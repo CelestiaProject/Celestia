@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-10-06 15:59+0400\n"
+"POT-Creation-Date: 2021-12-01 23:53+0200\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Levin Li <lilinfeng.app@outlook.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/celestia/"
@@ -23,3577 +23,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: ../data/data.cpp:1
-msgid "Mercury"
-msgstr "水星"
-
-#: ../data/data.cpp:2
-msgid "Venus"
-msgstr "金星"
-
-#: ../data/data.cpp:3 ../src/celestia/qt/qteventfinder.cpp:271
-#: ../src/celestia/win32/wineclipses.cpp:290
-msgid "Earth"
-msgstr "地球"
-
-#: ../data/data.cpp:4 ../src/celestia/qt/qtsolarsystembrowser.cpp:554
-msgid "Moon"
-msgstr "月球"
-
-#: ../data/data.cpp:5
-msgid "Mars"
-msgstr "火星"
-
-#: ../data/data.cpp:6
-msgid "Phobos"
-msgstr "火卫一"
-
-#: ../data/data.cpp:7
-msgid "Deimos"
-msgstr "火卫二"
-
-#: ../data/data.cpp:8 ../src/celestia/qt/qteventfinder.cpp:272
-#: ../src/celestia/win32/wineclipses.cpp:291
-msgid "Jupiter"
-msgstr "木星"
-
-#: ../data/data.cpp:9
-msgid "Io"
-msgstr "木卫一"
-
-#: ../data/data.cpp:10
-msgid "Europa"
-msgstr "木卫二"
-
-#: ../data/data.cpp:11
-msgid "Ganymede"
-msgstr "木卫三"
-
-#: ../data/data.cpp:12
-msgid "Callisto"
-msgstr "木卫四"
-
-#: ../data/data.cpp:13 ../src/celestia/qt/qteventfinder.cpp:273
-#: ../src/celestia/win32/wineclipses.cpp:292
-msgid "Saturn"
-msgstr "土星"
-
-#: ../data/data.cpp:14
-msgid "Prometheus"
-msgstr "土卫十六"
-
-#: ../data/data.cpp:15
-msgid "Pandora"
-msgstr "土卫十七"
-
-#: ../data/data.cpp:16
-msgid "Epimetheus"
-msgstr "土卫十一"
-
-#: ../data/data.cpp:17
-msgid "Janus"
-msgstr "土卫十"
-
-#: ../data/data.cpp:18
-msgid "Mimas"
-msgstr "土卫一"
-
-#: ../data/data.cpp:19
-msgid "Enceladus"
-msgstr "土卫二"
-
-#: ../data/data.cpp:20
-msgid "Tethys"
-msgstr "土卫三"
-
-#: ../data/data.cpp:21
-msgid "Dione"
-msgstr "土卫四"
-
-#: ../data/data.cpp:22
-msgid "Rhea"
-msgstr "土卫五"
-
-#: ../data/data.cpp:23
-msgid "Titan"
-msgstr "土卫六"
-
-#: ../data/data.cpp:24
-msgid "Hyperion"
-msgstr "土卫七"
-
-#: ../data/data.cpp:25
-msgid "Iapetus"
-msgstr "土卫八"
-
-#: ../data/data.cpp:26
-msgid "Phoebe"
-msgstr "土卫九"
-
-#: ../data/data.cpp:27 ../src/celestia/qt/qteventfinder.cpp:274
-#: ../src/celestia/win32/wineclipses.cpp:293
-msgid "Uranus"
-msgstr "天王星"
-
-#: ../data/data.cpp:28
-msgid "Miranda"
-msgstr "天卫五"
-
-#: ../data/data.cpp:29
-msgid "Ariel"
-msgstr "天卫一"
-
-#: ../data/data.cpp:30
-msgid "Umbriel"
-msgstr "天卫二"
-
-#: ../data/data.cpp:31
-msgid "Titania"
-msgstr "天卫三"
-
-#: ../data/data.cpp:32
-msgid "Oberon"
-msgstr "天卫四"
-
-#: ../data/data.cpp:33 ../src/celestia/qt/qteventfinder.cpp:275
-#: ../src/celestia/win32/wineclipses.cpp:294
-msgid "Neptune"
-msgstr "海王星"
-
-#: ../data/data.cpp:34
-msgid "Larissa"
-msgstr "海卫七"
-
-#: ../data/data.cpp:35
-msgid "Proteus"
-msgstr "海卫八"
-
-#: ../data/data.cpp:36
-msgid "Triton"
-msgstr "海卫一"
-
-#: ../data/data.cpp:37
-msgid "Nereid"
-msgstr "海卫二"
-
-#: ../data/data.cpp:38
-msgid "Ceres"
-msgstr "谷神星"
-
-#: ../data/data.cpp:39
-msgid "Pluto-Charon"
-msgstr "冥王星-冥卫一"
-
-#: ../data/data.cpp:40 ../src/celestia/qt/qteventfinder.cpp:276
-#: ../src/celestia/win32/wineclipses.cpp:295
-msgid "Pluto"
-msgstr "冥王星"
-
-#: ../data/data.cpp:41
-msgid "Charon"
-msgstr "冥卫一"
-
-#: ../data/data.cpp:42
-msgid "Styx"
-msgstr "冥卫五"
-
-#: ../data/data.cpp:43
-msgid "Nix"
-msgstr "冥卫二"
-
-#: ../data/data.cpp:44
-msgid "Kerberos"
-msgstr "冥卫四"
-
-#: ../data/data.cpp:45
-msgid "Hydra"
-msgstr "长蛇座"
-
-#: ../data/data.cpp:46
-msgid "Haumea"
-msgstr "妊神星"
-
-#: ../data/data.cpp:47
-msgid "Namaka"
-msgstr "妊卫二"
-
-#: ../data/data.cpp:48
-msgid "Hi'iaka"
-msgstr "妊卫一"
-
-#: ../data/data.cpp:49
-msgid "Makemake"
-msgstr "鸟神星"
-
-#: ../data/data.cpp:50
-msgid "S-2015 136472 I"
-msgstr "S-2015 136472 I"
-
-#: ../data/data.cpp:51
-msgid "Eris"
-msgstr "阋神星"
-
-#: ../data/data.cpp:52
-msgid "Dysnomia"
-msgstr "阋卫一"
-
-#: ../data/data.cpp:53
-msgid "Metis"
-msgstr "木卫十六"
-
-#: ../data/data.cpp:54
-msgid "Adrastea"
-msgstr "木卫十五"
-
-#: ../data/data.cpp:55
-msgid "Amalthea"
-msgstr "木卫五"
-
-#: ../data/data.cpp:56
-msgid "Thebe"
-msgstr "木卫十四"
-
-#: ../data/data.cpp:57
-msgid "Themisto"
-msgstr "木卫十八"
-
-#: ../data/data.cpp:58
-msgid "Leda"
-msgstr "木卫十八"
-
-#: ../data/data.cpp:59
-msgid "Himalia"
-msgstr "木卫六"
-
-#: ../data/data.cpp:60
-msgid "Lysithea"
-msgstr "木卫十"
-
-#: ../data/data.cpp:61
-msgid "Elara"
-msgstr "木卫七"
-
-#: ../data/data.cpp:62
-msgid "Iocaste"
-msgstr "木卫二十四"
-
-#: ../data/data.cpp:63
-msgid "Praxidike"
-msgstr "木卫二十七"
-
-#: ../data/data.cpp:64
-msgid "Harpalyke"
-msgstr "木卫二十二"
-
-#: ../data/data.cpp:65
-msgid "Ananke"
-msgstr "木卫十二"
-
-#: ../data/data.cpp:66
-msgid "Isonoe"
-msgstr "木卫二十六"
-
-#: ../data/data.cpp:67
-msgid "Erinome"
-msgstr "木卫二十五"
-
-#: ../data/data.cpp:68
-msgid "Taygete"
-msgstr "木卫二十"
-
-#: ../data/data.cpp:69
-msgid "Chaldene"
-msgstr "木卫二十一"
-
-#: ../data/data.cpp:70
-msgid "Carme"
-msgstr "木卫十一"
-
-#: ../data/data.cpp:71
-msgid "Pasiphae"
-msgstr "木卫八"
-
-#: ../data/data.cpp:72
-msgid "Kalyke"
-msgstr "木卫二十三"
-
-#: ../data/data.cpp:73
-msgid "Megaclite"
-msgstr "木卫十九"
-
-#: ../data/data.cpp:74
-msgid "Sinope"
-msgstr "木卫九"
-
-#: ../data/data.cpp:75
-msgid "Callirrhoe"
-msgstr "木卫十七"
-
-#: ../data/data.cpp:76
-msgid "Pan"
-msgstr "土卫十八"
-
-#: ../data/data.cpp:77
-msgid "Atlas"
-msgstr "土卫十五"
-
-#: ../data/data.cpp:78
-msgid "Telesto"
-msgstr "土卫十三"
-
-#: ../data/data.cpp:79
-msgid "Calypso"
-msgstr "土卫十四"
-
-#: ../data/data.cpp:80
-msgid "Helene"
-msgstr "土卫十二"
-
-#: ../data/data.cpp:81
-msgid "Cordelia"
-msgstr "天卫六"
-
-#: ../data/data.cpp:82
-msgid "Ophelia"
-msgstr "天卫七"
-
-#: ../data/data.cpp:83
-msgid "Bianca"
-msgstr "天卫八"
-
-#: ../data/data.cpp:84
-msgid "Cressida"
-msgstr "天卫九"
-
-#: ../data/data.cpp:85
-msgid "Desdemona"
-msgstr "天卫十"
-
-#: ../data/data.cpp:86
-msgid "Juliet"
-msgstr "天卫十一"
-
-#: ../data/data.cpp:87
-msgid "Portia"
-msgstr "天卫十二"
-
-#: ../data/data.cpp:88
-msgid "Rosalind"
-msgstr "天卫十三"
-
-#: ../data/data.cpp:89
-msgid "Belinda"
-msgstr "天卫十四"
-
-#: ../data/data.cpp:90
-msgid "Puck"
-msgstr "天卫十五"
-
-#: ../data/data.cpp:91
-msgid "Caliban"
-msgstr "天卫十六"
-
-#: ../data/data.cpp:92
-msgid "Stephano"
-msgstr "天卫二十"
-
-#: ../data/data.cpp:93
-msgid "Sycorax"
-msgstr "天卫十七"
-
-#: ../data/data.cpp:94
-msgid "Prospero"
-msgstr "天卫十八"
-
-#: ../data/data.cpp:95
-msgid "Setebos"
-msgstr "天卫十九"
-
-#: ../data/data.cpp:96
-msgid "Naiad"
-msgstr "海卫三"
-
-#: ../data/data.cpp:97
-msgid "Thalassa"
-msgstr "海卫四"
-
-#: ../data/data.cpp:98
-msgid "Despina"
-msgstr "海卫五"
-
-#: ../data/data.cpp:99
-msgid "Galatea"
-msgstr "海卫六"
-
-#: ../data/data.cpp:100
-msgid "NORTH AMERICA"
-msgstr "北美洲"
-
-#: ../data/data.cpp:101
-msgid "SOUTH AMERICA"
-msgstr "南美洲"
-
-#: ../data/data.cpp:102
-msgid "EURASIA"
-msgstr "欧亚大陆"
-
-#: ../data/data.cpp:103
-msgid "AFRICA"
-msgstr "非洲"
-
-#: ../data/data.cpp:104
-msgid "AUSTRALIA"
-msgstr "大洋洲"
-
-#: ../data/data.cpp:105
-msgid "ANTARCTICA"
-msgstr "南极"
-
-#: ../data/data.cpp:106
-msgid "NORTH ATLANTIC OCEAN"
-msgstr "北大西洋"
-
-#: ../data/data.cpp:107
-msgid "SOUTH ATLANTIC OCEAN"
-msgstr "南大西洋"
-
-#: ../data/data.cpp:108
-msgid "NORTH PACIFIC OCEAN"
-msgstr "北太平洋"
-
-#: ../data/data.cpp:109
-msgid "SOUTH PACIFIC OCEAN"
-msgstr "南太平洋"
-
-#: ../data/data.cpp:110
-msgid "INDIAN OCEAN"
-msgstr "印度洋"
-
-#: ../data/data.cpp:111
-msgid "ARCTIC OCEAN"
-msgstr "北冰洋"
-
-#: ../data/data.cpp:112
-msgid "Abu Dhabi"
-msgstr "阿布扎比"
-
-#: ../data/data.cpp:113
-msgid "Abuja"
-msgstr "阿布贾"
-
-#: ../data/data.cpp:114
-msgid "Accra"
-msgstr "阿克拉"
-
-#: ../data/data.cpp:115
-msgid "Adamstown"
-msgstr "亚当斯敦"
-
-#: ../data/data.cpp:116
-msgid "Addis Ababa"
-msgstr "亚的斯亚贝巴"
-
-#: ../data/data.cpp:117
-msgid "Algiers"
-msgstr "阿尔及尔"
-
-#: ../data/data.cpp:118
-msgid "Alofi"
-msgstr "阿洛菲"
-
-#: ../data/data.cpp:119
-msgid "Amman"
-msgstr "安曼"
-
-#: ../data/data.cpp:120
-msgid "Amsterdam"
-msgstr "阿姆斯特丹"
-
-#: ../data/data.cpp:121
-msgid "Andorra la Vella"
-msgstr "安道尔城"
-
-#: ../data/data.cpp:122
-msgid "Ankara"
-msgstr "安卡拉"
-
-#: ../data/data.cpp:123
-msgid "Antananarivo"
-msgstr "塔那那利佛"
-
-#: ../data/data.cpp:124
-msgid "Apia"
-msgstr "阿皮亚"
-
-#: ../data/data.cpp:125
-msgid "Ashgabat"
-msgstr "阿什哈巴德"
-
-#: ../data/data.cpp:126
-msgid "Asmara"
-msgstr "阿斯马拉"
-
-#: ../data/data.cpp:127
-msgid "Asuncion"
-msgstr "亚松森"
-
-#: ../data/data.cpp:128
-msgid "Athens"
-msgstr "雅典"
-
-#: ../data/data.cpp:129
-msgid "Avarua"
-msgstr "阿瓦鲁阿"
-
-#: ../data/data.cpp:130
-msgid "Baghdad"
-msgstr "巴格达"
-
-#: ../data/data.cpp:131
-msgid "Baku"
-msgstr "巴库"
-
-#: ../data/data.cpp:132
-msgid "Bamako"
-msgstr "巴马科"
-
-#: ../data/data.cpp:133
-msgid "Bandar Seri Begawan"
-msgstr "斯里巴加湾市"
-
-#: ../data/data.cpp:134
-msgid "Bangkok"
-msgstr "曼谷"
-
-#: ../data/data.cpp:135
-msgid "Bangui"
-msgstr "班吉"
-
-#: ../data/data.cpp:136
-msgid "Banjul"
-msgstr "班珠尔"
-
-#: ../data/data.cpp:137
-msgid "Basse-Terre"
-msgstr "巴斯特尔"
-
-#: ../data/data.cpp:138
-msgid "Basseterre"
-msgstr "巴斯特尔"
-
-#: ../data/data.cpp:139
-msgid "Beijing"
-msgstr "北京"
-
-#: ../data/data.cpp:140
-msgid "Beirut"
-msgstr "贝鲁特"
-
-#: ../data/data.cpp:141
-msgid "Belgrade"
-msgstr "贝尔格莱德"
-
-#: ../data/data.cpp:142
-msgid "Belmopan"
-msgstr "贝尔莫潘"
-
-#: ../data/data.cpp:143
-msgid "Berlin"
-msgstr "柏林"
-
-#: ../data/data.cpp:144
-msgid "Bern"
-msgstr "伯尔尼"
-
-#: ../data/data.cpp:145
-msgid "Bishkek"
-msgstr "比什凯克"
-
-#: ../data/data.cpp:146
-msgid "Bissau"
-msgstr "比绍"
-
-#: ../data/data.cpp:147
-msgid "Bloemfontein"
-msgstr "布隆方丹"
-
-#: ../data/data.cpp:148
-msgid "Bogota"
-msgstr "波哥大"
-
-#: ../data/data.cpp:149
-msgid "Brasilia"
-msgstr "巴西利亚"
-
-#: ../data/data.cpp:150
-msgid "Bratislava"
-msgstr "布拉迪斯拉发"
-
-#: ../data/data.cpp:151
-msgid "Brazzaville"
-msgstr "布拉柴维尔"
-
-#: ../data/data.cpp:152
-msgid "Bridgetown"
-msgstr "布里奇敦"
-
-#: ../data/data.cpp:153
-msgid "Brussels"
-msgstr "布鲁塞尔"
-
-#: ../data/data.cpp:154
-msgid "Bucharest"
-msgstr "布加勒斯特"
-
-#: ../data/data.cpp:155
-msgid "Budapest"
-msgstr "布达佩斯"
-
-#: ../data/data.cpp:156
-msgid "Buenos Aires"
-msgstr "布宜诺斯艾利斯"
-
-#: ../data/data.cpp:157
-msgid "Bujumbura"
-msgstr "布琼布拉"
-
-#: ../data/data.cpp:158
-msgid "Cairo"
-msgstr "开罗"
-
-#: ../data/data.cpp:159
-msgid "Canberra"
-msgstr "堪培拉"
-
-#: ../data/data.cpp:160
-msgid "Cape Town"
-msgstr "开普敦"
-
-#: ../data/data.cpp:161
-msgid "Caracas"
-msgstr "加拉加斯"
-
-#: ../data/data.cpp:162
-msgid "Castries"
-msgstr "卡斯特里"
-
-#: ../data/data.cpp:163
-msgid "Cayenne"
-msgstr "卡宴"
-
-#: ../data/data.cpp:164
-msgid "Charlotte Amalie"
-msgstr "夏洛特·阿马里"
-
-#: ../data/data.cpp:165
-msgid "Chisinau"
-msgstr "基希讷乌"
-
-#: ../data/data.cpp:166
-msgid "Colombo"
-msgstr "科伦坡"
-
-#: ../data/data.cpp:167
-msgid "Conakry"
-msgstr "科纳克里"
-
-#: ../data/data.cpp:168
-msgid "Copenhagen"
-msgstr "哥本哈根"
-
-#: ../data/data.cpp:169
-msgid "Cotonou"
-msgstr "科托努"
-
-#: ../data/data.cpp:170
-msgid "Dakar"
-msgstr "达喀尔"
-
-#: ../data/data.cpp:171
-msgid "Damascus"
-msgstr "大马士革"
-
-#: ../data/data.cpp:172
-msgid "Dar es Salaam"
-msgstr "达累斯萨拉姆"
-
-#: ../data/data.cpp:173
-msgid "Dhaka"
-msgstr "达卡"
-
-#: ../data/data.cpp:174
-msgid "Dili"
-msgstr "帝力"
-
-#: ../data/data.cpp:175
-msgid "Djibouti"
-msgstr "吉布提"
-
-#: ../data/data.cpp:176
-msgid "Doha"
-msgstr "多哈"
-
-#: ../data/data.cpp:177
-msgid "Douglas"
-msgstr "道格拉斯"
-
-#: ../data/data.cpp:178
-msgid "Dublin"
-msgstr "都柏林"
-
-#: ../data/data.cpp:179
-msgid "Dushanbe"
-msgstr "杜尚别"
-
-#: ../data/data.cpp:180
-msgid "Fongafale"
-msgstr "丰迦法利"
-
-#: ../data/data.cpp:181
-msgid "Fort-de-France"
-msgstr "法兰西堡"
-
-#: ../data/data.cpp:182
-msgid "Freetown"
-msgstr "弗里敦"
-
-#: ../data/data.cpp:183
-msgid "Gaborone"
-msgstr "哈博罗内"
-
-#: ../data/data.cpp:184
-msgid "George Town"
-msgstr "乔治敦"
-
-#: ../data/data.cpp:185
-msgid "Georgetown"
-msgstr "乔治敦"
-
-#: ../data/data.cpp:186
-msgid "Gibraltar"
-msgstr "直布罗陀"
-
-#: ../data/data.cpp:187
-msgid "Grand Turk"
-msgstr "科克本城"
-
-#: ../data/data.cpp:188
-msgid "Guatemala"
-msgstr "危地马拉城"
-
-#: ../data/data.cpp:189
-msgid "Hagatna"
-msgstr "阿加尼亚"
-
-#: ../data/data.cpp:190
-msgid "The Hague"
-msgstr "海牙"
-
-#: ../data/data.cpp:191
-msgid "Hamilton"
-msgstr "哈密尔顿"
-
-#: ../data/data.cpp:192
-msgid "Hanoi"
-msgstr "河内"
-
-#: ../data/data.cpp:193
-msgid "Harare"
-msgstr "哈拉雷"
-
-#: ../data/data.cpp:194
-msgid "Havana"
-msgstr "哈瓦那"
-
-#: ../data/data.cpp:195
-msgid "Helsinki"
-msgstr "赫尔辛基"
-
-#: ../data/data.cpp:196
-msgid "Hong Kong"
-msgstr ""
-
-#: ../data/data.cpp:197
-msgid "Honiara"
-msgstr "霍尼亚拉"
-
-#: ../data/data.cpp:198
-msgid "Islamabad"
-msgstr "伊斯兰堡"
-
-#: ../data/data.cpp:199
-msgid "Jakarta"
-msgstr "雅加达"
-
-#: ../data/data.cpp:200
-msgid "Jamestown"
-msgstr "詹姆斯敦"
-
-#: ../data/data.cpp:201
-msgid "Jerusalem"
-msgstr "耶路撒冷"
-
-#: ../data/data.cpp:202
-msgid "Kabul"
-msgstr "喀布尔"
-
-#: ../data/data.cpp:203
-msgid "Kampala"
-msgstr "坎帕拉"
-
-#: ../data/data.cpp:204
-msgid "Kathmandu"
-msgstr "加德满都"
-
-#: ../data/data.cpp:205
-msgid "Khartoum"
-msgstr "喀士穆"
-
-#: ../data/data.cpp:206
-msgid "Kiev"
-msgstr "基辅"
-
-#: ../data/data.cpp:207
-msgid "Kigali"
-msgstr "基加利"
-
-#: ../data/data.cpp:208 ../data/data.cpp:209
-msgid "Kingston"
-msgstr "金斯敦"
-
-#: ../data/data.cpp:210
-msgid "Kingstown"
-msgstr "金斯敦"
-
-#: ../data/data.cpp:211
-msgid "Kinshasa"
-msgstr "金沙萨"
-
-#: ../data/data.cpp:212
-msgid "Koror"
-msgstr "科罗尔"
-
-#: ../data/data.cpp:213
-msgid "Kuala Lumpur"
-msgstr "吉隆坡"
-
-#: ../data/data.cpp:214
-msgid "Kuwait"
-msgstr "科威特城"
-
-#: ../data/data.cpp:215
-msgid "La'youn"
-msgstr "阿尤恩"
-
-#: ../data/data.cpp:216
-msgid "La Paz"
-msgstr "拉巴斯"
-
-#: ../data/data.cpp:217
-msgid "Libreville"
-msgstr "利伯维尔"
-
-#: ../data/data.cpp:218
-msgid "Lilongwe"
-msgstr "利隆圭"
-
-#: ../data/data.cpp:219
-msgid "Lima"
-msgstr "利马"
-
-#: ../data/data.cpp:220
-msgid "Lisbon"
-msgstr "里斯本"
-
-#: ../data/data.cpp:221
-msgid "Ljubljana"
-msgstr "卢布尔雅那"
-
-#: ../data/data.cpp:222
-msgid "Lobamba"
-msgstr "洛班巴"
-
-#: ../data/data.cpp:223
-msgid "Lome"
-msgstr "洛美"
-
-#: ../data/data.cpp:224
-msgid "London"
-msgstr "伦敦"
-
-#: ../data/data.cpp:225
-msgid "Longyearbyen"
-msgstr "朗伊尔城"
-
-#: ../data/data.cpp:226
-msgid "Luanda"
-msgstr "罗安达"
-
-#: ../data/data.cpp:227
-msgid "Lusaka"
-msgstr "卢萨卡"
-
-#: ../data/data.cpp:228
-msgid "Luxembourg"
-msgstr "卢森堡"
-
-#: ../data/data.cpp:229
-msgid "Madrid"
-msgstr "马德里"
-
-#: ../data/data.cpp:230
-msgid "Majuro"
-msgstr "马朱罗"
-
-#: ../data/data.cpp:231
-msgid "Malabo"
-msgstr "马拉博"
-
-#: ../data/data.cpp:232
-msgid "Male"
-msgstr "马累"
-
-#: ../data/data.cpp:233
-msgid "Mamoutzou"
-msgstr "马穆楚"
-
-#: ../data/data.cpp:234
-msgid "Managua"
-msgstr "马那瓜"
-
-#: ../data/data.cpp:235
-msgid "Manama"
-msgstr "麦纳麦"
-
-#: ../data/data.cpp:236
-msgid "Manila"
-msgstr "马尼拉"
-
-#: ../data/data.cpp:237
-msgid "Maputo"
-msgstr "马普托"
-
-#: ../data/data.cpp:238
-msgid "Maseru"
-msgstr "马塞卢"
-
-#: ../data/data.cpp:239
-msgid "Mata-Utu"
-msgstr "马塔乌图"
-
-#: ../data/data.cpp:240
-msgid "Mbabane"
-msgstr "姆巴巴内"
-
-#: ../data/data.cpp:241
-msgid "Mexico City"
-msgstr "墨西哥城"
-
-#: ../data/data.cpp:242
-msgid "Minsk"
-msgstr "明斯克"
-
-#: ../data/data.cpp:243
-msgid "Mogadishu"
-msgstr "摩加迪沙"
-
-#: ../data/data.cpp:244
-msgid "Monaco"
-msgstr "摩纳哥城"
-
-#: ../data/data.cpp:245
-msgid "Monrovia"
-msgstr "蒙罗维亚"
-
-#: ../data/data.cpp:246
-msgid "Montevideo"
-msgstr "蒙得维的亚"
-
-#: ../data/data.cpp:247
-msgid "Moroni"
-msgstr "莫罗尼"
-
-#: ../data/data.cpp:248
-msgid "Moscow"
-msgstr "莫斯科"
-
-#: ../data/data.cpp:249
-msgid "Muscat"
-msgstr "马斯喀特"
-
-#: ../data/data.cpp:250
-msgid "Nairobi"
-msgstr "内罗毕"
-
-#: ../data/data.cpp:251
-msgid "Nassau"
-msgstr "拿骚"
-
-#: ../data/data.cpp:252
-msgid "N'Djamena"
-msgstr "恩贾梅纳"
-
-#: ../data/data.cpp:253
-msgid "New Delhi"
-msgstr "新德里"
-
-#: ../data/data.cpp:254
-msgid "Niamey"
-msgstr "尼亚美"
-
-#: ../data/data.cpp:255
-msgid "Nicosia"
-msgstr "尼科西亚"
-
-#: ../data/data.cpp:256
-msgid "Nouakchott"
-msgstr "努瓦克肖特"
-
-#: ../data/data.cpp:257
-msgid "Noumea"
-msgstr "努美阿"
-
-#: ../data/data.cpp:258
-msgid "Nuku'alofa"
-msgstr "努库阿洛法"
-
-#: ../data/data.cpp:259
-msgid "Nur-Sultan"
-msgstr ""
-
-#: ../data/data.cpp:260
-msgid "Nuuk"
-msgstr "努克"
-
-#: ../data/data.cpp:261
-msgid "Oranjestad"
-msgstr "奥拉涅斯塔德"
-
-#: ../data/data.cpp:262
-msgid "Oslo"
-msgstr "奥斯陆"
-
-#: ../data/data.cpp:263
-msgid "Ottawa"
-msgstr "渥太华"
-
-#: ../data/data.cpp:264
-msgid "Ouagadougou"
-msgstr "瓦加杜古"
-
-#: ../data/data.cpp:265
-msgid "Pago Pago"
-msgstr "帕果帕果"
-
-#: ../data/data.cpp:266
-msgid "Palikir"
-msgstr "帕利基尔"
-
-#: ../data/data.cpp:267
-msgid "Panama"
-msgstr "巴拿马城"
-
-#: ../data/data.cpp:268
-msgid "Papeete"
-msgstr "帕皮提"
-
-#: ../data/data.cpp:269
-msgid "Paramaribo"
-msgstr "帕拉马里博"
-
-#: ../data/data.cpp:270
-msgid "Paris"
-msgstr "巴黎"
-
-#: ../data/data.cpp:271
-msgid "Phnom Penh"
-msgstr "金边"
-
-#: ../data/data.cpp:272
-msgid "Plymouth"
-msgstr "普利茅斯"
-
-#: ../data/data.cpp:273
-msgid "Port Louis"
-msgstr "路易港"
-
-#: ../data/data.cpp:274
-msgid "Port Moresby"
-msgstr "莫尔兹比港"
-
-#: ../data/data.cpp:275
-msgid "Port-au-Prince"
-msgstr "太子港"
-
-#: ../data/data.cpp:276
-msgid "Port-of-Spain"
-msgstr "西班牙港"
-
-#: ../data/data.cpp:277
-msgid "Porto-Novo"
-msgstr "波多诺伏"
-
-#: ../data/data.cpp:278
-msgid "Port-Vila"
-msgstr "维拉港"
-
-#: ../data/data.cpp:279
-msgid "Prague"
-msgstr "布拉格"
-
-#: ../data/data.cpp:280
-msgid "Praia"
-msgstr "普拉亚"
-
-#: ../data/data.cpp:281
-msgid "Pretoria"
-msgstr "比勒陀利亚"
-
-#: ../data/data.cpp:282
-msgid "P'yongyang"
-msgstr "平壤"
-
-#: ../data/data.cpp:283
-msgid "Quito"
-msgstr "基多"
-
-#: ../data/data.cpp:284
-msgid "Rabat"
-msgstr "拉巴特"
-
-#: ../data/data.cpp:285
-msgid "Rangoon"
-msgstr "仰光"
-
-#: ../data/data.cpp:286
-msgid "Reykjavik"
-msgstr "雷克雅未克"
-
-#: ../data/data.cpp:287
-msgid "Riga"
-msgstr "里加"
-
-#: ../data/data.cpp:288
-msgid "Riyadh"
-msgstr "利雅得"
-
-#: ../data/data.cpp:289
-msgid "Road Town"
-msgstr "罗德城"
-
-#: ../data/data.cpp:290
-msgid "Rome"
-msgstr "罗马"
-
-#: ../data/data.cpp:291
-msgid "Roseau"
-msgstr "罗索"
-
-#: ../data/data.cpp:292
-msgid "Saint George's"
-msgstr "圣乔治"
-
-#: ../data/data.cpp:293
-msgid "Saint Helier"
-msgstr "圣赫利尔"
-
-#: ../data/data.cpp:294
-msgid "Saint John's"
-msgstr "圣约翰"
-
-#: ../data/data.cpp:295
-msgid "Saint Peter Port"
-msgstr "圣彼得港"
-
-#: ../data/data.cpp:296
-msgid "Saint-Denis"
-msgstr "圣但尼"
-
-#: ../data/data.cpp:297
-msgid "Saint-Pierre"
-msgstr "圣皮埃尔"
-
-#: ../data/data.cpp:298
-msgid "Saipan"
-msgstr "塞班"
-
-#: ../data/data.cpp:299
-msgid "San Jose"
-msgstr "圣何塞"
-
-#: ../data/data.cpp:300
-msgid "San Juan"
-msgstr "圣胡安"
-
-#: ../data/data.cpp:301
-msgid "San Marino"
-msgstr "圣马力诺"
-
-#: ../data/data.cpp:302
-msgid "San Salvador"
-msgstr "圣萨尔瓦多"
-
-#: ../data/data.cpp:303
-msgid "Sanaa"
-msgstr "萨那"
-
-#: ../data/data.cpp:304
-msgid "Santiago"
-msgstr "圣地亚哥"
-
-#: ../data/data.cpp:305
-msgid "Santo Domingo"
-msgstr "圣多明各"
-
-#: ../data/data.cpp:306
-msgid "Sao Tome"
-msgstr "圣多美"
-
-#: ../data/data.cpp:307
-msgid "Sarajevo"
-msgstr "萨拉热窝"
-
-#: ../data/data.cpp:308
-msgid "Seoul"
-msgstr "首尔"
-
-#: ../data/data.cpp:309
-msgid "The Settlement"
-msgstr "新村"
-
-#: ../data/data.cpp:310
-msgid "Singapore"
-msgstr "新加坡"
-
-#: ../data/data.cpp:311
-msgid "Skopje"
-msgstr "斯科普里"
-
-#: ../data/data.cpp:312
-msgid "Sofia"
-msgstr "索菲亚"
-
-#: ../data/data.cpp:313
-msgid "Sri Jayewardenepura Kotte"
-msgstr "斯里贾亚瓦德纳普拉科特"
-
-#: ../data/data.cpp:314
-msgid "Stanley"
-msgstr "斯坦利"
-
-#: ../data/data.cpp:315
-msgid "Stockholm"
-msgstr "斯德哥尔摩"
-
-#: ../data/data.cpp:316
-msgid "Sucre"
-msgstr "苏克雷"
-
-#: ../data/data.cpp:317
-msgid "Suva"
-msgstr "苏瓦"
-
-#: ../data/data.cpp:318
-msgid "Taipei"
-msgstr "台北"
-
-#: ../data/data.cpp:319
-msgid "Tallinn"
-msgstr "塔林"
-
-#: ../data/data.cpp:320
-msgid "Tarawa"
-msgstr "塔拉瓦"
-
-#: ../data/data.cpp:321
-msgid "Tashkent"
-msgstr "塔什干"
-
-#: ../data/data.cpp:322
-msgid "T'bilisi"
-msgstr "第比利斯"
-
-#: ../data/data.cpp:323
-msgid "Tegucigalpa"
-msgstr "特古西加尔巴"
-
-#: ../data/data.cpp:324
-msgid "Tehran"
-msgstr "德黑兰"
-
-#: ../data/data.cpp:325
-msgid "Tel Aviv"
-msgstr "特拉维夫市"
-
-#: ../data/data.cpp:326
-msgid "Thimphu"
-msgstr "廷布"
-
-#: ../data/data.cpp:327
-msgid "Tirana"
-msgstr "地拉那"
-
-#: ../data/data.cpp:328
-msgid "Tokyo"
-msgstr "东京"
-
-#: ../data/data.cpp:329
-msgid "Torshavn"
-msgstr "托尔斯港"
-
-#: ../data/data.cpp:330
-msgid "Tripoli"
-msgstr "的黎波里"
-
-#: ../data/data.cpp:331
-msgid "Tunis"
-msgstr "突尼斯"
-
-#: ../data/data.cpp:332
-msgid "Ulaanbaatar"
-msgstr "乌兰巴托"
-
-#: ../data/data.cpp:333
-msgid "Vaduz"
-msgstr "瓦杜兹"
-
-#: ../data/data.cpp:334
-msgid "Valletta"
-msgstr "瓦莱塔"
-
-#: ../data/data.cpp:335
-msgid "The Valley"
-msgstr "瓦利"
-
-#: ../data/data.cpp:336
-msgid "Vatican City"
-msgstr "梵蒂冈"
-
-#: ../data/data.cpp:337
-msgid "Victoria"
-msgstr "维多利亚"
-
-#: ../data/data.cpp:338
-msgid "Vienna"
-msgstr "维也纳"
-
-#: ../data/data.cpp:339
-msgid "Vientiane"
-msgstr "万象"
-
-#: ../data/data.cpp:340
-msgid "Vilnius"
-msgstr "维尔纽斯"
-
-#: ../data/data.cpp:341
-msgid "Warsaw"
-msgstr "华沙"
-
-#: ../data/data.cpp:342
-msgid "Washington D.C."
-msgstr "华盛顿"
-
-#: ../data/data.cpp:343
-msgid "Wellington"
-msgstr "威灵顿"
-
-#: ../data/data.cpp:344
-msgid "West Island"
-msgstr "西岛"
-
-#: ../data/data.cpp:345
-msgid "Willemstad"
-msgstr "威廉斯塔德"
-
-#: ../data/data.cpp:346
-msgid "Windhoek"
-msgstr "温得和克"
-
-#: ../data/data.cpp:347
-msgid "Yamoussoukro"
-msgstr "亚穆苏克罗"
-
-#: ../data/data.cpp:348
-msgid "Yaounde"
-msgstr "雅温得"
-
-#: ../data/data.cpp:349
-msgid "Yaren District"
-msgstr "亚伦区"
-
-#: ../data/data.cpp:350
-msgid "Yerevan"
-msgstr "埃里温"
-
-#: ../data/data.cpp:351
-msgid "Zagreb"
-msgstr "萨格勒布"
-
-#: ../data/data.cpp:352
-msgid "Milky Way"
-msgstr "银河系"
-
-#: ../data/data.cpp:353
-msgid "SMC"
-msgstr "小麦哲伦云"
-
-#: ../data/data.cpp:354
-msgid "LMC"
-msgstr "大麦哲伦云"
-
-#: ../data/data.cpp:355
-msgid "Solar System Barycenter"
-msgstr "太阳系质心"
-
-#: ../data/data.cpp:356
-msgid "Sol"
-msgstr "太阳"
-
-#: ../data/data.cpp:357
-msgid "Alpheratz"
-msgstr "壁宿二 Alpheratz"
-
-#: ../data/data.cpp:358
-msgid "Sirrah"
-msgstr "Sirrah"
-
-#: ../data/data.cpp:359
-msgid "Caph"
-msgstr "王良一 Caph"
-
-#: ../data/data.cpp:360
-msgid "Algenib"
-msgstr "壁宿一 Algenib"
-
-#: ../data/data.cpp:361
-msgid "Citadelle"
-msgstr ""
-
-#: ../data/data.cpp:362
-msgid "Schemali"
-msgstr "Schemali"
-
-#: ../data/data.cpp:363
-msgid "Ankaa"
-msgstr "火鸟六 Ankaa"
-
-#: ../data/data.cpp:364
-msgid "Felixvarela"
-msgstr ""
-
-#: ../data/data.cpp:365
-msgid "Fulu"
-msgstr ""
-
-#: ../data/data.cpp:366
-msgid "Schedar"
-msgstr "王良四 Mesartim"
-
-#: ../data/data.cpp:367
-msgid "Shedir"
-msgstr "Shedir"
-
-#: ../data/data.cpp:368
-msgid "Diphda"
-msgstr "土司空 Diphda"
-
-#: ../data/data.cpp:369
-msgid "Deneb Kaitos"
-msgstr "Deneb Kaitos"
-
-#: ../data/data.cpp:370
-msgid "Cocibolca"
-msgstr ""
-
-#: ../data/data.cpp:371
-msgid "Achird"
-msgstr "王良三 Ksora"
-
-#: ../data/data.cpp:372
-msgid "Van Maanen 2"
-msgstr "范马南2"
-
-#: ../data/data.cpp:373
-#, fuzzy
-msgid "Castula"
-msgstr "北河二 Castor"
-
-#: ../data/data.cpp:374
-msgid "Navi"
-msgstr "策 Navi"
-
-#: ../data/data.cpp:375
-msgid "Nenque"
-msgstr ""
-
-#: ../data/data.cpp:376
-msgid "Wurren"
-msgstr ""
-
-#: ../data/data.cpp:377
-msgid "Mirach"
-msgstr "奎宿九 Mirach"
-
-#: ../data/data.cpp:378
-msgid "Emiw"
-msgstr ""
-
-#: ../data/data.cpp:379
-msgid "Revati"
-msgstr ""
-
-#: ../data/data.cpp:380
-msgid "Adhil"
-msgstr "奎宿七 Adhil"
-
-#: ../data/data.cpp:381
-msgid "Bélénos"
-msgstr ""
-
-#: ../data/data.cpp:382
-msgid "Ruchbah"
-msgstr "阁道三 Ruchbah"
-
-#: ../data/data.cpp:383
-#, fuzzy
-msgid "Alpherg"
-msgstr "壁宿二 Alpheratz"
-
-#: ../data/data.cpp:384
-#, fuzzy
-msgid "Titawin"
-msgstr "土卫六"
-
-#: ../data/data.cpp:385
-msgid "Achernar"
-msgstr "水委一 Achernar"
-
-#: ../data/data.cpp:386
-msgid "Nembus"
-msgstr ""
-
-#: ../data/data.cpp:387
-msgid "Torcular"
-msgstr ""
-
-#: ../data/data.cpp:388
-msgid "Torcularis Septentrionalis"
-msgstr ""
-
-#: ../data/data.cpp:389
-msgid "Baten Kaitos"
-msgstr "天仓四 Baten Kaitos"
-
-#: ../data/data.cpp:390
-msgid "Mothallah"
-msgstr ""
-
-#: ../data/data.cpp:391
-msgid "Caput Trianguli"
-msgstr "Caput Trianguli"
-
-#: ../data/data.cpp:392
-msgid "Mesarthim"
-msgstr "娄宿二 Mesarthim"
-
-#: ../data/data.cpp:393
-msgid "Segin"
-msgstr "阁道二 Segin"
-
-#: ../data/data.cpp:394
-msgid "Sheratan"
-msgstr "娄宿一 Sheratan"
-
-#: ../data/data.cpp:395
-#, fuzzy
-msgid "Alrescha"
-msgstr "Al Rescha"
-
-#: ../data/data.cpp:396
-msgid "Al Rescha"
-msgstr "Al Rescha"
-
-#: ../data/data.cpp:397
-msgid "Almach"
-msgstr "天大将军一 Almach"
-
-#: ../data/data.cpp:398
-msgid "Almaak"
-msgstr "Almaak"
-
-#: ../data/data.cpp:399
-msgid "Alamak"
-msgstr "Alamak"
-
-#: ../data/data.cpp:400
-msgid "Hamal"
-msgstr "娄宿三Hamal"
-
-#: ../data/data.cpp:401
-msgid "Mira"
-msgstr "刍藁增二 Mira"
-
-#: ../data/data.cpp:402
-msgid "Polaris"
-msgstr "勾陈一  Polaris"
-
-#: ../data/data.cpp:403
-msgid "Buna"
-msgstr ""
-
-#: ../data/data.cpp:404
-msgid "Kaffaljidhma"
-msgstr ""
-
-#: ../data/data.cpp:405
-msgid "Koeia"
-msgstr ""
-
-#: ../data/data.cpp:406
-msgid "Lilii Borea"
-msgstr ""
-
-#: ../data/data.cpp:407
-msgid "Nushagak"
-msgstr ""
-
-#: ../data/data.cpp:408
-#, fuzzy
-msgid "Bharani"
-msgstr "常陈四 Chara"
-
-#: ../data/data.cpp:409
-#, fuzzy
-msgid "Miram"
-msgstr "刍藁增二 Mira"
-
-#: ../data/data.cpp:410
-msgid "Angetenar"
-msgstr "天苑九 Angetenar"
-
-#: ../data/data.cpp:411
-msgid "Azha"
-msgstr "天苑六 Azha"
-
-#: ../data/data.cpp:412
-msgid "Acamar"
-msgstr "天园六 Acamar"
-
-#: ../data/data.cpp:413
-msgid "Ayeyarwady"
-msgstr ""
-
-#: ../data/data.cpp:414
-msgid "Menkar"
-msgstr "天囷一 Menkar"
-
-#: ../data/data.cpp:415
-msgid "Menkab"
-msgstr "天囷三 Menkab"
-
-#: ../data/data.cpp:416
-msgid "Algol"
-msgstr "大陵五 Algol"
-
-#: ../data/data.cpp:417
-msgid "Misam"
-msgstr ""
-
-#: ../data/data.cpp:418
-msgid "Botein"
-msgstr "天阴四 Botein"
-
-#: ../data/data.cpp:419
-msgid "Dalim"
-msgstr ""
-
-#: ../data/data.cpp:420
-msgid "Zibal"
-msgstr ""
-
-#: ../data/data.cpp:421
-msgid "Intan"
-msgstr ""
-
-#: ../data/data.cpp:422
-msgid "Mirfak"
-msgstr "天船三 Mirfak"
-
-#: ../data/data.cpp:423
-msgid "Mirphak"
-msgstr "天船三 Mirphak"
-
-#: ../data/data.cpp:424
-msgid "Marfak"
-msgstr "Marfak"
-
-#: ../data/data.cpp:425
-#, fuzzy
-msgid "Ran"
-msgstr "天苑三 Rana"
-
-#: ../data/data.cpp:426
-msgid "Tupi"
-msgstr ""
-
-#: ../data/data.cpp:427
-msgid "Rana"
-msgstr "天苑三 Rana"
-
-#: ../data/data.cpp:428
-msgid "Atik"
-msgstr "卷舌增七 Atik"
-
-#: ../data/data.cpp:429
-msgid "Celaeno"
-msgstr "昴宿增六 Celaeno"
-
-#: ../data/data.cpp:430
-msgid "Electra"
-msgstr "昴宿一 Electra"
-
-#: ../data/data.cpp:431
-msgid "Taygeta"
-msgstr "昴宿二 Taygeta"
-
-#: ../data/data.cpp:432
-msgid "Maia"
-msgstr "昴宿四 Maia"
-
-#: ../data/data.cpp:433
-msgid "Asterope"
-msgstr "昴宿三 Asterope"
-
-#: ../data/data.cpp:434
-msgid "Merope"
-msgstr "昴宿五 Merope"
-
-#: ../data/data.cpp:435
-msgid "Alcyone"
-msgstr "昴宿六 Alcyone"
-
-#: ../data/data.cpp:436
-msgid "Pleione"
-msgstr "昴宿增十二 Pleione"
-
-#: ../data/data.cpp:437
-msgid "Zaurak"
-msgstr "天苑一 Zaurak"
-
-#: ../data/data.cpp:438
-msgid "Menkib"
-msgstr "卷舌三 Menkib"
-
-#: ../data/data.cpp:439
-msgid "Beid"
-msgstr "九洲殊口二 Beid"
-
-#: ../data/data.cpp:440
-msgid "Keid"
-msgstr "九洲殊口增七 Keid"
-
-#: ../data/data.cpp:441
-msgid "Prima Hyadum"
-msgstr ""
-
-#: ../data/data.cpp:442
-msgid "Secunda Hyadum"
-msgstr ""
-
-#: ../data/data.cpp:443
-msgid "Beemim"
-msgstr ""
-
-#: ../data/data.cpp:444
-msgid "Ain"
-msgstr "毕宿一 Ain"
-
-#: ../data/data.cpp:445
-msgid "Chamukuy"
-msgstr ""
-
-#: ../data/data.cpp:446
-msgid "Hoggar"
-msgstr ""
-
-#: ../data/data.cpp:447
-msgid "Theemin"
-msgstr ""
-
-#: ../data/data.cpp:448
-msgid "Aldebaran"
-msgstr "毕宿五 Aldebaran"
-
-#: ../data/data.cpp:449
-msgid "Sceptrum"
-msgstr ""
-
-#: ../data/data.cpp:450
-#, fuzzy
-msgid "Tabit"
-msgstr "参宿增卅六 Thabit"
-
-#: ../data/data.cpp:451
-msgid "Mouhoun"
-msgstr ""
-
-#: ../data/data.cpp:452
-msgid "Hassaleh"
-msgstr ""
-
-#: ../data/data.cpp:453
-msgid "Hind's Crimson Star"
-msgstr "欣德深红星 Hind's Crimson Star"
-
-#: ../data/data.cpp:454
-#, fuzzy
-msgid "Almaaz"
-msgstr "Almaak"
-
-#: ../data/data.cpp:455
-#, fuzzy
-msgid "Saclateni"
-msgstr "海卫六"
-
-#: ../data/data.cpp:456
-msgid "Sadatoni"
-msgstr "Sadatoni"
-
-#: ../data/data.cpp:457
-msgid "Haedus"
-msgstr ""
-
-#: ../data/data.cpp:458
-msgid "Cursa"
-msgstr "玉井三 Cursa"
-
-#: ../data/data.cpp:459
-msgid "Mago"
-msgstr ""
-
-#: ../data/data.cpp:460
-msgid "Kapteyn's Star"
-msgstr "卡普坦星 Kapteyn's Star"
-
-#: ../data/data.cpp:461
-msgid "Rigel"
-msgstr "参宿七 Rigel"
-
-#: ../data/data.cpp:462
-msgid "Capella"
-msgstr "五车二 Capella"
-
-#: ../data/data.cpp:463
-msgid "Bellatrix"
-msgstr "参宿五 Bellatrix"
-
-#: ../data/data.cpp:464
-msgid "Elnath"
-msgstr "五车五 Elnath"
-
-#: ../data/data.cpp:465
-msgid "Alnath"
-msgstr "五车五 Alnath"
-
-#: ../data/data.cpp:466
-msgid "Nihal"
-msgstr "厕二 Nihal"
-
-#: ../data/data.cpp:467
-msgid "Thabit"
-msgstr "参宿增卅六 Thabit"
-
-#: ../data/data.cpp:468
-msgid "Mintaka"
-msgstr "参宿三 Mintaka"
-
-#: ../data/data.cpp:469
-msgid "Arneb"
-msgstr "厕一 Arneb"
-
-#: ../data/data.cpp:470
-msgid "Meissa"
-msgstr "觜宿一 Meissa"
-
-#: ../data/data.cpp:471
-msgid "Heka"
-msgstr "Heka"
-
-#: ../data/data.cpp:472
-msgid "Hatysa"
-msgstr ""
-
-#: ../data/data.cpp:473
-msgid "Alnilam"
-msgstr "参宿二 Alnilam"
-
-#: ../data/data.cpp:474
-msgid "Bubup"
-msgstr ""
-
-#: ../data/data.cpp:475
-#, fuzzy
-msgid "Tianguan"
-msgstr "三角形"
-
-#: ../data/data.cpp:476
-msgid "Phact"
-msgstr "丈人一 Phact"
-
-#: ../data/data.cpp:477
-msgid "Alnitak"
-msgstr "参宿一 Alnitak"
-
-#: ../data/data.cpp:478
-msgid "Saiph"
-msgstr "参宿六 Saiph"
-
-#: ../data/data.cpp:479
-msgid "Wazn"
-msgstr "子二 Wazn"
-
-#: ../data/data.cpp:480
-msgid "Betelgeuse"
-msgstr "参宿四 Betelgeuse"
-
-#: ../data/data.cpp:481
-msgid "Prijipati"
-msgstr "Prijipati"
-
-#: ../data/data.cpp:482
-msgid "Menkalinan"
-msgstr "五车三 Menkalinan"
-
-#: ../data/data.cpp:483
-msgid "Mahasim"
-msgstr ""
-
-#: ../data/data.cpp:484
-#, fuzzy
-msgid "Elkurud"
-msgstr "孙增一 Furud"
-
-#: ../data/data.cpp:485
-msgid "Amadioha"
-msgstr ""
-
-#: ../data/data.cpp:486
-#, fuzzy
-msgid "Propus"
-msgstr "老人 Canopus"
-
-#: ../data/data.cpp:487
-msgid "Red Rectangle"
-msgstr "红矩形星 Red Rectangle"
-
-#: ../data/data.cpp:488
-msgid "Furud"
-msgstr "孙增一 Furud"
-
-#: ../data/data.cpp:489
-msgid "Mirzam"
-msgstr "军市一 Mirzam"
-
-#: ../data/data.cpp:490
-msgid "Murzim"
-msgstr "Murzim"
-
-#: ../data/data.cpp:491
-msgid "Tejat"
-msgstr "井宿一 Tejat"
-
-#: ../data/data.cpp:492
-msgid "Canopus"
-msgstr "老人 Canopus"
-
-#: ../data/data.cpp:493
-msgid "Suhel"
-msgstr "Suhel"
-
-#: ../data/data.cpp:494
-msgid "Lucilinburhuc"
-msgstr ""
-
-#: ../data/data.cpp:495
-msgid "Lusitânia"
-msgstr ""
-
-#: ../data/data.cpp:496
-#, fuzzy
-msgid "Plaskett's Star"
-msgstr "最近的恒星"
-
-#: ../data/data.cpp:497
-msgid "Alhena"
-msgstr "井宿三 Alhena"
-
-#: ../data/data.cpp:498
-msgid "Almeisan"
-msgstr "Almeisan"
-
-#: ../data/data.cpp:499
-msgid "Nosaxa"
-msgstr ""
-
-#: ../data/data.cpp:500
-msgid "Mebsuta"
-msgstr "井宿五 Mebsuta"
-
-#: ../data/data.cpp:501
-msgid "Sirius"
-msgstr "天狼 Sirius"
-
-#: ../data/data.cpp:502
-msgid "Alzirr"
-msgstr ""
-
-#: ../data/data.cpp:503
-msgid "Nervia"
-msgstr ""
-
-#: ../data/data.cpp:504
-msgid "Adhara"
-msgstr "弧矢七 Adhara"
-
-#: ../data/data.cpp:505
-msgid "Adara"
-msgstr "Adara"
-
-#: ../data/data.cpp:506
-msgid "Citalá"
-msgstr ""
-
-#: ../data/data.cpp:507
-msgid "Unurgunite"
-msgstr ""
-
-#: ../data/data.cpp:508
-msgid "Muliphein"
-msgstr "天狼增四 Muliphein"
-
-#: ../data/data.cpp:509
-msgid "Mekbuda"
-msgstr "井宿七 Mekbuda"
-
-#: ../data/data.cpp:510
-msgid "Wezen"
-msgstr "弧矢一 Wezen"
-
-#: ../data/data.cpp:511
-msgid "Bernes 135"
-msgstr "别尔涅斯135 Bernes 135"
-
-#: ../data/data.cpp:512
-msgid "Wasat"
-msgstr "天樽二 Wasat"
-
-#: ../data/data.cpp:513
-msgid "Aludra"
-msgstr "弧矢二 Aludra"
-
-#: ../data/data.cpp:514
-msgid "Gomeisa"
-msgstr "南河二 Gomeisa"
-
-#: ../data/data.cpp:515
-msgid "Luyten's Star"
-msgstr "鲁坦星 Luyten's Star"
-
-#: ../data/data.cpp:516
-msgid "Castor"
-msgstr "北河二 Castor"
-
-#: ../data/data.cpp:517
-msgid "Jishui"
-msgstr ""
-
-#: ../data/data.cpp:518
-msgid "Procyon"
-msgstr "南河三 Procyon"
-
-#: ../data/data.cpp:519
-msgid "Elgomaisa"
-msgstr "Elgomaisa"
-
-#: ../data/data.cpp:520
-msgid "Ceibo"
-msgstr ""
-
-#: ../data/data.cpp:521
-msgid "Pollux"
-msgstr "北河三 Pollux"
-
-#: ../data/data.cpp:522
-msgid "Tapecue"
-msgstr ""
-
-#: ../data/data.cpp:523
-#, fuzzy
-msgid "Azmidi"
-msgstr "Asmidiske"
-
-#: ../data/data.cpp:524
-msgid "Asmidiske"
-msgstr "Asmidiske"
-
-#: ../data/data.cpp:525
-msgid "Naos"
-msgstr "弧矢增廿二 Naos"
-
-#: ../data/data.cpp:526
-msgid "Tureis"
-msgstr ""
-
-#: ../data/data.cpp:527
-msgid "Regor"
-msgstr "天社一 Regor"
-
-#: ../data/data.cpp:528
-msgid "Tegmine"
-msgstr "水位四 Tegmine"
-
-#: ../data/data.cpp:529
-#, fuzzy
-msgid "Tarf"
-msgstr "Al Tarf"
-
-#: ../data/data.cpp:530
-msgid "Al Tarf"
-msgstr "Al Tarf"
-
-#: ../data/data.cpp:531
-msgid "Násti"
-msgstr ""
-
-#: ../data/data.cpp:532
-msgid "Piautos"
-msgstr ""
-
-#: ../data/data.cpp:533
-msgid "Avior"
-msgstr "海石一 Avior"
-
-#: ../data/data.cpp:534
-msgid "Alsciaukat"
-msgstr ""
-
-#: ../data/data.cpp:535
-msgid "Muscida"
-msgstr "内阶一 Muscida"
-
-#: ../data/data.cpp:536
-#, fuzzy
-msgid "Minchir"
-msgstr "王良三 Ksora"
-
-#: ../data/data.cpp:537
-msgid "Gakyid"
-msgstr ""
-
-#: ../data/data.cpp:538
-msgid "Meleph"
-msgstr ""
-
-#: ../data/data.cpp:539
-msgid "Asellus Borealis"
-msgstr "鬼宿三  Asellus Borealis"
-
-#: ../data/data.cpp:540
-msgid "Asellus Australis"
-msgstr "鬼宿四 Asellus Australis"
-
-#: ../data/data.cpp:541
-msgid "Alsephina"
-msgstr ""
-
-#: ../data/data.cpp:542
-msgid "Ashlesha"
-msgstr ""
-
-#: ../data/data.cpp:543
-msgid "Copernicus"
-msgstr ""
-
-#: ../data/data.cpp:544
-msgid "Stribor"
-msgstr ""
-
-#: ../data/data.cpp:545
-msgid "Acubens"
-msgstr "柳宿增三 Acubens"
-
-#: ../data/data.cpp:546
-msgid "Talitha"
-msgstr ""
-
-#: ../data/data.cpp:547
-msgid "Dnoces"
-msgstr "Dnoces"
-
-#: ../data/data.cpp:548
-msgid "Alkaphrah"
-msgstr ""
-
-#: ../data/data.cpp:549
-msgid "Talitha Australis"
-msgstr "Talitha Australis"
-
-#: ../data/data.cpp:550
-msgid "Suhail"
-msgstr "天纪 Suhail"
-
-#: ../data/data.cpp:551
-msgid "Nahn"
-msgstr ""
-
-#: ../data/data.cpp:552
-msgid "Miaplacidus"
-msgstr "南船五 Miaplacidus"
-
-#: ../data/data.cpp:553
-msgid "Aspidiske"
-msgstr "海石二 Aspidiske"
-
-#: ../data/data.cpp:554
-#, fuzzy
-msgid "Markeb"
-msgstr "室宿一 Markab"
-
-#: ../data/data.cpp:555
-msgid "Alphard"
-msgstr "星宿一 Alphard"
-
-#: ../data/data.cpp:556
-msgid "Cor Hydrae"
-msgstr "Cor Hydrae"
-
-#: ../data/data.cpp:557
-msgid "Intercrus"
-msgstr ""
-
-#: ../data/data.cpp:558
-msgid "Alterf"
-msgstr "轩辕八 Alterf"
-
-#: ../data/data.cpp:559
-msgid "Illyrian"
-msgstr ""
-
-#: ../data/data.cpp:560
-msgid "Kalausi"
-msgstr ""
-
-#: ../data/data.cpp:561
-msgid "Ukdah"
-msgstr "星宿四 Ukdah"
-
-#: ../data/data.cpp:562
-msgid "Subra"
-msgstr "轩辕十五 Subra"
-
-#: ../data/data.cpp:563
-msgid "Ras Elased Australis"
-msgstr "Ras Elased Australis"
-
-#: ../data/data.cpp:564
-msgid "Natasha"
-msgstr ""
-
-#: ../data/data.cpp:565
-msgid "Zhang"
-msgstr ""
-
-#: ../data/data.cpp:566
-msgid "Rasalas"
-msgstr "轩辕十 Rasalas"
-
-#: ../data/data.cpp:567
-msgid "Ras Elased Borealis"
-msgstr "Ras Elased Borealis"
-
-#: ../data/data.cpp:568
-msgid "Felis"
-msgstr ""
-
-#: ../data/data.cpp:569
-msgid "Bibhā"
-msgstr ""
-
-#: ../data/data.cpp:570
-msgid "Regulus"
-msgstr "轩辕十四 Regulus"
-
-#: ../data/data.cpp:571
-msgid "Kabeleced"
-msgstr "Kabeleced"
-
-#: ../data/data.cpp:572
-msgid "Cor Leonis"
-msgstr "Cor Leonis"
-
-#: ../data/data.cpp:573
-msgid "Adhafera"
-msgstr "轩辕十一 Adhafera"
-
-#: ../data/data.cpp:574
-msgid "Aldhafera"
-msgstr "Aldhafera"
-
-#: ../data/data.cpp:575
-msgid "Tania Borealis"
-msgstr "中台一 Tania Borealis"
-
-#: ../data/data.cpp:576
-msgid "Algieba"
-msgstr "轩辕十二 Algieba"
-
-#: ../data/data.cpp:577
-msgid "Tania Australis"
-msgstr "中台二 Tania Australis"
-
-#: ../data/data.cpp:578
-#, fuzzy
-msgid "Macondo"
-msgstr "伦敦"
-
-#: ../data/data.cpp:579
-msgid "Praecipua"
-msgstr ""
-
-#: ../data/data.cpp:580
-#, fuzzy
-msgid "Chalawan"
-msgstr "木卫二十一"
-
-#: ../data/data.cpp:581
-msgid "Alkes"
-msgstr "翼宿一 Alkes"
-
-#: ../data/data.cpp:582
-msgid "Merak"
-msgstr "天璇 Merak"
-
-#: ../data/data.cpp:583
-msgid "Lalande 21185"
-msgstr "拉兰德21185 Lalande 21185"
-
-#: ../data/data.cpp:584
-msgid "Dubhe"
-msgstr "天枢 Dubhe"
-
-#: ../data/data.cpp:585
-msgid "Dubb"
-msgstr "Dubb"
-
-#: ../data/data.cpp:586
-msgid "Dingolay"
-msgstr ""
-
-#: ../data/data.cpp:587
-msgid "Zosma"
-msgstr "西上相 Zosma"
-
-#: ../data/data.cpp:588
-msgid "Duhr"
-msgstr "Duhr"
-
-#: ../data/data.cpp:589
-msgid "Chertan"
-msgstr "西次相 Chertan"
-
-#: ../data/data.cpp:590
-msgid "Coxa"
-msgstr "Coxa"
-
-#: ../data/data.cpp:591
-msgid "Chort"
-msgstr "Chort"
-
-#: ../data/data.cpp:592
-msgid "Innes' Star"
-msgstr ""
-
-#: ../data/data.cpp:593
-msgid "Hunahpú"
-msgstr ""
-
-#: ../data/data.cpp:594
-msgid "Alula Australis"
-msgstr "下台二 Alula Australis"
-
-#: ../data/data.cpp:595
-msgid "Alula Borealis"
-msgstr "下台一 Alula Borealis"
-
-#: ../data/data.cpp:596
-msgid "Tsze Tseang"
-msgstr "Tsze Tseang"
-
-#: ../data/data.cpp:597
-#, fuzzy
-msgid "Shama"
-msgstr "左旗一 Sham"
-
-#: ../data/data.cpp:598
-msgid "Giausar"
-msgstr "上辅 Giausar"
-
-#: ../data/data.cpp:599
-#, fuzzy
-msgid "Formosa"
-msgstr "格式："
-
-#: ../data/data.cpp:600
-msgid "Sagarmatha"
-msgstr ""
-
-#: ../data/data.cpp:601
-msgid "Przybylski's Star"
-msgstr ""
-
-#: ../data/data.cpp:602
-msgid "Uklun"
-msgstr ""
-
-#: ../data/data.cpp:603
-#, fuzzy
-msgid "Flegetonte"
-msgstr "乔治敦"
-
-#: ../data/data.cpp:604
-msgid "Taiyangshou"
-msgstr ""
-
-#: ../data/data.cpp:605
-msgid "Denebola"
-msgstr "五帝座一 Denebola"
-
-#: ../data/data.cpp:606
-msgid "Zavijava"
-msgstr "右执法 Zavijava"
-
-#: ../data/data.cpp:607
-msgid "Alaraph"
-msgstr "Alaraph"
-
-#: ../data/data.cpp:608
-#, fuzzy
-msgid "Aniara"
-msgstr "霍尼亚拉"
-
-#: ../data/data.cpp:609
-msgid "Groombridge 1830"
-msgstr "葛罗姆布里吉1830"
-
-#: ../data/data.cpp:610
-msgid "Phecda"
-msgstr "天玑 Phecda"
-
-#: ../data/data.cpp:611
-msgid "Phad"
-msgstr "Phad"
-
-#: ../data/data.cpp:612
-msgid "Tonatiuh"
-msgstr ""
-
-#: ../data/data.cpp:613
-msgid "Alchiba"
-msgstr "右辖 Alchiba"
-
-#: ../data/data.cpp:614
-msgid "Imai"
-msgstr ""
-
-#: ../data/data.cpp:615
-msgid "Megrez"
-msgstr "天权 Megrez"
-
-#: ../data/data.cpp:616
-msgid "Gienah"
-msgstr "轸宿一 Gienah"
-
-#: ../data/data.cpp:617
-msgid "Zaniah"
-msgstr "左执法 Zaniah"
-
-#: ../data/data.cpp:618
-msgid "Ginan"
-msgstr ""
-
-#: ../data/data.cpp:619
-msgid "Tupã"
-msgstr ""
-
-#: ../data/data.cpp:620
-msgid "Acrux"
-msgstr "十字架二 Acrux"
-
-#: ../data/data.cpp:621
-msgid "Algorab"
-msgstr "轸宿三 Algorab"
-
-#: ../data/data.cpp:622
-msgid "Gacrux"
-msgstr "十字架一 Gacrux"
-
-#: ../data/data.cpp:623
-msgid "Funi"
-msgstr ""
-
-#: ../data/data.cpp:624
-msgid "Chara"
-msgstr "常陈四 Chara"
-
-#: ../data/data.cpp:625
-msgid "Kraz"
-msgstr "轸宿四 Kraz"
-
-#: ../data/data.cpp:626
-msgid "Muhlifain"
-msgstr "库楼七"
-
-#: ../data/data.cpp:627
-msgid "Porrima"
-msgstr "太微左垣二 东上相 Porrima"
-
-#: ../data/data.cpp:628
-msgid "La Superba"
-msgstr ""
-
-#: ../data/data.cpp:629
-msgid "Tianyi"
-msgstr ""
-
-#: ../data/data.cpp:630
-msgid "Mimosa"
-msgstr "十字架三 Mimosa"
-
-#: ../data/data.cpp:631
-msgid "Alioth"
-msgstr "玉衡 Alioth"
-
-#: ../data/data.cpp:632
-msgid "Taiyi"
-msgstr ""
-
-#: ../data/data.cpp:633
-msgid "Minelauva"
-msgstr "太微左垣三 东次相 Minelauva"
-
-#: ../data/data.cpp:634
-msgid "Auva"
-msgstr "Auva"
-
-#: ../data/data.cpp:635
-msgid "Cor Caroli"
-msgstr "常陈一 Cor Caroli"
-
-#: ../data/data.cpp:636
-msgid "Vindemiatrix"
-msgstr "太微左垣四 东次将 Vindemiatrix"
-
-#: ../data/data.cpp:637
-msgid "Almuredin"
-msgstr "Almuredin"
-
-#: ../data/data.cpp:638
-msgid "Diadem"
-msgstr ""
-
-#: ../data/data.cpp:639
-msgid "Mizar"
-msgstr "开阳 Mizar"
-
-#: ../data/data.cpp:640
-msgid "Spica"
-msgstr "角宿一 Spica"
-
-#: ../data/data.cpp:641
-msgid "Azimech"
-msgstr "Azimech"
-
-#: ../data/data.cpp:642
-msgid "Alcor"
-msgstr "辅 Alcor"
-
-#: ../data/data.cpp:643
-msgid "Dofida"
-msgstr ""
-
-#: ../data/data.cpp:644
-msgid "Liesma"
-msgstr ""
-
-#: ../data/data.cpp:645
-msgid "Heze"
-msgstr "角宿二 Heze"
-
-#: ../data/data.cpp:646
-msgid "Alkaid"
-msgstr "摇光 Alkaid"
-
-#: ../data/data.cpp:647
-msgid "Benetnasch"
-msgstr "Benetnasch"
-
-#: ../data/data.cpp:648
-msgid "Muphrid"
-msgstr "右摄提一 Muphrid"
-
-#: ../data/data.cpp:649
-msgid "Hadar"
-msgstr "马腹一 Hadar"
-
-#: ../data/data.cpp:650
-msgid "Agena"
-msgstr "Agena"
-
-#: ../data/data.cpp:651
-msgid "Thuban"
-msgstr "右枢 Thuban"
-
-#: ../data/data.cpp:652
-msgid "Menkent"
-msgstr "库楼三 Menkent"
-
-#: ../data/data.cpp:653
-msgid "Kang"
-msgstr ""
-
-#: ../data/data.cpp:654
-msgid "Arcturus"
-msgstr "大角 Arcturus"
-
-#: ../data/data.cpp:655
-msgid "Syrma"
-msgstr "亢宿二 Syrma"
-
-#: ../data/data.cpp:656
-msgid "Xuange"
-msgstr ""
-
-#: ../data/data.cpp:657
-msgid "Elgafar"
-msgstr ""
-
-#: ../data/data.cpp:658
-msgid "Proxima"
-msgstr "比邻星 Proxima"
-
-#: ../data/data.cpp:659
-msgid "Seginus"
-msgstr "招搖 Seginus"
-
-#: ../data/data.cpp:660
-msgid "Ceginus"
-msgstr "Ceginus"
-
-#: ../data/data.cpp:661
-msgid "Toliman"
-msgstr ""
-
-#: ../data/data.cpp:662
-msgid "Rigil Kentaurus"
-msgstr ""
-
-#: ../data/data.cpp:663
-msgid "Izar"
-msgstr "梗河一 Izar"
-
-#: ../data/data.cpp:664
-msgid "Mirak"
-msgstr "Mirak"
-
-#: ../data/data.cpp:665
-msgid "Pulcherrima"
-msgstr "Pulcherrima"
-
-#: ../data/data.cpp:666
-msgid "Mönch"
-msgstr ""
-
-#: ../data/data.cpp:667
-msgid "Merga"
-msgstr ""
-
-#: ../data/data.cpp:668
-msgid "Kochab"
-msgstr "北极二 帝 Kochab"
-
-#: ../data/data.cpp:669
-msgid "Kocab"
-msgstr "帝(北极二) Kocab"
-
-#: ../data/data.cpp:670
-msgid "Zubenelgenubi"
-msgstr "Zubenelgenubi"
-
-#: ../data/data.cpp:671
-msgid "Arcalís"
-msgstr ""
-
-#: ../data/data.cpp:672
-msgid "Baekdu"
-msgstr ""
-
-#: ../data/data.cpp:673
-msgid "Zuben Elakribi"
-msgstr "氐宿增一 Zuben Elakribi"
-
-#: ../data/data.cpp:674
-msgid "Nekkar"
-msgstr "七公增五 Nekkar"
-
-#: ../data/data.cpp:675
-msgid "Brachium"
-msgstr ""
-
-#: ../data/data.cpp:676
-msgid "Zubeneschamali"
-msgstr "氐宿四 Zubeneschamali"
-
-#: ../data/data.cpp:677
-#, fuzzy
-msgid "Pherkad Minor"
-msgstr "太子Pherkad"
-
-#: ../data/data.cpp:678
-msgid "Nikawiy"
-msgstr ""
-
-#: ../data/data.cpp:679
-msgid "Pherkad"
-msgstr "太子Pherkad"
-
-#: ../data/data.cpp:680
-msgid "Alkalurops"
-msgstr "七公六 Alkalurops"
-
-#: ../data/data.cpp:681
-msgid "Edasich"
-msgstr "左枢 Edasich"
-
-#: ../data/data.cpp:682
-msgid "Nusakan"
-msgstr "贯索三 Nusakan"
-
-#: ../data/data.cpp:683
-msgid "Alphecca"
-msgstr "贯索四 Alphecca"
-
-#: ../data/data.cpp:684
-msgid "Gemma"
-msgstr "Gemma"
-
-#: ../data/data.cpp:685
-#, fuzzy
-msgid "Zubenelhakrabi"
-msgstr "Zuben Elakrab"
-
-#: ../data/data.cpp:686
-msgid "Zuben Elakrab"
-msgstr "Zuben Elakrab"
-
-#: ../data/data.cpp:687
-msgid "Karaka"
-msgstr ""
-
-#: ../data/data.cpp:688
-msgid "Unukalhai"
-msgstr "天市右垣七 蜀 Unukalhai"
-
-#: ../data/data.cpp:689
-msgid "Chow"
-msgstr "Chow"
-
-#: ../data/data.cpp:690
-msgid "Gudja"
-msgstr ""
-
-#: ../data/data.cpp:691
-msgid "Iklil"
-msgstr ""
-
-#: ../data/data.cpp:692
-msgid "Fang"
-msgstr ""
-
-#: ../data/data.cpp:693
-msgid "Dschubba"
-msgstr "房宿三 Dschubba"
-
-#: ../data/data.cpp:694
-msgid "Acrab"
-msgstr ""
-
-#: ../data/data.cpp:695
-msgid "Graffias"
-msgstr "Graffias"
-
-#: ../data/data.cpp:696
-msgid "Akrab"
-msgstr "Akrab"
-
-#: ../data/data.cpp:697
-#, fuzzy
-msgid "Marsic"
-msgstr "火星"
-
-#: ../data/data.cpp:698
-msgid "Jabbah"
-msgstr "建闭 Jabbah"
-
-#: ../data/data.cpp:699
-msgid "Sharjah"
-msgstr ""
-
-#: ../data/data.cpp:700
-msgid "Yed Prior"
-msgstr ""
-
-#: ../data/data.cpp:701
-msgid "Yed Posterior"
-msgstr ""
-
-#: ../data/data.cpp:702
-msgid "Hunor"
-msgstr ""
-
-#: ../data/data.cpp:703
-#, fuzzy
-msgid "Alniyat"
-msgstr "Al Niyat"
-
-#: ../data/data.cpp:704
-msgid "Al Niyat"
-msgstr "Al Niyat"
-
-#: ../data/data.cpp:705
-#, fuzzy
-msgid "Athebyne"
-msgstr "雅典"
-
-#: ../data/data.cpp:706
-msgid "Cujam"
-msgstr "斗一 Cujam"
-
-#: ../data/data.cpp:707
-msgid "Timir"
-msgstr ""
-
-#: ../data/data.cpp:708
-msgid "Antares"
-msgstr "心宿二 Antares"
-
-#: ../data/data.cpp:709
-msgid "Kornephoros"
-msgstr "天市右垣一 河中 Kornephoros"
-
-#: ../data/data.cpp:710
-msgid "Ogma"
-msgstr ""
-
-#: ../data/data.cpp:711
-msgid "Marfik"
-msgstr "列肆二 Marfik"
-
-#: ../data/data.cpp:712
-msgid "Rosalíadecastro"
-msgstr ""
-
-#: ../data/data.cpp:713
-msgid "Paikauhale"
-msgstr ""
-
-#: ../data/data.cpp:714
-msgid "Atria"
-msgstr "三角形三 Atria"
-
-#: ../data/data.cpp:715
-#, fuzzy
-msgid "Larawag"
-msgstr "塔拉瓦"
-
-#: ../data/data.cpp:716
-msgid "Xamidimura"
-msgstr ""
-
-#: ../data/data.cpp:717
-#, fuzzy
-msgid "Pipirima"
-msgstr "太微左垣二 东上相 Porrima"
-
-#: ../data/data.cpp:718
-msgid "Mahsati"
-msgstr ""
-
-#: ../data/data.cpp:719
-#, fuzzy
-msgid "Rapeto"
-msgstr "土卫八"
-
-#: ../data/data.cpp:720
-#, fuzzy
-msgid "Alrakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:721
-msgid "Arrakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:722
-#, fuzzy
-msgid "Aldhibah"
-msgstr "右辖 Alchiba"
-
-#: ../data/data.cpp:723
-msgid "Sabik"
-msgstr "宋 Sabik"
-
-#: ../data/data.cpp:724
-msgid "Rasalgethi"
-msgstr "帝座 Rasalgethi"
-
-#: ../data/data.cpp:725
-msgid "Ras Algethi"
-msgstr "Ras Algethi"
-
-#: ../data/data.cpp:726
-msgid "Sarin"
-msgstr "天市左垣一 魏 Sarin"
-
-#: ../data/data.cpp:727
-msgid "Guniibuu"
-msgstr ""
-
-#: ../data/data.cpp:728
-msgid "Inquill"
-msgstr ""
-
-#: ../data/data.cpp:729
-msgid "Rastaban"
-msgstr "天棓三 Rastaban"
-
-#: ../data/data.cpp:730
-msgid "Maasym"
-msgstr "赵 Maasym"
-
-#: ../data/data.cpp:731
-msgid "Lesath"
-msgstr "尾宿九 Lesath"
-
-#: ../data/data.cpp:732
-msgid "Lesuth"
-msgstr "Lesuth"
-
-#: ../data/data.cpp:733
-msgid "Kuma"
-msgstr "天棓增一 Kuma"
-
-#: ../data/data.cpp:734
-msgid "Yildun"
-msgstr "勾陈二 Yildun"
-
-#: ../data/data.cpp:735
-msgid "Shaula"
-msgstr "尾宿八 Shaula"
-
-#: ../data/data.cpp:736
-msgid "Rasalhague"
-msgstr "侯 Rasalhague"
-
-#: ../data/data.cpp:737
-msgid "Ras Alhague"
-msgstr "Ras Alhague"
-
-#: ../data/data.cpp:738
-msgid "Sargas"
-msgstr "尾宿五 Sargas"
-
-#: ../data/data.cpp:739
-msgid "Dziban"
-msgstr "Dziban"
-
-#: ../data/data.cpp:740
-msgid "Girtab"
-msgstr ""
-
-#: ../data/data.cpp:741
-msgid "Cebalrai"
-msgstr "宗正一 Cebalrai"
-
-#: ../data/data.cpp:742
-msgid "Alruba"
-msgstr ""
-
-#: ../data/data.cpp:743
-#, fuzzy
-msgid "Cervantes"
-msgstr "观测站"
-
-#: ../data/data.cpp:744
-msgid "Fuyue"
-msgstr ""
-
-#: ../data/data.cpp:745
-msgid "Grumium"
-msgstr "天棓一 Grumium"
-
-#: ../data/data.cpp:746
-msgid "Eltanin"
-msgstr "天棓四 Eltanin"
-
-#: ../data/data.cpp:747
-msgid "Etamin"
-msgstr "天培四 Etamin"
-
-#: ../data/data.cpp:748
-msgid "Barnard's Star"
-msgstr "巴纳德星 Barnard's Star"
-
-#: ../data/data.cpp:749
-msgid "Pincoya"
-msgstr ""
-
-#: ../data/data.cpp:750
-msgid "Alnasl"
-msgstr "箕宿一 Alnasl"
-
-#: ../data/data.cpp:751
-msgid "Polis"
-msgstr ""
-
-#: ../data/data.cpp:752
-msgid "Kaus Media"
-msgstr "箕宿二 Kaus Media"
-
-#: ../data/data.cpp:753
-msgid "Alasia"
-msgstr ""
-
-#: ../data/data.cpp:754
-msgid "Kaus Australis"
-msgstr "箕宿三 Kaus Australis"
-
-#: ../data/data.cpp:755
-msgid "Al Athfar"
-msgstr "织女增三 Al Athfar"
-
-#: ../data/data.cpp:756
-msgid "Fafnir"
-msgstr ""
-
-#: ../data/data.cpp:757
-msgid "Kaus Borealis"
-msgstr "斗宿二 Kaus Borealis"
-
-#: ../data/data.cpp:758
-msgid "Vega"
-msgstr "织女一 Vega"
-
-#: ../data/data.cpp:759
-msgid "Xihe"
-msgstr ""
-
-#: ../data/data.cpp:760
-msgid "Sheliak"
-msgstr "渐台二(Sheliak)"
-
-#: ../data/data.cpp:761
-#, fuzzy
-msgid "Ainalrami"
-msgstr "天钩五 Alderamin"
-
-#: ../data/data.cpp:762
-msgid "Nunki"
-msgstr "斗宿四(Nunki)"
-
-#: ../data/data.cpp:763
-msgid "Kaveh"
-msgstr ""
-
-#: ../data/data.cpp:764
-msgid "Alya"
-msgstr " 天市左垣七 徐 Alya"
-
-#: ../data/data.cpp:765
-msgid "Sulafat"
-msgstr "渐台三 Sulafat"
-
-#: ../data/data.cpp:766
-msgid "Ascella"
-msgstr "斗宿六 Ascella"
-
-#: ../data/data.cpp:767
-msgid "Okab"
-msgstr ""
-
-#: ../data/data.cpp:768
-msgid "Deneb el Okab"
-msgstr "Deneb el Okab"
-
-#: ../data/data.cpp:769
-msgid "Meridiana"
-msgstr ""
-
-#: ../data/data.cpp:770
-#, fuzzy
-msgid "Albaldah"
-msgstr "女宿一 Albali"
-
-#: ../data/data.cpp:771
-msgid "Altais"
-msgstr "天厨一(Altais)"
-
-#: ../data/data.cpp:772
-msgid "Al Tais"
-msgstr "Al Tais"
-
-#: ../data/data.cpp:773
-msgid "Nodus Secundus"
-msgstr "Nodus Secundus"
-
-#: ../data/data.cpp:774
-msgid "Aladfar"
-msgstr "辇道二"
-
-#: ../data/data.cpp:775
-#, fuzzy
-msgid "Gumala"
-msgstr "危地马拉城"
-
-#: ../data/data.cpp:776
-msgid "Belel"
-msgstr ""
-
-#: ../data/data.cpp:777
-#, fuzzy
-msgid "Arkab Prior"
-msgstr "Arkab"
-
-#: ../data/data.cpp:778
-msgid "Arkab"
-msgstr "Arkab"
-
-#: ../data/data.cpp:779
-msgid "Sika"
-msgstr ""
-
-#: ../data/data.cpp:780
-msgid "Arkab Posterior"
-msgstr ""
-
-#: ../data/data.cpp:781
-msgid "Rukbat"
-msgstr "天渊三 Rukbat"
-
-#: ../data/data.cpp:782
-msgid "Anser"
-msgstr ""
-
-#: ../data/data.cpp:783
-msgid "Albireo"
-msgstr "辇道增七"
-
-#: ../data/data.cpp:784
-msgid "Uruk"
-msgstr ""
-
-#: ../data/data.cpp:785
-msgid "Alsafi"
-msgstr "天厨二 Alsafi"
-
-#: ../data/data.cpp:786
-msgid "Campbell's Star"
-msgstr "坎贝尔星 Campbell's Star"
-
-#: ../data/data.cpp:787
-msgid "Sham"
-msgstr "左旗一 Sham"
-
-#: ../data/data.cpp:788
-#, fuzzy
-msgid "Fawaris"
-msgstr "巴黎"
-
-#: ../data/data.cpp:789
-msgid "Tarazed"
-msgstr "河鼓三 Tarazed"
-
-#: ../data/data.cpp:790
-msgid "Tyl"
-msgstr "天厨三 Tyl"
-
-#: ../data/data.cpp:791
-msgid "Altair"
-msgstr "河鼓二 Altair"
-
-#: ../data/data.cpp:792
-msgid "Atair"
-msgstr "Atair"
-
-#: ../data/data.cpp:793
-msgid "Libertas"
-msgstr ""
-
-#: ../data/data.cpp:794
-msgid "Alshain"
-msgstr "河鼓一 Alshain"
-
-#: ../data/data.cpp:795
-msgid "Terebellum"
-msgstr ""
-
-#: ../data/data.cpp:796
-msgid "Phoenicia"
-msgstr ""
-
-#: ../data/data.cpp:797
-msgid "Chechia"
-msgstr ""
-
-#: ../data/data.cpp:798
-msgid "Algedi"
-msgstr "牛宿二 Algedi"
-
-#: ../data/data.cpp:799
-#, fuzzy
-msgid "Alshat"
-msgstr "河鼓一 Alshain"
-
-#: ../data/data.cpp:800
-msgid "Dabih"
-msgstr "牛宿一 Dabih"
-
-#: ../data/data.cpp:801
-msgid "Sadr"
-msgstr "天津一 Sadr"
-
-#: ../data/data.cpp:802
-msgid "Peacock"
-msgstr "孔雀十一"
-
-#: ../data/data.cpp:803
-msgid "Aldulfin"
-msgstr ""
-
-#: ../data/data.cpp:804
-msgid "Rotanev"
-msgstr "瓠瓜四 Rotanev"
-
-#: ../data/data.cpp:805
-msgid "Sualocin"
-msgstr "瓠瓜一 Sualocin"
-
-#: ../data/data.cpp:806
-msgid "Deneb"
-msgstr "天津四 Deneb"
-
-#: ../data/data.cpp:807
-#, fuzzy
-msgid "Aljanah"
-msgstr "卢布尔雅那"
-
-#: ../data/data.cpp:808
-msgid "Albali"
-msgstr "女宿一 Albali"
-
-#: ../data/data.cpp:809
-msgid "Musica"
-msgstr ""
-
-#: ../data/data.cpp:810
-#, fuzzy
-msgid "Polaris Australis"
-msgstr "箕宿三 Kaus Australis"
-
-#: ../data/data.cpp:811
-#, fuzzy
-msgid "Solaris"
-msgstr "勾陈一  Polaris"
-
-#: ../data/data.cpp:812
-msgid "Kitalpha"
-msgstr "虚宿二 Kitalpha"
-
-#: ../data/data.cpp:813
-msgid "Lacaille 8760"
-msgstr "拉开耶8760 Lacaille 8760"
-
-#: ../data/data.cpp:814
-msgid "Alderamin"
-msgstr "天钩五 Alderamin"
-
-#: ../data/data.cpp:815
-msgid "Alfirk"
-msgstr "上卫增一 Alfirk"
-
-#: ../data/data.cpp:816
-msgid "Sadalsuud"
-msgstr "虚宿一 Sadalsuud"
-
-#: ../data/data.cpp:817
-#, fuzzy
-msgid "Bunda"
-msgstr "星座边界"
-
-#: ../data/data.cpp:818
-msgid "Sāmaya"
-msgstr ""
-
-#: ../data/data.cpp:819
-msgid "Nashira"
-msgstr "垒壁阵三 Nashira"
-
-#: ../data/data.cpp:820
-msgid "Azelfafage"
-msgstr "螣蛇四 Azelfafage"
-
-#: ../data/data.cpp:821
-msgid "Bosona"
-msgstr ""
-
-#: ../data/data.cpp:822
-msgid "Herschel's Garnet Star"
-msgstr "赫歇尔的石榴石星 Herschel's Garnet Star"
-
-#: ../data/data.cpp:823
-#, fuzzy
-msgid "Erakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:824
-msgid "Enif"
-msgstr "危宿三 Enif"
-
-#: ../data/data.cpp:825
-msgid "Deneb Algedi"
-msgstr "垒壁阵四 Deneb Algedi"
-
-#: ../data/data.cpp:826
-#, fuzzy
-msgid "Aldhanab"
-msgstr "Al Dhanab"
-
-#: ../data/data.cpp:827
-msgid "Al Dhanab"
-msgstr "Al Dhanab"
-
-#: ../data/data.cpp:828
-msgid "Itonda"
-msgstr ""
-
-#: ../data/data.cpp:829
-msgid "Kurhah"
-msgstr "天钩六 Kurhah"
-
-#: ../data/data.cpp:830
-msgid "Sadalmelik"
-msgstr "危宿一 Sadalmelik"
-
-#: ../data/data.cpp:831
-msgid "Alnair"
-msgstr "鹤一 Alnair"
-
-#: ../data/data.cpp:832
-msgid "Al Nair"
-msgstr "Al Nair"
-
-#: ../data/data.cpp:833
-msgid "Biham"
-msgstr "危宿二 Biham"
-
-#: ../data/data.cpp:834
-msgid "Ancha"
-msgstr "泣二 Ancha"
-
-#: ../data/data.cpp:835
-msgid "Sadachbia"
-msgstr "坟墓二 Sadachbia"
-
-#: ../data/data.cpp:836
-msgid "Seat"
-msgstr "坟墓四 Seat"
-
-#: ../data/data.cpp:837
-msgid "Lionrock"
-msgstr ""
-
-#: ../data/data.cpp:838
-msgid "Kruger 60"
-msgstr "克虑格60"
-
-#: ../data/data.cpp:839
-msgid "Situla"
-msgstr "女宿四 Situla"
-
-#: ../data/data.cpp:840
-msgid "Homam"
-msgstr "雷电一 Homam"
-
-#: ../data/data.cpp:841
-msgid "Tiaki"
-msgstr ""
-
-#: ../data/data.cpp:842
-msgid "Matar"
-msgstr "离宫四 Matar"
-
-#: ../data/data.cpp:843
-msgid "Babcock's Star"
-msgstr "巴布科克星 Campbell's Star"
-
-#: ../data/data.cpp:844
-msgid "Sadalbari"
-msgstr "离宫二 Sadalbari"
-
-#: ../data/data.cpp:845
-msgid "Hydor"
-msgstr ""
-
-#: ../data/data.cpp:846
-msgid "Skat"
-msgstr "羽林军二十六 Skat"
-
-#: ../data/data.cpp:847
-msgid "Helvetios"
-msgstr ""
-
-#: ../data/data.cpp:848
-msgid "Fomalhaut"
-msgstr "北落师门 Fomalhaut"
-
-#: ../data/data.cpp:849
-msgid "Scheat"
-msgstr "室宿二 Scheat"
-
-#: ../data/data.cpp:850
-#, fuzzy
-msgid "Fumalsamakah"
-msgstr "Fum al Samakah"
-
-#: ../data/data.cpp:851
-msgid "Fum al Samakah"
-msgstr "Fum al Samakah"
-
-#: ../data/data.cpp:852
-msgid "Markab"
-msgstr "室宿一 Markab"
-
-#: ../data/data.cpp:853
-msgid "Marchab"
-msgstr "Marchab"
-
-#: ../data/data.cpp:854
-msgid "Ebla"
-msgstr ""
-
-#: ../data/data.cpp:855
-msgid "Bradley 3077"
-msgstr "布拉德利3077 Bradley 3077"
-
-#: ../data/data.cpp:856
-msgid "Salm"
-msgstr ""
-
-#: ../data/data.cpp:857
-#, fuzzy
-msgid "Alkarab"
-msgstr "安卡拉"
-
-#: ../data/data.cpp:858
-msgid "Veritate"
-msgstr ""
-
-#: ../data/data.cpp:859
-msgid "Poerava"
-msgstr ""
-
-#: ../data/data.cpp:860
-msgid "Errai"
-msgstr "少卫增八 Errai"
-
-#: ../data/data.cpp:861
-msgid "Axólotl"
-msgstr ""
-
-#: ../data/data.cpp:862
-msgid "Pleiades"
-msgstr "昴星团"
-
-#: ../data/data.cpp:863
-msgid "Hyades"
-msgstr "毕星团"
-
-#: ../data/data.cpp:864
-msgid "Praesepe"
-msgstr "鬼星团"
-
-#: ../data/data.cpp:865
-msgid "Beehive Cluster"
-msgstr "蜂巢星团"
-
-#: ../data/data.cpp:866
-msgid "Maffei 1"
-msgstr "马费伊1"
-
-#: ../data/data.cpp:867
-msgid "Maffei 2"
-msgstr "马费伊2"
-
-#: ../data/data.cpp:868
-msgid "Leo A"
-msgstr "狮子座A"
-
-#: ../data/data.cpp:869
-msgid "Sextans B"
-msgstr "六分仪座B"
-
-#: ../data/data.cpp:870
-msgid "Leo I"
-msgstr "狮子座I"
-
-#: ../data/data.cpp:871
-msgid "Sextans A"
-msgstr "六分仪座A"
-
-#: ../data/data.cpp:872
-msgid "Circinus"
-msgstr "圆规座"
-
-#: ../data/data.cpp:873
-msgid "Andromeda Galaxy"
-msgstr ""
-
-#: ../data/data.cpp:874
-msgid "Triangulum Galaxy"
-msgstr ""
-
-#: ../data/data.cpp:875
-msgid "Holmberg VI"
-msgstr "霍姆伯格VI"
-
-#: ../data/data.cpp:876
-msgid "Fath 703"
-msgstr "法思703"
-
-#: ../data/data.cpp:877
-msgid "47 Tuc"
-msgstr "杜鹃座47球状星团"
-
-#: ../data/data.cpp:878
-msgid "Eridanus"
-msgstr "波江座"
-
-#: ../data/data.cpp:879
-msgid "Pyxis"
-msgstr "罗盘座"
-
-#: ../data/data.cpp:880
-msgid "Tonantzintla 2"
-msgstr "托南钦特拉2球状星团"
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
@@ -3626,38 +55,38 @@ msgstr "%s：损坏的配置文件。\n"
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
 #.
-#: ../src/celengine/dsodb.cpp:375
+#: ../src/celengine/dsodb.cpp:379
 #, c-format
 msgid "Loaded %i deep space objects\n"
 msgstr "已加载 %i 个深空天体\n"
 
-#: ../src/celengine/galaxy.cpp:209
+#: ../src/celengine/galaxy.cpp:211
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "星系（哈勃分类：%s）"
 
-#: ../src/celengine/globular.cpp:238
+#: ../src/celengine/globular.cpp:241
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "球状星团（核心半径：%4.2f'，King 模型聚度参数：%4.2f）"
 
-#: ../src/celengine/image.cpp:289
+#: ../src/celengine/image.cpp:291
 #, c-format
 msgid "Loading image from file %s\n"
 msgstr "正在从 %s 文件加载图像\n"
 
-#: ../src/celengine/meshmanager.cpp:120
+#: ../src/celengine/meshmanager.cpp:102
 #, c-format
 msgid "Loading model: %s\n"
 msgstr "正在加载模型：%s\n"
 
-#: ../src/celengine/meshmanager.cpp:201
+#: ../src/celengine/meshmanager.cpp:184
 #, c-format
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
 msgstr "模型统计：%u 顶点，%u 原语，%u 材质（%u 唯一）\n"
 
-#: ../src/celengine/meshmanager.cpp:211
+#: ../src/celengine/meshmanager.cpp:194
 #, c-format
 msgid "Error loading model '%s'\n"
 msgstr "加载模型 %s 时出错\n"
@@ -3705,203 +134,209 @@ msgstr "可替换表面错误"
 msgid "bad location"
 msgstr "地理位置错误"
 
-#: ../src/celengine/stardb.cpp:569
+#: ../src/celengine/stardb.cpp:583
 msgid "Bad header for cross index\n"
 msgstr "跨索引文件头错误\n"
 
-#: ../src/celengine/stardb.cpp:583
+#: ../src/celengine/stardb.cpp:595
 msgid "Bad version for cross index\n"
 msgstr "跨索引文件文本错误\n"
 
-#: ../src/celengine/stardb.cpp:603
+#: ../src/celengine/stardb.cpp:609
+#, fuzzy
+msgid "Loading cross index failed\n"
+msgstr "加载跨索引文件失败 - 数据点 %u 错误\n"
+
+#: ../src/celengine/stardb.cpp:616
 #, c-format
 msgid "Loading cross index failed at record %u\n"
 msgstr "加载跨索引文件失败 - 数据点 %u 错误\n"
 
-#: ../src/celengine/stardb.cpp:687
+#: ../src/celengine/stardb.cpp:694
 #, c-format
 msgid "Bad spectral type in star database, star #%u\n"
 msgstr "恒星数据库中的恒星光谱型错误，恒星编号 #%u\n"
 
-#: ../src/celengine/stardb.cpp:702
+#: ../src/celengine/stardb.cpp:709
 #, c-format
 msgid "%d stars in binary database\n"
 msgstr "%d 个恒星在双星系统数据库中\n"
 
-#: ../src/celengine/stardb.cpp:726
+#: ../src/celengine/stardb.cpp:733
 #, c-format
 msgid "Total star count: %d\n"
 msgstr "总计恒星数：%d\n"
 
-#: ../src/celengine/stardb.cpp:760
+#: ../src/celengine/stardb.cpp:767
 #, c-format
 msgid "Error in .stc file (line %i): %s\n"
 msgstr ".stc 文件出错（行 %i）：%s\n"
 
-#: ../src/celengine/stardb.cpp:790
+#: ../src/celengine/stardb.cpp:797
 msgid "Invalid star: bad spectral type.\n"
 msgstr "无效恒星数据：恒星光谱型错误。\n"
 
-#: ../src/celengine/stardb.cpp:799
+#: ../src/celengine/stardb.cpp:806
 msgid "Invalid star: missing spectral type.\n"
 msgstr "无效恒星数据：缺少恒星光谱类型。\n"
 
-#: ../src/celengine/stardb.cpp:986
+#: ../src/celengine/stardb.cpp:993
 #, c-format
 msgid "Barycenter %s does not exist.\n"
 msgstr "质心 %s 不存在。\n"
 
-#: ../src/celengine/stardb.cpp:1042
+#: ../src/celengine/stardb.cpp:1049
 msgid "Invalid star: missing right ascension\n"
 msgstr "无效恒星数据：缺少赤经\n"
 
-#: ../src/celengine/stardb.cpp:1055
+#: ../src/celengine/stardb.cpp:1062
 msgid "Invalid star: missing declination.\n"
 msgstr "无效恒星数据：缺少赤纬。\n"
 
-#: ../src/celengine/stardb.cpp:1068
+#: ../src/celengine/stardb.cpp:1075
 msgid "Invalid star: missing distance.\n"
 msgstr "无效恒星数据：缺少距离。\n"
 
-#: ../src/celengine/stardb.cpp:1102
+#: ../src/celengine/stardb.cpp:1109
 msgid "Invalid star: missing magnitude.\n"
 msgstr "无效恒星数据：缺少星等。\n"
 
-#: ../src/celengine/stardb.cpp:1119
+#: ../src/celengine/stardb.cpp:1126
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr "无效恒星数据：必须输入接近原始的恒星的绝对星等（非视星等）\n"
 
-#: ../src/celengine/stardb.cpp:1426
+#: ../src/celengine/stardb.cpp:1431
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
 msgstr "等级 %i，%.5f ly，%i 节点，%i 恒星\n"
 
-#: ../src/celengine/texture.cpp:1015
+#: ../src/celengine/texture.cpp:928
 #, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
 msgstr "正在创建平铺纹理。宽度=%i，Max=%i\n"
 
-#: ../src/celengine/texture.cpp:1020
+#: ../src/celengine/texture.cpp:933
 #, c-format
 msgid "Creating ordinary texture: %ix%i\n"
 msgstr "正在创建一般纹理：%i×%i\n"
 
-#: ../src/celephem/samporbit.cpp:833
-#, c-format
-msgid "Error openning %s.\n"
+#: ../src/celephem/samporbit.cpp:835
+#, fuzzy, c-format
+msgid "Error opening %s.\n"
 msgstr "打开 %s 时出错。\n"
 
-#: ../src/celephem/samporbit.cpp:840 ../src/tools/xyzv2bin/bin2xyzv.cpp:25
+#: ../src/celephem/samporbit.cpp:842
 #, c-format
 msgid "Error reading header of %s.\n"
 msgstr "读取标题 %s 时出错。\n"
 
-#: ../src/celephem/samporbit.cpp:846 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
+#: ../src/celephem/samporbit.cpp:848
 #, c-format
 msgid "Bad binary xyzv file %s.\n"
 msgstr "二进制 xyzv 文件 %s 错误。\n"
 
-#: ../src/celephem/samporbit.cpp:852 ../src/tools/xyzv2bin/bin2xyzv.cpp:37
+#: ../src/celephem/samporbit.cpp:854
 #, c-format
 msgid "Unsupported byte order %i, expected %i.\n"
 msgstr "不支持的字节顺序 %i，缺少 %i。\n"
 
-#: ../src/celephem/samporbit.cpp:860 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
+#: ../src/celephem/samporbit.cpp:862
 #, c-format
 msgid "Unsupported digits number %i, expected %i.\n"
 msgstr "不支持的数字 %i，缺少 %i。\n"
 
 #: ../src/celestia/celestiacore.cpp:107 ../src/celestia/scriptmenu.cpp:88
-#, c-format
-msgid "Path %s doesn't exist or isn't a directory"
+#: ../src/celscript/lua/luascript.cpp:170
+#, fuzzy, c-format
+msgid "Path %s doesn't exist or isn't a directory\n"
 msgstr "路径 %s 不存在或者不是一个目录"
 
 #: ../src/celestia/celestiacore.cpp:204
 msgid "Error reading favorites file {}.\n"
 msgstr "读取收藏文件失败 {}。\n"
 
-#: ../src/celestia/celestiacore.cpp:226
+#: ../src/celestia/celestiacore.cpp:225
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr "无法确认收藏文件目录存在 {}\n"
 
-#: ../src/celestia/celestiacore.cpp:235
+#: ../src/celestia/celestiacore.cpp:233
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr "创建收藏文件目录失败 {}\n"
 
-#: ../src/celestia/celestiacore.cpp:356
+#: ../src/celestia/celestiacore.cpp:353
 msgid "Invalid filetype"
 msgstr "无效文件格式"
 
-#: ../src/celestia/celestiacore.cpp:694 ../src/celestia/celestiacore.cpp:1424
-#: ../src/celestia/celestiacore.cpp:1441
+#: ../src/celestia/celestiacore.cpp:691 ../src/celestia/celestiacore.cpp:1421
+#: ../src/celestia/celestiacore.cpp:1438
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "极限星等：%.2f"
 
-#: ../src/celestia/celestiacore.cpp:1071
+#: ../src/celestia/celestiacore.cpp:1068
 msgid "Markers enabled"
 msgstr "标记已开启"
 
-#: ../src/celestia/celestiacore.cpp:1074
+#: ../src/celestia/celestiacore.cpp:1071
 msgid "Markers disabled"
 msgstr "标记已关闭"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1084
+#: ../src/celestia/celestiacore.cpp:1081
 msgid "Goto surface"
 msgstr "着陆"
 
-#: ../src/celestia/celestiacore.cpp:1095
+#: ../src/celestia/celestiacore.cpp:1092
 msgid "Alt-azimuth mode enabled"
 msgstr "经纬仪模式已开启"
 
-#: ../src/celestia/celestiacore.cpp:1098
+#: ../src/celestia/celestiacore.cpp:1095
 msgid "Alt-azimuth mode disabled"
 msgstr "经纬仪模式已关闭"
 
-#: ../src/celestia/celestiacore.cpp:1154
+#: ../src/celestia/celestiacore.cpp:1151
 msgid "Star style: fuzzy points"
 msgstr "星点渲染：模糊点"
 
-#: ../src/celestia/celestiacore.cpp:1157
+#: ../src/celestia/celestiacore.cpp:1154
 msgid "Star style: points"
 msgstr "星点渲染：点"
 
-#: ../src/celestia/celestiacore.cpp:1160
+#: ../src/celestia/celestiacore.cpp:1157
 msgid "Star style: scaled discs"
 msgstr "星点渲染：缩放点"
 
-#: ../src/celestia/celestiacore.cpp:1173
+#: ../src/celestia/celestiacore.cpp:1170
 msgid "Comet tails enabled"
 msgstr "彗尾渲染已开启"
 
-#: ../src/celestia/celestiacore.cpp:1176
+#: ../src/celestia/celestiacore.cpp:1173
 msgid "Comet tails disabled"
 msgstr "彗尾渲染已关闭"
 
-#: ../src/celestia/celestiacore.cpp:1192
+#: ../src/celestia/celestiacore.cpp:1189
 msgid "Render path: OpenGL 2.1"
 msgstr "渲染路径：OpenGL 2.1"
 
-#: ../src/celestia/celestiacore.cpp:1211
+#: ../src/celestia/celestiacore.cpp:1208
 msgid "Anti-aliasing enabled"
 msgstr "抗锯齿已开启"
 
-#: ../src/celestia/celestiacore.cpp:1216
+#: ../src/celestia/celestiacore.cpp:1213
 msgid "Anti-aliasing disabled"
 msgstr "抗锯齿已关闭"
 
-#: ../src/celestia/celestiacore.cpp:1225
+#: ../src/celestia/celestiacore.cpp:1222
 msgid "Auto-magnitude enabled"
 msgstr "星等自动调节已开启"
 
-#: ../src/celestia/celestiacore.cpp:1230
+#: ../src/celestia/celestiacore.cpp:1227
 msgid "Auto-magnitude disabled"
 msgstr "星等自动调节已关闭"
 
-#: ../src/celestia/celestiacore.cpp:1252
+#: ../src/celestia/celestiacore.cpp:1249
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 #: ../src/celestia/win32/res/resource_strings.cpp:98
 #: ../src/celestia/win32/res/resource_strings.cpp:105
@@ -3915,404 +350,404 @@ msgstr "星等自动调节已关闭"
 msgid "Cancel"
 msgstr "取消"
 
-#: ../src/celestia/celestiacore.cpp:1284
+#: ../src/celestia/celestiacore.cpp:1281
 msgid "Time and script are paused"
 msgstr "时间和脚本运行已暂停"
 
-#: ../src/celestia/celestiacore.cpp:1286
+#: ../src/celestia/celestiacore.cpp:1283
 msgid "Time is paused"
 msgstr "时间已暂停"
 
-#: ../src/celestia/celestiacore.cpp:1290
+#: ../src/celestia/celestiacore.cpp:1287
 msgid "Resume"
 msgstr "恢复"
 
-#: ../src/celestia/celestiacore.cpp:1324
+#: ../src/celestia/celestiacore.cpp:1321
 msgid "Star color: Blackbody D65"
 msgstr "恒星着色：黑体 D65"
 
-#: ../src/celestia/celestiacore.cpp:1330
+#: ../src/celestia/celestiacore.cpp:1327
 msgid "Star color: Enhanced"
 msgstr "恒星着色：增强色"
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1367
+#: ../src/celestia/celestiacore.cpp:1364
 #, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "光传播时间：%.4f yr"
 
-#: ../src/celestia/celestiacore.cpp:1376
+#: ../src/celestia/celestiacore.cpp:1373
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "光传播时间：%d min %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1381
+#: ../src/celestia/celestiacore.cpp:1378
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "光传播时间：%d h %d min %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1399
+#: ../src/celestia/celestiacore.cpp:1396
 msgid "Light travel delay included"
 msgstr "包含光传播时间延迟"
 
-#: ../src/celestia/celestiacore.cpp:1404
+#: ../src/celestia/celestiacore.cpp:1401
 msgid "Light travel delay switched off"
 msgstr "关闭光传播时间延迟"
 
-#: ../src/celestia/celestiacore.cpp:1410
+#: ../src/celestia/celestiacore.cpp:1407
 msgid "Light travel delay ignored"
 msgstr "忽略光传播时间延迟"
 
-#: ../src/celestia/celestiacore.cpp:1453
+#: ../src/celestia/celestiacore.cpp:1450
 msgid "Using normal surface textures."
 msgstr "调用一般表面纹理。"
 
-#: ../src/celestia/celestiacore.cpp:1458
+#: ../src/celestia/celestiacore.cpp:1455
 msgid "Using limit of knowledge surface textures."
 msgstr "调用知识界限表面纹理。"
 
-#: ../src/celestia/celestiacore.cpp:1525
+#: ../src/celestia/celestiacore.cpp:1522
 msgid "Follow"
 msgstr "跟随"
 
-#: ../src/celestia/celestiacore.cpp:1550
+#: ../src/celestia/celestiacore.cpp:1547
 msgid "Time: Forward"
 msgstr "时间：前进"
 
-#: ../src/celestia/celestiacore.cpp:1552
+#: ../src/celestia/celestiacore.cpp:1549
 msgid "Time: Backward"
 msgstr "时间：后退"
 
-#: ../src/celestia/celestiacore.cpp:1564 ../src/celestia/celestiacore.cpp:1579
+#: ../src/celestia/celestiacore.cpp:1561 ../src/celestia/celestiacore.cpp:1576
 #, c-format
 msgid "Time rate: %.6g"
 msgstr "时间步长：%.6g"
 
-#: ../src/celestia/celestiacore.cpp:1619
+#: ../src/celestia/celestiacore.cpp:1616
 msgid "Low res textures"
 msgstr "低分辨率纹理"
 
-#: ../src/celestia/celestiacore.cpp:1622
+#: ../src/celestia/celestiacore.cpp:1619
 msgid "Medium res textures"
 msgstr "中分辨率纹理"
 
-#: ../src/celestia/celestiacore.cpp:1625
+#: ../src/celestia/celestiacore.cpp:1622
 msgid "High res textures"
 msgstr "高分辨率纹理"
 
-#: ../src/celestia/celestiacore.cpp:1672
+#: ../src/celestia/celestiacore.cpp:1669
 msgid "Sync Orbit"
 msgstr "同步轨道"
 
-#: ../src/celestia/celestiacore.cpp:1678
+#: ../src/celestia/celestiacore.cpp:1675
 msgid "Lock"
 msgstr "锁定"
 
-#: ../src/celestia/celestiacore.cpp:1684
+#: ../src/celestia/celestiacore.cpp:1681
 msgid "Chase"
 msgstr "追逐"
 
-#: ../src/celestia/celestiacore.cpp:1697 ../src/celestia/celestiacore.cpp:1728
+#: ../src/celestia/celestiacore.cpp:1694 ../src/celestia/celestiacore.cpp:1725
 #, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "极限星等：%.2f"
 
-#: ../src/celestia/celestiacore.cpp:1708 ../src/celestia/celestiacore.cpp:1739
+#: ../src/celestia/celestiacore.cpp:1705 ../src/celestia/celestiacore.cpp:1736
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "45° 视野区内星等自动调节：%.2f"
 
-#: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1773
+#: ../src/celestia/celestiacore.cpp:1755 ../src/celestia/celestiacore.cpp:1770
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "环境光等级：%.2f"
 
-#: ../src/celestia/celestiacore.cpp:1784 ../src/celestia/celestiacore.cpp:1795
+#: ../src/celestia/celestiacore.cpp:1781 ../src/celestia/celestiacore.cpp:1792
 #, c-format
 msgid "Light gain"
 msgstr "增光"
 
-#: ../src/celestia/celestiacore.cpp:1816
+#: ../src/celestia/celestiacore.cpp:1813
 msgid "Bloom enabled"
 msgstr "Bloom 已开启"
 
-#: ../src/celestia/celestiacore.cpp:1818
+#: ../src/celestia/celestiacore.cpp:1815
 msgid "Bloom disabled"
 msgstr "Bloom 已关闭"
 
-#: ../src/celestia/celestiacore.cpp:1824 ../src/celestia/celestiacore.cpp:1832
+#: ../src/celestia/celestiacore.cpp:1821 ../src/celestia/celestiacore.cpp:1829
 #, c-format
 msgid "Exposure"
 msgstr "曝光"
 
-#: ../src/celestia/celestiacore.cpp:2154
+#: ../src/celestia/celestiacore.cpp:2151
 msgid "GL error: "
 msgstr "GL 错误："
 
-#: ../src/celestia/celestiacore.cpp:2303
+#: ../src/celestia/celestiacore.cpp:2300
 msgid "View too small to be split"
 msgstr "视窗太小不能再分割"
 
-#: ../src/celestia/celestiacore.cpp:2323
+#: ../src/celestia/celestiacore.cpp:2320
 msgid "Added view"
 msgstr "已增加视窗"
 
-#: ../src/celestia/celestiacore.cpp:2499
+#: ../src/celestia/celestiacore.cpp:2496
 msgid "Mpc"
 msgstr "Mpc"
 
-#: ../src/celestia/celestiacore.cpp:2504
+#: ../src/celestia/celestiacore.cpp:2501
 msgid "kpc"
 msgstr "kpc"
 
-#: ../src/celestia/celestiacore.cpp:2509
+#: ../src/celestia/celestiacore.cpp:2506
 #: ../src/celestia/qt/qtselectionpopup.cpp:108
 msgid "ly"
 msgstr "ly"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2513
+#: ../src/celestia/celestiacore.cpp:2510
 #: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "au"
 msgstr "AU"
 
-#: ../src/celestia/celestiacore.cpp:2520
+#: ../src/celestia/celestiacore.cpp:2517
 #, fuzzy
 msgid "mi"
 msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2525
+#: ../src/celestia/celestiacore.cpp:2522
 msgid "ft"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
-#: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/celestiacore.cpp:2530 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/qt/qtinfopanel.cpp:249 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
+#: ../src/celestia/celestiacore.cpp:2535 ../src/celestia/qt/qtinfopanel.cpp:126
 msgid "m"
 msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
-#: ../src/celestia/qt/qtinfopanel.cpp:198
-#: ../src/celestia/qt/qtinfopanel.cpp:248
+#: ../src/celestia/celestiacore.cpp:2558 ../src/celestia/qt/qtinfopanel.cpp:178
+#: ../src/celestia/qt/qtinfopanel.cpp:211
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 msgid "days"
 msgstr "天"
 
-#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
-#: ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/celestiacore.cpp:2563 ../src/celestia/qt/qtinfopanel.cpp:174
+#: ../src/celestia/qt/qtinfopanel.cpp:207
 msgid "hours"
 msgstr "小时"
 
-#: ../src/celestia/celestiacore.cpp:2571
+#: ../src/celestia/celestiacore.cpp:2568
 msgid "minutes"
 msgstr "分钟"
 
-#: ../src/celestia/celestiacore.cpp:2576
+#: ../src/celestia/celestiacore.cpp:2573
 msgid "seconds"
 msgstr "秒"
 
-#: ../src/celestia/celestiacore.cpp:2579
+#: ../src/celestia/celestiacore.cpp:2576
 #, c-format
 msgid "Rotation period: %s %s\n"
 msgstr "自转周期：%s %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2587
+#: ../src/celestia/celestiacore.cpp:2584
 #, fuzzy, c-format
 msgid "Mass: %.6g lb\n"
 msgstr "质量：%.6g kg\n"
 
-#: ../src/celestia/celestiacore.cpp:2589
+#: ../src/celestia/celestiacore.cpp:2586
 #, c-format
 msgid "Mass: %.6g kg\n"
 msgstr "质量：%.6g kg\n"
 
-#: ../src/celestia/celestiacore.cpp:2592
+#: ../src/celestia/celestiacore.cpp:2589
 #, c-format
 msgid "Mass: %.2f Mj\n"
 msgstr "质量：%.2f Mj\n"
 
-#: ../src/celestia/celestiacore.cpp:2594
+#: ../src/celestia/celestiacore.cpp:2591
 #, c-format
 msgid "Mass: %.2f Me\n"
 msgstr "质量：%.2f Me\n"
 
-#: ../src/celestia/celestiacore.cpp:2605
+#: ../src/celestia/celestiacore.cpp:2602
 msgid "ly/s"
 msgstr "ly/s"
 
-#: ../src/celestia/celestiacore.cpp:2610
+#: ../src/celestia/celestiacore.cpp:2607
 msgid "AU/s"
 msgstr "AU/s"
 
-#: ../src/celestia/celestiacore.cpp:2622
+#: ../src/celestia/celestiacore.cpp:2619
 msgid "mi/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2627
+#: ../src/celestia/celestiacore.cpp:2624
 msgid "ft/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2635
+#: ../src/celestia/celestiacore.cpp:2632
 msgid "km/s"
 msgstr "km/s"
 
-#: ../src/celestia/celestiacore.cpp:2640
+#: ../src/celestia/celestiacore.cpp:2637
 msgid "m/s"
 msgstr "m/s"
 
-#: ../src/celestia/celestiacore.cpp:2643
+#: ../src/celestia/celestiacore.cpp:2640
 #, c-format
 msgid "Speed: %s %s\n"
 msgstr "速度：%s %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2677
+#: ../src/celestia/celestiacore.cpp:2674
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr "Dec: %+d%s %02d' %.1f\"\n"
 
-#: ../src/celestia/celestiacore.cpp:2689
+#: ../src/celestia/celestiacore.cpp:2686
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr "RA: %dh %02dm %.1fs\n"
 
-#: ../src/celestia/celestiacore.cpp:2705
+#: ../src/celestia/celestiacore.cpp:2702
 #, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "视直径：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2718
+#: ../src/celestia/celestiacore.cpp:2715
 #, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "视星等：%.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:2722
+#: ../src/celestia/celestiacore.cpp:2719
 #, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "绝对星等：%.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:2803
+#: ../src/celestia/celestiacore.cpp:2800
 #, fuzzy, c-format
 msgid "%.6f%c %.6f%c %s"
 msgstr "%.6f%c %.6f%c %f km"
 
-#: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
-#: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
+#: ../src/celestia/celestiacore.cpp:2827 ../src/celestia/celestiacore.cpp:2899
+#: ../src/celestia/celestiacore.cpp:2929 ../src/celestia/celestiacore.cpp:3010
 #, c-format
 msgid "Distance: %s\n"
 msgstr "距离：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2834
+#: ../src/celestia/celestiacore.cpp:2831
 msgid "Star system barycenter\n"
 msgstr "星系质心\n"
 
-#: ../src/celestia/celestiacore.cpp:2838
+#: ../src/celestia/celestiacore.cpp:2835
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "绝对星等（视星等）：%.2f（%.2f）\n"
 
-#: ../src/celestia/celestiacore.cpp:2843
+#: ../src/celestia/celestiacore.cpp:2840
 #, c-format
 msgid "Luminosity: %sx Sun\n"
 msgstr "光度: %s Lsun\n"
 
-#: ../src/celestia/celestiacore.cpp:2849
+#: ../src/celestia/celestiacore.cpp:2846
 msgid "Neutron star"
 msgstr "中子星"
 
-#: ../src/celestia/celestiacore.cpp:2852
+#: ../src/celestia/celestiacore.cpp:2849
 msgid "Black hole"
 msgstr "黑洞"
 
-#: ../src/celestia/celestiacore.cpp:2857
+#: ../src/celestia/celestiacore.cpp:2854
 #, c-format
 msgid "Class: %s\n"
 msgstr "类别：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2864
+#: ../src/celestia/celestiacore.cpp:2861
 #, c-format
 msgid "Surface temp: %s K\n"
 msgstr "表面温度：%s K\n"
 
-#: ../src/celestia/celestiacore.cpp:2869
+#: ../src/celestia/celestiacore.cpp:2866
 #, fuzzy, c-format
 msgid "Radius: %s Rsun  (%s)\n"
 msgstr "半径：%s Rsun（%s km）\n"
 
-#: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
-#: ../src/celestia/celestiacore.cpp:2939
+#: ../src/celestia/celestiacore.cpp:2872 ../src/celestia/celestiacore.cpp:2907
+#: ../src/celestia/celestiacore.cpp:2936
 #, c-format
 msgid "Radius: %s\n"
 msgstr "半径：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2891
+#: ../src/celestia/celestiacore.cpp:2888
 msgid "Planetary companions present\n"
 msgstr "拥有行星\n"
 
-#: ../src/celestia/celestiacore.cpp:2907
+#: ../src/celestia/celestiacore.cpp:2904
 #, c-format
 msgid "Distance from center: %s\n"
 msgstr "到中心的距离：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2980
+#: ../src/celestia/celestiacore.cpp:2977
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "相位角：%.1f%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2996
+#: ../src/celestia/celestiacore.cpp:2993
 #, fuzzy, c-format
 msgid "Density: %.2f x 1000 lb/ft^3\n"
 msgstr "密度：%.2f× 1000 kg/m^3\n"
 
-#: ../src/celestia/celestiacore.cpp:2998
+#: ../src/celestia/celestiacore.cpp:2995
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
 msgstr "密度：%.2f× 1000 kg/m^3\n"
 
-#: ../src/celestia/celestiacore.cpp:3003
+#: ../src/celestia/celestiacore.cpp:3000
 #, c-format
 msgid "Temperature: %.0f K\n"
 msgstr "温度：%.0f K\n"
 
-#: ../src/celestia/celestiacore.cpp:3156
+#: ../src/celestia/celestiacore.cpp:3153
 msgid "  LT"
 msgstr " 本地时间"
 
-#: ../src/celestia/celestiacore.cpp:3165
+#: ../src/celestia/celestiacore.cpp:3162
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
 #: ../src/celestia/qt/qttimetoolbar.cpp:54
 msgid "Real time"
 msgstr "实时"
 
-#: ../src/celestia/celestiacore.cpp:3167
+#: ../src/celestia/celestiacore.cpp:3164
 msgid "-Real time"
 msgstr "-实时"
 
-#: ../src/celestia/celestiacore.cpp:3171
+#: ../src/celestia/celestiacore.cpp:3168
 msgid "Time stopped"
 msgstr "时间已停止"
 
-#: ../src/celestia/celestiacore.cpp:3175
+#: ../src/celestia/celestiacore.cpp:3172
 #, c-format
 msgid "%.6g x faster"
 msgstr "加快 %.6g 倍"
 
-#: ../src/celestia/celestiacore.cpp:3179
+#: ../src/celestia/celestiacore.cpp:3176
 #, c-format
 msgid "%.6g x slower"
 msgstr "减慢至 1/%.6g"
 
-#: ../src/celestia/celestiacore.cpp:3185
+#: ../src/celestia/celestiacore.cpp:3182
 msgid " (Paused)"
 msgstr "（已暂停）"
 
-#: ../src/celestia/celestiacore.cpp:3204
+#: ../src/celestia/celestiacore.cpp:3201
 #, c-format
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
@@ -4321,179 +756,179 @@ msgstr ""
 "FPS：%.1f，可见恒星统计：[ %zu : %zu : %zu ]，可见深空天体统计：[ %zu : "
 "%zu : %zu ]\n"
 
-#: ../src/celestia/celestiacore.cpp:3213
+#: ../src/celestia/celestiacore.cpp:3210
 #, c-format
 msgid "FPS: %.1f\n"
 msgstr "FPS：%.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:3238
+#: ../src/celestia/celestiacore.cpp:3235
 #, c-format
 msgid "Travelling (%s)\n"
 msgstr "正在飞行（%s）\n"
 
-#: ../src/celestia/celestiacore.cpp:3241
+#: ../src/celestia/celestiacore.cpp:3238
 #, c-format
 msgid "Travelling\n"
 msgstr "正在飞行\n"
 
-#: ../src/celestia/celestiacore.cpp:3250
+#: ../src/celestia/celestiacore.cpp:3247
 #, c-format
 msgid "Track %s\n"
 msgstr "跟踪 %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3266
+#: ../src/celestia/celestiacore.cpp:3263
 #, c-format
 msgid "Follow %s\n"
 msgstr "跟随 %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3270
+#: ../src/celestia/celestiacore.cpp:3267
 #, c-format
 msgid "Sync Orbit %s\n"
 msgstr "同步轨道 %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3274
+#: ../src/celestia/celestiacore.cpp:3271
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr "锁定 %s -> %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3280
+#: ../src/celestia/celestiacore.cpp:3277
 #, c-format
 msgid "Chase %s\n"
 msgstr "追逐 %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3294
+#: ../src/celestia/celestiacore.cpp:3291
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr "FOV：%s（%.2f×）\n"
 
-#: ../src/celestia/celestiacore.cpp:3488
+#: ../src/celestia/celestiacore.cpp:3474
 #, c-format
 msgid "Target name: %s"
 msgstr "目标名称：%s"
 
-#: ../src/celestia/celestiacore.cpp:3575
+#: ../src/celestia/celestiacore.cpp:3561
 #, fuzzy, c-format
 msgid "%dx%d at %.2f fps  %s"
 msgstr "%d×%d 于 %f FPS  %s"
 
-#: ../src/celestia/celestiacore.cpp:3578
+#: ../src/celestia/celestiacore.cpp:3564
 msgid "Paused"
 msgstr "已暂停"
 
-#: ../src/celestia/celestiacore.cpp:3578
+#: ../src/celestia/celestiacore.cpp:3564
 msgid "Recording"
 msgstr "正在录像"
 
-#: ../src/celestia/celestiacore.cpp:3599
+#: ../src/celestia/celestiacore.cpp:3585
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 开始/暂停    F12 停止"
 
-#: ../src/celestia/celestiacore.cpp:3610 ../src/celestia/celestiacore.cpp:3615
+#: ../src/celestia/celestiacore.cpp:3596 ../src/celestia/celestiacore.cpp:3601
 msgid "Edit Mode"
 msgstr "编辑模式"
 
-#: ../src/celestia/celestiacore.cpp:3648
+#: ../src/celestia/celestiacore.cpp:3634
 #, c-format
 msgid "Skipping solar system catalog: %s\n"
 msgstr "跳过太阳系目录：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:3651
+#: ../src/celestia/celestiacore.cpp:3637
 #, c-format
 msgid "Loading solar system catalog: %s\n"
 msgstr "正在加载太阳系目录：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:3694
+#: ../src/celestia/celestiacore.cpp:3680
 #, c-format
 msgid "Skipping %s catalog: %s\n"
 msgstr "跳过 %s 目录：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:3697
+#: ../src/celestia/celestiacore.cpp:3683
 #, c-format
 msgid "Loading %s catalog: %s\n"
 msgstr "正在加载 %s 目录：%s\n"
 
-#: ../src/celestia/celestiacore.cpp:3733
+#: ../src/celestia/celestiacore.cpp:3719
 msgid "Error reading configuration file."
 msgstr "读取配置文件时出错。"
 
-#: ../src/celestia/celestiacore.cpp:3744
+#: ../src/celestia/celestiacore.cpp:3730
 msgid "Initialization of SPICE library failed."
 msgstr "Spice 库初始化失败。"
 
-#: ../src/celestia/celestiacore.cpp:3787
+#: ../src/celestia/celestiacore.cpp:3773
 msgid "Cannot read star database."
 msgstr "无法读取星体数据库。"
 
-#: ../src/celestia/celestiacore.cpp:3808
+#: ../src/celestia/celestiacore.cpp:3794
 #, c-format
 msgid "Error opening deepsky catalog file %s.\n"
 msgstr "读取深空天体目录文件 %s 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:3812
+#: ../src/celestia/celestiacore.cpp:3798
 #, c-format
 msgid "Cannot read Deep Sky Objects database %s.\n"
 msgstr "深空天体数据库 %s 无法读取。\n"
 
-#: ../src/celestia/celestiacore.cpp:3861
+#: ../src/celestia/celestiacore.cpp:3847
 #, c-format
 msgid "Error opening solar system catalog %s.\n"
 msgstr "打开太阳系目录文件 %s 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:3901
+#: ../src/celestia/celestiacore.cpp:3887
 #, c-format
 msgid "Error opening asterisms file %s.\n"
 msgstr "打开星群文件 %s 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:3917
+#: ../src/celestia/celestiacore.cpp:3903
 #, c-format
 msgid "Error opening constellation boundaries file %s.\n"
 msgstr "打开星座边界文件 %s 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:4050
+#: ../src/celestia/celestiacore.cpp:4036
 msgid "Failed to initialize renderer"
 msgstr "渲染器初始化失败"
 
-#: ../src/celestia/celestiacore.cpp:4066
+#: ../src/celestia/celestiacore.cpp:4052
 msgid "Error loading font; text will not be visible.\n"
 msgstr "读取字体时出错，文字将无法显示。\n"
 
-#: ../src/celestia/celestiacore.cpp:4114
+#: ../src/celestia/celestiacore.cpp:4100
 #, c-format
 msgid "Error reading cross index %s\n"
 msgstr "读取跨索引文件 %s 时出错\n"
 
-#: ../src/celestia/celestiacore.cpp:4116
+#: ../src/celestia/celestiacore.cpp:4102
 #, c-format
 msgid "Loaded cross index %s\n"
 msgstr "已加载跨索引文件 %s\n"
 
-#: ../src/celestia/celestiacore.cpp:4133
+#: ../src/celestia/celestiacore.cpp:4119
 msgid "Error reading star names file\n"
 msgstr "读取恒星名称文件时出错\n"
 
-#: ../src/celestia/celestiacore.cpp:4137 ../src/celestia/celestiacore.cpp:4151
+#: ../src/celestia/celestiacore.cpp:4123 ../src/celestia/celestiacore.cpp:4137
 #, c-format
 msgid "Error opening %s\n"
 msgstr "打开 %s 时出错\n"
 
-#: ../src/celestia/celestiacore.cpp:4159
+#: ../src/celestia/celestiacore.cpp:4145
 msgid "Error reading stars file\n"
 msgstr "读取恒星文件时出错\n"
 
-#: ../src/celestia/celestiacore.cpp:4185
+#: ../src/celestia/celestiacore.cpp:4171
 #, c-format
 msgid "Error opening star catalog %s\n"
 msgstr "读取恒星目录文件 %s 时出错\n"
 
-#: ../src/celestia/celestiacore.cpp:4543
+#: ../src/celestia/celestiacore.cpp:4529
 msgid "Invalid URL"
 msgstr "无效 URL"
 
-#: ../src/celestia/celestiacore.cpp:4768
+#: ../src/celestia/celestiacore.cpp:4754
 msgid "Unable to capture a frame!\n"
 msgstr "无法捕获当前帧\n"
 
-#: ../src/celestia/celestiacore.cpp:4780
+#: ../src/celestia/celestiacore.cpp:4766
 #, fuzzy
 msgid "Unsupported image type: {}!\n"
 msgstr "不支持的 URL 模式“%s”！\n"
@@ -4560,31 +995,6 @@ msgstr "插入器数量：%s\n"
 #, c-format
 msgid "Max anisotropy filtering: %s\n"
 msgstr "最大各项异性过滤：%s\n"
-
-#: ../src/celestia/oggtheoracapture.cpp:161
-#, c-format
-msgid "Error in creating ogg file %s for capture.\n"
-msgstr "创建屏幕录制使用的 OGG 文件 %s 出错。\n"
-
-#. can't get here
-#: ../src/celestia/oggtheoracapture.cpp:255
-#: ../src/celestia/oggtheoracapture.cpp:275
-msgid "Internal Ogg library error.\n"
-msgstr "内部 OGG 库出错\n"
-
-#: ../src/celestia/oggtheoracapture.cpp:311
-#, c-format
-msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
-msgstr ""
-"OggTheoraCapture::start() - Theora 影像：%s %.2f（%d/%d）FPS 质量 %d %d×%d 位"
-"移 (%d×%d)\n"
-
-#: ../src/celestia/oggtheoracapture.cpp:426
-#, c-format
-msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - 已写入 %d 帧\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:169
 msgid "Auto"
@@ -4750,19 +1160,20 @@ msgid "New bookmark"
 msgstr "新建书签"
 
 #: ../src/celestia/qt/qtappwin.cpp:1078
-#, qt-format
+#, fuzzy, qt-format
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
 "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Main site: <a "
-"href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</"
-"a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
-"\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"%5<br>NAIF kernels are %7<br>AVIF images are %8</p>Runtime Qt version: %6</"
+"p><p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>Celestia "
+"is free software. You can redistribute it and/or modify it under the terms "
+"of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a href=\"https://celestia.space/\">https://"
+"celestia.space/</a><br>Forum: <a href=\"https://celestia.space/forum/"
+"\">https://celestia.space/forum/</a><br>GitHub project: <a href=\"https://"
+"github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/"
+"Celestia</a></p></html>"
 msgstr ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
 "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
@@ -4776,302 +1187,302 @@ msgstr ""
 "a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
 "\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1113
+#: ../src/celestia/qt/qtappwin.cpp:1114
 msgid "Unknown compiler"
 msgstr "未知编译器"
 
-#: ../src/celestia/qt/qtappwin.cpp:1117
+#: ../src/celestia/qt/qtappwin.cpp:1118 ../src/celestia/qt/qtappwin.cpp:1123
 msgid "supported"
 msgstr "支持"
 
-#: ../src/celestia/qt/qtappwin.cpp:1119
+#: ../src/celestia/qt/qtappwin.cpp:1120 ../src/celestia/qt/qtappwin.cpp:1125
 msgid "not supported"
 msgstr "不支持"
 
-#: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1516
+#: ../src/celestia/qt/qtappwin.cpp:1128 ../src/celestia/qt/qtappwin.cpp:1522
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
 msgstr "关于 Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1141
+#: ../src/celestia/qt/qtappwin.cpp:1147
 #, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr "<b>%1 版本：</b>%2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1147
+#: ../src/celestia/qt/qtappwin.cpp:1153
 #, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "<b>厂商：</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1153
+#: ../src/celestia/qt/qtappwin.cpp:1159
 #, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "<b>渲染器：</b>%1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1160
+#: ../src/celestia/qt/qtappwin.cpp:1166
 #, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "<b>%1 版本：</b>%2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1167
+#: ../src/celestia/qt/qtappwin.cpp:1173
 #, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "<b>最大同步纹理</b> %1："
 
-#: ../src/celestia/qt/qtappwin.cpp:1173
+#: ../src/celestia/qt/qtappwin.cpp:1179
 #, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "<b>最大纹理尺寸：</b>%1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1179
+#: ../src/celestia/qt/qtappwin.cpp:1185
 #, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "<b>点大小范围：</b> %1 - %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1185
+#: ../src/celestia/qt/qtappwin.cpp:1191
 #, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "<b>点大小粒度：</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1191
+#: ../src/celestia/qt/qtappwin.cpp:1197
 #, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "<b>最大立方体贴图尺寸：</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1197
+#: ../src/celestia/qt/qtappwin.cpp:1203
 #, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "<b>插值数：</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1203
+#: ../src/celestia/qt/qtappwin.cpp:1209
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr "<b>最大各向异性过滤：</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1213
+#: ../src/celestia/qt/qtappwin.cpp:1219
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "<b>支持的扩展：</b><br>\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:1227
+#: ../src/celestia/qt/qtappwin.cpp:1233
 msgid "Renderer Info"
 msgstr "渲染器信息"
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1251
+#: ../src/celestia/qt/qtappwin.cpp:1257
 #: ../src/celestia/win32/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "文件(&F)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1254
+#: ../src/celestia/qt/qtappwin.cpp:1260
 msgid "&Grab image"
 msgstr "捕捉图像(&G)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1255
+#: ../src/celestia/qt/qtappwin.cpp:1261
 msgid "F10"
 msgstr "F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1260
+#: ../src/celestia/qt/qtappwin.cpp:1266
 msgid "Capture &video"
 msgstr "屏幕录制(&V)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1264
+#: ../src/celestia/qt/qtappwin.cpp:1270
 msgid "Shift+F10"
 msgstr "Shift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1268
+#: ../src/celestia/qt/qtappwin.cpp:1274
 msgid "&Copy image"
 msgstr "复制图像"
 
-#: ../src/celestia/qt/qtappwin.cpp:1269
+#: ../src/celestia/qt/qtappwin.cpp:1275
 msgid "Ctrl+Shift+C"
 msgstr "Ctrl+Shift+C"
 
-#: ../src/celestia/qt/qtappwin.cpp:1275
+#: ../src/celestia/qt/qtappwin.cpp:1281
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "打开脚本(&O)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1286
+#: ../src/celestia/qt/qtappwin.cpp:1292
 msgid "&Preferences..."
 msgstr "偏好(&P)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1290
+#: ../src/celestia/qt/qtappwin.cpp:1296
 #: ../src/celestia/win32/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "退出(&X)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1291
+#: ../src/celestia/qt/qtappwin.cpp:1297
 msgid "Ctrl+Q"
 msgstr "Ctrl+Q"
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1296
+#: ../src/celestia/qt/qtappwin.cpp:1302
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
 msgstr "导航(&N)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1298
+#: ../src/celestia/qt/qtappwin.cpp:1304
 msgid "Select Sun"
 msgstr "选择太阳"
 
-#: ../src/celestia/qt/qtappwin.cpp:1302
+#: ../src/celestia/qt/qtappwin.cpp:1308
 msgid "Center Selection"
 msgstr "置中所选天体"
 
-#: ../src/celestia/qt/qtappwin.cpp:1306
+#: ../src/celestia/qt/qtappwin.cpp:1312
 msgid "Goto Selection"
 msgstr "转到所选天体"
 
-#: ../src/celestia/qt/qtappwin.cpp:1310
+#: ../src/celestia/qt/qtappwin.cpp:1316
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "转到天体..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1314
+#: ../src/celestia/qt/qtappwin.cpp:1320
 msgid "Copy URL / console text"
 msgstr "复制 URL/控制台文本"
 
-#: ../src/celestia/qt/qtappwin.cpp:1319
+#: ../src/celestia/qt/qtappwin.cpp:1325
 msgid "Paste URL / console text"
 msgstr "粘贴 URL/控制台文本"
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1325
+#: ../src/celestia/qt/qtappwin.cpp:1331
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "时间(&T)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1327
+#: ../src/celestia/qt/qtappwin.cpp:1333
 msgid "Set &time"
 msgstr "设置时间(&T)"
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1335
+#: ../src/celestia/qt/qtappwin.cpp:1341
 msgid "&Display"
 msgstr "显示(&D)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1341
+#: ../src/celestia/qt/qtappwin.cpp:1347
 msgid "Dee&p Sky Objects"
 msgstr "深空天体(&P)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1347
+#: ../src/celestia/qt/qtappwin.cpp:1353
 msgid "&Shadows"
 msgstr "阴影"
 
-#: ../src/celestia/qt/qtappwin.cpp:1358
+#: ../src/celestia/qt/qtappwin.cpp:1364
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "恒星样式(&Y)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1365
+#: ../src/celestia/qt/qtappwin.cpp:1371
 msgid "Texture &Resolution"
 msgstr "纹理分辨率(&T)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1370
+#: ../src/celestia/qt/qtappwin.cpp:1376
 msgid "&FPS control"
 msgstr "FPS 控制(&F)"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1387
+#: ../src/celestia/qt/qtappwin.cpp:1393
 #: ../src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Bookmarks"
 msgstr "书签(&B)"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1390
+#: ../src/celestia/qt/qtappwin.cpp:1396
 #: ../src/celestia/win32/res/resource_strings.cpp:53
 msgid "&View"
 msgstr "视窗(&V)"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1393
+#: ../src/celestia/qt/qtappwin.cpp:1399
 msgid "&MultiView"
 msgstr "多重视窗(&M)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1396
+#: ../src/celestia/qt/qtappwin.cpp:1402
 msgid "Split view vertically"
 msgstr "垂直分割视窗"
 
-#: ../src/celestia/qt/qtappwin.cpp:1397
+#: ../src/celestia/qt/qtappwin.cpp:1403
 msgid "Ctrl+R"
 msgstr "Ctrl+R"
 
-#: ../src/celestia/qt/qtappwin.cpp:1402
+#: ../src/celestia/qt/qtappwin.cpp:1408
 msgid "Split view horizontally"
 msgstr "水平分割视窗"
 
-#: ../src/celestia/qt/qtappwin.cpp:1403
+#: ../src/celestia/qt/qtappwin.cpp:1409
 msgid "Ctrl+U"
 msgstr "Ctrl+U"
 
-#: ../src/celestia/qt/qtappwin.cpp:1408
+#: ../src/celestia/qt/qtappwin.cpp:1414
 msgid "Cycle views"
 msgstr "切换视窗"
 
-#: ../src/celestia/qt/qtappwin.cpp:1409
+#: ../src/celestia/qt/qtappwin.cpp:1415
 msgid "Tab"
 msgstr "Tab"
 
-#: ../src/celestia/qt/qtappwin.cpp:1414
+#: ../src/celestia/qt/qtappwin.cpp:1420
 msgid "Single view"
 msgstr "单视窗"
 
-#: ../src/celestia/qt/qtappwin.cpp:1415
+#: ../src/celestia/qt/qtappwin.cpp:1421
 msgid "Ctrl+D"
 msgstr "Ctrl+D"
 
-#: ../src/celestia/qt/qtappwin.cpp:1420
+#: ../src/celestia/qt/qtappwin.cpp:1426
 msgid "Delete view"
 msgstr "删除视窗"
 
-#: ../src/celestia/qt/qtappwin.cpp:1421
+#: ../src/celestia/qt/qtappwin.cpp:1427
 #: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "Delete"
 msgstr "删除"
 
-#: ../src/celestia/qt/qtappwin.cpp:1427
+#: ../src/celestia/qt/qtappwin.cpp:1433
 msgid "Frames visible"
 msgstr "显示视窗框架"
 
-#: ../src/celestia/qt/qtappwin.cpp:1448
+#: ../src/celestia/qt/qtappwin.cpp:1454
 msgid "Active frame visible"
 msgstr "激活视窗框架显示"
 
-#: ../src/celestia/qt/qtappwin.cpp:1464
+#: ../src/celestia/qt/qtappwin.cpp:1470
 msgid "Synchronize time"
 msgstr "同步时间"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1505
+#: ../src/celestia/qt/qtappwin.cpp:1511
 #: ../src/celestia/win32/res/resource_strings.cpp:63
 msgid "&Help"
 msgstr "帮助(&H)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1507
+#: ../src/celestia/qt/qtappwin.cpp:1513
 msgid "Celestia Manual"
 msgstr "Celestia 手册"
 
-#: ../src/celestia/qt/qtappwin.cpp:1512
+#: ../src/celestia/qt/qtappwin.cpp:1518
 msgid "OpenGL Info"
 msgstr "OpenGL 信息"
 
-#: ../src/celestia/qt/qtappwin.cpp:1532
+#: ../src/celestia/qt/qtappwin.cpp:1538
 msgid "Add Bookmark..."
 msgstr "添加书签..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1536
+#: ../src/celestia/qt/qtappwin.cpp:1542
 msgid "Organize Bookmarks..."
 msgstr "管理书签..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1574
+#: ../src/celestia/qt/qtappwin.cpp:1580
 msgid "Set custom FPS"
 msgstr "设置自定义 FPS"
 
-#: ../src/celestia/qt/qtappwin.cpp:1575
+#: ../src/celestia/qt/qtappwin.cpp:1581
 msgid "FPS value"
 msgstr "FPS 值"
 
-#: ../src/celestia/qt/qtappwin.cpp:1596
+#: ../src/celestia/qt/qtappwin.cpp:1602
 #, qt-format
 msgid ""
 "Loading data files: %1\n"
@@ -5080,7 +1491,7 @@ msgstr ""
 "正在加载数据文件：%1\n"
 "\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:1607
+#: ../src/celestia/qt/qtappwin.cpp:1613
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "脚本"
@@ -5758,6 +2169,36 @@ msgstr "所有日月食"
 msgid "Search range"
 msgstr "搜索范围"
 
+#: ../src/celestia/qt/qteventfinder.cpp:271
+#: ../src/celestia/win32/wineclipses.cpp:290
+msgid "Earth"
+msgstr "地球"
+
+#: ../src/celestia/qt/qteventfinder.cpp:272
+#: ../src/celestia/win32/wineclipses.cpp:291
+msgid "Jupiter"
+msgstr "木星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:273
+#: ../src/celestia/win32/wineclipses.cpp:292
+msgid "Saturn"
+msgstr "土星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:274
+#: ../src/celestia/win32/wineclipses.cpp:293
+msgid "Uranus"
+msgstr "天王星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:275
+#: ../src/celestia/win32/wineclipses.cpp:294
+msgid "Neptune"
+msgstr "海王星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:276
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Pluto"
+msgstr "冥王星"
+
 #: ../src/celestia/qt/qteventfinder.cpp:279
 msgid "Find eclipses"
 msgstr "查找日食"
@@ -5827,122 +2268,137 @@ msgstr "<b>大小：</b> %L1 %2"
 msgid "<b>Oblateness: "
 msgstr "<b>扁率："
 
-#: ../src/celestia/qt/qtinfopanel.cpp:173
+#: ../src/celestia/qt/qtinfopanel.cpp:181
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "<b>自转周期：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:176
+#: ../src/celestia/qt/qtinfopanel.cpp:184
+#, fuzzy
+msgid "Prograde"
+msgstr "贝尔格莱德"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:184
+#, fuzzy
+msgid "Retrograde"
+msgstr "贝尔格莱德"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:185
+#, fuzzy, qt-format
+msgid "<b>Rotation direction:</b> %1"
+msgstr "<b>渲染器：</b>%1"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:189
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "<b>太阳日：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:202
+#: ../src/celestia/qt/qtinfopanel.cpp:215
 msgid "years"
 msgstr "yr"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:207
+#: ../src/celestia/qt/qtinfopanel.cpp:220
 msgid "<b>Has rings</b>"
 msgstr "<b>拥有光环</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:209
+#: ../src/celestia/qt/qtinfopanel.cpp:222
 msgid "<b>Has atmosphere</b>"
 msgstr "<b>拥有大气层</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:217
+#: ../src/celestia/qt/qtinfopanel.cpp:230
 #, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "<b>开始：</b>%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:220
+#: ../src/celestia/qt/qtinfopanel.cpp:233
 #, qt-format
 msgid "<b>End:</b> %1"
 msgstr "<b>结束：</b>%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:222
+#: ../src/celestia/qt/qtinfopanel.cpp:235
 msgid "Orbit information"
 msgstr "轨道信息"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:223
+#: ../src/celestia/qt/qtinfopanel.cpp:236
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr "密切元素 %1"
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-#: ../src/celestia/qt/qtinfopanel.cpp:226
+#: ../src/celestia/qt/qtinfopanel.cpp:239
 #, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "<b>周期：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:231
+#: ../src/celestia/qt/qtinfopanel.cpp:244
 msgid "AU"
 msgstr "AU"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:239
+#: ../src/celestia/qt/qtinfopanel.cpp:252
 #, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "<b>半长轴：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:240
+#: ../src/celestia/qt/qtinfopanel.cpp:253
 #, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "<b>离心率：</b> %L1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:241
+#: ../src/celestia/qt/qtinfopanel.cpp:254
 #, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "<b>倾角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:242
+#: ../src/celestia/qt/qtinfopanel.cpp:255
 #, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "<b>近心点距离：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:243
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "<b>远心点距离：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:245
+#: ../src/celestia/qt/qtinfopanel.cpp:258
 #, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "<b>升交点经度：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:259
 #, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "<b>近心点幅角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:247
+#: ../src/celestia/qt/qtinfopanel.cpp:260
 #, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "<b>平近点角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:248
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "<b>周期（计算结果）：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:288
-#: ../src/celestia/qt/qtinfopanel.cpp:311
+#: ../src/celestia/qt/qtinfopanel.cpp:301
+#: ../src/celestia/qt/qtinfopanel.cpp:324
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "<b>赤经：</b> %L1h %L2m %L3s"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:292
-#: ../src/celestia/qt/qtinfopanel.cpp:315
+#: ../src/celestia/qt/qtinfopanel.cpp:305
+#: ../src/celestia/qt/qtinfopanel.cpp:328
 #, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "<b>赤纬：</b> %L1%2 %L3' %L4\""
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:323
+#: ../src/celestia/qt/qtinfopanel.cpp:336
 #, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "<b>L：</b> %L1%2 %L3' %L4\""
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:327
+#: ../src/celestia/qt/qtinfopanel.cpp:340
 #, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "<b>B：</b> %L1%2 %L3' %L4\""
@@ -6255,6 +2711,10 @@ msgstr "行星"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:552
 msgid "Dwarf planet"
 msgstr "矮行星"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:554
+msgid "Moon"
+msgstr "月球"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:556
 msgid "Minor moon"
@@ -6761,44 +3221,44 @@ msgstr "日期显示格式："
 msgid "Not an XBEL version 1.0 file."
 msgstr "XBEL 1.0 版本文件不存在"
 
-#: ../src/celestia/url.cpp:310
-#, c-format
-msgid "Incorrect hex value \"%s\"\n"
+#: ../src/celestia/url.cpp:312
+#, fuzzy
+msgid "Incorrect hex value \"{}\"\n"
 msgstr "无效的十六进制数值 “%s”\n"
 
-#: ../src/celestia/url.cpp:393
+#: ../src/celestia/url.cpp:395
 #, c-format
 msgid "URL must start with \"%s\"!\n"
 msgstr "URL 开头必须为“%s”！\n"
 
-#: ../src/celestia/url.cpp:409
+#: ../src/celestia/url.cpp:411
 msgid "URL must have at least mode and time!\n"
 msgstr "URL 需要至少包含模式和时间！\n"
 
-#: ../src/celestia/url.cpp:420
+#: ../src/celestia/url.cpp:422
 #, c-format
 msgid "Unsupported URL mode \"%s\"!\n"
 msgstr "不支持的 URL 模式“%s”！\n"
 
-#: ../src/celestia/url.cpp:438
+#: ../src/celestia/url.cpp:440
 msgid "URL must contain only one body\n"
 msgstr "URL 必须只包含一个物体\n"
 
-#: ../src/celestia/url.cpp:450
+#: ../src/celestia/url.cpp:452
 msgid "URL must contain 2 bodies\n"
 msgstr "URL 必须包含两个物体\n"
 
-#: ../src/celestia/url.cpp:491
+#: ../src/celestia/url.cpp:493
 #, c-format
 msgid "Invalid URL version \"%s\"!\n"
 msgstr "无效的 URL 版本“%s”！\n"
 
-#: ../src/celestia/url.cpp:498
+#: ../src/celestia/url.cpp:500
 #, c-format
 msgid "Unsupported URL version: %i\n"
 msgstr "不支持的 URL 版本：%i\n"
 
-#: ../src/celestia/url.cpp:530
+#: ../src/celestia/url.cpp:532
 msgid "URL parameter must look like key=value\n"
 msgstr "URL 参数必须为 key=value\n"
 
@@ -7640,17 +4100,17 @@ msgstr "时区名称"
 msgid "UTC Offset"
 msgstr "与 UTC 的差异"
 
-#: ../src/celimage/png.cpp:56
+#: ../src/celimage/png.cpp:57
 #, c-format
 msgid "Error opening image file %s\n"
 msgstr "打开 %s 图像文件时出错\n"
 
-#: ../src/celimage/png.cpp:64
+#: ../src/celimage/png.cpp:65
 #, c-format
 msgid "Error: %s is not a PNG file.\n"
 msgstr "错误：%s 不是 PNG 图像文件。\n"
 
-#: ../src/celimage/png.cpp:90
+#: ../src/celimage/png.cpp:91
 #, c-format
 msgid "Error reading PNG image file %s\n"
 msgstr "读取 PNG 图像文件 %s 时出错。\n"
@@ -7722,9 +4182,2417 @@ msgid "Unknown value returned by GetTimeZoneInformation()\n"
 msgstr "GetTimeZoneInformation() 函数返回了一个未知数值\n"
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
-#, c-format
-msgid "Error openning %s or .\n"
+#, fuzzy
+msgid "Error opening {} or .\n"
 msgstr "错误打开 %s 或 。\n"
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:25
+#, fuzzy
+msgid "Error reading header of {}.\n"
+msgstr "读取标题 %s 时出错。\n"
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:31
+#, fuzzy
+msgid "Bad binary xyzv file {}.\n"
+msgstr "二进制 xyzv 文件 %s 错误。\n"
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:37
+#, fuzzy
+msgid "Unsupported byte order {}, expected {}.\n"
+msgstr "不支持的字节顺序 %i，缺少 %i。\n"
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:44
+#, fuzzy
+msgid "Unsupported digits number {}, expected {}.\n"
+msgstr "不支持的数字 %i，缺少 %i。\n"
+
+#~ msgid "Mercury"
+#~ msgstr "水星"
+
+#~ msgid "Venus"
+#~ msgstr "金星"
+
+#~ msgid "Mars"
+#~ msgstr "火星"
+
+#~ msgid "Phobos"
+#~ msgstr "火卫一"
+
+#~ msgid "Deimos"
+#~ msgstr "火卫二"
+
+#~ msgid "Io"
+#~ msgstr "木卫一"
+
+#~ msgid "Europa"
+#~ msgstr "木卫二"
+
+#~ msgid "Ganymede"
+#~ msgstr "木卫三"
+
+#~ msgid "Callisto"
+#~ msgstr "木卫四"
+
+#~ msgid "Mimas"
+#~ msgstr "土卫一"
+
+#~ msgid "Enceladus"
+#~ msgstr "土卫二"
+
+#~ msgid "Tethys"
+#~ msgstr "土卫三"
+
+#~ msgid "Dione"
+#~ msgstr "土卫四"
+
+#~ msgid "Rhea"
+#~ msgstr "土卫五"
+
+#~ msgid "Titan"
+#~ msgstr "土卫六"
+
+#~ msgid "Hyperion"
+#~ msgstr "土卫七"
+
+#~ msgid "Iapetus"
+#~ msgstr "土卫八"
+
+#~ msgid "Phoebe"
+#~ msgstr "土卫九"
+
+#~ msgid "Miranda"
+#~ msgstr "天卫五"
+
+#~ msgid "Ariel"
+#~ msgstr "天卫一"
+
+#~ msgid "Umbriel"
+#~ msgstr "天卫二"
+
+#~ msgid "Titania"
+#~ msgstr "天卫三"
+
+#~ msgid "Oberon"
+#~ msgstr "天卫四"
+
+#~ msgid "Proteus"
+#~ msgstr "海卫八"
+
+#~ msgid "Triton"
+#~ msgstr "海卫一"
+
+#~ msgid "Nereid"
+#~ msgstr "海卫二"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "冥王星-冥卫一"
+
+#~ msgid "Charon"
+#~ msgstr "冥卫一"
+
+#~ msgid "Styx"
+#~ msgstr "冥卫五"
+
+#~ msgid "Nix"
+#~ msgstr "冥卫二"
+
+#~ msgid "Kerberos"
+#~ msgstr "冥卫四"
+
+#~ msgid "Hydra"
+#~ msgstr "长蛇座"
+
+#~ msgid "Ceres"
+#~ msgstr "谷神星"
+
+#~ msgid "Haumea"
+#~ msgstr "妊神星"
+
+#~ msgid "Namaka"
+#~ msgstr "妊卫二"
+
+#~ msgid "Hi'iaka"
+#~ msgstr "妊卫一"
+
+#~ msgid "Makemake"
+#~ msgstr "鸟神星"
+
+#, fuzzy
+#~ msgid "S 2015 (136472) 1"
+#~ msgstr "S-2015 136472 I"
+
+#~ msgid "Eris"
+#~ msgstr "阋神星"
+
+#~ msgid "Dysnomia"
+#~ msgstr "阋卫一"
+
+#~ msgid "Metis"
+#~ msgstr "木卫十六"
+
+#~ msgid "Adrastea"
+#~ msgstr "木卫十五"
+
+#~ msgid "Amalthea"
+#~ msgstr "木卫五"
+
+#~ msgid "Thebe"
+#~ msgstr "木卫十四"
+
+#~ msgid "Themisto"
+#~ msgstr "木卫十八"
+
+#~ msgid "Leda"
+#~ msgstr "木卫十八"
+
+#, fuzzy
+#~ msgid "Pandia"
+#~ msgstr "土卫十七"
+
+#~ msgid "Himalia"
+#~ msgstr "木卫六"
+
+#~ msgid "Lysithea"
+#~ msgstr "木卫十"
+
+#~ msgid "Elara"
+#~ msgstr "木卫七"
+
+#, fuzzy
+#~ msgid "Dia"
+#~ msgstr "土司空 Diphda"
+
+#, fuzzy
+#~ msgid "Jupiter LV"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LXVIII"
+#~ msgstr "木星"
+
+#~ msgid "Ananke"
+#~ msgstr "木卫十二"
+
+#~ msgid "Harpalyke"
+#~ msgstr "木卫二十二"
+
+#, fuzzy
+#~ msgid "Jupiter LII"
+#~ msgstr "木星"
+
+#~ msgid "Praxidike"
+#~ msgstr "木卫二十七"
+
+#, fuzzy
+#~ msgid "Jupiter LXIV"
+#~ msgstr "木星"
+
+#~ msgid "Iocaste"
+#~ msgstr "木卫二十四"
+
+#, fuzzy
+#~ msgid "Thyone"
+#~ msgstr "昴宿六 Alcyone"
+
+#, fuzzy
+#~ msgid "Jupiter LIV"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LVI"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Kallichore"
+#~ msgstr "木卫十七"
+
+#~ msgid "Chaldene"
+#~ msgstr "木卫二十一"
+
+#, fuzzy
+#~ msgid "Jupiter LXIX"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LXXII"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LXI"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Cyllene"
+#~ msgstr "土卫十二"
+
+#~ msgid "Taygete"
+#~ msgstr "木卫二十"
+
+#, fuzzy
+#~ msgid "Jupiter LXX"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LI"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LXVII"
+#~ msgstr "木星"
+
+#~ msgid "Carme"
+#~ msgstr "木卫十一"
+
+#~ msgid "Callirrhoe"
+#~ msgstr "木卫十七"
+
+#~ msgid "Erinome"
+#~ msgstr "木卫二十五"
+
+#, fuzzy
+#~ msgid "Pasithee"
+#~ msgstr "木卫八"
+
+#~ msgid "Sinope"
+#~ msgstr "木卫九"
+
+#~ msgid "Isonoe"
+#~ msgstr "木卫二十六"
+
+#, fuzzy
+#~ msgid "Autonoe"
+#~ msgstr "自动"
+
+#, fuzzy
+#~ msgid "Herse"
+#~ msgstr "简单"
+
+#~ msgid "Pasiphae"
+#~ msgstr "木卫八"
+
+#, fuzzy
+#~ msgid "Jupiter LXIII"
+#~ msgstr "木星"
+
+#~ msgid "Kalyke"
+#~ msgstr "木卫二十三"
+
+#~ msgid "Megaclite"
+#~ msgstr "木卫十九"
+
+#, fuzzy
+#~ msgid "Jupiter LXVI"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Jupiter LIX"
+#~ msgstr "木星"
+
+#~ msgid "Pan"
+#~ msgstr "土卫十八"
+
+#~ msgid "Atlas"
+#~ msgstr "土卫十五"
+
+#~ msgid "Prometheus"
+#~ msgstr "土卫十六"
+
+#~ msgid "Pandora"
+#~ msgstr "土卫十七"
+
+#~ msgid "Epimetheus"
+#~ msgstr "土卫十一"
+
+#~ msgid "Janus"
+#~ msgstr "土卫十"
+
+#, fuzzy
+#~ msgid "Pallene"
+#~ msgstr "土卫十二"
+
+#~ msgid "Telesto"
+#~ msgstr "土卫十三"
+
+#~ msgid "Calypso"
+#~ msgstr "土卫十四"
+
+#~ msgid "Helene"
+#~ msgstr "土卫十二"
+
+#, fuzzy
+#~ msgid "Skathi"
+#~ msgstr "羽林军二十六 Skat"
+
+#, fuzzy
+#~ msgid "Albiorix"
+#~ msgstr "辇道增七"
+
+#, fuzzy
+#~ msgid "Saturn LX"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LIV"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LIX"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXI"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LVII"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LV"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXII"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXV"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LVI"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXVI"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXIV"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LXIII"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Saturn LVIII"
+#~ msgstr "土星"
+
+#~ msgid "Cordelia"
+#~ msgstr "天卫六"
+
+#~ msgid "Ophelia"
+#~ msgstr "天卫七"
+
+#~ msgid "Bianca"
+#~ msgstr "天卫八"
+
+#~ msgid "Cressida"
+#~ msgstr "天卫九"
+
+#~ msgid "Desdemona"
+#~ msgstr "天卫十"
+
+#~ msgid "Juliet"
+#~ msgstr "天卫十一"
+
+#~ msgid "Portia"
+#~ msgstr "天卫十二"
+
+#~ msgid "Rosalind"
+#~ msgstr "天卫十三"
+
+#~ msgid "Belinda"
+#~ msgstr "天卫十四"
+
+#~ msgid "Puck"
+#~ msgstr "天卫十五"
+
+#, fuzzy
+#~ msgid "Mab"
+#~ msgstr "Tab"
+
+#~ msgid "Caliban"
+#~ msgstr "天卫十六"
+
+#~ msgid "Stephano"
+#~ msgstr "天卫二十"
+
+#~ msgid "Sycorax"
+#~ msgstr "天卫十七"
+
+#~ msgid "Prospero"
+#~ msgstr "天卫十八"
+
+#~ msgid "Setebos"
+#~ msgstr "天卫十九"
+
+#~ msgid "Naiad"
+#~ msgstr "海卫三"
+
+#~ msgid "Thalassa"
+#~ msgstr "海卫四"
+
+#~ msgid "Despina"
+#~ msgstr "海卫五"
+
+#~ msgid "Galatea"
+#~ msgstr "海卫六"
+
+#~ msgid "Larissa"
+#~ msgstr "海卫七"
+
+#, fuzzy
+#~ msgid "Halimede"
+#~ msgstr "木卫三"
+
+#, fuzzy
+#~ msgid "Sao"
+#~ msgstr "太阳"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "北美洲"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "南美洲"
+
+#~ msgid "EURASIA"
+#~ msgstr "欧亚大陆"
+
+#~ msgid "AFRICA"
+#~ msgstr "非洲"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "大洋洲"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "南极"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "北大西洋"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "南大西洋"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "北太平洋"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "南太平洋"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "印度洋"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "北冰洋"
+
+#~ msgid "Abu Dhabi"
+#~ msgstr "阿布扎比"
+
+#~ msgid "Abuja"
+#~ msgstr "阿布贾"
+
+#~ msgid "Accra"
+#~ msgstr "阿克拉"
+
+#~ msgid "Adamstown"
+#~ msgstr "亚当斯敦"
+
+#~ msgid "Addis Ababa"
+#~ msgstr "亚的斯亚贝巴"
+
+#~ msgid "Algiers"
+#~ msgstr "阿尔及尔"
+
+#~ msgid "Alofi"
+#~ msgstr "阿洛菲"
+
+#~ msgid "Amman"
+#~ msgstr "安曼"
+
+#~ msgid "Amsterdam"
+#~ msgstr "阿姆斯特丹"
+
+#~ msgid "Andorra la Vella"
+#~ msgstr "安道尔城"
+
+#~ msgid "Ankara"
+#~ msgstr "安卡拉"
+
+#~ msgid "Antananarivo"
+#~ msgstr "塔那那利佛"
+
+#~ msgid "Apia"
+#~ msgstr "阿皮亚"
+
+#~ msgid "Ashgabat"
+#~ msgstr "阿什哈巴德"
+
+#~ msgid "Asmara"
+#~ msgstr "阿斯马拉"
+
+#~ msgid "Asuncion"
+#~ msgstr "亚松森"
+
+#~ msgid "Athens"
+#~ msgstr "雅典"
+
+#~ msgid "Avarua"
+#~ msgstr "阿瓦鲁阿"
+
+#~ msgid "Baghdad"
+#~ msgstr "巴格达"
+
+#~ msgid "Baku"
+#~ msgstr "巴库"
+
+#~ msgid "Bamako"
+#~ msgstr "巴马科"
+
+#~ msgid "Bandar Seri Begawan"
+#~ msgstr "斯里巴加湾市"
+
+#~ msgid "Bangkok"
+#~ msgstr "曼谷"
+
+#~ msgid "Bangui"
+#~ msgstr "班吉"
+
+#~ msgid "Banjul"
+#~ msgstr "班珠尔"
+
+#~ msgid "Basse-Terre"
+#~ msgstr "巴斯特尔"
+
+#~ msgid "Basseterre"
+#~ msgstr "巴斯特尔"
+
+#~ msgid "Beijing"
+#~ msgstr "北京"
+
+#~ msgid "Beirut"
+#~ msgstr "贝鲁特"
+
+#~ msgid "Belgrade"
+#~ msgstr "贝尔格莱德"
+
+#~ msgid "Belmopan"
+#~ msgstr "贝尔莫潘"
+
+#~ msgid "Berlin"
+#~ msgstr "柏林"
+
+#~ msgid "Bern"
+#~ msgstr "伯尔尼"
+
+#~ msgid "Bishkek"
+#~ msgstr "比什凯克"
+
+#~ msgid "Bissau"
+#~ msgstr "比绍"
+
+#~ msgid "Bloemfontein"
+#~ msgstr "布隆方丹"
+
+#~ msgid "Bogota"
+#~ msgstr "波哥大"
+
+#~ msgid "Brasilia"
+#~ msgstr "巴西利亚"
+
+#~ msgid "Bratislava"
+#~ msgstr "布拉迪斯拉发"
+
+#~ msgid "Brazzaville"
+#~ msgstr "布拉柴维尔"
+
+#~ msgid "Bridgetown"
+#~ msgstr "布里奇敦"
+
+#~ msgid "Brussels"
+#~ msgstr "布鲁塞尔"
+
+#~ msgid "Bucharest"
+#~ msgstr "布加勒斯特"
+
+#~ msgid "Budapest"
+#~ msgstr "布达佩斯"
+
+#~ msgid "Buenos Aires"
+#~ msgstr "布宜诺斯艾利斯"
+
+#~ msgid "Bujumbura"
+#~ msgstr "布琼布拉"
+
+#~ msgid "Cairo"
+#~ msgstr "开罗"
+
+#~ msgid "Canberra"
+#~ msgstr "堪培拉"
+
+#~ msgid "Cape Town"
+#~ msgstr "开普敦"
+
+#~ msgid "Caracas"
+#~ msgstr "加拉加斯"
+
+#~ msgid "Castries"
+#~ msgstr "卡斯特里"
+
+#~ msgid "Cayenne"
+#~ msgstr "卡宴"
+
+#~ msgid "Charlotte Amalie"
+#~ msgstr "夏洛特·阿马里"
+
+#~ msgid "Chisinau"
+#~ msgstr "基希讷乌"
+
+#~ msgid "Colombo"
+#~ msgstr "科伦坡"
+
+#~ msgid "Conakry"
+#~ msgstr "科纳克里"
+
+#~ msgid "Copenhagen"
+#~ msgstr "哥本哈根"
+
+#~ msgid "Cotonou"
+#~ msgstr "科托努"
+
+#~ msgid "Dakar"
+#~ msgstr "达喀尔"
+
+#~ msgid "Damascus"
+#~ msgstr "大马士革"
+
+#~ msgid "Dar es Salaam"
+#~ msgstr "达累斯萨拉姆"
+
+#~ msgid "Dhaka"
+#~ msgstr "达卡"
+
+#~ msgid "Dili"
+#~ msgstr "帝力"
+
+#~ msgid "Djibouti"
+#~ msgstr "吉布提"
+
+#~ msgid "Doha"
+#~ msgstr "多哈"
+
+#~ msgid "Douglas"
+#~ msgstr "道格拉斯"
+
+#~ msgid "Dublin"
+#~ msgstr "都柏林"
+
+#~ msgid "Dushanbe"
+#~ msgstr "杜尚别"
+
+#~ msgid "Fongafale"
+#~ msgstr "丰迦法利"
+
+#~ msgid "Fort-de-France"
+#~ msgstr "法兰西堡"
+
+#~ msgid "Freetown"
+#~ msgstr "弗里敦"
+
+#~ msgid "Gaborone"
+#~ msgstr "哈博罗内"
+
+#~ msgid "George Town"
+#~ msgstr "乔治敦"
+
+#~ msgid "Georgetown"
+#~ msgstr "乔治敦"
+
+#~ msgid "Gibraltar"
+#~ msgstr "直布罗陀"
+
+#~ msgid "Grand Turk"
+#~ msgstr "科克本城"
+
+#~ msgid "Guatemala"
+#~ msgstr "危地马拉城"
+
+#~ msgid "Hagatna"
+#~ msgstr "阿加尼亚"
+
+#~ msgid "The Hague"
+#~ msgstr "海牙"
+
+#~ msgid "Hamilton"
+#~ msgstr "哈密尔顿"
+
+#~ msgid "Hanoi"
+#~ msgstr "河内"
+
+#~ msgid "Harare"
+#~ msgstr "哈拉雷"
+
+#~ msgid "Havana"
+#~ msgstr "哈瓦那"
+
+#~ msgid "Helsinki"
+#~ msgstr "赫尔辛基"
+
+#~ msgid "Honiara"
+#~ msgstr "霍尼亚拉"
+
+#~ msgid "Islamabad"
+#~ msgstr "伊斯兰堡"
+
+#~ msgid "Jakarta"
+#~ msgstr "雅加达"
+
+#~ msgid "Jamestown"
+#~ msgstr "詹姆斯敦"
+
+#~ msgid "Jerusalem"
+#~ msgstr "耶路撒冷"
+
+#~ msgid "Kabul"
+#~ msgstr "喀布尔"
+
+#~ msgid "Kampala"
+#~ msgstr "坎帕拉"
+
+#~ msgid "Kathmandu"
+#~ msgstr "加德满都"
+
+#~ msgid "Khartoum"
+#~ msgstr "喀士穆"
+
+#~ msgid "Kiev"
+#~ msgstr "基辅"
+
+#~ msgid "Kigali"
+#~ msgstr "基加利"
+
+#~ msgid "Kingston"
+#~ msgstr "金斯敦"
+
+#~ msgid "Kingstown"
+#~ msgstr "金斯敦"
+
+#~ msgid "Kinshasa"
+#~ msgstr "金沙萨"
+
+#~ msgid "Koror"
+#~ msgstr "科罗尔"
+
+#~ msgid "Kuala Lumpur"
+#~ msgstr "吉隆坡"
+
+#~ msgid "Kuwait"
+#~ msgstr "科威特城"
+
+#~ msgid "La'youn"
+#~ msgstr "阿尤恩"
+
+#~ msgid "La Paz"
+#~ msgstr "拉巴斯"
+
+#~ msgid "Libreville"
+#~ msgstr "利伯维尔"
+
+#~ msgid "Lilongwe"
+#~ msgstr "利隆圭"
+
+#~ msgid "Lima"
+#~ msgstr "利马"
+
+#~ msgid "Lisbon"
+#~ msgstr "里斯本"
+
+#~ msgid "Ljubljana"
+#~ msgstr "卢布尔雅那"
+
+#~ msgid "Lobamba"
+#~ msgstr "洛班巴"
+
+#~ msgid "Lome"
+#~ msgstr "洛美"
+
+#~ msgid "London"
+#~ msgstr "伦敦"
+
+#~ msgid "Longyearbyen"
+#~ msgstr "朗伊尔城"
+
+#~ msgid "Luanda"
+#~ msgstr "罗安达"
+
+#~ msgid "Lusaka"
+#~ msgstr "卢萨卡"
+
+#~ msgid "Luxembourg"
+#~ msgstr "卢森堡"
+
+#~ msgid "Madrid"
+#~ msgstr "马德里"
+
+#~ msgid "Majuro"
+#~ msgstr "马朱罗"
+
+#~ msgid "Malabo"
+#~ msgstr "马拉博"
+
+#~ msgid "Male"
+#~ msgstr "马累"
+
+#~ msgid "Mamoutzou"
+#~ msgstr "马穆楚"
+
+#~ msgid "Managua"
+#~ msgstr "马那瓜"
+
+#~ msgid "Manama"
+#~ msgstr "麦纳麦"
+
+#~ msgid "Manila"
+#~ msgstr "马尼拉"
+
+#~ msgid "Maputo"
+#~ msgstr "马普托"
+
+#~ msgid "Maseru"
+#~ msgstr "马塞卢"
+
+#~ msgid "Mata-Utu"
+#~ msgstr "马塔乌图"
+
+#~ msgid "Mbabane"
+#~ msgstr "姆巴巴内"
+
+#~ msgid "Mexico City"
+#~ msgstr "墨西哥城"
+
+#~ msgid "Minsk"
+#~ msgstr "明斯克"
+
+#~ msgid "Mogadishu"
+#~ msgstr "摩加迪沙"
+
+#~ msgid "Monaco"
+#~ msgstr "摩纳哥城"
+
+#~ msgid "Monrovia"
+#~ msgstr "蒙罗维亚"
+
+#~ msgid "Montevideo"
+#~ msgstr "蒙得维的亚"
+
+#~ msgid "Moroni"
+#~ msgstr "莫罗尼"
+
+#~ msgid "Moscow"
+#~ msgstr "莫斯科"
+
+#~ msgid "Muscat"
+#~ msgstr "马斯喀特"
+
+#~ msgid "Nairobi"
+#~ msgstr "内罗毕"
+
+#~ msgid "Nassau"
+#~ msgstr "拿骚"
+
+#~ msgid "N'Djamena"
+#~ msgstr "恩贾梅纳"
+
+#~ msgid "New Delhi"
+#~ msgstr "新德里"
+
+#~ msgid "Niamey"
+#~ msgstr "尼亚美"
+
+#~ msgid "Nicosia"
+#~ msgstr "尼科西亚"
+
+#~ msgid "Nouakchott"
+#~ msgstr "努瓦克肖特"
+
+#~ msgid "Noumea"
+#~ msgstr "努美阿"
+
+#~ msgid "Nuku'alofa"
+#~ msgstr "努库阿洛法"
+
+#~ msgid "Nuuk"
+#~ msgstr "努克"
+
+#~ msgid "Oranjestad"
+#~ msgstr "奥拉涅斯塔德"
+
+#~ msgid "Oslo"
+#~ msgstr "奥斯陆"
+
+#~ msgid "Ottawa"
+#~ msgstr "渥太华"
+
+#~ msgid "Ouagadougou"
+#~ msgstr "瓦加杜古"
+
+#~ msgid "Pago Pago"
+#~ msgstr "帕果帕果"
+
+#~ msgid "Palikir"
+#~ msgstr "帕利基尔"
+
+#~ msgid "Panama"
+#~ msgstr "巴拿马城"
+
+#~ msgid "Papeete"
+#~ msgstr "帕皮提"
+
+#~ msgid "Paramaribo"
+#~ msgstr "帕拉马里博"
+
+#~ msgid "Paris"
+#~ msgstr "巴黎"
+
+#~ msgid "Phnom Penh"
+#~ msgstr "金边"
+
+#~ msgid "Plymouth"
+#~ msgstr "普利茅斯"
+
+#~ msgid "Port Louis"
+#~ msgstr "路易港"
+
+#~ msgid "Port Moresby"
+#~ msgstr "莫尔兹比港"
+
+#~ msgid "Port-au-Prince"
+#~ msgstr "太子港"
+
+#~ msgid "Port-of-Spain"
+#~ msgstr "西班牙港"
+
+#~ msgid "Porto-Novo"
+#~ msgstr "波多诺伏"
+
+#~ msgid "Port-Vila"
+#~ msgstr "维拉港"
+
+#~ msgid "Prague"
+#~ msgstr "布拉格"
+
+#~ msgid "Praia"
+#~ msgstr "普拉亚"
+
+#~ msgid "Pretoria"
+#~ msgstr "比勒陀利亚"
+
+#~ msgid "P'yongyang"
+#~ msgstr "平壤"
+
+#~ msgid "Quito"
+#~ msgstr "基多"
+
+#~ msgid "Rabat"
+#~ msgstr "拉巴特"
+
+#~ msgid "Rangoon"
+#~ msgstr "仰光"
+
+#~ msgid "Reykjavik"
+#~ msgstr "雷克雅未克"
+
+#~ msgid "Riga"
+#~ msgstr "里加"
+
+#~ msgid "Riyadh"
+#~ msgstr "利雅得"
+
+#~ msgid "Road Town"
+#~ msgstr "罗德城"
+
+#~ msgid "Rome"
+#~ msgstr "罗马"
+
+#~ msgid "Roseau"
+#~ msgstr "罗索"
+
+#~ msgid "Saint George's"
+#~ msgstr "圣乔治"
+
+#~ msgid "Saint Helier"
+#~ msgstr "圣赫利尔"
+
+#~ msgid "Saint John's"
+#~ msgstr "圣约翰"
+
+#~ msgid "Saint Peter Port"
+#~ msgstr "圣彼得港"
+
+#~ msgid "Saint-Denis"
+#~ msgstr "圣但尼"
+
+#~ msgid "Saint-Pierre"
+#~ msgstr "圣皮埃尔"
+
+#~ msgid "Saipan"
+#~ msgstr "塞班"
+
+#~ msgid "San Jose"
+#~ msgstr "圣何塞"
+
+#~ msgid "San Juan"
+#~ msgstr "圣胡安"
+
+#~ msgid "San Marino"
+#~ msgstr "圣马力诺"
+
+#~ msgid "San Salvador"
+#~ msgstr "圣萨尔瓦多"
+
+#~ msgid "Sanaa"
+#~ msgstr "萨那"
+
+#~ msgid "Santiago"
+#~ msgstr "圣地亚哥"
+
+#~ msgid "Santo Domingo"
+#~ msgstr "圣多明各"
+
+#~ msgid "Sao Tome"
+#~ msgstr "圣多美"
+
+#~ msgid "Sarajevo"
+#~ msgstr "萨拉热窝"
+
+#~ msgid "Seoul"
+#~ msgstr "首尔"
+
+#~ msgid "The Settlement"
+#~ msgstr "新村"
+
+#~ msgid "Singapore"
+#~ msgstr "新加坡"
+
+#~ msgid "Skopje"
+#~ msgstr "斯科普里"
+
+#~ msgid "Sofia"
+#~ msgstr "索菲亚"
+
+#~ msgid "Sri Jayewardenepura Kotte"
+#~ msgstr "斯里贾亚瓦德纳普拉科特"
+
+#~ msgid "Stanley"
+#~ msgstr "斯坦利"
+
+#~ msgid "Stockholm"
+#~ msgstr "斯德哥尔摩"
+
+#~ msgid "Sucre"
+#~ msgstr "苏克雷"
+
+#~ msgid "Suva"
+#~ msgstr "苏瓦"
+
+#~ msgid "Taipei"
+#~ msgstr "台北"
+
+#~ msgid "Tallinn"
+#~ msgstr "塔林"
+
+#~ msgid "Tarawa"
+#~ msgstr "塔拉瓦"
+
+#~ msgid "Tashkent"
+#~ msgstr "塔什干"
+
+#~ msgid "T'bilisi"
+#~ msgstr "第比利斯"
+
+#~ msgid "Tegucigalpa"
+#~ msgstr "特古西加尔巴"
+
+#~ msgid "Tehran"
+#~ msgstr "德黑兰"
+
+#~ msgid "Tel Aviv"
+#~ msgstr "特拉维夫市"
+
+#~ msgid "Thimphu"
+#~ msgstr "廷布"
+
+#~ msgid "Tirana"
+#~ msgstr "地拉那"
+
+#~ msgid "Tokyo"
+#~ msgstr "东京"
+
+#~ msgid "Torshavn"
+#~ msgstr "托尔斯港"
+
+#~ msgid "Tripoli"
+#~ msgstr "的黎波里"
+
+#~ msgid "Tunis"
+#~ msgstr "突尼斯"
+
+#~ msgid "Ulaanbaatar"
+#~ msgstr "乌兰巴托"
+
+#~ msgid "Vaduz"
+#~ msgstr "瓦杜兹"
+
+#~ msgid "Valletta"
+#~ msgstr "瓦莱塔"
+
+#~ msgid "The Valley"
+#~ msgstr "瓦利"
+
+#~ msgid "Vatican City"
+#~ msgstr "梵蒂冈"
+
+#~ msgid "Victoria"
+#~ msgstr "维多利亚"
+
+#~ msgid "Vienna"
+#~ msgstr "维也纳"
+
+#~ msgid "Vientiane"
+#~ msgstr "万象"
+
+#~ msgid "Vilnius"
+#~ msgstr "维尔纽斯"
+
+#~ msgid "Warsaw"
+#~ msgstr "华沙"
+
+#~ msgid "Washington D.C."
+#~ msgstr "华盛顿"
+
+#~ msgid "Wellington"
+#~ msgstr "威灵顿"
+
+#~ msgid "West Island"
+#~ msgstr "西岛"
+
+#~ msgid "Willemstad"
+#~ msgstr "威廉斯塔德"
+
+#~ msgid "Windhoek"
+#~ msgstr "温得和克"
+
+#~ msgid "Yamoussoukro"
+#~ msgstr "亚穆苏克罗"
+
+#~ msgid "Yaounde"
+#~ msgstr "雅温得"
+
+#~ msgid "Yaren District"
+#~ msgstr "亚伦区"
+
+#~ msgid "Yerevan"
+#~ msgstr "埃里温"
+
+#~ msgid "Zagreb"
+#~ msgstr "萨格勒布"
+
+#~ msgid "Sol"
+#~ msgstr "太阳"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "太阳系质心"
+
+#~ msgid "Alpheratz"
+#~ msgstr "壁宿二 Alpheratz"
+
+#~ msgid "Sirrah"
+#~ msgstr "Sirrah"
+
+#~ msgid "Caph"
+#~ msgstr "王良一 Caph"
+
+#~ msgid "Algenib"
+#~ msgstr "壁宿一 Algenib"
+
+#~ msgid "Schemali"
+#~ msgstr "Schemali"
+
+#~ msgid "Ankaa"
+#~ msgstr "火鸟六 Ankaa"
+
+#~ msgid "Schedar"
+#~ msgstr "王良四 Mesartim"
+
+#~ msgid "Shedir"
+#~ msgstr "Shedir"
+
+#~ msgid "Diphda"
+#~ msgstr "土司空 Diphda"
+
+#~ msgid "Deneb Kaitos"
+#~ msgstr "Deneb Kaitos"
+
+#~ msgid "Achird"
+#~ msgstr "王良三 Ksora"
+
+#~ msgid "Van Maanen 2"
+#~ msgstr "范马南2"
+
+#, fuzzy
+#~ msgid "Castula"
+#~ msgstr "北河二 Castor"
+
+#~ msgid "Navi"
+#~ msgstr "策 Navi"
+
+#~ msgid "Mirach"
+#~ msgstr "奎宿九 Mirach"
+
+#~ msgid "Adhil"
+#~ msgstr "奎宿七 Adhil"
+
+#~ msgid "Ruchbah"
+#~ msgstr "阁道三 Ruchbah"
+
+#, fuzzy
+#~ msgid "Alpherg"
+#~ msgstr "壁宿二 Alpheratz"
+
+#, fuzzy
+#~ msgid "Titawin"
+#~ msgstr "土卫六"
+
+#~ msgid "Achernar"
+#~ msgstr "水委一 Achernar"
+
+#~ msgid "Baten Kaitos"
+#~ msgstr "天仓四 Baten Kaitos"
+
+#~ msgid "Caput Trianguli"
+#~ msgstr "Caput Trianguli"
+
+#~ msgid "Mesarthim"
+#~ msgstr "娄宿二 Mesarthim"
+
+#~ msgid "Segin"
+#~ msgstr "阁道二 Segin"
+
+#~ msgid "Sheratan"
+#~ msgstr "娄宿一 Sheratan"
+
+#, fuzzy
+#~ msgid "Alrescha"
+#~ msgstr "Al Rescha"
+
+#~ msgid "Al Rescha"
+#~ msgstr "Al Rescha"
+
+#~ msgid "Almach"
+#~ msgstr "天大将军一 Almach"
+
+#~ msgid "Almaak"
+#~ msgstr "Almaak"
+
+#~ msgid "Alamak"
+#~ msgstr "Alamak"
+
+#~ msgid "Hamal"
+#~ msgstr "娄宿三Hamal"
+
+#~ msgid "Mira"
+#~ msgstr "刍藁增二 Mira"
+
+#~ msgid "Polaris"
+#~ msgstr "勾陈一  Polaris"
+
+#, fuzzy
+#~ msgid "Bharani"
+#~ msgstr "常陈四 Chara"
+
+#, fuzzy
+#~ msgid "Miram"
+#~ msgstr "刍藁增二 Mira"
+
+#~ msgid "Angetenar"
+#~ msgstr "天苑九 Angetenar"
+
+#~ msgid "Azha"
+#~ msgstr "天苑六 Azha"
+
+#~ msgid "Acamar"
+#~ msgstr "天园六 Acamar"
+
+#~ msgid "Menkar"
+#~ msgstr "天囷一 Menkar"
+
+#~ msgid "Menkab"
+#~ msgstr "天囷三 Menkab"
+
+#~ msgid "Algol"
+#~ msgstr "大陵五 Algol"
+
+#~ msgid "Botein"
+#~ msgstr "天阴四 Botein"
+
+#~ msgid "Mirfak"
+#~ msgstr "天船三 Mirfak"
+
+#~ msgid "Mirphak"
+#~ msgstr "天船三 Mirphak"
+
+#~ msgid "Marfak"
+#~ msgstr "Marfak"
+
+#, fuzzy
+#~ msgid "Ran"
+#~ msgstr "天苑三 Rana"
+
+#~ msgid "Rana"
+#~ msgstr "天苑三 Rana"
+
+#~ msgid "Atik"
+#~ msgstr "卷舌增七 Atik"
+
+#~ msgid "Celaeno"
+#~ msgstr "昴宿增六 Celaeno"
+
+#~ msgid "Electra"
+#~ msgstr "昴宿一 Electra"
+
+#~ msgid "Taygeta"
+#~ msgstr "昴宿二 Taygeta"
+
+#~ msgid "Maia"
+#~ msgstr "昴宿四 Maia"
+
+#~ msgid "Asterope"
+#~ msgstr "昴宿三 Asterope"
+
+#~ msgid "Merope"
+#~ msgstr "昴宿五 Merope"
+
+#~ msgid "Alcyone"
+#~ msgstr "昴宿六 Alcyone"
+
+#~ msgid "Pleione"
+#~ msgstr "昴宿增十二 Pleione"
+
+#~ msgid "Zaurak"
+#~ msgstr "天苑一 Zaurak"
+
+#~ msgid "Menkib"
+#~ msgstr "卷舌三 Menkib"
+
+#~ msgid "Beid"
+#~ msgstr "九洲殊口二 Beid"
+
+#~ msgid "Keid"
+#~ msgstr "九洲殊口增七 Keid"
+
+#~ msgid "Ain"
+#~ msgstr "毕宿一 Ain"
+
+#~ msgid "Aldebaran"
+#~ msgstr "毕宿五 Aldebaran"
+
+#, fuzzy
+#~ msgid "Tabit"
+#~ msgstr "参宿增卅六 Thabit"
+
+#~ msgid "Hind's Crimson Star"
+#~ msgstr "欣德深红星 Hind's Crimson Star"
+
+#, fuzzy
+#~ msgid "Almaaz"
+#~ msgstr "Almaak"
+
+#, fuzzy
+#~ msgid "Saclateni"
+#~ msgstr "海卫六"
+
+#~ msgid "Sadatoni"
+#~ msgstr "Sadatoni"
+
+#~ msgid "Cursa"
+#~ msgstr "玉井三 Cursa"
+
+#~ msgid "Kapteyn's Star"
+#~ msgstr "卡普坦星 Kapteyn's Star"
+
+#~ msgid "Rigel"
+#~ msgstr "参宿七 Rigel"
+
+#~ msgid "Capella"
+#~ msgstr "五车二 Capella"
+
+#~ msgid "Bellatrix"
+#~ msgstr "参宿五 Bellatrix"
+
+#~ msgid "Elnath"
+#~ msgstr "五车五 Elnath"
+
+#~ msgid "Alnath"
+#~ msgstr "五车五 Alnath"
+
+#~ msgid "Nihal"
+#~ msgstr "厕二 Nihal"
+
+#~ msgid "Thabit"
+#~ msgstr "参宿增卅六 Thabit"
+
+#~ msgid "Mintaka"
+#~ msgstr "参宿三 Mintaka"
+
+#~ msgid "Arneb"
+#~ msgstr "厕一 Arneb"
+
+#~ msgid "Meissa"
+#~ msgstr "觜宿一 Meissa"
+
+#~ msgid "Heka"
+#~ msgstr "Heka"
+
+#~ msgid "Alnilam"
+#~ msgstr "参宿二 Alnilam"
+
+#, fuzzy
+#~ msgid "Tianguan"
+#~ msgstr "三角形"
+
+#~ msgid "Phact"
+#~ msgstr "丈人一 Phact"
+
+#~ msgid "Alnitak"
+#~ msgstr "参宿一 Alnitak"
+
+#~ msgid "Saiph"
+#~ msgstr "参宿六 Saiph"
+
+#~ msgid "Wazn"
+#~ msgstr "子二 Wazn"
+
+#~ msgid "Betelgeuse"
+#~ msgstr "参宿四 Betelgeuse"
+
+#~ msgid "Prijipati"
+#~ msgstr "Prijipati"
+
+#~ msgid "Menkalinan"
+#~ msgstr "五车三 Menkalinan"
+
+#, fuzzy
+#~ msgid "Elkurud"
+#~ msgstr "孙增一 Furud"
+
+#, fuzzy
+#~ msgid "Propus"
+#~ msgstr "老人 Canopus"
+
+#~ msgid "Red Rectangle"
+#~ msgstr "红矩形星 Red Rectangle"
+
+#~ msgid "Furud"
+#~ msgstr "孙增一 Furud"
+
+#~ msgid "Mirzam"
+#~ msgstr "军市一 Mirzam"
+
+#~ msgid "Murzim"
+#~ msgstr "Murzim"
+
+#~ msgid "Tejat"
+#~ msgstr "井宿一 Tejat"
+
+#~ msgid "Canopus"
+#~ msgstr "老人 Canopus"
+
+#~ msgid "Suhel"
+#~ msgstr "Suhel"
+
+#, fuzzy
+#~ msgid "Plaskett's Star"
+#~ msgstr "最近的恒星"
+
+#~ msgid "Alhena"
+#~ msgstr "井宿三 Alhena"
+
+#~ msgid "Almeisan"
+#~ msgstr "Almeisan"
+
+#~ msgid "Mebsuta"
+#~ msgstr "井宿五 Mebsuta"
+
+#~ msgid "Sirius"
+#~ msgstr "天狼 Sirius"
+
+#~ msgid "Adhara"
+#~ msgstr "弧矢七 Adhara"
+
+#~ msgid "Adara"
+#~ msgstr "Adara"
+
+#~ msgid "Muliphein"
+#~ msgstr "天狼增四 Muliphein"
+
+#~ msgid "Mekbuda"
+#~ msgstr "井宿七 Mekbuda"
+
+#~ msgid "Wezen"
+#~ msgstr "弧矢一 Wezen"
+
+#~ msgid "Bernes 135"
+#~ msgstr "别尔涅斯135 Bernes 135"
+
+#~ msgid "Wasat"
+#~ msgstr "天樽二 Wasat"
+
+#~ msgid "Aludra"
+#~ msgstr "弧矢二 Aludra"
+
+#~ msgid "Gomeisa"
+#~ msgstr "南河二 Gomeisa"
+
+#~ msgid "Luyten's Star"
+#~ msgstr "鲁坦星 Luyten's Star"
+
+#~ msgid "Castor"
+#~ msgstr "北河二 Castor"
+
+#~ msgid "Procyon"
+#~ msgstr "南河三 Procyon"
+
+#~ msgid "Elgomaisa"
+#~ msgstr "Elgomaisa"
+
+#~ msgid "Pollux"
+#~ msgstr "北河三 Pollux"
+
+#, fuzzy
+#~ msgid "Azmidi"
+#~ msgstr "Asmidiske"
+
+#~ msgid "Asmidiske"
+#~ msgstr "Asmidiske"
+
+#~ msgid "Naos"
+#~ msgstr "弧矢增廿二 Naos"
+
+#~ msgid "Regor"
+#~ msgstr "天社一 Regor"
+
+#~ msgid "Tegmine"
+#~ msgstr "水位四 Tegmine"
+
+#, fuzzy
+#~ msgid "Tarf"
+#~ msgstr "Al Tarf"
+
+#~ msgid "Al Tarf"
+#~ msgstr "Al Tarf"
+
+#~ msgid "Avior"
+#~ msgstr "海石一 Avior"
+
+#~ msgid "Muscida"
+#~ msgstr "内阶一 Muscida"
+
+#, fuzzy
+#~ msgid "Minchir"
+#~ msgstr "王良三 Ksora"
+
+#~ msgid "Asellus Borealis"
+#~ msgstr "鬼宿三  Asellus Borealis"
+
+#~ msgid "Asellus Australis"
+#~ msgstr "鬼宿四 Asellus Australis"
+
+#~ msgid "Acubens"
+#~ msgstr "柳宿增三 Acubens"
+
+#~ msgid "Dnoces"
+#~ msgstr "Dnoces"
+
+#~ msgid "Talitha Australis"
+#~ msgstr "Talitha Australis"
+
+#~ msgid "Suhail"
+#~ msgstr "天纪 Suhail"
+
+#~ msgid "Miaplacidus"
+#~ msgstr "南船五 Miaplacidus"
+
+#~ msgid "Aspidiske"
+#~ msgstr "海石二 Aspidiske"
+
+#, fuzzy
+#~ msgid "Markeb"
+#~ msgstr "室宿一 Markab"
+
+#~ msgid "Alphard"
+#~ msgstr "星宿一 Alphard"
+
+#~ msgid "Cor Hydrae"
+#~ msgstr "Cor Hydrae"
+
+#~ msgid "Alterf"
+#~ msgstr "轩辕八 Alterf"
+
+#~ msgid "Ukdah"
+#~ msgstr "星宿四 Ukdah"
+
+#~ msgid "Subra"
+#~ msgstr "轩辕十五 Subra"
+
+#~ msgid "Ras Elased Australis"
+#~ msgstr "Ras Elased Australis"
+
+#~ msgid "Rasalas"
+#~ msgstr "轩辕十 Rasalas"
+
+#~ msgid "Ras Elased Borealis"
+#~ msgstr "Ras Elased Borealis"
+
+#~ msgid "Regulus"
+#~ msgstr "轩辕十四 Regulus"
+
+#~ msgid "Kabeleced"
+#~ msgstr "Kabeleced"
+
+#~ msgid "Cor Leonis"
+#~ msgstr "Cor Leonis"
+
+#~ msgid "Adhafera"
+#~ msgstr "轩辕十一 Adhafera"
+
+#~ msgid "Aldhafera"
+#~ msgstr "Aldhafera"
+
+#~ msgid "Tania Borealis"
+#~ msgstr "中台一 Tania Borealis"
+
+#~ msgid "Algieba"
+#~ msgstr "轩辕十二 Algieba"
+
+#~ msgid "Tania Australis"
+#~ msgstr "中台二 Tania Australis"
+
+#, fuzzy
+#~ msgid "Macondo"
+#~ msgstr "伦敦"
+
+#, fuzzy
+#~ msgid "Chalawan"
+#~ msgstr "木卫二十一"
+
+#~ msgid "Alkes"
+#~ msgstr "翼宿一 Alkes"
+
+#~ msgid "Merak"
+#~ msgstr "天璇 Merak"
+
+#~ msgid "Lalande 21185"
+#~ msgstr "拉兰德21185 Lalande 21185"
+
+#~ msgid "Dubhe"
+#~ msgstr "天枢 Dubhe"
+
+#~ msgid "Dubb"
+#~ msgstr "Dubb"
+
+#~ msgid "Zosma"
+#~ msgstr "西上相 Zosma"
+
+#~ msgid "Duhr"
+#~ msgstr "Duhr"
+
+#~ msgid "Chertan"
+#~ msgstr "西次相 Chertan"
+
+#~ msgid "Coxa"
+#~ msgstr "Coxa"
+
+#~ msgid "Chort"
+#~ msgstr "Chort"
+
+#~ msgid "Alula Australis"
+#~ msgstr "下台二 Alula Australis"
+
+#~ msgid "Alula Borealis"
+#~ msgstr "下台一 Alula Borealis"
+
+#~ msgid "Tsze Tseang"
+#~ msgstr "Tsze Tseang"
+
+#, fuzzy
+#~ msgid "Shama"
+#~ msgstr "左旗一 Sham"
+
+#~ msgid "Giausar"
+#~ msgstr "上辅 Giausar"
+
+#, fuzzy
+#~ msgid "Formosa"
+#~ msgstr "格式："
+
+#, fuzzy
+#~ msgid "Flegetonte"
+#~ msgstr "乔治敦"
+
+#~ msgid "Denebola"
+#~ msgstr "五帝座一 Denebola"
+
+#~ msgid "Zavijava"
+#~ msgstr "右执法 Zavijava"
+
+#~ msgid "Alaraph"
+#~ msgstr "Alaraph"
+
+#, fuzzy
+#~ msgid "Aniara"
+#~ msgstr "霍尼亚拉"
+
+#~ msgid "Groombridge 1830"
+#~ msgstr "葛罗姆布里吉1830"
+
+#~ msgid "Phecda"
+#~ msgstr "天玑 Phecda"
+
+#~ msgid "Phad"
+#~ msgstr "Phad"
+
+#~ msgid "Alchiba"
+#~ msgstr "右辖 Alchiba"
+
+#~ msgid "Megrez"
+#~ msgstr "天权 Megrez"
+
+#~ msgid "Gienah"
+#~ msgstr "轸宿一 Gienah"
+
+#~ msgid "Zaniah"
+#~ msgstr "左执法 Zaniah"
+
+#~ msgid "Acrux"
+#~ msgstr "十字架二 Acrux"
+
+#~ msgid "Algorab"
+#~ msgstr "轸宿三 Algorab"
+
+#~ msgid "Gacrux"
+#~ msgstr "十字架一 Gacrux"
+
+#~ msgid "Chara"
+#~ msgstr "常陈四 Chara"
+
+#~ msgid "Kraz"
+#~ msgstr "轸宿四 Kraz"
+
+#~ msgid "Muhlifain"
+#~ msgstr "库楼七"
+
+#~ msgid "Porrima"
+#~ msgstr "太微左垣二 东上相 Porrima"
+
+#~ msgid "Mimosa"
+#~ msgstr "十字架三 Mimosa"
+
+#~ msgid "Alioth"
+#~ msgstr "玉衡 Alioth"
+
+#~ msgid "Minelauva"
+#~ msgstr "太微左垣三 东次相 Minelauva"
+
+#~ msgid "Auva"
+#~ msgstr "Auva"
+
+#~ msgid "Cor Caroli"
+#~ msgstr "常陈一 Cor Caroli"
+
+#~ msgid "Vindemiatrix"
+#~ msgstr "太微左垣四 东次将 Vindemiatrix"
+
+#~ msgid "Almuredin"
+#~ msgstr "Almuredin"
+
+#~ msgid "Mizar"
+#~ msgstr "开阳 Mizar"
+
+#~ msgid "Spica"
+#~ msgstr "角宿一 Spica"
+
+#~ msgid "Azimech"
+#~ msgstr "Azimech"
+
+#~ msgid "Alcor"
+#~ msgstr "辅 Alcor"
+
+#~ msgid "Heze"
+#~ msgstr "角宿二 Heze"
+
+#~ msgid "Alkaid"
+#~ msgstr "摇光 Alkaid"
+
+#~ msgid "Benetnasch"
+#~ msgstr "Benetnasch"
+
+#~ msgid "Muphrid"
+#~ msgstr "右摄提一 Muphrid"
+
+#~ msgid "Hadar"
+#~ msgstr "马腹一 Hadar"
+
+#~ msgid "Agena"
+#~ msgstr "Agena"
+
+#~ msgid "Thuban"
+#~ msgstr "右枢 Thuban"
+
+#~ msgid "Menkent"
+#~ msgstr "库楼三 Menkent"
+
+#~ msgid "Arcturus"
+#~ msgstr "大角 Arcturus"
+
+#~ msgid "Syrma"
+#~ msgstr "亢宿二 Syrma"
+
+#~ msgid "Proxima"
+#~ msgstr "比邻星 Proxima"
+
+#~ msgid "Seginus"
+#~ msgstr "招搖 Seginus"
+
+#~ msgid "Ceginus"
+#~ msgstr "Ceginus"
+
+#~ msgid "Izar"
+#~ msgstr "梗河一 Izar"
+
+#~ msgid "Mirak"
+#~ msgstr "Mirak"
+
+#~ msgid "Pulcherrima"
+#~ msgstr "Pulcherrima"
+
+#~ msgid "Kochab"
+#~ msgstr "北极二 帝 Kochab"
+
+#~ msgid "Kocab"
+#~ msgstr "帝(北极二) Kocab"
+
+#~ msgid "Zubenelgenubi"
+#~ msgstr "Zubenelgenubi"
+
+#~ msgid "Zuben Elakribi"
+#~ msgstr "氐宿增一 Zuben Elakribi"
+
+#~ msgid "Nekkar"
+#~ msgstr "七公增五 Nekkar"
+
+#~ msgid "Zubeneschamali"
+#~ msgstr "氐宿四 Zubeneschamali"
+
+#, fuzzy
+#~ msgid "Pherkad Minor"
+#~ msgstr "太子Pherkad"
+
+#~ msgid "Pherkad"
+#~ msgstr "太子Pherkad"
+
+#~ msgid "Alkalurops"
+#~ msgstr "七公六 Alkalurops"
+
+#~ msgid "Edasich"
+#~ msgstr "左枢 Edasich"
+
+#~ msgid "Nusakan"
+#~ msgstr "贯索三 Nusakan"
+
+#~ msgid "Alphecca"
+#~ msgstr "贯索四 Alphecca"
+
+#~ msgid "Gemma"
+#~ msgstr "Gemma"
+
+#, fuzzy
+#~ msgid "Zubenelhakrabi"
+#~ msgstr "Zuben Elakrab"
+
+#~ msgid "Zuben Elakrab"
+#~ msgstr "Zuben Elakrab"
+
+#~ msgid "Unukalhai"
+#~ msgstr "天市右垣七 蜀 Unukalhai"
+
+#~ msgid "Chow"
+#~ msgstr "Chow"
+
+#~ msgid "Dschubba"
+#~ msgstr "房宿三 Dschubba"
+
+#~ msgid "Graffias"
+#~ msgstr "Graffias"
+
+#~ msgid "Akrab"
+#~ msgstr "Akrab"
+
+#, fuzzy
+#~ msgid "Marsic"
+#~ msgstr "火星"
+
+#~ msgid "Jabbah"
+#~ msgstr "建闭 Jabbah"
+
+#, fuzzy
+#~ msgid "Alniyat"
+#~ msgstr "Al Niyat"
+
+#~ msgid "Al Niyat"
+#~ msgstr "Al Niyat"
+
+#, fuzzy
+#~ msgid "Athebyne"
+#~ msgstr "雅典"
+
+#~ msgid "Cujam"
+#~ msgstr "斗一 Cujam"
+
+#~ msgid "Antares"
+#~ msgstr "心宿二 Antares"
+
+#~ msgid "Kornephoros"
+#~ msgstr "天市右垣一 河中 Kornephoros"
+
+#~ msgid "Marfik"
+#~ msgstr "列肆二 Marfik"
+
+#~ msgid "Atria"
+#~ msgstr "三角形三 Atria"
+
+#, fuzzy
+#~ msgid "Larawag"
+#~ msgstr "塔拉瓦"
+
+#, fuzzy
+#~ msgid "Pipirima"
+#~ msgstr "太微左垣二 东上相 Porrima"
+
+#, fuzzy
+#~ msgid "Rapeto"
+#~ msgstr "土卫八"
+
+#, fuzzy
+#~ msgid "Alrakis"
+#~ msgstr "Arrakis"
+
+#~ msgid "Arrakis"
+#~ msgstr "Arrakis"
+
+#, fuzzy
+#~ msgid "Aldhibah"
+#~ msgstr "右辖 Alchiba"
+
+#~ msgid "Sabik"
+#~ msgstr "宋 Sabik"
+
+#~ msgid "Rasalgethi"
+#~ msgstr "帝座 Rasalgethi"
+
+#~ msgid "Ras Algethi"
+#~ msgstr "Ras Algethi"
+
+#~ msgid "Sarin"
+#~ msgstr "天市左垣一 魏 Sarin"
+
+#~ msgid "Rastaban"
+#~ msgstr "天棓三 Rastaban"
+
+#~ msgid "Maasym"
+#~ msgstr "赵 Maasym"
+
+#~ msgid "Lesath"
+#~ msgstr "尾宿九 Lesath"
+
+#~ msgid "Lesuth"
+#~ msgstr "Lesuth"
+
+#~ msgid "Kuma"
+#~ msgstr "天棓增一 Kuma"
+
+#~ msgid "Yildun"
+#~ msgstr "勾陈二 Yildun"
+
+#~ msgid "Shaula"
+#~ msgstr "尾宿八 Shaula"
+
+#~ msgid "Rasalhague"
+#~ msgstr "侯 Rasalhague"
+
+#~ msgid "Ras Alhague"
+#~ msgstr "Ras Alhague"
+
+#~ msgid "Sargas"
+#~ msgstr "尾宿五 Sargas"
+
+#~ msgid "Dziban"
+#~ msgstr "Dziban"
+
+#~ msgid "Cebalrai"
+#~ msgstr "宗正一 Cebalrai"
+
+#, fuzzy
+#~ msgid "Cervantes"
+#~ msgstr "观测站"
+
+#~ msgid "Grumium"
+#~ msgstr "天棓一 Grumium"
+
+#~ msgid "Eltanin"
+#~ msgstr "天棓四 Eltanin"
+
+#~ msgid "Etamin"
+#~ msgstr "天培四 Etamin"
+
+#~ msgid "Barnard's Star"
+#~ msgstr "巴纳德星 Barnard's Star"
+
+#~ msgid "Alnasl"
+#~ msgstr "箕宿一 Alnasl"
+
+#~ msgid "Kaus Media"
+#~ msgstr "箕宿二 Kaus Media"
+
+#~ msgid "Kaus Australis"
+#~ msgstr "箕宿三 Kaus Australis"
+
+#~ msgid "Al Athfar"
+#~ msgstr "织女增三 Al Athfar"
+
+#~ msgid "Kaus Borealis"
+#~ msgstr "斗宿二 Kaus Borealis"
+
+#~ msgid "Vega"
+#~ msgstr "织女一 Vega"
+
+#~ msgid "Sheliak"
+#~ msgstr "渐台二(Sheliak)"
+
+#, fuzzy
+#~ msgid "Ainalrami"
+#~ msgstr "天钩五 Alderamin"
+
+#~ msgid "Nunki"
+#~ msgstr "斗宿四(Nunki)"
+
+#~ msgid "Alya"
+#~ msgstr " 天市左垣七 徐 Alya"
+
+#~ msgid "Sulafat"
+#~ msgstr "渐台三 Sulafat"
+
+#~ msgid "Ascella"
+#~ msgstr "斗宿六 Ascella"
+
+#~ msgid "Deneb el Okab"
+#~ msgstr "Deneb el Okab"
+
+#, fuzzy
+#~ msgid "Albaldah"
+#~ msgstr "女宿一 Albali"
+
+#~ msgid "Altais"
+#~ msgstr "天厨一(Altais)"
+
+#~ msgid "Al Tais"
+#~ msgstr "Al Tais"
+
+#~ msgid "Nodus Secundus"
+#~ msgstr "Nodus Secundus"
+
+#~ msgid "Aladfar"
+#~ msgstr "辇道二"
+
+#, fuzzy
+#~ msgid "Gumala"
+#~ msgstr "危地马拉城"
+
+#, fuzzy
+#~ msgid "Arkab Prior"
+#~ msgstr "Arkab"
+
+#~ msgid "Arkab"
+#~ msgstr "Arkab"
+
+#~ msgid "Rukbat"
+#~ msgstr "天渊三 Rukbat"
+
+#~ msgid "Albireo"
+#~ msgstr "辇道增七"
+
+#~ msgid "Alsafi"
+#~ msgstr "天厨二 Alsafi"
+
+#~ msgid "Campbell's Star"
+#~ msgstr "坎贝尔星 Campbell's Star"
+
+#~ msgid "Sham"
+#~ msgstr "左旗一 Sham"
+
+#, fuzzy
+#~ msgid "Fawaris"
+#~ msgstr "巴黎"
+
+#~ msgid "Tarazed"
+#~ msgstr "河鼓三 Tarazed"
+
+#~ msgid "Tyl"
+#~ msgstr "天厨三 Tyl"
+
+#~ msgid "Altair"
+#~ msgstr "河鼓二 Altair"
+
+#~ msgid "Atair"
+#~ msgstr "Atair"
+
+#~ msgid "Alshain"
+#~ msgstr "河鼓一 Alshain"
+
+#~ msgid "Algedi"
+#~ msgstr "牛宿二 Algedi"
+
+#, fuzzy
+#~ msgid "Alshat"
+#~ msgstr "河鼓一 Alshain"
+
+#~ msgid "Dabih"
+#~ msgstr "牛宿一 Dabih"
+
+#~ msgid "Sadr"
+#~ msgstr "天津一 Sadr"
+
+#~ msgid "Peacock"
+#~ msgstr "孔雀十一"
+
+#~ msgid "Rotanev"
+#~ msgstr "瓠瓜四 Rotanev"
+
+#~ msgid "Sualocin"
+#~ msgstr "瓠瓜一 Sualocin"
+
+#~ msgid "Deneb"
+#~ msgstr "天津四 Deneb"
+
+#, fuzzy
+#~ msgid "Aljanah"
+#~ msgstr "卢布尔雅那"
+
+#~ msgid "Albali"
+#~ msgstr "女宿一 Albali"
+
+#, fuzzy
+#~ msgid "Polaris Australis"
+#~ msgstr "箕宿三 Kaus Australis"
+
+#, fuzzy
+#~ msgid "Solaris"
+#~ msgstr "勾陈一  Polaris"
+
+#~ msgid "Kitalpha"
+#~ msgstr "虚宿二 Kitalpha"
+
+#~ msgid "Lacaille 8760"
+#~ msgstr "拉开耶8760 Lacaille 8760"
+
+#~ msgid "Alderamin"
+#~ msgstr "天钩五 Alderamin"
+
+#~ msgid "Alfirk"
+#~ msgstr "上卫增一 Alfirk"
+
+#~ msgid "Sadalsuud"
+#~ msgstr "虚宿一 Sadalsuud"
+
+#, fuzzy
+#~ msgid "Bunda"
+#~ msgstr "星座边界"
+
+#~ msgid "Nashira"
+#~ msgstr "垒壁阵三 Nashira"
+
+#~ msgid "Azelfafage"
+#~ msgstr "螣蛇四 Azelfafage"
+
+#~ msgid "Herschel's Garnet Star"
+#~ msgstr "赫歇尔的石榴石星 Herschel's Garnet Star"
+
+#, fuzzy
+#~ msgid "Erakis"
+#~ msgstr "Arrakis"
+
+#~ msgid "Enif"
+#~ msgstr "危宿三 Enif"
+
+#~ msgid "Deneb Algedi"
+#~ msgstr "垒壁阵四 Deneb Algedi"
+
+#, fuzzy
+#~ msgid "Aldhanab"
+#~ msgstr "Al Dhanab"
+
+#~ msgid "Al Dhanab"
+#~ msgstr "Al Dhanab"
+
+#~ msgid "Kurhah"
+#~ msgstr "天钩六 Kurhah"
+
+#~ msgid "Sadalmelik"
+#~ msgstr "危宿一 Sadalmelik"
+
+#~ msgid "Alnair"
+#~ msgstr "鹤一 Alnair"
+
+#~ msgid "Al Nair"
+#~ msgstr "Al Nair"
+
+#~ msgid "Biham"
+#~ msgstr "危宿二 Biham"
+
+#~ msgid "Ancha"
+#~ msgstr "泣二 Ancha"
+
+#~ msgid "Sadachbia"
+#~ msgstr "坟墓二 Sadachbia"
+
+#~ msgid "Seat"
+#~ msgstr "坟墓四 Seat"
+
+#~ msgid "Kruger 60"
+#~ msgstr "克虑格60"
+
+#~ msgid "Situla"
+#~ msgstr "女宿四 Situla"
+
+#~ msgid "Homam"
+#~ msgstr "雷电一 Homam"
+
+#~ msgid "Matar"
+#~ msgstr "离宫四 Matar"
+
+#~ msgid "Babcock's Star"
+#~ msgstr "巴布科克星 Campbell's Star"
+
+#~ msgid "Sadalbari"
+#~ msgstr "离宫二 Sadalbari"
+
+#~ msgid "Skat"
+#~ msgstr "羽林军二十六 Skat"
+
+#~ msgid "Fomalhaut"
+#~ msgstr "北落师门 Fomalhaut"
+
+#~ msgid "Scheat"
+#~ msgstr "室宿二 Scheat"
+
+#, fuzzy
+#~ msgid "Fumalsamakah"
+#~ msgstr "Fum al Samakah"
+
+#~ msgid "Fum al Samakah"
+#~ msgstr "Fum al Samakah"
+
+#~ msgid "Markab"
+#~ msgstr "室宿一 Markab"
+
+#~ msgid "Marchab"
+#~ msgstr "Marchab"
+
+#~ msgid "Bradley 3077"
+#~ msgstr "布拉德利3077 Bradley 3077"
+
+#, fuzzy
+#~ msgid "Alkarab"
+#~ msgstr "安卡拉"
+
+#~ msgid "Errai"
+#~ msgstr "少卫增八 Errai"
+
+#~ msgid "Milky Way"
+#~ msgstr "银河系"
+
+#~ msgid "LMC"
+#~ msgstr "大麦哲伦云"
+
+#~ msgid "SMC"
+#~ msgstr "小麦哲伦云"
+
+#~ msgid "Pleiades"
+#~ msgstr "昴星团"
+
+#~ msgid "Hyades"
+#~ msgstr "毕星团"
+
+#~ msgid "Praesepe"
+#~ msgstr "鬼星团"
+
+#~ msgid "Beehive Cluster"
+#~ msgstr "蜂巢星团"
+
+#~ msgid "Maffei 1"
+#~ msgstr "马费伊1"
+
+#~ msgid "Maffei 2"
+#~ msgstr "马费伊2"
+
+#~ msgid "Leo A"
+#~ msgstr "狮子座A"
+
+#~ msgid "Sextans B"
+#~ msgstr "六分仪座B"
+
+#~ msgid "Leo I"
+#~ msgstr "狮子座I"
+
+#~ msgid "Sextans A"
+#~ msgstr "六分仪座A"
+
+#~ msgid "Circinus"
+#~ msgstr "圆规座"
+
+#~ msgid "Holmberg VI"
+#~ msgstr "霍姆伯格VI"
+
+#~ msgid "Fath 703"
+#~ msgstr "法思703"
+
+#~ msgid "47 Tuc"
+#~ msgstr "杜鹃座47球状星团"
+
+#~ msgid "Eridanus"
+#~ msgstr "波江座"
+
+#~ msgid "Pyxis"
+#~ msgstr "罗盘座"
+
+#~ msgid "Tonantzintla 2"
+#~ msgstr "托南钦特拉2球状星团"
+
+#~ msgid "Error in creating ogg file %s for capture.\n"
+#~ msgstr "创建屏幕录制使用的 OGG 文件 %s 出错。\n"
+
+#~ msgid "Internal Ogg library error.\n"
+#~ msgstr "内部 OGG 库出错\n"
+
+#~ msgid ""
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+#~ "%dx%d offset (%dx%d)\n"
+#~ msgstr ""
+#~ "OggTheoraCapture::start() - Theora 影像：%s %.2f（%d/%d）FPS 质量 %d %d×"
+#~ "%d 位移 (%d×%d)\n"
+
+#~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+#~ msgstr "OggTheoraCapture::cleanup() - 已写入 %d 帧\n"
 
 #~ msgid "Astana"
 #~ msgstr "阿斯塔纳"

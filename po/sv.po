@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-10-06 15:59+0400\n"
+"POT-Creation-Date: 2021-12-01 23:53+0200\n"
 "PO-Revision-Date: 2018-05-28 21:01+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -17,3584 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.7\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: ../data/data.cpp:1
-msgid "Mercury"
-msgstr "Merkurius"
-
-#: ../data/data.cpp:2
-msgid "Venus"
-msgstr "Venus"
-
-#: ../data/data.cpp:3 ../src/celestia/qt/qteventfinder.cpp:271
-#: ../src/celestia/win32/wineclipses.cpp:290
-msgid "Earth"
-msgstr "Jorden"
-
-#: ../data/data.cpp:4 ../src/celestia/qt/qtsolarsystembrowser.cpp:554
-msgid "Moon"
-msgstr "Måne"
-
-#: ../data/data.cpp:5
-msgid "Mars"
-msgstr "Mars"
-
-#: ../data/data.cpp:6
-msgid "Phobos"
-msgstr "Phobos"
-
-#: ../data/data.cpp:7
-msgid "Deimos"
-msgstr "Deimos"
-
-#: ../data/data.cpp:8 ../src/celestia/qt/qteventfinder.cpp:272
-#: ../src/celestia/win32/wineclipses.cpp:291
-msgid "Jupiter"
-msgstr "Jupiter"
-
-#: ../data/data.cpp:9
-msgid "Io"
-msgstr "Io"
-
-#: ../data/data.cpp:10
-msgid "Europa"
-msgstr "Europa"
-
-#: ../data/data.cpp:11
-msgid "Ganymede"
-msgstr "Ganymede"
-
-#: ../data/data.cpp:12
-msgid "Callisto"
-msgstr "Callisto"
-
-#: ../data/data.cpp:13 ../src/celestia/qt/qteventfinder.cpp:273
-#: ../src/celestia/win32/wineclipses.cpp:292
-msgid "Saturn"
-msgstr "Saturnus"
-
-#: ../data/data.cpp:14
-msgid "Prometheus"
-msgstr "Prometheus"
-
-#: ../data/data.cpp:15
-msgid "Pandora"
-msgstr "Pandora"
-
-#: ../data/data.cpp:16
-msgid "Epimetheus"
-msgstr "Epimetheus"
-
-#: ../data/data.cpp:17
-msgid "Janus"
-msgstr "Janus"
-
-#: ../data/data.cpp:18
-msgid "Mimas"
-msgstr "Mimas"
-
-#: ../data/data.cpp:19
-msgid "Enceladus"
-msgstr "Enceladus"
-
-#: ../data/data.cpp:20
-msgid "Tethys"
-msgstr "Tethys"
-
-#: ../data/data.cpp:21
-msgid "Dione"
-msgstr "Dione"
-
-#: ../data/data.cpp:22
-msgid "Rhea"
-msgstr "Rhea"
-
-#: ../data/data.cpp:23
-msgid "Titan"
-msgstr "Titan"
-
-#: ../data/data.cpp:24
-msgid "Hyperion"
-msgstr "Hyperion"
-
-#: ../data/data.cpp:25
-msgid "Iapetus"
-msgstr "Iapetus"
-
-#: ../data/data.cpp:26
-msgid "Phoebe"
-msgstr "Phobos"
-
-#: ../data/data.cpp:27 ../src/celestia/qt/qteventfinder.cpp:274
-#: ../src/celestia/win32/wineclipses.cpp:293
-msgid "Uranus"
-msgstr "Uranus"
-
-#: ../data/data.cpp:28
-msgid "Miranda"
-msgstr "Miranda"
-
-#: ../data/data.cpp:29
-msgid "Ariel"
-msgstr "Ariel"
-
-#: ../data/data.cpp:30
-msgid "Umbriel"
-msgstr "Umbriel"
-
-#: ../data/data.cpp:31
-msgid "Titania"
-msgstr "Titania"
-
-#: ../data/data.cpp:32
-msgid "Oberon"
-msgstr "Oberon"
-
-#: ../data/data.cpp:33 ../src/celestia/qt/qteventfinder.cpp:275
-#: ../src/celestia/win32/wineclipses.cpp:294
-msgid "Neptune"
-msgstr "Neptunus"
-
-#: ../data/data.cpp:34
-msgid "Larissa"
-msgstr "Larissa"
-
-#: ../data/data.cpp:35
-msgid "Proteus"
-msgstr "Proteus"
-
-#: ../data/data.cpp:36
-msgid "Triton"
-msgstr "Triton"
-
-#: ../data/data.cpp:37
-msgid "Nereid"
-msgstr "Nereid"
-
-#: ../data/data.cpp:38
-msgid "Ceres"
-msgstr ""
-
-#: ../data/data.cpp:39
-msgid "Pluto-Charon"
-msgstr "Pluto-Charon"
-
-#: ../data/data.cpp:40 ../src/celestia/qt/qteventfinder.cpp:276
-#: ../src/celestia/win32/wineclipses.cpp:295
-msgid "Pluto"
-msgstr "Pluto"
-
-#: ../data/data.cpp:41
-msgid "Charon"
-msgstr "Charon"
-
-#: ../data/data.cpp:42
-msgid "Styx"
-msgstr ""
-
-#: ../data/data.cpp:43
-msgid "Nix"
-msgstr ""
-
-#: ../data/data.cpp:44
-msgid "Kerberos"
-msgstr ""
-
-#: ../data/data.cpp:45
-msgid "Hydra"
-msgstr ""
-
-#: ../data/data.cpp:46
-#, fuzzy
-msgid "Haumea"
-msgstr "Noumea"
-
-#: ../data/data.cpp:47
-#, fuzzy
-msgid "Namaka"
-msgstr "Bamako"
-
-#: ../data/data.cpp:48
-msgid "Hi'iaka"
-msgstr ""
-
-#: ../data/data.cpp:49
-msgid "Makemake"
-msgstr ""
-
-#: ../data/data.cpp:50
-msgid "S-2015 136472 I"
-msgstr ""
-
-#: ../data/data.cpp:51
-msgid "Eris"
-msgstr ""
-
-#: ../data/data.cpp:52
-msgid "Dysnomia"
-msgstr ""
-
-#: ../data/data.cpp:53
-msgid "Metis"
-msgstr ""
-
-#: ../data/data.cpp:54
-msgid "Adrastea"
-msgstr ""
-
-#: ../data/data.cpp:55
-msgid "Amalthea"
-msgstr "Amalthea"
-
-#: ../data/data.cpp:56
-msgid "Thebe"
-msgstr ""
-
-#: ../data/data.cpp:57
-msgid "Themisto"
-msgstr ""
-
-#: ../data/data.cpp:58
-msgid "Leda"
-msgstr ""
-
-#: ../data/data.cpp:59
-msgid "Himalia"
-msgstr ""
-
-#: ../data/data.cpp:60
-msgid "Lysithea"
-msgstr ""
-
-#: ../data/data.cpp:61
-msgid "Elara"
-msgstr ""
-
-#: ../data/data.cpp:62
-msgid "Iocaste"
-msgstr ""
-
-#: ../data/data.cpp:63
-msgid "Praxidike"
-msgstr ""
-
-#: ../data/data.cpp:64
-msgid "Harpalyke"
-msgstr ""
-
-#: ../data/data.cpp:65
-msgid "Ananke"
-msgstr ""
-
-#: ../data/data.cpp:66
-msgid "Isonoe"
-msgstr ""
-
-#: ../data/data.cpp:67
-msgid "Erinome"
-msgstr ""
-
-#: ../data/data.cpp:68
-msgid "Taygete"
-msgstr ""
-
-#: ../data/data.cpp:69
-msgid "Chaldene"
-msgstr ""
-
-#: ../data/data.cpp:70
-msgid "Carme"
-msgstr ""
-
-#: ../data/data.cpp:71
-msgid "Pasiphae"
-msgstr ""
-
-#: ../data/data.cpp:72
-msgid "Kalyke"
-msgstr ""
-
-#: ../data/data.cpp:73
-msgid "Megaclite"
-msgstr ""
-
-#: ../data/data.cpp:74
-msgid "Sinope"
-msgstr ""
-
-#: ../data/data.cpp:75
-#, fuzzy
-msgid "Callirrhoe"
-msgstr "Callisto"
-
-#: ../data/data.cpp:76
-#, fuzzy
-msgid "Pan"
-msgstr "Jan"
-
-#: ../data/data.cpp:77
-msgid "Atlas"
-msgstr ""
-
-#: ../data/data.cpp:78
-#, fuzzy
-msgid "Telesto"
-msgstr "Celestia"
-
-#: ../data/data.cpp:79
-msgid "Calypso"
-msgstr ""
-
-#: ../data/data.cpp:80
-msgid "Helene"
-msgstr ""
-
-#: ../data/data.cpp:81
-msgid "Cordelia"
-msgstr ""
-
-#: ../data/data.cpp:82
-msgid "Ophelia"
-msgstr ""
-
-#: ../data/data.cpp:83
-msgid "Bianca"
-msgstr ""
-
-#: ../data/data.cpp:84
-msgid "Cressida"
-msgstr ""
-
-#: ../data/data.cpp:85
-msgid "Desdemona"
-msgstr ""
-
-#: ../data/data.cpp:86
-msgid "Juliet"
-msgstr ""
-
-#: ../data/data.cpp:87
-#, fuzzy
-msgid "Portia"
-msgstr "Port-Vila"
-
-#: ../data/data.cpp:88
-msgid "Rosalind"
-msgstr ""
-
-#: ../data/data.cpp:89
-msgid "Belinda"
-msgstr ""
-
-#: ../data/data.cpp:90
-msgid "Puck"
-msgstr ""
-
-#: ../data/data.cpp:91
-msgid "Caliban"
-msgstr ""
-
-#: ../data/data.cpp:92
-msgid "Stephano"
-msgstr ""
-
-#: ../data/data.cpp:93
-msgid "Sycorax"
-msgstr ""
-
-#: ../data/data.cpp:94
-msgid "Prospero"
-msgstr ""
-
-#: ../data/data.cpp:95
-msgid "Setebos"
-msgstr ""
-
-#: ../data/data.cpp:96
-msgid "Naiad"
-msgstr ""
-
-#: ../data/data.cpp:97
-msgid "Thalassa"
-msgstr ""
-
-#: ../data/data.cpp:98
-msgid "Despina"
-msgstr ""
-
-#: ../data/data.cpp:99
-#, fuzzy
-msgid "Galatea"
-msgstr "Galaxer"
-
-#: ../data/data.cpp:100
-msgid "NORTH AMERICA"
-msgstr "NORDAMERIKA"
-
-#: ../data/data.cpp:101
-msgid "SOUTH AMERICA"
-msgstr "SYDAMERIKA"
-
-#: ../data/data.cpp:102
-msgid "EURASIA"
-msgstr "EURASIEN"
-
-#: ../data/data.cpp:103
-msgid "AFRICA"
-msgstr "AFRIKA"
-
-#: ../data/data.cpp:104
-msgid "AUSTRALIA"
-msgstr "AUSTRALIEN"
-
-#: ../data/data.cpp:105
-msgid "ANTARCTICA"
-msgstr "ANTARKTIS"
-
-#: ../data/data.cpp:106
-msgid "NORTH ATLANTIC OCEAN"
-msgstr "NORDATLANTEN"
-
-#: ../data/data.cpp:107
-msgid "SOUTH ATLANTIC OCEAN"
-msgstr "SYDATLANTEN"
-
-#: ../data/data.cpp:108
-msgid "NORTH PACIFIC OCEAN"
-msgstr "NORRA STILLA HAVET"
-
-#: ../data/data.cpp:109
-msgid "SOUTH PACIFIC OCEAN"
-msgstr "SÖDRA STILLA HAVET"
-
-#: ../data/data.cpp:110
-msgid "INDIAN OCEAN"
-msgstr "INDISKA OCEANEN"
-
-#: ../data/data.cpp:111
-msgid "ARCTIC OCEAN"
-msgstr "NORRA ISHAVET"
-
-#: ../data/data.cpp:112
-msgid "Abu Dhabi"
-msgstr "Abu Dhabi"
-
-#: ../data/data.cpp:113
-msgid "Abuja"
-msgstr "Abuja"
-
-#: ../data/data.cpp:114
-msgid "Accra"
-msgstr "Accra"
-
-#: ../data/data.cpp:115
-msgid "Adamstown"
-msgstr "Adamstown"
-
-#: ../data/data.cpp:116
-msgid "Addis Ababa"
-msgstr "Addis Abeba"
-
-#: ../data/data.cpp:117
-msgid "Algiers"
-msgstr "Alger"
-
-#: ../data/data.cpp:118
-msgid "Alofi"
-msgstr "Alofi"
-
-#: ../data/data.cpp:119
-msgid "Amman"
-msgstr "Amman"
-
-#: ../data/data.cpp:120
-msgid "Amsterdam"
-msgstr "Amsterdam"
-
-#: ../data/data.cpp:121
-msgid "Andorra la Vella"
-msgstr "Andorra la Vella"
-
-#: ../data/data.cpp:122
-msgid "Ankara"
-msgstr "Ankara"
-
-#: ../data/data.cpp:123
-msgid "Antananarivo"
-msgstr "Antananarivo"
-
-#: ../data/data.cpp:124
-msgid "Apia"
-msgstr "Apia"
-
-#: ../data/data.cpp:125
-msgid "Ashgabat"
-msgstr "Asjchabad"
-
-#: ../data/data.cpp:126
-msgid "Asmara"
-msgstr "Asmara"
-
-#: ../data/data.cpp:127
-msgid "Asuncion"
-msgstr "Asunción"
-
-#: ../data/data.cpp:128
-msgid "Athens"
-msgstr "Aten"
-
-#: ../data/data.cpp:129
-msgid "Avarua"
-msgstr "Avarua"
-
-#: ../data/data.cpp:130
-msgid "Baghdad"
-msgstr "Bagdad"
-
-#: ../data/data.cpp:131
-msgid "Baku"
-msgstr "Baku"
-
-#: ../data/data.cpp:132
-msgid "Bamako"
-msgstr "Bamako"
-
-#: ../data/data.cpp:133
-msgid "Bandar Seri Begawan"
-msgstr "Bandar Seri Begawan"
-
-#: ../data/data.cpp:134
-msgid "Bangkok"
-msgstr "Bangkok"
-
-#: ../data/data.cpp:135
-msgid "Bangui"
-msgstr "Bangui"
-
-#: ../data/data.cpp:136
-msgid "Banjul"
-msgstr "Banjul"
-
-#: ../data/data.cpp:137
-msgid "Basse-Terre"
-msgstr "Basse-Terre"
-
-#: ../data/data.cpp:138
-msgid "Basseterre"
-msgstr "Basseterre"
-
-#: ../data/data.cpp:139
-msgid "Beijing"
-msgstr "Peking"
-
-#: ../data/data.cpp:140
-msgid "Beirut"
-msgstr "Beirut"
-
-#: ../data/data.cpp:141
-msgid "Belgrade"
-msgstr "Belgrad"
-
-#: ../data/data.cpp:142
-msgid "Belmopan"
-msgstr "Belmopan"
-
-#: ../data/data.cpp:143
-msgid "Berlin"
-msgstr "Berlin"
-
-#: ../data/data.cpp:144
-msgid "Bern"
-msgstr "Bern"
-
-#: ../data/data.cpp:145
-msgid "Bishkek"
-msgstr "Bishkek"
-
-#: ../data/data.cpp:146
-msgid "Bissau"
-msgstr "Bissau"
-
-#: ../data/data.cpp:147
-msgid "Bloemfontein"
-msgstr "Bloemfontein"
-
-#: ../data/data.cpp:148
-msgid "Bogota"
-msgstr "Bogota"
-
-#: ../data/data.cpp:149
-msgid "Brasilia"
-msgstr "Brasilia"
-
-#: ../data/data.cpp:150
-msgid "Bratislava"
-msgstr "Bratislava"
-
-#: ../data/data.cpp:151
-msgid "Brazzaville"
-msgstr "Brazzaville"
-
-#: ../data/data.cpp:152
-msgid "Bridgetown"
-msgstr "Bridgetown"
-
-#: ../data/data.cpp:153
-msgid "Brussels"
-msgstr "Bryssel"
-
-#: ../data/data.cpp:154
-msgid "Bucharest"
-msgstr "Bukarest"
-
-#: ../data/data.cpp:155
-msgid "Budapest"
-msgstr "Budapest"
-
-#: ../data/data.cpp:156
-msgid "Buenos Aires"
-msgstr "Buenos Aires"
-
-#: ../data/data.cpp:157
-msgid "Bujumbura"
-msgstr "Bujumbura"
-
-#: ../data/data.cpp:158
-msgid "Cairo"
-msgstr "Kairo"
-
-#: ../data/data.cpp:159
-msgid "Canberra"
-msgstr "Canberra"
-
-#: ../data/data.cpp:160
-msgid "Cape Town"
-msgstr "Kapstaden"
-
-#: ../data/data.cpp:161
-msgid "Caracas"
-msgstr "Caracas"
-
-#: ../data/data.cpp:162
-msgid "Castries"
-msgstr "Castries"
-
-#: ../data/data.cpp:163
-msgid "Cayenne"
-msgstr "Cayenne"
-
-#: ../data/data.cpp:164
-msgid "Charlotte Amalie"
-msgstr "Charlotte Amalie"
-
-#: ../data/data.cpp:165
-msgid "Chisinau"
-msgstr "Chisinau"
-
-#: ../data/data.cpp:166
-msgid "Colombo"
-msgstr "Colombo"
-
-#: ../data/data.cpp:167
-msgid "Conakry"
-msgstr "Conakry"
-
-#: ../data/data.cpp:168
-msgid "Copenhagen"
-msgstr "Köpenhamn"
-
-#: ../data/data.cpp:169
-msgid "Cotonou"
-msgstr "Cotonou"
-
-#: ../data/data.cpp:170
-msgid "Dakar"
-msgstr "Dakar"
-
-#: ../data/data.cpp:171
-msgid "Damascus"
-msgstr "Damaskus"
-
-#: ../data/data.cpp:172
-msgid "Dar es Salaam"
-msgstr "Dar es Salaam"
-
-#: ../data/data.cpp:173
-msgid "Dhaka"
-msgstr "Dhaka"
-
-#: ../data/data.cpp:174
-msgid "Dili"
-msgstr "Dili"
-
-#: ../data/data.cpp:175
-msgid "Djibouti"
-msgstr "Djibouti"
-
-#: ../data/data.cpp:176
-msgid "Doha"
-msgstr "Doha"
-
-#: ../data/data.cpp:177
-msgid "Douglas"
-msgstr "Douglas"
-
-#: ../data/data.cpp:178
-msgid "Dublin"
-msgstr "Dublin"
-
-#: ../data/data.cpp:179
-msgid "Dushanbe"
-msgstr "Dusjanbe"
-
-#: ../data/data.cpp:180
-msgid "Fongafale"
-msgstr "Fongafale"
-
-#: ../data/data.cpp:181
-msgid "Fort-de-France"
-msgstr "Fort-de-France"
-
-#: ../data/data.cpp:182
-msgid "Freetown"
-msgstr "Freetown"
-
-#: ../data/data.cpp:183
-msgid "Gaborone"
-msgstr "Gaborone"
-
-#: ../data/data.cpp:184
-msgid "George Town"
-msgstr "George Town"
-
-#: ../data/data.cpp:185
-msgid "Georgetown"
-msgstr "Georgetown"
-
-#: ../data/data.cpp:186
-msgid "Gibraltar"
-msgstr "Gibraltar"
-
-#: ../data/data.cpp:187
-msgid "Grand Turk"
-msgstr "Grand Turk"
-
-#: ../data/data.cpp:188
-msgid "Guatemala"
-msgstr "Guatemala"
-
-#: ../data/data.cpp:189
-msgid "Hagatna"
-msgstr "Hagatna"
-
-#: ../data/data.cpp:190
-msgid "The Hague"
-msgstr "Haag"
-
-#: ../data/data.cpp:191
-msgid "Hamilton"
-msgstr "Hamilton"
-
-#: ../data/data.cpp:192
-msgid "Hanoi"
-msgstr "Hanoi"
-
-#: ../data/data.cpp:193
-msgid "Harare"
-msgstr "Harare"
-
-#: ../data/data.cpp:194
-msgid "Havana"
-msgstr "Havanna"
-
-#: ../data/data.cpp:195
-msgid "Helsinki"
-msgstr "Helsingfors"
-
-#: ../data/data.cpp:196
-msgid "Hong Kong"
-msgstr ""
-
-#: ../data/data.cpp:197
-msgid "Honiara"
-msgstr "Honiara"
-
-#: ../data/data.cpp:198
-msgid "Islamabad"
-msgstr "Islamabad"
-
-#: ../data/data.cpp:199
-msgid "Jakarta"
-msgstr "Jakarta"
-
-#: ../data/data.cpp:200
-msgid "Jamestown"
-msgstr "Jamestown"
-
-#: ../data/data.cpp:201
-msgid "Jerusalem"
-msgstr "Jerusalem"
-
-#: ../data/data.cpp:202
-msgid "Kabul"
-msgstr "Kabul"
-
-#: ../data/data.cpp:203
-msgid "Kampala"
-msgstr "Kampala"
-
-#: ../data/data.cpp:204
-msgid "Kathmandu"
-msgstr "Kathmandu"
-
-#: ../data/data.cpp:205
-msgid "Khartoum"
-msgstr "Khartoum"
-
-#: ../data/data.cpp:206
-msgid "Kiev"
-msgstr "Kiev"
-
-#: ../data/data.cpp:207
-msgid "Kigali"
-msgstr "Kigali"
-
-#: ../data/data.cpp:208 ../data/data.cpp:209
-msgid "Kingston"
-msgstr "Kingston"
-
-#: ../data/data.cpp:210
-msgid "Kingstown"
-msgstr "Kingstown"
-
-#: ../data/data.cpp:211
-msgid "Kinshasa"
-msgstr "Kinshasa"
-
-#: ../data/data.cpp:212
-msgid "Koror"
-msgstr "Koror"
-
-#: ../data/data.cpp:213
-msgid "Kuala Lumpur"
-msgstr "Kuala Lumpur"
-
-#: ../data/data.cpp:214
-msgid "Kuwait"
-msgstr "Kuwait"
-
-#: ../data/data.cpp:215
-msgid "La'youn"
-msgstr "El Aaiún"
-
-#: ../data/data.cpp:216
-msgid "La Paz"
-msgstr "La Paz"
-
-#: ../data/data.cpp:217
-msgid "Libreville"
-msgstr "Libreville"
-
-#: ../data/data.cpp:218
-msgid "Lilongwe"
-msgstr "Lilongwe"
-
-#: ../data/data.cpp:219
-msgid "Lima"
-msgstr "Lima"
-
-#: ../data/data.cpp:220
-msgid "Lisbon"
-msgstr "Lissabon"
-
-#: ../data/data.cpp:221
-msgid "Ljubljana"
-msgstr "Ljubljana"
-
-#: ../data/data.cpp:222
-msgid "Lobamba"
-msgstr "Lobamba"
-
-#: ../data/data.cpp:223
-msgid "Lome"
-msgstr "Lome"
-
-#: ../data/data.cpp:224
-msgid "London"
-msgstr "London"
-
-#: ../data/data.cpp:225
-msgid "Longyearbyen"
-msgstr "Longyearbyen"
-
-#: ../data/data.cpp:226
-msgid "Luanda"
-msgstr "Luanda"
-
-#: ../data/data.cpp:227
-msgid "Lusaka"
-msgstr "Lusaka"
-
-#: ../data/data.cpp:228
-msgid "Luxembourg"
-msgstr "Luxemburg"
-
-#: ../data/data.cpp:229
-msgid "Madrid"
-msgstr "Madrid"
-
-#: ../data/data.cpp:230
-msgid "Majuro"
-msgstr "Majuro"
-
-#: ../data/data.cpp:231
-msgid "Malabo"
-msgstr "Malabo"
-
-#: ../data/data.cpp:232
-msgid "Male"
-msgstr "Manlig"
-
-#: ../data/data.cpp:233
-msgid "Mamoutzou"
-msgstr "Mamoutzou"
-
-#: ../data/data.cpp:234
-msgid "Managua"
-msgstr "Managua"
-
-#: ../data/data.cpp:235
-msgid "Manama"
-msgstr "Manama"
-
-#: ../data/data.cpp:236
-msgid "Manila"
-msgstr "Manila"
-
-#: ../data/data.cpp:237
-msgid "Maputo"
-msgstr "Maputo"
-
-#: ../data/data.cpp:238
-msgid "Maseru"
-msgstr "Maseru"
-
-#: ../data/data.cpp:239
-msgid "Mata-Utu"
-msgstr "Mata-Utu"
-
-#: ../data/data.cpp:240
-msgid "Mbabane"
-msgstr "Mbabane"
-
-#: ../data/data.cpp:241
-msgid "Mexico City"
-msgstr "Mexico City"
-
-#: ../data/data.cpp:242
-msgid "Minsk"
-msgstr "Minsk"
-
-#: ../data/data.cpp:243
-msgid "Mogadishu"
-msgstr "Mogadishu"
-
-#: ../data/data.cpp:244
-msgid "Monaco"
-msgstr "Monaco"
-
-#: ../data/data.cpp:245
-msgid "Monrovia"
-msgstr "Monrovia"
-
-#: ../data/data.cpp:246
-msgid "Montevideo"
-msgstr "Montevideo"
-
-#: ../data/data.cpp:247
-msgid "Moroni"
-msgstr "Moroni"
-
-#: ../data/data.cpp:248
-msgid "Moscow"
-msgstr "Moskva"
-
-#: ../data/data.cpp:249
-msgid "Muscat"
-msgstr "Muskat"
-
-#: ../data/data.cpp:250
-msgid "Nairobi"
-msgstr "Nairobi"
-
-#: ../data/data.cpp:251
-msgid "Nassau"
-msgstr "Nassau"
-
-#: ../data/data.cpp:252
-msgid "N'Djamena"
-msgstr "N'Djamena"
-
-#: ../data/data.cpp:253
-msgid "New Delhi"
-msgstr "New Delhi"
-
-#: ../data/data.cpp:254
-msgid "Niamey"
-msgstr "Niamey"
-
-#: ../data/data.cpp:255
-msgid "Nicosia"
-msgstr "Nicosia"
-
-#: ../data/data.cpp:256
-msgid "Nouakchott"
-msgstr "Nouakchott"
-
-#: ../data/data.cpp:257
-msgid "Noumea"
-msgstr "Noumea"
-
-#: ../data/data.cpp:258
-msgid "Nuku'alofa"
-msgstr "Nukualofa"
-
-#: ../data/data.cpp:259
-msgid "Nur-Sultan"
-msgstr ""
-
-#: ../data/data.cpp:260
-msgid "Nuuk"
-msgstr "Nuuk"
-
-#: ../data/data.cpp:261
-msgid "Oranjestad"
-msgstr "Oranjestad"
-
-#: ../data/data.cpp:262
-msgid "Oslo"
-msgstr "Oslo"
-
-#: ../data/data.cpp:263
-msgid "Ottawa"
-msgstr "Ottawa"
-
-#: ../data/data.cpp:264
-msgid "Ouagadougou"
-msgstr "Ouagadougou"
-
-#: ../data/data.cpp:265
-msgid "Pago Pago"
-msgstr "Pago Pago"
-
-#: ../data/data.cpp:266
-msgid "Palikir"
-msgstr "Palikir"
-
-#: ../data/data.cpp:267
-msgid "Panama"
-msgstr "Panama"
-
-#: ../data/data.cpp:268
-msgid "Papeete"
-msgstr "Papeete"
-
-#: ../data/data.cpp:269
-msgid "Paramaribo"
-msgstr "Paramaribo"
-
-#: ../data/data.cpp:270
-msgid "Paris"
-msgstr "Paris"
-
-#: ../data/data.cpp:271
-msgid "Phnom Penh"
-msgstr "Phnom Penh"
-
-#: ../data/data.cpp:272
-msgid "Plymouth"
-msgstr "Plymouth"
-
-#: ../data/data.cpp:273
-msgid "Port Louis"
-msgstr "Port Louis"
-
-#: ../data/data.cpp:274
-msgid "Port Moresby"
-msgstr "Port Moresby"
-
-#: ../data/data.cpp:275
-msgid "Port-au-Prince"
-msgstr "Port-au-Prince"
-
-#: ../data/data.cpp:276
-msgid "Port-of-Spain"
-msgstr "Port-of-Spain"
-
-#: ../data/data.cpp:277
-msgid "Porto-Novo"
-msgstr "Porto-Novo"
-
-#: ../data/data.cpp:278
-msgid "Port-Vila"
-msgstr "Port-Vila"
-
-#: ../data/data.cpp:279
-msgid "Prague"
-msgstr "Prag"
-
-#: ../data/data.cpp:280
-msgid "Praia"
-msgstr "Praia"
-
-#: ../data/data.cpp:281
-msgid "Pretoria"
-msgstr "Pretoria"
-
-#: ../data/data.cpp:282
-msgid "P'yongyang"
-msgstr "P'yŏngyang"
-
-#: ../data/data.cpp:283
-msgid "Quito"
-msgstr "Quito"
-
-#: ../data/data.cpp:284
-msgid "Rabat"
-msgstr "Rabat"
-
-#: ../data/data.cpp:285
-msgid "Rangoon"
-msgstr "Rangoon"
-
-#: ../data/data.cpp:286
-msgid "Reykjavik"
-msgstr "Reykjavik"
-
-#: ../data/data.cpp:287
-msgid "Riga"
-msgstr "Riga"
-
-#: ../data/data.cpp:288
-msgid "Riyadh"
-msgstr "Riyadh"
-
-#: ../data/data.cpp:289
-msgid "Road Town"
-msgstr "Road Town"
-
-#: ../data/data.cpp:290
-msgid "Rome"
-msgstr "Rom"
-
-#: ../data/data.cpp:291
-msgid "Roseau"
-msgstr "Roseau"
-
-#: ../data/data.cpp:292
-msgid "Saint George's"
-msgstr "Saint George's"
-
-#: ../data/data.cpp:293
-msgid "Saint Helier"
-msgstr "Saint Helier"
-
-#: ../data/data.cpp:294
-msgid "Saint John's"
-msgstr "Saint John's"
-
-#: ../data/data.cpp:295
-msgid "Saint Peter Port"
-msgstr "Saint Peter Port"
-
-#: ../data/data.cpp:296
-msgid "Saint-Denis"
-msgstr "Saint-Denis"
-
-#: ../data/data.cpp:297
-msgid "Saint-Pierre"
-msgstr "Saint-Pierre"
-
-#: ../data/data.cpp:298
-msgid "Saipan"
-msgstr "Saipan"
-
-#: ../data/data.cpp:299
-msgid "San Jose"
-msgstr "San Jose"
-
-#: ../data/data.cpp:300
-msgid "San Juan"
-msgstr "San Juan"
-
-#: ../data/data.cpp:301
-msgid "San Marino"
-msgstr "San Marino"
-
-#: ../data/data.cpp:302
-msgid "San Salvador"
-msgstr "San Salvador"
-
-#: ../data/data.cpp:303
-msgid "Sanaa"
-msgstr "Sana"
-
-#: ../data/data.cpp:304
-msgid "Santiago"
-msgstr "Santiago"
-
-#: ../data/data.cpp:305
-msgid "Santo Domingo"
-msgstr "Santo Domingo"
-
-#: ../data/data.cpp:306
-msgid "Sao Tome"
-msgstr "Sao Tome"
-
-#: ../data/data.cpp:307
-msgid "Sarajevo"
-msgstr "Sarajevo"
-
-#: ../data/data.cpp:308
-msgid "Seoul"
-msgstr "Seoul"
-
-#: ../data/data.cpp:309
-msgid "The Settlement"
-msgstr "Förlikningsavtalet"
-
-#: ../data/data.cpp:310
-msgid "Singapore"
-msgstr "Singapore"
-
-#: ../data/data.cpp:311
-msgid "Skopje"
-msgstr "Skopje"
-
-#: ../data/data.cpp:312
-msgid "Sofia"
-msgstr "Sofia"
-
-#: ../data/data.cpp:313
-msgid "Sri Jayewardenepura Kotte"
-msgstr "Sri Jayewardenepura Kotte"
-
-#: ../data/data.cpp:314
-msgid "Stanley"
-msgstr "Stanley"
-
-#: ../data/data.cpp:315
-msgid "Stockholm"
-msgstr "Stockholm"
-
-#: ../data/data.cpp:316
-msgid "Sucre"
-msgstr "Sucre"
-
-#: ../data/data.cpp:317
-msgid "Suva"
-msgstr "Suva"
-
-#: ../data/data.cpp:318
-msgid "Taipei"
-msgstr "Taipei"
-
-#: ../data/data.cpp:319
-msgid "Tallinn"
-msgstr "Tallinn"
-
-#: ../data/data.cpp:320
-msgid "Tarawa"
-msgstr "Tarawa"
-
-#: ../data/data.cpp:321
-msgid "Tashkent"
-msgstr "Tasjkent"
-
-#: ../data/data.cpp:322
-msgid "T'bilisi"
-msgstr "Tbilisi"
-
-#: ../data/data.cpp:323
-msgid "Tegucigalpa"
-msgstr "Tegucigalpa"
-
-#: ../data/data.cpp:324
-msgid "Tehran"
-msgstr "Teheran"
-
-#: ../data/data.cpp:325
-msgid "Tel Aviv"
-msgstr "Tel Aviv-Jaffa"
-
-#: ../data/data.cpp:326
-msgid "Thimphu"
-msgstr "Thimphu"
-
-#: ../data/data.cpp:327
-msgid "Tirana"
-msgstr "Tirana"
-
-#: ../data/data.cpp:328
-msgid "Tokyo"
-msgstr "Tokyo"
-
-#: ../data/data.cpp:329
-msgid "Torshavn"
-msgstr "Torshavn"
-
-#: ../data/data.cpp:330
-msgid "Tripoli"
-msgstr "Tripoli"
-
-#: ../data/data.cpp:331
-msgid "Tunis"
-msgstr "Tunis"
-
-#: ../data/data.cpp:332
-msgid "Ulaanbaatar"
-msgstr "Ulaanbaatar"
-
-#: ../data/data.cpp:333
-msgid "Vaduz"
-msgstr "Vaduz"
-
-#: ../data/data.cpp:334
-msgid "Valletta"
-msgstr "Valletta"
-
-#: ../data/data.cpp:335
-msgid "The Valley"
-msgstr "Valley"
-
-#: ../data/data.cpp:336
-msgid "Vatican City"
-msgstr "Vatikanstaten"
-
-#: ../data/data.cpp:337
-msgid "Victoria"
-msgstr "Victoria"
-
-#: ../data/data.cpp:338
-msgid "Vienna"
-msgstr "Wien"
-
-#: ../data/data.cpp:339
-msgid "Vientiane"
-msgstr "Vientiane"
-
-#: ../data/data.cpp:340
-msgid "Vilnius"
-msgstr "Vilnius"
-
-#: ../data/data.cpp:341
-msgid "Warsaw"
-msgstr "Warszawa"
-
-#: ../data/data.cpp:342
-msgid "Washington D.C."
-msgstr "Washington D.C."
-
-#: ../data/data.cpp:343
-msgid "Wellington"
-msgstr "Wellington"
-
-#: ../data/data.cpp:344
-msgid "West Island"
-msgstr "West Island"
-
-#: ../data/data.cpp:345
-msgid "Willemstad"
-msgstr "Willemstad"
-
-#: ../data/data.cpp:346
-msgid "Windhoek"
-msgstr "Windhoek"
-
-#: ../data/data.cpp:347
-msgid "Yamoussoukro"
-msgstr "Yamoussoukro"
-
-#: ../data/data.cpp:348
-msgid "Yaounde"
-msgstr "Yaounde"
-
-#: ../data/data.cpp:349
-msgid "Yaren District"
-msgstr "Yaren District"
-
-#: ../data/data.cpp:350
-msgid "Yerevan"
-msgstr "Yerevan"
-
-#: ../data/data.cpp:351
-msgid "Zagreb"
-msgstr "Zagreb"
-
-#: ../data/data.cpp:352
-msgid "Milky Way"
-msgstr "Vintergatan"
-
-#: ../data/data.cpp:353
-msgid "SMC"
-msgstr "SMC"
-
-#: ../data/data.cpp:354
-msgid "LMC"
-msgstr "LMC"
-
-#: ../data/data.cpp:355
-msgid "Solar System Barycenter"
-msgstr "Stjärnsystemets masscentrum"
-
-#: ../data/data.cpp:356
-msgid "Sol"
-msgstr "Solen"
-
-#: ../data/data.cpp:357
-msgid "Alpheratz"
-msgstr "Alpheratz"
-
-#: ../data/data.cpp:358
-msgid "Sirrah"
-msgstr "Sirrah"
-
-#: ../data/data.cpp:359
-msgid "Caph"
-msgstr "Caph"
-
-#: ../data/data.cpp:360
-msgid "Algenib"
-msgstr "Algenib"
-
-#: ../data/data.cpp:361
-msgid "Citadelle"
-msgstr ""
-
-#: ../data/data.cpp:362
-msgid "Schemali"
-msgstr "Schemali"
-
-#: ../data/data.cpp:363
-msgid "Ankaa"
-msgstr "Ankaa"
-
-#: ../data/data.cpp:364
-msgid "Felixvarela"
-msgstr ""
-
-#: ../data/data.cpp:365
-msgid "Fulu"
-msgstr ""
-
-#: ../data/data.cpp:366
-msgid "Schedar"
-msgstr "Schedar"
-
-#: ../data/data.cpp:367
-msgid "Shedir"
-msgstr "Shedir"
-
-#: ../data/data.cpp:368
-msgid "Diphda"
-msgstr "Diphda"
-
-#: ../data/data.cpp:369
-msgid "Deneb Kaitos"
-msgstr "Deneb Kaitos"
-
-#: ../data/data.cpp:370
-msgid "Cocibolca"
-msgstr ""
-
-#: ../data/data.cpp:371
-msgid "Achird"
-msgstr "Achird"
-
-#: ../data/data.cpp:372
-msgid "Van Maanen 2"
-msgstr "Van Maanen 2"
-
-#: ../data/data.cpp:373
-#, fuzzy
-msgid "Castula"
-msgstr "Castor"
-
-#: ../data/data.cpp:374
-msgid "Navi"
-msgstr "Navi"
-
-#: ../data/data.cpp:375
-msgid "Nenque"
-msgstr ""
-
-#: ../data/data.cpp:376
-#, fuzzy
-msgid "Wurren"
-msgstr "Aktuell"
-
-#: ../data/data.cpp:377
-msgid "Mirach"
-msgstr "Mirach"
-
-#: ../data/data.cpp:378
-msgid "Emiw"
-msgstr ""
-
-#: ../data/data.cpp:379
-msgid "Revati"
-msgstr ""
-
-#: ../data/data.cpp:380
-msgid "Adhil"
-msgstr "Adhil"
-
-#: ../data/data.cpp:381
-msgid "Bélénos"
-msgstr ""
-
-#: ../data/data.cpp:382
-msgid "Ruchbah"
-msgstr "Ruchbah"
-
-#: ../data/data.cpp:383
-#, fuzzy
-msgid "Alpherg"
-msgstr "Alpheratz"
-
-#: ../data/data.cpp:384
-#, fuzzy
-msgid "Titawin"
-msgstr "Titan"
-
-#: ../data/data.cpp:385
-msgid "Achernar"
-msgstr "Achernar"
-
-#: ../data/data.cpp:386
-msgid "Nembus"
-msgstr ""
-
-#: ../data/data.cpp:387
-msgid "Torcular"
-msgstr ""
-
-#: ../data/data.cpp:388
-msgid "Torcularis Septentrionalis"
-msgstr ""
-
-#: ../data/data.cpp:389
-msgid "Baten Kaitos"
-msgstr "Baten Kaitos"
-
-#: ../data/data.cpp:390
-msgid "Mothallah"
-msgstr ""
-
-#: ../data/data.cpp:391
-msgid "Caput Trianguli"
-msgstr "Caput Trianguli"
-
-#: ../data/data.cpp:392
-msgid "Mesarthim"
-msgstr "Mesarthim"
-
-#: ../data/data.cpp:393
-msgid "Segin"
-msgstr "Segin"
-
-#: ../data/data.cpp:394
-msgid "Sheratan"
-msgstr "Sheratan"
-
-#: ../data/data.cpp:395
-#, fuzzy
-msgid "Alrescha"
-msgstr "Al Rescha"
-
-#: ../data/data.cpp:396
-msgid "Al Rescha"
-msgstr "Al Rescha"
-
-#: ../data/data.cpp:397
-msgid "Almach"
-msgstr "Almach"
-
-#: ../data/data.cpp:398
-msgid "Almaak"
-msgstr "Almaak"
-
-#: ../data/data.cpp:399
-msgid "Alamak"
-msgstr "Alamak"
-
-#: ../data/data.cpp:400
-msgid "Hamal"
-msgstr "Hamal"
-
-#: ../data/data.cpp:401
-msgid "Mira"
-msgstr "Mira"
-
-#: ../data/data.cpp:402
-msgid "Polaris"
-msgstr "Polstjärnan"
-
-#: ../data/data.cpp:403
-msgid "Buna"
-msgstr ""
-
-#: ../data/data.cpp:404
-msgid "Kaffaljidhma"
-msgstr ""
-
-#: ../data/data.cpp:405
-msgid "Koeia"
-msgstr ""
-
-#: ../data/data.cpp:406
-msgid "Lilii Borea"
-msgstr ""
-
-#: ../data/data.cpp:407
-msgid "Nushagak"
-msgstr ""
-
-#: ../data/data.cpp:408
-#, fuzzy
-msgid "Bharani"
-msgstr "Chara"
-
-#: ../data/data.cpp:409
-#, fuzzy
-msgid "Miram"
-msgstr "Mira"
-
-#: ../data/data.cpp:410
-msgid "Angetenar"
-msgstr "Angetenar"
-
-#: ../data/data.cpp:411
-msgid "Azha"
-msgstr "Azha"
-
-#: ../data/data.cpp:412
-msgid "Acamar"
-msgstr "Acamar"
-
-#: ../data/data.cpp:413
-msgid "Ayeyarwady"
-msgstr ""
-
-#: ../data/data.cpp:414
-msgid "Menkar"
-msgstr "Menkar"
-
-#: ../data/data.cpp:415
-msgid "Menkab"
-msgstr "Menkab"
-
-#: ../data/data.cpp:416
-msgid "Algol"
-msgstr "Algol"
-
-#: ../data/data.cpp:417
-msgid "Misam"
-msgstr ""
-
-#: ../data/data.cpp:418
-msgid "Botein"
-msgstr "Botein"
-
-#: ../data/data.cpp:419
-msgid "Dalim"
-msgstr ""
-
-#: ../data/data.cpp:420
-msgid "Zibal"
-msgstr ""
-
-#: ../data/data.cpp:421
-msgid "Intan"
-msgstr ""
-
-#: ../data/data.cpp:422
-msgid "Mirfak"
-msgstr "Mirfak"
-
-#: ../data/data.cpp:423
-msgid "Mirphak"
-msgstr "Mirphak"
-
-#: ../data/data.cpp:424
-msgid "Marfak"
-msgstr "Marfak"
-
-#: ../data/data.cpp:425
-#, fuzzy
-msgid "Ran"
-msgstr "Rana"
-
-#: ../data/data.cpp:426
-msgid "Tupi"
-msgstr ""
-
-#: ../data/data.cpp:427
-msgid "Rana"
-msgstr "Rana"
-
-#: ../data/data.cpp:428
-msgid "Atik"
-msgstr "Atik"
-
-#: ../data/data.cpp:429
-msgid "Celaeno"
-msgstr "Celaeno"
-
-#: ../data/data.cpp:430
-msgid "Electra"
-msgstr "Electra"
-
-#: ../data/data.cpp:431
-msgid "Taygeta"
-msgstr "Taygeta"
-
-#: ../data/data.cpp:432
-msgid "Maia"
-msgstr "Maia"
-
-#: ../data/data.cpp:433
-msgid "Asterope"
-msgstr "Asterope"
-
-#: ../data/data.cpp:434
-msgid "Merope"
-msgstr "Merope"
-
-#: ../data/data.cpp:435
-msgid "Alcyone"
-msgstr "Alcyone"
-
-#: ../data/data.cpp:436
-msgid "Pleione"
-msgstr "Pleione"
-
-#: ../data/data.cpp:437
-msgid "Zaurak"
-msgstr "Zaurak"
-
-#: ../data/data.cpp:438
-msgid "Menkib"
-msgstr "Menkib"
-
-#: ../data/data.cpp:439
-msgid "Beid"
-msgstr "Beid"
-
-#: ../data/data.cpp:440
-msgid "Keid"
-msgstr "Keid"
-
-#: ../data/data.cpp:441
-msgid "Prima Hyadum"
-msgstr ""
-
-#: ../data/data.cpp:442
-msgid "Secunda Hyadum"
-msgstr ""
-
-#: ../data/data.cpp:443
-msgid "Beemim"
-msgstr ""
-
-#: ../data/data.cpp:444
-msgid "Ain"
-msgstr "Ain"
-
-#: ../data/data.cpp:445
-msgid "Chamukuy"
-msgstr ""
-
-#: ../data/data.cpp:446
-msgid "Hoggar"
-msgstr ""
-
-#: ../data/data.cpp:447
-msgid "Theemin"
-msgstr ""
-
-#: ../data/data.cpp:448
-msgid "Aldebaran"
-msgstr "Aldebaran"
-
-#: ../data/data.cpp:449
-msgid "Sceptrum"
-msgstr ""
-
-#: ../data/data.cpp:450
-#, fuzzy
-msgid "Tabit"
-msgstr "Thabit"
-
-#: ../data/data.cpp:451
-msgid "Mouhoun"
-msgstr ""
-
-#: ../data/data.cpp:452
-msgid "Hassaleh"
-msgstr ""
-
-#: ../data/data.cpp:453
-msgid "Hind's Crimson Star"
-msgstr "Hinds karmosinröda stjärna"
-
-#: ../data/data.cpp:454
-#, fuzzy
-msgid "Almaaz"
-msgstr "Almaak"
-
-#: ../data/data.cpp:455
-#, fuzzy
-msgid "Saclateni"
-msgstr "Galaxer"
-
-#: ../data/data.cpp:456
-msgid "Sadatoni"
-msgstr "Sadatoni"
-
-#: ../data/data.cpp:457
-msgid "Haedus"
-msgstr ""
-
-#: ../data/data.cpp:458
-msgid "Cursa"
-msgstr "Cursa"
-
-#: ../data/data.cpp:459
-msgid "Mago"
-msgstr ""
-
-#: ../data/data.cpp:460
-msgid "Kapteyn's Star"
-msgstr "Kapteyns stjärna"
-
-#: ../data/data.cpp:461
-msgid "Rigel"
-msgstr "Rigel"
-
-#: ../data/data.cpp:462
-msgid "Capella"
-msgstr "Capella"
-
-#: ../data/data.cpp:463
-msgid "Bellatrix"
-msgstr "Bellatrix"
-
-#: ../data/data.cpp:464
-msgid "Elnath"
-msgstr "Elnath"
-
-#: ../data/data.cpp:465
-msgid "Alnath"
-msgstr "Alnath"
-
-#: ../data/data.cpp:466
-msgid "Nihal"
-msgstr "Nihal"
-
-#: ../data/data.cpp:467
-msgid "Thabit"
-msgstr "Thabit"
-
-#: ../data/data.cpp:468
-msgid "Mintaka"
-msgstr "Mintaka"
-
-#: ../data/data.cpp:469
-msgid "Arneb"
-msgstr "Arneb"
-
-#: ../data/data.cpp:470
-msgid "Meissa"
-msgstr "Meissa"
-
-#: ../data/data.cpp:471
-msgid "Heka"
-msgstr "Heka"
-
-#: ../data/data.cpp:472
-msgid "Hatysa"
-msgstr ""
-
-#: ../data/data.cpp:473
-msgid "Alnilam"
-msgstr "Alnilam"
-
-#: ../data/data.cpp:474
-msgid "Bubup"
-msgstr ""
-
-#: ../data/data.cpp:475
-#, fuzzy
-msgid "Tianguan"
-msgstr "Triangel"
-
-#: ../data/data.cpp:476
-msgid "Phact"
-msgstr "Phact"
-
-#: ../data/data.cpp:477
-msgid "Alnitak"
-msgstr "Alnitak"
-
-#: ../data/data.cpp:478
-msgid "Saiph"
-msgstr "Saiph"
-
-#: ../data/data.cpp:479
-msgid "Wazn"
-msgstr "Wazn"
-
-#: ../data/data.cpp:480
-msgid "Betelgeuse"
-msgstr "Betelgeuse"
-
-#: ../data/data.cpp:481
-msgid "Prijipati"
-msgstr "Prijipati"
-
-#: ../data/data.cpp:482
-msgid "Menkalinan"
-msgstr "Menkalinan"
-
-#: ../data/data.cpp:483
-msgid "Mahasim"
-msgstr ""
-
-#: ../data/data.cpp:484
-#, fuzzy
-msgid "Elkurud"
-msgstr "Furud"
-
-#: ../data/data.cpp:485
-msgid "Amadioha"
-msgstr ""
-
-#: ../data/data.cpp:486
-#, fuzzy
-msgid "Propus"
-msgstr "Canopus"
-
-#: ../data/data.cpp:487
-msgid "Red Rectangle"
-msgstr "Röda rektangelnebulosan"
-
-#: ../data/data.cpp:488
-msgid "Furud"
-msgstr "Furud"
-
-#: ../data/data.cpp:489
-msgid "Mirzam"
-msgstr "Mirzam"
-
-#: ../data/data.cpp:490
-msgid "Murzim"
-msgstr "Murzim"
-
-#: ../data/data.cpp:491
-msgid "Tejat"
-msgstr "Tejat"
-
-#: ../data/data.cpp:492
-msgid "Canopus"
-msgstr "Canopus"
-
-#: ../data/data.cpp:493
-msgid "Suhel"
-msgstr "Suhel"
-
-#: ../data/data.cpp:494
-msgid "Lucilinburhuc"
-msgstr ""
-
-#: ../data/data.cpp:495
-msgid "Lusitânia"
-msgstr ""
-
-#: ../data/data.cpp:496
-#, fuzzy
-msgid "Plaskett's Star"
-msgstr "Visa stjärnor"
-
-#: ../data/data.cpp:497
-msgid "Alhena"
-msgstr "Alhena"
-
-#: ../data/data.cpp:498
-msgid "Almeisan"
-msgstr "Almeisan"
-
-#: ../data/data.cpp:499
-msgid "Nosaxa"
-msgstr ""
-
-#: ../data/data.cpp:500
-msgid "Mebsuta"
-msgstr "Mebsuta"
-
-#: ../data/data.cpp:501
-msgid "Sirius"
-msgstr "Sirius"
-
-#: ../data/data.cpp:502
-msgid "Alzirr"
-msgstr ""
-
-#: ../data/data.cpp:503
-msgid "Nervia"
-msgstr ""
-
-#: ../data/data.cpp:504
-msgid "Adhara"
-msgstr "Adhara"
-
-#: ../data/data.cpp:505
-msgid "Adara"
-msgstr "Adara"
-
-#: ../data/data.cpp:506
-msgid "Citalá"
-msgstr ""
-
-#: ../data/data.cpp:507
-msgid "Unurgunite"
-msgstr ""
-
-#: ../data/data.cpp:508
-msgid "Muliphein"
-msgstr "Muliphein"
-
-#: ../data/data.cpp:509
-msgid "Mekbuda"
-msgstr "Mekbuda"
-
-#: ../data/data.cpp:510
-msgid "Wezen"
-msgstr "Wezen"
-
-#: ../data/data.cpp:511
-msgid "Bernes 135"
-msgstr "Bernes 135"
-
-#: ../data/data.cpp:512
-msgid "Wasat"
-msgstr "Wasat"
-
-#: ../data/data.cpp:513
-msgid "Aludra"
-msgstr "Aludra"
-
-#: ../data/data.cpp:514
-msgid "Gomeisa"
-msgstr "Gomeisa"
-
-#: ../data/data.cpp:515
-msgid "Luyten's Star"
-msgstr "Luytens stjärna"
-
-#: ../data/data.cpp:516
-msgid "Castor"
-msgstr "Castor"
-
-#: ../data/data.cpp:517
-msgid "Jishui"
-msgstr ""
-
-#: ../data/data.cpp:518
-msgid "Procyon"
-msgstr "Procyon"
-
-#: ../data/data.cpp:519
-msgid "Elgomaisa"
-msgstr "Elgomaisa"
-
-#: ../data/data.cpp:520
-msgid "Ceibo"
-msgstr ""
-
-#: ../data/data.cpp:521
-msgid "Pollux"
-msgstr "Pollux"
-
-#: ../data/data.cpp:522
-msgid "Tapecue"
-msgstr ""
-
-#: ../data/data.cpp:523
-#, fuzzy
-msgid "Azmidi"
-msgstr "Asmidiske"
-
-#: ../data/data.cpp:524
-msgid "Asmidiske"
-msgstr "Asmidiske"
-
-#: ../data/data.cpp:525
-msgid "Naos"
-msgstr "Naos"
-
-#: ../data/data.cpp:526
-msgid "Tureis"
-msgstr ""
-
-#: ../data/data.cpp:527
-msgid "Regor"
-msgstr "Regor"
-
-#: ../data/data.cpp:528
-msgid "Tegmine"
-msgstr "Tegmine"
-
-#: ../data/data.cpp:529
-#, fuzzy
-msgid "Tarf"
-msgstr "Al Tarf"
-
-#: ../data/data.cpp:530
-msgid "Al Tarf"
-msgstr "Al Tarf"
-
-#: ../data/data.cpp:531
-msgid "Násti"
-msgstr ""
-
-#: ../data/data.cpp:532
-msgid "Piautos"
-msgstr ""
-
-#: ../data/data.cpp:533
-msgid "Avior"
-msgstr "Avior"
-
-#: ../data/data.cpp:534
-msgid "Alsciaukat"
-msgstr ""
-
-#: ../data/data.cpp:535
-msgid "Muscida"
-msgstr "Muscida"
-
-#: ../data/data.cpp:536
-#, fuzzy
-msgid "Minchir"
-msgstr "Achird"
-
-#: ../data/data.cpp:537
-msgid "Gakyid"
-msgstr ""
-
-#: ../data/data.cpp:538
-msgid "Meleph"
-msgstr ""
-
-#: ../data/data.cpp:539
-msgid "Asellus Borealis"
-msgstr "Asellus Borealis"
-
-#: ../data/data.cpp:540
-msgid "Asellus Australis"
-msgstr "Asellus Australis"
-
-#: ../data/data.cpp:541
-msgid "Alsephina"
-msgstr ""
-
-#: ../data/data.cpp:542
-msgid "Ashlesha"
-msgstr ""
-
-#: ../data/data.cpp:543
-msgid "Copernicus"
-msgstr ""
-
-#: ../data/data.cpp:544
-msgid "Stribor"
-msgstr ""
-
-#: ../data/data.cpp:545
-msgid "Acubens"
-msgstr "Acubens"
-
-#: ../data/data.cpp:546
-msgid "Talitha"
-msgstr ""
-
-#: ../data/data.cpp:547
-msgid "Dnoces"
-msgstr "Dnoces"
-
-#: ../data/data.cpp:548
-msgid "Alkaphrah"
-msgstr ""
-
-#: ../data/data.cpp:549
-msgid "Talitha Australis"
-msgstr "Talitha Australis"
-
-#: ../data/data.cpp:550
-msgid "Suhail"
-msgstr "Suhail"
-
-#: ../data/data.cpp:551
-msgid "Nahn"
-msgstr ""
-
-#: ../data/data.cpp:552
-msgid "Miaplacidus"
-msgstr "Miaplacidus"
-
-#: ../data/data.cpp:553
-msgid "Aspidiske"
-msgstr "Aspidiske"
-
-#: ../data/data.cpp:554
-#, fuzzy
-msgid "Markeb"
-msgstr "Markab"
-
-#: ../data/data.cpp:555
-msgid "Alphard"
-msgstr "Alphard"
-
-#: ../data/data.cpp:556
-msgid "Cor Hydrae"
-msgstr "Vattenormens hjärta"
-
-#: ../data/data.cpp:557
-msgid "Intercrus"
-msgstr ""
-
-#: ../data/data.cpp:558
-msgid "Alterf"
-msgstr "Alterf"
-
-#: ../data/data.cpp:559
-msgid "Illyrian"
-msgstr ""
-
-#: ../data/data.cpp:560
-msgid "Kalausi"
-msgstr ""
-
-#: ../data/data.cpp:561
-msgid "Ukdah"
-msgstr "Ukdah"
-
-#: ../data/data.cpp:562
-msgid "Subra"
-msgstr "Subra"
-
-#: ../data/data.cpp:563
-msgid "Ras Elased Australis"
-msgstr "Ras Elased Australis"
-
-#: ../data/data.cpp:564
-msgid "Natasha"
-msgstr ""
-
-#: ../data/data.cpp:565
-msgid "Zhang"
-msgstr ""
-
-#: ../data/data.cpp:566
-msgid "Rasalas"
-msgstr "Rasalas"
-
-#: ../data/data.cpp:567
-msgid "Ras Elased Borealis"
-msgstr "Ras Elased Borealis"
-
-#: ../data/data.cpp:568
-msgid "Felis"
-msgstr ""
-
-#: ../data/data.cpp:569
-msgid "Bibhā"
-msgstr ""
-
-#: ../data/data.cpp:570
-msgid "Regulus"
-msgstr "Regulus"
-
-#: ../data/data.cpp:571
-msgid "Kabeleced"
-msgstr "Kabeleced"
-
-#: ../data/data.cpp:572
-msgid "Cor Leonis"
-msgstr "Lejonets hjärta"
-
-#: ../data/data.cpp:573
-msgid "Adhafera"
-msgstr "Adhafera"
-
-#: ../data/data.cpp:574
-msgid "Aldhafera"
-msgstr "Aldhafera"
-
-#: ../data/data.cpp:575
-msgid "Tania Borealis"
-msgstr "Tania Borealis"
-
-#: ../data/data.cpp:576
-msgid "Algieba"
-msgstr "Algieba"
-
-#: ../data/data.cpp:577
-msgid "Tania Australis"
-msgstr "Tania Australis"
-
-#: ../data/data.cpp:578
-#, fuzzy
-msgid "Macondo"
-msgstr "London"
-
-#: ../data/data.cpp:579
-msgid "Praecipua"
-msgstr ""
-
-#: ../data/data.cpp:580
-msgid "Chalawan"
-msgstr ""
-
-#: ../data/data.cpp:581
-msgid "Alkes"
-msgstr "Alkes"
-
-#: ../data/data.cpp:582
-msgid "Merak"
-msgstr "Merak"
-
-#: ../data/data.cpp:583
-msgid "Lalande 21185"
-msgstr "Lalande 21185"
-
-#: ../data/data.cpp:584
-msgid "Dubhe"
-msgstr "Dubhe"
-
-#: ../data/data.cpp:585
-msgid "Dubb"
-msgstr "Dubb"
-
-#: ../data/data.cpp:586
-msgid "Dingolay"
-msgstr ""
-
-#: ../data/data.cpp:587
-msgid "Zosma"
-msgstr "Zosma"
-
-#: ../data/data.cpp:588
-msgid "Duhr"
-msgstr "Duhr"
-
-#: ../data/data.cpp:589
-msgid "Chertan"
-msgstr "Chertan"
-
-#: ../data/data.cpp:590
-msgid "Coxa"
-msgstr "Coxa"
-
-#: ../data/data.cpp:591
-msgid "Chort"
-msgstr "Chort"
-
-#: ../data/data.cpp:592
-msgid "Innes' Star"
-msgstr ""
-
-#: ../data/data.cpp:593
-msgid "Hunahpú"
-msgstr ""
-
-#: ../data/data.cpp:594
-msgid "Alula Australis"
-msgstr "Alula Australis"
-
-#: ../data/data.cpp:595
-msgid "Alula Borealis"
-msgstr "Alula Borealis"
-
-#: ../data/data.cpp:596
-msgid "Tsze Tseang"
-msgstr "Tsze Tseang"
-
-#: ../data/data.cpp:597
-#, fuzzy
-msgid "Shama"
-msgstr "Sham"
-
-#: ../data/data.cpp:598
-msgid "Giausar"
-msgstr "Giausar"
-
-#: ../data/data.cpp:599
-#, fuzzy
-msgid "Formosa"
-msgstr "Format: "
-
-#: ../data/data.cpp:600
-msgid "Sagarmatha"
-msgstr ""
-
-#: ../data/data.cpp:601
-msgid "Przybylski's Star"
-msgstr ""
-
-#: ../data/data.cpp:602
-msgid "Uklun"
-msgstr ""
-
-#: ../data/data.cpp:603
-#, fuzzy
-msgid "Flegetonte"
-msgstr "Georgetown"
-
-#: ../data/data.cpp:604
-msgid "Taiyangshou"
-msgstr ""
-
-#: ../data/data.cpp:605
-msgid "Denebola"
-msgstr "Denebola"
-
-#: ../data/data.cpp:606
-msgid "Zavijava"
-msgstr "Zavijava"
-
-#: ../data/data.cpp:607
-msgid "Alaraph"
-msgstr "Alaraph"
-
-#: ../data/data.cpp:608
-#, fuzzy
-msgid "Aniara"
-msgstr "Honiara"
-
-#: ../data/data.cpp:609
-msgid "Groombridge 1830"
-msgstr "Groombridge 1830"
-
-#: ../data/data.cpp:610
-msgid "Phecda"
-msgstr "Phecda"
-
-#: ../data/data.cpp:611
-msgid "Phad"
-msgstr "Phad"
-
-#: ../data/data.cpp:612
-msgid "Tonatiuh"
-msgstr ""
-
-#: ../data/data.cpp:613
-msgid "Alchiba"
-msgstr "Alchiba"
-
-#: ../data/data.cpp:614
-msgid "Imai"
-msgstr ""
-
-#: ../data/data.cpp:615
-msgid "Megrez"
-msgstr "Megrez"
-
-#: ../data/data.cpp:616
-msgid "Gienah"
-msgstr "Gienah"
-
-#: ../data/data.cpp:617
-msgid "Zaniah"
-msgstr "Zaniah"
-
-#: ../data/data.cpp:618
-msgid "Ginan"
-msgstr ""
-
-#: ../data/data.cpp:619
-msgid "Tupã"
-msgstr ""
-
-#: ../data/data.cpp:620
-msgid "Acrux"
-msgstr "Acrux"
-
-#: ../data/data.cpp:621
-msgid "Algorab"
-msgstr "Algorab"
-
-#: ../data/data.cpp:622
-msgid "Gacrux"
-msgstr "Gacrux"
-
-#: ../data/data.cpp:623
-msgid "Funi"
-msgstr ""
-
-#: ../data/data.cpp:624
-msgid "Chara"
-msgstr "Chara"
-
-#: ../data/data.cpp:625
-msgid "Kraz"
-msgstr "Kraz"
-
-#: ../data/data.cpp:626
-msgid "Muhlifain"
-msgstr "Muhlifain"
-
-#: ../data/data.cpp:627
-msgid "Porrima"
-msgstr "Porrima"
-
-#: ../data/data.cpp:628
-msgid "La Superba"
-msgstr ""
-
-#: ../data/data.cpp:629
-msgid "Tianyi"
-msgstr ""
-
-#: ../data/data.cpp:630
-msgid "Mimosa"
-msgstr "Mimosa"
-
-#: ../data/data.cpp:631
-msgid "Alioth"
-msgstr "Alioth"
-
-#: ../data/data.cpp:632
-msgid "Taiyi"
-msgstr ""
-
-#: ../data/data.cpp:633
-msgid "Minelauva"
-msgstr "Minelauva"
-
-#: ../data/data.cpp:634
-msgid "Auva"
-msgstr "Auva"
-
-#: ../data/data.cpp:635
-msgid "Cor Caroli"
-msgstr "Cor Caroli"
-
-#: ../data/data.cpp:636
-msgid "Vindemiatrix"
-msgstr "Vindemiatrix"
-
-#: ../data/data.cpp:637
-msgid "Almuredin"
-msgstr "Almuredin"
-
-#: ../data/data.cpp:638
-msgid "Diadem"
-msgstr ""
-
-#: ../data/data.cpp:639
-msgid "Mizar"
-msgstr "Mizar"
-
-#: ../data/data.cpp:640
-msgid "Spica"
-msgstr "Spica"
-
-#: ../data/data.cpp:641
-msgid "Azimech"
-msgstr "Azimech"
-
-#: ../data/data.cpp:642
-msgid "Alcor"
-msgstr "Alcor"
-
-#: ../data/data.cpp:643
-msgid "Dofida"
-msgstr ""
-
-#: ../data/data.cpp:644
-msgid "Liesma"
-msgstr ""
-
-#: ../data/data.cpp:645
-msgid "Heze"
-msgstr "Heze"
-
-#: ../data/data.cpp:646
-msgid "Alkaid"
-msgstr "Alkaid"
-
-#: ../data/data.cpp:647
-msgid "Benetnasch"
-msgstr "Benetnasch"
-
-#: ../data/data.cpp:648
-msgid "Muphrid"
-msgstr "Muphrid"
-
-#: ../data/data.cpp:649
-msgid "Hadar"
-msgstr "Hadar"
-
-#: ../data/data.cpp:650
-msgid "Agena"
-msgstr "Agena"
-
-#: ../data/data.cpp:651
-msgid "Thuban"
-msgstr "Thuban"
-
-#: ../data/data.cpp:652
-msgid "Menkent"
-msgstr "Menkent"
-
-#: ../data/data.cpp:653
-msgid "Kang"
-msgstr ""
-
-#: ../data/data.cpp:654
-msgid "Arcturus"
-msgstr "Arcturus"
-
-#: ../data/data.cpp:655
-msgid "Syrma"
-msgstr "Syrma"
-
-#: ../data/data.cpp:656
-msgid "Xuange"
-msgstr ""
-
-#: ../data/data.cpp:657
-msgid "Elgafar"
-msgstr ""
-
-#: ../data/data.cpp:658
-msgid "Proxima"
-msgstr "Proxima"
-
-#: ../data/data.cpp:659
-msgid "Seginus"
-msgstr "Segin"
-
-#: ../data/data.cpp:660
-msgid "Ceginus"
-msgstr "Ceginus"
-
-#: ../data/data.cpp:661
-msgid "Toliman"
-msgstr ""
-
-#: ../data/data.cpp:662
-msgid "Rigil Kentaurus"
-msgstr ""
-
-#: ../data/data.cpp:663
-msgid "Izar"
-msgstr "Izar"
-
-#: ../data/data.cpp:664
-msgid "Mirak"
-msgstr "Mirak"
-
-#: ../data/data.cpp:665
-msgid "Pulcherrima"
-msgstr "Pulcherrima"
-
-#: ../data/data.cpp:666
-msgid "Mönch"
-msgstr ""
-
-#: ../data/data.cpp:667
-msgid "Merga"
-msgstr ""
-
-#: ../data/data.cpp:668
-msgid "Kochab"
-msgstr "Kochab"
-
-#: ../data/data.cpp:669
-msgid "Kocab"
-msgstr "Kocab"
-
-#: ../data/data.cpp:670
-msgid "Zubenelgenubi"
-msgstr "Zubenelgenubi"
-
-#: ../data/data.cpp:671
-msgid "Arcalís"
-msgstr ""
-
-#: ../data/data.cpp:672
-msgid "Baekdu"
-msgstr ""
-
-#: ../data/data.cpp:673
-msgid "Zuben Elakribi"
-msgstr "Zuben Elakribi"
-
-#: ../data/data.cpp:674
-msgid "Nekkar"
-msgstr "Nekkar"
-
-#: ../data/data.cpp:675
-msgid "Brachium"
-msgstr ""
-
-#: ../data/data.cpp:676
-msgid "Zubeneschamali"
-msgstr "Zubeneschamali"
-
-#: ../data/data.cpp:677
-#, fuzzy
-msgid "Pherkad Minor"
-msgstr "Pherkad"
-
-#: ../data/data.cpp:678
-msgid "Nikawiy"
-msgstr ""
-
-#: ../data/data.cpp:679
-msgid "Pherkad"
-msgstr "Pherkad"
-
-#: ../data/data.cpp:680
-msgid "Alkalurops"
-msgstr "Alkalurops"
-
-#: ../data/data.cpp:681
-msgid "Edasich"
-msgstr "Edasich"
-
-#: ../data/data.cpp:682
-msgid "Nusakan"
-msgstr "Nusakan"
-
-#: ../data/data.cpp:683
-msgid "Alphecca"
-msgstr "Alphecca"
-
-#: ../data/data.cpp:684
-msgid "Gemma"
-msgstr "Gemma"
-
-#: ../data/data.cpp:685
-#, fuzzy
-msgid "Zubenelhakrabi"
-msgstr "Zuben Elakrab"
-
-#: ../data/data.cpp:686
-msgid "Zuben Elakrab"
-msgstr "Zuben Elakrab"
-
-#: ../data/data.cpp:687
-msgid "Karaka"
-msgstr ""
-
-#: ../data/data.cpp:688
-msgid "Unukalhai"
-msgstr "Unukalhai"
-
-#: ../data/data.cpp:689
-msgid "Chow"
-msgstr "Chow"
-
-#: ../data/data.cpp:690
-msgid "Gudja"
-msgstr ""
-
-#: ../data/data.cpp:691
-msgid "Iklil"
-msgstr ""
-
-#: ../data/data.cpp:692
-msgid "Fang"
-msgstr ""
-
-#: ../data/data.cpp:693
-msgid "Dschubba"
-msgstr "Dschubba"
-
-#: ../data/data.cpp:694
-msgid "Acrab"
-msgstr ""
-
-#: ../data/data.cpp:695
-msgid "Graffias"
-msgstr "Graffias"
-
-#: ../data/data.cpp:696
-msgid "Akrab"
-msgstr "Akrab"
-
-#: ../data/data.cpp:697
-#, fuzzy
-msgid "Marsic"
-msgstr "Mars"
-
-#: ../data/data.cpp:698
-msgid "Jabbah"
-msgstr "Jabbah"
-
-#: ../data/data.cpp:699
-msgid "Sharjah"
-msgstr ""
-
-#: ../data/data.cpp:700
-msgid "Yed Prior"
-msgstr ""
-
-#: ../data/data.cpp:701
-msgid "Yed Posterior"
-msgstr ""
-
-#: ../data/data.cpp:702
-msgid "Hunor"
-msgstr ""
-
-#: ../data/data.cpp:703
-#, fuzzy
-msgid "Alniyat"
-msgstr "Al Niyat"
-
-#: ../data/data.cpp:704
-msgid "Al Niyat"
-msgstr "Al Niyat"
-
-#: ../data/data.cpp:705
-#, fuzzy
-msgid "Athebyne"
-msgstr "Aten"
-
-#: ../data/data.cpp:706
-msgid "Cujam"
-msgstr "Cujam"
-
-#: ../data/data.cpp:707
-msgid "Timir"
-msgstr ""
-
-#: ../data/data.cpp:708
-msgid "Antares"
-msgstr "Antares"
-
-#: ../data/data.cpp:709
-msgid "Kornephoros"
-msgstr "Kornephoros"
-
-#: ../data/data.cpp:710
-msgid "Ogma"
-msgstr ""
-
-#: ../data/data.cpp:711
-msgid "Marfik"
-msgstr "Marfik"
-
-#: ../data/data.cpp:712
-msgid "Rosalíadecastro"
-msgstr ""
-
-#: ../data/data.cpp:713
-msgid "Paikauhale"
-msgstr ""
-
-#: ../data/data.cpp:714
-msgid "Atria"
-msgstr "Atria"
-
-#: ../data/data.cpp:715
-#, fuzzy
-msgid "Larawag"
-msgstr "Tarawa"
-
-#: ../data/data.cpp:716
-msgid "Xamidimura"
-msgstr ""
-
-#: ../data/data.cpp:717
-#, fuzzy
-msgid "Pipirima"
-msgstr "Porrima"
-
-#: ../data/data.cpp:718
-msgid "Mahsati"
-msgstr ""
-
-#: ../data/data.cpp:719
-#, fuzzy
-msgid "Rapeto"
-msgstr "Iapetus"
-
-#: ../data/data.cpp:720
-#, fuzzy
-msgid "Alrakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:721
-msgid "Arrakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:722
-#, fuzzy
-msgid "Aldhibah"
-msgstr "Alchiba"
-
-#: ../data/data.cpp:723
-msgid "Sabik"
-msgstr "Sabik"
-
-#: ../data/data.cpp:724
-msgid "Rasalgethi"
-msgstr "Rasalgethi"
-
-#: ../data/data.cpp:725
-msgid "Ras Algethi"
-msgstr "Ras Algethi"
-
-#: ../data/data.cpp:726
-msgid "Sarin"
-msgstr "Sarin"
-
-#: ../data/data.cpp:727
-msgid "Guniibuu"
-msgstr ""
-
-#: ../data/data.cpp:728
-msgid "Inquill"
-msgstr ""
-
-#: ../data/data.cpp:729
-msgid "Rastaban"
-msgstr "Rastaban"
-
-#: ../data/data.cpp:730
-msgid "Maasym"
-msgstr "Maasym"
-
-#: ../data/data.cpp:731
-msgid "Lesath"
-msgstr "Lesath"
-
-#: ../data/data.cpp:732
-msgid "Lesuth"
-msgstr "Lesuth"
-
-#: ../data/data.cpp:733
-msgid "Kuma"
-msgstr "Kuma"
-
-#: ../data/data.cpp:734
-msgid "Yildun"
-msgstr "Yildun"
-
-#: ../data/data.cpp:735
-msgid "Shaula"
-msgstr "Shaula"
-
-#: ../data/data.cpp:736
-msgid "Rasalhague"
-msgstr "Rasalhague"
-
-#: ../data/data.cpp:737
-msgid "Ras Alhague"
-msgstr "Ras Alhague"
-
-#: ../data/data.cpp:738
-msgid "Sargas"
-msgstr "Sargas"
-
-#: ../data/data.cpp:739
-msgid "Dziban"
-msgstr "Dziban"
-
-#: ../data/data.cpp:740
-msgid "Girtab"
-msgstr ""
-
-#: ../data/data.cpp:741
-msgid "Cebalrai"
-msgstr "Cebalrai"
-
-#: ../data/data.cpp:742
-msgid "Alruba"
-msgstr ""
-
-#: ../data/data.cpp:743
-#, fuzzy
-msgid "Cervantes"
-msgstr "Observatorier"
-
-#: ../data/data.cpp:744
-msgid "Fuyue"
-msgstr ""
-
-#: ../data/data.cpp:745
-msgid "Grumium"
-msgstr "Grumium"
-
-#: ../data/data.cpp:746
-msgid "Eltanin"
-msgstr "Eltanin"
-
-#: ../data/data.cpp:747
-msgid "Etamin"
-msgstr "Etamin"
-
-#: ../data/data.cpp:748
-msgid "Barnard's Star"
-msgstr "Barnards stjärna"
-
-#: ../data/data.cpp:749
-msgid "Pincoya"
-msgstr ""
-
-#: ../data/data.cpp:750
-msgid "Alnasl"
-msgstr "Alnasl"
-
-#: ../data/data.cpp:751
-msgid "Polis"
-msgstr ""
-
-#: ../data/data.cpp:752
-msgid "Kaus Media"
-msgstr "Kaus Media"
-
-#: ../data/data.cpp:753
-msgid "Alasia"
-msgstr ""
-
-#: ../data/data.cpp:754
-msgid "Kaus Australis"
-msgstr "Kaus Australis"
-
-#: ../data/data.cpp:755
-msgid "Al Athfar"
-msgstr "Al Athfar"
-
-#: ../data/data.cpp:756
-msgid "Fafnir"
-msgstr ""
-
-#: ../data/data.cpp:757
-msgid "Kaus Borealis"
-msgstr "Kaus Borealis"
-
-#: ../data/data.cpp:758
-msgid "Vega"
-msgstr "Vega"
-
-#: ../data/data.cpp:759
-msgid "Xihe"
-msgstr ""
-
-#: ../data/data.cpp:760
-msgid "Sheliak"
-msgstr "Sheliak"
-
-#: ../data/data.cpp:761
-#, fuzzy
-msgid "Ainalrami"
-msgstr "Alderamin"
-
-#: ../data/data.cpp:762
-msgid "Nunki"
-msgstr "Nunki"
-
-#: ../data/data.cpp:763
-msgid "Kaveh"
-msgstr ""
-
-#: ../data/data.cpp:764
-msgid "Alya"
-msgstr "Alya"
-
-#: ../data/data.cpp:765
-msgid "Sulafat"
-msgstr "Sulafat"
-
-#: ../data/data.cpp:766
-msgid "Ascella"
-msgstr "Ascella"
-
-#: ../data/data.cpp:767
-msgid "Okab"
-msgstr ""
-
-#: ../data/data.cpp:768
-msgid "Deneb el Okab"
-msgstr "Deneb el Okab"
-
-#: ../data/data.cpp:769
-msgid "Meridiana"
-msgstr ""
-
-#: ../data/data.cpp:770
-#, fuzzy
-msgid "Albaldah"
-msgstr "Albali"
-
-#: ../data/data.cpp:771
-msgid "Altais"
-msgstr "Altais"
-
-#: ../data/data.cpp:772
-msgid "Al Tais"
-msgstr "Al Tais"
-
-#: ../data/data.cpp:773
-msgid "Nodus Secundus"
-msgstr "Nodus Secundus"
-
-#: ../data/data.cpp:774
-msgid "Aladfar"
-msgstr "Aladfar"
-
-#: ../data/data.cpp:775
-#, fuzzy
-msgid "Gumala"
-msgstr "Guatemala"
-
-#: ../data/data.cpp:776
-msgid "Belel"
-msgstr ""
-
-#: ../data/data.cpp:777
-#, fuzzy
-msgid "Arkab Prior"
-msgstr "Arkab"
-
-#: ../data/data.cpp:778
-msgid "Arkab"
-msgstr "Arkab"
-
-#: ../data/data.cpp:779
-msgid "Sika"
-msgstr ""
-
-#: ../data/data.cpp:780
-msgid "Arkab Posterior"
-msgstr ""
-
-#: ../data/data.cpp:781
-msgid "Rukbat"
-msgstr "Rukbat"
-
-#: ../data/data.cpp:782
-msgid "Anser"
-msgstr ""
-
-#: ../data/data.cpp:783
-msgid "Albireo"
-msgstr "Albireo"
-
-#: ../data/data.cpp:784
-msgid "Uruk"
-msgstr ""
-
-#: ../data/data.cpp:785
-msgid "Alsafi"
-msgstr "Alsafi"
-
-#: ../data/data.cpp:786
-msgid "Campbell's Star"
-msgstr "Campbells stjärna"
-
-#: ../data/data.cpp:787
-msgid "Sham"
-msgstr "Sham"
-
-#: ../data/data.cpp:788
-#, fuzzy
-msgid "Fawaris"
-msgstr "Paris"
-
-#: ../data/data.cpp:789
-msgid "Tarazed"
-msgstr "Tarazed"
-
-#: ../data/data.cpp:790
-msgid "Tyl"
-msgstr "Tyl"
-
-#: ../data/data.cpp:791
-msgid "Altair"
-msgstr "Altair"
-
-#: ../data/data.cpp:792
-msgid "Atair"
-msgstr "Atair"
-
-#: ../data/data.cpp:793
-msgid "Libertas"
-msgstr ""
-
-#: ../data/data.cpp:794
-msgid "Alshain"
-msgstr "Alshain"
-
-#: ../data/data.cpp:795
-msgid "Terebellum"
-msgstr ""
-
-#: ../data/data.cpp:796
-msgid "Phoenicia"
-msgstr ""
-
-#: ../data/data.cpp:797
-msgid "Chechia"
-msgstr ""
-
-#: ../data/data.cpp:798
-msgid "Algedi"
-msgstr "Algedi"
-
-#: ../data/data.cpp:799
-#, fuzzy
-msgid "Alshat"
-msgstr "Alshain"
-
-#: ../data/data.cpp:800
-msgid "Dabih"
-msgstr "Dabih"
-
-#: ../data/data.cpp:801
-msgid "Sadr"
-msgstr "Sadr"
-
-#: ../data/data.cpp:802
-msgid "Peacock"
-msgstr "Peacock"
-
-#: ../data/data.cpp:803
-msgid "Aldulfin"
-msgstr ""
-
-#: ../data/data.cpp:804
-msgid "Rotanev"
-msgstr "Rotanev"
-
-#: ../data/data.cpp:805
-msgid "Sualocin"
-msgstr "Sualocin"
-
-#: ../data/data.cpp:806
-msgid "Deneb"
-msgstr "Deneb"
-
-#: ../data/data.cpp:807
-#, fuzzy
-msgid "Aljanah"
-msgstr "Ljubljana"
-
-#: ../data/data.cpp:808
-msgid "Albali"
-msgstr "Albali"
-
-#: ../data/data.cpp:809
-msgid "Musica"
-msgstr ""
-
-#: ../data/data.cpp:810
-#, fuzzy
-msgid "Polaris Australis"
-msgstr "Kaus Australis"
-
-#: ../data/data.cpp:811
-#, fuzzy
-msgid "Solaris"
-msgstr "Polstjärnan"
-
-#: ../data/data.cpp:812
-msgid "Kitalpha"
-msgstr "Kitalpha"
-
-#: ../data/data.cpp:813
-msgid "Lacaille 8760"
-msgstr "Lacaille 8760"
-
-#: ../data/data.cpp:814
-msgid "Alderamin"
-msgstr "Alderamin"
-
-#: ../data/data.cpp:815
-msgid "Alfirk"
-msgstr "Alfirk"
-
-#: ../data/data.cpp:816
-msgid "Sadalsuud"
-msgstr "Sadalsuud"
-
-#: ../data/data.cpp:817
-#, fuzzy
-msgid "Bunda"
-msgstr "Gränser"
-
-#: ../data/data.cpp:818
-msgid "Sāmaya"
-msgstr ""
-
-#: ../data/data.cpp:819
-msgid "Nashira"
-msgstr "Nashira"
-
-#: ../data/data.cpp:820
-msgid "Azelfafage"
-msgstr "Azelfafage"
-
-#: ../data/data.cpp:821
-msgid "Bosona"
-msgstr ""
-
-#: ../data/data.cpp:822
-msgid "Herschel's Garnet Star"
-msgstr "Herschel's Garnet Star"
-
-#: ../data/data.cpp:823
-#, fuzzy
-msgid "Erakis"
-msgstr "Arrakis"
-
-#: ../data/data.cpp:824
-msgid "Enif"
-msgstr "Enif"
-
-#: ../data/data.cpp:825
-msgid "Deneb Algedi"
-msgstr "Deneb Algedi"
-
-#: ../data/data.cpp:826
-#, fuzzy
-msgid "Aldhanab"
-msgstr "Al Dhanab"
-
-#: ../data/data.cpp:827
-msgid "Al Dhanab"
-msgstr "Al Dhanab"
-
-#: ../data/data.cpp:828
-msgid "Itonda"
-msgstr ""
-
-#: ../data/data.cpp:829
-msgid "Kurhah"
-msgstr "Kurhah"
-
-#: ../data/data.cpp:830
-msgid "Sadalmelik"
-msgstr "Sadalmelik"
-
-#: ../data/data.cpp:831
-msgid "Alnair"
-msgstr "Alnair"
-
-#: ../data/data.cpp:832
-msgid "Al Nair"
-msgstr "Al Nair"
-
-#: ../data/data.cpp:833
-msgid "Biham"
-msgstr "Biham"
-
-#: ../data/data.cpp:834
-msgid "Ancha"
-msgstr "Ancha"
-
-#: ../data/data.cpp:835
-msgid "Sadachbia"
-msgstr "Sadachbia"
-
-#: ../data/data.cpp:836
-msgid "Seat"
-msgstr "Seat"
-
-#: ../data/data.cpp:837
-msgid "Lionrock"
-msgstr ""
-
-#: ../data/data.cpp:838
-msgid "Kruger 60"
-msgstr "Kruger 60"
-
-#: ../data/data.cpp:839
-msgid "Situla"
-msgstr "Situla"
-
-#: ../data/data.cpp:840
-msgid "Homam"
-msgstr "Homam"
-
-#: ../data/data.cpp:841
-msgid "Tiaki"
-msgstr ""
-
-#: ../data/data.cpp:842
-msgid "Matar"
-msgstr "Matar"
-
-#: ../data/data.cpp:843
-msgid "Babcock's Star"
-msgstr "Babcocks stjärna"
-
-#: ../data/data.cpp:844
-msgid "Sadalbari"
-msgstr "Sadalbari"
-
-#: ../data/data.cpp:845
-msgid "Hydor"
-msgstr ""
-
-#: ../data/data.cpp:846
-msgid "Skat"
-msgstr "Skat"
-
-#: ../data/data.cpp:847
-msgid "Helvetios"
-msgstr ""
-
-#: ../data/data.cpp:848
-msgid "Fomalhaut"
-msgstr "Fomalhaut"
-
-#: ../data/data.cpp:849
-msgid "Scheat"
-msgstr "Scheat"
-
-#: ../data/data.cpp:850
-#, fuzzy
-msgid "Fumalsamakah"
-msgstr "Fum al Samakah"
-
-#: ../data/data.cpp:851
-msgid "Fum al Samakah"
-msgstr "Fum al Samakah"
-
-#: ../data/data.cpp:852
-msgid "Markab"
-msgstr "Markab"
-
-#: ../data/data.cpp:853
-msgid "Marchab"
-msgstr "Marchab"
-
-#: ../data/data.cpp:854
-msgid "Ebla"
-msgstr ""
-
-#: ../data/data.cpp:855
-msgid "Bradley 3077"
-msgstr "Bradley 3077"
-
-#: ../data/data.cpp:856
-msgid "Salm"
-msgstr ""
-
-#: ../data/data.cpp:857
-#, fuzzy
-msgid "Alkarab"
-msgstr "Ankara"
-
-#: ../data/data.cpp:858
-msgid "Veritate"
-msgstr ""
-
-#: ../data/data.cpp:859
-msgid "Poerava"
-msgstr ""
-
-#: ../data/data.cpp:860
-msgid "Errai"
-msgstr "Errai"
-
-#: ../data/data.cpp:861
-msgid "Axólotl"
-msgstr ""
-
-#: ../data/data.cpp:862
-msgid "Pleiades"
-msgstr "Plejaderna"
-
-#: ../data/data.cpp:863
-msgid "Hyades"
-msgstr "Hyaderna"
-
-#: ../data/data.cpp:864
-msgid "Praesepe"
-msgstr "Praesepe"
-
-#: ../data/data.cpp:865
-msgid "Beehive Cluster"
-msgstr "Bikupan"
-
-#: ../data/data.cpp:866
-msgid "Maffei 1"
-msgstr "Maffei 1"
-
-#: ../data/data.cpp:867
-msgid "Maffei 2"
-msgstr "Maffei 2"
-
-#: ../data/data.cpp:868
-msgid "Leo A"
-msgstr "Leo A"
-
-#: ../data/data.cpp:869
-msgid "Sextans B"
-msgstr "Sextans B"
-
-#: ../data/data.cpp:870
-msgid "Leo I"
-msgstr "Leo I"
-
-#: ../data/data.cpp:871
-msgid "Sextans A"
-msgstr "Sextans A"
-
-#: ../data/data.cpp:872
-msgid "Circinus"
-msgstr "Cirkelpassaren"
-
-#: ../data/data.cpp:873
-msgid "Andromeda Galaxy"
-msgstr ""
-
-#: ../data/data.cpp:874
-msgid "Triangulum Galaxy"
-msgstr ""
-
-#: ../data/data.cpp:875
-msgid "Holmberg VI"
-msgstr "Holmberg VI"
-
-#: ../data/data.cpp:876
-msgid "Fath 703"
-msgstr "Fath 703"
-
-#: ../data/data.cpp:877
-msgid "47 Tuc"
-msgstr "Stjärnhopen 47 Tuc"
-
-#: ../data/data.cpp:878
-msgid "Eridanus"
-msgstr "Floden Eridanus"
-
-#: ../data/data.cpp:879
-msgid "Pyxis"
-msgstr "Kompassen"
-
-#: ../data/data.cpp:880
-msgid "Tonantzintla 2"
-msgstr "Tonantzintla 2"
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
@@ -3627,38 +49,38 @@ msgstr "Fel vid läsning av konfigurationsfil."
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
 #.
-#: ../src/celengine/dsodb.cpp:375
+#: ../src/celengine/dsodb.cpp:379
 #, fuzzy, c-format
 msgid "Loaded %i deep space objects\n"
 msgstr " rymdobjekt"
 
-#: ../src/celengine/galaxy.cpp:209
+#: ../src/celengine/galaxy.cpp:211
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "Galax (Hubble-typ: %s)"
 
-#: ../src/celengine/globular.cpp:238
+#: ../src/celengine/globular.cpp:241
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr ""
 
-#: ../src/celengine/image.cpp:289
+#: ../src/celengine/image.cpp:291
 #, fuzzy, c-format
 msgid "Loading image from file %s\n"
 msgstr "Läser bild från fil "
 
-#: ../src/celengine/meshmanager.cpp:120
+#: ../src/celengine/meshmanager.cpp:102
 #, fuzzy, c-format
 msgid "Loading model: %s\n"
 msgstr "Läser modell: "
 
-#: ../src/celengine/meshmanager.cpp:201
+#: ../src/celengine/meshmanager.cpp:184
 #, c-format
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
 msgstr ""
 
-#: ../src/celengine/meshmanager.cpp:211
+#: ../src/celengine/meshmanager.cpp:194
 #, fuzzy, c-format
 msgid "Error loading model '%s'\n"
 msgstr "Fel vid inläsning av modell '"
@@ -3706,69 +128,74 @@ msgstr "felaktig alternativ yta"
 msgid "bad location"
 msgstr "felaktig plats"
 
-#: ../src/celengine/stardb.cpp:569
+#: ../src/celengine/stardb.cpp:583
 msgid "Bad header for cross index\n"
 msgstr "Felaktigt huvud för korsindex\n"
 
-#: ../src/celengine/stardb.cpp:583
+#: ../src/celengine/stardb.cpp:595
 msgid "Bad version for cross index\n"
 msgstr "Felaktig version för korsindex\n"
 
-#: ../src/celengine/stardb.cpp:603
+#: ../src/celengine/stardb.cpp:609
+#, fuzzy
+msgid "Loading cross index failed\n"
+msgstr "Läsning av korsindex misslyckades på post "
+
+#: ../src/celengine/stardb.cpp:616
 #, fuzzy, c-format
 msgid "Loading cross index failed at record %u\n"
 msgstr "Läsning av korsindex misslyckades på post "
 
-#: ../src/celengine/stardb.cpp:687
+#: ../src/celengine/stardb.cpp:694
 #, fuzzy, c-format
 msgid "Bad spectral type in star database, star #%u\n"
 msgstr "Felaktig spektraltyp i stjärndatabas, stjärna #"
 
-#: ../src/celengine/stardb.cpp:702
+#: ../src/celengine/stardb.cpp:709
 #, fuzzy, c-format
 msgid "%d stars in binary database\n"
 msgstr " stjärnor i binärdatabasen\n"
 
-#: ../src/celengine/stardb.cpp:726
+#: ../src/celengine/stardb.cpp:733
 #, fuzzy, c-format
 msgid "Total star count: %d\n"
 msgstr "Totalt antal stjärnor: "
 
-#: ../src/celengine/stardb.cpp:760
+#: ../src/celengine/stardb.cpp:767
 #, fuzzy, c-format
 msgid "Error in .stc file (line %i): %s\n"
 msgstr "Fel i .stc-fil (rad "
 
-#: ../src/celengine/stardb.cpp:790
+#: ../src/celengine/stardb.cpp:797
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Ogiltig stjärna: felaktig spektraltyp.\n"
 
-#: ../src/celengine/stardb.cpp:799
+#: ../src/celengine/stardb.cpp:806
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Ogiltig stjärna: saknar spektraltyp.\n"
 
-#: ../src/celengine/stardb.cpp:986
+#: ../src/celengine/stardb.cpp:993
 #, fuzzy, c-format
 msgid "Barycenter %s does not exist.\n"
 msgstr " finns ej.\n"
 
-#: ../src/celengine/stardb.cpp:1042
+#: ../src/celengine/stardb.cpp:1049
 msgid "Invalid star: missing right ascension\n"
 msgstr "Ogiltig stjärna: saknar rektascension\n"
 
-#: ../src/celengine/stardb.cpp:1055
+#: ../src/celengine/stardb.cpp:1062
 msgid "Invalid star: missing declination.\n"
 msgstr "Ogiltig stjärna: saknar deklination.\n"
 
-#: ../src/celengine/stardb.cpp:1068
+#: ../src/celengine/stardb.cpp:1075
 msgid "Invalid star: missing distance.\n"
 msgstr "Ogiltig stjärna: saknar avstånd.\n"
 
-#: ../src/celengine/stardb.cpp:1102
+#: ../src/celengine/stardb.cpp:1109
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Ogiltig stjärna: saknar magnitud.\n"
 
-#: ../src/celengine/stardb.cpp:1119
+#: ../src/celengine/stardb.cpp:1126
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -3776,49 +203,50 @@ msgstr ""
 "Felaktig stjärna: absolut (inte apparent) magnitud måste anges för en "
 "stjärna nära ursprung\n"
 
-#: ../src/celengine/stardb.cpp:1426
+#: ../src/celengine/stardb.cpp:1431
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
 msgstr ""
 
-#: ../src/celengine/texture.cpp:1015
+#: ../src/celengine/texture.cpp:928
 #, fuzzy, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
 msgstr "Skapar rutad textur. Bredd="
 
-#: ../src/celengine/texture.cpp:1020
+#: ../src/celengine/texture.cpp:933
 #, fuzzy, c-format
 msgid "Creating ordinary texture: %ix%i\n"
 msgstr "Skapar vanlig textur: "
 
-#: ../src/celephem/samporbit.cpp:833
+#: ../src/celephem/samporbit.cpp:835
 #, fuzzy, c-format
-msgid "Error openning %s.\n"
+msgid "Error opening %s.\n"
 msgstr "Fel vid öppning av "
 
-#: ../src/celephem/samporbit.cpp:840 ../src/tools/xyzv2bin/bin2xyzv.cpp:25
+#: ../src/celephem/samporbit.cpp:842
 #, fuzzy, c-format
 msgid "Error reading header of %s.\n"
 msgstr "Fel vid läsning av PNG-bildfil "
 
-#: ../src/celephem/samporbit.cpp:846 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
+#: ../src/celephem/samporbit.cpp:848
 #, c-format
 msgid "Bad binary xyzv file %s.\n"
 msgstr ""
 
-#: ../src/celephem/samporbit.cpp:852 ../src/tools/xyzv2bin/bin2xyzv.cpp:37
+#: ../src/celephem/samporbit.cpp:854
 #, c-format
 msgid "Unsupported byte order %i, expected %i.\n"
 msgstr ""
 
-#: ../src/celephem/samporbit.cpp:860 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
+#: ../src/celephem/samporbit.cpp:862
 #, c-format
 msgid "Unsupported digits number %i, expected %i.\n"
 msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:107 ../src/celestia/scriptmenu.cpp:88
+#: ../src/celscript/lua/luascript.cpp:170
 #, c-format
-msgid "Path %s doesn't exist or isn't a directory"
+msgid "Path %s doesn't exist or isn't a directory\n"
 msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:204
@@ -3826,89 +254,89 @@ msgstr ""
 msgid "Error reading favorites file {}.\n"
 msgstr "Fel vid läsning av favoritfil."
 
-#: ../src/celestia/celestiacore.cpp:226
+#: ../src/celestia/celestiacore.cpp:225
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:235
+#: ../src/celestia/celestiacore.cpp:233
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:356
+#: ../src/celestia/celestiacore.cpp:353
 msgid "Invalid filetype"
 msgstr "Ogiltig filtyp"
 
-#: ../src/celestia/celestiacore.cpp:694 ../src/celestia/celestiacore.cpp:1424
-#: ../src/celestia/celestiacore.cpp:1441
+#: ../src/celestia/celestiacore.cpp:691 ../src/celestia/celestiacore.cpp:1421
+#: ../src/celestia/celestiacore.cpp:1438
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Magnitudgräns: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1071
+#: ../src/celestia/celestiacore.cpp:1068
 msgid "Markers enabled"
 msgstr "Markörer aktiverade"
 
-#: ../src/celestia/celestiacore.cpp:1074
+#: ../src/celestia/celestiacore.cpp:1071
 msgid "Markers disabled"
 msgstr "Markörer inaktiverade"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1084
+#: ../src/celestia/celestiacore.cpp:1081
 msgid "Goto surface"
 msgstr "Gå till yta"
 
-#: ../src/celestia/celestiacore.cpp:1095
+#: ../src/celestia/celestiacore.cpp:1092
 msgid "Alt-azimuth mode enabled"
 msgstr "Alt-azimutläge aktiverat"
 
-#: ../src/celestia/celestiacore.cpp:1098
+#: ../src/celestia/celestiacore.cpp:1095
 msgid "Alt-azimuth mode disabled"
 msgstr "Alt-azimutläge inaktiverat"
 
-#: ../src/celestia/celestiacore.cpp:1154
+#: ../src/celestia/celestiacore.cpp:1151
 msgid "Star style: fuzzy points"
 msgstr "Visa stjärnor som: suddiga punkter"
 
-#: ../src/celestia/celestiacore.cpp:1157
+#: ../src/celestia/celestiacore.cpp:1154
 msgid "Star style: points"
 msgstr "Visa stjärnor som: punkter"
 
-#: ../src/celestia/celestiacore.cpp:1160
+#: ../src/celestia/celestiacore.cpp:1157
 msgid "Star style: scaled discs"
 msgstr "Visa stjärnor som: skalenliga skivor"
 
-#: ../src/celestia/celestiacore.cpp:1173
+#: ../src/celestia/celestiacore.cpp:1170
 msgid "Comet tails enabled"
 msgstr "Kometsvansar aktiverade"
 
-#: ../src/celestia/celestiacore.cpp:1176
+#: ../src/celestia/celestiacore.cpp:1173
 msgid "Comet tails disabled"
 msgstr "Kometsvansar inaktiverade"
 
-#: ../src/celestia/celestiacore.cpp:1192
+#: ../src/celestia/celestiacore.cpp:1189
 #, fuzzy
 msgid "Render path: OpenGL 2.1"
 msgstr "Renderingsläge: OpenGL 2.0"
 
-#: ../src/celestia/celestiacore.cpp:1211
+#: ../src/celestia/celestiacore.cpp:1208
 #, fuzzy
 msgid "Anti-aliasing enabled"
 msgstr "Alt-azimutläge aktiverat"
 
-#: ../src/celestia/celestiacore.cpp:1216
+#: ../src/celestia/celestiacore.cpp:1213
 #, fuzzy
 msgid "Anti-aliasing disabled"
 msgstr "Alt-azimutläge inaktiverat"
 
-#: ../src/celestia/celestiacore.cpp:1225
+#: ../src/celestia/celestiacore.cpp:1222
 msgid "Auto-magnitude enabled"
 msgstr "Automagnitud aktiverad"
 
-#: ../src/celestia/celestiacore.cpp:1230
+#: ../src/celestia/celestiacore.cpp:1227
 msgid "Auto-magnitude disabled"
 msgstr "Automagnitud inaktiverad"
 
-#: ../src/celestia/celestiacore.cpp:1252
+#: ../src/celestia/celestiacore.cpp:1249
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 #: ../src/celestia/win32/res/resource_strings.cpp:98
 #: ../src/celestia/win32/res/resource_strings.cpp:105
@@ -3922,601 +350,601 @@ msgstr "Automagnitud inaktiverad"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: ../src/celestia/celestiacore.cpp:1284
+#: ../src/celestia/celestiacore.cpp:1281
 msgid "Time and script are paused"
 msgstr "Tid och skript är pausade"
 
-#: ../src/celestia/celestiacore.cpp:1286
+#: ../src/celestia/celestiacore.cpp:1283
 msgid "Time is paused"
 msgstr "Tiden är pausad"
 
-#: ../src/celestia/celestiacore.cpp:1290
+#: ../src/celestia/celestiacore.cpp:1287
 msgid "Resume"
 msgstr "Återuppta"
 
-#: ../src/celestia/celestiacore.cpp:1324
+#: ../src/celestia/celestiacore.cpp:1321
 #, fuzzy
 msgid "Star color: Blackbody D65"
 msgstr "Totalt antal stjärnor: "
 
-#: ../src/celestia/celestiacore.cpp:1330
+#: ../src/celestia/celestiacore.cpp:1327
 #, fuzzy
 msgid "Star color: Enhanced"
 msgstr "Totalt antal stjärnor: "
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1367
+#: ../src/celestia/celestiacore.cpp:1364
 #, fuzzy, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "Ljusets restid:  %.4f år "
 
-#: ../src/celestia/celestiacore.cpp:1376
+#: ../src/celestia/celestiacore.cpp:1373
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Ljusets restid:  %d min  %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1381
+#: ../src/celestia/celestiacore.cpp:1378
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Ljusets restid:  %d h  %d min  %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1399
+#: ../src/celestia/celestiacore.cpp:1396
 msgid "Light travel delay included"
 msgstr "Fördröjning för ljusets resa inberäknad"
 
-#: ../src/celestia/celestiacore.cpp:1404
+#: ../src/celestia/celestiacore.cpp:1401
 msgid "Light travel delay switched off"
 msgstr "Fördröjning för ljusets resa avstängd"
 
-#: ../src/celestia/celestiacore.cpp:1410
+#: ../src/celestia/celestiacore.cpp:1407
 msgid "Light travel delay ignored"
 msgstr "Fördröjning för ljusets resa ignoreras"
 
-#: ../src/celestia/celestiacore.cpp:1453
+#: ../src/celestia/celestiacore.cpp:1450
 msgid "Using normal surface textures."
 msgstr "Använder normala yttexturer."
 
-#: ../src/celestia/celestiacore.cpp:1458
+#: ../src/celestia/celestiacore.cpp:1455
 msgid "Using limit of knowledge surface textures."
 msgstr "Använder yttexturer utanför kunskapsgräns."
 
-#: ../src/celestia/celestiacore.cpp:1525
+#: ../src/celestia/celestiacore.cpp:1522
 msgid "Follow"
 msgstr "Följ"
 
-#: ../src/celestia/celestiacore.cpp:1550
+#: ../src/celestia/celestiacore.cpp:1547
 msgid "Time: Forward"
 msgstr "Tid: Framåt"
 
-#: ../src/celestia/celestiacore.cpp:1552
+#: ../src/celestia/celestiacore.cpp:1549
 msgid "Time: Backward"
 msgstr "Tid: Bakåt"
 
-#: ../src/celestia/celestiacore.cpp:1564 ../src/celestia/celestiacore.cpp:1579
+#: ../src/celestia/celestiacore.cpp:1561 ../src/celestia/celestiacore.cpp:1576
 #, fuzzy, c-format
 msgid "Time rate: %.6g"
 msgstr "Tidsfrekvens"
 
-#: ../src/celestia/celestiacore.cpp:1619
+#: ../src/celestia/celestiacore.cpp:1616
 #, fuzzy
 msgid "Low res textures"
 msgstr "Texturer"
 
-#: ../src/celestia/celestiacore.cpp:1622
+#: ../src/celestia/celestiacore.cpp:1619
 #, fuzzy
 msgid "Medium res textures"
 msgstr "Texturer"
 
-#: ../src/celestia/celestiacore.cpp:1625
+#: ../src/celestia/celestiacore.cpp:1622
 #, fuzzy
 msgid "High res textures"
 msgstr "Texturer"
 
-#: ../src/celestia/celestiacore.cpp:1672
+#: ../src/celestia/celestiacore.cpp:1669
 msgid "Sync Orbit"
 msgstr "Synkronisera omloppsbana"
 
-#: ../src/celestia/celestiacore.cpp:1678
+#: ../src/celestia/celestiacore.cpp:1675
 msgid "Lock"
 msgstr "Lås"
 
-#: ../src/celestia/celestiacore.cpp:1684
+#: ../src/celestia/celestiacore.cpp:1681
 msgid "Chase"
 msgstr "Jaga"
 
-#: ../src/celestia/celestiacore.cpp:1697 ../src/celestia/celestiacore.cpp:1728
+#: ../src/celestia/celestiacore.cpp:1694 ../src/celestia/celestiacore.cpp:1725
 #, fuzzy, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "Magnitudgräns: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1708 ../src/celestia/celestiacore.cpp:1739
+#: ../src/celestia/celestiacore.cpp:1705 ../src/celestia/celestiacore.cpp:1736
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Automagnitudgräns på 45 grader:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1773
+#: ../src/celestia/celestiacore.cpp:1755 ../src/celestia/celestiacore.cpp:1770
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Nivå för omgivande ljus: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1784 ../src/celestia/celestiacore.cpp:1795
+#: ../src/celestia/celestiacore.cpp:1781 ../src/celestia/celestiacore.cpp:1792
 #, c-format
 msgid "Light gain"
 msgstr "Ljusförstärkning"
 
-#: ../src/celestia/celestiacore.cpp:1816
+#: ../src/celestia/celestiacore.cpp:1813
 msgid "Bloom enabled"
 msgstr "Överstrålning aktiverad"
 
-#: ../src/celestia/celestiacore.cpp:1818
+#: ../src/celestia/celestiacore.cpp:1815
 msgid "Bloom disabled"
 msgstr "Överstrålning inaktiverad"
 
-#: ../src/celestia/celestiacore.cpp:1824 ../src/celestia/celestiacore.cpp:1832
+#: ../src/celestia/celestiacore.cpp:1821 ../src/celestia/celestiacore.cpp:1829
 #, c-format
 msgid "Exposure"
 msgstr "Exponering"
 
-#: ../src/celestia/celestiacore.cpp:2154
+#: ../src/celestia/celestiacore.cpp:2151
 msgid "GL error: "
 msgstr "GL-fel: "
 
-#: ../src/celestia/celestiacore.cpp:2303
+#: ../src/celestia/celestiacore.cpp:2300
 msgid "View too small to be split"
 msgstr "Vy för liten för att delas upp"
 
-#: ../src/celestia/celestiacore.cpp:2323
+#: ../src/celestia/celestiacore.cpp:2320
 msgid "Added view"
 msgstr "Lade till vy"
 
-#: ../src/celestia/celestiacore.cpp:2499
+#: ../src/celestia/celestiacore.cpp:2496
 msgid "Mpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2504
+#: ../src/celestia/celestiacore.cpp:2501
 msgid "kpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2509
+#: ../src/celestia/celestiacore.cpp:2506
 #: ../src/celestia/qt/qtselectionpopup.cpp:108
 msgid "ly"
 msgstr "lå"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2513
+#: ../src/celestia/celestiacore.cpp:2510
 #: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "au"
 msgstr "au"
 
-#: ../src/celestia/celestiacore.cpp:2520
+#: ../src/celestia/celestiacore.cpp:2517
 #, fuzzy
 msgid "mi"
 msgstr " m/s"
 
-#: ../src/celestia/celestiacore.cpp:2525
+#: ../src/celestia/celestiacore.cpp:2522
 msgid "ft"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
-#: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/celestiacore.cpp:2530 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/qt/qtinfopanel.cpp:249 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
+#: ../src/celestia/celestiacore.cpp:2535 ../src/celestia/qt/qtinfopanel.cpp:126
 #, fuzzy
 msgid "m"
 msgstr " m/s"
 
-#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
-#: ../src/celestia/qt/qtinfopanel.cpp:198
-#: ../src/celestia/qt/qtinfopanel.cpp:248
+#: ../src/celestia/celestiacore.cpp:2558 ../src/celestia/qt/qtinfopanel.cpp:178
+#: ../src/celestia/qt/qtinfopanel.cpp:211
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, fuzzy
 msgid "days"
 msgstr " dagar"
 
-#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
-#: ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/celestiacore.cpp:2563 ../src/celestia/qt/qtinfopanel.cpp:174
+#: ../src/celestia/qt/qtinfopanel.cpp:207
 #, fuzzy
 msgid "hours"
 msgstr " timmar"
 
-#: ../src/celestia/celestiacore.cpp:2571
+#: ../src/celestia/celestiacore.cpp:2568
 #, fuzzy
 msgid "minutes"
 msgstr " minuter"
 
-#: ../src/celestia/celestiacore.cpp:2576
+#: ../src/celestia/celestiacore.cpp:2573
 #, fuzzy
 msgid "seconds"
 msgstr " sekunder"
 
-#: ../src/celestia/celestiacore.cpp:2579
+#: ../src/celestia/celestiacore.cpp:2576
 #, fuzzy, c-format
 msgid "Rotation period: %s %s\n"
 msgstr "Rotationsperiod: "
 
-#: ../src/celestia/celestiacore.cpp:2587
+#: ../src/celestia/celestiacore.cpp:2584
 #, c-format
 msgid "Mass: %.6g lb\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2589
+#: ../src/celestia/celestiacore.cpp:2586
 #, c-format
 msgid "Mass: %.6g kg\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2592
+#: ../src/celestia/celestiacore.cpp:2589
 #, c-format
 msgid "Mass: %.2f Mj\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2594
+#: ../src/celestia/celestiacore.cpp:2591
 #, c-format
 msgid "Mass: %.2f Me\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2605
+#: ../src/celestia/celestiacore.cpp:2602
 #, fuzzy
 msgid "ly/s"
 msgstr " lå/s"
 
-#: ../src/celestia/celestiacore.cpp:2610
+#: ../src/celestia/celestiacore.cpp:2607
 #, fuzzy
 msgid "AU/s"
 msgstr " AU/s"
 
-#: ../src/celestia/celestiacore.cpp:2622
+#: ../src/celestia/celestiacore.cpp:2619
 msgid "mi/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2627
+#: ../src/celestia/celestiacore.cpp:2624
 msgid "ft/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2635
+#: ../src/celestia/celestiacore.cpp:2632
 #, fuzzy
 msgid "km/s"
 msgstr " km/s"
 
-#: ../src/celestia/celestiacore.cpp:2640
+#: ../src/celestia/celestiacore.cpp:2637
 #, fuzzy
 msgid "m/s"
 msgstr " m/s"
 
-#: ../src/celestia/celestiacore.cpp:2643
+#: ../src/celestia/celestiacore.cpp:2640
 #, fuzzy, c-format
 msgid "Speed: %s %s\n"
 msgstr ""
 "\n"
 "Hastighet: "
 
-#: ../src/celestia/celestiacore.cpp:2677
+#: ../src/celestia/celestiacore.cpp:2674
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2689
+#: ../src/celestia/celestiacore.cpp:2686
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2705
+#: ../src/celestia/celestiacore.cpp:2702
 #, fuzzy, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "Apparent diameter: "
 
-#: ../src/celestia/celestiacore.cpp:2718
+#: ../src/celestia/celestiacore.cpp:2715
 #, fuzzy, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "Apparent magnitud: "
 
-#: ../src/celestia/celestiacore.cpp:2722
+#: ../src/celestia/celestiacore.cpp:2719
 #, fuzzy, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "Absolut magnitud: "
 
-#: ../src/celestia/celestiacore.cpp:2803
+#: ../src/celestia/celestiacore.cpp:2800
 #, c-format
 msgid "%.6f%c %.6f%c %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
-#: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
+#: ../src/celestia/celestiacore.cpp:2827 ../src/celestia/celestiacore.cpp:2899
+#: ../src/celestia/celestiacore.cpp:2929 ../src/celestia/celestiacore.cpp:3010
 #, fuzzy, c-format
 msgid "Distance: %s\n"
 msgstr "Avstånd: "
 
-#: ../src/celestia/celestiacore.cpp:2834
+#: ../src/celestia/celestiacore.cpp:2831
 msgid "Star system barycenter\n"
 msgstr "Stjärnsystemets masscentrum\n"
 
-#: ../src/celestia/celestiacore.cpp:2838
+#: ../src/celestia/celestiacore.cpp:2835
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Abs (ungefärlig) mag: %.2f (%.2f)\n"
 
-#: ../src/celestia/celestiacore.cpp:2843
+#: ../src/celestia/celestiacore.cpp:2840
 #, fuzzy, c-format
 msgid "Luminosity: %sx Sun\n"
 msgstr "Ljusstyrka: "
 
-#: ../src/celestia/celestiacore.cpp:2849
+#: ../src/celestia/celestiacore.cpp:2846
 msgid "Neutron star"
 msgstr "Neutronstjärna"
 
-#: ../src/celestia/celestiacore.cpp:2852
+#: ../src/celestia/celestiacore.cpp:2849
 msgid "Black hole"
 msgstr "Svart hål"
 
-#: ../src/celestia/celestiacore.cpp:2857
+#: ../src/celestia/celestiacore.cpp:2854
 #, fuzzy, c-format
 msgid "Class: %s\n"
 msgstr "Klass: "
 
-#: ../src/celestia/celestiacore.cpp:2864
+#: ../src/celestia/celestiacore.cpp:2861
 #, fuzzy, c-format
 msgid "Surface temp: %s K\n"
 msgstr "Yttemperatur: "
 
-#: ../src/celestia/celestiacore.cpp:2869
+#: ../src/celestia/celestiacore.cpp:2866
 #, fuzzy, c-format
 msgid "Radius: %s Rsun  (%s)\n"
 msgstr "Radie: "
 
-#: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
-#: ../src/celestia/celestiacore.cpp:2939
+#: ../src/celestia/celestiacore.cpp:2872 ../src/celestia/celestiacore.cpp:2907
+#: ../src/celestia/celestiacore.cpp:2936
 #, fuzzy, c-format
 msgid "Radius: %s\n"
 msgstr "Radie: "
 
-#: ../src/celestia/celestiacore.cpp:2891
+#: ../src/celestia/celestiacore.cpp:2888
 msgid "Planetary companions present\n"
 msgstr "Följeslagare till stjärnan finns\n"
 
-#: ../src/celestia/celestiacore.cpp:2907
+#: ../src/celestia/celestiacore.cpp:2904
 #, fuzzy, c-format
 msgid "Distance from center: %s\n"
 msgstr "Avstånd från centrum: "
 
-#: ../src/celestia/celestiacore.cpp:2980
+#: ../src/celestia/celestiacore.cpp:2977
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "Fasvinkel: %.1f%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2996
+#: ../src/celestia/celestiacore.cpp:2993
 #, c-format
 msgid "Density: %.2f x 1000 lb/ft^3\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2998
+#: ../src/celestia/celestiacore.cpp:2995
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3003
+#: ../src/celestia/celestiacore.cpp:3000
 #, fuzzy, c-format
 msgid "Temperature: %.0f K\n"
 msgstr "Temperatur: "
 
-#: ../src/celestia/celestiacore.cpp:3156
+#: ../src/celestia/celestiacore.cpp:3153
 msgid "  LT"
 msgstr "  LT"
 
-#: ../src/celestia/celestiacore.cpp:3165
+#: ../src/celestia/celestiacore.cpp:3162
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
 #: ../src/celestia/qt/qttimetoolbar.cpp:54
 msgid "Real time"
 msgstr "Realtid"
 
-#: ../src/celestia/celestiacore.cpp:3167
+#: ../src/celestia/celestiacore.cpp:3164
 msgid "-Real time"
 msgstr "-Realtid"
 
-#: ../src/celestia/celestiacore.cpp:3171
+#: ../src/celestia/celestiacore.cpp:3168
 msgid "Time stopped"
 msgstr "Tid stoppad"
 
-#: ../src/celestia/celestiacore.cpp:3175
+#: ../src/celestia/celestiacore.cpp:3172
 #, fuzzy, c-format
 msgid "%.6g x faster"
 msgstr " snabbare"
 
-#: ../src/celestia/celestiacore.cpp:3179
+#: ../src/celestia/celestiacore.cpp:3176
 #, fuzzy, c-format
 msgid "%.6g x slower"
 msgstr " långsammare"
 
-#: ../src/celestia/celestiacore.cpp:3185
+#: ../src/celestia/celestiacore.cpp:3182
 msgid " (Paused)"
 msgstr " (Pausad)"
 
-#: ../src/celestia/celestiacore.cpp:3204
+#: ../src/celestia/celestiacore.cpp:3201
 #, c-format
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3213
+#: ../src/celestia/celestiacore.cpp:3210
 #, fuzzy, c-format
 msgid "FPS: %.1f\n"
 msgstr "FPS: "
 
-#: ../src/celestia/celestiacore.cpp:3238
+#: ../src/celestia/celestiacore.cpp:3235
 #, fuzzy, c-format
 msgid "Travelling (%s)\n"
 msgstr "Reser "
 
-#: ../src/celestia/celestiacore.cpp:3241
+#: ../src/celestia/celestiacore.cpp:3238
 #, fuzzy, c-format
 msgid "Travelling\n"
 msgstr "Reser "
 
-#: ../src/celestia/celestiacore.cpp:3250
+#: ../src/celestia/celestiacore.cpp:3247
 #, fuzzy, c-format
 msgid "Track %s\n"
 msgstr "Spåra "
 
-#: ../src/celestia/celestiacore.cpp:3266
+#: ../src/celestia/celestiacore.cpp:3263
 #, fuzzy, c-format
 msgid "Follow %s\n"
 msgstr "Följ "
 
-#: ../src/celestia/celestiacore.cpp:3270
+#: ../src/celestia/celestiacore.cpp:3267
 #, fuzzy, c-format
 msgid "Sync Orbit %s\n"
 msgstr "Synkronisera omloppsbana "
 
-#: ../src/celestia/celestiacore.cpp:3274
+#: ../src/celestia/celestiacore.cpp:3271
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3280
+#: ../src/celestia/celestiacore.cpp:3277
 #, fuzzy, c-format
 msgid "Chase %s\n"
 msgstr "Jaga"
 
-#: ../src/celestia/celestiacore.cpp:3294
+#: ../src/celestia/celestiacore.cpp:3291
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3488
+#: ../src/celestia/celestiacore.cpp:3474
 #, fuzzy, c-format
 msgid "Target name: %s"
 msgstr "Målnamn: "
 
-#: ../src/celestia/celestiacore.cpp:3575
+#: ../src/celestia/celestiacore.cpp:3561
 #, c-format
 msgid "%dx%d at %.2f fps  %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3578
+#: ../src/celestia/celestiacore.cpp:3564
 #, fuzzy
 msgid "Paused"
 msgstr "  Pausad"
 
-#: ../src/celestia/celestiacore.cpp:3578
+#: ../src/celestia/celestiacore.cpp:3564
 #, fuzzy
 msgid "Recording"
 msgstr "  Spelar in"
 
-#: ../src/celestia/celestiacore.cpp:3599
+#: ../src/celestia/celestiacore.cpp:3585
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Start/Paus     F12 Stopp"
 
-#: ../src/celestia/celestiacore.cpp:3610 ../src/celestia/celestiacore.cpp:3615
+#: ../src/celestia/celestiacore.cpp:3596 ../src/celestia/celestiacore.cpp:3601
 msgid "Edit Mode"
 msgstr "Redigeringsläge"
 
-#: ../src/celestia/celestiacore.cpp:3648
+#: ../src/celestia/celestiacore.cpp:3634
 #, fuzzy, c-format
 msgid "Skipping solar system catalog: %s\n"
 msgstr "Läser solsystemskatalog: "
 
-#: ../src/celestia/celestiacore.cpp:3651
+#: ../src/celestia/celestiacore.cpp:3637
 #, fuzzy, c-format
 msgid "Loading solar system catalog: %s\n"
 msgstr "Läser solsystemskatalog: "
 
-#: ../src/celestia/celestiacore.cpp:3694
+#: ../src/celestia/celestiacore.cpp:3680
 #, fuzzy, c-format
 msgid "Skipping %s catalog: %s\n"
 msgstr "Läser solsystemskatalog: "
 
-#: ../src/celestia/celestiacore.cpp:3697
+#: ../src/celestia/celestiacore.cpp:3683
 #, fuzzy, c-format
 msgid "Loading %s catalog: %s\n"
 msgstr "Läser solsystemskatalog: "
 
-#: ../src/celestia/celestiacore.cpp:3733
+#: ../src/celestia/celestiacore.cpp:3719
 msgid "Error reading configuration file."
 msgstr "Fel vid läsning av konfigurationsfil."
 
-#: ../src/celestia/celestiacore.cpp:3744
+#: ../src/celestia/celestiacore.cpp:3730
 msgid "Initialization of SPICE library failed."
 msgstr "Initiering av SPICE-biblioteket misslyckades."
 
-#: ../src/celestia/celestiacore.cpp:3787
+#: ../src/celestia/celestiacore.cpp:3773
 msgid "Cannot read star database."
 msgstr "Kan inte läsa stjärndatabas."
 
-#: ../src/celestia/celestiacore.cpp:3808
+#: ../src/celestia/celestiacore.cpp:3794
 #, fuzzy, c-format
 msgid "Error opening deepsky catalog file %s.\n"
 msgstr "Fel vid öppning av deep-sky-katalog "
 
-#: ../src/celestia/celestiacore.cpp:3812
+#: ../src/celestia/celestiacore.cpp:3798
 #, fuzzy, c-format
 msgid "Cannot read Deep Sky Objects database %s.\n"
 msgstr "Kan inte läsa stjärndatabas."
 
-#: ../src/celestia/celestiacore.cpp:3861
+#: ../src/celestia/celestiacore.cpp:3847
 #, fuzzy, c-format
 msgid "Error opening solar system catalog %s.\n"
 msgstr "Fel vid öppning av solsystemskatalog.\n"
 
-#: ../src/celestia/celestiacore.cpp:3901
+#: ../src/celestia/celestiacore.cpp:3887
 #, fuzzy, c-format
 msgid "Error opening asterisms file %s.\n"
 msgstr "Fel vid öppning av asterismfil."
 
-#: ../src/celestia/celestiacore.cpp:3917
+#: ../src/celestia/celestiacore.cpp:3903
 #, fuzzy, c-format
 msgid "Error opening constellation boundaries file %s.\n"
 msgstr "Fel vid öppning av filer för begränsning av stjärnbilder."
 
-#: ../src/celestia/celestiacore.cpp:4050
+#: ../src/celestia/celestiacore.cpp:4036
 msgid "Failed to initialize renderer"
 msgstr "Misslyckades med att initiera renderare"
 
-#: ../src/celestia/celestiacore.cpp:4066
+#: ../src/celestia/celestiacore.cpp:4052
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Fel vid läsning av typsnitt; text kommer inte att vara synlig.\n"
 
-#: ../src/celestia/celestiacore.cpp:4114
+#: ../src/celestia/celestiacore.cpp:4100
 #, fuzzy, c-format
 msgid "Error reading cross index %s\n"
 msgstr "Fel vid läsning av korsindex "
 
-#: ../src/celestia/celestiacore.cpp:4116
+#: ../src/celestia/celestiacore.cpp:4102
 #, fuzzy, c-format
 msgid "Loaded cross index %s\n"
 msgstr "Läste in korsindex "
 
-#: ../src/celestia/celestiacore.cpp:4133
+#: ../src/celestia/celestiacore.cpp:4119
 msgid "Error reading star names file\n"
 msgstr "Fel vid läsning av stjärnnamnsfil\n"
 
-#: ../src/celestia/celestiacore.cpp:4137 ../src/celestia/celestiacore.cpp:4151
+#: ../src/celestia/celestiacore.cpp:4123 ../src/celestia/celestiacore.cpp:4137
 #, fuzzy, c-format
 msgid "Error opening %s\n"
 msgstr "Fel vid öppning av "
 
-#: ../src/celestia/celestiacore.cpp:4159
+#: ../src/celestia/celestiacore.cpp:4145
 msgid "Error reading stars file\n"
 msgstr "Fel vid läsning av stjärnfil\n"
 
-#: ../src/celestia/celestiacore.cpp:4185
+#: ../src/celestia/celestiacore.cpp:4171
 #, fuzzy, c-format
 msgid "Error opening star catalog %s\n"
 msgstr "Fel vid öppning av stjärnkatalog "
 
-#: ../src/celestia/celestiacore.cpp:4543
+#: ../src/celestia/celestiacore.cpp:4529
 msgid "Invalid URL"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:4768
+#: ../src/celestia/celestiacore.cpp:4754
 msgid "Unable to capture a frame!\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:4780
+#: ../src/celestia/celestiacore.cpp:4766
 #, fuzzy
 msgid "Unsupported image type: {}!\n"
 msgstr "Utökningar som stöds:"
@@ -4583,32 +1011,6 @@ msgstr ""
 #, c-format
 msgid "Max anisotropy filtering: %s\n"
 msgstr ""
-
-#: ../src/celestia/oggtheoracapture.cpp:161
-#, c-format
-msgid "Error in creating ogg file %s for capture.\n"
-msgstr "Fel vid skapande av ogg-filen %s för fångst.\n"
-
-#. can't get here
-#: ../src/celestia/oggtheoracapture.cpp:255
-#: ../src/celestia/oggtheoracapture.cpp:275
-#, fuzzy
-msgid "Internal Ogg library error.\n"
-msgstr "Internt fel i Ogg-bibliotek."
-
-#: ../src/celestia/oggtheoracapture.cpp:311
-#, c-format
-msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
-msgstr ""
-"OggTheoraCapture::start() - Theora-video: %s %.2f(%d/%d) fps kvalitet %d %dx"
-"%d position (%dx%d)\n"
-
-#: ../src/celestia/oggtheoracapture.cpp:426
-#, c-format
-msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - skrev %d frames\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:169
 msgid "Auto"
@@ -4794,359 +1196,360 @@ msgstr "Skapa en ny bokmärkesmapp i denna meny"
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
 "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Main site: <a "
-"href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</"
-"a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
-"\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"%5<br>NAIF kernels are %7<br>AVIF images are %8</p>Runtime Qt version: %6</"
+"p><p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>Celestia "
+"is free software. You can redistribute it and/or modify it under the terms "
+"of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a href=\"https://celestia.space/\">https://"
+"celestia.space/</a><br>Forum: <a href=\"https://celestia.space/forum/"
+"\">https://celestia.space/forum/</a><br>GitHub project: <a href=\"https://"
+"github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/"
+"Celestia</a></p></html>"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1113
+#: ../src/celestia/qt/qtappwin.cpp:1114
 #, fuzzy
 msgid "Unknown compiler"
 msgstr "Okänt fel vid öppning av skript"
 
-#: ../src/celestia/qt/qtappwin.cpp:1117
+#: ../src/celestia/qt/qtappwin.cpp:1118 ../src/celestia/qt/qtappwin.cpp:1123
 #, fuzzy
 msgid "supported"
 msgstr "Utökningar som stöds:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1119
+#: ../src/celestia/qt/qtappwin.cpp:1120 ../src/celestia/qt/qtappwin.cpp:1125
 #, fuzzy
 msgid "not supported"
 msgstr "Utökningar som stöds:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1516
+#: ../src/celestia/qt/qtappwin.cpp:1128 ../src/celestia/qt/qtappwin.cpp:1522
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
 msgstr "Om Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1141
+#: ../src/celestia/qt/qtappwin.cpp:1147
 #, fuzzy, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr "<b>OpenGL 2.0-skuggspråk</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1147
+#: ../src/celestia/qt/qtappwin.cpp:1153
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "<b>Ej utökad OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1153
+#: ../src/celestia/qt/qtappwin.cpp:1159
 #, fuzzy, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "<b>Ej utökad OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1160
+#: ../src/celestia/qt/qtappwin.cpp:1166
 #, fuzzy, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "GLSL-version: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1167
+#: ../src/celestia/qt/qtappwin.cpp:1173
 #, fuzzy, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "Max samtidiga texturer: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1173
+#: ../src/celestia/qt/qtappwin.cpp:1179
 #, fuzzy, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "Max texturstorlek: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1179
+#: ../src/celestia/qt/qtappwin.cpp:1185
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "Intervall för punktstorlek: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1185
+#: ../src/celestia/qt/qtappwin.cpp:1191
 #, fuzzy, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "Intervall för punktstorlek: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1191
+#: ../src/celestia/qt/qtappwin.cpp:1197
 #, fuzzy, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "Max kubmappstorlek: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1197
+#: ../src/celestia/qt/qtappwin.cpp:1203
 #, fuzzy, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "Radie: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1203
+#: ../src/celestia/qt/qtappwin.cpp:1209
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1213
+#: ../src/celestia/qt/qtappwin.cpp:1219
 #, fuzzy
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "<b>Ej utökad OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1227
+#: ../src/celestia/qt/qtappwin.cpp:1233
 #, fuzzy
 msgid "Renderer Info"
 msgstr "Uppritare: "
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1251
+#: ../src/celestia/qt/qtappwin.cpp:1257
 #: ../src/celestia/win32/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "&Arkiv"
 
-#: ../src/celestia/qt/qtappwin.cpp:1254
+#: ../src/celestia/qt/qtappwin.cpp:1260
 #, fuzzy
 msgid "&Grab image"
 msgstr "Fånga bild"
 
-#: ../src/celestia/qt/qtappwin.cpp:1255
+#: ../src/celestia/qt/qtappwin.cpp:1261
 #, fuzzy
 msgid "F10"
 msgstr "Fånga &bild...\tF10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1260
+#: ../src/celestia/qt/qtappwin.cpp:1266
 #, fuzzy
 msgid "Capture &video"
 msgstr "Fånga video"
 
-#: ../src/celestia/qt/qtappwin.cpp:1264
+#: ../src/celestia/qt/qtappwin.cpp:1270
 #, fuzzy
 msgid "Shift+F10"
 msgstr "Fånga &film...\tShift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1268
+#: ../src/celestia/qt/qtappwin.cpp:1274
 #, fuzzy
 msgid "&Copy image"
 msgstr "Kopiera URL"
 
-#: ../src/celestia/qt/qtappwin.cpp:1269
+#: ../src/celestia/qt/qtappwin.cpp:1275
 #, fuzzy
 msgid "Ctrl+Shift+C"
 msgstr "Alt+C"
 
-#: ../src/celestia/qt/qtappwin.cpp:1275
+#: ../src/celestia/qt/qtappwin.cpp:1281
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "Ö&ppna skript..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1286
+#: ../src/celestia/qt/qtappwin.cpp:1292
 #, fuzzy
 msgid "&Preferences..."
 msgstr "Inställningar för Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1290
+#: ../src/celestia/qt/qtappwin.cpp:1296
 #: ../src/celestia/win32/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "&Avsluta"
 
-#: ../src/celestia/qt/qtappwin.cpp:1291
+#: ../src/celestia/qt/qtappwin.cpp:1297
 #, fuzzy
 msgid "Ctrl+Q"
 msgstr "Kantutjämning\tCtrl+X"
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1296
+#: ../src/celestia/qt/qtappwin.cpp:1302
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
 msgstr "&Navigering"
 
-#: ../src/celestia/qt/qtappwin.cpp:1298
+#: ../src/celestia/qt/qtappwin.cpp:1304
 #, fuzzy
 msgid "Select Sun"
 msgstr "&Välj"
 
-#: ../src/celestia/qt/qtappwin.cpp:1302
+#: ../src/celestia/qt/qtappwin.cpp:1308
 #, fuzzy
 msgid "Center Selection"
 msgstr "&Centrera valt objekt\tC"
 
-#: ../src/celestia/qt/qtappwin.cpp:1306
+#: ../src/celestia/qt/qtappwin.cpp:1312
 #, fuzzy
 msgid "Goto Selection"
 msgstr ""
 "\n"
 "Val: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1310
+#: ../src/celestia/qt/qtappwin.cpp:1316
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "Gå till objekt..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1314
+#: ../src/celestia/qt/qtappwin.cpp:1320
 msgid "Copy URL / console text"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1319
+#: ../src/celestia/qt/qtappwin.cpp:1325
 msgid "Paste URL / console text"
 msgstr ""
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1325
+#: ../src/celestia/qt/qtappwin.cpp:1331
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "&Tid"
 
-#: ../src/celestia/qt/qtappwin.cpp:1327
+#: ../src/celestia/qt/qtappwin.cpp:1333
 #, fuzzy
 msgid "Set &time"
 msgstr "Ställ tid..."
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1335
+#: ../src/celestia/qt/qtappwin.cpp:1341
 #, fuzzy
 msgid "&Display"
 msgstr "Visa"
 
-#: ../src/celestia/qt/qtappwin.cpp:1341
+#: ../src/celestia/qt/qtappwin.cpp:1347
 #, fuzzy
 msgid "Dee&p Sky Objects"
 msgstr "Markerade objekt"
 
-#: ../src/celestia/qt/qtappwin.cpp:1347
+#: ../src/celestia/qt/qtappwin.cpp:1353
 #, fuzzy
 msgid "&Shadows"
 msgstr "Visa molnskuggor"
 
-#: ../src/celestia/qt/qtappwin.cpp:1358
+#: ../src/celestia/qt/qtappwin.cpp:1364
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "Stjärnutseende"
 
-#: ../src/celestia/qt/qtappwin.cpp:1365
+#: ../src/celestia/qt/qtappwin.cpp:1371
 #, fuzzy
 msgid "Texture &Resolution"
 msgstr "&Texturens upplösning"
 
-#: ../src/celestia/qt/qtappwin.cpp:1370
+#: ../src/celestia/qt/qtappwin.cpp:1376
 #, fuzzy
 msgid "&FPS control"
 msgstr "&Kontroller"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1387
+#: ../src/celestia/qt/qtappwin.cpp:1393
 #: ../src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Bookmarks"
 msgstr "&Bokmärken"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1390
+#: ../src/celestia/qt/qtappwin.cpp:1396
 #: ../src/celestia/win32/res/resource_strings.cpp:53
 msgid "&View"
 msgstr "&Visa"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1393
+#: ../src/celestia/qt/qtappwin.cpp:1399
 #, fuzzy
 msgid "&MultiView"
 msgstr "Vyer"
 
-#: ../src/celestia/qt/qtappwin.cpp:1396
+#: ../src/celestia/qt/qtappwin.cpp:1402
 #, fuzzy
 msgid "Split view vertically"
 msgstr "Dela vy vertikalt"
 
-#: ../src/celestia/qt/qtappwin.cpp:1397
+#: ../src/celestia/qt/qtappwin.cpp:1403
 #, fuzzy
 msgid "Ctrl+R"
 msgstr "Dela vy &horisontellt\tCtrl+R"
 
-#: ../src/celestia/qt/qtappwin.cpp:1402
+#: ../src/celestia/qt/qtappwin.cpp:1408
 #, fuzzy
 msgid "Split view horizontally"
 msgstr "Dela vy horisontellt"
 
-#: ../src/celestia/qt/qtappwin.cpp:1403
+#: ../src/celestia/qt/qtappwin.cpp:1409
 #, fuzzy
 msgid "Ctrl+U"
 msgstr "Dela vy &vertikalt\tCtrl+U"
 
-#: ../src/celestia/qt/qtappwin.cpp:1408
+#: ../src/celestia/qt/qtappwin.cpp:1414
 #, fuzzy
 msgid "Cycle views"
 msgstr "Växla vy"
 
-#: ../src/celestia/qt/qtappwin.cpp:1409
+#: ../src/celestia/qt/qtappwin.cpp:1415
 msgid "Tab"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1414
+#: ../src/celestia/qt/qtappwin.cpp:1420
 #, fuzzy
 msgid "Single view"
 msgstr "Enkel vy"
 
-#: ../src/celestia/qt/qtappwin.cpp:1415
+#: ../src/celestia/qt/qtappwin.cpp:1421
 #, fuzzy
 msgid "Ctrl+D"
 msgstr "&Enkel vy\tCtrl+D"
 
-#: ../src/celestia/qt/qtappwin.cpp:1420
+#: ../src/celestia/qt/qtappwin.cpp:1426
 #, fuzzy
 msgid "Delete view"
 msgstr "Ta bort vy"
 
-#: ../src/celestia/qt/qtappwin.cpp:1421
+#: ../src/celestia/qt/qtappwin.cpp:1427
 #: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "Delete"
 msgstr "Ta bort"
 
-#: ../src/celestia/qt/qtappwin.cpp:1427
+#: ../src/celestia/qt/qtappwin.cpp:1433
 #, fuzzy
 msgid "Frames visible"
 msgstr "Synliga ramar"
 
-#: ../src/celestia/qt/qtappwin.cpp:1448
+#: ../src/celestia/qt/qtappwin.cpp:1454
 #, fuzzy
 msgid "Active frame visible"
 msgstr "Aktiva ramar synliga"
 
-#: ../src/celestia/qt/qtappwin.cpp:1464
+#: ../src/celestia/qt/qtappwin.cpp:1470
 #, fuzzy
 msgid "Synchronize time"
 msgstr "Synkronisera tid"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1505
+#: ../src/celestia/qt/qtappwin.cpp:1511
 #: ../src/celestia/win32/res/resource_strings.cpp:63
 msgid "&Help"
 msgstr "&Hjälp"
 
-#: ../src/celestia/qt/qtappwin.cpp:1507
+#: ../src/celestia/qt/qtappwin.cpp:1513
 #, fuzzy
 msgid "Celestia Manual"
 msgstr "Inställningar för Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1512
+#: ../src/celestia/qt/qtappwin.cpp:1518
 msgid "OpenGL Info"
 msgstr "OpenGL-Info"
 
-#: ../src/celestia/qt/qtappwin.cpp:1532
+#: ../src/celestia/qt/qtappwin.cpp:1538
 #, fuzzy
 msgid "Add Bookmark..."
 msgstr "&Lägg till bokmärke"
 
-#: ../src/celestia/qt/qtappwin.cpp:1536
+#: ../src/celestia/qt/qtappwin.cpp:1542
 #, fuzzy
 msgid "Organize Bookmarks..."
 msgstr "&Organisera bokmärken..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1574
+#: ../src/celestia/qt/qtappwin.cpp:1580
 msgid "Set custom FPS"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1575
+#: ../src/celestia/qt/qtappwin.cpp:1581
 msgid "FPS value"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1596
+#: ../src/celestia/qt/qtappwin.cpp:1602
 #, fuzzy, qt-format
 msgid ""
 "Loading data files: %1\n"
 "\n"
 msgstr "Läser "
 
-#: ../src/celestia/qt/qtappwin.cpp:1607
+#: ../src/celestia/qt/qtappwin.cpp:1613
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "Skript"
@@ -5873,6 +2276,36 @@ msgstr "Avmarkera &alla"
 msgid "Search range"
 msgstr "Intervall för punktstorlek: "
 
+#: ../src/celestia/qt/qteventfinder.cpp:271
+#: ../src/celestia/win32/wineclipses.cpp:290
+msgid "Earth"
+msgstr "Jorden"
+
+#: ../src/celestia/qt/qteventfinder.cpp:272
+#: ../src/celestia/win32/wineclipses.cpp:291
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: ../src/celestia/qt/qteventfinder.cpp:273
+#: ../src/celestia/win32/wineclipses.cpp:292
+msgid "Saturn"
+msgstr "Saturnus"
+
+#: ../src/celestia/qt/qteventfinder.cpp:274
+#: ../src/celestia/win32/wineclipses.cpp:293
+msgid "Uranus"
+msgstr "Uranus"
+
+#: ../src/celestia/qt/qteventfinder.cpp:275
+#: ../src/celestia/win32/wineclipses.cpp:294
+msgid "Neptune"
+msgstr "Neptunus"
+
+#: ../src/celestia/qt/qteventfinder.cpp:276
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Pluto"
+msgstr "Pluto"
+
 #: ../src/celestia/qt/qteventfinder.cpp:279
 #, fuzzy
 msgid "Find eclipses"
@@ -5946,124 +2379,139 @@ msgstr "Storlek: %1 MB"
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:173
+#: ../src/celestia/qt/qtinfopanel.cpp:181
 #, fuzzy, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "Rotationsperiod: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:176
+#: ../src/celestia/qt/qtinfopanel.cpp:184
+#, fuzzy
+msgid "Prograde"
+msgstr "Belgrad"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:184
+#, fuzzy
+msgid "Retrograde"
+msgstr "Belgrad"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:185
+#, fuzzy, qt-format
+msgid "<b>Rotation direction:</b> %1"
+msgstr "<b>Ej utökad OpenGL 1.1</b>"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:189
 #, fuzzy, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:202
+#: ../src/celestia/qt/qtinfopanel.cpp:215
 msgid "years"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:207
+#: ../src/celestia/qt/qtinfopanel.cpp:220
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:209
+#: ../src/celestia/qt/qtinfopanel.cpp:222
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:217
+#: ../src/celestia/qt/qtinfopanel.cpp:230
 #, fuzzy, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:220
+#: ../src/celestia/qt/qtinfopanel.cpp:233
 #, fuzzy, qt-format
 msgid "<b>End:</b> %1"
 msgstr "Storlek: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:222
+#: ../src/celestia/qt/qtinfopanel.cpp:235
 #, fuzzy
 msgid "Orbit information"
 msgstr "Informationstext"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:223
+#: ../src/celestia/qt/qtinfopanel.cpp:236
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-#: ../src/celestia/qt/qtinfopanel.cpp:226
+#: ../src/celestia/qt/qtinfopanel.cpp:239
 #, fuzzy, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "Storlek: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:231
+#: ../src/celestia/qt/qtinfopanel.cpp:244
 #, fuzzy
 msgid "AU"
 msgstr "au"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:239
+#: ../src/celestia/qt/qtinfopanel.cpp:252
 #, fuzzy, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "Radie: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:240
+#: ../src/celestia/qt/qtinfopanel.cpp:253
 #, fuzzy, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:241
+#: ../src/celestia/qt/qtinfopanel.cpp:254
 #, fuzzy, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "Storlek: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:242
+#: ../src/celestia/qt/qtinfopanel.cpp:255
 #, fuzzy, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:243
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:245
+#: ../src/celestia/qt/qtinfopanel.cpp:258
 #, fuzzy, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "Avstånd (lj)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:259
 #, fuzzy, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "Radie: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:247
+#: ../src/celestia/qt/qtinfopanel.cpp:260
 #, fuzzy, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "Storlek: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:248
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, fuzzy, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "Rotationsperiod: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:288
-#: ../src/celestia/qt/qtinfopanel.cpp:311
+#: ../src/celestia/qt/qtinfopanel.cpp:301
+#: ../src/celestia/qt/qtinfopanel.cpp:324
 #, fuzzy, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "Storlek: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:292
-#: ../src/celestia/qt/qtinfopanel.cpp:315
+#: ../src/celestia/qt/qtinfopanel.cpp:305
+#: ../src/celestia/qt/qtinfopanel.cpp:328
 #, fuzzy, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "Storlek: %1 MB"
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:323
+#: ../src/celestia/qt/qtinfopanel.cpp:336
 #, fuzzy, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "Storlek: %1 MB"
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:327
+#: ../src/celestia/qt/qtinfopanel.cpp:340
 #, fuzzy, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "Storlek: %1 MB"
@@ -6407,6 +2855,10 @@ msgstr "Planet"
 #, fuzzy
 msgid "Dwarf planet"
 msgstr "Dvärgplanet"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:554
+msgid "Moon"
+msgstr "Måne"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:556
 #, fuzzy
@@ -6976,44 +3428,43 @@ msgstr "Visa"
 msgid "Not an XBEL version 1.0 file."
 msgstr ""
 
-#: ../src/celestia/url.cpp:310
-#, c-format
-msgid "Incorrect hex value \"%s\"\n"
+#: ../src/celestia/url.cpp:312
+msgid "Incorrect hex value \"{}\"\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:393
+#: ../src/celestia/url.cpp:395
 #, c-format
 msgid "URL must start with \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:409
+#: ../src/celestia/url.cpp:411
 msgid "URL must have at least mode and time!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:420
+#: ../src/celestia/url.cpp:422
 #, c-format
 msgid "Unsupported URL mode \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:438
+#: ../src/celestia/url.cpp:440
 msgid "URL must contain only one body\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:450
+#: ../src/celestia/url.cpp:452
 msgid "URL must contain 2 bodies\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:491
+#: ../src/celestia/url.cpp:493
 #, c-format
 msgid "Invalid URL version \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:498
+#: ../src/celestia/url.cpp:500
 #, fuzzy, c-format
 msgid "Unsupported URL version: %i\n"
 msgstr "Utökningar som stöds:"
 
-#: ../src/celestia/url.cpp:530
+#: ../src/celestia/url.cpp:532
 msgid "URL parameter must look like key=value\n"
 msgstr ""
 
@@ -7868,17 +4319,17 @@ msgstr "Namn på tidszon"
 msgid "UTC Offset"
 msgstr "Avvikelse från UTC"
 
-#: ../src/celimage/png.cpp:56
+#: ../src/celimage/png.cpp:57
 #, fuzzy, c-format
 msgid "Error opening image file %s\n"
 msgstr "Fel vid öppning av bildfil "
 
-#: ../src/celimage/png.cpp:64
+#: ../src/celimage/png.cpp:65
 #, fuzzy, c-format
 msgid "Error: %s is not a PNG file.\n"
 msgstr " är inte en PNG-fil.\n"
 
-#: ../src/celimage/png.cpp:90
+#: ../src/celimage/png.cpp:91
 #, fuzzy, c-format
 msgid "Error reading PNG image file %s\n"
 msgstr "Fel vid läsning av PNG-bildfil "
@@ -7940,9 +4391,2253 @@ msgid "Unknown value returned by GetTimeZoneInformation()\n"
 msgstr ""
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
-#, fuzzy, c-format
-msgid "Error openning %s or .\n"
+#, fuzzy
+msgid "Error opening {} or .\n"
 msgstr "Fel vid öppning av "
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:25
+#, fuzzy
+msgid "Error reading header of {}.\n"
+msgstr "Fel vid läsning av PNG-bildfil "
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:31
+msgid "Bad binary xyzv file {}.\n"
+msgstr ""
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:37
+msgid "Unsupported byte order {}, expected {}.\n"
+msgstr ""
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:44
+#, fuzzy
+msgid "Unsupported digits number {}, expected {}.\n"
+msgstr "Utökningar som stöds:"
+
+#~ msgid "Mercury"
+#~ msgstr "Merkurius"
+
+#~ msgid "Venus"
+#~ msgstr "Venus"
+
+#~ msgid "Mars"
+#~ msgstr "Mars"
+
+#~ msgid "Phobos"
+#~ msgstr "Phobos"
+
+#~ msgid "Deimos"
+#~ msgstr "Deimos"
+
+#~ msgid "Io"
+#~ msgstr "Io"
+
+#~ msgid "Europa"
+#~ msgstr "Europa"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ganymede"
+
+#~ msgid "Callisto"
+#~ msgstr "Callisto"
+
+#~ msgid "Mimas"
+#~ msgstr "Mimas"
+
+#~ msgid "Enceladus"
+#~ msgstr "Enceladus"
+
+#~ msgid "Tethys"
+#~ msgstr "Tethys"
+
+#~ msgid "Dione"
+#~ msgstr "Dione"
+
+#~ msgid "Rhea"
+#~ msgstr "Rhea"
+
+#~ msgid "Titan"
+#~ msgstr "Titan"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hyperion"
+
+#~ msgid "Iapetus"
+#~ msgstr "Iapetus"
+
+#~ msgid "Phoebe"
+#~ msgstr "Phobos"
+
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Ariel"
+
+#~ msgid "Umbriel"
+#~ msgstr "Umbriel"
+
+#~ msgid "Titania"
+#~ msgstr "Titania"
+
+#~ msgid "Oberon"
+#~ msgstr "Oberon"
+
+#~ msgid "Proteus"
+#~ msgstr "Proteus"
+
+#~ msgid "Triton"
+#~ msgstr "Triton"
+
+#~ msgid "Nereid"
+#~ msgstr "Nereid"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Pluto-Charon"
+
+#~ msgid "Charon"
+#~ msgstr "Charon"
+
+#, fuzzy
+#~ msgid "Haumea"
+#~ msgstr "Noumea"
+
+#, fuzzy
+#~ msgid "Namaka"
+#~ msgstr "Bamako"
+
+#~ msgid "Amalthea"
+#~ msgstr "Amalthea"
+
+#, fuzzy
+#~ msgid "Pandia"
+#~ msgstr "Pandora"
+
+#, fuzzy
+#~ msgid "Dia"
+#~ msgstr "Diphda"
+
+#, fuzzy
+#~ msgid "Jupiter LV"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXVIII"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LII"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXIV"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Thyone"
+#~ msgstr "Alcyone"
+
+#, fuzzy
+#~ msgid "Jupiter LIV"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LVI"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Kallichore"
+#~ msgstr "Callisto"
+
+#, fuzzy
+#~ msgid "Jupiter LXIX"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXXII"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXI"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXX"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LI"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXVII"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Callirrhoe"
+#~ msgstr "Callisto"
+
+#, fuzzy
+#~ msgid "Herse"
+#~ msgstr "Fåordig"
+
+#, fuzzy
+#~ msgid "Jupiter LXIII"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LXVI"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Jupiter LIX"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Pan"
+#~ msgstr "Jan"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometheus"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Epimetheus"
+
+#~ msgid "Janus"
+#~ msgstr "Janus"
+
+#, fuzzy
+#~ msgid "Telesto"
+#~ msgstr "Celestia"
+
+#, fuzzy
+#~ msgid "Skathi"
+#~ msgstr "Skat"
+
+#, fuzzy
+#~ msgid "Albiorix"
+#~ msgstr "Albireo"
+
+#, fuzzy
+#~ msgid "Saturn LX"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LIV"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LIX"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXI"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LVII"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LV"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXII"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXV"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LVI"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXVI"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXIV"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LXIII"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Saturn LVIII"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Portia"
+#~ msgstr "Port-Vila"
+
+#, fuzzy
+#~ msgid "Mab"
+#~ msgstr "Mar"
+
+#, fuzzy
+#~ msgid "Galatea"
+#~ msgstr "Galaxer"
+
+#~ msgid "Larissa"
+#~ msgstr "Larissa"
+
+#, fuzzy
+#~ msgid "Halimede"
+#~ msgstr "Ganymede"
+
+#, fuzzy
+#~ msgid "Sao"
+#~ msgstr "Solen"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "NORDAMERIKA"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "SYDAMERIKA"
+
+#~ msgid "EURASIA"
+#~ msgstr "EURASIEN"
+
+#~ msgid "AFRICA"
+#~ msgstr "AFRIKA"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "AUSTRALIEN"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "ANTARKTIS"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "NORDATLANTEN"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "SYDATLANTEN"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "NORRA STILLA HAVET"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "SÖDRA STILLA HAVET"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "INDISKA OCEANEN"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "NORRA ISHAVET"
+
+#~ msgid "Abu Dhabi"
+#~ msgstr "Abu Dhabi"
+
+#~ msgid "Abuja"
+#~ msgstr "Abuja"
+
+#~ msgid "Accra"
+#~ msgstr "Accra"
+
+#~ msgid "Adamstown"
+#~ msgstr "Adamstown"
+
+#~ msgid "Addis Ababa"
+#~ msgstr "Addis Abeba"
+
+#~ msgid "Algiers"
+#~ msgstr "Alger"
+
+#~ msgid "Alofi"
+#~ msgstr "Alofi"
+
+#~ msgid "Amman"
+#~ msgstr "Amman"
+
+#~ msgid "Amsterdam"
+#~ msgstr "Amsterdam"
+
+#~ msgid "Andorra la Vella"
+#~ msgstr "Andorra la Vella"
+
+#~ msgid "Ankara"
+#~ msgstr "Ankara"
+
+#~ msgid "Antananarivo"
+#~ msgstr "Antananarivo"
+
+#~ msgid "Apia"
+#~ msgstr "Apia"
+
+#~ msgid "Ashgabat"
+#~ msgstr "Asjchabad"
+
+#~ msgid "Asmara"
+#~ msgstr "Asmara"
+
+#~ msgid "Asuncion"
+#~ msgstr "Asunción"
+
+#~ msgid "Athens"
+#~ msgstr "Aten"
+
+#~ msgid "Avarua"
+#~ msgstr "Avarua"
+
+#~ msgid "Baghdad"
+#~ msgstr "Bagdad"
+
+#~ msgid "Baku"
+#~ msgstr "Baku"
+
+#~ msgid "Bamako"
+#~ msgstr "Bamako"
+
+#~ msgid "Bandar Seri Begawan"
+#~ msgstr "Bandar Seri Begawan"
+
+#~ msgid "Bangkok"
+#~ msgstr "Bangkok"
+
+#~ msgid "Bangui"
+#~ msgstr "Bangui"
+
+#~ msgid "Banjul"
+#~ msgstr "Banjul"
+
+#~ msgid "Basse-Terre"
+#~ msgstr "Basse-Terre"
+
+#~ msgid "Basseterre"
+#~ msgstr "Basseterre"
+
+#~ msgid "Beijing"
+#~ msgstr "Peking"
+
+#~ msgid "Beirut"
+#~ msgstr "Beirut"
+
+#~ msgid "Belgrade"
+#~ msgstr "Belgrad"
+
+#~ msgid "Belmopan"
+#~ msgstr "Belmopan"
+
+#~ msgid "Berlin"
+#~ msgstr "Berlin"
+
+#~ msgid "Bern"
+#~ msgstr "Bern"
+
+#~ msgid "Bishkek"
+#~ msgstr "Bishkek"
+
+#~ msgid "Bissau"
+#~ msgstr "Bissau"
+
+#~ msgid "Bloemfontein"
+#~ msgstr "Bloemfontein"
+
+#~ msgid "Bogota"
+#~ msgstr "Bogota"
+
+#~ msgid "Brasilia"
+#~ msgstr "Brasilia"
+
+#~ msgid "Bratislava"
+#~ msgstr "Bratislava"
+
+#~ msgid "Brazzaville"
+#~ msgstr "Brazzaville"
+
+#~ msgid "Bridgetown"
+#~ msgstr "Bridgetown"
+
+#~ msgid "Brussels"
+#~ msgstr "Bryssel"
+
+#~ msgid "Bucharest"
+#~ msgstr "Bukarest"
+
+#~ msgid "Budapest"
+#~ msgstr "Budapest"
+
+#~ msgid "Buenos Aires"
+#~ msgstr "Buenos Aires"
+
+#~ msgid "Bujumbura"
+#~ msgstr "Bujumbura"
+
+#~ msgid "Cairo"
+#~ msgstr "Kairo"
+
+#~ msgid "Canberra"
+#~ msgstr "Canberra"
+
+#~ msgid "Cape Town"
+#~ msgstr "Kapstaden"
+
+#~ msgid "Caracas"
+#~ msgstr "Caracas"
+
+#~ msgid "Castries"
+#~ msgstr "Castries"
+
+#~ msgid "Cayenne"
+#~ msgstr "Cayenne"
+
+#~ msgid "Charlotte Amalie"
+#~ msgstr "Charlotte Amalie"
+
+#~ msgid "Chisinau"
+#~ msgstr "Chisinau"
+
+#~ msgid "Colombo"
+#~ msgstr "Colombo"
+
+#~ msgid "Conakry"
+#~ msgstr "Conakry"
+
+#~ msgid "Copenhagen"
+#~ msgstr "Köpenhamn"
+
+#~ msgid "Cotonou"
+#~ msgstr "Cotonou"
+
+#~ msgid "Dakar"
+#~ msgstr "Dakar"
+
+#~ msgid "Damascus"
+#~ msgstr "Damaskus"
+
+#~ msgid "Dar es Salaam"
+#~ msgstr "Dar es Salaam"
+
+#~ msgid "Dhaka"
+#~ msgstr "Dhaka"
+
+#~ msgid "Dili"
+#~ msgstr "Dili"
+
+#~ msgid "Djibouti"
+#~ msgstr "Djibouti"
+
+#~ msgid "Doha"
+#~ msgstr "Doha"
+
+#~ msgid "Douglas"
+#~ msgstr "Douglas"
+
+#~ msgid "Dublin"
+#~ msgstr "Dublin"
+
+#~ msgid "Dushanbe"
+#~ msgstr "Dusjanbe"
+
+#~ msgid "Fongafale"
+#~ msgstr "Fongafale"
+
+#~ msgid "Fort-de-France"
+#~ msgstr "Fort-de-France"
+
+#~ msgid "Freetown"
+#~ msgstr "Freetown"
+
+#~ msgid "Gaborone"
+#~ msgstr "Gaborone"
+
+#~ msgid "George Town"
+#~ msgstr "George Town"
+
+#~ msgid "Georgetown"
+#~ msgstr "Georgetown"
+
+#~ msgid "Gibraltar"
+#~ msgstr "Gibraltar"
+
+#~ msgid "Grand Turk"
+#~ msgstr "Grand Turk"
+
+#~ msgid "Guatemala"
+#~ msgstr "Guatemala"
+
+#~ msgid "Hagatna"
+#~ msgstr "Hagatna"
+
+#~ msgid "The Hague"
+#~ msgstr "Haag"
+
+#~ msgid "Hamilton"
+#~ msgstr "Hamilton"
+
+#~ msgid "Hanoi"
+#~ msgstr "Hanoi"
+
+#~ msgid "Harare"
+#~ msgstr "Harare"
+
+#~ msgid "Havana"
+#~ msgstr "Havanna"
+
+#~ msgid "Helsinki"
+#~ msgstr "Helsingfors"
+
+#~ msgid "Honiara"
+#~ msgstr "Honiara"
+
+#~ msgid "Islamabad"
+#~ msgstr "Islamabad"
+
+#~ msgid "Jakarta"
+#~ msgstr "Jakarta"
+
+#~ msgid "Jamestown"
+#~ msgstr "Jamestown"
+
+#~ msgid "Jerusalem"
+#~ msgstr "Jerusalem"
+
+#~ msgid "Kabul"
+#~ msgstr "Kabul"
+
+#~ msgid "Kampala"
+#~ msgstr "Kampala"
+
+#~ msgid "Kathmandu"
+#~ msgstr "Kathmandu"
+
+#~ msgid "Khartoum"
+#~ msgstr "Khartoum"
+
+#~ msgid "Kiev"
+#~ msgstr "Kiev"
+
+#~ msgid "Kigali"
+#~ msgstr "Kigali"
+
+#~ msgid "Kingston"
+#~ msgstr "Kingston"
+
+#~ msgid "Kingstown"
+#~ msgstr "Kingstown"
+
+#~ msgid "Kinshasa"
+#~ msgstr "Kinshasa"
+
+#~ msgid "Koror"
+#~ msgstr "Koror"
+
+#~ msgid "Kuala Lumpur"
+#~ msgstr "Kuala Lumpur"
+
+#~ msgid "Kuwait"
+#~ msgstr "Kuwait"
+
+#~ msgid "La'youn"
+#~ msgstr "El Aaiún"
+
+#~ msgid "La Paz"
+#~ msgstr "La Paz"
+
+#~ msgid "Libreville"
+#~ msgstr "Libreville"
+
+#~ msgid "Lilongwe"
+#~ msgstr "Lilongwe"
+
+#~ msgid "Lima"
+#~ msgstr "Lima"
+
+#~ msgid "Lisbon"
+#~ msgstr "Lissabon"
+
+#~ msgid "Ljubljana"
+#~ msgstr "Ljubljana"
+
+#~ msgid "Lobamba"
+#~ msgstr "Lobamba"
+
+#~ msgid "Lome"
+#~ msgstr "Lome"
+
+#~ msgid "London"
+#~ msgstr "London"
+
+#~ msgid "Longyearbyen"
+#~ msgstr "Longyearbyen"
+
+#~ msgid "Luanda"
+#~ msgstr "Luanda"
+
+#~ msgid "Lusaka"
+#~ msgstr "Lusaka"
+
+#~ msgid "Luxembourg"
+#~ msgstr "Luxemburg"
+
+#~ msgid "Madrid"
+#~ msgstr "Madrid"
+
+#~ msgid "Majuro"
+#~ msgstr "Majuro"
+
+#~ msgid "Malabo"
+#~ msgstr "Malabo"
+
+#~ msgid "Male"
+#~ msgstr "Manlig"
+
+#~ msgid "Mamoutzou"
+#~ msgstr "Mamoutzou"
+
+#~ msgid "Managua"
+#~ msgstr "Managua"
+
+#~ msgid "Manama"
+#~ msgstr "Manama"
+
+#~ msgid "Manila"
+#~ msgstr "Manila"
+
+#~ msgid "Maputo"
+#~ msgstr "Maputo"
+
+#~ msgid "Maseru"
+#~ msgstr "Maseru"
+
+#~ msgid "Mata-Utu"
+#~ msgstr "Mata-Utu"
+
+#~ msgid "Mbabane"
+#~ msgstr "Mbabane"
+
+#~ msgid "Mexico City"
+#~ msgstr "Mexico City"
+
+#~ msgid "Minsk"
+#~ msgstr "Minsk"
+
+#~ msgid "Mogadishu"
+#~ msgstr "Mogadishu"
+
+#~ msgid "Monaco"
+#~ msgstr "Monaco"
+
+#~ msgid "Monrovia"
+#~ msgstr "Monrovia"
+
+#~ msgid "Montevideo"
+#~ msgstr "Montevideo"
+
+#~ msgid "Moroni"
+#~ msgstr "Moroni"
+
+#~ msgid "Moscow"
+#~ msgstr "Moskva"
+
+#~ msgid "Muscat"
+#~ msgstr "Muskat"
+
+#~ msgid "Nairobi"
+#~ msgstr "Nairobi"
+
+#~ msgid "Nassau"
+#~ msgstr "Nassau"
+
+#~ msgid "N'Djamena"
+#~ msgstr "N'Djamena"
+
+#~ msgid "New Delhi"
+#~ msgstr "New Delhi"
+
+#~ msgid "Niamey"
+#~ msgstr "Niamey"
+
+#~ msgid "Nicosia"
+#~ msgstr "Nicosia"
+
+#~ msgid "Nouakchott"
+#~ msgstr "Nouakchott"
+
+#~ msgid "Noumea"
+#~ msgstr "Noumea"
+
+#~ msgid "Nuku'alofa"
+#~ msgstr "Nukualofa"
+
+#~ msgid "Nuuk"
+#~ msgstr "Nuuk"
+
+#~ msgid "Oranjestad"
+#~ msgstr "Oranjestad"
+
+#~ msgid "Oslo"
+#~ msgstr "Oslo"
+
+#~ msgid "Ottawa"
+#~ msgstr "Ottawa"
+
+#~ msgid "Ouagadougou"
+#~ msgstr "Ouagadougou"
+
+#~ msgid "Pago Pago"
+#~ msgstr "Pago Pago"
+
+#~ msgid "Palikir"
+#~ msgstr "Palikir"
+
+#~ msgid "Panama"
+#~ msgstr "Panama"
+
+#~ msgid "Papeete"
+#~ msgstr "Papeete"
+
+#~ msgid "Paramaribo"
+#~ msgstr "Paramaribo"
+
+#~ msgid "Paris"
+#~ msgstr "Paris"
+
+#~ msgid "Phnom Penh"
+#~ msgstr "Phnom Penh"
+
+#~ msgid "Plymouth"
+#~ msgstr "Plymouth"
+
+#~ msgid "Port Louis"
+#~ msgstr "Port Louis"
+
+#~ msgid "Port Moresby"
+#~ msgstr "Port Moresby"
+
+#~ msgid "Port-au-Prince"
+#~ msgstr "Port-au-Prince"
+
+#~ msgid "Port-of-Spain"
+#~ msgstr "Port-of-Spain"
+
+#~ msgid "Porto-Novo"
+#~ msgstr "Porto-Novo"
+
+#~ msgid "Port-Vila"
+#~ msgstr "Port-Vila"
+
+#~ msgid "Prague"
+#~ msgstr "Prag"
+
+#~ msgid "Praia"
+#~ msgstr "Praia"
+
+#~ msgid "Pretoria"
+#~ msgstr "Pretoria"
+
+#~ msgid "P'yongyang"
+#~ msgstr "P'yŏngyang"
+
+#~ msgid "Quito"
+#~ msgstr "Quito"
+
+#~ msgid "Rabat"
+#~ msgstr "Rabat"
+
+#~ msgid "Rangoon"
+#~ msgstr "Rangoon"
+
+#~ msgid "Reykjavik"
+#~ msgstr "Reykjavik"
+
+#~ msgid "Riga"
+#~ msgstr "Riga"
+
+#~ msgid "Riyadh"
+#~ msgstr "Riyadh"
+
+#~ msgid "Road Town"
+#~ msgstr "Road Town"
+
+#~ msgid "Rome"
+#~ msgstr "Rom"
+
+#~ msgid "Roseau"
+#~ msgstr "Roseau"
+
+#~ msgid "Saint George's"
+#~ msgstr "Saint George's"
+
+#~ msgid "Saint Helier"
+#~ msgstr "Saint Helier"
+
+#~ msgid "Saint John's"
+#~ msgstr "Saint John's"
+
+#~ msgid "Saint Peter Port"
+#~ msgstr "Saint Peter Port"
+
+#~ msgid "Saint-Denis"
+#~ msgstr "Saint-Denis"
+
+#~ msgid "Saint-Pierre"
+#~ msgstr "Saint-Pierre"
+
+#~ msgid "Saipan"
+#~ msgstr "Saipan"
+
+#~ msgid "San Jose"
+#~ msgstr "San Jose"
+
+#~ msgid "San Juan"
+#~ msgstr "San Juan"
+
+#~ msgid "San Marino"
+#~ msgstr "San Marino"
+
+#~ msgid "San Salvador"
+#~ msgstr "San Salvador"
+
+#~ msgid "Sanaa"
+#~ msgstr "Sana"
+
+#~ msgid "Santiago"
+#~ msgstr "Santiago"
+
+#~ msgid "Santo Domingo"
+#~ msgstr "Santo Domingo"
+
+#~ msgid "Sao Tome"
+#~ msgstr "Sao Tome"
+
+#~ msgid "Sarajevo"
+#~ msgstr "Sarajevo"
+
+#~ msgid "Seoul"
+#~ msgstr "Seoul"
+
+#~ msgid "The Settlement"
+#~ msgstr "Förlikningsavtalet"
+
+#~ msgid "Singapore"
+#~ msgstr "Singapore"
+
+#~ msgid "Skopje"
+#~ msgstr "Skopje"
+
+#~ msgid "Sofia"
+#~ msgstr "Sofia"
+
+#~ msgid "Sri Jayewardenepura Kotte"
+#~ msgstr "Sri Jayewardenepura Kotte"
+
+#~ msgid "Stanley"
+#~ msgstr "Stanley"
+
+#~ msgid "Stockholm"
+#~ msgstr "Stockholm"
+
+#~ msgid "Sucre"
+#~ msgstr "Sucre"
+
+#~ msgid "Suva"
+#~ msgstr "Suva"
+
+#~ msgid "Taipei"
+#~ msgstr "Taipei"
+
+#~ msgid "Tallinn"
+#~ msgstr "Tallinn"
+
+#~ msgid "Tarawa"
+#~ msgstr "Tarawa"
+
+#~ msgid "Tashkent"
+#~ msgstr "Tasjkent"
+
+#~ msgid "T'bilisi"
+#~ msgstr "Tbilisi"
+
+#~ msgid "Tegucigalpa"
+#~ msgstr "Tegucigalpa"
+
+#~ msgid "Tehran"
+#~ msgstr "Teheran"
+
+#~ msgid "Tel Aviv"
+#~ msgstr "Tel Aviv-Jaffa"
+
+#~ msgid "Thimphu"
+#~ msgstr "Thimphu"
+
+#~ msgid "Tirana"
+#~ msgstr "Tirana"
+
+#~ msgid "Tokyo"
+#~ msgstr "Tokyo"
+
+#~ msgid "Torshavn"
+#~ msgstr "Torshavn"
+
+#~ msgid "Tripoli"
+#~ msgstr "Tripoli"
+
+#~ msgid "Tunis"
+#~ msgstr "Tunis"
+
+#~ msgid "Ulaanbaatar"
+#~ msgstr "Ulaanbaatar"
+
+#~ msgid "Vaduz"
+#~ msgstr "Vaduz"
+
+#~ msgid "Valletta"
+#~ msgstr "Valletta"
+
+#~ msgid "The Valley"
+#~ msgstr "Valley"
+
+#~ msgid "Vatican City"
+#~ msgstr "Vatikanstaten"
+
+#~ msgid "Victoria"
+#~ msgstr "Victoria"
+
+#~ msgid "Vienna"
+#~ msgstr "Wien"
+
+#~ msgid "Vientiane"
+#~ msgstr "Vientiane"
+
+#~ msgid "Vilnius"
+#~ msgstr "Vilnius"
+
+#~ msgid "Warsaw"
+#~ msgstr "Warszawa"
+
+#~ msgid "Washington D.C."
+#~ msgstr "Washington D.C."
+
+#~ msgid "Wellington"
+#~ msgstr "Wellington"
+
+#~ msgid "West Island"
+#~ msgstr "West Island"
+
+#~ msgid "Willemstad"
+#~ msgstr "Willemstad"
+
+#~ msgid "Windhoek"
+#~ msgstr "Windhoek"
+
+#~ msgid "Yamoussoukro"
+#~ msgstr "Yamoussoukro"
+
+#~ msgid "Yaounde"
+#~ msgstr "Yaounde"
+
+#~ msgid "Yaren District"
+#~ msgstr "Yaren District"
+
+#~ msgid "Yerevan"
+#~ msgstr "Yerevan"
+
+#~ msgid "Zagreb"
+#~ msgstr "Zagreb"
+
+#~ msgid "Sol"
+#~ msgstr "Solen"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Stjärnsystemets masscentrum"
+
+#~ msgid "Alpheratz"
+#~ msgstr "Alpheratz"
+
+#~ msgid "Sirrah"
+#~ msgstr "Sirrah"
+
+#~ msgid "Caph"
+#~ msgstr "Caph"
+
+#~ msgid "Algenib"
+#~ msgstr "Algenib"
+
+#~ msgid "Schemali"
+#~ msgstr "Schemali"
+
+#~ msgid "Ankaa"
+#~ msgstr "Ankaa"
+
+#~ msgid "Schedar"
+#~ msgstr "Schedar"
+
+#~ msgid "Shedir"
+#~ msgstr "Shedir"
+
+#~ msgid "Diphda"
+#~ msgstr "Diphda"
+
+#~ msgid "Deneb Kaitos"
+#~ msgstr "Deneb Kaitos"
+
+#~ msgid "Achird"
+#~ msgstr "Achird"
+
+#~ msgid "Van Maanen 2"
+#~ msgstr "Van Maanen 2"
+
+#, fuzzy
+#~ msgid "Castula"
+#~ msgstr "Castor"
+
+#~ msgid "Navi"
+#~ msgstr "Navi"
+
+#, fuzzy
+#~ msgid "Wurren"
+#~ msgstr "Aktuell"
+
+#~ msgid "Mirach"
+#~ msgstr "Mirach"
+
+#~ msgid "Adhil"
+#~ msgstr "Adhil"
+
+#~ msgid "Ruchbah"
+#~ msgstr "Ruchbah"
+
+#, fuzzy
+#~ msgid "Alpherg"
+#~ msgstr "Alpheratz"
+
+#, fuzzy
+#~ msgid "Titawin"
+#~ msgstr "Titan"
+
+#~ msgid "Achernar"
+#~ msgstr "Achernar"
+
+#~ msgid "Baten Kaitos"
+#~ msgstr "Baten Kaitos"
+
+#~ msgid "Caput Trianguli"
+#~ msgstr "Caput Trianguli"
+
+#~ msgid "Mesarthim"
+#~ msgstr "Mesarthim"
+
+#~ msgid "Segin"
+#~ msgstr "Segin"
+
+#~ msgid "Sheratan"
+#~ msgstr "Sheratan"
+
+#, fuzzy
+#~ msgid "Alrescha"
+#~ msgstr "Al Rescha"
+
+#~ msgid "Al Rescha"
+#~ msgstr "Al Rescha"
+
+#~ msgid "Almach"
+#~ msgstr "Almach"
+
+#~ msgid "Almaak"
+#~ msgstr "Almaak"
+
+#~ msgid "Alamak"
+#~ msgstr "Alamak"
+
+#~ msgid "Hamal"
+#~ msgstr "Hamal"
+
+#~ msgid "Mira"
+#~ msgstr "Mira"
+
+#~ msgid "Polaris"
+#~ msgstr "Polstjärnan"
+
+#, fuzzy
+#~ msgid "Bharani"
+#~ msgstr "Chara"
+
+#, fuzzy
+#~ msgid "Miram"
+#~ msgstr "Mira"
+
+#~ msgid "Angetenar"
+#~ msgstr "Angetenar"
+
+#~ msgid "Azha"
+#~ msgstr "Azha"
+
+#~ msgid "Acamar"
+#~ msgstr "Acamar"
+
+#~ msgid "Menkar"
+#~ msgstr "Menkar"
+
+#~ msgid "Menkab"
+#~ msgstr "Menkab"
+
+#~ msgid "Algol"
+#~ msgstr "Algol"
+
+#~ msgid "Botein"
+#~ msgstr "Botein"
+
+#~ msgid "Mirfak"
+#~ msgstr "Mirfak"
+
+#~ msgid "Mirphak"
+#~ msgstr "Mirphak"
+
+#~ msgid "Marfak"
+#~ msgstr "Marfak"
+
+#, fuzzy
+#~ msgid "Ran"
+#~ msgstr "Rana"
+
+#~ msgid "Rana"
+#~ msgstr "Rana"
+
+#~ msgid "Atik"
+#~ msgstr "Atik"
+
+#~ msgid "Celaeno"
+#~ msgstr "Celaeno"
+
+#~ msgid "Electra"
+#~ msgstr "Electra"
+
+#~ msgid "Taygeta"
+#~ msgstr "Taygeta"
+
+#~ msgid "Maia"
+#~ msgstr "Maia"
+
+#~ msgid "Asterope"
+#~ msgstr "Asterope"
+
+#~ msgid "Merope"
+#~ msgstr "Merope"
+
+#~ msgid "Alcyone"
+#~ msgstr "Alcyone"
+
+#~ msgid "Pleione"
+#~ msgstr "Pleione"
+
+#~ msgid "Zaurak"
+#~ msgstr "Zaurak"
+
+#~ msgid "Menkib"
+#~ msgstr "Menkib"
+
+#~ msgid "Beid"
+#~ msgstr "Beid"
+
+#~ msgid "Keid"
+#~ msgstr "Keid"
+
+#~ msgid "Ain"
+#~ msgstr "Ain"
+
+#~ msgid "Aldebaran"
+#~ msgstr "Aldebaran"
+
+#, fuzzy
+#~ msgid "Tabit"
+#~ msgstr "Thabit"
+
+#~ msgid "Hind's Crimson Star"
+#~ msgstr "Hinds karmosinröda stjärna"
+
+#, fuzzy
+#~ msgid "Almaaz"
+#~ msgstr "Almaak"
+
+#, fuzzy
+#~ msgid "Saclateni"
+#~ msgstr "Galaxer"
+
+#~ msgid "Sadatoni"
+#~ msgstr "Sadatoni"
+
+#~ msgid "Cursa"
+#~ msgstr "Cursa"
+
+#~ msgid "Kapteyn's Star"
+#~ msgstr "Kapteyns stjärna"
+
+#~ msgid "Rigel"
+#~ msgstr "Rigel"
+
+#~ msgid "Capella"
+#~ msgstr "Capella"
+
+#~ msgid "Bellatrix"
+#~ msgstr "Bellatrix"
+
+#~ msgid "Elnath"
+#~ msgstr "Elnath"
+
+#~ msgid "Alnath"
+#~ msgstr "Alnath"
+
+#~ msgid "Nihal"
+#~ msgstr "Nihal"
+
+#~ msgid "Thabit"
+#~ msgstr "Thabit"
+
+#~ msgid "Mintaka"
+#~ msgstr "Mintaka"
+
+#~ msgid "Arneb"
+#~ msgstr "Arneb"
+
+#~ msgid "Meissa"
+#~ msgstr "Meissa"
+
+#~ msgid "Heka"
+#~ msgstr "Heka"
+
+#~ msgid "Alnilam"
+#~ msgstr "Alnilam"
+
+#, fuzzy
+#~ msgid "Tianguan"
+#~ msgstr "Triangel"
+
+#~ msgid "Phact"
+#~ msgstr "Phact"
+
+#~ msgid "Alnitak"
+#~ msgstr "Alnitak"
+
+#~ msgid "Saiph"
+#~ msgstr "Saiph"
+
+#~ msgid "Wazn"
+#~ msgstr "Wazn"
+
+#~ msgid "Betelgeuse"
+#~ msgstr "Betelgeuse"
+
+#~ msgid "Prijipati"
+#~ msgstr "Prijipati"
+
+#~ msgid "Menkalinan"
+#~ msgstr "Menkalinan"
+
+#, fuzzy
+#~ msgid "Elkurud"
+#~ msgstr "Furud"
+
+#, fuzzy
+#~ msgid "Propus"
+#~ msgstr "Canopus"
+
+#~ msgid "Red Rectangle"
+#~ msgstr "Röda rektangelnebulosan"
+
+#~ msgid "Furud"
+#~ msgstr "Furud"
+
+#~ msgid "Mirzam"
+#~ msgstr "Mirzam"
+
+#~ msgid "Murzim"
+#~ msgstr "Murzim"
+
+#~ msgid "Tejat"
+#~ msgstr "Tejat"
+
+#~ msgid "Canopus"
+#~ msgstr "Canopus"
+
+#~ msgid "Suhel"
+#~ msgstr "Suhel"
+
+#, fuzzy
+#~ msgid "Plaskett's Star"
+#~ msgstr "Visa stjärnor"
+
+#~ msgid "Alhena"
+#~ msgstr "Alhena"
+
+#~ msgid "Almeisan"
+#~ msgstr "Almeisan"
+
+#~ msgid "Mebsuta"
+#~ msgstr "Mebsuta"
+
+#~ msgid "Sirius"
+#~ msgstr "Sirius"
+
+#~ msgid "Adhara"
+#~ msgstr "Adhara"
+
+#~ msgid "Adara"
+#~ msgstr "Adara"
+
+#~ msgid "Muliphein"
+#~ msgstr "Muliphein"
+
+#~ msgid "Mekbuda"
+#~ msgstr "Mekbuda"
+
+#~ msgid "Wezen"
+#~ msgstr "Wezen"
+
+#~ msgid "Bernes 135"
+#~ msgstr "Bernes 135"
+
+#~ msgid "Wasat"
+#~ msgstr "Wasat"
+
+#~ msgid "Aludra"
+#~ msgstr "Aludra"
+
+#~ msgid "Gomeisa"
+#~ msgstr "Gomeisa"
+
+#~ msgid "Luyten's Star"
+#~ msgstr "Luytens stjärna"
+
+#~ msgid "Castor"
+#~ msgstr "Castor"
+
+#~ msgid "Procyon"
+#~ msgstr "Procyon"
+
+#~ msgid "Elgomaisa"
+#~ msgstr "Elgomaisa"
+
+#~ msgid "Pollux"
+#~ msgstr "Pollux"
+
+#, fuzzy
+#~ msgid "Azmidi"
+#~ msgstr "Asmidiske"
+
+#~ msgid "Asmidiske"
+#~ msgstr "Asmidiske"
+
+#~ msgid "Naos"
+#~ msgstr "Naos"
+
+#~ msgid "Regor"
+#~ msgstr "Regor"
+
+#~ msgid "Tegmine"
+#~ msgstr "Tegmine"
+
+#, fuzzy
+#~ msgid "Tarf"
+#~ msgstr "Al Tarf"
+
+#~ msgid "Al Tarf"
+#~ msgstr "Al Tarf"
+
+#~ msgid "Avior"
+#~ msgstr "Avior"
+
+#~ msgid "Muscida"
+#~ msgstr "Muscida"
+
+#, fuzzy
+#~ msgid "Minchir"
+#~ msgstr "Achird"
+
+#~ msgid "Asellus Borealis"
+#~ msgstr "Asellus Borealis"
+
+#~ msgid "Asellus Australis"
+#~ msgstr "Asellus Australis"
+
+#~ msgid "Acubens"
+#~ msgstr "Acubens"
+
+#~ msgid "Dnoces"
+#~ msgstr "Dnoces"
+
+#~ msgid "Talitha Australis"
+#~ msgstr "Talitha Australis"
+
+#~ msgid "Suhail"
+#~ msgstr "Suhail"
+
+#~ msgid "Miaplacidus"
+#~ msgstr "Miaplacidus"
+
+#~ msgid "Aspidiske"
+#~ msgstr "Aspidiske"
+
+#, fuzzy
+#~ msgid "Markeb"
+#~ msgstr "Markab"
+
+#~ msgid "Alphard"
+#~ msgstr "Alphard"
+
+#~ msgid "Cor Hydrae"
+#~ msgstr "Vattenormens hjärta"
+
+#~ msgid "Alterf"
+#~ msgstr "Alterf"
+
+#~ msgid "Ukdah"
+#~ msgstr "Ukdah"
+
+#~ msgid "Subra"
+#~ msgstr "Subra"
+
+#~ msgid "Ras Elased Australis"
+#~ msgstr "Ras Elased Australis"
+
+#~ msgid "Rasalas"
+#~ msgstr "Rasalas"
+
+#~ msgid "Ras Elased Borealis"
+#~ msgstr "Ras Elased Borealis"
+
+#~ msgid "Regulus"
+#~ msgstr "Regulus"
+
+#~ msgid "Kabeleced"
+#~ msgstr "Kabeleced"
+
+#~ msgid "Cor Leonis"
+#~ msgstr "Lejonets hjärta"
+
+#~ msgid "Adhafera"
+#~ msgstr "Adhafera"
+
+#~ msgid "Aldhafera"
+#~ msgstr "Aldhafera"
+
+#~ msgid "Tania Borealis"
+#~ msgstr "Tania Borealis"
+
+#~ msgid "Algieba"
+#~ msgstr "Algieba"
+
+#~ msgid "Tania Australis"
+#~ msgstr "Tania Australis"
+
+#, fuzzy
+#~ msgid "Macondo"
+#~ msgstr "London"
+
+#~ msgid "Alkes"
+#~ msgstr "Alkes"
+
+#~ msgid "Merak"
+#~ msgstr "Merak"
+
+#~ msgid "Lalande 21185"
+#~ msgstr "Lalande 21185"
+
+#~ msgid "Dubhe"
+#~ msgstr "Dubhe"
+
+#~ msgid "Dubb"
+#~ msgstr "Dubb"
+
+#~ msgid "Zosma"
+#~ msgstr "Zosma"
+
+#~ msgid "Duhr"
+#~ msgstr "Duhr"
+
+#~ msgid "Chertan"
+#~ msgstr "Chertan"
+
+#~ msgid "Coxa"
+#~ msgstr "Coxa"
+
+#~ msgid "Chort"
+#~ msgstr "Chort"
+
+#~ msgid "Alula Australis"
+#~ msgstr "Alula Australis"
+
+#~ msgid "Alula Borealis"
+#~ msgstr "Alula Borealis"
+
+#~ msgid "Tsze Tseang"
+#~ msgstr "Tsze Tseang"
+
+#, fuzzy
+#~ msgid "Shama"
+#~ msgstr "Sham"
+
+#~ msgid "Giausar"
+#~ msgstr "Giausar"
+
+#, fuzzy
+#~ msgid "Formosa"
+#~ msgstr "Format: "
+
+#, fuzzy
+#~ msgid "Flegetonte"
+#~ msgstr "Georgetown"
+
+#~ msgid "Denebola"
+#~ msgstr "Denebola"
+
+#~ msgid "Zavijava"
+#~ msgstr "Zavijava"
+
+#~ msgid "Alaraph"
+#~ msgstr "Alaraph"
+
+#, fuzzy
+#~ msgid "Aniara"
+#~ msgstr "Honiara"
+
+#~ msgid "Groombridge 1830"
+#~ msgstr "Groombridge 1830"
+
+#~ msgid "Phecda"
+#~ msgstr "Phecda"
+
+#~ msgid "Phad"
+#~ msgstr "Phad"
+
+#~ msgid "Alchiba"
+#~ msgstr "Alchiba"
+
+#~ msgid "Megrez"
+#~ msgstr "Megrez"
+
+#~ msgid "Gienah"
+#~ msgstr "Gienah"
+
+#~ msgid "Zaniah"
+#~ msgstr "Zaniah"
+
+#~ msgid "Acrux"
+#~ msgstr "Acrux"
+
+#~ msgid "Algorab"
+#~ msgstr "Algorab"
+
+#~ msgid "Gacrux"
+#~ msgstr "Gacrux"
+
+#~ msgid "Chara"
+#~ msgstr "Chara"
+
+#~ msgid "Kraz"
+#~ msgstr "Kraz"
+
+#~ msgid "Muhlifain"
+#~ msgstr "Muhlifain"
+
+#~ msgid "Porrima"
+#~ msgstr "Porrima"
+
+#~ msgid "Mimosa"
+#~ msgstr "Mimosa"
+
+#~ msgid "Alioth"
+#~ msgstr "Alioth"
+
+#~ msgid "Minelauva"
+#~ msgstr "Minelauva"
+
+#~ msgid "Auva"
+#~ msgstr "Auva"
+
+#~ msgid "Cor Caroli"
+#~ msgstr "Cor Caroli"
+
+#~ msgid "Vindemiatrix"
+#~ msgstr "Vindemiatrix"
+
+#~ msgid "Almuredin"
+#~ msgstr "Almuredin"
+
+#~ msgid "Mizar"
+#~ msgstr "Mizar"
+
+#~ msgid "Spica"
+#~ msgstr "Spica"
+
+#~ msgid "Azimech"
+#~ msgstr "Azimech"
+
+#~ msgid "Alcor"
+#~ msgstr "Alcor"
+
+#~ msgid "Heze"
+#~ msgstr "Heze"
+
+#~ msgid "Alkaid"
+#~ msgstr "Alkaid"
+
+#~ msgid "Benetnasch"
+#~ msgstr "Benetnasch"
+
+#~ msgid "Muphrid"
+#~ msgstr "Muphrid"
+
+#~ msgid "Hadar"
+#~ msgstr "Hadar"
+
+#~ msgid "Agena"
+#~ msgstr "Agena"
+
+#~ msgid "Thuban"
+#~ msgstr "Thuban"
+
+#~ msgid "Menkent"
+#~ msgstr "Menkent"
+
+#~ msgid "Arcturus"
+#~ msgstr "Arcturus"
+
+#~ msgid "Syrma"
+#~ msgstr "Syrma"
+
+#~ msgid "Proxima"
+#~ msgstr "Proxima"
+
+#~ msgid "Seginus"
+#~ msgstr "Segin"
+
+#~ msgid "Ceginus"
+#~ msgstr "Ceginus"
+
+#~ msgid "Izar"
+#~ msgstr "Izar"
+
+#~ msgid "Mirak"
+#~ msgstr "Mirak"
+
+#~ msgid "Pulcherrima"
+#~ msgstr "Pulcherrima"
+
+#~ msgid "Kochab"
+#~ msgstr "Kochab"
+
+#~ msgid "Kocab"
+#~ msgstr "Kocab"
+
+#~ msgid "Zubenelgenubi"
+#~ msgstr "Zubenelgenubi"
+
+#~ msgid "Zuben Elakribi"
+#~ msgstr "Zuben Elakribi"
+
+#~ msgid "Nekkar"
+#~ msgstr "Nekkar"
+
+#~ msgid "Zubeneschamali"
+#~ msgstr "Zubeneschamali"
+
+#, fuzzy
+#~ msgid "Pherkad Minor"
+#~ msgstr "Pherkad"
+
+#~ msgid "Pherkad"
+#~ msgstr "Pherkad"
+
+#~ msgid "Alkalurops"
+#~ msgstr "Alkalurops"
+
+#~ msgid "Edasich"
+#~ msgstr "Edasich"
+
+#~ msgid "Nusakan"
+#~ msgstr "Nusakan"
+
+#~ msgid "Alphecca"
+#~ msgstr "Alphecca"
+
+#~ msgid "Gemma"
+#~ msgstr "Gemma"
+
+#, fuzzy
+#~ msgid "Zubenelhakrabi"
+#~ msgstr "Zuben Elakrab"
+
+#~ msgid "Zuben Elakrab"
+#~ msgstr "Zuben Elakrab"
+
+#~ msgid "Unukalhai"
+#~ msgstr "Unukalhai"
+
+#~ msgid "Chow"
+#~ msgstr "Chow"
+
+#~ msgid "Dschubba"
+#~ msgstr "Dschubba"
+
+#~ msgid "Graffias"
+#~ msgstr "Graffias"
+
+#~ msgid "Akrab"
+#~ msgstr "Akrab"
+
+#, fuzzy
+#~ msgid "Marsic"
+#~ msgstr "Mars"
+
+#~ msgid "Jabbah"
+#~ msgstr "Jabbah"
+
+#, fuzzy
+#~ msgid "Alniyat"
+#~ msgstr "Al Niyat"
+
+#~ msgid "Al Niyat"
+#~ msgstr "Al Niyat"
+
+#, fuzzy
+#~ msgid "Athebyne"
+#~ msgstr "Aten"
+
+#~ msgid "Cujam"
+#~ msgstr "Cujam"
+
+#~ msgid "Antares"
+#~ msgstr "Antares"
+
+#~ msgid "Kornephoros"
+#~ msgstr "Kornephoros"
+
+#~ msgid "Marfik"
+#~ msgstr "Marfik"
+
+#~ msgid "Atria"
+#~ msgstr "Atria"
+
+#, fuzzy
+#~ msgid "Larawag"
+#~ msgstr "Tarawa"
+
+#, fuzzy
+#~ msgid "Pipirima"
+#~ msgstr "Porrima"
+
+#, fuzzy
+#~ msgid "Rapeto"
+#~ msgstr "Iapetus"
+
+#, fuzzy
+#~ msgid "Alrakis"
+#~ msgstr "Arrakis"
+
+#~ msgid "Arrakis"
+#~ msgstr "Arrakis"
+
+#, fuzzy
+#~ msgid "Aldhibah"
+#~ msgstr "Alchiba"
+
+#~ msgid "Sabik"
+#~ msgstr "Sabik"
+
+#~ msgid "Rasalgethi"
+#~ msgstr "Rasalgethi"
+
+#~ msgid "Ras Algethi"
+#~ msgstr "Ras Algethi"
+
+#~ msgid "Sarin"
+#~ msgstr "Sarin"
+
+#~ msgid "Rastaban"
+#~ msgstr "Rastaban"
+
+#~ msgid "Maasym"
+#~ msgstr "Maasym"
+
+#~ msgid "Lesath"
+#~ msgstr "Lesath"
+
+#~ msgid "Lesuth"
+#~ msgstr "Lesuth"
+
+#~ msgid "Kuma"
+#~ msgstr "Kuma"
+
+#~ msgid "Yildun"
+#~ msgstr "Yildun"
+
+#~ msgid "Shaula"
+#~ msgstr "Shaula"
+
+#~ msgid "Rasalhague"
+#~ msgstr "Rasalhague"
+
+#~ msgid "Ras Alhague"
+#~ msgstr "Ras Alhague"
+
+#~ msgid "Sargas"
+#~ msgstr "Sargas"
+
+#~ msgid "Dziban"
+#~ msgstr "Dziban"
+
+#~ msgid "Cebalrai"
+#~ msgstr "Cebalrai"
+
+#, fuzzy
+#~ msgid "Cervantes"
+#~ msgstr "Observatorier"
+
+#~ msgid "Grumium"
+#~ msgstr "Grumium"
+
+#~ msgid "Eltanin"
+#~ msgstr "Eltanin"
+
+#~ msgid "Etamin"
+#~ msgstr "Etamin"
+
+#~ msgid "Barnard's Star"
+#~ msgstr "Barnards stjärna"
+
+#~ msgid "Alnasl"
+#~ msgstr "Alnasl"
+
+#~ msgid "Kaus Media"
+#~ msgstr "Kaus Media"
+
+#~ msgid "Kaus Australis"
+#~ msgstr "Kaus Australis"
+
+#~ msgid "Al Athfar"
+#~ msgstr "Al Athfar"
+
+#~ msgid "Kaus Borealis"
+#~ msgstr "Kaus Borealis"
+
+#~ msgid "Vega"
+#~ msgstr "Vega"
+
+#~ msgid "Sheliak"
+#~ msgstr "Sheliak"
+
+#, fuzzy
+#~ msgid "Ainalrami"
+#~ msgstr "Alderamin"
+
+#~ msgid "Nunki"
+#~ msgstr "Nunki"
+
+#~ msgid "Alya"
+#~ msgstr "Alya"
+
+#~ msgid "Sulafat"
+#~ msgstr "Sulafat"
+
+#~ msgid "Ascella"
+#~ msgstr "Ascella"
+
+#~ msgid "Deneb el Okab"
+#~ msgstr "Deneb el Okab"
+
+#, fuzzy
+#~ msgid "Albaldah"
+#~ msgstr "Albali"
+
+#~ msgid "Altais"
+#~ msgstr "Altais"
+
+#~ msgid "Al Tais"
+#~ msgstr "Al Tais"
+
+#~ msgid "Nodus Secundus"
+#~ msgstr "Nodus Secundus"
+
+#~ msgid "Aladfar"
+#~ msgstr "Aladfar"
+
+#, fuzzy
+#~ msgid "Gumala"
+#~ msgstr "Guatemala"
+
+#, fuzzy
+#~ msgid "Arkab Prior"
+#~ msgstr "Arkab"
+
+#~ msgid "Arkab"
+#~ msgstr "Arkab"
+
+#~ msgid "Rukbat"
+#~ msgstr "Rukbat"
+
+#~ msgid "Albireo"
+#~ msgstr "Albireo"
+
+#~ msgid "Alsafi"
+#~ msgstr "Alsafi"
+
+#~ msgid "Campbell's Star"
+#~ msgstr "Campbells stjärna"
+
+#~ msgid "Sham"
+#~ msgstr "Sham"
+
+#, fuzzy
+#~ msgid "Fawaris"
+#~ msgstr "Paris"
+
+#~ msgid "Tarazed"
+#~ msgstr "Tarazed"
+
+#~ msgid "Tyl"
+#~ msgstr "Tyl"
+
+#~ msgid "Altair"
+#~ msgstr "Altair"
+
+#~ msgid "Atair"
+#~ msgstr "Atair"
+
+#~ msgid "Alshain"
+#~ msgstr "Alshain"
+
+#~ msgid "Algedi"
+#~ msgstr "Algedi"
+
+#, fuzzy
+#~ msgid "Alshat"
+#~ msgstr "Alshain"
+
+#~ msgid "Dabih"
+#~ msgstr "Dabih"
+
+#~ msgid "Sadr"
+#~ msgstr "Sadr"
+
+#~ msgid "Peacock"
+#~ msgstr "Peacock"
+
+#~ msgid "Rotanev"
+#~ msgstr "Rotanev"
+
+#~ msgid "Sualocin"
+#~ msgstr "Sualocin"
+
+#~ msgid "Deneb"
+#~ msgstr "Deneb"
+
+#, fuzzy
+#~ msgid "Aljanah"
+#~ msgstr "Ljubljana"
+
+#~ msgid "Albali"
+#~ msgstr "Albali"
+
+#, fuzzy
+#~ msgid "Polaris Australis"
+#~ msgstr "Kaus Australis"
+
+#, fuzzy
+#~ msgid "Solaris"
+#~ msgstr "Polstjärnan"
+
+#~ msgid "Kitalpha"
+#~ msgstr "Kitalpha"
+
+#~ msgid "Lacaille 8760"
+#~ msgstr "Lacaille 8760"
+
+#~ msgid "Alderamin"
+#~ msgstr "Alderamin"
+
+#~ msgid "Alfirk"
+#~ msgstr "Alfirk"
+
+#~ msgid "Sadalsuud"
+#~ msgstr "Sadalsuud"
+
+#, fuzzy
+#~ msgid "Bunda"
+#~ msgstr "Gränser"
+
+#~ msgid "Nashira"
+#~ msgstr "Nashira"
+
+#~ msgid "Azelfafage"
+#~ msgstr "Azelfafage"
+
+#~ msgid "Herschel's Garnet Star"
+#~ msgstr "Herschel's Garnet Star"
+
+#, fuzzy
+#~ msgid "Erakis"
+#~ msgstr "Arrakis"
+
+#~ msgid "Enif"
+#~ msgstr "Enif"
+
+#~ msgid "Deneb Algedi"
+#~ msgstr "Deneb Algedi"
+
+#, fuzzy
+#~ msgid "Aldhanab"
+#~ msgstr "Al Dhanab"
+
+#~ msgid "Al Dhanab"
+#~ msgstr "Al Dhanab"
+
+#~ msgid "Kurhah"
+#~ msgstr "Kurhah"
+
+#~ msgid "Sadalmelik"
+#~ msgstr "Sadalmelik"
+
+#~ msgid "Alnair"
+#~ msgstr "Alnair"
+
+#~ msgid "Al Nair"
+#~ msgstr "Al Nair"
+
+#~ msgid "Biham"
+#~ msgstr "Biham"
+
+#~ msgid "Ancha"
+#~ msgstr "Ancha"
+
+#~ msgid "Sadachbia"
+#~ msgstr "Sadachbia"
+
+#~ msgid "Seat"
+#~ msgstr "Seat"
+
+#~ msgid "Kruger 60"
+#~ msgstr "Kruger 60"
+
+#~ msgid "Situla"
+#~ msgstr "Situla"
+
+#~ msgid "Homam"
+#~ msgstr "Homam"
+
+#~ msgid "Matar"
+#~ msgstr "Matar"
+
+#~ msgid "Babcock's Star"
+#~ msgstr "Babcocks stjärna"
+
+#~ msgid "Sadalbari"
+#~ msgstr "Sadalbari"
+
+#~ msgid "Skat"
+#~ msgstr "Skat"
+
+#~ msgid "Fomalhaut"
+#~ msgstr "Fomalhaut"
+
+#~ msgid "Scheat"
+#~ msgstr "Scheat"
+
+#, fuzzy
+#~ msgid "Fumalsamakah"
+#~ msgstr "Fum al Samakah"
+
+#~ msgid "Fum al Samakah"
+#~ msgstr "Fum al Samakah"
+
+#~ msgid "Markab"
+#~ msgstr "Markab"
+
+#~ msgid "Marchab"
+#~ msgstr "Marchab"
+
+#~ msgid "Bradley 3077"
+#~ msgstr "Bradley 3077"
+
+#, fuzzy
+#~ msgid "Alkarab"
+#~ msgstr "Ankara"
+
+#~ msgid "Errai"
+#~ msgstr "Errai"
+
+#~ msgid "Milky Way"
+#~ msgstr "Vintergatan"
+
+#~ msgid "LMC"
+#~ msgstr "LMC"
+
+#~ msgid "SMC"
+#~ msgstr "SMC"
+
+#~ msgid "Pleiades"
+#~ msgstr "Plejaderna"
+
+#~ msgid "Hyades"
+#~ msgstr "Hyaderna"
+
+#~ msgid "Praesepe"
+#~ msgstr "Praesepe"
+
+#~ msgid "Beehive Cluster"
+#~ msgstr "Bikupan"
+
+#~ msgid "Maffei 1"
+#~ msgstr "Maffei 1"
+
+#~ msgid "Maffei 2"
+#~ msgstr "Maffei 2"
+
+#~ msgid "Leo A"
+#~ msgstr "Leo A"
+
+#~ msgid "Sextans B"
+#~ msgstr "Sextans B"
+
+#~ msgid "Leo I"
+#~ msgstr "Leo I"
+
+#~ msgid "Sextans A"
+#~ msgstr "Sextans A"
+
+#~ msgid "Circinus"
+#~ msgstr "Cirkelpassaren"
+
+#~ msgid "Holmberg VI"
+#~ msgstr "Holmberg VI"
+
+#~ msgid "Fath 703"
+#~ msgstr "Fath 703"
+
+#~ msgid "47 Tuc"
+#~ msgstr "Stjärnhopen 47 Tuc"
+
+#~ msgid "Eridanus"
+#~ msgstr "Floden Eridanus"
+
+#~ msgid "Pyxis"
+#~ msgstr "Kompassen"
+
+#~ msgid "Tonantzintla 2"
+#~ msgstr "Tonantzintla 2"
+
+#~ msgid "Error in creating ogg file %s for capture.\n"
+#~ msgstr "Fel vid skapande av ogg-filen %s för fångst.\n"
+
+#, fuzzy
+#~ msgid "Internal Ogg library error.\n"
+#~ msgstr "Internt fel i Ogg-bibliotek."
+
+#~ msgid ""
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+#~ "%dx%d offset (%dx%d)\n"
+#~ msgstr ""
+#~ "OggTheoraCapture::start() - Theora-video: %s %.2f(%d/%d) fps kvalitet %d "
+#~ "%dx%d position (%dx%d)\n"
+
+#~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+#~ msgstr "OggTheoraCapture::cleanup() - skrev %d frames\n"
 
 #~ msgid "Astana"
 #~ msgstr "Astana"
