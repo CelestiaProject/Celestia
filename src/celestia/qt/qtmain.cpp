@@ -99,8 +99,8 @@ int main(int argc, char *argv[])
 #endif
     bindtextdomain("celestia", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia_constellations", localeDir.toUtf8().data());
-    bind_textdomain_codeset("celestia_constellations", "UTF-8");
+    bindtextdomain("celestia-data", localeDir.toUtf8().data());
+    bind_textdomain_codeset("celestia-data", "UTF-8");
     textdomain("celestia");
 #endif
 

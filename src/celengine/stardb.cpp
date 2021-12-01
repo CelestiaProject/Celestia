@@ -383,10 +383,13 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                return _(iter->second.c_str());
-            else
-                return iter->second;
+            if (i18n)
+            {
+                const char * local = D_(iter->second.c_str());
+                if (iter->second != local)
+                    return local;
+            }
+            return iter->second;
         }
     }
 
@@ -413,11 +416,18 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                strncpy(nameBuffer, _(iter->second.c_str()), bufferSize);
-            else
-                strncpy(nameBuffer, iter->second.c_str(), bufferSize);
+            if (i18n)
+            {
+                const char * local = D_(iter->second.c_str());
+                if (iter->second != local)
+                {
+                    strncpy(nameBuffer, local, bufferSize);
+                    nameBuffer[bufferSize - 1] = '\0';
+                    return;
+                }
+            }
 
+            strncpy(nameBuffer, iter->second.c_str(), bufferSize);
             nameBuffer[bufferSize - 1] = '\0';
             return;
         }
@@ -454,7 +464,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 
         while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && nameSet.size() < maxNames)
         {
-            append(_(iter->second.c_str()));
+            append(D_(iter->second.c_str()));
             ++iter;
         }
     }

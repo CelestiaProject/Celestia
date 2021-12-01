@@ -118,12 +118,12 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
     switch (nm->item.iSubItem)
     {
     case 0:
-        strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->receiver->getName().c_str())).c_str(), sizeof(callbackScratch) - 1);
+        strncpy(callbackScratch, UTF8ToCurrentCP(D_(eclipse->receiver->getName().c_str())).c_str(), sizeof(callbackScratch) - 1);
         nm->item.pszText = callbackScratch;
         break;
 
     case 1:
-        strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->occulter->getName().c_str())).c_str(), sizeof(callbackScratch) - 1);
+        strncpy(callbackScratch, UTF8ToCurrentCP(D_(eclipse->occulter->getName().c_str())).c_str(), sizeof(callbackScratch) - 1);
         nm->item.pszText = callbackScratch;
         break;
 

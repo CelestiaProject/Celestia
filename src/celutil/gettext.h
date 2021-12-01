@@ -40,8 +40,9 @@ inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback
 #define C_(ctx_string, string) pgettext(ctx_string, string)
 #endif
 
-#ifndef CX_
+#ifdef CX_
 #undef CX_
+#endif
 inline const char* CX_(const char *ctx_string, const char *string)
 {
     return cel_pgettext_aux(fmt::format("{}\004{}", ctx_string, string).c_str(), string);
@@ -51,10 +52,13 @@ inline const char* CX_(const char *ctx_string, const std::string &string)
 {
     return CX_(ctx_string, string.c_str());
 }
-#endif
 
 #ifndef NC_
 #define NC_(ctx_string, string) string
+#endif
+
+#ifndef D_
+#define D_(string) dgettext("celestia-data", string)
 #endif
 
 inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback)
@@ -101,6 +105,10 @@ inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback
 
 #ifndef NC_
 #define NC_(ctx_string, string) string
+#endif
+
+#ifndef D_
+#define D_(string) string
 #endif
 
 #endif // ENABLE_NLS

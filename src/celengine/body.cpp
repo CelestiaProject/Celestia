@@ -142,7 +142,7 @@ bool Body::hasLocalizedName() const
 void Body::setName(const string& name)
 {
     names[0] = name;
-    string localizedName = _(name.c_str());
+    string localizedName = D_(name.c_str());
     if (name == localizedName)
     {
         // No localized name; set the localized name index to zero to
@@ -1379,7 +1379,7 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
             completion.push_back(alias);
         else if (i18n)
         {
-            std::string lname = _(alias.c_str());
+            std::string lname = D_(alias.c_str());
             if (lname != alias && !UTF8StringCompare(lname, _name, _name_length))
                 completion.push_back(lname);
         }
