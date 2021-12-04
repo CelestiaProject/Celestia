@@ -30,7 +30,7 @@
 #include <fmt/printf.h>
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+#include <celutil/tzutil.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celestia/celestiacore.h>

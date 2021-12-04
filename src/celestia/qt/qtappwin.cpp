@@ -41,7 +41,7 @@
 #include <vector>
 #include <string>
 #include <celutil/gettext.h>
-#include <celutil/util.h>
+#include <celutil/tzutil.h>
 #include "qtappwin.h"
 #include "qtglwidget.h"
 #include "qtpreferencesdialog.h"

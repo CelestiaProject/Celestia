@@ -75,7 +75,6 @@ std::ofstream hdrlog;
 #include <celmath/geomutil.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
-#include <celutil/util.h>
 #include <celutil/timer.h>
 #include <celttf/truetypefont.h>
 #include "glsupport.h"

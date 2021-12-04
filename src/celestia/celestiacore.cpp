@@ -40,7 +40,6 @@
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
-#include <celutil/util.h>
 #include <celcompat/filesystem.h>
 #include <Eigen/Geometry>
 #include <iostream>

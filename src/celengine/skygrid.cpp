@@ -15,7 +15,6 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <celutil/util.h>
 #include <celmath/geomutil.h>
 #include "render.h"
 #include "vecgl.h"

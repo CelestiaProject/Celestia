@@ -10,7 +10,6 @@
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include <celutil/tokenizer.h>
-#include <celutil/util.h>
 #include "stardb.h"
 #include "asterism.h"
 #include "parser.h"
@@ -117,7 +116,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism file.\n");
-            for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
+            for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
             delete asterisms;
             return nullptr;
         }
@@ -129,7 +128,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism %s\n", name.c_str());
-            for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
+            for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
             delete ast;
             delete asterisms;
             delete chainsValue;

@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <celutil/debug.h>
 #include <celutil/stringutils.h>
-#include <celutil/util.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
 #include <celutil/tokenizer.h>
@@ -31,7 +30,7 @@ DestinationList* ReadDestinationList(istream& in)
         if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing destinations file.\n");
-            for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
+            for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             return nullptr;
         }
@@ -41,7 +40,7 @@ DestinationList* ReadDestinationList(istream& in)
         if (destValue == nullptr || destValue->getType() != Value::HashType)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing destination.\n");
-            for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
+            for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             if (destValue != nullptr)
                 delete destValue;

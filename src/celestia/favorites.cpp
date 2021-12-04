@@ -14,7 +14,6 @@
 #include <celengine/parser.h>
 #include <celutil/tokenizer.h>
 #include <celutil/debug.h>
-#include <celutil/util.h>
 #include "favorites.h"
 
 using namespace Eigen;
@@ -32,7 +31,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing favorites file.\n");
-            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
+            for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
             delete favorites;
             return nullptr;
         }
@@ -44,7 +43,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         if (favParamsValue == nullptr || favParamsValue->getType() != Value::HashType)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing favorites entry %s\n", fav->name.c_str());
-            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
+            for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
             delete favorites;
             if (favParamsValue != nullptr)
                 delete favParamsValue;

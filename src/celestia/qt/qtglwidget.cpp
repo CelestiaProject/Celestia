@@ -31,7 +31,6 @@
 #endif
 
 #include "celengine/astro.h"
-#include "celutil/util.h"
 #include "celutil/filetype.h"
 #include "celutil/debug.h"
 #include "celutil/gettext.h"
