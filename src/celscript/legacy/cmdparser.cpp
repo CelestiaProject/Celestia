@@ -13,7 +13,6 @@
 #include <iostream>
 #include <sstream>
 #include <Eigen/Geometry>
-#include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
@@ -74,7 +73,7 @@ CommandSequence* CommandParser::parse()
         Command* cmd = parseCommand();
         if (cmd == nullptr)
         {
-            for_each(seq->begin(), seq->end(), deleteFunc<Command*>());;
+            for_each(seq->begin(), seq->end(), [](Command* cmd) { delete cmd; });
             delete seq;
             return nullptr;
         }
@@ -89,7 +88,7 @@ CommandSequence* CommandParser::parse()
     if (ttype != Tokenizer::TokenEndGroup)
     {
         error("Missing '}' at end of script.");
-        for_each(seq->begin(), seq->end(), deleteFunc<Command*>());;
+        for_each(seq->begin(), seq->end(), [](Command* cmd) { delete cmd; });
         delete seq;
         return nullptr;
     }

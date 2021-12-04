@@ -11,7 +11,6 @@
 #include <vector>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
 #include "marker.h"
 #include "render.h"
 #include "vecgl.h"

@@ -1,4 +1,4 @@
-// util.cpp
+// tzutil.cpp
 //
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
@@ -10,16 +10,20 @@
 // of the License, or (at your option) any later version.
 
 #ifdef _WIN32
-#include <windows.h>
-#include <celutil/winutil.h>
-#endif
 #include <iostream>
-#include "util.h"
+
+#include <windows.h>
+
+#include <celutil/winutil.h>
 #include "gettext.h"
+#else
+// we need the C version of this header to get the POSIX function localtime_r
+#include <time.h>
+#endif
 
-using namespace std;
+#include "tzutil.h"
 
-bool GetTZInfo(celestia::compat::string_view tzName, int &dstBias)
+bool GetTZInfo(std::string& tzName, int& dstBias)
 {
 #ifdef _WIN32
     TIME_ZONE_INFORMATION tzi;
@@ -41,7 +45,7 @@ bool GetTZInfo(celestia::compat::string_view tzName, int &dstBias)
         name = tzi.DaylightName;
         break;
     default:
-        cerr << _("Unknown value returned by GetTimeZoneInformation()\n");
+        std::cerr << _("Unknown value returned by GetTimeZoneInformation()\n");
         return false;
     }
 
@@ -49,7 +53,7 @@ bool GetTZInfo(celestia::compat::string_view tzName, int &dstBias)
     dstBias = (tzi.Bias + bias) * -60;
     return true;
 #else
-    struct tm result;
+    tm result;
     time_t curtime = time(nullptr); // required only to get TZ info
     if (!localtime_r(&curtime, &result))
         return false;

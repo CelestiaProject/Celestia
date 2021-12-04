@@ -27,10 +27,10 @@ set(CELUTIL_SOURCES
   timer.h
   tokenizer.cpp
   tokenizer.h
+  tzutil.cpp
+  tzutil.h
   utf8.cpp
   utf8.h
-  util.cpp
-  util.h
   watcher.h
 )
 

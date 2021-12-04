@@ -1,6 +1,5 @@
 
 #include <celutil/debug.h>
-#include <celutil/util.h>
 #include "parseobject.h"
 #include "astroobj.h"
 #include "category.h"

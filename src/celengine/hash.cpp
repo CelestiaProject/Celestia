@@ -11,7 +11,6 @@
 #include <utility>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
-#include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include "astro.h"
 #include "hash.h"

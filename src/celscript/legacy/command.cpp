@@ -17,7 +17,6 @@
 #include <celestia/celestiacore.h>
 #include <celengine/multitexture.h>
 #include <celutil/filetype.h>
-#include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include <iostream>
 #include <utility>
