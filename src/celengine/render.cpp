@@ -4006,12 +4006,24 @@ static bool isBodyVisible(const Body* body, int bodyVisibilityMask)
     case Body::Diffuse:
         return body->isVisible();
 
-    // SurfaceFeature inherits visibility of its parent body
+    // SurfaceFeature and Component inherit visibility of its parent body
+    case Body::Component:
     case Body::SurfaceFeature:
-        assert(body->getSystem() != nullptr);
-        body = body->getSystem()->getPrimaryBody();
-        assert(body != nullptr);
-        return body->isVisible() && (bodyVisibilityMask & body->getClassification()) != 0;
+        for (;;)
+        {
+            assert(body->getSystem() != nullptr);
+            body = body->getSystem()->getPrimaryBody();
+            if (body == nullptr)
+            {
+                // TODO figure out what to do about components/features of stars/barycenters
+                return false;
+            }
+            if (body->getClassification() != Body::SurfaceFeature
+                && body->getClassification() != Body::Component)
+            {
+                return body->isVisible() && (bodyVisibilityMask & body->getClassification()) != 0;
+            }
+        }
 
     default:
         return body->isVisible() && (bodyVisibilityMask & klass) != 0;
