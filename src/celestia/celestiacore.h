@@ -12,6 +12,7 @@
 
 #include <fstream>
 #include <string>
+#include <functional>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -342,6 +343,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
+    void setCustomDateFormatter(std::function<std::string(double)> df) { customDateFormatter = df; };
+
     class TextDisplayHandler
     {
     public:
@@ -490,6 +493,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
     TextDisplayHandler* textDisplayHandler{ nullptr };
+    std::function<std::string(double)> customDateFormatter{ nullptr };
 
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent{ 0 };
