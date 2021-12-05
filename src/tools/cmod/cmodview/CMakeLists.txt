@@ -1,5 +1,10 @@
 if(NOT ENABLE_QT)
-  message("Qt frontend is disabled, not building cmodview.")
+  message("Qt5 frontend is disabled, not building cmodview.")
+  return()
+endif()
+
+if(USE_QT6)
+  message("Qt tools not supported on Qt6, not building cmodview.")
   return()
 endif()
 

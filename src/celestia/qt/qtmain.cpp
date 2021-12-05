@@ -28,7 +28,6 @@
 #include <QLibraryInfo>
 #include <vector>
 #include "qtappwin.h"
-#include <qtextcodec.h>
 #include <fmt/printf.h>
 
 using namespace std;

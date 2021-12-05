@@ -3,6 +3,11 @@ if(NOT ENABLE_QT)
   return()
 endif()
 
+if(USE_QT6)
+  message("Qt tools not supported on Qt6, not building cmodview.")
+  return()
+endif()
+
 if(APPLE AND EXISTS /usr/local/opt/qt5)
   # Homebrew installs Qt5 (up to at least 5.9.1) in
   # /usr/local/qt5, ensure it can be found by CMake since
