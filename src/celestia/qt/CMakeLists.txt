@@ -10,7 +10,11 @@ if(APPLE AND EXISTS /usr/local/opt/qt5)
   list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 
-find_package(Qt5 COMPONENTS Widgets OpenGL CONFIG REQUIRED)
+if(USE_QT6)
+  find_package(Qt6 COMPONENTS Widgets OpenGLWidgets Core5Compat CONFIG REQUIRED)
+else()
+  find_package(Qt5 COMPONENTS Widgets CONFIG REQUIRED)
+endif()
 
 set(QT_SOURCES
   qtappwin.cpp
@@ -58,7 +62,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-qt5_add_resources(RC_SRC "icons.qrc")
+if(USE_QT6)
+  qt6_add_resources(RC_SRC "icons.qrc")
+else()
+  qt5_add_resources(RC_SRC "icons.qrc")
+endif()
 
 if(WIN32)
   set (RES celestia.rc)
@@ -66,7 +74,11 @@ endif()
 
 add_executable(celestia-qt WIN32 ${QT_SOURCES} ${RC_SRC} ${RES})
 add_dependencies(celestia-qt celestia)
-target_link_libraries(celestia-qt Qt5::Widgets Qt5::OpenGL celestia)
+if(USE_QT6)
+  target_link_libraries(celestia-qt Qt6::Widgets Qt6::OpenGLWidgets Qt6::Core5Compat celestia)
+else()
+  target_link_libraries(celestia-qt Qt5::Widgets celestia)
+endif()
 if(APPLE)
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")

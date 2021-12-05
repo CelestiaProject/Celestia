@@ -271,12 +271,11 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Enable antialiasing if requested in the config file.
     // TODO: Make this settable via the GUI
-    QGLFormat glformat = QGLFormat::defaultFormat();
+    QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
     if (m_appCore->getConfig()->aaSamples > 1)
     {
-        glformat.setSampleBuffers(true);
         glformat.setSamples(m_appCore->getConfig()->aaSamples);
-        QGLFormat::setDefaultFormat(glformat);
+        QSurfaceFormat::setDefaultFormat(glformat);
     }
 
     glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
@@ -495,6 +494,7 @@ void CelestiaAppWindow::writeSettings()
     QSettings settings;
 
     settings.beginGroup("MainWindow");
+#ifndef _WIN32
     if (isFullScreen())
     {
         // Save the normal size, not the fullscreen size; fullscreen will
@@ -503,6 +503,7 @@ void CelestiaAppWindow::writeSettings()
         settings.setValue("Pos", normalGeometry().topLeft());
     }
     else
+#endif
     {
         settings.setValue("Size", size());
         settings.setValue("Pos", pos());
@@ -591,7 +592,7 @@ void CelestiaAppWindow::saveBookmarks()
 void CelestiaAppWindow::celestia_tick()
 {
     m_appCore->tick();
-    glWidget->updateGL();
+    glWidget->update();
 }
 
 
@@ -944,7 +945,13 @@ void CelestiaAppWindow::slotShowTimeDialog()
 
 void CelestiaAppWindow::slotToggleFullScreen()
 {
+#ifdef _WIN32
+    // On Windows, we don't actually use showFullscreen(), so use the presence
+    // of the FramelessWindowHint as an alternative to isFullScreen()
+    if (windowFlags().testFlag(Qt::FramelessWindowHint))
+#else
     if (isFullScreen())
+#endif
     {
         switchToNormal();
     }
@@ -966,7 +973,13 @@ void CelestiaAppWindow::switchToNormal()
 {
     // Switch to window
     menuBar()->setFixedHeight(menuBar()->sizeHint().height());
+#ifdef _WIN32
+    Qt::WindowFlags flags = windowFlags().setFlag(Qt::FramelessWindowHint, false);
+    setWindowFlags(flags);
+    show();
+#else
     showNormal();
+#endif
 
     QSettings settings;
     settings.beginGroup("MainWindow");
@@ -994,7 +1007,31 @@ void CelestiaAppWindow::switchToFullscreen()
     timeToolBar->setVisible(false);
     guidesToolBar->setVisible(false);
     m_bookmarkToolBar->setVisible(false);
+
+#ifdef _WIN32
+    // On Windows, we can't use showFullScreen as this prevents widgets
+    // (e.g. context menus) being drawn on top of the window. Instead, draw a
+    // borderless window 1 pixel wider than the screen.
+    QRect newGeometry = QApplication::primaryScreen()->geometry();
+    int intersectionArea = 0;
+    foreach (const QScreen *screen, QGuiApplication::screens())
+    {
+        QRect intersection = screen->geometry().intersected(geometry());
+        int newIntersectionArea = intersection.width() * intersection.height();
+        if (newIntersectionArea > intersectionArea)
+        {
+            newGeometry = screen->geometry();
+            intersectionArea = newIntersectionArea;
+        }
+    }
+
+    Qt::WindowFlags flags = windowFlags().setFlag(Qt::FramelessWindowHint, true);
+    setWindowFlags(flags);
+    show();
+    setGeometry(newGeometry.adjusted(-1, -1, 1, 1));
+#else
     showFullScreen();
+#endif
 }
 
 
@@ -1030,7 +1067,7 @@ void CelestiaAppWindow::slotAddBookmark()
     appState.captureState();
 
     // Capture the current frame buffer to use as a bookmark icon.
-    QImage grabbedImage = glWidget->grabFrameBuffer();
+    QImage grabbedImage = glWidget->grabFramebuffer();
     int width = grabbedImage.width();
     int height = grabbedImage.height();
 

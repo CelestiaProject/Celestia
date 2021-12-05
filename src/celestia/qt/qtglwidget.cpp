@@ -60,7 +60,7 @@ const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
-    QGLWidget(parent)
+    QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus);
 
@@ -96,7 +96,7 @@ void CelestiaGlWidget::initializeGL()
     using namespace celestia;
     if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
     {
-        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
+        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
         exit(1);
     }
 
@@ -133,7 +133,10 @@ void CelestiaGlWidget::initializeGL()
 
 void CelestiaGlWidget::resizeGL(int w, int h)
 {
-    appCore->resize(w, h);
+    float scale = devicePixelRatioF();
+    int width = static_cast<int>(static_cast<float>(w) * scale);
+    int height = static_cast<int>(static_cast<float>(h) * scale);
+    appCore->resize(width, height);
 }
 
 
