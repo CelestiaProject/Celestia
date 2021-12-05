@@ -1808,6 +1808,7 @@ BinaryModelWriter::writeVertices(const VWord* vertexData,
                 break;
             default:
                 assert(0);
+                result = false;
                 break;
             }
 

@@ -261,8 +261,6 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indic
 
         const VWord* origThisVertLoc = vertices.data() + thisIndex * originalStride;
         const VWord* origNextVertLoc = vertices.data() + nextIndex * originalStride;
-        float *ff = (float *)origThisVertLoc;
-        float *ffn = (float *)origNextVertLoc;
 
         // Fill the info for the 4 vertices
         std::memcpy(ptr, origThisVertLoc, originalStrideBytes);
@@ -289,7 +287,6 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indic
         std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
         ptr += stride;
 
-        int lineIndex = 6 * i;
         Index32 newIndex = 4 * i;
 
         // Fill info for the 6 indices
