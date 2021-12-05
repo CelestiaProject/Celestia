@@ -41,7 +41,7 @@ class ModelGeometry : public Geometry
     bool isOpaque() const override;
     bool isNormalized() const override;
 
-    void loadTextures();
+    void loadTextures() override;
 
  private:
     std::unique_ptr<cmod::Model> m_model;
