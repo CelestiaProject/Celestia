@@ -952,7 +952,11 @@ void CelestiaAppWindow::slotToggleFullScreen()
     {
         // save window state only when switching to fullscreen
         QSettings settings;
+        settings.beginGroup("MainWindow");
         settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
+        settings.setValue("Size", size());
+        settings.setValue("Pos", pos());
+        settings.endGroup();
         switchToFullscreen();
     }
 }
