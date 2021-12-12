@@ -1,370 +1,378 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Celestia Development Team
+# This file is distributed under the same license as the celestia package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Hleb Valoshka <375gnu@gmail.com>, 2019
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Celestia Constellations-pt\n"
-"Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2006-12-30 08:05-0000\n"
-"Last-Translator: José Raeiro <zeraeiro@gmail.com>\n"
-"Language-Team: Portuguese <zeraeiro@gmail.com>\n"
+"Project-Id-Version: celestia 1.7.0\n"
+"Report-Msgid-Bugs-To: team@celestia.space\n"
+"POT-Creation-Date: 2018-12-01 14:09+0300\n"
+"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2019\n"
+"Language-Team: Portuguese (https://www.transifex.com/celestia/teams/93131/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Portuguese\n"
-"X-Poedit-Country: PORTUGAL\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: data/constellations.cpp:1
+#: ../data/constellations.cpp:1
 msgid "Andromeda"
 msgstr "Andrómeda"
 
-#: data/constellations.cpp:2
+#: ../data/constellations.cpp:2
 msgid "Antlia"
 msgstr "Máquina Pneumática"
 
-#: data/constellations.cpp:3
+#: ../data/constellations.cpp:3
 msgid "Apus"
 msgstr "Ave do Paraíso"
 
-#: data/constellations.cpp:4
+#: ../data/constellations.cpp:4
 msgid "Aquarius"
 msgstr "Aquário"
 
-#: data/constellations.cpp:5
+#: ../data/constellations.cpp:5
 msgid "Aquila"
 msgstr "Águia"
 
-#: data/constellations.cpp:6
+#: ../data/constellations.cpp:6
 msgid "Ara"
 msgstr "Altar"
 
-#: data/constellations.cpp:7
+#: ../data/constellations.cpp:7
 msgid "Aries"
 msgstr "Carneiro"
 
-#: data/constellations.cpp:8
+#: ../data/constellations.cpp:8
 msgid "Auriga"
 msgstr "Cocheiro"
 
-#: data/constellations.cpp:9
+#: ../data/constellations.cpp:9
 msgid "Boötes"
 msgstr "Boieiro"
 
-#: data/constellations.cpp:10
+#: ../data/constellations.cpp:10
 msgid "Caelum"
 msgstr "Cinzel"
 
-#: data/constellations.cpp:11
+#: ../data/constellations.cpp:11
 msgid "Camelopardalis"
 msgstr "Girafa"
 
-#: data/constellations.cpp:12
+#: ../data/constellations.cpp:12
 msgid "Cancer"
 msgstr "Caranguejo"
 
-#: data/constellations.cpp:13
+#: ../data/constellations.cpp:13
 msgid "Canes Venatici"
 msgstr "Cães de Caça"
 
-#: data/constellations.cpp:14
+#: ../data/constellations.cpp:14
 msgid "Canis Major"
 msgstr "Cão Maior"
 
-#: data/constellations.cpp:15
+#: ../data/constellations.cpp:15
 msgid "Canis Minor"
 msgstr "Cão Menor"
 
-#: data/constellations.cpp:16
+#: ../data/constellations.cpp:16
 msgid "Capricornus"
 msgstr "Capricónio"
 
-#: data/constellations.cpp:17
+#: ../data/constellations.cpp:17
 msgid "Carina"
 msgstr "Quilha"
 
-#: data/constellations.cpp:18
+#: ../data/constellations.cpp:18
 msgid "Cassiopeia"
 msgstr "Cassiopeia"
 
-#: data/constellations.cpp:19
+#: ../data/constellations.cpp:19
 msgid "Centaurus"
 msgstr "Centauro"
 
-#: data/constellations.cpp:20
+#: ../data/constellations.cpp:20
 msgid "Cepheus"
 msgstr "Cefeu"
 
-#: data/constellations.cpp:21
+#: ../data/constellations.cpp:21
 msgid "Cetus"
 msgstr "Baleia"
 
-#: data/constellations.cpp:22
+#: ../data/constellations.cpp:22
 msgid "Chamaeleon"
 msgstr "Camaleão"
 
-#: data/constellations.cpp:23
+#: ../data/constellations.cpp:23
 msgid "Circinus"
 msgstr "Compasso"
 
-#: data/constellations.cpp:24
+#: ../data/constellations.cpp:24
 msgid "Columba"
 msgstr "Pomba"
 
-#: data/constellations.cpp:25
+#: ../data/constellations.cpp:25
 msgid "Coma Berenices"
 msgstr "Cabeleira de Berenice"
 
-#: data/constellations.cpp:26
+#: ../data/constellations.cpp:26
 msgid "Corona Australis"
 msgstr "Coroa Austral"
 
-#: data/constellations.cpp:27
+#: ../data/constellations.cpp:27
 msgid "Corona Borealis"
 msgstr "Coroa Boreal"
 
-#: data/constellations.cpp:28
+#: ../data/constellations.cpp:28
 msgid "Corvus"
 msgstr "Corvo"
 
-#: data/constellations.cpp:29
+#: ../data/constellations.cpp:29
 msgid "Crater"
 msgstr "Taça"
 
-#: data/constellations.cpp:30
+#: ../data/constellations.cpp:30
 msgid "Crux"
 msgstr "Cruzeiro do Sul"
 
-#: data/constellations.cpp:31
+#: ../data/constellations.cpp:31
 msgid "Cygnus"
 msgstr "Cisne"
 
-#: data/constellations.cpp:32
+#: ../data/constellations.cpp:32
 msgid "Delphinus"
 msgstr "Delfim"
 
-#: data/constellations.cpp:33
+#: ../data/constellations.cpp:33
 msgid "Dorado"
 msgstr "Dourado"
 
-#: data/constellations.cpp:34
+#: ../data/constellations.cpp:34
 msgid "Draco"
 msgstr "Dragão"
 
-#: data/constellations.cpp:35
+#: ../data/constellations.cpp:35
 msgid "Equuleus"
 msgstr "Potro"
 
-#: data/constellations.cpp:36
+#: ../data/constellations.cpp:36
 msgid "Eridanus"
 msgstr "Erídano"
 
-#: data/constellations.cpp:37
+#: ../data/constellations.cpp:37
 msgid "Fornax"
 msgstr "Fornalha"
 
-#: data/constellations.cpp:38
+#: ../data/constellations.cpp:38
 msgid "Gemini"
 msgstr "Gémeos"
 
-#: data/constellations.cpp:39
+#: ../data/constellations.cpp:39
 msgid "Grus"
 msgstr "Grou"
 
-#: data/constellations.cpp:40
+#: ../data/constellations.cpp:40
 msgid "Hercules"
 msgstr "Hércules"
 
-#: data/constellations.cpp:41
+#: ../data/constellations.cpp:41
 msgid "Horologium"
 msgstr "Relógio"
 
-#: data/constellations.cpp:42
+#: ../data/constellations.cpp:42
 msgid "Hydra"
 msgstr "Hidra"
 
-#: data/constellations.cpp:43
+#: ../data/constellations.cpp:43
 msgid "Hydrus"
 msgstr "Hidra Macho"
 
-#: data/constellations.cpp:44
+#: ../data/constellations.cpp:44
 msgid "Indus"
 msgstr "Índio"
 
-#: data/constellations.cpp:45
+#: ../data/constellations.cpp:45
 msgid "Lacerta"
 msgstr "Lagarto"
 
-#: data/constellations.cpp:46
+#: ../data/constellations.cpp:46
 msgid "Leo"
 msgstr "Leão"
 
-#: data/constellations.cpp:47
+#: ../data/constellations.cpp:47
 msgid "Leo Minor"
 msgstr "Leão Menor"
 
-#: data/constellations.cpp:48
+#: ../data/constellations.cpp:48
 msgid "Lepus"
 msgstr "Lebre"
 
-#: data/constellations.cpp:49
+#: ../data/constellations.cpp:49
 msgid "Libra"
 msgstr "Balança"
 
-#: data/constellations.cpp:50
+#: ../data/constellations.cpp:50
 msgid "Lupus"
 msgstr "Lobo"
 
-#: data/constellations.cpp:51
+#: ../data/constellations.cpp:51
 msgid "Lynx"
 msgstr "Lince"
 
-#: data/constellations.cpp:52
+#: ../data/constellations.cpp:52
 msgid "Lyra"
 msgstr "Lira"
 
-#: data/constellations.cpp:53
+#: ../data/constellations.cpp:53
 msgid "Mensa"
 msgstr "Mesa"
 
-#: data/constellations.cpp:54
+#: ../data/constellations.cpp:54
 msgid "Microscopium"
 msgstr "Microscópio"
 
-#: data/constellations.cpp:55
+#: ../data/constellations.cpp:55
 msgid "Monoceros"
 msgstr "Unicórnio"
 
-#: data/constellations.cpp:56
+#: ../data/constellations.cpp:56
 msgid "Musca"
 msgstr "Mosca"
 
-#: data/constellations.cpp:57
+#: ../data/constellations.cpp:57
 msgid "Norma"
 msgstr "Esquadro"
 
-#: data/constellations.cpp:58
+#: ../data/constellations.cpp:58
 msgid "Octans"
 msgstr "Octante"
 
-#: data/constellations.cpp:59
+#: ../data/constellations.cpp:59
 msgid "Ophiuchus"
 msgstr "Ofíuco"
 
-#: data/constellations.cpp:60
+#: ../data/constellations.cpp:60
 msgid "Orion"
 msgstr "Orionte (O Caçador)"
 
-#: data/constellations.cpp:61
+#: ../data/constellations.cpp:61
 msgid "Pavo"
 msgstr "Pavão"
 
-#: data/constellations.cpp:62
+#: ../data/constellations.cpp:62
 msgid "Pegasus"
 msgstr "Pégaso"
 
-#: data/constellations.cpp:63
+#: ../data/constellations.cpp:63
 msgid "Perseus"
 msgstr "Perseu"
 
-#: data/constellations.cpp:64
+#: ../data/constellations.cpp:64
 msgid "Phoenix"
 msgstr "Fénix"
 
-#: data/constellations.cpp:65
+#: ../data/constellations.cpp:65
 msgid "Pictor"
 msgstr "Pintor"
 
-#: data/constellations.cpp:66
+#: ../data/constellations.cpp:66
 msgid "Pisces"
 msgstr "Peixes"
 
-#: data/constellations.cpp:67
+#: ../data/constellations.cpp:67
 msgid "Piscis Austrinus"
 msgstr "Peixe Austral"
 
-#: data/constellations.cpp:68
+#: ../data/constellations.cpp:68
 msgid "Puppis"
 msgstr "Popa"
 
-#: data/constellations.cpp:69
+#: ../data/constellations.cpp:69
 msgid "Pyxis"
 msgstr "Bússola"
 
-#: data/constellations.cpp:70
+#: ../data/constellations.cpp:70
 msgid "Reticulum"
 msgstr "Retículo"
 
-#: data/constellations.cpp:71
+#: ../data/constellations.cpp:71
 msgid "Sagitta"
 msgstr "Seta"
 
-#: data/constellations.cpp:72
+#: ../data/constellations.cpp:72
 msgid "Sagittarius"
 msgstr "Sagitário"
 
-#: data/constellations.cpp:73
+#: ../data/constellations.cpp:73
 msgid "Scorpius"
 msgstr "Escorpião"
 
-#: data/constellations.cpp:74
+#: ../data/constellations.cpp:74
 msgid "Sculptor"
 msgstr "Escultor"
 
-#: data/constellations.cpp:75
+#: ../data/constellations.cpp:75
 msgid "Scutum"
 msgstr "Escudo"
 
-#: data/constellations.cpp:76
+#: ../data/constellations.cpp:76
 msgid "Serpens Caput"
 msgstr "Cabeça da Serpente"
 
-#: data/constellations.cpp:77
+#: ../data/constellations.cpp:77
 msgid "Serpens Cauda"
 msgstr "Cauda da Serpente"
 
-#: data/constellations.cpp:78
+#: ../data/constellations.cpp:78
 msgid "Sextans"
 msgstr "Sextante"
 
-#: data/constellations.cpp:79
+#: ../data/constellations.cpp:79
 msgid "Taurus"
 msgstr "Touro"
 
-#: data/constellations.cpp:80
+#: ../data/constellations.cpp:80
 msgid "Telescopium"
 msgstr "Telescópio"
 
-#: data/constellations.cpp:81
+#: ../data/constellations.cpp:81
 msgid "Triangulum"
 msgstr "Triângulo"
 
-#: data/constellations.cpp:82
+#: ../data/constellations.cpp:82
 msgid "Triangulum Australe"
 msgstr "Triângulo Austral"
 
-#: data/constellations.cpp:83
+#: ../data/constellations.cpp:83
 msgid "Tucana"
 msgstr "Tucano"
 
-#: data/constellations.cpp:84
+#: ../data/constellations.cpp:84
 msgid "Ursa Major"
 msgstr "Ursa Maior"
 
-#: data/constellations.cpp:85
+#: ../data/constellations.cpp:85
 msgid "Ursa Minor"
 msgstr "Ursa Menor"
 
-#: data/constellations.cpp:86
+#: ../data/constellations.cpp:86
 msgid "Vela"
 msgstr "Vela"
 
-#: data/constellations.cpp:87
+#: ../data/constellations.cpp:87
 msgid "Virgo"
 msgstr "Virgem"
 
-#: data/constellations.cpp:88
+#: ../data/constellations.cpp:88
 msgid "Volans"
 msgstr "Peixe Voador"
 
-#: data/constellations.cpp:89
+#: ../data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Raposa"
