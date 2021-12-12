@@ -2,10 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
-# Arda Güler <anonymousgamer111111@gmail.com>, 2020
-# Süleyman Poyraz <zaryob.dev@gmail.com>, 2021
+# Arda Güler <anonymousgamer111111@gmail.com>, 2021
+# Hleb Valoshka <375gnu@gmail.com>, 2021
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,12 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2021-10-06 15:59+0400\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2020\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2021\n"
 "Language-Team: Turkish (https://www.transifex.com/celestia/teams/93131/tr/)\n"
-"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: tr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../data/data.cpp:1
@@ -176,7 +177,7 @@ msgstr "Nereid"
 
 #: ../data/data.cpp:38
 msgid "Ceres"
-msgstr ""
+msgstr "Ceres"
 
 #: ../data/data.cpp:39
 msgid "Pluto-Charon"
@@ -289,7 +290,7 @@ msgstr "Ananke"
 
 #: ../data/data.cpp:66
 msgid "Isonoe"
-msgstr "Isonoe"
+msgstr "İsonoe"
 
 #: ../data/data.cpp:67
 msgid "Erinome"
@@ -1445,23 +1446,23 @@ msgstr "Güneş Sistemi Kütle Merkezi"
 
 #: ../data/data.cpp:356
 msgid "Sol"
-msgstr "Güneş"
+msgstr ""
 
 #: ../data/data.cpp:357
 msgid "Alpheratz"
-msgstr "Alpheratz"
+msgstr ""
 
 #: ../data/data.cpp:358
 msgid "Sirrah"
-msgstr "Sirrah"
+msgstr ""
 
 #: ../data/data.cpp:359
 msgid "Caph"
-msgstr "Caph"
+msgstr ""
 
 #: ../data/data.cpp:360
 msgid "Algenib"
-msgstr "Algenib"
+msgstr ""
 
 #: ../data/data.cpp:361
 msgid "Citadelle"
@@ -1469,11 +1470,11 @@ msgstr ""
 
 #: ../data/data.cpp:362
 msgid "Schemali"
-msgstr "Schemali"
+msgstr ""
 
 #: ../data/data.cpp:363
 msgid "Ankaa"
-msgstr "Ankaa"
+msgstr ""
 
 #: ../data/data.cpp:364
 msgid "Felixvarela"
@@ -1485,19 +1486,19 @@ msgstr ""
 
 #: ../data/data.cpp:366
 msgid "Schedar"
-msgstr "Schedar"
+msgstr ""
 
 #: ../data/data.cpp:367
 msgid "Shedir"
-msgstr "Shedir"
+msgstr ""
 
 #: ../data/data.cpp:368
 msgid "Diphda"
-msgstr "Diphda"
+msgstr ""
 
 #: ../data/data.cpp:369
 msgid "Deneb Kaitos"
-msgstr "Deneb Kaitos"
+msgstr ""
 
 #: ../data/data.cpp:370
 msgid "Cocibolca"
@@ -1505,20 +1506,19 @@ msgstr ""
 
 #: ../data/data.cpp:371
 msgid "Achird"
-msgstr "Achird"
+msgstr ""
 
 #: ../data/data.cpp:372
 msgid "Van Maanen 2"
-msgstr "Van Maanen 2"
+msgstr ""
 
 #: ../data/data.cpp:373
-#, fuzzy
 msgid "Castula"
-msgstr "Kastor"
+msgstr ""
 
 #: ../data/data.cpp:374
 msgid "Navi"
-msgstr "Navi"
+msgstr ""
 
 #: ../data/data.cpp:375
 msgid "Nenque"
@@ -1530,7 +1530,7 @@ msgstr ""
 
 #: ../data/data.cpp:377
 msgid "Mirach"
-msgstr "Miraç"
+msgstr ""
 
 #: ../data/data.cpp:378
 msgid "Emiw"
@@ -1542,7 +1542,7 @@ msgstr ""
 
 #: ../data/data.cpp:380
 msgid "Adhil"
-msgstr "Adhil"
+msgstr ""
 
 #: ../data/data.cpp:381
 msgid "Bélénos"
@@ -1550,21 +1550,19 @@ msgstr ""
 
 #: ../data/data.cpp:382
 msgid "Ruchbah"
-msgstr "Ruchbah"
+msgstr ""
 
 #: ../data/data.cpp:383
-#, fuzzy
 msgid "Alpherg"
-msgstr "Alpheratz"
+msgstr ""
 
 #: ../data/data.cpp:384
-#, fuzzy
 msgid "Titawin"
-msgstr "Titan"
+msgstr ""
 
 #: ../data/data.cpp:385
 msgid "Achernar"
-msgstr "Ağız"
+msgstr ""
 
 #: ../data/data.cpp:386
 msgid "Nembus"
@@ -1580,7 +1578,7 @@ msgstr ""
 
 #: ../data/data.cpp:389
 msgid "Baten Kaitos"
-msgstr "Baten Kaitos"
+msgstr ""
 
 #: ../data/data.cpp:390
 msgid "Mothallah"
@@ -1588,52 +1586,51 @@ msgstr ""
 
 #: ../data/data.cpp:391
 msgid "Caput Trianguli"
-msgstr "Caput Trianguli"
+msgstr ""
 
 #: ../data/data.cpp:392
 msgid "Mesarthim"
-msgstr "Mesarthim"
+msgstr ""
 
 #: ../data/data.cpp:393
 msgid "Segin"
-msgstr "Segin"
+msgstr ""
 
 #: ../data/data.cpp:394
 msgid "Sheratan"
-msgstr "Sheratan"
+msgstr ""
 
 #: ../data/data.cpp:395
-#, fuzzy
 msgid "Alrescha"
-msgstr "Al Rescha"
+msgstr ""
 
 #: ../data/data.cpp:396
 msgid "Al Rescha"
-msgstr "Al Rescha"
+msgstr ""
 
 #: ../data/data.cpp:397
 msgid "Almach"
-msgstr "Almach"
+msgstr ""
 
 #: ../data/data.cpp:398
 msgid "Almaak"
-msgstr "Almaak"
+msgstr ""
 
 #: ../data/data.cpp:399
 msgid "Alamak"
-msgstr "Alamak"
+msgstr ""
 
 #: ../data/data.cpp:400
 msgid "Hamal"
-msgstr "Hamel"
+msgstr ""
 
 #: ../data/data.cpp:401
 msgid "Mira"
-msgstr "Tansık"
+msgstr ""
 
 #: ../data/data.cpp:402
 msgid "Polaris"
-msgstr "Kutup Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:403
 msgid "Buna"
@@ -1656,26 +1653,24 @@ msgid "Nushagak"
 msgstr ""
 
 #: ../data/data.cpp:408
-#, fuzzy
 msgid "Bharani"
-msgstr "Chara"
+msgstr ""
 
 #: ../data/data.cpp:409
-#, fuzzy
 msgid "Miram"
-msgstr "Tansık"
+msgstr ""
 
 #: ../data/data.cpp:410
 msgid "Angetenar"
-msgstr "Angetenar"
+msgstr ""
 
 #: ../data/data.cpp:411
 msgid "Azha"
-msgstr "Azha"
+msgstr ""
 
 #: ../data/data.cpp:412
 msgid "Acamar"
-msgstr "Acamar"
+msgstr ""
 
 #: ../data/data.cpp:413
 msgid "Ayeyarwady"
@@ -1683,15 +1678,15 @@ msgstr ""
 
 #: ../data/data.cpp:414
 msgid "Menkar"
-msgstr "Menkar"
+msgstr ""
 
 #: ../data/data.cpp:415
 msgid "Menkab"
-msgstr "Menkab"
+msgstr ""
 
 #: ../data/data.cpp:416
 msgid "Algol"
-msgstr "Umacı"
+msgstr ""
 
 #: ../data/data.cpp:417
 msgid "Misam"
@@ -1699,7 +1694,7 @@ msgstr ""
 
 #: ../data/data.cpp:418
 msgid "Botein"
-msgstr "Botein"
+msgstr ""
 
 #: ../data/data.cpp:419
 msgid "Dalim"
@@ -1715,20 +1710,19 @@ msgstr ""
 
 #: ../data/data.cpp:422
 msgid "Mirfak"
-msgstr "Mirfak"
+msgstr ""
 
 #: ../data/data.cpp:423
 msgid "Mirphak"
-msgstr "Mirphak"
+msgstr ""
 
 #: ../data/data.cpp:424
 msgid "Marfak"
-msgstr "Marfak"
+msgstr ""
 
 #: ../data/data.cpp:425
-#, fuzzy
 msgid "Ran"
-msgstr "Rana"
+msgstr ""
 
 #: ../data/data.cpp:426
 msgid "Tupi"
@@ -1736,59 +1730,59 @@ msgstr ""
 
 #: ../data/data.cpp:427
 msgid "Rana"
-msgstr "Rana"
+msgstr ""
 
 #: ../data/data.cpp:428
 msgid "Atik"
-msgstr "Atik"
+msgstr ""
 
 #: ../data/data.cpp:429
 msgid "Celaeno"
-msgstr "Celaeno"
+msgstr ""
 
 #: ../data/data.cpp:430
 msgid "Electra"
-msgstr "Electra"
+msgstr ""
 
 #: ../data/data.cpp:431
 msgid "Taygeta"
-msgstr "Taygeta"
+msgstr ""
 
 #: ../data/data.cpp:432
 msgid "Maia"
-msgstr "Maia"
+msgstr ""
 
 #: ../data/data.cpp:433
 msgid "Asterope"
-msgstr "Asterope"
+msgstr ""
 
 #: ../data/data.cpp:434
 msgid "Merope"
-msgstr "Merope"
+msgstr ""
 
 #: ../data/data.cpp:435
 msgid "Alcyone"
-msgstr "Alcyone"
+msgstr ""
 
 #: ../data/data.cpp:436
 msgid "Pleione"
-msgstr "Pleione"
+msgstr ""
 
 #: ../data/data.cpp:437
 msgid "Zaurak"
-msgstr "Zaurak"
+msgstr ""
 
 #: ../data/data.cpp:438
 msgid "Menkib"
-msgstr "Menkib"
+msgstr ""
 
 #: ../data/data.cpp:439
 msgid "Beid"
-msgstr "Beid"
+msgstr ""
 
 #: ../data/data.cpp:440
 msgid "Keid"
-msgstr "Keid"
+msgstr ""
 
 #: ../data/data.cpp:441
 msgid "Prima Hyadum"
@@ -1804,7 +1798,7 @@ msgstr ""
 
 #: ../data/data.cpp:444
 msgid "Ain"
-msgstr "Ain"
+msgstr ""
 
 #: ../data/data.cpp:445
 msgid "Chamukuy"
@@ -1820,16 +1814,15 @@ msgstr ""
 
 #: ../data/data.cpp:448
 msgid "Aldebaran"
-msgstr "Eldeberan"
+msgstr ""
 
 #: ../data/data.cpp:449
 msgid "Sceptrum"
 msgstr ""
 
 #: ../data/data.cpp:450
-#, fuzzy
 msgid "Tabit"
-msgstr "Thabit"
+msgstr ""
 
 #: ../data/data.cpp:451
 msgid "Mouhoun"
@@ -1841,21 +1834,19 @@ msgstr ""
 
 #: ../data/data.cpp:453
 msgid "Hind's Crimson Star"
-msgstr "Hind's Crimson Star"
+msgstr ""
 
 #: ../data/data.cpp:454
-#, fuzzy
 msgid "Almaaz"
-msgstr "Almaak"
+msgstr ""
 
 #: ../data/data.cpp:455
-#, fuzzy
 msgid "Saclateni"
-msgstr "Galatea"
+msgstr ""
 
 #: ../data/data.cpp:456
 msgid "Sadatoni"
-msgstr "Sadatoni"
+msgstr ""
 
 #: ../data/data.cpp:457
 msgid "Haedus"
@@ -1863,7 +1854,7 @@ msgstr ""
 
 #: ../data/data.cpp:458
 msgid "Cursa"
-msgstr "Cursa"
+msgstr ""
 
 #: ../data/data.cpp:459
 msgid "Mago"
@@ -1871,51 +1862,51 @@ msgstr ""
 
 #: ../data/data.cpp:460
 msgid "Kapteyn's Star"
-msgstr "Kapteyn'in Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:461
 msgid "Rigel"
-msgstr "Ayak"
+msgstr ""
 
 #: ../data/data.cpp:462
 msgid "Capella"
-msgstr "Kapella"
+msgstr ""
 
 #: ../data/data.cpp:463
 msgid "Bellatrix"
-msgstr "Bellatrik"
+msgstr ""
 
 #: ../data/data.cpp:464
 msgid "Elnath"
-msgstr "Elnath"
+msgstr ""
 
 #: ../data/data.cpp:465
 msgid "Alnath"
-msgstr "Alnath"
+msgstr ""
 
 #: ../data/data.cpp:466
 msgid "Nihal"
-msgstr "Nihal"
+msgstr ""
 
 #: ../data/data.cpp:467
 msgid "Thabit"
-msgstr "Thabit"
+msgstr ""
 
 #: ../data/data.cpp:468
 msgid "Mintaka"
-msgstr "Mintaka"
+msgstr ""
 
 #: ../data/data.cpp:469
 msgid "Arneb"
-msgstr "Arneb"
+msgstr ""
 
 #: ../data/data.cpp:470
 msgid "Meissa"
-msgstr "Meissa"
+msgstr ""
 
 #: ../data/data.cpp:471
 msgid "Heka"
-msgstr "Heka"
+msgstr ""
 
 #: ../data/data.cpp:472
 msgid "Hatysa"
@@ -1923,90 +1914,87 @@ msgstr ""
 
 #: ../data/data.cpp:473
 msgid "Alnilam"
-msgstr "Alnilam"
+msgstr ""
 
 #: ../data/data.cpp:474
 msgid "Bubup"
 msgstr ""
 
 #: ../data/data.cpp:475
-#, fuzzy
 msgid "Tianguan"
-msgstr "Üçgen"
+msgstr ""
 
 #: ../data/data.cpp:476
 msgid "Phact"
-msgstr "Phact"
+msgstr ""
 
 #: ../data/data.cpp:477
 msgid "Alnitak"
-msgstr "Alnitak"
+msgstr ""
 
 #: ../data/data.cpp:478
 msgid "Saiph"
-msgstr "Saiph"
+msgstr ""
 
 #: ../data/data.cpp:479
 msgid "Wazn"
-msgstr "Wazn"
+msgstr ""
 
 #: ../data/data.cpp:480
 msgid "Betelgeuse"
-msgstr "İkizlerevi"
+msgstr ""
 
 #: ../data/data.cpp:481
 msgid "Prijipati"
-msgstr "Prijipati"
+msgstr ""
 
 #: ../data/data.cpp:482
 msgid "Menkalinan"
-msgstr "Menkalinan"
+msgstr ""
 
 #: ../data/data.cpp:483
 msgid "Mahasim"
 msgstr ""
 
 #: ../data/data.cpp:484
-#, fuzzy
 msgid "Elkurud"
-msgstr "Furud"
+msgstr ""
 
 #: ../data/data.cpp:485
 msgid "Amadioha"
 msgstr ""
 
 #: ../data/data.cpp:486
-#, fuzzy
 msgid "Propus"
-msgstr "Canopus"
+msgstr ""
 
 #: ../data/data.cpp:487
 msgid "Red Rectangle"
-msgstr "Red Rectangle"
+msgstr ""
 
 #: ../data/data.cpp:488
 msgid "Furud"
-msgstr "Furud"
+msgstr ""
 
 #: ../data/data.cpp:489
 msgid "Mirzam"
-msgstr "Mirzam"
+msgstr ""
 
 #: ../data/data.cpp:490
 msgid "Murzim"
-msgstr "Murzim"
+msgstr ""
 
 #: ../data/data.cpp:491
 msgid "Tejat"
-msgstr "Tejat"
+msgstr ""
 
 #: ../data/data.cpp:492
 msgid "Canopus"
-msgstr "Canopus"
+msgstr ""
 
 #: ../data/data.cpp:493
 msgid "Suhel"
-msgstr "Suhel"
+msgstr ""
 
 #: ../data/data.cpp:494
 msgid "Lucilinburhuc"
@@ -2017,17 +2005,16 @@ msgid "Lusitânia"
 msgstr ""
 
 #: ../data/data.cpp:496
-#, fuzzy
 msgid "Plaskett's Star"
-msgstr "En Yakın Yıldızlar"
+msgstr ""
 
 #: ../data/data.cpp:497
 msgid "Alhena"
-msgstr "Alhena"
+msgstr ""
 
 #: ../data/data.cpp:498
 msgid "Almeisan"
-msgstr "Almeisan"
+msgstr ""
 
 #: ../data/data.cpp:499
 msgid "Nosaxa"
@@ -2035,11 +2022,11 @@ msgstr ""
 
 #: ../data/data.cpp:500
 msgid "Mebsuta"
-msgstr "Mebsuta"
+msgstr ""
 
 #: ../data/data.cpp:501
 msgid "Sirius"
-msgstr "Akyıldız"
+msgstr ""
 
 #: ../data/data.cpp:502
 msgid "Alzirr"
@@ -2051,11 +2038,11 @@ msgstr ""
 
 #: ../data/data.cpp:504
 msgid "Adhara"
-msgstr "Adhara"
+msgstr ""
 
 #: ../data/data.cpp:505
 msgid "Adara"
-msgstr "Adara"
+msgstr ""
 
 #: ../data/data.cpp:506
 msgid "Citalá"
@@ -2067,39 +2054,39 @@ msgstr ""
 
 #: ../data/data.cpp:508
 msgid "Muliphein"
-msgstr "Muliphein"
+msgstr ""
 
 #: ../data/data.cpp:509
 msgid "Mekbuda"
-msgstr "Mekbuda"
+msgstr ""
 
 #: ../data/data.cpp:510
 msgid "Wezen"
-msgstr "Wezen"
+msgstr ""
 
 #: ../data/data.cpp:511
 msgid "Bernes 135"
-msgstr "Bernes 135"
+msgstr ""
 
 #: ../data/data.cpp:512
 msgid "Wasat"
-msgstr "Wasat"
+msgstr ""
 
 #: ../data/data.cpp:513
 msgid "Aludra"
-msgstr "Aludra"
+msgstr ""
 
 #: ../data/data.cpp:514
 msgid "Gomeisa"
-msgstr "Gomeisa"
+msgstr ""
 
 #: ../data/data.cpp:515
 msgid "Luyten's Star"
-msgstr "Luyten'in Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:516
 msgid "Castor"
-msgstr "Kastor"
+msgstr ""
 
 #: ../data/data.cpp:517
 msgid "Jishui"
@@ -2107,11 +2094,11 @@ msgstr ""
 
 #: ../data/data.cpp:518
 msgid "Procyon"
-msgstr "Öncü"
+msgstr ""
 
 #: ../data/data.cpp:519
 msgid "Elgomaisa"
-msgstr "Elgomaisa"
+msgstr ""
 
 #: ../data/data.cpp:520
 msgid "Ceibo"
@@ -2119,24 +2106,23 @@ msgstr ""
 
 #: ../data/data.cpp:521
 msgid "Pollux"
-msgstr "Polluks"
+msgstr ""
 
 #: ../data/data.cpp:522
 msgid "Tapecue"
 msgstr ""
 
 #: ../data/data.cpp:523
-#, fuzzy
 msgid "Azmidi"
-msgstr "Asmidiske"
+msgstr ""
 
 #: ../data/data.cpp:524
 msgid "Asmidiske"
-msgstr "Asmidiske"
+msgstr ""
 
 #: ../data/data.cpp:525
 msgid "Naos"
-msgstr "Naos"
+msgstr ""
 
 #: ../data/data.cpp:526
 msgid "Tureis"
@@ -2144,20 +2130,19 @@ msgstr ""
 
 #: ../data/data.cpp:527
 msgid "Regor"
-msgstr "Regor"
+msgstr ""
 
 #: ../data/data.cpp:528
 msgid "Tegmine"
-msgstr "Tegmine"
+msgstr ""
 
 #: ../data/data.cpp:529
-#, fuzzy
 msgid "Tarf"
-msgstr "Al Tarf"
+msgstr ""
 
 #: ../data/data.cpp:530
 msgid "Al Tarf"
-msgstr "Al Tarf"
+msgstr ""
 
 #: ../data/data.cpp:531
 msgid "Násti"
@@ -2169,7 +2154,7 @@ msgstr ""
 
 #: ../data/data.cpp:533
 msgid "Avior"
-msgstr "Avior"
+msgstr ""
 
 #: ../data/data.cpp:534
 msgid "Alsciaukat"
@@ -2177,12 +2162,11 @@ msgstr ""
 
 #: ../data/data.cpp:535
 msgid "Muscida"
-msgstr "Muscida"
+msgstr ""
 
 #: ../data/data.cpp:536
-#, fuzzy
 msgid "Minchir"
-msgstr "Achird"
+msgstr ""
 
 #: ../data/data.cpp:537
 msgid "Gakyid"
@@ -2194,11 +2178,11 @@ msgstr ""
 
 #: ../data/data.cpp:539
 msgid "Asellus Borealis"
-msgstr "Asellus Borealis"
+msgstr ""
 
 #: ../data/data.cpp:540
 msgid "Asellus Australis"
-msgstr "Asellus Australis"
+msgstr ""
 
 #: ../data/data.cpp:541
 msgid "Alsephina"
@@ -2218,7 +2202,7 @@ msgstr ""
 
 #: ../data/data.cpp:545
 msgid "Acubens"
-msgstr "Acubens"
+msgstr ""
 
 #: ../data/data.cpp:546
 msgid "Talitha"
@@ -2226,7 +2210,7 @@ msgstr ""
 
 #: ../data/data.cpp:547
 msgid "Dnoces"
-msgstr "Dnoces"
+msgstr ""
 
 #: ../data/data.cpp:548
 msgid "Alkaphrah"
@@ -2234,11 +2218,11 @@ msgstr ""
 
 #: ../data/data.cpp:549
 msgid "Talitha Australis"
-msgstr "Talitha Australis"
+msgstr ""
 
 #: ../data/data.cpp:550
 msgid "Suhail"
-msgstr "Suhail"
+msgstr ""
 
 #: ../data/data.cpp:551
 msgid "Nahn"
@@ -2246,24 +2230,23 @@ msgstr ""
 
 #: ../data/data.cpp:552
 msgid "Miaplacidus"
-msgstr "Miaplacidus"
+msgstr ""
 
 #: ../data/data.cpp:553
 msgid "Aspidiske"
-msgstr "Aspidiske"
+msgstr ""
 
 #: ../data/data.cpp:554
-#, fuzzy
 msgid "Markeb"
-msgstr "Markab"
+msgstr ""
 
 #: ../data/data.cpp:555
 msgid "Alphard"
-msgstr "Alphard"
+msgstr ""
 
 #: ../data/data.cpp:556
 msgid "Cor Hydrae"
-msgstr "Cor Hydrae"
+msgstr ""
 
 #: ../data/data.cpp:557
 msgid "Intercrus"
@@ -2271,7 +2254,7 @@ msgstr ""
 
 #: ../data/data.cpp:558
 msgid "Alterf"
-msgstr "Alterf"
+msgstr ""
 
 #: ../data/data.cpp:559
 msgid "Illyrian"
@@ -2283,15 +2266,15 @@ msgstr ""
 
 #: ../data/data.cpp:561
 msgid "Ukdah"
-msgstr "Ukdah"
+msgstr ""
 
 #: ../data/data.cpp:562
 msgid "Subra"
-msgstr "Subra"
+msgstr ""
 
 #: ../data/data.cpp:563
 msgid "Ras Elased Australis"
-msgstr "Ras Elased Australis"
+msgstr ""
 
 #: ../data/data.cpp:564
 msgid "Natasha"
@@ -2303,11 +2286,11 @@ msgstr ""
 
 #: ../data/data.cpp:566
 msgid "Rasalas"
-msgstr "Rasalas"
+msgstr ""
 
 #: ../data/data.cpp:567
 msgid "Ras Elased Borealis"
-msgstr "Ras Elased Borealis"
+msgstr ""
 
 #: ../data/data.cpp:568
 msgid "Felis"
@@ -2319,69 +2302,67 @@ msgstr ""
 
 #: ../data/data.cpp:570
 msgid "Regulus"
-msgstr "Regulus"
+msgstr ""
 
 #: ../data/data.cpp:571
 msgid "Kabeleced"
-msgstr "Kabeleced"
+msgstr ""
 
 #: ../data/data.cpp:572
 msgid "Cor Leonis"
-msgstr "Cor Leonis"
+msgstr ""
 
 #: ../data/data.cpp:573
 msgid "Adhafera"
-msgstr "Adhafera"
+msgstr ""
 
 #: ../data/data.cpp:574
 msgid "Aldhafera"
-msgstr "Aldhafera"
+msgstr ""
 
 #: ../data/data.cpp:575
 msgid "Tania Borealis"
-msgstr "Tania Borealis"
+msgstr ""
 
 #: ../data/data.cpp:576
 msgid "Algieba"
-msgstr "Algieba"
+msgstr ""
 
 #: ../data/data.cpp:577
 msgid "Tania Australis"
-msgstr "Tania Australis"
+msgstr ""
 
 #: ../data/data.cpp:578
-#, fuzzy
 msgid "Macondo"
-msgstr "Londra"
+msgstr ""
 
 #: ../data/data.cpp:579
 msgid "Praecipua"
 msgstr ""
 
 #: ../data/data.cpp:580
-#, fuzzy
 msgid "Chalawan"
-msgstr "Chaldene"
+msgstr ""
 
 #: ../data/data.cpp:581
 msgid "Alkes"
-msgstr "Alkes"
+msgstr ""
 
 #: ../data/data.cpp:582
 msgid "Merak"
-msgstr "Merak"
+msgstr ""
 
 #: ../data/data.cpp:583
 msgid "Lalande 21185"
-msgstr "Lalande 21185"
+msgstr ""
 
 #: ../data/data.cpp:584
 msgid "Dubhe"
-msgstr "Dubhe"
+msgstr ""
 
 #: ../data/data.cpp:585
 msgid "Dubb"
-msgstr "Dubb"
+msgstr ""
 
 #: ../data/data.cpp:586
 msgid "Dingolay"
@@ -2389,23 +2370,23 @@ msgstr ""
 
 #: ../data/data.cpp:587
 msgid "Zosma"
-msgstr "Zosma"
+msgstr ""
 
 #: ../data/data.cpp:588
 msgid "Duhr"
-msgstr "Duhr"
+msgstr ""
 
 #: ../data/data.cpp:589
 msgid "Chertan"
-msgstr "Chertan"
+msgstr ""
 
 #: ../data/data.cpp:590
 msgid "Coxa"
-msgstr "Coxa"
+msgstr ""
 
 #: ../data/data.cpp:591
 msgid "Chort"
-msgstr "Chort"
+msgstr ""
 
 #: ../data/data.cpp:592
 msgid "Innes' Star"
@@ -2417,29 +2398,27 @@ msgstr ""
 
 #: ../data/data.cpp:594
 msgid "Alula Australis"
-msgstr "Alula Australis"
+msgstr ""
 
 #: ../data/data.cpp:595
 msgid "Alula Borealis"
-msgstr "Alula Borealis"
+msgstr ""
 
 #: ../data/data.cpp:596
 msgid "Tsze Tseang"
-msgstr "Tsze Tseang"
+msgstr ""
 
 #: ../data/data.cpp:597
-#, fuzzy
 msgid "Shama"
-msgstr "Sham"
+msgstr ""
 
 #: ../data/data.cpp:598
 msgid "Giausar"
-msgstr "Giausar"
+msgstr ""
 
 #: ../data/data.cpp:599
-#, fuzzy
 msgid "Formosa"
-msgstr "Biçim:"
+msgstr ""
 
 #: ../data/data.cpp:600
 msgid "Sagarmatha"
@@ -2454,9 +2433,8 @@ msgid "Uklun"
 msgstr ""
 
 #: ../data/data.cpp:603
-#, fuzzy
 msgid "Flegetonte"
-msgstr "Georgetown"
+msgstr ""
 
 #: ../data/data.cpp:604
 msgid "Taiyangshou"
@@ -2464,32 +2442,31 @@ msgstr ""
 
 #: ../data/data.cpp:605
 msgid "Denebola"
-msgstr "Denebola"
+msgstr ""
 
 #: ../data/data.cpp:606
 msgid "Zavijava"
-msgstr "Zavijava"
+msgstr ""
 
 #: ../data/data.cpp:607
 msgid "Alaraph"
-msgstr "Alaraph"
+msgstr ""
 
 #: ../data/data.cpp:608
-#, fuzzy
 msgid "Aniara"
-msgstr "Honiara"
+msgstr ""
 
 #: ../data/data.cpp:609
 msgid "Groombridge 1830"
-msgstr "Groombridge 1830"
+msgstr ""
 
 #: ../data/data.cpp:610
 msgid "Phecda"
-msgstr "Phecda"
+msgstr ""
 
 #: ../data/data.cpp:611
 msgid "Phad"
-msgstr "Phad"
+msgstr ""
 
 #: ../data/data.cpp:612
 msgid "Tonatiuh"
@@ -2497,7 +2474,7 @@ msgstr ""
 
 #: ../data/data.cpp:613
 msgid "Alchiba"
-msgstr "Alchiba"
+msgstr ""
 
 #: ../data/data.cpp:614
 msgid "Imai"
@@ -2505,15 +2482,15 @@ msgstr ""
 
 #: ../data/data.cpp:615
 msgid "Megrez"
-msgstr "Megrez"
+msgstr ""
 
 #: ../data/data.cpp:616
 msgid "Gienah"
-msgstr "Gienah"
+msgstr ""
 
 #: ../data/data.cpp:617
 msgid "Zaniah"
-msgstr "Zaniah"
+msgstr ""
 
 #: ../data/data.cpp:618
 msgid "Ginan"
@@ -2525,15 +2502,15 @@ msgstr ""
 
 #: ../data/data.cpp:620
 msgid "Acrux"
-msgstr "Acrux"
+msgstr ""
 
 #: ../data/data.cpp:621
 msgid "Algorab"
-msgstr "Algorab"
+msgstr ""
 
 #: ../data/data.cpp:622
 msgid "Gacrux"
-msgstr "Gacrux"
+msgstr ""
 
 #: ../data/data.cpp:623
 msgid "Funi"
@@ -2541,19 +2518,19 @@ msgstr ""
 
 #: ../data/data.cpp:624
 msgid "Chara"
-msgstr "Chara"
+msgstr ""
 
 #: ../data/data.cpp:625
 msgid "Kraz"
-msgstr "Kraz"
+msgstr ""
 
 #: ../data/data.cpp:626
 msgid "Muhlifain"
-msgstr "Muhlifain"
+msgstr ""
 
 #: ../data/data.cpp:627
 msgid "Porrima"
-msgstr "Porrima"
+msgstr ""
 
 #: ../data/data.cpp:628
 msgid "La Superba"
@@ -2565,11 +2542,11 @@ msgstr ""
 
 #: ../data/data.cpp:630
 msgid "Mimosa"
-msgstr "Mimoza"
+msgstr ""
 
 #: ../data/data.cpp:631
 msgid "Alioth"
-msgstr "Alioth"
+msgstr ""
 
 #: ../data/data.cpp:632
 msgid "Taiyi"
@@ -2577,23 +2554,23 @@ msgstr ""
 
 #: ../data/data.cpp:633
 msgid "Minelauva"
-msgstr "Minelauva"
+msgstr ""
 
 #: ../data/data.cpp:634
 msgid "Auva"
-msgstr "Auva"
+msgstr ""
 
 #: ../data/data.cpp:635
 msgid "Cor Caroli"
-msgstr "Cor Caroli"
+msgstr ""
 
 #: ../data/data.cpp:636
 msgid "Vindemiatrix"
-msgstr "Vindemiatrix"
+msgstr ""
 
 #: ../data/data.cpp:637
 msgid "Almuredin"
-msgstr "Almuredin"
+msgstr ""
 
 #: ../data/data.cpp:638
 msgid "Diadem"
@@ -2601,19 +2578,19 @@ msgstr ""
 
 #: ../data/data.cpp:639
 msgid "Mizar"
-msgstr "Mizar"
+msgstr ""
 
 #: ../data/data.cpp:640
 msgid "Spica"
-msgstr "Başakçı"
+msgstr ""
 
 #: ../data/data.cpp:641
 msgid "Azimech"
-msgstr "Azimech"
+msgstr ""
 
 #: ../data/data.cpp:642
 msgid "Alcor"
-msgstr "Alcor"
+msgstr ""
 
 #: ../data/data.cpp:643
 msgid "Dofida"
@@ -2625,35 +2602,35 @@ msgstr ""
 
 #: ../data/data.cpp:645
 msgid "Heze"
-msgstr "Heze"
+msgstr ""
 
 #: ../data/data.cpp:646
 msgid "Alkaid"
-msgstr "Alkaid"
+msgstr ""
 
 #: ../data/data.cpp:647
 msgid "Benetnasch"
-msgstr "Benetnasch"
+msgstr ""
 
 #: ../data/data.cpp:648
 msgid "Muphrid"
-msgstr "Muphrid"
+msgstr ""
 
 #: ../data/data.cpp:649
 msgid "Hadar"
-msgstr "Hadar"
+msgstr ""
 
 #: ../data/data.cpp:650
 msgid "Agena"
-msgstr "Agena"
+msgstr ""
 
 #: ../data/data.cpp:651
 msgid "Thuban"
-msgstr "Thuban"
+msgstr ""
 
 #: ../data/data.cpp:652
 msgid "Menkent"
-msgstr "Menkent"
+msgstr ""
 
 #: ../data/data.cpp:653
 msgid "Kang"
@@ -2661,11 +2638,11 @@ msgstr ""
 
 #: ../data/data.cpp:654
 msgid "Arcturus"
-msgstr "Arktürüs"
+msgstr ""
 
 #: ../data/data.cpp:655
 msgid "Syrma"
-msgstr "Syrma"
+msgstr ""
 
 #: ../data/data.cpp:656
 msgid "Xuange"
@@ -2677,15 +2654,15 @@ msgstr ""
 
 #: ../data/data.cpp:658
 msgid "Proxima"
-msgstr "Proxima"
+msgstr ""
 
 #: ../data/data.cpp:659
 msgid "Seginus"
-msgstr "Seginus"
+msgstr ""
 
 #: ../data/data.cpp:660
 msgid "Ceginus"
-msgstr "Ceginus"
+msgstr ""
 
 #: ../data/data.cpp:661
 msgid "Toliman"
@@ -2697,15 +2674,15 @@ msgstr ""
 
 #: ../data/data.cpp:663
 msgid "Izar"
-msgstr "Izar"
+msgstr ""
 
 #: ../data/data.cpp:664
 msgid "Mirak"
-msgstr "Mirak"
+msgstr ""
 
 #: ../data/data.cpp:665
 msgid "Pulcherrima"
-msgstr "Pulcherrima"
+msgstr ""
 
 #: ../data/data.cpp:666
 msgid "Mönch"
@@ -2717,15 +2694,15 @@ msgstr ""
 
 #: ../data/data.cpp:668
 msgid "Kochab"
-msgstr "Kochab"
+msgstr ""
 
 #: ../data/data.cpp:669
 msgid "Kocab"
-msgstr "Kocab"
+msgstr ""
 
 #: ../data/data.cpp:670
 msgid "Zubenelgenubi"
-msgstr "Zubenelgenubi"
+msgstr ""
 
 #: ../data/data.cpp:671
 msgid "Arcalís"
@@ -2737,11 +2714,11 @@ msgstr ""
 
 #: ../data/data.cpp:673
 msgid "Zuben Elakribi"
-msgstr "Zuben Elakribi"
+msgstr ""
 
 #: ../data/data.cpp:674
 msgid "Nekkar"
-msgstr "Nekkar"
+msgstr ""
 
 #: ../data/data.cpp:675
 msgid "Brachium"
@@ -2749,12 +2726,11 @@ msgstr ""
 
 #: ../data/data.cpp:676
 msgid "Zubeneschamali"
-msgstr "Zubeneschamali"
+msgstr ""
 
 #: ../data/data.cpp:677
-#, fuzzy
 msgid "Pherkad Minor"
-msgstr "Pherkad"
+msgstr ""
 
 #: ../data/data.cpp:678
 msgid "Nikawiy"
@@ -2762,36 +2738,35 @@ msgstr ""
 
 #: ../data/data.cpp:679
 msgid "Pherkad"
-msgstr "Pherkad"
+msgstr ""
 
 #: ../data/data.cpp:680
 msgid "Alkalurops"
-msgstr "Alkalurops"
+msgstr ""
 
 #: ../data/data.cpp:681
 msgid "Edasich"
-msgstr "Edasich"
+msgstr ""
 
 #: ../data/data.cpp:682
 msgid "Nusakan"
-msgstr "Nusakan"
+msgstr ""
 
 #: ../data/data.cpp:683
 msgid "Alphecca"
-msgstr "Alphecca"
+msgstr ""
 
 #: ../data/data.cpp:684
 msgid "Gemma"
-msgstr "Gemma"
+msgstr ""
 
 #: ../data/data.cpp:685
-#, fuzzy
 msgid "Zubenelhakrabi"
-msgstr "Zuben Elakrab"
+msgstr ""
 
 #: ../data/data.cpp:686
 msgid "Zuben Elakrab"
-msgstr "Zuben Elakrab"
+msgstr ""
 
 #: ../data/data.cpp:687
 msgid "Karaka"
@@ -2799,11 +2774,11 @@ msgstr ""
 
 #: ../data/data.cpp:688
 msgid "Unukalhai"
-msgstr "Unukalhai"
+msgstr ""
 
 #: ../data/data.cpp:689
 msgid "Chow"
-msgstr "Chow"
+msgstr ""
 
 #: ../data/data.cpp:690
 msgid "Gudja"
@@ -2819,7 +2794,7 @@ msgstr ""
 
 #: ../data/data.cpp:693
 msgid "Dschubba"
-msgstr "Dschubba"
+msgstr ""
 
 #: ../data/data.cpp:694
 msgid "Acrab"
@@ -2827,20 +2802,19 @@ msgstr ""
 
 #: ../data/data.cpp:695
 msgid "Graffias"
-msgstr "Graffias"
+msgstr ""
 
 #: ../data/data.cpp:696
 msgid "Akrab"
-msgstr "Akrab"
+msgstr ""
 
 #: ../data/data.cpp:697
-#, fuzzy
 msgid "Marsic"
-msgstr "Mars"
+msgstr ""
 
 #: ../data/data.cpp:698
 msgid "Jabbah"
-msgstr "Jabbah"
+msgstr ""
 
 #: ../data/data.cpp:699
 msgid "Sharjah"
@@ -2859,22 +2833,20 @@ msgid "Hunor"
 msgstr ""
 
 #: ../data/data.cpp:703
-#, fuzzy
 msgid "Alniyat"
-msgstr "Al Niyat"
+msgstr ""
 
 #: ../data/data.cpp:704
 msgid "Al Niyat"
-msgstr "Al Niyat"
+msgstr ""
 
 #: ../data/data.cpp:705
-#, fuzzy
 msgid "Athebyne"
-msgstr "Atina"
+msgstr ""
 
 #: ../data/data.cpp:706
 msgid "Cujam"
-msgstr "Cujam"
+msgstr ""
 
 #: ../data/data.cpp:707
 msgid "Timir"
@@ -2882,11 +2854,11 @@ msgstr ""
 
 #: ../data/data.cpp:708
 msgid "Antares"
-msgstr "Akrep Yüreği"
+msgstr ""
 
 #: ../data/data.cpp:709
 msgid "Kornephoros"
-msgstr "Kornephoros"
+msgstr ""
 
 #: ../data/data.cpp:710
 msgid "Ogma"
@@ -2894,7 +2866,7 @@ msgstr ""
 
 #: ../data/data.cpp:711
 msgid "Marfik"
-msgstr "Marfik"
+msgstr ""
 
 #: ../data/data.cpp:712
 msgid "Rosalíadecastro"
@@ -2906,60 +2878,55 @@ msgstr ""
 
 #: ../data/data.cpp:714
 msgid "Atria"
-msgstr "Atria"
+msgstr ""
 
 #: ../data/data.cpp:715
-#, fuzzy
 msgid "Larawag"
-msgstr "Tarawa"
+msgstr ""
 
 #: ../data/data.cpp:716
 msgid "Xamidimura"
 msgstr ""
 
 #: ../data/data.cpp:717
-#, fuzzy
 msgid "Pipirima"
-msgstr "Porrima"
+msgstr ""
 
 #: ../data/data.cpp:718
 msgid "Mahsati"
 msgstr ""
 
 #: ../data/data.cpp:719
-#, fuzzy
 msgid "Rapeto"
-msgstr "Iapetus"
+msgstr ""
 
 #: ../data/data.cpp:720
-#, fuzzy
 msgid "Alrakis"
-msgstr "Arrakis"
+msgstr ""
 
 #: ../data/data.cpp:721
 msgid "Arrakis"
-msgstr "Arrakis"
+msgstr ""
 
 #: ../data/data.cpp:722
-#, fuzzy
 msgid "Aldhibah"
-msgstr "Alchiba"
+msgstr ""
 
 #: ../data/data.cpp:723
 msgid "Sabik"
-msgstr "Sabik"
+msgstr ""
 
 #: ../data/data.cpp:724
 msgid "Rasalgethi"
-msgstr "Rasalgethi"
+msgstr ""
 
 #: ../data/data.cpp:725
 msgid "Ras Algethi"
-msgstr "Ras Algethi"
+msgstr ""
 
 #: ../data/data.cpp:726
 msgid "Sarin"
-msgstr "Sarin"
+msgstr ""
 
 #: ../data/data.cpp:727
 msgid "Guniibuu"
@@ -2971,47 +2938,47 @@ msgstr ""
 
 #: ../data/data.cpp:729
 msgid "Rastaban"
-msgstr "Rastaban"
+msgstr ""
 
 #: ../data/data.cpp:730
 msgid "Maasym"
-msgstr "Maasym"
+msgstr ""
 
 #: ../data/data.cpp:731
 msgid "Lesath"
-msgstr "Lesath"
+msgstr ""
 
 #: ../data/data.cpp:732
 msgid "Lesuth"
-msgstr "Lesuth"
+msgstr ""
 
 #: ../data/data.cpp:733
 msgid "Kuma"
-msgstr "Kuma"
+msgstr ""
 
 #: ../data/data.cpp:734
 msgid "Yildun"
-msgstr "Yildun"
+msgstr ""
 
 #: ../data/data.cpp:735
 msgid "Shaula"
-msgstr "Shaula"
+msgstr ""
 
 #: ../data/data.cpp:736
 msgid "Rasalhague"
-msgstr "Rasalhague"
+msgstr ""
 
 #: ../data/data.cpp:737
 msgid "Ras Alhague"
-msgstr "Ras Alhague"
+msgstr ""
 
 #: ../data/data.cpp:738
 msgid "Sargas"
-msgstr "Sargas"
+msgstr ""
 
 #: ../data/data.cpp:739
 msgid "Dziban"
-msgstr "Dziban"
+msgstr ""
 
 #: ../data/data.cpp:740
 msgid "Girtab"
@@ -3019,16 +2986,15 @@ msgstr ""
 
 #: ../data/data.cpp:741
 msgid "Cebalrai"
-msgstr "Cebalrai"
+msgstr ""
 
 #: ../data/data.cpp:742
 msgid "Alruba"
 msgstr ""
 
 #: ../data/data.cpp:743
-#, fuzzy
 msgid "Cervantes"
-msgstr "Gözlemevleri"
+msgstr ""
 
 #: ../data/data.cpp:744
 msgid "Fuyue"
@@ -3036,19 +3002,19 @@ msgstr ""
 
 #: ../data/data.cpp:745
 msgid "Grumium"
-msgstr "Grumium"
+msgstr ""
 
 #: ../data/data.cpp:746
 msgid "Eltanin"
-msgstr "Eltanin"
+msgstr ""
 
 #: ../data/data.cpp:747
 msgid "Etamin"
-msgstr "Etamin"
+msgstr ""
 
 #: ../data/data.cpp:748
 msgid "Barnard's Star"
-msgstr "Barnard'ın Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:749
 msgid "Pincoya"
@@ -3056,7 +3022,7 @@ msgstr ""
 
 #: ../data/data.cpp:750
 msgid "Alnasl"
-msgstr "Alnasl"
+msgstr ""
 
 #: ../data/data.cpp:751
 msgid "Polis"
@@ -3064,7 +3030,7 @@ msgstr ""
 
 #: ../data/data.cpp:752
 msgid "Kaus Media"
-msgstr "Kaus Media"
+msgstr ""
 
 #: ../data/data.cpp:753
 msgid "Alasia"
@@ -3072,11 +3038,11 @@ msgstr ""
 
 #: ../data/data.cpp:754
 msgid "Kaus Australis"
-msgstr "Kaus Australis"
+msgstr ""
 
 #: ../data/data.cpp:755
 msgid "Al Athfar"
-msgstr "Al Athfar"
+msgstr ""
 
 #: ../data/data.cpp:756
 msgid "Fafnir"
@@ -3084,11 +3050,11 @@ msgstr ""
 
 #: ../data/data.cpp:757
 msgid "Kaus Borealis"
-msgstr "Kaus Borealis"
+msgstr ""
 
 #: ../data/data.cpp:758
 msgid "Vega"
-msgstr "Vega"
+msgstr ""
 
 #: ../data/data.cpp:759
 msgid "Xihe"
@@ -3096,16 +3062,15 @@ msgstr ""
 
 #: ../data/data.cpp:760
 msgid "Sheliak"
-msgstr "Sheliak"
+msgstr ""
 
 #: ../data/data.cpp:761
-#, fuzzy
 msgid "Ainalrami"
-msgstr "Alderamin"
+msgstr ""
 
 #: ../data/data.cpp:762
 msgid "Nunki"
-msgstr "Nunki"
+msgstr ""
 
 #: ../data/data.cpp:763
 msgid "Kaveh"
@@ -3113,15 +3078,15 @@ msgstr ""
 
 #: ../data/data.cpp:764
 msgid "Alya"
-msgstr "Alya"
+msgstr ""
 
 #: ../data/data.cpp:765
 msgid "Sulafat"
-msgstr "Sulafat"
+msgstr ""
 
 #: ../data/data.cpp:766
 msgid "Ascella"
-msgstr "Ascella"
+msgstr ""
 
 #: ../data/data.cpp:767
 msgid "Okab"
@@ -3129,50 +3094,47 @@ msgstr ""
 
 #: ../data/data.cpp:768
 msgid "Deneb el Okab"
-msgstr "Deneb el Okab"
+msgstr ""
 
 #: ../data/data.cpp:769
 msgid "Meridiana"
 msgstr ""
 
 #: ../data/data.cpp:770
-#, fuzzy
 msgid "Albaldah"
-msgstr "Albali"
+msgstr ""
 
 #: ../data/data.cpp:771
 msgid "Altais"
-msgstr "Altais"
+msgstr ""
 
 #: ../data/data.cpp:772
 msgid "Al Tais"
-msgstr "Al Tais"
+msgstr ""
 
 #: ../data/data.cpp:773
 msgid "Nodus Secundus"
-msgstr "Nodus Secundus"
+msgstr ""
 
 #: ../data/data.cpp:774
 msgid "Aladfar"
-msgstr "Aladfar"
+msgstr ""
 
 #: ../data/data.cpp:775
-#, fuzzy
 msgid "Gumala"
-msgstr "Guatemala"
+msgstr ""
 
 #: ../data/data.cpp:776
 msgid "Belel"
 msgstr ""
 
 #: ../data/data.cpp:777
-#, fuzzy
 msgid "Arkab Prior"
-msgstr "Arkab"
+msgstr ""
 
 #: ../data/data.cpp:778
 msgid "Arkab"
-msgstr "Arkab"
+msgstr ""
 
 #: ../data/data.cpp:779
 msgid "Sika"
@@ -3184,7 +3146,7 @@ msgstr ""
 
 #: ../data/data.cpp:781
 msgid "Rukbat"
-msgstr "Rukbat"
+msgstr ""
 
 #: ../data/data.cpp:782
 msgid "Anser"
@@ -3192,7 +3154,7 @@ msgstr ""
 
 #: ../data/data.cpp:783
 msgid "Albireo"
-msgstr "Albireo"
+msgstr ""
 
 #: ../data/data.cpp:784
 msgid "Uruk"
@@ -3200,36 +3162,35 @@ msgstr ""
 
 #: ../data/data.cpp:785
 msgid "Alsafi"
-msgstr "Alsafi"
+msgstr ""
 
 #: ../data/data.cpp:786
 msgid "Campbell's Star"
-msgstr "Campbell'in Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:787
 msgid "Sham"
-msgstr "Sham"
+msgstr ""
 
 #: ../data/data.cpp:788
-#, fuzzy
 msgid "Fawaris"
-msgstr "Paris"
+msgstr ""
 
 #: ../data/data.cpp:789
 msgid "Tarazed"
-msgstr "Tarazed"
+msgstr ""
 
 #: ../data/data.cpp:790
 msgid "Tyl"
-msgstr "Tyl"
+msgstr ""
 
 #: ../data/data.cpp:791
 msgid "Altair"
-msgstr "Uçucu"
+msgstr ""
 
 #: ../data/data.cpp:792
 msgid "Atair"
-msgstr "Atair"
+msgstr ""
 
 #: ../data/data.cpp:793
 msgid "Libertas"
@@ -3237,7 +3198,7 @@ msgstr ""
 
 #: ../data/data.cpp:794
 msgid "Alshain"
-msgstr "Alshain"
+msgstr ""
 
 #: ../data/data.cpp:795
 msgid "Terebellum"
@@ -3253,24 +3214,23 @@ msgstr ""
 
 #: ../data/data.cpp:798
 msgid "Algedi"
-msgstr "Algedi"
+msgstr ""
 
 #: ../data/data.cpp:799
-#, fuzzy
 msgid "Alshat"
-msgstr "Alshain"
+msgstr ""
 
 #: ../data/data.cpp:800
 msgid "Dabih"
-msgstr "Dabih"
+msgstr ""
 
 #: ../data/data.cpp:801
 msgid "Sadr"
-msgstr "Sadr"
+msgstr ""
 
 #: ../data/data.cpp:802
 msgid "Peacock"
-msgstr "Tavuskuşu"
+msgstr ""
 
 #: ../data/data.cpp:803
 msgid "Aldulfin"
@@ -3278,63 +3238,59 @@ msgstr ""
 
 #: ../data/data.cpp:804
 msgid "Rotanev"
-msgstr "Rotanev"
+msgstr ""
 
 #: ../data/data.cpp:805
 msgid "Sualocin"
-msgstr "Sualocin"
+msgstr ""
 
 #: ../data/data.cpp:806
 msgid "Deneb"
-msgstr "Denep"
+msgstr ""
 
 #: ../data/data.cpp:807
-#, fuzzy
 msgid "Aljanah"
-msgstr "Ljubljana"
+msgstr ""
 
 #: ../data/data.cpp:808
 msgid "Albali"
-msgstr "Albali"
+msgstr ""
 
 #: ../data/data.cpp:809
 msgid "Musica"
 msgstr ""
 
 #: ../data/data.cpp:810
-#, fuzzy
 msgid "Polaris Australis"
-msgstr "Kaus Australis"
+msgstr ""
 
 #: ../data/data.cpp:811
-#, fuzzy
 msgid "Solaris"
-msgstr "Kutup Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:812
 msgid "Kitalpha"
-msgstr "Kitalpha"
+msgstr ""
 
 #: ../data/data.cpp:813
 msgid "Lacaille 8760"
-msgstr "Lacaille 8760"
+msgstr ""
 
 #: ../data/data.cpp:814
 msgid "Alderamin"
-msgstr "Alderamin"
+msgstr ""
 
 #: ../data/data.cpp:815
 msgid "Alfirk"
-msgstr "Alfirk"
+msgstr ""
 
 #: ../data/data.cpp:816
 msgid "Sadalsuud"
-msgstr "Sadalsuud"
+msgstr ""
 
 #: ../data/data.cpp:817
-#, fuzzy
 msgid "Bunda"
-msgstr "Sınırlar"
+msgstr ""
 
 #: ../data/data.cpp:818
 msgid "Sāmaya"
@@ -3342,11 +3298,11 @@ msgstr ""
 
 #: ../data/data.cpp:819
 msgid "Nashira"
-msgstr "Nashira"
+msgstr ""
 
 #: ../data/data.cpp:820
 msgid "Azelfafage"
-msgstr "Azelfafage"
+msgstr ""
 
 #: ../data/data.cpp:821
 msgid "Bosona"
@@ -3354,29 +3310,27 @@ msgstr ""
 
 #: ../data/data.cpp:822
 msgid "Herschel's Garnet Star"
-msgstr "Herschel's Garnet Star"
+msgstr ""
 
 #: ../data/data.cpp:823
-#, fuzzy
 msgid "Erakis"
-msgstr "Arrakis"
+msgstr ""
 
 #: ../data/data.cpp:824
 msgid "Enif"
-msgstr "Enif"
+msgstr ""
 
 #: ../data/data.cpp:825
 msgid "Deneb Algedi"
-msgstr "Deneb Algedi"
+msgstr ""
 
 #: ../data/data.cpp:826
-#, fuzzy
 msgid "Aldhanab"
-msgstr "Al Dhanab"
+msgstr ""
 
 #: ../data/data.cpp:827
 msgid "Al Dhanab"
-msgstr "Al Dhanab"
+msgstr ""
 
 #: ../data/data.cpp:828
 msgid "Itonda"
@@ -3384,35 +3338,35 @@ msgstr ""
 
 #: ../data/data.cpp:829
 msgid "Kurhah"
-msgstr "Kurhah"
+msgstr ""
 
 #: ../data/data.cpp:830
 msgid "Sadalmelik"
-msgstr "Sadalmelik"
+msgstr ""
 
 #: ../data/data.cpp:831
 msgid "Alnair"
-msgstr "Alnair"
+msgstr ""
 
 #: ../data/data.cpp:832
 msgid "Al Nair"
-msgstr "Al Nair"
+msgstr ""
 
 #: ../data/data.cpp:833
 msgid "Biham"
-msgstr "Biham"
+msgstr ""
 
 #: ../data/data.cpp:834
 msgid "Ancha"
-msgstr "Ancha"
+msgstr ""
 
 #: ../data/data.cpp:835
 msgid "Sadachbia"
-msgstr "Sadachbia"
+msgstr ""
 
 #: ../data/data.cpp:836
 msgid "Seat"
-msgstr "Seat"
+msgstr ""
 
 #: ../data/data.cpp:837
 msgid "Lionrock"
@@ -3420,15 +3374,15 @@ msgstr ""
 
 #: ../data/data.cpp:838
 msgid "Kruger 60"
-msgstr "Kruger 60"
+msgstr ""
 
 #: ../data/data.cpp:839
 msgid "Situla"
-msgstr "Situla"
+msgstr ""
 
 #: ../data/data.cpp:840
 msgid "Homam"
-msgstr "Homam"
+msgstr ""
 
 #: ../data/data.cpp:841
 msgid "Tiaki"
@@ -3436,15 +3390,15 @@ msgstr ""
 
 #: ../data/data.cpp:842
 msgid "Matar"
-msgstr "Matar"
+msgstr ""
 
 #: ../data/data.cpp:843
 msgid "Babcock's Star"
-msgstr "Babcock'ın Yıldızı"
+msgstr ""
 
 #: ../data/data.cpp:844
 msgid "Sadalbari"
-msgstr "Sadalbari"
+msgstr ""
 
 #: ../data/data.cpp:845
 msgid "Hydor"
@@ -3452,7 +3406,7 @@ msgstr ""
 
 #: ../data/data.cpp:846
 msgid "Skat"
-msgstr "Skat"
+msgstr ""
 
 #: ../data/data.cpp:847
 msgid "Helvetios"
@@ -3460,28 +3414,27 @@ msgstr ""
 
 #: ../data/data.cpp:848
 msgid "Fomalhaut"
-msgstr "Fomalhaut"
+msgstr ""
 
 #: ../data/data.cpp:849
 msgid "Scheat"
-msgstr "Kılıf"
+msgstr ""
 
 #: ../data/data.cpp:850
-#, fuzzy
 msgid "Fumalsamakah"
-msgstr "Fum al Samakah"
+msgstr ""
 
 #: ../data/data.cpp:851
 msgid "Fum al Samakah"
-msgstr "Fum al Samakah"
+msgstr ""
 
 #: ../data/data.cpp:852
 msgid "Markab"
-msgstr "Markab"
+msgstr ""
 
 #: ../data/data.cpp:853
 msgid "Marchab"
-msgstr "Marchab"
+msgstr ""
 
 #: ../data/data.cpp:854
 msgid "Ebla"
@@ -3489,16 +3442,15 @@ msgstr ""
 
 #: ../data/data.cpp:855
 msgid "Bradley 3077"
-msgstr "Bradley 3077"
+msgstr ""
 
 #: ../data/data.cpp:856
 msgid "Salm"
 msgstr ""
 
 #: ../data/data.cpp:857
-#, fuzzy
 msgid "Alkarab"
-msgstr "Ankara"
+msgstr ""
 
 #: ../data/data.cpp:858
 msgid "Veritate"
@@ -3510,7 +3462,7 @@ msgstr ""
 
 #: ../data/data.cpp:860
 msgid "Errai"
-msgstr "Errai"
+msgstr ""
 
 #: ../data/data.cpp:861
 msgid "Axólotl"
@@ -3518,47 +3470,47 @@ msgstr ""
 
 #: ../data/data.cpp:862
 msgid "Pleiades"
-msgstr "Ülker"
+msgstr ""
 
 #: ../data/data.cpp:863
 msgid "Hyades"
-msgstr "Hyades"
+msgstr ""
 
 #: ../data/data.cpp:864
 msgid "Praesepe"
-msgstr "Arıkovanı kümesi"
+msgstr ""
 
 #: ../data/data.cpp:865
 msgid "Beehive Cluster"
-msgstr "Beehive Cluster"
+msgstr ""
 
 #: ../data/data.cpp:866
 msgid "Maffei 1"
-msgstr "Maffei 1"
+msgstr ""
 
 #: ../data/data.cpp:867
 msgid "Maffei 2"
-msgstr "Maffei 2"
+msgstr ""
 
 #: ../data/data.cpp:868
 msgid "Leo A"
-msgstr "Leo A"
+msgstr ""
 
 #: ../data/data.cpp:869
 msgid "Sextans B"
-msgstr "Sextans B"
+msgstr ""
 
 #: ../data/data.cpp:870
 msgid "Leo I"
-msgstr "Leo I"
+msgstr ""
 
 #: ../data/data.cpp:871
 msgid "Sextans A"
-msgstr "Sextans A"
+msgstr ""
 
 #: ../data/data.cpp:872
 msgid "Circinus"
-msgstr "Pergel"
+msgstr "Pergel takımyıldızı"
 
 #: ../data/data.cpp:873
 msgid "Andromeda Galaxy"
@@ -3570,27 +3522,27 @@ msgstr ""
 
 #: ../data/data.cpp:875
 msgid "Holmberg VI"
-msgstr "Holmberg VI"
+msgstr ""
 
 #: ../data/data.cpp:876
 msgid "Fath 703"
-msgstr "Fath 703"
+msgstr ""
 
 #: ../data/data.cpp:877
 msgid "47 Tuc"
-msgstr "47 Tuc"
+msgstr ""
 
 #: ../data/data.cpp:878
 msgid "Eridanus"
-msgstr "Irmak"
+msgstr "Irmak takımyıldızı"
 
 #: ../data/data.cpp:879
 msgid "Pyxis"
-msgstr "Pusula"
+msgstr "Kumpas takımyıldızı"
 
 #: ../data/data.cpp:880
 msgid "Tonantzintla 2"
-msgstr "Tonantzintla 2"
+msgstr ""
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
@@ -3603,7 +3555,7 @@ msgstr "Yaz saati"
 #: ../src/celengine/configreader.cpp:19
 #, c-format
 msgid "Error opening config file '%s'.\n"
-msgstr "'%s' yapılandırma dosyası açılırken hata oluştu.\n"
+msgstr "'%s' yapılandırma dosyası açılırken hata.\n"
 
 #: ../src/celengine/configreader.cpp:29
 #, c-format
@@ -3613,16 +3565,14 @@ msgstr "%s:%d 'Yapılandırma' bekleniyor.\n"
 #: ../src/celengine/configreader.cpp:37
 #, c-format
 msgid "%s: Bad configuration file.\n"
-msgstr "%s: Hatalı yapılandırma dosyası.\n"
+msgstr "%s: Kötü yapılandırma dosyası.\n"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:375
 #, c-format
 msgid "Loaded %i deep space objects\n"
@@ -3678,7 +3628,7 @@ msgstr "Yanlış GeomAlbedo değeri: {}\n"
 
 #: ../src/celengine/solarsys.cpp:841
 msgid "Incorrect Reflectivity value: {}\n"
-msgstr "Yanlış Yansıma değeri: {}\n"
+msgstr "Yanlış Reflectivity değeri: {}\n"
 
 #: ../src/celengine/solarsys.cpp:849
 msgid "Incorrect BondAlbedo value: {}\n"
@@ -3692,7 +3642,7 @@ msgstr "ana cisim '%s'nın '%s' bulunamadı.\n"
 #: ../src/celengine/solarsys.cpp:1264
 #, c-format
 msgid "warning duplicate definition of %s %s\n"
-msgstr "%s çift tanımlama uyarısı %s\n"
+msgstr "%s %s çift tanımlama uyarısı\n"
 
 #: ../src/celengine/solarsys.cpp:1295
 msgid "bad alternate surface"
@@ -3718,12 +3668,12 @@ msgstr "Çapraz dizin yüklemesi kayıt %u noktasında başarısız oldu\n"
 #: ../src/celengine/stardb.cpp:687
 #, c-format
 msgid "Bad spectral type in star database, star #%u\n"
-msgstr "Yıldız veritabanında kötü tayf türü, yıldız #%u\n"
+msgstr "Yıldız veritabanında kötü spektral tür, yıldız #%u\n"
 
 #: ../src/celengine/stardb.cpp:702
 #, c-format
 msgid "%d stars in binary database\n"
-msgstr "İkili veritabanında %d yıldız var\n"
+msgstr "İkili veritabanında %d yıldız\n"
 
 #: ../src/celengine/stardb.cpp:726
 #, c-format
@@ -3737,11 +3687,11 @@ msgstr ".stc dosyasında hata (satır %i): %s\n"
 
 #: ../src/celengine/stardb.cpp:790
 msgid "Invalid star: bad spectral type.\n"
-msgstr "Geçersiz yıldız: kötü tayf türü.\n"
+msgstr "Geçersiz yıldız: kötü spektral tür.\n"
 
 #: ../src/celengine/stardb.cpp:799
 msgid "Invalid star: missing spectral type.\n"
-msgstr "Geçersiz yıldız: tayf türü yok.\n"
+msgstr "Geçersiz yıldız: spektral tür yok.\n"
 
 #: ../src/celengine/stardb.cpp:986
 #, c-format
@@ -3769,8 +3719,8 @@ msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
-"Geçersiz yıldız: mutlak (görünür değil) kadir orijin yakınındaki yıldız için "
-"belirtilmelidir\n"
+"Geçersiz yıldız: mutlak (görünür değil) kadir orijin yakınındaki yıldız için"
+" belirtilmelidir\n"
 
 #: ../src/celengine/stardb.cpp:1426
 #, c-format
@@ -3780,7 +3730,7 @@ msgstr "Seviye %i, %.5f ıy, %i düğüm, %i  yıldız\n"
 #: ../src/celengine/texture.cpp:1015
 #, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
-msgstr "Karolu doku oluşturuluyor. Genişlik=%i, maks=%i\n"
+msgstr "Döşeli doku oluşturuluyor. Genişlik=%i, maks=%i\n"
 
 #: ../src/celengine/texture.cpp:1020
 #, c-format
@@ -3800,12 +3750,12 @@ msgstr "%s başlığını okurken hata.\n"
 #: ../src/celephem/samporbit.cpp:846 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
 #, c-format
 msgid "Bad binary xyzv file %s.\n"
-msgstr "Bozuk ikili xyzv dosyası %s.\n"
+msgstr "Kötü binary xyzv dosyası %s.\n"
 
 #: ../src/celephem/samporbit.cpp:852 ../src/tools/xyzv2bin/bin2xyzv.cpp:37
 #, c-format
 msgid "Unsupported byte order %i, expected %i.\n"
-msgstr "Desteklenmeyen bayt sırası %i, beklenen %i.\n"
+msgstr "Desteklenmeyen byte sırası %i, beklenen %i.\n"
 
 #: ../src/celephem/samporbit.cpp:860 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
 #, c-format
@@ -3815,19 +3765,19 @@ msgstr "Desteklenmeyen rakam sayısı %i, beklenen %i.\n"
 #: ../src/celestia/celestiacore.cpp:107 ../src/celestia/scriptmenu.cpp:88
 #, c-format
 msgid "Path %s doesn't exist or isn't a directory"
-msgstr "%s yolu mevcut değil veya bir dizin değil"
+msgstr "%s yolu mevcut değil ya da bir dizin değil"
 
 #: ../src/celestia/celestiacore.cpp:204
 msgid "Error reading favorites file {}.\n"
-msgstr "Sık kullanılanlar dosyasını okurken hata. {}\n"
+msgstr "Favoriler dosyasını okurken hata {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:226
 msgid "Failed to check directory existance for favorites file {}\n"
-msgstr "Sık kullanılanlar dosyası {} için dizin varlığını kontrol edemedi\n"
+msgstr "Favoriler dosyası için dizin varoluşu kontrol edilemedi {}\n"
 
 #: ../src/celestia/celestiacore.cpp:235
 msgid "Failed to create a directory for favorites file {}\n"
-msgstr "Sık kullanılanlar dosyası {} için bir dizin oluşturulamadı\n"
+msgstr "Favoriler dosyası için dizin oluşturma başarısız oldu {}\n"
 
 #: ../src/celestia/celestiacore.cpp:356
 msgid "Invalid filetype"
@@ -3837,7 +3787,7 @@ msgstr "Geçersiz dosya türü"
 #: ../src/celestia/celestiacore.cpp:1441
 #, c-format
 msgid "Magnitude limit: %.2f"
-msgstr "Kadir sınırı: %2f"
+msgstr "Büyüklük sınırı: %2f"
 
 #: ../src/celestia/celestiacore.cpp:1071
 msgid "Markers enabled"
@@ -3866,7 +3816,7 @@ msgstr "Yıldız stili: bulanık noktalar"
 
 #: ../src/celestia/celestiacore.cpp:1157
 msgid "Star style: points"
-msgstr "Yıldız stili: noktalar"
+msgstr "Yıldız stili:noktalar"
 
 #: ../src/celestia/celestiacore.cpp:1160
 msgid "Star style: scaled discs"
@@ -3916,7 +3866,7 @@ msgstr "İptal"
 
 #: ../src/celestia/celestiacore.cpp:1284
 msgid "Time and script are paused"
-msgstr "Zaman ve senaryo duraklatıldı"
+msgstr "Zaman ve script duraklatıldı"
 
 #: ../src/celestia/celestiacore.cpp:1286
 msgid "Time is paused"
@@ -3938,29 +3888,29 @@ msgstr "Yıldız rengi: Arttırılmış"
 #: ../src/celestia/celestiacore.cpp:1367
 #, c-format
 msgid "Light travel time:  %.4f yr"
-msgstr "Işık hızında seyahat süresi: %.4f yıl"
+msgstr "Işık seyahat süresi: %.4f yıl"
 
 #: ../src/celestia/celestiacore.cpp:1376
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
-msgstr "Işık hızında seyahat süresi:  %d dak  %.1f sn "
+msgstr "Işık seyahat süresi:  %d dak  %.1f sn "
 
 #: ../src/celestia/celestiacore.cpp:1381
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
-msgstr "Işık hızında seyahat süresi:  %d saat  %d dak  %.1f sn"
+msgstr "Işık seyahat süresi:  %d saat  %d dak  %.1f sn"
 
 #: ../src/celestia/celestiacore.cpp:1399
 msgid "Light travel delay included"
-msgstr "Işık hızı gecikmesi ekli"
+msgstr "Işık seyahat gecikmesi ekli"
 
 #: ../src/celestia/celestiacore.cpp:1404
 msgid "Light travel delay switched off"
-msgstr "Işık hızı gecikmesi kapalı"
+msgstr "Işık seyahat gecikmesi kapalı"
 
 #: ../src/celestia/celestiacore.cpp:1410
 msgid "Light travel delay ignored"
-msgstr "Işık hızı gecikmesi göz ardı ediliyor"
+msgstr "Işık seyahat gecikmesi göz ardı ediliyor"
 
 #: ../src/celestia/celestiacore.cpp:1453
 msgid "Using normal surface textures."
@@ -3968,7 +3918,7 @@ msgstr "Normal yüzey dokuları kullanılıyor."
 
 #: ../src/celestia/celestiacore.cpp:1458
 msgid "Using limit of knowledge surface textures."
-msgstr "Sınırlı bilgi yüzey dokularını kullanılıyor."
+msgstr "Bilgi sınırı yüzey dokuları kullanılıyor."
 
 #: ../src/celestia/celestiacore.cpp:1525
 msgid "Follow"
@@ -3980,7 +3930,7 @@ msgstr "Zaman: İleri"
 
 #: ../src/celestia/celestiacore.cpp:1552
 msgid "Time: Backward"
-msgstr "Zaman: Geri"
+msgstr "Zaman:Geri"
 
 #: ../src/celestia/celestiacore.cpp:1564 ../src/celestia/celestiacore.cpp:1579
 #, c-format
@@ -4046,7 +3996,7 @@ msgstr "Pozlama"
 
 #: ../src/celestia/celestiacore.cpp:2154
 msgid "GL error: "
-msgstr "GL hatası:"
+msgstr "GL hata:"
 
 #: ../src/celestia/celestiacore.cpp:2303
 msgid "View too small to be split"
@@ -4078,9 +4028,8 @@ msgid "au"
 msgstr "ab"
 
 #: ../src/celestia/celestiacore.cpp:2520
-#, fuzzy
 msgid "mi"
-msgstr "m"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2525
 msgid "ft"
@@ -4088,23 +4037,27 @@ msgstr ""
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/celestiacore.cpp:2533
+#: ../src/celestia/qt/qtinfopanel.cpp:122
 #: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
+#: ../src/celestia/celestiacore.cpp:2538
+#: ../src/celestia/qt/qtinfopanel.cpp:126
 msgid "m"
 msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
+#: ../src/celestia/celestiacore.cpp:2561
+#: ../src/celestia/qt/qtinfopanel.cpp:170
 #: ../src/celestia/qt/qtinfopanel.cpp:198
 #: ../src/celestia/qt/qtinfopanel.cpp:248
 msgid "days"
 msgstr "gün"
 
-#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/celestiacore.cpp:2566
+#: ../src/celestia/qt/qtinfopanel.cpp:166
 #: ../src/celestia/qt/qtinfopanel.cpp:194
 msgid "hours"
 msgstr "saat"
@@ -4123,9 +4076,9 @@ msgid "Rotation period: %s %s\n"
 msgstr "Dönüş periyodu: %s %s\n"
 
 #: ../src/celestia/celestiacore.cpp:2587
-#, fuzzy, c-format
+#, c-format
 msgid "Mass: %.6g lb\n"
-msgstr "Kütle: %.6g kg\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2589
 #, c-format
@@ -4174,12 +4127,12 @@ msgstr "Hız: %s %s\n"
 #: ../src/celestia/celestiacore.cpp:2677
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
-msgstr "Sap: %+d%s %02d' %.1f\"\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2689
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
-msgstr "RA: %dh %02dm %.1fs\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2705
 #, c-format
@@ -4197,9 +4150,9 @@ msgid "Absolute magnitude: %.1f\n"
 msgstr "Mutlak kadir %.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:2803
-#, fuzzy, c-format
+#, c-format
 msgid "%.6f%c %.6f%c %s"
-msgstr "%.6f%c %.6f%c %f km"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
 #: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
@@ -4240,9 +4193,9 @@ msgid "Surface temp: %s K\n"
 msgstr "Yüzey sıcaklığı: %s K\n"
 
 #: ../src/celestia/celestiacore.cpp:2869
-#, fuzzy, c-format
+#, c-format
 msgid "Radius: %s Rsun  (%s)\n"
-msgstr "Yarıçap: %s Rgüneş (%s km)\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
 #: ../src/celestia/celestiacore.cpp:2939
@@ -4265,9 +4218,9 @@ msgid "Phase angle: %.1f%s\n"
 msgstr "Faz açısı: %.1f%s\n"
 
 #: ../src/celestia/celestiacore.cpp:2996
-#, fuzzy, c-format
+#, c-format
 msgid "Density: %.2f x 1000 lb/ft^3\n"
-msgstr "Yoğunluk: %.2f x 1000 kg/m^3\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2998
 #, c-format
@@ -4281,7 +4234,7 @@ msgstr "Sıcaklık: %.0f K\n"
 
 #: ../src/celestia/celestiacore.cpp:3156
 msgid "  LT"
-msgstr " LT"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:3165
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
@@ -4317,13 +4270,11 @@ msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
 msgstr ""
-"FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
-"%zu : %zu ]\n"
 
 #: ../src/celestia/celestiacore.cpp:3213
 #, c-format
 msgid "FPS: %.1f\n"
-msgstr "FPS: %.1f\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:3238
 #, c-format
@@ -4363,17 +4314,17 @@ msgstr "%s Peşinden Git\n"
 #: ../src/celestia/celestiacore.cpp:3294
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
-msgstr "FOV: %s (%.2fx)\n"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:3488
 #, c-format
 msgid "Target name: %s"
-msgstr "Hedef adı: %s"
+msgstr "Hedef ismi: %s"
 
 #: ../src/celestia/celestiacore.cpp:3575
-#, fuzzy, c-format
+#, c-format
 msgid "%dx%d at %.2f fps  %s"
-msgstr "%f fps'de %dx%d %s"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:3578
 msgid "Paused"
@@ -4404,7 +4355,7 @@ msgstr "Güneş sistemi kataloğu yükleniyor: %s\n"
 #: ../src/celestia/celestiacore.cpp:3694
 #, c-format
 msgid "Skipping %s catalog: %s\n"
-msgstr "%s kataloğu atlanıyor: %s\n"
+msgstr "%s katalog atlanıyor: %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3697
 #, c-format
@@ -4493,17 +4444,16 @@ msgid "Unable to capture a frame!\n"
 msgstr "Bir kare yakalanamadı!\n"
 
 #: ../src/celestia/celestiacore.cpp:4780
-#, fuzzy
 msgid "Unsupported image type: {}!\n"
-msgstr "Desteklenmeyen URL modu \"%s\"!\n"
+msgstr ""
 
 #: ../src/celestia/glut/glutmain.cpp:522
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
-msgstr "Celestia, OpenGL 2.1'i başlatamadı.\n"
+msgstr "Celestia OpenGL 2.1'i başlatamadı.\n"
 
 #: ../src/celestia/gtk/actions.cpp:1095 ../src/celestia/win32/winmain.cpp:2661
 msgid "Please use a name ending in '.jpg' or '.png'."
-msgstr "Lütfen '.jpg' veya '.png' ile biten bir ad kullanın."
+msgstr "Lütfen '.jpg' veya '.png' ile biten bir isim kullanın."
 
 #: ../src/celestia/helper.cpp:106 ../src/celestia/helper.cpp:115
 #, c-format
@@ -4518,17 +4468,17 @@ msgstr "Satıcı: %s\n"
 #: ../src/celestia/helper.cpp:112
 #, c-format
 msgid "Renderer: %s\n"
-msgstr "Renderer: %s\n"
+msgstr "Renderer %s\n"
 
 #: ../src/celestia/helper.cpp:118
 #, c-format
 msgid "Max simultaneous textures: %s\n"
-msgstr "Maksimum eşzamanlı dokular: %s\n"
+msgstr "Maks. eşzamanlı dokular: %s\n"
 
 #: ../src/celestia/helper.cpp:121
 #, c-format
 msgid "Max texture size: %s\n"
-msgstr "Maksimum doku boyutu: %s\n"
+msgstr "Maks. doku boyutu: %s\n"
 
 #: ../src/celestia/helper.cpp:124
 #, c-format
@@ -4538,22 +4488,22 @@ msgstr "Nokta boyutu aralığı: %s - %s\n"
 #: ../src/celestia/helper.cpp:127
 #, c-format
 msgid "Line width range: %s - %s\n"
-msgstr "Çizgi genişliği aralığı: %s - %s\n"
+msgstr "Çizgi kalınlık aralığı: %s - %s\n"
 
 #: ../src/celestia/helper.cpp:130
 #, c-format
 msgid "Point size granularity: %s\n"
-msgstr "Nokta boyutu ayrıntı düzeyi: %s\n"
+msgstr "Nokta boyutu tanecikliliği: %s\n"
 
 #: ../src/celestia/helper.cpp:133
 #, c-format
 msgid "Max cube map size: %s\n"
-msgstr "Maks. küp eşleme boyutu: %s\n"
+msgstr "Maks. küp haritası boyutu: %s\n"
 
 #: ../src/celestia/helper.cpp:136
 #, c-format
 msgid "Number of interpolators: %s\n"
-msgstr "İnterpolatör sayısı: %s\n"
+msgstr "Enterpolatör sayısı: %s\n"
 
 #: ../src/celestia/helper.cpp:139
 #, c-format
@@ -4574,16 +4524,14 @@ msgstr "İç Ogg kütüphanesi hatası.\n"
 #: ../src/celestia/oggtheoracapture.cpp:311
 #, c-format
 msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+"%dx%d offset (%dx%d)\n"
 msgstr ""
-"OggTheoraCapture::start() - Theora videosu: %s %.2f(%d/%d) fps kalitesi %d "
-"%dx%d ofset (%dx%d)\n"
 
 #: ../src/celestia/oggtheoracapture.cpp:426
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - %d kare yazdı\n"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:169
 msgid "Auto"
@@ -4599,11 +4547,11 @@ msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:231
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
-"Celestia, veri dizini bulunamadığından, muhtemelen yanlış kurulumdan dolayı "
-"çalıştırılamıyor."
+"Celestia çalıştırılamıyor çünkü veri dizini bulunamıyor, muhtemelen hatalı "
+"kurulumdan dolayı."
 
 #: ../src/celestia/qt/qtappwin.cpp:297
 msgid "Celestial Browser"
@@ -4638,7 +4586,8 @@ msgstr "Yıldızlar"
 msgid "Deep Sky Objects"
 msgstr "Derin Uzay Cisimleri"
 
-#: ../src/celestia/qt/qtappwin.cpp:341 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:341
+#: ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 msgid "Event Finder"
 msgstr "Olay Bulucu"
@@ -4692,9 +4641,8 @@ msgid "Video (*.avi)"
 msgstr "Video (*.avi)"
 
 #: ../src/celestia/qt/qtappwin.cpp:654
-#, fuzzy
 msgid "Matroska Video (*.mkv)"
-msgstr "Video (*.avi)"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:670
 msgid "Resolution:"
@@ -4740,11 +4688,11 @@ msgstr "URL yapıştırılıyor"
 
 #: ../src/celestia/qt/qtappwin.cpp:908
 msgid "Open Script"
-msgstr "Betiği Aç"
+msgstr "Scripti Aç"
 
 #: ../src/celestia/qt/qtappwin.cpp:910
 msgid "Celestia Scripts (*.celx *.cel)"
-msgstr "Celestia Betikleri (*.celx *.cel)"
+msgstr "Celestia Scriptleri (*.celx *.cel)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1023
 msgid "New bookmark"
@@ -4753,34 +4701,19 @@ msgstr "Yeni yer imi"
 #: ../src/celestia/qt/qtappwin.cpp:1078
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Main site: <a "
+"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright"
+" (C) 2001-2021 by the Celestia Development Team.<br>Celestia is free "
+"software. You can redistribute it and/or modify it under the terms of the "
+"GNU General Public License as published by the Free Software Foundation; "
+"either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a "
 "href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</"
-"a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
-"\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</p><p>"
-"%2 bit CPU için inşaa edildi<br>%3 %4 kullanılıyor<br>İnşaa edilen Qt "
-"kitaplığı: %5<br>NAIF çekirdekleri %7<br>Qt sürümü: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Telif Hakkı "
-"(C) Celestia Development Team tarafından 2001-2021 .<br>Celestia bir özgür "
-"yazılımdır. Özgür Yazılım Vakfı tarafından yayınlanan GNU Genel Kamu "
-"Lisansının2. sürümü veya (isteğe bağlı olarak) herhangi bir sonraki sürümü;"
-"koşulları altında yeniden dağıtabilir ve/veya değiştirebilirsiniz."
-"<p>Anasayfa: <a href=\"https://celestia.space/\">https://celestia.space/</"
-"a><br>Forum: <a href=\"https://celestia.space/forum/\">https://celestia."
-"space/forum/</a><br>GitHub projesi: <a href=\"https://github.com/"
-"CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></"
-"p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1113
 msgid "Unknown compiler"
@@ -4788,11 +4721,11 @@ msgstr "Bilinmeyen derleyici"
 
 #: ../src/celestia/qt/qtappwin.cpp:1117
 msgid "supported"
-msgstr "destekleniyor"
+msgstr "desteklenen"
 
 #: ../src/celestia/qt/qtappwin.cpp:1119
 msgid "not supported"
-msgstr "desteklenmiyor"
+msgstr "desteklenmeyen"
 
 #: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1516
 #: ../src/celestia/win32/res/resource_strings.cpp:70
@@ -4802,12 +4735,12 @@ msgstr "Celestia Hakkında"
 #: ../src/celestia/qt/qtappwin.cpp:1141
 #, qt-format
 msgid "<b>%1 version:</b> %2"
-msgstr "<b>%1 sürüm:</b> %2"
+msgstr "<b>%1 sürüm:</b> %2 "
 
 #: ../src/celestia/qt/qtappwin.cpp:1147
 #, qt-format
 msgid "<b>Vendor:</b> %1"
-msgstr "<b>Satıcı:</b> %L1 %2"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1153
 #, qt-format
@@ -4822,41 +4755,41 @@ msgstr "<b>%1 Sürüm:</b> %2"
 #: ../src/celestia/qt/qtappwin.cpp:1167
 #, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
-msgstr "<b>Maksimum eşzamanlı dokular:</b> %1"
+msgstr "<b>Maks. eşzamanlı dokular:</b> %1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1173
 #, qt-format
 msgid "<b>Maximum texture size:</b> %1"
-msgstr "<b>Maksimum doku boyutu:</b> %1"
+msgstr "<b>Maks. doku boyutu:</b> %1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1179
 #, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
-msgstr "<b>Nokta boyutu uzaklığı:</b> %L1 %2"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1185
 #, qt-format
 msgid "<b>Point size granularity:</b> %1"
-msgstr "<b>Nokta boyutu ayrıntı düzeyi:</b> %1"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1191
 #, qt-format
 msgid "<b>Max cube map size:</b> %1"
-msgstr "<b>Maks. küp haritası boyutu:</b> %1"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1197
 #, qt-format
 msgid "<b>Number of interpolators:</b> %1"
-msgstr "<b>Periapsis argümanı:</b> %1"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1203
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
-msgstr "<b>Maks anizotropi filtreleme:</b> %1"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1213
 msgid "<b>Supported extensions:</b><br>\n"
-msgstr "<b>Desteklenen eklentiler:</b><br>\n"
+msgstr "<b>Desteklenen uzantılar:</b><br>\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:1227
 msgid "Renderer Info"
@@ -4895,7 +4828,7 @@ msgstr "Ctrl+Shift+C"
 #: ../src/celestia/qt/qtappwin.cpp:1275
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr "Betik &Aç..."
+msgstr "Script &Aç..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1286
 msgid "&Preferences..."
@@ -4935,11 +4868,11 @@ msgstr "Cisme Git..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1314
 msgid "Copy URL / console text"
-msgstr "URL / konsol metnini kopyala"
+msgstr "URL / konsol metni kopyala"
 
 #: ../src/celestia/qt/qtappwin.cpp:1319
 msgid "Paste URL / console text"
-msgstr "URL / konsol metnini yapıştır"
+msgstr "URL / konsol metni yapıştır"
 
 #. ***** Time menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1325
@@ -4975,7 +4908,7 @@ msgstr "Doku &Çözünürlüğü"
 
 #: ../src/celestia/qt/qtappwin.cpp:1370
 msgid "&FPS control"
-msgstr "&FPS kontrolü"
+msgstr ""
 
 #. ***** Bookmark menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1387
@@ -4992,7 +4925,7 @@ msgstr "&Görüntü"
 #. ***** MultiView menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1393
 msgid "&MultiView"
-msgstr "&Çoklu Görünüm"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1396
 msgid "Split view vertically"
@@ -5071,7 +5004,7 @@ msgstr "Yer İmlerini Organize Et..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1574
 msgid "Set custom FPS"
-msgstr "Özel FPS ayarla"
+msgstr "Özel FPS seç"
 
 #: ../src/celestia/qt/qtappwin.cpp:1575
 msgid "FPS value"
@@ -5089,7 +5022,7 @@ msgstr ""
 #: ../src/celestia/qt/qtappwin.cpp:1607
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
-msgstr "Betikler"
+msgstr "Scriptler"
 
 #: ../src/celestia/qt/qtbookmark.cpp:395
 msgid "Title"
@@ -5105,7 +5038,7 @@ msgstr "Yer İmleri Menüsü"
 
 #: ../src/celestia/qt/qtbookmark.cpp:583
 msgid "Add bookmarks to this folder to see them in the bookmarks menu."
-msgstr "Yer imleri menüsünde görmek için yer imlerini bu dizine ekleyin."
+msgstr "Yer imleri menüsünde görmek için yer imlerini bu klasöre ekleyin."
 
 #: ../src/celestia/qt/qtbookmark.cpp:588
 msgid "Bookmarks Toolbar"
@@ -5113,7 +5046,7 @@ msgstr "Yer İmleri Araç Çubuğu"
 
 #: ../src/celestia/qt/qtbookmark.cpp:589
 msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
-msgstr "Yer imleri çubuğunda görmek için yer imlerini bu dizine ekleyin."
+msgstr "Yer imleri çubuğunda görmek için yer imlerini bu klasöre ekleyin."
 
 #: ../src/celestia/qt/qtbookmark.cpp:603
 msgid "Error reading bookmarks file"
@@ -5136,7 +5069,8 @@ msgid "System time at activation"
 msgstr "Aktifleştirmedeki sistem zamanı"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:880 ../src/celestia/qt/rc.cpp:39
@@ -5247,8 +5181,9 @@ msgstr "Yörüngeler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:85
 #: ../src/celestia/qt/qtcelestiaactions.cpp:112
 #: ../src/celestia/qt/qtselectionpopup.cpp:388
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:157
+#: ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:213
 #: ../src/celestia/win32/winmain.cpp:1466
 #: ../src/celestia/win32/winmain.cpp:1504
@@ -5271,8 +5206,9 @@ msgstr "Cüce gezegenler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:87
 #: ../src/celestia/qt/qtcelestiaactions.cpp:114
 #: ../src/celestia/qt/qtselectionpopup.cpp:394
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:163
+#: ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:215
 #: ../src/celestia/win32/winmain.cpp:1462
 msgid "Moons"
@@ -5293,8 +5229,9 @@ msgstr "Küçük Uydular"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:89
 #: ../src/celestia/qt/qtcelestiaactions.cpp:116
 #: ../src/celestia/qt/qtselectionpopup.cpp:400
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742
+#: ../src/celestia/qt/rc.cpp:87 ../src/celestia/qt/rc.cpp:169
+#: ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:217
 #: ../src/celestia/win32/winmain.cpp:1456
 msgid "Asteroids"
@@ -5309,8 +5246,9 @@ msgstr "Asteroitler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:90
 #: ../src/celestia/qt/qtcelestiaactions.cpp:117
 #: ../src/celestia/qt/qtselectionpopup.cpp:403
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750
+#: ../src/celestia/qt/rc.cpp:90 ../src/celestia/qt/rc.cpp:172
+#: ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:218
 #: ../src/celestia/win32/winmain.cpp:1458
 msgid "Comets"
@@ -5330,13 +5268,14 @@ msgstr "Kuyruklu yıldızlar"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:118
 #: ../src/celestia/qt/qtselectionpopup.cpp:406
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746
+#: ../src/celestia/qt/rc.cpp:94 ../src/celestia/qt/rc.cpp:176
+#: ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:219
 #: ../src/celestia/win32/winmain.cpp:1471
 msgctxt "plural"
 msgid "Spacecraft"
-msgstr "Uzay aracı"
+msgstr "Uzay araçları"
 
 #. Label actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:107
@@ -5573,7 +5512,7 @@ msgstr "Kütle Merkezleri"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:547
 msgid "Spectral Type"
-msgstr "Tayf Türü"
+msgstr "Spektral Tür"
 
 #. End filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:556
@@ -5803,7 +5742,7 @@ msgstr "%1 arkasından"
 
 #: ../src/celestia/qt/qtglwidget.cpp:124
 msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr "Celestia, OpenGL 2.1'i başlatamadı."
+msgstr "Celestia, OpenGL 2.1'i başlatamadı."
 
 #: ../src/celestia/qt/qtinfopanel.cpp:79
 msgid "Error: no object selected!\n"
@@ -5849,16 +5788,16 @@ msgstr "yıl"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:207
 msgid "<b>Has rings</b>"
-msgstr "<b>Halkalı</b>"
+msgstr "<b>Halkaları var</b>"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Has atmosphere</b>"
-msgstr "<b>Atmosfere sahip</b>"
+msgstr "<b>Atmosferi var</b>"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:217
 #, qt-format
 msgid "<b>Start:</b> %1"
-msgstr "<b>Başlangıç:</b> %1"
+msgstr "<b>Başlangıç</b> %1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:220
 #, qt-format
@@ -5872,7 +5811,7 @@ msgstr "Yörünge bilgisi"
 #: ../src/celestia/qt/qtinfopanel.cpp:223
 #, qt-format
 msgid "Osculating elements for %1"
-msgstr "%1 için elemanlar teğet"
+msgstr ""
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
 #: ../src/celestia/qt/qtinfopanel.cpp:226
@@ -5902,12 +5841,12 @@ msgstr "<b>Eğiklik:</b> %L1%2"
 #: ../src/celestia/qt/qtinfopanel.cpp:242
 #, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
-msgstr "<b>Enberi uzaklığı:</b> %L1 %2"
+msgstr "<b>Perisantr uzaklığı:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:243
 #, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
-msgstr "<b>Enöte uzaklığı:</b> %L1 %2"
+msgstr "<b>Aposantr uzaklığı:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:245
 #, qt-format
@@ -5945,33 +5884,33 @@ msgstr "<b>Sap:</b> %L1%2 %L3' %L4\""
 #: ../src/celestia/qt/qtinfopanel.cpp:323
 #, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
-msgstr "<b>L:</b> %L1%2 %L3' %L4\""
+msgstr ""
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:327
 #, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
-msgstr "<b>B:</b> %L1%2 %L3' %L4\""
+msgstr ""
 
 #: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:3014
 msgid "Directory expected after --dir"
-msgstr "--dir'den sonra dizin bekleniyor"
+msgstr "--dir ifadesinden sonra dizin gerekli"
 
 #: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3027
 msgid "Configuration file name expected after --conf"
-msgstr "--conf'dan sonra yapılandırma dosyası adı bekleniyor"
+msgstr "--conf ifadesinden sonra yapılandırma dosya adı gerekli"
 
 #: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3041
 msgid "Directory expected after --extrasdir"
-msgstr "--extrasdir'den sonra dizin bekleniyor"
+msgstr "--extrasdir ifadesinden sonra dizin gerekli"
 
 #: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3054
 msgid "URL expected after --url"
-msgstr "--url'den sonra URL bekleniyor"
+msgstr "--url ifadesinden sonra URL gerekli"
 
 #: ../src/celestia/qt/qtmain.cpp:207
 msgid "A filename expected after --log/-l"
-msgstr "--log/-l'den sonra dosya adı bekleniyor"
+msgstr "--log/-l ifadesinden sonra bir dosya adı gerekli"
 
 #: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3069
 #, c-format
@@ -6060,7 +5999,7 @@ msgstr "&İzle"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
 msgid "S&ynch Orbit"
-msgstr "Yörüngeyi E&şzamanla"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164
 msgid "Visible"
@@ -6069,17 +6008,16 @@ msgstr "Görünür"
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
 #: ../src/celestia/win32/winmain.cpp:1649
 msgid "&Unmark"
-msgstr "İşareti &kaldır"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
 #: ../src/celestia/win32/winmain.cpp:1582
-#, fuzzy
 msgid "Select &Primary Body"
-msgstr "Birincil Gövdeyi Seçin"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:247
 msgid "Filled Square"
-msgstr "Dolu Kare"
+msgstr "Doldurulmuş Kare"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:255
 msgid "Disk"
@@ -6088,32 +6026,32 @@ msgstr "Disk"
 #: ../src/celestia/qt/qtselectionpopup.cpp:258
 #: ../src/celestia/win32/winmain.cpp:1651
 msgid "&Mark"
-msgstr "&İşaretle"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:275
 #: ../src/celestia/win32/winmain.cpp:1567
 msgid "&Reference Marks"
-msgstr "&Referans İşaretleri"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:277
 msgid "Show &Body Axes"
-msgstr "&Gövde Eksenlerini Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:283
 msgid "Show &Frame Axes"
-msgstr "&Çerçeve Eksenlerini Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:289
 msgid "Show &Sun Direction"
-msgstr "&Güneşin İstikametini Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:295
 msgid "Show &Velocity Vector"
-msgstr "&Hız Vektörünü Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:301
 msgid "Show S&pin Vector"
-msgstr "D&öndürme Vektörünü Göster"
+msgstr ""
 
 #. Only show the frame center menu item if the selection orbits another
 #. a non-stellar object. If it orbits a star, this is generally identical
@@ -6121,20 +6059,20 @@ msgstr "D&öndürme Vektörünü Göster"
 #: ../src/celestia/qt/qtselectionpopup.cpp:313
 #, qt-format
 msgid "Show &Direction to %1"
-msgstr "%1'e &Yön Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:320
 msgid "Show Planetographic &Grid"
-msgstr "Planetografik &Izgarayı Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:326
 msgid "Show &Terminator"
-msgstr "&Sonlandırıcıyı Göster"
+msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:344
 #: ../src/celestia/win32/winmain.cpp:1599
 msgid "&Alternate Surfaces"
-msgstr "Yüzeyleri &Değiştir"
+msgstr ""
 
 #. TRANSLATORS: normal texture in an alternative surface menu
 #: ../src/celestia/qt/qtselectionpopup.cpp:345
@@ -6161,9 +6099,9 @@ msgstr "Cüce gezegenler"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:397
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1464
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:166
+#: ../src/celestia/qt/rc.cpp:233 ../src/celestia/win32/winmain.cpp:1464
 msgid "Minor moons"
 msgstr "Küçük uydular"
 
@@ -6235,11 +6173,11 @@ msgstr "Saniye Seç"
 #: ../src/celestia/qt/qtsettimedialog.cpp:129
 #: ../src/celestia/win32/res/resource_strings.cpp:166
 msgid "Julian Date: "
-msgstr "Jülyen Tarihi:"
+msgstr "Julian Tarihi:"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:141
 msgid "Set Julian Date"
-msgstr "Jülyen Tarihi Seç"
+msgstr "Julian Tarihi Seç"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:150
 msgid "Set time"
@@ -6433,7 +6371,8 @@ msgid "Description:"
 msgstr "Açıklama:"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:153
 msgid "Organize Bookmarks"
@@ -6770,16 +6709,16 @@ msgstr "XBEL sürüm 1.0 dosyası değil."
 #: ../src/celestia/url.cpp:310
 #, c-format
 msgid "Incorrect hex value \"%s\"\n"
-msgstr "Yanlış onaltılık değer \"%s\"\n"
+msgstr "Yanlış hex değeri \"%s\"\n"
 
 #: ../src/celestia/url.cpp:393
 #, c-format
 msgid "URL must start with \"%s\"!\n"
-msgstr "URL \"%s\" ile başlamalıdır!\n"
+msgstr "URL \"%s\" ile başlamalı!\n"
 
 #: ../src/celestia/url.cpp:409
 msgid "URL must have at least mode and time!\n"
-msgstr "URL'nin en az bir moda ve zamana sahip olmalıdır!\n"
+msgstr "URL en azından bir mod ve zaman içermeli!\n"
 
 #: ../src/celestia/url.cpp:420
 #, c-format
@@ -6788,11 +6727,11 @@ msgstr "Desteklenmeyen URL modu \"%s\"!\n"
 
 #: ../src/celestia/url.cpp:438
 msgid "URL must contain only one body\n"
-msgstr "URL yalnızca bir gövde içermelidir\n"
+msgstr "URL sadece bir cisim içermeli\n"
 
 #: ../src/celestia/url.cpp:450
 msgid "URL must contain 2 bodies\n"
-msgstr "URL iki gövde içermelidir\n"
+msgstr "URL 2 cisim içermeli\n"
 
 #: ../src/celestia/url.cpp:491
 #, c-format
@@ -6802,11 +6741,11 @@ msgstr "Geçersiz URL sürümü \"%s\"!\n"
 #: ../src/celestia/url.cpp:498
 #, c-format
 msgid "Unsupported URL version: %i\n"
-msgstr "Geçersiz URL sürümü: %i\n"
+msgstr "Desteklenmeyen URL sürümü: %i\n"
 
 #: ../src/celestia/url.cpp:530
 msgid "URL parameter must look like key=value\n"
-msgstr "URL parametresi, anahtar=değer gibi görünmelidir\n"
+msgstr "URL parametresi key=value şeklinde olmalı\n"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:4
 msgid "Placeholder"
@@ -6814,15 +6753,15 @@ msgstr "Yer tutucu"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "&Görüntü Yakala...\tF10"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "&Video Yakala...\tShift+F10"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
-msgstr "&Çözüm'ü seç\tH"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
@@ -6830,11 +6769,11 @@ msgstr "&Tur Rehberi"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:11
 msgid "Select &Object..."
-msgstr "&Nesneyi Seç..."
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr "&Merkez Seçimi\tC"
+msgstr "&Merkez Seçin\tC"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
@@ -6842,27 +6781,27 @@ msgstr "&Seçime Git\tG"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr "Seçimi Takip &Et\tF"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "Yörünge Seçimini &Senkronize Et\tY"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
-msgstr "&Seçimi İzle\tT"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
-msgstr "Güneş Sistemi &Gezgini..."
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
-msgstr "Ge&zgini Başlat..."
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
-msgstr "Tutulma Bulucu"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
@@ -6882,7 +6821,7 @@ msgstr "&Gerçek Zaman\t\\"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
-msgstr "Te&rs Zaman\tJ"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:27
 msgid "Set &Time..."
@@ -6894,15 +6833,15 @@ msgstr "Yerel Zamanı Göster"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr "&Render"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
-msgstr "Görüntüleme Modunu Seçin..."
+msgstr "Görüntü Modunu Seç..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
-msgstr "Tam Ekranı Değiştir\tAlt+Enter"
+msgstr "Tam Ekrana Geç\tAlt+Enter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:32
 msgid "View Options..."
@@ -6914,15 +6853,15 @@ msgstr "Konumlar..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
-msgstr "Daha Fazla Yıldız Görünür\t]"
+msgstr "Daha Çok Görünür Yıldız\t]"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
-msgstr "Daha Az Yıldız Görünür\t["
+msgstr "Daha Az Görünür Yıldız\t["
 
 #: ../src/celestia/win32/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr "Otomatik Büyüklük\tCtrl+Y"
+msgstr "Oto Kadir\tCtrl+Y"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:38
 msgid "&Points"
@@ -6934,39 +6873,39 @@ msgstr "&Bulanık Noktalar"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
-msgstr "Ölçekli &Diskler"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:41
 msgid "Star &Color"
-msgstr "Yıldız &Rengi"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:42
 msgid "&Disabled"
-msgstr "&Devre dışı"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:43
 msgid "&Enabled"
-msgstr "&Etkin"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:44
 msgid "&Ambient Light"
-msgstr "&Ortam ışığı"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:45
 msgid "&No"
-msgstr "&Hayır"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:46
 msgid "&Weakly"
-msgstr "&Zayıf"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:47
 msgid "&Moderately"
-msgstr "&Orta Dereceli"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:48
 msgid "&Texture Resolution"
-msgstr "&Doku çözünürlüğü"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:49
 msgid "&Low"
@@ -6982,23 +6921,23 @@ msgstr "&Yüksek"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:52
 msgid "Antialiasing\tCtrl+X"
-msgstr "Kenar yumuşatma (Antialiasing)\tCtrl+X"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:54
 msgid "Split &Horizontally\tCtrl+R"
-msgstr "Yatay &Olarak Böl\tCtrl+R"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:55
 msgid "Split &Vertically\tCtrl+U"
-msgstr "&Dikey Olarak Böl\tCtrl+U"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:56
 msgid "&Delete Active View\tDEL"
-msgstr "&Aktif Görüntülemeyi Sil\tDEL"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:57
 msgid "&Single View\tCtrl+D"
-msgstr "&Tek Görünüm\tCtrl+D"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:58
 msgid "Show &Frames"
@@ -7006,11 +6945,11 @@ msgstr "&Kareleri Göster"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:59
 msgid "Synchronize &Time"
-msgstr "&Zamanı Eşzamanla"
+msgstr "&Zaman Senkronize"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:61
 msgid "&Add Bookmarks..."
-msgstr "&Yer imi ekle..."
+msgstr "&Yerimi ekle..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:62
 msgid "&Organize Bookmarks..."
@@ -7022,7 +6961,7 @@ msgstr "&Demo Çalıştır"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:65
 msgid "User &Guide"
-msgstr "Kullanım &Kılavuzu"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:66
 msgid "&Controls"
@@ -7069,7 +7008,7 @@ msgstr "1.7.0"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:74
 msgid "Copyright (C) 2001-2021, Celestia Development Team"
-msgstr "Telif hakkı (C) 2001-2019, Celestia Development Team"
+msgstr "Telif hakkı (C) 2001-2021, Celestia Geliştirme Ekibi"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:75
 msgid "https://celestia.space/"
@@ -7142,15 +7081,15 @@ msgstr "Şurada oluştur >>"
 #: ../src/celestia/win32/res/resource_strings.cpp:95
 #: ../src/celestia/win32/res/resource_strings.cpp:156
 msgid "New Folder..."
-msgstr "Yeni Dizin..."
+msgstr "Yeni Klasör..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:96
 msgid "Add New Bookmark Folder"
-msgstr "Yeni Yer İmleri Dizini Ekle"
+msgstr "Yeni Yer İmleri Klasörü Ekle"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:99
 msgid "Folder Name"
-msgstr "Dizin Adı"
+msgstr "Klasör Adı"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 msgid "Celestia Controls"
@@ -7198,11 +7137,11 @@ msgstr "Arama parametreleri"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:114
 msgid "Solar Eclipses"
-msgstr "Güneş tutulmaları"
+msgstr "Güneş Tutulmaları"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:115
 msgid "Lunar Eclipses"
-msgstr "Ay tutulmaları"
+msgstr "Ay Tutulmaları"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:116
 msgid "Select Object"
@@ -7248,27 +7187,27 @@ msgstr "Lisans"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:137
 msgid "Landing Sites"
-msgstr "İniş alanları"
+msgstr "İniş Alanları"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:138
 msgid "Montes (Mountains)"
-msgstr "Montes (dağlar)"
+msgstr "Montes (Dağlar)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:139
 msgid "Maria (Seas)"
-msgstr "Maria (denizler)"
+msgstr "Maria (Denizler)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:141
 msgid "Valles (Valleys)"
-msgstr "Valles (vadiler)"
+msgstr "Valles (Vadiler)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:142
 msgid "Terrae (Land masses)"
-msgstr "Terrae (kara kütleleri)"
+msgstr "Terrae (Kara kütleleri)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:145
 msgid "Label Features"
-msgstr "Özellikler"
+msgstr "Etiket Özellikleri"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:148
 msgid "Show Features"
@@ -7329,15 +7268,15 @@ msgstr "Yıldız Tarayıcısı"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:177
 msgid "Nearest"
-msgstr "En Yakın"
+msgstr "En yakın"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:178
 msgid "Brightest"
-msgstr "En Parlak"
+msgstr "En parlak"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:179
 msgid "With planets"
-msgstr "Gezegenlerle"
+msgstr "Gezegenler ile"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:182
 msgid "&Refresh"
@@ -7377,7 +7316,7 @@ msgstr "Görüntü:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:205
 msgid "Ecliptic Line"
-msgstr "Ekliptik çizgisi"
+msgstr "Ekliptik Çizgisi"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:211
 msgid "Body / Orbit / Label display"
@@ -7385,7 +7324,7 @@ msgstr "Cisim / Yörünge / Etiket görünümü"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:228
 msgid "Latin Names"
-msgstr "Latince İsimler"
+msgstr "Latin İsimleri"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:229
 msgid "Information Text"
@@ -7397,12 +7336,12 @@ msgstr "Özlü"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:232
 msgid "Verbose"
-msgstr "Ayrıntılı"
+msgstr "Açıklayıcı"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:236
 #: ../src/celestia/win32/winmain.cpp:3251
 msgid "WinLangID"
-msgstr "WinLangID"
+msgstr "41f"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:237
 msgid "Apr"
@@ -7469,8 +7408,8 @@ msgid ""
 "License file missing!\n"
 "See http://www.gnu.org/copyleft/gpl.html"
 msgstr ""
-"Lisans dosyası bulunmuyor!\n"
-"http://www.gnu.org/copyleft/gpl.html adresine bakın"
+"Lisans dosyası kayıp!\n"
+"http://www.gnu.org/copyleft/gpl.html adresine bakınız."
 
 #. Add windowed mode as the first item on the menu
 #: ../src/celestia/win32/winmain.cpp:1325
@@ -7483,7 +7422,7 @@ msgstr "Görünmezler"
 
 #: ../src/celestia/win32/winmain.cpp:1564
 msgid "S&ync Orbit"
-msgstr "Yörüngeyi Eş&zamanla"
+msgstr ""
 
 #: ../src/celestia/win32/winmain.cpp:1565
 #: ../src/celestia/win32/winmain.cpp:1613
@@ -7525,8 +7464,7 @@ msgstr "Yörüngedeki Cisimler"
 
 #: ../src/celestia/win32/winmain.cpp:1741
 msgid "Unable to switch to full screen mode; running in window mode"
-msgstr ""
-"Tam ekran modundan düzgün şekilde çıkılamadı. Celestia şimdi kapanacak."
+msgstr "Tam ekran moduna geçilemedi; pencere modunda çalışıyor"
 
 #: ../src/celestia/win32/winmain.cpp:1742
 #: ../src/celestia/win32/winmain.cpp:2014
@@ -7535,11 +7473,11 @@ msgstr ""
 #: ../src/celestia/win32/winmain.cpp:2690
 #: ../src/celestia/win32/winmain.cpp:2789
 msgid "Error"
-msgstr "Kritik Hata"
+msgstr "Hata"
 
 #: ../src/celestia/win32/winmain.cpp:1906
 msgid "Failed to register the window class."
-msgstr "Pencere sınıfı kaydedilemedi."
+msgstr ""
 
 #: ../src/celestia/win32/winmain.cpp:1907
 #: ../src/celestia/win32/winmain.cpp:1958
@@ -7552,7 +7490,7 @@ msgstr "Kritik Hata"
 
 #: ../src/celestia/win32/winmain.cpp:1957
 msgid "Could not get appropriate pixel format for OpenGL rendering."
-msgstr "OpenGL işleme için uygun piksel biçimi alınamadı."
+msgstr "OpenGL renderı için uygun piksel formatı alınamadı."
 
 #: ../src/celestia/win32/winmain.cpp:1981
 msgid "Your system doesn't support OpenGL 2.1!"
@@ -7560,12 +7498,12 @@ msgstr "Sisteminiz OpenGL 2.1 desteklemiyor!"
 
 #: ../src/celestia/win32/winmain.cpp:2013
 msgid "Releasing device context failed."
-msgstr "Cihaz içeriği serbest bırakılamadı."
+msgstr ""
 
 #. Comment this out if you just want the standard "Save As" caption.
 #: ../src/celestia/win32/winmain.cpp:2628
 msgid "Save As - Specify File to Capture Image"
-msgstr "Farklı Kaydet - Görüntü Yakalanacak Dosyayı Belirtin"
+msgstr "Farklı Kaydet - Görüntü Yakalamak için Dosya Belirtin"
 
 #: ../src/celestia/win32/winmain.cpp:2672
 msgid "Could not save image file."
@@ -7573,20 +7511,20 @@ msgstr "Resim dosyası kaydedilemedi."
 
 #: ../src/celestia/win32/winmain.cpp:2689
 msgid "Stop current movie capture before starting another one."
-msgstr "Başka bir filme başlamadan önce mevcut film çekimini durdurun."
+msgstr "Yenisini başlatmadan önce şu anki video yakalamasını durdur."
 
 #. Comment this out if you just want the standard "Save As" caption.
 #: ../src/celestia/win32/winmain.cpp:2715
 msgid "Save As - Specify Output File for Capture Movie"
-msgstr "Farklı Kaydet - Film Yakalama için Çıktı Dosyasını Belirtin"
+msgstr "Farklı Kaydet - Video Yakalamak için Çıkış Dosyası Belirtin"
 
 #: ../src/celestia/win32/winmain.cpp:2785
 msgid "Specified file extension is not recognized."
-msgstr "Belirtilen dosya uzantısı tanınmadı."
+msgstr "Belirtilen dosya uzantısı tanınamadı."
 
 #: ../src/celestia/win32/winmain.cpp:2787
 msgid "Could not capture movie."
-msgstr "Film Kaydedilemedi."
+msgstr "Video yakalanamadı."
 
 #: ../src/celestia/win32/winmain.cpp:3015
 #: ../src/celestia/win32/winmain.cpp:3028
@@ -7602,32 +7540,32 @@ msgstr "Yükleniyor:"
 
 #: ../src/celestia/win32/winmain.cpp:3150
 msgid "Loading data files..."
-msgstr "Veri dosyaları yükleniyor.."
+msgstr "Veri dosyaları yükleniyor..."
 
 #: ../src/celestia/win32/winmain.cpp:3249 ../src/celutil/fsutils.cpp:44
 #: ../src/celutil/fsutils.cpp:47
 msgid "LANGUAGE"
-msgstr "DİL"
+msgstr "tr"
 
 #: ../src/celestia/win32/winmain.cpp:3291
 msgid "Configuration file missing!"
-msgstr "Yapılandırma dosyası eksik!"
+msgstr "Yapılandırma dosyası kayıp!"
 
 #: ../src/celestia/win32/winmain.cpp:3329
 msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
-"Eski sık kullanılanlar dosyası algılandı.\n"
+"Eski favoriler dosyası bulundu.\n"
 "Yeni konuma kopyalansın mı?"
 
 #: ../src/celestia/win32/winmain.cpp:3330
 msgid "Copy favorites?"
-msgstr "Sık kullanılanları kopyala?"
+msgstr "Favorileri kopyala?"
 
 #: ../src/celestia/win32/winmain.cpp:3364
 msgid "Failed to create the application window."
-msgstr "Uygulama penceresi oluşturulamadı."
+msgstr "Uygulama penceresi yaratılamadı."
 
 #: ../src/celestia/win32/winmain.cpp:3906
 msgid "Loading URL"
@@ -7664,12 +7602,12 @@ msgstr "PNG dosyasını okurken hata %s\n"
 
 #: ../src/celscript/legacy/legacyscript.cpp:96
 msgid "Error opening script file."
-msgstr "Betik dosyası açılırken hata."
+msgstr "Script dosyası açılırken hata."
 
 #: ../src/celscript/legacy/legacyscript.cpp:105
 #: ../src/celscript/lua/luascript.cpp:96
 msgid "Unknown error loading script"
-msgstr "Komut dosyası yüklenirken bilinmeyen hata"
+msgstr "Script yüklenirken bilinmeyen hata"
 
 #: ../src/celscript/lua/celx.cpp:763
 msgid ""
@@ -7684,12 +7622,12 @@ msgid ""
 msgstr ""
 "DİKKAT:\n"
 "\n"
-"Bu betik dosya okuma/yazma ve dış program\n"
+"Bu script dosya okuma/yazma ve dış program\n"
 "çalıştırma izni istiyor. İzin vermek tehlikeli olabilir.\n"
-"Bu betiğe güveniyor ve izin vermek\n"
+"Bu scripte güveniyor ve izin vermek\n"
 "istiyor musunuz?\n"
 "\n"
-"y = evet, ESC = betiği iptal et, başka tuşlar = hayır"
+"y = evet, ESC = scripti iptal et, başka tuşlar = hayır"
 
 #: ../src/celscript/lua/celx.cpp:774
 msgid ""
@@ -7702,20 +7640,20 @@ msgid ""
 msgstr ""
 "DİKKAT:\n"
 "\n"
-"Bu betik dosya okuma/yazma ve dış program\n"
+"Bu script dosya okuma/yazma ve dış program\n"
 "çalıştırma izni istiyor. İzin vermek tehlikeli olabilir.\n"
-"Bu betiğe güveniyor ve izin vermek \n"
+"Bu scripte güveniyor ve izin vermek \n"
 "istiyor musunuz?"
 
 #: ../src/celscript/lua/luascript.cpp:87
 #, c-format
 msgid "Error opening script '%s'"
-msgstr "'%s' betiği açılırken hata"
+msgstr "'%s' scripti açılırken hata"
 
 #: ../src/celscript/lua/luascript.cpp:104
 #: ../src/celscript/lua/luascript.cpp:239
 msgid "Script coroutine initialization failed"
-msgstr "Betik eşyordam başlatması başarısız oldu"
+msgstr "Script eşyordam başlatması başarısız oldu"
 
 #: ../src/celscript/lua/luascript.cpp:211
 #, c-format
@@ -7724,166 +7662,13 @@ msgstr "'%s' LuaHook açılırken hata"
 
 #: ../src/celscript/lua/luascript.cpp:228
 msgid "Unknown error loading hook script"
-msgstr "Çengel betik yüklenirken bilinmeyen hata"
+msgstr "Çengel script yüklenirken bilinmeyen hata"
 
 #: ../src/celutil/util.cpp:44
 msgid "Unknown value returned by GetTimeZoneInformation()\n"
-msgstr "GetTimeZoneInformation() tarafından döndürülen bilinmeyen değer\n"
+msgstr "GetTimeZoneInformation() tarafından bilinmeyen değer döndürüldü\n"
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
 #, c-format
 msgid "Error openning %s or .\n"
 msgstr "%s açarken hata veya .\n"
-
-#~ msgid "Astana"
-#~ msgstr "Astana"
-
-#~ msgid "Radius: %s km\n"
-#~ msgstr "Yarıçap: %s km\n"
-
-#~ msgid "Sun"
-#~ msgstr "Güneş"
-
-#~ msgid "Video (*.ogv)"
-#~ msgstr "Video (*.ogv)"
-
-#~ msgid "URL must start with \"cel://\"!\n"
-#~ msgstr "URL \"cel://\" ile başlamalıdır!\n"
-
-#~ msgid "Settings"
-#~ msgstr "Ayarlar"
-
-#~ msgid "OpenGL 2.0"
-#~ msgstr "OpenGL 2.0"
-
-#~ msgid "%@: %d"
-#~ msgstr "%@: %d"
-
-#~ msgid "%s:  %@"
-#~ msgstr "%s:  %@"
-
-#~ msgid "Supported"
-#~ msgstr "Desteklenen"
-
-#~ msgid "Vendor: %@"
-#~ msgstr "Satıcı: %@"
-
-#~ msgid "Renderer: %@"
-#~ msgstr "Renderer: %@"
-
-#~ msgid "Version: %@"
-#~ msgstr "Sürüm: %@"
-
-#~ msgid "Max simultaneous textures"
-#~ msgstr "Maks eşzamanlı dokular"
-
-#~ msgid "Max texture size"
-#~ msgstr "Maks doku boyutu"
-
-#~ msgid "Extensions:"
-#~ msgstr "Eklentiler:"
-
-#~ msgid ""
-#~ "It appears that the \"CelestiaResources\" directory has not been properly "
-#~ "installed in the correct location as indicated in the installation "
-#~ "instructions. \n"
-#~ "\n"
-#~ "Please correct this and try again."
-#~ msgstr ""
-#~ "Öyle görünüyor ki \"CelestiaResources\" klasörü kurulum talimatlarında "
-#~ "yazıldığı gibi doğru yere düzgün bir şekilde kurulmamış. \n"
-#~ "\n"
-#~ "Lütfen bunu düzeltin ve tekrar deneyin."
-
-#~ msgid "Error loading data files. Celestia will now quit."
-#~ msgstr "Veri dosyaları yüklenirken hata. Celestia şimdi kapanacak."
-
-#~ msgid ""
-#~ "It appears you are running Celestia on %s hardware. Do you wish to "
-#~ "install a workaround?"
-#~ msgstr ""
-#~ "Öyle görünüyor ki Celestia'yı %s donanımında çalıştırıyorsunuz. Bir "
-#~ "düzeltme kurmak ister misiniz?"
-
-#~ msgid ""
-#~ "A shell script will be run to modify your %@, adding an "
-#~ "IgnoreGLExtensions directive. This can prevent freezing issues."
-#~ msgstr ""
-#~ "%@ değiştirmek için bir kabuk betiği çalıştırılacak ve bir "
-#~ "IgnoreGLExtensions yönergesi eklenecek. Bu donma sorunlarını "
-#~ "engelleyebilir."
-
-#~ msgid "Yes"
-#~ msgstr "Evet"
-
-#~ msgid "No"
-#~ msgstr "Hayır"
-
-#~ msgid "Workaround successfully installed."
-#~ msgstr "Düzeltme başarıyla kuruldu."
-
-#~ msgid "Your original %@ has been backed up."
-#~ msgstr "Orijinal %@ yedeklendi."
-
-#~ msgid ""
-#~ "There was a problem installing the workaround. You can attempt to perform "
-#~ "the workaround manually by following the instructions in the README."
-#~ msgstr ""
-#~ "Düzeltme kurulurken bir hata oldu. README'deki talimatları okuyarak "
-#~ "düzeltmeyi elle yapmayı deneyebilirsiniz."
-
-#~ msgid "Quit Celestia?"
-#~ msgstr "Celestia'dan Çık?"
-
-#~ msgid "Are you sure you want to quit Celestia?"
-#~ msgstr "Celestia'dan çıkmak istediğinize emin misiniz?"
-
-#~ msgid "Quit"
-#~ msgstr "Çık"
-
-#~ msgid "Movie capture is not available in this version of Celestia."
-#~ msgstr "Celestia'nın bu sürümünde film kaydı mevcut değil."
-
-#~ msgid "No Movie Capture"
-#~ msgstr "Film Yakalama Yok"
-
-#~ msgid "untitled folder"
-#~ msgstr "adsız klasör"
-
-#~ msgid "No Object Name Entered"
-#~ msgstr "Cisim Adı Girilmedi"
-
-#~ msgid "Please enter an object name."
-#~ msgstr "Lütfen bir cisim adı girin."
-
-#~ msgid "Object Not Found"
-#~ msgstr "Cisim Bulunamadı"
-
-#~ msgid "Please check that the object name is correct."
-#~ msgstr "Lütfen cisim adının doğru olduğundan emin olun."
-
-#~ msgid "Show Alternate Surface"
-#~ msgstr "Alternatif Yüzey Göster"
-
-#~ msgid "default"
-#~ msgstr "varsayılan"
-
-#~ msgid "No Date or Time Entered"
-#~ msgstr "Tarih veya Zaman Girilmedi"
-
-#~ msgid "Please enter a date and/or time."
-#~ msgstr "Lütfen bir tarih ve/veya zaman girin."
-
-#~ msgid "Improper Date or Time Format"
-#~ msgstr "Uygunsuz Tarih veya Zaman Formatı"
-
-#~ msgid ""
-#~ "Please enter the date as \"mm/dd/yyyy\" and the time as \"hh:mm:ss\"."
-#~ msgstr ""
-#~ "Lütfen tarihi \"aa/gg/yyyy\" ve zamanı \"sa:dd:sn\" biçiminde girin."
-
-#~ msgid "Spacecrafts"
-#~ msgstr "Uzay araçları"
-
-#~ msgid "The Garnet Star"
-#~ msgstr "The Garnet Star"
