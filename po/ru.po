@@ -2,12 +2,12 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # AlexL <loginov.alex.valer@gmail.com>, 2019
 # Hleb Valoshka <375gnu@gmail.com>, 2021
 # Askaniy Anpilogov, 2021
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -17,13 +17,11 @@ msgstr ""
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Askaniy Anpilogov, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/celestia/teams/93131/ru/)\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
-"%100>=11 && n%100<=14)? 2 : 3);\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../data/data.cpp:1
 msgid "Mercury"
@@ -1449,23 +1447,23 @@ msgstr "Центр Солнечной системы"
 
 #: ../data/data.cpp:356
 msgid "Sol"
-msgstr "Солнце"
+msgstr ""
 
 #: ../data/data.cpp:357
 msgid "Alpheratz"
-msgstr "Альферац"
+msgstr ""
 
 #: ../data/data.cpp:358
 msgid "Sirrah"
-msgstr "Зирра"
+msgstr ""
 
 #: ../data/data.cpp:359
 msgid "Caph"
-msgstr "Каф"
+msgstr ""
 
 #: ../data/data.cpp:360
 msgid "Algenib"
-msgstr "Альгениб"
+msgstr ""
 
 #: ../data/data.cpp:361
 msgid "Citadelle"
@@ -1473,11 +1471,11 @@ msgstr ""
 
 #: ../data/data.cpp:362
 msgid "Schemali"
-msgstr "Шемали"
+msgstr ""
 
 #: ../data/data.cpp:363
 msgid "Ankaa"
-msgstr "Анкаа"
+msgstr ""
 
 #: ../data/data.cpp:364
 msgid "Felixvarela"
@@ -1489,19 +1487,19 @@ msgstr ""
 
 #: ../data/data.cpp:366
 msgid "Schedar"
-msgstr "Шедар"
+msgstr ""
 
 #: ../data/data.cpp:367
 msgid "Shedir"
-msgstr "Шедир"
+msgstr ""
 
 #: ../data/data.cpp:368
 msgid "Diphda"
-msgstr "Дифда"
+msgstr ""
 
 #: ../data/data.cpp:369
 msgid "Deneb Kaitos"
-msgstr "Денеб Кайтос"
+msgstr ""
 
 #: ../data/data.cpp:370
 msgid "Cocibolca"
@@ -1509,20 +1507,19 @@ msgstr ""
 
 #: ../data/data.cpp:371
 msgid "Achird"
-msgstr "Ахирд"
+msgstr ""
 
 #: ../data/data.cpp:372
 msgid "Van Maanen 2"
-msgstr "Звезда Ван Маанена 2"
+msgstr ""
 
 #: ../data/data.cpp:373
-#, fuzzy
 msgid "Castula"
-msgstr "Кастор"
+msgstr ""
 
 #: ../data/data.cpp:374
 msgid "Navi"
-msgstr "Нави"
+msgstr ""
 
 #: ../data/data.cpp:375
 msgid "Nenque"
@@ -1534,7 +1531,7 @@ msgstr ""
 
 #: ../data/data.cpp:377
 msgid "Mirach"
-msgstr "Мирах"
+msgstr ""
 
 #: ../data/data.cpp:378
 msgid "Emiw"
@@ -1546,7 +1543,7 @@ msgstr ""
 
 #: ../data/data.cpp:380
 msgid "Adhil"
-msgstr "Адхил"
+msgstr ""
 
 #: ../data/data.cpp:381
 msgid "Bélénos"
@@ -1554,21 +1551,19 @@ msgstr ""
 
 #: ../data/data.cpp:382
 msgid "Ruchbah"
-msgstr "Рукбах"
+msgstr ""
 
 #: ../data/data.cpp:383
-#, fuzzy
 msgid "Alpherg"
-msgstr "Альферац"
+msgstr ""
 
 #: ../data/data.cpp:384
-#, fuzzy
 msgid "Titawin"
-msgstr "Титан"
+msgstr ""
 
 #: ../data/data.cpp:385
 msgid "Achernar"
-msgstr "Ахернар"
+msgstr ""
 
 #: ../data/data.cpp:386
 msgid "Nembus"
@@ -1584,7 +1579,7 @@ msgstr ""
 
 #: ../data/data.cpp:389
 msgid "Baten Kaitos"
-msgstr "Батен Кайтос"
+msgstr ""
 
 #: ../data/data.cpp:390
 msgid "Mothallah"
@@ -1592,52 +1587,51 @@ msgstr ""
 
 #: ../data/data.cpp:391
 msgid "Caput Trianguli"
-msgstr "Капут Триангули"
+msgstr ""
 
 #: ../data/data.cpp:392
 msgid "Mesarthim"
-msgstr "Месартим"
+msgstr ""
 
 #: ../data/data.cpp:393
 msgid "Segin"
-msgstr "Сегин"
+msgstr ""
 
 #: ../data/data.cpp:394
 msgid "Sheratan"
-msgstr "Шератан"
+msgstr ""
 
 #: ../data/data.cpp:395
-#, fuzzy
 msgid "Alrescha"
-msgstr "Аль Реша"
+msgstr ""
 
 #: ../data/data.cpp:396
 msgid "Al Rescha"
-msgstr "Аль Реша"
+msgstr ""
 
 #: ../data/data.cpp:397
 msgid "Almach"
-msgstr "Альмах"
+msgstr ""
 
 #: ../data/data.cpp:398
 msgid "Almaak"
-msgstr "Альмаак"
+msgstr ""
 
 #: ../data/data.cpp:399
 msgid "Alamak"
-msgstr "Аламак"
+msgstr ""
 
 #: ../data/data.cpp:400
 msgid "Hamal"
-msgstr "Гамаль"
+msgstr ""
 
 #: ../data/data.cpp:401
 msgid "Mira"
-msgstr "Мира"
+msgstr ""
 
 #: ../data/data.cpp:402
 msgid "Polaris"
-msgstr "Полярная"
+msgstr ""
 
 #: ../data/data.cpp:403
 msgid "Buna"
@@ -1660,26 +1654,24 @@ msgid "Nushagak"
 msgstr ""
 
 #: ../data/data.cpp:408
-#, fuzzy
 msgid "Bharani"
-msgstr "Чара"
+msgstr ""
 
 #: ../data/data.cpp:409
-#, fuzzy
 msgid "Miram"
-msgstr "Мира"
+msgstr ""
 
 #: ../data/data.cpp:410
 msgid "Angetenar"
-msgstr "Ангетенар"
+msgstr ""
 
 #: ../data/data.cpp:411
 msgid "Azha"
-msgstr "Азха"
+msgstr ""
 
 #: ../data/data.cpp:412
 msgid "Acamar"
-msgstr "Акамар"
+msgstr ""
 
 #: ../data/data.cpp:413
 msgid "Ayeyarwady"
@@ -1687,15 +1679,15 @@ msgstr ""
 
 #: ../data/data.cpp:414
 msgid "Menkar"
-msgstr "Менкар"
+msgstr ""
 
 #: ../data/data.cpp:415
 msgid "Menkab"
-msgstr "Менкаб"
+msgstr ""
 
 #: ../data/data.cpp:416
 msgid "Algol"
-msgstr "Алголь"
+msgstr ""
 
 #: ../data/data.cpp:417
 msgid "Misam"
@@ -1703,7 +1695,7 @@ msgstr ""
 
 #: ../data/data.cpp:418
 msgid "Botein"
-msgstr "Ботейн"
+msgstr ""
 
 #: ../data/data.cpp:419
 msgid "Dalim"
@@ -1719,20 +1711,19 @@ msgstr ""
 
 #: ../data/data.cpp:422
 msgid "Mirfak"
-msgstr "Мирфак"
+msgstr ""
 
 #: ../data/data.cpp:423
 msgid "Mirphak"
-msgstr "Мирфак"
+msgstr ""
 
 #: ../data/data.cpp:424
 msgid "Marfak"
-msgstr "Марфак"
+msgstr ""
 
 #: ../data/data.cpp:425
-#, fuzzy
 msgid "Ran"
-msgstr "Рана"
+msgstr ""
 
 #: ../data/data.cpp:426
 msgid "Tupi"
@@ -1740,59 +1731,59 @@ msgstr ""
 
 #: ../data/data.cpp:427
 msgid "Rana"
-msgstr "Рана"
+msgstr ""
 
 #: ../data/data.cpp:428
 msgid "Atik"
-msgstr "Атик"
+msgstr ""
 
 #: ../data/data.cpp:429
 msgid "Celaeno"
-msgstr "Целено"
+msgstr ""
 
 #: ../data/data.cpp:430
 msgid "Electra"
-msgstr "Электра"
+msgstr ""
 
 #: ../data/data.cpp:431
 msgid "Taygeta"
-msgstr "Тайгета"
+msgstr ""
 
 #: ../data/data.cpp:432
 msgid "Maia"
-msgstr "Майя"
+msgstr ""
 
 #: ../data/data.cpp:433
 msgid "Asterope"
-msgstr "Астеропа"
+msgstr ""
 
 #: ../data/data.cpp:434
 msgid "Merope"
-msgstr "Меропа"
+msgstr ""
 
 #: ../data/data.cpp:435
 msgid "Alcyone"
-msgstr "Альциона"
+msgstr ""
 
 #: ../data/data.cpp:436
 msgid "Pleione"
-msgstr "Плейона"
+msgstr ""
 
 #: ../data/data.cpp:437
 msgid "Zaurak"
-msgstr "Заурак"
+msgstr ""
 
 #: ../data/data.cpp:438
 msgid "Menkib"
-msgstr "Менкиб"
+msgstr ""
 
 #: ../data/data.cpp:439
 msgid "Beid"
-msgstr "Бейд"
+msgstr ""
 
 #: ../data/data.cpp:440
 msgid "Keid"
-msgstr "Кейд"
+msgstr ""
 
 #: ../data/data.cpp:441
 msgid "Prima Hyadum"
@@ -1808,7 +1799,7 @@ msgstr ""
 
 #: ../data/data.cpp:444
 msgid "Ain"
-msgstr "Аин"
+msgstr ""
 
 #: ../data/data.cpp:445
 msgid "Chamukuy"
@@ -1824,16 +1815,15 @@ msgstr ""
 
 #: ../data/data.cpp:448
 msgid "Aldebaran"
-msgstr "Альдебаран"
+msgstr ""
 
 #: ../data/data.cpp:449
 msgid "Sceptrum"
 msgstr ""
 
 #: ../data/data.cpp:450
-#, fuzzy
 msgid "Tabit"
-msgstr "Табит"
+msgstr ""
 
 #: ../data/data.cpp:451
 msgid "Mouhoun"
@@ -1845,21 +1835,19 @@ msgstr ""
 
 #: ../data/data.cpp:453
 msgid "Hind's Crimson Star"
-msgstr "Багряная звезда Хинда"
+msgstr ""
 
 #: ../data/data.cpp:454
-#, fuzzy
 msgid "Almaaz"
-msgstr "Альмаак"
+msgstr ""
 
 #: ../data/data.cpp:455
-#, fuzzy
 msgid "Saclateni"
-msgstr "Галатея"
+msgstr ""
 
 #: ../data/data.cpp:456
 msgid "Sadatoni"
-msgstr "Садатони"
+msgstr ""
 
 #: ../data/data.cpp:457
 msgid "Haedus"
@@ -1867,7 +1855,7 @@ msgstr ""
 
 #: ../data/data.cpp:458
 msgid "Cursa"
-msgstr "Курса"
+msgstr ""
 
 #: ../data/data.cpp:459
 msgid "Mago"
@@ -1875,51 +1863,51 @@ msgstr ""
 
 #: ../data/data.cpp:460
 msgid "Kapteyn's Star"
-msgstr "Звезда Каптейна"
+msgstr ""
 
 #: ../data/data.cpp:461
 msgid "Rigel"
-msgstr "Ригель"
+msgstr ""
 
 #: ../data/data.cpp:462
 msgid "Capella"
-msgstr "Капелла"
+msgstr ""
 
 #: ../data/data.cpp:463
 msgid "Bellatrix"
-msgstr "Беллатрикс"
+msgstr ""
 
 #: ../data/data.cpp:464
 msgid "Elnath"
-msgstr "Эльнатх"
+msgstr ""
 
 #: ../data/data.cpp:465
 msgid "Alnath"
-msgstr "Альнас"
+msgstr ""
 
 #: ../data/data.cpp:466
 msgid "Nihal"
-msgstr "Нихаль"
+msgstr ""
 
 #: ../data/data.cpp:467
 msgid "Thabit"
-msgstr "Табит"
+msgstr ""
 
 #: ../data/data.cpp:468
 msgid "Mintaka"
-msgstr "Минтака"
+msgstr ""
 
 #: ../data/data.cpp:469
 msgid "Arneb"
-msgstr "Арнеб"
+msgstr ""
 
 #: ../data/data.cpp:470
 msgid "Meissa"
-msgstr "Меисса"
+msgstr ""
 
 #: ../data/data.cpp:471
 msgid "Heka"
-msgstr "Хека"
+msgstr ""
 
 #: ../data/data.cpp:472
 msgid "Hatysa"
@@ -1927,90 +1915,87 @@ msgstr ""
 
 #: ../data/data.cpp:473
 msgid "Alnilam"
-msgstr "Альнилам"
+msgstr ""
 
 #: ../data/data.cpp:474
 msgid "Bubup"
 msgstr ""
 
 #: ../data/data.cpp:475
-#, fuzzy
 msgid "Tianguan"
-msgstr "Треугольник"
+msgstr ""
 
 #: ../data/data.cpp:476
 msgid "Phact"
-msgstr "Факт"
+msgstr ""
 
 #: ../data/data.cpp:477
 msgid "Alnitak"
-msgstr "Альнитак"
+msgstr ""
 
 #: ../data/data.cpp:478
 msgid "Saiph"
-msgstr "Сайф"
+msgstr ""
 
 #: ../data/data.cpp:479
 msgid "Wazn"
-msgstr "Вазн"
+msgstr ""
 
 #: ../data/data.cpp:480
 msgid "Betelgeuse"
-msgstr "Бетельгейзе"
+msgstr ""
 
 #: ../data/data.cpp:481
 msgid "Prijipati"
-msgstr "Приджипати"
+msgstr ""
 
 #: ../data/data.cpp:482
 msgid "Menkalinan"
-msgstr "Менкалинан"
+msgstr ""
 
 #: ../data/data.cpp:483
 msgid "Mahasim"
 msgstr ""
 
 #: ../data/data.cpp:484
-#, fuzzy
 msgid "Elkurud"
-msgstr "Фуруд"
+msgstr ""
 
 #: ../data/data.cpp:485
 msgid "Amadioha"
 msgstr ""
 
 #: ../data/data.cpp:486
-#, fuzzy
 msgid "Propus"
-msgstr "Канопус"
+msgstr ""
 
 #: ../data/data.cpp:487
 msgid "Red Rectangle"
-msgstr "Красный прямоугольник"
+msgstr ""
 
 #: ../data/data.cpp:488
 msgid "Furud"
-msgstr "Фуруд"
+msgstr ""
 
 #: ../data/data.cpp:489
 msgid "Mirzam"
-msgstr "Мирзам"
+msgstr ""
 
 #: ../data/data.cpp:490
 msgid "Murzim"
-msgstr "Мурзим"
+msgstr ""
 
 #: ../data/data.cpp:491
 msgid "Tejat"
-msgstr "Тейят"
+msgstr ""
 
 #: ../data/data.cpp:492
 msgid "Canopus"
-msgstr "Канопус"
+msgstr ""
 
 #: ../data/data.cpp:493
 msgid "Suhel"
-msgstr "Сухель"
+msgstr ""
 
 #: ../data/data.cpp:494
 msgid "Lucilinburhuc"
@@ -2021,17 +2006,16 @@ msgid "Lusitânia"
 msgstr ""
 
 #: ../data/data.cpp:496
-#, fuzzy
 msgid "Plaskett's Star"
-msgstr "Ближайшие звёзды"
+msgstr ""
 
 #: ../data/data.cpp:497
 msgid "Alhena"
-msgstr "Альхена"
+msgstr ""
 
 #: ../data/data.cpp:498
 msgid "Almeisan"
-msgstr "Альмейсан"
+msgstr ""
 
 #: ../data/data.cpp:499
 msgid "Nosaxa"
@@ -2039,11 +2023,11 @@ msgstr ""
 
 #: ../data/data.cpp:500
 msgid "Mebsuta"
-msgstr "Мебсута"
+msgstr ""
 
 #: ../data/data.cpp:501
 msgid "Sirius"
-msgstr "Сириус"
+msgstr ""
 
 #: ../data/data.cpp:502
 msgid "Alzirr"
@@ -2055,11 +2039,11 @@ msgstr ""
 
 #: ../data/data.cpp:504
 msgid "Adhara"
-msgstr "Адара"
+msgstr ""
 
 #: ../data/data.cpp:505
 msgid "Adara"
-msgstr "Адара"
+msgstr ""
 
 #: ../data/data.cpp:506
 msgid "Citalá"
@@ -2071,39 +2055,39 @@ msgstr ""
 
 #: ../data/data.cpp:508
 msgid "Muliphein"
-msgstr "Мулифейн"
+msgstr ""
 
 #: ../data/data.cpp:509
 msgid "Mekbuda"
-msgstr "Мекбуда"
+msgstr ""
 
 #: ../data/data.cpp:510
 msgid "Wezen"
-msgstr "Везен"
+msgstr ""
 
 #: ../data/data.cpp:511
 msgid "Bernes 135"
-msgstr "Бернес 135"
+msgstr ""
 
 #: ../data/data.cpp:512
 msgid "Wasat"
-msgstr "Васат"
+msgstr ""
 
 #: ../data/data.cpp:513
 msgid "Aludra"
-msgstr "Алудра"
+msgstr ""
 
 #: ../data/data.cpp:514
 msgid "Gomeisa"
-msgstr "Гомейса"
+msgstr ""
 
 #: ../data/data.cpp:515
 msgid "Luyten's Star"
-msgstr "Звезда Лейтена"
+msgstr ""
 
 #: ../data/data.cpp:516
 msgid "Castor"
-msgstr "Кастор"
+msgstr ""
 
 #: ../data/data.cpp:517
 msgid "Jishui"
@@ -2111,11 +2095,11 @@ msgstr ""
 
 #: ../data/data.cpp:518
 msgid "Procyon"
-msgstr "Процион"
+msgstr ""
 
 #: ../data/data.cpp:519
 msgid "Elgomaisa"
-msgstr "Эльгомайса"
+msgstr ""
 
 #: ../data/data.cpp:520
 msgid "Ceibo"
@@ -2123,24 +2107,23 @@ msgstr ""
 
 #: ../data/data.cpp:521
 msgid "Pollux"
-msgstr "Поллукс"
+msgstr ""
 
 #: ../data/data.cpp:522
 msgid "Tapecue"
 msgstr ""
 
 #: ../data/data.cpp:523
-#, fuzzy
 msgid "Azmidi"
-msgstr "Азмидиск"
+msgstr ""
 
 #: ../data/data.cpp:524
 msgid "Asmidiske"
-msgstr "Азмидиск"
+msgstr ""
 
 #: ../data/data.cpp:525
 msgid "Naos"
-msgstr "Наос"
+msgstr ""
 
 #: ../data/data.cpp:526
 msgid "Tureis"
@@ -2148,20 +2131,19 @@ msgstr ""
 
 #: ../data/data.cpp:527
 msgid "Regor"
-msgstr "Регор"
+msgstr ""
 
 #: ../data/data.cpp:528
 msgid "Tegmine"
-msgstr "Тегмин"
+msgstr ""
 
 #: ../data/data.cpp:529
-#, fuzzy
 msgid "Tarf"
-msgstr "Аль Тарф"
+msgstr ""
 
 #: ../data/data.cpp:530
 msgid "Al Tarf"
-msgstr "Аль Тарф"
+msgstr ""
 
 #: ../data/data.cpp:531
 msgid "Násti"
@@ -2173,7 +2155,7 @@ msgstr ""
 
 #: ../data/data.cpp:533
 msgid "Avior"
-msgstr "Авиор"
+msgstr ""
 
 #: ../data/data.cpp:534
 msgid "Alsciaukat"
@@ -2181,12 +2163,11 @@ msgstr ""
 
 #: ../data/data.cpp:535
 msgid "Muscida"
-msgstr "Мусцида"
+msgstr ""
 
 #: ../data/data.cpp:536
-#, fuzzy
 msgid "Minchir"
-msgstr "Ахирд"
+msgstr ""
 
 #: ../data/data.cpp:537
 msgid "Gakyid"
@@ -2198,11 +2179,11 @@ msgstr ""
 
 #: ../data/data.cpp:539
 msgid "Asellus Borealis"
-msgstr "Азеллус Бореалис"
+msgstr ""
 
 #: ../data/data.cpp:540
 msgid "Asellus Australis"
-msgstr "Азеллус Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:541
 msgid "Alsephina"
@@ -2222,7 +2203,7 @@ msgstr ""
 
 #: ../data/data.cpp:545
 msgid "Acubens"
-msgstr "Акубенс"
+msgstr ""
 
 #: ../data/data.cpp:546
 msgid "Talitha"
@@ -2230,7 +2211,7 @@ msgstr ""
 
 #: ../data/data.cpp:547
 msgid "Dnoces"
-msgstr "Дноцес"
+msgstr ""
 
 #: ../data/data.cpp:548
 msgid "Alkaphrah"
@@ -2238,11 +2219,11 @@ msgstr ""
 
 #: ../data/data.cpp:549
 msgid "Talitha Australis"
-msgstr "Талита Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:550
 msgid "Suhail"
-msgstr "Сухаиль"
+msgstr ""
 
 #: ../data/data.cpp:551
 msgid "Nahn"
@@ -2250,24 +2231,23 @@ msgstr ""
 
 #: ../data/data.cpp:552
 msgid "Miaplacidus"
-msgstr "Миаплацид"
+msgstr ""
 
 #: ../data/data.cpp:553
 msgid "Aspidiske"
-msgstr "Аспидиске"
+msgstr ""
 
 #: ../data/data.cpp:554
-#, fuzzy
 msgid "Markeb"
-msgstr "Маркаб"
+msgstr ""
 
 #: ../data/data.cpp:555
 msgid "Alphard"
-msgstr "Альфард"
+msgstr ""
 
 #: ../data/data.cpp:556
 msgid "Cor Hydrae"
-msgstr "Кор Гидра [Cердце Гидры]"
+msgstr ""
 
 #: ../data/data.cpp:557
 msgid "Intercrus"
@@ -2275,7 +2255,7 @@ msgstr ""
 
 #: ../data/data.cpp:558
 msgid "Alterf"
-msgstr "Альтерф"
+msgstr ""
 
 #: ../data/data.cpp:559
 msgid "Illyrian"
@@ -2287,15 +2267,15 @@ msgstr ""
 
 #: ../data/data.cpp:561
 msgid "Ukdah"
-msgstr "Укдах"
+msgstr ""
 
 #: ../data/data.cpp:562
 msgid "Subra"
-msgstr "Субра"
+msgstr ""
 
 #: ../data/data.cpp:563
 msgid "Ras Elased Australis"
-msgstr "Рас Эласед Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:564
 msgid "Natasha"
@@ -2307,11 +2287,11 @@ msgstr ""
 
 #: ../data/data.cpp:566
 msgid "Rasalas"
-msgstr "Расалас"
+msgstr ""
 
 #: ../data/data.cpp:567
 msgid "Ras Elased Borealis"
-msgstr "Рас Эласед Бореалис"
+msgstr ""
 
 #: ../data/data.cpp:568
 msgid "Felis"
@@ -2323,69 +2303,67 @@ msgstr ""
 
 #: ../data/data.cpp:570
 msgid "Regulus"
-msgstr "Регул"
+msgstr ""
 
 #: ../data/data.cpp:571
 msgid "Kabeleced"
-msgstr "Кабелецед"
+msgstr ""
 
 #: ../data/data.cpp:572
 msgid "Cor Leonis"
-msgstr "Кор Леонис [Cердце Льва]"
+msgstr ""
 
 #: ../data/data.cpp:573
 msgid "Adhafera"
-msgstr "Адхафера"
+msgstr ""
 
 #: ../data/data.cpp:574
 msgid "Aldhafera"
-msgstr "Альдафера"
+msgstr ""
 
 #: ../data/data.cpp:575
 msgid "Tania Borealis"
-msgstr "Танийа Бореалис"
+msgstr ""
 
 #: ../data/data.cpp:576
 msgid "Algieba"
-msgstr "Альгиеба"
+msgstr ""
 
 #: ../data/data.cpp:577
 msgid "Tania Australis"
-msgstr "Танийа Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:578
-#, fuzzy
 msgid "Macondo"
-msgstr "Лондон"
+msgstr ""
 
 #: ../data/data.cpp:579
 msgid "Praecipua"
 msgstr ""
 
 #: ../data/data.cpp:580
-#, fuzzy
 msgid "Chalawan"
-msgstr "Халдене"
+msgstr ""
 
 #: ../data/data.cpp:581
 msgid "Alkes"
-msgstr "Алькес"
+msgstr ""
 
 #: ../data/data.cpp:582
 msgid "Merak"
-msgstr "Мерак"
+msgstr ""
 
 #: ../data/data.cpp:583
 msgid "Lalande 21185"
-msgstr "Лаланд 21185"
+msgstr ""
 
 #: ../data/data.cpp:584
 msgid "Dubhe"
-msgstr "Дубхе"
+msgstr ""
 
 #: ../data/data.cpp:585
 msgid "Dubb"
-msgstr "Дубб"
+msgstr ""
 
 #: ../data/data.cpp:586
 msgid "Dingolay"
@@ -2393,23 +2371,23 @@ msgstr ""
 
 #: ../data/data.cpp:587
 msgid "Zosma"
-msgstr "Зосма"
+msgstr ""
 
 #: ../data/data.cpp:588
 msgid "Duhr"
-msgstr "Духр"
+msgstr ""
 
 #: ../data/data.cpp:589
 msgid "Chertan"
-msgstr "Шератан"
+msgstr ""
 
 #: ../data/data.cpp:590
 msgid "Coxa"
-msgstr "Кокса"
+msgstr ""
 
 #: ../data/data.cpp:591
 msgid "Chort"
-msgstr "Чёрт"
+msgstr ""
 
 #: ../data/data.cpp:592
 msgid "Innes' Star"
@@ -2421,29 +2399,27 @@ msgstr ""
 
 #: ../data/data.cpp:594
 msgid "Alula Australis"
-msgstr "Алула Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:595
 msgid "Alula Borealis"
-msgstr "Алула Бореалис"
+msgstr ""
 
 #: ../data/data.cpp:596
 msgid "Tsze Tseang"
-msgstr "Цзе Цеанг"
+msgstr ""
 
 #: ../data/data.cpp:597
-#, fuzzy
 msgid "Shama"
-msgstr "Шам"
+msgstr ""
 
 #: ../data/data.cpp:598
 msgid "Giausar"
-msgstr "Гиаусар"
+msgstr ""
 
 #: ../data/data.cpp:599
-#, fuzzy
 msgid "Formosa"
-msgstr "Формат: "
+msgstr ""
 
 #: ../data/data.cpp:600
 msgid "Sagarmatha"
@@ -2458,9 +2434,8 @@ msgid "Uklun"
 msgstr ""
 
 #: ../data/data.cpp:603
-#, fuzzy
 msgid "Flegetonte"
-msgstr "Джорджтаун"
+msgstr ""
 
 #: ../data/data.cpp:604
 msgid "Taiyangshou"
@@ -2468,32 +2443,31 @@ msgstr ""
 
 #: ../data/data.cpp:605
 msgid "Denebola"
-msgstr "Денебола"
+msgstr ""
 
 #: ../data/data.cpp:606
 msgid "Zavijava"
-msgstr "Завийява"
+msgstr ""
 
 #: ../data/data.cpp:607
 msgid "Alaraph"
-msgstr "Алараф"
+msgstr ""
 
 #: ../data/data.cpp:608
-#, fuzzy
 msgid "Aniara"
-msgstr "Хониара"
+msgstr ""
 
 #: ../data/data.cpp:609
 msgid "Groombridge 1830"
-msgstr "Грумбридж 1830"
+msgstr ""
 
 #: ../data/data.cpp:610
 msgid "Phecda"
-msgstr "Фекда"
+msgstr ""
 
 #: ../data/data.cpp:611
 msgid "Phad"
-msgstr "Фад"
+msgstr ""
 
 #: ../data/data.cpp:612
 msgid "Tonatiuh"
@@ -2501,7 +2475,7 @@ msgstr ""
 
 #: ../data/data.cpp:613
 msgid "Alchiba"
-msgstr "Альхиба"
+msgstr ""
 
 #: ../data/data.cpp:614
 msgid "Imai"
@@ -2509,15 +2483,15 @@ msgstr ""
 
 #: ../data/data.cpp:615
 msgid "Megrez"
-msgstr "Мегрец"
+msgstr ""
 
 #: ../data/data.cpp:616
 msgid "Gienah"
-msgstr "Гиенах"
+msgstr ""
 
 #: ../data/data.cpp:617
 msgid "Zaniah"
-msgstr "Заниах"
+msgstr ""
 
 #: ../data/data.cpp:618
 msgid "Ginan"
@@ -2529,15 +2503,15 @@ msgstr ""
 
 #: ../data/data.cpp:620
 msgid "Acrux"
-msgstr "Акрукс"
+msgstr ""
 
 #: ../data/data.cpp:621
 msgid "Algorab"
-msgstr "Альгораб"
+msgstr ""
 
 #: ../data/data.cpp:622
 msgid "Gacrux"
-msgstr "Гакрукс"
+msgstr ""
 
 #: ../data/data.cpp:623
 msgid "Funi"
@@ -2545,19 +2519,19 @@ msgstr ""
 
 #: ../data/data.cpp:624
 msgid "Chara"
-msgstr "Чара"
+msgstr ""
 
 #: ../data/data.cpp:625
 msgid "Kraz"
-msgstr "Крац"
+msgstr ""
 
 #: ../data/data.cpp:626
 msgid "Muhlifain"
-msgstr "Мухлифайн"
+msgstr ""
 
 #: ../data/data.cpp:627
 msgid "Porrima"
-msgstr "Поррима"
+msgstr ""
 
 #: ../data/data.cpp:628
 msgid "La Superba"
@@ -2569,11 +2543,11 @@ msgstr ""
 
 #: ../data/data.cpp:630
 msgid "Mimosa"
-msgstr "Мимоза"
+msgstr ""
 
 #: ../data/data.cpp:631
 msgid "Alioth"
-msgstr "Алиот"
+msgstr ""
 
 #: ../data/data.cpp:632
 msgid "Taiyi"
@@ -2581,23 +2555,23 @@ msgstr ""
 
 #: ../data/data.cpp:633
 msgid "Minelauva"
-msgstr "Минелаува"
+msgstr ""
 
 #: ../data/data.cpp:634
 msgid "Auva"
-msgstr "Аува"
+msgstr ""
 
 #: ../data/data.cpp:635
 msgid "Cor Caroli"
-msgstr "Кор Кароли [Сердце Карла]"
+msgstr ""
 
 #: ../data/data.cpp:636
 msgid "Vindemiatrix"
-msgstr "Виндемиатрикс"
+msgstr ""
 
 #: ../data/data.cpp:637
 msgid "Almuredin"
-msgstr "Альмуредин"
+msgstr ""
 
 #: ../data/data.cpp:638
 msgid "Diadem"
@@ -2605,19 +2579,19 @@ msgstr ""
 
 #: ../data/data.cpp:639
 msgid "Mizar"
-msgstr "Мицар"
+msgstr ""
 
 #: ../data/data.cpp:640
 msgid "Spica"
-msgstr "Спика"
+msgstr ""
 
 #: ../data/data.cpp:641
 msgid "Azimech"
-msgstr "Азимех"
+msgstr ""
 
 #: ../data/data.cpp:642
 msgid "Alcor"
-msgstr "Алькор"
+msgstr ""
 
 #: ../data/data.cpp:643
 msgid "Dofida"
@@ -2629,35 +2603,35 @@ msgstr ""
 
 #: ../data/data.cpp:645
 msgid "Heze"
-msgstr "Хеза"
+msgstr ""
 
 #: ../data/data.cpp:646
 msgid "Alkaid"
-msgstr "Алькаид"
+msgstr ""
 
 #: ../data/data.cpp:647
 msgid "Benetnasch"
-msgstr "Бенетнаш"
+msgstr ""
 
 #: ../data/data.cpp:648
 msgid "Muphrid"
-msgstr "Муфрид"
+msgstr ""
 
 #: ../data/data.cpp:649
 msgid "Hadar"
-msgstr "Хадар"
+msgstr ""
 
 #: ../data/data.cpp:650
 msgid "Agena"
-msgstr "Агена"
+msgstr ""
 
 #: ../data/data.cpp:651
 msgid "Thuban"
-msgstr "Тубан"
+msgstr ""
 
 #: ../data/data.cpp:652
 msgid "Menkent"
-msgstr "Менкент"
+msgstr ""
 
 #: ../data/data.cpp:653
 msgid "Kang"
@@ -2665,11 +2639,11 @@ msgstr ""
 
 #: ../data/data.cpp:654
 msgid "Arcturus"
-msgstr "Арктур"
+msgstr ""
 
 #: ../data/data.cpp:655
 msgid "Syrma"
-msgstr "Сырма"
+msgstr ""
 
 #: ../data/data.cpp:656
 msgid "Xuange"
@@ -2681,15 +2655,15 @@ msgstr ""
 
 #: ../data/data.cpp:658
 msgid "Proxima"
-msgstr "Проксима"
+msgstr ""
 
 #: ../data/data.cpp:659
 msgid "Seginus"
-msgstr "Сегинус"
+msgstr ""
 
 #: ../data/data.cpp:660
 msgid "Ceginus"
-msgstr "Цегинус"
+msgstr ""
 
 #: ../data/data.cpp:661
 msgid "Toliman"
@@ -2701,15 +2675,15 @@ msgstr ""
 
 #: ../data/data.cpp:663
 msgid "Izar"
-msgstr "Изар"
+msgstr ""
 
 #: ../data/data.cpp:664
 msgid "Mirak"
-msgstr "Мирак"
+msgstr ""
 
 #: ../data/data.cpp:665
 msgid "Pulcherrima"
-msgstr "Пульхеррима"
+msgstr ""
 
 #: ../data/data.cpp:666
 msgid "Mönch"
@@ -2721,15 +2695,15 @@ msgstr ""
 
 #: ../data/data.cpp:668
 msgid "Kochab"
-msgstr "Кохаб"
+msgstr ""
 
 #: ../data/data.cpp:669
 msgid "Kocab"
-msgstr "Кохаб"
+msgstr ""
 
 #: ../data/data.cpp:670
 msgid "Zubenelgenubi"
-msgstr "Зубен Эльгенуби"
+msgstr ""
 
 #: ../data/data.cpp:671
 msgid "Arcalís"
@@ -2741,11 +2715,11 @@ msgstr ""
 
 #: ../data/data.cpp:673
 msgid "Zuben Elakribi"
-msgstr "Зубен Элакриби"
+msgstr ""
 
 #: ../data/data.cpp:674
 msgid "Nekkar"
-msgstr "Неккар"
+msgstr ""
 
 #: ../data/data.cpp:675
 msgid "Brachium"
@@ -2753,12 +2727,11 @@ msgstr ""
 
 #: ../data/data.cpp:676
 msgid "Zubeneschamali"
-msgstr "Зубен эль Шемали"
+msgstr ""
 
 #: ../data/data.cpp:677
-#, fuzzy
 msgid "Pherkad Minor"
-msgstr "Феркад"
+msgstr ""
 
 #: ../data/data.cpp:678
 msgid "Nikawiy"
@@ -2766,36 +2739,35 @@ msgstr ""
 
 #: ../data/data.cpp:679
 msgid "Pherkad"
-msgstr "Феркад"
+msgstr ""
 
 #: ../data/data.cpp:680
 msgid "Alkalurops"
-msgstr "Алькалуропс"
+msgstr ""
 
 #: ../data/data.cpp:681
 msgid "Edasich"
-msgstr "Эдасих"
+msgstr ""
 
 #: ../data/data.cpp:682
 msgid "Nusakan"
-msgstr "Нусакан"
+msgstr ""
 
 #: ../data/data.cpp:683
 msgid "Alphecca"
-msgstr "Альфекка"
+msgstr ""
 
 #: ../data/data.cpp:684
 msgid "Gemma"
-msgstr "Гемма"
+msgstr ""
 
 #: ../data/data.cpp:685
-#, fuzzy
 msgid "Zubenelhakrabi"
-msgstr "Зубен Элакраб"
+msgstr ""
 
 #: ../data/data.cpp:686
 msgid "Zuben Elakrab"
-msgstr "Зубен Элакраб"
+msgstr ""
 
 #: ../data/data.cpp:687
 msgid "Karaka"
@@ -2803,11 +2775,11 @@ msgstr ""
 
 #: ../data/data.cpp:688
 msgid "Unukalhai"
-msgstr "Унукалхаи"
+msgstr ""
 
 #: ../data/data.cpp:689
 msgid "Chow"
-msgstr "Чоу"
+msgstr ""
 
 #: ../data/data.cpp:690
 msgid "Gudja"
@@ -2823,7 +2795,7 @@ msgstr ""
 
 #: ../data/data.cpp:693
 msgid "Dschubba"
-msgstr "Джубба"
+msgstr ""
 
 #: ../data/data.cpp:694
 msgid "Acrab"
@@ -2831,20 +2803,19 @@ msgstr ""
 
 #: ../data/data.cpp:695
 msgid "Graffias"
-msgstr "Граффиас"
+msgstr ""
 
 #: ../data/data.cpp:696
 msgid "Akrab"
-msgstr "Акраб"
+msgstr ""
 
 #: ../data/data.cpp:697
-#, fuzzy
 msgid "Marsic"
-msgstr "Марс"
+msgstr ""
 
 #: ../data/data.cpp:698
 msgid "Jabbah"
-msgstr "Джабба"
+msgstr ""
 
 #: ../data/data.cpp:699
 msgid "Sharjah"
@@ -2863,22 +2834,20 @@ msgid "Hunor"
 msgstr ""
 
 #: ../data/data.cpp:703
-#, fuzzy
 msgid "Alniyat"
-msgstr "Аль Ният"
+msgstr ""
 
 #: ../data/data.cpp:704
 msgid "Al Niyat"
-msgstr "Аль Ният"
+msgstr ""
 
 #: ../data/data.cpp:705
-#, fuzzy
 msgid "Athebyne"
-msgstr "Афины"
+msgstr ""
 
 #: ../data/data.cpp:706
 msgid "Cujam"
-msgstr "Кужам"
+msgstr ""
 
 #: ../data/data.cpp:707
 msgid "Timir"
@@ -2886,11 +2855,11 @@ msgstr ""
 
 #: ../data/data.cpp:708
 msgid "Antares"
-msgstr "Антарес"
+msgstr ""
 
 #: ../data/data.cpp:709
 msgid "Kornephoros"
-msgstr "Корнефорос"
+msgstr ""
 
 #: ../data/data.cpp:710
 msgid "Ogma"
@@ -2898,7 +2867,7 @@ msgstr ""
 
 #: ../data/data.cpp:711
 msgid "Marfik"
-msgstr "Марфик"
+msgstr ""
 
 #: ../data/data.cpp:712
 msgid "Rosalíadecastro"
@@ -2910,60 +2879,55 @@ msgstr ""
 
 #: ../data/data.cpp:714
 msgid "Atria"
-msgstr "Атрия"
+msgstr ""
 
 #: ../data/data.cpp:715
-#, fuzzy
 msgid "Larawag"
-msgstr "Тарава"
+msgstr ""
 
 #: ../data/data.cpp:716
 msgid "Xamidimura"
 msgstr ""
 
 #: ../data/data.cpp:717
-#, fuzzy
 msgid "Pipirima"
-msgstr "Поррима"
+msgstr ""
 
 #: ../data/data.cpp:718
 msgid "Mahsati"
 msgstr ""
 
 #: ../data/data.cpp:719
-#, fuzzy
 msgid "Rapeto"
-msgstr "Япет"
+msgstr ""
 
 #: ../data/data.cpp:720
-#, fuzzy
 msgid "Alrakis"
-msgstr "Арракис"
+msgstr ""
 
 #: ../data/data.cpp:721
 msgid "Arrakis"
-msgstr "Арракис"
+msgstr ""
 
 #: ../data/data.cpp:722
-#, fuzzy
 msgid "Aldhibah"
-msgstr "Альхиба"
+msgstr ""
 
 #: ../data/data.cpp:723
 msgid "Sabik"
-msgstr "Сабик"
+msgstr ""
 
 #: ../data/data.cpp:724
 msgid "Rasalgethi"
-msgstr "Рас Альгети"
+msgstr ""
 
 #: ../data/data.cpp:725
 msgid "Ras Algethi"
-msgstr "Рас Альгети"
+msgstr ""
 
 #: ../data/data.cpp:726
 msgid "Sarin"
-msgstr "Сарин"
+msgstr ""
 
 #: ../data/data.cpp:727
 msgid "Guniibuu"
@@ -2975,47 +2939,47 @@ msgstr ""
 
 #: ../data/data.cpp:729
 msgid "Rastaban"
-msgstr "Растабан"
+msgstr ""
 
 #: ../data/data.cpp:730
 msgid "Maasym"
-msgstr "Маасым"
+msgstr ""
 
 #: ../data/data.cpp:731
 msgid "Lesath"
-msgstr "Лесат"
+msgstr ""
 
 #: ../data/data.cpp:732
 msgid "Lesuth"
-msgstr "Лесут"
+msgstr ""
 
 #: ../data/data.cpp:733
 msgid "Kuma"
-msgstr "Кума"
+msgstr ""
 
 #: ../data/data.cpp:734
 msgid "Yildun"
-msgstr "Йилдун"
+msgstr ""
 
 #: ../data/data.cpp:735
 msgid "Shaula"
-msgstr "Шаула"
+msgstr ""
 
 #: ../data/data.cpp:736
 msgid "Rasalhague"
-msgstr "Рас Альхаг"
+msgstr ""
 
 #: ../data/data.cpp:737
 msgid "Ras Alhague"
-msgstr "Рас Альхагу"
+msgstr ""
 
 #: ../data/data.cpp:738
 msgid "Sargas"
-msgstr "Саргас"
+msgstr ""
 
 #: ../data/data.cpp:739
 msgid "Dziban"
-msgstr "Дзибан"
+msgstr ""
 
 #: ../data/data.cpp:740
 msgid "Girtab"
@@ -3023,16 +2987,15 @@ msgstr ""
 
 #: ../data/data.cpp:741
 msgid "Cebalrai"
-msgstr "Кебалраи"
+msgstr ""
 
 #: ../data/data.cpp:742
 msgid "Alruba"
 msgstr ""
 
 #: ../data/data.cpp:743
-#, fuzzy
 msgid "Cervantes"
-msgstr "Обсерватории"
+msgstr ""
 
 #: ../data/data.cpp:744
 msgid "Fuyue"
@@ -3040,19 +3003,19 @@ msgstr ""
 
 #: ../data/data.cpp:745
 msgid "Grumium"
-msgstr "Грумиум"
+msgstr ""
 
 #: ../data/data.cpp:746
 msgid "Eltanin"
-msgstr "Эльтанин"
+msgstr ""
 
 #: ../data/data.cpp:747
 msgid "Etamin"
-msgstr "Этамин"
+msgstr ""
 
 #: ../data/data.cpp:748
 msgid "Barnard's Star"
-msgstr "Звезда Барнарда"
+msgstr ""
 
 #: ../data/data.cpp:749
 msgid "Pincoya"
@@ -3060,7 +3023,7 @@ msgstr ""
 
 #: ../data/data.cpp:750
 msgid "Alnasl"
-msgstr "Альнасл"
+msgstr ""
 
 #: ../data/data.cpp:751
 msgid "Polis"
@@ -3068,7 +3031,7 @@ msgstr ""
 
 #: ../data/data.cpp:752
 msgid "Kaus Media"
-msgstr "Каус Медиа"
+msgstr ""
 
 #: ../data/data.cpp:753
 msgid "Alasia"
@@ -3076,11 +3039,11 @@ msgstr ""
 
 #: ../data/data.cpp:754
 msgid "Kaus Australis"
-msgstr "Каус Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:755
 msgid "Al Athfar"
-msgstr "Аль Асфар"
+msgstr ""
 
 #: ../data/data.cpp:756
 msgid "Fafnir"
@@ -3088,11 +3051,11 @@ msgstr ""
 
 #: ../data/data.cpp:757
 msgid "Kaus Borealis"
-msgstr "Каус Бореалис"
+msgstr ""
 
 #: ../data/data.cpp:758
 msgid "Vega"
-msgstr "Вега"
+msgstr ""
 
 #: ../data/data.cpp:759
 msgid "Xihe"
@@ -3100,16 +3063,15 @@ msgstr ""
 
 #: ../data/data.cpp:760
 msgid "Sheliak"
-msgstr "Шелиак"
+msgstr ""
 
 #: ../data/data.cpp:761
-#, fuzzy
 msgid "Ainalrami"
-msgstr "Альдерамин"
+msgstr ""
 
 #: ../data/data.cpp:762
 msgid "Nunki"
-msgstr "Нунки"
+msgstr ""
 
 #: ../data/data.cpp:763
 msgid "Kaveh"
@@ -3117,15 +3079,15 @@ msgstr ""
 
 #: ../data/data.cpp:764
 msgid "Alya"
-msgstr "Алия"
+msgstr ""
 
 #: ../data/data.cpp:765
 msgid "Sulafat"
-msgstr "Сулафат"
+msgstr ""
 
 #: ../data/data.cpp:766
 msgid "Ascella"
-msgstr "Асцелла"
+msgstr ""
 
 #: ../data/data.cpp:767
 msgid "Okab"
@@ -3133,50 +3095,47 @@ msgstr ""
 
 #: ../data/data.cpp:768
 msgid "Deneb el Okab"
-msgstr "Денеб эль Окаб"
+msgstr ""
 
 #: ../data/data.cpp:769
 msgid "Meridiana"
 msgstr ""
 
 #: ../data/data.cpp:770
-#, fuzzy
 msgid "Albaldah"
-msgstr "Альбали"
+msgstr ""
 
 #: ../data/data.cpp:771
 msgid "Altais"
-msgstr "Альтаис"
+msgstr ""
 
 #: ../data/data.cpp:772
 msgid "Al Tais"
-msgstr "Аль Тайс"
+msgstr ""
 
 #: ../data/data.cpp:773
 msgid "Nodus Secundus"
-msgstr "Нодус Секундус"
+msgstr ""
 
 #: ../data/data.cpp:774
 msgid "Aladfar"
-msgstr "Аладфар"
+msgstr ""
 
 #: ../data/data.cpp:775
-#, fuzzy
 msgid "Gumala"
-msgstr "Гватемала"
+msgstr ""
 
 #: ../data/data.cpp:776
 msgid "Belel"
 msgstr ""
 
 #: ../data/data.cpp:777
-#, fuzzy
 msgid "Arkab Prior"
-msgstr "Аркаб"
+msgstr ""
 
 #: ../data/data.cpp:778
 msgid "Arkab"
-msgstr "Аркаб"
+msgstr ""
 
 #: ../data/data.cpp:779
 msgid "Sika"
@@ -3188,7 +3147,7 @@ msgstr ""
 
 #: ../data/data.cpp:781
 msgid "Rukbat"
-msgstr "Рукбат"
+msgstr ""
 
 #: ../data/data.cpp:782
 msgid "Anser"
@@ -3196,7 +3155,7 @@ msgstr ""
 
 #: ../data/data.cpp:783
 msgid "Albireo"
-msgstr "Альбирео"
+msgstr ""
 
 #: ../data/data.cpp:784
 msgid "Uruk"
@@ -3204,36 +3163,35 @@ msgstr ""
 
 #: ../data/data.cpp:785
 msgid "Alsafi"
-msgstr "Альсафи"
+msgstr ""
 
 #: ../data/data.cpp:786
 msgid "Campbell's Star"
-msgstr "Звезда Кэмпбелла"
+msgstr ""
 
 #: ../data/data.cpp:787
 msgid "Sham"
-msgstr "Шам"
+msgstr ""
 
 #: ../data/data.cpp:788
-#, fuzzy
 msgid "Fawaris"
-msgstr "Париж"
+msgstr ""
 
 #: ../data/data.cpp:789
 msgid "Tarazed"
-msgstr "Таразед"
+msgstr ""
 
 #: ../data/data.cpp:790
 msgid "Tyl"
-msgstr "Тыл"
+msgstr ""
 
 #: ../data/data.cpp:791
 msgid "Altair"
-msgstr "Альтаир"
+msgstr ""
 
 #: ../data/data.cpp:792
 msgid "Atair"
-msgstr "Атаир"
+msgstr ""
 
 #: ../data/data.cpp:793
 msgid "Libertas"
@@ -3241,7 +3199,7 @@ msgstr ""
 
 #: ../data/data.cpp:794
 msgid "Alshain"
-msgstr "Альшаин"
+msgstr ""
 
 #: ../data/data.cpp:795
 msgid "Terebellum"
@@ -3257,24 +3215,23 @@ msgstr ""
 
 #: ../data/data.cpp:798
 msgid "Algedi"
-msgstr "Альгеди"
+msgstr ""
 
 #: ../data/data.cpp:799
-#, fuzzy
 msgid "Alshat"
-msgstr "Альшаин"
+msgstr ""
 
 #: ../data/data.cpp:800
 msgid "Dabih"
-msgstr "Дабих"
+msgstr ""
 
 #: ../data/data.cpp:801
 msgid "Sadr"
-msgstr "Садр"
+msgstr ""
 
 #: ../data/data.cpp:802
 msgid "Peacock"
-msgstr "Павлин"
+msgstr ""
 
 #: ../data/data.cpp:803
 msgid "Aldulfin"
@@ -3282,63 +3239,59 @@ msgstr ""
 
 #: ../data/data.cpp:804
 msgid "Rotanev"
-msgstr "Ротанев"
+msgstr ""
 
 #: ../data/data.cpp:805
 msgid "Sualocin"
-msgstr "Суалоцин"
+msgstr ""
 
 #: ../data/data.cpp:806
 msgid "Deneb"
-msgstr "Денеб"
+msgstr ""
 
 #: ../data/data.cpp:807
-#, fuzzy
 msgid "Aljanah"
-msgstr "Любляна"
+msgstr ""
 
 #: ../data/data.cpp:808
 msgid "Albali"
-msgstr "Альбали"
+msgstr ""
 
 #: ../data/data.cpp:809
 msgid "Musica"
 msgstr ""
 
 #: ../data/data.cpp:810
-#, fuzzy
 msgid "Polaris Australis"
-msgstr "Каус Аустралис"
+msgstr ""
 
 #: ../data/data.cpp:811
-#, fuzzy
 msgid "Solaris"
-msgstr "Полярная"
+msgstr ""
 
 #: ../data/data.cpp:812
 msgid "Kitalpha"
-msgstr "Китальфа"
+msgstr ""
 
 #: ../data/data.cpp:813
 msgid "Lacaille 8760"
-msgstr "Лакайль 8760"
+msgstr ""
 
 #: ../data/data.cpp:814
 msgid "Alderamin"
-msgstr "Альдерамин"
+msgstr ""
 
 #: ../data/data.cpp:815
 msgid "Alfirk"
-msgstr "Альфирк"
+msgstr ""
 
 #: ../data/data.cpp:816
 msgid "Sadalsuud"
-msgstr "Садалсууд"
+msgstr ""
 
 #: ../data/data.cpp:817
-#, fuzzy
 msgid "Bunda"
-msgstr "Границы"
+msgstr ""
 
 #: ../data/data.cpp:818
 msgid "Sāmaya"
@@ -3346,11 +3299,11 @@ msgstr ""
 
 #: ../data/data.cpp:819
 msgid "Nashira"
-msgstr "Нашира"
+msgstr ""
 
 #: ../data/data.cpp:820
 msgid "Azelfafage"
-msgstr "Азельфафаге"
+msgstr ""
 
 #: ../data/data.cpp:821
 msgid "Bosona"
@@ -3358,29 +3311,27 @@ msgstr ""
 
 #: ../data/data.cpp:822
 msgid "Herschel's Garnet Star"
-msgstr "Гранатовая звезда Гершеля"
+msgstr ""
 
 #: ../data/data.cpp:823
-#, fuzzy
 msgid "Erakis"
-msgstr "Арракис"
+msgstr ""
 
 #: ../data/data.cpp:824
 msgid "Enif"
-msgstr "Эниф"
+msgstr ""
 
 #: ../data/data.cpp:825
 msgid "Deneb Algedi"
-msgstr "Денеб Альгеди"
+msgstr ""
 
 #: ../data/data.cpp:826
-#, fuzzy
 msgid "Aldhanab"
-msgstr "Аль-Данаб"
+msgstr ""
 
 #: ../data/data.cpp:827
 msgid "Al Dhanab"
-msgstr "Аль-Данаб"
+msgstr ""
 
 #: ../data/data.cpp:828
 msgid "Itonda"
@@ -3388,35 +3339,35 @@ msgstr ""
 
 #: ../data/data.cpp:829
 msgid "Kurhah"
-msgstr "Курхах"
+msgstr ""
 
 #: ../data/data.cpp:830
 msgid "Sadalmelik"
-msgstr "Садалмелик"
+msgstr ""
 
 #: ../data/data.cpp:831
 msgid "Alnair"
-msgstr "Альнаир"
+msgstr ""
 
 #: ../data/data.cpp:832
 msgid "Al Nair"
-msgstr "Аль Найр"
+msgstr ""
 
 #: ../data/data.cpp:833
 msgid "Biham"
-msgstr "Бихам"
+msgstr ""
 
 #: ../data/data.cpp:834
 msgid "Ancha"
-msgstr "Анча"
+msgstr ""
 
 #: ../data/data.cpp:835
 msgid "Sadachbia"
-msgstr "Садахбиа"
+msgstr ""
 
 #: ../data/data.cpp:836
 msgid "Seat"
-msgstr "Сит"
+msgstr ""
 
 #: ../data/data.cpp:837
 msgid "Lionrock"
@@ -3424,15 +3375,15 @@ msgstr ""
 
 #: ../data/data.cpp:838
 msgid "Kruger 60"
-msgstr "Крюгер 60"
+msgstr ""
 
 #: ../data/data.cpp:839
 msgid "Situla"
-msgstr "Ситула"
+msgstr ""
 
 #: ../data/data.cpp:840
 msgid "Homam"
-msgstr "Хомам"
+msgstr ""
 
 #: ../data/data.cpp:841
 msgid "Tiaki"
@@ -3440,15 +3391,15 @@ msgstr ""
 
 #: ../data/data.cpp:842
 msgid "Matar"
-msgstr "Матар"
+msgstr ""
 
 #: ../data/data.cpp:843
 msgid "Babcock's Star"
-msgstr "Звезда Бабкока"
+msgstr ""
 
 #: ../data/data.cpp:844
 msgid "Sadalbari"
-msgstr "Садалбари"
+msgstr ""
 
 #: ../data/data.cpp:845
 msgid "Hydor"
@@ -3456,7 +3407,7 @@ msgstr ""
 
 #: ../data/data.cpp:846
 msgid "Skat"
-msgstr "Скат"
+msgstr ""
 
 #: ../data/data.cpp:847
 msgid "Helvetios"
@@ -3464,28 +3415,27 @@ msgstr ""
 
 #: ../data/data.cpp:848
 msgid "Fomalhaut"
-msgstr "Фомальгаут"
+msgstr ""
 
 #: ../data/data.cpp:849
 msgid "Scheat"
-msgstr "Шеат"
+msgstr ""
 
 #: ../data/data.cpp:850
-#, fuzzy
 msgid "Fumalsamakah"
-msgstr "Фум аль Самаках"
+msgstr ""
 
 #: ../data/data.cpp:851
 msgid "Fum al Samakah"
-msgstr "Фум аль Самаках"
+msgstr ""
 
 #: ../data/data.cpp:852
 msgid "Markab"
-msgstr "Маркаб"
+msgstr ""
 
 #: ../data/data.cpp:853
 msgid "Marchab"
-msgstr "Марчаб"
+msgstr ""
 
 #: ../data/data.cpp:854
 msgid "Ebla"
@@ -3493,16 +3443,15 @@ msgstr ""
 
 #: ../data/data.cpp:855
 msgid "Bradley 3077"
-msgstr "Брэдли 3077"
+msgstr ""
 
 #: ../data/data.cpp:856
 msgid "Salm"
 msgstr ""
 
 #: ../data/data.cpp:857
-#, fuzzy
 msgid "Alkarab"
-msgstr "Анкара"
+msgstr ""
 
 #: ../data/data.cpp:858
 msgid "Veritate"
@@ -3514,7 +3463,7 @@ msgstr ""
 
 #: ../data/data.cpp:860
 msgid "Errai"
-msgstr "Эррай"
+msgstr ""
 
 #: ../data/data.cpp:861
 msgid "Axólotl"
@@ -3522,43 +3471,43 @@ msgstr ""
 
 #: ../data/data.cpp:862
 msgid "Pleiades"
-msgstr "Плеяды"
+msgstr ""
 
 #: ../data/data.cpp:863
 msgid "Hyades"
-msgstr "Гиады"
+msgstr ""
 
 #: ../data/data.cpp:864
 msgid "Praesepe"
-msgstr "Ясли"
+msgstr ""
 
 #: ../data/data.cpp:865
 msgid "Beehive Cluster"
-msgstr "Скопление Улей"
+msgstr ""
 
 #: ../data/data.cpp:866
 msgid "Maffei 1"
-msgstr "Маффей 1"
+msgstr ""
 
 #: ../data/data.cpp:867
 msgid "Maffei 2"
-msgstr "Маффей 2"
+msgstr ""
 
 #: ../data/data.cpp:868
 msgid "Leo A"
-msgstr "Лев A"
+msgstr ""
 
 #: ../data/data.cpp:869
 msgid "Sextans B"
-msgstr "Секстант B"
+msgstr ""
 
 #: ../data/data.cpp:870
 msgid "Leo I"
-msgstr "Лев I"
+msgstr ""
 
 #: ../data/data.cpp:871
 msgid "Sextans A"
-msgstr "Секстант A"
+msgstr ""
 
 #: ../data/data.cpp:872
 msgid "Circinus"
@@ -3574,15 +3523,15 @@ msgstr ""
 
 #: ../data/data.cpp:875
 msgid "Holmberg VI"
-msgstr "Холмберг VI"
+msgstr ""
 
 #: ../data/data.cpp:876
 msgid "Fath 703"
-msgstr "Фатх 703"
+msgstr ""
 
 #: ../data/data.cpp:877
 msgid "47 Tuc"
-msgstr "47 Тукана"
+msgstr ""
 
 #: ../data/data.cpp:878
 msgid "Eridanus"
@@ -3594,7 +3543,7 @@ msgstr "Компас"
 
 #: ../data/data.cpp:880
 msgid "Tonantzintla 2"
-msgstr "Тонантзинтла 2"
+msgstr ""
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
@@ -3619,14 +3568,12 @@ msgstr "%s: %d Ожидалась секция «Configuration».\n"
 msgid "%s: Bad configuration file.\n"
 msgstr "%s: Неверный конфигурационный файл.\n"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:375
 #, c-format
 msgid "Loaded %i deep space objects\n"
@@ -4086,33 +4033,36 @@ msgid "au"
 msgstr "а.е."
 
 #: ../src/celestia/celestiacore.cpp:2520
-#, fuzzy
 msgid "mi"
-msgstr "м"
+msgstr "миль"
 
 #: ../src/celestia/celestiacore.cpp:2525
 msgid "ft"
-msgstr ""
+msgstr "фут(ов)"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/celestiacore.cpp:2533
+#: ../src/celestia/qt/qtinfopanel.cpp:122
 #: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "км"
 
-#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
+#: ../src/celestia/celestiacore.cpp:2538
+#: ../src/celestia/qt/qtinfopanel.cpp:126
 msgid "m"
 msgstr "м"
 
-#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
+#: ../src/celestia/celestiacore.cpp:2561
+#: ../src/celestia/qt/qtinfopanel.cpp:170
 #: ../src/celestia/qt/qtinfopanel.cpp:198
 #: ../src/celestia/qt/qtinfopanel.cpp:248
 msgid "days"
 msgstr "дн."
 
-#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/celestiacore.cpp:2566
+#: ../src/celestia/qt/qtinfopanel.cpp:166
 #: ../src/celestia/qt/qtinfopanel.cpp:194
 msgid "hours"
 msgstr "ч."
@@ -4131,9 +4081,9 @@ msgid "Rotation period: %s %s\n"
 msgstr "Период вращения: %s %s\n"
 
 #: ../src/celestia/celestiacore.cpp:2587
-#, fuzzy, c-format
+#, c-format
 msgid "Mass: %.6g lb\n"
-msgstr "Масса: %.6g кг\n"
+msgstr "Масса: %.6g фунт(ов)\n"
 
 #: ../src/celestia/celestiacore.cpp:2589
 #, c-format
@@ -4160,11 +4110,11 @@ msgstr "а.е./с"
 
 #: ../src/celestia/celestiacore.cpp:2622
 msgid "mi/s"
-msgstr ""
+msgstr "миль/с"
 
 #: ../src/celestia/celestiacore.cpp:2627
 msgid "ft/s"
-msgstr ""
+msgstr "фут(ов)/с"
 
 #: ../src/celestia/celestiacore.cpp:2635
 msgid "km/s"
@@ -4205,9 +4155,9 @@ msgid "Absolute magnitude: %.1f\n"
 msgstr "Абсолютная звёздная величина: %.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:2803
-#, fuzzy, c-format
+#, c-format
 msgid "%.6f%c %.6f%c %s"
-msgstr "%.6f%c %.6f%c %f км"
+msgstr "%.6f%c %.6f%c %s"
 
 #: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
 #: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
@@ -4248,9 +4198,9 @@ msgid "Surface temp: %s K\n"
 msgstr "Температура поверхности: %s К\n"
 
 #: ../src/celestia/celestiacore.cpp:2869
-#, fuzzy, c-format
+#, c-format
 msgid "Radius: %s Rsun  (%s)\n"
-msgstr "Радиус: %s солн.  (%s км)\n"
+msgstr "Радиус: %s солн.  (%s миль)\n"
 
 #: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
 #: ../src/celestia/celestiacore.cpp:2939
@@ -4273,9 +4223,9 @@ msgid "Phase angle: %.1f%s\n"
 msgstr "Фазовый угол: %.1f%s\n"
 
 #: ../src/celestia/celestiacore.cpp:2996
-#, fuzzy, c-format
+#, c-format
 msgid "Density: %.2f x 1000 lb/ft^3\n"
-msgstr "Плотность: %.2f x 1000 кг/м^3\n"
+msgstr "Плотность: %.2f x 1000 фунт/фут^3\n"
 
 #: ../src/celestia/celestiacore.cpp:2998
 #, c-format
@@ -4379,9 +4329,9 @@ msgid "Target name: %s"
 msgstr "Найти: %s"
 
 #: ../src/celestia/celestiacore.cpp:3575
-#, fuzzy, c-format
+#, c-format
 msgid "%dx%d at %.2f fps  %s"
-msgstr "%dx%d при %f fps  %s"
+msgstr "%dx%d при %.2f fps  %s"
 
 #: ../src/celestia/celestiacore.cpp:3578
 msgid "Paused"
@@ -4501,9 +4451,8 @@ msgid "Unable to capture a frame!\n"
 msgstr "Не удалось сделать снимок экрана!\n"
 
 #: ../src/celestia/celestiacore.cpp:4780
-#, fuzzy
 msgid "Unsupported image type: {}!\n"
-msgstr "Неподдерживаемый режим ссылки «%s»!\n"
+msgstr "Неподдерживаемый формат изображения: {}!\n"
 
 #: ../src/celestia/glut/glutmain.cpp:522
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
@@ -4582,11 +4531,11 @@ msgstr "Внутренняя ошибка библиотеки Ogg.\n"
 #: ../src/celestia/oggtheoracapture.cpp:311
 #, c-format
 msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+"%dx%d offset (%dx%d)\n"
 msgstr ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+"%dx%d offset (%dx%d)\n"
 
 #: ../src/celestia/oggtheoracapture.cpp:426
 #, c-format
@@ -4603,12 +4552,12 @@ msgstr "Настраиваемо"
 
 #: ../src/celestia/qt/qtappwin.cpp:214
 msgid "Error getting path for log filename!"
-msgstr ""
+msgstr "Ошибка получения пути для лог-файла!"
 
 #: ../src/celestia/qt/qtappwin.cpp:231
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia не может быть запущена, поскольку папка данных не была найдена, "
 "возможно, из-за неправильной установки."
@@ -4646,7 +4595,8 @@ msgstr "Звёзды"
 msgid "Deep Sky Objects"
 msgstr "Объекты глубокого космоса"
 
-#: ../src/celestia/qt/qtappwin.cpp:341 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:341
+#: ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 msgid "Event Finder"
 msgstr "Поиск затмений"
@@ -4700,9 +4650,8 @@ msgid "Video (*.avi)"
 msgstr "Видео (*.avi)"
 
 #: ../src/celestia/qt/qtappwin.cpp:654
-#, fuzzy
 msgid "Matroska Video (*.mkv)"
-msgstr "Видео (*.avi)"
+msgstr "Matroska Video (*.mkv)"
 
 #: ../src/celestia/qt/qtappwin.cpp:670
 msgid "Resolution:"
@@ -4720,19 +4669,19 @@ msgstr "Частота кадров:"
 
 #: ../src/celestia/qt/qtappwin.cpp:683
 msgid "Video codec:"
-msgstr ""
+msgstr "Видеокодек:"
 
 #: ../src/celestia/qt/qtappwin.cpp:685
 msgid "Lossless"
-msgstr ""
+msgstr "Без сжатия"
 
 #: ../src/celestia/qt/qtappwin.cpp:686
 msgid "Lossy (H.264)"
-msgstr ""
+msgstr "Сжатие по H.264"
 
 #: ../src/celestia/qt/qtappwin.cpp:690
 msgid "Bitrate:"
-msgstr ""
+msgstr "Битрейт:"
 
 #: ../src/celestia/qt/qtappwin.cpp:763
 msgid "Captured screen shot to clipboard"
@@ -4761,30 +4710,32 @@ msgstr "Новая закладка"
 #: ../src/celestia/qt/qtappwin.cpp:1078
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Main site: <a "
+"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright"
+" (C) 2001-2021 by the Celestia Development Team.<br>Celestia is free "
+"software. You can redistribute it and/or modify it under the terms of the "
+"GNU General Public License as published by the Free Software Foundation; "
+"either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a "
 "href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</"
-"a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
-"\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Компиляция для %2-битного CPU<br>Используется %3 %4<br>На основе "
-"библиотеки Qt %5<br>Ядра NAIF %7<br>Запущенная версия Qt: %6</p><p>Copyright "
-"(C) 2001-2021 by the Celestia Development Team.<br>Celestia является "
-"свободным программным обеспечением. Вы можете распространять и/или изменять "
-"его в соответствии с условиями Стандартной общественной лицензии GNU, "
-"опубликованной Free Software Foundation; либо Version 2, либо любой (на ваше "
-"усмотрение) более поздней версии.</p><p>Домашняя страница: <a href=\"https://"
-"celestia.space/\">https://celestia.space/</a><br>Форум: <a href=\"https://"
-"celestia.space/forum/\">https://celestia.space/forum/</a><br>Проект на "
-"GitHub: <a href=\"https://github.com/CelestiaProject/Celestia\">https://"
-"github.com/CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Компиляция для %2-битного CPU<br>Используется %3 %4<br>На "
+"основе библиотеки Qt %5<br>Ядра NAIF %7<br>Запущенная версия Qt: "
+"%6</p><p>Copyright (C) 2001-2021 by the Celestia Development "
+"Team.<br>Celestia является свободным программным обеспечением. Вы можете "
+"распространять и/или изменять его в соответствии с условиями Стандартной "
+"общественной лицензии GNU, опубликованной Free Software Foundation; либо "
+"Version 2, либо любой (на ваше усмотрение) более поздней "
+"версии.</p><p>Домашняя страница: <a "
+"href=\"https://celestia.space/\">https://celestia.space/</a><br>Форум: <a "
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>Проект"
+" на GitHub: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1113
 msgid "Unknown compiler"
@@ -5140,7 +5091,8 @@ msgid "System time at activation"
 msgstr "Системное время при активации"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:880 ../src/celestia/qt/rc.cpp:39
@@ -5251,8 +5203,9 @@ msgstr "Орбиты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:85
 #: ../src/celestia/qt/qtcelestiaactions.cpp:112
 #: ../src/celestia/qt/qtselectionpopup.cpp:388
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:157
+#: ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:213
 #: ../src/celestia/win32/winmain.cpp:1466
 #: ../src/celestia/win32/winmain.cpp:1504
@@ -5275,8 +5228,9 @@ msgstr "Карликовые планеты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:87
 #: ../src/celestia/qt/qtcelestiaactions.cpp:114
 #: ../src/celestia/qt/qtselectionpopup.cpp:394
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:163
+#: ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:215
 #: ../src/celestia/win32/winmain.cpp:1462
 msgid "Moons"
@@ -5297,8 +5251,9 @@ msgstr "Малые спутники"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:89
 #: ../src/celestia/qt/qtcelestiaactions.cpp:116
 #: ../src/celestia/qt/qtselectionpopup.cpp:400
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742
+#: ../src/celestia/qt/rc.cpp:87 ../src/celestia/qt/rc.cpp:169
+#: ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:217
 #: ../src/celestia/win32/winmain.cpp:1456
 msgid "Asteroids"
@@ -5313,8 +5268,9 @@ msgstr "Астероиды"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:90
 #: ../src/celestia/qt/qtcelestiaactions.cpp:117
 #: ../src/celestia/qt/qtselectionpopup.cpp:403
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750
+#: ../src/celestia/qt/rc.cpp:90 ../src/celestia/qt/rc.cpp:172
+#: ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:218
 #: ../src/celestia/win32/winmain.cpp:1458
 msgid "Comets"
@@ -5334,8 +5290,9 @@ msgstr "Кометы"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:118
 #: ../src/celestia/qt/qtselectionpopup.cpp:406
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746
+#: ../src/celestia/qt/rc.cpp:94 ../src/celestia/qt/rc.cpp:176
+#: ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:219
 #: ../src/celestia/win32/winmain.cpp:1471
 msgctxt "plural"
@@ -6078,7 +6035,6 @@ msgstr "Снять &метку"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
 #: ../src/celestia/win32/winmain.cpp:1582
-#, fuzzy
 msgid "Select &Primary Body"
 msgstr "Выбрать центральное тело"
 
@@ -6166,9 +6122,9 @@ msgstr "Карликовые планеты"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:397
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1464
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:166
+#: ../src/celestia/qt/rc.cpp:233 ../src/celestia/win32/winmain.cpp:1464
 msgid "Minor moons"
 msgstr "Малые луны"
 
@@ -6438,7 +6394,8 @@ msgid "Description:"
 msgstr "Описание:"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:153
 msgid "Organize Bookmarks"
@@ -7532,7 +7489,8 @@ msgstr "Объекты системы"
 #: ../src/celestia/win32/winmain.cpp:1741
 msgid "Unable to switch to full screen mode; running in window mode"
 msgstr ""
-"Не удаётся перейти в полноэкранный режим; продолжение работы в оконном режиме"
+"Не удаётся перейти в полноэкранный режим; продолжение работы в оконном "
+"режиме"
 
 #: ../src/celestia/win32/winmain.cpp:1742
 #: ../src/celestia/win32/winmain.cpp:2014
@@ -7740,24 +7698,3 @@ msgstr "Неизвестная ошибка, возвращённая функц
 #, c-format
 msgid "Error openning %s or .\n"
 msgstr "Ошибка открытия %s или .\n"
-
-#~ msgid "Astana"
-#~ msgstr "Астана"
-
-#~ msgid "Radius: %s km\n"
-#~ msgstr "Радиус: %s км\n"
-
-#~ msgid "Sun"
-#~ msgstr "Солнце"
-
-#~ msgid "Video (*.ogv)"
-#~ msgstr "Видео (*.ogv)"
-
-#~ msgid "URL must start with \"cel://\"!\n"
-#~ msgstr "Ссылка должна начинаться с «cel://»!\n"
-
-#~ msgid "Settings"
-#~ msgstr "Настройки"
-
-#~ msgid "The Garnet Star"
-#~ msgstr "Гранатовая звезда"
