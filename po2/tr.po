@@ -1,283 +1,378 @@
-# , 2011.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Celestia Development Team
+# This file is distributed under the same license as the celestia package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Hleb Valoshka <375gnu@gmail.com>, 2019
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: en\n"
-"Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2011-01-08 22:08+0200\n"
-"Last-Translator: \n"
-"Language-Team: Turkish <kde-i18n-doc@kde.org>\n"
+"Project-Id-Version: celestia 1.7.0\n"
+"Report-Msgid-Bugs-To: team@celestia.space\n"
+"POT-Creation-Date: 2018-12-01 14:09+0300\n"
+"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2019\n"
+"Language-Team: Turkish (https://www.transifex.com/celestia/teams/93131/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.1\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
-"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: tr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: ../data/constellations.cpp:1
 msgid "Andromeda"
 msgstr "Andromeda"
 
+#: ../data/constellations.cpp:2
 msgid "Antlia"
 msgstr "Pompa takımyıldızı"
 
+#: ../data/constellations.cpp:3
 msgid "Apus"
 msgstr "Cennetkuşu takımyıldızı"
 
+#: ../data/constellations.cpp:4
 msgid "Aquarius"
 msgstr "Kova takımyıldızı"
 
+#: ../data/constellations.cpp:5
 msgid "Aquila"
 msgstr "Kartal takımyıldızı"
 
+#: ../data/constellations.cpp:6
 msgid "Ara"
 msgstr "Sunak takımyıldızı"
 
+#: ../data/constellations.cpp:7
 msgid "Aries"
 msgstr "Koç takımyıldızı"
 
+#: ../data/constellations.cpp:8
 msgid "Auriga"
 msgstr "Arabacı takımyıldızı"
 
+#: ../data/constellations.cpp:9
 msgid "Boötes"
 msgstr "Çoban takımyıldızı"
 
+#: ../data/constellations.cpp:10
 msgid "Caelum"
 msgstr "Çelikkalem takımyıldızı"
 
+#: ../data/constellations.cpp:11
 msgid "Camelopardalis"
 msgstr "Zürafa takımyıldızı "
 
+#: ../data/constellations.cpp:12
 msgid "Cancer"
 msgstr "Yengeç takımyıldızı"
 
+#: ../data/constellations.cpp:13
 msgid "Canes Venatici"
 msgstr "Av köpekleri takımyıldızı "
 
+#: ../data/constellations.cpp:14
 msgid "Canis Major"
 msgstr "Büyük Köpek takımyıldızı"
 
+#: ../data/constellations.cpp:15
 msgid "Canis Minor"
 msgstr "Küçük Köpek takımyıldızı"
 
+#: ../data/constellations.cpp:16
 msgid "Capricornus"
 msgstr "Oğlak takımyıldızı"
 
+#: ../data/constellations.cpp:17
 msgid "Carina"
 msgstr "Karina takımyıldızı"
 
+#: ../data/constellations.cpp:18
 msgid "Cassiopeia"
 msgstr "Kraliçe takımyıldızı"
 
+#: ../data/constellations.cpp:19
 msgid "Centaurus"
 msgstr "Erboğa takımyıldızı"
 
+#: ../data/constellations.cpp:20
 msgid "Cepheus"
 msgstr "Kral takımyıldızı"
 
+#: ../data/constellations.cpp:21
 msgid "Cetus"
 msgstr "Balina takımyıldızı"
 
+#: ../data/constellations.cpp:22
 msgid "Chamaeleon"
 msgstr "Bukalemun takımyıldızı"
 
+#: ../data/constellations.cpp:23
 msgid "Circinus"
 msgstr "Pergel takımyıldızı"
 
+#: ../data/constellations.cpp:24
 msgid "Columba"
 msgstr "Güvercin takımyıldızı"
 
+#: ../data/constellations.cpp:25
 msgid "Coma Berenices"
 msgstr "Berenices'in Saçı takımyıldızı"
 
+#: ../data/constellations.cpp:26
 msgid "Corona Australis"
 msgstr "Güneytacı takımyıldızı"
 
+#: ../data/constellations.cpp:27
 msgid "Corona Borealis"
 msgstr "Kuzeytacı takımyıldızı"
 
+#: ../data/constellations.cpp:28
 msgid "Corvus"
 msgstr "Karga takımyıldızı"
 
+#: ../data/constellations.cpp:29
 msgid "Crater"
 msgstr "Kupa takımyıldızı"
 
+#: ../data/constellations.cpp:30
 msgid "Crux"
 msgstr "Güneyhaçı takımyıldızı"
 
+#: ../data/constellations.cpp:31
 msgid "Cygnus"
 msgstr "Kuğu Takımyıldızı"
 
+#: ../data/constellations.cpp:32
 msgid "Delphinus"
 msgstr "Yunus takımyıldızı"
 
+#: ../data/constellations.cpp:33
 msgid "Dorado"
 msgstr "Kılıçbalığı takımyıldızı"
 
+#: ../data/constellations.cpp:34
 msgid "Draco"
 msgstr "Ejderha takımyıldızı"
 
+#: ../data/constellations.cpp:35
 msgid "Equuleus"
 msgstr "Tay takımyıldızı"
 
+#: ../data/constellations.cpp:36
 msgid "Eridanus"
 msgstr "Irmak takımyıldızı"
 
+#: ../data/constellations.cpp:37
 msgid "Fornax"
 msgstr "Ocak takımyıldızı"
 
+#: ../data/constellations.cpp:38
 msgid "Gemini"
 msgstr "İkizler takımyıldızı"
 
+#: ../data/constellations.cpp:39
 msgid "Grus"
 msgstr "Turna takımyıldızı"
 
+#: ../data/constellations.cpp:40
 msgid "Hercules"
 msgstr "Herkül takımyıldızı"
 
+#: ../data/constellations.cpp:41
 msgid "Horologium"
 msgstr "Saat takımyıldızı"
 
+#: ../data/constellations.cpp:42
 msgid "Hydra"
 msgstr "Suyılanı takımyıldızı"
 
+#: ../data/constellations.cpp:43
 msgid "Hydrus"
 msgstr "Küçüksuyılanı takımyıldızı"
 
+#: ../data/constellations.cpp:44
 msgid "Indus"
 msgstr "Hintli takımyıldızı"
 
+#: ../data/constellations.cpp:45
 msgid "Lacerta"
 msgstr "Kertenkele takımyıldızı"
 
+#: ../data/constellations.cpp:46
 msgid "Leo"
 msgstr "Aslan takımyıldızı"
 
+#: ../data/constellations.cpp:47
 msgid "Leo Minor"
 msgstr "Küçük Aslan takımyıldızı"
 
+#: ../data/constellations.cpp:48
 msgid "Lepus"
 msgstr "Tavşan takımyıldızı"
 
+#: ../data/constellations.cpp:49
 msgid "Libra"
 msgstr "Terazi takımyıldızı"
 
+#: ../data/constellations.cpp:50
 msgid "Lupus"
 msgstr "Kurt takımyıldızı"
 
+#: ../data/constellations.cpp:51
 msgid "Lynx"
 msgstr "Vaşak takımyıldızı"
 
+#: ../data/constellations.cpp:52
 msgid "Lyra"
 msgstr "Çalgı takımyıldızı"
 
+#: ../data/constellations.cpp:53
 msgid "Mensa"
 msgstr "Masa takımyıldızı"
 
+#: ../data/constellations.cpp:54
 msgid "Microscopium"
 msgstr "Mikroskop takımyıldızı"
 
+#: ../data/constellations.cpp:55
 msgid "Monoceros"
 msgstr "Tekboynuz takımyıldızı"
 
+#: ../data/constellations.cpp:56
 msgid "Musca"
 msgstr "Sinek takımyıldızı"
 
+#: ../data/constellations.cpp:57
 msgid "Norma"
 msgstr "Cetvel takımyıldızı"
 
+#: ../data/constellations.cpp:58
 msgid "Octans"
 msgstr "Sekizlik takımyıldızı"
 
+#: ../data/constellations.cpp:59
 msgid "Ophiuchus"
 msgstr "Yılancı takımyıldızı"
 
+#: ../data/constellations.cpp:60
 msgid "Orion"
 msgstr "Avcı Takımyıldızı"
 
+#: ../data/constellations.cpp:61
 msgid "Pavo"
 msgstr "Tavus takımyıldızı"
 
+#: ../data/constellations.cpp:62
 msgid "Pegasus"
 msgstr "Kanatlıat takımyıldızı"
 
+#: ../data/constellations.cpp:63
 msgid "Perseus"
 msgstr "Kahraman takımyıldızı"
 
+#: ../data/constellations.cpp:64
 msgid "Phoenix"
 msgstr "Anka takımyıldızı"
 
+#: ../data/constellations.cpp:65
 msgid "Pictor"
 msgstr "Ressam takımyıldızı"
 
+#: ../data/constellations.cpp:66
 msgid "Pisces"
 msgstr "Balık takımyıldızı"
 
+#: ../data/constellations.cpp:67
 msgid "Piscis Austrinus"
 msgstr "Güneybalığı takımyıldızı"
 
+#: ../data/constellations.cpp:68
 msgid "Puppis"
 msgstr "Pupa takımyıldızı"
 
+#: ../data/constellations.cpp:69
 msgid "Pyxis"
 msgstr "Kumpas takımyıldızı"
 
+#: ../data/constellations.cpp:70
 msgid "Reticulum"
 msgstr "Ağcık takımyıldızı"
 
+#: ../data/constellations.cpp:71
 msgid "Sagitta"
 msgstr "Okçuk takımyıldızı"
 
+#: ../data/constellations.cpp:72
 msgid "Sagittarius"
 msgstr "Yay takımyıldızı"
 
+#: ../data/constellations.cpp:73
 msgid "Scorpius"
 msgstr "Akrep takımyıldızı"
 
+#: ../data/constellations.cpp:74
 msgid "Sculptor"
 msgstr "Heykeltraş takımyıldızı"
 
+#: ../data/constellations.cpp:75
 msgid "Scutum"
 msgstr "Kalkan takımyıldızı"
 
+#: ../data/constellations.cpp:76
 msgid "Serpens Caput"
 msgstr "Yılanın başı takımyıldızı"
 
+#: ../data/constellations.cpp:77
 msgid "Serpens Cauda"
 msgstr "Yılanın kuyruğu takımyıldızı"
 
+#: ../data/constellations.cpp:78
 msgid "Sextans"
 msgstr "Altılık takımyıldızı"
 
+#: ../data/constellations.cpp:79
 msgid "Taurus"
 msgstr "Boğa takımyıldızı"
 
+#: ../data/constellations.cpp:80
 msgid "Telescopium"
 msgstr "Dürbün takımyıldızı"
 
+#: ../data/constellations.cpp:81
 msgid "Triangulum"
 msgstr "Üçgen takımyıldızı"
 
+#: ../data/constellations.cpp:82
 msgid "Triangulum Australe"
 msgstr "Güney Üçgeni takımyıldızı"
 
+#: ../data/constellations.cpp:83
 msgid "Tucana"
 msgstr "Tukan takımyıldızı"
 
+#: ../data/constellations.cpp:84
 msgid "Ursa Major"
 msgstr "Büyük Ayı takımyıldızı"
 
+#: ../data/constellations.cpp:85
 msgid "Ursa Minor"
 msgstr "Küçük Ayı takımyıldızı"
 
+#: ../data/constellations.cpp:86
 msgid "Vela"
 msgstr "Yelken takımyıldızı"
 
+#: ../data/constellations.cpp:87
 msgid "Virgo"
 msgstr "Başak takımyıldızı"
 
+#: ../data/constellations.cpp:88
 msgid "Volans"
 msgstr "Uçanbalık takımyıldızı"
 
+#: ../data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Tilkicik takımyıldızı"
-
