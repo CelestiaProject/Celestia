@@ -13,9 +13,8 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_observer.h"
-//#include <celengine/body.h>
-//#include <celengine/timelinephase.h>
 #include <celestia/celestiacore.h>
+#include <celscript/common/scriptmaps.h>
 #include <celutil/logger.h>
 #include <Eigen/Geometry>
 
@@ -928,9 +927,13 @@ static int observer_getlocationflags(lua_State* l)
     lua_newtable(l);
     const auto locationFlags = obs->getLocationFilter();
     auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+    std::string itString;
+    itString.reserve(celestia::scripts::FlagMapNameLength);
     for (const auto& it : LocationFlagMap)
     {
-        lua_pushstring(l, it.first.c_str());
+        itString.clear();
+        itString.append(it.first);
+        lua_pushstring(l, itString.c_str());
         lua_pushboolean(l, (it.second & locationFlags) != 0);
         lua_settable(l, -3);
     }

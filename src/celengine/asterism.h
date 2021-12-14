@@ -12,6 +12,7 @@
 #define _CELENGINE_ASTERISM_H_
 
 #include <string>
+#include <string_view>
 #include <vector>
 #include <iostream>
 #include <celutil/color.h>
@@ -21,7 +22,7 @@ class StarDatabase;
 class Asterism
 {
  public:
-    Asterism(std::string);
+    Asterism(std::string_view);
     ~Asterism() = default;
     Asterism() = delete;
     Asterism(const Asterism&) = delete;

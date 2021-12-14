@@ -2,207 +2,209 @@
 #include <celestia/celestiacore.h>
 #include <celengine/render.h>
 
+using namespace std::string_view_literals;
+
 namespace celestia::scripts
 {
 
 void initRenderFlagMap(FlagMap64 &RenderFlagMap)
 {
-    RenderFlagMap["orbits"]              = Renderer::ShowOrbits;
-    RenderFlagMap["fadingorbits"]        = Renderer::ShowFadingOrbits;
-    RenderFlagMap["cloudmaps"]           = Renderer::ShowCloudMaps;
-    RenderFlagMap["constellations"]      = Renderer::ShowDiagrams;
-    RenderFlagMap["galaxies"]            = Renderer::ShowGalaxies;
-    RenderFlagMap["globulars"]           = Renderer::ShowGlobulars;
-    RenderFlagMap["planets"]             = Renderer::ShowPlanets;
-    RenderFlagMap["dwarfplanets"]        = Renderer::ShowDwarfPlanets;
-    RenderFlagMap["moons"]               = Renderer::ShowMoons;
-    RenderFlagMap["minormoons"]          = Renderer::ShowMinorMoons;
-    RenderFlagMap["asteroids"]           = Renderer::ShowAsteroids;
-    RenderFlagMap["comets"]              = Renderer::ShowComets;
-    RenderFlagMap["spasecrafts"]         = Renderer::ShowSpacecrafts;
-    RenderFlagMap["stars"]               = Renderer::ShowStars;
-    RenderFlagMap["nightmaps"]           = Renderer::ShowNightMaps;
-    RenderFlagMap["eclipseshadows"]      = Renderer::ShowEclipseShadows;
-    RenderFlagMap["planetrings"]         = Renderer::ShowPlanetRings;
-    RenderFlagMap["ringshadows"]         = Renderer::ShowRingShadows;
-    RenderFlagMap["comettails"]          = Renderer::ShowCometTails;
-    RenderFlagMap["boundaries"]          = Renderer::ShowBoundaries;
-    RenderFlagMap["markers"]             = Renderer::ShowMarkers;
-    RenderFlagMap["automag"]             = Renderer::ShowAutoMag;
-    RenderFlagMap["atmospheres"]         = Renderer::ShowAtmospheres;
-    RenderFlagMap["grid"]                = Renderer::ShowCelestialSphere;
-    RenderFlagMap["equatorialgrid"]      = Renderer::ShowCelestialSphere;
-    RenderFlagMap["galacticgrid"]        = Renderer::ShowGalacticGrid;
-    RenderFlagMap["eclipticgrid"]        = Renderer::ShowEclipticGrid;
-    RenderFlagMap["horizontalgrid"]      = Renderer::ShowHorizonGrid;
-    RenderFlagMap["smoothlines"]         = Renderer::ShowSmoothLines;
-    RenderFlagMap["partialtrajectories"] = Renderer::ShowPartialTrajectories;
-    RenderFlagMap["nebulae"]             = Renderer::ShowNebulae;
-    RenderFlagMap["openclusters"]        = Renderer::ShowOpenClusters;
-    RenderFlagMap["cloudshadows"]        = Renderer::ShowCloudShadows;
-    RenderFlagMap["ecliptic"]            = Renderer::ShowEcliptic;
+    RenderFlagMap["orbits"sv]              = Renderer::ShowOrbits;
+    RenderFlagMap["fadingorbits"sv]        = Renderer::ShowFadingOrbits;
+    RenderFlagMap["cloudmaps"sv]           = Renderer::ShowCloudMaps;
+    RenderFlagMap["constellations"sv]      = Renderer::ShowDiagrams;
+    RenderFlagMap["galaxies"sv]            = Renderer::ShowGalaxies;
+    RenderFlagMap["globulars"sv]           = Renderer::ShowGlobulars;
+    RenderFlagMap["planets"sv]             = Renderer::ShowPlanets;
+    RenderFlagMap["dwarfplanets"sv]        = Renderer::ShowDwarfPlanets;
+    RenderFlagMap["moons"sv]               = Renderer::ShowMoons;
+    RenderFlagMap["minormoons"sv]          = Renderer::ShowMinorMoons;
+    RenderFlagMap["asteroids"sv]           = Renderer::ShowAsteroids;
+    RenderFlagMap["comets"sv]              = Renderer::ShowComets;
+    RenderFlagMap["spasecrafts"sv]         = Renderer::ShowSpacecrafts;
+    RenderFlagMap["stars"sv]               = Renderer::ShowStars;
+    RenderFlagMap["nightmaps"sv]           = Renderer::ShowNightMaps;
+    RenderFlagMap["eclipseshadows"sv]      = Renderer::ShowEclipseShadows;
+    RenderFlagMap["planetrings"sv]         = Renderer::ShowPlanetRings;
+    RenderFlagMap["ringshadows"sv]         = Renderer::ShowRingShadows;
+    RenderFlagMap["comettails"sv]          = Renderer::ShowCometTails;
+    RenderFlagMap["boundaries"sv]          = Renderer::ShowBoundaries;
+    RenderFlagMap["markers"sv]             = Renderer::ShowMarkers;
+    RenderFlagMap["automag"sv]             = Renderer::ShowAutoMag;
+    RenderFlagMap["atmospheres"sv]         = Renderer::ShowAtmospheres;
+    RenderFlagMap["grid"sv]                = Renderer::ShowCelestialSphere;
+    RenderFlagMap["equatorialgrid"sv]      = Renderer::ShowCelestialSphere;
+    RenderFlagMap["galacticgrid"sv]        = Renderer::ShowGalacticGrid;
+    RenderFlagMap["eclipticgrid"sv]        = Renderer::ShowEclipticGrid;
+    RenderFlagMap["horizontalgrid"sv]      = Renderer::ShowHorizonGrid;
+    RenderFlagMap["smoothlines"sv]         = Renderer::ShowSmoothLines;
+    RenderFlagMap["partialtrajectories"sv] = Renderer::ShowPartialTrajectories;
+    RenderFlagMap["nebulae"sv]             = Renderer::ShowNebulae;
+    RenderFlagMap["openclusters"sv]        = Renderer::ShowOpenClusters;
+    RenderFlagMap["cloudshadows"sv]        = Renderer::ShowCloudShadows;
+    RenderFlagMap["ecliptic"sv]            = Renderer::ShowEcliptic;
 }
 
 void initLabelFlagMap(FlagMap &LabelFlagMap)
 {
-    LabelFlagMap["planets"]              = Renderer::PlanetLabels;
-    LabelFlagMap["dwarfplanets"]         = Renderer::DwarfPlanetLabels;
-    LabelFlagMap["moons"]                = Renderer::MoonLabels;
-    LabelFlagMap["minormoons"]           = Renderer::MinorMoonLabels;
-    LabelFlagMap["spacecraft"]           = Renderer::SpacecraftLabels;
-    LabelFlagMap["asteroids"]            = Renderer::AsteroidLabels;
-    LabelFlagMap["comets"]               = Renderer::CometLabels;
-    LabelFlagMap["constellations"]       = Renderer::ConstellationLabels;
-    LabelFlagMap["stars"]                = Renderer::StarLabels;
-    LabelFlagMap["galaxies"]             = Renderer::GalaxyLabels;
-    LabelFlagMap["globulars"]            = Renderer::GlobularLabels;
-    LabelFlagMap["locations"]            = Renderer::LocationLabels;
-    LabelFlagMap["nebulae"]              = Renderer::NebulaLabels;
-    LabelFlagMap["openclusters"]         = Renderer::OpenClusterLabels;
-    LabelFlagMap["i18nconstellations"]   = Renderer::I18nConstellationLabels;
+    LabelFlagMap["planets"sv]              = Renderer::PlanetLabels;
+    LabelFlagMap["dwarfplanets"sv]         = Renderer::DwarfPlanetLabels;
+    LabelFlagMap["moons"sv]                = Renderer::MoonLabels;
+    LabelFlagMap["minormoons"sv]           = Renderer::MinorMoonLabels;
+    LabelFlagMap["spacecraft"sv]           = Renderer::SpacecraftLabels;
+    LabelFlagMap["asteroids"sv]            = Renderer::AsteroidLabels;
+    LabelFlagMap["comets"sv]               = Renderer::CometLabels;
+    LabelFlagMap["constellations"sv]       = Renderer::ConstellationLabels;
+    LabelFlagMap["stars"sv]                = Renderer::StarLabels;
+    LabelFlagMap["galaxies"sv]             = Renderer::GalaxyLabels;
+    LabelFlagMap["globulars"sv]            = Renderer::GlobularLabels;
+    LabelFlagMap["locations"sv]            = Renderer::LocationLabels;
+    LabelFlagMap["nebulae"sv]              = Renderer::NebulaLabels;
+    LabelFlagMap["openclusters"sv]         = Renderer::OpenClusterLabels;
+    LabelFlagMap["i18nconstellations"sv]   = Renderer::I18nConstellationLabels;
 }
 
 void initBodyTypeMap(FlagMap &BodyTypeMap)
 {
-    BodyTypeMap["Planet"]                = Body::Planet;
-    BodyTypeMap["DwarfPlanet"]           = Body::DwarfPlanet;
-    BodyTypeMap["Moon"]                  = Body::Moon;
-    BodyTypeMap["MinorMoon"]             = Body::MinorMoon;
-    BodyTypeMap["Asteroid"]              = Body::Asteroid;
-    BodyTypeMap["Comet"]                 = Body::Comet;
-    BodyTypeMap["Spacecraft"]            = Body::Spacecraft;
-    BodyTypeMap["Invisible"]             = Body::Invisible;
-    BodyTypeMap["Star"]                  = Body::Stellar;
-    BodyTypeMap["Unknown"]               = Body::Unknown;
+    BodyTypeMap["Planet"sv]                = Body::Planet;
+    BodyTypeMap["DwarfPlanet"sv]           = Body::DwarfPlanet;
+    BodyTypeMap["Moon"sv]                  = Body::Moon;
+    BodyTypeMap["MinorMoon"sv]             = Body::MinorMoon;
+    BodyTypeMap["Asteroid"sv]              = Body::Asteroid;
+    BodyTypeMap["Comet"sv]                 = Body::Comet;
+    BodyTypeMap["Spacecraft"sv]            = Body::Spacecraft;
+    BodyTypeMap["Invisible"sv]             = Body::Invisible;
+    BodyTypeMap["Star"sv]                  = Body::Stellar;
+    BodyTypeMap["Unknown"sv]               = Body::Unknown;
 }
 
 void initLocationFlagMap(FlagMap64 &LocationFlagMap)
 {
-    LocationFlagMap["city"]              = Location::City;
-    LocationFlagMap["observatory"]       = Location::Observatory;
-    LocationFlagMap["landingsite"]       = Location::LandingSite;
-    LocationFlagMap["crater"]            = Location::Crater;
-    LocationFlagMap["vallis"]            = Location::Vallis;
-    LocationFlagMap["mons"]              = Location::Mons;
-    LocationFlagMap["planum"]            = Location::Planum;
-    LocationFlagMap["chasma"]            = Location::Chasma;
-    LocationFlagMap["patera"]            = Location::Patera;
-    LocationFlagMap["mare"]              = Location::Mare;
-    LocationFlagMap["rupes"]             = Location::Rupes;
-    LocationFlagMap["tessera"]           = Location::Tessera;
-    LocationFlagMap["regio"]             = Location::Regio;
-    LocationFlagMap["chaos"]             = Location::Chaos;
-    LocationFlagMap["terra"]             = Location::Terra;
-    LocationFlagMap["volcano"]           = Location::EruptiveCenter;
-    LocationFlagMap["astrum"]            = Location::Astrum;
-    LocationFlagMap["corona"]            = Location::Corona;
-    LocationFlagMap["dorsum"]            = Location::Dorsum;
-    LocationFlagMap["fossa"]             = Location::Fossa;
-    LocationFlagMap["catena"]            = Location::Catena;
-    LocationFlagMap["mensa"]             = Location::Mensa;
-    LocationFlagMap["rima"]              = Location::Rima;
-    LocationFlagMap["undae"]             = Location::Undae;
-    LocationFlagMap["tholus"]            = Location::Tholus;
-    LocationFlagMap["reticulum"]         = Location::Reticulum;
-    LocationFlagMap["planitia"]          = Location::Planitia;
-    LocationFlagMap["linea"]             = Location::Linea;
-    LocationFlagMap["fluctus"]           = Location::Fluctus;
-    LocationFlagMap["farrum"]            = Location::Farrum;
-    LocationFlagMap["insula"]            = Location::Insula;
-    LocationFlagMap["albedo"]            = Location::Albedo;
-    LocationFlagMap["arcus"]             = Location::Arcus;
-    LocationFlagMap["cavus"]             = Location::Cavus;
-    LocationFlagMap["colles"]            = Location::Colles;
-    LocationFlagMap["facula"]            = Location::Facula;
-    LocationFlagMap["flexus"]            = Location::Flexus;
-    LocationFlagMap["flumen"]            = Location::Flumen;
-    LocationFlagMap["fretum"]            = Location::Fretum;
-    LocationFlagMap["labes"]             = Location::Labes;
-    LocationFlagMap["labyrinthus"]       = Location::Labyrinthus;
-    LocationFlagMap["lacuna"]            = Location::Lacuna;
-    LocationFlagMap["lacus"]             = Location::Lacus;
-    LocationFlagMap["largeringed"]       = Location::LargeRinged;
-    LocationFlagMap["lenticula"]         = Location::Lenticula;
-    LocationFlagMap["lingula"]           = Location::Lingula;
-    LocationFlagMap["macula"]            = Location::Macula;
-    LocationFlagMap["oceanus"]           = Location::Oceanus;
-    LocationFlagMap["palus"]             = Location::Palus;
-    LocationFlagMap["plume"]             = Location::Plume;
-    LocationFlagMap["promontorium"]      = Location::Promontorium;
-    LocationFlagMap["satellite"]         = Location::Satellite;
-    LocationFlagMap["scopulus"]          = Location::Scopulus;
-    LocationFlagMap["serpens"]           = Location::Serpens;
-    LocationFlagMap["sinus"]             = Location::Sinus;
-    LocationFlagMap["sulcus"]            = Location::Sulcus;
-    LocationFlagMap["vastitas"]          = Location::Vastitas;
-    LocationFlagMap["virga"]             = Location::Virga;
-    LocationFlagMap["other"]             = Location::Other;
-    LocationFlagMap["saxum"]             = Location::Saxum;
-    LocationFlagMap["capital"]           = Location::Capital;
-    LocationFlagMap["cosmodrome"]        = Location::Cosmodrome;
-    LocationFlagMap["ring"]              = Location::Ring;
-    LocationFlagMap["historical"]        = Location::Historical;
+    LocationFlagMap["city"sv]              = Location::City;
+    LocationFlagMap["observatory"sv]       = Location::Observatory;
+    LocationFlagMap["landingsite"sv]       = Location::LandingSite;
+    LocationFlagMap["crater"sv]            = Location::Crater;
+    LocationFlagMap["vallis"sv]            = Location::Vallis;
+    LocationFlagMap["mons"sv]              = Location::Mons;
+    LocationFlagMap["planum"sv]            = Location::Planum;
+    LocationFlagMap["chasma"sv]            = Location::Chasma;
+    LocationFlagMap["patera"sv]            = Location::Patera;
+    LocationFlagMap["mare"sv]              = Location::Mare;
+    LocationFlagMap["rupes"sv]             = Location::Rupes;
+    LocationFlagMap["tessera"sv]           = Location::Tessera;
+    LocationFlagMap["regio"sv]             = Location::Regio;
+    LocationFlagMap["chaos"sv]             = Location::Chaos;
+    LocationFlagMap["terra"sv]             = Location::Terra;
+    LocationFlagMap["volcano"sv]           = Location::EruptiveCenter;
+    LocationFlagMap["astrum"sv]            = Location::Astrum;
+    LocationFlagMap["corona"sv]            = Location::Corona;
+    LocationFlagMap["dorsum"sv]            = Location::Dorsum;
+    LocationFlagMap["fossa"sv]             = Location::Fossa;
+    LocationFlagMap["catena"sv]            = Location::Catena;
+    LocationFlagMap["mensa"sv]             = Location::Mensa;
+    LocationFlagMap["rima"sv]              = Location::Rima;
+    LocationFlagMap["undae"sv]             = Location::Undae;
+    LocationFlagMap["tholus"sv]            = Location::Tholus;
+    LocationFlagMap["reticulum"sv]         = Location::Reticulum;
+    LocationFlagMap["planitia"sv]          = Location::Planitia;
+    LocationFlagMap["linea"sv]             = Location::Linea;
+    LocationFlagMap["fluctus"sv]           = Location::Fluctus;
+    LocationFlagMap["farrum"sv]            = Location::Farrum;
+    LocationFlagMap["insula"sv]            = Location::Insula;
+    LocationFlagMap["albedo"sv]            = Location::Albedo;
+    LocationFlagMap["arcus"sv]             = Location::Arcus;
+    LocationFlagMap["cavus"sv]             = Location::Cavus;
+    LocationFlagMap["colles"sv]            = Location::Colles;
+    LocationFlagMap["facula"sv]            = Location::Facula;
+    LocationFlagMap["flexus"sv]            = Location::Flexus;
+    LocationFlagMap["flumen"sv]            = Location::Flumen;
+    LocationFlagMap["fretum"sv]            = Location::Fretum;
+    LocationFlagMap["labes"sv]             = Location::Labes;
+    LocationFlagMap["labyrinthus"sv]       = Location::Labyrinthus;
+    LocationFlagMap["lacuna"sv]            = Location::Lacuna;
+    LocationFlagMap["lacus"sv]             = Location::Lacus;
+    LocationFlagMap["largeringed"sv]       = Location::LargeRinged;
+    LocationFlagMap["lenticula"sv]         = Location::Lenticula;
+    LocationFlagMap["lingula"sv]           = Location::Lingula;
+    LocationFlagMap["macula"sv]            = Location::Macula;
+    LocationFlagMap["oceanus"sv]           = Location::Oceanus;
+    LocationFlagMap["palus"sv]             = Location::Palus;
+    LocationFlagMap["plume"sv]             = Location::Plume;
+    LocationFlagMap["promontorium"sv]      = Location::Promontorium;
+    LocationFlagMap["satellite"sv]         = Location::Satellite;
+    LocationFlagMap["scopulus"sv]          = Location::Scopulus;
+    LocationFlagMap["serpens"sv]           = Location::Serpens;
+    LocationFlagMap["sinus"sv]             = Location::Sinus;
+    LocationFlagMap["sulcus"sv]            = Location::Sulcus;
+    LocationFlagMap["vastitas"sv]          = Location::Vastitas;
+    LocationFlagMap["virga"sv]             = Location::Virga;
+    LocationFlagMap["other"sv]             = Location::Other;
+    LocationFlagMap["saxum"sv]             = Location::Saxum;
+    LocationFlagMap["capital"sv]           = Location::Capital;
+    LocationFlagMap["cosmodrome"sv]        = Location::Cosmodrome;
+    LocationFlagMap["ring"sv]              = Location::Ring;
+    LocationFlagMap["historical"sv]        = Location::Historical;
 }
 
 void initOverlayElementMap(FlagMap &OverlayElementMap)
 {
-    OverlayElementMap["Time"]            = CelestiaCore::ShowTime;
-    OverlayElementMap["Velocity"]        = CelestiaCore::ShowVelocity;
-    OverlayElementMap["Selection"]       = CelestiaCore::ShowSelection;
-    OverlayElementMap["Frame"]           = CelestiaCore::ShowFrame;
+    OverlayElementMap["Time"sv]            = CelestiaCore::ShowTime;
+    OverlayElementMap["Velocity"sv]        = CelestiaCore::ShowVelocity;
+    OverlayElementMap["Selection"sv]       = CelestiaCore::ShowSelection;
+    OverlayElementMap["Frame"sv]           = CelestiaCore::ShowFrame;
 }
 
 void initOrbitVisibilityMap(FlagMap &OrbitVisibilityMap)
 {
-    OrbitVisibilityMap["never"]          = Body::NeverVisible;
-    OrbitVisibilityMap["normal"]         = Body::UseClassVisibility;
-    OrbitVisibilityMap["always"]         = Body::AlwaysVisible;
+    OrbitVisibilityMap["never"sv]          = Body::NeverVisible;
+    OrbitVisibilityMap["normal"sv]         = Body::UseClassVisibility;
+    OrbitVisibilityMap["always"sv]         = Body::AlwaysVisible;
 }
 
 void initLabelColorMap(ColorMap &LabelColorMap)
 {
-    LabelColorMap["stars"]               = &Renderer::StarLabelColor;
-    LabelColorMap["planets"]             = &Renderer::PlanetLabelColor;
-    LabelColorMap["dwarfplanets"]        = &Renderer::DwarfPlanetLabelColor;
-    LabelColorMap["moons"]               = &Renderer::MoonLabelColor;
-    LabelColorMap["minormoons"]          = &Renderer::MinorMoonLabelColor;
-    LabelColorMap["asteroids"]           = &Renderer::AsteroidLabelColor;
-    LabelColorMap["comets"]              = &Renderer::CometLabelColor;
-    LabelColorMap["spacecraft"]          = &Renderer::SpacecraftLabelColor;
-    LabelColorMap["locations"]           = &Renderer::LocationLabelColor;
-    LabelColorMap["galaxies"]            = &Renderer::GalaxyLabelColor;
-    LabelColorMap["globulars"]           = &Renderer::GlobularLabelColor;
-    LabelColorMap["nebulae"]             = &Renderer::NebulaLabelColor;
-    LabelColorMap["openclusters"]        = &Renderer::OpenClusterLabelColor;
-    LabelColorMap["constellations"]      = &Renderer::ConstellationLabelColor;
-    LabelColorMap["equatorialgrid"]      = &Renderer::EquatorialGridLabelColor;
-    LabelColorMap["galacticgrid"]        = &Renderer::GalacticGridLabelColor;
-    LabelColorMap["eclipticgrid"]        = &Renderer::EclipticGridLabelColor;
-    LabelColorMap["horizontalgrid"]      = &Renderer::HorizonGridLabelColor;
-    LabelColorMap["planetographicgrid"]  = &Renderer::PlanetographicGridLabelColor;
+    LabelColorMap["stars"sv]               = &Renderer::StarLabelColor;
+    LabelColorMap["planets"sv]             = &Renderer::PlanetLabelColor;
+    LabelColorMap["dwarfplanets"sv]        = &Renderer::DwarfPlanetLabelColor;
+    LabelColorMap["moons"sv]               = &Renderer::MoonLabelColor;
+    LabelColorMap["minormoons"sv]          = &Renderer::MinorMoonLabelColor;
+    LabelColorMap["asteroids"sv]           = &Renderer::AsteroidLabelColor;
+    LabelColorMap["comets"sv]              = &Renderer::CometLabelColor;
+    LabelColorMap["spacecraft"sv]          = &Renderer::SpacecraftLabelColor;
+    LabelColorMap["locations"sv]           = &Renderer::LocationLabelColor;
+    LabelColorMap["galaxies"sv]            = &Renderer::GalaxyLabelColor;
+    LabelColorMap["globulars"sv]           = &Renderer::GlobularLabelColor;
+    LabelColorMap["nebulae"sv]             = &Renderer::NebulaLabelColor;
+    LabelColorMap["openclusters"sv]        = &Renderer::OpenClusterLabelColor;
+    LabelColorMap["constellations"sv]      = &Renderer::ConstellationLabelColor;
+    LabelColorMap["equatorialgrid"sv]      = &Renderer::EquatorialGridLabelColor;
+    LabelColorMap["galacticgrid"sv]        = &Renderer::GalacticGridLabelColor;
+    LabelColorMap["eclipticgrid"sv]        = &Renderer::EclipticGridLabelColor;
+    LabelColorMap["horizontalgrid"sv]      = &Renderer::HorizonGridLabelColor;
+    LabelColorMap["planetographicgrid"sv]  = &Renderer::PlanetographicGridLabelColor;
 
 }
 
 void initLineColorMap(ColorMap &LineColorMap)
 {
-    LineColorMap["starorbits"]           = &Renderer::StarOrbitColor;
-    LineColorMap["planetorbits"]         = &Renderer::PlanetOrbitColor;
-    LineColorMap["dwarfplanetorbits"]    = &Renderer::DwarfPlanetOrbitColor;
-    LineColorMap["moonorbits"]           = &Renderer::MoonOrbitColor;
-    LineColorMap["minormoonorbits"]      = &Renderer::MinorMoonOrbitColor;
-    LineColorMap["asteroidorbits"]       = &Renderer::AsteroidOrbitColor;
-    LineColorMap["cometorbits"]          = &Renderer::CometOrbitColor;
-    LineColorMap["spacecraftorbits"]     = &Renderer::SpacecraftOrbitColor;
-    LineColorMap["constellations"]       = &Renderer::ConstellationColor;
-    LineColorMap["boundaries"]           = &Renderer::BoundaryColor;
-    LineColorMap["equatorialgrid"]       = &Renderer::EquatorialGridColor;
-    LineColorMap["galacticgrid"]         = &Renderer::GalacticGridColor;
-    LineColorMap["eclipticgrid"]         = &Renderer::EclipticGridColor;
-    LineColorMap["horizontalgrid"]       = &Renderer::HorizonGridColor;
-    LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
-    LineColorMap["planetequator"]        = &Renderer::PlanetEquatorColor;
-    LineColorMap["ecliptic"]             = &Renderer::EclipticColor;
-    LineColorMap["selectioncursor"]      = &Renderer::SelectionCursorColor;
+    LineColorMap["starorbits"sv]           = &Renderer::StarOrbitColor;
+    LineColorMap["planetorbits"sv]         = &Renderer::PlanetOrbitColor;
+    LineColorMap["dwarfplanetorbits"sv]    = &Renderer::DwarfPlanetOrbitColor;
+    LineColorMap["moonorbits"sv]           = &Renderer::MoonOrbitColor;
+    LineColorMap["minormoonorbits"sv]      = &Renderer::MinorMoonOrbitColor;
+    LineColorMap["asteroidorbits"sv]       = &Renderer::AsteroidOrbitColor;
+    LineColorMap["cometorbits"sv]          = &Renderer::CometOrbitColor;
+    LineColorMap["spacecraftorbits"sv]     = &Renderer::SpacecraftOrbitColor;
+    LineColorMap["constellations"sv]       = &Renderer::ConstellationColor;
+    LineColorMap["boundaries"sv]           = &Renderer::BoundaryColor;
+    LineColorMap["equatorialgrid"sv]       = &Renderer::EquatorialGridColor;
+    LineColorMap["galacticgrid"sv]         = &Renderer::GalacticGridColor;
+    LineColorMap["eclipticgrid"sv]         = &Renderer::EclipticGridColor;
+    LineColorMap["horizontalgrid"sv]       = &Renderer::HorizonGridColor;
+    LineColorMap["planetographicgrid"sv]   = &Renderer::PlanetographicGridColor;
+    LineColorMap["planetequator"sv]        = &Renderer::PlanetEquatorColor;
+    LineColorMap["ecliptic"sv]             = &Renderer::EclipticColor;
+    LineColorMap["selectioncursor"sv]      = &Renderer::SelectionCursorColor;
 }
 
 ScriptMaps::ScriptMaps()
