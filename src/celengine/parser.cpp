@@ -76,7 +76,7 @@ Hash* Parser::readHash()
             delete hash;
             return nullptr;
         }
-        string name = tokenizer->getNameValue();
+        string name = tokenizer->getStringValue();
 
 #ifndef USE_POSTFIX_UNITS
         readUnits(name, hash);
@@ -126,7 +126,7 @@ bool Parser::readUnits(const string& propertyName, Hash* hash)
             return false;
         }
 
-        string unit = tokenizer->getNameValue();
+        string unit = tokenizer->getStringValue();
         Value* value = new Value(unit);
 
         if (astro::isLengthUnit(unit))
@@ -174,9 +174,9 @@ Value* Parser::readValue()
         return new Value(tokenizer->getStringValue());
 
     case Tokenizer::TokenName:
-        if (tokenizer->getNameValue() == "false")
+        if (tokenizer->getStringValue() == "false")
             return new Value(false);
-        else if (tokenizer->getNameValue() == "true")
+        else if (tokenizer->getStringValue() == "true")
             return new Value(true);
         else
         {

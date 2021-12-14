@@ -307,7 +307,7 @@ AsciiModelLoader::reportError(const std::string& msg)
 bool
 AsciiModelLoader::loadMaterial(Material& material)
 {
-    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != MaterialToken)
+    if (tok.nextToken() != Tokenizer::TokenName || tok.getStringValue() != MaterialToken)
     {
         reportError("Material definition expected");
         return false;
@@ -319,7 +319,7 @@ AsciiModelLoader::loadMaterial(Material& material)
     material.specularPower = DefaultSpecularPower;
     material.opacity = DefaultOpacity;
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMaterialToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndMaterialToken)
     {
         std::string property = tok.getStringValue();
         TextureSemantic texType = parseTextureSemantic(property);
@@ -424,7 +424,7 @@ AsciiModelLoader::loadMaterial(Material& material)
 VertexDescription
 AsciiModelLoader::loadVertexDescription()
 {
-    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != VertexDescToken)
+    if (tok.nextToken() != Tokenizer::TokenName || tok.getStringValue() != VertexDescToken)
     {
         reportError("Vertex description expected");
         return {};
@@ -436,7 +436,7 @@ AsciiModelLoader::loadVertexDescription()
     std::vector<VertexAttribute> attributes;
     attributes.reserve(maxAttributes);
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndVertexDescToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndVertexDescToken)
     {
         std::string semanticName;
         std::string formatName;
@@ -504,7 +504,7 @@ std::vector<VWord>
 AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                                unsigned int& vertexCount)
 {
-    if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != VerticesToken)
+    if (tok.nextToken() != Tokenizer::TokenName && tok.getStringValue() != VerticesToken)
     {
         reportError("Vertex data expected");
         return {};
@@ -597,7 +597,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
 bool
 AsciiModelLoader::loadMesh(Mesh& mesh)
 {
-    if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != MeshToken)
+    if (tok.nextToken() != Tokenizer::TokenName && tok.getStringValue() != MeshToken)
     {
         reportError("Mesh definition expected");
         return false;
@@ -617,7 +617,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
     mesh.setVertexDescription(std::move(vertexDesc));
     mesh.setVertices(vertexCount, std::move(vertexData));
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMeshToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndMeshToken)
     {
         PrimitiveGroupType type = parsePrimitiveGroupType(tok.getStringValue());
         if (type == PrimitiveGroupType::InvalidPrimitiveGroupType)
