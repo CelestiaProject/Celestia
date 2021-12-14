@@ -17,19 +17,19 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         Tokenizer tok(&input);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "Normal");
+        REQUIRE(tok.getStringValue() == "Normal");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "Number2");
+        REQUIRE(tok.getStringValue() == "Number2");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "Number3Number");
+        REQUIRE(tok.getStringValue() == "Number3Number");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "snake_case");
+        REQUIRE(tok.getStringValue() == "snake_case");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "_prefixed");
+        REQUIRE(tok.getStringValue() == "_prefixed");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
@@ -40,12 +40,12 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         Tokenizer tok(&input);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "Quantity");
+        REQUIRE(tok.getStringValue() == "Quantity");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenBeginUnits);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getNameValue() == "unit");
+        REQUIRE(tok.getStringValue() == "unit");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEndUnits);
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
@@ -332,13 +332,13 @@ TEST_CASE("Tokenizer skips comments", "[Tokenizer]")
     Tokenizer tok(&input);
 
     REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-    REQUIRE(tok.getNameValue() == "Token1");
+    REQUIRE(tok.getStringValue() == "Token1");
 
     REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-    REQUIRE(tok.getNameValue() == "Token2");
+    REQUIRE(tok.getStringValue() == "Token2");
 
     REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-    REQUIRE(tok.getNameValue() == "Token3");
+    REQUIRE(tok.getStringValue() == "Token3");
 
     REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
 }

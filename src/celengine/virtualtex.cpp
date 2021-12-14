@@ -372,7 +372,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
     if (tokenizer.nextToken() != Tokenizer::TokenName)
         return nullptr;
 
-    string virtTexString = tokenizer.getNameValue();
+    string virtTexString = tokenizer.getStringValue();
     if (virtTexString != "VirtualTexture")
         return nullptr;
 

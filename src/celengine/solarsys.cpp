@@ -1125,17 +1125,17 @@ bool LoadSolarSystemObjects(istream& in,
         DataDisposition disposition = DataDisposition::Add;
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
-            if (tokenizer.getNameValue() == "Add")
+            if (tokenizer.getStringValue() == "Add")
             {
                 disposition = DataDisposition::Add;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getNameValue() == "Replace")
+            else if (tokenizer.getStringValue() == "Replace")
             {
                 disposition = DataDisposition::Replace;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getNameValue() == "Modify")
+            else if (tokenizer.getStringValue() == "Modify")
             {
                 disposition = DataDisposition::Modify;
                 tokenizer.nextToken();
@@ -1146,7 +1146,7 @@ bool LoadSolarSystemObjects(istream& in,
         string itemType("Body");
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
-            itemType = tokenizer.getNameValue();
+            itemType = tokenizer.getStringValue();
             tokenizer.nextToken();
         }
 

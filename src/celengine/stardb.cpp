@@ -1204,17 +1204,17 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         DataDisposition disposition = DataDisposition::Add;
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
-            if (tokenizer.getNameValue() == "Modify")
+            if (tokenizer.getStringValue() == "Modify")
             {
                 disposition = DataDisposition::Modify;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getNameValue() == "Replace")
+            else if (tokenizer.getStringValue() == "Replace")
             {
                 disposition = DataDisposition::Replace;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getNameValue() == "Add")
+            else if (tokenizer.getStringValue() == "Add")
             {
                 disposition = DataDisposition::Add;
                 tokenizer.nextToken();
@@ -1225,11 +1225,11 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         // may be omitted. The default is Star.
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
-            if (tokenizer.getNameValue() == "Star")
+            if (tokenizer.getStringValue() == "Star")
             {
                 isStar = true;
             }
-            else if (tokenizer.getNameValue() == "Barycenter")
+            else if (tokenizer.getStringValue() == "Barycenter")
             {
                 isStar = false;
             }

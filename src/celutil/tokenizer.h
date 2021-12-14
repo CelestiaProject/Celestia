@@ -45,7 +45,6 @@ public:
     double getNumberValue() const;
     bool isInteger() const;
     std::int32_t getIntegerValue() const;
-    std::string getNameValue() const;
     std::string getStringValue() const;
 
     int getLineNumber() const;

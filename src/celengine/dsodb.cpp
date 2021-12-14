@@ -242,7 +242,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
             GetLogger()->error("Error parsing deep sky catalog file.\n");
             return false;
         }
-        objType = tokenizer.getNameValue();
+        objType = tokenizer.getStringValue();
 
         bool autoGenCatalogNumber = true;
         AstroCatalog::IndexNumber objCatalogNumber = AstroCatalog::InvalidIndex;
