@@ -809,7 +809,7 @@ static Body* CreateBody(const string& name,
     double t;
     if (planetData->getNumber("Albedo", t))
     {
-        // TODO: make this warn 
+        // TODO: make this warn
         GetLogger()->verbose("Deprecated parameter Albedo used in {} definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
         body->setGeomAlbedo((float) t);
     }
@@ -1158,14 +1158,14 @@ bool LoadSolarSystemObjects(istream& in,
 
         // The name list is a string with zero more names. Multiple names are
         // delimited by colons.
-        string nameList = tokenizer.getStringValue().c_str();
+        string nameList(tokenizer.getStringValue());
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             sscError(tokenizer, "bad parent object name");
             return false;
         }
-        string parentName = tokenizer.getStringValue().c_str();
+        string parentName(tokenizer.getStringValue());
 
         Value* objectDataValue = parser.readValue();
         if (objectDataValue == nullptr)

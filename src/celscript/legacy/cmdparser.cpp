@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <string_view>
 #include <Eigen/Geometry>
 #include <celutil/logger.h>
 #include <celmath/mathlib.h>
@@ -144,7 +145,7 @@ Command* CommandParser::parseCommand()
         return nullptr;
     }
 
-    string commandName = tokenizer->getStringValue();
+    string commandName(tokenizer->getStringValue());
 
     Value* paramListValue = parser->readValue();
     if (paramListValue == nullptr || paramListValue->getType() != Value::HashType)
@@ -870,7 +871,7 @@ uint64_t parseRenderFlags(const string &s, const FlagMap64& RenderFlagMap)
     {
         if (ttype == Tokenizer::TokenName)
         {
-            string name = tokenizer.getStringValue();
+            std::string_view name = tokenizer.getStringValue();
 
             if (RenderFlagMap.count(name) == 0)
                 GetLogger()->warn("Unknown render flag: {}\n", name);
@@ -899,7 +900,7 @@ int parseLabelFlags(const string &s, const FlagMap &LabelFlagMap)
     {
         if (ttype == Tokenizer::TokenName)
         {
-            string name = tokenizer.getStringValue();
+            std::string_view name = tokenizer.getStringValue();
 
             if (LabelFlagMap.count(name) == 0)
                 GetLogger()->warn("Unknown label flag: {}\n", name);
@@ -928,7 +929,7 @@ int parseOrbitFlags(const string &s, const FlagMap &BodyTypeMap)
     {
         if (ttype == Tokenizer::TokenName)
         {
-            string name = tokenizer.getStringValue();
+            std::string name(tokenizer.getStringValue());
             name[0] = toupper(name[0]);
 
             if (BodyTypeMap.count(name) == 0)
@@ -958,7 +959,7 @@ int parseConstellations(CommandConstellations* cmd, const string &s, int act)
     {
         if (ttype == Tokenizer::TokenName)
         {
-            string name = tokenizer.getStringValue();
+            std::string_view name = tokenizer.getStringValue();
             if (compareIgnoringCase(name, "all") == 0 && act==1)
                 cmd->flags.all = true;
             else if (compareIgnoringCase(name, "all") == 0 && act==0)
@@ -998,7 +999,7 @@ int parseConstellationColor(CommandConstellationColor* cmd, const string &s, Eig
     {
         if (ttype == Tokenizer::TokenName)
         {
-            string name = tokenizer.getStringValue();
+            std::string_view name = tokenizer.getStringValue();
             if (compareIgnoringCase(name, "all") == 0 && act==1)
                 cmd->flags.all = true;
             else if (compareIgnoringCase(name, "all") == 0 && act==0)

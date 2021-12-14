@@ -13,6 +13,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <fmt/format.h>
@@ -193,7 +194,7 @@ defined here--they have the obvious definitions.
 */
 
 PrimitiveGroupType
-parsePrimitiveGroupType(const std::string& name)
+parsePrimitiveGroupType(std::string_view name)
 {
     if (name == "trilist")
         return PrimitiveGroupType::TriList;
@@ -215,7 +216,7 @@ parsePrimitiveGroupType(const std::string& name)
 
 
 VertexAttributeSemantic
-parseVertexAttributeSemantic(const std::string& name)
+parseVertexAttributeSemantic(std::string_view name)
 {
     if (name == "position")
         return VertexAttributeSemantic::Position;
@@ -242,7 +243,7 @@ parseVertexAttributeSemantic(const std::string& name)
 
 
 VertexAttributeFormat
-parseVertexAttributeFormat(const std::string& name)
+parseVertexAttributeFormat(std::string_view name)
 {
     if (name == "f1")
         return VertexAttributeFormat::Float1;
@@ -259,7 +260,7 @@ parseVertexAttributeFormat(const std::string& name)
 
 
 TextureSemantic
-parseTextureSemantic(const std::string& name)
+parseTextureSemantic(std::string_view name)
 {
     if (name == "texture0")
         return TextureSemantic::DiffuseMap;
@@ -321,7 +322,7 @@ AsciiModelLoader::loadMaterial(Material& material)
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndMaterialToken)
     {
-        std::string property = tok.getStringValue();
+        std::string property(tok.getStringValue());
         TextureSemantic texType = parseTextureSemantic(property);
 
         if (texType != TextureSemantic::InvalidTextureSemantic)
@@ -332,9 +333,7 @@ AsciiModelLoader::loadMaterial(Material& material)
                 return false;
             }
 
-            std::string textureName = tok.getStringValue();
-
-            ResourceHandle tex = getHandle(textureName);
+            ResourceHandle tex = getHandle(tok.getStringValue());
             material.setMap(texType, tex);
         }
         else if (property == "blend")
@@ -343,7 +342,7 @@ AsciiModelLoader::loadMaterial(Material& material)
 
             if (tok.nextToken() == Tokenizer::TokenName)
             {
-                std::string blendModeName = tok.getStringValue();
+                std::string_view blendModeName = tok.getStringValue();
                 if (blendModeName == "normal")
                     blendMode = BlendMode::NormalBlend;
                 else if (blendModeName == "add")
@@ -438,10 +437,6 @@ AsciiModelLoader::loadVertexDescription()
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndVertexDescToken)
     {
-        std::string semanticName;
-        std::string formatName;
-        bool valid = false;
-
         if (nAttributes == maxAttributes)
         {
             // TODO: Should eliminate the attribute limit, though no real vertex
@@ -450,31 +445,23 @@ AsciiModelLoader::loadVertexDescription()
             return {};
         }
 
-        semanticName = tok.getStringValue();
-
-        if (tok.nextToken() == Tokenizer::TokenName)
+        VertexAttributeSemantic semantic = parseVertexAttributeSemantic(tok.getStringValue());
+        if (semantic == VertexAttributeSemantic::InvalidSemantic)
         {
-            formatName = tok.getStringValue();
-            valid = true;
+            reportError(fmt::format("Invalid vertex attribute semantic '{}'", tok.getStringValue()));
+            return {};
         }
 
-        if (!valid)
+        if (tok.nextToken() != Tokenizer::TokenName)
         {
             reportError("Invalid vertex description");
             return {};
         }
 
-        VertexAttributeSemantic semantic = parseVertexAttributeSemantic(semanticName);
-        if (semantic == VertexAttributeSemantic::InvalidSemantic)
-        {
-            reportError(fmt::format("Invalid vertex attribute semantic '{}'", semanticName));
-            return {};
-        }
-
-        VertexAttributeFormat format = parseVertexAttributeFormat(formatName);
+        VertexAttributeFormat format = parseVertexAttributeFormat(tok.getStringValue());
         if (format == VertexAttributeFormat::InvalidFormat)
         {
-            reportError(fmt::format("Invalid vertex attribute format '{}'", formatName));
+            reportError(fmt::format("Invalid vertex attribute format '{}'", tok.getStringValue()));
             return {};
         }
 
@@ -622,7 +609,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
         PrimitiveGroupType type = parsePrimitiveGroupType(tok.getStringValue());
         if (type == PrimitiveGroupType::InvalidPrimitiveGroupType)
         {
-            reportError("Bad primitive group type: " + tok.getStringValue());
+            reportError(fmt::format("Bad primitive group type: {}", tok.getStringValue()));
             return false;
         }
 
@@ -689,7 +676,7 @@ AsciiModelLoader::load()
     {
         if (token == Tokenizer::TokenName)
         {
-            std::string name = tok.getStringValue();
+            std::string_view name = tok.getStringValue();
             tok.pushBack();
 
             if (name == "material")

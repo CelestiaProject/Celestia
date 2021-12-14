@@ -12,7 +12,9 @@
 
 #include <cassert>
 #include <string>
+#include <string_view>
 #include <vector>
+
 #include "hash.h"
 
 class Value;
@@ -46,6 +48,10 @@ class Value
     Value(const char *s) : type(StringType)
     {
         data.s = new std::string(s);
+    }
+    explicit Value(const std::string_view sv) : type(StringType)
+    {
+        data.s = new std::string(sv);
     }
     explicit Value(const std::string &s) : type(StringType)
     {

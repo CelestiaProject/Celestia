@@ -721,7 +721,7 @@ static int object_getinfo(lua_State* l)
                                  LocationFlagMap.end(),
                                  [&featureType](auto& it){ return it.second == featureType; });
         if (iter != LocationFlagMap.end())
-             celx.setTable("featureType", iter->first.c_str());
+             celx.setTable("featureType", std::string(iter->first).c_str());
         else
              celx.setTable("featureType", "Unknown");
 

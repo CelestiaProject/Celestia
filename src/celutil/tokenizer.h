@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <string>
+#include <string_view>
 
 class Tokenizer
 {
@@ -45,7 +46,7 @@ public:
     double getNumberValue() const;
     bool isInteger() const;
     std::int32_t getIntegerValue() const;
-    std::string getStringValue() const;
+    std::string_view getStringValue() const;
 
     int getLineNumber() const;
 

@@ -280,10 +280,13 @@ static int celestia_getrenderflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    std::string rfmString;
+    rfmString.reserve(FlagMapNameLength);
     for (const auto& rfm : appCore->scriptMaps()->RenderFlagMap)
     {
-        string key = rfm.first;
-        lua_pushstring(l, key.c_str());
+        rfmString.clear();
+        rfmString.append(rfm.first);
+        lua_pushstring(l, rfmString.c_str());
         lua_pushboolean(l, (rfm.second & renderFlags) != 0);
         lua_settable(l,-3);
     }
@@ -412,10 +415,13 @@ static int celestia_getlabelflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const int labelFlags = appCore->getRenderer()->getLabelMode();
+    std::string lfmString;
+    lfmString.reserve(FlagMapNameLength);
     for (const auto& lfm : appCore->scriptMaps()->LabelFlagMap)
     {
-        string key = lfm.first;
-        lua_pushstring(l, key.c_str());
+        lfmString.clear();
+        lfmString.append(lfm.first);
+        lua_pushstring(l, lfmString.c_str());
         lua_pushboolean(l, (lfm.second & labelFlags) != 0);
         lua_settable(l,-3);
     }
@@ -481,10 +487,13 @@ static int celestia_getorbitflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const int orbitFlags = appCore->getRenderer()->getOrbitMask();
+    std::string btmString;
+    btmString.reserve(FlagMapNameLength);
     for (const auto& btm : appCore->scriptMaps()->BodyTypeMap)
     {
-        string key = btm.first;
-        lua_pushstring(l, key.c_str());
+        btmString.clear();
+        btmString.append(btm.first);
+        lua_pushstring(l, btmString.c_str());
         lua_pushboolean(l, (btm.second & orbitFlags) != 0);
         lua_settable(l,-3);
     }
@@ -687,10 +696,13 @@ static int celestia_getoverlayelements(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const int overlayElements = appCore->getOverlayElements();
+    std::string oemString;
+    oemString.reserve(FlagMapNameLength);
     for (const auto& oem : appCore->scriptMaps()->OverlayElementMap)
     {
-        string key = oem.first;
-        lua_pushstring(l, key.c_str());
+        oemString.clear();
+        oemString.append(oem.first);
+        lua_pushstring(l, oemString.c_str());
         lua_pushboolean(l, (oem.second & overlayElements) != 0);
         lua_settable(l,-3);
     }

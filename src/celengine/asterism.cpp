@@ -18,8 +18,8 @@
 using namespace std;
 using celestia::util::GetLogger;
 
-Asterism::Asterism(string _name) :
-    name(std::move(_name))
+Asterism::Asterism(string_view _name) :
+    name(_name)
 {
 #ifdef ENABLE_NLS
     i18nName = D_(name.c_str());
@@ -121,13 +121,12 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             return nullptr;
         }
 
-        string name = tokenizer.getStringValue();
-        Asterism* ast = new Asterism(name);
+        Asterism* ast = new Asterism(tokenizer.getStringValue());
 
         Value* chainsValue = parser.readValue();
         if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)
         {
-            GetLogger()->error("Error parsing asterism {}\n", name);
+            GetLogger()->error("Error parsing asterism {}\n", ast->getName());
             for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
             delete ast;
             delete asterisms;
@@ -157,7 +156,9 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                         if (star != nullptr)
                             new_chain->push_back(star->getPosition());
                         else
-                            GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n", name, i->getString());
+                            GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n",
+                                               ast->getName(),
+                                               i->getString());
                     }
                 }
 
