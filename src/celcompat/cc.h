@@ -11,6 +11,9 @@
 
 #pragma once
 
+#ifdef HAVE_CHARCONV
+#include <charconv>
+#endif
 #include <limits>
 #include <system_error>
 #include <type_traits>
@@ -19,13 +22,21 @@ namespace celestia
 {
 namespace compat
 {
+#ifdef HAVE_CHARCONV
+using std::from_chars_result;
+#else
 struct from_chars_result
 {
     const char* ptr;
     std::errc ec;
 };
+#endif
 
-enum class chars_format
+template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type = 0>
+from_chars_result
+from_chars(const char* first, const char* last, T& value, int base = 10);
+
+enum class chars_format : unsigned int
 {
     scientific  = 1,
     fixed       = 2,
@@ -33,27 +44,77 @@ enum class chars_format
     general     = fixed | scientific
 };
 
-template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type = 0>
-auto from_chars(const char* first, const char* last, T& value, int base = 10)
-    -> celestia::compat::from_chars_result;
+constexpr chars_format
+operator&(chars_format lhs, chars_format rhs) noexcept
+{
+    return static_cast<chars_format>(
+        static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+}
 
-auto from_chars(const char* first, const char* last, float &value,
-                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
-    -> celestia::compat::from_chars_result;
+constexpr chars_format
+operator|(chars_format lhs, chars_format rhs) noexcept
+{
+    return static_cast<chars_format>(
+        static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
 
-auto from_chars(const char* first, const char* last, double &value,
-                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
-    -> celestia::compat::from_chars_result;
+constexpr chars_format
+operator^(chars_format lhs, chars_format rhs) noexcept
+{
+    return static_cast<chars_format>(
+        static_cast<unsigned int>(lhs) ^ static_cast<unsigned int>(rhs));
+}
 
-auto from_chars(const char* first, const char* last, long double &value,
-                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
-    -> celestia::compat::from_chars_result;
+constexpr chars_format
+operator~(chars_format rhs) noexcept
+{
+    return static_cast<chars_format>((~static_cast<unsigned int>(rhs)) & 7);
+}
 
-namespace
+constexpr chars_format&
+operator&=(chars_format& lhs, chars_format rhs) noexcept
+{
+    return lhs = lhs & rhs;
+}
+
+constexpr chars_format&
+operator|=(chars_format& lhs, chars_format rhs) noexcept
+{
+    return lhs = lhs | rhs;
+}
+
+constexpr chars_format&
+operator^=(chars_format& lhs, chars_format rhs) noexcept
+{
+    return lhs = lhs ^ rhs;
+}
+
+from_chars_result
+from_chars(const char* first, const char* last, float &value,
+           chars_format fmt = chars_format::general);
+
+from_chars_result
+from_chars(const char* first, const char* last, double &value,
+           chars_format fmt = chars_format::general);
+
+from_chars_result
+from_chars(const char* first, const char* last, long double &value,
+           chars_format fmt = chars_format::general);
+
+
+#ifdef HAVE_CHARCONV
+template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type>
+from_chars_result
+from_chars(const char* first, const char* last, T& value, int base)
+{
+    return std::from_chars(first, last, value, base);
+}
+#else
+namespace detail
 {
 template <typename T>
-auto int_from_chars(const char* first, const char* last, T& value, int base) noexcept
-    -> celestia::compat::from_chars_result
+from_chars_result
+int_from_chars(const char* first, const char* last, T& value, int base) noexcept
 {
     auto p = first;
     bool has_minus = false;
@@ -123,13 +184,15 @@ auto int_from_chars(const char* first, const char* last, T& value, int base) noe
     return { p, std::errc() };
 }
 
-} // anon namespace
+} // end namespace detail
 
 template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type>
-auto from_chars(const char* first, const char* last, T& value, int base)
-    -> celestia::compat::from_chars_result
+from_chars_result
+from_chars(const char* first, const char* last, T& value, int base)
 {
-    return int_from_chars(first, last, value, base);
+    return detail::int_from_chars(first, last, value, base);
 }
-}
-}
+#endif
+
+} // end namespace compat
+} // end namespace celestia
