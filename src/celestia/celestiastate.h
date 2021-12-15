@@ -28,8 +28,6 @@ class CelestiaCore;
 class CelestiaState
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     CelestiaState() = default;
     CelestiaState(CelestiaCore* appCore);
     ~CelestiaState() = default;

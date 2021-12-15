@@ -28,13 +28,11 @@ using namespace celmath;
 
 struct OrientationSample
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Eigen::Quaternionf q;
     double t;
 };
 
-typedef vector<OrientationSample, aligned_allocator<OrientationSample> > OrientationSampleVector;
+typedef vector<OrientationSample> OrientationSampleVector;
 
 /*!
  * Sampled orientation files are ASCII text files containing a sequence of

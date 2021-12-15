@@ -21,8 +21,6 @@ class Texture;
 
 struct RenderInfo
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
 #ifdef HDR_COMPRESS
     Color color{ 0.5f, 0.5f, 0.5f };
 #else

@@ -16,8 +16,6 @@
 class Nebula : public DeepSkyObject
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Nebula() = default;
 
     const char* getType() const override;

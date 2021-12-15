@@ -158,8 +158,6 @@ static inline bool frustumCull(const Vector4d& curvePoint,
 class HighPrec_VertexBuffer
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     HighPrec_VertexBuffer() :
         currentPosition(0),
         capacity(4096),
@@ -389,7 +387,6 @@ private:
     unsigned int capacity;
     struct Vertex
     {
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         Vector4f position;
         Vector4f color;
         float scale;

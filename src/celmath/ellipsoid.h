@@ -17,8 +17,6 @@ template<class T>
 class Ellipsoid
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
      /*! Default Ellipsoid constructor. Create a unit sphere centered
      *  at the origin.
      */

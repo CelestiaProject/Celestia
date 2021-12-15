@@ -36,8 +36,6 @@ class OpenCluster;
 class DeepSkyObject : public AstroObject
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     virtual Selection toSelection();
     DeepSkyObject() = default;
     virtual ~DeepSkyObject() = default;

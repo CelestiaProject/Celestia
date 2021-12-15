@@ -109,8 +109,6 @@ enum class RenderMode
 class Renderer
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Renderer();
     ~Renderer();
 
@@ -486,8 +484,6 @@ class Renderer
 
     struct RenderProperties
     {
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
         Surface* surface{ nullptr };
         const Atmosphere* atmosphere{ nullptr };
         RingSystem* rings{ nullptr };

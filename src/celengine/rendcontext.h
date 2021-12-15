@@ -28,8 +28,6 @@ class Renderer;
 class RenderContext
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     RenderContext(const cmod::Material*);
     RenderContext(Renderer*);
     virtual ~RenderContext() = default;
@@ -96,8 +94,6 @@ class Shadow_RenderContext : public RenderContext
 class GLSL_RenderContext : public RenderContext
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     GLSL_RenderContext(Renderer* r,
                        const LightingState& ls,
                        float _objRadius,

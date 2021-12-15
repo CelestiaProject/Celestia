@@ -143,8 +143,6 @@ class ModelViewWidget : public QGLWidget
 {
 Q_OBJECT
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     ModelViewWidget(QWidget *parent);
     ~ModelViewWidget();
 

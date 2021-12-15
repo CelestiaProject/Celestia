@@ -19,8 +19,6 @@
 
 struct FavoritesEntry
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     std::string name;
     std::string selectionName;
 

@@ -80,8 +80,6 @@ class M3DMeshMaterialGroup
 class M3DTriangleMesh
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     M3DTriangleMesh() = default;
     ~M3DTriangleMesh() = default;
     M3DTriangleMesh(const M3DTriangleMesh&) = delete;
@@ -114,7 +112,7 @@ class M3DTriangleMesh
 
  private:
     std::vector<Eigen::Vector3f> points{};
-    std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords{};
+    std::vector<Eigen::Vector2f> texCoords{};
     std::vector<std::uint16_t> faces{};
     std::vector<std::uint32_t> smoothingGroups{};
     std::vector<M3DMeshMaterialGroup> meshMaterialGroups{};

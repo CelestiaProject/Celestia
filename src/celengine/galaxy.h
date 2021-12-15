@@ -27,8 +27,6 @@ class Renderer;
 
 struct Blob
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Eigen::Vector4f position;
     unsigned int    colorIndex;
     float           brightness;
@@ -39,8 +37,6 @@ class GalacticForm;
 class Galaxy : public DeepSkyObject
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;

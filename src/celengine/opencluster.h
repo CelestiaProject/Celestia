@@ -18,8 +18,6 @@
 class OpenCluster : public DeepSkyObject
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     OpenCluster() = default;
 
     const char* getType() const override;

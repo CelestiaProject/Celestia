@@ -122,8 +122,6 @@ class RingSystem
 class Body : public AstroObject
 {
  public:
-     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
      Body(PlanetarySystem*, const std::string& name);
      virtual ~Body();
 

@@ -46,8 +46,6 @@ class Renderer;
 class Console : public std::ostream
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     static constexpr const int PageRows = 10;
 
 

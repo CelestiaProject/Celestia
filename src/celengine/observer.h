@@ -107,8 +107,6 @@ private:
 class Observer
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     static constexpr const double JourneyDuration    = 5.0;
     static constexpr const double StartInterpolation = 0.25;
     static constexpr const double EndInterpolation   = 0.75;
@@ -236,7 +234,6 @@ public:
 
     struct JourneyParams
     {
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         double duration;
         double startTime;
         UniversalCoord from;

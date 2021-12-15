@@ -114,8 +114,6 @@ class CommandGotoLongLat : public InstantaneousCommand
 class CommandGotoLocation : public InstantaneousCommand
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     CommandGotoLocation(double t,
                         const Eigen::Vector3d& translation,
                         const Eigen::Quaterniond& rotation);
@@ -339,8 +337,6 @@ class CommandSetPosition : public InstantaneousCommand
 class CommandSetOrientation : public InstantaneousCommand
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     CommandSetOrientation(const Eigen::Quaternionf&);
 
     void process(ExecutionEnvironment&) override;
