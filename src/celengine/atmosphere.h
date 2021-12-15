@@ -67,7 +67,7 @@ class Atmosphere
 // to render. The radius of the sphere is the height at which the
 // density of the atmosphere falls to the extinction threshold, i.e.
 // -H * ln(extinctionThreshold)
-constexpr const float AtmosphereExtinctionThreshold = 0.05f;
+constexpr inline float AtmosphereExtinctionThreshold = 0.05f;
 
 #endif // _CELENGINE_ATMOSPHERE_H_
 

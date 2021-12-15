@@ -22,11 +22,11 @@ class StarDatabase;
 
 // TODO: move these variables to PointStarRenderer class
 // without adding a variable. Requires C++17
-constexpr const float StarDistanceLimit     = 1.0e6f;
+constexpr inline float StarDistanceLimit     = 1.0e6f;
 // Star disc size in pixels
-constexpr const float BaseStarDiscSize      = 5.0f;
-constexpr const float MaxScaledDiscStarSize = 8.0f;
-constexpr const float GlareOpacity          = 0.65f;
+constexpr inline float BaseStarDiscSize      = 5.0f;
+constexpr inline float MaxScaledDiscStarSize = 8.0f;
+constexpr inline float GlareOpacity          = 0.65f;
 
 class PointStarRenderer : public ObjectRenderer<Star, float>
 {

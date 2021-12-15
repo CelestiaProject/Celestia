@@ -13,7 +13,7 @@
 namespace celestia::gl
 {
 
-constexpr const int GL_2_1 = 21;
+constexpr inline int GL_2_1 = 21;
 
 extern bool ARB_shader_objects;
 extern bool ARB_shading_language_100;
