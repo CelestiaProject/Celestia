@@ -34,6 +34,19 @@ elseif(ENABLE_FFMPEG)
   )
 endif()
 
+set(CELESTIA_CORE_LIBS $<TARGET_OBJECTS:cel3ds>
+                       $<TARGET_OBJECTS:celengine>
+                       $<TARGET_OBJECTS:celephem>
+                       $<TARGET_OBJECTS:celimage>
+                       $<TARGET_OBJECTS:celmath>
+                       $<TARGET_OBJECTS:celmodel>
+                       $<TARGET_OBJECTS:celttf>
+                       $<TARGET_OBJECTS:celutil>
+)
+if(TARGET celcompat)
+  set(CELESTIA_CORE_LIBS ${CELESTIA_CORE_LIBS} $<TARGET_OBJECTS:celcompat>)
+endif()
+
 set(SCRIPT_LIBS $<TARGET_OBJECTS:celcommonscript> $<TARGET_OBJECTS:cellegacyscript>)
 if(ENABLE_CELX)
   set(SCRIPT_LIBS ${SCRIPT_LIBS} $<TARGET_OBJECTS:celluascript>)
@@ -46,15 +59,7 @@ set(CELSO "celestia-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
 add_library(celestia SHARED ${CELESTIA_SOURCES}
                             ${SCRIPT_LIBS}
-                            $<TARGET_OBJECTS:cel3ds>
-                            $<TARGET_OBJECTS:celcompat>
-                            $<TARGET_OBJECTS:celengine>
-                            $<TARGET_OBJECTS:celephem>
-                            $<TARGET_OBJECTS:celimage>
-                            $<TARGET_OBJECTS:celmath>
-                            $<TARGET_OBJECTS:celmodel>
-                            $<TARGET_OBJECTS:celttf>
-                            $<TARGET_OBJECTS:celutil>
+                            ${CELESTIA_CORE_LIBS}
 )
 
 set_target_properties(celestia PROPERTIES
