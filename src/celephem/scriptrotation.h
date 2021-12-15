@@ -20,7 +20,6 @@ struct lua_State;
 class ScriptedRotation : public RotationModel
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     ScriptedRotation() = default;
     ~ScriptedRotation() = default;
 

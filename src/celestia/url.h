@@ -23,8 +23,6 @@ class CelestiaCore;
 class Url
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     constexpr static int CurrentVersion = 3;
 
     /*! The TimeSource specifies what the time will be set to when the user

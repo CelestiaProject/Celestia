@@ -44,8 +44,6 @@ struct ParticleVertex
 class ParticleEmitter
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     ParticleEmitter();
     ~ParticleEmitter();
 

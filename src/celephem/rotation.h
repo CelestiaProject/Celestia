@@ -87,8 +87,6 @@ class RotationModel
 class CachingRotationModel : public RotationModel
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     CachingRotationModel();
     virtual ~CachingRotationModel() = default;
 
@@ -119,8 +117,6 @@ private:
 class ConstantOrientation : public RotationModel
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     ConstantOrientation(const Eigen::Quaterniond& q);
     virtual ~ConstantOrientation() = default;
 

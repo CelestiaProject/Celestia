@@ -52,7 +52,7 @@ bool operator< (const Blob& b1, const Blob& b2)
     return (b1.position.squaredNorm() < b2.position.squaredNorm());
 }
 
-typedef vector<Blob, aligned_allocator<Blob> > BlobVector;
+typedef vector<Blob> BlobVector;
 class GalacticForm
 {
 public:
@@ -291,8 +291,6 @@ void Galaxy::render(const Vector3f& offset,
 
 struct GalaxyVertex
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Vector4f position;
     Matrix<GLushort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };

@@ -17,8 +17,6 @@ namespace celmath
 template<class T> class Sphere
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Sphere() :
         center(Eigen::Matrix<T, 3, 1>::Zero()),
         radius(static_cast<T>(1))

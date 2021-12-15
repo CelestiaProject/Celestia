@@ -44,8 +44,6 @@ struct GlobularForm
 class Globular : public DeepSkyObject
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     Globular();
 
     const char* getType() const override;

@@ -18,8 +18,6 @@ class ReferenceMark;
 
 struct RenderListEntry
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     enum RenderableType
     {
         RenderableStar,

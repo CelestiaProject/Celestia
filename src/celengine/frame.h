@@ -69,8 +69,6 @@ class ReferenceFrame
 class CachingFrame : public ReferenceFrame
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     SHARED_TYPES(CachingFrame)
 
     CachingFrame(Selection _center);
@@ -180,8 +178,6 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 class FrameVector
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     FrameVector(const FrameVector& fv);
     ~FrameVector() = default;
     FrameVector& operator=(const FrameVector&);

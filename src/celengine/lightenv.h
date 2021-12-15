@@ -41,8 +41,6 @@ public:
 class EclipseShadow
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     const Body* caster;
     Eigen::Quaternionf casterOrientation;
     Eigen::Vector3f origin;
@@ -55,8 +53,6 @@ public:
 class RingShadow
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     RingSystem* ringSystem;
     Eigen::Quaternionf casterOrientation;
     Eigen::Vector3f origin;
@@ -67,9 +63,7 @@ public:
 class LightingState
 {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-    typedef std::vector<EclipseShadow, Eigen::aligned_allocator<EclipseShadow> > EclipseShadowVector;
+    typedef std::vector<EclipseShadow> EclipseShadowVector;
 
     LightingState() :
         nLights(0),

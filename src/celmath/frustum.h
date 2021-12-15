@@ -19,8 +19,6 @@ namespace celmath
 class Frustum
 {
  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     using PlaneType = Eigen::Hyperplane<float, 3>;
 
     Frustum(float fov, float aspectRatio, float nearDist);
