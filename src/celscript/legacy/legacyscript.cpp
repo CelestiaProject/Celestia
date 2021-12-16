@@ -90,7 +90,7 @@ bool LegacyScriptPlugin::isOurFile(const fs::path &p) const
 
 unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
 {
-    ifstream scriptfile(path.string());
+    ifstream scriptfile(path);
     if (!scriptfile.good())
     {
         appCore()->fatalError(_("Error opening script file."));

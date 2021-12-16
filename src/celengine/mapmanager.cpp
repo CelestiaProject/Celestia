@@ -140,7 +140,7 @@ fs::path WarpMeshInfo::resolve(const fs::path& baseDir)
 WarpMesh* WarpMeshInfo::load(const fs::path& name)
 {
 #define MESHTYPE_RECT 2
-    ifstream f(name.string());
+    ifstream f(name);
     if (!f.good())
         return nullptr;
 

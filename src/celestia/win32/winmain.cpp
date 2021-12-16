@@ -497,7 +497,7 @@ bool LoadItemTextFromFile(HWND hWnd,
                           const fs::path& filename)
 {
     // ifstream textFile(filename, ios::in | ios::binary);
-    ifstream textFile(filename.string(), ios::in);
+    ifstream textFile(filename, ios::in);
     string s;
 
     if (!textFile.good())

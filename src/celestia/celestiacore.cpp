@@ -195,7 +195,7 @@ void CelestiaCore::readFavoritesFile()
         path = WriteableDataPath() / path;
 #endif
 
-    ifstream in(path.string(), ios::in);
+    ifstream in(path, ios::in);
     if (in.good())
     {
         favorites = ReadFavoritesList(in);
@@ -234,7 +234,7 @@ void CelestiaCore::writeFavoritesFile()
         }
     }
 
-    ofstream out(path.string(), ios::out);
+    ofstream out(path, ios::out);
     if (out.good())
         WriteFavoritesList(*favorites, out);
 }
@@ -3645,7 +3645,7 @@ class SolarSystemLoader
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
-        ifstream solarSysFile(filepath.string(), ios::in);
+        ifstream solarSysFile(filepath, ios::in);
         if (solarSysFile.good())
         {
             LoadSolarSystemObjects(solarSysFile,
@@ -3691,7 +3691,7 @@ template <class OBJDB> class CatalogLoader
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
-        ifstream catalogFile(filepath.string(), ios::in);
+        ifstream catalogFile(filepath, ios::in);
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
@@ -3795,7 +3795,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         if (progressNotifier)
             progressNotifier->update(file.string());
 
-        ifstream dsoFile(file.string(), ios::in);
+        ifstream dsoFile(file, ios::in);
         if (!dsoFile.good())
         {
             warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
@@ -3848,7 +3848,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             if (progressNotifier)
                 progressNotifier->update(file.string());
 
-            ifstream solarSysFile(file.string(), ios::in);
+            ifstream solarSysFile(file, ios::in);
             if (!solarSysFile.good())
             {
                 warning(fmt::sprintf(_("Error opening solar system catalog %s.\n"), file));
@@ -3888,7 +3888,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Load asterisms:
     if (!config->asterismsFile.empty())
     {
-        ifstream asterismsFile(config->asterismsFile.string(), ios::in);
+        ifstream asterismsFile(config->asterismsFile, ios::in);
         if (!asterismsFile.good())
         {
             warning(fmt::sprintf(_("Error opening asterisms file %s.\n"),
@@ -3904,7 +3904,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     if (!config->boundariesFile.empty())
     {
-        ifstream boundariesFile(config->boundariesFile.string(), ios::in);
+        ifstream boundariesFile(config->boundariesFile, ios::in);
         if (!boundariesFile.good())
         {
             warning(fmt::sprintf(_("Error opening constellation boundaries file %s.\n"),
@@ -3921,7 +3921,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (!config->destinationsFile.empty())
     {
         fs::path localeDestinationsFile = LocaleFilename(config->destinationsFile);
-        ifstream destfile(localeDestinationsFile.string());
+        ifstream destfile(localeDestinationsFile, ios::in);
         if (destfile.good())
         {
             destinations = ReadDestinationList(destfile);
@@ -4100,7 +4100,7 @@ static void loadCrossIndex(StarDatabase* starDB,
 {
     if (!filename.empty())
     {
-        ifstream xrefFile(filename.string(), ios::in | ios::binary);
+        ifstream xrefFile(filename, ios::in | ios::binary);
         if (xrefFile.good())
         {
             if (!starDB->loadCrossIndex(catalog, xrefFile))
@@ -4118,7 +4118,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     StarDetails::SetStarTextures(cfg.starTextures);
 
     StarNameDatabase* starNameDB = nullptr;
-    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
+    ifstream starNamesFile(cfg.starNamesFile, ios::in);
     if (starNamesFile.good())
     {
         starNameDB = StarNameDatabase::readNames(starNamesFile);
@@ -4138,7 +4138,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (progressNotifier)
             progressNotifier->update(cfg.starDatabaseFile.string());
 
-        ifstream starFile(cfg.starDatabaseFile.string(), ios::in | ios::binary);
+        ifstream starFile(cfg.starDatabaseFile, ios::in | ios::binary);
         if (!starFile.good())
         {
             cerr << fmt::sprintf(_("Error opening %s\n"), cfg.starDatabaseFile);
@@ -4171,7 +4171,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (file.empty())
             continue;
 
-        ifstream starFile(file.string(), ios::in);
+        ifstream starFile(file, ios::in);
         if (starFile.good())
             starDB->load(starFile);
         else
@@ -4806,7 +4806,7 @@ CelestiaCore::MeasurementSystem CelestiaCore::getMeasurementSystem() const
 
 void CelestiaCore::setLogFile(const fs::path &fn)
 {
-    m_logfile = std::ofstream(fn.string());
+    m_logfile = std::ofstream(fn);
     if (m_logfile.good())
     {
         m_tee = teestream(m_logfile, *console);

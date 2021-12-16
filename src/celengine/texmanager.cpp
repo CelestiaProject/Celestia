@@ -68,7 +68,7 @@ fs::path TextureInfo::resolve(const fs::path& baseDir)
         }
         else
         {
-            ifstream in(filename.string());
+            ifstream in(filename);
             if (in.good())
                 return filename;
         }

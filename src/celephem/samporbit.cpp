@@ -727,7 +727,7 @@ static bool SkipComments(istream& in)
 
 template <typename T> SampledOrbit<T>* LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.string());
+    ifstream in(filename);
     if (!in.good())
         return nullptr;
 
@@ -782,7 +782,7 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const fs::path& filename
 
 template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.string());
+    ifstream in(filename);
     if (!in.good())
         return nullptr;
 
@@ -829,7 +829,7 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const fs::path& 
 template <typename T> SampledOrbitXYZV<T>*
 LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.string(), ios::binary);
+    ifstream in(filename, ios::binary);
     if (!in.good())
     {
         cerr << fmt::sprintf(_("Error opening %s.\n"), filename);

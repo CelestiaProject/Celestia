@@ -50,7 +50,7 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
     if (!path.empty())
     {
         fs::path filename = path / "data" / source;
-        ifstream in(filename.string());
+        ifstream in(filename);
         if (in.good())
             return filename += uniquifyingSuffix;
     }

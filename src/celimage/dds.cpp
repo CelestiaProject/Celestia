@@ -136,7 +136,7 @@ uint32_t* decompressDXTc(uint32_t width, uint32_t height, GLenum format, bool tr
 
 Image* LoadDDSImage(const fs::path& filename)
 {
-    ifstream in(filename.string(), ios::in | ios::binary);
+    ifstream in(filename, ios::in | ios::binary);
     if (!in.good())
     {
         DPRINTF(LOG_LEVEL_ERROR, "Error opening DDS texture file %s.\n", filename);

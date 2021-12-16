@@ -395,7 +395,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
 
 VirtualTexture* LoadVirtualTexture(const fs::path& filename)
 {
-    ifstream in(filename.string(), ios::in);
+    ifstream in(filename, ios::in);
 
     if (!in.good())
     {
