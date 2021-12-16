@@ -82,7 +82,7 @@ NoiseDisplacementFunc(float u, float v, void* info)
 std::unique_ptr<cmod::Model>
 LoadCelestiaMesh(const fs::path& filename)
 {
-    std::ifstream meshFile(filename.string(), std::ios::in);
+    std::ifstream meshFile(filename, std::ios::in);
     if (!meshFile.good())
     {
         GetLogger()->error("Error opening mesh file: {}\n", filename);
@@ -439,7 +439,7 @@ GeometryInfo::resolve(const fs::path& baseDir)
     if (!path.empty())
     {
         fs::path filename = path / "models" / source;
-        std::ifstream in(filename.string());
+        std::ifstream in(filename);
         if (in.good())
         {
             resolvedToPath = true;
@@ -480,7 +480,7 @@ GeometryInfo::load(const fs::path& resolvedFilename)
     }
     else if (fileType == Content_CelestiaModel)
     {
-        std::ifstream in(filename.string(), std::ios::binary);
+        std::ifstream in(filename, std::ios::binary);
         if (in.good())
         {
             model = cmod::LoadModel(

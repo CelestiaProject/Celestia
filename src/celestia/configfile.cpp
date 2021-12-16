@@ -34,7 +34,7 @@ static unsigned int getUint(Hash* params,
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *config)
 {
-    ifstream configFile(filename.string());
+    ifstream configFile(filename);
     if (!configFile.good())
     {
         GetLogger()->error("Error opening config file '{}'.\n", filename);

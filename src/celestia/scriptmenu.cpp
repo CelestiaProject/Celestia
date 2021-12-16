@@ -36,7 +36,7 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
     // Scan the script file for metainformation. At the moment,
     // the only thing searched for is the script title, which must
     // appear on the first line after the string 'Title:'
-    ifstream in(p.string());
+    ifstream in(p);
     if (in.good())
     {
         ScriptMenuItem item;
