@@ -3719,6 +3719,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         fs::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
             ReadCelestiaConfig(localConfigFile, config);
+
+        localConfigFile = PathExp("~/.celestia-1.7.cfg");
+        if (!localConfigFile.empty())
+            ReadCelestiaConfig(localConfigFile, config);
     }
 
     if (config == nullptr)
