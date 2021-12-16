@@ -604,7 +604,7 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
 
 std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename)
 {
-    std::ifstream in(filename.string(), std::ios::in | std::ios::binary);
+    std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())
     {
         GetLogger()->error("Read3DSFile: Error opening {}\n", filename);

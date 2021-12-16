@@ -218,7 +218,7 @@ SampledOrientation::getOrientation(double tjd) const
 
 RotationModel* LoadSampledOrientation(const fs::path& filename)
 {
-    ifstream in(filename.string());
+    ifstream in(filename);
     if (!in.good())
         return nullptr;
 
