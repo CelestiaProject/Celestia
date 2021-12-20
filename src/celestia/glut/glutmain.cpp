@@ -41,6 +41,7 @@
 using namespace celestia;
 using namespace std;
 using celestia::util::GetLogger;
+using celestia::util::Level;
 
 
 char AppName[] = "Celestia";
