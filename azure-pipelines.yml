@@ -6,9 +6,11 @@ strategy:
    Linux:
      imageName: 'ubuntu-latest'
      enableLibavif: 'OFF'
+     enableGLUT: 'ON'
    Mac:
      imageName: 'macos-latest'
      enableLibavif: 'ON'
+     enableGLUT: 'OFF'
 
 pool:
   vmImage: $(imageName)
@@ -39,6 +41,7 @@ steps:
                         libfreetype6-dev \
                         libsdl2-dev \
                         libluajit-5.1-dev \
+                        freeglut3-dev \
                         libfmt-dev
   displayName: 'Install Linux dependencies'
   condition: eq( variables['Agent.OS'], 'Linux' )
@@ -59,6 +62,7 @@ steps:
                  freetype \
                  libepoxy \
                  sdl2 \
+                 freeglut \
                  libavif
     brew link gettext --force
     brew link lua --force
@@ -68,7 +72,7 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DENABLE_FFMPEG=ON -DENABLE_LIBAVIF=$(enableLibavif) ..
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DENABLE_GLUT=$(enableGLUT) -DENABLE_FFMPEG=ON -DENABLE_LIBAVIF=$(enableLibavif) ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
