@@ -22,15 +22,26 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
-    string priName   = name;
+    string priName(name);
     string altName;
 
+    bool isOrbitingStar = false; // star is an orbiting one if it looks like `Barycenter A`
     // See if the name is a Bayer or Flamsteed designation
-    string::size_type pos  = name.find(' ');
-    if (pos != 0 && pos != string::npos && pos < name.length() - 1)
+    auto pos = name.find(' ');
+    auto nameLength = name.length();
+    if (pos != 0 && pos != string::npos && pos < nameLength - 1)
     {
+        auto pos1 = name.rfind(' ');
+        char starLetter = '\0';
+        if (pos1 != string::npos && pos1 > pos && pos1 < nameLength - 1 && isalpha(name[pos1 + 1]))
+        {
+            starLetter = name[pos1 + 1];
+            isOrbitingStar = true;
+            do { --pos1; } while (isspace(name[pos1]));
+        }
         string prefix(name, 0, pos);
-        string conName(name, pos + 1, string::npos);
+        string conName(name, pos + 1, isOrbitingStar ? pos1 - pos : string::npos);
+
         Constellation* con  = Constellation::getConstellation(conName);
         if (con != nullptr)
         {
@@ -51,7 +62,7 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
             // of the name.  Next, we see if the first part of
             // the name is a greek letter.
             const string& letter = Greek::canonicalAbbreviation(string(prefix, 0, len));
-            if (letter != "")
+            if (!letter.empty())
             {
                 // Matched . . . this is a Bayer designation
                 if (digit == ' ')
@@ -71,25 +82,35 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
                 // Something other than a Bayer designation
                 priName = prefix + ' ' + con->getAbbreviation();
             }
+
+            if (isOrbitingStar)
+            {
+                char star[3] = {' ', starLetter, '\0'};
+                priName.append(star);
+                altName.append(star);
+            }
         }
+
+        catalogNumber = getCatalogNumberByName(priName, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
     }
 
-    catalogNumber = getCatalogNumberByName(priName, i18n);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
-
-    priName += " A";  // try by appending an A
-    catalogNumber = getCatalogNumberByName(priName, i18n);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
+    if (!isOrbitingStar)
+    {
+        priName.append(" A");  // try by appending an A
+        catalogNumber = getCatalogNumberByName(priName, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
 
     // If the first search failed, try using the alternate name
-    if (altName.length() != 0)
+    if (!altName.empty())
     {
         catalogNumber = getCatalogNumberByName(altName, i18n);
-        if (catalogNumber == AstroCatalog::InvalidIndex)
+        if (catalogNumber == AstroCatalog::InvalidIndex && !isOrbitingStar)
         {
-            altName += " A";
+            altName.append(" A");
             catalogNumber = getCatalogNumberByName(altName, i18n);
         }   // Intentional fallthrough.
     }
