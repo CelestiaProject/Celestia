@@ -14,9 +14,7 @@
 #include <type_traits> // std::remove_cv
 #include <cstddef>     // std::size_t
 
-namespace celestia
-{
-namespace util
+namespace celestia::util
 {
 
 /**
@@ -174,5 +172,5 @@ class array_view
     const element_type* m_ptr;
     size_t m_size;
 };
-}
-}
+
+} // end namespace celestia::util

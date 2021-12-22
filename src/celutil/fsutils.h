@@ -15,10 +15,9 @@
 #include <celutil/array_view.h>
 #include <celcompat/filesystem.h>
 
-namespace celestia
+namespace celestia::util
 {
-namespace util
-{
+
 fs::path LocaleFilename(const fs::path& filename);
 fs::path PathExp(const fs::path& filename);
 fs::path ResolveWildcard(const fs::path& wildcard,
@@ -27,5 +26,5 @@ fs::path ResolveWildcard(const fs::path& wildcard,
 fs::path HomeDir();
 fs::path WriteableDataPath();
 #endif
-}
-}
+
+} // end namespace celestia::util

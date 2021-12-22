@@ -17,9 +17,7 @@ class CelestiaConfig;
 class CelestiaCore;
 class ProgressNotifier;
 
-namespace celestia
-{
-namespace scripts
+namespace celestia::scripts
 {
 
 class LuaScript : public IScript
@@ -83,5 +81,4 @@ class LuaHook : public IScriptHook
 
 bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier = nullptr);
 
-}
-}
+} // end namespace celestia::scripts

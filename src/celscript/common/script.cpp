@@ -9,9 +9,7 @@
 
 #include "script.h"
 
-namespace celestia
-{
-namespace scripts
+namespace celestia::scripts
 {
 
 bool IScript::handleMouseButtonEvent(float /*x*/, float /*y*/, int /*button*/, bool /*down*/)
@@ -34,5 +32,4 @@ bool IScript::handleTickEvent(double /*dt*/)
     return false;
 }
 
-}
-}
+} // end namespace celestia::scripts

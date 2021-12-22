@@ -15,9 +15,7 @@
 #include <fmt/ostream.h>
 #include "logger.h"
 
-namespace celestia
-{
-namespace util
+namespace celestia::util
 {
 
 Logger* Logger::g_logger = nullptr;
@@ -53,5 +51,4 @@ void Logger::vlog(Level level, fmt::string_view format, fmt::format_args args) c
     fmt::vprint(stream, format, args);
 }
 
-}
-}
+} // end namespace celestia::util

@@ -25,9 +25,7 @@ struct fmt::formatter<fs::path> : formatter<std::string>
     }
 };
 
-namespace celestia
-{
-namespace util
+namespace celestia::util
 {
 
 enum class Level
@@ -126,5 +124,5 @@ Logger* CreateLogger(Level level = Level::Info,
                      Logger::Stream &log = std::clog,
                      Logger::Stream &err = std::cerr);
 void DestroyLogger();
-}
-}
+
+} // end namespace celestia::util

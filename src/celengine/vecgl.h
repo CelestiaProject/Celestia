@@ -35,9 +35,7 @@ inline void glVertexAttrib(GLuint index, const Eigen::Vector4f &v)
     glVertexAttrib4fv(index, v.data());
 }
 
-namespace celestia
-{
-namespace vecgl
+namespace celestia::vecgl
 {
 template<typename T>
 inline Eigen::Matrix<T,4,4>
@@ -152,7 +150,6 @@ translate(T x, T y, T z)
 {
     return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
 }
-} // namespace vecgl
-} // namespace celestia
+} // end namespace celestia::vecgl
 
 #endif // _CELENGINE_VECGL_H_

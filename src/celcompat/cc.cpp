@@ -19,9 +19,7 @@
 #include <config.h>
 #include "cc.h"
 
-namespace celestia
-{
-namespace compat
+namespace celestia::compat
 {
 namespace
 {
@@ -236,5 +234,4 @@ from_chars(const char* first, const char* last, long double &value, chars_format
     return from_chars_impl(first, last, value, fmt);
 }
 
-} // end namespace compat
-} // end namespace celestia
+} // end namespace celestia::compat

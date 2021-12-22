@@ -18,9 +18,7 @@
 
 using namespace std;
 
-namespace celestia
-{
-namespace scripts
+namespace celestia::scripts
 {
 
 // Extremely basic implementation of an ExecutionEnvironment for
@@ -109,5 +107,4 @@ unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
     return script;
 }
 
-}
 }

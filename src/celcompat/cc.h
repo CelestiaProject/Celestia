@@ -18,9 +18,7 @@
 #include <system_error>
 #include <type_traits>
 
-namespace celestia
-{
-namespace compat
+namespace celestia::compat
 {
 #ifdef HAVE_CHARCONV
 using std::from_chars_result;
@@ -194,5 +192,4 @@ from_chars(const char* first, const char* last, T& value, int base)
 }
 #endif
 
-} // end namespace compat
-} // end namespace celestia
+} // end namespace celestia::compat

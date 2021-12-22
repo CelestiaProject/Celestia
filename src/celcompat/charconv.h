@@ -4,14 +4,11 @@
 
 #ifdef HAVE_FLOAT_CHARCONV
 #include <charconv>
-namespace celestia
-{
-namespace compat
+namespace celestia::compat
 {
     using std::chars_format;
     using std::from_chars_result;
     using std::from_chars;
-}
 }
 #else
 #include "cc.h"

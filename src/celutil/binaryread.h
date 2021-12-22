@@ -8,10 +8,9 @@
 #include <config.h>
 
 
-namespace celestia
+namespace celestia::util
 {
-namespace util
-{
+
 /*! Read a value stored in machine-native byte order from an input stream.
  */
 template<typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -120,5 +119,4 @@ inline bool readBE(std::istream& in, T& value)
 
 #endif
 
-}
-}
+} // end namespace celestia::util

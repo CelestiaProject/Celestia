@@ -16,9 +16,7 @@ class Execution;
 class ExecutionEnvironment;
 class CelestiaCore;
 
-namespace celestia
-{
-namespace scripts
+namespace celestia::scripts
 {
 
 class LegacyScript : public IScript
@@ -54,5 +52,4 @@ class LegacyScriptPlugin : public IScriptPlugin
     std::unique_ptr<IScript> loadScript(const fs::path&) override;
 };
 
-}
-}
+} // end namespace celestia::scripts

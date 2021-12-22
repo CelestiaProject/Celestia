@@ -1,9 +1,7 @@
 #include "glsupport.h"
 #include <algorithm>
 
-namespace celestia
-{
-namespace gl
+namespace celestia::gl
 {
 
 #ifdef GL_ES
@@ -75,5 +73,4 @@ bool checkVersion(int v) noexcept
 {
     return epoxy_gl_version() >= v;
 }
-} // gl
-} // celestia
+} // end namespace celestia::gl

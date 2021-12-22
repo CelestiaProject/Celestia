@@ -1,8 +1,6 @@
 #include "glsupport.h"
 
-namespace celestia
-{
-namespace gl
+namespace celestia::gl
 {
 
 bool ARB_shader_objects       = false;
@@ -30,5 +28,5 @@ bool checkVersion(int v) noexcept
 {
     return epoxy_gl_version() >= v;
 }
-} // gl
-} // celestia
+
+} // end namespace celestia::gl
