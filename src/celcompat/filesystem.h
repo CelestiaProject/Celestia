@@ -2,13 +2,10 @@
 
 #include <config.h>
 
-#ifdef HAVE_FILESYSTEM
+#ifdef HAVE_STD_FILESYSTEM
 #include <filesystem>
 namespace fs = std::filesystem;
-#elif defined(HAVE_EXPERIMENTAL_FILESYSTEM)
+#else
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
-#else
-#include "fs.h"
-namespace fs = celestia::filesystem;
 #endif

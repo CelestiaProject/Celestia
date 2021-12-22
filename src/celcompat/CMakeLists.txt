@@ -5,13 +5,6 @@ set(CELCOMPAT_SOURCES
 )
 endif()
 
-if ((NOT HAVE_EXPERIMENTAL_FILESYSTEM) AND (NOT HAVE_FILESYSTEM))
-  set(CELCOMPAT_SOURCES ${CELCOMPAT_SOURCES}
-    fs.cpp
-    fs.h
-  )
-endif()
-
 if (CELCOMPAT_SOURCES)
   add_library(celcompat OBJECT ${CELCOMPAT_SOURCES})
 endif()
