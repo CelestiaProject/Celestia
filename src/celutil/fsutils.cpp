@@ -31,9 +31,7 @@
 
 using namespace std;
 
-namespace celestia
-{
-namespace util
+namespace celestia::util
 {
 
 fs::path LocaleFilename(const fs::path &p)
@@ -185,5 +183,4 @@ fs::path WriteableDataPath()
 }
 #endif // !PORTABLE_BUILD
 
-}
-}
+} // end namespace celestia::util

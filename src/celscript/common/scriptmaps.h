@@ -4,10 +4,9 @@
 #include <string>
 #include <celutil/color.h>
 
-namespace celestia
+namespace celestia::scripts
 {
-namespace scripts
-{
+
 // String to flag mappings
 typedef std::map<std::string, uint32_t> FlagMap;
 typedef std::map<std::string, uint64_t> FlagMap64;
@@ -32,5 +31,5 @@ class ScriptMaps
     ColorMap  LineColorMap;
     ColorMap  LabelColorMap;
 };
-}
-}
+
+} // end namespace celestia::scripts

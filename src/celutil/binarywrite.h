@@ -8,10 +8,9 @@
 #include <config.h>
 
 
-namespace celestia
+namespace celestia::util
 {
-namespace util
-{
+
 /*! Write a value to an output stream in machine-native byte order.
  */
 template<typename T, typename = std::enable_if_t<std::is_trivially_copyable<T>::value>>
@@ -111,5 +110,4 @@ inline bool writeBE(std::ostream& out, T value)
 
 #endif
 
-}
-}
+} // end namespace celestia::util

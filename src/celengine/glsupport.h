@@ -29,9 +29,7 @@
 #define glDepthRange glDepthRangef
 #endif
 
-namespace celestia
-{
-namespace gl
+namespace celestia::gl
 {
 
 constexpr const int GL_2_1 = 21;
@@ -55,5 +53,5 @@ extern GLint maxTextureAnisotropy;
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
-} // gl
-} // celestia
+
+} // end namespace celestia::gl

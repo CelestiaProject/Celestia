@@ -2,9 +2,7 @@
 #include <celestia/celestiacore.h>
 #include <celengine/render.h>
 
-namespace celestia
-{
-namespace scripts
+namespace celestia::scripts
 {
 
 void initRenderFlagMap(FlagMap64 &RenderFlagMap)
@@ -219,5 +217,4 @@ ScriptMaps::ScriptMaps()
     initLineColorMap(LineColorMap);
 }
 
-}
-}
+} // end namespace celestia::scripts
