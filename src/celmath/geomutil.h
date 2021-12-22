@@ -21,8 +21,7 @@ namespace celmath
 template<class T> Eigen::Quaternion<T>
 XRotation(T radians)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
     T halfAngle = radians * static_cast<T>(0.5);
     return Eigen::Quaternion<T>(cos(halfAngle), sin(halfAngle), 0, 0);
 }
@@ -31,8 +30,7 @@ XRotation(T radians)
 template<class T> Eigen::Quaternion<T>
 YRotation(T radians)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
     T halfAngle = radians * static_cast<T>(0.5);
     return Eigen::Quaternion<T>(cos(halfAngle), 0, sin(halfAngle), 0);
 }
@@ -41,8 +39,7 @@ YRotation(T radians)
 template<class T> Eigen::Quaternion<T>
 ZRotation(T radians)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
     T halfAngle = radians * static_cast<T>(0.5);
     return Eigen::Quaternion<T>(cos(halfAngle), 0, 0, sin(halfAngle));
 }
@@ -110,8 +107,7 @@ ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
                const int viewport[4],
                Eigen::Matrix<T, 3, 1>& to)
 {
-    using std::atan2;
-    using std::hypot;
+    using std::atan2, std::hypot;
     Eigen::Matrix<T, 4, 1> inPos = modelViewMatrix * Eigen::Matrix<T, 4, 1>(from.x(),
                                                                             from.y(),
                                                                             from.z(),
@@ -146,8 +142,7 @@ ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
 template<class T> Eigen::Matrix<T, 4, 4>
 Perspective(T fovy, T aspect, T nearZ, T farZ)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
 
     if (aspect == static_cast<T>(0))
         return Eigen::Matrix<T, 4, 4>::Identity();
