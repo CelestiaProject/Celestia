@@ -41,8 +41,7 @@ RealDists<T>::SignedFullAngle{static_cast<T>(-PI), static_cast<T>(PI)};
 template<typename T, typename RNG = std::mt19937>
 Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
     T phi = RealDists<T>::SignedFullAngle(rng);
     return Eigen::Matrix<T, 2, 1>{cos(phi), sin(phi)};
 }
@@ -50,9 +49,7 @@ Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)
 template<typename T, typename RNG = std::mt19937>
 Eigen::Matrix<T, 3, 1> randomOnSphere(RNG&& rng)
 {
-    using std::cos;
-    using std::sin;
-    using std::sqrt;
+    using std::cos, std::sin, std::sqrt;
     T phi = RealDists<T>::SignedFullAngle(rng);
     T cosTheta = RealDists<T>::SignedUnit(rng);
     T xyScale = sqrt(static_cast<T>(1) - square(cosTheta));

@@ -18,8 +18,7 @@ namespace celmath
 {
 template<typename T> inline void sincos(T angle, T& s, T& c)
 {
-    using std::cos;
-    using std::sin;
+    using std::cos, std::sin;
     s = sin(angle);
     c = cos(angle);
 }
@@ -80,8 +79,7 @@ template<typename T> inline constexpr T sign(T x)
 // a positive value in the range [ 0, y )
 template<typename T> T pfmod(T x, T y)
 {
-    using std::abs;
-    using std::floor;
+    using std::abs, std::floor;
 
     T quotient = floor(abs(x / y));
     if (x < 0.0)
