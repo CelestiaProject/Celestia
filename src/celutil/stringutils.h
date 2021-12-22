@@ -12,26 +12,26 @@
 
 #pragma once
 
+#include <string_view>
 #include <celcompat/charconv.h>
-#include <celcompat/string_view.h>
 
-int compareIgnoringCase(celestia::compat::string_view s1, celestia::compat::string_view s2);
-int compareIgnoringCase(celestia::compat::string_view s1, celestia::compat::string_view s2, int n);
+int compareIgnoringCase(std::string_view s1, std::string_view s2);
+int compareIgnoringCase(std::string_view s1, std::string_view s2, int n);
 
 struct CompareIgnoringCasePredicate
 {
-    bool operator()(celestia::compat::string_view, celestia::compat::string_view) const;
+    bool operator()(std::string_view, std::string_view) const;
 };
 
 template <typename T>
-[[nodiscard]] bool to_number(celestia::compat::string_view p, T &result)
+[[nodiscard]] bool to_number(std::string_view p, T &result)
 {
     auto r = celestia::compat::from_chars(p.data(), p.data() + p.size(), result);
     return r.ec == std::errc();
 }
 
 template <typename T>
-[[nodiscard]] bool to_number(celestia::compat::string_view p, T &result, int base)
+[[nodiscard]] bool to_number(std::string_view p, T &result, int base)
 {
     auto r = celestia::compat::from_chars(p.data(), p.data() + p.size(), result, base);
     return r.ec == std::errc();

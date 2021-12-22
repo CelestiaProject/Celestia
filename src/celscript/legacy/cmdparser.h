@@ -13,7 +13,7 @@
 #define _CMDPARSER_H_
 
 #include <iosfwd>
-#include <celcompat/string_view.h>
+#include <string_view>
 #include <celscript/common/scriptmaps.h>
 #include <celutil/array_view.h>
 #include "command.h" // CommandSequence

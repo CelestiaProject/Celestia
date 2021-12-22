@@ -361,9 +361,6 @@ else()
   message(WARNING "C++ experimental filesystem library is unusable!\nWill use own implementation.")
 endif()
 
-try_compile(HAVE_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsv.cpp")
-try_compile(HAVE_EXPERIMENTAL_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsvexp.cpp")
-
 try_compile(HAVE_CHARCONV ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxccint.cpp")
 if(HAVE_CHARCONV)
   try_compile(HAVE_FLOAT_CHARCONV ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxccfloat.cpp")
