@@ -1,8 +1,5 @@
 test_case(charconv_compat)
 test_case(hash)
-if ((NOT HAVE_EXPERIMENTAL_FILESYSTEM) AND (NOT HAVE_FILESYSTEM))
-  test_case(fs)
-endif()
 test_case(logger)
 test_case(stellarclass)
 test_case(tokenizer)
