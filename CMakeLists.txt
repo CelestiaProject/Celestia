@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.8)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
@@ -86,7 +86,7 @@ add_definitions(-D_USE_MATH_DEFINES)
 
 # Let CMake handle setting C++11 (since 3.1)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 set(CMAKE_C_STANDARD 11)
 
