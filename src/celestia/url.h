@@ -12,10 +12,10 @@
 
 #include <map>
 #include <string>
+#include <string_view>
 #include <Eigen/Geometry>
 #include <celengine/observer.h>
 #include <celengine/astro.h>
-#include <celcompat/string_view.h>
 #include "celestiastate.h"
 
 class CelestiaCore;
@@ -53,17 +53,17 @@ class Url
     ~Url() = default;
 
     static std::string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
-    static constexpr celestia::compat::string_view proto();
-    static std::string decodeString(celestia::compat::string_view);
-    static std::string encodeString(celestia::compat::string_view);
+    static constexpr std::string_view proto();
+    static std::string decodeString(std::string_view);
+    static std::string encodeString(std::string_view);
 
-    bool parse(celestia::compat::string_view);
+    bool parse(std::string_view);
     bool goTo();
     std::string getAsString() const;
 
  private:
-    bool initVersion3(std::map<celestia::compat::string_view, std::string> &params, celestia::compat::string_view timeStr);
-    bool initVersion4(std::map<celestia::compat::string_view, std::string> &params, celestia::compat::string_view timeStr);
+    bool initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr);
+    bool initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr);
     void evalName();
 
     CelestiaState   m_state;
@@ -84,7 +84,7 @@ class Url
     bool            m_valid         { false };
 };
 
-constexpr celestia::compat::string_view Url::proto()
+constexpr std::string_view Url::proto()
 {
     return "cel://";
 }
