@@ -83,6 +83,7 @@ public:
     std::string viewportEffect;
     std::string warpMeshFile;
     std::string measurementSystem;
+    std::string temperatureScale;
 
     std::string x264EncoderOptions;
     std::string ffvhEncoderOptions;
