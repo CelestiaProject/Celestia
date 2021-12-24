@@ -159,7 +159,7 @@ void Overlay::print_impl(const std::string& s)
     while (i < length && validChar)
     {
         wchar_t ch = 0;
-        validChar = UTF8Decode(s.c_str(), i, length, ch);
+        validChar = UTF8Decode(s, i, ch);
         i += UTF8EncodedSize(ch);
         print(ch);
     }

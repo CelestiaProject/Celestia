@@ -19,7 +19,7 @@
 #include <celengine/starbrowser.h>
 #include <celengine/stardb.h>
 #include <celengine/univcoord.h>
-#include <celutil/utf8.h>
+#include <celutil/greek.h>
 
 #include "dialog-star.h"
 #include "actions.h"

@@ -1,4 +1,5 @@
 test_case(charconv_compat)
+test_case(greek)
 test_case(hash)
 test_case(logger)
 test_case(stellarclass)

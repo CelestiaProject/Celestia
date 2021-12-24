@@ -45,8 +45,7 @@ class NameDatabase
     NumberIndex::const_iterator getFirstNameIter(const AstroCatalog::IndexNumber catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
-    std::vector<std::string> getCompletion(const std::string& name, bool i18n, bool greek = true) const;
-    std::vector<std::string> getCompletion(const std::vector<std::string> &list, bool i18n) const;
+    std::vector<std::string> getCompletion(const std::string& name, bool i18n) const;
 
  protected:
     NameIndex   nameIndex;
