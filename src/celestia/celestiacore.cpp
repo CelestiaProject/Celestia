@@ -90,6 +90,47 @@ static const double OneFtInKm = 0.0003048;
 static const double OneLbInKg = 0.45359237;
 static const double OneLbPerFt3InKgPerM3 = OneLbInKg / pow(OneFtInKm * 1000.0, 3);
 
+namespace
+{
+float KelvinToCelsius(float kelvin)
+{
+    return kelvin - 273.15f;
+}
+
+float KelvinToFahrenheit(float kelvin)
+{
+    return kelvin * 1.8f - 459.67f;
+}
+
+FormattedNumber SigDigitNum(double v, int digits)
+{
+    return FormattedNumber(v, digits,
+                           FormattedNumber::GroupThousands |
+                           FormattedNumber::SignificantDigits);
+}
+
+string KelvinToStr(float value, int digits, CelestiaCore::TemperatureScale temperatureScale)
+{
+    const char* unitTemplate = "";
+
+    switch (temperatureScale)
+    {
+        case CelestiaCore::Celsius:
+            value = KelvinToCelsius(value);
+            unitTemplate = "{} °C";
+            break;
+        case CelestiaCore::Fahrenheit:
+            value = KelvinToFahrenheit(value);
+            unitTemplate = "{} °F";
+            break;
+        case CelestiaCore::Kelvin:
+        default:
+            unitTemplate = "{} K";
+            break;
+    }
+    return fmt::format(unitTemplate, SigDigitNum(value, digits));
+}
+}
 
 static bool is_valid_directory(const fs::path& dir)
 {
@@ -2478,13 +2519,6 @@ int CelestiaCore::getTextWidth(const std::string &s) const
     return titleFont->getWidth(s);
 }
 
-static FormattedNumber SigDigitNum(double v, int digits)
-{
-    return FormattedNumber(v, digits,
-                           FormattedNumber::GroupThousands |
-                           FormattedNumber::SignificantDigits);
-}
-
 
 static string DistanceLyToStr(double distance, int digits, CelestiaCore::MeasurementSystem measurement)
 {
@@ -2821,7 +2855,8 @@ static void displayStarInfo(Overlay& overlay,
                             Star& star,
                             const Universe& universe,
                             double distance,
-                            CelestiaCore::MeasurementSystem measurement)
+                            CelestiaCore::MeasurementSystem measurement,
+                            CelestiaCore::TemperatureScale temperatureScale)
 {
     overlay.printf(_("Distance: %s\n"), DistanceLyToStr(distance, 5, measurement));
 
@@ -2857,7 +2892,7 @@ static void displayStarInfo(Overlay& overlay,
 
         if (detail > 1)
         {
-            overlay.printf(_("Surface temp: %s K\n"), SigDigitNum(star.getTemperature(), 3));
+            overlay.printf(_("Surface temp: %s\n"), KelvinToStr(star.getTemperature(), 3, temperatureScale));
             float solarRadii = star.getRadius() / 6.96e5f;
 
             if (solarRadii > 0.01f)
@@ -2922,7 +2957,8 @@ static void displayPlanetInfo(Overlay& overlay,
                               double t,
                               double distanceKm,
                               const Vector3d& viewVec,
-                              CelestiaCore::MeasurementSystem measurement)
+                              CelestiaCore::MeasurementSystem measurement,
+                              CelestiaCore::TemperatureScale temperatureScale)
 {
     double distance = distanceKm - body.getRadius();
     overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
@@ -2996,7 +3032,7 @@ static void displayPlanetInfo(Overlay& overlay,
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
-            overlay.printf(_("Temperature: %.0f K\n"), planetTemp);
+            overlay.printf(_("Temperature: %s\n"), KelvinToStr(planetTemp, 3, temperatureScale));
     }
 }
 
@@ -3331,7 +3367,8 @@ void CelestiaCore::renderOverlay()
                                 *(sel.star()),
                                 *(sim->getUniverse()),
                                 astro::kilometersToLightYears(v.norm()),
-                                measurement);
+                                measurement,
+                                temperatureScale);
             }
             break;
 
@@ -3397,7 +3434,8 @@ void CelestiaCore::renderOverlay()
                                   sim->getTime(),
                                   v.norm(),
                                   v,
-                                  measurement);
+                                  measurement,
+                                  temperatureScale);
             }
             break;
 
@@ -3972,6 +4010,18 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             measurement = Metric;
         else
             GetLogger()->warn("Unknown measurement system {}\n", config->measurementSystem);
+    }
+
+    if (!config->temperatureScale.empty())
+    {
+        if (compareIgnoringCase(config->temperatureScale, "kelvin") == 0)
+            temperatureScale = Kelvin;
+        else if (compareIgnoringCase(config->temperatureScale, "celsius") == 0)
+            temperatureScale = Celsius;
+        else if (compareIgnoringCase(config->temperatureScale, "fahrenheit") == 0)
+            temperatureScale = Fahrenheit;
+        else
+            GetLogger()->warn("Unknown temperature scale {}\n", config->temperatureScale);
     }
 
     sim = new Simulation(universe);
@@ -4808,6 +4858,20 @@ void CelestiaCore::setMeasurementSystem(CelestiaCore::MeasurementSystem newMeasu
 CelestiaCore::MeasurementSystem CelestiaCore::getMeasurementSystem() const
 {
     return measurement;
+}
+
+void CelestiaCore::setTemperatureScale(CelestiaCore::TemperatureScale newScale)
+{
+    if (temperatureScale != newScale)
+    {
+        temperatureScale = newScale;
+        notifyWatchers(TemperatureScaleChanged);
+    }
+}
+
+CelestiaCore::TemperatureScale CelestiaCore::getTemperatureScale() const
+{
+    return temperatureScale;
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)

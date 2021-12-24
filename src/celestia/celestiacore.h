@@ -160,6 +160,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         TextEnterModeChanged        = 0x0080,
         GalaxyLightGainChanged      = 0x0100,
         MeasurementSystemChanged    = 0x0200,
+        TemperatureScaleChanged     = 0x0400,
     };
 
     enum
@@ -182,6 +183,13 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     {
         Metric      = 0,
         Imperial    = 1,
+    };
+
+    enum TemperatureScale
+    {
+        Kelvin      = 0,
+        Celsius     = 1,
+        Fahrenheit  = 2,
     };
 
  public:
@@ -381,6 +389,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void setMeasurementSystem(MeasurementSystem);
     MeasurementSystem getMeasurementSystem() const;
+    void setTemperatureScale(TemperatureScale);
+    TemperatureScale getTemperatureScale() const;
 
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
@@ -524,6 +534,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     EdgeInsets safeAreaInsets { 0, 0, 0, 0 };
 
     MeasurementSystem measurement { Metric };
+    TemperatureScale temperatureScale { Kelvin };
 
     Selection lastSelection;
     std::string selectionNames;
