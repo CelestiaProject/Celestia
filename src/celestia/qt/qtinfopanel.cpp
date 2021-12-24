@@ -15,7 +15,7 @@
 #include <celengine/astro.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
-#include <celutil/utf8.h>
+#include <celutil/greek.h>
 #include <celengine/universe.h>
 #include <QTextBrowser>
 #include <QIODevice>

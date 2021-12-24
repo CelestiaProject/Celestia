@@ -12,6 +12,7 @@
 
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
+#include <celutil/greek.h>
 #include "qtdeepskybrowser.h"
 #include "qtcolorswatchwidget.h"
 #include "qtinfopanel.h"

@@ -16,7 +16,7 @@
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 #include <celestia/helper.h>
-#include <celutil/utf8.h>
+#include <celutil/greek.h>
 
 #include "menu-context.h"
 #include "actions.h"

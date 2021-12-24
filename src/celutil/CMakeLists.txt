@@ -13,6 +13,8 @@ set(CELUTIL_SOURCES
   formatnum.h
   fsutils.cpp
   fsutils.h
+  greek.cpp
+  greek.h
   logger.cpp
   logger.h
   reshandle.h

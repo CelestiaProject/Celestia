@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/gettext.h>
+#include <celutil/greek.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
 #include "stardb.h"

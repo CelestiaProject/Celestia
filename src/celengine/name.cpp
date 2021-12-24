@@ -1,5 +1,6 @@
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <celutil/greek.h>
 #include "name.h"
 
 uint32_t NameDatabase::getNameCount() const
@@ -97,41 +98,25 @@ NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
     return numberIndex.end();
 }
 
-std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool i18n, bool greek) const
+std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool i18n) const
 {
-    if (greek)
-    {
-        auto compList = getGreekCompletion(name);
-        compList.push_back(name);
-        return getCompletion(compList, i18n);
-    }
+    std::string name2 = ReplaceGreekLetter(name);
 
     std::vector<std::string> completion;
-    int name_length = UTF8Length(name);
+    const int name_length = UTF8Length(name2);
 
-    for (NameIndex::const_iterator iter = nameIndex.begin(); iter != nameIndex.end(); ++iter)
+    for (const auto &[n, _] : nameIndex)
     {
-        if (!UTF8StringCompare(iter->first, name, name_length, true))
-            completion.push_back(iter->first);
+        if (!UTF8StringCompare(n, name2, name_length, true))
+            completion.push_back(n);
     }
     if (i18n)
     {
-        for (NameIndex::const_iterator iter = localizedNameIndex.begin(); iter != localizedNameIndex.end(); ++iter)
+        for (const auto &[n, _] : localizedNameIndex)
         {
-            if (!UTF8StringCompare(iter->first, name, name_length, true))
-                completion.push_back(iter->first);
+            if (!UTF8StringCompare(n, name2, name_length, true))
+                completion.push_back(n);
         }
-    }
-    return completion;
-}
-
-std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::string> &list, bool i18n) const
-{
-    std::vector<std::string> completion;
-    for (const auto &n : list)
-    {
-        for (const auto &nn : getCompletion(n, i18n, false))
-            completion.emplace_back(nn);
     }
     return completion;
 }

@@ -22,7 +22,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
-#include <celutil/utf8.h>
+#include <celutil/greek.h>
 #include <cassert>
 
 static const double ANGULAR_RES = 3.5e-6;

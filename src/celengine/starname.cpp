@@ -10,8 +10,10 @@
 //
 //
 
+#include <fmt/format.h>
 #include <celengine/constellation.h>
 #include <celengine/starname.h>
+#include <celutil/greek.h>
 
 using namespace std;
 
@@ -61,26 +63,26 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
             // We have a valid constellation as the last part
             // of the name.  Next, we see if the first part of
             // the name is a greek letter.
-            const string& letter = Greek::canonicalAbbreviation(string(prefix, 0, len));
+            std::string_view letter = GetCanonicalGreekAbbreviation(std::string_view(prefix).substr(0, len));
             if (!letter.empty())
             {
                 // Matched . . . this is a Bayer designation
                 if (digit == ' ')
                 {
-                    priName  = letter + ' ' + con->getAbbreviation();
+                    priName  = fmt::format("{} {}", letter, con->getAbbreviation());
                     // If 'let con' doesn't match, try using
                     // 'let1 con' instead.
-                    altName  = letter + '1' + ' ' + con->getAbbreviation();
+                    altName  = fmt::format("{}1 {}", letter, con->getAbbreviation());
                 }
                 else
                 {
-                    priName = letter + digit + ' ' + con->getAbbreviation();
+                    priName = fmt::format("{}{} {}", letter, digit, con->getAbbreviation());
                 }
             }
             else
             {
                 // Something other than a Bayer designation
-                priName = prefix + ' ' + con->getAbbreviation();
+                priName = fmt::format("{} {}", prefix, con->getAbbreviation());
             }
 
             if (isOrbitingStar)

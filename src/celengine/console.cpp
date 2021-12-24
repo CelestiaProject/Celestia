@@ -179,7 +179,7 @@ void Console::print(char* s)
     while (i < length && validChar)
     {
         wchar_t ch = 0;
-        validChar = UTF8Decode(s, i, length, ch);
+        validChar = UTF8Decode(string_view(s, length), i, ch);
         i += UTF8EncodedSize(ch);
         print(ch);
     }
