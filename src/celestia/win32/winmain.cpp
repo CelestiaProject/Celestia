@@ -3150,6 +3150,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
+    CreateLogger(verbosity);
     // If a start directory was given on the command line, switch to it
     // now.
     if (startDirectory != "")
@@ -3242,7 +3243,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore = new CelestiaCore();
-    GetLogger()->setLevel(verbosity);
 
     // Gettext integration
     setlocale(LC_ALL, "");
