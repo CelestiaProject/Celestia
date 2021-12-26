@@ -4171,19 +4171,3 @@ msgstr "„GetTimeZoneInformation()“ отчита неизвестна сто�
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
 msgid "Error opening {} or .\n"
 msgstr "Грешка при отваряне на {} или .\n"
-
-#: ../src/tools/xyzv2bin/bin2xyzv.cpp:25
-msgid "Error reading header of {}.\n"
-msgstr "Грешка при четене на заглавката от {}.\n"
-
-#: ../src/tools/xyzv2bin/bin2xyzv.cpp:31
-msgid "Bad binary xyzv file {}.\n"
-msgstr "Неточен бинарен файл „xyzv“ {}.\n"
-
-#: ../src/tools/xyzv2bin/bin2xyzv.cpp:37
-msgid "Unsupported byte order {}, expected {}.\n"
-msgstr "Неподдържан байтов ред {}, очакван {}.\n"
-
-#: ../src/tools/xyzv2bin/bin2xyzv.cpp:44
-msgid "Unsupported digits number {}, expected {}.\n"
-msgstr "Неподдържано число {}, очаквано {}.\n"
