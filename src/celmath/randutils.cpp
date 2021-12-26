@@ -214,7 +214,6 @@ float fractalsum(const Eigen::Vector3f& p, float freq)
     {
         Eigen::Vector3f vec = freq * p;
         t += noise(vec) / freq;
-        freq *= 0.5f;
     }
 
     return t;
