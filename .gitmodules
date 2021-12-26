@@ -7,3 +7,6 @@
 [submodule "thirdparty/fmt"]
 	path = thirdparty/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "src/tools/celestia-gaia-stardb"]
+	path = src/tools/celestia-gaia-stardb
+	url = https://github.com/ajtribick/celestia-gaia-stardb.git
