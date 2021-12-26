@@ -141,6 +141,56 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest
 
+  gnulinux-arm64:
+    runs-on: self-hosted
+    steps:
+    - name: 'Install dependencies'
+      run: |
+        sudo dnf config-manager --set-enabled ol8_codeready_builder
+        sudo yum install -y eigen3-devel \
+                            libepoxy-devel \
+                            libpng-devel \
+                            libjpeg-turbo-devel \
+                            freetype-devel \
+                            SDL2-devel \
+                            lua-devel \
+                            gtk3-devel \
+                            gettext-devel \
+                            cmake \
+                            ninja-build \
+                            gcc-toolset-11-gcc-c++
+
+    - name: 'Checkout source code'
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: 'Configure CMake'
+      run: |
+        cmake -B ${{github.workspace}}/build  \
+              -G Ninja                        \
+              -DENABLE_GLES=ON                \
+              -DENABLE_SPICE=OFF              \
+              -DENABLE_TOOLS=OFF              \
+              -DENABLE_TESTS=ON               \
+              -DENABLE_SDL=ON                 \
+              -DENABLE_GTK=ON                 \
+              -DUSE_GTK3=ON                   \
+              -DENABLE_QT=OFF                 \
+              -DENABLE_FFMPEG=OFF             \
+              -DENABLE_DATA=OFF
+      env:
+        CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
+        CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: ninja
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest
+
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
