@@ -1,0 +1,29 @@
+name: Celestia
+
+on:
+  push:
+    branches: [ master ]
+    paths: [ po/**, .github/workflows/translations.yml ]
+  pull_request:
+    branches: [ master ]
+    paths: [ po/**, .github/workflows/translations.yml ]
+
+jobs:
+  gettext:
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [ ubuntu-latest ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Install dependencies'
+      run: |
+        sudo apt update
+        sudo apt install -y gettext
+
+    - name: 'Checkout source code'
+      uses: actions/checkout@v2
+
+    - name: 'Validate translations'
+      working-directory: ${{github.workspace}}/po
+      run: for i in *.po; do msgfmt --statistics --verbose $i; done
