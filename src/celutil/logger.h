@@ -11,10 +11,13 @@
 
 #pragma once
 
-#include <iostream> // for std::cerr, sdt::clog
+#include <iosfwd>
+#include <string>
+
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
+
 template <>
 struct fmt::formatter<fs::path> : formatter<std::string>
 {
@@ -42,7 +45,7 @@ class Logger
  public:
     using Stream = std::basic_ostream<char>;
 
-    Logger() = default;
+    Logger();
     Logger(Level level, Stream &log, Stream &err) :
         m_level(level),
         m_log(log),
@@ -77,8 +80,8 @@ class Logger
  private:
     void vlog(Level level, fmt::string_view format, fmt::format_args args) const;
 
-    Stream &m_log   { std::clog };
-    Stream &m_err   { std::cerr };
+    Stream &m_log;
+    Stream &m_err;
     Level   m_level { Level::Info };
 };
 
@@ -120,9 +123,10 @@ Logger::error(const char *format, const Args&... args) const
 }
 
 Logger* GetLogger();
-Logger* CreateLogger(Level level = Level::Info,
-                     Logger::Stream &log = std::clog,
-                     Logger::Stream &err = std::cerr);
+Logger* CreateLogger(Level level = Level::Info);
+Logger* CreateLogger(Level level,
+                     Logger::Stream &log,
+                     Logger::Stream &err);
 void DestroyLogger();
 
 } // end namespace celestia::util
