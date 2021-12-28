@@ -2123,7 +2123,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     // Gradually fade in the atmosphere if it's thickness on screen is just
     // over one pixel.
-    float fade = celmath::clamp(pixSize - 2);
+    float fade = std::clamp(pixSize - 2, 0.0f, 1.0f);
 
     Matrix3f rot = orientation.toRotationMatrix();
     Matrix3f irot = orientation.conjugate().toRotationMatrix();
@@ -3036,7 +3036,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             thicknessInPixels = atmosphere->height /
                 ((distance - radius) * pixelSize);
-            fade = celmath::clamp(thicknessInPixels - 2);
+            fade = std::clamp(thicknessInPixels - 2, 0.0f, 1.0f);
         }
         else
         {
@@ -3934,8 +3934,10 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     float opacity = 1.0f;
     if (dist > MaxAsterismLinesConstDist)
     {
-        opacity = celmath::clamp((MaxAsterismLinesConstDist - dist) /
-                                 (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
+        opacity = std::clamp((MaxAsterismLinesConstDist - dist)
+                             / (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1.0f,
+                             0.0f,
+                             1.0f);
     }
 
     enableSmoothLines();
@@ -3965,8 +3967,10 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     float opacity = 1.0f;
     if (dist > MaxAsterismLabelsConstDist)
     {
-        opacity = celmath::clamp((MaxAsterismLabelsConstDist - dist) /
-                                 (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+        opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
+                             / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
+                             0.0f,
+                             1.0f);
     }
 
     enableSmoothLines();
@@ -4918,8 +4922,10 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     float dist = observerPos.norm();
                     if (dist > MaxAsterismLabelsConstDist)
                     {
-                        opacity = celmath::clamp((MaxAsterismLabelsConstDist - dist) /
-                                                 (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+                        opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
+                                             / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
+                                             0.0f,
+                                             1.0f);
                     }
 
                     // Use the default label color unless the constellation has an
@@ -5171,7 +5177,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     {
         // Compute normalized device z
         float z = fisheye ? (1.0f - (iter->position.z() - nearDist) / d0 * 2.0f) : (d1 + d2 / -iter->position.z());
-        float ndc_z = celmath::clamp(z, -1.0f, 1.0f);
+        float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
         // Offsets to left align label
         int labelHOffset = 0;
@@ -5374,7 +5380,7 @@ void Renderer::updateBodyVisibilityMask()
 
 void Renderer::setSolarSystemMaxDistance(float t)
 {
-    SolarSystemMaxDistance = celmath::clamp(t, 1.0f, 10.0f);
+    SolarSystemMaxDistance = std::clamp(t, 1.0f, 10.0f);
 }
 
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
@@ -5815,7 +5821,7 @@ Renderer::setShadowMapSize(unsigned size)
         return;
     GLint t = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);
-    m_shadowMapSize = celmath::clamp(size, 0u, static_cast<unsigned>(t));
+    m_shadowMapSize = std::clamp(size, 0u, static_cast<unsigned>(t));
     if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
         return;
     if (m_shadowMapSize == 0)
@@ -6060,7 +6066,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         maxBodyMag = maxBodyMagPrev;
         saturationMag = maxBodyMag;
 #endif
-        float illumination = celmath::clamp(sunDir.dot(normal) + 0.2f);
+        float illumination = std::clamp(sunDir.dot(normal) + 0.2f, 0.0f, 1.0f);
 
         float lightness = illumination * density;
         faintestMag = faintestMag - 15.0f * lightness;

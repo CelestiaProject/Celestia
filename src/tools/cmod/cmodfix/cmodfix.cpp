@@ -18,6 +18,7 @@
 #include <string>
 #include <utility>
 
+#include <celmath/mathlib.h>
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>

@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include <celmath/mathlib.h>
 #include <celmodel/mesh.h>
 #include "spheremesh.h"
 

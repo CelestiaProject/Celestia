@@ -379,7 +379,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     int pow2 = 1;
 
     BlobVector* points = form->blobs;
-    unsigned int nPoints = (unsigned int) (points->size() * celmath::clamp(getDetail()));
+    unsigned int nPoints = static_cast<unsigned int>(points->size() * std::clamp(getDetail(), 0.0f, 1.0f));
     // corrections to avoid excessive brightening if viewed e.g. edge-on
 
     float brightness_corr = 1.0f;
@@ -575,7 +575,7 @@ float Galaxy::getLightGain()
 
 void Galaxy::setLightGain(float lg)
 {
-    lightGain = celmath::clamp(lg);
+    lightGain = std::clamp(lg, 0.0f, 1.0f);
 }
 
 

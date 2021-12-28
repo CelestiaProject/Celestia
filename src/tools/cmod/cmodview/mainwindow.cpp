@@ -37,6 +37,7 @@
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
+#include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
