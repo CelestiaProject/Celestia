@@ -2,7 +2,7 @@ if(NOT ENABLE_NLS)
   return()
 endif()
 
-find_package(PERL)
+find_package(Perl)
 
 if(PERL_FOUND)
   include(windres)
