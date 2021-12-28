@@ -9,6 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
+
 #ifdef _MSC_VER
 #include <windows.h>
 #endif
@@ -25,6 +27,11 @@ Logger* GetLogger()
     return Logger::g_logger;
 }
 
+Logger* CreateLogger(Level level)
+{
+    return CreateLogger(level, std::clog, std::cerr);
+}
+
 Logger* CreateLogger(Level level, Logger::Stream &log, Logger::Stream &err)
 {
     if (Logger::g_logger == nullptr)
@@ -35,6 +42,12 @@ Logger* CreateLogger(Level level, Logger::Stream &log, Logger::Stream &err)
 void DestroyLogger()
 {
     delete Logger::g_logger;
+}
+
+Logger::Logger() :
+    m_log(std::clog),
+    m_err(std::cerr)
+{
 }
 
 void Logger::vlog(Level level, fmt::string_view format, fmt::format_args args) const
