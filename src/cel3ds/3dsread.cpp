@@ -154,7 +154,7 @@ std::int32_t read3DSChunks(std::istream& in,
     while (bytesRead < nBytes)
     {
         std::int32_t chunkSize = read3DSChunk(in, chunkFunc, obj);
-        if (chunkSize < 0) {
+        if (chunkSize <= 0) {
             GetLogger()->error("Failed to read 3DS chunk\n");
             return READ_FAILURE;
         }
@@ -282,7 +282,7 @@ std::int32_t processFaceArrayChunk(std::istream& in,
         M3DMeshMaterialGroup matGroup;
 
         bytesRead = readString(in, matGroup.materialName);
-        if (bytesRead == READ_FAILURE || !celutil::readLE<std::uint16_t>(in, nFaces))
+        if (bytesRead <= 0 || !celutil::readLE<std::uint16_t>(in, nFaces))
         {
             return READ_FAILURE;
         }
@@ -346,6 +346,8 @@ std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh& triMesh, std::int3
                                                   contentSize - bytesRead,
                                                   processFaceArrayChunk,
                                                   triMesh);
+        if (trailingSize < 0) { return trailingSize; }
+        if (trailingSize == 0) { return READ_FAILURE; }
         bytesRead += trailingSize;
     }
 
@@ -370,7 +372,7 @@ std::int32_t processTriMeshChunk(std::istream& in,
         {
             Eigen::Matrix4f matrix;
             std::int32_t bytesRead = readMeshMatrix(in, matrix);
-            if (bytesRead < 0) { return READ_FAILURE; }
+            if (bytesRead <= 0) { return READ_FAILURE; }
             triMesh.setMatrix(matrix);
             return bytesRead;
         }
@@ -389,7 +391,7 @@ std::int32_t processModelChunk(std::istream& in,
     {
         M3DTriangleMesh triMesh;
         std::int32_t bytesRead = read3DSChunks(in, contentSize, processTriMeshChunk, triMesh);
-        if (bytesRead == READ_FAILURE) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         model.addTriMesh(std::move(triMesh));
         return bytesRead;
     }
@@ -446,7 +448,7 @@ std::int32_t processTexmapChunk(std::istream& in,
     {
         std::string name;
         std::int32_t bytesRead = readString(in, name);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setTextureMap(name);
         return bytesRead;
     }
@@ -469,32 +471,32 @@ std::int32_t processMaterialChunk(std::istream& in,
     {
     case M3DChunkType::MaterialName:
         bytesRead = readString(in, name);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setName(std::move(name));
         return bytesRead;
     case M3DChunkType::MaterialAmbient:
         bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setAmbientColor(color);
         return bytesRead;
     case M3DChunkType::MaterialDiffuse:
         bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setDiffuseColor(color);
         return bytesRead;
     case M3DChunkType::MaterialSpecular:
         bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setSpecularColor(color);
         return bytesRead;
     case M3DChunkType::MaterialShininess:
         bytesRead = read3DSChunks(in, contentSize, processPercentageChunk, t);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setShininess(t);
         return bytesRead;
     case M3DChunkType::MaterialTransparency:
         bytesRead = read3DSChunks(in, contentSize, processPercentageChunk, t);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         material.setOpacity(1.0f - t / 100.0f);
         return bytesRead;
     case M3DChunkType::MaterialTexmap:
@@ -516,14 +518,14 @@ std::int32_t processSceneChunk(std::istream& in,
     {
         std::string name;
         std::int32_t bytesRead = readString(in, name);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         M3DModel model;
         model.setName(name);
         std::int32_t chunksSize = read3DSChunks(in,
                                                 contentSize - bytesRead,
                                                 processModelChunk,
                                                 model);
-        if (chunksSize < 0) { return READ_FAILURE; }
+        if (chunksSize <= 0) { return READ_FAILURE; }
         scene.addModel(std::move(model));
 
         return bytesRead + chunksSize;
@@ -535,7 +537,7 @@ std::int32_t processSceneChunk(std::istream& in,
                                                contentSize,
                                                processMaterialChunk,
                                                material);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         scene.addMaterial(std::move(material));
 
         return bytesRead;
@@ -544,7 +546,7 @@ std::int32_t processSceneChunk(std::istream& in,
     {
         M3DColor color;
         std::int32_t bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead < 0) { return READ_FAILURE; }
+        if (bytesRead <= 0) { return READ_FAILURE; }
         scene.setBackgroundColor(color);
         return bytesRead;
     }
@@ -592,8 +594,7 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
     std::int32_t contentSize = chunkSize - 6;
 
     std::int32_t bytesRead = read3DSChunks(in, contentSize, processTopLevelChunk, *scene);
-    if (bytesRead < 0) { return nullptr; }
-    if (bytesRead != contentSize)
+    if (bytesRead <= 0 || bytesRead != contentSize)
     {
         return nullptr;
     }
