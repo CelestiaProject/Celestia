@@ -105,6 +105,10 @@ include(FastMath)
 # Compile options
 #
 if(MSVC)
+  # CMake 3.14 and below set warning flags by default, remove them to prevent conflicts
+  string(REGEX REPLACE "/W[3|4]" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+  string(REGEX REPLACE "/W[3|4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
   # Disabled warnings
   # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
