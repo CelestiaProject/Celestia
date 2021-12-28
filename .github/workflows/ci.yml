@@ -264,6 +264,7 @@ jobs:
 
     - name: Analyze
       run: |
+        printenv
         sonar-scanner                                           \
           -Dsonar.host.url=https://sonarcloud.io                \
           -Dsonar.cfamily.build-wrapper-output=build/bw-output  \
