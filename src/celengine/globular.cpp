@@ -489,9 +489,9 @@ void Globular::renderGlobularPointSprites(
      * or when distance from globular center decreases.
      */
 
-    GLsizei count = (GLsizei) (form->gblobs->size() * celmath::clamp(getDetail()));
+    GLsizei count = static_cast<GLsizei>(form->gblobs->size() * std::clamp(getDetail(), 0.0f, 1.0f));
     float t = pow(2, 1 + log2(minimumFeatureSize / brightness) / log2(1/1.25f));
-    count = min(count, (GLsizei) celmath::clamp(t, 128.0f, (float) max(count, 128)));
+    count = min(count, static_cast<GLsizei>(std::clamp(t, 128.0f, static_cast<float>(max(count, 128)))));
 
     globProg->use();
 

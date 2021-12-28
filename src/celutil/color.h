@@ -7,25 +7,31 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_COLOR_H_
-#define _CELUTIL_COLOR_H_
+#pragma once
 
+#include <algorithm>
 #include <array>
+#include <cstdint>
 #include <map>
 #include <string>
-#include <Eigen/Core>
-#include <celmath/mathlib.h>
 
-#define C(a) uint8_t(celmath::clamp(a) * 255.99f)
+#include <Eigen/Core>
+
 
 class Color
 {
+ private:
+    static constexpr inline std::uint8_t scaleFloat(float a)
+    {
+        return static_cast<std::uint8_t>(std::clamp(a, 0.0f, 1.0f) * 255.99f);
+    }
+
  public:
     constexpr Color() noexcept :
         c({ 0, 0, 0, 0xff })
     {}
     constexpr Color(float r, float g, float b, float a) noexcept :
-        c({ C(r), C(g), C(b), C(a) })
+        c({ scaleFloat(r), scaleFloat(g), scaleFloat(b), scaleFloat(a) })
     {}
     constexpr Color(float r, float g, float b) noexcept :
         Color(r, g, b, 1.0f)
@@ -174,9 +180,6 @@ inline Color Color::operator*(float m) const
 
 inline Color& Color::alpha(float a)
 {
-    c[Alpha] = C(a);
+    c[Alpha] = scaleFloat(a);
     return *this;
 }
-#undef C
-
-#endif // _CELUTIL_COLOR_H_

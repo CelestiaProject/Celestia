@@ -30,24 +30,6 @@ template<typename T> constexpr T lerp(T t, T a, T b)
 }
 #endif
 
-// return t clamped to [0, 1]
-template<typename T> constexpr T clamp(T t)
-{
-    return t < static_cast<T>(0) ? static_cast<T>(0)
-        : t > static_cast<T>(1) ? 1
-        : t;
-}
-
-#if __cplusplus < 201703L
-// return t clamped to [low, high]
-template<typename T> constexpr T clamp(T t, T low, T high)
-{
-    return (t < low) ? low : ((t > high) ? high : t);
-}
-#else
-using std::clamp;
-#endif
-
 template<typename T> inline constexpr T degToRad(T d)
 {
     return d / static_cast<T>(180) * static_cast<T>(PI);

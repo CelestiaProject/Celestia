@@ -809,7 +809,7 @@ static Body* CreateBody(const string& name,
     double t;
     if (planetData->getNumber("Albedo", t))
     {
-        // TODO: make this warn 
+        // TODO: make this warn
         GetLogger()->verbose("Deprecated parameter Albedo used in {} definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
         body->setGeomAlbedo((float) t);
     }
@@ -966,7 +966,7 @@ static Body* CreateBody(const string& name,
                 double cloudShadowDepth = 0.0;
                 if (atmosData->getNumber("CloudShadowDepth", cloudShadowDepth))
                 {
-                    cloudShadowDepth = max(0.0, min(1.0, cloudShadowDepth));  // clamp to [0, 1]
+                    cloudShadowDepth = std::clamp(cloudShadowDepth, 0.0, 1.0);
                     atmosphere->cloudShadowDepth = (float) cloudShadowDepth;
                 }
 
