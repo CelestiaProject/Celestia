@@ -336,7 +336,10 @@ if("${build_type_lc}" STREQUAL "debug")
 else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
   if(NOT MSVC)
-    add_compile_options(-fno-rtti -fno-exceptions)
+    add_compile_options(
+      $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+      $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+    )
   endif()
 endif()
 
