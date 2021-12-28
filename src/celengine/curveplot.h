@@ -30,10 +30,10 @@
 #pragma once
 
 #include <deque>
+
+#include <Eigen/Core>
 #include <Eigen/Geometry>
 
-
-class HighPrec_Frustum;
 
 class CurvePlotSample
 {
@@ -110,7 +110,7 @@ class CurvePlot
 
  private:
     std::deque<CurvePlotSample> m_samples;
- 
+
     double m_duration{ 0.0 };
 
     unsigned int m_lastUsed{ 0 };
