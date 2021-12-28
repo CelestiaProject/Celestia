@@ -164,20 +164,23 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: true
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
 
     - name: 'Configure CMake'
       run: |
-        cmake -B ${{github.workspace}}/build  \
-              -G Ninja                        \
-              -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=OFF              \
-              -DENABLE_TOOLS=OFF              \
-              -DENABLE_TESTS=ON               \
-              -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
-              -DENABLE_QT=OFF                 \
-              -DENABLE_FFMPEG=OFF             \
+        cmake -B ${{github.workspace}}/build    \
+              -G Ninja                          \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+              -DENABLE_GLES=ON                  \
+              -DENABLE_SPICE=OFF                \
+              -DENABLE_TOOLS=OFF                \
+              -DENABLE_TESTS=ON                 \
+              -DENABLE_SDL=ON                   \
+              -DENABLE_GTK=ON                   \
+              -DUSE_GTK3=ON                     \
+              -DENABLE_QT=OFF                   \
+              -DENABLE_FFMPEG=OFF               \
               -DENABLE_DATA=OFF
       env:
         CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
@@ -191,92 +194,15 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest
 
-  sonarcloud:
-    runs-on: ubuntu-latest
-    steps:
-    - name: 'Install dependencies'
-      run: |
-        sudo apt update
-        sudo apt install -y libeigen3-dev \
-                            libepoxy-dev \
-                            libavcodec-dev \
-                            libavformat-dev \
-                            libavutil-dev \
-                            libswscale-dev \
-                            libjpeg-dev \
-                            libpng-dev \
-                            libglu1-mesa-dev \
-                            qtbase5-dev \
-                            qtbase5-dev-tools \
-                            libqt5opengl5-dev \
-                            libgtk-3-dev \
-                            libfreetype6-dev \
-                            libsdl2-dev \
-                            libluajit-5.1-dev \
-                            libfmt-dev \
-                            ninja-build \
-                            default-jre-headless
-
-    - name: 'Checkout source code'
-      uses: actions/checkout@v2
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-
-    - name: 'Install Sonar scanner'
-      run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472.zip
-          unzip sonar-scanner-cli-4.6.2.2472.zip
-          chmod +x sonar-scanner-4.6.2.2472/bin/sonar-scanner
-          [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
-          ln -s $(pwd)/sonar-scanner-4.6.2.2472/bin/sonar-scanner ~/.local/bin/sonar-scanner
-
-    - name: 'Install build wrapper'
-      run: |
-        wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-        unzip build-wrapper-linux-x86.zip
-        chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
-        ln -s $(pwd)/build-wrapper-linux-x86/build-wrapper-linux-x86-64 ~/.local/bin/build-wrapper
-
-    - name: 'Configure CMake'
-      run: |
-        cmake -B ${{github.workspace}}/build  \
-              -G Ninja                        \
-              -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=OFF              \
-              -DENABLE_TOOLS=OFF              \
-              -DENABLE_TESTS=OFF              \
-              -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
-              -DENABLE_FFMPEG=ON              \
-              -DENABLE_DATA=OFF
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: build-wrapper --out-dir bw-output ninja
-
-    - name: 'Restore analysis cache'
-      uses: actions/cache@v2
-      with:
-        key: sonarcache
-        path: sonarcache
-
     - name: Analyze
       run: |
         printenv
-        sonar-scanner                                           \
-          -Dsonar.host.url=https://sonarcloud.io                \
-          -Dsonar.cfamily.build-wrapper-output=build/bw-output  \
-          -Dsonar.organization=celestiaproject                  \
-          -Dsonar.projectKey=CelestiaProject_Celestia           \
-          -Dsonar.sources=src/                                  \
-          -Dsonar.test.exclusions=test/**                       \
-          -Dsonar.tests=test/                                   \
-          -Dsonar.cfamily.threads=4                             \
-          -Dsonar.cfamily.cache.enabled=true                    \
-          -Dsonar.cfamily.cache.path=sonarcache                 \
-          -Dsonar.verbose=false
+        sonar-scanner                                                   \
+          -Dsonar.cfamily.compile-commands=build/compile_commands.json  \
+          -Dsonar.organization=celestiaproject                          \
+          -Dsonar.projectKey=CelestiaProject_Celestia                   \
+          -Dsonar.sources=src/                                          \
+          -Dsonar.test.exclusions=test/**                               \
+          -Dsonar.tests=test/
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
