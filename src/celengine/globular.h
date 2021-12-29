@@ -39,10 +39,10 @@ class Globular : public DeepSkyObject
     void setType(const std::string&) override;
     std::string getDescription() const override;
     float getDetail() const;
-    void  setDetail(float);
+    void setDetail(float);
     float getCoreRadius() const;
-    void  setCoreRadius(const float);
-    void  setConcentration(const float);
+    void setCoreRadius(float);
+    void setConcentration(float);
     float getConcentration() const;
     float getHalfMassRadius() const override;
     unsigned int cSlot(float) const;
@@ -71,11 +71,11 @@ class Globular : public DeepSkyObject
 
     void recomputeTidalRadius();
 
-    float         detail{ 1.0f };
-    GlobularForm* form{ nullptr };
-    float         r_c{ R_c_ref };
-    float         c{ C_ref };
-    float         tidalRadius{ 0.0f };
+    float detail{ 1.0f };
+    const GlobularForm* form{ nullptr };
+    float r_c{ R_c_ref };
+    float c{ C_ref };
+    float tidalRadius{ 0.0f };
 
     celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 };

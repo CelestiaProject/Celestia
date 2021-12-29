@@ -15,6 +15,8 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <optional>
+#include <utility>
 
 #include <fmt/printf.h>
 
@@ -33,7 +35,23 @@
 
 namespace vecgl = celestia::vecgl;
 
-namespace {
+
+struct GlobularForm
+{
+    struct Blob
+    {
+        Eigen::Vector3f position;
+        unsigned int colorIndex;
+        float radius_2d;
+    };
+
+    std::vector<Blob> gblobs;
+    Eigen::Vector3f scale;
+};
+
+
+namespace
+{
 
 constexpr const int cntrTexWidth  = 512;
 constexpr const int cntrTexHeight = 512;
@@ -49,7 +67,8 @@ constexpr const float LumiShape = 3.0f;
 // min/max c-values of globular cluster data
 constexpr const float MinC = 0.50f;
 constexpr const float MaxC = 2.58f;
-constexpr const float BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
+constexpr std::size_t GlobularBuckets = 8;
+constexpr const float BinWidth = (MaxC - MinC) / static_cast<float>(GlobularBuckets) + 0.02f;
 
 // P1 determines the zoom level, where individual cluster stars start to appear.
 // The smaller P2 (< 1), the faster stars show up when resolution increases.
@@ -61,32 +80,7 @@ constexpr const float RADIUS_CORRECTION = 0.025f;
 
 float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
 
-struct GBlob
-{
-    Eigen::Vector3f position;
-    unsigned int colorIndex;
-    float radius_2d;
-};
-
-} // end unnamed namespace
-
-
-struct GlobularForm
-{
-    std::vector<GBlob>* gblobs;
-    Eigen::Vector3f scale;
-};
-
-
-namespace
-{
-
-GlobularForm** globularForms = nullptr;
-Texture* globularTex = nullptr;
-Texture* centerTex[8] = {nullptr};
-bool formsInitialized = false;
-
-void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+void globularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
 {
     // use an exponential luminosity shape for the individual stars
     // giving sort of a halo for the brighter (i.e.bigger) stars.
@@ -129,7 +123,7 @@ float relStarDensity(float eta)
     return ((std::log(rho2) + 4.0f * (1.0f - std::sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
 }
 
-static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
+void centerCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
 {
     /*! For reasons of speed, calculate central "cloud" texture only for
      *  8 bins of King_1962 concentration, c = CBin, XI(CBin), RRatio(CBin).
@@ -154,7 +148,7 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     // Skyplane projected King_1962 profile (Eq.(14)), vanishes for eta = 1:
     // i.e. absolutely no globular stars for r > tidalRadius:
 
-    float profile_2d = (1.0f / std::sqrt(rho2) - 1.0f)/c2d + 1.0f ;
+    float profile_2d = (1.0f / std::sqrt(rho2) - 1.0f)/c2d + 1.0f;
     profile_2d = profile_2d * profile_2d;
 
     pixel[0] = 255;
@@ -163,7 +157,10 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     pixel[3] = static_cast<unsigned char>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
-void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint sizeLoc, GLint etaLoc)
+void initGlobularData(celgl::VertexObject& vo,
+                      const std::vector<GlobularForm::Blob>& points,
+                      GLint sizeLoc,
+                      GLint etaLoc)
 {
     struct GlobularVtx
     {
@@ -173,7 +170,7 @@ void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint
         float eta;
     };
     std::vector<GlobularVtx> globularVtx;
-    globularVtx.reserve(4 + points->size());
+    globularVtx.reserve(4 + points.size());
 
     // Reuse the buffer for a tidal
     globularVtx.push_back({{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0.0f});
@@ -188,7 +185,7 @@ void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint
 
     float starSize = 0.5f;
     std::size_t pow2 = 128;
-    for (std::size_t i = 0; i < points->size(); ++i)
+    for (std::size_t i = 0; i < points.size(); ++i)
     {
         /*! Note that the [axis,angle] input in globulars.dsc transforms the
          *  2d projected star distance r_2d in the globular frame to refer to the
@@ -205,7 +202,7 @@ void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint
             starSize /= 1.25f;
         }
 
-        GBlob b = (*points)[i];
+        const GlobularForm::Blob& b = points[i];
         GlobularVtx vtx;
         vtx.starSize = starSize;
         vtx.position = b.position;
@@ -229,10 +226,10 @@ void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint
     vo.setVertexAttribArray(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
 }
 
-GlobularForm* buildGlobularForms(float c)
+GlobularForm buildGlobularForm(float c)
 {
-    GBlob b{};
-    std::vector<GBlob>* globularPoints = new std::vector<GBlob>;
+    GlobularForm::Blob b{};
+    std::vector<GlobularForm::Blob> globularPoints;
 
     float rRatio = std::pow(10.0f, c); //  = r_t / r_c
     float prob;
@@ -318,7 +315,7 @@ GlobularForm* buildGlobularForms(float c)
 
             b.colorIndex = static_cast<unsigned int>(Z * 254);
 
-            globularPoints->push_back(b);
+            globularPoints.push_back(b);
             i++;
         }
     }
@@ -326,14 +323,14 @@ GlobularForm* buildGlobularForms(float c)
     // Check for efficiency of sprite-star generation => close to 100 %!
     //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 << "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
 
-    auto* globularForm   = new GlobularForm();
-    globularForm->gblobs = globularPoints;
-    globularForm->scale  = Eigen::Vector3f::Ones();
+    GlobularForm globularForm;
+    globularForm.gblobs = std::move(globularPoints);
+    globularForm.scale  = Eigen::Vector3f::Ones();
 
     return globularForm;
 }
 
-void InitializeForms()
+std::vector<GlobularForm> initializeForms()
 {
 
     // Build RGB color table, using hue, saturation, value as input.
@@ -372,21 +369,24 @@ void InitializeForms()
                                                       / static_cast<float>(i_width)) + 1.0f);
 
         DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, hue, sat, 0.85f);
-        colorTable[i]  = Color(Rr, Gg, Bb);
+        colorTable[i] = Color(Rr, Gg, Bb);
     }
     // Define globularForms corresponding to 8 different bins of King concentration c
 
-    globularForms = new GlobularForm*[8];
+    std::vector<GlobularForm> globularForms;
+    globularForms.reserve(GlobularBuckets);
 
     for (unsigned int ic  = 0; ic <= 7; ++ic)
     {
         float CBin = MinC + (static_cast<float>(ic) + 0.5f) * BinWidth;
-        globularForms[ic] = buildGlobularForms(CBin);
+        globularForms.push_back(buildGlobularForm(CBin));
     }
-    formsInitialized = true;
+
+    return globularForms;
 }
 
 } // end unnamed namespace
+
 
 Globular::Globular()
 {
@@ -452,12 +452,10 @@ float Globular::getConcentration() const
 void Globular::setConcentration(const float conc)
 {
     c = conc;
-    if (!formsInitialized)
-        InitializeForms();
-
     // For saving time, account for the c dependence via 8 bins only,
 
-    form = globularForms[cSlot(conc)];
+    static const std::vector<GlobularForm> globularForms = initializeForms();
+    form = &globularForms[cSlot(conc)];
     recomputeTidalRadius();
 }
 
@@ -503,7 +501,7 @@ bool Globular::load(AssociativeArray* params, const fs::path& resPath)
         return false;
 
     if (params->getNumber("Detail", detail))
-        setDetail((float) detail);
+        setDetail(static_cast<float>(detail));
 
     double coreRadius;
     if (params->getAngle("CoreRadius", coreRadius, 1.0 / MINUTES_PER_DEG))
@@ -570,20 +568,18 @@ void Globular::render(const Eigen::Vector3f& offset,
     RRatio = std::pow(10.0f, CBin);
     XI = 1.0f / std::sqrt(1.0f + RRatio * RRatio);
 
+    static Texture* centerTex[GlobularBuckets] = {nullptr};
     if(centerTex[ic] == nullptr)
     {
         centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
                                                 celestia::PixelFormat::RGBA,
-                                                CenterCloudTexEval);
+                                                centerCloudTexEval);
     }
     assert(centerTex[ic] != nullptr);
 
-    if (globularTex == nullptr)
-    {
-        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              celestia::PixelFormat::RGBA,
-                                              GlobularTextureEval);
-    }
+    static Texture* globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
+                                                          celestia::PixelFormat::RGBA,
+                                                          globularTextureEval);
     assert(globularTex != nullptr);
 
     renderer->enableBlending();
@@ -628,7 +624,7 @@ void Globular::render(const Eigen::Vector3f& offset,
      * or when distance from globular center decreases.
      */
 
-    GLsizei count = static_cast<GLsizei>(form->gblobs->size() * std::clamp(getDetail(), 0.0f, 1.0f));
+    GLsizei count = static_cast<GLsizei>(form->gblobs.size() * std::clamp(getDetail(), 0.0f, 1.0f));
     float t = std::pow(2.0f, 1.0f + std::log2(minimumFeatureSize / brightness) / std::log2(1.0f/1.25f));
     count = std::min(count, static_cast<GLsizei>(std::clamp(t, 128.0f, static_cast<float>(std::max(count, 128)))));
 
