@@ -14,133 +14,6 @@ env:
   VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [x64, x86]
-        generator_platform: [x64, Win32]
-        include:
-          - platform: x64
-            generator_platform: x64
-          - platform: x86
-            generator_platform: Win32
-        exclude:
-          - platform: x64
-            generator_platform: Win32
-          - platform: x86
-            generator_platform: x64
-
-    steps:
-    - name: 'Setup NuGet Credentials'
-      shell: 'bash'
-      run: >
-        $(c:/vcpkg/vcpkg fetch nuget | tail -n 1)
-        sources add
-        -source "https://nuget.pkg.github.com/CelestiaProject/index.json"
-        -storepasswordincleartext
-        -name "GitHub"
-        -username "CelestiaProject"
-        -password "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: 'Install dependencies'
-      run: vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice qt5-base
-
-    - name: 'Checkout source code'
-      uses: actions/checkout@v2
-      with:
-        submodules: true
-
-    - name: 'Configure CMake'
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_DATA=OFF
-
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
-
-    - name: 'Copy DLL for tests'
-      working-directory: ${{github.workspace}}/build
-      run: |
-        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
-        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\integration\${{env.BUILD_TYPE}}\
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{env.BUILD_TYPE}}
-
-    - name: Package artifacts
-      working-directory: ${{github.workspace}}/build/src/celestia
-      run: |
-        7z a celestia-dep.${{matrix.platform}}.7z ${{env.BUILD_TYPE}}\*
-        7z a celestia-win.${{matrix.platform}}.7z win32\${{env.BUILD_TYPE}}\* win32\res\${{env.BUILD_TYPE}}\res_*.dll
-        c:\vcpkg\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
-        7z a celestia-qt.${{matrix.platform}}.7z qt\${{env.BUILD_TYPE}}\*
-        cd ..\tools
-        7z a celestia-tools.${{matrix.platform}}.7z xyzv2bin\${{env.BUILD_TYPE}}\*.exe spice2xyzv\${{env.BUILD_TYPE}}\*.exe
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      if: success()
-      with:
-        name: celestia-${{matrix.platform}}
-        path: ${{github.workspace}}/build/src/*/*.7z
-
-  build-ubuntu-old:
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [ ubuntu-18.04 ]
-    runs-on: ${{matrix.platform}}
-    steps:
-    - name: 'Install dependencies'
-      run: |
-        sudo apt update
-        sudo apt install -y libeigen3-dev \
-                            libepoxy-dev \
-                            libavcodec-dev \
-                            libavformat-dev \
-                            libavutil-dev \
-                            libswscale-dev \
-                            libjpeg-dev \
-                            libpng-dev \
-                            libglu1-mesa-dev \
-                            qtbase5-dev \
-                            qtbase5-dev-tools \
-                            libqt5opengl5-dev \
-                            libgtk-3-dev \
-                            libfreetype6-dev \
-                            libsdl2-dev \
-                            libluajit-5.1-dev \
-                            libfmt-dev \
-                            ninja-build
-
-    - name: 'Checkout source code'
-      uses: actions/checkout@v2
-      with:
-        submodules: true
-
-    - name: 'Configure CMake'
-      run: |
-        cmake -B ${{github.workspace}}/build  \
-              -G Ninja                        \
-              -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=ON               \
-              -DENABLE_TOOLS=OFF              \
-              -DENABLE_TESTS=ON               \
-              -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
-              -DENABLE_FFMPEG=ON              \
-              -DENABLE_DATA=OFF
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: ninja
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest
-
   gnulinux-arm64:
     runs-on: self-hosted
     steps:
@@ -169,26 +42,24 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
-        cmake -B ${{github.workspace}}/build    \
-              -G Ninja                          \
-              -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
-              -DENABLE_GLES=ON                  \
-              -DENABLE_SPICE=OFF                \
-              -DENABLE_TOOLS=OFF                \
-              -DENABLE_TESTS=ON                 \
-              -DENABLE_SDL=ON                   \
-              -DENABLE_GTK=ON                   \
-              -DUSE_GTK3=ON                     \
-              -DENABLE_QT=OFF                   \
-              -DENABLE_FFMPEG=OFF               \
-              -DENABLE_DATA=OFF
+        cmake -B ${{github.workspace}}/build \
+              -G Ninja                       \
+              -DENABLE_GLES=ON               \
+              -DENABLE_SPICE=OFF             \
+              -DENABLE_TOOLS=OFF             \
+              -DENABLE_TESTS=ON              \
+              -DENABLE_SDL=ON                \
+              -DENABLE_GTK=ON                \
+              -DUSE_GTK3=ON                  \
+              -DENABLE_QT=OFF                \
+              -DENABLE_FFMPEG=OFF
       env:
         CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
         CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
 
     - name: Build
       working-directory: ${{github.workspace}}/build
-      run: ninja
+      run: ninja -t compdb > compile_commands.json
 
     - name: Test
       working-directory: ${{github.workspace}}/build
@@ -196,7 +67,6 @@ jobs:
 
     - name: Analyze
       run: |
-        printenv
         sonar-scanner                                                   \
           -Dsonar.cfamily.compile-commands=build/compile_commands.json  \
           -Dsonar.organization=celestiaproject                          \
