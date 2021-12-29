@@ -14,25 +14,30 @@ env:
   VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
 
 jobs:
-  gnulinux-arm64:
-    runs-on: self-hosted
+  sonarscanner:
+    runs-on: amd64
     steps:
     - name: 'Install dependencies'
       run: |
-        sudo dnf config-manager --set-enabled ol8_codeready_builder
-        sudo yum install -y eigen3-devel \
-                            libepoxy-devel \
-                            libpng-devel \
-                            libjpeg-turbo-devel \
-                            freetype-devel \
-                            SDL2-devel \
-                            lua-devel \
-                            gtk3-devel \
-                            gettext-devel \
-                            cmake \
-                            ninja-build \
-                            gcc-toolset-11-gcc-c++
-
+        sudo apt update
+        sudo apt install -y libeigen3-dev \
+                            libepoxy-dev \
+                            libavcodec-dev \
+                            libavformat-dev \
+                            libavutil-dev \
+                            libswscale-dev \
+                            libjpeg-dev \
+                            libpng-dev \
+                            libglu1-mesa-dev \
+                            qtbase5-dev \
+                            qtbase5-dev-tools \
+                            libqt5opengl5-dev \
+                            libgtk-3-dev \
+                            libfreetype6-dev \
+                            libsdl2-dev \
+                            libluajit-5.1-dev \
+                            libfmt-dev \
+                            ninja-build
     - name: 'Checkout source code'
       uses: actions/checkout@v2
       with:
@@ -51,17 +56,9 @@ jobs:
               -DENABLE_SDL=ON                \
               -DENABLE_GTK=ON                \
               -DUSE_GTK3=ON                  \
-              -DENABLE_QT=OFF                \
+              -DENABLE_QT=ON                 \
               -DENABLE_FFMPEG=OFF            \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: ninja
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest
 
     - name: Analyze
       run: |
