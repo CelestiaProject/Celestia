@@ -495,9 +495,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     double distance = position.norm();
     position *= cursorDistance / distance;
 
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
     disableDepthTest();
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -539,10 +536,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 
     markerVO.unbind();
     enableDepthTest();
-
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
 }
 
 /*! Draw the J2000.0 ecliptic; trivial, since this forms the basis for

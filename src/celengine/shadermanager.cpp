@@ -2219,9 +2219,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if ((props.texUsage & ShaderProperties::NightTexture))
     {
-#ifdef USE_HDR
-        source += "uniform float nightLightScale;\n";
-#endif
         if (VSComputesColorSum(props))
         {
             source += "varying float totalLight;\n";
@@ -2528,11 +2525,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += NightTextureBlend();
         }
 
-#ifdef USE_HDR
-        source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight * nightLightScale;\n";
-#else
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
-#endif
     }
 
     if (props.texUsage & ShaderProperties::EmissiveTexture)
@@ -3587,9 +3580,6 @@ CelestiaGLProgram::initParameters()
 
     opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
-#ifdef USE_HDR
-    nightLightScale          = floatParam("nightLightScale");
-#endif
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
@@ -3719,11 +3709,7 @@ void
 CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                       Color materialDiffuse,
                                       Color materialSpecular,
-                                      Color materialEmissive
-#ifdef USE_HDR
-                                     ,float _nightLightScale
-#endif
-                                      )
+                                      Color materialEmissive)
 {
     unsigned int nLights = min(MaxShaderLights, ls.nLights);
 
@@ -3781,9 +3767,6 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     ambientColor = ls.ambientColor.cwiseProduct(diffuseColor) +
         Vector3f(materialEmissive.red(), materialEmissive.green(), materialEmissive.blue());
     opacity = materialDiffuse.alpha();
-#ifdef USE_HDR
-    nightLightScale = _nightLightScale;
-#endif
 }
 
 

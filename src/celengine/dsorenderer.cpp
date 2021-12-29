@@ -80,9 +80,6 @@ void DSORenderer::process(DeepSkyObject* const &dso,
 
         brightness *= 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
 
-#ifdef USE_HDR
-        brightness *= exposure;
-#endif
         if (brightness < 0)
             brightness = 0;
 

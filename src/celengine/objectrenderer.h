@@ -33,9 +33,6 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     float faintestMag           { 0.0f };
     float faintestMagNight      { 0.0f };
     float saturationMag         { 0.0f };
-#ifdef USE_HDR
-    float exposure              { 0.0f };
-#endif
     float brightnessScale       { 0.0f };
     float brightnessBias        { 0.0f };
     float distanceLimit         { 0.0f };

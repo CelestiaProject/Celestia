@@ -103,11 +103,7 @@ class RingSystem
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),
-#ifdef HDR_COMPRESS
-        color(0.5f, 0.5f, 0.5f),
-#else
         color(1.0f, 1.0f, 1.0f),
-#endif
         texture()
         { };
     RingSystem(float inner, float outer, Color _color, int _loTexture = -1, int _texture = -1) :

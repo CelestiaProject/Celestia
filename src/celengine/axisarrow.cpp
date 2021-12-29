@@ -269,11 +269,7 @@ ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
     body(_body),
     size(1.0),
     color(1.0f, 1.0f, 1.0f),
-#ifdef USE_HDR
-    opacity(0.0f)
-#else
     opacity(1.0f)
-#endif
 {
     shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
@@ -324,11 +320,7 @@ ArrowReferenceMark::render(Renderer* renderer,
         renderer->enableDepthTest();
         renderer->disableDepthMask();
         renderer->enableBlending();
-#ifdef USE_HDR
-        renderer->setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-#else
         renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
     }
 
     Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
@@ -356,11 +348,7 @@ ArrowReferenceMark::render(Renderer* renderer,
 AxesReferenceMark::AxesReferenceMark(const Body& _body) :
     body(_body),
     size(),
-#ifdef USE_HDR
-    opacity(0.0f)
-#else
     opacity(1.0f)
-#endif
 {
     shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
@@ -378,9 +366,6 @@ void
 AxesReferenceMark::setOpacity(float _opacity)
 {
     opacity = _opacity;
-#ifdef USE_HDR
-    opacity = 1.0f - opacity;
-#endif
 }
 
 
@@ -405,11 +390,7 @@ AxesReferenceMark::render(Renderer* renderer,
         renderer->enableDepthTest();
         renderer->disableDepthMask();
         renderer->enableBlending();
-#ifdef USE_HDR
-        renderer->setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-#else
         renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
     }
 
     Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);

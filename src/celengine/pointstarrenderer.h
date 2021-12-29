@@ -51,15 +51,5 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     float SolarSystemMaxDistance                { 1.0f };
     float maxDiscSize                           { 1.0f };
     float cosFOV                                { 1.0f };
-#ifdef DEBUG_HDR_ADAPT
-    float minMag                                { 0.0f };
-    float maxMag                                { 0.0f };
-    float minAlpha                              { 0.0f };
-    float maxAlpha                              { 0.0f };
-    float maxSize                               { 0.0f };
-    float above                                 { 0.0f };
-    unsigned long countAboveN                   { 0 };
-    unsigned long total                         { 0 };
-#endif
     bool  useScaledDiscs                        { false };
 };

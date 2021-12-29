@@ -67,8 +67,6 @@ public:
 
     unsigned int aaSamples;
 
-    bool hdr;
-
     unsigned int consoleLogRows;
 
     Hash* params;

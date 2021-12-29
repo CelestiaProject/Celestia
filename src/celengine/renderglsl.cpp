@@ -305,11 +305,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);
 
-#ifdef USE_HDR
-    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black, ri.nightLightScale);
-#else
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-#endif
 
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;

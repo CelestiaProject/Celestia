@@ -94,15 +94,9 @@ static void GalaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixe
         r = 0;
 
     auto pixVal = (int) (r * 255.99f);
-#ifdef HDR_COMPRESS
-    pixel[0] = 127;
-    pixel[1] = 127;
-    pixel[2] = 127;
-#else
     pixel[0] = 255;//65;
     pixel[1] = 255;//64;
     pixel[2] = 255;//65;
-#endif
     pixel[3] = pixVal;
 }
 

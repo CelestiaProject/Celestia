@@ -55,14 +55,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     // cost of a normalize per star.
     if (relPos.dot(viewNormal) > 0.0f || relPos.x() * relPos.x() < 0.1f || hasOrbit)
     {
-#ifdef HDR_COMPRESS
-        Color starColorFull = colorTemp->lookupColor(star.getTemperature());
-        Color starColor(starColorFull.red()   * 0.5f,
-                        starColorFull.green() * 0.5f,
-                        starColorFull.blue()  * 0.5f);
-#else
         Color starColor = colorTemp->lookupColor(star.getTemperature());
-#endif
         float discSizeInPixels = 0.0f;
         float orbitSizeInPixels = 0.0f;
 
@@ -103,24 +96,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-#ifdef USE_HDR
-            float satPoint = saturationMag;
-            float alpha = exposure*(faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
-#else
             float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
-#endif
-#ifdef DEBUG_HDR_ADAPT
-            minMag = max(minMag, appMag);
-            maxMag = min(maxMag, appMag);
-            minAlpha = min(minAlpha, alpha);
-            maxAlpha = max(maxAlpha, alpha);
-            ++total;
-            if (alpha > above)
-            {
-                ++countAboveN;
-            }
-#endif
 
             if (useScaledDiscs)
             {
@@ -152,9 +129,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     float discScale = min(100.0f, satPoint - appMag + 2.0f);
                     float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
                     glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
-#ifdef DEBUG_HDR_ADAPT
-                    maxSize = max(maxSize, 2.0f * discScale * size);
-#endif
                 }
                 starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
             }
