@@ -11,9 +11,6 @@
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include "execution.h"
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include <celestia/celestiacore.h>
 #include <celengine/multitexture.h>
 #include <celutil/filetype.h>
@@ -692,30 +689,6 @@ void CommandSetTextureResolution::process(ExecutionEnvironment& env)
         env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     }
 }
-
-
-////////////////
-// Set RenderPath command. Left for compatibility.
-
-#ifdef USE_GLCONTEXT
-CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
-    path(_path)
-{
-}
-
-void CommandRenderPath::process(ExecutionEnvironment& /*env*/)
-{
-#if 0
-    GLContext* context = env.getRenderer()->getGLContext();
-
-    if (context != nullptr)
-    {
-        context->setRenderPath(path);
-        env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
-    }
-#endif
-}
-#endif
 
 
 ////////////////

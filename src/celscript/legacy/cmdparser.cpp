@@ -19,9 +19,6 @@
 #include <celengine/astro.h>
 #include <celengine/parser.h>
 #include <celutil/tokenizer.h>
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include "cmdparser.h"
 
 using namespace std;
@@ -688,20 +685,7 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "renderpath")
     {
-#if 0
-        GLContext::GLRenderPath glcpath = GLContext::GLPath_GLSL;
-        string path;
-        paramList->getString("path", path);
-
-        if (compareIgnoringCase(path, "glsl") == 0)
-            glcpath = GLContext::GLPath_GLSL;
-
-        cmd = new CommandRenderPath(glcpath);
-#else
-#ifdef USE_GLCONTEXT
-        cmd = new CommandRenderPath(GLContext::GLPath_GLSL);
-#endif
-#endif
+        // ignore: renderpath not supported
     }
     else if (commandName == "splitview")
     {

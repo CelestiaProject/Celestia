@@ -45,8 +45,6 @@ set(CELENGINE_SOURCES
   galaxy.cpp
   galaxy.h
   geometry.h
-  #glcontext.cpp
-  #glcontext.h
   glmarker.cpp
   globular.cpp
   globular.h

@@ -518,9 +518,6 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("StarStyle", renderer->getStarStyle());
-#ifdef USE_GLCONTEXT
-    settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
-#endif
     settings.setValue("TextureResolution", renderer->getResolution());
     ColorTableType colorsst;
     const ColorTemperatureTable* current = renderer->getStarColorTable();

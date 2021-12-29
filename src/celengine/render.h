@@ -24,9 +24,6 @@
 #include <celengine/renderlistentry.h>
 #include "vertexobject.h"
 
-#ifdef USE_GLCONTEXT
-class GLContext;
-#endif
 class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
@@ -129,11 +126,7 @@ class Renderer
         FisheyeMode     = 1
     };
 
-#ifdef USE_GLCONTEXT
-    bool init(GLContext*, int, int, DetailOptions&);
-#else
     bool init(int, int, DetailOptions&);
-#endif
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -360,10 +353,6 @@ class Renderer
     void increaseBrightness();
     void decreaseBrightness();
     float getBrightness();
-#endif
-
-#ifdef USE_GLCONTEXT
-    GLContext* getGLContext() { return context; }
 #endif
 
     void setStarStyle(StarStyle);
@@ -777,9 +766,6 @@ class Renderer
 #endif
 
  private:
-#ifdef USE_GLCONTEXT
-    GLContext* context;
-#endif
     ShaderManager* shaderManager{ nullptr };
 
     int windowWidth;
