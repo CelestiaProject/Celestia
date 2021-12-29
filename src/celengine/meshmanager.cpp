@@ -8,9 +8,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Experimental particle system support
-#define PARTICLE_SYSTEM 0
-
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -39,11 +36,6 @@
 #include "parser.h"
 #include "spheremesh.h"
 #include "texmanager.h"
-
-#if PARTICLE_SYSTEM
-#include "particlesystem.h"
-#include "particlesystemfile.h"
-#endif
 
 using celestia::util::GetLogger;
 
@@ -509,16 +501,6 @@ GeometryInfo::load(const fs::path& resolvedFilename)
                 model->transform(center, scale);
         }
     }
-#if PARTICLE_SYSTEM
-    else if (fileType == Content_CelestiaParticleSystem)
-    {
-        ifstream in(filename);
-        if (in.good())
-        {
-            return LoadParticleSystem(in, path);
-        }
-    }
-#endif
 
     // Condition the model for optimal rendering
     if (model != nullptr)

@@ -91,10 +91,6 @@ set(CELENGINE_SOURCES
   parseobject.h
   parser.cpp
   parser.h
-#  particlesystem.cpp
-#  particlesystemfile.cpp
-#  particlesystemfile.h
-#  particlesystem.h
   planetgrid.cpp
   planetgrid.h
   pointstarrenderer.cpp
