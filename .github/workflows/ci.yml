@@ -59,7 +59,9 @@ jobs:
 
     - name: Build
       working-directory: ${{github.workspace}}/build
-      run: ninja -t compdb > compile_commands.json
+      run: |
+        ninja -t compdb > compile_commands.json
+        ninja
 
     - name: Test
       working-directory: ${{github.workspace}}/build
