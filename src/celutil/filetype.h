@@ -34,7 +34,7 @@ enum ContentType
     Content_DXT5NormalMap          = 17,
     Content_CelestiaXYZTrajectory  = 18,
     Content_CelestiaXYZVTrajectory = 19,
-    Content_CelestiaParticleSystem = 20,
+ // Content_CelestiaParticleSystem = 20,
     Content_WarpMesh               = 21,
     Content_CelestiaXYZVBinary     = 22,
 #ifdef USE_LIBAVIF

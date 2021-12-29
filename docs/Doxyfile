@@ -840,10 +840,6 @@ EXCLUDE                = src/packdb.cpp                         \
                          src/celmath/plane.h                    \
                          src/celmath/quaternion.h               \
                          src/celmath/vecmath.h                  \
-                         src/celengine/particlesystem.cpp       \
-                         src/celengine/particlesystem.h         \
-                         src/celengine/particlesystemfile.cpp   \
-                         src/celengine/particlesystemfile.h     \
                          src/celengine/vertexbuf.h              \
                          src/celtxf/*.*
 

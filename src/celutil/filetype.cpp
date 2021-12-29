@@ -35,7 +35,6 @@ static const char CelestiaLegacyScriptExt[] = ".cel";
 static const char CelestiaScriptExt[] = ".clx";
 static const char CelestiaScriptExt2[] = ".celx";
 static const char CelestiaModelExt[] = ".cmod";
-static const char CelestiaParticleSystemExt[] = ".cpart";
 static const char CelestiaXYZTrajectoryExt[] = ".xyz";
 static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
 static const char ContentXYZVBinaryExt[] = ".xyzvbin";
@@ -82,8 +81,6 @@ ContentType DetermineFileType(const fs::path& filename)
         return Content_CelestiaScript;
     if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
         return Content_CelestiaModel;
-    if (compareIgnoringCase(CelestiaParticleSystemExt, ext) == 0)
-        return Content_CelestiaParticleSystem;
     if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
         return Content_DXT5NormalMap;
     if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
