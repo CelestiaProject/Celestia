@@ -47,6 +47,8 @@ class BigFix
 
     int sign() const;
 
+    bool isOutOfBounds() const;
+
     // for debugging
     void dump();
     std::string toString();
@@ -63,6 +65,16 @@ class BigFix
     uint64_t hi;
     uint64_t lo;
 };
+
+
+// Checks whether the coordinate exceeds a magnitude of 2^62 microlightyears,
+// which represents the bounds of the simulated volume.
+inline bool BigFix::isOutOfBounds() const
+{
+    constexpr std::uint64_t hi_threshold = UINT64_C(1) << 62;
+    constexpr std::uint64_t lo_threshold = static_cast<std::uint64_t>(-static_cast<std::int64_t>(hi_threshold));
+    return (hi > hi_threshold && hi < lo_threshold);
+}
 
 
 // Compute the additive inverse of a 128-bit twos complement value

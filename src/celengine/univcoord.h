@@ -154,6 +154,11 @@ class UniversalCoord
         return UniversalCoord(vUly.x(), vUly.y(), vUly.z());
     }
 
+    bool isOutOfBounds() const
+    {
+        return x.isOutOfBounds() || y.isOutOfBounds() || z.isOutOfBounds();
+    }
+
 public:
     BigFix x, y, z;
 };
