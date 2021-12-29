@@ -25,13 +25,6 @@ struct Matrices;
 class Renderer;
 
 
-struct Blob
-{
-    Eigen::Vector4f position;
-    unsigned int    colorIndex;
-    float           brightness;
-};
-
 class GalacticForm;
 
 class Galaxy : public DeepSkyObject
@@ -96,12 +89,6 @@ class Galaxy : public DeepSkyObject
                                   float pixelSize,
                                   const Matrices& mvp,
                                   Renderer* r);
-#if 0
-    void renderGalaxyEllipsoid(const Eigen::Vector3f& offset,
-                               const Eigen::Quaternionf& viewerOrientation,
-                               float brightness,
-                               float pixelSize);
-#endif
 
     float         detail{ 1.0f };
     std::string*  customTmpName{ nullptr };
