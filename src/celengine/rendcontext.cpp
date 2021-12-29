@@ -640,11 +640,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     }
 
     // setLightParameters() expects opacity in the alpha channel of the diffuse color
-#ifdef HDR_COMPRESS
-    Color diffuse(m.diffuse.red() * 0.5f, m.diffuse.green() * 0.5f, m.diffuse.blue() * 0.5f, m.opacity);
-#else
     Color diffuse(m.diffuse.red(), m.diffuse.green(), m.diffuse.blue(), m.opacity);
-#endif
     Color specular(m.specular.red(), m.specular.green(), m.specular.blue());
     Color emissive(m.emissive.red(), m.emissive.green(), m.emissive.blue());
 
@@ -860,11 +856,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
         textures[i]->bind();
     }
 
-#ifdef HDR_COMPRESS
-    prog->lights[0].diffuse = m.diffuse.toVector3() * 0.5f;
-#else
     prog->lights[0].diffuse = m.diffuse.toVector3();
-#endif
     prog->opacity = m.opacity;
 
     if (usePointSize)

@@ -186,9 +186,6 @@ static void FillinSurface(Hash* surfaceData,
     surfaceData->getNumber("SpecularPower", surface->specularPower);
 
     surfaceData->getNumber("LunarLambert", surface->lunarLambert);
-#ifdef USE_HDR
-    surfaceData->getNumber("NightLightRadiance", surface->nightLightRadiance);
-#endif
 
     string baseTexture;
     string bumpTexture;

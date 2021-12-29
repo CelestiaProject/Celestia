@@ -12,27 +12,6 @@
 #define DEBUG_SECONDARY_ILLUMINATION 0
 #define DEBUG_ORBIT_CACHE            0
 
-//#define DEBUG_HDR
-#ifdef DEBUG_HDR
-//#define DEBUG_HDR_FILE
-//#define DEBUG_HDR_ADAPT
-//#define DEBUG_HDR_TONEMAP
-#endif
-#ifdef DEBUG_HDR_FILE
-#include <fstream>
-std::ofstream hdrlog;
-#define HDR_LOG     hdrlog
-#else
-#define HDR_LOG     cout
-#endif
-
-#ifdef USE_HDR
-#define BLUR_PASS_COUNT     2
-#define BLUR_SIZE           128
-#define DEFAULT_EXPOSURE    -23.35f
-#define EXPOSURE_HALFLIFE   0.4f
-#endif
-
 #include <Eigen/Geometry>
 
 #include <fmt/printf.h>
@@ -271,16 +250,6 @@ Renderer::Renderer() :
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0ull),
     colorTemp(nullptr),
-#ifdef USE_HDR
-    sceneTexture(0),
-    blurFormat(GL_RGBA),
-    useLuminanceAlpha(false),
-    bloomEnabled(true),
-    maxBodyMag(100.0f),
-    exposure(1.0f),
-    exposurePrev(1.0f),
-    brightPlus(0.0f),
-#endif
     settingsChanged(true),
     objectAnnotationSetOpen(false)
 {
@@ -290,17 +259,6 @@ Renderer::Renderer() :
     skyIndices = new uint32_t[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
     colorTemp = GetStarColorTable(ColorTable_Blackbody_D65);
-#ifdef DEBUG_HDR_FILE
-    HDR_LOG.open("hdr.log", ios_base::app);
-#endif
-#ifdef USE_HDR
-    blurTextures = new Texture*[BLUR_PASS_COUNT];
-    blurTempTexture = nullptr;
-    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
-    {
-        blurTextures[i] = nullptr;
-    }
-#endif
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -319,21 +277,6 @@ Renderer::~Renderer()
     delete[] skyVertices;
     delete[] skyIndices;
     delete[] skyContour;
-
-#ifdef USE_HDR
-    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
-    {
-        if (blurTextures[i] != nullptr)
-            delete blurTextures[i];
-    }
-    delete [] blurTextures;
-    if (blurTempTexture)
-        delete blurTempTexture;
-
-    if (sceneTexture != 0)
-        glDeleteTextures(1, &sceneTexture);
-#endif
-
     delete shaderManager;
     delete m_asterismRenderer;
     delete m_boundariesRenderer;
@@ -589,46 +532,8 @@ bool Renderer::init(
         gaussianDiscTex = BuildGaussianDiscTexture(8);
         gaussianGlareTex = BuildGaussianGlareTexture(9);
 
-#ifdef USE_HDR
-        genSceneTexture();
-        genBlurTextures();
-#endif
-
         commonDataInitialized = true;
     }
-
-#ifdef USE_HDR
-    Image        *testImg = new Image(PixelFormat::LUM_ALPHA, 1, 1);
-    ImageTexture *testTex = new ImageTexture(*testImg,
-                                             Texture::EdgeClamp,
-                                             Texture::NoMipMaps);
-    delete testImg;
-    GLint actualTexFormat = 0;
-    glEnable(GL_TEXTURE_2D);
-    testTex->bind();
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &actualTexFormat);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
-    switch (actualTexFormat)
-    {
-    case 2:
-    case GL_LUMINANCE_ALPHA:
-    case GL_LUMINANCE4_ALPHA4:
-    case GL_LUMINANCE6_ALPHA2:
-    case GL_LUMINANCE8_ALPHA8:
-    case GL_LUMINANCE12_ALPHA4:
-    case GL_LUMINANCE12_ALPHA12:
-    case GL_LUMINANCE16_ALPHA16:
-        useLuminanceAlpha = true;
-        break;
-    default:
-        useLuminanceAlpha = false;
-        break;
-    }
-
-    blurFormat = useLuminanceAlpha ? GL_LUMINANCE_ALPHA : GL_RGBA;
-    delete testTex;
-#endif
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -647,23 +552,11 @@ bool Renderer::init(
 
 void Renderer::resize(int width, int height)
 {
-#ifdef USE_HDR
-    if (width == windowWidth && height == windowHeight)
-        return;
-#endif
     windowWidth = width;
     windowHeight = height;
     cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
     // glViewport(windowWidth, windowHeight);
     m_orthoProjMatrix = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
-
-#ifdef USE_HDR
-    if (commonDataInitialized)
-    {
-        genSceneTexture();
-        genBlurTextures();
-    }
-#endif
 }
 
 float Renderer::calcPixelSize(float fovY, float windowHeight)
@@ -1059,11 +952,7 @@ Renderer::enableSmoothLines()
         return;
 
     // enableBlending();
-#ifdef USE_HDR
-    setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-#else
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
 #ifndef GL_ES
     glEnable(GL_LINE_SMOOTH);
 #endif
@@ -1135,11 +1024,7 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
         }
     }
 
-#ifdef USE_HDR
-    return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), 1.0f - opacity * orbitColor.alpha());
-#else
     return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), opacity * orbitColor.alpha());
-#endif
 }
 
 void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
@@ -1574,57 +1459,7 @@ void Renderer::render(const Observer& observer,
                       float faintestMagNight,
                       const Selection& sel)
 {
-#ifdef USE_HDR
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    renderToTexture(observer, universe, faintestMagNight, sel);
-
-    //------------- Post processing from here ------------//
-    glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_TEXTURE_2D);
-    disableBlending();
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, 1.0f, 0.0f, 1.0f));
-    glMatrixMode (GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    if (bloomEnabled)
-    {
-        renderToBlurTexture(0);
-        renderToBlurTexture(1);
-//        renderToBlurTexture(2);
-    }
-
-    drawSceneTexture();
-
-    enableBlending();
-    setBlendingFactors(GL_ONE, GL_ONE);
-
-#ifdef HDR_COMPRESS
-    // Assume luminance 1.0 mapped to 128 previously
-    // Compositing a 2nd copy doubles 128->255
-    drawSceneTexture();
-#endif
-
-    if (bloomEnabled)
-    {
-        drawBlur();
-    }
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glPopAttrib();
-#else
     draw(observer, universe, faintestMagNight, sel);
-#endif
 }
 
 void Renderer::draw(const Observer& observer,
@@ -1697,15 +1532,6 @@ void Renderer::draw(const Observer& observer,
     }
 
     faintestPlanetMag = faintestMag;
-#ifdef USE_HDR
-    float maxBodyMagPrev = saturationMag;
-    maxBodyMag = min(maxBodyMag, saturationMag);
-    vector<RenderListEntry>::iterator closestBody;
-    const Star *brightestStar = nullptr;
-    bool foundClosestBody   = false;
-    bool foundBrightestStar = false;
-#endif
-
     if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
         buildNearSystemsLists(universe, observer, xfrustum, now);
@@ -1729,38 +1555,14 @@ void Renderer::draw(const Observer& observer,
     // maintain a minimum range of six magnitudes between faintest visible
     // and saturation; this keeps stars from popping in or out as the sun
     // sets or rises.
-#ifdef USE_HDR
-    brightnessScale = 1.0f / (faintestMag -  saturationMag);
-    exposurePrev = exposure;
-    float exposureNow = 1.f / (1.f+exp((faintestMag - saturationMag + DEFAULT_EXPOSURE)/2.f));
-    exposure = exposurePrev + (exposureNow - exposurePrev) * (1.f - exp(-1.f/(15.f * EXPOSURE_HALFLIFE)));
-    brightnessScale /= exposure;
-#else
     if (faintestMag - saturationMag >= 6.0f)
         brightnessScale = 1.0f / (faintestMag -  saturationMag);
     else
         brightnessScale = 0.1667f;
-#endif
 
-#ifdef DEBUG_HDR_TONEMAP
-    HDR_LOG <<
-//        "brightnessScale = " << brightnessScale <<
-        "faint = "    << faintestMag << ", " <<
-        "sat = "      << saturationMag << ", " <<
-        "exposure = " << (exposure+brightPlus) << endl;
-#endif
-
-#ifdef HDR_COMPRESS
-    ambientColor = Color(ambientLightLevel*.5f, ambientLightLevel*.5f, ambientLightLevel*.5f);
-#else
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
-#endif
 
-#ifdef USE_HDR
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-#else
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-#endif
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLineWidth(getScaleFactor());
 
@@ -1779,19 +1581,12 @@ void Renderer::draw(const Observer& observer,
     }
 
     // Render stars
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
         renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
     }
-
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
 
     // Translate the camera before rendering the asterisms and boundaries
     // Set up the camera for star rendering; the units of this phase
@@ -1840,10 +1635,6 @@ void Renderer::draw(const Observer& observer,
 
     // Sort the orbit paths
     sort(orbitPathList.begin(), orbitPathList.end());
-
-#ifdef USE_HDR
-    adjustEclipsedStarExposure(now);
-#endif
 
 #ifndef GL_ES
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
@@ -1978,13 +1769,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         float alpha = 1.0f;
         float fade = 1.0f;
         float size = BaseStarDiscSize * screenDpi / 96.0f;
-#ifdef USE_HDR
-        float fieldCorr = 2.0f * FOV/(fov + FOV);
-        float satPoint = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
-        satPoint += brightPlus;
-#else
         float satPoint = _faintestMag - (1.0f - brightnessBias) / brightnessScale;
-#endif
 
         if (discSizeInPixels > maxDiscSize)
         {
@@ -2314,9 +2099,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             if (coloration != 0.0f)
                 color = (1.0f - coloration) * color + coloration * sunsetColor;
 
-#ifdef HDR_COMPRESS
-            brightness *= 0.5f;
-#endif
             Color(brightness * color.x(),
                   brightness * color.y(),
                   brightness * color.z(),
@@ -2399,9 +2181,6 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->textureOffset = 0.0f;
     prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
-#ifdef USE_HDR
-    prog->nightLightScale = ri.nightLightScale;
-#endif
     g_lodSphere->render(frustum, ri.pixWidth, textures, nTextures);
 }
 
@@ -2591,20 +2370,11 @@ setupObjectLighting(const vector<LightSource>& suns,
                     const Vector3f& objScale,
                     const Vector3f& objPosition_eye,
                     bool isNormalized,
-#ifdef USE_HDR
-                    const float faintestMag,
-                    const float saturationMag,
-                    const float appMag,
-#endif
                     LightingState& ls)
 {
     unsigned int nLights = min(MaxLights, (unsigned int) suns.size());
     if (nLights == 0)
         return;
-
-#ifdef USE_HDR
-    float exposureFactor = (faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
-#endif
 
     unsigned int i;
     for (i = 0; i < nLights; i++)
@@ -2719,12 +2489,8 @@ setupObjectLighting(const vector<LightSource>& suns,
     ls.nLights = 0;
     for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
     {
-#ifdef USE_HDR
-        ls.lights[i].irradiance *= exposureFactor / totalIrradiance;
-#else
         ls.lights[i].irradiance =
             (float) pow(ls.lights[i].irradiance / totalIrradiance, gamma);
-#endif
 
         // Compute the direction of the light in object space
         ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
@@ -2863,9 +2629,6 @@ void Renderer::renderObject(const Vector3f& pos,
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
     ri.lunarLambert = obj.surface->lunarLambert;
-#ifdef USE_HDR
-    ri.nightLightScale = obj.surface->nightLightRadiance * exposure * 1.e5f * .5f;
-#endif
 
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
@@ -3358,11 +3121,6 @@ void Renderer::renderPlanet(Body& body,
                             scaleFactors,
                             pos,
                             isNormalized,
-#ifdef USE_HDR
-                            faintestMag,
-                            DEFAULT_EXPOSURE + brightPlus, //exposure + brightPlus,
-                            appMag,
-#endif
                             lights);
         assert(lights.nLights <= MaxLights);
 
@@ -3553,9 +3311,6 @@ void Renderer::renderPlanet(Body& body,
 
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
 
     if (body.isVisibleAsPoint())
     {
@@ -3567,9 +3322,6 @@ void Renderer::renderPlanet(Body& body,
                             body.getSurface().color,
                             false, false, m);
     }
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
 }
 
 
@@ -3614,7 +3366,6 @@ void Renderer::renderStar(const Star& star,
         rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.geometry = star.getGeometry();
 
-#ifndef USE_HDR
         Atmosphere atmosphere;
 
         // Use atmosphere effect to give stars a fuzzy fringe
@@ -3632,9 +3383,6 @@ void Renderer::renderStar(const Star& star,
         {
             rp.atmosphere = nullptr;
         }
-#else
-        rp.atmosphere = nullptr;
-#endif
 
         rp.orientation = star.getRotationModel()->orientationAtTime(now).cast<float>();
 
@@ -3644,9 +3392,6 @@ void Renderer::renderStar(const Star& star,
     }
 
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
 
     renderObjectAsPoint(pos,
                         star.getRadius(),
@@ -3656,9 +3401,6 @@ void Renderer::renderStar(const Star& star,
                         color,
                         star.hasCorona(), true,
                         m);
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
 }
 
 
@@ -4634,22 +4376,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.faintestMag       = faintestMag;
     starRenderer.faintestMagNight  = faintestMagNight;
     starRenderer.saturationMag     = saturationMag;
-#ifdef USE_HDR
-    starRenderer.exposure          = exposure + brightPlus;
-#endif
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
-#ifdef DEBUG_HDR_ADAPT
-    starRenderer.minMag = -100.f;
-    starRenderer.maxMag =  100.f;
-    starRenderer.minAlpha = 1.f;
-    starRenderer.maxAlpha = 0.f;
-    starRenderer.maxSize  = 0.f;
-    starRenderer.above    = 1.0f;
-    starRenderer.countAboveN = 0L;
-    starRenderer.total       = 0L;
-#endif
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -4737,9 +4466,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.faintestMag      = faintestMag;
     dsoRenderer.faintestMagNight = faintestMagNight;
     dsoRenderer.saturationMag    = saturationMag;
-#ifdef USE_HDR
-    dsoRenderer.exposure         = exposure + brightPlus;
-#endif
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
     dsoRenderer.wWidth           = windowWidth;
@@ -5031,9 +4757,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     // Enable line smoothing for rendering symbols
     enableSmoothLines();
 
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -5086,10 +4809,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
             renderAnnotationLabel(annotations[i], fs, hOffset, vOffset, 0.0f, m);
         }
     }
-
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
 
     font->unbind();
     disableSmoothLines();
@@ -5821,10 +5540,6 @@ Renderer::removeInvisibleItems(const Frustum &frustum)
     // Remove objects from the render list that lie completely outside the
     // view frustum.
     auto notCulled = renderList.begin();
-#ifdef USE_HDR
-    maxBodyMag = maxBodyMagPrev;
-    float starMaxMag = maxBodyMagPrev;
-#endif
     for (auto &ri : renderList)
     {
         bool convex = true;
@@ -5926,23 +5641,10 @@ Renderer::removeInvisibleItems(const Frustum &frustum)
 
             *notCulled = ri;
             notCulled++;
-#ifdef USE_HDR
-            if (ri.discSizeInPixels > 1.0f && ri.appMag < starMaxMag)
-            {
-                starMaxMag = ri.appMag;
-                brightestStar = ri.star;
-                foundBrightestStar = true;
-            }
-            maxBodyMag = min(maxBodyMag, starMaxMag);
-            foundClosestBody = true;
-#endif
         }
     }
 
     renderList.resize(notCulled - renderList.begin());
-#ifdef USE_HDR
-    saturationMag = maxBodyMag;
-#endif // USE_HDR
 
     // The calls to buildRenderLists/renderStars filled renderList
     // with visible bodies.  Sort it front to back, then
@@ -6045,12 +5747,6 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
 
         Vector3f sunDir = ri.sun.normalized();
         Vector3f normal = -ri.position.normalized();
-#ifdef USE_HDR
-        // Ignore magnitude of planet underneath when lighting atmosphere
-        // Could be changed to simulate light pollution, etc
-        maxBodyMag = maxBodyMagPrev;
-        saturationMag = maxBodyMag;
-#endif
         float illumination = std::clamp(sunDir.dot(normal) + 0.2f, 0.0f, 1.0f);
 
         float lightness = illumination * density;
@@ -6318,11 +6014,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         if (!orbitPathList.empty())
         {
             disableDepthMask();
-#ifdef USE_HDR
-            setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-#else
             setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
             enableSmoothLines();
 
             // Scan through the list of orbits and render any that overlap this interval

@@ -54,7 +54,6 @@ set(CELENGINE_SOURCES
   glsupport.h
   hash.cpp
   hash.h
-  #hdrfuncrender.cpp
   image.cpp
   image.h
   lightenv.h

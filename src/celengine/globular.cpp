@@ -85,15 +85,9 @@ static void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pi
         lumi = 0.0f;
 
     auto pixVal = (int) (lumi * 255.99f);
-#ifdef HDR_COMPRESS
-    pixel[0] = 127;
-    pixel[1] = 127;
-    pixel[2] = 127;
-#else
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
-#endif
     pixel[3] = pixVal;
 }
 
@@ -150,15 +144,9 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     float profile_2d = (1.0f / sqrt(rho2) - 1.0f)/c2d + 1.0f ;
     profile_2d = profile_2d * profile_2d;
 
-#ifdef HDR_COMPRESS
-    pixel[0] = 127;
-    pixel[1] = 127;
-    pixel[2] = 127;
-#else
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
-#endif
     pixel[3] = (int) (relStarDensity(eta) * profile_2d * 255.99f);
 }
 

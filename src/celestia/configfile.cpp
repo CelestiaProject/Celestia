@@ -111,9 +111,6 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getNumber("AntialiasingSamples", aaSamples);
     config->aaSamples = (unsigned int) aaSamples;
 
-    config->hdr = false;
-    configParams->getBoolean("HighDynamicRange", config->hdr);
-
     config->rotateAcceleration = 120.0f;
     configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
     config->mouseRotationSensitivity = 1.0f;

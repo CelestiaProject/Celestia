@@ -1823,32 +1823,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         // with a Lua script.
         editMode = !editMode;
         break;
-
-#ifdef USE_HDR
-    case '|':
-        renderer->setBloomEnabled(!renderer->getBloomEnabled());
-        if (renderer->getBloomEnabled())
-            flash(_("Bloom enabled"));
-        else
-            flash(_("Bloom disabled"));
-        break;
-
-    case '<':
-        {
-            renderer->decreaseBrightness();
-            string buf = fmt::sprintf("%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
-            flash(buf);
-        }
-        break;
-
-    case '>':
-        {
-            renderer->increaseBrightness();
-            string buf = fmt::sprintf("%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
-            flash(buf);
-        }
-        break;
-#endif
     }
 }
 
