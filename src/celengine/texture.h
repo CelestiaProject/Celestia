@@ -10,13 +10,14 @@
 #ifndef _CELENGINE_TEXTURE_H_
 #define _CELENGINE_TEXTURE_H_
 
+#include <cstdint>
 #include <string>
 #include <celutil/color.h>
 #include <celcompat/filesystem.h>
 #include <celengine/image.h>
 
 
-typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
+typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
 
 struct TextureTile
@@ -40,7 +41,7 @@ class TexelFunctionObject
     TexelFunctionObject() {};
     virtual ~TexelFunctionObject() {};
     virtual void operator()(float u, float v, float w,
-                            unsigned char* pixel) = 0;
+                            std::uint8_t* pixel) = 0;
 };
 
 
