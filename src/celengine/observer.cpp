@@ -1375,7 +1375,22 @@ Vector3f Observer::getPickRayFisheye(float x, float y) const
 // universal coordinates.
 void Observer::updateUniversal()
 {
-    positionUniv = frame->convertToUniversal(position, simTime);
+    UniversalCoord newPositionUniv = frame->convertToUniversal(position, simTime);
+    if (newPositionUniv.isOutOfBounds())
+    {
+        // New position would take us out of range of the simulation. At this
+        // point the positionUniv has not been updated, so will contain a position
+        // within the bounds of the simulation. To make the coordinates consistent,
+        // we recompute the frame-local position from positionUniv.
+        position = frame->convertFromUniversal(positionUniv, simTime);
+    }
+    else
+    {
+        // We're in bounds of the simulation, so update the universal coordinate
+        // to match the frame-local position.
+        positionUniv = newPositionUniv;
+    }
+
     orientationUniv = frame->convertToUniversal(orientation, simTime);
 }
 
