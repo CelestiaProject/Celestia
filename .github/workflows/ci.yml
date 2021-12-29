@@ -15,7 +15,7 @@ env:
 
 jobs:
   sonarscanner:
-    runs-on: amd64
+    runs-on: x64
     steps:
     - name: 'Install dependencies'
       run: |
