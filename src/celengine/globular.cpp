@@ -14,83 +14,95 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <fstream>
-#include <random>
+#include <cstddef>
+
+#include <fmt/printf.h>
+
+#include <celmath/ellipsoid.h>
 #include <celmath/intersect.h>
-#include <celmath/ray.h>
 #include <celmath/randutils.h>
+#include <celmath/ray.h>
+#include <celutil/color.h>
 #include <celutil/gettext.h>
-#include "astro.h"
 #include "globular.h"
+#include "glsupport.h"
+#include "pixelformat.h"
 #include "render.h"
 #include "texture.h"
 #include "vecgl.h"
-#include <fmt/printf.h>
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
-using namespace celgl;
-using namespace celestia;
+namespace vecgl = celestia::vecgl;
+
+namespace {
 
 constexpr const int cntrTexWidth  = 512;
 constexpr const int cntrTexHeight = 512;
 constexpr const int starTexWidth  = 128;
 constexpr const int starTexHeight = 128;
 
-static Color colorTable[256];
+Color colorTable[256];
+
 constexpr const unsigned int GLOBULAR_POINTS  = 8192;
-#if !defined(_MSC_VER) && !defined(__clang__)
-constexpr const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
-#else
-static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
-#endif
+
+constexpr const float LumiShape = 3.0f;
 
 // min/max c-values of globular cluster data
-constexpr const float MinC = 0.50f, MaxC = 2.58f, BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
+constexpr const float MinC = 0.50f;
+constexpr const float MaxC = 2.58f;
+constexpr const float BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
 
 // P1 determines the zoom level, where individual cluster stars start to appear.
 // The smaller P2 (< 1), the faster stars show up when resolution increases.
 constexpr const float P1 = 65.0f, P2 = 0.75f;
 
-#if !defined(_MSC_VER) && !defined(__clang__)
-constexpr const float RRatio_min = pow(10.0f, 1.7f);
-#else
-static const float RRatio_min = pow(10.0f, 1.7f);
-#endif
-static float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
+constexpr const float RRatio_min_exponent = 1.7f;
 
-static GlobularForm** globularForms = nullptr;
-static Texture* globularTex = nullptr;
-static Texture* centerTex[8] = {nullptr};
-static void InitializeForms();
-static GlobularForm* buildGlobularForms(float /*c*/);
-static bool formsInitialized = false;
+constexpr const float RADIUS_CORRECTION = 0.025f;
 
-#if 0
-static bool decreasing (const GBlob& b1, const GBlob& b2)
+float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
+
+struct GBlob
 {
-    return (b1.radius_2d > b2.radius_2d);
-}
-#endif
+    Eigen::Vector3f position;
+    unsigned int colorIndex;
+    float radius_2d;
+};
 
-static void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+} // end unnamed namespace
+
+
+struct GlobularForm
+{
+    std::vector<GBlob>* gblobs;
+    Eigen::Vector3f scale;
+};
+
+
+namespace
+{
+
+GlobularForm** globularForms = nullptr;
+Texture* globularTex = nullptr;
+Texture* centerTex[8] = {nullptr};
+bool formsInitialized = false;
+
+void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
 {
     // use an exponential luminosity shape for the individual stars
     // giving sort of a halo for the brighter (i.e.bigger) stars.
 
-    float lumi = exp(- LumiShape * sqrt(u * u + v * v)) - Lumi0;
+    static const float Lumi0 = std::exp(-LumiShape);
+    float lumi = std::exp(-LumiShape * std::sqrt(u * u + v * v)) - Lumi0;
 
     if (lumi <= 0.0f)
         lumi = 0.0f;
 
-    auto pixVal = (int) (lumi * 255.99f);
+    auto pixVal = static_cast<unsigned char>(lumi * 255.99f);
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
     pixel[3] = pixVal;
 }
-
 
 float relStarDensity(float eta)
 {
@@ -108,12 +120,13 @@ float relStarDensity(float eta)
      *  taking max(C_ref, CBin). Smaller c gives a shallower distribution!
      */
 
-     float rRatio = max(RRatio_min, RRatio);
-     float Xi = 1.0f / sqrt(1.0f + rRatio * rRatio);
-     float XI2 = Xi * Xi;
-     float rho2 = 1.0001f + eta * eta * rRatio * rRatio; //add 1e-4 as regulator near rho=0
+    static const float RRatio_min = std::pow(10.0f, RRatio_min_exponent);
+    float rRatio = std::max(RRatio_min, RRatio);
+    float Xi = 1.0f / std::sqrt(1.0f + rRatio * rRatio);
+    float XI2 = Xi * Xi;
+    float rho2 = 1.0001f + eta * eta * rRatio * rRatio; //add 1e-4 as regulator near rho=0
 
-     return ((log(rho2) + 4.0f * (1.0f - sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
+    return ((std::log(rho2) + 4.0f * (1.0f - std::sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
 }
 
 static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
@@ -125,7 +138,7 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     // Skyplane projected King_1962 profile at center (rho = eta = 0):
     float c2d = 1.0f - XI;
 
-    float eta = sqrt(u * u + v * v);  // u,v = (-1..1)
+    float eta = std::sqrt(u * u + v * v);  // u,v = (-1..1)
 
     // eta^2 = u * u  + v * v = 1 is the biggest circle fitting into the quadratic
     // procedural texture. Hence clipping
@@ -141,14 +154,239 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     // Skyplane projected King_1962 profile (Eq.(14)), vanishes for eta = 1:
     // i.e. absolutely no globular stars for r > tidalRadius:
 
-    float profile_2d = (1.0f / sqrt(rho2) - 1.0f)/c2d + 1.0f ;
+    float profile_2d = (1.0f / std::sqrt(rho2) - 1.0f)/c2d + 1.0f ;
     profile_2d = profile_2d * profile_2d;
 
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
-    pixel[3] = (int) (relStarDensity(eta) * profile_2d * 255.99f);
+    pixel[3] = static_cast<unsigned char>(relStarDensity(eta) * profile_2d * 255.99f);
 }
+
+void initGlobularData(celgl::VertexObject& vo, std::vector<GBlob>* points, GLint sizeLoc, GLint etaLoc)
+{
+    struct GlobularVtx
+    {
+        Eigen::Vector3f position;
+        Color color;
+        float starSize;
+        float eta;
+    };
+    std::vector<GlobularVtx> globularVtx;
+    globularVtx.reserve(4 + points->size());
+
+    // Reuse the buffer for a tidal
+    globularVtx.push_back({{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0.0f});
+    globularVtx.push_back({{ 1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 0.0f});
+    globularVtx.push_back({{ 1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f});
+    globularVtx.push_back({{-1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 1.0f});
+
+    // regarding used constants:
+    // pow2 = 128;           // Associate "Red Giants" with the 128 biggest star-sprites
+    // starSize = br * 0.5f; // Maximal size of star sprites -> "Red Giants"
+    // br = 2 * brightness, where `brightness' is passed to Globular::render()
+
+    float starSize = 0.5f;
+    std::size_t pow2 = 128;
+    for (std::size_t i = 0; i < points->size(); ++i)
+    {
+        /*! Note that the [axis,angle] input in globulars.dsc transforms the
+         *  2d projected star distance r_2d in the globular frame to refer to the
+         *  skyplane frame for each globular! That's what I need here.
+         *
+         *  The [axis,angle] input will be needed anyway, when upgrading to
+         *  account for  ellipticities, with corresponding  inclinations and
+         *  position angles...
+         */
+
+        if ((i & pow2) != 0)
+        {
+            pow2    <<= 1;
+            starSize /= 1.25f;
+        }
+
+        GBlob b = (*points)[i];
+        GlobularVtx vtx;
+        vtx.starSize = starSize;
+        vtx.position = b.position;
+        vtx.eta      = b.radius_2d;
+
+        /* Colors of normal globular stars are given by color profile.
+         * Associate orange "Red Giant" stars with the largest sprite
+         * sizes (while pow2 = 128).
+         */
+
+        vtx.color = (pow2 < 256) ? colorTable[255] : colorTable[b.colorIndex];
+
+        globularVtx.push_back(vtx);
+    }
+
+    vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
+    vo.setVertices(3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
+    vo.setTextureCoords(2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
+    vo.setColors(4, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
+    vo.setVertexAttribArray(sizeLoc, 1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize));
+    vo.setVertexAttribArray(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
+}
+
+GlobularForm* buildGlobularForms(float c)
+{
+    GBlob b{};
+    std::vector<GBlob>* globularPoints = new std::vector<GBlob>;
+
+    float rRatio = std::pow(10.0f, c); //  = r_t / r_c
+    float prob;
+    float cc =  1.0f + rRatio * rRatio;
+    unsigned int i = 0, k = 0;
+
+    // Value of King_1962 luminosity profile at center:
+
+    float prob0 = std::sqrt(cc) - 1.0f;
+
+    /*! Generate the globular star distribution randomly, according
+     *  to the  King_1962 surface density profile f(r), eq.(14).
+     *
+     *  rho = r / r_c = eta r_t / r_c, 0 <= eta <= 1,
+     *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
+     */
+
+    auto& rng = celmath::getRNG();
+    while (i < GLOBULAR_POINTS)
+    {
+        /*!
+         *  Use a combination of the Inverse Transform method and
+         *  Von Neumann's Acceptance-Rejection method for generating sprite stars
+         *  with eta distributed according to the exact King luminosity profile.
+         *
+         * This algorithm leads to almost 100% efficiency for all values of
+         * parameters and variables!
+         */
+
+        float uu = celmath::RealDists<float>::Unit(rng);
+
+        /* First step: eta distributed as inverse power distribution (~1/Z^2)
+         * that majorizes the exact King profile. Compute eta in terms of uniformly
+         * distributed variable uu! Normalization to 1 for eta -> 0.
+         */
+
+        float eta = std::tan(uu * std::atan(rRatio)) / rRatio;
+
+        float rho = eta * rRatio;
+        float  cH = 1.0f/(1.0f + rho * rho);
+        float   Z = std::sqrt((1.0f + rho * rho)/cc); // scaling variable
+
+        // Express King_1962 profile in terms of the UNIVERSAL variable 0 < Z <= 1,
+
+        prob = (1.0f - 1.0f / Z) / prob0;
+        prob = prob * prob;
+
+        /* Second step: Use Acceptance-Rejection method (Von Neumann) for
+         * correcting the power distribution of eta into the exact,
+         * desired King form 'prob'!
+         */
+
+        k++;
+
+        if (celmath::RealDists<float>::Unit(rng) < prob / cH)
+        {
+            /* Generate 3d points of globular cluster stars in polar coordinates:
+             * Distribution in eta (<=> r) according to King's profile.
+             * Uniform distribution on any spherical surface for given eta.
+             * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
+             */
+            float u = celmath::RealDists<float>::SignedUnit(rng);
+            float theta = celmath::RealDists<float>::SignedFullAngle(rng);
+            float sthetu2 = std::sin(theta) * std::sqrt(1.0f - u * u);
+
+            // x,y,z points within -0.5..+0.5, as required for consistency:
+            b.position = 0.5f * Eigen::Vector3f(eta * std::sqrt(1.0f - u * u) * std::cos(theta),
+                                                eta * sthetu2,
+                                                eta * u);
+
+            /*
+             * Note: 2d projection in x-z plane, according to Celestia's
+             * conventions! Hence...
+             */
+            b.radius_2d = eta * std::sqrt(1.0f - sthetu2 * sthetu2);
+
+            /* For now, implement only a generic spectrum for normal cluster
+             * stars, modelled from Hubble photo of M80.
+             * Blue Stragglers are qualitatively accounted for...
+             * assume color index poportional to Z as function of which the King profile
+             * becomes universal!
+             */
+
+            b.colorIndex = static_cast<unsigned int>(Z * 254);
+
+            globularPoints->push_back(b);
+            i++;
+        }
+    }
+
+    // Check for efficiency of sprite-star generation => close to 100 %!
+    //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 << "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
+
+    auto* globularForm   = new GlobularForm();
+    globularForm->gblobs = globularPoints;
+    globularForm->scale  = Eigen::Vector3f::Ones();
+
+    return globularForm;
+}
+
+void InitializeForms()
+{
+
+    // Build RGB color table, using hue, saturation, value as input.
+    // Hue in degrees.
+
+    // Location of hue transition and saturation peak in color index space:
+    int i0 = 36, i_satmax = 16;
+    // Width of hue transition in color index space:
+    int i_width = 3;
+
+    float sat_l = 0.08f, sat_h = 0.1f, hue_r = 27.0f, hue_b = 220.0f;
+
+    // Red Giant star color: i = 255:
+    // -------------------------------
+    // Convert hue, saturation and value to RGB
+
+    DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, 25.0f, 0.65f, 1.0f);
+    colorTable[255] = Color(Rr, Gg, Bb);
+
+    // normal stars: i < 255, generic color profile for now, improve later
+    // --------------------------------------------------------------------
+    // Convert hue, saturation, value to RGB
+
+    for (int i = 254; i >=0; i--)
+    {
+        // simple qualitative saturation profile:
+        // i_satmax is value of i where sat = sat_h + sat_l maximal
+
+        float x = static_cast<float>(i) / static_cast<float>(i_satmax), x2 = x;
+        float sat = sat_l + 2 * sat_h /(x2 + 1.0f / x2);
+
+        // Fast transition from hue_r to hue_b at i = i0 within a width
+        // i_width in color index space:
+
+        float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh(static_cast<float>(i - i0)
+                                                      / static_cast<float>(i_width)) + 1.0f);
+
+        DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, hue, sat, 0.85f);
+        colorTable[i]  = Color(Rr, Gg, Bb);
+    }
+    // Define globularForms corresponding to 8 different bins of King concentration c
+
+    globularForms = new GlobularForm*[8];
+
+    for (unsigned int ic  = 0; ic <= 7; ++ic)
+    {
+        float CBin = MinC + (static_cast<float>(ic) + 0.5f) * BinWidth;
+        globularForms[ic] = buildGlobularForms(CBin);
+    }
+    formsInitialized = true;
+}
+
+} // end unnamed namespace
 
 Globular::Globular()
 {
@@ -165,7 +403,7 @@ unsigned int Globular::cSlot(float conc) const
     if (conc >= MaxC)
         conc  = MaxC;
 
-    return (unsigned int) floor((conc - MinC) / BinWidth);
+    return static_cast<unsigned int>(std::floor((conc - MinC) / BinWidth));
 }
 
 const char* Globular::getType() const
@@ -203,7 +441,7 @@ float Globular::getHalfMassRadius() const
     // Aproximation to the half-mass radius r_h [ly]
     // (~ 20% accuracy)
 
-    return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm() * pow(10.0f, 0.6f * c - 0.4f);
+    return std::tan(celmath::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm()) * std::pow(10.0f, 0.6f * c - 0.4f);
 }
 
 float Globular::getConcentration() const
@@ -223,14 +461,9 @@ void Globular::setConcentration(const float conc)
     recomputeTidalRadius();
 }
 
-string Globular::getDescription() const
+std::string Globular::getDescription() const
 {
    return fmt::sprintf(_("Globular (core radius: %4.2f', King concentration: %4.2f)"), r_c, c);
-}
-
-GlobularForm* Globular::getForm() const
-{
-    return form;
 }
 
 const char* Globular::getObjTypeName() const
@@ -238,7 +471,6 @@ const char* Globular::getObjTypeName() const
     return "globular";
 }
 
-constexpr const float RADIUS_CORRECTION = 0.025f;
 bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                     double& distanceToPicker,
                     double& cosAngleToBoundCenter) const
@@ -250,18 +482,17 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
      * that blobs are considered points when globulars are built, but have size
      * when they are drawn.
      */
-    Vector3d ellipsoidAxes(getRadius() * (form->scale.x() + RADIUS_CORRECTION),
-                           getRadius() * (form->scale.y() + RADIUS_CORRECTION),
-                           getRadius() * (form->scale.z() + RADIUS_CORRECTION));
+    Eigen::Vector3d ellipsoidAxes(getRadius() * (form->scale.x() + RADIUS_CORRECTION),
+                                  getRadius() * (form->scale.y() + RADIUS_CORRECTION),
+                                  getRadius() * (form->scale.z() + RADIUS_CORRECTION));
 
-    Vector3d p = getPosition();
-    return testIntersection(transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
-                                         getOrientation().cast<double>().toRotationMatrix()),
-                            Ellipsoidd(ellipsoidAxes),
-                            distanceToPicker,
-                            cosAngleToBoundCenter);
+    Eigen::Vector3d p = getPosition();
+    return celmath::testIntersection(celmath::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
+                                                           getOrientation().cast<double>().toRotationMatrix()),
+                                     celmath::Ellipsoidd(ellipsoidAxes),
+                                     distanceToPicker,
+                                     cosAngleToBoundCenter);
 }
-
 
 bool Globular::load(AssociativeArray* params, const fs::path& resPath)
 {
@@ -287,92 +518,12 @@ bool Globular::load(AssociativeArray* params, const fs::path& resPath)
     return true;
 }
 
-
-void Globular::render(const Vector3f& offset,
-                      const Quaternionf& viewerOrientation,
+void Globular::render(const Eigen::Vector3f& offset,
+                      const Eigen::Quaternionf& viewerOrientation,
                       float brightness,
                       float pixelSize,
                       const Matrices& m,
-                      Renderer* r)
-{
-    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, m, r);
-}
-
-
-void initGlobularData(VertexObject& vo, vector<GBlob>* points, GLint sizeLoc, GLint etaLoc)
-{
-    struct GlobularVtx
-    {
-        Vector3f position;
-        Color    color;
-        float    starSize;
-        float    eta;
-    };
-    vector<GlobularVtx> globularVtx;
-    globularVtx.reserve(4 + points->size());
-
-    // Reuse the buffer for a tidal
-    globularVtx.push_back({{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0.0f});
-    globularVtx.push_back({{ 1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 0.0f});
-    globularVtx.push_back({{ 1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f});
-    globularVtx.push_back({{-1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 1.0f});
-
-    // regarding used constants:
-    // pow2 = 128;           // Associate "Red Giants" with the 128 biggest star-sprites
-    // starSize = br * 0.5f; // Maximal size of star sprites -> "Red Giants"
-    // br = 2 * brightness, where `brightness' is passed to Globular::render()
-
-    float starSize = 0.5f;
-    size_t pow2 = 128;
-    for (size_t i = 0; i < points->size(); ++i)
-    {
-        /*! Note that the [axis,angle] input in globulars.dsc transforms the
-         *  2d projected star distance r_2d in the globular frame to refer to the
-         *  skyplane frame for each globular! That's what I need here.
-         *
-         *  The [axis,angle] input will be needed anyway, when upgrading to
-         *  account for  ellipticities, with corresponding  inclinations and
-         *  position angles...
-         */
-
-        if ((i & pow2) != 0)
-        {
-            pow2    <<= 1;
-            starSize /= 1.25f;
-        }
-
-        GBlob b = (*points)[i];
-        GlobularVtx vtx;
-        vtx.starSize = starSize;
-        vtx.position = b.position;
-        vtx.eta      = b.radius_2d;
-
-        /* Colors of normal globular stars are given by color profile.
-         * Associate orange "Red Giant" stars with the largest sprite
-         * sizes (while pow2 = 128).
-         */
-
-        vtx.color    = (pow2 < 256) ? colorTable[255] : colorTable[b.colorIndex];
-
-        globularVtx.push_back(vtx);
-    }
-
-    vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
-    vo.setVertices(3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
-    vo.setTextureCoords(2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
-    vo.setColors(4, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
-    vo.setVertexAttribArray(sizeLoc, 1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize));
-    vo.setVertexAttribArray(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
-}
-
-
-void Globular::renderGlobularPointSprites(
-                                      const Vector3f& offset,
-                                      const Quaternionf& viewerOrientation,
-                                      float brightness,
-                                      float pixelSize,
-                                      const Matrices& m,
-                                      Renderer* renderer)
+                      Renderer* renderer)
 {
     if (form == nullptr)
         return;
@@ -414,15 +565,15 @@ void Globular::renderGlobularPointSprites(
     // Use same 8 c-bins as in globularForms below!
 
     unsigned int ic = cSlot(c);
-    CBin = MinC + ((float) ic + 0.5f) * BinWidth; // center value of (ic+1)th c-bin
+    CBin = MinC + (static_cast<float>(ic) + 0.5f) * BinWidth; // center value of (ic+1)th c-bin
 
-    RRatio = pow(10.0f, CBin);
-    XI = 1.0f / sqrt(1.0f + RRatio * RRatio);
+    RRatio = std::pow(10.0f, CBin);
+    XI = 1.0f / std::sqrt(1.0f + RRatio * RRatio);
 
     if(centerTex[ic] == nullptr)
     {
         centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                PixelFormat::RGBA,
+                                                celestia::PixelFormat::RGBA,
                                                 CenterCloudTexEval);
     }
     assert(centerTex[ic] != nullptr);
@@ -430,7 +581,7 @@ void Globular::renderGlobularPointSprites(
     if (globularTex == nullptr)
     {
         globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              PixelFormat::RGBA,
+                                              celestia::PixelFormat::RGBA,
                                               GlobularTextureEval);
     }
     assert(globularTex != nullptr);
@@ -443,7 +594,7 @@ void Globular::renderGlobularPointSprites(
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
 
-    float tidalSize = 2 * tidalRadius;
+    float tidalSize = 2.0f * tidalRadius;
 
     /* Render central cloud sprite (centerTex). It fades away when
      * distance from center or resolution increases sufficiently.
@@ -462,10 +613,10 @@ void Globular::renderGlobularPointSprites(
 
     tidalProg->setMVPMatrices(*m.projection, *m.modelview);
 
-    Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
-    tidalProg->vec4Param("color")       = Vector4f(Rr, Gg, Bb, min(2 * brightness * pixelWeight, 1.0f));
-    tidalProg->floatParam("tidalSize")  = tidalSize;
-    tidalProg->mat3Param("viewMat")     = viewMat;
+    Eigen::Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
+    tidalProg->vec4Param("color") = Eigen::Vector4f(Rr, Gg, Bb, std::min(2 * brightness * pixelWeight, 1.0f));
+    tidalProg->floatParam("tidalSize") = tidalSize;
+    tidalProg->mat3Param("viewMat") = viewMat;
     tidalProg->samplerParam("tidalTex") = 0;
 
     vo.draw(GL_TRIANGLE_FAN, 4);
@@ -478,8 +629,8 @@ void Globular::renderGlobularPointSprites(
      */
 
     GLsizei count = static_cast<GLsizei>(form->gblobs->size() * std::clamp(getDetail(), 0.0f, 1.0f));
-    float t = pow(2, 1 + log2(minimumFeatureSize / brightness) / log2(1/1.25f));
-    count = min(count, static_cast<GLsizei>(std::clamp(t, 128.0f, static_cast<float>(max(count, 128)))));
+    float t = std::pow(2.0f, 1.0f + std::log2(minimumFeatureSize / brightness) / std::log2(1.0f/1.25f));
+    count = std::min(count, static_cast<GLsizei>(std::clamp(t, 128.0f, static_cast<float>(std::max(count, 128)))));
 
     globProg->use();
 
@@ -487,7 +638,7 @@ void Globular::renderGlobularPointSprites(
     globProg->setMVPMatrices(*m.projection, *m.modelview);
     // TODO: model view matrix should not be reset here
     globProg->ModelViewMatrix = vecgl::translate(*m.modelview, offset);
-    Matrix3f mx = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
+    Eigen::Matrix3f mx = Eigen::Scaling(form->scale) * getOrientation().toRotationMatrix() * Eigen::Scaling(tidalSize);
     globProg->mat3Param("m")            = mx;
     globProg->vec3Param("offset")       = offset;
     globProg->floatParam("brightness")  = brightness;
@@ -508,7 +659,7 @@ void Globular::renderGlobularPointSprites(
     //glDisable(GL_BLEND);
 }
 
-uint64_t Globular::getRenderMask() const
+std::uint64_t Globular::getRenderMask() const
 {
     return Renderer::ShowGlobulars;
 }
@@ -518,168 +669,11 @@ unsigned int Globular::getLabelMask() const
     return Renderer::GlobularLabels;
 }
 
-
 void Globular::recomputeTidalRadius()
 {
     // Convert the core radius from arcminutes to light years
     // Compute the tidal radius in light years
 
-    float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm();
+    float coreRadiusLy = std::tan(celmath::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm());
     tidalRadius = coreRadiusLy * std::pow(10.0f, c);
-}
-
-
-GlobularForm* buildGlobularForms(float c)
-{
-    GBlob b{};
-    vector<GBlob>* globularPoints = new vector<GBlob>;
-
-    float rRatio = pow(10.0f, c); //  = r_t / r_c
-    float prob;
-    float cc =  1.0f + rRatio * rRatio;
-    unsigned int i = 0, k = 0;
-
-    // Value of King_1962 luminosity profile at center:
-
-    float prob0 = sqrt(cc) - 1.0f;
-
-    /*! Generate the globular star distribution randomly, according
-     *  to the  King_1962 surface density profile f(r), eq.(14).
-     *
-     *  rho = r / r_c = eta r_t / r_c, 0 <= eta <= 1,
-     *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
-     */
-
-    auto& rng = getRNG();
-    while (i < GLOBULAR_POINTS)
-    {
-        /*!
-         *  Use a combination of the Inverse Transform method and
-         *  Von Neumann's Acceptance-Rejection method for generating sprite stars
-         *  with eta distributed according to the exact King luminosity profile.
-         *
-         * This algorithm leads to almost 100% efficiency for all values of
-         * parameters and variables!
-         */
-
-        float uu = RealDists<float>::Unit(rng);
-
-        /* First step: eta distributed as inverse power distribution (~1/Z^2)
-         * that majorizes the exact King profile. Compute eta in terms of uniformly
-         * distributed variable uu! Normalization to 1 for eta -> 0.
-         */
-
-        float eta = tan(uu *atan(rRatio))/rRatio;
-
-        float rho = eta * rRatio;
-        float  cH = 1.0f/(1.0f + rho * rho);
-        float   Z = sqrt((1.0f + rho * rho)/cc); // scaling variable
-
-        // Express King_1962 profile in terms of the UNIVERSAL variable 0 < Z <= 1,
-
-        prob = (1.0f - 1.0f / Z) / prob0;
-        prob = prob * prob;
-
-        /* Second step: Use Acceptance-Rejection method (Von Neumann) for
-         * correcting the power distribution of eta into the exact,
-         * desired King form 'prob'!
-         */
-
-        k++;
-
-        if (RealDists<float>::Unit(rng) < prob / cH)
-        {
-            /* Generate 3d points of globular cluster stars in polar coordinates:
-             * Distribution in eta (<=> r) according to King's profile.
-             * Uniform distribution on any spherical surface for given eta.
-             * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
-             */
-            float u = RealDists<float>::SignedUnit(rng);
-            float theta = RealDists<float>::SignedFullAngle(rng);
-            float sthetu2 = sin(theta) * sqrt(1.0f - u * u);
-
-            // x,y,z points within -0.5..+0.5, as required for consistency:
-            b.position = 0.5f * Vector3f(eta * sqrt(1.0f - u * u) * cos(theta), eta * sthetu2 , eta * u);
-
-            /*
-             * Note: 2d projection in x-z plane, according to Celestia's
-             * conventions! Hence...
-             */
-            b.radius_2d = eta * sqrt(1.0f - sthetu2 * sthetu2);
-
-            /* For now, implement only a generic spectrum for normal cluster
-             * stars, modelled from Hubble photo of M80.
-             * Blue Stragglers are qualitatively accounted for...
-             * assume color index poportional to Z as function of which the King profile
-             * becomes universal!
-             */
-
-            b.colorIndex  = (unsigned int) (Z * 254);
-
-            globularPoints->push_back(b);
-            i++;
-        }
-    }
-
-    // Check for efficiency of sprite-star generation => close to 100 %!
-    //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 << "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
-
-    auto* globularForm   = new GlobularForm();
-    globularForm->gblobs = globularPoints;
-    globularForm->scale  = Vector3f::Ones();
-
-    return globularForm;
-}
-
-void InitializeForms()
-{
-
-    // Build RGB color table, using hue, saturation, value as input.
-    // Hue in degrees.
-
-    // Location of hue transition and saturation peak in color index space:
-    int i0 = 36, i_satmax = 16;
-    // Width of hue transition in color index space:
-    int i_width = 3;
-
-    float sat_l = 0.08f, sat_h = 0.1f, hue_r = 27.0f, hue_b = 220.0f;
-
-    // Red Giant star color: i = 255:
-    // -------------------------------
-    // Convert hue, saturation and value to RGB
-
-    DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, 25.0f, 0.65f, 1.0f);
-    colorTable[255]  = Color(Rr, Gg, Bb);
-
-    // normal stars: i < 255, generic color profile for now, improve later
-    // --------------------------------------------------------------------
-    // Convert hue, saturation, value to RGB
-
-    for (int i = 254; i >=0; i--)
-    {
-        // simple qualitative saturation profile:
-        // i_satmax is value of i where sat = sat_h + sat_l maximal
-
-        float x = (float) i / (float) i_satmax, x2 = x ;
-        float sat = sat_l + 2 * sat_h /(x2 + 1.0f / x2);
-
-        // Fast transition from hue_r to hue_b at i = i0 within a width
-        // i_width in color index space:
-
-        float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh((float)(i - i0) / (float) i_width) + 1.0f);
-
-        DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, hue, sat, 0.85f);
-        colorTable[i]  = Color(Rr, Gg, Bb);
-    }
-    // Define globularForms corresponding to 8 different bins of King concentration c
-
-    globularForms = new GlobularForm*[8];
-
-    for (unsigned int ic  = 0; ic <= 7; ++ic)
-    {
-        float CBin = MinC + ((float) ic + 0.5f) * BinWidth;
-        globularForms[ic] = buildGlobularForms(CBin);
-    }
-    formsInitialized = true;
-
 }
