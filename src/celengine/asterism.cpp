@@ -157,8 +157,8 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                             new_chain->push_back(star->getPosition());
                         else
                             GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n",
-                                               ast->getName(),
-                                               i->getString());
+                                               i->getString(),
+                                               ast->getName());
                     }
                 }
 
