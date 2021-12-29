@@ -571,19 +571,6 @@ class CommandSetTextureResolution : public InstantaneousCommand
 };
 
 
-#ifdef USE_GLCONTEXT
-class CommandRenderPath : public InstantaneousCommand
-{
- public:
-    CommandRenderPath(GLContext::GLRenderPath);
-    void process(ExecutionEnvironment&) override;
-
- private:
-    GLContext::GLRenderPath path;
-};
-#endif
-
-
 class CommandSplitView : public InstantaneousCommand
 {
  public:

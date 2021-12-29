@@ -12,9 +12,6 @@
 #define CELENGINE_LODSPHEREMESH_H_
 
 #include <celengine/texture.h>
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include <Eigen/Geometry>
 #include <celmath/frustum.h>
 

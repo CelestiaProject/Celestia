@@ -35,9 +35,6 @@
 #include "celutil/gettext.h"
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
-#ifdef USE_GLCONTEXT
-#include "celengine/glcontext.h"
-#endif
 
 #include "qtglwidget.h"
 
@@ -90,26 +87,6 @@ void CelestiaGlWidget::paintGL()
 }
 
 
-#ifdef USE_GLCONTEXT
-static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc*/)
-{
-#if 0
-    const GLContext::GLRenderPath renderPaths[] = {
-        GLContext::GLPath_GLSL,
-    };
-
-    for (auto renderPath : renderPaths)
-    {
-        if (glc.renderPathSupported(renderPath))
-            return renderPath;
-    }
-#endif
-
-    return GLContext::GLPath_GLSL;
-}
-#endif
-
-
 /*!
   Set up the OpenGL rendering state, and define display list
 */
@@ -148,22 +125,6 @@ void CelestiaGlWidget::initializeGL()
         appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
 
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
-
-    // Read the saved render path
-#ifdef USE_GLCONTEXT
-    GLContext::GLRenderPath bestPath = getBestAvailableRenderPath(*appRenderer->getGLContext());
-    GLContext::GLRenderPath savedPath = (GLContext::GLRenderPath) settings.value("RenderPath", bestPath).toInt();
-
-    // Use the saved path only if it's supported (otherwise a graphics card
-    // downgrade could cause Celestia to not function.)
-    GLContext::GLRenderPath usePath;
-    if (appRenderer->getGLContext()->renderPathSupported(savedPath))
-        usePath = savedPath;
-    else
-        usePath = bestPath;
-
-    appRenderer->getGLContext()->setRenderPath(usePath);
-#endif
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->ShadowMapSize);

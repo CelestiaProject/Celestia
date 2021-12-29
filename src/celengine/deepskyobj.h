@@ -14,9 +14,6 @@
 #include <string>
 #include <iostream>
 #include <celengine/astroobj.h>
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include <celengine/parser.h>
 #include <celcompat/filesystem.h>
 #include <Eigen/Core>

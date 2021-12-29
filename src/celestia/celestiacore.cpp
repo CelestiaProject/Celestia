@@ -1214,28 +1214,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         notifyWatchers(RenderFlagsChanged);
         break;
 
-    case '\026':  // Ctrl+V
-#ifdef USE_GLCONTEXT
-        {
-            GLContext* context = renderer->getGLContext();
-            GLContext::GLRenderPath path = context->getRenderPath();
-            GLContext::GLRenderPath newPath = context->nextRenderPath();
-
-            if (newPath != path)
-            {
-                switch (newPath)
-                {
-                case GLContext::GLPath_GLSL:
-                    flash(_("Render path: OpenGL 2.1"));
-                    break;
-                }
-                context->setRenderPath(newPath);
-                notifyWatchers(RenderFlagsChanged);
-            }
-        }
-#endif
-        break;
-
     case '\027':  // Ctrl+W
         wireframe = !wireframe;
         renderer->setRenderMode(wireframe ? RenderMode::Line : RenderMode::Fill);
@@ -4072,15 +4050,6 @@ bool CelestiaCore::initRenderer()
                              Renderer::ShowAtmospheres |
                              Renderer::ShowAutoMag);
 
-#ifdef USE_GLCONTEXT
-    GLContext* context = new GLContext();
-
-    context->init(config->ignoreGLExtensions);
-    // Choose the render path, starting with the least desirable
-    context->setRenderPath(GLContext::GLPath_GLSL);
-    //GetLogger()->verbose("render path: {}\n", context->getRenderPath());
-#endif
-
     Renderer::DetailOptions detailOptions;
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
     detailOptions.shadowTextureSize = config->shadowTextureSize;
@@ -4090,11 +4059,7 @@ bool CelestiaCore::initRenderer()
     detailOptions.linearFadeFraction = config->linearFadeFraction;
 
     // Prepare the scene for rendering.
-#ifdef USE_GLCONTEXT
-    if (!renderer->init(context, (int) width, (int) height, detailOptions))
-#else
     if (!renderer->init((int) width, (int) height, detailOptions))
-#endif
     {
         fatalError(_("Failed to initialize renderer"), false);
         return false;

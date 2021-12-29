@@ -28,9 +28,6 @@
 #include "qtappwin.h"
 #include "qtpreferencesdialog.h"
 #include <celengine/render.h>
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
@@ -70,10 +67,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     // Get flags
     Renderer* renderer = appCore->getRenderer();
     Observer* observer = appCore->getSimulation()->getActiveObserver();
-#ifdef USE_GLCONTEXT
-    GLContext* glContext = appCore->getRenderer()->getGLContext();
-    GLContext::GLRenderPath renderPath = glContext->getRenderPath();
-#endif
 
     uint64_t renderFlags = renderer->getRenderFlags();
     int orbitMask = renderer->getOrbitMask();
@@ -169,14 +162,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.featureSizeSlider->setValue(minimumFeatureSize);
     ui.featureSizeEdit->setText(QString::number(minimumFeatureSize));
 
-#ifdef USE_GLCONTEXT
-    if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
-        ui.renderPathBox->addItem(_("OpenGL 2.1"), GLContext::GLPath_GLSL);
-
-    SetComboBoxValue(ui.renderPathBox, renderPath);
-#else
     ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
-#endif
 
     ui.antialiasLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
     ui.tintedIlluminationCheck->setChecked(renderFlags & Renderer::ShowTintedIllumination);
@@ -706,19 +692,9 @@ void PreferencesDialog::on_featureSizeEdit_textEdited(const QString& text)
 }
 
 
-#ifdef USE_GLCONTEXT
-void PreferencesDialog::on_renderPathBox_currentIndexChanged(int index)
-{
-    GLContext* glContext = appCore->getRenderer()->getGLContext();
-    QVariant itemData = ui.renderPathBox->itemData(index, Qt::UserRole);
-    GLContext::GLRenderPath renderPath = (GLContext::GLRenderPath) itemData.toInt();
-    glContext->setRenderPath(renderPath);
-}
-#else
 void PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/)
 {
 }
-#endif
 
 
 void PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
