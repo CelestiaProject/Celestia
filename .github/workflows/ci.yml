@@ -52,16 +52,15 @@ jobs:
               -DENABLE_GTK=ON                \
               -DUSE_GTK3=ON                  \
               -DENABLE_QT=OFF                \
-              -DENABLE_FFMPEG=OFF
+              -DENABLE_FFMPEG=OFF            \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       env:
         CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
         CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
 
     - name: Build
       working-directory: ${{github.workspace}}/build
-      run: |
-        ninja -t compdb > compile_commands.json
-        ninja
+      run: ninja
 
     - name: Test
       working-directory: ${{github.workspace}}/build
