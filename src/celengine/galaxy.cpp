@@ -53,19 +53,12 @@ bool operator<(const Blob& b1, const Blob& b2)
 
 using BlobVector = std::vector<Blob>;
 
-} // end unnamed namespace
-
-
 class GalacticForm
 {
 public:
     BlobVector blobs;
     Eigen::Vector3f scale;
 };
-
-
-namespace
-{
 
 constexpr int width = 128;
 constexpr int height = 128;
@@ -77,11 +70,6 @@ constexpr float RADIUS_CORRECTION     = 0.025f;
 constexpr float MAX_SPIRAL_THICKNESS  = 0.06f;
 
 bool formsInitialized = false;
-
-constexpr std::size_t GalacticFormsReserve = 32;
-
-std::vector<std::optional<GalacticForm>> galacticForms;
-std::map<fs::path, std::size_t> customForms;
 
 Texture* galaxyTex = nullptr;
 Texture* colorTex  = nullptr;
@@ -258,7 +246,50 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
     return galacticForm;
 }
 
-void initializeForms()
+class GalacticFormManager
+{
+ private:
+    static constexpr std::size_t GalacticFormsReserve = 32;
+
+ public:
+    GalacticFormManager()
+    {
+        initializeStandardForms();
+    }
+
+    const GalacticForm* getForm(std::size_t) const;
+    std::size_t getCustomForm(const fs::path& path);
+
+ private:
+    void initializeStandardForms();
+
+    std::vector<std::optional<GalacticForm>> galacticForms{ };
+    std::map<fs::path, std::size_t> customForms{ };
+};
+
+const GalacticForm* GalacticFormManager::getForm(std::size_t form) const
+{
+    assert(form < galacticForms.size());
+    return galacticForms[form].has_value()
+        ? &*galacticForms[form]
+        : nullptr;
+}
+
+std::size_t GalacticFormManager::getCustomForm(const fs::path& path)
+{
+    auto iter = customForms.find(path);
+    if (iter != customForms.end())
+    {
+        return iter->second;
+    }
+
+    std::size_t result = galacticForms.size();
+    customForms[path] = result;
+    galacticForms.push_back(buildGalacticForm(path));
+    return result;
+}
+
+void GalacticFormManager::initializeStandardForms()
 {
     // Irregular Galaxies
     unsigned int galaxySize = GALAXY_POINTS, ip = 0;
@@ -290,13 +321,11 @@ void initializeForms()
         }
     }
 
-    GalacticForm& irregularForm = *galacticForms.emplace_back(std::in_place);
-    irregularForm.blobs = std::move(irregularPoints);
-    irregularForm.scale = Eigen::Vector3f::Constant(0.5f);
+    std::optional<GalacticForm>& irregularForm = galacticForms.emplace_back(std::in_place);
+    irregularForm->blobs = std::move(irregularPoints);
+    irregularForm->scale = Eigen::Vector3f::Constant(0.5f);
 
     // Spiral Galaxies, 7 classical Hubble types
-
-    galacticForms.reserve(GalacticFormsReserve);
 
     galacticForms.push_back(buildGalacticForm("models/S0.png"));
     galacticForms.push_back(buildGalacticForm("models/Sa.png"));
@@ -317,34 +346,27 @@ void initializeForms()
 
         // note the correct x,y-alignment of 'ell' scaling!!
         // build all elliptical templates from rescaling E0
-
-        galacticForms.push_back(buildGalacticForm("models/E0.png"));
-        if (!galacticForms.back().has_value()) { continue; }
-
-        GalacticForm& ellipticalForm = *galacticForms.back();
-        ellipticalForm.scale = Eigen::Vector3f(ell, ell, 1.0f);
-
-        for (Blob& blob : ellipticalForm.blobs)
+        std::optional<GalacticForm> ellipticalForm = buildGalacticForm("models/E0.png");
+        if (ellipticalForm.has_value())
         {
-            blob.colorIndex = static_cast<unsigned int>(std::ceil(0.76f * static_cast<float>(blob.colorIndex)));
+            ellipticalForm->scale = Eigen::Vector3f(ell, ell, 1.0f);
+
+            for (Blob& blob : ellipticalForm->blobs)
+            {
+                blob.colorIndex = static_cast<unsigned int>(std::ceil(0.76f * static_cast<float>(blob.colorIndex)));
+            }
         }
+
+        galacticForms.push_back(std::move(ellipticalForm));
     }
 
     formsInitialized = true;
 }
 
-std::size_t customForm(const fs::path& path)
+GalacticFormManager* getGalacticFormManager()
 {
-    auto iter = customForms.find(path);
-    if (iter != customForms.end())
-    {
-        return iter->second;
-    }
-
-    std::size_t result = galacticForms.size();
-    customForms[path] = result;
-    galacticForms.push_back(buildGalacticForm(path));
-    return result;
+    static GalacticFormManager* galacticFormManager = new GalacticFormManager();
+    return galacticFormManager;
 }
 
 } // end unnamed namespace
@@ -378,16 +400,13 @@ void Galaxy::setType(const std::string& typeStr)
 
 void Galaxy::setForm(const std::string& customTmpName)
 {
-    if (!formsInitialized)
-        initializeForms();
-
     if (customTmpName.empty())
     {
         form = static_cast<std::size_t>(type);
     }
     else
     {
-        form = customForm(fs::path("models") / customTmpName);
+        form = getGalacticFormManager()->getCustomForm(fs::path("models") / customTmpName);
     }
 }
 
@@ -405,22 +424,20 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                   double& distanceToPicker,
                   double& cosAngleToBoundCenter) const
 {
-    if (!galacticForms[form].has_value() || !isVisible())
-        return false;
-
-    GalacticForm& galacticForm = *galacticForms[form];
+    const GalacticForm* galacticForm = getGalacticFormManager()->getForm(form);
+    if (galacticForm == nullptr || !isVisible()) { return false; }
 
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
     // when they are drawn.
     float yscale = (type > GalaxyType::Irr && type < GalaxyType::E0)
         ? MAX_SPIRAL_THICKNESS
-        : galacticForm.scale.y() + RADIUS_CORRECTION;
-    Eigen::Vector3d ellipsoidAxes(getRadius()*(galacticForm.scale.x() + RADIUS_CORRECTION),
+        : galacticForm->scale.y() + RADIUS_CORRECTION;
+    Eigen::Vector3d ellipsoidAxes(getRadius()*(galacticForm->scale.x() + RADIUS_CORRECTION),
                                   getRadius()* yscale,
-                                  getRadius()*(galacticForm.scale.z() + RADIUS_CORRECTION));
-
+                                  getRadius()*(galacticForm->scale.z() + RADIUS_CORRECTION));
     Eigen::Matrix3d rotation = getOrientation().cast<double>().toRotationMatrix();
+
     return celmath::testIntersection(
         celmath::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
                               rotation),
@@ -453,10 +470,8 @@ void Galaxy::render(const Eigen::Vector3f& offset,
                     const Matrices& ms,
                     Renderer* renderer)
 {
-    if (!galacticForms[form].has_value())
-        return;
-
-    const GalacticForm& galacticForm = *galacticForms[form];
+    const GalacticForm* galacticForm = getGalacticFormManager()->getForm(form);
+    if (galacticForm == nullptr) { return; }
 
     /* We'll first see if the galaxy's apparent size is big enough to
        be noticeable on screen; if it's not we'll break right here,
@@ -507,7 +522,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     v3.head(3) = viewMat * Eigen::Vector3f(-1,  1, 0) * size;
 
     Eigen::Quaternionf orientation = getOrientation().conjugate();
-    Eigen::Matrix3f mScale = galacticForm.scale.asDiagonal() * size;
+    Eigen::Matrix3f mScale = galacticForm->scale.asDiagonal() * size;
     Eigen::Matrix3f mLinear = orientation.toRotationMatrix() * mScale;
 
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
@@ -516,7 +531,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
 
     int pow2 = 1;
 
-    const BlobVector& points = galacticForm.blobs;
+    const BlobVector& points = galacticForm->blobs;
     unsigned int nPoints = static_cast<unsigned int>(points.size() * std::clamp(getDetail(), 0.0f, 1.0f));
     // corrections to avoid excessive brightening if viewed e.g. edge-on
 
