@@ -45,8 +45,8 @@ struct GlobularForm
         float radius_2d;
     };
 
-    std::vector<Blob> gblobs;
-    Eigen::Vector3f scale;
+    std::vector<Blob> gblobs{ };
+    Eigen::Vector3f scale{ };
 };
 
 
@@ -330,9 +330,60 @@ GlobularForm buildGlobularForm(float c)
     return globularForm;
 }
 
-std::vector<GlobularForm> initializeForms()
+class GlobularInfoManager
 {
+ public:
+    GlobularInfoManager()
+    {
+        initializeForms();
+        centerTex.fill(nullptr);
+    }
 
+    const GlobularForm* getForm(unsigned int) const;
+    Texture* getCenterTex(unsigned int);
+    Texture* getGlobularTex();
+
+ private:
+    void initializeForms();
+
+    std::array<GlobularForm, GlobularBuckets> globularForms{ };
+    std::array<Texture*, GlobularBuckets> centerTex{ };
+    Texture* globularTex{ nullptr };
+};
+
+const GlobularForm* GlobularInfoManager::getForm(unsigned int form) const
+{
+    assert(form < globularForms.size());
+    return &globularForms[form];
+}
+
+Texture* GlobularInfoManager::getCenterTex(unsigned int form)
+{
+    if(centerTex[form] == nullptr)
+    {
+        centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
+                                                  celestia::PixelFormat::RGBA,
+                                                  centerCloudTexEval);
+    }
+
+    assert(centerTex[form] != nullptr);
+    return centerTex[form];
+}
+
+Texture* GlobularInfoManager::getGlobularTex()
+{
+    if (globularTex == nullptr)
+    {
+        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
+                                              celestia::PixelFormat::RGBA,
+                                              globularTextureEval);
+    }
+    assert(globularTex != nullptr);
+    return globularTex;
+}
+
+void GlobularInfoManager::initializeForms()
+{
     // Build RGB color table, using hue, saturation, value as input.
     // Hue in degrees.
 
@@ -373,16 +424,17 @@ std::vector<GlobularForm> initializeForms()
     }
     // Define globularForms corresponding to 8 different bins of King concentration c
 
-    std::vector<GlobularForm> globularForms;
-    globularForms.reserve(GlobularBuckets);
-
-    for (unsigned int ic  = 0; ic <= 7; ++ic)
+    for (unsigned int ic  = 0; ic < GlobularBuckets; ++ic)
     {
         float CBin = MinC + (static_cast<float>(ic) + 0.5f) * BinWidth;
-        globularForms.push_back(buildGlobularForm(CBin));
+        globularForms[ic] = buildGlobularForm(CBin);
     }
+}
 
-    return globularForms;
+GlobularInfoManager* getGlobularInfoManager()
+{
+    static GlobularInfoManager* globularInfoManager = new GlobularInfoManager();
+    return globularInfoManager;
 }
 
 } // end unnamed namespace
@@ -454,8 +506,7 @@ void Globular::setConcentration(const float conc)
     c = conc;
     // For saving time, account for the c dependence via 8 bins only,
 
-    static const std::vector<GlobularForm> globularForms = initializeForms();
-    form = &globularForms[cSlot(conc)];
+    form = getGlobularInfoManager()->getForm(cSlot(conc));
     recomputeTidalRadius();
 }
 
@@ -568,19 +619,7 @@ void Globular::render(const Eigen::Vector3f& offset,
     RRatio = std::pow(10.0f, CBin);
     XI = 1.0f / std::sqrt(1.0f + RRatio * RRatio);
 
-    static Texture* centerTex[GlobularBuckets] = {nullptr};
-    if(centerTex[ic] == nullptr)
-    {
-        centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                celestia::PixelFormat::RGBA,
-                                                centerCloudTexEval);
-    }
-    assert(centerTex[ic] != nullptr);
-
-    static Texture* globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                                          celestia::PixelFormat::RGBA,
-                                                          globularTextureEval);
-    assert(globularTex != nullptr);
+    GlobularInfoManager* globularInfoManager = getGlobularInfoManager();
 
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -605,7 +644,7 @@ void Globular::render(const Eigen::Vector3f& offset,
     }
 
     tidalProg->use();
-    centerTex[ic]->bind();
+    globularInfoManager->getCenterTex(ic)->bind();
 
     tidalProg->setMVPMatrices(*m.projection, *m.modelview);
 
@@ -630,7 +669,7 @@ void Globular::render(const Eigen::Vector3f& offset,
 
     globProg->use();
 
-    globularTex->bind();
+    globularInfoManager->getGlobularTex()->bind();
     globProg->setMVPMatrices(*m.projection, *m.modelview);
     // TODO: model view matrix should not be reset here
     globProg->ModelViewMatrix = vecgl::translate(*m.modelview, offset);
