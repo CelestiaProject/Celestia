@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 #include <string>
 
 #include <Eigen/Core>
@@ -25,7 +26,25 @@ struct Matrices;
 class Renderer;
 
 
-class GalacticForm;
+enum class GalaxyType {
+    Irr  =  0,
+    S0   =  1,
+    Sa   =  2,
+    Sb   =  3,
+    Sc   =  4,
+    SBa  =  5,
+    SBb  =  6,
+    SBc  =  7,
+    E0   =  8,
+    E1   =  9,
+    E2   = 10,
+    E3   = 11,
+    E4   = 12,
+    E5   = 13,
+    E6   = 14,
+    E7   = 15,
+};
+
 
 class Galaxy : public DeepSkyObject
 {
@@ -33,8 +52,6 @@ class Galaxy : public DeepSkyObject
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
-    std::string getCustomTmpName() const;
-    void setCustomTmpName(const std::string&);
 
     float getDetail() const;
     void setDetail(float);
@@ -50,8 +67,6 @@ class Galaxy : public DeepSkyObject
                 const Matrices& m,
                 Renderer* r) override;
 
-    GalacticForm* getForm() const;
-
     static void  increaseLightGain();
     static void  decreaseLightGain();
     static float getLightGain();
@@ -62,38 +77,12 @@ class Galaxy : public DeepSkyObject
 
     const char* getObjTypeName() const override;
 
- public:
-    enum GalaxyType {
-        S0   =  0,
-        Sa   =  1,
-        Sb   =  2,
-        Sc   =  3,
-        SBa  =  4,
-        SBb  =  5,
-        SBc  =  6,
-        E0   =  7,
-        E1   =  8,
-        E2   =  9,
-        E3   = 10,
-        E4   = 11,
-        E5   = 12,
-        E6   = 13,
-        E7   = 14,
-        Irr  = 15
-    };
-
  private:
-    void renderGalaxyPointSprites(const Eigen::Vector3f& offset,
-                                  const Eigen::Quaternionf& viewerOrientation,
-                                  float brightness,
-                                  float pixelSize,
-                                  const Matrices& mvp,
-                                  Renderer* r);
+    void setForm(const std::string&);
 
-    float         detail{ 1.0f };
-    std::string*  customTmpName{ nullptr };
-    GalaxyType    type{ S0 };
-    GalacticForm* form{ nullptr };
+    float       detail{ 1.0f };
+    GalaxyType  type{ GalaxyType::Irr };
+    std::size_t form{ 0 };
 
-    static float  lightGain;
+    static float lightGain;
 };
