@@ -80,7 +80,7 @@ constexpr const float RADIUS_CORRECTION = 0.025f;
 
 float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
 
-void globularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+void globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 {
     // use an exponential luminosity shape for the individual stars
     // giving sort of a halo for the brighter (i.e.bigger) stars.
@@ -91,7 +91,7 @@ void globularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
     if (lumi <= 0.0f)
         lumi = 0.0f;
 
-    auto pixVal = static_cast<unsigned char>(lumi * 255.99f);
+    auto pixVal = static_cast<std::uint8_t>(lumi * 255.99f);
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
@@ -123,7 +123,7 @@ float relStarDensity(float eta)
     return ((std::log(rho2) + 4.0f * (1.0f - std::sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
 }
 
-void centerCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
+void centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 {
     /*! For reasons of speed, calculate central "cloud" texture only for
      *  8 bins of King_1962 concentration, c = CBin, XI(CBin), RRatio(CBin).
@@ -154,7 +154,7 @@ void centerCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
     pixel[0] = 255;
     pixel[1] = 255;
     pixel[2] = 255;
-    pixel[3] = static_cast<unsigned char>(relStarDensity(eta) * profile_2d * 255.99f);
+    pixel[3] = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
 void initGlobularData(celgl::VertexObject& vo,

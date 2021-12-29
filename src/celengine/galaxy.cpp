@@ -112,20 +112,20 @@ constexpr const GalaxyTypeName GalaxyTypeNames[] =
     { "E7",  GalaxyType::E7 },
 };
 
-void galaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+void galaxyTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 {
     float r = 0.9f - std::sqrt(u * u + v * v );
     if (r < 0)
         r = 0;
 
-    auto pixVal = static_cast<unsigned char>(r * 255.99f);
+    auto pixVal = static_cast<std::uint8_t>(r * 255.99f);
     pixel[0] = 255;//65;
     pixel[1] = 255;//64;
     pixel[2] = 255;//65;
     pixel[3] = pixVal;
 }
 
-void colorTextureEval(float u, float /*v*/, float /*w*/, unsigned char *pixel)
+void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
 {
     unsigned int i = static_cast<unsigned int>((static_cast<float>(u)*0.5f + 0.5f)*255.99f); // [-1, 1] -> [0, 255]
 
@@ -136,9 +136,9 @@ void colorTextureEval(float u, float /*v*/, float /*w*/, unsigned char *pixel)
     //convert Hue to RGB
     float r, g, b;
     DeepSkyObject::hsv2rgb(&r, &g, &b, hue, 0.20f, 1.0f);
-    pixel[0] = static_cast<unsigned char>(r * 255.99f);
-    pixel[1] = static_cast<unsigned char>(g * 255.99f);
-    pixel[2] = static_cast<unsigned char>(b * 255.99f);
+    pixel[0] = static_cast<std::uint8_t>(r * 255.99f);
+    pixel[1] = static_cast<std::uint8_t>(g * 255.99f);
+    pixel[2] = static_cast<std::uint8_t>(b * 255.99f);
 }
 
 struct GalaxyVertex
