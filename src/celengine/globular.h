@@ -21,25 +21,14 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celcompat/filesystem.h>
 #include "deepskyobj.h"
 #include "vertexobject.h"
 
+struct GlobularForm;
 struct Matrices;
 class Renderer;
 
-
-struct GBlob
-{
-    Eigen::Vector3f position;
-    unsigned int   colorIndex;
-    float          radius_2d;
-};
-
-struct GlobularForm
-{
-    std::vector<GBlob>* gblobs;
-    Eigen::Vector3f scale;
-};
 
 class Globular : public DeepSkyObject
 {
@@ -71,22 +60,13 @@ class Globular : public DeepSkyObject
                 const Matrices& m,
                 Renderer* r) override;
 
-    GlobularForm* getForm() const;
-
     std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
     const char* getObjTypeName() const override;
 
  private:
-    void renderGlobularPointSprites(const Eigen::Vector3f& offset,
-                                    const Eigen::Quaternionf& viewerOrientation,
-                                    float brightness,
-                                    float pixelSize,
-                                    const Matrices& m,
-                                    Renderer* r);
-
-   // Reference values ( = data base averages) of core radius, King concentration
-   // and mu25 isophote radius:
+    // Reference values ( = data base averages) of core radius, King concentration
+    // and mu25 isophote radius:
     static constexpr float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
 
     void recomputeTidalRadius();
