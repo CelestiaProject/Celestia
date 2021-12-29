@@ -54,9 +54,6 @@ jobs:
               -DENABLE_QT=OFF                \
               -DENABLE_FFMPEG=OFF            \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      env:
-        CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
-        CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
 
     - name: Build
       working-directory: ${{github.workspace}}/build
