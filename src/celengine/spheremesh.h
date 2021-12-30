@@ -10,10 +10,6 @@
 
 #pragma once
 
-// IMPORTANT: This file is a relic from the early days of Celestia.
-// Its sole function now is to handle the now-deprecated .cms mesh files;
-// it will eventually be removed from Celestia.
-
 #include <Eigen/Core>
 
 #include <celengine/dispmap.h>
@@ -25,17 +21,10 @@ class Mesh;
 
 /*! The SphereMesh class is used to generate displacement mapped
  *  spheres when loading the now-deprecated .cms geometry files.
- *  It remains in the Celestia code base for backward compatibility,
- *  and it's use is discouraged.
  */
 class SphereMesh
 {
 public:
-    SphereMesh(float radius, int _nRings, int _nSlices);
-    SphereMesh(const Eigen::Vector3f& size, int _nRings, int _nSlices);
-    SphereMesh(const Eigen::Vector3f& size,
-               const DisplacementMap& dispmap,
-               float height = 1.0f);
     SphereMesh(const Eigen::Vector3f& size,
                int _nRings, int _nSlices,
                DisplacementMapFunc func,

@@ -70,7 +70,6 @@ NoiseDisplacementFunc(float u, float v, void* info)
 }
 
 
-// TODO: The Celestia mesh format is deprecated
 std::unique_ptr<cmod::Model>
 LoadCelestiaMesh(const fs::path& filename)
 {
