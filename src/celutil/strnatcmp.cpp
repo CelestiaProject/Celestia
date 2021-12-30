@@ -58,7 +58,6 @@ static int right(const wchar_t *a, const wchar_t *b)
             return bias;
         }
     }
-    return 0;
 }
 
 
@@ -82,8 +81,6 @@ static int left(const wchar_t *a, const wchar_t *b)
         if (ca > cb)
             return +1;
     }
-
-    return 0;
 }
 
 static int strnatcmp0(const std::wstring &a, const std::wstring &b, bool fold_case)
@@ -132,7 +129,6 @@ static int strnatcmp0(const std::wstring &a, const std::wstring &b, bool fold_ca
         ai++;
         bi++;
     }
-    return 0;
 }
 
 static std::wstring utf8_to_wide(const std::string &s)
