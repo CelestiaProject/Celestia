@@ -12,22 +12,50 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <array>
+#include <cassert>
 #include <cmath>
-#include <iostream>
-#include "logger.h"
+#include <cstddef>
+#include <string_view>
+
 #include "bigfix.h"
+#include "logger.h"
+
+using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
 
-static const double POW2_31 = 2147483648.0;
-static const double POW2_32 = 4294967296.0;
-static const double POW2_64 = POW2_32 * POW2_32;
+namespace
+{
 
-static const double WORD0_FACTOR = 1.0 / POW2_64;
-static const double WORD1_FACTOR = 1.0 / POW2_32;
-static const double WORD2_FACTOR = 1.0;
-static const double WORD3_FACTOR = POW2_32;
+constexpr double POW2_31 = 0x1p+31; // 2^31
+constexpr double WORD0_FACTOR = 0x1p-64; // 2^-64
+constexpr double WORD1_FACTOR = 0x1p-32; // 2^-32
+constexpr double WORD2_FACTOR = 1.0;
+constexpr double WORD3_FACTOR = 0x1p+32; // 2^32
 
+constexpr std::string_view alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"sv;
+static_assert(alphabet.size() == 64, "Base64 decoder alphabet must be of length 64");
+
+constexpr std::uint8_t AsciiRange = 128;
+
+using DecoderArray = std::array<std::int8_t, AsciiRange>;
+
+DecoderArray createBase64Decoder()
+{
+    DecoderArray decoder;
+    decoder.fill(-1);
+    for (std::size_t i = 0; i < alphabet.size(); ++i)
+    {
+        std::uint8_t idx = static_cast<std::uint8_t>(alphabet[i]);
+        assert(idx < AsciiRange);
+        decoder[idx] = static_cast<std::int8_t>(i);
+    }
+
+    return decoder;
+}
+
+} // end unnamed namespace
 
 /*** Constructors ***/
 // Create a BigFix initialized to zero
@@ -37,13 +65,11 @@ BigFix::BigFix()
     lo = 0;
 }
 
-
-BigFix::BigFix(uint64_t i)
+BigFix::BigFix(std::uint64_t i)
 {
     hi = i;
     lo = 0;
 }
-
 
 BigFix::BigFix(double d)
 {
@@ -59,19 +85,19 @@ BigFix::BigFix(double d)
 
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
-    double e = floor(d * (1.0 / WORD3_FACTOR));
+    double e = std::floor(d * (1.0 / WORD3_FACTOR));
     if (e < POW2_31)
     {
-        auto w3 = (uint32_t) e;
+        auto w3 = static_cast<std::uint32_t>(e);
         d -= w3 * WORD3_FACTOR;
-        auto w2 = (uint32_t) (d * (1.0 / WORD2_FACTOR));
+        auto w2 = static_cast<std::uint32_t>(d * (1.0 / WORD2_FACTOR));
         d -= w2 * WORD2_FACTOR;
-        auto w1 = (uint32_t) (d * (1.0 / WORD1_FACTOR));
+        auto w1 = static_cast<std::uint32_t>(d * (1.0 / WORD1_FACTOR));
         d -= w1 * WORD1_FACTOR;
-        auto w0 = (uint32_t) (d * (1.0 / WORD0_FACTOR));
+        auto w0 = static_cast<std::uint32_t>(d * (1.0 / WORD0_FACTOR));
 
-        hi = ((uint64_t) w3 << 32) | w2;
-        lo = ((uint64_t) w1 << 32) | w0;
+        hi = (static_cast<std::uint64_t>(w3) << 32) | w2;
+        lo = (static_cast<std::uint64_t>(w1) << 32) | w0;
 
       if (isNegative)
           negate128(hi, lo);
@@ -85,14 +111,13 @@ BigFix::BigFix(double d)
     }
 }
 
-
 BigFix::operator double() const
 {
     // Handle negative values by inverting them before conversion,
     // then inverting the converted value.
     int sign = 1;
-    uint64_t l = lo;
-    uint64_t h = hi;
+    std::uint64_t l = lo;
+    std::uint64_t h = hi;
 
     if (isNegative())
     {
@@ -102,10 +127,10 @@ BigFix::operator double() const
 
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
-    uint32_t w0 = l & 0xffffffff;
-    uint32_t w1 = l >> 32;
-    uint32_t w2 = h & 0xffffffff;
-    uint32_t w3 = h >> 32;
+    std::uint32_t w0 = static_cast<std::uint32_t>(l);
+    std::uint32_t w1 = static_cast<std::uint32_t>(l >> 32);
+    std::uint32_t w2 = static_cast<std::uint32_t>(h);
+    std::uint32_t w3 = static_cast<std::uint32_t>(h >> 32);
     double d;
 
     d = (w0 * WORD0_FACTOR +
@@ -116,24 +141,20 @@ BigFix::operator double() const
     return d;
 }
 
-
 BigFix::operator float() const
 {
-    return (float) (double) *this;
+    return static_cast<float>(static_cast<double>(*this));
 }
-
 
 bool operator==(const BigFix& a, const BigFix& b)
 {
     return a.hi == b.hi && a.lo == b.lo;
 }
 
-
 bool operator!=(const BigFix& a, const BigFix& b)
 {
     return a.hi != b.hi || a.lo != b.lo;
 }
-
 
 bool operator<(const BigFix& a, const BigFix& b)
 {
@@ -144,12 +165,10 @@ bool operator<(const BigFix& a, const BigFix& b)
     return a.isNegative();
 }
 
-
 bool operator>(const BigFix& a, const BigFix& b)
 {
     return b < a;
 }
-
 
 // TODO: probably faster to do this by converting the double to fixed
 // point and using the fix*fix multiplication.
@@ -157,17 +176,16 @@ BigFix operator*(BigFix f, double d)
 {
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
-    uint32_t w0 = f.lo & 0xffffffff;
-    uint32_t w1 = f.lo >> 32;
-    uint32_t w2 = f.hi & 0xffffffff;
-    uint32_t w3 = f.hi >> 32;
+    std::uint32_t w0 = static_cast<std::uint32_t>(f.lo);
+    std::uint32_t w1 = static_cast<std::uint32_t>(f.lo >> 32);
+    std::uint32_t w2 = static_cast<std::uint32_t>(f.hi);
+    std::uint32_t w3 = static_cast<std::uint32_t>(f.hi >> 32);
 
     return BigFix(w0 * d * WORD0_FACTOR) +
            BigFix(w1 * d * WORD1_FACTOR) +
            BigFix(w2 * d * WORD2_FACTOR) +
            BigFix(w3 * d * WORD3_FACTOR);
 }
-
 
 /*! Multiply two BigFix values together. This function does not check for
  *  overflow. This is not a problem in Celestia, where it is used exclusively
@@ -177,57 +195,59 @@ BigFix operator*(const BigFix& a, const BigFix& b)
 {
     // Multiply two fixed point values together using partial products.
 
-    uint64_t ah = a.hi;
-    uint64_t al = a.lo;
+    std::uint64_t ah = a.hi;
+    std::uint64_t al = a.lo;
     if (a.isNegative())
         BigFix::negate128(ah, al);
 
-    uint64_t bh = b.hi;
-    uint64_t bl = b.lo;
+    std::uint64_t bh = b.hi;
+    std::uint64_t bl = b.lo;
     if (b.isNegative())
         BigFix::negate128(bh, bl);
 
     // Break the values down into 32-bit words so that the partial products
     // will fit into 64-bit words.
-    uint64_t aw[4];
-    aw[0] = al & 0xffffffff;
+    std::uint64_t aw[4];
+    aw[0] = al & UINT64_C(0xffffffff);
     aw[1] = al >> 32;
-    aw[2] = ah & 0xffffffff;
+    aw[2] = ah & UINT64_C(0xffffffff);
     aw[3] = ah >> 32;
 
-    uint64_t bw[4];
-    bw[0] = bl & 0xffffffff;
+    std::uint64_t bw[4];
+    bw[0] = bl & UINT64_C(0xffffffff);
     bw[1] = bl >> 32;
-    bw[2] = bh & 0xffffffff;
+    bw[2] = bh & UINT64_C(0xffffffff);
     bw[3] = bh >> 32;
 
     // Set the high and low non-zero words; this will
     // speed up multiplicatoin of integers and values
     // less than one.
-    uint32_t hiworda = ah == 0 ? 1 : 3;
-    uint32_t loworda = al == 0 ? 2 : 0;
-    uint32_t hiwordb = bh == 0 ? 1 : 3;
-    uint32_t lowordb = bl == 0 ? 2 : 0;
+    std::uint32_t hiworda = ah == 0 ? 1 : 3;
+    std::uint32_t loworda = al == 0 ? 2 : 0;
+    std::uint32_t hiwordb = bh == 0 ? 1 : 3;
+    std::uint32_t lowordb = bl == 0 ? 2 : 0;
 
-    uint32_t result[8] = {0};
+    std::uint32_t result[8] = {0};
 
-    for (uint32_t i = lowordb; i <= hiwordb; i++)
+    for (std::uint32_t i = lowordb; i <= hiwordb; i++)
     {
-        uint32_t carry = 0;
+        std::uint32_t carry = 0;
 
         unsigned int j;
         for (j = loworda; j <= hiworda; j++)
         {
-            uint64_t partialProd = aw[j] * bw[i];
+            std::uint64_t partialProd = aw[j] * bw[i];
 
             // This sum will never overflow. Let N = 2^32;
             // the max value of the partial product is (N-1)^2.
             // The max values of result[i + j] and carry are
             // N-1. Thus the max value of the sum is
             // (N-1)^2 + 2(N-1) = (N^2 - 2N + 1) + 2(N-1) = N^2-1
-            uint64_t q = (uint64_t) result[i + j] + partialProd + (uint64_t) carry;
-            carry = (uint32_t) (q >> 32);
-            result[i + j] = (uint32_t) (q & 0xffffffff);
+            std::uint64_t q = static_cast<std::uint64_t>(result[i + j])
+                            + partialProd
+                            + static_cast<std::uint64_t>(carry);
+            carry = static_cast<std::uint32_t>(q >> 32);
+            result[i + j] = static_cast<std::uint32_t>(q);
         }
 
         result[i + j] = carry;
@@ -236,87 +256,43 @@ BigFix operator*(const BigFix& a, const BigFix& b)
     // TODO: check for overflow
     // (as simple as result[0] != 0 || result[1] != 0 || highbit(result[2]))
     BigFix c;
-    c.lo = (uint64_t) result[2] + ((uint64_t) result[3] << 32);
-    c.hi = (uint64_t) result[4] + ((uint64_t) result[5] << 32);
+    c.lo = static_cast<std::uint64_t>(result[2]) + (static_cast<std::uint64_t>(result[3]) << 32);
+    c.hi = static_cast<std::uint64_t>(result[4]) + (static_cast<std::uint64_t>(result[5]) << 32);
 
     bool resultNegative = a.isNegative() != b.isNegative();
     return resultNegative ?  -c : c;
 }
 
-
 int BigFix::sign() const
 {
-
     if (hi == 0 && lo == 0)
         return 0;
     return isNegative() ? -1 : 1;
 }
 
-
-// For debugging
-void BigFix::dump()
+BigFix BigFix::fromBase64(std::string_view val)
 {
-    GetLogger()->info(
-            "{:08x} {:08x} {:08x} {:08x}",
-            (uint32_t) (hi >> 32),
-            (uint32_t) (hi & 0xffffffff),
-            (uint32_t) (lo >> 32),
-            (uint32_t) (lo & 0xffffffff));
-}
+    static DecoderArray decoder = createBase64Decoder();
 
-
-#if 0
-int main(int argc, char* argv[])
-{
-    if (argc != 3)
-        return 1;
-
-    double a = 0.0;
-    if (sscanf(argv[1], "%lf", &a) != 1)
-        return 1;
-
-    double b = 0.0;
-    if (sscanf(argv[2], "%lf", &b) != 1)
-        return 1;
-
-    GetLogger()->info("    sum:\n{}\n{}\n", a + b, (double) (BigFix(a) + BigFix(b)));
-    GetLogger()->info("   diff:\n{}\n{}\n", a - b, (double) (BigFix(a) - BigFix(b)));
-    GetLogger()->info("product:\n{}\n{}\n", a * b, (double) (BigFix(a) * BigFix(b)));
-    GetLogger()->info("     lt: {} {}\n", a < b, BigFix(a) < BigFix(b));
-
-    return 0;
-}
-#endif
-
-static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-BigFix::BigFix(const std::string& val)
-{
-    static char inalphabet[256] = {0}, decoder[256] = {0};
-    int i, bits, char_count;
-
-    for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
-    {
-        inalphabet[alphabet[i]] = 1;
-        decoder[alphabet[i]] = i;
-    }
-
-    uint16_t n[8] = {0};
+    std::uint16_t n[8] = {0};
 
     // Code from original BigFix class to convert base64 string into
     // array of 8 16-bit values.
-    char_count = 0;
-    bits = 0;
+    int char_count = 0;
+    int bits = 0;
 
-    i = 0;
+    int i = 0;
 
     for (unsigned char c : val)
     {
         if (c == '=')
             break;
-        if (!inalphabet[c])
+        if (c >= AsciiRange)
             continue;
-        bits += decoder[c];
+        std::int8_t decoded = decoder[c];
+        if (decoded < 0)
+            continue;
+        bits += decoded;
         char_count++;
         if (char_count == 4)
         {
@@ -359,34 +335,35 @@ BigFix::BigFix(const std::string& val)
         n[i/2] >>= 8;
 
     // Now, convert the 8 16-bit values to a 2 64-bit values
-    lo = ((uint64_t) n[0] |
-          ((uint64_t) n[1] << 16) |
-          ((uint64_t) n[2] << 32) |
-          ((uint64_t) n[3] << 48));
-    hi = ((uint64_t) n[4] |
-          ((uint64_t) n[5] << 16) |
-          ((uint64_t) n[6] << 32) |
-          ((uint64_t) n[7] << 48));
+    BigFix result;
+    result.lo = (static_cast<std::uint64_t>(n[0])
+                 | (static_cast<std::uint64_t>(n[1]) << 16)
+                 | (static_cast<std::uint64_t>(n[2]) << 32)
+                 | (static_cast<std::uint64_t>(n[3]) << 48));
+    result.hi = (static_cast<std::uint64_t>(n[4])
+                 | (static_cast<std::uint64_t>(n[5]) << 16)
+                 | (static_cast<std::uint64_t>(n[6]) << 32)
+                 | (static_cast<std::uint64_t>(n[7]) << 48));
+    return result;
 }
 
-
-std::string BigFix::toString()
+std::string BigFix::toBase64() const
 {
     // Old BigFix class used 8 16-bit words. The bulk of this function
     // is copied from that class, so first we'll convert from two
     // 64-bit words to 8 16-bit words so that the old code can work
     // as-is.
-    uint16_t n[8];
+    std::uint16_t n[8] {
+        static_cast<std::uint16_t>(lo),
+        static_cast<std::uint16_t>(lo >> 16),
+        static_cast<std::uint16_t>(lo >> 32),
+        static_cast<std::uint16_t>(lo >> 48),
 
-    n[0] = lo & 0xffff;
-    n[1] = (lo >> 16) & 0xffff;
-    n[2] = (lo >> 32) & 0xffff;
-    n[3] = (lo >> 48) & 0xffff;
-
-    n[4] = hi & 0xffff;
-    n[5] = (hi >> 16) & 0xffff;
-    n[6] = (hi >> 32) & 0xffff;
-    n[7] = (hi >> 48) & 0xffff;
+        static_cast<std::uint16_t>(hi),
+        static_cast<std::uint16_t>(hi >> 16),
+        static_cast<std::uint16_t>(hi >> 32),
+        static_cast<std::uint16_t>(hi >> 48),
+    };
 
     // Conversion using code from the original BigFix class.
     std::string encoded;

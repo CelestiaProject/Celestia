@@ -278,7 +278,10 @@ Command* CommandParser::parseCommand()
             paramList->getNumber("oy", oy);
             paramList->getNumber("oz", oz);
             Eigen::Quaterniond orientation(ow, ox, oy, oz);
-            cmd = new CommandGotoLocation(t, Eigen::Vector3d((double)BigFix(x), (double)BigFix(y), (double)BigFix(z)),
+            cmd = new CommandGotoLocation(t,
+                                          Eigen::Vector3d(static_cast<double>(BigFix::fromBase64(x)),
+                                                          static_cast<double>(BigFix::fromBase64(y)),
+                                                          static_cast<double>(BigFix::fromBase64(z))),
                                           orientation);
         }
     }
@@ -473,7 +476,9 @@ Command* CommandParser::parseCommand()
             paramList->getString("x", x);
             paramList->getString("y", y);
             paramList->getString("z", z);
-            cmd = new CommandSetPosition(UniversalCoord(BigFix(x), BigFix(y), BigFix(z)));
+            cmd = new CommandSetPosition(UniversalCoord(BigFix::fromBase64(x),
+                                                        BigFix::fromBase64(y),
+                                                        BigFix::fromBase64(z)));
         }
     }
     else if (commandName == "setorientation")

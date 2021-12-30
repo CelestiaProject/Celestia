@@ -12,11 +12,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_BIGFIX64_H_
-#define _CELUTIL_BIGFIX64_H_
+#pragma once
 
-#include <string>
+#include <cstdint>
 #include <limits>
+#include <string>
+#include <string_view>
 
 /*! 64.64 signed fixed point numbers.
  */
@@ -25,12 +26,11 @@ class BigFix
 {
  public:
     BigFix();
-    BigFix(uint64_t);
-    BigFix(double);
-    BigFix(const std::string&);
+    explicit BigFix(std::uint64_t);
+    explicit BigFix(double);
 
-    operator double() const;
-    operator float() const;
+    explicit operator double() const;
+    explicit operator float() const;
 
     BigFix operator-() const;
     BigFix operator+=(const BigFix&);
@@ -46,26 +46,23 @@ class BigFix
     friend bool operator>(const BigFix&, const BigFix&);
 
     int sign() const;
-
     bool isOutOfBounds() const;
+    std::string toBase64() const;
 
-    // for debugging
-    void dump();
-    std::string toString();
+    static BigFix fromBase64(std::string_view);
 
  private:
     bool isNegative() const
     {
-        return hi > static_cast<uint64_t>(std::numeric_limits<int64_t>::max());
+        return hi > static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max());
     }
 
-    static void negate128(uint64_t& hi, uint64_t& lo);
+    static void negate128(std::uint64_t& hi, std::uint64_t& lo);
 
  private:
-    uint64_t hi;
-    uint64_t lo;
+    std::uint64_t hi;
+    std::uint64_t lo;
 };
-
 
 // Checks whether the coordinate exceeds a magnitude of 2^62 microlightyears,
 // which represents the bounds of the simulated volume.
@@ -76,10 +73,9 @@ inline bool BigFix::isOutOfBounds() const
     return (hi > hi_threshold && hi < lo_threshold);
 }
 
-
 // Compute the additive inverse of a 128-bit twos complement value
 // represented by two 64-bit values.
-inline void BigFix::negate128(uint64_t& hi, uint64_t& lo)
+inline void BigFix::negate128(std::uint64_t& hi, std::uint64_t& lo)
 {
     // For a twos-complement number, -n = ~n + 1
     hi = ~hi;
@@ -98,7 +94,6 @@ inline BigFix BigFix::operator-() const
     return result;
 }
 
-
 inline BigFix BigFix::operator+=(const BigFix& a)
 {
     lo += a.lo;
@@ -111,7 +106,6 @@ inline BigFix BigFix::operator+=(const BigFix& a)
     return *this;
 }
 
-
 inline BigFix BigFix::operator-=(const BigFix& a)
 {
     lo -= a.lo;
@@ -123,7 +117,6 @@ inline BigFix BigFix::operator-=(const BigFix& a)
 
     return *this;
 }
-
 
 inline BigFix operator+(const BigFix& a, const BigFix& b)
 {
@@ -139,7 +132,6 @@ inline BigFix operator+(const BigFix& a, const BigFix& b)
     return c;
 }
 
-
 inline BigFix operator-(const BigFix& a, const BigFix& b)
 {
     BigFix c;
@@ -153,5 +145,3 @@ inline BigFix operator-(const BigFix& a, const BigFix& b)
 
     return c;
 }
-
-#endif // _CELUTIL_BIGFIX64_H_
