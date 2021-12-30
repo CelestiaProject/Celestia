@@ -15,8 +15,6 @@ set(CELUTIL_SOURCES
   fsutils.h
   logger.cpp
   logger.h
-  #memorypool.cpp
-  #memorypool.h
   reshandle.h
   resmanager.h
   stringutils.cpp
