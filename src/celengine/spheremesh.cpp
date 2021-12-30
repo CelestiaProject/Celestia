@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <cstring>
 #include <utility>
-#include <vector>
 
 #include <celmath/mathlib.h>
+#include <celmath/randutils.h>
 #include <celmodel/mesh.h>
 
 #include "spheremesh.h"
@@ -28,76 +28,86 @@ constexpr const int MinSlices = 3;
 
 } // end unnamed namespace
 
+float SphereMeshParameters::value(float u, float v) const
+{
+    float theta = u * static_cast<float>(PI) * 2;
+    float phi = (v - 0.5f) * static_cast<float>(PI);
+
+    Eigen::Vector3f p = Eigen::Vector3f(std::cos(phi) * std::cos(theta),
+                                        std::sin(phi),
+                                        std::cos(phi) * std::sin(theta))
+                      + offset;
+    return celmath::fractalsum(p, octaves) * featureHeight;
+}
+
 SphereMesh::SphereMesh(const Eigen::Vector3f& size,
                        int _nRings, int _nSlices,
-                       DisplacementMapFunc func,
-                       void* info)
+                       const SphereMeshParameters& params) :
+    nRings(std::max(_nRings, MinRings)),
+    nSlices(std::max(_nSlices, MinSlices)),
+    nVertices(nRings * (nSlices + 1))
 {
-    createSphere(1.0f, std::max(MinRings, _nRings), std::max(MinSlices, _nSlices));
+    createSphere();
     scale(size);
-    displace(func, info);
+    displace(params);
     generateNormals();
     fixNormals();
 }
 
-SphereMesh::~SphereMesh()
+void SphereMesh::createSphere()
 {
-    delete[] vertices;
-    delete[] normals;
-    delete[] texCoords;
-    delete[] indices;
-    delete[] tangents;
-}
+    vertices.reserve(nVertices);
+    normals.reserve(nVertices);
+    texCoords.reserve(nVertices);
 
-void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
-{
-    nRings = _nRings;
-    nSlices = _nSlices;
-    nVertices = nRings * (nSlices + 1);
-    vertices = new float[nVertices * 3];
-    normals = new float[nVertices * 3];
-    texCoords = new float[nVertices * 2];
-    nIndices = (nRings - 1) * (nSlices + 1) * 2;
-    indices = new unsigned short[nIndices];
-    tangents = new float[nVertices * 3];
+    auto nRings1f = static_cast<float>(nRings - 1);
+    auto nSlicesf = static_cast<float>(nSlices);
 
-    int i;
-    for (i = 0; i < nRings; i++)
+    for (int i = 0; i < nRings; i++)
     {
         float phi = (static_cast<float>(i) / static_cast<float>(nRings - 1) - 0.5f) * static_cast<float>(PI);
         for (int j = 0; j <= nSlices; j++)
         {
             float theta = static_cast<float>(j) / static_cast<float>(nSlices) * static_cast<float>(PI * 2.0);
-            int n = i * (nSlices + 1) + j;
             auto x = std::cos(phi) * std::cos(theta);
             auto y = std::sin(phi);
             auto z = std::cos(phi) * std::sin(theta);
-            vertices[n * 3]      = x * radius;
-            vertices[n * 3 + 1]  = y * radius;
-            vertices[n * 3 + 2]  = z * radius;
-            normals[n * 3]       = x;
-            normals[n * 3 + 1]   = y;
-            normals[n * 3 + 2]   = z;
-            texCoords[n * 2]     = 1.0f - static_cast<float>(j) / static_cast<float>(nSlices);
-            texCoords[n * 2 + 1] = 1.0f - static_cast<float>(i) / static_cast<float>(nRings - 1);
-
-            // Compute the tangent--required for bump mapping
-            auto tx = std::sin(phi) * std::sin(theta);
-            auto ty = -std::cos(phi);
-            auto tz = std::sin(phi) * std::cos(theta);
-            tangents[n * 3]      = tx;
-            tangents[n * 3 + 1]  = ty;
-            tangents[n * 3 + 2]  = tz;
+            vertices.emplace_back(x, y, z);
+            normals.emplace_back(x, y, z);
+            texCoords.emplace_back(1.0f - static_cast<float>(j) / nSlicesf,
+                                   1.0f - static_cast<float>(i) / nRings1f);
         }
     }
+}
 
-    for (i = 0; i < nRings - 1; i++)
+void SphereMesh::scale(const Eigen::Vector3f& s)
+{
+    for (Eigen::Vector3f& vertex : vertices)
     {
+        vertex = vertex.cwiseProduct(s);
+    }
+
+    // TODO: Make a fast special case for uniform scale factors, where
+    // renormalization is not required.
+    Eigen::Vector3f is = s.cwiseInverse();
+    for (Eigen::Vector3f& normal : normals)
+    {
+        normal = normal.cwiseProduct(is).normalized();
+    }
+}
+
+void SphereMesh::displace(const SphereMeshParameters& params)
+{
+    auto nRings1f = static_cast<float>(nRings - 1);
+    auto nSlicesf = static_cast<float>(nSlices);
+    for (int i = 0; i < nRings; i++)
+    {
+        float v = static_cast<float>(i) / nRings1f;
         for (int j = 0; j <= nSlices; j++)
         {
+            float u = static_cast<float>(j) / nSlicesf;
             int n = i * (nSlices + 1) + j;
-            indices[n * 2 + 0] = i * (nSlices + 1) + j;
-            indices[n * 2 + 1] = (i + 1) * (nSlices + 1) + j;
+            vertices[n] += normals[n] * params.value(u, v);
         }
     }
 }
@@ -106,33 +116,33 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 void SphereMesh::generateNormals()
 {
     int nQuads = nSlices * (nRings - 1);
-    Eigen::Vector3f* faceNormals = new Eigen::Vector3f[nQuads];
-    int i;
+    std::vector<Eigen::Vector3f> faceNormals;
+    faceNormals.reserve(nQuads);
 
     // Compute face normals for the mesh
-    for (i = 0; i < nRings - 1; i++)
+    for (int i = 0; i < nRings - 1; i++)
     {
         for (int j = 0; j < nSlices; j++)
         {
-            float* p0 = vertices + (i * (nSlices + 1) + j) * 3;
-            float* p1 = vertices + ((i + 1) * (nSlices + 1) + j) * 3;
-            float* p2 = vertices + ((i + 1) * (nSlices + 1) + j + 1) * 3;
-            float* p3 = vertices + (i * (nSlices + 1) + j + 1) * 3;
+            const Eigen::Vector3f& p0 = vertices[i * (nSlices + 1) + j];
+            const Eigen::Vector3f& p1 = vertices[(i + 1) * (nSlices + 1) + j];
+            const Eigen::Vector3f& p2 = vertices[(i + 1) * (nSlices + 1) + j + 1];
+            const Eigen::Vector3f& p3 = vertices[i * (nSlices + 1) + j + 1];
 
             // Compute the face normal.  Watch out for degenerate (zero-length)
             // edges.  If there are two degenerate edges, the entire face must
             // be degenerate and we'll handle that later
-            Eigen::Vector3f v0 = Eigen::Map<Eigen::Vector3f>(p1) - Eigen::Map<Eigen::Vector3f>(p0);
-            Eigen::Vector3f v1 = Eigen::Map<Eigen::Vector3f>(p2) - Eigen::Map<Eigen::Vector3f>(p1);
+            Eigen::Vector3f v0 = p1 - p0;
+            Eigen::Vector3f v1 = p2 - p1;
             if (v0.norm() < 1e-6f)
             {
-                v0 = Eigen::Map<Eigen::Vector3f>(p2) - Eigen::Map<Eigen::Vector3f>(p1);
-                v1 = Eigen::Map<Eigen::Vector3f>(p3) - Eigen::Map<Eigen::Vector3f>(p2);
+                v0 = p2 - p1;
+                v1 = p3 - p2;
             }
             else if (v1.norm() < 1e-6f)
             {
-                v0 = Eigen::Map<Eigen::Vector3f>(p3) - Eigen::Map<Eigen::Vector3f>(p2);
-                v1 = Eigen::Map<Eigen::Vector3f>(p0) - Eigen::Map<Eigen::Vector3f>(p3);
+                v0 = p3 - p2;
+                v1 = p0 - p3;
             }
 
             Eigen::Vector3f faceNormal = v0.cross(v1);
@@ -140,91 +150,50 @@ void SphereMesh::generateNormals()
             if (length != 0)
                 faceNormal *= (1 / length);
 
-            faceNormals[i * nSlices + j] = faceNormal;
+            faceNormals.push_back(faceNormal);
         }
     }
 
-    auto* faceCounts = new int[nVertices];
-    for (i = 0; i < nVertices; i++)
-    {
-        faceCounts[i] = 0;
-        normals[i * 3] = 0;
-        normals[i * 3 + 1] = 0;
-        normals[i * 3 + 2] = 0;
-    }
-
-    for (i = 1; i < nRings - 1; i++)
+    std::vector<int> faceCounts(nVertices, 4);
+    for (int i = 1; i < nRings - 1; i++)
     {
         for (int j = 0; j <= nSlices; j++)
         {
-            int vertex = i * (nSlices + 1) + j;
-            faceCounts[vertex] = 4;
+            int n = i * (nSlices + 1) + j;
 
-            int face = (i - 1) * nSlices + j % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
-            face = (i - 1) * nSlices + (j + nSlices - 1) % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
-            face = i * nSlices + (j + nSlices - 1) % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
-            face = i * nSlices + j % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
+            normals[n] = faceNormals[(i - 1) * nSlices + j % nSlices]
+                       + faceNormals[(i - 1) * nSlices + (j + nSlices - 1) % nSlices]
+                       + faceNormals[i * nSlices + (j + nSlices - 1) % nSlices]
+                       + faceNormals[i * nSlices + j % nSlices];
         }
     }
 
     // Compute normals at the poles
-    for (i = 0; i <= nSlices; i++)
+    for (int i = 0; i <= nSlices; i++)
     {
         int vertex = i;
-        int j;
         faceCounts[vertex] = nSlices;
-        for (j = 0; j < nSlices; j++)
+        normals[vertex] = Eigen::Vector3f::Zero();
+        for (int j = 0; j < nSlices; j++)
         {
             int face = j;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
+            normals[vertex] += faceNormals[face];
         }
 
-        vertex = (nRings - 1) * (nSlices + 1) + i;
+        vertex = nVertices - nSlices - 1 + i;
         faceCounts[vertex] = nSlices;
-        for (j = 0; j < nSlices; j++)
+        normals[vertex] = Eigen::Vector3f::Zero();
+        for (int j = 0; j < nSlices; j++)
         {
             int face = nQuads - j - 1;
-            normals[vertex * 3]     += faceNormals[face].x();
-            normals[vertex * 3 + 1] += faceNormals[face].y();
-            normals[vertex * 3 + 2] += faceNormals[face].z();
+            normals[vertex] += faceNormals[face];
         }
     }
 
-    for (i = 0; i < nVertices; i++)
+    for (Eigen::Vector3f& normal : normals)
     {
-        if (faceCounts[i] > 0)
-        {
-            float s = 1.0f / static_cast<float>(faceCounts[i]);
-            float nx = normals[i * 3] * s;
-            float ny = normals[i * 3 + 1] * s;
-            float nz = normals[i * 3 + 2] * s;
-            auto length = std::sqrt(nx * nx + ny * ny + nz * nz);
-            if (length > 0)
-            {
-                length = 1 / length;
-                normals[i * 3]     = nx * length;
-                normals[i * 3 + 1] = ny * length;
-                normals[i * 3 + 2] = nz * length;
-            }
-        }
+        normal.normalize();
     }
-
-    delete[] faceCounts;
-    delete[] faceNormals;
 }
 
 // Fix up the normals along the seam at longitude zero
@@ -232,85 +201,11 @@ void SphereMesh::fixNormals()
 {
     for (int i = 0; i < nRings; i++)
     {
-        float* v0 = normals + (i * (nSlices + 1)) * 3;
-        float* v1 = normals + ((i + 1) * (nSlices + 1) - 1) * 3;
-        Eigen::Map<Eigen::Vector3f> n0(v0);
-        Eigen::Map<Eigen::Vector3f> n1(v1);
-        Eigen::Vector3f normal = n0 + n1;
-        normal.normalize();
-        v0[0] = normal.x();
-        v0[1] = normal.y();
-        v0[2] = normal.z();
-        v1[0] = normal.x();
-        v1[1] = normal.y();
-        v1[2] = normal.z();
-    }
-}
-
-void SphereMesh::scale(const Eigen::Vector3f& s)
-{
-    int i;
-    for (i = 0; i < nVertices; i++)
-    {
-        vertices[i * 3]     *= s.x();
-        vertices[i * 3 + 1] *= s.y();
-        vertices[i * 3 + 2] *= s.z();
-    }
-
-    // Modify the normals
-    if (normals != nullptr)
-    {
-        // TODO: Make a fast special case for uniform scale factors, where
-        // renormalization is not required.
-        Eigen::Vector3f is = s.cwiseInverse();
-        for (i = 0; i < nVertices; i++)
-        {
-            int n = i * 3;
-            Eigen::Vector3f normal = Eigen::Map<Eigen::Vector3f>(normals).cwiseProduct(is);
-            normal.normalize();
-            normals[n]     = normal.x();
-            normals[n + 1] = normal.y();
-            normals[n + 2] = normal.z();
-        }
-    }
-}
-
-void SphereMesh::displace(const DisplacementMap& dispmap,
-                          float height)
-{
-    for (int i = 0; i < nRings; i++)
-    {
-        for (int j = 0; j <= nSlices; j++)
-        {
-            int n = (i * (nSlices + 1) + j) * 3;
-
-            Eigen::Map<Eigen::Vector3f> normal(normals);
-
-            int k = (j == nSlices) ? 0 : j;
-            Eigen::Vector3f v = normal * dispmap.getDisplacement(k, i) * height;
-            vertices[n]     += v.x();
-            vertices[n + 1] += v.y();
-            vertices[n + 2] += v.z();
-        }
-    }
-}
-
-
-void SphereMesh::displace(DisplacementMapFunc func, void* info)
-{
-    for (int i = 0; i < nRings; i++)
-    {
-        float v = (float) i / (float) (nRings - 1);
-        for (int j = 0; j <= nSlices; j++)
-        {
-            float u = (float) j / (float) nSlices;
-            int n = (i * (nSlices + 1) + j) * 3;
-            Eigen::Map<Eigen::Vector3f> normal(normals);
-            Eigen::Vector3f vert = normal * func(u, v, info);
-            vertices[n]     += vert.x();
-            vertices[n + 1] += vert.y();
-            vertices[n + 2] += vert.z();
-        }
+        int idx0 = i * (nSlices + 1);
+        int idx1 = (i + 1) * (nSlices + 1) - 1;
+        Eigen::Vector3f normal = (normals[idx0] + normals[idx1]).normalized();
+        normals[idx0] = normal;
+        normals[idx1] = normal;
     }
 }
 
@@ -342,9 +237,9 @@ cmod::Mesh SphereMesh::convertToMesh() const
     for (int i = 0; i < nVertices; i++)
     {
         cmod::VWord* vertex = vertexData.data() + stride * i;
-        std::memcpy(vertex, vertices + (i * 3), sizeof(float) * 3);
-        std::memcpy(vertex + 3, normals + (i * 3), sizeof(float) * 3);
-        std::memcpy(vertex + 6, texCoords + (i * 2), sizeof(float) * 2);
+        std::memcpy(vertex, vertices[i].data(), sizeof(Eigen::Vector3f));
+        std::memcpy(vertex + 3, normals[i].data(), sizeof(Eigen::Vector3f));
+        std::memcpy(vertex + 6, texCoords[i].data(), sizeof(Eigen::Vector2f));
     }
 
     mesh.setVertices(nVertices, std::move(vertexData));

@@ -26,8 +26,6 @@ set(CELENGINE_SOURCES
   curveplot.h
   deepskyobj.cpp
   deepskyobj.h
-  dispmap.cpp
-  dispmap.h
   dsodb.cpp
   dsodb.h
   dsoname.cpp
