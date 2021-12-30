@@ -60,8 +60,9 @@ fs::path LocaleFilename(const fs::path &p)
 
 fs::path PathExp(const fs::path& filename)
 {
-#ifndef PORTABLE_BUILD
-#ifdef _WIN32
+#ifdef PORTABLE_BUILD
+    return filename;
+#elif defined(_WIN32)
     auto str = filename.native();
     if (str[0] == '~')
     {
@@ -96,9 +97,7 @@ fs::path PathExp(const fs::path& filename)
     fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
-#endif
-    return filename;
-#else // !PORTABLE_BUILD
+#else
     return filename;
 #endif
 }
