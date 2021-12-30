@@ -1702,7 +1702,7 @@ static int celestia_newposition(lua_State* l)
         }
         else if (lua_isstring(l, i+2))
         {
-            components[i] = BigFix(string(lua_tostring(l, i+2)));
+            components[i] = BigFix::fromBase64(lua_tostring(l, i+2));
         }
         else
         {

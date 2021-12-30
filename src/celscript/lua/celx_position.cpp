@@ -63,11 +63,11 @@ static int position_get(lua_State* l)
     string key = celx.safeGetString(2, AllErrors, "Invalid key in position-access");
     double value = 0.0;
     if (key == "x")
-        value = uc->x;
+        value = static_cast<double>(uc->x);
     else if (key == "y")
-        value = uc->y;
+        value = static_cast<double>(uc->y);
     else if (key == "z")
-        value = uc->z;
+        value = static_cast<double>(uc->z);
     else
     {
         if (!lua_getmetatable(l, 1))
@@ -94,11 +94,11 @@ static int position_set(lua_State* l)
     string key = celx.safeGetString(2, AllErrors, "Invalid key in position-access");
     double value = celx.safeGetNumber(3, AllErrors, "Position components must be numbers");
     if (key == "x")
-        uc->x = value;
+        uc->x = BigFix(value);
     else if (key == "y")
-        uc->y = value;
+        uc->y = BigFix(value);
     else if (key == "z")
-        uc->z = value;
+        uc->z = BigFix(value);
     else
     {
         celx.doError("Invalid key in position-access");
@@ -115,7 +115,7 @@ static int position_getx(lua_State* l)
 
     UniversalCoord* uc = this_position(l);
     lua_Number x;
-    x = uc->x;
+    x = static_cast<double>(uc->x);
     lua_pushnumber(l, x);
 
     return 1;
@@ -130,7 +130,7 @@ static int position_gety(lua_State* l)
 
     UniversalCoord* uc = this_position(l);
     lua_Number y;
-    y = uc->y;
+    y = static_cast<double>(uc->y);
     lua_pushnumber(l, y);
 
     return 1;
@@ -145,7 +145,7 @@ static int position_getz(lua_State* l)
 
     UniversalCoord* uc = this_position(l);
     lua_Number z;
-    z = uc->z;
+    z = static_cast<double>(uc->z);
     lua_pushnumber(l, z);
 
     return 1;

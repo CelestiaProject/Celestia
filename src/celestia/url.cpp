@@ -131,9 +131,9 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     // observer position
     u << fmt::format("?x={}&y={}&z={}",
-                     m_state.m_observerPosition.x.toString(),
-                     m_state.m_observerPosition.y.toString(),
-                     m_state.m_observerPosition.z.toString());
+                     m_state.m_observerPosition.x.toBase64(),
+                     m_state.m_observerPosition.y.toBase64(),
+                     m_state.m_observerPosition.z.toBase64());
 
     // observer orientation
     u << fmt::format("&ow={}&ox={}&oy={}&oz={}",
@@ -553,9 +553,9 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
 
     if (params.count("x") == 0 || params.count("y") == 0 || params.count("z") == 0)
         return false;
-    m_state.m_observerPosition = UniversalCoord(BigFix(params["x"]),
-                                                BigFix(params["y"]),
-                                                BigFix(params["z"]));
+    m_state.m_observerPosition = UniversalCoord(BigFix::fromBase64(params["x"]),
+                                                BigFix::fromBase64(params["y"]),
+                                                BigFix::fromBase64(params["z"]));
 
     float ow, ox, oy, oz;
     if (to_number(params["ow"], ow) &&

@@ -57,7 +57,7 @@ static UniversalCoord rotate(const UniversalCoord& uc, const Quaterniond& q)
 UniversalCoord
 ReferenceFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
-    UniversalCoord uc1 = uc.difference(centerObject.getPosition(tjd));
+    UniversalCoord uc1 = uc - centerObject.getPosition(tjd);
     return rotate(uc1, getOrientation(tjd).conjugate());
 }
 

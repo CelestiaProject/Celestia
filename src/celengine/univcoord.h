@@ -12,12 +12,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_UNIVCOORD_H_
-#define _CELENGINE_UNIVCOORD_H_
+#pragma once
+
+#include <Eigen/Core>
 
 #include <celutil/bigfix.h>
+
 #include "astro.h"
-#include <Eigen/Core>
 
 
 class UniversalCoord
@@ -43,6 +44,7 @@ class UniversalCoord
     }
 
     friend UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
+    friend UniversalCoord operator-(const UniversalCoord&, const UniversalCoord&);
 
     /** Compute a universal coordinate that is the sum of this coordinate and
       * an offset in kilometers.
@@ -71,7 +73,9 @@ class UniversalCoord
       */
     Eigen::Vector3d offsetFromKm(const UniversalCoord& uc) const
     {
-        return Eigen::Vector3d((double) (x - uc.x), (double) (y - uc.y), (double) (z - uc.z)) * astro::microLightYearsToKilometers(1.0);
+        return Eigen::Vector3d(static_cast<double>(x - uc.x),
+                               static_cast<double>(y - uc.y),
+                               static_cast<double>(z - uc.z)) * astro::microLightYearsToKilometers(1.0);
     }
 
     /** Get the offset in light years of this coordinate from a point (also with
@@ -81,9 +85,9 @@ class UniversalCoord
     Eigen::Vector3f offsetFromLy(const Eigen::Vector3f& v) const
     {
         Eigen::Vector3f vUly = v * 1.0e6f;
-        Eigen::Vector3f offsetUly((float) (x - (BigFix) vUly.x()),
-                                  (float) (y - (BigFix) vUly.y()),
-                                  (float) (z - (BigFix) vUly.z()));
+        Eigen::Vector3f offsetUly(static_cast<float>(x - BigFix(vUly.x())),
+                                  static_cast<float>(y - BigFix(vUly.y())),
+                                  static_cast<float>(z - BigFix(vUly.z())));
         return offsetUly * 1.0e-6f;
     }
 
@@ -97,7 +101,9 @@ class UniversalCoord
       */
     Eigen::Vector3d offsetFromUly(const UniversalCoord& uc) const
     {
-        return Eigen::Vector3d((double) (x - uc.x), (double) (y - uc.y), (double) (z - uc.z));
+        return Eigen::Vector3d(static_cast<double>(x - uc.x),
+                               static_cast<double>(y - uc.y),
+                               static_cast<double>(z - uc.z));
     }
 
     /** Get the value of the coordinate in light years. The result is truncated to
@@ -105,7 +111,9 @@ class UniversalCoord
       */
     Eigen::Vector3d toLy() const
     {
-        return Eigen::Vector3d((double) x, (double) y, (double) z) * 1.0e-6;
+        return Eigen::Vector3d(static_cast<double>(x),
+                               static_cast<double>(y),
+                               static_cast<double>(z)) * 1.0e-6;
     }
 
     double distanceFromKm(const UniversalCoord& uc)
@@ -117,8 +125,6 @@ class UniversalCoord
     {
         return astro::kilometersToLightYears(offsetFromKm(uc).norm());
     }
-
-    UniversalCoord difference(const UniversalCoord&) const;
 
     static UniversalCoord Zero()
     {
@@ -163,7 +169,12 @@ public:
     BigFix x, y, z;
 };
 
-UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
+inline UniversalCoord operator+(const UniversalCoord& uc0, const UniversalCoord& uc1)
+{
+    return UniversalCoord(uc0.x + uc1.x, uc0.y + uc1.y, uc0.z + uc1.z);
+}
 
-#endif // _CELENGINE_UNIVCOORD_H_
-
+inline UniversalCoord operator-(const UniversalCoord& uc0, const UniversalCoord& uc1)
+{
+    return UniversalCoord(uc0.x - uc1.x, uc0.y - uc1.y, uc0.z - uc1.z);
+}
