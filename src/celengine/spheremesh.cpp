@@ -8,10 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// IMPORTANT: This file is a relic from the early days of Celestia.
-// It's sole function now is to handle the now-deprecated .cms mesh files;
-// it will eventually be removed from Celestia.
-
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -20,37 +17,23 @@
 
 #include <celmath/mathlib.h>
 #include <celmodel/mesh.h>
+
 #include "spheremesh.h"
 
 
-SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices)
-{
-    createSphere(radius, _nRings, _nSlices);
-}
+namespace {
 
-SphereMesh::SphereMesh(const Eigen::Vector3f& size, int _nRings, int _nSlices)
-{
-    createSphere(1.0f, _nRings, _nSlices);
-    scale(size);
-}
+constexpr const int MinRings = 3;
+constexpr const int MinSlices = 3;
 
-SphereMesh::SphereMesh(const Eigen::Vector3f& size,
-                       const DisplacementMap& dispmap,
-                       float height)
-{
-    createSphere(1.0f, dispmap.getHeight(), dispmap.getWidth());
-    scale(size);
-    displace(dispmap, height);
-    generateNormals();
-    fixNormals();
-}
+} // end unnamed namespace
 
 SphereMesh::SphereMesh(const Eigen::Vector3f& size,
                        int _nRings, int _nSlices,
                        DisplacementMapFunc func,
                        void* info)
 {
-    createSphere(1.0f, _nRings, _nSlices);
+    createSphere(1.0f, std::max(MinRings, _nRings), std::max(MinSlices, _nSlices));
     scale(size);
     displace(func, info);
     generateNormals();
@@ -65,7 +48,6 @@ SphereMesh::~SphereMesh()
     delete[] indices;
     delete[] tangents;
 }
-
 
 void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 {
@@ -119,7 +101,6 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
         }
     }
 }
-
 
 // Generate vertex normals for a quad mesh by averaging face normals
 void SphereMesh::generateNormals()
@@ -246,7 +227,6 @@ void SphereMesh::generateNormals()
     delete[] faceNormals;
 }
 
-
 // Fix up the normals along the seam at longitude zero
 void SphereMesh::fixNormals()
 {
@@ -266,7 +246,6 @@ void SphereMesh::fixNormals()
         v1[2] = normal.z();
     }
 }
-
 
 void SphereMesh::scale(const Eigen::Vector3f& s)
 {
@@ -295,7 +274,6 @@ void SphereMesh::scale(const Eigen::Vector3f& s)
         }
     }
 }
-
 
 void SphereMesh::displace(const DisplacementMap& dispmap,
                           float height)
@@ -335,7 +313,6 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
         }
     }
 }
-
 
 cmod::Mesh SphereMesh::convertToMesh() const
 {
