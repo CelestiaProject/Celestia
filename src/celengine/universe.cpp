@@ -18,6 +18,7 @@
 #include "universe.h"
 #include "timelinephase.h"
 #include "frametree.h"
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
@@ -400,7 +401,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         double sinAngle2 = bodyMiss.norm() / 2.0;
 
 
-        if (sinAngle2 < sin(PI/4.0) && distance > 0.0 &&
+        if (sinAngle2 < sin(celestia::numbers::pi/4.0) && distance > 0.0 &&
             distance  <= pickInfo->closestDistance)
         {
             pickInfo->closestDistance = distance;

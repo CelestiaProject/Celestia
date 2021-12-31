@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include "orbit.h"
+#include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
@@ -373,7 +374,7 @@ Vector3d EllipticalOrbit::velocityAtE(double E) const
         double sinE = sin(E);
         double cosE = cos(E);
 
-        double meanMotion = 2.0 * PI / period;
+        double meanMotion = 2.0 * celestia::numbers::pi / period;
         double edot = meanMotion / (1 - eccentricity * cosE);
 
         x = -a * sinE * edot;
@@ -403,7 +404,7 @@ Vector3d EllipticalOrbit::velocityAtE(double E) const
 Vector3d EllipticalOrbit::positionAtTime(double t) const
 {
     t = t - epoch;
-    double meanMotion = 2.0 * PI / period;
+    double meanMotion = 2.0 * celestia::numbers::pi / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
 
@@ -414,7 +415,7 @@ Vector3d EllipticalOrbit::positionAtTime(double t) const
 Vector3d EllipticalOrbit::velocityAtTime(double t) const
 {
     t = t - epoch;
-    double meanMotion = 2.0 * PI / period;
+    double meanMotion = 2.0 * celestia::numbers::pi / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
 
@@ -543,7 +544,7 @@ static EllipticalOrbit* StateVectorToOrbit(const Vector3d& position,
     double om = atan2(P.y(), Q.y());
 
     // Compute the period
-    double T = 2 * PI * sqrt(cube(a) / GM);
+    double T = 2 * celestia::numbers::pi * sqrt(cube(a) / GM);
     T = T / 86400.0; // Convert from seconds to days
 
     return new EllipticalOrbit(a * (1 - e), e, i, Om, om, M, T, t);

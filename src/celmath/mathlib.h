@@ -10,9 +10,10 @@
 #pragma once
 
 #include <cmath>
+
 #include <Eigen/Core>
 
-#define PI 3.14159265358979323846
+#include <celcompat/numbers.h>
 
 namespace celmath
 {
@@ -32,12 +33,14 @@ template<typename T> constexpr T lerp(T t, T a, T b)
 
 template<typename T> inline constexpr T degToRad(T d)
 {
-    return d / static_cast<T>(180) * static_cast<T>(PI);
+    using celestia::numbers::pi_v;
+    return d / static_cast<T>(180) * pi_v<T>;
 }
 
 template<typename T> inline constexpr T radToDeg(T r)
 {
-    return r * static_cast<T>(180) / static_cast<T>(PI);
+    using celestia::numbers::inv_pi_v;
+    return r * static_cast<T>(180) * inv_pi_v<T>;
 }
 
 template<typename T> inline constexpr T square(T x)
@@ -72,12 +75,14 @@ template<typename T> T pfmod(T x, T y)
 
 template<typename T> inline constexpr T circleArea(T r)
 {
-    return static_cast<T>(PI) * r * r;
+    using celestia::numbers::pi_v;
+    return pi_v<T> * r * r;
 }
 
 template<typename T> inline constexpr T sphereArea(T r)
 {
-    return static_cast<T>(4) * static_cast<T>(PI) * r * r;
+    using celestia::numbers::pi_v;
+    return static_cast<T>(4) * pi_v<T> * r * r;
 }
 
 template <typename T> static Eigen::Matrix<T, 3, 1>

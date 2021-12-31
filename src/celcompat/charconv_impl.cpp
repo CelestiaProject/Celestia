@@ -1,4 +1,4 @@
-// cc.cpp
+// charconv_impl.cpp
 //
 // Copyright (C) 2021-present, Celestia Development Team.
 //
@@ -17,7 +17,8 @@
 #include <cstring>
 
 #include <config.h>
-#include "cc.h"
+
+#include "charconv_impl.h"
 
 namespace celestia::compat
 {

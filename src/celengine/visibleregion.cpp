@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <Eigen/Geometry>
+#include <celcompat/numbers.h>
 #include <celmath/intersect.h>
 #include "body.h"
 #include "render.h"
@@ -219,7 +220,7 @@ VisibleRegion::render(Renderer* renderer,
 
     for (unsigned i = 0; i <= nSections + 1; i++)
     {
-        double theta = (double) i / (double) (nSections) * 2.0 * PI;
+        double theta = (double) i / (double) (nSections) * 2.0 * celestia::numbers::pi;
         Vector3d w = cos(theta) * uAxis + sin(theta) * vAxis;
 
         Vector3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);

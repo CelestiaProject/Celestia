@@ -19,6 +19,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celmath/ray.h>
@@ -31,6 +32,7 @@ using namespace std;
 using namespace Eigen;
 using namespace celmath;
 
+using celestia::numbers::pi;
 
 // Extinction lookup table dimensions
 constexpr const unsigned int ExtinctionLUTHeightSteps = 256;
@@ -141,8 +143,8 @@ public:
         }
         else
         {
-            double phi = -viewportY * fov / 2.0 + PI / 2.0;
-            double theta = viewportX * fov / 2.0 + PI / 2.0;
+            double phi = -viewportY * fov / 2.0 + pi / 2.0;
+            double theta = viewportX * fov / 2.0 + pi / 2.0;
             viewDir.x() = sin(phi) * cos(theta);
             viewDir.y() = cos(phi);
             viewDir.z() = sin(phi) * sin(theta);
@@ -153,7 +155,7 @@ public:
         return transformRay(viewRay, transform);
     }
 
-    double fov{PI / 2.0};
+    double fov{pi / 2.0};
     double front{1.0};
     Matrix4d transform{Matrix4d::Identity()};
     CameraType type{Planar};
@@ -496,9 +498,9 @@ void DumpLUT(const LUT3& lut, const string& filename)
                 {
                     unsigned int x = l;
                     Vector4d v = lut.getValue(x, y, z);
-                    Color c(mapColor(v.x() * 0.000617f * 4.0 * PI),
-                            mapColor(v.y() * 0.00109f * 4.0 * PI),
-                            mapColor(v.z() * 0.00195f * 4.0 * PI));
+                    Color c(mapColor(v.x() * 0.000617f * 4.0 * pi),
+                            mapColor(v.y() * 0.00109f * 4.0 * pi),
+                            mapColor(v.z() * 0.00195f * 4.0 * pi));
                     img.setPixel(j * tileWidth + k, i * tileHeight + l, c);
                 }
             }
@@ -930,8 +932,8 @@ Vector3d integrateInscattering(const Scene& scene,
         // Sum the optical depths to get the depth on the complete path from sun
         // to sample point to eye.
         OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
-        totalDepth.rayleigh *= 4.0 * PI;
-        totalDepth.mie      *= 4.0 * PI;
+        totalDepth.rayleigh *= 4.0 * pi;
+        totalDepth.mie      *= 4.0 * pi;
 
         Vector3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
@@ -988,8 +990,8 @@ Vector4d integrateInscatteringFactors(const Scene& scene,
         // Sum the optical depths to get the depth on the complete path from sun
         // to sample point to eye.
         OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
-        totalDepth.rayleigh *= 4.0 * PI;
-        totalDepth.mie      *= 4.0 * PI;
+        totalDepth.rayleigh *= 4.0 * pi;
+        totalDepth.mie      *= 4.0 * pi;
 
         Vector3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
@@ -1056,8 +1058,8 @@ buildExtinctionLUT(const Scene& scene)
 
             OpticalDepths depth = integrateOpticalDepth(scene, atmStart,
                                                         ray.pointAt(dist));
-            depth.rayleigh *= 4.0 * PI;
-            depth.mie      *= 4.0 * PI;
+            depth.rayleigh *= 4.0 * pi;
+            depth.mie      *= 4.0 * pi;
             Vector3d ext = scene.atmosphere.computeExtinction(depth);
 
             lut->setValue(i, j, ext.cwiseMax(1.0e-18));
@@ -1116,8 +1118,8 @@ buildOpticalDepthLUT(const Scene& scene)
 
             OpticalDepths depth = integrateOpticalDepth(scene, atmStart,
                                                         ray.pointAt(dist));
-            depth.rayleigh *= 4.0 * PI;
-            depth.mie      *= 4.0 * PI;
+            depth.rayleigh *= 4.0 * pi;
+            depth.mie      *= 4.0 * pi;
 
             lut->setValue(i, j, Vector3d(depth.rayleigh, depth.mie, depth.absorption));
         }
@@ -1390,8 +1392,8 @@ Color getPlanetColor(const Scene& scene, const Vector3d& p)
     // Give the planet a checkerboard texture
     double phi = atan2(n.z(), n.x());
     double theta = asin(n.y());
-    int tx = (int) (8 + 8 * phi / PI);
-    int ty = (int) (8 + 8 * theta / PI);
+    int tx = (int) (8 + 8 * phi / pi);
+    int ty = (int) (8 + 8 * theta / pi);
 
     return ((tx ^ ty) & 0x1) != 0 ? scene.planetColor : scene.planetColor2;
 }
@@ -1442,8 +1444,8 @@ Color Scene::raytrace(const Eigen::ParametrizedLine<double, 3>& ray) const
             OpticalDepths sunDepth = integrateOpticalDepth(*this, surfacePt, sunRay.pointAt(sunDist));
             OpticalDepths eyeDepth = integrateOpticalDepth(*this, atmStart, surfacePt);
             OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
-            totalDepth.rayleigh *= 4.0 * PI;
-            totalDepth.mie      *= 4.0 * PI;
+            totalDepth.rayleigh *= 4.0 * pi;
+            totalDepth.mie      *= 4.0 * pi;
             Vector3d extinction = atmosphere.computeExtinction(totalDepth);
 
             // Reflected color of planet surface is:
@@ -1453,7 +1455,7 @@ Color Scene::raytrace(const Eigen::ParametrizedLine<double, 3>& ray) const
             atmEnd = ray.origin() + dist * ray.direction();
         }
 
-        Vector3d inscatter = integrateInscattering(*this, atmStart, atmEnd) * 4.0 * PI;
+        Vector3d inscatter = integrateInscattering(*this, atmStart, atmEnd) * 4.0 * pi;
 
         return Color((float) inscatter.x(), (float) inscatter.y(), (float) inscatter.z()) +
             baseColor;
@@ -1537,7 +1539,7 @@ Scene::raytrace_LUT(const Eigen::ParametrizedLine<double, 3>& ray) const
         if (LUTUsage == UseExtinctionLUT)
         {
             bool hitPlanet = hit && planetEnter > 0.0;
-            inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt, hitPlanet) * 4.0 * PI;
+            inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt, hitPlanet) * 4.0 * pi;
             //if (!hit)
             //inscatter = Vector3d::Zero();
         }
@@ -1579,7 +1581,7 @@ Scene::raytrace_LUT(const Eigen::ParametrizedLine<double, 3>& ray) const
             const Vector3d& rayleigh = atmosphere.rayleighCoeff;
             double cosSunAngle = mray.direction().dot(-light.direction);
             inscatter = phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh);
-            inscatter = inscatter * 4.0 * PI;
+            inscatter = inscatter * 4.0 * pi;
         }
 
         return Color((float) inscatter.x(), (float) inscatter.y(), (float) inscatter.z()) +
@@ -1952,7 +1954,7 @@ int main(int argc, char* argv[])
     scene.setParameters(sceneParams);
 
     cout << "atmosphere height: " << scene.atmosphereShellHeight << '\n';
-    cout << "attenuation coeffs: " << scene.atmosphere.rayleighCoeff.transpose() * 4 * PI << '\n';
+    cout << "attenuation coeffs: " << scene.atmosphere.rayleighCoeff.transpose() * 4 * pi << '\n';
 
 
     if (LUTUsage != NoLUT)

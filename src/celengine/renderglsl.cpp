@@ -16,6 +16,8 @@
 #include <cstddef>
 #include <memory>
 
+#include <celcompat/numbers.h>
+
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
@@ -722,7 +724,7 @@ static void renderRingSystem(GLuint *vboId,
         GLshort tex[2];
     };
 
-    constexpr const float angle = 2.0f * static_cast<float>(PI);
+    constexpr const float angle = 2.0f * celestia::numbers::pi_v<float>;
 
     if (*vboId == 0)
     {
@@ -920,7 +922,7 @@ void renderRings_GLSL(RingSystem& rings,
     std::size_t i = 0;
     for (i = 0; i < data->vboId.size() - 1; i++)
     {
-        float s = segmentSizeInPixels * tan(PI / nSections);
+        float s = segmentSizeInPixels * tan(celestia::numbers::pi / nSections);
         if (s < 30.0f) // TODO: make configurable
             break;
         nSections <<= 1;

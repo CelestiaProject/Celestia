@@ -15,6 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include "render.h"
 #include "vecgl.h"
@@ -147,9 +148,10 @@ toStandardCoords(const Vector3d& v)
 template<class T> static T
 angleDiff(T a, T b)
 {
+    using celestia::numbers::pi_v;
     T diff = std::fabs(a - b);
-    if (diff > PI)
-        return (T) (2.0 * PI - diff);
+    if (diff > pi_v<T>)
+        return (T) (2.0 * pi_v<T> - diff);
     else
         return diff;
 }
@@ -346,7 +348,7 @@ SkyGrid::parallelSpacing(double idealSpacing) const
     unsigned int tableSize = sizeof(DEG_MIN_SEC_SPACING) / sizeof(DEG_MIN_SEC_SPACING[0]);
     for (unsigned int i = 0; i < tableSize; i++)
     {
-        if (PI * (double) DEG_MIN_SEC_SPACING[i] / (double) DEG_MIN_SEC_TOTAL < idealSpacing)
+        if (celestia::numbers::pi * (double) DEG_MIN_SEC_SPACING[i] / (double) DEG_MIN_SEC_TOTAL < idealSpacing)
             break;
         spacing = DEG_MIN_SEC_SPACING[i];
     }
@@ -375,7 +377,7 @@ SkyGrid::meridianSpacing(double idealSpacing) const
 
     for (unsigned int i = 0; i < tableSize; i++)
     {
-        if (2 * PI * (double) spacingTable[i] / (double) totalUnits < idealSpacing)
+        if (2 * celestia::numbers::pi * (double) spacingTable[i] / (double) totalUnits < idealSpacing)
             break;
         spacing = spacingTable[i];
     }
@@ -404,7 +406,7 @@ SkyGrid::render(Renderer& renderer,
 
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
-    Quaterniond xrot90 = XRotation(-PI / 2.0);
+    Quaterniond xrot90 = XRotation(-celestia::numbers::pi / 2.0);
 
     double vfov = observer.getFOV();
     double viewAspectRatio = (double) windowWidth / (double) windowHeight;
@@ -462,7 +464,7 @@ SkyGrid::render(Renderer& renderer,
     updateAngleRange(thetaC1, thetaC3, &maxDiff, &minTheta, &maxTheta);
     updateAngleRange(thetaC2, thetaC3, &maxDiff, &minTheta, &maxTheta);
 
-    if (std::fabs(maxTheta - minTheta) < PI)
+    if (std::fabs(maxTheta - minTheta) < celestia::numbers::pi)
     {
         if (minTheta > maxTheta)
             std::swap(minTheta, maxTheta);
@@ -495,26 +497,26 @@ SkyGrid::render(Renderer& renderer,
     if (fabs(viewCenter.z()) < 1.0)
         centerDec = std::asin(viewCenter.z());
     else if (viewCenter.z() < 0.0)
-        centerDec = -PI / 2.0;
+        centerDec = -celestia::numbers::pi / 2.0;
     else
-        centerDec = PI / 2.0;
+        centerDec = celestia::numbers::pi / 2.0;
 
     double minDec = centerDec - halfFov;
     double maxDec = centerDec + halfFov;
 
-    if (maxDec >= PI / 2.0)
+    if (maxDec >= celestia::numbers::pi / 2.0)
     {
         // view cone contains north pole
-        maxDec = PI / 2.0;
-        minTheta = -PI;
-        maxTheta = PI;
+        maxDec = celestia::numbers::pi / 2.0;
+        minTheta = -celestia::numbers::pi;
+        maxTheta = celestia::numbers::pi;
     }
-    else if (minDec <= -PI / 2.0)
+    else if (minDec <= -celestia::numbers::pi / 2.0)
     {
         // view cone contains south pole
-        minDec = -PI / 2.0;
-        minTheta = -PI;
-        maxTheta = PI;
+        minDec = -celestia::numbers::pi / 2.0;
+        minTheta = -celestia::numbers::pi;
+        maxTheta = celestia::numbers::pi;
     }
 
     double idealParallelSpacing = 2.0 * halfFov / MAX_VISIBLE_ARCS;
@@ -542,10 +544,10 @@ SkyGrid::render(Renderer& renderer,
     int raIncrement  = meridianSpacing(idealMeridianSpacing);
     int decIncrement = parallelSpacing(idealParallelSpacing);
 
-    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
-    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
-    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / PI) / (float) decIncrement) * decIncrement;
-    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / PI) / (float) decIncrement) * decIncrement;
+    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (celestia::numbers::pi * 2.0)) / (float) raIncrement) * raIncrement;
+    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (celestia::numbers::pi * 2.0)) / (float) raIncrement) * raIncrement;
+    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / celestia::numbers::pi) / (float) decIncrement) * decIncrement;
+    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / celestia::numbers::pi) / (float) decIncrement) * decIncrement;
 
     // Get the orientation at single precision
     Quaterniond q = xrot90 * m_orientation * xrot90.conjugate();
@@ -590,7 +592,7 @@ SkyGrid::render(Renderer& renderer,
 
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
-        double phi = PI * (double) dec / (double) DEG_MIN_SEC_TOTAL;
+        double phi = celestia::numbers::pi * (double) dec / (double) DEG_MIN_SEC_TOTAL;
         double cosPhi = cos(phi);
         double sinPhi = sin(phi);
 
@@ -660,7 +662,7 @@ SkyGrid::render(Renderer& renderer,
 
     // Render meridians only to the last latitude circle; this looks better
     // than spokes radiating from the pole.
-    double maxMeridianAngle = PI / 2.0 * (1.0 - 2.0 * (double) decIncrement / (double) DEG_MIN_SEC_TOTAL);
+    double maxMeridianAngle = celestia::numbers::pi / 2.0 * (1.0 - 2.0 * (double) decIncrement / (double) DEG_MIN_SEC_TOTAL);
     minDec = std::max(minDec, -maxMeridianAngle);
     maxDec = std::min(maxDec,  maxMeridianAngle);
     arcStep = (maxDec - minDec) / (double) ARC_SUBDIVISIONS;
@@ -670,7 +672,7 @@ SkyGrid::render(Renderer& renderer,
 
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
-        double theta = 2.0 * PI * (double) ra / (double) totalLongitudeUnits;
+        double theta = 2.0 * celestia::numbers::pi * (double) ra / (double) totalLongitudeUnits;
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
 

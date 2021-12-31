@@ -12,6 +12,7 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include "glsupport.h"
 #include "lodspheremesh.h"
@@ -64,14 +65,14 @@ static void InitTrigArrays()
     int i;
     for (i = 0; i <= thetaDivisions; i++)
     {
-        double theta = (double) i / (double) thetaDivisions * 2.0 * PI;
+        double theta = (double) i / (double) thetaDivisions * 2.0 * celestia::numbers::pi;
         sinTheta[i] = (float) sin(theta);
         cosTheta[i] = (float) cos(theta);
     }
 
     for (i = 0; i <= phiDivisions; i++)
     {
-        double phi = ((double) i / (double) phiDivisions - 0.5) * PI;
+        double phi = ((double) i / (double) phiDivisions - 0.5) * celestia::numbers::pi;
         sinPhi[i] = (float) sin(phi);
         cosPhi[i] = (float) cos(phi);
     }

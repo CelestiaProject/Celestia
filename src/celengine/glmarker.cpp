@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <vector>
+#include <celcompat/numbers.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include "marker.h"
@@ -148,7 +149,7 @@ static void fillCircleValue(GLfloat* data, int size, float scale)
     float s, c;
     for (int i = 0; i < size; i++)
     {
-        sincos((float) (2 * i) / (float) size * ((float) PI), s, c);
+        sincos((float) (2 * i) / (float) size * celestia::numbers::pi_v<float>, s, c);
         data[i * 2] = c * scale;
         data[i * 2 + 1] = s * scale;
     }
@@ -320,7 +321,7 @@ static void initEclipticVO(VertexObject& vo)
     float scale = 1000.0f;
     for (int i = 0; i < eclipticCount; i++)
     {
-        sincos((float) (2 * i) / (float) eclipticCount * ((float) PI), s, c);
+        sincos((float) (2 * i) / (float) eclipticCount * celestia::numbers::pi_v<float>, s, c);
         ecliptic[i * 3] = c * scale;
         ecliptic[i * 3 + 1] = 0;
         ecliptic[i * 3 + 2] = s * scale;
@@ -604,7 +605,8 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
     const float cursorPulsePeriod = 1.5f;
 
     float cursorRadius = selectionSizeInPixels + cursorMinRadius;
-    cursorRadius += cursorRadiusVariability * (float) (0.5 + 0.5 * sin(tsec * 2 * PI / cursorPulsePeriod));
+    cursorRadius += cursorRadiusVariability *
+                    (float) (0.5 + 0.5 * sin(tsec * 2 * celestia::numbers::pi / cursorPulsePeriod));
 
     // Enlarge the size of the cross hair sligtly when the selection
     // has a large apparent size
@@ -621,7 +623,7 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
     const unsigned int markCount = 4;
     for (unsigned int i = 0; i < markCount; i++)
     {
-        float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
+        float theta = (float) (celestia::numbers::pi / 4.0) + (float) i / (float) markCount * (float) (2 * celestia::numbers::pi);
         prog->floatParam("angle") = theta;
         markerVO.draw(GL_TRIANGLES, CrosshairCount, CrosshairOffset);
     }

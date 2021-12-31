@@ -5,6 +5,7 @@
 
 #include <Eigen/Core>
 
+#include <celcompat/numbers.h>
 #include "mathlib.h"
 
 namespace celmath
@@ -36,7 +37,7 @@ RealDists<T>::SignedUnit{static_cast<T>(-1), static_cast<T>(1)};
 
 template<typename T>
 std::uniform_real_distribution<T>
-RealDists<T>::SignedFullAngle{static_cast<T>(-PI), static_cast<T>(PI)};
+RealDists<T>::SignedFullAngle{-celestia::numbers::pi_v<T>, celestia::numbers::pi_v<T>};
 
 template<typename T, typename RNG = std::mt19937>
 Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)

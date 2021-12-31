@@ -12,6 +12,7 @@
 // of the License, or (at your option) any later version.
 
 #include "rotation.h"
+#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <cmath>
@@ -212,7 +213,7 @@ UniformRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return YRotation(-remainder * 2 * PI - offset);
+    return YRotation(-remainder * 2 * celestia::numbers::pi - offset);
 }
 
 
@@ -227,7 +228,7 @@ Vector3d
 UniformRotationModel::angularVelocityAtTime(double tdb) const
 {
     Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Vector3d::UnitY();;
-    return v * (2.0 * PI / period);
+    return v * (2.0 * celestia::numbers::pi / period);
 }
 
 
@@ -276,7 +277,7 @@ PrecessingRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return YRotation(-remainder * 2 * PI - offset);
+    return YRotation(-remainder * 2 * celestia::numbers::pi - offset);
 }
 
 
@@ -293,7 +294,7 @@ PrecessingRotationModel::equatorOrientationAtTime(double tjd) const
     else
     {
         nodeOfDate = (double) ascendingNode -
-            (2.0 * PI / precessionPeriod) * (tjd - epoch);
+            (2.0 * celestia::numbers::pi / precessionPeriod) * (tjd - epoch);
     }
 
     return XRotation((double) -inclination) * YRotation(-nodeOfDate);

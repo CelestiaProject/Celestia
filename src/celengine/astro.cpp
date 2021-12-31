@@ -14,6 +14,7 @@
 #include <ctime>
 #include "astro.h"
 #include "univcoord.h"
+#include <celcompat/numbers.h>
 #include <celutil/gettext.h>
 #include <celmath/geomutil.h>
 
@@ -140,7 +141,7 @@ static const UnitDefinition angleUnits[] =
     { "arcmin", 1.0 / MINUTES_PER_DEG },
     { "deg", 1.0 },
     { "hRA", DEG_PER_HRA },
-    { "rad", 180.0 / PI },
+    { "rad", 180.0 / celestia::numbers::pi },
 };
 
 
@@ -208,8 +209,9 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 Eigen::Vector3f
 astro::equatorialToCelestialCart(float ra, float dec, float distance)
 {
-    double theta = ra / 24.0 * PI * 2 + PI;
-    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    using celestia::numbers::pi;
+    double theta = ra / 24.0 * pi * 2 + pi;
+    double phi = (dec / 90.0 - 1.0) * pi / 2;
     double x = cos(theta) * sin(phi) * distance;
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
@@ -223,8 +225,9 @@ astro::equatorialToCelestialCart(float ra, float dec, float distance)
 Eigen::Vector3d
 astro::equatorialToCelestialCart(double ra, double dec, double distance)
 {
-    double theta = ra / 24.0 * PI * 2 + PI;
-    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    using celestia::numbers::pi;
+    double theta = ra / 24.0 * pi * 2 + pi;
+    double phi = (dec / 90.0 - 1.0) * pi / 2;
     double x = cos(theta) * sin(phi) * distance;
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
@@ -239,8 +242,9 @@ astro::equatorialToCelestialCart(double ra, double dec, double distance)
 Eigen::Vector3f
 astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
 {
-    double theta = ra / 24.0 * PI * 2 + PI;
-    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    using celestia::numbers::pi;
+    double theta = ra / 24.0 * pi * 2 + pi;
+    double phi = (dec / 90.0 - 1.0) * pi / 2;
     double x = cos(theta) * sin(phi) * distance;
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
@@ -252,11 +256,12 @@ astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
 void astro::anomaly(double meanAnomaly, double eccentricity,
                     double& trueAnomaly, double& eccentricAnomaly)
 {
+    using celestia::numbers::pi;
     double e, delta, err;
     double tol = 0.00000001745;
     int iterations = 20;    // limit while() to maximum of 20 iterations.
 
-    e = meanAnomaly - 2*PI * (int) (meanAnomaly / (2*PI));
+    e = meanAnomaly - 2*pi * (int) (meanAnomaly / (2*pi));
     err = 1;
     while(abs(err) > tol && iterations > 0)
     {
