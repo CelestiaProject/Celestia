@@ -18,6 +18,7 @@
 #ifndef _CELENGINE_OBSERVER_H_
 #define _CELENGINE_OBSERVER_H_
 
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celengine/frame.h>
 #include <Eigen/Core>
@@ -312,7 +313,7 @@ public:
 
     Eigen::Quaterniond 	trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
 
-    float fov{ (float) (PI / 4.0) };
+    float fov{ static_cast<float>(celestia::numbers::pi / 4.0) };
     bool reverseFlag{ false };
 
     uint64_t locationFilter{ ~0ull };

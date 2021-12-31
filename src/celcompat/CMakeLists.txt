@@ -1,7 +1,7 @@
 if (NOT HAVE_FLOAT_CHARCONV)
 set(CELCOMPAT_SOURCES
-  cc.cpp
-  cc.h
+  charconv_impl.cpp
+  charconv_impl.h
 )
 endif()
 

@@ -10,6 +10,7 @@
 #include "customorbit.h"
 #include "vsop87.h"
 #include "jpleph.h"
+#include <celcompat/numbers.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
@@ -236,7 +237,7 @@ static void EclipticToEquatorial(double fEclLat, double fEclLon,
     dec = asin((sy*ceps)+(cy*seps*sx));
     RA = atan(((sx*ceps)-(ty*seps))/cx);
     if (cx<0)
-        RA += PI;        // account for atan quad ambiguity
+        RA += celestia::numbers::pi; // account for atan quad ambiguity
     RA = pfmod(RA, TWOPI);
 }
 
@@ -345,7 +346,7 @@ void computePlanetCoords(int p, double map, double da, double dhl, double dl,
     spsi = sin(eclLat);
     eclLong = atan(y/clo) + om + degToRad(dl);
     if (clo < 0)
-        eclLong += PI;
+        eclLong += celestia::numbers::pi;
     eclLong = pfmod(eclLong, TWOPI);
     distance *= KM_PER_AU;
 }
@@ -430,8 +431,8 @@ class MercuryOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     // Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -503,8 +504,8 @@ class VenusOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -566,12 +567,12 @@ class EarthOrbit : public CachingOrbit
         dr = 5.43e-06*sin(a1)+1.575e-05*sin(b1)+1.627e-05*sin(c1)+
             3.076e-05*cos(d1)+9.27e-06*sin(h1);
 
-        eclLong = nu+degToRad(ls-ms+dl) + PI;
+        eclLong = nu+degToRad(ls-ms+dl) + celestia::numbers::pi;
         eclLong = pfmod(eclLong, TWOPI);
         distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
 
         // Correction for internal coordinate system
-        eclLong += PI;
+        eclLong += celestia::numbers::pi;
 
         return Vector3d(-cos(eclLong) * distance,
                         0,
@@ -733,8 +734,8 @@ class LunarOrbit : public CachingOrbit
         EpochConvert(jd, astro::J2000, RA, dec, RA, dec);
 
         // Corrections for internal coordinate system
-        dec -= (PI/2);
-        RA += PI;
+        dec -= (celestia::numbers::pi/2);
+        RA += celestia::numbers::pi;
 
         return Vector3d(cos(RA) * sin(dec) * distance,
                         cos(dec) * distance,
@@ -826,8 +827,8 @@ class MarsOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -937,8 +938,8 @@ class JupiterOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -1075,8 +1076,8 @@ class SaturnOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -1168,8 +1169,8 @@ class UranusOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -1251,8 +1252,8 @@ class NeptuneOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= (PI/2);
-    eclLong += PI;
+    eclLat -= (celestia::numbers::pi/2);
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -1296,8 +1297,8 @@ class PlutoOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
-    eclLong += PI;
+    eclLat -= celestia::numbers::pi / 2;
+    eclLong += celestia::numbers::pi;
 
     return Vector3d(cos(eclLong) * sin(eclLat) * distance,
                     cos(eclLat) * distance,
@@ -1607,8 +1608,8 @@ class IoOrbit : public CachingOrbit
     L += JupAscendingNode;
 
     // Corrections for internal coordinate system
-    B -= (PI/2);
-    L += PI;
+    B -= (celestia::numbers::pi/2);
+    L += celestia::numbers::pi;
 
     return Vector3d(cos(L) * sin(B) * R,
                     cos(B) * R,
@@ -1699,8 +1700,8 @@ class EuropaOrbit : public CachingOrbit
     L += JupAscendingNode;
 
     // Corrections for internal coordinate system
-    B -= (PI/2);
-    L += PI;
+    B -= (celestia::numbers::pi/2);
+    L += celestia::numbers::pi;
 
     return Vector3d(cos(L) * sin(B) * R,
                     cos(B) * R,
@@ -1794,8 +1795,8 @@ class GanymedeOrbit : public CachingOrbit
     L += JupAscendingNode;
 
     //Corrections for internal coordinate system
-    B -= (PI/2);
-    L += PI;
+    B -= (celestia::numbers::pi/2);
+    L += celestia::numbers::pi;
 
     return Vector3d(cos(L) * sin(B) * R,
                     cos(B) * R,
@@ -1934,8 +1935,8 @@ class CallistoOrbit : public CachingOrbit
     L += JupAscendingNode;
 
     //Corrections for internal coordinate system
-    B -= (PI/2);
-    L += PI;
+    B -= (celestia::numbers::pi/2);
+    L += celestia::numbers::pi;
 
     return Vector3d(cos(L) * sin(B) * R,
                     cos(B) * R,
@@ -2575,7 +2576,7 @@ class UranianSatelliteOrbit : public CachingOrbit
 
     double getPeriod() const override
     {
-        return 2 * PI / n;
+        return 2 * celestia::numbers::pi / n;
     }
 
     double getBoundingRadius() const override

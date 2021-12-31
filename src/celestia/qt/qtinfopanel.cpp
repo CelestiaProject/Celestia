@@ -10,7 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-
+#include <celcompat/numbers.h>
 #include <celestia/celestiacore.h>
 #include <celengine/astro.h>
 #include <celutil/gettext.h>
@@ -276,7 +276,7 @@ Vector3d rectToSpherical(const Vector3d& v)
     double r = v.norm();
     double theta = atan2(v.y(), v.x());
     if (theta < 0)
-        theta = theta + 2 * PI;
+        theta = theta + 2 * celestia::numbers::pi;
     double phi = asin(v.z() / r);
 
     return Vector3d(theta, phi, r);
@@ -407,7 +407,7 @@ static void StateVectorToElements(const Vector3d& position,
     double om = atan2(P.y(), Q.y());
 
     // Compute the period
-    double T = 2 * PI * sqrt(cube(a) / GM);
+    double T = 2 * celestia::numbers::pi * sqrt(cube(a) / GM);
 
     elements->semimajorAxis     = a;
     elements->eccentricity      = e;

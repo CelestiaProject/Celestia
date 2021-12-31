@@ -12,6 +12,7 @@
 
 #include <gtk/gtk.h>
 
+#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celengine/astro.h>
 #include <celengine/simulation.h>
@@ -328,7 +329,7 @@ static gint eclipseGoto(GtkButton*, EclipseData* ed)
 
     double distance = target.radius() * 4.0;
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                                  (YRotation(-PI / 2) * XRotation(-PI / 2)), 2.5);
+                                  (YRotation(-celestia::numbers::pi / 2) * XRotation(-celestia::numbers::pi / 2)), 2.5);
 
     return TRUE;
 }

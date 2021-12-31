@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include "axisarrow.h"
 #include "body.h"
@@ -58,7 +59,7 @@ static size_t initArrow(VertexObject &vo)
     for (unsigned i = 0; i <= nSections; i++)
     {
         float c, s;
-        sincos((i * 2.0f * (float)PI) / nSections, c, s);
+        sincos((i * 2.0f * celestia::numbers::pi_v<float>) / nSections, c, s);
 
         // circle at bottom
         Vector3f v0(shaftRadius * c, shaftRadius * s, 0.0f);
@@ -581,7 +582,7 @@ BodyAxisArrows::BodyAxisArrows(const Body& _body) :
 Quaterniond
 BodyAxisArrows::getOrientation(double tdb) const
 {
-    return (Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb)).conjugate();
+    return (Quaterniond(AngleAxis<double>(celestia::numbers::pi, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb)).conjugate();
 }
 
 

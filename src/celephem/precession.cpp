@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include "precession.h"
 
@@ -108,7 +109,7 @@ astro::EclipticPrecession_P03LP(double T)
     for (unsigned int i = 0; i < nTerms; i++)
     {
         const EclipticPrecessionTerm& p = EclipticPrecessionTerms[i];
-        double theta = 2.0 * PI * T / p.period;
+        double theta = 2.0 * celestia::numbers::pi * T / p.period;
         double s = sin(theta);
         double c = cos(theta);
         pole.PA += p.Pc * c + p.Ps * s;
@@ -146,7 +147,7 @@ astro::PrecObliquity_P03LP(double T)
     for (unsigned int i = 0; i < nTerms; i++)
     {
         const PrecessionTerm& p = PrecessionTerms[i];
-        double theta = 2.0 * PI * T / p.period;
+        double theta = 2.0 * celestia::numbers::pi * T / p.period;
         double s = sin(theta);
         double c = cos(theta);
         angles.pA   += p.pc * c   + p.ps * s;

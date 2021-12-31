@@ -10,6 +10,8 @@
 
 #include <Eigen/Core>
 
+#include <celcompat/numbers.h>
+
 
 using namespace std;
 
@@ -17,8 +19,6 @@ using namespace std;
 // TODO: these shouldn't be hardcoded
 static int latSamples = 1440;
 static int longSamples = 2880;
-
-constexpr float pi = 3.14159265f;
 
 static float* samples = nullptr;
 
@@ -130,8 +130,8 @@ void triangleSection(unsigned int subdiv,
             {
                 float theta = (float) acos(w.y());
                 float phi = (float) atan2(-w.z(), w.x());
-                float s = phi / (2.0f * pi) + 0.5f;
-                float t = theta / pi;
+                float s = phi / (2.0f * celestia::numbers::pi_v<float>) + 0.5f;
+                float t = theta / celestia::numbers::pi_v<float>;
 
                 float r = sampleBilinear(samples, longSamples, latSamples, s, t);
 

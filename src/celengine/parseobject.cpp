@@ -16,6 +16,7 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
+#include <celcompat/numbers.h>
 #include <celephem/customorbit.h>
 #include <celephem/customrotation.h>
 #ifdef USE_SPICE
@@ -833,7 +834,7 @@ CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
 {
-    Quaterniond q = YRotation(-PI - offset) *
+    Quaterniond q = YRotation(-celestia::numbers::pi - offset) *
                     XRotation(-inclination) *
                     YRotation(-ascendingNode);
 
@@ -910,7 +911,7 @@ CreateFixedRotationModel(Hash* rotationData)
         ascendingNode = degToRad(ascendingNode);
     }
 
-    Quaterniond q = YRotation(-PI - offset) *
+    Quaterniond q = YRotation(-celestia::numbers::pi - offset) *
                     XRotation(-inclination) *
                     YRotation(-ascendingNode);
 
@@ -939,7 +940,7 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
         roll = degToRad(roll);
     }
 
-    Quaterniond q = YRotation(-PI - heading) *
+    Quaterniond q = YRotation(-celestia::numbers::pi - heading) *
                     XRotation(-tilt) *
                     ZRotation(-roll);
 

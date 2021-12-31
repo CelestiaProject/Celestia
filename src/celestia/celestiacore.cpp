@@ -16,6 +16,7 @@
 #include "celestiacore.h"
 #include "favorites.h"
 #include "url.h"
+#include <celcompat/numbers.h>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include <celengine/boundaries.h>
@@ -2708,15 +2709,15 @@ static void displayApparentMagnitude(Overlay& overlay,
 
 static void displayRADec(Overlay& overlay, const Vector3d& v)
 {
-    double phi = atan2(v.x(), v.z()) - PI / 2;
+    double phi = atan2(v.x(), v.z()) - celestia::numbers::pi / 2;
     if (phi < 0)
-        phi = phi + 2 * PI;
+        phi = phi + 2 * celestia::numbers::pi;
 
     double theta = atan2(sqrt(v.x() * v.x() + v.z() * v.z()), v.y());
     if (theta > 0)
-        theta = PI / 2 - theta;
+        theta = celestia::numbers::pi / 2 - theta;
     else
-        theta = -PI / 2 - theta;
+        theta = -celestia::numbers::pi / 2 - theta;
 
 
     displayRightAscension(overlay, radToDeg(phi));

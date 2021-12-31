@@ -12,6 +12,7 @@
 
 #include "spicerotation.h"
 #include "spiceinterface.h"
+#include <celcompat/numbers.h>
 #include <celengine/astro.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
@@ -27,8 +28,8 @@ using namespace celmath;
 using celestia::util::GetLogger;
 
 static const double MILLISEC = astro::secsToDays(0.001);
-static const Quaterniond Rx90 = XRotation(PI / 2.0);
-static const Quaterniond Ry180 = YRotation(PI);
+static const Quaterniond Rx90 = XRotation(celestia::numbers::pi / 2.0);
+static const Quaterniond Ry180 = YRotation(celestia::numbers::pi);
 
 /*! Create a new rotation model based on a SPICE frame. The
  *  orientation of the rotation model is the orientation of the

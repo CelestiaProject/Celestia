@@ -341,7 +341,7 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
     unsigned int size = 1 << log2size;
     float sigma = fwhm / 2.3548f;
     float isig2 = 1.0f / (2.0f * sigma * sigma);
-    float s = 1.0f / (sigma * (float) sqrt(2.0 * PI));
+    float s = 1.0f / (sigma * (float) sqrt(2.0 * celestia::numbers::pi));
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -1999,7 +1999,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     {
         // We want rays with an origin at the eye point and tangent to the the
         // ellipsoid.
-        float theta = (float) i / (float) nSlices * 2 * (float) PI;
+        float theta = (float) i / (float) nSlices * 2 * celestia::numbers::pi_v<float>;
         Vector3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
         w = w * (float) centerDist;
 
@@ -2705,7 +2705,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 cloudNormalMap = atmosphere->cloudNormalMap.find(textureResolution);
         }
         if (atmosphere->cloudSpeed != 0.0f)
-            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
+            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * celestia::numbers::pi), 1.0));
     }
 
     if (obj.geometry == InvalidResource)
@@ -3546,7 +3546,7 @@ void Renderer::renderCometTail(const Body& body,
         float radius = (float) i / (float) nTailPoints * dustTailRadius;
         for (int j = 0; j < nTailSlices; j++)
         {
-            float theta = (float) (2 * PI * (float) j / nTailSlices);
+            float theta = (float) (2 * celestia::numbers::pi * (float) j / nTailSlices);
             float s, c;
             sincos(theta, s, c);
             CometTailVertex& vtx = cometTailVertices[i * nTailSlices + j];

@@ -13,6 +13,7 @@
 #include "customrotation.h"
 #include "rotation.h"
 #include "precession.h"
+#include <celcompat/numbers.h>
 #include <celengine/astro.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
@@ -78,7 +79,7 @@ public:
         double inclination = 90.0 - poleDec;
 
         if (flipped)
-            return XRotation(PI) * XRotation(degToRad(-inclination)) * YRotation(degToRad(-node));
+            return XRotation(celestia::numbers::pi) * XRotation(degToRad(-inclination)) * YRotation(degToRad(-node));
         else
             return XRotation(degToRad(-inclination)) * YRotation(degToRad(-node));
     }
@@ -122,7 +123,7 @@ public:
     {
         // TODO: Use a more accurate model for sidereal time
         double t = tjd - astro::J2000;
-        double theta = 2 * PI * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
+        double theta = 2 * celestia::numbers::pi * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
 
         return YRotation(-theta);
     }
@@ -147,8 +148,8 @@ public:
         // P and Q:
         //   P = sin(pi)*sin(Pi)
         //   Q = sin(pi)*cos(Pi)
-        double P = pole.PA * 2.0 * PI / 1296000;
-        double Q = pole.QA * 2.0 * PI / 1296000;
+        double P = pole.PA * 2.0 * celestia::numbers::pi / 1296000;
+        double Q = pole.QA * 2.0 * celestia::numbers::pi / 1296000;
         double piA = asin(sqrt(P * P + Q * Q));
         double PiA = atan2(P, Q);
 
@@ -161,7 +162,7 @@ public:
         Quaterniond q = XRotation(obliquity) * ZRotation(-precession) * eclRotation.conjugate();
 
         // convert to Celestia's coordinate system
-        return XRotation(PI / 2.0) * q * XRotation(-PI / 2.0);
+        return XRotation(celestia::numbers::pi / 2.0) * q * XRotation(-celestia::numbers::pi / 2.0);
     }
 
     double getPeriod() const override

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <algorithm>
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
@@ -261,7 +262,7 @@ float Body::getBoundingRadius() const
     if (geometry == InvalidResource)
         return radius;
 
-    return radius * 1.7320508f; // sqrt(3)
+    return radius * celestia::numbers::sqrt3_v<float>; // sqrt(3)
 }
 
 
@@ -300,7 +301,7 @@ float Body::getDensity() const
     // @astro::EarthMass unit is kg
     // @radius unit km
     // so we divide density by 1e9 to have kg/m^3
-    double volume = 4.0 / 3.0 * PI * ::pow(radius, 3);
+    double volume = 4.0 / 3.0 * celestia::numbers::pi * ::pow(radius, 3);
     return (float) mass * astro::EarthMass / 1e9 / volume;
 }
 
@@ -725,8 +726,9 @@ Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
 
 Vector3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
-    double phi = -degToRad(lat) + PI / 2;
-    double theta = degToRad(lon) - PI;
+    using celestia::numbers::pi;
+    double phi = -degToRad(lat) + pi / 2;
+    double theta = degToRad(lon) - pi;
 
     Vector3d pos(cos(theta) * sin(phi),
                  cos(phi),
@@ -749,7 +751,7 @@ Vector3d Body::cartesianToPlanetocentric(const Vector3d& v) const
 {
     Vector3d w = v.normalized();
 
-    double lat = PI / 2.0 - acos(w.y());
+    double lat = celestia::numbers::pi / 2.0 - acos(w.y());
     double lon = atan2(w.z(), -w.x());
 
     return Vector3d(lon, lat, v.norm() - getRadius());

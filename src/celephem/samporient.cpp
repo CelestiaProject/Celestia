@@ -12,6 +12,7 @@
 // of the License, or (at your option) any later version.
 
 #include "samporient.h"
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <cmath>
@@ -59,7 +60,7 @@ typedef vector<OrientationSample> OrientationSampleVector;
 
 // 90 degree rotation about x-axis to convert orientation to Celestia's
 // coordinate system.
-static Quaternionf coordSysCorrection = XRotation((float) (PI / 2.0));
+static Quaternionf coordSysCorrection = XRotation((float) (celestia::numbers::pi / 2.0));
 
 
 bool operator<(const OrientationSample& a, const OrientationSample& b)

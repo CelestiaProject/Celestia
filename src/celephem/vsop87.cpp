@@ -13,6 +13,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
+#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include "vsop87.h"
@@ -11088,8 +11089,8 @@ class VSOP87Orbit : public CachingOrbit
         r *= KM_PER_AU;
 
         // Corrections for internal coordinate system
-        b -= PI / 2;
-        l += PI;
+        b -= celestia::numbers::pi / 2;
+        l += celestia::numbers::pi;
 
         return Vector3d(cos(l) * sin(b) * r,
                         cos(b) * r,

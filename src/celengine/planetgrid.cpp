@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <Eigen/Geometry>
+#include <celcompat/numbers.h>
 #include <celmath/intersect.h>
 #include "body.h"
 #include "planetgrid.h"
@@ -105,7 +106,7 @@ PlanetographicGrid::render(Renderer* renderer,
         return;
 
     // Compatibility
-    Quaterniond q = Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
+    Quaterniond q = Quaterniond(AngleAxis<double>(celestia::numbers::pi, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
     Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
@@ -356,7 +357,7 @@ PlanetographicGrid::InitializeGeometry()
     xzCircle.reserve((circleSubdivisions + 2) * 2);
     for (unsigned int i = 0; i <= circleSubdivisions + 1; i++)
     {
-        float theta = (float) (2.0 * PI) * (float) i / (float) circleSubdivisions;
+        float theta = (float) (2.0 * celestia::numbers::pi) * (float) i / (float) circleSubdivisions;
         float s, c;
         sincos(theta, s, c);
         Vector3f thisPointXY(c, s, 0.0f);

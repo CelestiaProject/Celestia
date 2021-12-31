@@ -15,6 +15,7 @@
 #include <cassert>
 #include <windows.h>
 #include <commctrl.h>
+#include <celcompat/numbers.h>
 #include <celestia/eclipsefinder.h>
 #include "wineclipses.h"
 #include "res/resource.h"
@@ -383,7 +384,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
 
                 double distance = target.radius() * 4.0;
                 sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                                  YRotation(-PI / 2) * XRotation(-PI / 2),
+                                  YRotation(-celestia::numbers::pi / 2) * XRotation(-celestia::numbers::pi / 2),
                                   2.5);
             }
             break;
