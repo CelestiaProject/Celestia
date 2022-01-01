@@ -145,7 +145,7 @@ jobs:
     steps:
     - name: 'Install dependencies'
       run: |
-        sudo dnf config-manager --set-enabled ol8_codeready_builder
+        #sudo dnf config-manager --set-enabled ol8_codeready_builder
         sudo yum install -y eigen3-devel \
                             libepoxy-devel \
                             libpng-devel \
