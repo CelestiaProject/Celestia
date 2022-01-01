@@ -71,6 +71,7 @@ endif()
 target_include_directories(celestia-gtk PRIVATE ${GTK_INCLUDE_DIRS})
 target_link_directories(celestia-gtk PRIVATE ${GTK_LIBRARY_DIRS})
 target_link_libraries(celestia-gtk celestia ${GTK_LIBRARIES})
+target_compile_options(celestia-gtk PRIVATE "-Wno-deprecated-declarations") # this option is directory-wide
 
 if (CAIRO_FOUND)
   target_include_directories(celestia-gtk PRIVATE ${CAIRO_INCLUDE_DIRS})
