@@ -4745,22 +4745,25 @@ View* CelestiaCore::getViewByObserver(const Observer *obs) const
     return nullptr;
 }
 
-Image CelestiaCore::captureImage() const
+void CelestiaCore::getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelFormat& format) const
 {
-    // Get the dimensions of the current viewport
-    array<int, 4> viewport;
-    getRenderer()->getViewport(viewport);
+    renderer->getViewport(viewport);
+    format = renderer->getPreferredCaptureFormat();
+}
 
-    PixelFormat format = renderer->getPreferredCaptureFormat();
-
-    Image image(format, viewport[2], viewport[3]);
-    if (!renderer->captureFrame(viewport[0], viewport[1],
-                                viewport[2], viewport[3],
-                                format, image.getPixels()))
+bool CelestiaCore::captureImage(std::uint8_t* buffer,
+                                const std::array<int, 4>& viewport,
+                                celestia::PixelFormat format) const
+{
+    if (renderer->captureFrame(viewport[0], viewport[1],
+                               viewport[2], viewport[3],
+                               format, buffer))
     {
-        GetLogger()->error(_("Unable to capture a frame!\n"));
+        return true;
     }
-    return image;
+
+    GetLogger()->error(_("Unable to capture a frame!\n"));
+    return false;
 }
 
 bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) const
@@ -4774,8 +4777,11 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
         return false;
     }
 
-    Image image = captureImage();
-    if (!image.isValid())
+    std::array<int, 4> viewport;
+    PixelFormat format;
+    getCaptureInfo(viewport, format);
+    Image image(format, viewport[2], viewport[3]);
+    if (!captureImage(image.getPixels(), viewport, format))
         return false;
 
     switch (type)

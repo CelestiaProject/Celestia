@@ -10,6 +10,7 @@
 #ifndef _CELESTIACORE_H_
 #define _CELESTIACORE_H_
 
+#include <array>
 #include <fstream>
 #include <string>
 #include <functional>
@@ -19,6 +20,7 @@
 // #include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
+#include <celengine/pixelformat.h>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/render.h>
@@ -384,7 +386,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
 
-    Image captureImage() const;
+    void getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelFormat& format) const;
+    bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::PixelFormat format) const;
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
     void setMeasurementSystem(MeasurementSystem);

@@ -750,14 +750,16 @@ static QImage::Format toQFormat(PixelFormat format)
 void CelestiaAppWindow::slotCopyImage()
 {
     //glWidget->repaint();
-    Image image = m_appCore->captureImage();
-    QImage grabbedImage = QImage(image.getPixels(),
-                                 image.getWidth(),
-                                 image.getHeight(),
-                                 image.getPitch(),
-                                 toQFormat(image.getFormat()));
-    QApplication::clipboard()->setImage(grabbedImage);
-    m_appCore->flash(_("Captured screen shot to clipboard"));
+    std::array<int, 4> viewport;
+    celestia::PixelFormat format;
+    m_appCore->getCaptureInfo(viewport, format);
+    QImage grabbedImage = QImage(viewport[2], viewport[3],
+                                 toQFormat(format));
+    if (m_appCore->captureImage(grabbedImage.bits(), viewport, format))
+    {
+        QApplication::clipboard()->setImage(grabbedImage);
+        m_appCore->flash(_("Captured screen shot to clipboard"));
+    }
 }
 
 
