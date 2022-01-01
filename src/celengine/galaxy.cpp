@@ -115,12 +115,13 @@ void galaxyTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 
 void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
 {
-    unsigned int i = static_cast<unsigned int>((static_cast<float>(u)*0.5f + 0.5f)*255.99f); // [-1, 1] -> [0, 255]
+    int i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
     // generic Hue profile as deduced from true-color imaging for spirals
     // Hue in degrees
-    float hue = 25.0f * std::tanh(0.0615f * (27.0f - static_cast<float>(i)));
-    if (i >= 28) hue += 220.0f;
+    float hue = (i < 28)
+        ? 25.0f * std::tanh(0.0615f * static_cast<float>(27 - i))
+        : 245.0f;
     //convert Hue to RGB
     float r, g, b;
     DeepSkyObject::hsv2rgb(&r, &g, &b, hue, 0.20f, 1.0f);
