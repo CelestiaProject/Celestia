@@ -8,7 +8,7 @@ using celestia::util::GetLogger;
 void AstroObject::setIndex(AstroCatalog::IndexNumber nr)
 {
     if (m_mainIndexNumber != AstroCatalog::InvalidIndex)
-        GetLogger()->warn("AstroObject::setIndex({}) on object with already set index: {}!\n", nr, m_mainIndexNumber);
+        GetLogger()->debug("AstroObject::setIndex({}) on object with already set index: {}!\n", nr, m_mainIndexNumber);
     m_mainIndexNumber = nr;
 }
 
