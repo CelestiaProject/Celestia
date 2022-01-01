@@ -4053,14 +4053,10 @@ bool CelestiaCore::initRenderer()
 
     if (font == nullptr)
         cout << _("Error loading font; text will not be visible.\n");
-    else
-        font->buildTexture();
 
     if (!config->titleFont.empty())
         titleFont = LoadFontHelper(renderer, config->titleFont);
-    if (titleFont != nullptr)
-        titleFont->buildTexture();
-    else
+    if (titleFont == nullptr)
         titleFont = font;
 
     // Set up the overlay
@@ -4074,15 +4070,7 @@ bool CelestiaCore::initRenderer()
     else
     {
         auto labelFont = LoadFontHelper(renderer, config->labelFont);
-        if (labelFont == nullptr)
-        {
-            renderer->setFont(Renderer::FontNormal, font);
-        }
-        else
-        {
-            labelFont->buildTexture();
-            renderer->setFont(Renderer::FontNormal, labelFont);
-        }
+        renderer->setFont(Renderer::FontNormal, labelFont == nullptr ? font : labelFont);
     }
 
     renderer->setFont(Renderer::FontLarge, titleFont);
@@ -4286,26 +4274,34 @@ CelestiaCore::TextDisplayHandler* CelestiaCore::getTextDisplayHandler() const
     return textDisplayHandler;
 }
 
-void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    font = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
-    if (font != nullptr)
-        font->buildTexture();
+    if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
+    {
+        font = f;
+        return true;
+    }
+    return false;
 }
 
-void CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    titleFont = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
-    if (titleFont != nullptr)
-        titleFont->buildTexture();
+    if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
+    {
+        titleFont = f;
+        return true;
+    }
+    return false;
 }
 
-void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
+bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
 {
-    auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
-    if (f != nullptr)
-        f->buildTexture();
-    renderer->setFont(fontStyle, f);
+    if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
+    {
+        renderer->setFont(fontStyle, f);
+        return true;
+    }
+    return false;
 }
 
 void CelestiaCore::clearFonts()

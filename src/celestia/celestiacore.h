@@ -368,9 +368,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTextDisplayHandler(TextDisplayHandler*);
     TextDisplayHandler* getTextDisplayHandler() const;
 
-    void setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    void setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    void setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
+    bool setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
+    bool setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
+    bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
     void clearFonts();
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
