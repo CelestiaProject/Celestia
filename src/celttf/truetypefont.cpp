@@ -1,6 +1,6 @@
 // truetypefont.cpp
 //
-// Copyright (C) 2019, Celestia Development Team
+// Copyright (C) 2019-2022, Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,13 +9,15 @@
 
 #include <algorithm>
 #include <array>
-#include <iostream>
-#include <vector>
-#include <celutil/logger.h>
-#include <celutil/utf8.h>
+#include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
+#include <celutil/logger.h>
+#include <celutil/utf8.h>
 #include <ft2build.h>
+#include <map>
+#include <system_error>
+#include <vector>
 #include FT_FREETYPE_H
 #include "truetypefont.h"
 
@@ -25,26 +27,24 @@
 #include <fstream>
 #endif
 
-using namespace std;
+using celestia::compat::from_chars;
 using celestia::util::GetLogger;
-
-static FT_Library ft = nullptr;
 
 struct Glyph
 {
     wchar_t ch;
 
-    int ax;    // advance.x
-    int ay;    // advance.y
+    int ax; // advance.x
+    int ay; // advance.y
 
-    int bw;    // bitmap.width;
-    int bh;    // bitmap.height;
+    unsigned int bw; // bitmap.width;
+    unsigned int bh; // bitmap.height;
 
-    int bl;    // bitmap_left;
-    int bt;    // bitmap_top;
+    int bl; // bitmap_left;
+    int bt; // bitmap_top;
 
-    float tx;  // x offset of glyph in texture coordinates
-    float ty;  // y offset of glyph in texture coordinates
+    float tx; // x offset of glyph in texture coordinates
+    float ty; // y offset of glyph in texture coordinates
 };
 
 struct UnicodeBlock
@@ -56,75 +56,82 @@ struct TextureFontPrivate
 {
     struct FontVertex
     {
-        FontVertex(float _x, float _y, float _u, float _v) :
-            x(_x), y(_y), u(_u), v(_v)
-        {}
+        FontVertex(float _x, float _y, float _u, float _v) : x(_x), y(_y), u(_u), v(_v)
+        {
+        }
         float x, y;
         float u, v;
     };
 
-    TextureFontPrivate() = delete;
     TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
-    TextureFontPrivate(const TextureFontPrivate&) = default;
-    TextureFontPrivate(TextureFontPrivate&&) = default;
-    TextureFontPrivate& operator=(const TextureFontPrivate&) = default;
-    TextureFontPrivate& operator=(TextureFontPrivate&&) = default;
+    TextureFontPrivate() = delete;
+    TextureFontPrivate(const TextureFontPrivate &) = default;
+    TextureFontPrivate(TextureFontPrivate &&) = default;
+    TextureFontPrivate &operator=(const TextureFontPrivate &) = default;
+    TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
-    float render(const string &s, float x, float y);
+    float render(std::string_view s, float x, float y);
     float render(wchar_t ch, float xoffset, float yoffset);
 
-    bool buildAtlas();
-    void computeTextureSize();
-    bool loadGlyphInfo(wchar_t, Glyph&);
-    void initCommonGlyphs();
-    int getCommonGlyphsCount();
-    Glyph& getGlyph(wchar_t);
-    Glyph& getGlyph(wchar_t, wchar_t);
-    int toPos(wchar_t) const;
-    void optimize();
-    CelestiaGLProgram* getProgram();
-    void flush();
+    bool               buildAtlas();
+    void               computeTextureSize();
+    bool               loadGlyphInfo(wchar_t /*ch*/, Glyph & /*c*/) const;
+    void               initCommonGlyphs();
+    int                getCommonGlyphsCount();
+    Glyph &            getGlyph(wchar_t /*ch*/);
+    Glyph &            getGlyph(wchar_t /*ch*/, wchar_t /*fallback*/);
+    [[nodiscard]] int  toPos(wchar_t /*ch*/) const;
+    void               optimize();
+    CelestiaGLProgram *getProgram();
+    void               flush();
 
-    const Renderer *m_renderer;
-    CelestiaGLProgram *m_prog { nullptr };
+    const Renderer    *m_renderer;
+    CelestiaGLProgram *m_prog{ nullptr };
 
-    FT_Face m_face;         // font face
+    FT_Face m_face; // font face
 
-    int m_maxAscent;
-    int m_maxDescent;
-    int m_maxWidth;
+    int m_maxAscent{ 0 };
+    int m_maxDescent{ 0 };
+    int m_maxWidth{ 0 };
 
-    int m_texWidth;
-    int m_texHeight;
+    int m_texWidth{ 0 };
+    int m_texHeight{ 0 };
 
-    GLuint m_texName { 0 };       // texture object
-    vector<Glyph> m_glyphs; // character information
-    GLint m_maxTextureSize; // max supported texture size
+    GLuint             m_texName{ 0 };   // texture object
+    std::vector<Glyph> m_glyphs;         // character information
+    GLint              m_maxTextureSize; // max supported texture size
 
-    array<UnicodeBlock, 2> m_unicodeBlocks;
-    int m_commonGlyphsCount { 0 };
+    std::array<UnicodeBlock, 2> m_unicodeBlocks;
+    int                         m_commonGlyphsCount{ 0 };
 
-    int m_inserted { 0 };
+    int m_inserted{ 0 };
 
-    Eigen::Matrix4f m_projection;
-    Eigen::Matrix4f m_modelView;
-    bool m_shaderInUse { false };
-    vector<FontVertex> m_fontVertices;
+    Eigen::Matrix4f         m_projection;
+    Eigen::Matrix4f         m_modelView;
+    bool                    m_shaderInUse{ false };
+    std::vector<FontVertex> m_fontVertices;
 };
 
-inline float pt_to_px(float pt, int dpi = 96)
+namespace
 {
-   return dpi == 0 ? pt : pt / 72.0 * dpi;
+
+inline float
+pt_to_px(float pt, int dpi = 96)
+{
+    return dpi == 0 ? pt : pt / 72.0f * static_cast<float>(dpi);
 }
+
+Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
+
+} // namespace
 
 /*
    first = ((c / 32) + 1) * 32  == c & ~0xdf
    last  = first + 32
 */
 
-TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) :
-    m_renderer(renderer)
+TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(renderer)
 {
     m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
     m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
@@ -134,13 +141,12 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) :
 
 TextureFontPrivate::~TextureFontPrivate()
 {
-    if (m_face)
-        FT_Done_Face(m_face);
-    if (m_texName != 0)
-        glDeleteTextures(1, &m_texName);
+    if (m_face != nullptr) FT_Done_Face(m_face);
+    if (m_texName != 0) glDeleteTextures(1, &m_texName);
 }
 
-bool TextureFontPrivate::loadGlyphInfo(wchar_t ch, Glyph &c)
+bool
+TextureFontPrivate::loadGlyphInfo(wchar_t ch, Glyph &c) const
 {
     FT_GlyphSlot g = m_face->glyph;
     if (FT_Load_Char(m_face, ch, FT_LOAD_RENDER) != 0)
@@ -159,10 +165,10 @@ bool TextureFontPrivate::loadGlyphInfo(wchar_t ch, Glyph &c)
     return true;
 }
 
-void TextureFontPrivate::initCommonGlyphs()
+void
+TextureFontPrivate::initCommonGlyphs()
 {
-    if (m_glyphs.size() > 0)
-        return;
+    if (!m_glyphs.empty()) return;
 
     m_glyphs.reserve(256);
 
@@ -178,12 +184,13 @@ void TextureFontPrivate::initCommonGlyphs()
     }
 }
 
-void TextureFontPrivate::computeTextureSize()
+void
+TextureFontPrivate::computeTextureSize()
 {
     int roww = 0;
     int rowh = 0;
-    int w = 0;
-    int h = 0;
+    int w    = 0;
+    int h    = 0;
 
     // Find minimum size for a texture holding all visible ASCII characters
     for (const auto &c : m_glyphs)
@@ -192,23 +199,24 @@ void TextureFontPrivate::computeTextureSize()
 
         if (roww + c.bw + 1 >= m_maxTextureSize)
         {
-            w = max(w, roww);
+            w = std::max(w, roww);
             h += rowh;
             roww = 0;
             rowh = 0;
         }
         roww += c.bw + 1;
-        rowh = max(rowh, (int)c.bh);
+        rowh = std::max(rowh, static_cast<int>(c.bh));
     }
 
-    w = max(w, roww);
+    w = std::max(w, roww);
     h += rowh;
 
-    m_texWidth = w;
+    m_texWidth  = w;
     m_texHeight = h;
 }
 
-bool TextureFontPrivate::buildAtlas()
+bool
+TextureFontPrivate::buildAtlas()
 {
     FT_GlyphSlot g = m_face->glyph;
 
@@ -217,14 +225,20 @@ bool TextureFontPrivate::buildAtlas()
 
     // Create a texture that will be used to hold all glyphs
     glActiveTexture(GL_TEXTURE0);
-    if (m_texName != 0)
-        glDeleteTextures(1, &m_texName);
+    if (m_texName != 0) glDeleteTextures(1, &m_texName);
     glGenTextures(1, &m_texName);
-    if (m_texName == 0)
-        return false;
+    if (m_texName == 0) return false;
 
     glBindTexture(GL_TEXTURE_2D, m_texName);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, m_texWidth, m_texHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_ALPHA,
+                 m_texWidth,
+                 m_texHeight,
+                 0,
+                 GL_ALPHA,
+                 GL_UNSIGNED_BYTE,
+                 nullptr);
 
     // We require 1 byte alignment when uploading texture data
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -247,42 +261,53 @@ bool TextureFontPrivate::buildAtlas()
     {
         if (c.ch == 0) continue; // skip bad glyphs
 
-        if (FT_Load_Char(m_face, c.ch, FT_LOAD_RENDER))
+        if (FT_Load_Char(m_face, c.ch, FT_LOAD_RENDER) != 0)
         {
-           GetLogger()->warn("Loading character {:x} failed!\n", static_cast<unsigned>(c.ch));
-           c.ch = 0;
-           continue;
+            GetLogger()->warn("Loading character {:x} failed!\n", static_cast<unsigned>(c.ch));
+            c.ch = 0;
+            continue;
         }
 
         if (ox + int(g->bitmap.width) > int(m_texWidth))
         {
             oy += rowh;
             rowh = 0;
-            ox = 0;
+            ox   = 0;
         }
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-        c.tx = (float)ox / (float)m_texWidth;
-        c.ty = (float)oy / (float)m_texHeight;
+        glTexSubImage2D(GL_TEXTURE_2D,
+                        0,
+                        ox,
+                        oy,
+                        g->bitmap.width,
+                        g->bitmap.rows,
+                        GL_ALPHA,
+                        GL_UNSIGNED_BYTE,
+                        g->bitmap.buffer);
+        c.tx = static_cast<float>(ox) / static_cast<float>(m_texWidth);
+        c.ty = static_cast<float>(oy) / static_cast<float>(m_texHeight);
 
-        rowh = max(rowh, (int)g->bitmap.rows);
+        rowh = std::max(rowh, static_cast<int>(g->bitmap.rows));
         ox += g->bitmap.width + 1;
     }
 
 #if DUMP_TEXTURE
-    fmt::printf(cout/*cerr*/, "Generated a {} x {} ({} kb) texture atlas\n", m_texWidth, m_texHeight, m_texWidth * m_texHeight / 1024);
-    size_t img_size = sizeof(uint8_t) * m_texWidth * m_texHeight * 4;
-    uint8_t *raw_img = new uint8_t[img_size];
+    fmt::print("Generated a {} x {} ({} kb) texture atlas\n",
+               m_texWidth, m_texHeight,
+               m_texWidth * m_texHeight / 1024);
+    size_t   img_size = sizeof(uint8_t) * m_texWidth * m_texHeight * 4;
+    uint8_t *raw_img  = new uint8_t[img_size];
     glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw_img);
     ofstream f(fmt::format("/tmp/texture_{}x{}.data", m_texWidth, m_texHeight), ios::binary);
-    f.write(reinterpret_cast<char*>(raw_img), img_size);
+    f.write(reinterpret_cast<char *>(raw_img), img_size);
     f.close();
     delete[] raw_img;
 #endif
     return true;
 }
 
-int TextureFontPrivate::getCommonGlyphsCount()
+int
+TextureFontPrivate::getCommonGlyphsCount()
 {
     if (m_commonGlyphsCount == 0)
     {
@@ -292,17 +317,16 @@ int TextureFontPrivate::getCommonGlyphsCount()
     return m_commonGlyphsCount;
 }
 
-int TextureFontPrivate::toPos(wchar_t ch) const
+int
+TextureFontPrivate::toPos(wchar_t ch) const
 {
     int pos = 0;
 
-    if (ch > m_unicodeBlocks.back().last)
-        return -1;
+    if (ch > m_unicodeBlocks.back().last) return -1;
 
     for (const auto &r : m_unicodeBlocks)
     {
-        if (ch < r.first)
-            return -1;
+        if (ch < r.first) return -1;
 
         if (ch <= r.last)
         {
@@ -314,22 +338,22 @@ int TextureFontPrivate::toPos(wchar_t ch) const
     return -1;
 }
 
-Glyph& TextureFontPrivate::getGlyph(wchar_t ch, wchar_t fallback)
+Glyph &
+TextureFontPrivate::getGlyph(wchar_t ch, wchar_t fallback)
 {
     auto &g = getGlyph(ch);
     return g.ch == ch ? g : getGlyph(fallback);
 }
 
-Glyph g_badGlyph = {0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f};
-Glyph& TextureFontPrivate::getGlyph(wchar_t ch)
+Glyph &
+TextureFontPrivate::getGlyph(wchar_t ch)
 {
-    auto pos = toPos(ch);
-    if (pos != -1)
+    if (auto pos = toPos(ch); pos != -1)
         return m_glyphs[pos];
 
     auto it = find_if(m_glyphs.begin() + getCommonGlyphsCount(),
                       m_glyphs.end(),
-                      [ch](Glyph &g) { return g.ch == ch; });
+                      [ch](const Glyph &g) { return g.ch == ch; });
 
     if (it != m_glyphs.end())
         return *it;
@@ -341,14 +365,14 @@ Glyph& TextureFontPrivate::getGlyph(wchar_t ch)
     flush(); // render text to avoid garbled output due to changed texture
 
     m_glyphs.push_back(c);
-    if (++m_inserted == 10)
-        optimize();
+    if (++m_inserted == 10) optimize();
     buildAtlas();
 
     return m_glyphs.back();
 }
 
-void TextureFontPrivate::optimize()
+void
+TextureFontPrivate::optimize()
 {
     m_inserted = 0;
 }
@@ -358,34 +382,33 @@ void TextureFontPrivate::optimize()
  * Rendering starts at coordinates (x, y), z is always 0.
  * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
  */
-float TextureFontPrivate::render(const string &s, float x, float y)
+float
+TextureFontPrivate::render(std::string_view s, float x, float y)
 {
-    if (m_texName == 0)
-        return 0;
+    if (m_texName == 0) return 0;
 
     // Use the texture containing the atlas
     glBindTexture(GL_TEXTURE_2D, m_texName);
 
     // Loop through all characters
-    int len = s.length();
+    int  len       = s.length();
     bool validChar = true;
-    int i = 0;
+    int  i         = 0;
 
     while (i < len && validChar)
     {
         wchar_t ch = 0;
-        validChar = UTF8Decode(s, i, ch);
-        if (!validChar)
-            break;
+        validChar  = UTF8Decode(s, i, ch);
+        if (!validChar) break;
         i += UTF8EncodedSize(ch);
 
-        auto& g = getGlyph(ch, L'?');
+        auto &g = getGlyph(ch, L'?');
 
         // Calculate the vertex and texture coordinates
         const float x1 = x + g.bl;
         const float y1 = y + g.bt - g.bh;
-        const float w = g.bw;
-        const float h = g.bh;
+        const float w  = g.bw;
+        const float h  = g.bh;
         const float x2 = x1 + w;
         const float y2 = y1 + h;
 
@@ -394,27 +417,26 @@ float TextureFontPrivate::render(const string &s, float x, float y)
         y += g.ay;
 
         // Skip glyphs that have no pixels
-        if (g.bw == 0 || g.bh == 0)
-            continue;
+        if (g.bw == 0 || g.bh == 0) continue;
 
         const float tx1 = g.tx;
         const float ty1 = g.ty;
         const float tx2 = tx1 + w / m_texWidth;
         const float ty2 = ty1 + h / m_texHeight;
 
-        m_fontVertices.emplace_back(FontVertex(x1, y1, tx1, ty2));
-        m_fontVertices.emplace_back(FontVertex(x2, y1, tx2, ty2));
-        m_fontVertices.emplace_back(FontVertex(x1, y2, tx1, ty1));
-        m_fontVertices.emplace_back(FontVertex(x2, y2, tx2, ty1));
+        m_fontVertices.emplace_back(x1, y1, tx1, ty2);
+        m_fontVertices.emplace_back(x2, y1, tx2, ty2);
+        m_fontVertices.emplace_back(x1, y2, tx1, ty1);
+        m_fontVertices.emplace_back(x2, y2, tx2, ty1);
     }
 
     return x;
 }
 
-float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
+float
+TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
 {
-
-    auto& g = getGlyph(ch, L'?');
+    auto &g = getGlyph(ch, L'?');
 
     // Calculate the vertex and texture coordinates
     const float x1 = xoffset + g.bl;
@@ -427,32 +449,30 @@ float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
     const float tx2 = tx1 + static_cast<float>(g.bw) / m_texWidth;
     const float ty2 = ty1 + static_cast<float>(g.bh) / m_texHeight;
 
-    m_fontVertices.emplace_back(FontVertex(x1, y1, tx1, ty2));
-    m_fontVertices.emplace_back(FontVertex(x2, y1, tx2, ty2));
-    m_fontVertices.emplace_back(FontVertex(x1, y2, tx1, ty1));
-    m_fontVertices.emplace_back(FontVertex(x2, y2, tx2, ty1));
+    m_fontVertices.emplace_back(x1, y1, tx1, ty2);
+    m_fontVertices.emplace_back(x2, y1, tx2, ty2);
+    m_fontVertices.emplace_back(x1, y2, tx1, ty1);
+    m_fontVertices.emplace_back(x2, y2, tx2, ty1);
 
     return g.ax;
 }
 
-CelestiaGLProgram* TextureFontPrivate::getProgram()
+CelestiaGLProgram *
+TextureFontPrivate::getProgram()
 {
-    if (m_prog != nullptr)
-        return m_prog;
+    if (m_prog != nullptr) return m_prog;
     m_prog = m_renderer->getShaderManager().getShader("text");
     return m_prog;
 }
 
-void TextureFontPrivate::flush()
+void
+TextureFontPrivate::flush()
 {
-    if (m_fontVertices.size() < 4)
-        return;
+    if (m_fontVertices.size() < 4) return;
 
-    vector<unsigned short> indexes;
+    std::vector<unsigned short> indexes;
     indexes.reserve(m_fontVertices.size() / 4 * 6);
-    for (unsigned short index = 0;
-         index < (unsigned short) m_fontVertices.size();
-         index += 4)
+    for (unsigned short index = 0; index < static_cast<unsigned short>(m_fontVertices.size()); index += 4)
     {
         indexes.push_back(index + 0);
         indexes.push_back(index + 1);
@@ -465,9 +485,17 @@ void TextureFontPrivate::flush()
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &m_fontVertices[0].x);
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(FontVertex),
+                          &m_fontVertices[0].x);
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &m_fontVertices[0].u);
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(FontVertex),
+                          &m_fontVertices[0].u);
     glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, indexes.data());
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
@@ -475,15 +503,9 @@ void TextureFontPrivate::flush()
     m_fontVertices.clear();
 }
 
-
 TextureFont::TextureFont(const Renderer *renderer) :
-    impl(new TextureFontPrivate(renderer))
+    impl(std::make_unique<TextureFontPrivate>(renderer))
 {
-}
-
-TextureFont::~TextureFont()
-{
-    delete impl;
 }
 
 /**
@@ -496,7 +518,8 @@ TextureFont::~TextureFont()
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
  */
-float TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
+float
+TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
 {
     return impl->render(ch, xoffset, yoffset);
 }
@@ -511,7 +534,8 @@ float TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
  */
-float TextureFont::render(const string &s, float xoffset, float yoffset) const
+float
+TextureFont::render(std::string_view s, float xoffset, float yoffset) const
 {
     return impl->render(s, xoffset, yoffset);
 }
@@ -524,69 +548,92 @@ float TextureFont::render(const string &s, float xoffset, float yoffset) const
  * @param s -- string to calculate width
  * @return string width in pixels
  */
-int TextureFont::getWidth(const string& s) const
+int
+TextureFont::getWidth(std::string_view s) const
 {
-    int width = 0;
-    int len = s.length();
+    int  width     = 0;
+    int  len       = s.length();
     bool validChar = true;
-    int i = 0;
+    int  i         = 0;
 
     while (i < len && validChar)
     {
         wchar_t ch = 0;
-        validChar = UTF8Decode(s, i, ch);
-        if (!validChar)
-            break;
+        validChar  = UTF8Decode(s, i, ch);
+        if (!validChar) break;
 
         i += UTF8EncodedSize(ch);
 
-        auto& g = impl->getGlyph(ch, L'?');
+        auto &g = impl->getGlyph(ch, L'?');
         width += g.ax;
     }
 
     return width;
 }
 
-int TextureFont::getHeight() const
+/**
+ * Return line height for the current font as sum of the maximal ascent and the
+ * maximal descent.
+ */
+int
+TextureFont::getHeight() const
 {
     return impl->m_maxAscent + impl->m_maxDescent;
 }
 
-int TextureFont::getMaxWidth() const
+/**
+ * Return the maximal character width for the current font.
+ */
+int
+TextureFont::getMaxWidth() const
 {
     return impl->m_maxWidth;
 }
 
-int TextureFont::getMaxAscent() const
+/**
+ * Return the maximal ascent for the current font.
+ */
+int
+TextureFont::getMaxAscent() const
 {
     return impl->m_maxAscent;
 }
 
-void TextureFont::setMaxAscent(int _maxAscent)
+/**
+ * Set the maximal ascent for the current font.
+ */
+void
+TextureFont::setMaxAscent(int _maxAscent)
 {
     impl->m_maxAscent = _maxAscent;
 }
 
-int TextureFont::getMaxDescent() const
+/**
+ * Return the maximal descent for the current font.
+ */
+int
+TextureFont::getMaxDescent() const
 {
     return impl->m_maxDescent;
 }
 
-void TextureFont::setMaxDescent(int _maxDescent)
+/**
+ * Set the maximal descent for the current font.
+ */
+void
+TextureFont::setMaxDescent(int _maxDescent)
 {
     impl->m_maxDescent = _maxDescent;
 }
 
-int TextureFont::getTextureName() const
-{
-    return impl->m_texName;
-}
-
-void TextureFont::bind()
+/**
+ * Use the current font for text rendering.
+ */
+void
+TextureFont::bind()
 {
     auto *prog = impl->getProgram();
-    if (prog == nullptr)
-        return;
+    if (prog == nullptr) return;
 
     if (impl->m_texName != 0)
     {
@@ -594,16 +641,20 @@ void TextureFont::bind()
         glBindTexture(GL_TEXTURE_2D, impl->m_texName);
         prog->use();
         prog->samplerParam("atlasTex") = 0;
-        impl->m_shaderInUse = true;
+        impl->m_shaderInUse            = true;
         prog->setMVPMatrices(impl->m_projection, impl->m_modelView);
     }
 }
 
-void TextureFont::setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
+/**
+ * Assign Projection and ModelView matrices for the current font.
+ */
+void
+TextureFont::setMVPMatrices(const Eigen::Matrix4f &p, const Eigen::Matrix4f &m)
 {
     impl->m_projection = p;
-    impl->m_modelView = m;
-    auto *prog = impl->getProgram();
+    impl->m_modelView  = m;
+    auto *prog         = impl->getProgram();
     if (prog != nullptr && impl->m_shaderInUse)
     {
         flush();
@@ -611,29 +662,40 @@ void TextureFont::setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f
     }
 }
 
-void TextureFont::unbind()
+/**
+ * Stop the current font usage.
+ */
+void
+TextureFont::unbind()
 {
     flush();
     impl->m_shaderInUse = false;
 }
 
-short TextureFont::getAdvance(wchar_t ch) const
+/**
+ * Return the advance for the wide character `ch`.
+ */
+short
+TextureFont::getAdvance(wchar_t ch) const
 {
-    auto& g = impl->getGlyph(ch, L'?');
+    auto &g = impl->getGlyph(ch, L'?');
     return g.ax;
 }
 
-bool TextureFont::buildTexture()
-{
-    return true;
-}
-
-void TextureFont::flush()
+/**
+ * Perform all delayed text rendering operations.
+ */
+void
+TextureFont::flush()
 {
     impl->flush();
 }
 
-TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int index, int size, int dpi)
+namespace
+{
+
+FT_Face
+LoadFontFace(FT_Library ft, const fs::path &path, int index, int size, int dpi)
 {
     FT_Face face;
 
@@ -646,69 +708,89 @@ TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int inde
     if (!FT_IS_SCALABLE(face))
     {
         GetLogger()->error("Font is not scalable: {}\n", path);
+        FT_Done_Face(face);
         return nullptr;
     }
 
     if (FT_Set_Char_Size(face, 0, size << 6, dpi, dpi) != 0)
     {
         GetLogger()->error("Could not set font size {}\n", size);
+        FT_Done_Face(face);
         return nullptr;
     }
 
-    auto* font = new TextureFont(r);
-    font->impl->m_face = face;
-
-    if (!font->impl->buildAtlas())
-        return nullptr;
-
-    font->setMaxAscent(face->size->metrics.ascender >> 6);
-    font->setMaxDescent(-face->size->metrics.descender >> 6);
-
-    return font;
+    return face;
 }
 
 // temporary while no fontconfig support
-static fs::path ParseFontName(const fs::path &filename, int &collectionIndex, int &size)
+fs::path
+ParseFontName(const fs::path &filename, int &index, int &size)
 {
     // Format with font path/collection index(if any)/font size(if any)
     auto fn = filename.string();
-    auto pos = fn.rfind(',');
-    if (pos != string::npos)
+    if (auto ps = fn.rfind(','); ps != std::string::npos)
     {
-        size = (int) stof(fn.substr(pos + 1));
-        auto rest = fn.substr(0, pos);
-
-        pos = rest.rfind(',');
-        if (pos != string::npos)
+        if (from_chars(&fn[ps + 1], &fn[fn.size()], size).ec == std::errc())
         {
-            collectionIndex = stof(rest.substr(pos + 1));
-            return rest.substr(0, pos);
-        }
-        else
-        {
-            return rest;
+            if (auto pi = fn.rfind(',', ps - 1); pi != std::string::npos)
+            {
+                if (from_chars(&fn[pi + 1], &fn[pi], index).ec == std::errc())
+                    return fn.substr(0, pi);
+            }
+            return fn.substr(0, ps);
         }
     }
-    else
-    {
-        size = 12;
-        return filename;
-    }
+    return filename;
 }
 
-std::shared_ptr<TextureFont> LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
+} // namespace
+
+using FontCache = std::map<fs::path, std::weak_ptr<TextureFont>>;
+
+std::shared_ptr<TextureFont>
+LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
 {
-    if (ft == nullptr)
+    // Init FreeType library
+    static FT_Library ftlib = nullptr;
+    if (ftlib == nullptr && FT_Init_FreeType(&ftlib) != 0)
     {
-        if (FT_Init_FreeType(&ft))
-        {
-            GetLogger()->error("Could not init freetype library\n");
-            return nullptr;
-        }
+        GetLogger()->error("Could not init freetype library\n");
+        return nullptr;
     }
 
-    int psize = 0;
-    int pcollectionIndex = 0;
-    auto nameonly = ParseFontName(filename, pcollectionIndex, psize);
-    return std::shared_ptr<TextureFont>(TextureFont::load(r, nameonly, index > 0 ? index : pcollectionIndex, size > 0 ? size : psize, r->getScreenDpi()));
+    // Init FontCache
+    static FontCache *fontCache = nullptr;
+    if (fontCache == nullptr)
+        fontCache = new FontCache;
+
+    // Lookup for an existing cached font
+    std::weak_ptr<TextureFont> &font = (*fontCache)[filename];
+    std::shared_ptr<TextureFont> ret = font.lock();
+    if (ret == nullptr)
+    {
+        int  psize    = 12; // default size if missing
+        int  pindex   = 0;
+        auto nameonly = ParseFontName(filename, pindex, psize);
+        auto face     = LoadFontFace(ftlib, nameonly,
+                                     index > 0 ? index : pindex,
+                                     size > 0 ? size : psize,
+                                     r->getScreenDpi());
+        if (face == nullptr)
+            return nullptr;
+
+        ret = std::make_shared<TextureFont>(r);
+        ret->impl->m_face = face;
+
+        if (!ret->impl->buildAtlas())
+        {
+            FT_Done_Face(face);
+            return nullptr;
+        }
+
+        ret->setMaxAscent(static_cast<int>(face->size->metrics.ascender >> 6));
+        ret->setMaxDescent(static_cast<int>(-face->size->metrics.descender >> 6));
+
+        font = ret;
+    }
+    return ret;
 }
