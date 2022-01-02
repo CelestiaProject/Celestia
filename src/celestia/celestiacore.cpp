@@ -2960,7 +2960,7 @@ static void displayPlanetInfo(Overlay& overlay,
         {
             Vector3d sunVec = Selection(&body).getPosition(t).offsetFromKm(Selection(sun).getPosition(t));
             sunVec.normalize();
-            double cosPhaseAngle = sunVec.dot(viewVec.normalized());
+            double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
             overlay.printf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
         }
