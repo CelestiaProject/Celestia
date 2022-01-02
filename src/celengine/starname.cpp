@@ -32,10 +32,10 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
     if (pos != 0 && pos != string::npos && pos < nameLength - 1)
     {
         auto pos1 = name.rfind(' ');
-        char starLetter = '\0';
+        std::string_view rest;
         if (pos1 != string::npos && pos1 > pos && pos1 < nameLength - 1 && isalpha(name[pos1 + 1]))
         {
-            starLetter = name[pos1 + 1];
+            rest = std::string_view(name).substr(pos1);
             isOrbitingStar = true;
             do { --pos1; } while (isspace(name[pos1]));
         }
@@ -85,9 +85,9 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
 
             if (isOrbitingStar)
             {
-                char star[3] = {' ', starLetter, '\0'};
-                priName.append(star);
-                altName.append(star);
+                priName.append(rest);
+                if (!altName.empty())
+                    altName.append(rest);
             }
         }
 
