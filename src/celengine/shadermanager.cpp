@@ -1287,7 +1287,8 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 
     if (props.hasRingShadowForLight(light))
     {
-        source += "float ringShadowTexCoordX;\n";
+        if (light == 0)
+            source += "float ringShadowTexCoordX;\n";
         source += assign("ringShadowTexCoordX", ringShadowTexCoord(light));
 
 #ifdef GL_ES
