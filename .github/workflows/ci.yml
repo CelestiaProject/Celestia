@@ -170,8 +170,8 @@ jobs:
         cmake -B ${{github.workspace}}/build  \
               -G Ninja                        \
               -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=OFF              \
-              -DENABLE_TOOLS=OFF              \
+              -DENABLE_SPICE=ON               \
+              -DENABLE_TOOLS=ON               \
               -DENABLE_TESTS=ON               \
               -DENABLE_SDL=ON                 \
               -DENABLE_GTK=ON                 \
