@@ -53,7 +53,7 @@ jobs:
         submodules: true
 
     - name: 'Configure CMake'
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_DATA=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
@@ -130,8 +130,7 @@ jobs:
               -DENABLE_SDL=ON                 \
               -DENABLE_GTK=ON                 \
               -DUSE_GTK3=ON                   \
-              -DENABLE_FFMPEG=ON              \
-              -DENABLE_DATA=OFF
+              -DENABLE_FFMPEG=ON
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -177,8 +176,7 @@ jobs:
               -DENABLE_GTK=ON                 \
               -DUSE_GTK3=ON                   \
               -DENABLE_QT=OFF                 \
-              -DENABLE_FFMPEG=OFF             \
-              -DENABLE_DATA=OFF
+              -DENABLE_FFMPEG=OFF
       env:
         CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
         CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
