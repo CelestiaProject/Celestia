@@ -55,7 +55,8 @@ write_buffer(const char* first, const char* last, chars_format fmt, char* buffer
     if (*ptr == 'i' || *ptr == 'I')
     {
         if (last - ptr < inf_length) { return { first, std::errc::invalid_argument }; }
-        std::size_t length = std::min(static_cast<std::size_t>(infinity_length), static_cast<std::size_t>(last - ptr));
+        std::size_t length = std::min(infinity_length, static_cast<std::size_t>(last - ptr));
+        static_assert(infinity_length < buffer_size, "Buffer too small to hold 'infinity' literal");
         std::memcpy(buffer, ptr, length);
         buffer += length;
     }
