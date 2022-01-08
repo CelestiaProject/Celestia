@@ -9,9 +9,12 @@
 // of the License, or (at your option) any later version.
 
 #include <cctype>
-#include <cstdlib>
+#include <cmath>
 #include <cstring>
 #include <iostream>
+#include <system_error>
+
+#include <celcompat/charconv.h>
 
 #include "logger.h"
 #include "utf8.h"
@@ -40,9 +43,10 @@ enum class State
 };
 
 
-bool isSeparator(char c)
+bool isSeparator(unsigned char u)
 {
-    return !std::isdigit(c) && !std::isalpha(c) && c != '.';
+    constexpr auto period = static_cast<unsigned char>('.');
+    return !std::isdigit(u) && !std::isalpha(u) && u != period;
 }
 
 
@@ -123,6 +127,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
     while (newToken == TokenBegin)
     {
         bool isEof = false;
+        auto uNextChar = static_cast<unsigned char>(nextChar);
         if (reprocess)
         {
             reprocess = false;
@@ -143,7 +148,8 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                utf8Status = validator.check(nextChar);
+                uNextChar = static_cast<unsigned char>(nextChar);
+                utf8Status = validator.check(uNextChar);
                 if (utf8Status != UTF8Status::Ok && !hasUtf8Errors)
                 {
                     GetLogger()->error("Invalid UTF-8 sequence detected\n");
@@ -163,11 +169,11 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 newToken = TokenEnd;
             }
-            else if (std::isspace(nextChar))
+            else if (std::isspace(uNextChar))
             {
                 // no-op
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 textToken.push_back(nextChar);
                 state = State::Number;
@@ -186,7 +192,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 textToken.append("0.");
                 state = State::Fraction;
             }
-            else if (std::isalpha(nextChar) || nextChar == '_')
+            else if (std::isalpha(uNextChar) || nextChar == '_')
             {
                 textToken.push_back(nextChar);
                 state = State::Name;
@@ -244,7 +250,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
                 state = State::Number;
@@ -274,7 +280,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 newToken = TokenNumber;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
@@ -288,7 +294,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
                 state = State::ExponentStart;
             }
-            else if (isSeparator(nextChar))
+            else if (isSeparator(uNextChar))
             {
                 newToken = TokenNumber;
                 reprocess = true;
@@ -305,7 +311,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 newToken = TokenNumber;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
@@ -314,7 +320,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
                 state = State::ExponentStart;
             }
-            else if (isSeparator(nextChar))
+            else if (isSeparator(uNextChar))
             {
                 newToken = TokenNumber;
                 reprocess = true;
@@ -332,7 +338,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
                 state = State::Exponent;
@@ -355,7 +361,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
                 state = State::Exponent;
@@ -372,11 +378,11 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 newToken = TokenNumber;
             }
-            else if (std::isdigit(nextChar))
+            else if (std::isdigit(uNextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
-            else if (isSeparator(nextChar))
+            else if (isSeparator(uNextChar))
             {
                 newToken = TokenNumber;
                 reprocess = true;
@@ -393,7 +399,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 newToken = TokenName;
             }
-            else if (std::isalpha(nextChar) || std::isdigit(nextChar) || nextChar == '_')
+            else if (std::isalpha(uNextChar) || std::isdigit(uNextChar) || nextChar == '_')
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
@@ -467,7 +473,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 GetLogger()->error("Unexpected EOF in string\n");
                 newToken = TokenError;
             }
-            else if (std::isxdigit(nextChar))
+            else if (std::isxdigit(uNextChar))
             {
                 unicode[unicodeDigits++] = nextChar;
                 if (unicodeDigits == 4)
@@ -507,24 +513,30 @@ Tokenizer::TokenType Tokenizer::nextToken()
 
     if (newToken == TokenNumber)
     {
-        const char* start = textToken.c_str();
-        char* end;
-        errno = 0;
-        double value = std::strtod(start, &end);
-        if (end == start)
+        double value;
+        auto [p, ec] = celestia::compat::from_chars(textToken.data(), textToken.data() + textToken.size(), value);
+        if (ec == std::errc())
+        {
+            tokenValue = value;
+            if (p != textToken.data() + textToken.size())
+            {
+                GetLogger()->warn("Incomplete parsing of numeric token");
+            }
+        }
+        else if (ec == std::errc::invalid_argument)
         {
             GetLogger()->error("Could not parse number\n");
             newToken = TokenError;
         }
-        else if (errno == ERANGE)
+        else if (ec == std::errc::result_out_of_range)
         {
             GetLogger()->error("Number out of range\n");
             newToken = TokenError;
-            errno = 0;
         }
         else
         {
-            tokenValue = value;
+            GetLogger()->error("Unexpected error parsing number\n");
+            newToken = TokenError;
         }
     }
 
