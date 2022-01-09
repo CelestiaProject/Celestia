@@ -1669,43 +1669,6 @@ void Renderer::draw(const Observer& observer,
     enableDepthMask();
 }
 
-void renderPoint(const Renderer &renderer,
-                 const Vector3f &position,
-                 const Color &color,
-                 float size,
-                 bool useSprite,
-                 const Matrices &m)
-{
-    auto *prog = renderer.getShaderManager().getShader("star");
-    if (prog == nullptr)
-        return;
-
-    prog->use();
-    prog->samplerParam("starTex") = 0;
-    prog->setMVPMatrices(*m.projection, *m.modelview);
-
-#ifndef GL_ES
-    glEnable(GL_POINT_SPRITE);
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-#endif
-    // Workaround for macOS to pass a single vertex coord
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(position), position.data());
-
-    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
-    glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, useSprite ? size : renderer.getScreenDpi() / 96.0f);
-
-    glDrawArrays(GL_POINTS, 0, 1);
-
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-
-#ifndef GL_ES
-    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    glDisable(GL_POINT_SPRITE);
-#endif
-}
-
 void renderLargePoint(Renderer &renderer,
                       const Vector3f &position,
                       const Color &color,
@@ -1848,14 +1811,12 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         enableDepthTest();
         disableDepthMask();
 
-        const bool useSprites = starStyle != PointStars;
-
-        if (useSprites)
+        if (starStyle != PointStars)
             gaussianDiscTex->bind();
         if (pointSize > gl::maxPointSize)
             renderLargePoint(*this, center, {color, alpha}, pointSize, mvp);
         else
-            renderPoint(*this, center, {color, alpha}, pointSize, useSprites, mvp);
+            pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
 
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
@@ -1869,7 +1830,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             if (glareSize > gl::maxPointSize)
                 renderLargePoint(*this, center, {color, glareAlpha}, glareSize, mvp);
             else
-                renderPoint(*this, center, {color, glareAlpha}, glareSize, true, mvp);
+                glareVertexBuffer->addStar(position, {color, glareAlpha}, glareSize);
         }
     }
 }
@@ -5980,6 +5941,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             proj = Perspective(fov, aspectRatio, nearPlaneDistance, farPlaneDistance);
         Matrices m = { &proj, &m_modelMatrix };
 
+        setCurrentProjectionMatrix(proj);
+
         Frustum intervalFrustum(degToRad(fov),
                                 aspectRatio,
                                 nearPlaneDistance,
@@ -6042,6 +6005,18 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             i--;
         }
 
+        PointStarVertexBuffer::enable();
+        glareVertexBuffer->startSprites();
+        glareVertexBuffer->render();
+        glareVertexBuffer->finish();
+        if (starStyle == PointStars)
+            pointStarVertexBuffer->startBasicPoints();
+        else
+            pointStarVertexBuffer->startSprites();
+        pointStarVertexBuffer->render();
+        pointStarVertexBuffer->finish();
+        PointStarVertexBuffer::disable();
+
         // Render annotations in this interval
         enableSmoothLines();
         annotation = renderSortedAnnotations(annotation,
@@ -6054,4 +6029,5 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
     // reset the depth range
     glDepthRange(0, 1);
+    setDefaultProjectionMatrix();
 }
