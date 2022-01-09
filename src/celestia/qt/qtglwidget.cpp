@@ -133,18 +133,18 @@ void CelestiaGlWidget::initializeGL()
 
 void CelestiaGlWidget::resizeGL(int w, int h)
 {
-    float scale = devicePixelRatioF();
-    int width = static_cast<int>(static_cast<float>(w) * scale);
-    int height = static_cast<int>(static_cast<float>(h) * scale);
+    qreal scale = devicePixelRatioF();
+    auto width = static_cast<int>(w * scale);
+    auto height = static_cast<int>(h * scale);
     appCore->resize(width, height);
 }
 
 
 void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 {
-    float scale = devicePixelRatioF();
-    int x = (int)(m->x() * scale);
-    int y = (int)(m->y() * scale);
+    qreal scale = devicePixelRatioF();
+    auto x = static_cast<int>(m->x() * scale);
+    auto y = static_cast<int>(m->y() * scale);
 
     int buttons = 0;
     if (m->buttons() & LeftButton)
@@ -201,9 +201,9 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 
 void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
 {
-    float scale = devicePixelRatioF();
-    int x = (int)(m->x() * scale);
-    int y = (int)(m->y() * scale);
+    qreal scale = devicePixelRatioF();
+    auto x = static_cast<int>(m->x() * scale);
+    auto y = static_cast<int>(m->y() * scale);
 
     if (m->button() == LeftButton)
         appCore->mouseButtonDown(x, y, CelestiaCore::LeftButton);
@@ -216,9 +216,9 @@ void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
 
 void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
 {
-    float scale = devicePixelRatioF();
-    int x = (int)(m->x() * scale);
-    int y = (int)(m->y() * scale);
+    qreal scale = devicePixelRatioF();
+    auto x = static_cast<int>(m->x() * scale);
+    auto y = static_cast<int>(m->y() * scale);
 
     if (m->button() == LeftButton)
     {
