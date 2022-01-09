@@ -80,7 +80,7 @@ void PointStarVertexBuffer::makeCurrent()
         current->finish();
 
     program->use();
-    program->setMVPMatrices(renderer.getProjectionMatrix(), renderer.getModelViewMatrix());
+    program->setMVPMatrices(renderer.getCurrentProjectionMatrix(), renderer.getCurrentModelViewMatrix());
     if (pointSizeFromVertex)
     {
         program->samplerParam("starTex") = 0;
