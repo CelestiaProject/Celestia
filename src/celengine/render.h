@@ -618,10 +618,16 @@ class Renderer
                          float discSizeInPixels,
                          const Matrices&);
 
+    void calculatePointSize(float appMag,
+                            float size,
+                            float &discSize,
+                            float &alpha,
+                            float &glareSize,
+                            float &glareAlpha) const;
+
     void renderObjectAsPoint(const Eigen::Vector3f& center,
                              float radius,
                              float appMag,
-                             float _faintestMag,
                              float discSizeInPixels,
                              const Color& color,
                              bool useHalos,
@@ -840,6 +846,9 @@ class Renderer
 
     std::array<celgl::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
 
+    // Saturation magnitude used to calculate a point star size
+    float satPoint;
+
     // Location markers
  public:
     celestia::MarkerRepresentation mountainRep;
@@ -897,6 +906,8 @@ class Renderer
     static Color EclipticColor;
 
     static Color SelectionCursorColor;
+
+    friend class PointStarRenderer;
 };
 
 

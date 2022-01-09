@@ -43,13 +43,12 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     void process(const Star &star, float distance, float appMag);
 
     Eigen::Vector3d obsPos;
+    Eigen::Vector3f viewNormal;
     std::vector<RenderListEntry>* renderList    { nullptr };
     PointStarVertexBuffer* starVertexBuffer     { nullptr };
     PointStarVertexBuffer* glareVertexBuffer    { nullptr };
     const StarDatabase* starDB                  { nullptr };
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };
-    float maxDiscSize                           { 1.0f };
     float cosFOV                                { 1.0f };
-    bool  useScaledDiscs                        { false };
 };
