@@ -16,6 +16,8 @@
 #define NC_(c, s) s
 #endif
 
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "celestia.exe.manifest"
+
 //
 // Bitmap resources
 //

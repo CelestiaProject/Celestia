@@ -39,6 +39,8 @@ set(WIN32_HEADERS
   winviewoptsdlg.h
 )
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+
 add_library(resources OBJECT res/celestia.rc)
 target_include_directories(resources PRIVATE "${CMAKE_SOURCE_DIR}/src/celestia/win32/res")
 set(RESOURCES $<TARGET_OBJECTS:resources>)
