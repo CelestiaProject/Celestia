@@ -1560,6 +1560,13 @@ void Renderer::draw(const Observer& observer,
     else
         brightnessScale = 0.1667f;
 
+    brightnessScale *= corrFac;
+    if (starStyle == ScaledDiscStars)
+        brightnessScale *= 2.0f;
+
+    // Calculate saturation magnitude
+    satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale;
+
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1742,6 +1749,50 @@ void renderLargePoint(Renderer &renderer,
 }
 
 
+void
+Renderer::calculatePointSize(float appMag,
+                             float size,
+                             float &discSize,
+                             float &alpha,
+                             float &glareSize,
+                             float &glareAlpha) const
+{
+    alpha = std::max(0.0f, (faintestMag - appMag) * brightnessScale + brightnessBias);
+
+    discSize = size;
+    if (starStyle == ScaledDiscStars)
+    {
+        if (alpha > 1.0f)
+        {
+            float discScale = std::min(MaxScaledDiscStarSize, pow(2.0f, 0.3f * (satPoint - appMag)));
+            discSize *= std::max(1.0f, discScale);
+
+            glareAlpha = std::min(0.5f, discScale / 4.0f);
+            glareSize = discSize * 3.0f;
+
+            alpha = 1.0f;
+        }
+        else
+        {
+            glareSize = glareAlpha = 0.0f;
+        }
+    }
+    else
+    {
+        if (alpha > 1.0f)
+        {
+            float discScale = std::min(100.0f, satPoint - appMag + 2.0f);
+            glareAlpha = std::min(GlareOpacity, (discScale - 2.0f) / 4.0f);
+            glareSize = 2.0f * discScale * size;
+            alpha = 1.0f;
+        }
+        else
+        {
+            glareSize = glareAlpha = 0.0f;
+        }
+    }
+}
+
 // If the an object occupies a pixel or less of screen space, we don't
 // render its mesh at all and just display a starlike point instead.
 // Switching between the particle and mesh renderings of an object is
@@ -1751,74 +1802,38 @@ void renderLargePoint(Renderer &renderer,
 void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    float radius,
                                    float appMag,
-                                   float _faintestMag,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
                                    bool emissive,
                                    const Matrices &mvp)
 {
-    const float maxSize = MaxScaledDiscStarSize;
-    float maxDiscSize = (starStyle == ScaledDiscStars) ? maxSize : 1.0f;
+    const bool useScaledDiscs = starStyle == ScaledDiscStars;
+    float maxDiscSize = useScaledDiscs ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
-
-    bool useScaledDiscs = starStyle == ScaledDiscStars;
 
     if (discSizeInPixels < maxBlendDiscSize || useHalos)
     {
-        float alpha = 1.0f;
         float fade = 1.0f;
-        float size = BaseStarDiscSize * screenDpi / 96.0f;
-        float satPoint = _faintestMag - (1.0f - brightnessBias) / brightnessScale;
-
         if (discSizeInPixels > maxDiscSize)
         {
-            fade = (maxBlendDiscSize - discSizeInPixels) /
-                (maxBlendDiscSize - maxDiscSize);
-            if (fade > 1)
-                fade = 1;
+            fade = std::min(1.0f, (maxBlendDiscSize - discSizeInPixels) /
+                                  (maxBlendDiscSize - maxDiscSize));
         }
 
-        alpha = (_faintestMag - appMag) * brightnessScale * 2.0f + brightnessBias;
-        if (alpha < 0.0f)
-            alpha = 0.0f;
+        float scale = static_cast<float>(screenDpi) / 96.0f;
+        float pointSize, alpha, glareSize, glareAlpha;
+        calculatePointSize(appMag, BaseStarDiscSize * scale, pointSize, alpha, glareSize, glareAlpha);
 
-        float pointSize = size;
-        float glareSize = 0.0f;
-        float glareAlpha = 0.0f;
-        if (useScaledDiscs)
-        {
-            if (alpha > 1.0f)
-            {
-                float discScale = min(maxSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
-                pointSize *= max(1.0f, discScale);
-
-                glareAlpha = min(0.5f, discScale / 4.0f);
-                if (discSizeInPixels > maxSize)
-                    glareAlpha = min(glareAlpha, (maxSize - discSizeInPixels) / maxSize + 1.0f);
-                glareSize = pointSize * 3.0f;
-
-                alpha = 1.0f;
-            }
-        }
-        else
-        {
-            if (alpha > 1.0f)
-            {
-                float discScale = min(100.0f, satPoint - appMag + 2.0f);
-                glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-                glareSize = pointSize * discScale * 2.0f ;
-                if (emissive)
-                    glareSize = max(glareSize, pointSize * discSizeInPixels / (screenDpi / 96.0f) * 3.0f);
-            }
-        }
+        if (useScaledDiscs && discSizeInPixels > MaxScaledDiscStarSize)
+            glareAlpha = std::min(glareAlpha, (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
 
         alpha *= fade;
         if (!emissive)
-        {
-            glareSize = max(glareSize, pointSize * discSizeInPixels / (screenDpi / 96.0f) * 3.0f);
             glareAlpha *= fade;
-        }
+
+        if (glareSize != 0.0f)
+            glareSize = std::max(glareSize, pointSize * discSizeInPixels / scale * 3.0f);
 
         Matrix3f m = m_cameraOrientation.conjugate().toRotationMatrix();
         Vector3f center = position;
@@ -1833,7 +1848,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         enableDepthTest();
         disableDepthMask();
 
-        bool useSprites = starStyle != PointStars;
+        const bool useSprites = starStyle != PointStars;
+
         if (useSprites)
             gaussianDiscTex->bind();
         if (pointSize > gl::maxPointSize)
@@ -3317,7 +3333,6 @@ void Renderer::renderPlanet(Body& body,
         renderObjectAsPoint(pos,
                             body.getRadius(),
                             appMag,
-                            faintestMag,
                             discSizeInPixels,
                             body.getSurface().color,
                             false, false, m);
@@ -3396,7 +3411,6 @@ void Renderer::renderStar(const Star& star,
     renderObjectAsPoint(pos,
                         star.getRadius(),
                         appMag,
-                        faintestMag,
                         discSizeInPixels,
                         color,
                         star.hasCorona(), true,
@@ -4371,11 +4385,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
-    starRenderer.brightnessScale   = brightnessScale * corrFac;
-    starRenderer.brightnessBias    = brightnessBias;
     starRenderer.faintestMag       = faintestMag;
-    starRenderer.faintestMagNight  = faintestMagNight;
-    starRenderer.saturationMag     = saturationMag;
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
@@ -4383,18 +4393,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
-
-    starRenderer.size = BaseStarDiscSize * screenDpi / 96.0f;
-    if (starStyle == ScaledDiscStars)
-    {
-        starRenderer.useScaledDiscs = true;
-        starRenderer.brightnessScale *= 2.0f;
-        starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
-    }
-    else if (starStyle == FuzzyPointStars)
-    {
-        starRenderer.brightnessScale *= 1.0f;
-    }
 
     starRenderer.colorTemp = colorTemp;
 
@@ -4455,17 +4453,11 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.orientationMatrix= observer.getOrientationf().conjugate().toRotationMatrix();
     dsoRenderer.observer         = &observer;
     dsoRenderer.obsPos           = obsPos;
-    dsoRenderer.viewNormal       = observer.getOrientationf().conjugate() * -Vector3f::UnitZ();
     dsoRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
-    dsoRenderer.size             = pixelSize * 1.6f / corrFac;
     dsoRenderer.pixelSize        = pixelSize;
-    dsoRenderer.brightnessScale  = brightnessScale * corrFac;
-    dsoRenderer.brightnessBias   = brightnessBias;
     dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
     dsoRenderer.faintestMag      = faintestMag;
-    dsoRenderer.faintestMagNight = faintestMagNight;
-    dsoRenderer.saturationMag    = saturationMag;
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
     dsoRenderer.wWidth           = windowWidth;

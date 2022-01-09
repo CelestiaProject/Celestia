@@ -34,7 +34,8 @@ PointStarRenderer::PointStarRenderer() :
 
 void PointStarRenderer::process(const Star& star, float distance, float appMag)
 {
-    nProcessed++;
+    if (distance > distanceLimit)
+        return;
 
     Vector3f starPos = star.getPosition();
 
@@ -43,9 +44,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
     float    orbitalRadius = star.getOrbitalRadius();
     bool     hasOrbit = orbitalRadius > 0.0f;
-
-    if (distance > distanceLimit)
-        return;
 
     // A very rough check to see if the star may be visible: is the star in
     // front of the viewer? If the star might be close (relPos.x^2 < 0.1) or
@@ -69,10 +67,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         //   * It may be large enough that we should render it as a mesh
         //     instead of a particle
         // It's possible that the second condition might apply for stars
-        // further than one light year away if the star is huge, the fov is
+        // further than a solar system size if the star is huge, the fov is
         // very small and the resolution is high.  We'll ignore this for now
         // and use the most inexpensive test possible . . .
-        if (distance < 1.0f || orbitSizeInPixels > 1.0f)
+        if (distance < SolarSystemMaxDistance || orbitSizeInPixels > 1.0f)
         {
             // Compute the position of the observer relative to the star.
             // This is a much more accurate (and expensive) distance
@@ -85,10 +83,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
-            appMag = star.getApparentMagnitude((float)distance);
+            appMag = star.getApparentMagnitude(distance);
 
             discSizeInPixels = star.getRadius() / astro::lightYearsToKilometers(distance) / pixelSize;
-            ++nClose;
         }
 
         // Stars closer than the maximum solar system size are actually
@@ -96,44 +93,19 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-            float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
-            float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+            float pointSize, alpha, glareSize, glareAlpha;
+            float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
+            renderer->calculatePointSize(appMag,
+                                         size,
+                                         pointSize,
+                                         alpha,
+                                         glareSize,
+                                         glareAlpha);
 
-            if (useScaledDiscs)
-            {
-                float discSize = size;
-                if (alpha < 0.0f)
-                {
-                    alpha = 0.0f;
-                }
-                else if (alpha > 1.0f)
-                {
-                    float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
-                    discSize *= discScale;
-
-                    float glareAlpha = min(0.5f, discScale / 4.0f);
-                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), discSize * 3.0f);
-
-                    alpha = 1.0f;
-                }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), discSize);
-            }
-            else
-            {
-                if (alpha < 0.0f)
-                {
-                    alpha = 0.0f;
-                }
-                else if (alpha > 1.0f)
-                {
-                    float discScale = min(100.0f, satPoint - appMag + 2.0f);
-                    float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
-                }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
-            }
-
-            ++nRendered;
+            if (glareSize != 0.0f)
+                glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
+            if (pointSize != 0.0f)
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
 
             // Place labels for stars brighter than the specified label threshold brightness
             if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
@@ -147,7 +119,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                                       starDB->getStarName(star, true),
                                                       color,
                                                       relPos);
-                    nLabelled++;
                 }
             }
         }
