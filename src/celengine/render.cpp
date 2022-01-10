@@ -1669,6 +1669,7 @@ void Renderer::draw(const Observer& observer,
     enableDepthMask();
 }
 
+static
 void renderLargePoint(Renderer &renderer,
                       const Vector3f &position,
                       const Color &color,
@@ -1711,6 +1712,20 @@ void renderLargePoint(Renderer &renderer,
     vo.unbind();
 }
 
+static Eigen::Vector3f
+calculateQuadCenter(const Eigen::Quaternionf &cameraOrientation,
+                    const Eigen::Vector3f &position,
+                    float radius)
+{
+    Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
+
+    // Offset the glare sprite so that it lies in front of the object
+    Vector3f direction = position.normalized();
+
+    // Position the sprite on the the line between the viewer and the
+    // object, and on a plane normal to the view direction.
+    return position + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
+}
 
 void
 Renderer::calculatePointSize(float appMag,
@@ -1798,25 +1813,25 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (glareSize != 0.0f)
             glareSize = std::max(glareSize, pointSize * discSizeInPixels / scale * 3.0f);
 
-        Matrix3f m = m_cameraOrientation.conjugate().toRotationMatrix();
-        Vector3f center = position;
-
-        // Offset the glare sprite so that it lies in front of the object
-        Vector3f direction = center.normalized();
-
-        // Position the sprite on the the line between the viewer and the
-        // object, and on a plane normal to the view direction.
-        center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
-
         enableDepthTest();
         disableDepthMask();
 
         if (starStyle != PointStars)
             gaussianDiscTex->bind();
+
+        bool centerCalculated = false;
+        Eigen::Vector3f center;
+
         if (pointSize > gl::maxPointSize)
+        {
+            centerCalculated = true;
+            center = calculateQuadCenter(m_cameraOrientation, position, radius);
             renderLargePoint(*this, center, {color, alpha}, pointSize, mvp);
+        }
         else
+        {
             pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
+        }
 
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
@@ -1828,9 +1843,15 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         {
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
+            {
+                if (!centerCalculated)
+                    center = calculateQuadCenter(m_cameraOrientation, position, radius);
                 renderLargePoint(*this, center, {color, glareAlpha}, glareSize, mvp);
+            }
             else
+            {
                 glareVertexBuffer->addStar(position, {color, glareAlpha}, glareSize);
+            }
         }
     }
 }
