@@ -318,10 +318,12 @@ class Renderer
     {
         return m_modelMatrix;
     }
+
     const Eigen::Matrix4f& getProjectionMatrix() const
     {
         return m_projMatrix;
     }
+
     const Eigen::Matrix4f& getOrthoProjectionMatrix() const
     {
         return m_orthoProjMatrix;
@@ -337,6 +339,11 @@ class Renderer
         m_modelViewPtr = &m;
     }
 
+    void setDefaultModelViewMatrix()
+    {
+        m_modelViewPtr = &m_modelMatrix;
+    }
+
     const Eigen::Matrix4f& getCurrentProjectionMatrix() const
     {
         return *m_projectionPtr;
@@ -345,6 +352,11 @@ class Renderer
     void setCurrentProjectionMatrix(const Eigen::Matrix4f& m)
     {
         m_projectionPtr = &m;
+    }
+
+    void setDefaultProjectionMatrix()
+    {
+        m_projectionPtr = &m_projMatrix;
     }
 
     void setStarStyle(StarStyle);
