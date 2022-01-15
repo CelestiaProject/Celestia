@@ -68,11 +68,11 @@ class ODMenu
     void SetMenuItemOwnerDrawn(HMENU hMenu, UINT item, UINT type);
     void GenerateDisplayText(ODMENUITEM& item);
     void DrawItemText(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item);
-    void DrawIconBar(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item);
+    void DrawIconBar(HWND hWnd, DRAWITEMSTRUCT* lpdis, ODMENUITEM& item);
     void ComputeMenuTextPos(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item, int& x, int& y, SIZE& size);
-    void DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart, short yStart,
+    void DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short centerX, short centerY,
             COLORREF cTransparentColor, bitmapType eType=eNormal);
-    void DrawCheckMark(HDC hDC, short x, short y, bool bNarrow=true);
+    void DrawCheckMark(HWND hWnd, HDC hDC, short centerX, short centerY, bool bNarrow=true);
     COLORREF LightenColor(COLORREF col, double factor);
     COLORREF DarkenColor(COLORREF col, double factor);
     COLORREF AverageColor(COLORREF col1, COLORREF col2, double weight1=0.5);

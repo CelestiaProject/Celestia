@@ -68,6 +68,7 @@
 using namespace celestia;
 using namespace celestia::util;
 using namespace std;
+using namespace celestia::win32;
 
 typedef pair<int,string> IntStrPair;
 typedef vector<IntStrPair> IntStrPairVec;
@@ -988,7 +989,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
                                 if (strstr(text, ">>"))
                                 {
                                     //Increase size of dialog
-                                    int height = treeRect.bottom - dlgRect.top + 12;
+                                    int height = treeRect.bottom - dlgRect.top + DpToPixels(12, hDlg);
                                     SetWindowPos(hDlg, HWND_TOP, 0, 0, width, height,
                                                  SWP_NOMOVE | SWP_NOZORDER);
                                     //Change text in button
@@ -3186,8 +3187,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    int screenWidth = GetSystemMetricsForWindow(SM_CXSCREEN, nullptr);
+    int screenHeight = GetSystemMetricsForWindow(SM_CYSCREEN, nullptr);
     if (prefs.winWidth > screenWidth)
         prefs.winWidth = screenWidth;
     if (prefs.winHeight > screenHeight)
@@ -3385,6 +3386,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     extern void RegisterDatePicker();
     RegisterDatePicker();
+
+    appCore->setScreenDpi(GetDPIForWindow(hWnd));
 
     if (!appCore->initRenderer())
     {

@@ -21,11 +21,11 @@
 #include <celmath/mathlib.h>
 #include "winstarbrowser.h"
 #include "res/resource.h"
-
-extern void SetMouseCursor(LPCTSTR lpCursor);
+#include "winuiutils.h"
 
 using namespace Eigen;
 using namespace std;
+using namespace celestia::win32;
 
 static const int MinListStars = 10;
 static const int MaxListStars = 500;
@@ -49,7 +49,7 @@ bool InitStarBrowserColumns(HWND listView)
 
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_LEFT;
-    lvc.cx = 60;
+    lvc.cx = DpToPixels(60, listView);
     lvc.pszText = const_cast<char*>("");
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
@@ -65,16 +65,16 @@ bool InitStarBrowserColumns(HWND listView)
     string header4 = UTF8ToCurrentCP(_("Type"));
 
     columns[0].pszText = const_cast<char*>(header0.c_str());
-    columns[0].cx = 100;
+    columns[0].cx = DpToPixels(100, listView);
     columns[1].pszText = const_cast<char*>(header1.c_str());
     columns[1].fmt = LVCFMT_RIGHT;
-    columns[1].cx = 115;
+    columns[1].cx = DpToPixels(115, listView);
     columns[2].pszText = const_cast<char*>(header2.c_str());
     columns[2].fmt = LVCFMT_RIGHT;
-    columns[2].cx = 65;
+    columns[2].cx = DpToPixels(65, listView);
     columns[3].pszText = const_cast<char*>(header3.c_str());
     columns[3].fmt = LVCFMT_RIGHT;
-    columns[3].cx = 65;
+    columns[3].cx = DpToPixels(65, listView);
     columns[4].pszText = const_cast<char*>(header4.c_str());
 
     for (i = 0; i < nColumns; i++)
