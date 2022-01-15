@@ -2524,6 +2524,7 @@ static string DistanceLyToStr(double distance, int digits, CelestiaCore::Measure
         }
     }
 
+    std::cout << SigDigitNum(distance, digits);
     return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
 }
 
@@ -2892,7 +2893,8 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
     {
         overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
-     }
+    }
+    std::cout << DistanceLyToStr(dso.getRadius(), 5, measurement) << '\n';
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(dso.getRadius(), 5, measurement));
 
