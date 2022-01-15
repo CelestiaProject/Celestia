@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include "winsplash.h"
+#include "winuiutils.h"
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
 #include <string>
@@ -20,6 +21,7 @@
 
 
 using namespace std;
+using namespace celestia::win32;
 
 
 // Required for transparent Windows, but not present in VC6 headers. Only present
@@ -61,7 +63,9 @@ SplashWindow::SplashWindow(const string& _imageFileName) :
     hCompositionBitmap(0),
     useLayeredWindow(false),
     winWidth(640),
-    winHeight(480)
+    winHeight(480),
+    imageWidth(0),
+    imageHeight(0)
 {
     init();
 }
@@ -108,7 +112,7 @@ SplashWindow::paint(HDC hDC)
         HDC hMemDC      = ::CreateCompatibleDC(hDC);
         HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hMemDC, hBitmap);
 
-        BitBlt(hDC, 0, 0, winWidth, winHeight, hMemDC, 0, 0, SRCCOPY);
+        StretchBlt(hDC, 0, 0, winWidth, winHeight, hMemDC, 0, 0, imageWidth, imageHeight, SRCCOPY);
 
         ::SelectObject(hMemDC, hOldBitmap);
         ::DeleteDC(hMemDC);
@@ -126,10 +130,10 @@ SplashWindow::paint(HDC hDC)
 
     // Show the message text
     RECT r;
-    r.left   = rect.right - 250;
-    r.top    = rect.bottom - 70;
+    r.left   = rect.right - DpToPixels(250, hwnd);
+    r.top    = rect.bottom - DpToPixels(70, hwnd);
     r.right  = rect.right;
-    r.bottom = r.top + 30;
+    r.bottom = r.top + DpToPixels(30, hwnd);
 
     HFONT hFont = reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
     SelectObject(hDC, hFont);
@@ -212,15 +216,18 @@ SplashWindow::createWindow()
     if (!RegisterClassEx(&wndclass))
         return NULL;
 
-    if (image != NULL)
+    if (image != nullptr)
     {
-        winWidth = image->getWidth();
-        winHeight = image->getHeight();
+        imageWidth = image->getWidth();
+        imageHeight = image->getHeight();
+
+        winWidth = DpToPixels(imageWidth, nullptr);
+        winHeight = DpToPixels(imageHeight, nullptr);
     }
 
     // Create the application window centered in the middle of the screen
-    DWORD nScrWidth  = ::GetSystemMetrics(SM_CXFULLSCREEN);
-    DWORD nScrHeight = ::GetSystemMetrics(SM_CYFULLSCREEN);
+    DWORD nScrWidth  = GetSystemMetricsForWindow(SM_CXFULLSCREEN, nullptr);
+    DWORD nScrHeight = GetSystemMetricsForWindow(SM_CYFULLSCREEN, nullptr);
 
     int x = (nScrWidth  - winWidth) / 2;
     int y = (nScrHeight - winHeight) / 2;
@@ -304,7 +311,7 @@ SplashWindow::createBitmap()
         // layered window support.)
         if (hBitmap)
         {
-            hCompositionBitmap = CreateCompatibleBitmap(hwndDC, image->getWidth(), image->getHeight());
+            hCompositionBitmap = CreateCompatibleBitmap(hwndDC, winWidth, winHeight);
         }
     }
 

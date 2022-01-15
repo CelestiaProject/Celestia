@@ -2,8 +2,10 @@
 //
 
 #include "odmenu.h"
+#include "winuiutils.h"
 
 using namespace std;
+using namespace celestia::win32;
 
 ODMenu::ODMenu()
 {
@@ -37,14 +39,6 @@ ODMenu::ODMenu()
     ncms.cbSize = sizeof(NONCLIENTMETRICS);
     if(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncms, 0))
         m_hFont = CreateFontIndirect(&ncms.lfMenuFont);
-
-    //Set menu metrics
-    m_iconBarMargin = 3;
-    m_textLeftMargin = 6;
-    m_textRightMargin = 3;
-    m_iconWidth = GetSystemMetrics(SM_CXSMICON);
-    m_iconHeight = GetSystemMetrics(SM_CYSMICON);
-    m_verticalSpacing = 6;
 
     //Create GDI objects
     m_hItemBackground = CreateSolidBrush(m_clrItemBackground);
@@ -85,6 +79,16 @@ ODMenu::~ODMenu()
 bool ODMenu::Init(HWND hOwnerWnd, HMENU hMenu)
 {
     m_hRootMenu = hMenu;
+
+    auto iconDimension = GetSystemMetricsForWindow(SM_CXSMICON, hOwnerWnd);
+    m_iconWidth = iconDimension;
+    m_iconHeight = iconDimension;
+
+    // Set menu metrics
+    m_iconBarMargin = DpToPixels(3, hOwnerWnd);
+    m_textLeftMargin = DpToPixels(6, hOwnerWnd);
+    m_textRightMargin = DpToPixels(3, hOwnerWnd);
+    m_verticalSpacing = DpToPixels(6, hOwnerWnd);
 
     //Traverse through all menu items to allocate a map of ODMENUITEM which
     //will be subsequently used to measure and draw menu items.
@@ -227,7 +231,7 @@ void ODMenu::DrawItemText(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
         &rectText, DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
 }
 
-void ODMenu::DrawIconBar(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
+void ODMenu::DrawIconBar(HWND hWnd, DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
 {
     RECT rectBar;
     memcpy(&rectBar, &lpdis->rcItem, sizeof(RECT));
@@ -253,27 +257,27 @@ void ODMenu::DrawIconBar(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
     //Draw icon for menu item if handle is valid
     if(item.hBitmap)
     {
-        x = m_iconBarMargin;
-        y = rectBar.top + ((rectBar.bottom - rectBar.top - 16) / 2);
+        x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
+        y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
 
         if(lpdis->itemState & ODS_DISABLED || lpdis->itemState & ODS_GRAYED)
         {
             //Draw disabled icon in normal position
-            DrawTransparentBitmap(lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eDisabled);
+            DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eDisabled);
         }
         else if(lpdis->itemState & ODS_SELECTED)
         {
             //Draw icon "raised"
             //Draw shadow right one pixel and down one pixel from normal position
-            DrawTransparentBitmap(lpdis->hDC, item.hBitmap, x+1, y+1, m_clrTranparent, eShadow);
+            DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x+1, y+1, m_clrTranparent, eShadow);
 
             //Draw normal left one pixel and up one pixel from normal position
-            DrawTransparentBitmap(lpdis->hDC, item.hBitmap, x-1, y-1, m_clrTranparent);
+            DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x-1, y-1, m_clrTranparent);
         }
         else
         {
             //Draw faded icon in normal position
-            DrawTransparentBitmap(lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eFaded);
+            DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eFaded);
         }
     }
     else if(lpdis->itemState & ODS_CHECKED)
@@ -289,17 +293,17 @@ void ODMenu::DrawIconBar(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
             hPrevBrush = (HBRUSH)SelectObject(lpdis->hDC, m_hCheckMarkBackgroundBrush);
         hPrevPen = (HPEN)SelectObject(lpdis->hDC, m_hSelectionOutlinePen);
         rect.left = m_iconBarMargin;
-        rect.right = m_iconBarMargin + m_iconWidth;
+        rect.right = rect.left + m_iconWidth;
         rect.top = rectBar.top + (rectBar.bottom - rectBar.top - m_iconHeight) / 2;
         rect.bottom = rect.top + m_iconHeight;
         Rectangle(lpdis->hDC, rect.left, rect.top, rect.right, rect.bottom);
         SelectObject(lpdis->hDC, hPrevBrush);
         SelectObject(lpdis->hDC, hPrevPen);
 
-        //Draw check mark
-        x = (m_iconWidth + 2*m_iconBarMargin - 6) / 2;
-        y = rectBar.top + ((rectBar.bottom - rectBar.top - 7) / 2) + 1;
-        DrawCheckMark(lpdis->hDC, x, y, true);
+        // Draw check mark
+        x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
+        y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
+        DrawCheckMark(hWnd, lpdis->hDC, x, y, true);
     }
 }
 
@@ -321,8 +325,8 @@ void ODMenu::ComputeMenuTextPos(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item, int& x,
     }
 }
 
-void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
-                                   short yStart, COLORREF cTransparentColor,
+void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short centerX,
+                                   short centerY, COLORREF cTransparentColor,
                                    bitmapType eType)
 {
     BITMAP     bm;
@@ -333,8 +337,6 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
     POINT      ptSize;
     HBRUSH     hOldBrush;
 
-    BOOL bRC;
-
     hdcTemp = CreateCompatibleDC(hDC);
     SelectObject(hdcTemp, hBitmap);   // Select the bitmap
 
@@ -343,6 +345,9 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
     ptSize.y = bm.bmHeight;           // Get height of bitmap
     DPtoLP(hdcTemp, &ptSize, 1);      // Convert from device
                                       // to logical points
+
+    auto iconWidth = DpToPixels(ptSize.x, hWnd);
+    auto iconHeight = DpToPixels(ptSize.y, hWnd);
 
     // Create some DCs to hold temporary data.
     hdcBack   = CreateCompatibleDC(hDC);
@@ -359,7 +364,7 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
     // Monochrome DC
     bmAndObject = CreateBitmap(ptSize.x, ptSize.y, 1, 1, NULL);
 
-    bmAndMem    = CreateCompatibleBitmap(hDC, ptSize.x, ptSize.y);
+    bmAndMem    = CreateCompatibleBitmap(hDC, iconWidth, iconHeight);
     bmSave      = CreateCompatibleBitmap(hDC, ptSize.x, ptSize.y);
 
     // Each DC must select a bitmap object to store pixel data.
@@ -372,7 +377,7 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
     SetMapMode(hdcTemp, GetMapMode(hDC));
 
     // Save the bitmap sent here, because it will be overwritten.
-    bRC = BitBlt(hdcSave, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCCOPY);
+    BitBlt(hdcSave, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCCOPY);
 
     // Create an "AND mask" that contains the mask of the colors to draw
     // (the nontransparent portions of the image).
@@ -383,21 +388,21 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
 
     // Create the object mask for the bitmap by performing a BitBlt
     // from the source bitmap to a monochrome bitmap.
-    bRC = BitBlt(hdcObject, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCCOPY);
+    BitBlt(hdcObject, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCCOPY);
 
     // Set the background color of the source DC back to the original color.
     SetBkColor(hdcTemp, cColor);
 
     // Create the inverse of the object mask.
-    bRC = BitBlt(hdcBack, 0, 0, ptSize.x, ptSize.y, hdcObject, 0, 0, NOTSRCCOPY);
+    BitBlt(hdcBack, 0, 0, ptSize.x, ptSize.y, hdcObject, 0, 0, NOTSRCCOPY);
 
     // Copy the background of the main DC to the destination.
-    bRC = BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hDC, xStart, yStart, SRCCOPY);
+    BitBlt(hdcMem, 0, 0, iconWidth, iconHeight, hDC, centerX - iconWidth / 2, centerY - iconHeight / 2, SRCCOPY);
 
     // Mask out the places where the bitmap will be placed.
     // hdcMem then contains the background color of hDC only in the places
     // where the transparent pixels reside.
-    bRC = BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hdcObject, 0, 0, SRCAND);
+    StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcObject, 0, 0, ptSize.x, ptSize.y, SRCAND);
 
     if(eType == eNormal)
     {
@@ -407,7 +412,7 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
 
         // XOR the bitmap with the background on the destination DC.
         // hdcMem then contains the required result.
-        BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCPAINT);
+        StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
     }
     else if(eType == eShadow)
     {
@@ -415,11 +420,11 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
         hOldBrush = (HBRUSH)SelectObject(hdcTemp, m_hIconShadowBrush);
 
         //Copy shadow brush pixels for all non-transparent pixels to hdcTemp
-        bRC = BitBlt(hdcTemp, 0, 0, ptSize.x, ptSize.y, hdcBack, 0, 0, MERGECOPY);
+        BitBlt(hdcTemp, 0, 0, ptSize.x, ptSize.y, hdcBack, 0, 0, MERGECOPY);
 
         // XOR the bitmap with the background on the destination DC.
         // hdcMem then contains the required result.
-        bRC = BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCPAINT);
+        StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
 
         //Restore the brush in hdcTemp
         SelectObject(hdcTemp, hOldBrush);
@@ -446,7 +451,7 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
 
         // XOR the bitmap with the background on the destination DC.
         // hdcMem then contains the required result.
-        BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCPAINT);
+        StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
     }
     else if(eType == eDisabled)
     {
@@ -479,14 +484,14 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
 
         // XOR the bitmap with the background on the destination DC.
         // hdcMem then contains the required result.
-        BitBlt(hdcMem, 0, 0, ptSize.x, ptSize.y, hdcTemp, 0, 0, SRCPAINT);
+        StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
     }
 
     // Copy the destination to the screen.
-    bRC = BitBlt(hDC, xStart, yStart, ptSize.x, ptSize.y, hdcMem, 0, 0, SRCCOPY);
+    BitBlt(hDC, centerX - iconWidth / 2, centerY - iconHeight / 2, iconWidth, iconHeight, hdcMem, 0, 0, SRCCOPY);
 
     // Place the original bitmap back into the bitmap sent here.
-    bRC = BitBlt(hdcTemp, 0, 0, ptSize.x, ptSize.y, hdcSave, 0, 0, SRCCOPY);
+    BitBlt(hdcTemp, 0, 0, ptSize.x, ptSize.y, hdcSave, 0, 0, SRCCOPY);
 
     // Delete the memory bitmaps.
     DeleteObject(SelectObject(hdcBack, bmBackOld));
@@ -502,7 +507,7 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
     DeleteDC(hdcTemp);
 }
 
-void ODMenu::DrawCheckMark(HDC hDC, short x, short y, bool bNarrow)
+void ODMenu::DrawCheckMark(HWND hWnd, HDC hDC, short centerX, short centerY, bool bNarrow)
 {
     HPEN hOldPen;
     int dp = 0;
@@ -510,30 +515,26 @@ void ODMenu::DrawCheckMark(HDC hDC, short x, short y, bool bNarrow)
     if(bNarrow)
         dp = 1;
 
-    //Select check mark pen
+    // Select check mark pen
     hOldPen = (HPEN)SelectObject(hDC, m_hCheckMarkPen);
 
-    //Draw the check mark
-    MoveToEx(hDC, x, y + 2, NULL);
-    LineTo(hDC, x, y + 5 - dp);
+    // Draw the check mark
+    auto minLeftX = centerX - DpToPixels(4, hWnd);
+    auto maxLeftX = centerX - DpToPixels(1, hWnd);
+    auto x = minLeftX;
+    auto y = centerY - DpToPixels(2, hWnd);
+    for (; x < maxLeftX; x += 1, y += 1)
+    {
+        MoveToEx(hDC, x, y, NULL);
+        LineTo(hDC, x, y + DpToPixels(3 - dp, hWnd));
+    }
 
-    MoveToEx(hDC, x + 1, y + 3, NULL);
-    LineTo(hDC, x + 1, y + 6 - dp);
-
-    MoveToEx(hDC, x + 2, y + 4, NULL);
-    LineTo(hDC, x + 2, y + 7 - dp);
-
-    MoveToEx(hDC, x + 3, y + 3, NULL);
-    LineTo(hDC, x + 3, y + 6 - dp);
-
-    MoveToEx(hDC, x + 4, y + 2, NULL);
-    LineTo(hDC, x + 4, y + 5 - dp);
-
-    MoveToEx(hDC, x + 5, y + 1, NULL);
-    LineTo(hDC, x + 5, y + 4 - dp);
-
-    MoveToEx(hDC, x + 6, y, NULL);
-    LineTo(hDC, x + 6, y + 3 - dp);
+    auto maxRightX = centerX + DpToPixels(4, hWnd);
+    for (; x < maxRightX; x += 1, y -= 1)
+    {
+        MoveToEx(hDC, x, y, NULL);
+        LineTo(hDC, x, y + DpToPixels(3 - dp, hWnd));
+    }
 
     //Restore original DC pen
     SelectObject(hDC, hOldPen);
@@ -622,6 +623,7 @@ void ODMenu::MeasureItem(HWND hWnd, LPARAM lParam)
         DrawText(hDC, item.rawText.c_str(), item.rawText.length(), &rect,
             DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_CALCRECT);
         lpmis->itemWidth = rect.right - rect.left;
+        lpmis->itemHeight = m_iconHeight;
 
         if(!item.topMost)
         {
@@ -727,7 +729,7 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
     }
 
     //Draw the left icon bar
-    DrawIconBar(lpdis, item);
+    DrawIconBar(hWnd, lpdis, item);
 
     //Draw selection outline if drawing a selected item
     if(lpdis->itemState & ODS_SELECTED && !(lpdis->itemState & ODS_GRAYED || lpdis->itemState & ODS_DISABLED))

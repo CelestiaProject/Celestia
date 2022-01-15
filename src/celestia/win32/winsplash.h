@@ -43,4 +43,6 @@ private:
     std::string message;
     unsigned int winWidth;
     unsigned int winHeight;
+    unsigned int imageWidth;
+    unsigned int imageHeight;
 };

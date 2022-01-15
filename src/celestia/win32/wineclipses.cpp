@@ -29,10 +29,9 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using namespace celestia::win32;
 
 static vector<Eclipse> eclipseList;
-
-extern void SetMouseCursor(LPCTSTR lpCursor);
 
 const char* MonthNames[12] =
 {
@@ -63,15 +62,15 @@ bool InitEclipseFinderColumns(HWND listView)
     string header4 = UTF8ToCurrentCP(_("Duration"));
 
     columns[0].pszText = const_cast<char*>(header0.c_str());
-    columns[0].cx = 65;
+    columns[0].cx = DpToPixels(65, listView);
     columns[1].pszText = const_cast<char*>(header1.c_str());
-    columns[1].cx = 65;
+    columns[1].cx = DpToPixels(65, listView);
     columns[2].pszText = const_cast<char*>(header2.c_str());
-    columns[2].cx = 80;
+    columns[2].cx = DpToPixels(80, listView);
     columns[3].pszText = const_cast<char*>(header3.c_str());
-    columns[3].cx = 55;
+    columns[3].cx = DpToPixels(55, listView);
     columns[4].pszText = const_cast<char*>(header4.c_str());
-    columns[4].cx = 135;
+    columns[4].cx = DpToPixels(135, listView);
 
     for (i = 0; i < nColumns; i++)
     {

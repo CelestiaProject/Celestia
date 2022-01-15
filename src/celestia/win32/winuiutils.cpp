@@ -12,6 +12,34 @@
 
 #include "winuiutils.h"
 
+namespace
+{
+using GetDpiForWindowFn = UINT STDAPICALLTYPE(HWND hWnd);
+using GetDpiForSystemFn = UINT STDAPICALLTYPE();
+using GetSystemMetricsForDpiFn = UINT STDAPICALLTYPE(int nIndex, UINT dpi);
+GetDpiForWindowFn *pfnGetDpiForWindow = nullptr;
+GetDpiForSystemFn *pfnGetDpiForSystem = nullptr;
+GetSystemMetricsForDpiFn *pfnGetSystemMetricsForDpi = nullptr;
+bool dpiFunctionPointersInitialized = false;
+
+void InitializeDPIFunctionPointersIfNeeded()
+{
+    if (dpiFunctionPointersInitialized)
+        return;
+
+    HMODULE hUser = GetModuleHandle("user32.dll");
+    if (!hUser)
+        return;
+    pfnGetDpiForWindow = reinterpret_cast<GetDpiForWindowFn *>(GetProcAddress(hUser, "GetDpiForWindow"));
+    pfnGetDpiForSystem = reinterpret_cast<GetDpiForSystemFn *>(GetProcAddress(hUser, "GetDpiForSystem"));
+    pfnGetSystemMetricsForDpi = reinterpret_cast<GetSystemMetricsForDpiFn *>(GetProcAddress(hUser, "GetSystemMetricsForDpi"));
+    dpiFunctionPointersInitialized = true;
+}
+}
+
+namespace celestia::win32
+{
+
 void SetMouseCursor(LPCTSTR lpCursor)
 {
     HCURSOR hNewCrsr;
@@ -52,4 +80,45 @@ void AddButtonDefaultStyle(HWND hWnd)
     SetWindowLong(hWnd, GWL_STYLE,
         ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
     InvalidateRect(hWnd, nullptr, TRUE);
+}
+
+UINT GetBaseDPI()
+{
+    return 96;
+}
+
+UINT GetDPIForWindow(HWND hWnd)
+{
+    InitializeDPIFunctionPointersIfNeeded();
+    if (hWnd && pfnGetDpiForWindow)
+        return pfnGetDpiForWindow(hWnd);
+    if (pfnGetDpiForSystem)
+        return pfnGetDpiForSystem();
+    HDC hDC = GetDC(hWnd);
+    if (hDC)
+    {
+        auto dpi = GetDeviceCaps(hDC, LOGPIXELSX);
+        ReleaseDC(hWnd, hDC);
+        return dpi;
+    }
+    return GetBaseDPI();
+}
+
+int DpToPixels(int dp, HWND hWnd)
+{
+    return dp * GetDPIForWindow(hWnd) / GetBaseDPI();
+}
+
+int GetSystemMetricsForWindow(int index, HWND hWnd)
+{
+    InitializeDPIFunctionPointersIfNeeded();
+    auto dpi = GetDPIForWindow(hWnd);
+    if (pfnGetSystemMetricsForDpi)
+    {
+        return pfnGetSystemMetricsForDpi(index, dpi);
+    }
+    auto systemDpi = GetDPIForWindow(nullptr);
+    return GetSystemMetrics(index) * dpi / systemDpi;
+}
+
 }
