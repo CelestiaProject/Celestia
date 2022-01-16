@@ -53,6 +53,7 @@
 #include <cassert>
 #include <ctime>
 #include <set>
+#include <sstream>
 #include <celengine/rectangle.h>
 #include <celengine/mapmanager.h>
 #include <fmt/ostream.h>
@@ -129,8 +130,8 @@ string KelvinToStr(float value, int digits, CelestiaCore::TemperatureScale tempe
             unitTemplate = "{} K";
             break;
     }
-    auto s = SigDigitNum(value, digits);
-    for (auto c : s) std::cout << c; std::cout << '\n';
+    stringstream s; s << SigDigitNum(value, digits);
+    for (auto c : s.str()) std::cout << c; std::cout << '\n';
     return fmt::format(unitTemplate, SigDigitNum(value, digits));
 }
 }
@@ -2525,8 +2526,8 @@ static string DistanceLyToStr(double distance, int digits, CelestiaCore::Measure
         }
     }
 
-    auto s = SigDigitNum(distance, digits);
-    for (auto c : s) std::cout << c; std::cout << '\n';
+    stringstream s; s << SigDigitNum(distance, digits);
+    for (auto c : s.str()) std::cout << c; std::cout << '\n';
     return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
 }
 
@@ -2849,8 +2850,8 @@ static void displayStarInfo(Overlay& overlay,
 
         if (detail > 1)
         {
-            auto s = KelvinToStr(star.getTemperature(), 3, temperatureScale);
-            for (auto c : s) std::cout << c; std::cout << '\n';
+            stringstream s; s << KelvinToStr(star.getTemperature(), 3, temperatureScale);
+            for (auto c : s.str()) std::cout << c; std::cout << '\n';
             overlay.printf(_("Surface temp: %s\n"), KelvinToStr(star.getTemperature(), 3, temperatureScale));
             float solarRadii = star.getRadius() / 6.96e5f;
 
@@ -2897,8 +2898,8 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
         overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
     }
-    auto s = DistanceLyToStr(dso.getRadius(), 5, measurement);
-    for (auto c : s) std::cout <<c; std::cout<< '\n';
+    stringstream s; s << DistanceLyToStr(dso.getRadius(), 5, measurement);
+    for (auto c : s.str()) std::cout <<c; std::cout<< '\n';
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(dso.getRadius(), 5, measurement));
 
