@@ -129,7 +129,8 @@ string KelvinToStr(float value, int digits, CelestiaCore::TemperatureScale tempe
             unitTemplate = "{} K";
             break;
     }
-    std::cout << SigDigitNum(value, digits) << '\n';
+    auto s = SigDigitNum(value, digits);
+    for (auto c : s) std::cout << c; std::cout << '\n';
     return fmt::format(unitTemplate, SigDigitNum(value, digits));
 }
 }
@@ -2524,7 +2525,8 @@ static string DistanceLyToStr(double distance, int digits, CelestiaCore::Measure
         }
     }
 
-    std::cout << SigDigitNum(distance, digits);
+    auto s = SigDigitNum(distance, digits);
+    for (auto c : s) std::cout << c; std::cout << '\n';
     return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
 }
 
@@ -2847,7 +2849,8 @@ static void displayStarInfo(Overlay& overlay,
 
         if (detail > 1)
         {
-            std::cout << KelvinToStr(star.getTemperature(), 3, temperatureScale) << '\n';
+            auto s = KelvinToStr(star.getTemperature(), 3, temperatureScale);
+            for (auto c : s) std::cout << c; std::cout << '\n';
             overlay.printf(_("Surface temp: %s\n"), KelvinToStr(star.getTemperature(), 3, temperatureScale));
             float solarRadii = star.getRadius() / 6.96e5f;
 
@@ -2894,7 +2897,8 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
         overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
     }
-    std::cout << DistanceLyToStr(dso.getRadius(), 5, measurement) << '\n';
+    auto s = DistanceLyToStr(dso.getRadius(), 5, measurement);
+    for (auto c : s) std::cout <<c; std::cout<< '\n';
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(dso.getRadius(), 5, measurement));
 
