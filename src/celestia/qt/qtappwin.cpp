@@ -622,8 +622,8 @@ void CelestiaAppWindow::slotGrabImage()
 
     if (!saveAsName.isEmpty())
     {
-        m_appCore->saveScreenShot(saveAsName.toStdString());
-        settings.setValue("GrabImageDir", QFileInfo(saveAsName).absolutePath());
+        QImage grabbedImage = glWidget->grabFramebuffer();
+        grabbedImage.save(saveAsName);
     }
     settings.endGroup();
 }
@@ -751,17 +751,9 @@ static QImage::Format toQFormat(PixelFormat format)
 
 void CelestiaAppWindow::slotCopyImage()
 {
-    //glWidget->repaint();
-    std::array<int, 4> viewport;
-    celestia::PixelFormat format;
-    m_appCore->getCaptureInfo(viewport, format);
-    QImage grabbedImage = QImage(viewport[2], viewport[3],
-                                 toQFormat(format));
-    if (m_appCore->captureImage(grabbedImage.bits(), viewport, format))
-    {
-        QApplication::clipboard()->setImage(grabbedImage);
-        m_appCore->flash(_("Captured screen shot to clipboard"));
-    }
+    QImage grabbedImage = glWidget->grabFramebuffer();
+    QApplication::clipboard()->setImage(grabbedImage);
+    m_appCore->flash(_("Captured screen shot to clipboard"));
 }
 
 
