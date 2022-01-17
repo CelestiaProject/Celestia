@@ -54,6 +54,7 @@
 #include <ctime>
 #include <set>
 #include <sstream>
+#include <fstream>
 #include <celengine/rectangle.h>
 #include <celengine/mapmanager.h>
 #include <fmt/ostream.h>
@@ -91,6 +92,8 @@ static const double OneMiInKm = 1.609344;
 static const double OneFtInKm = 0.0003048;
 static const double OneLbInKg = 0.45359237;
 static const double OneLbPerFt3InKgPerM3 = OneLbInKg / pow(OneFtInKm * 1000.0, 3);
+
+static std::ofstream g_dump;
 
 namespace
 {
@@ -131,7 +134,7 @@ string KelvinToStr(float value, int digits, CelestiaCore::TemperatureScale tempe
             break;
     }
     stringstream s; s << SigDigitNum(value, digits);
-    for (auto c : s.str()) std::cout << c; std::cout << '\n';
+    for (auto c : s.str()) g_dump << c; g_dump << '\n';
     return fmt::format(unitTemplate, SigDigitNum(value, digits));
 }
 }
@@ -210,6 +213,7 @@ CelestiaCore::CelestiaCore() :
     clog.rdbuf(console->rdbuf());
     cerr.rdbuf(console->rdbuf());
     console->setWindowHeight(Console::PageRows);
+    g_dump = ofstream("dump.log", ios::binary);
 }
 
 CelestiaCore::~CelestiaCore()
@@ -2527,7 +2531,7 @@ static string DistanceLyToStr(double distance, int digits, CelestiaCore::Measure
     }
 
     stringstream s; s << SigDigitNum(distance, digits);
-    for (auto c : s.str()) std::cout << c; std::cout << '\n';
+    for (auto c : s.str()) g_dump.write(&c, 1); g_dump.write("\n", 1);;
     return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
 }
 
@@ -2851,7 +2855,7 @@ static void displayStarInfo(Overlay& overlay,
         if (detail > 1)
         {
             stringstream s; s << KelvinToStr(star.getTemperature(), 3, temperatureScale);
-            for (auto c : s.str()) std::cout << c; std::cout << '\n';
+            for (auto c : s.str()) g_dump.write(&c, 1); g_dump.write("\n", 1);
             overlay.printf(_("Surface temp: %s\n"), KelvinToStr(star.getTemperature(), 3, temperatureScale));
             float solarRadii = star.getRadius() / 6.96e5f;
 
@@ -2899,7 +2903,7 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
                      DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
     }
     stringstream s; s << DistanceLyToStr(dso.getRadius(), 5, measurement);
-    for (auto c : s.str()) std::cout <<c; std::cout<< '\n';
+    for (auto c : s.str()) g_dump.write(&c, 1); g_dump.write("\n", 1);
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(dso.getRadius(), 5, measurement));
 
