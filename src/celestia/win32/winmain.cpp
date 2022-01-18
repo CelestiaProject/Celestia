@@ -3306,21 +3306,25 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    bindtextdomain("celestia", "locale");
+    bindtextdomain("celestia", LOCALEDIR);
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia-data", "locale");
+    bindtextdomain("celestia-data", LOCALEDIR);
     bind_textdomain_codeset("celestia-data", "UTF-8");
     textdomain("celestia");
 
     // Loading localized resources
-    char res[255];
-    sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
-    int langID = 0;
-    if (sscanf(_("WinLangID"), "%x", &langID) == 1)
-        SetThreadLocale(langID);
-    if ((hRes = LoadLibrary(res)) == NULL) {
-        cout << "Couldn't load localized resources: "<< res<< "\n";
-        hRes = hInstance;
+    if (_("LANGUAGE") != "LANGUAGE")
+    {
+        char res[255];
+        sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
+        int langID = 0;
+        if (sscanf(_("WinLangID"), "%x", &langID) == 1)
+            SetThreadLocale(langID);
+        if ((hRes = LoadLibrary(res)) == NULL)
+        {
+            cout << "Couldn't load localized resources: "<< res << "\n";
+            hRes = hInstance;
+        }
     }
 #endif
 
