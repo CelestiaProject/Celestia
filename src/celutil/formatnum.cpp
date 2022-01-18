@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -15,6 +16,7 @@
 
 // HACK: MS Visual C++ has _snprintf declared in stdio.h but not snprintf
 #ifdef _WIN32
+#include <celutil/winutil.h>
 #define snprintf _snprintf
 #endif
 
@@ -58,9 +60,30 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
     char obuf[64];
     int fmtPrecision;
     double value = num.getRoundedValue();
-    char *decimal_point = localeconv()->decimal_point;
-    char *thousands_sep = localeconv()->thousands_sep;
-    char *grouping = localeconv()->grouping;
+    const char *grouping = localeconv()->grouping;
+#ifndef _WIN32
+    const char *decimal_point = localeconv()->decimal_point;
+    const char *thousands_sep = localeconv()->thousands_sep;
+#else
+    static bool initialized = false;
+    static char decimal_point[8] = {};
+    static char thousands_sep[8] = {};
+
+    if (!initialized)
+    {
+        std::string s = CurrentCPToUTF8(localeconv()->decimal_point);
+        assert(s.length() < 8);
+        strncpy(decimal_point, s.c_str(), sizeof(decimal_point) - 1);
+        decimal_point[sizeof(decimal_point) - 1 ] = '\0';
+
+        s = CurrentCPToUTF8(localeconv()->thousands_sep);
+        assert(s.length() < 8);
+        strncpy(thousands_sep, s.c_str(), sizeof(thousands_sep) - 1);
+        thousands_sep[sizeof(thousands_sep) - 1] = '\0';
+
+        initialized = true;
+    }
+#endif
 
     memset(obuf, 0, sizeof(obuf));
 
