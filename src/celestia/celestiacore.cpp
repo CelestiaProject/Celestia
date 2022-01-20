@@ -1045,10 +1045,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedText != "")
             {
                 Selection sel = sim->findObjectFromPath(typedText, true);
+#ifdef AUTO_COMPLETION
                 if (sel.empty() && typedTextCompletion.size() > 0)
                 {
                     sel = sim->findObjectFromPath(typedTextCompletion[0], true);
                 }
+#endif
                 if (!sel.empty())
                 {
                     addToHistory();
