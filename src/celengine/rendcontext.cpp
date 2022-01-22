@@ -16,6 +16,7 @@
 #include "lightenv.h"
 #include "rendcontext.h"
 #include "render.h"
+#include "shadowmap.h" // GL_ONLY_SHADOWS definition
 #include "texmanager.h"
 #include "texture.h"
 
