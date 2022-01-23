@@ -1,9 +1,19 @@
-//#define GL_ES
+// sdlmain.cpp
+//
+// Copyright (C) 2020-present, the Celestia Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
 #include <cctype>
 #include <cstring>
 #include <iostream>
 #include <memory>
+#include <system_error>
 #include <fmt/printf.h>
+#include <celcompat/filesystem.h>
 #include <celengine/glsupport.h>
 #include <celutil/gettext.h>
 #include <celutil/tzutil.h>
@@ -13,7 +23,6 @@
 #else
 #include <SDL_opengl.h>
 #endif
-#include <unistd.h>
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
 
@@ -551,10 +560,16 @@ int main(int argc, char **argv)
     bind_textdomain_codeset(PACKAGE, "UTF-8");
     textdomain(PACKAGE);
 
-    if (chdir(CONFIG_DATA_DIR) == -1)
+    const char *dataDir = getenv("CELESTIA_DATA_DIR");
+    if (dataDir == nullptr)
+        dataDir = CONFIG_DATA_DIR;
+
+    std::error_code ec;
+    fs::current_path(dataDir, ec);
+    if (ec)
     {
         FatalError(fmt::sprintf("Cannot chdir to '%s', probably due to improper installation",
-                   CONFIG_DATA_DIR));
+                   dataDir));
         return 1;
     }
 
