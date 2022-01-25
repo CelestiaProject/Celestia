@@ -363,7 +363,7 @@ joinVertices(std::vector<Face>& faces,
         return;
 
     // Must have a position
-    assert(desc.getAttribute(cmod::Mesh::Position).format == cmod::Mesh::Float3);
+    assert(desc.getAttribute(cmod::VertexAttributeSemantic::Position).format == cmod::VertexAttributeFormat::Float3);
 
     std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
     const cmod::VWord* vertexPoints = vertexData + posOffset;
