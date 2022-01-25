@@ -239,6 +239,7 @@ class Mesh
 
  private:
     PrimitiveGroup createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);
+    void mergePrimitiveGroups();
 
     VertexDescription vertexDesc{ };
 

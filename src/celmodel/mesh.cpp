@@ -14,9 +14,11 @@
 #include <iterator>
 #include <tuple>
 #include <utility>
+#include <celutil/logger.h>
 
 #include "mesh.h"
 
+using celestia::util::GetLogger;
 
 namespace cmod
 {
@@ -393,8 +395,64 @@ Mesh::aggregateByMaterial()
               {
                   return g0.materialIndex < g1.materialIndex;
               });
+    mergePrimitiveGroups();
 }
 
+
+void
+Mesh::mergePrimitiveGroups()
+{
+    if (groups.size() < 2)
+        return;
+
+    std::vector<PrimitiveGroup> newGroups;
+    for (size_t i = 0; i < groups.size(); i++)
+    {
+        auto &g = groups[i];
+
+        if (g.vertexCountOverride == 0 && g.prim == PrimitiveGroupType::TriStrip)
+        {
+            std::vector<Index32> newIndices;
+            newIndices.reserve(g.indices.size() * 2);
+            for (size_t j = 0, e = g.indices.size() - 2; j < e; j++)
+            {
+                auto x = g.indices[j + 0];
+                auto y = g.indices[j + 1];
+                auto z = g.indices[j + 2];
+                // skip degenerated triangles
+                if (x == y || y == z || z == x)
+                    continue;
+                if ((j & 1) != 0) // FIXME: CCW hardcoded
+                    std::swap(y, z);
+                newIndices.push_back(x);
+                newIndices.push_back(y);
+                newIndices.push_back(z);
+            }
+            g.indices = std::move(newIndices);
+            g.prim = PrimitiveGroupType::TriList;
+        }
+
+        if (i == 0 || g.vertexCountOverride != 0 || g.prim != PrimitiveGroupType::TriList)
+        {
+            newGroups.push_back(std::move(g));
+        }
+        else
+        {
+            auto &p = newGroups.back();
+            if (p.prim != g.prim || p.materialIndex != g.materialIndex)
+            {
+                newGroups.push_back(std::move(g));
+            }
+            else
+            {
+                p.indices.reserve(p.indices.size() + g.indices.size());
+                p.indices.insert(p.indices.end(), g.indices.begin(), g.indices.end());
+            }
+        }
+    }
+    GetLogger()->info("Optimized mesh groups: had {} groups, now: {} of them.\n", groups.size(), newGroups.size());
+    groups = std::move(newGroups);
+}
 
 bool
 Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection, PickResult* result) const
