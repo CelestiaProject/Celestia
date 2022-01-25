@@ -79,6 +79,7 @@ class SDL_Application
     void toggleFullscreen();
     void copyURL();
     void pasteURL();
+    void configure() const;
 
     // state variables
     std::string m_appName;
@@ -167,10 +168,21 @@ SDL_Application::initCelestiaCore()
 }
 
 void
+SDL_Application::configure() const
+{
+    auto *renderer     = m_appCore->getRenderer();
+    const auto *config = m_appCore->getConfig();
+
+    renderer->setRenderFlags(Renderer::DefaultRenderFlags);
+    renderer->setShadowMapSize(config->ShadowMapSize);
+    renderer->setSolarSystemMaxDistance(config->SolarSystemMaxDistance);
+}
+
+void
 SDL_Application::run()
 {
     m_appCore->initRenderer();
-    m_appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
+    configure();
     m_appCore->start();
 
     std::string tzName;
