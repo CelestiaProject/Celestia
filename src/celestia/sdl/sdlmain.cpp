@@ -15,6 +15,7 @@
 #endif
 #include <unistd.h>
 #include <celestia/celestiacore.h>
+#include <celestia/url.h>
 
 namespace celestia
 {
@@ -67,6 +68,8 @@ class SDL_Application
 
     // aux functions
     void toggleFullscreen();
+    void copyURL();
+    void pasteURL();
 
     // state variables
     std::string m_appName;
@@ -294,8 +297,18 @@ SDL_Application::handleKeyPressEvent(const SDL_KeyboardEvent &event)
         int k = tolower(key);
         if (k >= 'a' && k <= 'z')
         {
-            key = k + 1 - 'a';
-            m_appCore->charEntered(key, mod);
+            switch (k)
+            {
+            case 'c':
+                copyURL();
+                break;
+            case 'v':
+                pasteURL();
+                break;
+            default:
+                key = k + 1 - 'a';
+                m_appCore->charEntered(key, mod);
+            }
             return;
         }
         mod |= CelestiaCore::ControlKey;
@@ -471,6 +484,29 @@ SDL_Application::toggleFullscreen()
             m_fullscreen = true;
     }
 }
+
+void
+SDL_Application::copyURL()
+{
+    CelestiaState appState(m_appCore);
+    appState.captureState();
+
+    if (SDL_SetClipboardText(Url(appState).getAsString().c_str()) == 0)
+        m_appCore->flash(_("Copied URL"));
+}
+
+void
+SDL_Application::pasteURL()
+{
+    if (SDL_HasClipboardText() != SDL_TRUE)
+        return;
+
+    // on error SDL_GetClipboardText returns a new empty string
+    char *str = SDL_GetClipboardText(); // don't add const due to SDL_free
+    if (*str != '\0' && m_appCore->goToUrl(str))
+        m_appCore->flash(_("Pasting URL"));
+
+    SDL_free(str);
 }
 
 void
@@ -503,7 +539,7 @@ void DumpGLInfo()
     if (s != nullptr)
         std::cout << s << '\n';
 }
-
+} // namespace
 
 using namespace celestia;
 
