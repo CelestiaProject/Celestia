@@ -15,11 +15,13 @@
 
 #include <cel3ds/3dsread.h>
 #include <celmath/mathlib.h>
+#include <celutil/logger.h>
 
 #include "cmodops.h"
 #include "convert3ds.h"
 #include "pathmanager.h"
 
+using celestia::util::CreateLogger;
 
 void usage()
 {
@@ -34,6 +36,8 @@ int main(int argc, char* argv[])
         usage();
         return 1;
     }
+
+    CreateLogger();
 
     std::string inputFileName = argv[1];
 
