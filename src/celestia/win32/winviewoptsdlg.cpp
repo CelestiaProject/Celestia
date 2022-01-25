@@ -332,88 +332,59 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     int orbitMask = appCore->getRenderer()->getOrbitMask();
 
     //Set checkboxes and radiobuttons
-    SendDlgItemMessage(hDlg, IDC_SHOWATMOSPHERES, BM_SETCHECK,
-        (renderFlags & Renderer::ShowAtmospheres)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCELESTIALGRID, BM_SETCHECK,
-        (renderFlags & Renderer::ShowCelestialSphere)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWHORIZONGRID, BM_SETCHECK,
-        (renderFlags & Renderer::ShowHorizonGrid)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWGALACTICGRID, BM_SETCHECK,
-        (renderFlags & Renderer::ShowGalacticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWECLIPTICGRID, BM_SETCHECK,
-        (renderFlags & Renderer::ShowEclipticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWECLIPTIC, BM_SETCHECK,
-        (renderFlags & Renderer::ShowEcliptic)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowCloudMaps)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCLOUDSHADOWS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowCloudShadows)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowDiagrams)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWECLIPSESHADOWS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowEclipseShadows)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
-        (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWGLOBULARS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowGlobulars)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWNEBULAE, BM_SETCHECK,
-        (renderFlags & Renderer::ShowNebulae)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWOPENCLUSTERS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowOpenClusters)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
-    dlgCheck64(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
+    dlgCheck64(hDlg, IDC_SHOWATMOSPHERES, renderFlags, Renderer::ShowAtmospheres);
+    dlgCheck64(hDlg, IDC_SHOWCELESTIALGRID, renderFlags, Renderer::ShowCelestialSphere);
+    dlgCheck64(hDlg, IDC_SHOWHORIZONGRID, renderFlags, Renderer::ShowHorizonGrid);
+    dlgCheck64(hDlg, IDC_SHOWGALACTICGRID, renderFlags, Renderer::ShowGalacticGrid);
+    dlgCheck64(hDlg, IDC_SHOWECLIPTICGRID, renderFlags, Renderer::ShowEclipticGrid);
+    dlgCheck64(hDlg, IDC_SHOWECLIPTIC, renderFlags, Renderer::ShowEcliptic);
+    dlgCheck64(hDlg, IDC_SHOWCLOUDS, renderFlags, Renderer::ShowCloudMaps);
+    dlgCheck64(hDlg, IDC_SHOWCLOUDSHADOWS, renderFlags, Renderer::ShowCloudShadows);
+    dlgCheck64(hDlg, IDC_SHOWCONSTELLATIONS, renderFlags, Renderer::ShowDiagrams);
+    dlgCheck64(hDlg, IDC_SHOWECLIPSESHADOWS, renderFlags, Renderer::ShowEclipseShadows);
+    dlgCheck64(hDlg, IDC_SHOWGALAXIES, renderFlags, Renderer::ShowGalaxies);
+    dlgCheck64(hDlg, IDC_SHOWGLOBULARS, renderFlags, Renderer::ShowGlobulars);
+    dlgCheck64(hDlg, IDC_SHOWNEBULAE, renderFlags, Renderer::ShowNebulae);
+    dlgCheck64(hDlg, IDC_SHOWOPENCLUSTERS, renderFlags, Renderer::ShowOpenClusters);
+    dlgCheck64(hDlg, IDC_SHOWNIGHTSIDELIGHTS, renderFlags, Renderer::ShowNightMaps);
+    dlgCheck64(hDlg, IDC_SHOWORBITS, renderFlags, Renderer::ShowOrbits);
     dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
     dlgCheck64(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, Renderer::ShowPartialTrajectories);
-    dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
-    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask,   Body::DwarfPlanet);
-    dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
-    dlgCheck(hDlg, IDC_MINORMOONORBITS,  orbitMask,   Body::MinorMoon);
-    dlgCheck(hDlg, IDC_ASTEROIDORBITS,   orbitMask,   Body::Asteroid);
-    dlgCheck(hDlg, IDC_COMETORBITS,      orbitMask,   Body::Comet);
-    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask,   Body::Spacecraft);
-    dlgCheck(hDlg, IDC_STARORBITS,       orbitMask,   Body::Stellar);
-    SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowPlanets) != 0 ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWDWARFPLANETS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowDwarfPlanets) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWMOONS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowMoons) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWMINORMOONS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowMinorMoons) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWASTEROIDS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowAsteroids) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCOMETS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowComets) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWSPACECRAFTS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowSpacecrafts) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowStars)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowBoundaries)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWRINGSHADOWS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowRingShadows)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWRINGS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowPlanetRings)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWCOMETTAILS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowCometTails)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWMARKERS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowMarkers)? BST_CHECKED:BST_UNCHECKED, 0);
+    dlgCheck(hDlg, IDC_PLANETORBITS, orbitMask, Body::Planet);
+    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask, Body::DwarfPlanet);
+    dlgCheck(hDlg, IDC_MOONORBITS, orbitMask, Body::Moon);
+    dlgCheck(hDlg, IDC_MINORMOONORBITS, orbitMask, Body::MinorMoon);
+    dlgCheck(hDlg, IDC_ASTEROIDORBITS, orbitMask, Body::Asteroid);
+    dlgCheck(hDlg, IDC_COMETORBITS, orbitMask, Body::Comet);
+    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask, Body::Spacecraft);
+    dlgCheck(hDlg, IDC_STARORBITS, orbitMask, Body::Stellar);
+    dlgCheck64(hDlg, IDC_SHOWPLANETS, renderFlags, Renderer::ShowPlanets);
+    dlgCheck64(hDlg, IDC_SHOWDWARFPLANETS, renderFlags, Renderer::ShowDwarfPlanets);
+    dlgCheck64(hDlg, IDC_SHOWMOONS, renderFlags, Renderer::ShowMoons);
+    dlgCheck64(hDlg, IDC_SHOWMINORMOONS, renderFlags, Renderer::ShowMinorMoons);
+    dlgCheck64(hDlg, IDC_SHOWASTEROIDS, renderFlags, Renderer::ShowAsteroids);
+    dlgCheck64(hDlg, IDC_SHOWCOMETS, renderFlags, Renderer::ShowComets);
+    dlgCheck64(hDlg, IDC_SHOWSPACECRAFTS, renderFlags, Renderer::ShowSpacecrafts);
+    dlgCheck64(hDlg, IDC_SHOWSTARS, renderFlags, Renderer::ShowStars);
+    dlgCheck64(hDlg, IDC_SHOWCONSTELLATIONBORDERS, renderFlags, Renderer::ShowBoundaries);
+    dlgCheck64(hDlg, IDC_SHOWRINGSHADOWS, renderFlags, Renderer::ShowRingShadows);
+    dlgCheck64(hDlg, IDC_SHOWRINGS, renderFlags, Renderer::ShowPlanetRings);
+    dlgCheck64(hDlg, IDC_SHOWCOMETTAILS, renderFlags, Renderer::ShowCometTails);
+    dlgCheck64(hDlg, IDC_SHOWMARKERS, renderFlags, Renderer::ShowMarkers);
 
     dlgCheck(hDlg, IDC_LABELCONSTELLATIONS, labelMode, Renderer::ConstellationLabels);
-    SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONSLATIN, BM_SETCHECK,
-                       ((labelMode & Renderer::I18nConstellationLabels) == 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-    dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
+    dlgCheck(hDlg, IDC_LABELCONSTELLATIONSLATIN, ~labelMode, Renderer::I18nConstellationLabels); // check box if flag unset
+    dlgCheck(hDlg, IDC_LABELGALAXIES, labelMode, Renderer::GalaxyLabels);
     dlgCheck(hDlg, IDC_LABELGLOBULARS, labelMode, Renderer::GlobularLabels);
-    dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
+    dlgCheck(hDlg, IDC_LABELNEBULAE, labelMode, Renderer::NebulaLabels);
     dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
-    dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
-    dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
-    dlgCheck(hDlg, IDC_LABELDWARFPLANETS,    labelMode, Renderer::DwarfPlanetLabels);
-    dlgCheck(hDlg, IDC_LABELMOONS,      labelMode, Renderer::MoonLabels);
-    dlgCheck(hDlg, IDC_LABELMINORMOONS,      labelMode, Renderer::MinorMoonLabels);
-    dlgCheck(hDlg, IDC_LABELASTEROIDS,  labelMode, Renderer::AsteroidLabels);
-    dlgCheck(hDlg, IDC_LABELCOMETS,     labelMode, Renderer::CometLabels);
+    dlgCheck(hDlg, IDC_LABELSTARS, labelMode, Renderer::StarLabels);
+    dlgCheck(hDlg, IDC_LABELPLANETS, labelMode, Renderer::PlanetLabels);
+    dlgCheck(hDlg, IDC_LABELDWARFPLANETS, labelMode, Renderer::DwarfPlanetLabels);
+    dlgCheck(hDlg, IDC_LABELMOONS, labelMode, Renderer::MoonLabels);
+    dlgCheck(hDlg, IDC_LABELMINORMOONS, labelMode, Renderer::MinorMoonLabels);
+    dlgCheck(hDlg, IDC_LABELASTEROIDS, labelMode, Renderer::AsteroidLabels);
+    dlgCheck(hDlg, IDC_LABELCOMETS, labelMode, Renderer::CometLabels);
     dlgCheck(hDlg, IDC_LABELSPACECRAFT, labelMode, Renderer::SpacecraftLabels);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
