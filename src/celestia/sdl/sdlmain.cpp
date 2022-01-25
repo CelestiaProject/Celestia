@@ -11,6 +11,7 @@
 #include <cstring>
 #include <iostream>
 #include <memory>
+#include <string_view>
 #include <system_error>
 #include <fmt/printf.h>
 #include <celcompat/filesystem.h>
@@ -46,7 +47,7 @@ class SDL_Application
 {
  public:
     SDL_Application() = delete;
-    SDL_Application(const std::string name, int w, int h) :
+    SDL_Application(std::string_view name, int w, int h) :
         m_appName       { name },
         m_windowWidth   { w },
         m_windowHeight  { h }
@@ -54,13 +55,13 @@ class SDL_Application
     }
     ~SDL_Application();
 
-    static std::shared_ptr<SDL_Application> init(const std::string, int, int);
+    static std::shared_ptr<SDL_Application> init(std::string_view, int, int);
 
     bool createOpenGLWindow();
 
     bool initCelestiaCore();
     void run();
-    const char* getError() const;
+    std::string_view getError() const;
 
  private:
     void display();
@@ -97,7 +98,7 @@ class SDL_Application
 };
 
 std::shared_ptr<SDL_Application>
-SDL_Application::init(const std::string name, int w, int h)
+SDL_Application::init(std::string_view name, int w, int h)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         return nullptr;
@@ -109,7 +110,7 @@ SDL_Application::init(const std::string name, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
-    return std::shared_ptr<SDL_Application>(new SDL_Application(std::move(name), w, h));
+    return std::make_shared<SDL_Application>(name, w, h);
 }
 
 SDL_Application::~SDL_Application()
@@ -145,7 +146,7 @@ SDL_Application::createOpenGLWindow()
     return true;
 }
 
-const char*
+std::string_view
 SDL_Application::getError() const
 {
     return SDL_GetError();
@@ -541,7 +542,8 @@ FatalError(const std::string &message)
         std::cerr << message << std::endl;
 }
 
-void DumpGLInfo()
+void
+DumpGLInfo()
 {
     const char* s;
     s = reinterpret_cast<const char*>(glGetString(GL_VERSION));
@@ -560,11 +562,9 @@ void DumpGLInfo()
     if (s != nullptr)
         std::cout << s << '\n';
 }
-} // namespace
 
-using namespace celestia;
-
-int main(int argc, char **argv)
+int
+sdlmain(int /* argc */, char ** /* argv */)
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
@@ -619,4 +619,11 @@ int main(int argc, char **argv)
     app->run();
 
     return 0;
+}
+} // namespace
+
+int
+main(int argc, char **argv)
+{
+    return celestia::sdlmain(argc, argv);
 }
