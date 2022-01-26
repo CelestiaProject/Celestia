@@ -3306,11 +3306,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    bindtextdomain("celestia", LOCALEDIR);
+    std::cout << bindtextdomain("celestia", LOCALEDIR);
+    std::cout << '\n';
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia-data", LOCALEDIR);
+    std::cout << bindtextdomain("celestia-data", LOCALEDIR);
+    std::cout << '\n';
     bind_textdomain_codeset("celestia-data", "UTF-8");
-    textdomain("celestia");
+    std::cout << textdomain("celestia");
+    std::cout << '\n';
 
     // Loading localized resources
     if (_("LANGUAGE") != "LANGUAGE")
