@@ -150,7 +150,7 @@ following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 ## Celestia Install instructions for Windows (MSVC)
 
-Currently to build on Windows you need a Visual Studio 2015 or later, CMake
+Currently to build on Windows you need Visual Studio 2015 or later, CMake
 and vcpkg (*).
 
 Install required packages:
@@ -170,6 +170,9 @@ for 64-bit versions.
 
 Instead of `luajit` `lua` can be used.
 
+Use `vcpkg list` to ensure that all packages have actually been installed.
+If not, try installing them one at a time.
+
 Configure and build 32-bit version:
 
 ```
@@ -188,8 +191,8 @@ cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scrip
 cmake --build . --  /maxcpucount:N /nologo
 ```
 
-Instead of N in /maxcpucount pass a number of CPU cores you want to use during
-a build.
+Instead of N in /maxcpucount pass the number of CPU cores you want to use during
+the build.
 
 This example assumes that `vcpkg` is installed into `c:/tools/vcpkg`. Update
 the path to `vcpkg.cmake` according to your installation.
