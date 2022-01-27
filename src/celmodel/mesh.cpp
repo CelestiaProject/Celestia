@@ -40,6 +40,13 @@ VertexDescription appendingAttributes(const VertexDescription& desc, It begin, I
     return VertexDescription(std::move(allAttributes));
 }
 
+bool
+isOpaqueMaterial(const Material &material)
+{
+    return (!(material.opacity > 0.01f && material.opacity < 1.0f)) &&
+             material.blend != BlendMode::AdditiveBlend;
+}
+
 } // end unnamed namespace
 
 
@@ -322,13 +329,7 @@ Mesh::addGroup(PrimitiveGroupType prim,
 {
     PrimitiveGroup g;
     if (prim == PrimitiveGroupType::LineStrip || prim == PrimitiveGroupType::LineList)
-    {
         g = createLinePrimitiveGroup(prim == PrimitiveGroupType::LineStrip, indices);
-    }
-    else
-    {
-        g.primOverride = prim;
-    }
 
     g.indices = std::move(indices);
     g.prim = prim;
@@ -721,4 +722,51 @@ Mesh::getPrimitiveCount() const
     return count;
 }
 
+void
+Mesh::merge(const Mesh &other)
+{
+    auto &ti = groups.front().indices;
+    const auto &oi = other.groups.front().indices;
+
+    ti.reserve(ti.size() + oi.size());
+    for (auto i : oi)
+        ti.push_back(i + nVertices);
+
+    vertices.reserve(vertices.size() + other.vertices.size());
+    vertices.insert(vertices.end(), other.vertices.begin(), other.vertices.end());
+
+    nVertices += other.nVertices;
+}
+
+bool
+Mesh::canMerge(const Mesh &other, const std::vector<Material> &materials) const
+{
+    if (getGroupCount() != 1 || other.getGroupCount() != 1)
+        return false;
+
+    const auto &tg = groups.front();
+    const auto &og = other.groups.front();
+
+    if (tg.vertexCountOverride != 0 || og.vertexCountOverride != 0 || tg.prim != PrimitiveGroupType::TriList)
+        return false;
+
+    if (std::tie(tg.materialIndex, tg.prim, vertexDesc.strideBytes) !=
+        std::tie(og.materialIndex, og.prim, other.vertexDesc.strideBytes))
+        return false;
+
+    if (!isOpaqueMaterial(materials[tg.materialIndex]) || !isOpaqueMaterial(materials[og.materialIndex]))
+        return false;
+
+    for (auto i = VertexAttributeSemantic::Position;
+         i < VertexAttributeSemantic::SemanticMax;
+         i = static_cast<VertexAttributeSemantic>(1 + static_cast<uint16_t>(i)))
+    {
+        auto &ta = vertexDesc.getAttribute(i);
+        auto &oa = other.vertexDesc.getAttribute(i);
+        if (ta.format != oa.format || ta.offsetWords != oa.offsetWords)
+            return false;
+    }
+
+    return true;
+}
 } // end namespace cmod
