@@ -1819,19 +1819,10 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (starStyle != PointStars)
             gaussianDiscTex->bind();
 
-        bool centerCalculated = false;
-        Eigen::Vector3f center;
-
         if (pointSize > gl::maxPointSize)
-        {
-            centerCalculated = true;
-            center = calculateQuadCenter(m_cameraOrientation, position, radius);
-            renderLargePoint(*this, center, {color, alpha}, pointSize, mvp);
-        }
+            renderLargePoint(*this, position, {color, alpha}, pointSize, mvp);
         else
-        {
             pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
-        }
 
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
@@ -1841,17 +1832,12 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         // with halos.
         if (useHalos && glareAlpha > 0.0f)
         {
+            Eigen::Vector3f center = calculateQuadCenter(m_cameraOrientation, position, radius);
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
-            {
-                if (!centerCalculated)
-                    center = calculateQuadCenter(m_cameraOrientation, position, radius);
                 renderLargePoint(*this, center, {color, glareAlpha}, glareSize, mvp);
-            }
             else
-            {
-                glareVertexBuffer->addStar(position, {color, glareAlpha}, glareSize);
-            }
+                glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
         }
     }
 }
