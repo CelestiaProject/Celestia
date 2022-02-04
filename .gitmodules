@@ -1,9 +1,6 @@
 [submodule "thirdparty/Spice"]
 	path = thirdparty/Spice
 	url = https://github.com/OpenSpace/Spice.git
-[submodule "content"]
-	path = content
-	url = https://github.com/CelestiaProject/CelestiaContent.git
 [submodule "thirdparty/fmt"]
 	path = thirdparty/fmt
 	url = https://github.com/fmtlib/fmt.git
