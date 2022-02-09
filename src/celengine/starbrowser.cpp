@@ -17,29 +17,14 @@
 using namespace Eigen;
 using namespace std;
 
-
-// TODO: More of the functions in this module should be converted to
-// methods of the StarBrowser class.
-
 struct CloserStarPredicate
 {
     Vector3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Vector3f p0 = star0->getPosition();
-        Vector3f p1 = star1->getPosition();
-
-#if 0
-        Vector3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
-        Vector3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
-#endif
-        Vector3f v0 = p0 * 1.0e6f - pos;
-        Vector3f v1 = p1 * 1.0e6f - pos;
-
-        return (v0.squaredNorm() < v1.squaredNorm());
+        return (pos - star0->getPosition()).squaredNorm() < (pos - star1->getPosition()).squaredNorm();
     }
 };
-
 
 struct BrighterStarPredicate
 {
@@ -47,28 +32,27 @@ struct BrighterStarPredicate
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Vector3f p0 = star0->getPosition();
-        Vector3f p1 = star1->getPosition();
-        Vector3f v0 = p0 * 1.0e6f - pos;
-        Vector3f v1 = p1 * 1.0e6f - pos;
-        float d0 = v0.norm();
-        float d1 = v1.norm();
+        float d0 = (pos - star0->getPosition()).norm();
+        float d1 = (pos - star1->getPosition()).norm();
 
-        return (star0->getApparentMagnitude(d0) <
-                star1->getApparentMagnitude(d1));
+        // If the stars are closer than one light year, use
+        // a more precise distance estimate.
+        if (d0 < 1.0f)
+            d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
+        if (d1 < 1.0f)
+            d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
+
+        return star0->getApparentMagnitude(d0) < star1->getApparentMagnitude(d1);
     }
 };
-
 
 struct BrightestStarPredicate
 {
     bool operator()(const Star* star0, const Star* star1) const
     {
-        return (star0->getAbsoluteMagnitude() <
-                star1->getAbsoluteMagnitude());
+        return star0->getAbsoluteMagnitude() < star1->getAbsoluteMagnitude();
     }
 };
-
 
 struct SolarSystemPredicate
 {
@@ -85,11 +69,7 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            Vector3f p0 = star0->getPosition();
-            Vector3f p1 = star1->getPosition();
-            Vector3f v0 = p0 * 1.0e6f - pos;
-            Vector3f v1 = p1 * 1.0e6f - pos;
-            return (v0.squaredNorm() < v1.squaredNorm());
+            return ((pos - star0->getPosition()).squaredNorm() < (pos - star1->getPosition()).squaredNorm());
         }
         else
         {
