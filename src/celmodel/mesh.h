@@ -239,6 +239,7 @@ class Mesh
 
     void merge(const Mesh&);
     bool canMerge(const Mesh&, const std::vector<Material> &materials) const;
+    void optimize();
 
  private:
     PrimitiveGroup createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);

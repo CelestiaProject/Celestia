@@ -318,7 +318,6 @@ Model::usesTextureType(TextureSemantic t) const
 }
 
 
-
 bool
 Model::OpacityComparator::operator()(const Mesh& a, const Mesh& b) const
 {
@@ -353,6 +352,9 @@ Model::sortMeshes(const MeshComparator& comparator)
         p.merge(meshes[i]);
     }
     GetLogger()->info("Merged similar meshes: {} -> {}.\n", meshes.size(), newMeshes.size());
+
+    for (auto &mesh : newMeshes)
+        mesh.optimize();
     meshes = std::move(newMeshes);
 }
 

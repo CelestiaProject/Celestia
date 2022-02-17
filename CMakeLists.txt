@@ -245,6 +245,14 @@ endif()
 find_package(Freetype REQUIRED)
 link_libraries(Freetype::Freetype)
 
+find_package(meshoptimizer CONFIG QUIET)
+if(meshoptimizer_FOUND)
+  message(STATUS "Found meshoptimizer library")
+  set(HAVE_MESHOPTIMIZER 1)
+else()
+  message(STATUS "meshoptimizer library is missing")
+endif()
+
 #[[
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
