@@ -80,6 +80,10 @@ if(ENABLE_FFMPEG)
   target_link_libraries(celestia ${FFMPEG_LIBRARIES})
 endif()
 
+if (HAVE_MESHOPTIMIZER)
+  target_link_libraries(celestia PRIVATE meshoptimizer::meshoptimizer)
+endif()
+
 install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
 
 add_subdirectory(glut)

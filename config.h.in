@@ -3,4 +3,5 @@
 #cmakedefine HAVE_FLOAT_CHARCONV
 #cmakedefine HAVE_STD_FILESYSTEM
 #cmakedefine HAVE_WORDEXP
+#cmakedefine HAVE_MESHOPTIMIZER
 #cmakedefine WORDS_BIGENDIAN

@@ -16,6 +16,10 @@
 #include <utility>
 #include <celutil/logger.h>
 
+#ifdef HAVE_MESHOPTIMIZER
+#include <meshoptimizer.h>
+#endif
+
 #include "mesh.h"
 
 using celestia::util::GetLogger;
@@ -455,6 +459,21 @@ Mesh::mergePrimitiveGroups()
     groups = std::move(newGroups);
 }
 
+void
+Mesh::optimize()
+{
+#ifdef HAVE_MESHOPTIMIZER
+    if (groups.size() > 1)
+        return;
+
+    auto &g = groups.front();
+
+    meshopt_optimizeVertexCache(g.indices.data(), g.indices.data(), g.indices.size(), nVertices);
+    meshopt_optimizeOverdraw(g.indices.data(), g.indices.data(), g.indices.size(), reinterpret_cast<float*>(vertices.data()), nVertices, vertexDesc.strideBytes, 1.05f);
+    meshopt_optimizeVertexFetch(vertices.data(), g.indices.data(), g.indices.size(), vertices.data(), nVertices, vertexDesc.strideBytes);
+#endif
+}
+
 bool
 Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection, PickResult* result) const
 {
@@ -769,4 +788,5 @@ Mesh::canMerge(const Mesh &other, const std::vector<Material> &materials) const
 
     return true;
 }
+
 } // end namespace cmod
