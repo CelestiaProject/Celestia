@@ -11,7 +11,9 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QGLFormat>
+#include <celutil/logger.h>
 
+using celestia::util::CreateLogger;
 
 int
 main(int argc, char *argv[])
@@ -50,6 +52,8 @@ main(int argc, char *argv[])
     // Install an event filter so that the main window can take care of file
     // open events.
     app.installEventFilter(&window);
+
+    CreateLogger();
 
     return app.exec();
 }
