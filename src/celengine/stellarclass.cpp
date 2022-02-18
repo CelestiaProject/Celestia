@@ -57,62 +57,6 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
     }
 }
 
-
-// The << method of converting the stellar class to a string is
-// preferred, but it's not always practical, especially when you've
-// got a completely broken implementation of stringstreams to
-// deal with (*cough* gcc *cough*).
-string StellarClass::str() const
-{
-    char s0, s1;
-    const char* s2 = "";
-
-    switch (getStarType())
-    {
-    case StellarClass::WhiteDwarf:
-        return "WD";
-    case StellarClass::NeutronStar:
-        return "Q";
-    case StellarClass::BlackHole:
-        return "X";
-    case StellarClass::NormalStar:
-        s0 = "OBAFGKMRSNWWW?LTYC"[(unsigned int) getSpectralClass()];
-        s1 = "0123456789"[getSubclass()];
-        switch (getLuminosityClass())
-        {
-        case StellarClass::Lum_Ia0:
-            s2 = " I-a0";
-            break;
-        case StellarClass::Lum_Ia:
-            s2 = " I-a";
-            break;
-        case StellarClass::Lum_Ib:
-            s2 = " I-b";
-            break;
-        case StellarClass::Lum_II:
-            s2 = " II";
-            break;
-        case StellarClass::Lum_III:
-            s2 = " III";
-            break;
-        case StellarClass::Lum_IV:
-            s2 = " IV";
-            break;
-        case StellarClass::Lum_V:
-            s2 = " V";
-            break;
-        case StellarClass::Lum_VI:
-            s2 = " VI";
-            break;
-        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
-        }
-        return fmt::sprintf("%c%c%s", s0, s1, s2);
-    }
-
-    return "?";
-}
-
-
 uint16_t
 StellarClass::packV1() const
 {
@@ -238,14 +182,6 @@ StellarClass::unpackV2(uint16_t st)
 }
 
 
-ostream& operator<<(ostream& os, const StellarClass& sc)
-{
-    os << sc.str();
-
-    return os;
-}
-
-
 bool operator<(const StellarClass& sc0, const StellarClass& sc1)
 {
     return sc0.packV2() < sc1.packV2();
@@ -273,6 +209,7 @@ enum ParseState
     LumClassVState,
     LumClassIdashState,
     LumClassIaState,
+    LumClassIdashaState,
     WDTypeState,
     WDExtendedTypeState,
     WDSubclassState,
@@ -482,6 +419,8 @@ StellarClass::parse(const string& st)
             case 'V':
                 state = LumClassVState;
                 break;
+            case ' ':
+                break;
             default:
                 state = EndState;
                 break;
@@ -535,7 +474,8 @@ StellarClass::parse(const string& st)
             switch (c)
             {
             case 'a':
-                state = LumClassIaState;
+                state = LumClassIdashaState;
+                i++;
                 break;
             case 'b':
                 lumClass = StellarClass::Lum_Ib;
@@ -549,6 +489,24 @@ StellarClass::parse(const string& st)
             break;
 
         case LumClassIaState:
+            switch (c)
+            {
+            case '0':
+                lumClass = StellarClass::Lum_Ia0;
+                state = EndState;
+                break;
+            case '-':
+                state = LumClassIdashaState;
+                i++;
+                break;
+            default:
+                lumClass = StellarClass::Lum_Ia;
+                state = EndState;
+                break;
+            }
+            break;
+
+        case LumClassIdashaState:
             switch (c)
             {
             case '0':

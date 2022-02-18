@@ -98,8 +98,6 @@ public:
     Color getApparentColor() const;
     Color getApparentColor(StellarClass::SpectralClass sc) const;
 
-    std::string str() const;
-
     static StellarClass parse(const std::string&);
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
@@ -122,8 +120,6 @@ private:
     unsigned int subclass;
 };
 
-
-std::ostream& operator<<(std::ostream& os, const StellarClass& sc);
 
 // A rough ordering of stellar classes, from 'early' to 'late' . . .
 // Useful for organizing a list of stars by spectral class.
