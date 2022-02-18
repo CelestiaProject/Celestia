@@ -387,7 +387,7 @@ static float rotperiod_M[3][10] =
 
 
 const char* LumClassNames[StellarClass::Lum_Count] = {
-    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "VI", ""
+    "Ia-0", "Ia", "Ib", "II", "III", "IV", "V", "VI", ""
 };
 
 const char* SubclassNames[11] = {

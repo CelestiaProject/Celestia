@@ -111,13 +111,13 @@ void printStellarClass(uint16_t sc, ostream& out)
             switch (luminosityClass)
             {
             case StellarClass::Lum_Ia0:
-                out << "I-a0";
+                out << "Ia-0";
                 break;
             case StellarClass::Lum_Ia:
-                out << "I-a";
+                out << "Ia";
                 break;
             case StellarClass::Lum_Ib:
-                out << "I-b";
+                out << "Ib";
                 break;
             case StellarClass::Lum_II:
                 out << "II";
