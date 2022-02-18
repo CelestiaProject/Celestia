@@ -246,7 +246,7 @@ Code:
 * Windows version: InstallShield setup
 * Windows version: added controls help dialog
 * UNIX version: implemented find object and about dialogs (Gnome/Gtk only)
-	
+
 Code:
 * Moved star browser and solar system browser code into separate modules
 * Fixed DPRINTF macro so it's not broken in g++
@@ -276,7 +276,7 @@ Code:
   textures added to OpenGL Info dialog.
 * New objects: Comet Borrelly, the giant Kuiper Belt object 2001 KX76,
   and the Hubble Space Telescope
-	
+
 Code:
 * Rewrote texture and model managers
 * Cleaned up simulation.cpp to use frames of reference and eliminated a lot
@@ -393,7 +393,7 @@ Code:
   a single modeless dialog.
 * Fixed period and rotation of Phoebe
 
-	
+
 1.2.1
 * Unix: configure.in changes to better find OpenGL libraries by Bruckner.
 * Added accurate orbital calculations for Galilean satellites.
@@ -404,7 +404,7 @@ Code:
 * Windows: Fixed crash that occurred when recalling a location with
   no selection
 
-	
+
 1.2.2
 * Improved find algorithm for starnames, and combined names from hdnames.dat
   into starnames.dat. Also added several additional names and variant spellings
@@ -557,7 +557,7 @@ Code:
 * New colors for celestial grid and constellation figures
 * Tuning of Gnome GUI: underlined key accelerators, enabled operation of all
   dialogs and menus with ALT <key>, arrow keys, and Tab
-* Linux: GUI now synced with current state of pixel/vertex shaders 
+* Linux: GUI now synced with current state of pixel/vertex shaders
 * New keyboard bindings:
   Ctrl+Y    : automag toggle
   Ctrl+T    : toggle display of comet tails
@@ -572,16 +572,16 @@ Code:
   when building with VS.NET
 * Cleaned up OpenGL extension initialization
 * Significantly improved the reliability of object selection via mouse
-  click, notably for small fields of view in the arcsec range. 
+  click, notably for small fields of view in the arcsec range.
 * Fixed the 'move' script command
-* New script commands: setfaintestautomag45deg {magnitude float}, 
-  lookback {} 
-* [,] keys now adjust the limiting magnitude at 45 degrees 
-  field of view, if automag is ON. Values displayed via flash messages  
+* New script commands: setfaintestautomag45deg {magnitude float},
+  lookback {}
+* [,] keys now adjust the limiting magnitude at 45 degrees
+  field of view, if automag is ON. Values displayed via flash messages
 * Associated the 'looking back' operation  with the '*' key shortcut
 * Fixed bug in orbits of Galilean moons
 * Corrected equatorial planes and rotation offsets for the major planets
-* Linux: Added KDE interface, all features of the GTK interface are 
+* Linux: Added KDE interface, all features of the GTK interface are
   available (except for the Tour Guide), new features include:
    - Bookmarks / URLs;
    - History navigation;* Improved drag and drop of cel:// URLs on Windows
@@ -632,8 +632,8 @@ Code:
    - Markers may also be set on objects using the right-click context menu
    - Added mark/unmark commands for scripts
    - Bound Ctrl+K to toggle display of markers
-   - Added flash messages indicating on|off status of markers 
-   - Implemented markers into KDE interface	
+   - Added flash messages indicating on|off status of markers
+   - Implemented markers into KDE interface
 * Added triangle-accurate picking of mesh objects
 * Multiview
    - Ctrl+R : split view vertically
@@ -664,7 +664,7 @@ Code:
 * Updated configuration files for new versions of autoconf
 
 1.3.1
-* Improved inclusion of light travel delay, also in KDE time setting dialog 
+* Improved inclusion of light travel delay, also in KDE time setting dialog
 * Fixed lookback command for subsequent changes of target speed
 * Allow wildcard character * inplace of extension for texture filenames
 * Fix bump mapping (again)
@@ -706,7 +706,7 @@ Code:
 * Made cancel script command stop motion, tracking, and any object-relative
   coordinate system.
 * Adjusted estimates for radii and rotation periods of extrasolar planets;
-  rotation rates account (somewhat) for the effects of tidal despinning. 
+  rotation rates account (somewhat) for the effects of tidal despinning.
 * Fixed a bug that was causing precision loss in orientation values; this fixes
   some of the jerkiness apparent at very low fields of view.
 * Corrected radii of Uranus's rings
@@ -739,7 +739,7 @@ Code:
 * Eliminated obscuring of location labels that occurred low view aspect ratios
 * Added models of comet Halley and the small moons Pandora and Larissa
 * Added limit of knowledge masks for the Galilean moons
-* Changed spectral class of carbon stars to C, which supercedes and combines
+* Changed spectral class of carbon stars to C, which supersedes and combines
   R and N
 * Lua scripting additions
   * View management commands
@@ -760,7 +760,7 @@ Code:
 * Implemented an algorithm for importance weights to avoid overlapping or
   too crowded location labels for Mars, Venus and the Moon
 * Added new textures for Titan based on recent imaging from the Cassini
-  mission 
+  mission
 * Improved depth sorting so that hidden surface removal works properly for
   overlapping objects
 * Added theoretical estimates of oblateness and rotation rate for extrasolar
@@ -805,16 +805,16 @@ Code:
 * Implemented new GLSL render path; NVIDIA combiners and GeForceFX paths
   deprecated.
 * Display UTF-8 superscript digits in some star names
-* Updated the Titan texture. It accomodates all published high resolution 
-  imaging from the Cassini mission until and including the flyby of 03/31/05. 
+* Updated the Titan texture. It accomodates all published high resolution
+  imaging from the Cassini mission until and including the flyby of 03/31/05.
 * Updated the Iapetus texture. It accomodates all published high resolution
-  imaging from the Cassini mission, including also a unique hires photo taken 
-  in "Saturn shine". 
+  imaging from the Cassini mission, including also a unique hires photo taken
+  in "Saturn shine".
 * Added catalogs of 163 visual and 39 spectroscopic binary orbits,
   respectively, (S�erhjelm 1999, Pourbaix 2000) with known primary/secondary
   mass ratios.
-* Added an extended and precise data base of 942 galaxies 
-  (Steinicke's rev. NGC/IC, 2005) with a magnitude cutoff Bmag < 12. 
+* Added an extended and precise data base of 942 galaxies
+  (Steinicke's rev. NGC/IC, 2005) with a magnitude cutoff Bmag < 12.
 * Included the commented PERL scripts used to extract and adapt the binary
   orbit and  galaxy data from published professional catalogs.
 * Added --extrasdir command line option for specifying additional directories
@@ -843,13 +843,13 @@ Code:
    - fixed automake bug where GConf schema would always install
    - removed linking against glut for no reason
 * Implemented complete precision catalog (Steinicke's revised NGC/IC, 2005) of
-  10610 galaxies with 
-   - distance information from  four catalogs ( 6 methods ), 
-   - <= 4 alternate names, 
-   - info-URLs, 
-   - absolute magnitudes and 
+  10610 galaxies with
+   - distance information from  four catalogs ( 6 methods ),
+   - <= 4 alternate names,
+   - info-URLs,
+   - absolute magnitudes and
    - correct sizes & orientations in space, as calculated from catalog
-     parameters. 
+     parameters.
 * Included well commented Perl script (deepsky.pl) as documentation. The used distance determination method is indicated in catalog for each galaxy.
 * Updated binary star data base (visualbins.stc, spectbins.dsc) and respective
   PERL catalog extraction scripts (visualbins.pl, spectbins.pl), such as to eliminate double occurences wrto nearstars.stc (, which remained unaffected).
@@ -890,7 +890,7 @@ Code:
      template from S0 disk template via rescaling by (1.0f, 3.8f, 1.0f);
    - fixed wrong x,y alignment of elliptical rescaling.
 * Added code to ease compilation with newer Xcode versions (Macintosh).
-* Updated src/celengine/Makefile.am for Linux building. 
+* Updated src/celengine/Makefile.am for Linux building.
 * Introduced a new cel function => renderflags {set "nebulae"}.
 * Reduced the default value of 'faintestAutoMag45deg' from 8.5 to 7.0.
 * Fixed the visibility of the Milky Way during day-time and the abrupt
@@ -904,10 +904,10 @@ Code:
 * Deleted various source code files that became superfluous.
 * Improved comet display. Introduced a neat scheme implementing comet tail
   fading (between 4 and 6 AU for Sol). Systems with several suns and
-  luminosities different from the solar one are accounted for. 
-* Implemented a new, simple scheme avoiding overcrowded galaxy labels.  
+  luminosities different from the solar one are accounted for.
+* Implemented a new, simple scheme avoiding overcrowded galaxy labels.
   Their "importance"  is sorted according to apparent magnitude! Thus the
-  labels of the brightest galaxies pop up first upon zooming in... 
+  labels of the brightest galaxies pop up first upon zooming in...
 * Fixes/workarounds for OpenGL 2.0 render paths on both nVidia and ATI cards.
 
 
@@ -932,7 +932,7 @@ Code:
   located inside the galaxy (Milky Way...).
 * Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had
   penetrated the PERL filter.
-* Add the corrected PERL script deepsky.pl.     
+* Add the corrected PERL script deepsky.pl.
 * Mac: Universal binary - runs natively on Intel and PPC
 * Mac: OpenGL 2.0 render path should now work on many configurations
   (requires OS X 10.4.3 or later)
@@ -948,7 +948,7 @@ Code:
 * Mac: Fixed crash when LANG or LC environment variables are set
 * Mac: Added bona fide English and French help menu
 * Mac: Cleaned up README in general
-* Added Phoebe textures in medres and lores directories from recent published 
+* Added Phoebe textures in medres and lores directories from recent published
   Ciclops cylindrical maps
 * Updated  Titan and Iapetus textures in lores directory
 * Windows: save and restore the last used GL render path
@@ -959,10 +959,10 @@ Code:
 * KDE: Reverted mouse wheel action to be compatible with the other interfaces.
 * KDE: New configurable splash screen
     (http://celestia.teyssier.org/splash_spec.html)
-* Updated/added Tethys textures in lores, medres and hires directories. 
+* Updated/added Tethys textures in lores, medres and hires directories.
 * Added locations on Phoebe in satmoons2.ssc, as extracted from USGS/IAU
   official data.
-* Added Mesh for Phoebe texture.      
+* Added Mesh for Phoebe texture.
 * Updated Iapetus texture.
 * Moved locations files from extras into data directory for inclusion in
   standard package.
@@ -1002,7 +1002,7 @@ Code:
   - HIP 14810 c, HD 185269 b, Gliese 849 b
   - Mu Ara e
   - Gliese 581 c & d, HD 175541 b, HD 210702 b, HD192699 b
-  - HD 47536 c, XO-2 b, HD 147506 (HAT-P-2), HD 17092 b  
+  - HD 47536 c, XO-2 b, HD 147506 (HAT-P-2), HD 17092 b
 * Revised orbits of many extrasolar planets to reflect new data
 * Added stars for new extrasolar planets: GSC 92941-01657
 * Mac: Show menu bar when moving mouse to top of screen in full screen
@@ -1067,7 +1067,7 @@ Code:
 * Added cmodsphere, a utility for producing cmod meshes from height samples
   regularly spaced in longitude and latitude.
 * COPYING, controls.txt, start script, and guide can all be localized
-* cel and celx scripting: 
+* cel and celx scripting:
   - added openclusters and cloudshadows render flags
   - added location, nebulae, openclusers, and i18nconsteallations label flags
 * Established Barycentric Dynamical Time (TDB) as the time scale used
@@ -1090,12 +1090,12 @@ Code:
   spectra
 * Made star orbit paths visible
 * galaxies:
-  -changed galaxy template format to standard (grayscale) PNG 
+  -changed galaxy template format to standard (grayscale) PNG
   -allow a custom template for each galaxy in deepsky.dsc
   -new approach to thickness of galaxy (arms): assumed proportional to read-in
-   brightness values 
+   brightness values
   -emulate dust lanes around galactic plane (y=0)
-  -considerable improvement of Milky Way appearance as seen from Earth 
+  -considerable improvement of Milky Way appearance as seen from Earth
   -implement galaxy labels of transparency increasing with distance, thus
    providing a neat 3d effect
 * galaxy templates:
@@ -1114,10 +1114,10 @@ Code:
   - Guarded against crash when the JPL ephemeris file can't be found
 * Generalized rotations
   - Clear syntax for ssc files
-  - UniformRotation 
+  - UniformRotation
   - PrecessingOrientation
   - SampledOrientation - interpolated sequence of quaternion key frames
-* Scripting improvements	
+* Scripting improvements
   - New celx scripting commands:
     - utctotdb and tdbtoutc
     - gl commands
@@ -1125,7 +1125,7 @@ Code:
     - iterators: celestia:stars and celestia:dsos
     - get/setaltazimuthmode
   - Lua hooks for script extensions to Celestia
-  - Script interfaces for orbits and rotation models (ScriptedOrbit and 
+  - Script interfaces for orbits and rotation models (ScriptedOrbit and
     ScriptedRotation)
   - Support Lua 5.1 (5.0 compatibility retained)
   - Made celestia:loadtexture use relative file names
@@ -1148,7 +1148,7 @@ Code:
 * Corrected kilometers per light year constant
 * Added various improvements to the MilkyWay & other galaxy template display.
 * Added E0.png galaxy template that allows for better En, n=1..7 elliptical
-  shapes.  
+  shapes.
 * Fixed sizes of irregular galaxies (factor of 2!).
 * Prevented galaxy code from crashing if a template is missing.
 * Improved selection of galaxies by taking into account their 3d shape
@@ -1163,11 +1163,11 @@ Code:
 * Windows: Fixed crash that occurred when star browser was closed
 * Fixed bug that made moons disappear as a planet approached stellar transit
 * Added a major update of the galaxy database such that close to 100% of the
-  galaxies now involve distance measurements 
-* Included the complete local group of galaxies 
+  galaxies now involve distance measurements
+* Included the complete local group of galaxies
 * Added varying label transparency also for stars
 * Added the PERL scripts used for extraction of galaxy and binary orbit data
-  from scientific sources. They both are useful tools and a concise 
+  from scientific sources. They both are useful tools and a concise
   documentation of Celestia's data
 * updated binary orbit data (visualbins.stc and spectbins.stc) along with
   respective PERL scripts (visualbins.pl and spectbins.pl)
@@ -1220,7 +1220,7 @@ Code:
  HD 167042 b, HD 74156 d, HD 285968 b, V391 Peg b,
  HD 132406 b, HD 43691 b, NGC 2423 3 b, Gliese 317 b & c,
  TrES-3, HD 155358 b&c, HD 5319 b, HD 75898 b, OGLE-TR-182 b, WASP-3 b,
- 55 Cnc f, Lupus-TR-3 b, OGLE-TR-211 b, HD 156846 b, HD 4113 b, Kap CrB b, 
+ 55 Cnc f, Lupus-TR-3 b, OGLE-TR-211 b, HD 156846 b, HD 4113 b, Kap CrB b,
  GD 66 b, XO-3 b, WASP-4 b TW Hya b
  removed HD 33636 b
 * Set up transit of Gliese 436
@@ -1383,7 +1383,7 @@ Bug fixes
 * Fixed search path for Lua scripts
 * Fixed numerous bugs that occurred when an object's orbit center was different
 * Fixed a bug in the celx function celestia:getscreendimension
-* Fixed bug with returning Hubble type for galaxies 
+* Fixed bug with returning Hubble type for galaxies
 * Eliminated error-prone min/max macros; use STL functions instead
 * Fixed discrepancy between apparent magnitudes shown in the 3D view and
   the star browser.
@@ -1424,9 +1424,9 @@ Data file updates
 * Changed class of small outer planet moons to minormoon
 * Included new and updated solar system body features from the IAU
 * Added provisional rotation period for Eris
-	
+
 Tools
-* Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
+* Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation
 * Added spice2xyzv tool for extracting xyzv files from a pool of SPICE kernels
 * Added Perl script to build cross-indices
 * Added Perl script to generate CHARM2 catalog
@@ -1557,7 +1557,7 @@ Scripting
   - windowbordersvisible, setwindowbordersvisible
 * Split celx scripting support into several modules
 * Cel scripting
-  - splitview, deleteview, singleview, setactiveview 
+  - splitview, deleteview, singleview, setactiveview
   - setgalaxylightgain
   - setradius
   - setlinecolor
