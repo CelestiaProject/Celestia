@@ -266,6 +266,9 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
 // allow the script to perform cleanup
 void LuaState::cleanup()
 {
+    if (!costate)
+        return;
+
     if (ioMode == Asking)
     {
         // Restore renderflags:
