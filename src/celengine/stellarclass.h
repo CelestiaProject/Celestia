@@ -35,9 +35,9 @@ public:
         Spectral_G     = 4,
         Spectral_K     = 5,
         Spectral_M     = 6,
-        Spectral_R     = 7, // superceded by class C
+        Spectral_R     = 7, // superseded by class C
         Spectral_S     = 8,
-        Spectral_N     = 9, // superceded by class C
+        Spectral_N     = 9, // superseded by class C
         Spectral_WC    = 10,
         Spectral_WN    = 11,
         Spectral_WO    = 12,
