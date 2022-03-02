@@ -10,7 +10,6 @@
 **Celestia website: https://celestia.space**<br>
 **Celestia Wikibook: https://en.wikibooks.org/wiki/Celestia**<br>
 **Celestia forums: https://celestia.space/forum/**<br>
-**Celestia Discord Server: https://discordapp.com/invite/WEWDcJh**<br>
 **Celestia Subreddit: https://www.reddit.com/r/Celestiasoftware/**<br>
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
 ## License
