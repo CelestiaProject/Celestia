@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <functional>
+#include <tuple>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -46,6 +47,11 @@ class Url;
 class CelestiaCore;
 // class astro::Date;
 class Console;
+
+namespace celestia
+{
+class TextPrintPosition;
+}
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
 
@@ -241,6 +247,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
                   int horig = 0, int vorig = 0,
                   int hoff = 0, int voff = 0,
                   double duration = 1.0e9);
+    void showTextAtPixel(const std::string &s,
+                         int x = 0, int y = 0,
+                         double duration = 1.0e9);
     int getTextWidth(const std::string &s) const;
 
     void readFavoritesFile();
@@ -307,6 +316,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
     void setSafeAreaInsets(int left, int top, int right, int bottom);
+    std::tuple<int, int, int, int> getSafeAreaInsets() const;  // left, top, right, bottom
+    int getSafeAreaWidth() const;
+    int getSafeAreaHeight() const;
     float getPickTolerance() const;
     void setPickTolerance(float);
 
@@ -354,19 +366,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ContextMenuHandler* getContextMenuHandler() const;
 
     void setCustomDateFormatter(std::function<std::string(double)> df) { customDateFormatter = df; };
-
-    class TextDisplayHandler
-    {
-    public:
-        virtual ~TextDisplayHandler() = default;
-        virtual bool shouldShowText(const std::string& text,
-                                    int horig, int vorig,
-                                    int hoff, int voff,
-                                    double duration) = 0;
-    };
-
-    void setTextDisplayHandler(TextDisplayHandler*);
-    TextDisplayHandler* getTextDisplayHandler() const;
 
     bool setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
@@ -416,17 +415,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int width{ 1 };
     int height{ 1 };
 
-    int getSafeAreaWidth() const;
-    int getSafeAreaHeight() const;
-
     std::shared_ptr<TextureFont> font{ nullptr };
     std::shared_ptr<TextureFont> titleFont{ nullptr };
 
     std::string messageText;
-    int messageHOrigin{ 0 };
-    int messageVOrigin{ 0 };
-    int messageHOffset{ 0 };
-    int messageVOffset{ 0 };
+    std::unique_ptr<celestia::TextPrintPosition> messageTextPosition;
     double messageStart{ 0.0 };
     double messageDuration{ 0.0 };
     Color textColor{ 1.0f, 1.0f, 1.0f };
@@ -505,7 +498,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
-    TextDisplayHandler* textDisplayHandler{ nullptr };
     std::function<std::string(double)> customDateFormatter{ nullptr };
 
     std::vector<Url> history;
