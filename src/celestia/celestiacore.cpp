@@ -15,6 +15,7 @@
 
 #include "celestiacore.h"
 #include "favorites.h"
+#include "textprintposition.h"
 #include "url.h"
 #include <celcompat/numbers.h>
 #include <celengine/astro.h>
@@ -2257,6 +2258,11 @@ void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
     safeAreaInsets = { left, top, right, bottom };
 }
 
+std::tuple<int, int, int, int> CelestiaCore::getSafeAreaInsets() const
+{
+    return make_tuple(safeAreaInsets.left, safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom);
+}
+
 float CelestiaCore::getPickTolerance() const
 {
     return pickTolerance;
@@ -2484,18 +2490,22 @@ void CelestiaCore::showText(const std::string &s,
                             int hoff, int voff,
                             double duration)
 {
-    bool shouldShowText = true;
-    if (textDisplayHandler)
-        shouldShowText = textDisplayHandler->shouldShowText(s, horig, vorig, hoff, voff, duration);
-
-    if (!shouldShowText)
+    if (!titleFont)
         return;
 
     messageText = s;
-    messageHOrigin = horig;
-    messageVOrigin = vorig;
-    messageHOffset = hoff;
-    messageVOffset = voff;
+    messageTextPosition = std::make_unique<RelativeTextPrintPosition>(horig, vorig, hoff, voff, titleFont->getWidth("M"), titleFont->getHeight());
+    messageStart = currentTime;
+    messageDuration = duration;
+}
+
+void CelestiaCore::showTextAtPixel(const std::string &s, int x, int y, double duration)
+{
+    if (!titleFont)
+        return;
+
+    messageText = s;
+    messageTextPosition = std::make_unique<AbsoluteTextPrintPosition>(x, y);
     messageStart = currentTime;
     messageDuration = duration;
 }
@@ -3539,23 +3549,12 @@ void CelestiaCore::renderOverlay()
     }
 
     // Text messages
-    if (messageText != "" && currentTime < messageStart + messageDuration)
+    if (messageText != "" && currentTime < messageStart + messageDuration && messageTextPosition)
     {
-        int emWidth = titleFont->getWidth("M");
-        int fontHeight = titleFont->getHeight();
-        int x = messageHOffset * emWidth;
-        int y = messageVOffset * fontHeight;
+        int x = 0;
+        int y = 0;
 
-        if (messageHOrigin == 0)
-            x += getSafeAreaWidth() / 2;
-        else if (messageHOrigin > 0)
-            x += getSafeAreaWidth();
-        if (messageVOrigin == 0)
-            y += getSafeAreaHeight() / 2;
-        else if (messageVOrigin > 0)
-            y += getSafeAreaHeight();
-        else if (messageVOrigin < 0)
-            y -= fontHeight;
+        messageTextPosition->resolvePixelPosition(this, x, y);
 
         overlay->setFont(titleFont);
         overlay->savePos();
@@ -3564,7 +3563,7 @@ void CelestiaCore::renderOverlay()
         if (currentTime > messageStart + messageDuration - 0.5)
             alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
         overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
-        overlay->moveBy(safeAreaInsets.left + x, safeAreaInsets.bottom + y);
+        overlay->moveBy(x, y);
         overlay->beginText();
         *overlay << messageText;
         overlay->endText();
@@ -4298,16 +4297,6 @@ void CelestiaCore::setContextMenuHandler(ContextMenuHandler* handler)
 CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
 {
     return contextMenuHandler;
-}
-
-void CelestiaCore::setTextDisplayHandler(CelestiaCore::TextDisplayHandler* handler)
-{
-    textDisplayHandler = handler;
-}
-
-CelestiaCore::TextDisplayHandler* CelestiaCore::getTextDisplayHandler() const
-{
-    return textDisplayHandler;
 }
 
 bool CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)

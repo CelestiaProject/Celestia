@@ -128,6 +128,24 @@ static int celestia_print(lua_State* l)
     return 0;
 }
 
+static int celestia_printatpixel(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 5, "One to four arguments expected to function celestia:printatpixel");
+
+    CelestiaCore* appCore = this_celestia(l);
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:print must be a string");
+    double duration = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:print must be a number", 1.5);
+    int x = (int)Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:print must be a number", 0.0);
+    int y = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:print must be a number", 0.0);
+
+    if (duration < 0.0)
+        duration = 1.5;
+
+    appCore->showTextAtPixel(s, x, y, duration);
+
+    return 0;
+}
+
 static int celestia_gettextwidth(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:gettextwidth");
@@ -138,6 +156,28 @@ static int celestia_gettextwidth(lua_State* l)
     lua_pushnumber(l, appCore->getTextWidth(s));
 
     return 1;
+}
+
+static int celestia_getscreendpi(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getscreendp()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getScreenDpi());
+
+    return 1;
+}
+
+static int celestia_setscreendpi(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setscreendpi()");
+    int screenDpi = (int)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setscreendpi() must be a number");
+    screenDpi = max(screenDpi, 1);
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->setScreenDpi(screenDpi);
+
+    return 0;
 }
 
 static int celestia_getaltazimuthmode(lua_State* l)
@@ -308,6 +348,34 @@ int celestia_getscreendimension(lua_State* l)
     lua_pushnumber(l, w);
     lua_pushnumber(l, h);
     return 2;
+}
+
+int celestia_getsafeareainsets(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getsafeareainsets()");
+    // error checking only:
+    this_celestia(l);
+    CelestiaCore* appCore = to_celestia(l, 1);
+    const auto &edgeInsets = appCore->getSafeAreaInsets();
+    lua_pushnumber(l, get<0>(edgeInsets));
+    lua_pushnumber(l, get<1>(edgeInsets));
+    lua_pushnumber(l, get<2>(edgeInsets));
+    lua_pushnumber(l, get<3>(edgeInsets));
+    return 4;
+}
+
+int celestia_setsafeareainsets(lua_State* l)
+{
+    Celx_CheckArgs(l, 5, 5, "Four arguments expected for celestia:setsafeareainsets()");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    int left = (int)Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:setsafeareainsets() must be a number", 0.0);
+    int top = (int)Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:setsafeareainsets() must be a number", 0.0);
+    int right = (int)Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:setsafeareainsets() must be a number", 0.0);
+    int bottom = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:setsafeareainsets() must be a number", 0.0);
+    appCore->setSafeAreaInsets(left, top, right, bottom);
+    return 0;
 }
 
 static int celestia_showlabel(lua_State* l)
@@ -2150,14 +2218,19 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "__tostring", celestia_tostring);
     Celx_RegisterMethod(l, "flash", celestia_flash);
     Celx_RegisterMethod(l, "print", celestia_print);
+    Celx_RegisterMethod(l, "printatpixel", celestia_printatpixel);
     Celx_RegisterMethod(l, "gettextwidth", celestia_gettextwidth);
     Celx_RegisterMethod(l, "show", celestia_show);
     Celx_RegisterMethod(l, "setaltazimuthmode", celestia_setaltazimuthmode);
     Celx_RegisterMethod(l, "getaltazimuthmode", celestia_getaltazimuthmode);
+    Celx_RegisterMethod(l, "getscreendpi", celestia_getscreendpi);
+    Celx_RegisterMethod(l, "setscreendpi", celestia_setscreendpi);
     Celx_RegisterMethod(l, "hide", celestia_hide);
     Celx_RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
     Celx_RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
     Celx_RegisterMethod(l, "getscreendimension", celestia_getscreendimension);
+    Celx_RegisterMethod(l, "getsafeareainsets", celestia_getsafeareainsets);
+    Celx_RegisterMethod(l, "setsafeareainsets", celestia_setsafeareainsets);
     Celx_RegisterMethod(l, "showlabel", celestia_showlabel);
     Celx_RegisterMethod(l, "hidelabel", celestia_hidelabel);
     Celx_RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
