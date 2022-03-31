@@ -3,10 +3,10 @@
 	labels { clear "planets|minorplanets|stars|constellations" }
 	renderflags { set "stars|planets"
                       clear "constellations|orbits|cloudmaps" }
-	print { text "Начало на демонстрацията . . .\nНатиснете ESC за край." origin "center" duration 2 }
+	print { text "Начало на демонстрацията...\nНатиснете „Esc“ за край." origin "center" duration 2 }
 	wait { duration 2.0 }
 
-	print { text "Нека да започнем от нашия дом . . ." row -3 }
+	print { text "Нека да започнем от нашия дом..." row -3 }
 	select { object "Sol/Earth" }
 	cancel {}
 	# goto { time 0 distance 3 upframe "ecliptical" }
@@ -18,25 +18,25 @@
 	wait { duration 1.0 }
 	follow {}
 
-	print { text "В момента се намираме на 12 500 км над Земята" row -3 duration 5 }
+	print { text "В момента се намираме на 12 500 км. над Земята." row -3 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "Като добавим и облаците, Земята изглежда по позната." row -3}
+	print { text "Като добавим и облаците, Земята изглежда по-позната." row -3}
 	wait { duration 0.1 }
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
 
-	print { text "Следваща спирка: Луната." row -3 }
+	print { text "Следваща спирка: Луната" row -3 }
 	select { object "Moon" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
-	print { text "Оглеждайте се за Земята и Слънцето, докато се движим около Луната" row -3}
+	print { text "Оглеждайте се за Земята и Слънцето, докато обикаляме около Луната." row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
-	print { text "Напред към Слънцето." row -3}
+	print { text "Напред към Слънцето!" row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
-	print { text "От това разстояние могат да се видят тъмните слънчеви петна по повърхността му." row -3}
+	print { text "От това разстояние може да видим тъмните слънчеви петна по повърхността му." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
 	print { text "Нека да се отдалечим и разгледаме вътрешната част на Слънчевата система." row -3}
@@ -44,10 +44,10 @@
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
-	print { text "Да включим имената на планетите . . ." row -3}
+	print { text "Да включим имената на планетите..." row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
-	print { text "Можем да ускорим времето за да видим как планетите обикалят около Слънцето." row -3}
+	print { text "Може да ускорим времето за да видим как планетите обикалят около Слънцето." row -3}
 	timerate { rate 2592000 }
 	wait { duration 3.0 }
 	print { text "Всяка секунда в реално време е равна на един месец в симулацията." row -3}
@@ -56,7 +56,7 @@
 	print { text "В момента, времето е спряно." row -3}
 
 	wait { duration 1.0 }
-	print { text "Следващата ни дестинация е Сатурн." row -3}
+	print { text "Следваща спирка: Сатурн" row -3}
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
@@ -64,12 +64,12 @@
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
-	print { text "Няколко от луните на Сатурн са видими като ярки точки" row -3 duration 3}
+	print { text "Няколко от спътниците на Сатурн са видими като ярки точки." row -3 duration 3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "Най-интересната характеристика на Мимас е огромния кратер Хершел." row -3 duration 9 }
+	print { text "Най-интересната характеристика на Мимас е огромният кратер Хершел." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	changedistance { duration 6.0 rate 0.5 }
 
@@ -82,22 +82,22 @@
 	wait { duration 2 }
 	select { object "Alpha UMa" }
 	center { time 2 }
-	print { text "Ако живеете в северното полукълбо, ще разпознаете Колата в съзвездието Голямата мечка." row -3 duration 3 }
+	print { text "Ако живеете в северното полукълбо, ще разпознаете Волската кола в съзвездието Голямата мечка." row -3 duration 3 }
 	wait { duration 4 }
 
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "А това е Поларис, известна още като Северната звезда." row -3}
+	print { text "Това е Поларис, известна още като Северната звезда." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
 	print { text "Поларис е част от Малката мечка." row -3}
 	wait { duration 2 }
-	print { text "За по-добра ориентация в небето, Celestia може да активира диаграмите на съзвездията . . ." row -3}
+	print { text "За по-добра ориентация в небето, „Celestia“ може да активира очертанията на съзвездията..." row -3}
 	renderflags { set "constellations" }
 	wait { duration 2 }
-	print { text ". . . и имената на съзвездията" row -3}
+	print { text "...и имената на съзвездията." row -3}
 	labels { set "constellations" }
 	wait { duration 2 }
 
@@ -114,7 +114,7 @@
 	wait { duration 4 }
 
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
-	print { text "Нека да включим рендерирането на галактиките за да видим Млечния път" row -3 duration 4 }
+	print { text "Нека да включим показването на галактиките за да видим Млечния път." row -3 duration 4 }
 	renderflags { set "galaxies" }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
@@ -122,7 +122,7 @@
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "Сега ще пътуваме до Антарес, това е звезда червен гигант в съзвездието Скорпион." row -3 duration 5 }
+	print { text "Сега ще посетим Антарес, това е звезда червен гигант в съзвездието Скорпион." row -3 duration 5 }
 	wait { duration 2 }
 	renderflags { clear "constellations" }
 	labels { clear "constellations|stars" }
@@ -134,13 +134,13 @@
 	print { text "Въпреки че сме 10 пъти по-далече от Антарес\nотколкото Земята е от Слънцето, масивната звезда червен гигант изглежда застрашително голяма." row -3}
 	wait { duration 4.0 }
 
-	print { text "Нека да се отдалечим за да видим как изглежда нашата галактика . . ." row -3}
+	print { text "Нека да се отдалечим за да видим как изглежда нашата галактика..." row -3}
 	changedistance { duration 10.0 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "Това е Млечния път." row -3 duration 6 }
+	print { text "Това е Млечният път." row -3 duration 6 }
 	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
-	print { text "Време е да се прибираме . . ." row -3}
+	print { text "Време е да се прибираме..." row -3}
 
 	select { object "Sol/Earth" }
 	goto { time 20 distance 10 upframe "equatorial" }
