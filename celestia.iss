@@ -212,6 +212,7 @@ Source: "locale\controls_zh_CN.txt";       DestDir: "{app}/locale"; Flags: ignor
 Source: "locale\controls_zh_TW.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\demo_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_bg.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_de.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_es.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_fr.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
