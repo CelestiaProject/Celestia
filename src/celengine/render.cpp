@@ -2570,14 +2570,14 @@ void Renderer::renderObject(const Vector3f& pos,
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
         ringsScaleFactor = obj.radius * obj.semiAxes.maxCoeff();
-        ri.pointScale = 2.0f * obj.radius / pixelSize * screenDpi / 96.0f;
+        ri.pointScale = 2.0f * obj.radius / pixelSize;
     }
     else
     {
         geometryScale = obj.geometryScale;
         scaleFactors = Vector3f::Constant(geometryScale);
         ringsScaleFactor = geometryScale;
-        ri.pointScale = 2.0f * geometryScale / pixelSize * screenDpi / 96.0f;
+        ri.pointScale = 2.0f * geometryScale / pixelSize;
     }
     // Apply the modelview transform for the object
     Affine3f transform = Translation3f(pos) * obj.orientation.conjugate();
