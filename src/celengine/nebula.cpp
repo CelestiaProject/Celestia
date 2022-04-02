@@ -100,7 +100,7 @@ void Nebula::render(const Vector3f& /*offset*/,
                                 getOrientation());
 
     GLSLUnlit_RenderContext rc(renderer, getRadius(), &mv, m.projection);
-    rc.setPointScale(2.0f * getRadius() / pixelSize * renderer->getScreenDpi() / 96.0f);
+    rc.setPointScale(2.0f * getRadius() / pixelSize);
     g->render(rc);
 
     renderer->enableBlending();
