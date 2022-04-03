@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.8)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
+# Plain and keyword target_link_libraries() signatures cannot be mixed
+if (POLICY CMP0023)
+  cmake_policy(SET CMP0023 NEW)
+endif()
+
 # Honor link flags in try_compile()
 if (POLICY CMP0056)
   cmake_policy(SET CMP0056 NEW)
