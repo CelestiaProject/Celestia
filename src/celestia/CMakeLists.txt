@@ -81,7 +81,7 @@ if(ENABLE_FFMPEG)
 endif()
 
 if (HAVE_MESHOPTIMIZER)
-  target_link_libraries(celestia PRIVATE meshoptimizer::meshoptimizer)
+  target_link_libraries(celestia meshoptimizer::meshoptimizer)
 endif()
 
 install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
