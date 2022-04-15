@@ -96,6 +96,7 @@ void actionRenderMinorMoons(GtkToggleAction*, AppData*);
 void actionRenderAsteroids(GtkToggleAction*, AppData*);
 void actionRenderComets(GtkToggleAction*, AppData*);
 void actionRenderSpacecrafts(GtkToggleAction*, AppData*);
+void actionRenderPlanetRings(GtkToggleAction*, AppData*);
 void actionRenderRingShadows(GtkToggleAction*, AppData*);
 void actionRenderStars(GtkToggleAction*, AppData*);
 

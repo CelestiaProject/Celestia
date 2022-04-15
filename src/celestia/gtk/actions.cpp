@@ -943,6 +943,11 @@ void actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
 }
 
 
+void actionRenderPlanetRings(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowPlanetRings, gtk_toggle_action_get_active(action));
+}
+
 void actionRenderRingShadows(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowRingShadows, gtk_toggle_action_get_active(action));
@@ -1270,9 +1275,9 @@ void resyncRenderActions(AppData* app)
 
     /* Unlike the other interfaces, which go through each menu item and set
      * the corresponding renderFlag, we go the other way and set the menu
-     * based on the renderFlag. Last one is ShowFadingOrbits. */
+     * based on the renderFlag. Last one is ShowPlanetRings. */
 
-    for (uint64_t i = Renderer::ShowStars; i <= Renderer::ShowFadingOrbits; i *= 2)
+    for (uint64_t i = Renderer::ShowStars; i <= Renderer::ShowPlanetRings; i *= 2)
     {
         switch (i)
         {
@@ -1294,6 +1299,7 @@ void resyncRenderActions(AppData* app)
             case Renderer::ShowAtmospheres: actionName = "RenderAtmospheres"; break;
             case Renderer::ShowSmoothLines: actionName = "RenderAA"; break;
             case Renderer::ShowEclipseShadows: actionName = "RenderEclipseShadows"; break;
+            case Renderer::ShowPlanetRings: actionName = "RenderPlanetRings"; break;
             case Renderer::ShowRingShadows: actionName = "RenderRingShadows"; break;
             case Renderer::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
             case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
@@ -1317,7 +1323,7 @@ void resyncRenderActions(AppData* app)
             action = gtk_action_group_get_action(app->agRender, actionName);
 
             /* The current i anded with the renderFlags gives state of flag */
-            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & rf));
+            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & rf) != 0);
         }
     }
 }

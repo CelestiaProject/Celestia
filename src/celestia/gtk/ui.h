@@ -155,6 +155,7 @@ static const GtkToggleActionEntry actionsRenderFlags[] = {
     { "RenderComets", NULL, "Comets", NULL, NULL, G_CALLBACK(actionRenderComets), FALSE },
     { "RenderAsteroids", NULL, "Asteroids", NULL, NULL, G_CALLBACK(actionRenderAsteroids), FALSE },
     { "RenderSpacecrafts", NULL, "Spacecraft", NULL, NULL, G_CALLBACK(actionRenderSpacecrafts), FALSE },
+    { "RenderPlanetRings", NULL, "Planet Rings", NULL, NULL, G_CALLBACK(actionRenderPlanetRings), FALSE },
     { "RenderRingShadows", NULL, "Ring Shadows", NULL, NULL, G_CALLBACK(actionRenderRingShadows), FALSE },
     { "RenderStars", NULL, "Stars", NULL, NULL, G_CALLBACK(actionRenderStars), FALSE },
 };
