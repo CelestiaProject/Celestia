@@ -155,6 +155,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     getFlag64(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
     getFlag64(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
     getFlag64(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
+    getFlag64(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
     getFlag64(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
     getFlag64(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
     getFlag64(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
@@ -267,6 +268,7 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "atmospheres", (rf & Renderer::ShowAtmospheres) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "smoothLines", (rf & Renderer::ShowSmoothLines) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "eclipseShadows", (rf & Renderer::ShowEclipseShadows) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "planetRings", (rf & Renderer::ShowPlanetRings) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "ringShadows", (rf & Renderer::ShowRingShadows) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "boundaries", (rf & Renderer::ShowBoundaries) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "autoMag", (rf & Renderer::ShowAutoMag) != 0);
