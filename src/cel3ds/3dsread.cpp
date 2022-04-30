@@ -7,6 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -16,6 +18,7 @@
 #include <utility>
 
 #include <Eigen/Core>
+#include <fmt/format.h>
 
 #include <celutil/binaryread.h>
 #include <celutil/logger.h>
@@ -27,10 +30,6 @@ using celestia::util::GetLogger;
 
 namespace
 {
-constexpr std::int32_t READ_FAILURE = -1;
-constexpr std::int32_t UNKNOWN_CHUNK = -2;
-
-
 enum class M3DChunkType : std::uint16_t
 {
     Null                 = 0x0000,
@@ -79,29 +78,28 @@ enum class M3DChunkType : std::uint16_t
 };
 
 
-template<typename T>
-using ProcessChunkFunc = std::int32_t (*)(std::istream&, M3DChunkType, std::int32_t, T&);
+constexpr auto chunkHeaderSize = static_cast<std::int32_t>(sizeof(M3DChunkType) + sizeof(std::int32_t));
+
+} // end unnamed namespace
 
 
-std::int32_t readString(std::istream& in, std::string& value)
+template<>
+struct fmt::formatter<M3DChunkType>
 {
-    constexpr std::size_t maxLength = 1024;
-    char s[maxLength];
-
-    for (std::size_t count = 0; count < maxLength; count++)
-    {
-        in.read(s + count, 1);
-        if (!in.good()) { return READ_FAILURE; }
-        if (s[count] == '\0')
-        {
-            value = s;
-            return count + 1;
-        }
+    constexpr auto parse(const format_parse_context& ctx) const -> decltype(ctx.begin()) {
+        // we should validate the format here but exceptions are disabled
+        return ctx.begin();
     }
 
-    return READ_FAILURE;
-}
+    template<typename FormatContext>
+    auto format(const M3DChunkType& chunkType, FormatContext& ctx) -> decltype(ctx.out()) {
+        return format_to(ctx.out(), "{:04x}", static_cast<std::uint16_t>(chunkType));
+    }
+};
 
+
+namespace
+{
 
 bool readChunkType(std::istream& in, M3DChunkType& chunkType)
 {
@@ -112,219 +110,309 @@ bool readChunkType(std::istream& in, M3DChunkType& chunkType)
 }
 
 
-template<typename T>
-std::int32_t read3DSChunk(std::istream& in,
-                          ProcessChunkFunc<T> chunkFunc,
-                          T& obj)
+bool readString(std::istream& in, std::int32_t& contentSize, std::string& value)
 {
-    M3DChunkType chunkType;
-    if (!readChunkType(in, chunkType)) { return READ_FAILURE; }
-    std::int32_t chunkSize;
-    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < 6) { return READ_FAILURE; }
-
-    std::int32_t contentSize = chunkSize - 6;
-    std::int32_t processedSize = chunkFunc(in, chunkType, contentSize, obj);
-    switch (processedSize)
+    if (contentSize == 0)
     {
-    case READ_FAILURE:
-        return READ_FAILURE;
-    case UNKNOWN_CHUNK:
-        in.ignore(contentSize);
-        return in.good() ? chunkSize : READ_FAILURE;
-    default:
-        if (processedSize != contentSize)
+        value.clear();
+        return true;
+    }
+
+    std::size_t max_length = std::min(64, contentSize);
+    value.resize(max_length);
+    in.getline(value.data(), max_length, '\0');
+    if (!in.good())
+    {
+        GetLogger()->error("Error occurred reading string\n");
+        return false;
+    }
+
+    value.resize(in.gcount() - 1);
+    contentSize -= in.gcount();
+    return true;
+}
+
+
+bool skipChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize)
+{
+    GetLogger()->debug("Skipping {} bytes of unknown/unexpected chunk type {}\n", contentSize, chunkType);
+    if (!in.ignore(contentSize).good())
+    {
+        GetLogger()->error("Error skipping {} bytes of unknown/unexpected chunk type {}\n", contentSize, chunkType);
+        return false;
+    }
+
+    return true;
+}
+
+
+bool skipTrailing(std::istream& in, std::int32_t contentSize)
+{
+    if (contentSize < 0)
+    {
+        GetLogger()->error("Negative trailing chunk size {} detected", contentSize);
+        return false;
+    }
+
+    if (contentSize == 0) { return true; }
+
+    GetLogger()->debug("Skipping {} trailing bytes\n", contentSize);
+    if (!in.ignore(contentSize).good())
+    {
+        GetLogger()->error("Error skipping {} trailing bytes\n", contentSize);
+        return false;
+    }
+
+    return true;
+}
+
+
+template<typename T, typename ProcessFunc>
+bool readChunks(std::istream& in, std::int32_t contentSize, T& obj, ProcessFunc processChunk)
+{
+    while (contentSize > chunkHeaderSize)
+    {
+        M3DChunkType chunkType;
+        if (!readChunkType(in, chunkType))
         {
-            GetLogger()->error("Chunk type {:04x}, expected {} bytes but read {}\n",
-                               static_cast<int>(chunkType), contentSize, processedSize);
-            return READ_FAILURE;
+            GetLogger()->error("Failed to read chunk type\n");
+            return false;
         }
-        return chunkSize;
-    }
-}
 
+        GetLogger()->debug("Found chunk type {}\n", chunkType);
 
-template<typename T>
-std::int32_t read3DSChunks(std::istream& in,
-                           std::int32_t nBytes,
-                           ProcessChunkFunc<T> chunkFunc,
-                           T& obj)
-{
-    std::int32_t bytesRead = 0;
-
-    while (bytesRead < nBytes)
-    {
-        std::int32_t chunkSize = read3DSChunk(in, chunkFunc, obj);
-        if (chunkSize <= 0) {
-            GetLogger()->error("Failed to read 3DS chunk\n");
-            return READ_FAILURE;
-        }
-        bytesRead += chunkSize;
-    }
-
-    if (bytesRead != nBytes)
-    {
-        GetLogger()->error("Multiple chunks, expected {} bytes but read {}\n", nBytes, bytesRead);
-        return READ_FAILURE;
-    }
-
-    return bytesRead;
-}
-
-
-std::int32_t readColor(std::istream& in, M3DColor& color)
-{
-    std::uint8_t r, g, b;
-    if (!celutil::readLE<std::uint8_t>(in, r)
-        || !celutil::readLE<std::uint8_t>(in, g)
-        || !celutil::readLE<std::uint8_t>(in, b))
-    {
-        return READ_FAILURE;
-    }
-
-    color = {static_cast<float>(r) / 255.0f,
-             static_cast<float>(g) / 255.0f,
-             static_cast<float>(b) / 255.0f};
-
-    return 3;
-}
-
-
-std::int32_t readFloatColor(std::istream& in, M3DColor& color)
-{
-    float r, g, b;
-    if (!celutil::readLE<float>(in, r)
-        || !celutil::readLE<float>(in, g)
-        || !celutil::readLE<float>(in, b))
-    {
-        return READ_FAILURE;
-    }
-
-    color = { r, g, b };
-    return static_cast<std::int32_t>(3 * sizeof(float));
-}
-
-
-std::int32_t readMeshMatrix(std::istream& in, Eigen::Matrix4f& m)
-{
-    float elements[12];
-    for (std::size_t i = 0; i < 12; ++i)
-    {
-        if (!celutil::readLE<float>(in, elements[i])) { return READ_FAILURE; }
-    }
-
-    m << elements[0], elements[1], elements[2], 0,
-         elements[3], elements[4], elements[5], 0,
-         elements[6], elements[7], elements[8], 0,
-         elements[9], elements[10], elements[11], 1;
-
-    return static_cast<std::int32_t>(12 * sizeof(float));
-}
-
-
-std::int32_t readPointArray(std::istream& in, M3DTriangleMesh& triMesh)
-{
-    std::uint16_t nPoints;
-    if (!celutil::readLE<std::uint16_t>(in, nPoints)) { return READ_FAILURE; }
-    std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nPoints));
-
-    for (int i = 0; i < static_cast<int>(nPoints); i++)
-    {
-        float x, y, z;
-        if (!celutil::readLE<float>(in, x)
-            || !celutil::readLE<float>(in, y)
-            || !celutil::readLE<float>(in, z))
+        std::int32_t chunkSize;
+        if (!celutil::readLE<std::int32_t>(in, chunkSize))
         {
-            return READ_FAILURE;
+            GetLogger()->error("Failed to read chunk size\n", chunkType);
+            return false;
         }
-        bytesRead += static_cast<std::int32_t>(3 * sizeof(float));
-        triMesh.addVertex(Eigen::Vector3f(x, y, z));
+        else if (chunkSize < chunkHeaderSize)
+        {
+            GetLogger()->error("Chunk size {} too small to include header\n", chunkSize);
+            return false;
+        }
+        else if (chunkSize > contentSize)
+        {
+            GetLogger()->error("Chunk size {} exceeds remaining content size {} of outer chunk\n", chunkSize, contentSize);
+            return false;
+        }
+
+        if (!processChunk(in, chunkType, chunkSize - chunkHeaderSize, obj))
+        {
+            GetLogger()->debug("Failed to process inner chunk\n");
+            return false;
+        }
+
+        contentSize -= chunkSize;
     }
 
-    return bytesRead;
+    return skipTrailing(in, contentSize);
 }
 
 
-std::int32_t readTextureCoordArray(std::istream& in, M3DTriangleMesh& triMesh)
+bool readPointArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
 {
-    std::int32_t bytesRead = 0;
+    constexpr auto headerSize = static_cast<std::int32_t>(sizeof(std::uint16_t));
+    if (contentSize < headerSize)
+    {
+        GetLogger()->error("Content size {} too small to include point array count\n", contentSize);
+        return false;
+    }
 
     std::uint16_t nPoints;
-    if (!celutil::readLE<std::uint16_t>(in, nPoints)) { return READ_FAILURE; }
-    bytesRead += static_cast<std::int32_t>(sizeof(nPoints));
-
-    for (int i = 0; i < static_cast<int>(nPoints); i++)
+    if (!celutil::readLE<std::uint16_t>(in, nPoints))
     {
-        float u, v;
-        if (!celutil::readLE<float>(in, u) || !celutil::readLE<float>(in, v))
-        {
-            return READ_FAILURE;
-        }
-        bytesRead += static_cast<std::int32_t>(2 * sizeof(float));
-        triMesh.addTexCoord(Eigen::Vector2f(u, -v));
+        GetLogger()->error("Failed to read point array count\n");
+        return false;
     }
 
-    return bytesRead;
+    auto pointsCount = static_cast<std::int32_t>(nPoints);
+    std::int32_t expectedSize = headerSize + pointsCount * static_cast<std::int32_t>(3 * sizeof(float));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Content size {} too small to include point array with {} entries", contentSize);
+        return false;
+    }
+
+    for (std::int32_t i = 0; i < pointsCount; ++i)
+    {
+        Eigen::Vector3f vertex;
+        if (!celutil::readLE<float>(in, vertex.x())
+            || !celutil::readLE<float>(in, vertex.y())
+            || !celutil::readLE<float>(in, vertex.z()))
+        {
+            GetLogger()->error("Failed to read entry {} of point array\n", i);
+            return false;
+        }
+
+        triMesh.addVertex(vertex);
+    }
+
+    return skipTrailing(in, contentSize - expectedSize);
 }
 
 
-std::int32_t processFaceArrayChunk(std::istream& in,
-                                   M3DChunkType chunkType,
-                                   std::int32_t /*contentSize*/,
-                                   M3DTriangleMesh& triMesh)
+bool readTextureCoordArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
 {
-    std::int32_t bytesRead = 0;
+    constexpr auto headerSize = static_cast<std::int32_t>(sizeof(std::uint16_t));
+    if (contentSize < headerSize)
+    {
+        GetLogger()->error("Content size {} too small to include texture coord array count\n", contentSize);
+        return false;
+    }
+
+    std::uint16_t nTexCoords;
+    if (!celutil::readLE<std::uint16_t>(in, nTexCoords))
+    {
+        GetLogger()->error("Failed to read texture coord array count\n");
+        return false;
+    }
+
+    auto texCoordsCount = static_cast<std::int32_t>(nTexCoords);
+    std::int32_t expectedSize = headerSize + texCoordsCount * static_cast<std::int32_t>(2 * sizeof(float));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Content size {} too small to include texture coord array with {} entries\n", contentSize, nTexCoords);
+        return false;
+    }
+
+    for (std::int32_t i = 0; i < texCoordsCount; ++i)
+    {
+        Eigen::Vector2f texCoord;
+        if (!celutil::readLE<float>(in, texCoord.x())
+            || !celutil::readLE<float>(in, texCoord.y()))
+        {
+            GetLogger()->error("Failed to read entry {} of texture coord array\n", i);
+            return false;
+        }
+
+        texCoord.y() = -texCoord.y();
+        triMesh.addTexCoord(texCoord);
+    }
+
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool readMeshMaterialGroup(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
+{
+    M3DMeshMaterialGroup matGroup;
+    if (!readString(in, contentSize, matGroup.materialName)) { return false; }
+    constexpr auto headerSize = static_cast<std::int32_t>(sizeof(std::uint16_t));
+    if (contentSize < headerSize)
+    {
+        GetLogger()->error("Remaining content size {} too small to include material group face array count\n", contentSize);
+        return false;
+    }
+
     std::uint16_t nFaces;
+    if (!celutil::readLE<std::uint16_t>(in, nFaces))
+    {
+        GetLogger()->error("Failed to read material group face array count\n");
+        return false;
+    }
 
+    auto faceCount = static_cast<std::int32_t>(nFaces);
+    std::int32_t expectedSize = headerSize + faceCount * static_cast<std::int32_t>(sizeof(std::uint16_t));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Remaining content size {} too small to include material group face array with {} entries\n", contentSize, nFaces);
+        return false;
+    }
+
+    for (std::int32_t i = 0; i < faceCount; ++i)
+    {
+        std::uint16_t faceIndex;
+        if (!celutil::readLE(in, faceIndex))
+        {
+            GetLogger()->error("Failed to read entry {} of material group face array\n", i);
+            return false;
+        }
+
+        matGroup.faces.push_back(faceIndex);
+    }
+
+    triMesh.addMeshMaterialGroup(std::move(matGroup));
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool readMeshSmoothGroup(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
+{
+    auto faceCount = static_cast<std::int32_t>(triMesh.getFaceCount());
+    std::int32_t expectedSize = faceCount * static_cast<std::int32_t>(sizeof(std::int32_t));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Content size {} too small to include smoothing group array with {} entries\n", contentSize, faceCount);
+        return false;
+    }
+
+    for (std::int32_t i = 0; i < faceCount; ++i)
+    {
+        std::int32_t groups;
+        if (!celutil::readLE<std::int32_t>(in, groups))
+        {
+            GetLogger()->error("Failed to read entry {} of smoothing group array\n", i);
+            return false;
+        }
+
+        if (groups < 0)
+        {
+            GetLogger()->error("Invalid smoothing group entry {}\n", groups);
+            return false;
+        }
+
+        triMesh.addSmoothingGroups(static_cast<std::uint32_t>(groups));
+    }
+
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool processFaceArrayChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DTriangleMesh& triMesh)
+{
     switch (chunkType)
     {
     case M3DChunkType::MeshMaterialGroup:
-    {
-        M3DMeshMaterialGroup matGroup;
+        GetLogger()->debug("Processing MeshMaterialGroup chunk\n");
+        return readMeshMaterialGroup(in, contentSize, triMesh);
 
-        bytesRead = readString(in, matGroup.materialName);
-        if (bytesRead <= 0 || !celutil::readLE<std::uint16_t>(in, nFaces))
-        {
-            return READ_FAILURE;
-        }
-        bytesRead += static_cast<std::int32_t>(sizeof(nFaces));
-
-        for (std::uint16_t i = 0; i < nFaces; i++)
-        {
-            std::uint16_t faceIndex;
-            if (!celutil::readLE<std::uint16_t>(in, faceIndex)) { return READ_FAILURE; }
-            bytesRead += static_cast<std::int32_t>(sizeof(faceIndex));
-            matGroup.faces.push_back(faceIndex);
-        }
-
-        triMesh.addMeshMaterialGroup(std::move(matGroup));
-
-        return bytesRead;
-    }
     case M3DChunkType::MeshSmoothGroup:
-        nFaces = triMesh.getFaceCount();
-
-        for (std::uint16_t i = 0; i < nFaces; i++)
-        {
-            std::int32_t groups;
-            if (!celutil::readLE<std::int32_t>(in, groups) || groups < 0){ return READ_FAILURE; }
-            bytesRead += static_cast<std::int32_t>(sizeof(groups));
-            triMesh.addSmoothingGroups(static_cast<std::uint32_t>(groups));
-        }
-        return bytesRead;
+        GetLogger()->debug("Processing MeshSmoothGroup chunk\n");
+        return readMeshSmoothGroup(in, contentSize, triMesh);
 
     default:
-        return UNKNOWN_CHUNK;
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh& triMesh, std::int32_t contentSize)
+bool readFaceArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
 {
-    std::uint16_t nFaces;
-    if (!celutil::readLE<std::uint16_t>(in, nFaces)) { return READ_FAILURE; }
-    std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nFaces));
+    constexpr auto headerSize = static_cast<std::int32_t>(sizeof(std::uint16_t));
+    if (contentSize < headerSize)
+    {
+        GetLogger()->error("Content size {} too small to include face array count\n", contentSize);
+        return false;
+    }
 
-    for (int i = 0; i < static_cast<int>(nFaces); i++)
+    std::uint16_t nFaces;
+    if (!celutil::readLE<std::uint16_t>(in, nFaces))
+    {
+        GetLogger()->error("Failed to read face array count\n");
+        return false;
+    }
+
+    auto faceCount = static_cast<std::int32_t>(nFaces);
+    std::int32_t expectedSize = headerSize + faceCount * static_cast<std::int32_t>(4 * sizeof(std::uint16_t));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Content size {} too small to include face array with {} entries\n", contentSize, nFaces);
+        return false;
+    }
+
+    for (std::int32_t i = 0; i < faceCount; ++i)
     {
         std::uint16_t v0, v1, v2, flags;
         if (!celutil::readLE<std::uint16_t>(in, v0)
@@ -332,244 +420,363 @@ std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh& triMesh, std::int3
             || !celutil::readLE<std::uint16_t>(in, v2)
             || !celutil::readLE<std::uint16_t>(in, flags))
         {
-            return READ_FAILURE;
+            GetLogger()->error("Failed to read entry {} of face array\n", i);
+            return false;
         }
-        bytesRead += static_cast<std::int32_t>(4 * sizeof(std::uint16_t));
+
         triMesh.addFace(v0, v1, v2);
     }
 
-    if (bytesRead > contentSize) { return READ_FAILURE; }
-
-    if (bytesRead < contentSize)
+    if (expectedSize < contentSize)
     {
-        std::int32_t trailingSize = read3DSChunks(in,
-                                                  contentSize - bytesRead,
-                                                  processFaceArrayChunk,
-                                                  triMesh);
-        if (trailingSize < 0) { return trailingSize; }
-        if (trailingSize == 0) { return READ_FAILURE; }
-        bytesRead += trailingSize;
+        return readChunks(in, contentSize - expectedSize, triMesh, processFaceArrayChunk);
     }
 
-    return bytesRead;
+    return true;
 }
 
 
-std::int32_t processTriMeshChunk(std::istream& in,
-                                 M3DChunkType chunkType,
-                                 std::int32_t contentSize,
-                                 M3DTriangleMesh& triMesh)
+bool readMeshMatrix(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& triMesh)
+{
+    constexpr auto expectedSize = static_cast<std::int32_t>(sizeof(float) * 12);
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->error("Content size {} too small to include mesh matrix\n", contentSize);
+        return false;
+    }
+
+    float elements[12];
+    for (std::size_t i = 0; i < 12; ++i)
+    {
+        if (!celutil::readLE<float>(in, elements[i]))
+        {
+            GetLogger()->error("Failed to read element {} of mesh matrix\n", i);
+            return false;
+        }
+    }
+
+    Eigen::Matrix4f matrix;
+    matrix << elements[0], elements[1], elements[2], 0,
+                elements[3], elements[4], elements[5], 0,
+                elements[6], elements[7], elements[8], 0,
+                elements[9], elements[10], elements[11], 1;
+    triMesh.setMatrix(matrix);
+
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool processTriangleMeshChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DTriangleMesh& triMesh)
 {
     switch (chunkType)
     {
     case M3DChunkType::PointArray:
-        return readPointArray(in, triMesh);
+        GetLogger()->debug("Processing PointArray chunk\n");
+        return readPointArray(in, contentSize, triMesh);
+
     case M3DChunkType::MeshTextureCoords:
-        return readTextureCoordArray(in, triMesh);
+        GetLogger()->debug("Processing MeshTextureCoords chunk\n");
+        return readTextureCoordArray(in, contentSize, triMesh);
+
     case M3DChunkType::FaceArray:
-        return readFaceArray(in, triMesh, contentSize);
+        GetLogger()->debug("Processing FaceArray chunk\n");
+        return readFaceArray(in, contentSize, triMesh);
+
     case M3DChunkType::MeshMatrix:
-        {
-            Eigen::Matrix4f matrix;
-            std::int32_t bytesRead = readMeshMatrix(in, matrix);
-            if (bytesRead <= 0) { return READ_FAILURE; }
-            triMesh.setMatrix(matrix);
-            return bytesRead;
-        }
+        GetLogger()->debug("Processing MeshMatrix chunk\n");
+        return readMeshMatrix(in, contentSize, triMesh);
+
     default:
-        return UNKNOWN_CHUNK;
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t processModelChunk(std::istream& in,
-                               M3DChunkType chunkType,
-                               std::int32_t contentSize,
-                               M3DModel& model)
+bool processModelChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DModel& model)
 {
-    if (chunkType == M3DChunkType::TriangleMesh)
+    if (chunkType != M3DChunkType::TriangleMesh)
     {
-        M3DTriangleMesh triMesh;
-        std::int32_t bytesRead = read3DSChunks(in, contentSize, processTriMeshChunk, triMesh);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        model.addTriMesh(std::move(triMesh));
-        return bytesRead;
+        return skipChunk(in, chunkType, contentSize);
     }
 
-    return UNKNOWN_CHUNK;
+    GetLogger()->debug("Processing TriangleMesh chunk\n");
+    M3DTriangleMesh triMesh;
+    if (!readChunks(in, contentSize, triMesh, processTriangleMeshChunk)) { return false; }
+    model.addTriMesh(std::move(triMesh));
+    return true;
 }
 
 
-std::int32_t processColorChunk(std::istream& in,
-                               M3DChunkType chunkType,
-                               std::int32_t /*contentSize*/,
-                               M3DColor& color)
+bool readColor24(std::istream& in, std::int32_t contentSize, M3DColor& color)
+{
+    if (contentSize < 3)
+    {
+        GetLogger()->warn("Content size {} too small to include 24-bit color\n", contentSize);
+        return skipTrailing(in, contentSize);
+    }
+
+    std::array<char, 3> rgb;
+    if (!in.read(rgb.data(), rgb.size()).good())
+    {
+        GetLogger()->error("Error reading Color24 RGB values");
+        return false;
+    }
+
+    color.red = static_cast<float>(static_cast<std::uint8_t>(rgb[0])) / 255.0f;
+    color.green = static_cast<float>(static_cast<std::uint8_t>(rgb[1])) / 255.0f;
+    color.blue = static_cast<float>(static_cast<std::uint8_t>(rgb[2])) / 255.0f;
+
+    return skipTrailing(in, contentSize - 3);
+}
+
+
+bool readColorFloat(std::istream& in, std::int32_t contentSize, M3DColor& color)
+{
+    constexpr auto expectedSize = static_cast<std::int32_t>(sizeof(float) * 3);
+    GetLogger()->debug("Processing ColorFloat chunk\n");
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->warn("Content size {} too small to include float color\n", contentSize);
+        return skipTrailing(in, contentSize);
+    }
+
+    if (!celutil::readLE<float>(in, color.red)
+        || !celutil::readLE<float>(in, color.green)
+        || !celutil::readLE<float>(in, color.blue))
+    {
+        GetLogger()->error("Error reading ColorFloat RGB values");
+        return false;
+    }
+
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool processColorChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DColor& color)
 {
     switch (chunkType)
     {
     case M3DChunkType::Color24:
-        return readColor(in, color);
+        GetLogger()->debug("Processing Color24 chunk\n");
+        return readColor24(in, contentSize, color);
+
     case M3DChunkType::ColorFloat:
-        return readFloatColor(in, color);
+        GetLogger()->debug("Processing ColorFloat chunk\n");
+        return readColorFloat(in, contentSize, color);
+
     default:
-        return UNKNOWN_CHUNK;
+        GetLogger()->warn("Unknown color chunk type {}\n", chunkType);
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t processPercentageChunk(std::istream& in,
-                                    M3DChunkType chunkType,
-                                    std::int32_t /*contentSize*/,
-                                    float& percent)
+bool readIntPercentage(std::istream& in, std::int32_t contentSize, float& percentage)
+{
+    constexpr auto expectedSize = static_cast<std::int32_t>(sizeof(std::int16_t));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->warn("Content size {} too small to include integer perecentage\n", contentSize);
+        return skipTrailing(in, contentSize);
+    }
+
+    std::int16_t value;
+    if (!celutil::readLE<std::int16_t>(in, value))
+    {
+        GetLogger()->error("Error reading IntPercentage\n");
+        return false;
+    }
+
+    percentage = static_cast<float>(value);
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool readFloatPercentage(std::istream& in, std::int32_t contentSize, float& percentage)
+{
+    constexpr auto expectedSize = static_cast<std::int32_t>(sizeof(float));
+    if (contentSize < expectedSize)
+    {
+        GetLogger()->warn("Content size {} too small to include float percentage\n", contentSize);
+        return skipTrailing(in, contentSize);
+    }
+
+    if (!celutil::readLE<float>(in, percentage))
+    {
+        GetLogger()->error("Error reading FloatPercentage\n");
+        return false;
+    }
+
+    return skipTrailing(in, contentSize - expectedSize);
+}
+
+
+bool processPercentageChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, float& percentage)
 {
     switch (chunkType)
     {
     case M3DChunkType::IntPercentage:
-        {
-            std::int16_t value;
-            if (!celutil::readLE<std::int16_t>(in, value)) { return READ_FAILURE; }
-            percent = static_cast<float>(value);
-            return sizeof(value);
-        }
+        GetLogger()->debug("Processing IntPercentage chunk\n");
+        return readIntPercentage(in, contentSize, percentage);
+
     case M3DChunkType::FloatPercentage:
-        return celutil::readLE<float>(in, percent) ? sizeof(float) : READ_FAILURE;
+        GetLogger()->debug("Processing FloatPercentage chunk\n");
+        readFloatPercentage(in, contentSize, percentage);
+
     default:
-        return UNKNOWN_CHUNK;
+        GetLogger()->warn("Unknown percentage {}\n", chunkType);
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t processTexmapChunk(std::istream& in,
-                                M3DChunkType chunkType,
-                                std::int32_t /*contentSize*/,
-                                M3DMaterial& material)
+bool processTexmapChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DMaterial& material)
 {
-    if (chunkType == M3DChunkType::MaterialMapname)
+    if (chunkType != M3DChunkType::MaterialMapname)
     {
-        std::string name;
-        std::int32_t bytesRead = readString(in, name);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setTextureMap(name);
-        return bytesRead;
+        return skipChunk(in, chunkType, contentSize);
     }
 
-    return UNKNOWN_CHUNK;
+    GetLogger()->debug("Processing MaterialMapname chunk\n");
+    std::string name;
+    if (!readString(in, contentSize, name)) { return false; }
+    material.setTextureMap(name);
+    return skipTrailing(in, contentSize);
 }
 
 
-std::int32_t processMaterialChunk(std::istream& in,
-                                  M3DChunkType chunkType,
-                                  std::int32_t contentSize,
-                                  M3DMaterial& material)
+bool readMaterialName(std::istream& in, std::int32_t contentSize, M3DMaterial& material)
 {
-    std::int32_t bytesRead;
     std::string name;
-    M3DColor color;
-    float t;
+    if (!readString(in, contentSize, name)) { return false; }
+    material.setName(std::move(name));
+    return skipTrailing(in, contentSize);
+}
 
+
+template<typename Setter>
+bool readMaterialColor(std::istream& in, std::int32_t contentSize, Setter setter)
+{
+    M3DColor color;
+    if (!readChunks(in, contentSize, color, processColorChunk)) { return false; }
+    setter(color);
+    return true;
+}
+
+
+template<typename Setter>
+bool readMaterialPercentage(std::istream& in, std::int32_t contentSize, Setter setter)
+{
+    float percentage = 0.0f;
+    if (!readChunks(in, contentSize, percentage, processPercentageChunk)) { return false; }
+    setter(percentage);
+    return true;
+}
+
+
+bool processMaterialChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DMaterial& material)
+{
     switch (chunkType)
     {
     case M3DChunkType::MaterialName:
-        bytesRead = readString(in, name);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setName(std::move(name));
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialName chunk\n");
+        return readMaterialName(in, contentSize, material);
+
     case M3DChunkType::MaterialAmbient:
-        bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setAmbientColor(color);
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialAmbient chunk\n");
+        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setAmbientColor(color); });
+
     case M3DChunkType::MaterialDiffuse:
-        bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setDiffuseColor(color);
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialDiffuse chunk\n");
+        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setDiffuseColor(color); });
+
     case M3DChunkType::MaterialSpecular:
-        bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setSpecularColor(color);
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialSpecular chunk\n");
+        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setSpecularColor(color); });
+
     case M3DChunkType::MaterialShininess:
-        bytesRead = read3DSChunks(in, contentSize, processPercentageChunk, t);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setShininess(t);
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialShininess chunk\n");
+        return readMaterialPercentage(in, contentSize, [&](float percentage) { material.setShininess(percentage); });
+
     case M3DChunkType::MaterialTransparency:
-        bytesRead = read3DSChunks(in, contentSize, processPercentageChunk, t);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        material.setOpacity(1.0f - t / 100.0f);
-        return bytesRead;
+        GetLogger()->debug("Processing MaterialTransparency chunk\n");
+        return readMaterialPercentage(in, contentSize,
+                                      [&](float percentage) { material.setOpacity(1.0f - percentage / 100.0f); });
+
     case M3DChunkType::MaterialTexmap:
-        return read3DSChunks(in, contentSize, processTexmapChunk, material);
+        GetLogger()->debug("Processing MaterialTexmap chunk\n");
+        return readChunks(in, contentSize, material, processTexmapChunk);
+
     default:
-        return UNKNOWN_CHUNK;
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t processSceneChunk(std::istream& in,
-                               M3DChunkType chunkType,
-                               std::int32_t contentSize,
-                               M3DScene& scene)
+bool readNamedObject(std::istream& in, std::int32_t contentSize, M3DScene& scene)
+{
+    std::string name;
+    if (!readString(in, contentSize, name)) { return false; }
+    M3DModel model;
+    model.setName(name);
+    if (!readChunks(in, contentSize, model, processModelChunk)) { return false; }
+    scene.addModel(std::move(model));
+    return true;
+}
+
+
+bool readMaterialEntry(std::istream& in, std::int32_t contentSize, M3DScene& scene)
+{
+    M3DMaterial material;
+    if (!readChunks(in, contentSize, material, processMaterialChunk)) { return false; }
+    scene.addMaterial(std::move(material));
+    return true;
+}
+
+
+bool readBackgroundColor(std::istream& in, std::int32_t contentSize, M3DScene& scene)
+{
+    M3DColor color;
+    if (!readChunks(in, contentSize, color, processColorChunk)) { return false; }
+    scene.setBackgroundColor(color);
+    return true;
+}
+
+
+bool processMeshdataChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DScene& scene)
 {
     switch (chunkType)
     {
     case M3DChunkType::NamedObject:
-    {
-        std::string name;
-        std::int32_t bytesRead = readString(in, name);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        M3DModel model;
-        model.setName(name);
-        std::int32_t chunksSize = read3DSChunks(in,
-                                                contentSize - bytesRead,
-                                                processModelChunk,
-                                                model);
-        if (chunksSize <= 0) { return READ_FAILURE; }
-        scene.addModel(std::move(model));
+        GetLogger()->debug("Processing NamedObject chunk\n");
+        return readNamedObject(in, contentSize, scene);
 
-        return bytesRead + chunksSize;
-    }
     case M3DChunkType::MaterialEntry:
-    {
-        M3DMaterial material;
-        std::int32_t bytesRead = read3DSChunks(in,
-                                               contentSize,
-                                               processMaterialChunk,
-                                               material);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        scene.addMaterial(std::move(material));
+        GetLogger()->debug("Processing MaterialEntry chunk\n");
+        return readMaterialEntry(in, contentSize, scene);
 
-        return bytesRead;
-    }
     case M3DChunkType::BackgroundColor:
-    {
-        M3DColor color;
-        std::int32_t bytesRead = read3DSChunks(in, contentSize, processColorChunk, color);
-        if (bytesRead <= 0) { return READ_FAILURE; }
-        scene.setBackgroundColor(color);
-        return bytesRead;
-    }
+        GetLogger()->debug("Processing BackgroundColor chunk\n");
+        return readBackgroundColor(in, contentSize, scene);
+
     default:
-        return UNKNOWN_CHUNK;
+        return skipChunk(in, chunkType, contentSize);
     }
 }
 
 
-std::int32_t processTopLevelChunk(std::istream& in,
-                                  M3DChunkType chunkType,
-                                  std::int32_t contentSize,
-                                  M3DScene& scene)
+bool processTopLevelChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DScene& scene)
 {
-    if (chunkType == M3DChunkType::Meshdata)
+    if (chunkType != M3DChunkType::Meshdata)
     {
-        return read3DSChunks(in, contentSize, processSceneChunk, scene);
+        return skipChunk(in, chunkType, contentSize);
     }
 
-    return UNKNOWN_CHUNK;
+    GetLogger()->debug("Processing Meshdata chunk\n");
+    return readChunks(in, contentSize, scene, processMeshdataChunk);
 }
 
-} // end namespace
+} // end unnamed namespace
 
 
 std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
@@ -582,19 +789,16 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
     }
 
     std::int32_t chunkSize;
-    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < 6)
+    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < chunkHeaderSize)
     {
         GetLogger()->error("Read3DSFile: Error reading 3DS file top level chunk size\n");
         return nullptr;
     }
 
-    GetLogger()->verbose("3DS file, {} bytes\n", chunkSize + 6);
+    GetLogger()->verbose("3DS file, {} bytes\n", chunkSize + chunkHeaderSize);
 
     auto scene = std::make_unique<M3DScene>();
-    std::int32_t contentSize = chunkSize - 6;
-
-    std::int32_t bytesRead = read3DSChunks(in, contentSize, processTopLevelChunk, *scene);
-    if (bytesRead <= 0 || bytesRead != contentSize)
+    if (!readChunks(in, chunkSize - chunkHeaderSize, *scene, processTopLevelChunk))
     {
         return nullptr;
     }
@@ -616,29 +820,3 @@ std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename)
     in.close();
     return scene;
 }
-
-
-#if 0
-int main(int argc, char* argv[])
-{
-    if (argc != 2)
-    {
-        cerr << "Usage: 3dsread <filename>\n";
-        exit(1);
-    }
-
-    ifstream in(argv[1], ios::in | ios::binary);
-    if (!in.good())
-    {
-        cerr << "Error opening " << argv[1] << '\n';
-        exit(1);
-    }
-    else
-    {
-        read3DSFile(in);
-        in.close();
-    }
-
-    return 0;
-}
-#endif
