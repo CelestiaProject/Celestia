@@ -1,4 +1,6 @@
-test_case(charconv_compat)
+if(NOT HAVE_FLOAT_CHARCONV)
+  test_case(charconv_compat)
+endif()
 test_case(greek)
 test_case(hash)
 test_case(logger)
