@@ -136,13 +136,11 @@ bool readString(std::istream& in, std::int32_t& contentSize, std::string& value)
 bool skipChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize)
 {
     GetLogger()->debug("Skipping {} bytes of unknown/unexpected chunk type {}\n", contentSize, chunkType);
-    if (!in.ignore(contentSize).good())
-    {
-        GetLogger()->error("Error skipping {} bytes of unknown/unexpected chunk type {}\n", contentSize, chunkType);
-        return false;
-    }
+    in.ignore(contentSize);
+    if (in.good() || in.eof()) { return true; }
 
-    return true;
+    GetLogger()->error("Error skipping {} bytes of unknown/unexpected chunk type {}\n", contentSize, chunkType);
+    return false;
 }
 
 
@@ -157,13 +155,11 @@ bool skipTrailing(std::istream& in, std::int32_t contentSize)
     if (contentSize == 0) { return true; }
 
     GetLogger()->debug("Skipping {} trailing bytes\n", contentSize);
-    if (!in.ignore(contentSize).good())
-    {
-        GetLogger()->error("Error skipping {} trailing bytes\n", contentSize);
-        return false;
-    }
+    in.ignore(contentSize);
+    if (in.good() || in.eof()) { return true; }
 
-    return true;
+    GetLogger()->error("Error skipping {} trailing bytes\n", contentSize);
+    return false;
 }
 
 
@@ -172,6 +168,12 @@ bool readChunks(std::istream& in, std::int32_t contentSize, T& obj, ProcessFunc 
 {
     while (contentSize > chunkHeaderSize)
     {
+        if (in.eof())
+        {
+            GetLogger()->warn("Unexpected EOF detected, stopping processing\n");
+            return true;
+        }
+
         M3DChunkType chunkType;
         if (!readChunkType(in, chunkType))
         {
