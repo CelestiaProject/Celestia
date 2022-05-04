@@ -149,8 +149,14 @@ static void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeStore* s
             case Body::Planet:
                 type = "Planet";
                 break;
+            case Body::DwarfPlanet:
+                type = "Dwarf Planet";
+                break;
             case Body::Moon:
                 type = "Moon";
+                break;
+            case Body::MinorMoon:
+                type = "Minor Moon";
                 break;
             case Body::Asteroid:
                 type = "Asteroid";
