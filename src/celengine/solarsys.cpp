@@ -176,6 +176,15 @@ static Location* CreateLocation(Hash* locationData,
     return location;
 }
 
+template<typename Dst, typename Flag>
+inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
+{
+    if (cond)
+        dst |= flag;
+    else
+        dst &= ~flag;
+}
+
 
 static void FillinSurface(Hash* surfaceData,
                           Surface* surface,
@@ -218,25 +227,16 @@ static void FillinSurface(Hash* surfaceData,
 
     bool compressTexture = false;
     surfaceData->getBoolean("CompressTexture", compressTexture);
-    if (compressTexture)
-        baseFlags |= TextureInfo::CompressTexture;
+    SetOrUnset(baseFlags, TextureInfo::CompressTexture, compressTexture);
 
-    if (blendTexture)
-        surface->appearanceFlags |= Surface::BlendTexture;
-    if (emissive)
-        surface->appearanceFlags |= Surface::Emissive;
-    if (applyBaseTexture)
-        surface->appearanceFlags |= Surface::ApplyBaseTexture;
-    if (applyBumpMap || applyNormalMap)
-        surface->appearanceFlags |= Surface::ApplyBumpMap;
-    if (applyNightMap)
-        surface->appearanceFlags |= Surface::ApplyNightMap;
-    if (separateSpecular)
-        surface->appearanceFlags |= Surface::SeparateSpecularMap;
-    if (applyOverlay)
-        surface->appearanceFlags |= Surface::ApplyOverlay;
-    if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
-        surface->appearanceFlags |= Surface::SpecularReflection;
+    SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
+    SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, applyBaseTexture);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (applyBumpMap || applyNormalMap));
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, applyNightMap);
+    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, separateSpecular);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, applyOverlay);
+    SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
     if (applyBaseTexture)
         surface->baseTexture.setTexture(baseTexture, path, baseFlags);
