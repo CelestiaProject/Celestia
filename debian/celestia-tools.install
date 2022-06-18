@@ -12,7 +12,6 @@ usr/bin/3dstocmod
 usr/bin/cmodfix
 usr/bin/txt2cmod
 usr/bin/cmodsphere
-usr/bin/qttxf
 #usr/bin/spice2xyzv
 usr/bin/vsoptrunc-rect
 usr/bin/vsoptrunc-sph
