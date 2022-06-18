@@ -85,6 +85,8 @@ public:
 
     std::string x264EncoderOptions;
     std::string ffvhEncoderOptions;
+
+    fs::path leapSecondsFile;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);

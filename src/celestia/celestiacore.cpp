@@ -131,9 +131,8 @@ string KelvinToStr(float value, int digits, CelestiaCore::TemperatureScale tempe
     }
     return fmt::format(unitTemplate, SigDigitNum(value, digits));
 }
-}
 
-static bool is_valid_directory(const fs::path& dir)
+bool is_valid_directory(const fs::path& dir)
 {
     if (dir.empty())
         return false;
@@ -148,6 +147,40 @@ static bool is_valid_directory(const fs::path& dir)
     return true;
 }
 
+bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
+{
+    std::ifstream file(path);
+    if (!file.good())
+    {
+        GetLogger()->error("Failed to open leapseconds file {}\n", path);
+        return false;
+    }
+
+
+    std::string s;
+    for (int line = 1; std::getline(file, s); line++)
+    {
+        const char *ptr = &s[0];
+        while (*ptr != 0 && std::isspace(*ptr)) ptr++;
+        if (*ptr == '#' || *ptr == 0)
+            continue;
+
+        unsigned timestamp = 0u; // NTP timestamp is 32 bit unsigned value
+        int seconds = 0;
+        if (sscanf(ptr, "%u %i", &timestamp, &seconds) != 2)
+        {
+            GetLogger()->error("Failed to parse leapseconds file {}, line {}, column {}\n", path, line, ptr - &s[0]);
+            leapSeconds.clear();
+            return false;
+        }
+        double jd = (timestamp - 2208988800) / 86400.0 + 2440587.5;
+        leapSeconds.push_back({seconds, jd});
+    }
+
+    astro::setLeapSeconds(leapSeconds);
+    return true;
+}
+}
 
 // If right dragging to rotate, adjust the rotation rate based on the
 // distance from the reference object.  This makes right drag rotation
@@ -3725,6 +3758,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Set the console log size; ignore any request to use less than 100 lines
     if (config->consoleLogRows > 100)
         console->setRowCount(config->consoleLogRows);
+
+    if (!config->leapSecondsFile.empty())
+        ReadLeapSecondsFile(config->leapSecondsFile, leapSeconds);
 
 #ifdef USE_SPICE
     if (!InitializeSpice())

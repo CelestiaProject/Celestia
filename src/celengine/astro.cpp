@@ -54,18 +54,13 @@ static const Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROT
 // Atomic Time
 static const double dTA = 32.184;
 
-struct LeapSecondRecord
-{
-    int seconds;
-    double t;
-};
-
 
 // Table of leap second insertions. The leap second always
 // appears as the last second of the day immediately prior
 // to the date in the table.
-static const LeapSecondRecord LeapSeconds[] =
+static const astro::LeapSecondRecord LeapSeconds[] =
 {
+    { 10, 2441317.5 }, // 1 Jan 1972
     { 11, 2441499.5 }, // 1 Jul 1972
     { 12, 2441683.5 }, // 1 Jan 1973
     { 13, 2442048.5 }, // 1 Jan 1974
@@ -94,6 +89,9 @@ static const LeapSecondRecord LeapSeconds[] =
     { 36, 2457204.5 }, // 1 Jul 2015
     { 37, 2457754.5 }, // 1 Jan 2017
 };
+
+
+static celestia::util::array_view<astro::LeapSecondRecord> g_leapSeconds = LeapSeconds;
 
 
 #if !defined(__GNUC__) || defined(_WIN32)
@@ -557,22 +555,21 @@ ostream& operator<<(ostream& s, const astro::Date& d)
 astro::Date
 astro::TAItoUTC(double tai)
 {
-    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
-    double dAT = LeapSeconds[0].seconds;
+    double dAT = g_leapSeconds[0].seconds;
     /*double dD = 0.0;  Unused*/
     int extraSecs = 0;
 
-    for (unsigned int i = nRecords - 1; i > 0; i--)
+    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
-        if (tai - secsToDays(LeapSeconds[i].seconds) >= LeapSeconds[i].t)
+        if (tai - secsToDays(g_leapSeconds[i].seconds) >= g_leapSeconds[i].t)
         {
-            dAT = LeapSeconds[i].seconds;
+            dAT = g_leapSeconds[i].seconds;
             break;
         }
-        if (tai - secsToDays(LeapSeconds[i - 1].seconds) >= LeapSeconds[i].t)
+        if (tai - secsToDays(g_leapSeconds[i - 1].seconds) >= g_leapSeconds[i].t)
         {
-            dAT = LeapSeconds[i].seconds;
-            extraSecs = LeapSeconds[i].seconds - LeapSeconds[i - 1].seconds;
+            dAT = g_leapSeconds[i].seconds;
+            extraSecs = g_leapSeconds[i].seconds - g_leapSeconds[i - 1].seconds;
             break;
         }
     }
@@ -588,15 +585,14 @@ astro::TAItoUTC(double tai)
 double
 astro::UTCtoTAI(const astro::Date& utc)
 {
-    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
-    double dAT = LeapSeconds[0].seconds;
+    double dAT = g_leapSeconds[0].seconds;
     double utcjd = (double) Date(utc.year, utc.month, utc.day);
 
-    for (unsigned int i = nRecords - 1; i > 0; i--)
+    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
-        if (utcjd >= LeapSeconds[i].t)
+        if (utcjd >= g_leapSeconds[i].t)
         {
-            dAT = LeapSeconds[i].seconds;
+            dAT = g_leapSeconds[i].seconds;
             break;
         }
     }
@@ -731,14 +727,13 @@ astro::UTCtoTDB(const astro::Date& utc)
 double
 astro::JDUTCtoTAI(double utc)
 {
-    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
-    double dAT = LeapSeconds[0].seconds;
+    double dAT = g_leapSeconds[0].seconds;
 
-    for (unsigned int i = nRecords - 1; i > 0; i--)
+    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
-        if (utc > LeapSeconds[i].t)
+        if (utc > g_leapSeconds[i].t)
         {
-            dAT = LeapSeconds[i].seconds;
+            dAT = g_leapSeconds[i].seconds;
             break;
         }
     }
@@ -751,14 +746,13 @@ astro::JDUTCtoTAI(double utc)
 double
 astro::TAItoJDUTC(double tai)
 {
-    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
-    double dAT = LeapSeconds[0].seconds;
+    double dAT = g_leapSeconds[0].seconds;
 
-    for (unsigned int i = nRecords - 1; i > 0; i--)
+    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
-        if (tai - secsToDays(LeapSeconds[i - 1].seconds) > LeapSeconds[i].t)
+        if (tai - secsToDays(g_leapSeconds[i - 1].seconds) > g_leapSeconds[i].t)
         {
-            dAT = LeapSeconds[i].seconds;
+            dAT = g_leapSeconds[i].seconds;
             break;
         }
     }
@@ -861,4 +855,10 @@ bool astro::isMassUnit(std::string_view unitName)
 {
     double dummy;
     return getMassScale(unitName, dummy);
+}
+
+
+void astro::setLeapSeconds(celestia::util::array_view<astro::LeapSecondRecord> leapSeconds)
+{
+    g_leapSeconds = leapSeconds;
 }

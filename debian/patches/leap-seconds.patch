@@ -1,0 +1,10 @@
+--- a/celestia.cfg	2022-06-18 21:49:37.401596634 +0300
++++ b/celestia.cfg	2022-06-18 21:49:46.949762042 +0300
+@@ -429,6 +429,6 @@
+ # can be dounload from ftp://ftp.nist.gov/pub/time/leap-seconds.list or
+ # ftp://ftp.boulder.nist.gov/pub/time/leap-seconds.list.
+ #------------------------------------------------------------------------
+-# LeapSecondsFile "/usr/share/zoneinfo/leap-seconds.list"
++LeapSecondsFile "/usr/share/zoneinfo/leap-seconds.list"
+
+ }

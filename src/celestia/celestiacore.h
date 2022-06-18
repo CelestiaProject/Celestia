@@ -546,6 +546,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::ofstream m_logfile;
     teestream m_tee;
 
+    std::vector<astro::LeapSecondRecord> leapSeconds;
+
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
     friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
