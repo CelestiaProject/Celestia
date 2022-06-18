@@ -108,6 +108,7 @@ Description: real-time visual space simulation (GLUT frontend)
 Package: libcelestia1.7
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: tzdata
 Description: Library for the Celestia space simulator
  This package includes the libcelestia library, which is
  necessary to run Celestia.

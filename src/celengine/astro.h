@@ -16,6 +16,7 @@
 #include <string>
 #include <string_view>
 #include <celmath/mathlib.h>
+#include <celutil/array_view.h>
 
 #define SOLAR_ABSMAG   4.83f
 #define LN_MAG         1.085736
@@ -239,6 +240,14 @@ namespace astro
     constexpr inline double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
     constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
 
+    struct LeapSecondRecord
+    {
+        int seconds;
+        double t;
+    };
+
+    // Provide leap seconds data loaded from an external source
+    void setLeapSeconds(celestia::util::array_view<LeapSecondRecord>);
 
     namespace literals
     {

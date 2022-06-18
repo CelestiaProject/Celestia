@@ -88,6 +88,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getPath("HDCrossIndex", config->HDCrossIndexFile);
     configParams->getPath("SAOCrossIndex", config->SAOCrossIndexFile);
     configParams->getPath("GlieseCrossIndex", config->GlieseCrossIndexFile);
+    configParams->getPath("LeapSecondsFile", config->leapSecondsFile);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
