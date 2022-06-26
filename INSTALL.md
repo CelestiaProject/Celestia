@@ -162,7 +162,7 @@ vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext luajit fm
 Install optional packages:
 
 ```
-vcpkg --triplet=TRIPLET install --recurse qt5-base ffmpeg cspice libavif
+vcpkg --triplet=TRIPLET install --recurse qt5-base ffmpeg[x264] cspice libavif
 ```
 
 Replace TRIPLET with `x86-windows` to build 32-bit versions or `x64-windows`
