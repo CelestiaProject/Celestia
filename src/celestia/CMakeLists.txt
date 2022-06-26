@@ -22,12 +22,7 @@ set(CELESTIA_SOURCES
   view.h
 )
 
-if(WIN32)
-  list(APPEND CELESTIA_SOURCES
-    avicapture.cpp
-    avicapture.h
-  )
-elseif(ENABLE_FFMPEG)
+if(ENABLE_FFMPEG)
   list(APPEND CELESTIA_SOURCES
     ffmpegcapture.cpp
     ffmpegcapture.h
