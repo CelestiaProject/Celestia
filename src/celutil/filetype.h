@@ -23,7 +23,7 @@ enum ContentType
     Content_CelestiaTexture        = 6,
     Content_3DStudio               = 7,
     Content_CelestiaMesh           = 8,
-    Content_AVI                    = 9,
+    Content_MKV                    = 9,
     Content_CelestiaCatalog        = 10,
     Content_DDS                    = 11,
     Content_CelestiaStarCatalog    = 12,

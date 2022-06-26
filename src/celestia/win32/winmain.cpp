@@ -22,6 +22,8 @@
 #include <process.h>
 #include <time.h>
 #include <windows.h>
+#include <windowsx.h>
+#include <oleidl.h>
 #include <commctrl.h>
 #include <mmsystem.h>
 #include <commdlg.h>
@@ -29,6 +31,7 @@
 
 #include <celengine/glsupport.h>
 
+#include <celcompat/charconv.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
 #include <celutil/gettext.h>
@@ -41,7 +44,7 @@
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"
-#include "celestia/avicapture.h"
+#include "celestia/ffmpegcapture.h"
 #include "celestia/helper.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
@@ -140,9 +143,22 @@ static int MovieSizes[8][2] = {
 
 static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
+struct MovieCodec
+{
+    AVCodecID   codecId;
+    const char *codecDesc;
+};
+
+static MovieCodec MovieCodecs[2] =
+{
+    { AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
+    { AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
+};
+
 static int movieSize = 1;
 static int movieFramerate = 1;
-
+static int movieCodec = 1;
+static int64_t movieBitrate = 400000;
 
 astro::Date newTime(0.0);
 
@@ -430,9 +446,17 @@ static void ShowLocalTime(CelestiaCore* appCore)
 static bool BeginMovieCapture(const Renderer* renderer,
                               const std::string& filename,
                               int width, int height,
-                              float framerate)
+                              float framerate,
+                              AVCodecID codec,
+                              int64_t bitrate)
 {
-    MovieCapture* movieCapture = new AVICapture(renderer);
+    auto* movieCapture = new FFMPEGCapture(renderer);
+    movieCapture->setVideoCodec(codec);
+    movieCapture->setBitRate(bitrate);
+    if (codec == AV_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(appCore->getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(appCore->getConfig()->ffvhEncoderOptions);
 
     bool success = movieCapture->start(filename, width, height, framerate);
     if (success)
@@ -666,25 +690,34 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_SIZE);
             int nSizes = sizeof MovieSizes / sizeof MovieSizes[0];
 
-            int i;
-            for (i = 0; i < nSizes; i++)
+            for (int i = 0; i < nSizes; i++)
             {
-                sprintf(buf, "%d x %d", MovieSizes[i][0], MovieSizes[i][1]);
+                sprintf(buf, _("%d x %d"), MovieSizes[i][0], MovieSizes[i][1]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
-
             }
             SendMessage(hwnd, CB_SETCURSEL, movieSize, 0);
 
             hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_FRAMERATE);
             int nFramerates = sizeof MovieFramerates / sizeof MovieFramerates[0];
-            for (i = 0; i < nFramerates; i++)
+            for (int i = 0; i < nFramerates; i++)
             {
                 sprintf(buf, "%.2f", MovieFramerates[i]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieFramerate, 0);
+
+            hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_CODEC);
+            int nCodecs = sizeof MovieCodecs / sizeof MovieCodecs[0];
+            for (int i = 0; i < nCodecs; i++)
+            {
+                SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(_(MovieCodecs[i].codecDesc)));
+            }
+            SendMessage(hwnd, CB_SETCURSEL, movieCodec, 0);
+
+            hwnd = GetDlgItem(hDlg, IDC_EDIT_MOVIE_BITRATE);
+            SetWindowText(hwnd, "400000");
         }
         return TRUE;
 
@@ -708,6 +741,36 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                 int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
                 if (item != CB_ERR)
                     movieFramerate = item;
+            }
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_COMBO_MOVIE_CODEC)
+        {
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                HWND hwnd = reinterpret_cast<HWND>(lParam);
+                int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+                if (item != CB_ERR)
+                    movieCodec = item;
+            }
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_EDIT_MOVIE_BITRATE)
+        {
+            if (HIWORD(wParam) == EN_CHANGE)
+            {
+                char buf[24], out[24];
+                int len = GetDlgItemText(hDlg, IDC_EDIT_MOVIE_BITRATE, buf, sizeof(buf));
+                int wlen = 0;
+                if (len > 0)
+                {
+                    wchar_t wbuff[48];
+                    wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
+                    WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
+                }
+                auto result = std::from_chars(out, out + wlen, movieBitrate);
+                if (result.ec != std::errc())
+                    movieBitrate = 400000;
             }
             return TRUE;
         }
@@ -2694,7 +2757,7 @@ static void HandleCaptureMovie(HWND hWnd)
     ZeroMemory(&Ofn, sizeof(OPENFILENAME));
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
-    Ofn.lpstrFilter = "Microsoft AVI\0*.avi\0";
+    Ofn.lpstrFilter = "Matroska (*.mkv)\0*.mkv\0";
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
@@ -2722,7 +2785,7 @@ static void HandleCaptureMovie(HWND hWnd)
         bool success = false;
 
         DWORD nFileType=0;
-        char defaultExtensions[][4] = { "avi" };
+        char defaultExtensions[][4] = { "mkv" };
         if (Ofn.nFileExtension == 0)
         {
             // If no extension was specified, use the selection of filter to
@@ -2744,7 +2807,7 @@ static void HandleCaptureMovie(HWND hWnd)
         {
             switch (DetermineFileType(Ofn.lpstrFile))
             {
-            case Content_AVI:
+            case Content_MKV:
                 nFileType = 1;
                 break;
             default:
@@ -2757,9 +2820,9 @@ static void HandleCaptureMovie(HWND hWnd)
         {
             // Invalid file extension specified.
             MessageBox(hWnd,
-                       _("Unknown file extension specified for movie capture."),
-                       _("Error"),
-                       MB_OK | MB_ICONERROR);
+                      _("Unknown file extension specified for movie capture."),
+                      _("Error"),
+                      MB_OK | MB_ICONERROR);
         }
         else
         {
@@ -2767,7 +2830,9 @@ static void HandleCaptureMovie(HWND hWnd)
                                         string(Ofn.lpstrFile),
                                         MovieSizes[movieSize][0],
                                         MovieSizes[movieSize][1],
-                                        MovieFramerates[movieFramerate]);
+                                        MovieFramerates[movieFramerate],
+                                        MovieCodecs[movieCodec].codecId,
+                                        movieBitrate);
         }
 
         if (!success)
