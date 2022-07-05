@@ -16,6 +16,8 @@ set(CELESTIA_SOURCES
   moviecapture.h
   scriptmenu.cpp
   scriptmenu.h
+  textprintposition.cpp
+  textprintposition.h
   url.cpp
   url.h
   view.cpp
