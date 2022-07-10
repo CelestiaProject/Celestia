@@ -2898,8 +2898,6 @@ bool Renderer::testEclipse(const Body& receiver,
                            unsigned int lightIndex,
                            double now)
 {
-    const DirectionalLight& light = lightingState.lights[lightIndex];
-    LightingState::EclipseShadowVector& shadows = *lightingState.shadows[lightIndex];
     bool isReceiverShadowed = false;
 
     // Ignore situations where the shadow casting body is much smaller than
@@ -2908,9 +2906,13 @@ bool Renderer::testEclipse(const Body& receiver,
     // generate correct shadows in this case.
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
         caster.hasVisibleGeometry() &&
+        (caster.getClassification() & bodyVisibilityMask) != 0 &&
         caster.extant(now) &&
         caster.isEllipsoid())
     {
+        const DirectionalLight& light = lightingState.lights[lightIndex];
+        LightingState::EclipseShadowVector& shadows = *lightingState.shadows[lightIndex];
+
         // All of the eclipse related code assumes that both the caster
         // and receiver are spherical.  Irregular receivers will work more
         // or less correctly, but casters that are sufficiently non-spherical
