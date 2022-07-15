@@ -44,7 +44,6 @@
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"
-#include "celestia/ffmpegcapture.h"
 #include "celestia/helper.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
@@ -67,6 +66,10 @@
 
 #include <locale.h>
 #include <fmt/printf.h>
+
+#ifdef USE_FFMPEG
+#include "celestia/ffmpegcapture.h"
+#endif
 
 using namespace celestia;
 using namespace celestia::util;
@@ -130,6 +133,7 @@ static POINT lastMouseMove;
 class WinCursorHandler;
 WinCursorHandler* cursorHandler = NULL;
 
+#ifdef USE_FFMPEG
 static int MovieSizes[8][2] = {
                                 { 160, 120 },
                                 { 320, 240 },
@@ -159,6 +163,7 @@ static int movieSize = 1;
 static int movieFramerate = 1;
 static int movieCodec = 1;
 static int64_t movieBitrate = 400000;
+#endif
 
 astro::Date newTime(0.0);
 
@@ -442,7 +447,7 @@ static void ShowLocalTime(CelestiaCore* appCore)
     }
 }
 
-
+#ifdef USE_FFMPEG
 static bool BeginMovieCapture(const Renderer* renderer,
                               const std::string& filename,
                               int width, int height,
@@ -466,7 +471,7 @@ static bool BeginMovieCapture(const Renderer* renderer,
 
     return success;
 }
-
+#endif
 
 static bool CopyStateURLToClipboard()
 {
@@ -678,7 +683,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
     return FALSE;
 }
 
-
+#ifdef USE_FFMPEG
 UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                                     WPARAM wParam, LPARAM lParam)
 {
@@ -778,7 +783,7 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
 
     return FALSE;
 }
-
+#endif
 
 BOOL APIENTRY FindObjectProc(HWND hDlg,
                              UINT message,
@@ -2729,7 +2734,7 @@ static void HandleCaptureImage(HWND hWnd)
     }
 }
 
-
+#ifdef USE_FFMPEG
 static void HandleCaptureMovie(HWND hWnd)
 {
     // TODO: The menu item should be disable so that the user doesn't even
@@ -2848,7 +2853,7 @@ static void HandleCaptureMovie(HWND hWnd)
         }
     }
 }
-
+#endif
 
 static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
 {
@@ -3345,6 +3350,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->setStartURL(startURL);
 
     menuBar = CreateMenuBar();
+#ifndef USE_FFMPEG
+    EnableMenuItem(menuBar, ID_FILE_CAPTUREMOVIE, MF_GRAYED);
+#endif
     acceleratorTable = LoadAccelerators(hRes,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
 
@@ -4305,9 +4313,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             HandleCaptureImage(hWnd);
             break;
 
+#ifdef USE_FFMPEG
         case ID_FILE_CAPTUREMOVIE:
             HandleCaptureMovie(hWnd);
             break;
+#endif
 
         case ID_FILE_EXIT:
             SendMessage(hWnd, WM_CLOSE, 0, 0);

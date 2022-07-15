@@ -60,7 +60,9 @@
 #include <celestia/scriptmenu.h>
 #include <celestia/url.h>
 #include "qtbookmark.h"
+#ifdef USE_FFMPEG
 #include "celestia/ffmpegcapture.h"
+#endif
 
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
