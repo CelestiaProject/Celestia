@@ -7,3 +7,6 @@
 [submodule "src/tools/celestia-gaia-stardb"]
 	path = src/tools/celestia-gaia-stardb
 	url = https://github.com/ajtribick/celestia-gaia-stardb.git
+[submodule "thirdparty/miniaudio"]
+	path = thirdparty/miniaudio
+	url = https://github.com/mackron/miniaudio.git

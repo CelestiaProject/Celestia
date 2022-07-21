@@ -57,6 +57,9 @@
 #include <celengine/rectangle.h>
 #include <celengine/mapmanager.h>
 #include <fmt/ostream.h>
+#ifdef USE_MINIAUDIO
+#include "miniaudiosession.h"
+#endif
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
@@ -4821,6 +4824,45 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     }
     return false;
 }
+
+#ifdef USE_MINIAUDIO
+bool CelestiaCore::isPlayingAudio() const
+{
+    return audioSession && audioSession->isPlaying();
+}
+
+bool CelestiaCore::playAudio(const fs::path &path, double startTime)
+{
+    stopAudio();
+    audioSession = make_unique<MiniAudioSession>(path);
+    return audioSession->play(startTime);
+}
+
+bool CelestiaCore::resumeAudio()
+{
+    return audioSession ? audioSession->play() : false;
+}
+
+void CelestiaCore::pauseAudio()
+{
+    if (audioSession)
+        audioSession->stop();
+}
+
+void CelestiaCore::stopAudio()
+{
+    if (audioSession)
+    {
+        audioSession->stop();
+        audioSession = nullptr;
+    }
+}
+
+bool CelestiaCore::seekAudio(double seconds)
+{
+    return audioSession ? audioSession->seek(seconds) : false;
+}
+#endif
 
 void CelestiaCore::setMeasurementSystem(CelestiaCore::MeasurementSystem newMeasurement)
 {
