@@ -2182,6 +2182,103 @@ static int celestia_play(lua_State*)
     return 0;
 }
 
+static int celestia_isplayingaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:isplayingaudio()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->isPlayingAudio());
+#else
+    Celx_DoError(l, "Audio playback not supported");
+    lua_pushboolean(l, false);
+#endif
+    return 1;
+}
+
+static int celestia_playaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 2, 3, "Function celestia:playaudio requires one or two arguments");
+
+    const char* path = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:playaudio must be a string");
+    if (path == nullptr)
+    {
+        lua_pushboolean(l, false);
+        return 0;
+    }
+
+    double startTime = max(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:playaudio must be a number", 0.0), 0.0);
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->playAudio(path, startTime));
+#else
+    Celx_DoError(l, "Audio playback not supported");
+    lua_pushboolean(l, false);
+#endif
+    return 1;
+}
+
+static int celestia_resumeaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:resumeaudio()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->resumeAudio());
+#else
+    Celx_DoError(l, "Audio playback not supported");
+    lua_pushboolean(l, false);
+#endif
+    return 1;
+}
+
+static int celestia_pauseaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:pauseaudio()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->pauseAudio();
+#else
+    Celx_DoError(l, "Audio playback not supported");
+#endif
+    return 0;
+}
+
+static int celestia_stopaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:stopaudio()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->stopAudio();
+#else
+    Celx_DoError(l, "Audio playback not supported");
+#endif
+    return 0;
+}
+
+static int celestia_seekaudio(lua_State* l)
+{
+#ifdef USE_MINIAUDIO
+    Celx_CheckArgs(l, 2, 2, "Function celestia:seekaudio requires one argument");
+
+    if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
+    {
+        Celx_DoError(l, "Argument for celestia:seekaudio must be a number");
+        lua_pushboolean(l, false);
+        return 1;
+    }
+
+    double time = max(Celx_SafeGetNumber(l, 2, AllErrors, "Argument for celestia:seekaudio must be a number"), 0.0);
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->seekAudio(time));
+#else
+    Celx_DoError(l, "Audio playback not supported");
+    lua_pushboolean(l, false);
+#endif
+    return 1;
+}
 
 static int celestia_loadfragment(lua_State* l)
 {
@@ -2331,6 +2428,14 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
     // Dummy command for compatibility purpose
     Celx_RegisterMethod(l, "play", celestia_play);
+
+    // Audio Playback
+    Celx_RegisterMethod(l, "isplayingaudio", celestia_isplayingaudio);
+    Celx_RegisterMethod(l, "playaudio", celestia_playaudio);
+    Celx_RegisterMethod(l, "resumeaudio", celestia_resumeaudio);
+    Celx_RegisterMethod(l, "pauseaudio", celestia_pauseaudio);
+    Celx_RegisterMethod(l, "stopaudio", celestia_stopaudio);
+    Celx_RegisterMethod(l, "seekaudio", celestia_seekaudio);
 
     Celx_RegisterMethod(l, "loadfragment", celestia_loadfragment);
 

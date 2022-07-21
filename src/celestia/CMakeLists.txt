@@ -31,6 +31,28 @@ if(ENABLE_FFMPEG)
   )
 endif()
 
+if(ENABLE_MINIAUDIO)
+  list(APPEND CELESTIA_SOURCES
+    audiosession.h
+    miniaudiosession.h
+  )
+
+  set(MINIAUDIO_SOURCES
+    miniaudiosession.cpp
+  )
+
+  # Files including miniaudio needs to treated as Objective-C++
+  # on Apple platforms
+  if(APPLE)
+    set_property(SOURCE ${MINIAUDIO_SOURCES}
+      APPEND_STRING PROPERTY COMPILE_FLAGS "-x objective-c++")
+  endif()
+
+  list(APPEND CELESTIA_SOURCES
+    ${MINIAUDIO_SOURCES}
+  )
+endif()
+
 set(CELESTIA_CORE_LIBS $<TARGET_OBJECTS:cel3ds>
                        $<TARGET_OBJECTS:celengine>
                        $<TARGET_OBJECTS:celephem>

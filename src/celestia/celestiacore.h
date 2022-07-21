@@ -51,6 +51,9 @@ class Console;
 namespace celestia
 {
 class TextPrintPosition;
+#ifdef USE_MINIAUDIO
+class AudioSession;
+#endif
 }
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
@@ -390,6 +393,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::PixelFormat format) const;
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
+#ifdef USE_MINIAUDIO
+    bool isPlayingAudio() const;
+    bool playAudio(const fs::path&, double);
+    bool resumeAudio();
+    void pauseAudio();
+    void stopAudio();
+    bool seekAudio(double);
+#endif
+
     void setMeasurementSystem(MeasurementSystem);
     MeasurementSystem getMeasurementSystem() const;
     void setTemperatureScale(TemperatureScale);
@@ -493,6 +505,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     MovieCapture* movieCapture{ nullptr };
     bool recording{ false };
+
+#ifdef USE_MINIAUDIO
+    std::unique_ptr<celestia::AudioSession> audioSession { nullptr };
+#endif
 
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
