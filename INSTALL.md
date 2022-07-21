@@ -338,8 +338,9 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_QT            | bool | ON      | Build Qt frontend
 | ENABLE_SDL           | bool | OFF     | Build SQL frontend
 | ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
-| ENABLE_FFMPEG        | bool | \*\*ON    | Support video capture using ffmpeg
+| ENABLE_FFMPEG        | bool | OFF     | Support video capture using ffmpeg
 | ENABLE_LIBAVIF       | bool | OFF     | Support AVIF texture using libavif
+| ENABLE_MINIAUDIO     | bool | OFF     | Support audio playback using miniaudio
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
