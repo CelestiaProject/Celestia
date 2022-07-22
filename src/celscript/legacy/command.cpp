@@ -11,6 +11,7 @@
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include "execution.h"
+#include <celestia/audiosession.h>
 #include <celestia/celestiacore.h>
 #include <celengine/multitexture.h>
 #include <celutil/filetype.h>
@@ -24,6 +25,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace celmath;
+using namespace celestia;
 using celestia::util::GetLogger;
 
 
@@ -916,6 +918,37 @@ double RepeatCommand::getDuration() const
 {
     return bodyDuration * repeatCount;
 }
+
+#ifdef USE_MINIAUDIO
+CommandPlay::CommandPlay(int channel, std::optional<float> volume, float pan, std::optional<bool> loop, const std::optional<fs::path> &filename, bool nopause) :
+    channel(channel),
+    volume(volume),
+    pan(pan),
+    loop(loop),
+    filename(filename),
+    nopause(nopause)
+{
+}
+
+void CommandPlay::process(ExecutionEnvironment& env)
+{
+    auto appCore = env.getCelestiaCore();
+    if (!filename.has_value())
+    {
+        // filename not set, only try to set values
+        if (volume.has_value())
+            appCore->setAudioVolume(channel, volume.value());
+        appCore->setAudioPan(channel, pan);
+        if (loop.has_value())
+            appCore->setAudioLoop(channel, loop.value());
+        appCore->setAudioNoPause(channel, nopause);
+    }
+    else if (filename.value().empty())
+        appCore->stopAudio(channel);
+    else
+        appCore->playAudio(channel, filename.value(), 0.0, volume.value_or(defaultAudioVolume), pan, loop.value_or(false), nopause);
+}
+#endif
 
 // ScriptImage command
 CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,

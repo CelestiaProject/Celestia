@@ -33,6 +33,7 @@ endif()
 
 if(ENABLE_MINIAUDIO)
   list(APPEND CELESTIA_SOURCES
+    audiosession.cpp
     audiosession.h
     miniaudiosession.h
   )

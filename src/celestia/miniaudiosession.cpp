@@ -49,15 +49,15 @@ MiniAudioSessionPrivate::~MiniAudioSessionPrivate()
     }
 }
 
-MiniAudioSession::MiniAudioSession(const fs::path &path) :
-    AudioSession(path),
+MiniAudioSession::MiniAudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause) :
+    AudioSession(path, volume, pan, loop, nopause),
     p(std::make_unique<MiniAudioSessionPrivate>())
 {
 }
 
 MiniAudioSession::~MiniAudioSession() = default;
 
-bool MiniAudioSession::play(double seconds)
+bool MiniAudioSession::play(double startTime)
 {
     ma_result result;
     switch (p->state)
@@ -80,11 +80,14 @@ bool MiniAudioSession::play(double seconds)
             GetLogger()->error("Failed to load sound file {}", path());
             return false;
         }
+        ma_sound_set_volume(&p->sound, volume());
+        ma_sound_set_pan(&p->sound, pan());
+        ma_sound_set_looping(&p->sound, loop() ? MA_TRUE : MA_FALSE);
         p->state = MiniAudioSessionPrivate::State::SoundInitialzied;
 
     case MiniAudioSessionPrivate::State::SoundInitialzied:
         // start playing, seek if needed
-        if (seconds >= 0 && !seek(seconds))
+        if (startTime >= 0 && !seek(startTime))
             return false;
 
         result = ma_sound_start(&p->sound);
@@ -101,7 +104,7 @@ bool MiniAudioSession::play(double seconds)
         if (!isPlaying())
         {
             // not playing, start playing and seek if needed
-            if (seconds >= 0 && !seek(seconds))
+            if (startTime >= 0 && !seek(startTime))
                 return false;
 
             result = ma_sound_start(&p->sound);
@@ -111,13 +114,11 @@ bool MiniAudioSession::play(double seconds)
                 return false;
             }
             p->state = MiniAudioSessionPrivate::State::Playing;
+            return true;
         }
-        else
-        {
-            // already playing, seek if needed
-            if (seconds >= 0 && !seek(seconds))
-                return false;
-        }
+        // already playing, seek if needed
+        if (startTime >= 0 && !seek(startTime))
+            return false;
         return true;
     }
 }
@@ -157,6 +158,24 @@ bool MiniAudioSession::seek(double seconds)
         }
     }
     return true;
+}
+
+void MiniAudioSession::updateVolume()
+{
+    if (p->state >= MiniAudioSessionPrivate::State::SoundInitialzied)
+        ma_sound_set_volume(&p->sound, volume());
+}
+
+void MiniAudioSession::updatePan()
+{
+    if (p->state >= MiniAudioSessionPrivate::State::SoundInitialzied)
+        ma_sound_set_pan(&p->sound, pan());
+}
+
+void MiniAudioSession::updateLoop()
+{
+    if (p->state >= MiniAudioSessionPrivate::State::SoundInitialzied)
+        ma_sound_set_looping(&p->sound, loop() ? MA_TRUE : MA_FALSE);
 }
 
 }
