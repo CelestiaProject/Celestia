@@ -350,6 +350,19 @@ int celestia_getscreendimension(lua_State* l)
     return 2;
 }
 
+int celestia_getwindowdimension(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getwindowdimension()");
+    // error checking only:
+    this_celestia(l);
+    // Get the dimensions of the current viewport
+    CelestiaCore* appCore = to_celestia(l, 1);
+    auto dimension = appCore->getWindowDimension();
+    lua_pushnumber(l, get<0>(dimension));
+    lua_pushnumber(l, get<1>(dimension));
+    return 2;
+}
+
 int celestia_getsafeareainsets(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getsafeareainsets()");
@@ -2229,6 +2242,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
     Celx_RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
     Celx_RegisterMethod(l, "getscreendimension", celestia_getscreendimension);
+    Celx_RegisterMethod(l, "getwindowdimension", celestia_getwindowdimension);
     Celx_RegisterMethod(l, "getsafeareainsets", celestia_getsafeareainsets);
     Celx_RegisterMethod(l, "setsafeareainsets", celestia_setsafeareainsets);
     Celx_RegisterMethod(l, "showlabel", celestia_showlabel);

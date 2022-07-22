@@ -2263,6 +2263,11 @@ std::tuple<int, int, int, int> CelestiaCore::getSafeAreaInsets() const
     return make_tuple(safeAreaInsets.left, safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom);
 }
 
+std::tuple<int, int> CelestiaCore::getWindowDimension() const
+{
+    return make_tuple(width, height);
+}
+
 float CelestiaCore::getPickTolerance() const
 {
     return pickTolerance;

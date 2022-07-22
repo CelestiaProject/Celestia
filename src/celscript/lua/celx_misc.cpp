@@ -226,6 +226,42 @@ static int font_getheight(lua_State* l)
     return 1;
 }
 
+static int font_getmaxascent(lua_State* l)
+{
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 1, "No arguments expected for font:getmaxascent()");
+
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, font->getMaxAscent());
+    return 1;
+}
+
+static int font_getmaxdescent(lua_State* l)
+{
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 1, "No arguments expected for font:getmaxdescent()");
+
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, font->getMaxDescent());
+    return 1;
+}
+
+static int font_gettextwidth(lua_State* l)
+{
+    CelxLua celx(l);
+
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function font:gettextwidth");
+
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:gettextwidth must be a string");
+
+    lua_pushnumber(l, font->getWidth(s));
+
+    return 1;
+}
+
 static int font_tostring(lua_State* l)
 {
     CelxLua celx(l);
@@ -244,6 +280,9 @@ void CreateFontMetaTable(lua_State* l)
     celx.registerMethod("unbind", font_unbind);
     celx.registerMethod("getwidth", font_getwidth);
     celx.registerMethod("getheight", font_getheight);
+    celx.registerMethod("getmaxascent", font_getmaxascent);
+    celx.registerMethod("getmaxdescent", font_getmaxdescent);
+    celx.registerMethod("gettextwidth", font_gettextwidth);
 
     celx.pop(1); // remove metatable from stack
 }
