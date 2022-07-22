@@ -11,7 +11,7 @@ class MiniAudioSessionPrivate;
 class MiniAudioSession: public AudioSession
 {
  public:
-    explicit MiniAudioSession(const fs::path &path);
+    MiniAudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause);
     ~MiniAudioSession() override;
 
     MiniAudioSession() = delete;
@@ -20,10 +20,15 @@ class MiniAudioSession: public AudioSession
     MiniAudioSession &operator=(const MiniAudioSession&) = delete;
     MiniAudioSession &operator=(MiniAudioSession&&) = delete;
 
-    bool play(double seconds) override;
+    bool play(double startTime) override;
     bool isPlaying() const override;
     void stop() override;
     bool seek(double seconds) override;
+
+ protected:
+    void updateVolume() override;
+    void updatePan() override;
+    void updateLoop() override;
 
  private:
     std::unique_ptr<MiniAudioSessionPrivate> p  { nullptr };

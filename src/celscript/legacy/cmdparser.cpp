@@ -19,10 +19,12 @@
 #include <celengine/astro.h>
 #include <celengine/parser.h>
 #include <celutil/tokenizer.h>
+#include <celestia/audiosession.h>
 #include "cmdparser.h"
 
 using namespace std;
 using namespace celmath;
+using namespace celestia;
 using namespace celestia::scripts;
 using celestia::util::GetLogger;
 
@@ -751,9 +753,39 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetTextColor(color);
     }
-    else if(commandName == "play")
+    else if (commandName == "play")
     {
+#ifdef USE_MINIAUDIO
+        int channel;
+        int nopause;
+        float pan;
+        float volume;
+        int loop;
+        string filename;
+        if (!paramList->getNumber("channel", channel))
+            channel = defaultAudioChannel;
+        else
+            channel = max(channel, minAudioChannel);
+        std::optional<float> optionalVolume;
+        if (paramList->getNumber("volume", volume))
+            optionalVolume = clamp(volume, minAudioVolume, maxAudioVolume);
+        if (!paramList->getNumber("pan", pan))
+            pan = defaultAudioPan;
+        else
+            pan = clamp(pan, minAudioPan, maxAudioPan);
+        if (paramList->getNumber("nopause", nopause))
+            nopause = 0;
+        std::optional<bool> optionalLoop;
+        std::optional<string> optionalFilename;
+        if (paramList->getNumber("loop", loop))
+            optionalLoop = loop == 1;
+        if (paramList->getString("filename", filename))
+            optionalFilename = filename;
+
+        cmd = new CommandPlay(channel, optionalVolume, pan, optionalLoop, optionalFilename, nopause == 1);
+#else
         cmd = new CommandWait(0);
+#endif
     }
     else if (commandName == "overlay")
     {

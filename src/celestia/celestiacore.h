@@ -394,12 +394,19 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
 #ifdef USE_MINIAUDIO
-    bool isPlayingAudio() const;
-    bool playAudio(const fs::path&, double);
-    bool resumeAudio();
-    void pauseAudio();
-    void stopAudio();
-    bool seekAudio(double);
+    bool isPlayingAudio(int channel) const;
+    bool playAudio(int channel, const fs::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
+    bool resumeAudio(int channel);
+    void pauseAudio(int channel);
+    void stopAudio(int channel);
+    bool seekAudio(int channel, double time);
+    void setAudioVolume(int channel, float volume);
+    void setAudioPan(int channel, float pan);
+    void setAudioLoop(int channel, bool loop);
+    void setAudioNoPause(int channel, bool nopause);
+
+    void pauseAudioIfNeeded();
+    void resumeAudioIfNeeded();
 #endif
 
     void setMeasurementSystem(MeasurementSystem);
@@ -507,7 +514,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool recording{ false };
 
 #ifdef USE_MINIAUDIO
-    std::unique_ptr<celestia::AudioSession> audioSession { nullptr };
+    std::map<int, std::shared_ptr<celestia::AudioSession>> audioSessions;
+
+    std::shared_ptr<celestia::AudioSession> getAudioSession(int channel) const;
 #endif
 
     Alerter* alerter{ nullptr };

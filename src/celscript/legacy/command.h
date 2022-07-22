@@ -14,6 +14,7 @@
 
 #include <array>
 #include <iosfwd>
+#include <optional>
 #include <string_view>
 #include <celutil/color.h>
 #include "execenv.h"
@@ -684,6 +685,22 @@ class RepeatCommand : public Command
     Execution* execution{ nullptr };
 };
 
+#ifdef USE_MINIAUDIO
+class CommandPlay : public InstantaneousCommand
+{
+ public:
+    CommandPlay(int channel, std::optional<float> volume, float pan, std::optional<bool> loop, const std::optional<fs::path> &filename, bool nopause);
+    void process(ExecutionEnvironment&) override;
+
+ private:
+    int channel;
+    std::optional<float> volume;
+    float pan;
+    std::optional<bool> loop;
+    std::optional<fs::path> filename;
+    bool nopause;
+};
+#endif
 
 class CommandScriptImage : public InstantaneousCommand
 {
