@@ -317,6 +317,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setDistanceToScreen(int);
     void setSafeAreaInsets(int left, int top, int right, int bottom);
     std::tuple<int, int, int, int> getSafeAreaInsets() const;  // left, top, right, bottom
+    std::tuple<int, int> getWindowDimension() const;
     int getSafeAreaWidth() const;
     int getSafeAreaHeight() const;
     float getPickTolerance() const;
