@@ -28,6 +28,7 @@ class MiniAudioSessionPrivate
     MiniAudioSessionPrivate &operator=(const MiniAudioSessionPrivate&) = delete;
     MiniAudioSessionPrivate &operator=(MiniAudioSessionPrivate&&) = delete;
 
+    ma_context context;
     ma_engine engine;
     ma_sound sound;
     State state         { State::NotInitialized };
@@ -44,6 +45,7 @@ MiniAudioSessionPrivate::~MiniAudioSessionPrivate()
         ma_sound_uninit(&sound);
     case State::EngineStarted:
         ma_engine_uninit(&engine);
+        ma_context_uninit(&context);
     case State::NotInitialized:
         break;
     }
@@ -64,12 +66,8 @@ bool MiniAudioSession::play(double startTime)
     {
     case MiniAudioSessionPrivate::State::NotInitialized:
         // start the engine
-        result = ma_engine_init(nullptr, &p->engine);
-        if (result != MA_SUCCESS)
-        {
-            GetLogger()->error("Failed to start miniaudio engine");
+        if (!startEngine())
             return false;
-        }
         p->state = MiniAudioSessionPrivate::State::EngineStarted;
 
     case MiniAudioSessionPrivate::State::EngineStarted:
@@ -176,6 +174,33 @@ void MiniAudioSession::updateLoop()
 {
     if (p->state >= MiniAudioSessionPrivate::State::SoundInitialzied)
         ma_sound_set_looping(&p->sound, loop() ? MA_TRUE : MA_FALSE);
+}
+
+bool MiniAudioSession::startEngine()
+{
+    if (p->state >= MiniAudioSessionPrivate::State::EngineStarted)
+        return true;
+
+    auto config = ma_context_config_init();
+    // on iOS, explicitly set the correct category for correct routing
+    config.coreaudio.sessionCategory = ma_ios_session_category_playback;
+    ma_result result = ma_context_init(nullptr, 0, &config, &p->context);
+    if (result != MA_SUCCESS)
+    {
+        GetLogger()->error("Failed to init miniaudio context");
+        return false;
+    }
+    auto engineConfig = ma_engine_config_init();
+    engineConfig.pContext = &p->context;
+    result = ma_engine_init(&engineConfig, &p->engine);
+    if (result != MA_SUCCESS)
+    {
+        ma_context_uninit(&p->context);
+        GetLogger()->error("Failed to start miniaudio engine");
+        return false;
+    }
+    p->state = MiniAudioSessionPrivate::State::EngineStarted;
+    return true;
 }
 
 }
