@@ -32,6 +32,8 @@ class MiniAudioSession: public AudioSession
 
  private:
     std::unique_ptr<MiniAudioSessionPrivate> p  { nullptr };
+
+    bool startEngine();
 };
 
 }
