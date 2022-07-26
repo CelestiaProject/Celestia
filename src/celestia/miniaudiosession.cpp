@@ -118,6 +118,10 @@ bool MiniAudioSession::play(double startTime)
         if (startTime >= 0 && !seek(startTime))
             return false;
         return true;
+
+    default:
+        GetLogger()->error("Unknown miniaudio session state {}", static_cast<int>(p->state));
+        return false;
     }
 }
 
