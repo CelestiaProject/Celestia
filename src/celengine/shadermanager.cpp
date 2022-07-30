@@ -63,9 +63,11 @@ static const char* errorFragmentShaderSource =
 
 
 #ifndef GL_ES
-static const char* CommonHeader = "#version 120\n";
+static const char* VersionHeader = "#version 120\n";
+static const char* CommonHeader = "\n";
 #else
-static const char* CommonHeader = "#version 100\nprecision highp float;\n";
+static const char* VersionHeader = "#version 100\n";
+static const char* CommonHeader = "precision highp float;\n";
 #endif
 static const char* VertexHeader = R"glsl(
 uniform mat4 ModelViewMatrix;
@@ -1754,7 +1756,8 @@ float calculateShadow()
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
 
@@ -2108,12 +2111,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildFragmentShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
-
+    string source(VersionHeader);
     // Without GL_ARB_shader_texture_lod enabled one can use texture2DLod
     // in vertext shaders only
     if (gl::ARB_shader_texture_lod)
         source += "#extension GL_ARB_shader_texture_lod : enable\n";
+    source += CommonHeader;
 
     string diffTexCoord("diffTexCoord");
     string specTexCoord("specTexCoord");
@@ -2554,7 +2557,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
 
@@ -2610,7 +2614,8 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
 
     source += "uniform vec3 ambientColor;\n";
     source += "vec4 diff = vec4(ambientColor, 1.0);\n";
@@ -2696,7 +2701,8 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
 
@@ -2748,7 +2754,8 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
 
     source += "uniform vec3 ambientColor;\n";
     for (unsigned int i = 0; i < props.nLights; i++)
@@ -2858,7 +2865,8 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
 
@@ -2904,7 +2912,8 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
 
     source += "varying vec3 scatterEx;\n";
     source += "varying vec3 eyeDir_obj;\n";
@@ -2962,7 +2971,8 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
 
@@ -3034,7 +3044,8 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 {
-    string source(CommonHeader);
+    string source(VersionHeader);
+    source += CommonHeader;
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
@@ -3091,7 +3102,7 @@ GLVertexShader*
 ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 {
     ostringstream source;
-
+    source << VersionHeader;
     source << CommonHeader;
     source << VertexHeader;
     source << CommonAttribs;
@@ -3173,7 +3184,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 {
     ostringstream source;
 
-    source << CommonHeader;
+    source << VersionHeader << CommonHeader;
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
@@ -3372,8 +3383,8 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
 {
     GLProgram* prog = nullptr;
     GLShaderStatus status;
-    string _vs = fmt::sprintf("%s%s%s%s%s\n", CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
-    string _fs = fmt::sprintf("%s%s%s\n", CommonHeader, FragmentHeader, fs);
+    string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
+    string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);
     DumpFSSource(_fs);
