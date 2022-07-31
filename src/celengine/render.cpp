@@ -5049,33 +5049,34 @@ void Renderer::setSolarSystemMaxDistance(float t)
     SolarSystemMaxDistance = std::clamp(t, 1.0f, 10.0f);
 }
 
+
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
 {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
     if (x != nullptr)
-        *x = viewport[0];
+        *x = m_viewport[0];
     if (y != nullptr)
-        *y = viewport[1];
+        *y = m_viewport[1];
     if (w != nullptr)
-        *w = viewport[2];
+        *w = m_viewport[2];
     if (h != nullptr)
-        *h = viewport[3];
+        *h = m_viewport[3];
 }
 
 void Renderer::getViewport(std::array<int, 4>& viewport) const
 {
     static_assert(sizeof(int) == sizeof(GLint), "int and GLint size mismatch");
-    glGetIntegerv(GL_VIEWPORT, &viewport[0]);
+    std::copy(std::begin(m_viewport), std::end(m_viewport), std::begin(viewport));
 }
 
-void Renderer::setViewport(int x, int y, int w, int h) const
+void Renderer::setViewport(int x, int y, int w, int h)
 {
+    m_viewport = {x, y, w, h};
     glViewport(x, y, w, h);
 }
 
-void Renderer::setViewport(const std::array<int, 4>& viewport) const
+void Renderer::setViewport(const std::array<int, 4>& viewport)
 {
+    std::copy(std::begin(viewport), std::end(viewport), std::begin(m_viewport));
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 

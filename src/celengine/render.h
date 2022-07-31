@@ -276,8 +276,8 @@ class Renderer
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
     void getViewport(std::array<int, 4>& viewport) const;
-    void setViewport(int x, int y, int w, int h) const;
-    void setViewport(const std::array<int, 4>& viewport) const;
+    void setViewport(int x, int y, int w, int h);
+    void setViewport(const std::array<int, 4>& viewport);
     void setScissor(int x, int y, int w, int h);
     void removeScissor();
 
@@ -819,7 +819,8 @@ class Renderer
     };
     State m_GLState { false, false, false, false, false };
 
- private:
+    std::array<int, 4> m_viewport { 0, 0, 0, 0 };
+
     typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
     OrbitCache orbitCache;
     uint32_t lastOrbitCacheFlush;
@@ -875,7 +876,6 @@ class Renderer
 
     std::list<RendererWatcher*> watchers;
 
- public:
     // Colors for all lines and labels
     static Color StarLabelColor;
     static Color PlanetLabelColor;
