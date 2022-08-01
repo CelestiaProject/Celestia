@@ -1263,6 +1263,13 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             }
         }
 
+        // now goes the star definition
+        if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
+        {
+            GetLogger()->error("Unexpected token at line {}!\n", tokenizer.getLineNumber());
+            return false;
+        }
+
         Star* star = nullptr;
 
         switch (disposition)
@@ -1272,6 +1279,11 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             // supplied.
             if (catalogNumber == AstroCatalog::InvalidIndex)
             {
+                if (!isStar && firstName.empty())
+                {
+                    GetLogger()->error("Bad barycenter: neither catalog number nor name set at line {}.\n", tokenizer.getLineNumber());
+                    return false;
+                }
                 catalogNumber = nextAutoCatalogNumber--;
             }
             else
@@ -1321,13 +1333,13 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         Value* starDataValue = parser.readValue();
         if (starDataValue == nullptr)
         {
-            GetLogger()->error("Error reading star.\n");
+            GetLogger()->error("Error reading star at line {}.\n", tokenizer.getLineNumber());
             return false;
         }
 
         if (starDataValue->getType() != Value::HashType)
         {
-            GetLogger()->error("Bad star definition.\n");
+            GetLogger()->error("Bad star definition at line {}.\n", tokenizer.getLineNumber());
             delete starDataValue;
             return false;
         }
