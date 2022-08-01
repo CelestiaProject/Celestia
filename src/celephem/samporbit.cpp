@@ -826,7 +826,7 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const fs::path& 
 /* Load a binary xyzv sampled trajectory file.
  */
 template <typename T> SampledOrbitXYZV<T>*
-LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
+LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
     ifstream in(filename, ios::binary);
     if (!in.good())
@@ -915,10 +915,13 @@ Orbit* LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInter
  */
 Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    auto f = filename;
-    Orbit* ret = LoadSampledOrbitXYZVBinary(f += fs::path("bin"), interpolation, 0.0f); // FIXME
-    if (ret != nullptr)
-        return ret;
+    auto binname = filename;
+    binname += "bin";
+    if (fs::exists(binname))
+    {
+        Orbit* ret = LoadSampledOrbitXYZVBinary<float>(binname, interpolation);
+        if (ret != nullptr) return ret;
+    }
 
     return LoadSampledOrbitXYZV(filename, interpolation, 0.0f);
 }
@@ -928,10 +931,13 @@ Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpol
  */
 Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    auto f = filename;
-    Orbit* ret = LoadSampledOrbitXYZVBinary(f += fs::path("bin"), interpolation, 0.0); // FIXME
-    if (ret != nullptr)
-        return ret;
+    auto binname = filename;
+    binname += "bin";
+    if (fs::exists(binname))
+    {
+        Orbit* ret = LoadSampledOrbitXYZVBinary<double>(binname, interpolation);
+        if (ret != nullptr) return ret;
+    }
 
     return LoadSampledOrbitXYZV(filename, interpolation, 0.0);
 }
@@ -940,7 +946,7 @@ Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpol
  */
 Orbit* LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0f);
+    return LoadSampledOrbitXYZVBinary<float>(filename, interpolation);
 }
 
 
@@ -948,5 +954,5 @@ Orbit* LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolatio
  */
 Orbit* LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0);
+    return LoadSampledOrbitXYZVBinary<double>(filename, interpolation);
 }
