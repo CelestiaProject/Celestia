@@ -18,7 +18,7 @@
 #include <vector>
 
 #include <fmt/ostream.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
@@ -367,11 +367,9 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
     return model;
 }
 
-constexpr const fs::path::value_type UniqueSuffixChar = '!';
+constexpr const char UniqueSuffixChar = '!';
 
 } // end unnamed namespace
-
-
 
 
 GeometryManager*
@@ -388,14 +386,9 @@ GeometryInfo::resolve(const fs::path& baseDir)
     // Ensure that models with different centers get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
-    fs::path::string_type uniquifyingSuffix;
-    fs::path::string_type format;
-#ifdef _WIN32
-    format = L"%c%f,%f,%f,%f,%d";
-#else
-    format = "%c%f,%f,%f,%f,%d";
-#endif
-    uniquifyingSuffix = fmt::sprintf(format, UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
+    auto uniquifyingSuffix = fmt::format("{}{},{},{},{},{}", UniqueSuffixChar,
+                                         center.x(), center.y(), center.z(),
+                                         scale, static_cast<int>(isNormalized));
 
     if (!path.empty())
     {
@@ -416,10 +409,10 @@ Geometry*
 GeometryInfo::load(const fs::path& resolvedFilename)
 {
     // Strip off the uniquifying suffix
-    fs::path::string_type::size_type uniquifyingSuffixStart = resolvedFilename.native().rfind(UniqueSuffixChar);
-    fs::path filename = resolvedFilename.native().substr(0, uniquifyingSuffixStart);
+    auto uniquifyingSuffixStart = resolvedFilename.string().rfind(UniqueSuffixChar);
+    fs::path filename = resolvedFilename.string().substr(0, uniquifyingSuffixStart);
 
-    std::clog << fmt::sprintf(_("Loading model: %s\n"), filename);
+    GetLogger()->info(_("Loading model: {}\n"), filename);
     std::unique_ptr<cmod::Model> model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
@@ -490,8 +483,8 @@ GeometryInfo::load(const fs::path& resolvedFilename)
         model->determineOpacity();
 
         // Display some statics for the model
-        std::clog << fmt::sprintf(
-                        _("   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"),
+        GetLogger()->verbose(
+                        _("   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"),
                         model->getVertexCount(),
                         model->getPrimitiveCount(),
                         originalMaterialCount,
@@ -501,7 +494,7 @@ GeometryInfo::load(const fs::path& resolvedFilename)
     }
     else
     {
-        std::clog << fmt::sprintf(_("Error loading model '%s'\n"), filename);
+        GetLogger()->error(_("Error loading model '{}'\n"), filename);
         return nullptr;
     }
 }

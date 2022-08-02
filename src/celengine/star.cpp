@@ -8,15 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celmath/mathlib.h>
-#include <celengine/selection.h>
 #include <cassert>
-#include <config.h>
+#include <fmt/format.h>
+#include <celephem/orbit.h>
+#include <celmath/mathlib.h>
 #include "astro.h"
+#include "selection.h"
 #include "star.h"
 #include "texmanager.h"
-#include "celephem/orbit.h"
-#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;
@@ -474,16 +473,16 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         {
             // Hot subdwarfs are prefixed with "sd", while cool subdwarfs use
             // luminosity class VI, per recommendations in arXiv:0805.2567v1
-            name = fmt::sprintf("sd%s%s",
-                                SpectralClassNames[specClass],
-                                SubclassNames[subclass]);
+            name = fmt::format("sd{}{}",
+                               SpectralClassNames[specClass],
+                               SubclassNames[subclass]);
         }
         else
         {
-            name = fmt::sprintf("%s%s%s",
-                                SpectralClassNames[specClass],
-                                SubclassNames[subclass],
-                                LumClassNames[lumClass]);
+            name = fmt::format("{}{}{}",
+                               SpectralClassNames[specClass],
+                               SubclassNames[subclass],
+                               LumClassNames[lumClass]);
         }
 
         // Use the same properties for an unknown subclass as for subclass 5
@@ -697,10 +696,9 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
     unsigned int index = subclass + (scIndex * StellarClass::SubclassCount);
     if (whiteDwarfDetails[index] == nullptr)
     {
-        string name;
-        name = fmt::sprintf("%s%s",
-                            WDSpectralClassNames[scIndex],
-                            SubclassNames[subclass]);
+        auto name = fmt::format("{}{}",
+                                WDSpectralClassNames[scIndex],
+                                SubclassNames[subclass]);
 
         float temp;
         float bmagCorrection;

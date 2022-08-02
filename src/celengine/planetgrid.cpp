@@ -12,13 +12,13 @@
 
 #include <cmath>
 #include <Eigen/Geometry>
+#include <fmt/format.h>
 #include <celcompat/numbers.h>
 #include <celmath/intersect.h>
 #include "body.h"
 #include "planetgrid.h"
 #include "render.h"
 #include "vecgl.h"
-#include <fmt/printf.h>
 
 using namespace std;
 using namespace Eigen;
@@ -220,7 +220,7 @@ PlanetographicGrid::render(Renderer* renderer,
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
                 string buf;
-                buf = fmt::sprintf("%d%c", (int) fabs(latitude), ns);
+                buf = fmt::format("{}{}", static_cast<int>(fabs(latitude)), ns);
                 longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
                 longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
@@ -276,7 +276,7 @@ PlanetographicGrid::render(Renderer* renderer,
             }
 
             string buf;
-            buf = fmt::sprintf("%d%c", (int) showLongitude, ew);
+            buf = fmt::format("{}{}", showLongitude, ew);
             longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             if (longitude > 0.0f && longitude < 180.0f)
             {
@@ -297,7 +297,7 @@ PlanetographicGrid::render(Renderer* renderer,
                     break;
                 }
 
-                buf = fmt::sprintf("%d%c", showLongitude, ew);
+                buf = fmt::format("{}{}", showLongitude, ew);
                 longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
         }

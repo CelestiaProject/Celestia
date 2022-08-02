@@ -13,7 +13,7 @@
 #include <memory>
 #include <string_view>
 #include <system_error>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include <celcompat/filesystem.h>
 #include <celengine/glsupport.h>
 #include <celutil/gettext.h>
@@ -531,9 +531,10 @@ SDL_Application::pasteURL()
     SDL_free(str);
 }
 
-void
-FatalError(const std::string &message)
+static void
+FatalErrorImpl(fmt::string_view format, fmt::format_args args)
 {
+    auto message = fmt::vformat(format, args);
     int ret = SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                                        "Fatal Error",
                                        message.c_str(),
@@ -542,7 +543,13 @@ FatalError(const std::string &message)
         std::cerr << message << std::endl;
 }
 
-void
+template <typename... Args> void
+FatalError(const char *format, const Args&... args)
+{
+    FatalErrorImpl(fmt::string_view(format), fmt::make_format_args(args...));
+}
+
+static void
 DumpGLInfo()
 {
     const char* s;
@@ -580,16 +587,14 @@ sdlmain(int /* argc */, char ** /* argv */)
     fs::current_path(dataDir, ec);
     if (ec)
     {
-        FatalError(fmt::sprintf("Cannot chdir to '%s', probably due to improper installation",
-                   dataDir));
+        FatalError("Cannot chdir to {}, probably due to improper installation", dataDir);
         return 1;
     }
 
     auto app = SDL_Application::init("Celestia", 640, 480);
     if (app == nullptr)
     {
-        FatalError(fmt::sprintf("Could not initialize SDL! Error: %s",
-                   app->getError()));
+        FatalError("Could not initialize SDL! Error: {}", app->getError());
         return 2;
     }
 
@@ -600,8 +605,7 @@ sdlmain(int /* argc */, char ** /* argv */)
     }
     if (!app->createOpenGLWindow())
     {
-        FatalError(fmt::sprintf("Could not create a OpenGL window! Error: %s",
-                   app->getError()));
+        FatalError("Could not create a OpenGL window! Error: {}", app->getError());
         return 4;
     }
 

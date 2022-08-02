@@ -27,7 +27,6 @@
 #include <Carbon/Carbon.h>
 #include <GLUT/glut.h>
 #endif
-#include <fmt/printf.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/tzutil.h>

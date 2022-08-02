@@ -1311,7 +1311,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 #ifdef USE_MINIAUDIO
             resumeAudioIfNeeded();
 #endif
-    
+
             if (scriptState == ScriptPaused)
                 scriptState = ScriptRunning;
             sim->setPauseState(false);
@@ -2582,7 +2582,7 @@ static string DistanceLyToStr(double distance, int digits, CelestiaCore::Measure
         }
     }
 
-    return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
+    return fmt::format("{} {}", SigDigitNum(distance, digits), units);
 }
 
 
@@ -2618,7 +2618,7 @@ static void displayRotationPeriod(Overlay& overlay, double days)
         p = _("seconds");
     }
 
-    overlay.printf(_("Rotation period: %s %s\n"), n, p);
+    overlay.print(_("Rotation period: {} {}\n"), n, p);
 }
 
 static void displayMass(Overlay& overlay, float mass, CelestiaCore::MeasurementSystem measurement)
@@ -2682,7 +2682,7 @@ static void displaySpeed(Overlay& overlay, float speed, CelestiaCore::Measuremen
             u = _("m/s");
         }
     }
-    overlay.printf(_("Speed: %s %s\n"), n, u);
+    overlay.print(_("Speed: {} {}\n"), n, u);
 }
 
 // Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
@@ -2696,18 +2696,16 @@ static string angleToStr(double angle)
 
     if (degrees > 0)
     {
-        return fmt::sprintf("%d%s %02d' %.1f\"",
-                            degrees, UTF8_DEGREE_SIGN,
-                            abs(minutes), abs(seconds));
+        return fmt::format("{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
+                           degrees, abs(minutes), abs(seconds));
     }
 
     if (minutes > 0)
     {
-        return fmt::sprintf("%02d' %.1f\"",
-                            abs(minutes), abs(seconds));
+        return fmt::format("{:02d}' {:.1f}\"", abs(minutes), abs(seconds));
     }
 
-    return fmt::sprintf("%.2f\"", abs(seconds));
+    return fmt::format("{:.2f}\"", abs(seconds));
 }
 
 static void displayDeclination(Overlay& overlay, double angle)
@@ -2883,7 +2881,7 @@ static void displayStarInfo(Overlay& overlay,
                                 star.getApparentMagnitude(float(distance)));
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay.printf(_("Luminosity: %sx Sun\n"), SigDigitNum(star.getLuminosity(), 3));
+            overlay.print(_("Luminosity: {}x Sun\n"), SigDigitNum(star.getLuminosity(), 3));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -2909,14 +2907,14 @@ static void displayStarInfo(Overlay& overlay,
 
             if (solarRadii > 0.01f)
             {
-                overlay.printf(_("Radius: %s Rsun  (%s)\n"),
-                             SigDigitNum(star.getRadius() / 696000.0f, 2),
-                             DistanceKmToStr(star.getRadius(), 3, measurement));
+                overlay.print(_("Radius: {} Rsun  ({})\n"),
+                              SigDigitNum(star.getRadius() / 696000.0f, 2),
+                              DistanceKmToStr(star.getRadius(), 3, measurement));
             }
             else
             {
-                overlay.printf(_("Radius: %s\n"),
-                             DistanceKmToStr(star.getRadius(), 3, measurement));
+                overlay.print(_("Radius: {}\n"),
+                              DistanceKmToStr(star.getRadius(), 3, measurement));
             }
 
             if (star.getRotationModel()->isPeriodic())
@@ -3200,7 +3198,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy(width - safeAreaInsets.right - dateStrWidth, height - safeAreaInsets.top - fontHeight);
         overlay->beginText();
 
-        overlay->printf(dateStr.c_str());
+        *overlay << dateStr;
 
         if (lightTravelFlag && lt > 0.0)
         {
@@ -3287,10 +3285,10 @@ void CelestiaCore::renderOverlay()
         {
             double timeLeft = sim->getArrivalTime() - sim->getRealTime();
             if (timeLeft >= 1)
-                overlay->printf(_("Travelling (%s)\n"),
-                             FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
+                overlay->print(_("Travelling ({})\n"),
+                               FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
             else
-                overlay->printf(_("Travelling\n"));
+                overlay->print(_("Travelling\n"));
         }
         else
         {
@@ -3620,7 +3618,7 @@ void CelestiaCore::renderOverlay()
         auto min = (int) (sec / 60);
         sec -= min * 60.0f;
         overlay->beginText();
-        overlay->printf("%3d:%05.2f", min, sec);
+        overlay->print("{:3i}:{05.2f}", min, sec);
         overlay->endText();
         overlay->restorePos();
 

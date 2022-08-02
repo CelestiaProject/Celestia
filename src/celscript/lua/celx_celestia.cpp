@@ -10,13 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <optional>
-#include <celutil/gettext.h>
-#include <celutil/logger.h>
-#include "celttf/truetypefont.h"
-#include <fmt/printf.h>
-#include <celengine/category.h>
-#include <celengine/texture.h>
-#include <celcompat/filesystem.h>
+#include <fmt/format.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -33,6 +27,13 @@
 #include <celestia/celestiacore.h>
 #include <celestia/view.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/gettext.h>
+#include <celutil/logger.h>
+#include <celttf/truetypefont.h>
+#include <celengine/category.h>
+#include <celengine/texture.h>
+#include <celcompat/filesystem.h>
+
 
 using namespace std;
 using namespace Eigen;
@@ -2023,10 +2024,10 @@ static int celestia_takescreenshot(lua_State* l)
     luastate->screenshotCount++;
     bool success = false;
     string filenamestem;
-    filenamestem = fmt::sprintf("screenshot-%s%06i", fileid, luastate->screenshotCount);
+    filenamestem = fmt::format("screenshot-{}{:06i}", fileid, luastate->screenshotCount);
 
     fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
-    fs::path filepath = path / fmt::sprintf("%s.%s", filenamestem, filetype);
+    fs::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);
     success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 

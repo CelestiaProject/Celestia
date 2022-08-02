@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fmt/printf.h>
-
+#include <fmt/format.h>
 #include "scriptobject.h"
 
 using namespace std;
@@ -49,7 +48,7 @@ string
 GenerateScriptObjectName()
 {
     string buf;
-    buf = fmt::sprintf("%s%u", ScriptedObjectNamePrefix, ScriptedObjectNameIndex);
+    buf = fmt::format("{}{}", ScriptedObjectNamePrefix, ScriptedObjectNameIndex);
     ScriptedObjectNameIndex++;
 
     return buf;

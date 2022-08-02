@@ -18,7 +18,7 @@
 #include <celengine/planetgrid.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include "qtselectionpopup.h"
 #include "qtappwin.h"
 
@@ -106,23 +106,22 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         setlocale(LC_NUMERIC, "");
 
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            buff = fmt::sprintf("%.3f %s", distance, _("ly"));
+            buff = fmt::format(_("{:.3f} ly"), distance);
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            buff = fmt::sprintf("%.3f %s", astro::lightYearsToAU(distance), _("au"));
+            buff = fmt::format(_("{:.3f} au"), astro::lightYearsToAU(distance));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-            buff = fmt::sprintf(_("%.3f km"), astro::lightYearsToKilometers(distance));
+            buff = fmt::format(_("{:.3f} km"), astro::lightYearsToKilometers(distance));
         else
-            buff = fmt::sprintf(_("%.3f m"), astro::lightYearsToKilometers(distance) * 1000.0f);
+            buff = fmt::format(_("{:.3f} m"), astro::lightYearsToKilometers(distance) * 1000.0f);
 
         addAction(italicTextItem(_("Distance: ") + QString::fromStdString(buff)));
 
-        buff = fmt::sprintf("%.2f (%.2f)",
-                            sel.star()->getAbsoluteMagnitude(),
-                            sel.star()->getApparentMagnitude((float) distance));
+        buff = fmt::format("{:.2f} ({:.2f})",
+                           sel.star()->getAbsoluteMagnitude(),
+                           sel.star()->getApparentMagnitude((float) distance));
         addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromStdString(buff)));
 
-        buff = fmt::sprintf("%s", sel.star()->getSpectralType());
-        addAction(italicTextItem(_("Class: ") + QString::fromStdString(buff)));
+        addAction(italicTextItem(_("Class: ") + QString::fromStdString(sel.star()->getSpectralType())));
 
         setlocale(LC_NUMERIC, "C");
     }

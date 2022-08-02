@@ -331,7 +331,7 @@ static int image_tostring(lua_State* l)
 {
     CelxLua celx(l);
     auto image = *celx.getThis<Image*>();
-    std::string s = fmt::sprintf("[Image:%dx%d]", image->getWidth(), image->getHeight());
+    std::string s = fmt::format("[Image:{}x{}]", image->getWidth(), image->getHeight());
     return celx.push(s.c_str());
 }
 
@@ -386,7 +386,7 @@ static int texture_tostring(lua_State* l)
     CelxLua celx(l);
 
     auto tex = *celx.getThis<Texture*>();
-    std::string s = fmt::sprintf("[Texture:%dx%d]", tex->getWidth(), tex->getHeight());
+    std::string s = fmt::format("[Texture:{}x{}]", tex->getWidth(), tex->getHeight());
     return celx.push(s.c_str());
 }
 

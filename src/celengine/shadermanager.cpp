@@ -15,7 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <tuple>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include <Eigen/Geometry>
 #include <celcompat/filesystem.h>
 #include <celmath/geomutil.h>
@@ -404,8 +404,8 @@ ShaderManager::getShader(const string& name)
     }
 
     fs::path dir("shaders");
-    auto vsName = dir / fmt::sprintf("%s_vert.glsl", name);
-    auto fsName = dir / fmt::sprintf("%s_frag.glsl", name);
+    auto vsName = dir / fmt::format("{}_vert.glsl", name);
+    auto fsName = dir / fmt::format("{}_frag.glsl", name);
 
     std::error_code ecv, ecf;
     uintmax_t vsSize = fs::file_size(vsName, ecv);
@@ -446,9 +446,9 @@ static string
 LightProperty(unsigned int i, const char* property)
 {
 #ifndef USE_GLSL_STRUCTS
-    return fmt::sprintf("light%d_%s", i, property);
+    return fmt::format("light{}_{}", i, property);
 #else
-    return fmt::sprintf("lights[%d].%s", i, property);
+    return fmt::format("lights[{}].{}", i, property);
 #endif
 }
 
@@ -456,14 +456,14 @@ LightProperty(unsigned int i, const char* property)
 static string
 FragLightProperty(unsigned int i, const char* property)
 {
-    return fmt::sprintf("light%s%d", property, i);
+    return fmt::format("light{}{}", property, i);
 }
 
 #if 0
 static string
 IndexedParameter(const char* name, unsigned int index)
 {
-    return fmt::sprintf("%s%d", name, index);
+    return fmt::format("{}{}", name, index);
 }
 #endif
 
@@ -502,13 +502,13 @@ ShaderTypeString(ShaderVariableType type)
 static string
 IndexedParameter(const char* name, unsigned int index0)
 {
-    return fmt::sprintf("%s%d", name, index0);
+    return fmt::format("{}{}", name, index0);
 }
 
 static string
 IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 {
-    return fmt::sprintf("%s%d_%d", name, index0, index1);
+    return fmt::format("{}{}_{}", name, index0, index1);
 }
 
 
@@ -524,7 +524,7 @@ public:
     string toStringPrecedence(int parentPrecedence) const
     {
         if (parentPrecedence >= precedence())
-            return string("(") + toString() + ")";
+            return fmt::format("({})", toString());
         else
             return toString();
     }
@@ -553,7 +553,7 @@ public:
     Sh_ConstantExpression(float value) : m_value(value) {}
     string toString() const override
     {
-        return fmt::sprintf("%f", m_value);
+        return std::to_string(m_value);
     }
 
     int precedence() const override { return 100; }
@@ -880,85 +880,82 @@ Sh_Expression sh_float(const string& name)
 
 Sh_Expression indexedUniform(const string& name, unsigned int index0)
 {
-    string buf;
-    buf = fmt::sprintf("%s%u", name.c_str(), index0);
+    auto buf = fmt::format("{}{}", name, index0);
     return new Sh_VariableExpression(buf);
 }
 
 Sh_Expression ringShadowTexCoord(unsigned int index)
 {
-    string buf;
-    buf = fmt::sprintf("ringShadowTexCoord.%c", "xyzw"[index]);
+    auto buf = fmt::format("ringShadowTexCoord.{}", "xyzw"[index]);
     return new Sh_VariableExpression(buf);
 }
 
 Sh_Expression cloudShadowTexCoord(unsigned int index)
 {
-    string buf;
-    buf = fmt::sprintf("cloudShadowTexCoord%d", index);
+    auto buf = fmt::format("cloudShadowTexCoord{}", index);
     return new Sh_VariableExpression(string(buf));
 }
 
 static string
 DeclareUniform(const std::string& name, ShaderVariableType type)
 {
-    return string("uniform ") + ShaderTypeString(type) + " " + name + ";\n";
+    return fmt::format("uniform {} {};\n", ShaderTypeString(type), name);
 }
 
 static string
 DeclareVarying(const std::string& name, ShaderVariableType type)
 {
-    return string("varying ") + ShaderTypeString(type) + " " + name + ";\n";
+    return fmt::format("varying {} {};\n", ShaderTypeString(type), name);
 }
 
 static string
 DeclareAttribute(const std::string& name, ShaderVariableType type)
 {
-    return string("attribute ") + ShaderTypeString(type) + " " + name + ";\n";
+    return fmt::format("attribute {} {};\n", ShaderTypeString(type), name);
 }
 
 static string
 DeclareLocal(const std::string& name, ShaderVariableType type)
 {
-    return ShaderTypeString(type) + " " + name + ";\n";
+    return fmt::format("{} {};\n", ShaderTypeString(type), name);
 }
 
 static string
 DeclareLocal(const std::string& name, ShaderVariableType type, const Sh_Expression& expr)
 {
-    return ShaderTypeString(type) + " " + name + " = " + expr.toString() + ";\n";
+    return fmt::format("{} {} = {};\n", ShaderTypeString(type), name, expr.toString());
 }
 
-string assign(const string& variableName, const Sh_Expression& expr)
+static string
+assign(const string& variableName, const Sh_Expression& expr)
 {
-    return variableName + " = " + expr.toString() + ";\n";
+    return fmt::format("{} = {};\n", variableName, expr.toString());
 }
 
-string addAssign(const string& variableName, const Sh_Expression& expr)
+static string
+addAssign(const string& variableName, const Sh_Expression& expr)
 {
+    return fmt::format("{} += {};\n", variableName, expr.toString());
     return variableName + " += " + expr.toString() + ";\n";
 }
 
-string mulAssign(const string& variableName, const Sh_Expression& expr)
+static string
+mulAssign(const string& variableName, const Sh_Expression& expr)
 {
-    return variableName + " *= " + expr.toString() + ";\n";
+    return fmt::format("{} *= {};\n", variableName, expr.toString());
 }
-
-
 
 static string
 RingShadowTexCoord(unsigned int index)
 {
-    return fmt::sprintf("ringShadowTexCoord.%c", "xyzw"[index]);
+    return fmt::format("ringShadowTexCoord.{}", "xyzw"[index]);
 }
-
 
 static string
 CloudShadowTexCoord(unsigned int index)
 {
-    return fmt::sprintf("cloudShadowTexCoord%d", index);
+    return fmt::format("cloudShadowTexCoord{}", index);
 }
-
 
 static string
 VarScatterInVS()
@@ -971,7 +968,6 @@ VarScatterInFS()
 {
     return "v_ScatterColor";
 }
-
 
 static void
 DumpShaderSource(ostream& out, const std::string& source)
@@ -1067,7 +1063,7 @@ static string
 SeparateDiffuse(unsigned int i)
 {
     // Used for packing multiple diffuse factors into the diffuse color.
-    return fmt::sprintf("diffFactors.%c", "xyzw"[i & 3]);
+    return fmt::format("diffFactors.{}", "xyzw"[i & 3]);
 }
 
 
@@ -1075,7 +1071,7 @@ static string
 SeparateSpecular(unsigned int i)
 {
     // Used for packing multiple specular factors into the specular color.
-    return fmt::sprintf("specFactors.%c", "xyzw"[i & 3]);
+    return fmt::format("specFactors.{}", "xyzw"[i & 3]);
 }
 
 
@@ -1083,14 +1079,14 @@ SeparateSpecular(unsigned int i)
 static string
 ShadowDepth(unsigned int i)
 {
-    return fmt::sprintf("shadowDepths.%c", "xyzw"[i & 3]);
+    return fmt::format("shadowDepths.{}", "xyzw"[i & 3]);
 }
 
 
 static string
 TexCoord2D(unsigned int i)
 {
-    return fmt::sprintf("in_TexCoord%d.st", i);
+    return fmt::format("in_TexCoord{}.st", i);
 }
 
 
@@ -1098,7 +1094,7 @@ TexCoord2D(unsigned int i)
 static string
 LightDir_tan(unsigned int i)
 {
-    return fmt::sprintf("lightDir_tan_%d", i);
+    return fmt::format("lightDir_tan_{}", i);
 }
 
 
@@ -1106,7 +1102,7 @@ LightDir_tan(unsigned int i)
 static string
 LightHalfVector(unsigned int i)
 {
-    return fmt::sprintf("lightHalfVec%d", i);
+    return fmt::format("lightHalfVec{}", i);
 }
 #endif
 
@@ -1114,7 +1110,7 @@ LightHalfVector(unsigned int i)
 static string
 ScatteredColor(unsigned int i)
 {
-    return fmt::sprintf("scatteredColor%d", i);
+    return fmt::format("scatteredColor{}", i);
 }
 
 
@@ -1726,10 +1722,10 @@ float calculateShadow()
     float firstSample = -boxFilterWidth / 2.0f;
     float lastSample = firstSample + boxFilterWidth;
     float sampleWeight = 1.0f / (float) (ShadowSampleKernelWidth * ShadowSampleKernelWidth);
-    source += fmt::sprintf("    for (float y = %f; y <= %f; y += 1.0)\n", firstSample, lastSample);
-    source += fmt::sprintf("        for (float x = %f; x <= %f; x += 1.0)\n", firstSample, lastSample);
+    source += fmt::format("    for (float y = {:f}; y <= {:f}; y += 1.0)\n", firstSample, lastSample);
+    source += fmt::format("        for (float x = {:f}; x <= {:f}; x += 1.0)\n", firstSample, lastSample);
     source += "            s += shadow2D(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, bias)).z;\n";
-    source += fmt::sprintf("    return s * %f;\n", sampleWeight);
+    source += fmt::format("    return s * {:f};\n", sampleWeight);
     source += "}\n";
 #else
     source += R"glsl(
