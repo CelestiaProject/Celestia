@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-12-19 21:13+0200\n"
+"POT-Creation-Date: 2022-08-02 19:45+0300\n"
 "PO-Revision-Date: 2021-12-20 00:20+0200\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
 "Language-Team: Turkish (https://www.transifex.com/celestia/teams/93131/tr/)\n"
@@ -21,11 +21,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: ../src/celengine/astro.cpp:707
+#: ../src/celengine/astro.cpp:708
 msgid "DST"
 msgstr "DST (Yaz saati uy.)"
 
-#: ../src/celengine/astro.cpp:707
+#: ../src/celengine/astro.cpp:708
 msgid "STD"
 msgstr "Yaz saati"
 
@@ -53,34 +53,34 @@ msgstr "{}: Hatalı yapılandırma dosyası.\n"
 msgid "Loaded {} deep space objects\n"
 msgstr "{} derin uzay cismi yüklendi\n"
 
-#: ../src/celengine/galaxy.cpp:210
+#: ../src/celengine/galaxy.cpp:416
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "Galaksi (Hubble türü: %s)"
 
-#: ../src/celengine/globular.cpp:240
+#: ../src/celengine/globular.cpp:515
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "Küresel (merkezi yarıçap: %4.2f', King konsantrasyonu %4.2f)"
 
-#: ../src/celengine/image.cpp:291
+#: ../src/celengine/image.cpp:290
 msgid "Loading image from file {}\n"
 msgstr "Dosyadan resim yükleniyor {}\n"
 
-#: ../src/celengine/meshmanager.cpp:461
-#, c-format
-msgid "Loading model: %s\n"
+#: ../src/celengine/meshmanager.cpp:422
+#, fuzzy
+msgid "Loading model: {}\n"
 msgstr "Model yükleniyor: %s\n"
 
-#: ../src/celengine/meshmanager.cpp:543
-#, c-format
+#: ../src/celengine/meshmanager.cpp:494
+#, fuzzy
 msgid ""
-"   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
+"   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
 msgstr "Model istatistikleri: %u köşe, %u ilkel, %u materyal (%u özgün)\n"
 
-#: ../src/celengine/meshmanager.cpp:553
-#, c-format
-msgid "Error loading model '%s'\n"
+#: ../src/celengine/meshmanager.cpp:504
+#, fuzzy
+msgid "Error loading model '{}'\n"
 msgstr "Model yüklenirken hata '%s'\n"
 
 #: ../src/celengine/nebula.cpp:39
@@ -95,109 +95,104 @@ msgstr "Açık küme"
 msgid "Error in .ssc file (line {}): {}\n"
 msgstr ".ssc dosyasında hata (satır {}): {}\n"
 
-#: ../src/celengine/solarsys.cpp:830
+#: ../src/celengine/solarsys.cpp:827
 msgid "Incorrect GeomAlbedo value: {}\n"
 msgstr "Yanlış GeomAlbedo değeri: {}\n"
 
-#: ../src/celengine/solarsys.cpp:839
+#: ../src/celengine/solarsys.cpp:836
 msgid "Incorrect Reflectivity value: {}\n"
 msgstr "Yanlış Yansıma değeri: {}\n"
 
-#: ../src/celengine/solarsys.cpp:847
+#: ../src/celengine/solarsys.cpp:844
 msgid "Incorrect BondAlbedo value: {}\n"
 msgstr "Yanlış BondAlbedo değeri: {}\n"
 
-#: ../src/celengine/solarsys.cpp:1250 ../src/celengine/solarsys.cpp:1311
+#: ../src/celengine/solarsys.cpp:1247 ../src/celengine/solarsys.cpp:1308
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
 msgstr "ana cisim '%s'nın '%s' bulunamadı.\n"
 
-#: ../src/celengine/solarsys.cpp:1260
+#: ../src/celengine/solarsys.cpp:1257
 #, c-format
 msgid "warning duplicate definition of %s %s\n"
 msgstr "%s çift tanımlama uyarısı %s\n"
 
-#: ../src/celengine/solarsys.cpp:1291
+#: ../src/celengine/solarsys.cpp:1288
 msgid "bad alternate surface"
 msgstr "kötü alternatif yüzey"
 
-#: ../src/celengine/solarsys.cpp:1306
+#: ../src/celengine/solarsys.cpp:1303
 msgid "bad location"
 msgstr "kötü konum"
 
-#: ../src/celengine/stardb.cpp:584
+#: ../src/celengine/stardb.cpp:583
 msgid "Bad header for cross index\n"
 msgstr "Çapraz dizin için kötü başlık\n"
 
-#: ../src/celengine/stardb.cpp:596
+#: ../src/celengine/stardb.cpp:595
 msgid "Bad version for cross index\n"
 msgstr "Çapraz dizin için kötü sürüm\n"
 
-#: ../src/celengine/stardb.cpp:610
+#: ../src/celengine/stardb.cpp:609
 #, fuzzy
 msgid "Loading cross index failed\n"
 msgstr "Çapraz dizin yüklemesi kayıt %u noktasında başarısız oldu\n"
 
-#: ../src/celengine/stardb.cpp:617
+#: ../src/celengine/stardb.cpp:616
 msgid "Loading cross index failed at record {}\n"
 msgstr "Çapraz dizin yüklemesi kayıt {} noktasında başarısız oldu\n"
 
-#: ../src/celengine/stardb.cpp:695
+#: ../src/celengine/stardb.cpp:694
 msgid "Bad spectral type in star database, star #{}\n"
 msgstr "Yıldız veritabanında kötü tayf türü, yıldız #{}\n"
 
-#: ../src/celengine/stardb.cpp:710
+#: ../src/celengine/stardb.cpp:709
 msgid "{} stars in binary database\n"
 msgstr "İkili veritabanında {} yıldız var\n"
 
-#: ../src/celengine/stardb.cpp:734
+#: ../src/celengine/stardb.cpp:733
 msgid "Total star count: {}\n"
 msgstr "Toplam yıldız sayısı: {}\n"
 
-#: ../src/celengine/stardb.cpp:768
+#: ../src/celengine/stardb.cpp:767
 msgid "Error in .stc file (line {}): {}\n"
 msgstr ".stc dosyasında hata (satır {}): {}\n"
 
-#: ../src/celengine/stardb.cpp:798
+#: ../src/celengine/stardb.cpp:797
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Geçersiz yıldız: kötü tayf türü.\n"
 
-#: ../src/celengine/stardb.cpp:807
+#: ../src/celengine/stardb.cpp:806
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Geçersiz yıldız: tayf türü yok.\n"
 
-#: ../src/celengine/stardb.cpp:994
+#: ../src/celengine/stardb.cpp:993
 msgid "Barycenter {} does not exist.\n"
 msgstr "Kütle merkezi {} mevcut değil.\n"
 
-#: ../src/celengine/stardb.cpp:1050
+#: ../src/celengine/stardb.cpp:1049
 msgid "Invalid star: missing right ascension\n"
 msgstr "Geçersiz yıldız: sağ yükseliş yok\n"
 
-#: ../src/celengine/stardb.cpp:1063
+#: ../src/celengine/stardb.cpp:1062
 msgid "Invalid star: missing declination.\n"
 msgstr "Geçersiz yıldız: sapma yok.\n"
 
-#: ../src/celengine/stardb.cpp:1076
+#: ../src/celengine/stardb.cpp:1075
 msgid "Invalid star: missing distance.\n"
 msgstr "Geçersiz yıldız: mesafe yok.\n"
 
-#: ../src/celengine/stardb.cpp:1110
+#: ../src/celengine/stardb.cpp:1109
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Geçersiz yıldız: kadir yok.\n"
 
-#: ../src/celengine/stardb.cpp:1127
+#: ../src/celengine/stardb.cpp:1126
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
 "Geçersiz yıldız: mutlak (görünür değil) kadir orijin yakınındaki yıldız için "
 "belirtilmelidir\n"
-
-#: ../src/celengine/stardb.cpp:1432
-#, c-format
-msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
-msgstr "Seviye %i, %.5f ıy, %i düğüm, %i  yıldız\n"
 
 #: ../src/celengine/texture.cpp:928
 msgid "Creating tiled texture. Width={}, max={}\n"
@@ -227,506 +222,491 @@ msgstr "Desteklenmeyen bayt sırası {}, beklenen {}.\n"
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Desteklenmeyen rakam sayısı {}, beklenen {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:102 ../src/celestia/scriptmenu.cpp:87
+#: ../src/celestia/celestiacore.cpp:147 ../src/celestia/scriptmenu.cpp:87
 #: ../src/celscript/lua/luascript.cpp:173
 msgid "Path {} doesn't exist or isn't a directory\n"
 msgstr "{} yolu mevcut değil veya bir dizin değil\n"
 
-#: ../src/celestia/celestiacore.cpp:203
+#: ../src/celestia/celestiacore.cpp:282
 msgid "Error reading favorites file {}.\n"
 msgstr "Sık kullanılanlar dosyasını okurken hata. {}\n"
 
-#: ../src/celestia/celestiacore.cpp:224
+#: ../src/celestia/celestiacore.cpp:303
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr "Sık kullanılanlar dosyası {} için dizin varlığını kontrol edemedi\n"
 
-#: ../src/celestia/celestiacore.cpp:232
+#: ../src/celestia/celestiacore.cpp:311
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr "Sık kullanılanlar dosyası {} için bir dizin oluşturulamadı\n"
 
-#: ../src/celestia/celestiacore.cpp:352
+#: ../src/celestia/celestiacore.cpp:431
 msgid "Invalid filetype"
 msgstr "Geçersiz dosya türü"
 
-#: ../src/celestia/celestiacore.cpp:690 ../src/celestia/celestiacore.cpp:1420
-#: ../src/celestia/celestiacore.cpp:1437
+#: ../src/celestia/celestiacore.cpp:769 ../src/celestia/celestiacore.cpp:1485
+#: ../src/celestia/celestiacore.cpp:1502
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Kadir sınırı: %2f"
 
-#: ../src/celestia/celestiacore.cpp:1067
+#: ../src/celestia/celestiacore.cpp:1146
 msgid "Markers enabled"
 msgstr "İşaretleyiciler etkin"
 
-#: ../src/celestia/celestiacore.cpp:1070
+#: ../src/celestia/celestiacore.cpp:1149
 msgid "Markers disabled"
 msgstr "İşaretleyiciler devre dışı"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1080
+#: ../src/celestia/celestiacore.cpp:1159
 msgid "Goto surface"
 msgstr "Yüzeye git"
 
-#: ../src/celestia/celestiacore.cpp:1091
+#: ../src/celestia/celestiacore.cpp:1170
 msgid "Alt-azimuth mode enabled"
 msgstr "İrtifa-azimut modu etkin"
 
-#: ../src/celestia/celestiacore.cpp:1094
+#: ../src/celestia/celestiacore.cpp:1173
 msgid "Alt-azimuth mode disabled"
 msgstr "İrtifa-azimut modu devre dışı"
 
-#: ../src/celestia/celestiacore.cpp:1150
+#: ../src/celestia/celestiacore.cpp:1229
 msgid "Star style: fuzzy points"
 msgstr "Yıldız stili: bulanık noktalar"
 
-#: ../src/celestia/celestiacore.cpp:1153
+#: ../src/celestia/celestiacore.cpp:1232
 msgid "Star style: points"
 msgstr "Yıldız stili: noktalar"
 
-#: ../src/celestia/celestiacore.cpp:1156
+#: ../src/celestia/celestiacore.cpp:1235
 msgid "Star style: scaled discs"
 msgstr "Yıldız stili: ölçekli diskler"
 
-#: ../src/celestia/celestiacore.cpp:1169
+#: ../src/celestia/celestiacore.cpp:1248
 msgid "Comet tails enabled"
 msgstr "Kuyruklu yıldızların kuyrukları etkin"
 
-#: ../src/celestia/celestiacore.cpp:1172
+#: ../src/celestia/celestiacore.cpp:1251
 msgid "Comet tails disabled"
 msgstr "Kuyruklu yıldızların kuyrukları devre dışı"
 
-#: ../src/celestia/celestiacore.cpp:1188
-msgid "Render path: OpenGL 2.1"
-msgstr "Render yolu: OpenGL 2.1"
-
-#: ../src/celestia/celestiacore.cpp:1207
+#: ../src/celestia/celestiacore.cpp:1264
 msgid "Anti-aliasing enabled"
 msgstr "Kenar yumuşatma (anti-aliasing) etkin"
 
-#: ../src/celestia/celestiacore.cpp:1212
+#: ../src/celestia/celestiacore.cpp:1269
 msgid "Anti-aliasing disabled"
 msgstr "Kenar yumuşatma (anti-aliasing) devre dışı"
 
-#: ../src/celestia/celestiacore.cpp:1221
+#: ../src/celestia/celestiacore.cpp:1278
 msgid "Auto-magnitude enabled"
 msgstr "Oto-kadir etkin"
 
-#: ../src/celestia/celestiacore.cpp:1226
+#: ../src/celestia/celestiacore.cpp:1283
 msgid "Auto-magnitude disabled"
 msgstr "Oto-kadir devre dışı"
 
-#: ../src/celestia/celestiacore.cpp:1248
+#: ../src/celestia/celestiacore.cpp:1305
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 #: ../src/celestia/win32/res/resource_strings.cpp:98
 #: ../src/celestia/win32/res/resource_strings.cpp:105
 #: ../src/celestia/win32/res/resource_strings.cpp:118
 #: ../src/celestia/win32/res/resource_strings.cpp:127
 #: ../src/celestia/win32/res/resource_strings.cpp:147
-#: ../src/celestia/win32/res/resource_strings.cpp:155
-#: ../src/celestia/win32/res/resource_strings.cpp:161
-#: ../src/celestia/win32/res/resource_strings.cpp:169
-#: ../src/celestia/win32/res/resource_strings.cpp:235
+#: ../src/celestia/win32/res/resource_strings.cpp:157
+#: ../src/celestia/win32/res/resource_strings.cpp:163
+#: ../src/celestia/win32/res/resource_strings.cpp:171
+#: ../src/celestia/win32/res/resource_strings.cpp:237
 msgid "Cancel"
 msgstr "İptal"
 
-#: ../src/celestia/celestiacore.cpp:1280
+#: ../src/celestia/celestiacore.cpp:1345
 msgid "Time and script are paused"
 msgstr "Zaman ve senaryo duraklatıldı"
 
-#: ../src/celestia/celestiacore.cpp:1282
+#: ../src/celestia/celestiacore.cpp:1347
 msgid "Time is paused"
 msgstr "Süre durduruldu"
 
-#: ../src/celestia/celestiacore.cpp:1286
+#: ../src/celestia/celestiacore.cpp:1351
 msgid "Resume"
 msgstr "Devam"
 
-#: ../src/celestia/celestiacore.cpp:1320
+#: ../src/celestia/celestiacore.cpp:1385
 msgid "Star color: Blackbody D65"
 msgstr "Yıldız rengi: Siyah cisim D65"
 
-#: ../src/celestia/celestiacore.cpp:1326
+#: ../src/celestia/celestiacore.cpp:1391
 msgid "Star color: Enhanced"
 msgstr "Yıldız rengi: Arttırılmış"
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1363
+#: ../src/celestia/celestiacore.cpp:1428
 #, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "Işık hızında seyahat süresi: %.4f yıl"
 
-#: ../src/celestia/celestiacore.cpp:1372
+#: ../src/celestia/celestiacore.cpp:1437
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Işık hızında seyahat süresi:  %d dak  %.1f sn "
 
-#: ../src/celestia/celestiacore.cpp:1377
+#: ../src/celestia/celestiacore.cpp:1442
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Işık hızında seyahat süresi:  %d saat  %d dak  %.1f sn"
 
-#: ../src/celestia/celestiacore.cpp:1395
+#: ../src/celestia/celestiacore.cpp:1460
 msgid "Light travel delay included"
 msgstr "Işık hızı gecikmesi ekli"
 
-#: ../src/celestia/celestiacore.cpp:1400
+#: ../src/celestia/celestiacore.cpp:1465
 msgid "Light travel delay switched off"
 msgstr "Işık hızı gecikmesi kapalı"
 
-#: ../src/celestia/celestiacore.cpp:1406
+#: ../src/celestia/celestiacore.cpp:1471
 msgid "Light travel delay ignored"
 msgstr "Işık hızı gecikmesi göz ardı ediliyor"
 
-#: ../src/celestia/celestiacore.cpp:1449
+#: ../src/celestia/celestiacore.cpp:1514
 msgid "Using normal surface textures."
 msgstr "Normal yüzey dokuları kullanılıyor."
 
-#: ../src/celestia/celestiacore.cpp:1454
+#: ../src/celestia/celestiacore.cpp:1519
 msgid "Using limit of knowledge surface textures."
 msgstr "Sınırlı bilgi yüzey dokularını kullanılıyor."
 
-#: ../src/celestia/celestiacore.cpp:1521
+#: ../src/celestia/celestiacore.cpp:1586
 msgid "Follow"
 msgstr "İzle"
 
-#: ../src/celestia/celestiacore.cpp:1546
+#: ../src/celestia/celestiacore.cpp:1611
 msgid "Time: Forward"
 msgstr "Zaman: İleri"
 
-#: ../src/celestia/celestiacore.cpp:1548
+#: ../src/celestia/celestiacore.cpp:1613
 msgid "Time: Backward"
 msgstr "Zaman: Geri"
 
-#: ../src/celestia/celestiacore.cpp:1560 ../src/celestia/celestiacore.cpp:1575
+#: ../src/celestia/celestiacore.cpp:1625 ../src/celestia/celestiacore.cpp:1640
 #, c-format
 msgid "Time rate: %.6g"
 msgstr "Zaman oranı: %.6g"
 
-#: ../src/celestia/celestiacore.cpp:1615
+#: ../src/celestia/celestiacore.cpp:1680
 msgid "Low res textures"
 msgstr "Düşük çözünürlüklü dokular"
 
-#: ../src/celestia/celestiacore.cpp:1618
+#: ../src/celestia/celestiacore.cpp:1683
 msgid "Medium res textures"
 msgstr "Orta çözünürlüklü dokular"
 
-#: ../src/celestia/celestiacore.cpp:1621
+#: ../src/celestia/celestiacore.cpp:1686
 msgid "High res textures"
 msgstr "Yüksek çözünürlüklü dokular"
 
-#: ../src/celestia/celestiacore.cpp:1668
+#: ../src/celestia/celestiacore.cpp:1733
 msgid "Sync Orbit"
 msgstr "Yörünge Senkronizasyonu"
 
-#: ../src/celestia/celestiacore.cpp:1674
+#: ../src/celestia/celestiacore.cpp:1739
 msgid "Lock"
 msgstr "Kilitli"
 
-#: ../src/celestia/celestiacore.cpp:1680
+#: ../src/celestia/celestiacore.cpp:1745
 msgid "Chase"
 msgstr "Takip"
 
-#: ../src/celestia/celestiacore.cpp:1693 ../src/celestia/celestiacore.cpp:1724
+#: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1789
 #, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "Kadir sınırı:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1704 ../src/celestia/celestiacore.cpp:1735
+#: ../src/celestia/celestiacore.cpp:1769 ../src/celestia/celestiacore.cpp:1800
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "45 derecede oto kadir sınırı:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1754 ../src/celestia/celestiacore.cpp:1769
+#: ../src/celestia/celestiacore.cpp:1819 ../src/celestia/celestiacore.cpp:1834
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Çevre ışık seviyesi:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1780 ../src/celestia/celestiacore.cpp:1791
+#: ../src/celestia/celestiacore.cpp:1845 ../src/celestia/celestiacore.cpp:1856
 #, c-format
 msgid "Light gain"
 msgstr "Işık kazanımı"
 
-#: ../src/celestia/celestiacore.cpp:1812
-msgid "Bloom enabled"
-msgstr "Parlama etkin"
-
-#: ../src/celestia/celestiacore.cpp:1814
-msgid "Bloom disabled"
-msgstr "Parlama devre dışı"
-
-#: ../src/celestia/celestiacore.cpp:1820 ../src/celestia/celestiacore.cpp:1828
-#, c-format
-msgid "Exposure"
-msgstr "Pozlama"
-
-#: ../src/celestia/celestiacore.cpp:2150
+#: ../src/celestia/celestiacore.cpp:2189
 msgid "GL error: "
 msgstr "GL hatası:"
 
-#: ../src/celestia/celestiacore.cpp:2299
+#: ../src/celestia/celestiacore.cpp:2348
 msgid "View too small to be split"
 msgstr "Görünüm ayırmak için çok küçük"
 
-#: ../src/celestia/celestiacore.cpp:2319
+#: ../src/celestia/celestiacore.cpp:2368
 msgid "Added view"
 msgstr "Eklenen görünüm"
 
-#: ../src/celestia/celestiacore.cpp:2495
+#: ../src/celestia/celestiacore.cpp:2541
 msgid "Mpc"
 msgstr "Mpc"
 
-#: ../src/celestia/celestiacore.cpp:2500
+#: ../src/celestia/celestiacore.cpp:2546
 msgid "kpc"
 msgstr "kpc"
 
-#: ../src/celestia/celestiacore.cpp:2505
-#: ../src/celestia/qt/qtselectionpopup.cpp:108
+#: ../src/celestia/celestiacore.cpp:2551
 msgid "ly"
 msgstr "ly (ışık yılı)"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2509
-#: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
+#: ../src/celestia/celestiacore.cpp:2555 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "au"
 msgstr "ab"
 
-#: ../src/celestia/celestiacore.cpp:2516
+#: ../src/celestia/celestiacore.cpp:2562
 #, fuzzy
 msgid "mi"
 msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2521
+#: ../src/celestia/celestiacore.cpp:2567
 msgid "ft"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2529 ../src/celestia/qt/qtinfopanel.cpp:124
+#: ../src/celestia/celestiacore.cpp:2575 ../src/celestia/qt/qtinfopanel.cpp:124
 #: ../src/celestia/qt/qtinfopanel.cpp:251 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2534 ../src/celestia/qt/qtinfopanel.cpp:128
+#: ../src/celestia/celestiacore.cpp:2580 ../src/celestia/qt/qtinfopanel.cpp:128
 msgid "m"
 msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2557 ../src/celestia/qt/qtinfopanel.cpp:180
+#: ../src/celestia/celestiacore.cpp:2603 ../src/celestia/qt/qtinfopanel.cpp:180
 #: ../src/celestia/qt/qtinfopanel.cpp:213
 #: ../src/celestia/qt/qtinfopanel.cpp:263
 msgid "days"
 msgstr "gün"
 
-#: ../src/celestia/celestiacore.cpp:2562 ../src/celestia/qt/qtinfopanel.cpp:176
+#: ../src/celestia/celestiacore.cpp:2608 ../src/celestia/qt/qtinfopanel.cpp:176
 #: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "hours"
 msgstr "saat"
 
-#: ../src/celestia/celestiacore.cpp:2567
+#: ../src/celestia/celestiacore.cpp:2613
 msgid "minutes"
 msgstr "dakika"
 
-#: ../src/celestia/celestiacore.cpp:2572
+#: ../src/celestia/celestiacore.cpp:2618
 msgid "seconds"
 msgstr "saniye"
 
-#: ../src/celestia/celestiacore.cpp:2575
-#, c-format
-msgid "Rotation period: %s %s\n"
+#: ../src/celestia/celestiacore.cpp:2621
+#, fuzzy
+msgid "Rotation period: {} {}\n"
 msgstr "Dönüş periyodu: %s %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2583
+#: ../src/celestia/celestiacore.cpp:2629
 #, fuzzy, c-format
 msgid "Mass: %.6g lb\n"
 msgstr "Kütle: %.6g kg\n"
 
-#: ../src/celestia/celestiacore.cpp:2585
+#: ../src/celestia/celestiacore.cpp:2631
 #, c-format
 msgid "Mass: %.6g kg\n"
 msgstr "Kütle: %.6g kg\n"
 
-#: ../src/celestia/celestiacore.cpp:2588
+#: ../src/celestia/celestiacore.cpp:2634
 #, c-format
 msgid "Mass: %.2f Mj\n"
 msgstr "Kütle: %.2f Mj\n"
 
-#: ../src/celestia/celestiacore.cpp:2590
+#: ../src/celestia/celestiacore.cpp:2636
 #, c-format
 msgid "Mass: %.2f Me\n"
 msgstr "Kütle: %.2f Me\n"
 
-#: ../src/celestia/celestiacore.cpp:2601
+#: ../src/celestia/celestiacore.cpp:2647
 msgid "ly/s"
 msgstr "ıy/s"
 
-#: ../src/celestia/celestiacore.cpp:2606
+#: ../src/celestia/celestiacore.cpp:2652
 msgid "AU/s"
 msgstr "AB/s"
 
-#: ../src/celestia/celestiacore.cpp:2618
+#: ../src/celestia/celestiacore.cpp:2664
 msgid "mi/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2623
+#: ../src/celestia/celestiacore.cpp:2669
 msgid "ft/s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2631
+#: ../src/celestia/celestiacore.cpp:2677
 msgid "km/s"
 msgstr "km/s"
 
-#: ../src/celestia/celestiacore.cpp:2636
+#: ../src/celestia/celestiacore.cpp:2682
 msgid "m/s"
 msgstr "m/s"
 
-#: ../src/celestia/celestiacore.cpp:2639
-#, c-format
-msgid "Speed: %s %s\n"
+#: ../src/celestia/celestiacore.cpp:2685
+#, fuzzy
+msgid "Speed: {} {}\n"
 msgstr "Hız: %s %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2673
+#: ../src/celestia/celestiacore.cpp:2717
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr "Sap: %+d%s %02d' %.1f\"\n"
 
-#: ../src/celestia/celestiacore.cpp:2685
+#: ../src/celestia/celestiacore.cpp:2729
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr "RA: %dh %02dm %.1fs\n"
 
-#: ../src/celestia/celestiacore.cpp:2701
+#: ../src/celestia/celestiacore.cpp:2745
 #, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "Görünür çap: %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2714
+#: ../src/celestia/celestiacore.cpp:2758
 #, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "Görünür kadir: %.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:2718
+#: ../src/celestia/celestiacore.cpp:2762
 #, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "Mutlak kadir %.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:2799
+#: ../src/celestia/celestiacore.cpp:2843
 #, c-format
 msgid "%.6f%c %.6f%c %s"
 msgstr "%.6f%c %.6f%c %s"
 
-#: ../src/celestia/celestiacore.cpp:2826 ../src/celestia/celestiacore.cpp:2898
-#: ../src/celestia/celestiacore.cpp:2928 ../src/celestia/celestiacore.cpp:3009
+#: ../src/celestia/celestiacore.cpp:2871 ../src/celestia/celestiacore.cpp:2943
+#: ../src/celestia/celestiacore.cpp:2974 ../src/celestia/celestiacore.cpp:3055
 #, c-format
 msgid "Distance: %s\n"
 msgstr "Mesafe: %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2830
+#: ../src/celestia/celestiacore.cpp:2875
 msgid "Star system barycenter\n"
 msgstr "Yıldız sistemi kütle merkezi\n"
 
-#: ../src/celestia/celestiacore.cpp:2834
+#: ../src/celestia/celestiacore.cpp:2879
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Mtlk (grnr) kad: %.2f (%.2f)\n"
 
-#: ../src/celestia/celestiacore.cpp:2839
-#, c-format
-msgid "Luminosity: %sx Sun\n"
+#: ../src/celestia/celestiacore.cpp:2884
+#, fuzzy
+msgid "Luminosity: {}x Sun\n"
 msgstr "Parlaklık: %s x Güneş\n"
 
-#: ../src/celestia/celestiacore.cpp:2845
+#: ../src/celestia/celestiacore.cpp:2890
 msgid "Neutron star"
 msgstr "Nötron yıldızı"
 
-#: ../src/celestia/celestiacore.cpp:2848
+#: ../src/celestia/celestiacore.cpp:2893
 msgid "Black hole"
 msgstr "Kara delik"
 
-#: ../src/celestia/celestiacore.cpp:2853
+#: ../src/celestia/celestiacore.cpp:2898
 #, c-format
 msgid "Class: %s\n"
 msgstr "Sınıf: %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2860
-#, c-format
-msgid "Surface temp: %s K\n"
+#: ../src/celestia/celestiacore.cpp:2905
+#, fuzzy, c-format
+msgid "Surface temp: %s\n"
 msgstr "Yüzey sıcaklığı: %s K\n"
 
-#: ../src/celestia/celestiacore.cpp:2865
-#, c-format
-msgid "Radius: %s Rsun  (%s)\n"
+#: ../src/celestia/celestiacore.cpp:2910
+#, fuzzy
+msgid "Radius: {} Rsun  ({})\n"
 msgstr "Yarıçap: %s Rgüneş  (%s)\n"
 
-#: ../src/celestia/celestiacore.cpp:2871 ../src/celestia/celestiacore.cpp:2906
-#: ../src/celestia/celestiacore.cpp:2935
-#, c-format
-msgid "Radius: %s\n"
+#: ../src/celestia/celestiacore.cpp:2916
+#, fuzzy
+msgid "Radius: {}\n"
 msgstr "Yarıçap: %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2887
+#: ../src/celestia/celestiacore.cpp:2932
 msgid "Planetary companions present\n"
 msgstr "Gezegensel refakatçiler mevcut\n"
 
-#: ../src/celestia/celestiacore.cpp:2903
+#: ../src/celestia/celestiacore.cpp:2948
 #, c-format
 msgid "Distance from center: %s\n"
 msgstr "Merkezden uzaklık %s\n"
 
-#: ../src/celestia/celestiacore.cpp:2976
+#: ../src/celestia/celestiacore.cpp:2951 ../src/celestia/celestiacore.cpp:2981
+#, c-format
+msgid "Radius: %s\n"
+msgstr "Yarıçap: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3022
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "Faz açısı: %.1f%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2992
+#: ../src/celestia/celestiacore.cpp:3038
 #, fuzzy, c-format
 msgid "Density: %.2f x 1000 lb/ft^3\n"
 msgstr "Yoğunluk: %.2f x 1000 kg/m^3\n"
 
-#: ../src/celestia/celestiacore.cpp:2994
+#: ../src/celestia/celestiacore.cpp:3040
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
 msgstr "Yoğunluk: %.2f x 1000 kg/m^3\n"
 
-#: ../src/celestia/celestiacore.cpp:2999
-#, c-format
-msgid "Temperature: %.0f K\n"
+#: ../src/celestia/celestiacore.cpp:3045
+#, fuzzy, c-format
+msgid "Temperature: %s\n"
 msgstr "Sıcaklık: %.0f K\n"
 
-#: ../src/celestia/celestiacore.cpp:3160
+#: ../src/celestia/celestiacore.cpp:3206
 msgid "  LT"
 msgstr " LT"
 
-#: ../src/celestia/celestiacore.cpp:3169
+#: ../src/celestia/celestiacore.cpp:3215
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
 #: ../src/celestia/qt/qttimetoolbar.cpp:54
 msgid "Real time"
 msgstr "Gerçek zaman"
 
-#: ../src/celestia/celestiacore.cpp:3171
+#: ../src/celestia/celestiacore.cpp:3217
 msgid "-Real time"
 msgstr "-Gerçek zaman"
 
-#: ../src/celestia/celestiacore.cpp:3175
+#: ../src/celestia/celestiacore.cpp:3221
 msgid "Time stopped"
 msgstr "Zaman durdu"
 
-#: ../src/celestia/celestiacore.cpp:3179
+#: ../src/celestia/celestiacore.cpp:3225
 #, c-format
 msgid "%.6g x faster"
 msgstr "%.6g x daha hızlı"
 
-#: ../src/celestia/celestiacore.cpp:3183
+#: ../src/celestia/celestiacore.cpp:3229
 #, c-format
 msgid "%.6g x slower"
 msgstr "%.6g x daha yavaş"
 
-#: ../src/celestia/celestiacore.cpp:3189
+#: ../src/celestia/celestiacore.cpp:3235
 msgid " (Paused)"
 msgstr "(duraklatıldı)"
 
-#: ../src/celestia/celestiacore.cpp:3208
+#: ../src/celestia/celestiacore.cpp:3254
 #, c-format
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
@@ -735,181 +715,180 @@ msgstr ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
 
-#: ../src/celestia/celestiacore.cpp:3217
+#: ../src/celestia/celestiacore.cpp:3263
 #, c-format
 msgid "FPS: %.1f\n"
 msgstr "FPS: %.1f\n"
 
-#: ../src/celestia/celestiacore.cpp:3242
-#, c-format
-msgid "Travelling (%s)\n"
+#: ../src/celestia/celestiacore.cpp:3288
+#, fuzzy
+msgid "Travelling ({})\n"
 msgstr "Seyahat ediliyor (%s)\n"
 
-#: ../src/celestia/celestiacore.cpp:3245
-#, c-format
+#: ../src/celestia/celestiacore.cpp:3291
 msgid "Travelling\n"
 msgstr "Seyahat ediliyor\n"
 
-#: ../src/celestia/celestiacore.cpp:3254
+#: ../src/celestia/celestiacore.cpp:3300
 #, c-format
 msgid "Track %s\n"
 msgstr "%s İzle\n"
 
-#: ../src/celestia/celestiacore.cpp:3270
+#: ../src/celestia/celestiacore.cpp:3316
 #, c-format
 msgid "Follow %s\n"
 msgstr "%s Takip Et\n"
 
-#: ../src/celestia/celestiacore.cpp:3274
+#: ../src/celestia/celestiacore.cpp:3320
 #, c-format
 msgid "Sync Orbit %s\n"
 msgstr "%s Yörüngesiyle Senkronize Et\n"
 
-#: ../src/celestia/celestiacore.cpp:3278
+#: ../src/celestia/celestiacore.cpp:3324
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr "Kilitle %s -> %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3284
+#: ../src/celestia/celestiacore.cpp:3330
 #, c-format
 msgid "Chase %s\n"
 msgstr "%s Peşinden Git\n"
 
-#: ../src/celestia/celestiacore.cpp:3298
+#: ../src/celestia/celestiacore.cpp:3344
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr "FOV: %s (%.2fx)\n"
 
-#: ../src/celestia/celestiacore.cpp:3481
+#: ../src/celestia/celestiacore.cpp:3529
 #, c-format
 msgid "Target name: %s"
 msgstr "Hedef adı: %s"
 
-#: ../src/celestia/celestiacore.cpp:3568
+#: ../src/celestia/celestiacore.cpp:3605
 #, c-format
 msgid "%dx%d at %.2f fps  %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3571
+#: ../src/celestia/celestiacore.cpp:3608
 msgid "Paused"
 msgstr "Durduruldu"
 
-#: ../src/celestia/celestiacore.cpp:3571
+#: ../src/celestia/celestiacore.cpp:3608
 msgid "Recording"
 msgstr "Kaydediyor"
 
-#: ../src/celestia/celestiacore.cpp:3592
+#: ../src/celestia/celestiacore.cpp:3629
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Başlat/Duraklat    F12 Durdur"
 
-#: ../src/celestia/celestiacore.cpp:3603 ../src/celestia/celestiacore.cpp:3608
+#: ../src/celestia/celestiacore.cpp:3640 ../src/celestia/celestiacore.cpp:3645
 msgid "Edit Mode"
 msgstr "Düzenleme Modu"
 
-#: ../src/celestia/celestiacore.cpp:3641
+#: ../src/celestia/celestiacore.cpp:3678
 msgid "Skipping solar system catalog: {}\n"
 msgstr "Güneş sistemi kataloğu atlanıyor: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:3644
+#: ../src/celestia/celestiacore.cpp:3681
 #, fuzzy
 msgid "Loading solar system catalog: {}\n"
 msgstr "Güneş sistemi kataloğu yükleniyor: %s\n"
 
-#: ../src/celestia/celestiacore.cpp:3687
+#: ../src/celestia/celestiacore.cpp:3724
 msgid "Skipping {} catalog: {}\n"
 msgstr "{} kataloğu atlanıyor: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:3690
+#: ../src/celestia/celestiacore.cpp:3727
 msgid "Loading {} catalog: {}\n"
 msgstr "{} kataloğu yükleniyor: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:3698
+#: ../src/celestia/celestiacore.cpp:3735
 #, fuzzy
 msgid "Error reading {} catalog file: {}\n"
 msgstr "Sık kullanılanlar dosyasını okurken hata. {}\n"
 
-#: ../src/celestia/celestiacore.cpp:3726
+#: ../src/celestia/celestiacore.cpp:3767
 msgid "Error reading configuration file."
 msgstr "Yapılandırma dosyası okunurken hata oluştu."
 
-#: ../src/celestia/celestiacore.cpp:3737
+#: ../src/celestia/celestiacore.cpp:3781
 msgid "Initialization of SPICE library failed."
 msgstr "SPICE kütüphanesinin başlatılması başarısız oldu."
 
-#: ../src/celestia/celestiacore.cpp:3780
+#: ../src/celestia/celestiacore.cpp:3824
 msgid "Cannot read star database."
 msgstr "Yıldız veritabanı okunamıyor"
 
-#: ../src/celestia/celestiacore.cpp:3801
+#: ../src/celestia/celestiacore.cpp:3845
 msgid "Error opening deepsky catalog file {}.\n"
 msgstr "{} derin uzay katalog dosyası açılırken hata.\n"
 
-#: ../src/celestia/celestiacore.cpp:3805
+#: ../src/celestia/celestiacore.cpp:3849
 msgid "Cannot read Deep Sky Objects database {}.\n"
 msgstr "{} Derin Uzay Cisimleri veritabanı okunamıyor.\n"
 
-#: ../src/celestia/celestiacore.cpp:3854
+#: ../src/celestia/celestiacore.cpp:3898
 msgid "Error opening solar system catalog {}.\n"
 msgstr "{} güneş sistemi katalogu açılırken hata.\n"
 
-#: ../src/celestia/celestiacore.cpp:3894
+#: ../src/celestia/celestiacore.cpp:3938
 msgid "Error opening asterisms file {}.\n"
 msgstr "{} yıldız kümeleri dosyası açılırken hata.\n"
 
-#: ../src/celestia/celestiacore.cpp:3910
+#: ../src/celestia/celestiacore.cpp:3954
 msgid "Error opening constellation boundaries file {}.\n"
 msgstr "{} takımyıldız sınırları dosyası açılırken hata.\n"
 
-#: ../src/celestia/celestiacore.cpp:4045
+#: ../src/celestia/celestiacore.cpp:4088
 msgid "Failed to initialize renderer"
 msgstr "Renderer başlatması başarısız oldu."
 
-#: ../src/celestia/celestiacore.cpp:4061
+#: ../src/celestia/celestiacore.cpp:4104
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Font yükleme hatası; metinler görünmeyecek.\n"
 
-#: ../src/celestia/celestiacore.cpp:4109
+#: ../src/celestia/celestiacore.cpp:4140
 msgid "Error reading cross index {}\n"
 msgstr "{} çapraz dizini okunurken hata\n"
 
-#: ../src/celestia/celestiacore.cpp:4111
+#: ../src/celestia/celestiacore.cpp:4142
 msgid "Loaded cross index {}\n"
 msgstr "{} çapraz dizini yüklendi.\n"
 
-#: ../src/celestia/celestiacore.cpp:4128
+#: ../src/celestia/celestiacore.cpp:4159
 msgid "Error reading star names file\n"
 msgstr "Yıldız isimleri dosyası okunurken hata\n"
 
-#: ../src/celestia/celestiacore.cpp:4132 ../src/celestia/celestiacore.cpp:4146
+#: ../src/celestia/celestiacore.cpp:4163 ../src/celestia/celestiacore.cpp:4177
 msgid "Error opening {}\n"
 msgstr "{} açılırken hata\n"
 
-#: ../src/celestia/celestiacore.cpp:4154
+#: ../src/celestia/celestiacore.cpp:4185
 msgid "Error reading stars file\n"
 msgstr "Dosyadan yıldızlar okunurken hata\n"
 
-#: ../src/celestia/celestiacore.cpp:4180
+#: ../src/celestia/celestiacore.cpp:4211
 msgid "Error opening star catalog {}\n"
 msgstr "{} yıldız kataloğu açılırken hata\n"
 
-#: ../src/celestia/celestiacore.cpp:4542
+#: ../src/celestia/celestiacore.cpp:4571
 msgid "Invalid URL"
 msgstr "Geçersiz URL"
 
-#: ../src/celestia/celestiacore.cpp:4767
+#: ../src/celestia/celestiacore.cpp:4800
 msgid "Unable to capture a frame!\n"
 msgstr "Bir kare yakalanamadı!\n"
 
-#: ../src/celestia/celestiacore.cpp:4779
+#: ../src/celestia/celestiacore.cpp:4811
 #, fuzzy
 msgid "Unsupported image type: {}!\n"
 msgstr "Desteklenmeyen URL modu \"%s\"!\n"
 
-#: ../src/celestia/glut/glutmain.cpp:530
+#: ../src/celestia/glut/glutmain.cpp:524
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
 msgstr "Celestia, OpenGL 2.1'i başlatamadı.\n"
 
-#: ../src/celestia/gtk/actions.cpp:1095 ../src/celestia/win32/winmain.cpp:2663
+#: ../src/celestia/gtk/actions.cpp:1100 ../src/celestia/win32/winmain.cpp:2719
 msgid "Please use a name ending in '.jpg' or '.png'."
 msgstr "Lütfen '.jpg' veya '.png' ile biten bir ad kullanın."
 
@@ -968,19 +947,19 @@ msgstr "İnterpolatör sayısı: %s\n"
 msgid "Max anisotropy filtering: %s\n"
 msgstr "Maks. anizotropi filtreleme: %s\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:169
+#: ../src/celestia/qt/qtappwin.cpp:167
 msgid "Auto"
 msgstr "Oto"
 
-#: ../src/celestia/qt/qtappwin.cpp:175
+#: ../src/celestia/qt/qtappwin.cpp:173
 msgid "Custom"
 msgstr "Özel"
 
-#: ../src/celestia/qt/qtappwin.cpp:214
+#: ../src/celestia/qt/qtappwin.cpp:212
 msgid "Error getting path for log filename!"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:231
+#: ../src/celestia/qt/qtappwin.cpp:229
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably "
 "due to improper installation."
@@ -988,18 +967,18 @@ msgstr ""
 "Celestia, veri dizini bulunamadığından, muhtemelen yanlış kurulumdan dolayı "
 "çalıştırılamıyor."
 
-#: ../src/celestia/qt/qtappwin.cpp:297
+#: ../src/celestia/qt/qtappwin.cpp:294
 msgid "Celestial Browser"
 msgstr "Gök Tarayıcı"
 
 #. Info browser for a selected object
-#: ../src/celestia/qt/qtappwin.cpp:303
+#: ../src/celestia/qt/qtappwin.cpp:300
 msgid "Info Browser"
 msgstr "Bilgi Tarayıcısı"
 
 #. Set up the browser tabs
-#: ../src/celestia/qt/qtappwin.cpp:332
-#: ../src/celestia/win32/res/resource_strings.cpp:172
+#: ../src/celestia/qt/qtappwin.cpp:329
+#: ../src/celestia/win32/res/resource_strings.cpp:174
 msgid "Solar System"
 msgstr "Güneş Sistemi"
 
@@ -1009,19 +988,19 @@ msgstr "Güneş Sistemi"
 #. i18n: ectx: property (text), widget (QCheckBox, starOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:499
 #. i18n: ectx: property (text), widget (QCheckBox, starLabelsCheck)
-#: ../src/celestia/qt/qtappwin.cpp:333
+#: ../src/celestia/qt/qtappwin.cpp:330
 #: ../src/celestia/qt/qtcelestiaactions.cpp:84
 #: ../src/celestia/qt/qtcelestiaactions.cpp:111 ../src/celestia/qt/rc.cpp:72
 #: ../src/celestia/qt/rc.cpp:154 ../src/celestia/qt/rc.cpp:221
-#: ../src/celestia/win32/res/resource_strings.cpp:212
+#: ../src/celestia/win32/res/resource_strings.cpp:214
 msgid "Stars"
 msgstr "Yıldızlar"
 
-#: ../src/celestia/qt/qtappwin.cpp:334
+#: ../src/celestia/qt/qtappwin.cpp:331
 msgid "Deep Sky Objects"
 msgstr "Derin Uzay Cisimleri"
 
-#: ../src/celestia/qt/qtappwin.cpp:341 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:338 ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 msgid "Event Finder"
 msgstr "Olay Bulucu"
@@ -1030,110 +1009,107 @@ msgstr "Olay Bulucu"
 #. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1034
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
-#: ../src/celestia/qt/qtappwin.cpp:350 ../src/celestia/qt/rc.cpp:351
+#: ../src/celestia/qt/qtappwin.cpp:347 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Zaman"
 
 #. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#: ../src/celestia/qt/qtappwin.cpp:357 ../src/celestia/qt/rc.cpp:139
+#: ../src/celestia/qt/qtappwin.cpp:354 ../src/celestia/qt/rc.cpp:139
 msgid "Guides"
 msgstr "Rehberler"
 
-#: ../src/celestia/qt/qtappwin.cpp:407
+#: ../src/celestia/qt/qtappwin.cpp:404
 msgid "Full screen"
 msgstr "Tam ekran"
 
-#: ../src/celestia/qt/qtappwin.cpp:409
+#: ../src/celestia/qt/qtappwin.cpp:406
 msgid "Shift+F11"
 msgstr "Shift+F11"
 
-#: ../src/celestia/qt/qtappwin.cpp:564
+#: ../src/celestia/qt/qtappwin.cpp:560
 msgid "Error opening bookmarks file"
 msgstr "Yer imleri dosyası açılırken hata"
 
-#: ../src/celestia/qt/qtappwin.cpp:583
+#: ../src/celestia/qt/qtappwin.cpp:579
 msgid "Error Saving Bookmarks"
 msgstr "Yer İmleri Kaydedilirken Hata"
 
-#: ../src/celestia/qt/qtappwin.cpp:620
+#: ../src/celestia/qt/qtappwin.cpp:616
 msgid "Save Image"
 msgstr "Resmi Kaydet"
 
-#: ../src/celestia/qt/qtappwin.cpp:622
+#: ../src/celestia/qt/qtappwin.cpp:618
 msgid "Images (*.png *.jpg)"
 msgstr "Resimler (*.png *.jpg)"
 
-#: ../src/celestia/qt/qtappwin.cpp:647 ../src/celestia/qt/qtappwin.cpp:652
-#: ../src/celestia/qt/qtappwin.cpp:665
+#: ../src/celestia/qt/qtappwin.cpp:642 ../src/celestia/qt/qtappwin.cpp:652
 msgid "Capture Video"
 msgstr "Video Çek"
 
-#: ../src/celestia/qt/qtappwin.cpp:649
-msgid "Video (*.avi)"
-msgstr "Video (*.avi)"
-
-#: ../src/celestia/qt/qtappwin.cpp:654
+#: ../src/celestia/qt/qtappwin.cpp:644
 #, fuzzy
 msgid "Matroska Video (*.mkv)"
 msgstr "Video (*.avi)"
 
-#: ../src/celestia/qt/qtappwin.cpp:670
+#: ../src/celestia/qt/qtappwin.cpp:657
 msgid "Resolution:"
 msgstr "Çözünürlük:"
 
-#: ../src/celestia/qt/qtappwin.cpp:673
+#: ../src/celestia/qt/qtappwin.cpp:660
 #, qt-format
 msgid "%1 x %2"
 msgstr "%1 x %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:676
+#: ../src/celestia/qt/qtappwin.cpp:663
 #: ../src/celestia/win32/res/resource_strings.cpp:152
 msgid "Frame rate:"
 msgstr "Kare hızı:"
 
-#: ../src/celestia/qt/qtappwin.cpp:683
+#: ../src/celestia/qt/qtappwin.cpp:669
 msgid "Video codec:"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:685
+#: ../src/celestia/qt/qtappwin.cpp:671
 msgid "Lossless"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:686
+#: ../src/celestia/qt/qtappwin.cpp:672
 msgid "Lossy (H.264)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:690
+#: ../src/celestia/qt/qtappwin.cpp:676
+#: ../src/celestia/win32/res/resource_strings.cpp:154
 msgid "Bitrate:"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:763
+#: ../src/celestia/qt/qtappwin.cpp:734
 msgid "Captured screen shot to clipboard"
 msgstr "Ekran alıntısı panoya yakalandı"
 
-#: ../src/celestia/qt/qtappwin.cpp:774 ../src/celestia/win32/winmain.cpp:3818
+#: ../src/celestia/qt/qtappwin.cpp:745 ../src/celestia/sdl/sdlmain.cpp:517
+#: ../src/celestia/win32/winmain.cpp:3873
 msgid "Copied URL"
 msgstr "URL kopyalandı"
 
-#: ../src/celestia/qt/qtappwin.cpp:784
+#: ../src/celestia/qt/qtappwin.cpp:755 ../src/celestia/sdl/sdlmain.cpp:529
 msgid "Pasting URL"
 msgstr "URL yapıştırılıyor"
 
-#: ../src/celestia/qt/qtappwin.cpp:908
+#: ../src/celestia/qt/qtappwin.cpp:879
 msgid "Open Script"
 msgstr "Betiği Aç"
 
-#: ../src/celestia/qt/qtappwin.cpp:910
+#: ../src/celestia/qt/qtappwin.cpp:881
 msgid "Celestia Scripts (*.celx *.cel)"
 msgstr "Celestia Betikleri (*.celx *.cel)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1027
+#: ../src/celestia/qt/qtappwin.cpp:1034
 msgid "New bookmark"
 msgstr "Yeni yer imi"
 
-#: ../src/celestia/qt/qtappwin.cpp:1082
+#: ../src/celestia/qt/qtappwin.cpp:1089
 #, fuzzy, qt-format
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
@@ -1166,302 +1142,302 @@ msgstr ""
 "CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></"
 "p></html>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1118
+#: ../src/celestia/qt/qtappwin.cpp:1125
 msgid "Unknown compiler"
 msgstr "Bilinmeyen derleyici"
 
-#: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1127
+#: ../src/celestia/qt/qtappwin.cpp:1129 ../src/celestia/qt/qtappwin.cpp:1134
 msgid "supported"
 msgstr "destekleniyor"
 
-#: ../src/celestia/qt/qtappwin.cpp:1124 ../src/celestia/qt/qtappwin.cpp:1129
+#: ../src/celestia/qt/qtappwin.cpp:1131 ../src/celestia/qt/qtappwin.cpp:1136
 msgid "not supported"
 msgstr "desteklenmiyor"
 
-#: ../src/celestia/qt/qtappwin.cpp:1132 ../src/celestia/qt/qtappwin.cpp:1526
+#: ../src/celestia/qt/qtappwin.cpp:1139 ../src/celestia/qt/qtappwin.cpp:1533
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
 msgstr "Celestia Hakkında"
 
-#: ../src/celestia/qt/qtappwin.cpp:1151
+#: ../src/celestia/qt/qtappwin.cpp:1158
 #, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr "<b>%1 sürüm:</b> %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1157
+#: ../src/celestia/qt/qtappwin.cpp:1164
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "<b>Satıcı:</b> %L1 %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1163
+#: ../src/celestia/qt/qtappwin.cpp:1170
 #, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "<b>Renderer:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1170
+#: ../src/celestia/qt/qtappwin.cpp:1177
 #, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "<b>%1 Sürüm:</b> %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1177
+#: ../src/celestia/qt/qtappwin.cpp:1184
 #, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "<b>Maksimum eşzamanlı dokular:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1183
+#: ../src/celestia/qt/qtappwin.cpp:1190
 #, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "<b>Maksimum doku boyutu:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1189
+#: ../src/celestia/qt/qtappwin.cpp:1196
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "<b>Nokta boyutu uzaklığı:</b> %L1 %2"
 
-#: ../src/celestia/qt/qtappwin.cpp:1195
+#: ../src/celestia/qt/qtappwin.cpp:1202
 #, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "<b>Nokta boyutu ayrıntı düzeyi:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1201
+#: ../src/celestia/qt/qtappwin.cpp:1208
 #, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "<b>Maks. küp haritası boyutu:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1207
+#: ../src/celestia/qt/qtappwin.cpp:1214
 #, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "<b>Periapsis argümanı:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1213
+#: ../src/celestia/qt/qtappwin.cpp:1220
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr "<b>Maks anizotropi filtreleme:</b> %1"
 
-#: ../src/celestia/qt/qtappwin.cpp:1223
+#: ../src/celestia/qt/qtappwin.cpp:1230
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "<b>Desteklenen eklentiler:</b><br>\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:1237
+#: ../src/celestia/qt/qtappwin.cpp:1244
 msgid "Renderer Info"
 msgstr "Renderer Bilgisi"
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1261
+#: ../src/celestia/qt/qtappwin.cpp:1268
 #: ../src/celestia/win32/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "&Dosya"
 
-#: ../src/celestia/qt/qtappwin.cpp:1264
+#: ../src/celestia/qt/qtappwin.cpp:1271
 msgid "&Grab image"
 msgstr "Resmi &al"
 
-#: ../src/celestia/qt/qtappwin.cpp:1265
+#: ../src/celestia/qt/qtappwin.cpp:1272
 msgid "F10"
 msgstr "F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1270
+#: ../src/celestia/qt/qtappwin.cpp:1277
 msgid "Capture &video"
 msgstr "&Video çek"
 
-#: ../src/celestia/qt/qtappwin.cpp:1274
+#: ../src/celestia/qt/qtappwin.cpp:1281
 msgid "Shift+F10"
 msgstr "Shift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1278
+#: ../src/celestia/qt/qtappwin.cpp:1285
 msgid "&Copy image"
 msgstr "Resmi &kopyala"
 
-#: ../src/celestia/qt/qtappwin.cpp:1279
+#: ../src/celestia/qt/qtappwin.cpp:1286
 msgid "Ctrl+Shift+C"
 msgstr "Ctrl+Shift+C"
 
-#: ../src/celestia/qt/qtappwin.cpp:1285
+#: ../src/celestia/qt/qtappwin.cpp:1292
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "Betik &Aç..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1296
+#: ../src/celestia/qt/qtappwin.cpp:1303
 msgid "&Preferences..."
 msgstr "&Tercihler..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1300
+#: ../src/celestia/qt/qtappwin.cpp:1307
 #: ../src/celestia/win32/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "&Çıkış"
 
-#: ../src/celestia/qt/qtappwin.cpp:1301
+#: ../src/celestia/qt/qtappwin.cpp:1308
 msgid "Ctrl+Q"
 msgstr "Ctrl+Q"
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1306
+#: ../src/celestia/qt/qtappwin.cpp:1313
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
 msgstr "&Navigasyon"
 
-#: ../src/celestia/qt/qtappwin.cpp:1308
+#: ../src/celestia/qt/qtappwin.cpp:1315
 msgid "Select Sun"
 msgstr "Güneşi Seç"
 
-#: ../src/celestia/qt/qtappwin.cpp:1312
+#: ../src/celestia/qt/qtappwin.cpp:1319
 msgid "Center Selection"
 msgstr "Merkez Seçim"
 
-#: ../src/celestia/qt/qtappwin.cpp:1316
+#: ../src/celestia/qt/qtappwin.cpp:1323
 msgid "Goto Selection"
 msgstr "Seçime Git"
 
-#: ../src/celestia/qt/qtappwin.cpp:1320
+#: ../src/celestia/qt/qtappwin.cpp:1327
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "Cisme Git..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1324
+#: ../src/celestia/qt/qtappwin.cpp:1331
 msgid "Copy URL / console text"
 msgstr "URL / konsol metnini kopyala"
 
-#: ../src/celestia/qt/qtappwin.cpp:1329
+#: ../src/celestia/qt/qtappwin.cpp:1336
 msgid "Paste URL / console text"
 msgstr "URL / konsol metnini yapıştır"
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1335
+#: ../src/celestia/qt/qtappwin.cpp:1342
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "&Zaman"
 
-#: ../src/celestia/qt/qtappwin.cpp:1337
+#: ../src/celestia/qt/qtappwin.cpp:1344
 msgid "Set &time"
 msgstr "&Zaman seç"
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1345
+#: ../src/celestia/qt/qtappwin.cpp:1352
 msgid "&Display"
 msgstr "&Görünüm"
 
-#: ../src/celestia/qt/qtappwin.cpp:1351
+#: ../src/celestia/qt/qtappwin.cpp:1358
 msgid "Dee&p Sky Objects"
 msgstr "&Derin Uzay Cisimleri"
 
-#: ../src/celestia/qt/qtappwin.cpp:1357
+#: ../src/celestia/qt/qtappwin.cpp:1364
 msgid "&Shadows"
 msgstr "&Gölgeler"
 
-#: ../src/celestia/qt/qtappwin.cpp:1368
+#: ../src/celestia/qt/qtappwin.cpp:1375
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "&Yıldız Stili"
 
-#: ../src/celestia/qt/qtappwin.cpp:1375
+#: ../src/celestia/qt/qtappwin.cpp:1382
 msgid "Texture &Resolution"
 msgstr "Doku &Çözünürlüğü"
 
-#: ../src/celestia/qt/qtappwin.cpp:1380
+#: ../src/celestia/qt/qtappwin.cpp:1387
 msgid "&FPS control"
 msgstr "&FPS kontrolü"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1397
+#: ../src/celestia/qt/qtappwin.cpp:1404
 #: ../src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Bookmarks"
 msgstr "&Yerimleri"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1400
+#: ../src/celestia/qt/qtappwin.cpp:1407
 #: ../src/celestia/win32/res/resource_strings.cpp:53
 msgid "&View"
 msgstr "&Görüntü"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1403
+#: ../src/celestia/qt/qtappwin.cpp:1410
 msgid "&MultiView"
 msgstr "&Çoklu Görünüm"
 
-#: ../src/celestia/qt/qtappwin.cpp:1406
+#: ../src/celestia/qt/qtappwin.cpp:1413
 msgid "Split view vertically"
 msgstr "Görüntüyü dikey ayır"
 
-#: ../src/celestia/qt/qtappwin.cpp:1407
+#: ../src/celestia/qt/qtappwin.cpp:1414
 msgid "Ctrl+R"
 msgstr "Ctrl+R"
 
-#: ../src/celestia/qt/qtappwin.cpp:1412
+#: ../src/celestia/qt/qtappwin.cpp:1419
 msgid "Split view horizontally"
 msgstr "Görüntüyü yatay ayır"
 
-#: ../src/celestia/qt/qtappwin.cpp:1413
+#: ../src/celestia/qt/qtappwin.cpp:1420
 msgid "Ctrl+U"
 msgstr "Ctrl+U"
 
-#: ../src/celestia/qt/qtappwin.cpp:1418
+#: ../src/celestia/qt/qtappwin.cpp:1425
 msgid "Cycle views"
 msgstr "Görüntüler arası geçiş yap"
 
-#: ../src/celestia/qt/qtappwin.cpp:1419
+#: ../src/celestia/qt/qtappwin.cpp:1426
 msgid "Tab"
 msgstr "Sekme"
 
-#: ../src/celestia/qt/qtappwin.cpp:1424
+#: ../src/celestia/qt/qtappwin.cpp:1431
 msgid "Single view"
 msgstr "Tek görüntü"
 
-#: ../src/celestia/qt/qtappwin.cpp:1425
+#: ../src/celestia/qt/qtappwin.cpp:1432
 msgid "Ctrl+D"
 msgstr "Ctrl+D"
 
-#: ../src/celestia/qt/qtappwin.cpp:1430
+#: ../src/celestia/qt/qtappwin.cpp:1437
 msgid "Delete view"
 msgstr "Görüntüyü sil"
 
-#: ../src/celestia/qt/qtappwin.cpp:1431
-#: ../src/celestia/win32/res/resource_strings.cpp:158
+#: ../src/celestia/qt/qtappwin.cpp:1438
+#: ../src/celestia/win32/res/resource_strings.cpp:160
 msgid "Delete"
 msgstr "Sil"
 
-#: ../src/celestia/qt/qtappwin.cpp:1437
+#: ../src/celestia/qt/qtappwin.cpp:1444
 msgid "Frames visible"
 msgstr "Görünür kareler"
 
-#: ../src/celestia/qt/qtappwin.cpp:1458
+#: ../src/celestia/qt/qtappwin.cpp:1465
 msgid "Active frame visible"
 msgstr "Görünür aktif kareler"
 
-#: ../src/celestia/qt/qtappwin.cpp:1474
+#: ../src/celestia/qt/qtappwin.cpp:1481
 msgid "Synchronize time"
 msgstr "Zamanı senkronize et"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1515
+#: ../src/celestia/qt/qtappwin.cpp:1522
 #: ../src/celestia/win32/res/resource_strings.cpp:63
 msgid "&Help"
 msgstr "&Yardım"
 
-#: ../src/celestia/qt/qtappwin.cpp:1517
+#: ../src/celestia/qt/qtappwin.cpp:1524
 msgid "Celestia Manual"
 msgstr "Celestia El Kitabı"
 
-#: ../src/celestia/qt/qtappwin.cpp:1522
+#: ../src/celestia/qt/qtappwin.cpp:1529
 msgid "OpenGL Info"
 msgstr "OpenGL Bilgisi"
 
-#: ../src/celestia/qt/qtappwin.cpp:1542
+#: ../src/celestia/qt/qtappwin.cpp:1549
 msgid "Add Bookmark..."
 msgstr "Yer İmi Ekle..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1546
+#: ../src/celestia/qt/qtappwin.cpp:1553
 msgid "Organize Bookmarks..."
 msgstr "Yer İmlerini Organize Et..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1584
+#: ../src/celestia/qt/qtappwin.cpp:1591
 msgid "Set custom FPS"
 msgstr "Özel FPS ayarla"
 
-#: ../src/celestia/qt/qtappwin.cpp:1585
+#: ../src/celestia/qt/qtappwin.cpp:1592
 msgid "FPS value"
 msgstr "FPS değeri"
 
-#: ../src/celestia/qt/qtappwin.cpp:1606
+#: ../src/celestia/qt/qtappwin.cpp:1613
 #, qt-format
 msgid ""
 "Loading data files: %1\n"
@@ -1470,7 +1446,7 @@ msgstr ""
 "Veri dosyaları yükleniyor: %1\n"
 "\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:1617
+#: ../src/celestia/qt/qtappwin.cpp:1624
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "Betikler"
@@ -1579,11 +1555,11 @@ msgstr "İ"
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
 #: ../src/celestia/qt/qtcelestiaactions.cpp:53
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:561
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:481
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:562
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:482
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775
 #: ../src/celestia/qt/rc.cpp:209
-#: ../src/celestia/win32/res/resource_strings.cpp:204
+#: ../src/celestia/win32/res/resource_strings.cpp:206
 msgid "Markers"
 msgstr "İşaretleyiciler"
 
@@ -1598,7 +1574,7 @@ msgstr "T"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:58
 #: ../src/celestia/qt/qtcelestiaactions.cpp:124 ../src/celestia/qt/rc.cpp:194
 #: ../src/celestia/qt/rc.cpp:258
-#: ../src/celestia/win32/res/resource_strings.cpp:224
+#: ../src/celestia/win32/res/resource_strings.cpp:226
 msgid "Constellations"
 msgstr "Takımyıldızlar"
 
@@ -1617,7 +1593,7 @@ msgstr "O"
 #. i18n: file: ../src/celestia/qt/preferences.ui:236
 #. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:68 ../src/celestia/qt/rc.cpp:142
-#: ../src/celestia/win32/res/resource_strings.cpp:201
+#: ../src/celestia/win32/res/resource_strings.cpp:203
 msgid "Orbits"
 msgstr "Yörüngeler"
 
@@ -1631,18 +1607,18 @@ msgstr "Yörüngeler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:85
 #: ../src/celestia/qt/qtcelestiaactions.cpp:112
 #: ../src/celestia/qt/qtselectionpopup.cpp:388
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:582 ../src/celestia/qt/rc.cpp:75
 #: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
-#: ../src/celestia/win32/res/resource_strings.cpp:213
-#: ../src/celestia/win32/winmain.cpp:1468
-#: ../src/celestia/win32/winmain.cpp:1506
-#: ../src/celestia/win32/winmain.cpp:1626
+#: ../src/celestia/win32/res/resource_strings.cpp:215
+#: ../src/celestia/win32/winmain.cpp:1534
+#: ../src/celestia/win32/winmain.cpp:1572
+#: ../src/celestia/win32/winmain.cpp:1692
 msgid "Planets"
 msgstr "Gezegenler"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:86
 #: ../src/celestia/qt/qtcelestiaactions.cpp:113
-#: ../src/celestia/win32/res/resource_strings.cpp:214
+#: ../src/celestia/win32/res/resource_strings.cpp:216
 msgid "Dwarf Planets"
 msgstr "Cüce gezegenler"
 
@@ -1655,16 +1631,16 @@ msgstr "Cüce gezegenler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:87
 #: ../src/celestia/qt/qtcelestiaactions.cpp:114
 #: ../src/celestia/qt/qtselectionpopup.cpp:394
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:584 ../src/celestia/qt/rc.cpp:81
 #: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
-#: ../src/celestia/win32/res/resource_strings.cpp:215
-#: ../src/celestia/win32/winmain.cpp:1464
+#: ../src/celestia/win32/res/resource_strings.cpp:217
+#: ../src/celestia/win32/winmain.cpp:1530
 msgid "Moons"
 msgstr "Uydular"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:88
 #: ../src/celestia/qt/qtcelestiaactions.cpp:115
-#: ../src/celestia/win32/res/resource_strings.cpp:216
+#: ../src/celestia/win32/res/resource_strings.cpp:218
 msgid "Minor Moons"
 msgstr "Küçük Uydular"
 
@@ -1677,10 +1653,10 @@ msgstr "Küçük Uydular"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:89
 #: ../src/celestia/qt/qtcelestiaactions.cpp:116
 #: ../src/celestia/qt/qtselectionpopup.cpp:400
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:743 ../src/celestia/qt/rc.cpp:87
 #: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
-#: ../src/celestia/win32/res/resource_strings.cpp:217
-#: ../src/celestia/win32/winmain.cpp:1458
+#: ../src/celestia/win32/res/resource_strings.cpp:219
+#: ../src/celestia/win32/winmain.cpp:1524
 msgid "Asteroids"
 msgstr "Asteroitler"
 
@@ -1693,10 +1669,10 @@ msgstr "Asteroitler"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:90
 #: ../src/celestia/qt/qtcelestiaactions.cpp:117
 #: ../src/celestia/qt/qtselectionpopup.cpp:403
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:751 ../src/celestia/qt/rc.cpp:90
 #: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
-#: ../src/celestia/win32/res/resource_strings.cpp:218
-#: ../src/celestia/win32/winmain.cpp:1460
+#: ../src/celestia/win32/res/resource_strings.cpp:220
+#: ../src/celestia/win32/winmain.cpp:1526
 msgid "Comets"
 msgstr "Kuyruklu yıldızlar"
 
@@ -1713,11 +1689,11 @@ msgstr "Kuyruklu yıldızlar"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:91
 #: ../src/celestia/qt/qtcelestiaactions.cpp:118
 #: ../src/celestia/qt/qtselectionpopup.cpp:406
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:586
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:747 ../src/celestia/qt/rc.cpp:94
 #: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
-#: ../src/celestia/win32/res/resource_strings.cpp:219
-#: ../src/celestia/win32/winmain.cpp:1473
+#: ../src/celestia/win32/res/resource_strings.cpp:221
+#: ../src/celestia/win32/winmain.cpp:1539
 msgctxt "plural"
 msgid "Spacecraft"
 msgstr "Uzay aracı"
@@ -1733,7 +1709,7 @@ msgstr "L"
 #. i18n: ectx: property (title), widget (QGroupBox, labelsGroupBox)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:108 ../src/celestia/qt/rc.cpp:215
 #: ../src/celestia/qt/rc.cpp:218
-#: ../src/celestia/win32/res/resource_strings.cpp:227
+#: ../src/celestia/win32/res/resource_strings.cpp:229
 msgid "Labels"
 msgstr "Etiketler"
 
@@ -1743,9 +1719,9 @@ msgstr "Etiketler"
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:119
 #: ../src/celestia/qt/qtcelestiaactions.cpp:143
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:443 ../src/celestia/qt/rc.cpp:97
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:444 ../src/celestia/qt/rc.cpp:97
 #: ../src/celestia/qt/rc.cpp:246
-#: ../src/celestia/win32/res/resource_strings.cpp:220
+#: ../src/celestia/win32/res/resource_strings.cpp:222
 msgid "Galaxies"
 msgstr "Galaksiler"
 
@@ -1753,8 +1729,8 @@ msgstr "Galaksiler"
 #. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:120
 #: ../src/celestia/qt/qtcelestiaactions.cpp:145
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:439
-#: ../src/celestia/win32/res/resource_strings.cpp:221
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:440
+#: ../src/celestia/win32/res/resource_strings.cpp:223
 msgid "Globulars"
 msgstr "Küresel kümeler"
 
@@ -1773,9 +1749,9 @@ msgstr "Açık kümeler"
 #. i18n: ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtcelestiaactions.cpp:147
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:447 ../src/celestia/qt/rc.cpp:100
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:448 ../src/celestia/qt/rc.cpp:100
 #: ../src/celestia/qt/rc.cpp:249
-#: ../src/celestia/win32/res/resource_strings.cpp:223
+#: ../src/celestia/win32/res/resource_strings.cpp:225
 msgid "Nebulae"
 msgstr "Bulutsular"
 
@@ -1787,48 +1763,48 @@ msgid "Locations"
 msgstr "Konumlar"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:146
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:451
-#: ../src/celestia/win32/res/resource_strings.cpp:222
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:452
+#: ../src/celestia/win32/res/resource_strings.cpp:224
 msgid "Open Clusters"
 msgstr "Açık Kümeler"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:155
 #. i18n: ectx: property (text), widget (QCheckBox, cloudsCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:154 ../src/celestia/qt/rc.cpp:115
-#: ../src/celestia/win32/res/resource_strings.cpp:193
+#: ../src/celestia/win32/res/resource_strings.cpp:195
 msgid "Clouds"
 msgstr "Bulutlar"
 
 #. cloudsAction->setShortcut(QString("I"));
 #: ../src/celestia/qt/qtcelestiaactions.cpp:156
-#: ../src/celestia/win32/res/resource_strings.cpp:197
+#: ../src/celestia/win32/res/resource_strings.cpp:199
 msgid "Night Side Lights"
 msgstr "Gece Işıkları"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:158
-#: ../src/celestia/win32/res/resource_strings.cpp:198
+#: ../src/celestia/win32/res/resource_strings.cpp:200
 msgid "Comet Tails"
 msgstr "Kuyruklu yıldız kuyrukları"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:148
 #. i18n: ectx: property (text), widget (QCheckBox, atmospheresCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:159 ../src/celestia/qt/rc.cpp:112
-#: ../src/celestia/win32/res/resource_strings.cpp:192
+#: ../src/celestia/win32/res/resource_strings.cpp:194
 msgid "Atmospheres"
 msgstr "Atmosferler"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:166
-#: ../src/celestia/win32/res/resource_strings.cpp:195
+#: ../src/celestia/win32/res/resource_strings.cpp:197
 msgid "Ring Shadows"
 msgstr "Halka Gölgeleri"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:167
-#: ../src/celestia/win32/res/resource_strings.cpp:196
+#: ../src/celestia/win32/res/resource_strings.cpp:198
 msgid "Eclipse Shadows"
 msgstr "Tutulma Gölgeleri"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:169
-#: ../src/celestia/win32/res/resource_strings.cpp:194
+#: ../src/celestia/win32/res/resource_strings.cpp:196
 msgid "Cloud Shadows"
 msgstr "Bulut Gölgeleri"
 
@@ -1894,223 +1870,223 @@ msgstr "45 derecede oto kadir sınırı: %L1"
 msgid "Magnitude limit: %L1"
 msgstr "Kadir sınırı: %L1"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:221
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:192
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:654
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:222
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:193
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:655
 #: ../src/celestia/win32/res/resource_strings.cpp:91
 #: ../src/celestia/win32/winstarbrowser.cpp:61
 msgid "Name"
 msgstr "İsim"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:223
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:194
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:224
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:195
 #: ../src/celestia/win32/winstarbrowser.cpp:62
 msgid "Distance (ly)"
 msgstr "Mesafe (ıy)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:225
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:196
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:226
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:197
 #: ../src/celestia/win32/winstarbrowser.cpp:63
 msgid "App. mag"
 msgstr "Grnr. kad"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:227
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:228
 #: ../src/celestia/win32/winstarbrowser.cpp:64
 msgid "Abs. mag"
 msgstr "Mtlk. kad"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:229
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:198
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:467
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:656
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:230
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:199
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:468
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:657
 #: ../src/celestia/win32/winstarbrowser.cpp:65
 msgid "Type"
 msgstr "Türü"
 
 #. Buttons to select filtering criterion for stars
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:517
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:518
 msgid "Closest Stars"
 msgstr "En Yakın Yıldızlar"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:521
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:522
 msgid "Brightest Stars"
 msgstr "En Parlak Yıldızlar"
 
 #. Additional filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:531
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:464
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:758
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:532
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:465
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:759
 msgid "Filter"
 msgstr "Filtre"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:534
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:535
 msgid "With Planets"
 msgstr "Gezegenlerle"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:538
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:539
 msgid "Multiple Stars"
 msgstr "Çoklu Yıldızlar"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:541
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:542
 msgid "Barycenters"
 msgstr "Kütle Merkezleri"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:547
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:548
 msgid "Spectral Type"
 msgstr "Tayf Türü"
 
 #. End filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:556
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:476
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:765
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:557
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:477
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:766
 msgid "Refresh"
 msgstr "Yenile"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:564
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:484
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:777
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:565
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:485
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:778
 msgid "Mark Selected"
 msgstr "Seçimi İşaretle"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:566
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:567
 msgid "Mark stars selected in list view"
 msgstr "Liste görünümünde seçili yıldızları işaretle"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:569
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:489
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:782
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:570
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:490
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:783
 msgid "Unmark Selected"
 msgstr "Seçililerin İşaretini Kaldır"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:570
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:783
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:571
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:784
 msgid "Unmark stars selected in list view"
 msgstr "Liste görünümünde seçili yıldızların işaretini kaldır"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:574
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:494
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:787
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:575
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:495
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:788
 msgid "Clear Markers"
 msgstr "İşaretleri Temizle"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:576
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:496
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:789
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:577
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:497
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:790
 msgid "Remove all existing markers"
 msgstr "Varolan tüm işaretleri kaldır"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:583
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:796
-#: ../src/celestia/win32/res/resource_strings.cpp:230
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:584
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:504
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:797
+#: ../src/celestia/win32/res/resource_strings.cpp:232
 msgid "None"
 msgstr "Hiçbiri"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:584
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:504
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:585
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:505
 #: ../src/celestia/qt/qtselectionpopup.cpp:244
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:797
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
 msgid "Diamond"
 msgstr "Elmas"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:585
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:505
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:586
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:506
 #: ../src/celestia/qt/qtselectionpopup.cpp:245
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:799
 msgid "Triangle"
 msgstr "Üçgen"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:586
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:506
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:587
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:507
 #: ../src/celestia/qt/qtselectionpopup.cpp:246
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:799
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:800
 msgid "Square"
 msgstr "Kare"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:587
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:507
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:588
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:508
 #: ../src/celestia/qt/qtselectionpopup.cpp:248
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:800
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:801
 msgid "Plus"
 msgstr "Artı"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:588
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:508
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:589
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:509
 #: ../src/celestia/qt/qtselectionpopup.cpp:249
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:801
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
 msgid "X"
 msgstr "X"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:589
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:509
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:590
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:510
 #: ../src/celestia/qt/qtselectionpopup.cpp:254
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:803
 msgid "Circle"
 msgstr "Daire"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:590
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:510
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:591
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:511
 #: ../src/celestia/qt/qtselectionpopup.cpp:250
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:803
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:804
 msgid "Left Arrow"
 msgstr "Sol Ok"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:591
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:511
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:592
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
 #: ../src/celestia/qt/qtselectionpopup.cpp:251
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:804
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
 msgid "Right Arrow"
 msgstr "Sağ Ok"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:592
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:593
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:513
 #: ../src/celestia/qt/qtselectionpopup.cpp:252
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
 msgid "Up Arrow"
 msgstr "Yukarı Ok"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:593
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:513
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:594
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:514
 #: ../src/celestia/qt/qtselectionpopup.cpp:253
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:807
 msgid "Down Arrow"
 msgstr "Aşağı Ok"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:515
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:808
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:596
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:516
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:809
 msgid "Select marker symbol"
 msgstr "İşaretçi sembolünü seç"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:608
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:528
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:821
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:609
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:529
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:822
 msgid "Select marker size"
 msgstr "İşaretçi boyutunu seç"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:612
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:825
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:613
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:533
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
 msgid "Click to select marker color"
 msgstr "İşaretçi rengini seçmek için tıkla"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:535
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:828
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:616
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:536
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
 msgid "Label"
 msgstr "Etiket"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:679
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:587
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:680
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:588
 #, qt-format
 msgid "%1 objects found"
 msgstr "%1 cisim bulundu"
 
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:485
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:486
 msgid "Mark DSOs selected in list view"
 msgstr "Liste görünümünde seçili D.U.C.ni işaretle"
 
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:490
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:491
 msgid "Unmark DSOs selected in list view"
 msgstr "Liste görünümünde seçili D.U.C.nin işaretini kaldır"
 
@@ -2215,8 +2191,9 @@ msgstr "%1 yüzeyinden"
 msgid "Behind %1"
 msgstr "%1 arkasından"
 
-#: ../src/celestia/qt/qtglwidget.cpp:122
-msgid "Celestia was unable to initialize OpenGL 2.1."
+#: ../src/celestia/qt/qtglwidget.cpp:99
+#, fuzzy
+msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr "Celestia, OpenGL 2.1'i başlatamadı."
 
 #: ../src/celestia/qt/qtinfopanel.cpp:81
@@ -2382,81 +2359,86 @@ msgstr "<b>L:</b> %L1%2 %L3' %L4\""
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "<b>B:</b> %L1%2 %L3' %L4\""
 
-#: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:3023
+#: ../src/celestia/qt/qtmain.cpp:161 ../src/celestia/win32/winmain.cpp:3081
 msgid "Directory expected after --dir"
 msgstr "--dir'den sonra dizin bekleniyor"
 
-#: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3036
+#: ../src/celestia/qt/qtmain.cpp:171 ../src/celestia/win32/winmain.cpp:3094
 msgid "Configuration file name expected after --conf"
 msgstr "--conf'dan sonra yapılandırma dosyası adı bekleniyor"
 
-#: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3050
+#: ../src/celestia/qt/qtmain.cpp:182 ../src/celestia/win32/winmain.cpp:3108
 msgid "Directory expected after --extrasdir"
 msgstr "--extrasdir'den sonra dizin bekleniyor"
 
-#: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3063
+#: ../src/celestia/qt/qtmain.cpp:192 ../src/celestia/win32/winmain.cpp:3121
 msgid "URL expected after --url"
 msgstr "--url'den sonra URL bekleniyor"
 
-#: ../src/celestia/qt/qtmain.cpp:207
+#: ../src/celestia/qt/qtmain.cpp:206
 msgid "A filename expected after --log/-l"
 msgstr "--log/-l'den sonra dosya adı bekleniyor"
 
-#: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3078
+#: ../src/celestia/qt/qtmain.cpp:214 ../src/celestia/win32/winmain.cpp:3136
 #, c-format
 msgid "Invalid command line option '%s'"
 msgstr "Geçersiz komut satırı seçeneği '%s'"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:174
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:178
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:165
 msgid "OpenGL 2.1"
 msgstr "OpenGL 2.1"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:217
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:203
 msgid "Blackbody D65"
 msgstr "Siyah cisim D65"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:218
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:204
 msgid "Classic colors"
 msgstr "Klasik renkler"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:224
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:210
 msgid "Local format"
 msgstr "Yerel format"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:226
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:212
 msgid "Time zone name"
 msgstr "Zaman dilimi adı"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:227
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:213
 msgid "UTC offset"
 msgstr "UTC kayması"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:77
+#: ../src/celestia/qt/qtselectionpopup.cpp:78
 #, qt-format
 msgid "Start: %1"
 msgstr "Başlangıç: %1"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:86
+#: ../src/celestia/qt/qtselectionpopup.cpp:87
 #, qt-format
 msgid "End: %1"
 msgstr "Bitiş: %1"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:112
-#, c-format
-msgid "%.3f km"
-msgstr "%.3f km"
+#: ../src/celestia/qt/qtselectionpopup.cpp:109
+msgid "{:.3f} ly"
+msgstr ""
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:114
-#, c-format
-msgid "%.3f m"
-msgstr "%.3f m"
+#: ../src/celestia/qt/qtselectionpopup.cpp:111
+msgid "{:.3f} au"
+msgstr ""
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:116
+#: ../src/celestia/qt/qtselectionpopup.cpp:113
+msgid "{:.3f} km"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:115
+msgid "{:.3f} m"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:117
 msgid "Distance: "
 msgstr "Mesafe:"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:121
+#: ../src/celestia/qt/qtselectionpopup.cpp:122
 msgid "Abs (app) mag: "
 msgstr "Mtlk (grnr) kad:"
 
@@ -2469,21 +2451,21 @@ msgid "&Select"
 msgstr "&Seçin"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:139
-#: ../src/celestia/win32/res/resource_strings.cpp:173
-#: ../src/celestia/win32/res/resource_strings.cpp:180
+#: ../src/celestia/win32/res/resource_strings.cpp:175
+#: ../src/celestia/win32/res/resource_strings.cpp:182
 msgid "&Center"
 msgstr "&Merkez"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:143
-#: ../src/celestia/win32/winmain.cpp:1564
-#: ../src/celestia/win32/winmain.cpp:1614
-#: ../src/celestia/win32/winmain.cpp:1637
+#: ../src/celestia/win32/winmain.cpp:1630
+#: ../src/celestia/win32/winmain.cpp:1680
+#: ../src/celestia/win32/winmain.cpp:1703
 msgid "&Goto"
 msgstr "&Git"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:147
-#: ../src/celestia/win32/winmain.cpp:1565
-#: ../src/celestia/win32/winmain.cpp:1638
+#: ../src/celestia/win32/winmain.cpp:1631
+#: ../src/celestia/win32/winmain.cpp:1704
 msgid "&Follow"
 msgstr "&İzle"
 
@@ -2496,12 +2478,12 @@ msgid "Visible"
 msgstr "Görünür"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
-#: ../src/celestia/win32/winmain.cpp:1651
+#: ../src/celestia/win32/winmain.cpp:1717
 msgid "&Unmark"
 msgstr "İşareti &kaldır"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
-#: ../src/celestia/win32/winmain.cpp:1584
+#: ../src/celestia/win32/winmain.cpp:1650
 #, fuzzy
 msgid "Select &Primary Body"
 msgstr "Birincil Gövdeyi Seçin"
@@ -2515,12 +2497,12 @@ msgid "Disk"
 msgstr "Disk"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:258
-#: ../src/celestia/win32/winmain.cpp:1653
+#: ../src/celestia/win32/winmain.cpp:1719
 msgid "&Mark"
 msgstr "&İşaretle"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:275
-#: ../src/celestia/win32/winmain.cpp:1569
+#: ../src/celestia/win32/winmain.cpp:1635
 msgid "&Reference Marks"
 msgstr "&Referans İşaretleri"
 
@@ -2561,13 +2543,13 @@ msgid "Show &Terminator"
 msgstr "&Sonlandırıcıyı Göster"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:344
-#: ../src/celestia/win32/winmain.cpp:1601
+#: ../src/celestia/win32/winmain.cpp:1667
 msgid "&Alternate Surfaces"
 msgstr "Yüzeyleri &Değiştir"
 
 #. TRANSLATORS: normal texture in an alternative surface menu
 #: ../src/celestia/qt/qtselectionpopup.cpp:345
-#: ../src/celestia/win32/winmain.cpp:1538
+#: ../src/celestia/win32/winmain.cpp:1604
 msgid "Normal"
 msgstr "Normal"
 
@@ -2579,7 +2561,7 @@ msgstr "Normal"
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:391 ../src/celestia/qt/rc.cpp:78
 #: ../src/celestia/qt/rc.cpp:160 ../src/celestia/qt/rc.cpp:227
-#: ../src/celestia/win32/winmain.cpp:1470
+#: ../src/celestia/win32/winmain.cpp:1536
 msgid "Dwarf planets"
 msgstr "Cüce gezegenler"
 
@@ -2590,14 +2572,14 @@ msgstr "Cüce gezegenler"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:397
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:592 ../src/celestia/qt/rc.cpp:84
 #: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1466
+#: ../src/celestia/win32/winmain.cpp:1532
 msgid "Minor moons"
 msgstr "Küçük uydular"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:409
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:597
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:598
 msgid "Other objects"
 msgstr "Diğer cisimler"
 
@@ -2606,7 +2588,7 @@ msgid "Set Time"
 msgstr "Zaman Ayarla"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:55
-#: ../src/celestia/win32/res/resource_strings.cpp:164
+#: ../src/celestia/win32/res/resource_strings.cpp:166
 msgid "Time Zone: "
 msgstr "Saat Dilimi :"
 
@@ -2662,7 +2644,7 @@ msgid "Set Seconds"
 msgstr "Saniye Seç"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:129
-#: ../src/celestia/win32/res/resource_strings.cpp:166
+#: ../src/celestia/win32/res/resource_strings.cpp:168
 msgid "Julian Date: "
 msgstr "Jülyen Tarihi:"
 
@@ -2674,85 +2656,85 @@ msgstr "Jülyen Tarihi Seç"
 msgid "Set time"
 msgstr "Zaman seç"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:540
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:541
 msgid "Barycenter"
 msgstr "Kütle merkezi"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:542
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:543
 msgid "Star"
 msgstr "Yıldız"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:550
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:551
 #: ../src/celestia/win32/wineclipses.cpp:58
 msgid "Planet"
 msgstr "Gezegen"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:552
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:553
 msgid "Dwarf planet"
 msgstr "Cüce gezegen"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:554
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:555
 msgid "Moon"
 msgstr "Ay"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:556
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:557
 msgid "Minor moon"
 msgstr "Küçük uydu"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:558
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:559
 msgid "Asteroid"
 msgstr "Asteroit"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:560
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:561
 msgid "Comet"
 msgstr "Kuyruklu yıldız"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:562
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:563
 msgid "Spacecraft"
 msgstr "Uzay aracı"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:564
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:565
 msgid "Reference point"
 msgstr "Referans noktası"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:566
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:567
 msgid "Component"
 msgstr "Bileşen"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:568
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:569
 msgid "Surface feature"
 msgstr "Yüzey özelliği"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:572
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:573
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:587
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:588
 msgid "Asteroids & comets"
 msgstr "Asteroidler & kuyrukluyıldızlar"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:589
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:590
 msgid "Reference points"
 msgstr "Referans noktaları"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:593
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:594
 msgid "Components"
 msgstr "Bileşenler"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:595
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:596
 msgid "Surface features"
 msgstr "Yüzey özellikleri"
 
 #. Buttons to select filtering criterion for objects
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:738
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:739
 msgid "Planets and moons"
 msgstr "Gezegenler ve uydular"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:769
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:770
 msgid "Group objects by class"
 msgstr "Cisimleri sınıflarına göre gruplandır"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:780
 msgid "Mark bodies selected in list view"
 msgstr "Liste görünümünde seçili cisimleri işaretle"
 
@@ -2868,7 +2850,7 @@ msgstr "Açıklama:"
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
 #. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
-#: ../src/celestia/win32/res/resource_strings.cpp:153
+#: ../src/celestia/win32/res/resource_strings.cpp:155
 msgid "Organize Bookmarks"
 msgstr "Yer İmlerini Organize Et"
 
@@ -2963,63 +2945,63 @@ msgstr "Yörüngeleri göster"
 #. i18n: file: ../src/celestia/qt/preferences.ui:249
 #. i18n: ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
 #: ../src/celestia/qt/rc.cpp:148
-#: ../src/celestia/win32/res/resource_strings.cpp:202
+#: ../src/celestia/win32/res/resource_strings.cpp:204
 msgid "Fading orbits"
 msgstr "Solan yörüngeler"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:256
 #. i18n: ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
 #: ../src/celestia/qt/rc.cpp:151
-#: ../src/celestia/win32/res/resource_strings.cpp:203
+#: ../src/celestia/win32/res/resource_strings.cpp:205
 msgid "Partial trajectories"
 msgstr "Kısmi yörüngeler"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:355
 #. i18n: ectx: property (title), widget (QGroupBox, gridsGroupBox)
 #: ../src/celestia/qt/rc.cpp:179
-#: ../src/celestia/win32/res/resource_strings.cpp:206
+#: ../src/celestia/win32/res/resource_strings.cpp:208
 msgid "Grids"
 msgstr "Izgaralar"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:361
 #. i18n: ectx: property (text), widget (QCheckBox, equatorialGridCheck)
 #: ../src/celestia/qt/rc.cpp:182
-#: ../src/celestia/win32/res/resource_strings.cpp:207
+#: ../src/celestia/win32/res/resource_strings.cpp:209
 msgid "Equatorial"
 msgstr "Ekvatoral"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:368
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticGridCheck)
 #: ../src/celestia/qt/rc.cpp:185
-#: ../src/celestia/win32/res/resource_strings.cpp:210
+#: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Ecliptic"
 msgstr "Ekliptik"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:375
 #. i18n: ectx: property (text), widget (QCheckBox, galacticGridCheck)
 #: ../src/celestia/qt/rc.cpp:188
-#: ../src/celestia/win32/res/resource_strings.cpp:209
+#: ../src/celestia/win32/res/resource_strings.cpp:211
 msgid "Galactic"
 msgstr "Galaktik"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:382
 #. i18n: ectx: property (text), widget (QCheckBox, horizontalGridCheck)
 #: ../src/celestia/qt/rc.cpp:191
-#: ../src/celestia/win32/res/resource_strings.cpp:208
+#: ../src/celestia/win32/res/resource_strings.cpp:210
 msgid "Horizontal"
 msgstr "Yatay"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:411
 #. i18n: ectx: property (text), widget (QCheckBox, diagramsCheck)
 #: ../src/celestia/qt/rc.cpp:197
-#: ../src/celestia/win32/res/resource_strings.cpp:225
+#: ../src/celestia/win32/res/resource_strings.cpp:227
 msgid "Diagrams"
 msgstr "Şemalar"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:418
 #. i18n: ectx: property (text), widget (QCheckBox, boundariesCheck)
 #: ../src/celestia/qt/rc.cpp:200
-#: ../src/celestia/win32/res/resource_strings.cpp:226
+#: ../src/celestia/win32/res/resource_strings.cpp:228
 msgid "Boundaries"
 msgstr "Sınırlar"
 
@@ -3200,40 +3182,40 @@ msgstr "Tarih gösterme formatı:"
 msgid "Not an XBEL version 1.0 file."
 msgstr "XBEL sürüm 1.0 dosyası değil."
 
-#: ../src/celestia/url.cpp:314
+#: ../src/celestia/url.cpp:312
 #, fuzzy
 msgid "Incorrect hex value \"{}\"\n"
 msgstr "Yanlış onaltılık değer \"%s\"\n"
 
-#: ../src/celestia/url.cpp:397
+#: ../src/celestia/url.cpp:395
 msgid "URL must start with \"{}\"!\n"
 msgstr "URL \"{}\" ile başlamalıdır!\n"
 
-#: ../src/celestia/url.cpp:413
+#: ../src/celestia/url.cpp:411
 msgid "URL must have at least mode and time!\n"
 msgstr "URL'nin en az bir moda ve zamana sahip olmalıdır!\n"
 
-#: ../src/celestia/url.cpp:424
+#: ../src/celestia/url.cpp:422
 msgid "Unsupported URL mode \"{}\"!\n"
 msgstr "Desteklenmeyen URL modu \"{}\"!\n"
 
-#: ../src/celestia/url.cpp:442
+#: ../src/celestia/url.cpp:440
 msgid "URL must contain only one body\n"
 msgstr "URL yalnızca bir gövde içermelidir\n"
 
-#: ../src/celestia/url.cpp:454
+#: ../src/celestia/url.cpp:452
 msgid "URL must contain 2 bodies\n"
 msgstr "URL iki gövde içermelidir\n"
 
-#: ../src/celestia/url.cpp:495
+#: ../src/celestia/url.cpp:493
 msgid "Invalid URL version \"{}\"!\n"
 msgstr "Geçersiz URL sürümü \"{}\"!\n"
 
-#: ../src/celestia/url.cpp:502
+#: ../src/celestia/url.cpp:500
 msgid "Unsupported URL version: {}\n"
 msgstr "Geçersiz URL sürümü: {}\n"
 
-#: ../src/celestia/url.cpp:534
+#: ../src/celestia/url.cpp:532
 msgid "URL parameter must look like key=value\n"
 msgstr "URL parametresi, anahtar=değer gibi görünmelidir\n"
 
@@ -3478,13 +3460,13 @@ msgstr "&Celestia Hakkında"
 #: ../src/celestia/win32/res/resource_strings.cpp:121
 #: ../src/celestia/win32/res/resource_strings.cpp:133
 #: ../src/celestia/win32/res/resource_strings.cpp:146
-#: ../src/celestia/win32/res/resource_strings.cpp:154
-#: ../src/celestia/win32/res/resource_strings.cpp:160
-#: ../src/celestia/win32/res/resource_strings.cpp:168
-#: ../src/celestia/win32/res/resource_strings.cpp:171
-#: ../src/celestia/win32/res/resource_strings.cpp:183
-#: ../src/celestia/win32/res/resource_strings.cpp:187
-#: ../src/celestia/win32/res/resource_strings.cpp:234
+#: ../src/celestia/win32/res/resource_strings.cpp:156
+#: ../src/celestia/win32/res/resource_strings.cpp:162
+#: ../src/celestia/win32/res/resource_strings.cpp:170
+#: ../src/celestia/win32/res/resource_strings.cpp:173
+#: ../src/celestia/win32/res/resource_strings.cpp:185
+#: ../src/celestia/win32/res/resource_strings.cpp:189
+#: ../src/celestia/win32/res/resource_strings.cpp:236
 msgid "OK"
 msgstr "TAMAM"
 
@@ -3569,7 +3551,7 @@ msgid "Create in >>"
 msgstr "Şurada oluştur >>"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:95
-#: ../src/celestia/win32/res/resource_strings.cpp:156
+#: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "New Folder..."
 msgstr "Yeni Dizin..."
 
@@ -3650,7 +3632,7 @@ msgid "Go to Object"
 msgstr "Cisme Git"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:126
-#: ../src/celestia/win32/res/resource_strings.cpp:188
+#: ../src/celestia/win32/res/resource_strings.cpp:190
 msgid "Go To"
 msgstr "Git"
 
@@ -3667,7 +3649,7 @@ msgid "Lat."
 msgstr "En."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:131
-#: ../src/celestia/win32/res/resource_strings.cpp:233
+#: ../src/celestia/win32/res/resource_strings.cpp:235
 msgid "Distance"
 msgstr "Mesafe"
 
@@ -3715,169 +3697,173 @@ msgstr "Minimum Etiketli Özellik Boyutu"
 msgid "Size:"
 msgstr "Boyut:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:157
+#: ../src/celestia/win32/res/resource_strings.cpp:153
+msgid "Codec:"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:159
 msgid "Rename..."
 msgstr "Yeniden adlandır..."
 
-#: ../src/celestia/win32/res/resource_strings.cpp:159
+#: ../src/celestia/win32/res/resource_strings.cpp:161
 msgid "Rename Bookmark or Folder"
 msgstr "Yer İmi veya Klasörü Yeniden Adlandır"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:162
+#: ../src/celestia/win32/res/resource_strings.cpp:164
 msgid "New Name"
 msgstr "Yeni İsim"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:163
+#: ../src/celestia/win32/res/resource_strings.cpp:165
 msgid "Set Simulation Time"
 msgstr "Simülasyon Zamanı Ayarla"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:165
+#: ../src/celestia/win32/res/resource_strings.cpp:167
 msgid "Format: "
 msgstr "Biçim:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:167
+#: ../src/celestia/win32/res/resource_strings.cpp:169
 msgid "Set To Current Time"
 msgstr "Şu Anki Zamana Ayarla"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:170
+#: ../src/celestia/win32/res/resource_strings.cpp:172
 msgid "Solar System Browser"
 msgstr "Güneş Sistemi Tarayıcısı"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:174
-#: ../src/celestia/win32/res/resource_strings.cpp:181
+#: ../src/celestia/win32/res/resource_strings.cpp:176
+#: ../src/celestia/win32/res/resource_strings.cpp:183
 msgid "&Go To"
 msgstr "&Git"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:175
+#: ../src/celestia/win32/res/resource_strings.cpp:177
 msgid "Solar System Objects"
 msgstr "Güneş Sistemi Cisimleri"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:176
+#: ../src/celestia/win32/res/resource_strings.cpp:178
 msgid "Star Browser"
 msgstr "Yıldız Tarayıcısı"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:177
+#: ../src/celestia/win32/res/resource_strings.cpp:179
 msgid "Nearest"
 msgstr "En Yakın"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:178
+#: ../src/celestia/win32/res/resource_strings.cpp:180
 msgid "Brightest"
 msgstr "En Parlak"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:179
+#: ../src/celestia/win32/res/resource_strings.cpp:181
 msgid "With planets"
 msgstr "Gezegenlerle"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:182
+#: ../src/celestia/win32/res/resource_strings.cpp:184
 msgid "&Refresh"
 msgstr "&Tazele"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:184
+#: ../src/celestia/win32/res/resource_strings.cpp:186
 msgid "Star Search Criteria"
 msgstr "Yıldız Arama Kriteri"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:185
+#: ../src/celestia/win32/res/resource_strings.cpp:187
 msgid "Maximum Stars Displayed in List"
 msgstr "Listede Gösterilecek Maksimum Yıldız"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:186
+#: ../src/celestia/win32/res/resource_strings.cpp:188
 msgid "Tour Guide"
 msgstr "Tur Rehberi"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:189
+#: ../src/celestia/win32/res/resource_strings.cpp:191
 msgid "Select your destination:"
 msgstr "Gideceğiniz yeri seçin:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:190
+#: ../src/celestia/win32/res/resource_strings.cpp:192
 msgid "View Options"
 msgstr "Ayarları Görüntüle"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:191
+#: ../src/celestia/win32/res/resource_strings.cpp:193
 msgid "Show:"
 msgstr "Göster:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:199
+#: ../src/celestia/win32/res/resource_strings.cpp:201
 msgid "Rings"
 msgstr "Halkalar"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:200
+#: ../src/celestia/win32/res/resource_strings.cpp:202
 msgid "Display:"
 msgstr "Görüntü:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:205
+#: ../src/celestia/win32/res/resource_strings.cpp:207
 msgid "Ecliptic Line"
 msgstr "Ekliptik çizgisi"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:211
+#: ../src/celestia/win32/res/resource_strings.cpp:213
 msgid "Body / Orbit / Label display"
 msgstr "Cisim / Yörünge / Etiket görünümü"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:228
+#: ../src/celestia/win32/res/resource_strings.cpp:230
 msgid "Latin Names"
 msgstr "Latince İsimler"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:229
+#: ../src/celestia/win32/res/resource_strings.cpp:231
 msgid "Information Text"
 msgstr "Bilgi Metni"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:231
+#: ../src/celestia/win32/res/resource_strings.cpp:233
 msgid "Terse"
 msgstr "Özlü"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:232
+#: ../src/celestia/win32/res/resource_strings.cpp:234
 msgid "Verbose"
 msgstr "Ayrıntılı"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:236
-#: ../src/celestia/win32/winmain.cpp:3261
+#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/winmain.cpp:3319
 msgid "WinLangID"
 msgstr "WinLangID"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Apr"
 msgstr "Nisan"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Feb"
 msgstr "Şubat"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Jan"
 msgstr "Ocak"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Jun"
 msgstr "Haziran"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Mar"
 msgstr "Mart"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "May"
 msgstr "Mayıs"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Aug"
 msgstr "Ağustos"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Dec"
 msgstr "Aralık"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Jul"
 msgstr "Temmuz"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Nov"
 msgstr "Kasım"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Oct"
 msgstr "Ekim "
 
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/resource_strings.cpp:240
 msgid "Sep"
 msgstr "Eylül"
 
@@ -3893,7 +3879,7 @@ msgstr "Tarih"
 msgid "Start"
 msgstr "Başlat"
 
-#: ../src/celestia/win32/winmain.cpp:507
+#: ../src/celestia/win32/winmain.cpp:534
 msgid ""
 "License file missing!\n"
 "See http://www.gnu.org/copyleft/gpl.html"
@@ -3901,153 +3887,158 @@ msgstr ""
 "Lisans dosyası bulunmuyor!\n"
 "http://www.gnu.org/copyleft/gpl.html adresine bakın"
 
+#: ../src/celestia/win32/winmain.cpp:700
+#, fuzzy, c-format
+msgid "%d x %d"
+msgstr "%1 x %2"
+
 #. Add windowed mode as the first item on the menu
-#: ../src/celestia/win32/winmain.cpp:1327
+#: ../src/celestia/win32/winmain.cpp:1393
 msgid "Windowed Mode"
 msgstr "Pencere Modu"
 
-#: ../src/celestia/win32/winmain.cpp:1462
+#: ../src/celestia/win32/winmain.cpp:1528
 msgid "Invisibles"
 msgstr "Görünmezler"
 
-#: ../src/celestia/win32/winmain.cpp:1566
+#: ../src/celestia/win32/winmain.cpp:1632
 msgid "S&ync Orbit"
 msgstr "Yörüngeyi Eş&zamanla"
 
-#: ../src/celestia/win32/winmain.cpp:1567
-#: ../src/celestia/win32/winmain.cpp:1615
-#: ../src/celestia/win32/winmain.cpp:1639
+#: ../src/celestia/win32/winmain.cpp:1633
+#: ../src/celestia/win32/winmain.cpp:1681
+#: ../src/celestia/win32/winmain.cpp:1705
 msgid "&Info"
 msgstr "&Bilgi"
 
-#: ../src/celestia/win32/winmain.cpp:1570
+#: ../src/celestia/win32/winmain.cpp:1636
 msgid "Show Body Axes"
 msgstr "Cisim Eksenlerini Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1571
+#: ../src/celestia/win32/winmain.cpp:1637
 msgid "Show Frame Axes"
 msgstr "Kare Eksenlerini Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1572
+#: ../src/celestia/win32/winmain.cpp:1638
 msgid "Show Sun Direction"
 msgstr "Güneş Yönünü Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1573
+#: ../src/celestia/win32/winmain.cpp:1639
 msgid "Show Velocity Vector"
 msgstr "Hız Vektörünü Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1574
+#: ../src/celestia/win32/winmain.cpp:1640
 msgid "Show Planetographic Grid"
 msgstr "Gezegensel Izgarayı Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1575
+#: ../src/celestia/win32/winmain.cpp:1641
 msgid "Show Terminator"
 msgstr "Bitiriciyi Göster"
 
-#: ../src/celestia/win32/winmain.cpp:1591
+#: ../src/celestia/win32/winmain.cpp:1657
 msgid "&Satellites"
 msgstr "&Uydular"
 
-#: ../src/celestia/win32/winmain.cpp:1624
+#: ../src/celestia/win32/winmain.cpp:1690
 msgid "Orbiting Bodies"
 msgstr "Yörüngedeki Cisimler"
 
-#: ../src/celestia/win32/winmain.cpp:1743
+#: ../src/celestia/win32/winmain.cpp:1809
 msgid "Unable to switch to full screen mode; running in window mode"
 msgstr ""
 "Tam ekran modundan düzgün şekilde çıkılamadı. Celestia şimdi kapanacak."
 
-#: ../src/celestia/win32/winmain.cpp:1744
-#: ../src/celestia/win32/winmain.cpp:2016
-#: ../src/celestia/win32/winmain.cpp:2664
-#: ../src/celestia/win32/winmain.cpp:2675
-#: ../src/celestia/win32/winmain.cpp:2692
-#: ../src/celestia/win32/winmain.cpp:2773
-#: ../src/celestia/win32/winmain.cpp:2794
+#: ../src/celestia/win32/winmain.cpp:1810
+#: ../src/celestia/win32/winmain.cpp:2082
+#: ../src/celestia/win32/winmain.cpp:2720
+#: ../src/celestia/win32/winmain.cpp:2731
+#: ../src/celestia/win32/winmain.cpp:2748
+#: ../src/celestia/win32/winmain.cpp:2829
+#: ../src/celestia/win32/winmain.cpp:2852
 msgid "Error"
 msgstr "Kritik Hata"
 
-#: ../src/celestia/win32/winmain.cpp:1908
+#: ../src/celestia/win32/winmain.cpp:1974
 msgid "Failed to register the window class."
 msgstr "Pencere sınıfı kaydedilemedi."
 
-#: ../src/celestia/win32/winmain.cpp:1909
-#: ../src/celestia/win32/winmain.cpp:1960
-#: ../src/celestia/win32/winmain.cpp:1984
-#: ../src/celestia/win32/winmain.cpp:2294
-#: ../src/celestia/win32/winmain.cpp:3302
-#: ../src/celestia/win32/winmain.cpp:3375
+#: ../src/celestia/win32/winmain.cpp:1975
+#: ../src/celestia/win32/winmain.cpp:2026
+#: ../src/celestia/win32/winmain.cpp:2050
+#: ../src/celestia/win32/winmain.cpp:2360
+#: ../src/celestia/win32/winmain.cpp:3363
+#: ../src/celestia/win32/winmain.cpp:3436
 msgid "Fatal Error"
 msgstr "Kritik Hata"
 
-#: ../src/celestia/win32/winmain.cpp:1959
+#: ../src/celestia/win32/winmain.cpp:2025
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr "OpenGL işleme için uygun piksel biçimi alınamadı."
 
-#: ../src/celestia/win32/winmain.cpp:1983
+#: ../src/celestia/win32/winmain.cpp:2049
 msgid "Your system doesn't support OpenGL 2.1!"
 msgstr "Sisteminiz OpenGL 2.1 desteklemiyor!"
 
-#: ../src/celestia/win32/winmain.cpp:2015
+#: ../src/celestia/win32/winmain.cpp:2081
 msgid "Releasing device context failed."
 msgstr "Cihaz içeriği serbest bırakılamadı."
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2630
+#: ../src/celestia/win32/winmain.cpp:2686
 msgid "Save As - Specify File to Capture Image"
 msgstr "Farklı Kaydet - Görüntü Yakalanacak Dosyayı Belirtin"
 
-#: ../src/celestia/win32/winmain.cpp:2674
+#: ../src/celestia/win32/winmain.cpp:2730
 msgid "Could not save image file."
 msgstr "Resim dosyası kaydedilemedi."
 
-#: ../src/celestia/win32/winmain.cpp:2691
+#: ../src/celestia/win32/winmain.cpp:2747
 msgid "Stop current movie capture before starting another one."
 msgstr "Başka bir filme başlamadan önce mevcut film çekimini durdurun."
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2717
+#: ../src/celestia/win32/winmain.cpp:2773
 msgid "Save As - Specify Output File for Capture Movie"
 msgstr "Farklı Kaydet - Film Yakalama için Çıktı Dosyasını Belirtin"
 
-#: ../src/celestia/win32/winmain.cpp:2772
+#: ../src/celestia/win32/winmain.cpp:2828
 msgid "Unknown file extension specified for movie capture."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2790
+#: ../src/celestia/win32/winmain.cpp:2848
 msgid "Specified file extension is not recognized."
 msgstr "Belirtilen dosya uzantısı tanınmadı."
 
-#: ../src/celestia/win32/winmain.cpp:2792
+#: ../src/celestia/win32/winmain.cpp:2850
 msgid "Could not capture movie."
 msgstr "Film Kaydedilemedi."
 
-#: ../src/celestia/win32/winmain.cpp:3024
-#: ../src/celestia/win32/winmain.cpp:3037
-#: ../src/celestia/win32/winmain.cpp:3051
-#: ../src/celestia/win32/winmain.cpp:3064
-#: ../src/celestia/win32/winmain.cpp:3080
+#: ../src/celestia/win32/winmain.cpp:3082
+#: ../src/celestia/win32/winmain.cpp:3095
+#: ../src/celestia/win32/winmain.cpp:3109
+#: ../src/celestia/win32/winmain.cpp:3122
+#: ../src/celestia/win32/winmain.cpp:3138
 msgid "Celestia Command Line Error"
 msgstr "Celestia Komut Satırı Hatası"
 
-#: ../src/celestia/win32/winmain.cpp:3101
+#: ../src/celestia/win32/winmain.cpp:3159
 msgid "Loading: "
 msgstr "Yükleniyor:"
 
-#: ../src/celestia/win32/winmain.cpp:3159
+#: ../src/celestia/win32/winmain.cpp:3218
 msgid "Loading data files..."
 msgstr "Veri dosyaları yükleniyor.."
 
-#: ../src/celestia/win32/winmain.cpp:3259 ../src/celutil/fsutils.cpp:44
-#: ../src/celutil/fsutils.cpp:47
+#: ../src/celestia/win32/winmain.cpp:3317 ../src/celutil/fsutils.cpp:42
+#: ../src/celutil/fsutils.cpp:45
 msgid "LANGUAGE"
 msgstr "DİL"
 
-#: ../src/celestia/win32/winmain.cpp:3301
+#: ../src/celestia/win32/winmain.cpp:3362
 msgid "Configuration file missing!"
 msgstr "Yapılandırma dosyası eksik!"
 
-#: ../src/celestia/win32/winmain.cpp:3339
+#: ../src/celestia/win32/winmain.cpp:3400
 msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
@@ -4055,21 +4046,21 @@ msgstr ""
 "Eski sık kullanılanlar dosyası algılandı.\n"
 "Yeni konuma kopyalansın mı?"
 
-#: ../src/celestia/win32/winmain.cpp:3340
+#: ../src/celestia/win32/winmain.cpp:3401
 msgid "Copy favorites?"
 msgstr "Sık kullanılanları kopyala?"
 
-#: ../src/celestia/win32/winmain.cpp:3374
+#: ../src/celestia/win32/winmain.cpp:3435
 msgid "Failed to create the application window."
 msgstr "Uygulama penceresi oluşturulamadı."
 
-#: ../src/celestia/win32/winmain.cpp:3916
+#: ../src/celestia/win32/winmain.cpp:3971
 msgid "Loading URL"
 msgstr "URL yükleniyor"
 
 #. string s;
 #. s += UTF8ToCurrentCP(_("Version: "));
-#: ../src/celestia/win32/winsplash.cpp:138
+#: ../src/celestia/win32/winsplash.cpp:142
 msgid "Version: "
 msgstr "Sürüm:"
 
@@ -4102,16 +4093,20 @@ msgstr ""
 msgid "Error writing PNG file '{}'\n"
 msgstr "PNG dosyasını okurken hata %s\n"
 
-#: ../src/celscript/legacy/legacyscript.cpp:96
+#: ../src/celscript/legacy/legacyscript.cpp:94
 msgid "Error opening script file."
 msgstr "Betik dosyası açılırken hata."
 
-#: ../src/celscript/legacy/legacyscript.cpp:105
+#: ../src/celscript/legacy/legacyscript.cpp:103
 #: ../src/celscript/lua/luascript.cpp:99
 msgid "Unknown error loading script"
 msgstr "Komut dosyası yüklenirken bilinmeyen hata"
 
-#: ../src/celscript/lua/celx.cpp:771
+#: ../src/celscript/lua/celx.cpp:728
+msgid "In line {}: {}"
+msgstr ""
+
+#: ../src/celscript/lua/celx.cpp:774
 msgid ""
 "WARNING:\n"
 "\n"
@@ -4131,7 +4126,7 @@ msgstr ""
 "\n"
 "y = evet, ESC = betiği iptal et, başka tuşlar = hayır"
 
-#: ../src/celscript/lua/celx.cpp:782
+#: ../src/celscript/lua/celx.cpp:785
 msgid ""
 "WARNING:\n"
 "\n"
@@ -4148,8 +4143,8 @@ msgstr ""
 "istiyor musunuz?"
 
 #: ../src/celscript/lua/luascript.cpp:90
-#, c-format
-msgid "Error opening script '%s'"
+#, fuzzy
+msgid "Error opening script {}"
 msgstr "'%s' betiği açılırken hata"
 
 #: ../src/celscript/lua/luascript.cpp:107
@@ -4158,8 +4153,8 @@ msgid "Script coroutine initialization failed"
 msgstr "Betik eşyordam başlatması başarısız oldu"
 
 #: ../src/celscript/lua/luascript.cpp:214
-#, c-format
-msgid "Error opening LuaHook '%s'"
+#, fuzzy
+msgid "Error opening LuaHook {}"
 msgstr "'%s' LuaHook açılırken hata"
 
 #: ../src/celscript/lua/luascript.cpp:231
@@ -4174,6 +4169,30 @@ msgstr "GetTimeZoneInformation() tarafından döndürülen bilinmeyen değer\n"
 #, fuzzy
 msgid "Error opening {} or .\n"
 msgstr "%s açarken hata veya .\n"
+
+#~ msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
+#~ msgstr "Seviye %i, %.5f ıy, %i düğüm, %i  yıldız\n"
+
+#~ msgid "Render path: OpenGL 2.1"
+#~ msgstr "Render yolu: OpenGL 2.1"
+
+#~ msgid "Bloom enabled"
+#~ msgstr "Parlama etkin"
+
+#~ msgid "Bloom disabled"
+#~ msgstr "Parlama devre dışı"
+
+#~ msgid "Exposure"
+#~ msgstr "Pozlama"
+
+#~ msgid "Video (*.avi)"
+#~ msgstr "Video (*.avi)"
+
+#~ msgid "%.3f km"
+#~ msgstr "%.3f km"
+
+#~ msgid "%.3f m"
+#~ msgstr "%.3f m"
 
 #, fuzzy
 #~ msgid "Error opening %s.\n"

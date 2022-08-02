@@ -10,9 +10,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
+#include <config.h> // HAVE_WORDEXP
 #include <fstream>
-#include <fmt/printf.h>
+#include <iostream>
+#include <fmt/format.h>
 #include "gettext.h"
 #ifdef _WIN32
 #include <shlobj.h>
@@ -36,15 +37,12 @@ namespace celestia::util
 
 fs::path LocaleFilename(const fs::path &p)
 {
-    fs::path::string_type format, lang;
-#ifdef _WIN32
-    format = L"%s_%s%s";
-    lang = CurrentCPToWide(_("LANGUAGE"));
-#else
-    format = "%s_%s%s";
-    lang = _("LANGUAGE");
-#endif
-    fs::path locPath = p.parent_path() / fmt::sprintf(format, p.stem().native(), lang, p.extension().native());
+    const char *orig = N_("LANGUAGE");
+    const char *lang = _(orig);
+    if (lang == orig)
+        return p;
+
+    fs::path locPath = p.parent_path() / p.stem().concat("_").concat(lang).replace_extension(p.extension());
 
     std::error_code ec;
     if (fs::exists(locPath, ec))

@@ -8,12 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
 #include <algorithm>
+#include <fmt/format.h>
 #include <celmath/mathlib.h>
 #include <celutil/binaryread.h>
 #include <celutil/logger.h>
@@ -26,7 +26,6 @@
 #include "multitexture.h"
 #include "meshmanager.h"
 
-#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;
@@ -348,7 +347,7 @@ static string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 {
     if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
-        return fmt::sprintf("HIP %d", catalogNumber);
+        return fmt::format("HIP {}", catalogNumber);
     }
     else
     {
@@ -357,7 +356,7 @@ static string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
         AstroCatalog::IndexNumber tyc2 = catalogNumber / 10000;
         catalogNumber -= tyc2 * 10000;
         AstroCatalog::IndexNumber tyc1 = catalogNumber;
-        return fmt::sprintf("TYC %d-%d-%d", tyc1, tyc2, tyc3);
+        return fmt::format("TYC {}-{}-{}", tyc1, tyc2, tyc3);
     }
 }
 
@@ -397,7 +396,7 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
     /*
       // Get the HD catalog name
       if (star.getIndex() != AstroCatalog::InvalidIndex)
-      return fmt::sprintf("HD %d", star.getIndex(Star::HDCatalog));
+      return fmt::format("HD {}", star.getIndex(Star::HDCatalog));
       else
     */
     return catalogNumberToString(catalogNumber);
@@ -484,11 +483,11 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
                        h     -= tyc2 * 10000;
                 AstroCatalog::IndexNumber tyc1   = h;
 
-                append(fmt::sprintf("TYC %u-%u-%u", tyc1, tyc2, tyc3));
+                append(fmt::format("TYC {}-{}-{}", tyc1, tyc2, tyc3));
             }
             else
             {
-                append(fmt::sprintf("HIP %u", hip));
+                append(fmt::format("HIP {}", hip));
             }
         }
     }
@@ -496,13 +495,13 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
     AstroCatalog::IndexNumber hd   = crossIndex(StarDatabase::HenryDraper, hip);
     if (nameSet.size() < maxNames && hd != AstroCatalog::InvalidIndex)
     {
-        append(fmt::sprintf("HD %u", hd));
+        append(fmt::format("HD {}", hd));
     }
 
     AstroCatalog::IndexNumber sao   = crossIndex(StarDatabase::SAO, hip);
     if (nameSet.size() < maxNames && sao != AstroCatalog::InvalidIndex)
     {
-        append(fmt::sprintf("SAO %u", sao));
+        append(fmt::format("SAO {}", sao));
     }
 
     return starNames;
@@ -1428,8 +1427,8 @@ void StarDatabase::buildOctree()
     for (const auto& stat : stats)
     {
         level++;
-        clog << fmt::sprintf(
-                     _("Level %i, %.5f ly, %i nodes, %i  stars\n"),
+        clog << fmt::format(
+                     "Level {}, {:.5f} ly, {} nodes, {} stars\n",
                      level,
                      STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level),
                      stat.nodeCount,

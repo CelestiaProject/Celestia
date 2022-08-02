@@ -147,11 +147,11 @@ std::string Helper::getRenderInfo(const Renderer *r)
         string::size_type old = 0, pos = ext.find(' ');
         while (pos != string::npos)
         {
-            s += fmt::sprintf("    %s\n", ext.substr(old, pos - old));
+            s += fmt::format("    {}\n", ext.substr(old, pos - old));
             old = pos + 1;
             pos = ext.find(' ', old);
         }
-        s += fmt::sprintf("    %s\n", ext.substr(old));
+        s += fmt::format("    {}\n", ext.substr(old));
     }
 
     return s;

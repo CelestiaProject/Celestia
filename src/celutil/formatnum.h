@@ -7,11 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef CELUTIL_FORMATNUM_H_
-#define CELUTIL_FORMATNUM_H_
+#pragma once
 
-#include <iostream>
-
+#include <fmt/ostream.h>
 
 class FormattedNumber
 {
@@ -35,6 +33,6 @@ private:
     unsigned int flags;
 };
 
-
-#endif // CELUTIL_FORMATNUM_H_
-
+#if FMT_VERSION >= 90000
+template <> struct fmt::formatter<FormattedNumber> : ostream_formatter {};
+#endif

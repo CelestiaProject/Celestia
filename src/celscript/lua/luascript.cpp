@@ -87,7 +87,7 @@ unique_ptr<IScript> LuaScriptPlugin::loadScript(const fs::path &path)
     ifstream scriptfile(path);
     if (!scriptfile.good())
     {
-        appCore()->fatalError(fmt::sprintf(_("Error opening script '%s'"), path));
+        appCore()->fatalError(fmt::format(_("Error opening script {}"), path));
         return nullptr;
     }
 
@@ -211,7 +211,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
     {
         ifstream scriptfile(config->luaHook);
         if (!scriptfile.good())
-            appCore->fatalError(fmt::sprintf(_("Error opening LuaHook '%s'"), config->luaHook));
+            appCore->fatalError(fmt::format(_("Error opening LuaHook {}"), config->luaHook));
 
         if (progressNotifier != nullptr)
             progressNotifier->update(config->luaHook.string());

@@ -8,9 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream>
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include <celcompat/charconv.h>
 #include <celutil/bigfix.h>
 #include <celutil/gettext.h>
@@ -360,7 +358,7 @@ Url::encodeString(std::string_view str)
         }
 
         if (encode)
-            enc << fmt::sprintf("%%%02x", ch);
+            enc << fmt::format("%{:02x}", ch);
         else
             enc << _ch;
     }
@@ -652,12 +650,12 @@ void Url::evalName()
 {
     std::string name;
     if (!m_state.m_refBodyName.empty())
-        name += fmt::sprintf(" %s", getBodyShortName(m_state.m_refBodyName));
+        name += fmt::format(" {}", getBodyShortName(m_state.m_refBodyName));
     if (!m_state.m_targetBodyName.empty())
-        name += fmt::sprintf(" %s", getBodyShortName(m_state.m_targetBodyName));
+        name += fmt::format(" {}", getBodyShortName(m_state.m_targetBodyName));
     if (!m_state.m_trackedBodyName.empty())
-        name += fmt::sprintf(" -> %s", getBodyShortName(m_state.m_trackedBodyName));
+        name += fmt::format(" -> {}", getBodyShortName(m_state.m_trackedBodyName));
     if (!m_state.m_selectedBodyName.empty())
-        name += fmt::sprintf(" [%s]", getBodyShortName(m_state.m_selectedBodyName));
+        name += fmt::format(" [{}]", getBodyShortName(m_state.m_selectedBodyName));
     m_name = std::move(name);
 }

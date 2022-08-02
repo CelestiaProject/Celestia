@@ -7,10 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <fstream>
 #include <cassert>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include <celephem/samporbit.h>
 #include <celutil/logger.h>
 #include <celutil/filetype.h>
@@ -21,7 +20,7 @@ using celestia::util::GetLogger;
 
 static TrajectoryManager* trajectoryManager = nullptr;
 
-constexpr const fs::path::value_type UniqueSuffixChar = '!';
+constexpr const char UniqueSuffixChar = '!';
 
 
 TrajectoryManager* GetTrajectoryManager()
@@ -37,13 +36,7 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
     // Ensure that trajectories with different interpolation or precision get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
     // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
-    fs::path::string_type uniquifyingSuffix, format;
-#ifdef _WIN32
-    format = L"%c%u%u";
-#else
-    format = "%c%u%u";
-#endif
-    uniquifyingSuffix = fmt::sprintf(format, UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
+    auto uniquifyingSuffix = fmt::format("{}{}{}", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
 
     if (!path.empty())
     {
@@ -59,7 +52,7 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
 Orbit* TrajectoryInfo::load(const fs::path& filename)
 {
     // strip off the uniquifying suffix
-    string::size_type uniquifyingSuffixStart = filename.string().rfind(UniqueSuffixChar);
+    auto uniquifyingSuffixStart = filename.string().rfind(UniqueSuffixChar);
     fs::path strippedFilename = filename.string().substr(0, uniquifyingSuffixStart);
     ContentType filetype = DetermineFileType(strippedFilename);
 

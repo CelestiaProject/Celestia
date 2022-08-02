@@ -14,7 +14,7 @@
 
 #include <Eigen/Geometry>
 
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #include "render.h"
 #include "boundaries.h"
@@ -5425,7 +5425,7 @@ bool Renderer::getInfo(map<string, string>& info) const
 #ifndef GL_ES
     GLfloat pointSizeGran = 0;
     glGetFloatv(GL_SMOOTH_POINT_SIZE_GRANULARITY, &pointSizeGran);
-    info["PointSizeGran"] = fmt::sprintf("%.2f", pointSizeGran);
+    info["PointSizeGran"] = fmt::format("{:.2f}", pointSizeGran);
 
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryings);
@@ -5435,7 +5435,7 @@ bool Renderer::getInfo(map<string, string>& info) const
     {
         float maxAnisotropy = 0.0f;
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-        info["MaxAnisotropy"] = fmt::sprintf("%.2f", maxAnisotropy);
+        info["MaxAnisotropy"] = fmt::format("{:.2f}", maxAnisotropy);
     }
 #endif
 

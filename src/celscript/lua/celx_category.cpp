@@ -1,13 +1,11 @@
 #include <string>
-
-#include <fmt/printf.h>
-
+#include <fmt/format.h>
+#include <celengine/category.h>
+#include <celengine/selection.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_category.h"
 #include "celx_object.h"
-#include <celengine/category.h>
-#include <celengine/selection.h>
 
 static int category_tostring(lua_State *l)
 {
@@ -19,7 +17,7 @@ static int category_tostring(lua_State *l)
         celx.doError("Category object is null!");
         return 0;
     }
-    std::string s = fmt::sprintf("[UserCategory:%s]", c->name());
+    std::string s = fmt::format("[UserCategory:{}]", c->name());
     return celx.push(s.c_str());
 }
 

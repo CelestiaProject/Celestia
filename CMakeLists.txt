@@ -362,9 +362,13 @@ else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
   if(NOT MSVC)
     add_compile_options(
-      $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
       $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
     )
+    if(FMT_VERSION LESS 90000)
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+      )
+    endif()
   endif()
 endif()
 

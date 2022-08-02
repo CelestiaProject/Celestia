@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <fmt/format.h>
 #include "astro.h"
 #include "selection.h"
 #include "frametree.h"
@@ -16,7 +17,6 @@
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/deepskyobj.h>
-#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;
@@ -115,10 +115,10 @@ string Selection::getName(bool i18n) const
     switch (type)
     {
     case Type_Star:
-        return fmt::sprintf("#%u", star()->getIndex());
+        return fmt::format("#{}", star()->getIndex());
 
     case Type_DeepSky:
-        return fmt::sprintf("#%u", deepsky()->getIndex());
+        return fmt::format("#{}", deepsky()->getIndex());
 
     case Type_Body:
         {
@@ -136,7 +136,7 @@ string Selection::getName(bool i18n) const
                 {
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
-                        name = fmt::sprintf("#%u/%s", parentStar->getIndex(), name);
+                        name = fmt::format("#{}/{}", parentStar->getIndex(), name);
                     system = nullptr;
                 }
             }

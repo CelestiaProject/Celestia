@@ -725,7 +725,7 @@ void Celx_DoError(lua_State* l, const char* errorMsg)
     {
         if (lua_getinfo(l, "l", &debug))
         {
-            string buf = fmt::sprintf("In line %i: %s", debug.currentline, errorMsg);
+            string buf = fmt::format(_("In line {}: {}"), debug.currentline, errorMsg);
             lua_pushstring(l, buf.c_str());
             lua_error(l);
         }
