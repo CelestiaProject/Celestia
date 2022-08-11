@@ -13,10 +13,18 @@
 #include "celx_internal.h"
 #include "celx_object.h"
 #include <celengine/glsupport.h>
-#include <celengine/shadermanager.h>
+#include "glcompat.h"
 
 
 // ==================== OpenGL ====================
+
+// If defined then our GLES compatibily layer is used
+// If not defined then GL1 functions are used
+#define USE_GLES_COMPAT_LAYER
+
+#ifndef USE_GLES_COMPAT_LAYER
+#include <celengine/shadermanager.h>
+#endif
 
 static int glu_LookAt(lua_State* l)
 {
@@ -71,7 +79,7 @@ static int glu_Ortho2D(lua_State* l)
     float r = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
     float b = (float)celx.safeGetNumber(3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
     float t = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
-    gluOrtho2D(ll,r,b,t);
+    glOrtho(ll,r,b,t,-1.0,1.0);
     return 0;
 }
 
@@ -118,8 +126,9 @@ static int gl_Color(lua_State* l)
     float b = (float)celx.safeGetNumber(3, WrongType, "argument 3 to gl.Color must be a number", 0.0);
     float a = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
     glColor4f(r,g,b,a);
-    //    glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
+#ifndef USE_GLES_COMPAT_LAYER
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
+#endif
     return 0;
 }
 
@@ -157,7 +166,9 @@ static int gl_Begin(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Begin()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
+#ifndef USE_GLES_COMPAT_LAYER
     glUseProgram(0);
+#endif
     glBegin(i);
     return 0;
 }
