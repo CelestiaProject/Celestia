@@ -3,24 +3,10 @@
 #include <string>
 #include <celutil/array_view.h>
 
-#ifdef GL_ES
-#include <epoxy/gl.h>
-/*
-#include <GLES2/gl2.h>
-#define GL_GLEXT_PROTOTYPES 1
-#include <GLES2/gl2ext.h>
-*/
-#else
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #include <epoxy/gl.h>
-#ifdef __APPLE__
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
-#endif
 
 #ifdef GL_ES
 #ifdef glDepthRange

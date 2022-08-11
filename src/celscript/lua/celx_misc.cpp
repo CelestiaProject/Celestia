@@ -13,6 +13,7 @@
 #include <celscript/legacy/execution.h>
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
+#include "glcompat.h"
 
 using namespace std;
 using namespace celestia::scripts;
@@ -196,12 +197,10 @@ static int font_render(lua_State* l)
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
     auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-#ifndef GL_ES
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
     font->setMVPMatrices(p, m);
-#endif
     float ret = font->render(s);
     font->flush();
     return celx.push(ret);

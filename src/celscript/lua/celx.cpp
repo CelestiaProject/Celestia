@@ -1137,9 +1137,7 @@ static void loadLuaLibs(lua_State* state)
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
 
-#ifndef GL_ES
     LoadLuaGraphicsLibrary(state);
-#endif
 }
 
 

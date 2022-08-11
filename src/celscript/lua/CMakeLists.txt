@@ -24,10 +24,10 @@ set(CELX_SOURCES
   celx_vector.h
   luascript.cpp
   luascript.h
+  glcompat.cpp
+  glcompat.h
+  celx_gl.cpp
+  celx_gl.h
 )
-
-if(NOT ENABLE_GLES)
-  set(CELX_SOURCES ${CELX_SOURCES} celx_gl.cpp celx_gl.h)
-endif()
 
 add_library(celluascript OBJECT ${CELX_SOURCES})
