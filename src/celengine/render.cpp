@@ -538,8 +538,10 @@ bool Renderer::init(
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+#ifndef GL_ES
     if (gl::MESA_pack_invert)
         glPixelStorei(GL_PACK_INVERT_MESA, GL_TRUE);
+#endif
 
     // LEQUAL rather than LESS required for multipass rendering
     glDepthFunc(GL_LEQUAL);
@@ -5430,6 +5432,7 @@ bool Renderer::getInfo(map<string, string>& info) const
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryings);
     info["MaxVaryingFloats"] = to_string(maxVaryings);
+#endif
 
     if (gl::EXT_texture_filter_anisotropic)
     {
@@ -5437,7 +5440,6 @@ bool Renderer::getInfo(map<string, string>& info) const
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
         info["MaxAnisotropy"] = fmt::format("{:.2f}", maxAnisotropy);
     }
-#endif
 
 #if 0 // we don't use cubemaps yet
     GLint maxCubeMapSize = 0;
