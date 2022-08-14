@@ -404,12 +404,10 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-#ifndef GL_ES
     if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
     }
-#endif
 
     bool genMipmaps = mipmap && !precomputedMipMaps;
 #if !defined(GL_ES)
@@ -530,12 +528,11 @@ TiledTexture::TiledTexture(Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-#ifndef GL_ES
+
             if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
             {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
             }
-#endif
 
             // Copy texels from the subtexture area to the pixel buffer.  This
             // is straightforward for normal textures, but an immense headache

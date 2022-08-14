@@ -61,10 +61,8 @@ bool init(util::array_view<std::string> ignore) noexcept
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
-#ifndef GL_ES
     if (gl::EXT_texture_filter_anisotropic)
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxTextureAnisotropy);
-#endif
 
     return true;
 }

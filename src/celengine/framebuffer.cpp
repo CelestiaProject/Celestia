@@ -112,8 +112,10 @@ FramebufferObject::generateDepthTexture()
     glGenTextures(1, &m_depthTexId);
     glBindTexture(GL_TEXTURE_2D, m_depthTexId);
 
+#ifndef GL_ES
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+#endif
 
     // Only nearest sampling is appropriate for depth textures
     // But we can use linear to decrease aliasing
