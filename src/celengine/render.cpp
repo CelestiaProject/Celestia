@@ -3546,7 +3546,7 @@ void Renderer::renderCometTail(const Body& body,
         }
     }
 
-    disableDepthTest();
+    enableDepthTest();
     disableDepthMask();
     glDisable(GL_CULL_FACE);
     enableBlending();
