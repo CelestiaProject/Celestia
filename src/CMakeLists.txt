@@ -7,6 +7,7 @@ set(CELESTIA_LIBS
   celimage
   celmath
   celmodel
+  celrender
   celttf
   celutil
 )
