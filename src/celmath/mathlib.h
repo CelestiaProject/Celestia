@@ -136,6 +136,68 @@ ellipsoidTangent(const Eigen::Matrix<T, 3, 1>& recipSemiAxes,
 
     return e + v * t1;
 }
+
+// Find the intersection of a circle and the plane with the specified normal and
+// containing the origin. The circle is defined parametrically by:
+// center + cos(t)*u + sin(t)*u
+// u and v are orthogonal vectors with magnitudes equal to the radius of the
+// circle.
+// Return true if there are two solutions.
+template<typename T> bool planeCircleIntersection(const Eigen::Matrix<T, 3, 1>& planeNormal,
+                                                  const Eigen::Matrix<T, 3, 1>& center,
+                                                  const Eigen::Matrix<T, 3, 1>& u,
+                                                  const Eigen::Matrix<T, 3, 1>& v,
+                                                  Eigen::Matrix<T, 3, 1>* sol0,
+                                                  Eigen::Matrix<T, 3, 1>* sol1)
+{
+    // Any point p on the plane must satisfy p*N = 0. Thus the intersection points
+    // satisfy (center + cos(t)U + sin(t)V)*N = 0
+    // This simplifies to an equation of the form:
+    // a*cos(t)+b*sin(t)+c = 0, with a=N*U, b=N*V, and c=N*center
+    T a = u.dot(planeNormal);
+    T b = v.dot(planeNormal);
+    T c = center.dot(planeNormal);
+
+    // The solution is +-acos((-ac +- sqrt(a^2+b^2-c^2))/(a^2+b^2))
+    T s = a * a + b * b;
+    if (s == 0.0)
+    {
+        // No solution; plane containing circle is parallel to test plane
+        return false;
+    }
+
+    if (s - c * c <= 0)
+    {
+        // One or no solutions; no need to distinguish between these
+        // cases for our purposes.
+        return false;
+    }
+
+    // No need to actually call acos to get the solution, since we're just
+    // going to plug it into sin and cos anyhow.
+    T r = b * std::sqrt(s - c * c);
+    T cosTheta0 = (-a * c + r) / s;
+    T cosTheta1 = (-a * c - r) / s;
+    T sinTheta0 = std::sqrt(1 - cosTheta0 * cosTheta0);
+    T sinTheta1 = std::sqrt(1 - cosTheta1 * cosTheta1);
+
+    *sol0 = center + cosTheta0 * u + sinTheta0 * v;
+    *sol1 = center + cosTheta1 * u + sinTheta1 * v;
+
+    // Check that we've chosen a solution that produces a point on the
+    // plane. If not, we need to use the -acos solution.
+    if (std::abs(sol0->dot(planeNormal)) > 1.0e-8)
+    {
+        *sol0 = center + cosTheta0 * u - sinTheta0 * v;
+    }
+
+    if (std::abs(sol1->dot(planeNormal)) > 1.0e-8)
+    {
+        *sol1 = center + cosTheta1 * u - sinTheta1 * v;
+    }
+
+    return true;
+}
 } // namespace celmath
 
 constexpr long double operator"" _deg (long double deg)

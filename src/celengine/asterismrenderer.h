@@ -1,6 +1,6 @@
 // asterismrenderer.h
 //
-// Copyright (C) 2018-2019, the Celestia Development Team
+// Copyright (C) 2018-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,18 +11,16 @@
 
 #include <vector>
 #include <celengine/asterism.h>
-#include <celutil/color.h>
-#include "shadermanager.h"
-#include "vertexobject.h"
+#include <celrender/linerenderer.h>
 
+class Color;
 class Renderer;
 struct Matrices;
-struct LineEnds;
 
 class AsterismRenderer
 {
- public:
-    AsterismRenderer(const AsterismList *asterisms);
+public:
+    AsterismRenderer(const Renderer &renderer, const AsterismList *asterisms);
     ~AsterismRenderer() = default;
     AsterismRenderer() = delete;
     AsterismRenderer(const AsterismRenderer&) = delete;
@@ -30,16 +28,15 @@ class AsterismRenderer
     AsterismRenderer& operator=(const AsterismRenderer&) = delete;
     AsterismRenderer& operator=(AsterismRenderer&&) = delete;
 
-    void render(const Renderer &renderer, const Color &color, const Matrices &mvp);
+    void render(const Color &color, const Matrices &mvp);
     bool sameAsterisms(const AsterismList *asterisms) const;
 
- private:
-    bool prepare(std::vector<LineEnds> &data);
+private:
+    bool prepare();
 
-    celgl::VertexObject     m_vo        { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-    ShaderProperties        m_shadprop;
-    std::vector<GLsizei>    m_lineCount;
-
-    const AsterismList     *m_asterisms { nullptr };
-    GLsizei                 m_totalLineCount  { 0 };
+    celestia::engine::LineRenderer  m_lineRenderer;
+    std::vector<int>                m_lineCount;
+    const AsterismList             *m_asterisms       { nullptr };
+    int                             m_totalLineCount  { 0 };
+    bool                            m_initialized     { false };
 };

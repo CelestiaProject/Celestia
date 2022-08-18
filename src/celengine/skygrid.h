@@ -2,7 +2,7 @@
 //
 // Celestial longitude/latitude grids.
 //
-// Copyright (C) 2008, the Celestia Development Team
+// Copyright (C) 2008-present, the Celestia Development Team
 // Initial version by Chris Laurel, <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -10,13 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SKYGRID_H_
-#define _CELENGINE_SKYGRID_H_
+#pragma once
 
 #include <string>
-#include <celutil/color.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <celrender/linerenderer.h>
+#include <celutil/color.h>
 
 class Renderer;
 class Observer;
@@ -36,9 +36,6 @@ public:
         IncreasingCounterclockwise,
         IncreasingClockwise,
     };
-
-    SkyGrid() = default;
-    ~SkyGrid() = default;
 
     void render(Renderer& renderer,
                 const Observer& observer,
@@ -99,19 +96,20 @@ public:
         m_longitudeDirection = longitudeDirection;
     }
 
+    static void deinit();
+
 private:
     std::string latitudeLabel(int latitude, int latitudeStep) const;
     std::string longitudeLabel(int longitude, int longitudeStep) const;
     int parallelSpacing(double idealSpacing) const;
     int meridianSpacing(double idealSpacing) const;
 
-private:
     Eigen::Quaterniond m_orientation{ Eigen::Quaterniond::Identity() };
     Color m_lineColor{ Color::White };
     Color m_labelColor{ Color::White };
     LongitudeUnits m_longitudeUnits{ LongitudeHours };
     LongitudeDirection m_longitudeDirection{ IncreasingCounterclockwise };
+
+    static celestia::engine::LineRenderer *g_gridRenderer;
+    static celestia::engine::LineRenderer *g_crossRenderer;
 };
-
-#endif // _CELENGINE_PLANETGRID_H_
-

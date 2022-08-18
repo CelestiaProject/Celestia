@@ -2,7 +2,7 @@
 //
 // Longitude/latitude grids for ellipsoidal bodies.
 //
-// Copyright (C) 2008, the Celestia Development Team
+// Copyright (C) 2008-present, the Celestia Development Team
 // Initial version by Chris Laurel, claurel@gmail.com
 //
 // This program is free software; you can redistribute it and/or
@@ -10,13 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_PLANETGRID_H_
-#define _CELENGINE_PLANETGRID_H_
+#pragma once
 
 #include <celengine/referencemark.h>
+#include <celrender/linerenderer.h>
 
 class Body;
-struct LineStripEnd;
+class Renderer;
 
 class PlanetographicGrid : public ReferenceMark
 {
@@ -58,10 +58,15 @@ public:
 
     void setIAULongLatConvention();
 
-private:
-    static void InitializeGeometry();
+    static void deinit();
 
 private:
+    static celestia::engine::LineRenderer *latitudeRenderer;
+    static celestia::engine::LineRenderer *equatorRenderer;
+    static celestia::engine::LineRenderer *longitudeRenderer;
+    static bool initialized;
+    static void InitializeGeometry(const Renderer&);
+
     const Body& body;
 
     float minLongitudeStep{ 10.0f };
@@ -69,11 +74,4 @@ private:
 
     LongitudeConvention longitudeConvention{ Westward };
     NorthDirection northDirection{ NorthNormal };
-
-    static unsigned int circleSubdivisions;
-    static std::vector<LineStripEnd> xyCircle;
-    static std::vector<LineStripEnd> xzCircle;
 };
-
-#endif // _CELENGINE_PLANETGRID_H_
-
