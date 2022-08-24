@@ -3618,7 +3618,7 @@ void CelestiaCore::renderOverlay()
         auto min = (int) (sec / 60);
         sec -= min * 60.0f;
         overlay->beginText();
-        overlay->print("{:3i}:{05.2f}", min, sec);
+        overlay->print("{:3d}:{:05.2f}", min, sec);
         overlay->endText();
         overlay->restorePos();
 
