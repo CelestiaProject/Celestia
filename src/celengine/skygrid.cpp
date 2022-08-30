@@ -606,6 +606,13 @@ SkyGrid::render(Renderer& renderer,
             buffer[2 * j] = {position, -0.5f};
             buffer[2 * j + 1] =  {position, 0.5f};
         }
+
+        Renderer::PipelineState ps;
+        ps.blending = true;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+        ps.smoothLines = true;
+        renderer.setPipelineState(ps);
+
         if (lineAsTriangles)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
         else

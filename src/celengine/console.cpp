@@ -78,8 +78,11 @@ void Console::begin()
 {
     projection = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
-    renderer.enableBlending();
-    renderer.setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthMask = true;
+    renderer.setPipelineState(ps);
 
     global.reset();
 }

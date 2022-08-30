@@ -39,7 +39,6 @@ class PassthroughViewportEffect : public ViewportEffect
     PassthroughViewportEffect();
     ~PassthroughViewportEffect() override = default;
 
-    bool prerender(Renderer*, FramebufferObject* fbo) override;
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
  private:

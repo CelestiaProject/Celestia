@@ -574,6 +574,12 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     prog->samplerParam("galaxyTex") = 0;
     prog->samplerParam("colorTex") = 1;
 
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.smoothLines = true;
+    renderer->setPipelineState(ps);
+
     std::size_t vertex = 0, index = 0;
     for (unsigned int i = 0; i < nPoints; ++i)
     {

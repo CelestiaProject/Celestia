@@ -309,20 +309,18 @@ ArrowReferenceMark::render(Renderer* renderer,
     Quaterniond q;
     q.setFromTwoVectors(Vector3d::UnitZ(), v);
 
+    Renderer::PipelineState ps;
+    ps.depthTest = true;
     if (opacity == 1.0f)
     {
-        // Enable depth buffering
-        renderer->enableDepthTest();
-        renderer->enableDepthMask();
-        renderer->disableBlending();
+        ps.depthMask = true;
     }
     else
     {
-        renderer->enableDepthTest();
-        renderer->disableDepthMask();
-        renderer->enableBlending();
-        renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ps.blending = true;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     }
+    renderer->setPipelineState(ps);
 
     Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
     Matrix4f mv = (*m.modelview) * transform.matrix();
@@ -338,9 +336,6 @@ ArrowReferenceMark::render(Renderer* renderer,
 
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     RenderArrow(vo);
-
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 
@@ -379,20 +374,18 @@ AxesReferenceMark::render(Renderer* renderer,
 {
     Quaterniond q = getOrientation(tdb);
 
+    Renderer::PipelineState ps;
+    ps.depthTest = true;
     if (opacity == 1.0f)
     {
-        // Enable depth buffering
-        renderer->enableDepthTest();
-        renderer->enableDepthMask();
-        renderer->disableBlending();
+        ps.depthMask = true;
     }
     else
     {
-        renderer->enableDepthTest();
-        renderer->disableDepthMask();
-        renderer->enableBlending();
-        renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ps.blending = true;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     }
+    renderer->setPipelineState(ps);
 
     Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
     Matrix4f projection = *m.projection;
@@ -475,9 +468,6 @@ AxesReferenceMark::render(Renderer* renderer,
     RenderZ(letterVo, lineAsTriangles);
 
     letterVo.unbind();
-
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 

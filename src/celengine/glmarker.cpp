@@ -496,10 +496,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     double distance = position.norm();
     position *= cursorDistance / distance;
 
-    disableDepthTest();
-    enableBlending();
-    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     float vfov = (float) observer.getFOV();
     float h = tan(vfov / 2);
     float w = h * getAspectRatio();
@@ -522,6 +518,12 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     if (!markerVO.initialized())
         initVO(markerVO);
 
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthMask = true;
+    setPipelineState(ps);
+
     prog->use();
     const Vector3f &center = cameraMatrix.col(2);
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * vecgl::translate(Vector3f(-center)));
@@ -534,9 +536,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     prog->vec3Param("u") = u;
     prog->vec3Param("v") = v;
     markerVO.draw(GL_TRIANGLES, SelPointerCount, SelPointerOffset);
-
     markerVO.unbind();
-    enableDepthTest();
 }
 
 /*! Draw the J2000.0 ecliptic; trivial, since this forms the basis for
@@ -544,9 +544,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
  */
 void Renderer::renderEclipticLine()
 {
-    if ((renderFlags & ShowEcliptic) == 0)
-        return;
-
     using AttributesType = celgl::VertexObject::AttributesType;
 
     ShaderProperties shadprop;
@@ -567,6 +564,12 @@ void Renderer::renderEclipticLine()
         initEclipticVO(eclipticVO);
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, EclipticColor);
+
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.smoothLines = true;
+    setPipelineState(ps);
 
     prog->use();
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix());

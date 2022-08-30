@@ -82,11 +82,14 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
 
     // Write only to the depth buffer
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    renderer->enableDepthMask();
-    renderer->enableDepthTest();
     glClear(GL_DEPTH_BUFFER_BIT);
     // Render backfaces only in order to reduce self-shadowing artifacts
     glCullFace(GL_FRONT);
+
+    Renderer::PipelineState ps;
+    ps.depthMask = true;
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
 
     Shadow_RenderContext rc(renderer);
 
@@ -268,8 +271,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
 #ifdef GL_ES
             if (gl::OES_texture_border_clamp)
-            {
 #endif
+            {
                 // Tweak the texture--set clamp to border and a border color with
                 // a zero alpha.
                 float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -280,10 +283,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                 glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR_OES, bc);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_OES);
 #endif
-
-#ifdef GL_ES
             }
-#endif
             glActiveTexture(GL_TEXTURE0);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
@@ -351,6 +351,12 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     unsigned int attributes = LODSphereMesh::Normals;
     if (ri.bumpTex != nullptr)
         attributes |= LODSphereMesh::Tangents;
+
+    Renderer::PipelineState ps;
+    ps.depthMask = true;
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
+
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
@@ -401,7 +407,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                                   tsec, renderer, &lightMatrix);
         renderer->setViewport(viewport);
 #ifdef DEPTH_BUFFER_DEBUG
-        renderer->disableDepthTest();
+        glDisable(GL_DEPTH_TEST);
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadMatrixf(Ortho2D(0.0f, (float)viewport[2], 0.0f, (float)viewport[3]).data());
@@ -436,7 +442,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         glPopMatrix();
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_TEXTURE_2D);
-        renderer->enableDepthTest();
+        glEnable(GL_DEPTH_TEST);
 #endif
         glDepthRange(range[0], range[1]);
     }
@@ -458,6 +464,11 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     // Handle extended material attributes (per model only, not per submesh)
     rc.setLunarLambert(ri.lunarLambert);
+
+    Renderer::PipelineState ps;
+    ps.depthMask = true;
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the geometry file.
@@ -496,6 +507,11 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
 {
     GLSLUnlit_RenderContext rc(renderer, geometryScale, m.modelview, m.projection);
     rc.setPointScale(ri.pointScale);
+
+    Renderer::PipelineState ps;
+    ps.depthMask = true;
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the model file.
@@ -644,6 +660,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != nullptr)
         attributes |= LODSphereMesh::Tangents;
+
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
+
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
@@ -700,17 +723,18 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(atmScale));
 
     glFrontFace(GL_CW);
-    renderer->enableBlending();
-    renderer->disableDepthMask();
-    renderer->setBlendingFactors(GL_ONE, GL_SRC_ALPHA);
+
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_ONE, GL_SRC_ALPHA};
+    ps.depthTest = true;
+    renderer->setPipelineState(ps);
 
     g_lodSphere->render(LODSphereMesh::Normals,
                         frustum,
                         ri.pixWidth,
                         nullptr);
 
-    renderer->disableBlending();
-    renderer->enableDepthMask();
     glFrontFace(GL_CCW);
 }
 
@@ -812,6 +836,7 @@ void renderRings_GLSL(RingSystem& rings,
                       bool renderShadow,
                       float segmentSizeInPixels,
                       const Matrices &m,
+                      bool inside,
                       Renderer* renderer)
 {
     float inner = rings.innerRadius / planetRadius;
@@ -909,9 +934,6 @@ void renderRings_GLSL(RingSystem& rings,
         prog->shadows[li][0].falloff = bias / r0;
     }
 
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     if (ringsTex != nullptr)
         ringsTex->bind();
 
@@ -928,7 +950,13 @@ void renderRings_GLSL(RingSystem& rings,
             break;
         nSections <<= 1;
     }
-    renderRingSystem(&data->vboId[i], inner, outer, nSections);
 
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthTest = true;
+    ps.depthMask = inside;
+    renderer->setPipelineState(ps);
+
+    renderRingSystem(&data->vboId[i], inner, outer, nSections);
 }

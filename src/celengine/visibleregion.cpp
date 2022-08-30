@@ -184,11 +184,13 @@ VisibleRegion::render(Renderer* renderer,
 
     Vector3f semiAxes = m_body.getSemiAxes();
 
-    // Enable depth buffering
-    renderer->enableDepthTest();
-    renderer->enableDepthMask();
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthMask = true;
+    ps.depthTest = true;
+    ps.smoothLines = true;
+    renderer->setPipelineState(ps);
 
     double maxSemiAxis = m_body.getRadius();
 
@@ -233,9 +235,6 @@ VisibleRegion::render(Renderer* renderer,
     Affine3f transform = Translation3f(position) * qf.conjugate();
     Matrix4f modelView = (*m.modelview) * transform.matrix();
     renderTerminator(renderer, pos, Color(m_color, opacity), { m.projection, &modelView });
-
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 

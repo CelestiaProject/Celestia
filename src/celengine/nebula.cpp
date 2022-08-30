@@ -94,7 +94,9 @@ void Nebula::render(const Vector3f& /*offset*/,
     if (g == nullptr)
         return;
 
-    renderer->disableBlending();
+    Renderer::PipelineState ps;
+    ps.smoothLines = true;
+    renderer->setPipelineState(ps);
 
     Matrix4f mv = vecgl::rotate(vecgl::scale(*m.modelview, getRadius()),
                                 getOrientation());
@@ -102,8 +104,6 @@ void Nebula::render(const Vector3f& /*offset*/,
     GLSLUnlit_RenderContext rc(renderer, getRadius(), &mv, m.projection);
     rc.setPointScale(2.0f * getRadius() / pixelSize);
     g->render(rc);
-
-    renderer->enableBlending();
 }
 
 
