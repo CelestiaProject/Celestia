@@ -402,7 +402,8 @@ static int object_addreferencemark(lua_State* l)
         }
         else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
         {
-            PlanetographicGrid* grid = new PlanetographicGrid(*body);
+            CelestiaCore* appCore = celx.appCore(AllErrors);
+            PlanetographicGrid* grid = new PlanetographicGrid(*appCore->getRenderer(), *body);
             body->addReferenceMark(grid);
         }
     }

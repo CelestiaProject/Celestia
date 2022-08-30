@@ -2,7 +2,7 @@
 //
 // Longitude/latitude grids for ellipsoidal bodies.
 //
-// Copyright (C) 2008-2009, the Celestia Development Team
+// Copyright (C) 2008-present, the Celestia Development Team
 // Initial version by Chris Laurel, claurel@gmail.com
 //
 // This program is free software; you can redistribute it and/or
@@ -15,48 +15,40 @@
 #include <fmt/format.h>
 #include <celcompat/numbers.h>
 #include <celmath/intersect.h>
+#include <celrender/linerenderer.h>
 #include "body.h"
 #include "planetgrid.h"
 #include "render.h"
 #include "vecgl.h"
 
-using namespace std;
-using namespace Eigen;
 using namespace celmath;
 using namespace celestia;
+using celestia::engine::LineRenderer;
 
-
-unsigned int PlanetographicGrid::circleSubdivisions = 100;
-std::vector<LineStripEnd> PlanetographicGrid::xyCircle;
-std::vector<LineStripEnd> PlanetographicGrid::xzCircle;
-
-
-PlanetographicGrid::PlanetographicGrid(const Body& _body) :
-    body(_body)
+namespace
 {
-    if (xyCircle.empty())
-        InitializeGeometry();
-    setTag("planetographic grid");
-    setIAULongLatConvention();
-}
+constexpr unsigned circleSubdivisions = 100;
+LineRenderer *g_latitudeRenderer = nullptr;
+LineRenderer *g_equatorRenderer = nullptr;
+LineRenderer *g_longitudeRenderer = nullptr;
+bool g_initialized = false;
 
-
-static void longLatLabel(const string& labelText,
+static void longLatLabel(const std::string& labelText,
                          double longitude,
                          double latitude,
-                         const Vector3d& viewRayOrigin,
-                         const Vector3d& viewNormal,
-                         const Vector3d& bodyCenter,
-                         const Quaterniond& bodyOrientation,
-                         const Vector3f& semiAxes,
+                         const Eigen::Vector3d& viewRayOrigin,
+                         const Eigen::Vector3d& viewNormal,
+                         const Eigen::Vector3d& bodyCenter,
+                         const Eigen::Quaterniond& bodyOrientation,
+                         const Eigen::Vector3f& semiAxes,
                          float labelOffset,
                          Renderer* renderer)
 {
     double theta = degToRad(longitude);
     double phi = degToRad(latitude);
-    Vector3d pos(cos(phi) * cos(theta) * semiAxes.x(),
-                 sin(phi) * semiAxes.y(),
-                 -cos(phi) * sin(theta) * semiAxes.z());
+    Eigen::Vector3d pos( cos(phi) * cos(theta) * semiAxes.x(),
+                         sin(phi) * semiAxes.y(),
+                        -cos(phi) * sin(theta) * semiAxes.z());
 
     float nearDist = renderer->getNearPlaneDistance();
 
@@ -70,14 +62,12 @@ static void longLatLabel(const string& labelText,
                          Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
-        Vector3d labelPos = bodyCenter +
-                            bodyOrientation.conjugate() * pos * (1.0 + labelOffset);
+        Eigen::Vector3d labelPos = bodyCenter +
+                                   bodyOrientation.conjugate() * pos * (1.0 + labelOffset);
 
         // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
         // the view normal that touches the front of the objects bounding sphere
-        double planetZ = viewNormal.dot(bodyCenter) - boundingRadius;
-        if (planetZ < -nearDist * 1.001)
-            planetZ = -nearDist * 1.001;
+        double planetZ = std::max(viewNormal.dot(bodyCenter) - boundingRadius, -nearDist * 1.001);
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
 
@@ -86,71 +76,52 @@ static void longLatLabel(const string& labelText,
                                       labelPos.cast<float>());
     }
 }
+} // namespace
 
+PlanetographicGrid::PlanetographicGrid(Renderer& _renderer, const Body& _body) :
+    renderer(_renderer),
+    body(_body)
+{
+    InitializeGeometry(renderer);
+    setTag("planetographic grid");
+    setIAULongLatConvention();
+}
 
 void
-PlanetographicGrid::render(Renderer* renderer,
-                           const Eigen::Vector3f& pos,
+PlanetographicGrid::render(const Eigen::Vector3f& pos,
                            float discSizeInPixels,
                            double tdb,
                            const Matrices& m) const
 {
-    ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-    bool lineAsTriangles = renderer->shouldDrawLineAsTriangles(2.0f);
-    if (lineAsTriangles)
-        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-    auto *prog = renderer->getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
     // Compatibility
-    Quaterniond q = Quaterniond(AngleAxis<double>(celestia::numbers::pi, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
-    Quaternionf qf = q.cast<float>();
+    Eigen::Quaterniond q(Eigen::AngleAxis(celestia::numbers::pi, Eigen::Vector3d::UnitY()));
+    q *= body.getEclipticToBodyFixed(tdb);
+    Eigen::Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
     // there will be z-fighting problems. Render it at a height above the
     // planet that will place it about one pixel away from the planet.
     float scale = (discSizeInPixels + 1) / discSizeInPixels;
-    scale = max(scale, 1.001f);
+    scale = std::max(scale, 1.001f);
     float offset = scale - 1.0f;
 
-    Vector3f semiAxes = body.getSemiAxes();
-    Vector3d posd = pos.cast<double>();
-    Vector3d viewRayOrigin = q * -posd;
+    Eigen::Vector3f semiAxes = body.getSemiAxes();
+    Eigen::Vector3d posd = pos.cast<double>();
+    Eigen::Vector3d viewRayOrigin = q * -posd;
 
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
-    Vector3f vn  = renderer->getCameraOrientation().conjugate() * -Vector3f::UnitZ();
-    Vector3d viewNormal = vn.cast<double>();
+    Eigen::Vector3f vn  = renderer.getCameraOrientation().conjugate() * -Eigen::Vector3f::UnitZ();
+    Eigen::Vector3d viewNormal = vn.cast<double>();
 
     // Enable depth buffering
-    renderer->enableDepthTest();
-    renderer->enableDepthMask();
-    renderer->disableBlending();
+    renderer.enableDepthTest();
+    renderer.enableDepthMask();
+    renderer.disableBlending();
 
-    Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
-    Matrix4f projection = *m.projection;
-    Matrix4f modelView = *m.modelview * transform.matrix();
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].point);
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[2].point);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].scale);
-    }
-    else
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &xzCircle[0].point);
-    }
+    Eigen::Affine3f transform = Eigen::Translation3f(pos) * qf.conjugate() * Eigen::Scaling(scale * semiAxes);
+    Eigen::Matrix4f projection = *m.projection;
+    Eigen::Matrix4f modelView = *m.modelview * transform.matrix();
 
     // Only show the coordinate labels if the body is sufficiently large on screen
     bool showCoordinateLabels = false;
@@ -165,49 +136,23 @@ PlanetographicGrid::render(Renderer* renderer,
         longitudeStep = 30.0f;
     }
 
-    prog->use();
-    float lineWidthX = renderer->getLineWidthX();
-    float lineWidthY = renderer->getLineWidthY();
-
     for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
     {
         float phi = degToRad(latitude);
-        auto r = (float) std::cos(phi);
+        float r = std::cos(phi);
 
+        Eigen::Matrix4f mvcur = modelView * vecgl::translate(0.0f, std::sin(phi), 0.0f) * vecgl::scale(r);
         if (latitude == 0.0f)
         {
-            glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
-                           Renderer::PlanetEquatorColor);
-            if (lineAsTriangles)
-            {
-                prog->lineWidthX = 2.0f * lineWidthX;
-                prog->lineWidthY = 2.0f * lineWidthY;
-            }
-            else
-            {
-                glLineWidth(renderer->getRasterizedLineWidth(2.0f));
-            }
+            g_equatorRenderer->render({&projection, &mvcur},
+                                      Renderer::PlanetEquatorColor,
+                                      circleSubdivisions+1);
         }
         else
         {
-            glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
-                           Renderer::PlanetographicGridColor);
-            if (lineAsTriangles)
-            {
-                prog->lineWidthX = lineWidthX;
-                prog->lineWidthY = lineWidthY;
-            }
-        }
-        prog->setMVPMatrices(projection, modelView * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r));
-        if (lineAsTriangles)
-        {
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, xzCircle.size() - 2);
-        }
-        else
-        {
-            glDrawArrays(GL_LINE_STRIP, 0, (xzCircle.size() - 2) / 2);
-            if (latitude == 0.0f)
-                glLineWidth(renderer->getRasterizedLineWidth(1.0f));
+            g_latitudeRenderer->render({&projection, &mvcur},
+                                       Renderer::PlanetographicGridColor,
+                                       circleSubdivisions+1);
         }
 
         if (showCoordinateLabels)
@@ -219,38 +164,21 @@ PlanetographicGrid::render(Renderer* renderer,
                     ns = northDirection == NorthNormal ? 'S' : 'N';
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
-                string buf;
-                buf = fmt::format("{}{}", static_cast<int>(fabs(latitude)), ns);
-                longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
-                longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+
+                auto buf = fmt::format("{}{}", static_cast<int>(fabs(latitude)), ns);
+                longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, &renderer);
+                longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, &renderer);
             }
         }
     }
 
-    if (lineAsTriangles)
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].point);
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[2].point);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].scale);
-    }
-    else
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &xyCircle[0].point);
-    }
-
-    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
-                   Renderer::PlanetographicGridColor);
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        prog->setMVPMatrices(projection, modelView * vecgl::rotate(AngleAxisf(degToRad(longitude), Vector3f::UnitY())));
-        if (lineAsTriangles)
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, xyCircle.size() - 2);
-        else
-            glDrawArrays(GL_LINE_STRIP, 0, (xyCircle.size() - 2) / 2);
+        Eigen::Matrix4f mvcur =  modelView * vecgl::rotate(Eigen::AngleAxisf(degToRad(longitude), Eigen::Vector3f::UnitY()));
+
+        g_longitudeRenderer->render({&projection, &mvcur},
+                                    Renderer::PlanetographicGridColor,
+                                    circleSubdivisions+1);
 
         if (showCoordinateLabels)
         {
@@ -275,9 +203,8 @@ PlanetographicGrid::render(Renderer* renderer,
                 break;
             }
 
-            string buf;
-            buf = fmt::format("{}{}", showLongitude, ew);
-            longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+            auto buf = fmt::format("{}{}", showLongitude, ew);
+            longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, &renderer);
             if (longitude > 0.0f && longitude < 180.0f)
             {
                 showLongitude = (int) longitude;
@@ -298,29 +225,20 @@ PlanetographicGrid::render(Renderer* renderer,
                 }
 
                 buf = fmt::format("{}{}", showLongitude, ew);
-                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, &renderer);
             }
         }
     }
 
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-    }
-
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
+    renderer.enableBlending();
+    renderer.setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
-
 
 float
 PlanetographicGrid::boundingSphereRadius() const
 {
     return body.getRadius();
 }
-
 
 /*! Determine the longitude convention to use based on IAU rules:
  *    Westward for prograde rotators, Eastward for retrograde
@@ -349,22 +267,27 @@ PlanetographicGrid::setIAULongLatConvention()
     }
 }
 
-
 void
-PlanetographicGrid::InitializeGeometry()
+PlanetographicGrid::InitializeGeometry(const Renderer &renderer)
 {
-    xyCircle.reserve((circleSubdivisions + 2) * 2);
-    xzCircle.reserve((circleSubdivisions + 2) * 2);
+    static bool initialized = false;
+    if (initialized)
+        return;
+    initialized = true;
+
+    g_latitudeRenderer  = new LineRenderer(renderer, 1.0f, LineRenderer::LINE_STRIP);
+    g_equatorRenderer   = new LineRenderer(renderer, 2.0f, LineRenderer::LINE_STRIP);
+    g_longitudeRenderer = new LineRenderer(renderer, 1.0f, LineRenderer::LINE_STRIP);
+
     for (unsigned int i = 0; i <= circleSubdivisions + 1; i++)
     {
         float theta = (float) (2.0 * celestia::numbers::pi) * (float) i / (float) circleSubdivisions;
         float s, c;
         sincos(theta, s, c);
-        Vector3f thisPointXY(c, s, 0.0f);
-        Vector3f thisPointXZ(c, 0.0f, s);
-        xyCircle.emplace_back(thisPointXY, -0.5f);
-        xyCircle.emplace_back(thisPointXY,  0.5f);
-        xzCircle.emplace_back(thisPointXZ, -0.5f);
-        xzCircle.emplace_back(thisPointXZ,  0.5f);
+        Eigen::Vector3f latitudePoint(c, 0.0f, s);
+        Eigen::Vector3f longitudePoint(c, s, 0.0f);
+        g_latitudeRenderer->addVertex(latitudePoint);
+        g_equatorRenderer->addVertex(latitudePoint);
+        g_longitudeRenderer->addVertex(longitudePoint);
     }
 }

@@ -60,6 +60,7 @@ set(CELESTIA_CORE_LIBS $<TARGET_OBJECTS:cel3ds>
                        $<TARGET_OBJECTS:celimage>
                        $<TARGET_OBJECTS:celmath>
                        $<TARGET_OBJECTS:celmodel>
+                       $<TARGET_OBJECTS:celrender>
                        $<TARGET_OBJECTS:celttf>
                        $<TARGET_OBJECTS:celutil>
 )

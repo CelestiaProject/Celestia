@@ -51,20 +51,6 @@ struct Matrices
     const Eigen::Matrix4f *modelview;
 };
 
-struct LineStripEnd
-{
-    LineStripEnd(Eigen::Vector3f point, float scale) : point(point), scale(scale) {};
-    Eigen::Vector3f point;
-    float scale;
-};
-
-struct LineEnds
-{
-    LineEnds(Eigen::Vector3f point1, Eigen::Vector3f point2, float scale) : point1(point1), point2(point2), scale(scale) {};
-    Eigen::Vector3f point1;
-    Eigen::Vector3f point2;
-    float scale;
-};
 
 struct LightSource
 {

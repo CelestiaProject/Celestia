@@ -4692,7 +4692,7 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
         }
         else if (refMark == "planetographic grid")
         {
-            body->addReferenceMark(new PlanetographicGrid(*body));
+            body->addReferenceMark(new PlanetographicGrid(*getRenderer(), *body));
         }
         else if (refMark == "terminator")
         {

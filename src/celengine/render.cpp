@@ -52,6 +52,7 @@
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
+#include <celrender/linerenderer.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celutil/timer.h>
@@ -75,6 +76,7 @@ using namespace std;
 using namespace celestia;
 using namespace celmath;
 using celestia::util::GetLogger;
+using celestia::engine::LineRenderer;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -219,6 +221,14 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
     return 1.0 / diag;
 }
 
+inline void glVertexAttrib(GLuint index, const Color &color)
+{
+#ifdef GL_ES
+    glVertexAttrib4fv(index, color.toVector4().data());
+#else
+    glVertexAttrib4Nubv(index, color.data());
+#endif
+}
 
 Renderer::Renderer() :
     windowWidth(0),
@@ -1036,16 +1046,10 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            float nearDist,
                            float farDist,
                            const Matrices& m)
-{
-    ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    bool lineAsTriangles = shouldDrawLineAsTriangles();
-    if (lineAsTriangles)
-        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-    auto *prog = shaderManager->getShader(shadprop);
+{/*
+    auto *prog = shaderManager->getShader("orbit");
     if (prog == nullptr)
-        return;
+        return;*/
 
     Body* body = orbitPath.body;
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
@@ -1084,7 +1088,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             {
                 startTime = begin;
                 nSamples = (int) (orbit->getPeriod() * 100.0);
-                nSamples = max(min(nSamples, 1000), 100);
+                nSamples = std::clamp(nSamples, 100, 1000);
             }
             else
             {
@@ -1101,7 +1105,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             startTime = t - orbit->getPeriod();
         }
 
-        cachedOrbit = new CurvePlot();
+        cachedOrbit = new CurvePlot(*this);
         cachedOrbit->setLastUsed(frameCount);
 
         OrbitSampler sampler;
@@ -1242,13 +1246,11 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         viewFrustumPlaneNormals[i] = frustum.plane(i).normal().cast<double>();
     }
 
+/*
     prog->use();
     prog->setMVPMatrices(*m.projection);
-    if (lineAsTriangles)
-    {
-        prog->lineWidthX = getPointWidth();
-        prog->lineWidthY = getPointHeight();
-    }
+    prog->vec4Param("color") = orbitColor;
+*/
     if (orbit->isPeriodic())
     {
         double period = orbit->getPeriod();
@@ -1262,7 +1264,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                                 nearZ, farZ, viewFrustumPlaneNormals,
                                 subdivisionThreshold,
                                 windowStart, windowEnd,
-                                orbitColor, lineAsTriangles);
+                                orbitColor);
         }
         else
         {
@@ -1272,8 +1274,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                                      windowStart, windowEnd,
                                      orbitColor,
                                      windowStart,
-                                     windowEnd - windowDuration * (1.0 - LinearFadeFraction),
-                                     lineAsTriangles);
+                                     windowEnd - windowDuration * (1.0 - LinearFadeFraction));
         }
     }
     else
@@ -1285,7 +1286,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                                 nearZ, farZ, viewFrustumPlaneNormals,
                                 subdivisionThreshold,
                                 cachedOrbit->startTime(), t,
-                                orbitColor, lineAsTriangles);
+                                orbitColor);
         }
         else
         {
@@ -1293,7 +1294,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,
                                 subdivisionThreshold,
-                                orbitColor, lineAsTriangles);
+                                orbitColor);
         }
     }
 
@@ -1706,8 +1707,10 @@ void renderLargePoint(Renderer &renderer,
              0.5f,  0.5f, 1.0f, 0.0f,
         };
         vo.allocate(sizeof(texCoords), texCoords);
-        vo.setVertices(2, GL_FLOAT, false, 4 * sizeof(float), 0);
-        vo.setTextureCoords(2, GL_FLOAT, false, 4 * sizeof(float), 2 * sizeof(float));
+        vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
+                                2, GL_FLOAT, false, 4 * sizeof(float), 0);
+        vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                                2, GL_FLOAT, false, 4 * sizeof(float), 2 * sizeof(float));
     }
 
     vo.draw(GL_TRIANGLES, 6);
@@ -3641,12 +3644,12 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
 
     if (m_asterismRenderer == nullptr)
     {
-        m_asterismRenderer = new AsterismRenderer(asterisms);
+        m_asterismRenderer = new AsterismRenderer(*this, asterisms);
     }
     else if (!m_asterismRenderer->sameAsterisms(asterisms))
     {
         delete m_asterismRenderer;
-        m_asterismRenderer = new AsterismRenderer(asterisms);
+        m_asterismRenderer = new AsterismRenderer(*this, asterisms);
     }
 
     float opacity = 1.0f;
@@ -3659,7 +3662,7 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     }
 
     enableSmoothLines();
-    m_asterismRenderer->render(*this, Color(ConstellationColor, opacity), mvp);
+    m_asterismRenderer->render(Color(ConstellationColor, opacity), mvp);
     disableSmoothLines();
 }
 
@@ -3672,12 +3675,12 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
 
     if (m_boundariesRenderer == nullptr)
     {
-        m_boundariesRenderer = new BoundariesRenderer(boundaries);
+        m_boundariesRenderer = new BoundariesRenderer(*this, boundaries);
     }
     else if (!m_boundariesRenderer->sameBoundaries(boundaries))
     {
         delete m_boundariesRenderer;
-        m_boundariesRenderer = new BoundariesRenderer(boundaries);
+        m_boundariesRenderer = new BoundariesRenderer(*this, boundaries);
     }
 
     /* We'll linearly fade the boundaries as a function of the
@@ -3692,7 +3695,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     }
 
     enableSmoothLines();
-    m_boundariesRenderer->render(*this, Color(BoundaryColor, opacity), mvp);
+    m_boundariesRenderer->render(Color(BoundaryColor, opacity), mvp);
     disableSmoothLines();
 }
 
@@ -5222,7 +5225,9 @@ bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsi
     if (!ok)
         return false;
 
+#ifndef GL_ES
     if (!gl::MESA_pack_invert)
+#endif
     {
         int realWidth = w * formatWidth(format);
         realWidth = (realWidth + 3) & ~0x3;
@@ -5242,20 +5247,31 @@ bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsi
     return ok;
 }
 
-void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
+static void draw_rectangle_border(const Renderer &renderer,
+                                  const celestia::Rect &rect,
+                                  int fishEyeOverrideMode,
+                                  const Eigen::Matrix4f& p,
+                                  const Eigen::Matrix4f& m)
+{
+    LineRenderer lr(renderer, rect.lw, LineRenderer::LINE_STRIP);
+    if (fishEyeOverrideMode == ShaderProperties::FisheyeOverrideModeDisabled)
+        lr.setHints(LineRenderer::DISABLE_FISHEYE_TRANFORMATION);
+    lr.addVertex(rect.x,          rect.y);
+    lr.addVertex(rect.x + rect.w, rect.y);
+    lr.addVertex(rect.x + rect.w, rect.y + rect.h);
+    lr.addVertex(rect.x,          rect.y + rect.h);
+    lr.addVertex(rect.x,          rect.y);
+    lr.render({&p, &m}, rect.colors[0], 4);
+}
+
+static void draw_rectangle_solid(const Renderer &renderer,
+                                 const celestia::Rect &r,
+                                 int fishEyeOverrideMode,
+                                 const Eigen::Matrix4f& p,
+                                 const Eigen::Matrix4f& m)
 {
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
-
-    bool solid = r.type != celestia::Rect::Type::BorderOnly;
-    bool lineAsTriangles = false;
-    if (!solid)
-    {
-        lineAsTriangles = shouldDrawLineAsTriangles();
-        if (lineAsTriangles)
-            shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-    }
-
     if (r.nColors > 0)
         shadprop.texUsage |= ShaderProperties::VertexColors;
     if (r.tex != nullptr)
@@ -5263,61 +5279,17 @@ void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, c
 
     shadprop.fishEyeOverride = fishEyeOverrideMode;
 
-    auto *prog = getShaderManager().getShader(shadprop);
+    auto *prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
     constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
-    array<float, 80> lineAsTriangleVertices = {
-        r.x,       r.y,       r.x + r.w, r.y,       -0.5,
-        r.x,       r.y,       r.x + r.w, r.y,        0.5,
-
-        r.x + r.w, r.y,       r.x,       r.y,       -0.5,
-        r.x + r.w, r.y,       r.x,       r.y,        0.5,
-
-        r.x + r.w, r.y,       r.x + r.w, r.y + r.h, -0.5,
-        r.x + r.w, r.y,       r.x + r.w, r.y + r.h,  0.5,
-
-        r.x + r.w, r.y + r.h, r.x + r.w, r.y,       -0.5,
-        r.x + r.w, r.y + r.h, r.x + r.w, r.y,        0.5,
-
-        r.x + r.w, r.y + r.h, r.x,       r.y + r.h, -0.5,
-        r.x + r.w, r.y + r.h, r.x,       r.y + r.h,  0.5,
-
-        r.x,       r.y + r.h, r.x + r.w, r.y + r.h, -0.5,
-        r.x,       r.y + r.h, r.x + r.w, r.y + r.h,  0.5,
-
-        r.x,       r.y + r.h, r.x,       r.y,       -0.5,
-        r.x,       r.y + r.h, r.x,       r.y,        0.5,
-
-        r.x,       r.y,       r.x,       r.y + r.h, -0.5,
-        r.x,       r.y,       r.x,       r.y + r.h,  0.5,
-    };
-    constexpr array<short, 24> lineAsTriangleIndcies = {
-        0,  1,  2,   2,  3,  0,
-        4,  5,  6,   6,  7,  4,
-        8,  9,  10,  10, 11, 8,
-        12, 13, 14,  14, 15, 12
-    };
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data());
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                              2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data() + 2);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data() + 4);
-    }
-    else
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                      2, GL_FLOAT, GL_FALSE, 0, vertices.data());
-    }
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, 0, vertices.data());
+
     if (r.tex != nullptr)
     {
         glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
@@ -5339,25 +5311,21 @@ void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, c
     prog->use();
     prog->setMVPMatrices(p, m);
 
-    if (lineAsTriangles)
-    {
-        prog->lineWidthX = getLineWidthX() * r.lw;
-        prog->lineWidthY = getLineWidthY() * r.lw;
-        glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
-    }
-    else
-    {
-        glDrawArrays(solid ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
-    }
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-    }
+    if (r.tex != nullptr)
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    if (r.nColors == 4)
+        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+}
+
+void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
+{
+    if(r.type == celestia::Rect::Type::BorderOnly)
+        draw_rectangle_border(*this, r, fishEyeOverrideMode, p, m);
+    else
+        draw_rectangle_solid(*this, r, fishEyeOverrideMode, p, m);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)

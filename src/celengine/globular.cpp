@@ -219,9 +219,12 @@ void initGlobularData(celgl::VertexObject& vo,
     }
 
     vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
-    vo.setVertices(3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
-    vo.setTextureCoords(2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
-    vo.setColors(4, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
+    vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
+                            3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                            2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
+    vo.setVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex,
+                            4, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
     vo.setVertexAttribArray(sizeLoc, 1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize));
     vo.setVertexAttribArray(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
 }

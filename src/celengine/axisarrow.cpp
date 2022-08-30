@@ -12,6 +12,7 @@
 #include <vector>
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
+#include <celrender/linerenderer.h>
 #include "axisarrow.h"
 #include "body.h"
 #include "frame.h"
@@ -27,6 +28,7 @@ using namespace std;
 using namespace celestia;
 using namespace celmath;
 using namespace celgl;
+using celestia::engine::LineRenderer;
 
 // draw a simple circle or annulus
 #define DRAW_ANNULUS 0
@@ -146,121 +148,17 @@ static size_t initArrow(VertexObject &vo)
     vo.setBufferData(head.data(), offset, s);
     offset += s;
 
-    vo.setVertices(3, GL_FLOAT, GL_FALSE, 0, 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     return count;
 }
 
-static void initLetters(VertexObject &vo, VertexObject::AttributesType attributes)
-{
-    vo.bind(attributes);
-    if (vo.initialized())
-        return;
-
-    GLfloat lettersVtx[] =
-    {
-        // X
-        0,    0,    0,    1,    0,    1,    -0.5f,
-        0,    0,    0,    1,    0,    1,    0.5f,
-        1,    0,    1,    0,    0,    0,    -0.5f,
-        1,    0,    1,    0,    0,    0,    -0.5f,
-        1,    0,    1,    0,    0,    0,    0.5f,
-        0,    0,    0,    1,    0,    1,    -0.5f,
-
-        1,    0,    0,    0,    0,    1,    -0.5f,
-        1,    0,    0,    0,    0,    1,    0.5f,
-        0,    0,    1,    1,    0,    0,    -0.5f,
-        0,    0,    1,    1,    0,    0,    -0.5f,
-        0,    0,    1,    1,    0,    0,    0.5f,
-        1,    0,    0,    0,    0,    1,    -0.5f,
-        // Y
-        0,    0,    1,    0.5f, 0,    0.5f, -0.5f,
-        0,    0,    1,    0.5f, 0,    0.5f, 0.5f,
-        0.5f, 0,    0.5f, 0,    0,    1,    -0.5f,
-        0.5f, 0,    0.5f, 0,    0,    1,    -0.5f,
-        0.5f, 0,    0.5f, 0,    0,    1,    0.5f,
-        0,    0,    1,    0.5f, 0,    0.5f, -0.5f,
-
-        1,    0,    1,    0.5f, 0,    0.5f, -0.5f,
-        1,    0,    1,    0.5f, 0,    0.5f, 0.5f,
-        0.5f, 0,    0.5f, 1,    0,    1,    -0.5f,
-        0.5f, 0,    0.5f, 1,    0,    1,    -0.5f,
-        0.5f, 0,    0.5f, 1,    0,    1,    0.5f,
-        1,    0,    1,    0.5f, 0,    0.5f, -0.5f,
-
-        0.5f, 0,    0,    0.5f, 0,    0.5f, -0.5f,
-        0.5f, 0,    0,    0.5f, 0,    0.5f, 0.5f,
-        0.5f, 0,    0.5f, 0.5f, 0,    0,    -0.5f,
-        0.5f, 0,    0.5f, 0.5f, 0,    0,    -0.5f,
-        0.5f, 0,    0.5f, 0.5f, 0,    0,    0.5f,
-        0.5f, 0,    0,    0.5f, 0,    0.5f, -0.5f,
-        // Z
-        0,    0,    1,    1,    0,    1,    -0.5f,
-        0,    0,    1,    1,    0,    1,    0.5f,
-        1,    0,    1,    0,    0,    1,    -0.5f,
-        1,    0,    1,    0,    0,    1,    -0.5f,
-        1,    0,    1,    0,    0,    1,    0.5f,
-        0,    0,    1,    1,    0,    1,    -0.5f,
-
-        1,    0,    1,    0,    0,    0,    -0.5f,
-        1,    0,    1,    0,    0,    0,    0.5f,
-        0,    0,    0,    1,    0,    1,    -0.5f,
-        0,    0,    0,    1,    0,    1,    -0.5f,
-        0,    0,    0,    1,    0,    1,    0.5f,
-        1,    0,    1,    0,    0,    0,    -0.5f,
-
-        0,    0,    0,    1,    0,    0,    -0.5f,
-        0,    0,    0,    1,    0,    0,    0.5f,
-        1,    0,    0,    0,    0,    0,    -0.5f,
-        1,    0,    0,    0,    0,    0,    -0.5f,
-        1,    0,    0,    0,    0,    0,    0.5f,
-        0,    0,    0,    1,    0,    0,    -0.5f,
-    };
-
-    vo.allocate(sizeof(lettersVtx));
-
-    vo.setBufferData(lettersVtx, 0, sizeof(lettersVtx));
-    vo.setVertices(3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, 0);
-    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, sizeof(float) * 3);
-    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, sizeof(float) * 6);
-
-    vo.setVertices(3, GL_FLOAT, GL_FALSE, sizeof(float) * 7 * 3, 0, celgl::VertexObject::AttributesType::Alternative1);
-}
 
 static void RenderArrow(VertexObject& vo)
 {
     auto count = initArrow(vo);
     vo.draw(GL_TRIANGLES, count);
     vo.unbind();
-}
-
-// Draw letter x in xz plane
-static void RenderX(VertexObject& vo, bool lineAsTriangles)
-{
-    if (lineAsTriangles)
-        vo.draw(GL_TRIANGLES, 12);
-    else
-        vo.draw(GL_LINES, 4);
-}
-
-
-// Draw letter y in xz plane
-static void RenderY(VertexObject& vo, bool lineAsTriangles)
-{
-    if (lineAsTriangles)
-        vo.draw(GL_TRIANGLES, 18, 12);
-    else
-        vo.draw(GL_LINES, 6, 4);
-}
-
-
-// Draw letter z in xz plane
-static void RenderZ(VertexObject& vo, bool lineAsTriangles)
-{
-    if (lineAsTriangles)
-        vo.draw(GL_TRIANGLES, 18, 30);
-    else
-        vo.draw(GL_LINES, 6, 10);
 }
 
 
@@ -334,7 +232,7 @@ ArrowReferenceMark::render(Renderer* renderer,
     prog->setMVPMatrices(*m.projection, mv);
 
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
-		     color.red(), color.green(), color.blue(), opacity);
+                     color.red(), color.green(), color.blue(), opacity);
 
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     RenderArrow(vo);
@@ -447,34 +345,37 @@ AxesReferenceMark::render(Renderer* renderer,
     prog->setMVPMatrices(projection, zModelView);
     RenderArrow(arrowVo);
 
-    bool lineAsTriangles = renderer->shouldDrawLineAsTriangles();
-    if (lineAsTriangles)
-    {
-        ShaderProperties letterProp = shadprop;
-        letterProp.texUsage |= ShaderProperties::LineAsTriangles;
-        prog = renderer->getShaderManager().getShader(letterProp);
-        if (prog == nullptr)
-            return;
+    LineRenderer lr(*renderer);
+    // X
+    lr.addVertex(0.0f, 0.0f, 0.0f);
+    lr.addVertex(1.0f, 0.0f, 1.0f);
+    lr.addVertex(1.0f, 0.0f, 0.0f);
+    lr.addVertex(0.0f, 0.0f, 1.0f);
+    // Y
+    lr.addVertex(0.0f, 0.0f, 1.0f);
+    lr.addVertex(0.5f, 0.0f, 0.5f);
+    lr.addVertex(1.0f, 0.0f, 1.0f);
+    lr.addVertex(0.5f, 0.0f, 0.5f);
+    lr.addVertex(0.5f, 0.0f, 0.0f);
+    lr.addVertex(0.5f, 0.0f, 0.5f);
+    // Z
+    lr.addVertex(0.0f, 0.0f, 1.0f);
+    lr.addVertex(1.0f, 0.0f, 1.0f);
+    lr.addVertex(1.0f, 0.0f, 1.0f);
+    lr.addVertex(0.0f, 0.0f, 0.0f);
+    lr.addVertex(0.0f, 0.0f, 0.0f);
+    lr.addVertex(1.0f, 0.0f, 0.0f);
 
-        prog->use();
-        prog->lineWidthX = renderer->getLineWidthX();
-        prog->lineWidthY = renderer->getLineWidthY();
-    }
-
-    auto &letterVo = renderer->getVertexObject(VOType::AxisLetter, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    initLetters(letterVo, lineAsTriangles ? VertexObject::AttributesType::Default : VertexObject::AttributesType::Alternative1);
-
-    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
-    prog->setMVPMatrices(projection, xModelView * labelTransformMatrix);
-    RenderX(letterVo, lineAsTriangles);
-    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
-    prog->setMVPMatrices(projection, yModelView * labelTransformMatrix);
-    RenderY(letterVo, lineAsTriangles);
-    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
-    prog->setMVPMatrices(projection, zModelView * labelTransformMatrix);
-    RenderZ(letterVo, lineAsTriangles);
-
-    letterVo.unbind();
+    Eigen::Matrix4f mv;
+    // X
+    mv = xModelView * labelTransformMatrix;
+    lr.render({&projection, &mv}, {1.0f, 0.0f, 0.0f, opacity}, 4, 0);
+    // Y
+    mv = yModelView * labelTransformMatrix;
+    lr.render({&projection, &mv}, {0.0f, 1.0f, 0.0f, opacity}, 6, 4);
+    // Z
+    mv = zModelView * labelTransformMatrix;
+    lr.render({&projection, &mv}, {0.0f, 0.0f, 1.0f, opacity}, 6, 10);
 
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);

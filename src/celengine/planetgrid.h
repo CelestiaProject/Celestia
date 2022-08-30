@@ -2,7 +2,7 @@
 //
 // Longitude/latitude grids for ellipsoidal bodies.
 //
-// Copyright (C) 2008, the Celestia Development Team
+// Copyright (C) 2008-present, the Celestia Development Team
 // Initial version by Chris Laurel, claurel@gmail.com
 //
 // This program is free software; you can redistribute it and/or
@@ -10,13 +10,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_PLANETGRID_H_
-#define _CELENGINE_PLANETGRID_H_
+#pragma once
 
 #include <celengine/referencemark.h>
 
 class Body;
-struct LineStripEnd;
+class Renderer;
 
 class PlanetographicGrid : public ReferenceMark
 {
@@ -46,22 +45,29 @@ public:
         NorthReversed
     };
 
-    PlanetographicGrid(const Body& _body);
+    PlanetographicGrid(Renderer& _renderer, const Body& _body);
     ~PlanetographicGrid() = default;
 
-    void render(Renderer* renderer,
+    void render(const Eigen::Vector3f& pos,
+                float discSizeInPixels,
+                double tdb,
+                const Matrices& m) const/* override*/;
+    void render(Renderer *, /* FIXME */
                 const Eigen::Vector3f& pos,
                 float discSizeInPixels,
                 double tdb,
-                const Matrices& m) const override;
+                const Matrices& m) const override
+    {
+        render(pos, discSizeInPixels, tdb, m);
+    };
     float boundingSphereRadius() const override;
 
     void setIAULongLatConvention();
 
 private:
-    static void InitializeGeometry();
+    static void InitializeGeometry(const Renderer&);
 
-private:
+    Renderer& renderer;
     const Body& body;
 
     float minLongitudeStep{ 10.0f };
@@ -69,11 +75,4 @@ private:
 
     LongitudeConvention longitudeConvention{ Westward };
     NorthDirection northDirection{ NorthNormal };
-
-    static unsigned int circleSubdivisions;
-    static std::vector<LineStripEnd> xyCircle;
-    static std::vector<LineStripEnd> xzCircle;
 };
-
-#endif // _CELENGINE_PLANETGRID_H_
-
