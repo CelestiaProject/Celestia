@@ -579,7 +579,7 @@ class Renderer
                          double now);
     void buildLabelLists(const celmath::Frustum& viewFrustum,
                          double now);
-    void buildDepthPartitions();
+    int buildDepthPartitions();
 
 
     void addRenderListEntries(RenderListEntry& rle,
@@ -733,6 +733,7 @@ class Renderer
                      const Matrices&);
 
     void renderSolarSystemObjects(const Observer &observer,
+                                  int nIntervals,
                                   double now);
 
     void updateBodyVisibilityMask();

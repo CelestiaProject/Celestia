@@ -1652,8 +1652,8 @@ void Renderer::draw(const Observer& observer,
     enableDepthTest();
     enableDepthMask();
 
-    buildDepthPartitions();
-    renderSolarSystemObjects(observer, now);
+    int nIntervals = buildDepthPartitions();
+    renderSolarSystemObjects(observer, nIntervals, now);
 
     renderForegroundAnnotations(FontNormal);
 
@@ -5778,7 +5778,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
         buildLabelLists(xfrustum, now);
 }
 
-void
+int
 Renderer::buildDepthPartitions()
 {
     // Since we're rendering objects of a huge range of sizes spread over
@@ -5917,45 +5917,17 @@ Renderer::buildDepthPartitions()
 
     // We want to avoid overpartitioning the depth buffer. In this stage, we
     // coalesce partitions that have small spans in the depth buffer.
-    constexpr float PreferredNearFarRatio = 0.002f;
-
-    std::vector<DepthBufferPartition>  mergedDepthBufferPartitions;
-
-    for(unsigned i = 0;i < nIntervals; )
-    {
-        float farZ = depthPartitions[i].farZ;
-
-        // Merge all partitions into a single one that's as large as possible
-        // without near/far being less than the preferred near-far ratio. This
-        // will reduce the number of depth buffer partitions without sacrificing
-        // depth buffer precision.
-        unsigned j = i;
-        for (; j < nIntervals - 1; j++)
-        {
-            if (depthPartitions[j + 1].nearZ / farZ < PreferredNearFarRatio)
-                break;
-        }
-
-        DepthBufferPartition partition;
-        partition.farZ = farZ;
-        partition.nearZ = depthPartitions[j].nearZ;
-        partition.index = depthPartitions[i].index;
-
-        mergedDepthBufferPartitions.push_back(partition);
-
-        i = j + 1;
-    }
-
-    depthPartitions = std::move(mergedDepthBufferPartitions);
+    // TODO: Implement this step!
+    return nIntervals;
 }
 
 void
 Renderer::renderSolarSystemObjects(const Observer &observer,
+                                   int nIntervals,
                                    double now)
 {
     // Render everything that wasn't culled.
     auto annotation = depthSortedAnnotations.begin();
-    int nIntervals = static_cast<int>(depthPartitions.size());
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
     for (int interval = 0; interval < nIntervals; interval++)
