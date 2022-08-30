@@ -621,9 +621,6 @@ void Globular::render(const Eigen::Vector3f& offset,
 
     GlobularInfoManager* globularInfoManager = getGlobularInfoManager();
 
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 #ifndef GL_ES
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -653,6 +650,12 @@ void Globular::render(const Eigen::Vector3f& offset,
     tidalProg->floatParam("tidalSize") = tidalSize;
     tidalProg->mat3Param("viewMat") = viewMat;
     tidalProg->samplerParam("tidalTex") = 0;
+
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.smoothLines = true;
+    renderer->setPipelineState(ps);
 
     vo.draw(GL_TRIANGLE_FAN, 4);
 

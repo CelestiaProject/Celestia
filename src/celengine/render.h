@@ -109,6 +109,22 @@ class Renderer
     Renderer();
     ~Renderer();
 
+    struct PipelineState
+    {
+        bool blending       { false };
+        bool scissor        { false };
+        bool multisample    { false };
+        bool depthMask      { false };
+        bool depthTest      { false };
+        bool smoothLines    { false };
+
+        struct
+        {
+            GLenum src      { GL_NONE };
+            GLenum dst      { GL_NONE };
+        } blendFunc;
+    };
+
     struct DetailOptions
     {
         DetailOptions();
@@ -285,15 +301,7 @@ class Renderer
     void disableMSAA() noexcept;
     bool isMSAAEnabled() const noexcept;
 
-    void enableBlending() noexcept;
-    void disableBlending() noexcept;
-    void setBlendingFactors(GLenum, GLenum) noexcept;
-
-    void enableDepthMask() noexcept;
-    void disableDepthMask() noexcept;
-
-    void enableDepthTest() noexcept;
-    void disableDepthTest() noexcept;
+    void setPipelineState(const PipelineState &ps) noexcept;
 
     celestia::PixelFormat getPreferredCaptureFormat() const noexcept;
 
@@ -740,9 +748,6 @@ class Renderer
 
     void createShadowFBO();
 
-    void enableSmoothLines();
-    void disableSmoothLines();
-
  private:
     ShaderManager* shaderManager{ nullptr };
 
@@ -807,17 +812,7 @@ class Renderer
 
     int currentIntervalIndex{ 0 };
 
-    struct State
-    {
-        bool blending    : 1;
-        bool scissor     : 1;
-        bool multisample : 1;
-        bool depthMask   : 1;
-        bool depthTest   : 1;
-
-        GLenum sfactor, dfactor; // blending
-    };
-    State m_GLState { false, false, false, false, false };
+    PipelineState m_pipelineState;
 
     std::array<int, 4> m_viewport { 0, 0, 0, 0 };
 

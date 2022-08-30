@@ -125,10 +125,11 @@ PlanetographicGrid::render(Renderer* renderer,
     Vector3f vn  = renderer->getCameraOrientation().conjugate() * -Vector3f::UnitZ();
     Vector3d viewNormal = vn.cast<double>();
 
-    // Enable depth buffering
-    renderer->enableDepthTest();
-    renderer->enableDepthMask();
-    renderer->disableBlending();
+    Renderer::PipelineState ps;
+    ps.depthMask = true;
+    ps.depthTest = true;
+    ps.smoothLines = true;
+    renderer->setPipelineState(ps);
 
     Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
     Matrix4f projection = *m.projection;
@@ -309,9 +310,6 @@ PlanetographicGrid::render(Renderer* renderer,
         glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
         glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
     }
-
-    renderer->enableBlending();
-    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 

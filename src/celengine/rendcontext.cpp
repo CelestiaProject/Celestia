@@ -716,37 +716,29 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     if (newBlendMode != blendMode)
     {
         blendMode = newBlendMode;
+        Renderer::PipelineState ps;
         switch (blendMode)
         {
         case cmod::BlendMode::NormalBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            if (disableDepthWriteOnBlend)
-                renderer->disableDepthMask();
-            else
-                renderer->enableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+            ps.depthMask = !disableDepthWriteOnBlend;
             break;
         case cmod::BlendMode::AdditiveBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-            if (disableDepthWriteOnBlend)
-                renderer->disableDepthMask();
-            else
-                renderer->enableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
+            ps.depthMask = !disableDepthWriteOnBlend;
             break;
         case cmod::BlendMode::PremultipliedAlphaBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            if (disableDepthWriteOnBlend)
-                renderer->disableDepthMask();
-            else
-                renderer->enableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
+            ps.depthMask = !disableDepthWriteOnBlend;
             break;
         default:
-            renderer->disableBlending();
-            renderer->enableDepthMask();
+            ps.depthMask = true;
             break;
         }
+        renderer->setPipelineState(ps);
     }
 }
 
@@ -886,27 +878,25 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     if (newBlendMode != blendMode)
     {
         blendMode = newBlendMode;
+        Renderer::PipelineState ps;
         switch (blendMode)
         {
         case cmod::BlendMode::NormalBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            renderer->disableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
             break;
         case cmod::BlendMode::AdditiveBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-            renderer->disableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
             break;
         case cmod::BlendMode::PremultipliedAlphaBlend:
-            renderer->enableBlending();
-            renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            renderer->disableDepthMask();
+            ps.blending = true;
+            ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
             break;
         default:
-            renderer->disableBlending();
-            renderer->enableDepthMask();
+            ps.depthMask = true;
             break;
         }
+        renderer->setPipelineState(ps);
     }
 }

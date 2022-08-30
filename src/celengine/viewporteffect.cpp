@@ -14,6 +14,8 @@
 #include "shadermanager.h"
 #include "mapmanager.h"
 
+static const Renderer::PipelineState ps;
+
 bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
 {
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
@@ -41,15 +43,6 @@ PassthroughViewportEffect::PassthroughViewportEffect() :
 {
 }
 
-bool PassthroughViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo)
-{
-    if (!ViewportEffect::prerender(renderer, fbo))
-        return false;
-
-    renderer->disableDepthTest();
-    return true;
-}
-
 bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
 {
     CelestiaGLProgram *prog = renderer->getShaderManager().getShader("passthrough");
@@ -63,6 +56,7 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
     prog->use();
     prog->samplerParam("tex") = 0;
     glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
+    renderer->setPipelineState(ps);
     draw(vo);
     glBindTexture(GL_TEXTURE_2D, 0);
     vo.unbind();
@@ -103,11 +97,7 @@ bool WarpMeshViewportEffect::prerender(Renderer* renderer, FramebufferObject* fb
     if (mesh == nullptr)
         return false;
 
-    if (!ViewportEffect::prerender(renderer, fbo))
-        return false;
-
-    renderer->disableDepthTest();
-    return true;
+    return ViewportEffect::prerender(renderer, fbo);
 }
 
 bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
@@ -124,6 +114,7 @@ bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, 
     prog->samplerParam("tex") = 0;
     prog->floatParam("screenRatio") = (float)height / width;
     glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
+    renderer->setPipelineState(ps);
     draw(vo);
     glBindTexture(GL_TEXTURE_2D, 0);
     vo.unbind();

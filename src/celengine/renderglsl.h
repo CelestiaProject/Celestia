@@ -90,6 +90,7 @@ void renderRings_GLSL(RingSystem& rings,
                       bool renderShadow,
                       float segmentSizeInPixels,
                       const Matrices &m,
+                      bool inside,
                       Renderer* renderer);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
