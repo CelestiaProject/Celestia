@@ -456,7 +456,7 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPane
     dsoGroup->setLayout(dsoGroupLayout);
     layout->addWidget(dsoGroup);
 
-    globularsButton->setChecked(true);
+    galaxiesButton->setChecked(true);
 
     // Additional filtering controls
     QGroupBox* filterGroup = new QGroupBox(_("Filter"));
