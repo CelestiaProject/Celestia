@@ -57,10 +57,10 @@ Q_OBJECT
 
     QLabel* searchResultLabel{nullptr};
 
-    QCheckBox* globularsButton{nullptr};
-    QCheckBox* galaxiesButton{nullptr};
-    QCheckBox* nebulaeButton{nullptr};
-    QCheckBox* openClustersButton{nullptr};
+    QRadioButton* globularsButton{nullptr};
+    QRadioButton* galaxiesButton{nullptr};
+    QRadioButton* nebulaeButton{nullptr};
+    QRadioButton* openClustersButton{nullptr};
 
     QLineEdit* objectTypeFilterBox{nullptr};
 
