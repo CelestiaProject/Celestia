@@ -612,17 +612,17 @@ float Renderer::getPointHeight() const
 
 float Renderer::getLineWidthX() const
 {
-    return ((renderFlags | ShowSmoothLines) ? 1.5f : 1.0f) * getPointWidth();
+    return ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getPointWidth();
 }
 
 float Renderer::getLineWidthY() const
 {
-    return ((renderFlags | ShowSmoothLines) ? 1.5f : 1.0f) * getPointHeight();
+    return ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getPointHeight();
 }
 
 float Renderer::getRasterizedLineWidth(float multiplier) const
 {
-    return multiplier * ((renderFlags | ShowSmoothLines) ? 1.5f : 1.0f) * getScaleFactor();
+    return multiplier * ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getScaleFactor();
 }
 
 bool Renderer::shouldDrawLineAsTriangles(float multiplier) const
