@@ -865,11 +865,11 @@ void SolarSystemBrowser::slotRefreshTree()
 
     int bodyFilter = 0;
     if (planetsButton->isChecked())
-        bodyFilter |= Body::Planet | Body::DwarfPlanet | Body::Moon;
+        bodyFilter |= Body::Planet | Body::DwarfPlanet | Body::Moon | Body::MinorMoon;
     if (asteroidsButton->isChecked())
         bodyFilter |= Body::Asteroid;
     if (spacecraftsButton->isChecked())
-        bodyFilter |= Body::Spacecraft;
+        bodyFilter |= Body::Spacecraft | Body::Component;
     if (cometsButton->isChecked())
         bodyFilter |= Body::Comet;
 
