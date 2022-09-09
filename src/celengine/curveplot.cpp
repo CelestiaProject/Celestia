@@ -299,8 +299,14 @@ public:
         if (currentStripLength > 1)
         {
             int index = currentPosition * 2;
-            data[index] = data[index - 4];
-            data[index + 1] = data[index - 3];
+            // append the second to last point again to calculate the last line
+            // segment direction, only position is used
+            data[index].position = data[index - 4].position;
+            data[index + 1].position = data[index - 3].position;
+            // since the last line direction is calculated from last point to
+            // second to last point, set the scales of last point to their inverse
+            data[index - 2].scale = -data[index - 2].scale;
+            data[index - 1].scale = -data[index - 1].scale;
             currentPosition += 1;
             stripLengths.push_back(currentStripLength);
         }
