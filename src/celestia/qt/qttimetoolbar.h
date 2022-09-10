@@ -14,6 +14,7 @@
 #define _QTTIMETOOLBAR_H_
 
 #include <QToolBar>
+#include <QToolButton>
 
 class CelestiaCore;
 
@@ -28,7 +29,7 @@ Q_OBJECT
     ~TimeToolBar() = default;
 
  public slots:
-    void slotPauseTime();
+    void slotPauseResumeTime();
     void slotReverseTime();
     void slotRealTime();
     void slotDoubleTime();
@@ -39,6 +40,8 @@ Q_OBJECT
 
  private:
     CelestiaCore* appCore;
+    QToolButton* pauseResumeBtn;
+    bool textButton = false;
 };
 
 #endif // _QTTIMETOOLBAR_H_
