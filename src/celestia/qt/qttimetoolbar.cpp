@@ -31,9 +31,9 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     textButton = true;
     QAction* reverseTimeAction = new QAction(QString("< >"), this);
     reverseTimeAction->setToolTip(_("Reverse time"));
-    QAction* slowTimeAction = new QAction(QString("<<|"), this);
+    QAction* slowTimeAction = new QAction(QString("<<<"), this);
     slowTimeAction->setToolTip(_("10x slower"));
-    QAction* halfTimeAction = new QAction(QString("<|"), this);
+    QAction* halfTimeAction = new QAction(QString("<<"), this);
     halfTimeAction->setToolTip(_("2x slower"));
     QAction* doubleTimeAction = new QAction(QString(">>"), this);
     doubleTimeAction->setToolTip(_("2x faster"));
@@ -70,10 +70,13 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 
     pauseResumeBtn = new QToolButton(this);
     connect(pauseResumeBtn, SIGNAL(clicked()), this, SLOT(slotPauseResumeTime()));
-    if (textButton) {
-       pauseResumeBtn->setText(QString("||")); 
-    } else {
-       pauseResumeBtn->setIcon(QIcon(":/icons/time-pause.png"));
+    if (textButton)
+    {
+        pauseResumeBtn->setText(QString("||")); 
+    }
+    else
+    {
+        pauseResumeBtn->setIcon(QIcon(":/icons/time-pause.png"));
     }
     pauseResumeBtn->setToolTip(_("Pause time"));
     addWidget(pauseResumeBtn);
@@ -94,22 +97,31 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 
 void TimeToolBar::slotPauseResumeTime()
 {
-    if (appCore->getSimulation()->getPauseState()) {
-       if (textButton) {
-          pauseResumeBtn->setText(QString("||"));
-       } else {
-          pauseResumeBtn->setIcon(QIcon(":/icons/time-pause.png"));
-       }
-       pauseResumeBtn->setToolTip(_("Pause time"));
-       appCore->getSimulation()->setPauseState(false);
-    } else {
-       if (textButton) {
-          pauseResumeBtn->setText(QString(">"));
-       } else {
-          pauseResumeBtn->setIcon(QIcon(":/icons/time-resume.png"));
-       }
-       pauseResumeBtn->setToolTip(_("Resume time"));
-       appCore->getSimulation()->setPauseState(true);
+    if (appCore->getSimulation()->getPauseState()) 
+    {
+        if (textButton)
+        {
+            pauseResumeBtn->setText(QString("||"));
+        }
+        else
+        {
+            pauseResumeBtn->setIcon(QIcon(":/icons/time-pause.png"));
+        }
+        pauseResumeBtn->setToolTip(_("Pause time"));
+        appCore->getSimulation()->setPauseState(false);
+    }
+    else
+    {
+        if (textButton)
+        {
+            pauseResumeBtn->setText(QString(">"));
+        }
+        else
+        {
+            pauseResumeBtn->setIcon(QIcon(":/icons/time-resume.png"));
+        }
+        pauseResumeBtn->setToolTip(_("Resume time"));
+        appCore->getSimulation()->setPauseState(true);
     }
 }
 
