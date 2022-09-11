@@ -18,24 +18,40 @@
 namespace celestia::engine
 {
 
+/**
+ * @brief Return number of elements of position attribute.
+ *
+ * @return int
+ */
 int
 LineRenderer::pos_count() const
 {
     return (static_cast<int>(m_format) & VF_COUNT_MASK);
 }
 
+/**
+ * @brief Return number of elements of color attribute.
+ *
+ * @return int
+ */
 int
 LineRenderer::color_count() const
 {
     return ((static_cast<int>(m_format) >> VF_COLOR_POS) & VF_COUNT_MASK);
 }
 
+/**
+ * @brief Return type of elements of color attribute.
+ *
+ * @return VF_UBYTE/VF_FLOAT
+ */
 int
 LineRenderer::color_type() const
 {
     return ((static_cast<int>(m_format) >> VF_COLOR_POS) & VF_UBYTE_BIT) != 0 ? VF_UBYTE : VF_FLOAT;
 }
 
+//! Draw triangles defined with segments.
 void
 LineRenderer::draw_triangles(int count, int offset) const
 {
@@ -45,6 +61,7 @@ LineRenderer::draw_triangles(int count, int offset) const
     m_trVertexObj->unbind();
 }
 
+//! Draw triangle strips.
 void
 LineRenderer::draw_triangle_strip(int count, int offset) const
 {
@@ -53,6 +70,7 @@ LineRenderer::draw_triangle_strip(int count, int offset) const
     m_trVertexObj->draw(GL_TRIANGLE_STRIP, count, offset);
 }
 
+//! Draw lines defained with segments.
 void
 LineRenderer::draw_lines(int count, int offset) const
 {
@@ -61,6 +79,7 @@ LineRenderer::draw_lines(int count, int offset) const
     m_lnVertexObj->draw(static_cast<GLenum>(m_primType), count, offset);
 }
 
+//! Enable GPU shader and set it's uniform values. Set line width.
 void
 LineRenderer::setup_shader()
 {
@@ -91,6 +110,7 @@ LineRenderer::setup_shader()
     }
 }
 
+//! Allocate GPU memory for vertices and define its layout.
 void
 LineRenderer::create_vbo_lines()
 {
@@ -118,6 +138,7 @@ LineRenderer::create_vbo_lines()
     }
 }
 
+//! Update or create GPU memory for vertices.
 void
 LineRenderer::setup_vbo_lines()
 {
@@ -145,6 +166,7 @@ LineRenderer::setup_vbo_lines()
     }
 }
 
+//! Allocate GPU memory for vertices and define its layout.
 void
 LineRenderer::create_vbo_triangles()
 {
@@ -215,6 +237,7 @@ LineRenderer::create_vbo_triangles()
     }
 }
 
+//! Update or create GPU memory for vertices.
 void
 LineRenderer::setup_vbo_triangles()
 {
@@ -253,6 +276,7 @@ LineRenderer::setup_vbo_triangles()
     }
 }
 
+//! Update or create GPU memory for vertices.
 void
 LineRenderer::setup_vbo()
 {
@@ -262,6 +286,7 @@ LineRenderer::setup_vbo()
         setup_vbo_triangles();
 }
 
+//! Add new triagles for a line segment (when primitive is Lines).
 void
 LineRenderer::add_segment_points(const Vertex &point1, const Vertex &point2)
 {
@@ -273,6 +298,7 @@ LineRenderer::add_segment_points(const Vertex &point1, const Vertex &point2)
     m_segments.emplace_back(point1, point2, -0.5f);
 }
 
+//! Convert line segments into triangles.
 void
 LineRenderer::triangulate_segments()
 {
@@ -282,6 +308,7 @@ LineRenderer::triangulate_segments()
         add_segment_points(m_vertices[i], m_vertices[i+1]);
 }
 
+//! Convert line strip or loop into triangles.
 void
 LineRenderer::triangulate_vertices_as_segments()
 {
@@ -292,6 +319,7 @@ LineRenderer::triangulate_vertices_as_segments()
         add_segment_points(m_vertices[i], m_vertices[(i + 1) % count]);
 }
 
+//! Add additional triangle strips to simulate LineLoop.
 void
 LineRenderer::close_loop()
 {
@@ -307,6 +335,7 @@ LineRenderer::close_loop()
     m_loopDone = true;
 }
 
+//! Add additional triangle strip to calculate normals used to define actual vertex position.
 void
 LineRenderer::close_strip()
 {
@@ -319,6 +348,7 @@ LineRenderer::close_strip()
     m_loopDone = true;
 }
 
+//! Convert line strip or loop into triangle strip.
 void
 LineRenderer::triangulate_vertices()
 {
@@ -335,6 +365,7 @@ LineRenderer::triangulate_vertices()
         close_strip();
 }
 
+//! Convert lines into triangles.
 void
 LineRenderer::triangulate()
 {
@@ -520,21 +551,6 @@ LineRenderer::addVertex(float x, float y, float z)
     else
     {
         Vertex v(Eigen::Vector3f(x, y, z));
-        m_verticesTr.emplace_back(v, -0.5f);
-        m_verticesTr.emplace_back(v,  0.5f);
-    }
-}
-
-void
-LineRenderer::addVertex(float x, float y)
-{
-    if (!m_useTriangles)
-    {
-        m_vertices.emplace_back(Eigen::Vector3f(x, y, 0.0f));
-    }
-    else
-    {
-        Vertex v(Eigen::Vector3f(x, y, 0.0f));
         m_verticesTr.emplace_back(v, -0.5f);
         m_verticesTr.emplace_back(v,  0.5f);
     }
