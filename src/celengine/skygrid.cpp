@@ -2,7 +2,7 @@
 //
 // Celestial longitude/latitude grids.
 //
-// Copyright (C) 2008-2009, the Celestia Development Team
+// Copyright (C) 2008-present, the Celestia Development Team
 // Initial version by Chris Laurel, <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
+#include <celmath/mathlib.h>
 #include "render.h"
 #include "vecgl.h"
 #include "skygrid.h"
@@ -25,28 +26,31 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 using namespace celestia;
+using celestia::render::LineRenderer;
 
+LineRenderer *SkyGrid::g_gridRenderer = nullptr;
+LineRenderer *SkyGrid::g_crossRenderer = nullptr;
 
 // #define DEBUG_LABEL_PLACEMENT
 
 // The maximum number of parallels or meridians that will be visible
-const double MAX_VISIBLE_ARCS = 10.0;
+constexpr double MAX_VISIBLE_ARCS = 10.0;
 
 // Number of line segments used to approximate one arc of the celestial sphere
-const int ARC_SUBDIVISIONS = 100;
+constexpr int ARC_SUBDIVISIONS = 100;
 
 // Size of the cross indicating the north and south poles
 const double POLAR_CROSS_SIZE = 0.01;
 
 // Grid line spacing tables
-static const int MSEC = 1;
-static const int SEC = 1000;
-static const int MIN = 60 * SEC;
-static const int DEG = 60 * MIN;
-static const int HR  = 60 * MIN;
+constexpr int MSEC = 1;
+constexpr int SEC = 1000;
+constexpr int MIN = 60 * SEC;
+constexpr int DEG = 60 * MIN;
+constexpr int HR  = 60 * MIN;
 
-static const int HOUR_MIN_SEC_TOTAL = 24 * HR;
-static const int DEG_MIN_SEC_TOTAL  = 180 * DEG;
+constexpr int HOUR_MIN_SEC_TOTAL = 24 * HR;
+constexpr int DEG_MIN_SEC_TOTAL  = 180 * DEG;
 
 static const int HOUR_MIN_SEC_SPACING[] =
 {
@@ -144,6 +148,12 @@ toStandardCoords(const Vector3d& v)
     return Vector3d(v.x(), -v.z(), v.y());
 }
 
+static Vector3d
+toCelestiaCoords(const Vector3d& v)
+{
+    return Vector3d(v.x(), v.z(), -v.y());
+}
+
 // Compute the difference between two angles in [-PI, PI]
 template<class T> static T
 angleDiff(T a, T b)
@@ -154,12 +164,6 @@ angleDiff(T a, T b)
         return (T) (2.0 * pi_v<T> - diff);
     else
         return diff;
-}
-
-template<class T> static T
-min4(T a, T b, T c, T d)
-{
-    return std::min(a, std::min(b, std::min(c, d)));
 }
 
 
@@ -195,69 +199,6 @@ static Renderer::LabelVerticalAlignment
 getCoordLabelVAlign(int planeIndex)
 {
     return planeIndex == 1 ? Renderer::VerticalAlignTop : Renderer::VerticalAlignBottom;
-}
-
-
-// Find the intersection of a circle and the plane with the specified normal and
-// containing the origin. The circle is defined parametrically by:
-// center + cos(t)*u + sin(t)*u
-// u and v are orthogonal vectors with magnitudes equal to the radius of the
-// circle.
-// Return true if there are two solutions.
-template<typename T> static bool planeCircleIntersection(const Matrix<T, 3, 1>& planeNormal,
-                                                         const Matrix<T, 3, 1>& center,
-                                                         const Matrix<T, 3, 1>& u,
-                                                         const Matrix<T, 3, 1>& v,
-                                                         Matrix<T, 3, 1>* sol0,
-                                                         Matrix<T, 3, 1>* sol1)
-{
-    // Any point p on the plane must satisfy p*N = 0. Thus the intersection points
-    // satisfy (center + cos(t)U + sin(t)V)*N = 0
-    // This simplifies to an equation of the form:
-    // a*cos(t)+b*sin(t)+c = 0, with a=N*U, b=N*V, and c=N*center
-    T a = u.dot(planeNormal);
-    T b = v.dot(planeNormal);
-    T c = center.dot(planeNormal);
-
-    // The solution is +-acos((-ac +- sqrt(a^2+b^2-c^2))/(a^2+b^2))
-    T s = a * a + b * b;
-    if (s == 0.0)
-    {
-        // No solution; plane containing circle is parallel to test plane
-        return false;
-    }
-
-    if (s - c * c <= 0)
-    {
-        // One or no solutions; no need to distinguish between these
-        // cases for our purposes.
-        return false;
-    }
-
-    // No need to actually call acos to get the solution, since we're just
-    // going to plug it into sin and cos anyhow.
-    T r = b * std::sqrt(s - c * c);
-    T cosTheta0 = (-a * c + r) / s;
-    T cosTheta1 = (-a * c - r) / s;
-    T sinTheta0 = std::sqrt(1 - cosTheta0 * cosTheta0);
-    T sinTheta1 = std::sqrt(1 - cosTheta1 * cosTheta1);
-
-    *sol0 = center + cosTheta0 * u + sinTheta0 * v;
-    *sol1 = center + cosTheta1 * u + sinTheta1 * v;
-
-    // Check that we've chosen a solution that produces a point on the
-    // plane. If not, we need to use the -acos solution.
-    if (std::abs(sol0->dot(planeNormal)) > 1.0e-8)
-    {
-        *sol0 = center + cosTheta0 * u - sinTheta0 * v;
-    }
-
-    if (std::abs(sol1->dot(planeNormal)) > 1.0e-8)
-    {
-        *sol1 = center + cosTheta1 * u - sinTheta1 * v;
-    }
-
-    return true;
 }
 
 
@@ -392,18 +333,6 @@ SkyGrid::render(Renderer& renderer,
                 int windowWidth,
                 int windowHeight)
 {
-    ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-
-    bool lineAsTriangles = renderer.shouldDrawLineAsTriangles();
-    if (lineAsTriangles)
-        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-
-    auto *prog = renderer.getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
     Quaterniond xrot90 = XRotation(-celestia::numbers::pi / 2.0);
@@ -480,10 +409,10 @@ SkyGrid::render(Renderer& renderer,
     // when computing intersection points with the parallels and meridians of the
     // grid. Coordinate labels will be drawn at the intersection points.
     Vector3d frustumNormal[4];
-    frustumNormal[0] = Vector3d( 0,  1, -h);
-    frustumNormal[1] = Vector3d( 0, -1, -h);
-    frustumNormal[2] = Vector3d( 1,  0, -w);
-    frustumNormal[3] = Vector3d(-1,  0, -w);
+    frustumNormal[0] = Vector3d( 0.0,  1.0, -h);
+    frustumNormal[1] = Vector3d( 0.0, -1.0, -h);
+    frustumNormal[2] = Vector3d( 1.0,  0.0, -w);
+    frustumNormal[3] = Vector3d(-1.0,  0.0, -w);
 
     for (int i = 0; i < 4; i++)
     {
@@ -544,79 +473,45 @@ SkyGrid::render(Renderer& renderer,
     int raIncrement  = meridianSpacing(idealMeridianSpacing);
     int decIncrement = parallelSpacing(idealParallelSpacing);
 
-    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (celestia::numbers::pi * 2.0)) / (float) raIncrement) * raIncrement;
-    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (celestia::numbers::pi * 2.0)) / (float) raIncrement) * raIncrement;
-    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / celestia::numbers::pi) / (float) decIncrement) * decIncrement;
-    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / celestia::numbers::pi) / (float) decIncrement) * decIncrement;
+    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (celestia::numbers::pi * 2.0)) / (double) raIncrement) * raIncrement;
+    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (celestia::numbers::pi * 2.0)) / (double) raIncrement) * raIncrement;
+    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / celestia::numbers::pi) / (double) decIncrement) * decIncrement;
+    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / celestia::numbers::pi) / (double) decIncrement) * decIncrement;
 
     // Get the orientation at single precision
     Quaterniond q = xrot90 * m_orientation * xrot90.conjugate();
     Quaternionf orientationf = q.cast<float>();
-
-    prog->use();
-    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, m_lineColor);
 
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
     Matrix4f m = renderer.getModelViewMatrix() *
                  vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
                  vecgl::scale(1000.0f);
-    prog->setMVPMatrices(renderer.getProjectionMatrix(), m);
-    if (lineAsTriangles)
-    {
-        prog->lineWidthX = renderer.getLineWidthX();
-        prog->lineWidthY = renderer.getLineWidthY();
-    }
+    Matrices matrices = {&renderer.getProjectionMatrix(), &m};
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;
-    static vector<LineStripEnd> buffer(2 * (ARC_SUBDIVISIONS + 2), { Vector3f::Identity(), 1.0f });
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
 
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].point);
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[2].point);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].scale);
-    }
-    else
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &buffer[0].point);
-    }
+    int count = 0;
+    if (g_gridRenderer == nullptr)
+        g_gridRenderer = new LineRenderer(renderer, 1.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream);
+    g_gridRenderer->startUpdate();
 
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
+        count++;
         double phi = celestia::numbers::pi * (double) dec / (double) DEG_MIN_SEC_TOTAL;
         double cosPhi = cos(phi);
         double sinPhi = sin(phi);
 
-        for (int j = 0; j <= ARC_SUBDIVISIONS + 1; j++)
+        for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
         {
             double theta = theta0 + j * arcStep;
             auto x = (float) (cosPhi * std::cos(theta));
             auto y = (float) (cosPhi * std::sin(theta));
             auto z = (float) sinPhi;
-            Vector3f position = {x, z, -y};  // convert to Celestia coords
-            buffer[2 * j] = {position, -0.5f};
-            buffer[2 * j + 1] =  {position, 0.5f};
+            g_gridRenderer->addVertex(x, z, -y);  // convert to Celestia coords
         }
-
-        Renderer::PipelineState ps;
-        ps.blending = true;
-        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-        ps.smoothLines = true;
-        renderer.setPipelineState(ps);
-
-        if (lineAsTriangles)
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
-        else
-            glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS + 1);
 
         // Place labels at the intersections of the view frustum planes
         // and the parallels.
@@ -627,16 +522,14 @@ SkyGrid::render(Renderer& renderer,
         {
             Vector3d isect0(Vector3d::Zero());
             Vector3d isect1(Vector3d::Zero());
-            Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
-            Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
             if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
                                         &isect0, &isect1))
             {
                 string labelText = latitudeLabel(dec, decIncrement);
 
-                Vector3f p0((float) isect0.x(), (float) isect0.z(), (float) -isect0.y());
-                Vector3f p1((float) isect1.x(), (float) isect1.z(), (float) -isect1.y());
+                Vector3f p0(toCelestiaCoords(isect0).cast<float>());
+                Vector3f p1(toCelestiaCoords(isect1).cast<float>());
 
 #ifdef DEBUG_LABEL_PLACEMENT
                 glPointSize(5.0);
@@ -651,6 +544,8 @@ SkyGrid::render(Renderer& renderer,
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
+                Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+                Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
                 if ((m * p0).z() < 0.0)
                 {
@@ -679,44 +574,37 @@ SkyGrid::render(Renderer& renderer,
 
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
+        count++;
         double theta = 2.0 * celestia::numbers::pi * (double) ra / (double) totalLongitudeUnits;
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
 
-        for (int j = 0; j <= ARC_SUBDIVISIONS + 1; j++)
+        for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
         {
             double phi = phi0 + j * arcStep;
             auto x = (float) (cos(phi) * cosTheta);
             auto y = (float) (cos(phi) * sinTheta);
             auto z = (float) sin(phi);
-            Vector3f position = {x, z, -y};  // convert to Celestia coords
-            buffer[2 * j] = {position, -0.5f};
-            buffer[2 * j + 1] =  {position, 0.5f};
+            g_gridRenderer->addVertex(x, z, -y);  // convert to Celestia coords
         }
-        if (lineAsTriangles)
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
-        else
-            glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS + 1);
 
         // Place labels at the intersections of the view frustum planes
         // and the meridians.
-        Vector3d center(0.0, 0.0, 0.0);
+        Vector3d center(Vector3d::Zero());
         Vector3d axis0(cosTheta, sinTheta, 0.0);
-        Vector3d axis1(0.0, 0.0, 1.0);
+        Vector3d axis1(Vector3d::UnitZ());
         for (int k = 1; k < 4; k += 2)
         {
-            Vector3d isect0(0.0, 0.0, 0.0);
-            Vector3d isect1(0.0, 0.0, 0.0);
-            Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
-            Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
+            Vector3d isect0(Vector3d::Zero());
+            Vector3d isect1(Vector3d::Zero());
 
             if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
                                         &isect0, &isect1))
             {
                 string labelText = longitudeLabel(ra, raIncrement);
 
-                Vector3f p0((float) isect0.x(), (float) isect0.z(), (float) -isect0.y());
-                Vector3f p1((float) isect1.x(), (float) isect1.z(), (float) -isect1.y());
+                Vector3f p0(toCelestiaCoords(isect0).cast<float>());
+                Vector3f p1(toCelestiaCoords(isect1).cast<float>());
 
 #ifdef DEBUG_LABEL_PLACEMENT
                 glPointSize(5.0);
@@ -731,6 +619,8 @@ SkyGrid::render(Renderer& renderer,
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
+                Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+                Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
                 if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)
                 {
@@ -745,60 +635,43 @@ SkyGrid::render(Renderer& renderer,
         }
     }
 
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.smoothLines = true;
+    renderer.setPipelineState(ps);
+
+    for (int offset = 0, i = 0; i < count; i++)
+    {
+        g_gridRenderer->render(matrices, m_lineColor, ARC_SUBDIVISIONS + 1, offset);
+        offset += ARC_SUBDIVISIONS + 1;
+    }
+
     // Draw crosses indicating the north and south poles
-    array<float, 112> lineAsTriangleVertices = {
-        -polarCrossSize, 1.0f, 0.0f,   polarCrossSize, 1.0f, 0.0f,   -0.5,
-        -polarCrossSize, 1.0f, 0.0f,   polarCrossSize, 1.0f, 0.0f,    0.5,
+    if (g_crossRenderer == nullptr)
+        g_crossRenderer = new LineRenderer(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Stream);
+    g_crossRenderer->startUpdate();
+    g_crossRenderer->addVertex(-polarCrossSize,  1.0f,  0.0f);
+    g_crossRenderer->addVertex( polarCrossSize,  1.0f,  0.0f);
+    g_crossRenderer->addVertex( 0.0f,            1.0f, -polarCrossSize);
+    g_crossRenderer->addVertex( 0.0f,            1.0f,  polarCrossSize);
+    g_crossRenderer->addVertex(-polarCrossSize, -1.0f,  0.0f);
+    g_crossRenderer->addVertex( polarCrossSize, -1.0f,  0.0f);
+    g_crossRenderer->addVertex( 0.0f,           -1.0f, -polarCrossSize);
+    g_crossRenderer->addVertex( 0.0f,           -1.0f,  polarCrossSize);
+    g_crossRenderer->render(matrices, m_lineColor, 8);
 
-        polarCrossSize, 1.0f, 0.0f,    -polarCrossSize, 1.0f, 0.0f,  -0.5,
-        polarCrossSize, 1.0f, 0.0f,    -polarCrossSize, 1.0f, 0.0f,   0.5,
+    g_gridRenderer->clear();
+    g_crossRenderer->clear();
+    g_gridRenderer->finish();
+    g_crossRenderer->finish();
+}
 
-        0.0f, 1.0f, -polarCrossSize,   0.0f, 1.0f, polarCrossSize,   -0.5,
-        0.0f, 1.0f, -polarCrossSize,   0.0f, 1.0f, polarCrossSize,    0.5,
-
-        0.0f, 1.0f, polarCrossSize,    0.0f, 1.0f, -polarCrossSize,  -0.5,
-        0.0f, 1.0f, polarCrossSize,    0.0f, 1.0f, -polarCrossSize,   0.5,
-
-        -polarCrossSize, -1.0f, 0.0f,  polarCrossSize, -1.0f, 0.0f,  -0.5,
-        -polarCrossSize, -1.0f, 0.0f,  polarCrossSize, -1.0f, 0.0f,   0.5,
-
-        polarCrossSize, -1.0f, 0.0f,   -polarCrossSize, -1.0f, 0.0f, -0.5,
-        polarCrossSize, -1.0f, 0.0f,   -polarCrossSize, -1.0f, 0.0f,  0.5,
-
-        0.0f, -1.0f, -polarCrossSize,  0.0f, -1.0f, polarCrossSize,  -0.5,
-        0.0f, -1.0f, -polarCrossSize,  0.0f, -1.0f, polarCrossSize,   0.5,
-
-        0.0f, -1.0f, polarCrossSize,   0.0f, -1.0f, -polarCrossSize, -0.5,
-        0.0f, -1.0f, polarCrossSize,   0.0f, -1.0f, -polarCrossSize,  0.5,
-    };
-    constexpr array<short, 24> lineAsTriangleIndcies = {
-        0,  1,  2,   2,  3,  0,
-        4,  5,  6,   6,  7,  4,
-        8,  9,  10,  10, 11, 8,
-        12, 13, 14,  14, 15, 12
-    };
-
-    if (lineAsTriangles)
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data());
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 3);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 6);
-        glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
-    }
-    else
-    {
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7 * 2, lineAsTriangleVertices.data());
-        glDrawArrays(GL_LINES, 0, 8);
-    }
-
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (lineAsTriangles)
-    {
-        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-    }
+void
+SkyGrid::deinit()
+{
+    delete g_gridRenderer;
+    g_gridRenderer = nullptr;
+    delete g_crossRenderer;
+    g_crossRenderer = nullptr;
 }

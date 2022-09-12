@@ -27,45 +27,24 @@
 // License and a copy of the GNU General Public License along with
 // CurvePlot. If not, see <http://www.gnu.org/licenses/>.
 
-#define DEBUG_ADAPTIVE_SPLINE 0
-#if DEBUG_ADAPTIVE_SPLINE
-#define USE_VERTEX_BUFFER 0
-#else
-#define USE_VERTEX_BUFFER 1
-#endif
-
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <vector>
+#include <celrender/linerenderer.h>
 
-#if DEBUG_ADAPTIVE_SPLINE
-#include <celutil/logger.h>
-#endif
 #include "curveplot.h"
-#include "glsupport.h"
+#include "render.h"
 #include "shadermanager.h"
 
-namespace {
+using celestia::render::LineRenderer;
 
+namespace
+{
+constexpr unsigned int VertexBufferCapacity = 4096;
 constexpr unsigned int SubdivisionFactor = 8;
 constexpr double InvSubdivisionFactor = 1.0 / static_cast<double>(SubdivisionFactor);
-
-#if DEBUG_ADAPTIVE_SPLINE
-constexpr float SplineColors[10][3] = {
-    { 0, 0, 1 },
-    { 0, 1, 1 },
-    { 0, 1, 0 },
-    { 1, 1, 0 },
-    { 1, 0, 0 },
-    { 1, 0, 1 },
-    { 0.5f, 0.5f, 1.0f },
-    { 0.5f, 1.0f, 1.0f },
-    { 0.5f, 1.0f, 0.5f },
-    { 1.0f, 1.0f, 0.5f },
-};
-
-unsigned int SegmentCounts[32];
-#endif
+constexpr float OrbitThickness = 1.0f;
 
 // Convert a 3-vector to a 4-vector by adding a zero
 inline Eigen::Vector4d
@@ -135,263 +114,77 @@ cubicHermiteCoefficients(const Eigen::Vector4d& p0,
     return coeff;
 }
 
+const Eigen::Matrix4f ModelViewMatrix(Eigen::Matrix4f::Identity());
 
 class HighPrec_VertexBuffer
 {
 public:
-    HighPrec_VertexBuffer() :
-        currentPosition(0),
-        capacity(4096),
-        data(nullptr),
-        vbobj(0),
-        currentStripLength(0),
-        lineAsTriangles(false)
+    void setup(const Renderer& _renderer, const Color& _color)
     {
-        data = new Vertex[(capacity + 1) * 2];
-    }
-
-    ~HighPrec_VertexBuffer()
-    {
-        delete[] data;
-    }
-
-    void setup(bool lineAsTriangles)
-    {
-#if USE_VERTEX_BUFFER
         stripLengths.clear();
         currentStripLength = 0;
-        currentPosition = 0;
+        color = _color;
+        renderer = &_renderer;
 
-        this->lineAsTriangles = lineAsTriangles;
-        if (vbobj)
+        if (lr == nullptr)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
+            lr = new LineRenderer(*renderer, OrbitThickness, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream, LineRenderer::VertexFormat::P3F_C4UB);
+            lr->setVertexCount(VertexBufferCapacity);
         }
-
-        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        int stride = lineAsTriangles ? sizeof(Vertex) : sizeof(Vertex) * 2;
-
-        const Eigen::Vector4f* vertexBase = vbobj
-            ? reinterpret_cast<const Eigen::Vector4f*>(offsetof(Vertex, position))
-            : &data[0].position;
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, stride, vertexBase);
-
-        const Eigen::Vector4f* colorBase = vbobj
-            ? reinterpret_cast<const Eigen::Vector4f*>(offsetof(Vertex, color))
-            : &data[0].color;
-        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                              4, GL_FLOAT, GL_FALSE, stride, colorBase);
-        if (lineAsTriangles)
-        {
-            glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-            glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-
-            const float* scaleBase = vbobj
-                ? reinterpret_cast<const float*>(offsetof(Vertex, scale))
-                : &data[0].scale;
-            glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                                  1, GL_FLOAT, GL_FALSE, stride, scaleBase);
-
-            const Eigen::Vector4f* nextVertexBase = vbobj
-                ? reinterpret_cast<const Eigen::Vector4f*>(offsetof(Vertex, position) + (2 * sizeof(Vertex)))
-                : &data[2].position;
-            glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                                  4, GL_FLOAT, GL_FALSE, stride, nextVertexBase);
-        }
-#endif
+        lr->startUpdate();
     }
 
     void finish()
     {
-#if USE_VERTEX_BUFFER
-        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        if (lineAsTriangles)
-        {
-            glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-            glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        }
-        if (vbobj)
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
+        lr->finish();
     }
 
-    inline void vertex(const Eigen::Vector3d& v)
+    inline void vertex(const Eigen::Vector4d& v, float opacity = 1.0f)
     {
-#if USE_VERTEX_BUFFER
-        Eigen::Vector3f pos = v.cast<float>();
-        int index = currentPosition * 2;
-        data[index].position.segment<3>(0) = pos;
-        data[index].color = color;
-        data[index].scale = -0.5f;
-        data[index + 1].position.segment<3>(0) = pos;
-        data[index + 1].color = color;
-        data[index + 1].scale = 0.5f;
-        ++currentPosition;
+        Eigen::Vector3f pos = v.head(3).cast<float>();
+        lr->addVertex(pos, {color, color.alpha() * opacity});
         ++currentStripLength;
-        if (currentPosition == capacity)
-        {
-            flush();
-
-            data[0].position.segment<3>(0) = pos;
-            data[0].color = color;
-            data[0].scale = -0.5f;
-            data[1].position.segment<3>(0) = pos;
-            data[1].color = color;
-            data[1].scale = 0.5f;
-            currentPosition = 1;
-            currentStripLength = 1;
-        }
-#else
-        glVertex3dv(v.data());
-#endif
     }
 
-    inline void vertex(const Eigen::Vector4d& v)
+    inline void end()
     {
-        vertex(v, color);
-    }
-
-    inline void vertex(const Eigen::Vector4d& v, const Eigen::Vector4f& color)
-    {
-#if USE_VERTEX_BUFFER
-        Eigen::Vector4f pos = v.cast<float>();
-        int index = currentPosition * 2;
-        data[index].position = pos;
-        data[index].color = color;
-        data[index].scale = -0.5f;
-        data[index + 1].position = pos;
-        data[index + 1].color = color;
-        data[index + 1].scale = 0.5f;
-        ++currentPosition;
-        ++currentStripLength;
-        if (currentPosition == capacity)
-        {
-            flush();
-
-            data[0].position = pos;
-            data[0].color = color;
-            data[0].scale = -0.5f;
-            data[1].position = pos;
-            data[1].color = color;
-            data[1].scale = 0.5f;
-            currentPosition = 1;
-            currentStripLength = 1;
-        }
-#else
-        glColor4fv(color.data());
-        glVertex3dv(v.data());
-#endif
-    }
-
-    inline void begin()
-    {
-#if !USE_VERTEX_BUFFER
-        glBegin(GL_LINE_STRIP);
-#endif
-    }
-
-    inline void end(bool flushIfNeeded = true)
-    {
-#if USE_VERTEX_BUFFER
         if (currentStripLength > 1)
-        {
-            int index = currentPosition * 2;
-            // append the second to last point again to calculate the last line
-            // segment direction, only position is used
-            data[index].position = data[index - 4].position;
-            data[index + 1].position = data[index - 3].position;
-            // since the last line direction is calculated from last point to
-            // second to last point, set the scales of last point to their inverse
-            data[index - 2].scale = -data[index - 2].scale;
-            data[index - 1].scale = -data[index - 1].scale;
-            currentPosition += 1;
             stripLengths.push_back(currentStripLength);
-        }
-        else
-        {
-            // Abandon line strips that only contains zero/one point
-            currentPosition -= currentStripLength;
-        }
+        else if (currentStripLength == 1)
+            lr->dropLast(); // Abandon line strips that contains only one point
         currentStripLength = 0;
-        if (flushIfNeeded && currentPosition == capacity)
-            flush(false);
-#else
-        glEnd();
-#endif
     }
 
-    inline void flush(bool endIfNeeded = true)
+    inline void flush()
     {
-#if USE_VERTEX_BUFFER
-        if (currentPosition > 0)
+        if (currentStripLength > 1)
+            end();
+
+        Matrices m = { &renderer->getCurrentProjectionMatrix(), &ModelViewMatrix };
+        unsigned int startIndex = 0;
+        lr->prerender(); // this will allocate a new GPU buffer if required
+        for (unsigned int lineCount : stripLengths)
         {
-            // Finish the current line strip
-            if (endIfNeeded && currentStripLength > 1)
-                end(false);
-
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * currentPosition * 2, data);
-
-            unsigned int startIndex = 0;
-            for (unsigned int lineCount : stripLengths)
-            {
-                if (lineAsTriangles)
-                    glDrawArrays(GL_TRIANGLE_STRIP, startIndex * 2, lineCount * 2);
-                else
-                    glDrawArrays(GL_LINE_STRIP, startIndex, lineCount);
-                startIndex += lineCount + 1;
-            }
-
-            currentPosition = 0;
-            stripLengths.clear();
+            lr->render(m, lineCount, startIndex);
+            startIndex += lineCount;
         }
-
+        stripLengths.clear();
+        lr->clear();
         currentStripLength = 0;
-#endif
     }
 
-    void createVertexBuffer()
+    void deinit()
     {
-#if USE_VERTEX_BUFFER
-        if (!vbobj)
-        {
-            glGenBuffers(1, &vbobj);
-            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
-            glBufferData(GL_ARRAY_BUFFER,
-                         (2 * (capacity + 1)) * sizeof(Vertex),
-                         nullptr,
-                         GL_STREAM_DRAW);
-        }
-#endif
-    }
-
-    void setColor(const Eigen::Vector4f &aColor)
-    {
-#if USE_VERTEX_BUFFER
-        color = aColor;
-#else
-        glColor4fv(aColor.data());
-#endif
+        delete lr;
+        lr = nullptr;
     }
 
 private:
-    unsigned int currentPosition;
-    unsigned int capacity;
-    struct Vertex
-    {
-        Eigen::Vector4f position;
-        Eigen::Vector4f color;
-        float scale;
-    };
-
-    Vertex* data;
-    GLuint vbobj;
-    unsigned int currentStripLength;
+    unsigned int currentStripLength { 0 };
     std::vector<unsigned int> stripLengths;
-    Eigen::Vector4f color;
-    bool lineAsTriangles;
+    LineRenderer *lr { nullptr };
+    const Renderer *renderer { nullptr };
+    Color color;
 };
 
 
@@ -427,14 +220,6 @@ public:
         const double dt = (t1 - t0) * InvSubdivisionFactor;
         double segmentBoundingRadius = curveBoundingRadius * InvSubdivisionFactor;
 
-#if DEBUG_ADAPTIVE_SPLINE
-        {
-            int c = depth % 10;
-            glColor4f(SplineColors[c][0], SplineColors[c][1], SplineColors[c][2], 1.0f);
-            ++SegmentCounts[depth];
-        }
-#endif
-
         Eigen::Vector4d lastP = coeff * Eigen::Vector4d(1.0, t0, t0 * t0, t0 * t0 * t0);
 
         for (unsigned int i = 1; i <= SubdivisionFactor; i++)
@@ -464,16 +249,8 @@ public:
             }
             else
             {
-#if DEBUG_ADAPTIVE_SPLINE
-                {
-                    int c = depth % 10;
-                    glColor4f(SplineColors[c][0], SplineColors[c][1], SplineColors[c][2], i % 2 ? 0.25f : 1.0f);
-                }
-#endif
-
                 if (restartCurve)
                 {
-                    m_vbuf.begin();
                     m_vbuf.vertex(lastP);
                     restartCurve = false;
                 }
@@ -498,14 +275,6 @@ public:
     {
         const double dt = (t1 - t0) * InvSubdivisionFactor;
         double segmentBoundingRadius = curveBoundingRadius * InvSubdivisionFactor;
-
-#if DEBUG_ADAPTIVE_SPLINE
-        {
-            int c = depth % 10;
-            glColor4f(SplineColors[c][0], SplineColors[c][1], SplineColors[c][2], 1.0f);
-            ++SegmentCounts[depth];
-        }
-#endif
 
         Eigen::Vector4d lastP = coeff * Eigen::Vector4d(1.0, t0, t0 * t0, t0 * t0 * t0);
         double lastOpacity = (t0 - fadeStart) * fadeRate;
@@ -542,21 +311,13 @@ public:
             }
             else
             {
-#if DEBUG_ADAPTIVE_SPLINE
-                {
-                    int c = depth % 10;
-                    glColor4f(SplineColors[c][0], SplineColors[c][1], SplineColors[c][2], i % 2 ? 0.25f : 1.0f);
-                }
-#endif
-
                 if (restartCurve)
                 {
-                    m_vbuf.begin();
-                    m_vbuf.vertex(lastP, Eigen::Vector4f(color.x(), color.y(), color.z(), color.w() * float(lastOpacity)));
+                    m_vbuf.vertex(lastP, static_cast<float>(lastOpacity));
                     restartCurve = false;
                 }
 
-                m_vbuf.vertex(p, Eigen::Vector4f(color.x(), color.y(), color.z(), color.w() * float(opacity)));
+                m_vbuf.vertex(p, static_cast<float>(opacity));
             }
             lastP = p;
             lastOpacity = opacity;
@@ -574,16 +335,19 @@ private:
 
 HighPrec_VertexBuffer vbuf;
 
-
-
-
 } // end unnamed namespace
 
 
-CurvePlot::CurvePlot()
+CurvePlot::CurvePlot(const Renderer &renderer) :
+    m_renderer(renderer)
 {
 }
 
+void
+CurvePlot::deinit()
+{
+    vbuf.deinit();
+}
 
 /** Add a new sample to the path. If the sample time is less than the first time,
   * it is added at the end. If it is greater than the last time, it is appended
@@ -694,8 +458,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
                   double farZ,
                   const Eigen::Vector3d viewFrustumPlaneNormals[],
                   double subdivisionThreshold,
-                  const Eigen::Vector4f& color,
-                  bool lineAsTriangles) const
+                  const Eigen::Vector4f& color) const
 {
     // Flag to indicate whether we need to issue a glBegin()
     bool restartCurve = true;
@@ -708,14 +471,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
     HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
-#if DEBUG_ADAPTIVE_SPLINE
-    for (unsigned int i = 0; i < sizeof(SegmentCounts) / sizeof(SegmentCounts[0]); i++)
-        SegmentCounts[i] = 0;
-#endif
-
-    vbuf.createVertexBuffer();
-    vbuf.setup(lineAsTriangles);
-    vbuf.setColor(color);
+    vbuf.setup(m_renderer, color);
 
     for (unsigned int i = 1; i < m_samples.size(); i++)
     {
@@ -748,9 +504,6 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
         // volume.
         if (curveBoundingRadius >= subdivisionThreshold * minDistance)
         {
-#if DEBUG_ADAPTIVE_SPLINE
-            ++SegmentCounts[0];
-#endif
             // Skip rendering this section if it lies outside the view
             // frustum.
             if (viewFrustum.cullSphere(p0, curveBoundingRadius))
@@ -771,10 +524,6 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
         }
         else
         {
-#if DEBUG_ADAPTIVE_SPLINE
-            glColor4f(SplineColors[0][0], SplineColors[0][1], SplineColors[0][2], 1.0f);
-#endif
-
             // Apparent size of curve is small enough that we can approximate
             // it as a line.
 
@@ -791,7 +540,6 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin();
                     vbuf.vertex(p0);
                     restartCurve = false;
                 }
@@ -810,14 +558,6 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
 
     vbuf.flush();
     vbuf.finish();
-
-#if DEBUG_ADAPTIVE_SPLINE
-    for (unsigned int i = 0; SegmentCounts[i] != 0 || i < 3; i++)
-    {
-        celestia::util::GetLogger()->debug("{}: {}, ", i, SegmentCounts[i]);
-    }
-    celestia::util::GetLogger()->debug("\n");
-#endif
 }
 
 
@@ -839,8 +579,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
                   double subdivisionThreshold,
                   double startTime,
                   double endTime,
-                  const Eigen::Vector4f& color,
-                  bool lineAsTriangles) const
+                  const Eigen::Vector4f& color) const
 {
     // Flag to indicate whether we need to issue a glBegin()
     bool restartCurve = true;
@@ -865,9 +604,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
     HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
-    vbuf.createVertexBuffer();
-    vbuf.setup(lineAsTriangles);
-    vbuf.setColor(color);
+    vbuf.setup(m_renderer, color);
 
     bool firstSegment = true;
     bool lastSegment = false;
@@ -960,7 +697,6 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin();
                     vbuf.vertex(p0);
                     restartCurve = false;
                 }
@@ -1008,8 +744,7 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
                        double endTime,
                        const Eigen::Vector4f& color,
                        double fadeStartTime,
-                       double fadeEndTime,
-                       bool lineAsTriangles) const
+                       double fadeEndTime) const
 {
     // Flag to indicate whether we need to issue a glBegin()
     bool restartCurve = true;
@@ -1039,8 +774,7 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
     HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
-    vbuf.createVertexBuffer();
-    vbuf.setup(lineAsTriangles);
+    vbuf.setup(m_renderer, color);
 
     bool firstSegment = true;
     bool lastSegment = false;
@@ -1139,17 +873,10 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin();
-                    vbuf.vertex(p0, Eigen::Vector4f(color.x(),
-                                                    color.y(),
-                                                    color.z(),
-                                                    color.w() * static_cast<float>(opacity0)));
+                    vbuf.vertex(p0, static_cast<float>(opacity0));
                     restartCurve = false;
                 }
-                vbuf.vertex(p1, Eigen::Vector4f(color.x(),
-                                                color.y(),
-                                                color.z(),
-                                                color.w() * static_cast<float>(opacity1)));
+                vbuf.vertex(p1, static_cast<float>(opacity1));
             }
         }
 

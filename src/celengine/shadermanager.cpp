@@ -3428,6 +3428,14 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
                              CelestiaGLProgram::IntensityAttributeIndex,
                              "in_Intensity");
 
+        glBindAttribLocation(prog->getID(),
+                             CelestiaGLProgram::NextVCoordAttributeIndex,
+                             "in_PositionNext");
+
+        glBindAttribLocation(prog->getID(),
+                             CelestiaGLProgram::ScaleFactorAttributeIndex,
+                             "in_ScaleFactor");
+
         status = prog->link();
     }
 
@@ -3542,6 +3550,8 @@ CelestiaGLProgram::initCommonParameters()
     ModelViewMatrix = mat4Param("ModelViewMatrix");
     ProjectionMatrix = mat4Param("ProjectionMatrix");
     MVPMatrix = mat4Param("MVPMatrix");
+    lineWidthX = floatParam("lineWidthX");
+    lineWidthY = floatParam("lineWidthY");
 }
 
 void

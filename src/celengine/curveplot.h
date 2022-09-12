@@ -34,6 +34,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celutil/color.h>
+
+class Color;
+class Renderer;
 
 class CurvePlotSample
 {
@@ -48,25 +52,19 @@ public:
 class CurvePlot
 {
  public:
-    CurvePlot();
+    explicit CurvePlot(const Renderer &renderer);
 
     double duration() const { return m_duration; }
     void setDuration(double duration);
 
     double startTime() const
     {
-        if (m_samples.empty())
-            return 0.0;
-        else
-            return m_samples.front().t;
+        return m_samples.empty() ? 0.0 : m_samples.front().t;
     }
 
     double endTime() const
     {
-        if (m_samples.empty())
-            return 0.0;
-        else
-            return m_samples.back().t;
+        return m_samples.empty() ? 0.0 : m_samples.back().t;
     }
 
     void render(const Eigen::Affine3d& modelview,
@@ -74,8 +72,7 @@ class CurvePlot
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
                 double subdivisionThreshold,
-                const Eigen::Vector4f& color,
-                bool lineAsTriangles) const;
+                const Eigen::Vector4f& color) const;
     void render(const Eigen::Affine3d& modelview,
                 double nearZ,
                 double farZ,
@@ -83,8 +80,7 @@ class CurvePlot
                 double subdivisionThreshold,
                 double startTime,
                 double endTime,
-                const Eigen::Vector4f& color,
-                bool lineAsTriangles) const;
+                const Eigen::Vector4f& color) const;
     void renderFaded(const Eigen::Affine3d& modelview,
                      double nearZ,
                      double farZ,
@@ -94,8 +90,7 @@ class CurvePlot
                      double endTime,
                      const Eigen::Vector4f& color,
                      double fadeStartTime,
-                     double fadeEndTime,
-                     bool lineAsTriangles) const;
+                     double fadeEndTime) const;
 
     unsigned int lastUsed() const { return m_lastUsed; }
     void setLastUsed(unsigned int lastUsed) { m_lastUsed = lastUsed; }
@@ -106,13 +101,14 @@ class CurvePlot
 
     bool empty() const { return m_samples.empty(); }
 
-    unsigned int sampleCount() const { return m_samples.size(); }
+    unsigned int sampleCount() const { return static_cast<unsigned int>(m_samples.size()); }
+
+    static void deinit();
 
  private:
-    std::deque<CurvePlotSample> m_samples;
-
-    double m_duration{ 0.0 };
-
-    unsigned int m_lastUsed{ 0 };
+    std::deque<CurvePlotSample>     m_samples;
+    const Renderer                 &m_renderer;
+    double                          m_duration      { 0.0 };
+    unsigned int                    m_lastUsed      { 0   };
 };
 

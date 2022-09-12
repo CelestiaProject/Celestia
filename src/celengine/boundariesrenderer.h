@@ -1,6 +1,6 @@
 // boundariesrenderer.h
 //
-// Copyright (C) 2018-2019, the Celestia Development Team
+// Copyright (C) 2018-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,19 +9,17 @@
 
 #pragma once
 
-#include "shadermanager.h"
-#include "vertexobject.h"
+#include <celrender/linerenderer.h>
 
 class Color;
 class ConstellationBoundaries;
 class Renderer;
 struct Matrices;
-struct LineEnds;
 
 class BoundariesRenderer
 {
- public:
-    BoundariesRenderer(const ConstellationBoundaries*);
+public:
+    BoundariesRenderer(const Renderer &renderer, const ConstellationBoundaries*);
     ~BoundariesRenderer() = default;
     BoundariesRenderer() = delete;
     BoundariesRenderer(const BoundariesRenderer&) = delete;
@@ -29,14 +27,14 @@ class BoundariesRenderer
     BoundariesRenderer& operator=(const BoundariesRenderer&) = delete;
     BoundariesRenderer& operator=(BoundariesRenderer&&) = delete;
 
-    void render(const Renderer &renderer, const Color &color, const Matrices &mvp);
+    void render(const Color &color, const Matrices &mvp);
     bool sameBoundaries(const ConstellationBoundaries*) const;
 
- private:
-    bool prepare(std::vector<LineEnds> &data);
+private:
+    bool prepare();
 
-    celgl::VertexObject            m_vo         { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-    ShaderProperties               m_shadprop;
-    const ConstellationBoundaries *m_boundaries { nullptr };
-    GLsizei                        m_lineCount  { 0 };
+    celestia::render::LineRenderer  m_lineRenderer;
+    const ConstellationBoundaries  *m_boundaries      { nullptr };
+    int                             m_lineCount       { 0 };
+    bool                            m_initialized     { false };
 };
