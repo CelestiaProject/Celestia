@@ -51,20 +51,6 @@ struct Matrices
     const Eigen::Matrix4f *modelview;
 };
 
-struct LineStripEnd
-{
-    LineStripEnd(Eigen::Vector3f point, float scale) : point(point), scale(scale) {};
-    Eigen::Vector3f point;
-    float scale;
-};
-
-struct LineEnds
-{
-    LineEnds(Eigen::Vector3f point1, Eigen::Vector3f point2, float scale) : point1(point1), point2(point2), scale(scale) {};
-    Eigen::Vector3f point1;
-    Eigen::Vector3f point2;
-    float scale;
-};
 
 struct LightSource
 {
@@ -737,8 +723,7 @@ class Renderer
                      const Eigen::Quaterniond& cameraOrientation,
                      const celmath::Frustum& frustum,
                      float nearDist,
-                     float farDist,
-                     const Matrices&);
+                     float farDist);
 
     void renderSolarSystemObjects(const Observer &observer,
                                   int nIntervals,
@@ -835,8 +820,8 @@ class Renderer
 
     bool settingsChanged;
 
-    AsterismRenderer* m_asterismRenderer { nullptr };
-    BoundariesRenderer* m_boundariesRenderer { nullptr };
+    std::unique_ptr<AsterismRenderer> m_asterismRenderer;
+    std::unique_ptr<BoundariesRenderer> m_boundariesRenderer;
 
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;

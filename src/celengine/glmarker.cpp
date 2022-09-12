@@ -12,6 +12,7 @@
 #include <celcompat/numbers.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
+#include <celrender/linerenderer.h>
 #include "marker.h"
 #include "render.h"
 #include "vecgl.h"
@@ -23,10 +24,11 @@ using namespace celgl;
 using namespace celmath;
 using namespace celestia;
 using namespace Eigen;
+using celestia::render::LineRenderer;
 
-constexpr const int SquareOffset = 0;
-constexpr const int SquareCount  = 4;
-static GLfloat Square[SquareCount * 2] =
+constexpr int FilledSquareOffset = 0;
+constexpr int FilledSquareCount  = 4;
+static GLfloat FilledSquare[FilledSquareCount * 2] =
 {
     -1.0f, -1.0f,
      1.0f, -1.0f,
@@ -34,17 +36,8 @@ static GLfloat Square[SquareCount * 2] =
     -1.0f,  1.0f
 };
 
-constexpr const int TriangleOffset = SquareOffset + SquareCount;
-constexpr const int TriangleCount  = 3;
-static GLfloat Triangle[TriangleCount * 2] =
-{
-    0.0f,  1.0f,
-    1.0f, -1.0f,
-   -1.0f, -1.0f
-};
-
-constexpr const int RightArrowOffset = TriangleOffset + TriangleCount;
-constexpr const int RightArrowCount  = 9;
+constexpr int RightArrowOffset = FilledSquareOffset + FilledSquareCount;
+constexpr int RightArrowCount  = 9;
 static GLfloat RightArrow[RightArrowCount * 2] =
 {
     -3*1.0f,  1.0f/3.0f,
@@ -58,8 +51,8 @@ static GLfloat RightArrow[RightArrowCount * 2] =
     -1.0f,         0.0f
 };
 
-constexpr const int LeftArrowOffset = RightArrowOffset + RightArrowCount;
-constexpr const int LeftArrowCount  = 9;
+constexpr int LeftArrowOffset = RightArrowOffset + RightArrowCount;
+constexpr int LeftArrowCount  = 9;
 static GLfloat LeftArrow[LeftArrowCount * 2] =
 {
      3*1.0f,    -1.0f/3,
@@ -73,8 +66,8 @@ static GLfloat LeftArrow[LeftArrowCount * 2] =
      1.0f,         0.0f
 };
 
-constexpr const int UpArrowOffset = LeftArrowOffset + LeftArrowCount;
-constexpr const int UpArrowCount  = 9;
+constexpr int UpArrowOffset = LeftArrowOffset + LeftArrowCount;
+constexpr int UpArrowCount  = 9;
 static GLfloat UpArrow[UpArrowCount * 2] =
 {
     -1.0f/3,    -3*1.0f,
@@ -88,8 +81,8 @@ static GLfloat UpArrow[UpArrowCount * 2] =
      0.0f,        -1.0f
 };
 
-constexpr const int DownArrowOffset = UpArrowOffset + UpArrowCount;
-constexpr const int DownArrowCount  = 9;
+constexpr int DownArrowOffset = UpArrowOffset + UpArrowCount;
+constexpr int DownArrowCount  = 9;
 static GLfloat DownArrow[DownArrowCount * 2] =
 {
      1.0f/3,     3*1.0f,
@@ -103,8 +96,8 @@ static GLfloat DownArrow[DownArrowCount * 2] =
      0.0f,         1.0f
 };
 
-constexpr const int SelPointerOffset = DownArrowOffset + DownArrowCount;
-constexpr const int SelPointerCount  = 3;
+constexpr int SelPointerOffset = DownArrowOffset + DownArrowCount;
+constexpr int SelPointerCount  = 3;
 static GLfloat SelPointer[SelPointerCount * 2] =
 {
     0.0f,       0.0f,
@@ -112,8 +105,8 @@ static GLfloat SelPointer[SelPointerCount * 2] =
    -20.0f,     -6.0f
 };
 
-constexpr const int CrosshairOffset = SelPointerOffset + SelPointerCount;
-constexpr const int CrosshairCount  = 3;
+constexpr int CrosshairOffset = SelPointerOffset + SelPointerCount;
+constexpr int CrosshairCount  = 3;
 static GLfloat Crosshair[CrosshairCount * 2] =
 {
     0.0f,       0.0f,
@@ -121,28 +114,69 @@ static GLfloat Crosshair[CrosshairCount * 2] =
     1.0f,       1.0f
 };
 
-constexpr const int StaticVtxCount = CrosshairOffset + CrosshairCount;
 
-constexpr const int SmallCircleOffset = StaticVtxCount;
-constexpr const int SmallCircleCount  = 10;
-constexpr const int LargeCircleOffset = SmallCircleOffset + SmallCircleCount;
-constexpr const int LargeCircleCount  = 60;
+// Markers drawn with lines
+constexpr int SquareCount = 8;
+constexpr int SquareOffset = 0;
+static GLfloat Square[SquareCount * 2] =
+{
+    -1.0f, -1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f, -1.0f
+};
 
-static int DiamondLineOffset = 0;
-static int DiamondLineCount = 0;
-static int PlusLineOffset = 0;
-static int PlusLineCount = 0;
-static int XLineOffset = 0;
-static int XLineCount = 0;
-static int TriangleLineOffset = 0;
-static int TriangleLineCount = 0;
-static int SquareLineOffset = 0;
-static int SquareLineCount = 0;
-static int SmallCircleLineOffset = 0;
-static int SmallCircleLineCount = 0;
-static int LargeCircleLineOffset = 0;
-static int LargeCircleLineCount = 0;
-static int EclipticLineCount = 0;
+constexpr int TriangleOffset = SquareOffset + SquareCount;
+constexpr int TriangleCount  = 6;
+static GLfloat Triangle[TriangleCount * 2] =
+{
+    0.0f,  1.0f,  1.0f, -1.0f,
+    1.0f, -1.0f, -1.0f, -1.0f,
+   -1.0f, -1.0f,  0.0f,  1.0f
+};
+
+constexpr int DiamondCount = 8;
+constexpr int DiamondOffset = TriangleOffset + TriangleCount;
+static GLfloat Diamond[DiamondCount * 2] =
+{
+     0.0f,  1.0f,  1.0f,  0.0f,
+     1.0f,  0.0f,  0.0f, -1.0f,
+     0.0f, -1.0f, -1.0f,  0.0f,
+    -1.0f,  0.0f,  0.0f,  1.0f
+
+};
+
+constexpr int PlusCount = 4;
+constexpr int PlusOffset = DiamondOffset + DiamondCount;
+static GLfloat Plus[PlusCount * 2] =
+{
+     0.0f,  1.0f,  0.0f, -1.0f,
+     1.0f,  0.0f, -1.0f,  0.0f
+};
+
+constexpr int XCount = 4;
+constexpr int XOffset = PlusOffset + PlusCount;
+static GLfloat X[XCount * 2] =
+{
+    -1.0f, -1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,  1.0f
+};
+
+constexpr int StaticVtxCount = CrosshairOffset + CrosshairCount;
+constexpr int SmallCircleOffset = StaticVtxCount;
+constexpr int SmallCircleCount  = 10;
+constexpr int LargeCircleOffset = SmallCircleOffset + SmallCircleCount;
+constexpr int LargeCircleCount  = 60;
+
+constexpr int _SmallCircleOffset = XOffset + XCount;
+constexpr int _SmallCircleCount = SmallCircleCount*2;
+constexpr int _LargeCircleOffset = _SmallCircleCount + _SmallCircleOffset;
+constexpr int _LargeCircleCount = LargeCircleCount*2;
+
+static GLfloat SmallCircle[SmallCircleCount*2];
+static GLfloat LargeCircle[LargeCircleCount*2];
+
+static bool CirclesInitilized = false;
 
 static void fillCircleValue(GLfloat* data, int size, float scale)
 {
@@ -155,7 +189,7 @@ static void fillCircleValue(GLfloat* data, int size, float scale)
     }
 }
 
-static int bufferVertices(VertexObject& vo, GLfloat* data, int vertexCount, int& offset)
+static int bufferVertices(VertexObject& vo, const GLfloat* data, int vertexCount, int& offset)
 {
     int dataSize = vertexCount * 2 * sizeof(GLfloat);
     vo.setBufferData(data, offset, dataSize);
@@ -163,80 +197,25 @@ static int bufferVertices(VertexObject& vo, GLfloat* data, int vertexCount, int&
     return vertexCount;
 }
 
-static int bufferLineVertices(VertexObject& vo, GLfloat* data, int vertexSize, int vertexCount, int& offset)
+static void initializeCircles()
 {
-    int dataSize = vertexCount * 3 * (2 * vertexSize + 1) * sizeof(GLfloat);
-    GLfloat* tranformed = new GLfloat[dataSize];
-    GLfloat* ptr = tranformed;
-    for (int i = 0; i < vertexCount; i += 2)
-    {
-        int index = i * vertexSize;
-        GLfloat* thisVert = &data[index];
-        GLfloat* nextVert = &data[index + vertexSize];
-#define STREAM_AND_ADVANCE(firstVertex, secondVertex, scale) do {\
-memcpy(ptr, firstVertex, vertexSize * sizeof(GLfloat));\
-memcpy(ptr + vertexSize, secondVertex, vertexSize * sizeof(GLfloat));\
-ptr[2 * vertexSize] = scale;\
-ptr += 2 * vertexSize + 1;\
-} while (0)
-        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
-        STREAM_AND_ADVANCE(thisVert, nextVert,  0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert,  0.5);
-        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
-#undef STREAM_AND_ADVANCE
-    }
-    vo.setBufferData(tranformed, offset, dataSize);
-    offset += dataSize;
-    delete[] tranformed;
-    return vertexCount * 3;
-}
+    if (CirclesInitilized)
+        return;
 
-static int bufferLineLoopVertices(VertexObject& vo, GLfloat* data, int vertexSize, int vertexCount, int& offset)
-{
-    int dataSize = vertexCount * 6 * (2 * vertexSize + 1) * sizeof(GLfloat);
-    GLfloat* tranformed = new GLfloat[dataSize];
-    GLfloat* ptr = tranformed;
-    for (int i = 0; i < vertexCount; i += 1)
-    {
-        int index = i * vertexSize;
-        int nextIndex = ((i + 1) % vertexCount) * vertexSize;
-        GLfloat* thisVert = &data[index];
-        GLfloat* nextVert = &data[nextIndex];
-#define STREAM_AND_ADVANCE(firstVertex, secondVertex, scale) do {\
-memcpy(ptr, firstVertex, vertexSize * sizeof(GLfloat));\
-memcpy(ptr + vertexSize, secondVertex, vertexSize * sizeof(GLfloat));\
-ptr[2 * vertexSize] = scale;\
-ptr += 2 * vertexSize + 1;\
-} while (0)
-        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
-        STREAM_AND_ADVANCE(thisVert, nextVert,  0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
-        STREAM_AND_ADVANCE(nextVert, thisVert,  0.5);
-        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
-#undef STREAM_AND_ADVANCE
-    }
-    vo.setBufferData(tranformed, offset, dataSize);
-    offset += dataSize;
-    delete[] tranformed;
-    return vertexCount * 6;
+    fillCircleValue(SmallCircle, SmallCircleCount, 1.0f);
+    fillCircleValue(LargeCircle, LargeCircleCount, 1.0f);
+    CirclesInitilized = true;
 }
 
 static void initVO(VertexObject& vo)
 {
-    GLfloat SmallCircle[SmallCircleCount * 2];
-    GLfloat LargeCircle[LargeCircleCount * 2];
-    fillCircleValue(SmallCircle, SmallCircleCount, 1.0f);
-    fillCircleValue(LargeCircle, LargeCircleCount, 1.0f);
+    initializeCircles();
 
     vo.allocate((LargeCircleOffset + LargeCircleCount) * sizeof(GLfloat) * 2);
 
     int offset = 0;
 #define VOSTREAM(a) bufferVertices(vo, a, a##Count, offset)
-    VOSTREAM(Square);
-    VOSTREAM(Triangle);
+    VOSTREAM(FilledSquare);
     VOSTREAM(RightArrow);
     VOSTREAM(LeftArrow);
     VOSTREAM(UpArrow);
@@ -247,96 +226,93 @@ static void initVO(VertexObject& vo)
     VOSTREAM(LargeCircle);
 #undef VOSTREAM
 
-    vo.setVertices(2, GL_FLOAT, false, 0, 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
+                            2, GL_FLOAT, false, 0, 0);
 }
 
-static void initLineVO(VertexObject& vo)
+
+static void render_hollow_marker(const Renderer &renderer,
+                        celestia::MarkerRepresentation::Symbol symbol,
+                        float size,
+                        const Color &color,
+                        const Matrices &m)
 {
-    constexpr const int DiamondCount  = 4;
-    static GLfloat Diamond[DiamondCount * 2] =
+    static LineRenderer *lr = nullptr;
+
+    if (lr == nullptr)
     {
-         0.0f,  1.0f,
-         1.0f,  0.0f,
-         0.0f, -1.0f,
-        -1.0f,  0.0f
-    };
-    constexpr const int PlusCount  = 4;
-    GLfloat Plus[PlusCount * 2] =
-    {
-         0.0f,  1.0f,
-         0.0f, -1.0f,
-         1.0f,  0.0f,
-        -1.0f,  0.0f
-    };
-    constexpr const int XCount  = 4;
-    GLfloat X[XCount * 2] =
-    {
-        -1.0f, -1.0f,
-         1.0f,  1.0f,
-         1.0f, -1.0f,
-        -1.0f,  1.0f
-    };
+        lr = new LineRenderer(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static);
+        lr->setHints(LineRenderer::DISABLE_FISHEYE_TRANFORMATION);
 
-    GLfloat SmallCircle[SmallCircleCount * 2];
-    GLfloat LargeCircle[LargeCircleCount * 2];
-    fillCircleValue(SmallCircle, SmallCircleCount, 1.0f);
-    fillCircleValue(LargeCircle, LargeCircleCount, 1.0f);
+        for (int i = 0; i < SquareCount*2; i+=2)
+            lr->addVertex(Square[i], Square[i+1]);
 
-    int stride = sizeof(GLfloat) * 5;
-    int size = ((DiamondCount + SquareCount + TriangleCount + SmallCircleCount + LargeCircleCount) * 6 + (PlusCount + XCount) * 3) * stride;
+        for (int i = 0; i < TriangleCount*2; i+=2)
+            lr->addVertex(Triangle[i], Triangle[i+1]);
 
-    vo.allocate(size);
+        for (int i = 0; i < DiamondCount*2; i+=2)
+            lr->addVertex(Diamond[i], Diamond[i+1]);
 
-    int offset = 0;
-#define VOSTREAM_LINES(a) do { \
-a##LineOffset = offset / stride / 6;\
-a##LineCount = bufferLineVertices(vo, a, 2, a##Count, offset) / 6; \
-} while (0)
-#define VOSTREAM_LINE_LOOP(a) do { \
-a##LineOffset = offset / stride / 6;\
-a##LineCount = bufferLineLoopVertices(vo, a, 2, a##Count, offset) / 6; \
-} while (0)
-    VOSTREAM_LINE_LOOP(Diamond);
-    VOSTREAM_LINES(Plus);
-    VOSTREAM_LINES(X);
-    VOSTREAM_LINE_LOOP(Square);
-    VOSTREAM_LINE_LOOP(Triangle);
-    VOSTREAM_LINE_LOOP(SmallCircle);
-    VOSTREAM_LINE_LOOP(LargeCircle);
-#undef VOSTREAM_LINES
-#undef VOSTREAM_LINE_LOOP
+        for (int i = 0; i < PlusCount*2; i+=2)
+            lr->addVertex(Plus[i], Plus[i+1]);
 
-    vo.setVertices(2, GL_FLOAT, false, stride, 0);
-    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 2, GL_FLOAT, false, stride, sizeof(GLfloat) * 2);
-    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 4);
+        for (int i = 0; i < XCount*2; i+=2)
+            lr->addVertex(X[i], X[i+1]);
 
-    vo.setVertices(2, GL_FLOAT, false, stride * 3, 0, VertexObject::AttributesType::Alternative1);
-}
+        initializeCircles();
+        for (int i = 0; i < SmallCircleCount; i++)
+        {
+            int j = i * 2;
+            lr->addVertex(SmallCircle[j], SmallCircle[j+1]);
+            int k = ((i + 1) % SmallCircleCount) * 2;
+            lr->addVertex(SmallCircle[k], SmallCircle[k+1]);
+        }
 
-static void initEclipticVO(VertexObject& vo)
-{
-    constexpr const int eclipticCount = 200;
-    GLfloat ecliptic[eclipticCount * 3];
-    float s, c;
-    float scale = 1000.0f;
-    for (int i = 0; i < eclipticCount; i++)
-    {
-        sincos((float) (2 * i) / (float) eclipticCount * celestia::numbers::pi_v<float>, s, c);
-        ecliptic[i * 3] = c * scale;
-        ecliptic[i * 3 + 1] = 0;
-        ecliptic[i * 3 + 2] = s * scale;
+        for (int i = 0; i < LargeCircleCount; i++)
+        {
+            int j = i * 2;
+            lr->addVertex(LargeCircle[j], LargeCircle[j+1]);
+            int k = ((i + 1) % LargeCircleCount) * 2;
+            lr->addVertex(LargeCircle[k], LargeCircle[k+1]);
+        }
     }
 
-    int stride = sizeof(GLfloat) * 7;
-    vo.allocate(eclipticCount * 6 * stride);
-    int offset = 0;
-    EclipticLineCount = bufferLineLoopVertices(vo, ecliptic, 3, eclipticCount, offset) / 6;
+    float s = size / 2.0f * renderer.getScaleFactor();
+    Eigen::Matrix4f mv = (*m.modelview) * vecgl::scale(Vector3f(s, s, 0));
 
-    vo.setVertices(3, GL_FLOAT, false, stride, 0);
-    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, false, stride, sizeof(GLfloat) * 3);
-    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 6);
+    lr->prerender();
+    switch (symbol)
+    {
+    case MarkerRepresentation::Square:
+        lr->render({m.projection, &mv}, color, SquareCount, SquareOffset);
+        break;
 
-    vo.setVertices(3, GL_FLOAT, false, stride * 3, 0, VertexObject::AttributesType::Alternative1);
+    case MarkerRepresentation::Triangle:
+        lr->render({m.projection, &mv}, color, TriangleCount, TriangleOffset);
+        break;
+
+    case MarkerRepresentation::Diamond:
+        lr->render({m.projection, &mv}, color, DiamondCount, DiamondOffset);
+        break;
+
+    case MarkerRepresentation::Plus:
+        lr->render({m.projection, &mv}, color, PlusCount, PlusOffset);
+        break;
+
+    case MarkerRepresentation::X:
+        lr->render({m.projection, &mv}, color, XCount, XOffset);
+        break;
+
+    case MarkerRepresentation::Circle:
+        if (size <= 40.0f) // TODO: this should be configurable
+            lr->render({m.projection, &mv}, color, _SmallCircleCount, _SmallCircleOffset);
+        else
+            lr->render({m.projection, &mv}, color, _LargeCircleCount, _LargeCircleOffset);
+        break;
+    default:
+        return;
+    }
+    lr->finish();
 }
 
 void Renderer::renderMarker(celestia::MarkerRepresentation::Symbol symbol,
@@ -346,10 +322,6 @@ void Renderer::renderMarker(celestia::MarkerRepresentation::Symbol symbol,
 {
     assert(shaderManager != nullptr);
 
-    using namespace celestia;
-    using AttributesType = celgl::VertexObject::AttributesType;
-
-    bool solid = true;
     switch (symbol)
     {
     case MarkerRepresentation::Diamond:
@@ -358,76 +330,39 @@ void Renderer::renderMarker(celestia::MarkerRepresentation::Symbol symbol,
     case MarkerRepresentation::Square:
     case MarkerRepresentation::Triangle:
     case MarkerRepresentation::Circle:
-        solid = false;
+        render_hollow_marker(*this, symbol, size, color, m);
+        return;
     default:
         break;
     }
 
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::VertexColors;
-
-    bool lineAsTriangles = false;
-    if (!solid)
-    {
-        lineAsTriangles = shouldDrawLineAsTriangles();
-        if (lineAsTriangles)
-            shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-    }
     shadprop.lightModel = ShaderProperties::UnlitModel;
     shadprop.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
     auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
-    auto &markerVO = getVertexObject(solid ? VOType::Marker : VOType::MarkerLine, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    if (solid)
-        markerVO.bind();
-    else
-        markerVO.bind(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
+    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    markerVO.bind();
     if (!markerVO.initialized())
-        solid ? initVO(markerVO) : initLineVO(markerVO);
+        initVO(markerVO);
 
-    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
+#ifdef GL_ES
+    glVertexAttrib4fv(CelestiaGLProgram::ColorAttributeIndex, color.toVector4().data());
+#else
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, color.data());
+#endif
 
     prog->use();
     float s = size / 2.0f * getScaleFactor();
     prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(Vector3f(s, s, 0)));
-    if (lineAsTriangles)
-    {
-        prog->lineWidthX = getLineWidthX();
-        prog->lineWidthY = getLineWidthY();
-    }
 
-#define DRAW_LINE(type) do { \
-if (lineAsTriangles) \
-    markerVO.draw(GL_TRIANGLES, type##LineCount * 6, type##LineOffset * 6); \
-else \
-    markerVO.draw(GL_LINES, type##LineCount * 2, type##LineOffset * 2); \
-} while (0)
     switch (symbol)
     {
-    case MarkerRepresentation::Diamond:
-        DRAW_LINE(Diamond);
-        break;
-
-    case MarkerRepresentation::Plus:
-        DRAW_LINE(Plus);
-        break;
-
-    case MarkerRepresentation::X:
-        DRAW_LINE(X);
-        break;
-
-    case MarkerRepresentation::Square:
-        DRAW_LINE(Square);
-        break;
-
     case MarkerRepresentation::FilledSquare:
-        markerVO.draw(GL_TRIANGLE_FAN, SquareCount, SquareOffset);
-        break;
-
-    case MarkerRepresentation::Triangle:
-        DRAW_LINE(Triangle);
+        markerVO.draw(GL_TRIANGLE_FAN, FilledSquareCount, FilledSquareOffset);
         break;
 
     case MarkerRepresentation::RightArrow:
@@ -443,14 +378,7 @@ else \
         break;
 
     case MarkerRepresentation::DownArrow:
-        markerVO.draw(GL_TRIANGLES, UpArrowCount, DownArrowOffset);
-        break;
-
-    case MarkerRepresentation::Circle:
-        if (size <= 40.0f) // TODO: this should be configurable
-            DRAW_LINE(SmallCircle);
-        else
-            DRAW_LINE(LargeCircle);
+        markerVO.draw(GL_TRIANGLES, DownArrowCount, DownArrowOffset);
         break;
 
     case MarkerRepresentation::Disk:
@@ -463,7 +391,6 @@ else \
     default:
         break;
     }
-#undef DRAW_LINE
 
     markerVO.unbind();
 }
@@ -476,7 +403,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
                                       const Frustum& viewFrustum,
                                       const Selection& sel)
 {
-    constexpr const float cursorDistance = 20.0f;
+    constexpr float cursorDistance = 20.0f;
     if (sel.empty())
         return;
 
@@ -496,7 +423,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     double distance = position.norm();
     position *= cursorDistance / distance;
 
-    float vfov = (float) observer.getFOV();
+    float vfov = observer.getFOV();
     float h = tan(vfov / 2);
     float w = h * getAspectRatio();
     float diag = sqrt(h * h + w * w);
@@ -544,47 +471,30 @@ void Renderer::renderSelectionPointer(const Observer& observer,
  */
 void Renderer::renderEclipticLine()
 {
-    using AttributesType = celgl::VertexObject::AttributesType;
-
-    ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-
-    bool lineAsTriangles = shouldDrawLineAsTriangles();
-    if (lineAsTriangles)
-        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
-
-    auto* prog = shaderManager->getShader(shadprop);
-    if (prog == nullptr)
+    if ((renderFlags & ShowEcliptic) == 0)
         return;
 
-    auto &eclipticVO = getVertexObject(VOType::Ecliptic, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    eclipticVO.bind(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
-    if (!eclipticVO.initialized())
-        initEclipticVO(eclipticVO);
+    static LineRenderer *lr = nullptr;
 
-    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, EclipticColor);
-
+    constexpr int eclipticCount = 200;
+    if (lr == nullptr)
+    {
+        lr = new LineRenderer(*this, 1.0f, LineRenderer::PrimType::LineLoop, LineRenderer::StorageType::Static);
+        constexpr float scale = 1000.0f;
+        for (int i = 0; i < eclipticCount; i++)
+        {
+            float s, c;
+            sincos((float) (2 * i) / (float) eclipticCount * celestia::numbers::pi_v<float>, s, c);
+            lr->addVertex(c * scale, 0.0f, s * scale);
+        }
+    }
     Renderer::PipelineState ps;
     ps.blending = true;
     ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     ps.smoothLines = true;
     setPipelineState(ps);
-
-    prog->use();
-    prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix());
-    if (lineAsTriangles)
-    {
-        prog->lineWidthX = getLineWidthX();
-        prog->lineWidthY = getLineWidthY();
-        eclipticVO.draw(GL_TRIANGLES, EclipticLineCount * 6);
-    }
-    else
-    {
-        eclipticVO.draw(GL_LINES, EclipticLineCount * 2);
-    }
-
-    eclipticVO.unbind();
+    lr->render({&getProjectionMatrix(), &getModelViewMatrix()}, EclipticColor, eclipticCount);
+    lr->finish();
 }
 
 void Renderer::renderCrosshair(float selectionSizeInPixels,
@@ -626,7 +536,7 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
     const unsigned int markCount = 4;
     for (unsigned int i = 0; i < markCount; i++)
     {
-        float theta = (float) (celestia::numbers::pi / 4.0) + (float) i / (float) markCount * (float) (2 * celestia::numbers::pi);
+        float theta = (celestia::numbers::pi_v<float> / 4.0f) + (float) i / (float) markCount * (2.0f * celestia::numbers::pi_v<float>);
         prog->floatParam("angle") = theta;
         markerVO.draw(GL_TRIANGLES, CrosshairCount, CrosshairOffset);
     }
