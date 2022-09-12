@@ -1,6 +1,6 @@
 // vertexobject.cpp
 //
-// Copyright (C) 2019, the Celestia Development Team
+// Copyright (C) 2019-present, the Celestia Development Team
 //
 // VBO/VAO wrappper class. Currently GL2/GL2+VAO only.
 //
@@ -9,10 +9,22 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "shadermanager.h"
+#include <cassert>
 #include "vertexobject.h"
 
 using namespace celestia;
+
+namespace
+{
+[[ nodiscard ]] inline bool isVAOSupported()
+{
+#ifndef GL_ES
+    return celestia::gl::ARB_vertex_array_object;
+#else
+    return celestia::gl::OES_vertex_array_object;
+#endif
+}
+}
 
 namespace celgl
 {
@@ -37,9 +49,8 @@ VertexObject::~VertexObject()
         glDeleteBuffers(1, &m_vboId);
 }
 
-void VertexObject::bind(AttributesType attributes) noexcept
+void VertexObject::bind() noexcept
 {
-    m_currentAttributes = attributes;
     if ((m_state & State::Initialize) != 0)
     {
         if (isVAOSupported())
@@ -66,10 +77,10 @@ void VertexObject::bind(AttributesType attributes) noexcept
     }
 }
 
-void VertexObject::bindWritable(AttributesType attributes) noexcept
+void VertexObject::bindWritable() noexcept
 {
     m_state |= State::Update;
-    bind(attributes);
+    bind();
 }
 
 void VertexObject::unbind() noexcept
@@ -86,36 +97,33 @@ void VertexObject::unbind() noexcept
         glBindBuffer(m_bufferType, 0);
     }
     m_state = State::NormalState;
-    m_currentAttributes = AttributesType::Invalid;
 }
 
-bool VertexObject::allocate(const void* data) noexcept
+void VertexObject::allocate(const void* data) const noexcept
 {
     glBufferData(m_bufferType, m_bufferSize, data, m_streamType);
-    return glGetError() != GL_NO_ERROR;
 }
 
-bool VertexObject::allocate(GLsizeiptr bufferSize, const void* data) noexcept
+void VertexObject::allocate(GLsizeiptr bufferSize, const void* data) noexcept
 {
     m_bufferSize = bufferSize;
-    return allocate(data);
+    allocate(data);
 }
 
-bool VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept
+void VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept
 {
     m_bufferType = bufferType;
     m_bufferSize = bufferSize;
     m_streamType = streamType;
-    return allocate(data);
+    allocate(data);
 }
 
-bool VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size) noexcept
+void VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept
 {
     glBufferSubData(m_bufferType, offset, size == 0 ? m_bufferSize : size, data);
-    return glGetError() == GL_NO_ERROR;
 }
 
-void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
+void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) const noexcept
 {
     if ((m_state & State::Initialize) != 0)
         enableAttribArrays();
@@ -123,65 +131,37 @@ void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
     glDrawArrays(primitive, first, count);
 }
 
-void VertexObject::enableAttribArrays() noexcept
+struct VertexObject::PtrParams
 {
-    glBindBuffer(m_bufferType, m_vboId);
-    for (const auto& t : m_attribParams[(unsigned int)m_currentAttributes])
+    PtrParams(GLint location, GLsizeiptr offset, GLsizei stride, GLint count, GLenum type, bool normalized) :
+        location(location), offset(offset), stride(stride), count(count), type(type), normalized(normalized)
+    {}
+    GLint      location;
+    GLsizeiptr offset;
+    GLsizei    stride;
+    GLint      count;
+    GLenum     type;
+    bool       normalized;
+};
+
+void VertexObject::enableAttribArrays() const noexcept
+{
+    for (const auto& p : m_attribParams)
     {
-        auto  n = t.first;
-        auto& p = t.second;
-        glEnableVertexAttribArray(n);
-        glVertexAttribPointer(n, p.count, p.type, p.normalized, p.stride, (GLvoid*) (size_t) p.offset);
+        glEnableVertexAttribArray(p.location);
+        glVertexAttribPointer(p.location, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
     }
 }
 
-void VertexObject::disableAttribArrays() noexcept
+void VertexObject::disableAttribArrays() const noexcept
 {
-    if (m_currentAttributes == AttributesType::Invalid)
-        return;
-
-    for (const auto& t : m_attribParams[(unsigned int)m_currentAttributes])
-        glDisableVertexAttribArray(t.first);
-
-    glBindBuffer(m_bufferType, 0);
+    for (const auto& p : m_attribParams)
+        glDisableVertexAttribArray(p.location);
 }
 
-void VertexObject::setVertices(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
+void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
 {
-    setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex, count, type, normalized, stride, offset, attributes);
-}
-
-void VertexObject::setNormals(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
-{
-    setVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex, count, type, normalized, stride, offset, attributes);
-}
-
-void VertexObject::setColors(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
-{
-    setVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex, count, type, normalized, stride, offset, attributes);
-}
-
-void VertexObject::setTextureCoords(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
-{
-    setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex, count, type, normalized, stride, offset, attributes);
-}
-
-void VertexObject::setTangents(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
-{
-    setVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex, count, type, normalized, stride, offset, attributes);
-}
-
-void VertexObject::setPointSizes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes) noexcept
-{
-    setVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex, count, type, normalized, offset, stride, attributes);
-}
-
-void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset, AttributesType attributes)
-{
-    if (location < 0)
-        return;
-
-    PtrParams p = { offset, stride, count, type, normalized };
-    m_attribParams[(unsigned int)attributes][location] = p;
+    assert(location >= 0);
+    m_attribParams.emplace_back(location, offset, stride, count, type, normalized);
 }
 } // namespace
