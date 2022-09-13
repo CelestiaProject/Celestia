@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <Eigen/Core>
-#include <celengine/vertexobject.h>
+#include <celrender/vertexobject.h>
 #include <celutil/color.h>
 
 class CelestiaGLProgram;
@@ -266,8 +266,8 @@ private:
     std::vector<LineSegment>        m_segments;
     std::vector<Vertex>             m_vertices;
     std::vector<Color>              m_colors;
-    std::unique_ptr<celgl::VertexObject> m_lnVertexObj;
-    std::unique_ptr<celgl::VertexObject> m_trVertexObj;
+    std::unique_ptr<VertexObject>   m_lnVertexObj;
+    std::unique_ptr<VertexObject>   m_trVertexObj;
     const Renderer                 &m_renderer;
     float                           m_width;
     PrimType                        m_primType;

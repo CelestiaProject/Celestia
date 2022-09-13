@@ -34,7 +34,7 @@
 #include "vecgl.h"
 
 namespace vecgl = celestia::vecgl;
-
+using celestia::render::VertexObject;
 
 struct GlobularForm
 {
@@ -157,7 +157,7 @@ void centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     pixel[3] = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
-void initGlobularData(celgl::VertexObject& vo,
+void initGlobularData(VertexObject& vo,
                       const std::vector<GlobularForm::Blob>& points,
                       GLint sizeLoc,
                       GLint etaLoc)

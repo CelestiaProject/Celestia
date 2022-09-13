@@ -150,8 +150,6 @@ set(CELENGINE_SOURCES
   value.cpp
   value.h
   vecgl.h
-  vertexobject.cpp
-  vertexobject.h
   viewporteffect.h
   viewporteffect.cpp
   virtualtex.cpp

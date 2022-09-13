@@ -12,7 +12,7 @@
 
 #include <string>
 #include <celengine/glsupport.h>
-#include <celengine/vertexobject.h>
+#include <celrender/vertexobject.h>
 
 class FramebufferObject;
 class Renderer;
@@ -42,10 +42,10 @@ class PassthroughViewportEffect : public ViewportEffect
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
  private:
-    celgl::VertexObject vo;
+    celestia::render::VertexObject vo;
 
-    void initializeVO(celgl::VertexObject&);
-    void draw(celgl::VertexObject&);
+    void initializeVO(celestia::render::VertexObject&);
+    void draw(celestia::render::VertexObject&);
 };
 
 class WarpMeshViewportEffect : public ViewportEffect
@@ -59,9 +59,9 @@ class WarpMeshViewportEffect : public ViewportEffect
     bool distortXY(float& x, float& y) override;
 
  private:
-    celgl::VertexObject vo;
+    celestia::render::VertexObject vo;
     WarpMesh *mesh;
 
-    void initializeVO(celgl::VertexObject&);
-    void draw(celgl::VertexObject&);
+    void initializeVO(celestia::render::VertexObject&);
+    void draw(celestia::render::VertexObject&);
 };

@@ -22,8 +22,8 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/filesystem.h>
+#include <celrender/vertexobject.h>
 #include "deepskyobj.h"
-#include "vertexobject.h"
 
 struct GlobularForm;
 struct Matrices;
@@ -77,5 +77,5 @@ class Globular : public DeepSkyObject
     float c{ C_ref };
     float tidalRadius{ 0.0f };
 
-    celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
+    celestia::render::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 };
