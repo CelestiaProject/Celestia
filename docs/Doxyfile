@@ -835,13 +835,7 @@ RECURSIVE              = YES
 EXCLUDE                = src/packdb.cpp                         \
                          src/packnames.cpp                      \
                          src/readstars.cpp                      \
-                         src/celmath/aabox.h                    \
-                         src/celmath/capsule.h                  \
-                         src/celmath/plane.h                    \
-                         src/celmath/quaternion.h               \
-                         src/celmath/vecmath.h                  \
-                         src/celengine/vertexbuf.h              \
-                         src/celtxf/*.*
+                         src/tools
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
