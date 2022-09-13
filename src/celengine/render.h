@@ -22,7 +22,7 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
-#include "vertexobject.h"
+#include <celrender/vertexobject.h>
 
 class RendererWatcher;
 class FrameTree;
@@ -412,7 +412,7 @@ class Renderer
 
     ShaderManager& getShaderManager() const { return *shaderManager; }
 
-    celgl::VertexObject& getVertexObject(VOType, GLenum, GLsizeiptr, GLenum);
+    celestia::render::VertexObject& getVertexObject(VOType, GLenum, GLsizeiptr, GLenum);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
@@ -837,7 +837,7 @@ class Renderer
     unsigned m_shadowMapSize { 0 };
     std::unique_ptr<FramebufferObject> m_shadowFBO;
 
-    std::array<celgl::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
+    std::array<celestia::render::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
 
     // Saturation magnitude used to calculate a point star size
     float satPoint;

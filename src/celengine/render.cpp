@@ -47,13 +47,13 @@
 #include "asterismrenderer.h"
 #include "boundariesrenderer.h"
 #include "rendcontext.h"
-#include "vertexobject.h"
 #include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
 #include <celrender/linerenderer.h>
+#include <celrender/vertexobject.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celutil/timer.h>
@@ -78,6 +78,7 @@ using namespace celestia;
 using namespace celmath;
 using celestia::util::GetLogger;
 using celestia::render::LineRenderer;
+using celestia::render::VertexObject;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -5313,12 +5314,12 @@ bool Renderer::getInfo(map<string, string>& info) const
     return true;
 }
 
-celgl::VertexObject&
+VertexObject&
 Renderer::getVertexObject(VOType owner, GLenum type, GLsizeiptr size, GLenum stream)
 {
     auto i = static_cast<size_t>(owner);
     if (m_VertexObjects[i] == nullptr)
-        m_VertexObjects[i] = new celgl::VertexObject(type, size, stream);
+        m_VertexObjects[i] = new VertexObject(type, size, stream);
 
     return *m_VertexObjects[i];
 }

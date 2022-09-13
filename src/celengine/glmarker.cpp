@@ -13,18 +13,18 @@
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celrender/linerenderer.h>
+#include <celrender/vertexobject.h>
 #include "marker.h"
 #include "render.h"
 #include "vecgl.h"
-#include "vertexobject.h"
 
 
 using namespace std;
-using namespace celgl;
 using namespace celmath;
 using namespace celestia;
 using namespace Eigen;
 using celestia::render::LineRenderer;
+using celestia::render::VertexObject;
 
 constexpr int FilledSquareOffset = 0;
 constexpr int FilledSquareCount  = 4;

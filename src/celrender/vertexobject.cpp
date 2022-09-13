@@ -12,8 +12,6 @@
 #include <cassert>
 #include "vertexobject.h"
 
-using namespace celestia;
-
 namespace
 {
 [[ nodiscard ]] inline bool isVAOSupported()
@@ -26,7 +24,7 @@ namespace
 }
 }
 
-namespace celgl
+namespace celestia::render
 {
 VertexObject::VertexObject(GLenum bufferType) :
     m_bufferType(bufferType)
