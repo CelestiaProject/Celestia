@@ -13,6 +13,7 @@
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celrender/linerenderer.h>
+#include <celrender/vertexobject.h>
 #include "axisarrow.h"
 #include "body.h"
 #include "frame.h"
@@ -21,14 +22,13 @@
 #include "shadermanager.h"
 #include "timelinephase.h"
 #include "vecgl.h"
-#include "vertexobject.h"
 
 using namespace Eigen;
 using namespace std;
 using namespace celestia;
 using namespace celmath;
-using namespace celgl;
 using celestia::render::LineRenderer;
+using celestia::render::VertexObject;
 
 // draw a simple circle or annulus
 #define DRAW_ANNULUS 0

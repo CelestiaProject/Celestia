@@ -115,7 +115,7 @@ void
 LineRenderer::create_vbo_lines()
 {
     auto storageType = static_cast<GLenum>(m_storageType);
-    m_lnVertexObj    = std::make_unique<celgl::VertexObject>(GL_ARRAY_BUFFER, 0, storageType);
+    m_lnVertexObj    = std::make_unique<VertexObject>(GL_ARRAY_BUFFER, 0, storageType);
     m_lnVertexObj->bind();
 
     m_lnVertexObj->allocate(m_vertices.capacity() * sizeof(m_vertices[0]), m_vertices.data());
@@ -171,7 +171,7 @@ void
 LineRenderer::create_vbo_triangles()
 {
     auto storageType = static_cast<GLenum>(m_storageType);
-    m_trVertexObj    = std::make_unique<celgl::VertexObject>(GL_ARRAY_BUFFER, 0, storageType);
+    m_trVertexObj    = std::make_unique<VertexObject>(GL_ARRAY_BUFFER, 0, storageType);
     m_trVertexObj->bind();
 
     GLsizei               stride;

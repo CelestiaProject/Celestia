@@ -14,6 +14,8 @@
 #include "shadermanager.h"
 #include "mapmanager.h"
 
+using celestia::render::VertexObject;
+
 static const Renderer::PipelineState ps;
 
 bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
@@ -63,7 +65,7 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
     return true;
 }
 
-void PassthroughViewportEffect::initializeVO(celgl::VertexObject& vo)
+void PassthroughViewportEffect::initializeVO(VertexObject& vo)
 {
     static float quadVertices[] = {
         // positions   // texCoords
@@ -82,7 +84,7 @@ void PassthroughViewportEffect::initializeVO(celgl::VertexObject& vo)
                             2, GL_FLOAT, false, 4 * sizeof(float), 2 * sizeof(float));
 }
 
-void PassthroughViewportEffect::draw(celgl::VertexObject& vo)
+void PassthroughViewportEffect::draw(VertexObject& vo)
 {
     vo.draw(GL_TRIANGLES, 6);
 }
@@ -123,7 +125,7 @@ bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, 
     return true;
 }
 
-void WarpMeshViewportEffect::initializeVO(celgl::VertexObject& vo)
+void WarpMeshViewportEffect::initializeVO(VertexObject& vo)
 {
     mesh->scopedDataForRendering([&vo](float *data, int size){
         vo.allocate(size, data);
@@ -136,7 +138,7 @@ void WarpMeshViewportEffect::initializeVO(celgl::VertexObject& vo)
     });
 }
 
-void WarpMeshViewportEffect::draw(celgl::VertexObject& vo)
+void WarpMeshViewportEffect::draw(VertexObject& vo)
 {
     vo.draw(GL_TRIANGLES, mesh->count());
 }
