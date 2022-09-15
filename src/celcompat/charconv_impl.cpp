@@ -193,6 +193,7 @@ from_chars_impl(const char* first, const char* last, T& value, chars_format fmt)
 
     const char* savedLocale = std::setlocale(LC_NUMERIC, nullptr);
     std::setlocale(LC_NUMERIC, "C");
+    errno = 0;
     char* end;
     T parsed;
     parse_value(buffer, &end, parsed);
