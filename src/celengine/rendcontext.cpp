@@ -169,40 +169,6 @@ setExtendedVertexArrays(const cmod::VertexDescription& desc,
         glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
         break;
     }
-
-    const cmod::VertexAttribute& nextPos = desc.getAttribute(cmod::VertexAttributeSemantic::NextPosition);
-    switch (nextPos.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                                      GLComponentCounts[static_cast<std::size_t>(nextPos.format)],
-                                      GLComponentTypes[static_cast<std::size_t>(nextPos.format)],
-                                      GL_FALSE,
-                                      desc.strideBytes,
-                                      vertexData + nextPos.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        break;
-    }
-
-    const cmod::VertexAttribute& scaleFac = desc.getAttribute(cmod::VertexAttributeSemantic::ScaleFactor);
-    switch (scaleFac.format)
-    {
-    case cmod::VertexAttributeFormat::Float1:
-        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                                      GLComponentCounts[static_cast<std::size_t>(scaleFac.format)],
-                                      GLComponentTypes[static_cast<std::size_t>(scaleFac.format)],
-                                      GL_FALSE,
-                                      desc.strideBytes,
-                                      vertexData + scaleFac.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        break;
-    }
 }
 
 } // end unnamed namespace
@@ -262,13 +228,6 @@ RenderContext::setMaterial(const cmod::Material* newMaterial)
 }
 
 
-bool
-RenderContext::shouldDrawLineAsTriangles() const
-{
-    return renderer->shouldDrawLineAsTriangles();
-}
-
-
 void
 RenderContext::setPointScale(float _pointScale)
 {
@@ -298,7 +257,7 @@ RenderContext::getCameraOrientation() const
 
 
 void
-RenderContext::drawGroup(const cmod::PrimitiveGroup& group, bool useOverride)
+RenderContext::drawGroup(const cmod::PrimitiveGroup& group)
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
@@ -322,10 +281,10 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group, bool useOverride)
         glActiveTexture(GL_TEXTURE0);
     }
 
-    glDrawElements(GLPrimitiveModes[(int)(useOverride ? group.primOverride : group.prim)],
-                   useOverride ? group.indicesOverride.size() :  group.indices.size(),
+    glDrawElements(GLPrimitiveModes[(int)group.prim],
+                   group.indices.size(),
                    GL_UNSIGNED_INT,
-                   useOverride ? group.indicesOverride.data() : group.indices.data());
+                   group.indices.data());
 #ifndef GL_ES
     if (drawPoints)
     {
@@ -359,23 +318,19 @@ RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::Primitive
                          != cmod::VertexAttributeFormat::InvalidFormat);
     bool useTexCoordsNow = (desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).format
                             != cmod::VertexAttributeFormat::InvalidFormat);
-    bool drawLineNow = (desc.getAttribute(cmod::VertexAttributeSemantic::NextPosition).format
-                        == cmod::VertexAttributeFormat::Float3);
     bool useStaticPointSizeNow = primType == cmod::PrimitiveGroupType::PointList;
 
     if (usePointSizeNow         != usePointSize       ||
         useStaticPointSizeNow   != useStaticPointSize ||
         useNormalsNow           != useNormals         ||
         useColorsNow            != useColors          ||
-        useTexCoordsNow         != useTexCoords       ||
-        drawLineNow             != drawLine)
+        useTexCoordsNow         != useTexCoords)
     {
         usePointSize = usePointSizeNow;
         useStaticPointSize = useStaticPointSizeNow;
         useNormals = useNormalsNow;
         useColors = useColorsNow;
         useTexCoords = useTexCoordsNow;
-        drawLine = drawLineNow;
         if (getMaterial() != nullptr)
             makeCurrent(*getMaterial());
     }
@@ -594,9 +549,6 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     else if (useStaticPointSize)
         shaderProps.texUsage |= ShaderProperties::StaticPointSize;
 
-    if (drawLine)
-        shaderProps.texUsage |= ShaderProperties::LineAsTriangles;
-
     if (useColors)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
@@ -678,12 +630,6 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     else if (useStaticPointSize)
     {
         prog->pointScale = renderer->getScreenDpi() / 96.0f;
-    }
-
-    if (drawLine)
-    {
-        prog->lineWidthX = renderer->getLineWidthX();
-        prog->lineWidthY = renderer->getLineWidthY();
     }
 
     // Ring shadow parameters
@@ -828,9 +774,6 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     else if (useStaticPointSize)
         shaderProps.texUsage |= ShaderProperties::StaticPointSize;
 
-    if (drawLine)
-        shaderProps.texUsage |= ShaderProperties::LineAsTriangles;
-
     if (useColors)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
@@ -859,12 +802,6 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     else if (useStaticPointSize)
     {
         prog->pointScale = renderer->getScreenDpi() / 96.0f;
-    }
-
-    if (drawLine)
-    {
-        prog->lineWidthX = renderer->getLineWidthX();
-        prog->lineWidthY = renderer->getLineWidthY();
     }
 
     cmod::BlendMode newBlendMode = cmod::BlendMode::InvalidBlend;

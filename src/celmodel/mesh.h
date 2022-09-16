@@ -41,9 +41,7 @@ enum class VertexAttributeSemantic : std::int16_t
     Texture2     = 7,
     Texture3     = 8,
     PointSize    = 9,
-    NextPosition = 10,
-    ScaleFactor  = 11,
-    SemanticMax  = 12,
+    SemanticMax  = 10,
     InvalidSemantic  = -1,
 };
 
@@ -170,11 +168,6 @@ struct PrimitiveGroup
     PrimitiveGroupType prim{ PrimitiveGroupType::InvalidPrimitiveGroupType };
     unsigned int materialIndex{ 0 };
     std::vector<Index32> indices{ };
-    PrimitiveGroupType primOverride{ PrimitiveGroupType::InvalidPrimitiveGroupType };
-    std::vector<VWord> vertexOverride{ };
-    unsigned int vertexCountOverride{ 0 };
-    std::vector<Index32> indicesOverride{ };
-    VertexDescription vertexDescriptionOverride{ };
 };
 
 
@@ -242,7 +235,6 @@ class Mesh
     void optimize();
 
  private:
-    PrimitiveGroup createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);
     void mergePrimitiveGroups();
 
     VertexDescription vertexDesc{ };

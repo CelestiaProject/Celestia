@@ -29,21 +29,6 @@ namespace cmod
 namespace
 {
 
-template<typename It>
-VertexDescription appendingAttributes(const VertexDescription& desc, It begin, It end)
-{
-    std::vector<VertexAttribute> allAttributes;
-    allAttributes.reserve(desc.attributes.size() + (end - begin));
-
-    std::copy(desc.attributes.cbegin(), desc.attributes.cend(), std::back_inserter(allAttributes));
-    for (auto it = begin; it != end; ++it)
-    {
-        allAttributes.push_back(*it);
-    }
-
-    return VertexDescription(std::move(allAttributes));
-}
-
 bool
 isOpaqueMaterial(const Material &material)
 {
@@ -139,11 +124,6 @@ PrimitiveGroup::clone() const
     newGroup.prim = prim;
     newGroup.materialIndex = materialIndex;
     newGroup.indices = indices;
-    newGroup.primOverride = primOverride;
-    newGroup.vertexOverride = vertexOverride;
-    newGroup.vertexCountOverride = vertexCountOverride;
-    newGroup.indicesOverride = indicesOverride;
-    newGroup.vertexDescriptionOverride = vertexDescriptionOverride.clone();
     return newGroup;
 }
 
@@ -240,101 +220,12 @@ Mesh::addGroup(PrimitiveGroup&& group)
 }
 
 
-PrimitiveGroup
-Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices)
-{
-    // Transform LINE_STRIP/LINES to triangle vertices
-    // Get information of the position attributes
-    auto positionAttributes = vertexDesc.getAttribute(VertexAttributeSemantic::Position);
-    int positionSize = VertexAttribute::getFormatSizeWords(positionAttributes.format);
-    int positionSizeBytes = positionSize * sizeof(VWord);
-    int positionOffset = positionAttributes.offsetWords;
-
-    int originalStrideBytes = vertexDesc.strideBytes;
-    int originalStride = originalStrideBytes / sizeof(VWord);
-    // Add another position (next line end), and scale factor
-    // ORIGINAL ATTRIBUTES | NextVCoordAttributeIndex | ScaleFactorAttributeIndex
-    int stride = originalStride + positionSize + 1;
-
-    // Get line count
-    int lineCount = lineStrip ? indices.size() - 1 : indices.size() / 2;
-    int lineIndexCount = 6 * lineCount;
-    int lineVertexCount = 4 * lineCount;
-
-    // Create buffer to hold the transformed vertices/indices
-    std::vector<VWord> data(stride * lineVertexCount);
-    std::vector<Index32> newIndices;
-    newIndices.reserve(lineIndexCount);
-
-    VWord* ptr = data.data();
-    for (int i = 0; i < lineCount; ++i)
-    {
-        int thisIndex = indices[lineStrip ? i : i * 2];
-        int nextIndex = indices[lineStrip ? i + 1 : i * 2 + 1];
-
-        const VWord* origThisVertLoc = vertices.data() + thisIndex * originalStride;
-        const VWord* origNextVertLoc = vertices.data() + nextIndex * originalStride;
-
-        // Fill the info for the 4 vertices
-        std::memcpy(ptr, origThisVertLoc, originalStrideBytes);
-        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSizeBytes);
-        float scaleFactor = -0.5f;
-        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
-        ptr += stride;
-
-        std::memcpy(ptr, origThisVertLoc, originalStrideBytes);
-        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSizeBytes);
-        scaleFactor = 0.5f;
-        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
-        ptr += stride;
-
-        std::memcpy(ptr, origNextVertLoc, originalStrideBytes);
-        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSizeBytes);
-        scaleFactor = -0.5f;
-        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
-        ptr += stride;
-
-        std::memcpy(ptr, origNextVertLoc, originalStrideBytes);
-        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSizeBytes);
-        scaleFactor = 0.5f;
-        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
-        ptr += stride;
-
-        Index32 newIndex = 4 * i;
-
-        // Fill info for the 6 indices
-        newIndices.push_back(newIndex);
-        newIndices.push_back(newIndex + 1);
-        newIndices.push_back(newIndex + 2);
-        newIndices.push_back(newIndex + 2);
-        newIndices.push_back(newIndex + 3);
-        newIndices.push_back(newIndex);
-    }
-
-    std::array<VertexAttribute, 2> newAttributes = {
-        VertexAttribute(VertexAttributeSemantic::NextPosition, positionAttributes.format, originalStride),
-        VertexAttribute(VertexAttributeSemantic::ScaleFactor, VertexAttributeFormat::Float1, originalStride + positionSize),
-    };
-
-    PrimitiveGroup g;
-    g.vertexOverride = std::move(data);
-    g.vertexCountOverride = lineVertexCount;
-    g.vertexDescriptionOverride = appendingAttributes(vertexDesc, newAttributes.cbegin(), newAttributes.cend());
-    g.indicesOverride = std::move(newIndices);
-    g.primOverride = PrimitiveGroupType::TriList;
-    return g;
-}
-
-
 unsigned int
 Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int materialIndex,
                std::vector<Index32>&& indices)
 {
     PrimitiveGroup g;
-    if (prim == PrimitiveGroupType::LineStrip || prim == PrimitiveGroupType::LineList)
-        g = createLinePrimitiveGroup(prim == PrimitiveGroupType::LineStrip, indices);
-
     g.indices = std::move(indices);
     g.prim = prim;
     g.materialIndex = materialIndex;
@@ -415,7 +306,7 @@ Mesh::mergePrimitiveGroups()
     {
         auto &g = groups[i];
 
-        if (g.vertexCountOverride == 0 && g.prim == PrimitiveGroupType::TriStrip)
+        if (g.prim == PrimitiveGroupType::TriStrip)
         {
             std::vector<Index32> newIndices;
             newIndices.reserve(g.indices.size() * 2);
@@ -437,7 +328,7 @@ Mesh::mergePrimitiveGroups()
             g.prim = PrimitiveGroupType::TriList;
         }
 
-        if (i == 0 || g.vertexCountOverride != 0 || g.prim != PrimitiveGroupType::TriList)
+        if (i == 0 || g.prim != PrimitiveGroupType::TriList)
         {
             newGroups.push_back(std::move(g));
         }
@@ -691,30 +582,6 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
         std::memcpy(vdata, tv.data(), sizeof(float) * 3);
     }
 
-    // Scale and translate the overriden vertex values
-    for (i = 0; i < getGroupCount(); i++)
-    {
-        PrimitiveGroup* group = getGroup(i);
-        if (group->vertexOverride.empty()) { continue; }
-        VWord* vdataOverride = group->vertexOverride.data();
-
-        const auto& vertexDescOverride = group->vertexDescriptionOverride;
-        unsigned int strideOverride = vertexDescOverride.strideBytes / sizeof(VWord);
-        int positionOffset = vertexDescOverride.getAttribute(VertexAttributeSemantic::Position).offsetWords;
-        int nextPositionOffset = vertexDescOverride.getAttribute(VertexAttributeSemantic::NextPosition).offsetWords;
-        for (unsigned int j = 0; j < group->vertexCountOverride; j++, vdataOverride += strideOverride)
-        {
-            float fv[3];
-            std::memcpy(fv, vdataOverride + positionOffset, sizeof(float) * 3);
-            Eigen::Vector3f tv = (Eigen::Map<Eigen::Vector3f>(fv) + translation) * scale;
-            std::memcpy(vdataOverride + positionOffset, tv.data(), sizeof(float) * 3);
-
-            std::memcpy(fv, vdataOverride + nextPositionOffset, sizeof(float) * 3);
-            tv = (Eigen::Map<Eigen::Vector3f>(fv) + translation) * scale;
-            std::memcpy(vdataOverride + nextPositionOffset, tv.data(), sizeof(float) * 3);
-        }
-    }
-
     // Point sizes need to be scaled as well
     if (vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).format == VertexAttributeFormat::Float1)
     {
@@ -766,7 +633,7 @@ Mesh::canMerge(const Mesh &other, const std::vector<Material> &materials) const
     const auto &tg = groups.front();
     const auto &og = other.groups.front();
 
-    if (tg.vertexCountOverride != 0 || og.vertexCountOverride != 0 || tg.prim != PrimitiveGroupType::TriList)
+    if (tg.prim != PrimitiveGroupType::TriList)
         return false;
 
     if (std::tie(tg.materialIndex, tg.prim, vertexDesc.strideBytes) !=
