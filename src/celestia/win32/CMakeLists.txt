@@ -47,7 +47,8 @@ set(RESOURCES $<TARGET_OBJECTS:resources>)
 
 add_executable(celestia-win WIN32 ${WIN32_SOURCES} ${RESOURCES})
 add_dependencies(celestia-win celestia)
-target_link_libraries(celestia-win celestia)
+target_link_libraries(celestia-win celestia ${OPENGL_LIBRARIES})
+target_include_directories(celestia-win PRIVATE ${OPENGL_INCLUDE_DIRS})
 install(TARGETS celestia-win RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 add_subdirectory(res)
