@@ -216,10 +216,8 @@ if(WIN32)
   link_libraries("vfw32" "comctl32" "winmm")
 endif()
 
-if(NOT ENABLE_GLES)
+if(ENABLE_WIN OR ENABLE_TOOLS)
   find_package(OpenGL REQUIRED)
-  include_directories(${OPENGL_INCLUDE_DIRS})
-  link_libraries(${OPENGL_LIBRARIES})
 endif()
 
 find_package(Libepoxy REQUIRED)
