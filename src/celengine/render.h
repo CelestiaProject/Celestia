@@ -270,10 +270,6 @@ class Renderer
     float getScaleFactor() const;
     float getPointWidth() const;
     float getPointHeight() const;
-    float getLineWidthX() const;
-    float getLineWidthY() const;
-    float getRasterizedLineWidth(float multiplier) const;
-    bool shouldDrawLineAsTriangles(float multiplier = 1.0f) const;
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
