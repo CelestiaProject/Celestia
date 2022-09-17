@@ -624,26 +624,6 @@ float Renderer::getPointHeight() const
     return 2.0f / windowHeight * getScaleFactor();
 }
 
-float Renderer::getLineWidthX() const
-{
-    return ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getPointWidth();
-}
-
-float Renderer::getLineWidthY() const
-{
-    return ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getPointHeight();
-}
-
-float Renderer::getRasterizedLineWidth(float multiplier) const
-{
-    return multiplier * ((renderFlags & ShowSmoothLines) != 0 ? 1.5f : 1.0f) * getScaleFactor();
-}
-
-bool Renderer::shouldDrawLineAsTriangles(float multiplier) const
-{
-    return getRasterizedLineWidth(multiplier) > celestia::gl::maxLineWidth;
-}
-
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
 {
     faintestAutoMag45deg = _faintestAutoMag45deg;
@@ -5930,20 +5910,12 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
     if (ps.smoothLines != m_pipelineState.smoothLines)
     {
+#ifndef GL_ES
         if (ps.smoothLines && (renderFlags & ShowSmoothLines) != 0)
-        {
-            #ifndef GL_ES
             glEnable(GL_LINE_SMOOTH);
-            #endif
-            glLineWidth(getRasterizedLineWidth(1.0f));
-        }
         else
-        {
-            #ifndef GL_ES
             glDisable(GL_LINE_SMOOTH);
-            #endif
-            glLineWidth(getScaleFactor());
-        }
+#endif
         m_pipelineState.smoothLines = ps.smoothLines;
     }
 }

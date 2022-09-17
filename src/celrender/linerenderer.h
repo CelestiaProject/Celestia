@@ -261,6 +261,9 @@ private:
     int pos_count() const;
     int color_count() const;
     int color_type() const;
+    bool should_triangulate() const;
+    float width_multiplyer() const;
+    float rasterized_width() const;
 
     std::vector<LineVertex>         m_verticesTr;
     std::vector<LineSegment>        m_segments;

@@ -101,12 +101,12 @@ LineRenderer::setup_shader()
 
     if (m_useTriangles)
     {
-        m_prog->lineWidthX = m_width * m_renderer.getLineWidthX();
-        m_prog->lineWidthY = m_width * m_renderer.getLineWidthY();
+        m_prog->lineWidthX = m_width * width_multiplyer() * m_renderer.getPointWidth();
+        m_prog->lineWidthY = m_width * width_multiplyer() * m_renderer.getPointHeight();
     }
     else
     {
-        glLineWidth(m_renderer.getRasterizedLineWidth(m_width));
+        glLineWidth(rasterized_width());
     }
 }
 
@@ -397,6 +397,24 @@ LineRenderer::triangulate()
     }
 }
 
+bool
+LineRenderer::should_triangulate() const
+{
+    return rasterized_width() > celestia::gl::maxLineWidth;
+}
+
+float
+LineRenderer::width_multiplyer() const
+{
+    return (m_renderer.getRenderFlags() & Renderer::ShowSmoothLines) != 0 ? 1.5f : 1.0f;
+}
+
+float
+LineRenderer::rasterized_width() const
+{
+    return m_width * width_multiplyer() * m_renderer.getScaleFactor();
+}
+
 LineRenderer::LineRenderer(const Renderer &renderer, float width, PrimType primType, StorageType storageType, VertexFormat format) :
     m_renderer(renderer),
     m_width(width),
@@ -410,7 +428,7 @@ void
 LineRenderer::startUpdate()
 {
     if (m_storageType != StorageType::Static)
-        m_useTriangles = m_renderer.shouldDrawLineAsTriangles(m_width);
+        m_useTriangles = should_triangulate();
 }
 
 void
@@ -448,7 +466,7 @@ LineRenderer::finish()
 void
 LineRenderer::prerender()
 {
-    m_useTriangles = m_useTriangles || m_renderer.shouldDrawLineAsTriangles(m_width);
+    m_useTriangles = m_useTriangles || should_triangulate();
 
     if (m_useTriangles)
         triangulate();
