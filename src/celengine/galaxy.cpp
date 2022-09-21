@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <iterator>
 #include <map>
 #include <optional>
 #include <ostream>
@@ -63,6 +62,8 @@ public:
 constexpr int width = 128;
 constexpr int height = 128;
 constexpr unsigned int GALAXY_POINTS = 3500;
+constexpr unsigned int MAX_VERTICES = 8192; // 256k buffer
+constexpr unsigned int MAX_INDICES = (MAX_VERTICES / 4 + 1) * 6;
 
 // TODO: This value is just a guess.
 // To be optimal, it should actually be computed:
@@ -135,21 +136,28 @@ struct GalaxyVertex
     Eigen::Vector4f position;
     Eigen::Matrix<GLushort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };
+static_assert(std::is_standard_layout_v<GalaxyVertex>);
 
 void draw(const GalaxyVertex *v, std::size_t count, const GLushort *indices)
 {
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GalaxyVertex) * MAX_VERTICES, nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_INDICES, nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GalaxyVertex) * MAX_VERTICES, v, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_INDICES, indices, GL_STREAM_DRAW);
+
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           4, GL_FLOAT, GL_FALSE,
-                          sizeof(GalaxyVertex), v[0].position.data());
+                          sizeof(GalaxyVertex), reinterpret_cast<void*>(offsetof(GalaxyVertex, position)));
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           4, GL_UNSIGNED_SHORT, GL_FALSE,
-                          sizeof(GalaxyVertex), v[0].texCoord.data());
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
+                          sizeof(GalaxyVertex), reinterpret_cast<void*>(offsetof(GalaxyVertex, texCoord)));
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, nullptr);
 }
 
 GalaxyVertex *g_vertices = nullptr;
 GLushort *g_indices = nullptr;
-constexpr const std::size_t maxPoints = 8192; // 256k buffer
+GLuint vbo = 0;
+GLuint vio = 0;
 
 std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
 {
@@ -219,9 +227,9 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
                 kmin = 12;
             }
 
-            b.position    = Eigen::Vector4f(x, y, z, 1.0f);
-            unsigned int rr =  static_cast<unsigned int>(b.position.head(3).norm() * 511);
-            b.colorIndex  = rr < 256 ? rr : 255;
+            b.position = Eigen::Vector4f(x, y, z, 1.0f);
+            auto rr = static_cast<unsigned int>(b.position.head(3).norm() * 511);
+            b.colorIndex = std::min(rr, 255u);
             galacticPoints.push_back(b);
             j++;
         }
@@ -309,13 +317,14 @@ void GalacticFormManager::initializeStandardForms()
         float r  = p.norm();
         if (r < 1)
         {
-            float prob = (1 - r) * (celmath::fractalsum(Eigen::Vector3f(p.x() + 5, p.y() + 5, p.z() + 5), 8) + 1) * 0.5f;
+            Eigen::Vector3f p1(p.array() + 5.0f);
+            float prob = (1.0f - r) * (celmath::fractalsum(p1, 8.0f) + 1.0f) * 0.5f;
             if (celmath::RealDists<float>::Unit(rng) < prob)
             {
                 b.position   = Eigen::Vector4f(p.x(), p.y(), p.z(), 1.0f);
                 b.brightness = 64u;
                 auto rr      = static_cast<unsigned int>(r * 511);
-                b.colorIndex = rr < 256 ? rr : 255;
+                b.colorIndex = std::min(rr, 255u);
                 irregularPoints.push_back(b);
                 ++ip;
             }
@@ -341,7 +350,7 @@ void GalacticFormManager::initializeStandardForms()
     // To save space: generate spherical E0 template from S0 disk
     // via rescaling by (1.0f, 3.8f, 1.0f).
 
-    for (unsigned int eform  = 0; eform <= 7; ++eform)
+    for (unsigned int eform = 0; eform <= 7; ++eform)
     {
         float ell = 1.0f - static_cast<float>(eform) / 8.0f;
 
@@ -373,7 +382,7 @@ GalacticFormManager* getGalacticFormManager()
 } // end unnamed namespace
 
 
-float Galaxy::lightGain  = 0.0f;
+float Galaxy::lightGain = 0.0f;
 
 float Galaxy::getDetail() const
 {
@@ -474,16 +483,19 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     const GalacticForm* galacticForm = getGalacticFormManager()->getForm(form);
     if (galacticForm == nullptr) { return; }
 
+    if (vbo == 0)
+        glGenBuffers(1, &vbo);
+    if (vio == 0)
+        glGenBuffers(1, &vio);
+
     /* We'll first see if the galaxy's apparent size is big enough to
        be noticeable on screen; if it's not we'll break right here,
        avoiding all the overhead of the matrix transformations and
        GL state changes: */
-    float distanceToDSO = offset.norm() - getRadius();
-    if (distanceToDSO < 0)
-        distanceToDSO = 0;
+    float distanceToDSO = std::max(0.0f, offset.norm() - getRadius());
 
     float minimumFeatureSize = pixelSize * distanceToDSO;
-    float size  = 2 * getRadius();
+    float size = 2.0f * getRadius();
 
     if (size < minimumFeatureSize)
         return;
@@ -542,16 +554,12 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     if (type < GalaxyType::E0 || type > GalaxyType::E3) //all galaxies, except ~round elliptics
     {
         cosi = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
-        brightness_corr = std::sqrt(std::abs(cosi));
-        if (brightness_corr < 0.2f)
-            brightness_corr = 0.2f;
+        brightness_corr = std::max(0.2f, std::sqrt(std::abs(cosi)));
     }
     if (type > GalaxyType::E3) // only elliptics with higher ellipticities
     {
         cosi = (orientation * Eigen::Vector3f::UnitX()).dot(offset) / offset.norm();
-        brightness_corr = brightness_corr * std::abs(cosi);
-        if (brightness_corr < 0.45f)
-            brightness_corr = 0.45f;
+        brightness_corr = std::max(0.45f, brightness_corr * std::abs(cosi));
     }
 
     Eigen::Matrix4f mv = vecgl::translate(*ms.modelview, Eigen::Vector3f(-offset));
@@ -559,13 +567,16 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     const float btot = (type == GalaxyType::Irr || type >= GalaxyType::E0) ? 2.5f : 5.0f;
     const float spriteScaleFactor = 1.0f / 1.55f;
 
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vio);
+
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     if (g_vertices == nullptr)
-        g_vertices = new GalaxyVertex[maxPoints];
+        g_vertices = new GalaxyVertex[MAX_VERTICES];
     if (g_indices == nullptr)
-        g_indices = new GLushort[(maxPoints / 4 + 1) * 6];
+        g_indices = new GLushort[MAX_INDICES];
 
     GLushort j = 0;
 
@@ -618,7 +629,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
             g_indices[index++] = j + 3;
             j += 4;
 
-            if (vertex + 4 > maxPoints)
+            if (vertex + 4 > MAX_VERTICES)
             {
                 draw(g_vertices, index, g_indices);
                 index = 0;
@@ -634,6 +645,8 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glActiveTexture(GL_TEXTURE0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 std::uint64_t Galaxy::getRenderMask() const
@@ -648,16 +661,12 @@ unsigned int Galaxy::getLabelMask() const
 
 void Galaxy::increaseLightGain()
 {
-    lightGain  += 0.05f;
-    if (lightGain > 1.0f)
-        lightGain  = 1.0f;
+    lightGain = std::min(1.0f, lightGain + 0.05f);
 }
 
 void Galaxy::decreaseLightGain()
 {
-    lightGain  -= 0.05f;
-    if (lightGain < 0.0f)
-        lightGain  = 0.0f;
+    lightGain = std::max(0.0f, lightGain - 0.05f);
 }
 
 float Galaxy::getLightGain()
