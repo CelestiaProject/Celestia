@@ -24,6 +24,23 @@ template<typename T> inline void sincos(T angle, T& s, T& c)
     c = cos(angle);
 }
 
+#ifdef HAVE_SINCOS
+template<> inline void sincos(float angle, float& s, float& c)
+{
+    ::sincosf(angle, &s, &c);
+}
+
+template<> inline void sincos(double angle, double& s, double& c)
+{
+    ::sincos(angle, &s, &c);
+}
+
+template<> inline void sincos(long double angle, long double& s, long double& c)
+{
+    ::sincosl(angle, &s, &c);
+}
+#endif
+
 #ifndef HAVE_LERP
 template<typename T> constexpr T lerp(T t, T a, T b)
 {

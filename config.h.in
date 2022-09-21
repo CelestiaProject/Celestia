@@ -4,4 +4,5 @@
 #cmakedefine HAVE_STD_FILESYSTEM
 #cmakedefine HAVE_WORDEXP
 #cmakedefine HAVE_MESHOPTIMIZER
+#cmakedefine HAVE_SINCOS
 #cmakedefine WORDS_BIGENDIAN
