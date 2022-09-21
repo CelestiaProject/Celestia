@@ -63,6 +63,8 @@ struct TextureFontPrivate
         float u, v;
     };
 
+    static_assert(std::is_standard_layout_v<FontVertex>);
+
     TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
     TextureFontPrivate() = delete;
@@ -110,7 +112,15 @@ struct TextureFontPrivate
     Eigen::Matrix4f         m_modelView;
     bool                    m_shaderInUse{ false };
     std::vector<FontVertex> m_fontVertices;
+
+    static GLuint m_vbo;
+    static GLuint m_vio;
+    static constexpr std::size_t MaxVertices = 256; // This gives BO size 4kB, MUST be multiply of 4
+    static constexpr std::size_t MaxIndices = MaxVertices / 4 * 6;
 };
+
+GLuint TextureFontPrivate::m_vbo = 0;
+GLuint TextureFontPrivate::m_vio = 0;
 
 namespace
 {
@@ -134,6 +144,8 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
 {
     m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
     m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
+    if (m_vbo == 0) glGenBuffers(1, &m_vbo);
+    if (m_vio == 0) glGenBuffers(1, &m_vio);
 }
 
 TextureFontPrivate::~TextureFontPrivate()
@@ -352,9 +364,9 @@ TextureFontPrivate::getGlyph(wchar_t ch)
     if (auto pos = toPos(ch); pos != -1)
         return m_glyphs[pos];
 
-    auto it = find_if(m_glyphs.begin() + getCommonGlyphsCount(),
-                      m_glyphs.end(),
-                      [ch](const Glyph &g) { return g.ch == ch; });
+    auto it = std::find_if(m_glyphs.begin() + getCommonGlyphsCount(),
+                           m_glyphs.end(),
+                           [ch](const Glyph &g) { return g.ch == ch; });
 
     if (it != m_glyphs.end())
         return *it;
@@ -429,6 +441,8 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
         m_fontVertices.emplace_back(x2, y1, tx2, ty2);
         m_fontVertices.emplace_back(x1, y2, tx1, ty1);
         m_fontVertices.emplace_back(x2, y2, tx2, ty1);
+
+        if (m_fontVertices.size() == MaxVertices) flush();
     }
 
     return x;
@@ -455,6 +469,8 @@ TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
     m_fontVertices.emplace_back(x1, y2, tx1, ty1);
     m_fontVertices.emplace_back(x2, y2, tx2, ty1);
 
+    if (m_fontVertices.size() == MaxVertices) flush();
+
     return g.ax;
 }
 
@@ -472,7 +488,7 @@ TextureFontPrivate::flush()
     if (m_fontVertices.size() < 4) return;
 
     std::vector<unsigned short> indexes;
-    indexes.reserve(m_fontVertices.size() / 4 * 6);
+    indexes.reserve(MaxIndices);
     for (unsigned short index = 0; index < static_cast<unsigned short>(m_fontVertices.size()); index += 4)
     {
         indexes.push_back(index + 0);
@@ -483,6 +499,15 @@ TextureFontPrivate::flush()
         indexes.push_back(index + 2);
     }
 
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vio);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(FontVertex) * MaxVertices, nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MaxIndices, nullptr, GL_STREAM_DRAW);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(FontVertex) * MaxVertices, m_fontVertices.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MaxIndices, indexes.data(), GL_STREAM_DRAW);
+
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -490,16 +515,18 @@ TextureFontPrivate::flush()
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(FontVertex),
-                          &m_fontVertices[0].x);
+                          reinterpret_cast<void*>(offsetof(FontVertex, x)));
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(FontVertex),
-                          &m_fontVertices[0].u);
-    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, indexes.data());
+                          reinterpret_cast<void*>(offsetof(FontVertex, u)));
+    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, nullptr);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     m_fontVertices.clear();
 }
