@@ -717,6 +717,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     {
         blendMode = newBlendMode;
         Renderer::PipelineState ps;
+        ps.depthTest = true;
         switch (blendMode)
         {
         case cmod::BlendMode::NormalBlend:
@@ -879,6 +880,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     {
         blendMode = newBlendMode;
         Renderer::PipelineState ps;
+        ps.depthTest = true;
         switch (blendMode)
         {
         case cmod::BlendMode::NormalBlend:
