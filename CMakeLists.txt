@@ -428,6 +428,7 @@ add_subdirectory(images)
 add_subdirectory(locale)
 add_subdirectory(scripts)
 add_subdirectory(shaders)
+add_subdirectory(help)
 
 if(ENABLE_TESTS)
   enable_testing()
