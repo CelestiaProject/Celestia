@@ -1,22 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Chris Laurel
+# translation of celestia.po to Norwegian Bokmål
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright (C) YEAR Chris Laurel.
 #
+# Bjørn Steensrud <bjornst@powertech.no>, 2005.
+# Bjørn Steensrud <bjornst@skogkatt.homelinux.org>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: celestia 1.7.0\n"
+"Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2022-08-02 19:45+0300\n"
-"PO-Revision-Date: 2018-05-28 20:50+0300\n"
-"Last-Translator: Alexell <alexell@alexell.ru>\n"
-"Language-Team: \n"
-"Language: no\n"
+"PO-Revision-Date: 2010-02-25 17:50+0100\n"
+"Last-Translator: Bjørn Steensrud <bjornst@skogkatt.homelinux.org>\n"
+"Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.7\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: ../src/celengine/astro.cpp:708
 msgid "DST"
@@ -32,14 +33,13 @@ msgid "Error opening config file '{}'.\n"
 msgstr "Feil ved åpning av bildefil "
 
 #: ../src/celengine/configreader.cpp:32
-#, fuzzy
 msgid "{}:{} 'Configuration' expected.\n"
-msgstr "Feil ved lesing av konfigurasjonsfil."
+msgstr ""
 
 #: ../src/celengine/configreader.cpp:40
 #, fuzzy
 msgid "{}: Bad configuration file.\n"
-msgstr "Feil ved lesing av konfigurasjonsfil."
+msgstr "Feil ved lesing av oppsettsfil."
 
 #.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
@@ -52,7 +52,7 @@ msgstr "Feil ved lesing av konfigurasjonsfil."
 #: ../src/celengine/dsodb.cpp:377
 #, fuzzy
 msgid "Loaded {} deep space objects\n"
-msgstr " deep space objekter"
+msgstr " fjerne objekter"
 
 #: ../src/celengine/galaxy.cpp:416
 #, c-format
@@ -62,17 +62,17 @@ msgstr "Galakse (Hubble-type: %s)"
 #: ../src/celengine/globular.cpp:515
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr "Kulehop (kjerneradius: %4.2f', King konsentrasjon: %4.2f)"
+msgstr ""
 
 #: ../src/celengine/image.cpp:290
 #, fuzzy
 msgid "Loading image from file {}\n"
-msgstr "Laster bilde fra fil "
+msgstr "Laster inn bilde fra fil "
 
 #: ../src/celengine/meshmanager.cpp:422
 #, fuzzy
 msgid "Loading model: {}\n"
-msgstr "Laster modell: "
+msgstr "Laster inn modell: "
 
 #: ../src/celengine/meshmanager.cpp:494
 msgid ""
@@ -85,12 +85,14 @@ msgid "Error loading model '{}'\n"
 msgstr "Feil ved innlasting av modell '"
 
 #: ../src/celengine/nebula.cpp:39
+#, fuzzy
 msgid "Nebula"
-msgstr "Stjernetåke"
+msgstr "Tåker"
 
 #: ../src/celengine/opencluster.cpp:37
+#, fuzzy
 msgid "Open cluster"
-msgstr "Åpen stjernehop"
+msgstr "Åpne stjernehoper"
 
 #: ../src/celengine/solarsys.cpp:84
 #, fuzzy
@@ -117,11 +119,11 @@ msgstr ""
 #: ../src/celengine/solarsys.cpp:1257
 #, fuzzy, c-format
 msgid "warning duplicate definition of %s %s\n"
-msgstr "advarsel for dobbelt definisjon av "
+msgstr "advarsel - dobbelt definisjon av "
 
 #: ../src/celengine/solarsys.cpp:1288
 msgid "bad alternate surface"
-msgstr "feilaktig alternativ overflate"
+msgstr "feil alternativ flate"
 
 #: ../src/celengine/solarsys.cpp:1303
 msgid "bad location"
@@ -129,58 +131,58 @@ msgstr "feil sted"
 
 #: ../src/celengine/stardb.cpp:583
 msgid "Bad header for cross index\n"
-msgstr "Feilaktig overskriftsformat i kryssindeks\n"
+msgstr "Feil overskrift for kryssindeks\n"
 
 #: ../src/celengine/stardb.cpp:595
 msgid "Bad version for cross index\n"
-msgstr "Feilaktig versjon for kryssindeks\n"
+msgstr "Feil versjon for kryssindeks\n"
 
 #: ../src/celengine/stardb.cpp:609
 #, fuzzy
 msgid "Loading cross index failed\n"
-msgstr "Lasting av krysssindeks feilet ved post "
+msgstr "Innlasting av kryssindeks mislyktes ved post "
 
 #: ../src/celengine/stardb.cpp:616
 #, fuzzy
 msgid "Loading cross index failed at record {}\n"
-msgstr "Lasting av krysssindeks feilet ved post "
+msgstr "Innlasting av kryssindeks mislyktes ved post "
 
 #: ../src/celengine/stardb.cpp:694
 #, fuzzy
 msgid "Bad spectral type in star database, star #{}\n"
-msgstr "Feilaktig spektraltype i stjernedatabase, stjerne #"
+msgstr "Feil spektraltype i stjernedatabasen, stjerne nr.\n"
 
 #: ../src/celengine/stardb.cpp:709
 #, fuzzy
 msgid "{} stars in binary database\n"
-msgstr " stjerner i binærdatabase\n"
+msgstr " stjerner i binær database\n"
 
 #: ../src/celengine/stardb.cpp:733
 #, fuzzy
 msgid "Total star count: {}\n"
-msgstr "Totale antall stjerner: "
+msgstr "Totalt antall stjerner: "
 
 #: ../src/celengine/stardb.cpp:767
 #, fuzzy
 msgid "Error in .stc file (line {}): {}\n"
-msgstr "Feil i .stc-fil (linje "
+msgstr "Feil i .stc-fil (linje"
 
 #: ../src/celengine/stardb.cpp:797
 msgid "Invalid star: bad spectral type.\n"
-msgstr "Ugyldig stjerne: feilaktig spektraltype.\n"
+msgstr "Ugyldig stjerne: feil spektraltype.\n"
 
 #: ../src/celengine/stardb.cpp:806
 msgid "Invalid star: missing spectral type.\n"
-msgstr "Ugyldig stjerne: mangler spektraltype.\n"
+msgstr "Ugyldig stjerne: spektraltype mangler.\n"
 
 #: ../src/celengine/stardb.cpp:993
 #, fuzzy
 msgid "Barycenter {} does not exist.\n"
-msgstr " eksisterer ikke.\n"
+msgstr " finnes ikke.\n"
 
 #: ../src/celengine/stardb.cpp:1049
 msgid "Invalid star: missing right ascension\n"
-msgstr "Ugyldig stjerne: mangler rektascensjon\n"
+msgstr "Ugyldig stjerne: mangler rektasensjon\n"
 
 #: ../src/celengine/stardb.cpp:1062
 msgid "Invalid star: missing declination.\n"
@@ -192,15 +194,15 @@ msgstr "Ugyldig stjerne: mangler avstand.\n"
 
 #: ../src/celengine/stardb.cpp:1109
 msgid "Invalid star: missing magnitude.\n"
-msgstr "Ugyldig stjerne: mangler magnitude.\n"
+msgstr "Ugyldig stjerne: mangler størrelse.\n"
 
 #: ../src/celengine/stardb.cpp:1126
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
-"Ugyldig stjerne: absolutt (ikke tilsynelatende) magnitude må spesifiseres "
-"for stjerne nær utspring\n"
+"Ugyldig stjerne: for en stjerne nær origo må absolutt størrelse angis, ikke "
+"tilsynelatende\n"
 
 #: ../src/celengine/texture.cpp:928
 #, fuzzy
@@ -215,12 +217,12 @@ msgstr "Oppretter vanlig tekstur: "
 #: ../src/celephem/samporbit.cpp:834
 #, fuzzy
 msgid "Error opening {}.\n"
-msgstr "Feil ved åpning av "
+msgstr "Feil ved åpning "
 
 #: ../src/celephem/samporbit.cpp:841 ../src/tools/xyzv2bin/bin2xyzv.cpp:25
 #, fuzzy
 msgid "Error reading header of {}.\n"
-msgstr "Feil ved lesing av PNG-bildefil "
+msgstr "Feil ved lesing av stjernefil\n"
 
 #: ../src/celephem/samporbit.cpp:847 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
 msgid "Bad binary xyzv file {}.\n"
@@ -231,9 +233,8 @@ msgid "Unsupported byte order {}, expected {}.\n"
 msgstr ""
 
 #: ../src/celephem/samporbit.cpp:861 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
-#, fuzzy
 msgid "Unsupported digits number {}, expected {}.\n"
-msgstr "Støttede utvidelser:"
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:147 ../src/celestia/scriptmenu.cpp:87
 #: ../src/celscript/lua/luascript.cpp:173
@@ -243,7 +244,7 @@ msgstr ""
 #: ../src/celestia/celestiacore.cpp:282
 #, fuzzy
 msgid "Error reading favorites file {}.\n"
-msgstr "Feil ved lesing av favorittfil."
+msgstr "Feil ved lesing av bokmerkefila."
 
 #: ../src/celestia/celestiacore.cpp:303
 msgid "Failed to check directory existance for favorites file {}\n"
@@ -261,66 +262,66 @@ msgstr "Ugyldig filtype"
 #: ../src/celestia/celestiacore.cpp:1502
 #, c-format
 msgid "Magnitude limit: %.2f"
-msgstr "Magnitudegrense: %.2f"
+msgstr "Størrelsesgrense: %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1146
 msgid "Markers enabled"
-msgstr "Markører aktiverte"
+msgstr "Markører på"
 
 #: ../src/celestia/celestiacore.cpp:1149
 msgid "Markers disabled"
-msgstr "Markører deaktiverte"
+msgstr "Markører av"
 
 #. Ctrl+G
 #: ../src/celestia/celestiacore.cpp:1159
 msgid "Goto surface"
-msgstr "Gå til overflate"
+msgstr "Gå til flate"
 
 #: ../src/celestia/celestiacore.cpp:1170
 msgid "Alt-azimuth mode enabled"
-msgstr "Alt-azimut modus aktivert"
+msgstr "Alt-azimut modus på"
 
 #: ../src/celestia/celestiacore.cpp:1173
 msgid "Alt-azimuth mode disabled"
-msgstr "Alt-azimut modus deaktivert"
+msgstr "Alt-azimut modus av"
 
 #: ../src/celestia/celestiacore.cpp:1229
 msgid "Star style: fuzzy points"
-msgstr "Stjernestil: Uklare punkter"
+msgstr "Stjernestil: uklare punkter"
 
 #: ../src/celestia/celestiacore.cpp:1232
 msgid "Star style: points"
-msgstr "Stjernestil: Punkter"
+msgstr "Stjernestil: punkter"
 
 #: ../src/celestia/celestiacore.cpp:1235
 msgid "Star style: scaled discs"
-msgstr "Stjernestil: Skalerte skiver"
+msgstr "Stjernestil: skalerte skiver"
 
 #: ../src/celestia/celestiacore.cpp:1248
 msgid "Comet tails enabled"
-msgstr "Komethaler aktiverte"
+msgstr "Komethaler på"
 
 #: ../src/celestia/celestiacore.cpp:1251
 msgid "Comet tails disabled"
-msgstr "Komethaler deaktiverte"
+msgstr "Komethaler av"
 
 #: ../src/celestia/celestiacore.cpp:1264
 #, fuzzy
 msgid "Anti-aliasing enabled"
-msgstr "Alt-azimut modus aktivert"
+msgstr "Antialiasing\tCtrl+X"
 
 #: ../src/celestia/celestiacore.cpp:1269
 #, fuzzy
 msgid "Anti-aliasing disabled"
-msgstr "Alt-azimut modus deaktivert"
+msgstr "Antialiasing\tCtrl+X"
 
 #: ../src/celestia/celestiacore.cpp:1278
 msgid "Auto-magnitude enabled"
-msgstr "Auto-magnitude aktivert"
+msgstr "Autostørrelse på"
 
 #: ../src/celestia/celestiacore.cpp:1283
 msgid "Auto-magnitude disabled"
-msgstr "Auto-magnitude deaktivert"
+msgstr "Autostørrelse av"
 
 #: ../src/celestia/celestiacore.cpp:1305
 #: ../src/celestia/win32/res/resource_strings.cpp:93
@@ -338,31 +339,29 @@ msgstr "Avbryt"
 
 #: ../src/celestia/celestiacore.cpp:1345
 msgid "Time and script are paused"
-msgstr "Tid og skript er midlertidig stoppet"
+msgstr "Tid og skript er satt på pause"
 
 #: ../src/celestia/celestiacore.cpp:1347
 msgid "Time is paused"
-msgstr "Tiden er midlertidig stoppet"
+msgstr "Tid er satt på pause"
 
 #: ../src/celestia/celestiacore.cpp:1351
 msgid "Resume"
-msgstr "Gjenoppta"
+msgstr "Fortsett"
 
 #: ../src/celestia/celestiacore.cpp:1385
-#, fuzzy
 msgid "Star color: Blackbody D65"
-msgstr "Totale antall stjerner: "
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:1391
-#, fuzzy
 msgid "Star color: Enhanced"
-msgstr "Totale antall stjerner: "
+msgstr ""
 
 #. Light travel time in years, if >= 1day
 #: ../src/celestia/celestiacore.cpp:1428
 #, fuzzy, c-format
 msgid "Light travel time:  %.4f yr"
-msgstr "Lysreisetid:  %.4f år "
+msgstr "Lysreisetid:  %.4f år"
 
 #: ../src/celestia/celestiacore.cpp:1437
 #, c-format
@@ -388,11 +387,11 @@ msgstr "Lysreiseforsinkelse ignorert"
 
 #: ../src/celestia/celestiacore.cpp:1514
 msgid "Using normal surface textures."
-msgstr "Bruker normale overflateteksturer."
+msgstr "Bruker normale flatestrukturer."
 
 #: ../src/celestia/celestiacore.cpp:1519
 msgid "Using limit of knowledge surface textures."
-msgstr "Bruker 'limit of knowledge' overflateteksturer."
+msgstr "Bruker flatestrukturer «grense for kunnskap»."
 
 #: ../src/celestia/celestiacore.cpp:1586
 msgid "Follow"
@@ -400,35 +399,34 @@ msgstr "Følg"
 
 #: ../src/celestia/celestiacore.cpp:1611
 msgid "Time: Forward"
-msgstr "Tid: Fram"
+msgstr "Tid: Fremover"
 
 #: ../src/celestia/celestiacore.cpp:1613
 msgid "Time: Backward"
-msgstr "Tid: Tilbake"
+msgstr "Tid: Bakover"
 
 #: ../src/celestia/celestiacore.cpp:1625 ../src/celestia/celestiacore.cpp:1640
 #, fuzzy, c-format
 msgid "Time rate: %.6g"
-msgstr "Tidsfrekvens"
+msgstr "Tidsskala"
 
 #: ../src/celestia/celestiacore.cpp:1680
 #, fuzzy
 msgid "Low res textures"
-msgstr "Teksturer"
+msgstr "Strukturer med høy oppløsning"
 
 #: ../src/celestia/celestiacore.cpp:1683
 #, fuzzy
 msgid "Medium res textures"
-msgstr "Teksturer"
+msgstr "Strukturer med høy oppløsning"
 
 #: ../src/celestia/celestiacore.cpp:1686
-#, fuzzy
 msgid "High res textures"
-msgstr "Teksturer"
+msgstr "Strukturer med høy oppløsning"
 
 #: ../src/celestia/celestiacore.cpp:1733
 msgid "Sync Orbit"
-msgstr "Synkron omløpsbane"
+msgstr "Synkron bane"
 
 #: ../src/celestia/celestiacore.cpp:1739
 msgid "Lock"
@@ -436,27 +434,27 @@ msgstr "Lås"
 
 #: ../src/celestia/celestiacore.cpp:1745
 msgid "Chase"
-msgstr "Gå etter"
+msgstr "Jag"
 
 #: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1789
 #, fuzzy, c-format
 msgid "Magnitude limit:  %.2f"
-msgstr "Magnitudegrense: %.2f"
+msgstr "Størrelsesgrense: %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1769 ../src/celestia/celestiacore.cpp:1800
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "Auto-magnitudegrense på 45 grader:  %.2f"
+msgstr "Automatisk størrelsesgrense ved 45 grader:  %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1819 ../src/celestia/celestiacore.cpp:1834
 #, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "Omgivende lysnivå: %.2f"
+msgstr "Nivå for omgivelseslys: %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1845 ../src/celestia/celestiacore.cpp:1856
 #, c-format
 msgid "Light gain"
-msgstr "Lysforsterkning"
+msgstr "Lysforsterking"
 
 #: ../src/celestia/celestiacore.cpp:2189
 msgid "GL error: "
@@ -464,7 +462,7 @@ msgstr "GL-feil: "
 
 #: ../src/celestia/celestiacore.cpp:2348
 msgid "View too small to be split"
-msgstr "Visning for liten til å deles opp"
+msgstr "Visningen for liten til å bli delt"
 
 #: ../src/celestia/celestiacore.cpp:2368
 msgid "Added view"
@@ -480,7 +478,7 @@ msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2551
 msgid "ly"
-msgstr "lå"
+msgstr " lå"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
@@ -492,7 +490,7 @@ msgstr "au"
 #: ../src/celestia/celestiacore.cpp:2562
 #, fuzzy
 msgid "mi"
-msgstr " m/s"
+msgstr "km"
 
 #: ../src/celestia/celestiacore.cpp:2567
 msgid "ft"
@@ -509,7 +507,7 @@ msgstr "km"
 #: ../src/celestia/celestiacore.cpp:2580 ../src/celestia/qt/qtinfopanel.cpp:128
 #, fuzzy
 msgid "m"
-msgstr " m/s"
+msgstr "km"
 
 #: ../src/celestia/celestiacore.cpp:2603 ../src/celestia/qt/qtinfopanel.cpp:180
 #: ../src/celestia/qt/qtinfopanel.cpp:213
@@ -530,14 +528,13 @@ msgid "minutes"
 msgstr " minutter"
 
 #: ../src/celestia/celestiacore.cpp:2618
-#, fuzzy
 msgid "seconds"
-msgstr "Still tid..."
+msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2621
 #, fuzzy
 msgid "Rotation period: {} {}\n"
-msgstr "Rotasjonsperiode: "
+msgstr "Omløpstid: "
 
 #: ../src/celestia/celestiacore.cpp:2629
 #, c-format
@@ -550,14 +547,14 @@ msgid "Mass: %.6g kg\n"
 msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:2634
-#, c-format
+#, fuzzy, c-format
 msgid "Mass: %.2f Mj\n"
-msgstr ""
+msgstr "Radius: %.2f Rsol\n"
 
 #: ../src/celestia/celestiacore.cpp:2636
-#, c-format
+#, fuzzy, c-format
 msgid "Mass: %.2f Me\n"
-msgstr ""
+msgstr "Radius: %.2f Rsol\n"
 
 #: ../src/celestia/celestiacore.cpp:2647
 #, fuzzy
@@ -612,12 +609,12 @@ msgstr "Tilsynelatende diameter: "
 #: ../src/celestia/celestiacore.cpp:2758
 #, fuzzy, c-format
 msgid "Apparent magnitude: %.1f\n"
-msgstr "Tilsynelatende magnitude: "
+msgstr "Tilsynelatende størrelse: "
 
 #: ../src/celestia/celestiacore.cpp:2762
 #, fuzzy, c-format
 msgid "Absolute magnitude: %.1f\n"
-msgstr "Absolutt magnitude: "
+msgstr "Absolutt størrelse: "
 
 #: ../src/celestia/celestiacore.cpp:2843
 #, c-format
@@ -632,12 +629,12 @@ msgstr "Avstand: "
 
 #: ../src/celestia/celestiacore.cpp:2875
 msgid "Star system barycenter\n"
-msgstr "Stjernesystemets massesentrum\n"
+msgstr "Stjernesystemets tyngdesenter\n"
 
 #: ../src/celestia/celestiacore.cpp:2879
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "Abs (tils.) mag: %.2f (%.2f)\n"
+msgstr "Abs (tils.) størr.: %.2f (%.2f)\n"
 
 #: ../src/celestia/celestiacore.cpp:2884
 #, fuzzy
@@ -660,12 +657,12 @@ msgstr "Klasse: "
 #: ../src/celestia/celestiacore.cpp:2905
 #, fuzzy, c-format
 msgid "Surface temp: %s\n"
-msgstr "Oveflatetemp.: "
+msgstr "Overflatetemperatur: "
 
 #: ../src/celestia/celestiacore.cpp:2910
 #, fuzzy
 msgid "Radius: {} Rsun  ({})\n"
-msgstr "Radius: "
+msgstr "Radius: %.2f Rsol\n"
 
 #: ../src/celestia/celestiacore.cpp:2916
 #, fuzzy
@@ -679,7 +676,7 @@ msgstr "Planetære satellitter tilstede\n"
 #: ../src/celestia/celestiacore.cpp:2948
 #, fuzzy, c-format
 msgid "Distance from center: %s\n"
-msgstr "Avstand fra senter: "
+msgstr "Avstand fra sentrum: "
 
 #: ../src/celestia/celestiacore.cpp:2951 ../src/celestia/celestiacore.cpp:2981
 #, fuzzy, c-format
@@ -704,7 +701,7 @@ msgstr ""
 #: ../src/celestia/celestiacore.cpp:3045
 #, fuzzy, c-format
 msgid "Temperature: %s\n"
-msgstr "Tidsfrekvens"
+msgstr "Temperatur: "
 
 #: ../src/celestia/celestiacore.cpp:3206
 msgid "  LT"
@@ -727,16 +724,16 @@ msgstr "Tid stoppet"
 #: ../src/celestia/celestiacore.cpp:3225
 #, fuzzy, c-format
 msgid "%.6g x faster"
-msgstr "raskere"
+msgstr " raskere"
 
 #: ../src/celestia/celestiacore.cpp:3229
 #, fuzzy, c-format
 msgid "%.6g x slower"
-msgstr "langsommere"
+msgstr " langsommere"
 
 #: ../src/celestia/celestiacore.cpp:3235
 msgid " (Paused)"
-msgstr " (pause)"
+msgstr "  (Pause)"
 
 #: ../src/celestia/celestiacore.cpp:3254
 #, c-format
@@ -763,17 +760,17 @@ msgstr "Reiser "
 #: ../src/celestia/celestiacore.cpp:3300
 #, fuzzy, c-format
 msgid "Track %s\n"
-msgstr "Spor"
+msgstr "Spor "
 
 #: ../src/celestia/celestiacore.cpp:3316
 #, fuzzy, c-format
 msgid "Follow %s\n"
-msgstr "&Følg"
+msgstr "Følg "
 
 #: ../src/celestia/celestiacore.cpp:3320
 #, fuzzy, c-format
 msgid "Sync Orbit %s\n"
-msgstr "Synkron omløpsbane "
+msgstr "Synkronbane"
 
 #: ../src/celestia/celestiacore.cpp:3324
 #, c-format
@@ -783,7 +780,7 @@ msgstr ""
 #: ../src/celestia/celestiacore.cpp:3330
 #, fuzzy, c-format
 msgid "Chase %s\n"
-msgstr "Gå etter"
+msgstr "Jag "
 
 #: ../src/celestia/celestiacore.cpp:3344
 #, c-format
@@ -793,7 +790,7 @@ msgstr ""
 #: ../src/celestia/celestiacore.cpp:3529
 #, fuzzy, c-format
 msgid "Target name: %s"
-msgstr "Målnavn: "
+msgstr "Målets navn: "
 
 #: ../src/celestia/celestiacore.cpp:3605
 #, c-format
@@ -801,9 +798,8 @@ msgid "%dx%d at %.2f fps  %s"
 msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:3608
-#, fuzzy
 msgid "Paused"
-msgstr "  Pause"
+msgstr "Pause"
 
 #: ../src/celestia/celestiacore.cpp:3608
 #, fuzzy
@@ -812,7 +808,7 @@ msgstr "  Opptak"
 
 #: ../src/celestia/celestiacore.cpp:3629
 msgid "F11 Start/Pause    F12 Stop"
-msgstr "F11 Start/Pause     F12 Stopp"
+msgstr "F11 Start/Pause    F12 Stopp"
 
 #: ../src/celestia/celestiacore.cpp:3640 ../src/celestia/celestiacore.cpp:3645
 msgid "Edit Mode"
@@ -821,35 +817,35 @@ msgstr "Redigeringsmodus"
 #: ../src/celestia/celestiacore.cpp:3678
 #, fuzzy
 msgid "Skipping solar system catalog: {}\n"
-msgstr "Laster solsystemkatalog: "
+msgstr "Laster inn solsystemkatalog: "
 
 #: ../src/celestia/celestiacore.cpp:3681
 #, fuzzy
 msgid "Loading solar system catalog: {}\n"
-msgstr "Laster solsystemkatalog: "
+msgstr "Laster inn solsystemkatalog: "
 
 #: ../src/celestia/celestiacore.cpp:3724
 #, fuzzy
 msgid "Skipping {} catalog: {}\n"
-msgstr "Laster solsystemkatalog: "
+msgstr "Laster inn stjernekatalog: "
 
 #: ../src/celestia/celestiacore.cpp:3727
 #, fuzzy
 msgid "Loading {} catalog: {}\n"
-msgstr "Laster solsystemkatalog: "
+msgstr "Laster inn stjernekatalog: "
 
 #: ../src/celestia/celestiacore.cpp:3735
 #, fuzzy
 msgid "Error reading {} catalog file: {}\n"
-msgstr "Feil ved lesing av favorittfil."
+msgstr "Feil ved lesing av stjernefil\n"
 
 #: ../src/celestia/celestiacore.cpp:3767
 msgid "Error reading configuration file."
-msgstr "Feil ved lesing av konfigurasjonsfil."
+msgstr "Feil ved lesing av oppsettsfil."
 
 #: ../src/celestia/celestiacore.cpp:3781
 msgid "Initialization of SPICE library failed."
-msgstr "Initiering av SPICE-biblioteket feilet"
+msgstr "Klarte kke klargjøre SPICE-biblioteket."
 
 #: ../src/celestia/celestiacore.cpp:3824
 msgid "Cannot read star database."
@@ -858,7 +854,7 @@ msgstr "Kan ikke lese stjernedatabase."
 #: ../src/celestia/celestiacore.cpp:3845
 #, fuzzy
 msgid "Error opening deepsky catalog file {}.\n"
-msgstr "Feil ved åpning av deep-sky-katalog "
+msgstr "Feil ved åpning av katalogfil med fjerne objekter."
 
 #: ../src/celestia/celestiacore.cpp:3849
 #, fuzzy
@@ -868,35 +864,35 @@ msgstr "Kan ikke lese stjernedatabase."
 #: ../src/celestia/celestiacore.cpp:3898
 #, fuzzy
 msgid "Error opening solar system catalog {}.\n"
-msgstr "Feil ved åpning av solsystemskatalog.\n"
+msgstr "Feil ved åpning av solsystemkatalogen.\n"
 
 #: ../src/celestia/celestiacore.cpp:3938
 #, fuzzy
 msgid "Error opening asterisms file {}.\n"
-msgstr "Feil ved åpning av asterismefil."
+msgstr "Feil ved åpning av fil med asterismer."
 
 #: ../src/celestia/celestiacore.cpp:3954
 #, fuzzy
 msgid "Error opening constellation boundaries file {}.\n"
-msgstr "Feil ved åpning av stjernebildegrense-filer."
+msgstr "Feil ved åpning av fil med stjernebildelinjer."
 
 #: ../src/celestia/celestiacore.cpp:4088
 msgid "Failed to initialize renderer"
-msgstr "Feilet i å initialisere opptegninger"
+msgstr "Klargjøring av opptegner mislyktes"
 
 #: ../src/celestia/celestiacore.cpp:4104
 msgid "Error loading font; text will not be visible.\n"
-msgstr "Feil ved lasting av skrift; tekst blir ikke synlig.\n"
+msgstr "Feil ved lasting av skrifttype, tekst blir ikke synlig.\n"
 
 #: ../src/celestia/celestiacore.cpp:4140
 #, fuzzy
 msgid "Error reading cross index {}\n"
-msgstr "Feil ved lesing av kryssindeks"
+msgstr "Feil ved lesing av kryssindeks "
 
 #: ../src/celestia/celestiacore.cpp:4142
 #, fuzzy
 msgid "Loaded cross index {}\n"
-msgstr "Lastet inn kryssindeks"
+msgstr "Lastet kryssindeks "
 
 #: ../src/celestia/celestiacore.cpp:4159
 msgid "Error reading star names file\n"
@@ -905,11 +901,11 @@ msgstr "Feil ved lesing av stjernenavn-fil\n"
 #: ../src/celestia/celestiacore.cpp:4163 ../src/celestia/celestiacore.cpp:4177
 #, fuzzy
 msgid "Error opening {}\n"
-msgstr "Feil ved åpning av "
+msgstr "Feil ved åpning "
 
 #: ../src/celestia/celestiacore.cpp:4185
 msgid "Error reading stars file\n"
-msgstr "Feil ved lesing av stjerne-fil\n"
+msgstr "Feil ved lesing av stjernefil\n"
 
 #: ../src/celestia/celestiacore.cpp:4211
 #, fuzzy
@@ -925,9 +921,8 @@ msgid "Unable to capture a frame!\n"
 msgstr ""
 
 #: ../src/celestia/celestiacore.cpp:4811
-#, fuzzy
 msgid "Unsupported image type: {}!\n"
-msgstr "Støttede utvidelser:"
+msgstr ""
 
 #: ../src/celestia/glut/glutmain.cpp:524
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
@@ -945,7 +940,7 @@ msgstr "Versjon: "
 #: ../src/celestia/helper.cpp:109
 #, fuzzy, c-format
 msgid "Vendor: %s\n"
-msgstr "Tilbyder: "
+msgstr "Leverandør: "
 
 #: ../src/celestia/helper.cpp:112
 #, fuzzy, c-format
@@ -955,17 +950,17 @@ msgstr "Opptegner: "
 #: ../src/celestia/helper.cpp:118
 #, fuzzy, c-format
 msgid "Max simultaneous textures: %s\n"
-msgstr "Maks samtidige teksturer: "
+msgstr "Maks. samtidige teksturer: "
 
 #: ../src/celestia/helper.cpp:121
 #, fuzzy, c-format
 msgid "Max texture size: %s\n"
-msgstr "Maks teksturstørrelse: "
+msgstr "Maks tekstur-størrelse: "
 
 #: ../src/celestia/helper.cpp:124
 #, fuzzy, c-format
 msgid "Point size range: %s - %s\n"
-msgstr "Punktstørrelses-område: "
+msgstr "Område for punktstørrelse: "
 
 #: ../src/celestia/helper.cpp:127
 #, c-format
@@ -975,12 +970,12 @@ msgstr ""
 #: ../src/celestia/helper.cpp:130
 #, fuzzy, c-format
 msgid "Point size granularity: %s\n"
-msgstr "Punktstørrelses-område: "
+msgstr "Område for punktstørrelse: "
 
 #: ../src/celestia/helper.cpp:133
 #, fuzzy, c-format
 msgid "Max cube map size: %s\n"
-msgstr "Maks kubekartstørrelse: "
+msgstr "Maks størrelse på terningkart: "
 
 #: ../src/celestia/helper.cpp:136
 #, c-format
@@ -1001,8 +996,9 @@ msgid "Custom"
 msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:212
+#, fuzzy
 msgid "Error getting path for log filename!"
-msgstr ""
+msgstr "Feil ved åpning av katalogfil med fjerne objekter."
 
 #: ../src/celestia/qt/qtappwin.cpp:229
 msgid ""
@@ -1018,7 +1014,7 @@ msgstr "Objektfinner"
 #: ../src/celestia/qt/qtappwin.cpp:300
 #, fuzzy
 msgid "Info Browser"
-msgstr "Objektfinner"
+msgstr "Stjerneviser"
 
 #. Set up the browser tabs
 #: ../src/celestia/qt/qtappwin.cpp:329
@@ -1043,22 +1039,21 @@ msgstr "Stjerner"
 #: ../src/celestia/qt/qtappwin.cpp:331
 #, fuzzy
 msgid "Deep Sky Objects"
-msgstr " deep space objekter"
+msgstr "Vis baner"
 
 #: ../src/celestia/qt/qtappwin.cpp:338 ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 #, fuzzy
 msgid "Event Finder"
-msgstr "Formørkelses-finner"
+msgstr "Formørkelsesfinner"
 
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1034
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/qtappwin.cpp:347 ../src/celestia/qt/rc.cpp:351
-#, fuzzy
 msgid "Time"
-msgstr "&Tid"
+msgstr "Tid"
 
 #. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
@@ -1066,27 +1061,26 @@ msgstr "&Tid"
 #: ../src/celestia/qt/qtappwin.cpp:354 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
-msgstr "Turguide"
+msgstr "Turveiviser"
 
 #: ../src/celestia/qt/qtappwin.cpp:404
 #, fuzzy
 msgid "Full screen"
-msgstr "Full skjerm"
+msgstr "Fullskjerm"
 
 #: ../src/celestia/qt/qtappwin.cpp:406
-#, fuzzy
 msgid "Shift+F11"
-msgstr "&Ta film...\tShift+F10"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:560
 #, fuzzy
 msgid "Error opening bookmarks file"
-msgstr "Feil ved åpning av asterismefil."
+msgstr "Feil ved åpning av bildefil "
 
 #: ../src/celestia/qt/qtappwin.cpp:579
 #, fuzzy
 msgid "Error Saving Bookmarks"
-msgstr "&Legg til bokmerker..."
+msgstr "Organiser bokmerker"
 
 #: ../src/celestia/qt/qtappwin.cpp:616
 #, fuzzy
@@ -1094,18 +1088,16 @@ msgid "Save Image"
 msgstr "Ta bilde"
 
 #: ../src/celestia/qt/qtappwin.cpp:618
-#, fuzzy
 msgid "Images (*.png *.jpg)"
-msgstr "er ikke en PNG-fil.\n"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:642 ../src/celestia/qt/qtappwin.cpp:652
 msgid "Capture Video"
 msgstr "Ta opp video"
 
 #: ../src/celestia/qt/qtappwin.cpp:644
-#, fuzzy
 msgid "Matroska Video (*.mkv)"
-msgstr "Ta opp video"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:657
 #, fuzzy
@@ -1120,7 +1112,7 @@ msgstr ""
 #: ../src/celestia/qt/qtappwin.cpp:663
 #: ../src/celestia/win32/res/resource_strings.cpp:152
 msgid "Frame rate:"
-msgstr "Bildefrekvens:"
+msgstr "Rutefrekvens:"
 
 #: ../src/celestia/qt/qtappwin.cpp:669
 msgid "Video codec:"
@@ -1151,21 +1143,22 @@ msgstr "Kopiert URL"
 #: ../src/celestia/qt/qtappwin.cpp:755 ../src/celestia/sdl/sdlmain.cpp:529
 #, fuzzy
 msgid "Pasting URL"
-msgstr "Laster url"
+msgstr "Laster URL"
 
 #: ../src/celestia/qt/qtappwin.cpp:879
 #, fuzzy
 msgid "Open Script"
-msgstr "Å&pne skript..."
+msgstr "&Åpne skript …"
 
 #: ../src/celestia/qt/qtappwin.cpp:881
+#, fuzzy
 msgid "Celestia Scripts (*.celx *.cel)"
-msgstr ""
+msgstr "Celestia styreelementer"
 
 #: ../src/celestia/qt/qtappwin.cpp:1034
 #, fuzzy
 msgid "New bookmark"
-msgstr "Opprett en ny bokmerkemappe i denne meny"
+msgstr "Bokmerker"
 
 #: ../src/celestia/qt/qtappwin.cpp:1089
 #, qt-format
@@ -1185,19 +1178,16 @@ msgid ""
 msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1125
-#, fuzzy
 msgid "Unknown compiler"
-msgstr "Ukjent feil ved åpning av skript"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1129 ../src/celestia/qt/qtappwin.cpp:1134
-#, fuzzy
 msgid "supported"
-msgstr "Støttede utvidelser:"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1131 ../src/celestia/qt/qtappwin.cpp:1136
-#, fuzzy
 msgid "not supported"
-msgstr "Støttede utvidelser:"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1139 ../src/celestia/qt/qtappwin.cpp:1533
 #: ../src/celestia/win32/res/resource_strings.cpp:70
@@ -1205,54 +1195,54 @@ msgid "About Celestia"
 msgstr "Om Celestia"
 
 #: ../src/celestia/qt/qtappwin.cpp:1158
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>%1 version:</b> %2"
-msgstr "<b>OpenGL 2.0 Shading Language</b>"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1164
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
-msgstr "<b>Unextended OpenGL 1.1</b>"
+msgstr "Leverandør: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1170
 #, fuzzy, qt-format
 msgid "<b>Renderer:</b> %1"
-msgstr "<b>Unextended OpenGL 1.1</b>"
+msgstr "Opptegner: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1177
 #, fuzzy, qt-format
 msgid "<b>%1 Version:</b> %2"
-msgstr "GLSL-versjon: "
+msgstr "Versjon: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1184
 #, fuzzy, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
-msgstr "Maks samtidige teksturer: "
+msgstr "Maks. samtidige teksturer: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1190
 #, fuzzy, qt-format
 msgid "<b>Maximum texture size:</b> %1"
-msgstr "Maks teksturstørrelse: "
+msgstr "Maks tekstur-størrelse: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1196
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
-msgstr "Punktstørrelses-område: "
+msgstr "Område for punktstørrelse: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1202
 #, fuzzy, qt-format
 msgid "<b>Point size granularity:</b> %1"
-msgstr "Punktstørrelses-område: "
+msgstr "Område for punktstørrelse: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1208
 #, fuzzy, qt-format
 msgid "<b>Max cube map size:</b> %1"
-msgstr "Maks kubekartstørrelse: "
+msgstr "Maks størrelse på terningkart: "
 
 #: ../src/celestia/qt/qtappwin.cpp:1214
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Number of interpolators:</b> %1"
-msgstr "Ekvatorial"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1220
 #, qt-format
@@ -1262,7 +1252,7 @@ msgstr ""
 #: ../src/celestia/qt/qtappwin.cpp:1230
 #, fuzzy
 msgid "<b>Supported extensions:</b><br>\n"
-msgstr "<b>Unextended OpenGL 1.1</b>"
+msgstr "Støttede utvidelser:"
 
 #: ../src/celestia/qt/qtappwin.cpp:1244
 #, fuzzy
@@ -1281,9 +1271,8 @@ msgid "&Grab image"
 msgstr "Ta bilde"
 
 #: ../src/celestia/qt/qtappwin.cpp:1272
-#, fuzzy
 msgid "F10"
-msgstr "Ta &bilde...\tF10"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1277
 #, fuzzy
@@ -1291,29 +1280,26 @@ msgid "Capture &video"
 msgstr "Ta opp video"
 
 #: ../src/celestia/qt/qtappwin.cpp:1281
-#, fuzzy
 msgid "Shift+F10"
-msgstr "&Ta film...\tShift+F10"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1285
-#, fuzzy
 msgid "&Copy image"
-msgstr "Kopier URL"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1286
-#, fuzzy
 msgid "Ctrl+Shift+C"
-msgstr "&Sentrer valgt objekt\tC"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1292
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr "Å&pne skript..."
+msgstr "&Åpne skript …"
 
 #: ../src/celestia/qt/qtappwin.cpp:1303
 #, fuzzy
 msgid "&Preferences..."
-msgstr "Celestia innstillinger"
+msgstr "&Referansevektorer"
 
 #: ../src/celestia/qt/qtappwin.cpp:1307
 #: ../src/celestia/win32/res/resource_strings.cpp:7
@@ -1321,37 +1307,34 @@ msgid "E&xit"
 msgstr "&Avslutt"
 
 #: ../src/celestia/qt/qtappwin.cpp:1308
-#, fuzzy
 msgid "Ctrl+Q"
-msgstr "Kantutjevning\tCtrl+X"
+msgstr ""
 
 #. ***** Navigation menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1313
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
-msgstr "&Navigering"
+msgstr "&Navigasjon"
 
 #: ../src/celestia/qt/qtappwin.cpp:1315
 #, fuzzy
 msgid "Select Sun"
-msgstr "&Velg"
+msgstr "Velg &Solen\tH"
 
 #: ../src/celestia/qt/qtappwin.cpp:1319
 #, fuzzy
 msgid "Center Selection"
-msgstr "&Sentrer valgt objekt\tC"
+msgstr "&Sentrer utvalg\tC"
 
 #: ../src/celestia/qt/qtappwin.cpp:1323
 #, fuzzy
 msgid "Goto Selection"
-msgstr ""
-"\n"
-"Valg: "
+msgstr "&Gå til utvalg\tG"
 
 #: ../src/celestia/qt/qtappwin.cpp:1327
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
-msgstr "Gå til objekt..."
+msgstr "Gå til objekt …"
 
 #: ../src/celestia/qt/qtappwin.cpp:1331
 msgid "Copy URL / console text"
@@ -1370,7 +1353,7 @@ msgstr "&Tid"
 #: ../src/celestia/qt/qtappwin.cpp:1344
 #, fuzzy
 msgid "Set &time"
-msgstr "Still tid..."
+msgstr "Sett tid ..."
 
 #. ***** Display menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1352
@@ -1381,27 +1364,27 @@ msgstr "Vis"
 #: ../src/celestia/qt/qtappwin.cpp:1358
 #, fuzzy
 msgid "Dee&p Sky Objects"
-msgstr " deep space objekter"
+msgstr "Vis baner"
 
 #: ../src/celestia/qt/qtappwin.cpp:1364
 #, fuzzy
 msgid "&Shadows"
-msgstr "Vis sky-skygger"
+msgstr "Ringskygger"
 
 #: ../src/celestia/qt/qtappwin.cpp:1375
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
-msgstr "Stj&ernestil"
+msgstr "Stjernest&il"
 
 #: ../src/celestia/qt/qtappwin.cpp:1382
 #, fuzzy
 msgid "Texture &Resolution"
-msgstr "&Teksturens oppløsning"
+msgstr "&Teksturoppløsning"
 
 #: ../src/celestia/qt/qtappwin.cpp:1387
 #, fuzzy
 msgid "&FPS control"
-msgstr "&Styring"
+msgstr "&Kontrollelementer"
 
 #. ***** Bookmark menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1404
@@ -1419,27 +1402,25 @@ msgstr "&Vis"
 #: ../src/celestia/qt/qtappwin.cpp:1410
 #, fuzzy
 msgid "&MultiView"
-msgstr "&Vis"
+msgstr "Flervisning"
 
 #: ../src/celestia/qt/qtappwin.cpp:1413
 #, fuzzy
 msgid "Split view vertically"
-msgstr "Del visning vertikalt"
+msgstr "Del visningen loddrett"
 
 #: ../src/celestia/qt/qtappwin.cpp:1414
-#, fuzzy
 msgid "Ctrl+R"
-msgstr "Del &horisontalt\tCtrl+R"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1419
 #, fuzzy
 msgid "Split view horizontally"
-msgstr "Del visning horisontalt"
+msgstr "Del visningen vannrett"
 
 #: ../src/celestia/qt/qtappwin.cpp:1420
-#, fuzzy
 msgid "Ctrl+U"
-msgstr "Del &vertikalt\tCtrl+U"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1425
 #, fuzzy
@@ -1456,9 +1437,8 @@ msgid "Single view"
 msgstr "Enkel visning"
 
 #: ../src/celestia/qt/qtappwin.cpp:1432
-#, fuzzy
 msgid "Ctrl+D"
-msgstr "&Enkel visning\tCtrl+D"
+msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:1437
 #, fuzzy
@@ -1473,12 +1453,12 @@ msgstr "Slett"
 #: ../src/celestia/qt/qtappwin.cpp:1444
 #, fuzzy
 msgid "Frames visible"
-msgstr "Synlige rammer"
+msgstr "Rammer synlige"
 
 #: ../src/celestia/qt/qtappwin.cpp:1465
 #, fuzzy
 msgid "Active frame visible"
-msgstr "Aktive ramme synlig"
+msgstr "Aktiv ramme synlig"
 
 #: ../src/celestia/qt/qtappwin.cpp:1481
 #, fuzzy
@@ -1494,21 +1474,21 @@ msgstr "&Hjelp"
 #: ../src/celestia/qt/qtappwin.cpp:1524
 #, fuzzy
 msgid "Celestia Manual"
-msgstr "Celestia innstillinger"
+msgstr "Celestia"
 
 #: ../src/celestia/qt/qtappwin.cpp:1529
 msgid "OpenGL Info"
-msgstr "OpenGL-Info"
+msgstr "OpenGL Info"
 
 #: ../src/celestia/qt/qtappwin.cpp:1549
 #, fuzzy
 msgid "Add Bookmark..."
-msgstr "&Legg til bokmerke"
+msgstr "&Legg til bokmerker …"
 
 #: ../src/celestia/qt/qtappwin.cpp:1553
 #, fuzzy
 msgid "Organize Bookmarks..."
-msgstr "&Organiser bokmerker..."
+msgstr "&Organiser bokmerker …"
 
 #: ../src/celestia/qt/qtappwin.cpp:1591
 msgid "Set custom FPS"
@@ -1523,12 +1503,12 @@ msgstr ""
 msgid ""
 "Loading data files: %1\n"
 "\n"
-msgstr "Laster"
+msgstr "Laster inn bilde fra fil "
 
 #: ../src/celestia/qt/qtappwin.cpp:1624
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
-msgstr "Skript"
+msgstr "Skripter"
 
 #: ../src/celestia/qt/qtbookmark.cpp:395
 msgid "Title"
@@ -1542,7 +1522,7 @@ msgstr "Varighet"
 #: ../src/celestia/qt/qtbookmark.cpp:582
 #, fuzzy
 msgid "Bookmarks Menu"
-msgstr "&Bokmerker"
+msgstr "Bokmerker"
 
 #: ../src/celestia/qt/qtbookmark.cpp:583
 msgid "Add bookmarks to this folder to see them in the bookmarks menu."
@@ -1560,7 +1540,7 @@ msgstr ""
 #: ../src/celestia/qt/qtbookmark.cpp:603
 #, fuzzy
 msgid "Error reading bookmarks file"
-msgstr "Feil ved lesing av favorittfil."
+msgstr "Feil ved lesing av stjernefil\n"
 
 #: ../src/celestia/qt/qtbookmark.cpp:720
 msgid "Bookmarks"
@@ -1569,17 +1549,15 @@ msgstr "Bokmerker"
 #: ../src/celestia/qt/qtbookmark.cpp:833
 #, fuzzy
 msgid "Current simulation time"
-msgstr "Still inn simuleringstid"
+msgstr "Sett simuleringstid"
 
 #: ../src/celestia/qt/qtbookmark.cpp:834
-#, fuzzy
 msgid "Simulation time at activation"
-msgstr "Still inn simuleringstid"
+msgstr ""
 
 #: ../src/celestia/qt/qtbookmark.cpp:835
-#, fuzzy
 msgid "System time at activation"
-msgstr "&Tid"
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
 #. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
@@ -1589,7 +1567,7 @@ msgstr "&Tid"
 #: ../src/celestia/qt/rc.cpp:54
 #, fuzzy
 msgid "New Folder"
-msgstr "Ny mappe..."
+msgstr "Ny mappe ..."
 
 #. Create the render flags actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:27
@@ -1599,16 +1577,15 @@ msgstr ""
 #: ../src/celestia/qt/qtcelestiaactions.cpp:28
 #, fuzzy
 msgid "Equatorial coordinate grid"
-msgstr "Vis ekvatorialt rutenett"
+msgstr "Himmelrutenett"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:32
 msgid "Ga"
 msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:33
-#, fuzzy
 msgid "Galactic coordinate grid"
-msgstr "Galaktisk"
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:37
 msgid "Ec"
@@ -1617,16 +1594,15 @@ msgstr ""
 #: ../src/celestia/qt/qtcelestiaactions.cpp:38
 #, fuzzy
 msgid "Ecliptic coordinate grid"
-msgstr "Ekvatorialt rutnett"
+msgstr "Ekliptikk"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:42
 msgid "Hz"
 msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:43
-#, fuzzy
 msgid "Horizontal coordinate grid"
-msgstr "Horisontal"
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:47
 msgid "Ecl"
@@ -1637,12 +1613,11 @@ msgstr ""
 #: ../src/celestia/qt/qtcelestiaactions.cpp:48 ../src/celestia/qt/rc.cpp:212
 #, fuzzy
 msgid "Ecliptic line"
-msgstr ", linje"
+msgstr "Ekliptikk"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:52
-#, fuzzy
 msgid "M"
-msgstr " m/s"
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
@@ -1657,9 +1632,8 @@ msgid "Markers"
 msgstr "Markører"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:57
-#, fuzzy
 msgid "C"
-msgstr "Copyright © 2001-2009, Celestias utviklingsgruppe"
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:405
 #. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
@@ -1673,14 +1647,13 @@ msgid "Constellations"
 msgstr "Stjernebilder"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:62
-#, fuzzy
 msgid "B"
-msgstr "<b>NVIDIA-kombinatorer, ingen vertexprogram</b>"
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:63
 #, fuzzy
 msgid "Constellation boundaries"
-msgstr "Stjernebilder-grenser"
+msgstr "Stjernebildegrenser"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:67
 #, fuzzy
@@ -1692,7 +1665,7 @@ msgstr "OK"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:68 ../src/celestia/qt/rc.cpp:142
 #: ../src/celestia/win32/res/resource_strings.cpp:203
 msgid "Orbits"
-msgstr "Omløpsbaner"
+msgstr "Baner"
 
 #. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
@@ -1798,9 +1771,8 @@ msgstr "Romfartøy"
 
 #. Label actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:107
-#, fuzzy
 msgid "L"
-msgstr "10x &raskere\tL"
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:487
 #. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
@@ -1810,7 +1782,7 @@ msgstr "10x &raskere\tL"
 #: ../src/celestia/qt/rc.cpp:218
 #: ../src/celestia/win32/res/resource_strings.cpp:229
 msgid "Labels"
-msgstr "Påskrifter"
+msgstr "Etiketter"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
@@ -1853,7 +1825,7 @@ msgstr "Åpne stjernehoper"
 #: ../src/celestia/qt/rc.cpp:249
 #: ../src/celestia/win32/res/resource_strings.cpp:225
 msgid "Nebulae"
-msgstr "Stjernetåker"
+msgstr "Tåker"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:606
 #. i18n: ectx: property (title), widget (QGroupBox, locationsGroupBox)
@@ -1879,7 +1851,7 @@ msgstr "Skyer"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:156
 #: ../src/celestia/win32/res/resource_strings.cpp:199
 msgid "Night Side Lights"
-msgstr "Nattside-lys"
+msgstr "Lys på nattsiden"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:158
 #: ../src/celestia/win32/res/resource_strings.cpp:200
@@ -1896,7 +1868,7 @@ msgstr "Atmosfærer"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:166
 #: ../src/celestia/win32/res/resource_strings.cpp:197
 msgid "Ring Shadows"
-msgstr "Ring-skygger"
+msgstr "Ringskygger"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:167
 #: ../src/celestia/win32/res/resource_strings.cpp:198
@@ -1929,7 +1901,7 @@ msgstr "Høy"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:186
 #, fuzzy
 msgid "Auto Magnitude"
-msgstr "Auto-magnitude\tCtrl+Y"
+msgstr "Autostørrelser"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:188
 msgid "Faintest visible magnitude based on field of view"
@@ -1938,7 +1910,7 @@ msgstr ""
 #: ../src/celestia/qt/qtcelestiaactions.cpp:191
 #, fuzzy
 msgid "More Stars Visible"
-msgstr "Flere  stjerner synlige\t]"
+msgstr "Flere stjerner synlige\t]"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:194
 #, fuzzy
@@ -1960,22 +1932,21 @@ msgstr "&Uklare punkter"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:202
 #, fuzzy
 msgid "Scaled Discs"
-msgstr "Skalerte s&kiver"
+msgstr "Skaler&te skiver"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:212
-#, fuzzy
 msgid "Light Time Delay"
-msgstr "Lysreiseforsinkelse slått av"
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:394
 #, fuzzy, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
-msgstr "Auto-magnitudegrense på 45 grader:  %.2f"
+msgstr "Automatisk størrelsesgrense ved 45 grader:  %.2f"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:401
 #, fuzzy, qt-format
 msgid "Magnitude limit: %L1"
-msgstr "Magnitudegrense: %.2f"
+msgstr "Størrelsesgrense: %.2f"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:222
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:193
@@ -1995,12 +1966,12 @@ msgstr "Avstand (lå)"
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:197
 #: ../src/celestia/win32/winstarbrowser.cpp:63
 msgid "App. mag"
-msgstr "Tils. mag"
+msgstr "Tils. størr"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:228
 #: ../src/celestia/win32/winstarbrowser.cpp:64
 msgid "Abs. mag"
-msgstr "Abs. mag"
+msgstr "Abs. størr"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:230
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:199
@@ -2008,18 +1979,18 @@ msgstr "Abs. mag"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:657
 #: ../src/celestia/win32/winstarbrowser.cpp:65
 msgid "Type"
-msgstr "Typ"
+msgstr "Type"
 
 #. Buttons to select filtering criterion for stars
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:518
 #, fuzzy
 msgid "Closest Stars"
-msgstr "Vis stjerner"
+msgstr "Filtrer stjener"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:522
 #, fuzzy
 msgid "Brightest Stars"
-msgstr "Stjerner"
+msgstr "Lyssterkest"
 
 #. Additional filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:532
@@ -2027,54 +1998,51 @@ msgstr "Stjerner"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:759
 #, fuzzy
 msgid "Filter"
-msgstr "Filtrer stjerner"
+msgstr "Filtrer stjener"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:535
-#, fuzzy
 msgid "With Planets"
 msgstr "Med planeter"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:539
 #, fuzzy
 msgid "Multiple Stars"
-msgstr "Vis stjerner"
+msgstr "Filtrer stjener"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:542
 #, fuzzy
 msgid "Barycenters"
-msgstr "Massesentrum"
+msgstr "Tyngdesenter"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:548
-#, fuzzy
 msgid "Spectral Type"
-msgstr "Feilaktig spektraltype i stjernedatabase, stjerne #"
+msgstr ""
 
 #. End filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:557
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:477
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:766
-#, fuzzy
 msgid "Refresh"
-msgstr "&Gjenoppfrisk"
+msgstr "Frisk opp"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:565
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:485
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:778
 #, fuzzy
 msgid "Mark Selected"
-msgstr "&Marker"
+msgstr "Markører på"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:567
 #, fuzzy
 msgid "Mark stars selected in list view"
-msgstr "Maksimale antall stjerner vist i liste"
+msgstr "Høyeste antall stjerner som vises i lista"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:570
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:490
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:783
 #, fuzzy
 msgid "Unmark Selected"
-msgstr "&Marker"
+msgstr "Fjern merking fra &alle"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:571
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:784
@@ -2106,14 +2074,14 @@ msgstr "Ingen"
 #: ../src/celestia/qt/qtselectionpopup.cpp:244
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
 msgid "Diamond"
-msgstr "Diamant"
+msgstr "Rombe"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:586
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:506
 #: ../src/celestia/qt/qtselectionpopup.cpp:245
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:799
 msgid "Triangle"
-msgstr "Triangel"
+msgstr "Trekant"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:587
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:507
@@ -2148,76 +2116,72 @@ msgstr "Sirkel"
 #: ../src/celestia/qt/qtselectionpopup.cpp:250
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:804
 msgid "Left Arrow"
-msgstr "Venstrepil"
+msgstr "Pil venstre"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:592
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:512
 #: ../src/celestia/qt/qtselectionpopup.cpp:251
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
 msgid "Right Arrow"
-msgstr "Høyrepil"
+msgstr "Pil høyre"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:593
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:513
 #: ../src/celestia/qt/qtselectionpopup.cpp:252
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
 msgid "Up Arrow"
-msgstr "Opp-pil"
+msgstr "Pil opp"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:594
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:514
 #: ../src/celestia/qt/qtselectionpopup.cpp:253
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:807
 msgid "Down Arrow"
-msgstr "Ned-pil"
+msgstr "Pil ned"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:596
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:516
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:809
-#, fuzzy
 msgid "Select marker symbol"
-msgstr "Velg &objekt..."
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:609
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:529
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:822
-#, fuzzy
 msgid "Select marker size"
-msgstr "Størrelse:"
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:613
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:533
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
-#, fuzzy
 msgid "Click to select marker color"
-msgstr "Velg &objekt..."
+msgstr ""
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:616
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:536
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
 #, fuzzy
 msgid "Label"
-msgstr "Sett påskrift på detaljer"
+msgstr "Etiketter"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:680
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:588
 #, fuzzy, qt-format
 msgid "%1 objects found"
-msgstr "' ikke funnet.\n"
+msgstr "' ikke funnet."
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:486
 msgid "Mark DSOs selected in list view"
 msgstr ""
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:491
-#, fuzzy
 msgid "Unmark DSOs selected in list view"
-msgstr "&Marker"
+msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:142
 #, fuzzy
 msgid "Eclipsed body"
-msgstr "overordnet objekt '"
+msgstr "Formørkelsesfinner"
 
 #: ../src/celestia/qt/qteventfinder.cpp:144
 msgid "Occulter"
@@ -2226,7 +2190,7 @@ msgstr ""
 #: ../src/celestia/qt/qteventfinder.cpp:146
 #, fuzzy
 msgid "Start time"
-msgstr "Start med full skjerm"
+msgstr "Start"
 
 #: ../src/celestia/qt/qteventfinder.cpp:148
 #: ../src/celestia/win32/wineclipses.cpp:62
@@ -2246,13 +2210,13 @@ msgstr "Måneformørkelser"
 #: ../src/celestia/qt/qteventfinder.cpp:241
 #, fuzzy
 msgid "All eclipses"
-msgstr "Fjern merking av &alle"
+msgstr "Solformørkelser"
 
 #. Search the search range box
 #: ../src/celestia/qt/qteventfinder.cpp:249
 #, fuzzy
 msgid "Search range"
-msgstr "Søkeparametere"
+msgstr "Søkeparametre"
 
 #: ../src/celestia/qt/qteventfinder.cpp:271
 #: ../src/celestia/win32/wineclipses.cpp:290
@@ -2287,49 +2251,44 @@ msgstr "Pluto"
 #: ../src/celestia/qt/qteventfinder.cpp:279
 #, fuzzy
 msgid "Find eclipses"
-msgstr "Solformørkelser"
+msgstr "Måneformørkelser"
 
 #: ../src/celestia/qt/qteventfinder.cpp:334
-#, fuzzy, qt-format
+#, qt-format
 msgid "%1 is not a valid object"
-msgstr "Velg &objekt..."
+msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:346
 msgid "End date is earlier than start date."
 msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:360
-#, fuzzy
 msgid "Finding eclipses..."
-msgstr "Solformørkelser"
+msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:392
-#, fuzzy
 msgid "Set time to mid-eclipse"
-msgstr "Still tid til nå"
+msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:396
-#, fuzzy, qt-format
+#, qt-format
 msgid "Near %1"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:400
 #: ../src/celestia/qt/qteventfinder.cpp:404
 #, fuzzy, qt-format
 msgid "From surface of %1"
-msgstr "Laster bilde fra fil "
+msgstr "Gå til flate"
 
 #: ../src/celestia/qt/qteventfinder.cpp:408
-#, fuzzy, qt-format
+#, qt-format
 msgid "Behind %1"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtglwidget.cpp:99
-#, fuzzy
 msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr ""
-"Celestia var ikke istand til å initialisere OpenGL utvidelser. Grafikk-"
-"kvalitet blir redusert. Bare enkel opptegning blir tilgjengelig"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:81
 msgid "Error: no object selected!\n"
@@ -2342,14 +2301,14 @@ msgid "Info"
 msgstr "&Info"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:117
-#, fuzzy, qt-format
+#, qt-format
 msgid "Web info: %1"
-msgstr "OpenGL-info"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:133
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
-msgstr "Ekvatorial"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:135
 #, fuzzy, qt-format
@@ -2361,29 +2320,27 @@ msgid "<b>Oblateness: "
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:183
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
-msgstr "Rotasjonsperiode: "
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:186
-#, fuzzy
 msgid "Prograde"
-msgstr "Beograd"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:186
-#, fuzzy
 msgid "Retrograde"
-msgstr "Beograd"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:187
 #, fuzzy, qt-format
 msgid "<b>Rotation direction:</b> %1"
-msgstr "<b>Unextended OpenGL 1.1</b>"
+msgstr "Omløpstid: "
 
 #: ../src/celestia/qt/qtinfopanel.cpp:191
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:217
 msgid "years"
@@ -2398,19 +2355,19 @@ msgid "<b>Has atmosphere</b>"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:232
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Start:</b> %1"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:235
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>End:</b> %1"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:237
 #, fuzzy
 msgid "Orbit information"
-msgstr "Informasjonsstekst"
+msgstr "Informasjonstekst"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:238
 #, qt-format
@@ -2419,83 +2376,82 @@ msgstr ""
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
 #: ../src/celestia/qt/qtinfopanel.cpp:241
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Period:</b> %L1 %2"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:246
-#, fuzzy
 msgid "AU"
-msgstr "au"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:254
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
-msgstr "Ekvatorial"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:255
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Eccentricity:</b> %L1"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:256
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Inclination:</b> %L1%2"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:257
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:258
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:260
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
-msgstr "Avstand (lå)"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:261
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
-msgstr "Ekvatorial"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:262
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:263
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
-msgstr "Rotasjonsperiode: "
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:303
 #: ../src/celestia/qt/qtinfopanel.cpp:326
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:307
 #: ../src/celestia/qt/qtinfopanel.cpp:330
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #. TRANSLATORS: Galactic longitude
 #: ../src/celestia/qt/qtinfopanel.cpp:338
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:342
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
-msgstr "Størrelse: %1 MB"
+msgstr ""
 
 #: ../src/celestia/qt/qtmain.cpp:161 ../src/celestia/win32/winmain.cpp:3081
 msgid "Directory expected after --dir"
@@ -2532,24 +2488,23 @@ msgid "Blackbody D65"
 msgstr ""
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:204
-#, fuzzy
 msgid "Classic colors"
-msgstr "Stj&ernestil"
+msgstr ""
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:210
 #, fuzzy
 msgid "Local format"
-msgstr "Lokalt format"
+msgstr "Lokat format"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:212
 #, fuzzy
 msgid "Time zone name"
-msgstr "Tidssonenavn"
+msgstr "Navn på tidssone "
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:213
 #, fuzzy
 msgid "UTC offset"
-msgstr "Avvikelse fra UTC"
+msgstr "UTC-avstand"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:78
 #, fuzzy, qt-format
@@ -2583,7 +2538,7 @@ msgstr "Avstand: "
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:122
 msgid "Abs (app) mag: "
-msgstr "Abs (tils.) mag: "
+msgstr "Abs. (tils.) størr.: "
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:124
 msgid "Class: "
@@ -2597,7 +2552,7 @@ msgstr "&Velg"
 #: ../src/celestia/win32/res/resource_strings.cpp:175
 #: ../src/celestia/win32/res/resource_strings.cpp:182
 msgid "&Center"
-msgstr "&Sentrer"
+msgstr "&Senter"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:143
 #: ../src/celestia/win32/winmain.cpp:1630
@@ -2614,17 +2569,17 @@ msgstr "&Følg"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
 msgid "S&ynch Orbit"
-msgstr "S&ynkr. omløpsbane"
+msgstr "S&ynk bane"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164
 #, fuzzy
 msgid "Visible"
-msgstr "Aktive ramme synlig"
+msgstr "Usynlig"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
 #: ../src/celestia/win32/winmain.cpp:1717
 msgid "&Unmark"
-msgstr "&Fjern markering"
+msgstr "&Fjern merking"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
 #: ../src/celestia/win32/winmain.cpp:1650
@@ -2634,7 +2589,7 @@ msgstr "Velg visningsmodus"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:247
 msgid "Filled Square"
-msgstr "Fyllt kvadrat"
+msgstr "Fylt kvadrat"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:255
 msgid "Disk"
@@ -2643,28 +2598,28 @@ msgstr "Disk"
 #: ../src/celestia/qt/qtselectionpopup.cpp:258
 #: ../src/celestia/win32/winmain.cpp:1719
 msgid "&Mark"
-msgstr "&Marker"
+msgstr "&Merk"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:275
 #: ../src/celestia/win32/winmain.cpp:1635
 #, fuzzy
 msgid "&Reference Marks"
-msgstr "&Referanse-vektorer"
+msgstr "&Referansevektorer"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:277
 #, fuzzy
 msgid "Show &Body Axes"
-msgstr "Vis legeme-akser"
+msgstr "Vis akser for legemet"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:283
 #, fuzzy
 msgid "Show &Frame Axes"
-msgstr "Vis ramme-akser"
+msgstr "Vis koordinatakser"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:289
 #, fuzzy
 msgid "Show &Sun Direction"
-msgstr "Vis solretning"
+msgstr "Vis retning til Solen"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:295
 #, fuzzy
@@ -2682,7 +2637,7 @@ msgstr "Vis hastighetsvektor"
 #: ../src/celestia/qt/qtselectionpopup.cpp:313
 #, fuzzy, qt-format
 msgid "Show &Direction to %1"
-msgstr "Vis solretning"
+msgstr "Vis retning til Solen"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:320
 #, fuzzy
@@ -2736,12 +2691,12 @@ msgstr "Mindre måner"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:598
 #, fuzzy
 msgid "Other objects"
-msgstr "Andre detaljer"
+msgstr "Objekter"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:49
 #, fuzzy
 msgid "Set Time"
-msgstr "Still tid..."
+msgstr "Sett tid ..."
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:55
 #: ../src/celestia/win32/res/resource_strings.cpp:166
@@ -2751,7 +2706,7 @@ msgstr "Tidssone: "
 #: ../src/celestia/qt/qtsettimedialog.cpp:60
 #: ../src/celestia/win32/wintime.cpp:94
 msgid "Universal Time"
-msgstr "Universaltid"
+msgstr "Universal tid"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:61
 #: ../src/celestia/win32/wintime.cpp:95
@@ -2761,7 +2716,7 @@ msgstr "Lokal tid"
 #: ../src/celestia/qt/qtsettimedialog.cpp:66
 #, fuzzy
 msgid "Select Time Zone"
-msgstr "Tidssonenavn"
+msgstr "Tidssone: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:70
 #, fuzzy
@@ -2771,22 +2726,20 @@ msgstr "Dato"
 #: ../src/celestia/qt/qtsettimedialog.cpp:88
 #, fuzzy
 msgid "Set Year"
-msgstr "Still tid..."
+msgstr "Sett tid ..."
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:91
-#, fuzzy
 msgid "Set Month"
-msgstr "Still tid..."
+msgstr ""
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:94
-#, fuzzy
 msgid "Set Day"
-msgstr "Still tid..."
+msgstr ""
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:98
 #, fuzzy
 msgid "Time: "
-msgstr "&Tid"
+msgstr "Tid"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:117
 #, fuzzy
@@ -2804,34 +2757,32 @@ msgid "Set Minutes"
 msgstr " minutter"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:125
-#, fuzzy
 msgid "Set Seconds"
-msgstr "Still tid..."
+msgstr ""
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:129
 #: ../src/celestia/win32/res/resource_strings.cpp:168
 msgid "Julian Date: "
-msgstr "Juliansk dato: "
+msgstr "Juliansk dato; "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:141
 #, fuzzy
 msgid "Set Julian Date"
-msgstr "Juliansk dato: "
+msgstr "Juliansk dato; "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:150
 #, fuzzy
 msgid "Set time"
-msgstr "Still tid..."
+msgstr "Sett tid ..."
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:541
-#, fuzzy
 msgid "Barycenter"
-msgstr "Massesentrum"
+msgstr "Tyngdesenter"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:543
 #, fuzzy
 msgid "Star"
-msgstr "Feilaktig spektraltype i stjernedatabase, stjerne #"
+msgstr "Start"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:551
 #: ../src/celestia/win32/wineclipses.cpp:58
@@ -2854,7 +2805,7 @@ msgstr "Mindre måner"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:559
 msgid "Asteroid"
-msgstr "Asteroid"
+msgstr "Asteroide"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:561
 msgid "Comet"
@@ -2867,7 +2818,7 @@ msgstr "Romfartøy"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:565
 #, fuzzy
 msgid "Reference point"
-msgstr "&Referanse-vektorer"
+msgstr "&Referansevektorer"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:567
 #, fuzzy
@@ -2877,12 +2828,11 @@ msgstr "Beregn"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:569
 #, fuzzy
 msgid "Surface feature"
-msgstr "Gå til overflate"
+msgstr "Overflatetemperatur: "
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:573
-#, fuzzy
 msgid "Unknown"
-msgstr "Ukjent feil ved åpning av skript"
+msgstr ""
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:588
 #, fuzzy
@@ -2892,7 +2842,7 @@ msgstr "Asteroider"
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:590
 #, fuzzy
 msgid "Reference points"
-msgstr "&Referanse-vektorer"
+msgstr "&Referansevektorer"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:594
 msgid "Components"
@@ -2901,18 +2851,16 @@ msgstr ""
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:596
 #, fuzzy
 msgid "Surface features"
-msgstr "Andre detaljer"
+msgstr "Andre trekk"
 
 #. Buttons to select filtering criterion for objects
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:739
-#, fuzzy
 msgid "Planets and moons"
-msgstr "Planeter"
+msgstr ""
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:770
-#, fuzzy
 msgid "Group objects by class"
-msgstr "Klasse: "
+msgstr ""
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:780
 msgid "Mark bodies selected in list view"
@@ -2922,56 +2870,56 @@ msgstr ""
 #: ../src/celestia/qt/qttimetoolbar.cpp:46
 #, fuzzy
 msgid "Reverse time"
-msgstr "Snu tiden"
+msgstr "Snu tid"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:33
 #: ../src/celestia/qt/qttimetoolbar.cpp:48
 #, fuzzy
 msgid "10x slower"
-msgstr "10x &langsommere\tK"
+msgstr " langsommere"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:35
 #: ../src/celestia/qt/qttimetoolbar.cpp:50
 #, fuzzy
 msgid "2x slower"
-msgstr "langsommere"
+msgstr " langsommere"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:37
 #: ../src/celestia/qt/qttimetoolbar.cpp:52
 #, fuzzy
 msgid "Pause time"
-msgstr "Stopp tiden midlertidig"
+msgstr "Pause tid"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:41
 #: ../src/celestia/qt/qttimetoolbar.cpp:56
 #, fuzzy
 msgid "2x faster"
-msgstr "raskere"
+msgstr " raskere"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:43
 #: ../src/celestia/qt/qttimetoolbar.cpp:58
 #, fuzzy
 msgid "10x faster"
-msgstr "10x &raskere\tL"
+msgstr " raskere"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:60
 #, fuzzy
 msgid "Set to current time"
-msgstr "Still inn til gjeldende tid"
+msgstr "Sett til gjeldende tid"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:16
 #. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
 #: ../src/celestia/qt/rc.cpp:3
 #, fuzzy
 msgid "Bookmark Location"
-msgstr "Vis stedspåskrifter"
+msgstr "Vis Mare-steder"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:24
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:6
 #, fuzzy
 msgid "Bookmark name:"
-msgstr "Målnavn: "
+msgstr "Bokmerker"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:37
 #. i18n: ectx: property (text), widget (QLabel, label_2)
@@ -2987,7 +2935,7 @@ msgstr "Opprett i >>"
 #: ../src/celestia/qt/rc.cpp:12
 #, fuzzy
 msgid "Time source:"
-msgstr "Tiden er midlertidig stoppet"
+msgstr "Tidssone: "
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
@@ -3007,7 +2955,7 @@ msgstr "Objektnavn"
 #: ../src/celestia/qt/rc.cpp:21
 #, fuzzy
 msgid "Longitude:"
-msgstr "Breddegrad: "
+msgstr "Lengde: "
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:88
 #. i18n: ectx: property (text), widget (QLabel, label_4)
@@ -3021,7 +2969,7 @@ msgstr "Avstand: "
 #: ../src/celestia/qt/rc.cpp:27
 #, fuzzy
 msgid "Latitude:"
-msgstr "Breddegrad: "
+msgstr "Bredde: "
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:187
 #. i18n: ectx: property (text), widget (QRadioButton, radiiButton)
@@ -3042,7 +2990,7 @@ msgstr "Navn"
 #: ../src/celestia/qt/rc.cpp:48
 #, fuzzy
 msgid "Description:"
-msgstr "Oppløsning: "
+msgstr "Varighet"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
 #. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
@@ -3054,9 +3002,8 @@ msgstr "Organiser bokmerker"
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:31
 #. i18n: ectx: property (text), widget (QPushButton, newSeparatorButton)
 #: ../src/celestia/qt/rc.cpp:57
-#, fuzzy
 msgid "New Separator"
-msgstr "Ny mappe..."
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:38
 #. i18n: ectx: property (text), widget (QPushButton, removeItemButton)
@@ -3069,16 +3016,15 @@ msgstr ""
 #: ../src/celestia/qt/rc.cpp:63
 #, fuzzy
 msgid "Preferences"
-msgstr "Celestia innstillinger"
+msgstr "Innstillinger for Celestia"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:27
 #. i18n: ectx: attribute (title), widget (QWidget, objectsTab)
 #. i18n: file: ../src/celestia/qt/preferences.ui:33
 #. i18n: ectx: property (title), widget (QGroupBox, objectsGroupBox)
 #: ../src/celestia/qt/rc.cpp:66 ../src/celestia/qt/rc.cpp:69
-#, fuzzy
 msgid "Objects"
-msgstr " deep space objekter"
+msgstr "Objekter"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:119
 #. i18n: ectx: property (text), widget (QCheckBox, globularClustersCheck)
@@ -3087,7 +3033,7 @@ msgstr " deep space objekter"
 #: ../src/celestia/qt/rc.cpp:106 ../src/celestia/qt/rc.cpp:255
 #, fuzzy
 msgid "Globular clusters"
-msgstr "Vis kulehop-påskrifter"
+msgstr "Kulehoper"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:142
 #. i18n: ectx: property (title), widget (QGroupBox, featuresGroupBox)
@@ -3115,7 +3061,7 @@ msgstr "Formørkelsesskygger"
 #: ../src/celestia/qt/rc.cpp:124
 #, fuzzy
 msgid "Ring shadows"
-msgstr "Ring-skygger"
+msgstr "Ringskygger"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:183
 #. i18n: ectx: property (text), widget (QCheckBox, planetRingsCheck)
@@ -3129,7 +3075,7 @@ msgstr "Planeter"
 #: ../src/celestia/qt/rc.cpp:130
 #, fuzzy
 msgid "Nightside lights"
-msgstr "Nattside-lys"
+msgstr "Lys på nattsiden"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:197
 #. i18n: ectx: property (text), widget (QCheckBox, cometTailsCheck)
@@ -3143,14 +3089,14 @@ msgstr "Komethaler"
 #: ../src/celestia/qt/rc.cpp:136
 #, fuzzy
 msgid "Limit of knowledge textures"
-msgstr "Bruker 'limit of knowledge' overflateteksturer."
+msgstr "grense for kunnskap"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:242
 #. i18n: ectx: property (text), widget (QCheckBox, orbitsCheck)
 #: ../src/celestia/qt/rc.cpp:145
 #, fuzzy
 msgid "Show orbits"
-msgstr "Vis omløpsbaner"
+msgstr "Vis baner"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:249
 #. i18n: ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
@@ -3158,7 +3104,7 @@ msgstr "Vis omløpsbaner"
 #: ../src/celestia/win32/res/resource_strings.cpp:204
 #, fuzzy
 msgid "Fading orbits"
-msgstr "Landingsplasser"
+msgstr "Landingssteder"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:256
 #. i18n: ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
@@ -3166,28 +3112,28 @@ msgstr "Landingsplasser"
 #: ../src/celestia/win32/res/resource_strings.cpp:205
 #, fuzzy
 msgid "Partial trajectories"
-msgstr "Delvise baner"
+msgstr "Delvise spor"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:355
 #. i18n: ectx: property (title), widget (QGroupBox, gridsGroupBox)
 #: ../src/celestia/qt/rc.cpp:179
 #: ../src/celestia/win32/res/resource_strings.cpp:208
 msgid "Grids"
-msgstr "Rutenett"
+msgstr "Koordinatnett"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:361
 #. i18n: ectx: property (text), widget (QCheckBox, equatorialGridCheck)
 #: ../src/celestia/qt/rc.cpp:182
 #: ../src/celestia/win32/res/resource_strings.cpp:209
 msgid "Equatorial"
-msgstr "Ekvatorial"
+msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:368
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticGridCheck)
 #: ../src/celestia/qt/rc.cpp:185
 #: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Ecliptic"
-msgstr "Ekliptikken"
+msgstr "Ekliptikk"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:375
 #. i18n: ectx: property (text), widget (QCheckBox, galacticGridCheck)
@@ -3201,7 +3147,7 @@ msgstr "Galaktisk"
 #: ../src/celestia/qt/rc.cpp:191
 #: ../src/celestia/win32/res/resource_strings.cpp:210
 msgid "Horizontal"
-msgstr "Horisontal"
+msgstr "Horisont"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:411
 #. i18n: ectx: property (text), widget (QCheckBox, diagramsCheck)
@@ -3235,14 +3181,14 @@ msgstr ""
 #: ../src/celestia/qt/rc.cpp:264
 #, fuzzy
 msgid "Show locations"
-msgstr "Vis byer"
+msgstr "Vis Vallis-steder"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:638
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: ../src/celestia/qt/rc.cpp:267
 #, fuzzy
 msgid "Location types:"
-msgstr "Vis stedspåskrifter"
+msgstr "Steder"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:647
 #. i18n: ectx: property (text), widget (QCheckBox, citiesCheck)
@@ -3256,7 +3202,7 @@ msgstr "Byer"
 #: ../src/celestia/qt/rc.cpp:273
 #, fuzzy
 msgid "Landing sites"
-msgstr "Landingsplasser"
+msgstr "Landingssteder"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:661
 #. i18n: ectx: property (text), widget (QCheckBox, volcanoesCheck)
@@ -3277,7 +3223,7 @@ msgstr "Observatorier"
 #: ../src/celestia/qt/rc.cpp:282
 #: ../src/celestia/win32/res/resource_strings.cpp:140
 msgid "Craters"
-msgstr "Krater"
+msgstr "Kratere"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:682
 #. i18n: ectx: property (text), widget (QCheckBox, montesCheck)
@@ -3312,14 +3258,14 @@ msgstr "Maria (Hav)"
 #: ../src/celestia/qt/rc.cpp:297
 #: ../src/celestia/win32/res/resource_strings.cpp:144
 msgid "Other features"
-msgstr "Andre detaljer"
+msgstr "Andre trekk"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:735
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:300
 #, fuzzy
 msgid "Minimum labelled feature size:"
-msgstr "Minste størrelse på detaljer med påskrift"
+msgstr "Minstestørrelse på detaljer med etikett"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:772
 #. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
@@ -3332,21 +3278,21 @@ msgstr ""
 #: ../src/celestia/qt/rc.cpp:306
 #, fuzzy
 msgid "Render"
-msgstr "&Opptegn"
+msgstr "&Tegn opp"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
 #: ../src/celestia/qt/rc.cpp:309
 #, fuzzy
 msgid "Texture resolution"
-msgstr "&Teksturens oppløsning"
+msgstr "&Teksturoppløsning"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
 #: ../src/celestia/qt/rc.cpp:321
 #, fuzzy
 msgid "Ambient light"
-msgstr "Omgivende lys"
+msgstr "Omgivelseslys"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:874
 #. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
@@ -3367,14 +3313,14 @@ msgstr "opptegning: "
 #: ../src/celestia/qt/rc.cpp:330
 #, fuzzy
 msgid "Antialiased lines"
-msgstr "Jevne banelinjer"
+msgstr "Antialiasing\tCtrl+X"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:940
 #. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/rc.cpp:333
 #, fuzzy
 msgid "Star style"
-msgstr "Stjernestil: Punkter"
+msgstr "Stjernest&il"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:953
 #. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
@@ -3388,28 +3334,27 @@ msgstr "&Uklare punkter"
 #: ../src/celestia/qt/rc.cpp:342
 #, fuzzy
 msgid "Scaled discs"
-msgstr "Skalerte s&kiver"
+msgstr "Skaler&te skiver"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:983
 #. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/rc.cpp:345
 #, fuzzy
 msgid "Auto-magnitude"
-msgstr "Auto-magnitude\tCtrl+Y"
+msgstr "Autostørrelser"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:1006
 #. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
 #: ../src/celestia/qt/rc.cpp:348
 #, fuzzy
 msgid "Star colors"
-msgstr "Stj&ernestil"
+msgstr "Stjerner"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:1043
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:354
-#, fuzzy
 msgid "Date display format:"
-msgstr "Vis"
+msgstr ""
 
 #: ../src/celestia/qt/xbel.cpp:64
 msgid "Not an XBEL version 1.0 file."
@@ -3428,9 +3373,8 @@ msgid "URL must have at least mode and time!\n"
 msgstr ""
 
 #: ../src/celestia/url.cpp:422
-#, fuzzy
 msgid "Unsupported URL mode \"{}\"!\n"
-msgstr "Støttede utvidelser:"
+msgstr ""
 
 #: ../src/celestia/url.cpp:440
 msgid "URL must contain only one body\n"
@@ -3459,79 +3403,79 @@ msgstr "Plassholder"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "Ta &bilde...\tF10"
+msgstr "Fang opp b&ilde …\tF10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "&Ta film...\tShift+F10"
+msgstr "Ta opp &video …\tShift+F10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
-msgstr "Velg &sol\tH"
+msgstr "Velg &Solen\tH"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
-msgstr "Turg&uide..."
+msgstr "T&ur-veiviser …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:11
 msgid "Select &Object..."
-msgstr "Velg &objekt..."
+msgstr "Velg &objekt …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr "&Sentrer valgt objekt\tC"
+msgstr "&Sentrer utvalg\tC"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
-msgstr "&Gå til valgt objekt\tG"
+msgstr "&Gå til utvalg\tG"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr "&Følg valgt objekt\tF"
+msgstr "&Følg utvalg\tF"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "S&ynkr. omløpsbane-valg\tY"
+msgstr "Velg s&ynkronbane\tY"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
-msgstr "S&por valgt objekt\tT"
+msgstr "Spor u&tvalg\t T"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
-msgstr "Solsystem&viser..."
+msgstr "So&lsystemviser …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
-msgstr "Stjerne-lese&r..."
+msgstr "St&jerneviser …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
-msgstr "Finn form&ørkelse"
+msgstr "Formørk&elsesfinner"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
-msgstr "10x &raskere\tL"
+msgstr "10× &fortere\tL"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
-msgstr "10x &langsommere\tK"
+msgstr "10× lang&sommere\tK"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
-msgstr "&Frys\tMellomrom"
+msgstr "Fr&ys\tmellomrom"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
-msgstr "&Sanntid\t\\"
+msgstr "S&anntid\t\\"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
-msgstr "Sn&u tid\tJ"
+msgstr "&Baklengs tid\tJ"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:27
 msgid "Set &Time..."
-msgstr "Still inn &tid..."
+msgstr "Sett &tid ..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:28
 msgid "Show Local Time"
@@ -3539,27 +3483,27 @@ msgstr "Vis lokal tid"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr "&Opptegn"
+msgstr "&Tegn opp"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
-msgstr "Velg visningsmodus..."
+msgstr "Velg visningsmodus …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
-msgstr "Full skerm av/på\tAlt+Enter"
+msgstr "Slå fullskjerm av/på\tAlt+Enter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:32
 msgid "View Options..."
-msgstr "Visningsalternativer..."
+msgstr "Vis valg …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:33
 msgid "Locations..."
-msgstr "Steder..."
+msgstr "Steder …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
-msgstr "Flere  stjerner synlige\t]"
+msgstr "Flere stjerner synlige\t]"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
@@ -3567,7 +3511,7 @@ msgstr "Færre stjerner synlige\t["
 
 #: ../src/celestia/win32/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr "Auto-magnitude\tCtrl+Y"
+msgstr "Autostørrelse\tCtrl+Y"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:38
 msgid "&Points"
@@ -3579,31 +3523,30 @@ msgstr "&Uklare punkter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
-msgstr "Skalerte s&kiver"
+msgstr "Skaler&te skiver"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:41
 #, fuzzy
 msgid "Star &Color"
-msgstr "Stj&ernestil"
+msgstr "Stjernest&il"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:42
 #, fuzzy
 msgid "&Disabled"
-msgstr "Alt-azimut modus deaktivert"
+msgstr "Oversvømming av"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:43
-#, fuzzy
 msgid "&Enabled"
-msgstr "Alt-azimut modus aktivert"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:44
 msgid "&Ambient Light"
-msgstr "&Omgivende lys"
+msgstr "&Omgivelseslys"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:45
 #, fuzzy
 msgid "&No"
-msgstr "Nå"
+msgstr "I&kke noe"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:46
 msgid "&Weakly"
@@ -3615,11 +3558,11 @@ msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:48
 msgid "&Texture Resolution"
-msgstr "&Teksturens oppløsning"
+msgstr "&Teksturoppløsning"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:49
 msgid "&Low"
-msgstr "&Lav"
+msgstr "&Lavt"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:50
 msgid "&Medium"
@@ -3631,23 +3574,23 @@ msgstr "&Høy"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:52
 msgid "Antialiasing\tCtrl+X"
-msgstr "Kantutjevning\tCtrl+X"
+msgstr "Antialiasing\tCtrl+X"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:54
 msgid "Split &Horizontally\tCtrl+R"
-msgstr "Del &horisontalt\tCtrl+R"
+msgstr "Del &vannrett\tCtrl+R"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:55
 msgid "Split &Vertically\tCtrl+U"
-msgstr "Del &vertikalt\tCtrl+U"
+msgstr "Del &loddrett\tCtrl+U"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:56
 msgid "&Delete Active View\tDEL"
-msgstr "&Slett aktiv visning\tDEL"
+msgstr "Sl&ett aktiv visning\tDEL"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:57
 msgid "&Single View\tCtrl+D"
-msgstr "&Enkel visning\tCtrl+D"
+msgstr "En&kel visning\tCtrl+D"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:58
 msgid "Show &Frames"
@@ -3659,36 +3602,36 @@ msgstr "Synkroniser &tid"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:61
 msgid "&Add Bookmarks..."
-msgstr "&Legg til bokmerker..."
+msgstr "&Legg til bokmerker …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:62
 msgid "&Organize Bookmarks..."
-msgstr "&Organiser bokmerker..."
+msgstr "&Organiser bokmerker …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:64
 msgid "Run &Demo"
-msgstr "Kjør &demonstrasjon"
+msgstr "Kjør &demo"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:65
 #, fuzzy
 msgid "User &Guide"
-msgstr "Turguide"
+msgstr "Turveiviser"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:66
 msgid "&Controls"
-msgstr "&Styring"
+msgstr "&Kontrollelementer"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:67
 msgid "&OpenGL Info"
-msgstr "&OpenGL-Info"
+msgstr "&OpenGL Info"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:68
 msgid "&License"
-msgstr "&Lisens"
+msgstr "&Lisensbestemmelser"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:69
 msgid "&About Celestia"
-msgstr "Om &Celestia"
+msgstr "O&m Celestia"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:71
 #: ../src/celestia/win32/res/resource_strings.cpp:92
@@ -3720,16 +3663,15 @@ msgstr ""
 #: ../src/celestia/win32/res/resource_strings.cpp:74
 #, fuzzy
 msgid "Copyright (C) 2001-2021, Celestia Development Team"
-msgstr "Copyright © 2001-2009, Celestias utviklingsgruppe"
+msgstr "Copyright © 2001-2009  Celestia utviklingslag"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:75
-#, fuzzy
 msgid "https://celestia.space/"
-msgstr "http://celestiaproject.net/"
+msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:76
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia er gratis programvare og absolutt ingen garanti gjelder."
+msgstr "Celestia er fri programvare og har absolutt ingen garanti."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:77
 msgid "Authors"
@@ -3794,7 +3736,7 @@ msgstr "Opprett i >>"
 #: ../src/celestia/win32/res/resource_strings.cpp:95
 #: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "New Folder..."
-msgstr "Ny mappe..."
+msgstr "Ny mappe ..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:96
 msgid "Add New Bookmark Folder"
@@ -3806,7 +3748,7 @@ msgstr "Mappenavn"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 msgid "Celestia Controls"
-msgstr "Celestia styring"
+msgstr "Celestia styreelementer"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:102
 msgid "Select Display Mode"
@@ -3818,7 +3760,7 @@ msgstr "Oppløsning"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:106
 msgid "Eclipse Finder"
-msgstr "Formørkelses-finner"
+msgstr "Formørkelsesfinner"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:107
 msgid "Compute"
@@ -3826,7 +3768,7 @@ msgstr "Beregn"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:108
 msgid "Set Date and Go to Planet"
-msgstr "Still inn dato og gå til planet"
+msgstr "Angi dato og gå til planet"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:109
 msgid "Close"
@@ -3838,15 +3780,15 @@ msgstr "Fra:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:111
 msgid "To:"
-msgstr ""
+msgstr "Til:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:112
 msgid "On:"
-msgstr ""
+msgstr "På:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:113
 msgid "Search parameters"
-msgstr "Søkeparametere"
+msgstr "Søkeparametre"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:114
 msgid "Solar Eclipses"
@@ -3883,11 +3825,11 @@ msgstr "Objekt"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:129
 msgid "Long."
-msgstr "L.gr."
+msgstr "Leng."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:130
 msgid "Lat."
-msgstr "Br.gr."
+msgstr "Bred."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:131
 #: ../src/celestia/win32/res/resource_strings.cpp:235
@@ -3896,11 +3838,11 @@ msgstr "Avstand"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:132
 msgid "License"
-msgstr "Lisens"
+msgstr "Lisensbestemmelser"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:137
 msgid "Landing Sites"
-msgstr "Landingsplasser"
+msgstr "Landingssteder"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:138
 msgid "Montes (Mountains)"
@@ -3920,7 +3862,7 @@ msgstr "Terrae (Landmasser)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:145
 msgid "Label Features"
-msgstr "Sett påskrift på detaljer"
+msgstr "Sett etikett på detaljer"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:148
 msgid "Show Features"
@@ -3929,11 +3871,11 @@ msgstr "Vis detaljer"
 #: ../src/celestia/win32/res/resource_strings.cpp:149
 #, fuzzy
 msgid "Show Label"
-msgstr "Sett påskrift på detaljer"
+msgstr "Vis stjerneetiketter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:150
 msgid "Minimum Labeled Feature Size"
-msgstr "Minste størrelse på detaljer med påskrift"
+msgstr "Minstestørrelse på detaljer med etikett"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:151
 msgid "Size:"
@@ -3945,7 +3887,7 @@ msgstr ""
 
 #: ../src/celestia/win32/res/resource_strings.cpp:159
 msgid "Rename..."
-msgstr "Endre navn..."
+msgstr "Endre navn …"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:161
 msgid "Rename Bookmark or Folder"
@@ -3957,7 +3899,7 @@ msgstr "Nytt navn"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:165
 msgid "Set Simulation Time"
-msgstr "Still inn simuleringstid"
+msgstr "Sett simuleringstid"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:167
 msgid "Format: "
@@ -3965,7 +3907,7 @@ msgstr "Format: "
 
 #: ../src/celestia/win32/res/resource_strings.cpp:169
 msgid "Set To Current Time"
-msgstr "Still inn til gjeldende tid"
+msgstr "Sett til gjeldende tid"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:172
 msgid "Solar System Browser"
@@ -3986,7 +3928,7 @@ msgstr "Stjerneviser"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:179
 msgid "Nearest"
-msgstr "Nærmeste"
+msgstr "Nærmest"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:180
 msgid "Brightest"
@@ -3998,27 +3940,27 @@ msgstr "Med planeter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:184
 msgid "&Refresh"
-msgstr "&Gjenoppfrisk"
+msgstr "F&risk opp"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:186
 msgid "Star Search Criteria"
-msgstr "Stjernesøk-kriterie"
+msgstr "Kriterier for stjernesøk"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:187
 msgid "Maximum Stars Displayed in List"
-msgstr "Maksimale antall stjerner vist i liste"
+msgstr "Høyeste antall stjerner som vises i lista"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:188
 msgid "Tour Guide"
-msgstr "Turguide"
+msgstr "Turveiviser"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:191
 msgid "Select your destination:"
-msgstr "Velg ditt mål:"
+msgstr "Velg mål:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:192
 msgid "View Options"
-msgstr "Visningsalternativ"
+msgstr "Visningsinnstillinger"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:193
 #, fuzzy
@@ -4028,7 +3970,7 @@ msgstr "Vis"
 #: ../src/celestia/win32/res/resource_strings.cpp:201
 #, fuzzy
 msgid "Rings"
-msgstr "Kingston"
+msgstr "innstillinger"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:202
 #, fuzzy
@@ -4038,12 +3980,12 @@ msgstr "Vis"
 #: ../src/celestia/win32/res/resource_strings.cpp:207
 #, fuzzy
 msgid "Ecliptic Line"
-msgstr ", linje"
+msgstr "Ekliptikk"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:213
 #, fuzzy
 msgid "Body / Orbit / Label display"
-msgstr "Omløpsbaner / Påskrifter"
+msgstr "Baner / etiketter"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:230
 msgid "Latin Names"
@@ -4051,20 +3993,20 @@ msgstr "Latinske navn"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:231
 msgid "Information Text"
-msgstr "Informasjonsstekst"
+msgstr "Informasjonstekst"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:233
 msgid "Terse"
-msgstr "Knapp"
+msgstr "Ordknapt"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:234
 msgid "Verbose"
-msgstr "Utførlig"
+msgstr "Pratsomt"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:238
 #: ../src/celestia/win32/winmain.cpp:3319
 msgid "WinLangID"
-msgstr "414"
+msgstr "WinLangID"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Apr"
@@ -4072,7 +4014,7 @@ msgstr "Apr"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Feb"
-msgstr "Feb"
+msgstr "feb."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:239
 msgid "Jan"
@@ -4148,7 +4090,7 @@ msgstr "Usynlige"
 
 #: ../src/celestia/win32/winmain.cpp:1632
 msgid "S&ync Orbit"
-msgstr "S&ynkr. omløpsbane"
+msgstr "S&ynk bane"
 
 #: ../src/celestia/win32/winmain.cpp:1633
 #: ../src/celestia/win32/winmain.cpp:1681
@@ -4158,15 +4100,15 @@ msgstr "&Info"
 
 #: ../src/celestia/win32/winmain.cpp:1636
 msgid "Show Body Axes"
-msgstr "Vis legeme-akser"
+msgstr "Vis akser for legemet"
 
 #: ../src/celestia/win32/winmain.cpp:1637
 msgid "Show Frame Axes"
-msgstr "Vis ramme-akser"
+msgstr "Vis koordinatakser"
 
 #: ../src/celestia/win32/winmain.cpp:1638
 msgid "Show Sun Direction"
-msgstr "Vis solretning"
+msgstr "Vis retning til Solen"
 
 #: ../src/celestia/win32/winmain.cpp:1639
 msgid "Show Velocity Vector"
@@ -4189,9 +4131,8 @@ msgid "Orbiting Bodies"
 msgstr "Legemer i bane"
 
 #: ../src/celestia/win32/winmain.cpp:1809
-#, fuzzy
 msgid "Unable to switch to full screen mode; running in window mode"
-msgstr "Feil ved lasting av skrift; tekst blir ikke synlig.\n"
+msgstr ""
 
 #: ../src/celestia/win32/winmain.cpp:1810
 #: ../src/celestia/win32/winmain.cpp:2082
@@ -4214,8 +4155,9 @@ msgstr ""
 #: ../src/celestia/win32/winmain.cpp:2360
 #: ../src/celestia/win32/winmain.cpp:3363
 #: ../src/celestia/win32/winmain.cpp:3436
+#, fuzzy
 msgid "Fatal Error"
-msgstr ""
+msgstr "Feil: "
 
 #: ../src/celestia/win32/winmain.cpp:2025
 msgid "Could not get appropriate pixel format for OpenGL rendering."
@@ -4258,7 +4200,7 @@ msgstr ""
 #: ../src/celestia/win32/winmain.cpp:2850
 #, fuzzy
 msgid "Could not capture movie."
-msgstr "Ta opp video"
+msgstr "Ta opp &video …\tShift+F10"
 
 #: ../src/celestia/win32/winmain.cpp:3082
 #: ../src/celestia/win32/winmain.cpp:3095
@@ -4267,26 +4209,26 @@ msgstr "Ta opp video"
 #: ../src/celestia/win32/winmain.cpp:3138
 #, fuzzy
 msgid "Celestia Command Line Error"
-msgstr "Celestia styring"
+msgstr "Celestia styreelementer"
 
 #: ../src/celestia/win32/winmain.cpp:3159
 msgid "Loading: "
-msgstr "Laster: "
+msgstr "Laster inn: "
 
 #: ../src/celestia/win32/winmain.cpp:3218
 #, fuzzy
 msgid "Loading data files..."
-msgstr "Laster"
+msgstr "Laster inn bilde fra fil "
 
 #: ../src/celestia/win32/winmain.cpp:3317 ../src/celutil/fsutils.cpp:42
 #: ../src/celutil/fsutils.cpp:45
 msgid "LANGUAGE"
-msgstr "no"
+msgstr "Språk"
 
 #: ../src/celestia/win32/winmain.cpp:3362
 #, fuzzy
 msgid "Configuration file missing!"
-msgstr "Feil ved lesing av konfigurasjonsfil."
+msgstr "Bruk alternativ oppsettsfil"
 
 #: ../src/celestia/win32/winmain.cpp:3400
 msgid ""
@@ -4304,7 +4246,7 @@ msgstr ""
 
 #: ../src/celestia/win32/winmain.cpp:3971
 msgid "Loading URL"
-msgstr "Laster url"
+msgstr "Laster URL"
 
 #. string s;
 #. s += UTF8ToCurrentCP(_("Version: "));
@@ -4314,11 +4256,11 @@ msgstr "Versjon: "
 
 #: ../src/celestia/win32/wintime.cpp:96
 msgid "Time Zone Name"
-msgstr "Tidssonenavn"
+msgstr "Navn på tidssone "
 
 #: ../src/celestia/win32/wintime.cpp:97
 msgid "UTC Offset"
-msgstr "Avvikelse fra UTC"
+msgstr "UTC-avstand"
 
 #: ../src/celimage/png.cpp:54
 #, fuzzy
@@ -4328,7 +4270,7 @@ msgstr "Feil ved åpning av bildefil "
 #: ../src/celimage/png.cpp:62
 #, fuzzy
 msgid "Error: {} is not a PNG file.\n"
-msgstr "er ikke en PNG-fil.\n"
+msgstr " er ikke en PNG-fil.\n"
 
 #: ../src/celimage/png.cpp:88
 #, fuzzy
@@ -4342,11 +4284,11 @@ msgstr ""
 #: ../src/celimage/png.cpp:227
 #, fuzzy
 msgid "Error writing PNG file '{}'\n"
-msgstr "Feil ved lesing av PNG-bildefil "
+msgstr "Feil ved åpning av skript «%s»"
 
 #: ../src/celscript/legacy/legacyscript.cpp:94
 msgid "Error opening script file."
-msgstr "Feil ved åpning av skriptfil."
+msgstr "Feil ved åpning av skript-fil."
 
 #: ../src/celscript/legacy/legacyscript.cpp:103
 #: ../src/celscript/lua/luascript.cpp:99
@@ -4383,17 +4325,17 @@ msgstr ""
 #: ../src/celscript/lua/luascript.cpp:90
 #, fuzzy
 msgid "Error opening script {}"
-msgstr "Feil ved åpning av skript"
+msgstr "Feil ved åpning av skriptet"
 
 #: ../src/celscript/lua/luascript.cpp:107
 #: ../src/celscript/lua/luascript.cpp:242
 msgid "Script coroutine initialization failed"
-msgstr "Initiering av skriptets medrutine feilet"
+msgstr "Klargjøring av skript-korutine mislyktes"
 
 #: ../src/celscript/lua/luascript.cpp:214
 #, fuzzy
 msgid "Error opening LuaHook {}"
-msgstr "Feil ved åpning av skript '%s'"
+msgstr "Feil ved åpning "
 
 #: ../src/celscript/lua/luascript.cpp:231
 #, fuzzy
@@ -4407,35 +4349,1092 @@ msgstr ""
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
 #, fuzzy
 msgid "Error opening {} or .\n"
-msgstr "Feil ved åpning av "
+msgstr "Feil ved åpning "
 
-#, fuzzy
-#~ msgid "Render path: OpenGL 2.1"
+#~ msgid "Loaded "
+#~ msgstr "Lastet "
+
+#~ msgid "Loading NV fragment program: "
+#~ msgstr "Laster inn NV-fragmentprogram: "
+
+#~ msgid "Error loading NV fragment program: "
+#~ msgstr "Feil ved innlasting av NV fragmentprogram: "
+
+#~ msgid "Error in fragment program "
+#~ msgstr "Feil i fragmentprogram "
+
+#~ msgid "Initializing NV fragment programs . . .\n"
+#~ msgstr "Klargjør NV fragmentprogrammer . . .\n"
+
+#~ msgid "All NV fragment programs loaded successfully.\n"
+#~ msgstr "Alle NV fragmentprogrammer lastet inn.\n"
+
+#~ msgid "Initializing ARB fragment programs . . .\n"
+#~ msgstr "Klargjør ARB fragmentprogrammer . . .\n"
+
+#~ msgid ": unrecognized or unsupported image file type.\n"
+#~ msgstr ": bildefiltypen er ukjent eller ikke støttet.\n"
+
+#~ msgid "Error: "
+#~ msgstr "Feil: "
+
+#~ msgid "   Model statistics: "
+#~ msgstr "  Modellstatistikk:"
+
+#~ msgid " vertices, "
+#~ msgstr " spisser, "
+
+#~ msgid " primitives, "
+#~ msgstr " primitiver, "
+
+#~ msgid " materials "
+#~ msgstr " materialer "
+
+#~ msgid " unique)\n"
+#~ msgstr " unik)\n"
+
+#~ msgid "parent body '"
+#~ msgstr " hovedkropp '"
+
+#~ msgid "' of '"
+#~ msgstr "' til '"
+
+#~ msgid "' not found.\n"
+#~ msgstr "' ikke funnet.\n"
+
+#~ msgid "Bad spectral type in star database, star #"
+#~ msgstr "Feil spektraltype i stjernedatabasen, stjerne nr."
+
+#~ msgid "Barycenter "
+#~ msgstr "Tyngepunkt "
+
+#~ msgid ", max="
+#~ msgstr ", maks="
+
+#~ msgid "Loading NV vertex program: "
+#~ msgstr "Laster inn NV vertex-program: "
+
+#~ msgid "Error loading NV vertex program: "
+#~ msgstr "Feil ved lasting av NV vertex-program: "
+
+#~ msgid "Error in vertex program "
+#~ msgstr "Feil i vertex-program "
+
+#~ msgid "Loading ARB vertex program: "
+#~ msgstr "Laster inn ARB vertex-program: "
+
+#~ msgid "Error loading ARB vertex program: "
+#~ msgstr "Feil ved innlasting av ARB vertex-program: "
+
+#~ msgid ", line "
+#~ msgstr ", linje "
+
+#~ msgid "Initializing NV vertex programs . . .\n"
+#~ msgstr "Klargjør NV vertex-programmer . . .\n"
+
+#~ msgid "All NV vertex programs loaded successfully.\n"
+#~ msgstr "Alle NV vertex-programmer lastet inn.\n"
+
+#~ msgid "Initializing ARB vertex programs . . .\n"
+#~ msgstr "Klargjør ARB vertex-programmer . . .\n"
+
+#~ msgid "All ARB vertex programs loaded successfully.\n"
+#~ msgstr "Alle ARB vertex-programmer lastet inn.\n"
+
+#~ msgid "Orientation: "
+#~ msgstr "Orientering: "
+
+#~ msgid "Error opening script '%s'"
+#~ msgstr "Feil ved åpning av skript «%s»"
+
+#~ msgid "Render path: Basic"
+#~ msgstr "Opptegning: Enkel"
+
+#~ msgid "Render path: Multitexture"
+#~ msgstr "Opptegning: Flerstruktur"
+
+#~ msgid "Render path: NVIDIA combiners"
+#~ msgstr "Opptegning: NVIDIA kombinatorer"
+
+#~ msgid "Render path: OpenGL vertex program"
+#~ msgstr "Opptegning:  OpenGL vertex-program"
+
+#~ msgid "Render path: NVIDIA vertex program and combiners"
+#~ msgstr "Opptegning: NVIDIA vertex-program og kombinatorer"
+
+#~ msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+#~ msgstr "Opptegning: OpenGL vertex-program/NVIDIA-kombinatorer"
+
+#~ msgid "Render path: OpenGL 1.5 vertex/fragment program"
+#~ msgstr "Opptegning: OpenGL 1.5 vertex/fragmentprogram"
+
+#~ msgid "Render path: NVIDIA GeForce FX"
+#~ msgstr "Opptegning: NVIDIA GeForce FX"
+
+#~ msgid "Render path: OpenGL 2.0"
 #~ msgstr "Opptegning: OpenGL 2.0"
 
+# Astronomisk ordliste fra UiO foreslår oversvømming for CCD blooming
 #~ msgid "Bloom enabled"
-#~ msgstr "Overstråling aktivert"
-
-#~ msgid "Bloom disabled"
-#~ msgstr "Overstråling deaktivert"
+#~ msgstr "Oversvømming på"
 
 #~ msgid "Exposure"
 #~ msgstr "Eksponering"
 
-#, fuzzy
-#~ msgid "Video (*.avi)"
-#~ msgstr "Ta opp video"
+#~ msgid "RA: "
+#~ msgstr "RA: "
 
-#~ msgid "Error opening script '%s'"
-#~ msgstr "Feil ved åpning av skript '%s'"
+#~ msgid "Dec: "
+#~ msgstr "Dekl: "
+
+#~ msgid "x Sun"
+#~ msgstr "x Sol"
+
+#~ msgid "Rsun"
+#~ msgstr "Rsol"
 
 #, fuzzy
-#~ msgid "Error opening %s.\n"
-#~ msgstr "Feil ved åpning av "
+#~ msgid " km"
+#~ msgstr "km"
+
+#~ msgid "Apparent mag: %.2f\n"
+#~ msgstr "Tilsynelatende størr.: %.2f\n"
+
+#~ msgid "Lock "
+#~ msgstr "Lås "
+
+#~ msgid "FOV: "
+#~ msgstr "FOV: "
+
+#~ msgid "Sun"
+#~ msgstr "Solen"
+
+#~ msgid " at "
+#~ msgstr " ved "
+
+#~ msgid " fps"
+#~ msgstr " fps"
+
+#~ msgid "  Paused"
+#~ msgstr "  Pause"
+
+#~ msgid "Loading "
+#~ msgstr "Laster "
+
+#~ msgid "License file 'License.txt' is missing!"
+#~ msgstr "Lisensfila «License.txt» mangler!"
+
+#~ msgid "Error in creating ogg file %s for capture.\n"
+#~ msgstr "Feil ved oppretting av ogg-fil %s for opptak.\n"
+
+#~ msgid "Internal Ogg library error."
+#~ msgstr "Intern feil i Ogg-biblioteket."
+
+#~ msgid ""
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+#~ "%dx%d offset (%dx%d)\n"
+#~ msgstr ""
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps kvalitet %d "
+#~ "%dx%d forskyvning (%dx%d)\n"
+
+#~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+#~ msgstr "OggTheoraCapture::cleanup() - skrev %d ruter\n"
+
+#~ msgid "GLSL version: "
+#~ msgstr "GLSL-versjon: "
+
+#~ msgid "Error loading script"
+#~ msgstr "Feil ved lasting av skriptet"
+
+#~ msgid "Running script"
+#~ msgstr "Kjører skript"
 
 #, fuzzy
-#~ msgid "Error reading header of %s.\n"
-#~ msgstr "Feil ved lesing av PNG-bildefil "
+#~ msgid "Enter cel:// URL"
+#~ msgstr "Oppgi URL"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Bredde/høyde-forhold:"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Rutefrekvens:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Videokvalitet:"
+
+#, fuzzy
+#~ msgid "Object name"
+#~ msgstr "Objektnavn"
+
+#, fuzzy
+#~ msgid "Set Viewer Size..."
+#~ msgstr "Sett tid ..."
+
+#, fuzzy
+#~ msgid ""
+#~ "Supported Extensions:\n"
+#~ "    "
+#~ msgstr "Støttede utvidelser:"
+
+#, fuzzy
+#~ msgid "Open GL Info"
+#~ msgstr "OpenGL Info"
+
+#, fuzzy
+#~ msgid "Copyright © 2001-2021 Celestia Development Team"
+#~ msgstr "Copyright © 2001-2009  Celestia utviklingslag"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#, fuzzy
+#~ msgid "Error writing captured image."
+#~ msgstr "Feil under klargjøring av videoopptak."
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Feil under klargjøring av videoopptak."
+
+#, fuzzy
+#~ msgid "January"
+#~ msgstr "Janus"
+
+#, fuzzy
+#~ msgid "March"
+#~ msgstr "Søk"
+
+#, fuzzy
+#~ msgid "From"
+#~ msgstr "Fra:"
+
+#~ msgid "End"
+#~ msgstr "Slutt"
+
+#, fuzzy
+#~ msgid "Goto Object"
+#~ msgstr "Gå til objekt"
+
+#, fuzzy
+#~ msgid "Texture Detail"
+#~ msgstr "&Teksturoppløsning"
+
+#~ msgid "Info Text"
+#~ msgstr "Info-tekst"
+
+#, fuzzy
+#~ msgid "Center"
+#~ msgstr "&Senter"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#, fuzzy
+#~ msgid "%s Star"
+#~ msgstr "Start"
+
+#, fuzzy
+#~ msgid "Star System Browser"
+#~ msgstr "Solsystemviser"
+
+#, fuzzy
+#~ msgid "Distance(LY)"
+#~ msgstr "Avstand (lå)"
+
+#, fuzzy
+#~ msgid "App. Mag"
+#~ msgstr "Tils. størr."
+
+#, fuzzy
+#~ msgid "Abs. Mag"
+#~ msgstr "Abs. størr."
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Lyssterkest (Tils.)"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Lyssterkest (abs.)"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#, fuzzy
+#~ msgid "Local"
+#~ msgstr "Lokal tid"
+
+#, fuzzy
+#~ msgid "Set Current Time"
+#~ msgstr "Sett til gjeldende tid"
+
+#, fuzzy
+#~ msgid "Minute"
+#~ msgstr " minutter"
+
+#, fuzzy
+#~ msgid "  "
+#~ msgstr "  LT"
+
+#, fuzzy
+#~ msgid "Timezone"
+#~ msgstr "Tidssone: "
+
+#, fuzzy
+#~ msgid "Day"
+#~ msgstr "Mai"
+
+#, fuzzy
+#~ msgid "Tour Guide..."
+#~ msgstr "T&ur-veiviser …"
+
+#, fuzzy
+#~ msgid "Alternate installation directory"
+#~ msgstr "Bruk alternativ installasjonsmappe"
+
+#, fuzzy
+#~ msgid "Additional \"extras\" directory"
+#~ msgstr "Bruk som ekstra «tillegg»-mappe"
+
+#, fuzzy
+#~ msgid "Start full-screen"
+#~ msgstr "Start i fullskjermmodus"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Slå av velkomstbildet"
+
+#, fuzzy
+#~ msgid "Failed to initialize renderer.\n"
+#~ msgstr "Klargjøring av opptegner mislyktes"
+
+#, fuzzy
+#~ msgid "Failed to initialize Celestia core.\n"
+#~ msgstr "Klargjøring av opptegner mislyktes"
+
+#, fuzzy
+#~ msgid "_Goto"
+#~ msgstr "&Gå til"
+
+#, fuzzy
+#~ msgid "_Follow"
+#~ msgstr "Følg"
+
+#, fuzzy
+#~ msgid "S_ync Orbit"
+#~ msgstr "Synkron bane"
+
+#, fuzzy
+#~ msgid "_Satellites"
+#~ msgstr "&Satellitter"
+
+#, fuzzy
+#~ msgid "_Alternate Surfaces"
+#~ msgstr "&Alternative overflater"
+
+#, fuzzy
+#~ msgid "_Unmark"
+#~ msgstr "&Fjern merking"
+
+#, fuzzy
+#~ msgid "_Mark"
+#~ msgstr "&Merk"
+
+#~ msgid "Sol"
+#~ msgstr "Solen"
+
+#, fuzzy
+#~ msgid "Error reading '%s': %s.\n"
+#~ msgstr "Feil ved lesing av stjernefil\n"
+
+#, fuzzy
+#~ msgid "Version "
+#~ msgstr "Versjon: "
+
+#, fuzzy
+#~ msgid "_File"
+#~ msgstr "&Fil"
+
+#, fuzzy
+#~ msgid "Copy _URL"
+#~ msgstr "Kopier URL"
+
+#, fuzzy
+#~ msgid "Open UR_L"
+#~ msgstr "OpenGL"
+
+#, fuzzy
+#~ msgid "_Open Script..."
+#~ msgstr "&Åpne skript …"
+
+#, fuzzy
+#~ msgid "_Capture Image..."
+#~ msgstr "Fang opp b&ilde …\tF10"
+
+#, fuzzy
+#~ msgid "_Navigation"
+#~ msgstr "&Navigasjon"
+
+#, fuzzy
+#~ msgid "Tour G_uide..."
+#~ msgstr "T&ur-veiviser …"
+
+#, fuzzy
+#~ msgid "Search for _Object..."
+#~ msgstr "Velg &objekt …"
+
+#, fuzzy
+#~ msgid "Go to Object..."
+#~ msgstr "Gå til objekt …"
+
+#, fuzzy
+#~ msgid "_Follow Selection"
+#~ msgstr "&Følg utvalg\tF"
+
+#, fuzzy
+#~ msgid "S_ync Orbit Selection"
+#~ msgstr "Velg s&ynkronbane\tY"
+
+#, fuzzy
+#~ msgid "_Track Selection"
+#~ msgstr "Spor u&tvalg\t T"
+
+#, fuzzy
+#~ msgid "Solar System _Browser..."
+#~ msgstr "So&lsystemviser …"
+
+#, fuzzy
+#~ msgid "Star B_rowser..."
+#~ msgstr "St&jerneviser …"
+
+#, fuzzy
+#~ msgid "_Eclipse Finder..."
+#~ msgstr "Formørkelsesfinner"
+
+#, fuzzy
+#~ msgid "_Time"
+#~ msgstr "Tid"
+
+#, fuzzy
+#~ msgid "2x _Faster"
+#~ msgstr "10× &fortere\tL"
+
+#, fuzzy
+#~ msgid "2x _Slower"
+#~ msgstr "10× lang&sommere\tK"
+
+#, fuzzy
+#~ msgid "Free_ze"
+#~ msgstr "Fr&ys\tmellomrom"
+
+#, fuzzy
+#~ msgid "_Real Time"
+#~ msgstr "Sanntid"
+
+#, fuzzy
+#~ msgid "Re_verse Time"
+#~ msgstr "Snu tid"
+
+#, fuzzy
+#~ msgid "Set _Time..."
+#~ msgstr "Sett tid ..."
+
+#, fuzzy
+#~ msgid "_Options"
+#~ msgstr "Valg"
+
+#, fuzzy
+#~ msgid "View _Options..."
+#~ msgstr "Vis valg …"
+
+#, fuzzy
+#~ msgid "Show Grids"
+#~ msgstr "Vis baner"
+
+#, fuzzy
+#~ msgid "_Ambient Light"
+#~ msgstr "Omgivelseslys"
+
+#, fuzzy
+#~ msgid "_Window"
+#~ msgstr "Vindusmodus"
+
+#, fuzzy
+#~ msgid "Set Window Size..."
+#~ msgstr "Sett tid ..."
+
+#, fuzzy
+#~ msgid "Split _Horizontally"
+#~ msgstr "Del visningen vannrett"
+
+#, fuzzy
+#~ msgid "Split _Vertically"
+#~ msgstr "Del visningen loddrett"
+
+#, fuzzy
+#~ msgid "_Delete Active View"
+#~ msgstr "Sl&ett aktiv visning\tDEL"
+
+#, fuzzy
+#~ msgid "_Single View"
+#~ msgstr "Enkel visning"
+
+#, fuzzy
+#~ msgid "_Help"
+#~ msgstr "&Hjelp"
+
+#, fuzzy
+#~ msgid "Run _Demo"
+#~ msgstr "Kjør &demo"
+
+#, fuzzy
+#~ msgid "_Controls"
+#~ msgstr "&Kontrollelementer"
+
+#, fuzzy
+#~ msgid "OpenGL _Info"
+#~ msgstr "OpenGL Info"
+
+#, fuzzy
+#~ msgid "Show _Local Time"
+#~ msgstr "Vis lokal tid"
+
+#, fuzzy
+#~ msgid "_Full Screen"
+#~ msgstr "Fullskjerm"
+
+#, fuzzy
+#~ msgid "Show _Frames"
+#~ msgstr "Vis &rammer"
+
+#, fuzzy
+#~ msgid "Active Frame Highlighted"
+#~ msgstr "Aktiv ramme synlig"
+
+#, fuzzy
+#~ msgid "Synchronize _Time"
+#~ msgstr "Synkroniser tid"
+
+#, fuzzy
+#~ msgid "_Limit Frame Rate"
+#~ msgstr "Rutefrekvens:"
+
+#, fuzzy
+#~ msgid "_None"
+#~ msgstr "Ingen"
+
+#, fuzzy
+#~ msgid "_Terse"
+#~ msgstr "Ordknapt"
+
+#, fuzzy
+#~ msgid "_Verbose"
+#~ msgstr "Pratsomt"
+
+#, fuzzy
+#~ msgid "_Medium"
+#~ msgstr "Middels"
+
+#, fuzzy
+#~ msgid "Grid: Celestial"
+#~ msgstr "Himmelrutenett"
+
+#, fuzzy
+#~ msgid "Grid: Ecliptic"
+#~ msgstr "Ekliptikk"
+
+#, fuzzy
+#~ msgid "Grid: Galactic"
+#~ msgstr "Galaktisk"
+
+#, fuzzy
+#~ msgid "Grid: Horizontal"
+#~ msgstr "Horisont"
+
+#~ msgid "Small Body"
+#~ msgstr "Lite objekt"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "&Legg til bokmerke"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Legg til et bokmerke for dette dokumentet"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Legg til &relativt bokmerke"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Legg til et relativt bokmerke for dette dokumentet"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Legg til inn&stillingsbokmerke"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Legg til innstillingsbokmerke for dette dokumentet"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Rediger bokmerkesamlingen i et eget vindu"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Ny mappe ..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Lag ei ny bokmerkemappe i denne menyen"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Kan ikke legge til bokmerke med tom URL"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Det ser ut til at noe er galt med din Celestia-installasjon. Mappa som "
+#~ "inneholder velkomstbilder ble ikke funnet.\n"
+#~ "Oppstarten fortsetter, men Celestia vil antakelig mangle noen datafiler "
+#~ "og vil kanskje ikke fungere riktig, kontroller installasjonen."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Gå til &URL ..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Gå til &lengde/bredde ..."
+
+#~ msgid "&Back"
+#~ msgstr "&Tilbake"
+
+#~ msgid "&Forward"
+#~ msgstr "&Fram"
+
+#~ msgid "Home"
+#~ msgstr "Hjem"
+
+#~ msgid "Copy URL"
+#~ msgstr "Kopier URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Sett tid ..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Sett tidspunkt til Nå"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Akselerer tid"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Brems tid"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Akselerer tid (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Brems tid (/2)"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Alt-azimut-modus"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Gå til overflate"
+
+#~ msgid "Show Stars"
+#~ msgstr "Vis stjerner"
+
+#~ msgid "Show Planets"
+#~ msgstr "Vis planeter"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Vis galakser"
+
+#~ msgid "Show Globulars"
+#~ msgstr "Vis kulehoper"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Vis delvise spor"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Vis tåker"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Vis åpne hoper"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Vis stjernebilder"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Vis skykart"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Vis sky-skygger"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Vis asteroidebaner"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Vis kometbaner"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Vis månebaner"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Vis stjernebaner"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Vis planetbaner"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Vis romfartøy-baner"
+
+#, fuzzy
+#~ msgid "Show Equatorial Grid"
+#~ msgstr "Vis himmelrutenett"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Vis lys på nattsiden"
+
+#~ msgid "Show Markers"
+#~ msgstr "Vis markører"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Vis atmosfærer"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Vis jevne banelinjer"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Vis formørkelsesskygger"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Veksle stjernemodus"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Vis ringskygger"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Vis grenser"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Autostørrelser"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Vis komethaler"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Vis stjerneetiketter"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Vis planetetiketter"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Vis måneetiketter"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Vis kometetiketter"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Vis stjernebilde-etiketter"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Vis stjernebilde-etiketter på latin"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Vis galakseetiketter"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "Vis etiketter på kulehoper"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Vis tåke-etiketter"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Vis etiketter på åpne hoper"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Vis asteroideetiketter"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Vis etiketter for romfartøy"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Vis stedsetiketter"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Vis lokal tid"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Vis byer"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Vis observatorier"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Vis landingssteder"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Vis Crater-steder"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Vis Mons-steder"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Vis Terra-steder"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Vis andre steder"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Trådramme-modus"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Sentrer på bane"
+
+#~ msgid "Basic"
+#~ msgstr "Enkel"
+
+#~ msgid "Multitexture"
+#~ msgstr "Flerstruktur"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NVkombinatorer"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "Nvkombinator NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "Nvkombinator ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Veksle gjennom OpenGL opptegninger"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Synkroniser rutefrekvensen med oppfriskingen"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL info"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr ""
+#~ "Denne versjonen av Celestia ble ikke bygget med støtte for videoopptak."
+
+#~ msgid "Go to URL"
+#~ msgstr "Gå til &URL"
+
+#~ msgid "Enter URL"
+#~ msgstr "Oppgi URL"
+
+#~ msgid "Object: "
+#~ msgstr "Objekt: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Lengde: "
+
+#~ msgid "East"
+#~ msgstr "Øst"
+
+#~ msgid "West"
+#~ msgstr "Vest"
+
+#~ msgid "Latitude: "
+#~ msgstr "Bredde: "
+
+#~ msgid "North"
+#~ msgstr "Nord"
+
+#~ msgid "South"
+#~ msgstr "Sør"
+
+#~ msgid "Altitude: "
+#~ msgstr "Høyde: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia støtte på en feil ved kjøring av skriptet ditt"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Bruk alternativ oppsettsfil"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Bruk alternativ installasjonsmappe"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Bruk som ekstra «tillegg»-mappe"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Start i fullskjermmodus"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Start og gå til url"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "Bjørn Steensrud"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "bjornst@skogkatt.homelinux.org"
+
+#~ msgid "Rendering"
+#~ msgstr "Opptegning"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Jevne banelinjer"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Stjernebilder på latin"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Romfartøy"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Begrensende størrelse"
+
+#~ msgid "Level: "
+#~ msgstr "Nivå: "
+
+#~ msgid "Textures"
+#~ msgstr "Teksturer"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Automatisk synsfelt"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Skjerm DPI: "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Synsavstand cm: "
+
+#~ msgid "Mons"
+#~ msgstr "Fjell (Mons)"
+
+#~ msgid "Terra"
+#~ msgstr "Terra (land)"
+
+#~ msgid "Vallis"
+#~ msgstr "Vallis (Dal)"
+
+#~ msgid "Mare"
+#~ msgstr "Mare (Hav)"
+
+#~ msgid "Other"
+#~ msgstr "Annet"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Minstestørrelse på trekk"
+
+#~ msgid "Date/Time"
+#~ msgstr "Dato/tid"
+
+#~ msgid "Timezone: "
+#~ msgstr "Tidssone: "
+
+#~ msgid "Set"
+#~ msgstr "Velg"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "Lokal Tid er bare støttet for datoer mellom 1902 og 2037.\n"
+
+#~ msgid "Now"
+#~ msgstr "Nå"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Utvalg: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Inkluder lysreisetid"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignorer lysreisetid"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Tastaturbindinger"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>Ikke-utvidet OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b> Flerteksturer og utvidelsen ARB_texenv_combine</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b> NVIDIA-kombinatorer, ingen vertex-programmer</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3-utvidelse, ARB_vertex_program-utvidelse</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b> NVIDIA kombinatorer og utvidelsen NV_vertex_program</b><br> gir "
+#~ "ruglekart, ringskygger, og flotte fremhevinger på alle GeForce eller ATI "
+#~ "Radeon grafikkort, men NvCombiner ARBVP er et litt bedre valg for GeForce-"
+#~ "brukere."
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b> NVIDIA kombinatorer, utvidelsen ARB_vertex_program</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>Utvidelsene ARB_fragment_program og ARB_vertex_program </b><br>gir "
+#~ "avanserteeffekter på Geforce FX og Radeon 9700-kort"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>Utvidelsene NV_fragment_program og ARB_vertex_program </b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 skyggespråk</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr "Fila %1 finnes ikke, bruker standardoppsettsfila %2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Mappa %1 finnes ikke bruker %2 som standard"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Tilleggsmappa %1 finnes ikke"
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Overflatetemp: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Markerte objekter"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Små objekter"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Varighet: %1"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Gjeldende størrelse: %1 × %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Gjeldende bredde: %1 × %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Gjeldende høyde: %1 × %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Du må oppgi et filnavn."
 
 #~ msgid "Mercury"
 #~ msgstr "Merkur"
@@ -4452,6 +5451,9 @@ msgstr "Feil ved åpning av "
 #~ msgid "Deimos"
 #~ msgstr "Deimos"
 
+#~ msgid "Amalthea"
+#~ msgstr "Amalthea"
+
 #~ msgid "Io"
 #~ msgstr "Io"
 
@@ -4459,10 +5461,22 @@ msgstr "Feil ved åpning av "
 #~ msgstr "Europa"
 
 #~ msgid "Ganymede"
-#~ msgstr "Ganymede"
+#~ msgstr "Ganymedes"
 
 #~ msgid "Callisto"
 #~ msgstr "Callisto"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometheus"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Epimetheus"
+
+#~ msgid "Janus"
+#~ msgstr "Janus"
 
 #~ msgid "Mimas"
 #~ msgstr "Mimas"
@@ -4489,7 +5503,7 @@ msgstr "Feil ved åpning av "
 #~ msgstr "Iapetus"
 
 #~ msgid "Phoebe"
-#~ msgstr "Phobos"
+#~ msgstr "Phoebe"
 
 #~ msgid "Miranda"
 #~ msgstr "Miranda"
@@ -4506,6 +5520,9 @@ msgstr "Feil ved åpning av "
 #~ msgid "Oberon"
 #~ msgstr "Oberon"
 
+#~ msgid "Larissa"
+#~ msgstr "Larissa"
+
 #~ msgid "Proteus"
 #~ msgstr "Proteus"
 
@@ -4521,2059 +5538,197 @@ msgstr "Feil ved åpning av "
 #~ msgid "Charon"
 #~ msgstr "Charon"
 
-#, fuzzy
-#~ msgid "Haumea"
-#~ msgstr "Noumea"
+#~ msgid "NORTH AMERICA"
+#~ msgstr "Nord-Amerika"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "Sør-Amerika"
+
+#~ msgid "EURASIA"
+#~ msgstr "Eurasia"
+
+#~ msgid "AFRICA"
+#~ msgstr "Afrika"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "Australia"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "Antarktika"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "Nord-Atlanteren"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "Sør-Atlanteren"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "Nordlige Stillehav"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "Sørlige Stillehav"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "Indiske hav"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "Nordishavet"
 
 #, fuzzy
-#~ msgid "Namaka"
-#~ msgstr "Bamako"
-
-#~ msgid "Amalthea"
-#~ msgstr "Amalthea"
+#~ msgid "Amsterdam"
+#~ msgstr "Asteroide"
 
 #, fuzzy
-#~ msgid "Pandia"
-#~ msgstr "Pandora"
-
-#, fuzzy
-#~ msgid "Dia"
-#~ msgstr "Diamant"
-
-#, fuzzy
-#~ msgid "Jupiter LV"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXVIII"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LII"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXIV"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LIV"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LVI"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Kallichore"
-#~ msgstr "Callisto"
-
-#, fuzzy
-#~ msgid "Jupiter LXIX"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXXII"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXI"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXX"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LI"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXVII"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Callirrhoe"
-#~ msgstr "Callisto"
-
-#, fuzzy
-#~ msgid "Herse"
-#~ msgstr "Knapp"
-
-#, fuzzy
-#~ msgid "Jupiter LXIII"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LXVI"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Jupiter LIX"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Pan"
-#~ msgstr "Jan"
-
-#~ msgid "Prometheus"
-#~ msgstr "Prometheus"
-
-#~ msgid "Pandora"
-#~ msgstr "Pandora"
-
-#~ msgid "Epimetheus"
-#~ msgstr "Epimetheus"
-
-#~ msgid "Janus"
-#~ msgstr "Janus"
-
-#, fuzzy
-#~ msgid "Telesto"
-#~ msgstr "Celestia"
-
-#, fuzzy
-#~ msgid "Saturn LX"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LIV"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LIX"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXI"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LVII"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LV"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXII"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXV"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LVI"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXVI"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXIV"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LXIII"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Saturn LVIII"
-#~ msgstr "Saturn"
-
-#, fuzzy
-#~ msgid "Portia"
-#~ msgstr "Port-Vila"
-
-#, fuzzy
-#~ msgid "Mab"
-#~ msgstr "Mar"
-
-#, fuzzy
-#~ msgid "Galatea"
-#~ msgstr "Galakser"
-
-#~ msgid "Larissa"
+#~ msgid "Bissau"
 #~ msgstr "Larissa"
 
 #, fuzzy
-#~ msgid "Halimede"
-#~ msgstr "Ganymede"
-
-#~ msgid "NORTH AMERICA"
-#~ msgstr "NORDAMERIKA"
-
-#~ msgid "SOUTH AMERICA"
-#~ msgstr "SØRAMERIKA"
-
-#~ msgid "EURASIA"
-#~ msgstr "EURASIA"
-
-#~ msgid "AFRICA"
-#~ msgstr "AFRIKA"
-
-#~ msgid "AUSTRALIA"
-#~ msgstr "AUSTRALIA"
-
-#~ msgid "ANTARCTICA"
-#~ msgstr "ANTARKTIS"
-
-#~ msgid "NORTH ATLANTIC OCEAN"
-#~ msgstr "NORDATLANTEREN"
-
-#~ msgid "SOUTH ATLANTIC OCEAN"
-#~ msgstr "SØRATLANTEREN"
-
-#~ msgid "NORTH PACIFIC OCEAN"
-#~ msgstr "NORDLIGE STILLEHAVET"
-
-#~ msgid "SOUTH PACIFIC OCEAN"
-#~ msgstr "SØRLIGE STILLEHAVET"
-
-#~ msgid "INDIAN OCEAN"
-#~ msgstr "INDISKE HAV"
-
-#~ msgid "ARCTIC OCEAN"
-#~ msgstr "NORDISHAVET"
-
-#~ msgid "Abu Dhabi"
-#~ msgstr "Abu Dhabi"
-
-#~ msgid "Abuja"
-#~ msgstr "Abuja"
-
-#~ msgid "Accra"
-#~ msgstr "Accra"
-
-#~ msgid "Adamstown"
-#~ msgstr "Adamstown"
-
-#~ msgid "Addis Ababa"
-#~ msgstr "Addis Abeba"
-
-#~ msgid "Algiers"
-#~ msgstr "Alger"
-
-#~ msgid "Alofi"
-#~ msgstr "Alofi"
-
-#~ msgid "Amman"
-#~ msgstr "Amman"
-
-#~ msgid "Amsterdam"
-#~ msgstr "Amsterdam"
-
-#~ msgid "Andorra la Vella"
-#~ msgstr "Andorra la Vella"
-
-#~ msgid "Ankara"
-#~ msgstr "Ankara"
-
-#~ msgid "Antananarivo"
-#~ msgstr "Antananarivo"
-
-#~ msgid "Apia"
-#~ msgstr "Apia"
-
-#~ msgid "Ashgabat"
-#~ msgstr "Asjchabad"
-
-#~ msgid "Asmara"
-#~ msgstr "Asmara"
-
-#~ msgid "Asuncion"
-#~ msgstr "Asunción"
-
-#~ msgid "Athens"
-#~ msgstr "Aten"
-
-#~ msgid "Avarua"
-#~ msgstr "Avarua"
-
-#~ msgid "Baghdad"
-#~ msgstr "Bagdad"
-
-#~ msgid "Baku"
-#~ msgstr "Baku"
-
-#~ msgid "Bamako"
-#~ msgstr "Bamako"
-
-#~ msgid "Bandar Seri Begawan"
-#~ msgstr "Bandar Seri Begawan"
-
-#~ msgid "Bangkok"
-#~ msgstr "Bangkok"
-
-#~ msgid "Bangui"
-#~ msgstr "Bangui"
-
-#~ msgid "Banjul"
-#~ msgstr "Banjul"
-
-#~ msgid "Basse-Terre"
-#~ msgstr "Basse-Terre"
-
-#~ msgid "Basseterre"
-#~ msgstr "Basseterre"
-
-#~ msgid "Beijing"
-#~ msgstr "Peking"
-
-#~ msgid "Beirut"
-#~ msgstr "Beirut"
-
-#~ msgid "Belgrade"
-#~ msgstr "Beograd"
-
-#~ msgid "Belmopan"
-#~ msgstr "Belmopan"
-
-#~ msgid "Berlin"
-#~ msgstr "Berlin"
-
-#~ msgid "Bern"
-#~ msgstr "Bern"
-
-#~ msgid "Bishkek"
-#~ msgstr "Bishkek"
-
-#~ msgid "Bissau"
-#~ msgstr "Bissau"
-
-#~ msgid "Bloemfontein"
-#~ msgstr "Bloemfontein"
-
-#~ msgid "Bogota"
-#~ msgstr "Bogota"
-
-#~ msgid "Brasilia"
-#~ msgstr "Brasilia"
-
-#~ msgid "Bratislava"
-#~ msgstr "Bratislava"
-
-#~ msgid "Brazzaville"
-#~ msgstr "Brazzaville"
-
-#~ msgid "Bridgetown"
-#~ msgstr "Bridgetown"
-
-#~ msgid "Brussels"
-#~ msgstr "Brussel"
-
 #~ msgid "Bucharest"
-#~ msgstr "Bucuresti"
+#~ msgstr "Nærmest"
 
-#~ msgid "Budapest"
-#~ msgstr "Budapest"
-
-#~ msgid "Buenos Aires"
-#~ msgstr "Buenos Aires"
-
-#~ msgid "Bujumbura"
-#~ msgstr "Bujumbura"
-
-#~ msgid "Cairo"
-#~ msgstr "Kairo"
-
+#, fuzzy
 #~ msgid "Canberra"
-#~ msgstr "Canberra"
+#~ msgstr "Terra (land)"
 
-#~ msgid "Cape Town"
-#~ msgstr "Cape Town"
-
-#~ msgid "Caracas"
-#~ msgstr "Caracas"
-
-#~ msgid "Castries"
-#~ msgstr "Castries"
-
-#~ msgid "Cayenne"
-#~ msgstr "Cayenne"
-
-#~ msgid "Charlotte Amalie"
-#~ msgstr "Charlotte Amalie"
-
-#~ msgid "Chisinau"
-#~ msgstr "Chisinau"
-
-#~ msgid "Colombo"
-#~ msgstr "Colombo"
-
-#~ msgid "Conakry"
-#~ msgstr "Conakry"
-
-#~ msgid "Copenhagen"
-#~ msgstr "København"
-
-#~ msgid "Cotonou"
-#~ msgstr "Cotonou"
-
-#~ msgid "Dakar"
-#~ msgstr "Dakar"
-
-#~ msgid "Damascus"
-#~ msgstr "Damaskus"
-
-#~ msgid "Dar es Salaam"
-#~ msgstr "Dar es Salaam"
-
-#~ msgid "Dhaka"
-#~ msgstr "Dhaka"
-
-#~ msgid "Dili"
-#~ msgstr "Dili"
-
-#~ msgid "Djibouti"
-#~ msgstr "Djibouti"
-
-#~ msgid "Doha"
-#~ msgstr "Doha"
-
-#~ msgid "Douglas"
-#~ msgstr "Douglas"
-
-#~ msgid "Dublin"
-#~ msgstr "Dublin"
-
-#~ msgid "Dushanbe"
-#~ msgstr "Dusjanbe"
-
-#~ msgid "Fongafale"
-#~ msgstr "Fongafale"
-
-#~ msgid "Fort-de-France"
-#~ msgstr "Fort-de-France"
-
-#~ msgid "Freetown"
-#~ msgstr "Freetown"
-
-#~ msgid "Gaborone"
-#~ msgstr "Gaborone"
-
-#~ msgid "George Town"
-#~ msgstr "George Town"
-
-#~ msgid "Georgetown"
-#~ msgstr "Georgetown"
-
-#~ msgid "Gibraltar"
-#~ msgstr "Gibraltar"
-
-#~ msgid "Grand Turk"
-#~ msgstr "Grand Turk"
-
-#~ msgid "Guatemala"
-#~ msgstr "Guatemala"
-
-#~ msgid "Hagatna"
-#~ msgstr "Hagatna"
-
-#~ msgid "The Hague"
-#~ msgstr "Den Haag"
-
-#~ msgid "Hamilton"
-#~ msgstr "Hamilton"
-
-#~ msgid "Hanoi"
-#~ msgstr "Hanoi"
-
-#~ msgid "Harare"
-#~ msgstr "Harare"
-
-#~ msgid "Havana"
-#~ msgstr "Havanna"
-
-#~ msgid "Helsinki"
-#~ msgstr "Helsingfors"
-
-#~ msgid "Honiara"
-#~ msgstr "Honiara"
-
-#~ msgid "Islamabad"
-#~ msgstr "Islamabad"
-
-#~ msgid "Jakarta"
-#~ msgstr "Jakarta"
-
-#~ msgid "Jamestown"
-#~ msgstr "Jamestown"
-
-#~ msgid "Jerusalem"
-#~ msgstr "Jerusalem"
-
-#~ msgid "Kabul"
-#~ msgstr "Kabul"
-
-#~ msgid "Kampala"
-#~ msgstr "Kampala"
-
-#~ msgid "Kathmandu"
-#~ msgstr "Kathmandu"
-
-#~ msgid "Khartoum"
-#~ msgstr "Khartoum"
-
-#~ msgid "Kiev"
-#~ msgstr "Kiev"
-
-#~ msgid "Kigali"
-#~ msgstr "Kigali"
-
-#~ msgid "Kingston"
-#~ msgstr "Kingston"
-
-#~ msgid "Kingstown"
-#~ msgstr "Kingstown"
-
-#~ msgid "Kinshasa"
-#~ msgstr "Kinshasa"
-
-#~ msgid "Koror"
-#~ msgstr "Koror"
-
-#~ msgid "Kuala Lumpur"
-#~ msgstr "Kuala Lumpur"
-
-#~ msgid "Kuwait"
-#~ msgstr "Kuwait"
-
-#~ msgid "La'youn"
-#~ msgstr "El Aaiún"
-
-#~ msgid "La Paz"
-#~ msgstr "La Paz"
-
-#~ msgid "Libreville"
-#~ msgstr "Libreville"
-
-#~ msgid "Lilongwe"
-#~ msgstr "Lilongwe"
-
-#~ msgid "Lima"
-#~ msgstr "Lima"
-
-#~ msgid "Lisbon"
-#~ msgstr "Lisboa"
-
-#~ msgid "Ljubljana"
-#~ msgstr "Ljubljana"
-
-#~ msgid "Lobamba"
-#~ msgstr "Lobamba"
-
-#~ msgid "Lome"
-#~ msgstr "Lome"
-
-#~ msgid "London"
-#~ msgstr "London"
-
-#~ msgid "Longyearbyen"
-#~ msgstr "Longyearbyen"
-
+#, fuzzy
 #~ msgid "Luanda"
-#~ msgstr "Luanda"
-
-#~ msgid "Lusaka"
-#~ msgstr "Lusaka"
-
-#~ msgid "Luxembourg"
-#~ msgstr "Luxemburg"
-
-#~ msgid "Madrid"
-#~ msgstr "Madrid"
-
-#~ msgid "Majuro"
-#~ msgstr "Majuro"
-
-#~ msgid "Malabo"
-#~ msgstr "Malabo"
-
-#~ msgid "Male"
-#~ msgstr "Manlig"
-
-#~ msgid "Mamoutzou"
-#~ msgstr "Mamoutzou"
-
-#~ msgid "Managua"
-#~ msgstr "Managua"
-
-#~ msgid "Manama"
-#~ msgstr "Manama"
-
-#~ msgid "Manila"
-#~ msgstr "Manila"
-
-#~ msgid "Maputo"
-#~ msgstr "Maputo"
-
-#~ msgid "Maseru"
-#~ msgstr "Maseru"
-
-#~ msgid "Mata-Utu"
-#~ msgstr "Mata-Utu"
-
-#~ msgid "Mbabane"
-#~ msgstr "Mbabane"
-
-#~ msgid "Mexico City"
-#~ msgstr "Mexico City"
-
-#~ msgid "Minsk"
-#~ msgstr "Minsk"
-
-#~ msgid "Mogadishu"
-#~ msgstr "Mogadishu"
-
-#~ msgid "Monaco"
-#~ msgstr "Monaco"
-
-#~ msgid "Monrovia"
-#~ msgstr "Monrovia"
-
-#~ msgid "Montevideo"
-#~ msgstr "Montevideo"
-
-#~ msgid "Moroni"
-#~ msgstr "Moroni"
-
-#~ msgid "Moscow"
-#~ msgstr "Moskva"
-
-#~ msgid "Muscat"
-#~ msgstr "Muskat"
-
-#~ msgid "Nairobi"
-#~ msgstr "Nairobi"
-
-#~ msgid "Nassau"
-#~ msgstr "Nassau"
-
-#~ msgid "N'Djamena"
-#~ msgstr "N'Djamena"
-
-#~ msgid "New Delhi"
-#~ msgstr "New Delhi"
-
-#~ msgid "Niamey"
-#~ msgstr "Niamey"
-
-#~ msgid "Nicosia"
-#~ msgstr "Nicosia"
-
-#~ msgid "Nouakchott"
-#~ msgstr "Nouakchott"
-
-#~ msgid "Noumea"
-#~ msgstr "Noumea"
-
-#~ msgid "Nuku'alofa"
-#~ msgstr "Nukualofa"
-
-#~ msgid "Nuuk"
-#~ msgstr "Nuuk"
-
-#~ msgid "Oranjestad"
-#~ msgstr "Oranjestad"
-
-#~ msgid "Oslo"
-#~ msgstr "Oslo"
-
-#~ msgid "Ottawa"
-#~ msgstr "Ottawa"
-
-#~ msgid "Ouagadougou"
-#~ msgstr "Ouagadougou"
-
-#~ msgid "Pago Pago"
-#~ msgstr "Pago Pago"
-
-#~ msgid "Palikir"
-#~ msgstr "Palikir"
-
-#~ msgid "Panama"
-#~ msgstr "Panama"
-
-#~ msgid "Papeete"
-#~ msgstr "Papeete"
-
-#~ msgid "Paramaribo"
-#~ msgstr "Paramaribo"
-
-#~ msgid "Paris"
-#~ msgstr "Paris"
-
-#~ msgid "Phnom Penh"
-#~ msgstr "Phnom Penh"
-
-#~ msgid "Plymouth"
-#~ msgstr "Plymouth"
-
-#~ msgid "Port Louis"
-#~ msgstr "Port Louis"
-
-#~ msgid "Port Moresby"
-#~ msgstr "Port Moresby"
-
-#~ msgid "Port-au-Prince"
-#~ msgstr "Port-au-Prince"
-
-#~ msgid "Port-of-Spain"
-#~ msgstr "Port-of-Spain"
-
-#~ msgid "Porto-Novo"
-#~ msgstr "Porto-Novo"
-
-#~ msgid "Port-Vila"
-#~ msgstr "Port-Vila"
-
-#~ msgid "Prague"
-#~ msgstr "Praha"
-
-#~ msgid "Praia"
-#~ msgstr "Praia"
-
-#~ msgid "Pretoria"
-#~ msgstr "Pretoria"
-
-#~ msgid "P'yongyang"
-#~ msgstr "P'yŏngyang"
-
-#~ msgid "Quito"
-#~ msgstr "Quito"
-
-#~ msgid "Rabat"
-#~ msgstr "Rabat"
-
-#~ msgid "Rangoon"
-#~ msgstr "Rangoon"
-
-#~ msgid "Reykjavik"
-#~ msgstr "Reykjavik"
-
-#~ msgid "Riga"
-#~ msgstr "Riga"
-
-#~ msgid "Riyadh"
-#~ msgstr "Riyadh"
-
-#~ msgid "Road Town"
-#~ msgstr "Road Town"
-
-#~ msgid "Rome"
-#~ msgstr "Roma"
-
-#~ msgid "Roseau"
-#~ msgstr "Roseau"
-
-#~ msgid "Saint George's"
-#~ msgstr "Saint George's"
-
-#~ msgid "Saint Helier"
-#~ msgstr "Saint Helier"
-
-#~ msgid "Saint John's"
-#~ msgstr "Saint John's"
-
-#~ msgid "Saint Peter Port"
-#~ msgstr "Saint Peter Port"
-
-#~ msgid "Saint-Denis"
-#~ msgstr "Saint-Denis"
-
-#~ msgid "Saint-Pierre"
-#~ msgstr "Saint-Pierre"
-
-#~ msgid "Saipan"
-#~ msgstr "Saipan"
-
-#~ msgid "San Jose"
-#~ msgstr "San Jose"
-
-#~ msgid "San Juan"
-#~ msgstr "San Juan"
-
-#~ msgid "San Marino"
-#~ msgstr "San Marino"
-
-#~ msgid "San Salvador"
-#~ msgstr "San Salvador"
-
-#~ msgid "Sanaa"
-#~ msgstr "Sana"
-
-#~ msgid "Santiago"
-#~ msgstr "Santiago"
-
-#~ msgid "Santo Domingo"
-#~ msgstr "Santo Domingo"
-
-#~ msgid "Sao Tome"
-#~ msgstr "Sao Tome"
-
-#~ msgid "Sarajevo"
-#~ msgstr "Sarajevo"
-
-#~ msgid "Seoul"
-#~ msgstr "Seoul"
-
-#~ msgid "The Settlement"
-#~ msgstr "The Settlement"
-
-#~ msgid "Singapore"
-#~ msgstr "Singapore"
-
-#~ msgid "Skopje"
-#~ msgstr "Skopje"
-
-#~ msgid "Sofia"
-#~ msgstr "Sofia"
-
-#~ msgid "Sri Jayewardenepura Kotte"
-#~ msgstr "Sri Jayewardenepura Kotte"
-
-#~ msgid "Stanley"
-#~ msgstr "Stanley"
-
-#~ msgid "Stockholm"
-#~ msgstr "Stockholm"
-
-#~ msgid "Sucre"
-#~ msgstr "Sucre"
-
-#~ msgid "Suva"
-#~ msgstr "Suva"
-
-#~ msgid "Taipei"
-#~ msgstr "Taipei"
-
-#~ msgid "Tallinn"
-#~ msgstr "Tallinn"
-
-#~ msgid "Tarawa"
-#~ msgstr "Tarawa"
-
-#~ msgid "Tashkent"
-#~ msgstr "Tasjkent"
-
-#~ msgid "T'bilisi"
-#~ msgstr "Tbilisi"
-
-#~ msgid "Tegucigalpa"
-#~ msgstr "Tegucigalpa"
-
-#~ msgid "Tehran"
-#~ msgstr "Teheran"
-
-#~ msgid "Tel Aviv"
-#~ msgstr "Tel Aviv"
-
-#~ msgid "Thimphu"
-#~ msgstr "Thimphu"
-
-#~ msgid "Tirana"
-#~ msgstr "Tirana"
-
-#~ msgid "Tokyo"
-#~ msgstr "Tokyo"
-
-#~ msgid "Torshavn"
-#~ msgstr "Torshavn"
-
-#~ msgid "Tripoli"
-#~ msgstr "Tripoli"
-
-#~ msgid "Tunis"
-#~ msgstr "Tunis"
-
-#~ msgid "Ulaanbaatar"
-#~ msgstr "Ulaanbaatar"
-
-#~ msgid "Vaduz"
-#~ msgstr "Vaduz"
-
-#~ msgid "Valletta"
-#~ msgstr "Valletta"
-
-#~ msgid "The Valley"
-#~ msgstr "Valley"
-
-#~ msgid "Vatican City"
-#~ msgstr "Vatikanstaten"
-
-#~ msgid "Victoria"
-#~ msgstr "Victoria"
-
-#~ msgid "Vienna"
-#~ msgstr "Wien"
-
-#~ msgid "Vientiane"
-#~ msgstr "Vientiane"
-
-#~ msgid "Vilnius"
-#~ msgstr "Vilnius"
-
-#~ msgid "Warsaw"
-#~ msgstr "Warszawa"
-
-#~ msgid "Washington D.C."
-#~ msgstr "Washington D.C."
-
-#~ msgid "Wellington"
-#~ msgstr "Wellington"
-
-#~ msgid "West Island"
-#~ msgstr "West Island"
-
-#~ msgid "Willemstad"
-#~ msgstr "Willemstad"
-
-#~ msgid "Windhoek"
-#~ msgstr "Windhoek"
-
-#~ msgid "Yamoussoukro"
-#~ msgstr "Yamoussoukro"
-
-#~ msgid "Yaounde"
-#~ msgstr "Yaounde"
-
-#~ msgid "Yaren District"
-#~ msgstr "Yaren District"
-
-#~ msgid "Yerevan"
-#~ msgstr "Yerevan"
-
-#~ msgid "Zagreb"
-#~ msgstr "Zagreb"
-
-#~ msgid "Solar System Barycenter"
-#~ msgstr "Solsystemets massesentrum"
-
-#, fuzzy
-#~ msgid "Wurren"
-#~ msgstr "Legg til et relativt bokmerke for gjeldende dokument"
-
-#, fuzzy
-#~ msgid "Titawin"
-#~ msgstr "Titan"
-
-#, fuzzy
-#~ msgid "Miram"
 #~ msgstr "Miranda"
 
 #, fuzzy
-#~ msgid "Ran"
-#~ msgstr "Jan"
+#~ msgid "Paris"
+#~ msgstr "Larissa"
 
 #, fuzzy
-#~ msgid "Saclateni"
-#~ msgstr "Galakser"
-
-#, fuzzy
-#~ msgid "Tianguan"
-#~ msgstr "Triangel"
-
-#, fuzzy
-#~ msgid "Plaskett's Star"
-#~ msgstr "Vis stjerner"
-
-#, fuzzy
-#~ msgid "Markeb"
-#~ msgstr "Markører"
-
-#, fuzzy
-#~ msgid "Macondo"
-#~ msgstr "London"
-
-#, fuzzy
-#~ msgid "Formosa"
-#~ msgstr "Format: "
-
-#, fuzzy
-#~ msgid "Flegetonte"
-#~ msgstr "Georgetown"
-
-#, fuzzy
-#~ msgid "Aniara"
-#~ msgstr "Honiara"
-
-#, fuzzy
-#~ msgid "Marsic"
-#~ msgstr "Mars"
-
-#, fuzzy
-#~ msgid "Athebyne"
-#~ msgstr "Aten"
-
-#, fuzzy
-#~ msgid "Larawag"
-#~ msgstr "Tarawa"
-
-#, fuzzy
-#~ msgid "Rapeto"
-#~ msgstr "Iapetus"
-
-#, fuzzy
-#~ msgid "Cervantes"
-#~ msgstr "Observatorier"
-
-#, fuzzy
-#~ msgid "Gumala"
-#~ msgstr "Guatemala"
-
-#, fuzzy
-#~ msgid "Fawaris"
-#~ msgstr "Paris"
-
-#, fuzzy
-#~ msgid "Aljanah"
-#~ msgstr "Ljubljana"
-
-#, fuzzy
-#~ msgid "Solaris"
-#~ msgstr "Solformørkelser"
-
-#, fuzzy
-#~ msgid "Bunda"
-#~ msgstr "Grenser"
-
-#, fuzzy
-#~ msgid "Alkarab"
-#~ msgstr "Ankara"
-
-#~ msgid "Milky Way"
-#~ msgstr "Melkevei"
-
-#~ msgid "LMC"
-#~ msgstr "LMC"
-
-#~ msgid "SMC"
-#~ msgstr "SMC"
-
-#~ msgid "Error in creating ogg file %s for capture.\n"
-#~ msgstr "Feil ved opprettelse av videofil (ogg) %s.\n"
-
-#, fuzzy
-#~ msgid "Internal Ogg library error.\n"
-#~ msgstr "Intern feil i Ogg-bibliotek."
-
-#~ msgid ""
-#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
-#~ "%dx%d offset (%dx%d)\n"
-#~ msgstr ""
-#~ "OggTheoraCapture::start() - Theora-video: %s %.2f(%d/%d) fps kvalitet %d "
-#~ "%dx%d forskyvning (%dx%d)\n"
-
-#~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-#~ msgstr "OggTheoraCapture::cleanup() - skrev %d bilderammer\n"
-
-#~ msgid "Astana"
-#~ msgstr "Astana"
-
-#, fuzzy
-#~ msgid "Radius: %s km\n"
-#~ msgstr "Radius: "
-
-#~ msgid "Sun"
-#~ msgstr "Sol"
-
-#, fuzzy
-#~ msgid "Video (*.ogv)"
-#~ msgstr "Ta opp video"
-
-#~ msgid "Settings"
-#~ msgstr "Innstillinger"
-
-#~ msgid "OpenGL 2.0"
-#~ msgstr "OpenGL 2.0"
-
-#~ msgid "Loading NV fragment program: "
-#~ msgstr "Laster NV-fragmentprogram: "
-
-#~ msgid "Error loading NV fragment program: "
-#~ msgstr "Feil ved lasting av NV-fragmentprogram: "
-
-#~ msgid "Error in fragment program "
-#~ msgstr "Feil i fragmentprogram "
-
-#~ msgid "Initializing NV fragment programs . . .\n"
-#~ msgstr "Initierer NV-fragmentprogram . . .\n"
-
-#~ msgid "All NV fragment programs loaded successfully.\n"
-#~ msgstr "Alle NV-fragmentprogram vellykket lastet.\n"
-
-#~ msgid "Initializing ARB fragment programs . . .\n"
-#~ msgstr "Initierer ARB-fragmentprogram . . .\n"
-
-#, fuzzy
-#~ msgid "%s: unrecognized or unsupported image file type.\n"
-#~ msgstr ": ukjent eller ikke støttet bildefiltype.\n"
-
-#~ msgid "Loading NV vertex program: "
-#~ msgstr "Laster NV-vertexprogram: "
-
-#~ msgid "Error loading NV vertex program: "
-#~ msgstr "Feil ved lasting av NV-vertexprogram: "
-
-#~ msgid "Error in vertex program "
-#~ msgstr "Feil i vertexprogram "
-
-#~ msgid "Loading ARB vertex program: "
-#~ msgstr "Laster ARB-vertexprogram: "
-
-#~ msgid "Error loading ARB vertex program: "
-#~ msgstr "Feil ved innlasting av ARB-vertexprogram: "
-
-#~ msgid ", line "
-#~ msgstr ", linje"
-
-#~ msgid "Initializing NV vertex programs . . .\n"
-#~ msgstr "Initierer NV-vertexprogrammer . . .\n"
-
-#~ msgid "All NV vertex programs loaded successfully.\n"
-#~ msgstr "Alle NV-vertexprogrammer vellykket lastet.\n"
-
-#~ msgid "Initializing ARB vertex programs . . .\n"
-#~ msgstr "Initierer ARB-vertexprogrammer . . .\n"
-
-#~ msgid "All ARB vertex programs loaded successfully.\n"
-#~ msgstr "Alle ARB-vertexprogrammer vellykket lastet.\n"
-
-#~ msgid "Unknown error opening script"
-#~ msgstr "Ukjent feil ved åpning av skript"
-
-#, fuzzy
-#~ msgid "Max simultaneous textures"
-#~ msgstr "Maks samtidige teksturer: "
-
-#, fuzzy
-#~ msgid "Max texture size"
-#~ msgstr "Maks teksturstørrelse: "
-
-#, fuzzy
-#~ msgid "Extensions:"
-#~ msgstr "Støttede utvidelser:"
-
-#, fuzzy
-#~ msgid "Error loading data files. Celestia will now quit."
-#~ msgstr "Feil ved lasting av skrift; tekst blir ikke synlig.\n"
-
-#, fuzzy
-#~ msgid "No"
-#~ msgstr "Nå"
-
-#, fuzzy
-#~ msgid "Quit Celestia?"
-#~ msgstr "Om Celestia"
-
-#, fuzzy
-#~ msgid "Quit"
-#~ msgstr "Quito"
-
-#, fuzzy
-#~ msgid "No Movie Capture"
-#~ msgstr "Ta opp video"
-
-#, fuzzy
-#~ msgid "No Object Name Entered"
-#~ msgstr "Objektnavn"
-
-#, fuzzy
-#~ msgid "Object Not Found"
-#~ msgstr "' ikke funnet.\n"
-
-#, fuzzy
-#~ msgid "Show Alternate Surface"
-#~ msgstr "&Alternative overflater"
-
-#, fuzzy
-#~ msgid "No Date or Time Entered"
-#~ msgstr "Objektnavn"
-
-#, fuzzy
-#~ msgid ""
-#~ "Celestia was unable to initialize OpenGL extensions (error %1). Graphics "
-#~ "quality will be reduced."
-#~ msgstr ""
-#~ "Celestia var ikke istand til å initialisere OpenGL utvidelser. Grafikk-"
-#~ "kvalitet blir redusert. Bare enkel opptegning blir tilgjengelig"
-
-#, fuzzy
-#~ msgid "Copy &URL"
-#~ msgstr "Kopier URL"
-
-#, fuzzy
-#~ msgid "&Paste URL"
-#~ msgstr "Kopiert URL"
-
-#~ msgid "Spacecrafts"
-#~ msgstr "Romfartøy"
-
-#, fuzzy
-#~ msgid "Enable Vsync"
-#~ msgstr "Alt-azimut modus aktivert"
-
-#~ msgid "Vendor: "
-#~ msgstr "Tilbyder: "
-
-#~ msgid "GLSL version: "
-#~ msgstr "GLSL-versjon: "
-
-#~ msgid "Error loading script"
-#~ msgstr "Feil ved lasting av skript"
-
-#~ msgid "Running script"
-#~ msgstr "Kjør skript"
-
-#~ msgid "Invisible"
-#~ msgstr "Usynlig"
-
-#~ msgid "Small Body"
-#~ msgstr "Lite objekt"
-
-#~ msgid "Dwarf Planet"
-#~ msgstr "Dvergplanet"
-
-#~ msgid "&Add Bookmark"
-#~ msgstr "&Legg til bokmerke"
-
-#~ msgid "Add a bookmark for the current document"
-#~ msgstr "Legg til et bokmerke for gjeldende dokument"
-
-#~ msgid "Add &Relative Bookmark"
-#~ msgstr "Legg til &relativt bokmerke"
-
-#~ msgid "Add a relative bookmark for the current document"
-#~ msgstr "Legg til et relativt bokmerke for gjeldende dokument"
-
-#~ msgid "Add &Settings Bookmark"
-#~ msgstr "Legg til &innstillingsbokmerke"
-
-#~ msgid "Add a settings bookmark for the current document"
-#~ msgstr "Legg til et innstillingsbokmerke for gjeldende dokument"
-
-#~ msgid "Edit your bookmark collection in a separate window"
-#~ msgstr "Rediger din bokmerkesamling i et separat vindu"
-
-#~ msgid "&New Folder..."
-#~ msgstr "&Ny mappe..."
-
-#~ msgid "Create a new bookmark folder in this menu"
-#~ msgstr "Opprett en ny bokmerkemappe i denne meny"
-
-#~ msgid "Can't add bookmark with empty URL"
-#~ msgstr "Kan ikke legge til bokmerke med tom URL"
-
-#~ msgid ""
-#~ "Something seems to be wrong with your installation of Celestia. The "
-#~ "splash screen directory couldn't be found. \n"
-#~ "Start-up will continue, but Celestia will probably be missing some data "
-#~ "files and may not work correctly, please check your installation."
-#~ msgstr ""
-#~ "Noe synes å være feil med din installasjon av Celestia. Oppstartskjerm-"
-#~ "mappen kunne ikke bli funnet. \n"
-#~ "Oppstarten vil  fortsette, men Celestia kommer antagelig til å mangle "
-#~ "noen datafiler og fungerer kanskje ikke korrekt, kontroller din "
-#~ "installasjon."
-
-#~ msgid ""
-#~ "Celestia was unable to initialize OpenGL extensions. Graphics quality "
-#~ "will be reduced. Only Basic render path will be available"
-#~ msgstr ""
-#~ "Celestia var ikke istand til å initialisere OpenGL utvidelser. Grafikk-"
-#~ "kvalitet blir redusert. Bare enkel opptegning blir tilgjengelig"
-
-#~ msgid "Go to &URL..."
-#~ msgstr "Gå til &URL..."
-
-#~ msgid "Go to &Long/Lat..."
-#~ msgstr "Gål til &lengde/bredde..."
-
-#~ msgid "&Back"
-#~ msgstr "&Tilbake"
-
-#~ msgid "&Forward"
-#~ msgstr "&Fram"
-
-#~ msgid "Home"
-#~ msgstr "Hjem"
-
-#~ msgid "Full Screen"
-#~ msgstr "Full skjerm"
-
-#~ msgid "Copy URL"
-#~ msgstr "Kopier URL"
-
-#~ msgid "Set Time..."
-#~ msgstr "Still tid..."
-
-#~ msgid "Set Time to Now"
-#~ msgstr "Still tid til nå"
-
-#~ msgid "Accelerate Time"
-#~ msgstr "Akselerer tiden"
-
-#~ msgid "Decelerate Time"
-#~ msgstr "Saktne tiden"
-
-#~ msgid "Accelerate Time (x2)"
-#~ msgstr "Akselerer tiden (x2)"
-
-#~ msgid "Decelerate Time (/2)"
-#~ msgstr "Saktne tiden (/2)"
-
-#~ msgid "Pause Time"
-#~ msgstr "Stopp tiden midlertidig"
-
-#~ msgid "Reverse Time"
-#~ msgstr "Snu tiden"
-
-#~ msgid "Split View Vertically"
-#~ msgstr "Del visning vertikalt"
-
-#~ msgid "Split View Horizontally"
-#~ msgstr "Del visning horisontalt"
-
-#~ msgid "Cycle View"
-#~ msgstr "Syklusvisning"
-
-#~ msgid "Single View"
-#~ msgstr "Enkel visning"
-
-#~ msgid "Delete View"
-#~ msgstr "Slett visning"
-
-#~ msgid "Frames Visible"
-#~ msgstr "Synlige rammer"
-
-#~ msgid "Active Frame Visible"
-#~ msgstr "Aktive ramme synlig"
-
-#~ msgid "Synchronize Time"
-#~ msgstr "Synkroniser tid"
-
-#~ msgid "Alt-Azimuth Mode"
-#~ msgstr "Alt-Azimut modus"
-
-#~ msgid "Go To Surface"
-#~ msgstr "Gå til overflate"
-
-#~ msgid "Show Stars"
-#~ msgstr "Vis stjerner"
-
-#~ msgid "Show Planets"
-#~ msgstr "Vis planeter"
-
-#~ msgid "Show Galaxies"
-#~ msgstr "Vis galakser"
-
-#~ msgid "Show Globulars"
-#~ msgstr "Vis kulehoper"
-
-#~ msgid "Show Partial Trajectories"
-#~ msgstr "Vis delvise baner"
-
-#~ msgid "Show Nebulae"
-#~ msgstr "Vis stjernetåker"
-
-#~ msgid "Show Open Clusters"
-#~ msgstr "Vis åpne stjernehoper"
-
-#~ msgid "Show Constellations"
-#~ msgstr "Vis stjernebilder"
-
-#~ msgid "Show CloudMaps"
-#~ msgstr "Vis kart med skyer"
-
-#~ msgid "Show Cloud Shadows"
-#~ msgstr "Vis sky-skygger"
-
-#~ msgid "Show Orbits"
-#~ msgstr "Vis omløpsbaner"
-
-#~ msgid "Show Asteroid Orbits"
-#~ msgstr "Vis asteroide-omløpsbaner"
-
-#~ msgid "Show Comet Orbits"
-#~ msgstr "Vis kometers omløpsbaner"
-
-#~ msgid "Show Moon Orbits"
-#~ msgstr "Vis måners omløpsbaner"
-
-#~ msgid "Show Star Orbits"
-#~ msgstr "Vis omløpsbaner"
-
-#~ msgid "Show Planet Orbits"
-#~ msgstr "Vis planeters omløpsbaner"
-
-#~ msgid "Show Spacecraft Orbits"
-#~ msgstr "Vis romfartøys omløpsbaner"
-
-#~ msgid "Show Equatorial Grid"
-#~ msgstr "Vis ekvatorialt rutenett"
-
-#~ msgid "Show Night Side Lights"
-#~ msgstr "Vis nattside-lys"
-
-#~ msgid "Show Markers"
-#~ msgstr "Vis markører"
-
-#~ msgid "Show Atmospheres"
-#~ msgstr "Vis atmosfærer"
-
-#~ msgid "Show Smooth Orbit Lines"
-#~ msgstr "Vis jevne omløpsbaner"
-
-#~ msgid "Show Eclipse Shadows"
-#~ msgstr "Vis formørkelsesskygger"
-
-#~ msgid "Cycle Star Mode"
-#~ msgstr "Veksle stjernemodus"
-
-#~ msgid "Show Ring Shadows"
-#~ msgstr "Vis ring-skygger"
-
-#~ msgid "Show Boundaries"
-#~ msgstr "Vis grenser"
-
-#~ msgid "Auto Magnitudes"
-#~ msgstr "Auto-magnituder"
-
-#~ msgid "Show Comet Tails"
-#~ msgstr "Vis kometshaler"
-
-#~ msgid "Show Star Labels"
-#~ msgstr "Vis stjerne-påskrifter"
-
-#~ msgid "Show Planet Labels"
-#~ msgstr "Vis planet-påskrifter"
-
-#~ msgid "Show Moon Labels"
-#~ msgstr "Vis måne-påskrifter"
-
-#~ msgid "Show Comet Labels"
-#~ msgstr "Vis komet-påskrifter"
-
-#~ msgid "Show Constellation Labels"
-#~ msgstr "Vis stjernebilde-påskrifter"
-
-#~ msgid "Constellation Labels in Latin"
-#~ msgstr "Stjernebilde-påskrifter på latin"
-
-#~ msgid "Show Galaxy Labels"
-#~ msgstr "Vis galakse-påskrifter"
-
-#~ msgid "Show Globular Labels"
-#~ msgstr "Vis kulehop-påskrifter"
-
-#~ msgid "Show Nebula Labels"
-#~ msgstr "Vis stjernetåke-påskrifter"
-
-#~ msgid "Show Open Cluster Labels"
-#~ msgstr "Vis åpen stjernehop-påskrifter"
-
-#~ msgid "Show Asteroid Labels"
-#~ msgstr "Vis asteroide-påskrifter"
-
-#~ msgid "Show Spacecraft Labels"
-#~ msgstr "Vis romfartøy-påskrifter"
-
-#~ msgid "Show Location Labels"
-#~ msgstr "Vis stedspåskrifter"
-
-#~ msgid "Display Local Time"
-#~ msgstr "Vis lokal tid"
-
-#~ msgid "Show City Locations"
-#~ msgstr "Vis byer"
-
-#~ msgid "Show Observatory Locations"
-#~ msgstr "Vis observatorie-steder"
-
-#~ msgid "Show Landing Sites Locations"
-#~ msgstr "Vis landingssteder"
-
-#~ msgid "Show Crater Locations"
-#~ msgstr "Vis krater-steder"
-
-#~ msgid "Show Mons Locations"
-#~ msgstr "Vis Mons-steder"
-
-#~ msgid "Show Terra Locations"
-#~ msgstr "Vis Terra-steder"
-
-#~ msgid "Show Vallis Locations"
-#~ msgstr "Vis Vallis-steder"
-
-#~ msgid "Show Mare Locations"
-#~ msgstr "Vis Mare-steder"
-
-#~ msgid "Show Other Locations"
-#~ msgstr "Vis andre steder"
-
-#~ msgid "Wireframe Mode"
-#~ msgstr "Trådramme-modus"
-
-#~ msgid "Center on Orbit"
-#~ msgstr "Sentrer på omløpsbane"
-
-#~ msgid "Basic"
-#~ msgstr "Enkel"
-
-#~ msgid "Multitexture"
-#~ msgstr "Multitekstur"
-
-#~ msgid "NvCombiners"
-#~ msgstr "NvKombinatorer"
-
-#~ msgid "DOT3 ARBVP"
-#~ msgstr "DOT3 ARBVP"
-
-#~ msgid "NvCombiner NvVP"
-#~ msgstr "NvCombiner NvVP"
-
-#~ msgid "NvCombiner ARBVP"
-#~ msgstr "NvCombiner ARBVP"
-
-#~ msgid "ARBFP ARBVP"
-#~ msgstr "ARBFP ARBVP"
-
-#~ msgid "NV30"
-#~ msgstr "NV30"
-
-#~ msgid "Cycle OpenGL Render Path"
-#~ msgstr "Veksle mellom OpenGL-opptegninger"
-
-#~ msgid "Sync framerate to video refresh rate"
-#~ msgstr "Synkroniser bildefrekvensen til video oppdateringsfrekvens"
-
-#~ msgid "Grab Image"
-#~ msgstr "Ta bilde"
-
-#~ msgid "OpenGL info"
-#~ msgstr "OpenGL-info"
-
-#~ msgid "Show Bookmark Toolbar"
-#~ msgstr "Vis bokmerke-verktøylinje"
-
-#~ msgid "UTC"
-#~ msgstr "UTC"
-
-#~ msgid ""
-#~ "This version of Celestia was not built with support for movie recording."
-#~ msgstr ""
-#~ "Denne versjon av Celestia ble ikke bygd med støtte for video-opptak."
-
-#~ msgid "Enter URL"
-#~ msgstr "Oppfør URL"
-
-#~ msgid "Go to URL"
-#~ msgstr "Gå til URL"
-
-#~ msgid "Object: "
-#~ msgstr "Objekt: "
-
-#~ msgid "Longitude: "
-#~ msgstr "Breddegrad: "
-
-#~ msgid "East"
-#~ msgstr "Øst"
-
-#~ msgid "West"
-#~ msgstr "Vest"
-
-#~ msgid "Latitude: "
-#~ msgstr "Breddegrad: "
-
-#~ msgid "North"
-#~ msgstr "Nord"
-
-#~ msgid "South"
+#~ msgid "Plymouth"
 #~ msgstr "Sør"
 
-#~ msgid "Altitude: "
-#~ msgstr "Høyde: "
-
-#~ msgid "Celestia encountered an error while processing your script"
-#~ msgstr "Celestia traff på en feil ved behandling av ditt skript"
-
-#~ msgid "Celestia Preferences"
-#~ msgstr "Celestia innstillinger"
-
-#~ msgid "Rendering"
-#~ msgstr "Opptegning"
-
-#~ msgid "Show"
-#~ msgstr "Vis"
-
-#~ msgid "Partial Trajectories"
-#~ msgstr "Delvise baner"
-
-#~ msgid "Smooth Orbit Lines"
-#~ msgstr "Jevne banelinjer"
-
-#~ msgid "Equatorial Grid"
-#~ msgstr "Ekvatorialt rutnett"
-
-#~ msgid "Constellation Boundaries"
-#~ msgstr "Stjernebilder-grenser"
-
-#~ msgid "Orbits / Labels"
-#~ msgstr "Omløpsbaner / Påskrifter"
-
-#~ msgid "Constellations in Latin"
-#~ msgstr "Stjernbilder på latinsk"
-
-#~ msgid "Ambient Light"
-#~ msgstr "Omgivende lys"
-
-#~ msgid "Limiting Magnitude"
-#~ msgstr "Grense-magnitude"
-
-#~ msgid "Info Text"
-#~ msgstr "Infotekst"
-
-#~ msgid "Level: "
-#~ msgstr "Nivå: "
-
-#~ msgid "Textures"
-#~ msgstr "Teksturer"
-
-#~ msgid "Resolution: "
-#~ msgstr "Oppløsning: "
-
-#~ msgid "Automatic FOV"
-#~ msgstr "Automatisk synsfelt"
-
-#~ msgid "Screen DPI: "
-#~ msgstr "Skjermens DPI: "
-
-#~ msgid "Viewing Distance (cm): "
-#~ msgstr "Visningsavstand (cm): "
-
-#~ msgid "Mons"
-#~ msgstr "Mons"
-
-#~ msgid "Terra"
-#~ msgstr "Terra"
-
-#~ msgid "Vallis"
-#~ msgstr "Vallis"
-
-#~ msgid "Mare"
-#~ msgstr "Mare"
-
-#~ msgid "Other"
-#~ msgstr "Annet"
-
-#~ msgid "Minimum Feature Size"
-#~ msgstr "Minste størrelse"
-
-#~ msgid "Date/Time"
-#~ msgstr "Dato/Tid"
-
-#~ msgid "Display"
-#~ msgstr "Vis"
-
-#~ msgid "Timezone: "
-#~ msgstr "Tidssone: "
-
-#~ msgid "Local Format"
-#~ msgstr "Lokalt format"
-
-#~ msgid "Set"
-#~ msgstr "Still inn"
-
-#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-#~ msgstr "Lokal tid støttes bare for datoer mellom 1902 og 2037.\n"
-
-#~ msgid "Now"
-#~ msgstr "Nå"
-
-#~ msgid ""
-#~ "\n"
-#~ "Selection: "
-#~ msgstr ""
-#~ "\n"
-#~ "Valg: "
-
-#~ msgid "Include Light Travel Time"
-#~ msgstr "Inkluder lysreisetid"
-
-#~ msgid "Ignore Light Travel Time "
-#~ msgstr "Ignorer lysreisetid "
-
-#~ msgid "OpenGL"
-#~ msgstr "OpenGL"
-
-#~ msgid "Key Bindings"
-#~ msgstr "Taste-bindninger"
-
-#~ msgid "<b>Unextended OpenGL 1.1</b>"
-#~ msgstr "<b>Unextended OpenGL 1.1</b>"
-
-#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-#~ msgstr "<b>Multi teksturer og ARB_texenv_combine extension</b>"
-
-#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
-#~ msgstr "<b>NVIDIA-kombinatorer, ingen vertexprogram</b>"
-
-#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-#~ msgstr "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-
-#~ msgid ""
-#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
-#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
-#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
-#~ "for Geforce users"
-#~ msgstr ""
-#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> gir bumpmapping, "
-#~ "ringskygger og refleksjon 'highlights' på alle Geforce- eller ATI Radeon-"
-#~ "grafikkort, selv om NvCombiner ARBVP er et litt bedre alternativ for "
-#~ "Geforce-brukere"
-
-#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-#~ msgstr "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-
-#~ msgid ""
-#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
-#~ "advanced effects on Geforce FX and Radeon 9700 cards"
-#~ msgstr ""
-#~ "<b>ARB_fragment_program og ARB_vertex_program utvidelser</b><br>gir "
-#~ "avanserte effekter på Geforce FX- og Radeon 9700-kort"
-
-#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-#~ msgstr "<b>NV_fragment_program og ARB_vertex_program utvidelser</b>"
-
-#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
-#~ msgstr "<b>OpenGL 2.0 Shading Language</b>"
-
-#~ msgid ""
-#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
-#~ msgstr ""
-#~ "Fil %1 eksisterer ikke, bruker standard konfigurasjonsfil %2/celestia.cfg"
-
-#~ msgid "Directory %1 does not exist, using default %2"
-#~ msgstr "Mappe %1 eksisterer ikke, bruker standard %2"
-
-#~ msgid "Extras directory %1 does not exist"
-#~ msgstr "Ekstra-mappe %1 eksisterer ikke"
-
-#~ msgid "Surface Temp: "
-#~ msgstr "Overflatetemperatur: "
-
-#~ msgid "Rsun"
-#~ msgstr "Rsol"
-
-#~ msgid "Marked objects"
-#~ msgstr "Markerte objekter"
-
-#~ msgid "Unmark &All"
-#~ msgstr "Fjern merking av &alle"
-
-#~ msgid "&Reference Vectors"
-#~ msgstr "&Referanse-vektorer"
-
-#~ msgid "Small Bodies"
-#~ msgstr "Små objekter"
-
-#~ msgid "Duration: %1"
-#~ msgstr "Varighet: %1"
-
-#~ msgid "Size: %1 MB"
-#~ msgstr "Størrelse: %1 MB"
-
-#~ msgid "  Paused"
-#~ msgstr "  Pause"
-
-#~ msgid "Current size: %1 x %2"
-#~ msgstr "Gjeldende størrrelse: %1 x %2"
-
-#~ msgid "Current width: %1 x %2"
-#~ msgstr "Gjeldende bredde: %1 x %2"
-
-#~ msgid "Current height: %1 x %2"
-#~ msgstr "Gjeldende høyde: %1 x %2"
-
-#~ msgid "You must specify a file name."
-#~ msgstr "Du må spesifisere et filnavn."
-
-#~ msgid "Error initializing movie capture."
-#~ msgstr "Feil ved initiering av video-opptak."
-
-#~ msgid "  Recording"
-#~ msgstr "  Opptak"
-
-#~ msgid "License file 'License.txt' is missing!"
-#~ msgstr "Lisensfil 'License.txt' mangler!"
+#, fuzzy
+#~ msgid "San Juan"
+#~ msgstr "Da Woon Jung"
 
 #, fuzzy
-#~ msgid "render path: %i\n"
-#~ msgstr "opptegning: "
+#~ msgid "Sao Tome"
+#~ msgstr "Gå til"
+
+#, fuzzy
+#~ msgid "Tallinn"
+#~ msgstr "Reiser "
+
+#, fuzzy
+#~ msgid "Tirana"
+#~ msgstr "Miranda"
+
+#, fuzzy
+#~ msgid "The Valley"
+#~ msgstr "Valles (Daler)"
+
+#~ msgid "Milky Way"
+#~ msgstr "Melkeveien"
+
+# Store Magellanske Sky
+#~ msgid "SMC"
+#~ msgstr "SMS"
+
+#~ msgid "LMC"
+#~ msgstr "LMS"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Solsystemets tyngdesenter"
 
 #~ msgid "DSO Labels"
-#~ msgstr "DSO-påskrifter"
-
-#~ msgid "Filter Stars"
-#~ msgstr "Filtrer stjerner"
+#~ msgstr "DSO-etiketter"
 
 #, fuzzy
-#~ msgid "Coordinate grids"
-#~ msgstr "Rutenett"
+#~ msgid "Copyright © 2001-2019 Celestia Development Team"
+#~ msgstr "Copyright © 2001-2009  Celestia utviklingslag"
 
-#~ msgid "Loaded "
-#~ msgstr "Lastet inn"
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
 
-#~ msgid "   Model statistics: "
-#~ msgstr "   Modellstatistikk: "
-
-#~ msgid " vertices, "
-#~ msgstr " vertex, "
-
-#~ msgid " primitives, "
-#~ msgstr " primitiver, "
-
-#~ msgid " materials "
-#~ msgstr " materialer "
-
-#~ msgid " unique)\n"
-#~ msgstr " unike)\n"
-
-#~ msgid "' not found."
-#~ msgstr "' ikke funnet."
-
-#~ msgid "parent body '"
-#~ msgstr "overordnet objekt '"
-
-#~ msgid "' not found.\n"
-#~ msgstr "' ikke funnet.\n"
-
-#~ msgid "Barycenter "
-#~ msgstr "Massesentrum"
-
-#~ msgid ", max="
-#~ msgstr ", maks="
-
-#~ msgid "Orientation: "
-#~ msgstr "Orientering: "
-
-#~ msgid "Render path: Basic"
-#~ msgstr "Opptegning: Enkel"
-
-#~ msgid "Render path: Multitexture"
-#~ msgstr "Opptegning: Multitekstur"
-
-#~ msgid "Render path: NVIDIA combiners"
-#~ msgstr "Opptegning: NVIDIA-kombinatorer"
-
-#~ msgid "Render path: OpenGL vertex program"
-#~ msgstr "Opptegning: OpenGL-vertexprogram"
-
-#~ msgid "Render path: NVIDIA vertex program and combiners"
-#~ msgstr "Opptegning: NVIDIA-vertexprogram og kombinatorer"
-
-#~ msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-#~ msgstr "Opptegning: OpenGL-vertexprogram/NVIDIA-kombinatorer"
-
-#~ msgid "Render path: OpenGL 1.5 vertex/fragment program"
-#~ msgstr "Opptegning: OpenGL 1.5 vertex-/fragmentprogram"
-
-#~ msgid "Render path: NVIDIA GeForce FX"
-#~ msgstr "Opptegning: NVIDIA GeForce FX"
-
-#~ msgid " days"
-#~ msgstr " dager"
-
-#~ msgid " hours"
-#~ msgstr " timer"
-
-#~ msgid "RA: "
-#~ msgstr "RA: "
-
-#~ msgid "Dec: "
-#~ msgstr "Dekl: "
-
-#~ msgid "x Sun"
-#~ msgstr "x Sol"
-
-#~ msgid " faster"
-#~ msgstr "raskere"
-
-#~ msgid " slower"
-#~ msgstr "langsommere"
-
-#, fuzzy
-#~ msgid "Lock "
-#~ msgstr "Lås"
-
-#~ msgid "FOV: "
-#~ msgstr "Synsfelt:"
-
-#~ msgid " fps"
-#~ msgstr " fps"
-
-#~ msgid "Loading "
-#~ msgstr "Laster"
-
-#, fuzzy
-#~ msgid "Bookmarks file %1 does not exist."
-#~ msgstr "Ekstra-mappe %1 eksisterer ikke"
-
-#, fuzzy
-#~ msgid "No Bookmarks File"
-#~ msgstr "&Bokmerker"
-
-#, fuzzy
-#~ msgid "Toggle star style"
-#~ msgstr "Stjernestil: Punkter"
-
-#, fuzzy
-#~ msgid "Size: "
-#~ msgstr "Størrelse:"
-
-#, fuzzy
-#~ msgid "Period: "
-#~ msgstr "Rotasjonsperiode: "
-
-#, fuzzy
-#~ msgid "days<br>\n"
-#~ msgstr " dager"
-
-#, fuzzy
-#~ msgid "NVIDIA combiners"
-#~ msgstr "Opptegning: OpenGL-vertexprogram/NVIDIA-kombinatorer"
-
-#, fuzzy
-#~ msgid "OpenGL vertex program"
-#~ msgstr "Opptegning: OpenGL-vertexprogram/NVIDIA-kombinatorer"
-
-#, fuzzy
-#~ msgid "NVIDIA vertex program and combiners"
-#~ msgstr "Opptegning: NVIDIA-vertexprogram og kombinatorer"
-
-#, fuzzy
-#~ msgid "OpenGL vertex program/NVIDIA combiners"
-#~ msgstr "Opptegning: OpenGL-vertexprogram/NVIDIA-kombinatorer"
-
-#, fuzzy
-#~ msgid "OpenGL 1.5 vertex/fragment program"
-#~ msgstr "Opptegning: OpenGL 1.5 vertex-/fragmentprogram"
-
-#, fuzzy
-#~ msgid "NVIDIA GeForce FX"
-#~ msgstr "Opptegning: NVIDIA GeForce FX"
-
-#, fuzzy
-#~ msgid "*.ogg"
-#~ msgstr "Feil ved opprettelse av videofil (ogg) %s.\n"
-
-#, fuzzy
-#~ msgid "Image Size:"
-#~ msgstr "Ta bilde"
-
-#, fuzzy
-#~ msgid "Frame Rate:"
-#~ msgstr "Bildefrekvens:"
-
-#, fuzzy
-#~ msgid "Video Quality:"
-#~ msgstr "Ta opp video"
-
-#, fuzzy
-#~ msgid "&OK"
-#~ msgstr "OK"
-
-#, fuzzy
-#~ msgid "&Cancel"
-#~ msgstr "Avbryt"
-
-#, fuzzy
-#~ msgid "Options"
-#~ msgstr "Visningsalternativ"
-
-#, fuzzy
 #~ msgid "OpenGL Render Path"
-#~ msgstr "Veksle mellom OpenGL-opptegninger"
+#~ msgstr "OpenGL opptegningssti"
 
-#, fuzzy
 #~ msgid "Main Toolbar"
-#~ msgstr "Vis bokmerke-verktøylinje"
+#~ msgstr "Hovedverktøylinje"
 
-#, fuzzy
-#~ msgid "App. Mag."
-#~ msgstr "Tils. mag"
+#~ msgid "Dist."
+#~ msgstr "Avst."
 
-#, fuzzy
-#~ msgid "Abs. Mag."
-#~ msgstr "Abs. mag"
-
-#, fuzzy
-#~ msgid "Brightest (Abs.)"
-#~ msgstr "Lyssterkest"
-
-#, fuzzy
-#~ msgid "Brightest (App.)"
-#~ msgstr "Lyssterkest"
-
-#, fuzzy
 #~ msgid "&Close"
-#~ msgstr "Lukk"
+#~ msgstr "&Lukk"
 
-#, fuzzy
 #~ msgid "Alt+C"
-#~ msgstr "Alt-azimut modus aktivert"
+#~ msgstr "Alt+C"
 
-#, fuzzy
-#~ msgid "Moon Eclipses"
-#~ msgstr "Solformørkelser"
+#~ msgid "Video Capture"
+#~ msgstr "Videoopptak"
 
-#, fuzzy
-#~ msgid "Search"
-#~ msgstr "Stjernesøk-kriterie"
+#~ msgid "Save As:"
+#~ msgstr "Lagre som:"
 
-#, fuzzy
-#~ msgid "Star color: enhanced"
-#~ msgstr "Totale antall stjerner: "
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
 
-#, fuzzy
-#~ msgid "Star color: normal"
-#~ msgstr "Bruker normale overflateteksturer."
+#~ msgid "Current"
+#~ msgstr "Gjeldende"
 
-#, fuzzy
-#~ msgid "Apparent mag: %.2f\n"
-#~ msgstr "Abs (tils.) mag: %.2f (%.2f)\n"
+#~ msgid "11:9"
+#~ msgstr "11:9"
 
-#~ msgid "Use alternate configuration file"
-#~ msgstr "Bruk alternativ konfigurasjonsfil"
+#~ msgid "Image Size:"
+#~ msgstr "Bildestørrelse:"
 
-#~ msgid "Use alternate installation directory"
-#~ msgstr "Bruk alternativ installasjonsmappe"
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Spill video når opptaket er ferdig"
 
-#~ msgid "Use as additional \"extras\" directory"
-#~ msgstr "Bruk som tilleggs \"ekstra\"-mappe"
+#~ msgid "Usage"
+#~ msgstr "Bruk"
 
-#~ msgid "Start fullscreen"
-#~ msgstr "Start med full skjerm"
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Trykk <b>F11</b> for å starte/pause opptak<br>\n"
+#~ "Trykk <b>F12</b> for å stoppe opptak</p>\n"
+#~ "\n"
+#~ "<p>Merk at det ikke er mulig å endre størrelse på hovedvinduet før "
+#~ "opptaket er slutt.</p>"
 
-#~ msgid "Disable splash screen"
-#~ msgstr "Deaktiver oppstartsbilde"
+#~ msgid "&OK"
+#~ msgstr "&OK"
 
-#~ msgid "Start and go to url"
-#~ msgstr "Start og gå til URL"
+#~ msgid "&Cancel"
+#~ msgstr "&Avbryt"
 
-#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
-#~ msgstr "http://home.c2i.net/freewaretips/"
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr " stjerne(r) med duplikate katalognumre slettet.)\n"
 
-#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
-#~ msgstr "FreewareTips"
+#~ msgid "%.3f m"
+#~ msgstr "%.3f m"
 
-#, fuzzy
-#~ msgid "Manual Celestia"
-#~ msgstr "Celestia innstillinger"
+#~ msgid "Day length: "
+#~ msgstr "Daglengde: "
 
-#~ msgid "&None"
-#~ msgstr "&Ingen"
+#~ msgid "Type: "
+#~ msgstr "Type: "
+
+#~ msgid " UTC"
+#~ msgstr " UTC"
+
+#~ msgid "Loading deep sky catalog: "
+#~ msgstr "Laster inn katalog over fjerne objekter: "
+
+#~ msgid "Error opening test.xml\n"
+#~ msgstr "Feil ved åpning av test.xml\n"
+
+#~ msgid "<p align=\"right\">On:</p>"
+#~ msgstr "<p align=\"right\">På:</p>"
+
+#~ msgid "<p align=\"right\">To:</p>"
+#~ msgstr "<p align=\"right\"> Til:</p>"
+
+#~ msgid "<p align=\"right\">From:</p>"
+#~ msgstr "<p align=\"right\">Fra:</p>"
