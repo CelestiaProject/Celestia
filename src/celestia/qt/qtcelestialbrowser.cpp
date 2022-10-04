@@ -219,15 +219,15 @@ QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation 
     switch (section)
     {
     case 0:
-        return _("Name");
+        return QString(_("Name"));
     case 1:
-        return _("Distance (ly)");
+        return QString(_("Distance (ly)"));
     case 2:
-        return _("App. mag");
+        return QString(_("App. mag"));
     case 3:
-        return _("Abs. mag");
+        return QString(_("Abs. mag"));
     case 4:
-        return _("Type");
+        return QString(_("Type"));
     default:
         return QVariant();
     }
