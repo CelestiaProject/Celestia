@@ -392,9 +392,9 @@ BookmarkTreeModel::headerData(int section, Qt::Orientation /* orientation */, in
         return QVariant();
 
     if (section == 0)
-        return _("Title");
+        return QString(_("Title"));
     else
-        return _("Description");
+        return QString(_("Description"));
 }
 
 

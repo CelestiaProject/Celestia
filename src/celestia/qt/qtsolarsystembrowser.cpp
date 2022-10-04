@@ -652,9 +652,9 @@ QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orient
     switch (section)
     {
     case NameColumn:
-        return _("Name");
+        return QString(_("Name"));
     case TypeColumn:
-        return _("Type");
+        return QString(_("Type"));
     default:
         return QVariant();
     }

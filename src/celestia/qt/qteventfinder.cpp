@@ -139,13 +139,13 @@ QVariant EventTableModel::headerData(int section, Qt::Orientation /*unused*/, in
     switch (section)
     {
     case 0:
-        return _("Eclipsed body");
+        return QString(_("Eclipsed body"));
     case 1:
-        return _("Occulter");
+        return QString(_("Occulter"));
     case 2:
-        return _("Start time");
+        return QString(_("Start time"));
     case 3:
-        return _("Duration");
+        return QString(_("Duration"));
     default:
         return QVariant();
     }
