@@ -119,7 +119,9 @@ int main(int argc, char *argv[])
     // Set the main window to be the cel url handler
     QDesktopServices::setUrlHandler("cel", &window, "handleCelUrl");
 
-    return app.exec();
+    int ret = app.exec();
+    QDesktopServices::unsetUrlHandler("cel");
+    return ret;
 }
 
 
