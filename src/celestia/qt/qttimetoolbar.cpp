@@ -29,18 +29,20 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     setToolButtonStyle(Qt::ToolButtonTextOnly);
     QAction* reverseTimeAction = new QAction(QString("< >"), this);
     reverseTimeAction->setToolTip(_("Reverse time"));
-    QAction* slowTimeAction = new QAction(QString("<<|"), this);
+    QAction* slowTimeAction = new QAction(QString("<<<"), this);
     slowTimeAction->setToolTip(_("10x slower"));
-    QAction* halfTimeAction = new QAction(QString("<|"), this);
+    QAction* halfTimeAction = new QAction(QString("<<"), this);
     halfTimeAction->setToolTip(_("2x slower"));
     QAction* pauseAction = new QAction(QString("||"), this);
     pauseAction->setToolTip(_("Pause time"));
-    QAction* realTimeAction = new QAction(QString(">"), this);
-    realTimeAction->setToolTip(_("Real time"));
     QAction* doubleTimeAction = new QAction(QString(">>"), this);
     doubleTimeAction->setToolTip(_("2x faster"));
     QAction* fastTimeAction = new QAction(QString(">>>"), this);
     fastTimeAction->setToolTip(_("10x faster"));
+    QAction* realTimeAction = new QAction(QString("|^|"), this);
+    realTimeAction->setToolTip(_("Real time"));
+    QAction* currentTimeAction = new QAction(QString("< ! >"), this);
+    currentTimeAction->setToolTip(_("Set to current time"));
 #else
     QAction* reverseTimeAction = new QAction(QIcon(":/icons/time-reverse.png"),
                                              _("Reverse time"), this);
@@ -50,12 +52,12 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
                                           _("2x slower"), this);
     QAction* pauseAction = new QAction(QIcon(":/icons/time-pause.png"),
                                        _("Pause time"), this);
-    QAction* realTimeAction = new QAction(QIcon(":/icons/time-realtime.png"),
-                                          _("Real time"), this);
     QAction* doubleTimeAction = new QAction(QIcon(":/icons/time-double.png"),
                                             _("2x faster"), this);
     QAction* fastTimeAction = new QAction(QIcon(":/icons/time-faster.png"),
                                           _("10x faster"), this);
+    QAction* realTimeAction = new QAction(QIcon(":/icons/time-realtime.png"),
+                                          _("Real time"), this);
     QAction* currentTimeAction = new QAction(QIcon(":icons/time-currenttime.png"),
                                              _("Set to current time"), this);
 #endif
@@ -71,14 +73,15 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     connect(pauseAction, SIGNAL(triggered()), this, SLOT(slotPauseTime()));
     addAction(pauseAction);
 
-    connect(realTimeAction, SIGNAL(triggered()), this, SLOT(slotRealTime()));
-    addAction(realTimeAction);
 
     connect(doubleTimeAction, SIGNAL(triggered()), this, SLOT(slotDoubleTime()));
     addAction(doubleTimeAction);
 
     connect(fastTimeAction, SIGNAL(triggered()), this, SLOT(slotFaster()));
     addAction(fastTimeAction);
+
+    connect(realTimeAction, SIGNAL(triggered()), this, SLOT(slotRealTime()));
+    addAction(realTimeAction);
 
     connect(currentTimeAction, SIGNAL(triggered()), this, SLOT(slotCurrentTime()));
     addAction(currentTimeAction);
