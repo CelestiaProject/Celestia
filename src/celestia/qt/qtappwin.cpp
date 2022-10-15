@@ -1626,7 +1626,7 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
     for (const auto& script : *scripts)
     {
         QAction* act = new QAction(script.title.c_str(), this);
-        act->setData(script.filename.c_str());
+        act->setData(script.filename.string().c_str());
         connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
         menu->addAction(act);
     }
