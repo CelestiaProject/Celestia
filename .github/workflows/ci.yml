@@ -19,18 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [x64, x86]
-        generator_platform: [x64, Win32]
-        include:
-          - platform: x64
-            generator_platform: x64
-          - platform: x86
-            generator_platform: Win32
-        exclude:
-          - platform: x64
-            generator_platform: Win32
-          - platform: x86
-            generator_platform: x64
+        platform: [ x64, x86 ]
+        qtversion: [ Qt5, Qt6 ]
 
     steps:
     - name: 'Setup NuGet Credentials'
@@ -45,7 +35,15 @@ jobs:
         -password "${{ secrets.GITHUB_TOKEN }}"
 
     - name: 'Install dependencies'
-      run: vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext lua fmt libepoxy eigen3 freetype cspice qt5-base ffmpeg[x264]
+      shell: cmd
+      run: |
+        set QtBasePkg=qtbase
+        set QtCompatPkg=qt5compat
+        if ${{matrix.qtversion}}==Qt5 (
+            set QtBasePkg=qt5-base
+            unset QtCompatPkg
+        )
+        vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] %QtBasePkg% %QtCompatPkg%
 
     - name: 'Checkout source code'
       uses: actions/checkout@v2
@@ -53,7 +51,13 @@ jobs:
         submodules: true
 
     - name: 'Configure CMake'
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON
+      shell: cmd
+      run: |
+        set UseQt6=OFF
+        set GeneratorPlatform=${{matrix.platform}}
+        if ${{matrix.qtversion}}==Qt6 set UseQt6=ON
+        if ${{matrix.platform}}==x86 set GeneratorPlatform=Win32
+        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
@@ -85,11 +89,16 @@ jobs:
         name: celestia-${{matrix.platform}}
         path: ${{github.workspace}}/build/src/*/*.7z
 
-  build-ubuntu-old:
+  build-gnu-linux:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ ubuntu-18.04 ]
+        platform: [ ubuntu-18.04, ubuntu-22.04 ]
+        qtversion: [ Qt5, Qt6 ]
+        exclude:
+          - platform: ubuntu-18.04
+            qtversion: Qt6
+
     runs-on: ${{matrix.platform}}
     steps:
     - name: 'Install dependencies'
@@ -104,15 +113,17 @@ jobs:
                             libjpeg-dev \
                             libpng-dev \
                             libglu1-mesa-dev \
-                            qtbase5-dev \
-                            qtbase5-dev-tools \
-                            libqt5opengl5-dev \
                             libgtk-3-dev \
                             libfreetype6-dev \
                             libsdl2-dev \
                             libluajit-5.1-dev \
                             libfmt-dev \
                             ninja-build
+        if [ "${{matrix.qtversion}}" = "Qt5" ]; then
+            sudo apt install -y qtbase5-dev qtbase5-dev-tools
+        else
+            sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev
+        fi
 
     - name: 'Checkout source code'
       uses: actions/checkout@v2
@@ -121,6 +132,8 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
+        UseQt6=OFF
+        [ "${{matrix.qtversion}}" = "Qt6" ] && UseQt6=ON
         cmake -B ${{github.workspace}}/build  \
               -G Ninja                        \
               -DENABLE_GLES=ON                \
@@ -130,6 +143,8 @@ jobs:
               -DENABLE_SDL=ON                 \
               -DENABLE_GTK=ON                 \
               -DUSE_GTK3=ON                   \
+              -DENABLE_QT=ON                  \
+              -DUSE_QT6=$UseQt6               \
               -DENABLE_FFMPEG=ON
 
     - name: Build
