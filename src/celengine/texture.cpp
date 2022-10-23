@@ -57,34 +57,6 @@ static void DumpTextureMipmapInfo(GLenum target)
 #define DumpTextureMipmapInfo(target) (void)target
 #endif
 
-static bool testMaxLevel()
-{
-#ifndef GL_ES
-    unsigned char texels[64];
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    // Test whether GL_TEXTURE_MAX_LEVEL is supported . . .
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 8, 8,
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 texels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
-    float maxLev = -1.0f;
-    glGetTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLev);
-    glDeleteTextures(1, &textureID);
-
-    return maxLev == 2;
-#else
-    return false;
-#endif
-}
-
-
 static const TextureCaps& GetTextureCaps()
 {
     static bool texCapsInitialized = false;
