@@ -251,6 +251,10 @@ TextureFontPrivate::buildAtlas()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+#ifndef GL_ES
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+#endif
+
     // Paste all glyph bitmaps into the texture, remembering the offset
     int ox = 0;
     int oy = 0;
