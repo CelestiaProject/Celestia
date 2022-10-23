@@ -223,6 +223,9 @@ static void SetBorderColor(Color borderColor, GLenum target)
 static void LoadMipmapSet(Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
+#ifndef GL_ES
+    glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount() - 1);
+#endif
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
@@ -410,7 +413,7 @@ ImageTexture::ImageTexture(Image& img,
     }
 
     bool genMipmaps = mipmap && !precomputedMipMaps;
-#if !defined(GL_ES)
+#ifndef GL_ES
     if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
@@ -418,13 +421,23 @@ ImageTexture::ImageTexture(Image& img,
     if (mipmap)
     {
         if (precomputedMipMaps)
+        {
             LoadMipmapSet(img, GL_TEXTURE_2D);
+        }
         else if (mipMapMode == DefaultMipMaps)
+        {
             LoadMiplessTexture(img, GL_TEXTURE_2D);
+#ifndef GL_ES
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevelCount - 1);
+#endif
+        }
     }
     else
     {
         LoadMiplessTexture(img, GL_TEXTURE_2D);
+#ifndef GL_ES
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+#endif
     }
     if (genMipmaps && FramebufferObject::isSupported())
         glGenerateMipmap(GL_TEXTURE_2D);
