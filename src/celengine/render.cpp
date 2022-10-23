@@ -1651,6 +1651,12 @@ void renderLargePoint(Renderer &renderer,
                       float size,
                       const Matrices &mvp)
 {
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
+    ps.depthTest = true;
+    renderer.setPipelineState(ps);
+
     auto *prog = renderer.getShaderManager().getShader("largestar");
     if (prog == nullptr)
         return;
@@ -1787,12 +1793,6 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 
         if (glareSize != 0.0f)
             glareSize = std::max(glareSize, pointSize * discSizeInPixels / scale * 3.0f);
-
-        Renderer::PipelineState ps;
-        ps.blending = true;
-        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-        ps.depthTest = true;
-        setPipelineState(ps);
 
         if (starStyle != PointStars)
             gaussianDiscTex->bind();
@@ -4348,6 +4348,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     else
         starRenderer.starVertexBuffer->startSprites();
 
+    Renderer::PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
+    setPipelineState(ps);
+
 #ifdef OCTREE_DEBUG
     m_starProcStats.nodes = 0;
     m_starProcStats.height = 0;
@@ -4365,13 +4370,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             nullptr);
 #endif
 
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-    setPipelineState(ps);
-
-    starRenderer.starVertexBuffer->render();
-    starRenderer.glareVertexBuffer->render();
     starRenderer.starVertexBuffer->finish();
     starRenderer.glareVertexBuffer->finish();
     PointStarVertexBuffer::disable();
@@ -5914,6 +5912,12 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
             i--;
         }
+
+        Renderer::PipelineState ps;
+        ps.blending = true;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
+        ps.depthTest = true;
+        setPipelineState(ps);
 
         PointStarVertexBuffer::enable();
         glareVertexBuffer->startSprites();
