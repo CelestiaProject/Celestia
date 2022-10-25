@@ -15,6 +15,7 @@ env:
 
 jobs:
   build-windows:
+    name: "windows-${{matrix.platform}} with ${{matrix.qtversion}}"
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -89,19 +90,40 @@ jobs:
         name: celestia-${{matrix.platform}}
         path: ${{github.workspace}}/build/src/*/*.7z
 
-  build-gnu-linux:
+  build-posix:
+    name: "${{matrix.config.os}} with ${{matrix.qtversion}}"
     strategy:
       fail-fast: false
       matrix:
-        platform: [ ubuntu-18.04, ubuntu-22.04 ]
+        config:
+        - os: ubuntu-18.04
+          avif: OFF     # Not supported on Ubuntu18.04
+          gles: ON
+          glut: ON
+          gtk3: ON
+          minaudio: OFF # Requires newer g++
+        - os: ubuntu-22.04
+          avif: ON
+          gles: ON
+          glut: ON
+          gtk3: ON
+          minaudio: ON
+        - os: macos-latest
+          avif: ON
+          gles: OFF     # Native macOS applications can't access GLES APIs
+          glut: ON
+          gtk3: OFF     # macOS is not a primary target for GTK frontend
+          minaudio: ON
         qtversion: [ Qt5, Qt6 ]
         exclude:
-          - platform: ubuntu-18.04
-            qtversion: Qt6
+        - config:
+            os: ubuntu-18.04
+          qtversion: Qt6
 
-    runs-on: ${{matrix.platform}}
+    runs-on: ${{matrix.config.os}}
     steps:
     - name: 'Install dependencies'
+      if: matrix.config.os != 'macos-latest'
       run: |
         sudo apt update
         sudo apt install -y libeigen3-dev \
@@ -118,11 +140,41 @@ jobs:
                             libsdl2-dev \
                             libluajit-5.1-dev \
                             libfmt-dev \
+                            freeglut3-dev \
                             ninja-build
         if [ "${{matrix.qtversion}}" = "Qt5" ]; then
             sudo apt install -y qtbase5-dev qtbase5-dev-tools
         else
             sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev
+        fi
+        if [ "${{matrix.config.avif}}" = "ON" ]; then
+            sudo apt install -y libavif-dev
+        fi
+
+    - name: 'Install dependencies'
+      if: matrix.config.os == 'macos-latest'
+      run: |
+        brew install pkg-config \
+                     ninja \
+                     eigen \
+                     ffmpeg \
+                     gtk+ \
+                     gtkglext \
+                     cspice \
+                     fmt \
+                     jpeg \
+                     gettext \
+                     libpng \
+                     lua \
+                     freetype \
+                     libepoxy \
+                     sdl2 \
+                     freeglut \
+                     libavif
+        if [ "${{matrix.qtversion}}" = "Qt5" ]; then
+            brew install qt5
+        else
+            brew install qt6
         fi
 
     - name: 'Checkout source code'
@@ -132,20 +184,22 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
-        UseQt6=OFF
         [ "${{matrix.qtversion}}" = "Qt6" ] && UseQt6=ON
-        cmake -B ${{github.workspace}}/build  \
-              -G Ninja                        \
-              -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=ON               \
-              -DENABLE_TOOLS=OFF              \
-              -DENABLE_TESTS=ON               \
-              -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
-              -DENABLE_QT=ON                  \
-              -DUSE_QT6=$UseQt6               \
-              -DENABLE_FFMPEG=ON
+        cmake -B ${{github.workspace}}/build            \
+              -G Ninja                                  \
+              -DENABLE_GLES=${{matrix.config.gles}}     \
+              -DENABLE_SPICE=ON                         \
+              -DENABLE_TOOLS=OFF                        \
+              -DENABLE_TESTS=ON                         \
+              -DENABLE_SDL=ON                           \
+              -DENABLE_GLUT=${{matrix.config.glut}}     \
+              -DENABLE_GTK=ON                           \
+              -DUSE_GTK3=${{matrix.config.gtk3}}        \
+              -DENABLE_QT=ON                            \
+              -DUSE_QT6=${UseQt6:OFF}                   \
+              -DENABLE_FFMPEG=ON                        \
+              -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
+              -DENABLE_MINIAUDIO=${{matrix.config.minaudio}}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -204,7 +258,6 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest
-
 
   sonarscanner:
     runs-on: sonarscanner
