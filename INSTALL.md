@@ -336,7 +336,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_GLUT          | bool | OFF     | Build simple Glut frontend
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
 | ENABLE_QT            | bool | ON      | Build Qt frontend
-| ENABLE_SDL           | bool | OFF     | Build SQL frontend
+| ENABLE_SDL           | bool | OFF     | Build SDL frontend
 | ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
 | ENABLE_FFMPEG        | bool | OFF     | Support video capture using ffmpeg
 | ENABLE_LIBAVIF       | bool | OFF     | Support AVIF texture using libavif
@@ -374,7 +374,7 @@ Please note that not all options are compatible:
 Executable files
 ----------------
 
-As said prevously Celestia provides several user interfaces, accordingly with
+As said previously Celestia provides several user interfaces, accordingly with
 interfaces it's built with it has different executable files installed to
 ${CMAKE_INSTALL_PREFIX}/bin (e.g. with default CMAKE_INSTALL_PREFIX on
 Unix-like systems they are installed into `/usr/local/bin`).
