@@ -371,6 +371,23 @@ Please note that not all options are compatible:
 - `ENABLE_GLES` is not compatible with `ENABLE_GLUT` and with `ENABLE_QT` if
   your `glut` or Qt5 installation don't support OpenGL ES.
 
+## Installing the content
+
+See that the above build instructions are *not* enough to get a running
+Celestia installation, as they are only for the binaries.
+The content -- which is kept in a separate git repository at
+https://github.com/CelestiaProject/CelestiaContent -- also needs to be
+installed:
+
+```
+git clone https://github.com/CelestiaProject/CelestiaContent.git
+cd CelestiaContent
+mkdir build
+cmake ..
+make
+sudo make install
+```
+
 Executable files
 ----------------
 
