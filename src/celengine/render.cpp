@@ -1794,6 +1794,12 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (glareSize != 0.0f)
             glareSize = std::max(glareSize, pointSize * discSizeInPixels / scale * 3.0f);
 
+        Renderer::PipelineState ps;
+        ps.blending = true;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
+        ps.depthTest = true;
+        setPipelineState(ps);
+
         if (starStyle != PointStars)
             gaussianDiscTex->bind();
 
