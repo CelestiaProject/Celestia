@@ -3630,6 +3630,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     ps.blending = true;
     ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     ps.smoothLines = true;
+    setPipelineState(ps);
 
     m_boundariesRenderer->render(Color(BoundaryColor, opacity), mvp);
 }
