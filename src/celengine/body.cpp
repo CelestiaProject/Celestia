@@ -1013,6 +1013,8 @@ void Body::computeLocations()
     {
         Vector3f v = location->getPosition();
         float alt = v.norm() - radius;
+        if (alt > 0.1f * radius) // assume we don't have locations with height > 0.1*radius
+            continue;
         if (alt != -radius)
             v.normalize();
         v *= (float) boundingRadius;
