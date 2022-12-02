@@ -16,7 +16,6 @@ build*/
 src/celestia/win32/res/resource_strings.cpp
 src/celestia/qt/rc.cpp
 locale/*/LC_MESSAGES/
-data/
 extras/
 extras-standard/
 models/

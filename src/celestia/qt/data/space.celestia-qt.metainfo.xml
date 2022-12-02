@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2022 Mattia Verga <mattia.verga@proton.me> -->
+<component type="desktop-application">
+    <id>space.celestia-qt</id>
+    <metadata_license>MIT</metadata_license>
+    <project_license>GPL-2.0+</project_license>
+    <name>Celestia (QT)</name>
+    <summary>Explore the universe</summary>
+    <description>
+    <p>
+      Celestia provides photo-realistic, real-time, three-dimensional viewing of
+      the Solar System, the Galaxy and the Universe.
+    </p>
+    <p>
+      It is an easy to use, freely-distributed, multi-platform, open source,
+      software package which has become a valuable tool for astronomy education.
+      Used in homes, schools, museums and planetariums around the world, it also
+      is used as a visualization tool by space mission designers.
+    </p>
+  </description>
+  <launchable type="desktop-id">celestia-qt.desktop</launchable>
+  <url type="homepage">https://celestia.space</url>
+  <screenshots>
+    <screenshot type="default">https://celestia.space/images/gallery/cassini.jpg</screenshot>
+    <screenshot>https://celestia.space/images/gallery/earth.jpg</screenshot>
+    <screenshot>https://celestia.space/images/gallery/europa.jpg</screenshot>
+    <screenshot>https://celestia.space/images/gallery/proxima.png</screenshot>
+  </screenshots>
+</component>
