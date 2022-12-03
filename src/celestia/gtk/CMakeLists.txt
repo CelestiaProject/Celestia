@@ -100,3 +100,15 @@ endif()
 install(TARGETS celestia-gtk RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 add_subdirectory(data)
+
+if((NOT WIN32) AND (NOT NATIVE_OSX_APP))
+  install(FILES ${CMAKE_SOURCE_DIR}/src/celestia/gtk/data/celestia-gtk.desktop
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+  install(FILES ${CMAKE_SOURCE_DIR}/celestia-logo.png
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/pixmaps
+          RENAME celestia.png)
+  install(FILES ${CMAKE_SOURCE_DIR}/src/celestia/gtk/data/space.celestia-gtk.metainfo.xml
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+  install(FILES ${CMAKE_SOURCE_DIR}/src/celestia/gtk/data/celestia-gtk.1
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/man/man1)
+endif()
