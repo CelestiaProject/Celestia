@@ -19,8 +19,6 @@ override_dh_auto_configure:
 		-DENABLE_GTK=ON		\
 		-DENABLE_QT=ON		\
 		-DENABLE_TOOLS=ON	\
-		-DENABLE_TTF=ON		\
-		-DENABLE_DATA=OFF       \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DGIT_COMMIT="$$_git_commit"
 
@@ -28,7 +26,9 @@ override_dh_auto_configure:
 override_dh_install:
 	find debian/tmp/usr/bin/ -type f ! -name *.pl -exec chrpath --delete {} ';'
 	chrpath --delete debian/tmp/usr/lib/*/libcelestia.so.*
-	dh_install --fail-missing
+	rm debian/tmp/usr/share/celestia/COPYING
+	dh_install
+	dh_missing --fail-missing
 	mv debian/celestia-common/usr/share/celestia/celestia.cfg \
 	   debian/celestia-common/etc/celestia.cfg
 	ln -s /etc/celestia.cfg debian/celestia-common/usr/share/celestia/
