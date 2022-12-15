@@ -1,1 +1,4 @@
 usr/bin/celestia-qt
+usr/share/applications/celestia-qt.desktop
+usr/share/metainfo/space.celestia-qt.metainfo.xml
+usr/share/man/man1/celestia-qt.1

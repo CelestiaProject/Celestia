@@ -424,6 +424,10 @@ if(NATIVE_OSX_APP)
   install(FILES ${CMAKE_BINARY_DIR}/Info.plist DESTINATION .)
 endif()
 
+if((NOT WIN32) AND (NOT NATIVE_OSX_APP))
+  install(FILES celestia-logo.png DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps" RENAME celestia.png)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(po)
 add_subdirectory(fonts)

@@ -1,2 +1,5 @@
 usr/bin/celestia-gtk
 usr/share/celestia/celestiaui.xml
+usr/share/applications/celestia-gtk.desktop
+usr/share/metainfo/space.celestia-gtk.metainfo.xml
+usr/share/man/man1/celestia-gtk.1

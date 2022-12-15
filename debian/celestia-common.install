@@ -5,7 +5,8 @@ usr/share/celestia/scripts
 usr/share/celestia/shaders
 usr/share/celestia/splash
 usr/share/celestia/celestia.cfg
-usr/share/celestia/celestia-logo.png
 usr/share/celestia/controls.txt
 usr/share/celestia/*.cel
+usr/share/celestia/help
 usr/share/locale
+usr/share/pixmaps/celestia.png
