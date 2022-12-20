@@ -3315,11 +3315,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     std::cout << textdomain("celestia");
     std::cout << '\n';
 
+    std::string l10n(_("LANGUAGE"));
+    std::cout << l10n << '\n';
+  
     // Loading localized resources
-    if (_("LANGUAGE") != "LANGUAGE")
+    if (l10n.compare("LANGUAGE") != 0)
     {
         char res[255];
-        sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
+        sprintf(res, "locale\\res_%s.dll", l10n.c_str());
+        std::cout << res << '\n';
         int langID = 0;
         if (sscanf(_("WinLangID"), "%x", &langID) == 1)
             SetThreadLocale(langID);
