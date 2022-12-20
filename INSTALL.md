@@ -23,7 +23,7 @@ uid                           home:munix9 OBS Project <home:munix9@build.opensus
 ❯ sudo apt update && sudo apt install celestia
 ```
 
-### On Ubuntu 18.04/20.04 and derived systems:
+### On Ubuntu 20.04/22.04 and derived systems:
 
 ```
 curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/Release.key | sudo apt-key add -
@@ -31,18 +31,18 @@ echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubun
 sudo apt update && sudo apt install celestia
 ```
 
-Where VERSION is 18.04 or 20.04.
+Where VERSION is 20.04 or 22.04.
 
 
 ### On openSUSE Leap/Tumbleweed:
 
 ```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_${VERSION}/home:munix9:unstable.repo
+sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/${VERSION}/home:munix9:unstable.repo
 sudo zypper refresh
 sudo zypper install celestia
 ```
 
-Where VERSION is 'Leap_15.2', 'Leap_15.3' or 'Tumbleweed'.
+Where VERSION is '15.3', '15.4', '15.5' or 'openSUSE_Tumbleweed'.
 
 See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
 
@@ -50,7 +50,7 @@ See also the download package sites on OBS for [celestia](https://software.opens
 
 Try experimental portable AppImage (see https://github.com/CelestiaProject/Celestia/issues/333):
 ```
-wget https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-1.7.0-git-x86_64.AppImage
+wget -O celestia-1.7.0-git-x86_64.AppImage https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-latest-x86_64.AppImage
 chmod 755 celestia-1.7.0-git-x86_64.AppImage
 ```
 
