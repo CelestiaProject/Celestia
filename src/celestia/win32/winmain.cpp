@@ -32,6 +32,7 @@
 #include <celengine/glsupport.h>
 
 #include <celcompat/charconv.h>
+#include <celcompat/filesystem.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
 #include <celutil/gettext.h>
@@ -3306,10 +3307,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    std::cout << bindtextdomain("celestia", LOCALEDIR);
+    auto localedir = fs::current_path() / LOCALEDIR;
+    
+    std::cout << bindtextdomain("celestia", localedir);
     std::cout << '\n';
     bind_textdomain_codeset("celestia", "UTF-8");
-    std::cout << bindtextdomain("celestia-data", LOCALEDIR);
+    std::cout << bindtextdomain("celestia-data", localedir);
     std::cout << '\n';
     bind_textdomain_codeset("celestia-data", "UTF-8");
     std::cout << textdomain("celestia");
