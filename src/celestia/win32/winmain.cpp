@@ -3307,12 +3307,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    auto localedir = fs::current_path() / LOCALEDIR;
+    std::error_code ec;
+    std::string localedir = (fs::current_path(ec) / LOCALEDIR).string();
     
-    std::cout << bindtextdomain("celestia", localedir);
+    std::cout << bindtextdomain("celestia", localedir.c_str());
     std::cout << '\n';
     bind_textdomain_codeset("celestia", "UTF-8");
-    std::cout << bindtextdomain("celestia-data", localedir);
+    std::cout << bindtextdomain("celestia-data", localedir.c_str());
     std::cout << '\n';
     bind_textdomain_codeset("celestia-data", "UTF-8");
     std::cout << textdomain("celestia");
