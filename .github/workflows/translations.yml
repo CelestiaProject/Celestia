@@ -22,7 +22,7 @@ jobs:
         sudo apt install -y gettext
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: 'Validate translations'
       working-directory: ${{github.workspace}}/po

@@ -47,7 +47,7 @@ jobs:
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] %QtBasePkg% %QtCompatPkg%
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -84,7 +84,7 @@ jobs:
         7z a celestia-tools.${{matrix.platform}}.7z xyzv2bin\${{env.BUILD_TYPE}}\*.exe spice2xyzv\${{env.BUILD_TYPE}}\*.exe
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: success()
       with:
         name: celestia-${{matrix.platform}}
@@ -178,7 +178,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -229,7 +229,7 @@ jobs:
                             gcc-toolset-11-gcc-c++
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -283,7 +283,7 @@ jobs:
                             cmake
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
         # Disabling shallow clone is recommended for improving relevancy of reporting
