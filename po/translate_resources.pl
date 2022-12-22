@@ -89,28 +89,51 @@ my @res = split(/\n|\r\n/, $resource);
 my $lang_id = $lang{$lang}[0];
 my $codepade = $lang{$lang}[1];
 my $lang_name =  $lang{$lang}[2];
-Encode::from_to($v, 'UTF-8', "CP$codepade");
 
 while (my ($k, $v) = each %$strings) {
-    next if $k !~ /^(.+)\004(.+)$/;
-    my $msgctxt = $1;
-    my $msgid = $2;
+    Encode::from_to($v, 'UTF-8', "CP$codepade");
+    my $msgctxt;
+    my $msgid;
+    my $context = 0;
 
+    if ($k =~ /^(.+)\004(.+)$/) {
+        $msgctxt = $1;
+        $msgid = $2;
+        $context = 1;
+    }
     foreach my $line (@res) {
         if ($line =~ /^\s*(?:$keys)/) {
-            $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+            if ($context) {
+                $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+            } else {
+                $line =~ s/"\Q$k\E"/"$v"/g;
+            }
         }
     }
 }
 
-while (my ($k, $v) = each %$strings) {
-    next if $k =~ /^(.+)\004(.+)$/;
-    foreach my $line (@res) {
-        if ($line =~ /^\s*(?:$keys)/) {
-            $line =~ s/"\Q$k\E"/"$v"/g;
-        }
-    }
-}
+#while (my ($k, $v) = each %$strings) {
+#    next if $k !~ /^(.+)\004(.+)$/;
+#    Encode::from_to($v, 'UTF-8', "CP$codepade");
+#    my $msgctxt = $1;
+#    my $msgid = $2;
+#
+#    foreach my $line (@res) {
+#        if ($line =~ /^\s*(?:$keys)/) {
+#            $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+#        }
+#    }
+#}
+#
+#while (my ($k, $v) = each %$strings) {
+#    next if $k =~ /^(.+)\004(.+)$/;
+#    Encode::from_to($v, 'UTF-8', "CP$codepade");
+#    foreach my $line (@res) {
+#        if ($line =~ /^\s*(?:$keys)/) {
+#            $line =~ s/"\Q$k\E"/"$v"/g;
+#        }
+#    }
+#}
 
 foreach my $line (@res) {
     $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/\/\/LANGUAGE $lang_name/;
