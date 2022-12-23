@@ -43,7 +43,7 @@ jobs:
     - name: Package artifacts
       working-directory: ${{github.workspace}}/build/src/celestia
       run: |
-        7z a celestia-win.${{matrix.platform}}.7z win32\${{env.BUILD_TYPE}}\* win32\res\${{env.BUILD_TYPE}}\res_*.dll win32\res\res_*.dll
+        7z a celestia-win.${{matrix.platform}}.7z win32\${{env.BUILD_TYPE}}\* win32\res\${{env.BUILD_TYPE}}\res_*.dll win32\res\res_*.dll win32\res\${{env.BUILD_TYPE}}\*.rc win32\res\*.rc
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
