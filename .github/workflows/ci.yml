@@ -29,6 +29,14 @@ jobs:
       with:
         submodules: false
 
+    - name: debug crap
+      shell: cmd
+      run: |
+        cd c:/
+        dir /s /b vcvarsall.bat
+        dir /s /b link.exe
+        dir /s /b rc.exe
+
     - name: Translate UI
       shell: cmd
       run: |
