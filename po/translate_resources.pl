@@ -93,9 +93,8 @@ foreach my $po (@po_files) {
         open OUT, "> $res_dir/celestia_$lang.rc";
         print OUT $res;
         close OUT;
-        system qq{rc /?};
-        system qq{echo rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir/celestia_$lang.res /i $c_dir $res_dir/celestia_$lang.rc};
-        system qq{echo link /nologo /noentry /dll /machine:$machine /out:$res_dir/res_$lang.dll $res_dir/celestia_$lang.res};
+        system qq{rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir/celestia_$lang.res /i $rc_dir $res_dir/celestia_$lang.rc};
+        system qq{link /nologo /noentry /dll /machine:$machine /out:$res_dir/res_$lang.dll $res_dir/celestia_$lang.res};
     }
 }
 
