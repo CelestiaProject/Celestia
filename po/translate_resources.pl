@@ -17,6 +17,10 @@ use File::Path qw(make_path);
 use Cwd qw(getcwd);
 
 my $lang = $ARGV[0];
+my $compiler = $ARGV[1];
+my $machine = $ARGV[2];
+my $rc_compiler = $ARGV[3];
+my $linker = $ARGV[4];
 
 my $po_dir = dirname $0;
 my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
@@ -143,6 +147,14 @@ foreach my $line (@res) {
 open OUT, "> celestia_$lang.rc";
 print OUT join("\r\n", @res);
 close OUT;
+
+if ($compiler eq "msvc") {
+  system qq{rc /l $lang_id /d NDEBUG /fo celestia_$lang.res /i $rc_dir celestia_$lang.rc};
+  system qq{link /nologo /noentry /dll /machine:$machine /out:res_$lang.dll celestia_$lang.res};
+} else {
+  system qq{$rc_compiler -i celestia_$lang.rc -o celestia_$lang.o -O coff -F pe-$machine -I $rc_dir -l $lang_id -D NDEBUG};
+  system qq{$linker -o res_$lang.dll --dll celestia_$lang.o};
+}
 
 sub load_po_strings {
     my $po = shift;

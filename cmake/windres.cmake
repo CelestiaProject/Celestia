@@ -13,6 +13,23 @@ macro(WINDRES_CREATE_TRANSLATIONS _rcFile _firstPoFileArg)
   # make it a real variable, so we can modify it here
   set(_firstPoFile "${_firstPoFileArg}")
 
+  set(_compiler "mingw")
+  if (MSVC)
+    set(_compiler "msvc")
+  endif()
+
+  set(_machine ${CMAKE_SYSTEM_PROCESSOR})
+  if ("${_machine}" STREQUAL "")
+    set(_machine ${TARGET_ARCH})
+  endif()
+  if ("${_machine}" STREQUAL "AMD64")
+    if (MSVC)
+      set(_machine "x64")
+    else()
+      set(_machine "x86_64")
+    endif()
+  endif()
+
   set(_addToAll)
   if(${_firstPoFile} STREQUAL "ALL")
     set(_addToAll "ALL")
@@ -26,19 +43,26 @@ macro(WINDRES_CREATE_TRANSLATIONS _rcFile _firstPoFileArg)
     set(_locRcFile ${CMAKE_CURRENT_BINARY_DIR}/celestia_${_lang}.rc)
     set(_dllFile res_${_lang})
 
-    add_custom_command(
-      OUTPUT ${_locRcFile}
-      COMMAND perl ${CMAKE_SOURCE_DIR}/po/translate_resources.pl ${_lang}
+#    add_custom_command(
+#      OUTPUT ${_locRcFile}
+#      COMMAND perl ${CMAKE_SOURCE_DIR}/po/translate_resources.pl ${_lang}
+#      DEPENDS ${_absFile}
+#    )
+
+    add_custom_target(
+      ${_dllFile} ALL
+      COMMAND perl ${CMAKE_SOURCE_DIR}/po/translate_resources.pl ${_lang} ${_compiler} ${_machine} ${CMAKE_RC_COMPILER} ${CMAKE_LINKER}
       DEPENDS ${_absFile}
     )
 
-    add_library(${_dllFile} MODULE ${_locRcFile})
-    set_target_properties(${_dllFile} PROPERTIES PREFIX "" LINKER_LANGUAGE C)
-    if(MSVC)
-      set_target_properties(${_dllFile} PROPERTIES LINK_FLAGS "/MANIFEST:NO /NODEFAULTLIB /NOENTRY")
-    endif()
+#    add_library(${_dllFile} MODULE ${_locRcFile})
+#    set_target_properties(${_dllFile} PROPERTIES PREFIX "" LINKER_LANGUAGE C)
+#    if(MSVC)
+#      set_target_properties(${_dllFile} PROPERTIES LINK_FLAGS "/MANIFEST:NO /NODEFAULTLIB /NOENTRY")
+#    endif()
 
-    install(TARGETS ${_dllFile} LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR})
+#    install(TARGETS ${_dllFile} LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES "${_dllFile}.dll" DESTINATION ${CMAKE_INSTALL_BINDIR})
     set(_dllFiles ${_dllFiles} ${_dllFile})
   endforeach()
 

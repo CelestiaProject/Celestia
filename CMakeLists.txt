@@ -407,6 +407,9 @@ endif()
 include(TestBigEndian)
 test_big_endian(WORDS_BIGENDIAN)
 
+include(TestArch)
+target_architecture(TARGET_ARCH)
+
 configure_file("config.h.in" "config.h")
 
 set(BASE_DATA_SOURCES
