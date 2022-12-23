@@ -76,6 +76,8 @@ zh_CN => [ '804', 936 ],
 zh_TW => [ '404', 950 ],
 );
 
+make_path($res_dir) if ! -d $res_dir;
+
 foreach my $po (@po_files) {
     my $strings = load_po_strings("$po_dir/$po");
     my $res = $resource;
