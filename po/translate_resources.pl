@@ -149,10 +149,8 @@ print OUT join("\r\n", @res);
 close OUT;
 
 if ($compiler eq "msvc") {
-  system qq{echo $build_dir};
   system qq{rc /l $lang_id /d NDEBUG /fo celestia_$lang.res /i $rc_dir celestia_$lang.rc};
   system qq{link /nologo /noentry /dll /machine:$machine /out:res_$lang.dll celestia_$lang.res};
-  system qq{dir};
 } else {
   system qq{$rc_compiler -i celestia_$lang.rc -o celestia_$lang.o -O coff -F pe-$machine -I $rc_dir -l $lang_id -D NDEBUG};
   system qq{$linker -o res_$lang.dll --dll celestia_$lang.o};
