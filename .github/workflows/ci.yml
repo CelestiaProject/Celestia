@@ -66,6 +66,8 @@ jobs:
     - name: Translate UI
       run: |
           md ${{github.workspace}}/build
+          md ${{github.workspace}}/build/src
+          md ${{github.workspace}}/build/src/celestia
           perl translate_resources.pl ${{matrix.platform}}
       working-directory: ${{github.workspace}}/po
 
