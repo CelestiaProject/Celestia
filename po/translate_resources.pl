@@ -92,13 +92,13 @@ foreach my $po (@po_files) {
     if ($lang{$lang}) {
         $res=~ s/\Q#pragma code_page(1252)\E/#pragma code_page($lang{$lang}[1])/;
         $res=~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang{$lang}[0], $lang{$lang}[1]/;
-        open OUT, "> $res_dir/celestia_$lang.rc";
+        open OUT, "> celestia_$lang.rc";
         print OUT $res;
         close OUT;
-        system qq{echo rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir\\celestia_$lang.res /i $rc_dir $res_dir\\celestia_$lang.rc};
+        system qq{echo rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir\\celestia_$lang.res /i $rc_dir celestia_$lang.rc};
         system qq{echo link /nologo /noentry /dll /machine:$machine /out:$res_dir\\res_$lang.dll $res_dir\\celestia_$lang.res};
 
-        system qq{rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir\\celestia_$lang.res /i $rc_dir $res_dir\\celestia_$lang.rc};
+        system qq{rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir\\celestia_$lang.res /i $rc_dir celestia_$lang.rc};
         system qq{link /nologo /noentry /dll /machine:$machine /out:$res_dir\\res_$lang.dll $res_dir\\celestia_$lang.res};
     }
 }
