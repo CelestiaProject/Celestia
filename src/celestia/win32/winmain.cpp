@@ -18,6 +18,7 @@
 #include <cctype>
 #include <cstring>
 #include <cassert>
+#include <clocale>
 #include <tuple>
 #include <process.h>
 #include <time.h>
@@ -32,6 +33,7 @@
 #include <celengine/glsupport.h>
 
 #include <celcompat/charconv.h>
+#include <celcompat/filesystem.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
 #include <celutil/gettext.h>
@@ -63,9 +65,6 @@
 
 #include "res/resource.h"
 #include "wglext.h"
-
-#include <locale.h>
-#include <fmt/printf.h>
 
 #ifdef USE_FFMPEG
 #include "celestia/ffmpegcapture.h"
@@ -3306,21 +3305,31 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    bindtextdomain("celestia", "locale");
+    std::error_code ec;
+    std::string localedir = (fs::current_path(ec) / LOCALEDIR).string();
+
+    bindtextdomain("celestia", localedir.c_str());
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia-data", "locale");
+    bindtextdomain("celestia-data", localedir.c_str());
     bind_textdomain_codeset("celestia-data", "UTF-8");
     textdomain("celestia");
 
+    const char *msgid = N_("LANGUAGE");
+    const char *lang = _(msgid);
+
     // Loading localized resources
-    char res[255];
-    sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
-    int langID = 0;
-    if (sscanf(_("WinLangID"), "%x", &langID) == 1)
-        SetThreadLocale(langID);
-    if ((hRes = LoadLibrary(res)) == NULL) {
-        cout << "Couldn't load localized resources: "<< res<< "\n";
-        hRes = hInstance;
+    if (msgid != lang) // gettext(s) returns either pointer to the translation or `s`
+    {
+        char res[255];
+        sprintf(res, "locale\\res_%s.dll", lang);
+        int langID = 0;
+        if (sscanf(_("WinLangID"), "%x", &langID) == 1)
+            SetThreadLocale(langID);
+        if ((hRes = LoadLibrary(res)) == NULL)
+        {
+            cout << "Couldn't load localized resources: "<< res << "\n";
+            hRes = hInstance;
+        }
     }
 #endif
 

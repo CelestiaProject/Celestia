@@ -13,15 +13,11 @@
 
 use Encode;
 use File::Basename;
-use File::Path qw(make_path);
-use Cwd qw(getcwd);
 
 my $lang = $ARGV[0];
 
 my $po_dir = dirname $0;
 my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
-my $rc_dir = dirname $resource_file;
-my $build_dir = getcwd;
 
 open RES, "< $resource_file";
 my $resource;
@@ -54,7 +50,7 @@ nl => [ '413', 1252, 'LANG_DUTCH, SUBLANG_DEFAULT'],
 nn => [ '814', 1252, 'LANG_NORWEGIAN, SUBLANG_NORWEGIAN_NYNORSK'],
 pl => [ '415', 1250, 'LANG_POLISH, SUBLANG_DEFAULT'],
 pt_BR => [ '416', 1252, 'LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN'],
-pt => [ '816', 1252, 'LANG_PORTUGUESE, SUBLANG_PORTUGUESE_PORTUGAL'],
+pt => [ '816', 1252, 'LANG_PORTUGUESE, SUBLANG_PORTUGUESE'],
 ro => [ '418', 1250, 'LANG_ROMANIAN, SUBLANG_DEFAULT'],
 ru => [ '419', 1251, 'LANG_RUSSIAN, SUBLANG_DEFAULT'],
 sk => [ '41b', 1250, 'LANG_SLOVAK, SUBLANG_DEFAULT'],
@@ -89,31 +85,31 @@ my @res = split(/\n|\r\n/, $resource);
 my $lang_id = $lang{$lang}[0];
 my $codepade = $lang{$lang}[1];
 my $lang_name =  $lang{$lang}[2];
-Encode::from_to($v, 'UTF-8', "CP$codepade");
 
 while (my ($k, $v) = each %$strings) {
-    next if $k !~ /^(.+)\004(.+)$/;
-    my $msgctxt = $1;
-    my $msgid = $2;
+    Encode::from_to($v, 'UTF-8', "CP$codepade");
+    my $msgctxt;
+    my $msgid;
+    my $context = 0;
 
-    foreach my $line (@res) {
-        if ($line =~ /^\s*(?:$keys)/) {
-            $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
-        }
+    if ($k =~ /^(.+)\004(.+)$/) {
+        $msgctxt = $1;
+        $msgid = $2;
+        $context = 1;
     }
-}
-
-while (my ($k, $v) = each %$strings) {
-    next if $k =~ /^(.+)\004(.+)$/;
     foreach my $line (@res) {
         if ($line =~ /^\s*(?:$keys)/) {
-            $line =~ s/"\Q$k\E"/"$v"/g;
+            if ($context) {
+                $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+            } else {
+                $line =~ s/"\Q$k\E"/"$v"/g;
+            }
         }
     }
 }
 
 foreach my $line (@res) {
-    $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/\/\/LANGUAGE $lang_name/;
+    $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/LANGUAGE $lang_name/;
     $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
     $line =~ s/VALUE "Translation", 0x0?409, (?:1252|0x04B0)/VALUE "Translation", 0x$lang_id, $codepade/;
 }
