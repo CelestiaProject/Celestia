@@ -51,4 +51,4 @@ target_link_libraries(celestia-win celestia ${OPENGL_LIBRARIES})
 target_include_directories(celestia-win PRIVATE ${OPENGL_INCLUDE_DIRS})
 install(TARGETS celestia-win RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-add_subdirectory(res)
+#add_subdirectory(res)
