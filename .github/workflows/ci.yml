@@ -37,7 +37,7 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{matrix.platform}}
-        perl translate_resources.pl ${{matrix.platform}}
+        perl translate_resources.pl be ${{matrix.platform}}
       working-directory: ${{github.workspace}}\po
 
     - name: Package artifacts
