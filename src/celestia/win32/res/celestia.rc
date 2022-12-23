@@ -7,6 +7,8 @@
 #include <richedit.h>
 #include "resource.h"
 
+#pragma code_page(1252)
+
 #ifndef IDC_STATIC
 #define IDC_STATIC -1
 #endif
