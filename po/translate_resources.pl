@@ -138,7 +138,7 @@ while (my ($k, $v) = each %$strings) {
 #}
 
 foreach my $line (@res) {
-    $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/\/\/LANGUAGE $lang_name/;
+    $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/LANGUAGE $lang_name/;
     $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
     $line =~ s/VALUE "Translation", 0x0?409, (?:1252|0x04B0)/VALUE "Translation", 0x$lang_id, $codepade/;
 }
