@@ -29,22 +29,20 @@ jobs:
       with:
         submodules: false
 
-    - name: debug crap
-      run: |
-        Get-Childitem –Path C:\ -Include vcvarsall.bat,link.exe,rc.exe -Recurse -ErrorAction SilentlyContinue
+#    - name: debug crap
+#      run: |
+#        Get-Childitem –Path C:\ -Include vcvarsall.bat,link.exe,rc.exe -Recurse -ErrorAction SilentlyContinue
 
     - name: Translate UI
       shell: cmd
       run: |
-        dir 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise'
-        dir 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
-        call 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat' ${{matrix.platform}}
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{matrix.platform}}
         md ${{github.workspace}}\build
         md ${{github.workspace}}\build\src
         md ${{github.workspace}}\build\src\celestia
         md ${{github.workspace}}\build\src\celestia\win32
         perl translate_resources.pl ${{matrix.platform}}
-      working-directory: ${{github.workspace}}/po
+      working-directory: ${{github.workspace}}\po
 
     - name: Package artifacts
       working-directory: ${{github.workspace}}/build/src/celestia
