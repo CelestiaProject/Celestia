@@ -31,7 +31,7 @@ jobs:
 
     - name: debug crap
       run: |
-        Get-Childitem –Path C:\ -Include vcvarsall.bat,link.exe,rc.exe
+        Get-Childitem –Path C:\ -Include vcvarsall.bat,link.exe,rc.exe -Recurse
 
     - name: Translate UI
       shell: cmd
