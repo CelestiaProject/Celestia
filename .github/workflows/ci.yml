@@ -43,7 +43,7 @@ jobs:
     - name: Package artifacts
       working-directory: ${{github.workspace}}\po
       run: |
-        7z a celestia-win.${{matrix.platform}}.7z *.rc
+        7z a celestia-win.${{matrix.platform}}.7z *.rc *.dll
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
