@@ -32,17 +32,16 @@ jobs:
     - name: Translate UI
       shell: cmd
       run: |
-        call C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat ${{matrix.platform}}
-        md ${{github.workspace}}/build
-        md ${{github.workspace}}/build/src
-        md ${{github.workspace}}/build/src/celestia
-        md ${{github.workspace}}/build/src/celestia/win32
+        call 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat' ${{matrix.platform}}
+        md ${{github.workspace}}\build
+        md ${{github.workspace}}\build\src
+        md ${{github.workspace}}\build\src\celestia
+        md ${{github.workspace}}\build\src\celestia\win32
         perl translate_resources.pl ${{matrix.platform}}
       working-directory: ${{github.workspace}}/po
 
     - name: Package artifacts
       working-directory: ${{github.workspace}}/build/src/celestia
-      shell: cmd
       run: |
         7z a celestia-win.${{matrix.platform}}.7z win32\${{env.BUILD_TYPE}}\* win32\res\${{env.BUILD_TYPE}}\res_*.dll win32\res\res_*.dll
 
