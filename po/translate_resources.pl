@@ -19,6 +19,7 @@
 use Encode;
 use File::Basename;
 use File::Path qw(make_path);
+use Cwd qw(getcwd);
 
 my $platform = $#ARGV == -1 ? 'win32' : $ARGV[0];
 my $machine = $platform == 'win32' ? 'X86' : $platform;
