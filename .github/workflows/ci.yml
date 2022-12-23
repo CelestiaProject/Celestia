@@ -32,6 +32,8 @@ jobs:
     - name: Translate UI
       shell: cmd
       run: |
+        dir 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise'
+        dir 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
         call 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat' ${{matrix.platform}}
         md ${{github.workspace}}\build
         md ${{github.workspace}}\build\src
