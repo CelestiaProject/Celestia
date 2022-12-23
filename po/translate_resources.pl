@@ -27,8 +27,8 @@ my $machine = $platform == 'win32' ? 'X86' : $platform;
 my $po_dir = dirname $0;
 my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
 my $rc_dir = "$po_dir/../src/celestia/win32/res";
-my $build_dir = getcwd;
-my $res_dir = "$build_dir/src/celestia/win32/res";
+#my $build_dir = getcwd;
+my $res_dir = "$po_dir/../build/src/celestia/win32/res";
 
 opendir(DIR, $po_dir);
 my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
