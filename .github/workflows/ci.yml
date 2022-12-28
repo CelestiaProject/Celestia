@@ -73,22 +73,28 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
-    - name: Package artifacts
+    - name: Run winqtdeploy
       working-directory: ${{github.workspace}}/build/src/celestia
+      if: matrix.qtversion == 'Qt5'
       run: |
-        7z a celestia-dep.${{matrix.platform}}.7z ${{env.BUILD_TYPE}}\*
-        7z a celestia-win.${{matrix.platform}}.7z win32\${{env.BUILD_TYPE}}\* win32\res\${{env.BUILD_TYPE}}\res_*.dll
         c:\vcpkg\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
-        7z a celestia-qt.${{matrix.platform}}.7z qt\${{env.BUILD_TYPE}}\*
-        cd ..\tools
-        7z a celestia-tools.${{matrix.platform}}.7z xyzv2bin\${{env.BUILD_TYPE}}\*.exe spice2xyzv\${{env.BUILD_TYPE}}\*.exe
+
+    - name: Run winqtdeploy
+      working-directory: ${{github.workspace}}/build/src/celestia
+      if: matrix.qtversion == 'Qt6'
+      run: |
+        C:/vcpkg/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe qt\${{env.BUILD_TYPE}}\celestia-qt.exe
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       if: success()
       with:
-        name: celestia-${{matrix.platform}}
-        path: ${{github.workspace}}/build/src/*/*.7z
+        name: celestia-${{matrix.platform}}-${{matrix.qtversion}}
+        path: |
+          ${{github.workspace}}/build/src/**/*.exe
+          ${{github.workspace}}/build/src/**/*.dll
+          ${{github.workspace}}/build/po/**/*.gmo
+          ${{github.workspace}}/build/tools/**/*.exe
 
   build-posix:
     name: "${{matrix.config.os}} with ${{matrix.qtversion}}"
