@@ -2453,7 +2453,7 @@ msgid "&Follow"
 msgstr "&Ісьці ўсьлед"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "&Сынхранізаваць арбіту"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164

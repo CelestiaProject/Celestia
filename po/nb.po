@@ -2568,7 +2568,7 @@ msgid "&Follow"
 msgstr "&Følg"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "S&ynk bane"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164

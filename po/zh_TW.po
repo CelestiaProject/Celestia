@@ -2606,7 +2606,7 @@ msgid "&Follow"
 msgstr "跟隨(&F)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "同步軌跡(&Y)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164

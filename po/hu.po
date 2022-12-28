@@ -2610,7 +2610,7 @@ msgid "&Follow"
 msgstr "Követ "
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "Pálya szinkr."
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164

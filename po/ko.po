@@ -2609,7 +2609,7 @@ msgid "&Follow"
 msgstr "추적(&F)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "자전 동기(&Y)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164

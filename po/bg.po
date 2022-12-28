@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2021
 # Georgi Georgiev (Жоро) <g.georgiev.shumen@gmail.com>, 2022
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -2458,7 +2458,7 @@ msgid "&Follow"
 msgstr "Следвай"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:153
-msgid "S&ynch Orbit"
+msgid "S&ync Orbit"
 msgstr "Синхронизирай с орбитата"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:164
