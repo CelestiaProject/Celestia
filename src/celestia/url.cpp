@@ -9,8 +9,10 @@
 // of the License, or (at your option) any later version.
 
 #include <fmt/format.h>
+
 #include <celcompat/charconv.h>
 #include <celutil/bigfix.h>
+#include <celengine/body.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>

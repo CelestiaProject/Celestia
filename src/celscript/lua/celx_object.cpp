@@ -10,10 +10,9 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include "celx.h"
-#include "celx_internal.h"
-#include "celx_object.h"
-#include "celx_category.h"
+#include <iostream>
+
+#include <celengine/atmosphere.h>
 #include <celengine/body.h>
 #include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
@@ -23,6 +22,11 @@
 #include <celestia/celestiacore.h>
 #include <celscript/common/scriptmaps.h>
 #include <celutil/logger.h>
+#include <celutil/stringutils.h>
+#include "celx.h"
+#include "celx_internal.h"
+#include "celx_object.h"
+#include "celx_category.h"
 
 using namespace Eigen;
 using namespace std;
@@ -1558,7 +1562,7 @@ void ExtendObjectMetaTable(lua_State* l)
     celx.pushClassName(Celx_Object);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << CelxLua::ClassNames[Celx_Object] << " not found!\n";
+        std::cout << "Metatable for " << CelxLua::ClassNames[Celx_Object] << " not found!\n";
     celx.registerMethod("setatmosphere", object_setatmosphere);
     celx.registerMethod("getcategories", object_getcategories);
     celx.registerMethod("addtocategory", object_addtocategory);

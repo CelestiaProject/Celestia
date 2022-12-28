@@ -10,36 +10,21 @@
 //
 //
 
-#include <cmath>
-#include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <cmath>
 
-#include <fmt/printf.h>
-
-#include <celmath/mathlib.h>
-#include <celutil/logger.h>
 #include <celutil/gettext.h>
-#include <celutil/bytes.h>
-#include <celutil/utf8.h>
+#include <celutil/logger.h>
 #include <celutil/tokenizer.h>
-#include "astro.h"
+#include "galaxy.h"
+#include "globular.h"
 #include "parser.h"
-#include "parseobject.h"
-#include "multitexture.h"
-#include "meshmanager.h"
+#include "dsodb.h"
+#include "dsoname.h"
+#include "nebula.h"
+#include "opencluster.h"
+#include "value.h"
 
-#include <celengine/dsodb.h>
-#include <celengine/galaxy.h>
-#include <celengine/globular.h>
-#include <celengine/opencluster.h>
-#include <celengine/nebula.h>
-
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-
-using namespace Eigen;
-using namespace std;
 using celestia::util::GetLogger;
 
 constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
@@ -47,19 +32,6 @@ constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
                                                       // (useful as a complement of binary loaded DSOs)
 
 //constexpr char FILE_HEADER[]                 = "CEL_DSOs";
-
-// Used to sort DSO pointers by catalog number
-struct PtrCatalogNumberOrderingPredicate
-{
-    int unused;
-
-    PtrCatalogNumberOrderingPredicate() = default;
-
-    bool operator()(const DeepSkyObject* const & dso0, const DeepSkyObject* const & dso1) const
-    {
-        return (dso0->getIndex() < dso1->getIndex());
-    }
-};
 
 
 DSODatabase::~DSODatabase()
@@ -71,13 +43,10 @@ DSODatabase::~DSODatabase()
 
 DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
 {
-    Galaxy refDSO;  //terrible hack !!
-    refDSO.setIndex(catalogNumber);
-
-    DeepSkyObject** dso   = lower_bound(catalogNumberIndex,
-                                        catalogNumberIndex + nDSOs,
-                                        &refDSO,
-                                        PtrCatalogNumberOrderingPredicate());
+    DeepSkyObject** dso = std::lower_bound(catalogNumberIndex,
+                                           catalogNumberIndex + nDSOs,
+                                           catalogNumber,
+                                           [](const DeepSkyObject* const& dso, AstroCatalog::IndexNumber catNum) { return dso->getIndex() < catNum; });
 
     if (dso != catalogNumberIndex + nDSOs && (*dso)->getIndex() == catalogNumber)
         return *dso;
@@ -86,14 +55,14 @@ DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) 
 }
 
 
-DeepSkyObject* DSODatabase::find(const string& name, bool i18n) const
+DeepSkyObject* DSODatabase::find(const std::string& name, bool i18n) const
 {
     if (name.empty())
         return nullptr;
 
     if (namesDB != nullptr)
     {
-        AstroCatalog::IndexNumber catalogNumber   = namesDB->findCatalogNumberByName(name, i18n);
+        AstroCatalog::IndexNumber catalogNumber = namesDB->findCatalogNumberByName(name, i18n);
         if (catalogNumber != AstroCatalog::InvalidIndex)
             return find(catalogNumber);
     }
@@ -102,9 +71,9 @@ DeepSkyObject* DSODatabase::find(const string& name, bool i18n) const
 }
 
 
-vector<string> DSODatabase::getCompletion(const string& name, bool i18n) const
+std::vector<std::string> DSODatabase::getCompletion(const std::string& name, bool i18n) const
 {
-    vector<string> completion;
+    std::vector<std::string> completion;
 
     // only named DSOs are supported by completion.
     if (!name.empty() && namesDB != nullptr)
@@ -114,13 +83,13 @@ vector<string> DSODatabase::getCompletion(const string& name, bool i18n) const
 }
 
 
-string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
+std::string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
     AstroCatalog::IndexNumber catalogNumber    = dso->getIndex();
 
     if (namesDB != nullptr)
     {
-        DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
+        DSONameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
             if (i18n)
@@ -137,13 +106,13 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) cons
 }
 
 
-string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsigned int maxNames) const
+std::string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsigned int maxNames) const
 {
-    string dsoNames;
+    std::string dsoNames;
 
     auto catalogNumber   = dso->getIndex();
 
-    DSONameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
+    DSONameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
@@ -160,33 +129,33 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 }
 
 
-void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
-                                  const Vector3d& obsPos,
-                                  const Quaternionf& obsOrient,
+void DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
+                                  const Eigen::Vector3d& obsPos,
+                                  const Eigen::Quaternionf& obsOrient,
                                   float fovY,
                                   float aspectRatio,
                                   float limitingMag,
                                   OctreeProcStats *stats) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Hyperplane<double, 3> frustumPlanes[5];
-    Vector3d  planeNormals[5];
+    Eigen::Hyperplane<double, 3> frustumPlanes[5];
+    Eigen::Vector3d planeNormals[5];
 
-    Quaterniond obsOrientd = obsOrient.cast<double>();
-    Matrix3d    rot    = obsOrientd.toRotationMatrix().transpose();
-    double      h      = tan(fovY / 2);
-    double      w      = h * aspectRatio;
+    Eigen::Quaterniond obsOrientd = obsOrient.cast<double>();
+    Eigen::Matrix3d rot = obsOrientd.toRotationMatrix().transpose();
+    double h = std::tan(fovY / 2);
+    double w = h * aspectRatio;
 
-    planeNormals[0] = Vector3d( 0,  1, -h);
-    planeNormals[1] = Vector3d( 0, -1, -h);
-    planeNormals[2] = Vector3d( 1,  0, -w);
-    planeNormals[3] = Vector3d(-1,  0, -w);
-    planeNormals[4] = Vector3d( 0,  0, -1);
+    planeNormals[0] = Eigen::Vector3d( 0,  1, -h);
+    planeNormals[1] = Eigen::Vector3d( 0, -1, -h);
+    planeNormals[2] = Eigen::Vector3d( 1,  0, -w);
+    planeNormals[3] = Eigen::Vector3d(-1,  0, -w);
+    planeNormals[4] = Eigen::Vector3d( 0,  0, -1);
 
     for (int i = 0; i < 5; ++i)
     {
         planeNormals[i]    = rot * planeNormals[i].normalized();
-        frustumPlanes[i]   = Hyperplane<double, 3>(planeNormals[i], obsPos);
+        frustumPlanes[i]   = Eigen::Hyperplane<double, 3>(planeNormals[i], obsPos);
     }
 
     octreeRoot->processVisibleObjects(dsoHandler,
@@ -198,9 +167,9 @@ void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
 }
 
 
-void DSODatabase::findCloseDSOs(DSOHandler&     dsoHandler,
-                                const Vector3d& obsPos,
-                                float           radius) const
+void DSODatabase::findCloseDSOs(DSOHandler& dsoHandler,
+                                const Eigen::Vector3d& obsPos,
+                                float radius) const
 {
     octreeRoot->processCloseObjects(dsoHandler,
                                     obsPos,
@@ -221,21 +190,21 @@ void DSODatabase::setNameDatabase(DSONameDatabase* _namesDB)
 }
 
 
-bool DSODatabase::load(istream& in, const fs::path& resourcePath)
+bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser    parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    string s = resourcePath.string();
+    std::string s = resourcePath.string();
     const char *d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
-        string objType;
-        string objName;
+        std::string objType;
+        std::string objName;
 
         if (tokenizer.getTokenType() != Tokenizer::TokenName)
         {
@@ -298,7 +267,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
                 // assumption here is that there will be small numbers of
                 // DSOs in text files added to a big collection loaded from
                 // a binary file.
-                capacity = (int) (capacity * 1.05);
+                capacity = static_cast<int>(capacity * 1.05);
 
                 // 100 DSOs seems like a reasonable minimum
                 if (capacity < 100)
@@ -308,7 +277,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
                 if (DSOs != nullptr)
                 {
-                    copy(DSOs, DSOs + nDSOs, newDSOs);
+                    std::copy(DSOs, DSOs + nDSOs, newDSOs);
                     delete[] DSOs;
                 }
                 DSOs = newDSOs;
@@ -327,17 +296,17 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
                 // Iterate through the string for names delimited
                 // by ':', and insert them into the DSO database.
                 // Note that db->add() will skip empty names.
-                string::size_type startPos   = 0;
-                while (startPos != string::npos)
+                std::string::size_type startPos = 0;
+                while (startPos != std::string::npos)
                 {
-                    string::size_type next    = objName.find(':', startPos);
-                    string::size_type length  = string::npos;
-                    if (next != string::npos)
+                    std::string::size_type next    = objName.find(':', startPos);
+                    std::string::size_type length  = std::string::npos;
+                    if (next != std::string::npos)
                     {
                         length = next - startPos;
                         ++next;
                     }
-                    string DSOName = objName.substr(startPos, length);
+                    std::string DSOName = objName.substr(startPos, length);
                     namesDB->add(objCatalogNumber, DSOName);
                     startPos   = next;
                 }
@@ -354,7 +323,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 }
 
 
-bool DSODatabase::loadBinary(istream&)
+bool DSODatabase::loadBinary(std::istream&)
 {
     // TODO: define a binary dso file format
     return true;
@@ -386,7 +355,7 @@ void DSODatabase::buildOctree()
     // TODO: investigate using a different center--it's possible that more
     // objects end up straddling the base level nodes when the center of the
     // octree is at the origin.
-    DynamicDSOOctree* root   = new DynamicDSOOctree(Vector3d::Zero(), absMag);
+    DynamicDSOOctree* root   = new DynamicDSOOctree(Eigen::Vector3d::Zero(), absMag);
     for (int i = 0; i < nDSOs; ++i)
     {
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
@@ -443,7 +412,9 @@ void DSODatabase::buildIndexes()
     for (int i = 0; i < nDSOs; ++i)
         catalogNumberIndex[i] = DSOs[i];
 
-    sort(catalogNumberIndex, catalogNumberIndex + nDSOs, PtrCatalogNumberOrderingPredicate());
+    std::sort(catalogNumberIndex,
+              catalogNumberIndex + nDSOs,
+              [](const DeepSkyObject* dso0, const DeepSkyObject* dso1) { return dso0->getIndex() < dso1->getIndex(); });
 }
 
 

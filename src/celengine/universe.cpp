@@ -10,20 +10,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "render.h"
-#include "astro.h"
-#include "asterism.h"
-#include "boundaries.h"
-#include "meshmanager.h"
-#include "universe.h"
-#include "timelinephase.h"
-#include "frametree.h"
+#include <cassert>
+
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
 #include <celutil/greek.h>
-#include <cassert>
+#include <celutil/utf8.h>
+#include "asterism.h"
+#include "astro.h"
+#include "body.h"
+#include "boundaries.h"
+#include "frametree.h"
+#include "location.h"
+#include "meshmanager.h"
+#include "render.h"
+#include "timelinephase.h"
+#include "universe.h"
 
 static const double ANGULAR_RES = 3.5e-6;
 

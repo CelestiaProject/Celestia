@@ -12,6 +12,7 @@
 
 #include <gtk/gtk.h>
 
+#include <celengine/body.h>
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
 

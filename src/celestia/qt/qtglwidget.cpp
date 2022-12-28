@@ -18,7 +18,8 @@
 #include <config.h>
 
 #include <cassert>
-#include <celengine/starbrowser.h>
+#include <cmath>
+#include <vector>
 
 #include <QCursor>
 #include <QPaintDevice>
@@ -30,16 +31,15 @@
 #  define G_DISABLE_ASSERT
 #endif
 
-#include "celengine/astro.h"
-#include "celutil/filetype.h"
-#include "celutil/gettext.h"
-#include "celestia/celestiacore.h"
-#include "celengine/simulation.h"
-
+#include <celengine/astro.h>
+#include <celengine/body.h>
+#include <celengine/simulation.h>
+#include <celengine/starbrowser.h>
+#include <celestia/celestiacore.h>
+#include <celutil/filetype.h>
+#include <celutil/gettext.h>
 #include "qtglwidget.h"
 
-#include <cmath>
-#include <vector>
 
 using namespace Qt;
 

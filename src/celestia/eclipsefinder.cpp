@@ -15,9 +15,10 @@
 
 #include <Eigen/Geometry>
 
+#include <celengine/body.h>
+#include <celmath/distance.h>
+#include <celmath/ray.h>
 #include "eclipsefinder.h"
-#include "celmath/ray.h"
-#include "celmath/distance.h"
 
 using namespace Eigen;
 using namespace std;

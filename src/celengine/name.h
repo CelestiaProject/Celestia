@@ -12,27 +12,26 @@
 
 #pragma once
 
-#include <string>
-#include <iostream>
+#include <cstdint>
 #include <map>
-#include <vector>
-#include <celutil/stringutils.h>
-#include <celutil/utf8.h>
+#include <string>
+
 #include <celengine/astroobj.h>
+#include <celutil/stringutils.h>
 
 // TODO: this can be "detemplatized" by creating e.g. a global-scope enum InvalidCatalogNumber since there
 // lies the one and only need for type genericity.
 class NameDatabase
 {
  public:
-    typedef std::map<std::string, AstroCatalog::IndexNumber, CompareIgnoringCasePredicate> NameIndex;
-    typedef std::multimap<AstroCatalog::IndexNumber, std::string> NumberIndex;
+    using NameIndex = std::map<std::string, AstroCatalog::IndexNumber, CompareIgnoringCasePredicate>;
+    using NumberIndex = std::multimap<AstroCatalog::IndexNumber, std::string>;
 
  public:
     NameDatabase() {};
 
 
-    uint32_t getNameCount() const;
+    std::uint32_t getNameCount() const;
 
     void add(const AstroCatalog::IndexNumber, const std::string&, bool parseGreek = true);
 

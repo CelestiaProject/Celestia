@@ -10,11 +10,11 @@
 // Load JPL's DE200, DE405, and DE406 ephemerides and compute planet
 // positions.
 
-#ifndef _CELENGINE_JPLEPH_H_
-#define _CELENGINE_JPLEPH_H_
+#pragma once
 
-#include <iostream>
+#include <iosfwd>
 #include <vector>
+
 #include <Eigen/Core>
 
 enum JPLEphemItem
@@ -91,5 +91,3 @@ private:
 
     std::vector<JPLEphRecord> records;
 };
-
-#endif // _CELENGINE_JPLEPH_H_

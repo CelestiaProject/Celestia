@@ -13,18 +13,22 @@
 #include <algorithm>
 #include <set>
 #include <cassert>
+
 #include <windows.h>
 #include <commctrl.h>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 #include <celcompat/numbers.h>
+#include <celengine/body.h>
 #include <celestia/eclipsefinder.h>
-#include "wineclipses.h"
-#include "res/resource.h"
 #include <celmath/geomutil.h>
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
+#include "res/resource.h"
+#include "wineclipses.h"
 #include "winuiutils.h"
-#include <Eigen/Core>
-#include <Eigen/Geometry>
 
 using namespace Eigen;
 using namespace std;

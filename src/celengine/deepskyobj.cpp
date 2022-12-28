@@ -8,39 +8,28 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cstdio>
-#include <config.h>
-#include <cassert>
-#include "astro.h"
-#include "deepskyobj.h"
-#include "galaxy.h"
-#include "globular.h"
-#include "nebula.h"
-#include "opencluster.h"
-#include <celengine/selection.h>
+#include <cmath>
+
 #include <celmath/intersect.h>
+#include <celmath/sphere.h>
+#include "deepskyobj.h"
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
-
-Vector3d DeepSkyObject::getPosition() const
+Eigen::Vector3d DeepSkyObject::getPosition() const
 {
     return position;
 }
 
-void DeepSkyObject::setPosition(const Vector3d& p)
+void DeepSkyObject::setPosition(const Eigen::Vector3d& p)
 {
     position = p;
 }
 
-Quaternionf DeepSkyObject::getOrientation() const
+Eigen::Quaternionf DeepSkyObject::getOrientation() const
 {
     return orientation;
 }
 
-void DeepSkyObject::setOrientation(const Quaternionf& q)
+void DeepSkyObject::setOrientation(const Eigen::Quaternionf& q)
 {
     orientation = q;
 }
@@ -60,17 +49,17 @@ void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
     absMag = _absMag;
 }
 
-string DeepSkyObject::getDescription() const
+std::string DeepSkyObject::getDescription() const
 {
     return "";
 }
 
-const string& DeepSkyObject::getInfoURL() const
+const std::string& DeepSkyObject::getInfoURL() const
 {
     return infoURL;
 }
 
-void DeepSkyObject::setInfoURL(const string& s)
+void DeepSkyObject::setInfoURL(const std::string& s)
 {
     infoURL = s;
 }
@@ -81,7 +70,10 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                          double& cosAngleToBoundCenter) const
 {
     if (isVisible())
-        return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosAngleToBoundCenter);
+        return celmath::testIntersection(ray,
+                                         celmath::Sphered(position, static_cast<double>(radius)),
+                                         distanceToPicker,
+                                         cosAngleToBoundCenter);
     else
         return false;
 }
@@ -103,8 +95,8 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
     }
 
     h /= 60;                      // sector 0 to 5
-    i = (int) floorf( h );
-    f = h - (float) i;            // factorial part of h
+    i = static_cast<int>(std::floor( h ));
+    f = h - static_cast<float>(i);            // factorial part of h
     p = v * ( 1 - s );
     q = v * ( 1 - s * f );
     t = v * ( 1 - s * ( 1 - f ) );
@@ -147,7 +139,7 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
 bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
-    Vector3d position(Vector3d::Zero());
+    Eigen::Vector3d position(Eigen::Vector3d::Zero());
     if (params->getVector("Position", position))
     {
         setPosition(position);
@@ -161,31 +153,32 @@ bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
         params->getAngle("RA", RA, DEG_PER_HRA);
         params->getAngle("Dec", dec);
 
-        Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
+        Eigen::Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
         setPosition(p);
     }
 
     // Get orientation
-    Vector3d axis(Vector3d::UnitX());
+    Eigen::Vector3d axis(Eigen::Vector3d::UnitX());
     double angle = 0.0;
     params->getVector("Axis", axis);
     params->getAngle("Angle", angle);
 
-    setOrientation(Quaternionf(AngleAxisf((float) degToRad(angle), axis.cast<float>().normalized())));
+    setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(angle)),
+                                                        axis.cast<float>().normalized())));
 
     double radius = 1.0;
     params->getLength("Radius", radius, KM_PER_LY);
 
-    setRadius((float) radius);
+    setRadius(static_cast<float>(radius));
 
     double absMag = 0.0;
     if (params->getNumber("AbsMag", absMag))
-        setAbsoluteMagnitude((float) absMag);
+        setAbsoluteMagnitude(static_cast<float>(absMag));
 
-    string infoURL; // FIXME: infourl class
+    std::string infoURL; // FIXME: infourl class
     if (params->getString("InfoURL", infoURL))
     {
-        if (infoURL.find(':') == string::npos)
+        if (infoURL.find(':') == std::string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory

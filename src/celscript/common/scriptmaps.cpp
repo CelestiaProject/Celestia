@@ -1,6 +1,7 @@
-#include "scriptmaps.h"
-#include <celestia/celestiacore.h>
+#include <celengine/body.h>
 #include <celengine/render.h>
+#include <celestia/celestiacore.h>
+#include "scriptmaps.h"
 
 using namespace std::string_view_literals;
 

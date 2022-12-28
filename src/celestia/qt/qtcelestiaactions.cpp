@@ -13,6 +13,8 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QMenu>
+
+#include <celengine/body.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include "qtcelestiaactions.h"

@@ -7,13 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_GLSHADER_H_
-#define _CELENGINE_GLSHADER_H_
+#pragma once
 
-#include <Eigen/Core>
+#include <iosfwd>
 #include <string>
 #include <vector>
-#include <iostream>
+
+#include <Eigen/Core>
+
 #include "glsupport.h"
 
 class GLShaderLoader;
@@ -188,5 +189,3 @@ class GLShaderLoader
 
 
 extern std::ostream* g_shaderLogFile;
-
-#endif // _CELENGINE_GLSHADER_H_

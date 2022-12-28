@@ -30,6 +30,7 @@
 #include <commdlg.h>
 #include <shellapi.h>
 
+#include <celengine/body.h>
 #include <celengine/glsupport.h>
 
 #include <celcompat/charconv.h>
@@ -42,6 +43,7 @@
 #include <celutil/tzutil.h>
 #include <celutil/filetype.h>
 #include <celutil/logger.h>
+#include <celutil/stringutils.h>
 #include <celengine/astro.h>
 #include <celscript/legacy/cmdparser.h>
 

@@ -13,12 +13,15 @@
 #include <sstream>
 #include <algorithm>
 #include <set>
+
 #include <windows.h>
 #include <commctrl.h>
-#include "winssbrowser.h"
-#include "celutil/winutil.h"
 
+#include <celengine/body.h>
+#include <celutil/winutil.h>
 #include "res/resource.h"
+#include "winssbrowser.h"
+
 
 using namespace std;
 

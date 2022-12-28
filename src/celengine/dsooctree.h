@@ -10,15 +10,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_DSOOCTREE_H_
-#define _CELENGINE_DSOOCTREE_H_
+#pragma once
 
 #include <celengine/deepskyobj.h>
 #include <celengine/octree.h>
 
 
-typedef DynamicOctree  <DeepSkyObject*, double> DynamicDSOOctree;
-typedef StaticOctree   <DeepSkyObject*, double> DSOOctree;
-typedef OctreeProcessor<DeepSkyObject*, double> DSOHandler;
-
-#endif  // _CELENGINE_DSOOCTREE_H_
+using DynamicDSOOctree = DynamicOctree<DeepSkyObject*, double>;
+using DSOOctree = StaticOctree<DeepSkyObject*, double>;
+using DSOHandler = OctreeProcessor<DeepSkyObject*, double>;

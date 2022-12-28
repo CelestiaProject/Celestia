@@ -10,14 +10,11 @@
 // Load JPL's DE200, DE405, and DE406 ephemerides and compute planet
 // positions.
 
-#include <fstream>
-#include <iomanip>
 #include <cassert>
+#include <istream>
+
 #include <celutil/bytes.h>
 #include "jpleph.h"
-
-using namespace Eigen;
-using namespace std;
 
 constexpr const unsigned int NConstants         =  400;
 constexpr const unsigned int ConstantNameLength =  6;
@@ -30,16 +27,16 @@ constexpr const unsigned int INPOP_DE_COMPATIBLE = 100;
 constexpr const unsigned int DE200 = 200;
 
 // Read a big-endian or little endian 32-bit unsigned integer
-static uint32_t readUint(istream& in, bool swap)
+static std::uint32_t readUint(std::istream& in, bool swap)
 {
-    uint32_t ret;
-    in.read((char*) &ret, sizeof(uint32_t));
+    std::uint32_t ret;
+    in.read((char*) &ret, sizeof(std::uint32_t));
     return swap ? bswap_32(ret) : ret;
 }
 
 // Read a big-endian or little endian 64-bit IEEE double.
 // If the native double format isn't IEEE 754, there will be troubles.
-static double readDouble(istream& in, bool swap)
+static double readDouble(std::istream& in, bool swap)
 {
     double d;
     in.read((char*) &d, sizeof(double));
@@ -82,22 +79,22 @@ bool JPLEphemeris::getByteSwap() const
 // or the Earth (in the case of the Moon) at a specified TDB Julian date tjd.
 // If tjd is outside the span covered by the ephemeris it is clamped to a
 // valid time.
-Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
+Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
 {
     // Solar system barycenter is the origin
     if (planet == JPLEph_SSB)
     {
-        return Vector3d::Zero();
+        return Eigen::Vector3d::Zero();
     }
 
     // The position of the Earth must be computed from the positions of the
     // Earth-Moon barycenter and Moon
     if (planet == JPLEph_Earth)
     {
-        Vector3d embPos = getPlanetPosition(JPLEph_EarthMoonBary, tjd);
+        Eigen::Vector3d embPos = getPlanetPosition(JPLEph_EarthMoonBary, tjd);
 
         // Get the geocentric position of the Moon
-        Vector3d moonPos = getPlanetPosition(JPLEph_Moon, tjd);
+        Eigen::Vector3d moonPos = getPlanetPosition(JPLEph_Moon, tjd);
 
         return embPos - moonPos * (1.0 / (earthMoonMassRatio + 1.0));
     }
@@ -156,15 +153,15 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
         }
     }
 
-    return Vector3d(sum[0], sum[1], sum[2]);
+    return Eigen::Vector3d(sum[0], sum[1], sum[2]);
 }
 
 #pragma pack(push, 1)
 struct JPLECoeff
 {
-    uint32_t offset;
-    uint32_t nCoeffs;
-    uint32_t nGranules;
+    std::uint32_t offset;
+    std::uint32_t nCoeffs;
+    std::uint32_t nGranules;
 };
 struct JPLEFileHeader
 {
@@ -189,7 +186,7 @@ struct JPLEFileHeader
     JPLECoeff coeffInfo[JPLEph_NItems];
 
     // DE number
-    uint32_t deNum;
+    std::uint32_t deNum;
 
     // Libration coefficient information
     JPLECoeff librationCoeffInfo;
@@ -199,15 +196,15 @@ struct JPLEFileHeader
 #define MAYBE_SWAP_DOUBLE(d) (swapBytes ? bswap_double(d) : (d))
 #define MAYBE_SWAP_UINT32(u) (swapBytes ? bswap_32(u) : (u))
 
-JPLEphemeris* JPLEphemeris::load(istream& in)
+JPLEphemeris* JPLEphemeris::load(std::istream& in)
 {
     JPLEFileHeader fh;
     in.read((char*) &fh, sizeof(fh));
     if (!in.good())
         return nullptr;
 
-    uint32_t deNum = fh.deNum;
-    uint32_t deNum2 = bswap_32(deNum);
+    std::uint32_t deNum = fh.deNum;
+    std::uint32_t deNum2 = bswap_32(deNum);
 
     bool swapBytes;
     if (deNum == INPOP_DE_COMPATIBLE)

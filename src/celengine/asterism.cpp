@@ -11,15 +11,14 @@
 #include <celutil/greek.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
-#include "stardb.h"
 #include "asterism.h"
 #include "parser.h"
+#include "star.h"
+#include "stardb.h"
 
-
-using namespace std;
 using celestia::util::GetLogger;
 
-Asterism::Asterism(string_view _name) :
+Asterism::Asterism(std::string_view _name) :
     name(_name)
 {
 #ifdef ENABLE_NLS
@@ -27,7 +26,7 @@ Asterism::Asterism(string_view _name) :
 #endif
 }
 
-string Asterism::getName(bool i18n) const
+std::string Asterism::getName(bool i18n) const
 {
 #ifdef ENABLE_NLS
     return i18n ? i18nName : name;
@@ -106,7 +105,7 @@ bool Asterism::isColorOverridden() const
 }
 
 
-AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
+AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
 {
     auto* asterisms = new AsterismList();
     Tokenizer tokenizer(&in);

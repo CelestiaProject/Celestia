@@ -12,6 +12,7 @@
 #include <cstddef>
 
 #include <celutil/color.h>
+#include "atmosphere.h"
 #include "body.h"
 #include "lightenv.h"
 #include "rendcontext.h"

@@ -8,12 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "observer.h"
-#include "simulation.h"
-#include "frametree.h"
+#include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
-#include <celmath/geomutil.h>
+#include "body.h"
+#include "frametree.h"
+#include "location.h"
+#include "observer.h"
+#include "simulation.h"
 
 static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
 static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC

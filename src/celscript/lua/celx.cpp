@@ -13,6 +13,7 @@
 #include <config.h>
 #include <cassert>
 #include <ctime>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <utility>
@@ -24,6 +25,7 @@
 #include <celengine/timelinephase.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
+#include <celutil/stringutils.h>
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
 

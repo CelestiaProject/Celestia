@@ -18,6 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
+#include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 #include <celestia/audiosession.h>
 #include "cmdparser.h"

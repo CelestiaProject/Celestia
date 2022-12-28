@@ -22,6 +22,7 @@
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celutil/color.h>
+#include "atmosphere.h"
 #include "body.h"
 #include "framebuffer.h"
 #include "geometry.h"

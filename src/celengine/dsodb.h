@@ -10,16 +10,20 @@
 //
 //
 
-#ifndef _DSODB_H_
-#define _DSODB_H_
+#pragma once
 
-#include <iostream>
+#include <cstdint>
+#include <iosfwd>
+#include <string>
 #include <vector>
-#include <celengine/dsoname.h>
-#include <celengine/deepskyobj.h>
-#include <celengine/dsooctree.h>
-#include <celengine/parser.h>
 
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+#include <celcompat/filesystem.h>
+#include <celengine/dsooctree.h>
+
+class DSONameDatabase;
 
 constexpr inline unsigned int MAX_DSO_NAMES = 10;
 
@@ -34,8 +38,8 @@ class DSODatabase
     ~DSODatabase();
 
 
-    inline DeepSkyObject* getDSO(const uint32_t) const;
-    inline uint32_t size() const;
+    inline DeepSkyObject* getDSO(const std::uint32_t) const;
+    inline std::uint32_t size() const;
 
     DeepSkyObject* find(const AstroCatalog::IndexNumber catalogNumber) const;
     DeepSkyObject* find(const std::string&, bool i18n) const;
@@ -85,15 +89,13 @@ private:
 };
 
 
-DeepSkyObject* DSODatabase::getDSO(const uint32_t n) const
+DeepSkyObject* DSODatabase::getDSO(const std::uint32_t n) const
 {
     return *(DSOs + n);
 }
 
 
-uint32_t DSODatabase::size() const
+std::uint32_t DSODatabase::size() const
 {
     return nDSOs;
 }
-
-#endif // _DSODB_H_

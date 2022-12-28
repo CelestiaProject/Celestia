@@ -9,10 +9,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fmt/format.h>
-#include "scriptobject.h"
+#include <cstddef>
 
-using namespace std;
+#include <fmt/format.h>
+
+#include <celengine/value.h>
+#include "scriptobject.h"
 
 
 // global script context for scripted orbits and rotations
@@ -44,10 +46,10 @@ GetScriptedObjectContext()
 /*! Generate a unique name for this script orbit object so that
  * we can refer to it later.
  */
-string
+std::string
 GenerateScriptObjectName()
 {
-    string buf;
+    std::string buf;
     buf = fmt::format("{}{}", ScriptedObjectNamePrefix, ScriptedObjectNameIndex);
     ScriptedObjectNameIndex++;
 
@@ -61,7 +63,7 @@ GenerateScriptObjectName()
 void
 GetLuaTableEntry(lua_State* state,
                  int tableIndex,
-                 const string& key)
+                 const std::string& key)
 {
     lua_pushvalue(state, tableIndex);
     lua_pushstring(state, key.c_str());
@@ -76,7 +78,7 @@ GetLuaTableEntry(lua_State* state,
 double
 SafeGetLuaNumber(lua_State* state,
                  int tableIndex,
-                 const string& key,
+                 const std::string& key,
                  double defaultValue)
 {
     double v = defaultValue;
@@ -99,8 +101,8 @@ SetLuaVariables(lua_State* state, Hash* parameters)
 {
     for (const auto& param : *parameters)
     {
-        size_t percentPos = param.first.find('%');
-        if (percentPos == string::npos)
+        std::size_t percentPos = param.first.find('%');
+        if (percentPos == std::string::npos)
         {
             switch (param.second->getType())
             {
