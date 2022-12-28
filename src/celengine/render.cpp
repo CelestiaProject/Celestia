@@ -16,6 +16,9 @@
 
 #include <fmt/format.h>
 
+#include "atmosphere.h"
+#include "body.h"
+#include "location.h"
 #include "render.h"
 #include "boundaries.h"
 #include "dsorenderer.h"

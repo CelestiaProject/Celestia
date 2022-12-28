@@ -9,17 +9,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SCRIPTOBJECT_H_
-#define _CELENGINE_SCRIPTOBJECT_H_
+#pragma once
 
 #ifndef LUA_VER
 #define LUA_VER 0x050100
 #endif
 
-#include "lua.hpp"
-#include <iostream>
 #include <string>
-#include <celengine/parser.h>
+
+#include <lua.hpp>
+
+#include <celengine/hash.h>
 
 
 void SetScriptedObjectContext(lua_State* l);
@@ -39,5 +39,3 @@ double SafeGetLuaNumber(lua_State* state,
                         double defaultValue);
 
 void SetLuaVariables(lua_State* state, Hash* parameters);
-
-#endif // _CELENGINE_SCRIPTOBJECT_H_

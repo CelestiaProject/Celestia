@@ -10,12 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celestia/celestiacore.h>
-#include <celutil/gettext.h>
-#include <celutil/greek.h>
-#include "qtsolarsystembrowser.h"
-#include "qtinfopanel.h"
-#include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
 #include <QItemSelection>
 #include <QTreeView>
@@ -30,6 +24,14 @@
 #ifdef TEST_MODEL
 #include <QAbstractItemModelTester>
 #endif
+
+#include <celengine/body.h>
+#include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
+#include <celutil/greek.h>
+#include "qtsolarsystembrowser.h"
+#include "qtinfopanel.h"
+#include "qtcolorswatchwidget.h"
 
 using namespace std;
 

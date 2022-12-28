@@ -10,16 +10,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <QTextBrowser>
+#include <QIODevice>
+#include <QItemSelection>
+
 #include <celcompat/numbers.h>
+#include <celengine/body.h>
+#include <celengine/universe.h>
 #include <celestia/celestiacore.h>
 #include <celengine/astro.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/greek.h>
-#include <celengine/universe.h>
-#include <QTextBrowser>
-#include <QIODevice>
-#include <QItemSelection>
 #include "qtinfopanel.h"
 
 using namespace std;

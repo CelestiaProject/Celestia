@@ -17,6 +17,7 @@
 
 #include <Eigen/Core>
 
+#include <celengine/lightenv.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/starcolors.h>
@@ -32,6 +33,7 @@ class PointStarVertexBuffer;
 class AsterismRenderer;
 class BoundariesRenderer;
 class Observer;
+class Surface;
 class TextureFont;
 class FramebufferObject;
 

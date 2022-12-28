@@ -10,10 +10,12 @@
 // of the License, or (at your option) any later version.
 
 #include <windows.h>
-#include "wingotodlg.h"
-#include "celutil/winutil.h"
 
+#include <celengine/body.h>
+#include <celutil/winutil.h>
 #include "res/resource.h"
+#include "wingotodlg.h"
+
 
 using namespace Eigen;
 using namespace std;

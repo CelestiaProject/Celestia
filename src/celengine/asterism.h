@@ -8,13 +8,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_ASTERISM_H_
-#define _CELENGINE_ASTERISM_H_
+#pragma once
 
+#include <iosfwd>
 #include <string>
 #include <string_view>
 #include <vector>
-#include <iostream>
+
+#include <Eigen/Core>
+
 #include <celutil/color.h>
 
 class StarDatabase;
@@ -30,7 +32,7 @@ class Asterism
     Asterism& operator=(const Asterism&) = delete;
     Asterism& operator=(Asterism&&) = delete;
 
-    typedef std::vector<Eigen::Vector3f> Chain;
+    using Chain = std::vector<Eigen::Vector3f>;
 
     std::string getName(bool i18n = false) const;
     int getChainCount() const;
@@ -56,8 +58,6 @@ class Asterism
     bool useOverrideColor   { false };
 };
 
-typedef std::vector<Asterism*> AsterismList;
+using AsterismList = std::vector<Asterism*>;
 
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
-
-#endif // _CELENGINE_ASTERISM_H_

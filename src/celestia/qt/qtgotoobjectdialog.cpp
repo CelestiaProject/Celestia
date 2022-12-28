@@ -1,7 +1,9 @@
 #include <QPushButton>
 #include <QLocale>
-#include "qtgotoobjectdialog.h"
+
+#include <celengine/body.h>
 #include <celestia/celestiacore.h>
+#include "qtgotoobjectdialog.h"
 
 using namespace Eigen;
 using namespace celmath;

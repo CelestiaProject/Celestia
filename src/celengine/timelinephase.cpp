@@ -10,13 +10,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celengine/timelinephase.h"
-#include "celengine/frame.h"
-#include "celengine/universe.h"
-#include "celengine/frametree.h"
-#include "celephem/orbit.h"
-#include "celephem/rotation.h"
 #include <cassert>
+
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
+#include "body.h"
+#include "frame.h"
+#include "frametree.h"
+#include "timelinephase.h"
+#include "universe.h"
 
 using namespace std;
 

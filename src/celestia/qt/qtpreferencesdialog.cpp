@@ -25,11 +25,13 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "qtappwin.h"
-#include "qtpreferencesdialog.h"
+#include <celengine/body.h>
+#include <celengine/location.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
+#include "qtappwin.h"
+#include "qtpreferencesdialog.h"
 
 
 static void SetComboBoxValue(QComboBox* combo, const QVariant& value)

@@ -8,12 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_BOUNDARIES_H_
-#define _CELENGINE_BOUNDARIES_H_
+#pragma once
+
+#include <iosfwd>
+#include <vector>
 
 #include <Eigen/Core>
-#include <vector>
-#include <iostream>
 
 class ConstellationBoundaries
 {
@@ -38,5 +38,3 @@ class ConstellationBoundaries
 };
 
 ConstellationBoundaries* ReadBoundaries(std::istream&);
-
-#endif // _CELENGINE_BOUNDARIES_H_

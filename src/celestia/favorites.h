@@ -8,13 +8,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_FAVORITES_H_
-#define _CELESTIA_FAVORITES_H_
+#pragma once
 
+#include <iosfwd>
 #include <string>
 #include <vector>
-#include <iostream>
+
+#include <Eigen/Geometry>
+
 #include <celengine/observer.h>
+#include <celengine/univcoord.h>
 
 
 struct FavoritesEntry
@@ -31,9 +34,7 @@ struct FavoritesEntry
     ObserverFrame::CoordinateSystem coordSys;
 };
 
-typedef std::vector<FavoritesEntry*> FavoritesList;
+using FavoritesList = std::vector<FavoritesEntry*>;
 
 FavoritesList* ReadFavoritesList(std::istream&);
 void WriteFavoritesList(FavoritesList&, std::ostream&);
-
-#endif // _FAVORITES_H_

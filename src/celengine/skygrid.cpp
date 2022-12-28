@@ -15,9 +15,11 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celutil/utf8.h>
 #include "render.h"
 #include "vecgl.h"
 #include "skygrid.h"

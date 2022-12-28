@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <celutil/strnatcmp.h>
+#include "body.h"
+#include "location.h"
 #include "render.h"
 #include "simulation.h"
 

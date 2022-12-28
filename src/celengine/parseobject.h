@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_PARSEOBJECT_H_
-#define _CELENGINE_PARSEOBJECT_H_
+#pragma once
 
 #include <string>
 #include <memory>
@@ -55,6 +54,3 @@ ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
 std::shared_ptr<const TwoVectorFrame> CreateTopocentricFrame(const Selection& center,
                                        const Selection& target,
                                        const Selection& observer);
-
-
-#endif // _CELENGINE_PARSEOBJECT_H_

@@ -8,28 +8,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstring>
-#include <cmath>
-#include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+
 #include <fmt/format.h>
-#include <celmath/mathlib.h>
+
 #include <celutil/binaryread.h>
-#include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celutil/tokenizer.h>
-#include "stardb.h"
-#include "astro.h"
-#include "parser.h"
-#include "parseobject.h"
-#include "multitexture.h"
+#include <celutil/stringutils.h>
 #include "meshmanager.h"
+#include "parser.h"
+#include "stardb.h"
+#include "starname.h"
+#include "value.h"
 
-
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
 using celestia::util::GetLogger;
 
 namespace celutil = celestia::util;
@@ -60,33 +56,6 @@ constexpr const char FILE_HEADER[]            = "CELSTARS";
 constexpr const char CROSSINDEX_FILE_HEADER[] = "CELINDEX";
 
 
-// Used to sort stars by catalog number
-struct CatalogNumberOrderingPredicate
-{
-    int unused;
-
-    CatalogNumberOrderingPredicate() = default;
-
-    bool operator()(const Star& star0, const Star& star1) const
-    {
-        return (star0.getIndex() < star1.getIndex());
-    }
-};
-
-
-struct CatalogNumberEquivalencePredicate
-{
-    int unused;
-
-    CatalogNumberEquivalencePredicate() = default;
-
-    bool operator()(const Star& star0, const Star& star1) const
-    {
-        return (star0.getIndex() == star1.getIndex());
-    }
-};
-
-
 // Used to sort star pointers by catalog number
 struct PtrCatalogNumberOrderingPredicate
 {
@@ -101,8 +70,8 @@ struct PtrCatalogNumberOrderingPredicate
 };
 
 
-static bool parseSimpleCatalogNumber(const string& name,
-                                     const string& prefix,
+static bool parseSimpleCatalogNumber(const std::string& name,
+                                     const std::string& prefix,
                                      AstroCatalog::IndexNumber* catalogNumber)
 {
     char extra[4];
@@ -112,7 +81,7 @@ static bool parseSimpleCatalogNumber(const string& name,
         // Use scanf to see if we have a valid catalog number; it must be
         // of the form: <prefix> <non-negative integer>  No additional
         // characters other than whitespace are allowed after the number.
-        if (sscanf(name.c_str() + prefix.length(), " %u %c", &num, extra) == 1)
+        if (std::sscanf(name.c_str() + prefix.length(), " %u %c", &num, extra) == 1)
         {
             *catalogNumber = (AstroCatalog::IndexNumber) num;
             return true;
@@ -123,7 +92,7 @@ static bool parseSimpleCatalogNumber(const string& name,
 }
 
 
-static bool parseHIPPARCOSCatalogNumber(const string& name,
+static bool parseHIPPARCOSCatalogNumber(const std::string& name,
                                         AstroCatalog::IndexNumber* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
@@ -132,7 +101,7 @@ static bool parseHIPPARCOSCatalogNumber(const string& name,
 }
 
 
-static bool parseHDCatalogNumber(const string& name,
+static bool parseHDCatalogNumber(const std::string& name,
                                  AstroCatalog::IndexNumber* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
@@ -141,14 +110,14 @@ static bool parseHDCatalogNumber(const string& name,
 }
 
 
-static bool parseTychoCatalogNumber(const string& name,
+static bool parseTychoCatalogNumber(const std::string& name,
                                     AstroCatalog::IndexNumber* catalogNumber)
 {
-    int len = strlen(TychoCatalogPrefix);
+    int len = std::strlen(TychoCatalogPrefix);
     if (compareIgnoringCase(name, TychoCatalogPrefix, len) == 0)
     {
         unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (sscanf(string(name, len, string::npos).c_str(),
+        if (std::sscanf(std::string(name, len, std::string::npos).c_str(),
                    " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
         {
             *catalogNumber = (AstroCatalog::IndexNumber) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
@@ -160,7 +129,7 @@ static bool parseTychoCatalogNumber(const string& name,
 }
 
 
-static bool parseCelestiaCatalogNumber(const string& name,
+static bool parseCelestiaCatalogNumber(const std::string& name,
                                        AstroCatalog::IndexNumber* catalogNumber)
 {
     char extra[4];
@@ -206,10 +175,10 @@ Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
     Star refStar;
     refStar.setIndex(catalogNumber);
 
-    Star** star   = lower_bound(catalogNumberIndex,
-                                catalogNumberIndex + nStars,
-                                &refStar,
-                                PtrCatalogNumberOrderingPredicate());
+    Star** star = std::lower_bound(catalogNumberIndex,
+                                   catalogNumberIndex + nStars,
+                                   catalogNumber,
+                                   [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
 
     if (star != catalogNumberIndex + nStars && (*star)->getIndex() == catalogNumber)
         return *star;
@@ -218,7 +187,7 @@ Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 }
 
 
-AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& name, bool i18n) const
+AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const std::string& name, bool i18n) const
 {
     if (name.empty())
         return AstroCatalog::InvalidIndex;
@@ -260,7 +229,7 @@ AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& na
 }
 
 
-Star* StarDatabase::find(const string& name, bool i18n) const
+Star* StarDatabase::find(const std::string& name, bool i18n) const
 {
     AstroCatalog::IndexNumber catalogNumber = findCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
@@ -323,9 +292,9 @@ Star* StarDatabase::searchCrossIndex(const Catalog catalog, const AstroCatalog::
 }
 
 
-vector<string> StarDatabase::getCompletion(const string& name, bool i18n) const
+std::vector<std::string> StarDatabase::getCompletion(const std::string& name, bool i18n) const
 {
-    vector<string> completion;
+    std::vector<std::string> completion;
 
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
@@ -343,7 +312,7 @@ static void catalogNumberToString(AstroCatalog::IndexNumber catalogNumber, char*
 #endif
 
 
-static string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
+static std::string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 {
     if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
@@ -374,7 +343,7 @@ static string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 // mind that calling this method could possibly incur the overhead
 // of a memory allocation (though no explcit deallocation is
 // required as it's all wrapped in the string class.)
-string StarDatabase::getStarName(const Star& star, bool i18n) const
+std::string StarDatabase::getStarName(const Star& star, bool i18n) const
 {
     AstroCatalog::IndexNumber catalogNumber = star.getIndex();
 
@@ -438,14 +407,14 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
 }
 
 
-string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNames) const
+std::string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNames) const
 {
-    string starNames;
+    std::string starNames;
     unsigned int catalogNumber = star.getIndex();
     std::set<std::string> nameSet;
     bool isNameSetEmpty = true;
 
-    auto append = [&] (const string &str)
+    auto append = [&] (const std::string &str)
     {
         auto inserted = nameSet.insert(str);
         if (inserted.second)
@@ -509,28 +478,28 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 
 
 void StarDatabase::findVisibleStars(StarHandler& starHandler,
-                                    const Vector3f& position,
-                                    const Quaternionf& orientation,
+                                    const Eigen::Vector3f& position,
+                                    const Eigen::Quaternionf& orientation,
                                     float fovY,
                                     float aspectRatio,
                                     float limitingMag,
                                     OctreeProcStats *stats) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Hyperplane<float, 3> frustumPlanes[5];
-    Vector3f planeNormals[5];
+    Eigen::Hyperplane<float, 3> frustumPlanes[5];
+    Eigen::Vector3f planeNormals[5];
     Eigen::Matrix3f rot = orientation.toRotationMatrix();
     float h = (float) tan(fovY / 2);
     float w = h * aspectRatio;
-    planeNormals[0] = Vector3f(0.0f, 1.0f, -h);
-    planeNormals[1] = Vector3f(0.0f, -1.0f, -h);
-    planeNormals[2] = Vector3f(1.0f, 0.0f, -w);
-    planeNormals[3] = Vector3f(-1.0f, 0.0f, -w);
-    planeNormals[4] = Vector3f(0.0f, 0.0f, -1.0f);
+    planeNormals[0] = Eigen::Vector3f(0.0f, 1.0f, -h);
+    planeNormals[1] = Eigen::Vector3f(0.0f, -1.0f, -h);
+    planeNormals[2] = Eigen::Vector3f(1.0f, 0.0f, -w);
+    planeNormals[3] = Eigen::Vector3f(-1.0f, 0.0f, -w);
+    planeNormals[4] = Eigen::Vector3f(0.0f, 0.0f, -1.0f);
     for (int i = 0; i < 5; i++)
     {
         planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
-        frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], position);
+        frustumPlanes[i] = Eigen::Hyperplane<float, 3>(planeNormals[i], position);
     }
 
     octreeRoot->processVisibleObjects(starHandler,
@@ -543,7 +512,7 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
 
 
 void StarDatabase::findCloseStars(StarHandler& starHandler,
-                                  const Vector3f& position,
+                                  const Eigen::Vector3f& position,
                                   float radius) const
 {
     octreeRoot->processCloseObjects(starHandler,
@@ -565,7 +534,7 @@ void StarDatabase::setNameDatabase(StarNameDatabase* _namesDB)
 }
 
 
-bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
+bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 {
     if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
         return false;
@@ -631,7 +600,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
 }
 
 
-bool StarDatabase::loadBinary(istream& in)
+bool StarDatabase::loadBinary(std::istream& in)
 {
     uint32_t nStarsInFile = 0;
 
@@ -720,8 +689,8 @@ bool StarDatabase::loadBinary(istream& in)
         {
             binFileCatalogNumberIndex[i] = &unsortedStars[i];
         }
-        sort(binFileCatalogNumberIndex, binFileCatalogNumberIndex + binFileStarCount,
-             PtrCatalogNumberOrderingPredicate());
+        std::sort(binFileCatalogNumberIndex, binFileCatalogNumberIndex + binFileStarCount,
+                  [](const Star* star0, const Star* star1) { return star0->getIndex() < star1->getIndex(); });
     }
 
     return true;
@@ -762,7 +731,7 @@ void StarDatabase::finish()
 
 
 static void stcError(const Tokenizer& tok,
-                     const string& msg)
+                     const std::string& msg)
 {
     GetLogger()->error(_("Error in .stc file (line {}): {}\n"), tok.getLineNumber(), msg);
 }
@@ -778,7 +747,7 @@ bool StarDatabase::createStar(Star* star,
                               bool isBarycenter)
 {
     StarDetails* details = nullptr;
-    string spectralType;
+    std::string spectralType;
 
     // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.
@@ -841,15 +810,15 @@ bool StarDatabase::createStar(Star* star,
         }
     }
 
-    string modelName;
-    string textureName;
+    std::string modelName;
+    std::string textureName;
     bool hasTexture = starData->getString("Texture", textureName);
     bool hasModel = starData->getString("Mesh", modelName);
 
     RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != nullptr);
 
-    Vector3d semiAxes = Vector3d::Ones();
+    Eigen::Vector3d semiAxes = Eigen::Vector3d::Ones();
     bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
@@ -868,7 +837,7 @@ bool StarDatabase::createStar(Star* star,
     double bolometricCorrection;
     bool hasBolometricCorrection = starData->getNumber("BoloCorrection", bolometricCorrection);
 
-    string infoURL;
+    std::string infoURL;
     bool hasInfoURL = starData->getString("InfoURL", infoURL);
 
     Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
@@ -901,7 +870,11 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasModel)
         {
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vector3f::Zero(), 1.0f, true));
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName,
+                                                                                         path,
+                                                                                         Eigen::Vector3f::Zero(),
+                                                                                         1.0f,
+                                                                                         true));
             details->setGeometry(geometryHandle);
         }
 
@@ -954,7 +927,7 @@ bool StarDatabase::createStar(Star* star,
             AstroCatalog::IndexNumber barycenterCatNo = AstroCatalog::InvalidIndex;
             bool barycenterDefined = false;
 
-            string barycenterName;
+            std::string barycenterName;
             if (starData->getString("OrbitBarycenter", barycenterName))
             {
                 barycenterCatNo   = findCatalogNumberByName(barycenterName, false);
@@ -1022,18 +995,18 @@ bool StarDatabase::createStar(Star* star,
 
         if (disposition == DataDisposition::Modify)
         {
-            Vector3f pos = star->getPosition();
+            Eigen::Vector3f pos = star->getPosition();
 
             // Convert from Celestia's coordinate system
-            Vector3f v(pos.x(), -pos.z(), pos.y());
-            v = Quaternionf(AngleAxis<float>((float) astro::J2000Obliquity, Vector3f::UnitX())) * v;
+            Eigen::Vector3f v(pos.x(), -pos.z(), pos.y());
+            v = Eigen::Quaternionf(Eigen::AngleAxis<float>((float) astro::J2000Obliquity, Eigen::Vector3f::UnitX())) * v;
 
             distance = v.norm();
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
-                dec = radToDeg(std::asin(v.z()));
+                ra = celmath::radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
+                dec = celmath::radToDeg(std::asin(v.z()));
             }
         }
 
@@ -1085,7 +1058,7 @@ bool StarDatabase::createStar(Star* star,
             float raf = ((float) ra);
             float decf = ((float) dec);
             float distancef = ((float) distance);
-            Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+            Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
             star->setPosition(pos.cast<float>());
         }
     }
@@ -1183,13 +1156,13 @@ bool StarDatabase::createStar(Star* star,
  *  Modify <name>     : error
  *  Modify <number>   : error
  */
-bool StarDatabase::load(istream& in, const fs::path& resourcePath)
+bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    string s = resourcePath.string();
+    std::string s = resourcePath.string();
     const char *d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
@@ -1248,8 +1221,8 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             tokenizer.nextToken();
         }
 
-        string objName;
-        string firstName;
+        std::string objName;
+        std::string firstName;
         if (tokenizer.getTokenType() == Tokenizer::TokenString)
         {
             // A star name (or names) is present
@@ -1257,7 +1230,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             tokenizer.nextToken();
             if (!objName.empty())
             {
-                string::size_type next = objName.find(':', 0);
+                std::string::size_type next = objName.find(':', 0);
                 firstName = objName.substr(0, next);
             }
         }
@@ -1380,17 +1353,17 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
                 // Iterate through the string for names delimited
                 // by ':', and insert them into the star database.
                 // Note that db->add() will skip empty namesDB.
-                string::size_type startPos = 0;
-                while (startPos != string::npos)
+                std::string::size_type startPos = 0;
+                while (startPos != std::string::npos)
                 {
-                    string::size_type next    = objName.find(':', startPos);
-                    string::size_type length = string::npos;
-                    if (next != string::npos)
+                    std::string::size_type next   = objName.find(':', startPos);
+                    std::string::size_type length = std::string::npos;
+                    if (next != std::string::npos)
                     {
                         length = next - startPos;
                         ++next;
                     }
-                    string starName = objName.substr(startPos, length);
+                    std::string starName = objName.substr(startPos, length);
                     namesDB->add(catalogNumber, starName);
                     startPos = next;
                 }
@@ -1416,7 +1389,7 @@ void StarDatabase::buildOctree()
     GetLogger()->debug("Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
-    DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
+    DynamicStarOctree* root = new DynamicStarOctree(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
     for (unsigned int i = 0; i < unsortedStars.size(); ++i)
     {
@@ -1468,7 +1441,8 @@ void StarDatabase::buildIndexes()
     for (int i = 0; i < nStars; ++i)
         catalogNumberIndex[i] = &stars[i];
 
-    sort(catalogNumberIndex, catalogNumberIndex + nStars, PtrCatalogNumberOrderingPredicate());
+    std::sort(catalogNumberIndex, catalogNumberIndex + nStars,
+              [](const Star* star0, const Star* star1) { return star0->getIndex() < star1->getIndex(); });
 }
 
 
@@ -1488,20 +1462,17 @@ Star* StarDatabase::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) co
     // First check for stars loaded from the binary database
     if (binFileCatalogNumberIndex != nullptr)
     {
-        Star refStar;
-        refStar.setIndex(catalogNumber);
-
-        Star** star   = lower_bound(binFileCatalogNumberIndex,
-                                    binFileCatalogNumberIndex + binFileStarCount,
-                                    &refStar,
-                                    PtrCatalogNumberOrderingPredicate());
+        Star** star = std::lower_bound(binFileCatalogNumberIndex,
+                                       binFileCatalogNumberIndex + binFileStarCount,
+                                       catalogNumber,
+                                       [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
 
         if (star != binFileCatalogNumberIndex + binFileStarCount && (*star)->getIndex() == catalogNumber)
             return *star;
     }
 
     // Next check for stars loaded from an stc file
-    map<AstroCatalog::IndexNumber, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
+    std::map<AstroCatalog::IndexNumber, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
     if (iter != stcFileCatalogNumberIndex.end())
     {
         return iter->second;

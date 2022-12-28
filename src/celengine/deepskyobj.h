@@ -7,17 +7,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_DEEPSKYOBJ_H_
-#define _CELENGINE_DEEPSKYOBJ_H_
+#pragma once
 
-#include <vector>
+#include <iosfwd>
 #include <string>
-#include <iostream>
-#include <celengine/astroobj.h>
-#include <celengine/parser.h>
-#include <celcompat/filesystem.h>
+#include <vector>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+
+#include <celcompat/filesystem.h>
+#include <celengine/astroobj.h>
 
 class Selection;
 class Renderer;
@@ -102,9 +102,6 @@ class DeepSkyObject : public AstroObject
     bool clickable { true };
 };
 
-typedef std::vector<DeepSkyObject*> DeepSkyCatalog;
+using DeepSkyCatalog = std::vector<DeepSkyObject*>;
 int LoadDeepSkyObjects(DeepSkyCatalog&, std::istream& in,
                        const std::string& path);
-
-
-#endif // _CELENGINE_DEEPSKYOBJ_H_

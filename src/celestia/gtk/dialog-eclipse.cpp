@@ -13,10 +13,11 @@
 #include <gtk/gtk.h>
 
 #include <celcompat/numbers.h>
-#include <celmath/geomutil.h>
 #include <celengine/astro.h>
+#include <celengine/body.h>
 #include <celengine/simulation.h>
 #include <celestia/eclipsefinder.h>
+#include <celmath/geomutil.h>
 
 #include "dialog-eclipse.h"
 #include "common.h"

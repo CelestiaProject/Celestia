@@ -9,18 +9,17 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include "boundaries.h"
-#include "astro.h"
+#include <istream>
 
-using namespace Eigen;
-using namespace std;
+#include "astro.h"
+#include "boundaries.h"
 
 constexpr const float BoundariesDrawDistance = 10000.0f;
 
 ConstellationBoundaries::ConstellationBoundaries()
 {
     currentChain = new Chain();
-    currentChain->emplace_back(Vector3f::Zero());
+    currentChain->emplace_back(Eigen::Vector3f::Zero());
 }
 
 ConstellationBoundaries::~ConstellationBoundaries()
@@ -44,7 +43,7 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 {
     assert(currentChain != nullptr);
 
-    Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
+    Eigen::Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
     {
         chains.emplace_back(currentChain);
@@ -64,10 +63,10 @@ void ConstellationBoundaries::lineto(float ra, float dec)
 }
 
 
-ConstellationBoundaries* ReadBoundaries(istream& in)
+ConstellationBoundaries* ReadBoundaries(std::istream& in)
 {
     auto* boundaries = new ConstellationBoundaries();
-    string lastCon;
+    std::string lastCon;
     int conCount = 0;
     int ptCount = 0;
 
@@ -80,8 +79,8 @@ ConstellationBoundaries* ReadBoundaries(istream& in)
             break;
         in >> dec;
 
-        string pt;
-        string con;
+        std::string pt;
+        std::string con;
 
         in >> con;
         in >> pt;

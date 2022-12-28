@@ -10,31 +10,42 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <cassert>
+#include <iostream>
 #include <limits>
-#include <fmt/format.h>
-#include <fmt/printf.h>
-#include <celmath/mathlib.h>
-#include <celutil/logger.h>
-#include <celutil/gettext.h>
-#include <celutil/tokenizer.h>
-#include "astro.h"
-#include "parser.h"
-#include "texmanager.h"
-#include "meshmanager.h"
-#include "universe.h"
-#include "multitexture.h"
-#include "parseobject.h"
-#include "frametree.h"
-#include "timeline.h"
-#include "timelinephase.h"
-#include "atmosphere.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
+#include <Eigen/Geometry>
+#include <fmt/printf.h>
+
+#include <celmath/mathlib.h>
+#include <celutil/color.h>
+#include <celutil/gettext.h>
+#include <celutil/logger.h>
+#include <celutil/stringutils.h>
+#include <celutil/tokenizer.h>
+#include "atmosphere.h"
+#include "body.h"
+#include "hash.h"
+#include "frame.h"
+#include "frametree.h"
+#include "location.h"
+#include "meshmanager.h"
+#include "parseobject.h"
+#include "parser.h"
+#include "solarsys.h"
+#include "surface.h"
+#include "texmanager.h"
+#include "universe.h"
+#include "value.h"
+
+
 using celestia::util::GetLogger;
+
+namespace
+{
 
 enum BodyType
 {
@@ -78,8 +89,8 @@ enum BodyType
   The name and parent name are both mandatory.
 */
 
-static void sscError(const Tokenizer& tok,
-                     const string& msg)
+void sscError(const Tokenizer& tok,
+              const std::string& msg)
 {
     GetLogger()->error(_("Error in .ssc file (line {}): {}\n"),
                       tok.getLineNumber(), msg);
@@ -87,23 +98,23 @@ static void sscError(const Tokenizer& tok,
 
 
 // Object class properties
-static const int CLASSES_UNCLICKABLE           = Body::Invisible |
-                                                 Body::Diffuse;
+const int CLASSES_UNCLICKABLE           = Body::Invisible |
+                                          Body::Diffuse;
 
-static const int CLASSES_INVISIBLE_AS_POINT    = Body::Invisible      |
-                                                 Body::SurfaceFeature |
-                                                 Body::Component      |
-                                                 Body::Diffuse;
+const int CLASSES_INVISIBLE_AS_POINT    = Body::Invisible      |
+                                          Body::SurfaceFeature |
+                                          Body::Component      |
+                                          Body::Diffuse;
 
-static const int CLASSES_SECONDARY_ILLUMINATOR = Body::Planet      |
-                                                 Body::Moon        |
-                                                 Body::MinorMoon   |
-                                                 Body::DwarfPlanet |
-                                                 Body::Asteroid    |
-                                                 Body::Comet;
+const int CLASSES_SECONDARY_ILLUMINATOR = Body::Planet      |
+                                          Body::Moon        |
+                                          Body::MinorMoon   |
+                                          Body::DwarfPlanet |
+                                          Body::Asteroid    |
+                                          Body::Comet;
 
-typedef map<std::string, int, CompareIgnoringCasePredicate> ClassificationTable;
-static ClassificationTable Classifications;
+using ClassificationTable = std::map<std::string, int, CompareIgnoringCasePredicate>;
+ClassificationTable Classifications;
 
 void InitializeClassifications()
 {
@@ -120,7 +131,7 @@ void InitializeClassifications()
     Classifications["diffuse"]        = Body::Diffuse;
 }
 
-int GetClassificationId(const string& className)
+int GetClassificationId(const std::string& className)
 {
     if (Classifications.empty())
         InitializeClassifications();
@@ -133,24 +144,24 @@ int GetClassificationId(const string& className)
 
 
 //! Maximum depth permitted for nested frames.
-static unsigned int MaxFrameDepth = 50;
+unsigned int MaxFrameDepth = 50;
 
-static bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType frameType)
+bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType frameType)
 {
     return frame.nestingDepth(MaxFrameDepth, frameType) > MaxFrameDepth;
 }
 
 
 
-static Location* CreateLocation(Hash* locationData,
-                                Body* body)
+Location* CreateLocation(Hash* locationData,
+                         Body* body)
 {
     Location* location = new Location();
 
-    Vector3d longlat(Vector3d::Zero());
+    Eigen::Vector3d longlat(Eigen::Vector3d::Zero());
     locationData->getSphericalTuple("LongLat", longlat);
 
-    Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
+    Eigen::Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
     location->setPosition(position);
 
     double size = 1.0;
@@ -162,7 +173,7 @@ static Location* CreateLocation(Hash* locationData,
     locationData->getNumber("Importance", importance);
     location->setImportance((float) importance);
 
-    string featureTypeName;
+    std::string featureTypeName;
     if (locationData->getString("Type", featureTypeName))
         location->setFeatureType(Location::parseFeatureType(featureTypeName));
 
@@ -186,9 +197,9 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
 }
 
 
-static void FillinSurface(Hash* surfaceData,
-                          Surface* surface,
-                          const fs::path& path)
+void FillinSurface(Hash* surfaceData,
+                   Surface* surface,
+                   const fs::path& path)
 {
     surfaceData->getColor("Color", surface->color);
     surfaceData->getColor("SpecularColor", surface->specularColor);
@@ -196,12 +207,12 @@ static void FillinSurface(Hash* surfaceData,
 
     surfaceData->getNumber("LunarLambert", surface->lunarLambert);
 
-    string baseTexture;
-    string bumpTexture;
-    string nightTexture;
-    string specularTexture;
-    string normalTexture;
-    string overlayTexture;
+    std::string baseTexture;
+    std::string bumpTexture;
+    std::string nightTexture;
+    std::string specularTexture;
+    std::string normalTexture;
+    std::string overlayTexture;
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
@@ -256,7 +267,7 @@ static void FillinSurface(Hash* surfaceData,
 }
 
 
-static Selection GetParentObject(PlanetarySystem* system)
+Selection GetParentObject(PlanetarySystem* system)
 {
     Selection parent;
     Body* primary = system->getPrimaryBody();
@@ -280,7 +291,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                                   double previousPhaseEnd)
 {
     double beginning = previousPhaseEnd;
-    double ending = numeric_limits<double>::infinity();
+    double ending = std::numeric_limits<double>::infinity();
 
     // Beginning is optional for the first phase of a timeline, and not
     // allowed for the other phases, where beginning is always the ending
@@ -355,7 +366,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
         // TODO: Should distinguish between a missing rotation model (where it's
         // appropriate to use a default one) and a bad rotation model (where
         // we should report an error.)
-        rotationModel = new ConstantOrientation(Quaterniond::Identity());
+        rotationModel = new ConstantOrientation(Eigen::Quaterniond::Identity());
     }
 
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
@@ -380,7 +391,7 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
     auto* timeline = new Timeline();
-    double previousEnding = -numeric_limits<double>::infinity();
+    double previousEnding = -std::numeric_limits<double>::infinity();
 
     for (ValueArray::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
@@ -418,13 +429,13 @@ Timeline* CreateTimelineFromArray(Body* body,
 }
 
 
-static bool CreateTimeline(Body* body,
-                           PlanetarySystem* system,
-                           Universe& universe,
-                           Hash* planetData,
-                           const fs::path& path,
-                           DataDisposition disposition,
-                           BodyType bodyType)
+bool CreateTimeline(Body* body,
+                    PlanetarySystem* system,
+                    Universe& universe,
+                    Hash* planetData,
+                    const fs::path& path,
+                    DataDisposition disposition,
+                    BodyType bodyType)
 {
     FrameTree* parentFrameTree = nullptr;
     Selection parentObject = GetParentObject(system);
@@ -451,7 +462,7 @@ static bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
-        defaultOrbitFrame = shared_ptr<BodyFixedFrame>(new BodyFixedFrame(parentObject, parentObject));
+        defaultOrbitFrame = std::shared_ptr<BodyFixedFrame>(new BodyFixedFrame(parentObject, parentObject));
         defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
     }
     else
@@ -486,8 +497,8 @@ static bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr bodyFrame;
     Orbit* orbit                 = nullptr;
     RotationModel* rotationModel = nullptr;
-    double beginning             = -numeric_limits<double>::infinity();
-    double ending                =  numeric_limits<double>::infinity();
+    double beginning             = -std::numeric_limits<double>::infinity();
+    double ending                =  std::numeric_limits<double>::infinity();
 
     // If any new timeline values are specified, we need to overrideOldTimeline will
     // be set to true.
@@ -666,14 +677,14 @@ static bool CreateTimeline(Body* body,
 // Create a body (planet, moon, spacecraft, etc.) using the values from a
 // property list. The usePlanetsUnits flags specifies whether period and
 // semi-major axis are in years and AU rather than days and kilometers.
-static Body* CreateBody(const string& name,
-                        PlanetarySystem* system,
-                        Universe& universe,
-                        Body* existingBody,
-                        Hash* planetData,
-                        const fs::path& path,
-                        DataDisposition disposition,
-                        BodyType bodyType)
+Body* CreateBody(const std::string& name,
+                 PlanetarySystem* system,
+                 Universe& universe,
+                 Body* existingBody,
+                 Hash* planetData,
+                 const fs::path& path,
+                 DataDisposition disposition,
+                 BodyType bodyType)
 {
     Body* body = nullptr;
 
@@ -719,11 +730,11 @@ static Body* CreateBody(const string& name,
     bool radiusSpecified = false;
     if (planetData->getLength("Radius", radius))
     {
-        body->setSemiAxes(Vector3f::Constant((float) radius));
+        body->setSemiAxes(Eigen::Vector3f::Constant((float) radius));
         radiusSpecified = true;
     }
 
-    Vector3d semiAxes = Vector3d::Ones();
+    Eigen::Vector3d semiAxes = Eigen::Vector3d::Ones();
     if (planetData->getVector("SemiAxes", semiAxes))
     {
         if (radiusSpecified)
@@ -739,19 +750,19 @@ static Body* CreateBody(const string& name,
             semiAxes *= semiAxesScale;
         }
         // Swap y and z to match internal coordinate system
-        body->setSemiAxes(Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
+        body->setSemiAxes(Eigen::Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
     }
     else
     {
         double oblateness = 0.0;
         if (planetData->getNumber("Oblateness", oblateness))
         {
-            body->setSemiAxes((float) body->getRadius() * Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
+            body->setSemiAxes((float) body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
         }
     }
 
     int classification = body->getClassification();
-    string classificationName;
+    std::string classificationName;
     if (planetData->getString("Class", classificationName))
         classification = GetClassificationId(classificationName);
 
@@ -786,14 +797,14 @@ static Body* CreateBody(const string& name,
     if (classification & CLASSES_UNCLICKABLE)
         body->setClickable(false);
 
-    string infoURL; // FIXME: should be own class
+    std::string infoURL; // FIXME: should be own class
     if (planetData->getString("InfoURL", infoURL))
     {
-        if (infoURL.find(':') == string::npos)
+        if (infoURL.find(':') == std::string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            string p = path.string();
+            std::string p = path.string();
             if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
                 infoURL = "file:///" + p + "/" + infoURL;
@@ -856,7 +867,7 @@ static Body* CreateBody(const string& name,
     if (planetData->getNumber("Density", t))
        body->setDensity((float) t);
 
-    Quaternionf orientation = Quaternionf::Identity();
+    Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
     if (planetData->getRotation("Orientation", orientation))
     {
         body->setGeometryOrientation(orientation);
@@ -875,10 +886,10 @@ static Body* CreateBody(const string& name,
     body->setSurface(surface);
 
     {
-        string geometry;
+        std::string geometry;
         if (planetData->getString("Mesh", geometry))
         {
-            Vector3f geometryCenter(Vector3f::Zero());
+            Eigen::Vector3f geometryCenter(Eigen::Vector3f::Zero());
             if (planetData->getVector("MeshCenter", geometryCenter))
             {
                 // TODO: Adjust bounding radius if model center isn't
@@ -904,7 +915,7 @@ static Body* CreateBody(const string& name,
         {
             if (atmosDataValue->getType() != Value::HashType)
             {
-                cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
+                std::cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
             }
             else
             {
@@ -942,9 +953,9 @@ static Body* CreateBody(const string& name,
                 // Get the cloud map settings
                 atmosData->getLength("CloudHeight", atmosphere->cloudHeight);
                 if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
-                    atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
+                    atmosphere->cloudSpeed = celmath::degToRad(atmosphere->cloudSpeed);
 
-                string cloudTexture;
+                std::string cloudTexture;
                 if (atmosData->getString("CloudMap", cloudTexture))
                 {
                     atmosphere->cloudTexture.setTexture(cloudTexture,
@@ -952,7 +963,7 @@ static Body* CreateBody(const string& name,
                                                         TextureInfo::WrapTexture);
                 }
 
-                string cloudNormalMap;
+                std::string cloudNormalMap;
                 if (atmosData->getString("CloudNormalMap", cloudNormalMap))
                 {
                     atmosphere->cloudNormalMap.setTexture(cloudNormalMap,
@@ -981,7 +992,7 @@ static Body* CreateBody(const string& name,
         {
             if (ringsDataValue->getType() != Value::HashType)
             {
-                cout << "ReadSolarSystem: Rings must be an assoc array.\n";
+                std::cout << "ReadSolarSystem: Rings must be an assoc array.\n";
             }
             else
             {
@@ -1002,7 +1013,7 @@ static Body* CreateBody(const string& name,
                 if (ringsData->getColor("Color", color))
                     rings.color = color;
 
-                string textureName;
+                std::string textureName;
                 if (ringsData->getString("Texture", textureName))
                     rings.texture = MultiResTexture(textureName, path);
 
@@ -1042,13 +1053,13 @@ static Body* CreateBody(const string& name,
 
 
 // Create a barycenter object using the values from a hash
-static Body* CreateReferencePoint(const string& name,
-                                  PlanetarySystem* system,
-                                  Universe& universe,
-                                  Body* existingBody,
-                                  Hash* refPointData,
-                                  const fs::path& path,
-                                  DataDisposition disposition)
+Body* CreateReferencePoint(const std::string& name,
+                           PlanetarySystem* system,
+                           Universe& universe,
+                           Body* existingBody,
+                           Hash* refPointData,
+                           const fs::path& path,
+                           DataDisposition disposition)
 {
     Body* body = nullptr;
 
@@ -1064,7 +1075,7 @@ static Body* CreateReferencePoint(const string& name,
         disposition = DataDisposition::Add;
     }
 
-    body->setSemiAxes(Vector3f::Ones());
+    body->setSemiAxes(Eigen::Vector3f::Ones());
     body->setClassification(Body::Invisible);
     body->setVisible(false);
     body->setVisibleAsPoint(false);
@@ -1101,9 +1112,9 @@ static Body* CreateReferencePoint(const string& name,
 
     return body;
 }
+} // end unnamed namespace
 
-
-bool LoadSolarSystemObjects(istream& in,
+bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const fs::path& directory)
 {
@@ -1111,7 +1122,7 @@ bool LoadSolarSystemObjects(istream& in,
     Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    string s = directory.string();
+    std::string s = directory.string();
     const char* d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
@@ -1140,7 +1151,7 @@ bool LoadSolarSystemObjects(istream& in,
         }
 
         // Read the item type; if none is specified the default is Body
-        string itemType("Body");
+        std::string itemType("Body");
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
             itemType = tokenizer.getStringValue();
@@ -1155,14 +1166,14 @@ bool LoadSolarSystemObjects(istream& in,
 
         // The name list is a string with zero more names. Multiple names are
         // delimited by colons.
-        string nameList(tokenizer.getStringValue());
+        std::string nameList(tokenizer.getStringValue());
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             sscError(tokenizer, "bad parent object name");
             return false;
         }
-        string parentName(tokenizer.getStringValue());
+        std::string parentName(tokenizer.getStringValue());
 
         Value* objectDataValue = parser.readValue();
         if (objectDataValue == nullptr)
@@ -1182,7 +1193,7 @@ bool LoadSolarSystemObjects(istream& in,
         Selection parent = universe.findPath(parentName, nullptr, 0);
         PlanetarySystem* parentSystem = nullptr;
 
-        vector<string> names;
+        std::vector<std::string> names;
         // Iterate through the string for names delimited
         // by ':', and insert them into the name list.
         if (nameList.empty())
@@ -1191,21 +1202,21 @@ bool LoadSolarSystemObjects(istream& in,
         }
         else
         {
-            string::size_type startPos   = 0;
-            while (startPos != string::npos)
+            std::string::size_type startPos   = 0;
+            while (startPos != std::string::npos)
             {
-                string::size_type next    = nameList.find(':', startPos);
-                string::size_type length  = string::npos;
-                if (next != string::npos)
+                std::string::size_type next   = nameList.find(':', startPos);
+                std::string::size_type length = std::string::npos;
+                if (next != std::string::npos)
                 {
-                    length   = next - startPos;
+                    length = next - startPos;
                     ++next;
                 }
                 names.push_back(nameList.substr(startPos, length));
                 startPos   = next;
             }
         }
-        string primaryName = names.front();
+        std::string primaryName = names.front();
 
         BodyType bodyType = UnknownBodyType;
         if (itemType == "Body")
@@ -1337,7 +1348,7 @@ Star* SolarSystem::getStar() const
     return star;
 }
 
-Vector3f SolarSystem::getCenter() const
+Eigen::Vector3f SolarSystem::getCenter() const
 {
     // TODO: This is a very simple method at the moment, but it will get
     // more complex when planets around multistar systems are supported

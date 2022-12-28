@@ -1,9 +1,12 @@
+#ifdef DEBUG
 #include <celutil/logger.h>
+#endif
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
+#include <celutil/utf8.h>
 #include "name.h"
 
-uint32_t NameDatabase::getNameCount() const
+std::uint32_t NameDatabase::getNameCount() const
 {
     return nameIndex.size();
 }

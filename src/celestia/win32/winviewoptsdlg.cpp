@@ -9,12 +9,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
+
 #include <windows.h>
 #include <commctrl.h>
-#include "winviewoptsdlg.h"
-#include "celengine/render.h"
 
+#include <celengine/body.h>
+#include <celengine/render.h>
 #include "res/resource.h"
+#include "winviewoptsdlg.h"
+
 
 using namespace std;
 
@@ -279,7 +283,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                 }
 
             default:
-                cout << "Slider msg: " << sbValue << '\n';
+                std::cout << "Slider msg: " << sbValue << '\n';
                 break;
 #if 0
             case SB_THUMBPOSITION:

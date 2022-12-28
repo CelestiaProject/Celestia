@@ -10,13 +10,16 @@
 // of the License, or (at your option) any later version.
 
 #include <memory>
-#include "celx.h"
-#include "celx_internal.h"
-#include "celx_observer.h"
+
+#include <Eigen/Geometry>
+
 #include <celestia/celestiacore.h>
 #include <celscript/common/scriptmaps.h>
 #include <celutil/logger.h>
-#include <Eigen/Geometry>
+#include <celutil/stringutils.h>
+#include "celx.h"
+#include "celx_internal.h"
+#include "celx_observer.h"
 
 using namespace std;
 using namespace Eigen;

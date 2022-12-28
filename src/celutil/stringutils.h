@@ -13,6 +13,8 @@
 #pragma once
 
 #include <string_view>
+#include <system_error>
+
 #include <celcompat/charconv.h>
 
 int compareIgnoringCase(std::string_view s1, std::string_view s2);

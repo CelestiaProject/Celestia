@@ -7,17 +7,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SHADERMANAGER_H_
-#define _CELENGINE_SHADERMANAGER_H_
+#pragma once
 
+#include <cstdint>
 #include <map>
-#include <iostream>
-#include <celengine/glshader.h>
-#include <celengine/lightenv.h>
-#include <celengine/atmosphere.h>
+#include <string>
+
+#include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#define ADVANCED_CLOUD_SHADOWS 0
+#include <celutil/color.h>
+#include <celengine/glshader.h>
+
+
+class Atmosphere;
+class LightingState;
 
 class ShaderProperties
 {
@@ -113,7 +117,7 @@ class ShaderProperties
     //   Bit  2,   on if there are ring shadows
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
-    uint32_t shadowCounts{ 0 };
+    std::uint32_t shadowCounts{ 0 };
 
     int fishEyeOverride { FisheyeOverrideModeNone };
 
@@ -328,5 +332,3 @@ class ShaderManager
 
     bool fisheyeEnabled { false };
 };
-
-#endif // _CELENGINE_SHADERMANAGER_H_

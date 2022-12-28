@@ -9,8 +9,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
 #include <optional>
+
 #include <fmt/format.h>
+
+#include <celcompat/filesystem.h>
+#include <celengine/category.h>
+#include <celengine/texture.h>
+#include <celestia/audiosession.h>
+#include <celestia/url.h>
+#include <celestia/celestiacore.h>
+#include <celestia/view.h>
+#include <celscript/common/scriptmaps.h>
+#include <celttf/truetypefont.h>
+#include <celutil/gettext.h>
+#include <celutil/logger.h>
+#include <celutil/stringutils.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -22,17 +37,6 @@
 #include "celx_rotation.h"
 #include "celx_vector.h"
 #include "celx_category.h"
-#include <celestia/audiosession.h>
-#include <celestia/url.h>
-#include <celestia/celestiacore.h>
-#include <celestia/view.h>
-#include <celscript/common/scriptmaps.h>
-#include <celutil/gettext.h>
-#include <celutil/logger.h>
-#include <celttf/truetypefont.h>
-#include <celengine/category.h>
-#include <celengine/texture.h>
-#include <celcompat/filesystem.h>
 
 
 using namespace std;
@@ -2872,7 +2876,7 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.pushClassName(Celx_Celestia);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << CelxLua::ClassNames[Celx_Celestia] << " not found!\n";
+        std::cout << "Metatable for " << CelxLua::ClassNames[Celx_Celestia] << " not found!\n";
     celx.registerMethod("log", celestia_log);
     celx.registerMethod("settimeslice", celestia_settimeslice);
     celx.registerMethod("setluahook", celestia_setluahook);

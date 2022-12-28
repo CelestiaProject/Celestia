@@ -11,10 +11,12 @@
 
 #pragma once
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <vector>
+
 #include <lua.hpp>
+
 #include <celcompat/filesystem.h>
 #include <celutil/timer.h>
 #include <celengine/observer.h>

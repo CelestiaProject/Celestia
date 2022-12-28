@@ -20,9 +20,13 @@
 #include <celcompat/numbers.h>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
+#include <celengine/body.h>
 #include <celengine/boundaries.h>
+#include <celengine/dsoname.h>
+#include <celengine/location.h>
 #include <celengine/overlay.h>
 #include <celengine/console.h>
+#include <celengine/starname.h>
 #include <celscript/legacy/execution.h>
 #include <celscript/legacy/cmdparser.h>
 #include <celengine/multitexture.h>

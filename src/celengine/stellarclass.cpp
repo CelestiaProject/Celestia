@@ -8,9 +8,9 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include "stellarclass.h"
+#include <cctype>
 
-using namespace std;
+#include "stellarclass.h"
 
 
 Color StellarClass::getApparentColor() const
@@ -54,43 +54,43 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
     }
 }
 
-uint16_t
+std::uint16_t
 StellarClass::packV1() const
 {
     // StarDB Ver. 0x0100 doesn't support Spectral_Y/WO.
     // Classes following Spectral_Y are shifted by 2.
     // Classes following Spectral_WO are shifted by 1.
-    uint16_t sc;
+    std::uint16_t sc;
     if (specClass > SpectralClass::Spectral_Y)
-        sc = (uint16_t) specClass - 2;
+        sc = (std::uint16_t) specClass - 2;
     else if (specClass == SpectralClass::Spectral_Y)
-        sc = (uint16_t) SpectralClass::Spectral_WO; // WO uses value Unknown used
+        sc = (std::uint16_t) SpectralClass::Spectral_WO; // WO uses value Unknown used
     else if (specClass > SpectralClass::Spectral_WO)
-        sc = (uint16_t) specClass - 1;
+        sc = (std::uint16_t) specClass - 1;
     else
-        sc = (uint16_t) specClass;
+        sc = (std::uint16_t) specClass;
 
-    return (((uint16_t) starType << 12) |
-           (((uint16_t) sc & 0x0f) << 8) |
-           ((uint16_t) subclass << 4) |
-           ((uint16_t) lumClass));
+    return (((std::uint16_t) starType << 12) |
+           (((std::uint16_t) sc & 0x0f) << 8) |
+           ((std::uint16_t) subclass << 4) |
+           ((std::uint16_t) lumClass));
 }
 
 
-uint16_t
+std::uint16_t
 StellarClass::packV2() const
 {
-    uint16_t sc = (starType == StellarClass::WhiteDwarf ? specClass - 2 : specClass);
+    std::uint16_t sc = (starType == StellarClass::WhiteDwarf ? specClass - 2 : specClass);
 
-    return (((uint16_t) starType         << 13) |
-           (((uint16_t) sc       & 0x1f) << 8)  |
-           (((uint16_t) subclass & 0x0f) << 4)  |
-           ((uint16_t)  lumClass & 0x0f));
+    return (((std::uint16_t) starType         << 13) |
+           (((std::uint16_t) sc       & 0x1f) << 8)  |
+           (((std::uint16_t) subclass & 0x0f) << 4)  |
+           ((std::uint16_t)  lumClass & 0x0f));
 }
 
 
 bool
-StellarClass::unpackV1(uint16_t st)
+StellarClass::unpackV1(std::uint16_t st)
 {
     starType = static_cast<StellarClass::StarType>(st >> 12);
 
@@ -147,7 +147,7 @@ StellarClass::unpackV1(uint16_t st)
 
 
 bool
-StellarClass::unpackV2(uint16_t st)
+StellarClass::unpackV2(std::uint16_t st)
 {
     starType = static_cast<StellarClass::StarType>(st >> 13);
 
@@ -215,9 +215,9 @@ enum ParseState
 
 
 StellarClass
-StellarClass::parse(const string& st)
+StellarClass::parse(const std::string& st)
 {
-    uint32_t i = 0;
+    std::uint32_t i = 0;
     ParseState state = BeginState;
     StellarClass::StarType starType = StellarClass::NormalStar;
     StellarClass::SpectralClass specClass = StellarClass::Spectral_Unknown;
@@ -375,7 +375,7 @@ StellarClass::parse(const string& st)
             break;
 
         case NormalStarSubclassState:
-            if (isdigit(c))
+            if (std::isdigit(c))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
                 state = NormalStarSubclassDecimalState;
@@ -400,7 +400,7 @@ StellarClass::parse(const string& st)
             break;
 
         case NormalStarSubclassFinalState:
-            if (isdigit(c))
+            if (std::isdigit(c))
                 state = LumClassBeginState;
             else
                 state = EndState;
@@ -592,7 +592,7 @@ StellarClass::parse(const string& st)
             break;
 
         case WDSubclassState:
-            if (isdigit(c))
+            if (std::isdigit(c))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
                 i++;

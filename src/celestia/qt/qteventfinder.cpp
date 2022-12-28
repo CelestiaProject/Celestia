@@ -10,6 +10,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+#include <cassert>
+#include <vector>
+
 #include <QRadioButton>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -23,9 +27,8 @@
 #include <QProgressDialog>
 #include <QApplication>
 #include <QMenu>
-#include <vector>
-#include <algorithm>
-#include <cassert>
+
+#include <celengine/body.h>
 #include <celestia/celestiacore.h>
 #include <celestia/eclipsefinder.h>
 #include <celmath/distance.h>

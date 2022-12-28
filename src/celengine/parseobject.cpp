@@ -12,6 +12,7 @@
 // of the License, or (at your option) any later version.
 
 #include "parseobject.h"
+#include "body.h"
 #include "frame.h"
 #include "trajmanager.h"
 #include "rotationmanager.h"
@@ -27,6 +28,7 @@
 #include <celephem/scriptrotation.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
+#include <celutil/stringutils.h>
 #include <cassert>
 
 using namespace Eigen;

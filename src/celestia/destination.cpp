@@ -7,19 +7,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
+
+#include <celengine/astro.h>
+#include <celengine/hash.h>
+#include <celengine/parser.h>
+#include <celengine/value.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
-#include <celengine/astro.h>
-#include <celengine/parser.h>
 #include <celutil/tokenizer.h>
 #include "destination.h"
 
-using namespace std;
 using celestia::util::GetLogger;
 
-DestinationList* ReadDestinationList(istream& in)
+DestinationList* ReadDestinationList(std::istream& in)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
@@ -30,7 +31,7 @@ DestinationList* ReadDestinationList(istream& in)
         if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
         {
             GetLogger()->error("Error parsing destinations file.\n");
-            for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
+            std::for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             return nullptr;
         }
@@ -40,7 +41,7 @@ DestinationList* ReadDestinationList(istream& in)
         if (destValue == nullptr || destValue->getType() != Value::HashType)
         {
             GetLogger()->error("Error parsing destination.\n");
-            for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
+            std::for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             if (destValue != nullptr)
                 delete destValue;
@@ -62,7 +63,7 @@ DestinationList* ReadDestinationList(istream& in)
             destParams->getNumber("Distance", dest->distance);
 
             // Default unit of distance is the light year
-            string distanceUnits;
+            std::string distanceUnits;
             if (destParams->getString("DistanceUnits", distanceUnits))
             {
                 if (!compareIgnoringCase(distanceUnits, "km"))

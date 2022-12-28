@@ -7,12 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _DESTINATION_H_
-#define _DESTINATION_H_
+#pragma once
 
+#include <iosfwd>
 #include <string>
 #include <vector>
-#include <iostream>
 
 
 class Destination
@@ -27,8 +26,6 @@ class Destination
     std::string description;
 };
 
-typedef std::vector<Destination*> DestinationList;
+using DestinationList = std::vector<Destination*>;
 
 DestinationList* ReadDestinationList(std::istream&);
-
-#endif // _DESTINATION_H_
