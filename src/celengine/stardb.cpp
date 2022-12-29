@@ -64,6 +64,18 @@ constexpr inline std::string_view CROSSINDEX_FILE_HEADER = "CELINDEX"sv;
 
 constexpr inline AstroCatalog::IndexNumber TYC3_MULTIPLIER = 1000000000u;
 constexpr inline AstroCatalog::IndexNumber TYC2_MULTIPLIER = 10000u;
+constexpr inline AstroCatalog::IndexNumber TYC123_MIN = 1u;
+constexpr inline AstroCatalog::IndexNumber TYC1_MAX   = 9999u;  // actual upper limit is 9537 in TYC2
+constexpr inline AstroCatalog::IndexNumber TYC2_MAX   = 99999u; // actual upper limit is 12121 in TYC2
+constexpr inline AstroCatalog::IndexNumber TYC3_MAX   = 3u;     // from TYC2
+
+// In the original Tycho catalog, TYC3 ranges from 1 to 3, so no there is
+// no chance of overflow in the multiplication. TDSC (Fabricius et al. 2002)
+// adds one entry with TYC3 = 4 (TYC 2907-1276-4) so permit TYC=4 when the
+// TYC1 number is <= 2907
+constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX            = 4u;
+constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX_RANGE_TYC1 = 2907u;
+
 
 bool parseSimpleCatalogNumber(std::string_view name,
                               std::string_view prefix,
@@ -126,37 +138,38 @@ bool parseTychoCatalogNumber(std::string_view name,
 
     const char* const end_ptr = name.data() + name.size();
 
-    AstroCatalog::IndexNumber tyc1, tyc2, tyc3;
-    auto result = from_chars(name.data() + pos, end_ptr, tyc1);
+    std::array<AstroCatalog::IndexNumber, 3> tycParts;
+    auto result = from_chars(name.data() + pos, end_ptr, tycParts[0]);
     if (result.ec != std::errc{}
-        || tyc1 < 1 || tyc1 > 9999 // actual upper limit is 9537 in TYC2
+        || tycParts[0] < TYC123_MIN || tycParts[0] > TYC1_MAX
         || result.ptr == end_ptr
         || *result.ptr != '-')
     {
         return false;
     }
 
-    result = from_chars(result.ptr + 1, end_ptr, tyc2);
+    result = from_chars(result.ptr + 1, end_ptr, tycParts[1]);
     if (result.ec != std::errc{}
-        || tyc2 < 1 || tyc2 > 99999 // actual upper limit is 12121 in TYC2
+        || tycParts[1] < TYC123_MIN || tycParts[1] > TYC2_MAX
         || result.ptr == end_ptr
         || *result.ptr != '-')
     {
         return false;
     }
 
-    // In the original Tycho catalog, TYC3 ranges from 1 to 3, so no there is
-    // no chance of overflow in the multiplication. TDSC (Fabricius et al. 2002)
-    // adds one entry with TYC3 = 4 (TYC 2907-1276-4) so permit TYC=4 up to 2907
-    if (result = from_chars(result.ptr + 1, end_ptr, tyc3);
+    if (result = from_chars(result.ptr + 1, end_ptr, tycParts[2]);
         result.ec == std::errc{}
-        && tyc3 >= 1 && (tyc3 <= 3 || (tyc3 == 4 && tyc1 <= 2907)))
+        && tycParts[2] >= TYC123_MIN
+        && (tycParts[2] <= TYC3_MAX
+            || (tycParts[2] == TDSC_TYC3_MAX && tycParts[0] <= TDSC_TYC3_MAX_RANGE_TYC1)))
     {
         // Do not match if suffix is present
-        auto pos = name.find_first_not_of(" \t", result.ptr - name.data());
+        pos = name.find_first_not_of(" \t", result.ptr - name.data());
         if (pos != std::string_view::npos) { return false; }
 
-        catalogNumber = tyc3 * TYC3_MULTIPLIER + tyc2 * TYC2_MULTIPLIER + tyc1;
+        catalogNumber = tycParts[2] * TYC3_MULTIPLIER
+                      + tycParts[1] * TYC2_MULTIPLIER
+                      + tycParts[0];
         return true;
     }
 
