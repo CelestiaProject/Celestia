@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 #include <ostream>
 
 #include <celengine/hash.h>
@@ -131,13 +132,13 @@ void WriteFavoritesList(FavoritesList& favorites, std::ostream& out)
         {
             out << "\tisFolder " << "false\n";
             out << "\tparentFolder \"" << fav->parentFolder << "\"\n";
-            out << std::setprecision(16);
+            out << std::setprecision(std::numeric_limits<double>::max_digits10);
             out << "\tbase   [ " << base.x()   << ' ' << base.y()   << ' ' << base.z()   << " ]\n";
             out << "\toffset [ " << offset.x() << ' ' << offset.y() << ' ' << offset.z() << " ]\n";
-            out << std::setprecision(6);
+            out << std::setprecision(std::numeric_limits<float>::max_digits10);
             out << "\taxis   [ " << axis.x() << ' ' << axis.y() << ' ' << axis.z() << " ]\n";
             out << "\tangle  " << angle << '\n';
-            out << std::setprecision(16);
+            out << std::setprecision(std::numeric_limits<double>::max_digits10);
             out << "\ttime   " << fav->jd << '\n';
             out << "\tselection \"" << fav->selectionName << "\"\n";
             out << "\tcoordsys \"";
