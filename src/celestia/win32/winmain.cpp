@@ -3317,14 +3317,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     const char *msgid = N_("LANGUAGE");
     const char *lang = _(msgid);
 
+    std::cout << "msgid==" <<msgid<<" lang="<<lang<<'\n';
+
     // Loading localized resources
     if (msgid != lang) // gettext(s) returns either pointer to the translation or `s`
     {
         char res[255];
         sprintf(res, "locale\\res_%s.dll", lang);
+        std::cout << "ui translation="<<res<<'\n';
         int langID = 0;
         if (sscanf(_("WinLangID"), "%x", &langID) == 1)
             SetThreadLocale(langID);
+        std::cout << "langID="<<langID<<'\n';
         if ((hRes = LoadLibrary(res)) == NULL)
         {
             cout << "Couldn't load localized resources: "<< res << "\n";
