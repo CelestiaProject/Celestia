@@ -212,7 +212,7 @@ std::string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 
 
 void stcError(const Tokenizer& tok,
-              const std::string& msg)
+              std::string_view msg)
 {
     GetLogger()->error(_("Error in .stc file (line {}): {}\n"), tok.getLineNumber(), msg);
 }
@@ -934,8 +934,8 @@ bool StarDatabase::createStar(Star* star,
                 // Observational-Theoretical HR Diagram", Journal of the Royal
                 // Astronomical Society of Canada, Vol 92. p36.
 
-                double logT = log10(temperature) - 4;
-                double bc = -8.499 * pow(logT, 4) + 13.421 * pow(logT, 3)
+                double logT = std::log10(temperature) - 4;
+                double bc = -8.499 * std::pow(logT, 4) + 13.421 * std::pow(logT, 3)
                             - 8.131 * logT * logT - 3.901 * logT - 0.438;
 
                 details->setBolometricCorrection((float) bc);
