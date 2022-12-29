@@ -30,7 +30,7 @@
 class StarNameDatabase;
 
 
-static const unsigned int MAX_STAR_NAMES = 10;
+constexpr inline unsigned int MAX_STAR_NAMES = 10;
 
 class StarDatabase
 {
@@ -80,7 +80,7 @@ class StarDatabase
 
     // Not exact, but any star with a catalog number greater than this is assumed to not be
     // a HIPPARCOS stars.
-    static const AstroCatalog::IndexNumber MAX_HIPPARCOS_NUMBER = 999999;
+    static constexpr AstroCatalog::IndexNumber MAX_HIPPARCOS_NUMBER = 999999;
 
     struct CrossIndexEntry
     {
@@ -90,16 +90,14 @@ class StarDatabase
         bool operator<(const CrossIndexEntry&) const;
     };
 
-    typedef std::vector<CrossIndexEntry> CrossIndex;
+    using CrossIndex = std::vector<CrossIndexEntry>;
 
     bool loadCrossIndex(const Catalog, std::istream&);
     AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(const Catalog, const AstroCatalog::IndexNumber number) const;
-    Star*  searchCrossIndex(const Catalog, const AstroCatalog::IndexNumber number) const;
+    Star* searchCrossIndex(const Catalog, const AstroCatalog::IndexNumber number) const;
     AstroCatalog::IndexNumber crossIndex(const Catalog, const AstroCatalog::IndexNumber number) const;
 
     void finish();
-
-    static StarDatabase* read(std::istream&);
 
 private:
     bool createStar(Star* star,
@@ -113,7 +111,7 @@ private:
     void buildIndexes();
     Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
 
-    int nStars{ 0 };
+    std::uint32_t nStars{ 0 };
 
     Star*             stars{ nullptr };
     StarNameDatabase* namesDB{ nullptr };
