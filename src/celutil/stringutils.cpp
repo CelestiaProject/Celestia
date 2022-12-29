@@ -13,39 +13,41 @@
 #include <cctype>
 #include "stringutils.h"
 
-using namespace std;
-
 int compareIgnoringCase(std::string_view s1, std::string_view s2)
 {
     auto i1 = s1.begin();
     auto i2 = s2.begin();
 
-    while (i1 != s1.end() && i2 != s2.end())
+    for (;;)
     {
-        if (toupper(*i1) != toupper(*i2))
-            return (toupper(*i1) < toupper(*i2)) ? -1 : 1;
+        if (i1 == s1.end()) { return i2 == s2.end() ? 0 : -1; }
+        if (i2 == s2.end()) { return 1; }
+        auto c1 = std::toupper(static_cast<unsigned char>(*i1));
+        auto c2 = std::toupper(static_cast<unsigned char>(*i2));
+        if (c1 != c2) { return c1 < c2 ? -1 : 1; }
         ++i1;
         ++i2;
     }
-
-    return s2.size() - s1.size();
 }
 
-int compareIgnoringCase(std::string_view s1, std::string_view s2, int n)
+int compareIgnoringCase(std::string_view s1,
+                        std::string_view s2,
+                        std::string_view::size_type n)
 {
     auto i1 = s1.begin();
     auto i2 = s2.begin();
 
-    while (i1 != s1.end() && i2 != s2.end() && n > 0)
+    for (;;)
     {
-        if (toupper(*i1) != toupper(*i2))
-            return (toupper(*i1) < toupper(*i2)) ? -1 : 1;
+        if (n-- == 0) { return 0; }
+        if (i1 == s1.end()) { return i2 == s2.end() ? 0 : -1; }
+        if (i2 == s2.end()) { return 1; }
+        auto c1 = std::toupper(static_cast<unsigned char>(*i1));
+        auto c2 = std::toupper(static_cast<unsigned char>(*i2));
+        if (c1 != c2) { return c1 < c2 ? -1 : 1; }
         ++i1;
         ++i2;
-        n--;
     }
-
-    return n > 0 ? s2.size() - s1.size() : 0;
 }
 
 bool CompareIgnoringCasePredicate::operator()(std::string_view s1,

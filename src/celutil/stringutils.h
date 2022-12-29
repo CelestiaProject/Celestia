@@ -18,7 +18,9 @@
 #include <celcompat/charconv.h>
 
 int compareIgnoringCase(std::string_view s1, std::string_view s2);
-int compareIgnoringCase(std::string_view s1, std::string_view s2, int n);
+int compareIgnoringCase(std::string_view s1,
+                        std::string_view s2,
+                        std::string_view::size_type n);
 
 struct CompareIgnoringCasePredicate
 {
