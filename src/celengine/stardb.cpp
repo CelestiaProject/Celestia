@@ -9,12 +9,17 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cmath>
-#include <cstdio>
-#include <cstring>
+#include <cstddef>
+#include <istream>
+#include <set>
+#include <string_view>
+#include <system_error>
 
 #include <fmt/format.h>
 
+#include <celcompat/charconv.h>
 #include <celutil/binaryread.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -26,19 +31,21 @@
 #include "starname.h"
 #include "value.h"
 
+using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 
 namespace celutil = celestia::util;
 
-
-constexpr const char HDCatalogPrefix[]        = "HD ";
-constexpr const char HIPPARCOSCatalogPrefix[] = "HIP ";
-constexpr const char TychoCatalogPrefix[]     = "TYC ";
-constexpr const char SAOCatalogPrefix[]       = "SAO ";
+namespace
+{
+constexpr inline std::string_view HDCatalogPrefix        = "HD "sv;
+constexpr inline std::string_view HIPPARCOSCatalogPrefix = "HIP "sv;
+constexpr inline std::string_view TychoCatalogPrefix     = "TYC "sv;
+constexpr inline std::string_view SAOCatalogPrefix       = "SAO "sv;
 #if 0
-constexpr const char GlieseCatalogPrefix[]    = "Gliese ";
-constexpr const char RossCatalogPrefix[]      = "Ross ";
-constexpr const char LacailleCatalogPrefix[]  = "Lacaille ";
+constexpr inline std::string_view GlieseCatalogPrefix    = "Gliese "sv;
+constexpr inline std::string_view RossCatalogPrefix      = "Ross "sv;
+constexpr inline std::string_view LacailleCatalogPrefix  = "Lacaille "sv;
 #endif
 
 // The size of the root star octree node is also the maximum distance
@@ -47,53 +54,47 @@ constexpr const char LacailleCatalogPrefix[]  = "Lacaille ";
 // local group of galaxies. A larger value should be OK, but the
 // performance implications for octree traversal still need to be
 // investigated.
-constexpr const float STAR_OCTREE_ROOT_SIZE   = 1000000000.0f;
+constexpr inline float STAR_OCTREE_ROOT_SIZE   = 1000000000.0f;
 
-constexpr const float STAR_OCTREE_MAGNITUDE   = 6.0f;
+constexpr inline float STAR_OCTREE_MAGNITUDE   = 6.0f;
 //constexpr const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
 
-constexpr const char FILE_HEADER[]            = "CELSTARS";
-constexpr const char CROSSINDEX_FILE_HEADER[] = "CELINDEX";
+constexpr inline std::string_view FILE_HEADER            = "CELSTARS"sv;
+constexpr inline std::string_view CROSSINDEX_FILE_HEADER = "CELINDEX"sv;
 
+constexpr inline AstroCatalog::IndexNumber TYC3_MULTIPLIER = 1000000000u;
+constexpr inline AstroCatalog::IndexNumber TYC2_MULTIPLIER = 10000u;
 
-// Used to sort star pointers by catalog number
-struct PtrCatalogNumberOrderingPredicate
+bool parseSimpleCatalogNumber(std::string_view name,
+                              std::string_view prefix,
+                              AstroCatalog::IndexNumber& catalogNumber)
 {
-    int unused;
-
-    PtrCatalogNumberOrderingPredicate() = default;
-
-    bool operator()(const Star* const & star0, const Star* const & star1) const
+    using celestia::compat::from_chars;
+    if (compareIgnoringCase(name, prefix, prefix.size()) != 0)
     {
-        return (star0->getIndex() < star1->getIndex());
+        return false;
     }
-};
 
-
-static bool parseSimpleCatalogNumber(const std::string& name,
-                                     const std::string& prefix,
-                                     AstroCatalog::IndexNumber* catalogNumber)
-{
-    char extra[4];
-    if (compareIgnoringCase(name, prefix, prefix.length()) == 0)
+    // skip additional whitespace
+    auto pos = name.find_first_not_of(" \t", prefix.size());
+    if (pos == std::string_view::npos)
     {
-        unsigned int num;
-        // Use scanf to see if we have a valid catalog number; it must be
-        // of the form: <prefix> <non-negative integer>  No additional
-        // characters other than whitespace are allowed after the number.
-        if (std::sscanf(name.c_str() + prefix.length(), " %u %c", &num, extra) == 1)
-        {
-            *catalogNumber = (AstroCatalog::IndexNumber) num;
-            return true;
-        }
+        return false;
+    }
+
+    if (auto [ptr, ec] = from_chars(name.data() + pos, name.data() + name.size(), catalogNumber); ec == std::errc{})
+    {
+        // Do not match if suffix is present
+        pos = name.find_first_not_of(" \t", ptr - name.data());
+        return pos == std::string_view::npos;
     }
 
     return false;
 }
 
 
-static bool parseHIPPARCOSCatalogNumber(const std::string& name,
-                                        AstroCatalog::IndexNumber* catalogNumber)
+bool parseHIPPARCOSCatalogNumber(std::string_view name,
+                                 AstroCatalog::IndexNumber& catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
                                     HIPPARCOSCatalogPrefix,
@@ -101,8 +102,8 @@ static bool parseHIPPARCOSCatalogNumber(const std::string& name,
 }
 
 
-static bool parseHDCatalogNumber(const std::string& name,
-                                 AstroCatalog::IndexNumber* catalogNumber)
+bool parseHDCatalogNumber(std::string_view name,
+                          AstroCatalog::IndexNumber& catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
                                     HDCatalogPrefix,
@@ -110,42 +111,99 @@ static bool parseHDCatalogNumber(const std::string& name,
 }
 
 
-static bool parseTychoCatalogNumber(const std::string& name,
-                                    AstroCatalog::IndexNumber* catalogNumber)
+bool parseTychoCatalogNumber(std::string_view name,
+                             AstroCatalog::IndexNumber& catalogNumber)
 {
-    int len = std::strlen(TychoCatalogPrefix);
-    if (compareIgnoringCase(name, TychoCatalogPrefix, len) == 0)
+    using celestia::compat::from_chars;
+    if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.size()) != 0)
     {
-        unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (std::sscanf(std::string(name, len, std::string::npos).c_str(),
-                   " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
-        {
-            *catalogNumber = (AstroCatalog::IndexNumber) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
-            return true;
-        }
+        return false;
+    }
+
+    // skip additional whitespace
+    auto pos = name.find_first_not_of(" \t", TychoCatalogPrefix.size());
+    if (pos == std::string_view::npos) { return false; }
+
+    const char* const end_ptr = name.data() + name.size();
+
+    AstroCatalog::IndexNumber tyc1, tyc2, tyc3;
+    auto result = from_chars(name.data() + pos, end_ptr, tyc1);
+    if (result.ec != std::errc{}
+        || tyc1 < 1 || tyc1 > 9999 // actual upper limit is 9537 in TYC2
+        || result.ptr == end_ptr
+        || *result.ptr != '-')
+    {
+        return false;
+    }
+
+    result = from_chars(result.ptr + 1, end_ptr, tyc2);
+    if (result.ec != std::errc{}
+        || tyc2 < 1 || tyc2 > 99999 // actual upper limit is 12121 in TYC2
+        || result.ptr == end_ptr
+        || *result.ptr != '-')
+    {
+        return false;
+    }
+
+    // In the original Tycho catalog, TYC3 ranges from 1 to 3, so no there is
+    // no chance of overflow in the multiplication. TDSC (Fabricius et al. 2002)
+    // adds one entry with TYC3 = 4 (TYC 2907-1276-4) so permit TYC=4 up to 2907
+    if (result = from_chars(result.ptr + 1, end_ptr, tyc3);
+        result.ec == std::errc{}
+        && tyc3 >= 1 && (tyc3 <= 3 || (tyc3 == 4 && tyc1 <= 2907)))
+    {
+        // Do not match if suffix is present
+        auto pos = name.find_first_not_of(" \t", result.ptr - name.data());
+        if (pos != std::string_view::npos) { return false; }
+
+        catalogNumber = tyc3 * TYC3_MULTIPLIER + tyc2 * TYC2_MULTIPLIER + tyc1;
+        return true;
     }
 
     return false;
 }
 
 
-static bool parseCelestiaCatalogNumber(const std::string& name,
-                                       AstroCatalog::IndexNumber* catalogNumber)
+bool parseCelestiaCatalogNumber(std::string_view name,
+                                AstroCatalog::IndexNumber& catalogNumber)
 {
-    char extra[4];
-
-    if (name[0] == '#')
+    using celestia::compat::from_chars;
+    if (name.size() == 0 || name[0] != '#') { return false; }
+    if (auto [ptr, ec] = from_chars(name.data() + 1, name.data() + name.size(), catalogNumber); ec == std::errc{})
     {
-        unsigned int num;
-        if (sscanf(name.c_str(), "#%u %c", &num, extra) == 1)
-        {
-            *catalogNumber = (AstroCatalog::IndexNumber) num;
-            return true;
-        }
+        // Do not match if suffix is present
+        auto pos = name.find_first_not_of(" \t", ptr - name.data());
+        return pos == std::string_view::npos;
     }
 
     return false;
 }
+
+
+std::string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
+{
+    if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
+    {
+        return fmt::format("HIP {}", catalogNumber);
+    }
+    else
+    {
+        AstroCatalog::IndexNumber tyc3 = catalogNumber / TYC3_MULTIPLIER;
+        catalogNumber -= tyc3 * TYC3_MULTIPLIER;
+        AstroCatalog::IndexNumber tyc2 = catalogNumber / TYC2_MULTIPLIER;
+        catalogNumber -= tyc2 * TYC2_MULTIPLIER;
+        AstroCatalog::IndexNumber tyc1 = catalogNumber;
+        return fmt::format("TYC {}-{}-{}", tyc1, tyc2, tyc3);
+    }
+}
+
+
+void stcError(const Tokenizer& tok,
+              const std::string& msg)
+{
+    GetLogger()->error(_("Error in .stc file (line {}): {}\n"), tok.getLineNumber(), msg);
+}
+} // end unnamed namespace
 
 
 bool StarDatabase::CrossIndexEntry::operator<(const StarDatabase::CrossIndexEntry& e) const
@@ -201,24 +259,24 @@ AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const std::strin
             return catalogNumber;
     }
 
-    if (parseCelestiaCatalogNumber(name, &catalogNumber))
+    if (parseCelestiaCatalogNumber(name, catalogNumber))
     {
         return catalogNumber;
     }
-    else if (parseHIPPARCOSCatalogNumber(name, &catalogNumber))
+    else if (parseHIPPARCOSCatalogNumber(name, catalogNumber))
     {
         return catalogNumber;
     }
-    else if (parseTychoCatalogNumber(name, &catalogNumber))
+    else if (parseTychoCatalogNumber(name, catalogNumber))
     {
         return catalogNumber;
     }
-    else if (parseHDCatalogNumber(name, &catalogNumber))
+    else if (parseHDCatalogNumber(name, catalogNumber))
     {
         return searchCrossIndexForCatalogNumber(HenryDraper, catalogNumber);
     }
     else if (parseSimpleCatalogNumber(name, SAOCatalogPrefix,
-                                      &catalogNumber))
+                                      catalogNumber))
     {
         return searchCrossIndexForCatalogNumber(SAO, catalogNumber);
     }
@@ -241,7 +299,7 @@ Star* StarDatabase::find(const std::string& name, bool i18n) const
 
 AstroCatalog::IndexNumber StarDatabase::crossIndex(const Catalog catalog, const AstroCatalog::IndexNumber celCatalogNumber) const
 {
-    if (static_cast<size_t>(catalog) >= crossIndexes.size())
+    if (static_cast<std::size_t>(catalog) >= crossIndexes.size())
         return AstroCatalog::InvalidIndex;
 
     CrossIndex* xindex = crossIndexes[catalog];
@@ -301,32 +359,6 @@ std::vector<std::string> StarDatabase::getCompletion(const std::string& name, bo
         return namesDB->getCompletion(name, i18n);
     else
         return completion;
-}
-
-
-#if 0
-static void catalogNumberToString(AstroCatalog::IndexNumber catalogNumber, char* buf, unsigned int bufSize)
-{
-    // TODO: implement using using fmt::write
-}
-#endif
-
-
-static std::string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
-{
-    if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
-    {
-        return fmt::format("HIP {}", catalogNumber);
-    }
-    else
-    {
-        AstroCatalog::IndexNumber tyc3 = catalogNumber / 1000000000;
-        catalogNumber -= tyc3 * 1000000000;
-        AstroCatalog::IndexNumber tyc2 = catalogNumber / 10000;
-        catalogNumber -= tyc2 * 10000;
-        AstroCatalog::IndexNumber tyc1 = catalogNumber;
-        return fmt::format("TYC {}-{}-{}", tyc1, tyc2, tyc3);
-    }
 }
 
 
@@ -446,11 +478,11 @@ std::string StarDatabase::getStarNameList(const Star& star, const unsigned int m
             if (hip >= 1000000)
             {
                 AstroCatalog::IndexNumber h = hip;
-                AstroCatalog::IndexNumber tyc3   = h / 1000000000;
-                       h     -= tyc3 * 1000000000;
-                AstroCatalog::IndexNumber tyc2   = h / 10000;
-                       h     -= tyc2 * 10000;
-                AstroCatalog::IndexNumber tyc1   = h;
+                AstroCatalog::IndexNumber tyc3 = h / TYC3_MULTIPLIER;
+                h -= tyc3 * TYC3_MULTIPLIER;
+                AstroCatalog::IndexNumber tyc2 = h / TYC2_MULTIPLIER;
+                h -= tyc2 * TYC2_MULTIPLIER;
+                AstroCatalog::IndexNumber tyc1 = h;
 
                 append(fmt::format("TYC {}-{}-{}", tyc1, tyc2, tyc3));
             }
@@ -530,7 +562,7 @@ StarNameDatabase* StarDatabase::getNameDatabase() const
 
 void StarDatabase::setNameDatabase(StarNameDatabase* _namesDB)
 {
-    namesDB    = _namesDB;
+    namesDB = _namesDB;
 }
 
 
@@ -544,16 +576,13 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 
     // Verify that the star database file has a correct header
     {
-        int headerLength = strlen(CROSSINDEX_FILE_HEADER);
-        char* header = new char[headerLength];
-        if (!in.read(header, headerLength).good()
-            || strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
+        std::array<char, CROSSINDEX_FILE_HEADER.size()> header;
+        if (!in.read(header.data(), header.size()).good()
+            || CROSSINDEX_FILE_HEADER != std::string_view(header.data(), header.size()))
         {
             GetLogger()->error(_("Bad header for cross index\n"));
-            delete[] header;
             return false;
         }
-        delete[] header;
     }
 
     // Verify the version
@@ -602,17 +631,15 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 
 bool StarDatabase::loadBinary(std::istream& in)
 {
-    uint32_t nStarsInFile = 0;
+    std::uint32_t nStarsInFile = 0;
 
     // Verify that the star database file has a correct header
     {
-        int headerLength = strlen(FILE_HEADER);
-        char* header = new char[headerLength];
-        if (!in.read(header, headerLength).good() || strncmp(header, FILE_HEADER, headerLength)) {
-            delete[] header;
+        std::array<char, FILE_HEADER.size()> header;
+        if (!in.read(header.data(), header.size()).good()
+            || FILE_HEADER != std::string_view(header.data(), header.size())) {
             return false;
         }
-        delete[] header;
     }
 
     // Verify the version
@@ -630,14 +657,14 @@ bool StarDatabase::loadBinary(std::istream& in)
         return false;
     }
 
-    unsigned int totalStars = nStars + nStarsInFile;
+    std::uint32_t totalStars = nStars + nStarsInFile;
 
-    while (((unsigned int) nStars) < totalStars)
+    while (nStars < totalStars)
     {
         AstroCatalog::IndexNumber catNo = 0;
         float x = 0.0f, y = 0.0f, z = 0.0f;
-        int16_t absMag;
-        uint16_t spectralType;
+        std::int16_t absMag;
+        std::uint16_t spectralType;
 
         if (!celutil::readLE<AstroCatalog::IndexNumber>(in, catNo)
             || !celutil::readLE<float>(in, x)
@@ -651,7 +678,7 @@ bool StarDatabase::loadBinary(std::istream& in)
 
         Star star;
         star.setPosition(x, y, z);
-        star.setAbsoluteMagnitude((float) absMag / 256.0f);
+        star.setAbsoluteMagnitude(static_cast<float>(absMag) / 256.0f);
 
         StarDetails* details = nullptr;
         StellarClass sc;
@@ -727,13 +754,6 @@ void StarDatabase::finish()
     }
 
     barycenters.clear();
-}
-
-
-static void stcError(const Tokenizer& tok,
-                     const std::string& msg)
-{
-    GetLogger()->error(_("Error in .stc file (line {}): {}\n"), tok.getLineNumber(), msg);
 }
 
 
@@ -1403,7 +1423,7 @@ void StarDatabase::buildOctree()
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
-                       static_cast<int>(firstStar - sortedStars),
+                       firstStar - sortedStars,
                        1 + octreeRoot->countChildren(), octreeRoot->countObjects());
 #ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
