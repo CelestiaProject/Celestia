@@ -416,41 +416,6 @@ std::string StarDatabase::getStarName(const Star& star, bool i18n) const
     return catalogNumberToString(catalogNumber);
 }
 
-// A less convenient version of getStarName that writes to a char
-// array instead of a string. The advantage is that no memory allocation
-// will every occur.
-void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize, bool i18n) const
-{
-    assert(bufferSize != 0);
-
-    AstroCatalog::IndexNumber catalogNumber = star.getIndex();
-
-    if (namesDB != nullptr)
-    {
-        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
-        if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
-        {
-            if (i18n)
-            {
-                const char * local = D_(iter->second.c_str());
-                if (iter->second != local)
-                {
-                    strncpy(nameBuffer, local, bufferSize);
-                    nameBuffer[bufferSize - 1] = '\0';
-                    return;
-                }
-            }
-
-            strncpy(nameBuffer, iter->second.c_str(), bufferSize);
-            nameBuffer[bufferSize - 1] = '\0';
-            return;
-        }
-    }
-
-    strncpy(nameBuffer, catalogNumberToString(catalogNumber).c_str(), bufferSize);
-    nameBuffer[bufferSize - 1] = '\0';
-}
-
 
 std::string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNames) const
 {
