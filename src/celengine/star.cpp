@@ -1152,7 +1152,7 @@ float Star::getBolometricLuminosity() const
     // visual magnitude of the star.
     float solarBMag = SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
-    return (float) exp((solarBMag - bmag) / LN_MAG);
+    return exp((solarBMag - bmag) / LN_MAG);
 #endif
 }
 

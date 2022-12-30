@@ -21,16 +21,16 @@ constexpr inline float SOLAR_ABSMAG = 4.83f;
 constexpr inline float LN_MAG = 1.085736f;
 
 template<typename T>
-constexpr inline T LY_PER_PARSEC{3.26167};
+constexpr inline T LY_PER_PARSEC = static_cast<T>(3.26167);
 
 template<typename T>
-constexpr inline T KM_PER_LY{9460730472580.8};
+constexpr inline T KM_PER_LY = static_cast<T>(9460730472580.8);
 
 // Old incorrect value; will be required for cel:// URL compatibility
 // #define OLD_KM_PER_LY     9466411842000.000
 
 template<typename T>
-constexpr inline T KM_PER_AU{149597870.7};
+constexpr inline T KM_PER_AU = static_cast<T>(149597870.7);
 
 template<typename T>
 constexpr inline T AU_PER_LY = KM_PER_LY<T> / KM_PER_AU<T>;
@@ -50,13 +50,13 @@ constexpr inline double SECONDS_PER_DEG = 3600.0;
 constexpr inline double DEG_PER_HRA     = 15.0;
 
 template<typename T>
-constexpr inline T EARTH_RADIUS{6378.14};
+constexpr inline T EARTH_RADIUS = static_cast<T>(6378.14);
 
 template<typename T>
-constexpr inline T JUPITER_RADIUS{71492.0};
+constexpr inline T JUPITER_RADIUS = static_cast<T>(71492.0);
 
 template<typename T>
-constexpr inline T SOLAR_RADIUS{696000.0};
+constexpr inline T SOLAR_RADIUS = static_cast<T>(696000.0);
 
 class UniversalCoord;
 

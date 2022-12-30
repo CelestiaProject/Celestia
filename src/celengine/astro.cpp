@@ -153,7 +153,7 @@ static const UnitDefinition massUnits[] =
 
 float astro::lumToAbsMag(float lum)
 {
-    return (float) (SOLAR_ABSMAG - log(lum) * LN_MAG);
+    return SOLAR_ABSMAG - log(lum) * LN_MAG;
 }
 
 // Return the apparent magnitude of a star with lum times solar
@@ -165,7 +165,7 @@ float astro::lumToAppMag(float lum, float lyrs)
 
 float astro::absMagToLum(float mag)
 {
-    return (float) exp((SOLAR_ABSMAG - mag) / LN_MAG);
+    return exp((SOLAR_ABSMAG - mag) / LN_MAG);
 }
 
 float astro::appMagToLum(float mag, float lyrs)
