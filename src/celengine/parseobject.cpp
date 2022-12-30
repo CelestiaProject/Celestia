@@ -75,7 +75,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 static void
 GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
 {
-    distanceScale = (usePlanetUnits) ? KM_PER_AU<double> : 1.0;
+    distanceScale = usePlanetUnits ? KM_PER_AU<double> : 1.0;
 }
 
 

@@ -569,7 +569,7 @@ class EarthOrbit : public CachingOrbit
 
         eclLong = nu+degToRad(ls-ms+dl) + celestia::numbers::pi;
         eclLong = pfmod(eclLong, TWOPI);
-        distance = KM_PER_AU<double> * (1.0000002*(1-s*cos(ea))+dr);
+        distance = KM_PER_AU<double> * (1.0000002*(1.0-s*cos(ea))+dr);
 
         // Correction for internal coordinate system
         eclLong += celestia::numbers::pi;
