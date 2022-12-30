@@ -174,7 +174,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
         /*uint8_t  parallaxError = */readUbyte(in); // not used yet
 
         // Compute distance based on parallax
-        double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+        double distance = LY_PER_PARSEC<double> / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
         out << catalogNum << ' ';
         out << setprecision(8);
 
@@ -188,7 +188,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
         {
             Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
             float absMag = (float) (appMag / 256.0 + 5 -
-                                    5 * log10(distance / LY_PER_PARSEC));
+                                    5 * log10(distance / LY_PER_PARSEC<double>));
             out << (float) pos.x() << ' ' <<
                    (float) pos.y() << ' ' <<
                    (float) pos.z() << ' ';
@@ -263,7 +263,7 @@ bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
             // atan2 outputs angles in interval [-pi, pi], so we add 360 to fix this
             double ra = theta - 180 + 360;
             double dec = phi + 90;
-            float appMag = float (absMag / 256.0 - 5 + 5 * log10(distance / LY_PER_PARSEC));
+            float appMag = float (absMag / 256.0 - 5 + 5 * log10(distance / LY_PER_PARSEC<double>));
 
             out << fixed << setprecision(9) << (float) ra << ' ' << (float) dec << ' ';
             out << setprecision(6) << (float) distance << ' ';
