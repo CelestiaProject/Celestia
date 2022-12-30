@@ -111,14 +111,14 @@ static const UnitDefinition lengthUnits[] =
 {
     { "km", 1.0 },
     { "m",  0.001 },
-    { "rE", (double) EARTH_RADIUS },
-    { "rJ", (double) JUPITER_RADIUS },
-    { "rS", (double) SOLAR_RADIUS },
-    { "AU", (double) KM_PER_AU },
-    { "ly", (double) KM_PER_LY },
-    { "pc", (double) KM_PER_PARSEC },
-    { "kpc", 1000.0 * ((double) KM_PER_PARSEC) },
-    { "Mpc", 1000000.0 * ((double) KM_PER_PARSEC) },
+    { "rE", EARTH_RADIUS<double> },
+    { "rJ", JUPITER_RADIUS<double> },
+    { "rS", SOLAR_RADIUS<double> },
+    { "AU", KM_PER_AU<double> },
+    { "ly", KM_PER_LY<double> },
+    { "pc", KM_PER_PARSEC<double> },
+    { "kpc", 1000.0 * KM_PER_PARSEC<double> },
+    { "Mpc", 1000000.0 * KM_PER_PARSEC<double> },
 };
 
 

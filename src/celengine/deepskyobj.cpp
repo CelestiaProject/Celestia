@@ -149,7 +149,7 @@ bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
         double distance = 1.0;
         double RA = 0.0;
         double dec = 0.0;
-        params->getLength("Distance", distance, KM_PER_LY);
+        params->getLength("Distance", distance, KM_PER_LY<double>);
         params->getAngle("RA", RA, DEG_PER_HRA);
         params->getAngle("Dec", dec);
 
@@ -167,7 +167,7 @@ bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
                                                         axis.cast<float>().normalized())));
 
     double radius = 1.0;
-    params->getLength("Radius", radius, KM_PER_LY);
+    params->getLength("Radius", radius, KM_PER_LY<double>);
 
     setRadius(static_cast<float>(radius));
 

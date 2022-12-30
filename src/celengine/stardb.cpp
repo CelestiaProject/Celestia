@@ -1070,7 +1070,7 @@ bool StarDatabase::createStar(Star* star,
             }
         }
 
-        if (starData->getLength("Distance", distance, KM_PER_LY))
+        if (starData->getLength("Distance", distance, KM_PER_LY<double>))
         {
             modifyPosition = true;
         }
