@@ -348,7 +348,7 @@ void computePlanetCoords(int p, double map, double da, double dhl, double dl,
     if (clo < 0)
         eclLong += celestia::numbers::pi;
     eclLong = pfmod(eclLong, TWOPI);
-    distance *= KM_PER_AU;
+    distance *= KM_PER_AU<double>;
 }
 
 void ComputeGalileanElements(double t,
@@ -569,7 +569,7 @@ class EarthOrbit : public CachingOrbit
 
         eclLong = nu+degToRad(ls-ms+dl) + celestia::numbers::pi;
         eclLong = pfmod(eclLong, TWOPI);
-        distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
+        distance = KM_PER_AU<double> * (1.0000002*(1-s*cos(ea))+dr);
 
         // Correction for internal coordinate system
         eclLong += celestia::numbers::pi;

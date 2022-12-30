@@ -1072,7 +1072,7 @@ bool LuaState::init(CelestiaCore* appCore)
         return false;
     }
 
-    lua_pushnumber(state, (lua_Number)KM_PER_LY/1e6);
+    lua_pushnumber(state, KM_PER_LY<lua_Number>/1e6);
     lua_setglobal(state, "KM_PER_MICROLY");
 
     loadLuaLibs(state);

@@ -52,7 +52,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 {
     if(usePlanetUnits)
     {
-        distanceScale = KM_PER_AU;
+        distanceScale = KM_PER_AU<double>;
         timeScale = DAYS_PER_YEAR;
     }
     else
@@ -75,7 +75,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 static void
 GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
 {
-    distanceScale = (usePlanetUnits) ? KM_PER_AU : 1.0;
+    distanceScale = (usePlanetUnits) ? KM_PER_AU<double> : 1.0;
 }
 
 
