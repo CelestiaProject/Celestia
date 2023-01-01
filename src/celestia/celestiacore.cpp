@@ -1266,7 +1266,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (renderer->getRenderFlags() & Renderer::ShowSmoothLines)
         {
             flash(_("Anti-aliasing enabled"));
-            setFaintestAutoMag();
         }
         else
         {
