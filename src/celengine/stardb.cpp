@@ -17,6 +17,7 @@
 #include <set>
 #include <string_view>
 #include <system_error>
+#include <type_traits>
 
 #include <fmt/format.h>
 
@@ -61,8 +62,8 @@ constexpr inline float STAR_OCTREE_ROOT_SIZE   = 1000000000.0f;
 constexpr inline float STAR_OCTREE_MAGNITUDE   = 6.0f;
 //constexpr const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
 
-constexpr inline std::string_view FILE_IDENTIFIER            = "CELSTARS"sv;
-constexpr inline std::string_view CROSSINDEX_FILE_IDENTIFIER = "CELINDEX"sv;
+constexpr inline std::string_view STARSDAT_MAGIC   = "CELSTARS"sv;
+constexpr inline std::string_view CROSSINDEX_MAGIC = "CELINDEX"sv;
 
 constexpr inline AstroCatalog::IndexNumber TYC3_MULTIPLIER = 1000000000u;
 constexpr inline AstroCatalog::IndexNumber TYC2_MULTIPLIER = 10000u;
@@ -78,15 +79,53 @@ constexpr inline AstroCatalog::IndexNumber TYC3_MAX   = 3u;     // from TYC2
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX            = 4u;
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX_RANGE_TYC1 = 2907u;
 
-// stars.dat file header and record sizes
-constexpr inline std::size_t FILE_HEADER_SIZE = FILE_IDENTIFIER.size() + sizeof(std::uint16_t) + sizeof(std::uint32_t);
-constexpr inline std::size_t FILE_RECORD_SIZE = sizeof(AstroCatalog::IndexNumber)
-                                              + 3 * sizeof(float)
-                                              + sizeof(std::int16_t) + sizeof(std::uint16_t);
+#pragma pack(push, 1)
+// stars.dat header structure
+struct StarsDatHeader
+{
+    StarsDatHeader() = delete;
+    char magic[8];
+    std::uint16_t version;
+    std::uint32_t counter;
+};
 
-// crossindex file header and record sizes
-constexpr inline std::size_t CROSSINDEX_HEADER_SIZE = CROSSINDEX_FILE_IDENTIFIER.size() + sizeof(std::uint16_t);
-constexpr inline std::size_t CROSSINDEX_RECORD_SIZE = sizeof(std::uint32_t) * 2;
+static_assert(std::is_standard_layout_v<StarsDatHeader>);
+
+// stars.dat record structure
+struct StarsDatRecord
+{
+    StarsDatRecord() = delete;
+    AstroCatalog::IndexNumber catNo;
+    float x;
+    float y;
+    float z;
+    std::int16_t absMag;
+    std::uint16_t spectralType;
+};
+
+static_assert(std::is_standard_layout_v<StarsDatRecord>);
+
+// cross-index header structure
+struct CrossIndexHeader
+{
+    CrossIndexHeader() = delete;
+    char magic[8];
+    std::uint16_t version;
+};
+
+static_assert(std::is_standard_layout_v<CrossIndexHeader>);
+
+// cross-index record structure
+struct CrossIndexRecord
+{
+    CrossIndexRecord() = delete;
+    std::uint32_t catalogNumber;
+    std::uint32_t celCatalogNumber;
+};
+
+static_assert(std::is_standard_layout_v<CrossIndexRecord>);
+
+#pragma pack(pop)
 
 bool parseSimpleCatalogNumber(std::string_view name,
                               std::string_view prefix,
@@ -567,11 +606,11 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 
     // Verify that the star database file has a correct header
     {
-        std::array<char, CROSSINDEX_HEADER_SIZE> header;
+        std::array<char, sizeof(CrossIndexHeader)> header;
         if (!in.read(header.data(), header.size()).good()) { return false; }
 
         // Verify the magic string
-        if (std::string_view(header.data(), CROSSINDEX_FILE_IDENTIFIER.size()) != CROSSINDEX_FILE_IDENTIFIER)
+        if (std::string_view(header.data() + offsetof(CrossIndexHeader, magic), CROSSINDEX_MAGIC.size()) != CROSSINDEX_MAGIC)
         {
             GetLogger()->error(_("Bad header for cross index\n"));
             return false;
@@ -579,7 +618,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 
         // Verify the version
         std::uint16_t version;
-        std::memcpy(&version, header.data() + CROSSINDEX_FILE_IDENTIFIER.size(), sizeof(version));
+        std::memcpy(&version, header.data() + offsetof(CrossIndexHeader, version), sizeof(version));
         LE_TO_CPU_INT16(version, version);
         if (version != 0x0100)
         {
@@ -590,8 +629,8 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
 
     CrossIndex* xindex = new CrossIndex();
 
-    constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / CROSSINDEX_RECORD_SIZE;
-    std::vector<char> buffer(CROSSINDEX_RECORD_SIZE * BUFFER_RECORDS);
+    constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(CrossIndexRecord);
+    std::vector<char> buffer(sizeof(CrossIndexRecord) * BUFFER_RECORDS);
     bool hasMoreRecords = true;
     while (hasMoreRecords)
     {
@@ -606,9 +645,9 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
         if (in.eof())
         {
             auto bytesRead = static_cast<std::uint32_t>(in.gcount());
-            remainingRecords = bytesRead / CROSSINDEX_RECORD_SIZE;
+            remainingRecords = bytesRead / sizeof(CrossIndexRecord);
             // disallow partial records
-            if (bytesRead % CROSSINDEX_RECORD_SIZE != 0)
+            if (bytesRead % sizeof(CrossIndexRecord) != 0)
             {
                 GetLogger()->error(_("Loading cross index failed - unexpected EOF\n"));
                 delete xindex;
@@ -624,15 +663,14 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, std::istream& in)
         while (remainingRecords-- > 0)
         {
             CrossIndexEntry ent;
-            std::memcpy(&ent.catalogNumber, ptr, sizeof(ent.catalogNumber));
+            std::memcpy(&ent.catalogNumber, ptr + offsetof(CrossIndexRecord, catalogNumber), sizeof(ent.catalogNumber));
             LE_TO_CPU_INT32(ent.catalogNumber, ent.catalogNumber);
-            ptr += sizeof(ent.catalogNumber);
 
-            std::memcpy(&ent.celCatalogNumber, ptr, sizeof(ent.celCatalogNumber));
+            std::memcpy(&ent.celCatalogNumber, ptr + offsetof(CrossIndexRecord, celCatalogNumber), sizeof(ent.celCatalogNumber));
             LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
-            ptr += sizeof(ent.celCatalogNumber);
 
             xindex->push_back(ent);
+            ptr += sizeof(CrossIndexRecord);
         }
     }
 
@@ -651,63 +689,57 @@ bool StarDatabase::loadBinary(std::istream& in)
     Timer timer{};
     std::uint32_t nStarsInFile = 0;
     {
-        std::array<char, FILE_HEADER_SIZE> header;
+        std::array<char, sizeof(StarsDatHeader)> header;
         if (!in.read(header.data(), header.size()).good()) { return false; }
 
         // Verify the magic string
-        if (std::string_view(header.data(), FILE_IDENTIFIER.size()) != FILE_IDENTIFIER) { return false; }
+        if (std::string_view(header.data() + offsetof(StarsDatHeader, magic), STARSDAT_MAGIC.size()) != STARSDAT_MAGIC) { return false; }
 
         // Verify the version
         std::uint16_t version;
-        std::memcpy(&version, header.data() + FILE_IDENTIFIER.size(), sizeof(version));
+        std::memcpy(&version, header.data() + offsetof(StarsDatHeader, version), sizeof(version));
         LE_TO_CPU_INT16(version, version);
         if (version != 0x0100) { return false; }
 
         // Read the star count
-        std::memcpy(&nStarsInFile, header.data() + FILE_IDENTIFIER.size() + sizeof(version), sizeof(nStarsInFile));
+        std::memcpy(&nStarsInFile, header.data() + offsetof(StarsDatHeader, counter), sizeof(nStarsInFile));
         LE_TO_CPU_INT32(nStarsInFile, nStarsInFile);
     }
 
-    constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / FILE_RECORD_SIZE;
-    std::vector<char> buffer(FILE_RECORD_SIZE * BUFFER_RECORDS);
+    constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(StarsDatRecord);
+    std::vector<char> buffer(sizeof(StarsDatRecord) * BUFFER_RECORDS);
     std::uint32_t nStarsRemaining = nStarsInFile;
     while (nStarsRemaining > 0)
     {
         std::uint32_t recordsToRead = std::min(BUFFER_RECORDS, nStarsRemaining);
-        if (!in.read(buffer.data(), FILE_RECORD_SIZE * recordsToRead).good()) { return false; }
+        if (!in.read(buffer.data(), sizeof(StarsDatRecord) * recordsToRead).good()) { return false; }
 
         const char* ptr = buffer.data();
         for (std::uint32_t i = 0; i < recordsToRead; ++i)
         {
             AstroCatalog::IndexNumber catNo;
-            std::memcpy(&catNo, ptr, sizeof(catNo));
+            std::memcpy(&catNo, ptr + offsetof(StarsDatRecord, catNo), sizeof(catNo));
             LE_TO_CPU_INT32(catNo, catNo);
-            ptr += sizeof(catNo);
 
             float x;
-            std::memcpy(&x, ptr, sizeof(x));
+            std::memcpy(&x, ptr + offsetof(StarsDatRecord, x), sizeof(x));
             LE_TO_CPU_FLOAT(x, x);
-            ptr += sizeof(x);
 
             float y;
-            std::memcpy(&y, ptr, sizeof(y));
+            std::memcpy(&y, ptr + offsetof(StarsDatRecord, y), sizeof(y));
             LE_TO_CPU_FLOAT(y, y);
-            ptr += sizeof(y);
 
             float z;
-            std::memcpy(&z, ptr, sizeof(z));
+            std::memcpy(&z, ptr + offsetof(StarsDatRecord, z), sizeof(z));
             LE_TO_CPU_FLOAT(z, z);
-            ptr += sizeof(z);
 
             std::int16_t absMag;
-            std::memcpy(&absMag, ptr, sizeof(absMag));
+            std::memcpy(&absMag, ptr + offsetof(StarsDatRecord, absMag), sizeof(absMag));
             LE_TO_CPU_INT16(absMag, absMag);
-            ptr += sizeof(absMag);
 
             std::uint16_t spectralType;
-            std::memcpy(&spectralType, ptr, sizeof(spectralType));
+            std::memcpy(&spectralType, ptr + offsetof(StarsDatRecord, spectralType), sizeof(spectralType));
             LE_TO_CPU_INT16(spectralType, spectralType);
-            ptr += sizeof(spectralType);
 
             Star star;
             star.setPosition(x, y, z);
@@ -728,6 +760,7 @@ bool StarDatabase::loadBinary(std::istream& in)
             star.setIndex(catNo);
             unsortedStars.add(star);
 
+            ptr += sizeof(StarsDatRecord);
             nStars++;
         }
 
