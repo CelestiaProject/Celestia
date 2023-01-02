@@ -1131,19 +1131,19 @@ bool LoadSolarSystemObjects(std::istream& in,
     {
         // Read the disposition; if none is specified, the default is Add.
         DataDisposition disposition = DataDisposition::Add;
-        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            if (tokenizer.getStringValue() == "Add")
+            if (*tokenValue == "Add")
             {
                 disposition = DataDisposition::Add;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getStringValue() == "Replace")
+            else if (*tokenValue == "Replace")
             {
                 disposition = DataDisposition::Replace;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getStringValue() == "Modify")
+            else if (*tokenValue == "Modify")
             {
                 disposition = DataDisposition::Modify;
                 tokenizer.nextToken();
@@ -1152,28 +1152,36 @@ bool LoadSolarSystemObjects(std::istream& in,
 
         // Read the item type; if none is specified the default is Body
         std::string itemType("Body");
-        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            itemType = tokenizer.getStringValue();
+            itemType = *tokenValue;
             tokenizer.nextToken();
         }
 
-        if (tokenizer.getTokenType() != Tokenizer::TokenString)
+        // The name list is a string with zero more names. Multiple names are
+        // delimited by colons.
+        std::string nameList;
+        if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
+        {
+            nameList = *tokenValue;
+        }
+        else
         {
             sscError(tokenizer, "object name expected");
             return false;
         }
 
-        // The name list is a string with zero more names. Multiple names are
-        // delimited by colons.
-        std::string nameList(tokenizer.getStringValue());
-
-        if (tokenizer.nextToken() != Tokenizer::TokenString)
+        tokenizer.nextToken();
+        std::string parentName;
+        if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
+        {
+            parentName = *tokenValue;
+        }
+        else
         {
             sscError(tokenizer, "bad parent object name");
             return false;
         }
-        std::string parentName(tokenizer.getStringValue());
 
         Value* objectDataValue = parser.readValue();
         if (objectDataValue == nullptr)

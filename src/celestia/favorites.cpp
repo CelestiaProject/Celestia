@@ -39,7 +39,7 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         }
 
         FavoritesEntry* fav = new FavoritesEntry(); // FIXME: check
-        fav->name = tokenizer.getStringValue();
+        fav->name = *tokenizer.getStringValue();
 
         Value* favParamsValue = parser.readValue();
         if (favParamsValue == nullptr || favParamsValue->getType() != Value::HashType)

@@ -309,7 +309,8 @@ AsciiModelLoader::reportError(const std::string& msg)
 bool
 AsciiModelLoader::loadMaterial(Material& material)
 {
-    if (tok.nextToken() != Tokenizer::TokenName || tok.getStringValue() != MaterialToken)
+    tok.nextToken();
+    if (tok.getNameValue() != MaterialToken)
     {
         reportError("Material definition expected");
         return false;
@@ -321,34 +322,47 @@ AsciiModelLoader::loadMaterial(Material& material)
     material.specularPower = DefaultSpecularPower;
     material.opacity = DefaultOpacity;
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndMaterialToken)
+    for (;;)
     {
-        std::string property(tok.getStringValue());
+        tok.nextToken();
+        std::string property;
+        if (auto tokenValue = tok.getNameValue();
+            tokenValue.has_value() && *tokenValue != EndMaterialToken)
+        {
+            property = *tokenValue;
+        }
+        else
+        {
+            break;
+        }
         TextureSemantic texType = parseTextureSemantic(property);
 
         if (texType != TextureSemantic::InvalidTextureSemantic)
         {
-            if (tok.nextToken() != Tokenizer::TokenString)
+            tok.nextToken();
+            if (auto tokenValue = tok.getStringValue(); tokenValue.has_value())
+            {
+                ResourceHandle tex = getHandle(*tokenValue);
+                material.setMap(texType, tex);
+            }
+            else
             {
                 reportError("Texture name expected");
                 return false;
             }
-
-            ResourceHandle tex = getHandle(tok.getStringValue());
-            material.setMap(texType, tex);
         }
         else if (property == "blend")
         {
             BlendMode blendMode = BlendMode::InvalidBlend;
 
-            if (tok.nextToken() == Tokenizer::TokenName)
+            tok.nextToken();
+            if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
             {
-                std::string_view blendModeName = tok.getStringValue();
-                if (blendModeName == "normal")
+                if (*tokenValue == "normal")
                     blendMode = BlendMode::NormalBlend;
-                else if (blendModeName == "add")
+                else if (*tokenValue == "add")
                     blendMode = BlendMode::AdditiveBlend;
-                else if (blendModeName == "premultiplied")
+                else if (*tokenValue == "premultiplied")
                     blendMode = BlendMode::PremultipliedAlphaBlend;
             }
 
@@ -428,7 +442,8 @@ AsciiModelLoader::loadMaterial(Material& material)
 VertexDescription
 AsciiModelLoader::loadVertexDescription()
 {
-    if (tok.nextToken() != Tokenizer::TokenName || tok.getStringValue() != VertexDescToken)
+    tok.nextToken();
+    if (tok.getNameValue() != VertexDescToken)
     {
         reportError("Vertex description expected");
         return {};
@@ -440,8 +455,25 @@ AsciiModelLoader::loadVertexDescription()
     std::vector<VertexAttribute> attributes;
     attributes.reserve(maxAttributes);
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndVertexDescToken)
+    for (;;)
     {
+        tok.nextToken();
+        VertexAttributeSemantic semantic;
+        if (auto tokenValue = tok.getNameValue();
+            tokenValue.has_value() && *tokenValue != EndVertexDescToken)
+        {
+            semantic = parseVertexAttributeSemantic(*tokenValue);
+            if (semantic == VertexAttributeSemantic::InvalidSemantic)
+            {
+                reportError(fmt::format("Invalid vertex attribute semantic '{}'", *tokenValue));
+                return {};
+            }
+        }
+        else
+        {
+            break;
+        }
+
         if (nAttributes == maxAttributes)
         {
             // TODO: Should eliminate the attribute limit, though no real vertex
@@ -450,23 +482,20 @@ AsciiModelLoader::loadVertexDescription()
             return {};
         }
 
-        VertexAttributeSemantic semantic = parseVertexAttributeSemantic(tok.getStringValue());
-        if (semantic == VertexAttributeSemantic::InvalidSemantic)
+        tok.nextToken();
+        VertexAttributeFormat format;
+        if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
         {
-            reportError(fmt::format("Invalid vertex attribute semantic '{}'", tok.getStringValue()));
-            return {};
+            format = parseVertexAttributeFormat(*tokenValue);
+            if (format == VertexAttributeFormat::InvalidFormat)
+            {
+                reportError(fmt::format("Invalid vertex attribute format '{}'", *tokenValue));
+                return {};
+            }
         }
-
-        if (tok.nextToken() != Tokenizer::TokenName)
+        else
         {
             reportError("Invalid vertex description");
-            return {};
-        }
-
-        VertexAttributeFormat format = parseVertexAttributeFormat(tok.getStringValue());
-        if (format == VertexAttributeFormat::InvalidFormat)
-        {
-            reportError(fmt::format("Invalid vertex attribute format '{}'", tok.getStringValue()));
             return {};
         }
 
@@ -496,26 +525,30 @@ std::vector<VWord>
 AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                                unsigned int& vertexCount)
 {
-    if (tok.nextToken() != Tokenizer::TokenName && tok.getStringValue() != VerticesToken)
+    tok.nextToken();
+    if (tok.getNameValue() != VerticesToken)
     {
         reportError("Vertex data expected");
         return {};
     }
 
-    if (tok.nextToken() != Tokenizer::TokenNumber)
+    tok.nextToken();
+    if (auto tokenValue = tok.getIntegerValue(); tokenValue.has_value())
+    {
+        if (*tokenValue <= 0)
+        {
+            reportError("Bad vertex count for mesh");
+            return {};
+        }
+
+        vertexCount = static_cast<unsigned int>(*tokenValue);
+    }
+    else
     {
         reportError("Vertex count expected");
         return {};
     }
 
-    std::int32_t num = tok.getIntegerValue().value_or(-1);
-    if (num <= 0)
-    {
-        reportError("Bad vertex count for mesh");
-        return {};
-    }
-
-    vertexCount = static_cast<unsigned int>(num);
     unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
     unsigned int vertexDataSize = stride * vertexCount;
     std::vector<VWord> vertexData(vertexDataSize);
@@ -590,7 +623,8 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
 bool
 AsciiModelLoader::loadMesh(Mesh& mesh)
 {
-    if (tok.nextToken() != Tokenizer::TokenName && tok.getStringValue() != MeshToken)
+    tok.nextToken();
+    if (tok.getNameValue() != MeshToken)
     {
         reportError("Mesh definition expected");
         return false;
@@ -610,23 +644,28 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
     mesh.setVertexDescription(std::move(vertexDesc));
     mesh.setVertices(vertexCount, std::move(vertexData));
 
-    while (tok.nextToken() == Tokenizer::TokenName && tok.getStringValue() != EndMeshToken)
+    for (;;)
     {
-        PrimitiveGroupType type = parsePrimitiveGroupType(tok.getStringValue());
-        if (type == PrimitiveGroupType::InvalidPrimitiveGroupType)
+        tok.nextToken();
+        PrimitiveGroupType type;
+        if (auto tokenValue = tok.getNameValue();
+            tokenValue.has_value() && *tokenValue != EndMeshToken)
         {
-            reportError(fmt::format("Bad primitive group type: {}", tok.getStringValue()));
-            return false;
+            type = parsePrimitiveGroupType(*tokenValue);
+            if (type == PrimitiveGroupType::InvalidPrimitiveGroupType)
+            {
+                reportError(fmt::format("Bad primitive group type: {}", *tokenValue));
+                return false;
+            }
+        }
+        else
+        {
+            break;
         }
 
-        if (tok.nextToken() != Tokenizer::TokenNumber)
-        {
-            reportError("Material index expected in primitive group");
-            return false;
-        }
-
+        tok.nextToken();
         unsigned int materialIndex;
-        if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue(); !tokenValue.has_value() || *tokenValue < -1)
+        if (auto tokenValue = tok.getIntegerValue(); !tokenValue.has_value() || *tokenValue < -1)
         {
             reportError("Bad material index in primitive group");
             return false;
@@ -643,7 +682,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
         }
 
         unsigned int indexCount;
-        if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue(); tokenValue.has_value() && *tokenValue >= 0)
+        if (auto tokenValue = tok.getIntegerValue(); tokenValue.has_value() && *tokenValue >= 0)
         {
             indexCount = static_cast<unsigned int>(*tokenValue);
         }
@@ -665,7 +704,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
             }
 
             unsigned int index;
-            if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue();
+            if (auto tokenValue = tok.getIntegerValue();
                 !tokenValue.has_value() || *tokenValue < 0 || *tokenValue >= vertexCount)
             {
                 reportError("Index out of range");
@@ -695,12 +734,11 @@ AsciiModelLoader::load()
     // Parse material and mesh definitions
     for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
     {
-        if (token == Tokenizer::TokenName)
+        if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
         {
-            std::string_view name = tok.getStringValue();
             tok.pushBack();
 
-            if (name == "material")
+            if (*tokenValue == "material")
             {
                 if (seenMeshes)
                 {
@@ -716,7 +754,7 @@ AsciiModelLoader::load()
 
                 model->addMaterial(std::move(material));
             }
-            else if (name == "mesh")
+            else if (*tokenValue == "mesh")
             {
                 seenMeshes = true;
 
@@ -730,7 +768,7 @@ AsciiModelLoader::load()
             }
             else
             {
-                reportError(fmt::format("Error: Unknown block type {}", name));
+                reportError(fmt::format("Error: Unknown block type {}", *tokenValue));
                 return nullptr;
             }
         }

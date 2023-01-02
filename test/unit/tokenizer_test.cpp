@@ -22,19 +22,19 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         Tokenizer tok(&input);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Normal");
+        REQUIRE(tok.getNameValue() == "Normal");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Number2");
+        REQUIRE(tok.getNameValue() == "Number2");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Number3Number");
+        REQUIRE(tok.getNameValue() == "Number3Number");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "snake_case");
+        REQUIRE(tok.getNameValue() == "snake_case");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "_prefixed");
+        REQUIRE(tok.getNameValue() == "_prefixed");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
@@ -45,12 +45,12 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         Tokenizer tok(&input);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Quantity");
+        REQUIRE(tok.getNameValue() == "Quantity");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenBeginUnits);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "unit");
+        REQUIRE(tok.getNameValue() == "unit");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEndUnits);
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
@@ -76,7 +76,7 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
                 Tokenizer tok(&in, 8);
 
                 REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-                REQUIRE(tok.getStringValue() == input);
+                REQUIRE(tok.getNameValue() == input);
             }
         }
     }
@@ -94,7 +94,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.getStringValue() == "abc 123.456 {}<>");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenString);
-        REQUIRE(tok.getStringValue().empty());
+        REQUIRE(tok.getStringValue().value().empty());
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
@@ -445,7 +445,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
 
             // Exponent is treated as a name token (e or E)
             REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-            REQUIRE(tok.getStringValue() == std::string_view(test.data() + 4, 1));
+            REQUIRE(tok.getNameValue() == std::string_view(test.data() + 4, 1));
         }
     }
 
@@ -489,13 +489,13 @@ TEST_CASE("Tokenizer skips comments", "[Tokenizer]")
         Tokenizer tok(&input);
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Token1");
+        REQUIRE(tok.getNameValue() == "Token1");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Token2");
+        REQUIRE(tok.getNameValue() == "Token2");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenName);
-        REQUIRE(tok.getStringValue() == "Token3");
+        REQUIRE(tok.getNameValue() == "Token3");
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }

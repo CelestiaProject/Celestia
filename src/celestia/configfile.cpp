@@ -44,14 +44,8 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     Tokenizer tokenizer(&configFile);
     Parser parser(&tokenizer);
 
-    if (tokenizer.nextToken() != Tokenizer::TokenName)
-    {
-        GetLogger()->error("{}:{} 'Configuration' expected.\n", filename,
-                           tokenizer.getLineNumber());
-        return config;
-    }
-
-    if (tokenizer.getStringValue() != "Configuration")
+    tokenizer.nextToken();
+    if (auto tokenValue = tokenizer.getNameValue(); tokenValue != "Configuration")
     {
         GetLogger()->error("{}:{} 'Configuration' expected.\n", filename,
                            tokenizer.getLineNumber());

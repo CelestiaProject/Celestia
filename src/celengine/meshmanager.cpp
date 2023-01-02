@@ -54,16 +54,16 @@ LoadCelestiaMesh(const fs::path& filename)
     Tokenizer tokenizer(&meshFile);
     Parser parser(&tokenizer);
 
-    if (tokenizer.nextToken() != Tokenizer::TokenName)
+    tokenizer.nextToken();
+    if (auto tokenValue = tokenizer.getNameValue(); !tokenValue.has_value())
     {
         GetLogger()->error("Mesh file {} is invalid.\n", filename);
         return nullptr;
     }
-
-    if (tokenizer.getStringValue() != "SphereDisplacementMesh")
+    else if (*tokenValue != "SphereDisplacementMesh")
     {
         GetLogger()->error("{}: Unrecognized mesh type {}.\n",
-                filename, tokenizer.getStringValue());
+                           filename, *tokenValue);
         return nullptr;
     }
 

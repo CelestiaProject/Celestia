@@ -113,7 +113,8 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
-        if (tokenizer.getTokenType() != Tokenizer::TokenString)
+        auto tokenValue = tokenizer.getStringValue();
+        if (!tokenValue.has_value())
         {
             GetLogger()->error("Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
@@ -121,7 +122,7 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
             return nullptr;
         }
 
-        Asterism* ast = new Asterism(tokenizer.getStringValue());
+        Asterism* ast = new Asterism(*tokenValue);
 
         Value* chainsValue = parser.readValue();
         if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)

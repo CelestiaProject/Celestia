@@ -204,14 +204,15 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         std::string objType;
-        std::string objName;
-
-        if (tokenizer.getTokenType() != Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
+        {
+            objType = *tokenValue;
+        }
+        else
         {
             GetLogger()->error("Error parsing deep sky catalog file.\n");
             return false;
         }
-        objType = tokenizer.getStringValue();
 
         bool autoGenCatalogNumber = true;
         AstroCatalog::IndexNumber objCatalogNumber = AstroCatalog::InvalidIndex;
@@ -227,12 +228,17 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             objCatalogNumber   = nextAutoCatalogNumber--;
         }
 
-        if (tokenizer.nextToken() != Tokenizer::TokenString)
+        tokenizer.nextToken();
+        std::string objName;
+        if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
+        {
+            objName = *tokenValue;
+        }
+        else
         {
             GetLogger()->error("Error parsing deep sky catalog file: bad name.\n");
             return false;
         }
-        objName = tokenizer.getStringValue();
 
         Value* objParamsValue    = parser.readValue();
         if (objParamsValue == nullptr ||

@@ -139,13 +139,17 @@ static ObserverFrame::CoordinateSystem parseCoordinateSystem(const string& name)
 
 Command* CommandParser::parseCommand()
 {
-    if (tokenizer->nextToken() != Tokenizer::TokenName)
+    tokenizer->nextToken();
+    std::string commandName;
+    if (auto tokenValue = tokenizer->getNameValue(); tokenValue.has_value())
+    {
+        commandName = *tokenValue;
+    }
+    else
     {
         error("Invalid command name");
         return nullptr;
     }
-
-    string commandName(tokenizer->getStringValue());
 
     Value* paramListValue = parser->readValue();
     if (paramListValue == nullptr || paramListValue->getType() != Value::HashType)
@@ -888,17 +892,16 @@ uint64_t parseRenderFlags(const string &s, const FlagMap64& RenderFlagMap)
     Tokenizer tokenizer(&in);
     uint64_t flags = 0;
 
+
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
-        if (ttype == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            std::string_view name = tokenizer.getStringValue();
-
-            if (RenderFlagMap.count(name) == 0)
-                GetLogger()->warn("Unknown render flag: {}\n", name);
+            if (RenderFlagMap.count(*tokenValue) == 0)
+                GetLogger()->warn("Unknown render flag: {}\n", *tokenValue);
             else
-                flags |= RenderFlagMap.at(name);
+                flags |= RenderFlagMap.at(*tokenValue);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -920,14 +923,12 @@ int parseLabelFlags(const string &s, const FlagMap &LabelFlagMap)
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
-        if (ttype == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            std::string_view name = tokenizer.getStringValue();
-
-            if (LabelFlagMap.count(name) == 0)
-                GetLogger()->warn("Unknown label flag: {}\n", name);
+            if (LabelFlagMap.count(*tokenValue) == 0)
+                GetLogger()->warn("Unknown label flag: {}\n", *tokenValue);
             else
-                flags |= LabelFlagMap.at(name);
+                flags |= LabelFlagMap.at(*tokenValue);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -949,9 +950,9 @@ int parseOrbitFlags(const string &s, const FlagMap &BodyTypeMap)
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
-        if (ttype == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            std::string name(tokenizer.getStringValue());
+            std::string name(*tokenValue);
             name[0] = toupper(name[0]);
 
             if (BodyTypeMap.count(name) == 0)
@@ -979,15 +980,14 @@ int parseConstellations(CommandConstellations* cmd, const string &s, int act)
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
-        if (ttype == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            std::string_view name = tokenizer.getStringValue();
-            if (compareIgnoringCase(name, "all") == 0 && act==1)
+            if (compareIgnoringCase(*tokenValue, "all") == 0 && act==1)
                 cmd->flags.all = true;
-            else if (compareIgnoringCase(name, "all") == 0 && act==0)
+            else if (compareIgnoringCase(*tokenValue, "all") == 0 && act==0)
                 cmd->flags.none = true;
             else
-                cmd->setValues(name, act);
+                cmd->setValues(*tokenValue, act);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -1019,15 +1019,14 @@ int parseConstellationColor(CommandConstellationColor* cmd, const string &s, Eig
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
-        if (ttype == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            std::string_view name = tokenizer.getStringValue();
-            if (compareIgnoringCase(name, "all") == 0 && act==1)
+            if (compareIgnoringCase(*tokenValue, "all") == 0 && act==1)
                 cmd->flags.all = true;
-            else if (compareIgnoringCase(name, "all") == 0 && act==0)
+            else if (compareIgnoringCase(*tokenValue, "all") == 0 && act==0)
                 cmd->flags.none = true;
             else
-                cmd->setConstellations(name);
+                cmd->setConstellations(*tokenValue);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)

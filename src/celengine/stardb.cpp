@@ -1265,19 +1265,19 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
         // Parse the disposition--either Add, Replace, or Modify. The disposition
         // may be omitted. The default value is Add.
         DataDisposition disposition = DataDisposition::Add;
-        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            if (tokenizer.getStringValue() == "Modify")
+            if (*tokenValue == "Modify")
             {
                 disposition = DataDisposition::Modify;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getStringValue() == "Replace")
+            else if (*tokenValue == "Replace")
             {
                 disposition = DataDisposition::Replace;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getStringValue() == "Add")
+            else if (*tokenValue == "Add")
             {
                 disposition = DataDisposition::Add;
                 tokenizer.nextToken();
@@ -1286,13 +1286,13 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
 
         // Parse the object type--either Star or Barycenter. The object type
         // may be omitted. The default is Star.
-        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
-            if (tokenizer.getStringValue() == "Star")
+            if (*tokenValue == "Star")
             {
                 isStar = true;
             }
-            else if (tokenizer.getStringValue() == "Barycenter")
+            else if (*tokenValue == "Barycenter")
             {
                 isStar = false;
             }
@@ -1314,10 +1314,10 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
 
         std::string objName;
         std::string firstName;
-        if (tokenizer.getTokenType() == Tokenizer::TokenString)
+        if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
         {
             // A star name (or names) is present
-            objName    = tokenizer.getStringValue();
+            objName = *tokenValue;
             tokenizer.nextToken();
             if (!objName.empty())
             {

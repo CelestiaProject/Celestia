@@ -65,13 +65,17 @@ Hash* Parser::readHash()
     tok = tokenizer->nextToken();
     while (tok != Tokenizer::TokenEndGroup)
     {
-        if (tok != Tokenizer::TokenName)
+        std::string name;
+        if (auto tokenValue = tokenizer->getNameValue(); tokenValue.has_value())
+        {
+            name = *tokenValue;
+        }
+        else
         {
             tokenizer->pushBack();
             delete hash;
             return nullptr;
         }
-        std::string name(tokenizer->getStringValue());
 
 #ifndef USE_POSTFIX_UNITS
         readUnits(name, hash);
@@ -115,13 +119,17 @@ bool Parser::readUnits(const std::string& propertyName, Hash* hash)
     tok = tokenizer->nextToken();
     while (tok != Tokenizer::TokenEndUnits)
     {
-        if (tok != Tokenizer::TokenName)
+        std::string_view unit;
+        if (auto tokenValue = tokenizer->getNameValue(); tokenValue.has_value())
+        {
+            unit = *tokenValue;
+        }
+        else
         {
             tokenizer->pushBack();
             return false;
         }
 
-        std::string_view unit = tokenizer->getStringValue();
         Value* value = new Value(unit);
 
         if (astro::isLengthUnit(unit))
@@ -166,12 +174,12 @@ Value* Parser::readValue()
         return new Value(*tokenizer->getNumberValue());
 
     case Tokenizer::TokenString:
-        return new Value(tokenizer->getStringValue());
+        return new Value(*tokenizer->getStringValue());
 
     case Tokenizer::TokenName:
-        if (tokenizer->getStringValue() == "false")
+        if (tokenizer->getNameValue() == "false")
             return new Value(false);
-        else if (tokenizer->getStringValue() == "true")
+        else if (tokenizer->getNameValue() == "true")
             return new Value(true);
         else
         {
