@@ -369,11 +369,11 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
-    if (tokenizer.nextToken() != Tokenizer::TokenName)
+    tokenizer.nextToken();
+    if (auto tokenValue = tokenizer.getNameValue(); tokenValue != "VirtualTexture")
+    {
         return nullptr;
-
-    if (tokenizer.getStringValue() != "VirtualTexture")
-        return nullptr;
+    }
 
     Value* texParamsValue = parser.readValue();
     if (texParamsValue == nullptr || texParamsValue->getType() != Value::HashType)

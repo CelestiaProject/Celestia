@@ -121,11 +121,11 @@ StringState::checkUTF8(char c, std::string_view run)
 
 struct VisitorStringView
 {
-    std::string_view operator()(std::monostate) const { return {}; }
-    std::string_view operator()(std::int32_t) const { return {}; }
-    std::string_view operator()(double) const { return {}; }
-    std::string_view operator()(std::string_view sv) const { return sv; }
-    std::string_view operator()(const std::string& s) const { return s; }
+    std::optional<std::string_view> operator()(std::monostate) const { return std::nullopt; }
+    std::optional<std::string_view> operator()(std::int32_t) const { return std::nullopt; }
+    std::optional<std::string_view> operator()(double) const { return std::nullopt; }
+    std::optional<std::string_view> operator()(std::string_view sv) const { return sv; }
+    std::optional<std::string_view> operator()(const std::string& s) const { return s; }
 };
 
 
@@ -777,9 +777,17 @@ Tokenizer::getTokenType() const
 }
 
 
-std::string_view
+std::optional<std::string_view>
+Tokenizer::getNameValue() const
+{
+    if (tokenType != TokenType::TokenName) { return std::nullopt; }
+    return std::visit(VisitorStringView(), impl->getTokenValue());
+}
+
+std::optional<std::string_view>
 Tokenizer::getStringValue() const
 {
+    if (tokenType != TokenType::TokenString) { return std::nullopt; }
     return std::visit(VisitorStringView(), impl->getTokenValue());
 }
 
