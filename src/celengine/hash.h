@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <map>
+#include <string>
 #include <celcompat/filesystem.h>
 #include <celmath/mathlib.h>
 #include <Eigen/Geometry>
@@ -37,7 +39,7 @@ class AssociativeArray
     bool getNumber(const std::string&, double&) const;
     bool getNumber(const std::string&, float&) const;
     bool getNumber(const std::string&, int&) const;
-    bool getNumber(const std::string&, uint32_t&) const;
+    bool getNumber(const std::string&, std::uint32_t&) const;
     bool getString(const std::string&, std::string&) const;
     bool getPath(const std::string&, fs::path&) const;
     bool getBoolean(const std::string&, bool&) const;
