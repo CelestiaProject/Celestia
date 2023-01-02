@@ -27,6 +27,6 @@ class Parser
     Tokenizer* tokenizer;
 
     bool readUnits(const std::string&, Hash*);
-    Array* readArray();
+    ValueArray* readArray();
     Hash* readHash();
 };

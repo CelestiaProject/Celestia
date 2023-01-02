@@ -1436,7 +1436,7 @@ Value *CelxLua::getValue(int index)
         v = new Value(getString(index));
     else if (isTable(index))
     {
-        ::Array *array = new ::Array;
+        ValueArray *array = new ValueArray;
         Hash *hash = new Hash;
         push();
         while(lua_next(m_lua, index) != 0)
