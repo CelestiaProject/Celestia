@@ -1436,8 +1436,8 @@ Value *CelxLua::getValue(int index)
         v = new Value(getString(index));
     else if (isTable(index))
     {
-        ValueArray *array = new ValueArray;
-        Hash *hash = new Hash;
+        auto array = std::make_unique<ValueArray>();
+        auto hash = std::make_unique<Hash>();
         push();
         while(lua_next(m_lua, index) != 0)
         {
@@ -1445,7 +1445,6 @@ Value *CelxLua::getValue(int index)
             {
                 if (hash != nullptr)
                 {
-                    delete hash;
                     hash = nullptr;
                 }
                 if (array != nullptr)
@@ -1457,7 +1456,6 @@ Value *CelxLua::getValue(int index)
             {
                 if (array != nullptr)
                 {
-                    delete array;
                     array = nullptr;
                 }
                 if (hash != nullptr)
@@ -1471,9 +1469,9 @@ Value *CelxLua::getValue(int index)
         }
         pop(1);
         if (hash != nullptr)
-            v = new Value(hash);
+            v = new Value(std::move(hash));
         else if (array != nullptr)
-            v = new Value(array);
+            v = new Value(std::move(array));
     }
     return v;
 }

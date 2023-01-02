@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include "hash.h"
@@ -29,6 +30,6 @@ class Parser
     Tokenizer* tokenizer;
 
     bool readUnits(const std::string&, Hash*);
-    ValueArray* readArray();
-    Hash* readHash();
+    std::unique_ptr<ValueArray> readArray();
+    std::unique_ptr<Hash> readHash();
 };

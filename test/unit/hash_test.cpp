@@ -1,3 +1,6 @@
+#include <memory>
+#include <utility>
+
 #include <celengine/hash.h>
 #include <celengine/value.h>
 #include <celutil/color.h>
@@ -18,11 +21,11 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         SECTION("Defined as Vector3")
         {
             AssociativeArray h;
-            auto *ary = new ValueArray;
+            auto ary = std::make_unique<ValueArray>();
             ary->push_back(new Value(.23));
             ary->push_back(new Value(.34));
             ary->push_back(new Value(.45));
-            auto *v = new Value(ary);
+            auto *v = new Value(std::move(ary));
             h.addValue("color", *v);
 
             auto val = h.getValue("color");
@@ -45,12 +48,12 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         SECTION("Defined as Vector4")
         {
             AssociativeArray h;
-            auto *ary = new ValueArray;
+            auto ary = std::make_unique<ValueArray>();
             ary->push_back(new Value(.23));
             ary->push_back(new Value(.34));
             ary->push_back(new Value(.45));
             ary->push_back(new Value(.56));
-            auto *v = new Value(ary);
+            auto *v = new Value(std::move(ary));
             h.addValue("color", *v);
 
             auto val = h.getValue("color");

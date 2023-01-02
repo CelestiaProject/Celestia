@@ -7,6 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
+#include <utility>
 
 #include <celutil/tokenizer.h>
 #include "astro.h"
@@ -21,7 +22,7 @@ Parser::Parser(Tokenizer* _tokenizer) :
 }
 
 
-ValueArray* Parser::readArray()
+std::unique_ptr<ValueArray> Parser::readArray()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginArray)
@@ -30,7 +31,7 @@ ValueArray* Parser::readArray()
         return nullptr;
     }
 
-    ValueArray* array = new ValueArray();
+    auto array = std::make_unique<ValueArray>();
 
     Value* v = readValue();
     while (v != nullptr)
@@ -43,7 +44,6 @@ ValueArray* Parser::readArray()
     if (tok != Tokenizer::TokenEndArray)
     {
         tokenizer->pushBack();
-        delete array;
         return nullptr;
     }
 
@@ -51,7 +51,7 @@ ValueArray* Parser::readArray()
 }
 
 
-Hash* Parser::readHash()
+std::unique_ptr<Hash> Parser::readHash()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginGroup)
@@ -60,7 +60,7 @@ Hash* Parser::readHash()
         return nullptr;
     }
 
-    auto* hash = new Hash();
+    auto hash = std::make_unique<Hash>();
 
     tok = tokenizer->nextToken();
     while (tok != Tokenizer::TokenEndGroup)
@@ -73,18 +73,16 @@ Hash* Parser::readHash()
         else
         {
             tokenizer->pushBack();
-            delete hash;
             return nullptr;
         }
 
 #ifndef USE_POSTFIX_UNITS
-        readUnits(name, hash);
+        readUnits(name, hash.get());
 #endif
 
         Value* value = readValue();
         if (value == nullptr)
         {
-            delete hash;
             return nullptr;
         }
 
@@ -190,21 +188,21 @@ Value* Parser::readValue()
     case Tokenizer::TokenBeginArray:
         tokenizer->pushBack();
         {
-            auto* array = readArray();
+            std::unique_ptr<ValueArray> array = readArray();
             if (array == nullptr)
                 return nullptr;
             else
-                return new Value(array);
+                return new Value(std::move(array));
         }
 
     case Tokenizer::TokenBeginGroup:
         tokenizer->pushBack();
         {
-            Hash* hash = readHash();
+            std::unique_ptr<Hash> hash = readHash();
             if (hash == nullptr)
                 return nullptr;
             else
-                return new Value(hash);
+                return new Value(std::move(hash));
         }
 
     default:
