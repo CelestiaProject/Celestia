@@ -313,7 +313,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 
     // Get the orbit reference frame.
     ReferenceFrame::SharedConstPtr orbitFrame;
-    Value* frameValue = phaseData->getValue("OrbitFrame");
+    const Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
         orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
@@ -330,7 +330,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 
     // Get the body reference frame
     ReferenceFrame::SharedConstPtr bodyFrame;
-    Value* bodyFrameValue = phaseData->getValue("BodyFrame");
+    const Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
         bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
@@ -473,7 +473,7 @@ bool CreateTimeline(Body* body,
 
     // If there's an explicit timeline definition, parse that. Otherwise, we'll do
     // things the old way.
-    Value* value = planetData->getValue("Timeline");
+    const Value* value = planetData->getValue("Timeline");
     if (value != nullptr)
     {
         if (value->getType() != Value::ArrayType)
@@ -527,7 +527,7 @@ bool CreateTimeline(Body* body,
 
     // Get the object's orbit reference frame.
     bool newOrbitFrame = false;
-    Value* frameValue = planetData->getValue("OrbitFrame");
+    const Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
         auto frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
@@ -541,7 +541,7 @@ bool CreateTimeline(Body* body,
 
     // Get the object's body frame.
     bool newBodyFrame = false;
-    Value* bodyFrameValue = planetData->getValue("BodyFrame");
+    const Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
         auto frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
@@ -910,7 +910,7 @@ Body* CreateBody(const std::string& name,
 
     // Read the atmosphere
     {
-        Value* atmosDataValue = planetData->getValue("Atmosphere");
+        const Value* atmosDataValue = planetData->getValue("Atmosphere");
         if (atmosDataValue != nullptr)
         {
             if (atmosDataValue->getType() != Value::HashType)
@@ -987,7 +987,7 @@ Body* CreateBody(const std::string& name,
 
     // Read the ring system
     {
-        Value* ringsDataValue = planetData->getValue("Rings");
+        const Value* ringsDataValue = planetData->getValue("Rings");
         if (ringsDataValue != nullptr)
         {
             if (ringsDataValue->getType() != Value::HashType)

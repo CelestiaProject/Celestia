@@ -47,10 +47,10 @@ RotationModel* CreateRotationModel(const Hash* rotationData,
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
 
 ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
-                                     Value* frameValue,
-                                     const Selection& defaultCenter,
-                                     Body* defaultObserver);
+                                                    const Value* frameValue,
+                                                    const Selection& defaultCenter,
+                                                    Body* defaultObserver);
 
 std::shared_ptr<const TwoVectorFrame> CreateTopocentricFrame(const Selection& center,
-                                       const Selection& target,
-                                       const Selection& observer);
+                                                             const Selection& target,
+                                                             const Selection& observer);

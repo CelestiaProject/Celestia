@@ -111,7 +111,7 @@ bool AstroObject::loadCategories(const Hash *hash, DataDisposition disposition, 
             return false;
         return addToCategory(cn, true, domain);
     }
-    Value *a = hash->getValue("Category");
+    const Value *a = hash->getValue("Category");
     if (a == nullptr)
         return false;
     const ValueArray *v = a->getArray();
