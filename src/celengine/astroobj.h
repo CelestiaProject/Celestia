@@ -42,6 +42,6 @@ public:
     bool isInCategory(const std::string&) const;
     int categoriesCount() const { return m_cats == nullptr ? 0 : m_cats->size(); }
     CategorySet *getCategories() const { return m_cats; };
-    bool loadCategories(Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
+    bool loadCategories(const Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
     friend UserCategory;
 };

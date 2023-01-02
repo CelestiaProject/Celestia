@@ -45,7 +45,8 @@ using celestia::util::GetLogger;
 bool
 ScriptedOrbit::initialize(const std::string& moduleName,
                           const std::string& funcName,
-                          Hash* parameters)
+                          const Hash* parameters,
+                          const fs::path& path)
 {
     if (parameters == nullptr)
         return false;
@@ -92,6 +93,13 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     lua_newtable(luaState);
 
     SetLuaVariables(luaState, parameters);
+    // set the addon path
+    {
+        std::string pathStr = path.string();
+        lua_pushstring(luaState, "AddonPath");
+        lua_pushstring(luaState, pathStr.c_str());
+        lua_settable(luaState, -3);
+    }
 
     // Call the generator function
     if (lua_pcall(luaState, 1, 1, 0) != 0)

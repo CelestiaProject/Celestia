@@ -100,7 +100,7 @@ bool AstroObject::isInCategory(const std::string &s) const
     return isInCategory(c);
 }
 
-bool AstroObject::loadCategories(Hash *hash, DataDisposition disposition, const std::string &domain)
+bool AstroObject::loadCategories(const Hash *hash, DataDisposition disposition, const std::string &domain)
 {
     if (disposition == DataDisposition::Replace)
         clearCategories();
@@ -114,7 +114,7 @@ bool AstroObject::loadCategories(Hash *hash, DataDisposition disposition, const 
     Value *a = hash->getValue("Category");
     if (a == nullptr)
         return false;
-    ValueArray *v = a->getArray();
+    const ValueArray *v = a->getArray();
     if (v == nullptr)
         return false;
     bool ret = true;

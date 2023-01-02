@@ -59,7 +59,7 @@ class Galaxy : public DeepSkyObject
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(AssociativeArray*, const fs::path&) override;
+    bool load(const AssociativeArray*, const fs::path&) override;
     void render(const Eigen::Vector3f& offset,
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,

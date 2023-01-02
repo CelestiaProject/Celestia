@@ -80,7 +80,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
 
 
 bool
-ParseDate(Hash* hash, const string& name, double& jd)
+ParseDate(const Hash* hash, const string& name, double& jd)
 {
     // Check first for a number value representing a Julian date
     if (hash->getNumber(name, jd))
@@ -136,7 +136,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
 static EllipticalOrbit*
-CreateEllipticalOrbit(Hash* orbitData,
+CreateEllipticalOrbit(const Hash* orbitData,
                       bool usePlanetUnits)
 {
 
@@ -230,7 +230,7 @@ CreateEllipticalOrbit(Hash* orbitData,
  * DoublePrecision defaults to true.
  */
 static Orbit*
-CreateSampledTrajectory(Hash* trajData, const fs::path& path)
+CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
 {
     string sourceName;
     if (!trajData->getString("Source", sourceName))
@@ -284,7 +284,7 @@ CreateSampledTrajectory(Hash* trajData, const fs::path& path)
  * is BodyFixed.
  */
 static Orbit*
-CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
+CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
 {
     double distanceScale;
     GetDefaultUnits(usePlanetUnits, distanceScale);
@@ -335,7 +335,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
  * Parse a string list--either a single string or an array of strings is permitted.
  */
 static bool
-ParseStringList(Hash* table,
+ParseStringList(const Hash* table,
                 const string& propertyName,
                 list<string>& stringList)
 {
@@ -351,7 +351,7 @@ ParseStringList(Hash* table,
     }
     if (v->getType() == Value::ArrayType)
     {
-        ValueArray* array = v->getArray();
+        const ValueArray* array = v->getArray();
         ValueArray::const_iterator iter;
 
         // Verify that all array entries are strings
@@ -404,7 +404,7 @@ ParseStringList(Hash* table,
  *  used.
  */
 static SpiceOrbit*
-CreateSpiceOrbit(Hash* orbitData,
+CreateSpiceOrbit(const Hash* orbitData,
                  const fs::path& path,
                  bool usePlanetUnits)
 {
@@ -544,7 +544,7 @@ CreateSpiceOrbit(Hash* orbitData,
  *  as sidereal day length.
  */
 static SpiceRotation*
-CreateSpiceRotation(Hash* rotationData,
+CreateSpiceRotation(const Hash* rotationData,
                     const fs::path& path)
 {
     string frameName;
@@ -636,7 +636,7 @@ CreateSpiceRotation(Hash* rotationData,
 
 
 static ScriptedOrbit*
-CreateScriptedOrbit(Hash* orbitData,
+CreateScriptedOrbit(const Hash* orbitData,
                     const fs::path& path)
 {
 #if !defined(CELX)
@@ -656,11 +656,11 @@ CreateScriptedOrbit(Hash* orbitData,
     string moduleName;
     orbitData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path.string());
-    orbitData->addValue("AddonPath", *pathValue);
+    //Value* pathValue = new Value(path.string());
+    //orbitData->addValue("AddonPath", *pathValue);
 
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
-    if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
+    if (!scriptedOrbit->initialize(moduleName, funcName, orbitData, path))
     {
         delete scriptedOrbit;
         scriptedOrbit = nullptr;
@@ -673,7 +673,7 @@ CreateScriptedOrbit(Hash* orbitData,
 
 Orbit*
 CreateOrbit(const Selection& centralObject,
-            Hash* planetData,
+            const Hash* planetData,
             const fs::path& path,
             bool usePlanetUnits)
 {
@@ -845,7 +845,7 @@ CreateFixedRotationModel(double offset,
 
 
 static RotationModel*
-CreateUniformRotationModel(Hash* rotationData,
+CreateUniformRotationModel(const Hash* rotationData,
                            double syncRotationPeriod)
 {
     // Default to synchronous rotation
@@ -893,7 +893,7 @@ CreateUniformRotationModel(Hash* rotationData,
 
 
 static ConstantOrientation*
-CreateFixedRotationModel(Hash* rotationData)
+CreateFixedRotationModel(const Hash* rotationData)
 {
     double offset = 0.0;
     if (rotationData->getAngle("MeridianAngle", offset))
@@ -922,7 +922,7 @@ CreateFixedRotationModel(Hash* rotationData)
 
 
 static ConstantOrientation*
-CreateFixedAttitudeRotationModel(Hash* rotationData)
+CreateFixedAttitudeRotationModel(const Hash* rotationData)
 {
     double heading = 0.0;
     if (rotationData->getAngle("Heading", heading))
@@ -951,7 +951,7 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
 
 
 static RotationModel*
-CreatePrecessingRotationModel(Hash* rotationData,
+CreatePrecessingRotationModel(const Hash* rotationData,
                               double syncRotationPeriod)
 {
     // Default to synchronous rotation
@@ -1005,7 +1005,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
 
 
 static ScriptedRotation*
-CreateScriptedRotation(Hash* rotationData,
+CreateScriptedRotation(const Hash* rotationData,
                        const fs::path& path)
 {
 #if !defined(CELX)
@@ -1025,11 +1025,11 @@ CreateScriptedRotation(Hash* rotationData,
     string moduleName;
     rotationData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path.string());
-    rotationData->addValue("AddonPath", *pathValue);
+    //Value* pathValue = new Value(path.string());
+    //rotationData->addValue("AddonPath", *pathValue);
 
     ScriptedRotation* scriptedRotation = new ScriptedRotation();
-    if (!scriptedRotation->initialize(moduleName, funcName, rotationData))
+    if (!scriptedRotation->initialize(moduleName, funcName, rotationData, path))
     {
          delete scriptedRotation;
          scriptedRotation = nullptr;
@@ -1047,7 +1047,7 @@ CreateScriptedRotation(Hash* rotationData,
  * appear in the top level structure.
  */
 RotationModel*
-CreateRotationModel(Hash* planetData,
+CreateRotationModel(const Hash* planetData,
                     const fs::path& path,
                     double syncRotationPeriod)
 {
@@ -1281,7 +1281,7 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
  * if it's missing or refers to an object that doesn't exist.
  */
 static Selection
-getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defaultCenter)
+getFrameCenter(const Universe& universe, const Hash* frameData, const Selection& defaultCenter)
 {
     string centerName;
     if (!frameData->getString("Center", centerName))
@@ -1308,7 +1308,7 @@ getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defau
 
 static BodyFixedFrame::SharedConstPtr
 CreateBodyFixedFrame(const Universe& universe,
-                     Hash* frameData,
+                     const Hash* frameData,
                      const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
@@ -1321,7 +1321,7 @@ CreateBodyFixedFrame(const Universe& universe,
 
 static BodyMeanEquatorFrame::SharedConstPtr
 CreateMeanEquatorFrame(const Universe& universe,
-                       Hash* frameData,
+                       const Hash* frameData,
                        const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
@@ -1402,7 +1402,7 @@ parseAxisLabel(const std::string& label)
 
 
 static int
-getAxis(Hash* vectorData)
+getAxis(const Hash* vectorData)
 {
     string axisLabel;
     if (!vectorData->getString("Axis", axisLabel))
@@ -1442,7 +1442,7 @@ getAxis(Hash* vectorData)
  * empty selection if it's missing or refers to an object that doesn't exist.
  */
 static Selection
-getVectorTarget(const Universe& universe, Hash* vectorData)
+getVectorTarget(const Universe& universe, const Hash* vectorData)
 {
     string targetName;
     if (!vectorData->getString("Target", targetName))
@@ -1468,7 +1468,7 @@ getVectorTarget(const Universe& universe, Hash* vectorData)
  * empty selection if it's missing or refers to an object that doesn't exist.
  */
 static Selection
-getVectorObserver(const Universe& universe, Hash* vectorData)
+getVectorObserver(const Universe& universe, const Hash* vectorData)
 {
     string obsName;
     if (!vectorData->getString("Observer", obsName))
@@ -1493,14 +1493,14 @@ getVectorObserver(const Universe& universe, Hash* vectorData)
 static FrameVector*
 CreateFrameVector(const Universe& universe,
                   const Selection& center,
-                  Hash* vectorData)
+                  const Hash* vectorData)
 {
     Value* value = nullptr;
 
     value = vectorData->getValue("RelativePosition");
     if (value != nullptr && value->getHash() != nullptr)
     {
-        Hash* relPosData = value->getHash();
+        const Hash* relPosData = value->getHash();
         Selection observer = getVectorObserver(universe, relPosData);
         Selection target = getVectorTarget(universe, relPosData);
         // Default observer is the frame center
@@ -1516,7 +1516,7 @@ CreateFrameVector(const Universe& universe,
     value = vectorData->getValue("RelativeVelocity");
     if (value != nullptr && value->getHash() != nullptr)
     {
-        Hash* relVData = value->getHash();
+        const Hash* relVData = value->getHash();
         Selection observer = getVectorObserver(universe, relVData);
         Selection target = getVectorTarget(universe, relVData);
         // Default observer is the frame center
@@ -1532,7 +1532,7 @@ CreateFrameVector(const Universe& universe,
     value = vectorData->getValue("ConstantVector");
     if (value != nullptr && value->getHash() != nullptr)
     {
-        Hash* constVecData = value->getHash();
+        const Hash* constVecData = value->getHash();
         Vector3d vec = Vector3d::UnitZ();
         constVecData->getVector("Vector", vec);
         if (vec.norm() == 0.0)
@@ -1566,7 +1566,7 @@ CreateFrameVector(const Universe& universe,
 
 static shared_ptr<const TwoVectorFrame>
 CreateTwoVectorFrame(const Universe& universe,
-                     Hash* frameData,
+                     const Hash* frameData,
                      const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
@@ -1581,7 +1581,7 @@ CreateTwoVectorFrame(const Universe& universe,
         return nullptr;
     }
 
-    Hash* primaryData = primaryValue->getHash();
+    const Hash* primaryData = primaryValue->getHash();
     if (primaryData == nullptr)
     {
         GetLogger()->error("Bad syntax for primary axis of two-vector frame.\n");
@@ -1595,7 +1595,7 @@ CreateTwoVectorFrame(const Universe& universe,
         return nullptr;
     }
 
-    Hash* secondaryData = secondaryValue->getHash();
+    const Hash* secondaryData = secondaryValue->getHash();
     if (secondaryData == nullptr)
     {
         GetLogger()->error("Bad syntax for secondary axis of two-vector frame.\n");
@@ -1640,7 +1640,7 @@ CreateTwoVectorFrame(const Universe& universe,
 
 static shared_ptr<const J2000EclipticFrame>
 CreateJ2000EclipticFrame(const Universe& universe,
-                         Hash* frameData,
+                         const Hash* frameData,
                          const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
@@ -1654,7 +1654,7 @@ CreateJ2000EclipticFrame(const Universe& universe,
 
 static shared_ptr<const J2000EquatorFrame>
 CreateJ2000EquatorFrame(const Universe& universe,
-                        Hash* frameData,
+                        const Hash* frameData,
                         const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
@@ -1725,7 +1725,7 @@ CreateTopocentricFrame(const Selection& center,
  */
 static shared_ptr<const TwoVectorFrame>
 CreateTopocentricFrame(const Universe& universe,
-                       Hash* frameData,
+                       const Hash* frameData,
                        const Selection& defaultTarget,
                        const Selection& defaultObserver)
 {
@@ -1806,7 +1806,7 @@ CreateTopocentricFrame(const Universe& universe,
 
 
 static ReferenceFrame::SharedConstPtr
-CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
+CreateComplexFrame(const Universe& universe, const Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
     Value* value = frameData->getValue("BodyFixed");
     if (value != nullptr)

@@ -33,14 +33,14 @@ enum class DataDisposition
 };
 
 
-bool ParseDate(Hash* hash, const std::string& name, double& jd);
+bool ParseDate(const Hash* hash, const std::string& name, double& jd);
 
 Orbit* CreateOrbit(const Selection& centralObject,
-                   Hash* planetData,
+                   const Hash* planetData,
                    const fs::path& path,
                    bool usePlanetUnits);
 
-RotationModel* CreateRotationModel(Hash* rotationData,
+RotationModel* CreateRotationModel(const Hash* rotationData,
                                    const fs::path& path,
                                    double syncRotationPeriod);
 

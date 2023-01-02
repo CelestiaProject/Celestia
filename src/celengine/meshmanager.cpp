@@ -81,7 +81,7 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    Hash* meshDef = meshDefValue->getHash();
+    const Hash* meshDef = meshDefValue->getHash();
 
     SphereMeshParameters params{};
 

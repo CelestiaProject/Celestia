@@ -546,7 +546,7 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                      cosAngleToBoundCenter);
 }
 
-bool Globular::load(AssociativeArray* params, const fs::path& resPath)
+bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Load the basic DSO parameters first
 

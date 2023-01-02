@@ -136,7 +136,7 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
     }
 }
 
-bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
+bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
     Eigen::Vector3d position(Eigen::Vector3d::Zero());

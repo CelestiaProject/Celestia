@@ -311,7 +311,7 @@ void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u,
 }
 
 
-static VirtualTexture* CreateVirtualTexture(Hash* texParams,
+static VirtualTexture* CreateVirtualTexture(const Hash* texParams,
                                             const fs::path& path)
 {
     string imageDirectory;
@@ -383,7 +383,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
         return nullptr;
     }
 
-    Hash* texParams = texParamsValue->getHash();
+    const Hash* texParams = texParamsValue->getHash();
 
     VirtualTexture* virtualTex  = CreateVirtualTexture(texParams, path);
     delete texParamsValue;

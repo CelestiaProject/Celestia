@@ -97,7 +97,7 @@ SafeGetLuaNumber(lua_State* state,
  *  only number, string, and boolean values are converted.
  */
 void
-SetLuaVariables(lua_State* state, Hash* parameters)
+SetLuaVariables(lua_State* state, const Hash* parameters)
 {
     for (const auto& param : *parameters)
     {
