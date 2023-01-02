@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstddef>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -320,13 +321,17 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
 
         // negative zero is not considered to be an integer value
         REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
-        REQUIRE(tok.getNumberValue() == -0.0);
-        REQUIRE(std::signbit(tok.getNumberValue()) == 1);
+        std::optional<double> numberValue = tok.getNumberValue();
+        REQUIRE(numberValue.has_value());
+        REQUIRE(numberValue.value() == -0.0);
+        REQUIRE(std::signbit(numberValue.value()) == 1);
         REQUIRE(!tok.getIntegerValue().has_value());
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
-        REQUIRE(tok.getNumberValue() == -0.0);
-        REQUIRE(std::signbit(tok.getNumberValue()) == 1);
+        numberValue = tok.getNumberValue();
+        REQUIRE(numberValue.has_value());
+        REQUIRE(numberValue.value() == -0.0);
+        REQUIRE(std::signbit(numberValue.value()) == 1);
         REQUIRE(!tok.getIntegerValue().has_value());
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);

@@ -373,12 +373,16 @@ AsciiModelLoader::loadMaterial(Material& material)
 
             for (int i = 0; i < nValues; i++)
             {
-                if (tok.nextToken() != Tokenizer::TokenNumber)
+                tok.nextToken();
+                if (auto tokenValue = tok.getNumberValue(); tokenValue.has_value())
+                {
+                    data[i] = *tokenValue;
+                }
+                else
                 {
                     reportError(fmt::format("Bad {} value in material", property));
                     return false;
                 }
-                data[i] = tok.getNumberValue();
             }
 
             Color colorVal;
@@ -548,14 +552,15 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
 
             for (int j = 0; j < readCount; j++)
             {
-                if (tok.nextToken() != Tokenizer::TokenNumber)
+                tok.nextToken();
+                if (auto tokenValue = tok.getNumberValue(); tokenValue.has_value())
                 {
-                    reportError("Error in vertex data");
-                    data[j] = 0.0;
+                    data[j] = *tokenValue;
                 }
                 else
                 {
-                    data[j] = tok.getNumberValue();
+                    reportError("Error in vertex data");
+                    data[j] = 0.0;
                 }
                 // TODO: range check unsigned byte values
             }

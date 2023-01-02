@@ -163,7 +163,7 @@ Value* Parser::readValue()
     switch (tok)
     {
     case Tokenizer::TokenNumber:
-        return new Value(tokenizer->getNumberValue());
+        return new Value(*tokenizer->getNumberValue());
 
     case Tokenizer::TokenString:
         return new Value(tokenizer->getStringValue());
