@@ -24,7 +24,7 @@ AssociativeArray::~AssociativeArray()
 }
 
 
-Value* AssociativeArray::getValue(const std::string& key) const
+const Value* AssociativeArray::getValue(const std::string& key) const
 {
     auto iter = assoc.find(key);
     if (iter == assoc.end())
@@ -42,7 +42,7 @@ void AssociativeArray::addValue(const std::string& key, Value& val)
 
 bool AssociativeArray::getNumber(const std::string& key, double& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::NumberType)
         return false;
 
@@ -89,7 +89,7 @@ bool AssociativeArray::getNumber(const std::string& key, std::uint32_t& val) con
 
 bool AssociativeArray::getString(const std::string& key, std::string& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::StringType)
         return false;
 
@@ -112,7 +112,7 @@ bool AssociativeArray::getPath(const std::string& key, fs::path& val) const
 
 bool AssociativeArray::getBoolean(const std::string& key, bool& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::BooleanType)
         return false;
 
@@ -123,7 +123,7 @@ bool AssociativeArray::getBoolean(const std::string& key, bool& val) const
 
 bool AssociativeArray::getVector(const std::string& key, Eigen::Vector3d& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
@@ -159,7 +159,7 @@ bool AssociativeArray::getVector(const std::string& key, Eigen::Vector3f& val) c
 
 bool AssociativeArray::getVector(const std::string& key, Eigen::Vector4d& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
@@ -207,7 +207,7 @@ bool AssociativeArray::getVector(const std::string& key, Eigen::Vector4f& val) c
  */
 bool AssociativeArray::getRotation(const std::string& key, Eigen::Quaternionf& val) const
 {
-    Value* v = getValue(key);
+    const Value* v = getValue(key);
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 

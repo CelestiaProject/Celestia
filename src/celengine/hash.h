@@ -33,7 +33,7 @@ class AssociativeArray
     AssociativeArray& operator=(AssociativeArray&&) = default;
     AssociativeArray& operator=(AssociativeArray&) = delete;
 
-    Value* getValue(const std::string&) const;
+    const Value* getValue(const std::string&) const;
     void addValue(const std::string&, Value&);
 
     bool getNumber(const std::string&, double&) const;

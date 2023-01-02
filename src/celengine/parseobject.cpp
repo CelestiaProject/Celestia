@@ -339,7 +339,7 @@ ParseStringList(const Hash* table,
                 const string& propertyName,
                 list<string>& stringList)
 {
-    Value* v = table->getValue(propertyName);
+    const Value* v = table->getValue(propertyName);
     if (v == nullptr)
         return false;
 
@@ -455,8 +455,8 @@ CreateSpiceOrbit(const Hash* orbitData,
 
     // Either a complete time interval must be specified with Beginning/Ending, or
     // else neither field can be present.
-    Value* beginningDate = orbitData->getValue("Beginning");
-    Value* endingDate = orbitData->getValue("Ending");
+    const Value* beginningDate = orbitData->getValue("Beginning");
+    const Value* endingDate = orbitData->getValue("Ending");
     if (beginningDate != nullptr && endingDate == nullptr)
     {
         GetLogger()->error("Beginning specified for SPICE orbit, but ending is missing.\n");
@@ -578,8 +578,8 @@ CreateSpiceRotation(const Hash* rotationData,
 
     // Either a complete time interval must be specified with Beginning/Ending, or
     // else neither field can be present.
-    Value* beginningDate = rotationData->getValue("Beginning");
-    Value* endingDate = rotationData->getValue("Ending");
+    const Value* beginningDate = rotationData->getValue("Beginning");
+    const Value* endingDate = rotationData->getValue("Ending");
     if (beginningDate != nullptr && endingDate == nullptr)
     {
         GetLogger()->error("Beginning specified for SPICE rotation, but ending is missing.\n");
@@ -691,7 +691,7 @@ CreateOrbit(const Selection& centralObject,
     }
 
 #ifdef USE_SPICE
-    Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit");
+    const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit");
     if (spiceOrbitDataValue != nullptr)
     {
         if (spiceOrbitDataValue->getType() != Value::HashType)
@@ -713,7 +713,7 @@ CreateOrbit(const Selection& centralObject,
 #endif
 
     // Trajectory calculated by Lua script
-    Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit");
+    const Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit");
     if (scriptedOrbitValue != nullptr)
     {
         if (scriptedOrbitValue->getType() != Value::HashType)
@@ -729,7 +729,7 @@ CreateOrbit(const Selection& centralObject,
 
     // New 1.5.0 style for sampled trajectories. Permits specification of
     // precision and interpolation type.
-    Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory");
+    const Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory");
     if (sampledTrajDataValue != nullptr)
     {
         if (sampledTrajDataValue->getType() != Value::HashType)
@@ -760,7 +760,7 @@ CreateOrbit(const Selection& centralObject,
         GetLogger()->error("Could not load sampled orbit file '{}'\n", sampOrbitFile);
     }
 
-    Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
+    const Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
     if (orbitDataValue != nullptr)
     {
         if (orbitDataValue->getType() != Value::HashType)
@@ -786,7 +786,7 @@ CreateOrbit(const Selection& centralObject,
     //
     // In addition to Rectangular, other coordinate types for fixed position are
     // Planetographic and Planetocentric.
-    Value* fixedPositionValue = planetData->getValue("FixedPosition");
+    const Value* fixedPositionValue = planetData->getValue("FixedPosition");
     if (fixedPositionValue != nullptr)
     {
         Vector3d fixedPosition = Vector3d::Zero();
@@ -1075,7 +1075,7 @@ CreateRotationModel(const Hash* planetData,
     }
 
 #ifdef USE_SPICE
-    Value* spiceRotationDataValue = planetData->getValue("SpiceRotation");
+    const Value* spiceRotationDataValue = planetData->getValue("SpiceRotation");
     if (spiceRotationDataValue != nullptr)
     {
         if (spiceRotationDataValue->getType() != Value::HashType)
@@ -1095,7 +1095,7 @@ CreateRotationModel(const Hash* planetData,
     }
 #endif
 
-    Value* scriptedRotationValue = planetData->getValue("ScriptedRotation");
+    const Value* scriptedRotationValue = planetData->getValue("ScriptedRotation");
     if (scriptedRotationValue != nullptr)
     {
         if (scriptedRotationValue->getType() != Value::HashType)
@@ -1125,7 +1125,7 @@ CreateRotationModel(const Hash* planetData,
         GetLogger()->error("Could not load rotation model file '{}'\n", sampOrientationFile);
     }
 
-    Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
+    const Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
     if (precessingRotationValue != nullptr)
     {
         if (precessingRotationValue->getType() != Value::HashType)
@@ -1138,7 +1138,7 @@ CreateRotationModel(const Hash* planetData,
                                              syncRotationPeriod);
     }
 
-    Value* uniformRotationValue = planetData->getValue("UniformRotation");
+    const Value* uniformRotationValue = planetData->getValue("UniformRotation");
     if (uniformRotationValue != nullptr)
     {
         if (uniformRotationValue->getType() != Value::HashType)
@@ -1150,7 +1150,7 @@ CreateRotationModel(const Hash* planetData,
                                           syncRotationPeriod);
     }
 
-    Value* fixedRotationValue = planetData->getValue("FixedRotation");
+    const Value* fixedRotationValue = planetData->getValue("FixedRotation");
     if (fixedRotationValue != nullptr)
     {
         if (fixedRotationValue->getType() != Value::HashType)
@@ -1162,7 +1162,7 @@ CreateRotationModel(const Hash* planetData,
         return CreateFixedRotationModel(fixedRotationValue->getHash());
     }
 
-    Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
+    const Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
     if (fixedAttitudeValue != nullptr)
     {
         if (fixedAttitudeValue->getType() != Value::HashType)
@@ -1495,9 +1495,7 @@ CreateFrameVector(const Universe& universe,
                   const Selection& center,
                   const Hash* vectorData)
 {
-    Value* value = nullptr;
-
-    value = vectorData->getValue("RelativePosition");
+    const Value* value = vectorData->getValue("RelativePosition");
     if (value != nullptr && value->getHash() != nullptr)
     {
         const Hash* relPosData = value->getHash();
@@ -1546,7 +1544,7 @@ CreateFrameVector(const Universe& universe,
         // The frame for the vector is optional; a nullptr frame indicates
         // J2000 ecliptic.
         ReferenceFrame::SharedConstPtr f;
-        Value* frameValue = constVecData->getValue("Frame");
+        const Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != nullptr)
         {
             f = CreateReferenceFrame(universe, frameValue, center, nullptr);
@@ -1574,7 +1572,7 @@ CreateTwoVectorFrame(const Universe& universe,
         return nullptr;
 
     // Primary and secondary vector definitions are required
-    Value* primaryValue = frameData->getValue("Primary");
+    const Value* primaryValue = frameData->getValue("Primary");
     if (primaryValue == nullptr)
     {
         GetLogger()->error("Primary axis missing from two-vector frame.\n");
@@ -1588,7 +1586,7 @@ CreateTwoVectorFrame(const Universe& universe,
         return nullptr;
     }
 
-    Value* secondaryValue = frameData->getValue("Secondary");
+    const Value* secondaryValue = frameData->getValue("Secondary");
     if (secondaryValue == nullptr)
     {
         GetLogger()->error("Secondary axis missing from two-vector frame.\n");
@@ -1808,7 +1806,7 @@ CreateTopocentricFrame(const Universe& universe,
 static ReferenceFrame::SharedConstPtr
 CreateComplexFrame(const Universe& universe, const Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
-    Value* value = frameData->getValue("BodyFixed");
+    const Value* value = frameData->getValue("BodyFixed");
     if (value != nullptr)
     {
         if (value->getType() != Value::HashType)
@@ -1887,9 +1885,9 @@ CreateComplexFrame(const Universe& universe, const Hash* frameData, const Select
 
 
 ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
-                                     Value* frameValue,
-                                     const Selection& defaultCenter,
-                                     Body* defaultObserver)
+                                                    const Value* frameValue,
+                                                    const Selection& defaultCenter,
+                                                    Body* defaultObserver)
 {
     if (frameValue->getType() == Value::StringType)
     {

@@ -129,7 +129,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
     config->consoleLogRows = getUint(configParams, "LogSize", 200);
 
-    Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
+    const Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != nullptr)
     {
         if (solarSystemsVal->getType() != Value::ArrayType)
@@ -156,7 +156,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* starCatalogsVal = configParams->getValue("StarCatalogs");
+    const Value* starCatalogsVal = configParams->getValue("StarCatalogs");
     if (starCatalogsVal != nullptr)
     {
         if (starCatalogsVal->getType() != Value::ArrayType)
@@ -184,7 +184,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
+    const Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
     if (dsoCatalogsVal != nullptr)
     {
         if (dsoCatalogsVal->getType() != Value::ArrayType)
@@ -212,7 +212,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
+    const Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
     if (extrasDirsVal != nullptr)
     {
         if (extrasDirsVal->getType() == Value::ArrayType)
@@ -242,7 +242,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* skipExtrasVal = configParams->getValue("SkipExtras");
+    const Value* skipExtrasVal = configParams->getValue("SkipExtras");
     if (skipExtrasVal != nullptr)
     {
         if (skipExtrasVal->getType() == Value::ArrayType)
@@ -272,7 +272,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
+    const Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
     if (ignoreExtVal != nullptr)
     {
         if (ignoreExtVal->getType() != Value::ArrayType)
@@ -297,7 +297,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    Value* starTexValue = configParams->getValue("StarTextures");
+    const Value* starTexValue = configParams->getValue("StarTextures");
     if (starTexValue != nullptr)
     {
         if (starTexValue->getType() != Value::HashType)
@@ -382,7 +382,7 @@ CelestiaConfig::getStringValue(const string& name)
 {
     assert(params != nullptr);
 
-    Value* v = params->getValue(name);
+    const Value* v = params->getValue(name);
     if (v == nullptr || v->getType() != Value::StringType)
         return string("");
 
