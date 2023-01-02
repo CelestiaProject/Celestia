@@ -10,11 +10,15 @@
 
 #pragma once
 
-#include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
-#include <string>
+#include <memory>
+#include <optional>
 #include <string_view>
+
+
+class TokenizerImpl;
 
 class Tokenizer
 {
@@ -38,29 +42,22 @@ public:
         TokenEndUnits       = 14,
     };
 
-    Tokenizer(std::istream*);
+    static constexpr std::size_t DEFAULT_BUFFER_SIZE = 4096;
+
+    Tokenizer(std::istream*, std::size_t = DEFAULT_BUFFER_SIZE);
+    ~Tokenizer();
 
     TokenType nextToken();
     TokenType getTokenType() const;
     void pushBack();
     double getNumberValue() const;
-    bool isInteger() const;
-    std::int32_t getIntegerValue() const;
+    std::optional<std::int32_t> getIntegerValue() const;
     std::string_view getStringValue() const;
 
     int getLineNumber() const;
 
 private:
-    std::istream* in;
-    TokenType tokenType{ TokenBegin };
-    bool isStart{ true };
+    std::unique_ptr<TokenizerImpl> impl;
+    TokenType tokenType{ TokenType::TokenBegin };
     bool isPushedBack{ false };
-    std::string textToken{};
-    double tokenValue{ std::nan("") };
-    int lineNumber{ 1 };
-    char nextChar{ '\0' };
-    bool reprocess{ false };
-    bool hasUtf8Errors{ false };
-
-    bool skipUtf8Bom();
 };

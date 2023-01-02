@@ -8,622 +8,800 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cctype>
+#include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstring>
-#include <iostream>
+#include <istream>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <variant>
+#include <vector>
 #include <system_error>
 
 #include <celcompat/charconv.h>
-
-#include "logger.h"
-#include "utf8.h"
+#include <celutil/utf8.h>
 #include "tokenizer.h"
 
-using celestia::util::GetLogger;
+using namespace std::string_view_literals;
 
 namespace
 {
-constexpr std::string::size_type maxTokenLength = 1024;
+constexpr inline std::string_view UTF8_BOM = "\357\273\277"sv;
 
-enum class State
+constexpr bool
+isWhitespace(char ch)
 {
-    Start,
-    NumberSigned,
-    Number,
+    return ch == ' ' || ch == '\t' || ch == '\r';
+}
+
+constexpr bool
+isAsciiDigit(char ch)
+{
+    return ch >= '0' && ch <= '9';
+}
+
+constexpr bool
+isStartName(char ch)
+{
+    return (ch >= 'A' && ch <= 'Z') ||
+           (ch >= 'a' && ch <= 'z') ||
+           (ch == '_');
+}
+
+constexpr bool
+isName(char ch)
+{
+    return isStartName(ch) || isAsciiDigit(ch);
+}
+
+constexpr bool
+isSign(char ch)
+{
+    return ch == '+' || ch == '-';
+}
+
+
+enum class NumberPart
+{
+    Initial,
     Fraction,
-    ExponentStart,
-    ExponentSigned,
     Exponent,
-    Name,
-    String,
-    StringEscape,
-    UnicodeEscape,
-    Comment,
+    End,
+    Error,
 };
 
 
-bool isSeparator(unsigned char u)
+struct NumberState
 {
-    constexpr auto period = static_cast<unsigned char>('.');
-    return !std::isdigit(u) && !std::isalpha(u) && u != period;
-}
+    std::size_t endPosition{ 0 };
+    NumberPart part{ NumberPart::Initial };
+    bool isInteger{ true };
+};
 
 
-bool tryPushBack(std::string& s, char c)
+struct StringState
 {
-    if (s.size() < maxTokenLength)
+    std::size_t runStart{ 1 };
+    std::size_t runEnd{ 1 };
+    std::string processed{};
+    UTF8Validator validator{};
+
+    bool checkUTF8(char, std::string_view);
+};
+
+
+bool
+StringState::checkUTF8(char c, std::string_view run)
+{
+    auto utf8Status = validator.check(c);
+    if (utf8Status == UTF8Status::Ok) { return true; }
+
+    if (utf8Status == UTF8Status::InvalidTrailingByte)
     {
-        s.push_back(c);
-        return true;
-    }
-
-    GetLogger()->error("Token too long\n");
-    return false;
-}
-
-
-bool handleUtf8Error(std::string& s, UTF8Status status)
-{
-    if (status == UTF8Status::InvalidTrailingByte)
-    {
-        // remove the partial UTF-8 sequence
-        std::string::size_type pos = s.size();
+        std::size_t pos = run.size();
         while (pos > 0)
         {
-            unsigned char u = static_cast<unsigned char>(s[--pos]);
-            if (u >= 0xc0) { break; }
+            --pos;
+            auto uch = static_cast<unsigned char>(run[pos]);
+            if (uch >= 0xc0) { break; }
         }
 
-        s.resize(pos);
+        run = run.substr(0, pos);
     }
 
-    if (s.size() <= maxTokenLength - std::strlen(UTF8_REPLACEMENT_CHAR))
-    {
-        s.append(UTF8_REPLACEMENT_CHAR);
-        return true;
-    }
-
-    GetLogger()->error("Token too long\n");
+    processed.append(run);
+    processed.append(UTF8_REPLACEMENT_CHAR);
+    runStart = runEnd + 1;
+    runEnd = runStart;
     return false;
 }
+
+
+struct VisitorStringView
+{
+    std::string_view operator()(std::monostate) const { return {}; }
+    std::string_view operator()(std::int32_t) const { return {}; }
+    std::string_view operator()(double) const { return {}; }
+    std::string_view operator()(std::string_view sv) const { return sv; }
+    std::string_view operator()(const std::string& s) const { return s; }
+};
+
+
+struct VisitorDouble
+{
+    double operator()(std::monostate) const { return std::nan(""); }
+    double operator()(std::int32_t i) const { return static_cast<double>(i); }
+    double operator()(double d) const { return d; }
+    double operator()(std::string_view) const { return std::nan(""); }
+    double operator()(const std::string&) const { return std::nan(""); }
+};
+
+
+struct VisitorInteger
+{
+    std::optional<std::int32_t> operator()(std::monostate) const { return std::nullopt; }
+    std::optional<std::int32_t> operator()(std::int32_t i) const { return i; }
+    std::optional<std::int32_t> operator()(double) const { return std::nullopt; }
+    std::optional<std::int32_t> operator()(std::string_view) const { return std::nullopt; }
+    std::optional<std::int32_t> operator()(const std::string&) const { return std::nullopt; }
+};
+
 } // end unnamed namespace
 
 
-Tokenizer::Tokenizer(std::istream* _in) :
-    in(_in)
+class TokenizerImpl
 {
-    textToken.reserve(maxTokenLength);
-}
+public:
+    using TokenValue = std::variant<std::monostate, std::int32_t, double, std::string_view, std::string>;
+
+    TokenizerImpl(std::istream*, std::size_t);
+
+    Tokenizer::TokenType nextToken();
+
+    const TokenValue& getTokenValue() const { return tokenValue; }
+    int getLineNumber() const { return lineNumber; }
+
+private:
+    std::istream* in;
+    std::vector<char> buffer;
+    std::size_t position{ 0 };
+    std::size_t length{ 0 };
+    TokenValue tokenValue{ std::in_place_type<std::monostate> };
+
+    int lineNumber{ 1 };
+    bool isAtStart{ true };
+    bool isEnded{ false };
+
+    bool skipUTF8Bom();
+
+    std::variant<char, Tokenizer::TokenType> skipWhitespace();
+    Tokenizer::TokenType readToken(char);
+
+    bool readString();
+    bool readNumber();
+    bool readName();
+
+    NumberState createNumberState();
+    static void parseDecimal(NumberState&);
+    void parseExponent(NumberState&);
+    bool setNumber(const NumberState&);
+
+    bool parseChar(StringState&, char, std::string_view);
+    bool parseEscape(StringState&, char);
+
+    bool fillBuffer(std::size_t* = nullptr);
+    std::optional<char> peekAt(std::size_t&);
+};
 
 
-Tokenizer::TokenType Tokenizer::nextToken()
+TokenizerImpl::TokenizerImpl(std::istream* _in, std::size_t _bufferSize)
+    : in(_in),
+      buffer(_bufferSize)
+{}
+
+
+Tokenizer::TokenType
+TokenizerImpl::nextToken()
 {
-    if (isPushedBack)
-    {
-        isPushedBack = false;
-        return tokenType;
-    }
+    tokenValue.emplace<std::monostate>();
 
-    if (isStart)
+    // skip UTF8 BOM
+    if (isAtStart && !skipUTF8Bom()) { return Tokenizer::TokenError; }
+
+    auto wsResult = skipWhitespace();
+    return std::visit([this](auto& arg)
     {
-        isStart = false;
-        if (!skipUtf8Bom())
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, Tokenizer::TokenType>)
         {
-            tokenType = TokenError;
-            return tokenType;
-        }
-    }
-
-    UTF8Validator validator;
-    textToken.clear();
-    tokenValue = std::nan("");
-    State state = State::Start;
-    TokenType newToken = TokenBegin;
-    int unicodeDigits = 0;
-    char unicode[5] = {};
-    UTF8Status utf8Status = UTF8Status::Ok;
-
-    while (newToken == TokenBegin)
-    {
-        bool isEof = false;
-        auto uNextChar = static_cast<unsigned char>(nextChar);
-        if (reprocess)
-        {
-            reprocess = false;
+            return arg;
         }
         else
         {
-            utf8Status = UTF8Status::Ok;
-            in->get(nextChar);
-            if (in->eof())
+            static_assert(std::is_same_v<T, char>);
+            return readToken(arg);
+        }
+    }, wsResult);
+}
+
+
+std::variant<char, Tokenizer::TokenType>
+TokenizerImpl::skipWhitespace()
+{
+    for (;;)
+    {
+        // skip whitespace
+        auto bufferEnd = buffer.cbegin() + length;
+        auto it = std::find_if_not(buffer.cbegin() + position, bufferEnd, isWhitespace);
+        position = it - buffer.cbegin();
+        if (it == bufferEnd)
+        {
+            if (isEnded) { return Tokenizer::TokenEnd; }
+            if (!fillBuffer()) { return Tokenizer::TokenError; }
+            continue;
+        }
+
+        // track lines
+        if (*it == '\n')
+        {
+            ++lineNumber;
+            ++position;
+            continue;
+        }
+
+        if (*it != '#') {
+            return *it;
+        }
+
+        // skip comments
+        for (;;)
+        {
+            it = std::find(buffer.cbegin() + position, bufferEnd, '\n');
+            position = it - buffer.cbegin();
+            if (it != bufferEnd)
             {
-                isEof = true;
-            }
-            else if (in->fail())
-            {
-                GetLogger()->error("Unexpected error reading stream\n");
-                newToken = TokenError;
+                ++position;
                 break;
             }
-            else
-            {
-                uNextChar = static_cast<unsigned char>(nextChar);
-                utf8Status = validator.check(uNextChar);
-                if (utf8Status != UTF8Status::Ok && !hasUtf8Errors)
-                {
-                    GetLogger()->error("Invalid UTF-8 sequence detected\n");
-                    hasUtf8Errors = true;
-                }
-                else if (nextChar == '\n')
-                {
-                    ++lineNumber;
-                }
-            }
+
+            if (isEnded) { return Tokenizer::TokenEnd; }
+            if (!fillBuffer()) { return Tokenizer::TokenError; }
+            bufferEnd = buffer.cbegin() + length;
+        }
+    }
+}
+
+
+Tokenizer::TokenType
+TokenizerImpl::readToken(char ch)
+{
+    switch (ch)
+    {
+    case '{':
+        ++position;
+        return Tokenizer::TokenBeginGroup;
+
+    case '}':
+        ++position;
+        return Tokenizer::TokenEndGroup;
+
+    case '[':
+        ++position;
+        return Tokenizer::TokenBeginArray;
+
+    case ']':
+        ++position;
+        return Tokenizer::TokenEndArray;
+
+    case '=':
+        ++position;
+        return Tokenizer::TokenEquals;
+
+    case '|':
+        ++position;
+        return Tokenizer::TokenBar;
+
+    case '<':
+        ++position;
+        return Tokenizer::TokenBeginUnits;
+
+    case '>':
+        ++position;
+        return Tokenizer::TokenEndUnits;
+
+    case '"':
+        return readString() ? Tokenizer::TokenString : Tokenizer::TokenError;
+
+    default:
+        if (ch == '-' || ch == '+' || ch == '.' || isAsciiDigit(ch))
+        {
+            return readNumber() ? Tokenizer::TokenNumber : Tokenizer::TokenError;
+        }
+        if (isStartName(ch))
+        {
+            return readName() ? Tokenizer::TokenName : Tokenizer::TokenError;
         }
 
-        switch (state)
+        ++position;
+        return Tokenizer::TokenError;
+    }
+}
+
+
+bool
+TokenizerImpl::skipUTF8Bom()
+{
+    if (!fillBuffer()) { return false; }
+    isAtStart = false;
+    if (length >= UTF8_BOM.size() && std::string_view(buffer.data(), UTF8_BOM.size()) == UTF8_BOM)
+    {
+        position += UTF8_BOM.size();
+    }
+
+    return true;
+}
+
+
+bool
+TokenizerImpl::readName()
+{
+    std::size_t endPosition = position + 1;
+    do
+    {
+        auto bufferEnd = buffer.cbegin() + length;
+        auto it = std::find_if_not(buffer.cbegin() + endPosition, bufferEnd, isName);
+        endPosition = it - buffer.cbegin();
+        if (it != bufferEnd || isEnded) { break; }
+
+        if (!fillBuffer(&endPosition))
         {
-        case State::Start:
-            if (isEof)
+            position = endPosition;
+            return false;
+        }
+    } while (endPosition < length);
+
+    tokenValue.emplace<std::string_view>(buffer.data() + position, endPosition - position);
+    position = endPosition;
+
+    return true;
+}
+
+
+bool
+TokenizerImpl::readNumber()
+{
+    NumberState state = createNumberState();
+    if (state.part == NumberPart::Error)
+    {
+        return false;
+    }
+
+    while (state.part != NumberPart::End)
+    {
+        auto bufferEnd = buffer.cbegin() + length;
+        auto it = std::find_if_not(buffer.cbegin() + state.endPosition, bufferEnd, isAsciiDigit);
+        state.endPosition = it - buffer.cbegin();
+        if (it == bufferEnd)
+        {
+            if (isEnded)
             {
-                newToken = TokenEnd;
+                state.part = NumberPart::End;
             }
-            else if (std::isspace(uNextChar))
+            else if (!fillBuffer(&state.endPosition))
             {
-                // no-op
+                position = state.endPosition;
+                return false;
             }
-            else if (std::isdigit(uNextChar))
+            else if (state.endPosition == length)
             {
-                textToken.push_back(nextChar);
-                state = State::Number;
+                state.part = NumberPart::End;
             }
-            else if (nextChar == '-')
-            {
-                textToken.push_back(nextChar);
-                state = State::NumberSigned;
-            }
-            else if (nextChar == '+')
-            {
-                state = State::NumberSigned;
-            }
-            else if (nextChar == '.')
-            {
-                textToken.append("0.");
-                state = State::Fraction;
-            }
-            else if (std::isalpha(uNextChar) || nextChar == '_')
-            {
-                textToken.push_back(nextChar);
-                state = State::Name;
-            }
-            else if (nextChar == '"')
-            {
-                state = State::String;
-            }
-            else if (nextChar == '#')
-            {
-                state = State::Comment;
-            }
-            else if (nextChar == '{')
-            {
-                newToken = TokenBeginGroup;
-            }
-            else if (nextChar == '}')
-            {
-                newToken = TokenEndGroup;
-            }
-            else if (nextChar == '[')
-            {
-                newToken = TokenBeginArray;
-            }
-            else if (nextChar == ']')
-            {
-                newToken = TokenEndArray;
-            }
-            else if (nextChar == '=')
-            {
-                newToken = TokenEquals;
-            }
-            else if (nextChar == '|')
-            {
-                newToken = TokenBar;
-            }
-            else if (nextChar == '<')
-            {
-                newToken = TokenBeginUnits;
-            }
-            else if (nextChar == '>')
-            {
-                newToken = TokenEndUnits;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in stream\n");
-                newToken = TokenError;
-            }
+            continue;
+        }
+
+        switch (*it)
+        {
+        case '.':
+            parseDecimal(state);
             break;
 
-        case State::NumberSigned:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in number\n");
-                newToken = TokenError;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-                state = State::Number;
-            }
-            else if (nextChar == '.')
-            {
-                if (textToken.size() + 2 <= maxTokenLength)
-                {
-                    textToken.append("0.");
-                    state = State::Fraction;
-                }
-                else
-                {
-                    GetLogger()->error("Token too long\n");
-                    newToken = TokenError;
-                }
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
+        case 'E':
+        case 'e':
+            parseExponent(state);
             break;
 
-        case State::Number:
-            if (isEof)
-            {
-                newToken = TokenNumber;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-            }
-            else if (nextChar == '.')
-            {
-                if (!tryPushBack(textToken, '.')) { newToken = TokenError; }
-                state = State::Fraction;
-            }
-            else if (nextChar == 'e' || nextChar == 'E')
-            {
-                if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
-                state = State::ExponentStart;
-            }
-            else if (isSeparator(uNextChar))
-            {
-                newToken = TokenNumber;
-                reprocess = true;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::Fraction:
-            if (isEof)
-            {
-                newToken = TokenNumber;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-            }
-            else if (nextChar == 'e' || nextChar == 'E')
-            {
-                if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
-                state = State::ExponentStart;
-            }
-            else if (isSeparator(uNextChar))
-            {
-                newToken = TokenNumber;
-                reprocess = true;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::ExponentStart:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in number\n");
-                newToken = TokenError;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-                state = State::Exponent;
-            }
-            else if (nextChar == '+' || nextChar == '-')
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-                state = State::ExponentSigned;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::ExponentSigned:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in number\n");
-                newToken = TokenError;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-                state = State::Exponent;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::Exponent:
-            if (isEof)
-            {
-                newToken = TokenNumber;
-            }
-            else if (std::isdigit(uNextChar))
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-            }
-            else if (isSeparator(uNextChar))
-            {
-                newToken = TokenNumber;
-                reprocess = true;
-            }
-            else
-            {
-                GetLogger()->error("Bad character in number\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::Name:
-            if (isEof)
-            {
-                newToken = TokenName;
-            }
-            else if (std::isalpha(uNextChar) || std::isdigit(uNextChar) || nextChar == '_')
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-            }
-            else
-            {
-                newToken = TokenName;
-                reprocess = true;
-            }
-            break;
-
-        case State::String:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in string\n");
-                newToken = TokenError;
-            }
-            else if (utf8Status != UTF8Status::Ok)
-            {
-                if (!handleUtf8Error(textToken, utf8Status)) { newToken = TokenError; }
-            }
-            else if (nextChar == '\\')
-            {
-                state = State::StringEscape;
-            }
-            else if (nextChar == '"')
-            {
-                newToken = TokenString;
-            }
-            else
-            {
-                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
-            }
-            break;
-
-        case State::StringEscape:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in string\n");
-                newToken = TokenError;
-            }
-            else if (nextChar == '\\')
-            {
-                if (!tryPushBack(textToken, '\\')) { newToken = TokenError; }
-                state = State::String;
-            }
-            else if (nextChar == 'n')
-            {
-                if (!tryPushBack(textToken, '\n')) { newToken = TokenError; }
-                state = State::String;
-            }
-            else if (nextChar == '"')
-            {
-                if (!tryPushBack(textToken, '"')) { newToken = TokenError; }
-                state = State::String;
-            }
-            else if (nextChar == 'u')
-            {
-                state = State::UnicodeEscape;
-                unicodeDigits = 0;
-            }
-            else
-            {
-                GetLogger()->error("Invalid string escape sequence\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::UnicodeEscape:
-            if (isEof)
-            {
-                GetLogger()->error("Unexpected EOF in string\n");
-                newToken = TokenError;
-            }
-            else if (std::isxdigit(uNextChar))
-            {
-                unicode[unicodeDigits++] = nextChar;
-                if (unicodeDigits == 4)
-                {
-                    auto unicodeValue = static_cast<std::uint32_t>(std::strtoul(unicode, nullptr, 16));
-                    if (textToken.size() <= maxTokenLength - UTF8EncodedSizeChecked(unicodeValue))
-                    {
-                        UTF8Encode(unicodeValue, textToken);
-                        state = State::String;
-                    }
-                    else
-                    {
-                        GetLogger()->error("Token too long\n");
-                        newToken = TokenError;
-                    }
-                }
-            }
-            else
-            {
-                GetLogger()->error("Bad character in Unicode escape\n");
-                newToken = TokenError;
-            }
-            break;
-
-        case State::Comment:
-            if (isEof)
-            {
-                newToken = TokenEnd;
-            }
-            else if (nextChar == '\n' || nextChar == '\r')
-            {
-                state = State::Start;
-            }
+        default:
+            state.part = NumberPart::End;
             break;
         }
     }
 
-    if (newToken == TokenNumber)
+    return setNumber(state);
+}
+
+
+NumberState
+TokenizerImpl::createNumberState()
+{
+    NumberState state;
+    state.endPosition = position + 1;
+    if (buffer[position] == '.')
     {
-        double value;
-        auto [p, ec] = celestia::compat::from_chars(textToken.data(), textToken.data() + textToken.size(), value);
-        if (ec == std::errc())
+        // decimal point must be followed by a digit
+        if (auto check = peekAt(state.endPosition); !isAsciiDigit(check.value_or('\0')))
         {
-            tokenValue = value;
-            if (p != textToken.data() + textToken.size())
+            position = state.endPosition;
+            state.part = NumberPart::Error;
+            return state;
+        }
+        state.isInteger = false;
+        state.part = NumberPart::Fraction;
+    }
+    else if (isSign(buffer[position]))
+    {
+        // sign must be followed by either a decimal point or a digit
+        if (auto check = peekAt(state.endPosition); check == '.')
+        {
+            ++state.endPosition;
+            state.isInteger = false;
+            // decimal point must be followed by a digit
+            if (auto check2 = peekAt(state.endPosition); !isAsciiDigit(check2.value_or('\0')))
             {
-                GetLogger()->warn("Incomplete parsing of numeric token");
+                position = state.endPosition;
+                state.part = NumberPart::Error;
             }
         }
-        else if (ec == std::errc::invalid_argument)
+        else if (!isAsciiDigit(check.value_or('\0')))
         {
-            GetLogger()->error("Could not parse number\n");
-            newToken = TokenError;
+            position = state.endPosition;
+            state.part = NumberPart::Error;
         }
-        else if (ec == std::errc::result_out_of_range)
+    }
+
+    return state;
+}
+
+
+void
+TokenizerImpl::parseDecimal(NumberState& numberState)
+{
+    if (numberState.part == NumberPart::Initial)
+    {
+        numberState.isInteger = false;
+        numberState.part = NumberPart::Fraction;
+        ++numberState.endPosition;
+    }
+    else
+    {
+        numberState.part = NumberPart::End;
+    }
+}
+
+
+void
+TokenizerImpl::parseExponent(NumberState& numberState)
+{
+    if (numberState.part == NumberPart::Initial || numberState.part == NumberPart::Fraction)
+    {
+        ++numberState.endPosition;
+        if (auto check = peekAt(numberState.endPosition).value_or('\0'); isSign(check))
         {
-            GetLogger()->error("Number out of range\n");
-            newToken = TokenError;
+            ++numberState.endPosition;
+            if (auto check2 = peekAt(numberState.endPosition).value_or('\0'); isAsciiDigit(check2))
+            {
+                numberState.part = NumberPart::Exponent;
+            }
+            else
+            {
+                numberState.endPosition -= 2;
+                numberState.part = NumberPart::End;
+            }
+        }
+        else if (isAsciiDigit(check))
+        {
+            numberState.part = NumberPart::Exponent;
         }
         else
         {
-            GetLogger()->error("Unexpected error parsing number\n");
-            newToken = TokenError;
+            --numberState.endPosition;
+            numberState.part = NumberPart::End;
+        }
+    }
+    else
+    {
+        numberState.part = NumberPart::End;
+    }
+}
+
+
+bool
+TokenizerImpl::setNumber(const NumberState& numberState)
+{
+    using celestia::compat::from_chars;
+
+    const char* startPtr = buffer.data() + position;
+    if (*startPtr == '+') { ++startPtr; }
+
+    const char* endPtr = buffer.data() + numberState.endPosition;
+    position = numberState.endPosition;
+
+    // detect negative zero in order to roundtrip CMOD correctly
+    bool isNegative = *startPtr == '-';
+
+    if (numberState.isInteger)
+    {
+        std::int32_t intResult;
+        if (auto [ptr, ec] = from_chars(startPtr, endPtr, intResult);
+            ec == std::errc{} && ptr == endPtr && !(intResult == 0 && isNegative))
+        {
+            tokenValue = intResult;
+            return true;
         }
     }
 
-    tokenType = newToken;
-    return tokenType;
+    double dblResult;
+    if (auto [ptr, ec] = from_chars(startPtr, endPtr, dblResult);
+        ec == std::errc{} && ptr == endPtr)
+    {
+        tokenValue = dblResult;
+        return true;
+    }
+
+    return false;
 }
 
 
-Tokenizer::TokenType Tokenizer::getTokenType() const
+bool
+TokenizerImpl::readString()
 {
-    return tokenType;
+    StringState state;
+    for (;;)
+    {
+        char ch;
+        auto peekPos = position + state.runEnd;
+        if (auto check = peekAt(peekPos); check.has_value())
+        {
+            ch = *check;
+        }
+        else
+        {
+            position = peekPos;
+            return false;
+        }
+
+        std::string_view run(buffer.data() + position + state.runStart,
+                             state.runEnd - state.runStart);
+
+        if (!state.checkUTF8(ch, run)) { continue; }
+        if (ch == '"') { break; }
+        if (!parseChar(state, ch, run)) { return false;}
+    }
+
+    const char* startPtr = buffer.data() + position;
+    position += state.runEnd + 1;
+
+    if (state.runStart == 1)
+    {
+        // string did not need to be modified
+        tokenValue.emplace<std::string_view>(startPtr + state.runStart, state.runEnd - state.runStart);
+        return true;
+    }
+
+    state.processed.append(startPtr + state.runStart, startPtr + state.runEnd);
+    tokenValue = state.processed;
+    return true;
 }
 
 
-void Tokenizer::pushBack()
+bool
+TokenizerImpl::parseChar(StringState& state, char ch, std::string_view run)
+{
+    switch (ch)
+    {
+    case '\r':
+        state.processed.append(run);
+        state.runStart = state.runEnd + 1;
+        state.runEnd = state.runStart;
+        break;
+
+    case '\\':
+        {
+            state.processed.append(run);
+            std::size_t peekPos = position + state.runEnd + 1;
+            if (auto check = peekAt(peekPos); check.has_value())
+            {
+                return parseEscape(state, *check);
+            }
+
+            position = peekPos;
+            return false;
+        }
+
+    case '\n':
+        ++lineNumber;
+        [[fallthrough]];
+
+    default:
+        ++state.runEnd;
+        break;
+    }
+
+    return true;
+}
+
+
+bool
+TokenizerImpl::parseEscape(StringState& state, char ch)
+{
+    switch (ch)
+    {
+    case '"':
+        state.processed.push_back('\"');
+        state.runStart = state.runEnd + 2;
+        state.runEnd = state.runStart;
+        break;
+
+    case 'n':
+        state.processed.push_back('\n');
+        state.runStart = state.runEnd + 2;
+        state.runEnd = state.runStart;
+        break;
+
+    case '\\':
+        state.processed.push_back('\\');
+        state.runStart = state.runEnd + 2;
+        state.runEnd = state.runStart;
+        break;
+
+    case 'u':
+        {
+            std::size_t peekPos = position + state.runEnd + 5;
+            if (auto check = peekAt(peekPos); !check.has_value())
+            {
+                position = length;
+                return false;
+            }
+
+            const char* uStart = buffer.data() + position + state.runEnd + 2;
+            const char* uEnd = buffer.data() + position + state.runEnd + 6;
+
+            std::uint32_t uch;
+            if (auto [ptr, ec] = celestia::compat::from_chars(uStart, uEnd, uch, 16);
+                ec == std::errc{} && ptr == uEnd)
+            {
+                UTF8Encode(uch, state.processed);
+                state.runStart = state.runEnd + 6;
+                state.runEnd = state.runStart;
+            }
+            else
+            {
+                position = ptr - buffer.data();
+                return false;
+            }
+        }
+
+        break;
+
+    default:
+        position += state.runEnd + 1;
+        return false;
+    }
+
+    return true;
+}
+
+
+bool
+TokenizerImpl::fillBuffer(std::size_t* alterOffset)
+{
+    // If we've hit EOF or we've got an overlong token then exit
+    if (position == 0 && length > 0) { return false; }
+
+    assert(position <= length);
+
+    std::size_t unprocessed = length - position;
+    // Move any unprocessed elements to the front of the buffer
+    if (unprocessed > 0)
+    {
+        std::memmove(buffer.data(), buffer.data() + position, unprocessed);
+    }
+
+    if (alterOffset)
+    {
+        *alterOffset -= position;
+    }
+
+    in->read(buffer.data() + unprocessed, buffer.size() - unprocessed);
+    if (in->bad())
+    {
+        return false;
+    }
+
+    if (in->eof())
+    {
+        isEnded = true;
+    }
+
+    position = 0;
+    length = unprocessed + static_cast<std::size_t>(in->gcount());
+    return true;
+}
+
+
+std::optional<char>
+TokenizerImpl::peekAt(std::size_t& offset)
+{
+    if (offset < length) { return buffer[offset]; }
+    if (isEnded || !fillBuffer(&offset) || offset >= length) { return std::nullopt; }
+    return buffer[offset];
+}
+
+
+Tokenizer::Tokenizer(std::istream* _in, std::size_t buffer_size)
+    : impl(std::make_unique<TokenizerImpl>(_in, buffer_size))
+{}
+
+
+Tokenizer::~Tokenizer() = default;
+
+
+void
+Tokenizer::pushBack()
 {
     isPushedBack = true;
 }
 
 
-double Tokenizer::getNumberValue() const
+Tokenizer::TokenType
+Tokenizer::nextToken()
 {
-    return tokenType == TokenNumber ? tokenValue : std::nan("");
-}
-
-
-bool Tokenizer::isInteger() const
-{
-    return tokenType == TokenNumber
-        && textToken.find_first_of(".eE") == std::string::npos
-        && tokenValue >= INT32_MIN && tokenValue <= INT32_MAX;
-}
-
-
-std::int32_t Tokenizer::getIntegerValue() const
-{
-    return static_cast<std::int32_t>(tokenValue);
-}
-
-
-std::string_view Tokenizer::getStringValue() const
-{
-    return textToken;
-}
-
-
-int Tokenizer::getLineNumber() const
-{
-    return lineNumber;
-}
-
-
-bool Tokenizer::skipUtf8Bom()
-{
-    for (int i = 0; i < 3; ++i)
+    if (isPushedBack)
     {
-        in->get(nextChar);
-        if (in->eof())
-        {
-            if (i == 0)
-            {
-                return true;
-            }
-
-            GetLogger()->error("Incomplete UTF-8 sequence\n");
-            return false;
-        }
-        else if (in->fail())
-        {
-            GetLogger()->error("Unexpected error reading stream\n");
-            return false;
-        }
-        else if (i == 0)
-        {
-            if (nextChar != '\357')
-            {
-                lineNumber += nextChar == '\n' ? 1 : 0;
-                reprocess = true;
-                return true;
-            }
-        }
-        else if ((i == 1 && nextChar != '\273') || (i == 2 && nextChar != '\277'))
-        {
-            GetLogger()->error("Bad character in stream\n");
-            return false;
-        }
+        isPushedBack = false;
+    }
+    else
+    {
+        tokenType = impl->nextToken();
     }
 
-    return true;
+    return tokenType;
 }
+
+
+Tokenizer::TokenType
+Tokenizer::getTokenType() const
+{
+    return tokenType;
+}
+
+
+std::string_view
+Tokenizer::getStringValue() const
+{
+    return std::visit(VisitorStringView(), impl->getTokenValue());
+}
+
+
+double
+Tokenizer::getNumberValue() const
+{
+    return std::visit(VisitorDouble(), impl->getTokenValue());
+}
+
+
+std::optional<std::int32_t>
+Tokenizer::getIntegerValue() const
+{
+    return std::visit(VisitorInteger(), impl->getTokenValue());
+}
+
+
+int
+Tokenizer::getLineNumber() const
+{
+    return impl->getLineNumber();
+}
+
+

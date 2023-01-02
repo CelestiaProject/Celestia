@@ -8,16 +8,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <string_view>
-
 #include <celutil/tokenizer.h>
 #include "astro.h"
 #include "parser.h"
-#include "value.h"
-
-using namespace std;
-using namespace Eigen;
-using namespace celmath;
 
 
 /****** Parser method implementation ******/
@@ -78,7 +71,7 @@ Hash* Parser::readHash()
             delete hash;
             return nullptr;
         }
-        string name(tokenizer->getStringValue());
+        std::string name(tokenizer->getStringValue());
 
 #ifndef USE_POSTFIX_UNITS
         readUnits(name, hash);
@@ -110,7 +103,7 @@ Hash* Parser::readHash()
  * @param[in] hash Hash to add units quantities into.
  * @return True if a units section was successfully read, false otherwise.
  */
-bool Parser::readUnits(const string& propertyName, Hash* hash)
+bool Parser::readUnits(const std::string& propertyName, Hash* hash)
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginUnits)
@@ -133,22 +126,22 @@ bool Parser::readUnits(const string& propertyName, Hash* hash)
 
         if (astro::isLengthUnit(unit))
         {
-            string keyName(propertyName + "%Length");
+            std::string keyName(propertyName + "%Length");
             hash->addValue(keyName, *value);
         }
         else if (astro::isTimeUnit(unit))
         {
-            string keyName(propertyName + "%Time");
+            std::string keyName(propertyName + "%Time");
             hash->addValue(keyName, *value);
         }
         else if (astro::isAngleUnit(unit))
         {
-            string keyName(propertyName + "%Angle");
+            std::string keyName(propertyName + "%Angle");
             hash->addValue(keyName, *value);
         }
         else if (astro::isMassUnit(unit))
         {
-            string keyName(propertyName + "%Mass");
+            std::string keyName(propertyName + "%Mass");
             hash->addValue(keyName, *value);
         }
         else
