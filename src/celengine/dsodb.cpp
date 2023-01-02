@@ -215,10 +215,10 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
 
         bool autoGenCatalogNumber = true;
         AstroCatalog::IndexNumber objCatalogNumber = AstroCatalog::InvalidIndex;
-        if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
+        if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
         {
             autoGenCatalogNumber   = false;
-            objCatalogNumber       = (AstroCatalog::IndexNumber) tokenizer.getNumberValue();
+            objCatalogNumber       = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
             tokenizer.nextToken();
         }
 

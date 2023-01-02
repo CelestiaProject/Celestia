@@ -131,11 +131,11 @@ struct VisitorStringView
 
 struct VisitorDouble
 {
-    double operator()(std::monostate) const { return std::nan(""); }
-    double operator()(std::int32_t i) const { return static_cast<double>(i); }
-    double operator()(double d) const { return d; }
-    double operator()(std::string_view) const { return std::nan(""); }
-    double operator()(const std::string&) const { return std::nan(""); }
+    std::optional<double> operator()(std::monostate) const { return std::nullopt; }
+    std::optional<double> operator()(std::int32_t i) const { return static_cast<double>(i); }
+    std::optional<double> operator()(double d) const { return d; }
+    std::optional<double> operator()(std::string_view) const { return std::nullopt; }
+    std::optional<double> operator()(const std::string&) const { return std::nullopt; }
 };
 
 
@@ -784,7 +784,7 @@ Tokenizer::getStringValue() const
 }
 
 
-double
+std::optional<double>
 Tokenizer::getNumberValue() const
 {
     return std::visit(VisitorDouble(), impl->getTokenValue());

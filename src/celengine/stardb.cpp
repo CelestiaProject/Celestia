@@ -1306,9 +1306,9 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
 
         // Parse the catalog number; it may be omitted if a name is supplied.
         AstroCatalog::IndexNumber catalogNumber = AstroCatalog::InvalidIndex;
-        if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
+        if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
         {
-            catalogNumber = (AstroCatalog::IndexNumber) tokenizer.getNumberValue();
+            catalogNumber = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
             tokenizer.nextToken();
         }
 

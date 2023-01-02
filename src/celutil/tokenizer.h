@@ -50,7 +50,7 @@ public:
     TokenType nextToken();
     TokenType getTokenType() const;
     void pushBack();
-    double getNumberValue() const;
+    std::optional<double> getNumberValue() const;
     std::optional<std::int32_t> getIntegerValue() const;
     std::string_view getStringValue() const;
 
