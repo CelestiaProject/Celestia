@@ -134,13 +134,13 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
             return nullptr;
         }
 
-        Array* chains = chainsValue->getArray();
+        ValueArray* chains = chainsValue->getArray();
 
         for (const auto chain : *chains)
         {
             if (chain->getType() == Value::ArrayType)
             {
-                Array* a = chain->getArray();
+                ValueArray* a = chain->getArray();
                 // skip empty (without or only with a single star) chains
                 if (a->size() <= 1)
                     continue;

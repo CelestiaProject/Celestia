@@ -18,8 +18,7 @@
 #include "hash.h"
 
 class Value;
-using Array = std::vector<Value*>;
-using ValueArray = Array;
+using ValueArray = std::vector<Value*>;
 
 class Value
 {
@@ -57,7 +56,7 @@ class Value
     {
         data.s = new std::string(s);
     }
-    Value(Array *a) : type(ArrayType)
+    Value(ValueArray *a) : type(ArrayType)
     {
         data.a = a;
     }
@@ -88,7 +87,7 @@ class Value
         assert(type == StringType);
         return *data.s;
     }
-    Array* getArray() const
+    ValueArray* getArray() const
     {
         assert(type == ArrayType);
         return data.a;
@@ -109,7 +108,7 @@ class Value
     {
         std::string *s;
         double       d;
-        Array       *a;
+        ValueArray  *a;
         Hash        *h;
     };
 

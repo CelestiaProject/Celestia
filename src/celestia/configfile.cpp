@@ -144,7 +144,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            Array* solarSystems = solarSystemsVal->getArray();
+            ValueArray* solarSystems = solarSystemsVal->getArray();
             // assert(solarSystems != nullptr);
 
             for (const auto catalogNameVal : *solarSystems)
@@ -171,7 +171,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            Array* starCatalogs = starCatalogsVal->getArray();
+            ValueArray* starCatalogs = starCatalogsVal->getArray();
             assert(starCatalogs != nullptr);
 
             for (const auto catalogNameVal : *starCatalogs)
@@ -199,7 +199,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            Array* dsoCatalogs = dsoCatalogsVal->getArray();
+            ValueArray* dsoCatalogs = dsoCatalogsVal->getArray();
             assert(dsoCatalogs != nullptr);
 
             for (const auto catalogNameVal : *dsoCatalogs)
@@ -223,7 +223,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (extrasDirsVal->getType() == Value::ArrayType)
         {
-            Array* extrasDirs = extrasDirsVal->getArray();
+            ValueArray* extrasDirs = extrasDirsVal->getArray();
             assert(extrasDirs != nullptr);
 
             for (const auto dirNameVal : *extrasDirs)
@@ -253,7 +253,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (skipExtrasVal->getType() == Value::ArrayType)
         {
-            Array* skipExtras = skipExtrasVal->getArray();
+            ValueArray* skipExtras = skipExtrasVal->getArray();
             assert(skipExtras != nullptr);
 
             for (const auto fileNameVal : *skipExtras)
@@ -287,7 +287,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            Array* ignoreExt = ignoreExtVal->getArray();
+            ValueArray* ignoreExt = ignoreExtVal->getArray();
 
             for (const auto extVal : *ignoreExt)
             {
