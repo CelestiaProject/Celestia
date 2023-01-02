@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cassert>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -57,13 +58,13 @@ class Value
     {
         data.s = new std::string(s);
     }
-    explicit Value(ValueArray *a) : type(ArrayType)
+    explicit Value(std::unique_ptr<ValueArray>&& a) : type(ArrayType)
     {
-        data.a = a;
+        data.a = a.release();
     }
-    explicit Value(Hash *h) : type(HashType)
+    explicit Value(std::unique_ptr<Hash>&& h) : type(HashType)
     {
-        data.h = h;
+        data.h = h.release();
     }
 
     // C++ likes implicit conversions to bool, so use template magic
