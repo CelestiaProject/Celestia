@@ -150,7 +150,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
     if (sel.star() == nullptr && sel.deepsky() == nullptr)
     {
-        QAction* syncOrbitAction = new QAction(_("S&ynch Orbit"), this);
+        QAction* syncOrbitAction = new QAction(_("S&ync Orbit"), this);
         connect(syncOrbitAction, SIGNAL(triggered()), this, SLOT(slotSyncOrbitSelection()));
         addAction(syncOrbitAction);
     }
