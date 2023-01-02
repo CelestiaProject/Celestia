@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -374,7 +375,7 @@ AsciiModelLoader::loadMaterial(Material& material)
             {
                 if (tok.nextToken() != Tokenizer::TokenNumber)
                 {
-                    reportError("Bad property value in material");
+                    reportError(fmt::format("Bad {} value in material", property));
                     return false;
                 }
                 data[i] = tok.getNumberValue();
@@ -497,13 +498,13 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
         return {};
     }
 
-    if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
+    if (tok.nextToken() != Tokenizer::TokenNumber)
     {
         reportError("Vertex count expected");
         return {};
     }
 
-    std::int32_t num = tok.getIntegerValue();
+    std::int32_t num = tok.getIntegerValue().value_or(-1);
     if (num <= 0)
     {
         reportError("Bad vertex count for mesh");
@@ -613,46 +614,61 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
             return false;
         }
 
-        if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
+        if (tok.nextToken() != Tokenizer::TokenNumber)
         {
             reportError("Material index expected in primitive group");
             return false;
         }
 
         unsigned int materialIndex;
-        if (tok.getIntegerValue() == -1)
+        if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue(); !tokenValue.has_value() || *tokenValue < -1)
         {
-            materialIndex = ~0u;
+            reportError("Bad material index in primitive group");
+            return false;
         }
         else
         {
-            materialIndex = (unsigned int) tok.getIntegerValue();
+            materialIndex = *tokenValue == -1 ? ~0u : static_cast<unsigned int>(*tokenValue);
         }
 
-        if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
+        if (tok.nextToken() != Tokenizer::TokenNumber)
         {
             reportError("Index count expected in primitive group");
             return false;
         }
 
-        unsigned int indexCount = (unsigned int) tok.getIntegerValue();
+        unsigned int indexCount;
+        if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue(); tokenValue.has_value() && *tokenValue >= 0)
+        {
+            indexCount = static_cast<unsigned int>(*tokenValue);
+        }
+        else
+        {
+            reportError("Bad index count in primitive group");
+            return false;
+        }
 
         std::vector<Index32> indices;
         indices.reserve(indexCount);
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
+            if (tok.nextToken() != Tokenizer::TokenNumber)
             {
                 reportError("Incomplete index list in primitive group");
                 return false;
             }
 
-            unsigned int index = (unsigned int) tok.getIntegerValue();
-            if (index >= vertexCount)
+            unsigned int index;
+            if (std::optional<std::int32_t> tokenValue = tok.getIntegerValue();
+                !tokenValue.has_value() || *tokenValue < 0 || *tokenValue >= vertexCount)
             {
                 reportError("Index out of range");
                 return false;
+            }
+            else
+            {
+                index = static_cast<unsigned int>(*tokenValue);
             }
 
             indices.push_back(index);

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "hash.h"
 #include "value.h"
 
