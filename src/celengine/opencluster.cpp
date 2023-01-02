@@ -54,7 +54,7 @@ bool OpenCluster::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool OpenCluster::load(AssociativeArray* params, const fs::path& resPath)
+bool OpenCluster::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars
     // could be useful.

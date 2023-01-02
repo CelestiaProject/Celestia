@@ -248,7 +248,7 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        Hash* objParams    = objParamsValue->getHash();
+        const Hash* objParams    = objParamsValue->getHash();
         assert(objParams != nullptr);
 
         DeepSkyObject* obj = nullptr;

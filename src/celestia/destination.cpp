@@ -48,7 +48,7 @@ DestinationList* ReadDestinationList(std::istream& in)
             return nullptr;
         }
 
-        Hash* destParams = destValue->getHash();
+        const Hash* destParams = destValue->getHash();
         Destination* dest = new Destination();
 
         if (!destParams->getString("Name", dest->name))

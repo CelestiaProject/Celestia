@@ -66,7 +66,7 @@ bool Nebula::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool Nebula::load(AssociativeArray* params, const fs::path& resPath)
+bool Nebula::load(const AssociativeArray* params, const fs::path& resPath)
 {
     string t;
     if (params->getString("Mesh", t))

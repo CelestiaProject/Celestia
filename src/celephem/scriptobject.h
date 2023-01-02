@@ -38,4 +38,4 @@ double SafeGetLuaNumber(lua_State* state,
                         const std::string& key,
                         double defaultValue);
 
-void SetLuaVariables(lua_State* state, Hash* parameters);
+void SetLuaVariables(lua_State* state, const Hash* parameters);

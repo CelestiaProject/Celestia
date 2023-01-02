@@ -13,6 +13,7 @@
 #include <cassert>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <vector>
 
 #include "hash.h"
@@ -40,11 +41,11 @@ class Value
     Value& operator=(const Value&) = delete;
     Value& operator=(Value&&) = default;
 
-    Value(double d) : type(NumberType)
+    explicit Value(double d) : type(NumberType)
     {
         data.d = d;
     }
-    Value(const char *s) : type(StringType)
+    explicit Value(const char *s) : type(StringType)
     {
         data.s = new std::string(s);
     }
@@ -56,15 +57,19 @@ class Value
     {
         data.s = new std::string(s);
     }
-    Value(ValueArray *a) : type(ArrayType)
+    explicit Value(ValueArray *a) : type(ArrayType)
     {
         data.a = a;
     }
-    Value(Hash *h) : type(HashType)
+    explicit Value(Hash *h) : type(HashType)
     {
         data.h = h;
     }
-    Value(bool b) : type(BooleanType)
+
+    // C++ likes implicit conversions to bool, so use template magic
+    // to restrict this constructor to exactly bool
+    template<typename T, std::enable_if_t<std::is_same_v<T, bool>, int> = 0>
+    explicit Value(T b) : type(BooleanType)
     {
         data.d = b ? 1.0 : 0.0;
     }
@@ -87,12 +92,12 @@ class Value
         assert(type == StringType);
         return *data.s;
     }
-    ValueArray* getArray() const
+    const ValueArray* getArray() const
     {
         assert(type == ArrayType);
         return data.a;
     }
-    Hash* getHash() const
+    const Hash* getHash() const
     {
         assert(type == HashType);
         return data.h;

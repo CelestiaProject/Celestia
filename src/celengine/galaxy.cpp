@@ -456,7 +456,7 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(AssociativeArray* params, const fs::path& resPath)
+bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
 {
     double detail = 1.0;
     params->getNumber("Detail", detail);

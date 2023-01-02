@@ -53,7 +53,7 @@ FavoritesList* ReadFavoritesList(std::istream& in)
             return nullptr;
         }
 
-        Hash* favParams = favParamsValue->getHash();
+        const Hash* favParams = favParamsValue->getHash();
 
         //If this is a folder, don't get any other params.
         if(!favParams->getBoolean("isFolder", fav->isFolder))

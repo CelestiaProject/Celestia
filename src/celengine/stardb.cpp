@@ -833,7 +833,7 @@ void StarDatabase::finish()
 bool StarDatabase::createStar(Star* star,
                               DataDisposition disposition,
                               AstroCatalog::IndexNumber catalogNumber,
-                              Hash* starData,
+                              const Hash* starData,
                               const fs::path& path,
                               bool isBarycenter)
 {
@@ -1406,7 +1406,7 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
             delete starDataValue;
             return false;
         }
-        Hash* starData = starDataValue->getHash();
+        const Hash* starData = starDataValue->getHash();
 
         if (isNewStar)
             star = new Star();

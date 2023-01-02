@@ -153,7 +153,7 @@ bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType fram
 
 
 
-Location* CreateLocation(Hash* locationData,
+Location* CreateLocation(const Hash* locationData,
                          Body* body)
 {
     Location* location = new Location();
@@ -197,7 +197,7 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
 }
 
 
-void FillinSurface(Hash* surfaceData,
+void FillinSurface(const Hash* surfaceData,
                    Surface* surface,
                    const fs::path& path)
 {
@@ -282,7 +282,7 @@ Selection GetParentObject(PlanetarySystem* system)
 
 TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                                   Universe& universe,
-                                                  Hash* phaseData,
+                                                  const Hash* phaseData,
                                                   const fs::path& path,
                                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
@@ -385,7 +385,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 
 Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
-                                  ValueArray* timelineArray,
+                                  const ValueArray* timelineArray,
                                   const fs::path& path,
                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
@@ -395,7 +395,7 @@ Timeline* CreateTimelineFromArray(Body* body,
 
     for (ValueArray::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
-        Hash* phaseData = (*iter)->getHash();
+        const Hash* phaseData = (*iter)->getHash();
         if (phaseData == nullptr)
         {
             GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
@@ -432,7 +432,7 @@ Timeline* CreateTimelineFromArray(Body* body,
 bool CreateTimeline(Body* body,
                     PlanetarySystem* system,
                     Universe& universe,
-                    Hash* planetData,
+                    const Hash* planetData,
                     const fs::path& path,
                     DataDisposition disposition,
                     BodyType bodyType)
@@ -681,7 +681,7 @@ Body* CreateBody(const std::string& name,
                  PlanetarySystem* system,
                  Universe& universe,
                  Body* existingBody,
-                 Hash* planetData,
+                 const Hash* planetData,
                  const fs::path& path,
                  DataDisposition disposition,
                  BodyType bodyType)
@@ -919,7 +919,7 @@ Body* CreateBody(const std::string& name,
             }
             else
             {
-                Hash* atmosData = atmosDataValue->getHash();
+                const Hash* atmosData = atmosDataValue->getHash();
                 assert(atmosData != nullptr);
 
                 Atmosphere* atmosphere = nullptr;
@@ -996,7 +996,7 @@ Body* CreateBody(const std::string& name,
             }
             else
             {
-                Hash* ringsData = ringsDataValue->getHash();
+                const Hash* ringsData = ringsDataValue->getHash();
                 // ASSERT(ringsData != nullptr);
 
                 RingSystem rings(0.0f, 0.0f);
@@ -1057,7 +1057,7 @@ Body* CreateReferencePoint(const std::string& name,
                            PlanetarySystem* system,
                            Universe& universe,
                            Body* existingBody,
-                           Hash* refPointData,
+                           const Hash* refPointData,
                            const fs::path& path,
                            DataDisposition disposition)
 {
@@ -1196,7 +1196,7 @@ bool LoadSolarSystemObjects(std::istream& in,
             delete objectDataValue;
             return false;
         }
-        Hash* objectData = objectDataValue->getHash();
+        const Hash* objectData = objectDataValue->getHash();
 
         Selection parent = universe.findPath(parentName, nullptr, 0);
         PlanetarySystem* parentSystem = nullptr;

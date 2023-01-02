@@ -158,7 +158,7 @@ Command* CommandParser::parseCommand()
         return nullptr;
     }
 
-    Hash* paramList = paramListValue->getHash();
+    const Hash* paramList = paramListValue->getHash();
     Command* cmd = nullptr;
 
     if (commandName == "wait")

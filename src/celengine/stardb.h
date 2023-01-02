@@ -102,7 +102,7 @@ private:
     bool createStar(Star* star,
                     DataDisposition disposition,
                     AstroCatalog::IndexNumber catalogNumber,
-                    Hash* starData,
+                    const Hash* starData,
                     const fs::path& path,
                     const bool isBarycenter);
 

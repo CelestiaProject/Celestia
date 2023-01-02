@@ -131,7 +131,7 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
-    ValueArray* arr = v->getArray();
+    const ValueArray* arr = v->getArray();
     if (arr->size() != 3)
         return false;
 
@@ -167,7 +167,7 @@ bool AssociativeArray::getVector(const string& key, Vector4d& val) const
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
-    ValueArray* arr = v->getArray();
+    const ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 
@@ -215,7 +215,7 @@ bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) c
     if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
-    ValueArray* arr = v->getArray();
+    const ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 

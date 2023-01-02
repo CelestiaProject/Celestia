@@ -20,7 +20,7 @@
 using namespace std;
 using namespace celestia::util;
 
-static unsigned int getUint(Hash* params,
+static unsigned int getUint(const Hash* params,
                             const string& paramName,
                             unsigned int defaultValue)
 {
@@ -59,7 +59,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         return config;
     }
 
-    Hash* configParams = configParamsValue->getHash();
+    const Hash* configParams = configParamsValue->getHash();
 
     if (config == nullptr)
         config = new CelestiaConfig();
@@ -138,7 +138,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            ValueArray* solarSystems = solarSystemsVal->getArray();
+            const ValueArray* solarSystems = solarSystemsVal->getArray();
             // assert(solarSystems != nullptr);
 
             for (const auto catalogNameVal : *solarSystems)
@@ -165,7 +165,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            ValueArray* starCatalogs = starCatalogsVal->getArray();
+            const ValueArray* starCatalogs = starCatalogsVal->getArray();
             assert(starCatalogs != nullptr);
 
             for (const auto catalogNameVal : *starCatalogs)
@@ -193,7 +193,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            ValueArray* dsoCatalogs = dsoCatalogsVal->getArray();
+            const ValueArray* dsoCatalogs = dsoCatalogsVal->getArray();
             assert(dsoCatalogs != nullptr);
 
             for (const auto catalogNameVal : *dsoCatalogs)
@@ -217,7 +217,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (extrasDirsVal->getType() == Value::ArrayType)
         {
-            ValueArray* extrasDirs = extrasDirsVal->getArray();
+            const ValueArray* extrasDirs = extrasDirsVal->getArray();
             assert(extrasDirs != nullptr);
 
             for (const auto dirNameVal : *extrasDirs)
@@ -247,7 +247,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (skipExtrasVal->getType() == Value::ArrayType)
         {
-            ValueArray* skipExtras = skipExtrasVal->getArray();
+            const ValueArray* skipExtras = skipExtrasVal->getArray();
             assert(skipExtras != nullptr);
 
             for (const auto fileNameVal : *skipExtras)
@@ -281,7 +281,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            ValueArray* ignoreExt = ignoreExtVal->getArray();
+            const ValueArray* ignoreExt = ignoreExtVal->getArray();
 
             for (const auto extVal : *ignoreExt)
             {
@@ -306,7 +306,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            Hash* starTexTable = starTexValue->getHash();
+            const Hash* starTexTable = starTexValue->getHash();
             string starTexNames[StellarClass::Spectral_Count];
             starTexTable->getString("O", starTexNames[StellarClass::Spectral_O]);
             starTexTable->getString("B", starTexNames[StellarClass::Spectral_B]);
