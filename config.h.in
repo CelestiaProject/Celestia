@@ -5,4 +5,5 @@
 #cmakedefine HAVE_WORDEXP
 #cmakedefine HAVE_MESHOPTIMIZER
 #cmakedefine HAVE_SINCOS
+#cmakedefine HAVE_APPLE_SINCOS
 #cmakedefine WORDS_BIGENDIAN
