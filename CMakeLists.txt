@@ -385,6 +385,7 @@ check_symbol_exists(wordexp wordexp.h HAVE_WORDEXP)
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
 
 try_compile(HAVE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/sincos.cpp")
+try_compile(HAVE_APPLE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/applesincos.cpp")
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
 if(CXX_FILESYSTEM_IS_EXPERIMENTAL)

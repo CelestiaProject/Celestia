@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <config.h>
+
 #include <cmath>
 
 #include <Eigen/Core>
@@ -39,6 +41,17 @@ template<> inline void sincos(long double angle, long double& s, long double& c)
 {
     ::sincosl(angle, &s, &c);
 }
+#elif defined(HAVE_APPLE_SINCOS)
+template<> inline void sincos(float angle, float& s, float& c)
+{
+    __sincosf(angle, &s, &c);
+}
+
+template<> inline void sincos(double angle, double& s, double& c)
+{
+    __sincos(angle, &s, &c);
+}
+// Apple's version does not have __sincosl
 #endif
 
 #ifndef HAVE_LERP
