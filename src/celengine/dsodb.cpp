@@ -214,19 +214,7 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        bool autoGenCatalogNumber = true;
-        AstroCatalog::IndexNumber objCatalogNumber = AstroCatalog::InvalidIndex;
-        if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
-        {
-            autoGenCatalogNumber   = false;
-            objCatalogNumber       = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
-            tokenizer.nextToken();
-        }
-
-        if (autoGenCatalogNumber)
-        {
-            objCatalogNumber   = nextAutoCatalogNumber--;
-        }
+        AstroCatalog::IndexNumber objCatalogNumber = nextAutoCatalogNumber--;
 
         tokenizer.nextToken();
         std::string objName;
