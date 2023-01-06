@@ -37,18 +37,16 @@ DestinationList* ReadDestinationList(std::istream& in)
         }
         tokenizer.pushBack();
 
-        Value* destValue = parser.readValue();
-        if (destValue == nullptr || destValue->getType() != Value::HashType)
+        const Value destValue = parser.readValue();
+        const Hash* destParams = destValue.getHash();
+        if (destParams == nullptr)
         {
             GetLogger()->error("Error parsing destination.\n");
             std::for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
-            if (destValue != nullptr)
-                delete destValue;
             return nullptr;
         }
 
-        const Hash* destParams = destValue->getHash();
         Destination* dest = new Destination();
 
         if (!destParams->getString("Name", dest->name))
@@ -74,8 +72,6 @@ DestinationList* ReadDestinationList(std::istream& in)
 
             destinations->push_back(dest);
         }
-
-        delete destValue;
     }
 
     return destinations;

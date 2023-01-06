@@ -393,9 +393,17 @@ Timeline* CreateTimelineFromArray(Body* body,
     auto* timeline = new Timeline();
     double previousEnding = -std::numeric_limits<double>::infinity();
 
-    for (ValueArray::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
+    if (timelineArray->empty())
     {
-        const Hash* phaseData = (*iter)->getHash();
+        GetLogger()->error("Error in timeline of '{}': timeline array is empty.\n", body->getName());
+        delete timeline;
+        return nullptr;
+    }
+
+    const auto finalIter = timelineArray->end() - 1;
+    for (auto iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
+    {
+        const Hash* phaseData = iter->getHash();
         if (phaseData == nullptr)
         {
             GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
@@ -404,7 +412,7 @@ Timeline* CreateTimelineFromArray(Body* body,
         }
 
         bool isFirstPhase = iter == timelineArray->begin();
-        bool isLastPhase = *iter == timelineArray->back();
+        bool isLastPhase =  iter == finalIter;
 
         auto phase = CreateTimelinePhase(body, universe, phaseData,
                                          path,
@@ -476,13 +484,14 @@ bool CreateTimeline(Body* body,
     const Value* value = planetData->getValue("Timeline");
     if (value != nullptr)
     {
-        if (value->getType() != Value::ArrayType)
+        const ValueArray* timelineArray = value->getArray();
+        if (timelineArray == nullptr)
         {
             GetLogger()->error("Error: Timeline must be an array\n");
             return false;
         }
 
-        Timeline* timeline = CreateTimelineFromArray(body, universe, value->getArray(), path,
+        Timeline* timeline = CreateTimelineFromArray(body, universe, timelineArray, path,
                                                      defaultOrbitFrame, defaultBodyFrame);
 
         if (!timeline)
@@ -735,29 +744,27 @@ Body* CreateBody(const std::string& name,
     }
 
     Eigen::Vector3d semiAxes = Eigen::Vector3d::Ones();
-    if (planetData->getVector("SemiAxes", semiAxes))
+    if (radiusSpecified && planetData->getVector("SemiAxes", semiAxes))
     {
-        if (radiusSpecified)
-        {
-            // if the radius has been specified, treat SemiAxes as dimensionless
-            // (i.e. ignore units) and multiply the radius by the SemiAxes
-            semiAxes *= radius;
-        }
-        else
-        {
-            double semiAxesScale = 1.0;
-            planetData->getLengthScale("SemiAxes", semiAxesScale);
-            semiAxes *= semiAxesScale;
-        }
+        // If the radius has been specified, treat SemiAxes as dimensionless
+        // (ignore units) and multiply the SemiAxes by the Radius.
+        semiAxes *= radius;
         // Swap y and z to match internal coordinate system
-        body->setSemiAxes(Eigen::Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
+        semiAxes.tail<2>().reverseInPlace();
+        body->setSemiAxes(semiAxes.cast<float>());
+    }
+    else if (!radiusSpecified && planetData->getLengthVector("SemiAxes", semiAxes))
+    {
+        // Swap y and z to match internal coordinate system
+        semiAxes.tail<2>().reverseInPlace();
+        body->setSemiAxes(semiAxes.cast<float>());
     }
     else
     {
-        double oblateness = 0.0;
+        float oblateness = 0.0f;
         if (planetData->getNumber("Oblateness", oblateness))
         {
-            body->setSemiAxes((float) body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
+            body->setSemiAxes(body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - oblateness, 1.0f));
         }
     }
 
@@ -909,116 +916,106 @@ Body* CreateBody(const std::string& name,
     }
 
     // Read the atmosphere
+    if (const Value* atmosDataValue = planetData->getValue("Atmosphere"); atmosDataValue != nullptr)
     {
-        const Value* atmosDataValue = planetData->getValue("Atmosphere");
-        if (atmosDataValue != nullptr)
+        if (const Hash* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
         {
-            if (atmosDataValue->getType() != Value::HashType)
+            std::cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
+        }
+        else
+        {
+            assert(atmosData != nullptr);
+
+            Atmosphere* atmosphere = nullptr;
+            if (disposition == DataDisposition::Modify)
             {
-                std::cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
+                atmosphere = body->getAtmosphere();
+                if (atmosphere == nullptr)
+                {
+                    Atmosphere atm;
+                    body->setAtmosphere(atm);
+                    atmosphere = body->getAtmosphere();
+                }
             }
             else
             {
-                const Hash* atmosData = atmosDataValue->getHash();
-                assert(atmosData != nullptr);
+                atmosphere = new Atmosphere();
+            }
+            atmosData->getLength("Height", atmosphere->height);
+            atmosData->getColor("Lower", atmosphere->lowerColor);
+            atmosData->getColor("Upper", atmosphere->upperColor);
+            atmosData->getColor("Sky", atmosphere->skyColor);
+            atmosData->getColor("Sunset", atmosphere->sunsetColor);
 
-                Atmosphere* atmosphere = nullptr;
-                if (disposition == DataDisposition::Modify)
-                {
-                    atmosphere = body->getAtmosphere();
-                    if (atmosphere == nullptr)
-                    {
-                        Atmosphere atm;
-                        body->setAtmosphere(atm);
-                        atmosphere = body->getAtmosphere();
-                    }
-                }
-                else
-                {
-                    atmosphere = new Atmosphere();
-                }
-                atmosData->getLength("Height", atmosphere->height);
-                atmosData->getColor("Lower", atmosphere->lowerColor);
-                atmosData->getColor("Upper", atmosphere->upperColor);
-                atmosData->getColor("Sky", atmosphere->skyColor);
-                atmosData->getColor("Sunset", atmosphere->sunsetColor);
+            atmosData->getNumber("Mie", atmosphere->mieCoeff);
+            atmosData->getLength("MieScaleHeight", atmosphere->mieScaleHeight);
+            atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
+            atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
+            //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
+            atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
 
-                atmosData->getNumber("Mie", atmosphere->mieCoeff);
-                atmosData->getLength("MieScaleHeight", atmosphere->mieScaleHeight);
-                atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
-                atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
-                //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
-                atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
+            // Get the cloud map settings
+            atmosData->getLength("CloudHeight", atmosphere->cloudHeight);
+            if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
+                atmosphere->cloudSpeed = celmath::degToRad(atmosphere->cloudSpeed);
 
-                // Get the cloud map settings
-                atmosData->getLength("CloudHeight", atmosphere->cloudHeight);
-                if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
-                    atmosphere->cloudSpeed = celmath::degToRad(atmosphere->cloudSpeed);
+            std::string cloudTexture;
+            if (atmosData->getString("CloudMap", cloudTexture))
+            {
+                atmosphere->cloudTexture.setTexture(cloudTexture,
+                                                    path,
+                                                    TextureInfo::WrapTexture);
+            }
 
-                std::string cloudTexture;
-                if (atmosData->getString("CloudMap", cloudTexture))
-                {
-                    atmosphere->cloudTexture.setTexture(cloudTexture,
+            std::string cloudNormalMap;
+            if (atmosData->getString("CloudNormalMap", cloudNormalMap))
+            {
+                atmosphere->cloudNormalMap.setTexture(cloudNormalMap,
                                                         path,
                                                         TextureInfo::WrapTexture);
-                }
-
-                std::string cloudNormalMap;
-                if (atmosData->getString("CloudNormalMap", cloudNormalMap))
-                {
-                    atmosphere->cloudNormalMap.setTexture(cloudNormalMap,
-                                                           path,
-                                                           TextureInfo::WrapTexture);
-                }
-
-                double cloudShadowDepth = 0.0;
-                if (atmosData->getNumber("CloudShadowDepth", cloudShadowDepth))
-                {
-                    cloudShadowDepth = std::clamp(cloudShadowDepth, 0.0, 1.0);
-                    atmosphere->cloudShadowDepth = (float) cloudShadowDepth;
-                }
-
-                body->setAtmosphere(*atmosphere);
-                if (disposition != DataDisposition::Modify)
-                    delete atmosphere;
             }
+
+            double cloudShadowDepth = 0.0;
+            if (atmosData->getNumber("CloudShadowDepth", cloudShadowDepth))
+            {
+                cloudShadowDepth = std::clamp(cloudShadowDepth, 0.0, 1.0);
+                atmosphere->cloudShadowDepth = (float) cloudShadowDepth;
+            }
+
+            body->setAtmosphere(*atmosphere);
+            if (disposition != DataDisposition::Modify)
+                delete atmosphere;
         }
     }
 
     // Read the ring system
+    if (const Value* ringsDataValue = planetData->getValue("Rings"); ringsDataValue != nullptr)
     {
-        const Value* ringsDataValue = planetData->getValue("Rings");
-        if (ringsDataValue != nullptr)
+        if (const Hash* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
         {
-            if (ringsDataValue->getType() != Value::HashType)
-            {
-                std::cout << "ReadSolarSystem: Rings must be an assoc array.\n";
-            }
-            else
-            {
-                const Hash* ringsData = ringsDataValue->getHash();
-                // ASSERT(ringsData != nullptr);
+            std::cout << "ReadSolarSystem: Rings must be an assoc array.\n";
+        }
+        else
+        {
+            RingSystem rings(0.0f, 0.0f);
+            if (body->getRings() != nullptr)
+                rings = *body->getRings();
 
-                RingSystem rings(0.0f, 0.0f);
-                if (body->getRings() != nullptr)
-                    rings = *body->getRings();
+            double inner = 0.0, outer = 0.0;
+            if (ringsData->getLength("Inner", inner))
+                rings.innerRadius = (float) inner;
+            if (ringsData->getLength("Outer", outer))
+                rings.outerRadius = (float) outer;
 
-                double inner = 0.0, outer = 0.0;
-                if (ringsData->getLength("Inner", inner))
-                    rings.innerRadius = (float) inner;
-                if (ringsData->getLength("Outer", outer))
-                    rings.outerRadius = (float) outer;
+            Color color(1.0f, 1.0f, 1.0f);
+            if (ringsData->getColor("Color", color))
+                rings.color = color;
 
-                Color color(1.0f, 1.0f, 1.0f);
-                if (ringsData->getColor("Color", color))
-                    rings.color = color;
+            std::string textureName;
+            if (ringsData->getString("Texture", textureName))
+                rings.texture = MultiResTexture(textureName, path);
 
-                std::string textureName;
-                if (ringsData->getString("Texture", textureName))
-                    rings.texture = MultiResTexture(textureName, path);
-
-                body->setRings(rings);
-            }
+            body->setRings(rings);
         }
     }
 
@@ -1183,20 +1180,13 @@ bool LoadSolarSystemObjects(std::istream& in,
             return false;
         }
 
-        Value* objectDataValue = parser.readValue();
-        if (objectDataValue == nullptr)
-        {
-            sscError(tokenizer, "bad object definition");
-            return false;
-        }
-
-        if (objectDataValue->getType() != Value::HashType)
+        const Value objectDataValue = parser.readValue();
+        const Hash* objectData = objectDataValue.getHash();
+        if (objectData == nullptr)
         {
             sscError(tokenizer, "{ expected");
-            delete objectDataValue;
             return false;
         }
-        const Hash* objectData = objectDataValue->getHash();
 
         Selection parent = universe.findPath(parentName, nullptr, 0);
         PlanetarySystem* parentSystem = nullptr;
@@ -1327,7 +1317,6 @@ bool LoadSolarSystemObjects(std::istream& in,
                 sscError(tokenizer, fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName));
             }
         }
-        delete objectDataValue;
     }
 
     // TODO: Return some notification if there's an error parsing the file

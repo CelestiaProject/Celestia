@@ -599,8 +599,8 @@ static int celestia_showconstellations(lua_State* l)
 
     if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
-        for (const auto ast : *asterisms)
-            ast->setActive(true);
+        for (auto& ast : *asterisms)
+            ast.setActive(true);
     }
     else if (!lua_istable(l, 2))
     {
@@ -622,10 +622,10 @@ static int celestia_showconstellations(lua_State* l)
                 Celx_DoError(l, "Values in table-argument to celestia:showconstellations() must be strings");
                 return 0;
             }
-            for (const auto ast : *asterisms)
+            for (auto& ast : *asterisms)
             {
-                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
-                    ast->setActive(true);
+                if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
+                    ast.setActive(true);
             }
             lua_pop(l,1);
         }
@@ -644,8 +644,8 @@ static int celestia_hideconstellations(lua_State* l)
 
     if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
-        for (const auto ast : *asterisms)
-            ast->setActive(false);
+        for (auto& ast : *asterisms)
+            ast.setActive(false);
     }
     else if (!lua_istable(l, 2))
     {
@@ -667,10 +667,10 @@ static int celestia_hideconstellations(lua_State* l)
                 Celx_DoError(l, "Values in table-argument to celestia:hideconstellations() must be strings");
                 return 0;
             }
-            for (const auto ast : *asterisms)
+            for (auto& ast : *asterisms)
             {
-                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
-                    ast->setActive(false);
+                if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
+                    ast.setActive(false);
             }
             lua_pop(l,1);
         }
@@ -694,8 +694,8 @@ static int celestia_setconstellationcolor(lua_State* l)
 
     if (lua_type(l, 5) == LUA_TNONE) // Fourth argument omited
     {
-        for (const auto ast : *asterisms)
-            ast->setOverrideColor(constellationColor);
+        for (auto& ast : *asterisms)
+            ast.setOverrideColor(constellationColor);
     }
     else if (!lua_istable(l, 5))
     {
@@ -710,9 +710,9 @@ static int celestia_setconstellationcolor(lua_State* l)
             if (lua_isstring(l, -1))
             {
                 const char* constellation = lua_tostring(l, -1);
-                for (const auto ast : *asterisms)
-                    if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
-                        ast->setOverrideColor(constellationColor);
+                for (auto& ast : *asterisms)
+                    if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
+                        ast.setOverrideColor(constellationColor);
             }
             else
             {

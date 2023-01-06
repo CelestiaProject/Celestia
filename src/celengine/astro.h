@@ -12,8 +12,8 @@
 
 #include <Eigen/Geometry>
 #include <iosfwd>
+#include <optional>
 #include <string>
-#include <string_view>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
 
@@ -213,14 +213,54 @@ namespace astro
         return jd * SECONDS_PER_DAY;
     }
 
-    bool isLengthUnit(std::string_view unitName);
-    bool isTimeUnit(std::string_view unitName);
-    bool isAngleUnit(std::string_view unitName);
-    bool isMassUnit(std::string_view unitName);
-    bool getLengthScale(std::string_view unitName, double& scale);
-    bool getTimeScale(std::string_view unitName, double& scale);
-    bool getAngleScale(std::string_view unitName, double& scale);
-    bool getMassScale(std::string_view unitName, double& scale);
+    enum class LengthUnit : std::uint8_t
+    {
+        Default = 0,
+        Kilometer,
+        Meter,
+        EarthRadius,
+        JupiterRadius,
+        SolarRadius,
+        AstronomicalUnit,
+        LightYear,
+        Parsec,
+        Kiloparsec,
+        Megaparsec,
+    };
+
+    enum class TimeUnit : std::uint8_t
+    {
+        Default = 0,
+        Second,
+        Minute,
+        Hour,
+        Day,
+        JulianYear,
+    };
+
+    enum class AngleUnit : std::uint8_t
+    {
+        Default = 0,
+        Milliarcsecond,
+        Arcsecond,
+        Arcminute,
+        Degree,
+        Hour,
+        Radian,
+    };
+
+    enum class MassUnit : std::uint8_t
+    {
+        Default = 0,
+        Kilogram,
+        EarthMass,
+        JupiterMass,
+    };
+
+    std::optional<double> getLengthScale(LengthUnit unit);
+    std::optional<double> getTimeScale(TimeUnit unit);
+    std::optional<double> getAngleScale(AngleUnit unit);
+    std::optional<double> getMassScale(MassUnit unit);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);

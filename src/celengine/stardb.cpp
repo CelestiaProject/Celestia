@@ -1393,20 +1393,13 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
 
         tokenizer.pushBack();
 
-        Value* starDataValue = parser.readValue();
-        if (starDataValue == nullptr)
-        {
-            GetLogger()->error("Error reading star at line {}.\n", tokenizer.getLineNumber());
-            return false;
-        }
-
-        if (starDataValue->getType() != Value::HashType)
+        const Value starDataValue = parser.readValue();
+        const Hash* starData = starDataValue.getHash();
+        if (starData == nullptr)
         {
             GetLogger()->error("Bad star definition at line {}.\n", tokenizer.getLineNumber());
-            delete starDataValue;
             return false;
         }
-        const Hash* starData = starDataValue->getHash();
 
         if (isNewStar)
             star = new Star();
@@ -1421,7 +1414,6 @@ bool StarDatabase::load(std::istream& in, const fs::path& resourcePath)
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
             star->loadCategories(starData, disposition, resourcePath.string());
         }
-        delete starDataValue;
 
         if (ok)
         {

@@ -112,16 +112,16 @@ bool AstroObject::loadCategories(const Hash *hash, DataDisposition disposition, 
         return addToCategory(cn, true, domain);
     }
     const Value *a = hash->getValue("Category");
-    if (a == nullptr)
-        return false;
+    if (a == nullptr) { return false; }
+
     const ValueArray *v = a->getArray();
-    if (v == nullptr)
-        return false;
+    if (v == nullptr) { return false; }
+
     bool ret = true;
-    for (auto it : *v)
+    for (const auto& it : *v)
     {
-        cn = it->getString();
-        if (!addToCategory(cn, true, domain))
+        const std::string* str = it.getString();
+        if (str == nullptr || !addToCategory(*str, true, domain))
             ret = false;
     }
     return ret;

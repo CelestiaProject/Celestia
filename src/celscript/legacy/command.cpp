@@ -1003,24 +1003,24 @@ void CommandConstellations::process(ExecutionEnvironment& env)
         return;
 
     AsterismList& asterisms = *u->getAsterisms();
-    for (const auto ast : asterisms)
+    for (auto& ast : asterisms)
     {
         if (flags.none)
         {
-            ast->setActive(false);
+            ast.setActive(false);
         }
         else if (flags.all)
         {
-            ast->setActive(true);
+            ast.setActive(true);
         }
         else
         {
-            auto name = ast->getName(false);
+            auto name = ast.getName(false);
             auto it = std::find_if(constellations.begin(), constellations.end(),
                                    [&name](Cons& c){ return compareIgnoringCase(c.name, name) == 0; });
 
             if (it != constellations.end())
-                ast->setActive(it->active);
+                ast.setActive(it->active);
         }
     }
 }
@@ -1051,28 +1051,28 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
         return;
 
     AsterismList& asterisms = *u->getAsterisms();
-    for (const auto ast : asterisms)
+    for (auto& ast : asterisms)
     {
         if (flags.none)
         {
-            ast->unsetOverrideColor();
+            ast.unsetOverrideColor();
         }
         else if (flags.all)
         {
-            ast->setOverrideColor(rgb);
+            ast.setOverrideColor(rgb);
         }
         else
         {
-            auto name = ast->getName(false);
+            auto name = ast.getName(false);
             auto it = std::find_if(constellations.begin(), constellations.end(),
                                    [&name](string& c){ return compareIgnoringCase(c, name) == 0; });
 
             if (it != constellations.end())
             {
                 if (flags.unset)
-                    ast->unsetOverrideColor();
+                    ast.unsetOverrideColor();
                 else
-                    ast->setOverrideColor(rgb);
+                    ast.setOverrideColor(rgb);
             }
         }
     }

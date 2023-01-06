@@ -22,14 +22,13 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         {
             AssociativeArray h;
             auto ary = std::make_unique<ValueArray>();
-            ary->push_back(new Value(.23));
-            ary->push_back(new Value(.34));
-            ary->push_back(new Value(.45));
-            auto *v = new Value(std::move(ary));
-            h.addValue("color", *v);
+            ary->emplace_back(.23);
+            ary->emplace_back(.34);
+            ary->emplace_back(.45);
+            h.addValue("color", Value(std::move(ary)));
 
             auto val = h.getValue("color");
-            REQUIRE(val->getType() == Value::ArrayType);
+            REQUIRE(val->getType() == ValueType::ArrayType);
 
             Eigen::Vector3d vec;
             auto v2 = h.getVector("color", vec);
@@ -49,15 +48,14 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         {
             AssociativeArray h;
             auto ary = std::make_unique<ValueArray>();
-            ary->push_back(new Value(.23));
-            ary->push_back(new Value(.34));
-            ary->push_back(new Value(.45));
-            ary->push_back(new Value(.56));
-            auto *v = new Value(std::move(ary));
-            h.addValue("color", *v);
+            ary->emplace_back(.23);
+            ary->emplace_back(.34);
+            ary->emplace_back(.45);
+            ary->emplace_back(.56);
+            h.addValue("color", Value(std::move(ary)));
 
             auto val = h.getValue("color");
-            REQUIRE(val->getType() == Value::ArrayType);
+            REQUIRE(val->getType() == ValueType::ArrayType);
 
             Eigen::Vector4d vec;
             auto v2 = h.getVector("color", vec);
@@ -78,8 +76,7 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         SECTION("Defined as rrggbb string")
         {
             AssociativeArray h;
-            auto *v = new Value("#123456");
-            h.addValue("color", *v);
+            h.addValue("color", Value("#123456"));
 
             Color c;
             h.getColor("color", c);
@@ -92,8 +89,7 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
         SECTION("Defined as rrggbbaa string")
         {
             AssociativeArray h;
-            auto *v = new Value("#12345678");
-            h.addValue("color", *v);
+            h.addValue("color", Value("#12345678"));
 
             Color c;
             h.getColor("color", c);

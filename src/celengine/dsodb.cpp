@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -228,16 +229,13 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        Value* objParamsValue    = parser.readValue();
-        if (objParamsValue == nullptr ||
-            objParamsValue->getType() != Value::HashType)
+        const Value objParamsValue = parser.readValue();
+        const Hash* objParams = objParamsValue.getHash();
+        if (objParams == nullptr)
         {
             GetLogger()->error("Error parsing deep sky catalog entry {}\n", objName.c_str());
             return false;
         }
-
-        const Hash* objParams    = objParamsValue->getHash();
-        assert(objParams != nullptr);
 
         DeepSkyObject* obj = nullptr;
         if (compareIgnoringCase(objType, "Galaxy") == 0)
@@ -252,7 +250,6 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
         if (obj != nullptr && obj->load(objParams, resourcePath))
         {
             obj->loadCategories(objParams, DataDisposition::Add, resourcePath.string());
-            delete objParamsValue;
 
             // Ensure that the DSO array is large enough
             if (nDSOs == capacity)
@@ -309,7 +306,6 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
         else
         {
             GetLogger()->warn("Bad Deep Sky Object definition--will continue parsing file.\n");
-            delete objParamsValue;
             return false;
         }
     }

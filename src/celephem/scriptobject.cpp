@@ -99,31 +99,31 @@ SafeGetLuaNumber(lua_State* state,
 void
 SetLuaVariables(lua_State* state, const Hash* parameters)
 {
-    for (const auto& param : *parameters)
+    parameters->for_all([state](const std::string& key, const Value& value)
     {
-        std::size_t percentPos = param.first.find('%');
+        std::size_t percentPos = key.find('%');
         if (percentPos == std::string::npos)
         {
-            switch (param.second->getType())
+            switch (value.getType())
             {
-            case Value::NumberType:
-                lua_pushstring(state, param.first.c_str());
-                lua_pushnumber(state, param.second->getNumber());
+            case ValueType::NumberType:
+                lua_pushstring(state, key.c_str());
+                lua_pushnumber(state, *value.getNumber());
                 lua_settable(state, -3);
                 break;
-            case Value::StringType:
-                lua_pushstring(state, param.first.c_str());
-                lua_pushstring(state, param.second->getString().c_str());
+            case ValueType::StringType:
+                lua_pushstring(state, key.c_str());
+                lua_pushstring(state, value.getString()->c_str());
                 lua_settable(state, -3);
                 break;
-            case Value::BooleanType:
-                lua_pushstring(state, param.first.c_str());
-                lua_pushboolean(state, param.second->getBoolean());
+            case ValueType::BooleanType:
+                lua_pushstring(state, key.c_str());
+                lua_pushboolean(state, *value.getBoolean());
                 lua_settable(state, -3);
                 break;
             default:
                 break;
             }
         }
-    }
+    });
 }

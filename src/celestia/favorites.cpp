@@ -41,19 +41,16 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         FavoritesEntry* fav = new FavoritesEntry(); // FIXME: check
         fav->name = *tokenizer.getStringValue();
 
-        Value* favParamsValue = parser.readValue();
-        if (favParamsValue == nullptr || favParamsValue->getType() != Value::HashType)
+        const Value favParamsValue = parser.readValue();
+        const Hash* favParams = favParamsValue.getHash();
+        if (favParams == nullptr)
         {
             GetLogger()->error("Error parsing favorites entry {}\n", fav->name);
             std::for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
             delete favorites;
-            if (favParamsValue != nullptr)
-                delete favParamsValue;
             delete fav;
             return nullptr;
         }
-
-        const Hash* favParams = favParamsValue->getHash();
 
         //If this is a folder, don't get any other params.
         if(!favParams->getBoolean("isFolder", fav->isFolder))

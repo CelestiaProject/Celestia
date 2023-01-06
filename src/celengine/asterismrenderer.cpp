@@ -44,14 +44,14 @@ void AsterismRenderer::render(const Color &defaultColor, const Matrices &mvp)
     float opacity = defaultColor.alpha();
     for (size_t size = m_asterisms->size(), i = 0; i < size; i++)
     {
-        auto *ast = (*m_asterisms)[i];
-        if (!ast->getActive() || !ast->isColorOverridden())
+        const auto& ast = (*m_asterisms)[i];
+        if (!ast.getActive() || !ast.isColorOverridden())
         {
             offset += m_lineCount[i];
             continue;
         }
 
-        Color color = {ast->getOverrideColor(), opacity};
+        Color color = {ast.getOverrideColor(), opacity};
         m_lineRenderer.render(mvp, color, m_lineCount[i] * 2, offset * 2);
         offset += m_lineCount[i];
     }
@@ -62,15 +62,15 @@ bool AsterismRenderer::prepare()
 {
     // calculate required vertices number
     GLsizei vtx_num = 0;
-    for (const auto ast : *m_asterisms)
+    for (const auto& ast : *m_asterisms)
     {
         GLsizei ast_vtx_num = 0;
-        for (int k = 0; k < ast->getChainCount(); k++)
+        for (int k = 0; k < ast.getChainCount(); k++)
         {
             // as we use GL_LINES we should double the number of vertices.
             // as we don't need closed figures we have only one copy of
             // the 1st and last vertexes
-            GLsizei s = ast->getChain(k).size();
+            GLsizei s = ast.getChain(k).size();
             if (s > 1)
                 ast_vtx_num += s - 1;
         }
@@ -84,11 +84,11 @@ bool AsterismRenderer::prepare()
 
     m_totalLineCount = vtx_num;
 
-    for (const auto ast : *m_asterisms)
+    for (const auto& ast : *m_asterisms)
     {
-        for (int k = 0; k < ast->getChainCount(); k++)
+        for (int k = 0; k < ast.getChainCount(); k++)
         {
-            const auto& chain = ast->getChain(k);
+            const auto& chain = ast.getChain(k);
             for (unsigned i = 1; i < chain.size(); i++)
                 m_lineRenderer.addSegment(chain[i - 1], chain[i]);
         }

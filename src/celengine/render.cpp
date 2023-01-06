@@ -4510,11 +4510,11 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 {
     Vector3f observerPos = observer.getPosition().toLy().cast<float>();
 
-    for (auto ast : asterisms)
+    for (const auto& ast : asterisms)
     {
-        if (ast->getChainCount() > 0 && ast->getActive())
+        if (ast.getChainCount() > 0 && ast.getActive())
         {
-            const Asterism::Chain& chain = ast->getChain(0);
+            const Asterism::Chain& chain = ast.getChain(0);
 
             if (!chain.empty())
             {
@@ -4551,11 +4551,11 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     // Use the default label color unless the constellation has an
                     // override color set.
                     Color labelColor = ConstellationLabelColor;
-                    if (ast->isColorOverridden())
-                        labelColor = ast->getOverrideColor();
+                    if (ast.isColorOverridden())
+                        labelColor = ast.getOverrideColor();
 
                     addBackgroundAnnotation(nullptr,
-                                            ast->getName((labelMode & I18nConstellationLabels) != 0),
+                                            ast.getName((labelMode & I18nConstellationLabels) != 0),
                                             Color(labelColor, opacity),
                                             rpos,
                                             AlignCenter, VerticalAlignCenter);

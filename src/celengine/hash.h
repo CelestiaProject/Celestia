@@ -10,77 +10,76 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <string>
-#include <celcompat/filesystem.h>
-#include <celmath/mathlib.h>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+#include <Eigen/Core>
 #include <Eigen/Geometry>
+
+#include <celcompat/filesystem.h>
 
 
 class Color;
 class Value;
 
-using HashIterator = std::map<std::string, Value*>::const_iterator;
-
 class AssociativeArray
 {
  public:
+    using AssocType = std::map<std::string, std::size_t, std::less<>>;
+
     AssociativeArray() = default;
     ~AssociativeArray();
-    AssociativeArray(AssociativeArray&&) = default;
+    AssociativeArray(AssociativeArray&&);
     AssociativeArray(const AssociativeArray&) = delete;
-    AssociativeArray& operator=(AssociativeArray&&) = default;
+    AssociativeArray& operator=(AssociativeArray&&);
     AssociativeArray& operator=(AssociativeArray&) = delete;
 
-    const Value* getValue(const std::string&) const;
-    void addValue(const std::string&, Value&);
+    const Value* getValue(std::string_view) const;
+    void addValue(std::string&&, Value&&);
 
-    bool getNumber(const std::string&, double&) const;
-    bool getNumber(const std::string&, float&) const;
-    bool getNumber(const std::string&, int&) const;
-    bool getNumber(const std::string&, std::uint32_t&) const;
-    bool getString(const std::string&, std::string&) const;
-    bool getPath(const std::string&, fs::path&) const;
-    bool getBoolean(const std::string&, bool&) const;
-    bool getVector(const std::string&, Eigen::Vector3d&) const;
-    bool getVector(const std::string&, Eigen::Vector3f&) const;
-    bool getVector(const std::string&, Eigen::Vector4d&) const;
-    bool getVector(const std::string&, Eigen::Vector4f&) const;
-    bool getRotation(const std::string&, Eigen::Quaternionf&) const;
-    bool getColor(const std::string&, Color&) const;
-    bool getAngle(const std::string&, double&, double = 1.0, double = 0.0) const;
-    bool getAngle(const std::string&, float&, double = 1.0, double = 0.0) const;
-    bool getLength(const std::string&, double&, double = 1.0, double = 0.0) const;
-    bool getLength(const std::string&, float&, double = 1.0, double = 0.0) const;
-    bool getTime(const std::string&, double&, double = 1.0, double = 0.0) const;
-    bool getTime(const std::string&, float&, double = 1.0, double = 0.0) const;
-    bool getMass(const std::string&, double&, double = 1.0, double = 0.0) const;
-    bool getMass(const std::string&, float&, double = 1.0, double = 0.0) const;
-    bool getLengthVector(const std::string&, Eigen::Vector3d&, double = 1.0, double = 0.0) const;
-    bool getLengthVector(const std::string&, Eigen::Vector3f&, double = 1.0, double = 0.0) const;
-    bool getSphericalTuple(const std::string&, Eigen::Vector3d&) const;
-    bool getSphericalTuple(const std::string&, Eigen::Vector3f&) const;
-    bool getAngleScale(const std::string&, double&) const;
-    bool getAngleScale(const std::string&, float&) const;
-    bool getLengthScale(const std::string&, double&) const;
-    bool getLengthScale(const std::string&, float&) const;
-    bool getTimeScale(const std::string&, double&) const;
-    bool getTimeScale(const std::string&, float&) const;
-    bool getMassScale(const std::string&, double&) const;
-    bool getMassScale(const std::string&, float&) const;
+    bool getNumber(std::string_view, double&) const;
+    bool getNumber(std::string_view, float&) const;
+    bool getNumber(std::string_view, int&) const;
+    bool getNumber(std::string_view, std::uint32_t&) const;
+    bool getString(std::string_view, std::string&) const;
+    bool getPath(std::string_view, fs::path&) const;
+    bool getBoolean(std::string_view, bool&) const;
+    bool getVector(std::string_view, Eigen::Vector3d&) const;
+    bool getVector(std::string_view, Eigen::Vector3f&) const;
+    bool getVector(std::string_view, Eigen::Vector4d&) const;
+    bool getVector(std::string_view, Eigen::Vector4f&) const;
+    bool getRotation(std::string_view, Eigen::Quaternionf&) const;
+    bool getColor(std::string_view, Color&) const;
+    bool getAngle(std::string_view, double&, double = 1.0, double = 0.0) const;
+    bool getAngle(std::string_view, float&, double = 1.0, double = 0.0) const;
+    bool getLength(std::string_view, double&, double = 1.0, double = 0.0) const;
+    bool getLength(std::string_view, float&, double = 1.0, double = 0.0) const;
+    bool getTime(std::string_view, double&, double = 1.0, double = 0.0) const;
+    bool getTime(std::string_view, float&, double = 1.0, double = 0.0) const;
+    bool getMass(std::string_view, double&, double = 1.0, double = 0.0) const;
+    bool getMass(std::string_view, float&, double = 1.0, double = 0.0) const;
+    bool getLengthVector(std::string_view, Eigen::Vector3d&, double = 1.0, double = 0.0) const;
+    bool getLengthVector(std::string_view, Eigen::Vector3f&, double = 1.0, double = 0.0) const;
+    bool getSphericalTuple(std::string_view, Eigen::Vector3d&) const;
+    bool getSphericalTuple(std::string_view, Eigen::Vector3f&) const;
 
-    HashIterator begin() const
+    template<typename T>
+    void for_all(T action) const
     {
-        return assoc.begin();
-    }
-    HashIterator end() const
-    {
-        return assoc.end();
+        for (const auto& pair : assoc)
+        {
+            action(pair.first, values[pair.second]);
+        }
     }
 
  private:
-    std::map<std::string, Value*> assoc;
+    std::vector<Value> values;
+    AssocType assoc;
 };
 
 using Hash = AssociativeArray;

@@ -11,7 +11,6 @@
 #pragma once
 
 #include <memory>
-#include <string>
 
 #include "hash.h"
 #include "value.h"
@@ -24,12 +23,11 @@ class Parser
  public:
     Parser(Tokenizer*);
 
-    Value* readValue();
+    Value readValue();
 
  private:
     Tokenizer* tokenizer;
 
-    bool readUnits(const std::string&, Hash*);
     std::unique_ptr<ValueArray> readArray();
     std::unique_ptr<Hash> readHash();
 };
