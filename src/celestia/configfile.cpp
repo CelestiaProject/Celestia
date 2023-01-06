@@ -52,14 +52,13 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         return config;
     }
 
-    Value* configParamsValue = parser.readValue();
-    if (configParamsValue == nullptr || configParamsValue->getType() != Value::HashType)
+    const Value configParamsValue = parser.readValue();
+    const Hash* configParams = configParamsValue.getHash();
+    if (configParams == nullptr)
     {
         GetLogger()->error("{}: Bad configuration file.\n", filename);
         return config;
     }
-
-    const Hash* configParams = configParamsValue->getHash();
 
     if (config == nullptr)
         config = new CelestiaConfig();
@@ -129,112 +128,91 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
     config->consoleLogRows = getUint(configParams, "LogSize", 200);
 
-    const Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
-    if (solarSystemsVal != nullptr)
+    if (const Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs"); solarSystemsVal != nullptr)
     {
-        if (solarSystemsVal->getType() != Value::ArrayType)
+        if (const ValueArray* solarSystems = solarSystemsVal->getArray(); solarSystems == nullptr)
         {
             GetLogger()->error("{}: SolarSystemCatalogs must be an array.\n", filename);
         }
         else
         {
-            const ValueArray* solarSystems = solarSystemsVal->getArray();
-            // assert(solarSystems != nullptr);
-
-            for (const auto catalogNameVal : *solarSystems)
+            for (const auto& catalogNameVal : *solarSystems)
             {
-                // assert(catalogNameVal != nullptr);
-                if (catalogNameVal->getType() == Value::StringType)
-                {
-                    config->solarSystemFiles.push_back(PathExp(catalogNameVal->getString()));
-                }
-                else
+                const std::string* catalogName = catalogNameVal.getString();
+                if (catalogName == nullptr)
                 {
                     GetLogger()->error("{}: Solar system catalog name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->solarSystemFiles.push_back(PathExp(*catalogName));
             }
         }
     }
 
-    const Value* starCatalogsVal = configParams->getValue("StarCatalogs");
-    if (starCatalogsVal != nullptr)
+    if (const Value* starCatalogsVal = configParams->getValue("StarCatalogs"); starCatalogsVal != nullptr)
     {
-        if (starCatalogsVal->getType() != Value::ArrayType)
+        if (const ValueArray* starCatalogs = starCatalogsVal->getArray(); starCatalogs == nullptr)
         {
             GetLogger()->error("{}: StarCatalogs must be an array.\n", filename);
         }
         else
         {
-            const ValueArray* starCatalogs = starCatalogsVal->getArray();
-            assert(starCatalogs != nullptr);
-
-            for (const auto catalogNameVal : *starCatalogs)
+            for (const auto& catalogNameVal : *starCatalogs)
             {
-                assert(catalogNameVal != nullptr);
-
-                if (catalogNameVal->getType() == Value::StringType)
-                {
-                    config->starCatalogFiles.push_back(PathExp(catalogNameVal->getString()));
-                }
-                else
+                const std::string* catalogName = catalogNameVal.getString();
+                if (catalogName == nullptr)
                 {
                     GetLogger()->error("{}: Star catalog name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->starCatalogFiles.push_back(PathExp(*catalogName));
             }
         }
     }
 
-    const Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
-    if (dsoCatalogsVal != nullptr)
+    if (const Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs"); dsoCatalogsVal != nullptr)
     {
-        if (dsoCatalogsVal->getType() != Value::ArrayType)
+        if (const ValueArray* dsoCatalogs = dsoCatalogsVal->getArray(); dsoCatalogs == nullptr)
         {
             GetLogger()->error("{}: DeepSkyCatalogs must be an array.\n", filename);
         }
         else
         {
-            const ValueArray* dsoCatalogs = dsoCatalogsVal->getArray();
-            assert(dsoCatalogs != nullptr);
-
-            for (const auto catalogNameVal : *dsoCatalogs)
+            for (const auto& catalogNameVal : *dsoCatalogs)
             {
-                assert(catalogNameVal != nullptr);
-
-                if (catalogNameVal->getType() == Value::StringType)
-                {
-                    config->dsoCatalogFiles.push_back(PathExp(catalogNameVal->getString()));
-                }
-                else
+                const std::string* catalogName = catalogNameVal.getString();
+                if (catalogName == nullptr)
                 {
                     GetLogger()->error("{}: DeepSky catalog name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->dsoCatalogFiles.push_back(PathExp(*catalogName));
             }
         }
     }
 
-    const Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
-    if (extrasDirsVal != nullptr)
+    if (const Value* extrasDirsVal = configParams->getValue("ExtrasDirectories"); extrasDirsVal != nullptr)
     {
-        if (extrasDirsVal->getType() == Value::ArrayType)
+        if (const ValueArray* extrasDirs = extrasDirsVal->getArray(); extrasDirs != nullptr)
         {
-            const ValueArray* extrasDirs = extrasDirsVal->getArray();
-            assert(extrasDirs != nullptr);
-
-            for (const auto dirNameVal : *extrasDirs)
+            for (const auto& dirNameVal : *extrasDirs)
             {
-                if (dirNameVal->getType() == Value::StringType)
-                {
-                    config->extrasDirs.push_back(PathExp(dirNameVal->getString()));
-                }
-                else
+                const std::string* dirName = dirNameVal.getString();
+                if (dirName == nullptr)
                 {
                     GetLogger()->error("{}: Extras directory name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->extrasDirs.push_back(PathExp(*dirName));
             }
         }
-        else if (extrasDirsVal->getType() == Value::StringType)
+        else if (const std::string* dirName = extrasDirsVal->getString(); dirName != nullptr)
         {
-            config->extrasDirs.push_back(PathExp(extrasDirsVal->getString()));
+            config->extrasDirs.push_back(PathExp(*dirName));
         }
         else
         {
@@ -242,29 +220,25 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    const Value* skipExtrasVal = configParams->getValue("SkipExtras");
-    if (skipExtrasVal != nullptr)
+    if (const Value* skipExtrasVal = configParams->getValue("SkipExtras"); skipExtrasVal != nullptr)
     {
-        if (skipExtrasVal->getType() == Value::ArrayType)
+        if (const ValueArray* skipExtras = skipExtrasVal->getArray(); skipExtras != nullptr)
         {
-            const ValueArray* skipExtras = skipExtrasVal->getArray();
-            assert(skipExtras != nullptr);
-
-            for (const auto fileNameVal : *skipExtras)
+            for (const auto& fileNameVal : *skipExtras)
             {
-                if (fileNameVal->getType() == Value::StringType)
-                {
-                    config->skipExtras.push_back(PathExp(fileNameVal->getString()));
-                }
-                else
+                const std::string* fileName = fileNameVal.getString();
+                if (fileName == nullptr)
                 {
                     GetLogger()->error("{}: Skipped file name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->skipExtras.push_back(PathExp(*fileName));
             }
         }
-        else if (skipExtrasVal->getType() == Value::StringType)
+        else if (const std::string* fileName = skipExtrasVal->getString(); fileName != nullptr)
         {
-            config->skipExtras.push_back(PathExp(skipExtrasVal->getString()));
+            config->skipExtras.push_back(PathExp(*fileName));
         }
         else
         {
@@ -272,41 +246,36 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    const Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
-    if (ignoreExtVal != nullptr)
+    if (const Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions"); ignoreExtVal != nullptr)
     {
-        if (ignoreExtVal->getType() != Value::ArrayType)
+        if (const ValueArray* ignoreExt = ignoreExtVal->getArray(); ignoreExt == nullptr)
         {
             GetLogger()->error("{}: IgnoreGLExtensions must be an array.\n", filename);
         }
         else
         {
-            const ValueArray* ignoreExt = ignoreExtVal->getArray();
-
-            for (const auto extVal : *ignoreExt)
+            for (const auto& extVal : *ignoreExt)
             {
-                if (extVal->getType() == Value::StringType)
-                {
-                    config->ignoreGLExtensions.push_back(extVal->getString());
-                }
-                else
+                const std::string* ext = extVal.getString();
+                if (ext == nullptr)
                 {
                     GetLogger()->error("{}: extension name must be a string.\n", filename);
+                    continue;
                 }
+
+                config->ignoreGLExtensions.push_back(*ext);
             }
         }
     }
 
-    const Value* starTexValue = configParams->getValue("StarTextures");
-    if (starTexValue != nullptr)
+    if (const Value* starTexValue = configParams->getValue("StarTextures"); starTexValue != nullptr)
     {
-        if (starTexValue->getType() != Value::HashType)
+        if (const Hash* starTexTable = starTexValue->getHash(); starTexTable == nullptr)
         {
             GetLogger()->error("{}: StarTextures must be a property list.\n", filename);
         }
         else
         {
-            const Hash* starTexTable = starTexValue->getHash();
             string starTexNames[StellarClass::Spectral_Count];
             starTexTable->getString("O", starTexNames[StellarClass::Spectral_O]);
             starTexTable->getString("B", starTexNames[StellarClass::Spectral_B]);
@@ -374,17 +343,4 @@ CelestiaConfig::getFloatValue(const string& name)
     params->getNumber(name, x);
 
     return (float) x;
-}
-
-
-const string
-CelestiaConfig::getStringValue(const string& name)
-{
-    assert(params != nullptr);
-
-    const Value* v = params->getValue(name);
-    if (v == nullptr || v->getType() != Value::StringType)
-        return string("");
-
-    return v->getString();
 }

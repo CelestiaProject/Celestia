@@ -12,22 +12,54 @@
 
 /****** Value method implementations *******/
 
+Value::Value(Value&& other) noexcept
+    : type(other.type),
+      units(other.units),
+      data(other.data)
+{
+    other.type = ValueType::NullType;
+}
+
+
+Value& Value::operator=(Value&& other) noexcept
+{
+    if (this != &other)
+    {
+        switch (type)
+        {
+        case ValueType::StringType:
+            delete data.s;
+            break;
+        case ValueType::ArrayType:
+            delete data.a;
+            break;
+        case ValueType::HashType:
+            delete data.h;
+            break;
+        default:
+            break;
+        }
+        type = other.type;
+        units = other.units;
+        data = other.data;
+        other.type = ValueType::NullType;
+    }
+
+    return *this;
+}
+
+
 Value::~Value()
 {
     switch (type)
     {
-    case StringType:
+    case ValueType::StringType:
         delete data.s;
         break;
-    case ArrayType:
-        if (data.a != nullptr)
-        {
-            for (auto *p : *data.a)
-                delete p;
-            delete data.a;
-        }
+    case ValueType::ArrayType:
+        delete data.a;
         break;
-    case HashType:
+    case ValueType::HashType:
         delete data.h;
         break;
     default:

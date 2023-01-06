@@ -151,14 +151,14 @@ Command* CommandParser::parseCommand()
         return nullptr;
     }
 
-    Value* paramListValue = parser->readValue();
-    if (paramListValue == nullptr || paramListValue->getType() != Value::HashType)
+    const Value paramListValue = parser->readValue();
+    const Hash* paramList = paramListValue.getHash();
+    if (paramList == nullptr)
     {
         error("Bad parameter list");
         return nullptr;
     }
 
-    const Hash* paramList = paramListValue->getHash();
     Command* cmd = nullptr;
 
     if (commandName == "wait")
@@ -878,8 +878,6 @@ Command* CommandParser::parseCommand()
         error("Unknown command name '" + commandName + "'");
         cmd = nullptr;
     }
-
-    delete paramListValue;
 
     return cmd;
 }

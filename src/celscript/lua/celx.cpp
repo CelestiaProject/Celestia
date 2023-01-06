@@ -1423,18 +1423,17 @@ bool CelxLua::isType(int index, int type) const
     return Celx_istype(m_lua, index, type);
 }
 
-Value *CelxLua::getValue(int index)
+Value CelxLua::getValue(int index)
 {
-    Value *v = nullptr;
     if (isInteger(index))
-        v = new Value((double)getInt(index));
-    else if (isNumber(index))
-        v = new Value(getNumber(index));
-    else if (isBoolean(index))
-        v = new Value(getBoolean(index));
-    else if (isString(index))
-        v = new Value(getString(index));
-    else if (isTable(index))
+        return Value((double)getInt(index));
+    if (isNumber(index))
+        return Value(getNumber(index));
+    if (isBoolean(index))
+        return Value(getBoolean(index));
+    if (isString(index))
+        return Value(getString(index));
+    if (isTable(index))
     {
         auto array = std::make_unique<ValueArray>();
         auto hash = std::make_unique<Hash>();
@@ -1460,7 +1459,7 @@ Value *CelxLua::getValue(int index)
                 }
                 if (hash != nullptr)
                 {
-                    hash->addValue(getString(-2), *getValue(-1));
+                    hash->addValue(getString(-2), getValue(-1));
                 }
             }
             pop(1);
@@ -1469,11 +1468,12 @@ Value *CelxLua::getValue(int index)
         }
         pop(1);
         if (hash != nullptr)
-            v = new Value(std::move(hash));
+            return Value(std::move(hash));
         else if (array != nullptr)
-            v = new Value(std::move(array));
+            return Value(std::move(array));
     }
-    return v;
+
+    return Value();
 }
 
 void CelxLua::setClass(int id)

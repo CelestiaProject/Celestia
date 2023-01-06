@@ -11,6 +11,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -28,9 +29,9 @@ class Asterism
     ~Asterism() = default;
     Asterism() = delete;
     Asterism(const Asterism&) = delete;
-    Asterism(Asterism&&) = delete;
+    Asterism(Asterism&&) noexcept = default;
     Asterism& operator=(const Asterism&) = delete;
-    Asterism& operator=(Asterism&&) = delete;
+    Asterism& operator=(Asterism&&) noexcept = default;
 
     using Chain = std::vector<Eigen::Vector3f>;
 
@@ -46,18 +47,18 @@ class Asterism
     void unsetOverrideColor();
     bool isColorOverridden() const;
 
-    void addChain(Chain&);
+    void addChain(Chain&&);
 
  private:
     std::string name;
     std::string i18nName;
-    std::vector<Chain*> chains;
+    std::vector<Chain> chains;
     Color color;
 
     bool active             { true };
     bool useOverrideColor   { false };
 };
 
-using AsterismList = std::vector<Asterism*>;
+using AsterismList = std::vector<Asterism>;
 
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);

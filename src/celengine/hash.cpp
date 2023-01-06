@@ -17,41 +17,44 @@
 
 namespace celutil = celestia::util;
 
-AssociativeArray::~AssociativeArray()
-{
-    for (const auto &iter : assoc)
-        delete iter.second;
-}
+
+// Define these here: at declaration the vector member contains an incomplete type
+AssociativeArray::~AssociativeArray() = default;
+AssociativeArray::AssociativeArray(AssociativeArray&&) = default;
+AssociativeArray& AssociativeArray::operator=(AssociativeArray&&) = default;
 
 
-const Value* AssociativeArray::getValue(const std::string& key) const
+const Value* AssociativeArray::getValue(std::string_view key) const
 {
     auto iter = assoc.find(key);
     if (iter == assoc.end())
         return nullptr;
 
-    return iter->second;
+    return &values[iter->second];
 }
 
 
-void AssociativeArray::addValue(const std::string& key, Value& val)
+void AssociativeArray::addValue(std::string&& key, Value&& val)
 {
-    assoc.insert(std::map<std::string, Value*>::value_type(key, &val));
+    std::size_t index = values.size();
+    values.emplace_back(std::move(val));
+    assoc.emplace(std::move(key), index);
 }
 
 
-bool AssociativeArray::getNumber(const std::string& key, double& val) const
+bool AssociativeArray::getNumber(std::string_view key, double& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::NumberType)
-        return false;
+    if (v == nullptr) { return false; }
+    std::optional<double> dbl = v->getNumber();
+    if (!dbl.has_value()) { return false; }
 
-    val = v->getNumber();
+    val = *dbl;
     return true;
 }
 
 
-bool AssociativeArray::getNumber(const std::string& key, float& val) const
+bool AssociativeArray::getNumber(std::string_view key, float& val) const
 {
     double dval;
 
@@ -63,7 +66,7 @@ bool AssociativeArray::getNumber(const std::string& key, float& val) const
 }
 
 
-bool AssociativeArray::getNumber(const std::string& key, int& val) const
+bool AssociativeArray::getNumber(std::string_view key, int& val) const
 {
     double ival;
 
@@ -75,7 +78,7 @@ bool AssociativeArray::getNumber(const std::string& key, int& val) const
 }
 
 
-bool AssociativeArray::getNumber(const std::string& key, std::uint32_t& val) const
+bool AssociativeArray::getNumber(std::string_view key, std::uint32_t& val) const
 {
     double ival;
 
@@ -87,18 +90,20 @@ bool AssociativeArray::getNumber(const std::string& key, std::uint32_t& val) con
 }
 
 
-bool AssociativeArray::getString(const std::string& key, std::string& val) const
+bool AssociativeArray::getString(std::string_view key, std::string& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::StringType)
-        return false;
+    if (v == nullptr) { return false; }
 
-    val = v->getString();
+    const std::string* str = v->getString();
+    if (str == nullptr) { return false; }
+
+    val = *str;
     return true;
 }
 
 
-bool AssociativeArray::getPath(const std::string& key, fs::path& val) const
+bool AssociativeArray::getPath(std::string_view key, fs::path& val) const
 {
     std::string v;
     if (getString(key, v))
@@ -110,42 +115,38 @@ bool AssociativeArray::getPath(const std::string& key, fs::path& val) const
 }
 
 
-bool AssociativeArray::getBoolean(const std::string& key, bool& val) const
+bool AssociativeArray::getBoolean(std::string_view key, bool& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::BooleanType)
-        return false;
+    if (v == nullptr) { return false; }
+    auto bln = v->getBoolean();
+    if (!bln.has_value()) { return false;}
 
-    val = v->getBoolean();
+    val = *bln;
     return true;
 }
 
 
-bool AssociativeArray::getVector(const std::string& key, Eigen::Vector3d& val) const
+bool AssociativeArray::getVector(std::string_view key, Eigen::Vector3d& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::ArrayType)
-        return false;
+    if (v == nullptr) { return false; }
 
     const ValueArray* arr = v->getArray();
-    if (arr->size() != 3)
-        return false;
+    if (arr == nullptr || arr->size() != 3) { return false; }
 
-    Value* x = (*arr)[0];
-    Value* y = (*arr)[1];
-    Value* z = (*arr)[2];
+    std::optional<double> x = (*arr)[0].getNumber();
+    std::optional<double> y = (*arr)[1].getNumber();
+    std::optional<double> z = (*arr)[2].getNumber();
 
-    if (x->getType() != Value::NumberType ||
-        y->getType() != Value::NumberType ||
-        z->getType() != Value::NumberType)
-        return false;
+    if (!x.has_value() || !y.has_value() || !z.has_value()) { return false; }
 
-    val = Eigen::Vector3d(x->getNumber(), y->getNumber(), z->getNumber());
+    val = Eigen::Vector3d(*x, *y, *z);
     return true;
 }
 
 
-bool AssociativeArray::getVector(const std::string& key, Eigen::Vector3f& val) const
+bool AssociativeArray::getVector(std::string_view key, Eigen::Vector3f& val) const
 {
     Eigen::Vector3d vecVal;
 
@@ -157,33 +158,30 @@ bool AssociativeArray::getVector(const std::string& key, Eigen::Vector3f& val) c
 }
 
 
-bool AssociativeArray::getVector(const std::string& key, Eigen::Vector4d& val) const
+bool AssociativeArray::getVector(std::string_view key, Eigen::Vector4d& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::ArrayType)
-        return false;
+    if (v == nullptr) { return false; }
 
     const ValueArray* arr = v->getArray();
-    if (arr->size() != 4)
+    if (arr == nullptr || arr->size() != 4) { return false; }
+
+    std::optional<double> x = (*arr)[0].getNumber();
+    std::optional<double> y = (*arr)[1].getNumber();
+    std::optional<double> z = (*arr)[2].getNumber();
+    std::optional<double> w = (*arr)[3].getNumber();
+
+    if (!x.has_value() || !y.has_value() || !z.has_value() || !w.has_value())
+    {
         return false;
+    }
 
-    Value* x = (*arr)[0];
-    Value* y = (*arr)[1];
-    Value* z = (*arr)[2];
-    Value* w = (*arr)[3];
-
-    if (x->getType() != Value::NumberType ||
-        y->getType() != Value::NumberType ||
-        z->getType() != Value::NumberType ||
-        w->getType() != Value::NumberType)
-        return false;
-
-    val = Eigen::Vector4d(x->getNumber(), y->getNumber(), z->getNumber(), w->getNumber());
+    val = Eigen::Vector4d(*x, *y, *z, *w);
     return true;
 }
 
 
-bool AssociativeArray::getVector(const std::string& key, Eigen::Vector4f& val) const
+bool AssociativeArray::getVector(std::string_view key, Eigen::Vector4f& val) const
 {
     Eigen::Vector4d vecVal;
 
@@ -205,35 +203,30 @@ bool AssociativeArray::getVector(const std::string& key, Eigen::Vector4f& val) c
  * @param[out] val A quaternion representing the value if present, unaffected if not.
  * @return True if the key exists in the hash, false otherwise.
  */
-bool AssociativeArray::getRotation(const std::string& key, Eigen::Quaternionf& val) const
+bool AssociativeArray::getRotation(std::string_view key, Eigen::Quaternionf& val) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::ArrayType)
-        return false;
+    if (v == nullptr ) { return false; }
 
     const ValueArray* arr = v->getArray();
-    if (arr->size() != 4)
+    if (arr == nullptr || arr->size() != 4) { return false; }
+
+    std::optional<double> w = (*arr)[0].getNumber();
+    std::optional<double> x = (*arr)[1].getNumber();
+    std::optional<double> y = (*arr)[2].getNumber();
+    std::optional<double> z = (*arr)[3].getNumber();
+
+    if (!w.has_value() || !x.has_value() || !y.has_value() || !z.has_value())
+    {
         return false;
+    }
 
-    Value* w = (*arr)[0];
-    Value* x = (*arr)[1];
-    Value* y = (*arr)[2];
-    Value* z = (*arr)[3];
+    Eigen::Vector3f axis(static_cast<float>(*x),
+                         static_cast<float>(*y),
+                         static_cast<float>(*z));
 
-    if (w->getType() != Value::NumberType ||
-        x->getType() != Value::NumberType ||
-        y->getType() != Value::NumberType ||
-        z->getType() != Value::NumberType)
-        return false;
-
-    Eigen::Vector3f axis((float) x->getNumber(),
-                         (float) y->getNumber(),
-                         (float) z->getNumber());
-
-    double ang = w->getNumber();
-    double angScale = 1.0;
-    getAngleScale(key, angScale);
-    float angle = celmath::degToRad((float) (ang * angScale));
+    double angScale = astro::getAngleScale(v->getAngleUnit()).value_or(1.0);
+    auto angle = static_cast<float>(celmath::degToRad(*w * angScale));
 
     val = Eigen::Quaternionf(Eigen::AngleAxisf(angle, axis.normalized()));
 
@@ -241,7 +234,7 @@ bool AssociativeArray::getRotation(const std::string& key, Eigen::Quaternionf& v
 }
 
 
-bool AssociativeArray::getColor(const std::string& key, Color& val) const
+bool AssociativeArray::getColor(std::string_view key, Color& val) const
 {
     Eigen::Vector4d vec4;
     if (getVector(key, vec4))
@@ -278,22 +271,28 @@ bool AssociativeArray::getColor(const std::string& key, Color& val) const
  * @return True if the key exists in the hash, false otherwise.
  */
 bool
-AssociativeArray::getAngle(const std::string& key, double& val, double outputScale, double defaultScale) const
+AssociativeArray::getAngle(std::string_view key, double& val, double outputScale, double defaultScale) const
 {
-    if (!getNumber(key, val))
-        return false;
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
 
-    double angleScale;
-    if(getAngleScale(key, angleScale))
+    if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
     {
-        angleScale /= outputScale;
+        val = *dbl;
     }
     else
     {
-        angleScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+        return false;
     }
 
-    val *= angleScale;
+    if(auto angleScale = astro::getAngleScale(v->getAngleUnit()); angleScale.has_value())
+    {
+        val *= *angleScale / outputScale;
+    }
+    else if (defaultScale != 0.0)
+    {
+        val *= defaultScale / outputScale;
+    }
 
     return true;
 }
@@ -301,7 +300,7 @@ AssociativeArray::getAngle(const std::string& key, double& val, double outputSca
 
 /** @copydoc AssociativeArray::getAngle() */
 bool
-AssociativeArray::getAngle(const std::string& key, float& val, double outputScale, double defaultScale) const
+AssociativeArray::getAngle(std::string_view key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
 
@@ -323,29 +322,35 @@ AssociativeArray::getAngle(const std::string& key, float& val, double outputScal
  * @return True if the key exists in the hash, false otherwise.
  */
 bool
-AssociativeArray::getLength(const std::string& key, double& val, double outputScale, double defaultScale) const
+AssociativeArray::getLength(std::string_view key, double& val, double outputScale, double defaultScale) const
 {
-    if(!getNumber(key, val))
-        return false;
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
 
-    double lengthScale;
-    if(getLengthScale(key, lengthScale))
+    if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
     {
-        lengthScale /= outputScale;
+        val = *dbl;
     }
     else
     {
-        lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+        return false;
     }
 
-    val *= lengthScale;
+    if (auto lengthScale = astro::getLengthScale(v->getLengthUnit()); lengthScale.has_value())
+    {
+        val *= *lengthScale / outputScale;
+    }
+    else if (defaultScale != 0.0)
+    {
+        val *= defaultScale / outputScale;
+    }
 
     return true;
 }
 
 
 /** @copydoc AssociativeArray::getLength() */
-bool AssociativeArray::getLength(const std::string& key, float& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getLength(std::string_view key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
 
@@ -366,29 +371,35 @@ bool AssociativeArray::getLength(const std::string& key, float& val, double outp
  * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
  * @return True if the key exists in the hash, false otherwise.
  */
-bool AssociativeArray::getTime(const std::string& key, double& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getTime(std::string_view key, double& val, double outputScale, double defaultScale) const
 {
-    if(!getNumber(key, val))
-        return false;
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
 
-    double timeScale;
-    if(getTimeScale(key, timeScale))
+    if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
     {
-        timeScale /= outputScale;
+        val = *dbl;
     }
     else
     {
-        timeScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+        return false;
     }
 
-    val *= timeScale;
+    if (auto timeScale = astro::getTimeScale(v->getTimeUnit()))
+    {
+        val *= *timeScale / outputScale;
+    }
+    else if (defaultScale != 0.0)
+    {
+        val *= defaultScale / outputScale;
+    }
 
     return true;
 }
 
 
 /** @copydoc AssociativeArray::getTime() */
-bool AssociativeArray::getTime(const std::string& key, float& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getTime(std::string_view key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
 
@@ -409,29 +420,35 @@ bool AssociativeArray::getTime(const std::string& key, float& val, double output
  * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
  * @return True if the key exists in the hash, false otherwise.
  */
-bool AssociativeArray::getMass(const std::string& key, double& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getMass(std::string_view key, double& val, double outputScale, double defaultScale) const
 {
-    if(!getNumber(key, val))
-        return false;
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
 
-    double massScale;
-    if(getMassScale(key, massScale))
+    if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
     {
-        massScale /= outputScale;
+        val = *dbl;
     }
     else
     {
-        massScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+        return false;
     }
 
-    val *= massScale;
+    if (auto massScale = astro::getMassScale(v->getMassUnit()); massScale.has_value())
+    {
+        val *= *massScale / outputScale;
+    }
+    else if (defaultScale != 0.0)
+    {
+        val *= defaultScale / outputScale;
+    }
 
     return true;
 }
 
 
 /** @copydoc AssociativeArray::getMass() */
-bool AssociativeArray::getMass(const std::string& key, float& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getMass(std::string_view key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
 
@@ -452,29 +469,37 @@ bool AssociativeArray::getMass(const std::string& key, float& val, double output
  * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
  * @return True if the key exists in the hash, false otherwise.
  */
-bool AssociativeArray::getLengthVector(const std::string& key, Eigen::Vector3d& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getLengthVector(std::string_view key, Eigen::Vector3d& val, double outputScale, double defaultScale) const
 {
-    if(!getVector(key, val))
-        return false;
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
 
-    double lengthScale;
-    if(getLengthScale(key, lengthScale))
-    {
-        lengthScale /= outputScale;
-    }
-    else
-    {
-        lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
-    }
+    const ValueArray* arr = v->getArray();
+    if (arr == nullptr || arr->size() != 3) { return false; }
 
-    val *= lengthScale;
+    std::optional<double> x = (*arr)[0].getNumber();
+    std::optional<double> y = (*arr)[1].getNumber();
+    std::optional<double> z = (*arr)[2].getNumber();
+
+    if (!x.has_value() || !y.has_value() || !z.has_value()) { return false; }
+
+    val = Eigen::Vector3d(*x, *y, *z);
+
+    if (auto lengthScale = astro::getLengthScale(v->getLengthUnit()); lengthScale.has_value())
+    {
+        val *= *lengthScale / outputScale;
+    }
+    else if (defaultScale != 0.0)
+    {
+        val *= defaultScale / outputScale;
+    }
 
     return true;
 }
 
 
 /** @copydoc AssociativeArray::getLengthVector() */
-bool AssociativeArray::getLengthVector(const std::string& key, Eigen::Vector3f& val, double outputScale, double defaultScale) const
+bool AssociativeArray::getLengthVector(std::string_view key, Eigen::Vector3f& val, double outputScale, double defaultScale) const
 {
     Eigen::Vector3d vecVal;
 
@@ -492,28 +517,40 @@ bool AssociativeArray::getLengthVector(const std::string& key, Eigen::Vector3f& 
  * @param[out] val The returned tuple in units of degrees and kilometers if present, unaffected if not.
  * @return True if the key exists in the hash, false otherwise.
  */
-bool AssociativeArray::getSphericalTuple(const std::string& key, Eigen::Vector3d& val) const
+bool AssociativeArray::getSphericalTuple(std::string_view key, Eigen::Vector3d& val) const
 {
-    if(!getVector(key, val))
+    const Value* v = getValue(key);
+    if (v == nullptr) { return false; }
+
+    const ValueArray* arr = v->getArray();
+    if (arr == nullptr || arr->size() != 3)
         return false;
 
-    double angleScale;
-    if(getAngleScale(key, angleScale))
+    std::optional<double> x = (*arr)[0].getNumber();
+    std::optional<double> y = (*arr)[1].getNumber();
+    std::optional<double> z = (*arr)[2].getNumber();
+
+    if (!x.has_value() || !y.has_value() || !z.has_value())
+        return false;
+
+    val = Eigen::Vector3d(*x, *y, *z);
+
+    if (auto angleScale = astro::getAngleScale(v->getAngleUnit()); angleScale.has_value())
     {
-        val[0] *= angleScale;
-        val[1] *= angleScale;
+        val.head<2>() *= *angleScale;
     }
 
-    double lengthScale = 1.0;
-    getLengthScale(key, lengthScale);
-    val[2] *= lengthScale;
+    if (auto lengthScale = astro::getLengthScale(v->getLengthUnit()); lengthScale.has_value())
+    {
+        val[2] *= *lengthScale;
+    }
 
     return true;
 }
 
 
 /** @copydoc AssociativeArray::getSphericalTuple */
-bool AssociativeArray::getSphericalTuple(const std::string& key, Eigen::Vector3f& val) const
+bool AssociativeArray::getSphericalTuple(std::string_view key, Eigen::Vector3f& val) const
 {
     Eigen::Vector3d vecVal;
 
@@ -521,125 +558,5 @@ bool AssociativeArray::getSphericalTuple(const std::string& key, Eigen::Vector3f
         return false;
 
     val = vecVal.cast<float>();
-    return true;
-}
-
-
-/**
- * Retrieves the angle unit associated with a given property.
- * @param[in] key Hash key for the property.
- * @param[out] scale The returned angle unit scaled to degrees if present, unaffected if not.
- * @return True if an angle unit has been specified for the property, false otherwise.
- */
-bool AssociativeArray::getAngleScale(const std::string& key, double& scale) const
-{
-    std::string unitKey(key + "%Angle");
-    std::string unit;
-
-    if (!getString(unitKey, unit))
-        return false;
-
-    return astro::getAngleScale(unit, scale);
-}
-
-
-/** @copydoc AssociativeArray::getAngleScale() */
-bool AssociativeArray::getAngleScale(const std::string& key, float& scale) const
-{
-    double dscale;
-    if (!getAngleScale(key, dscale))
-        return false;
-
-    scale = ((float) dscale);
-    return true;
-}
-
-
-/**
- * Retrieves the length unit associated with a given property.
- * @param[in] key Hash key for the property.
- * @param[out] scale The returned length unit scaled to kilometers if present, unaffected if not.
- * @return True if a length unit has been specified for the property, false otherwise.
- */
-bool AssociativeArray::getLengthScale(const std::string& key, double& scale) const
-{
-    std::string unitKey(key + "%Length");
-    std::string unit;
-
-    if (!getString(unitKey, unit))
-        return false;
-
-    return astro::getLengthScale(unit, scale);
-}
-
-
-/** @copydoc AssociativeArray::getLengthScale() */
-bool AssociativeArray::getLengthScale(const std::string& key, float& scale) const
-{
-    double dscale;
-    if (!getLengthScale(key, dscale))
-        return false;
-
-    scale = ((float) dscale);
-    return true;
-}
-
-
-/**
- * Retrieves the time unit associated with a given property.
- * @param[in] key Hash key for the property.
- * @param[out] scale The returned time unit scaled to days if present, unaffected if not.
- * @return True if a time unit has been specified for the property, false otherwise.
- */
-bool AssociativeArray::getTimeScale(const std::string& key, double& scale) const
-{
-    std::string unitKey(key + "%Time");
-    std::string unit;
-
-    if (!getString(unitKey, unit))
-        return false;
-
-    return astro::getTimeScale(unit, scale);
-}
-
-
-/** @copydoc AssociativeArray::getTimeScale() */
-bool AssociativeArray::getTimeScale(const std::string& key, float& scale) const
-{
-    double dscale;
-    if (!getTimeScale(key, dscale))
-        return false;
-
-    scale = ((float) dscale);
-    return true;
-}
-
-
-/**
- * Retrieves the mass unit associated with a given property.
- * @param[in] key Hash key for the property.
- * @param[out] scale The returned mass unit scaled to Earth mass if present, unaffected if not.
- * @return True if a mass unit has been specified for the property, false otherwise.
- */
-bool AssociativeArray::getMassScale(const std::string& key, double& scale) const
-{
-    std::string unitKey(key + "%Mass");
-    std::string unit;
-
-    if (!getString(unitKey, unit))
-        return false;
-
-    return astro::getMassScale(unit, scale);
-}
-
-
-/** @copydoc AssociativeArray::getMassScale() */
-bool AssociativeArray::getMassScale(const std::string& key, float& scale) const
-{
-    double dscale;
-    if (!getMassScale(key, dscale))
-        return false;
-
-    scale = ((float) dscale);
     return true;
 }

@@ -375,18 +375,15 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
         return nullptr;
     }
 
-    Value* texParamsValue = parser.readValue();
-    if (texParamsValue == nullptr || texParamsValue->getType() != Value::HashType)
+    const Value texParamsValue = parser.readValue();
+    const Hash* texParams = texParamsValue.getHash();
+    if (texParams == nullptr)
     {
         GetLogger()->error("Error parsing virtual texture\n");
-        delete texParamsValue;
         return nullptr;
     }
 
-    const Hash* texParams = texParamsValue->getHash();
-
     VirtualTexture* virtualTex  = CreateVirtualTexture(texParams, path);
-    delete texParamsValue;
 
     return virtualTex;
 }

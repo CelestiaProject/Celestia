@@ -100,57 +100,6 @@ static const char* MonthAbbrList[12] =
 #endif
 
 
-struct UnitDefinition
-{
-    std::string_view name;
-    double conversion;
-};
-
-
-static const UnitDefinition lengthUnits[] =
-{
-    { "km", 1.0 },
-    { "m",  0.001 },
-    { "rE", EARTH_RADIUS<double> },
-    { "rJ", JUPITER_RADIUS<double> },
-    { "rS", SOLAR_RADIUS<double> },
-    { "AU", KM_PER_AU<double> },
-    { "ly", KM_PER_LY<double> },
-    { "pc", KM_PER_PARSEC<double> },
-    { "kpc", 1000.0 * KM_PER_PARSEC<double> },
-    { "Mpc", 1000000.0 * KM_PER_PARSEC<double> },
-};
-
-
-static const UnitDefinition timeUnits[] =
-{
-    { "s", 1.0 / SECONDS_PER_DAY },
-    { "min", 1.0 / MINUTES_PER_DAY },
-    { "h", 1.0 / HOURS_PER_DAY },
-    { "d", 1.0 },
-    { "y", DAYS_PER_YEAR },
-};
-
-
-static const UnitDefinition angleUnits[] =
-{
-    { "mas", 0.001 / SECONDS_PER_DEG },
-    { "arcsec", 1.0 / SECONDS_PER_DEG },
-    { "arcmin", 1.0 / MINUTES_PER_DEG },
-    { "deg", 1.0 },
-    { "hRA", DEG_PER_HRA },
-    { "rad", 180.0 / celestia::numbers::pi },
-};
-
-
-static const UnitDefinition massUnits[] =
-{
-    { "kg", 1.0 / astro::EarthMass },
-    { "mE", 1.0 },
-    { "mJ", astro::JupiterMass / astro::EarthMass },
-};
-
-
 float astro::lumToAbsMag(float lum)
 {
     return SOLAR_ABSMAG - log(lum) * LN_MAG;
@@ -762,99 +711,65 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-bool astro::getLengthScale(std::string_view unitName, double& scale)
+std::optional<double> astro::getLengthScale(LengthUnit unit)
 {
-    unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
-    bool foundMatch = false;
-    for(unsigned int i = 0; i < nUnits; i++)
+    switch (unit)
     {
-        if (lengthUnits[i].name == unitName)
-        {
-            foundMatch = true;
-            scale = lengthUnits[i].conversion;
-            break;
-        }
+    case LengthUnit::Kilometer: return 1.0;
+    case LengthUnit::Meter: return 1e-3;
+    case LengthUnit::EarthRadius: return EARTH_RADIUS<double>;
+    case LengthUnit::JupiterRadius: return JUPITER_RADIUS<double>;
+    case LengthUnit::SolarRadius: return SOLAR_RADIUS<double>;
+    case LengthUnit::AstronomicalUnit: return KM_PER_AU<double>;
+    case LengthUnit::LightYear: return KM_PER_LY<double>;
+    case LengthUnit::Parsec: return KM_PER_PARSEC<double>;
+    case LengthUnit::Kiloparsec: return 1e3 * KM_PER_PARSEC<double>;
+    case LengthUnit::Megaparsec: return 1e6 * KM_PER_PARSEC<double>;
+    default: return std::nullopt;
     }
-
-    return foundMatch;
 }
 
 
 // Get scale of given time unit in days
-bool astro::getTimeScale(std::string_view unitName, double& scale)
+std::optional<double> astro::getTimeScale(TimeUnit unit)
 {
-    for (const auto& timeUnit : timeUnits)
+    switch (unit)
     {
-        if (timeUnit.name == unitName)
-        {
-            scale = timeUnit.conversion;
-            return true;
-        }
+    case TimeUnit::Second: return 1.0 / SECONDS_PER_DAY;
+    case TimeUnit::Minute: return 1.0 / MINUTES_PER_DAY;
+    case TimeUnit::Hour: return 1.0 / HOURS_PER_DAY;
+    case TimeUnit::Day: return 1.0;
+    case TimeUnit::JulianYear: return DAYS_PER_YEAR;
+    default: return std::nullopt;
     }
-
-    return false;
 }
 
 
 // Get scale of given angle unit in degrees
-bool astro::getAngleScale(std::string_view unitName, double& scale)
+std::optional<double> astro::getAngleScale(AngleUnit unit)
 {
-    for (const auto& angleUnit : angleUnits)
+    switch (unit)
     {
-        if (angleUnit.name == unitName)
-        {
-            scale = angleUnit.conversion;
-            return true;
-        }
+    case AngleUnit::Milliarcsecond: return 1e-3 / SECONDS_PER_DEG;
+    case AngleUnit::Arcsecond: return 1.0 / SECONDS_PER_DEG;
+    case AngleUnit::Arcminute: return 1.0 / MINUTES_PER_DEG;
+    case AngleUnit::Degree: return 1.0;
+    case AngleUnit::Hour: return DEG_PER_HRA;
+    case AngleUnit::Radian: return 180.0 / celestia::numbers::pi;
+    default: return std::nullopt;
     }
-
-    return false;
 }
 
 
-bool astro::getMassScale(std::string_view unitName, double& scale)
+std::optional<double> astro::getMassScale(MassUnit unit)
 {
-    for (const auto& massUnit : massUnits)
+    switch (unit)
     {
-        if (massUnit.name == unitName)
-        {
-            scale = massUnit.conversion;
-            return true;
-        }
+    case MassUnit::Kilogram: return 1.0 / astro::EarthMass;
+    case MassUnit::EarthMass: return 1.0;
+    case MassUnit::JupiterMass: return astro::JupiterMass / astro::EarthMass;
+    default: return std::nullopt;
     }
-
-    return false;
-}
-
-
-// Check if unit is a length unit
-bool astro::isLengthUnit(std::string_view unitName)
-{
-    double dummy;
-    return getLengthScale(unitName, dummy);
-}
-
-
-// Check if unit is a time unit
-bool astro::isTimeUnit(std::string_view unitName)
-{
-    double dummy;
-    return getTimeScale(unitName, dummy);
-}
-
-
-// Check if unit is an angle unit
-bool astro::isAngleUnit(std::string_view unitName)
-{
-    double dummy;
-    return getAngleScale(unitName, dummy);
-}
-
-
-bool astro::isMassUnit(std::string_view unitName)
-{
-    double dummy;
-    return getMassScale(unitName, dummy);
 }
 
 

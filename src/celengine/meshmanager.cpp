@@ -67,21 +67,13 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    Value* meshDefValue = parser.readValue();
-    if (meshDefValue == nullptr)
+    const Value meshDefValue = parser.readValue();
+    const Hash* meshDef = meshDefValue.getHash();
+    if (meshDef == nullptr)
     {
         GetLogger()->error("{}: Bad mesh file.\n", filename);
         return nullptr;
     }
-
-    if (meshDefValue->getType() != Value::HashType)
-    {
-        GetLogger()->error("{}: Bad mesh file.\n", filename);
-        delete meshDefValue;
-        return nullptr;
-    }
-
-    const Hash* meshDef = meshDefValue->getHash();
 
     SphereMeshParameters params{};
 
@@ -98,8 +90,6 @@ LoadCelestiaMesh(const fs::path& filename)
     meshDef->getNumber("Octaves", params.octaves);
     meshDef->getNumber("Slices", params.slices);
     meshDef->getNumber("Rings", params.rings);
-
-    delete meshDefValue;
 
     auto model = std::make_unique<cmod::Model>();
     SphereMesh sphereMesh(params.size,

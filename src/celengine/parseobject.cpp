@@ -11,6 +11,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
 #include "parseobject.h"
 #include "body.h"
 #include "frame.h"
@@ -344,26 +345,23 @@ ParseStringList(const Hash* table,
         return false;
 
     // Check for a single string first.
-    if (v->getType() == Value::StringType)
+    if (const std::string* str = v->getString(); str != nullptr)
     {
-        stringList.push_back(v->getString());
+        stringList.emplace_back(*str);
         return true;
     }
-    if (v->getType() == Value::ArrayType)
+    if (const ValueArray* array = v->getArray(); array != nullptr)
     {
-        const ValueArray* array = v->getArray();
         ValueArray::const_iterator iter;
 
         // Verify that all array entries are strings
-        for (iter = array->begin(); iter != array->end(); iter++)
-        {
-            if ((*iter)->getType() != Value::StringType)
-                return false;
-        }
+
+        if (std::any_of(array->begin(), array->end(), [](const Value& val) { return val.getType() != ValueType::StringType; }))
+            return false;
 
         // Add strings to stringList
-        for (iter = array->begin(); iter != array->end(); iter++)
-             stringList.push_back((*iter)->getString());
+        for (const auto& val : *array)
+            stringList.emplace_back(*val.getString());
 
         return true;
     }
@@ -679,8 +677,7 @@ CreateOrbit(const Selection& centralObject,
 {
     Orbit* orbit = nullptr;
 
-    string customOrbitName;
-    if (planetData->getString("CustomOrbit", customOrbitName))
+    if (string customOrbitName; planetData->getString("CustomOrbit", customOrbitName))
     {
         orbit = GetCustomOrbit(customOrbitName);
         if (orbit != nullptr)
@@ -691,17 +688,17 @@ CreateOrbit(const Selection& centralObject,
     }
 
 #ifdef USE_SPICE
-    const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit");
-    if (spiceOrbitDataValue != nullptr)
+    if (const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit"); spiceOrbitDataValue != nullptr)
     {
-        if (spiceOrbitDataValue->getType() != Value::HashType)
+        const Hash* spiceOrbitData = spiceOrbitDataValue->getHash();
+        if (spiceOrbitData == nullptr)
         {
             GetLogger()->error("Object has incorrect spice orbit syntax.\n");
             return nullptr;
         }
         else
         {
-            orbit = CreateSpiceOrbit(spiceOrbitDataValue->getHash(), path, usePlanetUnits);
+            orbit = CreateSpiceOrbit(spiceOrbitData, path, usePlanetUnits);
             if (orbit != nullptr)
             {
                 return orbit;
@@ -713,38 +710,37 @@ CreateOrbit(const Selection& centralObject,
 #endif
 
     // Trajectory calculated by Lua script
-    const Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit");
-    if (scriptedOrbitValue != nullptr)
+    if (const Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit"); scriptedOrbitValue != nullptr)
     {
-        if (scriptedOrbitValue->getType() != Value::HashType)
+        const Hash* scriptedOrbitData = scriptedOrbitValue->getHash();
+        if (scriptedOrbitData == nullptr)
         {
             GetLogger()->error("Object has incorrect scripted orbit syntax.\n");
             return nullptr;
         }
 
-        orbit = CreateScriptedOrbit(scriptedOrbitValue->getHash(), path);
+        orbit = CreateScriptedOrbit(scriptedOrbitData, path);
         if (orbit != nullptr)
             return orbit;
     }
 
     // New 1.5.0 style for sampled trajectories. Permits specification of
     // precision and interpolation type.
-    const Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory");
-    if (sampledTrajDataValue != nullptr)
+    if (const Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory"); sampledTrajDataValue != nullptr)
     {
-        if (sampledTrajDataValue->getType() != Value::HashType)
+        const Hash* sampledTrajData = sampledTrajDataValue->getHash();
+        if (sampledTrajData == nullptr)
         {
             GetLogger()->error("Object has incorrect syntax for SampledTrajectory.\n");
             return nullptr;
         }
 
-        return CreateSampledTrajectory(sampledTrajDataValue->getHash(), path);
+        return CreateSampledTrajectory(sampledTrajData, path);
     }
 
     // Old style for sampled trajectories. Assumes cubic interpolation and
     // single precision.
-    string sampOrbitFile;
-    if (planetData->getString("SampledOrbit", sampOrbitFile))
+    if (string sampOrbitFile; planetData->getString("SampledOrbit", sampOrbitFile))
     {
         GetLogger()->verbose("Attempting to load sampled orbit file '{}'\n", sampOrbitFile);
         ResourceHandle orbitHandle =
@@ -760,17 +756,16 @@ CreateOrbit(const Selection& centralObject,
         GetLogger()->error("Could not load sampled orbit file '{}'\n", sampOrbitFile);
     }
 
-    const Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
-    if (orbitDataValue != nullptr)
+    if (const Value* orbitDataValue = planetData->getValue("EllipticalOrbit"); orbitDataValue != nullptr)
     {
-        if (orbitDataValue->getType() != Value::HashType)
+        const Hash* orbitData = orbitDataValue->getHash();
+        if (orbitData == nullptr)
         {
             GetLogger()->error("Object has incorrect elliptical orbit syntax.\n");
             return nullptr;
         }
 
-        return CreateEllipticalOrbit(orbitDataValue->getHash(),
-                                     usePlanetUnits);
+        return CreateEllipticalOrbit(orbitData, usePlanetUnits);
     }
 
     // Create an 'orbit' that places the object at a fixed point in its
@@ -786,8 +781,7 @@ CreateOrbit(const Selection& centralObject,
     //
     // In addition to Rectangular, other coordinate types for fixed position are
     // Planetographic and Planetocentric.
-    const Value* fixedPositionValue = planetData->getValue("FixedPosition");
-    if (fixedPositionValue != nullptr)
+    if (const Value* fixedPositionValue = planetData->getValue("FixedPosition"); fixedPositionValue != nullptr)
     {
         Vector3d fixedPosition = Vector3d::Zero();
         double distanceScale;
@@ -802,9 +796,9 @@ CreateOrbit(const Selection& centralObject,
 
             return new FixedOrbit(fixedPosition);
         }
-        if (fixedPositionValue->getType() == Value::HashType)
+        if (auto fixedPositionData = fixedPositionValue->getHash(); fixedPositionData != nullptr)
         {
-            return CreateFixedPosition(fixedPositionValue->getHash(), centralObject, usePlanetUnits);
+            return CreateFixedPosition(fixedPositionData, centralObject, usePlanetUnits);
         }
 
         GetLogger()->error("Object has incorrect FixedPosition syntax.\n");
@@ -814,8 +808,7 @@ CreateOrbit(const Selection& centralObject,
     // object. This is done by creating an orbit with a period equal to the
     // rotation rate of the parent object. A body-fixed reference frame is a
     // much better way to accomplish this.
-    Vector3d longlat = Vector3d::Zero();
-    if (planetData->getSphericalTuple("LongLat", longlat))
+    if (Vector3d longlat = Vector3d::Zero(); planetData->getSphericalTuple("LongLat", longlat))
     {
         Body* centralBody = centralObject.body();
         if (centralBody != nullptr)
@@ -1061,9 +1054,7 @@ CreateRotationModel(const Hash* planetData,
     //   PrecessingRotation
     //   UniformRotation
     //   legacy rotation parameters
-
-    string customRotationModelName;
-    if (planetData->getString("CustomRotation", customRotationModelName))
+    if (string customRotationModelName; planetData->getString("CustomRotation", customRotationModelName))
     {
         rotationModel = GetCustomRotationModel(customRotationModelName);
         if (rotationModel != nullptr)
@@ -1075,17 +1066,17 @@ CreateRotationModel(const Hash* planetData,
     }
 
 #ifdef USE_SPICE
-    const Value* spiceRotationDataValue = planetData->getValue("SpiceRotation");
-    if (spiceRotationDataValue != nullptr)
+    if (const Value* spiceRotationDataValue = planetData->getValue("SpiceRotation"); spiceRotationDataValue != nullptr)
     {
-        if (spiceRotationDataValue->getType() != Value::HashType)
+        const Hash* spiceRotationData = spiceRotationDataValue->getHash();
+        if (spiceRotationData == nullptr)
         {
             GetLogger()->error("Object has incorrect spice rotation syntax.\n");
             return nullptr;
         }
         else
         {
-            rotationModel = CreateSpiceRotation(spiceRotationDataValue->getHash(), path);
+            rotationModel = CreateSpiceRotation(spiceRotationData, path);
             if (rotationModel != nullptr)
             {
                 return rotationModel;
@@ -1095,23 +1086,22 @@ CreateRotationModel(const Hash* planetData,
     }
 #endif
 
-    const Value* scriptedRotationValue = planetData->getValue("ScriptedRotation");
-    if (scriptedRotationValue != nullptr)
+    if (const Value* scriptedRotationValue = planetData->getValue("ScriptedRotation"); scriptedRotationValue != nullptr)
     {
-        if (scriptedRotationValue->getType() != Value::HashType)
+        const Hash* scriptedRotationData = scriptedRotationValue->getHash();
+        if (scriptedRotationData == nullptr)
         {
             GetLogger()->error("Object has incorrect scripted rotation syntax.\n");
             return nullptr;
         }
 
-        rotationModel = CreateScriptedRotation(scriptedRotationValue->getHash(), path);
+        rotationModel = CreateScriptedRotation(scriptedRotationData, path);
         if (rotationModel != nullptr)
             return rotationModel;
 
     }
 
-    string sampOrientationFile;
-    if (planetData->getString("SampledOrientation", sampOrientationFile))
+    if (string sampOrientationFile; planetData->getString("SampledOrientation", sampOrientationFile))
     {
         GetLogger()->verbose("Attempting to load orientation file '{}'\n", sampOrientationFile);
         ResourceHandle orientationHandle =
@@ -1125,53 +1115,53 @@ CreateRotationModel(const Hash* planetData,
         GetLogger()->error("Could not load rotation model file '{}'\n", sampOrientationFile);
     }
 
-    const Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
-    if (precessingRotationValue != nullptr)
+    if (const Value* precessingRotationValue = planetData->getValue("PrecessingRotation"); precessingRotationValue != nullptr)
     {
-        if (precessingRotationValue->getType() != Value::HashType)
+        const Hash* precessingRotationData = precessingRotationValue->getHash();
+        if (precessingRotationData == nullptr)
         {
             GetLogger()->error("Object has incorrect syntax for precessing rotation.\n");
             return nullptr;
         }
 
-        return CreatePrecessingRotationModel(precessingRotationValue->getHash(),
+        return CreatePrecessingRotationModel(precessingRotationData,
                                              syncRotationPeriod);
     }
 
-    const Value* uniformRotationValue = planetData->getValue("UniformRotation");
-    if (uniformRotationValue != nullptr)
+    if (const Value* uniformRotationValue = planetData->getValue("UniformRotation"); uniformRotationValue != nullptr)
     {
-        if (uniformRotationValue->getType() != Value::HashType)
+        const Hash* uniformRotationData = uniformRotationValue->getHash();
+        if (uniformRotationData == nullptr)
         {
             GetLogger()->error("Object has incorrect UniformRotation syntax.\n");
             return nullptr;
         }
-        return CreateUniformRotationModel(uniformRotationValue->getHash(),
+        return CreateUniformRotationModel(uniformRotationData,
                                           syncRotationPeriod);
     }
 
-    const Value* fixedRotationValue = planetData->getValue("FixedRotation");
-    if (fixedRotationValue != nullptr)
+    if (const Value* fixedRotationValue = planetData->getValue("FixedRotation"); fixedRotationValue != nullptr)
     {
-        if (fixedRotationValue->getType() != Value::HashType)
+        const Hash* fixedRotationData = fixedRotationValue->getHash();
+        if (fixedRotationData == nullptr)
         {
             GetLogger()->error("Object has incorrect FixedRotation syntax.\n");
             return nullptr;
         }
 
-        return CreateFixedRotationModel(fixedRotationValue->getHash());
+        return CreateFixedRotationModel(fixedRotationData);
     }
 
-    const Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
-    if (fixedAttitudeValue != nullptr)
+    if (const Value* fixedAttitudeValue = planetData->getValue("FixedAttitude"); fixedAttitudeValue != nullptr)
     {
-        if (fixedAttitudeValue->getType() != Value::HashType)
+        const Hash* fixedAttitudeData = fixedAttitudeValue->getHash();
+        if (fixedAttitudeData == nullptr)
         {
             GetLogger()->error("Object has incorrect FixedAttitude syntax.\n");
             return nullptr;
         }
 
-        return CreateFixedAttitudeRotationModel(fixedAttitudeValue->getHash());
+        return CreateFixedAttitudeRotationModel(fixedAttitudeData);
     }
 
     // For backward compatibility we need to support rotation parameters
@@ -1495,70 +1485,71 @@ CreateFrameVector(const Universe& universe,
                   const Selection& center,
                   const Hash* vectorData)
 {
-    const Value* value = vectorData->getValue("RelativePosition");
-    if (value != nullptr && value->getHash() != nullptr)
+    if (const Value* value = vectorData->getValue("RelativePosition"); value != nullptr)
     {
-        const Hash* relPosData = value->getHash();
-        Selection observer = getVectorObserver(universe, relPosData);
-        Selection target = getVectorTarget(universe, relPosData);
-        // Default observer is the frame center
-        if (observer.empty())
-            observer = center;
-
-        if (observer.empty() || target.empty())
-            return nullptr;
-
-        return new FrameVector(FrameVector::createRelativePositionVector(observer, target));
-    }
-
-    value = vectorData->getValue("RelativeVelocity");
-    if (value != nullptr && value->getHash() != nullptr)
-    {
-        const Hash* relVData = value->getHash();
-        Selection observer = getVectorObserver(universe, relVData);
-        Selection target = getVectorTarget(universe, relVData);
-        // Default observer is the frame center
-        if (observer.empty())
-            observer = center;
-
-        if (observer.empty() || target.empty())
-            return nullptr;
-
-        return new FrameVector(FrameVector::createRelativeVelocityVector(observer, target));
-    }
-
-    value = vectorData->getValue("ConstantVector");
-    if (value != nullptr && value->getHash() != nullptr)
-    {
-        const Hash* constVecData = value->getHash();
-        Vector3d vec = Vector3d::UnitZ();
-        constVecData->getVector("Vector", vec);
-        if (vec.norm() == 0.0)
+        if (const Hash* relPosData = value->getHash(); relPosData != nullptr)
         {
-            GetLogger()->error("Bad two-vector frame: constant vector has length zero\n");
-            return nullptr;
-        }
-        vec.normalize();
-        vec = Vector3d(vec.x(), vec.z(), -vec.y());
+            Selection observer = getVectorObserver(universe, relPosData);
+            Selection target = getVectorTarget(universe, relPosData);
+            // Default observer is the frame center
+            if (observer.empty())
+                observer = center;
 
-        // The frame for the vector is optional; a nullptr frame indicates
-        // J2000 ecliptic.
-        ReferenceFrame::SharedConstPtr f;
-        const Value* frameValue = constVecData->getValue("Frame");
-        if (frameValue != nullptr)
-        {
-            f = CreateReferenceFrame(universe, frameValue, center, nullptr);
-            if (f == nullptr)
+            if (observer.empty() || target.empty())
                 return nullptr;
-        }
 
-        return new FrameVector(FrameVector::createConstantVector(vec, f));
+            return new FrameVector(FrameVector::createRelativePositionVector(observer, target));
+        }
     }
-    else
+
+    if (const Value* value = vectorData->getValue("RelativeVelocity"); value != nullptr)
     {
-        GetLogger()->error("Bad two-vector frame: unknown vector type\n");
-        return nullptr;
+        if (const Hash* relVData = value->getHash(); relVData != nullptr)
+        {
+            Selection observer = getVectorObserver(universe, relVData);
+            Selection target = getVectorTarget(universe, relVData);
+            // Default observer is the frame center
+            if (observer.empty())
+                observer = center;
+
+            if (observer.empty() || target.empty())
+                return nullptr;
+
+            return new FrameVector(FrameVector::createRelativeVelocityVector(observer, target));
+        }
     }
+
+    if (const Value* value = vectorData->getValue("ConstantVector"); value != nullptr)
+    {
+        if (const Hash* constVecData = value->getHash(); constVecData != nullptr)
+        {
+            Vector3d vec = Vector3d::UnitZ();
+            constVecData->getVector("Vector", vec);
+            if (vec.norm() == 0.0)
+            {
+                GetLogger()->error("Bad two-vector frame: constant vector has length zero\n");
+                return nullptr;
+            }
+            vec.normalize();
+            vec = Vector3d(vec.x(), vec.z(), -vec.y());
+
+            // The frame for the vector is optional; a nullptr frame indicates
+            // J2000 ecliptic.
+            ReferenceFrame::SharedConstPtr f;
+            const Value* frameValue = constVecData->getValue("Frame");
+            if (frameValue != nullptr)
+            {
+                f = CreateReferenceFrame(universe, frameValue, center, nullptr);
+                if (f == nullptr)
+                    return nullptr;
+            }
+
+            return new FrameVector(FrameVector::createConstantVector(vec, f));
+        }
+    }
+
+    GetLogger()->error("Bad two-vector frame: unknown vector type\n");
+    return nullptr;
 }
 
 
@@ -1806,76 +1797,76 @@ CreateTopocentricFrame(const Universe& universe,
 static ReferenceFrame::SharedConstPtr
 CreateComplexFrame(const Universe& universe, const Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
-    const Value* value = frameData->getValue("BodyFixed");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("BodyFixed"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* bodyFixedData = value->getHash();
+        if (bodyFixedData == nullptr)
         {
             GetLogger()->error("Object has incorrect body-fixed frame syntax.\n");
             return nullptr;
         }
 
-        return CreateBodyFixedFrame(universe, value->getHash(), defaultCenter);
+        return CreateBodyFixedFrame(universe, bodyFixedData, defaultCenter);
     }
 
-    value = frameData->getValue("MeanEquator");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("MeanEquator"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* meanEquatorData = value->getHash();
+        if (meanEquatorData == nullptr)
         {
             GetLogger()->error("Object has incorrect mean equator frame syntax.\n");
             return nullptr;
         }
 
-        return CreateMeanEquatorFrame(universe, value->getHash(), defaultCenter);
+        return CreateMeanEquatorFrame(universe, meanEquatorData, defaultCenter);
     }
 
-    value = frameData->getValue("TwoVector");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("TwoVector"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* twoVectorData = value->getHash();
+        if (twoVectorData == nullptr)
         {
             GetLogger()->error("Object has incorrect two-vector frame syntax.\n");
             return nullptr;
         }
 
-       return CreateTwoVectorFrame(universe, value->getHash(), defaultCenter);
+       return CreateTwoVectorFrame(universe, twoVectorData, defaultCenter);
     }
 
-    value = frameData->getValue("Topocentric");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("Topocentric"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* topocentricData = value->getHash();
+        if (topocentricData == nullptr)
         {
             GetLogger()->error("Object has incorrect topocentric frame syntax.\n");
             return nullptr;
         }
 
-        return CreateTopocentricFrame(universe, value->getHash(), defaultCenter, Selection(defaultObserver));
+        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, Selection(defaultObserver));
     }
 
-    value = frameData->getValue("EclipticJ2000");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("EclipticJ2000"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* eclipticData = value->getHash();
+        if (eclipticData == nullptr)
         {
             GetLogger()->error("Object has incorrect J2000 ecliptic frame syntax.\n");
             return nullptr;
         }
 
-        return CreateJ2000EclipticFrame(universe, value->getHash(), defaultCenter);
+        return CreateJ2000EclipticFrame(universe, eclipticData, defaultCenter);
     }
 
-    value = frameData->getValue("EquatorJ2000");
-    if (value != nullptr)
+    if (const Value* value = frameData->getValue("EquatorJ2000"); value != nullptr)
     {
-        if (value->getType() != Value::HashType)
+        const Hash* equatorData = value->getHash();
+        if (equatorData == nullptr)
         {
             GetLogger()->error("Object has incorrect J2000 equator frame syntax.\n");
             return nullptr;
         }
 
-        return CreateJ2000EquatorFrame(universe, value->getHash(), defaultCenter);
+        return CreateJ2000EquatorFrame(universe, equatorData, defaultCenter);
     }
 
     GetLogger()->error("Frame definition does not have a valid frame type.\n");
@@ -1889,17 +1880,14 @@ ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
                                                     const Selection& defaultCenter,
                                                     Body* defaultObserver)
 {
-    if (frameValue->getType() == Value::StringType)
-    {
-        // TODO: handle named frames
-        GetLogger()->error("Invalid syntax for frame definition.\n");
-        return nullptr;
-    }
-    if (frameValue->getType() != Value::HashType)
+    // TODO: handle named frames
+
+    const Hash* frameData = frameValue->getHash();
+    if (frameData == nullptr)
     {
         GetLogger()->error("Invalid syntax for frame definition.\n");
         return nullptr;
     }
 
-    return CreateComplexFrame(universe, frameValue->getHash(), defaultCenter, defaultObserver);
+    return CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver);
 }
