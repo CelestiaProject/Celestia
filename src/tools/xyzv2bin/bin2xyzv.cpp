@@ -56,7 +56,7 @@ static bool binaryToText(const string& infilename, const string& outfilename)
         if (!in.read(reinterpret_cast<char*>(&data), sizeof(data)))
             break;
 
-        fmt::print(out, "{:.7f} {:.7f} {:.7f} {:.7f} {:.7f} {:.7f} {:.7f}\n",
+        fmt::print(out, "{} {} {} {} {} {} {}\n",
                    data.tdb,
                    data.position[0], data.position[1], data.position[2],
                    data.velocity[0], data.velocity[1], data.velocity[2]);
