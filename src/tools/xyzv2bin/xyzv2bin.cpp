@@ -57,7 +57,7 @@ static bool SkipComments(istream& in)
 static bool xyzvToBinary(const string& inFilename, const string& outFilename)
 {
     ifstream in(inFilename);
-    ofstream out(outFilename);
+    ofstream out(outFilename, ios::binary);
     if (!in.good() || !out.good())
         return false;
 
@@ -77,7 +77,7 @@ static bool xyzvToBinary(const string& inFilename, const string& outFilename)
 
     uint64_t counter = 0;
     XYZVBinaryData data;
-    while (in.good())
+    while (!in.eof())
     {
         in >> data.tdb;
         in >> data.position[0];
@@ -88,12 +88,21 @@ static bool xyzvToBinary(const string& inFilename, const string& outFilename)
         in >> data.velocity[2];
 
         if (!in.good())
-            continue;
+        {
+            if (!in.eof())
+                fmt::print(cerr, "Error reading input file, line {}\n", counter+1);
+            break;
+        }
 
         if (!out.write(reinterpret_cast<char*>(&data), sizeof(data)))
+        {
+            fmt::print(cerr, "Error writing output file, record N{}\n", counter);
             break;
+        }
         counter++;
     }
+
+    fmt::print(clog, "Written {} records.\n", counter);
 
     if (counter == 0)
         return false;

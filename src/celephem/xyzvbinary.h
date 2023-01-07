@@ -2,13 +2,14 @@
 
 #include <cstdint>
 
+#pragma pack(push, 1)
 struct XYZVBinaryHeader
 {
     char magic[8];
-    uint16_t byteOrder;
-    uint16_t digits;
-    uint32_t reserved;
-    uint64_t count;
+    std::uint16_t byteOrder;
+    std::uint16_t digits;
+    std::uint32_t reserved;
+    std::uint64_t count;
 };
 
 struct XYZVBinaryData
@@ -17,3 +18,4 @@ struct XYZVBinaryData
     double position[3];
     double velocity[3];
 };
+#pragma pack(pop)
