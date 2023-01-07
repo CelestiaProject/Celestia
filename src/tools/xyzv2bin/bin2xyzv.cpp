@@ -11,11 +11,11 @@ using namespace std;
 
 static bool binaryToText(const string& infilename, const string& outfilename)
 {
-    ifstream in(infilename);
+    ifstream in(infilename, ios::binary);
     ofstream out(outfilename);
     if (!in.good() || !out.good())
     {
-        fmt::print(cerr, _("Error opening {} or .\n"), infilename, outfilename);
+        fmt::print(cerr, _("Error opening {} or {}.\n"), infilename, outfilename);
         return false;
     }
 
@@ -46,10 +46,12 @@ static bool binaryToText(const string& infilename, const string& outfilename)
         return false;
     }
 
+    fmt::print(clog, "File has {} records.\n", header.count);
+
     if (header.count == 0)
         return false;
 
-    while (in.good())
+    while (!in.eof())
     {
         XYZVBinaryData data;
 
