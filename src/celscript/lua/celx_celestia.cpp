@@ -2657,10 +2657,9 @@ static int celestia_getparamstring(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
     CelestiaCore* appCore = this_celestia(l);
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
-    std::string paramString; // HWR
     CelestiaConfig* config = appCore->getConfig();
-    config->configParams->getString(s, paramString);
-    lua_pushstring(l,paramString.c_str());
+    const std::string* paramString = config->configParams->getString(s);
+    lua_pushstring(l, paramString == nullptr ? "" : paramString->c_str());
     return 1;
 }
 

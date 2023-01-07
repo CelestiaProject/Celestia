@@ -49,24 +49,27 @@ DestinationList* ReadDestinationList(std::istream& in)
 
         Destination* dest = new Destination();
 
-        if (!destParams->getString("Name", dest->name))
+        if (const std::string* destName = destParams->getString("Name"); destName == nullptr)
         {
             GetLogger()->warn("Skipping unnamed destination\n");
             delete dest;
         }
         else
         {
-            destParams->getString("Target", dest->target);
-            destParams->getString("Description", dest->description);
-            destParams->getNumber("Distance", dest->distance);
+            dest->name = *destName;
+            if (const std::string* target = destParams->getString("Target"); target != nullptr)
+                dest->target = *target;
+            if (const std::string* description = destParams->getString("Description"); description != nullptr)
+                dest->description = *description;
+            if (auto distance = destParams->getNumber<double>("Distance"); distance.has_value())
+                dest->distance = *distance;
 
             // Default unit of distance is the light year
-            std::string distanceUnits;
-            if (destParams->getString("DistanceUnits", distanceUnits))
+            if (const std::string* distanceUnits = destParams->getString("DistanceUnits"); distanceUnits != nullptr)
             {
-                if (!compareIgnoringCase(distanceUnits, "km"))
+                if (!compareIgnoringCase(*distanceUnits, "km"))
                     dest->distance = astro::kilometersToLightYears(dest->distance);
-                else if (!compareIgnoringCase(distanceUnits, "au"))
+                else if (!compareIgnoringCase(*distanceUnits, "au"))
                     dest->distance = astro::AUtoLightYears(dest->distance);
             }
 

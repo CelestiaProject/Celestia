@@ -20,17 +20,6 @@
 using namespace std;
 using namespace celestia::util;
 
-static unsigned int getUint(const Hash* params,
-                            const string& paramName,
-                            unsigned int defaultValue)
-{
-    double value = 0.0;
-    if (params->getNumber(paramName, value))
-        return (unsigned int) value;
-
-    return defaultValue;
-}
-
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *config)
 {
@@ -65,68 +54,85 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
 #ifdef CELX
     config->configParams = configParams;
-    configParams->getPath("LuaHook", config->luaHook);
+    if (auto path = configParams->getPath("LuaHook"); path.has_value())
+        config->luaHook = *path;
 #endif
 
-    config->faintestVisible = 6.0f;
-    configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
-    configParams->getPath("FavoritesFile", config->favoritesFile);
-    configParams->getPath("DestinationFile", config->destinationsFile);
-    configParams->getPath("InitScript", config->initScriptFile);
-    configParams->getPath("DemoScript", config->demoScriptFile);
-    configParams->getPath("AsterismsFile", config->asterismsFile);
-    configParams->getPath("BoundariesFile", config->boundariesFile);
-    configParams->getPath("StarDatabase", config->starDatabaseFile);
-    configParams->getPath("StarNameDatabase", config->starNamesFile);
-    configParams->getPath("HDCrossIndex", config->HDCrossIndexFile);
-    configParams->getPath("SAOCrossIndex", config->SAOCrossIndexFile);
-    configParams->getPath("GlieseCrossIndex", config->GlieseCrossIndexFile);
-    configParams->getPath("LeapSecondsFile", config->leapSecondsFile);
-    configParams->getString("Font", config->mainFont);
-    configParams->getString("LabelFont", config->labelFont);
-    configParams->getString("TitleFont", config->titleFont);
-    configParams->getPath("LogoTexture", config->logoTextureFile);
-    configParams->getString("Cursor", config->cursor);
-    configParams->getString("ProjectionMode", config->projectionMode);
-    configParams->getString("ViewportEffect", config->viewportEffect);
-    configParams->getString("WarpMeshFile", config->warpMeshFile);
-    configParams->getString("X264EncoderOptions", config->x264EncoderOptions);
-    configParams->getString("FFVHEncoderOptions", config->ffvhEncoderOptions);
-    configParams->getString("MeasurementSystem", config->measurementSystem);
-    configParams->getString("TemperatureScale", config->temperatureScale);
+    config->faintestVisible = configParams->getNumber<float>("FaintestVisibleMagnitude").value_or(6.0f);
+    if (auto path = configParams->getPath("FavoritesFile"); path.has_value())
+        config->favoritesFile = *path;
+    if (auto path = configParams->getPath("DestinationFile"); path.has_value())
+        config->destinationsFile = *path;
+    if (auto path = configParams->getPath("InitScript"); path.has_value())
+        config->initScriptFile = *path;
+    if (auto path = configParams->getPath("DemoScript"); path.has_value())
+        config->demoScriptFile = *path;
+    if (auto path = configParams->getPath("AsterismsFile"); path.has_value())
+        config->asterismsFile = *path;
+    if (auto path = configParams->getPath("BoundariesFile"); path.has_value())
+        config->boundariesFile = *path;
+    if (auto path = configParams->getPath("StarDatabase"); path.has_value())
+        config->starDatabaseFile = *path;
+    if (auto path = configParams->getPath("StarNameDatabase"); path.has_value())
+        config->starNamesFile = *path;
+    if (auto path = configParams->getPath("HDCrossIndex"); path.has_value())
+        config->HDCrossIndexFile = *path;
+    if (auto path = configParams->getPath("SAOCrossIndex"); path.has_value())
+        config->SAOCrossIndexFile = *path;
+    if (auto path = configParams->getPath("GlieseCrossIndex"); path.has_value())
+        config->GlieseCrossIndexFile = *path;
+    if (auto path = configParams->getPath("LeapSecondsFile"); path.has_value())
+        config->leapSecondsFile = *path;
+    if (const std::string* font = configParams->getString("Font"); font != nullptr)
+        config->mainFont = *font;
+    if (const std::string* labelFont = configParams->getString("LabelFont"); labelFont != nullptr)
+        config->labelFont = *labelFont;
+    if (const std::string* titleFont = configParams->getString("TitleFont"); titleFont != nullptr)
+        config->titleFont = *titleFont;
+    if (const std::string* logoTextureFile = configParams->getString("LogoTexture"); logoTextureFile != nullptr)
+        config->logoTextureFile = *logoTextureFile;
+    if (const std::string* cursor = configParams->getString("Cursor"); cursor != nullptr)
+        config->cursor = *cursor;
+    if (const std::string* projectionMode = configParams->getString("ProjectionMode"); projectionMode != nullptr)
+        config->projectionMode = *projectionMode;
+    if (const std::string* viewportEffect = configParams->getString("ViewportEffect"); viewportEffect != nullptr)
+        config->viewportEffect = *viewportEffect;
+    if (const std::string* warpMeshFile = configParams->getString("WarpMeshFile"); warpMeshFile != nullptr)
+        config->warpMeshFile = *warpMeshFile;
+    if (const std::string* x264EncoderOptions = configParams->getString("X264EncoderOptions"); x264EncoderOptions != nullptr)
+        config->x264EncoderOptions = *x264EncoderOptions;
+    if (const std::string* ffvhEncoderOptions = configParams->getString("FFVHEncoderOptions"); ffvhEncoderOptions != nullptr)
+        config->ffvhEncoderOptions = *ffvhEncoderOptions;
+    if (const std::string* measurementSystem = configParams->getString("MeasurementSystem"); measurementSystem != nullptr)
+        config->measurementSystem = *measurementSystem;
+    if (const std::string* temperatureScale = configParams->getString("TemperatureScale"); temperatureScale != nullptr)
+        config->temperatureScale = *temperatureScale;
 
-    float maxDist = 1.0;
-    configParams->getNumber("SolarSystemMaxDistance", maxDist);
-    config->SolarSystemMaxDistance = min(max(maxDist, 1.0f), 10.0f);
+    auto maxDist = configParams->getNumber<float>("SolarSystemMaxDistance").value_or(1.0f);
+    config->SolarSystemMaxDistance = std::clamp(maxDist, 1.0f, 10.0f);
 
-    config->ShadowMapSize = getUint(configParams, "ShadowMapSize", 0);
+    config->ShadowMapSize = configParams->getNumber<unsigned int>("ShadowMapSize").value_or(0u);
 
-    double aaSamples = 1;
-    configParams->getNumber("AntialiasingSamples", aaSamples);
-    config->aaSamples = (unsigned int) aaSamples;
+    config->aaSamples = configParams->getNumber<unsigned int>("AntialiasingSamples").value_or(1u);
 
-    config->rotateAcceleration = 120.0f;
-    configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
-    config->mouseRotationSensitivity = 1.0f;
-    configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
-    config->reverseMouseWheel = false;
-    configParams->getBoolean("ReverseMouseWheel", config->reverseMouseWheel);
-    configParams->getPath("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
+    config->rotateAcceleration = configParams->getNumber<float>("RotateAcceleration").value_or(120.0f);
+    config->mouseRotationSensitivity = configParams->getNumber<float>("MouseRotationSensitivity").value_or(1.0f);
+    config->reverseMouseWheel = configParams->getBoolean("ReverseMouseWheel").value_or(false);
+    if (auto path = configParams->getPath("ScriptScreenshotDirectory"); path.has_value())
+        config->scriptScreenshotDirectory = *path;
     config->scriptSystemAccessPolicy = "ask";
-    configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
+    if (const std::string* scriptSystemAccessPolicy = configParams->getString("ScriptSystemAccessPolicy"); scriptSystemAccessPolicy != nullptr)
+        config->scriptSystemAccessPolicy = *scriptSystemAccessPolicy;
 
-    config->orbitWindowEnd = 0.5f;
-    configParams->getNumber("OrbitWindowEnd", config->orbitWindowEnd);
-    config->orbitPeriodsShown = 1.0f;
-    configParams->getNumber("OrbitPeriodsShown", config->orbitPeriodsShown);
-    config->linearFadeFraction = 0.0f;
-    configParams->getNumber("LinearFadeFraction", config->linearFadeFraction);
+    config->orbitWindowEnd = configParams->getNumber<float>("OrbitWindowEnd").value_or(0.5f);
+    config->orbitPeriodsShown = configParams->getNumber<float>("OrbitPeriodsShown").value_or(1.0f);
+    config->linearFadeFraction = configParams->getNumber<float>("LinearFadeFraction").value_or(0.0f);
 
-    config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
-    config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);
-    config->eclipseTextureSize = getUint(configParams, "EclipseTextureSize", 128);
+    config->orbitPathSamplePoints = configParams->getNumber<unsigned int>("OrbitPathSamplePoints").value_or(100u);
+    config->shadowTextureSize = configParams->getNumber<unsigned int>("ShadowTextureSize").value_or(256u);
+    config->eclipseTextureSize = configParams->getNumber<unsigned int>("EclipseTextureSize").value_or(128u);
 
-    config->consoleLogRows = getUint(configParams, "LogSize", 200);
+    config->consoleLogRows = configParams->getNumber<unsigned int>("LogSize").value_or(200u);
 
     if (const Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs"); solarSystemsVal != nullptr)
     {
@@ -277,41 +283,54 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         else
         {
             string starTexNames[StellarClass::Spectral_Count];
-            starTexTable->getString("O", starTexNames[StellarClass::Spectral_O]);
-            starTexTable->getString("B", starTexNames[StellarClass::Spectral_B]);
-            starTexTable->getString("A", starTexNames[StellarClass::Spectral_A]);
-            starTexTable->getString("F", starTexNames[StellarClass::Spectral_F]);
-            starTexTable->getString("G", starTexNames[StellarClass::Spectral_G]);
-            starTexTable->getString("K", starTexNames[StellarClass::Spectral_K]);
-            starTexTable->getString("M", starTexNames[StellarClass::Spectral_M]);
-            starTexTable->getString("R", starTexNames[StellarClass::Spectral_R]);
-            starTexTable->getString("S", starTexNames[StellarClass::Spectral_S]);
-            starTexTable->getString("N", starTexNames[StellarClass::Spectral_N]);
-            starTexTable->getString("WC", starTexNames[StellarClass::Spectral_WC]);
-            starTexTable->getString("WN", starTexNames[StellarClass::Spectral_WN]);
-            starTexTable->getString("WO", starTexNames[StellarClass::Spectral_WO]);
-            starTexTable->getString("Unknown", starTexNames[StellarClass::Spectral_Unknown]);
-            starTexTable->getString("L", starTexNames[StellarClass::Spectral_L]);
-            starTexTable->getString("T", starTexNames[StellarClass::Spectral_T]);
-            starTexTable->getString("Y", starTexNames[StellarClass::Spectral_Y]);
-            starTexTable->getString("C", starTexNames[StellarClass::Spectral_C]);
+            if (const std::string* texName = starTexTable->getString("O"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_O] = *texName;
+            if (const std::string* texName = starTexTable->getString("B"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_B] = *texName;
+            if (const std::string* texName = starTexTable->getString("A"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_A] = *texName;
+            if (const std::string* texName = starTexTable->getString("F"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_F] = *texName;
+            if (const std::string* texName = starTexTable->getString("G"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_G] = *texName;
+            if (const std::string* texName = starTexTable->getString("K"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_K] = *texName;
+            if (const std::string* texName = starTexTable->getString("M"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_M] = *texName;
+            if (const std::string* texName = starTexTable->getString("R"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_R] = *texName;
+            if (const std::string* texName = starTexTable->getString("S"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_S] = *texName;
+            if (const std::string* texName = starTexTable->getString("N"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_N] = *texName;
+            if (const std::string* texName = starTexTable->getString("WC"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_WC] = *texName;
+            if (const std::string* texName = starTexTable->getString("WN"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_WN] = *texName;
+            if (const std::string* texName = starTexTable->getString("WO"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_WO] = *texName;
+            if (const std::string* texName = starTexTable->getString("Unknown"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_Unknown] = *texName;
+            if (const std::string* texName = starTexTable->getString("L"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_L] = *texName;
+            if (const std::string* texName = starTexTable->getString("T"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_T] = *texName;
+            if (const std::string* texName = starTexTable->getString("Y"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_Y] = *texName;
+            if (const std::string* texName = starTexTable->getString("C"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_C] = *texName;
 
             // One texture for all white dwarf types; not sure if this needs to be
             // changed. White dwarfs vary widely in temperature, so texture choice
             // should probably be based on that instead of spectral type.
-            starTexTable->getString("WD", starTexNames[StellarClass::Spectral_D]);
+            if (const std::string* texName = starTexTable->getString("WD"); texName != nullptr)
+                starTexNames[StellarClass::Spectral_D] = *texName;
 
-            string neutronStarTexName;
-            if (starTexTable->getString("NeutronStar", neutronStarTexName))
-            {
-                config->starTextures.neutronStarTex.setTexture(neutronStarTexName, "textures");
-            }
+            if (const std::string* texName = starTexTable->getString("NeutronStar"); texName != nullptr)
+                config->starTextures.neutronStarTex.setTexture(*texName, "textures");
 
-            string defaultTexName;
-            if (starTexTable->getString("Default", defaultTexName))
-            {
-                config->starTextures.defaultTex.setTexture(defaultTexName, "textures");
-            }
+            if (const std::string* texName = starTexTable->getString("Default"); texName != nullptr)
+                config->starTextures.defaultTex.setTexture(*texName, "textures");
 
             for (unsigned int i = 0; i < (unsigned int) StellarClass::Spectral_Count; i++)
             {
@@ -331,16 +350,4 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 #endif
 
     return config;
-}
-
-
-float
-CelestiaConfig::getFloatValue(const string& name)
-{
-    assert(params != nullptr);
-
-    double x = 0.0;
-    params->getNumber(name, x);
-
-    return (float) x;
 }

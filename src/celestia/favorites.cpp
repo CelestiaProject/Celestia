@@ -53,8 +53,7 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         }
 
         //If this is a folder, don't get any other params.
-        if(!favParams->getBoolean("isFolder", fav->isFolder))
-            fav->isFolder = false;
+        fav->isFolder = favParams->getBoolean("isFolder").value_or(false);
         if(fav->isFolder)
         {
             favorites->push_back(fav);
@@ -62,40 +61,38 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         }
 
         // Get parentFolder
-        favParams->getString("parentFolder", fav->parentFolder);
+        if (const std::string* parentFolder = favParams->getString("parentFolder"); parentFolder != nullptr)
+            fav->parentFolder = *parentFolder;
 
         // Get position. It is stored as a base in light years with an offset
         // in microlight years. Bad idea, but we need to stay compatible.
-        Eigen::Vector3d base(Eigen::Vector3d::Zero());
-        Eigen::Vector3d offset(Eigen::Vector3d::Zero());
-        favParams->getVector("base", base);
-        favParams->getVector("offset", offset);
+        auto base = favParams->getVector3<double>("base").value_or(Eigen::Vector3d::Zero());
+        auto offset = favParams->getVector3<double>("offset").value_or(Eigen::Vector3d::Zero());
         fav->position = UniversalCoord::CreateLy(base) + UniversalCoord::CreateLy(offset * 1.0e-6);
 
         // Get orientation
-        Eigen::Vector3d axis = Eigen::Vector3d::UnitX();
-        double angle = 0.0;
-        favParams->getVector("axis", axis);
-        favParams->getNumber("angle", angle);
+        auto axis = favParams->getVector3<double>("axis").value_or(Eigen::Vector3d::UnitX());
+        auto angle = favParams->getNumber<double>("angle").value_or(0.0);
         fav->orientation = Eigen::Quaternionf(Eigen::AngleAxisf((float) angle, axis.cast<float>()));
 
         // Get time
-        fav->jd = 0.0;
-        favParams->getNumber("time", fav->jd);
+        fav->jd = favParams->getNumber<double>("time").value_or(0.0);
 
         // Get the selected object
-        favParams->getString("selection", fav->selectionName);
+        if (const std::string* selectionName = favParams->getString("selection"); selectionName != nullptr)
+            fav->selectionName = *selectionName;
 
-        std::string coordSysName;
-        favParams->getString("coordsys", coordSysName);
-        if (coordSysName == "ecliptical")
-            fav->coordSys = ObserverFrame::Ecliptical;
-        else if (coordSysName == "equatorial")
-            fav->coordSys = ObserverFrame::Equatorial;
-        else if (coordSysName == "geographic")
-            fav->coordSys = ObserverFrame::BodyFixed;
-        else
-            fav->coordSys = ObserverFrame::Universal;
+        if (const std::string* coordSysName = favParams->getString("coordsys"); coordSysName != nullptr)
+        {
+            if (*coordSysName == "ecliptical")
+                fav->coordSys = ObserverFrame::Ecliptical;
+            else if (*coordSysName == "equatorial")
+                fav->coordSys = ObserverFrame::Equatorial;
+            else if (*coordSysName == "geographic")
+                fav->coordSys = ObserverFrame::BodyFixed;
+            else
+                fav->coordSys = ObserverFrame::Universal;
+        }
 
         favorites->push_back(fav);
     }

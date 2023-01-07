@@ -314,51 +314,56 @@ void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u,
 static VirtualTexture* CreateVirtualTexture(const Hash* texParams,
                                             const fs::path& path)
 {
-    string imageDirectory;
-    if (!texParams->getString("ImageDirectory", imageDirectory))
+    const std::string* imageDirectory = texParams->getString("ImageDirectory");
+    if (imageDirectory == nullptr)
     {
         GetLogger()->error("ImageDirectory missing in virtual texture.\n");
         return nullptr;
     }
 
-    double baseSplit = 0.0;
-    if (!texParams->getNumber("BaseSplit", baseSplit) ||
-        baseSplit < 0.0 || baseSplit != floor(baseSplit))
+    std::optional<double> baseSplit = texParams->getNumber<double>("BaseSplit");
+    if (!baseSplit.has_value() || *baseSplit < 0.0 || *baseSplit != floor(*baseSplit))
     {
         GetLogger()->error("BaseSplit in virtual texture missing or has bad value\n");
         return nullptr;
     }
 
-    double tileSize = 0.0;
-    if (!texParams->getNumber("TileSize", tileSize))
+    std::optional<double> tileSize = texParams->getNumber<double>("TileSize");
+    if (!tileSize.has_value())
     {
         GetLogger()->error("TileSize is missing from virtual texture\n");
         return nullptr;
     }
 
-    if (tileSize != floor(tileSize) ||
-        tileSize < 64.0 ||
-        !isPow2((int) tileSize))
+    if (*tileSize != floor(*tileSize) ||
+        *tileSize < 64.0 ||
+        !isPow2((int) *tileSize))
     {
         GetLogger()->error("Virtual texture tile size must be a power of two >= 64\n");
         return nullptr;
     }
 
     string tileType = "dds";
-    texParams->getString("TileType", tileType);
+    if (const std::string* tileTypeVal = texParams->getString("TileType"); tileTypeVal != nullptr)
+    {
+        tileType = *tileTypeVal;
+    }
 
     string tilePrefix = "tx_";
-    texParams->getString("TilePrefix", tilePrefix);
+    if (const std::string* tilePrefixVal = texParams->getString("TilePrefix"); tilePrefixVal != nullptr)
+    {
+        tilePrefix = *tilePrefixVal;
+    }
 
     // if absolute directory notation for ImageDirectory used,
     // don't prepend the current add-on path.
-    fs::path directory(imageDirectory);
+    fs::path directory(*imageDirectory);
 
     if (directory.is_relative())
         directory = path / directory;
     return new VirtualTexture(directory,
-                              (unsigned int) baseSplit,
-                              (unsigned int) tileSize,
+                              (unsigned int) *baseSplit,
+                              (unsigned int) *tileSize,
                               tilePrefix,
                               tileType);
 }

@@ -68,10 +68,9 @@ bool Nebula::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 
 bool Nebula::load(const AssociativeArray* params, const fs::path& resPath)
 {
-    string t;
-    if (params->getString("Mesh", t))
+    if (const std::string* t = params->getString("Mesh"); t != nullptr)
     {
-        fs::path geometryFileName(t);
+        fs::path geometryFileName(*t);
         ResourceHandle geometryHandle =
             GetGeometryManager()->getHandle(GeometryInfo(geometryFileName, resPath));
         setGeometry(geometryHandle);

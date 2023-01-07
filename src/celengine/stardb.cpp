@@ -838,7 +838,6 @@ bool StarDatabase::createStar(Star* star,
                               bool isBarycenter)
 {
     StarDetails* details = nullptr;
-    std::string spectralType;
 
     // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.
@@ -848,22 +847,22 @@ bool StarDatabase::createStar(Star* star,
     }
     else
     {
-        if (starData->getString("SpectralType", spectralType))
-        {
-            StellarClass sc = StellarClass::parse(spectralType);
-            details = StarDetails::GetStarDetails(sc);
-            if (details == nullptr)
-            {
-                GetLogger()->error(_("Invalid star: bad spectral type.\n"));
-                return false;
-            }
-        }
-        else
+        if (const std::string* spectralType = starData->getString("SpectralType"); spectralType == nullptr)
         {
             // Spectral type is required for new stars
             if (disposition != DataDisposition::Modify)
             {
                 GetLogger()->error(_("Invalid star: missing spectral type.\n"));
+                return false;
+            }
+        }
+        else
+        {
+            StellarClass sc = StellarClass::parse(*spectralType);
+            details = StarDetails::GetStarDetails(sc);
+            if (details == nullptr)
+            {
+                GetLogger()->error(_("Invalid star: bad spectral type.\n"));
                 return false;
             }
         }
@@ -901,47 +900,36 @@ bool StarDatabase::createStar(Star* star,
         }
     }
 
-    std::string modelName;
-    std::string textureName;
-    bool hasTexture = starData->getString("Texture", textureName);
-    bool hasModel = starData->getString("Mesh", modelName);
+    const std::string* modelName = starData->getString("Mesh");
+    const std::string* textureName = starData->getString("Texture");
 
     RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != nullptr);
 
-    Eigen::Vector3d semiAxes = Eigen::Vector3d::Ones();
-    bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
+    std::optional<Eigen::Vector3d> semiAxes = starData->getLengthVector<double>("SemiAxes");
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
 
-    double radius;
-    bool hasRadius = starData->getLength("Radius", radius);
+    std::optional<float> radius = starData->getLength<float>("Radius");
 
-    double temperature = 0.0;
-    bool hasTemperature = starData->getNumber("Temperature", temperature);
+    auto temperature = starData->getNumber<double>("Temperature").value_or(0.0);
     // disallow unphysical temperature values
-    if (temperature <= 0.0)
-    {
-        hasTemperature = false;
-    }
+    bool hasTemperature = temperature > 0.0;
 
-    double bolometricCorrection;
-    bool hasBolometricCorrection = starData->getNumber("BoloCorrection", bolometricCorrection);
+    auto bolometricCorrection = starData->getNumber<float>("BoloCorrection");
 
-    std::string infoURL;
-    bool hasInfoURL = starData->getString("InfoURL", infoURL);
+    const std::string* infoURL = starData->getString("InfoURL");
 
-    Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
-
-    if (hasTexture              ||
-        hasModel                ||
-        orbit != nullptr        ||
-        hasSemiAxes             ||
-        hasRadius               ||
-        hasTemperature          ||
-        hasBolometricCorrection ||
-        hasRotationModel        ||
-        hasInfoURL)
+    if (Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
+        textureName != nullptr ||
+        modelName != nullptr ||
+        orbit != nullptr ||
+        semiAxes.has_value() ||
+        radius.has_value() ||
+        hasTemperature ||
+        bolometricCorrection.has_value() ||
+        hasRotationModel ||
+        infoURL != nullptr)
     {
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
@@ -953,15 +941,15 @@ bool StarDatabase::createStar(Star* star,
             free_details = true;
         }
 
-        if (hasTexture)
+        if (textureName != nullptr)
         {
-            details->setTexture(MultiResTexture(textureName, path));
+            details->setTexture(MultiResTexture(*textureName, path));
             details->addKnowledge(StarDetails::KnowTexture);
         }
 
-        if (hasModel)
+        if (modelName != nullptr)
         {
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName,
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*modelName,
                                                                                          path,
                                                                                          Eigen::Vector3f::Zero(),
                                                                                          1.0f,
@@ -969,14 +957,14 @@ bool StarDatabase::createStar(Star* star,
             details->setGeometry(geometryHandle);
         }
 
-        if (hasSemiAxes)
+        if (semiAxes.has_value())
         {
-            details->setEllipsoidSemiAxes(semiAxes.cast<float>());
+            details->setEllipsoidSemiAxes(semiAxes->cast<float>());
         }
 
-        if (hasRadius)
+        if (radius.has_value())
         {
-            details->setRadius((float) radius);
+            details->setRadius(*radius);
             details->addKnowledge(StarDetails::KnowRadius);
         }
 
@@ -984,7 +972,7 @@ bool StarDatabase::createStar(Star* star,
         {
             details->setTemperature((float) temperature);
 
-            if (!hasBolometricCorrection)
+            if (!bolometricCorrection.has_value())
             {
                 // if we change the temperature, recalculate the bolometric
                 // correction using formula from formula for main sequence
@@ -1000,14 +988,14 @@ bool StarDatabase::createStar(Star* star,
             }
         }
 
-        if (hasBolometricCorrection)
+        if (bolometricCorrection.has_value())
         {
-            details->setBolometricCorrection((float) bolometricCorrection);
+            details->setBolometricCorrection(*bolometricCorrection);
         }
 
-        if (hasInfoURL)
+        if (infoURL != nullptr)
         {
-            details->setInfoURL(infoURL);
+            details->setInfoURL(*infoURL);
         }
 
         if (orbit != nullptr)
@@ -1018,14 +1006,16 @@ bool StarDatabase::createStar(Star* star,
             AstroCatalog::IndexNumber barycenterCatNo = AstroCatalog::InvalidIndex;
             bool barycenterDefined = false;
 
-            std::string barycenterName;
-            if (starData->getString("OrbitBarycenter", barycenterName))
+            const std::string* barycenterName = starData->getString("OrbitBarycenter");
+            if (barycenterName != nullptr)
             {
-                barycenterCatNo   = findCatalogNumberByName(barycenterName, false);
+                barycenterCatNo   = findCatalogNumberByName(*barycenterName, false);
                 barycenterDefined = true;
             }
-            else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
+            else if (auto barycenterNumber = starData->getNumber<AstroCatalog::IndexNumber>("OrbitBarycenter");
+                     barycenterNumber.has_value())
             {
+                barycenterCatNo   = *barycenterNumber;
                 barycenterDefined = true;
             }
 
@@ -1054,7 +1044,14 @@ bool StarDatabase::createStar(Star* star,
 
                 if (!hasBarycenter)
                 {
-                    GetLogger()->error(_("Barycenter {} does not exist.\n"), barycenterName);
+                    if (barycenterName == nullptr)
+                    {
+                        GetLogger()->error(_("Barycenter {} does not exist.\n"), barycenterCatNo);
+                    }
+                    else
+                    {
+                        GetLogger()->error(_("Barycenter {} does not exist.\n"), *barycenterName);
+                    }
                     delete rm;
                     if (free_details)
                         delete details;
@@ -1102,8 +1099,9 @@ bool StarDatabase::createStar(Star* star,
         }
 
         bool modifyPosition = false;
-        if (starData->getAngle("RA", ra, DEG_PER_HRA, 1.0))
+        if (auto raValue = starData->getAngle<double>("RA", DEG_PER_HRA, 1.0); raValue.has_value())
         {
+            ra = *raValue;
             modifyPosition = true;
         }
         else
@@ -1115,8 +1113,9 @@ bool StarDatabase::createStar(Star* star,
             }
         }
 
-        if (starData->getAngle("Dec", dec))
+        if (auto decValue = starData->getAngle<double>("Dec"); decValue.has_value())
         {
+            dec = *decValue;
             modifyPosition = true;
         }
         else
@@ -1128,8 +1127,9 @@ bool StarDatabase::createStar(Star* star,
             }
         }
 
-        if (starData->getLength("Distance", distance, KM_PER_LY<double>))
+        if (auto dist = starData->getLength<double>("Distance", KM_PER_LY<double>); dist.has_value())
         {
+            distance = *dist;
             modifyPosition = true;
         }
         else
@@ -1160,25 +1160,12 @@ bool StarDatabase::createStar(Star* star,
     }
     else
     {
-        float magnitude = 0.0f;
-        bool magnitudeModified = true;
         bool absoluteDefined = true;
-        if (!starData->getNumber("AbsMag", magnitude))
+        std::optional<float> magnitude = starData->getNumber<float>("AbsMag");
+        if (!magnitude.has_value())
         {
             absoluteDefined = false;
-            if (!starData->getNumber("AppMag", magnitude))
-            {
-                if (disposition != DataDisposition::Modify)
-                {
-                    GetLogger()->error(_("Invalid star: missing magnitude.\n"));
-                    return false;
-                }
-                else
-                {
-                    magnitudeModified = false;
-                }
-            }
-            else
+            if (auto appMag = starData->getNumber<float>("AppMag"); appMag.has_value())
             {
                 float distance = star->getPosition().norm();
 
@@ -1190,23 +1177,27 @@ bool StarDatabase::createStar(Star* star,
                     GetLogger()->error(_("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"));
                     return false;
                 }
-                magnitude = astro::appToAbsMag(magnitude, distance);
+                magnitude = astro::appToAbsMag(*appMag, distance);
+            }
+            else if (disposition != DataDisposition::Modify)
+            {
+                GetLogger()->error(_("Invalid star: missing magnitude.\n"));
+                return false;
             }
         }
 
-        if (magnitudeModified)
-            star->setAbsoluteMagnitude(magnitude);
+        if (magnitude.has_value())
+            star->setAbsoluteMagnitude(*magnitude);
 
-        float extinction = 0.0f;
-        if (starData->getNumber("Extinction", extinction))
+        if (auto extinction = starData->getNumber<float>("Extinction"); extinction.has_value())
         {
             float distance = star->getPosition().norm();
             if (distance != 0.0f)
-                star->setExtinction(extinction / distance);
+                star->setExtinction(*extinction / distance);
             else
                 extinction = 0.0f;
             if (!absoluteDefined)
-                star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
+                star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - *extinction);
         }
     }
 
