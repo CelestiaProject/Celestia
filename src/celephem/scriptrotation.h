@@ -23,7 +23,7 @@ class ScriptedRotation : public RotationModel
     ScriptedRotation() = default;
     ~ScriptedRotation() = default;
 
-    bool initialize(const std::string& moduleName,
+    bool initialize(const std::string* moduleName,
                     const std::string& funcName,
                     const Hash* parameters,
                     const fs::path& path);

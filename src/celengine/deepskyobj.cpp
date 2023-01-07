@@ -139,68 +139,57 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
 bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
-    Eigen::Vector3d position(Eigen::Vector3d::Zero());
-    if (params->getVector("Position", position))
+    if (auto position = params->getVector3<double>("Position"); position.has_value())
     {
-        setPosition(position);
+        setPosition(*position);
     }
     else
     {
-        double distance = 1.0;
-        double RA = 0.0;
-        double dec = 0.0;
-        params->getLength("Distance", distance, KM_PER_LY<double>);
-        params->getAngle("RA", RA, DEG_PER_HRA);
-        params->getAngle("Dec", dec);
+        auto distance = params->getLength<double>("Distance", KM_PER_LY<double>).value_or(1.0);
+        auto RA = params->getAngle<double>("RA", DEG_PER_HRA).value_or(0.0);
+        auto dec = params->getAngle<double>("Dec").value_or(0.0);
 
         Eigen::Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
         setPosition(p);
     }
 
     // Get orientation
-    Eigen::Vector3d axis(Eigen::Vector3d::UnitX());
-    double angle = 0.0;
-    params->getVector("Axis", axis);
-    params->getAngle("Angle", angle);
+    auto axis = params->getVector3<double>("Axis").value_or(Eigen::Vector3d::UnitX());
+    auto angle = params->getAngle<double>("Angle").value_or(0.0);
 
     setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(angle)),
                                                         axis.cast<float>().normalized())));
 
-    double radius = 1.0;
-    params->getLength("Radius", radius, KM_PER_LY<double>);
+    setRadius(params->getLength<float>("Radius", KM_PER_LY<double>).value_or(1.0f));
 
-    setRadius(static_cast<float>(radius));
+    if (auto absMagValue = params->getNumber<float>("AbsMag"); absMagValue.has_value())
+        setAbsoluteMagnitude(*absMagValue);
 
-    double absMag = 0.0;
-    if (params->getNumber("AbsMag", absMag))
-        setAbsoluteMagnitude(static_cast<float>(absMag));
-
-    std::string infoURL; // FIXME: infourl class
-    if (params->getString("InfoURL", infoURL))
+    // FIXME: infourl class
+    if (const std::string* infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
     {
-        if (infoURL.find(':') == std::string::npos)
+        std::string modifiedURL;
+        if (infoURLValue->find(':') == std::string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
             if (resPath.c_str()[1] == ':')
                 // Absolute Windows path, file:/// is required
-                infoURL = "file:///" + resPath.string() + "/" + infoURL;
+                modifiedURL = "file:///" + resPath.string() + "/" + *infoURLValue;
             else if (!resPath.empty())
-                infoURL = resPath.string() + "/" + infoURL;
+                modifiedURL = resPath.string() + "/" + *infoURLValue;
         }
-        setInfoURL(infoURL);
+        setInfoURL(modifiedURL.empty() ? *infoURLValue : modifiedURL);
     }
 
-    bool visible = true;
-    if (params->getBoolean("Visible", visible))
+    if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
     {
-        setVisible(visible);
+        setVisible(*visibleValue);
     }
 
-    bool clickable = true;
-    if (params->getBoolean("Clickable", clickable))
+    if (auto clickableValue = params->getBoolean("Clickable"); clickableValue.has_value())
     {
-        setClickable(clickable);
+        setClickable(*clickableValue);
     }
 
     return true;

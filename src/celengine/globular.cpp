@@ -554,18 +554,14 @@ bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
     if (!ok)
         return false;
 
-    if (params->getNumber("Detail", detail))
-        setDetail(static_cast<float>(detail));
+    if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())
+        setDetail(*detailVal);
 
-    double coreRadius;
-    if (params->getAngle("CoreRadius", coreRadius, 1.0 / MINUTES_PER_DEG))
-    {
-        r_c = coreRadius;
-        setCoreRadius(r_c);
-    }
+    if (auto coreRadius = params->getAngle<float>("CoreRadius", 1.0 / MINUTES_PER_DEG); coreRadius.has_value())
+        setCoreRadius(*coreRadius);
 
-    if (params->getNumber("KingConcentration", c))
-        setConcentration(c);
+    if (auto king = params->getNumber<float>("KingConcentration"); king.has_value())
+        setConcentration(*king);
 
     return true;
 }

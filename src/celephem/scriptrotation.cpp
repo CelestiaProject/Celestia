@@ -41,7 +41,7 @@ using celestia::util::GetLogger;
  *         quaternion (w, x, y, z).
  */
 bool
-ScriptedRotation::initialize(const std::string& moduleName,
+ScriptedRotation::initialize(const std::string* moduleName,
                              const std::string& funcName,
                              const Hash* parameters,
                              const fs::path& path)
@@ -56,7 +56,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
         return false;
     }
 
-    if (!moduleName.empty())
+    if (moduleName != nullptr && !moduleName->empty())
     {
         lua_getglobal(luaState, "require");
         if (!lua_isfunction(luaState, -1))
@@ -66,7 +66,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
             return false;
         }
 
-        lua_pushstring(luaState, moduleName.c_str());
+        lua_pushstring(luaState, moduleName->c_str());
         if (lua_pcall(luaState, 1, 1, 0) != 0)
         {
             GetLogger()->error("Failed to load module for ScriptedRotation: {}\n", lua_tostring(luaState, -1));

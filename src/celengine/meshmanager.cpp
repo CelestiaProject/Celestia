@@ -77,19 +77,12 @@ LoadCelestiaMesh(const fs::path& filename)
 
     SphereMeshParameters params{};
 
-    params.size = Eigen::Vector3f::Ones();
-    params.offset = Eigen::Vector3f::Constant(10.0f);
-    params.featureHeight = 0.0f;
-    params.octaves = 1;
-    params.slices = 20;
-    params.rings = 20;
-
-    meshDef->getVector("Size", params.size);
-    meshDef->getVector("NoiseOffset", params.offset);
-    meshDef->getNumber("FeatureHeight", params.featureHeight);
-    meshDef->getNumber("Octaves", params.octaves);
-    meshDef->getNumber("Slices", params.slices);
-    meshDef->getNumber("Rings", params.rings);
+    params.size = meshDef->getVector3<float>("Size").value_or(Eigen::Vector3f::Ones());
+    params.offset = meshDef->getVector3<float>("NoiseOffset").value_or(Eigen::Vector3f::Constant(10.0f));
+    params.featureHeight = meshDef->getNumber<float>("FeatureHeight").value_or(0.0f);
+    params.octaves = meshDef->getNumber<float>("Octaves").value_or(1.0f);
+    params.slices = meshDef->getNumber<float>("Slices").value_or(20.0f);
+    params.rings = meshDef->getNumber<float>("Rings").value_or(20.0f);
 
     auto model = std::make_unique<cmod::Model>();
     SphereMesh sphereMesh(params.size,

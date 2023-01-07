@@ -136,7 +136,8 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
         for (const auto& chain : *chains)
         {
             const ValueArray* a = chain.getArray();
-            if (a == nullptr) { continue; }
+            if (a == nullptr)
+                continue;
 
             // skip empty (without or only with a single star) chains
             if (a->size() <= 1)
@@ -146,17 +147,22 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
             for (const auto& i : *a)
             {
                 const std::string* iStr = i.getString();
-                if (iStr == nullptr) { continue; }
+                if (iStr == nullptr)
+                    continue;
 
-                Star* star = stardb.find(*iStr, false);
+                const Star* star = stardb.find(*iStr, false);
                 if (star == nullptr)
                     star = stardb.find(ReplaceGreekLetterAbbr(*iStr), false);
                 if (star != nullptr)
+                {
                     new_chain.push_back(star->getPosition());
+                }
                 else
+                {
                     GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n",
                                         *iStr,
                                         ast.getName());
+                }
             }
 
             ast.addChain(std::move(new_chain));

@@ -71,8 +71,6 @@ public:
 
     const Hash* params;
 
-    float getFloatValue(const std::string& name);
-
     float SolarSystemMaxDistance;
     unsigned ShadowMapSize;
 

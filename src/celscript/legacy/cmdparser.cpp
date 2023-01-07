@@ -163,71 +163,90 @@ Command* CommandParser::parseCommand()
 
     if (commandName == "wait")
     {
-        double duration = 1.0;
-        paramList->getNumber("duration", duration);
+        auto duration = paramList->getNumber<double>("duration").value_or(1.0);
         cmd = new CommandWait(duration);
     }
     else if (commandName == "set")
     {
         double value = 0.0;
-        string name;
-        paramList->getString("name", name);
-        if (!paramList->getNumber("value", value))
+        const std::string* name = paramList->getString("name");
+        if (name == nullptr)
+        {
+            error("Missing name");
+            return nullptr;
+        }
+        if (auto valueOpt = paramList->getNumber<double>("value"); valueOpt.has_value())
+        {
+            value = *valueOpt;
+        }
+        else if (const std::string* valstr = paramList->getString("value"); valstr != nullptr)
         {
             // Some values may be specified via strings
-            string valstr;
-            if (paramList->getString("value", valstr))
-            {
-                if (compareIgnoringCase(valstr, "fuzzypoints") == 0)
-                    value = (double) Renderer::FuzzyPointStars;
-                else if (compareIgnoringCase(valstr, "points") == 0)
-                    value = (double) Renderer::PointStars;
-                else if (compareIgnoringCase(valstr, "scaleddiscs") == 0)
-                    value = (double) Renderer::ScaledDiscStars;
-            }
+            if (compareIgnoringCase(*valstr, "fuzzypoints") == 0)
+                value = (double) Renderer::FuzzyPointStars;
+            else if (compareIgnoringCase(*valstr, "points") == 0)
+                value = (double) Renderer::PointStars;
+            else if (compareIgnoringCase(*valstr, "scaleddiscs") == 0)
+                value = (double) Renderer::ScaledDiscStars;
         }
 
-        cmd = new CommandSet(name, value);
+        cmd = new CommandSet(*name, value);
     }
     else if (commandName == "select")
     {
         string object;
-        paramList->getString("object", object);
+        if (const std::string* objStr = paramList->getString("object"); objStr != nullptr)
+        {
+            object = *objStr;
+        }
+
         cmd = new CommandSelect(object);
     }
     else if (commandName == "setframe")
     {
-        string refName;
-        paramList->getString("ref", refName);
-        string targetName;
-        paramList->getString("target", targetName);
-        string coordSysName;
-        ObserverFrame::CoordinateSystem coordSys = ObserverFrame::Universal;
-        if (paramList->getString("coordsys", coordSysName))
-            coordSys = parseCoordinateSystem(coordSysName);
+        const std::string* refName = paramList->getString("ref");
+        if (refName == nullptr)
+        {
+            error("Missing ref parameter to setframe");
+            return nullptr;
+        }
 
-        cmd = new CommandSetFrame(coordSys, refName, targetName);
+        const std::string* targetName = paramList->getString("target");
+        if (targetName == nullptr)
+        {
+            error("Missing target parameter to setframe");
+            return nullptr;
+        }
+
+        ObserverFrame::CoordinateSystem coordSys;
+        if (const std::string* coordSysName = paramList->getString("coordsys"); coordSysName == nullptr)
+            coordSys = ObserverFrame::Universal;
+        else
+            coordSys = parseCoordinateSystem(*coordSysName);
+
+        cmd = new CommandSetFrame(coordSys, *refName, *targetName);
     }
     else if (commandName == "setsurface")
     {
-        string name;
-        paramList->getString("name", name);
-        cmd = new CommandSetSurface(name);
+        const std::string* name = paramList->getString("name");
+        if (name == nullptr)
+        {
+            error("Missing name parameter to setsurface");
+            return nullptr;
+        }
+
+        cmd = new CommandSetSurface(*name);
     }
     else if (commandName == "goto")
     {
-        double t = 1.0;
-        paramList->getNumber("time", t);
-        double distance = 5.0;
-        paramList->getNumber("distance", distance);
+        auto t = paramList->getNumber<double>("time").value_or(1.0);
+        auto distance = paramList->getNumber<double>("distance").value_or(5.0);
 
         ObserverFrame::CoordinateSystem upFrame = ObserverFrame::ObserverLocal;
-        string frameString;
-        if (paramList->getString("upframe", frameString))
-            upFrame = parseCoordinateSystem(frameString);
+        if (const std::string* frameString = paramList->getString("upframe"); frameString != nullptr)
+            upFrame = parseCoordinateSystem(*frameString);
 
-        Eigen::Vector3d up(Eigen::Vector3d::UnitY());
-        paramList->getVector("up", up);
+        auto up = paramList->getVector3<double>("up").value_or(Eigen::Vector3d::UnitY());
 
         cmd = new CommandGoto(t,
                               distance,
@@ -236,16 +255,11 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "gotolonglat")
     {
-        double t = 1.0;
-        paramList->getNumber("time", t);
-        double distance = 5.0;
-        paramList->getNumber("distance", distance);
-        Eigen::Vector3d up(Eigen::Vector3d::UnitY());
-        paramList->getVector("up", up);
-        double longitude;
-        paramList->getNumber("longitude", longitude);
-        double latitude;
-        paramList->getNumber("latitude", latitude);
+        auto t = paramList->getNumber<double>("time").value_or(1.0);
+        auto distance = paramList->getNumber<double>("distance").value_or(5.0);
+        auto up = paramList->getVector3<double>("up").value_or(Eigen::Vector3d::UnitY());
+        auto longitude = paramList->getNumber<double>("longitude").value_or(0.0);
+        auto latitude = paramList->getNumber<double>("latitude").value_or(0.0);
 
         cmd = new CommandGotoLongLat(t,
                                      distance,
@@ -255,53 +269,49 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "gotoloc")
     {
-        double t = 1.0;
-        paramList->getNumber("time", t);
-        Eigen::Vector3d pos(Eigen::Vector3d::UnitY());
-        if (paramList->getVector("position", pos))
+        auto t = paramList->getNumber<double>("time").value_or(1.0);
+
+        if (auto pos = paramList->getVector3<double>("position"); pos.has_value())
         {
-            pos = pos * astro::kilometersToMicroLightYears(1.0);
-            double xrot = 0.0;
-            paramList->getNumber("xrot", xrot);
-            double yrot = 0.0;
-            paramList->getNumber("yrot", yrot);
-            double zrot = 0.0;
-            paramList->getNumber("zrot", zrot);
-            zrot = degToRad(zrot);
+            *pos *= astro::kilometersToMicroLightYears(1.0);
+            auto xrot = paramList->getNumber<double>("xrot").value_or(0.0);
+            auto yrot = paramList->getNumber<double>("yrot").value_or(0.0);
+            auto zrot = paramList->getNumber<double>("zrot").value_or(0.0);
             auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(degToRad(xrot), Eigen::Vector3d::UnitX()) *
                                                Eigen::AngleAxisd(degToRad(yrot), Eigen::Vector3d::UnitY()) *
                                                Eigen::AngleAxisd(degToRad(zrot), Eigen::Vector3d::UnitZ()));
-            cmd = new CommandGotoLocation(t, pos, rotation);
+            cmd = new CommandGotoLocation(t, *pos, rotation);
         }
         else
         {
-            std::string x, y, z;
-            paramList->getString("x", x);
-            paramList->getString("y", y);
-            paramList->getString("z", z);
-            double ow, ox, oy, oz;
-            paramList->getNumber("ow", ow);
-            paramList->getNumber("ox", ox);
-            paramList->getNumber("oy", oy);
-            paramList->getNumber("oz", oz);
+            const std::string* x = paramList->getString("x");
+            const std::string* y = paramList->getString("y");
+            const std::string* z = paramList->getString("z");
+            double xpos = x == nullptr ? 0.0 : static_cast<double>(BigFix::fromBase64(*x));
+            double ypos = y == nullptr ? 0.0 : static_cast<double>(BigFix::fromBase64(*y));
+            double zpos = z == nullptr ? 0.0 : static_cast<double>(BigFix::fromBase64(*z));
+            auto ow = paramList->getNumber<double>("ow").value_or(0.0);
+            auto ox = paramList->getNumber<double>("ox").value_or(0.0);
+            auto oy = paramList->getNumber<double>("oy").value_or(0.0);
+            auto oz = paramList->getNumber<double>("oz").value_or(0.0);
             Eigen::Quaterniond orientation(ow, ox, oy, oz);
-            cmd = new CommandGotoLocation(t,
-                                          Eigen::Vector3d(static_cast<double>(BigFix::fromBase64(x)),
-                                                          static_cast<double>(BigFix::fromBase64(y)),
-                                                          static_cast<double>(BigFix::fromBase64(z))),
-                                          orientation);
+            cmd = new CommandGotoLocation(t, Eigen::Vector3d(xpos, ypos, zpos), orientation);
         }
     }
     else if (commandName == "seturl")
     {
-        std::string url;
-        paramList->getString("url", url);
-        cmd = new CommandSetUrl(url);
+        const std::string* url = paramList->getString("url");
+        if (url == nullptr)
+        {
+            error("Missing url parameter to seturl");
+            return nullptr;
+        }
+
+        cmd = new CommandSetUrl(*url);
     }
     else if (commandName == "center")
     {
-        double t = 1.0;
-        paramList->getNumber("time", t);
+        auto t = paramList->getNumber<double>("time").value_or(1.0);
         cmd = new CommandCenter(t);
     }
     else if (commandName == "follow")
@@ -334,71 +344,74 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "print")
     {
-        string text;
-        string origin;
-        int horig = -1;
-        int vorig = -1;
-        double hoff = 0;
-        double voff = 0;
-        double duration = 1.0e9;
-        paramList->getString("text", text);
-        paramList->getString("origin", origin);
-        paramList->getNumber("duration", duration);
-        paramList->getNumber("row", voff);
-        paramList->getNumber("column", hoff);
-        if (compareIgnoringCase(origin, "left") == 0)
+        const std::string* text = paramList->getString("text");
+        if (text == nullptr)
         {
-            horig = -1;
-            vorig = 0;
-        }
-        else if (compareIgnoringCase(origin, "right") == 0)
-        {
-            horig = 1;
-            vorig = 0;
-        }
-        else if (compareIgnoringCase(origin, "center") == 0)
-        {
-            horig = 0;
-            vorig = 0;
-        }
-        else if (compareIgnoringCase(origin, "left") == 0)
-        {
-            horig = -1;
-            vorig = 0;
-        }
-        else if (compareIgnoringCase(origin, "top") == 0)
-        {
-            horig = 0;
-            vorig = 1;
-        }
-        else if (compareIgnoringCase(origin, "bottom") == 0)
-        {
-            horig = 0;
-            vorig = -1;
-        }
-        else if (compareIgnoringCase(origin, "topright") == 0)
-        {
-            horig = 1;
-            vorig = 1;
-        }
-        else if (compareIgnoringCase(origin, "topleft") == 0)
-        {
-            horig = -1;
-            vorig = 1;
-        }
-        else if (compareIgnoringCase(origin, "bottomleft") == 0)
-        {
-            horig = -1;
-            vorig = -1;
-        }
-        else if (compareIgnoringCase(origin, "bottomright") == 0)
-        {
-            horig = 1;
-            vorig = -1;
+            error("Missing text parameter to print");
+            return nullptr;
         }
 
-        cmd = new CommandPrint(text,
-                               horig, vorig, (int) hoff, (int) -voff,
+        auto duration = paramList->getNumber<double>("duration").value_or(1e9);
+        auto voff = paramList->getNumber<int>("row").value_or(0);
+        auto hoff = paramList->getNumber<int>("column").value_or(0);
+        int horig = -1;
+        int vorig = -1;
+        if (const std::string* origin = paramList->getString("origin"); origin != nullptr)
+        {
+            if (compareIgnoringCase(*origin, "left") == 0)
+            {
+                horig = -1;
+                vorig = 0;
+            }
+            else if (compareIgnoringCase(*origin, "right") == 0)
+            {
+                horig = 1;
+                vorig = 0;
+            }
+            else if (compareIgnoringCase(*origin, "center") == 0)
+            {
+                horig = 0;
+                vorig = 0;
+            }
+            else if (compareIgnoringCase(*origin, "left") == 0)
+            {
+                horig = -1;
+                vorig = 0;
+            }
+            else if (compareIgnoringCase(*origin, "top") == 0)
+            {
+                horig = 0;
+                vorig = 1;
+            }
+            else if (compareIgnoringCase(*origin, "bottom") == 0)
+            {
+                horig = 0;
+                vorig = -1;
+            }
+            else if (compareIgnoringCase(*origin, "topright") == 0)
+            {
+                horig = 1;
+                vorig = 1;
+            }
+            else if (compareIgnoringCase(*origin, "topleft") == 0)
+            {
+                horig = -1;
+                vorig = 1;
+            }
+            else if (compareIgnoringCase(*origin, "bottomleft") == 0)
+            {
+                horig = -1;
+                vorig = -1;
+            }
+            else if (compareIgnoringCase(*origin, "bottomright") == 0)
+            {
+                horig = 1;
+                vorig = -1;
+            }
+        }
+
+        cmd = new CommandPrint(*text,
+                               horig, vorig, hoff, -voff,
                                duration);
     }
     else if (commandName == "cls")
@@ -408,12 +421,21 @@ Command* CommandParser::parseCommand()
     else if (commandName == "time")
     {
         double jd = 2451545.0;
-        if (!paramList->getNumber("jd", jd))
+        if (auto jdVal = paramList->getNumber<double>("jd"); jdVal.has_value())
         {
-            std::string utc;
-            paramList->getString("utc", utc);
+            jd = *jdVal;
+        }
+        else
+        {
+            const std::string* utc = paramList->getString("utc");
+            if (utc == nullptr)
+            {
+                error("Missing either time or utc parameter to time");
+                return nullptr;
+            }
+
             astro::Date date = astro::Date(0.0);
-            sscanf(utc.c_str(), "%d-%d-%dT%d:%d:%lf",
+            sscanf(utc->c_str(), "%d-%d-%dT%d:%d:%lf",
                 &date.year, &date.month, &date.day,
                 &date.hour, &date.minute, &date.seconds);
             jd = (double)date;
@@ -422,90 +444,79 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "timerate")
     {
-        double rate = 1.0;
-        paramList->getNumber("rate", rate);
+        auto rate = paramList->getNumber<double>("rate").value_or(1.0);
         cmd = new CommandSetTimeRate(rate);
     }
     else if (commandName == "changedistance")
     {
-        double rate = 0.0;
-        double duration = 1.0;
-        paramList->getNumber("rate", rate);
-        paramList->getNumber("duration", duration);
+        auto rate = paramList->getNumber<double>("rate").value_or(0.0);
+        auto duration = paramList->getNumber<double>("duration").value_or(1.0);
         cmd = new CommandChangeDistance(duration, rate);
     }
     else if (commandName == "orbit")
     {
-        double rate = 0.0;
-        double duration = 1.0;
-        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
-        paramList->getNumber("duration", duration);
-        paramList->getNumber("rate", rate);
-        paramList->getVector("axis", axis);
+        auto duration = paramList->getNumber<double>("duration").value_or(1.0);
+        auto rate = paramList->getNumber<double>("rate").value_or(0.0);
+        auto axis = paramList->getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
         cmd = new CommandOrbit(duration,
                                axis.cast<float>(),
                                (float) degToRad(rate));
     }
     else if (commandName == "rotate")
     {
-        double rate = 0.0;
-        double duration = 1.0;
-        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
-        paramList->getNumber("duration", duration);
-        paramList->getNumber("rate", rate);
-        paramList->getVector("axis", axis);
+        auto duration = paramList->getNumber<double>("duration").value_or(1.0);
+        auto rate = paramList->getNumber<double>("rate").value_or(0.0);
+        auto axis = paramList->getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
         cmd = new CommandRotate(duration,
                                 axis.cast<float>(),
                                 (float) degToRad(rate));
     }
     else if (commandName == "move")
     {
-        Eigen::Vector3d velocity(Eigen::Vector3d::Zero());
-        double duration;
-        paramList->getNumber("duration", duration);
-        paramList->getVector("velocity", velocity);
+        auto duration = paramList->getNumber<double>("duration").value_or(1.0);
+        auto velocity = paramList->getVector3<double>("velocity").value_or(Eigen::Vector3d::Zero());
         cmd = new CommandMove(duration, velocity * astro::kilometersToMicroLightYears(1.0));
     }
     else if (commandName == "setposition")
     {
         // Base position in light years, offset in kilometers
-        Eigen::Vector3d base, offset;
-        if (paramList->getVector("base", base))
+        if (auto base = paramList->getVector3<double>("base"); base.has_value())
         {
-            paramList->getVector("offset", offset);
-            Eigen::Vector3f basef = base.cast<float>();
+            auto offset = paramList->getVector3<double>("offset").value_or(Eigen::Vector3d::Zero());
+            Eigen::Vector3f basef = base->cast<float>();
             UniversalCoord basePosition = UniversalCoord::CreateLy(basef.cast<double>());
             cmd = new CommandSetPosition(basePosition.offsetKm(offset));
         }
         else
         {
-            std::string x, y, z;
-            paramList->getString("x", x);
-            paramList->getString("y", y);
-            paramList->getString("z", z);
-            cmd = new CommandSetPosition(UniversalCoord(BigFix::fromBase64(x),
-                                                        BigFix::fromBase64(y),
-                                                        BigFix::fromBase64(z)));
+            const std::string* x = paramList->getString("x");
+            const std::string* y = paramList->getString("y");
+            const std::string* z = paramList->getString("z");
+            if (x == nullptr || y == nullptr || z == nullptr)
+            {
+                error("Missing x, y, z or base, offset parameters to setposition");
+                return nullptr;
+            }
+            cmd = new CommandSetPosition(UniversalCoord(BigFix::fromBase64(*x),
+                                                        BigFix::fromBase64(*y),
+                                                        BigFix::fromBase64(*z)));
         }
     }
     else if (commandName == "setorientation")
     {
-        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
-        double angle;
-        if (paramList->getNumber("angle", angle))
+        if (auto angle = paramList->getNumber<double>("angle"); angle.has_value())
         {
-            paramList->getVector("axis", axis);
-            auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf((float) degToRad(angle),
+            auto axis = paramList->getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
+            auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf((float) degToRad(*angle),
                                                                     axis.cast<float>().normalized()));
             cmd = new CommandSetOrientation(orientation);
         }
         else
         {
-            double ow, ox, oy, oz;
-            paramList->getNumber("ow", ow);
-            paramList->getNumber("ox", ox);
-            paramList->getNumber("oy", oy);
-            paramList->getNumber("oz", oz);
+            auto ow = paramList->getNumber<double>("ow").value_or(0.0);
+            auto ox = paramList->getNumber<double>("ox").value_or(0.0);
+            auto oy = paramList->getNumber<double>("oy").value_or(0.0);
+            auto oz = paramList->getNumber<double>("oz").value_or(0.0);
             Eigen::Quaternionf orientation(ow, ox, oy, oz);
             cmd = new CommandSetOrientation(orientation);
         }
@@ -518,12 +529,11 @@ Command* CommandParser::parseCommand()
     {
         uint64_t setFlags = 0;
         uint64_t clearFlags = 0;
-        string s;
 
-        if (paramList->getString("set", s))
-            setFlags = parseRenderFlags(s, scriptMaps->RenderFlagMap);
-        if (paramList->getString("clear", s))
-            clearFlags = parseRenderFlags(s, scriptMaps->RenderFlagMap);
+        if (const std::string* s = paramList->getString("set"); s != nullptr)
+            setFlags = parseRenderFlags(*s, scriptMaps->RenderFlagMap);
+        if (const std::string* s = paramList->getString("clear"); s != nullptr)
+            clearFlags = parseRenderFlags(*s, scriptMaps->RenderFlagMap);
 
         cmd = new CommandRenderFlags(setFlags, clearFlags);
     }
@@ -531,12 +541,11 @@ Command* CommandParser::parseCommand()
     {
         int setFlags = 0;
         int clearFlags = 0;
-        string s;
 
-        if (paramList->getString("set", s))
-            setFlags = parseLabelFlags(s, scriptMaps->LabelFlagMap);
-        if (paramList->getString("clear", s))
-            clearFlags = parseLabelFlags(s, scriptMaps->LabelFlagMap);
+        if (const std::string* s = paramList->getString("set"); s != nullptr)
+            setFlags = parseLabelFlags(*s, scriptMaps->LabelFlagMap);
+        if (const std::string* s = paramList->getString("clear"); s != nullptr)
+            clearFlags = parseLabelFlags(*s, scriptMaps->LabelFlagMap);
 
         cmd = new CommandLabels(setFlags, clearFlags);
     }
@@ -544,144 +553,146 @@ Command* CommandParser::parseCommand()
     {
         int setFlags = 0;
         int clearFlags = 0;
-        string s;
 
-        if (paramList->getString("set", s))
-            setFlags = parseOrbitFlags(s, scriptMaps->OrbitVisibilityMap);
-        if (paramList->getString("clear", s))
-            clearFlags = parseOrbitFlags(s, scriptMaps->OrbitVisibilityMap);
+        if (const std::string* s = paramList->getString("set"); s != nullptr)
+            setFlags = parseOrbitFlags(*s, scriptMaps->OrbitVisibilityMap);
+        if (const std::string* s = paramList->getString("clear"); s != nullptr)
+            clearFlags = parseOrbitFlags(*s, scriptMaps->OrbitVisibilityMap);
 
         cmd = new CommandOrbitFlags(setFlags, clearFlags);
     }
     else if (commandName == "constellations")
     {
-        string s;
         CommandConstellations *cmdcons= new CommandConstellations();
 
-        if (paramList->getString("set", s))
-            parseConstellations(cmdcons, s, 1);
-        if (paramList->getString("clear", s))
-            parseConstellations(cmdcons, s, 0);
+        if (const std::string* s = paramList->getString("set"); s != nullptr)
+            parseConstellations(cmdcons, *s, 1);
+        if (const std::string* s = paramList->getString("clear"); s != nullptr)
+            parseConstellations(cmdcons, *s, 0);
         cmd = cmdcons;
     }
 
     else if (commandName == "constellationcolor")
     {
-        string s;
         CommandConstellationColor *cmdconcol= new CommandConstellationColor();
 
-        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
-        paramList->getVector("color", colorv);
+        auto colorv = paramList->getVector3<double>("color").value_or(Eigen::Vector3d::UnitX());
 
-        if (paramList->getString("set", s))
-            parseConstellationColor(cmdconcol, s, &colorv, 1);
-        if (paramList->getString("clear", s))
-            parseConstellationColor(cmdconcol, s, &colorv, 0);
+        if (const std::string* s = paramList->getString("set"); s != nullptr)
+            parseConstellationColor(cmdconcol, *s, &colorv, 1);
+        if (const std::string* s = paramList->getString("clear"); s != nullptr)
+            parseConstellationColor(cmdconcol, *s, &colorv, 0);
         cmd = cmdconcol;
     }
     else if (commandName == "setvisibilitylimit")
     {
-        double mag = 6.0;
-        paramList->getNumber("magnitude", mag);
+        auto mag = paramList->getNumber<double>("magnitude").value_or(6.0);
         cmd = new CommandSetVisibilityLimit(mag);
     }
     else if (commandName == "setfaintestautomag45deg")
     {
-        double mag = 8.5;
-        paramList->getNumber("magnitude", mag);
+        auto mag = paramList->getNumber<double>("magnitude").value_or(8.5);
         cmd = new CommandSetFaintestAutoMag45deg(mag);
     }
     else if (commandName == "setambientlight")
     {
-        double brightness = 0.0;
-        paramList->getNumber("brightness", brightness);
-        cmd = new CommandSetAmbientLight((float) brightness);
+        auto brightness = paramList->getNumber<float>("brightness").value_or(0.0f);
+        cmd = new CommandSetAmbientLight(brightness);
     }
     else if (commandName == "setgalaxylightgain")
     {
-        double gain = 0.0;
-        paramList->getNumber("gain", gain);
-        cmd = new CommandSetGalaxyLightGain((float) gain);
+        auto gain = paramList->getNumber<float>("gain").value_or(0.0f);
+        cmd = new CommandSetGalaxyLightGain(gain);
     }
     else if (commandName == "settextureresolution")
     {
-        string textureRes;
         unsigned int res = 1;
-        paramList->getString("resolution", textureRes);
-        if (compareIgnoringCase(textureRes, "low") == 0)
-            res = 0;
-        else if (compareIgnoringCase(textureRes, "medium") == 0)
-            res = 1;
-        else if (compareIgnoringCase(textureRes, "high") == 0)
-            res = 2;
+        if (const std::string* textureRes = paramList->getString("resolution"); textureRes != nullptr)
+        {
+            if (compareIgnoringCase(*textureRes, "low") == 0)
+                res = 0;
+            else if (compareIgnoringCase(*textureRes, "medium") == 0)
+                res = 1;
+            else if (compareIgnoringCase(*textureRes, "high") == 0)
+                res = 2;
+        }
         cmd = new CommandSetTextureResolution(res);
     }
     else if (commandName == "preloadtex")
     {
-        string object;
-        paramList->getString("object", object);
-        cmd = new CommandPreloadTextures(object);
+        const std::string* object = paramList->getString("object");
+        if (object == nullptr)
+        {
+            error("Missing object parameter to preloadtex");
+            return nullptr;
+        }
+
+        cmd = new CommandPreloadTextures(*object);
     }
     else if (commandName == "mark")
     {
-        string object;
-        paramList->getString("object", object);
-        double size = 10.0f;
-        paramList->getNumber("size", size);
-        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
-        paramList->getVector("color", colorv);
-        double alpha = 0.9f;
-        paramList->getNumber("alpha", alpha);
-        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z(), (float) alpha);
+        const std::string* object = paramList->getString("object");
+        if (object == nullptr)
+        {
+            error("Missing object parameter to mark");
+            return nullptr;
+        }
+
+        auto size = paramList->getNumber<double>("size").value_or(10.0);
+        auto colorv = paramList->getVector3<float>("color").value_or(Eigen::Vector3f::UnitX());
+        auto alpha = paramList->getNumber<float>("alpha").value_or(0.9f);
+        Color color(colorv.x(), colorv.y(), colorv.z(), alpha);
 
         using namespace celestia;
 
         MarkerRepresentation rep(MarkerRepresentation::Diamond);
-        string symbolString;
-        if (paramList->getString("symbol", symbolString))
+        if (const std::string* symbolString = paramList->getString("symbol"); symbolString != nullptr)
         {
-            if (compareIgnoringCase(symbolString, "diamond") == 0)
+            if (compareIgnoringCase(*symbolString, "diamond") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Diamond);
-            else if (compareIgnoringCase(symbolString, "triangle") == 0)
+            else if (compareIgnoringCase(*symbolString, "triangle") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Triangle);
-            else if (compareIgnoringCase(symbolString, "square") == 0)
+            else if (compareIgnoringCase(*symbolString, "square") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Square);
-            else if (compareIgnoringCase(symbolString, "filledsquare") == 0)
+            else if (compareIgnoringCase(*symbolString, "filledsquare") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::FilledSquare);
-            else if (compareIgnoringCase(symbolString, "plus") == 0)
+            else if (compareIgnoringCase(*symbolString, "plus") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Plus);
-            else if (compareIgnoringCase(symbolString, "x") == 0)
+            else if (compareIgnoringCase(*symbolString, "x") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::X);
-            else if (compareIgnoringCase(symbolString, "leftarrow") == 0)
+            else if (compareIgnoringCase(*symbolString, "leftarrow") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::LeftArrow);
-            else if (compareIgnoringCase(symbolString, "rightarrow") == 0)
+            else if (compareIgnoringCase(*symbolString, "rightarrow") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::RightArrow);
-            else if (compareIgnoringCase(symbolString, "uparrow") == 0)
+            else if (compareIgnoringCase(*symbolString, "uparrow") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::UpArrow);
-            else if (compareIgnoringCase(symbolString, "downarrow") == 0)
+            else if (compareIgnoringCase(*symbolString, "downarrow") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::DownArrow);
-            else if (compareIgnoringCase(symbolString, "circle") == 0)
+            else if (compareIgnoringCase(*symbolString, "circle") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Circle);
-            else if (compareIgnoringCase(symbolString, "disk") == 0)
+            else if (compareIgnoringCase(*symbolString, "disk") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Disk);
         }
 
-        string label;
-        paramList->getString("label", label);
         rep.setSize((float) size);
         rep.setColor(color);
-        rep.setLabel(label);
+        if (const std::string* label = paramList->getString("label"); label != nullptr)
+            rep.setLabel(*label);
 
-        bool occludable = true;
-        paramList->getBoolean("occludable", occludable);
+        bool occludable = paramList->getBoolean("occludable").value_or(true);
 
-        cmd = new CommandMark(object, rep, occludable);
+        cmd = new CommandMark(*object, rep, occludable);
     }
     else if (commandName == "unmark")
     {
-        string object;
-        paramList->getString("object", object);
-        cmd = new CommandUnmark(object);
+        const std::string* object = paramList->getString("object");
+        if (object == nullptr)
+        {
+            error("Missing object parameter to unmark");
+            return nullptr;
+        }
+
+        cmd = new CommandUnmark(*object);
     }
     else if (commandName == "unmarkall")
     {
@@ -689,11 +700,20 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "capture")
     {
-        string type, filename;
-        paramList->getString("type", type);
-        paramList->getString("filename", filename);
+        const std::string* filename = paramList->getString("filename");
+        if (filename == nullptr)
+        {
+            error("Missing filename parameter to capture");
+            return nullptr;
+        }
 
-        cmd = new CommandCapture(type, filename);
+        std::string type;
+        if (const std::string* typeStr = paramList->getString("type"); typeStr != nullptr)
+        {
+            type = *typeStr;
+        }
+
+        cmd = new CommandCapture(type, *filename);
     }
     else if (commandName == "renderpath")
     {
@@ -701,18 +721,19 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "splitview")
     {
-        unsigned int view = 1;
-        paramList->getNumber("view", view);
+        auto view = paramList->getNumber<unsigned int>("view").value_or(1u);
         string splitType;
-        paramList->getString("type", splitType);
-        double splitPos = 0.5;
-        paramList->getNumber("position", splitPos);
-        cmd = new CommandSplitView(view, splitType, (float) splitPos);
+        if (const std::string* splitVal = paramList->getString("type"); splitVal != nullptr)
+        {
+            splitType = *splitVal;
+        }
+
+        auto splitPos = paramList->getNumber<float>("position").value_or(0.5f);
+        cmd = new CommandSplitView(view, splitType, splitPos);
     }
     else if (commandName == "deleteview")
     {
-        unsigned int view = 1;
-        paramList->getNumber("view", view);
+        auto view = paramList->getNumber<unsigned int>("view").value_or(1u);
         cmd = new CommandDeleteView(view);
     }
     else if (commandName == "singleview")
@@ -721,71 +742,70 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "setactiveview")
     {
-        unsigned int view = 1;
-        paramList->getNumber("view", view);
+        auto view = paramList->getNumber<unsigned int>("view").value_or(1u);
         cmd = new CommandSetActiveView(view);
     }
     else if (commandName == "setradius")
     {
-        string object;
-        paramList->getString("object", object);
-        double radius = 1.0;
-        paramList->getNumber("radius", radius);
-        cmd = new CommandSetRadius(object, (float) radius);
+        const std::string* object = paramList->getString("object");
+        if (object == nullptr)
+        {
+            error("Missing object parameter to setradius");
+            return nullptr;
+        }
+        auto radius = paramList->getNumber<float>("radius").value_or(1.0f);
+        cmd = new CommandSetRadius(*object, radius);
     }
     else if (commandName == "setlinecolor")
     {
-        string item;
-        paramList->getString("item", item);
-        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
-        paramList->getVector("color", colorv);
-        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
-        cmd = new CommandSetLineColor(item, color);
+        const std::string* item = paramList->getString("item");
+        if (item == nullptr)
+        {
+            error("Missing item parameter to setlinecolor");
+            return nullptr;
+        }
+
+        auto colorv = paramList->getVector3<float>("color").value_or(Eigen::Vector3f::UnitX());
+        Color color(colorv.x(), colorv.y(), colorv.z());
+        cmd = new CommandSetLineColor(*item, color);
     }
     else if (commandName == "setlabelcolor")
     {
-        string item;
-        paramList->getString("item", item);
-        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
-        paramList->getVector("color", colorv);
-        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
-        cmd = new CommandSetLabelColor(item, color);
+        const std::string* item = paramList->getString("item");
+        if (item == nullptr)
+        {
+            error("Missing item parameter to setlabelcolor");
+            return nullptr;
+        }
+
+        auto colorv = paramList->getVector3<float>("color").value_or(Eigen::Vector3f::UnitX());
+        Color color(colorv.x(), colorv.y(), colorv.z());
+        cmd = new CommandSetLabelColor(*item, color);
     }
     else if (commandName == "settextcolor")
     {
-        Eigen::Vector3d colorv(Eigen::Vector3d::Ones());
-        paramList->getVector("color", colorv);
-        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
+        auto colorv = paramList->getVector3<float>("color").value_or(Eigen::Vector3f::Ones());
+        Color color(colorv.x(), colorv.y(), colorv.z());
         cmd = new CommandSetTextColor(color);
     }
     else if (commandName == "play")
     {
 #ifdef USE_MINIAUDIO
-        int channel;
-        int nopause;
-        float pan;
-        float volume;
-        int loop;
-        string filename;
-        if (!paramList->getNumber("channel", channel))
-            channel = defaultAudioChannel;
-        else
-            channel = max(channel, minAudioChannel);
-        std::optional<float> optionalVolume;
-        if (paramList->getNumber("volume", volume))
-            optionalVolume = clamp(volume, minAudioVolume, maxAudioVolume);
-        if (!paramList->getNumber("pan", pan))
-            pan = defaultAudioPan;
-        else
-            pan = clamp(pan, minAudioPan, maxAudioPan);
-        if (paramList->getNumber("nopause", nopause))
-            nopause = 0;
-        std::optional<bool> optionalLoop;
-        std::optional<string> optionalFilename;
-        if (paramList->getNumber("loop", loop))
-            optionalLoop = loop == 1;
-        if (paramList->getString("filename", filename))
-            optionalFilename = filename;
+        int channel = std::max(paramList->getNumber<int>("channel").value_or(defaultAudioChannel),
+                               minAudioChannel);
+
+        auto optionalVolume = paramList->getNumber<float>("volume");
+        if (optionalVolume.has_value())
+            optionalVolume = clamp(*optionalVolume, minAudioVolume, maxAudioVolume);
+        float pan = clamp(paramList->getNumber<float>("pan").value_or(defaultAudioPan),
+                          minAudioPan, maxAudioPan);
+        int nopause = paramList->getNumber<int>("nopause").value_or(0);
+        std::optional<bool> optionalLoop = std::nullopt;
+        if (auto loop = paramList->getNumber<int>("loop"); loop.has_value())
+            optionalLoop = *loop == 1;
+        std::optional<string> optionalFilename = std::nullopt;
+        if (auto filename = paramList->getString("filename"); filename != nullptr)
+            optionalFilename = *filename;
 
         cmd = new CommandPlay(channel, optionalVolume, pan, optionalLoop, optionalFilename, nopause == 1);
 #else
@@ -794,84 +814,106 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "overlay")
     {
-        float duration = 3.0f;
-        float fadeafter;
-        float xoffset = 0.0f;
-        float yoffset = 0.0f;
-        float alpha = 1.0f;
-        bool hasAlpha = true;
-        string filename;
-        bool fitscreen = false;
-        Color color(Color::White);
+        auto duration = paramList->getNumber<float>("duration").value_or(3.0f);
+        auto xoffset = paramList->getNumber<float>("xoffset").value_or(0.0f);
+        auto yoffset = paramList->getNumber<float>("yoffset").value_or(0.0f);
+        std::optional<float> alpha = paramList->getNumber<float>("alpha");
 
-        paramList->getNumber("duration", duration);
-        paramList->getNumber("xoffset", xoffset);
-        paramList->getNumber("yoffset", yoffset);
-        if (paramList->getNumber("alpha", alpha))
-            hasAlpha = true;
-        paramList->getString("filename", filename);
-
-        if (!paramList->getBoolean("fitscreen", fitscreen))
+        const std::string* filename = paramList->getString("filename");
+        if (filename == nullptr)
         {
-            int f;
-            // backward compatibility with celestia ed implementation
-            if (paramList->getNumber("fitscreen", f))
-                fitscreen = (bool) f;
+            error("Missing filename parameter to overlay");
+            return nullptr;
+        }
+
+        bool fitscreen = false;
+        if (auto fitscreenValue = paramList->getBoolean("fitscreen"); fitscreenValue.has_value())
+        {
+            fitscreen = *fitscreenValue;
+        }
+        else
+        {
+            fitscreen = paramList->getNumber<int>("fitscreen").value_or(0) != 0;
         }
 
         array<Color, 4> colors;
-        paramList->getColor("color", color);
-        colors.fill(hasAlpha ? Color(color, alpha) : color);
-        if (paramList->getColor("colortop", color))
-            colors[0] = colors[1] = hasAlpha ? Color(color, alpha) : color;
-        if (paramList->getColor("colorbottom", color))
-            colors[2] = colors[3] = hasAlpha ? Color(color, alpha) : color;
-        if (paramList->getColor("colortopleft", color))
-            colors[0] = hasAlpha ? Color(color, alpha) : color;
-        if (paramList->getColor("colortopright", color))
-            colors[1] = hasAlpha ? Color(color, alpha) : color;
-        if (paramList->getColor("colorbottomright", color))
-            colors[2] = hasAlpha ? Color(color, alpha) : color;
-        if (paramList->getColor("colorbottomleft", color))
-            colors[3] = hasAlpha ? Color(color, alpha) : color;
+        Color color = paramList->getColor("color").value_or(Color::White);
+        colors.fill(alpha.has_value() ? Color(color, *alpha) : color);
 
-        if (!paramList->getNumber("fadeafter", fadeafter))
-            fadeafter = duration;
+        if (auto colorTop = paramList->getColor("colortop"); colorTop.has_value())
+            colors[0] = colors[1] = alpha.has_value() ? Color(*colorTop, *alpha) : *colorTop;
+        if (auto colorBottom = paramList->getColor("colorbottom"); colorBottom.has_value())
+            colors[2] = colors[3] = alpha.has_value() ? Color(*colorBottom, *alpha) : *colorBottom;
+        if (auto colorTopLeft = paramList->getColor("colortopleft"); colorTopLeft.has_value())
+            colors[0] = alpha.has_value() ? Color(*colorTopLeft, *alpha) : *colorTopLeft;
+        if (auto colorTopRight = paramList->getColor("colortopright"); colorTopRight.has_value())
+            colors[1] = alpha.has_value() ? Color(*colorTopRight, *alpha) : *colorTopRight;
+        if (auto colorBottomRight = paramList->getColor("colorbottomright"); colorBottomRight.has_value())
+            colors[2] = alpha.has_value() ? Color(*colorBottomRight, *alpha) : *colorBottomRight;
+        if (auto colorBottomLeft = paramList->getColor("colorbottomleft"); colorBottomLeft.has_value())
+            colors[3] = alpha.has_value() ? Color(*colorBottomLeft, *alpha) : *colorBottomLeft;
 
-        cmd = new CommandScriptImage(duration, fadeafter, xoffset, yoffset, filename, fitscreen, colors);
+        auto fadeafter = paramList->getNumber<float>("fadeafter").value_or(duration);
+
+        cmd = new CommandScriptImage(duration, fadeafter, xoffset, yoffset, *filename, fitscreen, colors);
     }
     else if (commandName == "verbosity")
     {
-        int level;
-
-        if (!paramList->getNumber("level", level))
-            level = 2;
-
+        int level = paramList->getNumber<int>("level").value_or(2);
         cmd = new CommandVerbosity(level);
     }
     else if (commandName == "setwindowbordersvisible")
     {
-        bool visible;
-        if (!paramList->getBoolean("visible", visible))
-             visible = true;
-
+        bool visible = paramList->getBoolean("visible").value_or(true);
         cmd = new CommandSetWindowBordersVisible(visible);
     }
     else if (commandName == "setringstexture")
     {
-        string object, texture, path;
-        paramList->getString("object", object);
-        paramList->getString("texture", texture);
-        paramList->getString("path", path);
-        cmd = new CommandSetRingsTexture(object, texture, path);
+        const std::string* object = paramList->getString("object");
+        if (object == nullptr)
+        {
+            error("Missing object parameter to setringstexture");
+            return nullptr;
+        }
+
+        const std::string* texture = paramList->getString("texture");
+        if (texture == nullptr)
+        {
+            error("Missing texture parameter to setringstexture");
+            return nullptr;
+        }
+
+        std::string path;
+        if (const std::string* pathStr = paramList->getString("path"); pathStr != nullptr)
+        {
+            path = *pathStr;
+        }
+
+        cmd = new CommandSetRingsTexture(*object, *texture, path);
     }
     else if (commandName == "loadfragment")
     {
-        string type, fragment, dir;
-        paramList->getString("type", type);
-        paramList->getString("fragment", fragment);
-        paramList->getString("dir", dir);
-        cmd = new CommandLoadFragment(type, fragment, dir);
+        const std::string* type = paramList->getString("type");
+        if (type == nullptr)
+        {
+            error("Missing type parameter to loadfragment");
+            return nullptr;
+        }
+
+        const std::string* fragment = paramList->getString("fragment");
+        if (fragment == nullptr)
+        {
+            error("Missing fragment parameter to loadfragment");
+            return nullptr;
+        }
+
+        std::string dir;
+        if (const std::string* dirName = paramList->getString("dir"); dirName != nullptr)
+        {
+            dir = *dirName;
+        }
+
+        cmd = new CommandLoadFragment(*type, *fragment, dir);
     }
     else
     {

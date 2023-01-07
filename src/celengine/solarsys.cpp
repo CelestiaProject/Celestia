@@ -158,29 +158,22 @@ Location* CreateLocation(const Hash* locationData,
 {
     Location* location = new Location();
 
-    Eigen::Vector3d longlat(Eigen::Vector3d::Zero());
-    locationData->getSphericalTuple("LongLat", longlat);
-
+    auto longlat = locationData->getSphericalTuple("LongLat").value_or(Eigen::Vector3d::Zero());
     Eigen::Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
     location->setPosition(position);
 
-    double size = 1.0;
-    locationData->getLength("Size", size);
+    auto size = locationData->getLength<float>("Size").value_or(1.0f);
+    location->setSize(size);
 
-    location->setSize((float) size);
+    auto importance = locationData->getNumber<float>("Importance").value_or(-1.0f);
+    location->setImportance(importance);
 
-    double importance = -1.0;
-    locationData->getNumber("Importance", importance);
-    location->setImportance((float) importance);
+    if (const std::string* featureTypeName = locationData->getString("Type"); featureTypeName != nullptr)
+        location->setFeatureType(Location::parseFeatureType(*featureTypeName));
 
-    std::string featureTypeName;
-    if (locationData->getString("Type", featureTypeName))
-        location->setFeatureType(Location::parseFeatureType(featureTypeName));
-
-    Color labelColor;
-    if (locationData->getColor("LabelColor", labelColor))
+    if (auto labelColor = locationData->getColor("LabelColor"); labelColor.has_value())
     {
-        location->setLabelColor(labelColor);
+        location->setLabelColor(*labelColor);
         location->setLabelColorOverridden(true);
     }
 
@@ -201,69 +194,59 @@ void FillinSurface(const Hash* surfaceData,
                    Surface* surface,
                    const fs::path& path)
 {
-    surfaceData->getColor("Color", surface->color);
-    surfaceData->getColor("SpecularColor", surface->specularColor);
-    surfaceData->getNumber("SpecularPower", surface->specularPower);
+    if (auto color = surfaceData->getColor("Color"); color.has_value())
+        surface->color = *color;
+    if (auto specularColor = surfaceData->getColor("SpecularColor"); specularColor.has_value())
+        surface->specularColor = *specularColor;
+    if (auto specularPower = surfaceData->getNumber<float>("SpecularPower"); specularPower.has_value())
+        surface->specularPower = *specularPower;
+    if (auto lunarLambert = surfaceData->getNumber<float>("LunarLambert"); lunarLambert.has_value())
+        surface->lunarLambert = *lunarLambert;
 
-    surfaceData->getNumber("LunarLambert", surface->lunarLambert);
-
-    std::string baseTexture;
-    std::string bumpTexture;
-    std::string nightTexture;
-    std::string specularTexture;
-    std::string normalTexture;
-    std::string overlayTexture;
-    bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
-    bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
-    bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
-    bool separateSpecular = surfaceData->getString("SpecularTexture",
-                                                   specularTexture);
-    bool applyNormalMap = surfaceData->getString("NormalMap", normalTexture);
-    bool applyOverlay = surfaceData->getString("OverlayTexture",
-                                               overlayTexture);
+    const std::string* baseTexture = surfaceData->getString("Texture");
+    const std::string* bumpTexture = surfaceData->getString("BumpMap");
+    const std::string* nightTexture = surfaceData->getString("NightTexture");
+    const std::string* specularTexture = surfaceData->getString("SpecularTexture");
+    const std::string* normalTexture = surfaceData->getString("NormalMap");
+    const std::string* overlayTexture = surfaceData->getString("OverlayTexture");
 
     unsigned int baseFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int nightFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int specularFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
 
-    float bumpHeight = 2.5f;
-    surfaceData->getNumber("BumpHeight", bumpHeight);
+    auto bumpHeight = surfaceData->getNumber<float>("BumpHeight").value_or(2.5f);
 
-    bool blendTexture = false;
-    surfaceData->getBoolean("BlendTexture", blendTexture);
+    bool blendTexture = surfaceData->getBoolean("BlendTexture").value_or(false);
+    bool emissive = surfaceData->getBoolean("Emissive").value_or(false);
+    bool compressTexture = surfaceData->getBoolean("CompressTexture").value_or(false);
 
-    bool emissive = false;
-    surfaceData->getBoolean("Emissive", emissive);
-
-    bool compressTexture = false;
-    surfaceData->getBoolean("CompressTexture", compressTexture);
     SetOrUnset(baseFlags, TextureInfo::CompressTexture, compressTexture);
 
     SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
     SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, applyBaseTexture);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (applyBumpMap || applyNormalMap));
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, applyNightMap);
-    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, separateSpecular);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, applyOverlay);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture != nullptr);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture != nullptr || normalTexture != nullptr));
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture != nullptr);
+    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture != nullptr);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture != nullptr);
     SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
-    if (applyBaseTexture)
-        surface->baseTexture.setTexture(baseTexture, path, baseFlags);
-    if (applyNightMap)
-        surface->nightTexture.setTexture(nightTexture, path, nightFlags);
-    if (separateSpecular)
-        surface->specularTexture.setTexture(specularTexture, path, specularFlags);
+    if (baseTexture != nullptr)
+        surface->baseTexture.setTexture(*baseTexture, path, baseFlags);
+    if (nightTexture != nullptr)
+        surface->nightTexture.setTexture(*nightTexture, path, nightFlags);
+    if (specularTexture != nullptr)
+        surface->specularTexture.setTexture(*specularTexture, path, specularFlags);
 
     // If both are present, NormalMap overrides BumpMap
-    if (applyNormalMap)
-        surface->bumpTexture.setTexture(normalTexture, path, bumpFlags);
-    else if (applyBumpMap)
-        surface->bumpTexture.setTexture(bumpTexture, path, bumpHeight, bumpFlags);
+    if (normalTexture != nullptr)
+        surface->bumpTexture.setTexture(*normalTexture, path, bumpFlags);
+    else if (bumpTexture != nullptr)
+        surface->bumpTexture.setTexture(*bumpTexture, path, bumpHeight, bumpFlags);
 
-    if (applyOverlay)
-        surface->overlayTexture.setTexture(overlayTexture, path, baseFlags);
+    if (overlayTexture != nullptr)
+        surface->overlayTexture.setTexture(*overlayTexture, path, baseFlags);
 }
 
 
@@ -390,13 +373,12 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
-    auto* timeline = new Timeline();
+    auto timeline = std::make_unique<Timeline>();
     double previousEnding = -std::numeric_limits<double>::infinity();
 
     if (timelineArray->empty())
     {
         GetLogger()->error("Error in timeline of '{}': timeline array is empty.\n", body->getName());
-        delete timeline;
         return nullptr;
     }
 
@@ -407,7 +389,6 @@ Timeline* CreateTimelineFromArray(Body* body,
         if (phaseData == nullptr)
         {
             GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
-            delete timeline;
             return nullptr;
         }
 
@@ -424,7 +405,6 @@ Timeline* CreateTimelineFromArray(Body* body,
             GetLogger()->error("Error in timeline of '{}', phase {}.\n",
                                body->getName(),
                                iter - timelineArray->begin() + 1);
-            delete timeline;
             return nullptr;
         }
 
@@ -433,7 +413,7 @@ Timeline* CreateTimelineFromArray(Body* body,
         timeline->appendPhase(phase);
     }
 
-    return timeline;
+    return timeline.release();
 }
 
 
@@ -735,43 +715,51 @@ Body* CreateBody(const std::string& name,
     // If the body also has a mesh, it is always scaled in x, y, and z by
     // the maximum semiaxis, never anisotropically.
 
-    auto radius = (double) body->getRadius();
+    auto radius = static_cast<double>(body->getRadius());
     bool radiusSpecified = false;
-    if (planetData->getLength("Radius", radius))
+    if (auto rad = planetData->getLength<double>("Radius"); rad.has_value())
     {
+        radius = *rad;
         body->setSemiAxes(Eigen::Vector3f::Constant((float) radius));
         radiusSpecified = true;
     }
 
-    Eigen::Vector3d semiAxes = Eigen::Vector3d::Ones();
-    if (radiusSpecified && planetData->getVector("SemiAxes", semiAxes))
+    bool semiAxesSpecified = false;
+    if (radiusSpecified)
     {
-        // If the radius has been specified, treat SemiAxes as dimensionless
-        // (ignore units) and multiply the SemiAxes by the Radius.
-        semiAxes *= radius;
-        // Swap y and z to match internal coordinate system
-        semiAxes.tail<2>().reverseInPlace();
-        body->setSemiAxes(semiAxes.cast<float>());
-    }
-    else if (!radiusSpecified && planetData->getLengthVector("SemiAxes", semiAxes))
-    {
-        // Swap y and z to match internal coordinate system
-        semiAxes.tail<2>().reverseInPlace();
-        body->setSemiAxes(semiAxes.cast<float>());
+        if (auto semiAxes = planetData->getVector3<double>("SemiAxes"); semiAxes.has_value())
+        {
+            // If the radius has been specified, treat SemiAxes as dimensionless
+            // (ignore units) and multiply the SemiAxes by the Radius.
+            *semiAxes *= radius;
+            // Swap y and z to match internal coordinate system
+            semiAxes->tail<2>().reverseInPlace();
+            body->setSemiAxes(semiAxes->cast<float>());
+            semiAxesSpecified = true;
+        }
     }
     else
     {
-        float oblateness = 0.0f;
-        if (planetData->getNumber("Oblateness", oblateness))
+        if (auto semiAxes = planetData->getLengthVector<double>("SemiAxes"); semiAxes.has_value())
         {
-            body->setSemiAxes(body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - oblateness, 1.0f));
+            // Swap y and z to match internal coordinate system
+            semiAxes->tail<2>().reverseInPlace();
+            body->setSemiAxes(semiAxes->cast<float>());
+            semiAxesSpecified = true;
+        }
+    }
+
+    if (!semiAxesSpecified)
+    {
+        if (auto oblateness = planetData->getNumber<float>("Oblateness"); oblateness.has_value())
+        {
+            body->setSemiAxes(body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - *oblateness, 1.0f));
         }
     }
 
     int classification = body->getClassification();
-    std::string classificationName;
-    if (planetData->getString("Class", classificationName))
-        classification = GetClassificationId(classificationName);
+    if (const std::string* classificationName = planetData->getString("Class"); classificationName != nullptr)
+        classification = GetClassificationId(*classificationName);
 
     if (classification == Body::Unknown)
     {
@@ -804,81 +792,75 @@ Body* CreateBody(const std::string& name,
     if (classification & CLASSES_UNCLICKABLE)
         body->setClickable(false);
 
-    std::string infoURL; // FIXME: should be own class
-    if (planetData->getString("InfoURL", infoURL))
+    // FIXME: should be own class
+    if (const std::string* infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
     {
-        if (infoURL.find(':') == std::string::npos)
+        std::string modifiedURL;
+        if (infoURL->find(':') == std::string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
             std::string p = path.string();
             if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
-                infoURL = "file:///" + p + "/" + infoURL;
+                modifiedURL = "file:///" + p + "/" + *infoURL;
             else if (!p.empty())
-                infoURL = p + "/" + infoURL;
+                modifiedURL = p + "/" + *infoURL;
         }
-        body->setInfoURL(infoURL);
+        body->setInfoURL(modifiedURL.empty() ? *infoURL : modifiedURL);
     }
 
-    double t;
-    if (planetData->getNumber("Albedo", t))
+    if (auto albedo = planetData->getNumber<float>("Albedo"); albedo.has_value())
     {
         // TODO: make this warn
         GetLogger()->verbose("Deprecated parameter Albedo used in {} definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
-        body->setGeomAlbedo((float) t);
+        body->setGeomAlbedo(*albedo);
     }
 
-    if (planetData->getNumber("GeomAlbedo", t))
+    if (auto albedo = planetData->getNumber<float>("GeomAlbedo"); albedo.has_value())
     {
-        if (t > 0.0)
+        if (*albedo > 0.0)
         {
-            body->setGeomAlbedo((float) t);
+            body->setGeomAlbedo(*albedo);
             // Set the BondAlbedo and Reflectivity values if it is <1, otherwise as 1.
-            if (t > 1.0)
-                t = 1.0;
-            body->setBondAlbedo((float) t);
-            body->setReflectivity((float) t);
+            if (*albedo > 1.0)
+                albedo = 1.0;
+            body->setBondAlbedo(*albedo);
+            body->setReflectivity(*albedo);
         }
         else
         {
-            GetLogger()->error(_("Incorrect GeomAlbedo value: {}\n"), t);
+            GetLogger()->error(_("Incorrect GeomAlbedo value: {}\n"), *albedo);
         }
     }
 
-    if (planetData->getNumber("Reflectivity", t))
+    if (auto reflectivity = planetData->getNumber<float>("Reflectivity"); reflectivity.has_value())
     {
-        if (t >= 0.0 && t <= 1.0)
-            body->setReflectivity((float) t);
+        if (*reflectivity >= 0.0f && *reflectivity <= 1.0f)
+            body->setReflectivity(*reflectivity);
         else
-            GetLogger()->error(_("Incorrect Reflectivity value: {}\n"), t);
+            GetLogger()->error(_("Incorrect Reflectivity value: {}\n"), *reflectivity);
     }
 
-    if (planetData->getNumber("BondAlbedo", t))
+    if (auto albedo = planetData->getNumber<float>("BondAlbedo"); albedo.has_value())
     {
-        if (t >= 0.0 && t <= 1.0)
-            body->setBondAlbedo((float) t);
+        if (*albedo >= 0.0f && *albedo <= 1.0f)
+            body->setBondAlbedo(*albedo);
         else
-            GetLogger()->error(_("Incorrect BondAlbedo value: {}\n"), t);
+            GetLogger()->error(_("Incorrect BondAlbedo value: {}\n"), *albedo);
     }
 
-    if (planetData->getNumber("Temperature", t))
-        body->setTemperature((float) t);
+    if (auto temperature = planetData->getNumber<float>("Temperature"); temperature.has_value() && *temperature > 0.0f)
+        body->setTemperature(*temperature);
+    if (auto tempDiscrepancy = planetData->getNumber<float>("TempDiscrepancy"); tempDiscrepancy.has_value())
+        body->setTempDiscrepancy(*tempDiscrepancy);
+    if (auto mass = planetData->getMass<float>("Mass", 1.0, 1.0); mass.has_value())
+        body->setMass(*mass);
+    if (auto density = planetData->getNumber<float>("Density"); density.has_value())
+       body->setDensity(*density);
 
-    if (planetData->getNumber("TempDiscrepancy", t))
-        body->setTempDiscrepancy((float) t);
-
-    if (planetData->getMass("Mass", t, 1.0, 1.0))
-        body->setMass((float) t);
-
-    if (planetData->getNumber("Density", t))
-       body->setDensity((float) t);
-
-    Eigen::Quaternionf orientation = Eigen::Quaternionf::Identity();
-    if (planetData->getRotation("Orientation", orientation))
-    {
-        body->setGeometryOrientation(orientation);
-    }
+    if (auto orientation = planetData->getRotation("Orientation"); orientation.has_value())
+        body->setGeometryOrientation(*orientation);
 
     Surface surface;
     if (disposition == DataDisposition::Modify)
@@ -892,27 +874,18 @@ Body* CreateBody(const std::string& name,
     FillinSurface(planetData, &surface, path);
     body->setSurface(surface);
 
+    if (const std::string* geometry = planetData->getString("Mesh"); geometry != nullptr)
     {
-        std::string geometry;
-        if (planetData->getString("Mesh", geometry))
-        {
-            Eigen::Vector3f geometryCenter(Eigen::Vector3f::Zero());
-            if (planetData->getVector("MeshCenter", geometryCenter))
-            {
-                // TODO: Adjust bounding radius if model center isn't
-                // (0.0f, 0.0f, 0.0f)
-            }
+        auto geometryCenter = planetData->getVector3<float>("MeshCenter").value_or(Eigen::Vector3f::Zero());
+        // TODO: Adjust bounding radius if model center isn't
+        // (0.0f, 0.0f, 0.0f)
 
-            bool isNormalized = true;
-            planetData->getBoolean("NormalizeMesh", isNormalized);
+        bool isNormalized = planetData->getBoolean("NormalizeMesh").value_or(true);
+        auto geometryScale = planetData->getLength<float>("MeshScale").value_or(1.0f);
 
-            float geometryScale = 1.0f;
-            planetData->getLength("MeshScale", geometryScale);
-
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter, 1.0f, isNormalized));
-            body->setGeometry(geometryHandle);
-            body->setGeometryScale(geometryScale);
-        }
+        ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*geometry, path, geometryCenter, 1.0f, isNormalized));
+        body->setGeometry(geometryHandle);
+        body->setGeometryScale(geometryScale);
     }
 
     // Read the atmosphere
@@ -941,45 +914,54 @@ Body* CreateBody(const std::string& name,
             {
                 atmosphere = new Atmosphere();
             }
-            atmosData->getLength("Height", atmosphere->height);
-            atmosData->getColor("Lower", atmosphere->lowerColor);
-            atmosData->getColor("Upper", atmosphere->upperColor);
-            atmosData->getColor("Sky", atmosphere->skyColor);
-            atmosData->getColor("Sunset", atmosphere->sunsetColor);
 
-            atmosData->getNumber("Mie", atmosphere->mieCoeff);
-            atmosData->getLength("MieScaleHeight", atmosphere->mieScaleHeight);
-            atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
-            atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
+            if (auto height = atmosData->getLength<float>("Height"); height.has_value())
+                atmosphere->height = *height;
+            if (auto color = atmosData->getColor("Lower"); color.has_value())
+                atmosphere->lowerColor = *color;
+            if (auto color = atmosData->getColor("Upper"); color.has_value())
+                atmosphere->upperColor = *color;
+            if (auto color = atmosData->getColor("Sky"); color.has_value())
+                atmosphere->skyColor = *color;
+            if (auto color = atmosData->getColor("Sunset"); color.has_value())
+                atmosphere->sunsetColor = *color;
+
+            if (auto mieCoeff = atmosData->getNumber<float>("Mie"); mieCoeff.has_value())
+                atmosphere->mieCoeff = *mieCoeff;
+            if (auto mieScaleHeight = atmosData->getLength<float>("MieScaleHeight"))
+                atmosphere->mieScaleHeight = *mieScaleHeight;
+            if (auto miePhaseAsymmetry = atmosData->getNumber<float>("MieAsymmetry"); miePhaseAsymmetry.has_value())
+                atmosphere->miePhaseAsymmetry = *miePhaseAsymmetry;
+            if (auto rayleighCoeff = atmosData->getVector3<float>("Rayleigh"); rayleighCoeff.has_value())
+                atmosphere->rayleighCoeff = *rayleighCoeff;
             //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
-            atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
+            if (auto absorptionCoeff = atmosData->getVector3<float>("Absorption"); absorptionCoeff.has_value())
+                atmosphere->absorptionCoeff = *absorptionCoeff;
 
             // Get the cloud map settings
-            atmosData->getLength("CloudHeight", atmosphere->cloudHeight);
-            if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
-                atmosphere->cloudSpeed = celmath::degToRad(atmosphere->cloudSpeed);
+            if (auto cloudHeight = atmosData->getLength<float>("CloudHeight"); cloudHeight.has_value())
+                atmosphere->cloudHeight = *cloudHeight;
+            if (auto cloudSpeed = atmosData->getNumber<float>("CloudSpeed"); cloudSpeed.has_value())
+                atmosphere->cloudSpeed = celmath::degToRad(*cloudSpeed);
 
-            std::string cloudTexture;
-            if (atmosData->getString("CloudMap", cloudTexture))
+            if (const std::string* cloudTexture = atmosData->getString("CloudMap"); cloudTexture != nullptr)
             {
-                atmosphere->cloudTexture.setTexture(cloudTexture,
+                atmosphere->cloudTexture.setTexture(*cloudTexture,
                                                     path,
                                                     TextureInfo::WrapTexture);
             }
 
-            std::string cloudNormalMap;
-            if (atmosData->getString("CloudNormalMap", cloudNormalMap))
+            if (const std::string* cloudNormalMap = atmosData->getString("CloudNormalMap"); cloudNormalMap != nullptr)
             {
-                atmosphere->cloudNormalMap.setTexture(cloudNormalMap,
-                                                        path,
-                                                        TextureInfo::WrapTexture);
+                atmosphere->cloudNormalMap.setTexture(*cloudNormalMap,
+                                                      path,
+                                                      TextureInfo::WrapTexture);
             }
 
-            double cloudShadowDepth = 0.0;
-            if (atmosData->getNumber("CloudShadowDepth", cloudShadowDepth))
+            if (auto cloudShadowDepth = atmosData->getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
             {
-                cloudShadowDepth = std::clamp(cloudShadowDepth, 0.0, 1.0);
-                atmosphere->cloudShadowDepth = (float) cloudShadowDepth;
+                cloudShadowDepth = std::clamp(*cloudShadowDepth, 0.0f, 1.0f);
+                atmosphere->cloudShadowDepth = *cloudShadowDepth;
             }
 
             body->setAtmosphere(*atmosphere);
@@ -1001,48 +983,41 @@ Body* CreateBody(const std::string& name,
             if (body->getRings() != nullptr)
                 rings = *body->getRings();
 
-            double inner = 0.0, outer = 0.0;
-            if (ringsData->getLength("Inner", inner))
-                rings.innerRadius = (float) inner;
-            if (ringsData->getLength("Outer", outer))
-                rings.outerRadius = (float) outer;
+            if (auto inner = ringsData->getLength<float>("Inner"); inner.has_value())
+                rings.innerRadius = *inner;
+            if (auto outer = ringsData->getLength<float>("Outer"); outer.has_value())
+                rings.outerRadius = *outer;
 
-            Color color(1.0f, 1.0f, 1.0f);
-            if (ringsData->getColor("Color", color))
-                rings.color = color;
+            if (auto color = ringsData->getColor("Color"); color.has_value())
+                rings.color = *color;
 
-            std::string textureName;
-            if (ringsData->getString("Texture", textureName))
-                rings.texture = MultiResTexture(textureName, path);
+            if (const std::string* textureName = ringsData->getString("Texture"); textureName != nullptr)
+                rings.texture = MultiResTexture(*textureName, path);
 
             body->setRings(rings);
         }
     }
 
     // Read comet tail color
-    Color cometTailColor;
-    if(planetData->getColor("TailColor", cometTailColor))
+    if (auto cometTailColor = planetData->getColor("TailColor"); cometTailColor.has_value())
     {
-        body->setCometTailColor(cometTailColor);
+        body->setCometTailColor(*cometTailColor);
     }
 
-    bool clickable = true;
-    if (planetData->getBoolean("Clickable", clickable))
+    if (auto clickable = planetData->getBoolean("Clickable"); clickable.has_value())
     {
-        body->setClickable(clickable);
+        body->setClickable(*clickable);
     }
 
-    bool visible = true;
-    if (planetData->getBoolean("Visible", visible))
+    if (auto visible = planetData->getBoolean("Visible"); visible.has_value())
     {
-        body->setVisible(visible);
+        body->setVisible(*visible);
     }
 
-    Color orbitColor;
-    if (planetData->getColor("OrbitColor", orbitColor))
+    if (auto orbitColor = planetData->getColor("OrbitColor"); orbitColor.has_value())
     {
         body->setOrbitColorOverridden(true);
-        body->setOrbitColor(orbitColor);
+        body->setOrbitColor(*orbitColor);
     }
 
     return body;
@@ -1088,23 +1063,20 @@ Body* CreateReferencePoint(const std::string& name,
 
     // Reference points can be marked visible; no geometry is shown, but the label and orbit
     // will be.
-    bool visible = false;
-    if (refPointData->getBoolean("Visible", visible))
+    if (auto visible = refPointData->getBoolean("Visible"); visible.has_value())
     {
-        body->setVisible(visible);
+        body->setVisible(*visible);
     }
 
-    bool clickable = false;
-    if (refPointData->getBoolean("Clickable", clickable))
+    if (auto clickable = refPointData->getBoolean("Clickable"); clickable.has_value())
     {
-        body->setClickable(clickable);
+        body->setClickable(*clickable);
     }
 
-    Color orbitColor;
-    if (refPointData->getColor("OrbitColor", orbitColor))
+    if (auto orbitColor = refPointData->getColor("OrbitColor"); orbitColor.has_value())
     {
         body->setOrbitColorOverridden(true);
-        body->setOrbitColor(orbitColor);
+        body->setOrbitColor(*orbitColor);
     }
 
     return body;
@@ -1294,7 +1266,10 @@ bool LoadSolarSystemObjects(std::istream& in,
             if (parent.body() != nullptr)
                 parent.body()->addAlternateSurface(primaryName, surface);
             else
+            {
                 sscError(tokenizer, _("bad alternate surface"));
+                delete surface;
+            }
         }
         else if (itemType == "Location")
         {

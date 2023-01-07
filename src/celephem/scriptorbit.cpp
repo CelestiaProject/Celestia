@@ -43,7 +43,7 @@ using celestia::util::GetLogger;
  *         z coordinates. Units for the position are kilometers.
  */
 bool
-ScriptedOrbit::initialize(const std::string& moduleName,
+ScriptedOrbit::initialize(const std::string* moduleName,
                           const std::string& funcName,
                           const Hash* parameters,
                           const fs::path& path)
@@ -58,7 +58,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         return false;
     }
 
-    if (!moduleName.empty())
+    if (moduleName != nullptr && !moduleName->empty())
     {
         lua_getglobal(luaState, "require");
         if (!lua_isfunction(luaState, -1))
@@ -68,7 +68,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
             return false;
         }
 
-        lua_pushstring(luaState, moduleName.c_str());
+        lua_pushstring(luaState, moduleName->c_str());
         if (lua_pcall(luaState, 1, 1, 0) != 0)
         {
             GetLogger()->error("Failed to load module for ScriptedOrbit: {}\n", lua_tostring(luaState, -1));

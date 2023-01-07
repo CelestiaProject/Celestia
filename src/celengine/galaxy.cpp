@@ -458,17 +458,26 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 
 bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
 {
-    double detail = 1.0;
-    params->getNumber("Detail", detail);
-    setDetail(static_cast<float>(detail));
+    setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 
-    std::string customTmpName;
-    params->getString("CustomTemplate", customTmpName);
+    if (const std::string* typeName = params->getString("Type"); typeName == nullptr)
+    {
+        setType("");
+    }
+    else
+    {
+        setType(*typeName);
+    }
 
-    std::string typeName;
-    params->getString("Type", typeName);
-    setType(typeName);
-    setForm(customTmpName);
+
+    if (const std::string* customTmpName = params->getString("CustomTemplate"); customTmpName == nullptr)
+    {
+        setForm("");
+    }
+    else
+    {
+        setForm(*customTmpName);
+    }
 
     return DeepSkyObject::load(params, resPath);
 }
