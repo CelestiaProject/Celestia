@@ -214,12 +214,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
 
     if (celestia_data_dir.isEmpty()) {
-#ifdef NATIVE_OSX_APP
-        // On macOS data directory is in a fixed position relative to the application bundle
-        QString dataDir = QApplication::applicationDirPath() + "/../Resources";
-#else
         QString dataDir = CONFIG_DATA_DIR;
-#endif
         QString celestia_data_dir = dataDir;
         QDir::setCurrent(celestia_data_dir);
     } else if (QDir(celestia_data_dir).isReadable()) {

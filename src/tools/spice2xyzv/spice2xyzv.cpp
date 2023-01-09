@@ -588,7 +588,7 @@ int main(int argc, char* argv[])
     }
 
     // Load the leap second kernel
-#if defined(_WIN32) || defined(NATIVE_OSX_APP)
+#if defined(_WIN32)
     furnsh_c("naif0012.tls");
 #else
     furnsh_c(CONFIG_DATA_DIR "/" "naif0012.tls");

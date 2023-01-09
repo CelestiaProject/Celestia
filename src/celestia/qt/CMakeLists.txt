@@ -84,8 +84,5 @@ if(APPLE)
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
 endif()
 install(TARGETS celestia-qt RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-if(NATIVE_OSX_APP)
-  install(FILES ../macosx/celestia.icns DESTINATION Resources)
-endif()
 
 add_subdirectory(data)
