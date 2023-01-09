@@ -58,10 +58,45 @@ jobs:
         set GeneratorPlatform=${{matrix.platform}}
         if ${{matrix.qtversion}}==Qt6 set UseQt6=ON
         if ${{matrix.platform}}==x86 set GeneratorPlatform=Win32
-        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON
+        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/installer -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -- /maxcpucount:2 /nologo
+
+    - name: 'Checkout data'
+      uses: actions/checkout@v3
+      with:
+        repository: CelestiaProject/CelestiaContent
+        path: 'content'
+
+    - name: 'Copy content'
+      run: |
+        cd content
+        cmake -B ${{github.workspace}}/content/build -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/installer
+        cmake --build ${{github.workspace}}/content/build --config ${{env.BUILD_TYPE}} --target install
+
+    - name: 'Copy files for installer'
+      run: |
+        copy celestia.iss ${{github.workspace}}\installer\
+        copy win32-installer-image.bmp ${{github.workspace}}\installer\
+        copy AUTHORS ${{github.workspace}}\installer\
+        copy ChangeLog ${{github.workspace}}\installer\
+        copy README ${{github.workspace}}\installer\
+        copy TRANSLATORS ${{github.workspace}}\installer\
+
+    - name: 'Download VC++ redistributable installer'
+      shell: cmd
+      run: |
+        set DownloadURL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+        if ${{matrix.platform}}==x86 set DownloadURL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
+        curl -L -o ${{github.workspace}}\installer\vc_redist.exe %DownloadURL%
+
+    - name: 'Create installer'
+      shell: cmd
+      run: |
+        set ISCCExtraFlags=/DBuildX64Installer
+        if ${{matrix.platform}}==x86 set ISCCExtraFlags=/DBuildX86Installer
+        iscc ${{github.workspace}}\installer\celestia.iss /O${{github.workspace}}\installer /FCelestiaInstaller %ISCCExtraFlags%
 
     - name: 'Copy DLL for tests'
       working-directory: ${{github.workspace}}/build
@@ -91,6 +126,7 @@ jobs:
       with:
         name: celestia-${{matrix.platform}}-${{matrix.qtversion}}
         path: |
+          ${{github.workspace}}/installer/CelestiaInstaller.exe
           ${{github.workspace}}/build/src/**/*.exe
           ${{github.workspace}}/build/src/**/*.dll
           ${{github.workspace}}/build/po/**/*.gmo
