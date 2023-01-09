@@ -23,7 +23,7 @@
 using namespace std;
 using namespace celmath;
 
-#if defined(_WIN32) || defined(NATIVE_OSX_APP)
+#if defined(_WIN32)
 static string MainDatabaseFile("hip_main.dat");
 static string TychoDatabaseFile("tyc_main.dat");
 static string ComponentDatabaseFile("h_dm_com.dat");

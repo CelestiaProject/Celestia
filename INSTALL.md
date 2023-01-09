@@ -317,10 +317,6 @@ Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/celestia, but you may want to specify a new location with
 the following option to cmake: `-DCMAKE_INSTALL_PREFIX=/another/path`.
 
-To build the application bundle, pass -DNATIVE_OSX_APP=ON to the cmake command,
-the application bundle will be located in the "build" folder that you previously
-created.
-
 ## Supported CMake parameters
 
 List of supported parameters (passed as `-DPARAMETER=VALUE`):
@@ -344,14 +340,12 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
-| NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
 | USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
 | USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
    on Windows depending on OS type (32 or 64 bit) and build configuration.
-   This option effect is overriden by NATIVE_OSX_APP.
  \*\* Ignored on Windows systems.
  \*\*\* Ignored on Unix-like systems.
  `USE_GTK3` requires `ENABLE_GTK`

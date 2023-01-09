@@ -74,12 +74,7 @@ int main(int argc, char *argv[])
 
     ParseCommandLine();
 
-#ifdef NATIVE_OSX_APP
-    // On macOS data directory is in a fixed position relative to the application bundle
-    QDir splashDir(QApplication::applicationDirPath() + "/../Resources/splash");
-#else
     QDir splashDir(SPLASH_DIR);
-#endif
     QPixmap pixmap(splashDir.filePath("splash.png"));
     QSplashScreen splash(pixmap);
     splash.setMask(pixmap.mask());
@@ -92,12 +87,7 @@ int main(int argc, char *argv[])
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-#ifdef NATIVE_OSX_APP
-    // On macOS locale directory is in a fixed position relative to the application bundle
-    QString localeDir = QApplication::applicationDirPath() + "/../Resources/locale";
-#else
     QString localeDir = LOCALEDIR;
-#endif
     bindtextdomain("celestia", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia", "UTF-8");
     bindtextdomain("celestia-data", localeDir.toUtf8().data());
