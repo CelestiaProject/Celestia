@@ -12,8 +12,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
-#include <map>
-#include <string>
+#include <string_view>
 
 #include <Eigen/Core>
 
@@ -21,10 +20,12 @@
 class Color
 {
  private:
-    static constexpr inline std::uint8_t scaleFloat(float a)
+    static constexpr std::uint8_t scaleFloat(float a)
     {
         return static_cast<std::uint8_t>(std::clamp(a, 0.0f, 1.0f) * 255.99f);
     }
+
+    std::array<std::uint8_t, 4> c;
 
  public:
     constexpr Color() noexcept :
@@ -36,10 +37,10 @@ class Color
     constexpr Color(float r, float g, float b) noexcept :
         Color(r, g, b, 1.0f)
     {}
-    constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept :
+    constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) noexcept :
         c({ r, g, b, a })
     {}
-    constexpr Color(uint8_t r, uint8_t g, uint8_t b) noexcept:
+    constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b) noexcept:
         Color(r, g, b, 0xff)
     {}
     constexpr Color(const Color &color, float alpha) noexcept :
@@ -60,126 +61,88 @@ class Color
         Alpha  = 3
     };
 
-    inline constexpr float red() const;
-    inline constexpr float green() const;
-    inline constexpr float blue() const;
-    inline constexpr float alpha() const;
-    inline Color& alpha(float a);
+    constexpr float red() const { return static_cast<float>(c[Red]) * (1.0f / 255.0f); }
+    constexpr float green() const { return static_cast<float>(c[Green]) * (1.0f / 255.0f); }
+    constexpr float blue() const { return static_cast<float>(c[Blue]) * (1.0f / 255.0f); }
+    constexpr float alpha() const { return static_cast<float>(c[Alpha]) * (1.0f / 255.0f); }
+    inline Color& alpha(float a)
+    {
+        c[Alpha] = scaleFloat(a);
+        return *this;
+    }
 
-    inline void get(uint8_t*) const;
-    inline const uint8_t* data() const;
+    inline void get(std::uint8_t *rgba) const
+    {
+        rgba[0] = c[Red];
+        rgba[1] = c[Green];
+        rgba[2] = c[Blue];
+        rgba[3] = c[Alpha];
+    }
 
-    inline Eigen::Vector3f toVector3() const;
-    inline Eigen::Vector4f toVector4() const;
-    inline operator Eigen::Vector3f() const;
-    inline operator Eigen::Vector4f() const;
+    constexpr const std::uint8_t* data() const { return c.data(); }
 
-    inline Color operator*(float m) const;
-    friend bool operator==(Color, Color);
-    friend bool operator!=(Color, Color);
-    friend Color operator*(Color, Color);
+    /** Return the color as a vector, with red, green, and blue in the
+     *  the x, y, and z components of the vector. Each component is a
+     *  floating point value between 0 and 1, inclusive.
+     */
+    inline Eigen::Vector3f toVector3() const { return { red(), green(), blue() }; }
+
+    /** Return the color as a vector, with red, green, blue, and alpha in the
+     *  the x, y, z, and w components of the vector. Each component is a
+     *  floating point value between 0 and 1, inclusive.
+     */
+    inline Eigen::Vector4f toVector4() const { return { red(), green(), blue(), alpha() }; }
+
+    constexpr Color& operator*=(float m)
+    {
+        c[Red] = scaleFloat(red() * m);
+        c[Green] = scaleFloat(green() * m);
+        c[Blue] = scaleFloat(blue() * m);
+        return *this;
+    }
+
+    constexpr Color& operator*=(const Color& rhs)
+    {
+        c[Red] = scaleFloat(red() * rhs.red());
+        c[Green] = scaleFloat(green() * rhs.green());
+        c[Blue] = scaleFloat(blue() * rhs.blue());
+        c[Alpha] = scaleFloat(alpha() * rhs.alpha());
+        return *this;
+    }
+
+    friend constexpr bool operator==(Color, Color);
 
     static /*constexpr*/ const Color Black/* = Color(1.0f, 1.0f, 1.0f)*/;
     static /*constexpr*/ const Color White/* = Color(0.0f,0.0f, 0.0f)*/;
 
-    static bool parse(const char*, Color&);
-
- private:
-    static void buildX11ColorMap();
-
-    std::array<uint8_t, 4> c;
-
-    typedef std::map<const std::string, Color> ColorMap;
-    static ColorMap x11Colors;
+    static bool parse(std::string_view, Color&);
 };
 
-constexpr float Color::red() const
-{
-    return c[Red] * (1.0f / 255.0f);
-}
-
-constexpr float Color::green() const
-{
-    return c[Green] * (1.0f / 255.0f);
-}
-
-constexpr float Color::blue() const
-{
-    return c[Blue] * (1.0f / 255.0f);
-}
-
-constexpr float Color::alpha() const
-{
-    return c[Alpha] * (1.0f / 255.0f);
-}
-
-void Color::get(uint8_t* rgba) const
-{
-    rgba[0] = c[Red];
-    rgba[1] = c[Green];
-    rgba[2] = c[Blue];
-    rgba[3] = c[Alpha];
-}
-
-const uint8_t* Color::data() const
-{
-    return c.data();
-}
-
-/** Return the color as a vector, with red, green, and blue in the
- *  the x, y, and z components of the vector. Each component is a
- *  floating point value between 0 and 1, inclusive.
- */
-Eigen::Vector3f Color::toVector3() const
-{
-    return Eigen::Vector3f(red(), green(), blue());
-}
-
-/** Return the color as a vector, with red, green, blue, and alpha in the
- *  the x, y, z, and w components of the vector. Each component is a
- *  floating point value between 0 and 1, inclusive.
- */
-Eigen::Vector4f Color::toVector4() const
-{
-    return Eigen::Vector4f(red(), green(), blue(), alpha());
-}
-
-inline bool operator==(Color a, Color b)
+constexpr bool operator==(Color a, Color b)
 {
     return (a.c[0] == b.c[0] && a.c[1] == b.c[1] &&
             a.c[2] == b.c[2] && a.c[3] == b.c[3]);
 }
 
-inline bool operator!=(Color a, Color b)
+constexpr bool operator!=(Color a, Color b)
 {
     return !(a == b);
 }
 
-inline Color operator*(Color a, Color b)
+constexpr Color operator*(Color a, float b)
 {
-    return Color(a.red() * b.red(),
-                 a.green() * b.green(),
-                 a.blue() * b.blue(),
-                 a.alpha() * b.alpha());
+    a *= b;
+    return a;
 }
 
-inline Color::operator Eigen::Vector3f() const
+constexpr Color operator*(float a, Color b)
 {
-    return toVector3();
+    b *= a;
+    return b;
 }
 
-inline Color::operator Eigen::Vector4f() const
+constexpr Color operator*(Color a, const Color& b)
 {
-    return toVector4();
-}
-
-inline Color Color::operator*(float m) const
-{
-    return { red() * m, green() * m, blue() *m };
-}
-
-inline Color& Color::alpha(float a)
-{
-    c[Alpha] = scaleFloat(a);
-    return *this;
+    a *= b;
+    return a;
 }
