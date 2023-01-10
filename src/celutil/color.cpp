@@ -7,11 +7,215 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <map>
+#include <system_error>
+
+#include <celcompat/charconv.h>
 #include "color.h"
 
-using namespace std;
+using namespace std::string_view_literals;
 
-Color::ColorMap Color::x11Colors;
+namespace
+{
+
+using ColorMap = std::map<std::string_view, Color>;
+
+const ColorMap* buildX11ColorMap()
+{
+    return new ColorMap
+    {
+        { "aliceblue"sv,            Color((std::uint8_t)240, (std::uint8_t)248, (std::uint8_t)255) },
+        { "antiquewhite"sv,         Color((std::uint8_t)250, (std::uint8_t)235, (std::uint8_t)215) },
+        { "aqua"sv,                 Color((std::uint8_t)0,   (std::uint8_t)255, (std::uint8_t)255) },
+        { "aquamarine"sv,           Color((std::uint8_t)127, (std::uint8_t)255, (std::uint8_t)212) },
+        { "azure"sv,                Color((std::uint8_t)240, (std::uint8_t)255, (std::uint8_t)255) },
+        { "beige"sv,                Color((std::uint8_t)245, (std::uint8_t)245, (std::uint8_t)220) },
+        { "bisque"sv,               Color((std::uint8_t)255, (std::uint8_t)228, (std::uint8_t)196) },
+        { "black"sv,                Color((std::uint8_t)0,   (std::uint8_t)0,   (std::uint8_t)0)   },
+        { "blanchedalmond"sv,       Color((std::uint8_t)255, (std::uint8_t)235, (std::uint8_t)205) },
+        { "blue"sv,                 Color((std::uint8_t)0,   (std::uint8_t)0,   (std::uint8_t)255) },
+        { "blueviolet"sv,           Color((std::uint8_t)138, (std::uint8_t)43,  (std::uint8_t)226) },
+        { "brown"sv,                Color((std::uint8_t)165, (std::uint8_t)42,  (std::uint8_t)42)  },
+        { "burlywood"sv,            Color((std::uint8_t)222, (std::uint8_t)184, (std::uint8_t)135) },
+        { "cadetblue"sv,            Color((std::uint8_t)95,  (std::uint8_t)158, (std::uint8_t)160) },
+        { "chartreuse"sv,           Color((std::uint8_t)127, (std::uint8_t)255, (std::uint8_t)0)   },
+        { "chocolate"sv,            Color((std::uint8_t)210, (std::uint8_t)105, (std::uint8_t)30)  },
+        { "coral"sv,                Color((std::uint8_t)255, (std::uint8_t)127, (std::uint8_t)80)  },
+        { "cornflowerblue"sv,       Color((std::uint8_t)100, (std::uint8_t)149, (std::uint8_t)237) },
+        { "cornsilk"sv,             Color((std::uint8_t)255, (std::uint8_t)248, (std::uint8_t)220) },
+        { "crimson"sv,              Color((std::uint8_t)220, (std::uint8_t)20,  (std::uint8_t)60)  },
+        { "cyan"sv,                 Color((std::uint8_t)0,   (std::uint8_t)255, (std::uint8_t)255) },
+        { "darkblue"sv,             Color((std::uint8_t)0,   (std::uint8_t)0,   (std::uint8_t)139) },
+        { "darkcyan"sv,             Color((std::uint8_t)0,   (std::uint8_t)139, (std::uint8_t)139) },
+        { "darkgoldenrod"sv,        Color((std::uint8_t)184, (std::uint8_t)134, (std::uint8_t)11)  },
+        { "darkgray"sv,             Color((std::uint8_t)169, (std::uint8_t)169, (std::uint8_t)169) },
+        { "darkgreen"sv,            Color((std::uint8_t)0,   (std::uint8_t)100, (std::uint8_t)0)   },
+        { "darkkhaki"sv,            Color((std::uint8_t)189, (std::uint8_t)183, (std::uint8_t)107) },
+        { "darkmagenta"sv,          Color((std::uint8_t)139, (std::uint8_t)0,   (std::uint8_t)139) },
+        { "darkolivegreen"sv,       Color((std::uint8_t)85,  (std::uint8_t)107, (std::uint8_t)47)  },
+        { "darkorange"sv,           Color((std::uint8_t)255, (std::uint8_t)140, (std::uint8_t)0)   },
+        { "darkorchid"sv,           Color((std::uint8_t)153, (std::uint8_t)50,  (std::uint8_t)204) },
+        { "darkred"sv,              Color((std::uint8_t)139, (std::uint8_t)0,   (std::uint8_t)0)   },
+        { "darksalmon"sv,           Color((std::uint8_t)233, (std::uint8_t)150, (std::uint8_t)122) },
+        { "darkseagreen"sv,         Color((std::uint8_t)143, (std::uint8_t)188, (std::uint8_t)143) },
+        { "darkslateblue"sv,        Color((std::uint8_t)72,  (std::uint8_t)61,  (std::uint8_t)139) },
+        { "darkslategray"sv,        Color((std::uint8_t)47,  (std::uint8_t)79,  (std::uint8_t)79)  },
+        { "darkturquoise"sv,        Color((std::uint8_t)0,   (std::uint8_t)206, (std::uint8_t)209) },
+        { "darkviolet"sv,           Color((std::uint8_t)148, (std::uint8_t)0,   (std::uint8_t)211) },
+        { "deeppink"sv,             Color((std::uint8_t)255, (std::uint8_t)20,  (std::uint8_t)147) },
+        { "deepskyblue"sv,          Color((std::uint8_t)0,   (std::uint8_t)191, (std::uint8_t)255) },
+        { "dimgray"sv,              Color((std::uint8_t)105, (std::uint8_t)105, (std::uint8_t)105) },
+        { "dodgerblue"sv,           Color((std::uint8_t)30,  (std::uint8_t)144, (std::uint8_t)255) },
+        { "firebrick"sv,            Color((std::uint8_t)178, (std::uint8_t)34,  (std::uint8_t)34)  },
+        { "floralwhite"sv,          Color((std::uint8_t)255, (std::uint8_t)250, (std::uint8_t)240) },
+        { "forestgreen"sv,          Color((std::uint8_t)34,  (std::uint8_t)139, (std::uint8_t)34)  },
+        { "fuchsia"sv,              Color((std::uint8_t)255, (std::uint8_t)0,   (std::uint8_t)255) },
+        { "gainsboro"sv,            Color((std::uint8_t)220, (std::uint8_t)220, (std::uint8_t)220) },
+        { "ghostwhite"sv,           Color((std::uint8_t)248, (std::uint8_t)248, (std::uint8_t)255) },
+        { "gold"sv,                 Color((std::uint8_t)255, (std::uint8_t)215, (std::uint8_t)0)   },
+        { "goldenrod"sv,            Color((std::uint8_t)218, (std::uint8_t)165, (std::uint8_t)32)  },
+        { "gray"sv,                 Color((std::uint8_t)128, (std::uint8_t)128, (std::uint8_t)128) },
+        { "green"sv,                Color((std::uint8_t)0,   (std::uint8_t)128, (std::uint8_t)0)   },
+        { "greenyellow"sv,          Color((std::uint8_t)173, (std::uint8_t)255, (std::uint8_t)47)  },
+        { "honeydew"sv,             Color((std::uint8_t)240, (std::uint8_t)255, (std::uint8_t)240) },
+        { "hotpink"sv,              Color((std::uint8_t)255, (std::uint8_t)105, (std::uint8_t)180) },
+        { "indianred"sv,            Color((std::uint8_t)205, (std::uint8_t)92,  (std::uint8_t)92)  },
+        { "indigo"sv,               Color((std::uint8_t)75,  (std::uint8_t)0,   (std::uint8_t)130) },
+        { "ivory"sv,                Color((std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)240) },
+        { "khaki"sv,                Color((std::uint8_t)240, (std::uint8_t)230, (std::uint8_t)140) },
+        { "lavender"sv,             Color((std::uint8_t)230, (std::uint8_t)230, (std::uint8_t)250) },
+        { "lavenderblush"sv,        Color((std::uint8_t)255, (std::uint8_t)240, (std::uint8_t)245) },
+        { "lawngreen"sv,            Color((std::uint8_t)124, (std::uint8_t)252, (std::uint8_t)0)   },
+        { "lemonchiffon"sv,         Color((std::uint8_t)255, (std::uint8_t)250, (std::uint8_t)205) },
+        { "lightblue"sv,            Color((std::uint8_t)173, (std::uint8_t)216, (std::uint8_t)230) },
+        { "lightcoral"sv,           Color((std::uint8_t)240, (std::uint8_t)128, (std::uint8_t)128) },
+        { "lightcyan"sv,            Color((std::uint8_t)224, (std::uint8_t)255, (std::uint8_t)255) },
+        { "lightgoldenrodyellow"sv, Color((std::uint8_t)250, (std::uint8_t)250, (std::uint8_t)210) },
+        { "lightgreen"sv,           Color((std::uint8_t)144, (std::uint8_t)238, (std::uint8_t)144) },
+        { "lightgrey"sv,            Color((std::uint8_t)211, (std::uint8_t)211, (std::uint8_t)211) },
+        { "lightpink"sv,            Color((std::uint8_t)255, (std::uint8_t)182, (std::uint8_t)193) },
+        { "lightsalmon"sv,          Color((std::uint8_t)255, (std::uint8_t)160, (std::uint8_t)122) },
+        { "lightseagreen"sv,        Color((std::uint8_t)32,  (std::uint8_t)178, (std::uint8_t)170) },
+        { "lightskyblue"sv,         Color((std::uint8_t)135, (std::uint8_t)206, (std::uint8_t)250) },
+        { "lightslategray"sv,       Color((std::uint8_t)119, (std::uint8_t)136, (std::uint8_t)153) },
+        { "lightsteelblue"sv,       Color((std::uint8_t)176, (std::uint8_t)196, (std::uint8_t)222) },
+        { "lightyellow"sv,          Color((std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)224) },
+        { "lime"sv,                 Color((std::uint8_t)0,   (std::uint8_t)255, (std::uint8_t)0)   },
+        { "limegreen"sv,            Color((std::uint8_t)50,  (std::uint8_t)205, (std::uint8_t)50)  },
+        { "linen"sv,                Color((std::uint8_t)250, (std::uint8_t)240, (std::uint8_t)230) },
+        { "magenta"sv,              Color((std::uint8_t)255, (std::uint8_t)0,   (std::uint8_t)255) },
+        { "maroon"sv,               Color((std::uint8_t)128, (std::uint8_t)0,   (std::uint8_t)0)   },
+        { "mediumaquamarine"sv,     Color((std::uint8_t)102, (std::uint8_t)205, (std::uint8_t)170) },
+        { "mediumblue"sv,           Color((std::uint8_t)0,   (std::uint8_t)0,   (std::uint8_t)205) },
+        { "mediumorchid"sv,         Color((std::uint8_t)186, (std::uint8_t)85,  (std::uint8_t)211) },
+        { "mediumpurple"sv,         Color((std::uint8_t)147, (std::uint8_t)112, (std::uint8_t)219) },
+        { "mediumseagreen"sv,       Color((std::uint8_t)60,  (std::uint8_t)179, (std::uint8_t)113) },
+        { "mediumslateblue"sv,      Color((std::uint8_t)123, (std::uint8_t)104, (std::uint8_t)238) },
+        { "mediumspringgreen"sv,    Color((std::uint8_t)0,   (std::uint8_t)250, (std::uint8_t)154) },
+        { "mediumturquoise"sv,      Color((std::uint8_t)72,  (std::uint8_t)209, (std::uint8_t)204) },
+        { "mediumvioletred"sv,      Color((std::uint8_t)199, (std::uint8_t)21,  (std::uint8_t)133) },
+        { "midnightblue"sv,         Color((std::uint8_t)25,  (std::uint8_t)25,  (std::uint8_t)112) },
+        { "mintcream"sv,            Color((std::uint8_t)245, (std::uint8_t)255, (std::uint8_t)250) },
+        { "mistyrose"sv,            Color((std::uint8_t)255, (std::uint8_t)228, (std::uint8_t)225) },
+        { "moccasin"sv,             Color((std::uint8_t)255, (std::uint8_t)228, (std::uint8_t)181) },
+        { "navajowhite"sv,          Color((std::uint8_t)255, (std::uint8_t)222, (std::uint8_t)173) },
+        { "navy"sv,                 Color((std::uint8_t)0,   (std::uint8_t)0,   (std::uint8_t)128) },
+        { "oldlace"sv,              Color((std::uint8_t)253, (std::uint8_t)245, (std::uint8_t)230) },
+        { "olive"sv,                Color((std::uint8_t)128, (std::uint8_t)128, (std::uint8_t)0)   },
+        { "olivedrab"sv,            Color((std::uint8_t)107, (std::uint8_t)142, (std::uint8_t)35)  },
+        { "orange"sv,               Color((std::uint8_t)255, (std::uint8_t)165, (std::uint8_t)0)   },
+        { "orangered"sv,            Color((std::uint8_t)255, (std::uint8_t)69,  (std::uint8_t)0)   },
+        { "orchid"sv,               Color((std::uint8_t)218, (std::uint8_t)112, (std::uint8_t)214) },
+        { "palegoldenrod"sv,        Color((std::uint8_t)238, (std::uint8_t)232, (std::uint8_t)170) },
+        { "palegreen"sv,            Color((std::uint8_t)152, (std::uint8_t)251, (std::uint8_t)152) },
+        { "paleturquoise"sv,        Color((std::uint8_t)175, (std::uint8_t)238, (std::uint8_t)238) },
+        { "palevioletred"sv,        Color((std::uint8_t)219, (std::uint8_t)112, (std::uint8_t)147) },
+        { "papayawhip"sv,           Color((std::uint8_t)255, (std::uint8_t)239, (std::uint8_t)213) },
+        { "peachpuff"sv,            Color((std::uint8_t)255, (std::uint8_t)218, (std::uint8_t)185) },
+        { "peru"sv,                 Color((std::uint8_t)205, (std::uint8_t)133, (std::uint8_t)63)  },
+        { "pink"sv,                 Color((std::uint8_t)255, (std::uint8_t)192, (std::uint8_t)203) },
+        { "plum"sv,                 Color((std::uint8_t)221, (std::uint8_t)160, (std::uint8_t)221) },
+        { "powderblue"sv,           Color((std::uint8_t)176, (std::uint8_t)224, (std::uint8_t)230) },
+        { "purple"sv,               Color((std::uint8_t)128, (std::uint8_t)0,   (std::uint8_t)128) },
+        { "red"sv,                  Color((std::uint8_t)255, (std::uint8_t)0,   (std::uint8_t)0)   },
+        { "rosybrown"sv,            Color((std::uint8_t)188, (std::uint8_t)143, (std::uint8_t)143) },
+        { "royalblue"sv,            Color((std::uint8_t)65,  (std::uint8_t)105, (std::uint8_t)225) },
+        { "saddlebrown"sv,          Color((std::uint8_t)139, (std::uint8_t)69,  (std::uint8_t)19)  },
+        { "salmon"sv,               Color((std::uint8_t)250, (std::uint8_t)128, (std::uint8_t)114) },
+        { "sandybrown"sv,           Color((std::uint8_t)244, (std::uint8_t)164, (std::uint8_t)96)  },
+        { "seagreen"sv,             Color((std::uint8_t)46,  (std::uint8_t)139, (std::uint8_t)87)  },
+        { "seashell"sv,             Color((std::uint8_t)255, (std::uint8_t)245, (std::uint8_t)238) },
+        { "sienna"sv,               Color((std::uint8_t)160, (std::uint8_t)82,  (std::uint8_t)45)  },
+        { "silver"sv,               Color((std::uint8_t)192, (std::uint8_t)192, (std::uint8_t)192) },
+        { "skyblue"sv,              Color((std::uint8_t)135, (std::uint8_t)206, (std::uint8_t)235) },
+        { "slateblue"sv,            Color((std::uint8_t)106, (std::uint8_t)90,  (std::uint8_t)205) },
+        { "slategray"sv,            Color((std::uint8_t)112, (std::uint8_t)128, (std::uint8_t)144) },
+        { "snow"sv,                 Color((std::uint8_t)255, (std::uint8_t)250, (std::uint8_t)250) },
+        { "springgreen"sv,          Color((std::uint8_t)0,   (std::uint8_t)255, (std::uint8_t)127) },
+        { "steelblue"sv,            Color((std::uint8_t)70,  (std::uint8_t)130, (std::uint8_t)180) },
+        { "tan"sv,                  Color((std::uint8_t)210, (std::uint8_t)180, (std::uint8_t)140) },
+        { "teal"sv,                 Color((std::uint8_t)0,   (std::uint8_t)128, (std::uint8_t)128) },
+        { "thistle"sv,              Color((std::uint8_t)216, (std::uint8_t)191, (std::uint8_t)216) },
+        { "tomato"sv,               Color((std::uint8_t)255, (std::uint8_t)99,  (std::uint8_t)71)  },
+        { "turquoise"sv,            Color((std::uint8_t)64,  (std::uint8_t)224, (std::uint8_t)208) },
+        { "violet"sv,               Color((std::uint8_t)238, (std::uint8_t)130, (std::uint8_t)238) },
+        { "wheat"sv,                Color((std::uint8_t)245, (std::uint8_t)222, (std::uint8_t)179) },
+        { "white"sv,                Color((std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255) },
+        { "whitesmoke"sv,           Color((std::uint8_t)245, (std::uint8_t)245, (std::uint8_t)245) },
+        { "yellow"sv,               Color((std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)0)   },
+        { "yellowgreen"sv,          Color((std::uint8_t)154, (std::uint8_t)205, (std::uint8_t)50)  },
+    };
+}
+
+bool parseHexColor(std::string_view s, Color& c)
+{
+    using celestia::compat::from_chars;
+
+    std::uint32_t value;
+    switch (s.size())
+    {
+    case 3: // rgb
+        if (auto [ptr, ec] = from_chars(s.data(), s.data() + s.size(), value, 16);
+            ec == std::errc{} && ptr == s.data() + s.size())
+        {
+            c = Color(static_cast<std::uint8_t>((value >> 8) * UINT32_C(0x11)),
+                    static_cast<std::uint8_t>(((value & UINT32_C(0x0f0)) >> 4) * UINT32_C(0x11)),
+                    static_cast<std::uint8_t>((value & UINT32_C(0x00f)) * UINT32_C(0x11)));
+            return true;
+        }
+        break;
+
+    case 6: // rrggbb
+        if (auto [ptr, ec] = from_chars(s.data(), s.data() + s.size(), value, 16);
+            ec == std::errc{} && ptr == s.data() + s.size())
+        {
+            c = Color(static_cast<std::uint8_t>(value >> 16),
+                    static_cast<std::uint8_t>((value & UINT32_C(0x00ff00)) >> 8),
+                    static_cast<std::uint8_t>(value & UINT32_C(0x0000ff)));
+            return true;
+        }
+        break;
+
+    case 8: // rrggbbaa
+        if (auto [ptr, ec] = from_chars(s.data(), s.data() + s.size(), value, 16);
+            ec == std::errc{} && ptr == s.data() + s.size())
+        {
+            c = Color(static_cast<std::uint8_t>(value >> 24),
+                    static_cast<std::uint8_t>((value & UINT32_C(0x00ff0000)) >> 16),
+                    static_cast<std::uint8_t>((value & UINT32_C(0x0000ff00)) >> 8),
+                    static_cast<std::uint8_t>(value & UINT32_C(0x000000ff)));
+            return true;
+        }
+        break;
+
+    default:
+        break;
+    }
+    return false;
+}
+
+} // end unnamed namespace
+
 
 const Color Color::White = Color(1.0f, 1.0f, 1.0f);
 const Color Color::Black = Color(0.0f,0.0f, 0.0f);
@@ -20,205 +224,34 @@ const Color Color::Black = Color(0.0f,0.0f, 0.0f);
  *  false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is
  *  hexadecimal digit) or one of a list of named colors.
  */
-bool Color::parse(const char* s, Color& c)
+bool Color::parse(std::string_view s, Color& c)
 {
-    // Initialize the color dictionary if this is the first
-    // time Color::parse has been called.
-    if (x11Colors.empty())
-    {
-        buildX11ColorMap();
-    }
+    using celestia::compat::from_chars;
+
+    if (s.empty()) { return false; }
 
     if (s[0] == '#')
     {
-        s++;
-
-        int length = strlen(s);
-
-        // Verify that the string contains only hex digits
-        for (int i = 0; i < length; i++)
-        {
-            if (isxdigit(s[i]) == 0)
-                return false;
-        }
-
-        unsigned int n;
-        sscanf(s, "%x", &n);
-        switch(length)
-        {
-        case 3:
-            c = Color((uint8_t) ((n >> 8) * 17),
-                      (uint8_t) (((n & 0x0f0) >> 4) * 17),
-                      (uint8_t) ((n & 0x00f) * 17));
-            return true;
-        case 6:
-            c = Color((uint8_t) (n >> 16),
-                      (uint8_t) ((n & 0x00ff00) >> 8),
-                      (uint8_t) (n & 0x0000ff));
-            return true;
-        case 8:
-            c = Color((uint8_t) (n >> 24),
-                      (uint8_t) ((n & 0x00ff0000) >> 16),
-                      (uint8_t) ((n & 0x00ff00) >> 8),
-                      (uint8_t) (n & 0x0000ff));
-            return true;
-        default:
-            return false;
-        }
+        return parseHexColor(s.substr(1), c);
     }
     else
     {
-        if (x11Colors.find(s) != x11Colors.end())
+        static const ColorMap* x11Colors = nullptr;
+
+        // Initialize the color dictionary if this is the first
+        // time Color::parse has been called for a non-hex value.
+        if (x11Colors == nullptr)
         {
-            c = x11Colors.find(s)->second;
+            x11Colors = buildX11ColorMap();
+        }
+
+        auto it = x11Colors->find(s);
+        if (it != x11Colors->end())
+        {
+            c = it->second;
             return true;
         }
-        return false;
     }
-}
 
-
-// X11 Colors STL map
-void Color::buildX11ColorMap()
-{
-    x11Colors["aliceblue"]            = Color((uint8_t)240, (uint8_t)248, (uint8_t)255);
-    x11Colors["antiquewhite"]         = Color((uint8_t)250, (uint8_t)235, (uint8_t)215);
-    x11Colors["aqua"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)255);
-    x11Colors["aquamarine"]           = Color((uint8_t)127, (uint8_t)255, (uint8_t)212);
-    x11Colors["azure"]                = Color((uint8_t)240, (uint8_t)255, (uint8_t)255);
-    x11Colors["beige"]                = Color((uint8_t)245, (uint8_t)245, (uint8_t)220);
-    x11Colors["bisque"]               = Color((uint8_t)255, (uint8_t)228, (uint8_t)196);
-    x11Colors["black"]                = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)0);
-    x11Colors["blanchedalmond"]       = Color((uint8_t)255, (uint8_t)235, (uint8_t)205);
-    x11Colors["blue"]                 = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)255);
-    x11Colors["blueviolet"]           = Color((uint8_t)138, (uint8_t)43,  (uint8_t)226);
-    x11Colors["brown"]                = Color((uint8_t)165, (uint8_t)42,  (uint8_t)42);
-    x11Colors["burlywood"]            = Color((uint8_t)222, (uint8_t)184, (uint8_t)135);
-    x11Colors["cadetblue"]            = Color((uint8_t)95,  (uint8_t)158, (uint8_t)160);
-    x11Colors["chartreuse"]           = Color((uint8_t)127, (uint8_t)255, (uint8_t)0);
-    x11Colors["chocolate"]            = Color((uint8_t)210, (uint8_t)105, (uint8_t)30);
-    x11Colors["coral"]                = Color((uint8_t)255, (uint8_t)127, (uint8_t)80);
-    x11Colors["cornflowerblue"]       = Color((uint8_t)100, (uint8_t)149, (uint8_t)237);
-    x11Colors["cornsilk"]             = Color((uint8_t)255, (uint8_t)248, (uint8_t)220);
-    x11Colors["crimson"]              = Color((uint8_t)220, (uint8_t)20,  (uint8_t)60);
-    x11Colors["cyan"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)255);
-    x11Colors["darkblue"]             = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)139);
-    x11Colors["darkcyan"]             = Color((uint8_t)0,   (uint8_t)139, (uint8_t)139);
-    x11Colors["darkgoldenrod"]        = Color((uint8_t)184, (uint8_t)134, (uint8_t)11);
-    x11Colors["darkgray"]             = Color((uint8_t)169, (uint8_t)169, (uint8_t)169);
-    x11Colors["darkgreen"]            = Color((uint8_t)0,   (uint8_t)100, (uint8_t)0);
-    x11Colors["darkkhaki"]            = Color((uint8_t)189, (uint8_t)183, (uint8_t)107);
-    x11Colors["darkmagenta"]          = Color((uint8_t)139, (uint8_t)0,   (uint8_t)139);
-    x11Colors["darkolivegreen"]       = Color((uint8_t)85,  (uint8_t)107, (uint8_t)47);
-    x11Colors["darkorange"]           = Color((uint8_t)255, (uint8_t)140, (uint8_t)0);
-    x11Colors["darkorchid"]           = Color((uint8_t)153, (uint8_t)50,  (uint8_t)204);
-    x11Colors["darkred"]              = Color((uint8_t)139, (uint8_t)0,   (uint8_t)0);
-    x11Colors["darksalmon"]           = Color((uint8_t)233, (uint8_t)150, (uint8_t)122);
-    x11Colors["darkseagreen"]         = Color((uint8_t)143, (uint8_t)188, (uint8_t)143);
-    x11Colors["darkslateblue"]        = Color((uint8_t)72,  (uint8_t)61,  (uint8_t)139);
-    x11Colors["darkslategray"]        = Color((uint8_t)47,  (uint8_t)79,  (uint8_t)79);
-    x11Colors["darkturquoise"]        = Color((uint8_t)0,   (uint8_t)206, (uint8_t)209);
-    x11Colors["darkviolet"]           = Color((uint8_t)148, (uint8_t)0,   (uint8_t)211);
-    x11Colors["deeppink"]             = Color((uint8_t)255, (uint8_t)20,  (uint8_t)147);
-    x11Colors["deepskyblue"]          = Color((uint8_t)0,   (uint8_t)191, (uint8_t)255);
-    x11Colors["dimgray"]              = Color((uint8_t)105, (uint8_t)105, (uint8_t)105);
-    x11Colors["dodgerblue"]           = Color((uint8_t)30,  (uint8_t)144, (uint8_t)255);
-    x11Colors["firebrick"]            = Color((uint8_t)178, (uint8_t)34,  (uint8_t)34);
-    x11Colors["floralwhite"]          = Color((uint8_t)255, (uint8_t)250, (uint8_t)240);
-    x11Colors["forestgreen"]          = Color((uint8_t)34,  (uint8_t)139, (uint8_t)34);
-    x11Colors["fuchsia"]              = Color((uint8_t)255, (uint8_t)0,   (uint8_t)255);
-    x11Colors["gainsboro"]            = Color((uint8_t)220, (uint8_t)220, (uint8_t)220);
-    x11Colors["ghostwhite"]           = Color((uint8_t)248, (uint8_t)248, (uint8_t)255);
-    x11Colors["gold"]                 = Color((uint8_t)255, (uint8_t)215, (uint8_t)0);
-    x11Colors["goldenrod"]            = Color((uint8_t)218, (uint8_t)165, (uint8_t)32);
-    x11Colors["gray"]                 = Color((uint8_t)128, (uint8_t)128, (uint8_t)128);
-    x11Colors["green"]                = Color((uint8_t)0,   (uint8_t)128, (uint8_t)0);
-    x11Colors["greenyellow"]          = Color((uint8_t)173, (uint8_t)255, (uint8_t)47);
-    x11Colors["honeydew"]             = Color((uint8_t)240, (uint8_t)255, (uint8_t)240);
-    x11Colors["hotpink"]              = Color((uint8_t)255, (uint8_t)105, (uint8_t)180);
-    x11Colors["indianred"]            = Color((uint8_t)205, (uint8_t)92,  (uint8_t)92);
-    x11Colors["indigo"]               = Color((uint8_t)75,  (uint8_t)0,   (uint8_t)130);
-    x11Colors["ivory"]                = Color((uint8_t)255, (uint8_t)255, (uint8_t)240);
-    x11Colors["khaki"]                = Color((uint8_t)240, (uint8_t)230, (uint8_t)140);
-    x11Colors["lavender"]             = Color((uint8_t)230, (uint8_t)230, (uint8_t)250);
-    x11Colors["lavenderblush"]        = Color((uint8_t)255, (uint8_t)240, (uint8_t)245 );
-    x11Colors["lawngreen"]            = Color((uint8_t)124, (uint8_t)252, (uint8_t)0);
-    x11Colors["lemonchiffon"]         = Color((uint8_t)255, (uint8_t)250, (uint8_t)205);
-    x11Colors["lightblue"]            = Color((uint8_t)173, (uint8_t)216, (uint8_t)230);
-    x11Colors["lightcoral"]           = Color((uint8_t)240, (uint8_t)128, (uint8_t)128);
-    x11Colors["lightcyan"]            = Color((uint8_t)224, (uint8_t)255, (uint8_t)255);
-    x11Colors["lightgoldenrodyellow"] = Color((uint8_t)250, (uint8_t)250, (uint8_t)210);
-    x11Colors["lightgreen"]           = Color((uint8_t)144, (uint8_t)238, (uint8_t)144);
-    x11Colors["lightgrey"]            = Color((uint8_t)211, (uint8_t)211, (uint8_t)211);
-    x11Colors["lightpink"]            = Color((uint8_t)255, (uint8_t)182, (uint8_t)193);
-    x11Colors["lightsalmon"]          = Color((uint8_t)255, (uint8_t)160, (uint8_t)122);
-    x11Colors["lightseagreen"]        = Color((uint8_t)32,  (uint8_t)178, (uint8_t)170);
-    x11Colors["lightskyblue"]         = Color((uint8_t)135, (uint8_t)206, (uint8_t)250);
-    x11Colors["lightslategray"]       = Color((uint8_t)119, (uint8_t)136, (uint8_t)153);
-    x11Colors["lightsteelblue"]       = Color((uint8_t)176, (uint8_t)196, (uint8_t)222);
-    x11Colors["lightyellow"]          = Color((uint8_t)255, (uint8_t)255, (uint8_t)224);
-    x11Colors["lime"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)0);
-    x11Colors["limegreen"]            = Color((uint8_t)50,  (uint8_t)205, (uint8_t)50);
-    x11Colors["linen"]                = Color((uint8_t)250, (uint8_t)240, (uint8_t)230);
-    x11Colors["magenta"]              = Color((uint8_t)255, (uint8_t)0,   (uint8_t)255);
-    x11Colors["maroon"]               = Color((uint8_t)128, (uint8_t)0,   (uint8_t)0);
-    x11Colors["mediumaquamarine"]     = Color((uint8_t)102, (uint8_t)205, (uint8_t)170);
-    x11Colors["mediumblue"]           = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)205);
-    x11Colors["mediumorchid"]         = Color((uint8_t)186, (uint8_t)85,  (uint8_t)211);
-    x11Colors["mediumpurple"]         = Color((uint8_t)147, (uint8_t)112, (uint8_t)219);
-    x11Colors["mediumseagreen"]       = Color((uint8_t)60,  (uint8_t)179, (uint8_t)113);
-    x11Colors["mediumslateblue"]      = Color((uint8_t)123, (uint8_t)104, (uint8_t)238);
-    x11Colors["mediumspringgreen"]    = Color((uint8_t)0,   (uint8_t)250, (uint8_t)154);
-    x11Colors["mediumturquoise"]      = Color((uint8_t)72,  (uint8_t)209, (uint8_t)204);
-    x11Colors["mediumvioletred"]      = Color((uint8_t)199, (uint8_t)21,  (uint8_t)133);
-    x11Colors["midnightblue"]         = Color((uint8_t)25,  (uint8_t)25,  (uint8_t)112);
-    x11Colors["mintcream"]            = Color((uint8_t)245, (uint8_t)255, (uint8_t)250);
-    x11Colors["mistyrose"]            = Color((uint8_t)255, (uint8_t)228, (uint8_t)225);
-    x11Colors["moccasin"]             = Color((uint8_t)255, (uint8_t)228, (uint8_t)181);
-    x11Colors["navajowhite"]          = Color((uint8_t)255, (uint8_t)222, (uint8_t)173);
-    x11Colors["navy"]                 = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)128);
-    x11Colors["oldlace"]              = Color((uint8_t)253, (uint8_t)245, (uint8_t)230);
-    x11Colors["olive"]                = Color((uint8_t)128, (uint8_t)128, (uint8_t)0);
-    x11Colors["olivedrab"]            = Color((uint8_t)107, (uint8_t)142, (uint8_t)35);
-    x11Colors["orange"]               = Color((uint8_t)255, (uint8_t)165, (uint8_t)0);
-    x11Colors["orangered"]            = Color((uint8_t)255, (uint8_t)69,  (uint8_t)0);
-    x11Colors["orchid"]               = Color((uint8_t)218, (uint8_t)112, (uint8_t)214);
-    x11Colors["palegoldenrod"]        = Color((uint8_t)238, (uint8_t)232, (uint8_t)170);
-    x11Colors["palegreen"]            = Color((uint8_t)152, (uint8_t)251, (uint8_t)152);
-    x11Colors["paleturquoise"]        = Color((uint8_t)175, (uint8_t)238, (uint8_t)238);
-    x11Colors["palevioletred"]        = Color((uint8_t)219, (uint8_t)112, (uint8_t)147);
-    x11Colors["papayawhip"]           = Color((uint8_t)255, (uint8_t)239, (uint8_t)213);
-    x11Colors["peachpuff"]            = Color((uint8_t)255, (uint8_t)218, (uint8_t)185);
-    x11Colors["peru"]                 = Color((uint8_t)205, (uint8_t)133, (uint8_t)63);
-    x11Colors["pink"]                 = Color((uint8_t)255, (uint8_t)192, (uint8_t)203);
-    x11Colors["plum"]                 = Color((uint8_t)221, (uint8_t)160, (uint8_t)221);
-    x11Colors["powderblue"]           = Color((uint8_t)176, (uint8_t)224, (uint8_t)230);
-    x11Colors["purple"]               = Color((uint8_t)128, (uint8_t)0,   (uint8_t)128);
-    x11Colors["red"]                  = Color((uint8_t)255, (uint8_t)0,   (uint8_t)0);
-    x11Colors["rosybrown"]            = Color((uint8_t)188, (uint8_t)143, (uint8_t)143);
-    x11Colors["royalblue"]            = Color((uint8_t)65,  (uint8_t)105, (uint8_t)225);
-    x11Colors["saddlebrown"]          = Color((uint8_t)139, (uint8_t)69,  (uint8_t)19);
-    x11Colors["salmon"]               = Color((uint8_t)250, (uint8_t)128, (uint8_t)114);
-    x11Colors["sandybrown"]           = Color((uint8_t)244, (uint8_t)164, (uint8_t)96);
-    x11Colors["seagreen"]             = Color((uint8_t)46,  (uint8_t)139, (uint8_t)87);
-    x11Colors["seashell"]             = Color((uint8_t)255, (uint8_t)245, (uint8_t)238);
-    x11Colors["sienna"]               = Color((uint8_t)160, (uint8_t)82,  (uint8_t)45);
-    x11Colors["silver"]               = Color((uint8_t)192, (uint8_t)192, (uint8_t)192);
-    x11Colors["skyblue"]              = Color((uint8_t)135, (uint8_t)206, (uint8_t)235);
-    x11Colors["slateblue"]            = Color((uint8_t)106, (uint8_t)90,  (uint8_t)205);
-    x11Colors["slategray"]            = Color((uint8_t)112, (uint8_t)128, (uint8_t)144);
-    x11Colors["snow"]                 = Color((uint8_t)255, (uint8_t)250, (uint8_t)250);
-    x11Colors["springgreen"]          = Color((uint8_t)0,   (uint8_t)255, (uint8_t)127);
-    x11Colors["steelblue"]            = Color((uint8_t)70,  (uint8_t)130, (uint8_t)180);
-    x11Colors["tan"]                  = Color((uint8_t)210, (uint8_t)180, (uint8_t)140);
-    x11Colors["teal"]                 = Color((uint8_t)0,   (uint8_t)128, (uint8_t)128);
-    x11Colors["thistle"]              = Color((uint8_t)216, (uint8_t)191, (uint8_t)216);
-    x11Colors["tomato"]               = Color((uint8_t)255, (uint8_t)99,  (uint8_t)71);
-    x11Colors["turquoise"]            = Color((uint8_t)64,  (uint8_t)224, (uint8_t)208);
-    x11Colors["violet"]               = Color((uint8_t)238, (uint8_t)130, (uint8_t)238);
-    x11Colors["wheat"]                = Color((uint8_t)245, (uint8_t)222, (uint8_t)179);
-    x11Colors["white"]                = Color((uint8_t)255, (uint8_t)255, (uint8_t)255);
-    x11Colors["whitesmoke"]           = Color((uint8_t)245, (uint8_t)245, (uint8_t)245);
-    x11Colors["yellow"]               = Color((uint8_t)255, (uint8_t)255, (uint8_t)0);
-    x11Colors["yellowgreen"]          = Color((uint8_t)154, (uint8_t)205, (uint8_t)50);
+    return false;
 }

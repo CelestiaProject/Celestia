@@ -3073,7 +3073,7 @@ void Renderer::renderPlanet(Body& body,
                             lights);
         assert(lights.nLights <= MaxLights);
 
-        lights.ambientColor = ambientColor;
+        lights.ambientColor = ambientColor.toVector3();
 
         // Clear out the list of eclipse shadows
         for (unsigned int li = 0; li < lights.nLights; li++)

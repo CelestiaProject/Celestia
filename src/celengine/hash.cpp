@@ -173,7 +173,7 @@ std::optional<Color> AssociativeArray::getColor(std::string_view key) const
     if (const std::string* rgba = getString(key); rgba != nullptr)
     {
         Color color;
-        if (Color::parse(rgba->c_str(), color))
+        if (Color::parse(*rgba, color))
         {
             return color;
         }
