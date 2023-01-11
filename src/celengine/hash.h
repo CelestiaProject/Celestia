@@ -36,10 +36,9 @@ class AssociativeArray
 
     AssociativeArray() = default;
     ~AssociativeArray();
-    // implementations differ in whether std::map is nothrow moveable
-    AssociativeArray(AssociativeArray&&) noexcept(std::is_nothrow_move_constructible_v<AssocType>);
+    AssociativeArray(AssociativeArray&&) = delete;
     AssociativeArray(const AssociativeArray&) = delete;
-    AssociativeArray& operator=(AssociativeArray&&) noexcept(std::is_nothrow_move_assignable_v<AssocType>);
+    AssociativeArray& operator=(AssociativeArray&&) = delete;
     AssociativeArray& operator=(AssociativeArray&) = delete;
 
     const Value* getValue(std::string_view) const;
