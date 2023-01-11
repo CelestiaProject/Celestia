@@ -20,8 +20,6 @@ namespace celutil = celestia::util;
 
 // Define these here: at declaration the vector member contains an incomplete type
 AssociativeArray::~AssociativeArray() = default;
-AssociativeArray::AssociativeArray(AssociativeArray&&) noexcept(std::is_nothrow_move_constructible_v<AssocType>) = default;
-AssociativeArray& AssociativeArray::operator=(AssociativeArray&&) noexcept(std::is_nothrow_move_assignable_v<AssocType>) = default;
 
 
 const Value* AssociativeArray::getValue(std::string_view key) const
