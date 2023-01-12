@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -22,10 +23,8 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/filesystem.h>
-#include <celrender/vertexobject.h>
 #include "deepskyobj.h"
 
-struct GlobularForm;
 struct Matrices;
 class Renderer;
 
@@ -38,14 +37,7 @@ class Globular : public DeepSkyObject
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
-    float getDetail() const;
-    void setDetail(float);
-    float getCoreRadius() const;
-    void setCoreRadius(float);
-    void setConcentration(float);
-    float getConcentration() const;
     float getHalfMassRadius() const override;
-    unsigned int cSlot(float) const;
 
     float getBoundingSphereRadius() const override { return tidalRadius; }
 
@@ -66,16 +58,15 @@ class Globular : public DeepSkyObject
 
  private:
     // Reference values ( = data base averages) of core radius, King concentration
-    // and mu25 isophote radius:
-    static constexpr float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
+    static constexpr float R_c_ref = 0.83f;
+    static constexpr float C_ref = 2.1f;
+    // mu25 isophote radius is not used: R_mu25 = 40.32f
 
     void recomputeTidalRadius();
 
     float detail{ 1.0f };
-    const GlobularForm* form{ nullptr };
     float r_c{ R_c_ref };
     float c{ C_ref };
     float tidalRadius{ 0.0f };
-
-    celestia::render::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
+    std::size_t formIndex{ static_cast<std::size_t>(-1) };
 };
