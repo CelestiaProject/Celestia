@@ -83,6 +83,9 @@ void VertexObject::bindWritable() noexcept
 
 void VertexObject::unbind() noexcept
 {
+    if ((m_state & State::Initialize) != 0)
+        enableAttribArrays();
+
     if (isVAOSupported())
     {
         if ((m_state & (State::Initialize | State::Update)) != 0)
