@@ -3306,6 +3306,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
+
+    hRes = hInstance;
 #ifdef ENABLE_NLS
     std::error_code ec;
     std::string localedir = (fs::current_path(ec) / LOCALEDIR).string();
@@ -3327,11 +3329,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         int langID = 0;
         if (sscanf(_("WinLangID"), "%x", &langID) == 1)
             SetThreadLocale(langID);
-        if ((hRes = LoadLibrary(res)) == NULL)
-        {
+
+        HMODULE localizedRes = LoadLibrary(res);
+        if (localizedRes == NULL)
             cout << "Couldn't load localized resources: "<< res << "\n";
-            hRes = hInstance;
-        }
+        else
+            hRes = localizedRes;
     }
 #endif
 
