@@ -354,7 +354,10 @@ Model::sortMeshes(const MeshComparator& comparator)
     GetLogger()->info("Merged similar meshes: {} -> {}.\n", meshes.size(), newMeshes.size());
 
     for (auto &mesh : newMeshes)
+    {
         mesh.optimize();
+        mesh.rebuildIndexMetadata();
+    }
     meshes = std::move(newMeshes);
 }
 

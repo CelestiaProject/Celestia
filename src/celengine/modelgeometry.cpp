@@ -10,35 +10,31 @@
 
 #include <vector>
 #include <utility>
-
+#include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include "glsupport.h"
 #include "modelgeometry.h"
 #include "rendcontext.h"
 
-
-// Vertex buffer object support
-
-// VBO optimization is only worthwhile for large enough vertex lists
-static const unsigned int MinVBOSize = 4096;
-
+using celestia::util::GetLogger;
 
 class ModelOpenGLData
 {
 public:
     ModelOpenGLData() = default;
+    ModelOpenGLData(const ModelOpenGLData&) = delete;
+    ModelOpenGLData(ModelOpenGLData&&) = default;
+    ModelOpenGLData& operator=(const ModelOpenGLData&) = delete;
+    ModelOpenGLData& operator=(ModelOpenGLData&&) = default;
 
     ~ModelOpenGLData()
     {
-        for (auto vboId : vbos)
-        {
-            if (vboId != 0)
-            {
-                glDeleteBuffers(1, &vboId);
-            }
-        }
+        glDeleteBuffers(vbos.size(), vbos.data());
+        glDeleteBuffers(vios.size(), vios.data());
     }
 
     std::vector<GLuint> vbos; // vertex buffer objects
+    std::vector<GLuint> vios; // vertex index objects
 };
 
 
@@ -86,21 +82,32 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
             GLuint vboId = 0;
-            if (mesh->getVertexCount() * vertexDesc.strideBytes > MinVBOSize)
+            glGenBuffers(1, &vboId);
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER,
+                         mesh->getVertexCount() * vertexDesc.strideBytes,
+                         mesh->getVertexData(),
+                         GL_STATIC_DRAW);
+
+            GLuint vioId = 0;
+            glGenBuffers(1, &vioId);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vioId);
+
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                         mesh->getIndexCount() * sizeof(GL_UNSIGNED_INT),
+                         nullptr,
+                         GL_STATIC_DRAW);
+
+            for (unsigned int offset = 0, groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
             {
-                glGenBuffers(1, &vboId);
-                if (vboId != 0)
-                {
-                    glBindBuffer(GL_ARRAY_BUFFER, vboId);
-                    glBufferData(GL_ARRAY_BUFFER,
-                                 mesh->getVertexCount() * vertexDesc.strideBytes,
-                                 mesh->getVertexData(),
-                                 GL_STATIC_DRAW);
-                    glBindBuffer(GL_ARRAY_BUFFER, 0);
-                }
+                const auto* group = mesh->getGroup(groupIndex);
+                auto size = group->indices.size() * sizeof(GL_UNSIGNED_INT);
+                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, group->indices.data());
+                offset += size;
             }
 
             m_glData->vbos.push_back(vboId);
+            m_glData->vios.push_back(vioId);
         }
     }
 
@@ -112,23 +119,21 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
     {
         const cmod::Mesh* mesh = m_model->getMesh(meshIndex);
         GLuint vboId = 0;
+        GLuint vioId = 0;
 
         if (meshIndex < m_glData->vbos.size())
         {
             vboId = m_glData->vbos[meshIndex];
-        }
-
-        if (vboId != 0)
-        {
-            // Bind the vertex buffer object.
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
+            vioId = m_glData->vios[meshIndex];
         }
         else
         {
-            // No vertex buffer object; just use normal vertex arrays
-            rc.setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
+            GetLogger()->error(_("Mesh index {} is higher than VBO count {}!"), meshIndex, m_glData->vbos.size());
         }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vioId);
+        rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
 
         // Iterate over all primitive groups in the mesh
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
@@ -147,13 +152,9 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             rc.setMaterial(material);
             rc.drawGroup(*group);
         }
-
-        // If we set a VBO, unbind it.
-        if (vboId != 0)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
     }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 

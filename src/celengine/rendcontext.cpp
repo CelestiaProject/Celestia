@@ -282,10 +282,10 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group)
         glActiveTexture(GL_TEXTURE0);
     }
 
-    glDrawElements(GLPrimitiveModes[(int)group.prim],
-                   group.indices.size(),
+    glDrawElements(GLPrimitiveModes[static_cast<int>(group.prim)],
+                   group.indicesCount,
                    GL_UNSIGNED_INT,
-                   group.indices.data());
+                   reinterpret_cast<void*>(group.indicesOffset*sizeof(GLuint))); //NOSONAR
 #ifndef GL_ES
     if (drawPoints)
     {
