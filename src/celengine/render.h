@@ -40,6 +40,10 @@ class FramebufferObject;
 namespace celestia
 {
 class Rect;
+namespace render
+{
+class CometRenderer;
+}
 }
 
 namespace celmath
@@ -305,6 +309,11 @@ class Renderer
                       float size,
                       const Color &color,
                       const Matrices &m);
+
+    celestia::util::array_view<const Star*> getNearStars() const
+    {
+        return nearStars;
+    }
 
     const Eigen::Matrix4f& getModelViewMatrix() const
     {
@@ -619,6 +628,7 @@ class Renderer
     void renderCometTail(const Body& body,
                          const Eigen::Vector3f& pos,
                          const Observer& observer,
+                         float dustTailLength,
                          float discSizeInPixels,
                          const Matrices&);
 
@@ -839,6 +849,8 @@ class Renderer
 
     // Saturation magnitude used to calculate a point star size
     float satPoint;
+
+    std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
 
     // Location markers
  public:
