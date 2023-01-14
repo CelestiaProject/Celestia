@@ -86,10 +86,7 @@ void globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     // giving sort of a halo for the brighter (i.e.bigger) stars.
 
     static const float Lumi0 = std::exp(-LumiShape);
-    float lumi = std::exp(-LumiShape * std::sqrt(u * u + v * v)) - Lumi0;
-
-    if (lumi <= 0.0f)
-        lumi = 0.0f;
+    float lumi = std::max(0.0f, std::exp(-LumiShape * std::sqrt(u * u + v * v)) - Lumi0);
 
     auto pixVal = static_cast<std::uint8_t>(lumi * 255.99f);
     pixel[0] = 255;
@@ -508,9 +505,7 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Load the basic DSO parameters first
-
-    bool ok = DeepSkyObject::load(params, resPath);
-    if (!ok)
+    if (!DeepSkyObject::load(params, resPath))
         return false;
 
     if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())
@@ -653,9 +648,6 @@ void Globular::render(const Eigen::Vector3f& offset,
     glDisable(GL_POINT_SPRITE);
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
-    // These should be called but stars are broken then
-    // TODO: find and fix
-    //glDisable(GL_BLEND);
 }
 
 std::uint64_t Globular::getRenderMask() const
