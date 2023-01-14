@@ -141,6 +141,29 @@ class VertexObject
      */
     void setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
 
+
+    /**
+     *  Disable vertex attribute.
+     *
+     *  @param location Specifies the index of the generic vertex attribute.
+     */
+    void disableVertexAttribArray(GLint location) const noexcept;
+
+    /**
+     *  Enable vertex attribute.
+     *
+     *  @param location Specifies the index of the generic vertex attribute.
+     */
+    void enableVertexAttribArray(GLint location) const noexcept;
+
+    /**
+     *  Disable vertex attribute and use a contant value.
+     *
+     *  @param location Specifies the index of the generic vertex attribute.
+     *  @param value Value to provide in shaders when this attribute is used.
+     */
+    void setVertexAttribConstant(GLint location, float value) const noexcept;
+
     //! Return the buffer's initialization state.
     inline bool initialized() const noexcept
     {
