@@ -50,18 +50,10 @@ class VertexObject
     /**
      * @brief Construct a new VertexObject.
      *
-     * @param bufferType Currently only GL_ARRAY_BUFFER is supported.
-     */
-    explicit VertexObject(GLenum bufferType);
-
-    /**
-     * @brief Construct a new VertexObject.
-     *
-     * @param bufferType Currently only GL_ARRAY_BUFFER is supported.
      * @param bufferSize Buffer size in bytes.
      * @param streamType Buffer update policy: GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW.
      */
-    VertexObject(GLenum bufferType, GLsizeiptr bufferSize, GLenum streamType);
+    VertexObject(GLsizeiptr bufferSize, GLenum streamType);
 
     ~VertexObject();
 
@@ -94,18 +86,18 @@ class VertexObject
     void draw(GLenum primitive, GLsizei count, GLint first = 0) const noexcept;
 
     /**
-     * @brief Allocate GPU buffer and (optionally) copy data.
+     * @brief Allocate a GPU buffer and (optionally) copy data.
      *
-     * Allocate GPU buffer which size is defined by `bufferSize` parameter of constructor. If `data`
-     * is equal to <em>nullptr</em> then just allocate a new GPU side memory.
+     * Allocate a GPU buffer which size is defined by `bufferSize` parameter of a constructor. If
+     * `data` is equal to <em>nullptr</em> then just allocate a new GPU side memory.
      * @param data Pointer to CPU side memory buffer with vertex data.
      */
     void allocate(const void* data = nullptr) const noexcept;
 
     /**
-     * @brief Allocate GPU buffer and copy data.
+     * @brief Allocate a GPU buffer and copy data.
      *
-     * Allocate GPU buffer which size is defined by `bufferSize` parameter of the method.
+     * Allocate a GPU buffer which size is defined by `bufferSize` parameter of the method.
      *
      * @param bufferSize Buffer size in bytes.
      * @param data Pointer to CPU side memory buffer with vertex data.
@@ -113,14 +105,13 @@ class VertexObject
     void allocate(GLsizeiptr bufferSize, const void* data = nullptr) noexcept;
 
     /**
-     * @brief Allocate GPU buffer and copy data.
+     * @brief Allocate a GPU buffer and copy data.
      *
-     * @param bufferType Currently only GL_ARRAY_BUFFER is supported.
      * @param bufferSize Buffer size in bytes.
      * @param data Pointer to CPU side memory buffer with vertex data.
      * @param streamType Buffer update policy: GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW.
      */
-    void allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept;
+    void allocate(GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept;
 
     /**
      * @brief Copy vertex data from a CPU buffer to GPU buffer.
@@ -155,11 +146,6 @@ class VertexObject
     {
         return (m_state & State::Initialize) == 0;
     }
-    //! Return the buffer's current type.
-    GLenum getBufferType() const noexcept              { return m_bufferType; }
-
-    //! Update the buffer's current type.
-    void setBufferType(GLenum bufferType) noexcept     { m_bufferType = bufferType; }
 
     //! Return the buffer's current size.
     GLsizeiptr getBufferSize() const noexcept          { return m_bufferSize; }
@@ -173,7 +159,7 @@ class VertexObject
     //! Update the buffer's current update policy.
     void setStreamType(GLenum streamType) noexcept     { m_streamType = streamType; }
 
- private:
+ protected:
     enum State : uint16_t
     {
         NormalState = 0x0000,
@@ -181,20 +167,108 @@ class VertexObject
         Update      = 0x0002
     };
 
+    uint16_t   m_state              { State::Initialize };
+
     struct PtrParams;
 
     void enableAttribArrays() const noexcept;
     void disableAttribArrays() const noexcept;
 
+private:
     std::vector<PtrParams> m_attribParams;
 
-    GLuint     m_vboId{ 0 };
-    GLuint     m_vaoId{ 0 };
+    GLuint     m_vboId              { 0 };
+    GLuint     m_vaoId              { 0 };
 
-    GLsizeiptr m_bufferSize{ 0 };
-    GLenum     m_bufferType{ 0 };
-    GLenum     m_streamType{ 0 };
+    GLsizeiptr m_bufferSize         { 0 };
+    GLenum     m_streamType         { 0 };
+};
 
-    uint16_t   m_state{ State::Initialize };
+class IndexedVertexObject : public VertexObject
+{
+public:
+    IndexedVertexObject(const IndexedVertexObject&) = delete;
+    IndexedVertexObject(IndexedVertexObject&&) = delete;
+    IndexedVertexObject& operator=(const IndexedVertexObject&) = delete;
+    IndexedVertexObject& operator=(IndexedVertexObject&&) = delete;
+
+    IndexedVertexObject() = default;
+    explicit IndexedVertexObject(GLenum indexType);
+    IndexedVertexObject(GLsizeiptr bufferSize, GLenum streamType, GLenum indexType, GLsizeiptr indexSize);
+    IndexedVertexObject(GLsizeiptr bufferSize, GLenum streamType, GLenum indexType, GLsizeiptr indexSize, GLenum indexStreamType);
+    ~IndexedVertexObject();
+
+    /**
+     * @brief Bind the buffer to use.
+     *
+     * When the buffer is not initialized (just created) then after this call you can provide vertex
+     * data and configuration. After that only drawing is allowed.
+     */
+    void bind() noexcept;
+
+    /**
+     * @brief Bind the buffer to update and draw.
+     *
+     * If the buffer's update policy is GL_DYNAMIC_DRAW or GL_STREAM_DRAW then use this call to
+     * update data and draw.
+     */
+    void bindWritable() noexcept;
+
+    //! Unbind the buffer (stop usage)
+    void unbind() noexcept;
+
+    /**
+     * @brief Draw the buffer data
+     *
+     * @param primitive OpenGL primitive (GL_LINES, GL_TRIANGLES and so on).
+     * @param count Number of vertices to draw.
+     * @param first First vertice to draw.
+     */
+    void draw(GLenum primitive, GLsizei count, GLint first = 0) const noexcept;
+
+    /**
+     * @brief Allocate GPU vertex and index buffers and copy data.
+     *
+     * Allocate GPU buffers for vertices and indices which sizes are defined by `bufferSize` and
+     * `indexSize` parameters of a constructor. If `data` or `indices` is equal to <em>nullptr</em>
+     * then just allocate a new GPU side memory.
+     *
+     * @param data Pointer to a CPU side memory buffer with vertex data.
+     * @param indices Pointer to a CPU side memory buffer with index data.
+     */
+    void allocate(const void* data, const void* indices) const noexcept;
+
+    /**
+     * @brief Copy index data from a CPU buffer to GPU buffer.
+     *
+     * @param data Pointer to CPU side memory buffer with vertex data.
+     * @param offset Offset in GPU memory to copy data to.
+     * @param size Total number of bytes to copy.
+     */
+    void setIndexBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept;
+
+    //! Return the indexbuffer's current size.
+    GLsizeiptr getIndexBufferSize() const noexcept         { return m_indexSize; }
+
+    //! Update the index buffer's current size.
+    void setIndexBufferSize(GLsizeiptr indexSize) noexcept { m_indexSize = indexSize; }
+
+    //! Return the index buffer's current update policy.
+    GLenum getIndexStreamType() const noexcept             { return m_indexStreamType; }
+
+    //! Update the index buffer's current update policy.
+    void setIndexStreamType(GLenum streamType) noexcept    { m_indexStreamType = streamType; }
+
+    //! Return the index buffer's current type.
+    GLenum getIndexType() const noexcept                   { return m_indexType; }
+
+    //! Update the index buffer's type.
+    void setIndexType(GLenum indexType) noexcept           { m_indexType = indexType; }
+
+private:
+    GLuint     m_vioId              { 0 };
+    GLenum     m_indexType          { 0 };
+    GLenum     m_indexStreamType    { 0 };
+    GLsizeiptr m_indexSize          { 0 };
 };
 } // namespace

@@ -49,7 +49,7 @@ struct GlobularForm
     };
 
     std::vector<Blob> gblobs{ };
-    mutable VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
+    mutable VertexObject vo{ 0, GL_STATIC_DRAW };
 };
 
 
