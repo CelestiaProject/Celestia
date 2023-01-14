@@ -466,17 +466,6 @@ class Renderer
     FramebufferObject* getShadowFBO(int) const;
 
  public:
-    // Internal types
-    // TODO: Figure out how to make these private.  Even with a friend
-    //
-    struct Particle
-    {
-        Eigen::Vector3f center;
-        float size;
-        Color color;
-        float pad0, pad1, pad2;
-    };
-
     struct RenderProperties
     {
         Surface* surface{ nullptr };
@@ -653,8 +642,6 @@ class Renderer
 
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
-    void renderParticles(const std::vector<Particle>& particles);
-
 
     void addAnnotation(std::vector<Annotation>&,
                        const celestia::MarkerRepresentation*,
@@ -755,7 +742,6 @@ class Renderer
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
-    std::vector<Particle> glareParticles;
     std::vector<Annotation> backgroundAnnotations;
     std::vector<Annotation> foregroundAnnotations;
     std::vector<Annotation> depthSortedAnnotations;

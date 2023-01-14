@@ -4104,35 +4104,6 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 }
 
 
-void Renderer::renderParticles(const vector<Particle>& particles)
-{
-    ShaderProperties shaderprop;
-    shaderprop.lightModel = ShaderProperties::ParticleModel;
-    shaderprop.texUsage = ShaderProperties::PointSprite;
-    auto *prog = shaderManager->getShader(shaderprop);
-    if (prog == nullptr)
-        return;
-    prog->use();
-
-#ifndef GL_ES
-    glEnable(GL_POINT_SPRITE);
-#endif
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(Particle), &particles[0].center);
-    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE,
-                          sizeof(Particle), &particles[0].size);
-    glDrawArrays(GL_POINTS, 0, particles.size());
-
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-#ifndef GL_ES
-    glDisable(GL_POINT_SPRITE);
-#endif
-}
-
 void
 Renderer::renderAnnotationMarker(const Annotation &a,
                                  FontStyle fs,
