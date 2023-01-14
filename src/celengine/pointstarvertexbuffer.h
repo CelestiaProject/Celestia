@@ -1,6 +1,6 @@
 // pointstarvertexbuffer.h
 //
-// Copyright (C) 2001-2019, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <memory>
 #include <Eigen/Core>
+#include <celrender/vertexobject.h>
 
 class Color;
 class Renderer;
@@ -23,8 +25,8 @@ class PointStarVertexBuffer
 public:
     using capacity_t = unsigned int;
 
-    PointStarVertexBuffer(const Renderer& _renderer, unsigned int _capacity);
-    ~PointStarVertexBuffer();
+    PointStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
+    ~PointStarVertexBuffer() = default;
     PointStarVertexBuffer() = delete;
     PointStarVertexBuffer(const PointStarVertexBuffer&) = delete;
     PointStarVertexBuffer(PointStarVertexBuffer&&) = delete;
@@ -35,8 +37,8 @@ public:
     void startSprites();
     void render();
     void finish();
-    inline void addStar(const Eigen::Vector3f& pos, const Color&, float);
-    void setTexture(Texture* /*_texture*/);
+    void addStar(const Eigen::Vector3f &pos, const Color &color, float size);
+    void setTexture(Texture* texture);
     void setPointScale(float);
 
     static void enable();
@@ -48,39 +50,40 @@ private:
         Eigen::Vector3f position;
         float size;
         unsigned char color[4];
-        float pad;
     };
 
-    const Renderer& renderer;
-    capacity_t capacity;
+    const Renderer                 &m_renderer;
+    capacity_t                      m_capacity;
+    capacity_t                      m_nStars                { 0 };
+    std::unique_ptr<StarVertex[]>   m_vertices;
+    Texture                        *m_texture               { nullptr };
+    bool                            m_pointSizeFromVertex   { false };
+    float                           m_pointScale            { 1.0f };
+    CelestiaGLProgram              *m_prog                  { nullptr };
+    celestia::render::VertexObject  m_vao;
 
-    capacity_t nStars           { 0 };
-    StarVertex* vertices        { nullptr };
-    Texture* texture            { nullptr };
-    bool pointSizeFromVertex    { false };
-    float pointScale            { 1.0f };
-    CelestiaGLProgram* program  { nullptr };
-
-    static PointStarVertexBuffer* current;
+    static PointStarVertexBuffer    *current;
 
     void makeCurrent();
+    void setupVertexArrayObject();
 };
 
-inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
-                                           const Color& color,
-                                           float size)
+inline void
+PointStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
+                               const Color &color,
+                               float size)
 {
-    if (nStars < capacity)
+    if (m_nStars < m_capacity)
     {
-        vertices[nStars].position = pos;
-        vertices[nStars].size = size;
-        color.get(vertices[nStars].color);
-        nStars++;
+        m_vertices[m_nStars].position = pos;
+        m_vertices[m_nStars].size = size;
+        color.get(m_vertices[m_nStars].color);
+        m_nStars++;
     }
 
-    if (nStars == capacity)
+    if (m_nStars == m_capacity)
     {
         render();
-        nStars = 0;
+        m_nStars = 0;
     }
 }
