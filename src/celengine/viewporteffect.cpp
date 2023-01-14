@@ -41,7 +41,7 @@ bool ViewportEffect::distortXY(float &x, float &y)
 
 PassthroughViewportEffect::PassthroughViewportEffect() :
     ViewportEffect(),
-    vo(GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW)
+    vo(0, GL_STATIC_DRAW)
 {
 }
 
@@ -91,7 +91,7 @@ void PassthroughViewportEffect::draw(VertexObject& vo)
 
 WarpMeshViewportEffect::WarpMeshViewportEffect(WarpMesh *mesh) :
     ViewportEffect(),
-    vo(GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW),
+    vo(0, GL_STATIC_DRAW),
     mesh(mesh)
 {
 }

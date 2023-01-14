@@ -26,14 +26,8 @@ namespace
 
 namespace celestia::render
 {
-VertexObject::VertexObject(GLenum bufferType) :
-    m_bufferType(bufferType)
-{
-}
-
-VertexObject::VertexObject(GLenum bufferType, GLsizeiptr bufferSize, GLenum streamType) :
+VertexObject::VertexObject(GLsizeiptr bufferSize, GLenum streamType) :
     m_bufferSize(bufferSize),
-    m_bufferType(bufferType),
     m_streamType(streamType)
 {
 }
@@ -57,7 +51,7 @@ void VertexObject::bind() noexcept
             glBindVertexArray(m_vaoId);
         }
         glGenBuffers(1, &m_vboId);
-        glBindBuffer(m_bufferType, m_vboId);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
     }
     else
     {
@@ -65,11 +59,11 @@ void VertexObject::bind() noexcept
         {
             glBindVertexArray(m_vaoId);
             if ((m_state & State::Update) != 0)
-                glBindBuffer(m_bufferType, m_vboId);
+                glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
         }
         else
         {
-            glBindBuffer(m_bufferType, m_vboId);
+            glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
             enableAttribArrays();
         }
     }
@@ -89,20 +83,21 @@ void VertexObject::unbind() noexcept
     if (isVAOSupported())
     {
         if ((m_state & (State::Initialize | State::Update)) != 0)
-            glBindBuffer(m_bufferType, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+        m_attribParams.clear(); // we don't need them anymore if VAO is supported
     }
     else
     {
         disableAttribArrays();
-        glBindBuffer(m_bufferType, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     m_state = State::NormalState;
 }
 
 void VertexObject::allocate(const void* data) const noexcept
 {
-    glBufferData(m_bufferType, m_bufferSize, data, m_streamType);
+    glBufferData(GL_ARRAY_BUFFER, m_bufferSize, data, m_streamType);
 }
 
 void VertexObject::allocate(GLsizeiptr bufferSize, const void* data) noexcept
@@ -111,9 +106,8 @@ void VertexObject::allocate(GLsizeiptr bufferSize, const void* data) noexcept
     allocate(data);
 }
 
-void VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept
+void VertexObject::allocate(GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept
 {
-    m_bufferType = bufferType;
     m_bufferSize = bufferSize;
     m_streamType = streamType;
     allocate(data);
@@ -121,7 +115,7 @@ void VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void
 
 void VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept
 {
-    glBufferSubData(m_bufferType, offset, size == 0 ? m_bufferSize : size, data);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size == 0 ? m_bufferSize : size, data);
 }
 
 void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) const noexcept
@@ -165,4 +159,89 @@ void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type
     assert(location >= 0);
     m_attribParams.emplace_back(location, offset, stride, count, type, normalized);
 }
+
+IndexedVertexObject::IndexedVertexObject(GLenum indexType) :
+    VertexObject(),
+    m_indexType(indexType)
+{
+}
+
+IndexedVertexObject::IndexedVertexObject(GLsizeiptr bufferSize, GLenum streamType, GLenum indexType, GLsizeiptr indexSize) :
+    VertexObject(bufferSize, streamType),
+    m_indexType(indexType),
+    m_indexStreamType(streamType),
+    m_indexSize(indexSize)
+{
+}
+
+IndexedVertexObject::IndexedVertexObject(GLsizeiptr bufferSize, GLenum streamType, GLenum indexType, GLsizeiptr indexSize, GLenum indexStreamType) :
+    VertexObject(bufferSize, streamType),
+    m_indexType(indexType),
+    m_indexStreamType(indexStreamType),
+    m_indexSize(indexSize)
+{
+}
+
+IndexedVertexObject::~IndexedVertexObject()
+{
+    if (m_vioId != 0)
+        glDeleteBuffers(1, &m_vioId);
+}
+
+void
+IndexedVertexObject::bindWritable() noexcept
+{
+    m_state |= State::Update;
+    bind();
+}
+
+void
+IndexedVertexObject::bind() noexcept
+{
+    VertexObject::bind();
+
+    if ((m_state & State::Initialize) != 0)
+    {
+        glGenBuffers(1, &m_vioId);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vioId);
+    }
+
+    // we can have streaming/dynamic VBO and static VIO so we have an additional check
+    if (!isVAOSupported() ||
+        ((m_state & State::Update) != 0 && m_indexStreamType != GL_STATIC_DRAW))
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vioId);
+    }
+}
+
+void
+IndexedVertexObject::unbind() noexcept
+{
+    VertexObject::unbind();
+    if ((m_state & (State::Initialize | State::Update)) != 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void
+IndexedVertexObject::draw(GLenum primitive, GLsizei count, GLint first) const noexcept
+{
+    if ((m_state & State::Initialize) != 0)
+        enableAttribArrays();
+
+    glDrawElements(primitive, count, m_indexType, reinterpret_cast<void*>(first));
+}
+
+void
+IndexedVertexObject::allocate(const void* data, const void* indices) const noexcept
+{
+    VertexObject::allocate(data);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexSize, indices, m_indexStreamType);
+}
+
+void
+IndexedVertexObject::setIndexBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept
+{
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
+}
+
 } // namespace

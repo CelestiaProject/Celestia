@@ -5305,11 +5305,11 @@ bool Renderer::getInfo(map<string, string>& info) const
 }
 
 VertexObject&
-Renderer::getVertexObject(VOType owner, GLenum type, GLsizeiptr size, GLenum stream)
+Renderer::getVertexObject(VOType owner, GLenum /*type*/, GLsizeiptr size, GLenum stream)
 {
-    auto i = static_cast<size_t>(owner);
+    auto i = static_cast<int>(owner);
     if (m_VertexObjects[i] == nullptr)
-        m_VertexObjects[i] = new VertexObject(type, size, stream);
+        m_VertexObjects[i] = new VertexObject(size, stream);
 
     return *m_VertexObjects[i];
 }
