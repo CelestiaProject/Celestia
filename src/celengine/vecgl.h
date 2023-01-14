@@ -130,4 +130,12 @@ translate(T x, T y, T z)
 {
     return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
 }
+
+template <typename T, typename F, std::enable_if_t<std::is_floating_point_v<F>, bool> = true>
+inline T
+mix(const T &x, const T &y, F a)
+{
+    return x * (static_cast<F>(1.0) - a) + y * a;
+}
+
 } // end namespace celestia::vecgl

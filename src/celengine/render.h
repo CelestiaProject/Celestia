@@ -42,6 +42,7 @@ namespace celestia
 class Rect;
 namespace render
 {
+class AtmosphereRenderer;
 class CometRenderer;
 }
 }
@@ -494,21 +495,6 @@ class Renderer
     OctreeProcStats m_dsoProcStats;
 #endif
  private:
-    struct SkyVertex
-    {
-        float x, y, z;
-        unsigned char color[4];
-    };
-
-    struct SkyContourPoint
-    {
-        Eigen::Vector3f v;
-        Eigen::Vector3f eyeDir;
-        float centerDist;
-        float eyeDist;
-        float cosSkyCapAltitude;
-    };
-
     template <class OBJ> struct ObjectLabel
     {
         OBJ*        obj{ nullptr };
@@ -647,16 +633,6 @@ class Renderer
                              bool useHalos,
                              bool emissive,
                              const Matrices&);
-
-    void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                                   const Eigen::Vector3f& center,
-                                   const Eigen::Quaternionf& orientation,
-                                   const Eigen::Vector3f& semiAxes,
-                                   const Eigen::Vector3f& sunDirection,
-                                   const LightingState& ls,
-                                   float fade,
-                                   bool lit,
-                                   const Matrices&);
 
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
@@ -818,10 +794,6 @@ class Renderer
     float minFeatureSize;
     uint64_t locationFilter;
 
-    SkyVertex* skyVertices;
-    uint32_t* skyIndices;
-    SkyContourPoint* skyContour;
-
     const ColorTemperatureTable* colorTemp;
 
     Selection highlightObject;
@@ -850,6 +822,7 @@ class Renderer
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
+    std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
 
     // Location markers
