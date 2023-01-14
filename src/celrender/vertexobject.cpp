@@ -154,6 +154,25 @@ void VertexObject::disableAttribArrays() const noexcept
         glDisableVertexAttribArray(p.location);
 }
 
+void
+VertexObject::disableVertexAttribArray(GLint location) const noexcept
+{
+    glDisableVertexAttribArray(location);
+}
+
+void
+VertexObject::setVertexAttribConstant(GLint location, float value) const noexcept
+{
+    disableVertexAttribArray(location);
+    glVertexAttrib1f(location, value);
+}
+
+void
+VertexObject::enableVertexAttribArray(GLint location) const noexcept
+{
+    glEnableVertexAttribArray(location);
+}
+
 void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
 {
     assert(location >= 0);
