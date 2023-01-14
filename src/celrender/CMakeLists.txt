@@ -1,4 +1,6 @@
 set(CELRENDER_SOURCES
+  cometrenderer.cpp
+  cometrenderer.h
   linerenderer.cpp
   linerenderer.h
   vertexobject.cpp
