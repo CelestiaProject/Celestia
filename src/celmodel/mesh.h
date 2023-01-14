@@ -167,6 +167,8 @@ struct PrimitiveGroup
 
     PrimitiveGroupType prim{ PrimitiveGroupType::InvalidPrimitiveGroupType };
     unsigned int materialIndex{ 0 };
+    int indicesCount{ 0 };
+    int indicesOffset{ 0 };
     std::vector<Index32> indices{ };
 };
 
@@ -230,9 +232,13 @@ class Mesh
     unsigned int getVertexStrideWords() const { return vertexDesc.strideBytes / sizeof(cmod::VWord); }
     unsigned int getPrimitiveCount() const;
 
+    unsigned int getIndexCount() const { return nTotalIndices; }
+
     void merge(const Mesh&);
     bool canMerge(const Mesh&, const std::vector<Material> &materials) const;
     void optimize();
+
+    void rebuildIndexMetadata();
 
  private:
     void mergePrimitiveGroups();
@@ -241,6 +247,8 @@ class Mesh
 
     unsigned int nVertices{ 0 };
     std::vector<VWord> vertices{ };
+
+    unsigned int nTotalIndices{ 0 };
 
     std::vector<PrimitiveGroup> groups;
 

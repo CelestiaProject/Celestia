@@ -124,6 +124,8 @@ PrimitiveGroup::clone() const
     newGroup.prim = prim;
     newGroup.materialIndex = materialIndex;
     newGroup.indices = indices;
+    newGroup.indicesCount = indicesCount;
+    newGroup.indicesOffset = indicesOffset;
     return newGroup;
 }
 
@@ -363,6 +365,19 @@ Mesh::optimize()
     meshopt_optimizeOverdraw(g.indices.data(), g.indices.data(), g.indices.size(), reinterpret_cast<float*>(vertices.data()), nVertices, vertexDesc.strideBytes, 1.05f);
     meshopt_optimizeVertexFetch(vertices.data(), g.indices.data(), g.indices.size(), vertices.data(), nVertices, vertexDesc.strideBytes);
 #endif
+}
+
+void
+Mesh::rebuildIndexMetadata()
+{
+    int offset = 0;
+    for (auto &g : groups)
+    {
+        g.indicesOffset = offset;
+        g.indicesCount = static_cast<int>(g.indices.size());
+        offset += g.indicesCount;
+    }
+    nTotalIndices = offset;
 }
 
 bool
