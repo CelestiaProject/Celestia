@@ -1,6 +1,6 @@
 // geometry.h
 //
-// Copyright (C) 2004-2010, Celestia Development Team
+// Copyright (C) 2004-present, Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -16,12 +16,10 @@
 
 class RenderContext;
 
-
 class Geometry
 {
 public:
-    Geometry() {};
-    virtual ~Geometry() {};
+    virtual ~Geometry() = default;
 
     //! Render the geometry in the specified OpenGL context
     virtual void render(RenderContext& rc, double t = 0.0) = 0;

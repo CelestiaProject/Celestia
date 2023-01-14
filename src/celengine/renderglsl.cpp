@@ -254,8 +254,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
-                                                                       ls.shadows[li]->size()));
+            auto nShadows = std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
@@ -616,8 +615,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
-                                                                       ls.shadows[li]->size()));
+            unsigned int nShadows = std::min(MaxShaderEclipseShadows,
+                                             static_cast<unsigned int>(ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }

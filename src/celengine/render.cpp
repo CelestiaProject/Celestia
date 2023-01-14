@@ -885,12 +885,6 @@ void Renderer::addSortedAnnotation(const celestia::MarkerRepresentation* markerR
 }
 
 
-void Renderer::clearAnnotations(vector<Annotation>& annotations)
-{
-    annotations.clear();
-}
-
-
 // Return the orientation of the camera used to render the current
 // frame. Available only while rendering a frame.
 const Quaternionf& Renderer::getCameraOrientation() const
@@ -969,11 +963,7 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
     }
     else
     {
-        int classification;
-        if (body != nullptr)
-            classification = body->getOrbitClassification();
-        else
-            classification = Body::Stellar;
+        int classification = body != nullptr ? body->getOrbitClassification() : Body::Stellar;
 
         switch (classification)
         {
@@ -1019,11 +1009,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
 
-    const Orbit* orbit = nullptr;
-    if (body != nullptr)
-        orbit = body->getOrbit(t);
-    else
-        orbit = orbitPath.star->getOrbit();
+    const auto* orbit = body != nullptr ? body->getOrbit(t) : orbitPath.star->getOrbit();
 
     CurvePlot* cachedOrbit = nullptr;
     OrbitCache::iterator cached = orbitCache.find(orbit);
@@ -1186,20 +1172,11 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     // vertices into camera space.
     Affine3d modelview;
     {
-        Quaterniond orientation = Quaterniond::Identity();
-        if (body)
-        {
-            orientation = body->getOrbitFrame(t)->getOrientation(t);
-        }
-
+        auto orientation = body == nullptr ? Quaterniond::Identity() : body->getOrbitFrame(t)->getOrientation(t);
         modelview = cameraOrientation * Translation3d(orbitPath.origin) * orientation.conjugate();
     }
 
-    bool highlight;
-    if (body != nullptr)
-        highlight = highlightObject.body() == body;
-    else
-        highlight = highlightObject.star() == orbitPath.star;
+    bool highlight = body != nullptr ? highlightObject.body() == body : highlightObject.star() == orbitPath.star;
     Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity);
 
 #ifdef STIPPLED_LINES
@@ -1360,7 +1337,7 @@ static void
 setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
                            const vector<LightSource>& primaryIlluminators)
 {
-    float au2 = square(astro::kilometersToAU(1.0f));
+    constexpr float au2 = square(astro::kilometersToAU(1.0f));
 
     for (auto& i : secondaryIlluminators)
     {
@@ -1814,20 +1791,6 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 }
 
 
-// Used to sort light sources in order of decreasing irradiance
-struct LightIrradiancePredicate
-{
-    int unused;
-
-    LightIrradiancePredicate() = default;
-
-    bool operator()(const DirectionalLight& l0,
-                    const DirectionalLight& l1) const
-    {
-        return (l0.irradiance > l1.irradiance);
-    }
-};
-
 static void renderSphereUnlit(const RenderInfo& ri,
                               const Frustum& frustum,
                               const Matrices &m,
@@ -2156,7 +2119,8 @@ setupObjectLighting(const vector<LightSource>& suns,
     }
     else if (nLights > 2)
     {
-        sort(ls.lights, ls.lights + nLights, LightIrradiancePredicate());
+        sort(ls.lights, ls.lights + nLights,
+             [](const auto &l0, const auto &l1) { return l0.irradiance > l1.irradiance; });
     }
 
     // Compute the total irradiance
@@ -2174,7 +2138,7 @@ setupObjectLighting(const vector<LightSource>& suns,
     //   buffers is enabled.
     float minVisibleFraction = 1.0f / 10000.0f;
     float minDisplayableValue = 1.0f / 255.0f;
-    auto gamma = (float) (log(minDisplayableValue) / log(minVisibleFraction));
+    float gamma = log(minDisplayableValue) / log(minVisibleFraction);
     float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
 
     Matrix3f m = objOrientation.toRotationMatrix();
@@ -2185,8 +2149,7 @@ setupObjectLighting(const vector<LightSource>& suns,
     ls.nLights = 0;
     for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
     {
-        ls.lights[i].irradiance =
-            (float) pow(ls.lights[i].irradiance / totalIrradiance, gamma);
+        ls.lights[i].irradiance = pow(ls.lights[i].irradiance / totalIrradiance, gamma);
 
         // Compute the direction of the light in object space
         ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
@@ -2231,7 +2194,7 @@ void Renderer::renderObject(const Vector3f& pos,
 
     ri.sunDir_eye = Vector3f::UnitY();
     ri.sunDir_obj = Vector3f::UnitY();
-    ri.sunColor = Color(0.0f, 0.0f, 0.0f);
+    ri.sunColor = Color::Black;
     if (ls.nLights > 0)
     {
         ri.sunDir_eye = ls.lights[0].direction_eye;
@@ -2479,7 +2442,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             thicknessInPixels = atmosphere->height /
                 ((distance - radius) * pixelSize);
-            fade = std::clamp(thicknessInPixels - 2, 0.0f, 1.0f);
+            fade = std::clamp(thicknessInPixels - 2.0f, 0.0f, 1.0f);
         }
         else
         {
@@ -3272,7 +3235,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
     if (body.getClassification() == Body::Comet && (renderFlags & ShowCometTails) != 0)
     {
         float radius = cometDustTailLength(rle.sun.norm(), body.getRadius());
-        float discSize = (radius / (float) rle.distance) / pixelSize;
+        float discSize = (radius / rle.distance) / pixelSize;
         if (discSize > 1)
         {
             rle.renderableType = RenderListEntry::RenderableCometTail;
@@ -4171,7 +4134,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
                                  FontStyle fs)
 {
     auto font = getFont(fs);
-    if (!font)
+    if (font == nullptr)
         return;
 
     Matrix4f mv = Matrix4f::Identity();
@@ -4835,9 +4798,9 @@ Renderer::getShadowFBO(int index) const
 void
 Renderer::createShadowFBO()
 {
-    m_shadowFBO = unique_ptr<FramebufferObject>(new FramebufferObject(m_shadowMapSize,
-                                                                      m_shadowMapSize,
-                                                                      FramebufferObject::DepthAttachment));
+    m_shadowFBO = std::make_unique<FramebufferObject>(m_shadowMapSize,
+                                                      m_shadowMapSize,
+                                                      FramebufferObject::DepthAttachment);
     if (!m_shadowFBO->isValid())
     {
         GetLogger()->warn("Error creating shadow FBO.\n");
@@ -4850,9 +4813,7 @@ Renderer::setShadowMapSize(unsigned size)
 {
     if (!FramebufferObject::isSupported())
         return;
-    GLint t = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);
-    m_shadowMapSize = std::clamp(size, 0u, static_cast<unsigned>(t));
+    m_shadowMapSize = std::min(size, static_cast<unsigned>(gl::maxTextureSize));
     if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
         return;
     if (m_shadowMapSize == 0)
@@ -4998,11 +4959,7 @@ Renderer::selectionToAnnotation(const Selection &sel,
     float symbolSize = (float)(sel.radius() / distance) / pixelSize;
 
     // Modify the marker position so that it is always in front of the marked object.
-    double boundingRadius;
-    if (sel.body() != nullptr)
-        boundingRadius = sel.body()->getBoundingRadius();
-    else
-        boundingRadius = sel.radius();
+    double boundingRadius = sel.body() != nullptr ? sel.body()->getBoundingRadius() : sel.radius();
     offset *= (1.0 - boundingRadius * 1.01 / distance);
 
     // The selection cursor is only partially visible when the selected object is obscured. To implement
@@ -5068,9 +5025,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         if (ellipDist >= atmosphere->height / radius)
             continue;
 
-        float density = 1.0f - ellipDist / (atmosphere->height / radius);
-        if (density > 1.0f)
-            density = 1.0f;
+        float density = std::min(1.0f, 1.0f - ellipDist / (atmosphere->height / radius));
 
         Vector3f sunDir = ri.sun.normalized();
         Vector3f normal = -ri.position.normalized();

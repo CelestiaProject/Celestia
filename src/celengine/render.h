@@ -431,8 +431,6 @@ class Renderer
     const Eigen::Quaternionf& getCameraOrientation() const;
     float getNearPlaneDistance() const;
 
-    void clearAnnotations(std::vector<Annotation>&);
-
     void invalidateOrbitCache();
 
     struct OrbitPathListEntry
@@ -484,32 +482,6 @@ class Renderer
     OctreeProcStats m_starProcStats;
     OctreeProcStats m_dsoProcStats;
 #endif
- private:
-    template <class OBJ> struct ObjectLabel
-    {
-        OBJ*        obj{ nullptr };
-        std::string label;
-
-        ObjectLabel(OBJ* _obj, const std::string& _label) :
-            obj  (_obj),
-            label(_label)
-        {};
-
-        ObjectLabel(const ObjectLabel& objLbl) :
-            obj  (objLbl.obj),
-            label(objLbl.label)
-        {};
-
-        ObjectLabel& operator = (const ObjectLabel& objLbl)
-        {
-            obj   = objLbl.obj;
-            label = objLbl.label;
-            return *this;
-        };
-    };
-
-    typedef ObjectLabel<Star>          StarLabel;
-    typedef ObjectLabel<DeepSkyObject> DSOLabel;    // currently not used
 
     struct DepthBufferPartition
     {

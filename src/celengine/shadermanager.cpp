@@ -3810,20 +3810,20 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
     Eigen::Affine3f rotation(orientation.conjugate());
     Eigen::Matrix4f modelToWorld = (rotation * Eigen::Scaling(scaleFactors)).matrix();
 
+    // The shadow bias matrix maps from
+    Eigen::Matrix4f shadowBias;
+    shadowBias << 0.5f, 0.0f, 0.0f, 0.5f,
+                  0.0f, 0.5f, 0.0f, 0.5f,
+                  0.0f, 0.0f, 0.5f, 0.5f,
+                  0.0f, 0.0f, 0.0f, 1.0f;
+
     for (unsigned int li = 0;
          li < std::min(ls.nLights, MaxShaderLights);
          li++)
     {
         if (ls.shadows[li] != nullptr)
         {
-            unsigned int nShadows = std::min(static_cast<std::size_t>(MaxShaderEclipseShadows), ls.shadows[li]->size());
-
-            // The shadow bias matrix maps from
-            Eigen::Matrix4f shadowBias;
-            shadowBias << 0.5f, 0.0f, 0.0f, 0.5f,
-                          0.0f, 0.5f, 0.0f, 0.5f,
-                          0.0f, 0.0f, 0.5f, 0.5f,
-                          0.0f, 0.0f, 0.0f, 1.0f;
+            auto nShadows = std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[li]->size()));
 
             for (unsigned int i = 0; i < nShadows; i++)
             {
@@ -3873,7 +3873,7 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
                                            float objRadius)
 {
     // Compute the radius of the sky sphere to render; the density of the atmosphere
-    // fallse off exponentially with height above the planet's surface, so the actual
+    // falls off exponentially with height above the planet's surface, so the actual
     // radius is infinite. That's a bit impractical, so well just render the portion
     // out to the point where the density is some fraction of the surface density.
     float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * std::log(AtmosphereExtinctionThreshold);
