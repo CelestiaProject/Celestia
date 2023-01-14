@@ -23,6 +23,7 @@ set(QT_SOURCES
   qtcelestiaactions.cpp
   qtcolorswatchwidget.cpp
   qtdeepskybrowser.cpp
+  qtdraghandler.cpp
   qteventfinder.cpp
   qtglwidget.cpp
   qtgotoobjectdialog.cpp
@@ -43,6 +44,7 @@ set(QT_HEADERS
   qtcelestiaactions.h
   qtcolorswatchwidget.h
   qtdeepskybrowser.h
+  qtdraghandler.h
   qteventfinder.h
   qtgettext.h
   qtgotoobjectdialog.h
@@ -55,6 +57,23 @@ set(QT_HEADERS
   qttimetoolbar.h
   xbel.h
 )
+
+if(USE_WAYLAND)
+  find_package(Wayland COMPONENTS protocols scanner REQUIRED)
+
+  include(WaylandAddProtocolClient)
+  wayland_add_protocol_client(PROTOCOL_SOURCES
+    "unstable/pointer-constraints/pointer-constraints-unstable-v1.xml")
+  wayland_add_protocol_client(PROTOCOL_SOURCES
+    "unstable/relative-pointer/relative-pointer-unstable-v1.xml")
+
+  set_source_files_properties(${PROTOCOL_SOURCES} PROPERTIES GENERATED ON)
+  add_library(wayland-protocols-helper STATIC ${PROTOCOL_SOURCES})
+  target_include_directories(wayland-protocols-helper INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
+
+  list(APPEND QT_SOURCES qtwaylanddraghandler.cpp)
+  list(APPEND QT_HEADERS qtwaylanddraghandler.h)
+endif()
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
@@ -78,6 +97,15 @@ if(USE_QT6)
   target_link_libraries(celestia-qt Qt6::Widgets Qt6::OpenGLWidgets Qt6::Core5Compat celestia)
 else()
   target_link_libraries(celestia-qt Qt5::Widgets celestia)
+endif()
+if(USE_WAYLAND)
+  target_link_libraries(celestia-qt Wayland::Client wayland-protocols-helper)
+  target_compile_definitions(celestia-qt PRIVATE USE_WAYLAND)
+  if (USE_QT6)
+    target_include_directories(celestia-qt PRIVATE ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
+  else()
+    target_include_directories(celestia-qt PRIVATE ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
+  endif()
 endif()
 if(APPLE)
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")

@@ -22,6 +22,7 @@
 #include <vector>
 
 #include <QCursor>
+#include <QGuiApplication>
 #include <QPaintDevice>
 #include <QMouseEvent>
 #include <QSettings>
@@ -72,6 +73,7 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     currentCursor = CelestiaCore::CrossCursor;
     setMouseTracking(true);
 
+    dragHandler = createDragHandler(this, appCore);
     cursorVisible = true;
 }
 
@@ -163,10 +165,7 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
     // We may want to enable this on other platforms, though it's mostly only helpful
     // for users with single button mice.
     if (m->modifiers() & AltModifier)
-    {
-        buttons &= ~CelestiaCore::LeftButton;
-        buttons |= CelestiaCore::RightButton;
-    }
+        buttons |= CelestiaCore::AltKey;
 #endif
 
     if ((m->buttons() & (LeftButton | RightButton)) != 0)
@@ -177,20 +176,10 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
             setCursor(QCursor(Qt::BlankCursor));
             cursorVisible = false;
 
-            // Save the cursor position
-            QPoint pt;
-            pt.setX(m->x());
-            pt.setY(m->y());
-
-            // Store a local and global location
-            saveLocalCursorPos = pt;
-            pt = mapToGlobal(pt);
-            saveGlobalCursorPos = pt;
+            dragHandler->begin(*m, scale, buttons);
         }
 
-        // Calculate mouse delta from local coordinate then move it back to the saved location
-        appCore->mouseMove((m->x() - saveLocalCursorPos.rx()) * scale, (m->y() - saveLocalCursorPos.ry()) * scale, buttons);
-        QCursor::setPos(saveGlobalCursorPos);
+        dragHandler->move(*m, scale);
     }
     else
     {
@@ -206,11 +195,20 @@ void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
     auto y = static_cast<int>(m->y() * scale);
 
     if (m->button() == LeftButton)
+    {
+        dragHandler->setButton(CelestiaCore::LeftButton);
         appCore->mouseButtonDown(x, y, CelestiaCore::LeftButton);
+    }
     else if (m->button() == MiddleButton)
+    {
+        dragHandler->setButton(CelestiaCore::MiddleButton);
         appCore->mouseButtonDown(x, y, CelestiaCore::MiddleButton);
+    }
     else if (m->button() == RightButton)
+    {
+        dragHandler->setButton(CelestiaCore::RightButton);
         appCore->mouseButtonDown(x, y, CelestiaCore::RightButton);
+    }
 }
 
 
@@ -227,12 +225,14 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             // Restore the cursor position and make it visible again.
             setCursor(QCursor(Qt::CrossCursor));
             cursorVisible = true;
-            QCursor::setPos(saveGlobalCursorPos);
+            dragHandler->finish();
         }
+        dragHandler->clearButton(CelestiaCore::LeftButton);
         appCore->mouseButtonUp(x, y, CelestiaCore::LeftButton);
     }
     else if (m->button() == MiddleButton)
     {
+        dragHandler->clearButton(CelestiaCore::MiddleButton);
         appCore->mouseButtonUp(x, y, CelestiaCore::MiddleButton);
     }
     else if (m->button() == RightButton)
@@ -242,8 +242,9 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             // Restore the cursor position and make it visible again.
             setCursor(QCursor(Qt::CrossCursor));
             cursorVisible = true;
-            QCursor::setPos(saveGlobalCursorPos);
+            dragHandler->finish();
         }
+        dragHandler->clearButton(CelestiaCore::RightButton);
         appCore->mouseButtonUp(x, y, CelestiaCore::RightButton);
     }
 }
@@ -397,10 +398,23 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
 {
     int modifiers = 0;
     if (e->modifiers() & ShiftModifier)
+    {
         modifiers |= CelestiaCore::ShiftKey;
+    }
     if (e->modifiers() & ControlModifier)
+    {
         modifiers |= CelestiaCore::ControlKey;
+    }
 
+#ifdef __APPLE__
+    // Mac Option+left drag
+    if (e->modifiers() & AltModifier)
+        dragHandler->setButton(modifiers | CelestiaCore::AltKey);
+    else
+        dragHandler->setButton(modifiers);
+#else
+    dragHandler->setButton(modifiers);
+#endif
     switch (e->key())
     {
     case Key_Escape:
@@ -435,6 +449,16 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
 
 void CelestiaGlWidget::keyReleaseEvent( QKeyEvent* e )
 {
+    int modifiers = 0;
+    if (!(e->modifiers() & ShiftModifier))
+        modifiers |= CelestiaCore::ShiftKey;
+    if (!(e->modifiers() & ControlModifier))
+        modifiers |= CelestiaCore::ControlKey;
+#ifdef __APPLE__
+    if (!(e->modifiers() & AltModifier))
+        modifiers |= CelestiaCore::AltKey;
+#endif
+    dragHandler->clearButton(modifiers);
     handleSpecialKey(e, false);
 }
 

@@ -14,13 +14,15 @@
 #ifndef QTGLWIDGET_H
 #define QTGLWIDGET_H
 
+#include <string>
+#include <vector>
+
 #include <QOpenGLWidget>
 
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
 #include <celengine/starbrowser.h>
-#include <string>
-#include <vector>
+#include "qtdraghandler.h"
 
 /**
   *@author Christophe Teyssier
@@ -59,8 +61,7 @@ private:
     int lastX{ 0 };
     int lastY{ 0 };
     bool cursorVisible;
-    QPoint saveGlobalCursorPos;
-    QPoint saveLocalCursorPos;
+    std::unique_ptr<DragHandler> dragHandler;
     CelestiaCore::CursorShape currentCursor;
 
     //KActionCollection* actionColl;
