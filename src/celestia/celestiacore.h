@@ -77,6 +77,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         RightButton  = 0x04,
         ShiftKey     = 0x08,
         ControlKey   = 0x10,
+#ifdef __APPLE__
+        AltKey       = 0x20,
+#endif
     };
 
     enum CursorShape
