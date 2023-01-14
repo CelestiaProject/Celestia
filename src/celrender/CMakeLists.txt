@@ -1,4 +1,6 @@
 set(CELRENDER_SOURCES
+  atmosphererenderer.cpp
+  atmosphererenderer.h
   cometrenderer.cpp
   cometrenderer.h
   linerenderer.cpp

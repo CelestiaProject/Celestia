@@ -1,6 +1,6 @@
 // lodspheremesh.h
 //
-// Copyright (C) 2001-2010, Celestia Development Team
+// Copyright (C) 2001-present, Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -8,11 +8,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef CELENGINE_LODSPHEREMESH_H_
-#define CELENGINE_LODSPHEREMESH_H_
+#pragma once
 
-#include <celengine/texture.h>
 #include <Eigen/Geometry>
+#include <celengine/texture.h>
+#include <celengine/glsupport.h>
 #include <celmath/frustum.h>
 
 
@@ -81,5 +81,3 @@ public:
     GLuint vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
     GLuint indexBuffer{ 0 };
 };
-
-#endif // CELENGINE_LODSPHEREMESH_H_

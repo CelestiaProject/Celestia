@@ -55,6 +55,7 @@
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
+#include <celrender/atmosphererenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/vertexobject.h>
@@ -84,6 +85,7 @@ using celestia::util::GetLogger;
 using celestia::render::CometRenderer;
 using celestia::render::LineRenderer;
 using celestia::render::VertexObject;
+using celestia::render::AtmosphereRenderer;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -266,20 +268,17 @@ Renderer::Renderer() :
     colorTemp(nullptr),
     settingsChanged(true),
     objectAnnotationSetOpen(false),
+    m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
-    skyIndices = new uint32_t[(MaxSkySlices + 1) * 2 * MaxSkyRings];
-    skyContour = new SkyContourPoint[MaxSkySlices + 1];
     colorTemp = GetStarColorTable(ColorTable_Blackbody_D65);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
         fonts[i] = nullptr;
     }
-
     shaderManager = new ShaderManager();
     m_VertexObjects.fill(nullptr);
 }
@@ -289,14 +288,12 @@ Renderer::~Renderer()
 {
     delete pointStarVertexBuffer;
     delete glareVertexBuffer;
-    delete[] skyVertices;
-    delete[] skyIndices;
-    delete[] skyContour;
     delete shaderManager;
 
     for (auto p : m_VertexObjects)
         delete p;
 
+    m_atmosphereRenderer->deinitGL();
     m_cometRenderer->deinitGL();
     CurvePlot::deinit();
     PlanetographicGrid::deinit();
@@ -536,12 +533,11 @@ bool Renderer::OrbitPathListEntry::operator<(const Renderer::OrbitPathListEntry&
 }
 
 
-bool Renderer::init(
-                    int winWidth, int winHeight,
-                    DetailOptions& _detailOptions)
+bool Renderer::init(int winWidth, int winHeight, DetailOptions& _detailOptions)
 {
     detailOptions = _detailOptions;
 
+    m_atmosphereRenderer->initGL();
     m_cometRenderer->initGL();
 
     // Initialize static meshes and textures common to all instances of Renderer
@@ -1829,278 +1825,6 @@ struct LightIrradiancePredicate
     }
 };
 
-
-void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                                         const Vector3f& center,
-                                         const Quaternionf& orientation,
-                                         const Vector3f& semiAxes,
-                                         const Vector3f& sunDirection,
-                                         const LightingState& ls,
-                                         float pixSize,
-                                         bool lit,
-                                         const Matrices &m)
-{
-    ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-    auto *prog = shaderManager->getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
-    // Gradually fade in the atmosphere if it's thickness on screen is just
-    // over one pixel.
-    float fade = std::clamp(pixSize - 2, 0.0f, 1.0f);
-
-    Matrix3f rot = orientation.toRotationMatrix();
-    Matrix3f irot = orientation.conjugate().toRotationMatrix();
-
-    Vector3f eyePos = Vector3f::Zero();
-    float radius = semiAxes.maxCoeff();
-    Vector3f eyeVec = center - eyePos;
-    eyeVec = rot * eyeVec;
-    double centerDist = eyeVec.norm();
-
-    float height = atmosphere.height / radius;
-    Vector3f recipSemiAxes = semiAxes.cwiseInverse();
-
-    // ellipDist is not the true distance from the surface unless the
-    // planet is spherical.  Computing the true distance requires finding
-    // the roots of a sixth degree polynomial, and isn't actually what we
-    // want anyhow since the atmosphere region is just the planet ellipsoid
-    // multiplied by a uniform scale factor.  The value that we do compute
-    // is the distance to the surface along a line from the eye position to
-    // the center of the ellipsoid.
-    float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
-    bool within = ellipDist < height;
-
-    // Adjust the tesselation of the sky dome/ring based on distance from the
-    // planet surface.
-    int nSlices = MaxSkySlices;
-    if (ellipDist < 0.25f)
-    {
-        nSlices = MinSkySlices + max(0, (int) ((ellipDist / 0.25f) * (MaxSkySlices - MinSkySlices)));
-        nSlices &= ~1;
-    }
-
-    int nRings = min(1 + (int) pixSize / 5, 6);
-    int nHorizonRings = nRings;
-    if (within)
-        nRings += 12;
-
-    float horizonHeight = height;
-    if (within)
-    {
-        if (ellipDist <= 0.0f)
-            horizonHeight = 0.0f;
-        else
-            horizonHeight *= max((float) pow(ellipDist / height, 0.33f), 0.001f);
-    }
-
-    Vector3f e = -eyeVec;
-    Vector3f e_ = e.cwiseProduct(recipSemiAxes);
-    float ee = e_.dot(e_);
-
-    // Compute the cosine of the altitude of the sun.  This is used to compute
-    // the degree of sunset/sunrise coloration.
-    float cosSunAltitude = 0.0f;
-    {
-        // Check for a sun either directly behind or in front of the viewer
-        float cosSunAngle = (float) (sunDirection.dot(e) / centerDist);
-        if (cosSunAngle < -1.0f + 1.0e-6f)
-        {
-            cosSunAltitude = 0.0f;
-        }
-        else if (cosSunAngle > 1.0f - 1.0e-6f)
-        {
-            cosSunAltitude = 0.0f;
-        }
-        else
-        {
-            Vector3f v = (rot * -sunDirection) * (float) centerDist;
-            Vector3f tangentPoint = center +
-                irot * ellipsoidTangent(recipSemiAxes,
-                                        v,
-                                        e, e_, ee);
-            Vector3f tangentDir = (tangentPoint - eyePos).normalized();
-            cosSunAltitude = sunDirection.dot(tangentDir);
-        }
-    }
-
-    Vector3f normal = eyeVec;
-    normal = normal / (float) centerDist;
-
-    Vector3f uAxis, vAxis;
-    if (abs(normal.x()) < abs(normal.y()) && abs(normal.x()) < abs(normal.z()))
-    {
-        uAxis = Vector3f::UnitX().cross(normal);
-    }
-    else if (abs(eyeVec.y()) < abs(normal.z()))
-    {
-        uAxis = Vector3f::UnitY().cross(normal);
-    }
-    else
-    {
-        uAxis = Vector3f::UnitZ().cross(normal);
-    }
-    uAxis.normalize();
-    vAxis = uAxis.cross(normal);
-
-    // Compute the contour of the ellipsoid
-    for (int i = 0; i <= nSlices; i++)
-    {
-        // We want rays with an origin at the eye point and tangent to the the
-        // ellipsoid.
-        float theta = (float) i / (float) nSlices * 2 * celestia::numbers::pi_v<float>;
-        Vector3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
-        w = w * (float) centerDist;
-
-        Vector3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
-        skyContour[i].v = irot * toCenter;
-        skyContour[i].centerDist = skyContour[i].v.norm();
-        skyContour[i].eyeDir = skyContour[i].v + (center - eyePos);
-        skyContour[i].eyeDist = skyContour[i].eyeDir.norm();
-        skyContour[i].eyeDir.normalize();
-
-        float skyCapDist = (float) sqrt(square(skyContour[i].eyeDist) +
-                                        square(horizonHeight * radius));
-        skyContour[i].cosSkyCapAltitude = skyContour[i].eyeDist / skyCapDist;
-    }
-
-
-    Vector3f botColor = atmosphere.lowerColor.toVector3();
-    Vector3f topColor = atmosphere.upperColor.toVector3();
-    Vector3f sunsetColor = atmosphere.sunsetColor.toVector3();
-
-    if (within)
-    {
-        Vector3f skyColor = atmosphere.skyColor.toVector3();
-        if (ellipDist < 0.0f)
-            topColor = skyColor;
-        else
-            topColor = skyColor + (topColor - skyColor) * (ellipDist / height);
-    }
-
-    if (ls.nLights == 0 && lit)
-    {
-        botColor = topColor = sunsetColor = Vector3f::Zero();
-    }
-
-    Vector3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
-    zenith.normalize();
-    zenith *= skyContour[0].centerDist * (1.0f + horizonHeight * 2.0f);
-
-    float minOpacity = within ? (1.0f - ellipDist / height) * 0.75f : 0.0f;
-    float sunset = cosSunAltitude < 0.9f ? 0.0f : (cosSunAltitude - 0.9f) * 10.0f;
-
-    // Build the list of vertices
-    SkyVertex* vtx = skyVertices;
-    for (int i = 0; i <= nRings; i++)
-    {
-        float h = min(1.0f, (float) i / (float) nHorizonRings);
-        auto hh = (float) sqrt(h);
-        float u = i <= nHorizonRings ? 0.0f :
-            (float) (i - nHorizonRings) / (float) (nRings - nHorizonRings);
-        float r = lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
-        float atten = 1.0f - hh;
-
-        for (int j = 0; j < nSlices; j++)
-        {
-            Vector3f v;
-            if (i <= nHorizonRings)
-                v = skyContour[j].v * r;
-            else
-                v = (skyContour[j].v * (1.0f - u) + zenith * u) * r;
-            Vector3f p = center + v;
-
-            Vector3f viewDir = p.normalized();
-            float cosSunAngle = viewDir.dot(sunDirection);
-            float cosAltitude = viewDir.dot(skyContour[j].eyeDir);
-            float brightness = 1.0f;
-            float coloration = 0.0f;
-            if (lit)
-            {
-                if (sunset > 0.0f && cosSunAngle > 0.7f && cosAltitude > 0.98f)
-                {
-                    coloration =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
-                    coloration *= 50.0f * (cosAltitude - 0.98f);
-                    coloration *= sunset;
-                }
-
-                cosSunAngle = skyContour[j].v.dot(sunDirection) / skyContour[j].centerDist;
-                if (cosSunAngle > -0.2f)
-                {
-                    if (cosSunAngle < 0.3f)
-                        brightness = (cosSunAngle + 0.2f) * 2.0f;
-                    else
-                        brightness = 1.0f;
-                }
-                else
-                {
-                    brightness = 0.0f;
-                }
-            }
-
-            vtx->x = p.x();
-            vtx->y = p.y();
-            vtx->z = p.z();
-
-            atten = 1.0f - hh;
-            Vector3f color = (1.0f - hh) * botColor + hh * topColor;
-            brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
-            if (coloration != 0.0f)
-                color = (1.0f - coloration) * color + coloration * sunsetColor;
-
-            Color(brightness * color.x(),
-                  brightness * color.y(),
-                  brightness * color.z(),
-                  fade * (minOpacity + (1.0f - minOpacity)) * atten).get(vtx->color);
-            vtx++;
-        }
-    }
-
-    // Create the index list
-    int index = 0;
-    for (int i = 0; i < nRings; i++)
-    {
-        int baseVertex = i * nSlices;
-        for (int j = 0; j < nSlices; j++)
-        {
-            skyIndices[index++] = baseVertex + j;
-            skyIndices[index++] = baseVertex + nSlices + j;
-        }
-        skyIndices[index++] = baseVertex;
-        skyIndices[index++] = baseVertex + nSlices;
-    }
-
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
-    ps.depthTest = true;
-    setPipelineState(ps);
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE,
-                          sizeof(SkyVertex), &skyVertices[0].x);
-    glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                          4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SkyVertex),
-                          static_cast<void*>(&skyVertices[0].color));
-    prog->use();
-    prog->setMVPMatrices(*m.projection, *m.modelview);
-    for (int i = 0; i < nRings; i++)
-    {
-        glDrawElements(GL_TRIANGLE_STRIP,
-                       (nSlices + 1) * 2,
-                       GL_UNSIGNED_INT,
-                       &skyIndices[(nSlices + 1) * 2 * i]);
-    }
-
-    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-}
-
-
 static void renderSphereUnlit(const RenderInfo& ri,
                               const Frustum& frustum,
                               const Matrices &m,
@@ -2767,25 +2491,29 @@ void Renderer::renderObject(const Vector3f& pos,
             {
                 float atmScale = 1.0f + atmosphere->height / radius;
 
-                renderAtmosphere_GLSL(ri, ls,
-                                      atmosphere,
-                                      radius * atmScale,
-                                      obj.orientation,
-                                      viewFrustum,
-                                      planetMVP, this);
+                m_atmosphereRenderer->render(
+                    ri,
+                    *atmosphere,
+                    ls,
+                    obj.orientation,
+                    radius * atmScale,
+                    viewFrustum,
+                    planetMVP);
             }
             else
             {
-                Matrix4f mv = vecgl::rotate(getCameraOrientation());
-                renderEllipsoidAtmosphere(*atmosphere,
-                                          pos,
-                                          obj.orientation,
-                                          scaleFactors,
-                                          ri.sunDir_eye,
-                                          ls,
-                                          thicknessInPixels,
-                                          lit,
-                                          { m.projection, &mv });
+                Eigen::Matrix4f modelView = vecgl::rotate(getCameraOrientation());
+                Matrices mvp = { m.projection, &modelView };
+                m_atmosphereRenderer->renderLegacy(
+                    *atmosphere,
+                    ls,
+                    pos,
+                    obj.orientation,
+                    scaleFactors,
+                    ri.sunDir_eye,
+                    thicknessInPixels,
+                    lit,
+                    mvp);
             }
         }
 
