@@ -196,7 +196,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 #ifndef GL_ES
-    glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount() - 1);
+    glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount());
 #endif
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
@@ -354,13 +354,13 @@ ImageTexture::ImageTexture(Image& img,
     glGenTextures(1, (GLuint*) &glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
-
     bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;
 
     // Use precomputed mipmaps only if a complete set is supplied
     int mipLevelCount = img.getMipLevelCount();
-    if (mipmap && mipLevelCount == CalcMipLevelCount(img.getWidth(), img.getHeight()))
+    int expectedCount = CalcMipLevelCount(img.getWidth(), img.getHeight());
+    if (mipmap && mipLevelCount == expectedCount)
     {
         precomputedMipMaps = true;
     }
@@ -400,7 +400,7 @@ ImageTexture::ImageTexture(Image& img,
         {
             LoadMiplessTexture(img, GL_TEXTURE_2D);
 #ifndef GL_ES
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevelCount - 1);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, expectedCount);
 #endif
         }
     }
