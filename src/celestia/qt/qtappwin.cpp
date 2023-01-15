@@ -621,7 +621,9 @@ void CelestiaAppWindow::slotGrabImage()
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       _("Save Image"),
                                                       dir,
-                                                      _("Images (*.png *.jpg)"));
+                                                      _("Images (*.png *.jpg)"),
+                                                      nullptr,
+                                                      QFileDialog::DontUseNativeDialog);
 
     if (!saveAsName.isEmpty())
     {
@@ -647,7 +649,9 @@ void CelestiaAppWindow::slotCaptureVideo()
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       _("Capture Video"),
                                                       dir,
-                                                      _("Matroska Video (*.mkv)"));
+                                                      _("Matroska Video (*.mkv)"),
+                                                      nullptr,
+                                                      QFileDialog::DontUseNativeDialog);
 
     if (!saveAsName.isEmpty())
     {
@@ -884,7 +888,9 @@ void CelestiaAppWindow::slotOpenScriptDialog()
     QString scriptFileName = QFileDialog::getOpenFileName(this,
                                                           _("Open Script"),
                                                           dir,
-                                                          _("Celestia Scripts (*.celx *.cel)"));
+                                                          _("Celestia Scripts (*.celx *.cel)"),
+                                                          nullptr,
+                                                          QFileDialog::DontUseNativeDialog);
 
     if (!scriptFileName.isEmpty())
     {
