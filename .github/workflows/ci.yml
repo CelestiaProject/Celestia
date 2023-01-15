@@ -108,18 +108,21 @@ jobs:
           glut: ON
           gtk3: ON
           minaudio: OFF # Requires newer g++
+          wayland: ON
         - os: ubuntu-22.04
           avif: ON
           gles: ON
           glut: ON
           gtk3: ON
           minaudio: ON
+          wayland: ON
         - os: macos-latest
           avif: ON
           gles: OFF     # Native macOS applications can't access GLES APIs
           glut: ON
           gtk3: OFF     # macOS is not a primary target for GTK frontend
           minaudio: ON
+          wayland: OFF  # Wayland is not relevant on macOS
         qtversion: [ Qt5, Qt6 ]
         exclude:
         - config:
@@ -147,11 +150,13 @@ jobs:
                             libluajit-5.1-dev \
                             libfmt-dev \
                             freeglut3-dev \
+                            libwayland-dev \
+                            wayland-protocols \
                             ninja-build
         if [ "${{matrix.qtversion}}" = "Qt5" ]; then
-            sudo apt install -y qtbase5-dev qtbase5-dev-tools
+            sudo apt install -y qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
         else
-            sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev
+            sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
             sudo apt install -y libavif-dev
@@ -203,6 +208,7 @@ jobs:
               -DUSE_GTK3=${{matrix.config.gtk3}}        \
               -DENABLE_QT=ON                            \
               -DUSE_QT6=${UseQt6:OFF}                   \
+              -DUSE_WAYLAND=${{matrix.config.wayland}}  \
               -DENABLE_FFMPEG=ON                        \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}}
