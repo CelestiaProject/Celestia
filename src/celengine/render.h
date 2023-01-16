@@ -44,6 +44,7 @@ namespace render
 {
 class AtmosphereRenderer;
 class CometRenderer;
+class EclipticLineRenderer;
 }
 }
 
@@ -786,9 +787,6 @@ class Renderer
 
     bool settingsChanged;
 
-    std::unique_ptr<AsterismRenderer> m_asterismRenderer;
-    std::unique_ptr<BoundariesRenderer> m_boundariesRenderer;
-
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
 
@@ -808,8 +806,11 @@ class Renderer
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
+    std::unique_ptr<AsterismRenderer> m_asterismRenderer;
+    std::unique_ptr<BoundariesRenderer> m_boundariesRenderer;
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
+    std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
 
     // Location markers
  public:

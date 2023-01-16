@@ -57,6 +57,7 @@
 #include <celmath/geomutil.h>
 #include <celrender/atmosphererenderer.h>
 #include <celrender/cometrenderer.h>
+#include <celrender/eclipticlinerenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/vertexobject.h>
 #include <celutil/logger.h>
@@ -86,6 +87,7 @@ using celestia::render::CometRenderer;
 using celestia::render::LineRenderer;
 using celestia::render::VertexObject;
 using celestia::render::AtmosphereRenderer;
+using celestia::render::EclipticLineRenderer;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -269,7 +271,8 @@ Renderer::Renderer() :
     settingsChanged(true),
     objectAnnotationSetOpen(false),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
-    m_cometRenderer(std::make_unique<CometRenderer>(*this))
+    m_cometRenderer(std::make_unique<CometRenderer>(*this)),
+    m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
@@ -5439,4 +5442,10 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
 #endif
         m_pipelineState.smoothLines = ps.smoothLines;
     }
+}
+
+void Renderer::renderEclipticLine()
+{
+    if ((renderFlags & ShowEcliptic) != 0)
+        m_eclipticLineRenderer->render();
 }

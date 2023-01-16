@@ -3,6 +3,8 @@ set(CELRENDER_SOURCES
   atmosphererenderer.h
   cometrenderer.cpp
   cometrenderer.h
+  eclipticlinerenderer.cpp
+  eclipticlinerenderer.h
   linerenderer.cpp
   linerenderer.h
   vertexobject.cpp
