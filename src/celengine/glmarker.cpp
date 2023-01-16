@@ -466,37 +466,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     markerVO.unbind();
 }
 
-/*! Draw the J2000.0 ecliptic; trivial, since this forms the basis for
- *  Celestia's coordinate system.
- */
-void Renderer::renderEclipticLine()
-{
-    if ((renderFlags & ShowEcliptic) == 0)
-        return;
-
-    static LineRenderer *lr = nullptr;
-
-    constexpr int eclipticCount = 200;
-    if (lr == nullptr)
-    {
-        lr = new LineRenderer(*this, 1.0f, LineRenderer::PrimType::LineLoop, LineRenderer::StorageType::Static);
-        constexpr float scale = 1000.0f;
-        for (int i = 0; i < eclipticCount; i++)
-        {
-            float s, c;
-            sincos((float) (2 * i) / (float) eclipticCount * celestia::numbers::pi_v<float>, s, c);
-            lr->addVertex(c * scale, 0.0f, s * scale);
-        }
-    }
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-    ps.smoothLines = true;
-    setPipelineState(ps);
-    lr->render({&getProjectionMatrix(), &getModelViewMatrix()}, EclipticColor, eclipticCount);
-    lr->finish();
-}
-
 void Renderer::renderCrosshair(float selectionSizeInPixels,
                                double tsec,
                                const Color &color,
