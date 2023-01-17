@@ -62,6 +62,6 @@ void OverlayImage::render(float curr_time, int width, int height)
     {
         r.colors[i] = Color(colors[i], colors[i].alpha() * alpha);
     }
-    r.nColors = 4;
+    r.hasColors = true;
     renderer->drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, renderer->getOrthoProjectionMatrix());
 }

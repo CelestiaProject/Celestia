@@ -4631,7 +4631,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
 {
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
-    if (r.nColors > 0)
+    if (r.hasColors)
         shadprop.texUsage |= ShaderProperties::VertexColors;
     if (r.tex != nullptr)
         shadprop.texUsage |= ShaderProperties::DiffuseTexture;
@@ -4642,29 +4642,48 @@ static void draw_rectangle_solid(const Renderer &renderer,
     if (prog == nullptr)
         return;
 
-    constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
-    array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
+    struct RectVtx
+    {
+        float x, y, u, v; // NOSONAR
+        uint8_t color[4]; // NOSONAR
+    };
+
+    array<RectVtx, 4> vertices = {
+        r.x,       r.y,       0.0f, 1.0f, {},
+        r.x + r.w, r.y,       1.0f, 1.0f, {},
+        r.x + r.w, r.y + r.h, 1.0f, 0.0f, {},
+        r.x,       r.y + r.h, 0.0f, 0.0f, {},
+    };
+
+    if (r.hasColors)
+    {
+        for (int i = 0; i < 4; i++)
+            r.colors[i].get(vertices[i].color);
+    }
+
+    static GLuint vbo = 0u;
+    if (vbo == 0u)
+        glGenBuffers(1, &vbo);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(RectVtx), vertices.data(), GL_STREAM_DRAW);
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, 0, vertices.data());
+                          2, GL_FLOAT, GL_FALSE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, x))); //NOSONAR
 
     if (r.tex != nullptr)
     {
         glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
         glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                              2, GL_SHORT, GL_FALSE, 0, texels.data());
+                              2, GL_FLOAT, GL_FALSE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, u))); //NOSONAR
         r.tex->bind();
     }
-    if (r.nColors == 4)
+    if (r.hasColors)
     {
         glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                             4, GL_UNSIGNED_BYTE, GL_TRUE, 0, r.colors.data());
-    }
-    else if (r.nColors == 1)
-    {
-        glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, r.colors[0]);
+                             4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, color))); //NOSONAR
     }
 
     prog->use();
@@ -4675,8 +4694,9 @@ static void draw_rectangle_solid(const Renderer &renderer,
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     if (r.tex != nullptr)
         glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    if (r.nColors == 4)
+    if (r.hasColors)
         glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)

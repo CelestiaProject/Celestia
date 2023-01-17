@@ -34,13 +34,13 @@ class Rect
     };
     void setColor(const Color &_color)
     {
-        color = _color;
-        nColors = 1;
+        colors.fill(_color);
+        hasColors = true;
     }
-    void setColor(const std::array<Color,4> _colors)
+    void setColor(const std::array<Color,4> &_colors)
     {
         std::copy(_colors.begin(), _colors.end(), colors.begin());
-        nColors = 4;
+        hasColors = true;
     }
     void setLineWidth(float _lw)
     {
@@ -52,13 +52,9 @@ class Rect
     }
     float x, y, w, h;
     float lw        { 1.0f };
-    union
-    {
-        std::array<Color,4> colors;
-        Color color;
-    };
+    std::array<Color,4> colors;
     Texture *tex    { nullptr };
     Type type       { Type::Filled };
-    int nColors     { 0 };
+    bool hasColors  { false };
 };
 }
