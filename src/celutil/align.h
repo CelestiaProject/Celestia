@@ -1,26 +1,28 @@
 #pragma once
 
-#include <type_traits>
+#include <cstddef>
+#include <cstdint>
+
+namespace celestia::util
+{
 
 /*! Returns aligned position for type T inside memory region.
- *  Designed for usage with functions which allocate unalligned
+ *  Designed for usage with functions which allocate unaligned
  *  memory regions.
  */
-template<typename T> T* aligned_addr(T* addr)
+template<typename T> T* aligned_addr(void* addr)
 {
-    size_t align = std::alignment_of<T>::value;
-    return (T*) (((size_t(addr) - 1) / align + 1) * align);
-}
-
-template<typename T> T* aligned_addr(T* addr, size_t align)
-{
-    return (T*) (((size_t(addr) - 1) / align + 1) * align);
+    // alignof(T) is guaranteed to be a power of two
+    constexpr auto align_one = static_cast<std::uintptr_t>(alignof(T) - 1);
+    return reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(addr) + align_one) & (~align_one));
 }
 
 /*! Returns size large enough so an object of type T can be placed
- *  inside allocated unalligned memory region with its address aligned.
+ *  inside allocated unaligned memory region with its address aligned.
  */
-template<typename T> size_t aligned_sizeof()
+template<typename T> constexpr std::size_t aligned_sizeof()
 {
-    return sizeof(T) + std::alignment_of<T>::value - 1;
+    return sizeof(T) + alignof(T) - 1;
+}
+
 }

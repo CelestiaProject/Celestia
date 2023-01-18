@@ -17,11 +17,14 @@
 using namespace std;
 using namespace Eigen;
 
+namespace celutil = celestia::util;
+
 int rotation_new(lua_State* l, const Quaterniond& qd)
 {
     CelxLua celx(l);
-    auto q = reinterpret_cast<Quaterniond*>(lua_newuserdata(l, aligned_sizeof<Quaterniond>()));
-    *aligned_addr(q) = qd;
+    constexpr std::size_t size = celutil::aligned_sizeof<Quaterniond>();
+    auto q = celutil::aligned_addr<Quaterniond>(lua_newuserdata(l, size));
+    *q = qd;
     celx.setClass(Celx_Rotation);
 
     return 1;
@@ -30,9 +33,7 @@ int rotation_new(lua_State* l, const Quaterniond& qd)
 Quaterniond* to_rotation(lua_State* l, int index)
 {
     CelxLua celx(l);
-    auto q = reinterpret_cast<Quaterniond*>(celx.checkUserData(index, Celx_Rotation));
-
-    return aligned_addr(q);
+    return celutil::aligned_addr<Quaterniond>(celx.checkUserData(index, Celx_Rotation));
 }
 
 static Quaterniond* this_rotation(lua_State* l)
