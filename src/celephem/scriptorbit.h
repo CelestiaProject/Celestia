@@ -21,19 +21,19 @@ class ScriptedOrbit : public CachingOrbit
 {
  public:
     ScriptedOrbit() = default;
-    ~ScriptedOrbit() = default;
+    ~ScriptedOrbit() override = default;
 
     bool initialize(const std::string* moduleName,
                     const std::string& funcName,
                     const Hash* parameters,
                     const fs::path& path);
 
-    virtual Eigen::Vector3d computePosition(double tjd) const;
-    //virtual Vec3d computeVelocity(double tjd) const;
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
-    virtual double getBoundingRadius() const;
-    virtual void getValidRange(double& begin, double& end) const;
+    Eigen::Vector3d computePosition(double tjd) const override;
+    // Eigen::Vector3d computeVelocity(double tjd) const override;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
+    void getValidRange(double& begin, double& end) const override;
 
  private:
     lua_State* luaState{ nullptr };

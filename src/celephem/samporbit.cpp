@@ -73,7 +73,6 @@ public:
     ~SampledOrbit() override = default;
 
     void addSample(double t, double x, double y, double z);
-    void setPeriod();
 
     double getPeriod() const override;
     double getBoundingRadius() const override;
@@ -438,7 +437,6 @@ public:
     ~SampledOrbitXYZV() override = default;
 
     void addSample(double t, const Vector3d& position, const Vector3d& velocity);
-    void setPeriod();
 
     double getPeriod() const override;
     double getBoundingRadius() const override;

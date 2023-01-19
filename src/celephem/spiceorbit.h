@@ -31,23 +31,23 @@ class SpiceOrbit : public CachingOrbit
                std::string  _originName,
                double _period,
                double _boundingRadius);
-    virtual ~SpiceOrbit() = default;
+    ~SpiceOrbit() override = default;
 
     bool init(const fs::path& path,
               const std::list<std::string>* requiredKernels);
 
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
 
-    virtual double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return boundingRadius;
     }
 
-    Eigen::Vector3d computePosition(double jd) const;
-    Eigen::Vector3d computeVelocity(double jd) const;
+    Eigen::Vector3d computePosition(double jd) const override;
+    Eigen::Vector3d computeVelocity(double jd) const override;
 
-    virtual void getValidRange(double& begin, double& end) const;
+    void getValidRange(double& begin, double& end) const override;
 
  private:
     const std::string targetBodyName;
