@@ -37,6 +37,8 @@ using namespace std;
 using namespace celmath;
 using celestia::util::GetLogger;
 
+namespace celephem = celestia::ephem;
+
 /**
  * Returns the default units scale for orbits.
  *
@@ -695,7 +697,7 @@ CreateOrbit(const Selection& centralObject,
 
     if (const std::string* customOrbitName = planetData->getString("CustomOrbit"); customOrbitName != nullptr)
     {
-        orbit = GetCustomOrbit(*customOrbitName);
+        orbit = celephem::GetCustomOrbit(*customOrbitName).release(); // TODO replace release
         if (orbit != nullptr)
         {
             return orbit;
