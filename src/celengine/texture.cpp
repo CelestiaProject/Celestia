@@ -196,7 +196,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 #ifndef GL_ES
-    glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount());
+    glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
 #endif
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
@@ -400,7 +400,7 @@ ImageTexture::ImageTexture(Image& img,
         {
             LoadMiplessTexture(img, GL_TEXTURE_2D);
 #ifndef GL_ES
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, expectedCount);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, expectedCount-1);
 #endif
         }
     }
