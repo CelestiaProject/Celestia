@@ -35,6 +35,8 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using celestia::ephem::TrajectoryInterpolation;
+using celestia::ephem::TrajectoryPrecision;
 using celestia::util::GetLogger;
 
 namespace celephem = celestia::ephem;
@@ -251,20 +253,20 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
 
     // Read interpolation type; string value must be either "Linear" or "Cubic"
     // Default interpolation type is cubic.
-    TrajectoryInterpolation interpolation = TrajectoryInterpolationCubic;
+    TrajectoryInterpolation interpolation = TrajectoryInterpolation::Cubic;
     if (const std::string* interpolationString = trajData->getString("Interpolation"); interpolationString != nullptr)
     {
         if (!compareIgnoringCase(*interpolationString, "linear"))
-            interpolation = TrajectoryInterpolationLinear;
+            interpolation = TrajectoryInterpolation::Linear;
         else if (!compareIgnoringCase(*interpolationString, "cubic"))
-            interpolation = TrajectoryInterpolationCubic;
+            interpolation = TrajectoryInterpolation::Cubic;
         else
             GetLogger()->warn("Unknown interpolation type {}\n", *interpolationString); // non-fatal error
     }
 
     // Double precision is true by default
     bool useDoublePrecision = trajData->getBoolean("DoublePrecision").value_or(true);
-    TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecisionDouble : TrajectoryPrecisionSingle;
+    TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecision::Double : TrajectoryPrecision::Single;
 
     GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *sourceName);
     ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(*sourceName, path, interpolation, precision));
@@ -764,8 +766,8 @@ CreateOrbit(const Selection& centralObject,
         ResourceHandle orbitHandle =
             GetTrajectoryManager()->getHandle(TrajectoryInfo(*sampOrbitFile,
                                                              path,
-                                                             TrajectoryInterpolationCubic,
-                                                             TrajectoryPrecisionSingle));
+                                                             TrajectoryInterpolation::Cubic,
+                                                             TrajectoryPrecision::Single));
         orbit = GetTrajectoryManager()->find(orbitHandle);
         if (orbit != nullptr)
         {

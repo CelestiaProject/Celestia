@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <vector>
 
@@ -42,9 +43,9 @@ enum class JPLEphemItem
 
 struct JPLEphCoeffInfo
 {
-    unsigned int offset;
-    unsigned int nCoeffs;
-    unsigned int nGranules;
+    std::uint32_t offset;
+    std::uint32_t nCoeffs;
+    std::uint32_t nGranules;
 };
 
 
