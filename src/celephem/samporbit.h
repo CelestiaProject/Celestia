@@ -7,28 +7,34 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SAMPORBIT_H_
-#define _CELENGINE_SAMPORBIT_H_
+#pragma once
 
-#include "orbit.h"
+#include <memory>
+
 #include <celcompat/filesystem.h>
 
-enum TrajectoryInterpolation
+class Orbit;
+
+namespace celestia::ephem
 {
-    TrajectoryInterpolationLinear,
-    TrajectoryInterpolationCubic,
+
+enum class TrajectoryInterpolation
+{
+    Linear,
+    Cubic,
 };
 
-enum TrajectoryPrecision
+enum class TrajectoryPrecision
 {
-    TrajectoryPrecisionSingle,
-    TrajectoryPrecisionDouble
+    Single,
+    Double
 };
 
-extern Orbit* LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-#endif // _CELENGINE_SAMPORBIT_H_
+std::unique_ptr<Orbit> LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::unique_ptr<Orbit> LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::unique_ptr<Orbit> LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::unique_ptr<Orbit> LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::unique_ptr<Orbit> LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::unique_ptr<Orbit> LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+
+}

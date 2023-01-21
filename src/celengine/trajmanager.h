@@ -22,13 +22,13 @@ class TrajectoryInfo : public ResourceInfo<Orbit>
  public:
     std::string source;
     fs::path path;
-    TrajectoryInterpolation interpolation;
-    TrajectoryPrecision precision;
+    celestia::ephem::TrajectoryInterpolation interpolation;
+    celestia::ephem::TrajectoryPrecision precision;
 
     TrajectoryInfo(const std::string& _source,
                    const fs::path& _path = "",
-                   TrajectoryInterpolation _interpolation = TrajectoryInterpolationCubic,
-                   TrajectoryPrecision _precision = TrajectoryPrecisionSingle) :
+                   celestia::ephem::TrajectoryInterpolation _interpolation = celestia::ephem::TrajectoryInterpolation::Cubic,
+                   celestia::ephem::TrajectoryPrecision _precision = celestia::ephem::TrajectoryPrecision::Single) :
         source(_source), path(_path), interpolation(_interpolation), precision(_precision) {};
 
     fs::path resolve(const fs::path&) override;

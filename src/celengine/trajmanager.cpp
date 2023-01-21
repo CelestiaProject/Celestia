@@ -16,6 +16,8 @@
 #include "trajmanager.h"
 
 using namespace std;
+using celestia::ephem::TrajectoryInterpolation;
+using celestia::ephem::TrajectoryPrecision;
 using celestia::util::GetLogger;
 
 static TrajectoryManager* trajectoryManager = nullptr;
@@ -58,17 +60,18 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
 
     GetLogger()->debug("Loading trajectory: {}\n", strippedFilename);
 
+    // TODO use unique_ptr here and replace the use of .release()
     Orbit* sampTrajectory = nullptr;
 
     if (filetype == Content_CelestiaXYZVTrajectory)
     {
         switch (precision)
         {
-        case TrajectoryPrecisionSingle:
-            sampTrajectory = LoadXYZVTrajectorySinglePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Single:
+            sampTrajectory = LoadXYZVTrajectorySinglePrec(strippedFilename, interpolation).release();
             break;
-        case TrajectoryPrecisionDouble:
-            sampTrajectory = LoadXYZVTrajectoryDoublePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Double:
+            sampTrajectory = LoadXYZVTrajectoryDoublePrec(strippedFilename, interpolation).release();
             break;
         default:
             assert(0);
@@ -79,11 +82,11 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
     {
         switch (precision)
         {
-        case TrajectoryPrecisionSingle:
-            sampTrajectory = LoadXYZVBinarySinglePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Single:
+            sampTrajectory = LoadXYZVBinarySinglePrec(strippedFilename, interpolation).release();
             break;
-        case TrajectoryPrecisionDouble:
-            sampTrajectory = LoadXYZVBinaryDoublePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Double:
+            sampTrajectory = LoadXYZVBinaryDoublePrec(strippedFilename, interpolation).release();
             break;
         default:
             assert(0);
@@ -94,11 +97,11 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
     {
         switch (precision)
         {
-        case TrajectoryPrecisionSingle:
-            sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Single:
+            sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation).release();
             break;
-        case TrajectoryPrecisionDouble:
-            sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation);
+        case TrajectoryPrecision::Double:
+            sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation).release();
             break;
         default:
             assert(0);

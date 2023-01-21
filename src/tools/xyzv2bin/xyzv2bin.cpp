@@ -1,19 +1,22 @@
-#include <celephem/xyzvbinary.h>
-#include <celutil/bytes.h> // __BYTE_ORDER__
-#include <fmt/ostream.h>
-#include <cstring> // memcpy
+#include <array>
+#include <cctype>
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
 #include <fstream>
-#include <iostream>
-#include <limits> // std::numeric_limits
+#include <istream>
+#include <limits>
+#include <string>
 
-using namespace std;
+#include <fmt/format.h>
 
-constexpr char magic[8] = "CELXYZV";
+#include <celephem/xyzvbinary.h>
+#include <celutil/bytes.h>
 
 // Scan past comments. A comment begins with the # character and ends
 // with a newline. Return true if the stream state is good. The stream
 // position will be at the first non-comment, non-whitespace character.
-static bool SkipComments(istream& in)
+static bool SkipComments(std::istream& in)
 {
     bool inComment = false;
     bool done = false;
@@ -38,7 +41,7 @@ static bool SkipComments(istream& in)
                 {
                     inComment = true;
                 }
-                else if (isspace(c) == 0)
+                else if (std::isspace(c) == 0)
                 {
                     in.unget();
                     done = true;
@@ -54,61 +57,76 @@ static bool SkipComments(istream& in)
 }
 
 // Convert text xyzv file to binary file.
-static bool xyzvToBinary(const string& inFilename, const string& outFilename)
+static bool xyzvToBinary(const std::string& inFilename, const std::string& outFilename)
 {
-    ifstream in(inFilename);
-    ofstream out(outFilename, ios::binary);
+    using celestia::ephem::XYZVBinaryData;
+    using celestia::ephem::XYZVBinaryHeader;
+    using celestia::ephem::XYZV_MAGIC;
+
+    std::ifstream in(inFilename);
+    std::ofstream out(outFilename, std::ios::binary);
     if (!in.good() || !out.good())
         return false;
 
     if (!SkipComments(in))
         return false;
 
-    XYZVBinaryHeader header;
-    memcpy(header.magic, magic, 8);
-    header.byteOrder = __BYTE_ORDER__;
-    header.digits = std::numeric_limits<double>::digits;
-    header.reserved = 0;
-    header.count = -1;
+    std::array<char, sizeof(XYZVBinaryHeader)> header = {};
+
+    {
+        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.data(), XYZV_MAGIC.size());
+
+        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(__BYTE_ORDER__);
+        auto digits =    static_cast<decltype(XYZVBinaryHeader::digits)   >(std::numeric_limits<double>::digits);
+
+        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, byteOrder), &byteOrder, sizeof(byteOrder));
+        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, digits),    &digits,    sizeof(digits));
+    }
 
     // write empty header, will update it later
     if (!out.write(reinterpret_cast<char*>(&header), sizeof(header)))
         return false;
 
-    uint64_t counter = 0;
-    XYZVBinaryData data;
+    decltype(XYZVBinaryHeader::count) counter = 0;
     while (!in.eof())
     {
-        in >> data.tdb;
-        in >> data.position[0];
-        in >> data.position[1];
-        in >> data.position[2];
-        in >> data.velocity[0];
-        in >> data.velocity[1];
-        in >> data.velocity[2];
+        static_assert(offsetof(XYZVBinaryData, tdb)      == 0 * sizeof(double));
+        static_assert(offsetof(XYZVBinaryData, position) == 1 * sizeof(double));
+        static_assert(offsetof(XYZVBinaryData, velocity) == 4 * sizeof(double));
+        static_assert(sizeof(XYZVBinaryData) == 7 * sizeof(double));
+
+        std::array<double, 7> values;
+        in >> values[0]; // tdb
+        in >> values[1]; // position[0]
+        in >> values[2]; // position[1]
+        in >> values[3]; // position[2]
+        in >> values[4]; // velocity[0]
+        in >> values[5]; // velocity[1]
+        in >> values[6]; // velocity[2]
 
         if (!in.good())
         {
             if (!in.eof())
-                fmt::print(cerr, "Error reading input file, line {}\n", counter+1);
+                fmt::print(stderr, "Error reading input file, line {}\n", counter+1);
             break;
         }
 
-        if (!out.write(reinterpret_cast<char*>(&data), sizeof(data)))
+        if (!out.write(reinterpret_cast<const char*>(values.data()), values.size() * sizeof(double)))
         {
-            fmt::print(cerr, "Error writing output file, record N{}\n", counter);
+            fmt::print(stderr, "Error writing output file, record N{}\n", counter);
             break;
         }
         counter++;
     }
 
-    fmt::print(clog, "Written {} records.\n", counter);
+    fmt::print(stderr, "Written {} records.\n", counter);
 
     if (counter == 0)
         return false;
 
     // write actual header
-    header.count = counter;
+    std::memcpy(header.data() + offsetof(XYZVBinaryHeader, count), &counter, sizeof(counter));
+
     out.seekp(0);
     return !!out.write(reinterpret_cast<char*>(&header), sizeof(header));
 }
@@ -117,13 +135,13 @@ int main(int argc, char* argv[])
 {
     if (argc < 3)
     {
-        fmt::print(cerr, "Usage: {} infile.xyzv outfile.bin\n", argv[0]);
+        fmt::print(stderr, "Usage: {} infile.xyzv outfile.bin\n", argv[0]);
         return 1;
     }
 
     if (!xyzvToBinary(argv[1], argv[2]))
     {
-        fmt::print(cerr, "Error converting {} to {}.\n", argv[1], argv[2]);
+        fmt::print(stderr, "Error converting {} to {}.\n", argv[1], argv[2]);
         return 1;
     }
 
