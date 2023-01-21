@@ -10,7 +10,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-namespace astro
+#pragma once
+
+namespace celestia::ephem
 {
 
 // PA and QA are the location of the pole of the ecliptic of date

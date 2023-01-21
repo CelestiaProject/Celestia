@@ -10,8 +10,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#pragma once
 
-namespace astro
+namespace celestia::ephem
 {
 
 struct NutationAngles
@@ -20,6 +21,6 @@ struct NutationAngles
     double longitude;
 };
 
-extern NutationAngles Nutation_IAU2000B(double T);
+NutationAngles Nutation_IAU2000B(double T);
 
 }

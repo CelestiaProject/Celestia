@@ -10,15 +10,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cmath>
-#include <iostream>
-#include <celcompat/numbers.h>
-#include <celmath/mathlib.h>
 #include "precession.h"
 
-using namespace std;
+#include <array>
 
+#include <celcompat/numbers.h>
+#include <celmath/mathlib.h>
 
+namespace celestia::ephem
+{
+
+namespace
+{
 // Periodic term for the long-period extension of the P03 precession
 // model.
 struct EclipticPrecessionTerm
@@ -31,14 +34,14 @@ struct EclipticPrecessionTerm
 };
 
 
-static EclipticPrecessionTerm EclipticPrecessionTerms[] =
+constexpr std::array EclipticPrecessionTerms =
 {
-    {   486.230527, 2559.065245, -2578.462809,   485.116645, 2308.98 },
-    {  -963.825784,  247.582718,  -237.405076,  -971.375498, 1831.25 },
-    { -1868.737098, -957.399054,  1007.593090, -1930.464338,  687.52 },
-    { -1589.172175,  493.021354,  -423.035168, -1634.905683,  729.97 },
-    {   429.442489, -328.301413,   337.266785,   429.594383,  492.21 },
-    { -2244.742029, -339.969833,   221.240093, -2131.745072,  708.13 },
+    EclipticPrecessionTerm {   486.230527, 2559.065245, -2578.462809,   485.116645, 2308.98 },
+    EclipticPrecessionTerm {  -963.825784,  247.582718,  -237.405076,  -971.375498, 1831.25 },
+    EclipticPrecessionTerm { -1868.737098, -957.399054,  1007.593090, -1930.464338,  687.52 },
+    EclipticPrecessionTerm { -1589.172175,  493.021354,  -423.035168, -1634.905683,  729.97 },
+    EclipticPrecessionTerm {   429.442489, -328.301413,   337.266785,   429.594383,  492.21 },
+    EclipticPrecessionTerm { -2244.742029, -339.969833,   221.240093, -2131.745072,  708.13 },
 };
 
 
@@ -54,21 +57,25 @@ struct PrecessionTerm
 };
 
 
-static PrecessionTerm PrecessionTerms[] =
+constexpr std::array PrecessionTerms =
 {
-    { -6180.062400,   807.904635, -2434.845716, -2056.455197,  409.90 },
-    { -2721.869299,  -177.959383,   538.034071,  -912.727303,  396.15 },
-    {  1460.746498,   371.942696, -1245.689351,   447.710000,  536.91 },
-    { -1838.488899,  -176.029134,   529.220775,  -611.297411,  402.90 },
-    {   949.518077,   -89.154030,   277.195375,   315.900626,  417.15 },
-    {    32.701460,  -336.048179,   945.979710,    12.390157,  288.92 },
-    {   598.054819,   -17.415730,  -955.163661,   -15.922155, 4042.97 },
-    {  -293.145284,   -28.084479,    93.894079,  -102.870153,  304.90 },
-    {    66.354942,    21.456146,     0.671968,    24.123484,  281.46 },
-    {    18.894136,    30.917011,  -184.663935,     2.512708,  204.38 },
+    PrecessionTerm { -6180.062400,   807.904635, -2434.845716, -2056.455197,  409.90 },
+    PrecessionTerm { -2721.869299,  -177.959383,   538.034071,  -912.727303,  396.15 },
+    PrecessionTerm {  1460.746498,   371.942696, -1245.689351,   447.710000,  536.91 },
+    PrecessionTerm { -1838.488899,  -176.029134,   529.220775,  -611.297411,  402.90 },
+    PrecessionTerm {   949.518077,   -89.154030,   277.195375,   315.900626,  417.15 },
+    PrecessionTerm {    32.701460,  -336.048179,   945.979710,    12.390157,  288.92 },
+    PrecessionTerm {   598.054819,   -17.415730,  -955.163661,   -15.922155, 4042.97 },
+    PrecessionTerm {  -293.145284,   -28.084479,    93.894079,  -102.870153,  304.90 },
+    PrecessionTerm {    66.354942,    21.456146,     0.671968,    24.123484,  281.46 },
+    PrecessionTerm {    18.894136,    30.917011,  -184.663935,     2.512708,  204.38 },
 };
 
 
+// DE405 obliquity of the ecliptic
+constexpr double eps0 = 84381.40889;
+
+} // end unnamed namespace
 
 
 /*! Compute the precession of the ecliptic, based on a long-period
@@ -88,8 +95,8 @@ static PrecessionTerm PrecessionTerms[] =
  *  T is the time in centuries since J2000. The angles returned are
  *  in arcseconds.
  */
-astro::EclipticPole
-astro::EclipticPrecession_P03LP(double T)
+EclipticPole
+EclipticPrecession_P03LP(double T)
 {
     EclipticPole pole;
 
@@ -105,13 +112,12 @@ astro::EclipticPrecession_P03LP(double T)
                +   0.00011243 * T2
                -   6.4e-8 * T3);
 
-    unsigned int nTerms = sizeof(EclipticPrecessionTerms) / sizeof(EclipticPrecessionTerms[0]);
-    for (unsigned int i = 0; i < nTerms; i++)
+    for (const EclipticPrecessionTerm& p : EclipticPrecessionTerms)
     {
-        const EclipticPrecessionTerm& p = EclipticPrecessionTerms[i];
         double theta = 2.0 * celestia::numbers::pi * T / p.period;
-        double s = sin(theta);
-        double c = cos(theta);
+        double s;
+        double c;
+        celmath::sincos(theta, s, c);
         pole.PA += p.Pc * c + p.Ps * s;
         pole.QA += p.Qc * c + p.Qs * s;
     }
@@ -127,8 +133,8 @@ astro::EclipticPrecession_P03LP(double T)
  *  T is the time in centuries since J2000. The angles returned are
  *  in arcseconds.
  */
-astro::PrecessionAngles
-astro::PrecObliquity_P03LP(double T)
+PrecessionAngles
+PrecObliquity_P03LP(double T)
 {
     PrecessionAngles angles;
 
@@ -143,13 +149,12 @@ astro::PrecObliquity_P03LP(double T)
                    -     0.0425899 * T
                    -     0.00000113 * T2);
 
-    unsigned int nTerms = sizeof(PrecessionTerms) / sizeof(PrecessionTerms[0]);
-    for (unsigned int i = 0; i < nTerms; i++)
+    for (const PrecessionTerm& p : PrecessionTerms)
     {
-        const PrecessionTerm& p = PrecessionTerms[i];
         double theta = 2.0 * celestia::numbers::pi * T / p.period;
-        double s = sin(theta);
-        double c = cos(theta);
+        double s;
+        double c;
+        celmath::sincos(theta, s, c);
         angles.pA   += p.pc * c   + p.ps * s;
         angles.epsA += p.epsc * c + p.epss * s;
     }
@@ -161,8 +166,8 @@ astro::PrecObliquity_P03LP(double T)
 /*! Compute equatorial precession angles z, zeta, and theta using the P03
  *  precession model.
  */
-astro::EquatorialPrecessionAngles
-astro::EquatorialPrecessionAngles_P03(double T)
+EquatorialPrecessionAngles
+EquatorialPrecessionAngles_P03(double T)
 {
     EquatorialPrecessionAngles prec;
     double T2 = T * T;
@@ -196,10 +201,10 @@ astro::EquatorialPrecessionAngles_P03(double T)
  *  model. The quantities PA and QA are coordinates, but they are given in
  *  units of arcseconds in P03. They should be divided by 1296000/2pi.
  */
-astro::EclipticPole
-astro::EclipticPrecession_P03(double T)
+EclipticPole
+EclipticPrecession_P03(double T)
 {
-    astro::EclipticPole pole;
+    EclipticPole pole;
     double T2 = T * T;
     double T3 = T2 * T;
     double T4 = T3 * T;
@@ -223,10 +228,10 @@ astro::EclipticPrecession_P03(double T)
 /*! Calculate the angles of the ecliptic of date with respect to
  *  the J2000 ecliptic using the P03 precession model.
  */
-astro::EclipticAngles
-astro::EclipticPrecessionAngles_P03(double T)
+EclipticAngles
+EclipticPrecessionAngles_P03(double T)
 {
-    astro::EclipticAngles ecl;
+    EclipticAngles ecl;
     double T2 = T * T;
     double T3 = T2 * T;
     double T4 = T3 * T;
@@ -248,16 +253,13 @@ astro::EclipticPrecessionAngles_P03(double T)
 }
 
 
-// DE405 obliquity of the ecliptic
-static const double eps0 = 84381.40889;
-
 /*! Compute the general precession and obliquity using the P03
  *  precession model. See PrecObliquity_P03LP for more details.
  */
-astro::PrecessionAngles
-astro::PrecObliquity_P03(double T)
+PrecessionAngles
+PrecObliquity_P03(double T)
 {
-    astro::PrecessionAngles prec;
+    PrecessionAngles prec;
     double T2 = T * T;
     double T3 = T2 * T;
     double T4 = T3 * T;
@@ -284,3 +286,5 @@ astro::PrecObliquity_P03(double T)
 
     return prec;
 }
+
+} // end namespace celestia::ephem
