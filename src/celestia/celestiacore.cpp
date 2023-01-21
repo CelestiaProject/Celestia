@@ -3779,7 +3779,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ReadLeapSecondsFile(config->leapSecondsFile, leapSeconds);
 
 #ifdef USE_SPICE
-    if (!InitializeSpice())
+    if (!celestia::ephem::InitializeSpice())
     {
         fatalError(_("Initialization of SPICE library failed."), false);
         return false;

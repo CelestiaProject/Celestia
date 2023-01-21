@@ -90,7 +90,7 @@ ScriptedRotation::initialize(const std::string* moduleName,
     // Construct the table that we'll pass to the rotation generator function
     lua_newtable(luaState);
 
-    SetLuaVariables(luaState, parameters);
+    SetLuaVariables(luaState, *parameters);
     // set the addon path
     {
         std::string pathStr = path.string();

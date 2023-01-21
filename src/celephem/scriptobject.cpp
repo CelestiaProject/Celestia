@@ -97,9 +97,9 @@ SafeGetLuaNumber(lua_State* state,
  *  only number, string, and boolean values are converted.
  */
 void
-SetLuaVariables(lua_State* state, const Hash* parameters)
+SetLuaVariables(lua_State* state, const Hash& parameters)
 {
-    parameters->for_all([state](const std::string& key, const Value& value)
+    parameters.for_all([state](const std::string& key, const Value& value)
     {
         std::size_t percentPos = key.find('%');
         if (percentPos == std::string::npos)

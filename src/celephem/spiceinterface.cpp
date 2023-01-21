@@ -9,22 +9,34 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "SpiceUsr.h"
 #include "spiceinterface.h"
-#include <iostream>
-#include <cstdio>
+
 #include <set>
+
+#include <SpiceUsr.h>
+
 #include <celutil/logger.h>
 
-using namespace std;
 using celestia::util::GetLogger;
 
+namespace celestia::ephem
+{
 
-// Track loaded SPICE kernels in order to avoid loading the same kernel
-// multiple times. This is a global variable because SPICE uses a global
-// kernel pool.
-static set<fs::path> ResidentSpiceKernels;
+namespace
+{
 
+using ResidentKernelsSet = std::set<fs::path>;
+
+ResidentKernelsSet* getResidentKernelsSet()
+{
+    // Track loaded SPICE kernels in order to avoid loading the same kernel
+    // multiple times. This is a static variable because SPICE uses a global
+    // kernel pool.
+    static ResidentKernelsSet* residentKernelsSet = new std::set<fs::path>;
+    return residentKernelsSet;
+}
+
+} // end unnamed namespace
 
 /*! Perform one-time initialization of SPICE.
  */
@@ -43,7 +55,7 @@ InitializeSpice()
  *  refers to a known object, false if not. Both names and numeric IDs are
  *  accepted in the string.
  */
-bool GetNaifId(const string& name, int* id)
+bool GetNaifId(const std::string& name, int* id)
 {
     SpiceInt spiceID = 0;
     SpiceBoolean found = SPICEFALSE;
@@ -74,14 +86,6 @@ bool GetNaifId(const string& name, int* id)
 }
 
 
-/*! Return true if a SPICE kernel has already been loaded, false if not.
- */
-bool IsSpiceKernelLoaded(const fs::path& filepath)
-{
-    return ResidentSpiceKernels.find(filepath) != ResidentSpiceKernels.end();
-}
-
-
 /*! Load a SPICE kernel file of any type into the kernel pool. If the kernel
  *  is already resident, it will not be reloaded.
  */
@@ -90,10 +94,9 @@ bool LoadSpiceKernel(const fs::path& filepath)
     // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through
     // a metakernel.
-    if (IsSpiceKernelLoaded(filepath))
+    if (getResidentKernelsSet()->insert(filepath).second)
         return true;
 
-    ResidentSpiceKernels.insert(filepath);
     furnsh_c(filepath.string().c_str());
 
     // If there was an error loading the kernel, dump the error message.
@@ -113,3 +116,5 @@ bool LoadSpiceKernel(const fs::path& filepath)
      GetLogger()->info("Loaded SPK file {}\n", filepath);
      return true;
 }
+
+} // end namespace celestia::ephem

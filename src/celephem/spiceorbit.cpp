@@ -9,20 +9,26 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream>
-#include <cstdio>
 #include <utility>
-#include "SpiceUsr.h"
+
+#include <SpiceUsr.h>
+
 #include <celengine/astro.h>
 #include <celutil/logger.h>
-#include "spiceorbit.h"
 #include "spiceinterface.h"
+#include "spiceorbit.h"
 
-using namespace Eigen;
-using namespace std;
 using celestia::util::GetLogger;
 
-static const double MILLISEC = astro::secsToDays(0.001);
+namespace celestia::ephem
+{
+
+namespace
+{
+
+constexpr double MILLISEC = astro::secsToDays(0.001);
+
+} // end unnamed namespace
 
 /*! Create a new SPICE orbit using with a valid interval specified
  *  by beginning and ending.
@@ -86,23 +92,23 @@ SpiceOrbit::getPeriod() const
 
 
 bool
-SpiceOrbit::init(const fs::path& path,
-                 const list<string>* requiredKernels)
+SpiceOrbit::loadRequiredKernel(const fs::path& path, const std::string& kernel)
 {
-    // Load required kernel files
-    if (requiredKernels != nullptr)
+    // Load required kernel file
+    fs::path filepath = path / "data" / kernel;
+    if (!LoadSpiceKernel(filepath))
     {
-        for (const auto& kernel : *requiredKernels)
-        {
-            fs::path filepath = path / "data" / kernel;
-            if (!LoadSpiceKernel(filepath))
-            {
-                spiceErr = true;
-                break;
-            }
-        }
+        spiceErr = true;
+        return false;
     }
 
+    return true;
+}
+
+
+bool
+SpiceOrbit::init(const fs::path& path)
+{
     // Get the ID codes for the target
     if (!GetNaifId(targetBodyName, &targetID))
     {
@@ -233,7 +239,7 @@ SpiceOrbit::init(const fs::path& path,
 }
 
 
-Vector3d
+Eigen::Vector3d
 SpiceOrbit::computePosition(double jd) const
 {
     if (jd < validIntervalBegin)
@@ -243,7 +249,7 @@ SpiceOrbit::computePosition(double jd) const
 
     if (spiceErr)
     {
-        return Vector3d::Zero();
+        return Eigen::Vector3d::Zero();
     }
     else
     {
@@ -273,12 +279,12 @@ SpiceOrbit::computePosition(double jd) const
         }
 
         // Transform into Celestia's coordinate system
-        return Vector3d(position[0], position[2], -position[1]);
+        return Eigen::Vector3d(position[0], position[2], -position[1]);
     }
 }
 
 
-Vector3d
+Eigen::Vector3d
 SpiceOrbit::computeVelocity(double jd) const
 {
     if (jd < validIntervalBegin)
@@ -288,7 +294,7 @@ SpiceOrbit::computeVelocity(double jd) const
 
     if (spiceErr)
     {
-        return Vector3d::Zero();
+        return Eigen::Vector3d::Zero();
     }
     else
     {
@@ -319,7 +325,7 @@ SpiceOrbit::computeVelocity(double jd) const
 
         // Transform into Celestia's coordinate system, and from km/s to km/day
         double d2s = astro::daysToSecs(1.0);
-        return Vector3d(state[3] * d2s, state[5] * d2s, -state[4] * d2s);
+        return Eigen::Vector3d(state[3] * d2s, state[5] * d2s, -state[4] * d2s);
     }
 }
 
@@ -328,4 +334,6 @@ void SpiceOrbit::getValidRange(double& begin, double& end) const
 {
     begin = validIntervalBegin;
     end = validIntervalEnd;
+}
+
 }
