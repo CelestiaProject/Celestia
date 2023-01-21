@@ -343,13 +343,13 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     // Get the rotation model
     // TIMELINE-TODO: default rotation model is UniformRotation with a period
     // equal to the orbital period. Should we do something else?
-    RotationModel* rotationModel = CreateRotationModel(phaseData, path, orbit->getPeriod());
+    celestia::ephem::RotationModel* rotationModel = CreateRotationModel(phaseData, path, orbit->getPeriod());
     if (!rotationModel)
     {
         // TODO: Should distinguish between a missing rotation model (where it's
         // appropriate to use a default one) and a bad rotation model (where
         // we should report an error.)
-        rotationModel = new ConstantOrientation(Eigen::Quaterniond::Identity());
+        rotationModel = new celestia::ephem::ConstantOrientation(Eigen::Quaterniond::Identity());
     }
 
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
@@ -485,9 +485,9 @@ bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr orbitFrame;
     ReferenceFrame::SharedConstPtr bodyFrame;
     celestia::ephem::Orbit* orbit = nullptr;
-    RotationModel* rotationModel  = nullptr;
-    double beginning              = -std::numeric_limits<double>::infinity();
-    double ending                 =  std::numeric_limits<double>::infinity();
+    celestia::ephem::RotationModel* rotationModel  = nullptr;
+    double beginning  = -std::numeric_limits<double>::infinity();
+    double ending     =  std::numeric_limits<double>::infinity();
 
     // If any new timeline values are specified, we need to overrideOldTimeline will
     // be set to true.
@@ -581,7 +581,7 @@ bool CreateTimeline(Body* body,
 
     // Get the rotation model for this body
     double syncRotationPeriod = orbit->getPeriod();
-    RotationModel* newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
+    celestia::ephem::RotationModel* newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
 
     // If a new rotation model was given, override the old one
     if (newRotationModel != nullptr)

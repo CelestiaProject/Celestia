@@ -40,11 +40,11 @@ celestia::ephem::Orbit* CreateOrbit(const Selection& centralObject,
                                     const fs::path& path,
                                     bool usePlanetUnits);
 
-RotationModel* CreateRotationModel(const Hash* rotationData,
-                                   const fs::path& path,
-                                   double syncRotationPeriod);
+celestia::ephem::RotationModel* CreateRotationModel(const Hash* rotationData,
+                                                    const fs::path& path,
+                                                    double syncRotationPeriod);
 
-RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
+celestia::ephem::RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
 
 ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
                                                     const Value* frameValue,

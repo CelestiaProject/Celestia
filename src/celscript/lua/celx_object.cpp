@@ -681,7 +681,7 @@ static int object_getinfo(lua_State* l)
         // if the object has a single timeline phase. This should hardly ever
         // be a problem, but it still may be best to set the periods to zero
         // for objects with multiple phases.
-        const RotationModel* rm = body->getRotationModel(0.0);
+        const celestia::ephem::RotationModel* rm = body->getRotationModel(0.0);
         celx.setTable("rotationPeriod", (double) rm->getPeriod());
 
         const celestia::ephem::Orbit* orbit = body->getOrbit(0.0);

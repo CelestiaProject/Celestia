@@ -13,6 +13,6 @@
 #include "rotation.h"
 #include <celcompat/filesystem.h>
 
-extern RotationModel* LoadSampledOrientation(const fs::path& filename);
+celestia::ephem::RotationModel* LoadSampledOrientation(const fs::path& filename);
 
 #endif // _CELENGINE_SAMPORIENT_H_

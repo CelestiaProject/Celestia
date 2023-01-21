@@ -211,7 +211,7 @@ class Body : public AstroObject
     const ReferenceFrame::SharedConstPtr& getOrbitFrame(double tdb) const;
     const celestia::ephem::Orbit* getOrbit(double tdb) const;
     const ReferenceFrame::SharedConstPtr& getBodyFrame(double tdb) const;
-    const RotationModel* getRotationModel(double tdb) const;
+    const celestia::ephem::RotationModel* getRotationModel(double tdb) const;
 
     // Size methods
     void setSemiAxes(const Eigen::Vector3f&);

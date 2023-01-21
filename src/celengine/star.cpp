@@ -437,11 +437,11 @@ StarDetails::CreateStandardStarType(const std::string& specTypeName,
     details->setTemperature(_temperature);
     details->setSpectralType(specTypeName);
 
-    details->setRotationModel(new UniformRotationModel(_rotationPeriod,
-                                                       0.0f,
-                                                       astro::J2000,
-                                                       0.0f,
-                                                       0.0f));
+    details->setRotationModel(new celestia::ephem::UniformRotationModel(_rotationPeriod,
+                                                                        0.0f,
+                                                                        astro::J2000,
+                                                                        0.0f,
+                                                                        0.0f));
 
     return details;
 }
@@ -943,7 +943,7 @@ StarDetails::setVisibility(bool b)
 
 
 void
-StarDetails::setRotationModel(const RotationModel* rm)
+StarDetails::setRotationModel(const celestia::ephem::RotationModel* rm)
 {
     rotationModel = rm;
 }
@@ -1180,7 +1180,7 @@ void Star::computeOrbitalRadius()
 }
 
 void
-Star::setRotationModel(const RotationModel* rm)
+Star::setRotationModel(const celestia::ephem::RotationModel* rm)
 {
     details->setRotationModel(rm);
 }

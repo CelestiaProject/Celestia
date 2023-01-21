@@ -18,7 +18,7 @@
 #include <list>
 #include <celcompat/filesystem.h>
 
-class SpiceRotation : public CachingRotationModel
+class SpiceRotation : public celestia::ephem::CachingRotationModel
 {
  public:
     SpiceRotation(const std::string& frameName,

@@ -72,7 +72,7 @@ bool operator<(const OrientationSample& a, const OrientationSample& b)
  *  of quaternion keyframes. Typically, an instance of SampledRotation will
  *  be created from a file with LoadSampledOrientation().
  */
-class SampledOrientation : public RotationModel
+class SampledOrientation : public celestia::ephem::RotationModel
 {
 public:
     SampledOrientation() = default;
@@ -217,7 +217,7 @@ SampledOrientation::getOrientation(double tjd) const
 }
 
 
-RotationModel* LoadSampledOrientation(const fs::path& filename)
+celestia::ephem::RotationModel* LoadSampledOrientation(const fs::path& filename)
 {
     ifstream in(filename);
     if (!in.good())

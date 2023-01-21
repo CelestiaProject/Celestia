@@ -16,7 +16,7 @@
 #include <map>
 
 
-class RotationModelInfo : public ResourceInfo<RotationModel>
+class RotationModelInfo : public ResourceInfo<celestia::ephem::RotationModel>
 {
  public:
     std::string source;
@@ -27,7 +27,7 @@ class RotationModelInfo : public ResourceInfo<RotationModel>
         source(_source), path(_path) {};
 
     fs::path resolve(const fs::path&) override;
-    RotationModel* load(const fs::path&) override;
+    celestia::ephem::RotationModel* load(const fs::path&) override;
 };
 
 inline bool operator<(const RotationModelInfo& ti0,

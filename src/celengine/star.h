@@ -55,7 +55,7 @@ class StarDetails
     inline float getBolometricCorrection() const;
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
-    inline const RotationModel* getRotationModel() const;
+    inline const celestia::ephem::RotationModel* getRotationModel() const;
     inline Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
 
@@ -70,7 +70,7 @@ class StarDetails
     void setOrbitalRadius(float);
     void computeOrbitalRadius();
     void setVisibility(bool);
-    void setRotationModel(const RotationModel*);
+    void setRotationModel(const celestia::ephem::RotationModel*);
     void setEllipsoidSemiAxes(const Eigen::Vector3f&);
     void setInfoURL(const std::string& _infoURL);
 
@@ -107,7 +107,7 @@ class StarDetails
     float orbitalRadius{ 0.0f };
     Star* barycenter{ nullptr };
 
-    const RotationModel* rotationModel{ nullptr };
+    const celestia::ephem::RotationModel* rotationModel{ nullptr };
 
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
 
@@ -218,7 +218,7 @@ StarDetails::getVisibility() const
     return visible;
 }
 
-const RotationModel*
+const celestia::ephem::RotationModel*
 StarDetails::getRotationModel() const
 {
     return rotationModel;
@@ -288,7 +288,7 @@ public:
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
-    void setRotationModel(const RotationModel*);
+    void setRotationModel(const celestia::ephem::RotationModel*);
 
     void addOrbitingStar(Star*);
     inline const std::vector<Star*>* getOrbitingStars() const;
@@ -305,7 +305,7 @@ public:
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline uint32_t getKnowledge() const;
-    inline const RotationModel* getRotationModel() const;
+    inline const celestia::ephem::RotationModel* getRotationModel() const;
     inline Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
     inline bool hasCorona() const;
@@ -365,7 +365,7 @@ Star::getVisibility() const
     return details->getVisibility();
 }
 
-const RotationModel*
+const celestia::ephem::RotationModel*
 Star::getRotationModel() const
 {
     return details->getRotationModel();
