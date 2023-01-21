@@ -19,8 +19,10 @@
 
 #include <lua.hpp>
 
-#include <celengine/hash.h>
+class AssociativeArray;
 
+namespace celestia::ephem
+{
 
 void SetScriptedObjectContext(lua_State* l);
 
@@ -37,4 +39,6 @@ double SafeGetLuaNumber(lua_State* state,
                         const std::string& key,
                         double defaultValue);
 
-void SetLuaVariables(lua_State* state, const Hash& parameters);
+void SetLuaVariables(lua_State* state, const AssociativeArray& parameters);
+
+}

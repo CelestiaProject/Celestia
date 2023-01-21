@@ -259,7 +259,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
     if (config->scriptSystemAccessPolicy == "allow")
     {
         if (luaHook != nullptr)
-            SetScriptedObjectContext(luaHook->getState());
+            celestia::ephem::SetScriptedObjectContext(luaHook->getState());
     }
     else
     {
@@ -278,7 +278,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
             return false;
         }
 
-        SetScriptedObjectContext(luaSandbox->getState());
+        celestia::ephem::SetScriptedObjectContext(luaSandbox->getState());
     }
 
     return true;

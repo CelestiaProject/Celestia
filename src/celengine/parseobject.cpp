@@ -951,7 +951,7 @@ CreatePrecessingRotationModel(const Hash* rotationData,
 }
 
 
-static ScriptedRotation*
+static celestia::ephem::RotationModel*
 CreateScriptedRotation(const Hash* rotationData,
                        const fs::path& path)
 {
@@ -974,14 +974,7 @@ CreateScriptedRotation(const Hash* rotationData,
     //Value* pathValue = new Value(path.string());
     //rotationData->addValue("AddonPath", *pathValue);
 
-    ScriptedRotation* scriptedRotation = new ScriptedRotation();
-    if (!scriptedRotation->initialize(moduleName, *funcName, rotationData, path))
-    {
-         delete scriptedRotation;
-         scriptedRotation = nullptr;
-    }
-
-    return scriptedRotation;
+    return celestia::ephem::CreateScriptedRotation(moduleName, *funcName, *rotationData, path).release();
 #endif
 }
 

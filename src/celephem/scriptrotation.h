@@ -9,43 +9,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SCRIPTROTATION_H_
-#define _CELENGINE_SCRIPTROTATION_H_
+#pragma once
 
-#include <celengine/parser.h>
-#include "rotation.h"
+#include <memory>
+#include <string>
 
-struct lua_State;
+#include <celcompat/filesystem.h>
 
-class ScriptedRotation : public celestia::ephem::RotationModel
+class AssociativeArray;
+
+namespace celestia::ephem
 {
- public:
-    ScriptedRotation() = default;
-    ~ScriptedRotation() = default;
 
-    bool initialize(const std::string* moduleName,
-                    const std::string& funcName,
-                    const Hash* parameters,
-                    const fs::path& path);
+class RotationModel;
 
-    virtual Eigen::Quaterniond spin(double tjd) const;
+std::unique_ptr<RotationModel>
+CreateScriptedRotation(const std::string* moduleName,
+                       const std::string& funcName,
+                       const AssociativeArray& parameters,
+                       const fs::path& path);
 
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
-    virtual void getValidRange(double& begin, double& end) const;
-
- private:
-    lua_State* luaState{ nullptr };
-    std::string luaRotationObjectName;
-    double period{ 0.0 };
-    double validRangeBegin{ 0.0 };
-    double validRangeEnd{ 0.0 };
-
-    // Cached values
-    mutable double lastTime{ -1.0e50 };
-    mutable Eigen::Quaterniond lastOrientation{Eigen::Quaterniond::Identity()};
-
-    bool cacheable{ true }; // non-cacheable rotations not yet supported
-};
-
-#endif // _CELENGINE_SCRIPTROTATION_H_
+}
