@@ -28,7 +28,7 @@ TimelinePhase::TimelinePhase(Body* _body,
                              const ReferenceFrame::SharedConstPtr& _orbitFrame,
                              celestia::ephem::Orbit* _orbit,
                              const ReferenceFrame::SharedConstPtr& _bodyFrame,
-                             RotationModel* _rotationModel,
+                             celestia::ephem::RotationModel* _rotationModel,
                              FrameTree* _owner) :
     m_body(_body),
     m_startTime(_startTime),
@@ -52,7 +52,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,
                                    celestia::ephem::Orbit& orbit,
                                    const ReferenceFrame::SharedConstPtr& bodyFrame,
-                                   RotationModel& rotationModel)
+                                   celestia::ephem::RotationModel& rotationModel)
 {
     // Validate the time range.
     if (endTime <= startTime)

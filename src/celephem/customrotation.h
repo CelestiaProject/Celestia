@@ -14,11 +14,11 @@
 
 #include <string_view>
 
-class RotationModel;
 
 namespace celestia::ephem
 {
 
+class RotationModel;
 RotationModel* GetCustomRotationModel(std::string_view name);
 
 }

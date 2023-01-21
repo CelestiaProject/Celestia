@@ -834,7 +834,7 @@ CreateOrbit(const Selection& centralObject,
 }
 
 
-static ConstantOrientation*
+static celestia::ephem::ConstantOrientation*
 CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
@@ -843,11 +843,11 @@ CreateFixedRotationModel(double offset,
                     XRotation(-inclination) *
                     YRotation(-ascendingNode);
 
-    return new ConstantOrientation(q);
+    return new celestia::ephem::ConstantOrientation(q);
 }
 
 
-static RotationModel*
+static celestia::ephem::RotationModel*
 CreateUniformRotationModel(const Hash* rotationData,
                            double syncRotationPeriod)
 {
@@ -872,16 +872,16 @@ CreateUniformRotationModel(const Hash* rotationData,
     }
     else
     {
-        return new UniformRotationModel(period,
-                                        static_cast<float>(offset),
-                                        epoch,
-                                        static_cast<float>(inclination),
-                                        static_cast<float>(ascendingNode));
+        return new celestia::ephem::UniformRotationModel(period,
+                                                         static_cast<float>(offset),
+                                                         epoch,
+                                                         static_cast<float>(inclination),
+                                                         static_cast<float>(ascendingNode));
     }
 }
 
 
-static ConstantOrientation*
+static celestia::ephem::ConstantOrientation*
 CreateFixedRotationModel(const Hash* rotationData)
 {
     auto offset = degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
@@ -892,11 +892,11 @@ CreateFixedRotationModel(const Hash* rotationData)
                     XRotation(-inclination) *
                     YRotation(-ascendingNode);
 
-    return new ConstantOrientation(q);
+    return new celestia::ephem::ConstantOrientation(q);
 }
 
 
-static ConstantOrientation*
+static celestia::ephem::ConstantOrientation*
 CreateFixedAttitudeRotationModel(const Hash* rotationData)
 {
     auto heading = degToRad(rotationData->getAngle<double>("Heading").value_or(0.0));
@@ -907,11 +907,11 @@ CreateFixedAttitudeRotationModel(const Hash* rotationData)
                     XRotation(-tilt) *
                     ZRotation(-roll);
 
-    return new ConstantOrientation(q);
+    return new celestia::ephem::ConstantOrientation(q);
 }
 
 
-static RotationModel*
+static celestia::ephem::RotationModel*
 CreatePrecessingRotationModel(const Hash* rotationData,
                               double syncRotationPeriod)
 {
@@ -941,12 +941,12 @@ CreatePrecessingRotationModel(const Hash* rotationData,
     }
     else
     {
-        return new PrecessingRotationModel(period,
-                                           static_cast<float>(offset),
-                                           epoch,
-                                           static_cast<float>(inclination),
-                                           static_cast<float>(ascendingNode),
-                                           precessionPeriod);
+        return new celestia::ephem::PrecessingRotationModel(period,
+                                                            static_cast<float>(offset),
+                                                            epoch,
+                                                            static_cast<float>(inclination),
+                                                            static_cast<float>(ascendingNode),
+                                                            precessionPeriod);
     }
 }
 
@@ -992,12 +992,12 @@ CreateScriptedRotation(const Hash* rotationData,
  * grouped into a single subobject--the ssc fields relevant for rotation just
  * appear in the top level structure.
  */
-RotationModel*
+celestia::ephem::RotationModel*
 CreateRotationModel(const Hash* planetData,
                     const fs::path& path,
                     double syncRotationPeriod)
 {
-    RotationModel* rotationModel = nullptr;
+    celestia::ephem::RotationModel* rotationModel = nullptr;
 
     // If more than one rotation model is specified, the following precedence
     // is used to determine which one should be used:
@@ -1164,7 +1164,7 @@ CreateRotationModel(const Hash* planetData,
 
     if (specified)
     {
-        RotationModel* rm = nullptr;
+        celestia::ephem::RotationModel* rm = nullptr;
         if (period == 0.0)
         {
             // No period was specified, and the default synchronous
@@ -1175,20 +1175,20 @@ CreateRotationModel(const Hash* planetData,
         }
         else if (precessionRate == 0.0)
         {
-            rm = new UniformRotationModel(period,
-                                          offset,
-                                          epoch,
-                                          inclination,
-                                          ascendingNode);
+            rm = new celestia::ephem::UniformRotationModel(period,
+                                                           offset,
+                                                           epoch,
+                                                           inclination,
+                                                           ascendingNode);
         }
         else
         {
-            rm = new PrecessingRotationModel(period,
-                                             offset,
-                                             epoch,
-                                             inclination,
-                                             ascendingNode,
-                                             -360.0 / precessionRate);
+            rm = new celestia::ephem::PrecessingRotationModel(period,
+                                                              offset,
+                                                              epoch,
+                                                              inclination,
+                                                              ascendingNode,
+                                                              -360.0 / precessionRate);
         }
 
         return rm;
@@ -1201,21 +1201,22 @@ CreateRotationModel(const Hash* planetData,
 }
 
 
-RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
+celestia::ephem::RotationModel*
+CreateDefaultRotationModel(double syncRotationPeriod)
 {
     if (syncRotationPeriod == 0.0)
     {
         // If syncRotationPeriod is 0, the orbit of the object is
         // aperiodic and we'll just return a FixedRotation.
-        return new ConstantOrientation(Quaterniond::Identity());
+        return new celestia::ephem::ConstantOrientation(Quaterniond::Identity());
     }
     else
     {
-        return new UniformRotationModel(syncRotationPeriod,
-                                        0.0f,
-                                        astro::J2000,
-                                        0.0f,
-                                        0.0f);
+        return new celestia::ephem::UniformRotationModel(syncRotationPeriod,
+                                                         0.0f,
+                                                         astro::J2000,
+                                                         0.0f,
+                                                         0.0f);
     }
 }
 

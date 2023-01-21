@@ -8,11 +8,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_ROTATION_H_
-#define _CELENGINE_ROTATION_H_
+#pragma once
 
+#include <Eigen/Core>
 #include <Eigen/Geometry>
 
+namespace celestia::ephem
+{
 
 /*! A RotationModel object describes the orientation of an object
  *  over some time range.
@@ -88,17 +90,17 @@ class CachingRotationModel : public RotationModel
 {
  public:
     CachingRotationModel();
-    virtual ~CachingRotationModel() = default;
+    ~CachingRotationModel() override = default;
 
-    Eigen::Quaterniond spin(double tjd) const;
-    Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
-    Eigen::Vector3d angularVelocityAtTime(double tjd) const;
+    Eigen::Quaterniond spin(double tjd) const override;
+    Eigen::Quaterniond equatorOrientationAtTime(double tjd) const override;
+    Eigen::Vector3d angularVelocityAtTime(double tjd) const override;
 
     virtual Eigen::Quaterniond computeEquatorOrientation(double tjd) const = 0;
     virtual Eigen::Quaterniond computeSpin(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
-    virtual double getPeriod() const = 0;
-    virtual bool isPeriodic() const = 0;
+    double getPeriod() const override = 0;
+    bool isPeriodic() const override = 0;
 
 private:
     mutable Eigen::Quaterniond lastSpin;
@@ -118,10 +120,10 @@ class ConstantOrientation : public RotationModel
 {
  public:
     ConstantOrientation(const Eigen::Quaterniond& q);
-    virtual ~ConstantOrientation() = default;
+    ~ConstantOrientation() override = default;
 
-    virtual Eigen::Quaterniond spin(double tjd) const;
-    virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
+    Eigen::Quaterniond spin(double tjd) const override;
+    Eigen::Vector3d angularVelocityAtTime(double tjd) const override;
 
  private:
     Eigen::Quaterniond orientation;
@@ -139,13 +141,13 @@ class UniformRotationModel : public RotationModel
                          double _epoch,
                          float _inclination,
                          float _ascendingNode);
-    virtual ~UniformRotationModel() = default;
+    ~UniformRotationModel() override = default;
 
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
-    virtual Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
-    virtual Eigen::Quaterniond spin(double tjd) const;
-    virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
+    Eigen::Quaterniond equatorOrientationAtTime(double tjd) const override;
+    Eigen::Quaterniond spin(double tjd) const override;
+    Eigen::Vector3d angularVelocityAtTime(double tjd) const override;
 
  private:
     double period;       // sidereal rotation period
@@ -168,12 +170,12 @@ class PrecessingRotationModel : public RotationModel
                             float _inclination,
                             float _ascendingNode,
                             double _precPeriod);
-    virtual ~PrecessingRotationModel() = default;
+    ~PrecessingRotationModel() override = default;
 
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
-    virtual Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
-    virtual Eigen::Quaterniond spin(double tjd) const;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
+    Eigen::Quaterniond equatorOrientationAtTime(double tjd) const override;
+    Eigen::Quaterniond spin(double tjd) const override;
 
  private:
     double period;       // sidereal rotation period (in Julian days)
@@ -185,4 +187,4 @@ class PrecessingRotationModel : public RotationModel
     double precessionPeriod; // period of precession (in Julian days)
 };
 
-#endif // _CELENGINE_ROTATION_H_
+} // end namespace celestia::ephem

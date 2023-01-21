@@ -42,7 +42,8 @@ fs::path RotationModelInfo::resolve(const fs::path& baseDir)
 }
 
 
-RotationModel* RotationModelInfo::load(const fs::path& filename)
+celestia::ephem::RotationModel*
+RotationModelInfo::load(const fs::path& filename)
 {
     GetLogger()->verbose("Loading rotation model: {}\n", filename);
 

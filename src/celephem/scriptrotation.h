@@ -17,7 +17,7 @@
 
 struct lua_State;
 
-class ScriptedRotation : public RotationModel
+class ScriptedRotation : public celestia::ephem::RotationModel
 {
  public:
     ScriptedRotation() = default;

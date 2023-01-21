@@ -903,7 +903,7 @@ bool StarDatabase::createStar(Star* star,
     const std::string* modelName = starData->getString("Mesh");
     const std::string* textureName = starData->getString("Texture");
 
-    RotationModel* rm = CreateRotationModel(starData, path, 1.0);
+    celestia::ephem::RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != nullptr);
 
     std::optional<Eigen::Vector3d> semiAxes = starData->getLengthVector<double>("SemiAxes");

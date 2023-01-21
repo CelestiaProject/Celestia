@@ -240,7 +240,8 @@ const ReferenceFrame::SharedConstPtr& Body::getBodyFrame(double tdb) const
 }
 
 
-const RotationModel* Body::getRotationModel(double tdb) const
+const celestia::ephem::RotationModel*
+Body::getRotationModel(double tdb) const
 {
     return timeline->findPhase(tdb)->rotationModel();
 }

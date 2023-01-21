@@ -151,7 +151,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     // Show rotation information for natural, periodic rotators
     if (body->getRotationModel(t)->isPeriodic() && !isArtificial)
     {
-        const RotationModel* rotationModel = body->getRotationModel(t);
+        const celestia::ephem::RotationModel* rotationModel = body->getRotationModel(t);
         double rotPeriod = rotationModel->getPeriod();
 
         double dayLength = 0.0;
