@@ -105,12 +105,12 @@ namespace astro
     // TCB - Barycentric Coordinate Time
     // TDB - Barycentric Dynamical Time
 
-    inline double secsToDays(double s)
+    constexpr double secsToDays(double s)
     {
         return s * (1.0 / SECONDS_PER_DAY);
     }
 
-    inline double daysToSecs(double d)
+    constexpr double daysToSecs(double d)
     {
         return d * SECONDS_PER_DAY;
     }

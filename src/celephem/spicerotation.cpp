@@ -104,7 +104,7 @@ SpiceRotation::init(const fs::path& path,
         for (const auto& kernel : *requiredKernels)
         {
             fs::path filepath = path / "data" / kernel;
-            if (!LoadSpiceKernel(filepath))
+            if (!celestia::ephem::LoadSpiceKernel(filepath))
             {
                 m_spiceErr = true;
                 break;

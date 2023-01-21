@@ -26,7 +26,6 @@ void SetScriptedObjectContext(lua_State* l);
 
 lua_State* GetScriptedObjectContext();
 
-
 std::string GenerateScriptObjectName();
 
 void GetLuaTableEntry(lua_State* state,
@@ -38,4 +37,4 @@ double SafeGetLuaNumber(lua_State* state,
                         const std::string& key,
                         double defaultValue);
 
-void SetLuaVariables(lua_State* state, const Hash* parameters);
+void SetLuaVariables(lua_State* state, const Hash& parameters);

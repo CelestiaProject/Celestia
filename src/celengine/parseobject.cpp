@@ -413,7 +413,7 @@ ParseStringList(const Hash* table,
  *  kernel pool. If the coverage window is noncontiguous, the first interval is
  *  used.
  */
-static SpiceOrbit*
+static celestia::ephem::SpiceOrbit*
 CreateSpiceOrbit(const Hash* orbitData,
                  const fs::path& path,
                  bool usePlanetUnits)
@@ -482,7 +482,7 @@ CreateSpiceOrbit(const Hash* orbitData,
         return nullptr;
     }
 
-    SpiceOrbit* orbit = nullptr;
+    celestia::ephem::SpiceOrbit* orbit = nullptr;
     if (beginningDate != nullptr && endingDate != nullptr)
     {
         double beginningTDBJD = 0.0;
@@ -499,24 +499,24 @@ CreateSpiceOrbit(const Hash* orbitData,
             return nullptr;
         }
 
-        orbit = new SpiceOrbit(*targetBodyName,
-                               *originName,
-                               period,
-                               boundingRadius,
-                               beginningTDBJD,
-                               endingTDBJD);
+        orbit = new celestia::ephem::SpiceOrbit(*targetBodyName,
+                                                *originName,
+                                                period,
+                                                boundingRadius,
+                                                beginningTDBJD,
+                                                endingTDBJD);
     }
     else
     {
         // No time interval given; we'll use whatever coverage window is given
         // in the SPICE kernel.
-        orbit = new SpiceOrbit(*targetBodyName,
-                               *originName,
-                               period,
-                               boundingRadius);
+        orbit = new celestia::ephem::SpiceOrbit(*targetBodyName,
+                                                *originName,
+                                                period,
+                                                boundingRadius);
     }
 
-    if (!orbit->init(path, &kernelList))
+    if (!orbit->init(path, kernelList.cbegin(), kernelList.cend()))
     {
         // Error using SPICE library; destroy the orbit; hopefully a
         // fallback is defined in the SSC file.
@@ -654,7 +654,7 @@ CreateSpiceRotation(const Hash* rotationData,
 #endif
 
 
-static ScriptedOrbit*
+static Orbit*
 CreateScriptedOrbit(const Hash* orbitData,
                     const fs::path& path)
 {
@@ -677,14 +677,7 @@ CreateScriptedOrbit(const Hash* orbitData,
     //Value* pathValue = new Value(path.string());
     //orbitData->addValue("AddonPath", *pathValue);
 
-    ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
-    if (!scriptedOrbit->initialize(moduleName, *funcName, orbitData, path))
-    {
-        delete scriptedOrbit;
-        scriptedOrbit = nullptr;
-    }
-
-    return scriptedOrbit;
+    return celestia::ephem::CreateScriptedOrbit(moduleName, *funcName, *orbitData, path).release();
 #endif
 }
 
