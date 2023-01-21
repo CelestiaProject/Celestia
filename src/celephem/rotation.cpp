@@ -232,7 +232,7 @@ UniformRotationModel::equatorOrientationAtTime(double /*unused*/) const
 Eigen::Vector3d
 UniformRotationModel::angularVelocityAtTime(double tdb) const
 {
-    Eigen::Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Eigen::Vector3d::UnitY();;
+    Eigen::Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Eigen::Vector3d::UnitY();
     return v * (2.0 * celestia::numbers::pi / period);
 }
 

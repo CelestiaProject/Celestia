@@ -45,18 +45,18 @@ class StarDetails
     StarDetails& operator=(const StarDetails&);
 
  public:
-    inline float getRadius() const;
-    inline float getTemperature() const;
-    inline ResourceHandle getGeometry() const;
-    inline MultiResTexture getTexture() const;
-    inline celestia::ephem::Orbit* getOrbit() const;
-    inline float getOrbitalRadius() const;
-    inline const char* getSpectralType() const;
-    inline float getBolometricCorrection() const;
-    inline Star* getOrbitBarycenter() const;
-    inline bool getVisibility() const;
-    inline const celestia::ephem::RotationModel* getRotationModel() const;
-    inline Eigen::Vector3f getEllipsoidSemiAxes() const;
+    float getRadius() const;
+    float getTemperature() const;
+    ResourceHandle getGeometry() const;
+    MultiResTexture getTexture() const;
+    celestia::ephem::Orbit* getOrbit() const;
+    float getOrbitalRadius() const;
+    const char* getSpectralType() const;
+    float getBolometricCorrection() const;
+    Star* getOrbitBarycenter() const;
+    bool getVisibility() const;
+    const celestia::ephem::RotationModel* getRotationModel() const;
+    Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
 
     void setRadius(float);
@@ -83,10 +83,10 @@ class StarDetails
         KnowRotation = 0x2,
         KnowTexture  = 0x4,
     };
-    inline uint32_t getKnowledge() const;
-    inline bool getKnowledge(uint32_t) const;
-    void setKnowledge(uint32_t);
-    void addKnowledge(uint32_t);
+    std::uint32_t getKnowledge() const;
+    bool getKnowledge(std::uint32_t) const;
+    void setKnowledge(std::uint32_t);
+    void addKnowledge(std::uint32_t);
 
  private:
     void addOrbitingStar(Star*);
@@ -146,85 +146,85 @@ class StarDetails
 };
 
 
-float
+inline float
 StarDetails::getRadius() const
 {
     return radius;
 }
 
-float
+inline float
 StarDetails::getTemperature() const
 {
     return temperature;
 }
 
-ResourceHandle
+inline ResourceHandle
 StarDetails::getGeometry() const
 {
     return geometry;
 }
 
-MultiResTexture
+inline MultiResTexture
 StarDetails::getTexture() const
 {
     return texture;
 }
 
-celestia::ephem::Orbit*
+inline celestia::ephem::Orbit*
 StarDetails::getOrbit() const
 {
     return orbit;
 }
 
-float
+inline float
 StarDetails::getOrbitalRadius() const
 {
     return orbitalRadius;
 }
 
-uint32_t
+inline std::uint32_t
 StarDetails::getKnowledge() const
 {
     return knowledge;
 }
 
-bool
-StarDetails::getKnowledge(uint32_t knowledgeFlags) const
+inline bool
+StarDetails::getKnowledge(std::uint32_t knowledgeFlags) const
 {
     return ((knowledge & knowledgeFlags) == knowledgeFlags);
 }
 
-const char*
+inline const char*
 StarDetails::getSpectralType() const
 {
     return spectralType;
 }
 
-float
+inline float
 StarDetails::getBolometricCorrection() const
 {
     return bolometricCorrection;
 }
 
-Star*
+inline Star*
 StarDetails::getOrbitBarycenter() const
 {
     return barycenter;
 }
 
-bool
+inline bool
 StarDetails::getVisibility() const
 {
     return visible;
 }
 
-const celestia::ephem::RotationModel*
+inline const celestia::ephem::RotationModel*
 StarDetails::getRotationModel() const
 {
     return rotationModel;
 }
 
-Eigen::Vector3f
+inline Eigen::Vector3f
 StarDetails::getEllipsoidSemiAxes() const
 {
     return semiAxes;
@@ -291,24 +291,23 @@ public:
     void setRotationModel(const celestia::ephem::RotationModel*);
 
     void addOrbitingStar(Star*);
-    inline const std::vector<Star*>* getOrbitingStars() const;
+    const std::vector<Star*>* getOrbitingStars() const;
 
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
-    inline float getTemperature() const;
-    inline const char* getSpectralType() const;
-    inline float getBolometricMagnitude() const;
+    float getTemperature() const;
+    const char* getSpectralType() const;
+    float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
     ResourceHandle getGeometry() const;
-    inline celestia::ephem::Orbit* getOrbit() const;
-    inline float getOrbitalRadius() const;
-    inline Star* getOrbitBarycenter() const;
-    inline bool getVisibility() const;
-    inline uint32_t getKnowledge() const;
-    inline const celestia::ephem::RotationModel* getRotationModel() const;
-    inline Eigen::Vector3f getEllipsoidSemiAxes() const;
+    celestia::ephem::Orbit* getOrbit() const;
+    float getOrbitalRadius() const;
+    Star* getOrbitBarycenter() const;
+    bool getVisibility() const;
+    const celestia::ephem::RotationModel* getRotationModel() const;
+    Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
-    inline bool hasCorona() const;
+    bool hasCorona() const;
 
     enum : AstroCatalog::IndexNumber
     {
@@ -323,67 +322,67 @@ private:
 };
 
 
-float
+inline float
 Star::getTemperature() const
 {
     return details->getTemperature();
 }
 
-const char*
+inline const char*
 Star::getSpectralType() const
 {
     return details->getSpectralType();
 }
 
-float
+inline float
 Star::getBolometricMagnitude() const
 {
     return absMag + details->getBolometricCorrection();
 }
 
-celestia::ephem::Orbit*
+inline celestia::ephem::Orbit*
 Star::getOrbit() const
 {
     return details->getOrbit();
 }
 
-float
+inline float
 Star::getOrbitalRadius() const
 {
     return details->getOrbitalRadius();
 }
 
-Star*
+inline Star*
 Star::getOrbitBarycenter() const
 {
     return details->getOrbitBarycenter();
 }
 
-bool
+inline bool
 Star::getVisibility() const
 {
     return details->getVisibility();
 }
 
-const celestia::ephem::RotationModel*
+inline const celestia::ephem::RotationModel*
 Star::getRotationModel() const
 {
     return details->getRotationModel();
 }
 
-Eigen::Vector3f
+inline Eigen::Vector3f
 Star::getEllipsoidSemiAxes() const
 {
     return details->getEllipsoidSemiAxes();
 }
 
-const std::vector<Star*>*
+inline const std::vector<Star*>*
 Star::getOrbitingStars() const
 {
     return details->orbitingStars;
 }
 
-bool
+inline bool
 Star::hasCorona() const
 {
     return details->hasCorona();
