@@ -10,19 +10,34 @@
 // of the License, or (at your option) any later version.
 
 #include <cstddef>
+#include <string_view>
 
 #include <fmt/format.h>
 
 #include <celengine/value.h>
 #include "scriptobject.h"
 
+using namespace std::string_view_literals;
+
+namespace celestia::ephem
+{
+
+namespace
+{
 
 // global script context for scripted orbits and rotations
 static lua_State* scriptObjectLuaState = NULL;
 
-static const char* ScriptedObjectNamePrefix = "cel_script_object_";
+constexpr std::string_view ScriptedObjectNamePrefix = "cel_script_object_"sv;
 static unsigned int ScriptedObjectNameIndex = 1;
 
+lua_State** getCurrentScriptedObjectContext()
+{
+    static lua_State* scriptObjectLuaState = nullptr;
+    return &scriptObjectLuaState;
+}
+
+} // end unnamed namespace
 
 /*! Set the script context for ScriptedOrbits and ScriptRotations
  *  Should be called just once at initialization.
@@ -30,7 +45,7 @@ static unsigned int ScriptedObjectNameIndex = 1;
 void
 SetScriptedObjectContext(lua_State* l)
 {
-    scriptObjectLuaState = l;
+    *getCurrentScriptedObjectContext() = l;
 }
 
 
@@ -39,7 +54,7 @@ SetScriptedObjectContext(lua_State* l)
 lua_State*
 GetScriptedObjectContext()
 {
-    return scriptObjectLuaState;
+    return *getCurrentScriptedObjectContext();
 }
 
 
@@ -97,7 +112,7 @@ SafeGetLuaNumber(lua_State* state,
  *  only number, string, and boolean values are converted.
  */
 void
-SetLuaVariables(lua_State* state, const Hash& parameters)
+SetLuaVariables(lua_State* state, const AssociativeArray& parameters)
 {
     parameters.for_all([state](const std::string& key, const Value& value)
     {
@@ -127,3 +142,5 @@ SetLuaVariables(lua_State* state, const Hash& parameters)
         }
     });
 }
+
+} // end namespace celestia::ephem

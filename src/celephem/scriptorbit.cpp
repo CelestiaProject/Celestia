@@ -37,11 +37,6 @@ class ScriptedOrbit : public CachingOrbit
                   double validRangeEnd);
     ~ScriptedOrbit() override = default;
 
-    bool initialize(const std::string* moduleName,
-                    const std::string& funcName,
-                    const Hash* parameters,
-                    const fs::path& path);
-
     Eigen::Vector3d computePosition(double tjd) const override;
     // Eigen::Vector3d computeVelocity(double tjd) const override;
     bool isPeriodic() const override;
