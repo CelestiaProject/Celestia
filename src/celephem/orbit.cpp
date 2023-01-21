@@ -22,6 +22,9 @@
 #include <celmath/solve.h>
 #include <celmath/geomutil.h>
 
+namespace celestia::ephem
+{
+
 namespace
 {
 
@@ -696,3 +699,5 @@ void SynchronousOrbit::sample(double /* startTime */, double /* endTime */, Orbi
 {
     // Empty method--we never want to show a synchronous orbit.
 }
+
+} // end namespace celestia::ephem

@@ -333,7 +333,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     bool usePlanetUnits = orbitFrame->getCenter().star() != nullptr;
 
     // Get the orbit
-    Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
+    celestia::ephem::Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
     if (!orbit)
     {
         GetLogger()->error("Error: missing orbit in timeline phase.\n");
@@ -484,10 +484,10 @@ bool CreateTimeline(Body* body,
     // Information required for the object timeline.
     ReferenceFrame::SharedConstPtr orbitFrame;
     ReferenceFrame::SharedConstPtr bodyFrame;
-    Orbit* orbit                 = nullptr;
-    RotationModel* rotationModel = nullptr;
-    double beginning             = -std::numeric_limits<double>::infinity();
-    double ending                =  std::numeric_limits<double>::infinity();
+    celestia::ephem::Orbit* orbit = nullptr;
+    RotationModel* rotationModel  = nullptr;
+    double beginning              = -std::numeric_limits<double>::infinity();
+    double ending                 =  std::numeric_limits<double>::infinity();
 
     // If any new timeline values are specified, we need to overrideOldTimeline will
     // be set to true.
@@ -552,7 +552,7 @@ bool CreateTimeline(Body* body,
     // in AU; otherwise, use kilometers.
     orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
 
-    Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
+    celestia::ephem::Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
     if (newOrbit == nullptr && orbit == nullptr)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)

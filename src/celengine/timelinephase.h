@@ -15,11 +15,16 @@
 
 #include <memory>
 #include "frame.h"
-class Orbit;
+
 class RotationModel;
 class FrameTree;
 class Universe;
 class Body;
+
+namespace celestia::ephem
+{
+class Orbit;
+}
 
 
 class TimelinePhase
@@ -47,7 +52,7 @@ public:
         return m_orbitFrame;
     }
 
-    Orbit* orbit() const
+    celestia::ephem::Orbit* orbit() const
     {
         return m_orbit;
     }
@@ -83,7 +88,7 @@ public:
                                                              double startTime,
                                                              double endTime,
                                                              const ReferenceFrame::SharedConstPtr& orbitFrame,
-                                                             Orbit& orbit,
+                                                             celestia::ephem::Orbit& orbit,
                                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
                                                              RotationModel& rotationModel);
 
@@ -93,7 +98,7 @@ public:
                   double _startTime,
                   double _endTime,
                   const ReferenceFrame::SharedConstPtr& _orbitFrame,
-                  Orbit* _orbit,
+                  celestia::ephem::Orbit* _orbit,
                   const ReferenceFrame::SharedConstPtr& _bodyFrame,
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
@@ -108,7 +113,7 @@ private:
     double m_endTime;
 
     ReferenceFrame::SharedConstPtr m_orbitFrame;
-    Orbit* m_orbit;
+    celestia::ephem::Orbit* m_orbit;
     ReferenceFrame::SharedConstPtr m_bodyFrame;
     RotationModel* m_rotationModel;
 

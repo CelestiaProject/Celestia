@@ -142,7 +142,7 @@ ParseDate(const Hash* hash, const string& name, double& jd)
  *     Period is in Julian days
  *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
-static EllipticalOrbit*
+static celestia::ephem::Orbit*
 CreateEllipticalOrbit(const Hash* orbitData,
                       bool usePlanetUnits)
 {
@@ -217,14 +217,14 @@ CreateEllipticalOrbit(const Hash* orbitData,
     if (semiMajorAxis.has_value())
         pericenterDistance = *semiMajorAxis * (1.0 - eccentricity);
 
-    return new EllipticalOrbit(pericenterDistance,
-                               eccentricity,
-                               degToRad(inclination),
-                               degToRad(ascendingNode),
-                               degToRad(argOfPericenter),
-                               degToRad(anomalyAtEpoch),
-                               period,
-                               epoch);
+    return new celestia::ephem::EllipticalOrbit(pericenterDistance,
+                                                eccentricity,
+                                                degToRad(inclination),
+                                                degToRad(ascendingNode),
+                                                degToRad(argOfPericenter),
+                                                degToRad(anomalyAtEpoch),
+                                                period,
+                                                epoch);
 }
 
 
@@ -241,7 +241,7 @@ CreateEllipticalOrbit(const Hash* orbitData,
  * Source is the only required field. Interpolation defaults to cubic, and
  * DoublePrecision defaults to true.
  */
-static Orbit*
+static celestia::ephem::Orbit*
 CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
 {
     const std::string* sourceName = trajData->getString("Source");
@@ -270,7 +270,7 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
 
     GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *sourceName);
     ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(*sourceName, path, interpolation, precision));
-    Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
+    celestia::ephem::Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
     if (orbit == nullptr)
     {
         GetLogger()->error("Could not load sampled trajectory from '{}'\n", *sourceName);
@@ -293,7 +293,7 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
  * and planetocentric coordinates are only practical when the coordinate system
  * is BodyFixed.
  */
-static Orbit*
+static celestia::ephem::Orbit*
 CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
 {
     double distanceScale;
@@ -339,7 +339,7 @@ CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool u
         return nullptr;
     }
 
-    return new FixedOrbit(position);
+    return new celestia::ephem::FixedOrbit(position);
 }
 
 
@@ -560,7 +560,7 @@ static SpiceRotation*
 CreateSpiceRotation(const Hash* rotationData,
                     const fs::path& path)
 {
-    list<string> kernelList;
+    std::list<std::string> kernelList;
 
     if (rotationData->getValue("Kernel") != nullptr)
     {
@@ -654,7 +654,7 @@ CreateSpiceRotation(const Hash* rotationData,
 #endif
 
 
-static Orbit*
+static celestia::ephem::Orbit*
 CreateScriptedOrbit(const Hash* orbitData,
                     const fs::path& path)
 {
@@ -682,13 +682,13 @@ CreateScriptedOrbit(const Hash* orbitData,
 }
 
 
-Orbit*
+celestia::ephem::Orbit*
 CreateOrbit(const Selection& centralObject,
             const Hash* planetData,
             const fs::path& path,
             bool usePlanetUnits)
 {
-    Orbit* orbit = nullptr;
+    celestia::ephem::Orbit* orbit = nullptr;
 
     if (const std::string* customOrbitName = planetData->getString("CustomOrbit"); customOrbitName != nullptr)
     {
@@ -803,7 +803,7 @@ CreateOrbit(const Selection& centralObject,
         {
             // Convert to Celestia's coordinate system
             Eigen::Vector3d fixedPosition(fixed->x(), fixed->z(), -fixed->y());
-            return new FixedOrbit(fixedPosition);
+            return new celestia::ephem::FixedOrbit(fixedPosition);
         }
 
         if (auto fixedPositionData = fixedPositionValue->getHash(); fixedPositionData != nullptr)
@@ -824,7 +824,7 @@ CreateOrbit(const Selection& centralObject,
         if (centralBody != nullptr)
         {
             Vector3d pos = centralBody->planetocentricToCartesian(longlat->x(), longlat->y(), longlat->z());
-            return new SynchronousOrbit(*centralBody, pos);
+            return new celestia::ephem::SynchronousOrbit(*centralBody, pos);
         }
         // TODO: Allow fixing objects to the surface of stars.
         return nullptr;

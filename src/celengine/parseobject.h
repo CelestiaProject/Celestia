@@ -35,10 +35,10 @@ enum class DataDisposition
 
 bool ParseDate(const Hash* hash, const std::string& name, double& jd);
 
-Orbit* CreateOrbit(const Selection& centralObject,
-                   const Hash* planetData,
-                   const fs::path& path,
-                   bool usePlanetUnits);
+celestia::ephem::Orbit* CreateOrbit(const Selection& centralObject,
+                                    const Hash* planetData,
+                                    const fs::path& path,
+                                    bool usePlanetUnits);
 
 RotationModel* CreateRotationModel(const Hash* rotationData,
                                    const fs::path& path,

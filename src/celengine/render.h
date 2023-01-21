@@ -744,7 +744,7 @@ class Renderer
 
     std::array<int, 4> m_viewport { 0, 0, 0, 0 };
 
-    typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
+    typedef std::map<const celestia::ephem::Orbit*, CurvePlot*> OrbitCache;
     OrbitCache orbitCache;
     uint32_t lastOrbitCacheFlush;
 

@@ -896,7 +896,7 @@ StarDetails::setGeometry(ResourceHandle rh)
 
 
 void
-StarDetails::setOrbit(Orbit* o)
+StarDetails::setOrbit(celestia::ephem::Orbit* o)
 {
     orbit = o;
     computeOrbitalRadius();
@@ -1019,7 +1019,7 @@ StarDetails::addOrbitingStar(Star* star)
 UniversalCoord
 Star::getPosition(double t) const
 {
-    const Orbit* orbit = getOrbit();
+    const celestia::ephem::Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
         return UniversalCoord::CreateLy(position.cast<double>());
@@ -1062,7 +1062,7 @@ Star::getOrbitBarycenterPosition(double t) const
 Vector3d
 Star::getVelocity(double t) const
 {
-    const Orbit* orbit = getOrbit();
+    const celestia::ephem::Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
         // The star doesn't have a defined orbit, so the velocity is just

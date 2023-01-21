@@ -13,9 +13,11 @@
 
 #include "customorbittype.h"
 
-class Orbit;
-
 namespace celestia::ephem
 {
+
+class Orbit;
+
 std::unique_ptr<Orbit> CreateVSOP87Orbit(CustomOrbitType);
+
 }

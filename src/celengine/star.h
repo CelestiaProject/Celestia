@@ -23,8 +23,12 @@
 #include <vector>
 
 class Selection;
-class Orbit;
 class Star;
+
+namespace celestia::ephem
+{
+class Orbit;
+}
 
 class StarDetails
 {
@@ -45,7 +49,7 @@ class StarDetails
     inline float getTemperature() const;
     inline ResourceHandle getGeometry() const;
     inline MultiResTexture getTexture() const;
-    inline Orbit* getOrbit() const;
+    inline celestia::ephem::Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
     inline const char* getSpectralType() const;
     inline float getBolometricCorrection() const;
@@ -61,7 +65,7 @@ class StarDetails
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
     void setGeometry(ResourceHandle);
-    void setOrbit(Orbit*);
+    void setOrbit(celestia::ephem::Orbit*);
     void setOrbitBarycenter(Star*);
     void setOrbitalRadius(float);
     void computeOrbitalRadius();
@@ -99,7 +103,7 @@ class StarDetails
     MultiResTexture texture{ InvalidResource };
     ResourceHandle geometry{ InvalidResource };
 
-    Orbit* orbit{ nullptr };
+    celestia::ephem::Orbit* orbit{ nullptr };
     float orbitalRadius{ 0.0f };
     Star* barycenter{ nullptr };
 
@@ -166,7 +170,7 @@ StarDetails::getTexture() const
     return texture;
 }
 
-Orbit*
+celestia::ephem::Orbit*
 StarDetails::getOrbit() const
 {
     return orbit;
@@ -296,7 +300,7 @@ public:
     inline float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
     ResourceHandle getGeometry() const;
-    inline Orbit* getOrbit() const;
+    inline celestia::ephem::Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
@@ -337,7 +341,7 @@ Star::getBolometricMagnitude() const
     return absMag + details->getBolometricCorrection();
 }
 
-Orbit*
+celestia::ephem::Orbit*
 Star::getOrbit() const
 {
     return details->getOrbit();

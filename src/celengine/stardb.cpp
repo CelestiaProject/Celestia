@@ -920,7 +920,7 @@ bool StarDatabase::createStar(Star* star,
 
     const std::string* infoURL = starData->getString("InfoURL");
 
-    if (Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
+    if (celestia::ephem::Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
         textureName != nullptr ||
         modelName != nullptr ||
         orbit != nullptr ||
