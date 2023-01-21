@@ -556,7 +556,7 @@ CreateSpiceOrbit(const Hash* orbitData,
  *  period; it is only used by Celestia for displaying object information such
  *  as sidereal day length.
  */
-static SpiceRotation*
+static celestia::ephem::SpiceRotation*
 CreateSpiceRotation(const Hash* rotationData,
                     const fs::path& path)
 {
@@ -611,7 +611,7 @@ CreateSpiceRotation(const Hash* rotationData,
         return nullptr;
     }
 
-    SpiceRotation* rotation = nullptr;
+    celestia::ephem::SpiceRotation* rotation = nullptr;
     if (beginningDate != nullptr && endingDate != nullptr)
     {
         double beginningTDBJD = 0.0;
@@ -628,21 +628,21 @@ CreateSpiceRotation(const Hash* rotationData,
             return nullptr;
         }
 
-        rotation = new SpiceRotation(*frameName,
-                                     baseFrameName,
-                                     period,
-                                     beginningTDBJD,
-                                     endingTDBJD);
+        rotation = new celestia::ephem::SpiceRotation(*frameName,
+                                                      baseFrameName,
+                                                      period,
+                                                      beginningTDBJD,
+                                                      endingTDBJD);
     }
     else
     {
         // No time interval given; rotation is valid at any time.
-        rotation = new SpiceRotation(*frameName,
-                                     baseFrameName,
-                                     period);
+        rotation = new celestia::ephem::SpiceRotation(*frameName,
+                                                      baseFrameName,
+                                                      period);
     }
 
-    if (!rotation->init(path, &kernelList))
+    if (!rotation->init(path, kernelList.cbegin(), kernelList.cend()))
     {
         // Error using SPICE library; destroy the rotation.
         delete rotation;

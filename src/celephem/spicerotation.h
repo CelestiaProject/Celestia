@@ -10,15 +10,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SPICEROTATION_H_
-#define _CELENGINE_SPICEROTATION_H_
+#pragma once
 
-#include "rotation.h"
 #include <string>
-#include <list>
-#include <celcompat/filesystem.h>
 
-class SpiceRotation : public celestia::ephem::CachingRotationModel
+#include <Eigen/Geometry>
+
+#include <celcompat/filesystem.h>
+#include "rotation.h"
+
+namespace celestia::ephem
+{
+
+class SpiceRotation : public CachingRotationModel
 {
  public:
     SpiceRotation(const std::string& frameName,
@@ -31,8 +35,18 @@ class SpiceRotation : public celestia::ephem::CachingRotationModel
                   double period);
     virtual ~SpiceRotation() = default;
 
-    bool init(const fs::path& path,
-              const std::list<std::string>* requiredKernels);
+    template<typename It>
+    bool init(const fs::path& path, It begin, It end)
+    {
+        // Load required kernel files
+        while (begin != end)
+        {
+            if (!loadRequiredKernel(path, *(begin++)))
+                return false;
+        }
+
+        return init();
+    }
 
     bool isPeriodic() const;
     double getPeriod() const;
@@ -53,6 +67,9 @@ class SpiceRotation : public celestia::ephem::CachingRotationModel
     double m_validIntervalBegin;
     double m_validIntervalEnd;
     bool m_useDefaultTimeInterval;
+
+    bool loadRequiredKernel(const fs::path&, const std::string&);
+    bool init();
 };
 
-#endif // _CELENGINE_SPICEROTATION_H_
+}

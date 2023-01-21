@@ -39,12 +39,13 @@ class SpiceOrbit : public CachingOrbit
     template<typename It>
     bool init(const fs::path& path, It begin, It end)
     {
+        // Load required kernel files
         while (begin != end)
         {
             if (!loadRequiredKernel(path, *(begin++)))
                 return false;
         }
-        return init(path);
+        return init();
     }
 
     bool isPeriodic() const override;
@@ -76,7 +77,7 @@ class SpiceOrbit : public CachingOrbit
 
     bool useDefaultTimeInterval;
 
-    bool init(const fs::path&);
+    bool init();
     bool loadRequiredKernel(const fs::path&, const std::string&);
 };
 
