@@ -96,18 +96,16 @@ SpiceOrbit::loadRequiredKernel(const fs::path& path, const std::string& kernel)
 {
     // Load required kernel file
     fs::path filepath = path / "data" / kernel;
-    if (!LoadSpiceKernel(filepath))
-    {
-        spiceErr = true;
-        return false;
-    }
+    if (LoadSpiceKernel(filepath))
+        return true;
 
-    return true;
+    spiceErr = true;
+    return false;
 }
 
 
 bool
-SpiceOrbit::init(const fs::path& path)
+SpiceOrbit::init()
 {
     // Get the ID codes for the target
     if (!GetNaifId(targetBodyName, &targetID))
