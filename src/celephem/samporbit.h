@@ -13,10 +13,10 @@
 
 #include <celcompat/filesystem.h>
 
-class Orbit;
-
 namespace celestia::ephem
 {
+
+class Orbit;
 
 enum class TrajectoryInterpolation
 {

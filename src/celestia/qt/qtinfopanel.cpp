@@ -41,7 +41,7 @@ struct OrbitalElements
     double period;
 };
 
-static void CalculateOsculatingElements(const Orbit& orbit,
+static void CalculateOsculatingElements(const celestia::ephem::Orbit& orbit,
                                         double t,
                                         double dt,
                                         OrbitalElements* elements);
@@ -144,7 +144,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 #endif
 
     double orbitalPeriod = 0.0;
-    const Orbit* orbit = body->getOrbit(t);
+    const celestia::ephem::Orbit* orbit = body->getOrbit(t);
     if (orbit->isPeriodic())
         orbitalPeriod = orbit->getPeriod();
 
@@ -421,7 +421,7 @@ static void StateVectorToElements(const Vector3d& position,
 }
 
 
-static void CalculateOsculatingElements(const Orbit& orbit,
+static void CalculateOsculatingElements(const celestia::ephem::Orbit& orbit,
                                         double t,
                                         double dt,
                                         OrbitalElements* elements)

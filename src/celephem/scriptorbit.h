@@ -17,10 +17,11 @@
 #include <celcompat/filesystem.h>
 
 class AssociativeArray;
-class Orbit;
 
 namespace celestia::ephem
 {
+
+class Orbit;
 
 std::unique_ptr<Orbit> CreateScriptedOrbit(const std::string* moduleName,
                                            const std::string& funcName,

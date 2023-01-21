@@ -17,10 +17,6 @@
 #include <vector>
 #include "timelinephase.h"
 
-class ReferenceFrame;
-class Orbit;
-class RotationModel;
-
 class Timeline
 {
 public:

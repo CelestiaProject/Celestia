@@ -13,6 +13,10 @@
 
 #include <Eigen/Core>
 
+class Body;
+
+namespace celestia::ephem
+{
 
 class OrbitSampleProc;
 
@@ -157,8 +161,6 @@ class MixedOrbit : public Orbit
 };
 
 
-class Body;
-
 // TODO: eliminate this once body-fixed reference frames are implemented
 /*! An object in a synchronous orbit will always hover of the same spot on
  *  the surface of the body it orbits.  Only equatorial orbits of a certain
@@ -201,3 +203,5 @@ class FixedOrbit : public Orbit
  private:
     Eigen::Vector3d position;
 };
+
+}

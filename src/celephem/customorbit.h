@@ -12,9 +12,11 @@
 #include <memory>
 #include <string_view>
 
-class Orbit;
-
 namespace celestia::ephem
 {
+
+class Orbit;
+
 std::unique_ptr<Orbit> GetCustomOrbit(std::string_view name);
+
 }

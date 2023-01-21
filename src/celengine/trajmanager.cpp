@@ -51,7 +51,7 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
     return (baseDir / source) += uniquifyingSuffix;
 }
 
-Orbit* TrajectoryInfo::load(const fs::path& filename)
+celestia::ephem::Orbit* TrajectoryInfo::load(const fs::path& filename)
 {
     // strip off the uniquifying suffix
     auto uniquifyingSuffixStart = filename.string().rfind(UniqueSuffixChar);
@@ -61,7 +61,7 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
     GetLogger()->debug("Loading trajectory: {}\n", strippedFilename);
 
     // TODO use unique_ptr here and replace the use of .release()
-    Orbit* sampTrajectory = nullptr;
+    celestia::ephem::Orbit* sampTrajectory = nullptr;
 
     if (filetype == Content_CelestiaXYZVTrajectory)
     {

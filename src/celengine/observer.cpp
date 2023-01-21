@@ -1009,7 +1009,7 @@ static double getPreferredDistance(const Selection& selection)
             {
                 for (const auto star : *orbitingStars)
                 {
-                    Orbit* orbit = star->getOrbit();
+                    celestia::ephem::Orbit* orbit = star->getOrbit();
                     if (orbit != nullptr)
                         maxOrbitRadius = max(orbit->getBoundingRadius(), maxOrbitRadius);
                 }

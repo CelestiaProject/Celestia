@@ -228,7 +228,7 @@ const ReferenceFrame::SharedConstPtr& Body::getOrbitFrame(double tdb) const
 }
 
 
-const Orbit* Body::getOrbit(double tdb) const
+const celestia::ephem::Orbit* Body::getOrbit(double tdb) const
 {
     return timeline->findPhase(tdb)->orbit();
 }

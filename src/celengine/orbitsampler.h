@@ -14,7 +14,7 @@
 #include <celephem/orbit.h>
 #include "curveplot.h"
 
-class OrbitSampler : public OrbitSampleProc
+class OrbitSampler : public celestia::ephem::OrbitSampleProc
 {
 public:
     std::vector<CurvePlotSample> samples;
