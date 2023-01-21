@@ -1009,7 +1009,7 @@ CreateRotationModel(const Hash* planetData,
     //   legacy rotation parameters
     if (const std::string* customRotationModelName = planetData->getString("CustomRotation"); customRotationModelName != nullptr)
     {
-        rotationModel = GetCustomRotationModel(*customRotationModelName);
+        rotationModel = celestia::ephem::GetCustomRotationModel(*customRotationModelName);
         if (rotationModel != nullptr)
         {
             return rotationModel;
