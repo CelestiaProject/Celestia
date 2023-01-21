@@ -13,7 +13,9 @@
 #include "customrotation.h"
 
 #include <cmath>
+#include <initializer_list>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <Eigen/Geometry>
@@ -37,12 +39,12 @@ namespace
 // such as planets 'tipping over' Periodic terms are not clamped; their
 // validity over long time ranges is questionable, but extrapolating them
 // doesn't produce obviously absurd results.
-static const double IAU_SECULAR_TERM_VALID_CENTURIES = 50.0;
+constexpr double IAU_SECULAR_TERM_VALID_CENTURIES = 50.0;
 
 // The P03 long period precession theory for Earth is valid for a one
 // million year time span centered on J2000. For dates outside far outside
 // that range, the polynomial terms produce absurd results.
-static const double P03LP_VALID_CENTURIES = 5000.0;
+constexpr double P03LP_VALID_CENTURIES = 5000.0;
 
 /*! Base class for IAU rotation models. All IAU rotation models are in the
  *  J2000.0 Earth equatorial frame.
@@ -930,95 +932,202 @@ public:
     }
 };
 
-using CustomRotationModelsMap = std::map<std::string_view, RotationModel*>;
 
-const CustomRotationModelsMap* getCustomRotationModels()
+
+enum class CustomRotationModelType
 {
-    static auto customRotationModelsMap = new CustomRotationModelsMap
+    EarthP03lp = 0,
+    IAUMercury,
+    IAUVenus,
+    IAUEarth,
+    IAUMars,
+    IAUJupiter,
+    IAUSaturn,
+    IAUUranus,
+    IAUNeptune,
+    IAUPluto,
+    IAUMoon,
+    IAUPhobos,
+    IAUDeimos,
+    IAUMetis,
+    IAUAdrastea,
+    IAUAmalthea,
+    IAUThebe,
+    IAUIo,
+    IAUEuropa,
+    IAUGanymede,
+    IAUCallisto,
+    IAUPan,
+    IAUAtlas,
+    IAUPrometheus,
+    IAUPandora,
+    IAUMimas,
+    IAUEnceladus,
+    IAUTethys,
+    IAUTelesto,
+    IAUCalypso,
+    IAUDione,
+    IAUHelene,
+    IAURhea,
+    IAUTitan,
+    IAUIapetus,
+    IAUPhoebe,
+    IAUMiranda,
+    IAUAriel,
+    IAUUmbriel,
+    IAUTitania,
+    IAUOberon,
+    RotationModelsCount,
+};
+
+class CustomRotationsManager
+{
+private:
+    static constexpr auto ArraySize = static_cast<std::size_t>(CustomRotationModelType::RotationModelsCount);
+    static std::unique_ptr<RotationModel> createModel(CustomRotationModelType);
+    std::array<std::unique_ptr<RotationModel>, ArraySize> models{ nullptr };
+
+public:
+    RotationModel* getModel(CustomRotationModelType type)
     {
-        { "earth-p03lp"sv,    new EarthRotationModel() },
+        auto index = static_cast<std::size_t>(type);
+        auto& model = models[index];
+        if (model == nullptr)
+            model = createModel(type);
+        return model.get();
+    }
+};
 
-        // IAU rotation elements for the planets
-        { "iau-mercury"sv,    new IAUPrecessingRotationModel(281.01, -0.033,
-                                                             61.45, -0.005,
-                                                             329.548, 6.1385025) },
-        { "iau-venus"sv,      new IAUPrecessingRotationModel(272.76, 0.0,
-                                                             67.16, 0.0,
-                                                             160.20, -1.4813688) },
-        { "iau-earth"sv,      new IAUPrecessingRotationModel(0.0, -0.641,
-                                                             90.0, -0.557,
-                                                             190.147, 360.9856235) },
-        { "iau-mars"sv,       new IAUPrecessingRotationModel(317.68143, -0.1061,
-                                                             52.88650, -0.0609,
-                                                             176.630, 350.89198226) },
-        { "iau-jupiter"sv,    new IAUPrecessingRotationModel(268.05, -0.009,
-                                                             64.49, -0.003,
-                                                             284.95, 870.5366420) },
-        { "iau-saturn"sv,     new IAUPrecessingRotationModel(40.589, -0.036,
-                                                             83.537, -0.004,
-                                                             38.90, 810.7939024) },
-        { "iau-uranus"sv,     new IAUPrecessingRotationModel(257.311, 0.0,
-                                                             -15.175, 0.0,
-                                                             203.81, -501.1600928) },
-        { "iau-neptune"sv,    new IAUNeptuneRotationModel() },
-        { "iau-pluto"sv,      new IAUPrecessingRotationModel(313.02, 0.0,
-                                                             9.09, 0.0,
-                                                             236.77, -56.3623195) },
+std::unique_ptr<RotationModel>
+CustomRotationsManager::createModel(CustomRotationModelType type)
+{
+    switch (type)
+    {
+    case CustomRotationModelType::EarthP03lp:
+        return std::make_unique<EarthRotationModel>();
 
-        // IAU elements for satellite of Earth
-        { "iau-moon"sv,       new IAULunarRotationModel() },
+    // IAU rotation elements for the planets
+    case CustomRotationModelType::IAUMercury:
+        return std::make_unique<IAUPrecessingRotationModel>(281.01, -0.033,
+                                                            61.45, -0.005,
+                                                            329.548, 6.1385025);
+    case CustomRotationModelType::IAUVenus:
+        return std::make_unique<IAUPrecessingRotationModel>(272.76, 0.0,
+                                                            67.16, 0.0,
+                                                            160.20, -1.4813688);
+    case CustomRotationModelType::IAUEarth:
+        return std::make_unique<IAUPrecessingRotationModel>(0.0, -0.641,
+                                                            90.0, -0.557,
+                                                            190.147, 360.9856235);
+    case CustomRotationModelType::IAUMars:
+        return std::make_unique<IAUPrecessingRotationModel>(317.68143, -0.1061,
+                                                            52.88650, -0.0609,
+                                                            176.630, 350.89198226);
+    case CustomRotationModelType::IAUJupiter:
+        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+                                                            64.49, -0.003,
+                                                            284.95, 870.5366420);
+    case CustomRotationModelType::IAUSaturn:
+        return std::make_unique<IAUPrecessingRotationModel>(40.589, -0.036,
+                                                            83.537, -0.004,
+                                                            38.90, 810.7939024);
+    case CustomRotationModelType::IAUUranus:
+        return std::make_unique<IAUPrecessingRotationModel>(257.311, 0.0,
+                                                            -15.175, 0.0,
+                                                            203.81, -501.1600928);
+    case CustomRotationModelType::IAUNeptune:
+        return std::make_unique<IAUNeptuneRotationModel>();
+    case CustomRotationModelType::IAUPluto:
+        return std::make_unique<IAUPrecessingRotationModel>(313.02, 0.0,
+                                                            9.09, 0.0,
+                                                            236.77, -56.3623195);
 
-        // IAU elements for satellites of Mars
-        { "iau-phobos"sv,     new IAUPhobosRotationModel() },
-        { "iau-deimos"sv,     new IAUDeimosRotationModel() },
+    // IAU rotation elements for the Moon
+    case CustomRotationModelType::IAUMoon:
+        return std::make_unique<IAULunarRotationModel>();
 
-        // IAU elements for satellites of Jupiter
-        { "iau-metis"sv,      new IAUPrecessingRotationModel(268.05, -0.009,
-                                                             64.49, 0.003,
-                                                             346.09, 1221.2547301) },
-        { "iau-adrastea"sv,   new IAUPrecessingRotationModel(268.05, -0.009,
-                                                             64.49, 0.003,
-                                                             33.29, 1206.9986602) },
-        { "iau-amalthea"sv,   new IAUAmaltheaRotationModel() },
-        { "iau-thebe"sv,      new IAUThebeRotationModel() },
-        { "iau-io"sv,         new IAUIoRotationModel() },
-        { "iau-europa"sv,     new IAUEuropaRotationModel() },
-        { "iau-ganymede"sv,   new IAUGanymedeRotationModel() },
-        { "iau-callisto"sv,   new IAUCallistoRotationModel() },
+    // IAU rotation elements for satellites of Mars
+    case CustomRotationModelType::IAUPhobos:
+        return std::make_unique<IAUPhobosRotationModel>();
+    case CustomRotationModelType::IAUDeimos:
+        return std::make_unique<IAUDeimosRotationModel>();
 
-        // IAU elements for satellites of Saturn
-        { "iau-pan"sv,        new IAUPrecessingRotationModel(40.6, -0.036,
-                                                             83.5, -0.004,
-                                                             48.8, 626.0440000) },
-        { "iau-atlas"sv,      new IAUPrecessingRotationModel(40.6, -0.036,
-                                                             83.5, -0.004,
-                                                             137.88, 598.3060000) },
-        { "iau-prometheus"sv, new IAUPrecessingRotationModel(40.6, -0.036,
-                                                             83.5, -0.004,
-                                                             296.14, 587.289000) },
-        { "iau-pandora"sv,    new IAUPrecessingRotationModel(40.6, -0.036,
-                                                             83.5, -0.004,
-                                                             162.92, 572.7891000) },
-        { "iau-mimas"sv,      new IAUMimasRotationModel() },
-        { "iau-enceladus"sv,  new IAUEnceladusRotationModel() },
-        { "iau-tethys"sv,     new IAUTethysRotationModel() },
-        { "iau-telesto"sv,    new IAUTelestoRotationModel() },
-        { "iau-calypso"sv,    new IAUCalypsoRotationModel() },
-        { "iau-dione"sv,      new IAUDioneRotationModel() },
-        { "iau-helene"sv,     new IAUHeleneRotationModel() },
-        { "iau-rhea"sv,       new IAURheaRotationModel() },
-        { "iau-titan"sv,      new IAUTitanRotationModel() },
-        { "iau-iapetus"sv,    new IAUIapetusRotationModel() },
-        { "iau-phoebe"sv,     new IAUPhoebeRotationModel() },
+    // IAU rotation elements for satellites of Jupiter
+    case CustomRotationModelType::IAUMetis:
+        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+                                                            64.49, 0.003,
+                                                            346.09, 1221.2547301);
+    case CustomRotationModelType::IAUAdrastea:
+        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+                                                            64.49, 0.003,
+                                                            33.29, 1206.9986602);
+    case CustomRotationModelType::IAUAmalthea:
+        return std::make_unique<IAUAmaltheaRotationModel>();
+    case CustomRotationModelType::IAUThebe:
+        return std::make_unique<IAUThebeRotationModel>();
+    case CustomRotationModelType::IAUIo:
+        return std::make_unique<IAUIoRotationModel>();
+    case CustomRotationModelType::IAUEuropa:
+        return std::make_unique<IAUEuropaRotationModel>();
+    case CustomRotationModelType::IAUGanymede:
+        return std::make_unique<IAUGanymedeRotationModel>();
+    case CustomRotationModelType::IAUCallisto:
+        return std::make_unique<IAUCallistoRotationModel>();
 
-        { "iau-miranda"sv,    new IAUMirandaRotationModel() },
-        { "iau-ariel"sv,      new IAUArielRotationModel() },
-        { "iau-umbriel"sv,    new IAUUmbrielRotationModel() },
-        { "iau-titania"sv,    new IAUTitaniaRotationModel() },
-        { "iau-oberon"sv,     new IAUOberonRotationModel() },
-    };
+    // IAU rotation elements for satellites of Saturn
+    case CustomRotationModelType::IAUPan:
+        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+                                                            83.5, -0.004,
+                                                            48.8, 626.0440000);
+    case CustomRotationModelType::IAUAtlas:
+        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+                                                            83.5, -0.004,
+                                                            137.88, 598.3060000);
+    case CustomRotationModelType::IAUPrometheus:
+        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+                                                            83.5, -0.004,
+                                                            296.14, 587.289000);
+    case CustomRotationModelType::IAUPandora:
+        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+                                                            83.5, -0.004,
+                                                            162.92, 572.7891000);
+    case CustomRotationModelType::IAUMimas:
+        return std::make_unique<IAUMimasRotationModel>();
+    case CustomRotationModelType::IAUEnceladus:
+        return std::make_unique<IAUEnceladusRotationModel>();
+    case CustomRotationModelType::IAUTethys:
+        return std::make_unique<IAUTethysRotationModel>();
+    case CustomRotationModelType::IAUTelesto:
+        return std::make_unique<IAUTelestoRotationModel>();
+    case CustomRotationModelType::IAUCalypso:
+        return std::make_unique<IAUCalypsoRotationModel>();
+    case CustomRotationModelType::IAUDione:
+        return std::make_unique<IAUDioneRotationModel>();
+    case CustomRotationModelType::IAUHelene:
+        return std::make_unique<IAUHeleneRotationModel>();
+    case CustomRotationModelType::IAURhea:
+        return std::make_unique<IAURheaRotationModel>();
+    case CustomRotationModelType::IAUTitan:
+        return std::make_unique<IAUTitanRotationModel>();
+    case CustomRotationModelType::IAUIapetus:
+        return std::make_unique<IAUIapetusRotationModel>();
+    case CustomRotationModelType::IAUPhoebe:
+        return std::make_unique<IAUPhoebeRotationModel>();
 
-    return customRotationModelsMap;
+    // IAU rotation elements for satellites of Uranus
+    case CustomRotationModelType::IAUMiranda:
+        return std::make_unique<IAUMirandaRotationModel>();
+    case CustomRotationModelType::IAUAriel:
+        return std::make_unique<IAUArielRotationModel>();
+    case CustomRotationModelType::IAUUmbriel:
+        return std::make_unique<IAUUmbrielRotationModel>();
+    case CustomRotationModelType::IAUTitania:
+        return std::make_unique<IAUTitaniaRotationModel>();
+    case CustomRotationModelType::IAUOberon:
+        return std::make_unique<IAUOberonRotationModel>();
+    default:
+        return nullptr;
+    }
 }
 
 } // end unnamed namespace
@@ -1027,12 +1136,59 @@ const CustomRotationModelsMap* getCustomRotationModels()
 RotationModel*
 GetCustomRotationModel(std::string_view name)
 {
-    // Initialize the custom rotation model table.
-    const auto* customRotationModelsMap = getCustomRotationModels();
-    auto it = customRotationModelsMap->find(name);
-    return it == customRotationModelsMap->end()
-        ? nullptr
-        : it->second;
+    using CustomRotationTypeMap = std::map<std::string_view, CustomRotationModelType>;
+    static auto typeMap = std::make_unique<CustomRotationTypeMap>(
+        std::initializer_list<CustomRotationTypeMap::value_type>
+        {
+            { "earth-p03lp"sv,    CustomRotationModelType::EarthP03lp    },
+            { "iau-mercury"sv,    CustomRotationModelType::IAUMercury    },
+            { "iau-venus"sv,      CustomRotationModelType::IAUVenus      },
+            { "iau-earth"sv,      CustomRotationModelType::IAUEarth      },
+            { "iau-mars"sv,       CustomRotationModelType::IAUMars       },
+            { "iau-jupiter"sv,    CustomRotationModelType::IAUJupiter    },
+            { "iau-saturn"sv,     CustomRotationModelType::IAUSaturn     },
+            { "iau-uranus"sv,     CustomRotationModelType::IAUUranus     },
+            { "iau-neptune"sv,    CustomRotationModelType::IAUNeptune    },
+            { "iau-pluto"sv,      CustomRotationModelType::IAUPluto      },
+            { "iau-moon"sv,       CustomRotationModelType::IAUMoon       },
+            { "iau-phobos"sv,     CustomRotationModelType::IAUPhobos     },
+            { "iau-deimos"sv,     CustomRotationModelType::IAUDeimos     },
+            { "iau-metis"sv,      CustomRotationModelType::IAUMetis      },
+            { "iau-adrastea"sv,   CustomRotationModelType::IAUAdrastea   },
+            { "iau-amalthea"sv,   CustomRotationModelType::IAUAmalthea   },
+            { "iau-thebe"sv,      CustomRotationModelType::IAUThebe      },
+            { "iau-io"sv,         CustomRotationModelType::IAUIo         },
+            { "iau-europa"sv,     CustomRotationModelType::IAUEuropa     },
+            { "iau-ganymede"sv,   CustomRotationModelType::IAUGanymede   },
+            { "iau-callisto"sv,   CustomRotationModelType::IAUCallisto   },
+            { "iau-pan"sv,        CustomRotationModelType::IAUPan        },
+            { "iau-atlas"sv,      CustomRotationModelType::IAUAtlas      },
+            { "iau-prometheus"sv, CustomRotationModelType::IAUPrometheus },
+            { "iau-pandora"sv,    CustomRotationModelType::IAUPandora    },
+            { "iau-mimas"sv,      CustomRotationModelType::IAUMimas      },
+            { "iau-enceladus"sv,  CustomRotationModelType::IAUEnceladus  },
+            { "iau-tethys"sv,     CustomRotationModelType::IAUTethys     },
+            { "iau-telesto"sv,    CustomRotationModelType::IAUTelesto    },
+            { "iau-calypso"sv,    CustomRotationModelType::IAUCalypso    },
+            { "iau-dione"sv,      CustomRotationModelType::IAUDione      },
+            { "iau-helene"sv,     CustomRotationModelType::IAUHelene     },
+            { "iau-rhea"sv,       CustomRotationModelType::IAURhea       },
+            { "iau-titan"sv,      CustomRotationModelType::IAUTitan      },
+            { "iau-iapetus"sv,    CustomRotationModelType::IAUIapetus    },
+            { "iau-phoebe"sv,     CustomRotationModelType::IAUPhoebe     },
+            { "iau-miranda"sv,    CustomRotationModelType::IAUMiranda    },
+            { "iau-ariel"sv,      CustomRotationModelType::IAUAriel      },
+            { "iau-umbriel"sv,    CustomRotationModelType::IAUUmbriel    },
+            { "iau-titania"sv,    CustomRotationModelType::IAUTitania    },
+            { "iau-oberon"sv,     CustomRotationModelType::IAUOberon     },
+        }).release();
+
+    auto it = typeMap->find(name);
+    if (it == typeMap->end())
+        return nullptr;
+
+    static CustomRotationsManager* manager = std::make_unique<CustomRotationsManager>().release();
+    return manager->getModel(it->second);
 }
 
 } // end namespace celestia::ephem

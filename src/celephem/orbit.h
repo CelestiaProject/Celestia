@@ -118,8 +118,6 @@ class CachingOrbit : public Orbit
 
     virtual Eigen::Vector3d computePosition(double jd) const = 0;
     virtual Eigen::Vector3d computeVelocity(double jd) const;
-    // double getPeriod() const override = 0;
-    // double getBoundingRadius() const override = 0;
 
     Eigen::Vector3d positionAtTime(double jd) const override;
     Eigen::Vector3d velocityAtTime(double jd) const override;

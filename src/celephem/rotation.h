@@ -56,15 +56,9 @@ class RotationModel
      */
     virtual Eigen::Quaterniond spin(double tjd) const = 0;
 
-    virtual double getPeriod() const
-    {
-        return 0.0;
-    };
+    virtual double getPeriod() const = 0;
 
-    virtual bool isPeriodic() const
-    {
-        return false;
-    };
+    virtual bool isPeriodic() const = 0;
 
     // Return the time range over which the orientation model is valid;
     // if the model is always valid, begin and end should be equal.
@@ -124,6 +118,9 @@ class ConstantOrientation : public RotationModel
 
     Eigen::Quaterniond spin(double tjd) const override;
     Eigen::Vector3d angularVelocityAtTime(double tjd) const override;
+
+    double getPeriod() const override { return 0.0; }
+    bool isPeriodic() const override { return false; }
 
  private:
     Eigen::Quaterniond orientation;

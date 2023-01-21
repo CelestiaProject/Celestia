@@ -38,7 +38,6 @@ class ScriptedOrbit : public CachingOrbit
     ~ScriptedOrbit() override = default;
 
     Eigen::Vector3d computePosition(double tjd) const override;
-    // Eigen::Vector3d computeVelocity(double tjd) const override;
     bool isPeriodic() const override;
     double getPeriod() const override;
     double getBoundingRadius() const override;
