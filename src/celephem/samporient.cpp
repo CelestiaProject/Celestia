@@ -12,20 +12,22 @@
 // of the License, or (at your option) any later version.
 
 #include "samporient.h"
-#include <celcompat/numbers.h>
-#include <celmath/mathlib.h>
-#include <celmath/geomutil.h>
-#include <cmath>
-#include <cassert>
-#include <string>
-#include <algorithm>
-#include <vector>
-#include <iostream>
-#include <fstream>
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
+#include <algorithm>
+#include <fstream>
+#include <vector>
+
+#include <Eigen/Geometry>
+
+#include <celcompat/numbers.h>
+#include <celmath/geomutil.h>
+#include "rotation.h"
+
+namespace celestia::ephem
+{
+
+namespace
+{
 
 struct OrientationSample
 {
@@ -33,7 +35,7 @@ struct OrientationSample
     double t;
 };
 
-typedef vector<OrientationSample> OrientationSampleVector;
+using OrientationSampleVector = std::vector<OrientationSample>;
 
 /*!
  * Sampled orientation files are ASCII text files containing a sequence of
@@ -58,10 +60,6 @@ typedef vector<OrientationSample> OrientationSampleVector;
  * a single line.
  */
 
-// 90 degree rotation about x-axis to convert orientation to Celestia's
-// coordinate system.
-static Quaternionf coordSysCorrection = XRotation((float) (celestia::numbers::pi / 2.0));
-
 
 bool operator<(const OrientationSample& a, const OrientationSample& b)
 {
@@ -72,7 +70,7 @@ bool operator<(const OrientationSample& a, const OrientationSample& b)
  *  of quaternion keyframes. Typically, an instance of SampledRotation will
  *  be created from a file with LoadSampledOrientation().
  */
-class SampledOrientation : public celestia::ephem::RotationModel
+class SampledOrientation : public RotationModel
 {
 public:
     SampledOrientation() = default;
@@ -81,7 +79,7 @@ public:
     /*! Add another quaternion key to the sampled orientation. The keys
      *  should have monotonically increasing time values.
      */
-    void addSample(double tjd, const Quaternionf& q);
+    void addSample(double tjd, const Eigen::Quaternionf& q);
 
     /*! The orientation of a sampled rotation model is entirely due
      *  to spin (i.e. there's no notion of an equatorial frame.)
@@ -94,7 +92,7 @@ public:
     void getValidRange(double& begin, double& end) const override;
 
 private:
-    Quaternionf getOrientation(double tjd) const;
+    Eigen::Quaternionf getOrientation(double tjd) const;
 
 private:
     OrientationSampleVector samples;
@@ -113,11 +111,14 @@ private:
 void
 SampledOrientation::addSample(double t, const Eigen::Quaternionf& q)
 {
+    // 90 degree rotation about x-axis to convert orientation to Celestia's
+    // coordinate system.
+    static const Eigen::Quaternionf coordSysCorrection = celmath::XRotation((float) (celestia::numbers::pi / 2.0));
+
     // TODO: add a check for out of sequence samples
-    OrientationSample samp;
+    OrientationSample& samp = samples.emplace_back();
     samp.t = t;
     samp.q = q * coordSysCorrection;
-    samples.push_back(samp);
 }
 
 
@@ -148,13 +149,13 @@ void SampledOrientation::getValidRange(double& begin, double& end) const
 }
 
 
-Quaternionf
+Eigen::Quaternionf
 SampledOrientation::getOrientation(double tjd) const
 {
-    Quaternionf orientation;
+    Eigen::Quaternionf orientation;
     if (samples.size() == 0)
     {
-        orientation = Quaternionf::Identity();
+        orientation = Eigen::Quaternionf::Identity();
     }
     else if (samples.size() == 1)
     {
@@ -171,9 +172,9 @@ SampledOrientation::getOrientation(double tjd) const
         // the search if the covers the requested time.
         if (n < 1 || n >= (int) samples.size() || tjd < samples[n - 1].t || tjd > samples[n].t)
         {
-            OrientationSampleVector::const_iterator iter = lower_bound(samples.begin(),
-                                                                       samples.end(),
-                                                                       samp);
+            auto iter = std::lower_bound(samples.begin(),
+                                         samples.end(),
+                                         samp);
             if (iter == samples.end())
                 n = samples.size();
             else
@@ -204,7 +205,7 @@ SampledOrientation::getOrientation(double tjd) const
             else
             {
                 // Unknown interpolation type
-                orientation = Quaternionf::Identity();
+                orientation = Eigen::Quaternionf::Identity();
             }
         }
         else
@@ -216,19 +217,22 @@ SampledOrientation::getOrientation(double tjd) const
     return orientation;
 }
 
+} // end unnamed namespace
 
-celestia::ephem::RotationModel* LoadSampledOrientation(const fs::path& filename)
+
+std::unique_ptr<RotationModel>
+LoadSampledOrientation(const fs::path& filename)
 {
-    ifstream in(filename);
+    std::ifstream in(filename);
     if (!in.good())
         return nullptr;
 
-    auto* sampOrientation = new SampledOrientation();
+    auto sampOrientation = std::make_unique<SampledOrientation>();
     int nSamples = 0;
     while (in.good())
     {
         double tjd;
-        Quaternionf q;
+        Eigen::Quaternionf q;
         in >> tjd;
         in >> q.w();
         in >> q.x();
@@ -245,3 +249,5 @@ celestia::ephem::RotationModel* LoadSampledOrientation(const fs::path& filename)
 
     return sampOrientation;
 }
+
+} // end namespace celestia::ephem
