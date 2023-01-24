@@ -7,67 +7,52 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstring>
-#include <cassert>
+#include "console.h"
+
 #include <algorithm>
-#include <iostream>
+#include <cassert>
+
 #include <celmath/geomutil.h>
 #include <celttf/truetypefont.h>
-#include <celutil/utf8.h>
-#include "console.h"
+#include <celutil/color.h>
+#include "glsupport.h"
 #include "render.h"
 #include "shadermanager.h"
-#include "vecgl.h"
 
-using namespace std;
-using namespace celmath;
+namespace
+{
 
-static int pmod(int n, int m)
+constexpr int pmod(int n, int m)
 {
     return n >= 0 ? n % m : m - (-(n + 1) % m) - 1;
 }
 
+}
+
 
 Console::Console(Renderer& _renderer, int _nRows, int _nColumns) :
+    std::ostream(&sbuf),
     renderer(_renderer),
-    ostream(&sbuf),
     nRows(_nRows),
     nColumns(_nColumns)
 {
     sbuf.setConsole(this);
-    text = new wchar_t[(nColumns + 1) * nRows];
-    for (int i = 0; i < nRows; i++)
-        text[(nColumns + 1) * i] = '\0';
-}
-
-
-Console::~Console()
-{
-    delete[] text;
+    text.resize((nColumns + 1) * nRows, L'\0');
 }
 
 
 /*! Resize the console log to use the specified number of rows.
- *  Old long entries are preserved in the resize. setRowCount()
- *  returns true if it was able to successfully allocate a new
- *  buffer, and false if there was a problem (out of memory.)
+ *  setRowCount() returns true if it was able to successfully allocate
+ *  a new buffer, and false if there was a problem (out of memory.)
+ *  This is currently only called on startup, so no attempt to ensure
+ *  sensible preservation of old log entries is made.
  */
 bool Console::setRowCount(int _nRows)
 {
     if (_nRows == nRows)
         return true;
 
-    auto* newText = new wchar_t[(nColumns + 1) * _nRows];
-
-    for (int i = 0; i < _nRows; i++)
-    {
-        newText[(nColumns + 1) * i] = '\0';
-    }
-
-    std::copy(newText, newText + (nColumns + 1) * min(_nRows, nRows), text);
-
-    delete[] text;
-    text = newText;
+    text.resize((nColumns + 1) * _nRows, L'\0');
     nRows = _nRows;
 
     return true;
@@ -76,7 +61,7 @@ bool Console::setRowCount(int _nRows)
 
 void Console::begin()
 {
-    projection = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
+    projection = celmath::Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -173,34 +158,6 @@ void Console::print(wchar_t c)
 }
 
 
-void Console::print(char* s)
-{
-    int length = strlen(s);
-    bool validChar = true;
-    int i = 0;
-
-    while (i < length && validChar)
-    {
-        wchar_t ch = 0;
-        validChar = UTF8Decode(string_view(s, length), i, ch);
-        i += UTF8EncodedSize(ch);
-        print(ch);
-    }
-}
-
-
-int Console::getRow() const
-{
-    return row;
-}
-
-
-int Console::getColumn() const
-{
-    return column;
-}
-
-
 int Console::getWindowRow() const
 {
     return windowRow;
@@ -280,7 +237,7 @@ void Console::scroll(int lines)
 
     if (lines < 0)
     {
-        int scrollLimit = -min(height - 1, row);
+        int scrollLimit = -std::min(height - 1, row);
         if (topRow + lines >= scrollLimit)
             setWindowRow(topRow + lines);
         else
@@ -310,7 +267,7 @@ int ConsoleStreamBuf::overflow(int c)
     {
         switch (decodeState)
         {
-        case UTF8DecodeStart:
+        case UTF8DecodeState::Start:
             if (c < 0x80)
             {
                 // Just a normal 7-bit character
@@ -338,7 +295,7 @@ int ConsoleStreamBuf::overflow(int c)
                     unsigned int mask = (1 << (7 - count)) - 1;
                     decodeShift = (count - 1) * 6;
                     decodedChar = (c & mask) << decodeShift;
-                    decodeState = UTF8DecodeMultibyte;
+                    decodeState = UTF8DecodeState::Multibyte;
                 }
                 else
                 {
@@ -348,7 +305,7 @@ int ConsoleStreamBuf::overflow(int c)
             }
             break;
 
-        case UTF8DecodeMultibyte:
+        case UTF8DecodeState::Multibyte:
             if ((c & 0xc0) == 0x80)
             {
                 // We have a valid non-head byte in the sequence
@@ -357,14 +314,14 @@ int ConsoleStreamBuf::overflow(int c)
                 if (decodeShift == 0)
                 {
                     console->print(decodedChar);
-                    decodeState = UTF8DecodeStart;
+                    decodeState = UTF8DecodeState::Start;
                 }
             }
             else
             {
                 // Bad byte in UTF-8 encoded sequence; we'll silently ignore
                 // it and reset the state of the UTF-8 decoder.
-                decodeState = UTF8DecodeStart;
+                decodeState = UTF8DecodeState::Start;
             }
             break;
         }
