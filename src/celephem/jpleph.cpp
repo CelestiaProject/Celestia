@@ -196,9 +196,11 @@ Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd)
         recNo = records.size() - 1;
     const JPLEphRecord* rec = &records[recNo];
 
-    assert(coeffInfo[planet].nGranules >= 1);
-    assert(coeffInfo[planet].nGranules <= 32);
-    assert(coeffInfo[planet].nCoeffs <= MaxChebyshevCoeffs);
+    auto planetIdx = static_cast<std::size_t>(planet);
+
+    assert(coeffInfo[planetIdx].nGranules >= 1);
+    assert(coeffInfo[planetIdx].nGranules <= 32);
+    assert(coeffInfo[planetIdx].nCoeffs <= MaxChebyshevCoeffs);
 
     // u is the normalized time (in [-1, 1]) for interpolating
     // coeffs is a pointer to the Chebyshev coefficients
@@ -206,7 +208,6 @@ Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd)
     const double* coeffs = nullptr;
 
     // nGranules is unsigned int so it will be compared against FFFFFFFF:
-    auto planetIdx = static_cast<std::size_t>(planet);
     if (coeffInfo[planetIdx].nGranules == (unsigned int) -1)
     {
         coeffs = rec->coeffs.data() + coeffInfo[planetIdx].offset;
