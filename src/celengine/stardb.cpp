@@ -1075,6 +1075,13 @@ bool StarDatabase::createStar(Star* star,
     {
         star->setPosition(barycenterPosition);
     }
+    else if (auto rectangularPos = starData->getLengthVector<float>("Position", KM_PER_LY<double>); rectangularPos.has_value())
+    {
+        // "Position" allows the position of the star to be specified in
+        // coordinates matching those used in stars.dat, allowing an exact
+        // translation of stars.dat entries to .stc.
+        star->setPosition(*rectangularPos);
+    }
     else
     {
         double ra = 0.0;
