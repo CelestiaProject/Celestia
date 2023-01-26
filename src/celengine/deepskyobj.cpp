@@ -139,7 +139,7 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
 bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
-    if (auto position = params->getVector3<double>("Position"); position.has_value())
+    if (auto position = params->getLengthVector<double>("Position", KM_PER_LY<double>); position.has_value())
     {
         setPosition(*position);
     }
