@@ -55,6 +55,15 @@ class GLVertexShader : public GLShader
 };
 
 
+class GLGeometryShader : public GLShader
+{
+ private:
+    GLGeometryShader(GLuint _id) : GLShader(_id) {};
+
+ friend class GLShaderLoader;
+};
+
+
 class GLFragmentShader : public GLShader
 {
  private:
@@ -169,6 +178,8 @@ class GLShaderLoader
  public:
     static GLShaderStatus CreateVertexShader(const std::vector<std::string>&,
                                              GLVertexShader**);
+    static GLShaderStatus CreateGeometryShader(const std::vector<std::string>&,
+                                               GLGeometryShader**);
     static GLShaderStatus CreateFragmentShader(const std::vector<std::string>&,
                                                GLFragmentShader**);
     static GLShaderStatus CreateVertexShader(const std::string&,
@@ -179,11 +190,23 @@ class GLShaderLoader
     static GLShaderStatus CreateProgram(const GLVertexShader& vs,
                                         const GLFragmentShader& fs,
                                         GLProgram**);
+    static GLShaderStatus CreateProgram(const GLVertexShader& vs,
+                                        const GLGeometryShader& gs,
+                                        const GLFragmentShader& fs,
+                                        GLProgram**);
     static GLShaderStatus CreateProgram(const std::vector<std::string>& vs,
+                                        const std::vector<std::string>& fs,
+                                        GLProgram**);
+    static GLShaderStatus CreateProgram(const std::vector<std::string>& vs,
+                                        const std::vector<std::string>& gs,
                                         const std::vector<std::string>& fs,
                                         GLProgram**);
     static GLShaderStatus CreateProgram(const std::string& vsSource,
                                         const std::string& fsSource,
+                                        GLProgram**);
+    static GLShaderStatus CreateProgram(const std::string& vsSource,
+                                        const std::string& fsSource,
+                                        const std::string& gsSource,
                                         GLProgram**);
 };
 

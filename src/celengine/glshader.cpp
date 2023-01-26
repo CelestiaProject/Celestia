@@ -328,6 +328,31 @@ GLShaderLoader::CreateFragmentShader(const std::vector<std::string>& source,
 
 
 GLShaderStatus
+GLShaderLoader::CreateGeometryShader(const std::vector<std::string>& source,
+                                     GLGeometryShader** gs)
+{
+    GLuint vsid = glCreateShader(GL_GEOMETRY_SHADER);
+
+    auto* shader = new GLGeometryShader(vsid);
+
+    GLShaderStatus status = shader->compile(source);
+    if (status != ShaderStatus_OK)
+    {
+        if (g_shaderLogFile != nullptr)
+        {
+            *g_shaderLogFile << "Error compiling geometry shader:\n";
+            *g_shaderLogFile << GetInfoLog(shader->getID());
+        }
+        delete shader;
+        return status;
+    }
+
+    *gs = shader;
+
+    return ShaderStatus_OK;
+}
+
+GLShaderStatus
 GLShaderLoader::CreateVertexShader(const std::string& source,
                                    GLVertexShader** vs)
 
@@ -404,14 +429,95 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 
 
 GLShaderStatus
+GLShaderLoader::CreateProgram(const GLVertexShader& vs,
+                              const GLGeometryShader& gs,
+                              const GLFragmentShader& fs,
+                              GLProgram** progOut)
+{
+    GLuint progid = glCreateProgram();
+
+    auto* prog = new GLProgram(progid);
+
+    prog->attach(vs);
+    prog->attach(gs);
+    prog->attach(fs);
+
+    *progOut = prog;
+
+    return ShaderStatus_OK;
+}
+
+
+GLShaderStatus
+GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
+                              const std::vector<std::string>& gsSource,
+                              const std::vector<std::string>& fsSource,
+                              GLProgram** progOut)
+{
+    GLVertexShader* vs = nullptr;
+    GLShaderStatus status = CreateVertexShader(vsSource, &vs);
+    if (status != ShaderStatus_OK)
+        return status;
+
+    GLFragmentShader* fs = nullptr;
+    status = CreateFragmentShader(fsSource, &fs);
+    if (status != ShaderStatus_OK)
+    {
+        delete vs;
+        return status;
+    }
+
+    GLGeometryShader* gs = nullptr;
+    status = CreateGeometryShader(gsSource, &gs);
+    if (status != ShaderStatus_OK)
+    {
+        delete vs;
+        delete fs;
+        return status;
+    }
+
+    GLProgram* prog = nullptr;
+    status = CreateProgram(*vs, *gs, *fs, &prog);
+    if (status != ShaderStatus_OK)
+    {
+        delete vs;
+        delete gs;
+        delete fs;
+        return status;
+    }
+
+    *progOut = prog;
+
+    // No need to keep these around--the program doesn't reference them
+    delete vs;
+    delete gs;
+    delete fs;
+
+    return ShaderStatus_OK;
+}
+
+
+GLShaderStatus
 GLShaderLoader::CreateProgram(const std::string& vsSource,
                               const std::string& fsSource,
                               GLProgram** progOut)
 {
-    std::vector<std::string> vsSourceVec;
-    vsSourceVec.push_back(vsSource);
-    std::vector<std::string> fsSourceVec;
-    fsSourceVec.push_back(fsSource);
+    std::vector<std::string> vsSourceVec { vsSource };
+    std::vector<std::string> fsSourceVec { fsSource };
 
     return CreateProgram(vsSourceVec, fsSourceVec, progOut);
+}
+
+
+GLShaderStatus
+GLShaderLoader::CreateProgram(const std::string& vsSource,
+                              const std::string& gsSource,
+                              const std::string& fsSource,
+                              GLProgram** progOut)
+{
+    std::vector<std::string> vsSourceVec { vsSource };
+    std::vector<std::string> gsSourceVec { gsSource };
+    std::vector<std::string> fsSourceVec { fsSource };
+
+    return CreateProgram(vsSourceVec, gsSourceVec, fsSourceVec, progOut);
 }
