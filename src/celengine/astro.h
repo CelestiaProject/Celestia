@@ -269,8 +269,6 @@ namespace astro
     Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
     Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    Eigen::Vector3f equatorialToEclipticCartesian(float ra, float dec, float distance);
-
     Eigen::Quaterniond eclipticToEquatorial();
     Eigen::Vector3d eclipticToEquatorial(const Eigen::Vector3d& v);
     Eigen::Quaterniond equatorialToGalactic();
