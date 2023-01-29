@@ -43,7 +43,7 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 {
     assert(currentChain != nullptr);
 
-    Eigen::Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
+    Eigen::Vector3f v = astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
     {
         chains.emplace_back(currentChain);
@@ -59,7 +59,7 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 
 void ConstellationBoundaries::lineto(float ra, float dec)
 {
-    currentChain->emplace_back(astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance));
+    currentChain->emplace_back(astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance));
 }
 
 

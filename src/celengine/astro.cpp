@@ -183,23 +183,6 @@ astro::equatorialToCelestialCart(double ra, double dec, double distance)
 }
 
 
-/** Convert spherical coordinates in the J2000 equatorial frame to cartesian
-  * coordinates in the J2000 ecliptic frame. RA in hours, dec in degrees.
-  */
-Eigen::Vector3f
-astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
-{
-    using celestia::numbers::pi;
-    double theta = ra / 24.0 * pi * 2 + pi;
-    double phi = (dec / 90.0 - 1.0) * pi / 2;
-    double x = cos(theta) * sin(phi) * distance;
-    double y = cos(phi) * distance;
-    double z = -sin(theta) * sin(phi) * distance;
-
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f((float) x, (float) y, (float) z);
-}
-
-
 void astro::anomaly(double meanAnomaly, double eccentricity,
                     double& trueAnomaly, double& eccentricAnomaly)
 {
