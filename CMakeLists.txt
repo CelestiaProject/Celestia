@@ -239,9 +239,10 @@ find_package(PNG REQUIRED)
 add_definitions(${PNG_DEFINITIONS})
 link_libraries(PNG::PNG)
 
+include(FixJPEG)
 find_package(JPEG REQUIRED) # -DJPEG_LIBRARY=...
-include_directories(${JPEG_INCLUDE_DIRS})
-link_libraries(${JPEG_LIBRARIES})
+MakeJPEGTarget()
+link_libraries(JPEG::JPEG)
 
 if(ENABLE_CELX)
   add_definitions(-DCELX)
