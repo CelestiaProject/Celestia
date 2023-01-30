@@ -35,8 +35,8 @@ const Value* AssociativeArray::getValue(std::string_view key) const
 void AssociativeArray::addValue(std::string&& key, Value&& val)
 {
     std::size_t index = values.size();
-    values.emplace_back(std::move(val));
-    assoc.try_emplace(std::move(key), index);
+    if (assoc.try_emplace(std::move(key), index).second)
+        values.emplace_back(std::move(val));
 }
 
 
