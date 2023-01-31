@@ -11,8 +11,10 @@
 
 #pragma once
 
-#include <celengine/glsupport.h>
+#include <cstdint>
 #include <vector>
+
+#include <celengine/glsupport.h>
 
 namespace celestia::render
 {
@@ -183,14 +185,14 @@ class VertexObject
     void setStreamType(GLenum streamType) noexcept     { m_streamType = streamType; }
 
  protected:
-    enum State : uint16_t
+    enum State : std::uint16_t
     {
         NormalState = 0x0000,
         Initialize  = 0x0001,
         Update      = 0x0002
     };
 
-    uint16_t   m_state              { State::Initialize };
+    std::uint16_t m_state { State::Initialize };
 
     struct PtrParams;
 

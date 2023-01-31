@@ -9,8 +9,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
 #include "vertexobject.h"
+
+#include <cassert>
 
 namespace
 {
@@ -247,7 +248,8 @@ IndexedVertexObject::draw(GLenum primitive, GLsizei count, GLint first) const no
     if ((m_state & State::Initialize) != 0)
         enableAttribArrays();
 
-    glDrawElements(primitive, count, m_indexType, reinterpret_cast<void*>(first));
+    glDrawElements(primitive, count, m_indexType,
+                   reinterpret_cast<const void*>(static_cast<std::intptr_t>(first)));
 }
 
 void
