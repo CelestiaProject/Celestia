@@ -36,7 +36,16 @@ enum class ValueType : std::uint8_t
 class Value;
 using ValueArray = std::vector<Value>;
 
-class Value
+// Value acts as a custom variant type which stores the units data in what
+// would otherwise be padding between the discriminant and the union data.
+// Single ownership of the contained value is enforced via the constructors,
+// which either obtain ownership by releasing a unique-ptr, or create a new
+// copied object.
+// Lines that trigger Sonar rules forbidding manual memory management are
+// marked as NOSONAR, as the use of new/delete is inherent to the functioning
+// of the class.
+
+class Value //NOSONAR
 {
  public:
     struct Units
@@ -60,19 +69,19 @@ class Value
     }
     explicit Value(const char *s) : type(ValueType::StringType)
     {
-        data.s = new std::string(s);
+        data.s = new std::string(s); //NOSONAR
     }
     explicit Value(const std::string_view sv) : type(ValueType::StringType)
     {
-        data.s = new std::string(sv);
+        data.s = new std::string(sv); //NOSONAR
     }
     explicit Value(const std::string &s) : type(ValueType::StringType)
     {
-        data.s = new std::string(s);
+        data.s = new std::string(s); // NOSONAR
     }
     explicit Value(std::string&& s) : type(ValueType::StringType)
     {
-        data.s = new std::string(std::move(s));
+        data.s = new std::string(std::move(s)); //NOSONAR
     }
     explicit Value(std::unique_ptr<ValueArray>&& a) : type(ValueType::ArrayType)
     {
