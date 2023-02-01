@@ -28,13 +28,13 @@ Value& Value::operator=(Value&& other) noexcept
         switch (type)
         {
         case ValueType::StringType:
-            delete data.s;
+            delete data.s; //NOSONAR
             break;
         case ValueType::ArrayType:
-            delete data.a;
+            delete data.a; //NOSONAR
             break;
         case ValueType::HashType:
-            delete data.h;
+            delete data.h; //NOSONAR
             break;
         default:
             break;
