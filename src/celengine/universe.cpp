@@ -342,7 +342,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 // Perform an intersection test between the pick ray and a body
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
-    auto* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
+    auto* pickInfo = static_cast<PlanetPickInfo*>(info);
     Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     float radius = body->getRadius();
     double distance = -1.0;

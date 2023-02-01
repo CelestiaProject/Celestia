@@ -75,7 +75,7 @@ static fs::path GetScriptPath(lua_State* l)
 // ==================== Celestia-object ====================
 int celestia_new(lua_State* l, CelestiaCore* appCore)
 {
-    CelestiaCore** ud = reinterpret_cast<CelestiaCore**>(lua_newuserdata(l, sizeof(CelestiaCore*)));
+    CelestiaCore** ud = static_cast<CelestiaCore**>(lua_newuserdata(l, sizeof(CelestiaCore*)));
     *ud = appCore;
 
     Celx_SetClass(l, Celx_Celestia);

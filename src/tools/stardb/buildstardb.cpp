@@ -73,7 +73,7 @@ public:
 
 template<class T> void binwrite(ostream& out, T x)
 {
-    out.write(reinterpret_cast<char*>(&x), sizeof(T));
+    out.write(reinterpret_cast<const char*>(&x), sizeof(T));
 }
 
 void HipparcosStar::write(ostream& out)

@@ -70,14 +70,14 @@ bool parseCommandLine(int argc, char* argv[])
 static void writeUint(ostream& out, uint32_t n)
 {
     LE_TO_CPU_INT32(n, n);
-    out.write(reinterpret_cast<char*>(&n), sizeof n);
+    out.write(reinterpret_cast<const char*>(&n), sizeof n);
 }
 
 
 static void writeShort(ostream& out, int16_t n)
 {
     LE_TO_CPU_INT16(n, n);
-    out.write(reinterpret_cast<char*>(&n), sizeof n);
+    out.write(reinterpret_cast<const char*>(&n), sizeof n);
 }
 
 

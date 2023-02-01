@@ -3200,7 +3200,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                 COPYDATASTRUCT cd;
                 cd.dwData = 0;
                 cd.cbData = startURL.length();
-                cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
+                cd.lpData = startURL.data();
                 SendMessage(existingWnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
             }
             SetForegroundWindow(existingWnd);
@@ -3528,7 +3528,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         COPYDATASTRUCT cd;
         cd.dwData = 0;
         cd.cbData = startURL.length();
-        cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
+        cd.lpData = startURL.data();
         SendMessage(mainWindow, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
     }
 
