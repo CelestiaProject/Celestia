@@ -795,7 +795,7 @@ static void renderRingSystem(GLuint *vboId,
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           2, GL_SHORT, GL_FALSE,
                           sizeof(struct RingVertex),
-                          reinterpret_cast<GLvoid*>(offsetof(struct RingVertex, tex)));
+                          reinterpret_cast<const void*>(offsetof(struct RingVertex, tex)));
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -939,7 +939,7 @@ void renderRings_GLSL(RingSystem& rings,
 
     if (rings.renderData == nullptr)
         rings.renderData = std::make_shared<GLRingRenderData>();
-    auto data = reinterpret_cast<GLRingRenderData*>(rings.renderData.get());
+    auto data = static_cast<GLRingRenderData*>(rings.renderData.get());
 
     unsigned nSections = 180;
     std::size_t i = 0;

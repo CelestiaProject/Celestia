@@ -185,10 +185,10 @@ void draw(std::size_t vCount, const GalaxyVertex *v, std::size_t iCount, const G
 
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           4, GL_FLOAT, GL_FALSE,
-                          sizeof(GalaxyVertex), reinterpret_cast<void*>(offsetof(GalaxyVertex, position)));
+                          sizeof(GalaxyVertex), reinterpret_cast<const void*>(offsetof(GalaxyVertex, position)));
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           4, GL_UNSIGNED_SHORT, GL_FALSE,
-                          sizeof(GalaxyVertex), reinterpret_cast<void*>(offsetof(GalaxyVertex, texCoord)));
+                          sizeof(GalaxyVertex), reinterpret_cast<const void*>(offsetof(GalaxyVertex, texCoord)));
     glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_SHORT, nullptr);
 }
 

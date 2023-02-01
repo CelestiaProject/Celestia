@@ -140,7 +140,7 @@ public:
 
     template <typename T> T *newUserData()
     {
-        return reinterpret_cast<T*>(lua_newuserdata(m_lua, sizeof(T)));
+        return static_cast<T*>(lua_newuserdata(m_lua, sizeof(T)));
     }
     template <typename T> T *newUserData(T a)
     {
@@ -151,11 +151,11 @@ public:
     }
     template <typename T> T *newUserDataArray(int n)
     {
-        return reinterpret_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
+        return static_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
     }
     template <typename T> T *newUserDataArray(T *a, int n)
     {
-        T *p = reinterpret_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
+        T *p = static_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
         std::copy(a, a + n, p);
         return p;
     }
@@ -301,7 +301,7 @@ public:
         if (!safeIsValid(index))
             return nullptr;
         if (isUserData(index))
-            return reinterpret_cast<T*>(lua_touserdata(m_lua, index));
+            return static_cast<T*>(lua_touserdata(m_lua, index));
 
         if (errors & WrongType)
             doError(errorMessage);

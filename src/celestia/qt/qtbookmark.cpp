@@ -268,7 +268,7 @@ BookmarkTreeModel::index(int row, int column, const QModelIndex& parent) const
     Q_ASSERT(parentFolder->type() == BookmarkItem::Folder);
     Q_ASSERT(row < (int) parentFolder->childCount());
 
-    return createIndex(row, column, const_cast<void*>(reinterpret_cast<const void*>(parentFolder->child(row))));
+    return createIndex(row, column, parentFolder->child(row));
 }
 
 
@@ -283,7 +283,7 @@ BookmarkTreeModel::parent(const QModelIndex& index) const
     if (parentFolder == m_root)
         return QModelIndex();
     else
-        return createIndex(parentFolder->position(), 0, reinterpret_cast<void*>(parentFolder));
+        return createIndex(parentFolder->position(), 0, parentFolder);
 }
 
 

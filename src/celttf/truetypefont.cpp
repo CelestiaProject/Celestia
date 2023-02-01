@@ -312,7 +312,7 @@ TextureFontPrivate::buildAtlas()
     uint8_t *raw_img  = new uint8_t[img_size];
     glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw_img);
     ofstream f(fmt::format("/tmp/texture_{}x{}.data", m_texWidth, m_texHeight), ios::binary);
-    f.write(reinterpret_cast<char *>(raw_img), img_size);
+    f.write(reinterpret_cast<const char *>(raw_img), img_size);
     f.close();
     delete[] raw_img;
 #endif
@@ -515,13 +515,13 @@ TextureFontPrivate::flush()
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(FontVertex),
-                          reinterpret_cast<void*>(offsetof(FontVertex, x)));
+                          reinterpret_cast<const void*>(offsetof(FontVertex, x)));
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           sizeof(FontVertex),
-                          reinterpret_cast<void*>(offsetof(FontVertex, u)));
+                          reinterpret_cast<const void*>(offsetof(FontVertex, u)));
     glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, nullptr);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);

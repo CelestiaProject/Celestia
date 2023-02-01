@@ -102,7 +102,7 @@ int object_new(lua_State* l, const Selection& sel)
 {
     CelxLua celx(l);
 
-    Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
+    Selection* ud = static_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
     *ud = sel;
 
     celx.setClass(Celx_Object);

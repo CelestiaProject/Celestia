@@ -84,7 +84,7 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
     }
 
     // write empty header, will update it later
-    if (!out.write(reinterpret_cast<char*>(&header), sizeof(header)))
+    if (!out.write(reinterpret_cast<const char*>(&header), sizeof(header)))
         return false;
 
     decltype(XYZVBinaryHeader::count) counter = 0;
@@ -128,7 +128,7 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
     std::memcpy(header.data() + offsetof(XYZVBinaryHeader, count), &counter, sizeof(counter));
 
     out.seekp(0);
-    return !!out.write(reinterpret_cast<char*>(&header), sizeof(header));
+    return !!out.write(reinterpret_cast<const char*>(&header), sizeof(header));
 }
 
 int main(int argc, char* argv[])

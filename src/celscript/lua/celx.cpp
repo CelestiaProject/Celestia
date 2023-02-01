@@ -396,7 +396,7 @@ static const char* readStreamChunk(lua_State* /*unused*/, void* udata, size_t* s
     if (udata == nullptr)
         return nullptr;
 
-    auto* info = reinterpret_cast<ReadChunkInfo*>(udata);
+    auto* info = static_cast<ReadChunkInfo*>(udata);
     assert(info->buf != nullptr);
     assert(info->in != nullptr);
 

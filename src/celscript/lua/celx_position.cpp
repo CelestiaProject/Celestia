@@ -24,7 +24,7 @@ int position_new(lua_State* l, const UniversalCoord& uc)
 {
     CelxLua celx(l);
 
-    UniversalCoord* ud = reinterpret_cast<UniversalCoord*>(lua_newuserdata(l, sizeof(UniversalCoord)));
+    UniversalCoord* ud = static_cast<UniversalCoord*>(lua_newuserdata(l, sizeof(UniversalCoord)));
     *ud = uc;
 
     celx.setClass(Celx_Position);
