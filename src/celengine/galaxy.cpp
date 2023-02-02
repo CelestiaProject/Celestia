@@ -41,9 +41,9 @@ namespace
 
 struct Blob
 {
-    Eigen::Vector4f position;
-    unsigned int    colorIndex;
-    float           brightness;
+    Eigen::Vector3f position;
+    std::uint8_t    colorIndex;
+    std::uint8_t    brightness;
 };
 
 bool operator<(const Blob& b1, const Blob& b2)
@@ -68,8 +68,6 @@ constexpr unsigned int RequiredIndexCount(unsigned int vCount)
 constexpr int width = 128;
 constexpr int height = 128;
 constexpr unsigned int IRR_GALAXY_POINTS = 3500;
-constexpr unsigned int MAX_VERTICES = 43690; // 1MB buffer
-constexpr unsigned int MAX_INDICES = RequiredIndexCount(MAX_VERTICES);
 
 // TODO: This value is just a guess.
 // To be optimal, it should actually be computed:
@@ -127,17 +125,20 @@ void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
 
 struct GalaxyVertex
 {
-    Eigen::Vector4f position;
-    Eigen::Matrix<GLushort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
+    Eigen::Vector3f position;
+    Eigen::Matrix<std::uint8_t, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };
 static_assert(std::is_standard_layout_v<GalaxyVertex>);
+
+constexpr unsigned int MAX_VERTICES = 1024*1024 / sizeof(GalaxyVertex); // 1MB buffer
+constexpr unsigned int MAX_INDICES = RequiredIndexCount(MAX_VERTICES);
 
 void bindVMemBuffers(unsigned int vCount)
 {
     constexpr int nBuffers = 4;
     static std::array<GLuint, nBuffers> vbos = {};
     static std::array<GLuint, nBuffers> vios = {};
-    static std::array<unsigned int, nBuffers> counts = {MAX_VERTICES, 2730, 682, 170}; // Max, 65536, 16384, 4096
+    static std::array<unsigned int, nBuffers> counts = {MAX_VERTICES, MAX_VERTICES / 16 , MAX_VERTICES / 64, MAX_VERTICES / 256}; // 1MB, 64kB, 16kB, 4kB
 
     static bool initialized = false;
     if (!initialized)
@@ -172,10 +173,10 @@ void draw(std::size_t vCount, const GalaxyVertex *v, std::size_t iCount, const G
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLushort) * iCount, indices);
 
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          4, GL_FLOAT, GL_FALSE,
+                          3, GL_FLOAT, GL_FALSE,
                           sizeof(GalaxyVertex), reinterpret_cast<const void*>(offsetof(GalaxyVertex, position)));
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          4, GL_UNSIGNED_SHORT, GL_FALSE,
+                          4, GL_UNSIGNED_BYTE, GL_TRUE,
                           sizeof(GalaxyVertex), reinterpret_cast<const void*>(offsetof(GalaxyVertex, texCoord)));
     glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_SHORT, nullptr);
 }
@@ -233,7 +234,7 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
                     yr = celmath::RealDists<float>::SignedUnit(rng) * h;
                     prob = (1.0f - B * exp(-yr * yr))/p0;
                 } while (celmath::RealDists<float>::Unit(rng) > prob);
-                b.brightness = value * prob / 255.0f;
+                b.brightness = static_cast<std::uint8_t>(value * prob);
                 y = y0 * yr / h;
             }
             else
@@ -247,13 +248,12 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
                     prob = ry2 > 0 ? std::sqrt(ry2): 0.0f;
                 } while (celmath::RealDists<float>::Unit(rng) > prob);
                 y = yy * std::sqrt(0.25f - r2) ;
-                b.brightness = value / 255.0f;
+                b.brightness = value;
                 kmin = 12;
             }
 
-            b.position = Eigen::Vector4f(x, y, z, 1.0f);
-            auto rr = static_cast<unsigned int>(b.position.head(3).norm() * 511);
-            b.colorIndex = std::min(rr, 255u);
+            b.position = Eigen::Vector3f(x, y, z);
+            b.colorIndex = static_cast<std::uint8_t>(std::min(b.position.norm() * 511.0f, 255.0f));
             galacticPoints.push_back(b);
             j++;
         }
@@ -344,10 +344,9 @@ void GalacticFormManager::initializeStandardForms()
             float prob = (1.0f - r) * (celmath::fractalsum(p1, 8.0f) + 1.0f) * 0.5f;
             if (celmath::RealDists<float>::Unit(rng) < prob)
             {
-                b.position   = Eigen::Vector4f(p.x(), p.y(), p.z(), 1.0f);
-                b.brightness = 64.0f / 255.0f;
-                auto rr      = static_cast<unsigned int>(r * 511);
-                b.colorIndex = std::min(rr, 255u);
+                b.position   = p;
+                b.brightness = std::uint8_t(64);
+                b.colorIndex = static_cast<std::uint8_t>(std::min(r * 511.0f, 255.0f));
                 irregularPoints.push_back(b);
                 ++ip;
             }
@@ -386,7 +385,7 @@ void GalacticFormManager::initializeStandardForms()
 
             for (Blob& blob : ellipticalForm->blobs)
             {
-                blob.colorIndex = static_cast<unsigned int>(std::ceil(0.76f * static_cast<float>(blob.colorIndex)));
+                blob.colorIndex = static_cast<std::uint8_t>(std::ceil(0.76f * static_cast<float>(blob.colorIndex)));
             }
         }
 
@@ -554,14 +553,10 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     colorTex->bind();
 
     Eigen::Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
-    Eigen::Vector4f v0(Eigen::Vector4f::Zero());
-    Eigen::Vector4f v1(Eigen::Vector4f::Zero());
-    Eigen::Vector4f v2(Eigen::Vector4f::Zero());
-    Eigen::Vector4f v3(Eigen::Vector4f::Zero());
-    v0.head(3) = viewMat * Eigen::Vector3f(-1, -1, 0) * size;
-    v1.head(3) = viewMat * Eigen::Vector3f( 1, -1, 0) * size;
-    v2.head(3) = viewMat * Eigen::Vector3f( 1,  1, 0) * size;
-    v3.head(3) = viewMat * Eigen::Vector3f(-1,  1, 0) * size;
+    Eigen::Vector3f v0 = viewMat * Eigen::Vector3f(-1, -1, 0) * size;
+    Eigen::Vector3f v1 = viewMat * Eigen::Vector3f( 1, -1, 0) * size;
+    Eigen::Vector3f v2 = viewMat * Eigen::Vector3f( 1,  1, 0) * size;
+    Eigen::Vector3f v3 = viewMat * Eigen::Vector3f(-1,  1, 0) * size;
 
     Eigen::Quaternionf orientation = getOrientation().conjugate();
     Eigen::Matrix3f mScale = galacticForm->scale.asDiagonal() * size;
@@ -628,18 +623,17 @@ void Galaxy::render(const Eigen::Vector3f& offset,
         }
 
         const Blob& b = points[i];
-        Eigen::Vector4f p  = m * b.position;
+        Eigen::Vector3f p  = (m * Eigen::Vector4f(b.position.x(), b.position.y(), b.position.z(), 1.0f)).head(3);
 
         float screenFrac = size / p.norm();
         if (screenFrac < 0.1f)
         {
-            float a = std::min(1.0f, (0.1f - screenFrac) * b.brightness * brightness);
-            GLushort alpha = static_cast<GLushort>(a * 65535.99f); // encode as ushort
-            GLushort color = static_cast<GLushort>(b.colorIndex);
-            g_vertices[vertex++] = { p + v0, { 0, 0, color, alpha } };
-            g_vertices[vertex++] = { p + v1, { 1, 0, color, alpha } };
-            g_vertices[vertex++] = { p + v2, { 1, 1, color, alpha } };
-            g_vertices[vertex++] = { p + v3, { 0, 1, color, alpha } };
+            float a = std::min(255.0f, (0.1f - screenFrac) * static_cast<float>(b.brightness) * brightness);
+            auto alpha = static_cast<std::uint8_t>(a); // encode as byte
+            g_vertices[vertex++] = { p + v0, { std::uint8_t(0), std::uint8_t(0), b.colorIndex, alpha } };
+            g_vertices[vertex++] = { p + v1, { std::uint8_t(255), std::uint8_t(0), b.colorIndex, alpha } };
+            g_vertices[vertex++] = { p + v2, { std::uint8_t(255), std::uint8_t(255), b.colorIndex, alpha } };
+            g_vertices[vertex++] = { p + v3, { std::uint8_t(0), std::uint8_t(255), b.colorIndex, alpha } };
 
             g_indices[index++] = j;
             g_indices[index++] = j + 1;
