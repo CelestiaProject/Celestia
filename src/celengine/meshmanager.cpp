@@ -8,33 +8,30 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cmath>
+#include "meshmanager.h"
+
 #include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <iostream>
-#include <memory>
+#include <ios>
 #include <utility>
 #include <vector>
 
-#include <fmt/ostream.h>
-#include <fmt/format.h>
-
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
-#include <celmodel/material.h>
-#include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
-#include "meshmanager.h"
+#include "hash.h"
 #include "modelgeometry.h"
 #include "parser.h"
 #include "spheremesh.h"
 #include "texmanager.h"
+#include "value.h"
+
 
 using celestia::util::GetLogger;
 
@@ -350,7 +347,65 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
     return model;
 }
 
-constexpr const char UniqueSuffixChar = '!';
+
+std::unique_ptr<cmod::Model>
+Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+{
+    std::unique_ptr<M3DScene> scene = Read3DSFile(key.resolvedPath);
+    if (scene == nullptr)
+        return nullptr;
+
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : fs::path());
+
+    if (key.isNormalized)
+        model->normalize(key.center);
+    else
+        model->transform(key.center, key.scale);
+
+    return model;
+}
+
+
+std::unique_ptr<cmod::Model>
+LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+{
+    std::ifstream in(key.resolvedPath, std::ios::binary);
+    if (!in.good())
+        return nullptr;
+
+    std::unique_ptr<cmod::Model> model = cmod::LoadModel(
+        in,
+        [&](const fs::path& name)
+        {
+            return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
+        });
+
+    if (model == nullptr)
+        return nullptr;
+
+    if (key.isNormalized)
+        model->normalize(key.center);
+    else
+        model->transform(key.center, key.scale);
+
+    return model;
+}
+
+
+std::unique_ptr<cmod::Model>
+LoadCMSModel(const GeometryInfo::ResourceKey& key)
+{
+    std::unique_ptr<cmod::Model> model = LoadCelestiaMesh(key.resolvedPath);
+    if (model == nullptr)
+        return nullptr;
+
+    if (key.isNormalized)
+        model->normalize(key.center);
+    else
+        model->transform(key.center, key.scale);
+
+    return model;
+}
 
 } // end unnamed namespace
 
@@ -358,126 +413,80 @@ constexpr const char UniqueSuffixChar = '!';
 GeometryManager*
 GetGeometryManager()
 {
-    static GeometryManager geometryManager("models");
-    return &geometryManager;
+    static GeometryManager* geometryManager = nullptr;
+    if (geometryManager == nullptr)
+        geometryManager = std::make_unique<GeometryManager>("models").release();
+    return geometryManager;
 }
 
 
-fs::path
-GeometryInfo::resolve(const fs::path& baseDir)
+GeometryInfo::ResourceKey
+GeometryInfo::resolve(const fs::path& baseDir) const
 {
-    // Ensure that models with different centers get resolved to different objects by
-    // adding a 'uniquifying' suffix to the filename that encodes the center value.
-    // This suffix is stripped before the file is actually loaded.
-    auto uniquifyingSuffix = fmt::format("{}{},{},{},{},{}", UniqueSuffixChar,
-                                         center.x(), center.y(), center.z(),
-                                         scale, static_cast<int>(isNormalized));
-
     if (!path.empty())
     {
         fs::path filename = path / "models" / source;
         std::ifstream in(filename);
         if (in.good())
         {
-            resolvedToPath = true;
-            return filename += uniquifyingSuffix;
+            return ResourceKey(std::move(filename), center, scale, isNormalized, true);
         }
     }
 
-    return (baseDir / source) += uniquifyingSuffix;
+    return ResourceKey(baseDir / source, center, scale, isNormalized, false);
 }
 
 
-Geometry*
-GeometryInfo::load(const fs::path& resolvedFilename)
+std::unique_ptr<Geometry>
+GeometryInfo::load(const ResourceKey& key) const
 {
-    // Strip off the uniquifying suffix
-    auto uniquifyingSuffixStart = resolvedFilename.string().rfind(UniqueSuffixChar);
-    fs::path filename = resolvedFilename.string().substr(0, uniquifyingSuffixStart);
-
-    GetLogger()->info(_("Loading model: {}\n"), filename);
+    GetLogger()->info(_("Loading model: {}\n"), key.resolvedPath);
     std::unique_ptr<cmod::Model> model = nullptr;
-    ContentType fileType = DetermineFileType(filename);
 
-    if (fileType == Content_3DStudio)
+    switch (ContentType fileType = DetermineFileType(key.resolvedPath); fileType)
     {
-        std::unique_ptr<M3DScene> scene = Read3DSFile(filename);
-        if (scene != nullptr)
-        {
-            if (resolvedToPath)
-                model = Convert3DSModel(*scene, path);
-            else
-                model = Convert3DSModel(*scene, "");
+    case Content_3DStudio:
+        model = Load3DSModel(key, path);
+        break;
+    case Content_CelestiaModel:
+        model = LoadCMODModel(key, path);
+        break;
+    case Content_CelestiaMesh:
+        model = LoadCMSModel(key);
+        break;
+    default:
+        GetLogger()->error(_("Unknown model format '{}'\n"), key.resolvedPath);
+        return nullptr;
+    }
 
-            if (isNormalized)
-                model->normalize(center);
-            else
-                model->transform(center, scale);
-        }
-    }
-    else if (fileType == Content_CelestiaModel)
+    if (model == nullptr)
     {
-        std::ifstream in(filename, std::ios::binary);
-        if (in.good())
-        {
-            model = cmod::LoadModel(
-                in,
-                [&](const fs::path& name)
-                {
-                    return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
-                });
-            if (model != nullptr)
-            {
-                if (isNormalized)
-                    model->normalize(center);
-                else
-                    model->transform(center, scale);
-            }
-        }
-    }
-    else if (fileType == Content_CelestiaMesh)
-    {
-        model = LoadCelestiaMesh(filename);
-        if (model != nullptr)
-        {
-            if (isNormalized)
-                model->normalize(center);
-            else
-                model->transform(center, scale);
-        }
+        GetLogger()->error(_("Error loading model '{}'\n"), key.resolvedPath);
+        return nullptr;
     }
 
     // Condition the model for optimal rendering
-    if (model != nullptr)
-    {
-        // Many models tend to have a lot of duplicate materials; eliminate
-        // them, since unnecessarily setting material parameters can adversely
-        // impact rendering performance. Ideally uniquification of materials
-        // would be performed just once when the model was created, but
-        // that's not the case.
-        std::uint32_t originalMaterialCount = model->getMaterialCount();
-        model->uniquifyMaterials();
+    // Many models tend to have a lot of duplicate materials; eliminate
+    // them, since unnecessarily setting material parameters can adversely
+    // impact rendering performance. Ideally uniquification of materials
+    // would be performed just once when the model was created, but
+    // that's not the case.
+    std::uint32_t originalMaterialCount = model->getMaterialCount();
+    model->uniquifyMaterials();
 
-        // Sort the submeshes roughly by opacity.  This will eliminate a
-        // good number of the errors caused when translucent triangles are
-        // rendered before geometry that they cover.
-        model->sortMeshes(cmod::Model::OpacityComparator());
+    // Sort the submeshes roughly by opacity.  This will eliminate a
+    // good number of the errors caused when translucent triangles are
+    // rendered before geometry that they cover.
+    model->sortMeshes(cmod::Model::OpacityComparator());
 
-        model->determineOpacity();
+    model->determineOpacity();
 
-        // Display some statics for the model
-        GetLogger()->verbose(
-                        _("   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"),
-                        model->getVertexCount(),
-                        model->getPrimitiveCount(),
-                        originalMaterialCount,
-                        model->getMaterialCount());
+    // Display some statics for the model
+    GetLogger()->verbose(_("   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"),
+                         model->getVertexCount(),
+                         model->getPrimitiveCount(),
+                         originalMaterialCount,
+                         model->getMaterialCount());
 
-        return new ModelGeometry(std::move(model));
-    }
-    else
-    {
-        GetLogger()->error(_("Error loading model '{}'\n"), filename);
-        return nullptr;
-    }
+    return std::make_unique<ModelGeometry>(std::move(model));
 }

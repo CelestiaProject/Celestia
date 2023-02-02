@@ -2670,7 +2670,7 @@ static int celestia_loadtexture(lua_State* l)
     celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
     string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadtexture() must be a string");
     fs::path base_dir = GetScriptPath(l);
-    Texture* t = LoadTextureFromFile(base_dir / s);
+    Texture* t = LoadTextureFromFile(base_dir / s).release();
     if (t == nullptr) return 0;
     return celx.pushClass(t);
 }

@@ -38,16 +38,18 @@ class Image
     celestia::PixelFormat getFormat() const;
     int getComponents() const;
     uint8_t* getPixels();
+    const uint8_t* getPixels() const;
     uint8_t* getPixelRow(int row);
     uint8_t* getPixelRow(int mip, int row);
     uint8_t* getMipLevel(int mip);
+    const uint8_t* getMipLevel(int mip) const;
     int getSize() const;
     int getMipLevelSize(int mip) const;
 
     bool isCompressed() const;
     bool hasAlpha() const;
 
-    Image* computeNormalMap(float scale, bool wrap) const;
+    std::unique_ptr<Image> computeNormalMap(float scale, bool wrap) const;
 
     enum
     {
@@ -66,4 +68,4 @@ class Image
     std::unique_ptr<uint8_t[]> pixels;
 };
 
-Image* LoadImageFromFile(const fs::path& filename);
+std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename);

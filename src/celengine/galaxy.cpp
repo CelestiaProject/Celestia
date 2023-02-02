@@ -204,7 +204,7 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
     int width, height, rgb, j = 0, kmin = 9;
     unsigned char value;
     float h = 0.75f;
-    Image* img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = LoadImageFromFile(filename);
     if (img == nullptr)
     {
         celestia::util::GetLogger()->error("The galaxy template *** {} *** could not be loaded!\n", filename);
@@ -270,7 +270,6 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
         }
     }
 
-    delete img;
     galacticPoints.reserve(j);
 
     // sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
@@ -547,7 +546,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
     if (galaxyTex == nullptr)
     {
         galaxyTex = CreateProceduralTexture(width, height, celestia::PixelFormat::RGBA,
-                                            galaxyTextureEval);
+                                            galaxyTextureEval).release();
     }
     assert(galaxyTex != nullptr);
     glActiveTexture(GL_TEXTURE0);
@@ -558,7 +557,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
         colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
                                            colorTextureEval,
                                            Texture::EdgeClamp,
-                                           Texture::NoMipMaps);
+                                           Texture::NoMipMaps).release();
     }
     assert(colorTex != nullptr);
     glActiveTexture(GL_TEXTURE1);

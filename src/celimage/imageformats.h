@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <celcompat/filesystem.h>
 #include <celengine/image.h>
 
 Image* LoadJPEGImage(const fs::path& filename,
