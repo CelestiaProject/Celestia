@@ -7,71 +7,61 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fstream>
-#include <cassert>
-#include <fmt/format.h>
-#include <celephem/samporbit.h>
-#include <celutil/logger.h>
-#include <celutil/filetype.h>
 #include "trajmanager.h"
 
-using namespace std;
+#include <cassert>
+#include <fstream>
+
+#include <celutil/filetype.h>
+#include <celutil/logger.h>
+
 using celestia::ephem::TrajectoryInterpolation;
 using celestia::ephem::TrajectoryPrecision;
 using celestia::util::GetLogger;
 
-static TrajectoryManager* trajectoryManager = nullptr;
-
-constexpr const char UniqueSuffixChar = '!';
-
-
-TrajectoryManager* GetTrajectoryManager()
+TrajectoryManager*
+GetTrajectoryManager()
 {
+    static TrajectoryManager* trajectoryManager = nullptr;
     if (trajectoryManager == nullptr)
-        trajectoryManager = new TrajectoryManager("data");
+        trajectoryManager = std::make_unique<TrajectoryManager>("data").release();
     return trajectoryManager;
 }
 
 
-fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
+TrajectoryInfo::ResourceKey
+TrajectoryInfo::resolve(const fs::path& baseDir) const
 {
-    // Ensure that trajectories with different interpolation or precision get resolved to different objects by
-    // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
-    // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
-    auto uniquifyingSuffix = fmt::format("{}{}{}", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
-
     if (!path.empty())
     {
         fs::path filename = path / "data" / source;
-        ifstream in(filename);
+        std::ifstream in(filename);
         if (in.good())
-            return filename += uniquifyingSuffix;
+            return ResourceKey(std::move(filename), interpolation, precision);
     }
 
-    return (baseDir / source) += uniquifyingSuffix;
+    return ResourceKey(baseDir / source, interpolation, precision);
 }
 
-celestia::ephem::Orbit* TrajectoryInfo::load(const fs::path& filename)
+std::unique_ptr<celestia::ephem::Orbit>
+TrajectoryInfo::load(const ResourceKey& key) const
 {
-    // strip off the uniquifying suffix
-    auto uniquifyingSuffixStart = filename.string().rfind(UniqueSuffixChar);
-    fs::path strippedFilename = filename.string().substr(0, uniquifyingSuffixStart);
-    ContentType filetype = DetermineFileType(strippedFilename);
+    ContentType filetype = DetermineFileType(key.resolvedPath);
 
-    GetLogger()->debug("Loading trajectory: {}\n", strippedFilename);
+    GetLogger()->debug("Loading trajectory: {}\n", key.resolvedPath);
 
     // TODO use unique_ptr here and replace the use of .release()
-    celestia::ephem::Orbit* sampTrajectory = nullptr;
+    std::unique_ptr<celestia::ephem::Orbit> sampTrajectory = nullptr;
 
     if (filetype == Content_CelestiaXYZVTrajectory)
     {
-        switch (precision)
+        switch (key.precision)
         {
         case TrajectoryPrecision::Single:
-            sampTrajectory = LoadXYZVTrajectorySinglePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadXYZVTrajectorySinglePrec(key.resolvedPath, key.interpolation);
             break;
         case TrajectoryPrecision::Double:
-            sampTrajectory = LoadXYZVTrajectoryDoublePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadXYZVTrajectoryDoublePrec(key.resolvedPath, key.interpolation);
             break;
         default:
             assert(0);
@@ -80,13 +70,13 @@ celestia::ephem::Orbit* TrajectoryInfo::load(const fs::path& filename)
     }
     else if (filetype == Content_CelestiaXYZVBinary)
     {
-        switch (precision)
+        switch (key.precision)
         {
         case TrajectoryPrecision::Single:
-            sampTrajectory = LoadXYZVBinarySinglePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadXYZVBinarySinglePrec(key.resolvedPath, key.interpolation);
             break;
         case TrajectoryPrecision::Double:
-            sampTrajectory = LoadXYZVBinaryDoublePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadXYZVBinaryDoublePrec(key.resolvedPath, key.interpolation);
             break;
         default:
             assert(0);
@@ -98,10 +88,10 @@ celestia::ephem::Orbit* TrajectoryInfo::load(const fs::path& filename)
         switch (precision)
         {
         case TrajectoryPrecision::Single:
-            sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadSampledTrajectorySinglePrec(key.resolvedPath, interpolation);
             break;
         case TrajectoryPrecision::Double:
-            sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation).release();
+            sampTrajectory = LoadSampledTrajectoryDoublePrec(key.resolvedPath, interpolation);
             break;
         default:
             assert(0);

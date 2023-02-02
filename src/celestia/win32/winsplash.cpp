@@ -159,7 +159,7 @@ SplashWindow::init()
     if (winSetLayeredWindowAttributes != NULL && winUpdateLayeredWindow != NULL)
         useLayeredWindow = true;
 
-    image = LoadImageFromFile(imageFileName);
+    image = LoadImageFromFile(imageFileName).release();
 }
 
 

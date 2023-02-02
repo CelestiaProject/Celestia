@@ -7,35 +7,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_RESMANAGER_H_
-#define _CELUTIL_RESMANAGER_H_
+#pragma once
 
-#include <vector>
 #include <map>
-#include <celutil/reshandle.h>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include <celcompat/filesystem.h>
+#include <celutil/reshandle.h>
 
 
-enum ResourceState {
-    ResourceNotLoaded     = 0,
-    ResourceLoaded        = 1,
-    ResourceLoadingFailed = 2,
-};
-
-
-template<class T> class ResourceInfo
-{
- public:
-    ResourceInfo() : state(ResourceNotLoaded), resource(nullptr) {};
-    virtual ~ResourceInfo() {};
-
-    virtual fs::path resolve(const fs::path&) = 0;
-    virtual T* load(const fs::path&) = 0;
-
-    typedef T ResourceType;
-    ResourceState state;
-    fs::path resolvedName;
-    T* resource;
+enum class ResourceState {
+    NotLoaded     = 0,
+    Loaded        = 1,
+    LoadingFailed = 2,
 };
 
 
@@ -45,89 +31,100 @@ template<class T> class ResourceManager
     fs::path baseDir;
 
  public:
-    ResourceManager();
-    ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
+    explicit ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
     ~ResourceManager() = default;
 
-    typedef typename T::ResourceType ResourceType;
+    ResourceManager(const ResourceManager&) = delete;
+    ResourceManager& operator=(const ResourceManager&) = delete;
+    ResourceManager(ResourceManager&&) = delete;
+    ResourceManager& operator=(ResourceManager&&) = delete;
+
+    using ResourceType = typename T::ResourceType;
 
  private:
-    typedef std::vector<T> ResourceTable;
-    typedef std::map<T, ResourceHandle> ResourceHandleMap;
-    typedef std::map<fs::path, ResourceType*> NameMap;
+    using KeyType = typename T::ResourceKey;
 
-    typedef typename ResourceHandleMap::value_type ResourceHandleMapValue;
-    typedef typename NameMap::value_type NameMapValue;
+    struct InfoType
+    {
+        T info;
+        ResourceState state{ ResourceState::NotLoaded };
+        std::shared_ptr<ResourceType> resource{ nullptr };
+
+        explicit InfoType(T _info) : info(std::move(_info)) {}
+        InfoType(const InfoType&) = delete;
+        InfoType& operator=(const InfoType&) = delete;
+        InfoType(InfoType&&) noexcept = default;
+        InfoType& operator=(InfoType&&) noexcept = default;
+
+        KeyType resolve(const fs::path& _baseDir) { return info.resolve(_baseDir); }
+        bool load(const KeyType& resolvedKey)
+        {
+            resource = info.load(resolvedKey);
+            return resource != nullptr;
+        }
+    };
+
+    using ResourceTable = std::vector<InfoType>;
+    using ResourceHandleMap = std::map<T, ResourceHandle>;
+    using NameMap = std::map<KeyType, std::weak_ptr<ResourceType>>;
 
     ResourceTable resources;
     ResourceHandleMap handles;
     NameMap loadedResources;
 
- public:
-    ResourceHandle getHandle(const T& info)
+    void loadResource(InfoType& info)
     {
-        typename ResourceHandleMap::iterator iter = handles.find(info);
-        if (iter != handles.end())
+        KeyType resolvedKey = info.resolve(baseDir);
+        std::shared_ptr<ResourceType> resource = nullptr;
+        if (auto iter = loadedResources.find(resolvedKey); iter != loadedResources.end())
+            resource = iter->second.lock();
+
+        if (resource != nullptr)
         {
-            return iter->second;
+            info.resource = std::move(resource);
+            info.state = ResourceState::Loaded;
+        }
+        else if (info.load(resolvedKey))
+        {
+            info.state = ResourceState::Loaded;
+            if (auto [iter, inserted] = loadedResources.try_emplace(std::move(resolvedKey), info.resource); !inserted)
+                iter->second = info.resource;
         }
         else
         {
-            ResourceHandle h = handles.size();
-            resources.push_back(info);
-            handles.insert(ResourceHandleMapValue(info, h));
+            info.state = ResourceState::LoadingFailed;
+        }
+    }
+
+ public:
+    ResourceHandle getHandle(const T& info)
+    {
+        auto h = static_cast<ResourceHandle>(handles.size());
+        if (auto [iter, inserted] = handles.try_emplace(info, h); inserted)
+        {
+            resources.emplace_back(info);
             return h;
+        }
+        else
+        {
+            return iter->second;
         }
     }
 
     ResourceType* find(ResourceHandle h)
     {
-        if (h >= (int) handles.size() || h < 0)
+        if (h < 0 || h >= static_cast<ResourceHandle>(handles.size()))
         {
             return nullptr;
         }
-        else
+
+        if (resources[h].state == ResourceState::NotLoaded)
         {
-            if (resources[h].state == ResourceNotLoaded)
-            {
-                resources[h].resolvedName = resources[h].resolve(baseDir);
-                typename NameMap::iterator iter =
-                    loadedResources.find(resources[h].resolvedName);
-                if (iter != loadedResources.end())
-                {
-                    resources[h].resource = iter->second;
-                    resources[h].state = ResourceLoaded;
-                }
-                else
-                {
-                    resources[h].resource = resources[h].load(resources[h].resolvedName);
-                    if (resources[h].resource == nullptr)
-                    {
-                        resources[h].state = ResourceLoadingFailed;
-                    }
-                    else
-                    {
-                        resources[h].state = ResourceLoaded;
-                        loadedResources.insert(NameMapValue(resources[h].resolvedName, resources[h].resource));
-                    }
-                }
-            }
-
-            if (resources[h].state == ResourceLoaded)
-                return resources[h].resource;
-            else
-                return nullptr;
+            loadResource(resources[h]);
         }
-    }
 
-    const T* getResourceInfo(ResourceHandle h)
-    {
-        if (h >= (int) handles.size() || h < 0)
-            return nullptr;
-        else
-            return &resources[h];
+        return resources[h].state == ResourceState::Loaded
+            ? resources[h].resource.get()
+            : nullptr;
     }
 };
-
-#endif // _CELUTIL_RESMANAGER_H_
-

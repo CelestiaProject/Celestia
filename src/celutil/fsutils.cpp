@@ -101,11 +101,11 @@ fs::path PathExp(const fs::path& filename)
 }
 
 fs::path ResolveWildcard(const fs::path& wildcard,
-                         array_view<const char*> extensions)
+                         array_view<std::string_view> extensions)
 {
     fs::path filename(wildcard);
 
-    for (const auto *ext : extensions)
+    for (std::string_view ext : extensions)
     {
         filename.replace_extension(ext);
         ifstream in(filename.string());

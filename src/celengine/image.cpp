@@ -141,6 +141,11 @@ uint8_t* Image::getPixels()
     return pixels.get();
 }
 
+const uint8_t* Image::getPixels() const
+{
+    return pixels.get();
+}
+
 uint8_t* Image::getPixelRow(int mip, int row)
 {
     /*int w = max(width >> mip, 1); Unused*/
@@ -167,6 +172,18 @@ uint8_t* Image::getMipLevel(int mip)
 
     int offset = 0;
     for (int i = 0; i < mip; i++)
+        offset += calcMipLevelSize(format, width, height, i);
+
+    return pixels.get() + offset;
+}
+
+const uint8_t* Image::getMipLevel(int mip) const
+{
+    if (mip >= mipLevels)
+        return nullptr;
+
+    int offset = 0;
+    for (int i = 0; i < mip; ++i)
         offset += calcMipLevelSize(format, width, height, i);
 
     return pixels.get() + offset;
@@ -215,14 +232,15 @@ bool Image::hasAlpha() const
  * is the one only one used when generating normals.  This produces the
  * expected results for grayscale values in RGB images.
  */
-Image* Image::computeNormalMap(float scale, bool wrap) const
+std::unique_ptr<Image>
+Image::computeNormalMap(float scale, bool wrap) const
 {
     // Can't do anything with compressed input; there are probably some other
     // formats that should be rejected as well . . .
     if (isCompressed())
         return nullptr;
 
-    auto* normalMap = new Image(PixelFormat::RGBA, width, height);
+    auto normalMap = std::make_unique<Image>(PixelFormat::RGBA, width, height);
 
     uint8_t* nmPixels = normalMap->getPixels();
     int nmPitch = normalMap->getPitch();
@@ -282,12 +300,12 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
     return normalMap;
 }
 
-Image* LoadImageFromFile(const fs::path& filename)
+std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename)
 {
     ContentType type = DetermineFileType(filename);
-    Image* img = nullptr;
 
     GetLogger()->verbose(_("Loading image from file {}\n"), filename);
+    Image* img = nullptr;
 
     switch (type)
     {
@@ -314,5 +332,5 @@ Image* LoadImageFromFile(const fs::path& filename)
         break;
     }
 
-    return img;
+    return std::unique_ptr<Image>(img);
 }

@@ -127,15 +127,14 @@ bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, 
 
 void WarpMeshViewportEffect::initializeVO(VertexObject& vo)
 {
-    mesh->scopedDataForRendering([&vo](float *data, int size){
-        vo.allocate(size, data);
-        vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
-                                2, GL_FLOAT, false, 5 * sizeof(float), 0);
-        vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                                2, GL_FLOAT, false, 5 * sizeof(float), 2 * sizeof(float));
-        vo.setVertexAttribArray(CelestiaGLProgram::IntensityAttributeIndex,
-                                1, GL_FLOAT, false, 5 * sizeof(float), 4 * sizeof(float));
-    });
+    std::vector<float> scopedData = mesh->scopedDataForRendering();
+    vo.allocate(static_cast<GLsizeiptr>(scopedData.size() * sizeof(float)), scopedData.data());
+    vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
+                            2, GL_FLOAT, false, 5 * sizeof(float), 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                            2, GL_FLOAT, false, 5 * sizeof(float), 2 * sizeof(float));
+    vo.setVertexAttribArray(CelestiaGLProgram::IntensityAttributeIndex,
+                            1, GL_FLOAT, false, 5 * sizeof(float), 4 * sizeof(float));
 }
 
 void WarpMeshViewportEffect::draw(VertexObject& vo)

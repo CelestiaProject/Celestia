@@ -7,10 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_VIRTUALTEX_H_
-#define _CELENGINE_VIRTUALTEX_H_
+#pragma once
 
+#include <memory>
 #include <string>
+
+#include <celcompat/filesystem.h>
 #include <celengine/texture.h>
 
 
@@ -78,6 +80,5 @@ class VirtualTexture : public Texture
 };
 
 
-VirtualTexture* LoadVirtualTexture(const fs::path& filename);
-
-#endif // _CELENGINE_VIRTUALTEX_H_
+std::unique_ptr<VirtualTexture>
+LoadVirtualTexture(const fs::path& filename);

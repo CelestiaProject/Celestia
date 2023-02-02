@@ -52,6 +52,10 @@ ModelGeometry::ModelGeometry(std::unique_ptr<cmod::Model>&& model) :
 }
 
 
+// Needs to be defined at a point where ModelOpenGLData is complete
+ModelGeometry::~ModelGeometry() = default;
+
+
 bool
 ModelGeometry::pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const
 {

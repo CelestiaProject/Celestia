@@ -8,32 +8,30 @@
 // of the License, or (at your option) any later version.
 
 #include "rotationmanager.h"
-#include <config.h>
-#include <celephem/samporient.h>
-#include <celutil/logger.h>
-#include <iostream>
+
 #include <fstream>
 
-using namespace std;
-using celestia::util::GetLogger;
+#include <celephem/samporient.h>
+#include <celutil/logger.h>
 
-static RotationModelManager* rotationModelManager = nullptr;
+using celestia::util::GetLogger;
 
 
 RotationModelManager* GetRotationModelManager()
 {
+    static RotationModelManager* rotationModelManager = nullptr;
     if (rotationModelManager == nullptr)
-        rotationModelManager = new RotationModelManager("data");
+        rotationModelManager = std::make_unique<RotationModelManager>("data").release();
     return rotationModelManager;
 }
 
 
-fs::path RotationModelInfo::resolve(const fs::path& baseDir)
+fs::path RotationModelInfo::resolve(const fs::path& baseDir) const
 {
     if (!path.empty())
     {
         fs::path filename = path / "data" / source;
-        ifstream in(filename);
+        std::ifstream in(filename);
         if (in.good())
             return filename;
     }
@@ -42,11 +40,10 @@ fs::path RotationModelInfo::resolve(const fs::path& baseDir)
 }
 
 
-celestia::ephem::RotationModel*
-RotationModelInfo::load(const fs::path& filename)
+std::unique_ptr<celestia::ephem::RotationModel>
+RotationModelInfo::load(const fs::path& filename) const
 {
     GetLogger()->verbose("Loading rotation model: {}\n", filename);
 
-    // TODO use smart pointers here
-    return celestia::ephem::LoadSampledOrientation(filename).release();
+    return celestia::ephem::LoadSampledOrientation(filename);
 }

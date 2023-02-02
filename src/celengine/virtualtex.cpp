@@ -210,7 +210,7 @@ ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, 
                 fmt::format("level{:d}", lod) /
                 fmt::format("{:s}{:d}_{:d}{:s}", tilePrefix, u, v, tileExt.string());
 
-    Image* img = LoadImageFromFile(path);
+    std::unique_ptr<Image> img = LoadImageFromFile(path);
     if (img == nullptr)
         return nullptr;
 
@@ -227,8 +227,6 @@ ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, 
     // compressed and some not. The compression flag doesn't make much
     // sense for them.
     compressed = img->isCompressed();
-
-    delete img;
 
     return tex;
 }
@@ -311,8 +309,9 @@ void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u,
 }
 
 
-static VirtualTexture* CreateVirtualTexture(const Hash* texParams,
-                                            const fs::path& path)
+static std::unique_ptr<VirtualTexture>
+CreateVirtualTexture(const Hash* texParams,
+                     const fs::path& path)
 {
     const std::string* imageDirectory = texParams->getString("ImageDirectory");
     if (imageDirectory == nullptr)
@@ -343,13 +342,13 @@ static VirtualTexture* CreateVirtualTexture(const Hash* texParams,
         return nullptr;
     }
 
-    string tileType = "dds";
+    std::string tileType = "dds";
     if (const std::string* tileTypeVal = texParams->getString("TileType"); tileTypeVal != nullptr)
     {
         tileType = *tileTypeVal;
     }
 
-    string tilePrefix = "tx_";
+    std::string tilePrefix = "tx_";
     if (const std::string* tilePrefixVal = texParams->getString("TilePrefix"); tilePrefixVal != nullptr)
     {
         tilePrefix = *tilePrefixVal;
@@ -361,15 +360,16 @@ static VirtualTexture* CreateVirtualTexture(const Hash* texParams,
 
     if (directory.is_relative())
         directory = path / directory;
-    return new VirtualTexture(directory,
-                              (unsigned int) *baseSplit,
-                              (unsigned int) *tileSize,
-                              tilePrefix,
-                              tileType);
+    return std::make_unique<VirtualTexture>(directory,
+                                            (unsigned int) *baseSplit,
+                                            (unsigned int) *tileSize,
+                                            tilePrefix,
+                                            tileType);
 }
 
 
-static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
+static std::unique_ptr<VirtualTexture>
+LoadVirtualTexture(std::istream& in, const fs::path& path)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
@@ -388,15 +388,14 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
         return nullptr;
     }
 
-    VirtualTexture* virtualTex  = CreateVirtualTexture(texParams, path);
-
-    return virtualTex;
+    return CreateVirtualTexture(texParams, path);
 }
 
 
-VirtualTexture* LoadVirtualTexture(const fs::path& filename)
+std::unique_ptr<VirtualTexture>
+LoadVirtualTexture(const fs::path& filename)
 {
-    ifstream in(filename, ios::in);
+    std::ifstream in(filename, ios::in);
 
     if (!in.good())
     {

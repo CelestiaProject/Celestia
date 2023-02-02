@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
@@ -192,7 +193,7 @@ static void SetBorderColor(Color borderColor, GLenum target)
 
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
-static void LoadMipmapSet(Image& img, GLenum target)
+static void LoadMipmapSet(const Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 #ifndef GL_ES
@@ -230,7 +231,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
 
 // Load a texture without any mipmaps
-static void LoadMiplessTexture(Image& img, GLenum target)
+static void LoadMiplessTexture(const Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 
@@ -345,7 +346,7 @@ void Texture::setFormatOptions(unsigned int opts)
 }
 
 
-ImageTexture::ImageTexture(Image& img,
+ImageTexture::ImageTexture(const Image& img,
                            AddressMode addressMode,
                            MipMapMode mipMapMode) :
     Texture(img.getWidth(), img.getHeight()),
@@ -455,12 +456,12 @@ void ImageTexture::setBorderColor(Color borderColor)
 }
 
 
-TiledTexture::TiledTexture(Image& img,
+TiledTexture::TiledTexture(const Image& img,
                            int _uSplit, int _vSplit,
                            MipMapMode mipMapMode) :
     Texture(img.getWidth(), img.getHeight()),
-    uSplit(_uSplit),
-    vSplit(_vSplit),
+    uSplit(std::max(1, _uSplit)),
+    vSplit(std::max(1, _vSplit)),
     glNames(nullptr)
 {
     glNames = new unsigned int[uSplit * vSplit];
@@ -529,7 +530,7 @@ TiledTexture::TiledTexture(Image& img,
                     for (int mip = 0; mip < tileMipLevelCount; mip++)
                     {
                         int blockSize = getCompressedBlockSize(img.getFormat());
-                        unsigned char* imgMip =
+                        const unsigned char* imgMip =
                             img.getMipLevel(min(mip, mipLevelCount));
                         unsigned int mipWidth  = max((unsigned int) img.getWidth() >> mip, 1u);
                         unsigned char* tileMip = tile->getMipLevel(mip);
@@ -546,9 +547,9 @@ TiledTexture::TiledTexture(Image& img,
 
                         for (int y = 0; y < vBlocks; y++)
                         {
-                            memcpy(tileMip + y * destBytesPerRow,
-                                   imgMip + tileOffset + y * srcBytesPerRow,
-                                   destBytesPerRow);
+                            std::memcpy(tileMip + y * destBytesPerRow,
+                                        imgMip + tileOffset + y * srcBytesPerRow,
+                                        destBytesPerRow);
                         }
                     }
                 }
@@ -582,7 +583,7 @@ TiledTexture::TiledTexture(Image& img,
                 }
                 else
                 {
-                    unsigned char* tilePixels = img.getPixels() +
+                    const unsigned char* tilePixels = img.getPixels() +
                         (v * tileHeight * img.getWidth() + u * tileWidth) * components;
                     for (int y = 0; y < tileHeight; y++)
                     {
@@ -673,7 +674,7 @@ const TextureTile TiledTexture::getTile(int lod, int u, int v)
 }
 
 
-CubeMap::CubeMap(Image* faces[]) :
+CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     Texture(faces[0]->getWidth(), faces[0]->getHeight()),
     glName(0)
 {
@@ -723,7 +724,7 @@ CubeMap::CubeMap(Image* faces[]) :
     for (i = 0; i < 6; i++)
     {
         auto targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-        Image* face = faces[i];
+        const Image* face = faces[i];
 
         if (mipmap)
         {
@@ -773,13 +774,14 @@ void CubeMap::setBorderColor(Color borderColor)
 
 
 
-Texture* CreateProceduralTexture(int width, int height,
-                                 PixelFormat format,
-                                 ProceduralTexEval func,
-                                 Texture::AddressMode addressMode,
-                                 Texture::MipMapMode mipMode)
+std::unique_ptr<Texture>
+CreateProceduralTexture(int width, int height,
+                        PixelFormat format,
+                        ProceduralTexEval func,
+                        Texture::AddressMode addressMode,
+                        Texture::MipMapMode mipMode)
 {
-    Image* img = new Image(format, width, height);
+    auto img = std::make_unique<Image>(format, width, height);
 
     for (int y = 0; y < height; y++)
     {
@@ -791,20 +793,18 @@ Texture* CreateProceduralTexture(int width, int height,
         }
     }
 
-    Texture* tex = new ImageTexture(*img, addressMode, mipMode);
-    delete img;
-
-    return tex;
+    return std::make_unique<ImageTexture>(*img, addressMode, mipMode);
 }
 
 
-Texture* CreateProceduralTexture(int width, int height,
-                                 PixelFormat format,
-                                 TexelFunctionObject& func,
-                                 Texture::AddressMode addressMode,
-                                 Texture::MipMapMode mipMode)
+std::unique_ptr<Texture>
+CreateProceduralTexture(int width, int height,
+                        PixelFormat format,
+                        TexelFunctionObject& func,
+                        Texture::AddressMode addressMode,
+                        Texture::MipMapMode mipMode)
 {
-    Image* img = new Image(format, width, height);
+    auto img = std::make_unique<Image>(format, width, height);
 
     for (int y = 0; y < height; y++)
     {
@@ -816,10 +816,7 @@ Texture* CreateProceduralTexture(int width, int height,
         }
     }
 
-    Texture* tex = new ImageTexture(*img, addressMode, mipMode);
-    delete img;
-
-    return tex;
+    return std::make_unique<ImageTexture>(*img, addressMode, mipMode);
 }
 
 
@@ -859,17 +856,18 @@ static Vector3f cubeVector(int face, float s, float t)
 }
 
 
-Texture* CreateProceduralCubeMap(int size,
-                                 PixelFormat format,
-                                 ProceduralTexEval func)
+std::unique_ptr<Texture>
+CreateProceduralCubeMap(int size,
+                        PixelFormat format,
+                        ProceduralTexEval func)
 {
-    Image* faces[6];
+    std::array<std::unique_ptr<Image>, 6> faces{ };
 
     for (int i = 0; i < 6; i++)
     {
-        faces[i] = new Image(format, size, size);
+        faces[i] = std::make_unique<Image>(format, size, size);
 
-        Image* face = faces[i];
+        Image* face = faces[i].get();
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
@@ -883,23 +881,20 @@ Texture* CreateProceduralCubeMap(int size,
         }
     }
 
-    Texture* tex = new CubeMap(faces);
+    std::array<const Image*, 6> facePtrs;
+    std::transform(faces.begin(), faces.end(), facePtrs.begin(),
+                   [](const std::unique_ptr<Image>& iptr) { return iptr.get(); });
 
-    // Clean up the images
-    for (int i = 0; i < 6; i++)
-    {
-        delete faces[i];
-    }
-
-    return tex;
+    return std::make_unique<CubeMap>(facePtrs);
 }
 
 
-static Texture* CreateTextureFromImage(Image& img,
-                                       Texture::AddressMode addressMode,
-                                       Texture::MipMapMode mipMode)
+static std::unique_ptr<Texture>
+CreateTextureFromImage(const Image& img,
+                       Texture::AddressMode addressMode,
+                       Texture::MipMapMode mipMode)
 {
-    Texture* tex = nullptr;
+    std::unique_ptr<Texture> tex = nullptr;
 
     const int maxDim = gl::maxTextureSize;
     if ((img.getWidth() > maxDim || img.getHeight() > maxDim))
@@ -909,22 +904,23 @@ static Texture* CreateTextureFromImage(Image& img,
         int vSplit = max(1, img.getHeight() / maxDim);
         GetLogger()->info(_("Creating tiled texture. Width={}, max={}\n"),
                           img.getWidth(), maxDim);
-        tex = new TiledTexture(img, uSplit, vSplit, mipMode);
+        tex = std::make_unique<TiledTexture>(img, uSplit, vSplit, mipMode);
     }
     else
     {
         GetLogger()->info(_("Creating ordinary texture: {}x{}\n"),
                           img.getWidth(), img.getHeight());
-        tex = new ImageTexture(img, addressMode, mipMode);
+        tex = std::make_unique<ImageTexture>(img, addressMode, mipMode);
     }
 
     return tex;
 }
 
 
-Texture* LoadTextureFromFile(const fs::path& filename,
-                             Texture::AddressMode addressMode,
-                             Texture::MipMapMode mipMode)
+std::unique_ptr<Texture>
+LoadTextureFromFile(const fs::path& filename,
+                    Texture::AddressMode addressMode,
+                    Texture::MipMapMode mipMode)
 {
     // Check for a Celestia texture--these need to be handled specially.
     ContentType contentType = DetermineFileType(filename);
@@ -934,11 +930,11 @@ Texture* LoadTextureFromFile(const fs::path& filename,
 
     // All other texture types are handled by first loading an image, then
     // creating a texture from that image.
-    Image* img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = LoadImageFromFile(filename);
     if (img == nullptr)
         return nullptr;
 
-    Texture* tex = CreateTextureFromImage(*img, addressMode, mipMode);
+    std::unique_ptr<Texture> tex = CreateTextureFromImage(*img, addressMode, mipMode);
 
     if (contentType == Content_DXT5NormalMap)
     {
@@ -952,29 +948,24 @@ Texture* LoadTextureFromFile(const fs::path& filename,
         }
     }
 
-    delete img;
-
     return tex;
 }
 
 
 // Load a height map texture from a file and convert it to a normal map.
-Texture* LoadHeightMapFromFile(const fs::path& filename,
-                               float height,
-                               Texture::AddressMode addressMode)
+std::unique_ptr<Texture>
+LoadHeightMapFromFile(const fs::path& filename,
+                      float height,
+                      Texture::AddressMode addressMode)
 {
-    Image* img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = LoadImageFromFile(filename);
     if (img == nullptr)
         return nullptr;
-    Image* normalMap = img->computeNormalMap(height,
-                                             addressMode == Texture::Wrap);
-    delete img;
+    std::unique_ptr<Image> normalMap = img->computeNormalMap(height,
+                                                             addressMode == Texture::Wrap);
     if (normalMap == nullptr)
         return nullptr;
 
-    Texture* tex = CreateTextureFromImage(*normalMap, addressMode,
-                                          Texture::DefaultMipMaps);
-    delete normalMap;
-
-    return tex;
+    return CreateTextureFromImage(*normalMap, addressMode,
+                                  Texture::DefaultMipMaps);
 }

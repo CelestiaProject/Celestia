@@ -12,8 +12,10 @@
 
 #pragma once
 
-#include <celutil/array_view.h>
+#include <string_view>
+
 #include <celcompat/filesystem.h>
+#include <celutil/array_view.h>
 
 namespace celestia::util
 {
@@ -21,7 +23,7 @@ namespace celestia::util
 fs::path LocaleFilename(const fs::path& filename);
 fs::path PathExp(const fs::path& filename);
 fs::path ResolveWildcard(const fs::path& wildcard,
-                         array_view<const char*> extensions);
+                         array_view<std::string_view> extensions);
 #ifndef PORTABLE_BUILD
 fs::path HomeDir();
 fs::path WriteableDataPath();

@@ -8,19 +8,26 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "mapmanager.h"
+
 #include <array>
 #include <cmath>
 #include <cstring>
 #include <fstream>
-#include <celutil/logger.h>
-#include <celutil/fsutils.h>
-#include "mapmanager.h"
+#include <string_view>
 
-using namespace std;
-using namespace celestia;
+#include <celutil/fsutils.h>
+#include <celutil/logger.h>
+
+using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 
-static std::array<const char*, 1> extensions = {"map"};
+namespace
+{
+
+constexpr std::array extensions = {"map"sv};
+
+}
 
 WarpMesh::WarpMesh(int nx, int ny, float *data) :
     nx(nx),
@@ -34,29 +41,28 @@ WarpMesh::~WarpMesh()
     delete data;
 }
 
-void WarpMesh::scopedDataForRendering(const function<void (float*, int)>& f) const
+std::vector<float> WarpMesh::scopedDataForRendering() const
 {
     int step = 5 * 6;
-    int size = (nx - 1) * (ny - 1) * step * sizeof(float);
-    float *renderingData = new float[size];
+    int size = (nx - 1) * (ny - 1) * step;
+    std::vector<float> renderingData(static_cast<std::size_t>(size));
     for (int y = 0; y < ny - 1; y += 1)
     {
         for (int x = 0; x < nx - 1; x += 1)
         {
-            float *destination = &renderingData[(y * (nx - 1) + x) * step];
-            float *source = &data[(y * nx + x) * 5];
+            float *destination = renderingData.data() + (y * (nx - 1) + x) * step;
+            const float *source = &data[(y * nx + x) * 5];
             // Top left triangle
-            memcpy(destination, source + 5 * nx, sizeof(float) * 5);
-            memcpy(destination + 5, source, sizeof(float) * 5);
-            memcpy(destination + 10, source + 5, sizeof(float) * 5);
+            std::memcpy(destination, source + 5 * nx, sizeof(float) * 5);
+            std::memcpy(destination + 5, source, sizeof(float) * 5);
+            std::memcpy(destination + 10, source + 5, sizeof(float) * 5);
             // Bottom right triangle
-            memcpy(destination + 15, source + 5 * nx, sizeof(float) * 5);
-            memcpy(destination + 20, source + 5, sizeof(float) * 5);
-            memcpy(destination + 25, source + 5 * nx + 5, sizeof(float) * 5);
+            std::memcpy(destination + 15, source + 5 * nx, sizeof(float) * 5);
+            std::memcpy(destination + 20, source + 5, sizeof(float) * 5);
+            std::memcpy(destination + 25, source + 5 * nx + 5, sizeof(float) * 5);
         }
     }
-    f(renderingData, size);
-    delete[] renderingData;
+    return renderingData;
 }
 
 int WarpMesh::count() const
@@ -76,8 +82,8 @@ bool WarpMesh::mapVertex(float x, float y, float* u, float* v) const
 
     float locX = (x - minX) / stepX;
     float locY = (y - minY) / stepY;
-    int floX = floorf(locX);
-    int floY = floorf(locY);
+    auto floX = static_cast<int>(std::floor(locX));
+    auto floY = static_cast<int>(std::floor(locY));
     locX -= floX;
     locY -= floY;
 
@@ -117,11 +123,11 @@ WarpMeshManager* GetWarpMeshManager()
 {
     static WarpMeshManager* warpMeshManager = nullptr;
     if (warpMeshManager == nullptr)
-        warpMeshManager = new WarpMeshManager("warp");
+        warpMeshManager = std::make_unique<WarpMeshManager>("warp").release();
     return warpMeshManager;
 }
 
-fs::path WarpMeshInfo::resolve(const fs::path& baseDir)
+fs::path WarpMeshInfo::resolve(const fs::path& baseDir) const
 {
     bool wildcard = source.extension() == ".*";
 
@@ -129,7 +135,7 @@ fs::path WarpMeshInfo::resolve(const fs::path& baseDir)
 
     if (wildcard)
     {
-        fs::path matched = util::ResolveWildcard(filename, extensions);
+        fs::path matched = celestia::util::ResolveWildcard(filename, extensions);
         if (!matched.empty())
             return matched;
     }
@@ -138,10 +144,10 @@ fs::path WarpMeshInfo::resolve(const fs::path& baseDir)
 }
 
 
-WarpMesh* WarpMeshInfo::load(const fs::path& name)
+std::unique_ptr<WarpMesh> WarpMeshInfo::load(const fs::path& name) const
 {
 #define MESHTYPE_RECT 2
-    ifstream f(name);
+    std::ifstream f(name);
     if (!f.good())
         return nullptr;
 
@@ -185,5 +191,5 @@ WarpMesh* WarpMeshInfo::load(const fs::path& name)
         }
     }
     GetLogger()->info("Read a mesh of {} x {}\n", nx, ny);
-    return new WarpMesh(nx, ny, data);
+    return std::make_unique<WarpMesh>(nx, ny, data);
 }

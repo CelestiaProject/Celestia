@@ -7,15 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_TEXTURE_H_
-#define _CELENGINE_TEXTURE_H_
+#pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
+
 #include <celutil/color.h>
 #include <celcompat/filesystem.h>
 #include <celengine/image.h>
-
+#include <celutil/array_view.h>
 
 typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
@@ -118,7 +119,7 @@ class Texture
 class ImageTexture : public Texture
 {
  public:
-    ImageTexture(Image& img, AddressMode, MipMapMode);
+    ImageTexture(const Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
 
     virtual const TextureTile getTile(int lod, int u, int v);
@@ -135,7 +136,7 @@ class ImageTexture : public Texture
 class TiledTexture : public Texture
 {
  public:
-    TiledTexture(Image& img, int _uSplit, int _vSplit, MipMapMode);
+    TiledTexture(const Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
     virtual const TextureTile getTile(int lod, int u, int v);
@@ -155,7 +156,7 @@ class TiledTexture : public Texture
 class CubeMap : public Texture
 {
  public:
-    CubeMap(Image* faces[]);
+    explicit CubeMap(celestia::util::array_view<const Image*>);
     ~CubeMap();
 
     virtual const TextureTile getTile(int lod, int u, int v);
@@ -167,26 +168,30 @@ class CubeMap : public Texture
 };
 
 
-extern Texture* CreateProceduralTexture(int width, int height,
-                                        celestia::PixelFormat format,
-                                        ProceduralTexEval func,
-                                        Texture::AddressMode addressMode = Texture::EdgeClamp,
-                                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
-extern Texture* CreateProceduralTexture(int width, int height,
-                                        celestia::PixelFormat format,
-                                        TexelFunctionObject& func,
-                                        Texture::AddressMode addressMode = Texture::EdgeClamp,
-                                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
-extern Texture* CreateProceduralCubeMap(int size, celestia::PixelFormat format,
-                                        ProceduralTexEval func);
+std::unique_ptr<Texture>
+CreateProceduralTexture(int width, int height,
+                        celestia::PixelFormat format,
+                        ProceduralTexEval func,
+                        Texture::AddressMode addressMode = Texture::EdgeClamp,
+                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
-extern Texture* LoadTextureFromFile(const fs::path& filename,
-                                    Texture::AddressMode addressMode = Texture::EdgeClamp,
-                                    Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
+std::unique_ptr<Texture>
+CreateProceduralTexture(int width, int height,
+                        celestia::PixelFormat format,
+                        TexelFunctionObject& func,
+                        Texture::AddressMode addressMode = Texture::EdgeClamp,
+                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
-extern Texture* LoadHeightMapFromFile(const fs::path& filename,
-                                      float height,
-                                      Texture::AddressMode addressMode = Texture::EdgeClamp);
+std::unique_ptr<Texture>
+CreateProceduralCubeMap(int size, celestia::PixelFormat format,
+                        ProceduralTexEval func);
 
+std::unique_ptr<Texture>
+LoadTextureFromFile(const fs::path& filename,
+                    Texture::AddressMode addressMode = Texture::EdgeClamp,
+                    Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
-#endif // _CELENGINE_TEXTURE_H_
+std::unique_ptr<Texture>
+LoadHeightMapFromFile(const fs::path& filename,
+                      float height,
+                      Texture::AddressMode addressMode = Texture::EdgeClamp);

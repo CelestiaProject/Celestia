@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <memory>
 #include <optional>
 #include <utility>
 
@@ -345,7 +346,7 @@ class GlobularInfoManager
 
     std::array<GlobularForm, GlobularBuckets> globularForms{ };
     std::array<Texture*, GlobularBuckets> centerTex{ };
-    Texture* globularTex{ nullptr };
+    std::unique_ptr<Texture> globularTex{ nullptr };
 };
 
 const GlobularForm* GlobularInfoManager::getForm(std::size_t form) const
@@ -361,7 +362,7 @@ Texture* GlobularInfoManager::getCenterTex(std::size_t form)
     {
         centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
                                                   celestia::PixelFormat::RGBA,
-                                                  centerCloudTexEval);
+                                                  centerCloudTexEval).release();
     }
 
     assert(centerTex[form] != nullptr);
@@ -377,7 +378,7 @@ Texture* GlobularInfoManager::getGlobularTex()
                                               globularTextureEval);
     }
     assert(globularTex != nullptr);
-    return globularTex;
+    return globularTex.get();
 }
 
 void GlobularInfoManager::initializeForms()

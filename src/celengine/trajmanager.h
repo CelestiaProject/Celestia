@@ -9,29 +9,56 @@
 
 #pragma once
 
+#include <memory>
+#include <string>
+#include <tuple>
+#include <utility>
+
+#include <celcompat/filesystem.h>
 #include <celephem/orbit.h>
 #include <celephem/samporbit.h>
-#include <string>
-#include <map>
 #include <celutil/resmanager.h>
 
 
-class TrajectoryInfo : public ResourceInfo<celestia::ephem::Orbit>
+class TrajectoryInfo
 {
  public:
+    // Ensure that trajectories with different interpolation or precision get resolved to different objects by
+    // storing the interpolation and precision in the resource key.
+    struct ResourceKey
+    {
+        fs::path resolvedPath;
+        celestia::ephem::TrajectoryInterpolation interpolation;
+        celestia::ephem::TrajectoryPrecision precision;
+
+        ResourceKey(fs::path&& _resolvedPath,
+                    celestia::ephem::TrajectoryInterpolation _interpolation,
+                    celestia::ephem::TrajectoryPrecision _precision) :
+            resolvedPath(std::move(_resolvedPath)),
+            interpolation(_interpolation),
+            precision(_precision)
+        {}
+    };
+
+ private:
     std::string source;
     fs::path path;
     celestia::ephem::TrajectoryInterpolation interpolation;
     celestia::ephem::TrajectoryPrecision precision;
 
+    friend bool operator<(const TrajectoryInfo&, const TrajectoryInfo&);
+
+ public:
+    using ResourceType = celestia::ephem::Orbit;
+
     TrajectoryInfo(const std::string& _source,
                    const fs::path& _path = "",
                    celestia::ephem::TrajectoryInterpolation _interpolation = celestia::ephem::TrajectoryInterpolation::Cubic,
                    celestia::ephem::TrajectoryPrecision _precision = celestia::ephem::TrajectoryPrecision::Single) :
-        source(_source), path(_path), interpolation(_interpolation), precision(_precision) {};
+        source(_source), path(_path), interpolation(_interpolation), precision(_precision) {}
 
-    fs::path resolve(const fs::path&) override;
-    celestia::ephem::Orbit* load(const fs::path&) override;
+    ResourceKey resolve(const fs::path&) const;
+    std::unique_ptr<celestia::ephem::Orbit> load(const ResourceKey&) const;
 };
 
 // Sort trajectory info records. The same trajectory can be loaded multiple times with
@@ -40,26 +67,17 @@ class TrajectoryInfo : public ResourceInfo<celestia::ephem::Orbit>
 // sources or different attributes.
 inline bool operator<(const TrajectoryInfo& ti0, const TrajectoryInfo& ti1)
 {
-    if (ti0.interpolation == ti1.interpolation)
-    {
-        if (ti0.precision == ti1.precision)
-        {
-            if (ti0.source == ti1.source)
-                return ti0.path < ti1.path;
-            else
-                return ti0.source < ti1.source;
-        }
-        else
-        {
-            return ti0.precision < ti1.precision;
-        }
-    }
-    else
-    {
-        return ti0.interpolation < ti1.interpolation;
-    }
+    return std::tie(ti0.interpolation, ti0.precision, ti0.source, ti0.path) <
+           std::tie(ti1.interpolation, ti1.precision, ti1.source, ti1.path);
 }
 
-typedef ResourceManager<TrajectoryInfo> TrajectoryManager;
+inline bool operator<(const TrajectoryInfo::ResourceKey& k0,
+                      const TrajectoryInfo::ResourceKey& k1)
+{
+    return std::tie(k0.resolvedPath, k0.interpolation, k0.precision) <
+           std::tie(k1.resolvedPath, k1.interpolation, k1.precision);
+}
+
+using TrajectoryManager = ResourceManager<TrajectoryInfo>;
 
 TrajectoryManager* GetTrajectoryManager();

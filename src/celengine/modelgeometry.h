@@ -25,7 +25,7 @@ class ModelGeometry : public Geometry
 {
  public:
     ModelGeometry(std::unique_ptr<cmod::Model>&& model);
-    ~ModelGeometry() = default;
+    ~ModelGeometry();
 
     /*! Find the closest intersection between the ray and the
      *  model.  If the ray intersects the model, return true
