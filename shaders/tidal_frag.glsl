@@ -4,5 +4,5 @@ varying vec2 texCoord;
 
 void main(void)
 {
-    gl_FragColor = texture2D(tidalTex, texCoord) * color;
+    gl_FragColor = vec4(color.rgb, color.a * texture2D(tidalTex, texCoord).r);
 }

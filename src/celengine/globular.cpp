@@ -87,13 +87,9 @@ void globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     // giving sort of a halo for the brighter (i.e.bigger) stars.
 
     static const float Lumi0 = std::exp(-LumiShape);
-    float lumi = std::max(0.0f, std::exp(-LumiShape * std::sqrt(u * u + v * v)) - Lumi0);
+    float lumi = std::max(0.0f, std::exp(-LumiShape * std::hypot(u, v)) - Lumi0);
 
-    auto pixVal = static_cast<std::uint8_t>(lumi * 255.99f);
-    pixel[0] = 255;
-    pixel[1] = 255;
-    pixel[2] = 255;
-    pixel[3] = pixVal;
+    *pixel = static_cast<std::uint8_t>(lumi * 255.99f);
 }
 
 float relStarDensity(float eta)
@@ -130,13 +126,9 @@ void centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     // Skyplane projected King_1962 profile at center (rho = eta = 0):
     float c2d = 1.0f - XI;
 
-    float eta = std::sqrt(u * u + v * v);  // u,v = (-1..1)
-
     // eta^2 = u * u  + v * v = 1 is the biggest circle fitting into the quadratic
     // procedural texture. Hence clipping
-
-    if (eta >= 1.0f)
-        eta  = 1.0f;
+    float eta = std::min(1.0f, std::hypot(u, v));  // u,v = (-1..1)
 
     // eta = 1 corresponds to tidalRadius:
 
@@ -149,10 +141,7 @@ void centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     float profile_2d = (1.0f / std::sqrt(rho2) - 1.0f)/c2d + 1.0f;
     profile_2d = profile_2d * profile_2d;
 
-    pixel[0] = 255;
-    pixel[1] = 255;
-    pixel[2] = 255;
-    pixel[3] = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
+    *pixel = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
 void initGlobularData(VertexObject& vo,
@@ -361,7 +350,7 @@ Texture* GlobularInfoManager::getCenterTex(std::size_t form)
     if(centerTex[form] == nullptr)
     {
         centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                  celestia::PixelFormat::RGBA,
+                                                  celestia::PixelFormat::LUMINANCE,
                                                   centerCloudTexEval).release();
     }
 
@@ -374,7 +363,7 @@ Texture* GlobularInfoManager::getGlobularTex()
     if (globularTex == nullptr)
     {
         globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              celestia::PixelFormat::RGBA,
+                                              celestia::PixelFormat::LUMINANCE,
                                               globularTextureEval);
     }
     assert(globularTex != nullptr);
