@@ -5,5 +5,5 @@ uniform sampler2D galaxyTex;
 
 void main(void)
 {
-    gl_FragColor = texture2D(galaxyTex, texCoord) * color;
+    gl_FragColor = vec4(color.rgb, color.a * texture2D(galaxyTex, texCoord).r);
 }

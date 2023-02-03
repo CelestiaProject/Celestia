@@ -109,15 +109,8 @@ constexpr const GalaxyTypeName GalaxyTypeNames[] =
 
 void galaxyTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 {
-    float r = 0.9f - std::sqrt(u * u + v * v );
-    if (r < 0)
-        r = 0;
-
-    auto pixVal = static_cast<std::uint8_t>(r * 255.99f);
-    pixel[0] = 255;//65;
-    pixel[1] = 255;//64;
-    pixel[2] = 255;//65;
-    pixel[3] = pixVal;
+    float r = std::max(0.0f, 0.9f - std::hypot(u, v));
+    *pixel = static_cast<std::uint8_t>(r * 255.99f);
 }
 
 void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
@@ -545,7 +538,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
 
     if (galaxyTex == nullptr)
     {
-        galaxyTex = CreateProceduralTexture(width, height, celestia::PixelFormat::RGBA,
+        galaxyTex = CreateProceduralTexture(width, height, celestia::PixelFormat::LUMINANCE,
                                             galaxyTextureEval).release();
     }
     assert(galaxyTex != nullptr);
