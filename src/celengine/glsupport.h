@@ -28,6 +28,7 @@ extern bool MESA_pack_invert;
 #ifdef GL_ES
 extern bool OES_vertex_array_object;
 extern bool OES_texture_border_clamp;
+extern bool OES_geometry_shader;
 #else
 extern bool ARB_vertex_array_object;
 extern bool EXT_framebuffer_object;
