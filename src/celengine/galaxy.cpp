@@ -203,6 +203,7 @@ std::optional<GalacticForm> buildGalacticForm(const fs::path& filename)
     rgb    = img->getComponents();
 
     auto& rng = celmath::getRNG();
+    rng.seed(1312);
     for (int i = 0; i < width * height; i++)
     {
         value = img->getPixels()[rgb * i];
