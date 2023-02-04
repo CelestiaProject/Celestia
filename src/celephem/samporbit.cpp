@@ -643,8 +643,8 @@ template<typename T> void SampledOrbitXYZV<T>::sample(double /* startTime */, do
     for (const auto& sample : samples)
     {
         proc.sample(sample.t,
-                    sample.position.template cast<double>(),
-                    sample.velocity.template cast<double>());
+                    Eigen::Vector3d(sample.position.x(), sample.position.z(), -sample.position.y()),
+                    Eigen::Vector3d(sample.velocity.x(), sample.velocity.z(), -sample.velocity.y()));
     }
 }
 
