@@ -76,11 +76,6 @@ constexpr unsigned int MAX_INDICES = RequiredIndexCount(MAX_VERTICES);
 constexpr float RADIUS_CORRECTION     = 0.025f;
 constexpr float MAX_SPIRAL_THICKNESS  = 0.06f;
 
-bool formsInitialized = false;
-
-Texture* galaxyTex = nullptr;
-Texture* colorTex  = nullptr;
-
 struct GalaxyTypeName
 {
     const char* name;
@@ -396,8 +391,6 @@ void GalacticFormManager::initializeStandardForms()
 
         galacticForms.push_back(std::move(ellipticalForm));
     }
-
-    formsInitialized = true;
 }
 
 GalacticFormManager* getGalacticFormManager()
@@ -516,6 +509,9 @@ void Galaxy::render(const Eigen::Vector3f& offset,
                     const Matrices& ms,
                     Renderer* renderer)
 {
+    static Texture* galaxyTex = nullptr;
+    static Texture* colorTex  = nullptr;
+
     const GalacticForm* galacticForm = getGalacticFormManager()->getForm(form);
     if (galacticForm == nullptr)
         return;
