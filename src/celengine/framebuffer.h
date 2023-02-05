@@ -66,6 +66,6 @@ bool FramebufferObject::isSupported()
 #ifdef GL_ES
     return true;
 #else
-    return celestia::gl::EXT_framebuffer_object;
+    return celestia::gl::ARB_framebuffer_object;
 #endif
 }
