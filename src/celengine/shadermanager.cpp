@@ -1,6 +1,6 @@
 // shadermanager.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 
 
 using celestia::util::GetLogger;
-
+using namespace std::string_view_literals;
 namespace gl = celestia::gl;
 
 #define POINT_FADE 1
@@ -55,83 +55,103 @@ enum ShaderVariableType
     Shader_Sampler2DShadow,
 };
 
-const char* errorVertexShaderSource =
-    "attribute vec4 in_Position;\n"
-    "void main(void) {\n"
-    "   gl_Position = MVPMatrix * in_Position;\n"
-    "}\n";
-const char* errorFragmentShaderSource =
-    "void main(void) {\n"
-    "   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
-    "}\n";
+constexpr std::string_view errorVertexShaderSource = R"glsl(
+attribute vec4 in_Position;\n
+void main(void)
+{
+    gl_Position = MVPMatrix * in_Position;
+}
+)glsl"sv;
 
+constexpr std::string_view errorFragmentShaderSource = R"glsl(
+void main(void)
+{
+   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+)glsl"sv;
 
 #ifndef GL_ES
-const char VersionHeader[] = "#version 120\n";
-const char VersionHeaderGL3[] = "#version 150\n";
-const char CommonHeader[] = "\n";
+constexpr std::string_view VersionHeader = "#version 120\n"sv;
+constexpr std::string_view VersionHeaderGL3 = "#version 150\n"sv;
+constexpr std::string_view CommonHeader = "\n"sv;
 #else
-const char VersionHeader[] = "#version 100\n";
-const char VersionHeaderGL3[] = "#version 320 es\n";
-const char CommonHeader[] = "precision highp float;\n";
+constexpr std::string_view VersionHeader = "#version 100\n"sv;
+constexpr std::string_view VersionHeaderGL3 = "#version 320 es\n"sv;
+constexpr std::string_view CommonHeader = "precision highp float;\n"sv;
 #endif
-const char* VertexHeader = R"glsl(
+constexpr std::string_view VertexHeader = R"glsl(
 uniform mat4 ModelViewMatrix;
 uniform mat4 ProjectionMatrix;
 uniform mat4 MVPMatrix;
 
 invariant gl_Position;
-)glsl";
+)glsl"sv;
 
-const char * const GeomHeaderGL3 = VertexHeader;
+constexpr std::string_view GeomHeaderGL3 = VertexHeader;
 
-const char *VPFunction =
-    "#ifdef FISHEYE\n"
-    "vec4 calc_vp(vec4 in_Position)\n{\n"
-    "    float PID2 = 1.570796326794896619231322;\n"
-    "    vec4 inPos = ModelViewMatrix * in_Position;\n"
-    "    float l = length(inPos.xy);\n"
-    "    if (l != 0.0)\n"
-    "    {\n"
-    "        float phi = atan(l, -inPos.z);\n"
-    "        float lensR = phi / PID2;\n"
-    "        inPos.xy *= (lensR / l);\n"
-    "    }\n"
-    "    return ProjectionMatrix * inPos;\n"
-    "}\n"
-    "#else\n"
-    "vec4 calc_vp(vec4 in_Position)\n{\n"
-    "    return MVPMatrix * in_Position;\n"
-    "}\n"
-    "#endif\n"
-    "void set_vp(vec4 in_Position)\n{\n"
-    "    gl_Position = calc_vp(in_Position);\n"
-    "}\n";
+constexpr std::string_view VPFunctionFishEye = R"glsl(
+vec4 calc_vp(vec4 in_Position)
+{
+    float PID2 = 1.570796326794896619231322;
+    vec4 inPos = ModelViewMatrix * in_Position;
+    float l = length(inPos.xy);
+    if (l != 0.0)
+    {
+        float phi = atan(l, -inPos.z);
+        float lensR = phi / PID2;
+        inPos.xy *= (lensR / l);
+    }
+    return ProjectionMatrix * inPos;
+}
+void set_vp(vec4 in_Position)
+{
+    gl_Position = calc_vp(in_Position);
+}
+)glsl"sv;
 
-const char* NormalVertexPosition =
-    "set_vp(in_Position);\n";
+constexpr std::string_view VPFunctionUsual = R"glsl(
+vec4 calc_vp(vec4 in_Position)
+{
+    return MVPMatrix * in_Position;
+}
+void set_vp(vec4 in_Position)
+{
+    gl_Position = calc_vp(in_Position);
+}
+)glsl"sv;
 
-const char* LineVertexPosition =
-    "vec4 thisPos = calc_vp(in_Position);\n"
-    "vec4 nextPos = calc_vp(in_PositionNext);\n"
-    "float w = thisPos.w;\n"
-    "thisPos /= w;\n"
-    "nextPos /= nextPos.w;\n"
-    "vec2 transform = normalize(nextPos.xy - thisPos.xy);\n"
-    "transform = vec2(transform.y * lineWidthX, -transform.x * lineWidthY) * in_ScaleFactor;\n"
-    "gl_Position = thisPos;\n"
-    "gl_Position.xy += transform;\n"
-    "gl_Position *= w;\n";
+constexpr std::string_view
+VPFunction(bool enabled)
+{
+    return enabled ? VPFunctionFishEye : VPFunctionUsual;
+}
 
+constexpr std::string_view NormalVertexPosition = R"glsl(
+    set_vp(in_Position);
+)glsl"sv;
 
-std::string VertexPosition(const ShaderProperties& props)
+constexpr std::string_view LineVertexPosition = R"glsl(
+    vec4 thisPos = calc_vp(in_Position);
+    vec4 nextPos = calc_vp(in_PositionNext);
+    float w = thisPos.w;
+    thisPos /= w;
+    nextPos /= nextPos.w;
+    vec2 transform = normalize(nextPos.xy - thisPos.xy);
+    transform = vec2(transform.y * lineWidthX, -transform.x * lineWidthY) * in_ScaleFactor;
+    gl_Position = thisPos;
+    gl_Position.xy += transform;
+    gl_Position *= w;
+)glsl"sv;
+
+std::string_view
+VertexPosition(const ShaderProperties& props)
 {
     return (props.texUsage & ShaderProperties::LineAsTriangles) ? LineVertexPosition : NormalVertexPosition;
 }
 
-const char* FragmentHeader = "";
+constexpr std::string_view FragmentHeader = ""sv;
 
-const char* CommonAttribs = R"glsl(
+constexpr std::string_view CommonAttribs = R"glsl(
 attribute vec4 in_Position;
 attribute vec3 in_Normal;
 attribute vec4 in_TexCoord0;
@@ -139,10 +159,10 @@ attribute vec4 in_TexCoord1;
 attribute vec4 in_TexCoord2;
 attribute vec4 in_TexCoord3;
 attribute vec4 in_Color;
-)glsl";
+)glsl"sv;
 
 std::string
-LightProperty(unsigned int i, const char* property)
+LightProperty(unsigned int i, std::string_view property)
 {
 #ifndef USE_GLSL_STRUCTS
     return fmt::format("light{}_{}", i, property);
@@ -151,22 +171,28 @@ LightProperty(unsigned int i, const char* property)
 #endif
 }
 
-
 std::string
-FragLightProperty(unsigned int i, const char* property)
+FragLightProperty(unsigned int i, std::string_view property)
 {
     return fmt::format("light{}{}", property, i);
 }
 
-#if 0
 std::string
-IndexedParameter(const char* name, unsigned int index)
+ApplyShadow(bool hasSpecular)
 {
-    return fmt::format("{}{}", name, index);
-}
-#endif
+    std::string_view code = R"glsl(
+if (cosNormalLightDir > 0.0)
+{{
+    shadowMapCoeff = calculateShadow();
+    diff.rgb *= shadowMapCoeff;
+    {}
+}}
+)glsl"sv;
 
-std::string
+    return fmt::format(code, hasSpecular ? "spec.rgb *= shadowMapCoeff;" : "");
+}
+
+constexpr std::string_view
 ShaderTypeString(ShaderVariableType type)
 {
     switch (type)
@@ -199,13 +225,13 @@ ShaderTypeString(ShaderVariableType type)
 }
 
 std::string
-IndexedParameter(const char* name, unsigned int index0)
+IndexedParameter(std::string_view name, unsigned int index0)
 {
     return fmt::format("{}{}", name, index0);
 }
 
 std::string
-IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
+IndexedParameter(std::string_view name, unsigned int index0, unsigned int index1)
 {
     return fmt::format("{}{}_{}", name, index0, index1);
 }
@@ -326,7 +352,9 @@ private:
 class Sh_VariableExpression : public Sh_ExpressionContents
 {
 public:
-    Sh_VariableExpression(const std::string& name) : m_name(name) {}
+    Sh_VariableExpression(std::string_view name) : m_name(name) {}
+    explicit Sh_VariableExpression(const std::string &name) : m_name(name) {}
+
     std::string toString() const override
     {
         return m_name;
@@ -441,12 +469,12 @@ Sh_Expression Sh_Expression::operator[](const std::string& components) const
 class Sh_UnaryFunctionExpression : public Sh_ExpressionContents
 {
 public:
-    Sh_UnaryFunctionExpression(const std::string& name, const Sh_Expression& arg0) :
+    Sh_UnaryFunctionExpression(std::string_view name, const Sh_Expression& arg0) :
         m_name(name), m_arg0(arg0) {}
 
     std::string toString() const override
     {
-        return m_name + "(" + m_arg0.toString() + ")";
+        return fmt::format("{}({})", m_name, m_arg0.toString());
     }
 
     int precedence() const override { return 100; }
@@ -459,12 +487,12 @@ private:
 class Sh_BinaryFunctionExpression : public Sh_ExpressionContents
 {
 public:
-    Sh_BinaryFunctionExpression(const std::string& name, const Sh_Expression& arg0, const Sh_Expression& arg1) :
+    Sh_BinaryFunctionExpression(std::string_view name, const Sh_Expression& arg0, const Sh_Expression& arg1) :
         m_name(name), m_arg0(arg0), m_arg1(arg1) {}
 
     std::string toString() const override
     {
-        return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ")";
+        return fmt::format("{}({}, {})", m_name, m_arg0.toString(), m_arg1.toString());
     }
 
     int precedence() const override { return 100; }
@@ -478,12 +506,12 @@ private:
 class Sh_TernaryFunctionExpression : public Sh_ExpressionContents
 {
 public:
-    Sh_TernaryFunctionExpression(const std::string& name, const Sh_Expression& arg0, const Sh_Expression& arg1, const Sh_Expression& arg2) :
+    Sh_TernaryFunctionExpression(std::string_view name, const Sh_Expression& arg0, const Sh_Expression& arg1, const Sh_Expression& arg2) :
         m_name(name), m_arg0(arg0), m_arg1(arg1), m_arg2(arg2) {}
 
     std::string toString() const override
     {
-        return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ", " + m_arg2.toString() + ")";
+        return fmt::format("{}({}, {}, {})", m_name, m_arg0.toString(), m_arg1.toString(), m_arg2.toString());
     }
 
     int precedence() const override { return 100; }
@@ -540,6 +568,16 @@ Sh_Expression mix(const Sh_Expression& v0, const Sh_Expression& v1, const Sh_Exp
     return new Sh_TernaryFunctionExpression("mix", v0, v1, alpha);
 }
 
+Sh_Expression min(const Sh_Expression& v0, const Sh_Expression& v1)
+{
+    return new Sh_BinaryFunctionExpression("min", v0, v1);
+}
+
+Sh_Expression max(const Sh_Expression& v0, const Sh_Expression& v1)
+{
+    return new Sh_BinaryFunctionExpression("max", v0, v1);
+}
+
 Sh_Expression texture2D(const Sh_Expression& sampler, const Sh_Expression& texCoord)
 {
     return new Sh_BinaryFunctionExpression("texture2D", sampler, texCoord);
@@ -557,27 +595,27 @@ Sh_Expression texture2DLodBias(const Sh_Expression& sampler, const Sh_Expression
     return new Sh_TernaryFunctionExpression("texture2D", sampler, texCoord, lodBias);
 }
 
-Sh_Expression sampler2D(const std::string& name)
+Sh_Expression sampler2D(std::string_view name)
 {
     return new Sh_VariableExpression(name);
 }
 
-Sh_Expression sh_vec3(const std::string& name)
+Sh_Expression sh_vec3(std::string_view name)
 {
     return new Sh_VariableExpression(name);
 }
 
-Sh_Expression sh_vec4(const std::string& name)
+Sh_Expression sh_vec4(std::string_view name)
 {
     return new Sh_VariableExpression(name);
 }
 
-Sh_Expression sh_float(const std::string& name)
+Sh_Expression sh_float(std::string_view name)
 {
     return new Sh_VariableExpression(name);
 }
 
-Sh_Expression indexedUniform(const std::string& name, unsigned int index0)
+Sh_Expression indexedUniform(std::string_view name, unsigned int index0)
 {
     auto buf = fmt::format("{}{}", name, index0);
     return new Sh_VariableExpression(buf);
@@ -596,50 +634,49 @@ Sh_Expression cloudShadowTexCoord(unsigned int index)
 }
 
 std::string
-DeclareUniform(const std::string& name, ShaderVariableType type)
+DeclareUniform(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("uniform {} {};\n", ShaderTypeString(type), name);
 }
 
 std::string
-DeclareVarying(const std::string& name, ShaderVariableType type)
+DeclareVarying(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("varying {} {};\n", ShaderTypeString(type), name);
 }
 
 std::string
-DeclareAttribute(const std::string& name, ShaderVariableType type)
+DeclareAttribute(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("attribute {} {};\n", ShaderTypeString(type), name);
 }
 
 std::string
-DeclareLocal(const std::string& name, ShaderVariableType type)
+DeclareLocal(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("{} {};\n", ShaderTypeString(type), name);
 }
 
 std::string
-DeclareLocal(const std::string& name, ShaderVariableType type, const Sh_Expression& expr)
+DeclareLocal(std::string_view name, ShaderVariableType type, const Sh_Expression& expr)
 {
     return fmt::format("{} {} = {};\n", ShaderTypeString(type), name, expr.toString());
 }
 
 std::string
-assign(const std::string& variableName, const Sh_Expression& expr)
+assign(std::string_view variableName, const Sh_Expression& expr)
 {
     return fmt::format("{} = {};\n", variableName, expr.toString());
 }
 
 std::string
-addAssign(const std::string& variableName, const Sh_Expression& expr)
+addAssign(std::string_view variableName, const Sh_Expression& expr)
 {
     return fmt::format("{} += {};\n", variableName, expr.toString());
-    return variableName + " += " + expr.toString() + ";\n";
 }
 
 std::string
-mulAssign(const std::string& variableName, const Sh_Expression& expr)
+mulAssign(std::string_view variableName, const Sh_Expression& expr)
 {
     return fmt::format("{} *= {};\n", variableName, expr.toString());
 }
@@ -654,18 +691,6 @@ std::string
 CloudShadowTexCoord(unsigned int index)
 {
     return fmt::format("cloudShadowTexCoord{}", index);
-}
-
-std::string
-VarScatterInVS()
-{
-    return "v_ScatterColor";
-}
-
-std::string
-VarScatterInFS()
-{
-    return "v_ScatterColor";
 }
 
 void
@@ -742,15 +767,15 @@ DeclareLights(const ShaderProperties& props)
 #ifndef USE_GLSL_STRUCTS
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        stream << "uniform vec3 light" << i << "_direction;\n";
-        stream << "uniform vec3 light" << i << "_diffuse;\n";
+        stream << DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
+        stream << DeclareUniform(fmt::format("light{}_diffuse", i), Shader_Vector3);
         if (props.hasSpecular())
         {
-            stream << "uniform vec3 light" << i << "_specular;\n";
-            stream << "uniform vec3 light" << i << "_halfVector;\n";
+            stream << DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
+            stream << DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
         }
         if (props.texUsage & ShaderProperties::NightTexture)
-            stream << "uniform float light" << i << "_brightness;\n";
+            stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
     }
 
 #else
@@ -807,15 +832,6 @@ LightDir_tan(unsigned int i)
 }
 
 
-#if 0
-std::string
-LightHalfVector(unsigned int i)
-{
-    return fmt::format("lightHalfVec{}", i);
-}
-#endif
-
-
 std::string
 ScatteredColor(unsigned int i)
 {
@@ -824,28 +840,24 @@ ScatteredColor(unsigned int i)
 
 
 std::string
-TangentSpaceTransform(const std::string& dst, const std::string& src)
+TangentSpaceTransform(std::string_view dst, std::string_view src)
 {
-    std::string source;
-
-    source += dst + ".x = dot(in_Tangent, " + src + ");\n";
-    source += dst + ".y = dot(-bitangent, " + src + ");\n";
-    source += dst + ".z = dot(in_Normal, " + src + ");\n";
-
-    return source;
+    return fmt::format("{0}.x = dot(in_Tangent, {1});\n"
+                       "{0}.y = dot(-bitangent, {1});\n"
+                       "{0}.z = dot(in_Normal, {1});\n",
+                       dst, src);
 }
 
 
-std::string
+constexpr std::string_view
 NightTextureBlend()
 {
 #if 1
     // Output the blend factor for night lights textures
-    return std::string("totalLight = 1.0 - totalLight;\n"
-                       "totalLight = totalLight * totalLight * totalLight * totalLight;\n");
+    return "totalLight = 1.0 - totalLight;\ntotalLight = totalLight * totalLight * totalLight * totalLight;\n"sv;
 #else
     // Alternate night light blend function; much sharper falloff near terminator.
-    return std::string("totalLight = clamp(10.0 * (0.1 - totalLight), 0.0, 1.0);\n");
+    return "totalLight = clamp(10.0 * (0.1 - totalLight), 0.0, 1.0);\n"sv;
 #endif
 }
 
@@ -863,9 +875,9 @@ std::string
 AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 {
     if (VSComputesColorSum(props))
-        return std::string("diff.rgb += ") + LightProperty(lightIndex, "diffuse") + " * ";
+        return fmt::format("diff.rgb += {} * ", LightProperty(lightIndex, "diffuse"));
     else
-        return SeparateDiffuse(lightIndex)  + " = ";
+        return fmt::format(" = {}", SeparateDiffuse(lightIndex));
 }
 
 
@@ -889,18 +901,17 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         // The ParticleDiffuse model doesn't use a surface normal; vertices
         // are lit as if they were infinitesimal spherical particles,
         // unaffected by light direction except when considering shadows.
-        source += "NL = 1.0;\n";
+        source += assign("NL", 1.0f);
     }
     else
     {
-        source += "NL = max(0.0, dot(in_Normal, " +
-            LightProperty(i, "direction") + "));\n";
+        source += assign("NL", max(0.0f, dot(sh_vec3("in_Normal"), sh_vec3(LightProperty(i, "direction")))));
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
-        source += "H = normalize(" + LightProperty(i, "direction") + " + normalize(eyePosition - in_Position.xyz));\n";
-        source += "NH = max(0.0, dot(in_Normal, H));\n";
+        source += assign("H", normalize(sh_vec3(LightProperty(i, "direction")) + normalize(sh_vec3("eyePosition") - sh_vec3("in_Position.xyz"))));
+        source += assign("NH", max(0.0f, dot(sh_vec3("in_Normal"), sh_vec3("H"))));
 
         // The calculation below uses the infinite viewer approximation. It's slightly faster,
         // but results in less accurate rendering.
@@ -919,6 +930,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         else
             source += SeparateDiffuse(i) + " = NL;\n";
     }
+#if 0
     else if (props.lightModel == ShaderProperties::OrenNayarModel)
     {
         source += "float cosAlpha = min(NV, NL);\n";
@@ -943,6 +955,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
             source += "diff.rgb += " + LightProperty(i, "diffuse") + " * d;\n";
         }
     }
+#endif
     else if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
     {
         source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
@@ -972,7 +985,6 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         source += "totalLight += NL * " + LightProperty(i, "brightness") + ";\n";
     }
 
-
     return source;
 }
 
@@ -985,17 +997,17 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
     if (props.usesTangentSpaceLighting())
     {
         if (props.hasShadowsForLight(light))
-            source += "shadow = 1.0;\n";
+            source += assign("shadow", 1.0f);
     }
     else
     {
-        source += "shadow = " + SeparateDiffuse(light) + ";\n";
+        source += assign("shadow", sh_float(SeparateDiffuse(light)));
     }
 
     if (props.hasRingShadowForLight(light))
     {
         if (light == 0)
-            source += "float ringShadowTexCoordX;\n";
+            source += DeclareLocal("ringShadowTexCoordX", Shader_Float);
         source += assign("ringShadowTexCoordX", ringShadowTexCoord(light));
 
 #ifdef GL_ES
@@ -1183,7 +1195,7 @@ AtmosphericEffects(const ShaderProperties& props)
 
         source += "    scatterEx = ex;\n";
 
-        source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+        source += "    scatterColor = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
     }
 
 
@@ -1214,7 +1226,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     source += "    vec3 step = (atmLeave - atmEnter) * (1.0 / 10.0);\n";
     source += "    float stepLength = length(step);\n";
     source += "    vec3 atmSamplePoint = atmEnter + step * 0.5;\n";
-    source += "    vec3 scatter = vec3(0.0, 0.0, 0.0);\n";
+    source += "    vec3 scatter = vec3(0.0);\n";
     source += "    vec3 ex = vec3(1.0);\n";
     source += "    float tau = 0.0;\n";
     source += "    for (int i = 0; i < 10; ++i) {\n";
@@ -1250,10 +1262,10 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
 
         source += "    scatterEx = ex;\n";
 
-        source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * scatter;\n";
+        source += "    scatterColor = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * scatter;\n";
     }
     // Optional exposure control
-    //source += "    1.0 - (" + VarScatterInVS() + " * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
+    //source += "    1.0 - (scatterColor * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
 
     source += "}\n";
 
@@ -1267,15 +1279,15 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
 {
     std::string source;
 
-    source += "uniform vec3 atmosphereRadius;\n";
-    source += "uniform float mieCoeff;\n";
-    source += "uniform float mieH;\n";
-    source += "uniform float mieK;\n";
-    source += "uniform vec3 rayleighCoeff;\n";
-    source += "uniform float rayleighH;\n";
-    source += "uniform vec3 scatterCoeffSum;\n";
-    source += "uniform vec3 invScatterCoeffSum;\n";
-    source += "uniform vec3 extinctionCoeff;\n";
+    source += DeclareUniform("atmosphereRadius", Shader_Vector3);
+    source += DeclareUniform("mieCoeff", Shader_Float);
+    source += DeclareUniform("mieH", Shader_Float);
+    source += DeclareUniform("mieK", Shader_Float);
+    source += DeclareUniform("rayleighCoeff", Shader_Vector3);
+    source += DeclareUniform("rayleighH", Shader_Float);
+    source += DeclareUniform("scatterCoeffSum", Shader_Vector3);
+    source += DeclareUniform("invScatterCoeffSum", Shader_Vector3);
+    source += DeclareUniform("extinctionCoeff", Shader_Vector3);
 
     return source;
 }
@@ -1289,32 +1301,32 @@ TextureSamplerDeclarations(const ShaderProperties& props)
     // Declare texture samplers
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "uniform sampler2D diffTex;\n";
+        source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "uniform sampler2D normTex;\n";
+        source += DeclareUniform("normTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::SpecularTexture)
     {
-        source += "uniform sampler2D specTex;\n";
+        source += DeclareUniform("specTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        source += "uniform sampler2D nightTex;\n";
+        source += DeclareUniform("nightTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::EmissiveTexture)
     {
-        source += "uniform sampler2D emissiveTex;\n";
+        source += DeclareUniform("emissiveTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
-        source += "uniform sampler2D overlayTex;\n";
+        source += DeclareUniform("overlayTex", Shader_Sampler2D);
     }
 
     if (props.texUsage & ShaderProperties::ShadowMapTexture)
@@ -1346,23 +1358,23 @@ TextureCoordDeclarations(const ShaderProperties& props)
                               ShaderProperties::EmissiveTexture |
                               ShaderProperties::OverlayTexture))
         {
-            source += "varying vec2 diffTexCoord;\n";
+            source += DeclareVarying("diffTexCoord", Shader_Vector2);
         }
     }
     else
     {
         if (props.texUsage & ShaderProperties::DiffuseTexture)
-            source += "varying vec2 diffTexCoord;\n";
+            source += DeclareVarying("diffTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::NormalTexture)
-            source += "varying vec2 normTexCoord;\n";
+            source += DeclareVarying("normTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::SpecularTexture)
-            source += "varying vec2 specTexCoord;\n";
+            source += DeclareVarying("specTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::NightTexture)
-            source += "varying vec2 nightTexCoord;\n";
+            source += DeclareVarying("nightTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::EmissiveTexture)
-            source += "varying vec2 emissiveTexCoord;\n";
+            source += DeclareVarying("emissiveTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::OverlayTexture)
-            source += "varying vec2 overlayTexCoord;\n";
+            source += DeclareVarying("overlayTexCoord", Shader_Vector2);
     }
 
     if (props.texUsage & ShaderProperties::ShadowMapTexture)
@@ -1426,7 +1438,7 @@ float calculateShadow()
     float texelSize = 1.0 / shadowMapSize;
     float s = 0.0;
     float bias = max(0.005 * (1.0 - cosNormalLightDir), 0.0005);
-)glsl";
+)glsl"sv;
     float boxFilterWidth = (float) ShadowSampleKernelWidth - 1.0f;
     float firstSample = -boxFilterWidth / 2.0f;
     float lastSample = firstSample + boxFilterWidth;
@@ -1453,7 +1465,7 @@ float calculateShadow()
     }
     return 1.0 - s / 9.0;
 }
-)glsl";
+)glsl"sv;
 #endif
     return source;
 }
@@ -1505,7 +1517,7 @@ ReadShaderFile(const fs::path &path)
 GLShaderStatus
 CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
 {
-    std::string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, errorVertexShaderSource);
+    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), errorVertexShaderSource);
     std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, errorFragmentShaderSource);
 
     auto status = GLShaderLoader::CreateProgram(_vs, _fs, prog);
@@ -1526,39 +1538,39 @@ CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
     return ShaderStatus_OK;
 }
 
-const char *
+constexpr std::string_view
 InPrimitive(GLint prim)
 {
     switch (prim)
     {
     case GL_POINTS:
-        return "points";
+        return "points"sv;
     case GL_LINES:
-        return "lines";
+        return "lines"sv;
     case GL_LINES_ADJACENCY:
-        return "lines_adjacency";
+        return "lines_adjacency"sv;
     case GL_TRIANGLES:
-        return "triangles";
+        return "triangles"sv;
     case GL_TRIANGLES_ADJACENCY:
-        return "triangles_adjacency";
+        return "triangles_adjacency"sv;
     default:
-        return "invalid";
+        return "invalid"sv;
     }
 }
 
-const char *
+constexpr std::string_view
 OutPrimitive(GLint prim)
 {
     switch (prim)
     {
     case GL_POINTS:
-        return "points";
+        return "points"sv;
     case GL_LINE_STRIP:
-        return "line_strip";
+        return "line_strip"sv;
     case GL_TRIANGLE_STRIP:
-        return "triangle_strip";
+        return "triangle_strip"sv;
     default:
-        return "invalid";
+        return "invalid"sv;
     }
 }
 
@@ -1808,7 +1820,7 @@ ShaderManager::getShader(const ShaderProperties& props)
 }
 
 CelestiaGLProgram*
-ShaderManager::getShader(const std::string& name, const std::string& vs, const std::string& fs)
+ShaderManager::getShader(std::string_view name, std::string_view vs, std::string_view fs)
 {
     if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
@@ -1824,7 +1836,7 @@ ShaderManager::getShader(const std::string& name, const std::string& vs, const s
 }
 
 CelestiaGLProgram*
-ShaderManager::getShader(const std::string& name)
+ShaderManager::getShader(std::string_view name)
 {
     if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
@@ -1851,7 +1863,7 @@ ShaderManager::getShader(const std::string& name)
 }
 
 CelestiaGLProgram*
-ShaderManager::getShaderGL3(const std::string& name, const GeomShaderParams* params)
+ShaderManager::getShaderGL3(std::string_view name, const GeomShaderParams* params)
 {
     if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
@@ -1893,7 +1905,7 @@ ShaderManager::getShaderGL3(const std::string& name, const GeomShaderParams* par
 
 
 CelestiaGLProgram*
-ShaderManager::getShaderGL3(const std::string& name, const std::string& vs, const std::string& gs, const std::string& fs)
+ShaderManager::getShaderGL3(std::string_view name, std::string_view vs, std::string_view gs, std::string_view fs)
 {
     if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
@@ -1919,12 +1931,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     source += DeclareLights(props);
     if (props.lightModel == ShaderProperties::SpecularModel)
-        source += "uniform float shininess;\n";
+        source += DeclareUniform("shininess", Shader_Float);
 
-    source += "uniform vec3 eyePosition;\n";
+    source += DeclareUniform("eyePosition", Shader_Vector3);
 
     source += TextureCoordDeclarations(props);
-    source += "uniform float textureOffset;\n";
+    source += DeclareUniform("textureOffset", Shader_Float);
 
     if (props.hasScattering())
     {
@@ -1936,42 +1948,42 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.usesTangentSpaceLighting())
     {
-        source += "attribute vec3 in_Tangent;\n";
+        source += DeclareAttribute("in_Tangent", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " + LightDir_tan(i) + ";\n";
+            source += DeclareVarying(LightDir_tan(i), Shader_Vector3);
         }
 
         if (props.isViewDependent() &&
             props.lightModel != ShaderProperties::SpecularModel)
         {
-            source += "varying vec3 eyeDir_tan;\n";
+            source += DeclareVarying("eyeDir_tan", Shader_Vector3);
         }
     }
     else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
-        source += "varying vec4 diffFactors;\n";
-        source += "varying vec3 normal;\n";
+        source += DeclareVarying("diffFactors", Shader_Vector4);
+        source += DeclareVarying("normal", Shader_Vector3);
     }
     else if (props.usesShadows())
     {
-        source += "varying vec4 diffFactors;\n";
+        source += DeclareVarying("diffFactors", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += "varying vec4 specFactors;\n";
+            source += DeclareVarying("specFactors", Shader_Vector4);
         }
     }
     else
     {
         if (props.lightModel != ShaderProperties::UnlitModel)
         {
-            source += "uniform vec3 ambientColor;\n";
-            source += "uniform float opacity;\n";
+            source += DeclareUniform("ambientColor", Shader_Vector3);
+            source += DeclareUniform("opacity", Shader_Float);
         }
-        source += "varying vec4 diff;\n";
+        source += DeclareVarying("diff", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += "varying vec4 spec;\n";
+            source += DeclareVarying("spec", Shader_Vector4);
         }
     }
 
@@ -1981,20 +1993,20 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (!props.usesTangentSpaceLighting())
     {
         if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
-            source += "uniform float lunarLambert;\n";
+            source += DeclareUniform("lunarLambert", Shader_Float);
     }
 
     // Miscellaneous lighting values
     if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
-        source += "varying float totalLight;\n";
+        source += DeclareVarying("totalLight", Shader_Float);
     }
 
     if (props.hasScattering())
     {
-        //source += "varying vec3 scatterIn;\n";
-        source += "varying vec3 scatterEx;\n";
-        source += DeclareVarying(VarScatterInVS(), Shader_Vector3);
+        //source += DeclareVarying("scatterIn", Shader_Vector3);
+        source += DeclareVarying("scatterEx", Shader_Vector3);
+        source += DeclareVarying("scatterColor", Shader_Vector3);
     }
 
     // Shadow parameters
@@ -2014,27 +2026,24 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.hasCloudShadows())
     {
-        source += "uniform float cloudShadowTexOffset;\n";
-        source += "uniform float cloudHeight;\n";
+        source += DeclareUniform("cloudShadowTexOffset", Shader_Float);
+        source += DeclareUniform("cloudHeight", Shader_Float);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             if (props.hasCloudShadowForLight(i))
             {
-                source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+                source += DeclareVarying(CloudShadowTexCoord(i), Shader_Vector2);
             }
         }
     }
 
     if (props.hasShadowMap())
-        source += "uniform mat4 ShadowMatrix0;\n";
+        source += DeclareUniform("ShadowMatrix0", Shader_Matrix4);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
 
-    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
-        source += "#define FISHEYE\n";
-
-    source += VPFunction;
+    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
@@ -2093,7 +2102,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "diff = vec4(ambientColor, opacity);\n";
         }
         if (props.hasSpecular())
-            source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
+            source += "spec = vec4(0.0);\n";
     }
 
     if (props.hasShadowMap())
@@ -2293,114 +2302,110 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     // Declare lighting parameters
     if (props.usesTangentSpaceLighting())
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "uniform float opacity;\n";
+        source += DeclareUniform("ambientColor", Shader_Vector3);
+        source += DeclareUniform("opacity", Shader_Float);
         if (props.isViewDependent())
         {
             if (props.lightModel == ShaderProperties::SpecularModel)
             {
                 // Specular model is sort of a hybrid: all the view-dependent lighting is
                 // handled in the vertex shader, and the fragment shader is view-independent
-                source += "varying vec4 specFactors;\n";
+                source += DeclareVarying("specFactors", Shader_Vector4);
                 source += "vec4 spec = vec4(0.0);\n";
             }
             else
             {
-                source += "varying vec3 eyeDir_tan;\n";  // tangent space eye vector
+                source += DeclareVarying("eyeDir_tan", Shader_Vector3);  // tangent space eye vector
                 source += "vec4 spec = vec4(0.0);\n";
-                source += "uniform float shininess;\n";
+                source += DeclareUniform("shininess", Shader_Float);
             }
         }
 
         if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
-            source += "uniform float lunarLambert;\n";
+            source += DeclareUniform("lunarLambert", Shader_Float);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " + LightDir_tan(i) + ";\n";
-            source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+            source += DeclareVarying(LightDir_tan(i), Shader_Vector3);
+            source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
             if (props.hasSpecular())
             {
-                source += "uniform vec3 " + FragLightProperty(i, "specColor") + ";\n";
+                source += DeclareUniform(FragLightProperty(i, "specColor"), Shader_Vector3);
             }
             if (props.texUsage & ShaderProperties::NightTexture)
             {
-                source += "uniform float " + FragLightProperty(i, "brightness") + ";\n";
+                source += DeclareUniform(FragLightProperty(i, "brightness"), Shader_Float);
             }
         }
     }
     else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "uniform float opacity;\n";
-        source += "varying vec4 diffFactors;\n";
-        source += "varying vec3 normal;\n";
+        source += DeclareUniform("ambientColor", Shader_Vector3);
+        source += DeclareUniform("opacity", Shader_Float);
+        source += DeclareVarying("diffFactors", Shader_Vector4);
+        source += DeclareVarying("normal", Shader_Vector3);
         source += "vec4 spec = vec4(0.0);\n";
-        source += "uniform float shininess;\n";
+        source += DeclareUniform("shininess", Shader_Float);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
-            source += "uniform vec3 " + FragLightProperty(i, "specColor") + ";\n";
+            source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
+            source += DeclareUniform(FragLightProperty(i, "specColor"), Shader_Vector3);
         }
     }
     else if (props.usesShadows())
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "uniform float opacity;\n";
-        source += "varying vec4 diffFactors;\n";
+        source += DeclareUniform("ambientColor", Shader_Vector3);
+        source += DeclareUniform("opacity", Shader_Float);
+        source += DeclareVarying("diffFactors", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += "varying vec4 specFactors;\n";
+            source += DeclareVarying("specFactors", Shader_Vector4);
             source += "vec4 spec = vec4(0.0);\n";
         }
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+            source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
             if (props.lightModel == ShaderProperties::SpecularModel)
-                source += "uniform vec3 " + FragLightProperty(i, "specColor") + ";\n";
+                source += DeclareUniform(FragLightProperty(i, "specColor"), Shader_Vector3);
         }
     }
     else
     {
-        source += "varying vec4 diff;\n";
+        source += DeclareVarying("diff", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += "varying vec4 spec;\n";
+            source += DeclareVarying("spec", Shader_Vector4);
         }
     }
 
     if (props.hasScattering())
     {
-        //source += "varying vec3 scatterIn;\n";
-        source += "varying vec3 scatterEx;\n";
-        source += DeclareVarying(VarScatterInFS(), Shader_Vector3);
+        //source += DeclareVarying("scatterIn", Shader_Vector3);
+        source += DeclareVarying("scatterEx", Shader_Vector3);
+        source += DeclareVarying("scatterColor", Shader_Vector3);
     }
 
     if ((props.texUsage & ShaderProperties::NightTexture))
     {
         if (VSComputesColorSum(props))
         {
-            source += "varying float totalLight;\n";
+            source += DeclareVarying("totalLight", Shader_Float);
         }
     }
 
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
-        source += "varying vec3 position_obj;\n";
+        source += DeclareVarying("position_obj", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowFalloff", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
     }
@@ -2420,9 +2425,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.hasCloudShadows())
     {
-        source += "uniform sampler2D cloudShadowTex;\n";
+        source += DeclareUniform("cloudShadowTex", Shader_Sampler2D);
         for (unsigned int i = 0; i < props.nLights; i++)
-            source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+            source += DeclareVarying(CloudShadowTexCoord(i), Shader_Vector2);
     }
 
     if (props.usePointSize())
@@ -2468,15 +2473,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             if (props.texUsage & ShaderProperties::CompressedNormalTexture)
             {
                 source += "vec3 n;\n";
-                source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ag * 2.0 - vec2(1.0, 1.0);\n";
+                source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ag * 2.0 - vec2(1.0);\n";
                 source += "n.z = sqrt(1.0 - n.x * n.x - n.y * n.y);\n";
             }
             else
             {
                 // TODO: normalizing the filtered normal texture value noticeably improves the appearance; add
                 // an option for this.
-                //source += "vec3 n = normalize(texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0));\n";
-                source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
+                //source += "vec3 n = normalize(texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0));\n";
+                source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0);\n";
             }
         }
         else
@@ -2579,13 +2584,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += "NH = max(0.0, dot(n, normalize(" + LightProperty(i, "halfVector") + ")));\n";
             source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
             if (props.hasShadowMap() && i == 0)
-            {
-                source += "if (cosNormalLightDir > 0.0)\n{\n";
-                source += "    shadowMapCoeff = calculateShadow();\n";
-                source += "    diff.rgb *= shadowMapCoeff;\n";
-                source += "    spec.rgb *= shadowMapCoeff;\n";
-                source += "}\n";
-            }
+                source += ApplyShadow(true);
         }
     }
     else if (props.usesShadows())
@@ -2605,14 +2604,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                     FragLightProperty(i, "specColor") + ";\n";
             }
             if (props.hasShadowMap() && i == 0)
-            {
-                source += "if (cosNormalLightDir > 0.0)\n{\n";
-                source += "    shadowMapCoeff = calculateShadow();\n";
-                source += "    diff.rgb *= shadowMapCoeff;\n";
-                if (props.lightModel == ShaderProperties::SpecularModel)
-                    source += "    spec.rgb *= shadowMapCoeff;\n";
-                source += "}\n";
-            }
+                ApplyShadow(props.lightModel == ShaderProperties::SpecularModel);
         }
     }
 
@@ -2625,7 +2617,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
     else
     {
-        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+        source += "color = vec4(1.0);\n";
     }
 
 #if POINT_FADE
@@ -2696,7 +2688,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     // Include the effect of atmospheric scattering.
     if (props.hasScattering())
     {
-        source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + " + VarScatterInFS() + ";\n";
+        source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterColor;\n";
     }
 
     source += "}\n";
@@ -2719,17 +2711,17 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += CommonAttribs;
 
     source += DeclareLights(props);
-    source += "uniform vec3 eyePosition;\n";
+    source += DeclareUniform("eyePosition", Shader_Vector3);
 
-    source += "varying vec4 diffFactors;\n";
+    source += DeclareVarying("diffFactors", Shader_Vector4);
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += "varying vec2 diffTexCoord;\n";
+        source += DeclareVarying("diffTexCoord", Shader_Vector2);
 
     if (props.shadowCounts != 0)
     {
-        source += "varying vec3 position_obj;\n";
-        source += "varying vec4 shadowDepths;\n";
+        source += DeclareVarying("position_obj", Shader_Vector3);
+        source += DeclareVarying("shadowDepths", Shader_Vector4);
     }
 
     source += "\nvoid main(void)\n{\n";
@@ -2773,36 +2765,32 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     std::string source(VersionHeader);
     source += CommonHeader;
 
-    source += "uniform vec3 ambientColor;\n";
+    source += DeclareUniform("ambientColor", Shader_Vector3);
     source += "vec4 diff = vec4(ambientColor, 1.0);\n";
     for (unsigned int i = 0; i < props.nLights; i++)
-        source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+        source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
 
-    source += "varying vec4 diffFactors;\n";
+    source += DeclareVarying("diffFactors", Shader_Vector4);
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "varying vec2 diffTexCoord;\n";
-        source += "uniform sampler2D diffTex;\n";
+        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.hasEclipseShadows())
     {
-        source += "varying vec3 position_obj;\n";
-        source += "varying vec4 shadowDepths;\n";
+        source += DeclareVarying("position_obj", Shader_Vector3);
+        source += DeclareVarying("shadowDepths", Shader_Vector4);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowFalloff", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
     }
@@ -2839,7 +2827,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
-        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+        source += "color = vec4(1.0);\n";
 
     source += "gl_FragColor = color * diff;\n";
 
@@ -2867,19 +2855,16 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += DeclareVarying("position_obj", Shader_Vector3);
     if (props.hasEclipseShadows())
     {
-        source += "varying vec4 shadowDepths;\n";
+        source += DeclareVarying("shadowDepths", Shader_Vector4);
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += "varying vec2 diffTexCoord;\n";
+        source += DeclareVarying("diffTexCoord", Shader_Vector2);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
 
-    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
-        source += "#define FISHEYE\n";
-
-    source += VPFunction;
+    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
 
     source += "\nvoid main(void)\n{\n";
 
@@ -2913,9 +2898,9 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     std::string source(VersionHeader);
     source += CommonHeader;
 
-    source += "uniform vec3 ambientColor;\n";
+    source += DeclareUniform("ambientColor", Shader_Vector3);
     for (unsigned int i = 0; i < props.nLights; i++)
-        source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+        source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
 
     source += DeclareLights(props);
 
@@ -2924,26 +2909,22 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "varying vec2 diffTexCoord;\n";
-        source += "uniform sampler2D diffTex;\n";
+        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.hasEclipseShadows())
     {
-        source += "varying vec4 shadowDepths;\n";
+        source += DeclareVarying("shadowDepths", Shader_Vector4);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowFalloff", i, j) + ";\n";
-                source += "uniform float " +
-                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
     }
@@ -2959,7 +2940,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
-        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+        source += "color = vec4(1.0);\n";
     source += DeclareLocal("opticalDepth", Shader_Float, sh_vec4("color")["a"]);
     if (props.hasEclipseShadows())
     {
@@ -3027,23 +3008,20 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += CommonAttribs;
 
     source += DeclareLights(props);
-    source += "uniform vec3 eyePosition;\n";
+    source += DeclareUniform("eyePosition", Shader_Vector3);
     source += ScatteringConstantDeclarations(props);
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        source += "varying vec3 " + ScatteredColor(i) + ";\n";
+        source += DeclareVarying(ScatteredColor(i), Shader_Vector3);
     }
 
-    source += "varying vec3 scatterEx;\n";
-    source += "varying vec3 eyeDir_obj;\n";
+    source += DeclareVarying("scatterEx", Shader_Vector3);
+    source += DeclareVarying("eyeDir_obj", Shader_Vector3);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
 
-    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
-        source += "#define FISHEYE\n";
-
-    source += VPFunction;
+    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
@@ -3071,14 +3049,14 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     std::string source(VersionHeader);
     source += CommonHeader;
 
-    source += "varying vec3 scatterEx;\n";
-    source += "varying vec3 eyeDir_obj;\n";
+    source += DeclareVarying("scatterEx", Shader_Vector3);
+    source += DeclareVarying("eyeDir_obj", Shader_Vector3);
 
     // Scattering constants
-    source += "uniform float mieK;\n";
-    source += "uniform float mieCoeff;\n";
-    source += "uniform vec3  rayleighCoeff;\n";
-    source += "uniform vec3  invScatterCoeffSum;\n";
+    source += DeclareUniform("mieK", Shader_Float);
+    source += DeclareUniform("mieCoeff", Shader_Float);
+    source += DeclareUniform("rayleighCoeff", Shader_Vector3);
+    source += DeclareUniform("invScatterCoeffSum", Shader_Vector3);
 
 #ifdef USE_GLSL_STRUCTS
     source += DeclareLights(props);
@@ -3087,16 +3065,15 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     for (i = 0; i < props.nLights; i++)
     {
 #ifndef USE_GLSL_STRUCTS
-        source += "uniform vec3 " + LightProperty(i, "direction") + ";\n";
+        source += DeclareUniform(LightProperty(i, "direction"), Shader_Vector3);
 #endif
-        source += "varying vec3 " + ScatteredColor(i) + ";\n";
+        source += DeclareVarying(ScatteredColor(i), Shader_Vector3);
     }
 
-    source += "\nvoid main(void)\n";
-    source += "{\n";
+    source += "\nvoid main(void)\n{\n";
 
     // Sum the contributions from each light source
-    source += "vec3 color = vec3(0.0, 0.0, 0.0);\n";
+    source += "vec3 color = vec3(0.0);\n";
     source += "vec3 V = normalize(eyeDir_obj);\n";
 
     // Only do scattering calculations for the primary light source
@@ -3111,7 +3088,7 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
         source += "    color += (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * " + ScatteredColor(i) + ";\n";
     }
 
-    source += "    gl_FragColor = vec4(color, dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
+    source += "    gl_FragColor = vec4(color, dot(scatterEx, vec3(0.333)));\n";
     source += "}\n";
 
     DumpFSSource(source);
@@ -3132,7 +3109,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += VertexHeader;
     source += CommonAttribs;
 
-    source += "uniform float opacity;\n";
+    source += DeclareUniform("opacity", Shader_Float);
 
     // There are no light sources used for the emissive light model, but
     // we still need the diffuse property of light 0. For other lighting
@@ -3140,7 +3117,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     // Emissive shaders interoperate better with other shaders if they also
     // take the color from light source 0.
 #ifndef USE_GLSL_STRUCTS
-    source += std::string("uniform vec3 light0_diffuse;\n");
+    source += DeclareUniform("light0_diffuse", Shader_Vector3);
 #else
     source += std::string("uniform struct {\n   vec3 diffuse;\n} lights[1];\n");
 #endif
@@ -3154,10 +3131,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
 
-    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
-        source += "#define FISHEYE\n";
-
-    source += VPFunction;
+    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
@@ -3205,20 +3179,19 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "uniform sampler2D diffTex;\n";
+        source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.usePointSize())
     {
-        source += "varying float pointFade;\n";
+        source += DeclareVarying("pointFade", Shader_Float);
     }
 
     source += DeclareVarying("v_Color", Shader_Vector4);
     source += DeclareVarying("v_TexCoord0", Shader_Vector2);
 
     // Begin main()
-    source += "\nvoid main(void)\n";
-    source += "{\n";
+    source += "\nvoid main(void)\n{\n";
 
     std::string colorSource = "v_Color";
     if (props.usePointSize())
@@ -3268,7 +3241,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 
     source << DeclareLights(props);
 
-    source << "uniform vec3 eyePosition;\n";
+    source << DeclareUniform("eyePosition", Shader_Vector3);
 
     // TODO: scattering constants
 
@@ -3280,16 +3253,13 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
-        source << "varying vec3 position_obj;\n";
+        source << DeclareVarying("position_obj", Shader_Vector3);
     }
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source << LineDeclaration();
 
-    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
-        source << "#define FISHEYE\n";
-
-    source << VPFunction;
+    source << VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
 
     // Begin main() function
     source << "\nvoid main(void)\n{\n";
@@ -3344,7 +3314,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source << "uniform sampler2D diffTex;\n";
+        source << DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.usePointSize())
@@ -3354,25 +3324,25 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     if (props.usesShadows())
     {
-        source << "uniform vec3 ambientColor;\n";
+        source << DeclareUniform("ambientColor", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source << "uniform vec3 " << FragLightProperty(i, "color") << ";\n";
+            source << DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
         }
     }
 
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
-        source << "varying vec3 position_obj;\n";
+        source << DeclareVarying("position_obj", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
-                source << "uniform vec4 " << IndexedParameter("shadowTexGenS", i, j) << ";\n";
-                source << "uniform vec4 " << IndexedParameter("shadowTexGenT", i, j) << ";\n";
-                source << "uniform float " << IndexedParameter("shadowFalloff", i, j) << ";\n";
-                source << "uniform float " << IndexedParameter("shadowMaxDepth", i, j) << ";\n";
+                source << DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source << DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source << DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source << DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
     }
@@ -3380,8 +3350,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     source << DeclareVarying("v_Color", Shader_Vector4);
 
     // Begin main()
-    source << "\nvoid main(void)\n";
-    source << "{\n";
+    source << "\nvoid main(void)\n{\n";
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
@@ -3466,11 +3435,11 @@ ShaderManager::buildProgram(const ShaderProperties& props)
 }
 
 CelestiaGLProgram*
-ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
+ShaderManager::buildProgram(std::string_view vs, std::string_view fs)
 {
     GLProgram* prog = nullptr;
     GLShaderStatus status;
-    std::string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
+    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
     std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);
@@ -3495,11 +3464,11 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
 }
 
 CelestiaGLProgram*
-ShaderManager::buildProgramGL3(const std::string& vs, const std::string& fs)
+ShaderManager::buildProgramGL3(std::string_view vs, std::string_view fs)
 {
     GLProgram* prog = nullptr;
     GLShaderStatus status;
-    std::string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
+    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
     std::string _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);
@@ -3524,12 +3493,12 @@ ShaderManager::buildProgramGL3(const std::string& vs, const std::string& fs)
 }
 
 CelestiaGLProgram*
-ShaderManager::buildProgramGL3(const std::string& vs, const std::string& gs, const std::string& fs, const GeomShaderParams* params)
+ShaderManager::buildProgramGL3(std::string_view vs, std::string_view gs, std::string_view fs, const GeomShaderParams* params)
 {
     std::string layout;
     if (params != nullptr)
     {
-        layout = fmt::format("layout({}) in;\nlayout({}, max_vertices = {}) out;\n",
+        layout = fmt::format("layout({}) in;\nlayout({}, max_vertices = {}) out;\n"sv,
                              InPrimitive(params->inputType),
                              OutPrimitive(params->outType),
                              params->nOutVertices
@@ -3539,7 +3508,7 @@ ShaderManager::buildProgramGL3(const std::string& vs, const std::string& gs, con
     GLProgram* prog = nullptr;
     GLShaderStatus status;
     auto _vs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, vs);
-    auto _gs = fmt::format("{}{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, layout, GeomHeaderGL3, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, gs);
+    auto _gs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, layout, GeomHeaderGL3, VPFunction(fisheyeEnabled), gs);
     auto _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);
