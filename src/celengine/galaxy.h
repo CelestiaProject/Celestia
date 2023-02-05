@@ -79,6 +79,19 @@ class Galaxy : public DeepSkyObject
 
  private:
     void setForm(const std::string&);
+    float getBrightnessCorrection(const Eigen::Vector3f &) const;
+    void renderGL3(const Eigen::Vector3f& offset,
+                   const Eigen::Quaternionf& viewerOrientation,
+                   float brightness,
+                   float pixelSize,
+                   const Matrices& m,
+                   Renderer* r) const;
+    void renderGL2(const Eigen::Vector3f& offset,
+                   const Eigen::Quaternionf& viewerOrientation,
+                   float brightness,
+                   float pixelSize,
+                   const Matrices& m,
+                   Renderer* r) const;
 
     float       detail{ 1.0f };
     GalaxyType  type{ GalaxyType::Irr };
