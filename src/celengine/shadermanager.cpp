@@ -14,6 +14,7 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <system_error>
@@ -68,11 +69,13 @@ const char* errorFragmentShaderSource =
 
 
 #ifndef GL_ES
-const char* VersionHeader = "#version 120\n";
-const char* CommonHeader = "\n";
+const char VersionHeader[] = "#version 120\n";
+const char VersionHeaderGL3[] = "#version 150\n";
+const char CommonHeader[] = "\n";
 #else
-const char* VersionHeader = "#version 100\n";
-const char* CommonHeader = "precision highp float;\n";
+const char VersionHeader[] = "#version 100\n";
+const char VersionHeaderGL3[] = "#version 320 es\n";
+const char CommonHeader[] = "precision highp float;\n";
 #endif
 const char* VertexHeader = R"glsl(
 uniform mat4 ModelViewMatrix;
@@ -81,6 +84,8 @@ uniform mat4 MVPMatrix;
 
 invariant gl_Position;
 )glsl";
+
+const char * const GeomHeaderGL3 = VertexHeader;
 
 const char *VPFunction =
     "#ifdef FISHEYE\n"
@@ -702,6 +707,16 @@ inline void DumpVSSource(const std::string& source)
 inline void DumpVSSource(std::ostringstream& source)
 {
     DumpVSSource(source.str());
+}
+
+inline void DumpGSSource(const std::string& source)
+{
+    if (g_shaderLogFile != nullptr)
+    {
+        *g_shaderLogFile << "Geometry shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
 }
 
 inline void DumpFSSource(const std::string& source)
@@ -1445,6 +1460,74 @@ float calculateShadow()
     return source;
 }
 
+void
+BindAttribLocations(const GLProgram *prog)
+{
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::VertexCoordAttributeIndex,   "in_Position");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::NormalAttributeIndex,        "in_Normal");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord1AttributeIndex, "in_TexCoord1");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord2AttributeIndex, "in_TexCoord2");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord3AttributeIndex, "in_TexCoord3");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::ColorAttributeIndex,         "in_Color");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::IntensityAttributeIndex,     "in_Intensity");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::NextVCoordAttributeIndex,    "in_PositionNext");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::ScaleFactorAttributeIndex,   "in_ScaleFactor");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TangentAttributeIndex,       "in_Tangent");
+    glBindAttribLocation(prog->getID(), CelestiaGLProgram::PointSizeAttributeIndex,     "in_PointSize");
+}
+
+std::optional<std::string>
+ReadShaderFile(const fs::path &path)
+{
+    std::error_code ec;
+    std::uintmax_t size = fs::file_size(path, ec);
+    if (ec)
+    {
+        GetLogger()->error("Failed to get file size of {}.\n", path);
+        return {};
+    }
+
+    std::ifstream in(path);
+    if (!in.good())
+    {
+        GetLogger()->error("Failed to open {}.\n", path);
+        return {};
+    }
+
+    std::string s(size, '\0');
+    in.read(&s[0], size); /* Flawfinder: ignore */
+
+    if (!in.good() && !in.eof())
+        return {};
+
+    return s;
+}
+
+GLShaderStatus
+CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
+{
+    std::string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, errorVertexShaderSource);
+    std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, errorFragmentShaderSource);
+
+    auto status = GLShaderLoader::CreateProgram(_vs, _fs, prog);
+    if (status == ShaderStatus_OK)
+    {
+        BindAttribLocations(*prog);
+        status = (*prog)->link();
+    }
+
+    if (status != ShaderStatus_OK)
+    {
+        if (g_shaderLogFile != nullptr)
+            *g_shaderLogFile << "Failed to create error shader!\n";
+
+        return ShaderStatus_LinkError;
+    }
+
+    return ShaderStatus_OK;
+}
+
 } // end unnamed namespace
 
 bool
@@ -1693,15 +1776,14 @@ ShaderManager::getShader(const ShaderProperties& props)
 CelestiaGLProgram*
 ShaderManager::getShader(const std::string& name, const std::string& vs, const std::string& fs)
 {
-    auto iter = staticShaders.find(name);
-    if (iter != staticShaders.end())
+    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
         // Shader already exists
         return iter->second;
     }
 
     // Create a new shader and add it to the table of created shaders
-    CelestiaGLProgram* prog = buildProgram(vs, fs);
+    auto *prog = buildProgram(vs, fs);
     staticShaders[name] = prog;
 
     return prog;
@@ -1710,8 +1792,7 @@ ShaderManager::getShader(const std::string& name, const std::string& vs, const s
 CelestiaGLProgram*
 ShaderManager::getShader(const std::string& name)
 {
-    auto iter = staticShaders.find(name);
-    if (iter != staticShaders.end())
+    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
         // Shader already exists
         return iter->second;
@@ -1721,36 +1802,73 @@ ShaderManager::getShader(const std::string& name)
     auto vsName = dir / fmt::format("{}_vert.glsl", name);
     auto fsName = dir / fmt::format("{}_frag.glsl", name);
 
-    std::error_code ecv, ecf;
-    std::uintmax_t vsSize = fs::file_size(vsName, ecv);
-    std::uintmax_t fsSize = fs::file_size(fsName, ecf);
-    if (ecv || ecf)
-    {
-        GetLogger()->error("Failed to get file size of {} or {}\n", vsName, fsName);
+    auto vs = ReadShaderFile(vsName);
+    if (!vs.has_value())
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    }
-
-    std::ifstream vsf(vsName);
-    if (!vsf.good())
-    {
-        GetLogger()->error("Failed to open {}\n", vsName);
+    auto fs = ReadShaderFile(fsName);
+    if (!fs.has_value())
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    }
-
-    std::ifstream fsf(fsName);
-    if (!fsf.good())
-    {
-        GetLogger()->error("Failed to open {}\n", fsName);
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    }
-
-    std::string vs(vsSize, '\0'), fs(fsSize, '\0');
-
-    vsf.read(&vs[0], vsSize);
-    fsf.read(&fs[0], fsSize);
 
     // Create a new shader and add it to the table of created shaders
-    CelestiaGLProgram* prog = buildProgram(vs, fs);
+    auto *prog = buildProgram(*vs, *fs);
+    staticShaders[name] = prog;
+
+    return prog;
+}
+
+CelestiaGLProgram*
+ShaderManager::getShaderGL3(const std::string& name)
+{
+    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
+    {
+        // Shader already exists
+        return iter->second;
+    }
+
+    fs::path dir("shaders");
+    auto vsName = dir / fmt::format("{}_vert.glsl", name);
+    auto fsName = dir / fmt::format("{}_frag.glsl", name);
+
+    auto vs = ReadShaderFile(vsName);
+    if (!vs.has_value())
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    auto fs = ReadShaderFile(fsName);
+    if (!fs.has_value())
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+
+    CelestiaGLProgram *prog = nullptr;
+
+    // Geometric shader is optional
+    if (auto gsName = dir / fmt::format("{}_geom.glsl", name); fs::exists(gsName))
+    {
+        if (auto gs = ReadShaderFile(gsName); gs.has_value())
+            prog = buildProgramGL3(*vs, *gs, *fs);
+        else
+            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    }
+    else
+    {
+        prog = buildProgramGL3(*vs, *fs);
+    }
+
+    // Create a new shader and add it to the table of created shaders
+    staticShaders[name] = prog;
+
+    return prog;
+}
+
+
+CelestiaGLProgram*
+ShaderManager::getShaderGL3(const std::string& name, const std::string& vs, const std::string& gs, const std::string& fs)
+{
+    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
+    {
+        // Shader already exists
+        return iter->second;
+    }
+
+    // Create a new shader and add it to the table of created shaders
+    auto *prog = buildProgramGL3(vs, gs, fs);
     staticShaders[name] = prog;
 
     return prog;
@@ -3290,63 +3408,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         status = GLShaderLoader::CreateProgram(*vs, *fs, &prog);
         if (status == ShaderStatus_OK)
         {
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::VertexCoordAttributeIndex,
-                                 "in_Position");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::NormalAttributeIndex,
-                                 "in_Normal");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::TextureCoord0AttributeIndex,
-                                 "in_TexCoord0");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::TextureCoord1AttributeIndex,
-                                 "in_TexCoord1");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::TextureCoord2AttributeIndex,
-                                 "in_TexCoord2");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::TextureCoord3AttributeIndex,
-                                 "in_TexCoord3");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::ColorAttributeIndex,
-                                 "in_Color");
-
-            glBindAttribLocation(prog->getID(),
-                                 CelestiaGLProgram::IntensityAttributeIndex,
-                                 "in_Intensity");
-
-            if (props.texUsage & ShaderProperties::LineAsTriangles)
-            {
-                glBindAttribLocation(prog->getID(),
-                                     CelestiaGLProgram::NextVCoordAttributeIndex,
-                                     "in_PositionNext");
-
-                glBindAttribLocation(prog->getID(),
-                                     CelestiaGLProgram::ScaleFactorAttributeIndex,
-                                     "in_ScaleFactor");
-            }
-
-            if (props.texUsage & ShaderProperties::NormalTexture)
-            {
-                glBindAttribLocation(prog->getID(),
-                                     CelestiaGLProgram::TangentAttributeIndex,
-                                     "in_Tangent");
-            }
-
-            if (props.usePointSize())
-            {
-                glBindAttribLocation(prog->getID(),
-                                     CelestiaGLProgram::PointSizeAttributeIndex,
-                                     "in_PointSize");
-            }
-
+            BindAttribLocations(prog);
             status = prog->link();
         }
     }
@@ -3362,22 +3424,9 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        status = GLShaderLoader::CreateProgram(errorVertexShaderSource,
-                                               errorFragmentShaderSource,
-                                               &prog);
-        if (status != ShaderStatus_OK)
-        {
-            if (g_shaderLogFile != nullptr)
-                *g_shaderLogFile << "Failed to create error shader!\n";
-        }
-        else
-        {
-            status = prog->link();
-        }
+        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+            return nullptr;
     }
-
-    if (prog == nullptr)
-        return nullptr;
 
     return new CelestiaGLProgram(*prog, props);
 }
@@ -3396,54 +3445,7 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
     status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
     if (status == ShaderStatus_OK)
     {
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::VertexCoordAttributeIndex,
-                             "in_Position");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::NormalAttributeIndex,
-                             "in_Normal");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::TextureCoord0AttributeIndex,
-                             "in_TexCoord0");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::TextureCoord1AttributeIndex,
-                             "in_TexCoord1");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::TextureCoord2AttributeIndex,
-                             "in_TexCoord2");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::TextureCoord3AttributeIndex,
-                             "in_TexCoord3");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::ColorAttributeIndex,
-                             "in_Color");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::TangentAttributeIndex,
-                             "in_Tangent");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::PointSizeAttributeIndex,
-                             "in_PointSize");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::IntensityAttributeIndex,
-                             "in_Intensity");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::NextVCoordAttributeIndex,
-                             "in_PositionNext");
-
-        glBindAttribLocation(prog->getID(),
-                             CelestiaGLProgram::ScaleFactorAttributeIndex,
-                             "in_ScaleFactor");
-
+        BindAttribLocations(prog);
         status = prog->link();
     }
 
@@ -3451,22 +3453,69 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        status = GLShaderLoader::CreateProgram(errorVertexShaderSource,
-                                               errorFragmentShaderSource,
-                                               &prog);
-        if (status != ShaderStatus_OK)
-        {
-            if (g_shaderLogFile != nullptr)
-                *g_shaderLogFile << "Failed to create error shader!\n";
-        }
-        else
-        {
-            status = prog->link();
-        }
+        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+            return nullptr;
     }
 
-    if (prog == nullptr)
-        return nullptr;
+    return new CelestiaGLProgram(*prog);
+}
+
+CelestiaGLProgram*
+ShaderManager::buildProgramGL3(const std::string& vs, const std::string& fs)
+{
+    GLProgram* prog = nullptr;
+    GLShaderStatus status;
+    std::string _vs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
+    std::string _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
+
+    DumpVSSource(_vs);
+    DumpFSSource(_fs);
+
+    status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
+    if (status == ShaderStatus_OK)
+    {
+        BindAttribLocations(prog);
+        status = prog->link();
+    }
+
+    if (status != ShaderStatus_OK)
+    {
+        // If the shader creation failed for some reason, substitute the
+        // error shader.
+        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+            return nullptr;
+    }
+
+    return new CelestiaGLProgram(*prog);
+}
+
+CelestiaGLProgram*
+ShaderManager::buildProgramGL3(const std::string& vs, const std::string& gs, const std::string& fs)
+{
+    GLProgram* prog = nullptr;
+    GLShaderStatus status;
+    auto _vs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, vs);
+    auto _gs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, GeomHeaderGL3, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, gs);
+    auto _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
+
+    DumpVSSource(_vs);
+    DumpGSSource(_gs);
+    DumpFSSource(_fs);
+
+    status = GLShaderLoader::CreateProgram(_vs, _gs, _fs, &prog);
+    if (status == ShaderStatus_OK)
+    {
+        BindAttribLocations(prog);
+        status = prog->link();
+    }
+
+    if (status != ShaderStatus_OK)
+    {
+        // If the shader creation failed for some reason, substitute the
+        // error shader.
+        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+            return nullptr;
+    }
 
     return new CelestiaGLProgram(*prog);
 }
