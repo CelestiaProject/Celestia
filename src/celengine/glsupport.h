@@ -17,9 +17,21 @@
 
 namespace celestia::gl
 {
-
-constexpr const int GL_2_1 = 21;
-constexpr const int GLES_2 = 20;
+enum Version
+{
+    GL_2_1   = 21,
+    GL_3     = 30,
+    GL_3_0   = 30,
+    GL_3_1   = 31,
+    GL_3_2   = 32,
+    GL_3_3   = 33,
+    GLES_2   = 20,
+    GLES_2_0 = 20,
+    GLES_3   = 30,
+    GLES_3_0 = 30,
+    GLES_3_1 = 31,
+    GLES_3_2 = 32,
+};
 
 extern bool ARB_shader_texture_lod;
 extern bool EXT_texture_compression_s3tc;
@@ -31,7 +43,7 @@ extern bool OES_texture_border_clamp;
 extern bool OES_geometry_shader;
 #else
 extern bool ARB_vertex_array_object;
-extern bool EXT_framebuffer_object;
+extern bool ARB_framebuffer_object;
 #endif
 extern GLint maxPointSize;
 extern GLint maxTextureSize;
