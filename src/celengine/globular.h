@@ -14,10 +14,8 @@
 
 #pragma once
 
-#include <cstddef>
 #include <cstdint>
 #include <string>
-#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -31,7 +29,14 @@ class Renderer;
 
 class Globular : public DeepSkyObject
 {
- public:
+public:
+
+   // min/max c-values of globular cluster data
+   static constexpr float MinC = 0.50f;
+   static constexpr float MaxC = 2.58f;
+   static constexpr int GlobularBuckets = 8;
+   static constexpr float BinWidth = (MaxC - MinC) / static_cast<float>(GlobularBuckets) + 0.02f;
+
     Globular();
 
     const char* getType() const override;
@@ -39,24 +44,23 @@ class Globular : public DeepSkyObject
     std::string getDescription() const override;
     float getHalfMassRadius() const override;
 
+    float getDetail() const;
+    void setDetail(float);
+
     float getBoundingSphereRadius() const override { return tidalRadius; }
 
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(const AssociativeArray*, const fs::path&) override;
-    void render(const Eigen::Vector3f& offset,
-                const Eigen::Quaternionf& viewerOrientation,
-                float brightness,
-                float pixelSize,
-                const Matrices& m,
-                Renderer* r) override;
 
     std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
     const char* getObjTypeName() const override;
 
- private:
+    int getFormId() const;
+
+private:
     // Reference values ( = data base averages) of core radius, King concentration
     static constexpr float R_c_ref = 0.83f;
     static constexpr float C_ref = 2.1f;
@@ -68,5 +72,5 @@ class Globular : public DeepSkyObject
     float r_c{ R_c_ref };
     float c{ C_ref };
     float tidalRadius{ 0.0f };
-    std::size_t formIndex{ static_cast<std::size_t>(-1) };
+    int formIndex{ -1 };
 };

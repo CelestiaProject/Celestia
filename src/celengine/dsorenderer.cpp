@@ -10,24 +10,67 @@
 
 #include <celengine/dsodb.h>
 #include <celengine/deepskyobj.h>
-#include <celmath/geomutil.h>
-#include <celmath/vecgl.h>
-#include "glsupport.h"
+#include <celrender/galaxyrenderer.h>
+#include <celrender/globularrenderer.h>
+#include <celrender/nebularenderer.h>
+#include <celrender/openclusterrenderer.h>
 #include "render.h"
-
 #include "dsorenderer.h"
 
-using namespace Eigen;
-using namespace celestia;
-using namespace celmath;
 
+namespace
+{
 // The parameter 'enhance' adjusts the DSO brightness as viewed from "inside"
-// (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent  core
+// (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent core
 // brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly
 // enhance the too low sprite luminosity at close distance.
-constexpr const double enhance = 4.0;
-constexpr const double pc10 = 32.6167; // 10 parsecs
-static const float CubeCornerToCenterDistance = sqrt(3.0f);
+constexpr double enhance = 4.0;
+constexpr double pc10 = 32.6167; // 10 parsecs
+constexpr float CubeCornerToCenterDistance = 1.7320508075688772f;
+
+enum class DeepSkyObjectType
+{
+    Galaxy,
+    Globular,
+    Nebula,
+    OpenCluster
+};
+
+DeepSkyObjectType
+GetDSOType(const DeepSkyObject* dso)
+{
+    if (!strcmp(dso->getObjTypeName(), "galaxy"))
+        return DeepSkyObjectType::Galaxy;
+
+    if (!strcmp(dso->getObjTypeName(), "globular"))
+        return DeepSkyObjectType::Globular;
+
+    if (!strcmp(dso->getObjTypeName(), "nebula"))
+        return DeepSkyObjectType::Nebula;
+
+    if (!strcmp(dso->getObjTypeName(), "opencluster"))
+        return DeepSkyObjectType::OpenCluster;
+}
+
+float
+brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, float faintestMag)
+{
+    // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
+    // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
+    // determine a,b such that
+    // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
+    // The 2nd eq. guarantees that the faintest galaxies are still visible.
+
+    float r = absMag / avgAbsMag;
+    float b = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
+
+    // obviously, brightness(appMag = absMag) = r and
+    // brightness(appMag = faintestMag) = 0.2, as desired.
+
+    return std::max(0.0f, b * brightnessCorr);
+}
+
+} // anonymous namespace
 
 DSORenderer::DSORenderer() :
     ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE)
@@ -41,15 +84,15 @@ void DSORenderer::process(DeepSkyObject* const &dso,
     if (distanceToDSO > distanceLimit || !dso->isVisible())
         return;
 
-    Vector3f relPos = (dso->getPosition() - obsPos).cast<float>();
-    Vector3f center = orientationMatrixT * relPos;
+    Eigen::Vector3f relPos = (dso->getPosition() - obsPos).cast<float>();
+    Eigen::Vector3f center = orientationMatrixT * relPos;
 
     // Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     double dsoRadius = dso->getBoundingSphereRadius();
-    if (frustum.testSphere(center, (float) dsoRadius) == Frustum::Outside)
+    if (frustum.testSphere(center, (float) dsoRadius) == celmath::Frustum::Outside)
         return;
 
     float appMag;
@@ -62,59 +105,45 @@ void DSORenderer::process(DeepSkyObject* const &dso,
     {
         dsosProcessed++;
 
-        // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
-        // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
-        // determine a,b such that
-        // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
-        // The 2nd eq. guarantees that the faintest galaxies are still visible.
-
-        if (!strcmp(dso->getObjTypeName(), "globular"))
-            avgAbsMag = -6.86f; // average over 150 globulars in globulars.dsc.
-        else if (!strcmp(dso->getObjTypeName(), "galaxy"))
-            avgAbsMag = -19.04f; // average over 10937 galaxies in galaxies.dsc.
-
-        float r = absMag / avgAbsMag;
-        float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
-
-        // obviously, brightness(appMag = absMag) = r and
-        // brightness(appMag = faintestMag) = 0.2, as desired.
-
-        brightness *= 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
-
-        if (brightness < 0)
-            brightness = 0;
-
-        Matrix4f mv = celmath::translate(renderer->getModelViewMatrix(), relPos);
-        Matrix4f pr;
-
+        float nearZ = 0.0f, farZ = 0.0f;
         if (dsoRadius < 1000.0)
         {
             // Small objects may be prone to clipping; give them special
             // handling.  We don't want to always set the projection
             // matrix, since that could be expensive with large galaxy
             // catalogs.
-            auto nearZ = (float)(distanceToDSO / 2);
-            auto farZ = (float)(distanceToDSO + dsoRadius * 2 * CubeCornerToCenterDistance);
-            if (nearZ < dsoRadius * 0.001)
+            nearZ = static_cast<float>(distanceToDSO / 2.0);
+            farZ = static_cast<float>(distanceToDSO + dsoRadius * 2.0 * CubeCornerToCenterDistance);
+            auto minZ = static_cast<float>(dsoRadius * 0.001);
+            if (nearZ < minZ)
             {
-                nearZ = (float)(dsoRadius * 0.001);
+                nearZ = minZ;
                 farZ = nearZ * 10000.0f;
             }
-
-            float t = renderer->getAspectRatio();
-            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-                pr = Ortho(-t, t, -1.0f, 1.0f, nearZ, farZ);
-            else
-                pr = Perspective(fov, t, nearZ, farZ);
         }
-        else
+
+        float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
+        switch (GetDSOType(dso))
         {
-            pr = renderer->getProjectionMatrix();
+        case DeepSkyObjectType::Galaxy:
+            // -19.04f == average over 10937 galaxies in galaxies.dsc.
+            b = brightness(-19.04f, absMag, appMag, b, faintestMag);
+            galaxyRenderer->add(reinterpret_cast<Galaxy*>(dso), relPos, b, nearZ, farZ);
+            break;
+        case DeepSkyObjectType::Globular:
+            // -6.86f == average over 150 globulars in globulars.dsc.
+            b = brightness(-6.86f, absMag, appMag, b, faintestMag);
+            globularRenderer->add(reinterpret_cast<Globular*>(dso), relPos, b, nearZ, farZ);
+            break;
+        case DeepSkyObjectType::Nebula:
+            b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
+            nebulaRenderer->add(reinterpret_cast<Nebula*>(dso), relPos, b, nearZ, farZ);
+            break;
+        case DeepSkyObjectType::OpenCluster:
+            b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
+            openClusterRenderer->add(reinterpret_cast<OpenCluster*>(dso), relPos, b, nearZ, farZ);
+            break;
         }
-
-        dso->render(relPos, observer->getOrientationf(), brightness,
-                    pixelSize, { &pr, &mv }, renderer);
-
     } // renderFlags check
 
     // Only render those labels that are in front of the camera:
@@ -169,9 +198,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         if (appMagEff < labelThresholdMag)
         {
             // introduce distance dependent label transparency.
-            float distr = step * (labelThresholdMag - appMagEff) / labelThresholdMag;
-            if (distr > 1.0f)
-                distr = 1.0f;
+            float distr = std::min(1.0f, step * (labelThresholdMag - appMagEff) / labelThresholdMag);
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

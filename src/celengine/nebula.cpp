@@ -17,11 +17,6 @@
 #include "rendcontext.h"
 #include "render.h"
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
-using namespace celestia;
-
 
 const char* Nebula::getType() const
 {
@@ -29,12 +24,12 @@ const char* Nebula::getType() const
 }
 
 
-void Nebula::setType(const string& /*typeStr*/)
+void Nebula::setType(const std::string& /*typeStr*/)
 {
 }
 
 
-string Nebula::getDescription() const
+std::string Nebula::getDescription() const
 {
     return _("Nebula");
 }
@@ -80,33 +75,7 @@ bool Nebula::load(const AssociativeArray* params, const fs::path& resPath)
 }
 
 
-void Nebula::render(const Vector3f& /*offset*/,
-                    const Quaternionf& /*unused*/,
-                    float /*unused*/,
-                    float pixelSize,
-                    const Matrices& m,
-                    Renderer* renderer)
-{
-    Geometry* g = nullptr;
-    if (geometry != InvalidResource)
-        g = GetGeometryManager()->find(geometry);
-    if (g == nullptr)
-        return;
-
-    Renderer::PipelineState ps;
-    ps.smoothLines = true;
-    renderer->setPipelineState(ps);
-
-    Matrix4f mv = celmath::rotate(celmath::scale(*m.modelview, getRadius()),
-                                  getOrientation());
-
-    GLSLUnlit_RenderContext rc(renderer, getRadius(), &mv, m.projection);
-    rc.setPointScale(2.0f * getRadius() / pixelSize);
-    g->render(rc);
-}
-
-
-uint64_t Nebula::getRenderMask() const
+std::uint64_t Nebula::getRenderMask() const
 {
     return Renderer::ShowNebulae;
 }

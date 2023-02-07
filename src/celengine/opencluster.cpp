@@ -62,20 +62,6 @@ bool OpenCluster::load(const AssociativeArray* params, const fs::path& resPath)
 }
 
 
-void OpenCluster::render(const Vector3f& /*unused*/,
-                         const Quaternionf& /*unused*/,
-                         float /*unused*/,
-                         float /*unused*/,
-                         const Matrices& /*m*/,
-                         Renderer* /*unused*/)
-{
-    // Nothing to do right now; open clusters are only visible as their
-    // constituent stars and a label when labels are turned on.  A good idea
-    // would be to add an 'sky chart' mode, in which clusters are rendered as
-    // circles.
-}
-
-
 uint64_t OpenCluster::getRenderMask() const
 {
     return Renderer::ShowOpenClusters;

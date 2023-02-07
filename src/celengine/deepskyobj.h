@@ -81,12 +81,6 @@ public:
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(const AssociativeArray*, const fs::path& resPath);
-    virtual void render(const Eigen::Vector3f& offset,
-                        const Eigen::Quaternionf& viewerOrientation,
-                        float brightness,
-                        float pixelSize,
-                        const Matrices& m,
-                        Renderer*) = 0;
 
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }

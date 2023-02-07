@@ -1,5 +1,6 @@
 // nebula.h
 //
+// Copyright (C) 2003-present, the Celestia Development Team
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -7,15 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef CELENGINE_NEBULA_H_
-#define CELENGINE_NEBULA_H_
+#pragma once
 
 #include <celutil/reshandle.h>
 #include <celengine/deepskyobj.h>
 
 class Nebula : public DeepSkyObject
 {
- public:
+public:
     Nebula() = default;
 
     const char* getType() const override;
@@ -26,12 +26,6 @@ class Nebula : public DeepSkyObject
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(const AssociativeArray*, const fs::path&) override;
-    void render(const Eigen::Vector3f& offset,
-                const Eigen::Quaternionf& viewerOrientation,
-                float brightness,
-                float pixelSize,
-                const Matrices& m,
-                Renderer* renderer) override;
 
     uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
@@ -41,7 +35,6 @@ class Nebula : public DeepSkyObject
 
     const char* getObjTypeName() const override;
 
- public:
     enum NebulaType
     {
         Emissive           = 0,
@@ -54,8 +47,6 @@ class Nebula : public DeepSkyObject
         NotDefined         = 7
     };
 
- private:
+private:
     ResourceHandle geometry{ InvalidResource };
 };
-
-#endif // CELENGINE_NEBULA_H_

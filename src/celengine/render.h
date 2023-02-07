@@ -24,6 +24,7 @@
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
 #include <celengine/textlayout.h>
+#include <celrender/rendererfwd.h>
 
 class RendererWatcher;
 class FrameTree;
@@ -42,16 +43,6 @@ namespace gl
 {
 class Buffer;
 class VertexObject;
-}
-namespace render
-{
-class AsterismRenderer;
-class AtmosphereRenderer;
-class BoundariesRenderer;
-class CometRenderer;
-class EclipticLineRenderer;
-class LargeStarRenderer;
-class LineRenderer;
 }
 }
 
@@ -361,7 +352,7 @@ class Renderer
         m_projectionPtr = &m_projMatrix;
     }
 
-    void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ);
+    void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ) const;
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
@@ -787,8 +778,12 @@ class Renderer
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
+    std::unique_ptr<celestia::render::GalaxyRenderer> m_galaxyRenderer;
+    std::unique_ptr<celestia::render::GlobularRenderer> m_globularRenderer;
     std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
     std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
+    std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;
+    std::unique_ptr<celestia::render::OpenClusterRenderer> m_openClusterRenderer;
 
     // Location markers
  public:
