@@ -9,10 +9,18 @@ set(CELRENDER_SOURCES
   cometrenderer.h
   eclipticlinerenderer.cpp
   eclipticlinerenderer.h
+  galaxyrenderer.cpp
+  galaxyrenderer.h
+  globularrenderer.cpp
+  globularrenderer.h
   largestarrenderer.cpp
   largestarrenderer.h
   linerenderer.cpp
   linerenderer.h
+  nebularenderer.cpp
+  nebularenderer.h
+  openclusterrenderer.cpp
+  openclusterrenderer.h
   gl/buffer.cpp
   gl/buffer.h
   gl/vertexobject.cpp

@@ -1,6 +1,6 @@
 // dsorenderer.h
 //
-// Copyright (C) 2001-2020, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -12,18 +12,18 @@
 
 #include <Eigen/Core>
 #include <celmath/frustum.h>
+#include <celrender/rendererfwd.h>
 #include "objectrenderer.h"
 
 class DeepSkyObject;
 
 class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 {
- public:
+public:
     DSORenderer();
 
     void process(DeepSkyObject* const &, double, float);
 
- public:
     Eigen::Vector3d     obsPos;
     Eigen::Matrix3f     orientationMatrixT;
     celmath::Frustum    frustum         { 45.0_deg, 1.0f, 1.0f };
@@ -31,4 +31,10 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 
     float               avgAbsMag       { 0.0f };
     uint32_t            dsosProcessed   { 0 };
+
+    celestia::render::GalaxyRenderer      *galaxyRenderer{ nullptr };
+    celestia::render::GlobularRenderer    *globularRenderer{ nullptr };
+    celestia::render::NebulaRenderer      *nebulaRenderer{ nullptr };
+    celestia::render::OpenClusterRenderer *openClusterRenderer{ nullptr };
+
 };
