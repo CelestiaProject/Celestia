@@ -20,13 +20,12 @@
 #include <celcompat/filesystem.h>
 #include "deepskyobj.h"
 
-
 class AssociativeArray;
 struct Matrices;
 class Renderer;
 
-
-enum class GalaxyType {
+enum class GalaxyType
+{
     Irr  =  0,
     S0   =  1,
     Sa   =  2,
@@ -48,7 +47,9 @@ enum class GalaxyType {
 
 class Galaxy : public DeepSkyObject
 {
- public:
+public:
+    constexpr static float kMaxSpiralThickness = 0.06f;
+
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
@@ -60,12 +61,6 @@ class Galaxy : public DeepSkyObject
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(const AssociativeArray*, const fs::path&) override;
-    void render(const Eigen::Vector3f& offset,
-                const Eigen::Quaternionf& viewerOrientation,
-                float brightness,
-                float pixelSize,
-                const Matrices& m,
-                Renderer* r) override;
 
     static void  increaseLightGain();
     static void  decreaseLightGain();
@@ -77,25 +72,22 @@ class Galaxy : public DeepSkyObject
 
     const char* getObjTypeName() const override;
 
- private:
-    void setForm(const fs::path&, const fs::path& = {});
+    int getFormId() const;
+
+    GalaxyType getGalaxyType() const;
+
     float getBrightnessCorrection(const Eigen::Vector3f &) const;
-    void renderGL3(const Eigen::Vector3f& offset,
-                   const Eigen::Quaternionf& viewerOrientation,
-                   float brightness,
-                   float pixelSize,
-                   const Matrices& m,
-                   Renderer* r) const;
-    void renderGL2(const Eigen::Vector3f& offset,
-                   const Eigen::Quaternionf& viewerOrientation,
-                   float brightness,
-                   float pixelSize,
-                   const Matrices& m,
-                   Renderer* r) const;
+
+private:
+    // TODO: This value is just a guess.
+    // To be optimal, it should actually be computed:
+    constexpr static float kRadiusCorrection = 0.025f;
+
+    void setForm(const fs::path&, const fs::path& = {});
 
     float       detail{ 1.0f };
     GalaxyType  type{ GalaxyType::Irr };
-    std::size_t form{ 0 };
+    int         form{ 0 };
 
     static float lightGain;
 };
