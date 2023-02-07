@@ -505,8 +505,8 @@ TextureFontPrivate::flush()
     glBufferData(GL_ARRAY_BUFFER, sizeof(FontVertex) * MaxVertices, nullptr, GL_STREAM_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MaxIndices, nullptr, GL_STREAM_DRAW);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(FontVertex) * MaxVertices, m_fontVertices.data(), GL_STREAM_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MaxIndices, indexes.data(), GL_STREAM_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(FontVertex) * m_fontVertices.size(), m_fontVertices.data());
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLushort) * indexes.size(), indexes.data());
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
