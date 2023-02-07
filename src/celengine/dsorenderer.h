@@ -25,12 +25,10 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 
  public:
     Eigen::Vector3d     obsPos;
-    Eigen::Matrix3f     orientationMatrix;
+    Eigen::Matrix3f     orientationMatrixT;
     celmath::Frustum    frustum         { 45.0_deg, 1.0f, 1.0f };
     DSODatabase*        dsoDB           { nullptr };
 
-    int                 wWidth          { 0 };
-    int                 wHeight         { 0 };
-    double              avgAbsMag       { 0.0 };
+    float               avgAbsMag       { 0.0f };
     uint32_t            dsosProcessed   { 0 };
 };

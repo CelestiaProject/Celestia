@@ -41,7 +41,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         return;
 
     Vector3f relPos = (dso->getPosition() - obsPos).cast<float>();
-    Vector3f center = orientationMatrix.transpose() * relPos;
+    Vector3f center = orientationMatrixT * relPos;
 
     // Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:
@@ -68,11 +68,11 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         // The 2nd eq. guarantees that the faintest galaxies are still visible.
 
         if (!strcmp(dso->getObjTypeName(), "globular"))
-            avgAbsMag = -6.86; // average over 150 globulars in globulars.dsc.
+            avgAbsMag = -6.86f; // average over 150 globulars in globulars.dsc.
         else if (!strcmp(dso->getObjTypeName(), "galaxy"))
-            avgAbsMag = -19.04; // average over 10937 galaxies in galaxies.dsc.
+            avgAbsMag = -19.04f; // average over 10937 galaxies in galaxies.dsc.
 
-        float r = absMag / (float)avgAbsMag;
+        float r = absMag / avgAbsMag;
         float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
 
         // obviously, brightness(appMag = absMag) = r and
@@ -100,7 +100,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
                 farZ = nearZ * 10000.0f;
             }
 
-            float t = (float)wWidth / (float)wHeight;
+            float t = renderer->getAspectRatio();
             if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
                 pr = Ortho(-t, t, -1.0f, 1.0f, nearZ, farZ);
             else

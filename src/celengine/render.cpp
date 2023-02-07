@@ -3877,7 +3877,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
-    dsoRenderer.orientationMatrix= observer.getOrientationf().conjugate().toRotationMatrix();
+    dsoRenderer.orientationMatrixT = observer.getOrientationf().toRotationMatrix();
     dsoRenderer.observer         = &observer;
     dsoRenderer.obsPos           = obsPos;
     dsoRenderer.fov              = fov;
@@ -3887,8 +3887,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.faintestMag      = faintestMag;
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
-    dsoRenderer.wWidth           = windowWidth;
-    dsoRenderer.wHeight          = windowHeight;
 
     dsoRenderer.frustum = Frustum(degToRad(fov),
                                   getAspectRatio(),

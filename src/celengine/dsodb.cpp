@@ -376,7 +376,7 @@ void DSODatabase::calcAvgAbsMag()
     uint32_t nDSOeff = size();
     for (int i = 0; i < nDSOs; ++i)
     {
-        double DSOmag = DSOs[i]->getAbsoluteMagnitude();
+        float DSOmag = DSOs[i]->getAbsoluteMagnitude();
 
         // take only DSO's with realistic AbsMag entry
         // (> DSO_DEFAULT_ABS_MAGNITUDE) into account
@@ -384,10 +384,8 @@ void DSODatabase::calcAvgAbsMag()
             avgAbsMag += DSOmag;
         else if (nDSOeff > 1)
             nDSOeff--;
-        //cout << nDSOs<<"  "<<DSOmag<<"  "<<nDSOeff<<endl;
     }
-    avgAbsMag /= (double) nDSOeff;
-    //cout<<avgAbsMag<<endl;
+    avgAbsMag /= static_cast<float>(nDSOeff);
 }
 
 
@@ -408,7 +406,7 @@ void DSODatabase::buildIndexes()
 }
 
 
-double DSODatabase::getAverageAbsoluteMagnitude() const
+float DSODatabase::getAverageAbsoluteMagnitude() const
 {
     return avgAbsMag;
 }
