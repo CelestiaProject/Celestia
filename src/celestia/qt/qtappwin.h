@@ -42,6 +42,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     ~CelestiaAppWindow();
 
     void init(const QString& configFileName,
+              const QString& startDirectory,
               const QStringList& extrasDirectories,
               const QString& logFilename);
 

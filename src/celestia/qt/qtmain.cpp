@@ -16,23 +16,24 @@
  ***************************************************************************/
 
 
-#include <QTime>
-#include <QApplication>
-#include <QSplashScreen>
-#include <QDesktopServices>
-#include <QDir>
-#include <QPixmap>
-#include <QBitmap>
-#include "qtgettext.h"
-#include <QLocale>
-#include <QLibraryInfo>
-#include <vector>
-#include "qtappwin.h"
+#include <cstdio>
+#include <iostream>
+#include <string>
+
 #include <fmt/printf.h>
 
-using namespace std;
+#include <QApplication>
+#include <QBitmap>
+#include <QDesktopServices>
+#include <QDir>
+#include <QLibraryInfo>
+#include <QLocale>
+#include <QPixmap>
+#include <QSplashScreen>
+#include <QTime>
 
-//static const char *description = "Celestia";
+#include "qtgettext.h"
+#include "qtappwin.h"
 
 // Command line options
 static bool startFullscreen = false;
@@ -72,7 +73,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Celestia Development Team");
     QCoreApplication::setApplicationName("Celestia QT");
 
-    ParseCommandLine();
+    if (!ParseCommandLine())
+        return EXIT_FAILURE;
 
     QDir splashDir(SPLASH_DIR);
     QPixmap pixmap(splashDir.filePath("splash.png"));
@@ -103,7 +105,7 @@ int main(int argc, char *argv[])
     QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
                      &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
-    window.init(configFileName, extrasDirectories, logFilename);
+    window.init(configFileName, startDirectory, extrasDirectories, logFilename);
     window.show();
 
     splash.finish(&window);
@@ -118,8 +120,9 @@ int main(int argc, char *argv[])
 
 
 
-static void CommandLineError(const char* /*unused*/)
+static void CommandLineError(const char* message)
 {
+    fmt::print(stderr, "{}\n", message);
 }
 
 
@@ -133,13 +136,7 @@ bool ParseCommandLine()
     while (i < args.size())
     {
         bool isLastArg = (i == args.size() - 1);
-#if 0
-        if (strcmp(argv[i], "--verbose") == 0)
-        {
-            SetDebugVerbosity(1);
-        }
-        else
-#endif
+
         if (args.at(i) == "--fullscreen")
         {
             startFullscreen = true;
@@ -205,7 +202,7 @@ bool ParseCommandLine()
         }
         else
         {
-            string buf = fmt::sprintf(_("Invalid command line option '%s'"), args.at(i).toUtf8().data());
+            std::string buf = fmt::sprintf(_("Invalid command line option '%s'"), args.at(i).toUtf8().data());
             CommandLineError(buf.c_str());
             return false;
         }
