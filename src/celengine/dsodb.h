@@ -71,7 +71,7 @@ class DSODatabase
 
     static DSODatabase* read(std::istream&);
 
-    double getAverageAbsoluteMagnitude() const;
+    float getAverageAbsoluteMagnitude() const;
 
 private:
     void buildIndexes();
@@ -86,7 +86,7 @@ private:
     DSOOctree*       octreeRoot{ nullptr };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
-    double           avgAbsMag{ 0.0 };
+    float            avgAbsMag{ 0.0f };
 };
 
 
