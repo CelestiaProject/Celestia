@@ -22,6 +22,7 @@ set(QT_SOURCES
   qtcelestialbrowser.cpp
   qtcelestiaactions.cpp
   qtcolorswatchwidget.cpp
+  qtcommandline.cpp
   qtdeepskybrowser.cpp
   qtdraghandler.cpp
   qteventfinder.cpp
@@ -43,6 +44,7 @@ set(QT_HEADERS
   qtcelestialbrowser.h
   qtcelestiaactions.h
   qtcolorswatchwidget.h
+  qtcommandline.h
   qtdeepskybrowser.h
   qtdraghandler.h
   qteventfinder.h

@@ -21,6 +21,7 @@
 class QMenu;
 class QCloseEvent;
 class QDockWidget;
+struct CelestiaCommandLineOptions;
 class CelestiaGlWidget;
 class CelestialBrowser;
 class InfoPanel;
@@ -41,9 +42,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     CelestiaAppWindow(QWidget* parent = nullptr);
     ~CelestiaAppWindow();
 
-    void init(const QString& configFileName,
-              const QStringList& extrasDirectories,
-              const QString& logFilename);
+    void init(const CelestiaCommandLineOptions&);
 
     void readSettings();
     void writeSettings();
