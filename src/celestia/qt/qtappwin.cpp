@@ -56,6 +56,7 @@
 #include "qteventfinder.h"
 #include "qtsettimedialog.h"
 #include "qtgotoobjectdialog.h"
+#include "qtcommandline.h"
 #include <celestia/celestiastate.h>
 #include <celestia/scriptmenu.h>
 #include <celestia/url.h>
@@ -203,15 +204,15 @@ CelestiaAppWindow::~CelestiaAppWindow()
 }
 
 
-void CelestiaAppWindow::init(const QString& qConfigFileName,
-                             const QStringList& qExtrasDirectories,
-                             const QString& logFilename)
+void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 {
-    QDir logPath = QDir(logFilename);
+    auto logPath = QDir(options.logFilename);
     if (!logPath.makeAbsolute())
         QMessageBox::warning(0, "Celestia", _("Error getting path for log filename!"));
 
-    QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
+    QString celestia_data_dir = options.startDirectory.isEmpty()
+        ? QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"))
+        : options.startDirectory;
 
     if (celestia_data_dir.isEmpty()) {
         QString dataDir = CONFIG_DATA_DIR;
@@ -228,12 +229,12 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Get the config file name
     string configFileName;
-    if (!qConfigFileName.isEmpty())
-        configFileName = qConfigFileName.toStdString();
+    if (!options.configFileName.isEmpty())
+        configFileName = options.configFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
     vector<fs::path> extrasDirectories;
-    for (const auto& dir : qExtrasDirectories)
+    for (const auto& dir : options.extrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 
     initAppDataDirectory();
@@ -246,10 +247,16 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 
-    if (!logFilename.isEmpty())
+    if (!options.logFilename.isEmpty())
     {
         fs::path fn = logPath.absolutePath().toStdString();
         m_appCore->setLogFile(fn);
+    }
+
+    if (!options.startURL.isEmpty())
+    {
+        std::string startURL = options.startURL.toStdString();
+        m_appCore->setStartURL(startURL);
     }
 
     if (!m_appCore->initSimulation(configFileName,
@@ -384,6 +391,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Read saved window preferences
     readSettings();
+    if (options.startFullscreen)
+        switchToFullscreen();
 
     // Build the view menu
     // Add dockable panels and toolbars to the view menu
