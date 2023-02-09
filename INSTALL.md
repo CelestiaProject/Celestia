@@ -341,7 +341,9 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
 | USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
+| USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
 | USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
+| USE_GLSL_STRUCTS     | bool | OFF     | Use structs in GLSL
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)

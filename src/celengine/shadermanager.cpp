@@ -34,9 +34,6 @@ using celestia::util::GetLogger;
 
 namespace gl = celestia::gl;
 
-// GLES SL on some old Android device or with ANGLE presents a link failure with empty error when using struct.
-// GLSL on old version of Mac OS X appears to have a bug that precludes us from using structs.
-// #define USE_GLSL_STRUCTS
 #define POINT_FADE 1
 
 namespace

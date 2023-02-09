@@ -64,12 +64,18 @@ option(ENABLE_GLES          "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Defa
 option(USE_GTKGLEXT         "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
 option(USE_QT6              "Use Qt6 in Qt frontend (Default: off)" OFF)
 option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
-option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
+option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
   # Disable USE_GTKGLEXT if using OpenGL ES
   set(USE_GTKGLEXT OFF)
+endif()
+
+if(USE_GLSL_STRUCTS)
+  # GLES SL on some old Android device or with ANGLE presents a link failure with empty error when using struct.
+  # GLSL on old version of Mac OS X appears to have a bug that precludes us from using structs.
+  add_definitions(-DUSE_GLSL_STRUCTS)
 endif()
 
 if(USE_GTK3)
