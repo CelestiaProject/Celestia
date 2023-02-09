@@ -31,7 +31,10 @@ CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication& app)
     // configFileName and extrasDirectories are handled AFTER changing the
     // current directory to the startDirectory, so convert them to absolute
     // paths here.
-    options.configFileName = currentDirectory.absoluteFilePath(parser.value("conf"));
+    options.configFileName = parser.value("conf");
+    if (!options.configFileName.isEmpty())
+        options.configFileName = currentDirectory.absoluteFilePath(options.configFileName);
+
     options.extrasDirectories = parser.values("extrasdir");
     for (auto& extrasDir : options.extrasDirectories)
     {
@@ -41,10 +44,8 @@ CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication& app)
     // similarly if the startURL is not a cel: URL, it will be interpreted as
     // a path to a script, so convert that to absolute also
     options.startURL = parser.value("url");
-    if (!options.startURL.startsWith("cel:"))
-    {
+    if (!options.startURL.isEmpty() && !options.startURL.startsWith("cel:"))
         options.startURL = currentDirectory.absoluteFilePath(options.startURL);
-    }
 
     // logFilename is processed before the directory change
     options.logFilename = parser.value("log");
