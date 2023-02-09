@@ -64,6 +64,7 @@ option(ENABLE_GLES          "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Defa
 option(USE_GTKGLEXT         "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
 option(USE_QT6              "Use Qt6 in Qt frontend (Default: off)" OFF)
 option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
+option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 
 if(ENABLE_GLES)
