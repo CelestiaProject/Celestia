@@ -43,11 +43,11 @@ class VertexObject
 {
  public:
     VertexObject(const VertexObject&) = delete;
-    VertexObject(VertexObject&&) = delete;
+    VertexObject(VertexObject&&) noexcept;
     VertexObject& operator=(const VertexObject&) = delete;
-    VertexObject& operator=(VertexObject&&) = delete;
+    VertexObject& operator=(VertexObject&&) noexcept;
 
-    VertexObject() = default;
+    VertexObject();
 
     /**
      * @brief Construct a new VertexObject.
@@ -214,8 +214,8 @@ class IndexedVertexObject : public VertexObject
 public:
     IndexedVertexObject(const IndexedVertexObject&) = delete;
     IndexedVertexObject(IndexedVertexObject&&) = delete;
-    IndexedVertexObject& operator=(const IndexedVertexObject&) = delete;
-    IndexedVertexObject& operator=(IndexedVertexObject&&) = delete;
+    IndexedVertexObject& operator=(const IndexedVertexObject&) = default;
+    IndexedVertexObject& operator=(IndexedVertexObject&&) = default;
 
     IndexedVertexObject() = default;
     explicit IndexedVertexObject(GLenum indexType);
