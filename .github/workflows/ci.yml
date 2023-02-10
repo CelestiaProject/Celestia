@@ -95,6 +95,7 @@ jobs:
           ${{github.workspace}}/build/src/**/*.dll
           ${{github.workspace}}/build/po/**/*.gmo
           ${{github.workspace}}/build/tools/**/*.exe
+          ${{github.workspace}}/shaders/*.glsl
 
   build-posix:
     name: "${{matrix.config.os}} with ${{matrix.qtversion}}"
