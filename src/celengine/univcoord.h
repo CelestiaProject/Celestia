@@ -16,7 +16,8 @@
 
 #include <Eigen/Core>
 
-#include <celutil/bigfix.h>
+#include <celutil/r128.h>
+#include <celutil/r128util.h>
 
 #include "astro.h"
 
@@ -24,12 +25,10 @@
 class UniversalCoord
 {
  public:
-    UniversalCoord()
-    {
-    }
+    UniversalCoord() = default;
 
-    UniversalCoord(BigFix _x, BigFix _y, BigFix _z) :
-    x(_x), y(_y), z(_z)
+    UniversalCoord(R128 _x, R128 _y, R128 _z) :
+        x(_x), y(_y), z(_z)
     {
     }
 
@@ -85,9 +84,9 @@ class UniversalCoord
     Eigen::Vector3f offsetFromLy(const Eigen::Vector3f& v) const
     {
         Eigen::Vector3f vUly = v * 1.0e6f;
-        Eigen::Vector3f offsetUly(static_cast<float>(x - BigFix(vUly.x())),
-                                  static_cast<float>(y - BigFix(vUly.y())),
-                                  static_cast<float>(z - BigFix(vUly.z())));
+        Eigen::Vector3f offsetUly(static_cast<float>(static_cast<double>(x - R128(vUly.x()))),
+                                  static_cast<float>(static_cast<double>(y - R128(vUly.y()))),
+                                  static_cast<float>(static_cast<double>(z - R128(vUly.z()))));
         return offsetUly * 1.0e-6f;
     }
 
@@ -162,11 +161,15 @@ class UniversalCoord
 
     bool isOutOfBounds() const
     {
-        return x.isOutOfBounds() || y.isOutOfBounds() || z.isOutOfBounds();
+        using celestia::util::isOutOfBounds;
+        return isOutOfBounds(x) || isOutOfBounds(y) || isOutOfBounds(z);
     }
 
 public:
-    BigFix x, y, z;
+    R128 x { 0 };
+    R128 y { 0 };
+    R128 z { 0 };
+
 };
 
 inline UniversalCoord operator+(const UniversalCoord& uc0, const UniversalCoord& uc1)

@@ -326,7 +326,7 @@ jobs:
           -Dsonar.organization=celestiaproject                          \
           -Dsonar.projectKey=CelestiaProject_Celestia                   \
           -Dsonar.sources=src/                                          \
-          -Dsonar.exclusions=src/celestia/win32/**,src/celestia/win32/gtk/**,src/celestia/glut/** \
+          -Dsonar.exclusions=src/celestia/win32/**,src/celestia/gtk/**,src/celestia/glut/**,src/celutil/r128.h \
           -Dsonar.test.exclusions=test/**                               \
           -Dsonar.tests=test/
       env:

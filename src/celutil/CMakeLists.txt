@@ -1,6 +1,4 @@
 set(CELUTIL_SOURCES
-  bigfix.cpp
-  bigfix.h
   binaryread.h
   binarywrite.h
   blockarray.h
@@ -17,6 +15,9 @@ set(CELUTIL_SOURCES
   greek.h
   logger.cpp
   logger.h
+  r128.h
+  r128util.cpp
+  r128util.h
   reshandle.h
   resmanager.h
   stringutils.cpp

@@ -114,9 +114,9 @@ void WriteFavoritesList(FavoritesList& favorites, std::ostream& out)
         // store position, but we need to maintain compatibility with older version
         // of Celestia (for now...)
         Eigen::Vector3d baseUly((double) fav->position.x, (double) fav->position.y, (double) fav->position.z);
-        Eigen::Vector3d offset((double) (fav->position.x - (BigFix) baseUly.x()),
-                               (double) (fav->position.y - (BigFix) baseUly.y()),
-                               (double) (fav->position.z - (BigFix) baseUly.z()));
+        Eigen::Vector3d offset((double) (fav->position.x - R128(baseUly.x())),
+                               (double) (fav->position.y - R128(baseUly.y())),
+                               (double) (fav->position.z - R128(baseUly.z())));
         Eigen::Vector3d base = baseUly * 1e-6; // Base is in micro-light years
 
         out << '"' << fav->name << "\" {\n";

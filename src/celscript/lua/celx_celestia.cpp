@@ -1809,17 +1809,17 @@ static int celestia_newposition(lua_State* l)
     Celx_CheckArgs(l, 4, 4, "Expected 3 arguments for celestia:newposition");
     // for error checking only:
     this_celestia(l);
-    BigFix components[3];
+    R128 components[3];
     for (int i = 0; i < 3; i++)
     {
         if (lua_isnumber(l, i+2))
         {
             double v = lua_tonumber(l, i+2);
-            components[i] = BigFix(v);
+            components[i] = R128(v);
         }
         else if (lua_isstring(l, i+2))
         {
-            components[i] = BigFix::fromBase64(lua_tostring(l, i+2));
+            components[i] = celestia::util::DecodeFromBase64(lua_tostring(l, i+2));
         }
         else
         {
