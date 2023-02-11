@@ -246,6 +246,7 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     m_appCore->setAlerter(alerter);
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
+    QGuiApplication::setDesktopFileName("celestia-qt");
 
     if (!options.logFilename.isEmpty())
     {
