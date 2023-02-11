@@ -2062,7 +2062,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.hasShadowMap())
     {
-        source += "cosNormalLightDir = dot(in_Normal, lights[0].direction);\n";
+        source += "cosNormalLightDir = dot(in_Normal, " + LightProperty(0, "direction") + ");\n";
     }
 
     for (unsigned int i = 0; i < props.nLights; i++)
