@@ -94,11 +94,11 @@ static int position_set(lua_State* l)
     string key = celx.safeGetString(2, AllErrors, "Invalid key in position-access");
     double value = celx.safeGetNumber(3, AllErrors, "Position components must be numbers");
     if (key == "x")
-        uc->x = BigFix(value);
+        uc->x = R128(value);
     else if (key == "y")
-        uc->y = BigFix(value);
+        uc->y = R128(value);
     else if (key == "z")
-        uc->z = BigFix(value);
+        uc->z = R128(value);
     else
     {
         celx.doError("Invalid key in position-access");

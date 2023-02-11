@@ -22,6 +22,8 @@
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
+#include <celcompat/charconv.h>
+#include <celutil/r128util.h>
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/render.h>
@@ -35,6 +37,8 @@
 using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
+using celestia::util::DecodeFromBase64;
+using celestia::util::EncodeAsBase64;
 
 namespace
 {
@@ -172,9 +176,9 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     // observer position
     fmt::print(u, "?x={}&y={}&z={}",
-               m_state.m_observerPosition.x.toBase64(),
-               m_state.m_observerPosition.y.toBase64(),
-               m_state.m_observerPosition.z.toBase64());
+                     EncodeAsBase64(m_state.m_observerPosition.x),
+                     EncodeAsBase64(m_state.m_observerPosition.y),
+                     EncodeAsBase64(m_state.m_observerPosition.z));
 
     // observer orientation
     fmt::print(u, "&ow={}&ox={}&oy={}&oz={}",
@@ -578,9 +582,9 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
 
     if (params.count("x") == 0 || params.count("y") == 0 || params.count("z") == 0)
         return false;
-    m_state.m_observerPosition = UniversalCoord(BigFix::fromBase64(params["x"]),
-                                                BigFix::fromBase64(params["y"]),
-                                                BigFix::fromBase64(params["z"]));
+    m_state.m_observerPosition = UniversalCoord(DecodeFromBase64(params["x"]),
+                                                DecodeFromBase64(params["y"]),
+                                                DecodeFromBase64(params["z"]));
 
     float ow, ox, oy, oz;
     if (to_number(params["ow"], ow) &&

@@ -33,6 +33,10 @@ Copyright: 2009 Thomas Guest <tag@wordaligned.org>
            2021 Celestia Development Team <team@celestia.space>
 License: public-domain
 
+Files: src/celutil/r128.h
+Copyright: 2017-2022 Alan Hickman <f.alan.hickman@gmail.com>
+License: public-domain
+
 Files: fonts/DejaVuSans.ttf fonts/DejaVuSans-Bold.ttf
 Copyright: Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved.
  Bitstream Vera is a trademark of Bitstream, Inc.

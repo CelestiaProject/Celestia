@@ -4,7 +4,7 @@
 //
 // Because of the vastness of interstellar space, floats and doubles aren't
 // sufficient when we need to represent distances to millimeter accuracy.
-// BigFix is a high precision (128 bit) fixed point type used to represent
+// R128 is a high precision (128 bit) fixed point type used to represent
 // the position of an observer in space.  However, it's not practical to use
 // high-precision numbers for the positions of everything.  To get around
 // this problem, object positions are stored at two different scales--light
