@@ -235,6 +235,8 @@ jobs:
                             SDL2-devel \
                             lua-devel \
                             gtk3-devel \
+                            qt5-qtbase-devel \
+                            qt5-qttools \
                             gettext-devel \
                             cmake \
                             ninja-build \
@@ -256,7 +258,7 @@ jobs:
               -DENABLE_SDL=ON                 \
               -DENABLE_GTK=ON                 \
               -DUSE_GTK3=ON                   \
-              -DENABLE_QT=OFF                 \
+              -DENABLE_QT=ON                  \
               -DENABLE_FFMPEG=OFF             \
               -DENABLE_MINIAUDIO=ON
       env:
