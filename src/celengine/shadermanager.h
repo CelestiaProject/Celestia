@@ -299,13 +299,20 @@ class CelestiaGLProgram
 class ShaderManager
 {
  public:
+    struct GeomShaderParams
+    {
+        int inputType;
+        int outType;
+        int nOutVertices;
+    };
+
     ShaderManager();
     ~ShaderManager();
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
     CelestiaGLProgram* getShader(const std::string&);
     CelestiaGLProgram* getShader(const std::string&, const std::string&, const std::string&);
-    CelestiaGLProgram* getShaderGL3(const std::string&);
+    CelestiaGLProgram* getShaderGL3(const std::string&, const GeomShaderParams* = nullptr);
     CelestiaGLProgram* getShaderGL3(const std::string&, const std::string&, const std::string&, const std::string&);
 
     void setFisheyeEnabled(bool enabled);
@@ -314,7 +321,7 @@ class ShaderManager
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
     CelestiaGLProgram* buildProgram(const std::string&, const std::string&);
     CelestiaGLProgram* buildProgramGL3(const std::string&, const std::string&);
-    CelestiaGLProgram* buildProgramGL3(const std::string&, const std::string&, const std::string&);
+    CelestiaGLProgram* buildProgramGL3(const std::string&, const std::string&, const std::string&, const GeomShaderParams* = nullptr);
 
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);

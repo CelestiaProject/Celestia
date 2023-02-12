@@ -1,5 +1,3 @@
-layout(points) in;
-layout(triangle_strip, max_vertices = 4) out;
 
 uniform mat4 m;
 uniform mat3 viewMat;

@@ -1526,6 +1526,42 @@ CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
     return ShaderStatus_OK;
 }
 
+const char *
+InPrimitive(GLint prim)
+{
+    switch (prim)
+    {
+    case GL_POINTS:
+        return "points";
+    case GL_LINES:
+        return "lines";
+    case GL_LINES_ADJACENCY:
+        return "lines_adjacency";
+    case GL_TRIANGLES:
+        return "triangles";
+    case GL_TRIANGLES_ADJACENCY:
+        return "triangles_adjacency";
+    default:
+        return "invalid";
+    }
+}
+
+const char *
+OutPrimitive(GLint prim)
+{
+    switch (prim)
+    {
+    case GL_POINTS:
+        return "points";
+    case GL_LINE_STRIP:
+        return "line_strip";
+    case GL_TRIANGLE_STRIP:
+        return "triangle_strip";
+    default:
+        return "invalid";
+    }
+}
+
 } // end unnamed namespace
 
 bool
@@ -1815,7 +1851,7 @@ ShaderManager::getShader(const std::string& name)
 }
 
 CelestiaGLProgram*
-ShaderManager::getShaderGL3(const std::string& name)
+ShaderManager::getShaderGL3(const std::string& name, const GeomShaderParams* params)
 {
     if (auto iter = staticShaders.find(name); iter != staticShaders.end())
     {
@@ -1840,7 +1876,7 @@ ShaderManager::getShaderGL3(const std::string& name)
     if (auto gsName = dir / fmt::format("{}_geom.glsl", name); fs::exists(gsName))
     {
         if (auto gs = ReadShaderFile(gsName); gs.has_value())
-            prog = buildProgramGL3(*vs, *gs, *fs);
+            prog = buildProgramGL3(*vs, *gs, *fs, params);
         else
             return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
@@ -3488,12 +3524,22 @@ ShaderManager::buildProgramGL3(const std::string& vs, const std::string& fs)
 }
 
 CelestiaGLProgram*
-ShaderManager::buildProgramGL3(const std::string& vs, const std::string& gs, const std::string& fs)
+ShaderManager::buildProgramGL3(const std::string& vs, const std::string& gs, const std::string& fs, const GeomShaderParams* params)
 {
+    std::string layout;
+    if (params != nullptr)
+    {
+        layout = fmt::format("layout({}) in;\nlayout({}, max_vertices = {}) out;\n",
+                             InPrimitive(params->inputType),
+                             OutPrimitive(params->outType),
+                             params->nOutVertices
+        );
+    }
+
     GLProgram* prog = nullptr;
     GLShaderStatus status;
     auto _vs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, vs);
-    auto _gs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, GeomHeaderGL3, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, gs);
+    auto _gs = fmt::format("{}{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, layout, GeomHeaderGL3, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, gs);
     auto _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);

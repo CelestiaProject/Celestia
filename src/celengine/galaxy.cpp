@@ -771,7 +771,8 @@ void Galaxy::renderGL3(const Eigen::Vector3f& offset,
                        const Matrices& ms,
                        Renderer* renderer) const
 {
-    auto *prog = renderer->getShaderManager().getShaderGL3("galaxy150");
+    ShaderManager::GeomShaderParams params = {GL_POINTS, GL_TRIANGLE_STRIP, 4};
+    auto *prog = renderer->getShaderManager().getShaderGL3("galaxy150", &params);
     if (prog == nullptr)
         return;
 
