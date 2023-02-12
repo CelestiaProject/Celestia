@@ -768,7 +768,7 @@ static void renderRingSystem(GLuint *vboId,
             vertex.pos[1] = 0.0f;
             vertex.pos[2] = s * innerRadius;
             vertex.tex[0] = 0;
-            vertex.tex[1] = (i & 1) ^ 1; // even?(i) ? 0 : 1;
+            vertex.tex[1] = 0;
             ringCoord.push_back(vertex);
 
             // outer point
@@ -776,7 +776,7 @@ static void renderRingSystem(GLuint *vboId,
             // vertex.pos[1] = 0.0f;
             vertex.pos[2] = s * outerRadius;
             vertex.tex[0] = 1;
-            // vertex.tex[1] = (i & 1) ^ 1;
+            // vertex.tex[1] = 0;
             ringCoord.push_back(vertex);
         }
 
