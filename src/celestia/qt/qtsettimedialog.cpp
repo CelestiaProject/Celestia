@@ -24,13 +24,24 @@
 #include <QGridLayout>
 #include "qtsettimedialog.h"
 
+namespace
+{
 #ifdef _WIN32
-static const double minLocalTime = 2440587.5; // 1970 Jan 1 00:00:00
+constexpr double minLocalTime = 2440587.5; // 1970 Jan 1 00:00:00
 #else
-static const double minLocalTime = 2415733.0; // 1901 Dec 14 12:00:00
+constexpr double minLocalTime = 2415733.0; // 1901 Dec 14 12:00:00
 #endif
-static const double maxLocalTime = 2465442.0; // 2038 Jan 18 12:00:00
+constexpr double maxLocalTime = 2465442.0; // 2038 Jan 18 12:00:00
 
+template<typename TControl, typename TValue>
+void setValueNoSignal(TControl* target, TValue value)
+{
+    target->blockSignals(true);
+    target->setValue(value);
+    target->blockSignals(false);
+}
+
+} // end unnamed namespace
 
 SetTimeDialog::SetTimeDialog(double currentTimeTDB,
                              QWidget* parent,
@@ -147,10 +158,6 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-    QPushButton* setTimeButton = new QPushButton(_("Set time"), buttonBox);
-    buttonBox->addButton(setTimeButton, QDialogButtonBox::ApplyRole);
-    connect(setTimeButton, SIGNAL(clicked()), this, SLOT(slotSetSimulationTime()));
-
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
@@ -176,13 +183,13 @@ void SetTimeDialog::slotSetDateTime()
 
     astro::Date date = astro::TDBtoUTC(tdb);
 
-    yearSpin->setValue(date.year);
-    monthSpin->setValue(date.month);
-    daySpin->setValue(date.day);
+    setValueNoSignal(yearSpin, date.year);
+    setValueNoSignal(monthSpin, date.month);
+    setValueNoSignal(daySpin, date.day);
 
-    hourSpin->setValue(date.hour);
-    minSpin->setValue(date.minute);
-    secSpin->setValue((int)date.seconds);
+    setValueNoSignal(hourSpin, date.hour);
+    setValueNoSignal(minSpin, date.minute);
+    setValueNoSignal(secSpin, static_cast<int>(date.seconds));
 }
 
 void SetTimeDialog::slotDateTimeChanged()
@@ -205,7 +212,7 @@ void SetTimeDialog::slotDateTimeChanged()
 
     tdb -= tzb / 86400.0;
     double jdUTC = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
-    julianDateSpin->setValue(jdUTC);
+    setValueNoSignal(julianDateSpin, jdUTC);
 
     if (jdUTC <= minLocalTime || jdUTC >= maxLocalTime)
     {
