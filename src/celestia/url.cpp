@@ -156,7 +156,7 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     // ShowTintedIllumination == 0x04000000, the last 1.6 parameter
     // we keep only old parameters and clear new ones
-    int rf = static_cast<int>(m_state.m_renderFlags & 0x04ffffffull);
+    int rf = static_cast<int>(m_state.m_renderFlags & UINT64_C(0x07ffffff));
     // 1.6 uses ShowPlanets to control display of all types of solar
     // system objects. So set it if any one is displayed.
     if ((m_state.m_renderFlags & Renderer::ShowSolarSystemObjects) != 0)
@@ -602,7 +602,7 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
         if (hasNewRenderFlags)
         {
 
-            oldFlags = static_cast<uint64_t>(rf & 0x04ffffff);
+            oldFlags = static_cast<uint64_t>(rf & 0x07ffffff);
             // get actual Renderer::ShowPlanets value in 27th bit
             // clear ShowPlanets if 27th bit is unset
             if ((rf & (1<<27)) == 0)
