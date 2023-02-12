@@ -8,9 +8,9 @@ namespace celestia::util
 
 /*! Returns aligned position for type T inside memory region.
  *  Designed for usage with functions which allocate unaligned
- *  memory regions.
+ *  memory regions, as such void* is the appropriate type.
  */
-template<typename T> T* aligned_addr(void* addr)
+template<typename T> T* aligned_addr(void* addr) //NOSONAR
 {
     // alignof(T) is guaranteed to be a power of two
     constexpr auto align_one = static_cast<std::uintptr_t>(alignof(T) - 1);
