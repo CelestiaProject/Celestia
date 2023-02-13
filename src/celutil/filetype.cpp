@@ -48,9 +48,11 @@ constexpr std::string_view ContentWarpMeshExt = ".map"sv;
 
 } // end unnamed namespace
 
-ContentType DetermineFileType(const fs::path& filename)
+ContentType DetermineFileType(const fs::path& filename, bool isExtension)
 {
-    const std::string ext = filename.extension().string();
+    const std::string ext = isExtension
+        ? filename.string()
+        : filename.extension().string();
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||
