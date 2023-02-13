@@ -76,7 +76,7 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
     tileExt = fmt::format(".{:s}", _tileType);
     populateTileTree();
 
-    if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
+    if (DetermineFileType(tileExt) == ContentType::DXT5NormalMap)
         setFormatOptions(Texture::DXT5NormalMap);
 }
 

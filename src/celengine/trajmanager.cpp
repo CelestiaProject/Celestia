@@ -53,7 +53,7 @@ TrajectoryInfo::load(const ResourceKey& key) const
     // TODO use unique_ptr here and replace the use of .release()
     std::unique_ptr<celestia::ephem::Orbit> sampTrajectory = nullptr;
 
-    if (filetype == Content_CelestiaXYZVTrajectory)
+    if (filetype == ContentType::CelestiaXYZVTrajectory)
     {
         switch (key.precision)
         {
@@ -68,7 +68,7 @@ TrajectoryInfo::load(const ResourceKey& key) const
             break;
         }
     }
-    else if (filetype == Content_CelestiaXYZVBinary)
+    else if (filetype == ContentType::CelestiaXYZVBinary)
     {
         switch (key.precision)
         {

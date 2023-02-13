@@ -7,42 +7,39 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _FILETYPE_H_
-#define _FILETYPE_H_
+#pragma once
 
 #include <string>
 #include <celcompat/filesystem.h>
 
-enum ContentType
+enum class ContentType
 {
-    Content_JPEG                   = 1,
-    Content_BMP                    = 2,
-    Content_GIF                    = 3,
-    Content_PNG                    = 4,
-    Content_Targa                  = 5,
-    Content_CelestiaTexture        = 6,
-    Content_3DStudio               = 7,
-    Content_CelestiaMesh           = 8,
-    Content_MKV                    = 9,
-    Content_CelestiaCatalog        = 10,
-    Content_DDS                    = 11,
-    Content_CelestiaStarCatalog    = 12,
-    Content_CelestiaDeepSkyCatalog = 13,
-    Content_CelestiaScript         = 14,
-    Content_CelestiaLegacyScript   = 15,
-    Content_CelestiaModel          = 16,
-    Content_DXT5NormalMap          = 17,
-    Content_CelestiaXYZTrajectory  = 18,
-    Content_CelestiaXYZVTrajectory = 19,
- // Content_CelestiaParticleSystem = 20,
-    Content_WarpMesh               = 21,
-    Content_CelestiaXYZVBinary     = 22,
+    JPEG                   = 1,
+    BMP                    = 2,
+    GIF                    = 3,
+    PNG                    = 4,
+    Targa                  = 5,
+    CelestiaTexture        = 6,
+    _3DStudio              = 7,
+    CelestiaMesh           = 8,
+    MKV                    = 9,
+    CelestiaCatalog        = 10,
+    DDS                    = 11,
+    CelestiaStarCatalog    = 12,
+    CelestiaDeepSkyCatalog = 13,
+    CelestiaScript         = 14,
+    CelestiaLegacyScript   = 15,
+    CelestiaModel          = 16,
+    DXT5NormalMap          = 17,
+    CelestiaXYZTrajectory  = 18,
+    CelestiaXYZVTrajectory = 19,
+ // CelestiaParticleSystem = 20,
+    WarpMesh               = 21,
+    CelestiaXYZVBinary     = 22,
 #ifdef USE_LIBAVIF
-    Content_AVIF                   = 23,
+    AVIF                   = 23,
 #endif
-    Content_Unknown                = -1,
+    Unknown                = -1,
 };
 
 ContentType DetermineFileType(const fs::path& filename);
-
-#endif // _FILETYPE_H_

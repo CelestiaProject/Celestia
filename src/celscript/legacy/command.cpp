@@ -666,14 +666,14 @@ CommandCapture::CommandCapture(std::string _type,
 
 void CommandCapture::process(ExecutionEnvironment& env)
 {
-    ContentType _type = Content_Unknown;
+    ContentType _type = ContentType::Unknown;
     if (type == "jpeg" || type == "jpg")
-        _type = Content_JPEG;
+        _type = ContentType::JPEG;
     else if (type == "png")
-        _type = Content_PNG;
+        _type = ContentType::PNG;
 #ifdef USE_LIBAVIF
     else if (type == "avif")
-        _type = Content_AVIF;
+        _type = ContentType::AVIF;
 #endif
     env.getCelestiaCore()->saveScreenShot(filename, _type);
 }

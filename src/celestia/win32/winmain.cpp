@@ -2714,7 +2714,7 @@ static void HandleCaptureImage(HWND hWnd)
         }
 
         ContentType type = DetermineFileType(Ofn.lpstrFile);
-        if (type != Content_JPEG && type != Content_PNG)
+        if (type != ContentType::JPEG && type != ContentType::PNG)
         {
             MessageBox(hWnd,
                        _("Please use a name ending in '.jpg' or '.png'."),
@@ -2813,7 +2813,7 @@ static void HandleCaptureMovie(HWND hWnd)
         {
             switch (DetermineFileType(Ofn.lpstrFile))
             {
-            case Content_MKV:
+            case ContentType::MKV:
                 nFileType = 1;
                 break;
             default:
