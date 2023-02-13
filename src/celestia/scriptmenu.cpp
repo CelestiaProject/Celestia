@@ -26,10 +26,10 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
 {
     auto type = DetermineFileType(p);
 #ifndef CELX
-    if (type != Content_CelestiaLegacyScript)
+    if (type != ContentType::CelestiaLegacyScript)
 #else
-    if (type != Content_CelestiaScript &&
-        type != Content_CelestiaLegacyScript)
+    if (type != ContentType::CelestiaScript &&
+        type != ContentType::CelestiaLegacyScript)
 #endif
         return;
 

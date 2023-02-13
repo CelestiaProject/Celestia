@@ -445,13 +445,13 @@ GeometryInfo::load(const ResourceKey& key) const
 
     switch (ContentType fileType = DetermineFileType(key.resolvedPath); fileType)
     {
-    case Content_3DStudio:
+    case ContentType::_3DStudio:
         model = Load3DSModel(key, path);
         break;
-    case Content_CelestiaModel:
+    case ContentType::CelestiaModel:
         model = LoadCMODModel(key, path);
         break;
-    case Content_CelestiaMesh:
+    case ContentType::CelestiaMesh:
         model = LoadCMSModel(key);
         break;
     default:

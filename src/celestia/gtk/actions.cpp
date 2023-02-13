@@ -1091,7 +1091,7 @@ static void openScript(const char* filename, AppData* app)
 static void captureImage(const char* filename, AppData* app)
 {
     ContentType type = DetermineFileType(filename);
-    if (type != Content_JPEG && type != Content_PNG)
+    if (type != ContentType::JPEG && type != ContentType::PNG)
     {
         GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,

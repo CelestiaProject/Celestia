@@ -309,22 +309,22 @@ std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename)
 
     switch (type)
     {
-    case Content_JPEG:
+    case ContentType::JPEG:
         img = LoadJPEGImage(filename);
         break;
-    case Content_BMP:
+    case ContentType::BMP:
         img = LoadBMPImage(filename);
         break;
-    case Content_PNG:
+    case ContentType::PNG:
         img = LoadPNGImage(filename);
         break;
 #ifdef USE_LIBAVIF
-    case Content_AVIF:
+    case ContentType::AVIF:
         img = LoadAVIFImage(filename);
         break;
 #endif
-    case Content_DDS:
-    case Content_DXT5NormalMap:
+    case ContentType::DDS:
+    case ContentType::DXT5NormalMap:
         img = LoadDDSImage(filename);
         break;
     default:

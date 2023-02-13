@@ -925,7 +925,7 @@ LoadTextureFromFile(const fs::path& filename,
     // Check for a Celestia texture--these need to be handled specially.
     ContentType contentType = DetermineFileType(filename);
 
-    if (contentType == Content_CelestiaTexture)
+    if (contentType == ContentType::CelestiaTexture)
         return LoadVirtualTexture(filename);
 
     // All other texture types are handled by first loading an image, then
@@ -936,7 +936,7 @@ LoadTextureFromFile(const fs::path& filename,
 
     std::unique_ptr<Texture> tex = CreateTextureFromImage(*img, addressMode, mipMode);
 
-    if (contentType == Content_DXT5NormalMap)
+    if (contentType == ContentType::DXT5NormalMap)
     {
         // If the texture came from a .dxt5nm file then mark it as a dxt5
         // compressed normal map. There's no separate OpenGL format for dxt5

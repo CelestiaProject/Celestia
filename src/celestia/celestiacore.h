@@ -394,7 +394,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelFormat& format) const;
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::PixelFormat format) const;
-    bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
+    bool saveScreenShot(const fs::path&, ContentType = ContentType::Unknown) const;
 
 #ifdef USE_MINIAUDIO
     bool isPlayingAudio(int channel) const;

@@ -3673,7 +3673,7 @@ class SolarSystemLoader
 
     void process(const fs::path& filepath)
     {
-        if (DetermineFileType(filepath) != Content_CelestiaCatalog)
+        if (DetermineFileType(filepath) != ContentType::CelestiaCatalog)
             return;
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
@@ -3857,7 +3857,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         vector<fs::path> entries;
         DeepSkyLoader loader(dsoDB, "deep sky object",
-                             Content_CelestiaDeepSkyCatalog,
+                             ContentType::CelestiaDeepSkyCatalog,
                              progressNotifier,
                              config->skipExtras);
         for (const auto& dir : config->extrasDirs)
@@ -4219,7 +4219,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         vector<fs::path> entries;
         StarLoader loader(starDB,
                           "star",
-                          Content_CelestiaStarCatalog,
+                          ContentType::CelestiaStarCatalog,
                           progressNotifier,
                           config->skipExtras);
         for (const auto& dir : config->extrasDirs)
@@ -4806,10 +4806,10 @@ bool CelestiaCore::captureImage(std::uint8_t* buffer,
 
 bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) const
 {
-    if (type == Content_Unknown)
+    if (type == ContentType::Unknown)
         type = DetermineFileType(filename);
 
-    if (type != Content_JPEG && type != Content_PNG)
+    if (type != ContentType::JPEG && type != ContentType::PNG)
     {
         GetLogger()->error(_("Unsupported image type: {}!\n"), filename);
         return false;
@@ -4824,9 +4824,9 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
 
     switch (type)
     {
-    case Content_JPEG:
+    case ContentType::JPEG:
         return SaveJPEGImage(filename, image);
-    case Content_PNG:
+    case ContentType::PNG:
         return SavePNGImage(filename, image);
     default:
         break;

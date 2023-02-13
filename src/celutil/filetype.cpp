@@ -7,89 +7,97 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "stringutils.h"
 #include "filetype.h"
 
-using namespace std;
+#include <string>
+#include <string_view>
 
+#include "stringutils.h"
 
-static const char JPEGExt[] = ".jpeg";
-static const char JPGExt[] = ".jpg";
-static const char JFIFExt[] = ".jif";
-static const char BMPExt[] = ".bmp";
-static const char TargaExt[] = ".tga";
-static const char PNGExt[] = ".png";
+using namespace std::string_view_literals;
+
+namespace
+{
+
+constexpr std::string_view JPEGExt = ".jpeg"sv;
+constexpr std::string_view JPGExt = ".jpg"sv;
+constexpr std::string_view JFIFExt = ".jif"sv;
+constexpr std::string_view BMPExt = ".bmp"sv;
+constexpr std::string_view TargaExt = ".tga"sv;
+constexpr std::string_view PNGExt = ".png"sv;
 #ifdef USE_LIBAVIF
-static const char AVIFExt[] = ".avif";
+constexpr std::string_view AVIFExt = ".avif"sv;
 #endif
-static const char ThreeDSExt[] = ".3ds";
-static const char CelestiaTextureExt[] = ".ctx";
-static const char CelestiaMeshExt[] = ".cms";
-static const char CelestiaCatalogExt[] = ".ssc";
-static const char CelestiaStarCatalogExt[] = ".stc";
-static const char CelestiaDeepSkyCatalogExt[] = ".dsc";
-static const char MKVExt[] = ".mkv";
-static const char DDSExt[] = ".dds";
-static const char DXT5NormalMapExt[] = ".dxt5nm";
-static const char CelestiaLegacyScriptExt[] = ".cel";
-static const char CelestiaScriptExt[] = ".clx";
-static const char CelestiaScriptExt2[] = ".celx";
-static const char CelestiaModelExt[] = ".cmod";
-static const char CelestiaXYZTrajectoryExt[] = ".xyz";
-static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
-static const char ContentXYZVBinaryExt[] = ".xyzvbin";
-static const char ContentWarpMeshExt[] = ".map";
+constexpr std::string_view ThreeDSExt = ".3ds"sv;
+constexpr std::string_view CelestiaTextureExt = ".ctx"sv;
+constexpr std::string_view CelestiaMeshExt = ".cms"sv;
+constexpr std::string_view CelestiaCatalogExt = ".ssc"sv;
+constexpr std::string_view CelestiaStarCatalogExt = ".stc"sv;
+constexpr std::string_view CelestiaDeepSkyCatalogExt = ".dsc"sv;
+constexpr std::string_view MKVExt = ".mkv"sv;
+constexpr std::string_view DDSExt = ".dds"sv;
+constexpr std::string_view DXT5NormalMapExt = ".dxt5nm"sv;
+constexpr std::string_view CelestiaLegacyScriptExt = ".cel"sv;
+constexpr std::string_view CelestiaScriptExt = ".clx"sv;
+constexpr std::string_view CelestiaScriptExt2 = ".celx"sv;
+constexpr std::string_view CelestiaModelExt = ".cmod"sv;
+constexpr std::string_view CelestiaXYZTrajectoryExt = ".xyz"sv;
+constexpr std::string_view CelestiaXYZVTrajectoryExt = ".xyzv"sv;
+constexpr std::string_view ContentXYZVBinaryExt = ".xyzvbin"sv;
+constexpr std::string_view ContentWarpMeshExt = ".map"sv;
+
+} // end unnamed namespace
 
 ContentType DetermineFileType(const fs::path& filename)
 {
-    const string ext = filename.extension().string();
+    const std::string ext = filename.extension().string();
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||
         compareIgnoringCase(JFIFExt, ext) == 0)
-        return Content_JPEG;
+        return ContentType::JPEG;
     if (compareIgnoringCase(BMPExt, ext) == 0)
-        return Content_BMP;
+        return ContentType::BMP;
     if (compareIgnoringCase(TargaExt, ext) == 0)
-        return Content_Targa;
+        return ContentType::Targa;
     if (compareIgnoringCase(PNGExt, ext) == 0)
-        return Content_PNG;
+        return ContentType::PNG;
 #ifdef USE_LIBAVIF
     if (compareIgnoringCase(AVIFExt, ext) == 0)
-        return Content_AVIF;
+        return ContentType::AVIF;
 #endif
     if (compareIgnoringCase(ThreeDSExt, ext) == 0)
-        return Content_3DStudio;
+        return ContentType::_3DStudio;
     if (compareIgnoringCase(CelestiaTextureExt, ext) == 0)
-        return Content_CelestiaTexture;
+        return ContentType::CelestiaTexture;
     if (compareIgnoringCase(CelestiaMeshExt, ext) == 0)
-        return Content_CelestiaMesh;
+        return ContentType::CelestiaMesh;
     if (compareIgnoringCase(CelestiaCatalogExt, ext) == 0)
-        return Content_CelestiaCatalog;
+        return ContentType::CelestiaCatalog;
     if (compareIgnoringCase(CelestiaStarCatalogExt, ext) == 0)
-        return Content_CelestiaStarCatalog;
+        return ContentType::CelestiaStarCatalog;
     if (compareIgnoringCase(CelestiaDeepSkyCatalogExt, ext) == 0)
-        return Content_CelestiaDeepSkyCatalog;
+        return ContentType::CelestiaDeepSkyCatalog;
     if (compareIgnoringCase(MKVExt, ext) == 0)
-        return Content_MKV;
+        return ContentType::MKV;
     if (compareIgnoringCase(DDSExt, ext) == 0)
-        return Content_DDS;
+        return ContentType::DDS;
     if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
-        return Content_CelestiaLegacyScript;
+        return ContentType::CelestiaLegacyScript;
     if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
         compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
-        return Content_CelestiaScript;
+        return ContentType::CelestiaScript;
     if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
-        return Content_CelestiaModel;
+        return ContentType::CelestiaModel;
     if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
-        return Content_DXT5NormalMap;
+        return ContentType::DXT5NormalMap;
     if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
-        return Content_CelestiaXYZTrajectory;
+        return ContentType::CelestiaXYZTrajectory;
     if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
-        return Content_CelestiaXYZVTrajectory;
+        return ContentType::CelestiaXYZVTrajectory;
     if (compareIgnoringCase(ContentWarpMeshExt, ext) == 0)
-        return Content_WarpMesh;
+        return ContentType::WarpMesh;
     if (compareIgnoringCase(ContentXYZVBinaryExt, ext) == 0)
-        return Content_CelestiaXYZVBinary;
-    return Content_Unknown;
+        return ContentType::CelestiaXYZVBinary;
+    return ContentType::Unknown;
 }
