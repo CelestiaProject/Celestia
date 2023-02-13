@@ -753,8 +753,22 @@ void PreferencesDialog::on_highResolutionButton_clicked()
 void PreferencesDialog::on_ambientLightSlider_valueChanged(int value)
 {
     Renderer* renderer = appCore->getRenderer();
-    float ambient = ((float) value) / 100.0f;
+    float ambient = static_cast<float>(value) / 100.0f;
     renderer->setAmbientLightLevel(ambient);
+    ui.ambientLightSpinBox->blockSignals(true);
+    ui.ambientLightSpinBox->setValue(value);
+    ui.ambientLightSpinBox->blockSignals(false);
+}
+
+
+void PreferencesDialog::on_ambientLightSpinBox_valueChanged(int value)
+{
+    Renderer* renderer = appCore->getRenderer();
+    float ambient = static_cast<float>(value) / 100.0f;
+    renderer->setAmbientLightLevel(ambient);
+    ui.ambientLightSlider->blockSignals(true);
+    ui.ambientLightSlider->setValue(value);
+    ui.ambientLightSlider->blockSignals(false);
 }
 
 

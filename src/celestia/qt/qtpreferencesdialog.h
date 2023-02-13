@@ -109,6 +109,7 @@ private slots:
     void on_highResolutionButton_clicked();
 
     void on_ambientLightSlider_valueChanged(int value);
+    void on_ambientLightSpinBox_valueChanged(int value);
 
     void on_pointStarsButton_clicked();
     void on_scaledDiscsButton_clicked();
