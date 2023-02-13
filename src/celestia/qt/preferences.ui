@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>409</height>
+    <width>479</width>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -749,7 +749,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="featureSizeEdit">
+             <widget class="QSpinBox" name="featureSizeSpinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -758,21 +758,21 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>40</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
               </property>
-              <property name="inputMask">
-               <string>000; </string>
+              <property name="accelerated">
+               <bool>true</bool>
               </property>
-              <property name="text">
-               <string/>
+              <property name="correctionMode">
+               <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+              </property>
+              <property name="maximum">
+               <number>999</number>
               </property>
              </widget>
             </item>

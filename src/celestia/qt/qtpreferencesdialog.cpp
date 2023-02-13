@@ -162,7 +162,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     int minimumFeatureSize = (int)renderer->getMinimumFeatureSize();
     ui.featureSizeSlider->setValue(minimumFeatureSize);
-    ui.featureSizeEdit->setText(QString::number(minimumFeatureSize));
+    ui.featureSizeSpinBox->setValue(minimumFeatureSize);
 
     ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
 
@@ -682,15 +682,20 @@ void PreferencesDialog::on_otherLocationsCheck_stateChanged(int state)
 void PreferencesDialog::on_featureSizeSlider_valueChanged(int value)
 {
     Renderer* renderer = appCore->getRenderer();
-    renderer->setMinimumFeatureSize((float) value);
-    ui.featureSizeEdit->setText(QString::number(value));
+    renderer->setMinimumFeatureSize(static_cast<float>(value));
+    ui.featureSizeSpinBox->blockSignals(true);
+    ui.featureSizeSpinBox->setValue(value);
+    ui.featureSizeSpinBox->blockSignals(false);
 }
 
 
-void PreferencesDialog::on_featureSizeEdit_textEdited(const QString& text)
+void PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
 {
-    int featureSize = text.toInt();
-    ui.featureSizeSlider->setValue(featureSize);
+    Renderer* renderer = appCore->getRenderer();
+    renderer->setMinimumFeatureSize(static_cast<float>(value));
+    ui.featureSizeSlider->blockSignals(true);
+    ui.featureSizeSlider->setValue(value);
+    ui.featureSizeSlider->blockSignals(false);
 }
 
 
