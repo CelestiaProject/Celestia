@@ -14,7 +14,7 @@ template<typename T> T* aligned_addr(void* addr) //NOSONAR
 {
     // alignof(T) is guaranteed to be a power of two
     constexpr auto align_one = static_cast<std::uintptr_t>(alignof(T) - 1);
-    return reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(addr) + align_one) & (~align_one));
+    return reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(addr) + align_one) & (~align_one)); //NOSONAR
 }
 
 /*! Returns size large enough so an object of type T can be placed
