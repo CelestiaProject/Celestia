@@ -10,9 +10,7 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
-
-#include <celutil/color.h>
+#include <string_view>
 
 
 class StellarClass
@@ -79,10 +77,7 @@ public:
         Lum_Count   = 9,
     };
 
-    enum
-    {
-        Subclass_Unknown = 10
-    };
+    static constexpr unsigned int Subclass_Unknown = 10;
 
     inline StellarClass();
     inline StellarClass(StarType,
@@ -95,10 +90,7 @@ public:
     inline unsigned int getSubclass() const;
     inline LuminosityClass getLuminosityClass() const;
 
-    Color getApparentColor() const;
-    Color getApparentColor(StellarClass::SpectralClass sc) const;
-
-    static StellarClass parse(const std::string&);
+    static StellarClass parse(std::string_view);
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
@@ -109,9 +101,6 @@ public:
     // methods for StarDB Ver. 0x0200
     std::uint16_t packV2() const;
     bool unpackV2(std::uint16_t);
-
-    [[deprecated]] inline std::uint16_t pack() const;
-    [[deprecated]] inline bool unpack(std::uint16_t);
 
 private:
     StarType starType;
@@ -163,13 +152,4 @@ unsigned int StellarClass::getSubclass() const
 StellarClass::LuminosityClass StellarClass::getLuminosityClass() const
 {
     return lumClass;
-}
-
-[[deprecated]] std::uint16_t StellarClass::pack() const
-{
-    return packV1();
-}
-[[deprecated]] bool StellarClass::unpack(std::uint16_t t)
-{
-    return unpackV1(t);
 }
