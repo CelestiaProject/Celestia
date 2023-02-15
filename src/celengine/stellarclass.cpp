@@ -12,47 +12,34 @@
 
 #include "stellarclass.h"
 
-
-Color StellarClass::getApparentColor() const
+namespace
 {
-    return getApparentColor(getSpectralClass());
-}
 
-
-Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
+enum class ParseState
 {
-    switch (sc)
-    {
-    case Spectral_O:
-        return Color(0.7f, 0.8f, 1.0f);
-    case Spectral_B:
-        return Color(0.8f, 0.9f, 1.0f);
-    case Spectral_A:
-        return Color(1.0f, 1.0f, 1.0f);
-    case Spectral_F:
-        return Color(1.0f, 1.0f, 0.88f);
-    case Spectral_G:
-        return Color(1.0f, 1.0f, 0.75f);
-    case StellarClass::Spectral_K:
-        return Color(1.0f, 0.9f, 0.7f);
-    case StellarClass::Spectral_M:
-        return Color(1.0f, 0.7f, 0.7f);
-    case StellarClass::Spectral_R:
-    case StellarClass::Spectral_S:
-    case StellarClass::Spectral_N:
-    case StellarClass::Spectral_C:
-        return Color(1.0f, 0.4f, 0.4f);
-    case StellarClass::Spectral_L:
-    case StellarClass::Spectral_T:
-        return Color(0.75f, 0.2f, 0.2f);
-    case StellarClass::Spectral_Y:
-        return Color(0.5f, 0.175f, 0.125f);
-    default:
-        // TODO: Figure out reasonable colors for Wolf-Rayet stars,
-        // white dwarfs, and other oddities
-        return Color(1.0f, 1.0f, 1.0f);
-    }
-}
+    Begin,
+    End,
+    NormalStar,
+    WolfRayetType,
+    NormalStarClass,
+    NormalStarSubclass,
+    NormalStarSubclassDecimal,
+    NormalStarSubclassFinal,
+    LumClassBegin,
+    LumClassI,
+    LumClassII,
+    LumClassV,
+    LumClassIdash,
+    LumClassIa,
+    LumClassIdasha,
+    WDType,
+    WDExtendedType,
+    WDSubclass,
+    SubdwarfPrefix,
+};
+
+} // end unnamed namespace
+
 
 std::uint16_t
 StellarClass::packV1() const
@@ -190,41 +177,17 @@ bool operator<(const StellarClass& sc0, const StellarClass& sc1)
 // spectral type fields it can't find, and silently ignoring any extra
 // characters in the spectral type.  The parser is written this way because
 // the spectral type strings from the Hipparcos catalog are quite irregular.
-enum ParseState
-{
-    BeginState,
-    EndState,
-    NormalStarState,
-    WolfRayetTypeState,
-    NormalStarClassState,
-    NormalStarSubclassState,
-    NormalStarSubclassDecimalState,
-    NormalStarSubclassFinalState,
-    LumClassBeginState,
-    LumClassIState,
-    LumClassIIState,
-    LumClassVState,
-    LumClassIdashState,
-    LumClassIaState,
-    LumClassIdashaState,
-    WDTypeState,
-    WDExtendedTypeState,
-    WDSubclassState,
-    SubdwarfPrefixState,
-};
-
-
 StellarClass
-StellarClass::parse(const std::string& st)
+StellarClass::parse(std::string_view st)
 {
     std::uint32_t i = 0;
-    ParseState state = BeginState;
+    auto state = ParseState::Begin;
     StellarClass::StarType starType = StellarClass::NormalStar;
     StellarClass::SpectralClass specClass = StellarClass::Spectral_Unknown;
     StellarClass::LuminosityClass lumClass = StellarClass::Lum_Unknown;
     unsigned int subclass = StellarClass::Subclass_Unknown;
 
-    while (state != EndState)
+    while (state != ParseState::End)
     {
         char c;
         if (i < st.length())
@@ -234,304 +197,304 @@ StellarClass::parse(const std::string& st)
 
         switch (state)
         {
-        case BeginState:
+        case ParseState::Begin:
             switch (c)
             {
             case 'Q':
                 starType = StellarClass::NeutronStar;
-                state = EndState;
+                state = ParseState::End;
                 break;
             case 'X':
                 starType = StellarClass::BlackHole;
-                state = EndState;
+                state = ParseState::End;
                 break;
             case 'D':
                 starType = StellarClass::WhiteDwarf;
                 specClass = StellarClass::Spectral_D;
-                state = WDTypeState;
+                state = ParseState::WDType;
                 i++;
                 break;
             case 's':
                 // Hipparcos uses sd prefix for stars with luminosity
                 // class VI ('subdwarfs')
-                state = SubdwarfPrefixState;
+                state = ParseState::SubdwarfPrefix;
                 i++;
                 break;
             case '?':
-                state = EndState;
+                state = ParseState::End;
                 break;
             default:
-                state = NormalStarClassState;
+                state = ParseState::NormalStarClass;
                 break;
             }
             break;
 
-        case WolfRayetTypeState:
+        case ParseState::WolfRayetType:
             switch (c)
             {
             case 'C':
                 specClass = StellarClass::Spectral_WC;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 i++;
                 break;
             case 'N':
                 specClass = StellarClass::Spectral_WN;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 i++;
                 break;
             case 'O':
                 specClass = StellarClass::Spectral_WO;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 i++;
                 break;
             default:
                 specClass = StellarClass::Spectral_WC;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             }
             break;
 
-        case SubdwarfPrefixState:
+        case ParseState::SubdwarfPrefix:
             if (c == 'd')
             {
                 lumClass = StellarClass::Lum_VI;
-                state = NormalStarClassState;
+                state = ParseState::NormalStarClass;
                 i++;
                 break;
             }
             else
             {
-                state = EndState;
+                state = ParseState::End;
             }
             break;
 
-        case NormalStarClassState:
+        case ParseState::NormalStarClass:
             switch (c)
             {
             case 'W':
-                state = WolfRayetTypeState;
+                state = ParseState::WolfRayetType;
                 break;
             case 'O':
                 specClass = StellarClass::Spectral_O;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'B':
                 specClass = StellarClass::Spectral_B;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'A':
                 specClass = StellarClass::Spectral_A;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'F':
                 specClass = StellarClass::Spectral_F;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'G':
                 specClass = StellarClass::Spectral_G;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'K':
                 specClass = StellarClass::Spectral_K;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'M':
                 specClass = StellarClass::Spectral_M;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'R':
                 specClass = StellarClass::Spectral_R;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'S':
                 specClass = StellarClass::Spectral_S;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'N':
                 specClass = StellarClass::Spectral_N;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'L':
                 specClass = StellarClass::Spectral_L;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'T':
                 specClass = StellarClass::Spectral_T;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'Y':
                 specClass = StellarClass::Spectral_Y;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             case 'C':
                 specClass = StellarClass::Spectral_C;
-                state = NormalStarSubclassState;
+                state = ParseState::NormalStarSubclass;
                 break;
             default:
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             i++;
             break;
 
-        case NormalStarSubclassState:
+        case ParseState::NormalStarSubclass:
             if (std::isdigit(c))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
-                state = NormalStarSubclassDecimalState;
+                state = ParseState::NormalStarSubclassDecimal;
                 i++;
             }
             else
             {
-                state = LumClassBeginState;
+                state = ParseState::LumClassBegin;
             }
             break;
 
-        case NormalStarSubclassDecimalState:
+        case ParseState::NormalStarSubclassDecimal:
             if (c == '.')
             {
-                state = NormalStarSubclassFinalState;
+                state = ParseState::NormalStarSubclassFinal;
                 i++;
             }
             else
             {
-                state = LumClassBeginState;
+                state = ParseState::LumClassBegin;
             }
             break;
 
-        case NormalStarSubclassFinalState:
+        case ParseState::NormalStarSubclassFinal:
             if (std::isdigit(c))
-                state = LumClassBeginState;
+                state = ParseState::LumClassBegin;
             else
-                state = EndState;
+                state = ParseState::End;
             i++;
             break;
 
-        case LumClassBeginState:
+        case ParseState::LumClassBegin:
             switch (c)
             {
             case 'I':
-                state = LumClassIState;
+                state = ParseState::LumClassI;
                 break;
             case 'V':
-                state = LumClassVState;
+                state = ParseState::LumClassV;
                 break;
             case ' ':
                 break;
             default:
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             i++;
             break;
 
-        case LumClassIState:
+        case ParseState::LumClassI:
             switch (c)
             {
             case 'I':
-                state = LumClassIIState;
+                state = ParseState::LumClassII;
                 break;
             case 'V':
                 lumClass = StellarClass::Lum_IV;
-                state = EndState;
+                state = ParseState::End;
                 break;
             case 'a':
-                state = LumClassIaState;
+                state = ParseState::LumClassIa;
                 break;
             case 'b':
                 lumClass = StellarClass::Lum_Ib;
-                state = EndState;
+                state = ParseState::End;
                 break;
             case '-':
-                state = LumClassIdashState;
+                state = ParseState::LumClassIdash;
                 break;
             default:
                 lumClass = StellarClass::Lum_Ib;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             i++;
             break;
 
-        case LumClassIIState:
+        case ParseState::LumClassII:
             switch (c)
             {
             case 'I':
                 lumClass = StellarClass::Lum_III;
-                state = EndState;
+                state = ParseState::End;
                 break;
             default:
                 lumClass = StellarClass::Lum_II;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             break;
 
-        case LumClassIdashState:
+        case ParseState::LumClassIdash:
             switch (c)
             {
             case 'a':
-                state = LumClassIdashaState;
+                state = ParseState::LumClassIdasha;
                 i++;
                 break;
             case 'b':
                 lumClass = StellarClass::Lum_Ib;
-                state = EndState;
+                state = ParseState::End;
                 break;
             default:
                 lumClass = StellarClass::Lum_Ib;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             break;
 
-        case LumClassIaState:
+        case ParseState::LumClassIa:
             switch (c)
             {
             case '0':
                 lumClass = StellarClass::Lum_Ia0;
-                state = EndState;
+                state = ParseState::End;
                 break;
             case '-':
-                state = LumClassIdashaState;
+                state = ParseState::LumClassIdasha;
                 i++;
                 break;
             default:
                 lumClass = StellarClass::Lum_Ia;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             break;
 
-        case LumClassIdashaState:
+        case ParseState::LumClassIdasha:
             switch (c)
             {
             case '0':
                 lumClass = StellarClass::Lum_Ia0;
-                state = EndState;
+                state = ParseState::End;
                 break;
             default:
                 lumClass = StellarClass::Lum_Ia;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             break;
 
-        case LumClassVState:
+        case ParseState::LumClassV:
             switch (c)
             {
             case 'I':
                 lumClass = StellarClass::Lum_VI;
-                state = EndState;
+                state = ParseState::End;
                 break;
             default:
                 lumClass = StellarClass::Lum_V;
-                state = EndState;
+                state = ParseState::End;
                 break;
             }
             break;
 
-        case WDTypeState:
+        case ParseState::WDType:
             switch (c)
             {
             case 'A':
@@ -566,10 +529,10 @@ StellarClass::parse(const std::string& st)
                 specClass = StellarClass::Spectral_D;
                 break;
             }
-            state = WDExtendedTypeState;
+            state = ParseState::WDExtendedType;
             break;
 
-        case WDExtendedTypeState:
+        case ParseState::WDExtendedType:
             switch (c)
             {
             case 'A':
@@ -586,23 +549,23 @@ StellarClass::parse(const std::string& st)
                 i++;
                 break;
             default:
-                state = WDSubclassState;
+                state = ParseState::WDSubclass;
                 break;
             }
             break;
 
-        case WDSubclassState:
+        case ParseState::WDSubclass:
             if (std::isdigit(c))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
                 i++;
             }
-            state = EndState;
+            state = ParseState::End;
             break;
 
         default:
             assert(0);
-            state = EndState;
+            state = ParseState::End;
             break;
         }
     }
