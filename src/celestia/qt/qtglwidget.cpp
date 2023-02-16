@@ -45,19 +45,24 @@
 using namespace Qt;
 
 
-const int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
+namespace
+{
 
-const int DEFAULT_LABEL_MODE = 2176;
+constexpr int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
-const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
+constexpr int DEFAULT_LABEL_MODE = 2176;
 
-const int DEFAULT_STARS_COLOR = ColorTable_Blackbody_D65;
+constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 
-const float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
+constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::Blackbody_D65);
 
-const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
+constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
 
-const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
+constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
+
+constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
+
+} // end unnamed namespace
 
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
@@ -121,10 +126,10 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
     appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
 
-    if (settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt() == 0)
-        appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+    if (settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt() == static_cast<int>(ColorTableType::Enhanced))
+        appRenderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
     else
-        appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+        appRenderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
 
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 

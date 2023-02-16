@@ -77,14 +77,14 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ColorTableType colors;
     const ColorTemperatureTable* current = renderer->getStarColorTable();
-    if (current == GetStarColorTable(ColorTable_Blackbody_D65))
+    if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
     {
-        colors = ColorTable_Blackbody_D65;
+        colors = ColorTableType::Blackbody_D65;
     }
-    else // if (current == GetStarColorTable(ColorTable_Enhanced))
+    else // if (current == GetStarColorTable(ColorTableType::Enhanced))
     {
         // TODO: Figure out what we should do if we have an unknown color table
-        colors = ColorTable_Enhanced;
+        colors = ColorTableType::Enhanced;
     }
 
     ui.starsCheck->setChecked((renderFlags & Renderer::ShowStars) != 0);
@@ -202,9 +202,9 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.scaledDiscsButton->setChecked(true);
     }
 
-    ui.starColorBox->addItem(_("Blackbody D65"), ColorTable_Blackbody_D65);
-    ui.starColorBox->addItem(_("Classic colors"), ColorTable_Enhanced);
-    SetComboBoxValue(ui.starColorBox, colors);
+    ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
+    ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
+    SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
 
     ui.autoMagnitudeCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
 
@@ -816,7 +816,7 @@ void PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
 {
     Renderer* renderer = appCore->getRenderer();
     QVariant itemData = ui.starColorBox->itemData(index, Qt::UserRole);
-    ColorTableType value = (ColorTableType) itemData.toInt();
+    ColorTableType value = static_cast<ColorTableType>(itemData.toInt());
     renderer->setStarColorTable(GetStarColorTable(value));
 }
 

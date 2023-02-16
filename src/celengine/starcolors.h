@@ -9,45 +9,38 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_STARCOLORS_H_
-#define _CELENGINE_STARCOLORS_H_
+#pragma once
 
 #include <celutil/color.h>
-
+#include <celutil/array_view.h>
 
 class ColorTemperatureTable
 {
  public:
-    ColorTemperatureTable(Color* _colors,
-                          unsigned int _nColors,
+    ColorTemperatureTable(celestia::util::array_view<const Color> _colors,
                           float maxTemp) :
         colors(_colors),
-        nColors(_nColors),
-        tempScale((float) (_nColors - 1) / maxTemp)
+        tempScale(static_cast<float>(_colors.size() - 1) / maxTemp)
     {};
 
     Color lookupColor(float temp) const
     {
-        unsigned int colorTableIndex = (unsigned int) (temp * tempScale);
-        if (colorTableIndex >= nColors)
-            return colors[nColors - 1];
+        auto colorTableIndex = static_cast<unsigned int>(temp * tempScale);
+        if (colorTableIndex >= colors.size())
+            return colors.back();
         else
             return colors[colorTableIndex];
     }
 
  private:
-    const Color* colors;
-    unsigned nColors;
+    celestia::util::array_view<const Color> colors;
     float tempScale;
 };
 
-enum ColorTableType
+enum class ColorTableType
 {
-    ColorTable_Enhanced,
-    ColorTable_Blackbody_D65,
+    Enhanced,
+    Blackbody_D65,
 };
 
-extern ColorTemperatureTable* GetStarColorTable(ColorTableType);
-
-
-#endif // _CELENGINE_STARCOLORS_H_
+const ColorTemperatureTable* GetStarColorTable(ColorTableType);
