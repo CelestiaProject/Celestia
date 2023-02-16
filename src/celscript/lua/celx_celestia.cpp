@@ -1657,9 +1657,9 @@ static int celestia_getstarcolor(lua_State* l)
     }
 
     const ColorTemperatureTable* starColor = renderer->getStarColorTable();
-    if (starColor == GetStarColorTable(ColorTable_Enhanced))
+    if (starColor == GetStarColorTable(ColorTableType::Enhanced))
         lua_pushstring(l, "enhanced");
-    else if (starColor == GetStarColorTable(ColorTable_Blackbody_D65))
+    else if (starColor == GetStarColorTable(ColorTableType::Blackbody_D65))
         lua_pushstring(l, "blackbody_d65");
     else
         lua_pushstring(l, "invalid starcolor");
@@ -1681,9 +1681,9 @@ static int celestia_setstarcolor(lua_State* l)
     }
 
     if (starColor == "blackbody_d65")
-        renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+        renderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
     else if (starColor == "enhanced")
-        renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+        renderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
     else
         Celx_DoError(l, "Invalid starcolor");
     appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);

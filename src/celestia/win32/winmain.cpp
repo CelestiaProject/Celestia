@@ -2306,8 +2306,8 @@ static void syncMenusWithRendererState()
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
     const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
-    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTable_Enhanced) ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTableType::Enhanced) ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTableType::Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -2652,10 +2652,10 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
     const ColorTemperatureTable* current = appCore->getRenderer()->getStarColorTable();
-    if (current == GetStarColorTable(ColorTable_Enhanced))
-        prefs.starsColor = ColorTable_Enhanced;
-    if (current == GetStarColorTable(ColorTable_Blackbody_D65))
-        prefs.starsColor = ColorTable_Blackbody_D65;
+    if (current == GetStarColorTable(ColorTableType::Enhanced))
+        prefs.starsColor = static_cast<int>(ColorTableType::Enhanced);
+    if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
+        prefs.starsColor = static_cast<int>(ColorTableType::Blackbody_D65);
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
@@ -3252,7 +3252,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.dateFormat = 0;
     prefs.hudDetail = 2; // def 1
     prefs.fullScreenMode = -1;
-    prefs.starsColor = ColorTable_Blackbody_D65;
+    prefs.starsColor = static_cast<int>(ColorTableType::Blackbody_D65);
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
@@ -3494,10 +3494,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getRenderer()->setStarStyle(prefs.starStyle);
         appCore->setHudDetail(prefs.hudDetail);
 
-        if (prefs.starsColor == 0)
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
-        if (prefs.starsColor == 1)
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+        if (prefs.starsColor == static_cast<int>(ColorTableType::Enhanced))
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
+        if (prefs.starsColor == static_cast<int>(ColorTableType::Blackbody_D65))
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
 
         if (prefs.showLocalTime == 1)
             ShowLocalTime(appCore);
@@ -4164,12 +4164,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_STARCOLOR_DISABLED:
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
             syncMenusWithRendererState();
             break;
 
         case ID_STARCOLOR_ENABLED:
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
             syncMenusWithRendererState();
             break;
 

@@ -1382,15 +1382,15 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             const ColorTemperatureTable* current = renderer->getStarColorTable();
 
-            if (current == GetStarColorTable(ColorTable_Enhanced))
+            if (current == GetStarColorTable(ColorTableType::Enhanced))
             {
-                renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+                renderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
                 flash(_("Star color: Blackbody D65"));
                 notifyWatchers(RenderFlagsChanged);
             }
-            else if (current == GetStarColorTable(ColorTable_Blackbody_D65))
+            else if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
             {
-                renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+                renderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
                 flash(_("Star color: Enhanced"));
                 notifyWatchers(RenderFlagsChanged);
             }

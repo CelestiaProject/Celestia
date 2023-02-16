@@ -526,11 +526,11 @@ void CelestiaAppWindow::writeSettings()
     ColorTableType colorsst;
     const ColorTemperatureTable* current = renderer->getStarColorTable();
 
-    if (current == GetStarColorTable(ColorTable_Blackbody_D65))
-        colorsst = ColorTable_Blackbody_D65;
-    else // if (current == GetStarColorTable(ColorTable_Enhanced))
-        colorsst = ColorTable_Enhanced;
-    settings.setValue("StarsColor", colorsst);
+    if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
+        colorsst = ColorTableType::Blackbody_D65;
+    else // if (current == GetStarColorTable(ColorTableType::Enhanced))
+        colorsst = ColorTableType::Enhanced;
+    settings.setValue("StarsColor", static_cast<int>(colorsst));
 
     Simulation* simulation = m_appCore->getSimulation();
 

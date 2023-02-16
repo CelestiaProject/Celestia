@@ -276,7 +276,7 @@ Renderer::Renderer() :
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    colorTemp = GetStarColorTable(ColorTable_Blackbody_D65);
+    colorTemp = GetStarColorTable(ColorTableType::Blackbody_D65);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
