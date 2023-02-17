@@ -127,7 +127,7 @@ getFirstWordLength(std::string_view str)
         sp = str.length();
 
     // skip digits
-    while (sp > 0 && std::isdigit(str[sp - 1]) != 0)
+    while (sp > 0 && std::isdigit(static_cast<unsigned char>(str[sp - 1])) != 0)
         sp--;
 
     return sp;
