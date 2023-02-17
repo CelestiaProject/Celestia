@@ -219,15 +219,6 @@ void BindTextures()
     colorTex->bind();
 }
 
-bool hasGeomShader()
-{
-#ifdef GL_ES
-    return celestia::gl::checkVersion(celestia::gl::GLES_3_2);
-#else
-    return celestia::gl::checkVersion(celestia::gl::GL_3_2);
-#endif
-}
-
 void initGalaxyData(VertexObject& vo,
                     const BlobVector& points,
                     GLint sizeLoc,
@@ -638,7 +629,7 @@ void Galaxy::render(const Eigen::Vector3f& offset,
                     const Matrices& ms,
                     Renderer* renderer)
 {
-    if (hasGeomShader())
+    if (celestia::gl::hasGeomShader())
         renderGL3(offset, viewerOrientation, brightness, pixelSize, ms, renderer);
     else
         renderGL2(offset, viewerOrientation, brightness, pixelSize, ms, renderer);

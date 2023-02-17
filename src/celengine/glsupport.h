@@ -52,5 +52,8 @@ extern GLint maxTextureAnisotropy;
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
+bool hasGeomShader() noexcept;
+void enableGeomShaders() noexcept;
+void disableGeomShaders() noexcept;
 
 } // end namespace celestia::gl
