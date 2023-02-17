@@ -206,6 +206,13 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Fahrenheit  = 2,
     };
 
+    enum class ScriptSystemAccessPolicy
+    {
+        Ask         = 0,
+        Allow       = 1,
+        Deny        = 2,
+    };
+
  public:
     CelestiaCore();
     ~CelestiaCore();
@@ -417,6 +424,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTemperatureScale(TemperatureScale);
     TemperatureScale getTemperatureScale() const;
 
+    ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
+    void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -559,6 +569,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     MeasurementSystem measurement { Metric };
     TemperatureScale temperatureScale { Kelvin };
+
+    ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
 
     Selection lastSelection;
     std::string selectionNames;

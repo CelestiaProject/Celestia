@@ -271,7 +271,7 @@ void LuaState::cleanup()
     if (!costate)
         return;
 
-    if (ioMode == Asking)
+    if (ioMode == IOMode::Asking)
     {
         // Restore renderflags:
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
@@ -421,7 +421,7 @@ static const char* readStreamChunk(lua_State* /*unused*/, void* udata, size_t* s
 // Returns true if keypress has been consumed
 bool LuaState::charEntered(const char* c_p)
 {
-    if (ioMode == Asking && getTime() > timeout)
+    if (ioMode == IOMode::Asking && getTime() > timeout)
     {
         int stackTop = lua_gettop(costate);
         if (c_p[0] == 'y')
@@ -429,11 +429,11 @@ bool LuaState::charEntered(const char* c_p)
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
             openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
-            ioMode = IOAllowed;
+            ioMode = IOMode::Allowed;
         }
         else
         {
-            ioMode = IODenied;
+            ioMode = IOMode::Denied;
         }
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
         if (appCore == nullptr)
@@ -703,7 +703,7 @@ int LuaState::resume()
         return 1; // just the error string
     }
 
-    if (ioMode == Asking)
+    if (ioMode == IOMode::Asking)
     {
         // timeout now is used to first only display warning, and 1s
         // later allow response to avoid accidental activation
@@ -750,7 +750,7 @@ bool LuaState::tick(double dt)
     if (!isAlive())
         return false;
 
-    if (ioMode == Asking)
+    if (ioMode == IOMode::Asking)
     {
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
         if (appCore == nullptr)
@@ -828,24 +828,26 @@ void LuaState::requestIO()
     // and can request keyboard. We can't do this now
     // because the script is still active and could
     // disable keyboard again.
-    if (ioMode == NoIO)
+    if (ioMode == IOMode::NotDetermined)
     {
         CelestiaCore* appCore = getAppCore(state, AllErrors);
-        string policy = appCore->getConfig()->scriptSystemAccessPolicy;
-        if (policy == "allow")
+        auto policy = appCore->getScriptSystemAccessPolicy();
+        switch (policy)
         {
+        case CelestiaCore::ScriptSystemAccessPolicy::Allow:
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
             openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
-            ioMode = IOAllowed;
-        }
-        else if (policy == "deny")
-        {
-            ioMode = IODenied;
-        }
-        else
-        {
-            ioMode = Asking;
+            ioMode = IOMode::Allowed;
+            break;
+        case CelestiaCore::ScriptSystemAccessPolicy::Deny:
+            ioMode = IOMode::Denied;
+            break;
+        case CelestiaCore::ScriptSystemAccessPolicy::Ask:
+            ioMode = IOMode::Asking;
+            break;
+        default:
+            GetLogger()->error("Unknown script system access policy {}", static_cast<int>(policy));
         }
     }
 }
@@ -1148,7 +1150,7 @@ void LuaState::allowSystemAccess()
     openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
     openLuaLibrary(state, LUA_IOLIBNAME, luaopen_io);
     openLuaLibrary(state, LUA_OSLIBNAME, luaopen_os);
-    ioMode = IOAllowed;
+    ioMode = IOMode::Allowed;
 }
 
 

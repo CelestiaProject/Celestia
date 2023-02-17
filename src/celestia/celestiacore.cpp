@@ -4033,6 +4033,18 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             GetLogger()->warn("Unknown temperature scale {}\n", config->temperatureScale);
     }
 
+    if (!config->scriptSystemAccessPolicy.empty())
+    {
+        if (compareIgnoringCase(config->scriptSystemAccessPolicy, "ask") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Ask;
+        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "allow") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Allow;
+        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "deny") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Deny;
+        else
+            GetLogger()->warn("Unknown script system access policy {}\n", config->scriptSystemAccessPolicy);
+    }
+
     sim = new Simulation(universe);
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
@@ -4953,6 +4965,16 @@ void CelestiaCore::setTemperatureScale(CelestiaCore::TemperatureScale newScale)
 CelestiaCore::TemperatureScale CelestiaCore::getTemperatureScale() const
 {
     return temperatureScale;
+}
+
+void CelestiaCore::setScriptSystemAccessPolicy(ScriptSystemAccessPolicy newPolicy)
+{
+    scriptSystemAccessPolicy = newPolicy;
+}
+
+CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::getScriptSystemAccessPolicy() const
+{
+    return scriptSystemAccessPolicy;
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)
