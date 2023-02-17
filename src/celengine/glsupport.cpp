@@ -23,16 +23,21 @@ GLint maxTextureAnisotropy          = 0;
 
 namespace
 {
-    inline bool has_extension(const char* name) noexcept
-    {
-        return epoxy_has_gl_extension(name);
-    }
 
-    bool check_extension(util::array_view<std::string> list, const char* name) noexcept
-    {
-        return std::find(list.begin(), list.end(), std::string(name)) == list.end() && has_extension(name);
-    }
+inline bool has_extension(const char *name) noexcept
+{
+    return epoxy_has_gl_extension(name);
 }
+
+bool check_extension(util::array_view<std::string> list, const char *name) noexcept
+{
+    return std::find(list.begin(), list.end(), std::string(name)) == list.end()
+           && has_extension(name);
+}
+
+bool EnableGeomShaders = true;
+
+} // namespace
 
 bool init(util::array_view<std::string> ignore) noexcept
 {
@@ -76,4 +81,24 @@ bool checkVersion(int v) noexcept
         version = epoxy_gl_version(); // this function always queries GL
     return version >= v;
 }
+
+bool hasGeomShader() noexcept
+{
+#ifdef GL_ES
+    return EnableGeomShaders && checkVersion(celestia::gl::GLES_3_2);
+#else
+    return EnableGeomShaders && checkVersion(celestia::gl::GL_3_2);
+#endif
+}
+
+void enableGeomShaders() noexcept
+{
+    EnableGeomShaders = true;
+}
+
+void disableGeomShaders() noexcept
+{
+    EnableGeomShaders = false;
+}
+
 } // end namespace celestia::gl
