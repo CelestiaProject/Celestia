@@ -75,11 +75,12 @@ public:
     bool callLuaHook(void* obj, const char* method, float x, float y, int b);
     bool callLuaHook(void* obj, const char* method, double dt);
 
-    enum IOMode {
-        NoIO = 1,
-        Asking = 2,
-        IOAllowed = 4,
-        IODenied = 8
+    enum class IOMode
+    {
+        NotDetermined  = 1,
+        Asking         = 2,
+        Allowed        = 4,
+        Denied         = 8
     };
 
 private:
@@ -88,7 +89,7 @@ private:
     bool alive{ false };
     Timer* timer;
     double scriptAwakenTime{ 0.0 };
-    IOMode ioMode{ NoIO };
+    IOMode ioMode{ IOMode::NotDetermined };
     bool eventHandlerEnabled{ false };
 };
 

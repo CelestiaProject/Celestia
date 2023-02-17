@@ -256,7 +256,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
     // Set up the script context; if the system access policy is allow,
     // it will share the same context as the Lua hook. Otherwise, we
     // create a private context.
-    if (config->scriptSystemAccessPolicy == "allow")
+    if (appCore->getScriptSystemAccessPolicy() == CelestiaCore::ScriptSystemAccessPolicy::Allow)
     {
         if (luaHook != nullptr)
             celestia::ephem::SetScriptedObjectContext(luaHook->getState());

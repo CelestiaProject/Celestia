@@ -120,7 +120,6 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     config->reverseMouseWheel = configParams->getBoolean("ReverseMouseWheel").value_or(false);
     if (auto path = configParams->getPath("ScriptScreenshotDirectory"); path.has_value())
         config->scriptScreenshotDirectory = *path;
-    config->scriptSystemAccessPolicy = "ask";
     if (const std::string* scriptSystemAccessPolicy = configParams->getString("ScriptSystemAccessPolicy"); scriptSystemAccessPolicy != nullptr)
         config->scriptSystemAccessPolicy = *scriptSystemAccessPolicy;
 
