@@ -140,7 +140,7 @@ istream& operator>>(istream& in, QuotedString& qs)
     char c = '\0';
 
     in >> c;
-    while (in && isspace(c))
+    while (in && std::isspace(static_cast<unsigned char>(c)))
     {
         in >> c;
     }

@@ -993,7 +993,7 @@ int parseOrbitFlags(const string &s, const FlagMap &BodyTypeMap)
         if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
         {
             std::string name(*tokenValue);
-            name[0] = toupper(name[0]);
+            name[0] = std::toupper(static_cast<unsigned char>(name[0]));
 
             if (BodyTypeMap.count(name) == 0)
                 GetLogger()->warn("Unknown orbit flag: {}\n", name);

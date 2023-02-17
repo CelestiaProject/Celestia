@@ -338,7 +338,7 @@ StellarClass::parse(std::string_view st)
             break;
 
         case ParseState::NormalStarSubclass:
-            if (std::isdigit(c))
+            if (std::isdigit(static_cast<unsigned char>(c)))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
                 state = ParseState::NormalStarSubclassDecimal;
@@ -363,7 +363,7 @@ StellarClass::parse(std::string_view st)
             break;
 
         case ParseState::NormalStarSubclassFinal:
-            if (std::isdigit(c))
+            if (std::isdigit(static_cast<unsigned char>(c)))
                 state = ParseState::LumClassBegin;
             else
                 state = ParseState::End;
@@ -555,7 +555,7 @@ StellarClass::parse(std::string_view st)
             break;
 
         case ParseState::WDSubclass:
-            if (std::isdigit(c))
+            if (std::isdigit(static_cast<unsigned char>(c)))
             {
                 subclass = (unsigned int) c - (unsigned int) '0';
                 i++;

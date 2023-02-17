@@ -677,7 +677,7 @@ bool SkipComments(std::istream& in)
                 {
                     inComment = true;
                 }
-                else if (std::isspace(c) == 0)
+                else if (std::isspace(static_cast<unsigned char>(c)) == 0)
                 {
                     in.unget();
                     done = true;

@@ -316,7 +316,7 @@ SDL_Application::handleKeyPressEvent(const SDL_KeyboardEvent &event)
     int mod = 0;
     if ((event.keysym.mod & KMOD_CTRL) != 0)
     {
-        int k = tolower(key);
+        int k = std::tolower(key);
         if (k >= 'a' && k <= 'z')
         {
             switch (k)

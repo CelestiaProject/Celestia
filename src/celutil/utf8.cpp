@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <wchar.h>
+#include <cwctype>
 #include "utf8.h"
 
 namespace
@@ -520,8 +520,8 @@ int UTF8StringCompare(std::string_view s0, std::string_view s1, size_t n, bool i
 
         if (ignoreCase)
         {
-            ch0 = std::tolower(ch0);
-            ch1 = std::tolower(ch1);
+            ch0 = static_cast<wchar_t>(std::towlower(ch0));
+            ch1 = static_cast<wchar_t>(std::towlower(ch1));
         }
         if (ch0 < ch1)
             return -1;

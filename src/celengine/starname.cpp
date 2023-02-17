@@ -35,11 +35,14 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
     {
         auto pos1 = name.rfind(' ');
         std::string_view rest;
-        if (pos1 != string::npos && pos1 > pos && pos1 < nameLength - 1 && isalpha(name[pos1 + 1]))
+        if (pos1 != string::npos &&
+            pos1 > pos &&
+            pos1 < nameLength - 1 &&
+            std::isalpha(static_cast<unsigned char>(name[pos1 + 1])))
         {
             rest = std::string_view(name).substr(pos1);
             isOrbitingStar = true;
-            do { --pos1; } while (isspace(name[pos1]));
+            do { --pos1; } while (std::isspace(static_cast<unsigned char>(name[pos1])));
         }
         string prefix(name, 0, pos);
         string conName(name, pos + 1, isOrbitingStar ? pos1 - pos : string::npos);
@@ -54,7 +57,9 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n
             // and the last character is a digit, we may have
             // something like 'Alpha2 Cen' . . . Extract the digit
             // before trying to match a Greek letter.
-            if (len > 2 && isalpha(prefix[0]) && isdigit(prefix[len - 1]))
+            if (len > 2 &&
+                std::isalpha(static_cast<unsigned char>(prefix[0])) &&
+                std::isdigit(static_cast<unsigned char>(prefix[len - 1])))
             {
                 --len;
                 digit = prefix[len];

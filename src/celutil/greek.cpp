@@ -191,7 +191,7 @@ ReplaceGreekLetterAbbr(std::string_view str)
             }
 
             std::string ret(greekAlphabetUTF8[i]);
-            for (; str.length() > len && std::isdigit(str[len]); len++)
+            for (; str.length() > len && std::isdigit(static_cast<unsigned char>(str[len])); len++)
                 ret.append(toSuperscript(str[len]));
             ret.append(str.substr(len));
 
@@ -258,7 +258,7 @@ ReplaceGreekLetter(std::string_view str)
             }
 
             std::string ret(greekAlphabetUTF8[i]);
-            for (; str.length() > len && std::isdigit(str[len]); len++)
+            for (; str.length() > len && std::isdigit(static_cast<unsigned char>(str[len])); len++)
                 ret.append(toSuperscript(str[len]));
             ret.append(str.substr(len));
 
