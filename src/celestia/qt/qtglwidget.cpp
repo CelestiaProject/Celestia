@@ -50,7 +50,7 @@ namespace
 
 constexpr int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
-constexpr int DEFAULT_LABEL_MODE = 2176;
+constexpr int DEFAULT_LABEL_MODE = Renderer::LocationLabels | Renderer::I18nConstellationLabels;
 
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 
