@@ -95,7 +95,7 @@ static void insert_text_event(GtkEditable *editable, const gchar *text, gint len
 {
     for (int i = 0; i < length; i++)
     {
-        if (!isdigit(text[i]))
+        if (!std::isdigit(static_cast<unsigned char>(text[i])))
         {
             g_signal_stop_emission_by_name(G_OBJECT(editable), "insert-text");
             return;

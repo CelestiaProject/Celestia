@@ -280,10 +280,10 @@ C
     fseek(f2, 0, 0);
     while(fgets(buf, sizeof(buf), f2)) {
         for (p=buf; isspace(*p); p++);
-        RAL = atof(p); while(isgraph(*p)) p++; while(isspace(*p)) p++;
-        RAU = atof(p); while(isgraph(*p)) p++; while(isspace(*p)) p++;
-        DECL= atof(p); while(isgraph(*p)) p++; while(isspace(*p)) p++;
-        CON = p; while(isgraph(*p)) p++; *p = 0;
+        RAL = atof(p); while(isgraph(static_cast<unsigned char>(*p))) p++; while(isspace(static_cast<unsigned char>(*p))) p++;
+        RAU = atof(p); while(isgraph(static_cast<unsigned char>(*p))) p++; while(isspace(static_cast<unsigned char>(*p))) p++;
+        DECL= atof(p); while(isgraph(static_cast<unsigned char>(*p))) p++; while(isspace(static_cast<unsigned char>(*p))) p++;
+        CON = p; while(isgraph(static_cast<unsigned char>(*p))) p++; *p = 0;
         if (DECL > DEC) continue;
         if (RAU <= RA) continue;
         if (RAL >  RA) continue;

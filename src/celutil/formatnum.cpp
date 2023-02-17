@@ -129,7 +129,7 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
         bool does_grouping = *g != 0;
         while (i >= 0)
         {
-            if (isdigit(buf[i]))
+            if (std::isdigit(static_cast<unsigned char>(buf[i])))
             {
                 if (does_grouping && *g != CHAR_MAX)
                 {

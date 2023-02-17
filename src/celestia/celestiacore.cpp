@@ -169,7 +169,7 @@ bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondReco
     for (int line = 1; std::getline(file, s); line++)
     {
         const char *ptr = &s[0];
-        while (*ptr != 0 && std::isspace(*ptr)) ptr++;
+        while (*ptr != 0 && std::isspace(static_cast<unsigned char>(*ptr))) ptr++;
         if (*ptr == '#' || *ptr == 0)
             continue;
 
@@ -940,8 +940,8 @@ void CelestiaCore::keyDown(int key, int modifiers)
         KeyAccel *= 1.1;
 
     // Only process alphanumeric keys if we're not in text enter mode
-    if (islower(key))
-        key = toupper(key);
+    if (std::islower(key))
+        key = std::toupper(key);
     if (!(key >= 'A' && key <= 'Z' && (textEnterMode != KbNormal) ))
     {
         if (modifiers & ShiftKey)
@@ -955,8 +955,8 @@ void CelestiaCore::keyUp(int key, int)
 {
     setViewChanged();
     KeyAccel = 1.0;
-    if (islower(key))
-        key = toupper(key);
+    if (std::islower(key))
+        key = std::toupper(key);
     keysPressed[key] = false;
     shiftKeysPressed[key] = false;
 }
@@ -1116,7 +1116,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     if (m_scriptHook != nullptr && m_scriptHook->call("charentered", getKeyName(c_p, modifiers).c_str()))
         return;
 
-    char C = toupper(c);
+    char C = std::toupper(static_cast<unsigned char>(c));
     switch (C)
     {
     case '\001': // Ctrl+A

@@ -1754,7 +1754,7 @@ void ShowWWWInfo(const Selection& sel)
             {
                 string name = sel.body()->getName();
                 for (unsigned int i = 0; i < name.size(); i++)
-                    name[i] = tolower(name[i]);
+                    name[i] = std::tolower(static_cast<unsigned char>(name[i]));
 
                 url = string("http://www.nineplanets.org/") + name + ".html";
             }

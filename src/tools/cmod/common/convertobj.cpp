@@ -29,12 +29,12 @@ std::string::size_type getToken(const std::string& s, std::string::size_type sta
     std::string::size_type pos = start;
     token.clear();
 
-    while (pos < s.size() && isspace(s[pos]))
+    while (pos < s.size() && std::isspace(static_cast<unsigned char>(s[pos])))
     {
         pos++;
     }
 
-    while (pos < s.size() && !isspace(s[pos]))
+    while (pos < s.size() && !std::isspace(static_cast<unsigned char>(s[pos])))
     {
         token += s[pos];
         pos++;
