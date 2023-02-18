@@ -8,20 +8,49 @@ Stable version installation on Windows and OSX:
 * Check https://celestia.space/download.html.
 
 Development snapshots installation on Unix-like systems:
-### On Debian 10 (buster) and derived systems:
+### On Debian 10/11 (buster/bullseye) and derived systems:
 
+Download and check the GPG public key fingerprint and expiration date:
 ```
-❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key
+❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_${VERSION}/Release.key
+
 ❯ gpg --keyid-format long celestia.gpg
 gpg: WARNING: no command supplied.  Trying to guess what you mean ...
-pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2023-02-14]
+pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2025-04-10]
       3FE0C0AC1FD6F1034B818A14BDF3F6ACD4D81407
 uid                           home:munix9 OBS Project <home:munix9@build.opensuse.org>
+```
+
+Deploy GPG public key and set up sources.list file:
+```
 ❯ sudo mv celestia.gpg /usr/share/keyrings/celestia.asc
 
-❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
 ❯ sudo apt update && sudo apt install celestia
 ```
+
+Where ${VERSION} is 10 or 11.
+
+When the public key has expired, `apt update` complains:
+
+```
+❯ sudo apt update
+[...]
+Err:14 https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11 ./ InRelease
+  The following signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
+Fetched 19.0 kB in 1s (14.7 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+12 packages can be upgraded. Run 'apt list --upgradable' to see them.
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11 ./ InRelease: The foll
+owing signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
+W: Failed to fetch https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11/./InRelease  The following signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+```
+
+The `Release.key` should already have been updated.
+Just download the GPG public key again, check the fingerprint and expiration date and re-deploy it.
 
 ### On Ubuntu 20.04/22.04 and derived systems:
 
