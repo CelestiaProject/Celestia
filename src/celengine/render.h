@@ -208,8 +208,8 @@ class Renderer
         ShowEclipticGrid        = 0x0000000000800000,
         ShowHorizonGrid         = 0x0000000001000000,
         ShowEcliptic            = 0x0000000002000000,
-        ShowTintedIllumination  = 0x0000000004000000,
         // options added in 1.7
+        // removed flag         = 0x0000000004000000,
         ShowDwarfPlanets        = 0x0000000008000000,
         ShowMoons               = 0x0000000010000000,
         ShowMinorMoons          = 0x0000000020000000,

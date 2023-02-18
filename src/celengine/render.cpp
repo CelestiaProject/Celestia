@@ -1297,33 +1297,26 @@ setupLightSources(const vector<const Star*>& nearStars,
             ls.luminosity = star->getLuminosity();
             ls.radius = star->getRadius();
 
-            if ((renderFlags & Renderer::ShowTintedIllumination) != 0)
-            {
-                // If the star is sufficiently cool, change the light color
-                // from white.  Though our sun appears yellow, we still make
-                // it and all hotter stars emit white light, as this is the
-                // 'natural' light to which our eyes are accustomed.  We also
-                // assign a slight bluish tint to light from O and B type stars,
-                // though these will almost never have planets for their light
-                // to shine upon.
-                float temp = star->getTemperature();
-                if (temp > 30000.0f)
-                    ls.color = Color(0.8f, 0.8f, 1.0f);
-                else if (temp > 10000.0f)
-                    ls.color = Color(0.9f, 0.9f, 1.0f);
-                else if (temp > 5400.0f)
-                    ls.color = Color(1.0f, 1.0f, 1.0f);
-                else if (temp > 3900.0f)
-                    ls.color = Color(1.0f, 0.9f, 0.8f);
-                else if (temp > 2000.0f)
-                    ls.color = Color(1.0f, 0.7f, 0.7f);
-                else
-                    ls.color = Color(1.0f, 0.4f, 0.4f);
-            }
-            else
-            {
+            // If the star is sufficiently cool, change the light color
+            // from white.  Though our sun appears yellow, we still make
+            // it and all hotter stars emit white light, as this is the
+            // 'natural' light to which our eyes are accustomed.  We also
+            // assign a slight bluish tint to light from O and B type stars,
+            // though these will almost never have planets for their light
+            // to shine upon.
+            float temp = star->getTemperature();
+            if (temp > 30000.0f)
+                ls.color = Color(0.8f, 0.8f, 1.0f);
+            else if (temp > 10000.0f)
+                ls.color = Color(0.9f, 0.9f, 1.0f);
+            else if (temp > 5400.0f)
                 ls.color = Color(1.0f, 1.0f, 1.0f);
-            }
+            else if (temp > 3900.0f)
+                ls.color = Color(1.0f, 0.9f, 0.8f);
+            else if (temp > 2000.0f)
+                ls.color = Color(1.0f, 0.7f, 0.7f);
+            else
+                ls.color = Color(1.0f, 0.4f, 0.4f);
 
             lightSources.push_back(ls);
         }

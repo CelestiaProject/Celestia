@@ -8,21 +8,45 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fmt/format.h>
+#include "url.h"
 
-#include <celcompat/charconv.h>
-#include <celutil/bigfix.h>
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cstdint>
+#include <iterator>
+#include <sstream>
+#include <utility>
+
+#include <Eigen/Geometry>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
 #include <celengine/body.h>
+#include <celengine/location.h>
+#include <celengine/render.h>
+#include <celengine/simulation.h>
+#include <celengine/universe.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include "celestiacore.h"
-#include "url.h"
+
+using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
 
 namespace
 {
+
+constexpr std::string_view PROTOCOL = "cel://"sv;
+
+// First new render flag in version 1.7
+// ShowDwarfPlanets = bit 27 (0x0000000008000000)
+constexpr unsigned int NEW_FLAG_BIT_1_7 = 27;
+constexpr std::uint64_t NEW_SHOW_PLANETS_BIT_MASK = (UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1));
+constexpr std::uint64_t RF_MASK = (UINT64_C(1) << NEW_FLAG_BIT_1_7) - 1;
+
 
 std::string getBodyName(Universe* universe, Body* body)
 {
@@ -71,25 +95,42 @@ getCoordSysName(ObserverFrame::CoordinateSystem mode)
     switch (mode)
     {
     case ObserverFrame::Universal:
-        return "Freeflight";
+        return "Freeflight"sv;
     case ObserverFrame::Ecliptical:
-        return "Follow";
+        return "Follow"sv;
     case ObserverFrame::BodyFixed:
-        return "SyncOrbit";
+        return "SyncOrbit"sv;
     case ObserverFrame::Chase:
-        return "Chase";
+        return "Chase"sv;
     case ObserverFrame::PhaseLock:
-        return "PhaseLock";
+        return "PhaseLock"sv;
     case ObserverFrame::Equatorial:
-        return "Unknown";
+        return "Unknown"sv;
     case ObserverFrame::ObserverLocal:
-        return "Unknown";
+        return "Unknown"sv;
     default:
-        return "Unknown";
+        return "Unknown"sv;
     }
 }
 
-} // anon namespace
+
+struct Mode
+{
+    std::string_view                modeStr;
+    ObserverFrame::CoordinateSystem mode;
+    int                             nBodies;
+};
+
+constexpr std::array modes
+{
+    Mode{ "Freeflight"sv, ObserverFrame::Universal,   0 },
+    Mode{ "Follow"sv,     ObserverFrame::Ecliptical,  1 },
+    Mode{ "SyncOrbit"sv,  ObserverFrame::BodyFixed,   1 },
+    Mode{ "Chase"sv,      ObserverFrame::Chase,       1 },
+    Mode{ "PhaseLock"sv,  ObserverFrame::PhaseLock,   2 },
+};
+
+} // end unnamed namespace
 
 Url::Url(CelestiaCore *core) :
     m_appCore(core)
@@ -117,7 +158,7 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
         m_nBodies = 1;
     }
 
-    u << Url::proto() << getCoordSysName(m_state.m_coordSys);
+    u << PROTOCOL << getCoordSysName(m_state.m_coordSys);
 
     if (appState.m_coordSys != ObserverFrame::Universal)
     {
@@ -130,45 +171,45 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
     u << '/' << m_date.toCStr(astro::Date::ISO8601);
 
     // observer position
-    u << fmt::format("?x={}&y={}&z={}",
-                     m_state.m_observerPosition.x.toBase64(),
-                     m_state.m_observerPosition.y.toBase64(),
-                     m_state.m_observerPosition.z.toBase64());
+    fmt::print(u, "?x={}&y={}&z={}",
+               m_state.m_observerPosition.x.toBase64(),
+               m_state.m_observerPosition.y.toBase64(),
+               m_state.m_observerPosition.z.toBase64());
 
     // observer orientation
-    u << fmt::format("&ow={}&ox={}&oy={}&oz={}",
-                     m_state.m_observerOrientation.w(),
-                     m_state.m_observerOrientation.x(),
-                     m_state.m_observerOrientation.y(),
-                     m_state.m_observerOrientation.z());
+    fmt::print(u, "&ow={}&ox={}&oy={}&oz={}",
+               m_state.m_observerOrientation.w(),
+               m_state.m_observerOrientation.x(),
+               m_state.m_observerOrientation.y(),
+               m_state.m_observerOrientation.z());
 
     if (!m_state.m_trackedBodyName.empty())
         u << "&track=" << m_state.m_trackedBodyName;
     if (!m_state.m_selectedBodyName.empty())
         u << "&select=" << m_state.m_selectedBodyName;
 
-    u << fmt::format("&fov={}&ts={}&ltd={}&p={}",
-                     m_state.m_fieldOfView,
-                     m_state.m_timeScale,
-                     m_state.m_lightTimeDelay ? 1 : 0,
-                     m_state.m_pauseState ? 1 : 0);
+    fmt::print(u, "&fov={}&ts={}&ltd={}&p={}",
+               m_state.m_fieldOfView,
+               m_state.m_timeScale,
+               m_state.m_lightTimeDelay ? 1 : 0,
+               m_state.m_pauseState ? 1 : 0);
 
 
-    // ShowTintedIllumination == 0x04000000, the last 1.6 parameter
+    // ShowEcliptic == 0x02000000, the last 1.6 parameter
     // we keep only old parameters and clear new ones
-    int rf = static_cast<int>(m_state.m_renderFlags & UINT64_C(0x07ffffff));
+    auto rf = static_cast<int>(m_state.m_renderFlags & RF_MASK);
     // 1.6 uses ShowPlanets to control display of all types of solar
     // system objects. So set it if any one is displayed.
     if ((m_state.m_renderFlags & Renderer::ShowSolarSystemObjects) != 0)
         rf |= static_cast<int>(Renderer::ShowPlanets);
     // But we need to store actual value of the bit which controls
-    // planets display. 27th bit is unused in 1.6.
+    // planets display. 26th bit onwards are unused in 1.6.
     if ((m_state.m_renderFlags & Renderer::ShowPlanets) != 0)
-        rf |= (1<<27);
-    int nrf = static_cast<int>(m_state.m_renderFlags >> 27);
+        rf |= NEW_SHOW_PLANETS_BIT_MASK;
+    auto nrf = static_cast<int>(m_state.m_renderFlags >> NEW_FLAG_BIT_1_7);
 
-    u << fmt::format("&rf={}&nrf={}&lm={}",
-                     rf, nrf, m_state.m_labelMode);
+    fmt::print(u, "&rf={}&nrf={}&lm={}",
+               rf, nrf, m_state.m_labelMode);
 
     // Append the url settings: time source and version
     u << "&tsrc=" << (int) m_timeSource;
@@ -302,7 +343,7 @@ Url::decodeString(std::string_view str)
     while (b != std::string_view::npos && a < str.length())
     {
         auto s = str.substr(a, b - a);
-        out.append(s.data(), s.length());
+        out.append(s);
         std::string_view c_code = str.substr(b + 1, 2);
         uint8_t c;
         if (to_number(c_code, c, 16))
@@ -360,29 +401,13 @@ Url::encodeString(std::string_view str)
         }
 
         if (encode)
-            enc << fmt::format("%{:02x}", ch);
+            fmt::print(enc, "%{:02x}", ch);
         else
             enc << _ch;
     }
 
     return enc.str();
 }
-
-struct Mode
-{
-    std::string_view                 modeStr;
-    ObserverFrame::CoordinateSystem mode;
-    int                             nBodies;
-};
-
-static Mode modes[] =
-{
-    { "Freeflight", ObserverFrame::Universal,   0 },
-    { "Follow",     ObserverFrame::Ecliptical,  1 },
-    { "SyncOrbit",  ObserverFrame::BodyFixed,   1 },
-    { "Chase",      ObserverFrame::Chase,       1 },
-    { "PhaseLock",  ObserverFrame::PhaseLock,   2 },
-};
 
 auto ParseURLParams(std::string_view paramsStr)
     -> std::map<std::string_view, std::string>;
@@ -392,15 +417,15 @@ bool Url::parse(std::string_view urlStr)
     constexpr auto npos = std::string_view::npos;
 
     // proper URL string must start with protocol (cel://)
-    if (urlStr.compare(0, Url::proto().length(), Url::proto()) != 0)
+    if (urlStr.compare(0, PROTOCOL.length(), PROTOCOL) != 0)
     {
-        GetLogger()->error(_("URL must start with \"{}\"!\n"), Url::proto());
+        GetLogger()->error(_("URL must start with \"{}\"!\n"), PROTOCOL);
         return false;
     }
 
     // extract @path and @params from the URL
     auto pos = urlStr.find('?');
-    auto pathStr = urlStr.substr(Url::proto().length(), pos - Url::proto().length());
+    auto pathStr = urlStr.substr(PROTOCOL.length(), pos - PROTOCOL.length());
     while (pathStr.back() == '/')
         pathStr.remove_suffix(1);
     std::string_view paramsStr;
@@ -417,9 +442,9 @@ bool Url::parse(std::string_view urlStr)
 
     int nBodies = -1;
     CelestiaState state;
-    auto lambda = [modeStr](Mode &m) { return compareIgnoringCase(modeStr, m.modeStr) == 0; };
-    auto it = std::find_if(std::begin(modes), std::end(modes), lambda);
-    if (it == std::end(modes))
+    auto it = std::find_if(modes.begin(), modes.end(),
+                           [modeStr](const Mode &m) { return compareIgnoringCase(modeStr, m.modeStr) == 0; });
+    if (it == modes.end())
     {
         GetLogger()->error(_("Unsupported URL mode \"{}\"!\n"), modeStr);
         return false;
@@ -583,14 +608,14 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
 
     // Render settings
     bool hasNewRenderFlags = false;
-    uint64_t newFlags = 0ull, oldFlags = 0ull;
+    std::uint64_t newFlags = 0;
     if (params.count("nrf") != 0)
     {
         hasNewRenderFlags = true;
         int nrf;
         if (!to_number(params["nrf"], nrf))
             return false;
-        newFlags = static_cast<uint64_t>(nrf) << 27;
+        newFlags = static_cast<std::uint64_t>(nrf) << NEW_FLAG_BIT_1_7;
     }
     if (params.count("rf") != 0)
     {
@@ -599,18 +624,18 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
         if (!to_number(params["rf"], rf))
             return false;
         // older celestia versions don't know about the new renderer flags
+        std::uint64_t oldFlags;
         if (hasNewRenderFlags)
         {
-
-            oldFlags = static_cast<uint64_t>(rf & 0x07ffffff);
-            // get actual Renderer::ShowPlanets value in 27th bit
-            // clear ShowPlanets if 27th bit is unset
-            if ((rf & (1<<27)) == 0)
+            oldFlags = static_cast<std::uint64_t>(rf) & RF_MASK;
+            // get actual Renderer::ShowPlanets value in 26th bit
+            // clear ShowPlanets if 26th bit is unset
+            if ((rf & NEW_SHOW_PLANETS_BIT_MASK) == 0)
                 oldFlags &= ~Renderer::ShowPlanets;
         }
         else
         {
-            oldFlags = static_cast<uint64_t>(rf);
+            oldFlags = static_cast<std::uint64_t>(rf);
             // new options enabled by default in 1.7
             oldFlags |= Renderer::ShowPlanetRings | Renderer::ShowFadingOrbits;
             // old ShowPlanets == new ShowSolarSystemObjects
@@ -635,15 +660,15 @@ bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::str
 {
     if (params.count("rf") != 0)
     {
-        uint64_t rf;
+        std::uint64_t rf;
         if (!to_number(params["rf"], rf))
             return false;
-        int nrf = rf >> 27;
-        int _rf = rf & 0x07ffffff;
+        auto nrf = static_cast<int>(rf >> NEW_FLAG_BIT_1_7);
+        int _rf = rf & RF_MASK;
         if ((rf & Renderer::ShowPlanets) != 0)
-            _rf |= (1 << 27); // Set the 27th bits to ShowPlanets
-        params["nrf"] = std::to_string(nrf);
-        params["rf"] = std::to_string(_rf);
+            _rf |= NEW_SHOW_PLANETS_BIT_MASK; // Set the 26th bit to ShowPlanets
+        params["nrf"] = fmt::format("{}", nrf);
+        params["rf"] = fmt::format("{}", _rf);
     }
     return initVersion3(params, timeStr);
 }
@@ -651,13 +676,14 @@ bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::str
 void Url::evalName()
 {
     std::string name;
+    auto it = std::back_inserter(name);
     if (!m_state.m_refBodyName.empty())
-        name += fmt::format(" {}", getBodyShortName(m_state.m_refBodyName));
+        fmt::format_to(it, " {}", getBodyShortName(m_state.m_refBodyName));
     if (!m_state.m_targetBodyName.empty())
-        name += fmt::format(" {}", getBodyShortName(m_state.m_targetBodyName));
+        fmt::format_to(it, " {}", getBodyShortName(m_state.m_targetBodyName));
     if (!m_state.m_trackedBodyName.empty())
-        name += fmt::format(" -> {}", getBodyShortName(m_state.m_trackedBodyName));
+        fmt::format_to(it, " -> {}", getBodyShortName(m_state.m_trackedBodyName));
     if (!m_state.m_selectedBodyName.empty())
-        name += fmt::format(" [{}]", getBodyShortName(m_state.m_selectedBodyName));
+        fmt::format_to(it, " [{}]", getBodyShortName(m_state.m_selectedBodyName));
     m_name = std::move(name);
 }

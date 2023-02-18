@@ -102,7 +102,6 @@ private slots:
 
     void on_renderPathBox_currentIndexChanged(int index);
     void on_antialiasLinesCheck_stateChanged(int state);
-    void on_tintedIlluminationCheck_stateChanged(int state);
 
     void on_lowResolutionButton_clicked();
     void on_mediumResolutionButton_clicked();
@@ -124,4 +123,3 @@ protected:
     CelestiaCore* appCore;
     Ui_preferencesDialog ui;
 };
-
