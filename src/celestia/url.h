@@ -13,9 +13,13 @@
 #include <map>
 #include <string>
 #include <string_view>
+
 #include <Eigen/Geometry>
-#include <celengine/observer.h>
+
 #include <celengine/astro.h>
+#include <celengine/observer.h>
+#include <celengine/selection.h>
+
 #include "celestiastate.h"
 
 class CelestiaCore;
@@ -53,7 +57,6 @@ class Url
     ~Url() = default;
 
     static std::string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
-    static constexpr std::string_view proto();
     static std::string decodeString(std::string_view);
     static std::string encodeString(std::string_view);
 
@@ -83,8 +86,3 @@ class Url
     int             m_nBodies       { -1 };
     bool            m_valid         { false };
 };
-
-constexpr std::string_view Url::proto()
-{
-    return "cel://";
-}

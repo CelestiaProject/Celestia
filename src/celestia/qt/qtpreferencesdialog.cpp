@@ -167,7 +167,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
 
     ui.antialiasLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
-    ui.tintedIlluminationCheck->setChecked(renderFlags & Renderer::ShowTintedIllumination);
 
     switch (renderer->getResolution())
     {
@@ -707,12 +706,6 @@ void PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/)
 void PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowSmoothLines, state);
-}
-
-
-void PreferencesDialog::on_tintedIlluminationCheck_stateChanged(int state)
-{
-    setRenderFlag(appCore, Renderer::ShowTintedIllumination, state);
 }
 
 
