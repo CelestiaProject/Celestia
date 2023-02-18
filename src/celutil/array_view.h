@@ -24,7 +24,7 @@ template<typename T>
 class array_view
 {
  public:
-    using element_type = typename std::remove_cv<T>::type;
+    using element_type = std::remove_cv_t<T>;
     using size_type = std::size_t;
 
     /**
@@ -115,7 +115,7 @@ class array_view
      *
      * Calling front on an empty container is undefined.
      */
-    constexpr T front() const noexcept
+    constexpr const T& front() const noexcept
     {
         return *m_ptr;
     }
@@ -125,7 +125,7 @@ class array_view
      *
      * Calling back on an empty container is undefined.
      */
-    constexpr T back() const noexcept
+    constexpr const T& back() const noexcept
     {
         return m_ptr[m_size - 1];
     }
@@ -140,7 +140,7 @@ class array_view
      * @param pos - position of the element to return
      * @return the requested element
      */
-    constexpr element_type operator[](std::size_t pos) const noexcept
+    constexpr const T& operator[](std::size_t pos) const noexcept
     {
         return m_ptr[pos];
     }
