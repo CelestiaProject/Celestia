@@ -248,8 +248,9 @@ IndexedVertexObject::draw(GLenum primitive, GLsizei count, GLint first) const no
     if ((m_state & State::Initialize) != 0)
         enableAttribArrays();
 
+    auto offset = first * (m_indexType == GL_UNSIGNED_INT ? sizeof(GLuint) : sizeof(GLushort));
     glDrawElements(primitive, count, m_indexType,
-                   reinterpret_cast<const void*>(static_cast<std::intptr_t>(first)));
+                   reinterpret_cast<const void*>(static_cast<std::intptr_t>(offset))); //NOSONAR
 }
 
 void
