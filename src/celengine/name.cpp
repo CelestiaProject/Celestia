@@ -36,7 +36,7 @@ void NameDatabase::erase(const AstroCatalog::IndexNumber catalogNumber)
     numberIndex.erase(catalogNumber);
 }
 
-AstroCatalog::IndexNumber NameDatabase::getCatalogNumberByName(const std::string& name, bool i18n) const
+AstroCatalog::IndexNumber NameDatabase::getCatalogNumberByName(std::string_view name, bool i18n) const
 {
     auto iter = nameIndex.find(name);
     if (iter != nameIndex.end())
@@ -101,11 +101,10 @@ NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
     return numberIndex.end();
 }
 
-std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool i18n) const
+void NameDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const
 {
     std::string name2 = ReplaceGreekLetter(name);
 
-    std::vector<std::string> completion;
     const int name_length = UTF8Length(name2);
 
     for (const auto &[n, _] : nameIndex)
@@ -121,5 +120,4 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bo
                 completion.push_back(n);
         }
     }
-    return completion;
 }

@@ -21,6 +21,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <map>
 #include <memory>
@@ -62,15 +63,15 @@ class PlanetarySystem
     typedef bool (*TraversalFunc)(Body*, void*);
 
     bool traverse(TraversalFunc, void*) const;
-    Body* find(const std::string&, bool deepSearch = false, bool i18n = false) const;
-    std::vector<std::string> getCompletion(const std::string& _name, bool i18n, bool rec = true) const;
+    Body* find(std::string_view, bool deepSearch = false, bool i18n = false) const;
+    void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool i18n, bool rec = true) const;
 
  private:
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
 
  private:
-    typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
+    using ObjectIndex = std::map<std::string, Body*, UTF8StringOrderingPredicate>;
 
  private:
     Star* star;
@@ -315,7 +316,7 @@ class Body : public AstroObject
 
     std::vector<Location*>* getLocations() const;
     void addLocation(Location*);
-    Location* findLocation(const std::string&, bool i18n = false) const;
+    Location* findLocation(std::string_view, bool i18n = false) const;
     void computeLocations();
 
     bool isVisible() const { return visible; }

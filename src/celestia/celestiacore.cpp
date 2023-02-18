@@ -52,6 +52,7 @@
 #include <fstream>
 #include <iomanip>
 #include <algorithm>
+#include <cstddef>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
@@ -1023,27 +1024,28 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         else if (c == '\b')
         {
             typedTextCompletionIdx = -1;
-            if (typedText.size() > 0)
+            if (!typedText.empty())
             {
 #ifdef AUTO_COMPLETION
                 do
                 {
 #endif
-                    // We remove bytes like b10xxx xxxx at the end of typeText
-                    // these are guarantied to not be the first byte of a UTF-8 char
-                    while (typedText.size() && ((typedText[typedText.size() - 1] & 0xC0) == 0x80)) {
-                        typedText = string(typedText, 0, typedText.size() - 1);
-                    }
-                    // We then remove the first byte of the last UTF-8 char of typedText.
-                    typedText = string(typedText, 0, typedText.size() - 1);
-                    if (typedText.size() > 0)
+                    for (;;)
                     {
-                        typedTextCompletion = sim->getObjectCompletion(typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
-                    } else {
-                        typedTextCompletion.clear();
+                        auto ch = static_cast<std::byte>(typedText.back());
+                        typedText.pop_back();
+                        // If the string is empty, or the removed character was
+                        // not a UTF-8 continuation byte 0b10xx_xxxx then we're
+                        // done.
+                        if (typedText.empty() || (ch & std::byte(0xc0)) != std::byte(0x80))
+                            break;
                     }
+
+                    typedTextCompletion.clear();
+                    if (!typedText.empty())
+                         sim->getObjectCompletion(typedTextCompletion, typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
 #ifdef AUTO_COMPLETION
-                } while (typedText.size() > 0 && typedTextCompletion.size() == 1);
+                } while (!typedText.empty() && typedTextCompletion.size() == 1);
 #endif
             }
         }
@@ -4763,8 +4765,9 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 
 void CelestiaCore::setTypedText(const char *c_p)
 {
-    typedText += string(c_p);
-    typedTextCompletion = sim->getObjectCompletion(typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    typedText.append(c_p);
+    typedTextCompletion.clear();
+    sim->getObjectCompletion(typedTextCompletion, typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
     typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
     if (typedTextCompletion.size() == 1)

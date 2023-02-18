@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <celutil/array_view.h>
 #include <celutil/strnatcmp.h>
 #include "body.h"
 #include "location.h"
@@ -20,6 +21,7 @@
 using namespace Eigen;
 using namespace std;
 
+namespace celutil = celestia::util;
 
 Simulation::Simulation(Universe* _universe) :
     universe(_universe)
@@ -410,10 +412,10 @@ void Simulation::selectPlanet(int index)
 //   3. Search the planets and moons in the planetary system of the currently selected
 //      star
 //   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
-Selection Simulation::findObject(string s, bool i18n)
+Selection Simulation::findObject(std::string_view s, bool i18n) const
 {
     Selection path[2];
-    int nPathEntries = 0;
+    std::size_t nPathEntries = 0;
 
     if (!selection.empty())
         path[nPathEntries++] = selection;
@@ -421,17 +423,17 @@ Selection Simulation::findObject(string s, bool i18n)
     if (closestSolarSystem != nullptr)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
-    return universe->find(s, path, nPathEntries, i18n);
+    return universe->find(s, {path, nPathEntries}, i18n);
 }
 
 
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.
-Selection Simulation::findObjectFromPath(string s, bool i18n)
+Selection Simulation::findObjectFromPath(std::string_view s, bool i18n) const
 {
     Selection path[2];
-    int nPathEntries = 0;
+    std::size_t nPathEntries = 0;
 
     if (!selection.empty())
         path[nPathEntries++] = selection;
@@ -439,14 +441,17 @@ Selection Simulation::findObjectFromPath(string s, bool i18n)
     if (closestSolarSystem != nullptr)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
-    return universe->findPath(s, path, nPathEntries, i18n);
+    return universe->findPath(s, {path, nPathEntries}, i18n);
 }
 
 
-vector<std::string> Simulation::getObjectCompletion(string s, bool i18n, bool withLocations)
+void Simulation::getObjectCompletion(std::vector<std::string>& completion,
+                                     std::string_view s,
+                                     bool i18n,
+                                     bool withLocations) const
 {
     Selection path[2];
-    int nPathEntries = 0;
+    std::size_t nPathEntries = 0;
 
     if (!selection.empty())
     {
@@ -466,12 +471,10 @@ vector<std::string> Simulation::getObjectCompletion(string s, bool i18n, bool wi
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
     }
 
-    auto completion = universe->getCompletionPath(s, i18n, path, nPathEntries, withLocations);
+    universe->getCompletionPath(completion, s, i18n, {path, nPathEntries}, withLocations);
 
-    sort(begin(completion), end(completion),
-         [](const string &s1, const string &s2) { return strnatcmp(s1, s2) < 0; });
-
-    return completion;
+    std::sort(completion.begin(), completion.end(),
+              [](const std::string &s1, const std::string &s2) { return strnatcmp(s1, s2) < 0; });
 }
 
 

@@ -10,8 +10,9 @@
 //
 //
 
-#ifndef _DSONAME_H_
-#define _DSONAME_H_
+#pragma once
+
+#include <string_view>
 
 #include <celengine/name.h>
 #include <celengine/deepskyobj.h>
@@ -22,8 +23,5 @@ class DSONameDatabase: public NameDatabase
  public:
     DSONameDatabase() {};
 
-
-    uint32_t findCatalogNumberByName(const std::string&, bool i18n) const;
+    std::uint32_t findCatalogNumberByName(std::string_view, bool i18n) const;
 };
-
-#endif  // _DSONAME_H_

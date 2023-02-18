@@ -14,6 +14,7 @@
 #include <iosfwd>
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <Eigen/Core>
@@ -43,10 +44,10 @@ class StarDatabase
     inline std::uint32_t size() const;
 
     Star* find(AstroCatalog::IndexNumber catalogNumber) const;
-    Star* find(const std::string&, bool i18n) const;
-    AstroCatalog::IndexNumber findCatalogNumberByName(const std::string&, bool i18n) const;
+    Star* find(std::string_view, bool i18n) const;
+    AstroCatalog::IndexNumber findCatalogNumberByName(std::string_view, bool i18n) const;
 
-    std::vector<std::string> getCompletion(const std::string&, bool i18n) const;
+    void getCompletion(std::vector<std::string>&, std::string_view, bool i18n) const;
 
     void findVisibleStars(StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,

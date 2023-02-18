@@ -1219,7 +1219,7 @@ getFrameCenter(const Universe& universe, const Hash* frameData, const Selection&
         return defaultCenter;
     }
 
-    Selection centerObject = universe.findPath(*centerName, nullptr, 0);
+    Selection centerObject = universe.findPath(*centerName, {});
     if (centerObject.empty())
     {
         GetLogger()->error("Center object '{}' of reference frame not found.\n", *centerName);
@@ -1259,7 +1259,7 @@ CreateMeanEquatorFrame(const Universe& universe,
     Selection obj = center;
     if (const std::string* objName = frameData->getString("Object"); objName != nullptr)
     {
-        obj = universe.findPath(*objName, nullptr, 0);
+        obj = universe.findPath(*objName, {});
         if (obj.empty())
         {
             GetLogger()->error("Object '{}' for mean equator frame not found.\n", *objName);
@@ -1378,7 +1378,7 @@ getVectorTarget(const Universe& universe, const Hash* vectorData)
         return Selection();
     }
 
-    Selection targetObject = universe.findPath(*targetName, nullptr, 0);
+    Selection targetObject = universe.findPath(*targetName, {});
     if (targetObject.empty())
     {
         GetLogger()->warn("Bad two-vector frame: target object '{}' of vector not found.\n",
@@ -1405,7 +1405,7 @@ getVectorObserver(const Universe& universe, const Hash* vectorData)
         return Selection();
     }
 
-    Selection obsObject = universe.findPath(*obsName, nullptr, 0);
+    Selection obsObject = universe.findPath(*obsName, {});
     if (obsObject.empty())
     {
         GetLogger()->warn("Bad two-vector frame: observer object '{}' of vector not found.\n",
@@ -1663,7 +1663,7 @@ CreateTopocentricFrame(const Universe& universe,
         // If a center is provided, the default observer is the center and
         // the default target is the center's parent. This gives sensible results
         // when a topocentric frame is used as an orbit frame.
-        center = universe.findPath(*centerName, nullptr, 0);
+        center = universe.findPath(*centerName, {});
         if (center.empty())
         {
             GetLogger()->error("Center object '{}' for topocentric frame not found.\n", *centerName);
@@ -1693,7 +1693,7 @@ CreateTopocentricFrame(const Universe& universe,
     }
     else
     {
-        target = universe.findPath(*targetName, nullptr, 0);
+        target = universe.findPath(*targetName, {});
         if (target.empty())
         {
             GetLogger()->error("Target object '{}' for topocentric frame not found.\n", *targetName);
@@ -1715,7 +1715,7 @@ CreateTopocentricFrame(const Universe& universe,
     }
     else
     {
-        observer = universe.findPath(*observerName, nullptr, 0);
+        observer = universe.findPath(*observerName, {});
         if (observer.empty())
         {
             GetLogger()->error("Observer object '{}' for topocentric frame not found.\n", *observerName);

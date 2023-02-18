@@ -1160,7 +1160,7 @@ bool LoadSolarSystemObjects(std::istream& in,
             return false;
         }
 
-        Selection parent = universe.findPath(parentName, nullptr, 0);
+        Selection parent = universe.findPath(parentName, {});
         PlanetarySystem* parentSystem = nullptr;
 
         std::vector<std::string> names;

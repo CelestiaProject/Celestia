@@ -8,8 +8,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_UNIVERSE_H_
-#define _CELENGINE_UNIVERSE_H_
+#pragma once
+
+#include <cstdint>
+#include <string>
+#include <string_view>
+#include <vector>
+
 
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
@@ -19,7 +24,7 @@
 #include <celengine/marker.h>
 #include <celengine/selection.h>
 #include <celengine/asterism.h>
-#include <vector>
+#include <celutil/array_view.h>
 
 
 class ConstellationBoundaries;
@@ -53,31 +58,18 @@ class Universe
                    float tolerance = 0.0f);
 
 
-    Selection find(const std::string& s,
-                   Selection* contexts = nullptr,
-                   int nContexts = 0,
+    Selection find(std::string_view s,
+                   celestia::util::array_view<const Selection> contexts,
                    bool i18n = false) const;
-    Selection findPath(const std::string& s,
-                       Selection* contexts = nullptr,
-                       int nContexts = 0,
+    Selection findPath(std::string_view s,
+                       celestia::util::array_view<const Selection> contexts,
                        bool i18n = false) const;
-    Selection findChildObject(const Selection& sel,
-                              const std::string& name,
-                              bool i18n = false) const;
-    Selection findObjectInContext(const Selection& sel,
-                                  const std::string& name,
-                                  bool i18n = false) const;
 
-    std::vector<std::string> getCompletion(const std::string& s,
-                                           bool i18n,
-                                           Selection* contexts = nullptr,
-                                           int nContexts = 0,
-                                           bool withLocations = false);
-    std::vector<std::string> getCompletionPath(const std::string& s,
-                                               bool i18n,
-                                               Selection* contexts = nullptr,
-                                               int nContexts = 0,
-                                               bool withLocations = false);
+    void getCompletionPath(std::vector<std::string>& completion,
+                           std::string_view s,
+                           bool i18n,
+                           celestia::util::array_view<const Selection> contexts,
+                           bool withLocations = false) const;
 
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
@@ -100,6 +92,19 @@ class Universe
     celestia::MarkerList* getMarkers() const;
 
  private:
+    void getCompletion(std::vector<std::string>& completion,
+                       std::string_view s,
+                       bool i18n,
+                       celestia::util::array_view<const Selection> contexts,
+                       bool withLocations = false) const;
+
+    Selection findChildObject(const Selection& sel,
+                              std::string_view name,
+                              bool i18n = false) const;
+    Selection findObjectInContext(const Selection& sel,
+                                  std::string_view name,
+                                  bool i18n = false) const;
+
     Selection pickPlanet(SolarSystem& solarSystem,
                          const UniversalCoord& origin,
                          const Eigen::Vector3f& direction,
@@ -129,5 +134,3 @@ class Universe
 
     std::vector<const Star*> closeStars;
 };
-
-#endif // _CELENGINE_UNIVERSE_H_

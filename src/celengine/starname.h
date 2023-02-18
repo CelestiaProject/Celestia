@@ -10,8 +10,10 @@
 //
 //
 
-#ifndef _STARNAME_H_
-#define _STARNAME_H_
+#pragma once
+
+#include <cstdint>
+#include <string_view>
 
 #include <celengine/name.h>
 #include <celengine/star.h>
@@ -22,10 +24,7 @@ class StarNameDatabase: public NameDatabase
  public:
     StarNameDatabase() {};
 
-
-    uint32_t findCatalogNumberByName(const std::string&, bool i18n) const;
+    std::uint32_t findCatalogNumberByName(std::string_view, bool i18n) const;
 
     static StarNameDatabase* readNames(std::istream&);
 };
-
-#endif // _STARNAME_H_
