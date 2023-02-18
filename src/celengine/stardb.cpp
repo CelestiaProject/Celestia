@@ -308,7 +308,7 @@ Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 }
 
 
-AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const std::string& name, bool i18n) const
+AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
 {
     if (name.empty())
         return AstroCatalog::InvalidIndex;
@@ -350,7 +350,7 @@ AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const std::strin
 }
 
 
-Star* StarDatabase::find(const std::string& name, bool i18n) const
+Star* StarDatabase::find(std::string_view name, bool i18n) const
 {
     AstroCatalog::IndexNumber catalogNumber = findCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
@@ -413,15 +413,11 @@ Star* StarDatabase::searchCrossIndex(const Catalog catalog, const AstroCatalog::
 }
 
 
-std::vector<std::string> StarDatabase::getCompletion(const std::string& name, bool i18n) const
+void StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const
 {
-    std::vector<std::string> completion;
-
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        return namesDB->getCompletion(name, i18n);
-    else
-        return completion;
+        namesDB->getCompletion(completion, name, i18n);
 }
 
 

@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <string_view>
 
 #include <celengine/astroobj.h>
 #include <celutil/stringutils.h>
@@ -38,17 +39,16 @@ class NameDatabase
     // delete all names associated with the specified catalog number
     void erase(const AstroCatalog::IndexNumber);
 
-    AstroCatalog::IndexNumber getCatalogNumberByName(const std::string&, bool i18n) const;
+    AstroCatalog::IndexNumber getCatalogNumberByName(std::string_view, bool i18n) const;
     std::string getNameByCatalogNumber(const AstroCatalog::IndexNumber) const;
 
     NumberIndex::const_iterator getFirstNameIter(const AstroCatalog::IndexNumber catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
-    std::vector<std::string> getCompletion(const std::string& name, bool i18n) const;
+    void getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const;
 
  protected:
     NameIndex   nameIndex;
     NameIndex   localizedNameIndex;
     NumberIndex numberIndex;
 };
-

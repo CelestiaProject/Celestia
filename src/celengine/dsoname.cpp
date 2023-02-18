@@ -10,12 +10,10 @@
 //
 //
 
-#include <celengine/dsoname.h>
-
-using namespace std;
+#include "dsoname.h"
 
 //NOTE: this could be expanded in the near future, so we place it here:
-uint32_t DSONameDatabase::findCatalogNumberByName(const string& name, bool i18n) const
+std::uint32_t DSONameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
 {
     return getCatalogNumberByName(name, i18n);
 }

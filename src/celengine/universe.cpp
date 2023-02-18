@@ -29,11 +29,18 @@
 #include "timelinephase.h"
 #include "universe.h"
 
-static const double ANGULAR_RES = 3.5e-6;
+namespace celutil = celestia::util;
 
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+
+namespace
+{
+
+constexpr double ANGULAR_RES = 3.5e-6;
+
+} // end unnamed namespace
 
 
 Universe::Universe()
@@ -266,13 +273,13 @@ void ClosestStarFinder::process(const Star& star, float distance, float /*unused
 class NearStarFinder : public StarHandler
 {
 public:
-    NearStarFinder(float _maxDistance, vector<const Star*>& nearStars);
+    NearStarFinder(float _maxDistance, std::vector<const Star*>& nearStars);
     ~NearStarFinder() = default;
     void process(const Star& star, float distance, float appMag);
 
 private:
     float maxDistance;
-    vector<const Star*>& nearStars;
+    std::vector<const Star*>& nearStars;
 };
 
 NearStarFinder::NearStarFinder(float _maxDistance,
@@ -904,7 +911,7 @@ Selection Universe::pick(const UniversalCoord& origin,
 
 // Search by name for an immediate child of the specified object.
 Selection Universe::findChildObject(const Selection& sel,
-                                    const string& name,
+                                    std::string_view name,
                                     bool i18n) const
 {
     switch (sel.getType())
@@ -960,7 +967,7 @@ Selection Universe::findChildObject(const Selection& sel,
 // system.  For locations and planets, the context additionally includes
 // sibling or child locations, respectively.
 Selection Universe::findObjectInContext(const Selection& sel,
-                                        const string& name,
+                                        std::string_view name,
                                         bool i18n) const
 {
     Body* contextBody = nullptr;
@@ -1010,9 +1017,8 @@ Selection Universe::findObjectInContext(const Selection& sel,
 //   3. Check the solar systems for planet names; we don't make any decisions
 //      about which solar systems are relevant, and let the caller pass them
 //      to us to search.
-Selection Universe::find(const string& s,
-                         Selection* contexts,
-                         int nContexts,
+Selection Universe::find(std::string_view s,
+                         celutil::array_view<const Selection> contexts,
                          bool i18n) const
 {
     if (starCatalog != nullptr)
@@ -1035,9 +1041,9 @@ Selection Universe::find(const string& s,
             return Selection(dso);
     }
 
-    for (int i=0; i<nContexts; ++i)
+    for (const auto& context : contexts)
     {
-        Selection sel = findObjectInContext(contexts[i], s, i18n);
+        Selection sel = findObjectInContext(context, s, i18n);
         if (!sel.empty())
             return sel;
     }
@@ -1052,31 +1058,28 @@ Selection Universe::find(const string& s,
 // to search for objects--this is roughly analgous to the PATH environment
 // variable in Unix and Windows.  Typically, the solar system will be one
 // in which the user is currently located.
-Selection Universe::findPath(const string& s,
-                             Selection contexts[],
-                             int nContexts,
+Selection Universe::findPath(std::string_view s,
+                             celutil::array_view<const Selection> contexts,
                              bool i18n) const
 {
-    string::size_type pos = s.find('/', 0);
+    std::string_view::size_type pos = s.find('/', 0);
 
     // No delimiter found--just do a normal find.
-    if (pos == string::npos)
-        return find(s, contexts, nContexts, i18n);
+    if (pos == std::string_view::npos)
+        return find(s, contexts, i18n);
 
     // Find the base object
-    string base(s, 0, pos);
+    auto base = s.substr(0, pos);
+    Selection sel = find(base, contexts, i18n);
 
-    Selection sel = find(base, contexts, nContexts, i18n);
-
-    while (!sel.empty() && pos != string::npos)
+    while (!sel.empty() && pos != std::string_view::npos)
     {
-        string::size_type nextPos = s.find('/', pos + 1);
-        string::size_type len;
-        if (nextPos == string::npos)
-            len = s.size() - pos - 1;
-        else
-            len = nextPos - pos - 1;
-        string name = string(s, pos + 1, len);
+        auto nextPos = s.find('/', pos + 1);
+        auto len = nextPos == std::string_view::npos
+                 ? s.size() - pos - 1
+                 : nextPos - pos - 1;
+
+        auto name = s.substr(pos + 1, len);
 
         sel = findChildObject(sel, name, i18n);
 
@@ -1087,131 +1090,141 @@ Selection Universe::findPath(const string& s,
 }
 
 
-vector<string> Universe::getCompletion(const string& s,
-                                       bool i18n,
-                                       Selection* contexts,
-                                       int nContexts,
-                                       bool withLocations)
+static void getLocationsCompletion(std::vector<std::string>& completion,
+                                   std::string_view s,
+                                   int s_length,
+                                   bool i18n,
+                                   const std::vector<Location*>* locations)
 {
-    vector<string> completion;
+    if (locations == nullptr)
+        return;
+
+    for (const auto* location : *locations)
+    {
+        const std::string& name = location->getName(false);
+        if (!UTF8StringCompare(s, name, s_length))
+        {
+            completion.push_back(name);
+        }
+        else if (i18n)
+        {
+            const std::string& lname = location->getName(true);
+            if (lname != name && !UTF8StringCompare(s, lname, s_length))
+                completion.push_back(lname);
+        }
+    }
+}
+
+
+void Universe::getCompletion(std::vector<std::string>& completion,
+                             std::string_view s,
+                             bool i18n,
+                             celutil::array_view<const Selection> contexts,
+                             bool withLocations) const
+{
     int s_length = UTF8Length(s);
 
     // Solar bodies first:
-    for (int i = 0; i < nContexts; i++)
+    for (const Selection& context : contexts)
     {
-        if (withLocations && contexts[i].getType() == Selection::Type_Body)
+        if (withLocations && context.getType() == Selection::Type_Body)
         {
-            vector<Location*>* locations = contexts[i].body()->getLocations();
-            if (locations != nullptr)
-            {
-                for (const auto location : *locations)
-                {
-                    std::string name = location->getName(false);
-                    if (!UTF8StringCompare(s, name, s_length))
-                        completion.push_back(name);
-                    else if (i18n)
-                    {
-                        std::string lname = location->getName(true);
-                        if (lname != name && !UTF8StringCompare(s, lname, s_length))
-                            completion.push_back(lname);
-                    }
-                }
-            }
+            getLocationsCompletion(completion, s, s_length, i18n,
+                                   context.body()->getLocations());
         }
 
-        SolarSystem* sys = getSolarSystem(contexts[i]);
+        const SolarSystem* sys = getSolarSystem(context);
         if (sys != nullptr)
         {
-            PlanetarySystem* planets = sys->getPlanets();
+            const PlanetarySystem* planets = sys->getPlanets();
             if (planets != nullptr)
-            {
-                vector<string> bodies = planets->getCompletion(s, i18n);
-                completion.insert(completion.end(),
-                                  bodies.begin(), bodies.end());
-            }
+                planets->getCompletion(completion, s, i18n);
         }
     }
 
     // Deep sky objects:
     if (dsoCatalog != nullptr)
-    {
-        vector<string> dsos  = dsoCatalog->getCompletion(s, i18n);
-        completion.insert(completion.end(), dsos.begin(), dsos.end());
-    }
+        dsoCatalog->getCompletion(completion, s, i18n);
 
     // and finally stars;
     if (starCatalog != nullptr)
-    {
-        vector<string> stars  = starCatalog->getCompletion(s, i18n);
-        completion.insert(completion.end(), stars.begin(), stars.end());
-    }
-
-    return completion;
+        starCatalog->getCompletion(completion, s, i18n);
 }
 
 
-vector<string> Universe::getCompletionPath(const string& s,
-                                           bool i18n,
-                                           Selection* contexts,
-                                           int nContexts,
-                                           bool withLocations)
+static void getLocationsCompletionPath(std::vector<std::string>& completion,
+                                       std::string_view search,
+                                       bool i18n,
+                                       const std::vector<Location*>* locations)
 {
-    vector<string> completion;
-    vector<string> locationCompletion;
-    string::size_type pos = s.rfind('/', s.length());
+    if (locations == nullptr)
+        return;
 
-    if (pos == string::npos)
-        return getCompletion(s, i18n, contexts, nContexts, withLocations);
+    for (const auto location : *locations)
+    {
+        const std::string& name = location->getName(false);
+        if (!UTF8StringCompare(search, name, search.length()))
+            completion.push_back(name);
+        else if (i18n)
+        {
+            const std::string& lname = location->getName(true);
+            if (lname != name && !UTF8StringCompare(search, lname, search.length()))
+                completion.push_back(lname);
+        }
+    }
+}
 
-    string base(s, 0, pos);
-    Selection sel = findPath(base, contexts, nContexts, i18n);
+
+void Universe::getCompletionPath(std::vector<std::string>& completion,
+                                 std::string_view s,
+                                 bool i18n,
+                                 celutil::array_view<const Selection> contexts,
+                                 bool withLocations) const
+{
+    std::string_view::size_type pos = s.rfind('/', s.length());
+
+    if (pos == std::string_view::npos)
+    {
+        getCompletion(completion, s, i18n, contexts, withLocations);
+        return;
+    }
+
+    auto base = s.substr(0, pos);
+    Selection sel = findPath(base, contexts, i18n);
 
     if (sel.empty())
     {
-        return completion;
+        return;
     }
 
     if (sel.getType() == Selection::Type_DeepSky)
     {
         completion.push_back(dsoCatalog->getDSOName(sel.deepsky()));
-        return completion;
+        return;
     }
 
-    PlanetarySystem* worlds = nullptr;
+    const PlanetarySystem* worlds = nullptr;
     if (sel.getType() == Selection::Type_Body)
     {
         worlds = sel.body()->getSatellites();
-        vector<Location*>* locations = sel.body()->getLocations();
-        if (locations != nullptr && withLocations)
-        {
-            string search = s.substr(pos + 1);
-            for (const auto location : *locations)
-            {
-                std::string name = location->getName(false);
-                if (!UTF8StringCompare(search, name, search.length()))
-                    locationCompletion.push_back(name);
-                else if (i18n)
-                {
-                    std::string lname = location->getName(true);
-                    if (lname != name && !UTF8StringCompare(search, lname, search.length()))
-                        locationCompletion.push_back(lname);
-                }
-            }
-        }
     }
     else if (sel.getType() == Selection::Type_Star)
     {
-        SolarSystem* ssys = getSolarSystem(sel.star());
+        const SolarSystem* ssys = getSolarSystem(sel.star());
         if (ssys != nullptr)
             worlds = ssys->getPlanets();
     }
 
     if (worlds != nullptr)
-        completion = worlds->getCompletion(s.substr(pos + 1), i18n, false);
+        worlds->getCompletion(completion, s.substr(pos + 1), i18n, false);
 
-    completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
-
-    return completion;
+    if (sel.getType() == Selection::Type_Body && withLocations)
+    {
+        getLocationsCompletionPath(completion,
+                                   s.substr(pos + 1),
+                                   i18n,
+                                   sel.body()->getLocations());
+    }
 }
 
 
@@ -1219,7 +1232,7 @@ vector<string> Universe::getCompletionPath(const string& s,
 // with in one light year.
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
-    Vector3f pos = position.toLy().cast<float>();
+    Eigen::Vector3f pos = position.toLy().cast<float>();
     ClosestStarFinder closestFinder(1.0f, this);
     closestFinder.withPlanets = true;
     starCatalog->findCloseStars(closestFinder, pos, 1.0f);
@@ -1230,9 +1243,9 @@ SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) con
 void
 Universe::getNearStars(const UniversalCoord& position,
                        float maxDistance,
-                       vector<const Star*>& nearStars) const
+                       std::vector<const Star*>& nearStars) const
 {
-    Vector3f pos = position.toLy().cast<float>();
+    Eigen::Vector3f pos = position.toLy().cast<float>();
     NearStarFinder finder(maxDistance, nearStars);
     starCatalog->findCloseStars(finder, pos, maxDistance);
 }

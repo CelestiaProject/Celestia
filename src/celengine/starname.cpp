@@ -18,7 +18,7 @@
 using namespace std;
 
 
-uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n) const
+std::uint32_t StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
 {
     auto catalogNumber = getCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)

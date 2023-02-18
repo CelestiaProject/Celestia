@@ -970,7 +970,7 @@ vector<Location*>* Body::getLocations() const
 }
 
 
-Location* Body::findLocation(const string& name, bool i18n) const
+Location* Body::findLocation(std::string_view name, bool i18n) const
 {
     if (!locations)
         return nullptr;
@@ -1317,7 +1317,7 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  *    as resolving an object name in an ssc file--it should be false. Otherwise,
  *    object lookup will behave differently based on the locale.
  */
-Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
+Body* PlanetarySystem::find(std::string_view _name, bool deepSearch, bool i18n) const
 {
     auto firstMatch = objectIndex.find(_name);
     if (firstMatch != objectIndex.end())
@@ -1370,9 +1370,11 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     return true;
 }
 
-std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool i18n, bool deepSearch) const
+void PlanetarySystem::getCompletion(std::vector<std::string>& completion,
+                                    std::string_view _name,
+                                    bool i18n,
+                                    bool deepSearch) const
 {
-    std::vector<std::string> completion;
     int _name_length = UTF8Length(_name);
 
     // Search through all names in this planetary system.
@@ -1396,14 +1398,9 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
         for (const auto sat : satellites)
         {
             if (sat->getSatellites())
-            {
-                auto bodies = sat->getSatellites()->getCompletion(_name, i18n);
-                completion.insert(completion.end(), bodies.begin(), bodies.end());
-            }
+                sat->getSatellites()->getCompletion(completion, _name, i18n);
         }
     }
-
-    return completion;
 }
 
 

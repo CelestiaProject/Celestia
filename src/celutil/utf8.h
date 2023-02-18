@@ -26,6 +26,9 @@ int  UTF8StringCompare(std::string_view s0, std::string_view s1, size_t n, bool 
 class UTF8StringOrderingPredicate
 {
  public:
+    // enable use for lookup of strings by string_view
+    using is_transparent = void;
+
     bool operator()(std::string_view s0, std::string_view s1) const
     {
         return UTF8StringCompare(s0, s1) == -1;

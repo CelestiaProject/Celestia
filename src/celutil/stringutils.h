@@ -24,6 +24,8 @@ int compareIgnoringCase(std::string_view s1,
 
 struct CompareIgnoringCasePredicate
 {
+    // enable use for lookup by std::string_view with std::string keys
+    using is_transparent = void;
     bool operator()(std::string_view, std::string_view) const;
 };
 

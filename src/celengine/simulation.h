@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SIMULATION_H_
-#define _CELENGINE_SIMULATION_H_
+#pragma once
 
 #include <memory>
 #include <celengine/texture.h>
@@ -20,6 +19,7 @@
 #include <celengine/frame.h>
 #include <celengine/observer.h>
 #include <Eigen/Core>
+#include <string_view>
 #include <vector>
 
 
@@ -58,9 +58,12 @@ class Simulation
     void setTrackedObject(const Selection&);
 
     void selectPlanet(int);
-    Selection findObject(std::string s, bool i18n = false);
-    Selection findObjectFromPath(std::string s, bool i18n = false);
-    std::vector<std::string> getObjectCompletion(std::string s, bool i18n, bool withLocations = false);
+    Selection findObject(std::string_view s, bool i18n = false) const;
+    Selection findObjectFromPath(std::string_view s, bool i18n = false) const;
+    void getObjectCompletion(std::vector<std::string>& completion,
+                             std::string_view s,
+                             bool i18n,
+                             bool withLocations = false) const;
     void gotoSelection(double gotoTime,
                        const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);
@@ -136,5 +139,3 @@ class Simulation
     float faintestVisible{ 5.0f };
     bool pauseState{ false };
 };
-
-#endif // _CELENGINE_SIMULATION_H_

@@ -99,10 +99,9 @@ FeatureNameEntry FeatureNames[] =
 };
 
 
-string Location::getName(bool i18n) const
+const std::string& Location::getName(bool i18n) const
 {
-    if (!i18n || i18nName == "") return name;
-    return i18nName;
+    return i18n && !i18nName.empty() ? i18nName : name;
 }
 
 

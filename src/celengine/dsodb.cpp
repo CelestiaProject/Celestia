@@ -56,7 +56,7 @@ DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) 
 }
 
 
-DeepSkyObject* DSODatabase::find(const std::string& name, bool i18n) const
+DeepSkyObject* DSODatabase::find(std::string_view name, bool i18n) const
 {
     if (name.empty())
         return nullptr;
@@ -72,15 +72,11 @@ DeepSkyObject* DSODatabase::find(const std::string& name, bool i18n) const
 }
 
 
-std::vector<std::string> DSODatabase::getCompletion(const std::string& name, bool i18n) const
+void DSODatabase::getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const
 {
-    std::vector<std::string> completion;
-
     // only named DSOs are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        return namesDB->getCompletion(name, i18n);
-    else
-        return completion;
+        namesDB->getCompletion(completion, name, i18n);
 }
 
 
