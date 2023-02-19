@@ -172,6 +172,12 @@ class VertexObject
         return (m_state & State::Initialize) == 0;
     }
 
+    //! Return if the buffer is bound or not.
+    inline bool bound() const noexcept
+    {
+        return (m_state & State::Bound) != 0;
+    }
+
     //! Return the buffer's current size.
     GLsizeiptr getBufferSize() const noexcept          { return m_bufferSize; }
 
@@ -189,7 +195,8 @@ class VertexObject
     {
         NormalState = 0x0000,
         Initialize  = 0x0001,
-        Update      = 0x0002
+        Update      = 0x0002,
+        Bound       = 0x0004,
     };
 
     std::uint16_t m_state { State::Initialize };
