@@ -253,7 +253,6 @@ Renderer::Renderer() :
     labelMode(LocationLabels), //def. NoLabels
     renderFlags(DefaultRenderFlags),
     orbitMask(Body::Planet | Body::Moon | Body::Stellar),
-    ambientLightLevel(0.1f),
     brightnessBias(0.0f),
     saturationMagNight(1.0f),
     saturationMag(1.0f),
@@ -768,6 +767,19 @@ void Renderer::setAmbientLightLevel(float level)
 }
 
 
+float Renderer::getTintSaturation() const
+{
+    return tintSaturation;
+}
+
+
+void Renderer::setTintSaturation(float level)
+{
+    tintSaturation = level;
+    markSettingsChanged();
+}
+
+
 float Renderer::getMinimumFeatureSize() const
 {
     return minFeatureSize;
@@ -1275,6 +1287,29 @@ void Renderer::autoMag(float& faintestMag)
 }
 
 
+static Color legacyTintColor(float temp)
+{
+    // If the star is sufficiently cool, change the light color
+    // from white.  Though our sun appears yellow, we still make
+    // it and all hotter stars emit white light, as this is the
+    // 'natural' light to which our eyes are accustomed.  We also
+    // assign a slight bluish tint to light from O and B type stars,
+    // though these will almost never have planets for their light
+    // to shine upon.
+    if (temp > 30000.0f)
+        return Color(0.8f, 0.8f, 1.0f);
+    else if (temp > 10000.0f)
+        return Color(0.9f, 0.9f, 1.0f);
+    else if (temp > 5400.0f)
+        return Color(1.0f, 1.0f, 1.0f);
+    else if (temp > 3900.0f)
+        return Color(1.0f, 0.9f, 0.8f);
+    else if (temp > 2000.0f)
+        return Color(1.0f, 0.7f, 0.7f);
+    return Color(1.0f, 0.4f, 0.4f);
+}
+
+
 // Set up the light sources for rendering a solar system.  The positions of
 // all nearby stars are converted from universal to viewer-centered
 // coordinates.
@@ -1283,8 +1318,15 @@ setupLightSources(const vector<const Star*>& nearStars,
                   const UniversalCoord& observerPos,
                   double t,
                   vector<LightSource>& lightSources,
-                  uint64_t renderFlags)
+                  float tintSaturation,
+                  bool useBlackbodyColors)
 {
+    // Fade out the illumination from cool objects. Objects at the Draper
+    // point (798 K) should be visibly glowing, so set the minimum temperature
+    // for illumination to be slightly below this.
+    constexpr float DARK_POINT = 780.0f;
+    constexpr float FADE_POINT = 1000.0f;
+
     lightSources.clear();
 
     for (const auto star : nearStars)
@@ -1297,26 +1339,30 @@ setupLightSources(const vector<const Star*>& nearStars,
             ls.luminosity = star->getLuminosity();
             ls.radius = star->getRadius();
 
-            // If the star is sufficiently cool, change the light color
-            // from white.  Though our sun appears yellow, we still make
-            // it and all hotter stars emit white light, as this is the
-            // 'natural' light to which our eyes are accustomed.  We also
-            // assign a slight bluish tint to light from O and B type stars,
-            // though these will almost never have planets for their light
-            // to shine upon.
             float temp = star->getTemperature();
-            if (temp > 30000.0f)
-                ls.color = Color(0.8f, 0.8f, 1.0f);
-            else if (temp > 10000.0f)
-                ls.color = Color(0.9f, 0.9f, 1.0f);
-            else if (temp > 5400.0f)
-                ls.color = Color(1.0f, 1.0f, 1.0f);
-            else if (temp > 3900.0f)
-                ls.color = Color(1.0f, 0.9f, 0.8f);
-            else if (temp > 2000.0f)
-                ls.color = Color(1.0f, 0.7f, 0.7f);
+            if (temp <= DARK_POINT)
+                continue;
+
+            if (useBlackbodyColors)
+            {
+                float fadeFactor = temp < FADE_POINT
+                    ? (temp - DARK_POINT) / (FADE_POINT - DARK_POINT)
+                    : 1.0f;
+
+                // Artificially decrease the luminosity below the fade point
+                // so that other light sources in the system may provide more
+                // illumination.
+                ls.luminosity *= fadeFactor;
+
+                // Use a variant of the blackbody colors with the whitepoint
+                // set to Sol being white, to ensure consistency of the Solar
+                // System textures.
+                ls.color = GetTintColorTable()->lookupTintColor(temp, tintSaturation, fadeFactor);
+            }
             else
-                ls.color = Color(1.0f, 0.4f, 0.4f);
+            {
+                ls.color = legacyTintColor(temp);
+            }
 
             lightSources.push_back(ls);
         }
@@ -5080,7 +5126,12 @@ Renderer::buildNearSystemsLists(const Universe &universe,
     // Set up direct light sources (i.e. just stars at the moment)
     // Skip if only star orbits to be shown
     if ((renderFlags & ShowSolarSystemObjects) != 0)
-        setupLightSources(nearStars, observerPos, now, lightSourceList, renderFlags);
+        setupLightSources(nearStars,
+                          observerPos,
+                          now,
+                          lightSourceList,
+                          tintSaturation,
+                          colorTemp->type() == ColorTableType::Blackbody_D65);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
