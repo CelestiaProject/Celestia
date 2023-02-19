@@ -1,6 +1,7 @@
-uniform vec4 color;
 uniform sampler2D tidalTex;
+
 varying vec2 texCoord;
+varying vec4 color;
 
 void main(void)
 {

@@ -45,8 +45,8 @@ struct GlobularForm
     struct Blob
     {
         Eigen::Vector3f position;
-        unsigned int colorIndex;
         float radius_2d;
+        std::uint8_t colorIndex;
     };
 
     std::vector<Blob> gblobs{ };
@@ -54,32 +54,34 @@ struct GlobularForm
 };
 
 
-constexpr const int cntrTexWidth  = 512;
-constexpr const int cntrTexHeight = 512;
-constexpr const int starTexWidth  = 128;
-constexpr const int starTexHeight = 128;
+constexpr int cntrTexWidth  = 512;
+constexpr int cntrTexHeight = 512;
+constexpr int starTexWidth  = 128;
+constexpr int starTexHeight = 128;
 
 Color colorTable[256];
 
-constexpr const unsigned int GLOBULAR_POINTS  = 8192;
+constexpr unsigned int GLOBULAR_POINTS  = 8192;
 
-constexpr const float LumiShape = 3.0f;
+constexpr float LumiShape = 3.0f;
 
 // min/max c-values of globular cluster data
-constexpr const float MinC = 0.50f;
-constexpr const float MaxC = 2.58f;
+constexpr float MinC = 0.50f;
+constexpr float MaxC = 2.58f;
 constexpr std::size_t GlobularBuckets = 8;
-constexpr const float BinWidth = (MaxC - MinC) / static_cast<float>(GlobularBuckets) + 0.02f;
+constexpr float BinWidth = (MaxC - MinC) / static_cast<float>(GlobularBuckets) + 0.02f;
 
 // P1 determines the zoom level, where individual cluster stars start to appear.
 // The smaller P2 (< 1), the faster stars show up when resolution increases.
-constexpr const float P1 = 65.0f, P2 = 0.75f;
+constexpr float P1 = 65.0f, P2 = 0.75f;
 
-constexpr const float RRatio_min_exponent = 1.7f;
+constexpr float RRatio_min = 50.11872336272722f; // 10 ** 1.7
 
-constexpr const float RADIUS_CORRECTION = 0.025f;
+constexpr float spriteScaleFactor = 1.0f/1.25f;
 
-float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
+constexpr float RADIUS_CORRECTION = 0.025f;
+
+float CBin, RRatio, XI;
 
 void globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 {
@@ -108,7 +110,6 @@ float relStarDensity(float eta)
      *  taking max(C_ref, CBin). Smaller c gives a shallower distribution!
      */
 
-    static const float RRatio_min = std::pow(10.0f, RRatio_min_exponent);
     float rRatio = std::max(RRatio_min, RRatio);
     float Xi = 1.0f / std::sqrt(1.0f + rRatio * rRatio);
     float XI2 = Xi * Xi;
@@ -144,26 +145,73 @@ void centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     *pixel = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
+void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
+{
+    auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
+
+    // Build RGB color table, using hue, saturation, value as input.
+    // Hue in degrees.
+
+    // Location of hue transition and saturation peak in color index space:
+    constexpr int i0 = 36;
+    constexpr int i_satmax = 16;
+    // Width of hue transition in color index space:
+    constexpr float i_width = 3.0f;
+
+    constexpr float sat_l = 0.08f;
+    constexpr float sat_h = 0.1f;
+    constexpr float hue_r = 27.0f;
+    constexpr float hue_b = 220.0f;
+
+    float r, g, b; // NOSONAR
+    if (i == 255)
+    {
+        // Red Giant star color: i = 255:
+        DeepSkyObject::hsv2rgb(&r, &g, &b, 25.0f, 0.65f, 1.0f);
+    }
+    else
+    {
+        // normal stars: i < 255, generic color profile for now, improve later
+        // simple qualitative saturation profile:
+        // i_satmax is value of i where sat = sat_h + sat_l maximal
+
+        float x = static_cast<float>(i) / static_cast<float>(i_satmax), x2 = x;
+        float sat = sat_l + 2 * sat_h /(x2 + 1.0f / x2);
+
+        // Fast transition from hue_r to hue_b at i = i0 within a width
+        // i_width in color index space:
+
+        float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh(static_cast<float>(i - i0) / i_width) + 1.0f);
+
+        // Prevent green stars
+        if (hue > 60.0 && hue < 180.0)
+            sat = 0.0f;
+
+        DeepSkyObject::hsv2rgb(&r, &g, &b, hue, sat, 0.85f);
+    }
+
+    pixel[0] = static_cast<std::uint8_t>(r * 255.99f);
+    pixel[1] = static_cast<std::uint8_t>(g * 255.99f);
+    pixel[2] = static_cast<std::uint8_t>(b * 255.99f);
+}
+
 void initGlobularData(VertexObject& vo,
-                      const std::vector<GlobularForm::Blob>& points,
-                      GLint sizeLoc,
-                      GLint etaLoc)
+                      const std::vector<GlobularForm::Blob>& points)
 {
     struct GlobularVtx
     {
-        Eigen::Vector3f position;
-        Color color;
-        float starSize;
-        float eta;
+        Eigen::Matrix<short, 3, 1> position;
+        std::array<std::uint8_t, 3> texCoord; // reuse it for starSize, relStarDensity and colorIndex
     };
+
     std::vector<GlobularVtx> globularVtx;
     globularVtx.reserve(4 + points.size());
 
-    // Reuse the buffer for a tidal
-    globularVtx.push_back({{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 0.0f});
-    globularVtx.push_back({{ 1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 0.0f});
-    globularVtx.push_back({{ 1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f});
-    globularVtx.push_back({{-1.0f,  1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0f, 1.0f});
+    // Reuse the buffer for a tidal. Tidal uses color index 0.
+    globularVtx.push_back({{-32767, -32767, 0}, {  0,   0, 0}});
+    globularVtx.push_back({{ 32767, -32767, 0}, {255,   0, 0}});
+    globularVtx.push_back({{ 32767,  32767, 0}, {255, 255, 0}});
+    globularVtx.push_back({{-32767,  32767, 0}, {  0, 255, 0}});
 
     // regarding used constants:
     // pow2 = 128;           // Associate "Red Giants" with the 128 biggest star-sprites
@@ -186,34 +234,30 @@ void initGlobularData(VertexObject& vo,
         if ((i & pow2) != 0)
         {
             pow2    <<= 1;
-            starSize /= 1.25f;
+            starSize *= spriteScaleFactor;
         }
 
         const GlobularForm::Blob& b = points[i];
         GlobularVtx vtx;
-        vtx.starSize = starSize;
-        vtx.position = b.position;
-        vtx.eta      = b.radius_2d;
+        vtx.position    = (b.position * 32767.99f).cast<short>();
+        vtx.texCoord[0] = static_cast<std::uint8_t>(starSize * 255.99f);
+        vtx.texCoord[1] = static_cast<std::uint8_t>(relStarDensity(b.radius_2d) * 255.99f);
 
         /* Colors of normal globular stars are given by color profile.
          * Associate orange "Red Giant" stars with the largest sprite
          * sizes (while pow2 = 128).
          */
 
-        vtx.color = (pow2 < 256) ? colorTable[255] : colorTable[b.colorIndex];
+        vtx.texCoord[2] = (pow2 < 256) ? 255 : b.colorIndex;
 
         globularVtx.push_back(vtx);
     }
 
     vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
     vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
-                            3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
+                            3, GL_SHORT, true, sizeof(GlobularVtx), offsetof(GlobularVtx, position));
     vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                            2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
-    vo.setVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex,
-                            4, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
-    vo.setVertexAttribArray(sizeLoc, 1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize));
-    vo.setVertexAttribArray(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
+                            3, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, texCoord));
 }
 
 void buildGlobularForm(GlobularForm& globularForm, float c)
@@ -305,17 +349,60 @@ void buildGlobularForm(GlobularForm& globularForm, float c)
              * becomes universal!
              */
 
-            b.colorIndex = static_cast<unsigned int>(Z * 254);
+            b.colorIndex = static_cast<std::uint8_t>(Z * 254);
 
             globularPoints.push_back(b);
             i++;
         }
     }
 
-    // Check for efficiency of sprite-star generation => close to 100 %!
-    //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 << "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
-
     globularForm.gblobs = std::move(globularPoints);
+}
+
+Eigen::Vector4f toVector4(const Eigen::Vector3f &v, float w)
+{
+    return Eigen::Vector4f(v.x(), v.y(), v.z(), w);
+}
+
+float CalculateSpriteSize(const Renderer *renderer, const Eigen::Matrix4f &mvp, const Eigen::Matrix3f &viewMat)
+{
+    /*
+     * in original code sprite was a quad with coordinates (v0, v1, v2, v3), where
+     *   v2 = viewMat * vec3( 1, 1, 0),
+     *   v3 = viewMat * vec3(-1, 1, 0).
+     * So the width in world units is v2 - v3. The value remaves the same if we translate vertices by vec3(1, -1, 0).
+     * Trtanslated values are:
+     *   v2 = viewMat * vec3(2, 0, 0)
+     *   v3 = viewMat * vec3(0, 0, 0)
+     * Taking into account multiplication rules v2 becomes just 2 * viewMat.col(0) and v3 is just vec3(0, 0, 0).
+     * To get normalized coordinates we convert v2 and v3 into vec4 and multiply by MVP.
+     * As v3 is zero, then MVP * vec4(v3, 1) is equivalent to taking mvp.col(3).
+     */
+    Eigen::Vector4f v2 = mvp * toVector4(2.0f * viewMat.col(0), 1.0f);
+    Eigen::Vector2f ndc2(v2.head(2) / v2.w());
+    Eigen::Vector2f ndc3(mvp.col(3).head(2) / mvp(3, 3));
+    int w, h; // NOSONAR
+    renderer->getViewport(nullptr, nullptr, &w, &h);
+    Eigen::Vector2f dev(static_cast<float>(w), static_cast<float>(h));
+    // ac - bc <=> (a - b)c
+    return 0.5f * (ndc2 - ndc3).cwiseProduct(dev).norm();
+}
+
+int CalculateSpriteCount(const GlobularForm* form, float detail, float starSize, float minimumFeatureSize)
+{
+    auto nPoints = static_cast<int>(static_cast<float>(form->gblobs.size()) * std::clamp(detail, 0.0f, 1.0f));
+
+    for (int i = 128; i < nPoints; i<<=1)
+    {
+        starSize *= spriteScaleFactor;
+
+        if (starSize < minimumFeatureSize)
+        {
+            nPoints = i;
+            break;
+        }
+    }
+    return nPoints;
 }
 
 class GlobularInfoManager
@@ -373,50 +460,7 @@ Texture* GlobularInfoManager::getGlobularTex()
 
 void GlobularInfoManager::initializeForms()
 {
-    // Build RGB color table, using hue, saturation, value as input.
-    // Hue in degrees.
-
-    // Location of hue transition and saturation peak in color index space:
-    int i0 = 36, i_satmax = 16;
-    // Width of hue transition in color index space:
-    int i_width = 3;
-
-    float sat_l = 0.08f, sat_h = 0.1f, hue_r = 27.0f, hue_b = 220.0f;
-
-    // Red Giant star color: i = 255:
-    // -------------------------------
-    // Convert hue, saturation and value to RGB
-
-    DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, 25.0f, 0.65f, 1.0f);
-    colorTable[255] = Color(Rr, Gg, Bb);
-
-    // normal stars: i < 255, generic color profile for now, improve later
-    // --------------------------------------------------------------------
-    // Convert hue, saturation, value to RGB
-
-    for (int i = 254; i >=0; i--)
-    {
-        // simple qualitative saturation profile:
-        // i_satmax is value of i where sat = sat_h + sat_l maximal
-
-        float x = static_cast<float>(i) / static_cast<float>(i_satmax), x2 = x;
-        float sat = sat_l + 2 * sat_h /(x2 + 1.0f / x2);
-
-        // Fast transition from hue_r to hue_b at i = i0 within a width
-        // i_width in color index space:
-
-        float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh(static_cast<float>(i - i0)
-                                                      / static_cast<float>(i_width)) + 1.0f);
-
-        // Prevent green stars
-        if (hue > 60.0 && hue < 180.0)
-            sat = 0.0f;
-
-        DeepSkyObject::hsv2rgb(&r, &g, &b, hue, sat, 0.85f);
-        colorTable[i] = Color(r, g, b);
-    }
     // Define globularForms corresponding to 8 different bins of King concentration c
-
     for (unsigned int ic  = 0; ic < GlobularBuckets; ++ic)
     {
         float CBin = MinC + (static_cast<float>(ic) + 0.5f) * BinWidth;
@@ -434,12 +478,7 @@ unsigned int cSlot(float conc)
 {
     // map the physical range of c, minC <= c <= maxC,
     // to 8 integers (bin numbers), 0 < cSlot <= 7:
-
-    if (conc <= MinC)
-        conc  = MinC;
-    if (conc >= MaxC)
-        conc  = MaxC;
-
+    conc = std::clamp(conc, MinC, MaxC);
     return static_cast<unsigned int>(std::floor((conc - MinC) / BinWidth));
 }
 
@@ -530,9 +569,7 @@ void Globular::render(const Eigen::Vector3f& offset,
     if (form == nullptr)
         return;
 
-    float distanceToDSO = offset.norm() - getRadius();
-    if (distanceToDSO < 0)
-        distanceToDSO = 0;
+    float distanceToDSO = std::max(0.0f, offset.norm() - getRadius());
 
     float minimumFeatureSize = 0.5f * pixelSize * distanceToDSO;
 
@@ -565,16 +602,21 @@ void Globular::render(const Eigen::Vector3f& offset,
         pixelWeight = 1.0f/(P2 + (1.0f - P2) * DiskSizeInPixels / P1);
 
     // Use same 8 c-bins as in globularForms below!
-
     CBin = MinC + (static_cast<float>(formIndex) + 0.5f) * BinWidth; // center value of (ic+1)th c-bin
 
     RRatio = std::pow(10.0f, CBin);
     XI = 1.0f / std::sqrt(1.0f + RRatio * RRatio);
 
-#ifndef GL_ES
-    glEnable(GL_POINT_SPRITE);
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-#endif
+    static Texture *colorTex;
+    if (colorTex == nullptr)
+    {
+        colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
+                                           colorTextureEval,
+                                           Texture::EdgeClamp,
+                                           Texture::NoMipMaps).release();
+    }
+    glActiveTexture(GL_TEXTURE1);
+    colorTex->bind();
 
     float tidalSize = 2.0f * tidalRadius;
 
@@ -585,22 +627,21 @@ void Globular::render(const Eigen::Vector3f& offset,
     VertexObject& vo = form->vo;
     vo.bind();
     if (!vo.initialized())
-    {
-        auto i = globProg->attribIndex("starSize");
-        auto j = globProg->attribIndex("eta");
-        initGlobularData(vo, form->gblobs, i, j);
-    }
+        initGlobularData(vo, form->gblobs);
 
-    tidalProg->use();
+    glActiveTexture(GL_TEXTURE0);
     globularInfoManager->getCenterTex(formIndex)->bind();
 
-    tidalProg->setMVPMatrices(*m.projection, *m.modelview);
-
     Eigen::Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
-    tidalProg->vec4Param("color") = Eigen::Vector4f(Rr, Gg, Bb, std::min(2 * brightness * pixelWeight, 1.0f));
-    tidalProg->floatParam("tidalSize") = tidalSize;
-    tidalProg->mat3Param("viewMat") = viewMat;
-    tidalProg->samplerParam("tidalTex") = 0;
+
+    tidalProg->use();
+    tidalProg->setMVPMatrices(*m.projection, *m.modelview);
+    tidalProg->mat3Param("viewMat")      = viewMat;
+    tidalProg->floatParam("brightness")  = brightness;
+    tidalProg->floatParam("pixelWeight") = pixelWeight;
+    tidalProg->floatParam("tidalSize")   = tidalSize;
+    tidalProg->samplerParam("tidalTex")  = 0;
+    tidalProg->samplerParam("colorTex")  = 1;
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -616,27 +657,28 @@ void Globular::render(const Eigen::Vector3f& offset,
      * This RGBA texture fades away when resolution decreases (e.g. via automag!),
      * or when distance from globular center decreases.
      */
+    globularInfoManager->getGlobularTex()->bind();
 
-    auto count = static_cast<GLsizei>(static_cast<float>(form->gblobs.size()) * std::clamp(detail, 0.0f, 1.0f));
-    float t = std::pow(2.0f, 1.0f + std::log2(minimumFeatureSize / brightness) / std::log2(1.0f/1.25f));
-    count = std::min(count, static_cast<GLsizei>(std::clamp(t, 128.0f, static_cast<float>(std::max(count, 128)))));
+    Eigen::Matrix3f mx = getOrientation().conjugate().toRotationMatrix() * Eigen::Scaling(tidalSize);
+
+    float size = CalculateSpriteSize(renderer, (*m.projection) * (*m.modelview), viewMat);
 
     globProg->use();
-
-    globularInfoManager->getGlobularTex()->bind();
     globProg->setMVPMatrices(*m.projection, *m.modelview);
-    // TODO: model view matrix should not be reset here
-    globProg->ModelViewMatrix = vecgl::translate(*m.modelview, offset);
-    Eigen::Matrix3f mx = getOrientation().toRotationMatrix() * Eigen::Scaling(tidalSize);
     globProg->mat3Param("m")            = mx;
     globProg->vec3Param("offset")       = offset;
     globProg->floatParam("brightness")  = brightness;
     globProg->floatParam("pixelWeight") = pixelWeight;
-    globProg->floatParam("RRatio")      = RRatio;
-    globProg->floatParam("scale")       = renderer->getScreenDpi() / 25.4f / 3.78f;
+    globProg->floatParam("scale")       = size * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
     globProg->samplerParam("starTex")   = 0;
+    globProg->samplerParam("colorTex")  = 1;
 
-    vo.draw(GL_POINTS, count, 4);
+#ifndef GL_ES
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
+
+    vo.draw(GL_POINTS, CalculateSpriteCount(form, detail, brightness, minimumFeatureSize), 4);
 
     vo.unbind();
 #ifndef GL_ES
