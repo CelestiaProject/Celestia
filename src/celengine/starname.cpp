@@ -10,127 +10,290 @@
 //
 //
 
+#include "starname.h"
+
+#include <array>
+#include <cassert>
+#include <cctype>
+#include <cstddef>
+#include <istream>
+#include <optional>
+#include <string>
+#include <system_error>
+
 #include <fmt/format.h>
-#include <celengine/constellation.h>
-#include <celengine/starname.h>
+
+#include <celcompat/charconv.h>
 #include <celutil/greek.h>
+#include "astroobj.h"
+#include "constellation.h"
 
-using namespace std;
 
-
-std::uint32_t StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
+namespace
 {
-    auto catalogNumber = getCatalogNumberByName(name, i18n);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
 
-    string priName(name);
-    string altName;
+constexpr std::string_view::size_type MAX_CANONICAL_LENGTH = 256;
+constexpr unsigned int FIRST_NUMBERED_VARIABLE = 335;
+constexpr unsigned int INVALID_BAYER = static_cast<unsigned int>(-1);
 
-    bool isOrbitingStar = false; // star is an orbiting one if it looks like `Barycenter A`
-    // See if the name is a Bayer or Flamsteed designation
-    auto pos = name.find(' ');
-    auto nameLength = name.length();
-    if (pos != 0 && pos != string::npos && pos < nameLength - 1)
+// Try parsing the first word of a name as a Flamsteed number or variable star
+// designation. Single-letter variable star designations are handled by the
+// Bayer parser due to indistinguishability with case-insensitive lookup.
+bool isFlamsteedOrVariable(std::string_view prefix)
+{
+    using celestia::compat::from_chars;
+    switch (prefix.size())
     {
-        auto pos1 = name.rfind(' ');
-        std::string_view rest;
-        if (pos1 != string::npos &&
-            pos1 > pos &&
-            pos1 < nameLength - 1 &&
-            std::isalpha(static_cast<unsigned char>(name[pos1 + 1])))
-        {
-            rest = std::string_view(name).substr(pos1);
-            isOrbitingStar = true;
-            do { --pos1; } while (std::isspace(static_cast<unsigned char>(name[pos1])));
-        }
-        string prefix(name, 0, pos);
-        string conName(name, pos + 1, isOrbitingStar ? pos1 - pos : string::npos);
-
-        Constellation* con  = Constellation::getConstellation(conName);
-        if (con != nullptr)
-        {
-            char digit  = ' ';
-            int len = prefix.length();
-
-            // If the first character of the prefix is a letter
-            // and the last character is a digit, we may have
-            // something like 'Alpha2 Cen' . . . Extract the digit
-            // before trying to match a Greek letter.
-            if (len > 2 &&
-                std::isalpha(static_cast<unsigned char>(prefix[0])) &&
-                std::isdigit(static_cast<unsigned char>(prefix[len - 1])))
+        case 0:
+            return false;
+        case 1:
+            // Match single-digit Flamsteed number
+            return prefix[0] >= '1' && prefix[0] <= '9';
+        case 2:
             {
-                --len;
-                digit = prefix[len];
+                auto p0 = static_cast<unsigned char>(prefix[0]);
+                auto p1 = static_cast<unsigned char>(prefix[1]);
+                return
+                    // Two-digit Flamsteed number
+                    (std::isdigit(p0) && p0 != '0' && std::isdigit(p1)) ||
+                    (std::isalpha(p0) && std::isalpha(p1) &&
+                     std::tolower(p0) != 'j' && std::tolower(p1) != 'j' &&
+                     p1 >= p0);
             }
-
-            // We have a valid constellation as the last part
-            // of the name.  Next, we see if the first part of
-            // the name is a greek letter.
-            std::string_view letter = GetCanonicalGreekAbbreviation(std::string_view(prefix).substr(0, len));
-            if (!letter.empty())
+        default:
             {
-                // Matched . . . this is a Bayer designation
-                if (digit == ' ')
-                {
-                    priName  = fmt::format("{} {}", letter, con->getAbbreviation());
-                    // If 'let con' doesn't match, try using
-                    // 'let1 con' instead.
-                    altName  = fmt::format("{}1 {}", letter, con->getAbbreviation());
-                }
-                else
-                {
-                    priName = fmt::format("{}{} {}", letter, digit, con->getAbbreviation());
-                }
+                // check for either Flamsteed or V### format variable star designations
+                std::size_t startNumber = std::tolower(static_cast<unsigned char>(prefix[0])) == 'v'
+                    ? 1
+                    : 0;
+                auto endPtr = prefix.data() + prefix.size();
+                unsigned int value;
+                auto [ptr, ec] = from_chars(prefix.data() + startNumber, endPtr, value);
+                return ec == std::errc{} && ptr == endPtr &&
+                       (startNumber == 0 || value >= FIRST_NUMBERED_VARIABLE);
             }
-            else
-            {
-                // Something other than a Bayer designation
-                priName = fmt::format("{} {}", prefix, con->getAbbreviation());
-            }
-
-            if (isOrbitingStar)
-            {
-                priName.append(rest);
-                if (!altName.empty())
-                    altName.append(rest);
-            }
-        }
-
-        catalogNumber = getCatalogNumberByName(priName, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
     }
-
-    if (!isOrbitingStar)
-    {
-        priName.append(" A");  // try by appending an A
-        catalogNumber = getCatalogNumberByName(priName, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
-    }
-
-    // If the first search failed, try using the alternate name
-    if (!altName.empty())
-    {
-        catalogNumber = getCatalogNumberByName(altName, i18n);
-        if (catalogNumber == AstroCatalog::InvalidIndex && !isOrbitingStar)
-        {
-            altName.append(" A");
-            catalogNumber = getCatalogNumberByName(altName, i18n);
-        }   // Intentional fallthrough.
-    }
-
-    return catalogNumber;
 }
 
 
-StarNameDatabase* StarNameDatabase::readNames(istream& in)
+struct BayerLetter
+{
+    std::string_view letter{ };
+    unsigned int number{ 0 };
+};
+
+
+// Attempts to parse the first word of a star name as a Greek or Latin-letter
+// Bayer designation, with optional numeric suffix
+BayerLetter parseBayerLetter(std::string_view prefix)
+{
+    using celestia::compat::from_chars;
+
+    BayerLetter result;
+    if (auto numberPos = prefix.find_first_of("0123456789"); numberPos == std::string_view::npos)
+        result.letter = prefix;
+    else if (auto [ptr, ec] = from_chars(prefix.data() + numberPos, prefix.data() + prefix.size(), result.number);
+             ec == std::errc{} && ptr == prefix.data() + prefix.size())
+        result.letter = prefix.substr(0, numberPos);
+    else
+        return {};
+
+    if (result.letter.empty())
+        return {};
+
+    if (auto greek = GetCanonicalGreekAbbreviation(result.letter); !greek.empty())
+        result.letter = greek;
+    else if (result.letter.size() != 1 || !std::isalpha(static_cast<unsigned char>(result.letter[0])))
+        return {};
+
+    return result;
+}
+
+} // end unnamed namespace
+
+
+std::uint32_t
+StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
+{
+    if (auto catalogNumber = getCatalogNumberByName(name, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
+        return catalogNumber;
+
+    if (auto pos = name.find(' '); pos != 0 && pos != std::string::npos && pos < name.size() - 1)
+    {
+        std::string_view prefix = name.substr(0, pos);
+        std::string_view remainder = name.substr(pos + 1);
+
+        if (auto catalogNumber = findFlamsteedOrVariable(prefix, remainder, i18n);
+            catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+
+        if (auto catalogNumber = findBayer(prefix, remainder, i18n);
+            catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    return findWithComponentSuffix(name, i18n);
+}
+
+
+std::uint32_t
+StarNameDatabase::findFlamsteedOrVariable(std::string_view prefix,
+                                          std::string_view remainder,
+                                          bool i18n) const
+{
+    if (!isFlamsteedOrVariable(prefix))
+        return AstroCatalog::InvalidIndex;
+
+    std::string_view::size_type offset;
+    std::string_view constellationAbbrev = ParseConstellation(remainder, offset);
+    auto suffix = remainder.substr(offset);
+    if (constellationAbbrev.empty() || (!suffix.empty() && suffix.front() != ' '))
+        return AstroCatalog::InvalidIndex;
+
+    std::array<char, MAX_CANONICAL_LENGTH> canonical;
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {}{}",
+                                           prefix, constellationAbbrev, suffix);
+        size <= canonical.size())
+    {
+        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    if (!suffix.empty())
+        return AstroCatalog::InvalidIndex;
+
+    // try appending " A"
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {} A",
+                                           prefix, constellationAbbrev);
+        size <= canonical.size())
+        return getCatalogNumberByName({canonical.data(), size}, i18n);
+
+    return AstroCatalog::InvalidIndex;
+}
+
+
+std::uint32_t
+StarNameDatabase::findBayer(std::string_view prefix,
+                            std::string_view remainder,
+                            bool i18n) const
+{
+    auto bayerLetter = parseBayerLetter(prefix);
+    if (bayerLetter.letter.empty())
+        return AstroCatalog::InvalidIndex;
+
+    std::string_view::size_type offset;
+    std::string_view constellationAbbrev = ParseConstellation(remainder, offset);
+    auto suffix = remainder.substr(offset);
+    if (constellationAbbrev.empty() || (!suffix.empty() && suffix.front() != ' '))
+        return AstroCatalog::InvalidIndex;
+
+    return bayerLetter.number == 0
+        ? findBayerNoNumber(bayerLetter.letter, constellationAbbrev, suffix, i18n)
+        : findBayerWithNumber(bayerLetter.letter,
+                              bayerLetter.number,
+                              constellationAbbrev,
+                              suffix,
+                              i18n);
+}
+
+
+std::uint32_t
+StarNameDatabase::findBayerNoNumber(std::string_view letter,
+                                    std::string_view constellationAbbrev,
+                                    std::string_view suffix,
+                                    bool i18n) const
+{
+    std::array<char, MAX_CANONICAL_LENGTH> canonical;
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {}{}",
+                                           letter, constellationAbbrev, suffix);
+        size <= canonical.size())
+    {
+        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    // Try appending "1" to the letter, e.g. ALF CVn --> ALF1 CVn
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}1 {}{}",
+                                           letter, constellationAbbrev, suffix);
+        size <= canonical.size())
+    {
+        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    if (!suffix.empty())
+        return AstroCatalog::InvalidIndex;
+
+    // No component suffix, so try appending " A"
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {} A",
+                                           letter, constellationAbbrev);
+        size <= canonical.size())
+    {
+        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}1 {} A",
+                                           letter, constellationAbbrev);
+        size <= canonical.size())
+        return getCatalogNumberByName({canonical.data(), size}, i18n);
+
+    return AstroCatalog::InvalidIndex;
+}
+
+
+std::uint32_t
+StarNameDatabase::findBayerWithNumber(std::string_view letter,
+                                      unsigned int number,
+                                      std::string_view constellationAbbrev,
+                                      std::string_view suffix,
+                                      bool i18n) const
+{
+    std::array<char, MAX_CANONICAL_LENGTH> canonical;
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}{} {}{}",
+                                           letter, number, constellationAbbrev, suffix);
+        size <= canonical.size())
+    {
+        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
+        if (catalogNumber != AstroCatalog::InvalidIndex)
+            return catalogNumber;
+    }
+
+    if (!suffix.empty())
+        return AstroCatalog::InvalidIndex;
+
+    // No component suffix, so try appending "A"
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}{} {} A",
+                                           letter, number, constellationAbbrev);
+        size <= canonical.size())
+        return getCatalogNumberByName({canonical.data(), size}, i18n);
+
+    return AstroCatalog::InvalidIndex;
+}
+
+
+std::uint32_t
+StarNameDatabase::findWithComponentSuffix(std::string_view name, bool i18n) const
+{
+    std::array<char, MAX_CANONICAL_LENGTH> canonical;
+    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} A", name);
+        size <= canonical.size())
+        return getCatalogNumberByName({canonical.data(), size}, i18n);
+
+    return AstroCatalog::InvalidIndex;
+}
+
+StarNameDatabase*
+StarNameDatabase::readNames(std::istream& in)
 {
     StarNameDatabase* db = new StarNameDatabase();
     bool failed = false;
-    string s;
+    std::string s;
 
     while (!failed)
     {
@@ -147,8 +310,8 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
         // in.get(); // skip a space (or colon);
 
-        string name;
-        getline(in, name);
+        std::string name;
+        std::getline(in, name);
         if (in.bad())
         {
             failed = true;
@@ -158,14 +321,14 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
         // Iterate through the string for names delimited
         // by ':', and insert them into the star database. Note that
         // db->add() will skip empty names.
-        string::size_type startPos = 0;
-        while (startPos != string::npos)
+        std::string::size_type startPos = 0;
+        while (startPos != std::string::npos)
         {
             ++startPos;
-            string::size_type next = name.find(':', startPos);
-            string::size_type length = string::npos;
+            std::string::size_type next = name.find(':', startPos);
+            std::string::size_type length = std::string::npos;
 
-            if (next != string::npos)
+            if (next != std::string::npos)
                 length = next - startPos;
 
             db->add(catalogNumber, name.substr(startPos, length));
