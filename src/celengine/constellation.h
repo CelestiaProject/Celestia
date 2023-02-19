@@ -9,22 +9,6 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 
-class Constellation
-{
-public:
-    Constellation(const char *_name, const char *_genitive, const char *_abbrev);
-
-    static Constellation *getConstellation(unsigned int);
-    static Constellation *getConstellation(const std::string&);
-
-    const std::string getName() const;
-    const std::string getGenitive() const;
-    const std::string getAbbreviation() const;
-
-private:
-    const char* name;
-    const char* genitive;
-    const char* abbrev;
-};
+std::string_view ParseConstellation(std::string_view name, std::string_view::size_type& offset);

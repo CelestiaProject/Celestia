@@ -7,145 +7,148 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/stringutils.h>
 #include "constellation.h"
 
-using namespace std;
+#include <algorithm>
+#include <memory>
+#include <utility>
+#include <vector>
 
+#include <celutil/stringutils.h>
 
-static Constellation constellations[] = {
-    Constellation("Aries", "Arietis", "Ari"),
-    Constellation("Taurus", "Tauri", "Tau"),
-    Constellation("Gemini", "Geminorum", "Gem"),
-    Constellation("Cancer", "Cancri", "Cnc"),
-    Constellation("Leo", "Leonis", "Leo"),
-    Constellation("Virgo", "Virginis", "Vir"),
-    Constellation("Libra", "Librae", "Lib"),
-    Constellation("Scorpius", "Scorpii", "Sco"),
-    Constellation("Sagittarius", "Sagittarii", "Sgr"),
-    Constellation("Capricornus", "Capricorni", "Cap"),
-    Constellation("Aquarius", "Aquarii", "Aqr"),
-    Constellation("Pisces", "Piscium", "Psc"),
-    Constellation("Ursa Major", "Ursae Majoris", "UMa"),
-    Constellation("Ursa Minor", "Ursae Minoris", "UMi"),
-    Constellation("Bootes", "Bootis", "Boo"),
-    Constellation("Orion", "Orionis", "Ori"),
-    Constellation("Canis Major", "Canis Majoris", "CMa"),
-    Constellation("Canis Minor", "Canis Minoris", "CMi"),
-    Constellation("Lepus", "Leporis", "Lep"),
-    Constellation("Perseus", "Persei", "Per"),
-    Constellation("Andromeda", "Andromedae", "And"),
-    Constellation("Cassiopeia", "Cassiopeiae", "Cas"),
-    Constellation("Cepheus", "Cephei", "Cep"),
-    Constellation("Cetus", "Ceti", "Cet"),
-    Constellation("Pegasus", "Pegasi", "Peg"),
-    Constellation("Carina", "Carinae", "Car"),
-    Constellation("Puppis", "Puppis", "Pup"),
-    Constellation("Vela", "Velorum", "Vel"),
-    Constellation("Hercules", "Herculis", "Her"),
-    Constellation("Hydra", "Hydrae", "Hya"),
-    Constellation("Centaurus", "Centauri", "Cen"),
-    Constellation("Lupus", "Lupi", "Lup"),
-    Constellation("Ara", "Arae", "Ara"),
-    Constellation("Ophiuchus", "Ophiuchi", "Oph"),
-    Constellation("Serpens", "Serpentis", "Ser"),
-    Constellation("Aquila", "Aquilae", "Aql"),
-    Constellation("Auriga", "Aurigae", "Aur"),
-    Constellation("Corona Australis", "Coronae Australis", "CrA"),
-    Constellation("Corona Borealis", "Coronae Borealis", "CrB"),
-    Constellation("Corvus", "Corvi", "Crv"),
-    Constellation("Crater", "Crateris", "Crt"),
-    Constellation("Cygnus", "Cygni", "Cyg"),
-    Constellation("Delphinus", "Delphini", "Del"),
-    Constellation("Draco", "Draconis", "Dra"),
-    Constellation("Equuleus", "Equulei", "Equ"),
-    Constellation("Eridanus", "Eridani", "Eri"),
-    Constellation("Lyra", "Lyrae", "Lyr"),
-    Constellation("Piscis Austrinus", "Piscis Austrini", "PsA"),
-    Constellation("Sagitta", "Sagittae", "Sge"),
-    Constellation("Triangulum", "Trianguli", "Tri"),
-    Constellation("Antlia", "Antliae", "Ant"),
-    Constellation("Apus", "Apodis", "Aps"),
-    Constellation("Caelum", "Caeli", "Cae"),
-    Constellation("Camelopardalis", "Camelopardalis", "Cam"),
-    Constellation("Canes Venatici", "Canum Venaticorum", "CVn"),
-    Constellation("Chamaeleon", "Chamaeleontis", "Cha"),
-    Constellation("Circinus", "Circini", "Cir"),
-    Constellation("Columba", "Columbae", "Col"),
-    Constellation("Coma Berenices", "Comae Berenices", "Com"),
-    Constellation("Crux", "Crucis", "Cru"),
-    Constellation("Dorado", "Doradus", "Dor"),
-    Constellation("Fornax", "Fornacis", "For"),
-    Constellation("Grus", "Gruis", "Gru"),
-    Constellation("Horologium", "Horologii", "Hor"),
-    Constellation("Hydrus", "Hydri", "Hyi"),
-    Constellation("Indus", "Indi", "Ind"),
-    Constellation("Lacerta", "Lacertae", "Lac"),
-    Constellation("Leo Minor", "Leonis Minoris", "LMi"),
-    Constellation("Lynx", "Lyncis", "Lyn"),
-    Constellation("Microscopium", "Microscopii", "Mic"),
-    Constellation("Monoceros", "Monocerotis", "Mon"),
-    Constellation("Mensa", "Mensae", "Men"),
-    Constellation("Musca", "Muscae", "Mus"),
-    Constellation("Norma", "Normae", "Nor"),
-    Constellation("Octans", "Octantis", "Oct"),
-    Constellation("Pavo", "Pavonis", "Pav"),
-    Constellation("Phoenix", "Phoenicis", "Phe"),
-    Constellation("Pictor", "Pictoris", "Pic"),
-    Constellation("Pyxis", "Pyxidis", "Pyx"),
-    Constellation("Reticulum", "Reticuli", "Ret"),
-    Constellation("Sculptor", "Sculptoris", "Scl"),
-    Constellation("Scutum", "Scuti", "Sct"),
-    Constellation("Sextans", "Sextantis", "Sex"),
-    Constellation("Telescopium", "Telescopii", "Tel"),
-    Constellation("Triangulum Australe", "Trianguli Australis", "TrA"),
-    Constellation("Tucana", "Tucanae", "Tuc"),
-    Constellation("Volans", "Volantis", "Vol"),
-    Constellation("Vulpecula", "Vulpeculae", "Vul")
-};
+using namespace std::string_view_literals;
 
-
-Constellation::Constellation(const char *_name, const char *_genitive, const char *_abbrev) :
-    name(_name),
-    genitive(_genitive),
-    abbrev(_abbrev)
+namespace
 {
+
+using ConstellationName = std::pair<std::string_view, std::string_view>;
+
+void addConstellation(std::vector<ConstellationName>& constellations,
+                      std::string_view name,
+                      std::string_view genitive,
+                      std::string_view abbreviation)
+{
+    constellations.emplace_back(name, abbreviation);
+    constellations.emplace_back(genitive, abbreviation);
+    constellations.emplace_back(abbreviation, abbreviation);
 }
 
-Constellation* Constellation::getConstellation(unsigned int n)
+std::unique_ptr<std::vector<ConstellationName>> createConstellationsList()
 {
-    if (n >= sizeof(constellations) / sizeof(constellations[0]))
-        return nullptr;
+    auto constellationsList = std::make_unique<std::vector<ConstellationName>>();
+    constellationsList->reserve(88 * 3);
 
-    return &constellations[n];
+    addConstellation(*constellationsList, "Aries"sv, "Arietis"sv, "Ari"sv);
+    addConstellation(*constellationsList, "Taurus"sv, "Tauri"sv, "Tau"sv);
+    addConstellation(*constellationsList, "Gemini"sv, "Geminorum"sv, "Gem"sv);
+    addConstellation(*constellationsList, "Cancer"sv, "Cancri"sv, "Cnc"sv);
+    addConstellation(*constellationsList, "Leo"sv, "Leonis"sv, "Leo"sv);
+    addConstellation(*constellationsList, "Virgo"sv, "Virginis"sv, "Vir"sv);
+    addConstellation(*constellationsList, "Libra"sv, "Librae"sv, "Lib"sv);
+    addConstellation(*constellationsList, "Scorpius"sv, "Scorpii"sv, "Sco"sv);
+    addConstellation(*constellationsList, "Sagittarius"sv, "Sagittarii"sv, "Sgr"sv);
+    addConstellation(*constellationsList, "Capricornus"sv, "Capricorni"sv, "Cap"sv);
+    addConstellation(*constellationsList, "Aquarius"sv, "Aquarii"sv, "Aqr"sv);
+    addConstellation(*constellationsList, "Pisces"sv, "Piscium"sv, "Psc"sv);
+    addConstellation(*constellationsList, "Ursa Major"sv, "Ursae Majoris"sv, "UMa"sv);
+    addConstellation(*constellationsList, "Ursa Minor"sv, "Ursae Minoris"sv, "UMi"sv);
+    addConstellation(*constellationsList, "Bootes"sv, "Bootis"sv, "Boo"sv);
+    addConstellation(*constellationsList, "Orion"sv, "Orionis"sv, "Ori"sv);
+    addConstellation(*constellationsList, "Canis Major"sv, "Canis Majoris"sv, "CMa"sv);
+    addConstellation(*constellationsList, "Canis Minor"sv, "Canis Minoris"sv, "CMi"sv);
+    addConstellation(*constellationsList, "Lepus"sv, "Leporis"sv, "Lep"sv);
+    addConstellation(*constellationsList, "Perseus"sv, "Persei"sv, "Per"sv);
+    addConstellation(*constellationsList, "Andromeda"sv, "Andromedae"sv, "And"sv);
+    addConstellation(*constellationsList, "Cassiopeia"sv, "Cassiopeiae"sv, "Cas"sv);
+    addConstellation(*constellationsList, "Cepheus"sv, "Cephei"sv, "Cep"sv);
+    addConstellation(*constellationsList, "Cetus"sv, "Ceti"sv, "Cet"sv);
+    addConstellation(*constellationsList, "Pegasus"sv, "Pegasi"sv, "Peg"sv);
+    addConstellation(*constellationsList, "Carina"sv, "Carinae"sv, "Car"sv);
+    addConstellation(*constellationsList, "Puppis"sv, "Puppis"sv, "Pup"sv);
+    addConstellation(*constellationsList, "Vela"sv, "Velorum"sv, "Vel"sv);
+    addConstellation(*constellationsList, "Hercules"sv, "Herculis"sv, "Her"sv);
+    addConstellation(*constellationsList, "Hydra"sv, "Hydrae"sv, "Hya"sv);
+    addConstellation(*constellationsList, "Centaurus"sv, "Centauri"sv, "Cen"sv);
+    addConstellation(*constellationsList, "Lupus"sv, "Lupi"sv, "Lup"sv);
+    addConstellation(*constellationsList, "Ara"sv, "Arae"sv, "Ara"sv);
+    addConstellation(*constellationsList, "Ophiuchus"sv, "Ophiuchi"sv, "Oph"sv);
+    addConstellation(*constellationsList, "Serpens"sv, "Serpentis"sv, "Ser"sv);
+    addConstellation(*constellationsList, "Aquila"sv, "Aquilae"sv, "Aql"sv);
+    addConstellation(*constellationsList, "Auriga"sv, "Aurigae"sv, "Aur"sv);
+    addConstellation(*constellationsList, "Corona Australis"sv, "Coronae Australis"sv, "CrA"sv);
+    addConstellation(*constellationsList, "Corona Borealis"sv, "Coronae Borealis"sv, "CrB"sv);
+    addConstellation(*constellationsList, "Corvus"sv, "Corvi"sv, "Crv"sv);
+    addConstellation(*constellationsList, "Crater"sv, "Crateris"sv, "Crt"sv);
+    addConstellation(*constellationsList, "Cygnus"sv, "Cygni"sv, "Cyg"sv);
+    addConstellation(*constellationsList, "Delphinus"sv, "Delphini"sv, "Del"sv);
+    addConstellation(*constellationsList, "Draco"sv, "Draconis"sv, "Dra"sv);
+    addConstellation(*constellationsList, "Equuleus"sv, "Equulei"sv, "Equ"sv);
+    addConstellation(*constellationsList, "Eridanus"sv, "Eridani"sv, "Eri"sv);
+    addConstellation(*constellationsList, "Lyra"sv, "Lyrae"sv, "Lyr"sv);
+    addConstellation(*constellationsList, "Piscis Austrinus"sv, "Piscis Austrini"sv, "PsA"sv);
+    addConstellation(*constellationsList, "Sagitta"sv, "Sagittae"sv, "Sge"sv);
+    addConstellation(*constellationsList, "Triangulum"sv, "Trianguli"sv, "Tri"sv);
+    addConstellation(*constellationsList, "Antlia"sv, "Antliae"sv, "Ant"sv);
+    addConstellation(*constellationsList, "Apus"sv, "Apodis"sv, "Aps"sv);
+    addConstellation(*constellationsList, "Caelum"sv, "Caeli"sv, "Cae"sv);
+    addConstellation(*constellationsList, "Camelopardalis"sv, "Camelopardalis"sv, "Cam"sv);
+    addConstellation(*constellationsList, "Canes Venatici"sv, "Canum Venaticorum"sv, "CVn"sv);
+    addConstellation(*constellationsList, "Chamaeleon"sv, "Chamaeleontis"sv, "Cha"sv);
+    addConstellation(*constellationsList, "Circinus"sv, "Circini"sv, "Cir"sv);
+    addConstellation(*constellationsList, "Columba"sv, "Columbae"sv, "Col"sv);
+    addConstellation(*constellationsList, "Coma Berenices"sv, "Comae Berenices"sv, "Com"sv);
+    addConstellation(*constellationsList, "Crux"sv, "Crucis"sv, "Cru"sv);
+    addConstellation(*constellationsList, "Dorado"sv, "Doradus"sv, "Dor"sv);
+    addConstellation(*constellationsList, "Fornax"sv, "Fornacis"sv, "For"sv);
+    addConstellation(*constellationsList, "Grus"sv, "Gruis"sv, "Gru"sv);
+    addConstellation(*constellationsList, "Horologium"sv, "Horologii"sv, "Hor"sv);
+    addConstellation(*constellationsList, "Hydrus"sv, "Hydri"sv, "Hyi"sv);
+    addConstellation(*constellationsList, "Indus"sv, "Indi"sv, "Ind"sv);
+    addConstellation(*constellationsList, "Lacerta"sv, "Lacertae"sv, "Lac"sv);
+    addConstellation(*constellationsList, "Leo Minor"sv, "Leonis Minoris"sv, "LMi"sv);
+    addConstellation(*constellationsList, "Lynx"sv, "Lyncis"sv, "Lyn"sv);
+    addConstellation(*constellationsList, "Microscopium"sv, "Microscopii"sv, "Mic"sv);
+    addConstellation(*constellationsList, "Monoceros"sv, "Monocerotis"sv, "Mon"sv);
+    addConstellation(*constellationsList, "Mensa"sv, "Mensae"sv, "Men"sv);
+    addConstellation(*constellationsList, "Musca"sv, "Muscae"sv, "Mus"sv);
+    addConstellation(*constellationsList, "Norma"sv, "Normae"sv, "Nor"sv);
+    addConstellation(*constellationsList, "Octans"sv, "Octantis"sv, "Oct"sv);
+    addConstellation(*constellationsList, "Pavo"sv, "Pavonis"sv, "Pav"sv);
+    addConstellation(*constellationsList, "Phoenix"sv, "Phoenicis"sv, "Phe"sv);
+    addConstellation(*constellationsList, "Pictor"sv, "Pictoris"sv, "Pic"sv);
+    addConstellation(*constellationsList, "Pyxis"sv, "Pyxidis"sv, "Pyx"sv);
+    addConstellation(*constellationsList, "Reticulum"sv, "Reticuli"sv, "Ret"sv);
+    addConstellation(*constellationsList, "Sculptor"sv, "Sculptoris"sv, "Scl"sv);
+    addConstellation(*constellationsList, "Scutum"sv, "Scuti"sv, "Sct"sv);
+    addConstellation(*constellationsList, "Sextans"sv, "Sextantis"sv, "Sex"sv);
+    addConstellation(*constellationsList, "Telescopium"sv, "Telescopii"sv, "Tel"sv);
+    addConstellation(*constellationsList, "Triangulum Australe"sv, "Trianguli Australis"sv, "TrA"sv);
+    addConstellation(*constellationsList, "Tucana"sv, "Tucanae"sv, "Tuc"sv);
+    addConstellation(*constellationsList, "Volans"sv, "Volantis"sv, "Vol"sv);
+    addConstellation(*constellationsList, "Vulpecula"sv, "Vulpeculae"sv, "Vul"sv);
+
+    // Sort by decreasing length to get greedy matching
+    std::sort(constellationsList->begin(), constellationsList->end(),
+              [](const ConstellationName& lhs, const ConstellationName& rhs) { return lhs.first.size() > rhs.first.size(); });
+
+    return constellationsList;
 }
 
-Constellation* Constellation::getConstellation(const string& name)
+} // end unnamed namespace
+
+
+std::string_view ParseConstellation(std::string_view name, std::string_view::size_type& offset)
 {
-    for (auto& cons: constellations)
+    static const std::vector<ConstellationName>* constellationNames = createConstellationsList().release();
+    auto it = std::find_if(constellationNames->begin(), constellationNames->end(),
+                           [&name](const ConstellationName& c) { return compareIgnoringCase(name, c.first, c.first.size()) == 0; });
+
+    if (it == constellationNames->end())
     {
-        if (compareIgnoringCase(name, cons.getAbbreviation()) == 0 ||
-            compareIgnoringCase(name, cons.getGenitive()) == 0     ||
-            compareIgnoringCase(name, cons.getName()) == 0)
-        {
-            return &cons;
-        }
+        offset = 0;
+        return {};
     }
 
-    return nullptr;
-}
-
-const string Constellation::getName() const
-{
-    return name;
-}
-
-const string Constellation::getGenitive() const
-{
-    return genitive;
-}
-
-const string Constellation::getAbbreviation() const
-{
-    return abbrev;
+    offset = it->first.size();
+    return it->second;
 }
