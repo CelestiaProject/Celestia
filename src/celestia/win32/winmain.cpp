@@ -2306,8 +2306,8 @@ static void syncMenusWithRendererState()
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
     const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
-    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTableType::Enhanced) ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTableType::Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color->type() == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color->type() == ColorTableType::Blackbody_D65 ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -2652,9 +2652,9 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
     const ColorTemperatureTable* current = appCore->getRenderer()->getStarColorTable();
-    if (current == GetStarColorTable(ColorTableType::Enhanced))
+    if (current->type() == ColorTableType::Enhanced)
         prefs.starsColor = static_cast<int>(ColorTableType::Enhanced);
-    if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
+    if (current->type() == ColorTableType::Blackbody_D65)
         prefs.starsColor = static_cast<int>(ColorTableType::Blackbody_D65);
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 

@@ -1493,13 +1493,10 @@ static int celestia_setambient(lua_State* l)
 
     Renderer* renderer = appCore->getRenderer();
     double ambientLightLevel = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
-    if (ambientLightLevel > 1.0)
-        ambientLightLevel = 1.0;
-    if (ambientLightLevel < 0.0)
-        ambientLightLevel = 0.0;
+    ambientLightLevel = std::clamp(ambientLightLevel, 0.0, 1.0);
 
     if (renderer != nullptr)
-        renderer->setAmbientLightLevel((float)ambientLightLevel);
+        renderer->setAmbientLightLevel(static_cast<float>(ambientLightLevel));
     appCore->notifyWatchers(CelestiaCore::AmbientLightChanged);
 
     return 0;
@@ -1508,9 +1505,9 @@ static int celestia_setambient(lua_State* l)
 static int celestia_getambient(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:setambient");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
-    Renderer* renderer = appCore->getRenderer();
+    const Renderer* renderer = appCore->getRenderer();
     if (renderer == nullptr)
     {
         Celx_DoError(l, "Internal Error: renderer is nullptr!");
@@ -1518,6 +1515,38 @@ static int celestia_getambient(lua_State* l)
     }
 
     lua_pushnumber(l, renderer->getAmbientLightLevel());
+    return 1;
+}
+
+static int celestia_settintsaturation(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settintsaturation");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    double tintSaturation = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settintsaturation must be a number");
+    tintSaturation = std::clamp(tintSaturation, 0.0, 1.0);
+
+    if (renderer != nullptr)
+        renderer->setTintSaturation(static_cast<float>(tintSaturation));
+    appCore->notifyWatchers(CelestiaCore::TintSaturationChanged);
+
+    return 0;
+}
+
+static int celestia_gettintsaturation(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:gettintsaturation");
+    const CelestiaCore* appCore = this_celestia(l);
+
+    const Renderer* renderer = appCore->getRenderer();
+    if (renderer == nullptr)
+    {
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
+    }
+
+    lua_pushnumber(l, renderer->getTintSaturation());
     return 1;
 }
 
@@ -1656,10 +1685,9 @@ static int celestia_getstarcolor(lua_State* l)
         return 0;
     }
 
-    const ColorTemperatureTable* starColor = renderer->getStarColorTable();
-    if (starColor == GetStarColorTable(ColorTableType::Enhanced))
+    if (auto starColor = renderer->getStarColorTable()->type(); starColor == ColorTableType::Enhanced)
         lua_pushstring(l, "enhanced");
-    else if (starColor == GetStarColorTable(ColorTableType::Blackbody_D65))
+    else if (starColor == ColorTableType::Blackbody_D65)
         lua_pushstring(l, "blackbody_d65");
     else
         lua_pushstring(l, "invalid starcolor");
@@ -2575,6 +2603,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "settimescale", celestia_settimescale);
     Celx_RegisterMethod(l, "getambient", celestia_getambient);
     Celx_RegisterMethod(l, "setambient", celestia_setambient);
+    Celx_RegisterMethod(l, "gettintsaturation", celestia_gettintsaturation);
+    Celx_RegisterMethod(l, "settintsaturation", celestia_settintsaturation);
     Celx_RegisterMethod(l, "getminorbitsize", celestia_getminorbitsize);
     Celx_RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
     Celx_RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);

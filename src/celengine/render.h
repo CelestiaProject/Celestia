@@ -262,6 +262,8 @@ class Renderer
     void setProjectionMode(ProjectionMode);
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
+    float getTintSaturation() const;
+    void setTintSaturation(float);
     float getMinimumOrbitSize() const;
     void setMinimumOrbitSize(float);
     float getMinimumFeatureSize() const;
@@ -696,7 +698,8 @@ class Renderer
     uint64_t renderFlags;
     int bodyVisibilityMask{ ~0 };
     int orbitMask;
-    float ambientLightLevel;
+    float ambientLightLevel{ 0.1f };
+    float tintSaturation{ 0.5f };
     float brightnessBias;
 
     float brightnessScale{ 1.0f };

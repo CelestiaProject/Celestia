@@ -175,6 +175,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         GalaxyLightGainChanged      = 0x0100,
         MeasurementSystemChanged    = 0x0200,
         TemperatureScaleChanged     = 0x0400,
+        TintSaturationChanged       = 0x0800,
     };
 
     enum

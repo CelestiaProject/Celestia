@@ -522,14 +522,13 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("OrbitMask", renderer->getOrbitMask());
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
+    settings.setValue("TintSaturation", renderer->getTintSaturation());
     settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("TextureResolution", renderer->getResolution());
     ColorTableType colorsst;
-    const ColorTemperatureTable* current = renderer->getStarColorTable();
-
-    if (current == GetStarColorTable(ColorTableType::Blackbody_D65))
+    if (renderer->getStarColorTable()->type() == ColorTableType::Blackbody_D65)
         colorsst = ColorTableType::Blackbody_D65;
-    else // if (current == GetStarColorTable(ColorTableType::Enhanced))
+    else // if (renderer->getStarColorTable()->type() == ColorTableType::Enhanced)
         colorsst = ColorTableType::Enhanced;
     settings.setValue("StarsColor", static_cast<int>(colorsst));
 

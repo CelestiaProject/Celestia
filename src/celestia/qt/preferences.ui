@@ -862,9 +862,16 @@
          <item>
           <widget class="QGroupBox" name="ambientLightGroupBox">
            <property name="title">
-            <string>Ambient light</string>
+            <string>Lighting</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_15">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Ambient light:</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <property name="spacing">
@@ -920,17 +927,47 @@
              </layout>
             </item>
             <item>
-             <widget class="QCheckBox" name="tintedIlluminationCheck">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
+             <widget class="QLabel" name="label_5">
               <property name="text">
-               <string>Tinted illumination</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
+               <string>Tinted illumination saturation:</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QSlider" name="tintSaturationSlider">
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="tintSaturationSpinBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>30</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::NoButtons</enum>
+                </property>
+                <property name="accelerated">
+                 <bool>true</bool>
+                </property>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                </property>
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <spacer name="verticalSpacer_17">

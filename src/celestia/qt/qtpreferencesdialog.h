@@ -109,6 +109,8 @@ private slots:
 
     void on_ambientLightSlider_valueChanged(int value);
     void on_ambientLightSpinBox_valueChanged(int value);
+    void on_tintSaturationSlider_valueChanged(int value);
+    void on_tintSaturationSpinBox_valueChanged(int value);
 
     void on_pointStarsButton_clicked();
     void on_scaledDiscsButton_clicked();
