@@ -408,8 +408,12 @@ void GlobularInfoManager::initializeForms()
         float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh(static_cast<float>(i - i0)
                                                       / static_cast<float>(i_width)) + 1.0f);
 
-        DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, hue, sat, 0.85f);
-        colorTable[i] = Color(Rr, Gg, Bb);
+        // Prevent green stars
+        if (hue > 60.0 && hue < 180.0)
+            sat = 0.0f;
+
+        DeepSkyObject::hsv2rgb(&r, &g, &b, hue, sat, 0.85f);
+        colorTable[i] = Color(r, g, b);
     }
     // Define globularForms corresponding to 8 different bins of King concentration c
 
