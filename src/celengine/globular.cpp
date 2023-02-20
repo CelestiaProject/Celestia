@@ -237,6 +237,7 @@ void buildGlobularForm(GlobularForm& globularForm, float c)
      */
 
     auto& rng = celmath::getRNG();
+    rng.seed(1312);
     while (i < GLOBULAR_POINTS)
     {
         /*!
