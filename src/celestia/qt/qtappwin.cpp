@@ -272,11 +272,12 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     // Enable antialiasing if requested in the config file.
     // TODO: Make this settable via the GUI
     QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
+    glformat.setAlphaBufferSize(0);
     if (m_appCore->getConfig()->aaSamples > 1)
     {
         glformat.setSamples(m_appCore->getConfig()->aaSamples);
-        QSurfaceFormat::setDefaultFormat(glformat);
     }
+    QSurfaceFormat::setDefaultFormat(glformat);
 
     glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
 
