@@ -91,13 +91,6 @@ jobs:
         if ${{matrix.platform}}==x86 set DownloadURL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
         curl -L -o ${{github.workspace}}\installer\vc_redist.exe %DownloadURL%
 
-    - name: 'Create installer'
-      shell: cmd
-      run: |
-        set ISCCExtraFlags=/DBuildX64Installer
-        if ${{matrix.platform}}==x86 set ISCCExtraFlags=/DBuildX86Installer
-        iscc ${{github.workspace}}\installer\celestia.iss /O${{github.workspace}}\installer /FCelestiaInstaller %ISCCExtraFlags%
-
     - name: 'Copy DLL for tests'
       working-directory: ${{github.workspace}}/build
       run: |
@@ -113,12 +106,21 @@ jobs:
       if: matrix.qtversion == 'Qt5'
       run: |
         c:\vcpkg\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
+        c:\vcpkg\ports\qt5-base\qtdeploy.ps1 ${{github.workspace}}\installer\
 
     - name: Run winqtdeploy
       working-directory: ${{github.workspace}}/build/src/celestia
       if: matrix.qtversion == 'Qt6'
       run: |
         C:/vcpkg/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe qt\${{env.BUILD_TYPE}}\celestia-qt.exe
+        C:/vcpkg/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe ${{github.workspace}}\installer\celestia-qt.exe
+
+    - name: 'Create installer'
+      shell: cmd
+      run: |
+        set ISCCExtraFlags=/DBuildX64Installer
+        if ${{matrix.platform}}==x86 set ISCCExtraFlags=/DBuildX86Installer
+        iscc ${{github.workspace}}\installer\celestia.iss /O${{github.workspace}}\installer /FCelestiaInstaller %ISCCExtraFlags%
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
