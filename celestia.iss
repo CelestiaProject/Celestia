@@ -67,6 +67,14 @@ Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestN
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "splash\splash.png";   DestDir: "{app}/splash"; Flags: ignoreversion
 
+; Qt5
+Source: "plugins\*";          DestDir: "{app}/plugins"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
+
+; Qt6
+Source: "imageformats\*";     DestDir: "{app}/imageformats"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
+Source: "platforms\*";        DestDir: "{app}/platforms"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
+Source: "styles\*";           DestDir: "{app}/styles"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
+
 Source: "vc_redist.exe"; DestDir: {tmp}
 
 ; Languages
