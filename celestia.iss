@@ -111,9 +111,11 @@ Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String:
 
 [Icons]
 Name: "{group}\Celestia";            Filename: "{app}\celestia.exe"; WorkingDir: "{app}"
+Name: "{group}\Celestia (QT)";       Filename: "{app}\celestia-qt.exe"; WorkingDir: "{app}"
 Name: "{group}\README";              Filename: "{app}\README.txt"
 Name: "{group}\Celestia on the Web"; Filename: "{app}\celestia.url"
 Name: "{userdesktop}\Celestia";      Filename: "{app}\celestia.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{userdesktop}\Celestia (QT)"; Filename: "{app}\celestia-qt.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 
 [Registry]
 ; The Software\Shatters.net key is created by the Celestia program, so it needs
