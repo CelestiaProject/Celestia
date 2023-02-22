@@ -73,8 +73,8 @@ struct TextureFontPrivate
     TextureFontPrivate &operator=(const TextureFontPrivate &) = default;
     TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
-    float render(std::string_view s, float x, float y);
-    float render(wchar_t ch, float xoffset, float yoffset);
+    std::pair<float, float> render(std::string_view s, float x, float y);
+    std::pair<float, float> render(wchar_t ch, float xoffset, float yoffset);
 
     bool               buildAtlas();
     void               computeTextureSize();
@@ -395,10 +395,10 @@ TextureFontPrivate::optimize()
  * Rendering starts at coordinates (x, y), z is always 0.
  * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
  */
-float
+std::pair<float, float>
 TextureFontPrivate::render(std::string_view s, float x, float y)
 {
-    if (m_texName == 0) return 0;
+    if (m_texName == 0) return {0, 0};
 
     // Use the texture containing the atlas
     glBindTexture(GL_TEXTURE_2D, m_texName);
@@ -408,12 +408,24 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
     bool validChar = true;
     int  i         = 0;
 
+    float startingX = x;
+    float maxX = x;
+
     while (i < len && validChar)
     {
         wchar_t ch = 0;
         validChar  = UTF8Decode(s, i, ch);
         if (!validChar) break;
         i += UTF8EncodedSize(ch);
+
+        if (ch == L'\n')
+        {
+            // Restore to the starting point for x, and go to next line
+            maxX = std::max(maxX, x);
+            x = startingX;
+            y -= (m_maxAscent + m_maxDescent);
+            continue;
+        }
 
         auto &g = getGlyph(ch, L'?');
 
@@ -445,10 +457,10 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
         if (m_fontVertices.size() == MaxVertices) flush();
     }
 
-    return x;
+    return {maxX, y};
 }
 
-float
+std::pair<float, float>
 TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
 {
     auto &g = getGlyph(ch, L'?');
@@ -471,7 +483,7 @@ TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
 
     if (m_fontVertices.size() == MaxVertices) flush();
 
-    return g.ax;
+    return {g.ax, g.ay};
 }
 
 CelestiaGLProgram *
@@ -545,8 +557,9 @@ TextureFont::TextureFont(const Renderer *renderer) :
  * @param ch -- wide character
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
+ * @return the horizontal and vertical advance of the character
  */
-float
+std::pair<float, float>
 TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
 {
     return impl->render(ch, xoffset, yoffset);
@@ -561,8 +574,9 @@ TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
  * @param s -- string to render
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
+ * @return the rightmost and bottom pixel of the rendered string
  */
-float
+std::pair<float, float>
 TextureFont::render(std::string_view s, float xoffset, float yoffset) const
 {
     return impl->render(s, xoffset, yoffset);

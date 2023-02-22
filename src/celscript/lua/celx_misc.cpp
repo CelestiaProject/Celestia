@@ -201,9 +201,9 @@ static int font_render(lua_State* l)
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
     font->setMVPMatrices(p, m);
-    float ret = font->render(s);
+    auto [x, _] = font->render(s);
     font->flush();
-    return celx.push(ret);
+    return celx.push(x);
 }
 
 static int font_getwidth(lua_State* l)

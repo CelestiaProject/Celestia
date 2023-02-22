@@ -1,16 +1,15 @@
 // overlay.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _OVERLAY_H_
-#define _OVERLAY_H_
+#pragma once
 
-#include <iosfwd>
 #include <string>
 #include <vector>
 #include <fmt/printf.h>
@@ -26,34 +25,7 @@ namespace celestia
 class Rect;
 }
 
-// Custom streambuf class to support C++ operator style output.  The
-// output is completely unbuffered so that it can coexist with printf
-// style output which the Overlay class also supports.
-class OverlayStreamBuf : public std::streambuf
-{
- public:
-    OverlayStreamBuf();
-
-    void setOverlay(Overlay*);
-
-    int overflow(int c = EOF);
-
-    enum UTF8DecodeState
-    {
-        UTF8DecodeStart     = 0,
-        UTF8DecodeMultibyte = 1,
-    };
-
- private:
-    Overlay* overlay{ nullptr };
-
-    UTF8DecodeState decodeState{ UTF8DecodeStart };
-    wchar_t decodedChar{ 0 };
-    unsigned int decodeShift{ 0 };
-};
-
-
-class Overlay : public std::ostream
+class Overlay
 {
  public:
     Overlay(Renderer&);
@@ -82,15 +54,13 @@ class Overlay : public std::ostream
 
     void beginText();
     void endText();
-    void print(wchar_t);
-    void print(char);
     template <typename... T>
-    void print(const char* format, const T&... args)
+    void print(std::string_view format, const T&... args)
     {
         print_impl(fmt::format(format, args...));
     }
     template <typename... T>
-    void printf(const char* format, const T&... args)
+    void printf(std::string_view format, const T&... args)
     {
         print_impl(fmt::sprintf(format, args...));
     }
@@ -108,8 +78,6 @@ class Overlay : public std::ostream
     float xoffset{ 0.0f };
     float yoffset{ 0.0f };
 
-    OverlayStreamBuf sbuf;
-
     Renderer& renderer;
 
     struct CursorPosition
@@ -124,5 +92,3 @@ class Overlay : public std::ostream
     std::vector<CursorPosition> posStack;
     Eigen::Matrix4f projection;
 };
-
-#endif // _OVERLAY_H_

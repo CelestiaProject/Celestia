@@ -34,8 +34,8 @@ class TextureFont
     void setMVPMatrices(const Eigen::Matrix4f &p,
                         const Eigen::Matrix4f &m = Eigen::Matrix4f::Identity());
 
-    float render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
-    float render(std::string_view str, float xoffset = 0.0f, float yoffset = 0.0f) const;
+    std::pair<float, float> render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
+    std::pair<float, float> render(std::string_view str, float xoffset = 0.0f, float yoffset = 0.0f) const;
 
     int getWidth(std::string_view) const;
     int getWidth(int c) const;

@@ -97,8 +97,8 @@ void Console::render(int rowHeight)
             wchar_t ch = text[r * (nColumns + 1) + j];
             if (ch == '\0')
                 break;
-            font->render(ch, global.x + xoffset, global.y);
-            xoffset += font->getAdvance(ch);
+            auto [ax, _] = font->render(ch, global.x + xoffset, global.y);
+            xoffset += ax;
         }
 
         // advance to the next line
