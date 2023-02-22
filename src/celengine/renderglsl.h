@@ -72,15 +72,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Matrices &m,
                        Renderer* renderer);
 
-void renderAtmosphere_GLSL(const RenderInfo& ri,
-                           const LightingState& ls,
-                           Atmosphere* atmosphere,
-                           float radius,
-                           const Eigen::Quaternionf& planetOrientation,
-                           const celmath::Frustum& frustum,
-                           const Matrices &m,
-                           Renderer* renderer);
-
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
                       const LightingState& ls,

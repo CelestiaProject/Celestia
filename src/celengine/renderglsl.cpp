@@ -675,69 +675,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
 }
 
 
-// Render the sky sphere for a world with an atmosphere
-void
-renderAtmosphere_GLSL(const RenderInfo& ri,
-                      const LightingState& ls,
-                      Atmosphere* atmosphere,
-                      float radius,
-                      const Eigen::Quaternionf& /*planetOrientation*/,
-                      const celmath::Frustum& frustum,
-                      const Matrices &m,
-                      Renderer* renderer)
-{
-    // Currently, we just skip rendering an atmosphere when there are no
-    // light sources, even though the atmosphere would still the light
-    // of planets and stars behind it.
-    if (ls.nLights == 0)
-        return;
-
-    ShaderProperties shadprop;
-    shadprop.nLights = ls.nLights;
-
-    shadprop.texUsage |= ShaderProperties::Scattering;
-    shadprop.lightModel = ShaderProperties::AtmosphereModel;
-
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
-    prog->use();
-
-    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    prog->ambientColor = Eigen::Vector3f::Zero();
-
-    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * std::log(AtmosphereExtinctionThreshold);
-    float atmScale = atmosphereRadius / radius;
-
-    prog->eyePosition = ls.eyePos_obj / atmScale;
-    prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
-
-#if 0
-    // Currently eclipse shadows are ignored when rendering atmospheres
-    if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
-#endif
-
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(atmScale));
-
-    glFrontFace(GL_CW);
-
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_ONE, GL_SRC_ALPHA};
-    ps.depthTest = true;
-    renderer->setPipelineState(ps);
-
-    g_lodSphere->render(LODSphereMesh::Normals,
-                        frustum,
-                        ri.pixWidth,
-                        nullptr);
-
-    glFrontFace(GL_CCW);
-}
-
 static void renderRingSystem(GLuint *vboId,
                              float innerRadius,
                              float outerRadius,
