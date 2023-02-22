@@ -2877,7 +2877,7 @@ static void displayStarInfo(Overlay& overlay,
 
     if (!star.getVisibility())
     {
-        overlay << _("Star system barycenter\n");
+        overlay.print(_("Star system barycenter\n"));
     }
     else
     {
@@ -2934,14 +2934,15 @@ static void displayStarInfo(Overlay& overlay,
     {
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != nullptr && sys->getPlanets()->getSystemSize() != 0)
-            overlay << _("Planetary companions present\n");
+            overlay.print(_("Planetary companions present\n"));
     }
 }
 
 
 static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double distance, CelestiaCore::MeasurementSystem measurement)
 {
-    overlay << dso.getDescription() << '\n';
+    overlay.print(dso.getDescription());
+    overlay.print("\n");
 
     if (distance >= 0)
     {
@@ -3094,17 +3095,17 @@ static void displaySelectionName(Overlay& overlay,
     switch (sel.getType())
     {
     case Selection::Type_Body:
-        overlay << sel.body()->getName(true);
+        overlay.print(sel.body()->getName(true));
         break;
     case Selection::Type_DeepSky:
-        overlay << univ.getDSOCatalog()->getDSOName(sel.deepsky(), true);
+        overlay.print(univ.getDSOCatalog()->getDSOName(sel.deepsky(), true));
         break;
     case Selection::Type_Star:
         //displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
-        overlay << univ.getStarCatalog()->getStarName(*sel.star(), true);
+        overlay.print(univ.getStarCatalog()->getStarName(*sel.star(), true));
         break;
     case Selection::Type_Location:
-        overlay << sel.location()->getName(true);
+        overlay.print(sel.location()->getName(true));
         break;
     default:
         break;
@@ -3203,27 +3204,27 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy(width - safeAreaInsets.right - dateStrWidth, height - safeAreaInsets.top - fontHeight);
         overlay->beginText();
 
-        *overlay << dateStr;
+        overlay->print(dateStr);
 
         if (lightTravelFlag && lt > 0.0)
         {
             overlay->setColor(0.42f, 1.0f, 1.0f, 1.0f);
-            *overlay << _("  LT");
+            overlay->print(_("  LT"));
             overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
         }
-        *overlay << '\n';
+        overlay->print("\n");
 
         {
             if (abs(abs(sim->getTimeScale()) - 1) < 1e-6)
             {
                 if (sign(sim->getTimeScale()) == 1)
-                    *overlay << _("Real time");
+                    overlay->print(_("Real time"));
                 else
-                    *overlay << _("-Real time");
+                    overlay->print(_("-Real time"));
             }
             else if (abs(sim->getTimeScale()) < MinimumTimeRate)
             {
-                *overlay << _("Time stopped");
+                overlay->print(_("Time stopped"));
             }
             else if (abs(sim->getTimeScale()) > 1.0)
             {
@@ -3237,7 +3238,7 @@ void CelestiaCore::renderOverlay()
             if (sim->getPauseState() == true)
             {
                 overlay->setColor(1.0f, 0.0f, 0.0f, 1.0f);
-                *overlay << _(" (Paused)");
+                overlay->print(_(" (Paused)"));
             }
         }
 
@@ -3253,7 +3254,7 @@ void CelestiaCore::renderOverlay()
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
-        *overlay << '\n';
+        overlay->print("\n");
         if (showFPSCounter)
 #ifdef OCTREE_DEBUG
             overlay->printf(_("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
@@ -3268,7 +3269,7 @@ void CelestiaCore::renderOverlay()
             overlay->printf(_("FPS: %.1f\n"), fps);
 #endif
         else
-            *overlay << '\n';
+            overlay->print("\n");
 
         displaySpeed(*overlay, sim->getObserver().getVelocity().norm(), measurement);
 
@@ -3297,7 +3298,7 @@ void CelestiaCore::renderOverlay()
         }
         else
         {
-            *overlay << '\n';
+            overlay->print("\n");
         }
 
         if (!sim->getTrackedObject().empty())
@@ -3307,7 +3308,7 @@ void CelestiaCore::renderOverlay()
         }
         else
         {
-            *overlay << '\n';
+            overlay->print("\n");
         }
 
         {
@@ -3337,7 +3338,7 @@ void CelestiaCore::renderOverlay()
                 break;
 
             default:
-                *overlay << '\n';
+                overlay->print("\n");
                 break;
             }
         }
@@ -3374,9 +3375,9 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames;
+                overlay->print(selectionNames);
                 overlay->setFont(font);
-                *overlay << '\n';
+                overlay->print("\n");
                 displayStarInfo(*overlay,
                                 hudDetail,
                                 *(sel.star()),
@@ -3396,9 +3397,9 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames;
+                overlay->print(selectionNames);
                 overlay->setFont(font);
-                *overlay << '\n';
+                overlay->print("\n");
                 displayDSOinfo(*overlay,
                                *sel.deepsky(),
                                astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius(),
@@ -3440,9 +3441,9 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames;
+                overlay->print(selectionNames);
                 overlay->setFont(font);
-                *overlay << '\n';
+                overlay->print("\n");
                 displayPlanetInfo(*overlay,
                                   hudDetail,
                                   *(sel.body()),
@@ -3456,9 +3457,9 @@ void CelestiaCore::renderOverlay()
 
         case Selection::Type_Location:
             overlay->setFont(titleFont);
-            *overlay << sel.location()->getName(true).c_str();
+            overlay->print(sel.location()->getName(true).c_str());
             overlay->setFont(font);
-            *overlay << '\n';
+            overlay->print("\n");
             displayLocationInfo(*overlay, *(sel.location()), v.norm(), measurement);
             break;
 
@@ -3556,7 +3557,8 @@ void CelestiaCore::renderOverlay()
                         overlay->setColor(1.0f, 0.6f, 0.6f, 1);
                     else
                         overlay->setColor(0.6f, 0.6f, 1.0f, 1);
-                    *overlay << *iter << "\n";
+                    overlay->print(*iter);
+                    overlay->print("\n");
                 }
                 overlay->endText();
                 overlay->restorePos();
@@ -3584,7 +3586,7 @@ void CelestiaCore::renderOverlay()
         overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
         overlay->moveBy(x, y);
         overlay->beginText();
-        *overlay << messageText;
+        overlay->print(messageText);
         overlay->endText();
         overlay->restorePos();
         overlay->setFont(font);
@@ -3631,7 +3633,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy((float) ((width - movieWidth) / 2),
                         (float) ((height - movieHeight) / 2 - fontHeight - 2));
         overlay->beginText();
-        *overlay << _("F11 Start/Pause    F12 Stop");
+        overlay->print(_("F11 Start/Pause    F12 Stop"));
         overlay->endText();
         overlay->restorePos();
 
@@ -3647,7 +3649,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy((float) (safeAreaInsets.left + x),
                         (float) (safeAreaInsets.bottom + y));
         overlay->setColor(1, 0, 1, 1);
-        *overlay << _("Edit Mode");
+        overlay->print(_("Edit Mode"));
         overlay->endText();
         overlay->restorePos();
     }
