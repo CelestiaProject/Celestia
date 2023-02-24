@@ -4745,6 +4745,24 @@ bool Renderer::getInfo(map<string, string>& info) const
         info["LanguageVersion"] = s;
     }
 
+    GLint redBits = 0;
+    GLint greenBits = 0;
+    GLint blueBits = 0;
+    GLint alphaBits = 0;
+    GLint depthBits = 0;
+    glGetIntegerv(GL_RED_BITS, &redBits);
+    glGetIntegerv(GL_GREEN_BITS, &greenBits);
+    glGetIntegerv(GL_BLUE_BITS, &blueBits);
+    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
+    glGetIntegerv(GL_DEPTH_BITS, &depthBits);
+
+    if (alphaBits == 0)
+        info["ColorComponent"] = fmt::format("RGB{}{}{}", redBits, greenBits, blueBits);
+    else
+        info["ColorComponent"] = fmt::format("RGBA{}{}{}{}", redBits, greenBits, blueBits, alphaBits);
+
+    info["DepthComponent"] = to_string(depthBits);
+
     GLint maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     info["MaxTextureSize"] = to_string(maxTextureSize);

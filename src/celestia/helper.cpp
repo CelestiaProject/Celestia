@@ -114,6 +114,12 @@ std::string Helper::getRenderInfo(const Renderer *r)
     if (info.count("Language") > 0)
         s += fmt::sprintf(_("%s Version: %s\n"), info["Language"], info["LanguageVersion"]);
 
+    if (info.count("ColorComponent") > 0)
+        s += fmt::sprintf(_("Color component: %s\n"), info["ColorComponent"]);
+
+    if (info.count("DepthComponent") > 0)
+        s += fmt::sprintf(_("Depth component: %s\n"), info["DepthComponent"]);
+
     if (info.count("MaxTextureUnits") > 0)
         s += fmt::sprintf(_("Max simultaneous textures: %s\n"), info["MaxTextureUnits"]);
 
