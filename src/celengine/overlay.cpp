@@ -102,10 +102,12 @@ void Overlay::print_impl(const std::string& s)
         fontChanged = false;
     }
 
-    restorePos();
-    auto [_, y] = font->render(s, global.x + xoffset, global.y + yoffset);
-    global.y = y;
-    savePos();
+    auto [x, y] = font->render(s, global.x + xoffset, global.y + yoffset);
+    if (global.y + yoffset != y) // Workaround before we have a better text layout. Here we moved to the next line, reset xoffset
+        xoffset = 0;
+    else
+        xoffset = x - global.x;
+    yoffset = y - global.y;
 }
 
 void Overlay::drawRectangle(const celestia::Rect& r)
