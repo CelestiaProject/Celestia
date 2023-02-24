@@ -409,7 +409,6 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
     int  i         = 0;
 
     float startingX = x;
-    float maxX = x;
 
     while (i < len && validChar)
     {
@@ -421,7 +420,6 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
         if (ch == L'\n')
         {
             // Restore to the starting point for x, and go to next line
-            maxX = std::max(maxX, x);
             x = startingX;
             y -= (m_maxAscent + m_maxDescent);
             continue;
@@ -457,7 +455,7 @@ TextureFontPrivate::render(std::string_view s, float x, float y)
         if (m_fontVertices.size() == MaxVertices) flush();
     }
 
-    return {maxX, y};
+    return {x, y};
 }
 
 std::pair<float, float>
@@ -574,7 +572,7 @@ TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
  * @param s -- string to render
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
- * @return the rightmost and bottom pixel of the rendered string
+ * @return the start position for the next glyph
  */
 std::pair<float, float>
 TextureFont::render(std::string_view s, float xoffset, float yoffset) const
