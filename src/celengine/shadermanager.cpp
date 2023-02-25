@@ -2646,7 +2646,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         // Add in the specular color
         if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
-            source += "gl_FragColor = color * diff + float(color.a) * spec;\n";
+            source += "gl_FragColor = vec4(color.rgb, 1.0) * diff + float(color.a) * spec;\n";
         else if (props.texUsage & ShaderProperties::SpecularTexture)
             source += "gl_FragColor = color * diff + texture2D(specTex, " + specTexCoord + ".st) * spec;\n";
         else
