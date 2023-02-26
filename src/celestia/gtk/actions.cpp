@@ -736,9 +736,10 @@ void actionHelpAbout(GtkAction*, AppData* app)
                                   GTK_MINOR_VERSION);
 
     gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
-                         "name", "Celestia",
+                         "title", _("About Celestia"),
+                         "program-name", "Celestia",
                          "version", VERSION,
-                         "copyright", "Copyright \xc2\xa9 2001-2021 Celestia Development Team",
+                         "copyright", "Copyright \xc2\xa9 2001-2023 Celestia Development Team",
                          "comments", comments.c_str(),
                          "website", "https://celestia.space",
                          "authors", authors,
