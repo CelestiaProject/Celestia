@@ -317,7 +317,6 @@ endif()
 #
 add_definitions(
   -DVERSION="${PROJECT_VERSION}"
-  -DPACKAGE="celestia"
   -DGIT_COMMIT="${GIT_COMMIT}"
 )
 

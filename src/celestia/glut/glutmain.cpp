@@ -437,9 +437,11 @@ int main(int argc, char* argv[])
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    bind_textdomain_codeset(PACKAGE, "UTF-8");
-    textdomain(PACKAGE);
+    bindtextdomain("celestia", LOCALEDIR);
+    bind_textdomain_codeset("celestia", "UTF-8");
+    bindtextdomain("celestia-data", LOCALEDIR);
+    bind_textdomain_codeset("celestia-data", "UTF-8");
+    textdomain("celestia");
 
     #ifdef MACOSX
     #define BUNDLEONLY 1
