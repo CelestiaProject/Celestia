@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setOrganizationName("Celestia Development Team");
     QCoreApplication::setApplicationName("Celestia QT");
-    QCoreApplication::setApplicationVersion("1.7.0");
+    QCoreApplication::setApplicationVersion(VERSION);
 
     CelestiaCommandLineOptions options = ParseCommandLine(app);
 

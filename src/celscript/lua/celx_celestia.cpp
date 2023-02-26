@@ -2509,7 +2509,7 @@ static int celestia_loadfragment(lua_State* l)
 
 static int celestia_version(lua_State* l)
 {
-    lua_pushstring(l, "1.7.0");
+    lua_pushstring(l, VERSION);
     return 1;
 }
 

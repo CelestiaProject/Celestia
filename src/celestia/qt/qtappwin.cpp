@@ -1093,7 +1093,7 @@ void CelestiaAppWindow::slotShowAbout()
 {
     const char* aboutText = gettext_noop(
         "<html>"
-        "<h1>Celestia 1.7</h1>"
+        "<h1>Celestia " VERSION "</h1>"
         "<p>Development snapshot, commit <b>%1</b>.</p>"
 
         "<p>Built for %2 bit CPU<br>"
