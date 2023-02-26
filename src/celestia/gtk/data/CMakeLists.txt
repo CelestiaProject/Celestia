@@ -1,4 +1,4 @@
-install(FILES celestiaui.xml
+install(FILES celestiaui.xml celestia-logo.png
         DESTINATION "${DATADIR}")
 install(FILES celestia-gtk.desktop
         DESTINATION "${CMAKE_INSTALL_DATADIR}/applications")
