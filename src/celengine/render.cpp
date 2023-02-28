@@ -50,6 +50,7 @@
 #include "asterismrenderer.h"
 #include "boundariesrenderer.h"
 #include "rendcontext.h"
+#include "textlayout.h"
 #include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -82,6 +83,7 @@ using namespace Eigen;
 using namespace std;
 using namespace celestia;
 using namespace celmath;
+using namespace celestia::engine;
 using celestia::util::GetLogger;
 using celestia::render::CometRenderer;
 using celestia::render::LineRenderer;
@@ -4109,7 +4111,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
 void
 Renderer::renderAnnotationMarker(const Annotation &a,
-                                 FontStyle fs,
+                                 TextLayout &layout,
                                  float depth,
                                  const Matrices &m)
 {
@@ -4128,24 +4130,22 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     if (!markerRep.label().empty())
     {
-        if (auto font = getFont(fs); font != nullptr)
-        {
-            int labelOffset = (int)markerRep.size() / 2;
-            float x = labelOffset + PixelOffset;
-            float y = -labelOffset - font->getHeight() + PixelOffset;
-            font->bind();
-            font->setMVPMatrices(*m.projection, mv);
-            font->render(markerRep.label(), x, y);
-            font->flush();
-        }
+        layout.setHorizontalAlignment(TextLayout::HorizontalAlignment::Left);
+        layout.begin(*m.projection, mv);
+        float labelOffset = markerRep.size() / 2.0f;
+        float x = labelOffset + PixelOffset;
+        float y = -labelOffset - static_cast<float>(layout.getLineHeight()) + PixelOffset;
+        layout.moveAbsolute(x, y);
+        layout.render(markerRep.label());
+        layout.end();
     }
 }
 
 void
 Renderer::renderAnnotationLabel(const Annotation &a,
-                                FontStyle fs,
-                                int hOffset,
-                                int vOffset,
+                                TextLayout &layout,
+                                float hOffset,
+                                float vOffset,
                                 float depth,
                                 const Matrices &m)
 {
@@ -4156,14 +4156,10 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                                    (int)a.position.y() + vOffset + PixelOffset,
                                    depth);
 
-    auto font = getFont(fs);
-    if (font == nullptr)
-        return;
-
-    font->bind();
-    font->setMVPMatrices(*m.projection, mv);
-    font->render(a.labelText, 0.0f, 0.0f);
-    font->flush();
+    layout.begin(*m.projection, mv);
+    layout.moveAbsolute(0.0f, 0.0f);
+    layout.render(a.labelText);
+    layout.end();
 }
 
 // stars and constellations. DSOs
@@ -4174,6 +4170,9 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     if (font == nullptr)
         return;
 
+    TextLayout layout{ screenDpi };
+    layout.setFont(font);
+
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
 
@@ -4181,50 +4180,52 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     {
         if (annotations[i].markerRep != nullptr)
         {
-            renderAnnotationMarker(annotations[i], fs, 0.0f, m);
+            renderAnnotationMarker(annotations[i], layout, 0.0f, m);
         }
 
         if (!annotations[i].labelText.empty())
         {
-            int labelWidth = 0;
-            int hOffset = 2;
-            int vOffset = 0;
+            TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+            float hOffset = 0.0f;
+            float vOffset = 0.0f;
 
             switch (annotations[i].halign)
             {
             case AlignCenter:
-                labelWidth = (font->getWidth(annotations[i].labelText));
-                hOffset = -labelWidth / 2;
+                alignment = TextLayout::HorizontalAlignment::Center;
+                hOffset = 0.0f;
                 break;
 
             case AlignRight:
-                labelWidth = (font->getWidth(annotations[i].labelText));
-                hOffset = -(labelWidth + 2);
+                alignment = TextLayout::HorizontalAlignment::Right;
+                hOffset = -2.0f;
                 break;
 
             case AlignLeft:
+                alignment = TextLayout::HorizontalAlignment::Left;
                 if (annotations[i].markerRep != nullptr)
-                    hOffset = 2 + (int) annotations[i].markerRep->size() / 2;
+                    hOffset = 2.0f + annotations[i].markerRep->size() / 2.0f;
+                else
+                    hOffset = 2.0f;
                 break;
             }
 
             switch (annotations[i].valign)
             {
             case VerticalAlignCenter:
-                vOffset = -font->getHeight() / 2;
+                vOffset = -static_cast<float>(font->getHeight()) / 2.0f;
                 break;
             case VerticalAlignTop:
-                vOffset = -font->getHeight();
+                vOffset = -static_cast<float>(font->getHeight());
                 break;
             case VerticalAlignBottom:
-                vOffset = 0;
+                vOffset = 0.0f;
                 break;
             }
-            renderAnnotationLabel(annotations[i], fs, hOffset, vOffset, 0.0f, m);
+            layout.setHorizontalAlignment(alignment);
+            renderAnnotationLabel(annotations[i], layout, hOffset, vOffset, 0.0f, m);
         }
     }
-
-    font->unbind();
 }
 
 
@@ -4289,6 +4290,9 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     if (font == nullptr)
         return endIter;
 
+    TextLayout layout{ screenDpi };
+    layout.setFont(font);
+
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
 
@@ -4310,24 +4314,23 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
         // Offsets to left align label
-        int labelHOffset = 0;
-        int labelVOffset = 0;
+        float labelHOffset = 0.0f;
+        float labelVOffset = 0.0f;
 
         if (iter->markerRep != nullptr)
         {
-            renderAnnotationMarker(*iter, fs, ndc_z, m);
+            renderAnnotationMarker(*iter, layout, ndc_z, m);
         }
 
         if (!iter->labelText.empty())
         {
             if (iter->markerRep != nullptr)
-                labelHOffset += (int) iter->markerRep->size() / 2 + 3;
+                labelHOffset += std::trunc(iter->markerRep->size() / 2.0f) + 3.0f;
 
-            renderAnnotationLabel(*iter, fs, labelHOffset, labelVOffset, ndc_z, m);
+            layout.setHorizontalAlignment(TextLayout::HorizontalAlignment::Left);
+            renderAnnotationLabel(*iter, layout, labelHOffset, labelVOffset, ndc_z, m);
         }
     }
-
-    font->unbind();
 
     return iter;
 }

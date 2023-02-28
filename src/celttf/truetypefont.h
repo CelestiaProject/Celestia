@@ -35,9 +35,9 @@ class TextureFont
                         const Eigen::Matrix4f &m = Eigen::Matrix4f::Identity());
 
     std::pair<float, float> render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
-    std::pair<float, float> render(std::string_view str, float xoffset = 0.0f, float yoffset = 0.0f) const;
+    std::pair<float, float> render(std::wstring_view line, float xoffset = 0.0f, float yoffset = 0.0f) const;
 
-    int getWidth(std::string_view) const;
+    int getWidth(std::wstring_view) const;
     int getWidth(int c) const;
     int getMaxWidth() const;
     int getHeight() const;

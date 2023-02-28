@@ -16,11 +16,13 @@
 #include <celscript/legacy/cmdparser.h>
 #include <celscript/legacy/execenv.h>
 #include <celscript/legacy/execution.h>
+#include <celengine/textlayout.h>
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
 #include "glcompat.h"
 
 using namespace std;
+using namespace celestia::engine;
 using namespace celestia::scripts;
 
 LuaState *getLuaStateObject(lua_State*);
@@ -198,10 +200,12 @@ static int font_render(lua_State* l)
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
-    font->setMVPMatrices(p, m);
-    auto [x, _] = font->render(s);
-    font->flush();
-    return celx.push(x);
+    TextLayout layout;
+    layout.setFont(font);
+    layout.begin(p, m);
+    layout.render(s);
+    layout.end();
+    return celx.push(layout.getCurrentPosition().first);
 }
 
 static int font_getwidth(lua_State* l)
@@ -211,7 +215,7 @@ static int font_getwidth(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected for font:getwidth");
     const char* s = celx.safeGetString(2, AllErrors, "Argument to font:getwidth must be a string");
     auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    return celx.push(font->getWidth(s));
+    return celx.push(TextLayout::getTextWidth(s, font.get()));
 }
 
 static int font_getheight(lua_State* l)
@@ -256,7 +260,7 @@ static int font_gettextwidth(lua_State* l)
     auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:gettextwidth must be a string");
 
-    lua_pushnumber(l, font->getWidth(s));
+    lua_pushnumber(l, TextLayout::getTextWidth(s, font.get()));
 
     return 1;
 }

@@ -23,6 +23,7 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
+#include <celengine/textlayout.h>
 #include <celrender/vertexobject.h>
 
 class RendererWatcher;
@@ -628,13 +629,13 @@ class Renderer
                        float size = 0.0f,
                        bool special = false);
     void renderAnnotationMarker(const Annotation &a,
-                                FontStyle fs,
+                                celestia::engine::TextLayout &layout,
                                 float depth,
                                 const Matrices&);
     void renderAnnotationLabel(const Annotation &a,
-                               FontStyle fs,
-                               int hOffset,
-                               int vOffset,
+                               celestia::engine::TextLayout &layout,
+                               float hOffset,
+                               float vOffset,
                                float depth,
                                const Matrices&);
     void renderAnnotations(const std::vector<Annotation>&,

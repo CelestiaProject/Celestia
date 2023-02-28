@@ -23,6 +23,11 @@ class TextureFont;
 namespace celestia
 {
 class Rect;
+
+namespace engine
+{
+class TextLayout;
+}
 }
 
 class Overlay
@@ -70,25 +75,11 @@ class Overlay
 
     int windowWidth{ 1 };
     int windowHeight{ 1 };
-    std::shared_ptr<TextureFont> font{ nullptr };
-    bool useTexture{ false };
-    bool fontChanged{ false };
-    int textBlock{ 0 };
 
-    float xoffset{ 0.0f };
-    float yoffset{ 0.0f };
+    std::unique_ptr<celestia::engine::TextLayout> layout{ nullptr };
 
     Renderer& renderer;
 
-    struct CursorPosition
-    {
-        void reset()
-        {
-            x = y = 0.125f;
-        }
-        float x, y;
-    };
-    CursorPosition global { 0.0f, 0.0f };
-    std::vector<CursorPosition> posStack;
+    std::vector<std::pair<float, float>> posStack;
     Eigen::Matrix4f projection;
 };

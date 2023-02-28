@@ -73,7 +73,7 @@ struct TextureFontPrivate
     TextureFontPrivate &operator=(const TextureFontPrivate &) = default;
     TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
-    std::pair<float, float> render(std::string_view s, float x, float y);
+    std::pair<float, float> render(std::wstring_view line, float x, float y);
     std::pair<float, float> render(wchar_t ch, float xoffset, float yoffset);
 
     bool               buildAtlas();
@@ -396,35 +396,15 @@ TextureFontPrivate::optimize()
  * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
  */
 std::pair<float, float>
-TextureFontPrivate::render(std::string_view s, float x, float y)
+TextureFontPrivate::render(std::wstring_view line, float x, float y)
 {
     if (m_texName == 0) return {0, 0};
 
     // Use the texture containing the atlas
     glBindTexture(GL_TEXTURE_2D, m_texName);
 
-    // Loop through all characters
-    int  len       = s.length();
-    bool validChar = true;
-    int  i         = 0;
-
-    float startingX = x;
-
-    while (i < len && validChar)
+    for (auto ch : line)
     {
-        wchar_t ch = 0;
-        validChar  = UTF8Decode(s, i, ch);
-        if (!validChar) break;
-        i += UTF8EncodedSize(ch);
-
-        if (ch == L'\n')
-        {
-            // Restore to the starting point for x, and go to next line
-            x = startingX;
-            y -= (m_maxAscent + m_maxDescent);
-            continue;
-        }
-
         auto &g = getGlyph(ch, L'?');
 
         // Calculate the vertex and texture coordinates
@@ -569,15 +549,15 @@ TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
  * Render a string with the specified offset. Do *not* automatically update
  * the modelview transform.
  *
- * @param s -- string to render
+ * @param line -- line to render
  * @param xoffset -- horizontal offset
  * @param yoffset -- vertical offset
  * @return the start position for the next glyph
  */
 std::pair<float, float>
-TextureFont::render(std::string_view s, float xoffset, float yoffset) const
+TextureFont::render(std::wstring_view line, float xoffset, float yoffset) const
 {
-    return impl->render(s, xoffset, yoffset);
+    return impl->render(line, xoffset, yoffset);
 }
 
 /**
@@ -585,25 +565,15 @@ TextureFont::render(std::string_view s, float xoffset, float yoffset) const
  *
  * Calculate string width using the current font.
  *
- * @param s -- string to calculate width
+ * @param line -- string to calculate width
  * @return string width in pixels
  */
 int
-TextureFont::getWidth(std::string_view s) const
+TextureFont::getWidth(std::wstring_view line) const
 {
     int  width     = 0;
-    int  len       = s.length();
-    bool validChar = true;
-    int  i         = 0;
-
-    while (i < len && validChar)
+    for (auto ch : line)
     {
-        wchar_t ch = 0;
-        validChar  = UTF8Decode(s, i, ch);
-        if (!validChar) break;
-
-        i += UTF8EncodedSize(ch);
-
         auto &g = impl->getGlyph(ch, L'?');
         width += g.ax;
     }

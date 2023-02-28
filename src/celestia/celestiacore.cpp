@@ -27,6 +27,7 @@
 #include <celengine/overlay.h>
 #include <celengine/console.h>
 #include <celengine/starname.h>
+#include <celengine/textlayout.h>
 #include <celscript/legacy/execution.h>
 #include <celscript/legacy/cmdparser.h>
 #include <celengine/multitexture.h>
@@ -76,6 +77,7 @@ using namespace std;
 using namespace astro::literals;
 using namespace celmath;
 using namespace celestia;
+using namespace celestia::engine;
 using namespace celestia::scripts;
 using namespace celestia::util;
 
@@ -2515,7 +2517,7 @@ void CelestiaCore::showText(std::string_view s,
         return;
 
     messageText.replace(messageText.begin(), messageText.end(), s);
-    messageTextPosition = std::make_unique<RelativeTextPrintPosition>(horig, vorig, hoff, voff, titleFont->getWidth("M"), titleFont->getHeight());
+    messageTextPosition = std::make_unique<RelativeTextPrintPosition>(horig, vorig, hoff, voff, TextLayout::getTextWidth("M", titleFont.get()), titleFont->getHeight());
     messageStart = currentTime;
     messageDuration = duration;
 }
@@ -2533,7 +2535,7 @@ void CelestiaCore::showTextAtPixel(std::string_view s, int x, int y, double dura
 
 int CelestiaCore::getTextWidth(const std::string &s) const
 {
-    return titleFont->getWidth(s);
+    return TextLayout::getTextWidth(s, titleFont.get());
 }
 
 
@@ -3132,7 +3134,7 @@ void CelestiaCore::renderOverlay()
 
     int fontHeight = font->getHeight();
     int titleFontHeight = titleFont->getHeight();
-    int emWidth = font->getWidth("M");
+    int emWidth = TextLayout::getTextWidth("M", font.get());
     assert(emWidth > 0);
 
     overlay->begin();
@@ -3195,7 +3197,7 @@ void CelestiaCore::renderOverlay()
             astro::Date d = timeZoneBias != 0 ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
             dateStr = d.toCStr(dateFormat);
         }
-        int dateWidth = (font->getWidth(dateStr)/(emWidth * 3) + 2) * emWidth * 3;
+        int dateWidth = (TextLayout::getTextWidth(dateStr, font.get()) / (emWidth * 3) + 2) * emWidth * 3;
         if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
 
         // Time and date
@@ -3644,7 +3646,7 @@ void CelestiaCore::renderOverlay()
     {
         overlay->savePos();
         overlay->beginText();
-        int x = (getSafeAreaWidth() - font->getWidth(_("Edit Mode"))) / 2;
+        int x = (getSafeAreaWidth() - TextLayout::getTextWidth(_("Edit Mode"), font.get())) / 2;
         int y = getSafeAreaHeight() - fontHeight;
         overlay->moveBy((float) (safeAreaInsets.left + x),
                         (float) (safeAreaInsets.bottom + y));
