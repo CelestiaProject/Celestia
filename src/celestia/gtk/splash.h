@@ -47,7 +47,7 @@ struct _SplashData {
 
 
 /* Entry Functions */
-SplashData* splashStart(AppData* app, gboolean showSplash);
+SplashData* splashStart(AppData* app, gboolean showSplash, gchar* installDir, gchar* defaultDir);
 void splashEnd(SplashData* ss);
 void splashSetText(SplashData* ss, const char* text);
 

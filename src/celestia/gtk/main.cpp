@@ -362,12 +362,6 @@ int main(int argc, char* argv[])
     if (argc > 1)
         app->startURL = argv[argc - 1];
 
-    if (installDir == NULL)
-        installDir = (gchar*)CONFIG_DATA_DIR;
-
-    if (chdir(installDir) == -1)
-        cerr << "Cannot chdir to '" << installDir << "', probably due to improper installation.\n";
-
     #ifdef GNOME
     /* GNOME Initialization */
     GnomeProgram *program;
@@ -379,8 +373,14 @@ int main(int argc, char* argv[])
     #endif
 
     /* Turn on the splash screen */
-    SplashData* ss = splashStart(app, !noSplash);
+    SplashData* ss = splashStart(app, !noSplash, installDir, CONFIG_DATA_DIR);
     splashSetText(ss, "Initializing...");
+
+    if (installDir == NULL)
+        installDir = (gchar*)CONFIG_DATA_DIR;
+
+    if (chdir(installDir) == -1)
+        cerr << "Cannot chdir to '" << installDir << "', probably due to improper installation.\n";
 
     app->core = new CelestiaCore();
 
