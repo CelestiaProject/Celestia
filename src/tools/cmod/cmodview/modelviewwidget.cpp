@@ -20,6 +20,7 @@
 #include <QPixmap>
 #include <QTextStream>
 
+#include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
 
@@ -36,7 +37,7 @@
 namespace
 {
 
-constexpr float VIEWPORT_FOV = 45.0;
+constexpr float VIEWPORT_FOV = 45.0f;
 
 constexpr int ShadowBufferSize = 1024;
 constexpr int ShadowSampleKernelWidth = 2;
@@ -571,9 +572,8 @@ ModelViewWidget::paintGL()
     double farDistance = m_modelBoundingRadius + distanceToOrigin;
 
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     double aspectRatio = (double) size().width() / (double) size().height();
-    gluPerspective(VIEWPORT_FOV, aspectRatio, nearDistance, farDistance);
+    glLoadMatrixd(celmath::Perspective(static_cast<double>(VIEWPORT_FOV), aspectRatio, nearDistance, farDistance).data());
 
     glEnable(GL_LIGHTING);
 
@@ -637,8 +637,7 @@ ModelViewWidget::paintGL()
         {
             glDisable(GL_DEPTH_TEST);
             glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluOrtho2D(0, width(), 0, height());
+            glLoadMatrixd(celmath::Ortho2D(0.0, static_cast<double>(width()), 0.0, static_cast<double>(height()).data());
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glDisable(GL_LIGHTING);
@@ -673,7 +672,7 @@ ModelViewWidget::paintGL()
     GLenum errorCode = glGetError();
     if (errorCode != GL_NO_ERROR)
     {
-        std::cout << "OpenGL error: " << gluErrorString(errorCode) << std::endl;
+        std::cout << "OpenGL error: " << errorCode << std::endl;
     }
 }
 
