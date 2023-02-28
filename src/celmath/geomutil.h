@@ -15,6 +15,8 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include "mathlib.h"
+
 namespace celmath
 {
 
