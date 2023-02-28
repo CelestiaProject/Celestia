@@ -78,7 +78,14 @@ int main(int argc, char *argv[])
     std::optional<QSplashScreen> splash{std::nullopt};
     if (!options.skipSplashScreen)
     {
-        QDir splashDir(SPLASH_DIR);
+        QDir splashDir(CONFIG_DATA_DIR "/splash");
+        if (!options.startDirectory.isEmpty())
+        {
+            QDir newSplashDir = QString("%1/splash").arg(options.startDirectory);
+            if (newSplashDir.exists("splash.png"))
+                splashDir = std::move(newSplashDir);
+        }
+
         QPixmap pixmap(splashDir.filePath("splash.png"));
         splash.emplace(pixmap);
         splash->setMask(pixmap.mask());

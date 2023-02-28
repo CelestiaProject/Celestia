@@ -11,6 +11,7 @@
  */
 
 #include <config.h>
+#include <celcompat/filesystem.h>
 #include <gtk/gtk.h>
 
 #ifdef CAIRO
@@ -41,7 +42,7 @@ GtkSplashProgressNotifier::~GtkSplashProgressNotifier() {};
 
 
 /* ENTRY: Creates a new SplashData struct, starts the splash screen */
-SplashData* splashStart(AppData* app, gboolean showSplash)
+SplashData* splashStart(AppData* app, gboolean showSplash, gchar* installDir, gchar* defaultDir)
 {
     SplashData* ss = g_new0(SplashData, 1);
 
@@ -74,7 +75,15 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
     GtkWidget* gf = gtk_fixed_new();
     gtk_container_add(GTK_CONTAINER(ss->splash), gf);
 
-    GtkWidget* i = gtk_image_new_from_file("splash/splash.png");
+    fs::path splashFile = fs::path(defaultDir) / "splash/splash.png";
+    if (installDir != nullptr)
+    {
+        fs::path newSplashFile = fs::path(installDir) / "splash/splash.png";
+        if (fs::exists(splashFile))
+            splashFile = std::move(newSplashFile);
+    }
+
+    GtkWidget* i = gtk_image_new_from_file(splashFile.string().c_str());
     gtk_fixed_put(GTK_FIXED(gf), i, 0, 0);
 
     /* The information label is right-aligned and biased to the lower-right

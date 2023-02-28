@@ -3210,15 +3210,26 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     CreateLogger(verbosity);
+
+    if (!skipSplashScreen)
+    {
+        // by default look in the current (installation) directory
+        fs::path splashFile("splash\\splash.png");
+        if (!startDirectory.empty())
+        {
+            fs::path newSplashFile = fs::path(startDirectory) / splashFile;
+            if (fs::exists(newSplashFile))
+                splashFile = std::move(newSplashFile);
+        }
+        s_splash = new SplashWindow(splashFile.string().c_str());
+        s_splash->setMessage(_("Loading data files..."));
+        s_splash->showSplash();
+    }
+
     // If a start directory was given on the command line, switch to it
     // now.
-    if (startDirectory != "")
+    if (!startDirectory.empty())
         SetCurrentDirectory(startDirectory.c_str());
-
-    s_splash = new SplashWindow(SPLASH_DIR "\\" "splash.png");
-    s_splash->setMessage(_("Loading data files..."));
-    if (!skipSplashScreen)
-        s_splash->showSplash();
 
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
