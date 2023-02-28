@@ -136,6 +136,8 @@ set(CELENGINE_SOURCES
   surface.h
   texmanager.cpp
   texmanager.h
+  textlayout.cpp
+  textlayout.h
   texture.cpp
   texture.h
   timeline.cpp
