@@ -343,6 +343,8 @@ Model::sortMeshes(const MeshComparator& comparator)
 
     for (size_t i = 1; i < meshes.size(); i++)
     {
+        if (meshes[i].getGroupCount() == 0)
+            continue;
         auto &p = newMeshes.back();
         if (!p.canMerge(meshes[i], materials))
         {
