@@ -356,7 +356,7 @@ void
 Mesh::optimize()
 {
 #ifdef HAVE_MESHOPTIMIZER
-    if (groups.size() > 1)
+    if (groups.size() != 1)
         return;
 
     auto &g = groups.front();

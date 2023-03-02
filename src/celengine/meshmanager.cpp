@@ -100,6 +100,10 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     int nVertices  = mesh.getVertexCount();
     int nTexCoords = mesh.getTexCoordCount();
 
+    // Some community addons ships buggy meshes.
+    if (mesh.getMeshMaterialGroupCount() == 0 || nFaces == 0 || nVertices == 0)
+        return {};
+
     // Texture coordinates are optional. Check for tex coord count >= nVertices because some
     // convertors generate extra texture coordinates.
     bool hasTextureCoords = nTexCoords >= nVertices;
@@ -338,7 +342,11 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
                 const M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
                 if (mesh)
                 {
-                    model->addMesh(ConvertTriangleMesh(*mesh, scene));
+                    cmod::Mesh cmodmesh = ConvertTriangleMesh(*mesh, scene);
+                    if (cmodmesh.getGroupCount() > 0)
+                        model->addMesh(std::move(cmodmesh));
+                    else
+                        GetLogger()->warn("Skipping mesh with 0 primitive groups!\n");
                 }
             }
         }
