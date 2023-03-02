@@ -5407,7 +5407,7 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
     if (ps.blending && (ps.blendFunc.src != m_pipelineState.blendFunc.src || ps.blendFunc.dst != m_pipelineState.blendFunc.dst))
     {
-        glBlendFunc(ps.blendFunc.src, ps.blendFunc.dst);
+        glBlendFuncSeparate(ps.blendFunc.src, ps.blendFunc.dst, GL_ZERO, GL_ONE);
         m_pipelineState.blendFunc = ps.blendFunc;
     }
     if (ps.depthTest != m_pipelineState.depthTest)
