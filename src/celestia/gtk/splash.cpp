@@ -42,7 +42,7 @@ GtkSplashProgressNotifier::~GtkSplashProgressNotifier() {};
 
 
 /* ENTRY: Creates a new SplashData struct, starts the splash screen */
-SplashData* splashStart(AppData* app, gboolean showSplash, gchar* installDir, gchar* defaultDir)
+SplashData* splashStart(AppData* app, gboolean showSplash, const gchar* installDir, const gchar* defaultDir)
 {
     SplashData* ss = g_new0(SplashData, 1);
 
