@@ -7,10 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _COMMAND_H_
-#define _COMMAND_H_
-
-#define MAX_CONSTELLATIONS 100
+#pragma once
 
 #include <array>
 #include <iosfwd>
@@ -667,24 +664,6 @@ class CommandSetTextColor : public InstantaneousCommand
 };
 
 
-class Execution;
-
-class RepeatCommand : public Command
-{
- public:
-    RepeatCommand(CommandSequence* _body, int _repeatCount);
-    ~RepeatCommand() override;
-
-    double getDuration() const override;
-    void process(ExecutionEnvironment& env, double t, double dt) override;
-
- private:
-    CommandSequence* body;
-    double bodyDuration{ 0.0 };
-    int repeatCount;
-    Execution* execution{ nullptr };
-};
-
 #ifdef USE_MINIAUDIO
 class CommandPlay : public InstantaneousCommand
 {
@@ -765,5 +744,3 @@ class CommandLoadFragment : public InstantaneousCommand
  private:
     std::string type, fragment, dir;
 };
-
-#endif // _COMMAND_H_

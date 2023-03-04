@@ -32,6 +32,7 @@ using namespace celmath;
 using namespace celestia;
 using celestia::util::GetLogger;
 
+static constexpr std::size_t MAX_CONSTELLATIONS = 100;
 
 double InstantaneousCommand::getDuration() const
 {
@@ -866,62 +867,6 @@ void CommandSetTextColor::process(ExecutionEnvironment& env)
     env.getCelestiaCore()->setTextColor(color);
 }
 
-
-///////////////
-// Repeat command
-
-RepeatCommand::RepeatCommand(CommandSequence* _body, int _repeatCount) :
-    body(_body),
-    repeatCount(_repeatCount)
-{
-    for (const auto b : *body)
-    {
-        bodyDuration += b->getDuration();
-    }
-}
-
-RepeatCommand::~RepeatCommand()
-{
-
-    delete execution;
-    // delete body;
-}
-
-void RepeatCommand::process(ExecutionEnvironment& env, double t, double dt)
-{
-    double t0 = t - dt;
-    auto loop0 = (int) (t0 / bodyDuration);
-    auto loop1 = (int) (t / bodyDuration);
-
-    // TODO: This is bogus . . . should not be storing a reference to an
-    // execution environment.
-    if (execution == nullptr)
-        execution = new Execution(*body, env);
-
-    if (loop0 == loop1)
-    {
-        execution->tick(dt);
-    }
-    else
-    {
-        double timeLeft = (loop0 + 1) * bodyDuration - t0;
-        execution->tick(timeLeft);
-
-        for (int i = loop0 + 1; i < loop1; i++)
-        {
-            execution->reset(*body);
-            execution->tick(bodyDuration);
-        }
-
-        execution->reset(*body);
-        execution->tick(t - loop1 * bodyDuration);
-    }
-}
-
-double RepeatCommand::getDuration() const
-{
-    return bodyDuration * repeatCount;
-}
 
 #ifdef USE_MINIAUDIO
 CommandPlay::CommandPlay(int channel, std::optional<float> volume, float pan, std::optional<bool> loop, const std::optional<fs::path> &filename, bool nopause) :
