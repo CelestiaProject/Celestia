@@ -9,14 +9,14 @@
 
 #include "execution.h"
 
-using namespace std;
+#include <utility>
 
+namespace celestia::scripts
+{
 
-Execution::Execution(CommandSequence& cmd, ExecutionEnvironment& _env) :
-    currentCommand(cmd.begin()),
-    finalCommand(cmd.end()),
-    env(_env),
-    commandTime(-1.0)
+Execution::Execution(CommandSequence&& cmd, ExecutionEnvironment& _env) :
+    commandSequence(std::move(cmd)),
+    env(_env)
 {
 }
 
@@ -32,9 +32,9 @@ bool Execution::tick(double dt)
         return false;
     }
 
-    while (dt > 0.0 && currentCommand != finalCommand)
+    while (dt > 0.0 && currentCommand < commandSequence.size())
     {
-        Command* cmd = *currentCommand;
+        Command* cmd = commandSequence[currentCommand].get();
 
         double timeLeft = cmd->getDuration() - commandTime;
         if (dt >= timeLeft)
@@ -52,15 +52,7 @@ bool Execution::tick(double dt)
         }
     }
 
-    return currentCommand == finalCommand;
+    return currentCommand == commandSequence.size();
 }
 
-
-void Execution::reset(CommandSequence& cmd)
-{
-    currentCommand = cmd.begin();
-    finalCommand = cmd.end();
-    commandTime = -1.0;
 }
-
-

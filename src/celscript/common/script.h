@@ -10,6 +10,7 @@
 #pragma once
 
 #include <memory>
+
 #include <celcompat/filesystem.h>
 
 class CelestiaCore;

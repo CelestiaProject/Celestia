@@ -8,8 +8,13 @@
 // of the License, or (at your option) any later version.
 
 #include "celx_misc.h"
+
+#include <memory>
+#include <string_view>
+
 #include "celx_internal.h"
 #include <celscript/legacy/cmdparser.h>
+#include <celscript/legacy/execenv.h>
 #include <celscript/legacy/execution.h>
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
@@ -28,10 +33,10 @@ class CelScriptWrapper : public ExecutionEnvironment
         core(appCore)
     {
         CommandParser parser(scriptfile, appCore.scriptMaps());
-        cmdSequence = parser.parse();
-        if (cmdSequence != nullptr)
+        CommandSequence cmdSequence = parser.parse();
+        if (!cmdSequence.empty())
         {
-            script = new Execution(*cmdSequence, *this);
+            script = std::make_unique<Execution>(std::move(cmdSequence), *this);
         }
         else
         {
@@ -43,13 +48,7 @@ class CelScriptWrapper : public ExecutionEnvironment
         }
     }
 
-    virtual ~CelScriptWrapper()
-    {
-        delete script;
-        delete cmdSequence;
-    }
-
-    string getErrorMessage() const
+    const std::string& getErrorMessage() const
     {
         return errorMessage;
     }
@@ -68,31 +67,30 @@ class CelScriptWrapper : public ExecutionEnvironment
         return script->tick(dt);
     }
 
-    Simulation* getSimulation() const
+    Simulation* getSimulation() const override
     {
         return core.getSimulation();
     }
 
-    Renderer* getRenderer() const
+    Renderer* getRenderer() const override
     {
         return core.getRenderer();
     }
 
-    CelestiaCore* getCelestiaCore() const
+    CelestiaCore* getCelestiaCore() const override
     {
         return &core;
     }
 
-    void showText(string s, int horig, int vorig, int hoff, int voff,
-                  double duration)
+    void showText(std::string_view s, int horig, int vorig, int hoff, int voff,
+                  double duration) override
     {
-        core.showText(std::move(s), horig, vorig, hoff, voff, duration);
+        core.showText(s, horig, vorig, hoff, voff, duration);
     }
 
  private:
-    Execution* script{ nullptr };
+    std::unique_ptr<Execution> script{ nullptr };
     CelestiaCore& core;
-    CommandSequence* cmdSequence{ nullptr };
     double tickTime { 0.0 };
     string errorMessage;
 };
@@ -401,5 +399,3 @@ void CreateTextureMetaTable(lua_State* l)
 
     celx.pop(1); // remove metatable from stack
 }
-
-

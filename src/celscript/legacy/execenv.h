@@ -7,14 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _EXECENV_H_
-#define _EXECENV_H_
+#pragma once
 
-#include <celengine/render.h>
-#include <celengine/simulation.h>
-#include <string>
+#include <string_view>
 
 class CelestiaCore;
+class Renderer;
+class Simulation;
+
+namespace celestia::scripts
+{
 
 class ExecutionEnvironment
 {
@@ -29,7 +31,7 @@ class ExecutionEnvironment
     virtual Renderer* getRenderer() const = 0;
     virtual CelestiaCore* getCelestiaCore() const = 0;
 
-    virtual void showText(std::string, int, int, int, int, double) = 0;
+    virtual void showText(std::string_view, int, int, int, int, double) = 0;
 };
 
-#endif // _EXECENV_H_
+}

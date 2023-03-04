@@ -2506,7 +2506,7 @@ Simulation* CelestiaCore::getSimulation() const
     return sim;
 }
 
-void CelestiaCore::showText(const std::string &s,
+void CelestiaCore::showText(std::string_view s,
                             int horig, int vorig,
                             int hoff, int voff,
                             double duration)
@@ -2514,18 +2514,18 @@ void CelestiaCore::showText(const std::string &s,
     if (!titleFont)
         return;
 
-    messageText = s;
+    messageText.replace(messageText.begin(), messageText.end(), s);
     messageTextPosition = std::make_unique<RelativeTextPrintPosition>(horig, vorig, hoff, voff, titleFont->getWidth("M"), titleFont->getHeight());
     messageStart = currentTime;
     messageDuration = duration;
 }
 
-void CelestiaCore::showTextAtPixel(const std::string &s, int x, int y, double duration)
+void CelestiaCore::showTextAtPixel(std::string_view s, int x, int y, double duration)
 {
     if (!titleFont)
         return;
 
-    messageText = s;
+    messageText.replace(messageText.begin(), messageText.end(), s);
     messageTextPosition = std::make_unique<AbsoluteTextPrintPosition>(x, y);
     messageStart = currentTime;
     messageDuration = duration;
