@@ -170,8 +170,9 @@ bool Celx_istype(lua_State* l, int index, int id)
     }
 
     const char* classname = lua_tostring(l, -1);
+    bool result = classname != nullptr && strcmp(classname, CelxLua::ClassNames[id]) == 0;
     lua_pop(l, 1);
-    return classname != nullptr && strcmp(classname, CelxLua::ClassNames[id]) == 0;
+    return result;
 }
 
 // Verify that an object at location index on the stack is of the
