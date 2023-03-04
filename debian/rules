@@ -15,7 +15,6 @@ override_dh_auto_configure:
 		_git_commit="unknown" ; \
 	fi ; \
 	dh_auto_configure --parallel --	\
-		-DENABLE_GLUT=ON	\
 		-DENABLE_GTK=ON		\
 		-DENABLE_QT=ON		\
 		-DENABLE_TOOLS=ON	\
