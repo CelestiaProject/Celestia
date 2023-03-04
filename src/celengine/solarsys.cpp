@@ -11,7 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include <iostream>
+#include <istream>
 #include <limits>
 #include <memory>
 #include <string>
@@ -893,7 +893,7 @@ Body* CreateBody(const std::string& name,
     {
         if (const Hash* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
         {
-            std::cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
+            GetLogger()->error(_("Atmosphere must be an associative array.\n"));
         }
         else
         {
@@ -975,7 +975,7 @@ Body* CreateBody(const std::string& name,
     {
         if (const Hash* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
         {
-            std::cout << "ReadSolarSystem: Rings must be an assoc array.\n";
+            GetLogger()->error(_("Rings must be an associative array.\n"));
         }
         else
         {
