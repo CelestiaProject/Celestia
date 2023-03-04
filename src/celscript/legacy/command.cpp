@@ -7,32 +7,45 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "command.h"
+
 #include <algorithm>
-#include <iostream>
-#include <utility>
+#include <cstddef>
+#include <memory>
+#include <sstream>
 
-#include <Eigen/Geometry>
-
-#include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include <celengine/body.h>
-#include <celengine/multitexture.h>
+#include <celengine/dsodb.h>
+#include <celengine/galaxy.h>
+#include <celengine/overlayimage.h>
+#include <celengine/render.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/solarsys.h>
+#include <celengine/stardb.h>
+#include <celengine/universe.h>
+#ifdef USE_MINIAUDIO
 #include <celestia/audiosession.h>
+#endif
 #include <celestia/celestiacore.h>
+#include <celestia/view.h>
 #include <celmath/mathlib.h>
 #include <celutil/filetype.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
-#include "command.h"
-#include "execution.h"
+#include "execenv.h"
 
-using namespace std;
-using namespace Eigen;
-using namespace celmath;
-using namespace celestia;
+
 using celestia::util::GetLogger;
 
-static constexpr std::size_t MAX_CONSTELLATIONS = 100;
+namespace celestia::scripts
+{
+
+namespace
+{
+constexpr std::size_t MAX_CONSTELLATIONS = 100;
+}
 
 double InstantaneousCommand::getDuration() const
 {
@@ -41,7 +54,7 @@ double InstantaneousCommand::getDuration() const
 
 void InstantaneousCommand::process(ExecutionEnvironment& env, double /*t*/, double /*dt*/)
 {
-    process(env);
+    processInstantaneous(env);
 }
 
 TimedCommand::TimedCommand(double duration) :
@@ -69,11 +82,11 @@ void CommandWait::process(ExecutionEnvironment& /*unused*/, double /*unused*/, d
 ////////////////
 // Select command: select a body
 
-CommandSelect::CommandSelect(string _target) : target(std::move(_target))
+CommandSelect::CommandSelect(std::string _target) : target(std::move(_target))
 {
 }
 
-void CommandSelect::process(ExecutionEnvironment& env)
+void CommandSelect::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(target);
     env.getSimulation()->setSelection(sel);
@@ -95,7 +108,7 @@ CommandGoto::CommandGoto(double t,
 {
 }
 
-void CommandGoto::process(ExecutionEnvironment& env)
+void CommandGoto::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelection(gotoTime,
@@ -120,7 +133,7 @@ CommandGotoLongLat::CommandGotoLongLat(double t,
 {
 }
 
-void CommandGotoLongLat::process(ExecutionEnvironment& env)
+void CommandGotoLongLat::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelectionLongLat(gotoTime,
@@ -140,7 +153,7 @@ CommandGotoLocation::CommandGotoLocation(double t,
 {
 }
 
-void CommandGotoLocation::process(ExecutionEnvironment& env)
+void CommandGotoLocation::processInstantaneous(ExecutionEnvironment& env)
 {
     UniversalCoord toPosition = UniversalCoord::CreateUly(translation);
     env.getSimulation()->gotoLocation(toPosition, rotation, gotoTime);
@@ -154,7 +167,7 @@ CommandSetUrl::CommandSetUrl(std::string _url) :
 {
 }
 
-void CommandSetUrl::process(ExecutionEnvironment& env)
+void CommandSetUrl::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->goToUrl(url);
 }
@@ -167,7 +180,7 @@ CommandCenter::CommandCenter(double t) : centerTime(t)
 {
 }
 
-void CommandCenter::process(ExecutionEnvironment& env)
+void CommandCenter::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->centerSelection(centerTime);
 }
@@ -176,7 +189,7 @@ void CommandCenter::process(ExecutionEnvironment& env)
 ////////////////
 // Follow command: follow the selected body
 
-void CommandFollow::process(ExecutionEnvironment& env)
+void CommandFollow::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->follow();
 }
@@ -186,7 +199,7 @@ void CommandFollow::process(ExecutionEnvironment& env)
 // Synchronous command: maintain the current position relative to the
 // surface of the currently selected object.
 
-void CommandSynchronous::process(ExecutionEnvironment& env)
+void CommandSynchronous::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->geosynchronousFollow();
 }
@@ -195,7 +208,7 @@ void CommandSynchronous::process(ExecutionEnvironment& env)
 ////////////////
 // Chase command:
 
-void CommandChase::process(ExecutionEnvironment& env)
+void CommandChase::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->chase();
 }
@@ -204,7 +217,7 @@ void CommandChase::process(ExecutionEnvironment& env)
 ////////////////
 // Track command:
 
-void CommandTrack::process(ExecutionEnvironment& env)
+void CommandTrack::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setTrackedObject(env.getSimulation()->getSelection());
 }
@@ -213,7 +226,7 @@ void CommandTrack::process(ExecutionEnvironment& env)
 ////////////////
 // Lock command:
 
-void CommandLock::process(ExecutionEnvironment& env)
+void CommandLock::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->phaseLock();
 }
@@ -224,13 +237,13 @@ void CommandLock::process(ExecutionEnvironment& env)
 // Setframe command
 
 CommandSetFrame::CommandSetFrame(ObserverFrame::CoordinateSystem _coordSys,
-                                 string refName,
-                                 string targetName) :
+                                 std::string refName,
+                                 std::string targetName) :
     coordSys(_coordSys), refObjectName(std::move(refName)), targetObjectName(std::move(targetName))
 {
 }
 
-void CommandSetFrame::process(ExecutionEnvironment& env)
+void CommandSetFrame::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
     Selection target;
@@ -243,12 +256,12 @@ void CommandSetFrame::process(ExecutionEnvironment& env)
 ////////////////
 // SetSurface command: select an alternate surface to show
 
-CommandSetSurface::CommandSetSurface(string _surfaceName) :
+CommandSetSurface::CommandSetSurface(std::string _surfaceName) :
     surfaceName(std::move(_surfaceName))
 {
 }
 
-void CommandSetSurface::process(ExecutionEnvironment& env)
+void CommandSetSurface::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->getActiveObserver()->setDisplayedSurface(surfaceName);
 }
@@ -258,7 +271,7 @@ void CommandSetSurface::process(ExecutionEnvironment& env)
 // Cancel command: stop all motion, set the coordinate system to absolute,
 //                 and cancel any tracking
 
-void CommandCancel::process(ExecutionEnvironment& env)
+void CommandCancel::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->cancelMotion();
     env.getSimulation()->setFrame(ObserverFrame::Universal, Selection());
@@ -269,7 +282,7 @@ void CommandCancel::process(ExecutionEnvironment& env)
 ////////////////
 // Print command: print text to the console
 
-CommandPrint::CommandPrint(string _text,
+CommandPrint::CommandPrint(std::string _text,
                            int horig, int vorig, int hoff, int voff,
                            float _duration) :
     text(std::move(_text)),
@@ -279,7 +292,7 @@ CommandPrint::CommandPrint(string _text,
 {
 }
 
-void CommandPrint::process(ExecutionEnvironment& env)
+void CommandPrint::processInstantaneous(ExecutionEnvironment& env)
 {
     env.showText(text, hOrigin, vOrigin, hOffset, vOffset, duration);
 }
@@ -288,7 +301,7 @@ void CommandPrint::process(ExecutionEnvironment& env)
 ////////////////
 // Clear screen command: clear the console of all text
 
-void CommandClearScreen::process(ExecutionEnvironment& /*unused*/)
+void CommandClearScreen::processInstantaneous(ExecutionEnvironment& /*unused*/)
 {
 }
 
@@ -296,7 +309,7 @@ void CommandClearScreen::process(ExecutionEnvironment& /*unused*/)
 ////////////////
 // Exit command: quit the program
 
-void CommandExit::process(ExecutionEnvironment& /*unused*/)
+void CommandExit::processInstantaneous(ExecutionEnvironment& /*unused*/)
 {
     exit(0);
 }
@@ -308,7 +321,7 @@ CommandSetTime::CommandSetTime(double _jd) : jd(_jd)
 {
 }
 
-void CommandSetTime::process(ExecutionEnvironment& env)
+void CommandSetTime::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setTime(jd);
 }
@@ -322,7 +335,7 @@ CommandSetTimeRate::CommandSetTimeRate(double _rate) : rate(_rate)
 {
 }
 
-void CommandSetTimeRate::process(ExecutionEnvironment& env)
+void CommandSetTimeRate::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setTimeScale(rate);
 }
@@ -339,7 +352,7 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 
 void CommandChangeDistance::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
-    env.getSimulation()->changeOrbitDistance((float) (rate * dt));
+    env.getSimulation()->changeOrbitDistance(static_cast<float>(rate * dt));
 }
 
 
@@ -357,7 +370,7 @@ void CommandOrbit::process(ExecutionEnvironment& env, double /*unused*/, double 
     float v = spin.norm();
     if (v != 0.0f)
     {
-       auto q = Quaternionf(AngleAxisf((float) (v * dt), (spin / v).normalized()));
+       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
        env.getSimulation()->orbit(q);
     }
 }
@@ -373,7 +386,7 @@ void CommandRotate::process(ExecutionEnvironment& env, double /*unused*/, double
     float v = spin.norm();
     if (v != 0.0f)
     {
-       auto q = Quaternionf(AngleAxisf((float) (v * dt), (spin / v).normalized()));
+       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
        env.getSimulation()->rotate(q);
     }
 }
@@ -399,7 +412,7 @@ CommandSetPosition::CommandSetPosition(const UniversalCoord& uc) : pos(uc)
 {
 }
 
-void CommandSetPosition::process(ExecutionEnvironment& env)
+void CommandSetPosition::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setObserverPosition(pos);
 }
@@ -408,12 +421,12 @@ void CommandSetPosition::process(ExecutionEnvironment& env)
 ////////////////
 // Set orientation command: set the orientation of the camera
 
-CommandSetOrientation::CommandSetOrientation(const Quaternionf& _orientation) :
+CommandSetOrientation::CommandSetOrientation(const Eigen::Quaternionf& _orientation) :
     orientation(_orientation)
 {
 }
 
-void CommandSetOrientation::process(ExecutionEnvironment& env)
+void CommandSetOrientation::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setObserverOrientation(orientation);
 }
@@ -421,7 +434,7 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
 ////////////////
 // Look back command: reverse observer orientation
 
-void CommandLookBack::process(ExecutionEnvironment& env)
+void CommandLookBack::processInstantaneous(ExecutionEnvironment& env)
 {
   env.getSimulation()->reverseObserverOrientation();
 }
@@ -429,12 +442,12 @@ void CommandLookBack::process(ExecutionEnvironment& env)
 //////////////////
 // Set render flags command
 
-CommandRenderFlags::CommandRenderFlags(uint64_t _setFlags, uint64_t _clearFlags) :
+CommandRenderFlags::CommandRenderFlags(std::uint64_t _setFlags, std::uint64_t _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
 
-void CommandRenderFlags::process(ExecutionEnvironment& env)
+void CommandRenderFlags::processInstantaneous(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != nullptr)
@@ -453,7 +466,7 @@ CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
 {
 }
 
-void CommandLabels::process(ExecutionEnvironment& env)
+void CommandLabels::processInstantaneous(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != nullptr)
@@ -472,7 +485,7 @@ CommandOrbitFlags::CommandOrbitFlags(int _setFlags, int _clearFlags) :
 {
 }
 
-void CommandOrbitFlags::process(ExecutionEnvironment& env)
+void CommandOrbitFlags::processInstantaneous(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != nullptr)
@@ -492,7 +505,7 @@ CommandSetVisibilityLimit::CommandSetVisibilityLimit(double mag) :
 {
 }
 
-void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
+void CommandSetVisibilityLimit::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->setFaintestVisible((float) magnitude);
 }
@@ -504,7 +517,7 @@ CommandSetFaintestAutoMag45deg::CommandSetFaintestAutoMag45deg(double mag) :
 {
 }
 
-void CommandSetFaintestAutoMag45deg::process(ExecutionEnvironment& env)
+void CommandSetFaintestAutoMag45deg::processInstantaneous(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != nullptr)
@@ -519,7 +532,7 @@ CommandSetAmbientLight::CommandSetAmbientLight(float level) :
 {
 }
 
-void CommandSetAmbientLight::process(ExecutionEnvironment& env)
+void CommandSetAmbientLight::processInstantaneous(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != nullptr)
@@ -534,7 +547,7 @@ CommandSetGalaxyLightGain::CommandSetGalaxyLightGain(float gain) :
 {
 }
 
-void CommandSetGalaxyLightGain::process(ExecutionEnvironment& /* env */)
+void CommandSetGalaxyLightGain::processInstantaneous(ExecutionEnvironment& /* env */)
 {
     Galaxy::setLightGain(lightGain);
 }
@@ -548,27 +561,27 @@ CommandSet::CommandSet(std::string _name, double _value) :
 {
 }
 
-void CommandSet::process(ExecutionEnvironment& env)
+void CommandSet::processInstantaneous(ExecutionEnvironment& env)
 {
     if (compareIgnoringCase(name, "MinOrbitSize") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getRenderer()->setMinimumOrbitSize((float) value);
+            env.getRenderer()->setMinimumOrbitSize(static_cast<float>(value));
     }
     else if (compareIgnoringCase(name, "AmbientLightLevel") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getRenderer()->setAmbientLightLevel((float) value);
+            env.getRenderer()->setAmbientLightLevel(static_cast<float>(value));
     }
     else if (compareIgnoringCase(name, "FOV") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getSimulation()->getActiveObserver()->setFOV(degToRad((float) value));
+            env.getSimulation()->getActiveObserver()->setFOV(celmath::degToRad(static_cast<float>(value)));
     }
     else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getRenderer()->setDistanceLimit((float) value);
+            env.getRenderer()->setDistanceLimit(static_cast<float>(value));
     }
     else if (compareIgnoringCase(name, "StarStyle") == 0)
     {
@@ -576,7 +589,7 @@ void CommandSet::process(ExecutionEnvironment& env)
         // Probably shouldn't be doing this at all, but other alternatives
         // are more trouble than they're worth.
         if (env.getRenderer() != nullptr)
-            env.getRenderer()->setStarStyle((Renderer::StarStyle) (int) value);
+            env.getRenderer()->setStarStyle(static_cast<Renderer::StarStyle>(static_cast<int>(value)));
     }
 }
 
@@ -584,7 +597,7 @@ void CommandSet::process(ExecutionEnvironment& env)
 ////////////////
 // Mark object command
 
-CommandMark::CommandMark(string _target,
+CommandMark::CommandMark(std::string _target,
                          celestia::MarkerRepresentation _rep,
                          bool _occludable) :
     target(std::move(_target)),
@@ -593,7 +606,7 @@ CommandMark::CommandMark(string _target,
 {
 }
 
-void CommandMark::process(ExecutionEnvironment& env)
+void CommandMark::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(target);
     if (sel.empty())
@@ -611,12 +624,12 @@ void CommandMark::process(ExecutionEnvironment& env)
 ////////////////
 // Unmark object command
 
-CommandUnmark::CommandUnmark(string _target) :
+CommandUnmark::CommandUnmark(std::string _target) :
     target(std::move(_target))
 {
 }
 
-void CommandUnmark::process(ExecutionEnvironment& env)
+void CommandUnmark::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(target);
     if (sel.empty())
@@ -631,7 +644,7 @@ void CommandUnmark::process(ExecutionEnvironment& env)
 ///////////////
 // Unmarkall command - clear all current markers
 
-void CommandUnmarkAll::process(ExecutionEnvironment& env)
+void CommandUnmarkAll::processInstantaneous(ExecutionEnvironment& env)
 {
     if (env.getSimulation()->getUniverse() != nullptr)
         env.getSimulation()->getUniverse()->unmarkAll();
@@ -641,12 +654,12 @@ void CommandUnmarkAll::process(ExecutionEnvironment& env)
 ////////////////
 // Preload textures command
 
-CommandPreloadTextures::CommandPreloadTextures(string _name) :
+CommandPreloadTextures::CommandPreloadTextures(std::string _name) :
     name(std::move(_name))
 {
 }
 
-void CommandPreloadTextures::process(ExecutionEnvironment& env)
+void CommandPreloadTextures::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection target = env.getSimulation()->findObjectFromPath(name);
     if (target.body() == nullptr)
@@ -660,12 +673,12 @@ void CommandPreloadTextures::process(ExecutionEnvironment& env)
 ////////////////
 // Capture command
 
-CommandCapture::CommandCapture(std::string _type,
-    std::string _filename) : type(std::move(_type)), filename(std::move(_filename))
+CommandCapture::CommandCapture(std::string _type, std::string _filename)
+    : type(std::move(_type)), filename(std::move(_filename))
 {
 }
 
-void CommandCapture::process(ExecutionEnvironment& env)
+void CommandCapture::processInstantaneous(ExecutionEnvironment& env)
 {
     ContentType _type = ContentType::Unknown;
     if (type == "jpeg" || type == "jpg")
@@ -688,7 +701,7 @@ CommandSetTextureResolution::CommandSetTextureResolution(unsigned int _res) :
 {
 }
 
-void CommandSetTextureResolution::process(ExecutionEnvironment& env)
+void CommandSetTextureResolution::processInstantaneous(ExecutionEnvironment& env)
 {
     if (env.getRenderer() != nullptr)
     {
@@ -701,22 +714,22 @@ void CommandSetTextureResolution::process(ExecutionEnvironment& env)
 ////////////////
 // SplitView command
 
-CommandSplitView::CommandSplitView(unsigned int _view, string _splitType, double _splitPos) :
+CommandSplitView::CommandSplitView(unsigned int _view, std::string _splitType, double _splitPos) :
     view(_view),
     splitType(std::move(_splitType)),
     splitPos(_splitPos)
 {
 }
 
-void CommandSplitView::process(ExecutionEnvironment& env)
+void CommandSplitView::processInstantaneous(ExecutionEnvironment& env)
 {
-    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
+    std::vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
     if (view >= 1 && view <= observer_list.size())
     {
         Observer* obs = observer_list[view - 1];
         View* view = env.getCelestiaCore()->getViewByObserver(obs);
         View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
-        env.getCelestiaCore()->splitView(type, view, (float)splitPos);
+        env.getCelestiaCore()->splitView(type, view, static_cast<float>(splitPos));
     }
 }
 
@@ -729,9 +742,9 @@ CommandDeleteView::CommandDeleteView(unsigned int _view) :
 {
 }
 
-void CommandDeleteView::process(ExecutionEnvironment& env)
+void CommandDeleteView::processInstantaneous(ExecutionEnvironment& env)
 {
-    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
+    std::vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
 
     if (view >= 1 && view <= observer_list.size())
     {
@@ -745,7 +758,7 @@ void CommandDeleteView::process(ExecutionEnvironment& env)
 ////////////////
 // SingleView command
 
-void CommandSingleView::process(ExecutionEnvironment& env)
+void CommandSingleView::processInstantaneous(ExecutionEnvironment& env)
 {
     View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
     env.getCelestiaCore()->singleView(view);
@@ -760,9 +773,9 @@ CommandSetActiveView::CommandSetActiveView(unsigned int _view) :
 {
 }
 
-void CommandSetActiveView::process(ExecutionEnvironment& env)
+void CommandSetActiveView::processInstantaneous(ExecutionEnvironment& env)
 {
-    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
+    std::vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
 
     if (view >= 1 && view <= observer_list.size())
     {
@@ -776,13 +789,13 @@ void CommandSetActiveView::process(ExecutionEnvironment& env)
 ////////////////
 // SetRadius command
 
-CommandSetRadius::CommandSetRadius(string _object, double _radius) :
+CommandSetRadius::CommandSetRadius(std::string _object, double _radius) :
     object(std::move(_object)),
     radius(_radius)
 {
 }
 
-void CommandSetRadius::process(ExecutionEnvironment& env)
+void CommandSetRadius::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(object);
     if (sel.body() != nullptr)
@@ -811,13 +824,13 @@ void CommandSetRadius::process(ExecutionEnvironment& env)
 ////////////////
 // SetLineColor command
 
-CommandSetLineColor::CommandSetLineColor(string _item, const Color& _color) :
+CommandSetLineColor::CommandSetLineColor(std::string _item, const Color& _color) :
     item(std::move(_item)),
     color(_color)
 {
 }
 
-void CommandSetLineColor::process(ExecutionEnvironment& env)
+void CommandSetLineColor::processInstantaneous(ExecutionEnvironment& env)
 {
     auto &LineColorMap = env.getCelestiaCore()->scriptMaps()->LineColorMap;
     if (LineColorMap.count(item) == 0)
@@ -834,13 +847,13 @@ void CommandSetLineColor::process(ExecutionEnvironment& env)
 ////////////////
 // SetLabelColor command
 
-CommandSetLabelColor::CommandSetLabelColor(string _item, const Color& _color) :
+CommandSetLabelColor::CommandSetLabelColor(std::string _item, const Color& _color) :
     item(std::move(_item)),
     color(_color)
 {
 }
 
-void CommandSetLabelColor::process(ExecutionEnvironment& env)
+void CommandSetLabelColor::processInstantaneous(ExecutionEnvironment& env)
 {
     auto &LabelColorMap = env.getCelestiaCore()->scriptMaps()->LabelColorMap;
     if (LabelColorMap.count(item) == 0)
@@ -862,14 +875,19 @@ CommandSetTextColor::CommandSetTextColor(const Color& _color) :
 {
 }
 
-void CommandSetTextColor::process(ExecutionEnvironment& env)
+void CommandSetTextColor::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->setTextColor(color);
 }
 
 
 #ifdef USE_MINIAUDIO
-CommandPlay::CommandPlay(int channel, std::optional<float> volume, float pan, std::optional<bool> loop, const std::optional<fs::path> &filename, bool nopause) :
+CommandPlay::CommandPlay(int channel,
+                         std::optional<float> volume,
+                         float pan,
+                         std::optional<bool> loop,
+                         const std::optional<fs::path> &filename,
+                         bool nopause) :
     channel(channel),
     volume(volume),
     pan(pan),
@@ -879,7 +897,7 @@ CommandPlay::CommandPlay(int channel, std::optional<float> volume, float pan, st
 {
 }
 
-void CommandPlay::process(ExecutionEnvironment& env)
+void CommandPlay::processInstantaneous(ExecutionEnvironment& env)
 {
     auto appCore = env.getCelestiaCore();
     if (!filename.has_value())
@@ -895,7 +913,13 @@ void CommandPlay::process(ExecutionEnvironment& env)
     else if (filename.value().empty())
         appCore->stopAudio(channel);
     else
-        appCore->playAudio(channel, filename.value(), 0.0, volume.value_or(defaultAudioVolume), pan, loop.value_or(false), nopause);
+        appCore->playAudio(channel,
+                           filename.value(),
+                           0.0,
+                           volume.value_or(celestia::defaultAudioVolume),
+                           pan,
+                           loop.value_or(false),
+                           nopause);
 }
 #endif
 
@@ -904,7 +928,7 @@ CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
                                        float _xoffset, float _yoffset,
                                        const fs::path &_filename,
                                        bool _fitscreen,
-                                       array<Color,4> &_colors) :
+                                       std::array<Color,4> &_colors) :
     duration(_duration),
     fadeafter(_fadeafter),
     xoffset(_xoffset),
@@ -912,12 +936,12 @@ CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
     filename(_filename),
     fitscreen(_fitscreen)
 {
-    copy(_colors.begin(), _colors.end(), colors.begin());
+    std::copy(_colors.begin(), _colors.end(), colors.begin());
 }
 
-void CommandScriptImage::process(ExecutionEnvironment& env)
+void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto image = unique_ptr<OverlayImage>(new OverlayImage(filename, env.getRenderer()));
+    auto image = std::make_unique<OverlayImage>(filename, env.getRenderer());
     image->setDuration(duration);
     image->setFadeAfter(fadeafter);
     image->setOffset(xoffset, yoffset);
@@ -932,7 +956,7 @@ CommandVerbosity::CommandVerbosity(int _level) :
 {
 }
 
-void CommandVerbosity::process(ExecutionEnvironment& env)
+void CommandVerbosity::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->setHudDetail(level);
 }
@@ -941,7 +965,7 @@ void CommandVerbosity::process(ExecutionEnvironment& env)
 ///////////////
 //
 
-void CommandConstellations::process(ExecutionEnvironment& env)
+void CommandConstellations::processInstantaneous(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
     if (u == nullptr)
@@ -976,7 +1000,7 @@ void CommandConstellations::setValues(std::string_view _cons, bool act)
     if (constellations.size() == MAX_CONSTELLATIONS)
         return;
 
-    string cons(_cons);
+    std::string cons(_cons);
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
     auto it = std::find_if(constellations.begin(), constellations.end(),
@@ -989,7 +1013,7 @@ void CommandConstellations::setValues(std::string_view _cons, bool act)
 }
 
 
-void CommandConstellationColor::process(ExecutionEnvironment& env)
+void CommandConstellationColor::processInstantaneous(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
     if (u == nullptr)
@@ -1010,7 +1034,7 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
         {
             auto name = ast.getName(false);
             auto it = std::find_if(constellations.begin(), constellations.end(),
-                                   [&name](string& c){ return compareIgnoringCase(c, name) == 0; });
+                                   [&name](const std::string& c){ return compareIgnoringCase(c, name) == 0; });
 
             if (it != constellations.end())
             {
@@ -1042,19 +1066,19 @@ void CommandConstellationColor::setConstellations(std::string_view _cons)
     if (constellations.size() == MAX_CONSTELLATIONS)
        return;
 
-    string cons(_cons);
+    std::string cons(_cons);
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
     // If not found then add a new constellation
     if (std::none_of(constellations.begin(), constellations.end(),
-                     [&cons](string& c){ return compareIgnoringCase(c, cons) == 0; }))
+                     [&cons](const std::string& c){ return compareIgnoringCase(c, cons) == 0; }))
         constellations.push_back(cons);
 }
 
 
 ///////////////
 // SetWindowBordersVisible command
-void CommandSetWindowBordersVisible::process(ExecutionEnvironment& env)
+void CommandSetWindowBordersVisible::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->setFramesVisible(visible);
 }
@@ -1062,16 +1086,16 @@ void CommandSetWindowBordersVisible::process(ExecutionEnvironment& env)
 
 ///////////////
 // SetRingsTexture command
-CommandSetRingsTexture::CommandSetRingsTexture(string _object,
-                                               string _textureName,
-                                               string _path) :
+CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
+                                               std::string _textureName,
+                                               std::string _path) :
     object(std::move(_object)),
     textureName(std::move(_textureName)),
     path(std::move(_path))
 {
 }
 
-void CommandSetRingsTexture::process(ExecutionEnvironment& env)
+void CommandSetRingsTexture::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(object);
     if (sel.body() != nullptr &&
@@ -1085,20 +1109,20 @@ void CommandSetRingsTexture::process(ExecutionEnvironment& env)
 
 ///////////////
 // LoadFragment command
-CommandLoadFragment::CommandLoadFragment(string _type, string _fragment, string _dir) :
+CommandLoadFragment::CommandLoadFragment(std::string _type, std::string _fragment, std::string _dir) :
     type(std::move(_type)),
     fragment(std::move(_fragment)),
     dir(std::move(_dir))
 {
 }
 
-void CommandLoadFragment::process(ExecutionEnvironment& env)
+void CommandLoadFragment::processInstantaneous(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
     if (u == nullptr)
         return;
 
-    istringstream in(fragment);
+    std::istringstream in(fragment);
     if (compareIgnoringCase(type, "ssc") == 0)
     {
         LoadSolarSystemObjects(in, *u, dir);
@@ -1112,3 +1136,5 @@ void CommandLoadFragment::process(ExecutionEnvironment& env)
         u->getDSOCatalog()->load(in, dir);
     }
 }
+
+} // end namespace celestia::scripts

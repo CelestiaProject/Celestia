@@ -7,18 +7,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "legacyscript.h"
+
 #include <fstream>
-#include <string>
-#include <celcompat/filesystem.h>
+#include <istream>
+
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
-#include "legacyscript.h"
 #include "cmdparser.h"
+#include "command.h"
+#include "execenv.h"
 #include "execution.h"
 
-using namespace std;
 
 namespace celestia::scripts
+{
+
+namespace
 {
 
 // Extremely basic implementation of an ExecutionEnvironment for
@@ -33,46 +38,48 @@ public:
     {
     }
 
-    Simulation* getSimulation() const
+    Simulation* getSimulation() const override
     {
         return core.getSimulation();
     }
 
-    Renderer* getRenderer() const
+    Renderer* getRenderer() const override
     {
         return core.getRenderer();
     }
 
-    CelestiaCore* getCelestiaCore() const
+    CelestiaCore* getCelestiaCore() const override
     {
         return &core;
     }
 
-    void showText(string s, int horig, int vorig, int hoff, int voff,
-                  double duration)
+    void showText(std::string_view s, int horig, int vorig, int hoff, int voff,
+                  double duration) override
     {
         core.showText(s, horig, vorig, hoff, voff, duration);
     }
 };
 
+} // end unnamed namespace
+
 LegacyScript::LegacyScript(CelestiaCore *core) :
     m_appCore(core),
-    m_execEnv(new CoreExecutionEnvironment(*core))
+    m_execEnv(std::make_unique<CoreExecutionEnvironment>(*core))
 {
 }
 
-bool LegacyScript::load(ifstream &scriptfile, const fs::path &/*path*/, string &errorMsg)
+bool LegacyScript::load(std::istream &scriptfile, const fs::path &/*path*/, std::string &errorMsg)
 {
     CommandParser parser(scriptfile, m_appCore->scriptMaps());
-    CommandSequence* script = parser.parse();
-    if (script == nullptr)
+    CommandSequence script = parser.parse();
+    if (script.empty())
     {
         auto errors = parser.getErrors();
         if (!errors.empty())
             errorMsg = errors[0];
         return false;
     }
-    m_runningScript = unique_ptr<Execution>(new Execution(*script, *m_execEnv));
+    m_runningScript = std::make_unique<Execution>(std::move(script), *m_execEnv);
     return true;
 }
 
@@ -86,17 +93,17 @@ bool LegacyScriptPlugin::isOurFile(const fs::path &p) const
     return p.extension() == ".cel";
 }
 
-unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
+std::unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
 {
-    ifstream scriptfile(path);
+    std::ifstream scriptfile(path);
     if (!scriptfile.good())
     {
         appCore()->fatalError(_("Error opening script file."));
         return nullptr;
     }
 
-    auto script = unique_ptr<LegacyScript>(new LegacyScript(appCore()));
-    string errorMsg;
+    auto script = std::make_unique<LegacyScript>(appCore());
+    std::string errorMsg;
     if (!script->load(scriptfile, path, errorMsg))
     {
         if (errorMsg.empty())
@@ -107,4 +114,4 @@ unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
     return script;
 }
 
-}
+} // end namespace celestia::scripts

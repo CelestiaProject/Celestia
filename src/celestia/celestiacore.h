@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <functional>
+#include <string_view>
 #include <tuple>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
@@ -257,11 +258,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Simulation* getSimulation() const;
     Renderer* getRenderer() const;
-    void showText(const std::string &s,
+    void showText(std::string_view s,
                   int horig = 0, int vorig = 0,
                   int hoff = 0, int voff = 0,
                   double duration = 1.0e9);
-    void showTextAtPixel(const std::string &s,
+    void showTextAtPixel(std::string_view s,
                          int x = 0, int y = 0,
                          double duration = 1.0e9);
     int getTextWidth(const std::string &s) const;

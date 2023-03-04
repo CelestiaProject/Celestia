@@ -7,27 +7,29 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _EXECUTION_H_
-#define _EXECUTION_H_
+#pragma once
 
-#include "execenv.h"
+#include <cstddef>
+
 #include "command.h"
 
+namespace celestia::scripts
+{
+
+class ExecutionEnvironment;
 
 class Execution
 {
  public:
-    Execution(CommandSequence&, ExecutionEnvironment&);
+    Execution(CommandSequence&&, ExecutionEnvironment&);
 
     bool tick(double);
-    void reset(CommandSequence&);
 
  private:
-    CommandSequence::const_iterator currentCommand;
-    CommandSequence::const_iterator finalCommand;
+    CommandSequence commandSequence;
+    std::size_t currentCommand{ 0 };
     ExecutionEnvironment& env;
-    double commandTime;
+    double commandTime{ -1.0 };
 };
 
-#endif // _EXECUTION_H_
-
+} // end namespace celestia::scripts

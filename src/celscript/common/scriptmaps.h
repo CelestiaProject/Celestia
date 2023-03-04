@@ -1,9 +1,11 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <map>
 #include <string_view>
-#include <celutil/color.h>
+
+class Color;
 
 namespace celestia::scripts
 {
@@ -11,9 +13,9 @@ namespace celestia::scripts
 constexpr inline std::size_t FlagMapNameLength = 20;
 
 // String to flag mappings
-typedef std::map<std::string_view, uint32_t> FlagMap;
-typedef std::map<std::string_view, uint64_t> FlagMap64;
-typedef std::map<std::string_view, Color*>   ColorMap;
+using FlagMap   = std::map<std::string_view, std::uint32_t>;
+using FlagMap64 = std::map<std::string_view, std::uint64_t>;
+using ColorMap  = std::map<std::string_view, Color*>;
 
 class ScriptMaps
 {
