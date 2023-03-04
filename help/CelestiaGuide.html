@@ -17,19 +17,19 @@
 <tbody><tr>
 <td id="page-left" align="left" valign="top">
 	<!-- MENU START -->
-	
+
 	<div id="mainmenu">
 	<img src="CelestiaGuide/cellogo.gif" alt="Celestia" id="logo" border="0" height="100" width="200">
 	<h1>Table of contents</h1>
-	
+
 		<div class="item"><a href="#top">Getting Started</a></div>
-		
+
 		<div class="itemParent"><a href="javascript:animatedcollapse.toggle('controlchild')">Celestia Controls</a>
-			<div fade="1" class="itemChild" id="controlchild">	
+			<div fade="1" class="itemChild" id="controlchild">
 			<a href="#controls">Introduction</a>
 			<br><a href="#mouse">Mouse Controls</a>
 			<br><a href="javascript:animatedcollapse.toggle('keyboardchild')">Keyboard Controls</a>
-				<div fade="1" class="itemChild" id="keyboardchild">	
+				<div fade="1" class="itemChild" id="keyboardchild">
 				<a href="#keyboard">- Navigation</a>
 				<br><a href="#arrownav">- Via Arrow Keys</a>
 				<br><a href="#numlocknav">- Via number Pad</a>
@@ -46,11 +46,11 @@
 <!--				<a href="#whatorbits">- What orbits to display</a>-->
 			<br><a href="#linux">Linux specific controls</a>
 			</div>
-		</div>	
-		
+		</div>
+
 		<div class="itemParent">
 		<a href="javascript:animatedcollapse.toggle('faqchild')">Celestia FAQ</a>
-			<div fade="1" class="itemChild" id="faqchild">	
+			<div fade="1" class="itemChild" id="faqchild">
 			<a href="#faq">Graphics</a>
 			<br><a href="#windrivers">Installing drivers</a>
 			<br><a href="#crashes">Crashes</a>
@@ -59,14 +59,14 @@
 			<br><a href="#vista">Vista questions</a>
 			</div>
 		</div>
-	
+
 		<div class="item"><a href="#resources">Celestia resources</a></div>
 		<div class="item"><a href="#license">License</a></div>
 		<div class="item"><a href="#credits">Contributions</a></div>
 		<div class="item"><a href="#acknowledgements">Acknowledgements</a></div>
-		
+
 	</div>
-	
+
 	<!-- MENU END -->
 	<img src="CelestiaGuide/empty.gif" border="0" height="1" width="253">
 </td>
@@ -75,9 +75,9 @@
 <!-- PAGE CONTENT START -->
 <img src="CelestiaGuide/guide.gif" alt="Celestia" id="guidepix" border="0" height="100" width="200">
 <a name="introduction"><h1>Getting Started: Celestia</h1></a>
-	
+
 	<div class="txtcontent">
-		<b> A real-time space simulation that lets you experience our universe in three dimensions. 
+		<b> A real-time space simulation that lets you experience our universe in three dimensions.
 		<br>
 		Copyright © 2001-2022, Celestia Development Team</b>
 		<br>
@@ -86,24 +86,24 @@
 		<br>
 		<b>Celestia documentation:</b> <a href="https://celestia.space/guides.html">https://celestia.space/guides.html</a>
 		<br>
-		<b>Celestia WikiBook:</b> <a href="https://en.wikibooks.org/wiki/Celestia">https://en.wikibooks.org/wiki/Celestia</a> 
+		<b>Celestia WikiBook:</b> <a href="https://en.wikibooks.org/wiki/Celestia">https://en.wikibooks.org/wiki/Celestia</a>
 		<br>
-		<b>Celestia forums:</b> <a href="https://celestia.space/forum/">https://celestia.space/forum/</a> 
+		<b>Celestia forums:</b> <a href="https://celestia.space/forum/">https://celestia.space/forum/</a>
 		<br>
-		<b>Celestia.mobi:</b> <a href="https://celestia.mobi/">https://celestia.mobi/</a> 
-	
-	
+		<b>Celestia.mobi:</b> <a href="https://celestia.mobi/">https://celestia.mobi/</a>
+
+
 	<br>
 	<br>
 	<div class="list">
 	<h2>Getting Started Topics</h2>
-		
+
 	<ol>
 		<li><a href="javascript:animatedcollapse.toggle('installing')">Installing in Unix and Linux</a>
 		<div fade="1" id="installing" class="guide">
 			Type <span class="string">./configure --help</span> for a list of options.  The basic commands are shown below.  For more detailed information, refer to the INSTALL file.
 			<br>
-			<br>			
+			<br>
 			The GTK version is built with...
 			<br>
 			<span class="string">./configure --with-gtk
@@ -140,21 +140,11 @@
 			</span>
 			<br>
 			<br>
-			If all else fails, try the gui-less version with...
-			<br>
-			<span class="string">./configure --with-glut
-			<br>
-			make
-			<br>
-			make install
-			</span>
-			<br>
-			<br>
 			<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('installing')" type="button">
 		</div>
-	</li>		
-		
-		
+	</li>
+
+
 	<li><a href="javascript:animatedcollapse.toggle('gettingstarted')">Basic navigation</a>
 	<div fade="1" id="gettingstarted" class="guide">
 		Celestia will start up in a window, and if everything is working correctly, you'll see Earth in front of a field of stars. Displayed on-screen, is some information about your target (Earth), your speed, and the current time (Universal Time, so it'll probably be a few hours off from your computer's clock).
@@ -178,16 +168,16 @@
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('gettingstarted')" type="button">
 	</div>
 	</li>
-		
-		
+
+
 	<li><a href="javascript:animatedcollapse.toggle('solbrowser')">Star &amp; Solar System Browser</a>
 	<div fade="1" id="solbrowser" class="guide">
 		The Navigation menu contains <i>Solar System Browser</i> and <i>Star Browser</i> options.
 		<br>
 		<br>
-			
+
 		<h3>Star Browser</h3>
-		By default, the Star Browser window displays a table of the 100 nearest stars, along with their Distance, Apparent and Absolute Magnitude, and Type. Clicking on the column headers will sort the stars. The table is not continuously updated, so if you travel to another star, you should press the <b>Refresh</b> button to update the table for your current position. The radio buttons beneath the table let you switch between viewing a list of Nearest, Brightest, or <i>With planets</i> stars. 
+		By default, the Star Browser window displays a table of the 100 nearest stars, along with their Distance, Apparent and Absolute Magnitude, and Type. Clicking on the column headers will sort the stars. The table is not continuously updated, so if you travel to another star, you should press the <b>Refresh</b> button to update the table for your current position. The radio buttons beneath the table let you switch between viewing a list of Nearest, Brightest, or <i>With planets</i> stars.
 		<br>
 		<br>
 		As with the solar system browser, clicking on any star name in the table will select it.  Use this feature along with the <b>Center</b> and <b>Go To</b> buttons to tour the stars visible from any night sky in the galaxy.
@@ -200,8 +190,8 @@
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('solbrowser')" type="button">
 	</div>
 	</li>
-		
-		
+
+
 	<li><a href="javascript:animatedcollapse.toggle('byname')">Selecting objects by name</a>
 	<div fade="1" id="byname" class="guide">
 		Celestia provides several ways to select an object by name:
@@ -216,7 +206,7 @@
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('byname')" type="button">
 	</div>
 	</li>
-		
+
 
 	<li><a href="javascript:animatedcollapse.toggle('knownissues')">Known Issues</a>
 	<div fade="1" id="knownissues" class="guide">
@@ -226,7 +216,7 @@
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('knownissues')" type="button">
 	</div>
 	</li>
-		
+
 
 	<li><a href="javascript:animatedcollapse.toggle('usermodifiable')">User-modifiable elements</a>
 	<div fade="1" id="usermodifiable" class="guide">
@@ -248,10 +238,10 @@
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('usermodifiable')" type="button">
 	</div>
 	</li>
-		
+
 	</ol>
 	</div>
-		
+
 </div>
 
 
@@ -259,10 +249,10 @@
 
 	<div class="txtcontent">
 		This list of controls was current as of Celestia version 1.6.0. If you notice that a command is missing or incorrect, please write a message in the Celestia Bugs forum, located at: <a href="https://celestia.space/forum/viewforum.php?f=3">https://celestia.space/forum/viewforum.php?f=3</a>.
-		
+
 
 		<table class="list-table" border="0" cellpadding="0" cellspacing="0">
-		
+
 		<tbody><tr>
 		<td colspan="2" class="titlecell" align="left" valign="middle">
 		<a name="mouse"><h2>Mouse Controls description</h2></a>
@@ -286,7 +276,7 @@
 		Orbit selected object (Shift+Arrow keys)
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Left+Right Drag left/right
@@ -343,13 +333,13 @@
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
-		Left Click on object 
+		Left Click on object
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Select object (Enter key -- by object name)
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Left Click on no object
@@ -358,41 +348,41 @@
 		Deselect currently selected object
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
-		Left Double Click on object 
+		Left Double Click on object
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Select and Center object
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
-		Right Click on object 
+		Right Click on object
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Bring up context menu
 		</td>
 		</tr>
-		
-		
+
+
 <!-- Keyboard Controls -->
-		
+
 		<tr>
 		<td colspan="2" class="titlecell" align="left" valign="middle">
 		<a name="keyboard"><h2>Keyboard Controls description</h2></a>
 		</td>
-		</tr>		
-		
-<!-- Navigation -->		
+		</tr>
+
+<!-- Navigation -->
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="keynav"><h3>Navigation</h3></a>
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		1 - 9
@@ -400,7 +390,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Select planet around the nearest star
 		</td>
-		</tr>			
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -409,7 +399,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Select parent star of current planet or system
 		</td>
-		</tr>			
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -427,7 +417,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Center the selected object on the display
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -436,7 +426,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Goto selected object
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -445,7 +435,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Follow selected object
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -454,7 +444,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Track selected object (keep object centered on the display)
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -481,7 +471,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Chase selected object (orientation is based on the object's velocity)
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -500,7 +490,7 @@
 		Goto surface of selected object
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+F
@@ -508,7 +498,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Alt-azimuth mode (toggle). Used with Ctrl-G (Goto surface). The Left &amp; Right Arrow keys become Yaw Left / Yaw Right
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -517,7 +507,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Move closer to object
 		</td>
-		</tr>			
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -535,7 +525,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Look back (Reverse view 180 degrees)
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -550,7 +540,7 @@
 		<br>
 		&nbsp; - If selection is a star, clear the selection
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -559,7 +549,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Cancel: scripts, Goto, Follow, Track, Lock, Sync Orbit
 		</td>
-		</tr>			
+		</tr>
 
 <!-- Navigation via Arrow Keys -->
 
@@ -568,8 +558,8 @@
 		<a name="arrownav"><h3>Navigation via Arrow Keys</h3></a>
 		</td>
 		</tr>
-		
-		
+
+
 				<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Up Arrow
@@ -578,8 +568,8 @@
 		Pitch down  (moves object Up)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Down Arrow
@@ -588,18 +578,18 @@
 		Pitch up  (moves object Down)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
-		Left Arrow 
+		Left Arrow
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Roll left  (rolls object Right)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Right Arrow
@@ -608,8 +598,8 @@
 		Roll right  (rolls object Left)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Left Arrow
@@ -618,8 +608,8 @@
 		Orbit object: right  (rotates object Left)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Right Arrow
@@ -628,8 +618,8 @@
 		Orbit object: left  (rotates object Right)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Up Arrow
@@ -638,8 +628,8 @@
 		Orbit object: down  (rotates object Up)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Down Arrow
@@ -648,7 +638,7 @@
 		Orbit object: up  (rotates object Down)
 		</td>
 		</tr>
-		
+
 <!-- Navigation via number Pad Keys -->
 
 		<tr>
@@ -656,7 +646,7 @@
 		<a name="numlocknav"><h3>Navigation via number Pad Keys (with NumLock active)</h3></a>
 		</td>
 		</tr>
-				
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		8
@@ -665,8 +655,8 @@
 		Pitch down (moves object Up, also Down arrow)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		2
@@ -674,8 +664,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Pitch up  (moves object Down, also Up arrow)
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		7
@@ -684,8 +674,8 @@
 		Roll left  (rolls object Right, also Left arrow)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		9
@@ -693,8 +683,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Roll right  (rolls object Left, also Right arrow)
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		5
@@ -703,8 +693,8 @@
 		Stop rotation
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		4
@@ -712,8 +702,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Yaw left
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		6
@@ -722,7 +712,7 @@
 		Yaw right
 		</td>
 		</tr>
-		
+
 <!-- Motion (Spaceflight) -->
 
 		<tr>
@@ -730,7 +720,7 @@
 		<a name="motionnav"><h3>Motion (Spaceflight)</h3></a>
 		</td>
 		</tr>
-				
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		A
@@ -738,8 +728,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Increase velocity
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Z
@@ -748,8 +738,8 @@
 		Decrease velocity
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Q
@@ -757,8 +747,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Reverse direction
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		X
@@ -767,8 +757,8 @@
 		Set direction toward center of screen
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		S
@@ -776,8 +766,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Stop motion
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F1
@@ -786,8 +776,8 @@
 		Stop motion
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F2
@@ -795,8 +785,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Set velocity to 1 km/second
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F3
@@ -805,8 +795,8 @@
 		Set velocity to 1,000 km/second
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F4
@@ -814,8 +804,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Set velocity to speed of light (1 c/second)
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F5
@@ -824,8 +814,8 @@
 		Set velocity to 10x the speed of light (c)
 		</td>
 		</tr>
-		
-		
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F6
@@ -833,8 +823,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Set velocity to 1 AU/second
 		</td>
-		</tr>	
-				
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F7
@@ -843,7 +833,7 @@
 		Set velocity to 1 light year/second
 		</td>
 		</tr>
-		
+
 <!-- Time Control -->
 
 		<tr>
@@ -851,7 +841,7 @@
 		<a name="timenav"><h3>Time Control</h3></a>
 		</td>
 		</tr>
-				
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Spacebar
@@ -859,8 +849,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Pause/Resume the flow of time and scripts (toggle)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		J
@@ -868,9 +858,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Reverse/Forward time (toggle)
 		</td>
-		</tr>		
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		\
@@ -878,7 +868,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Set time: 1x forward (norm), cancels faster/slower x factors
 		</td>
-		</tr>		
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -887,8 +877,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Change time rate: 10x faster
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		K
@@ -896,8 +886,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Change time rate: 10x slower
 		</td>
-		</tr>		
-			
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+L
@@ -905,8 +895,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Change time rate: 2x faster
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+K
@@ -915,7 +905,7 @@
 		Change time rate: 2x slower
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		!
@@ -923,8 +913,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Set time to current date and time
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		?
@@ -932,8 +922,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Display light-travel delay between observer / selected object
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		- (hyphen)
@@ -941,17 +931,17 @@
 		<td class="rightcell" align="left" valign="middle">
 		Add / Subtract light-travel delay from current simulation time
 		</td>
-		</tr>			
-		
-<!-- Label Display -->		
+		</tr>
+
+<!-- Label Display -->
 
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="whatlabel"><h3>What Label to display (on/off toggles)</h3></a>
 		</td>
 		</tr>
-		
-				
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		E
@@ -959,8 +949,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Galaxies
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+E
@@ -968,8 +958,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Globulars
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		B
@@ -986,8 +976,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Planets
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+P
@@ -996,7 +986,7 @@
 		Dwarf Planets
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		M
@@ -1004,8 +994,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Moons
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+M
@@ -1013,7 +1003,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Minor Moons
 		</td>
-		</tr>		
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1022,8 +1012,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Asteroids
 		</td>
-		</tr>		
-			
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+W
@@ -1031,8 +1021,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Comets
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		N
@@ -1040,8 +1030,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Spacecraft
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		=
@@ -1049,8 +1039,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Constellations
 		</td>
-		</tr>		
-			
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		&amp;
@@ -1058,17 +1048,17 @@
 		<td class="rightcell" align="left" valign="middle">
 		Locations
 		</td>
-		</tr>	
-		
-<!-- Render Display -->	
+		</tr>
+
+<!-- Render Display -->
 
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="whatrender"><h3>What Items to Render / Display (on/off toggles)</h3></a>
 		</td>
 		</tr>
-		
-				
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		U
@@ -1076,8 +1066,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Galaxies
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+U
@@ -1085,17 +1075,17 @@
 		<td class="rightcell" align="left" valign="middle">
 		Globulars
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
-		^ 
+		^
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Nebulae
 		</td>
 		</tr>
-				
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+A
@@ -1103,8 +1093,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Atmospheres
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		I
@@ -1112,8 +1102,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Clouds
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+L
@@ -1121,8 +1111,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Night side planet lights (light pollution)
 		</td>
-		</tr>		
-	
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+T
@@ -1130,8 +1120,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Comet tails
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+E
@@ -1139,8 +1129,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Eclipse shadows
 		</td>
-		</tr>			
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+B
@@ -1148,8 +1138,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Constellation boundaries
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		/
@@ -1157,8 +1147,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Constellation diagrams
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		;
@@ -1166,8 +1156,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Earth-based equatorial coordinate sphere
 		</td>
-		</tr>	
-			
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+K
@@ -1175,8 +1165,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Markers (placed on objects)
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		O
@@ -1186,14 +1176,14 @@
 		</td>
 		</tr>
 
-<!-- Render / Display Options -->			
-		
+<!-- Render / Display Options -->
+
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="displayoptions"><h3>Render / Display Options</h3></a>
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		{
@@ -1201,8 +1191,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Decrease Ambient Light
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		}
@@ -1210,8 +1200,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Increase Ambient Light
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		(
@@ -1219,8 +1209,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Decrease Galaxy Light Gain (Dimmer)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		)
@@ -1228,8 +1218,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Increase Galaxy Light Gain (Brighter)
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		[
@@ -1241,8 +1231,8 @@
 		<br>
 		&nbsp; - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		]
@@ -1254,7 +1244,7 @@
 		<br>
 		&nbsp; - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1262,8 +1252,8 @@
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Toggle Auto Magnitude (auto adaptation of star visibility to FOV)</td>
-		</tr>			
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		,
@@ -1271,8 +1261,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Narrow Field Of View [FOV] (also Shift+Left Mouse Button Drag)
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		.
@@ -1280,7 +1270,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Widen Field Of View [FOV] (also Shift+Left Mouse Button Drag)
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1289,7 +1279,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Toggle Antialias lines (ie. orbits)
 		</td>
-		</tr>		
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1299,7 +1289,7 @@
 		Toggle Display mode (Full-Screen / Windowed)
 		</td>
 		</tr>
-	
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+P
@@ -1307,8 +1297,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Mark selected object (Marker display must be active -- Ctrl+K)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+V
@@ -1316,8 +1306,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		OpenGL Render Paths -- Cycle through the paths supported on your graphics card
 		</td>
-		</tr>			
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		+
@@ -1326,7 +1316,7 @@
 		Toggle Planet Texture Type (Artistic / Limit of Knowledge)
 		</td>
 		</tr>
-	
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		%
@@ -1335,7 +1325,7 @@
 		Toggle star color table
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+S
@@ -1343,8 +1333,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Cycle the Star Style (points / fuzzy discs / scaled discs)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		V
@@ -1352,8 +1342,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Cycle the Info text verbosity ( Terse / Verbose / None )
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+W
@@ -1369,16 +1359,16 @@
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="multiview"><h3>Multiview Options</h3></a>
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+U
 		</td>
 		<td class="rightcell" align="left" valign="middle">
 		Split view horizontally
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+R
@@ -1386,8 +1376,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Split view vertically
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Tab
@@ -1395,8 +1385,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Cycle through all active views
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Delete
@@ -1404,8 +1394,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Delete active view
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+D
@@ -1413,7 +1403,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Delete all views except active one (reset to Single view)
 		</td>
-		</tr>		
+		</tr>
 
 <!-- Other Functions -->
 
@@ -1422,7 +1412,7 @@
 		<a name="otherfunctions"><h3>Other Functions</h3></a>
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+C
@@ -1430,8 +1420,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Copy location URL to clipboard (Cel:// URL)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+Insert
@@ -1448,8 +1438,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Capture Image to file (screenshot)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+F10
@@ -1457,8 +1447,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Capture Movie to file (video)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F11
@@ -1466,8 +1456,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		While in Movie Capture: Start / Pause capture
 		</td>
-		</tr>		
-			
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		F12
@@ -1475,8 +1465,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		While in Movie Capture: Stop capture
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		~
@@ -1484,8 +1474,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Toggle debug console (display "file loading" information) Use to debug texture loading problems. Up/Down arrow keys scroll list
 		</td>
-		</tr>			
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		`
@@ -1493,8 +1483,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Toggle display of "frames per second" (FPS) being rendered
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Ctrl+O
@@ -1502,8 +1492,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Display "Select Object" dialog box
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		@
@@ -1511,7 +1501,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Edit Mode toggle (to assist in the placements of objects)
 		</td>
-		</tr>			
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1520,8 +1510,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Run demo script (demo.cel)
 		</td>
-		</tr>		
-	
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Enter
@@ -1538,7 +1528,7 @@
 		&nbsp; Enter will then select the highlighted item
 		</td>
 		</tr>
-		
+
 <!-- Joystick -->
 
 		<tr>
@@ -1554,7 +1544,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Toggle Joystick control
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1563,7 +1553,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Yaw Left/Right
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1572,7 +1562,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Pitch Up/Down
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1581,7 +1571,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Roll Left
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1590,7 +1580,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Roll Right
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1599,7 +1589,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Move slower
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1608,22 +1598,22 @@
 		<td class="rightcell" align="left" valign="middle">
 		Move faster
 		</td>
-		</tr>	
+		</tr>
 
-<!-- Mac spcific -->		
-		
+<!-- Mac spcific -->
+
 		<tr>
 		<td colspan="2" class="titlecell" align="left" valign="middle">
 		<a name="mac"><h2>Mac specific controls</h2></a>
 		</td>
-		</tr>	
-		
+		</tr>
+
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
 		<a name="whatorbits"><h3>What Orbits to Display</h3></a>
 		</td>
 		</tr>
-				
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		O
@@ -1631,9 +1621,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Orbits (toggle ON/OFF ALL selected orbits in the Preferences/General dialog box)
 		</td>
-		</tr>	
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+P
@@ -1641,9 +1631,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Planet orbits
 		</td>
-		</tr>	
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+M
@@ -1651,9 +1641,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Moon orbits
 		</td>
-		</tr>	
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+A
@@ -1661,9 +1651,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Asteroid orbits
 		</td>
-		</tr>	
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+C
@@ -1671,9 +1661,9 @@
 		<td class="rightcell" align="left" valign="middle">
 		Comet orbits
 		</td>
-		</tr>	
-		
-		
+		</tr>
+
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+S
@@ -1682,7 +1672,7 @@
 		Spacecraft orbits
 		</td>
 		</tr>
-		
+
 
 		<tr>
 		<td colspan="2" class="subtitlecell" align="left" valign="middle">
@@ -1707,7 +1697,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Open Go To Object dialog box
 		</td>
-		</tr>			
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1716,7 +1706,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Open Browser
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1725,7 +1715,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Open Set Time dialog box
 		</td>
-		</tr>		
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1735,7 +1725,7 @@
 		Toggle full screen mode
 		</td>
 		</tr>
-		
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+E
@@ -1743,7 +1733,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Open Eclipse Finder
 		</td>
-		</tr>		
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1752,8 +1742,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Copy the cel:// URL of current position
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+V
@@ -1761,8 +1751,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Paste last cel:// URL copied
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+D
@@ -1770,8 +1760,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		Add selected object to Favorites
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Shift+Cmd+D
@@ -1779,7 +1769,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Open Favorites dialog box
 		</td>
-		</tr>	
+		</tr>
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+]
@@ -1787,8 +1777,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		History (Forward)
 		</td>
-		</tr>			
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+[
@@ -1796,8 +1786,8 @@
 		<td class="rightcell" align="left" valign="middle">
 		History (Backward)
 		</td>
-		</tr>		
-		
+		</tr>
+
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
 		Cmd+M
@@ -1809,8 +1799,8 @@
 
 
 
-<!-- Linux specific -->		
-		
+<!-- Linux specific -->
+
 		<tr>
 		<td colspan="2" class="titlecell" align="left" valign="middle">
 		<a name="linux"><h2>Linux specific controls</h2></a>
@@ -1825,7 +1815,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		GotoSurface
 		</td>
-		</tr>	
+		</tr>
 
 		<tr>
 		<td class="leftcell" align="left" nowrap="nowrap" valign="middle">
@@ -1834,7 +1824,7 @@
 		<td class="rightcell" align="left" valign="middle">
 		Alt-azimuth mode (toggle). Used with Ctrl-G (Goto surface). The Left &amp; Right Arrow keys become Yaw Left / Yaw Right
 		</td>
-		</tr>	
+		</tr>
 
 
 		</tbody></table>
@@ -1842,10 +1832,10 @@
 
 
 
-<a name="faq"><h1>Celestia FAQ</h1></a>	
+<a name="faq"><h1>Celestia FAQ</h1></a>
 
 	<div class="txtcontent">
-		<div class="list">	
+		<div class="list">
 		<h2><a name="graphics">Graphics</a></h2>
 		<ol>
 			<li><a href="javascript:animatedcollapse.toggle('faq1')">The Earth and other planets look strange. They have weird colors or do not look like globes. How can I fix this?</a>
@@ -1885,7 +1875,7 @@
 						<b>a) For PCs running Windows with plugin graphics cards</b>, you can download the drivers for free from the Web site of the manufacturer of your graphics card. Make sure full hardware acceleration is enabled in your display properties.
 						<br>
 						<br>
-						<b>b) For laptops and desktops running Windows with embedded graphics chipsets</b>,	you usually must download the most recent drivers from the Web site of the manufacturer of your computer. Sometimes generic drivers are available from the manufacturer of the graphics chipset. 
+						<b>b) For laptops and desktops running Windows with embedded graphics chipsets</b>,	you usually must download the most recent drivers from the Web site of the manufacturer of your computer. Sometimes generic drivers are available from the manufacturer of the graphics chipset.
 						<br>
 						<br>
 						<b>c) For Apple PPC and Intel computers running MacOS X</b>, you must upgrade to the most recent version of the operating system. Updated drivers usually are not available separately.
@@ -1903,8 +1893,8 @@
 					</div>
 				</div>
 			</li>
-		
-		
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq3')">The Moon is purple, blue and red. Why?</a>
 				<div fade="1" id="faq3" class="answer">
 				<h3>Answer:</h3>
@@ -1916,7 +1906,7 @@
 						<br>
 						<b>Workaround 1:</b> Turn off Celestia's advanced display features.
 						<br>
-						Type <B>[Ctrl+V]</B> several times to select "<I>Basic</I>" or "<I>Multitexture</I>" render paths instead of the OpenGL Vertex programs. This disables the use of vertex and shading programs temporarily. If this does improve things after you've followed the previous suggestions, then you need to do the next step: 
+						Type <B>[Ctrl+V]</B> several times to select "<I>Basic</I>" or "<I>Multitexture</I>" render paths instead of the OpenGL Vertex programs. This disables the use of vertex and shading programs temporarily. If this does improve things after you've followed the previous suggestions, then you need to do the next step:
 						<br>
 						<br>
 						<b>Workaround 2:</b> Tell Celestia to ignore specific features that your OpenGL library claims (falsely) to support. To do this, edit celestia.cfg. Remove the # that's in front of the line
@@ -1930,20 +1920,20 @@
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq3')" type="button">
 					</div>
-				</div>	
-			</li>					
-			
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq4')">I want to see all possible Celestia eye candy. What kind of graphics card should I get?</a>
 				<div fade="1" id="faq4" class="answer">
 				<h3>Answer:</h3>
-					The short answer is the following: 
+					The short answer is the following:
 					<br>
 					<br>
-					Any graphics card with at least 128MB of memory and support for OpenGL 2.0 pixel shaders will be able to show everything that Celestia is visually capable of. 
+					Any graphics card with at least 128MB of memory and support for OpenGL 2.0 pixel shaders will be able to show everything that Celestia is visually capable of.
 					<br>
 					<br>
-					Look for a graphics card that advertises either support for Direct3D shader model 2.0 or higher. Almost all graphics cards being sold today meet this requirement, albeit with varying degrees of performance. High-end NVIDIA and ATI cards will provide the best experience in Celestia. NVIDIA's OpenGL drivers have tended to have fewer bugs than ATI's. 
+					Look for a graphics card that advertises either support for Direct3D shader model 2.0 or higher. Almost all graphics cards being sold today meet this requirement, albeit with varying degrees of performance. High-end NVIDIA and ATI cards will provide the best experience in Celestia. NVIDIA's OpenGL drivers have tended to have fewer bugs than ATI's.
 					<br>
 					<br>
 					<b>Here are some recommendations for cards:</b>
@@ -1957,9 +1947,9 @@
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq4')" type="button">
 					</div>
 				</div>
-			</li>	
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq5')">How will Celestia perform on my system?</a>
 				<div fade="1" id="faq5" class="answer">
 				<h3>Answer:</h3>
@@ -1996,13 +1986,13 @@
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq5')" type="button">
 					</div>
 				</div>
-			</li>			
-		
-		
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq6')">Why does the illumination level in Celestia not fall off the farther from the Sun I go - surely it should be very dark by the time I get to Pluto? </a>
 				<div fade="1" id="faq6" class="answer">
 				<h3>Answer:</h3>
-					The human eye can adapt to a very wide range of illuminations, so it wouldn't be as dark out there as you think &#8211; about the level of moderate indoor lighting, in which you can see very well. At the other end of the scale, your computer monitor is physically incapable of generating the brightness of illumination that pertains on the inner planets. 
+					The human eye can adapt to a very wide range of illuminations, so it wouldn't be as dark out there as you think &#8211; about the level of moderate indoor lighting, in which you can see very well. At the other end of the scale, your computer monitor is physically incapable of generating the brightness of illumination that pertains on the inner planets.
 					<br>
 					<br>
 					Fortunately it doesn't need to, since all that would happen would be that your pupils would constrict to reduce the incoming light to a more comfortable level.
@@ -2018,16 +2008,16 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq6')" type="button">
 					</div>
-				</div>		
-			</li>					
-	 
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq7')">Celestia's galaxies are ugly, dim, grey blobs. How can I get colorful galaxies that look like the real things?</a>
 				<div fade="1" id="faq7" class="answer">
 				<h3>Answer:</h3>
-					The real things <b>are</b> dim, grey blobs. Your eyes are not sensitive to color at the very low light levels emitted by distant galaxies. Many of the colorful pictures you're used to seeing are enhanced by long exposures on sensitive color film. Others are imaginative "false color" combinations of narrow-band CCD images designed to make visible the specific features of interest to the investigator. The colors of those pictures aren't realistic at all. 
+					The real things <b>are</b> dim, grey blobs. Your eyes are not sensitive to color at the very low light levels emitted by distant galaxies. Many of the colorful pictures you're used to seeing are enhanced by long exposures on sensitive color film. Others are imaginative "false color" combinations of narrow-band CCD images designed to make visible the specific features of interest to the investigator. The colors of those pictures aren't realistic at all.
 					<div class="solution">
-					<h3>Solution:</h3> 
+					<h3>Solution:</h3>
 						You can add a colorful object to Celestia by creating a 3DS model with appropriate images as surface textures. Define it as a Nebula in a DSC file. Use the Search command in the Celestia "Development" and "Add-On" forums to find examples.
 						<br>
 						<br>
@@ -2036,10 +2026,10 @@
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq7')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq8')">Positions on Mars are on the opposite side of the planet or bumps seem to be half a world away from the mountains or it's dark where it should be daylight. Why?</a>
 				<div fade="1" id="faq8" class="answer">
 				<h3>Answer:</h3>
@@ -2054,17 +2044,17 @@
 					Using a map with 0 at the edge would cause the symptoms you describe.
 					<div class="solution">
 					<h3>Solution:</h3>
-						You need to find a map that's properly aligned or you need to cut the map in half and exchange the halves. 
+						You need to find a map that's properly aligned or you need to cut the map in half and exchange the halves.
 						<br>
-						For example with Photoshop's '<I>Offset</I>' filter is quite easy to modify maps that are misaligned by 180 degrees. In Photoshop CS2, select <I>Filter/Other/Offset</I> and set the horizontal offset amount to half the texture width.	
+						For example with Photoshop's '<I>Offset</I>' filter is quite easy to modify maps that are misaligned by 180 degrees. In Photoshop CS2, select <I>Filter/Other/Offset</I> and set the horizontal offset amount to half the texture width.
 						<br>
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq8')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq9')">Why are some texture maps upside down and backward?</a>
 				<div fade="1" id="faq9" class="answer">
 					<i>I compared the Celestia textures for Venus, Ida and Miranda with some I found in a book or on the Web, and Celestia's maps are upside down.</i>
@@ -2077,7 +2067,7 @@
 					In contrast, Celestia uses an equally valid mapping convention called "rotational north" &#8211; north is defined as being the pole around which the planet appears to rotate counterclockwise, irrespective of that pole's orientation relative to the ecliptic.
 					<br>
 					<br>
-					For direct rotators, this difference is irrelevant &#8211; "north" turns out to be the same direction in both mapping conventions. But for retrograde rotators, Celestia's north pole corresponds to ecliptic south &#8211; so you will find many maps of retrograde rotators like Venus, Ida and the moons of Uranus that appear to be upside down relative to those in Celestia. 
+					For direct rotators, this difference is irrelevant &#8211; "north" turns out to be the same direction in both mapping conventions. But for retrograde rotators, Celestia's north pole corresponds to ecliptic south &#8211; so you will find many maps of retrograde rotators like Venus, Ida and the moons of Uranus that appear to be upside down relative to those in Celestia.
 					<div class="solution">
 					<h3>Solution:</h3>
 						If you want to convert such maps for use in Celestia, you'll have to turn them through 180 degrees.
@@ -2085,24 +2075,24 @@
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq9')" type="button">
 					</div>
-				</div>		
-			</li>					
-	
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq10')">My planet's rings are drawn as a featureless oval. It used to work. What's wrong?</a>
 				<div fade="1" id="faq10" class="answer">
 				<h3>Answer:</h3>
-					For most graphics cards, the texture size limit is at least 2048. To find out how big this size is, use the "<i>OpenGL Info...</i>" option in Celestia's help menu. Near the beginning it has a line that starts with "Max texture size:". 
+					For most graphics cards, the texture size limit is at least 2048. To find out how big this size is, use the "<i>OpenGL Info...</i>" option in Celestia's help menu. Near the beginning it has a line that starts with "Max texture size:".
 					<div class="solution">
 					<h3>Solution:</h3>
-						You need to use a smaller ring image, one that is no wider than the maximum texture size supported by your graphics card. 
+						You need to use a smaller ring image, one that is no wider than the maximum texture size supported by your graphics card.
 						<br>
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq10')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
+				</div>
+			</li>
+
 
 			<li><a href="javascript:animatedcollapse.toggle('faq11')">Problem on Ubuntu: Why does Celestia not have textures?</a>
 				<div fade="1" id="faq11" class="answer">
@@ -2117,10 +2107,10 @@
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq11')" type="button">
 					</div>
-				</div>		
+				</div>
 			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq12')">Older issues that should be solved</a>
 				<div fade="1" id="faq12" class="answer">
 				<i>These issues shouldn't normally happen with the recent Celestia version. But just in case IF they happen anyway, here are the solutions.</i>
@@ -2167,12 +2157,12 @@
 				<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq12')" type="button">
 				</div>
-			</div>		
-			</li>		
+			</div>
+			</li>
 		</ol>
-		
-		
-		
+
+
+
 
 		<h2><a name="windrivers">Installation of new graphic card drivers on Windows</a></h2>
 		<ol>
@@ -2193,15 +2183,15 @@
 				<br>
 				The two reboots are essential in order to cause the old low-level drivers to be deleted. Without those reboots, the old low-level drivers will not be deleted and the new installation will not work properly, although it may not generate any error messages.
 				<br>
-				<br>				
+				<br>
 				Next section shows in detail how to do it for an Nvidia card. The procedure is the same for cards by other vendors.
 				<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq13')" type="button">
 				</div>
-			</div>		
+			</div>
 			</li>
-			
-		
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq14')">Uninstalling the NVIDIA Display Driver Software</a>
 			<div fade="1" id="faq14" class="answer">
 				<i>Note: It is highly recommended that you follow the steps in this section to completely uninstall the NVIDIA Display Driver software before updating to a new version of the software.</i>
@@ -2209,7 +2199,7 @@
 				<br>
 				<b>To uninstall the nView software, follow these steps:</b>
 				<ul>
-					<li>From the Windows taskbar, click <i>Start &gt; Settings &gt; Control Panel</i> to open the Control Panel window.</li>			
+					<li>From the Windows taskbar, click <i>Start &gt; Settings &gt; Control Panel</i> to open the Control Panel window.</li>
 					<li>Double-click the <I>Add/Remove Programs</I> item.</li>
 					<li>Click the NVIDIA Display Driver item from the list.</li>
 					<li>Click <I>Change/Remove</I>.</li>
@@ -2221,14 +2211,14 @@
 						<li>If you click <b><i>Yes</i></b>, all of the nView software and all of your saved profiles will be deleted.</li>
 						<li>If you click <b><i>No</i></b>, the nView software is removed, but the profile files are saved in the Windows\nView directory on your hard disk.</li>
 					</ul>
-					<li>Your system now restarts.</li>	
+					<li>Your system now restarts.</li>
 				</ul>
 				<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq14')" type="button">
 				</div>
-			</div>		
-			</li>					
-		
+			</div>
+			</li>
+
 
 			<li><a href="javascript:animatedcollapse.toggle('faq15')">Installing the NVIDIA ForceWare Graphics Drivers </a>
 			<div fade="1" id="faq15" class="answer">
@@ -2245,9 +2235,9 @@
 				<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq15')" type="button">
 				</div>
-			</div>		
+			</div>
 			</li>
-			
+
 
 			<li><a href="javascript:animatedcollapse.toggle('faq16')">Graphics driver update procedure for Laptops</a>
 			<div fade="1" id="faq16" class="answer">
@@ -2281,28 +2271,28 @@
 					Besides offering <a href="http://www.laptopvideo2go.com/forum/index.php?showtopic=9243">Basic info</a> and a <a href="http://www.laptopvideo2go.com/forum/index.php?showtopic=10561">FAQ</a> this site also offers <a href="http://www.laptopvideo2go.com/forum/index.php?showtopic=11997">step-by-step instructions for VISTA.</a>
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq16')" type="button">
 				</div>
-			</div>		
+			</div>
 			</li>
 		</ol>
-	
+
 
 
 
 		<h2><a name="crashes">Crashes</a></h2>
-		<ol>		
+		<ol>
 			<li><a href="javascript:animatedcollapse.toggle('faq17')">Celestia crashes my computer.</a>
 			<div fade="1" id="faq17" class="answer">
 				<h3>Problem:</h3>
 					I can install it, no problem, but it won't even start up, it loads, then freezes. Then it crashes my computer, forcing it to restart.
 					<div class="solution">
-					<h3>Solution:</h3> 
+					<h3>Solution:</h3>
 						These kind of problems usually are caused by buggy graphics drivers. Please install the most recent drivers available for your graphics card and try again. Windows users see point <a href="#windrivers">»Installation of new graphic card drivers«</a>.<br>
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq17')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
+				</div>
+			</li>
+
 
 			<li><a href="javascript:animatedcollapse.toggle('faq18')">Celestia crashes, what it draws is messed up or it's extremely slow. What can I do? </a>
 			<div fade="1" id="faq18" class="answer">
@@ -2324,10 +2314,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq18')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq19')">Celestia still crashes, draws funny stuff or is extremely slow. What can I do?</a>
 			<div fade="1" id="faq19" class="answer">
 				<h3>Answer:</h3>
@@ -2349,17 +2339,17 @@
 					If you're running Windows, details are usually available in the Control Panel's System Properties menu.
 					<br>
 					<br>
-					Some of the graphics information can be found in Celestia's Help menu under <i>"OpenGL Info..."</i> Under Windows more details can be found in the Control Panel's Display Properties menu. 
+					Some of the graphics information can be found in Celestia's Help menu under <i>"OpenGL Info..."</i> Under Windows more details can be found in the Control Panel's Display Properties menu.
 					<br>
 					<br>
-					You can also report bugs on the <a href="https://github.com/CelestiaProject/Celestia/issues">GitHub bug tracker</a>; but before you do so, please check in the  <a href="https://celestia.space/forum/viewforum.php?f=3">Celestia Bugs</a> forum if it has already been reported or solved. 
+					You can also report bugs on the <a href="https://github.com/CelestiaProject/Celestia/issues">GitHub bug tracker</a>; but before you do so, please check in the  <a href="https://celestia.space/forum/viewforum.php?f=3">Celestia Bugs</a> forum if it has already been reported or solved.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq19')" type="button">
 					</div>
-				</div>		
-			</li>		
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq20')">Why does Celestia always use 100% of the CPU?</a>
 			<div fade="1" id="faq20" class="answer">
 				<h3>Answer:</h3>
@@ -2372,18 +2362,18 @@
 					In a dual processor or dual-core system or in a hyperthreaded system simulating a dual processor system, 100% of one of the CPUs is shown as 50% of total system usage. The calculations in Celestia are single-threaded and cannot make use of more than one CPU at a time.
 					<br>
 					<br>
-					Type a <B>[`]</B> (= backslanted apostrophe = accent grave) to enable Celestia's fps (frames per second) display in the lower left corner. If you have a keyboard that supports diacritical marks, then you may need to type a <B>[SPACE]</B> after the <B>[`]</B>. 
+					Type a <B>[`]</B> (= backslanted apostrophe = accent grave) to enable Celestia's fps (frames per second) display in the lower left corner. If you have a keyboard that supports diacritical marks, then you may need to type a <B>[SPACE]</B> after the <B>[`]</B>.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq20')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq21')">How can I make Celestia use less CPU time? </a>
 			<div fade="1" id="faq21" class="answer">
 				<h3>Answer:</h3>
-					On most systems Celestia will use no CPU time if its window has been iconized or minimized. (Under Windows, click on the icon in the upper right corner of Celestia's window which has an underscore in it.)  
+					On most systems Celestia will use no CPU time if its window has been iconized or minimized. (Under Windows, click on the icon in the upper right corner of Celestia's window which has an underscore in it.)
 					<br>
 					<br>
 					Also check if vsync is enabled in the Windows control panel (this is the default setting.) If vsync is not enabled, Celestia will render frames as fast as it can, even if this is faster than the rate at which the monitor can display them.
@@ -2398,17 +2388,17 @@
 						<li>reduce the number of objects being drawn by loading fewer addons.</li>
 					</ul>
 					<br>
-					Otherwise, consider upgrading your CPU so more can be calculated between screen refreshes. Upgrading the graphics card will help somewhat, depending on how many OpenGL functions get moved from software into hardware. 
+					Otherwise, consider upgrading your CPU so more can be calculated between screen refreshes. Upgrading the graphics card will help somewhat, depending on how many OpenGL functions get moved from software into hardware.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq21')" type="button">
 					</div>
-				</div>		
-			</li>		
+				</div>
+			</li>
 		</ol>
- 
-		
-		<h2><a name="features">Features</a></h2>		
-		<ol>	
+
+
+		<h2><a name="features">Features</a></h2>
+		<ol>
 			<li><a href="javascript:animatedcollapse.toggle('faq22')">Why are my favorite stars not in Celestia?</a>
 			<div fade="1" id="faq22" class="answer">
 				<h3>Answer:</h3>
@@ -2420,16 +2410,16 @@
 					<br>
 					Another possibility is that Celestia does not know this name of the star that you are looking for. A lot of stars have more than only one name/designation, some even more than 30. If you can't find the name that you are looking for, try an online resource like <a href="http://simbad.u-strasbg.fr/simbad/">SIMBAD</a> to find other names for the star.
 					<div class="solution">
-					<h3>Solution:</h3> 
+					<h3>Solution:</h3>
 						Someone may have created an Add-on that includes your stars, though. So you could try to look for it in the Add-on repository. Or consider creating the necessary STC file yourself and contributing it.
 						<br>
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq22')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq23')">Stars with HIP or HD designations sometimes show up in the "tab completion" line and sometimes do not. What's going on?</a>
 			<div fade="1" id="faq23" class="answer">
 				<h3>Answer:</h3>
@@ -2452,27 +2442,27 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq23')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq24')">Why are there no stars in other galaxies than the Milky Way?</a>
 			<div fade="1" id="faq24" class="answer">
 				<h3>Answer:</h3>
 					Up to version 1.5.1 Celestia had technical limitations which prevented it from drawing stars beyond a distance of about 16,000 LY from the sun.
 					<br>
 					<br>
-					Since version 1.6.0 Celestia is technically capable of displaying stars without a distance limitation. However, since Celestia is scientifically orientated only stars that have a precise measurement of their position are included in the star database of the official releases. 
+					Since version 1.6.0 Celestia is technically capable of displaying stars without a distance limitation. However, since Celestia is scientifically orientated only stars that have a precise measurement of their position are included in the star database of the official releases.
 					<br>
 					<br>
 					With increasing distances of the stars from the Earth the measuring error of a star position gets huge, so it is not possible to exactly say where the star should be. Those stars are not included in Celestia and this criterion is also the reason why there are no stars displayed in other galaxies.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq24')" type="button">
 					</div>
-				</div>		
+				</div>
 			</li>
-		
-		
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq25')">I want to write some scripts for Celestia. How can I do it? </a>
 			<div fade="1" id="faq25" class="answer">
 				<h3>Answer:</h3>
@@ -2481,20 +2471,20 @@
 					<br>
 					Celestia includes a very simple scripting language of its own which understands commands like "go here, look there, set flag, display text". These commands should go into a file with the filetype .CEL
 					<ul>
-						<li>An example .CEL script is Celestia's own start.cel, which is on your computer in Celestia's main directory.</li>				
-						<li>A .CEL Scripting Guide is available in English and German on the <a href="http://celestiamotherlode.net/catalog/documentation.html">Documentation Page</a> of the <a href="http://celestiamotherlode.net/">Celestia MotherLode</a>.</li>				
-						<li><a href="https://www.classe.cornell.edu/~seb/celestia/celestia_notes.html#4.0">Selden's Celestia Resources website</a> includes a list of some of the more recently added .CEL scripting commands, but they're rather cryptically organized.</li>					
+						<li>An example .CEL script is Celestia's own start.cel, which is on your computer in Celestia's main directory.</li>
+						<li>A .CEL Scripting Guide is available in English and German on the <a href="http://celestiamotherlode.net/catalog/documentation.html">Documentation Page</a> of the <a href="http://celestiamotherlode.net/">Celestia MotherLode</a>.</li>
+						<li><a href="https://www.classe.cornell.edu/~seb/celestia/celestia_notes.html#4.0">Selden's Celestia Resources website</a> includes a list of some of the more recently added .CEL scripting commands, but they're rather cryptically organized.</li>
 						<li>Information can also be found in the Scripting section of the <a href="https://en.wikibooks.org/wiki/Celestia#Scripting">Celestia Wikibook</a>.</li>
-					</ul>				
+					</ul>
 					<br>
 					<b>B)</b>
 					<br>
-					The Lua programming language is available for use in .CELX scripts. See <a href="http://www.lua.org/">http://www.lua.org/</a>. 
+					The Lua programming language is available for use in .CELX scripts. See <a href="http://www.lua.org/">http://www.lua.org/</a>.
 					<ul>
-						<li>A few example Lua scripts for Celestia are available on GitHub at <a href="https://github.com/CelestiaProject/Celestia/tree/master/scripts">https://github.com/CelestiaProject/Celestia/tree/master/scripts</a>.</li>		
-						<li>A .CELX Scripting Guide is available in English on the <a href="http://celestiamotherlode.net/catalog/documentation.html">Documentation Page</a> of the <a href="http://celestiamotherlode.net/">Celestia MotherLode</a>.</li>						
+						<li>A few example Lua scripts for Celestia are available on GitHub at <a href="https://github.com/CelestiaProject/Celestia/tree/master/scripts">https://github.com/CelestiaProject/Celestia/tree/master/scripts</a>.</li>
+						<li>A .CELX Scripting Guide is available in English on the <a href="http://celestiamotherlode.net/catalog/documentation.html">Documentation Page</a> of the <a href="http://celestiamotherlode.net/">Celestia MotherLode</a>.</li>
 						<li>More information about CELX is available on Harald Schmidt's web site at <a href="http://celestia.h-schmidt.net/">http://celestia.h-schmidt.net/</a>.</li>
-					</ul>					
+					</ul>
 					<br>
 					<b>C)</b>
 					<br>
@@ -2518,10 +2508,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq25')" type="button">
 					</div>
-				</div>		
-			</li>					
-			
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq26')">How can I make Celestia work like a planetarium?</a>
 			<div fade="1" id="faq26" class="answer">
 				<i>I want to see how the sky should look from my backyard.</i>
@@ -2530,8 +2520,8 @@
 				<h3>Answer:</h3>
 					<ul>
 						<li>Select the body from which to observe; the Earth for example.</li>
-						<li>Use the <i>GoTo</i> menu to specify your Longitude and Latitude and <b>GoTo</b> there (lat &amp; long are entered in decimal format &#8211; there are websites that convert to/from degrees/minute/seconds format.)</li>				
-						<li>Type a <B>[Y]</B> = Sync Orbit (this locks you into position above the location you set)</li>					
+						<li>Use the <i>GoTo</i> menu to specify your Longitude and Latitude and <b>GoTo</b> there (lat &amp; long are entered in decimal format &#8211; there are websites that convert to/from degrees/minute/seconds format.)</li>
+						<li>Type a <B>[Y]</B> = Sync Orbit (this locks you into position above the location you set)</li>
 						<li><b>Under Windows:</b>
 						<ul>
 							<li>Type a <b>[Ctrl+G]</b> = GotoSurface</li>
@@ -2551,10 +2541,10 @@
 					<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq26')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq27')">Why can't I see Mir or Galileo? I know they're defined in Celestia.  </a>
 			<div fade="1" id="faq27" class="answer">
 				<h3>Answer:</h3>
@@ -2571,10 +2561,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq27')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq28')">Celestia's orbit for the ISS is out of date. How can I get a better one? </a>
 			<div fade="1" id="faq28" class="answer">
 				<h3>Answer:</h3>
@@ -2591,11 +2581,11 @@
 						<br>
 						1 25544U 98067A   04229.23839543  .00019757  00000-0  15906-3 0  4532
 						<br>
-						2 25544  51.6323  19.1941 0005251 117.9988 304.8582 15.70921896327755 
+						2 25544  51.6323  19.1941 0005251 117.9988 304.8582 15.70921896327755
 					</span>
 					<br>
 					<br>
-					Grant Hutchison has provided a spreadsheet to convert TLEs into Celestia SSCs here: <a href="https://www.classe.cornell.edu/~seb/celestia/hutchison/spreadsheets.html#2">https://www.classe.cornell.edu/~seb/celestia/hutchison/spreadsheets.html#2</a>. 
+					Grant Hutchison has provided a spreadsheet to convert TLEs into Celestia SSCs here: <a href="https://www.classe.cornell.edu/~seb/celestia/hutchison/spreadsheets.html#2">https://www.classe.cornell.edu/~seb/celestia/hutchison/spreadsheets.html#2</a>.
 					<br>
 					<br>
 					Also, don't forget that Celestia models the shape of the Earth using a spheroid. The actual shape of our planet is much more complicated.
@@ -2605,10 +2595,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq28')" type="button">
 					</div>
-				</div>		
-			</li>				
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq29')">I've placed a planet in orbit around a star in a binary system, but I only see light it lit by one of the stars. What's wrong?  </a>
 			<div fade="1" id="faq29" class="answer">
 				<h3>Answer:</h3>
@@ -2619,21 +2609,21 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq29')" type="button">
 					</div>
-				</div>		
-			</li>						
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq30')">How many simultaneous light sources can Celestia handle?  </a>
 			<div fade="1" id="faq30" class="answer">
 				<h3>Answer:</h3>
-					Up to two in the OpenGL vertex shader paths, and up four in the basic, multitexture, and OpenGL 2.0 paths. The light sources with the greatest apparent brightness are given priority. 
+					Up to two in the OpenGL vertex shader paths, and up four in the basic, multitexture, and OpenGL 2.0 paths. The light sources with the greatest apparent brightness are given priority.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq30')" type="button">
 					</div>
-				</div>		
-			</li>				
-				
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq31')">Ring and eclipse shadows don't look right when there are multiple light sources.</a>
 			<div fade="1" id="faq31" class="answer">
 				<h3>Answer:</h3>
@@ -2641,10 +2631,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq31')" type="button">
 					</div>
-				</div>		
-			</li>				
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq32')">The Sun and the Moon are much too small in Celestia. What's wrong?  </a>
 			<div fade="1" id="faq32" class="answer">
 				<h3>Answer:</h3>
@@ -2665,14 +2655,14 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq32')" type="button">
 					</div>
-				</div>		
-			</li>				
+				</div>
+			</li>
 		</ol>
 
-	
-	
+
+
 		<h2><a name="general">General Questions</a></h2>
-		<ol>	
+		<ol>
 			<li><a href="javascript:animatedcollapse.toggle('faq33')">Where can I get more information about Celestia?  </a>
 			<div fade="1" id="faq33" class="answer">
 				<h3>Answer:</h3>
@@ -2682,14 +2672,14 @@
 					An other good place to look for or ask for additional information is the <a href="https://celestia.space/forum/">Celestia Forum</a>. You'll find lots of friendly people there. <a href="https://www.classe.cornell.edu/~seb/celestia/#2.1.2">Selden Ball's website</a> has pointers to additional documentation on catalog files (SSC, STC, DSC), planet surface textures, etc. Also you can find information in the <a href="https://en.wikibooks.org/wiki/Celestia">Celestia WikiBook</a>.
 					<br>
 					<br>
-					On the <a href="http://www.celestiamotherlode.net/">Celestia Motherlode</a> there are also many other Celestia resources and addons for download.	
+					On the <a href="http://www.celestiamotherlode.net/">Celestia Motherlode</a> there are also many other Celestia resources and addons for download.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq33')" type="button">
 					</div>
-				</div>		
-			</li>				
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq34')">Where can I get the most recent version of Celestia?  </a>
 			<div fade="1" id="faq34" class="answer">
 				<h3>Answer:</h3>
@@ -2697,11 +2687,11 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq34')" type="button">
 					</div>
-				</div>		
-			</li>				
-		
-		
-		
+				</div>
+			</li>
+
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq35')">What changes have been made to Celestia since the last version?</a>
 			<div fade="1" id="faq35" class="answer">
 				<h3>Answer:</h3>
@@ -2709,17 +2699,17 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq35')" type="button">
 					</div>
-				</div>		
-			</li>				
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq36')">I	have a previous version of Celestia with tons of addons, custom	textures, etc. How can I update to the latest version without having to reinstall all of those addons, textures, etc? </a>
 			<div fade="1" id="faq36" class="answer">
 				<h3>Answer:</h3>
 					You can have more than one copy of Celestia on your system at the same time.
 					<br>
 					<ul>
-						<li>Rename the directory (folder) where you have Celestia now, maybe to <I>Celestia151</I>.</li>					
+						<li>Rename the directory (folder) where you have Celestia now, maybe to <I>Celestia151</I>.</li>
 						<li>Verify that things still work:
 						<ul>
 							<li>Double-click on the icon for <I>Celestia151\Celestia.exe</I> and look around in your universe.</li>
@@ -2728,15 +2718,15 @@
 						<li>Install the new copy of Celestia and tell it to use the directory <I>Celestia</I>. It'll create the folder again and install itself there.</li>
 						<li>Move your addons at leisure.</li>
 					</ul>
-					Cel:// URLs run the copy of Celestia that is in the folder named Celestia. If you want to change back to using your old Celestia that way, just rename the directories again: rename <I>Celestia</I> to be <I>Celestia160</I> and rename <I>Celestia151</I> to be <I>Celestia</I>. 
+					Cel:// URLs run the copy of Celestia that is in the folder named Celestia. If you want to change back to using your old Celestia that way, just rename the directories again: rename <I>Celestia</I> to be <I>Celestia160</I> and rename <I>Celestia151</I> to be <I>Celestia</I>.
 					<br>
 					<br>
 					Also, please take a look at <a href="https://www.classe.cornell.edu/~seb/celestia/addon-intro.html">https://www.classe.cornell.edu/~seb/celestia/addon-intro.html</a> for a description of how to organize your addons so they can be moved easily.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq36')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
 
 			<li><a href="javascript:animatedcollapse.toggle('faq37')">Why don't Windows and Mac addons work under Linux?  </a>
@@ -2764,7 +2754,7 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq37')" type="button">
 					</div>
-				</div>		
+				</div>
 			</li>
 
 
@@ -2781,15 +2771,15 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq49')" type="button">
 					</div>
-				</div>		
-			</li>		
+				</div>
+			</li>
 
 
 		</ol>
-		
-	
-		<h2><a name="vista">Vista questions</a></h2>	
-		<ol>	
+
+
+		<h2><a name="vista">Vista questions</a></h2>
+		<ol>
 			<li><a href="javascript:animatedcollapse.toggle('faq38')">General information</a>
 			<div fade="1" id="faq38" class="answer">
 				A lot, if not all problems described are due to the fact that windows doesn't allow data to be placed in the program files directory. That is part of the security system (UAC) and can be turned off completely, or partly.
@@ -2802,30 +2792,30 @@
 				<div class="solution">
 					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq38')" type="button">
 				</div>
-				</div>		
-			</li>					
-	
+				</div>
+			</li>
+
 
 			<li><a href="javascript:animatedcollapse.toggle('faq39')">When trying to install the program on my windows Vista machine the installer says it needs administrator rights which I don't have.</a>
 			<div fade="1" id="faq39" class="answer">
 				<i>In earlier versions there was no need for administrator rights. Why does this version require administrator rights, and is this something that can be fixed?</i>
 				<br>
 				<br>
-				<h3>Answer:</h3> 
+				<h3>Answer:</h3>
 					The administrator rights are caused by the installation itself. Celestia wants to retain its <B>own</B> authorities when you install it, and that creates these problems. The only way to fix it is to either reset the permissions which you cannot do unless you <B>have</B> the administrator rights, or you can <B>copy</B> the files to a location that you have created yourself.
 					<div class="solution">
 						<h3>Solution:</h3>
 						Set up a different folder for Celestia and simply copy all the original files to the new folder. That is if you can.
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq39')" type="button">
 					</div>
-				</div>		
-			</li>					
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq40')">Why can't I make changes to files in the Celestia data directory?</a>
 				<div fade="1" id="faq40" class="answer">
 				<h3>Answer:</h3>
-					The short answer is &#8211; when installed with the default options &#8211;	Celestia takes ownership of the directory, so you simply <B>cannot</B> make any changes to the files in the data directory. 
+					The short answer is &#8211; when installed with the default options &#8211;	Celestia takes ownership of the directory, so you simply <B>cannot</B> make any changes to the files in the data directory.
 					<br>
 					<br>
 					Well, you <B>can</B> make the changes, it's just that you simply <B>cannot save</B> the changes to the data directory. This problem can be overcome by some work with permissions and security within Vista.
@@ -2845,29 +2835,29 @@
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq40')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq41')">What are compatibility directories?</a>
 				<div fade="1" id="faq41" class="answer">
 				<h3>Answer:</h3>
 					Generally, the compatibility directories are created when you try to install Celestia as an application defined as being associated with a previous version of Windows, i.e. XP, 98, etc.
 					<div class="solution">
-					<h3>Solution:</h3> 
-						Most of the compatibility directories will not be created if you install Celestia as a native Windows Vista application. 
+					<h3>Solution:</h3>
+						Most of the compatibility directories will not be created if you install Celestia as a native Windows Vista application.
 						<br>
 						<br>
-						Running Celestia in the native Vista mode seems to work pretty well. You may find also that you can simply move a compatibility file from its current location (once it has been created) into the standard Vista <I>C:\Program Files\Celestia</I> directory where you wish it to be. Once done, it will usually stay where you put it unless it is again acted upon by a non-Vista program. 
+						Running Celestia in the native Vista mode seems to work pretty well. You may find also that you can simply move a compatibility file from its current location (once it has been created) into the standard Vista <I>C:\Program Files\Celestia</I> directory where you wish it to be. Once done, it will usually stay where you put it unless it is again acted upon by a non-Vista program.
 						<br>
 						<br>If you also use other programs to perform functions like editing plain text SSC files using previous Windows version compatible programs, these will also cause compatibility directories. So, it is the best to use Vista-ready programs for all of the Celestia-related functions.
 						<br>
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq41')" type="button">
 					</div>
-				</div>		
-			</li>					
+				</div>
+			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq42')">I can't find/see those compatibility directories. Why? </a>
 				<div fade="1" id="faq42" class="answer">
 				<h3>Answer:</h3>
@@ -2887,10 +2877,10 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq42')" type="button">
 					</div>
-				</div>		
+				</div>
 			</li>
 
-		
+
 			<li><a href="javascript:animatedcollapse.toggle('faq43')">Where are the files that I just edited and saved? </a>
 				<div fade="1" id="faq43" class="answer">
 				<h3>Answer:</h3>
@@ -2909,8 +2899,8 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq43')" type="button">
 					</div>
-				</div>		
-			</li>			
+				</div>
+			</li>
 
 
 			<li><a href="javascript:animatedcollapse.toggle('faq44')">How do I use the 3dstocmod converter? </a>
@@ -2919,12 +2909,12 @@
 					In order to use the 3dstocmod converter in Vista, you have to convert the elements via Vista's "compatibility" mode under the file's "properties" dialog.
 					<br>
 					<br>
-					For every .exe and .dll file, you must specify compatibility for Windows XP, <B>and</B> you must specify that "Visual Themes" are to be disabled. 
+					For every .exe and .dll file, you must specify compatibility for Windows XP, <B>and</B> you must specify that "Visual Themes" are to be disabled.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq44')" type="button">
 					</div>
-				</div>		
-			</li>			
+				</div>
+			</li>
 
 
 			<li><a href="javascript:animatedcollapse.toggle('faq45')">What causes Celestia to crash on Vista? </a>
@@ -2937,25 +2927,25 @@
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq45')" type="button">
 					</div>
-				</div>		
-			</li>			
-			
+				</div>
+			</li>
 
-			
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq46')">Addressing limitations </a>
 				<div fade="1" id="faq46" class="answer">
 					Celestia is a 32 bit application, so it's limited to somewhat more than 2GB. However, it works fine under both Vista 32 and Vista 64.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq46')" type="button">
 					</div>
-				</div>		
-			</li>			
-		
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq47')">Do Cel:// URLs work under Vista? </a>
 				<div fade="1" id="faq47" class="answer">
 				<h3>Answer:</h3>
-					Cel:// URLs work fine under Vista with Word 2007. 
+					Cel:// URLs work fine under Vista with Word 2007.
 					<br>
 					<br>
 					MS Word automatically requires the use of <B>[Ctrl]</B> + click to launch a hyperlink, but there is a menu item to eliminate the need to press <B>[Ctrl]</B>.
@@ -2963,23 +2953,23 @@
 						<li>Go to the "<I>Tools/Options/Edit</I>" menu, and uncheck the box that says, "<I>Use Ctrl+Click for hyperlinks</I>".</li>
 						<li>Click <I>OK</I>.</li>
 					</ul>
-					From that point forward, simply pointing and clicking once on a cel:url or hyperlink will launch it. 
+					From that point forward, simply pointing and clicking once on a cel:url or hyperlink will launch it.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq47')" type="button">
 					</div>
-				</div>		
-			</li>			
-	
-		
+				</div>
+			</li>
+
+
 			<li><a href="javascript:animatedcollapse.toggle('faq48')">Are the security impacts from Vista on Celestia? </a>
 				<div fade="1" id="faq48" class="answer">
 				<h3>Answer:</h3>
-					Vista enforces some security requirements which usually are optional under earlier versions of Windows. You may have to select options to disable that enforcement for Celestia. E.g. allowing URLs to run programs. 
+					Vista enforces some security requirements which usually are optional under earlier versions of Windows. You may have to select options to disable that enforcement for Celestia. E.g. allowing URLs to run programs.
 					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq48')" type="button">
 					</div>
-				</div>		
-			</li>			
+				</div>
+			</li>
 		</ol>
 		</div>
 	</div>
@@ -3019,7 +3009,7 @@
 		<br>
 		<br>
 		This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the enclosed <a href="javascript:animatedcollapse.toggle('gnu')">GNU General Public License</a> (COPYING) for more details.
-		
+
 		<div fade="1" id="gnu">
 		<textarea class="gnulicence" cols="80">		   GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
@@ -3302,7 +3292,7 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 		<br>
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('gnu')" type="button">
 		</div>
-		
+
 		<br>
 		<br>
 		You may also get a copy of this licence from:
@@ -3320,7 +3310,7 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 
 
 <a name="credits"><h1>Contributions</h1></a>
-		
+
 <!--	<div class="txtcontent">-->
 <!--		<h2>Authors</h2> -->
 		<div class="table">
@@ -3359,7 +3349,7 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 <!-- <a href="javascript:animatedcollapse.toggle('contributors')">[ <b>View details on all contributions</b> ]</a>
 <div fade="1" id="contributors"> -->
 
-		
+
 <!--		<h2>Contributors</h2> -->
 			<li><a href="javascript:animatedcollapse.toggle('contributors')">Contributors</a>
 				<div fade="1" id="contributors" class="answer">
@@ -3377,7 +3367,7 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 				</div>
 			</li>
 
-		
+
 
 <!--		<h2>Documentation</h2> -->
 
@@ -3398,11 +3388,11 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 					<b>Christian Lenz &amp; Runar Thorvaldsen:</b> New help file
 				</div>
 			</li>
-		
 
-<!--		<h2>Scientific Data Base</h2>	-->	
+
+<!--		<h2>Scientific Data Base</h2>	-->
 			<li><a href="javascript:animatedcollapse.toggle('database')">Scientific Data Base</a>
-				<div fade="1" id="database" class="answer">		
+				<div fade="1" id="database" class="answer">
 					<b>Grant Hutchison</b>
 					<br>
 					Supplied the correct orientations for the major planets, their moons, and a number of asteroids and also worked on these data files: <i>Solarsys.ssc, nearstars.stc, extrasolar.ssc, extrasolar.stc, earth_locs.ssc</i>
@@ -3415,7 +3405,7 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 						<li>Data base on visual and spectroscopic binaries (visualbins.stc, spectbins.stc)</li>
 						<li>World-capitals.ssc</li>
 						<li>Asterisms.dat</li>
-					</ul>		
+					</ul>
 					<b>Andrew Tribick</b>
 					<ul>
 						<li>Significant update of the star.dat base based on new HIP Reduction of the Raw data, Floor van Leeuwen, 2007</li>
@@ -3423,10 +3413,10 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 					</ul>
 				</div>
 			</li>
-			
+
 <!--		<h2>Texture maps</h2> -->
 			<li><a href="javascript:animatedcollapse.toggle('maps')">Texture maps</a>
-				<div fade="1" id="maps" class="answer">		
+				<div fade="1" id="maps" class="answer">
 					Most of the planet maps are from David Seal's site: <a href="http://maps.jpl.nasa.gov/">http://maps.jpl.nasa.gov/</a>.
 					<br>
 					A few of these maps were modified by me, with fictional terrain added to fill in gaps. The model of the Galileo spacecraft is also from David Seal's site (though it was converted from Inventor to 3DS format.)
@@ -3435,74 +3425,74 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 					The Mars, Neptune, and Uranus textures and Mars bump maps are all from James Hastings-Trew's collection. His maps may be found here: <a href="http://gw.marketingden.com/planets/planets.html">http://gw.marketingden.com/planets/planets.html</a>.
 					<br>
 					<br>
-				
+
 					<b>Grant Hutchison</b>
 					<ul>
 						<li>Saturn's rings were built by Grant Hutchison from Cassini imaging, with transparency information derived from stellar transit data obtained from: <a href="http://pds-rings.arc.nasa.gov/ringocc/ringocc.html">http://pds-rings.arc.nasa.gov/ringocc/ringocc.html</a>.</li>
 						<li>The Eros map is a shaded relief generated from the NEAR laser rangefinder shape model at: <a href="http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape">http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape</a>.</li>
 					</ul>
-					
+
 					<b>Jens Meyer</b>
 					<ul>
-						<li>Dione and Rhea are USGS maps colored and modified by Jens Meyer.</li>									
+						<li>Dione and Rhea are USGS maps colored and modified by Jens Meyer.</li>
 						<li>The Moon map is based on data from PDS Map-A-Planet at <a href="http://pdsmaps.wr.usgs.gov/maps.html">http://pdsmaps.wr.usgs.gov/maps.html</a> with colors from Mark Robinson at <a href="http://www.earth.northwestern.edu/research/robinson/MOON/clem_color.html">http://www.earth.northwestern.edu/research/robinson/MOON/clem_color.html</a>.</li>
 					</ul>
-					
+
 					<b>Fridger Schrempp</b>
 					<ul>
 						<li><i>Available data</i> Pluto and Charon textures using maps created by Marc Buie at Lowell Observatory. Buie's maps were generated from photometric data gathered during six years of mutual occultations of Pluto and Charon.</li>
 
 						<li>Titan's cloud texture in natural colors and its surface map at near-infrared wavelength. They are based on resources available from the imaging site (Ciclops) of the Cassini mission, <a href="http://ciclops.lpl.arizona.edu/index.php">http://ciclops.lpl.arizona.edu/index.php</a>.</li>
-						
+
 						<li>The Phoebe base texture was created from the cylindrical map published by the Cassini imaging team, <a href="http://photojournal.jpl.nasa.gov/catalog/PIA07775">http://photojournal.jpl.nasa.gov/catalog/PIA07775</a>.</li>
-									
+
 						<li>The Tethys textures are based on the Oct 2008 Ciclops map <a href="http://photojournal.jpl.nasa.gov/catalog/PIA11116">http://photojournal.jpl.nasa.gov/catalog/PIA11116</a></li>
-								
+
 						<li>The Iapetus texture was created from the Oct 2008 Ciclops map <a href="http://photojournal.jpl.nasa.gov/catalog/PIA11116">http://photojournal.jpl.nasa.gov/catalog/PIA11116</a>.</li>
-									
+
 						<li>The Lunar topography map, using Clementine laser altimeter data, merged in the polar regions with topographic data from Clementine 750 nm oblique and nadir images, <a href="ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/">ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/</a>.</li>
 
-						<li>The Mercury map was created from a combination of Mariner 10 imaging with recent MESSENGER WAC images from the first two flybys, as collected 
+						<li>The Mercury map was created from a combination of Mariner 10 imaging with recent MESSENGER WAC images from the first two flybys, as collected
    and reprojected by Steve Albers: See <a href="http://laps.noaa.gov/albers/sos/sos.html">http://laps.noaa.gov/albers/sos/sos.html</a>.</li>
 					</ul>
-				
+
 					<b>Phil Stooke</b>
 					<ul>
 						<li>Proteus, Janus, Prometheus and Epimetheus maps are from Phil Stooke.</li>
 						<li>The Ida and Gaspra photomosaic maps are by Phil Stooke.</li>
 					</ul>
-					
-					<b>Various</b>		
+
+					<b>Various</b>
 					<ul>
 						<li>Venus's clouds and the textures for Ganymede, Callisto and Saturn are from Björn Jónsson. His site at <a href="http://www.mmedia.is/%7Ebjj/">http://www.mmedia.is/~bjj/</a> is an excellent resource for solar system rendering.</li>
-						
+
 						<li>Venus's surface is a copyright-free NASA image, prepared from Magellan radar data. The original is available at <a href="http://www.solarviews.com/cap/venus/venmap.htm">http://www.solarviews.com/cap/venus/venmap.htm</a>.</li>
 
 						<li>The Earth texture was created by NASA using data from the MODIS instrument aboard the Terra satellite. Further information is available from: <a href="http://earthobservatory.nasa.gov/Newsroom/BlueMarble/">http://earthobservatory.nasa.gov/Newsroom/BlueMarble/</a>.</li>
-						
+
 						<li>The Io and Europa maps are by Steve Albers. His planetary maps are at: <a href="http://laps.fsl.noaa.gov/albers/sos/sos.html">http://laps.fsl.noaa.gov/albers/sos/sos.html</a>.</li>
-						
+
 						<li>The textures for the Uranian satellites were created by Ivan Rivera from JPL data. His Celestia page is: <a href="http://bruckner.homelinux.net/celestia.html">http://bruckner.homelinux.net/celestia.html</a>.</li>
-						
+
 						<li>The Hyperion and Enceladus maps are photomosaics assembled by Phil Stooke and colored by Jens Meyer.</li>
-						
+
 						<li>Amalthea is a shaded relief map by Phil Stooke, colored by Wm. Robert Johnston (<a href="http://www.johnstonsarchive.net/spaceart/cylmaps.html">http://www.johnstonsarchive.net/spaceart/cylmaps.html</a>), and further modified by Jens Meyer and Grant Hutchison.</li>
-						
+
 						<li>The asteroid.jpg texture was created by Paul Roberts.</li>
-						
+
 						<li>The textures for the five classes of extrasolar giant planet were created by  Andrew Tribick.</li>
 
 						<li>The map of Enceladus is derived from the December 2008 CICLOPS map: <a href="http://ciclops.org/view/5447/Map_of_Enceladus_December_2008">http://ciclops.org/view/5447/Map_of_Enceladus_December_2008</a></li>
 					</ul>
 				</div>
-			</li>		
+			</li>
 
 <!--		<h2>3D Models</h2> -->
 			<li><a href="javascript:animatedcollapse.toggle('models')">3D Models</a>
-				<div fade="1" id="models" class="answer">		
+				<div fade="1" id="models" class="answer">
 					<ul>
 						<li>Models of Mars Global Surveyor and Mars Odyssey were created by Shrox: <a href="http://www.shrox.com/">http://www.shrox.com/</a>.</li>
-						
+
 						<li>The Cassini and Huygens models are by Jack Higgins: <a href="http://homepage.eircom.net/%7Ejackcelestia/">http://homepage.eircom.net/~jackcelestia/</a>.</li>
 
 						<li>The 3D model of ISS is a deconstruction of Andrew Farnaby's complete ISS model with textures by Bob Hundley. The model represents the ISS as of June 2008 and is a modification of the model that can be found here: <a href="http://www.celestiamotherlode.net/catalog/show_addon_details.php?addon_id=1199">http://www.celestiamotherlode.net/catalog/show_addon_details.php?addon_id=1199</a> ISS model of June 2008 (with Kibo) by krisci3 (modified and converted in order to work with JPG by Ulrich Dickmann, a.k.a. Adirondack)</li>
@@ -3510,54 +3500,54 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 						<li>3D asteroid models of Toutatis, Kleopatra, Geographos, 1998 KY26, Bacchus, Castalia and Golevka are courtesy of Scott Hudson, Washington State University. His site is: <a href="http://www.eecs.wsu.edu/%7Ehudson/Research/Asteroids/models.html">http://www.eecs.wsu.edu/~hudson/Research/Asteroids/models.html</a>.</li>
 
 						<li>3D models of Phobos, Deimos, Amalthea, Janus, Epimetheus, Prometheus, Pandora, Hyperion, Larissa, Proteus, Vesta, Ida, Gaspra and Halley are derived from Phil Stooke's Cartography of Non-Spherical Worlds at: <a href="http://publish.uwo.ca/%7Epjstooke/plancart.htm">http://publish.uwo.ca/~pjstooke/plancart.htm</a> and optical shape model dataset at: <a href="http://pdssbn.astro.umd.edu/SBNast/holdings/EAR-A-5-DDR-STOOKE-SHAPE-MODELS-V1.0.html">http://pdssbn.astro.umd.edu/SBNast/holdings/EAR-A-5-DDR-STOOKE-SHAPE-MODELS-V1.0.html</a>.</li>
-						
+
 						<li>The 3D model of Eros was prepared from the NEAR laser rangefinder shape model at: <a href="http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape">http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape</a>.</li>
-						
+
 						<li>The Phoebe mesh was designed by Jerry Gardner aka Jestr, <a href="mailto:jestr@ntlworld.com">jestr@ntlworld.com</a>, based on Phoebe's bumpy topography display from Cassini, <a href="http://photojournal.jpl.nasa.gov/catalog/PIA06070">http://photojournal.jpl.nasa.gov/catalog/PIA06070</a>.</li>
 					</ul>
 				</div>
-			</li>	
-		
+			</li>
+
 <!--		<h2>Libraries</h2> -->
 			<li><a href="javascript:animatedcollapse.toggle('libraries')">Libraries</a>
-				<div fade="1" id="libraries" class="answer">		
+				<div fade="1" id="libraries" class="answer">
 					<ul>
 						<li>This software is based in part on the work of the Independent JPEG Group.</li>
-						
+
 						<li>Some versions of Celestia may use the SPICE system for spacecraft and planetary information, developed by Caltech/JPL under contract to NASA.</li>
-						
+
 						<li>Many cylindrical projections of photographs were performed by Fridger Schrempp with Matthew Arcus <i><b>mmps</b></i> software, <a href="http://www.users.globalnet.co.uk/%7Earcus/mmps/">http://www.users.globalnet.co.uk/~arcus/mmps/</a>.</li>
-						
+
 						<li>The lower resolution textures were all converted from their higher resolution versions using Gimp.</li>
-						
+
 						<li>The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.</li>
-									
+
 						<li>Constellation boundaries are drawn from Davenhall &amp; Leggett's "Catalogue of Constellation Boundary Data": <a href="http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49">http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49</a>.
 						</li>
-					</ul>	
+					</ul>
 				</div>
-			</li>			
-	
+			</li>
+
 <!--		<h2>Other work</h2> -->
 			<li><a href="javascript:animatedcollapse.toggle('other')">Other work</a>
-				<div fade="1" id="other" class="answer">	
+				<div fade="1" id="other" class="answer">
 					<ul>
 						<li>Selden Ball deserves a special mention for suffering more prerelease versions finding more bugs, and giving more feedback than anyone else.</li>
-						
+
 						<li>Christophe Campos aka ElChristou created the splash screen for Celestia.</li>
-						
+
 						<li>The MacOS X icon was designed by Chris Alford: <a href="http://www.chrisalford.com/">http://www.chrisalford.com/</a>.</li>
-						
+
 						<li>The txf font format used by Celestia was devised by Mark Kilgard.</li>
 					</ul>
 				</div>
-			</li>	
+			</li>
 <!--	</div> -->
 
 </div>
 
 <a name="acknowledgements"><h1>Acknowledgements</h1></a>
-		
+
 		<div class="txtcontent">
 			A very big thank you for creating Celestia goes to Chris Laurel who started this program in the year 2001.
 			<br>
@@ -3574,14 +3564,14 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 			Special thanks go to all Celestia users who submit bug reports, suggestions, and fixes. Celestia wouldn't be the program it is today, without their help.
 			<br>
 			<br>
-			<i>The Celestia Development Team</i>		
+			<i>The Celestia Development Team</i>
 		</div>
 
 </div>
-		
 
-		
-		
+
+
+
 
 <!-- PAGE CONTENT END -->
 </td>

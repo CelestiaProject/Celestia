@@ -113,7 +113,7 @@ Clang 3.3 or later), CMake, GNU Make or Ninja.
 
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
-Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, libavif, glu and glut.
+Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, libavif, glu.
 
 For example on modern Debian-derived system you need to install the following
 packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
@@ -121,11 +121,10 @@ libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
 libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
 libgtkglext1-dev to build with legacy Gtk2 interface; libgtk3.0-dev to build
-Gtk3 interface, libsdl2-dev to build SDL interface or freeglut3-dev to build
-with glut interface. libavcodec-dev, libavformat-dev, libavutil-dev and
-libswscale-dev are required to build with video capture support. libavif-dev
-is required to build to AVIF texture support.
-
+Gtk3 interface, or libsdl2-dev to build SDL interface. libavcodec-dev,
+libavformat-dev, libavutil-dev and libswscale-dev are required to build with
+video capture support. libavif-dev is required to build to AVIF texture
+support.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
@@ -138,12 +137,9 @@ make
 sudo make install
 ```
 
-[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", "`SDL`" or
-"`GLUT`".
+[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", or "`SDL`"
 
 Four interfaces are available for Celestia on Unix-like systems:
-- GLUT: minimal interface, barebone Celestia core with no toolbar or menu...
-       Disabled by default.
 - SDL: minimal interface, barebone Celestia core with no toolbar or menu...
        Disabled by default.
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
@@ -259,7 +255,7 @@ pacman -S base-devel
 pacman -S git
 pacman -S mingw-w64-x86_64-cmake
 pacman -S mingw-w64-x86_64-qt5
-pacman -S mingw-w64-x86_64-freeglut mingw-w64-x86_64-libepoxy mingw-w64-x86_64-lua
+pacman -S mingw-w64-x86_64-libepoxy mingw-w64-x86_64-lua
 pacman -S mingw-w64-x86_64-mesa
 ```
 
@@ -358,7 +354,6 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_CELX          | bool | ON      | Enable Lua scripting support
 | ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
 | ENABLE_NLS           | bool | ON      | Enable interface translation
-| ENABLE_GLUT          | bool | OFF     | Build simple Glut frontend
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
 | ENABLE_QT            | bool | ON      | Build Qt frontend
 | ENABLE_SDL           | bool | OFF     | Build SDL frontend
@@ -393,8 +388,8 @@ On Windows systems two additonal options are supported:
 Please note that not all options are compatible:
 - `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
   be disabled if any of this is set.
-- `ENABLE_GLES` is not compatible with `ENABLE_GLUT` and with `ENABLE_QT` if
-  your `glut` or Qt5 installation don't support OpenGL ES.
+- `ENABLE_GLES` is not compatible with `ENABLE_QT` if your Qt installation
+  doesn't support OpenGL ES.
 
 ## Installing the content
 
@@ -427,6 +422,5 @@ Here's the table which provides executable file names accordingly to interface:
 |-----------|----------------|
 | Qt5       | celestia-qt
 | GTK       | celestia-gtk
-| GLUT      | celestia-glut
 | SDL       | celestia-sdl
 | WIN       | celestia-win
