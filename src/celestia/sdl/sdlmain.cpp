@@ -24,6 +24,9 @@
 #else
 #include <SDL_opengl.h>
 #endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
 
@@ -55,13 +58,30 @@ class SDL_Application
     }
     ~SDL_Application();
 
+    enum class EventHandleResult
+    {
+        Handled,
+        Ignored,
+        NoNewEvent,
+        Quit,
+    };
+
+    enum class RunLoopState
+    {
+        Normal,
+        Quit,
+    };
+
     static std::shared_ptr<SDL_Application> init(std::string_view, int, int);
 
     bool createOpenGLWindow();
 
     bool initCelestiaCore();
     void run();
+    EventHandleResult handleEvent();
+    RunLoopState update();
     std::string_view getError() const;
+    float getScalingFactor() const;
 
  private:
     void display();
@@ -132,7 +152,7 @@ SDL_Application::createOpenGLWindow()
                                     SDL_WINDOWPOS_CENTERED,
                                     m_windowWidth,
                                     m_windowHeight,
-                                    SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     if (m_mainWindow == nullptr)
         return false;
 
@@ -152,6 +172,12 @@ SDL_Application::getError() const
     return SDL_GetError();
 }
 
+float
+SDL_Application::getScalingFactor() const
+{
+    return static_cast<float>(m_appCore->getScreenDpi()) / 96.0f;
+}
+
 void
 SDL_Application::display()
 {
@@ -164,6 +190,8 @@ SDL_Application::initCelestiaCore()
 {
     m_appCore = new CelestiaCore();
     m_appCore->setAlerter(new SDL_Alerter());
+    if (float screenDpi = 96.0f; SDL_GetDisplayDPI(0, &screenDpi, nullptr, nullptr) == 0)
+        m_appCore->setScreenDpi(static_cast<int>(screenDpi));
     bool ret = m_appCore->initSimulation();
     return ret;
 }
@@ -179,6 +207,56 @@ SDL_Application::configure() const
     renderer->setSolarSystemMaxDistance(config->SolarSystemMaxDistance);
 }
 
+SDL_Application::EventHandleResult
+SDL_Application::handleEvent()
+{
+    SDL_Event event;
+    if (SDL_PollEvent(&event) == 0)
+        return EventHandleResult::NoNewEvent;
+
+    switch (event.type)
+    {
+    case SDL_QUIT:
+        return EventHandleResult::Quit;
+    case SDL_TEXTINPUT:
+        handleTextInputEvent(event.text);
+        break;
+    case SDL_KEYDOWN:
+        handleKeyPressEvent(event.key);
+        break;
+    case SDL_KEYUP:
+        handleKeyReleaseEvent(event.key);
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        handleMousePressEvent(event.button);
+        break;
+    case SDL_MOUSEBUTTONUP:
+        handleMouseReleaseEvent(event.button);
+        break;
+    case SDL_MOUSEWHEEL:
+        handleMouseWheelEvent(event.wheel);
+        break;
+    case SDL_MOUSEMOTION:
+        handleMouseMotionEvent(event.motion);
+        break;
+    case SDL_WINDOWEVENT:
+        handleWindowEvent(event.window);
+        break;
+    default:
+        return EventHandleResult::Ignored;
+    }
+    return EventHandleResult::Handled;
+}
+
+#ifdef __EMSCRIPTEN__
+static void mainRunLoopHandler(void *arg)
+{
+    auto app = reinterpret_cast<SDL_Application *>(arg);
+    if (app->update() == SDL_Application::RunLoopState::Quit)
+        emscripten_cancel_main_loop();
+}
+#endif
+
 void
 SDL_Application::run()
 {
@@ -193,52 +271,38 @@ SDL_Application::run()
         m_appCore->setTimeZoneName(tzName);
         m_appCore->setTimeZoneBias(dstBias);
     }
+    SDL_GL_GetDrawableSize(m_mainWindow, &m_windowWidth, &m_windowHeight);
     m_appCore->resize(m_windowWidth, m_windowHeight);
 
     SDL_StartTextInput();
 
-    bool quit = false;
-    while (!quit)
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop_arg(mainRunLoopHandler, this, 0, 1);
+#else
+    while (update() != RunLoopState::Quit);
+#endif
+}
+
+SDL_Application::RunLoopState
+SDL_Application::update()
+{
+    bool stop = false;
+    while (!stop)
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event) != 0)
+        auto result = handleEvent();
+        switch (result)
         {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                quit = true;
-                break;
-            case SDL_TEXTINPUT:
-                handleTextInputEvent(event.text);
-                break;
-            case SDL_KEYDOWN:
-                handleKeyPressEvent(event.key);
-                break;
-            case SDL_KEYUP:
-                handleKeyReleaseEvent(event.key);
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                handleMousePressEvent(event.button);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                handleMouseReleaseEvent(event.button);
-                break;
-            case SDL_MOUSEWHEEL:
-                handleMouseWheelEvent(event.wheel);
-                break;
-            case SDL_MOUSEMOTION:
-                handleMouseMotionEvent(event.motion);
-                break;
-            case SDL_WINDOWEVENT:
-                handleWindowEvent(event.window);
-                break;
-            default:
-                break;
-            }
+        case EventHandleResult::Quit:
+            return RunLoopState::Quit;
+        case EventHandleResult::NoNewEvent:
+            stop = true;
+        default:
+            break;
         }
-        m_appCore->tick();
-        display();
     }
+    m_appCore->tick();
+    display();
+    return RunLoopState::Normal;
 }
 
 static int
@@ -401,7 +465,8 @@ SDL_Application::handleMousePressEvent(const SDL_MouseButtonEvent &event)
 
     m_lastX = event.x;
     m_lastY = event.y;
-    m_appCore->mouseButtonDown(event.x, event.y, button);
+    float scaling = getScalingFactor();
+    m_appCore->mouseButtonDown(static_cast<float>(event.x) * scaling, static_cast<float>(event.y) * scaling, button);
 }
 
 void
@@ -417,21 +482,26 @@ SDL_Application::handleMouseReleaseEvent(const SDL_MouseButtonEvent &event)
         {
             SDL_ShowCursor(SDL_ENABLE);
             m_cursorVisible = true;
+#ifndef __EMSCRIPTEN__
+            // Mouse warping is not supported in browser
             SDL_WarpMouseInWindow(m_mainWindow, m_lastX, m_lastY);
+#endif
         }
     }
     m_lastX = event.x;
     m_lastY = event.y;
-    m_appCore->mouseButtonUp(event.x, event.y, button);
+    float scaling = getScalingFactor();
+    m_appCore->mouseButtonUp(static_cast<float>(event.x) * scaling, static_cast<float>(event.y) * scaling, button);
 }
 
 void
 SDL_Application::handleMouseWheelEvent(const SDL_MouseWheelEvent &event)
 {
+    float scaling = getScalingFactor();
     if (event.y > 0) // scroll up
-        m_appCore->mouseWheel(-1.0f, 0);
+        m_appCore->mouseWheel(-scaling, 0);
     else if (event.y < 0) // scroll down
-        m_appCore->mouseWheel(1.0f, 0);
+        m_appCore->mouseWheel(scaling, 0);
 }
 
 void
@@ -454,8 +524,17 @@ SDL_Application::handleMouseMotionEvent(const SDL_MouseMotionEvent &event)
             m_lastX = event.x;
             m_lastY = event.y;
         }
-        m_appCore->mouseMove(x, y, buttons);
+
+        float scaling = getScalingFactor();
+        m_appCore->mouseMove(static_cast<float>(x) * scaling, static_cast<float>(y) * scaling, buttons);
+
+#ifdef __EMSCRIPTEN__
+        // Mouse warping is not supported in browser
+        m_lastX = event.x;
+        m_lastY = event.y;
+#else
         SDL_WarpMouseInWindow(m_mainWindow, m_lastX, m_lastY);
+#endif
     }
 }
 
@@ -465,8 +544,7 @@ SDL_Application::handleWindowEvent(const SDL_WindowEvent &event)
     switch (event.event)
     {
     case SDL_WINDOWEVENT_RESIZED:
-        m_windowWidth  = event.data1;
-        m_windowHeight = event.data2;
+        SDL_GL_GetDrawableSize(m_mainWindow, &m_windowWidth, &m_windowHeight);
         m_appCore->resize(m_windowWidth, m_windowHeight);
         break;
     default:
