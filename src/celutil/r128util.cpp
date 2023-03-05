@@ -17,6 +17,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 
 #define R128_IMPLEMENTATION
 #include "r128util.h"
