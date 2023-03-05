@@ -5,14 +5,14 @@
 namespace celestia
 {
 
-const float minAudioPan = -1.0f;
-const float maxAudioPan = 1.0f;
-const float defaultAudioPan = 0.0f;
-const float minAudioVolume = 0.0f;
-const float maxAudioVolume = 1.0f;
-const float defaultAudioVolume = 1.0f;
-const int minAudioChannel = 0;
-const int defaultAudioChannel = 0;
+constexpr inline float minAudioPan = -1.0f;
+constexpr inline float maxAudioPan = 1.0f;
+constexpr inline float defaultAudioPan = 0.0f;
+constexpr inline float minAudioVolume = 0.0f;
+constexpr inline float maxAudioVolume = 1.0f;
+constexpr inline float defaultAudioVolume = 1.0f;
+constexpr inline int minAudioChannel = 0;
+constexpr inline int defaultAudioChannel = 0;
 
 class AudioSession
 {
