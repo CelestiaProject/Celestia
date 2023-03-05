@@ -102,16 +102,19 @@ static float tempM[3][10] =
     { 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
 
-// Wolf-Rayet temperatures. From Lang's Astrophysical Data: Planets and
-// Stars.
-static float tempWN[10] =
+// Wolf-Rayet temperatures.
+static float tempWN[3][10] =
 {
-    50000, 50000, 50000, 50000, 47000, 43000, 39000, 32000, 29000, 29000
+    { 185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000 },
+    { 185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000 },
+    // WNh stars. Currently as a workaround until its split into its own class.
+    { 133000, 106000, 92000, 72000, 61000, 51000, 42000, 36000, 31000, 27000 },
 };
 
+// Note: The temperatures for early and late WCs are mostly for CSPNe.
 static float tempWC[10] =
 {
-    60000, 60000, 60000, 60000, 60000, 60000, 60000, 54000, 46000, 38000
+    225000, 190000, 165000, 140000, 125000, 105000, 83000, 70000, 58000, 46000
 };
 
 // These values are based on extrapolation of 6 samples.
@@ -569,7 +572,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             temp = tempM[lumIndex][subclass];
             break;
         case StellarClass::Spectral_WN:
-            temp = tempWN[subclass];
+            temp = tempWN[lumIndex][subclass];
             break;
         case StellarClass::Spectral_WC:
             temp = tempWC[subclass];
