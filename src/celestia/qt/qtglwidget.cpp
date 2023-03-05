@@ -96,11 +96,19 @@ void CelestiaGlWidget::paintGL()
 void CelestiaGlWidget::initializeGL()
 {
     using namespace celestia;
-    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
+#ifdef GL_ES
+    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GLES_2))
     {
-        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
+        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGLES 2.0."));
         exit(1);
     }
+#else
+    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
+    {
+        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
+        exit(1);
+    }
+#endif
 
     appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
 
