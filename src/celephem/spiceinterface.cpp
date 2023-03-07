@@ -94,7 +94,7 @@ bool LoadSpiceKernel(const fs::path& filepath)
     // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through
     // a metakernel.
-    if (getResidentKernelsSet()->insert(filepath).second)
+    if (!getResidentKernelsSet()->insert(filepath).second)
         return true;
 
     furnsh_c(filepath.string().c_str());
