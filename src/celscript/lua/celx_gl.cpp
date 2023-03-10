@@ -157,7 +157,7 @@ static int gl_BlendFunc(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.BlendFunc()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.BlendFunc must be a number", 0.0);
     int j = (int)celx.safeGetNumber(2, WrongType, "argument 2 to gl.BlendFunc must be a number", 0.0);
-    glBlendFunc(i,j);
+    glBlendFuncSeparate(i,j,GL_ZERO,GL_ONE);
     return 0;
 }
 
