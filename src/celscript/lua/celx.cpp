@@ -725,16 +725,13 @@ int LuaState::resume()
 void Celx_DoError(lua_State* l, const char* errorMsg)
 {
     lua_Debug debug;
-    if (lua_getstack(l, 1, &debug))
+    if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
     {
-        if (lua_getinfo(l, "l", &debug))
-        {
-            string buf = fmt::format(_("In line {}: {}"), debug.currentline, errorMsg);
-            lua_pushstring(l, buf.c_str());
-            lua_error(l);
-        }
+        string buf = fmt::format(_("In line {}: {}"), debug.currentline, errorMsg);
+        lua_pushstring(l, buf.c_str());
     }
-    lua_pushstring(l, errorMsg);
+    else
+        lua_pushstring(l, errorMsg);
     lua_error(l);
 }
 
