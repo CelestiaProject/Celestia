@@ -250,7 +250,7 @@ StellarClass ParseStellarClass(char *starType)
     unsigned short number = 5;
     int i = 0;
 
-    // Subdwarves (luminosity class VI) are prefixed with sd
+    // Subdwarfs (luminosity class VI) are prefixed with sd
     if (starType[i] == 's' && starType[i + 1] == 'd')
     {
         lum = StellarClass::Lum_VI;
