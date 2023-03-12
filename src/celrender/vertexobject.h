@@ -39,7 +39,7 @@ namespace celestia::render
  *            3. vo.setBufferData()
  *            4. vo.draw()
  */
-class VertexObject
+class VertexObject //NOSONAR
 {
  public:
     VertexObject(const VertexObject&) = delete;
@@ -191,6 +191,8 @@ class VertexObject
     void disableAttribArrays() const noexcept;
 
 private:
+    void cleanup() const noexcept;
+
     std::vector<PtrParams> m_attribParams;
 
     GLuint     m_vboId              { 0 };
@@ -204,9 +206,9 @@ class IndexedVertexObject : private VertexObject //NOSONAR
 {
 public:
     IndexedVertexObject(const IndexedVertexObject&) = delete;
-    IndexedVertexObject(IndexedVertexObject&&) = default;
+    IndexedVertexObject(IndexedVertexObject&&) noexcept;
     IndexedVertexObject& operator=(const IndexedVertexObject&) = delete;
-    IndexedVertexObject& operator=(IndexedVertexObject&&) = default;
+    IndexedVertexObject& operator=(IndexedVertexObject&&) noexcept;
 
     IndexedVertexObject() = default;
     explicit IndexedVertexObject(GLenum indexType);
@@ -268,6 +270,8 @@ public:
     void setIndexBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept;
 
 private:
+    void cleanup() const noexcept;
+
     GLuint     m_vioId              { 0 };
     GLenum     m_indexType          { 0 };
     GLenum     m_indexStreamType    { 0 };

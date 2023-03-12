@@ -50,6 +50,8 @@ VertexObject::VertexObject(VertexObject &&other) noexcept :
 
 VertexObject& VertexObject::operator=(VertexObject &&other) noexcept
 {
+    cleanup();
+
     m_attribParams = std::move(other.m_attribParams);
     m_vboId        = other.m_vboId;
     m_vaoId        = other.m_vaoId;
@@ -66,11 +68,7 @@ VertexObject& VertexObject::operator=(VertexObject &&other) noexcept
 
 VertexObject::~VertexObject()
 {
-    if (m_vaoId != 0 && isVAOSupported())
-        glDeleteVertexArrays(1, &m_vaoId);
-
-    if (m_vboId != 0)
-        glDeleteBuffers(1, &m_vboId);
+    cleanup();
 }
 
 void VertexObject::bind() noexcept
@@ -209,6 +207,16 @@ VertexObject::enableVertexAttribArray(GLint location) const noexcept
     glEnableVertexAttribArray(location);
 }
 
+inline void
+VertexObject::cleanup() const noexcept
+{
+    if (m_vaoId != 0 && isVAOSupported())
+        glDeleteVertexArrays(1, &m_vaoId);
+
+    if (m_vboId != 0)
+        glDeleteBuffers(1, &m_vboId);
+}
+
 void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
 {
     assert(location >= 0);
@@ -237,10 +245,40 @@ IndexedVertexObject::IndexedVertexObject(GLsizeiptr bufferSize, GLenum streamTyp
 {
 }
 
+IndexedVertexObject::IndexedVertexObject(IndexedVertexObject&& other) noexcept :
+    VertexObject(std::move(other)),
+    m_vioId(other.m_vioId),
+    m_indexType(other.m_indexType),
+    m_indexStreamType(other.m_indexStreamType),
+    m_indexSize(other.m_indexSize)
+{
+    other.m_vioId           = 0;
+    other.m_indexType       = 0;
+    other.m_indexStreamType = 0;
+    other.m_indexSize       = 0;
+}
+
+IndexedVertexObject& IndexedVertexObject::operator=(IndexedVertexObject&& other) noexcept
+{
+    cleanup();
+
+    VertexObject::operator=(std::move(other));
+    m_vioId           = other.m_vioId;
+    m_indexType       = other.m_indexType;
+    m_indexStreamType = other.m_indexStreamType;
+    m_indexSize       = other.m_indexSize;
+
+    other.m_vioId           = 0;
+    other.m_indexType       = 0;
+    other.m_indexStreamType = 0;
+    other.m_indexSize       = 0;
+
+    return *this;
+}
+
 IndexedVertexObject::~IndexedVertexObject()
 {
-    if (m_vioId != 0)
-        glDeleteBuffers(1, &m_vioId);
+    cleanup();
 }
 
 void
@@ -302,6 +340,13 @@ void
 IndexedVertexObject::setIndexBufferData(const void* data, GLintptr offset, GLsizeiptr size) const noexcept
 {
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
+}
+
+inline void
+IndexedVertexObject::cleanup() const noexcept
+{
+    if (m_vioId != 0)
+        glDeleteBuffers(1, &m_vioId);
 }
 
 } // namespace
