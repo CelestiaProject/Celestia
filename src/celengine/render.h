@@ -24,7 +24,6 @@
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
 #include <celengine/textlayout.h>
-#include <celrender/vertexobject.h>
 
 class RendererWatcher;
 class FrameTree;
@@ -39,6 +38,11 @@ class FramebufferObject;
 namespace celestia
 {
 class Rect;
+namespace gl
+{
+class Buffer;
+class VertexObject;
+}
 namespace render
 {
 class AsterismRenderer;
@@ -46,6 +50,7 @@ class AtmosphereRenderer;
 class BoundariesRenderer;
 class CometRenderer;
 class EclipticLineRenderer;
+class LargeStarRenderer;
 }
 }
 
@@ -78,19 +83,6 @@ struct SecondaryIlluminator
     float           reflectedIrradiance;  // albedo times total irradiance from direct sources
 };
 
-
-enum class VOType
-{
-    Marker     = 0,
-    AxisArrow  = 1,
-    Rectangle  = 2,
-    Terminator = 3,
-    LargeStar  = 4,
-    AxisLetter = 5,
-    MarkerLine = 6,
-    Ecliptic   = 7,
-    Count      = 8,
-};
 
 enum class RenderMode
 {
@@ -161,7 +153,8 @@ class Renderer
 
     bool getInfo(std::map<std::string, std::string>& info) const;
 
-    enum {
+    enum
+    {
         NoLabels            = 0x000,
         StarLabels          = 0x001,
         PlanetLabels        = 0x002,
@@ -425,8 +418,6 @@ class Renderer
                              float size = 0.0f);
 
     ShaderManager& getShaderManager() const { return *shaderManager; }
-
-    celestia::render::VertexObject& getVertexObject(VOType, GLenum, GLsizeiptr, GLenum);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
@@ -782,7 +773,9 @@ class Renderer
     unsigned m_shadowMapSize { 0 };
     std::unique_ptr<FramebufferObject> m_shadowFBO;
 
-    std::array<celestia::render::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
+    std::unique_ptr<celestia::gl::VertexObject> m_markerVO;
+    std::unique_ptr<celestia::gl::Buffer> m_markerBO;
+    bool m_markerDataInitialized{ false };
 
     // Saturation magnitude used to calculate a point star size
     float satPoint;
@@ -792,6 +785,7 @@ class Renderer
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
+    std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
 
     // Location markers
  public:

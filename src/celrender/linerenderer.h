@@ -22,10 +22,14 @@ class CelestiaGLProgram;
 class Renderer;
 struct Matrices;
 
+namespace celestia::gl
+{
+class Buffer;
+class VertexObject;
+}
+
 namespace celestia::render
 {
-class VertexObject;
-
 /**
  * \class LineRenderer linerenderer.h celrender/linerenderer.h
  *
@@ -267,22 +271,24 @@ private:
     float width_multiplyer() const;
     float rasterized_width() const;
 
-    std::vector<LineVertex>         m_verticesTr;
-    std::vector<LineSegment>        m_segments;
-    std::vector<Vertex>             m_vertices;
-    std::vector<Color>              m_colors;
-    std::unique_ptr<VertexObject>   m_lnVertexObj;
-    std::unique_ptr<VertexObject>   m_trVertexObj;
-    const Renderer                 &m_renderer;
-    float                           m_width;
-    PrimType                        m_primType;
-    StorageType                     m_storageType;
-    VertexFormat                    m_format;
-    int                             m_hints             { 0     };
-    bool                            m_useTriangles      { false };
-    bool                            m_triangulated      { false };
-    bool                            m_loopDone          { false };
-    bool                            m_inUse             { false };
-    CelestiaGLProgram              *m_prog              { nullptr };
+    std::vector<LineVertex>             m_verticesTr;
+    std::vector<LineSegment>            m_segments;
+    std::vector<Vertex>                 m_vertices;
+    std::vector<Color>                  m_colors;
+    std::unique_ptr<gl::VertexObject>   m_lnVO;
+    std::unique_ptr<gl::VertexObject>   m_trVO;
+    std::unique_ptr<gl::Buffer>         m_lnBO;
+    std::unique_ptr<gl::Buffer>         m_trBO;
+    const Renderer                     &m_renderer;
+    float                               m_width;
+    PrimType                            m_primType;
+    StorageType                         m_storageType;
+    VertexFormat                        m_format;
+    int                                 m_hints{ 0 };
+    bool                                m_useTriangles{ false };
+    bool                                m_triangulated{ false };
+    bool                                m_loopDone{ false };
+    bool                                m_inUse{ false };
+    CelestiaGLProgram                  *m_prog{ nullptr };
 };
 }

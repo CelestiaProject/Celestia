@@ -59,8 +59,10 @@
 #include <celrender/boundariesrenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
+#include <celrender/largestarrenderer.h>
 #include <celrender/linerenderer.h>
-#include <celrender/vertexobject.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/arrayvector.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
@@ -91,8 +93,8 @@ using celestia::render::AtmosphereRenderer;
 using celestia::render::BoundariesRenderer;
 using celestia::render::CometRenderer;
 using celestia::render::EclipticLineRenderer;
+using celestia::render::LargeStarRenderer;
 using celestia::render::LineRenderer;
-using celestia::render::VertexObject;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -276,7 +278,8 @@ Renderer::Renderer() :
     objectAnnotationSetOpen(false),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
-    m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this))
+    m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
+    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
@@ -287,7 +290,6 @@ Renderer::Renderer() :
         fonts[i] = nullptr;
     }
     shaderManager = new ShaderManager();
-    m_VertexObjects.fill(nullptr);
 }
 
 
@@ -296,9 +298,6 @@ Renderer::~Renderer()
     delete pointStarVertexBuffer;
     delete glareVertexBuffer;
     delete shaderManager;
-
-    for (auto p : m_VertexObjects)
-        delete p;
 
     m_atmosphereRenderer->deinitGL();
     m_cometRenderer->deinitGL();
@@ -546,6 +545,9 @@ bool Renderer::init(int winWidth, int winHeight, DetailOptions& _detailOptions)
 
     m_atmosphereRenderer->initGL();
     m_cometRenderer->initGL();
+
+    m_markerVO = std::make_unique<celestia::gl::VertexObject>();
+    m_markerBO = std::make_unique<celestia::gl::Buffer>();
 
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
@@ -1697,57 +1699,6 @@ void Renderer::draw(const Observer& observer,
 #endif
 }
 
-static
-void renderLargePoint(Renderer &renderer,
-                      const Vector3f &position,
-                      const Color &color,
-                      float size,
-                      const Matrices &mvp)
-{
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-    ps.depthTest = true;
-    renderer.setPipelineState(ps);
-
-    auto *prog = renderer.getShaderManager().getShader("largestar");
-    if (prog == nullptr)
-        return;
-
-    // Draw billboard for large points
-    prog->use();
-    prog->samplerParam("starTex") = 0;
-    prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
-    prog->vec4Param("color") = color.toVector4();
-    prog->vec3Param("center") = position;
-    prog->floatParam("pointWidth") = size / renderer.getWindowWidth() * 2.0f;
-    prog->floatParam("pointHeight") = size / renderer.getWindowHeight() * 2.0f;
-
-    auto &vo = renderer.getVertexObject(VOType::LargeStar, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    vo.bind();
-    if (!vo.initialized())
-    {
-        const float texCoords[] = {
-            // offset     // texCoords
-            -0.5f,  0.5f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f, 1.0f,
-             0.5f, -0.5f, 1.0f, 1.0f,
-
-            -0.5f,  0.5f, 0.0f, 0.0f,
-             0.5f, -0.5f, 1.0f, 1.0f,
-             0.5f,  0.5f, 1.0f, 0.0f,
-        };
-        vo.allocate(sizeof(texCoords), texCoords);
-        vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
-                                2, GL_FLOAT, false, 4 * sizeof(float), 0);
-        vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                                2, GL_FLOAT, false, 4 * sizeof(float), 2 * sizeof(float));
-    }
-
-    vo.draw(GL_TRIANGLES, 6);
-    vo.unbind();
-}
-
 static Eigen::Vector3f
 calculateQuadCenter(const Eigen::Quaternionf &cameraOrientation,
                     const Eigen::Vector3f &position,
@@ -1859,7 +1810,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             gaussianDiscTex->bind();
 
         if (pointSize > gl::maxPointSize)
-            renderLargePoint(*this, position, {color, alpha}, pointSize, mvp);
+            m_largeStarRenderer->render(position, {color, alpha}, pointSize, mvp);
         else
             pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
 
@@ -1874,7 +1825,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             Eigen::Vector3f center = calculateQuadCenter(m_cameraOrientation, position, radius);
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
-                renderLargePoint(*this, center, {color, glareAlpha}, glareSize, mvp);
+                m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
             else
                 glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
         }
@@ -4877,16 +4828,6 @@ bool Renderer::getInfo(map<string, string>& info) const
         info["Extensions"] = s;
 
     return true;
-}
-
-VertexObject&
-Renderer::getVertexObject(VOType owner, GLenum /*type*/, GLsizeiptr size, GLenum stream)
-{
-    auto i = static_cast<int>(owner);
-    if (m_VertexObjects[i] == nullptr)
-        m_VertexObjects[i] = new VertexObject(size, stream);
-
-    return *m_VertexObjects[i];
 }
 
 FramebufferObject*

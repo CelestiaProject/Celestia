@@ -12,12 +12,17 @@
 
 #include <memory>
 #include <Eigen/Core>
-#include <celrender/vertexobject.h>
 
 class Color;
 class Renderer;
 class Texture;
 class CelestiaGLProgram;
+
+namespace celestia::gl
+{
+class Buffer;
+class VertexObject;
+}
 
 // PointStarVertexBuffer is used when hardware supports point sprites.
 class PointStarVertexBuffer
@@ -60,7 +65,11 @@ private:
     bool                            m_pointSizeFromVertex   { false };
     float                           m_pointScale            { 1.0f };
     CelestiaGLProgram              *m_prog                  { nullptr };
-    celestia::render::VertexObject  m_vao;
+
+    std::unique_ptr<celestia::gl::Buffer>        m_bo;
+    std::unique_ptr<celestia::gl::VertexObject>  m_vo1;
+    std::unique_ptr<celestia::gl::VertexObject>  m_vo2;
+    bool m_initialized{ false };
 
     static PointStarVertexBuffer    *current;
 

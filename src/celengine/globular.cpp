@@ -24,7 +24,8 @@
 #include <celmath/intersect.h>
 #include <celmath/randutils.h>
 #include <celmath/ray.h>
-#include <celrender/vertexobject.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
 #include <celutil/gettext.h>
 #include "globular.h"
@@ -33,7 +34,8 @@
 #include "render.h"
 #include "texture.h"
 
-using celestia::render::VertexObject;
+namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 namespace
 {
@@ -48,9 +50,12 @@ struct GlobularForm
     };
 
     std::vector<Blob> gblobs{ };
-    mutable VertexObject vo{ 0, GL_STATIC_DRAW };
+    mutable gl::Buffer bo{ util::NoCreateT{} };
+    mutable gl::VertexObject vo{ util::NoCreateT{} };
+    mutable bool GLDataInitialized{ false };
 };
 
+using BlobVector = std::vector<GlobularForm::Blob>;
 
 constexpr int cntrTexWidth  = 512;
 constexpr int cntrTexHeight = 512;
@@ -193,8 +198,8 @@ void colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
     pixel[2] = static_cast<std::uint8_t>(b * 255.99f);
 }
 
-void initGlobularData(VertexObject& vo,
-                      const std::vector<GlobularForm::Blob>& points)
+void
+initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, const BlobVector &points)
 {
     struct GlobularVtx
     {
@@ -251,16 +256,29 @@ void initGlobularData(VertexObject& vo,
         globularVtx.push_back(vtx);
     }
 
-    vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
-    vo.setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex,
-                            3, GL_SHORT, true, sizeof(GlobularVtx), offsetof(GlobularVtx, position));
-    vo.setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                            3, GL_UNSIGNED_BYTE, true, sizeof(GlobularVtx), offsetof(GlobularVtx, texCoord));
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, util::array_view<GlobularVtx>(globularVtx));
+    vo = gl::VertexObject(gl::VertexObject::Primitive::Points);
+    vo.addVertexBuffer(
+        bo,
+        CelestiaGLProgram::VertexCoordAttributeIndex,
+        3,
+        gl::VertexObject::DataType::Short,
+        true,
+        sizeof(GlobularVtx),
+        offsetof(GlobularVtx, position));
+    vo.addVertexBuffer(
+        bo,
+        CelestiaGLProgram::TextureCoord0AttributeIndex,
+        3,
+        gl::VertexObject::DataType::UnsignedByte,
+        true,
+        sizeof(GlobularVtx),
+        offsetof(GlobularVtx, texCoord));
 }
 
 void buildGlobularForm(GlobularForm& globularForm, float c)
 {
-    std::vector<GlobularForm::Blob> globularPoints;
+    BlobVector globularPoints;
 
     float rRatio = std::pow(10.0f, c); //  = r_t / r_c
     float prob;
@@ -622,10 +640,13 @@ void Globular::render(const Eigen::Vector3f& offset,
      * distance from center or resolution increases sufficiently.
      */
 
-    VertexObject& vo = form->vo;
-    vo.bind();
-    if (!vo.initialized())
-        initGlobularData(vo, form->gblobs);
+    gl::VertexObject& vo = form->vo;
+
+    if (!form->GLDataInitialized)
+    {
+        initGlobularData(form->bo, vo, form->gblobs);
+        form->GLDataInitialized = true;
+    }
 
     glActiveTexture(GL_TEXTURE0);
     globularInfoManager->getCenterTex(formIndex)->bind();
@@ -647,7 +668,7 @@ void Globular::render(const Eigen::Vector3f& offset,
     ps.smoothLines = true;
     renderer->setPipelineState(ps);
 
-    vo.draw(GL_TRIANGLE_FAN, 4);
+    vo.draw(gl::VertexObject::Primitive::TriangleFan, 4);
 
     /*! Next, render globular cluster via distinct "star" sprites (globularTex)
      * for sufficiently large resolution and distance from center of globular.
@@ -676,9 +697,8 @@ void Globular::render(const Eigen::Vector3f& offset,
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
 
-    vo.draw(GL_POINTS, CalculateSpriteCount(form, detail, brightness, minimumFeatureSize), 4);
+    vo.draw(gl::VertexObject::Primitive::Points, CalculateSpriteCount(form, detail, brightness, minimumFeatureSize), 4);
 
-    vo.unbind();
 #ifndef GL_ES
     glDisable(GL_POINT_SPRITE);
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);

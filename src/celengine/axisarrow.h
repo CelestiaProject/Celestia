@@ -8,8 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_AXISARROW_H_
-#define _CELENGINE_AXISARROW_H_
+#pragma once
 
 #include <celutil/color.h>
 #include <celengine/referencemark.h>
@@ -20,14 +19,13 @@
 
 class Body;
 
-
 class ArrowReferenceMark : public ReferenceMark
 {
- public:
+public:
     ArrowReferenceMark(const Body& _body);
 
     void setSize(float _size);
-    void setColor(Color _color);
+    void setColor(const Color& _color);
 
     void render(Renderer* renderer,
                 const Eigen::Vector3f& position,
@@ -46,20 +44,19 @@ class ArrowReferenceMark : public ReferenceMark
 
     virtual Eigen::Vector3d getDirection(double tdb) const = 0;
 
- protected:
+protected:
     const Body& body;
 
- private:
+private:
     float size;
     Color color;
     float opacity;
     ShaderProperties shadprop;
 };
 
-
 class AxesReferenceMark : public ReferenceMark
 {
- public:
+public:
     AxesReferenceMark(const Body& _body);
 
     void setSize(float _size);
@@ -82,10 +79,10 @@ class AxesReferenceMark : public ReferenceMark
 
     virtual Eigen::Quaterniond getOrientation(double tdb) const = 0;
 
- protected:
+protected:
     const Body& body;
 
- private:
+private:
     float size;
     float opacity;
     ShaderProperties shadprop;
@@ -144,5 +141,3 @@ public:
 private:
     Selection target;
 };
-
-#endif // _CELENGINE_AXISARROW_H_

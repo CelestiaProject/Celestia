@@ -9,10 +9,14 @@ set(CELRENDER_SOURCES
   cometrenderer.h
   eclipticlinerenderer.cpp
   eclipticlinerenderer.h
+  largestarrenderer.cpp
+  largestarrenderer.h
   linerenderer.cpp
   linerenderer.h
-  vertexobject.cpp
-  vertexobject.h
+  gl/buffer.cpp
+  gl/buffer.h
+  gl/vertexobject.cpp
+  gl/vertexobject.h
 )
 
 add_library(celrender OBJECT ${CELRENDER_SOURCES})
