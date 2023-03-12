@@ -29,15 +29,18 @@ namespace celmath
 class Frustum;
 }
 
+namespace celestia::gl
+{
+class Buffer;
+class VertexObject;
+}
 namespace celestia::render
 {
-class IndexedVertexObject;
-
 class AtmosphereRenderer
 {
 public:
     explicit AtmosphereRenderer(Renderer &renderer);
-    ~AtmosphereRenderer() = default;
+    ~AtmosphereRenderer();
     AtmosphereRenderer(const AtmosphereRenderer&) = delete;
     AtmosphereRenderer(AtmosphereRenderer&&) = delete;
     AtmosphereRenderer& operator=(const AtmosphereRenderer&) = delete;
@@ -77,8 +80,6 @@ private:
         float                     pixSize,
         bool                      lit);
 
-    void initVertexObject();
-
     struct SkyVertex
     {
         std::array<float,        3> position;
@@ -94,12 +95,13 @@ private:
         float cosSkyCapAltitude;
     };
 
-    Renderer                               &m_renderer;
-    std::vector<SkyVertex>                  m_skyVertices;
-    std::vector<unsigned short>             m_skyIndices;
-    std::vector<SkyContourPoint>            m_skyContour;
-    std::unique_ptr<IndexedVertexObject>    m_vo;
-
-    bool                                    m_initialized   { false };
+    Renderer                         &m_renderer;
+    std::vector<SkyVertex>            m_skyVertices;
+    std::vector<unsigned short>       m_skyIndices;
+    std::vector<SkyContourPoint>      m_skyContour;
+    std::unique_ptr<gl::Buffer>       m_bo;
+    std::unique_ptr<gl::Buffer>       m_io;
+    std::unique_ptr<gl::VertexObject> m_vo;
+    bool                              m_initialized{ false };
 };
 } // namespace celestia::render

@@ -24,7 +24,8 @@
 #include <celmath/randutils.h>
 #include <celmath/ray.h>
 #include <celmath/vecgl.h>
-#include <celrender/vertexobject.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "galaxy.h"
@@ -34,7 +35,8 @@
 #include "render.h"
 #include "texture.h"
 
-using celestia::render::VertexObject;
+namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 namespace
 {
@@ -58,7 +60,9 @@ class GalacticForm
 public:
     BlobVector blobs;
     Eigen::Vector3f scale;
-    mutable VertexObject vo{ 0, GL_STATIC_DRAW };
+    mutable gl::VertexObject vo{ util::NoCreateT{} };
+    mutable gl::Buffer bo{ util::NoCreateT{} };
+    mutable bool initialized{ false };
 };
 
 constexpr unsigned int RequiredIndexCount(unsigned int vCount)
@@ -175,8 +179,8 @@ void draw(std::size_t vCount, const GalaxyVertex *v, std::size_t iCount, const G
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GalaxyVertex) * vCount, v);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLushort) * iCount, indices);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GalaxyVertex) * vCount, v, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * iCount, indices, GL_STREAM_DRAW);
 
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           3, GL_FLOAT, GL_FALSE,
@@ -218,7 +222,8 @@ void BindTextures()
     colorTex->bind();
 }
 
-void initGalaxyData(VertexObject& vo,
+void initGalaxyData(gl::Buffer& bo,
+                    gl::VertexObject& vo,
                     const BlobVector& points,
                     GLint sizeLoc,
                     GLint colorLoc,
@@ -252,32 +257,38 @@ void initGalaxyData(VertexObject& vo,
         galaxyVtx.push_back(v);
     }
 
-    vo.allocate(sizeof(GalaxyVtx) * galaxyVtx.size(), galaxyVtx.data());
-    vo.setVertexAttribArray(
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, galaxyVtx);
+    vo = gl::VertexObject();
+
+    vo.addVertexBuffer(
+        bo,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         3,
-        GL_SHORT,
+        gl::VertexObject::DataType::Short,
         true,
         sizeof(GalaxyVtx),
         offsetof(GalaxyVtx, position));
-    vo.setVertexAttribArray(
+    vo.addVertexBuffer(
+        bo,
         sizeLoc,
         1,
-        GL_UNSIGNED_SHORT,
+        gl::VertexObject::DataType::UnsignedShort,
         true,
         sizeof(GalaxyVtx),
         offsetof(GalaxyVtx, size));
-    vo.setVertexAttribArray(
+    vo.addVertexBuffer(
+        bo,
         colorLoc,
         1,
-        GL_UNSIGNED_BYTE,
+        gl::VertexObject::DataType::UnsignedByte,
         true,
         sizeof(GalaxyVtx),
         offsetof(GalaxyVtx, colorIndex));
-    vo.setVertexAttribArray(
+    vo.addVertexBuffer(
+        bo,
         brightLoc,
         1,
-        GL_UNSIGNED_BYTE,
+        gl::VertexObject::DataType::UnsignedByte,
         true,
         sizeof(GalaxyVtx),
         offsetof(GalaxyVtx, brightness));
@@ -823,18 +834,17 @@ void Galaxy::renderGL3(const Eigen::Vector3f& offset,
             nPoints = std::min(nPoints, 1 << power);
     }
 
-    VertexObject& vo = galacticForm->vo;
-    vo.bind();
-    if (!vo.initialized())
+    gl::VertexObject& vo = galacticForm->vo;
+    if (!galacticForm->initialized)
     {
         auto s = prog->attribIndex("in_Size");
         auto c = prog->attribIndex("in_ColorIndex");
         auto b = prog->attribIndex("in_Brightness");
-        initGalaxyData(vo, points, s, c, b);
+        initGalaxyData(galacticForm->bo, vo, points, s, c, b);
+        galacticForm->initialized = true;
     }
 
-    vo.draw(GL_POINTS, nPoints);
-    vo.unbind();
+    vo.draw(gl::VertexObject::Primitive::Points, nPoints);
     glActiveTexture(GL_TEXTURE0);
 }
 

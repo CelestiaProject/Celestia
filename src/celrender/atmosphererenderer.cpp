@@ -26,7 +26,8 @@
 #include <celmath/vecgl.h>
 #include <celutil/color.h>
 #include <celutil/indexlist.h>
-#include "vertexobject.h"
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 
 using celestia::util::BuildIndexList;
 using celestia::util::IndexListCapacity;
@@ -49,6 +50,8 @@ AtmosphereRenderer::AtmosphereRenderer(Renderer &renderer) :
 {
 }
 
+AtmosphereRenderer::~AtmosphereRenderer() = default;
+
 void AtmosphereRenderer::initGL()
 {
     if (m_initialized)
@@ -60,17 +63,35 @@ void AtmosphereRenderer::initGL()
     m_skyIndices.reserve(MaxIndices);
     m_skyContour.reserve(MaxSkySlices + 1);
 
-    m_vo = std::make_unique<IndexedVertexObject>(
-        MaxVertices * sizeof(SkyVertex),
-        GL_STREAM_DRAW,
-        GL_UNSIGNED_SHORT,
-        MaxIndices * sizeof(unsigned short));
+    m_vo = std::make_unique<gl::VertexObject>();
+    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
+    m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
+
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::VertexCoordAttributeIndex,
+        3,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(SkyVertex),
+        offsetof(SkyVertex, position));
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::ColorAttributeIndex,
+        4,
+        gl::VertexObject::DataType::UnsignedByte,
+        true,
+        sizeof(SkyVertex),
+        offsetof(SkyVertex, color));
+    m_vo->setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 void AtmosphereRenderer::deinitGL()
 {
     m_initialized = false;
     m_vo = nullptr;
+    m_bo = nullptr;
+    m_io = nullptr;
 }
 
 void
@@ -289,26 +310,6 @@ AtmosphereRenderer::computeLegacy(
 }
 
 void
-AtmosphereRenderer::initVertexObject()
-{
-    m_vo->bind();
-    m_vo->setVertexAttribArray(
-        CelestiaGLProgram::VertexCoordAttributeIndex,
-        3,
-        GL_FLOAT,
-        false,
-        sizeof(SkyVertex),
-        offsetof(SkyVertex, position));
-    m_vo->setVertexAttribArray(
-        CelestiaGLProgram::ColorAttributeIndex,
-        4,
-        GL_UNSIGNED_BYTE,
-        true,
-        sizeof(SkyVertex),
-        offsetof(SkyVertex, color));
-}
-
-void
 AtmosphereRenderer::renderLegacy(
     const Atmosphere         &atmosphere,
     const LightingState      &ls,
@@ -335,20 +336,12 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    if (m_vo->initialized())
-        m_vo->bindWritable();
-    else
-        initVertexObject();
-
-    m_vo->allocate(nullptr, nullptr); // allocate or orphan GPU memory buffers
-
-    m_vo->setBufferData(m_skyVertices.data(), 0, m_skyVertices.size() * sizeof(SkyVertex));
-    m_vo->setIndexBufferData(m_skyIndices.data(), 0, m_skyIndices.size() * sizeof(unsigned short));
+    m_bo->bind().invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_io->bind().invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);
-    m_vo->draw(GL_TRIANGLE_STRIP, static_cast<int>(m_skyIndices.size()), 0);
-    m_vo->unbind();
+    m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, static_cast<int>(m_skyIndices.size()));
 
     m_skyIndices.clear();
     m_skyVertices.clear();

@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include <string>
-#include <celengine/glsupport.h>
-#include <celrender/vertexobject.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 
 class FramebufferObject;
 class Renderer;
@@ -21,7 +20,7 @@ class WarpMesh;
 
 class ViewportEffect
 {
- public:
+public:
     virtual ~ViewportEffect() = default;
 
     virtual bool preprocess(Renderer*, FramebufferObject*);
@@ -29,28 +28,30 @@ class ViewportEffect
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
 
- private:
+private:
     GLint oldFboId;
 };
 
 class PassthroughViewportEffect : public ViewportEffect
 {
- public:
+public:
     PassthroughViewportEffect();
     ~PassthroughViewportEffect() override = default;
 
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
- private:
-    celestia::render::VertexObject vo;
+private:
+    celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
+    celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
 
-    void initializeVO(celestia::render::VertexObject&);
-    void draw(celestia::render::VertexObject&);
+    void initialize();
+
+    bool initialized{ false };
 };
 
 class WarpMeshViewportEffect : public ViewportEffect
 {
- public:
+public:
     WarpMeshViewportEffect(WarpMesh *mesh);
     ~WarpMeshViewportEffect() override = default;
 
@@ -58,10 +59,13 @@ class WarpMeshViewportEffect : public ViewportEffect
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
     bool distortXY(float& x, float& y) override;
 
- private:
-    celestia::render::VertexObject vo;
+private:
+    celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
+    celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
+
     WarpMesh *mesh;
 
-    void initializeVO(celestia::render::VertexObject&);
-    void draw(celestia::render::VertexObject&);
+    void initialize();
+
+    bool initialized{ false };
 };

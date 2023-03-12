@@ -22,7 +22,6 @@
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celutil/arrayvector.h>
-#include <celutil/array_view.h>
 
 #define PTR(p) (reinterpret_cast<const void*>(static_cast<std::uintptr_t>(p)))
 
@@ -454,10 +453,10 @@ void LODSphereMesh::render(unsigned int attributes,
     assert(expectedIndices == indices.size());
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-                    0,
-                    indices.size() * sizeof(unsigned short),
-                    indices.data());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 indices.size() * sizeof(unsigned short),
+                 indices.data(),
+                 GL_DYNAMIC_DRAW);
 
     // Compute the size of a vertex
     vertexSize = 3;
@@ -735,7 +734,8 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     assert(expectedVertices == vertices.size());
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
 
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;

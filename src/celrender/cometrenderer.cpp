@@ -25,7 +25,8 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/indexlist.h>
-#include "vertexobject.h"
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 
 
 using celestia::util::BuildIndexList;
@@ -51,9 +52,11 @@ constexpr float CometTailAttenDistSol = astro::AUtoKilometers(5.0f);
 CometRenderer::CometRenderer(Renderer &renderer) :
     m_renderer(renderer),
     m_vertices(std::make_unique<CometTailVertex[]>(MaxVertices)),
-    m_indices(std::make_unique<unsigned short[]>(MaxIndices))
+    m_indices(std::make_unique<ushort[]>(MaxIndices))
 {
 }
+
+CometRenderer::~CometRenderer() = default;
 
 void
 CometRenderer::initGL()
@@ -66,11 +69,35 @@ CometRenderer::initGL()
     m_prog = m_renderer.getShaderManager().getShader("comet");
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
-    m_vo = std::make_unique<IndexedVertexObject>(
-            MaxVertices * sizeof(CometTailVertex),
-            GL_STREAM_DRAW,
-            GL_UNSIGNED_SHORT,
-            MaxIndices * sizeof(unsigned short));
+    m_vo = std::make_unique<gl::VertexObject>();
+    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
+    m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
+
+    m_vo->addVertexBuffer(
+            *m_bo,
+            CelestiaGLProgram::VertexCoordAttributeIndex,
+            3,
+            gl::VertexObject::DataType::Float,
+            false,
+            sizeof(CometTailVertex),
+            offsetof(CometTailVertex, point))
+        .addVertexBuffer(
+            *m_bo,
+            CelestiaGLProgram::NormalAttributeIndex,
+            3,
+            gl::VertexObject::DataType::Float,
+            false,
+            sizeof(CometTailVertex),
+            offsetof(CometTailVertex, normal))
+        .addVertexBuffer(
+            *m_bo,
+            m_brightnessLoc,
+            1,
+            gl::VertexObject::DataType::Float,
+            false,
+            sizeof(CometTailVertex),
+            offsetof(CometTailVertex, brightness))
+        .setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 void
@@ -78,33 +105,8 @@ CometRenderer::deinitGL()
 {
     m_initialized = false;
     m_vo = nullptr;
-}
-
-void
-CometRenderer::initVertexObject()
-{
-    m_vo->bind();
-    m_vo->setVertexAttribArray(
-        CelestiaGLProgram::VertexCoordAttributeIndex,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(CometTailVertex),
-        offsetof(CometTailVertex, point));
-    m_vo->setVertexAttribArray(
-        CelestiaGLProgram::NormalAttributeIndex,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(CometTailVertex),
-        offsetof(CometTailVertex, normal));
-    m_vo->setVertexAttribArray(
-        m_brightnessLoc,
-        1,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(CometTailVertex),
-        offsetof(CometTailVertex, brightness));
+    m_bo = nullptr;
+    m_io = nullptr;
 }
 
 void
@@ -253,20 +255,17 @@ CometRenderer::render(const Body &body,
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
-    if (m_vo->initialized())
-        m_vo->bindWritable();
-    else
-        initVertexObject();
+    m_bo->bind().invalidateData().setData(
+        util::array_view<CometTailVertex>(m_vertices.get(), MaxVertices),
+        gl::Buffer::BufferUsage::StreamDraw);
 
-    m_vo->allocate(nullptr, nullptr); // allocate or orphan GPU memory buffers
-
-    m_vo->setBufferData(m_vertices.get(), 0, sizeof(CometTailVertex) * nTailPoints * nTailSlices);
-    int count = IndexListCapacity(nTailSlices, nTailPoints);
-    m_vo->setIndexBufferData(m_indices.get(), 0, count * sizeof(m_indices[0]));
+    m_io->bind().invalidateData().setData(
+        util::array_view<ushort>(m_indices.get(), MaxIndices),
+        gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);
-    m_vo->draw(GL_TRIANGLE_STRIP, count, 0);
-    m_vo->unbind();
+    int count = IndexListCapacity(nTailSlices, nTailPoints);
+    m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, count);
     glEnable(GL_CULL_FACE);
 }
 }

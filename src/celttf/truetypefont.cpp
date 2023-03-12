@@ -9,15 +9,18 @@
 
 #include <algorithm>
 #include <array>
+#include <map>
+#include <memory>
+#include <system_error>
+#include <vector>
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <ft2build.h>
-#include <map>
-#include <system_error>
-#include <vector>
 #include FT_FREETYPE_H
 #include "truetypefont.h"
 
@@ -29,6 +32,7 @@
 
 using celestia::compat::from_chars;
 using celestia::util::GetLogger;
+namespace gl = celestia::gl;
 
 struct Glyph
 {
@@ -68,9 +72,9 @@ struct TextureFontPrivate
     TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
     TextureFontPrivate() = delete;
-    TextureFontPrivate(const TextureFontPrivate &) = default;
+    TextureFontPrivate(const TextureFontPrivate &) = delete;
     TextureFontPrivate(TextureFontPrivate &&) = default;
-    TextureFontPrivate &operator=(const TextureFontPrivate &) = default;
+    TextureFontPrivate &operator=(const TextureFontPrivate &) = delete;
     TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
     std::pair<float, float> render(std::wstring_view line, float x, float y);
@@ -113,14 +117,13 @@ struct TextureFontPrivate
     bool                    m_shaderInUse{ false };
     std::vector<FontVertex> m_fontVertices;
 
-    static GLuint m_vbo;
-    static GLuint m_vio;
+    gl::VertexObject m_vao;
+    gl::Buffer       m_vbo{ gl::Buffer::TargetHint::Array };
+    gl::Buffer       m_vio{ gl::Buffer::TargetHint::ElementArray };
+
     static constexpr std::size_t MaxVertices = 256; // This gives BO size 4kB, MUST be multiply of 4
     static constexpr std::size_t MaxIndices = MaxVertices / 4 * 6;
 };
-
-GLuint TextureFontPrivate::m_vbo = 0;
-GLuint TextureFontPrivate::m_vio = 0;
 
 namespace
 {
@@ -144,8 +147,24 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
 {
     m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
     m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
-    if (m_vbo == 0) glGenBuffers(1, &m_vbo);
-    if (m_vio == 0) glGenBuffers(1, &m_vio);
+
+    m_vao.addVertexBuffer(
+        m_vbo,
+        CelestiaGLProgram::VertexCoordAttributeIndex,
+        2,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(FontVertex),
+        offsetof(FontVertex, x));
+    m_vao.addVertexBuffer(
+        m_vbo,
+        CelestiaGLProgram::TextureCoord0AttributeIndex,
+        2,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(FontVertex),
+        offsetof(FontVertex, u));
+    m_vao.setIndexBuffer(m_vio, 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 TextureFontPrivate::~TextureFontPrivate()
@@ -477,9 +496,9 @@ TextureFontPrivate::flush()
 {
     if (m_fontVertices.size() < 4) return;
 
-    std::vector<unsigned short> indexes;
+    std::vector<std::uint16_t> indexes;
     indexes.reserve(MaxIndices);
-    for (unsigned short index = 0; index < static_cast<unsigned short>(m_fontVertices.size()); index += 4)
+    for (std::uint16_t index = 0; index < static_cast<std::uint16_t>(m_fontVertices.size()); index += 4)
     {
         indexes.push_back(index + 0);
         indexes.push_back(index + 1);
@@ -489,34 +508,11 @@ TextureFontPrivate::flush()
         indexes.push_back(index + 2);
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vio);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(FontVertex) * MaxVertices, nullptr, GL_STREAM_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MaxIndices, nullptr, GL_STREAM_DRAW);
-
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(FontVertex) * m_fontVertices.size(), m_fontVertices.data());
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLushort) * indexes.size(), indexes.data());
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          sizeof(FontVertex),
-                          reinterpret_cast<const void*>(offsetof(FontVertex, x)));
-    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          sizeof(FontVertex),
-                          reinterpret_cast<const void*>(offsetof(FontVertex, u)));
-    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, nullptr);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    m_vbo.bind().invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_vio.bind().invalidateData().setData(indexes, gl::Buffer::BufferUsage::StreamDraw);
+    m_vao.draw(gl::VertexObject::Primitive::Triangles, static_cast<int>(indexes.size()));
+    m_vbo.unbind();
+    m_vio.unbind();
 
     m_fontVertices.clear();
 }

@@ -11,7 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <celutil/array_view.h>
 #include <celutil/strnatcmp.h>
 #include "body.h"
 #include "location.h"

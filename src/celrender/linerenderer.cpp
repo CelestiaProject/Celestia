@@ -17,7 +17,8 @@
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
-#include "vertexobject.h"
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 
 namespace celestia::render
 {
@@ -61,21 +62,21 @@ LineRenderer::color_type() const
 void
 LineRenderer::draw_triangles(int count, int offset) const
 {
-    m_trVertexObj->draw(GL_TRIANGLES, count, offset);
+    m_trVO->draw(gl::VertexObject::Primitive::Triangles, count, offset);
 }
 
 //! Draw triangle strips.
 void
 LineRenderer::draw_triangle_strip(int count, int offset) const
 {
-    m_trVertexObj->draw(GL_TRIANGLE_STRIP, count, offset);
+    m_trVO->draw(gl::VertexObject::Primitive::TriangleStrip, count, offset);
 }
 
 //! Draw lines defained with segments.
 void
 LineRenderer::draw_lines(int count, int offset) const
 {
-    m_lnVertexObj->draw(static_cast<GLenum>(m_primType), count, offset);
+    m_lnVO->draw(static_cast<gl::VertexObject::Primitive>(m_primType), count, offset);
 }
 
 //! Enable GPU shader and set it's uniform values. Set line width.
@@ -113,25 +114,28 @@ LineRenderer::setup_shader()
 void
 LineRenderer::create_vbo_lines()
 {
-    auto storageType = static_cast<GLenum>(m_storageType);
-    m_lnVertexObj    = std::make_unique<VertexObject>(0, storageType);
-    m_lnVertexObj->bind();
+    m_lnVO = std::make_unique<gl::VertexObject>();
+    m_lnBO = std::make_unique<gl::Buffer>();
 
-    m_lnVertexObj->allocate(m_vertices.capacity() * sizeof(m_vertices[0]), m_vertices.data());
-    m_lnVertexObj->setVertexAttribArray(
+    m_lnBO->bind().setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+
+    m_lnVO->addVertexBuffer(
+        *m_lnBO,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         pos_count(),
-        GL_FLOAT,
-        GL_FALSE,
+        gl::VertexObject::DataType::Float,
+        false,
         sizeof(m_vertices[0]),
         offsetof(Vertex, pos));
+
     if (color_count() != 0)
     {
-        m_lnVertexObj->setVertexAttribArray(
+        m_lnVO->addVertexBuffer(
+            *m_lnBO,
             CelestiaGLProgram::ColorAttributeIndex,
             color_count(),
-            color_type() == VF_UBYTE ? GL_UNSIGNED_BYTE : GL_FLOAT,
-            color_type() == VF_UBYTE ? GL_TRUE : GL_FALSE,
+            color_type() == VF_UBYTE ? gl::VertexObject::DataType::UnsignedByte : gl::VertexObject::DataType::Float,
+            color_type() == VF_UBYTE,
             sizeof(m_vertices[0]),
             offsetof(Vertex, color));
     }
@@ -141,22 +145,11 @@ LineRenderer::create_vbo_lines()
 void
 LineRenderer::setup_vbo_lines()
 {
-    if (m_lnVertexObj != nullptr)
+    if (m_lnVO != nullptr)
     {
-        if (m_storageType == StorageType::Static)
+        if (m_storageType != StorageType::Static)
         {
-            m_lnVertexObj->bind();
-        }
-        else
-        {
-            m_lnVertexObj->bindWritable();
-            m_lnVertexObj->allocate(
-                m_vertices.capacity() * sizeof(m_vertices[0]),
-                nullptr); // orphan old buffer
-            m_lnVertexObj->setBufferData(
-                m_vertices.data(),
-                0,
-                m_vertices.size() * sizeof(m_vertices[0]));
+            m_lnBO->bind().invalidateData().setData(m_vertices);
         }
     }
     else
@@ -169,9 +162,9 @@ LineRenderer::setup_vbo_lines()
 void
 LineRenderer::create_vbo_triangles()
 {
-    auto storageType = static_cast<GLenum>(m_storageType);
-    m_trVertexObj    = std::make_unique<VertexObject>(0, storageType);
-    m_trVertexObj->bind();
+    m_trVO = std::make_unique<gl::VertexObject>();
+    m_trBO = std::make_unique<gl::Buffer>();
+    m_trBO->bind();
 
     GLsizei                    stride;
     std::array<std::size_t, 4> offset;
@@ -186,7 +179,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
-        m_trVertexObj->allocate(m_segments.size() * stride, m_segments.data());
+        m_trBO->setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_segments.clear();
     }
     else
@@ -200,37 +193,41 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
-        m_trVertexObj->allocate(m_verticesTr.capacity() * stride, m_verticesTr.data());
+        m_trBO->setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_verticesTr.clear();
     }
-    m_trVertexObj->setVertexAttribArray(
+    m_trVO->addVertexBuffer(
+        *m_trBO,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         pos_count(),
-        GL_FLOAT,
-        GL_FALSE,
+        gl::VertexObject::DataType::Float,
+        false,
         stride,
         static_cast<GLsizeiptr>(offset[0]));
-    m_trVertexObj->setVertexAttribArray(
+    m_trVO->addVertexBuffer(
+        *m_trBO,
         CelestiaGLProgram::NextVCoordAttributeIndex,
         pos_count(),
-        GL_FLOAT,
-        GL_FALSE,
+        gl::VertexObject::DataType::Float,
+        false,
         stride,
         static_cast<GLsizeiptr>(offset[1]));
-    m_trVertexObj->setVertexAttribArray(
+    m_trVO->addVertexBuffer(
+        *m_trBO,
         CelestiaGLProgram::ScaleFactorAttributeIndex,
         1,
-        GL_FLOAT,
-        GL_FALSE,
+        gl::VertexObject::DataType::Float,
+        false,
         stride,
         static_cast<GLsizeiptr>(offset[2]));
     if (color_count() != 0)
     {
-        m_trVertexObj->setVertexAttribArray(
+        m_trVO->addVertexBuffer(
+            *m_trBO,
             CelestiaGLProgram::ColorAttributeIndex,
             color_count(),
-            color_type() == VF_UBYTE ? GL_UNSIGNED_BYTE : GL_FLOAT,
-            color_type() == VF_UBYTE ? GL_TRUE : GL_FALSE,
+            color_type() == VF_UBYTE ? gl::VertexObject::DataType::UnsignedByte : gl::VertexObject::DataType::Float,
+            color_type() == VF_UBYTE,
             stride,
             static_cast<GLsizeiptr>(offset[3]));
     }
@@ -240,33 +237,20 @@ LineRenderer::create_vbo_triangles()
 void
 LineRenderer::setup_vbo_triangles()
 {
-    if (m_trVertexObj != nullptr)
+    if (m_trVO != nullptr)
     {
-        if (m_storageType == StorageType::Static)
+        if (m_storageType != StorageType::Static)
         {
-            m_trVertexObj->bind();
-        }
-        else
-        {
-            m_trVertexObj->bindWritable();
-            const void *data;
-            GLsizeiptr capacity, size;
+            m_trBO->bind().invalidateData();
+
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {
-                auto stride = static_cast<GLsizei>(sizeof(LineSegment));
-                data = m_segments.data();
-                capacity = m_segments.capacity() * stride;
-                size = m_segments.size() * stride;
+                m_trBO->setData(m_segments);
             }
             else
             {
-                auto stride = static_cast<GLsizei>(sizeof(LineVertex));
-                data = m_verticesTr.data();
-                capacity = m_verticesTr.capacity() * stride;
-                size = m_verticesTr.size() * stride;
+                m_trBO->setData(m_verticesTr);
             }
-            m_trVertexObj->allocate(capacity, nullptr); // orphan old buffer
-            m_trVertexObj->setBufferData(data, 0, size);
         }
     }
     else
@@ -445,19 +429,19 @@ LineRenderer::clear()
 void
 LineRenderer::orphan() const
 {
-    if (m_lnVertexObj != nullptr)
-        m_lnVertexObj->allocate(m_lnVertexObj->getBufferSize(), nullptr);
-    if (m_trVertexObj != nullptr)
-        m_trVertexObj->allocate(m_trVertexObj->getBufferSize(), nullptr);
+    if (m_lnBO != nullptr)
+        m_lnBO->invalidateData();
+    if (m_trBO != nullptr)
+        m_trBO->invalidateData();
 }
 
 void
 LineRenderer::finish()
 {
-    if (m_lnVertexObj != nullptr)
-        m_lnVertexObj->unbind();
-    if (m_trVertexObj != nullptr)
-        m_trVertexObj->unbind();
+    if (m_lnBO != nullptr)
+        m_lnBO->unbind();
+    if (m_trBO != nullptr)
+        m_trBO->unbind();
     m_inUse = false;
     m_prog = nullptr;
 }

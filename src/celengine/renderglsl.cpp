@@ -21,6 +21,8 @@
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
+#include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/arrayvector.h>
 #include <celutil/color.h>
 #include "atmosphere.h"
@@ -111,6 +113,92 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glCullFace(GL_BACK);
     shadowFbo->unbind(oldFboId);
+}
+
+class GLRingRenderData : public RingRenderData
+{
+    static constexpr int nLODs = 4;
+public:
+    ~GLRingRenderData() override = default;
+
+    int count() const { return nLODs; }
+    bool isInitializedLOD(int i) const { return init[i]; };
+    void initializeLOD(int i, float innerRadius, float outerRadius, unsigned nSections);
+    void renderLOD(int i);
+
+private:
+    std::array<gl::Buffer, nLODs> bo;
+    std::array<gl::VertexObject, nLODs> vo;
+    std::array<bool, nLODs> init;
+};
+
+struct RingVertex
+{
+    std::array<float, 3>  pos;
+    std::array<unsigned short, 2> tex;
+};
+
+void
+GLRingRenderData::initializeLOD(int i, float innerRadius, float outerRadius, unsigned nSections)
+{
+    std::vector<RingVertex> ringCoord;
+    ringCoord.reserve(2 * nSections);
+
+    constexpr float angle = 2.0f * celestia::numbers::pi_v<float>;
+    for (unsigned i = 0; i <= nSections; i++)
+    {
+        float theta = angle * i / nSections; // NOSONAR
+        float s, c;
+        celmath::sincos(theta, s, c);
+
+        RingVertex vertex;
+        // inner point
+        vertex.pos[0] = c * innerRadius;
+        vertex.pos[1] = 0.0f;
+        vertex.pos[2] = s * innerRadius;
+        vertex.tex[0] = 0;
+        vertex.tex[1] = 0;
+        ringCoord.push_back(vertex);
+
+        // outer point
+        vertex.pos[0] = c * outerRadius;
+        // vertex.pos[1] = 0.0f;
+        vertex.pos[2] = s * outerRadius;
+        vertex.tex[0] = 1;
+        // vertex.tex[1] = 0;
+        ringCoord.push_back(vertex);
+    }
+
+    bo[i] = gl::Buffer(gl::Buffer::TargetHint::Array, ringCoord);
+    vo[i] = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
+    vo[i]
+        .setCount((nSections + 1) * 2)
+        .addVertexBuffer(
+            bo[i],
+            CelestiaGLProgram::TextureCoord0AttributeIndex,
+            2,
+            gl::VertexObject::DataType::UnsignedShort,
+            false,
+            sizeof(RingVertex),
+            offsetof(RingVertex, tex))
+        .addVertexBuffer(
+            bo[i],
+            CelestiaGLProgram::VertexCoordAttributeIndex,
+            3,
+            gl::VertexObject::DataType::Float,
+            false,
+            sizeof(RingVertex),
+            offsetof(RingVertex, pos));
+    init[i] = true;
+    bo[i].unbind();
+}
+
+void
+GLRingRenderData::renderLOD(int i)
+{
+    glDisable(GL_CULL_FACE);
+    vo[i].draw();
+    glEnable(GL_CULL_FACE);
 }
 
 } // end unnamed namespace
@@ -644,95 +732,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
     prog->textureOffset = 0.0f;
 }
 
-
-static void renderRingSystem(GLuint *vboId,
-                             float innerRadius,
-                             float outerRadius,
-                             unsigned int nSections = 180)
-{
-    struct RingVertex
-    {
-        GLfloat pos[3];
-        GLshort tex[2];
-    };
-
-    constexpr const float angle = 2.0f * celestia::numbers::pi_v<float>;
-
-    if (*vboId == 0)
-    {
-        struct RingVertex vertex;
-        std::vector<struct RingVertex> ringCoord;
-        ringCoord.reserve(2 * nSections);
-        for (unsigned i = 0; i <= nSections; i++)
-        {
-            float t = static_cast<float>(i) / static_cast<float>(nSections);
-            float theta = t * angle;
-            float s = std::sin(theta);
-            float c = std::cos(theta);
-
-            // inner point
-            vertex.pos[0] = c * innerRadius;
-            vertex.pos[1] = 0.0f;
-            vertex.pos[2] = s * innerRadius;
-            vertex.tex[0] = 0;
-            vertex.tex[1] = 0;
-            ringCoord.push_back(vertex);
-
-            // outer point
-            vertex.pos[0] = c * outerRadius;
-            // vertex.pos[1] = 0.0f;
-            vertex.pos[2] = s * outerRadius;
-            vertex.tex[0] = 1;
-            // vertex.tex[1] = 0;
-            ringCoord.push_back(vertex);
-        }
-
-        glGenBuffers(1, vboId);
-        glBindBuffer(GL_ARRAY_BUFFER, *vboId);
-        glBufferData(GL_ARRAY_BUFFER,
-                     ringCoord.size() * sizeof(struct RingVertex),
-                     ringCoord.data(),
-                     GL_STATIC_DRAW);
-    }
-    else
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, *vboId);
-    }
-    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2, GL_SHORT, GL_FALSE,
-                          sizeof(struct RingVertex),
-                          reinterpret_cast<const void*>(offsetof(struct RingVertex, tex)));
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE,
-                          sizeof(struct RingVertex), 0);
-
-    // Celestia uses glCullFace(GL_BACK) by default so we just skip it here
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
-    glCullFace(GL_FRONT);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
-    glCullFace(GL_BACK);
-
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-
-class GLRingRenderData : public RingRenderData
-{
- public:
-    ~GLRingRenderData() override
-    {
-        glDeleteBuffers(vboId.size(), vboId.data());
-        vboId.fill(0);
-    }
-
-    std::array<GLuint, 4> vboId {{ 0, 0, 0, 0 }};
-};
-
 // Render a planetary ring system
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
@@ -769,7 +768,7 @@ void renderRings_GLSL(RingSystem& rings,
 
 
     // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    auto* prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -850,7 +849,7 @@ void renderRings_GLSL(RingSystem& rings,
 
     unsigned nSections = 180;
     std::size_t i = 0;
-    for (i = 0; i < data->vboId.size() - 1; i++)
+    for (i = 0; i < data->count() - 1; i++)
     {
         float s = segmentSizeInPixels * tan(celestia::numbers::pi / nSections);
         if (s < 30.0f) // TODO: make configurable
@@ -865,5 +864,7 @@ void renderRings_GLSL(RingSystem& rings,
     ps.depthMask = inside;
     renderer->setPipelineState(ps);
 
-    renderRingSystem(&data->vboId[i], inner, outer, nSections);
+    if (!data->isInitializedLOD(i))
+        data->initializeLOD(i, inner, outer, nSections);
+    data->renderLOD(i);
 }
