@@ -1,16 +1,18 @@
 #pragma once
 
-void DecompressBlockDXT1(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
-    bool transparent0,
-    uint32_t* image);
+#include <cstdint>
 
-void DecompressBlockDXT3(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
+void DecompressBlockDXT1(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+    const std::uint8_t* blockStorage,
     bool transparent0,
-    uint32_t* image);
+    std::uint32_t* image);
 
-void DecompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
+void DecompressBlockDXT3(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+    const std::uint8_t* blockStorage,
     bool transparent0,
-    uint32_t* image);
+    std::uint32_t* image);
+
+void DecompressBlockDXT5(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+    const std::uint8_t* blockStorage,
+    bool transparent0,
+    std::uint32_t* image);
