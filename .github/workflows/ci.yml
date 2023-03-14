@@ -103,11 +103,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - os: ubuntu-18.04
-          avif: OFF     # Not supported on Ubuntu18.04
+        - os: ubuntu-20.04
+          avif: OFF     # Not supported on Ubuntu20.04
           gles: ON
           gtk3: ON
-          minaudio: OFF # Requires newer g++
+          minaudio: ON
           wayland: ON
         - os: ubuntu-22.04
           avif: ON
@@ -124,7 +124,7 @@ jobs:
         qtversion: [ Qt5, Qt6 ]
         exclude:
         - config:
-            os: ubuntu-18.04
+            os: ubuntu-20.04
           qtversion: Qt6
 
     runs-on: ${{matrix.config.os}}
