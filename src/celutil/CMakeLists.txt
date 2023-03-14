@@ -35,6 +35,13 @@ set(CELUTIL_SOURCES
   watcher.h
 )
 
+if (USE_ICU)
+  list(APPEND CELUTIL_SOURCES
+    unicode.cpp
+    unicode.h
+  )
+endif()
+
 if (WIN32)
   list(APPEND CELUTIL_SOURCES
     winutil.cpp
