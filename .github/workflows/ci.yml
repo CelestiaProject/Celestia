@@ -44,7 +44,7 @@ jobs:
             set QtBasePkg=qt5-base
             unset QtCompatPkg
         )
-        vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] %QtBasePkg% %QtCompatPkg%
+        vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] icu %QtBasePkg% %QtCompatPkg%
 
     - name: 'Checkout source code'
       uses: actions/checkout@v3
@@ -58,7 +58,7 @@ jobs:
         set GeneratorPlatform=${{matrix.platform}}
         if ${{matrix.qtversion}}==Qt6 set UseQt6=ON
         if ${{matrix.platform}}==x86 set GeneratorPlatform=Win32
-        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON
+        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON -DUSE_ICU=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
@@ -147,6 +147,7 @@ jobs:
                             libsdl2-dev \
                             libluajit-5.1-dev \
                             libfmt-dev \
+                            libicu-dev \
                             libwayland-dev \
                             wayland-protocols \
                             ninja-build
@@ -177,12 +178,14 @@ jobs:
                      freetype \
                      libepoxy \
                      sdl2 \
-                     libavif
+                     libavif \
+                     icu4c
         if [ "${{matrix.qtversion}}" = "Qt5" ]; then
             brew install qt5
         else
             brew install qt6
         fi
+        brew link icu4c --force
 
     - name: 'Checkout source code'
       uses: actions/checkout@v3
@@ -206,7 +209,8 @@ jobs:
               -DUSE_WAYLAND=${{matrix.config.wayland}}  \
               -DENABLE_FFMPEG=ON                        \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
-              -DENABLE_MINIAUDIO=${{matrix.config.minaudio}}
+              -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
+              -USE_ICU=ON
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -233,6 +237,7 @@ jobs:
                             qt5-qtbase-devel \
                             qt5-qttools \
                             gettext-devel \
+                            libicu-devel \
                             cmake \
                             ninja-build \
                             gcc-toolset-11-gcc-c++
@@ -255,7 +260,8 @@ jobs:
               -DUSE_GTK3=ON                   \
               -DENABLE_QT=ON                  \
               -DENABLE_FFMPEG=OFF             \
-              -DENABLE_MINIAUDIO=ON
+              -DENABLE_MINIAUDIO=ON           \
+              -DUSE_ICU=ON
       env:
         CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
         CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
@@ -289,6 +295,7 @@ jobs:
                             libfreetype6-dev \
                             libsdl2-dev \
                             libluajit-5.1-dev \
+                            libicu-dev \
                             cmake
 
     - name: 'Checkout source code'
@@ -311,6 +318,7 @@ jobs:
               -DENABLE_QT=ON                 \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_MINIAUDIO=ON          \
+              -DUSE_ICU=ON                   \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
     - name: Analyze
