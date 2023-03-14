@@ -65,6 +65,7 @@ option(USE_QT6              "Use Qt6 in Qt frontend (Default: off)" OFF)
 option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
+option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
@@ -76,6 +77,13 @@ if(USE_GLSL_STRUCTS)
   # GLES SL on some old Android device or with ANGLE presents a link failure with empty error when using struct.
   # GLSL on old version of Mac OS X appears to have a bug that precludes us from using structs.
   add_definitions(-DUSE_GLSL_STRUCTS)
+endif()
+
+if(USE_ICU)
+  find_package(ICU REQUIRED COMPONENTS uc)
+  include_directories(${ICU_INCLUDE_DIRS})
+  link_libraries(${ICU_LIBRARIES})
+  add_definitions(-DUSE_ICU)
 endif()
 
 if(USE_GTK3)

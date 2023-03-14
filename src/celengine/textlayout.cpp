@@ -10,7 +10,12 @@
 #include <vector>
 
 #include "textlayout.h"
-#include "celutil/utf8.h"
+
+#ifdef USE_ICU
+#include <celutil/unicode.h>
+#else
+#include <celutil/utf8.h>
+#endif
 
 namespace celestia::engine
 {
@@ -217,6 +222,32 @@ void TextLayout::flushInternal(bool flushFont)
 
 bool TextLayout::processString(std::string_view input, std::vector<std::wstring> &output)
 {
+#ifdef USE_ICU
+    using namespace icu;
+    using namespace celestia::util;
+
+    auto ustr{ UnicodeString::fromUTF8(StringPiece(input.data(), static_cast<int32_t>(input.length()))) };
+    int32_t lineStart = 0;
+    for (int32_t i = 0; i < ustr.length(); i += 1)
+    {
+        if (ustr.charAt(i) == u'\n')
+        {
+            std::wstring line;
+            if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, i), line))
+                return false;
+            output.push_back(line);
+            lineStart = i + 1;
+        }
+    }
+
+    if (lineStart <= ustr.length())
+    {
+        std::wstring line;
+        if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, ustr.length()), line))
+            return false;
+        output.push_back(line);
+    }
+#else
     // Loop through all characters
     auto len                = input.length();
     bool validChar          = true;
@@ -246,6 +277,7 @@ bool TextLayout::processString(std::string_view input, std::vector<std::wstring>
 
     if (!currentLine.empty() || endsWithLineBreak)
         output.push_back(currentLine);
+#endif
     return true;
 }
 

@@ -368,6 +368,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
 | USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
 | USE_GLSL_STRUCTS     | bool | OFF     | Use structs in GLSL
+| USE_ICU              | bool | OFF     | Use ICU for UTF8 decoding for text rendering
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
