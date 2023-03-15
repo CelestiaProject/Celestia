@@ -9,13 +9,14 @@
 
 #include <vector>
 
-#include "textlayout.h"
-
 #ifdef USE_ICU
+#include <celutil/flag.h>
 #include <celutil/unicode.h>
 #else
 #include <celutil/utf8.h>
 #endif
+
+#include "textlayout.h"
 
 namespace celestia::engine
 {
@@ -228,12 +229,13 @@ bool TextLayout::processString(std::string_view input, std::vector<std::wstring>
 
     auto ustr{ UnicodeString::fromUTF8(StringPiece(input.data(), static_cast<int32_t>(input.length()))) };
     int32_t lineStart = 0;
+    const ConversionOption options = ConversionOption::ArabicShaping | ConversionOption::BidiReordering;
     for (int32_t i = 0; i < ustr.length(); i += 1)
     {
         if (ustr.charAt(i) == u'\n')
         {
             std::wstring line;
-            if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, i), line))
+            if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, i), line, options))
                 return false;
             output.push_back(line);
             lineStart = i + 1;
@@ -243,7 +245,7 @@ bool TextLayout::processString(std::string_view input, std::vector<std::wstring>
     if (lineStart <= ustr.length())
     {
         std::wstring line;
-        if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, ustr.length()), line))
+        if (!UnicodeStringToWString(ustr.tempSubStringBetween(lineStart, ustr.length()), line, options))
             return false;
         output.push_back(line);
     }

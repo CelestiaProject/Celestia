@@ -7,6 +7,7 @@ set(CELUTIL_SOURCES
   color.h
   filetype.cpp
   filetype.h
+  flag.h
   formatnum.cpp
   formatnum.h
   fsutils.cpp

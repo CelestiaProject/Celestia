@@ -14,6 +14,13 @@
 namespace celestia::util
 {
 
-bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &output);
+enum class ConversionOption : unsigned int
+{
+    None            = 0x00,
+    ArabicShaping   = 0x01,
+    BidiReordering  = 0x02,
+};
+
+bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &output, ConversionOption options = ConversionOption::None);
 
 }
