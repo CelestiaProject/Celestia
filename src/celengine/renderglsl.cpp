@@ -21,6 +21,7 @@
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
+#include <celutil/arrayvector.h>
 #include <celutil/color.h>
 #include "atmosphere.h"
 #include "body.h"
@@ -131,9 +132,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
-        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-    unsigned int nTextures = 0;
+    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
     shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
@@ -142,13 +141,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ri.baseTex != nullptr)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        textures[nTextures++] = ri.baseTex;
+        textures.try_push_back(ri.baseTex);
     }
 
     if (ri.bumpTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
-        textures[nTextures++] = ri.bumpTex;
+        textures.try_push_back(ri.bumpTex);
         if (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
@@ -163,7 +162,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         else
         {
             shadprop.texUsage |= ShaderProperties::SpecularTexture;
-            textures[nTextures++] = ri.glossTex;
+            textures.try_push_back(ri.glossTex);
         }
     }
     if (ri.lunarLambert != 0.0f)
@@ -174,13 +173,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ri.nightTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NightTexture;
-        textures[nTextures++] = ri.nightTex;
+        textures.try_push_back(ri.nightTex);
     }
 
     if (ri.overlayTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::OverlayTexture;
-        textures[nTextures++] = ri.overlayTex;
+        textures.try_push_back(ri.overlayTex);
     }
 
     if (atmosphere != nullptr)
@@ -202,17 +201,11 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
             // The current implementation of cloud shadows is not compatible
             // with virtual or split textures.
-            bool allowCloudShadows = true;
-            for (unsigned int i = 0; i < nTextures; i++)
-            {
-                if (textures[i] != nullptr &&
-                    (textures[i]->getLODCount() > 1 ||
-                     textures[i]->getUTileCount(0) > 1 ||
-                     textures[i]->getVTileCount(0) > 1))
-                {
-                    allowCloudShadows = false;
-                }
-            }
+            bool allowCloudShadows = std::none_of(textures.cbegin(), textures.cend(),
+                                                  [](const Texture* tex) { return tex != nullptr &&
+                                                                                  (tex->getLODCount() > 1 ||
+                                                                                   tex->getUTileCount(0) > 1 ||
+                                                                                   tex->getVTileCount(0) > 1); });
 
             // Split cloud shadows can't cast shadows
             if (cloudTex != nullptr)
@@ -228,8 +221,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             if (cloudTex != nullptr && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
-                textures[nTextures++] = cloudTex;
-                glActiveTexture(GL_TEXTURE0 + nTextures);
+                textures.try_push_back(cloudTex);
+                glActiveTexture(GL_TEXTURE0 + textures.size());
                 cloudTex->bind();
                 glActiveTexture(GL_TEXTURE0);
 
@@ -265,9 +258,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         Texture* ringsTex = ls.shadowingRingSystem->texture.find(textureRes);
         if (ringsTex != nullptr)
         {
-            glActiveTexture(GL_TEXTURE0 + nTextures);
+            glActiveTexture(GL_TEXTURE0 + textures.size());
             ringsTex->bind();
-            nTextures++;
 
 #ifdef GL_ES
             if (gl::OES_texture_border_clamp)
@@ -357,9 +349,11 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
+    auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
+    textures.erase(endTextures, textures.end());
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
-                        textures[0], textures[1], textures[2], textures[3]);
+                        textures.data(), static_cast<int>(textures.size()));
 }
 
 
@@ -551,9 +545,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
-        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-    unsigned int nTextures = 0;
+    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
     shadprop.nLights = ls.nLights;
@@ -562,39 +554,16 @@ void renderClouds_GLSL(const RenderInfo& ri,
     if (cloudTex != nullptr)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        textures[nTextures++] = cloudTex;
+        textures.try_push_back(cloudTex);
     }
 
     if (cloudNormalMap != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
-        textures[nTextures++] = cloudNormalMap;
+        textures.try_push_back(cloudNormalMap);
         if (cloudNormalMap->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
-
-#if 0
-    if (rings != nullptr && (renderFlags & Renderer::ShowRingShadows) != 0)
-    {
-        Texture* ringsTex = rings->texture.find(textureRes);
-        if (ringsTex != nullptr)
-        {
-            glActiveTexture(GL_TEXTURE0 + nTextures);
-            ringsTex->bind();
-            nTextures++;
-
-            // Tweak the texture--set clamp to border and a border color with
-            // a zero alpha.
-            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                            GL_CLAMP_TO_BORDER);
-            glActiveTexture(GL_TEXTURE0);
-
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
-        }
-    }
-#endif
 
     if (atmosphere != nullptr)
     {
@@ -667,9 +636,11 @@ void renderClouds_GLSL(const RenderInfo& ri,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
+    auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
+    textures.erase(endTextures, textures.end());
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
-                        textures[0], textures[1], textures[2], textures[3]);
+                        textures.data(), static_cast<int>(textures.size()));
 
     prog->textureOffset = 0.0f;
 }

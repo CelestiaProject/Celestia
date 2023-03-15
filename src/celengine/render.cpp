@@ -61,6 +61,7 @@
 #include <celrender/eclipticlinerenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/vertexobject.h>
+#include <celutil/arrayvector.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celutil/timer.h>
@@ -1837,8 +1838,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
                               const Matrices &m,
                               Renderer *r)
 {
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES];
-    int nTextures = 0;
+    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
 
@@ -1846,17 +1846,17 @@ static void renderSphereUnlit(const RenderInfo& ri,
     if (ri.baseTex != nullptr)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        textures[nTextures++] = ri.baseTex;
+        textures.try_push_back(ri.baseTex);
     }
     if (ri.nightTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NightTexture;
-        textures[nTextures++] = ri.nightTex;
+        textures.try_push_back(ri.nightTex);
     }
     if (ri.overlayTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::OverlayTexture;
-        textures[nTextures++] = ri.overlayTex;
+        textures.try_push_back(ri.overlayTex);
     }
 
     // Get a shader for the current rendering configuration
@@ -1875,7 +1875,8 @@ static void renderSphereUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
-    g_lodSphere->render(frustum, ri.pixWidth, textures, nTextures);
+    g_lodSphere->render(frustum, ri.pixWidth,
+                        textures.data(), static_cast<int>(textures.size()));
 }
 
 
