@@ -38,6 +38,9 @@ bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &outpu
 
     // Get the actual data
     u_strToWCS(output.data(), static_cast<int32_t>(output.size()), nullptr, input.getBuffer(), input.length(), &error);
+
+    // Removing the redundant \0 at the end
+    output.resize(requiredSize);
     return error == U_ZERO_ERROR;
 }
 
