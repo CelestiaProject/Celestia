@@ -2697,10 +2697,37 @@ static int celestia_loadtexture(lua_State* l)
 {
     CelxLua celx(l);
 
-    celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
-    string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadtexture() must be a string");
+    celx.checkArgs(2, 4, "Need one to three arguments for celestia:loadtexture()");
+    string s = celx.safeGetString(2, AllErrors, "First argument to celestia:loadtexture() must be a string");
+    auto argc = lua_gettop(l);
+    auto addressMode = Texture::AddressMode::EdgeClamp;
+    auto mipMapMode = Texture::MipMapMode::DefaultMipMaps;
+    if (argc >= 3)
+    {
+        string addressModeString = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:loadtexture must be a string");
+
+        if (addressModeString == "wrap")
+            addressMode = Texture::AddressMode::Wrap;
+        else if (addressModeString == "borderclamp")
+            addressMode = Texture::AddressMode::BorderClamp;
+        else if (addressModeString == "edgeclamp")
+            addressMode = Texture::AddressMode::EdgeClamp;
+        else
+           Celx_DoError(l, "Invalid addressMode");
+    }
+    if (argc >= 4)
+    {
+        string mipMapModeString = Celx_SafeGetString(l, 4, AllErrors, "Third argument to celestia:loadtexture must be a string");
+
+        if (mipMapModeString == "default")
+            mipMapMode = Texture::MipMapMode::DefaultMipMaps;
+        else if (mipMapModeString == "none")
+            mipMapMode = Texture::MipMapMode::NoMipMaps;
+        else
+           Celx_DoError(l, "Invalid mipMapMode");
+    }
     fs::path base_dir = GetScriptPath(l);
-    Texture* t = LoadTextureFromFile(base_dir / s).release();
+    Texture* t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode).release();
     if (t == nullptr) return 0;
     return celx.pushClass(t);
 }
