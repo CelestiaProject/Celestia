@@ -11,7 +11,6 @@
 #include <celutil/color.h>
 #include "asterismrenderer.h"
 #include "render.h"
-#include "vecgl.h"
 
 using celestia::render::LineRenderer;
 

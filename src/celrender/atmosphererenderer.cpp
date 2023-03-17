@@ -15,7 +15,7 @@
 #include <celengine/render.h>
 #include <celengine/renderinfo.h>
 #include <celengine/shadermanager.h>
-#include <celengine/vecgl.h>
+#include <celmath/vecgl.h>
 #include <celutil/color.h>
 #include <celutil/indexlist.h>
 #include "atmosphererenderer.h"
@@ -233,7 +233,7 @@ AtmosphereRenderer::computeLegacy(
             if (i <= nHorizonRings)
                 v = m_skyContour[j].v * r;
             else
-                v = vecgl::mix(m_skyContour[j].v, zenith, u) * r;
+                v = celmath::mix(m_skyContour[j].v, zenith, u) * r;
             Eigen::Vector3f p = center + v;
 
             Eigen::Vector3f viewDir = p.normalized();
@@ -262,10 +262,10 @@ AtmosphereRenderer::computeLegacy(
             memcpy(&vtx.position[0], p.data(), vtx.position.size() * sizeof(vtx.position[0]));
 
             float atten = 1.0f - hh;
-            Eigen::Vector3f color = vecgl::mix(botColor, topColor, hh);
+            Eigen::Vector3f color = celmath::mix(botColor, topColor, hh);
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             if (coloration != 0.0f)
-                color = vecgl::mix(color, sunsetColor, coloration);
+                color = celmath::mix(color, sunsetColor, coloration);
 
             Color(brightness * color.x(),
                   brightness * color.y(),
@@ -390,7 +390,7 @@ AtmosphereRenderer::render(
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(atmScale));
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::scale(atmScale));
 
     glFrontFace(GL_CW);
 

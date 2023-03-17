@@ -15,7 +15,6 @@
 #include "overlay.h"
 #include "rectangle.h"
 #include "render.h"
-#include "vecgl.h"
 #include "textlayout.h"
 
 using namespace std;

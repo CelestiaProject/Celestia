@@ -15,11 +15,11 @@
 #include <fmt/format.h>
 #include <celcompat/numbers.h>
 #include <celmath/intersect.h>
+#include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
 #include "body.h"
 #include "planetgrid.h"
 #include "render.h"
-#include "vecgl.h"
 
 using namespace celmath;
 using namespace celestia;
@@ -143,7 +143,7 @@ PlanetographicGrid::render(Renderer* renderer,
         float phi = degToRad(latitude);
         float r = std::cos(phi);
 
-        Eigen::Matrix4f mvcur = modelView * vecgl::translate(0.0f, std::sin(phi), 0.0f) * vecgl::scale(r);
+        Eigen::Matrix4f mvcur = modelView * celmath::translate(0.0f, std::sin(phi), 0.0f) * celmath::scale(r);
         if (latitude == 0.0f)
         {
             latitudeRenderer->finish();
@@ -180,7 +180,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        Eigen::Matrix4f mvcur = modelView * vecgl::rotate(Eigen::AngleAxisf(degToRad(longitude), Eigen::Vector3f::UnitY()));
+        Eigen::Matrix4f mvcur = modelView * celmath::rotate(Eigen::AngleAxisf(degToRad(longitude), Eigen::Vector3f::UnitY()));
 
         longitudeRenderer->render({&projection, &mvcur},
                                   Renderer::PlanetographicGridColor,

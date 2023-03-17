@@ -9,13 +9,13 @@
 
 #include <algorithm>
 #include <celmath/mathlib.h>
+#include <celmath/vecgl.h>
 #include <celutil/gettext.h>
 #include "astro.h"
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
 #include "render.h"
-#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;
@@ -97,8 +97,8 @@ void Nebula::render(const Vector3f& /*offset*/,
     ps.smoothLines = true;
     renderer->setPipelineState(ps);
 
-    Matrix4f mv = vecgl::rotate(vecgl::scale(*m.modelview, getRadius()),
-                                getOrientation());
+    Matrix4f mv = celmath::rotate(celmath::scale(*m.modelview, getRadius()),
+                                  getOrientation());
 
     GLSLUnlit_RenderContext rc(renderer, getRadius(), &mv, m.projection);
     rc.setPointScale(2.0f * getRadius() / pixelSize);

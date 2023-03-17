@@ -23,6 +23,7 @@
 #include <celmath/intersect.h>
 #include <celmath/randutils.h>
 #include <celmath/ray.h>
+#include <celmath/vecgl.h>
 #include <celrender/vertexobject.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -32,9 +33,7 @@
 #include "pixelformat.h"
 #include "render.h"
 #include "texture.h"
-#include "vecgl.h"
 
-namespace vecgl = celestia::vecgl;
 using celestia::render::VertexObject;
 
 namespace
@@ -689,7 +688,7 @@ void Galaxy::renderGL2(const Eigen::Vector3f& offset,
         g_indices = new GLushort[MAX_INDICES];
 
     prog->use();
-    Eigen::Matrix4f mv = vecgl::translate(*ms.modelview, Eigen::Vector3f(-offset));
+    Eigen::Matrix4f mv = celmath::translate(*ms.modelview, Eigen::Vector3f(-offset));
     prog->setMVPMatrices(*ms.projection, mv);
     prog->samplerParam("galaxyTex") = 0;
     prog->samplerParam("colorTex") = 1;
@@ -795,7 +794,7 @@ void Galaxy::renderGL3(const Eigen::Vector3f& offset,
 
     brightness *= getBrightnessCorrection(offset);
 
-    Eigen::Matrix4f mv = vecgl::translate(*ms.modelview, Eigen::Vector3f(-offset));
+    Eigen::Matrix4f mv = celmath::translate(*ms.modelview, Eigen::Vector3f(-offset));
 
     Renderer::PipelineState ps;
     ps.blending = true;

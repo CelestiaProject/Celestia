@@ -24,7 +24,6 @@
 #include "dsorenderer.h"
 #include "asterism.h"
 #include "astro.h"
-#include "vecgl.h"
 #include "glshader.h"
 #include "shadermanager.h"
 #include "spheremesh.h"
@@ -56,6 +55,7 @@
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
+#include <celmath/vecgl.h>
 #include <celrender/atmosphererenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
@@ -1587,7 +1587,7 @@ void Renderer::draw(const Observer& observer,
     Vector3f observerPosLY = -observer.getPosition().offsetFromLy(Vector3f::Zero());
 
     Matrix4f projection = getProjectionMatrix();
-    Matrix4f modelView = getModelViewMatrix() * vecgl::translate(observerPosLY);
+    Matrix4f modelView = getModelViewMatrix() * celmath::translate(observerPosLY);
 
     Matrices asterismMVP = { &projection, &modelView };
 
@@ -2510,7 +2510,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
             else
             {
-                Eigen::Matrix4f modelView = vecgl::rotate(getCameraOrientation());
+                Eigen::Matrix4f modelView = celmath::rotate(getCameraOrientation());
                 Matrices mvp = { m.projection, &modelView };
                 m_atmosphereRenderer->renderLegacy(
                     *atmosphere,
@@ -2529,7 +2529,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (cloudTex != nullptr)
         {
             float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-            Matrix4f cmv = vecgl::scale(planetMV, cloudScale);
+            Matrix4f cmv = celmath::scale(planetMV, cloudScale);
             Matrices mvp = { m.projection, &cmv };
 
             // If we're beneath the cloud level, render the interior of
@@ -4121,7 +4121,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = vecgl::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
+    Matrix4f mv = celmath::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
     Matrices mm = { m.projection, &mv };
 
     if (markerRep.symbol() == celestia::MarkerRepresentation::Crosshair)
@@ -4152,10 +4152,10 @@ Renderer::renderAnnotationLabel(const Annotation &a,
 {
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = vecgl::translate(*m.modelview,
-                                   (int)a.position.x() + hOffset + PixelOffset,
-                                   (int)a.position.y() + vOffset + PixelOffset,
-                                   depth);
+    Matrix4f mv = celmath::translate(*m.modelview,
+                                     (int)a.position.x() + hOffset + PixelOffset,
+                                     (int)a.position.y() + vOffset + PixelOffset,
+                                     depth);
 
     layout.begin(*m.projection, mv);
     layout.moveAbsolute(0.0f, 0.0f);

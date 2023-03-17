@@ -36,7 +36,6 @@
 #include "shadermanager.h"
 #include "shadowmap.h" // GL_ONLY_SHADOWS definition
 #include "texture.h"
-#include "vecgl.h"
 
 using namespace celestia;
 
