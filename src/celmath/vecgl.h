@@ -12,10 +12,12 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace celestia::vecgl
+namespace celmath
 {
 template<typename T>
 inline Eigen::Matrix<T,4,4>

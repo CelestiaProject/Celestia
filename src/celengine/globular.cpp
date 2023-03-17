@@ -32,9 +32,7 @@
 #include "pixelformat.h"
 #include "render.h"
 #include "texture.h"
-#include "vecgl.h"
 
-namespace vecgl = celestia::vecgl;
 using celestia::render::VertexObject;
 
 namespace

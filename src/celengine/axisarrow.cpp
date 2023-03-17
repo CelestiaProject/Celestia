@@ -12,6 +12,7 @@
 #include <vector>
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
+#include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
 #include <celrender/vertexobject.h>
 #include "axisarrow.h"
@@ -21,7 +22,6 @@
 #include "selection.h"
 #include "shadermanager.h"
 #include "timelinephase.h"
-#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;
@@ -321,19 +321,19 @@ AxesReferenceMark::render(Renderer* renderer,
     Matrix4f labelTransformMatrix = labelTransform.matrix();
 
     // x-axis
-    Matrix4f xModelView = modelView * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
+    Matrix4f xModelView = modelView * celmath::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
     RenderArrow(arrowVo);
 
     // y-axis
-    Matrix4f yModelView = modelView * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
+    Matrix4f yModelView = modelView * celmath::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
     RenderArrow(arrowVo);
 
     // z-axis
-    Matrix4f zModelView = modelView *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
+    Matrix4f zModelView = modelView * celmath::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
     RenderArrow(arrowVo);

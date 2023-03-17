@@ -12,11 +12,11 @@
 #include <celcompat/numbers.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
+#include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
 #include <celrender/vertexobject.h>
 #include "marker.h"
 #include "render.h"
-#include "vecgl.h"
 
 
 using namespace std;
@@ -278,7 +278,7 @@ static void render_hollow_marker(const Renderer &renderer,
     }
 
     float s = size / 2.0f * renderer.getScaleFactor();
-    Eigen::Matrix4f mv = (*m.modelview) * vecgl::scale(Vector3f(s, s, 0));
+    Eigen::Matrix4f mv = (*m.modelview) * celmath::scale(Vector3f(s, s, 0));
 
     lr->prerender();
     switch (symbol)
@@ -357,7 +357,7 @@ void Renderer::renderMarker(celestia::MarkerRepresentation::Symbol symbol,
 
     prog->use();
     float s = size / 2.0f * getScaleFactor();
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(Vector3f(s, s, 0)));
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::scale(Vector3f(s, s, 0)));
 
     switch (symbol)
     {
@@ -453,7 +453,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 
     prog->use();
     const Vector3f &center = cameraMatrix.col(2);
-    prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * vecgl::translate(Vector3f(-center)));
+    prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * celmath::translate(Vector3f(-center)));
     prog->vec4Param("color") = Color(SelectionCursorColor, 0.6f).toVector4();
     prog->floatParam("pixelSize") = pixelSize * getScaleFactor();
     prog->floatParam("s") = s;

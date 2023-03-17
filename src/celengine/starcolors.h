@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <celengine/vecgl.h>
+#include <celmath/vecgl.h>
 #include <celutil/color.h>
 #include <celutil/array_view.h>
 
@@ -43,9 +43,9 @@ class ColorTemperatureTable
 
     Color lookupTintColor(float temp, float saturation, float fadeFactor) const
     {
-        Eigen::Vector3f color = celestia::vecgl::mix(Eigen::Vector3f::Ones(),
-                                                     lookupColor(temp).toVector3(),
-                                                     saturation) * fadeFactor;
+        Eigen::Vector3f color = celmath::mix(Eigen::Vector3f::Ones(),
+                                             lookupColor(temp).toVector3(),
+                                             saturation) * fadeFactor;
         return Color(color);
     }
 

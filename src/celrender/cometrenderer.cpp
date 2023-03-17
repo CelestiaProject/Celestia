@@ -13,8 +13,8 @@
 #include <celengine/body.h>
 #include <celengine/observer.h>
 #include <celengine/render.h>
-#include <celengine/vecgl.h>
 #include <celmath/mathlib.h>
+#include <celmath/vecgl.h>
 #include <celutil/indexlist.h>
 #include "cometrenderer.h"
 
@@ -237,7 +237,7 @@ CometRenderer::render(const Body &body,
     m_renderer.setPipelineState(ps);
 
     m_prog->use();
-    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::translate(pos));
+    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::translate(pos));
     m_prog->vec3Param("color") = body.getCometTailColor().toVector3();
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;

@@ -13,7 +13,6 @@
 #include <celutil/color.h>
 #include "boundariesrenderer.h"
 #include "render.h"
-#include "vecgl.h"
 
 using celestia::render::LineRenderer;
 

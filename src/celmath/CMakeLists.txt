@@ -11,6 +11,7 @@ set(CELMATH_SOURCES
   ray.h
   solve.h
   sphere.h
+  vecgl.h
 )
 
 add_library(celmath OBJECT ${CELMATH_SOURCES})

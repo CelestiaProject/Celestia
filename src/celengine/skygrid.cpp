@@ -19,9 +19,9 @@
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celmath/vecgl.h>
 #include <celutil/utf8.h>
 #include "render.h"
-#include "vecgl.h"
 #include "skygrid.h"
 
 using namespace Eigen;
@@ -487,8 +487,8 @@ SkyGrid::render(Renderer& renderer,
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
     Matrix4f m = renderer.getModelViewMatrix() *
-                 vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
-                 vecgl::scale(1000.0f);
+                 celmath::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
+                 celmath::scale(1000.0f);
     Matrices matrices = {&renderer.getProjectionMatrix(), &m};
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
