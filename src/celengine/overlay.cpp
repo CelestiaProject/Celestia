@@ -30,6 +30,7 @@ Overlay::Overlay(Renderer& r) :
 
 void Overlay::begin()
 {
+    layout->setLayoutDirectionFollowTextAlignment(true);
     layout->setScreenDpi(renderer.getScreenDpi());
 
     projection = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
@@ -56,6 +57,11 @@ void Overlay::setWindowSize(int w, int h)
 void Overlay::setFont(const std::shared_ptr<TextureFont>& f)
 {
     layout->setFont(f);
+}
+
+void Overlay::setTextAlignment(TextLayout::HorizontalAlignment halign)
+{
+    layout->setHorizontalAlignment(halign);
 }
 
 void Overlay::beginText()
@@ -96,6 +102,11 @@ void Overlay::setColor(const Color& c)
 void Overlay::moveBy(float dx, float dy)
 {
     layout->moveRelative(dx, dy);
+}
+
+void Overlay::moveBy(int dx, int dy)
+{
+    layout->moveRelative(static_cast<float>(dx), static_cast<float>(dy));
 }
 
 void Overlay::savePos()

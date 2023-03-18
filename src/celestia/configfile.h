@@ -84,6 +84,8 @@ public:
     std::string ffvhEncoderOptions;
 
     fs::path leapSecondsFile;
+
+    std::string layoutDirection;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);

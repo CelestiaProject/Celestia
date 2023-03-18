@@ -27,23 +27,48 @@ RelativeTextPrintPosition::RelativeTextPrintPosition(int hOrigin, int vOrigin, i
 
 void RelativeTextPrintPosition::resolvePixelPosition(CelestiaCore* appCore, int& x, int& y)
 {
-    x = messageHOffset * emWidth;
-    y = messageVOffset * fontHeight;
+    auto offsetX = messageHOffset * emWidth;
+    auto offsetY = messageVOffset * fontHeight;
 
     if (messageHOrigin == 0)
-        x += appCore->getSafeAreaWidth() / 2;
+    {
+        // Align horizontal center with offsetX adjusted to layout direction
+        x += (appCore->getSafeAreaStart() + appCore->getSafeAreaEnd()) / 2;
+        if (appCore->getLayoutDirection() == CelestiaCore::LayoutDirection::RightToLeft)
+        {
+            x -= offsetX;
+        }
+        else
+        {
+            x += offsetX;
+        }
+    }
     else if (messageHOrigin > 0)
-        x += appCore->getSafeAreaWidth();
-    if (messageVOrigin == 0)
-        y += appCore->getSafeAreaHeight() / 2;
-    else if (messageVOrigin > 0)
-        y += appCore->getSafeAreaHeight();
-    else if (messageVOrigin < 0)
-        y -= fontHeight;
+    {
+        // Align horizontal end
+        x = appCore->getSafeAreaEnd(-offsetX);
+    }
+    else
+    {
+        // Align horizontal start
+        x = appCore->getSafeAreaStart(offsetX);
+    }
 
-    auto safeAreaInsets = appCore->getSafeAreaInsets();
-    x += std::get<0>(safeAreaInsets);
-    y += std::get<1>(safeAreaInsets);
+    if (messageVOrigin == 0)
+    {
+        // Align vertical center
+        y = (appCore->getSafeAreaTop() + appCore->getSafeAreaBottom()) / 2 + offsetY;
+    }
+    else if (messageVOrigin > 0)
+    {
+        // Align top
+        y = appCore->getSafeAreaTop(-offsetY);
+    }
+    else
+    {
+        // Align bottom
+        y = appCore->getSafeAreaBottom(offsetY - fontHeight);
+    }
 }
 
 }

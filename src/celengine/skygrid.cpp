@@ -181,17 +181,17 @@ static void updateAngleRange(double a, double b, double* maxDiff, double* minAng
 
 
 // Get the horizontal alignment for the coordinate label along the specified frustum plane
-static Renderer::LabelAlignment
+static Renderer::LabelHorizontalAlignment
 getCoordLabelHAlign(int planeIndex)
 {
     switch (planeIndex)
     {
     case 2:
-        return Renderer::AlignLeft;
+        return Renderer::LabelHorizontalAlignment::Start;
     case 3:
-        return Renderer::AlignRight;
+        return Renderer::LabelHorizontalAlignment::End;
     default:
-        return Renderer::AlignCenter;
+        return Renderer::LabelHorizontalAlignment::Center;
     }
 }
 
@@ -200,7 +200,7 @@ getCoordLabelHAlign(int planeIndex)
 static Renderer::LabelVerticalAlignment
 getCoordLabelVAlign(int planeIndex)
 {
-    return planeIndex == 1 ? Renderer::VerticalAlignTop : Renderer::VerticalAlignBottom;
+    return planeIndex == 1 ? Renderer::LabelVerticalAlignment::Top : Renderer::LabelVerticalAlignment::Bottom;
 }
 
 
@@ -546,7 +546,7 @@ SkyGrid::render(Renderer& renderer,
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
-                Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+                Renderer::LabelHorizontalAlignment hAlign = getCoordLabelHAlign(k);
                 Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
                 if ((m * p0).z() < 0.0)
@@ -621,7 +621,7 @@ SkyGrid::render(Renderer& renderer,
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
-                Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+                Renderer::LabelHorizontalAlignment hAlign = getCoordLabelHAlign(k);
                 Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
                 if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)

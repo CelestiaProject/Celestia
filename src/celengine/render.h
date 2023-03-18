@@ -145,6 +145,8 @@ class Renderer
     float calcPixelSize(float fovY, float windowHeight);
     void setFaintestAM45deg(float);
     float getFaintestAM45deg() const;
+    void setRTL(bool);
+    bool isRTL() const;
 
     void setRenderMode(RenderMode);
     void autoMag(float& faintestMag);
@@ -373,18 +375,18 @@ class Renderer
     void loadTextures(Body*);
 
     // Label related methods
-    enum LabelAlignment
+    enum class LabelHorizontalAlignment : std::uint8_t
     {
-        AlignCenter,
-        AlignLeft,
-        AlignRight
+        Center,
+        Start,
+        End,
     };
 
-    enum LabelVerticalAlignment
+    enum class LabelVerticalAlignment : std::uint8_t
     {
-        VerticalAlignCenter,
-        VerticalAlignBottom,
-        VerticalAlignTop,
+        Center,
+        Bottom,
+        Top,
     };
 
     struct Annotation
@@ -393,7 +395,7 @@ class Renderer
         const celestia::MarkerRepresentation* markerRep;
         Color color;
         Eigen::Vector3f position;
-        LabelAlignment halign : 3;
+        LabelHorizontalAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
         float size;
 
@@ -404,22 +406,22 @@ class Renderer
                                  const std::string& labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
-                                 LabelAlignment halign = AlignLeft,
-                                 LabelVerticalAlignment valign = VerticalAlignBottom,
+                                 LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
+                                 LabelVerticalAlignment valign = LabelVerticalAlignment::Bottom,
                                  float size = 0.0f);
     void addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
-                                 LabelAlignment halign = AlignLeft,
-                                 LabelVerticalAlignment valign = VerticalAlignBottom,
+                                 LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
+                                 LabelVerticalAlignment valign = LabelVerticalAlignment::Bottom,
                                  float size = 0.0f);
     void addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
                              const std::string& labelText,
                              Color color,
                              const Eigen::Vector3f& position,
-                             LabelAlignment halign = AlignLeft,
-                             LabelVerticalAlignment valign = VerticalAlignBottom,
+                             LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
+                             LabelVerticalAlignment valign = LabelVerticalAlignment::Bottom,
                              float size = 0.0f);
 
     ShaderManager& getShaderManager() const { return *shaderManager; }
@@ -429,7 +431,7 @@ class Renderer
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
+    void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&, LabelHorizontalAlignment halign, LabelVerticalAlignment valign);
     void endObjectAnnotations();
     const Eigen::Quaternionf& getCameraOrientation() const;
     float getNearPlaneDistance() const;
@@ -619,13 +621,15 @@ class Renderer
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
 
+    void getLabelAlignmentInfo(const Annotation &annotation, const TextureFont *font, celestia::engine::TextLayout::HorizontalAlignment &halign, float &hOffset, float &vOffset) const;
+
     void addAnnotation(std::vector<Annotation>&,
                        const celestia::MarkerRepresentation*,
                        const std::string& labelText,
                        Color color,
                        const Eigen::Vector3f& position,
-                       LabelAlignment halign = AlignLeft,
-                       LabelVerticalAlignment = VerticalAlignBottom,
+                       LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
+                       LabelVerticalAlignment = LabelVerticalAlignment::Bottom,
                        float size = 0.0f,
                        bool special = false);
     void renderAnnotationMarker(const Annotation &a,
@@ -696,6 +700,7 @@ class Renderer
     ProjectionMode projectionMode;
     int renderMode;
     int labelMode;
+    bool rtl{ false };
     uint64_t renderFlags;
     int bodyVisibilityMask{ ~0 };
     int orbitMask;
