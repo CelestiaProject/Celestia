@@ -46,8 +46,6 @@
 #include "pointstarvertexbuffer.h"
 #include "pointstarrenderer.h"
 #include "orbitsampler.h"
-#include "asterismrenderer.h"
-#include "boundariesrenderer.h"
 #include "rendcontext.h"
 #include "textlayout.h"
 #include <celengine/observer.h>
@@ -56,7 +54,9 @@
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
 #include <celmath/vecgl.h>
+#include <celrender/asterismrenderer.h>
 #include <celrender/atmosphererenderer.h>
+#include <celrender/boundariesrenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
 #include <celrender/linerenderer.h>
@@ -86,11 +86,13 @@ using namespace celestia;
 using namespace celmath;
 using namespace celestia::engine;
 using celestia::util::GetLogger;
+using celestia::render::AsterismRenderer;
+using celestia::render::AtmosphereRenderer;
+using celestia::render::BoundariesRenderer;
 using celestia::render::CometRenderer;
+using celestia::render::EclipticLineRenderer;
 using celestia::render::LineRenderer;
 using celestia::render::VertexObject;
-using celestia::render::AtmosphereRenderer;
-using celestia::render::EclipticLineRenderer;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f

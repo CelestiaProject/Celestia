@@ -10,14 +10,17 @@
 
 #pragma once
 
-#include <memory>
 #include <array>
+#include <cstdint>
+#include <memory>
 #include <vector>
+
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class Atmosphere;
 class Renderer;
-class RenderInfo;
+struct RenderInfo;
 class LightingState;
 struct Matrices;
 
@@ -78,8 +81,8 @@ private:
 
     struct SkyVertex
     {
-        std::array<float,   3> position;
-        std::array<uint8_t, 4> color;
+        std::array<float,        3> position;
+        std::array<std::uint8_t, 4> color;
     };
 
     struct SkyContourPoint

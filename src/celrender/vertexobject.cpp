@@ -12,6 +12,11 @@
 #include "vertexobject.h"
 
 #include <cassert>
+#include <utility>
+
+
+namespace celestia::render
+{
 
 namespace
 {
@@ -23,10 +28,8 @@ namespace
     return celestia::gl::OES_vertex_array_object;
 #endif
 }
-}
+} // end unnamed namespace
 
-namespace celestia::render
-{
 VertexObject::VertexObject() = default;
 
 VertexObject::VertexObject(GLsizeiptr bufferSize, GLenum streamType) :

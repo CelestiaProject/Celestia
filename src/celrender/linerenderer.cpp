@@ -9,14 +9,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/glsupport.h>        // gl::maxLineWidth
-#include <celengine/shadermanager.h>
-#include <celengine/render.h>
 #include "linerenderer.h"
-#include <iostream>
+
+#include <array>
+#include <cstddef>
+
+#include <celengine/glsupport.h>
+#include <celengine/render.h>
+#include <celengine/shadermanager.h>
+#include "vertexobject.h"
 
 namespace celestia::render
 {
+
+LineRenderer::~LineRenderer() = default;
 
 /**
  * @brief Return number of elements of position attribute.
@@ -167,8 +173,8 @@ LineRenderer::create_vbo_triangles()
     m_trVertexObj    = std::make_unique<VertexObject>(0, storageType);
     m_trVertexObj->bind();
 
-    GLsizei               stride;
-    std::array<size_t, 4> offset;
+    GLsizei                    stride;
+    std::array<std::size_t, 4> offset;
     if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
     {
         stride = static_cast<GLsizei>(sizeof(LineSegment));

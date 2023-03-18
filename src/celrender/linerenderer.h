@@ -12,10 +12,10 @@
 #pragma once
 
 #include <memory>
-#include <string>
 #include <vector>
+
 #include <Eigen/Core>
-#include <celrender/vertexobject.h>
+
 #include <celutil/color.h>
 
 class CelestiaGLProgram;
@@ -24,6 +24,8 @@ struct Matrices;
 
 namespace celestia::render
 {
+class VertexObject;
+
 /**
  * \class LineRenderer linerenderer.h celrender/linerenderer.h
  *
@@ -139,7 +141,7 @@ public:
                  StorageType storageType = StorageType::Dynamic,
                  VertexFormat format = VertexFormat::P3F);
 
-    ~LineRenderer() = default;
+    ~LineRenderer();
 
     //! Clear CPU side memory buffers
     void clear();

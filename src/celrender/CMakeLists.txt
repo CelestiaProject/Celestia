@@ -1,6 +1,10 @@
 set(CELRENDER_SOURCES
+  asterismrenderer.cpp
+  asterismrenderer.h
   atmosphererenderer.cpp
   atmosphererenderer.h
+  boundariesrenderer.cpp
+  boundariesrenderer.h
   cometrenderer.cpp
   cometrenderer.h
   eclipticlinerenderer.cpp

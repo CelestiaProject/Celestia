@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include <utility>
+#include <memory>
+
 #include <Eigen/Core>
 
 class Body;
