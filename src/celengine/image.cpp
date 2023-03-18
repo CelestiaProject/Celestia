@@ -9,8 +9,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <fstream>
-#include <iostream>
 #include <celengine/glsupport.h>
 #include <celutil/logger.h>
 #include <celutil/filetype.h>

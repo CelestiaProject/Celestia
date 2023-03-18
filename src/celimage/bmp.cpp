@@ -9,8 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cstdint>
-#include <fstream>  // ifstream
-#include <iostream> // ios
+#include <fstream>
+#include <istream>
 #include <memory>
 #include <vector>
 

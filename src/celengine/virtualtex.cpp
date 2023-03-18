@@ -10,7 +10,7 @@
 #include <cmath>
 #include <cassert>
 #include <cmath>
-#include <iostream>
+#include <istream>
 #include <fstream>
 #include <string>
 #include <utility>
@@ -84,9 +84,6 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
 const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 {
     tilesRequested++;
-#if 0
-    cout << "getTile(" << lod << ", " << u << ", " << v << ")\n";
-#endif
 
     lod += baseSplit;
 
@@ -146,10 +143,6 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
     texU = (u & ((1 << lodDiff) - 1)) * texDU;
     texV = (v & ((1 << lodDiff) - 1)) * texDV;
 
-#if 0
-    cout << "Tile: " << tile->tex->getName() << ", " <<
-        texU << ", " << texV << ", " << texDU << ", " << texDV << '\n';
-#endif
     return TextureTile(tile->tex->getName(), texU, texV, texDU, texDV);
 }
 
@@ -240,7 +233,6 @@ void VirtualTexture::makeResident(Tile* tile, unsigned int lod, unsigned int u, 
         tile->tex = loadTileTexture(lod, u, v);
         if (tile->tex == nullptr)
         {
-            // cout << "Texture load failed!\n";
             tile->loadFailed = true;
         }
     }
@@ -299,9 +291,6 @@ void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u,
             node->children[child] = new TileQuadtreeNode();
         node = node->children[child];
     }
-#if 0
-    clog << "addTileToTree: " << node << ", " << lod << ", " << u << ", " << v << '\n';
-#endif
 
     // Verify that the tile doesn't already exist
     if (!node->tile)

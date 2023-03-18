@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include "scriptmenu.h"
-#include <iostream>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>

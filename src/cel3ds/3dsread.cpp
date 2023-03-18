@@ -7,13 +7,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "3dsread.h"
+
 #include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <iostream>
+#include <istream>
 #include <string>
 #include <utility>
 
@@ -23,7 +25,6 @@
 #include <celutil/binaryread.h>
 #include <celutil/logger.h>
 #include "3dsmodel.h"
-#include "3dsread.h"
 
 namespace celutil = celestia::util;
 using celestia::util::GetLogger;

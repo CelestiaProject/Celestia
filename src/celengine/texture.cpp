@@ -12,8 +12,6 @@
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
-#include <fstream>
-#include <iostream>
 
 #include <Eigen/Core>
 #include "glsupport.h"
