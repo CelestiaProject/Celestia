@@ -60,8 +60,7 @@ bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &outpu
 {
     if (input.length() == 0)
     {
-        output.resize(1);
-        output[0] = L'\0';
+        output.clear();
         return true;
     }
 
