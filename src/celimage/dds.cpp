@@ -9,7 +9,6 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <memory>
@@ -307,14 +306,6 @@ Image* LoadDDSImage(const fs::path& filename)
         delete img;
         return nullptr;
     }
-
-#if 0
-    cout << "sizeof(ddsd) = " << sizeof(ddsd) << '\n';
-    cout << "dimensions: " << ddsd.width << 'x' << ddsd.height << '\n';
-    cout << "mipmap levels: " << ddsd.mipMapLevels << '\n';
-    cout << "fourCC: " << ddsd.format.fourCC << '\n';
-    cout << "bpp: " << ddsd.format.bpp << '\n';
-#endif
 
     return img;
 }

@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <celmath/mathlib.h>
 #include "overlayimage.h"
 #include "rectangle.h"

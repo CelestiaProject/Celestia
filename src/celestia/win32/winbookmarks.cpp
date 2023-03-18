@@ -13,7 +13,6 @@
 #include "res/resource.h"
 #include <celutil/logger.h>
 #include <celutil/winutil.h>
-#include <iostream>
 
 using namespace std;
 using celestia::util::GetLogger;

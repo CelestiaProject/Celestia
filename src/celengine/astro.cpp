@@ -9,7 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
-#include <iostream>
+#include <ostream>
 #include <utility>
 #include <ctime>
 #include "astro.h"

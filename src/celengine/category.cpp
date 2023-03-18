@@ -1,4 +1,3 @@
-#include <iostream>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celengine/astroobj.h>

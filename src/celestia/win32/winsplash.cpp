@@ -17,7 +17,6 @@
 #include <winuser.h>
 #include <commctrl.h>
 #include "res/resource.h"
-#include <iostream>
 
 
 using namespace std;

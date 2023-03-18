@@ -8,7 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
-#include <iostream>
 #include <fstream>
 #include <cassert>
 #include <celutil/logger.h>

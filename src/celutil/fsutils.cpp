@@ -12,7 +12,6 @@
 
 #include <config.h> // HAVE_WORDEXP
 #include <fstream>
-#include <iostream>
 #include <fmt/format.h>
 #include "gettext.h"
 #ifdef _WIN32
