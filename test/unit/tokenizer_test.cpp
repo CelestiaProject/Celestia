@@ -324,14 +324,14 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         std::optional<double> numberValue = tok.getNumberValue();
         REQUIRE(numberValue.has_value());
         REQUIRE(numberValue.value() == -0.0);
-        REQUIRE(std::signbit(numberValue.value()) == 1);
+        REQUIRE(std::signbit(numberValue.value()));
         REQUIRE(!tok.getIntegerValue().has_value());
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
         numberValue = tok.getNumberValue();
         REQUIRE(numberValue.has_value());
         REQUIRE(numberValue.value() == -0.0);
-        REQUIRE(std::signbit(numberValue.value()) == 1);
+        REQUIRE(std::signbit(numberValue.value()));
         REQUIRE(!tok.getIntegerValue().has_value());
 
         REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
