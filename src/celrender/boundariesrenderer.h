@@ -16,6 +16,9 @@ class ConstellationBoundaries;
 class Renderer;
 struct Matrices;
 
+namespace celestia::render
+{
+
 class BoundariesRenderer
 {
 public:
@@ -33,8 +36,10 @@ public:
 private:
     bool prepare();
 
-    celestia::render::LineRenderer  m_lineRenderer;
-    const ConstellationBoundaries  *m_boundaries      { nullptr };
-    int                             m_lineCount       { 0 };
-    bool                            m_initialized     { false };
+    LineRenderer                   m_lineRenderer;
+    const ConstellationBoundaries *m_boundaries      { nullptr };
+    int                            m_lineCount       { 0 };
+    bool                           m_initialized     { false };
 };
+
+} // end namespace celestia::render

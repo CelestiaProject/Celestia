@@ -7,14 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
-#include <numeric>
-#include <celengine/boundaries.h>
-#include <celutil/color.h>
 #include "boundariesrenderer.h"
-#include "render.h"
 
-using celestia::render::LineRenderer;
+#include <numeric>
+
+#include <celengine/boundaries.h>
+
+namespace celestia::render
+{
 
 BoundariesRenderer::BoundariesRenderer(const Renderer &renderer, const ConstellationBoundaries *boundaries) :
     m_lineRenderer(LineRenderer(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
@@ -44,7 +44,7 @@ bool BoundariesRenderer::prepare()
 {
     auto chains = m_boundaries->getChains();
     auto lineCount = std::accumulate(chains.begin(), chains.end(), 0,
-                                     [](int a, ConstellationBoundaries::Chain* b) { return a + b->size() - 1; });
+                                     [](int a, const ConstellationBoundaries::Chain* b) { return a + b->size() - 1; });
 
     if (lineCount == 0)
         return false;
@@ -59,3 +59,5 @@ bool BoundariesRenderer::prepare()
 
     return true;
 }
+
+} // end namespace celestia::render

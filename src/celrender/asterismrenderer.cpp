@@ -7,12 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
-#include <celutil/color.h>
 #include "asterismrenderer.h"
-#include "render.h"
 
-using celestia::render::LineRenderer;
+#include <cassert>
+#include <cstddef>
+
+#include <celengine/glsupport.h>
+#include <celutil/color.h>
+
+namespace celestia::render
+{
 
 AsterismRenderer::AsterismRenderer(const Renderer &renderer, const AsterismList *asterisms) :
     m_lineRenderer(LineRenderer(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
@@ -41,7 +45,7 @@ void AsterismRenderer::render(const Color &defaultColor, const Matrices &mvp)
 
     int offset = 0;
     float opacity = defaultColor.alpha();
-    for (size_t size = m_asterisms->size(), i = 0; i < size; i++)
+    for (std::size_t size = m_asterisms->size(), i = 0; i < size; i++)
     {
         const auto& ast = (*m_asterisms)[i];
         if (!ast.getActive() || !ast.isColorOverridden())
@@ -69,7 +73,7 @@ bool AsterismRenderer::prepare()
             // as we use GL_LINES we should double the number of vertices.
             // as we don't need closed figures we have only one copy of
             // the 1st and last vertexes
-            GLsizei s = ast.getChain(k).size();
+            auto s = static_cast<GLsizei>(ast.getChain(k).size());
             if (s > 1)
                 ast_vtx_num += s - 1;
         }
@@ -95,3 +99,5 @@ bool AsterismRenderer::prepare()
 
     return true;
 }
+
+} // end namespace celestia::render

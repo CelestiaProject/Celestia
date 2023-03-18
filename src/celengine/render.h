@@ -31,8 +31,6 @@ class FrameTree;
 class ReferenceMark;
 class CurvePlot;
 class PointStarVertexBuffer;
-class AsterismRenderer;
-class BoundariesRenderer;
 class Observer;
 class Surface;
 class TextureFont;
@@ -43,7 +41,9 @@ namespace celestia
 class Rect;
 namespace render
 {
+class AsterismRenderer;
 class AtmosphereRenderer;
+class BoundariesRenderer;
 class CometRenderer;
 class EclipticLineRenderer;
 }
@@ -782,8 +782,8 @@ class Renderer
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
-    std::unique_ptr<AsterismRenderer> m_asterismRenderer;
-    std::unique_ptr<BoundariesRenderer> m_boundariesRenderer;
+    std::unique_ptr<celestia::render::AsterismRenderer> m_asterismRenderer;
+    std::unique_ptr<celestia::render::BoundariesRenderer> m_boundariesRenderer;
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;

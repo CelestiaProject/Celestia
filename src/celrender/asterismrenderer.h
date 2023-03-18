@@ -10,12 +10,16 @@
 #pragma once
 
 #include <vector>
+
 #include <celengine/asterism.h>
 #include <celrender/linerenderer.h>
 
 class Color;
 class Renderer;
 struct Matrices;
+
+namespace celestia::render
+{
 
 class AsterismRenderer
 {
@@ -34,9 +38,11 @@ public:
 private:
     bool prepare();
 
-    celestia::render::LineRenderer  m_lineRenderer;
-    std::vector<int>                m_lineCount;
-    const AsterismList             *m_asterisms       { nullptr };
-    int                             m_totalLineCount  { 0 };
-    bool                            m_initialized     { false };
+    LineRenderer        m_lineRenderer;
+    std::vector<int>    m_lineCount;
+    const AsterismList *m_asterisms       { nullptr };
+    int                 m_totalLineCount  { 0 };
+    bool                m_initialized     { false };
 };
+
+} // end namespace celestia::render

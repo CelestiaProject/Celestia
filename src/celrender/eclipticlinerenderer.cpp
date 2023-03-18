@@ -8,18 +8,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celmath/mathlib.h> // sincos
-#include <celengine/render.h>
-
 #include "eclipticlinerenderer.h"
 
+#include <celcompat/numbers.h>
+#include <celengine/render.h>
+#include <celmath/mathlib.h>
+
+namespace celestia::render
+{
+
+namespace
+{
 constexpr float kEclipticScale = 1000.0f;
 constexpr int kEclipticCount = 200;
 
 constexpr float PI = celestia::numbers::pi_v<float>;
+}
 
-namespace celestia::render
-{
 EclipticLineRenderer::EclipticLineRenderer(Renderer &renderer) :
     m_renderer(renderer),
     m_lineRenderer(renderer, 1.0f, LineRenderer::PrimType::LineLoop, LineRenderer::StorageType::Static)

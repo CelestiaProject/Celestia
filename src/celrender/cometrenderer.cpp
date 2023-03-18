@@ -8,19 +8,32 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "cometrenderer.h"
+
 #include <algorithm>
-#include <vector>
+#include <cmath>
+
+#include <Eigen/Geometry>
+
+#include <celcompat/numbers.h>
+#include <celengine/astro.h>
 #include <celengine/body.h>
+#include <celengine/glsupport.h>
 #include <celengine/observer.h>
 #include <celengine/render.h>
+#include <celengine/shadermanager.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/indexlist.h>
-#include "cometrenderer.h"
+#include "vertexobject.h"
+
 
 using celestia::util::BuildIndexList;
 using celestia::util::IndexListCapacity;
 using ushort = unsigned short;
+
+namespace celestia::render
+{
 
 namespace
 {
@@ -32,10 +45,8 @@ constexpr int MaxIndices = IndexListCapacity(MaxCometTailSlices, MaxCometTailPoi
 
 // Distance from the Sun at which comet tails will start to fade out
 constexpr float CometTailAttenDistSol = astro::AUtoKilometers(5.0f);
-}
 
-namespace celestia::render
-{
+} // end unnamed namespace
 
 CometRenderer::CometRenderer(Renderer &renderer) :
     m_renderer(renderer),
