@@ -57,6 +57,15 @@ class TextLayout
     void setHorizontalAlignment(HorizontalAlignment);
     void setScreenDpi(int);
 
+    /// Sets whether text layout direction follows the specified text alignment, is useful for
+    /// distinguishing between (LTR + Right Aligned) vs (RTL)
+    /// For example when right aligned with calls render("ABC");render("DEF");render("GHI");
+    /// LTR (follows = false) will output
+    ///             ABC DEF GHI
+    /// RTL (follows = true) will output
+    ///             GHI DEF ABC
+    void setLayoutDirectionFollowTextAlignment(bool);
+
     /// Move the cursor relative to the absolute position
     /// @param newPositionX the horizontal coordinate of the destination
     /// @param newPositionY the vertical cooridinate of the destination
@@ -109,6 +118,7 @@ class TextLayout
     Eigen::Matrix4f projection{ Eigen::Matrix4f::Identity() };
 
     bool began{ false };
+    bool layoutDirectionFollowTextAlignment{ false };
 
     float getPixelSize(float size, Unit unit) const;
 

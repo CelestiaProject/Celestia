@@ -74,6 +74,16 @@ void TextLayout::setScreenDpi(int value)
     }
 }
 
+void TextLayout::setLayoutDirectionFollowTextAlignment(bool value)
+{
+    if (layoutDirectionFollowTextAlignment != value)
+    {
+        if (began)
+            flushInternal(false);
+        layoutDirectionFollowTextAlignment = value;
+    }
+}
+
 void TextLayout::moveAbsolute(float newPositionX, float newPositionY, bool updateAlignment)
 {
     if (positionX != newPositionX || positionY != newPositionY)
@@ -121,24 +131,44 @@ void TextLayout::render(std::string_view text)
         return;
 
     std::vector<std::wstring> lines;
-    if (!processString(text, lines))
+    if (!processString(text, lines) || lines.empty())
         return;
 
-    bool firstLine = true;
-    for (const auto& line : lines)
+    for (size_t i = 0; i < lines.size(); i += 1)
     {
-        if (firstLine)
+        auto lineToRender = lines[i];
+        if (i == 0)
         {
-            firstLine = false;
+            // Combine the current line with the first line
+            if (layoutDirectionFollowTextAlignment && horizontalAlignment == HorizontalAlignment::Right)
+            {
+                lineToRender += currentLine;
+            }
+            else
+            {
+                lineToRender = currentLine + lineToRender;
+            }
+            if (lines.size() == 1)
+            {
+                // This line is still continuing, clear line and do not render yet
+                currentLine = lineToRender;
+                lineToRender = L"";
+            }
         }
         else
         {
             // Reset to line start, and go to the next line
             positionX = alignmentEdgeX;
             positionY -= static_cast<float>(font->getHeight());
+            if (i == lines.size() - 1)
+            {
+                // Last line (and size != 1), clear line do not render
+                currentLine = lines[i];
+                lineToRender = L"";
+            }
         }
-        if (!line.empty())
-            renderLine(line);
+        if (!lineToRender.empty())
+            renderLine(lineToRender);
     }
 }
 
@@ -202,7 +232,14 @@ void TextLayout::renderLine(std::wstring_view line)
         break;
     }
     auto [newX, newY] = font->render(line, x, positionY);
-    positionX = newX;
+    if (layoutDirectionFollowTextAlignment && horizontalAlignment == HorizontalAlignment::Right)
+    {
+        positionX = x;
+    }
+    else
+    {
+        positionX = newX;
+    }
     positionY = newY;
 }
 

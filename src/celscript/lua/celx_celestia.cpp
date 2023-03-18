@@ -399,6 +399,39 @@ int celestia_setsafeareainsets(lua_State* l)
     return 0;
 }
 
+static int celestia_getlayoutdirection(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getlayoutdirection");
+    switch (this_celestia(l)->getLayoutDirection())
+    {
+    case CelestiaCore::LayoutDirection::LeftToRight:
+        lua_pushstring(l, "ltr");
+        break;
+    case CelestiaCore::LayoutDirection::RightToLeft:
+        lua_pushstring(l, "rtl");
+        break;
+    default:
+        lua_pushstring(l, "invalid layoutDirection");
+        break;
+    }
+    return 1;
+}
+
+static int celestia_setlayoutdirection(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setlayoutdirection");
+    auto appCore = this_celestia(l);
+
+    string layoutDirection = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setlayoutdirection must be a string");
+    if (layoutDirection == "ltr") // NOSONAR
+        appCore->setLayoutDirection(CelestiaCore::LayoutDirection::LeftToRight);
+    else if (layoutDirection == "rtl")
+        appCore->setLayoutDirection(CelestiaCore::LayoutDirection::RightToLeft);
+    else
+       Celx_DoError(l, "Invalid layoutDirection");
+    return 0;
+}
+
 static int celestia_showlabel(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1000, "Bad method call!");
@@ -2562,6 +2595,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "getwindowdimension", celestia_getwindowdimension);
     Celx_RegisterMethod(l, "getsafeareainsets", celestia_getsafeareainsets);
     Celx_RegisterMethod(l, "setsafeareainsets", celestia_setsafeareainsets);
+    Celx_RegisterMethod(l, "getlayoutdirection", celestia_getlayoutdirection);
+    Celx_RegisterMethod(l, "setlayoutdirection", celestia_setlayoutdirection);
     Celx_RegisterMethod(l, "showlabel", celestia_showlabel);
     Celx_RegisterMethod(l, "hidelabel", celestia_hidelabel);
     Celx_RegisterMethod(l, "getlabelflags", celestia_getlabelflags);

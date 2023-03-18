@@ -2271,6 +2271,30 @@ int CelestiaCore::getSafeAreaHeight() const
     return height - safeAreaInsets.top - safeAreaInsets.bottom;
 }
 
+int CelestiaCore::getSafeAreaStart(int offset) const
+{
+    if (layoutDirection == LayoutDirection::RightToLeft)
+        return width - safeAreaInsets.right - offset;
+    return safeAreaInsets.left + offset;
+}
+
+int CelestiaCore::getSafeAreaEnd(int offset) const
+{
+    if (layoutDirection == LayoutDirection::RightToLeft)
+        return safeAreaInsets.left + offset;
+    return width - safeAreaInsets.right - offset;
+}
+
+int CelestiaCore::getSafeAreaTop(int offset) const
+{
+    return height - safeAreaInsets.top - offset;
+}
+
+int CelestiaCore::getSafeAreaBottom(int offset) const
+{
+    return safeAreaInsets.bottom + offset;
+}
+
 void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
 {
     safeAreaInsets = { left, top, right, bottom };
@@ -3203,7 +3227,7 @@ void CelestiaCore::renderOverlay()
         // Time and date
         overlay->savePos();
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->moveBy(width - safeAreaInsets.right - dateStrWidth, height - safeAreaInsets.top - fontHeight);
+        overlay->moveBy(getSafeAreaEnd(dateStrWidth), getSafeAreaTop(fontHeight));
         overlay->beginText();
 
         overlay->print(dateStr);
@@ -3252,7 +3276,7 @@ void CelestiaCore::renderOverlay()
     {
         // Speed
         overlay->savePos();
-        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 2 + screenDpi / 25.4f * 1.3f);
+        overlay->moveBy(getSafeAreaStart(), getSafeAreaBottom(fontHeight * 2 + static_cast<int>(static_cast<float>(screenDpi) / 25.4f * 1.3f)));
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3285,7 +3309,7 @@ void CelestiaCore::renderOverlay()
     {
         // Field of view and camera mode in lower right corner
         overlay->savePos();
-        overlay->moveBy(width - safeAreaInsets.right - emWidth * 15, safeAreaInsets.bottom + fontHeight * 3 + screenDpi / 25.4f * 1.3f);
+        overlay->moveBy(getSafeAreaEnd(emWidth * 15), getSafeAreaBottom(fontHeight * 3 + static_cast<int>(static_cast<float>(screenDpi) / 25.4f * 1.3f)));
         overlay->beginText();
         overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
@@ -3361,7 +3385,7 @@ void CelestiaCore::renderOverlay()
     {
         overlay->savePos();
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->moveBy(safeAreaInsets.left, height - safeAreaInsets.top - titleFont->getHeight());
+        overlay->moveBy(getSafeAreaStart(), getSafeAreaTop(titleFont->getHeight()));
 
         overlay->beginText();
         Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
@@ -3531,7 +3555,7 @@ void CelestiaCore::renderOverlay()
         celestia::Rect r(0, 0, width, safeAreaInsets.bottom + rectHeight);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
-        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + rectHeight - titleFontHeight);
+        overlay->moveBy(getSafeAreaStart(), getSafeAreaBottom(rectHeight - titleFontHeight));
         overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
         overlay->printf(_("Target name: %s"), typedText);
@@ -3542,14 +3566,15 @@ void CelestiaCore::renderOverlay()
             int nb_cols = 4;
             int nb_lines = 3;
             int start = 0;
-            overlay->moveBy(3.0f, -font->getHeight() - 3.0f);
+            overlay->moveBy(3, -font->getHeight() - 3);
             vector<std::string>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
             {
                start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
                iter += start;
             }
-            for (int i=0; iter < typedTextCompletion.end() && i < nb_cols; i++)
+            int columnWidth = getSafeAreaWidth() / nb_cols;
+            for (int i = 0; iter < typedTextCompletion.end() && i < nb_cols; i++)
             {
                 overlay->savePos();
                 overlay->beginText();
@@ -3564,7 +3589,7 @@ void CelestiaCore::renderOverlay()
                 }
                 overlay->endText();
                 overlay->restorePos();
-                overlay->moveBy((float) (getSafeAreaWidth()/nb_cols), 0.0f);
+                overlay->moveBy(layoutDirection == LayoutDirection::RightToLeft ? -columnWidth : columnWidth, 0);
            }
         }
         overlay->restorePos();
@@ -3647,9 +3672,7 @@ void CelestiaCore::renderOverlay()
         overlay->savePos();
         overlay->beginText();
         int x = (getSafeAreaWidth() - TextLayout::getTextWidth(_("Edit Mode"), font.get())) / 2;
-        int y = getSafeAreaHeight() - fontHeight;
-        overlay->moveBy((float) (safeAreaInsets.left + x),
-                        (float) (safeAreaInsets.bottom + y));
+        overlay->moveBy(getSafeAreaStart(x), getSafeAreaTop(fontHeight));
         overlay->setColor(1, 0, 1, 1);
         overlay->print(_("Edit Mode"));
         overlay->endText();
@@ -4051,6 +4074,16 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             GetLogger()->warn("Unknown script system access policy {}\n", config->scriptSystemAccessPolicy);
     }
 
+    if (!config->layoutDirection.empty())
+    {
+        if (compareIgnoringCase(config->layoutDirection, "ltr") == 0)
+            layoutDirection = LayoutDirection::LeftToRight;
+        else if (compareIgnoringCase(config->layoutDirection, "rtl") == 0)
+            layoutDirection = LayoutDirection::RightToLeft;
+        else
+            GetLogger()->warn("Unknown layout direction {}\n", config->layoutDirection);
+    }
+
     sim = new Simulation(universe);
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
@@ -4131,6 +4164,7 @@ bool CelestiaCore::initRenderer()
 
     // Set up the overlay
     overlay = new Overlay(*renderer);
+    overlay->setTextAlignment(layoutDirection == LayoutDirection::RightToLeft ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left);
     overlay->setWindowSize(width, height);
 
     if (config->labelFont.empty())
@@ -4144,6 +4178,7 @@ bool CelestiaCore::initRenderer()
     }
 
     renderer->setFont(Renderer::FontLarge, titleFont);
+    renderer->setRTL(layoutDirection == LayoutDirection::RightToLeft);
     return true;
 }
 
@@ -4982,6 +5017,18 @@ void CelestiaCore::setScriptSystemAccessPolicy(ScriptSystemAccessPolicy newPolic
 CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::getScriptSystemAccessPolicy() const
 {
     return scriptSystemAccessPolicy;
+}
+
+CelestiaCore::LayoutDirection CelestiaCore::getLayoutDirection() const
+{
+    return layoutDirection;
+}
+
+void CelestiaCore::setLayoutDirection(LayoutDirection value)
+{
+    layoutDirection = value;
+    overlay->setTextAlignment(layoutDirection == LayoutDirection::RightToLeft ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left);
+    renderer->setRTL(layoutDirection == LayoutDirection::RightToLeft);
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)

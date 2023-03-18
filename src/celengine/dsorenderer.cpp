@@ -178,8 +178,8 @@ void DSORenderer::process(DeepSkyObject* const &dso,
                                               dsoDB->getDSOName(dso, true),
                                               labelColor,
                                               relPos,
-                                              Renderer::AlignLeft,
-                                              Renderer::VerticalAlignCenter,
+                                              Renderer::LabelHorizontalAlignment::Start,
+                                              Renderer::LabelVerticalAlignment::Center,
                                               symbolSize);
         }
     }     // labels enabled

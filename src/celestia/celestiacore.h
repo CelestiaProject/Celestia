@@ -215,6 +215,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Deny        = 2,
     };
 
+    enum class LayoutDirection
+    {
+        LeftToRight   = 0,
+        RightToLeft   = 1,
+    };
+
  public:
     CelestiaCore();
     ~CelestiaCore();
@@ -335,6 +341,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::tuple<int, int> getWindowDimension() const;
     int getSafeAreaWidth() const;
     int getSafeAreaHeight() const;
+    // Offset is applied towards the safearea
+    int getSafeAreaStart(int offset = 0) const;
+    int getSafeAreaEnd(int offset = 0) const;
+    int getSafeAreaTop(int offset = 0) const;
+    int getSafeAreaBottom(int offset = 0) const;
     float getPickTolerance() const;
     void setPickTolerance(float);
 
@@ -428,6 +439,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
     void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
+
+    LayoutDirection getLayoutDirection() const;
+    void setLayoutDirection(LayoutDirection);
 
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
@@ -573,6 +587,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     TemperatureScale temperatureScale { Kelvin };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
+
+    LayoutDirection layoutDirection { LayoutDirection::LeftToRight };
 
     Selection lastSelection;
     std::string selectionNames;

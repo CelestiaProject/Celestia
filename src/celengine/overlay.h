@@ -14,20 +14,15 @@
 #include <vector>
 #include <fmt/printf.h>
 #include <Eigen/Core>
+#include <celengine/textlayout.h>
 
 class Color;
 class Overlay;
 class Renderer;
-class TextureFont;
 
 namespace celestia
 {
 class Rect;
-
-namespace engine
-{
-class TextLayout;
-}
 }
 
 class Overlay
@@ -42,11 +37,13 @@ class Overlay
 
     void setWindowSize(int, int);
     void setFont(const std::shared_ptr<TextureFont>&);
+    void setTextAlignment(celestia::engine::TextLayout::HorizontalAlignment halign);
 
     void setColor(float r, float g, float b, float a);
     void setColor(const Color& c);
 
     void moveBy(float dx, float dy);
+    void moveBy(int dx, int dy);
     void savePos();
     void restorePos();
 

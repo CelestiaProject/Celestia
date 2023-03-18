@@ -649,6 +649,15 @@ unsigned int Renderer::getResolution() const
     return textureResolution;
 }
 
+void Renderer::setRTL(bool value)
+{
+    rtl = value;
+}
+
+bool Renderer::isRTL() const
+{
+    return rtl;
+}
 
 void Renderer::setResolution(unsigned int resolution)
 {
@@ -824,13 +833,49 @@ void Renderer::setDistanceLimit(float distanceLimit_)
     markSettingsChanged();
 }
 
+void Renderer::getLabelAlignmentInfo(const Annotation &annotation, const TextureFont *font, TextLayout::HorizontalAlignment &halign, float &hOffset, float &vOffset) const
+{
+    switch (annotation.halign)
+    {
+    case LabelHorizontalAlignment::Center:
+        halign = TextLayout::HorizontalAlignment::Center;
+        hOffset = 0.0f;
+        break;
+    case LabelHorizontalAlignment::End:
+        halign = rtl ? TextLayout::HorizontalAlignment::Left : TextLayout::HorizontalAlignment::Right;
+        hOffset = -2.0f;
+        break;
+    case LabelHorizontalAlignment::Start:
+        halign = rtl ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left;
+        if (annotation.markerRep != nullptr)
+            hOffset = 2.0f + std::trunc(annotation.markerRep->size() / 2.0f);
+        else
+            hOffset = 2.0f;
+        break;
+    }
+    if (rtl)
+        hOffset = -hOffset;
+
+    switch (annotation.valign)
+    {
+    case LabelVerticalAlignment::Center:
+        vOffset = -static_cast<float>(font->getHeight()) / 2.0f;
+        break;
+    case LabelVerticalAlignment::Top:
+        vOffset = -static_cast<float>(font->getHeight());
+        break;
+    case LabelVerticalAlignment::Bottom:
+        vOffset = 0.0f;
+        break;
+    }
+}
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const celestia::MarkerRepresentation* markerRep,
                              const string& labelText,
                              Color color,
                              const Vector3f& pos,
-                             LabelAlignment halign,
+                             LabelHorizontalAlignment halign,
                              LabelVerticalAlignment valign,
                              float size,
                              bool special)
@@ -870,7 +915,7 @@ void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* mar
                                        const string& labelText,
                                        Color color,
                                        const Vector3f& pos,
-                                       LabelAlignment halign,
+                                       LabelHorizontalAlignment halign,
                                        LabelVerticalAlignment valign,
                                        float size)
 {
@@ -882,7 +927,7 @@ void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* mar
                                        const string& labelText,
                                        Color color,
                                        const Vector3f& pos,
-                                       LabelAlignment halign,
+                                       LabelHorizontalAlignment halign,
                                        LabelVerticalAlignment valign,
                                        float size)
 {
@@ -894,7 +939,7 @@ void Renderer::addSortedAnnotation(const celestia::MarkerRepresentation* markerR
                                    const string& labelText,
                                    Color color,
                                    const Vector3f& pos,
-                                   LabelAlignment halign,
+                                   LabelHorizontalAlignment halign,
                                    LabelVerticalAlignment valign,
                                    float size)
 {
@@ -956,12 +1001,14 @@ void Renderer::endObjectAnnotations()
 void Renderer::addObjectAnnotation(const celestia::MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
-                                   const Vector3f& pos)
+                                   const Vector3f& pos,
+                                   LabelHorizontalAlignment halign,
+                                   LabelVerticalAlignment valign)
 {
     assert(objectAnnotationSetOpen);
     if (objectAnnotationSetOpen)
     {
-        addAnnotation(objectAnnotations, markerRep, labelText, color, pos, AlignCenter, VerticalAlignCenter);
+        addAnnotation(objectAnnotations, markerRep, labelText, color, pos, halign, valign);
     }
 }
 
@@ -2010,7 +2057,9 @@ Renderer::locationsToAnnotations(const Body& body,
                     addObjectAnnotation(locationMarker,
                                         location->getName(true),
                                         labelColor,
-                                        labelPos.cast<float>());
+                                        labelPos.cast<float>(),
+                                        LabelHorizontalAlignment::Start,
+                                        LabelVerticalAlignment::Bottom);
                 }
             }
         }
@@ -4104,7 +4153,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                                             ast.getName((labelMode & I18nConstellationLabels) != 0),
                                             Color(labelColor, opacity),
                                             rpos,
-                                            AlignCenter, VerticalAlignCenter);
+                                            LabelHorizontalAlignment::Center, LabelVerticalAlignment::Center);
                 }
             }
         }
@@ -4133,10 +4182,12 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     if (!markerRep.label().empty())
     {
-        layout.setHorizontalAlignment(TextLayout::HorizontalAlignment::Left);
+        layout.setHorizontalAlignment(rtl ? TextLayout::HorizontalAlignment::Left : TextLayout::HorizontalAlignment::Right);
         layout.begin(*m.projection, mv);
         float labelOffset = markerRep.size() / 2.0f;
         float x = labelOffset + PixelOffset;
+        if (rtl)
+            x = -x;
         float y = -labelOffset - static_cast<float>(layout.getLineHeight()) + PixelOffset;
         layout.moveAbsolute(x, y);
         layout.render(markerRep.label());
@@ -4192,39 +4243,8 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
             float hOffset = 0.0f;
             float vOffset = 0.0f;
 
-            switch (annotations[i].halign)
-            {
-            case AlignCenter:
-                alignment = TextLayout::HorizontalAlignment::Center;
-                hOffset = 0.0f;
-                break;
+            getLabelAlignmentInfo(annotations[i], font.get(), alignment, hOffset, vOffset);
 
-            case AlignRight:
-                alignment = TextLayout::HorizontalAlignment::Right;
-                hOffset = -2.0f;
-                break;
-
-            case AlignLeft:
-                alignment = TextLayout::HorizontalAlignment::Left;
-                if (annotations[i].markerRep != nullptr)
-                    hOffset = 2.0f + annotations[i].markerRep->size() / 2.0f;
-                else
-                    hOffset = 2.0f;
-                break;
-            }
-
-            switch (annotations[i].valign)
-            {
-            case VerticalAlignCenter:
-                vOffset = -static_cast<float>(font->getHeight()) / 2.0f;
-                break;
-            case VerticalAlignTop:
-                vOffset = -static_cast<float>(font->getHeight());
-                break;
-            case VerticalAlignBottom:
-                vOffset = 0.0f;
-                break;
-            }
             layout.setHorizontalAlignment(alignment);
             renderAnnotationLabel(annotations[i], layout, hOffset, vOffset, 0.0f, m);
         }
@@ -4316,10 +4336,6 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         float z = fisheye ? (1.0f - (iter->position.z() - nearDist) / d0 * 2.0f) : (d1 + d2 / -iter->position.z());
         float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
-        // Offsets to left align label
-        float labelHOffset = 0.0f;
-        float labelVOffset = 0.0f;
-
         if (iter->markerRep != nullptr)
         {
             renderAnnotationMarker(*iter, layout, ndc_z, m);
@@ -4327,10 +4343,13 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 
         if (!iter->labelText.empty())
         {
-            if (iter->markerRep != nullptr)
-                labelHOffset += std::trunc(iter->markerRep->size() / 2.0f) + 3.0f;
+            TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+            float labelHOffset = 0.0f;
+            float labelVOffset = 0.0f;
 
-            layout.setHorizontalAlignment(TextLayout::HorizontalAlignment::Left);
+            getLabelAlignmentInfo(*iter, font.get(), alignment, labelHOffset, labelVOffset);
+
+            layout.setHorizontalAlignment(alignment);
             renderAnnotationLabel(*iter, layout, labelHOffset, labelVOffset, ndc_z, m);
         }
     }
@@ -4387,7 +4406,7 @@ void Renderer::markersToAnnotations(const celestia::MarkerList& markers,
             addAnnotation(*a, &(marker.representation()), "",
                           marker.representation().color(),
                           offset.cast<float>(),
-                          AlignLeft, VerticalAlignTop, symbolSize);
+                          LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
         }
     }
 }
@@ -5051,13 +5070,13 @@ Renderer::selectionToAnnotation(const Selection &sel,
     {
         addSortedAnnotation(&cursorRep, "", SelectionCursorColor,
                             offset.cast<float>(),
-                            AlignLeft, VerticalAlignTop, symbolSize);
+                            LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
     }
     else
     {
         addBackgroundAnnotation(&cursorRep, "", SelectionCursorColor,
                                 offset.cast<float>(),
-                                AlignLeft, VerticalAlignTop, symbolSize);
+                                LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
     }
 
     Color occludedCursorColor(SelectionCursorColor.red(),
@@ -5066,7 +5085,7 @@ Renderer::selectionToAnnotation(const Selection &sel,
                               0.4f);
     addForegroundAnnotation(&cursorRep, "", occludedCursorColor,
                             offset.cast<float>(),
-                            AlignLeft, VerticalAlignTop, symbolSize);
+                            LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
     return true;
 }
 

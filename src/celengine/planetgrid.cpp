@@ -73,7 +73,9 @@ void longLatLabel(const std::string& labelText,
 
         renderer->addObjectAnnotation(nullptr, labelText,
                                       Renderer::PlanetographicGridLabelColor,
-                                      labelPos.cast<float>());
+                                      labelPos.cast<float>(),
+                                      Renderer::LabelHorizontalAlignment::Start,
+                                      Renderer::LabelVerticalAlignment::Bottom);
     }
 }
 } // namespace
