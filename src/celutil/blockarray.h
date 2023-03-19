@@ -1,6 +1,4 @@
 
-#pragma once
-
 // blockarray.h
 //
 // Copyright (C) 2001-2020, the Celestia Development Team
@@ -11,6 +9,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#pragma once
+
+#include <memory>
+#include <utility>
 #include <vector>
 
 // TODO: consider making it a full STL
@@ -27,16 +29,13 @@
 template<class T> class BlockArray
 {
 public:
-    BlockArray() :
-        m_blockSize(1000),
+    explicit BlockArray(unsigned int blockSize = 1000) :
+        m_blockSize(blockSize),
         m_elementCount(0)
     {
     }
 
-    ~BlockArray()
-    {
-        clear();
-    }
+    ~BlockArray() = default;
 
     unsigned int size() const
     {
@@ -44,27 +43,22 @@ public:
     }
 
     /*! Append an item to the BlockArray. */
-    void add(T& element)
+    void add(const T& element)
     {
-        unsigned int blockIndex = m_elementCount / m_blockSize;
-        if (blockIndex == m_blocks.size())
-        {
-            T* newBlock = new T[m_blockSize];
-            m_blocks.push_back(newBlock);
-        }
-
-        unsigned int elementIndex = m_elementCount % m_blockSize;
+        unsigned int elementIndex = newElementIndex();
         m_blocks.back()[elementIndex] = element;
+        ++m_elementCount;
+    }
 
+    void add(T&& element)
+    {
+        unsigned int elementIndex = newElementIndex();
+        m_blocks.back()[elementIndex] = std::move(element);
         ++m_elementCount;
     }
 
     void clear()
     {
-        for (typename std::vector<T*>::const_iterator iter = m_blocks.begin(); iter != m_blocks.end(); ++iter)
-        {
-            delete[] *iter;
-        }
         m_elementCount = 0;
         m_blocks.clear();
     }
@@ -84,7 +78,17 @@ public:
     }
 
 private:
+    inline unsigned int newElementIndex()
+    {
+        unsigned int blockIndex = m_elementCount / m_blockSize;
+        if (blockIndex == m_blocks.size())
+            m_blocks.push_back(std::make_unique<T[]>(m_blockSize));
+
+        return m_elementCount % m_blockSize;
+    }
+
     unsigned int m_blockSize;
     unsigned int m_elementCount;
-    std::vector<T*> m_blocks;
+    // Fixed-size blocks with size m_blocksize
+    std::vector<std::unique_ptr<T[]>> m_blocks; //NOSONAR
 };
