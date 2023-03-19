@@ -19,6 +19,7 @@
 #include <cstring>
 #include <cassert>
 #include <clocale>
+#include <string_view>
 #include <tuple>
 #include <process.h>
 #include <time.h>
@@ -29,6 +30,8 @@
 #include <mmsystem.h>
 #include <commdlg.h>
 #include <shellapi.h>
+
+#include <fmt/format.h>
 
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
@@ -1748,27 +1751,26 @@ void ShowWWWInfo(const Selection& sel)
     switch (sel.getType())
     {
     case Selection::Type_Body:
-        {
-            url = sel.body()->getInfoURL();
-            if (url.empty())
-            {
-                string name = sel.body()->getName();
-                for (unsigned int i = 0; i < name.size(); i++)
-                    name[i] = std::tolower(static_cast<unsigned char>(name[i]));
-
-                url = string("http://www.nineplanets.org/") + name + ".html";
-            }
-        }
+        url = sel.body()->getInfoURL();
         break;
 
     case Selection::Type_Star:
+        url = sel.star()->getInfoURL();
+        if (url.empty())
         {
-            url = sel.star()->getInfoURL();
-            if (url.empty())
+            using namespace std::string_view_literals;
+            constexpr std::string_view simbadUrl = "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident="sv;
+            AstroCatalog::IndexNumber number = sel.star()->getIndex();
+            if (number <= StarDatabase::MAX_HIPPARCOS_NUMBER)
+                url = fmt::format("{}HIP+{}", simbadUrl, number);
+            else if (number <= Star::MaxTychoCatalogNumber)
             {
-                char name[32];
-                sprintf(name, "HIP%d", sel.star()->getIndex() & ~Star::MaxTychoCatalogNumber);
-                url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
+                AstroCatalog::IndexNumber tyc3 = number / UINT32_C(1000000000);
+                number -= tyc3 * UINT32_C(1000000000);
+                AstroCatalog::IndexNumber tyc2 = number / UINT32_C(10000);
+                number -= tyc2 * UINT32_C(10000);
+                AstroCatalog::IndexNumber tyc1 = number;
+                url = fmt::format("{}TYC+{}-{}-{}", simbadUrl, tyc1, tyc2, tyc3);
             }
         }
         break;
@@ -1784,12 +1786,13 @@ void ShowWWWInfo(const Selection& sel)
         break;
     }
 
-    ShellExecute(mainWindow,
-                 "open",
-                 url.c_str(),
-                 NULL,
-                 NULL,
-                 0);
+    if (!url.empty())
+        ShellExecute(mainWindow,
+                     "open",
+                     url.c_str(),
+                     NULL,
+                     NULL,
+                     0);
 }
 
 
