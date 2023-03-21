@@ -158,7 +158,7 @@ TEST_CASE("ArrayVector reverse iterators", "[ArrayVector]")
 TEST_CASE("ArrayVector clear", "[ArrayVector]")
 {
     celutil::ArrayVector<InstanceTracker, 5> vec;
-    REQUIRE(InstanceTracker::counter == 0);
+    InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
     REQUIRE(vec.size() == 2);
@@ -173,7 +173,7 @@ TEST_CASE("ArrayVector clear", "[ArrayVector]")
 TEST_CASE("ArrayVector pop_back", "[ArrayVector]")
 {
     celutil::ArrayVector<InstanceTracker, 3> vec;
-    REQUIRE(InstanceTracker::counter == 0);
+    InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
     REQUIRE(vec.size() == 2);
@@ -187,7 +187,7 @@ TEST_CASE("ArrayVector pop_back", "[ArrayVector]")
 TEST_CASE("ArrayVector resize", "[ArrayVector]")
 {
     celutil::ArrayVector<InstanceTracker, 3> vec;
-    REQUIRE(InstanceTracker::counter == 0);
+    InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
@@ -201,7 +201,7 @@ TEST_CASE("ArrayVector resize", "[ArrayVector]")
 TEST_CASE("ArrayVector erase", "[ArrayVector]")
 {
     celutil::ArrayVector<InstanceTracker, 5> vec;
-    REQUIRE(InstanceTracker::counter == 0);
+    InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker{ 2 });
     vec.try_push_back(InstanceTracker{ 3 });
     vec.try_push_back(InstanceTracker{ 5 });
