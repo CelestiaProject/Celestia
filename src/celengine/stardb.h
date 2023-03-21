@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <map>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -38,7 +39,6 @@ class StarDatabase
  public:
     StarDatabase();
     ~StarDatabase();
-
 
     inline Star* getStar(const std::uint32_t) const;
     inline std::uint32_t size() const;
@@ -99,6 +99,8 @@ class StarDatabase
 
     void finish();
 
+    struct CustomStarDetails;
+
 private:
     bool createStar(Star* star,
                     DataDisposition disposition,
@@ -106,6 +108,24 @@ private:
                     const Hash* starData,
                     const fs::path& path,
                     const bool isBarycenter);
+    bool createOrUpdateStarDetails(Star* star,
+                                   DataDisposition disposition,
+                                   AstroCatalog::IndexNumber catalogNumber,
+                                   const Hash* starData,
+                                   const fs::path& path,
+                                   const bool isBarycenter,
+                                   std::optional<Eigen::Vector3f>& barycenterPosition);
+    bool applyCustomStarDetails(const Star*,
+                                AstroCatalog::IndexNumber,
+                                const Hash*,
+                                const fs::path&,
+                                const CustomStarDetails&,
+                                std::optional<Eigen::Vector3f>&);
+    bool applyOrbit(AstroCatalog::IndexNumber catalogNumber,
+                    const Hash* starData,
+                    StarDetails* details,
+                    const CustomStarDetails& customDetails,
+                    std::optional<Eigen::Vector3f>& barycenterPosition);
 
     void buildOctree();
     void buildIndexes();

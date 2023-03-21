@@ -3031,18 +3031,15 @@ static void displayPlanetInfo(Overlay& overlay,
         {
             showPhaseAngle = true;
         }
-        else if (sun->getOrbitingStars())
+        else if (const auto* orbitingStars = sun->getOrbitingStars(); orbitingStars != nullptr && orbitingStars->size() == 1)
         {
             // The planet's orbit is defined with respect to a barycenter. If there's
             // a single star orbiting the barycenter, we'll compute the phase angle
             // for the planet with respect to that star. If there are no stars, the
             // planet is an orphan, drifting through space with no star. We also skip
             // displaying the phase angle when there are multiple stars (for now.)
-            if (sun->getOrbitingStars()->size() == 1)
-            {
-                sun = sun->getOrbitingStars()->at(0);
-                showPhaseAngle = sun->getVisibility();
-            }
+            sun = orbitingStars->front();
+            showPhaseAngle = sun->getVisibility();
         }
 
         if (showPhaseAngle)

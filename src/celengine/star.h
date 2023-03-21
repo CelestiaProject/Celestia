@@ -11,6 +11,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -22,6 +23,7 @@
 #include <celengine/astroobj.h>
 #include <celengine/multitexture.h>
 #include <celengine/stellarclass.h>
+#include <celutil/intrusiveptr.h>
 #include <celutil/reshandle.h>
 
 class Selection;
@@ -44,11 +46,14 @@ class StarDetails
         std::array<MultiResTexture, StellarClass::Spectral_Count> starTex{ };
     };
 
-    StarDetails();
     ~StarDetails() = default;
-    StarDetails(const StarDetails&);
-    // Prohibit assignment of StarDetails objects
+    StarDetails(const StarDetails&) = delete;
     StarDetails& operator=(const StarDetails&) = delete;
+    StarDetails(StarDetails&&) = delete;
+    StarDetails& operator=(StarDetails&&) = delete;
+
+    static celestia::util::IntrusivePtr<StarDetails> create();
+    celestia::util::IntrusivePtr<StarDetails> clone() const;
 
     float getRadius() const;
     float getTemperature() const;
@@ -93,15 +98,27 @@ class StarDetails
     void setKnowledge(std::uint32_t);
     void addKnowledge(std::uint32_t);
 
-    static StarDetails* GetStarDetails(const StellarClass&);
-    static StarDetails* GetBarycenterDetails();
+    static celestia::util::IntrusivePtr<StarDetails> GetStarDetails(const StellarClass&);
+    static celestia::util::IntrusivePtr<StarDetails> GetBarycenterDetails();
 
     static void SetStarTextures(const StarTextureSet&);
 
  private:
+    StarDetails();
+
     friend class Star;
+    friend class celestia::util::IntrusivePtr<StarDetails>;
 
     void addOrbitingStar(Star*);
+
+    inline void intrusiveAddRef() const { ++refCount; }
+    inline std::size_t intrusiveRemoveRef() const
+    {
+        --refCount;
+        return refCount;
+    }
+
+    mutable std::size_t refCount{ 0 };
 
     float radius{ 0.0f };
     float temperature{ 0.0f };
@@ -226,9 +243,9 @@ class Star : public AstroObject
 {
 public:
     Star() = default;
-    virtual ~Star();
+    ~Star() override = default;
 
-    virtual Selection toSelection();
+    Selection toSelection() override;
 
     /** This getPosition() method returns the approximate star position; that is,
      *  star position without any orbital motion taken into account.  For a
@@ -267,7 +284,7 @@ public:
     void setLuminosity(float);
 
     StarDetails* getDetails() const;
-    void setDetails(StarDetails*);
+    void setDetails(celestia::util::IntrusivePtr<StarDetails>&&);
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
@@ -298,7 +315,7 @@ private:
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float absMag{ 4.83f };
     float extinction{ 0.0f };
-    StarDetails* details{ nullptr };
+    celestia::util::IntrusivePtr<StarDetails> details{ nullptr };
 };
 
 
