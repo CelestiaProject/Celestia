@@ -26,14 +26,22 @@ namespace celestia::util
 //* and `intrusiveRemoveRef()` methods on the object to manipulate the
 //* reference count. The `intrusiveRemoveRef()` should return zero if and only
 //* if the reference count is zero.
+//*
+//* The advantage of this class over shared_ptr is that it is the same size as
+//* a raw pointer. The disadvantage is that weak pointers are not supportable.
 template<typename T>
-class IntrusivePtr
+// This class manages ownership of a resource, so Sonar's rule-of-zero lint is
+// not useful here.
+class IntrusivePtr //NOSONAR
 {
 public:
     using element_type = std::remove_extent_t<T>;
 
     IntrusivePtr() noexcept = default;
-    IntrusivePtr(std::nullptr_t) noexcept {}
+
+    // Similarly to the equivalent unique_ptr/shared_ptr constructor, this is
+    // intentionally left non-explicit, so disable the Sonar lint.
+    IntrusivePtr(std::nullptr_t) noexcept {} //NOSONAR
 
     explicit IntrusivePtr(T* ptr) : m_ptr(ptr)
     {
@@ -149,7 +157,8 @@ private:
     inline void removeRef()
     {
         if (m_ptr != nullptr && m_ptr->intrusiveRemoveRef() == 0)
-            delete m_ptr;
+            // Sonar lint against use of delete is not useful here
+            delete m_ptr; //NOSONAR
     }
 
     T* m_ptr{ nullptr };
@@ -159,7 +168,7 @@ private:
 };
 
 template<typename T>
-inline void swap(IntrusivePtr<T>& lhs, IntrusivePtr<T>& rhs)
+inline void swap(IntrusivePtr<T>& lhs, IntrusivePtr<T>& rhs) noexcept
 {
     lhs.swap(rhs);
 }

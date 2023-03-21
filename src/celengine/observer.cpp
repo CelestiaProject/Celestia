@@ -8,6 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <numeric>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
@@ -996,24 +997,22 @@ static double getPreferredDistance(const Selection& selection)
 
     case Selection::Type_Star:
         if (selection.star()->getVisibility())
-        {
             return 100.0 * selection.radius();
-        }
         else
         {
             // Handle star system barycenters specially, using the same approach as
             // for reference points in solar systems.
-            double maxOrbitRadius = 0.0;
-            const vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
-            if (orbitingStars != nullptr)
-            {
-                for (const auto star : *orbitingStars)
-                {
-                    const celestia::ephem::Orbit* orbit = star->getOrbit();
-                    if (orbit != nullptr)
-                        maxOrbitRadius = max(orbit->getBoundingRadius(), maxOrbitRadius);
-                }
-            }
+            const std::vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
+            double maxOrbitRadius = orbitingStars == nullptr
+                ? 0.0
+                : std::accumulate(orbitingStars->begin(), orbitingStars->end(), 0.0,
+                                  [](double r, const Star* s)
+                                  {
+                                      const celestia::ephem::Orbit* orbit = s->getOrbit();
+                                      return orbit == nullptr
+                                          ? r
+                                          : std::max(r, orbit->getBoundingRadius());
+                                  });
 
             return maxOrbitRadius == 0.0 ? astro::AUtoKilometers(1.0) : maxOrbitRadius * 5.0;
         }
@@ -1599,5 +1598,3 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(_refObject));
     }
 }
-
-

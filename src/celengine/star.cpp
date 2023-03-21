@@ -19,6 +19,7 @@
 #include <fmt/format.h>
 
 using namespace std::string_view_literals;
+using celestia::util::IntrusivePtr;
 
 namespace
 {
@@ -390,13 +391,178 @@ constexpr std::array<std::string_view, StellarClass::WDClassCount> WDSpectralCla
 };
 
 
-StarDetails*
+constexpr unsigned int defaultSubclass(StellarClass::SpectralClass specClass)
+{
+    // Since early O and Wolf-Rayet stars are exceedingly rare,
+    // use temperature of the more common late types when the subclass
+    // is unspecified in the spectral type.  For other stars, default
+    // to subclass 5.
+    switch (specClass)
+    {
+    case StellarClass::Spectral_O:
+    case StellarClass::Spectral_WN:
+    case StellarClass::Spectral_WC:
+    case StellarClass::Spectral_WO:
+        return 9;
+    case StellarClass::Spectral_Y:
+        return 0;
+    default:
+        return 5;
+    }
+}
+
+
+constexpr std::size_t luminosityIndex(StellarClass::LuminosityClass lumClass)
+{
+    switch (lumClass)
+    {
+    case StellarClass::Lum_Ia0:
+    case StellarClass::Lum_Ia:
+    case StellarClass::Lum_Ib:
+    case StellarClass::Lum_II:
+        return 2;
+    case StellarClass::Lum_III:
+    case StellarClass::Lum_IV:
+        return 1;
+    default: // Lum_V, Lum_VI, Lum_Unknown
+        return 0;
+    }
+}
+
+
+constexpr float normalStarTemperature(StellarClass::SpectralClass specClass,
+                                      unsigned int subclass,
+                                      std::size_t lumIndex)
+{
+    switch (specClass)
+    {
+    case StellarClass::Spectral_O:
+        return tempO[lumIndex][subclass];
+    case StellarClass::Spectral_B:
+        return tempB[lumIndex][subclass];
+    case StellarClass::Spectral_Unknown:
+    case StellarClass::Spectral_A:
+        return tempA[lumIndex][subclass];
+    case StellarClass::Spectral_F:
+        return tempF[lumIndex][subclass];
+    case StellarClass::Spectral_G:
+        return tempG[lumIndex][subclass];
+    case StellarClass::Spectral_K:
+        return tempK[lumIndex][subclass];
+    case StellarClass::Spectral_M:
+        return tempM[lumIndex][subclass];
+    case StellarClass::Spectral_R:
+        return tempK[lumIndex][subclass];
+    case StellarClass::Spectral_S:
+        return tempM[lumIndex][subclass];
+    case StellarClass::Spectral_N:
+        return tempM[lumIndex][subclass];
+    case StellarClass::Spectral_C:
+        return tempM[lumIndex][subclass];
+    case StellarClass::Spectral_WN:
+        return tempWN[subclass];
+    case StellarClass::Spectral_WC:
+        return tempWC[subclass];
+    case StellarClass::Spectral_WO:
+        return tempWO[subclass];
+    case StellarClass::Spectral_L:
+        return tempL[subclass];
+    case StellarClass::Spectral_T:
+        return tempT[subclass];
+    case StellarClass::Spectral_Y:
+        return tempY[subclass];
+    default:
+        return 0.0f;
+    }
+}
+
+
+void getPeriodAndBmagCorrection(StellarClass::SpectralClass specClass,
+                                unsigned int subclass,
+                                std::size_t lumIndex,
+                                float& period,
+                                float& bmagCorrection)
+{
+    switch (specClass)
+    {
+    case StellarClass::Spectral_O:
+        period = rotperiod_O[lumIndex][subclass];
+        bmagCorrection = bmag_correctionO[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_B:
+        period = rotperiod_B[lumIndex][subclass];
+        bmagCorrection = bmag_correctionB[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_Unknown:
+    case StellarClass::Spectral_A:
+        period = rotperiod_A[lumIndex][subclass];
+        bmagCorrection = bmag_correctionA[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_F:
+        period = rotperiod_F[lumIndex][subclass];
+        bmagCorrection = bmag_correctionF[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_G:
+        period = rotperiod_G[lumIndex][subclass];
+        bmagCorrection = bmag_correctionG[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_K:
+        period = rotperiod_K[lumIndex][subclass];
+        bmagCorrection = bmag_correctionK[lumIndex][subclass];
+        break;
+    case StellarClass::Spectral_M:
+        period = rotperiod_M[lumIndex][subclass];
+        bmagCorrection = bmag_correctionM[lumIndex][subclass];
+        break;
+
+    case StellarClass::Spectral_R:
+    case StellarClass::Spectral_S:
+    case StellarClass::Spectral_N:
+    case StellarClass::Spectral_C:
+        period = rotperiod_M[lumIndex][subclass];
+        bmagCorrection = bmag_correctionM[lumIndex][subclass];
+        break;
+
+    case StellarClass::Spectral_WC:
+    case StellarClass::Spectral_WN:
+    case StellarClass::Spectral_WO:
+        period = rotperiod_O[lumIndex][subclass];
+        bmagCorrection = bmag_correctionO[lumIndex][subclass];
+        break;
+
+    case StellarClass::Spectral_L:
+        // Assume that brown dwarfs are fast rotators like late M dwarfs
+        period = 0.2f;
+        bmagCorrection = bmag_correctionL[subclass];
+        break;
+
+    case StellarClass::Spectral_T:
+        // Assume that brown dwarfs are fast rotators like late M dwarfs
+        period = 0.2f;
+        bmagCorrection = bmag_correctionT[subclass];
+        break;
+
+    case StellarClass::Spectral_Y:
+        // Assume that brown dwarfs are fast rotators like late M dwarfs
+        period = 0.2f;
+        bmagCorrection = bmag_correctionY[subclass];
+        break;
+
+    default:
+        period = 1.0f;
+        bmagCorrection = 0.0f;
+        break;
+    }
+}
+
+
+IntrusivePtr<StarDetails>
 CreateStandardStarType(std::string_view specTypeName,
                        float _temperature,
                        float _rotationPeriod)
 
 {
-    auto* details = new StarDetails();
+    auto details = StarDetails::create();
 
     details->setTemperature(_temperature);
     details->setSpectralType(specTypeName);
@@ -421,18 +587,48 @@ public:
     const StarDetails::StarTextureSet& getStarTextures() const { return starTextures; }
     void setStarTextures(const StarDetails::StarTextureSet&);
 
-    StarDetails* getNormalStarDetails(StellarClass::SpectralClass,
-                                      unsigned int,
-                                      StellarClass::LuminosityClass);
-    StarDetails* getWhiteDwarfDetails(StellarClass::SpectralClass,
-                                      unsigned int);
-    StarDetails* getNeutronStarDetails();
-    StarDetails* getBlackHoleDetails();
-    StarDetails* getBarycenterDetails();
+    const IntrusivePtr<StarDetails>& getNormalStarDetails(StellarClass::SpectralClass,
+                                                    unsigned int,
+                                                    StellarClass::LuminosityClass);
+    const IntrusivePtr<StarDetails>& getWhiteDwarfDetails(StellarClass::SpectralClass,
+                                                    unsigned int);
+    const IntrusivePtr<StarDetails>& getNeutronStarDetails();
+    const IntrusivePtr<StarDetails>& getBlackHoleDetails();
+    const IntrusivePtr<StarDetails>& getBarycenterDetails();
 
     static StarDetailsManager& getManager();
 
 private:
+    static constexpr std::size_t normalStarIndex(StellarClass::SpectralClass specClass,
+                                                 unsigned int subclass,
+                                                 StellarClass::LuminosityClass lumClass)
+    {
+        return static_cast<std::size_t>(subclass) +
+               (static_cast<std::size_t>(specClass) +
+                static_cast<std::size_t>(lumClass) * static_cast<std::size_t>(StellarClass::Spectral_Count)) *
+               static_cast<std::size_t>(StellarClass::SubclassCount);
+    }
+
+    static constexpr std::size_t whiteDwarfSpectralClassIndex(StellarClass::SpectralClass specClass)
+    {
+        return static_cast<std::size_t>(specClass) - static_cast<std::size_t>(StellarClass::FirstWDClass);
+    }
+
+    static constexpr std::size_t whiteDwarfIndex(std::size_t scIndex, unsigned int subclass)
+    {
+        return static_cast<std::size_t>(subclass) +
+               (scIndex * static_cast<std::size_t>(StellarClass::SubclassCount));
+    }
+
+    IntrusivePtr<StarDetails> createNormalStarDetails(StellarClass::SpectralClass,
+                                                      unsigned int,
+                                                      StellarClass::LuminosityClass);
+    IntrusivePtr<StarDetails> createWhiteDwarfDetails(std::size_t,
+                                                      unsigned int);
+    IntrusivePtr<StarDetails> createNeutronStarDetails();
+    static IntrusivePtr<StarDetails> createBlackHoleDetails();
+    static IntrusivePtr<StarDetails> createBarycenterDetails();
+
     static constexpr auto nNormal = static_cast<std::size_t>(StellarClass::Spectral_Count) *
                                     static_cast<std::size_t>(StellarClass::SubclassCount) *
                                     static_cast<std::size_t>(StellarClass::Lum_Count);
@@ -441,11 +637,11 @@ private:
 
     StarDetails::StarTextureSet starTextures{ };
 
-    std::array<StarDetails*, nNormal>     normalStarDetails{ };
-    std::array<StarDetails*, nWhiteDwarf> whiteDwarfDetails{ };
-    StarDetails* neutronStarDetails{ nullptr };
-    StarDetails* blackHoleDetails{ nullptr };
-    StarDetails* barycenterDetails{ nullptr };
+    std::array<IntrusivePtr<StarDetails>, nNormal>     normalStarDetails{ };
+    std::array<IntrusivePtr<StarDetails>, nWhiteDwarf> whiteDwarfDetails{ };
+    IntrusivePtr<StarDetails> neutronStarDetails{ };
+    IntrusivePtr<StarDetails> blackHoleDetails{ };
+    IntrusivePtr<StarDetails> barycenterDetails{ };
 
     static inline StarDetailsManager* manager = std::make_unique<StarDetailsManager>().release();
 };
@@ -472,7 +668,7 @@ StarDetailsManager::setStarTextures(const StarDetails::StarTextureSet& textures)
 }
 
 
-StarDetails*
+const IntrusivePtr<StarDetails>&
 StarDetailsManager::getNormalStarDetails(StellarClass::SpectralClass specClass,
                                          unsigned int subclass,
                                          StellarClass::LuminosityClass lumClass)
@@ -480,320 +676,184 @@ StarDetailsManager::getNormalStarDetails(StellarClass::SpectralClass specClass,
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
-    std::size_t index = static_cast<std::size_t>(subclass) +
-                        (static_cast<std::size_t>(specClass) +
-                         static_cast<std::size_t>(lumClass) * static_cast<std::size_t>(StellarClass::Spectral_Count)) *
-                        static_cast<std::size_t>(StellarClass::SubclassCount);
+    std::size_t index = normalStarIndex(specClass, subclass, lumClass);
     if (normalStarDetails[index] == nullptr)
-    {
-        std::string name;
-        if ((lumClass == StellarClass::Lum_VI) &&
-            (specClass >= StellarClass::Spectral_O) && (specClass <= StellarClass::Spectral_A))
-        {
-            // Hot subdwarfs are prefixed with "sd", while cool subdwarfs use
-            // luminosity class VI, per recommendations in arXiv:0805.2567v1
-            name = fmt::format("sd{}{}",
-                               SpectralClassNames[specClass],
-                               SubclassNames[subclass]);
-        }
-        else
-        {
-            name = fmt::format("{}{}{}",
-                               SpectralClassNames[specClass],
-                               SubclassNames[subclass],
-                               LumClassNames[lumClass]);
-        }
-
-        // Use the same properties for an unknown subclass as for subclass 5
-        if (subclass == StellarClass::Subclass_Unknown)
-        {
-            // Since early O and Wolf-Rayet stars are exceedingly rare,
-            // use temperature of the more common late types when the subclass
-            // is unspecified in the spectral type.  For other stars, default
-            // to subclass 5.
-            switch (specClass)
-            {
-            case StellarClass::Spectral_O:
-            case StellarClass::Spectral_WN:
-            case StellarClass::Spectral_WC:
-            case StellarClass::Spectral_WO:
-                subclass = 9;
-                break;
-            case StellarClass::Spectral_Y:
-                subclass = 0;
-                break;
-            default:
-                subclass = 5;
-                break;
-            }
-        }
-
-        std::size_t lumIndex = 0;
-        switch (lumClass)
-        {
-        case StellarClass::Lum_Ia0:
-        case StellarClass::Lum_Ia:
-        case StellarClass::Lum_Ib:
-        case StellarClass::Lum_II:
-            lumIndex = 2;
-            break;
-        case StellarClass::Lum_III:
-        case StellarClass::Lum_IV:
-            lumIndex = 1;
-            break;
-        case StellarClass::Lum_V:
-        case StellarClass::Lum_VI:
-        case StellarClass::Lum_Unknown:
-            lumIndex = 0;
-            break;
-
-        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
-        }
-
-        float temp = 0.0f;
-        switch (specClass)
-        {
-        case StellarClass::Spectral_O:
-            temp = tempO[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_B:
-            temp = tempB[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            temp = tempA[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_F:
-            temp = tempF[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_G:
-            temp = tempG[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_K:
-            temp = tempK[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_M:
-            temp = tempM[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_R:
-            temp = tempK[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_S:
-            temp = tempM[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_N:
-            temp = tempM[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_C:
-            temp = tempM[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_WN:
-            temp = tempWN[subclass];
-            break;
-        case StellarClass::Spectral_WC:
-            temp = tempWC[subclass];
-            break;
-        case StellarClass::Spectral_WO:
-            temp = tempWO[subclass];
-            break;
-        case StellarClass::Spectral_L:
-            temp = tempL[subclass];
-            break;
-        case StellarClass::Spectral_T:
-            temp = tempT[subclass];
-            break;
-        case StellarClass::Spectral_Y:
-            temp = tempY[subclass];
-            break;
-
-        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
-        }
-
-        float bmagCorrection = 0.0f;
-        float period = 1.0f;
-        switch (specClass)
-        {
-        case StellarClass::Spectral_O:
-            period = rotperiod_O[lumIndex][subclass];
-            bmagCorrection = bmag_correctionO[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_B:
-            period = rotperiod_B[lumIndex][subclass];
-            bmagCorrection = bmag_correctionB[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            period = rotperiod_A[lumIndex][subclass];
-            bmagCorrection = bmag_correctionA[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_F:
-            period = rotperiod_F[lumIndex][subclass];
-            bmagCorrection = bmag_correctionF[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_G:
-            period = rotperiod_G[lumIndex][subclass];
-            bmagCorrection = bmag_correctionG[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_K:
-            period = rotperiod_K[lumIndex][subclass];
-            bmagCorrection = bmag_correctionK[lumIndex][subclass];
-            break;
-        case StellarClass::Spectral_M:
-            period = rotperiod_M[lumIndex][subclass];
-            bmagCorrection = bmag_correctionM[lumIndex][subclass];
-            break;
-
-        case StellarClass::Spectral_R:
-        case StellarClass::Spectral_S:
-        case StellarClass::Spectral_N:
-        case StellarClass::Spectral_C:
-            period = rotperiod_M[lumIndex][subclass];
-            bmagCorrection = bmag_correctionM[lumIndex][subclass];
-            break;
-
-        case StellarClass::Spectral_WC:
-        case StellarClass::Spectral_WN:
-        case StellarClass::Spectral_WO:
-            period = rotperiod_O[lumIndex][subclass];
-            bmagCorrection = bmag_correctionO[lumIndex][subclass];
-            break;
-
-        case StellarClass::Spectral_L:
-            // Assume that brown dwarfs are fast rotators like late M dwarfs
-            period = 0.2f;
-            bmagCorrection = bmag_correctionL[subclass];
-            break;
-
-        case StellarClass::Spectral_T:
-            // Assume that brown dwarfs are fast rotators like late M dwarfs
-            period = 0.2f;
-            bmagCorrection = bmag_correctionT[subclass];
-            break;
-
-        case StellarClass::Spectral_Y:
-            // Assume that brown dwarfs are fast rotators like late M dwarfs
-            period = 0.2f;
-            bmagCorrection = bmag_correctionY[subclass];
-            break;
-
-        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
-        }
-
-        normalStarDetails[index] = CreateStandardStarType(name, temp, period);
-        normalStarDetails[index]->setBolometricCorrection(bmagCorrection);
-
-        const MultiResTexture& starTex = starTextures.starTex[specClass];
-        normalStarDetails[index]->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
-    }
+        normalStarDetails[index] = createNormalStarDetails(specClass, subclass, lumClass);
 
     return normalStarDetails[index];
 }
 
 
-StarDetails*
+const IntrusivePtr<StarDetails>&
 StarDetailsManager::getWhiteDwarfDetails(StellarClass::SpectralClass specClass,
                                          unsigned int subclass)
 {
     // Hack assumes all WD types are consecutive
-    auto scIndex = static_cast<std::size_t>(specClass) -
-                   static_cast<std::size_t>(StellarClass::FirstWDClass);
+    auto scIndex = whiteDwarfSpectralClassIndex(specClass);
 
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
-    std::size_t index = static_cast<std::size_t>(subclass) +
-                        (scIndex * static_cast<std::size_t>(StellarClass::SubclassCount));
+    std::size_t index = whiteDwarfIndex(scIndex, subclass);
     if (whiteDwarfDetails[index] == nullptr)
-    {
-        auto name = fmt::format("{}{}",
-                                WDSpectralClassNames[scIndex],
-                                SubclassNames[subclass]);
-
-        float temp;
-        float bmagCorrection;
-        // subclass is always >= 0:
-        if (subclass <= 9)
-        {
-            temp = tempWD[subclass];
-            bmagCorrection = bmag_correctionWD[subclass];
-        }
-        else
-        {
-            // Treat unknown as subclass 5
-            temp = tempWD[5];
-            bmagCorrection = bmag_correctionWD[5];
-        }
-
-        // Assign white dwarfs a rotation period of half an hour; very
-        // rough, as white rotation rates vary a lot.
-        float period = 1.0f / 48.0f;
-
-        whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
-        const MultiResTexture& starTex = starTextures.starTex[StellarClass::Spectral_D];
-        whiteDwarfDetails[index]->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
-        whiteDwarfDetails[index]->setBolometricCorrection(bmagCorrection);
-    }
+        whiteDwarfDetails[index] = createWhiteDwarfDetails(scIndex, subclass);
 
     return whiteDwarfDetails[index];
 }
 
 
-inline StarDetails*
+const IntrusivePtr<StarDetails>&
 StarDetailsManager::getNeutronStarDetails()
 {
     if (neutronStarDetails == nullptr)
-    {
-        // The default neutron star has a rotation period of one second,
-        // surface temperature of five million K.
-        neutronStarDetails = CreateStandardStarType("Q"sv, 5000000.0f,
-                                                    1.0f / 86400.0f);
-        neutronStarDetails->setRadius(10.0f);
-        neutronStarDetails->addKnowledge(StarDetails::KnowRadius);
-        const MultiResTexture& starTex = starTextures.neutronStarTex;
-        neutronStarDetails->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
-    }
+        neutronStarDetails = createNeutronStarDetails();
 
     return neutronStarDetails;
 }
 
 
-inline StarDetails*
+const IntrusivePtr<StarDetails>&
 StarDetailsManager::getBlackHoleDetails()
 {
     if (blackHoleDetails == nullptr)
-    {
-        // Default black hole parameters are based on a one solar mass
-        // black hole.
-        // The temperature is computed from the equation:
-        //      T=h_bar c^3/(8 pi G k m)
-        blackHoleDetails = CreateStandardStarType("X"sv, 6.15e-8f,
-                                                  1.0f / 86400.0f);
-        blackHoleDetails->setRadius(2.9f);
-        blackHoleDetails->addKnowledge(StarDetails::KnowRadius);
-    }
+        blackHoleDetails = createBlackHoleDetails();
 
     return blackHoleDetails;
 }
 
 
-inline StarDetails*
+const IntrusivePtr<StarDetails>&
 StarDetailsManager::getBarycenterDetails()
 {
     if (barycenterDetails == nullptr)
-    {
-        barycenterDetails = CreateStandardStarType("Bary"sv, 1.0f, 1.0f);
-        barycenterDetails->setRadius(0.001f);
-        barycenterDetails->addKnowledge(StarDetails::KnowRadius);
-        barycenterDetails->setVisibility(false);
-    }
+        barycenterDetails = createBarycenterDetails();
 
     return barycenterDetails;
+}
+
+
+IntrusivePtr<StarDetails>
+StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClass,
+                                            unsigned int subclass,
+                                            StellarClass::LuminosityClass lumClass)
+{
+    std::string name;
+    if ((lumClass == StellarClass::Lum_VI) &&
+        (specClass >= StellarClass::Spectral_O) && (specClass <= StellarClass::Spectral_A))
+    {
+        // Hot subdwarfs are prefixed with "sd", while cool subdwarfs use
+        // luminosity class VI, per recommendations in arXiv:0805.2567v1
+        name = fmt::format("sd{}{}",
+                            SpectralClassNames[specClass],
+                            SubclassNames[subclass]);
+    }
+    else
+    {
+        name = fmt::format("{}{}{}",
+                            SpectralClassNames[specClass],
+                            SubclassNames[subclass],
+                            LumClassNames[lumClass]);
+    }
+
+    // Use the same properties for an unknown subclass as for subclass 5
+    if (subclass == StellarClass::Subclass_Unknown)
+        subclass = defaultSubclass(specClass);
+
+    std::size_t lumIndex = luminosityIndex(lumClass);
+
+    float temp = normalStarTemperature(specClass, subclass, lumIndex);
+
+    float bmagCorrection;
+    float period;
+    getPeriodAndBmagCorrection(specClass, subclass, lumIndex, period, bmagCorrection);
+
+    auto details = CreateStandardStarType(name, temp, period);
+    details->setBolometricCorrection(bmagCorrection);
+
+    const MultiResTexture& starTex = starTextures.starTex[specClass];
+    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
+    return details;
+}
+
+
+IntrusivePtr<StarDetails>
+StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
+                                            unsigned int subclass)
+{
+    auto name = fmt::format("{}{}",
+                            WDSpectralClassNames[scIndex],
+                            SubclassNames[subclass]);
+
+    float temp;
+    float bmagCorrection;
+    // subclass is always >= 0:
+    if (subclass <= 9)
+    {
+        temp = tempWD[subclass];
+        bmagCorrection = bmag_correctionWD[subclass];
+    }
+    else
+    {
+        // Treat unknown as subclass 5
+        temp = tempWD[5];
+        bmagCorrection = bmag_correctionWD[5];
+    }
+
+    // Assign white dwarfs a rotation period of half an hour; very
+    // rough, as white rotation rates vary a lot.
+    float period = 1.0f / 48.0f;
+
+    auto details = CreateStandardStarType(name, temp, period);
+    const MultiResTexture& starTex = starTextures.starTex[StellarClass::Spectral_D];
+    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
+    details->setBolometricCorrection(bmagCorrection);
+    return details;
+}
+
+
+IntrusivePtr<StarDetails>
+StarDetailsManager::createNeutronStarDetails()
+{
+    // The default neutron star has a rotation period of one second,
+    // surface temperature of five million K.
+    auto details = CreateStandardStarType("Q"sv, 5000000.0f,
+                                          1.0f / 86400.0f);
+    details->setRadius(10.0f);
+    details->addKnowledge(StarDetails::KnowRadius);
+    const MultiResTexture& starTex = starTextures.neutronStarTex;
+    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
+    return details;
+}
+
+
+inline IntrusivePtr<StarDetails>
+StarDetailsManager::createBlackHoleDetails()
+{
+    // Default black hole parameters are based on a one solar mass
+    // black hole.
+    // The temperature is computed from the equation:
+    //      T=h_bar c^3/(8 pi G k m)
+    auto details = CreateStandardStarType("X"sv, 6.15e-8f, 1.0f / 86400.0f);
+    details->setRadius(2.9f);
+    details->addKnowledge(StarDetails::KnowRadius);
+    return details;
+}
+
+
+inline IntrusivePtr<StarDetails>
+StarDetailsManager::createBarycenterDetails()
+{
+    auto details = CreateStandardStarType("Bary"sv, 1.0f, 1.0f);
+    details->setRadius(0.001f);
+    details->addKnowledge(StarDetails::KnowRadius);
+    details->setVisibility(false);
+    return details;
 }
 
 } // end unnamed namespace
 
 
-StarDetails*
+IntrusivePtr<StarDetails>
 StarDetails::GetStarDetails(const StellarClass& sc)
 {
     StarDetailsManager& manager = StarDetailsManager::getManager();
@@ -817,7 +877,7 @@ StarDetails::GetStarDetails(const StellarClass& sc)
 }
 
 
-StarDetails*
+IntrusivePtr<StarDetails>
 StarDetails::GetBarycenterDetails()
 {
     StarDetailsManager& manager = StarDetailsManager::getManager();
@@ -839,27 +899,35 @@ StarDetails::StarDetails()
 }
 
 
-StarDetails::StarDetails(const StarDetails& sd) :
-    radius(sd.radius),
-    temperature(sd.temperature),
-    bolometricCorrection(sd.bolometricCorrection),
-    knowledge(sd.knowledge),
-    visible(sd.visible),
-    spectralType(sd.spectralType),
-    texture(sd.texture),
-    geometry(sd.geometry),
-    orbit(sd.orbit),
-    orbitalRadius(sd.orbitalRadius),
-    barycenter(sd.barycenter),
-    rotationModel(sd.rotationModel),
-    semiAxes(sd.semiAxes),
-    infoURL(sd.infoURL),
-    orbitingStars(nullptr),
-    isShared(false)
+IntrusivePtr<StarDetails>
+StarDetails::create()
 {
-    assert(sd.isShared);
+    return IntrusivePtr<StarDetails>(new StarDetails);
 }
 
+
+IntrusivePtr<StarDetails>
+StarDetails::clone() const
+{
+    assert(isShared);
+    auto newDetails = create();
+    newDetails->radius = radius;
+    newDetails->temperature = temperature;
+    newDetails->bolometricCorrection = bolometricCorrection;
+    newDetails->knowledge = knowledge;
+    newDetails->visible = visible;
+    newDetails->spectralType = spectralType;
+    newDetails->texture = texture;
+    newDetails->geometry = geometry;
+    newDetails->orbit = orbit;
+    newDetails->orbitalRadius = orbitalRadius;
+    newDetails->barycenter = barycenter;
+    newDetails->rotationModel = rotationModel;
+    newDetails->semiAxes = semiAxes;
+    newDetails->infoURL = infoURL;
+    newDetails->isShared = false;
+    return newDetails;
+}
 
 /*! Return the InfoURL. If the InfoURL has not been set, this method
  *  returns an empty string.
@@ -989,17 +1057,6 @@ void
 StarDetails::setInfoURL(std::string_view _infoURL)
 {
     infoURL = _infoURL;
-}
-
-
-Star::~Star()
-{
-    // TODO: Implement reference counting for StarDetails objects so that
-    // we can enable this.
-#if 0
-    if (!details->shared())
-        delete details;
-#endif
 }
 
 
@@ -1192,19 +1249,19 @@ float Star::getBolometricLuminosity() const
 
 StarDetails* Star::getDetails() const
 {
-    return details;
+    return details.get();
 }
 
-void Star::setDetails(StarDetails* sd)
+void Star::setDetails(IntrusivePtr<StarDetails>&& sd)
 {
     // TODO: delete existing details if they aren't shared
-    details = sd;
+    details = std::move(sd);
 }
 
 void Star::setOrbitBarycenter(Star* s)
 {
     if (details->shared())
-        details = new StarDetails(*details);
+        details = details->clone();
     details->setOrbitBarycenter(s);
 }
 
@@ -1223,7 +1280,7 @@ void
 Star::addOrbitingStar(Star* star)
 {
     if (details->shared())
-        details = new StarDetails(*details);
+        details = details->clone();
     details->addOrbitingStar(star);
 }
 

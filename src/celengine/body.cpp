@@ -384,12 +384,13 @@ float Body::getTemperature(double time) const
     }
     else // the sun is a barycenter
     {
-        if (sun->getOrbitingStars() == nullptr)
-            return 0;
+        const auto* orbitingStars = sun->getOrbitingStars();
+        if (orbitingStars == nullptr || orbitingStars->empty())
+            return 0.0f;
 
         const UniversalCoord bodyPos = getPosition(time);
-        float flux = 0.0;
-        for (const auto *s : *sun->getOrbitingStars())
+        float flux = 0.0f;
+        for (const auto *s : *orbitingStars)
         {
             float distFromSun = (float)s->getPosition(time).distanceFromKm(bodyPos);
             float lum = square(s->getRadius()) * pow(s->getTemperature(), 4.0f);
