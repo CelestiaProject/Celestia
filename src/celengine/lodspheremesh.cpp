@@ -429,7 +429,7 @@ void LODSphereMesh::render(unsigned int attributes,
     int nSlices = thetaExtent / ri.step;
 
     indices.clear();
-    int expectedIndices = nRings * (nSlices + 2) * 2 - std::max(nRings, 2);
+    int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
     indices.reserve(expectedIndices);
     for (i = 0; i < nRings; i++)
     {
@@ -748,4 +748,3 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         currentVB = 0;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
 }
-
