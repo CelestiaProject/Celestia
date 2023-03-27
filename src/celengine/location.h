@@ -52,9 +52,11 @@ class Location
     Point3d getHeliocentricPosition(double) const;
 
     typedef uint64_t FeatureType;
+    // Custom locations, part I
     static const FeatureType City           = 0x0000000000000001ull;
     static const FeatureType Observatory    = 0x0000000000000002ull;
     static const FeatureType LandingSite    = 0x0000000000000004ull;
+    // Standard locations
     static const FeatureType Crater         = 0x0000000000000008ull;
     static const FeatureType Vallis         = 0x0000000000000010ull;
     static const FeatureType Mons           = 0x0000000000000020ull;
@@ -95,7 +97,7 @@ class Location
     static const FeatureType Labyrinthus    = 0x0000010000000000ull;
     static const FeatureType Lacuna         = 0x0000020000000000ull;
     static const FeatureType Lacus          = 0x0000040000000000ull;
-    static const FeatureType Large          = 0x0000080000000000ull;
+    static const FeatureType LargeRinged    = 0x0000080000000000ull;
     static const FeatureType Lenticula      = 0x0000100000000000ull;
     static const FeatureType Lingula        = 0x0000200000000000ull;
     static const FeatureType Macula         = 0x0000400000000000ull;
@@ -111,6 +113,11 @@ class Location
     static const FeatureType Vastitas       = 0x0100000000000000ull;
     static const FeatureType Virga          = 0x0200000000000000ull;
     static const FeatureType Saxum          = 0x0400000000000000ull;
+    // Custom locations, part II
+    static const FeatureType Capital        = 0x0800000000000000ull;
+    static const FeatureType Cosmodrome     = 0x1000000000000000ull;
+    static const FeatureType Ring           = 0x2000000000000000ull;
+    static const FeatureType Historical     = 0x4000000000000000ull;
     static const FeatureType Other          = 0x8000000000000000ull;
 
     FeatureType getFeatureType() const;

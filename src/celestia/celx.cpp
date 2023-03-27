@@ -209,7 +209,7 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["labyrinthus"] = Location::Labyrinthus;
     LocationFlagMap["lacuna"] = Location::Lacuna;
     LocationFlagMap["lacus"] = Location::Lacus;
-    LocationFlagMap["large"] = Location::Large;
+    LocationFlagMap["largeringed"] = Location::LargeRinged;
     LocationFlagMap["lenticula"] = Location::Lenticula;
     LocationFlagMap["lingula"] = Location::Lingula;
     LocationFlagMap["macula"] = Location::Macula;
@@ -226,6 +226,10 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["virga"] = Location::Virga;
     LocationFlagMap["other"] = Location::Other;
     LocationFlagMap["saxum"] = Location::Saxum;
+    LocationFlagMap["capital"] = Location::Capital;
+    LocationFlagMap["cosmodrome"] = Location::Cosmodrome;
+    LocationFlagMap["ring"] = Location::Ring;
+    LocationFlagMap["historical"] = Location::Historical;
 }
 
 void CelxLua::initOverlayElementMap()
