@@ -37,6 +37,7 @@ static const string CelestiaModelExt(".cmod");
 static const string CelestiaParticleSystemExt(".cpart");
 static const string CelestiaXYZTrajectoryExt(".xyz");
 static const string CelestiaXYZVTrajectoryExt(".xyzv");
+static const string ContentXYZVBinaryExt(".xyzvbin");
 
 ContentType DetermineFileType(const string& filename)
 {
@@ -86,6 +87,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaXYZTrajectory;
     else if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
         return Content_CelestiaXYZVTrajectory;
+    else if (compareIgnoringCase(ContentXYZVBinaryExt, ext) == 0)
+        return Content_CelestiaXYZVBinary;
     else
         return Content_Unknown;
 }

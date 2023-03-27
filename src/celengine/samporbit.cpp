@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <sys/stat.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/orbit.h>
@@ -880,7 +881,7 @@ LoadSampledOrbitXYZVBinary(const string& filename, TrajectoryInterpolation inter
     ifstream in(filename.c_str(), ios::binary);
     if (!in.good())
     {
-        //cerr << "Error openning " << filename << ".\n";
+        cerr << "Error openning " << filename << ".\n";
         return NULL;
     }
 
@@ -964,9 +965,14 @@ Orbit* LoadSampledTrajectoryDoublePrec(const string& filename, TrajectoryInterpo
  */
 Orbit* LoadXYZVTrajectorySinglePrec(const string& filename, TrajectoryInterpolation interpolation)
 {
-    Orbit* ret = LoadSampledOrbitXYZVBinary(filename + "bin", interpolation, 0.0f);
-    if (ret != NULL)
-        return ret;
+    struct stat filestat;
+    string binname = filename + "bin";
+    if (stat(binname.c_str(), &filestat) == 0)
+    {
+        Orbit* ret = LoadSampledOrbitXYZVBinary(binname, interpolation, 0.0f);
+        if (ret != NULL)
+            return ret;
+    }
 
     return LoadSampledOrbitXYZV(filename, interpolation, 0.0f);
 }
@@ -976,9 +982,30 @@ Orbit* LoadXYZVTrajectorySinglePrec(const string& filename, TrajectoryInterpolat
  */
 Orbit* LoadXYZVTrajectoryDoublePrec(const string& filename, TrajectoryInterpolation interpolation)
 {
-    Orbit* ret = LoadSampledOrbitXYZVBinary(filename + "bin", interpolation, 0.0);
-    if (ret != NULL)
-        return ret;
+    struct stat filestat;
+    string binname = filename + "bin";
+    if (stat(binname.c_str(), &filestat) == 0)
+    {
+        Orbit* ret = LoadSampledOrbitXYZVBinary(binname, interpolation, 0.0);
+        if (ret != NULL)
+            return ret;
+    }
 
     return LoadSampledOrbitXYZV(filename, interpolation, 0.0);
+}
+
+
+/*! Load a binary trajectory file with single precision positions and velocities.
+ */
+Orbit* LoadXYZVBinarySinglePrec(const string& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0f);
+}
+
+
+/*! Load a trajectory file with double precision positions and velocities.
+ */
+Orbit* LoadXYZVBinaryDoublePrec(const string& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0);
 }
