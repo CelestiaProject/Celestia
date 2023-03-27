@@ -29,5 +29,7 @@ extern Orbit* LoadSampledTrajectoryDoublePrec(const std::string& name, Trajector
 extern Orbit* LoadSampledTrajectorySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
 extern Orbit* LoadXYZVTrajectoryDoublePrec(const std::string& name, TrajectoryInterpolation interpolation);
 extern Orbit* LoadXYZVTrajectorySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVBinarySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVBinaryDoublePrec(const std::string& name, TrajectoryInterpolation interpolation);
 
 #endif // _CELENGINE_SAMPORBIT_H_
