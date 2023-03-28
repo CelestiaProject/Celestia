@@ -339,19 +339,24 @@ Model::sortMeshes(const MeshComparator& comparator)
     std::sort(meshes.begin(), meshes.end(), std::ref(comparator));
 
     std::vector<Mesh> newMeshes;
-    newMeshes.push_back(meshes[0].clone());
-
-    for (size_t i = 1; i < meshes.size(); i++)
+    for (const auto &mesh : meshes)
     {
-        if (meshes[i].getGroupCount() == 0)
+        if (mesh.getGroupCount() == 0)
             continue;
-        auto &p = newMeshes.back();
-        if (!p.canMerge(meshes[i], materials))
+
+        if (newMeshes.empty())
         {
-            newMeshes.push_back(meshes[i].clone());
+            newMeshes.push_back(mesh.clone());
             continue;
         }
-        p.merge(meshes[i]);
+
+        auto &p = newMeshes.back();
+        if (!p.canMerge(mesh, materials))
+        {
+            newMeshes.push_back(mesh.clone());
+            continue;
+        }
+        p.merge(mesh);
     }
     GetLogger()->info("Merged similar meshes: {} -> {}.\n", meshes.size(), newMeshes.size());
 
