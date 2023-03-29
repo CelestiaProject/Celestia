@@ -4,7 +4,7 @@ dnl Process this file with autoconf to make a configure script
 dnl
 
 AC_PREREQ(2.57)
-AC_INIT([celestia], [1.6.2], [https://github.com/CelestiaProject/Celestia])
+AC_INIT([celestia], [1.6.3], [https://github.com/CelestiaProject/Celestia])
 AC_CONFIG_SRCDIR(acinclude.m4)
 AC_CONFIG_MACRO_DIRS([macros])
 

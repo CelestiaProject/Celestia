@@ -1322,7 +1322,7 @@ msgstr "OpenGL情報"
 
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
-msgid "Copyright © 2001-2021 Celestia Development Team"
+msgid "Copyright © 2001-2023 Celestia Development Team"
 msgstr "Copyright (C) 2001-2009, Celestia Development Team"
 
 #: src/celestia/gtk/actions.cpp:1046
@@ -4647,7 +4647,7 @@ msgstr "OK"
 
 #: src/celestia/res/resource_strings.cpp:70
 #, fuzzy
-msgid "Copyright (C) 2001-2021, Celestia Development Team"
+msgid "Copyright (C) 2001-2023, Celestia Development Team"
 msgstr "Copyright (C) 2001-2009, Celestia Development Team"
 
 #: src/celestia/res/resource_strings.cpp:71

@@ -1324,7 +1324,7 @@ msgstr "OpenGL informācija"
 
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
-msgid "Copyright © 2001-2021 Celestia Development Team"
+msgid "Copyright © 2001-2023 Celestia Development Team"
 msgstr "Autortiesības (C) 2001-2008, Celestia komanda"
 
 #: src/celestia/gtk/actions.cpp:1046
@@ -4697,7 +4697,7 @@ msgstr "Labi"
 
 #: src/celestia/res/resource_strings.cpp:70
 #, fuzzy
-msgid "Copyright (C) 2001-2021, Celestia Development Team"
+msgid "Copyright (C) 2001-2023, Celestia Development Team"
 msgstr "Autortiesības (C) 2001-2008, Celestia komanda"
 
 #: src/celestia/res/resource_strings.cpp:71
