@@ -1325,7 +1325,7 @@ msgstr "Інформація щодо OpenGL"
 
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
-msgid "Copyright © 2001-2021 Celestia Development Team"
+msgid "Copyright © 2001-2023 Celestia Development Team"
 msgstr ""
 "Авторські права на програму належать Команді з розробки Celestia, ©2001–2009."
 
@@ -4657,7 +4657,7 @@ msgstr "Гаразд"
 
 #: src/celestia/res/resource_strings.cpp:70
 #, fuzzy
-msgid "Copyright (C) 2001-2021, Celestia Development Team"
+msgid "Copyright (C) 2001-2023, Celestia Development Team"
 msgstr ""
 "Авторські права на програму належать Команді з розробки Celestia, ©2001–2009."
 

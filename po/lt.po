@@ -1314,7 +1314,7 @@ msgstr "OpenGL info"
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
 msgid "Copyright © 2001-2020 Celestia Development Team"
-msgstr "Autorinės teisės © 2001-2021, Celestia kūrėjų komanda"
+msgstr "Autorinės teisės © 2001-2023, Celestia kūrėjų komanda"
 
 #: src/celestia/gtk/actions.cpp:1046
 #, c-format
@@ -4579,7 +4579,7 @@ msgstr "Gerai"
 
 #: src/celestia/res/resource_strings.cpp:70
 msgid "Copyright (C) 2001-2020, Celestia Development Team"
-msgstr "Autorinės teisės (C) 2001-2021, Celestia kūrėjų komanda"
+msgstr "Autorinės teisės (C) 2001-2023, Celestia kūrėjų komanda"
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "https://celestia.space"

@@ -1780,3 +1780,19 @@ Bug fixes
 1.6.2.2
 Bug fixes
 * Windows: fix bookmark manager
+
+1.6.3
+Features, backported from 1.7
+* Backport location updates from 1.7 version
+* Allow binary orbits without text sources
+
+Bug fixes
+* Fix out-of-bounds in 3DS read
+* Handle locations in object:localname()
+* macOS: Re-add support for OS X 10.7 to 10.9
+* macOS: Fix flickering edges on some GPU
+* Unix: Fix executable name in celestia.desktop
+* Unix: Fix buffer overflow in eclipse finder
+
+Translations
+* Update Bulgarian translation

@@ -5,13 +5,13 @@
 
 [Setup]
 AppName=Celestia
-AppVersion=1.6.2.2
-VersionInfoVersion=1.6.2.2
+AppVersion=1.6.3
+VersionInfoVersion=1.6.3
 AppPublisher=Celestia Development Team
 AppPublisherURL=https://celestia.space/
 AppSupportURL=https://celestia.space/
 AppUpdatesURL=https://celestia.space/
-AppCopyright=Copyright (C) 2001-2020 Celestia Development Team
+AppCopyright=Copyright (C) 2001-2023 Celestia Development Team
 DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
