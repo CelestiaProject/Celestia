@@ -3,15 +3,18 @@
 
 ; This script was tested with Inno Setup Compiler version 5.1.5
 
+#define CelestiaVersion "1.6.3"
+
 [Setup]
 AppName=Celestia
-AppVersion=1.6.3
-VersionInfoVersion=1.6.3
+AppVersion={#CelestiaVersion}
+VersionInfoVersion={#CelestiaVersion}
 AppPublisher=Celestia Development Team
 AppPublisherURL=https://celestia.space/
 AppSupportURL=https://celestia.space/
 AppUpdatesURL=https://celestia.space/
 AppCopyright=Copyright (C) 2001-2023 Celestia Development Team
+OutputBaseFilename=celestia-{#CelestiaVersion}
 DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
@@ -67,24 +70,22 @@ Name: "{app}\help"
 Name: "{app}\help\CelestiaGuide" 
 
 [Files]
-Source: "x64\Release\celestia.exe";                              DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "win32\Release\celestia.exe";                            DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\cspice.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\cspice.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\libiconv.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\libiconv.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\libcharset.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\libcharset.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\lua51.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\lua51.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\celestia.exe";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\celestia.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\cspice.dll";     DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\cspice.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\jpeg62.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\jpeg62.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\intl-8.dll";     DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\intl-8.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\iconv-2.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\iconv-2.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\libpng16.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\lua51.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\lua51.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "x64\Release\zlib1.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "Win32\Release\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "start.cel";    DestDir: "{app}"; Flags: ignoreversion
 Source: "celestia.cfg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "demo.cel";     DestDir: "{app}"; Flags: ignoreversion
@@ -187,8 +188,6 @@ Source: "locale\nb\LC_MESSAGES\celestia.mo";                      DestDir: "{app
 Source: "locale\nb\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/nb/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\nl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\nl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
-Source: "locale\no\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/no/LC_MESSAGES"; Flags: ignoreversion
-Source: "locale\no\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/no/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\pl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/pl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\pl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/pl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\pt\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/pt/LC_MESSAGES"; Flags: ignoreversion
