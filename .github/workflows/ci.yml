@@ -1,0 +1,103 @@
+name: Celestia
+
+on:
+  push:
+    branches: [ 1.6.x ]
+    paths: [ src/**, .github/workflows/ci.yml, celestia.sln, celestia.vcxproj, celestia.iss ]
+  pull_request:
+    branches: [ 1.6.x ]
+    paths: [ src/**, .github/workflows/ci.yml, celestia.sln, celestia.vcxproj, celestia.iss ]
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
+
+jobs:
+  build-windows:
+    name: "Build and package Windows"
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Update vcpkg
+      shell: pwsh
+      run: |
+        $vcpkgCommit = '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
+        pushd $env:VCPKG_INSTALLATION_ROOT
+        git fetch --depth=1 origin $vcpkgCommit
+        git reset --hard $vcpkgCommit
+        ./bootstrap-vcpkg.bat
+        popd
+
+    - name: Setup Nuget Credentials
+      shell: pwsh
+      run: |
+        $nugetCmd = vcpkg fetch nuget | Select-Object -Last 1
+        $nugetSource = 'https://nuget.pkg.github.com/CelestiaProject/index.json'
+        & "$nugetCmd" sources add `
+          -Source "$nugetSource" `
+          -StorePasswordInClearText `
+          -Name "GitHub" `
+          -Username 'CelestiaProject' `
+          -Password '${{secrets.GITHUB_TOKEN}}'
+        & "$nugetCmd" setapikey '${{secrets.GITHUB_TOKEN}}' `
+          -Source "$nugetSource"
+
+    - name: Setup vcpkg integration
+      shell: pwsh
+      run: |
+        vcpkg integrate install
+      
+    - name: Install dependencies (x64)
+      shell: pwsh
+      run: |
+        vcpkg --triplet=x64-windows install --recurse libpng libjpeg-turbo gettext[tools] luajit cspice
+        echo "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/tools/gettext/bin" >> $env:GITHUB_PATH
+
+    - name: Install dependencies (x86)
+      shell: pwsh
+      run: |
+        vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit cspice
+
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Build Win32
+      shell: pwsh
+      run: |
+        $installationPath = vswhere.exe -prerelease -latest -property installationPath
+        if ($installationPath -and (Test-Path "$installationPath\Common7\Tools\vsdevcmd.bat")) {
+          & "${env:COMSPEC}" /s /c "`"$installationPath\Common7\Tools\vsdevcmd.bat`" -no_logo -arch=x86 -host_arch=amd64 && set" | ForEach-Object {
+            $name, $value = $_ -split '=', 2
+            Set-Content env:\"$name" $value
+          }
+        }
+        $VcpkgIncludeDir32 = "$env:VCPKG_INSTALLATION_ROOT/installed/x86-windows/include"
+        msbuild celestia.sln /p:Configuration=Release /p:Platform=Win32 "/p:IncludePath=`"$VcpkgIncludeDir32/cspice;$VcpkgIncludeDir32/luajit`""
+        perl po/translate_resources.pl Win32
+
+    - name: Build x64
+      shell: pwsh
+      run: |
+        $installationPath = vswhere.exe -prerelease -latest -property installationPath
+        if ($installationPath -and (Test-Path "$installationPath\Common7\Tools\vsdevcmd.bat")) {
+          & "${env:COMSPEC}" /s /c "`"$installationPath\Common7\Tools\vsdevcmd.bat`" -no_logo -arch=amd64 -host_arch=amd64 && set" | ForEach-Object {
+            $name, $value = $_ -split '=', 2
+            Set-Content env:\"$name" $value
+          }
+        }
+        $VcpkgIncludeDir64 = "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/include"
+        msbuild celestia.sln /p:Configuration=Release /p:Platform=x64 "/p:IncludePath=`"$VcpkgIncludeDir64/cspice;$VcpkgIncludeDir64/luajit`""
+        perl po/translate_resources.pl x64
+
+    - name: Create installer
+      shell: pwsh
+      run: ISCC celestia.iss
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: celestia-windows-installer
+        path: |
+          ${{github.workspace}}/Output/**.exe
