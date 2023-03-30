@@ -227,6 +227,14 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
             exit(1);
     }
 
+#ifdef ENABLE_NLS
+    bindtextdomain("celestia", "locale");
+    bind_textdomain_codeset("celestia", "UTF-8");
+    bindtextdomain("celestia-data", "locale");
+    bind_textdomain_codeset("celestia-data", "UTF-8");
+    textdomain("celestia");
+#endif
+
     // Get the config file name
     string configFileName;
     if (!options.configFileName.isEmpty())
