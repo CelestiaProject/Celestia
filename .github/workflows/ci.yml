@@ -24,41 +24,36 @@ jobs:
         qtversion: [ Qt5, Qt6 ]
 
     steps:
-    - name: 'Setup NuGet Credentials'
-      shell: 'bash'
-      run: >
-        $(c:/vcpkg/vcpkg fetch nuget | tail -n 1)
-        sources add
-        -source "https://nuget.pkg.github.com/CelestiaProject/index.json"
-        -storepasswordincleartext
-        -name "GitHub"
-        -username "CelestiaProject"
-        -password "${{ secrets.GITHUB_TOKEN }}"
+    - name: Checkout source code
+      uses: actions/checkout@v3
+      with:
+        submodules: true
 
-    - name: 'Install dependencies'
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{github.workspace}}/thirdparty/vcpkg'
+        vcpkgGitCommitId: '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
+
+    - name: Install dependencies
       shell: cmd
       run: |
         set QtBasePkg=qtbase
         set QtCompatPkg=qt5compat
         if ${{matrix.qtversion}}==Qt5 (
             set QtBasePkg=qt5-base
-            unset QtCompatPkg
+            set "QtCompatPkg= "
         )
-        vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] icu %QtBasePkg% %QtCompatPkg%
+        "%VCPKG_ROOT%/vcpkg.exe" --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] icu %QtBasePkg% %QtCompatPkg%
 
-    - name: 'Checkout source code'
-      uses: actions/checkout@v3
-      with:
-        submodules: true
-
-    - name: 'Configure CMake'
+    - name: Configure CMake
       shell: cmd
       run: |
         set UseQt6=OFF
         set GeneratorPlatform=${{matrix.platform}}
         if ${{matrix.qtversion}}==Qt6 set UseQt6=ON
         if ${{matrix.platform}}==x86 set GeneratorPlatform=Win32
-        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON -DUSE_ICU=ON
+        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON -DUSE_ICU=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
@@ -77,13 +72,13 @@ jobs:
       working-directory: ${{github.workspace}}/build/src/celestia
       if: matrix.qtversion == 'Qt5'
       run: |
-        c:\vcpkg\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
+        %VCPKG_ROOT%\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
 
     - name: Run winqtdeploy
       working-directory: ${{github.workspace}}/build/src/celestia
       if: matrix.qtversion == 'Qt6'
       run: |
-        C:/vcpkg/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe qt\${{env.BUILD_TYPE}}\celestia-qt.exe
+        %VCPKG_ROOT%/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe qt\${{env.BUILD_TYPE}}\celestia-qt.exe
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
