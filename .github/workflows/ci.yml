@@ -24,66 +24,104 @@ jobs:
         qtversion: [ Qt5, Qt6 ]
 
     steps:
-    - name: 'Setup NuGet Credentials'
-      shell: 'bash'
-      run: >
-        $(c:/vcpkg/vcpkg fetch nuget | tail -n 1)
-        sources add
-        -source "https://nuget.pkg.github.com/CelestiaProject/index.json"
-        -storepasswordincleartext
-        -name "GitHub"
-        -username "CelestiaProject"
-        -password "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: 'Install dependencies'
-      shell: cmd
+    - name: Update vcpkg
+      shell: pwsh
       run: |
-        set QtBasePkg=qtbase
-        set QtCompatPkg=qt5compat
-        if ${{matrix.qtversion}}==Qt5 (
-            set QtBasePkg=qt5-base
-            unset QtCompatPkg
-        )
-        vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg[x264] icu %QtBasePkg% %QtCompatPkg%
+        $vcpkgCommit = '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
+        pushd "$env:VCPKG_INSTALLATION_ROOT"
+        git fetch --depth=1 origin $vcpkgCommit
+        git reset --hard $vcpkgCommit
+        ./bootstrap-vcpkg.bat
+        popd
 
-    - name: 'Checkout source code'
+    - name: Setup NuGet Credentials
+      shell: pwsh
+      run: |
+        $nugetCmd = vcpkg fetch nuget | Select-Object -Last 1
+        $nugetSource = 'https://nuget.pkg.github.com/CelestiaProject/index.json'
+        & "$nugetCmd" sources add `
+          -Source "$nugetSource" `
+          -StorePasswordInClearText `
+          -Name "GitHub" `
+          -Username 'CelestiaProject' `
+          -Password '${{secrets.GITHUB_TOKEN}}'
+        & "$nugetCmd" setapikey '${{secrets.GITHUB_TOKEN}}' `
+          -Source "$nugetSource"
+
+    - name: Install dependencies
+      shell: pwsh
+      run: |
+        if ( '${{matrix.qtversion}}' -eq 'Qt5' ) {
+          $QtPackages = @('qt5-base')
+        } else {
+          $QtPackages = @('qtbase', 'qt5compat')
+        }
+        
+        vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
+          cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit @QtPackages
+
+    - name: Checkout source code
       uses: actions/checkout@v3
       with:
         submodules: true
 
-    - name: 'Configure CMake'
-      shell: cmd
+    - name: Configure CMake
+      shell: pwsh
       run: |
-        set UseQt6=OFF
-        set GeneratorPlatform=${{matrix.platform}}
-        if ${{matrix.qtversion}}==Qt6 set UseQt6=ON
-        if ${{matrix.platform}}==x86 set GeneratorPlatform=Win32
-        cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=%GeneratorPlatform% -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DUSE_QT6=%UseQt6% -DENABLE_FFMPEG=ON -DENABLE_MINIAUDIO=ON -DUSE_ICU=ON
+        if ( '${{matrix.platform}}' -eq 'x86' ) {
+            $GeneratorPlatform = 'Win32'
+        } else {
+            $GeneratorPlatform = '${{matrix.platform}}'
+        }
+        
+        if ( '${{matrix.qtversion}}' -eq 'Qt6' ) {
+            $UseQt6 = 'ON'
+        } else {
+            $UseQt6 = 'OFF'
+        }
+        
+        cmake -B '${{github.workspace}}/build' `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
+            -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
+            -DENABLE_SPICE=ON `
+            -DENABLE_TOOLS=ON `
+            -DENABLE_TESTS=ON `
+            -DENABLE_SDL=OFF `
+            -DENABLE_QT=ON `
+            -DUSE_QT6="$UseQt6" `
+            -DENABLE_FFMPEG=ON `
+            -DENABLE_MINIAUDIO=ON `
+            -DUSE_ICU=ON
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
+      shell: pwsh
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} '--' /maxcpucount:2 /nologo
 
-    - name: 'Copy DLL for tests'
+    - name: Copy DLL for tests
+      shell: pwsh
       working-directory: ${{github.workspace}}/build
       run: |
-        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
-        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\integration\${{env.BUILD_TYPE}}\
+        Copy-Item src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
+        Copy-Item src\celestia\${{env.BUILD_TYPE}}\*.dll test\integration\${{env.BUILD_TYPE}}\
 
     - name: Test
+      shell: pwsh
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
     - name: Run winqtdeploy
+      shell: pwsh
       working-directory: ${{github.workspace}}/build/src/celestia
       if: matrix.qtversion == 'Qt5'
       run: |
-        c:\vcpkg\ports\qt5-base\qtdeploy.ps1 qt\${{env.BUILD_TYPE}}\
+        & "$env:VCPKG_INSTALLATION_ROOT/ports/qt5-base/qtdeploy.ps1" qt\${{env.BUILD_TYPE}}\
 
     - name: Run winqtdeploy
       working-directory: ${{github.workspace}}/build/src/celestia
       if: matrix.qtversion == 'Qt6'
       run: |
-        C:/vcpkg/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe qt\${{env.BUILD_TYPE}}\celestia-qt.exe
+        & "$env:VCPKG_INSTALLATION_ROOT/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe" qt\${{env.BUILD_TYPE}}\celestia-qt.exe
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
