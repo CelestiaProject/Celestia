@@ -687,7 +687,7 @@ AtmosphericEffects(const ShaderProperties& props)
     // Compute the intersection of the view direction and the cloud layer (currently assumed to be a sphere)
     source += "    float rq = dot(eyePosition, eyeDir);\n";
     source += "    float qq = dot(eyePosition, eyePosition) - atmosphereRadius.y;\n";
-    source += "    float d = sqrt(rq * rq - qq);\n";
+    source += "    float d = sqrt(max(rq * rq - qq, 0.0));\n";
     source += "    vec3 atmEnter = eyePosition + min(0.0, (-rq + d)) * eyeDir;\n";
     source += "    vec3 atmLeave = gl_Vertex.xyz;\n";
 
@@ -698,7 +698,7 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    vec3 atmSamplePointSun = atmEnter * 0.5 + atmLeave * 0.5;\n";
     source += "    rq = dot(atmSamplePointSun, " + LightProperty(0, "direction") + ");\n";
     source += "    qq = dot(atmSamplePointSun, atmSamplePointSun) - atmosphereRadius.y;\n";
-    source += "    d = sqrt(rq * rq - qq);\n";
+    source += "    d = sqrt(max(rq * rq - qq, 0.0));\n";
     source += "    float distSun = -rq + d;\n";
     source += "    float distAtm = length(atmEnter - atmLeave);\n";
 
@@ -782,7 +782,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     // Compute the intersection of the view direction and the cloud layer (currently assumed to be a sphere)
     source += "    float rq = dot(eyePosition, eyeDir);\n";
     source += "    float qq = dot(eyePosition, eyePosition) - atmosphereRadius.y;\n";
-    source += "    float d = sqrt(rq * rq - qq);\n";
+    source += "    float d = sqrt(max(rq * rq - qq, 0.0));\n";
     source += "    vec3 atmEnter = eyePosition + min(0.0, (-rq + d)) * eyeDir;\n";
     source += "    vec3 atmLeave = gl_Vertex.xyz;\n";
 
@@ -797,7 +797,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     // Compute the distance through the atmosphere from the sample point to the sun
     source += "        rq = dot(atmSamplePoint, " + LightProperty(0, "direction") + ");\n";
     source += "        qq = dot(atmSamplePoint, atmSamplePoint) - atmosphereRadius.y;\n";
-    source += "        d = sqrt(rq * rq - qq);\n";
+    source += "        d = sqrt(max(rq * rq - qq, 0.0));\n";
     source += "        float distSun = -rq + d;\n";
 
     // Compute the density of the atmosphere at the sample point; it falls off exponentially
@@ -1199,7 +1199,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
             source += "    float rq = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz);\n";
             source += "    float qq = dot(gl_Vertex.xyz, gl_Vertex.xyz) - cloudHeight * cloudHeight;\n";
-            source += "    float d = sqrt(rq * rq - qq);\n";
+            source += "    float d = sqrt(max(rq * rq - qq, 0.0));\n";
             source += "    vec3 cloudSpherePos = (gl_Vertex.xyz + (-rq + d) * " + LightProperty(j, "direction") + ");\n";
             //source += "    vec3 cloudSpherePos = gl_Vertex.xyz;\n";
 
