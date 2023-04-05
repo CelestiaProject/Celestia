@@ -37,34 +37,67 @@ bool ApplyArabicShaping(const std::vector<UChar> &input, std::vector<UChar> &out
 
 bool ApplyBidiReordering(const std::vector<UChar> &input, std::vector<UChar> &output)
 {
-    icu::LocalUBiDiPointer ubidi{ ubidi_open() };
+    auto ubidi = ubidi_open();
     UErrorCode error = U_ZERO_ERROR;
-    ubidi_setPara(ubidi.getAlias(), input.data(), static_cast<int32_t>(input.size()), UBIDI_DEFAULT_LTR, nullptr, &error);
+    ubidi_setPara(ubidi, input.data(), static_cast<int32_t>(input.size()), UBIDI_DEFAULT_LTR, nullptr, &error);
 
     uint16_t options = UBIDI_DO_MIRRORING | UBIDI_REMOVE_BIDI_CONTROLS;
 
-    auto requiredSize = ubidi_writeReordered(ubidi.getAlias(), nullptr, 0, options, &error);
+    auto requiredSize = ubidi_writeReordered(ubidi, nullptr, 0, options, &error);
     if (error != U_BUFFER_OVERFLOW_ERROR)
+    {
+        ubidi_close(ubidi);
         return false;
+    }
 
     // Clear the error to be reused
     error = U_ZERO_ERROR;
 
     output.resize(requiredSize + 1);
-    ubidi_writeReordered(ubidi.getAlias(), output.data(), static_cast<int32_t>(output.size()), options, &error);
+    ubidi_writeReordered(ubidi, output.data(), static_cast<int32_t>(output.size()), options, &error);
+    ubidi_close(ubidi);
     output.resize(requiredSize);
     return error == U_ZERO_ERROR;
 }
 
-bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &output, ConversionOption options)
+bool UTF8StringToUnicodeString(std::string_view input, std::vector<UChar> &output)
 {
-    if (input.length() == 0)
+    if (input.empty())
     {
         output.clear();
         return true;
     }
 
-    std::vector<UChar> current{ input.getBuffer(), input.getBuffer() + input.length() };
+    int32_t requiredSize;
+    UErrorCode error = U_ZERO_ERROR;
+
+    // dry run to get the required size for unicode string
+    u_strFromUTF8(nullptr, 0, &requiredSize, input.data(), static_cast<int32_t>(input.size()), &error);
+    if (error != U_BUFFER_OVERFLOW_ERROR)
+        return false;
+
+    output.resize(requiredSize + 1);
+
+    // Clear the error to be reused
+    error = U_ZERO_ERROR;
+
+    // Get the actual data
+    u_strFromUTF8(output.data(), static_cast<int32_t>(output.size()), nullptr, input.data(), static_cast<int32_t>(input.size()), &error);
+
+    // Removing the redundant \0 at the end
+    output.resize(requiredSize);
+    return error == U_ZERO_ERROR;
+}
+
+bool UnicodeStringToWString(const std::vector<UChar> &input, std::wstring &output, ConversionOption options)
+{
+    if (input.empty())
+    {
+        output.clear();
+        return true;
+    }
+
+    auto current = input;
     if (is_set(options, ConversionOption::ArabicShaping))
     {
         std::vector<UChar> result;
