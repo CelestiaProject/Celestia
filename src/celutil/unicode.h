@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include <unicode/unistr.h>
+#include <string>
+#include <unicode/umachine.h>
 
 namespace celestia::util
 {
@@ -21,6 +22,7 @@ enum class ConversionOption : unsigned int
     BidiReordering  = 0x02,
 };
 
-bool UnicodeStringToWString(const icu::UnicodeString &input, std::wstring &output, ConversionOption options = ConversionOption::None);
+bool UTF8StringToUnicodeString(std::string_view input, std::vector<UChar> &output);
+bool UnicodeStringToWString(const std::vector<UChar> &input, std::wstring &output, ConversionOption options = ConversionOption::None);
 
 }
