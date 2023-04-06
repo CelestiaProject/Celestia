@@ -109,18 +109,21 @@ jobs:
           gtk3: ON
           minaudio: ON
           wayland: ON
+          icu: ON
         - os: ubuntu-22.04
           avif: ON
           gles: ON
           gtk3: ON
           minaudio: ON
           wayland: ON
+          icu: ON
         - os: macos-latest
           avif: ON
           gles: OFF     # Native macOS applications can't access GLES APIs
           gtk3: OFF     # macOS is not a primary target for GTK frontend
           minaudio: ON
           wayland: OFF  # Wayland is not relevant on macOS
+          icu: OFF # Unable to find ICU installed via Homebrew
         qtversion: [ Qt5, Qt6 ]
         exclude:
         - config:
@@ -178,14 +181,12 @@ jobs:
                      freetype \
                      libepoxy \
                      sdl2 \
-                     libavif \
-                     icu4c
+                     libavif
         if [ "${{matrix.qtversion}}" = "Qt5" ]; then
             brew install qt5
         else
             brew install qt6
         fi
-        brew link icu4c --force
 
     - name: 'Checkout source code'
       uses: actions/checkout@v3
@@ -210,7 +211,7 @@ jobs:
               -DENABLE_FFMPEG=ON                        \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
-              -USE_ICU=ON
+              -DUSE_ICU=${{matrix.config.icu}}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
