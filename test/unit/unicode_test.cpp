@@ -1,4 +1,3 @@
-#include <unicode/unistr.h>
 #include <unicode/ustring.h>
 
 #include <celutil/flag.h>
@@ -26,7 +25,7 @@ inline std::wstring ProcessWString(const std::wstring& str, ConversionOption opt
         return L"";
 
     std::wstring output;
-    if (!UnicodeStringToWString(icu::UnicodeString(result.data(), result.size()), output, options))
+    if (!UnicodeStringToWString(result, output, options))
         return L"";
     return output;
 }
