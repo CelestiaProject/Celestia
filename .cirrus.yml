@@ -1,0 +1,45 @@
+task:
+  name: freebsd amd64
+  freebsd_instance:
+    image_family: freebsd-13-1
+
+  install_script: |
+    pkg install -y cmake            \
+                   ninja            \
+                   git              \
+                   eigen            \
+                   libepoxy         \
+                   gettext          \
+                   ffmpeg           \
+                   libjpeg-turbo    \
+                   png              \
+                   mesa-libs        \
+                   meshoptimizer    \
+                   freetype2        \
+                   luajit           \
+                   libfmt           \
+                   icu              \
+                   pkgconf          \
+                   sdl2
+
+  clone_submodules_script: git submodule update --init --recursive
+
+  configure_script: |
+    cmake -B build                  \
+          -G Ninja                  \
+          -DCMAKE_BUILD_TYPE=Debug  \
+          -DENABLE_GLES=ON          \
+          -DENABLE_SPICE=ON         \
+          -DENABLE_TOOLS=OFF        \
+          -DENABLE_TESTS=ON         \
+          -DENABLE_SDL=ON           \
+          -DENABLE_GTK=OFF          \
+          -DENABLE_QT=OFF           \
+          -DENABLE_FFMPEG=ON        \
+          -DENABLE_LIBAVIF=OFF      \
+          -DENABLE_MINIAUDIO=ON     \
+          -DUSE_ICU=OFF # tests fail on freebsd
+
+  build_script: cmake --build build --parallel
+
+  test_script: ctest --progress --extra-verbose --output-on-failure --test-dir build
