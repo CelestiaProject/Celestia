@@ -1106,35 +1106,4 @@ void CommandSetRingsTexture::processInstantaneous(ExecutionEnvironment& env)
     }
 }
 
-
-///////////////
-// LoadFragment command
-CommandLoadFragment::CommandLoadFragment(std::string _type, std::string _fragment, std::string _dir) :
-    type(std::move(_type)),
-    fragment(std::move(_fragment)),
-    dir(std::move(_dir))
-{
-}
-
-void CommandLoadFragment::processInstantaneous(ExecutionEnvironment& env)
-{
-    Universe* u = env.getSimulation()->getUniverse();
-    if (u == nullptr)
-        return;
-
-    std::istringstream in(fragment);
-    if (compareIgnoringCase(type, "ssc") == 0)
-    {
-        LoadSolarSystemObjects(in, *u, dir);
-    }
-    else if (compareIgnoringCase(type, "stc") == 0)
-    {
-        u->getStarCatalog()->load(in, dir);
-    }
-    else if (compareIgnoringCase(type, "dsc") == 0)
-    {
-        u->getDSOCatalog()->load(in, dir);
-    }
-}
-
 } // end namespace celestia::scripts

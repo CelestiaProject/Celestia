@@ -980,24 +980,6 @@ ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&
 }
 
 
-ParseResult parseLoadFragmentCommand(const Hash& paramList, const ScriptMaps&)
-{
-    const std::string* type = paramList.getString("type");
-    if (type == nullptr)
-        return makeError("Missing type parameter to loadfragment");
-
-    const std::string* fragment = paramList.getString("fragment");
-    if (fragment == nullptr)
-        return makeError("Missing fragment parameter to loadfragment");
-
-    std::string dir;
-    if (const std::string* dirName = paramList.getString("dir"); dirName != nullptr)
-        dir = *dirName;
-
-    return std::make_unique<CommandLoadFragment>(*type, *fragment, dir);
-}
-
-
 using ParseCommandPtr = ParseResult (*)(const Hash&, const ScriptMaps&);
 using ParseCommandMap = std::map<std::string_view, ParseCommandPtr>;
 
@@ -1063,7 +1045,6 @@ std::unique_ptr<ParseCommandMap> createParseCommandMap()
             { "verbosity"sv,               &parseVerbosityCommand                         },
             { "setwindowbordersvisible"sv, &parseSetWindowBordersVisibleCommand           },
             { "setringstexture"sv,         &parseSetRingsTextureCommand                   },
-            { "loadfragment"sv,            &parseLoadFragmentCommand                      },
         });
 }
 

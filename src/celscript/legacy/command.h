@@ -803,17 +803,4 @@ class CommandSetRingsTexture : public InstantaneousCommand
     std::string object, textureName, path;
 };
 
-
-class CommandLoadFragment : public InstantaneousCommand
-{
- public:
-    CommandLoadFragment(std::string, std::string, std::string);
-
- protected:
-    void processInstantaneous(ExecutionEnvironment&) override;
-
- private:
-    std::string type, fragment, dir;
-};
-
 } // end namespace celestia::scripts
