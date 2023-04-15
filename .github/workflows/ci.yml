@@ -15,13 +15,12 @@ env:
 
 jobs:
   build-windows:
-    name: "windows-${{matrix.platform}} with ${{matrix.qtversion}}"
+    name: "windows-${{matrix.platform}}"
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         platform: [ x64, x86 ]
-        qtversion: [ Qt5, Qt6 ]
 
     steps:
     - name: Update vcpkg
@@ -51,14 +50,9 @@ jobs:
     - name: Install dependencies
       shell: pwsh
       run: |
-        if ( '${{matrix.qtversion}}' -eq 'Qt5' ) {
-          $QtPackages = @('qt5-base')
-        } else {
-          $QtPackages = @('qtbase', 'qt5compat')
-        }
-
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
-          cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit @QtPackages
+          cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit `
+          qt5-base qtbase qt5compat
 
     - name: Checkout source code
       uses: actions/checkout@v3
@@ -74,23 +68,17 @@ jobs:
             $GeneratorPlatform = '${{matrix.platform}}'
         }
 
-        if ( '${{matrix.qtversion}}' -eq 'Qt6' ) {
-            $UseQt6 = 'ON'
-        } else {
-            $UseQt6 = 'OFF'
-        }
-
         cmake -B '${{github.workspace}}/build' `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
-            -DENABLE_SPICE=ON `
-            -DENABLE_TOOLS=ON `
-            -DENABLE_TESTS=ON `
-            -DENABLE_SDL=OFF `
-            -DENABLE_QT=ON `
-            -DUSE_QT6="$UseQt6" `
-            -DENABLE_FFMPEG=ON `
+            -DENABLE_SPICE=ON     `
+            -DENABLE_TOOLS=ON     `
+            -DENABLE_TESTS=ON     `
+            -DENABLE_SDL=OFF      `
+            -DENABLE_QT5=ON       `
+            -DENABLE_QT6=ON       `
+            -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
             -DUSE_ICU=ON
 
@@ -113,21 +101,15 @@ jobs:
     - name: Run winqtdeploy
       shell: pwsh
       working-directory: ${{github.workspace}}/build/src/celestia
-      if: matrix.qtversion == 'Qt5'
       run: |
-        & "$env:VCPKG_INSTALLATION_ROOT/ports/qt5-base/qtdeploy.ps1" qt\${{env.BUILD_TYPE}}\
-
-    - name: Run winqtdeploy
-      working-directory: ${{github.workspace}}/build/src/celestia
-      if: matrix.qtversion == 'Qt6'
-      run: |
-        & "$env:VCPKG_INSTALLATION_ROOT/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe" qt\${{env.BUILD_TYPE}}\celestia-qt.exe
+        & "$env:VCPKG_INSTALLATION_ROOT/ports/qt5-base/qtdeploy.ps1" qt5\${{env.BUILD_TYPE}}\
+        & "$env:VCPKG_INSTALLATION_ROOT/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe" qt6\${{env.BUILD_TYPE}}\celestia-qt6.exe
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       if: success()
       with:
-        name: celestia-${{matrix.platform}}-${{matrix.qtversion}}
+        name: celestia-windows-${{matrix.platform}}
         path: |
           ${{github.workspace}}/build/src/**/*.exe
           ${{github.workspace}}/build/src/**/*.dll
@@ -136,7 +118,7 @@ jobs:
           ${{github.workspace}}/shaders/*.glsl
 
   build-posix:
-    name: "${{matrix.config.os}} with ${{matrix.qtversion}}"
+    name: "${{matrix.config.os}}"
     strategy:
       fail-fast: false
       matrix:
@@ -148,6 +130,7 @@ jobs:
           minaudio: ON
           wayland: ON
           icu: ON
+          qt6: OFF
         - os: ubuntu-22.04
           avif: ON
           gles: ON
@@ -155,23 +138,11 @@ jobs:
           minaudio: ON
           wayland: ON
           icu: ON
-        - os: macos-latest
-          avif: ON
-          gles: OFF     # Native macOS applications can't access GLES APIs
-          gtk3: OFF     # macOS is not a primary target for GTK frontend
-          minaudio: ON
-          wayland: OFF  # Wayland is not relevant on macOS
-          icu: OFF # Unable to find ICU installed via Homebrew
-        qtversion: [ Qt5, Qt6 ]
-        exclude:
-        - config:
-            os: ubuntu-20.04
-          qtversion: Qt6
+          qt6: ON
 
     runs-on: ${{matrix.config.os}}
     steps:
     - name: 'Install dependencies'
-      if: matrix.config.os != 'macos-latest'
       run: |
         sudo apt update
         sudo apt install -y libeigen3-dev \
@@ -191,39 +162,13 @@ jobs:
                             libicu-dev \
                             libwayland-dev \
                             wayland-protocols \
-                            ninja-build
-        if [ "${{matrix.qtversion}}" = "Qt5" ]; then
-            sudo apt install -y qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
-        else
+                            ninja-build \
+                            qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+        if [ "${{matrix.config.qt6}}" = "ON" ]; then
             sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
             sudo apt install -y libavif-dev
-        fi
-
-    - name: 'Install dependencies'
-      if: matrix.config.os == 'macos-latest'
-      run: |
-        brew install pkg-config \
-                     ninja \
-                     eigen \
-                     ffmpeg \
-                     gtk+ \
-                     gtkglext \
-                     cspice \
-                     fmt \
-                     jpeg \
-                     gettext \
-                     libpng \
-                     lua \
-                     freetype \
-                     libepoxy \
-                     sdl2 \
-                     libavif
-        if [ "${{matrix.qtversion}}" = "Qt5" ]; then
-            brew install qt5
-        else
-            brew install qt6
         fi
 
     - name: 'Checkout source code'
@@ -233,7 +178,6 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
-        [ "${{matrix.qtversion}}" = "Qt6" ] && UseQt6=ON
         cmake -B ${{github.workspace}}/build            \
               -G Ninja                                  \
               -DENABLE_GLES=${{matrix.config.gles}}     \
@@ -243,13 +187,93 @@ jobs:
               -DENABLE_SDL=ON                           \
               -DENABLE_GTK=ON                           \
               -DUSE_GTK3=${{matrix.config.gtk3}}        \
-              -DENABLE_QT=ON                            \
-              -DUSE_QT6=${UseQt6:OFF}                   \
+              -DENABLE_QT5=ON                           \
+              -DENABLE_QT6=${{matrix.config.qt6}}       \
               -DUSE_WAYLAND=${{matrix.config.wayland}}  \
               -DENABLE_FFMPEG=ON                        \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
               -DUSE_ICU=${{matrix.config.icu}}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: ninja
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest
+
+  build-macos:
+    # Because of include path conflicts when both Qt5 and Qt6 are installed,
+    # we run these as separate builds
+    name: "macos-latest with ${{matrix.config.qt}}"
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - qt: Qt5
+          gtk: ON
+          sdl: ON
+        - qt: Qt6
+          gtk: OFF
+          sdl: OFF
+    runs-on: macos-latest
+    steps:
+    - name: 'Install dependencies'
+      run: |
+        brew install pkg-config \
+                     ninja \
+                     eigen \
+                     ffmpeg \
+                     cspice \
+                     fmt \
+                     jpeg \
+                     gettext \
+                     libpng \
+                     lua \
+                     freetype \
+                     libepoxy \
+                     libavif
+        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
+          brew install qt@5
+        else
+          brew install qt@6
+        fi
+        if [ "${{matrix.config.gtk}}" = "ON" ]; then
+          brew install gtk+ gtkglext
+        fi
+        if [ "${{matrix.config.sdl}}" = "ON" ]; then
+          brew install sdl2
+        fi
+
+    - name: 'Checkout source code'
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: 'Configure CMake'
+      run: |
+        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
+          UseQt5=ON
+        else
+          UseQt6=ON
+        fi
+        cmake -B ${{github.workspace}}/build      \
+              -G Ninja                            \
+              -DENABLE_GLES=OFF                   \
+              -DENABLE_SPICE=ON                   \
+              -DENABLE_TOOLS=OFF                  \
+              -DENABLE_TESTS=ON                   \
+              -DENABLE_SDL=${{matrix.config.sdl}} \
+              -DENABLE_GTK=${{matrix.config.gtk}} \
+              -DUSE_GTK3=OFF                      \
+              -DENABLE_QT5=${UseQt5:OFF}          \
+              -DENABLE_QT6=${UseQt6:OFF}          \
+              -DUSE_WAYLAND=OFF                   \
+              -DENABLE_FFMPEG=ON                  \
+              -DENABLE_LIBAVIF=ON                 \
+              -DENABLE_MINIAUDIO=ON               \
+              -DUSE_ICU=OFF
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -297,7 +321,8 @@ jobs:
               -DENABLE_SDL=ON                 \
               -DENABLE_GTK=ON                 \
               -DUSE_GTK3=ON                   \
-              -DENABLE_QT=ON                  \
+              -DENABLE_QT5=ON                 \
+              -DENABLE_QT6=OFF                \
               -DENABLE_FFMPEG=OFF             \
               -DENABLE_MINIAUDIO=ON           \
               -DUSE_ICU=ON
@@ -354,7 +379,7 @@ jobs:
               -DENABLE_TESTS=OFF             \
               -DENABLE_SDL=ON                \
               -DENABLE_GTK=OFF               \
-              -DENABLE_QT=ON                 \
+              -DENABLE_QT5=ON                \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_MINIAUDIO=ON          \
               -DUSE_ICU=ON                   \

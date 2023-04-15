@@ -16,7 +16,7 @@ override_dh_auto_configure:
 	fi ; \
 	dh_auto_configure --parallel --	\
 		-DENABLE_GTK=ON		\
-		-DENABLE_QT=ON		\
+		-DENABLE_QT5=ON		\
 		-DENABLE_TOOLS=ON	\
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DGIT_COMMIT="$$_git_commit"

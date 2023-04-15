@@ -1,0 +1,4 @@
+usr/bin/celestia-qt5
+usr/share/applications/celestia-qt5.desktop
+usr/share/metainfo/space.celestia.celestia_qt5.metainfo.xml
+usr/share/man/man1/celestia-qt5.1

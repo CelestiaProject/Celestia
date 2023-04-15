@@ -145,9 +145,10 @@ Four interfaces are available for Celestia on Unix-like systems:
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities. Legacy interface, may lack some new
        features. Disabled by default.
-- QT: A full interface with minimal dependencies, adds a menu, a configuration
-      dialog some other utilities, bookmarks... A preferred option. Enabled by
-      default, No need to pass -DENABLE_QT=ON.
+- QT5: A full interface with minimal dependencies, adds a menu, a configuration
+       dialog some other utilities, bookmarks... A preferred option. Enabled by
+       default, No need to pass -DENABLE_QT5=ON.
+- QT6: As above, but compiled with Qt6.
 
 Starting with version 1.3.1, Lua is the new scripting engine for Celestia,
 the old homegrown scripting engine is still available. By default Lua support
@@ -355,7 +356,8 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
 | ENABLE_NLS           | bool | ON      | Enable interface translation
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
-| ENABLE_QT            | bool | ON      | Build Qt frontend
+| ENABLE_QT5           | bool | ON      | Build Qt5 frontend
+| ENABLE_QT6           | bool | ON      | Build Qt6 frontend
 | ENABLE_SDL           | bool | OFF     | Build SDL frontend
 | ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
 | ENABLE_FFMPEG        | bool | OFF     | Support video capture using ffmpeg
@@ -388,8 +390,10 @@ On Windows systems two additonal options are supported:
 Please note that not all options are compatible:
 - `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
   be disabled if any of this is set.
-- `ENABLE_GLES` is not compatible with `ENABLE_QT` if your Qt installation
-  doesn't support OpenGL ES.
+- `ENABLE_GLES` is not compatible with `ENABLE_QT5` or `ENABLE_QT6` if your Qt
+  installation doesn't support OpenGL ES.
+- `ENABLE_QT5` and `ENABLE_QT6` are not compatible on Apple systems due to
+  include path conflicts.
 
 ## Installing the content
 
@@ -420,7 +424,8 @@ Here's the table which provides executable file names accordingly to interface:
 
  Interface  | Executable name
 |-----------|----------------|
-| Qt5       | celestia-qt
+| Qt5       | celestia-qt5
+| Qt6       | celestia-qt6
 | GTK       | celestia-gtk
 | SDL       | celestia-sdl
 | WIN       | celestia-win
