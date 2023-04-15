@@ -32,6 +32,8 @@ jobs:
         git fetch --depth=1 origin $vcpkgCommit
         git reset --hard $vcpkgCommit
         ./bootstrap-vcpkg.bat
+        Add-Content -Path 'triplets\${{matrix.platform}}-windows.cmake' `
+          -Value 'set(VCPKG_BUILD_TYPE "release")'
         popd
 
     - name: Setup NuGet Credentials
@@ -45,8 +47,6 @@ jobs:
           -Name "GitHub" `
           -Username 'CelestiaProject' `
           -Password '${{secrets.GITHUB_TOKEN}}'
-        & "$nugetCmd" setapikey '${{secrets.GITHUB_TOKEN}}' `
-          -Source "$nugetSource"
 
     - name: Install dependencies
       shell: pwsh
@@ -56,7 +56,7 @@ jobs:
         } else {
           $QtPackages = @('qtbase', 'qt5compat')
         }
-        
+
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
           cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit @QtPackages
 
@@ -73,13 +73,13 @@ jobs:
         } else {
             $GeneratorPlatform = '${{matrix.platform}}'
         }
-        
+
         if ( '${{matrix.qtversion}}' -eq 'Qt6' ) {
             $UseQt6 = 'ON'
         } else {
             $UseQt6 = 'OFF'
         }
-        
+
         cmake -B '${{github.workspace}}/build' `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
