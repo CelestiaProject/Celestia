@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2022 Mattia Verga <mattia.verga@proton.me> -->
 <component type="desktop-application">
-    <id>space.celestia.celestia_qt</id>
+    <id>space.celestia.celestia_qt6</id>
     <metadata_license>MIT</metadata_license>
     <project_license>GPL-2.0+</project_license>
-    <name>Celestia (QT)</name>
+    <name>Celestia (Qt6)</name>
     <summary>Explore the universe</summary>
     <description>
     <p>
@@ -18,7 +18,7 @@
       is used as a visualization tool by space mission designers.
     </p>
   </description>
-  <launchable type="desktop-id">celestia-qt.desktop</launchable>
+  <launchable type="desktop-id">celestia-qt6.desktop</launchable>
   <url type="homepage">https://celestia.space</url>
   <screenshots>
     <screenshot type="default">https://celestia.space/images/gallery/cassini.jpg</screenshot>

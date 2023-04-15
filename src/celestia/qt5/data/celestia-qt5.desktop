@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Celestia (Qt5)
+GenericName=Space Simulator
+Comment=Explore the Universe in this detailed space simulation
+Type=Application
+Categories=Astronomy;Education;Science;
+Icon=celestia
+Exec=celestia-qt5 %f
+Terminal=false
+MimeType=application/x-celestia-script;

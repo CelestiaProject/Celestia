@@ -51,7 +51,8 @@ option(ENABLE_CELX          "Enable celx scripting, requires Lua library? (Defau
 option(ENABLE_SPICE         "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS           "Enable interface translation? (Default: on)" ON)
 option(ENABLE_GTK           "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
-option(ENABLE_QT            "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_QT5           "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_QT6           "Build Qt6 frontend (Default: off)" OFF)
 option(ENABLE_SDL           "Build SDL frontend? (Default: off)" OFF)
 option(ENABLE_WIN           "Build Windows native frontend? (Default: on)" ON)
 option(ENABLE_FFMPEG        "Support video capture using FFMPEG (Default: off)" OFF)
@@ -61,11 +62,15 @@ option(FAST_MATH            "Build with unsafe fast-math compiller option (Defau
 option(ENABLE_TESTS         "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES          "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(USE_GTKGLEXT         "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
-option(USE_QT6              "Use Qt6 in Qt frontend (Default: off)" OFF)
 option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
+
+if(APPLE AND ENABLE_QT5 AND ENABLE_QT6)
+  # If someone figures out how to resolve the include path conflicts, this can be removed
+  message(FATAL_ERROR "Simultaneous builds of Qt5 and Qt6 are not supported on Apple systems")
+endif()
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
@@ -280,6 +285,22 @@ if(meshoptimizer_FOUND)
   set(HAVE_MESHOPTIMIZER 1)
 else()
   message(STATUS "meshoptimizer library is missing")
+endif()
+
+if(USE_WAYLAND)
+  message(STATUS "Creating Wayland protocol helpers")
+
+  find_package(Wayland COMPONENTS protocols scanner REQUIRED)
+
+  include(WaylandAddProtocolClient)
+  wayland_add_protocol_client(PROTOCOL_SOURCES
+    "unstable/pointer-constraints/pointer-constraints-unstable-v1.xml")
+  wayland_add_protocol_client(PROTOCOL_SOURCES
+    "unstable/relative-pointer/relative-pointer-unstable-v1.xml")
+
+  set_source_files_properties(${PROTOCOL_SOURCES} PROPERTIES GENERATED ON)
+  add_library(wayland-protocols-helper STATIC ${PROTOCOL_SOURCES})
+  target_include_directories(wayland-protocols-helper INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 #[[

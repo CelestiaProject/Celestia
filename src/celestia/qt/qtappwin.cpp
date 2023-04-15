@@ -38,6 +38,7 @@
 #include <QInputDialog>
 #include <QUrl>
 #include <QScreen>
+#include <QtGlobal>
 #include <vector>
 #include <string>
 #include <celutil/gettext.h>
@@ -246,7 +247,12 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     m_appCore->setAlerter(alerter);
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
-    QGuiApplication::setDesktopFileName("celestia-qt");
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && QT_VERSION < QT_VERSION_CHECK(7, 0, 0)
+    QGuiApplication::setDesktopFileName("celestia-qt6");
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    QGuiApplication::setDesktopFileName("celestia-qt5");
+#endif
+
 
     if (!options.logFilename.isEmpty())
     {

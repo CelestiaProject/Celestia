@@ -38,7 +38,7 @@ Description: common files for Celestia, a real-time visual space simulation
 
 Package: celestia
 Architecture: all
-Depends: celestia-qt | celestia-gtk, ${misc:Depends}
+Depends: celestia-qt5 | celestia-gtk, ${misc:Depends}
 Description: real-time visual space simulation
  Celestia is a free 3D astronomy program. Based on the Hipparcos
  Catalogue, it allows users to display objects ranging in scale from
@@ -48,7 +48,7 @@ Description: real-time visual space simulation
  .
  This is a dummy package that selects at least one frontend for Celestia.
 
-Package: celestia-qt
+Package: celestia-qt5
 Section: science
 Architecture: any
 Depends: libcelestia1.7 (= ${binary:Version}),
@@ -58,7 +58,7 @@ Depends: libcelestia1.7 (= ${binary:Version}),
 Conflicts: celestia (<< 1.4.1)
 Replaces: celestia (<< 1.4.1)
 Suggests: stellarium
-Description: real-time visual space simulation (Qt frontend)
+Description: real-time visual space simulation (Qt5 frontend)
  Celestia is a free 3D astronomy program. Based on the Hipparcos
  Catalogue, it allows users to display objects ranging in scale from
  artificial satellites to entire galaxies in three dimensions using
