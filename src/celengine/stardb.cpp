@@ -32,6 +32,7 @@
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
 #include <celutil/stringutils.h>
+#include "category.h"
 #include "meshmanager.h"
 #include "parser.h"
 #include "starname.h"
@@ -800,9 +801,11 @@ bool StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
     Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    std::string s = resourcePath.string();
-    const char *d = s.c_str();
+    std::string domain = resourcePath.string();
+    const char *d = domain.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
+#else
+    std::string domain;
 #endif
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
@@ -959,7 +962,7 @@ bool StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         else
         {
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
-            star->loadCategories(starData, disposition, resourcePath.string());
+            loadCategories(catalogNumber, starData, disposition, domain);
         }
 
         if (ok)
@@ -1130,6 +1133,12 @@ StarDatabaseBuilder::finish()
         }
     }
 
+    for (const auto& [catalogNumber, category] : categories)
+    {
+        Star* star = starDB->find(catalogNumber);
+        star->addToCategory(category);
+    }
+
     return std::move(starDB);
 }
 
@@ -1289,9 +1298,6 @@ StarDatabaseBuilder::createStar(Star* star,
 
     return true;
 }
-
-
-StarDatabaseBuilder::StarDatabaseBuilder() : starDB( std::make_unique<StarDatabase>() ) {}
 
 
 bool
@@ -1497,6 +1503,70 @@ StarDatabaseBuilder::applyOrbit(AstroCatalog::IndexNumber catalogNumber,
 }
 
 
+void
+StarDatabaseBuilder::loadCategories(AstroCatalog::IndexNumber catalogNumber,
+                                    const Hash *hash,
+                                    DataDisposition disposition,
+                                    const std::string &domain)
+{
+    if (disposition == DataDisposition::Replace)
+        categories.erase(catalogNumber);
+
+    const Value* categoryValue = hash->getValue("Category");
+    if (categoryValue == nullptr)
+        return;
+
+    if (const std::string* categoryName = categoryValue->getString(); categoryName != nullptr)
+    {
+        if (categoryName->empty())
+            return;
+
+        addCategory(catalogNumber, *categoryName, domain);
+        return;
+    }
+
+    const ValueArray *arr = categoryValue->getArray();
+    if (arr == nullptr)
+        return;
+
+    for (const auto& it : *arr)
+    {
+        const std::string* categoryName = it.getString();
+        if (categoryName == nullptr || categoryName->empty())
+            continue;
+
+        addCategory(catalogNumber, *categoryName, domain);
+    }
+}
+
+
+void
+StarDatabaseBuilder::addCategory(AstroCatalog::IndexNumber catalogNumber,
+                                 const std::string& name,
+                                 const std::string& domain)
+{
+    UserCategory* category = UserCategory::find(name);
+    if (category == nullptr)
+    {
+        category = UserCategory::createRoot(name, domain);
+        if (category == nullptr)
+            return;
+    }
+
+    auto [start, end] = categories.equal_range(catalogNumber);
+    if (start == end)
+    {
+        categories.emplace(catalogNumber, category);
+        return;
+    }
+
+    if (std::any_of(start, end, [category](const auto& it) { return it.second == category; }))
+        return;
+
+    categories.emplace_hint(end, catalogNumber, category);
+}
+
+
 /*! While loading the star catalogs, this function must be called instead of
  *  find(). The final catalog number index for stars cannot be built until
  *  after all stars have been loaded. During catalog loading, there are two
@@ -1512,12 +1582,10 @@ Star*
 StarDatabaseBuilder::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const
 {
     // First check for stars loaded from the binary database
-    auto star = std::lower_bound(binFileCatalogNumberIndex.cbegin(),
-                                 binFileCatalogNumberIndex.cend(),
-                                 catalogNumber,
-                                 [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
-
-    if (star != binFileCatalogNumberIndex.cend() && (*star)->getIndex() == catalogNumber)
+    if (auto star = std::lower_bound(binFileCatalogNumberIndex.cbegin(), binFileCatalogNumberIndex.cend(),
+                                     catalogNumber,
+                                     [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
+        star != binFileCatalogNumberIndex.cend() && (*star)->getIndex() == catalogNumber)
         return *star;
 
     // Next check for stars loaded from an stc file
