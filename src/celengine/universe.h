@@ -11,10 +11,10 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
-
 
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
@@ -36,7 +36,7 @@ class Universe
     ~Universe();
 
     StarDatabase* getStarCatalog() const;
-    void setStarCatalog(StarDatabase*);
+    void setStarCatalog(std::unique_ptr<StarDatabase>&&);
 
     SolarSystemCatalog* getSolarSystemCatalog() const;
     void setSolarSystemCatalog(SolarSystemCatalog*);
@@ -125,7 +125,7 @@ class Universe
                                 float tolerance = 0.0f);
 
  private:
-    StarDatabase* starCatalog{nullptr};
+    std::unique_ptr<StarDatabase> starCatalog{nullptr};
     DSODatabase* dsoCatalog{nullptr};
     SolarSystemCatalog* solarSystemCatalog{nullptr};
     AsterismList* asterisms{nullptr};

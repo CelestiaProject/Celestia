@@ -3766,7 +3766,7 @@ template <class OBJDB> class CatalogLoader
     }
 };
 
-using StarLoader = CatalogLoader<StarDatabase>;
+using StarLoader = CatalogLoader<StarDatabaseBuilder>;
 using DeepSkyLoader = CatalogLoader<DSODatabase>;
 
 
@@ -4180,8 +4180,8 @@ bool CelestiaCore::initRenderer()
 }
 
 
-static void loadCrossIndex(StarDatabase* starDB,
-                           StarDatabase::Catalog catalog,
+static void loadCrossIndex(StarDatabaseBuilder& starDBBuilder,
+                           StarCatalog catalog,
                            const fs::path& filename)
 {
     if (!filename.empty())
@@ -4189,7 +4189,7 @@ static void loadCrossIndex(StarDatabase* starDB,
         ifstream xrefFile(filename, ios::in | ios::binary);
         if (xrefFile.good())
         {
-            if (!starDB->loadCrossIndex(catalog, xrefFile))
+            if (!starDBBuilder.loadCrossIndex(catalog, xrefFile))
                 GetLogger()->error(_("Error reading cross index {}\n"), filename);
             else
                 GetLogger()->info(_("Loaded cross index {}\n"), filename);
@@ -4203,7 +4203,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 {
     StarDetails::SetStarTextures(cfg.starTextures);
 
-    StarNameDatabase* starNameDB = nullptr;
+    std::unique_ptr<StarNameDatabase> starNameDB = nullptr;
     ifstream starNamesFile(cfg.starNamesFile, ios::in);
     if (starNamesFile.good())
     {
@@ -4218,7 +4218,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
     // First load the binary star database file.  The majority of stars
     // will be defined here.
-    StarDatabase* starDB = new StarDatabase();
+    StarDatabaseBuilder starDBBuilder;
     if (!cfg.starDatabaseFile.empty())
     {
         if (progressNotifier)
@@ -4228,27 +4228,23 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (!starFile.good())
         {
             GetLogger()->error(_("Error opening {}\n"), cfg.starDatabaseFile);
-            delete starDB;
-            delete starNameDB;
             return false;
         }
 
-        if (!starDB->loadBinary(starFile))
+        if (!starDBBuilder.loadBinary(starFile))
         {
             GetLogger()->error(_("Error reading stars file\n"));
-            delete starDB;
-            delete starNameDB;
             return false;
         }
     }
 
     if (starNameDB == nullptr)
-        starNameDB = new StarNameDatabase();
-    starDB->setNameDatabase(starNameDB);
+        starNameDB = std::make_unique<StarNameDatabase>();
+    starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    loadCrossIndex(starDB, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
-    loadCrossIndex(starDB, StarDatabase::SAO,         cfg.SAOCrossIndexFile);
-    loadCrossIndex(starDB, StarDatabase::Gliese,      cfg.GlieseCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, cfg.HDCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::SAO,         cfg.SAOCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::Gliese,      cfg.GlieseCrossIndexFile);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs
     // list.
@@ -4259,7 +4255,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
         ifstream starFile(file, ios::in);
         if (starFile.good())
-            starDB->load(starFile);
+            starDBBuilder.load(starFile);
         else
             GetLogger()->error(_("Error opening star catalog {}\n"), file);
     }
@@ -4267,7 +4263,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     // Now, read supplemental star files from the extras directories
     {
         vector<fs::path> entries;
-        StarLoader loader(starDB,
+        StarLoader loader(&starDBBuilder,
                           "star",
                           ContentType::CelestiaStarCatalog,
                           progressNotifier,
@@ -4293,10 +4289,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         }
     }
 
-    starDB->finish();
-
-    universe->setStarCatalog(starDB);
-
+    universe->setStarCatalog(starDBBuilder.finish());
     return true;
 }
 

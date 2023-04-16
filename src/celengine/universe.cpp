@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <utility>
 
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
@@ -57,12 +58,12 @@ Universe::~Universe()
 
 StarDatabase* Universe::getStarCatalog() const
 {
-    return starCatalog;
+    return starCatalog.get();
 }
 
-void Universe::setStarCatalog(StarDatabase* catalog)
+void Universe::setStarCatalog(std::unique_ptr<StarDatabase>&& catalog)
 {
-    starCatalog = catalog;
+    starCatalog = std::move(catalog);
 }
 
 

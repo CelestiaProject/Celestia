@@ -288,10 +288,11 @@ StarNameDatabase::findWithComponentSuffix(std::string_view name, bool i18n) cons
     return AstroCatalog::InvalidIndex;
 }
 
-StarNameDatabase*
+
+std::unique_ptr<StarNameDatabase>
 StarNameDatabase::readNames(std::istream& in)
 {
-    StarNameDatabase* db = new StarNameDatabase();
+    auto db = std::make_unique<StarNameDatabase>();
     bool failed = false;
     std::string s;
 
@@ -337,12 +338,7 @@ StarNameDatabase::readNames(std::istream& in)
     }
 
     if (failed)
-    {
-        delete db;
         return nullptr;
-    }
-    else
-    {
-        return db;
-    }
+
+    return db;
 }
