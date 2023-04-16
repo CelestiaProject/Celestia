@@ -34,7 +34,7 @@ task:
           -DENABLE_TESTS=ON         \
           -DENABLE_SDL=ON           \
           -DENABLE_GTK=OFF          \
-          -DENABLE_QT=OFF           \
+          -DENABLE_QT5=OFF           \
           -DENABLE_FFMPEG=ON        \
           -DENABLE_LIBAVIF=OFF      \
           -DENABLE_MINIAUDIO=ON     \
