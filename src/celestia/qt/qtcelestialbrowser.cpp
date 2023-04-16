@@ -193,7 +193,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         case NameColumn:
             {
                 auto hipCatNo = star->getIndex();
-                auto hdCatNo  = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
+                auto hdCatNo  = universe->getStarCatalog()->crossIndex(StarCatalog::HenryDraper, hipCatNo);
                 if (hdCatNo != AstroCatalog::InvalidIndex)
                     return QString("HD %1").arg(hdCatNo);
                 else

@@ -14,6 +14,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <memory>
 #include <string_view>
 
 #include <celengine/name.h>
@@ -26,7 +27,7 @@ class StarNameDatabase: public NameDatabase
 
     std::uint32_t findCatalogNumberByName(std::string_view, bool i18n) const;
 
-    static StarNameDatabase* readNames(std::istream&);
+    static std::unique_ptr<StarNameDatabase> readNames(std::istream&);
 
  private:
     std::uint32_t findFlamsteedOrVariable(std::string_view, std::string_view, bool) const;

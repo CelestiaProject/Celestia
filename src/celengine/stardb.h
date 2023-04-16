@@ -34,6 +34,17 @@ class StarNameDatabase;
 
 constexpr inline unsigned int MAX_STAR_NAMES = 10;
 
+enum class StarCatalog
+{
+    HenryDraper = 0,
+    Gliese      = 1,
+    SAO         = 2,
+    MaxCatalog  = 3,
+};
+
+
+class StarDatabaseBuilder;
+
 class StarDatabase
 {
  public:
@@ -65,18 +76,6 @@ class StarDatabase
     std::string getStarNameList(const Star&, const unsigned int maxNames = MAX_STAR_NAMES) const;
 
     StarNameDatabase* getNameDatabase() const;
-    void setNameDatabase(StarNameDatabase*);
-
-    bool load(std::istream&, const fs::path& resourcePath = fs::path());
-    bool loadBinary(std::istream&);
-
-    enum Catalog
-    {
-        HenryDraper = 0,
-        Gliese      = 1,
-        SAO         = 2,
-        MaxCatalog  = 3,
-    };
 
     // Not exact, but any star with a catalog number greater than this is assumed to not be
     // a HIPPARCOS stars.
@@ -86,22 +85,67 @@ class StarDatabase
     {
         AstroCatalog::IndexNumber catalogNumber;
         AstroCatalog::IndexNumber celCatalogNumber;
-
-        bool operator<(const CrossIndexEntry&) const;
     };
 
     using CrossIndex = std::vector<CrossIndexEntry>;
 
-    bool loadCrossIndex(const Catalog, std::istream&);
-    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(const Catalog, const AstroCatalog::IndexNumber number) const;
-    Star* searchCrossIndex(const Catalog, const AstroCatalog::IndexNumber number) const;
-    AstroCatalog::IndexNumber crossIndex(const Catalog, const AstroCatalog::IndexNumber number) const;
+    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(StarCatalog, AstroCatalog::IndexNumber number) const;
+    Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
+    AstroCatalog::IndexNumber crossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
-    void finish();
+private:
+    std::uint32_t nStars{ 0 };
+
+    Star*                             stars{ nullptr };
+    std::unique_ptr<StarNameDatabase> namesDB{ nullptr };
+    std::vector<Star*>                catalogNumberIndex{ };
+    StarOctree*                       octreeRoot{ nullptr };
+
+    std::vector<CrossIndex> crossIndexes;
+
+    friend class StarDatabaseBuilder;
+};
+
+
+inline Star* StarDatabase::getStar(const std::uint32_t n) const
+{
+    return stars + n;
+}
+
+inline std::uint32_t StarDatabase::size() const
+{
+    return nStars;
+}
+
+
+inline bool operator<(const StarDatabase::CrossIndexEntry& lhs, const StarDatabase::CrossIndexEntry& rhs)
+{
+    return lhs.catalogNumber < rhs.catalogNumber;
+}
+
+
+class StarDatabaseBuilder
+{
+ public:
+    StarDatabaseBuilder();
+    ~StarDatabaseBuilder() = default;
+
+    StarDatabaseBuilder(const StarDatabaseBuilder&) = delete;
+    StarDatabaseBuilder& operator=(const StarDatabaseBuilder&) = delete;
+    StarDatabaseBuilder(StarDatabaseBuilder&&) noexcept = delete;
+    StarDatabaseBuilder& operator=(StarDatabaseBuilder&&) noexcept = delete;
+
+    bool load(std::istream&, const fs::path& resourcePath = fs::path());
+    bool loadBinary(std::istream&);
+
+    void setNameDatabase(std::unique_ptr<StarNameDatabase>&&);
+    bool loadCrossIndex(StarCatalog, std::istream&);
+
+    std::unique_ptr<StarDatabase> finish();
 
     struct CustomStarDetails;
 
-private:
+ private:
     bool createStar(Star* star,
                     DataDisposition disposition,
                     AstroCatalog::IndexNumber catalogNumber,
@@ -131,22 +175,13 @@ private:
     void buildIndexes();
     Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
 
-    std::uint32_t nStars{ 0 };
+    std::unique_ptr<StarDatabase> starDB;
 
-    Star*             stars{ nullptr };
-    StarNameDatabase* namesDB{ nullptr };
-    Star**            catalogNumberIndex{ nullptr };
-    StarOctree*       octreeRoot{ nullptr };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
-    std::vector<CrossIndex*> crossIndexes;
-
-    // These values are used by the star database loader; they are
-    // not used after loading is complete.
     BlockArray<Star> unsortedStars;
     // List of stars loaded from binary file, sorted by catalog number
-    Star** binFileCatalogNumberIndex{ nullptr };
-    unsigned int binFileStarCount{ 0 };
+    std::vector<Star*> binFileCatalogNumberIndex{ nullptr };
     // Catalog number -> star mapping for stars loaded from stc files
     std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex;
 
@@ -157,14 +192,3 @@ private:
     };
     std::vector<BarycenterUsage> barycenters;
 };
-
-
-Star* StarDatabase::getStar(const std::uint32_t n) const
-{
-    return stars + n;
-}
-
-std::uint32_t StarDatabase::size() const
-{
-    return nStars;
-}
