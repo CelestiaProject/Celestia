@@ -30,6 +30,7 @@
 
 
 class StarNameDatabase;
+class UserCategory;
 
 
 constexpr inline unsigned int MAX_STAR_NAMES = 10;
@@ -127,7 +128,7 @@ inline bool operator<(const StarDatabase::CrossIndexEntry& lhs, const StarDataba
 class StarDatabaseBuilder
 {
  public:
-    StarDatabaseBuilder();
+    StarDatabaseBuilder() = default;
     ~StarDatabaseBuilder() = default;
 
     StarDatabaseBuilder(const StarDatabaseBuilder&) = delete;
@@ -146,6 +147,12 @@ class StarDatabaseBuilder
     struct CustomStarDetails;
 
  private:
+    struct BarycenterUsage
+    {
+        AstroCatalog::IndexNumber catNo;
+        AstroCatalog::IndexNumber barycenterCatNo;
+    };
+
     bool createStar(Star* star,
                     DataDisposition disposition,
                     AstroCatalog::IndexNumber catalogNumber,
@@ -170,25 +177,27 @@ class StarDatabaseBuilder
                     StarDetails* details,
                     const CustomStarDetails& customDetails,
                     std::optional<Eigen::Vector3f>& barycenterPosition);
+    void loadCategories(AstroCatalog::IndexNumber catalogNumber,
+                        const Hash *starData,
+                        DataDisposition disposition,
+                        const std::string &domain);
+    void addCategory(AstroCatalog::IndexNumber catalogNumber,
+                     const std::string& name,
+                     const std::string& domain);
 
     void buildOctree();
     void buildIndexes();
     Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
 
-    std::unique_ptr<StarDatabase> starDB;
+    std::unique_ptr<StarDatabase> starDB{ std::make_unique<StarDatabase>() };
 
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
-    BlockArray<Star> unsortedStars;
+    BlockArray<Star> unsortedStars{ };
     // List of stars loaded from binary file, sorted by catalog number
     std::vector<Star*> binFileCatalogNumberIndex{ nullptr };
     // Catalog number -> star mapping for stars loaded from stc files
-    std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex;
-
-    struct BarycenterUsage
-    {
-        AstroCatalog::IndexNumber catNo;
-        AstroCatalog::IndexNumber barycenterCatNo;
-    };
-    std::vector<BarycenterUsage> barycenters;
+    std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex{};
+    std::vector<BarycenterUsage> barycenters{};
+    std::multimap<AstroCatalog::IndexNumber, UserCategory*> categories{};
 };
