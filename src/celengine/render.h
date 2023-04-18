@@ -51,6 +51,7 @@ class BoundariesRenderer;
 class CometRenderer;
 class EclipticLineRenderer;
 class LargeStarRenderer;
+class LineRenderer;
 }
 }
 
@@ -786,6 +787,7 @@ class Renderer
     std::unique_ptr<celestia::render::CometRenderer> m_cometRenderer;
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
     std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
+    std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
 
     // Location markers
  public:
