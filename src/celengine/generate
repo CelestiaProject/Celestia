@@ -1,0 +1,4 @@
+#!/usr/bin/make -f
+
+markers.inc: genmarkers.py
+	python genmarkers.py > markers.inc

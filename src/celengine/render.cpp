@@ -279,7 +279,8 @@ Renderer::Renderer() :
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
-    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this))
+    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
+    m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
