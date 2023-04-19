@@ -128,7 +128,7 @@ static int category_addobject(lua_State *l)
 
     UserCategory *c = *celx.getThis<UserCategory*>();
     Selection *s = celx.safeGetUserData<Selection>(2);
-    return celx.push(c->addObject(s->object()));
+    return celx.push(c->addObject(*s));
 }
 
 static int category_removeobject(lua_State *l)
@@ -137,7 +137,7 @@ static int category_removeobject(lua_State *l)
 
     UserCategory *c = *celx.getThis<UserCategory*>();
     Selection *s = celx.safeGetUserData<Selection>(2);
-    return celx.push(c->removeObject(s->object()));
+    return celx.push(c->removeObject(*s));
 }
 
 void CreateCategoryMetaTable(lua_State *l)

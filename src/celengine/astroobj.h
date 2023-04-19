@@ -1,17 +1,19 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <unordered_set>
-#include <celengine/selection.h>
-#include <celengine/parseobject.h>
 
+#include <celengine/parseobject.h>
+#include <celengine/selection.h>
+
+class AssociativeArray;
 class UserCategory;
 
-class AstroCatalog
+namespace AstroCatalog
 {
- public:
-    typedef uint32_t IndexNumber;
-    static const IndexNumber InvalidIndex = UINT32_MAX;
+using IndexNumber = std::uint32_t;
+constexpr inline IndexNumber InvalidIndex = UINT32_MAX;
 };
 
 class AstroObject
@@ -22,17 +24,10 @@ public:
 
     AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
     void setIndex(AstroCatalog::IndexNumber);
+    virtual Selection toSelection() = 0;
 
 // Category stuff
-    typedef std::unordered_set<UserCategory*> CategorySet;
-
-private:
-    CategorySet *m_cats { nullptr };
-protected:
-    bool _addToCategory(UserCategory*);
-    bool _removeFromCategory(UserCategory*);
-public:
-    virtual Selection toSelection();
+    using CategorySet = std::unordered_set<UserCategory*>;
     bool addToCategory(UserCategory*);
     bool addToCategory(const std::string&, bool = false, const std::string &domain = "");
     bool removeFromCategory(UserCategory*);
@@ -42,6 +37,11 @@ public:
     bool isInCategory(const std::string&) const;
     int categoriesCount() const { return m_cats == nullptr ? 0 : m_cats->size(); }
     CategorySet *getCategories() const { return m_cats; };
-    bool loadCategories(const Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
+    bool loadCategories(const AssociativeArray*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
+
+private:
+    CategorySet *m_cats { nullptr };
+    bool _addToCategory(UserCategory*);
+    bool _removeFromCategory(UserCategory*);
     friend UserCategory;
 };

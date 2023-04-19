@@ -1,23 +1,17 @@
 #pragma once
 
-#include <unordered_set>
 #include <map>
+#include <string>
+#include <unordered_set>
+
 #include "selection.h"
 
 class UserCategory
 {
 public:
-    struct Hasher
-    {
-        size_t operator()(const Selection &s) const
-        {
-            return (size_t)s.object();
-        }
-    };
-
-    typedef std::unordered_set<Selection, Hasher> ObjectSet;
-    typedef std::unordered_set<UserCategory*> CategorySet;
-    typedef std::map<const std::string, UserCategory*> CategoryMap;
+    using ObjectSet = std::unordered_set<Selection>;
+    using CategorySet = std::unordered_set<UserCategory*>;
+    using CategoryMap = std::map<const std::string, UserCategory*>;
 
 private:
     std::string m_name;
@@ -46,10 +40,7 @@ public:
 private:
     bool _addObject(Selection);
     bool _removeObject(Selection);
-    void _insertChild(UserCategory*);
-    bool removeChild(UserCategory*);
     void setParent(UserCategory*);
-    static bool _deleteCategory(UserCategory*);
     void cleanup();
 
     static CategoryMap m_allcats;
@@ -64,4 +55,4 @@ public:
     static bool deleteCategory(const std::string&);
     static bool deleteCategory(UserCategory*);
     friend AstroObject;
-}; 
+};

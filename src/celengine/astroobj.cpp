@@ -1,7 +1,8 @@
-#include <celutil/logger.h>
-#include "parseobject.h"
 #include "astroobj.h"
+
+#include <celutil/logger.h>
 #include "category.h"
+#include "hash.h"
 
 using celestia::util::GetLogger;
 
@@ -10,11 +11,6 @@ void AstroObject::setIndex(AstroCatalog::IndexNumber nr)
     if (m_mainIndexNumber != AstroCatalog::InvalidIndex)
         GetLogger()->debug("AstroObject::setIndex({}) on object with already set index: {}!\n", nr, m_mainIndexNumber);
     m_mainIndexNumber = nr;
-}
-
-Selection AstroObject::toSelection()
-{
-    return Selection(this);
 }
 
 bool AstroObject::_addToCategory(UserCategory *c)

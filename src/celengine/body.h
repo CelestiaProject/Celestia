@@ -120,7 +120,7 @@ class Body : public AstroObject
 {
  public:
      Body(PlanetarySystem*, const std::string& name);
-     virtual ~Body();
+     ~Body() override;
 
     // Object class enumeration:
     // All of these values must be powers of two so that they can
