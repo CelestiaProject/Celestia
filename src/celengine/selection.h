@@ -23,26 +23,26 @@ class Body;
 class Location;
 class DeepSkyObject;
 
+enum class SelectionType
+{
+    Nil,
+    Star,
+    Body,
+    DeepSky,
+    Location,
+};
+
 class Selection
 {
  public:
-    enum Type
-    {
-        Type_Nil,
-        Type_Star,
-        Type_Body,
-        Type_DeepSky,
-        Type_Location,
-    };
-
     Selection() = default;
-    Selection(Star* star) : type(Type_Star), obj(star) { checkNull(); };
-    Selection(Body* body) : type(Type_Body), obj(body) { checkNull(); };
-    Selection(DeepSkyObject* deepsky) : type(Type_DeepSky), obj(deepsky) {checkNull(); };
-    Selection(Location* location) : type(Type_Location), obj(location) { checkNull(); };
+    Selection(Star* star) : type(SelectionType::Star), obj(star) { checkNull(); };
+    Selection(Body* body) : type(SelectionType::Body), obj(body) { checkNull(); };
+    Selection(DeepSkyObject* deepsky) : type(SelectionType::DeepSky), obj(deepsky) {checkNull(); };
+    Selection(Location* location) : type(SelectionType::Location), obj(location) { checkNull(); };
     ~Selection() = default;
 
-    bool empty() const { return type == Type_Nil; }
+    bool empty() const { return type == SelectionType::Nil; }
     double radius() const;
     UniversalCoord getPosition(double t) const;
     Eigen::Vector3d getVelocity(double t) const;
@@ -53,36 +53,36 @@ class Selection
 
     Star* star() const
     {
-        return type == Type_Star ? static_cast<Star*>(obj) : nullptr;
+        return type == SelectionType::Star ? static_cast<Star*>(obj) : nullptr;
     }
 
     Body* body() const
     {
-        return type == Type_Body ? static_cast<Body*>(obj) : nullptr;
+        return type == SelectionType::Body ? static_cast<Body*>(obj) : nullptr;
     }
 
     DeepSkyObject* deepsky() const
     {
-        return type == Type_DeepSky ? static_cast<DeepSkyObject*>(obj) : nullptr;
+        return type == SelectionType::DeepSky ? static_cast<DeepSkyObject*>(obj) : nullptr;
     }
 
     Location* location() const
     {
-        return type == Type_Location ? static_cast<Location*>(obj) : nullptr;
+        return type == SelectionType::Location ? static_cast<Location*>(obj) : nullptr;
     }
 
     AstroObject *object() const
     {
-        return type != Type_Nil ? static_cast<AstroObject*>(obj) : nullptr;
+        return type != SelectionType::Nil ? static_cast<AstroObject*>(obj) : nullptr;
     }
 
-    Type getType() const { return type; }
+    SelectionType getType() const { return type; }
 
  private:
-    Type type { Type_Nil };
+    SelectionType type { SelectionType::Nil };
     void* obj { nullptr };
 
-    void checkNull() { if (obj == nullptr) type = Type_Nil; }
+    void checkNull() { if (obj == nullptr) type = SelectionType::Nil; }
 
     friend bool operator==(const Selection& s0, const Selection& s1);
     friend bool operator!=(const Selection& s0, const Selection& s1);

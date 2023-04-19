@@ -279,7 +279,7 @@ void Simulation::gotoSelection(double gotoTime,
                                const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
-    if (selection.getType() == Selection::Type_Location)
+    if (selection.getType() == SelectionType::Location)
     {
         activeObserver->gotoSelectionGC(selection,
                                         gotoTime,
@@ -376,7 +376,7 @@ void Simulation::selectPlanet(int index)
 {
     if (index < 0)
     {
-        if (selection.getType() == Selection::Type_Body)
+        if (selection.getType() == SelectionType::Body)
         {
             PlanetarySystem* system = selection.body()->getSystem();
             if (system != nullptr)
@@ -386,9 +386,9 @@ void Simulation::selectPlanet(int index)
     else
     {
         const Star* star = nullptr;
-        if (selection.getType() == Selection::Type_Star)
+        if (selection.getType() == SelectionType::Star)
             star = selection.star();
-        else if (selection.getType() == Selection::Type_Body)
+        else if (selection.getType() == SelectionType::Body)
             star = getSun(selection.body());
 
         SolarSystem* solarSystem = nullptr;
@@ -455,7 +455,7 @@ void Simulation::getObjectCompletion(std::vector<std::string>& completion,
 
     if (!selection.empty())
     {
-        if (selection.getType() == Selection::Type_Location)
+        if (selection.getType() == SelectionType::Location)
         {
             path[nPathEntries++] = Selection(selection.location()->getParentBody());
         }

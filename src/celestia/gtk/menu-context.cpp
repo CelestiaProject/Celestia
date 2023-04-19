@@ -61,7 +61,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
 
     switch (sel.getType())
     {
-        case Selection::Type_Body:
+        case SelectionType::Body:
         {
             name = sel.body()->getName();
             AppendMenu(popup, NULL, name.c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
@@ -96,7 +96,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
         }
         break;
 
-        case Selection::Type_Star:
+        case SelectionType::Star:
         {
             Simulation* sim = app->simulation;
             name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star())));
@@ -120,7 +120,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
         }
         break;
 
-        case Selection::Type_DeepSky:
+        case SelectionType::DeepSky:
         {
             AppendMenu(popup, NULL, app->simulation->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
             AppendMenu(popup, NULL, NULL, 0);
@@ -131,7 +131,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
         }
         break;
 
-        case Selection::Type_Location:
+        case SelectionType::Location:
             break;
 
         default:
@@ -189,23 +189,23 @@ static void handleContextPlanet(gpointer data)
     Selection sel = app->simulation->getSelection();
     switch (sel.getType())
     {
-        case Selection::Type_Star:
+        case SelectionType::Star:
             app->simulation->selectPlanet(value);
             break;
 
-        case Selection::Type_Body:
+        case SelectionType::Body:
             {
                 PlanetarySystem* satellites = (PlanetarySystem*) sel.body()->getSatellites();
                 app->simulation->setSelection(Selection(satellites->getBody(value)));
                 break;
             }
 
-        case Selection::Type_DeepSky:
+        case SelectionType::DeepSky:
             /* Current deep sky object/galaxy implementation does
              * not have children to select. */
             break;
 
-        case Selection::Type_Location:
+        case SelectionType::Location:
             break;
 
         default:

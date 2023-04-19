@@ -130,10 +130,10 @@ SolarSystem* Universe::getSolarSystem(const Selection& sel) const
 {
     switch (sel.getType())
     {
-    case Selection::Type_Star:
+    case SelectionType::Star:
         return getSolarSystem(sel.star());
 
-    case Selection::Type_Body:
+    case SelectionType::Body:
         {
             PlanetarySystem* system = sel.body()->getSystem();
             while (system != nullptr)
@@ -147,7 +147,7 @@ SolarSystem* Universe::getSolarSystem(const Selection& sel) const
             return nullptr;
         }
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         return getSolarSystem(Selection(sel.location()->getParentBody()));
 
     default:
@@ -917,7 +917,7 @@ Selection Universe::findChildObject(const Selection& sel,
 {
     switch (sel.getType())
     {
-    case Selection::Type_Star:
+    case SelectionType::Star:
         {
             SolarSystem* sys = getSolarSystem(sel.star());
             if (sys != nullptr)
@@ -929,7 +929,7 @@ Selection Universe::findChildObject(const Selection& sel,
         }
         break;
 
-    case Selection::Type_Body:
+    case SelectionType::Body:
         {
             // First, search for a satellite
             PlanetarySystem* sats = sel.body()->getSatellites();
@@ -947,11 +947,11 @@ Selection Universe::findChildObject(const Selection& sel,
         }
         break;
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         // Locations have no children
         break;
 
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         // Deep sky objects have no children
         break;
 
@@ -975,11 +975,11 @@ Selection Universe::findObjectInContext(const Selection& sel,
 
     switch (sel.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         contextBody = sel.body();
         break;
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         contextBody = sel.location()->getParentBody();
         break;
 
@@ -1128,7 +1128,7 @@ void Universe::getCompletion(std::vector<std::string>& completion,
     // Solar bodies first:
     for (const Selection& context : contexts)
     {
-        if (withLocations && context.getType() == Selection::Type_Body)
+        if (withLocations && context.getType() == SelectionType::Body)
         {
             getLocationsCompletion(completion, s, s_length, i18n,
                                    context.body()->getLocations());
@@ -1198,18 +1198,18 @@ void Universe::getCompletionPath(std::vector<std::string>& completion,
         return;
     }
 
-    if (sel.getType() == Selection::Type_DeepSky)
+    if (sel.getType() == SelectionType::DeepSky)
     {
         completion.push_back(dsoCatalog->getDSOName(sel.deepsky()));
         return;
     }
 
     const PlanetarySystem* worlds = nullptr;
-    if (sel.getType() == Selection::Type_Body)
+    if (sel.getType() == SelectionType::Body)
     {
         worlds = sel.body()->getSatellites();
     }
-    else if (sel.getType() == Selection::Type_Star)
+    else if (sel.getType() == SelectionType::Star)
     {
         const SolarSystem* ssys = getSolarSystem(sel.star());
         if (ssys != nullptr)
@@ -1219,7 +1219,7 @@ void Universe::getCompletionPath(std::vector<std::string>& completion,
     if (worlds != nullptr)
         worlds->getCompletion(completion, s.substr(pos + 1), i18n, false);
 
-    if (sel.getType() == Selection::Type_Body && withLocations)
+    if (sel.getType() == SelectionType::Body && withLocations)
     {
         getLocationsCompletionPath(completion,
                                    s.substr(pos + 1),

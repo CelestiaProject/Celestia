@@ -586,7 +586,7 @@ UniversalCoord Body::getPosition(double tdb) const
     Vector3d p = phase->orbit()->positionAtTime(tdb);
     auto frame = phase->orbitFrame();
 
-    while (frame->getCenter().getType() == Selection::Type_Body)
+    while (frame->getCenter().getType() == SelectionType::Body)
     {
         phase = frame->getCenter().body()->timeline->findPhase(tdb);
         position += frame->getOrientation(tdb).conjugate() * p;

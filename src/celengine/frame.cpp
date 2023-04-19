@@ -97,12 +97,12 @@ ReferenceFrame::convertToUniversal(const Quaterniond& q, double tjd) const
 Vector3d
 ReferenceFrame::convertFromAstrocentric(const Vector3d& p, double tjd) const
 {
-    if (centerObject.getType() == Selection::Type_Body)
+    if (centerObject.getType() == SelectionType::Body)
     {
         Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
         return getOrientation(tjd) * (p - center);
     }
-    else if (centerObject.getType() == Selection::Type_Star)
+    else if (centerObject.getType() == SelectionType::Star)
     {
         return getOrientation(tjd) * p;
     }
@@ -119,12 +119,12 @@ ReferenceFrame::convertFromAstrocentric(const Vector3d& p, double tjd) const
 Vector3d
 ReferenceFrame::convertToAstrocentric(const Vector3d& p, double tjd) const
 {
-    if (centerObject.getType() == Selection::Type_Body)
+    if (centerObject.getType() == SelectionType::Body)
     {
         Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
         return center + getOrientation(tjd).conjugate() * p;
     }
-    else if (centerObject.getType() == Selection::Type_Star)
+    else if (centerObject.getType() == SelectionType::Star)
     {
         return getOrientation(tjd).conjugate() * p;
     }
@@ -276,11 +276,11 @@ BodyFixedFrame::getOrientation(double tjd) const
 
     switch (fixObject.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
-    case Selection::Type_Star:
+    case SelectionType::Star:
         return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
-    case Selection::Type_Location:
+    case SelectionType::Location:
         if (fixObject.location()->getParentBody())
             return yrot180 * fixObject.location()->getParentBody()->getEclipticToBodyFixed(tjd);
         else
@@ -296,11 +296,11 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
 {
     switch (fixObject.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         return fixObject.body()->getAngularVelocity(tjd);
-    case Selection::Type_Star:
+    case SelectionType::Star:
         return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
-    case Selection::Type_Location:
+    case SelectionType::Location:
         if (fixObject.location()->getParentBody())
             return fixObject.location()->getParentBody()->getAngularVelocity(tjd);
         else
@@ -366,9 +366,9 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 
     switch (equatorObject.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         return equatorObject.body()->getEclipticToEquatorial(t);
-    case Selection::Type_Star:
+    case SelectionType::Star:
         return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
         return Quaterniond::Identity();

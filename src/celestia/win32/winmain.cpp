@@ -965,7 +965,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
             Selection sel = appCore->getSimulation()->getSelection();
             switch (sel.getType())
             {
-            case Selection::Type_Body:
+            case SelectionType::Body:
                 {
                     string name = UTF8ToCurrentCP(sel.body()->getName(true));
                     SetWindowText(hCtrl, (char*)name.c_str());
@@ -1626,7 +1626,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     hMenu = CreatePopupMenu();
     switch (sel.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         {
             name = sel.body()->getName(true);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
@@ -1675,7 +1675,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         }
         break;
 
-    case Selection::Type_Star:
+    case SelectionType::Star:
         {
             Simulation* sim = appCore->getSimulation();
             name = sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star()));
@@ -1698,7 +1698,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         }
         break;
 
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         {
             Simulation* sim = appCore->getSimulation();
             name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
@@ -1710,7 +1710,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         }
         break;
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         break;
 
     default:
@@ -1750,11 +1750,11 @@ void ShowWWWInfo(const Selection& sel)
     string url;
     switch (sel.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         url = sel.body()->getInfoURL();
         break;
 
-    case Selection::Type_Star:
+    case SelectionType::Star:
         url = sel.star()->getInfoURL();
         if (url.empty())
         {
@@ -1775,11 +1775,11 @@ void ShowWWWInfo(const Selection& sel)
         }
         break;
 
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         url = sel.deepsky()->getInfoURL();
         break;
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         break;
 
     default:
@@ -4408,23 +4408,23 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     Selection sel = appCore->getSimulation()->getSelection();
                     switch (sel.getType())
                     {
-                    case Selection::Type_Star:
+                    case SelectionType::Star:
                         appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
                         break;
 
-                    case Selection::Type_Body:
+                    case SelectionType::Body:
                         {
                             PlanetarySystem* satellites = (PlanetarySystem*) sel.body()->getSatellites();
                             appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
                             break;
                         }
 
-                    case Selection::Type_DeepSky:
+                    case SelectionType::DeepSky:
                         // Current deep sky object/galaxy implementation does
                         // not have children to select.
                         break;
 
-                    case Selection::Type_Location:
+                    case SelectionType::Location:
                         break;
 
                     default:
