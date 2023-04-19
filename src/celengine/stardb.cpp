@@ -44,6 +44,11 @@ using celestia::util::IntrusivePtr;
 
 namespace celutil = celestia::util;
 
+// Enable the below to switch back to parsing coordinates as float to match
+// legacy behaviour. This shouldn't be necessary since stars.dat stores
+// Cartesian coordinates.
+// #define PARSE_COORDS_FLOAT
+
 
 struct StarDatabaseBuilder::CustomStarDetails
 {
@@ -1236,15 +1241,20 @@ StarDatabaseBuilder::createStar(Star* star,
             return false;
         }
 
-        // Truncate to floats to match behavior of reading from binary file.
-        // The conversion to rectangular coordinates is still performed at
-        // double precision, however.
         if (modifyPosition)
         {
+#ifdef PARSE_COORDS_FLOAT
+            // Truncate to floats to match behavior of reading from binary file.
+            // (No longer applies since binary file stores Cartesians)
+            // The conversion to rectangular coordinates is still performed at
+            // double precision, however.
             float raf = ((float) ra);
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+#else
+            Eigen::Vector3d pos = astro::equatorialToCelestialCart(ra, dec, distance);
+#endif
             star->setPosition(pos.cast<float>());
         }
     }
