@@ -1,4 +1,5 @@
 test_case(arrayvector)
+test_case(array_view)
 if(NOT HAVE_FLOAT_CHARCONV)
   test_case(charconv_compat)
 endif()
