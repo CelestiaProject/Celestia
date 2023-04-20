@@ -3,10 +3,10 @@ name: Celestia
 on:
   push:
     branches: [ master ]
-    paths: [ src/**, test/**, .github/workflows/ci.yml, CMakeLists.txt ]
+    paths: [ src/**, test/**, cmake/**, .github/workflows/ci.yml, CMakeLists.txt ]
   pull_request:
     branches: [ master ]
-    paths: [ src/**, test/**, .github/workflows/ci.yml, CMakeLists.txt ]
+    paths: [ src/**, test/**, cmake/**, .github/workflows/ci.yml, CMakeLists.txt ]
 
 env:
   BUILD_TYPE: RelWithDebInfo
