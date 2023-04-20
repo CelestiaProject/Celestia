@@ -2840,8 +2840,8 @@ static int celestia_newcategory(lua_State *l)
     }
     if (celx.isString(2))
         domain = celx.getString(2);
-    UserCategory *c = UserCategory::createRoot(name, domain);
-    if (c == nullptr)
+    UserCategoryId c = UserCategory::create(name, UserCategoryId::Invalid, domain);
+    if (c == UserCategoryId::Invalid)
         return 0;
     return celx.pushClass(c);
 }
@@ -2857,8 +2857,8 @@ static int celestia_findcategory(lua_State *l)
         celx.doError(emsg);
         return 0;
     }
-    UserCategory *c = UserCategory::find(name);
-    if (c == nullptr)
+    UserCategoryId c = UserCategory::find(name);
+    if (c == UserCategoryId::Invalid)
         return 0;
     return celx.pushClass(c);
 }
@@ -2877,17 +2877,18 @@ static int celestia_deletecategory(lua_State *l)
             celx.doError(emsg);
             return 0;
         }
-        ret = UserCategory::deleteCategory(n);
+        auto c = UserCategory::find(n);
+        ret = UserCategory::destroy(c);
     }
     else
     {
-        UserCategory *c = *celx.safeGetClass<UserCategory*>(2, AllErrors, emsg);
-        if (c == nullptr)
+        auto c = *celx.safeGetClass<UserCategoryId>(2, AllErrors, emsg);
+        if (c == UserCategoryId::Invalid)
         {
             celx.doError(emsg);
             return 0;
         }
-        ret = UserCategory::deleteCategory(c);
+        ret = UserCategory::destroy(c);
     }
     return celx.push(ret);
 }
@@ -2896,18 +2897,16 @@ static int celestia_getcategories(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory::CategoryMap map = UserCategory::getAll();
-
-    return celx.pushIterable<UserCategory*>(map);
+    const auto& set = UserCategory::active();
+    return celx.pushIterable<UserCategoryId>(set);
 }
 
 static int celestia_getrootcategories(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory::CategorySet set = UserCategory::getRoots();
-
-    return celx.pushIterable<UserCategory*>(set);
+    const auto& set = UserCategory::roots();
+    return celx.pushIterable<UserCategoryId>(set);
 }
 
 static int celestia_bindtranslationdomain(lua_State *l)

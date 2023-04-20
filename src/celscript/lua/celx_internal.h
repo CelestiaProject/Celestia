@@ -13,9 +13,11 @@
 #ifndef _CELX_INTERNAL_H_
 #define _CELX_INTERNAL_H_
 
+#include <iterator>
 #include <memory>
 #include <map>
 #include <string>
+#include <type_traits>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <celutil/color.h>
@@ -180,7 +182,7 @@ public:
         lua_replace(l, CelxLua::localIndex(2));
         return celx.pushClass(ret);
     }
-    template<typename V, typename K> static V value(std::pair<const K, V> &v)
+    template<typename V, typename K> static V value(const std::pair<const K, V> &v)
     {
         return v.second;
     }
@@ -188,22 +190,28 @@ public:
     {
         return it;
     }
-    template<typename T, typename C> int pushIterable(C& a)
+    template<typename T, typename It>
+    int pushIterable(It begin, It end)
     {
         CelxLua celx(m_lua);
-        int n = a.size();
-        T *array = celx.newUserDataArray<T>(n);
-        for (auto &it : a)
+        auto n = static_cast<int>(std::distance(begin, end));
+        T* array = celx.newUserDataArray<T>(n);
+        for (auto it = begin; it != end; ++it)
         {
-            *array = value(it);
-            array++;
+            *array = value(*it);
+            ++array;
         }
         celx.push(n - 1);
         celx.push(iterator<T>, 2);
-
         return 1;
     }
-    template<typename T, typename C> int pushIterable(C *a)
+    template<typename T, typename C, std::enable_if_t<!std::is_pointer_v<C>, int> = 0>
+    int pushIterable(const C& a)
+    {
+        return pushIterable<T>(std::begin(a), std::end(a));
+    }
+    template<typename T, typename C, std::enable_if_t<!std::is_pointer_v<C>, int> = 0>
+    int pushIterable(const C *a)
     {
         if (a == nullptr)
             return 0;
