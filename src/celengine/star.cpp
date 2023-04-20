@@ -18,6 +18,9 @@
 
 #include <fmt/format.h>
 
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
+
 using namespace std::string_view_literals;
 using celestia::util::IntrusivePtr;
 

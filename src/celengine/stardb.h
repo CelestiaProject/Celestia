@@ -22,6 +22,7 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/filesystem.h>
+#include <celengine/category.h>
 #include <celengine/parseobject.h>
 #include <celutil/blockarray.h>
 #include "astroobj.h"
@@ -200,5 +201,5 @@ class StarDatabaseBuilder
     // Catalog number -> star mapping for stars loaded from stc files
     std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex{};
     std::vector<BarycenterUsage> barycenters{};
-    std::multimap<AstroCatalog::IndexNumber, UserCategory*> categories{};
+    std::multimap<AstroCatalog::IndexNumber, UserCategoryId> categories{};
 };

@@ -32,7 +32,6 @@
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
 #include <celutil/stringutils.h>
-#include "category.h"
 #include "meshmanager.h"
 #include "parser.h"
 #include "value.h"
@@ -1140,7 +1139,7 @@ StarDatabaseBuilder::finish()
     for (const auto& [catalogNumber, category] : categories)
     {
         Star* star = starDB->find(catalogNumber);
-        star->addToCategory(category);
+        UserCategory::addObject(star, category);
     }
 
     return std::move(starDB);
@@ -1554,13 +1553,9 @@ StarDatabaseBuilder::addCategory(AstroCatalog::IndexNumber catalogNumber,
                                  const std::string& name,
                                  const std::string& domain)
 {
-    UserCategory* category = UserCategory::find(name);
-    if (category == nullptr)
-    {
-        category = UserCategory::createRoot(name, domain);
-        if (category == nullptr)
-            return;
-    }
+    auto category = UserCategory::findOrAdd(name, domain);
+    if (category == UserCategoryId::Invalid)
+        return;
 
     auto [start, end] = categories.equal_range(catalogNumber);
     if (start == end)

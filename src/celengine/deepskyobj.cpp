@@ -8,11 +8,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "deepskyobj.h"
+
 #include <cmath>
 
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
-#include "deepskyobj.h"
+#include "hash.h"
 
 Eigen::Vector3d DeepSkyObject::getPosition() const
 {

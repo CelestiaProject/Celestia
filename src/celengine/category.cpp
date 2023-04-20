@@ -1,164 +1,294 @@
-#include <celutil/gettext.h>
-#include <celutil/logger.h>
-#include <celengine/astroobj.h>
 #include "category.h"
 
-using celestia::util::GetLogger;
+#include <algorithm>
+#include <initializer_list>
+#include <utility>
 
-UserCategory::UserCategory(const std::string &n, UserCategory *p, const std::string &domain) :
-        m_name(n),
-        m_parent(p)
+#include <celutil/gettext.h>
+#include "hash.h"
+
+
+UserCategoryManager::UserCategoryManager() = default;
+UserCategoryManager::~UserCategoryManager() = default;
+
+
+UserCategoryId
+UserCategoryManager::create(const std::string& name,
+                            UserCategoryId parent,
+                            const std::string& domain)
 {
-#ifdef ENABLE_NLS
-    m_i18n = dgettext(m_name.c_str(), domain.c_str());
+    if (parent != UserCategoryId::Invalid && static_cast<std::size_t>(parent) >= m_categories.size())
+        return UserCategoryId::Invalid;
+
+    UserCategoryId id;
+    bool reusedExisting = false;
+    if (m_available.empty())
+        id = static_cast<UserCategoryId>(m_categories.size());
+    else
+    {
+        id = m_available.back();
+        m_available.pop_back();
+        reusedExisting = true;
+    }
+
+    if (!m_categoryMap.try_emplace(name, id).second)
+    {
+        if (reusedExisting)
+            m_available.push_back(id);
+        return UserCategoryId::Invalid;
+    }
+
+    return createNew(id, name, parent, domain);
+}
+
+
+bool
+UserCategoryManager::destroy(UserCategoryId category)
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= m_categories.size() || m_categories[categoryIndex] == nullptr)
+        return false;
+
+    auto& entry = m_categories[categoryIndex];
+    if (!entry->m_children.empty())
+        return false;
+
+    // remove all members
+    for (const Selection& sel : entry->m_members)
+    {
+        auto it = m_objectMap.find(sel);
+        if (it == m_objectMap.end())
+            continue;
+
+        auto& categories = it->second;
+        if (auto item = std::find(categories.begin(), categories.end(), category); item != categories.end())
+        {
+            categories.erase(item);
+            if (categories.empty())
+                m_objectMap.erase(it);
+        }
+    }
+
+    m_active.erase(category);
+    if (entry->m_parent == UserCategoryId::Invalid)
+        m_roots.erase(category);
+    else
+    {
+        auto& parentChildren = m_categories[static_cast<std::size_t>(entry->m_parent)]->m_children;
+        auto it = std::find(parentChildren.begin(), parentChildren.end(), category);
+        parentChildren.erase(it);
+    }
+
+    m_categoryMap.erase(entry->m_name);
+    m_available.push_back(category);
+
+    entry.reset();
+    return true;
+}
+
+
+UserCategoryId
+UserCategoryManager::find(std::string_view name) const
+{
+    auto it = m_categoryMap.find(name);
+    return it == m_categoryMap.end()
+        ? UserCategoryId::Invalid
+        : it->second;
+}
+
+
+UserCategoryId
+UserCategoryManager::findOrAdd(const std::string& name, const std::string& domain)
+{
+    auto id = static_cast<UserCategoryId>(m_categories.size());
+    if (auto [it, emplaced] = m_categoryMap.try_emplace(name, id); !emplaced)
+        return it->second;
+
+    return createNew(id, name, UserCategoryId::Invalid, domain);
+}
+
+
+UserCategoryId
+UserCategoryManager::createNew(UserCategoryId id,
+                               const std::string& name,
+                               UserCategoryId parent,
+                               const std::string& domain)
+{
+#if ENABLE_NLS
+    std::string i18nName = dgettext(name.c_str(), domain.c_str());
+#else
+    std::string i18nName = name;
 #endif
-}
 
-UserCategory::~UserCategory() { cleanup(); }
+    auto category = std::make_unique<UserCategory>(ConstructorToken{}, name, parent, std::move(i18nName));
 
-void UserCategory::setParent(UserCategory *c)
-{
-    m_parent = c;
-}
-
-bool UserCategory::_addObject(Selection s)
-{
-    if (s.empty() || m_objlist.count(s) > 0)
-        return false;
-    m_objlist.insert(s);
-    return true;
-}
-
-bool UserCategory::addObject(Selection s)
-{
-    if (s.empty())
-        return false;
-    Selection s_ = s.object()->toSelection();
-    if (!_addObject(s_))
-        return false;
-    return s_.object()->_addToCategory(this);
-}
-
-bool UserCategory::removeObject(Selection s)
-{
-    if (s.empty() || m_objlist.count(s) == 0)
-        return false;
-    if (!_removeObject(s))
-        return false;
-    return s.object()->_removeFromCategory(this);
-}
-
-bool UserCategory::_removeObject(Selection s)
-{
-    m_objlist.erase(s);
-    return true;
-}
-
-UserCategory *UserCategory::createChild(const std::string &s, const std::string &domain)
-{
-    UserCategory *c = newCategory(s, this, domain);
-    if (c == nullptr)
-        return nullptr;
-    m_catlist.insert(c);
-    return c;
-}
-
-bool UserCategory::deleteChild(UserCategory *c)
-{
-    if (m_catlist.count(c) == 0)
-        return false;
-    m_catlist.erase(c);
-    m_allcats.erase(c->name());
-    delete c;
-    return true;
-}
-
-bool UserCategory::deleteChild(const std::string &s)
-{
-    UserCategory *c = find(s);
-    if (c == nullptr)
-        return false;
-    return deleteChild(c);
-}
-
-bool UserCategory::hasChild(UserCategory *c) const
-{
-    return m_catlist.count(c) > 0;
-}
-
-bool UserCategory::hasChild(const std::string &n) const
-{
-    UserCategory *c = find(n);
-    if (c == nullptr)
-        return false;
-    return hasChild(c);
-}
-
-void UserCategory::cleanup()
-{
-    GetLogger()->debug("UserCategory::cleanup()\n  Objects: {}\n  Categories: {}\n",
-                       m_objlist.size(), m_catlist.size());
-
-    while(!m_objlist.empty())
-    {
-        auto it = m_objlist.begin();
-        GetLogger()->debug("Removing object: {}\n", it->getName());
-        removeObject(*it);
-    }
-    while(!m_catlist.empty())
-    {
-        auto it = m_catlist.begin();
-        GetLogger()->debug("Removing category: {}\n", (*it)->name());
-        deleteChild(*it);
-    }
-}
-
-UserCategory::CategoryMap UserCategory::m_allcats;
-UserCategory::CategorySet UserCategory::m_roots;
-
-UserCategory *UserCategory::newCategory(const std::string &s, UserCategory *p, const std::string &domain)
-{
-    if (m_allcats.count(s) > 0)
-        return nullptr;
-    UserCategory *c = new UserCategory(s, p, domain);
-    m_allcats.insert(std::pair<const std::string, UserCategory*>(s, c));
-    if (p == nullptr)
-        m_roots.insert(c);
+    if (auto idIndex = static_cast<std::size_t>(id); idIndex < m_categories.size())
+        m_categories[idIndex] = std::move(category);
     else
-        p->m_catlist.insert(c);
-    return c;
-}
+        m_categories.push_back(std::move(category));
 
-UserCategory *UserCategory::createRoot(const std::string &n, const std::string &domain)
-{
-    return newCategory(n, nullptr, domain);
-}
-
-UserCategory *UserCategory::find(const std::string &s)
-{
-    if (m_allcats.count(s) == 0)
-        return nullptr;
-    GetLogger()->info("UserCategory::find({}): exists\n", s.c_str());
-    return m_allcats.find(s)->second;
-}
-
-bool UserCategory::deleteCategory(const std::string &n)
-{
-    UserCategory *c = find(n);
-    if (c == nullptr)
-        return false;
-    return deleteCategory(c);
-}
-
-bool UserCategory::deleteCategory(UserCategory *c)
-{
-    if (!find(c->name()))
-        return false;
-    m_allcats.erase(c->name());
-    if (c->parent())
-        c->parent()->m_catlist.erase(c);
+    m_active.emplace(id);
+    if (parent == UserCategoryId::Invalid)
+        m_roots.emplace(id);
     else
-        m_roots.erase(c);
-    delete c;
+        m_categories[static_cast<std::size_t>(parent)]->m_children.push_back(id);
+
+    return id;
+}
+
+
+bool
+UserCategoryManager::addObject(Selection selection, UserCategoryId category)
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= m_categories.size())
+        return false;
+
+    if (!m_categories[categoryIndex]->m_members.emplace(selection).second)
+        return false;
+
+    if (auto it = m_objectMap.find(selection); it == m_objectMap.end())
+        m_objectMap.try_emplace(selection, std::initializer_list<UserCategoryId> { category });
+    else
+        it->second.push_back(category);
     return true;
+}
+
+
+bool
+UserCategoryManager::removeObject(Selection selection, UserCategoryId category)
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= m_categories.size())
+        return false;
+
+    if (m_categories[categoryIndex]->m_members.erase(selection) == 0)
+        return false;
+
+    auto it = m_objectMap.find(selection);
+    if (it == m_objectMap.end())
+    {
+        assert(false);
+        return true;
+    }
+
+    auto& categories = it->second;
+    if (auto item = std::find(categories.begin(), categories.end(), category); item != categories.end())
+    {
+        categories.erase(item);
+        if (categories.empty())
+            m_objectMap.erase(it);
+    }
+
+    return true;
+}
+
+
+void
+UserCategoryManager::clearCategories(Selection selection)
+{
+    auto iter = m_objectMap.find(selection);
+    if (iter == m_objectMap.end())
+        return;
+
+    for (UserCategoryId category : iter->second)
+    {
+        m_categories[static_cast<std::size_t>(category)]->m_members.erase(selection);
+    }
+
+    m_objectMap.erase(selection);
+}
+
+
+bool
+UserCategoryManager::isInCategory(Selection selection, UserCategoryId category) const
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= m_categories.size())
+        return false;
+
+    const auto& members = m_categories[categoryIndex]->m_members;
+    return members.find(selection) != members.end();
+}
+
+
+const std::vector<UserCategoryId>*
+UserCategoryManager::getCategories(Selection selection) const
+{
+    auto it = m_objectMap.find(selection);
+    return it == m_objectMap.end()
+        ? nullptr
+        : &it->second;
+}
+
+
+UserCategory::UserCategory(UserCategoryManager::ConstructorToken,
+                           const std::string& name,
+                           UserCategoryId parent,
+                           std::string&& i18nName) :
+    m_parent(parent),
+    m_name(name),
+    m_i18nName(std::move(i18nName))
+{}
+
+
+const std::string&
+UserCategory::getName(bool i18n) const
+{
+    return i18n ? m_i18nName : m_name;
+}
+
+
+bool
+UserCategory::hasChild(UserCategoryId child) const
+{
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    return it != m_children.end();
+}
+
+
+const UserCategory*
+UserCategory::get(UserCategoryId category)
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= manager.m_categories.size())
+        return nullptr;
+    return manager.m_categories[categoryIndex].get();
+}
+
+
+void
+UserCategory::loadCategories(Selection selection,
+                             const AssociativeArray& hash,
+                             DataDisposition disposition,
+                             const std::string& domain)
+{
+    if (disposition == DataDisposition::Replace)
+        manager.clearCategories(selection);
+
+    auto categoryValue = hash.getValue("Category");
+    if (categoryValue == nullptr)
+        return;
+
+    if (const std::string* cn = categoryValue->getString(); cn != nullptr)
+    {
+        if (cn->empty())
+            return;
+        auto categoryId = manager.findOrAdd(*cn, domain);
+        manager.addObject(selection, categoryId);
+    }
+
+    const ValueArray *categoryArray = categoryValue->getArray();
+    if (categoryArray == nullptr)
+        return;
+
+    for (const auto& it : *categoryArray)
+    {
+        const std::string* cn = it.getString();
+        if (cn == nullptr || cn->empty())
+            continue;
+
+        auto categoryId = manager.findOrAdd(*cn, domain);
+        manager.addObject(selection, categoryId);
+    }
 }

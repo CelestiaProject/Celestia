@@ -17,6 +17,7 @@
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
+#include "category.h"
 #include "galaxy.h"
 #include "globular.h"
 #include "parser.h"
@@ -245,7 +246,7 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
 
         if (obj != nullptr && obj->load(objParams, resourcePath))
         {
-            obj->loadCategories(objParams, DataDisposition::Add, resourcePath.string());
+            UserCategory::loadCategories(obj, *objParams, DataDisposition::Add, resourcePath.string());
 
             // Ensure that the DSO array is large enough
             if (nDSOs == capacity)

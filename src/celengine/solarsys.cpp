@@ -28,6 +28,7 @@
 #include <celutil/tokenizer.h>
 #include "atmosphere.h"
 #include "body.h"
+#include "category.h"
 #include "hash.h"
 #include "frame.h"
 #include "frametree.h"
@@ -1251,7 +1252,7 @@ bool LoadSolarSystemObjects(std::istream& in,
 
                 if (body != nullptr)
                 {
-                    body->loadCategories(objectData, disposition, directory.string());
+                    UserCategory::loadCategories(body, *objectData, disposition, directory.string());
                     if (disposition == DataDisposition::Add)
                         for (const auto& name : names)
                             body->addAlias(name);
@@ -1276,7 +1277,7 @@ bool LoadSolarSystemObjects(std::istream& in,
             if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                location->loadCategories(objectData, disposition, directory.string());
+                UserCategory::loadCategories(location, *objectData, disposition, directory.string());
                 if (location != nullptr)
                 {
                     location->setName(primaryName);

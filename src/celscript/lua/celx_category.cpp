@@ -7,17 +7,19 @@
 #include "celx_category.h"
 #include "celx_object.h"
 
+static constexpr const char nullCategoryMsg[] = "Category object is null!";
+
 static int category_tostring(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory *c = *celx.getThis<UserCategory*>();
-    if (c == nullptr)
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
     {
-        celx.doError("Category object is null!");
+        celx.doError(nullCategoryMsg);
         return 0;
     }
-    std::string s = fmt::format("[UserCategory:{}]", c->name());
+    std::string s = fmt::format("[UserCategory:{}]", UserCategory::get(c)->getName());
     return celx.push(s.c_str());
 }
 
@@ -26,10 +28,15 @@ static int category_getname(lua_State *l)
     CelxLua celx(l);
 
     bool i18n = false;
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
     if (celx.isBoolean(2))
         i18n = celx.getBoolean(2);
-    const char *n = c->name(i18n).c_str();
+    const char *n = UserCategory::get(c)->getName(i18n).c_str();
     return celx.push(n);
 }
 
@@ -38,7 +45,13 @@ static int category_createchild(lua_State *l)
     CelxLua celx(l);
 
     const char *emsg = "Argument of category:createchild must be a string!";
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
+
     const char *n = celx.safeGetString(2, AllErrors, emsg);
     if (n == nullptr)
     {
@@ -48,8 +61,8 @@ static int category_createchild(lua_State *l)
     const char *d = "";
     if (celx.isString(3))
         d = celx.getString(3);
-    UserCategory *cc = c->createChild(n, d);
-    if (cc == nullptr)
+    UserCategoryId cc = UserCategory::create(n, c, d);
+    if (cc == UserCategoryId::Invalid)
         return celx.push();
     return celx.pushClass(cc);
 }
@@ -60,7 +73,12 @@ static int category_deletechild(lua_State *l)
 
     bool ret;
     const char *emsg = "Argument of category:createchild must be a string or userdata!";
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
     if (celx.isString(2))
     {
         const char *n = celx.safeGetString(2, AllErrors, emsg);
@@ -69,12 +87,13 @@ static int category_deletechild(lua_State *l)
             celx.doError(emsg);
             return 0;
         }
-        ret = c->deleteChild(n);
+        UserCategoryId cc = UserCategory::find(n);
+        ret = UserCategory::get(c)->hasChild(cc) && UserCategory::destroy(cc);
     }
     else
     {
-        UserCategory *cc = *celx.safeGetClass<UserCategory*>(2, AllErrors, emsg);
-        ret = c->deleteChild(cc);
+        UserCategoryId cc = *celx.safeGetClass<UserCategoryId>(2, AllErrors, emsg);
+        ret = UserCategory::get(c)->hasChild(cc) && UserCategory::destroy(cc);
     }
     return celx.push(ret);
 }
@@ -85,7 +104,12 @@ static int category_haschild(lua_State *l)
 
     bool ret;
     const char *emsg = "Argument of category:haschild must be string or userdata!";
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    UserCategoryId c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
     if (celx.isString(2))
     {
         const char *n = celx.safeGetString(2, AllErrors, emsg);
@@ -94,12 +118,13 @@ static int category_haschild(lua_State *l)
             celx.doError(emsg);
             return 0;
         }
-        ret = c->hasChild(n);
+        auto cc = UserCategory::find(n);
+        ret = UserCategory::get(c)->hasChild(cc);
     }
     else
     {
-        UserCategory *cc = *celx.safeGetClass<UserCategory*>(2, AllErrors, emsg);
-        ret = c->hasChild(cc);
+        UserCategoryId cc = *celx.safeGetClass<UserCategoryId>(2, AllErrors, emsg);
+        ret = UserCategory::get(c)->hasChild(cc);
     }
     return celx.push(ret);
 }
@@ -108,17 +133,27 @@ static int category_getchildren(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory *c = *celx.getThis<UserCategory*>();
-    UserCategory::CategorySet set = c->children();
-    return celx.pushIterable<UserCategory*>(set);
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
+    auto set = UserCategory::get(c)->children();
+    return celx.pushIterable<UserCategoryId>(set);
 }
 
 static int category_getobjects(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory *c = *celx.getThis<UserCategory*>();
-    UserCategory::ObjectSet set = c->objects();
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
+    const auto& set = UserCategory::get(c)->members();
     return celx.pushIterable<Selection>(set);
 }
 
@@ -126,18 +161,23 @@ static int category_addobject(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    auto c = *celx.getThis<UserCategoryId>();
+    if (c == UserCategoryId::Invalid)
+    {
+        celx.doError(nullCategoryMsg);
+        return 0;
+    }
     Selection *s = celx.safeGetUserData<Selection>(2);
-    return celx.push(c->addObject(s->object()));
+    return celx.push(UserCategory::addObject(*s, c));
 }
 
 static int category_removeobject(lua_State *l)
 {
     CelxLua celx(l);
 
-    UserCategory *c = *celx.getThis<UserCategory*>();
+    UserCategoryId c = *celx.getThis<UserCategoryId>();
     Selection *s = celx.safeGetUserData<Selection>(2);
-    return celx.push(c->removeObject(s->object()));
+    return celx.push(UserCategory::removeObject(*s, c));
 }
 
 void CreateCategoryMetaTable(lua_State *l)

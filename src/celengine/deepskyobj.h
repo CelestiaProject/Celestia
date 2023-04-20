@@ -19,6 +19,7 @@
 #include <celcompat/filesystem.h>
 #include <celengine/astroobj.h>
 
+class AssociativeArray;
 class Selection;
 class Renderer;
 struct Matrices;
