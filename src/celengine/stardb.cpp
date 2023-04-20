@@ -35,7 +35,6 @@
 #include "category.h"
 #include "meshmanager.h"
 #include "parser.h"
-#include "starname.h"
 #include "value.h"
 
 using namespace std::string_view_literals;
