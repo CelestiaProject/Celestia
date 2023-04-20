@@ -27,6 +27,7 @@
 #include "astroobj.h"
 #include "hash.h"
 #include "staroctree.h"
+#include "starname.h"
 
 
 class StarNameDatabase;
