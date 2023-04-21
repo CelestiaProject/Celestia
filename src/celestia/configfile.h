@@ -7,13 +7,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CONFIGFILE_H_
-#define _CONFIGFILE_H_
+#pragma once
 
 #include <string>
 #include <vector>
 #include <celengine/parser.h>
 #include <celengine/star.h>
+#include <celengine/value.h>
 #include <celcompat/filesystem.h>
 
 
@@ -51,7 +51,7 @@ public:
     std::string scriptSystemAccessPolicy;
 #ifdef CELX
     fs::path luaHook;
-    const Hash* configParams;
+    Value configParams;
 #endif
 
     fs::path HDCrossIndexFile;
@@ -68,8 +68,6 @@ public:
     unsigned int aaSamples;
 
     unsigned int consoleLogRows;
-
-    const Hash* params;
 
     float SolarSystemMaxDistance;
     unsigned ShadowMapSize;
@@ -89,5 +87,3 @@ public:
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);
-
-#endif // _CONFIGFILE_H_
