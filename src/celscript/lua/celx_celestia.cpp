@@ -2686,8 +2686,11 @@ static int celestia_getparamstring(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
     CelestiaConfig* config = appCore->getConfig();
-    const std::string* paramString = config->configParams->getString(s);
-    lua_pushstring(l, paramString == nullptr ? "" : paramString->c_str());
+    if (auto params = config->configParams.getHash(); params != nullptr)
+    {
+        const std::string* paramString = params->getString(s);
+        lua_pushstring(l, paramString == nullptr ? "" : paramString->c_str());
+    }
     return 1;
 }
 

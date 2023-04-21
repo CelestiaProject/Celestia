@@ -40,7 +40,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         return config;
     }
 
-    const Value configParamsValue = parser.readValue();
+    Value configParamsValue = parser.readValue();
     const Hash* configParams = configParamsValue.getHash();
     if (configParams == nullptr)
     {
@@ -50,12 +50,6 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
     if (config == nullptr)
         config = new CelestiaConfig();
-
-#ifdef CELX
-    config->configParams = configParams;
-    if (auto path = configParams->getPath("LuaHook"); path.has_value())
-        config->luaHook = *path;
-#endif
 
     config->faintestVisible = configParams->getNumber<float>("FaintestVisibleMagnitude").value_or(6.0f);
     if (auto path = configParams->getPath("FavoritesFile"); path.has_value())
@@ -342,11 +336,11 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
     }
 
-    // TODO: not cleaning up properly here--we're just saving the hash, not the instance of Value
-    config->params = configParams;
-
-#ifndef CELX
-     delete configParamsValue;
+#ifdef CELX
+    if (auto path = configParams->getPath("LuaHook"); path.has_value())
+        config->luaHook = *path;
+    // Move the value into the config object to retain ownership of the hash
+    config->configParams = std::move(configParamsValue);
 #endif
 
     return config;
