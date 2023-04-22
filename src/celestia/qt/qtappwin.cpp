@@ -893,7 +893,11 @@ void CelestiaAppWindow::slotOpenScriptDialog()
     QString scriptFileName = QFileDialog::getOpenFileName(this,
                                                           _("Open Script"),
                                                           dir,
+#ifdef CELX
                                                           _("Celestia Scripts (*.celx *.cel)"),
+#else
+                                                          _("Celestia Scripts (*.cel)"),
+#endif
                                                           nullptr,
                                                           QFileDialog::DontUseNativeDialog);
 
