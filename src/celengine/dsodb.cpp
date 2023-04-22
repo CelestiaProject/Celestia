@@ -83,7 +83,7 @@ void DSODatabase::getCompletion(std::vector<std::string>& completion, std::strin
 
 std::string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
-    AstroCatalog::IndexNumber catalogNumber    = dso->getIndex();
+    AstroCatalog::IndexNumber catalogNumber = dso->getIndex();
 
     if (namesDB != nullptr)
     {
@@ -108,9 +108,8 @@ std::string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const 
 {
     std::string dsoNames;
 
-    auto catalogNumber   = dso->getIndex();
-
-    DSONameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+    auto catalogNumber = dso->getIndex();
+    auto iter = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)

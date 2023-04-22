@@ -116,11 +116,11 @@ class RingSystem
 };
 
 
-class Body : public AstroObject
+class Body
 {
  public:
      Body(PlanetarySystem*, const std::string& name);
-     virtual ~Body();
+     ~Body();
 
     // Object class enumeration:
     // All of these values must be powers of two so that they can
@@ -193,7 +193,6 @@ class Body : public AstroObject
         AlwaysVisible      = 2,
     };
 
-    virtual Selection toSelection();
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;

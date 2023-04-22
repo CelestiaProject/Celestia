@@ -16,6 +16,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <celengine/astroobj.h>
 #include <celutil/stringutils.h>

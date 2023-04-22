@@ -20,6 +20,7 @@
 
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
+#include "univcoord.h"
 
 using namespace std::string_view_literals;
 using celestia::util::IntrusivePtr;
@@ -1285,12 +1286,6 @@ Star::addOrbitingStar(Star* star)
     if (details->shared())
         details = details->clone();
     details->addOrbitingStar(star);
-}
-
-Selection Star::toSelection()
-{
-//    std::cout << "Star::toSelection()\n";
-    return Selection(this);
 }
 
 void Star::setExtinction(float _extinction)

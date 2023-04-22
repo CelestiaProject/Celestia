@@ -4,7 +4,6 @@ set(CELENGINE_SOURCES
   astro.cpp
   astro.h
   astroobj.h
-  astroobj.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
