@@ -311,19 +311,19 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
 
     switch (selection.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         name = getBodyName(universe, selection.body());
         break;
 
-    case Selection::Type_Star:
+    case SelectionType::Star:
         name = universe->getStarCatalog()->getStarName(*selection.star());
         break;
 
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         name = universe->getDSOCatalog()->getDSOName(selection.deepsky());
         break;
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         name = selection.location()->getName();
         parentBody = selection.location()->getParentBody();
         if (parentBody != nullptr)

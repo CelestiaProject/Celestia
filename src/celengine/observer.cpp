@@ -974,7 +974,7 @@ static double getPreferredDistance(const Selection& selection)
 {
     switch (selection.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         // Handle reference points (i.e. invisible objects) specially, since the
         // actual radius of the point is meaningless. Instead, use the size of
         // bounding sphere of all child objects. This is useful for system
@@ -992,10 +992,10 @@ static double getPreferredDistance(const Selection& selection)
             return 5.0 * selection.radius();
         }
 
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         return 5.0 * selection.radius();
 
-    case Selection::Type_Star:
+    case SelectionType::Star:
         if (selection.star()->getVisibility())
             return 100.0 * selection.radius();
         else
@@ -1017,7 +1017,7 @@ static double getPreferredDistance(const Selection& selection)
             return maxOrbitRadius == 0.0 ? astro::AUtoKilometers(1.0) : maxOrbitRadius * 5.0;
         }
 
-    case Selection::Type_Location:
+    case SelectionType::Location:
         {
             double maxDist = getPreferredDistance(selection.location()->getParentBody());
             return max(min(selection.location()->getSize() * 50.0, maxDist),
