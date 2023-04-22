@@ -488,19 +488,19 @@ static int object_type(lua_State* l)
     const char* tname;
     switch (sel->getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         tname = bodyTypeName(sel->body()->getClassification());
         break;
-    case Selection::Type_Star:
+    case SelectionType::Star:
         tname = "star";
         break;
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         tname = sel->deepsky()->getObjTypeName();
         break;
-    case Selection::Type_Location:
+    case SelectionType::Location:
         tname = "location";
         break;
-    case Selection::Type_Nil:
+    case SelectionType::Nil:
         tname = "null";
         break;
     default:
@@ -522,18 +522,18 @@ static int object_name(lua_State* l)
     Selection* sel = this_object(l);
     switch (sel->getType())
     {
-        case Selection::Type_Body:
+        case SelectionType::Body:
             lua_pushstring(l, sel->body()->getName().c_str());
             break;
-        case Selection::Type_DeepSky:
+        case SelectionType::DeepSky:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
                            ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
             break;
-        case Selection::Type_Star:
+        case SelectionType::Star:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
                            ->getStarCatalog()->getStarName(*(sel->star())).c_str());
             break;
-        case Selection::Type_Location:
+        case SelectionType::Location:
             lua_pushstring(l, sel->location()->getName().c_str());
             break;
         default:
@@ -552,18 +552,18 @@ static int object_localname(lua_State* l)
     Selection* sel = this_object(l);
     switch (sel->getType())
     {
-        case Selection::Type_Body:
+        case SelectionType::Body:
             lua_pushstring(l, sel->body()->getName(true).c_str());
             break;
-        case Selection::Type_DeepSky:
+        case SelectionType::DeepSky:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
                            ->getDSOCatalog()->getDSOName(sel->deepsky(), true).c_str());
             break;
-        case Selection::Type_Star:
+        case SelectionType::Star:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
                            ->getStarCatalog()->getStarName(*(sel->star()), true).c_str());
             break;
-        case Selection::Type_Location:
+        case SelectionType::Location:
             lua_pushstring(l, sel->location()->getName(true).c_str());
             break;
         default:

@@ -308,7 +308,7 @@ CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool u
     }
     else if (auto planetographic = trajData->getSphericalTuple("Planetographic"); planetographic.has_value())
     {
-        if (centralObject.getType() != Selection::Type_Body)
+        if (centralObject.getType() != SelectionType::Body)
         {
             GetLogger()->error("FixedPosition planetographic coordinates aren't valid for stars.\n");
             return nullptr;
@@ -322,7 +322,7 @@ CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool u
     }
     else if (auto planetocentric = trajData->getSphericalTuple("Planetocentric"); planetocentric.has_value())
     {
-        if (centralObject.getType() != Selection::Type_Body)
+        if (centralObject.getType() != SelectionType::Body)
         {
             GetLogger()->error("FixedPosition planetocentric coordinates aren't valid for stars.\n");
             return nullptr;

@@ -102,7 +102,7 @@ void dialogSolarBrowser(AppData* app)
 static void treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 {
     gpointer item;
-    gint type;
+    SelectionType type;
 
     GValue value = { 0, {{0}} }; /* Initialize empty GValue */
     GtkTreeIter iter;
@@ -117,12 +117,12 @@ static void treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 
     /* Retrieve if isStar */
     gtk_tree_model_get_value(model, &iter, 3, &value);
-    type = g_value_get_int(&value);
+    type = static_cast<SelectionType>(g_value_get_int(&value));
     g_value_unset(&value);
 
-    if (type == Selection::Type_Star)
+    if (type == SelectionType::Star)
         app->simulation->setSelection(Selection((Star *)item));
-    else if (type == Selection::Type_Body)
+    else if (type == SelectionType::Body)
         app->simulation->setSelection(Selection((Body *)item));
     else
         g_warning("Unexpected selection type selected.");
@@ -181,7 +181,7 @@ static void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeStore* s
                            0, name,
                            1, type,
                            2, (gpointer)world,
-                           3, Selection::Type_Body, /* not Star */
+                           3, SelectionType::Body, /* not Star */
                            -1);
 
         /* Recurse */
@@ -221,7 +221,7 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
                            0, name,
                            1, &type,
                            2, (gpointer)nearestStar,
-                           3, Selection::Type_Star, /* Is Star */
+                           3, SelectionType::Star, /* Is Star */
                            -1);
 
         const PlanetarySystem* planets = solarSys->getPlanets();

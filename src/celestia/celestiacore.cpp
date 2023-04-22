@@ -203,8 +203,8 @@ float ComputeRotationCoarseness(Simulation& sim)
     float coarseness = 1.5f;
 
     Selection selection = sim.getActiveObserver()->getFrame()->getRefObject();
-    if (selection.getType() == Selection::Type_Star ||
-        selection.getType() == Selection::Type_Body)
+    if (selection.getType() == SelectionType::Star ||
+        selection.getType() == SelectionType::Body)
     {
         double radius = selection.radius();
         double t = sim.getTime();
@@ -702,16 +702,16 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // Rotate the selected object
             Selection sel = sim->getSelection();
             Quaternionf q = Quaternionf::Identity();
-            if (sel.getType() == Selection::Type_DeepSky)
+            if (sel.getType() == SelectionType::DeepSky)
                 q = sel.deepsky()->getOrientation();
-            else if (sel.getType() == Selection::Type_Body)
+            else if (sel.getType() == SelectionType::Body)
                 q = sel.body()->getGeometryOrientation();
 
             q = XRotation(dy / height) * YRotation(dx / width) * q;
 
-            if (sel.getType() == Selection::Type_DeepSky)
+            if (sel.getType() == SelectionType::DeepSky)
                 sel.deepsky()->setOrientation(q);
-            else if (sel.getType() == Selection::Type_Body)
+            else if (sel.getType() == SelectionType::Body)
                 sel.body()->setGeometryOrientation(q);
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
@@ -3097,13 +3097,13 @@ static string getSelectionName(const Selection& sel, const Universe& univ)
 {
     switch (sel.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         return sel.body()->getName(true);
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         return univ.getDSOCatalog()->getDSOName(sel.deepsky(), true);
-    case Selection::Type_Star:
+    case SelectionType::Star:
         return univ.getStarCatalog()->getStarName(*sel.star(), true);
-    case Selection::Type_Location:
+    case SelectionType::Location:
         return sel.location()->getName(true);
     default:
         return {};
@@ -3117,17 +3117,17 @@ static void displaySelectionName(Overlay& overlay,
 {
     switch (sel.getType())
     {
-    case Selection::Type_Body:
+    case SelectionType::Body:
         overlay.print(sel.body()->getName(true));
         break;
-    case Selection::Type_DeepSky:
+    case SelectionType::DeepSky:
         overlay.print(univ.getDSOCatalog()->getDSOName(sel.deepsky(), true));
         break;
-    case Selection::Type_Star:
+    case SelectionType::Star:
         //displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
         overlay.print(univ.getStarCatalog()->getStarName(*sel.star(), true));
         break;
-    case Selection::Type_Location:
+    case SelectionType::Location:
         overlay.print(sel.location()->getName(true));
         break;
     default:
@@ -3196,7 +3196,7 @@ void CelestiaCore::renderOverlay()
     {
         double lt = 0.0;
 
-        if (sim->getSelection().getType() == Selection::Type_Body &&
+        if (sim->getSelection().getType() == SelectionType::Body &&
             (sim->getTargetSpeed() < 0.99_c))
         {
             if (lightTravelFlag)
@@ -3389,7 +3389,7 @@ void CelestiaCore::renderOverlay()
 
         switch (sel.getType())
         {
-        case Selection::Type_Star:
+        case SelectionType::Star:
             {
                 if (sel != lastSelection)
                 {
@@ -3411,7 +3411,7 @@ void CelestiaCore::renderOverlay()
             }
             break;
 
-        case Selection::Type_DeepSky:
+        case SelectionType::DeepSky:
             {
                 if (sel != lastSelection)
                 {
@@ -3430,7 +3430,7 @@ void CelestiaCore::renderOverlay()
             }
             break;
 
-        case Selection::Type_Body:
+        case SelectionType::Body:
             {
                 // Show all names for the body
                 if (sel != lastSelection)
@@ -3478,7 +3478,7 @@ void CelestiaCore::renderOverlay()
             }
             break;
 
-        case Selection::Type_Location:
+        case SelectionType::Location:
             overlay->setFont(titleFont);
             overlay->print(sel.location()->getName(true).c_str());
             overlay->setFont(font);
