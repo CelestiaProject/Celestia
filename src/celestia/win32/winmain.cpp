@@ -2879,7 +2879,11 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
     ZeroMemory(&Ofn, sizeof(OPENFILENAME));
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
+#ifdef CELX
     Ofn.lpstrFilter = "Celestia Script\0*.celx;*.clx;*.cel\0";
+#else
+    Ofn.lpstrFilter = "Celestia Script\0*.cel\0";
+#endif
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
