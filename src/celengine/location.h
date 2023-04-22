@@ -18,13 +18,9 @@
 class Selection;
 class Body;
 
-class Location : public AstroObject
+class Location
 {
 public:
-    ~Location() override = default;
-
-    Selection toSelection() override;
-
     const std::string& getName(bool i18n = false) const;
     void setName(const std::string&);
 

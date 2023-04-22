@@ -1416,9 +1416,3 @@ int PlanetarySystem::getOrder(const Body* body) const
 
     return iter - satellites.begin();
 }
-
-Selection Body::toSelection()
-{
-//    std::cout << "Body::toSelection()\n";
-    return Selection(this);
-}

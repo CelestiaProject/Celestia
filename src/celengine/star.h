@@ -239,13 +239,9 @@ StarDetails::hasCorona() const
 
 
 
-class Star : public AstroObject
+class Star
 {
 public:
-    Star() = default;
-    ~Star() override = default;
-
-    Selection toSelection() override;
 
     /** This getPosition() method returns the approximate star position; that is,
      *  star position without any orbital motion taken into account.  For a
@@ -293,6 +289,9 @@ public:
     void addOrbitingStar(Star*);
     const std::vector<Star*>* getOrbitingStars() const;
 
+    AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
+    void setIndex(AstroCatalog::IndexNumber idx) { indexNumber = idx; }
+
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
     float getTemperature() const;
@@ -312,6 +311,7 @@ public:
     static constexpr AstroCatalog::IndexNumber MaxTychoCatalogNumber = 0xf0000000;
 
 private:
+    AstroCatalog::IndexNumber indexNumber{ AstroCatalog::InvalidIndex };
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float absMag{ 4.83f };
     float extinction{ 0.0f };

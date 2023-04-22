@@ -14,6 +14,7 @@
 
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
+#include "astro.h"
 #include "hash.h"
 
 Eigen::Vector3d DeepSkyObject::getPosition() const
@@ -195,10 +196,4 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     }
 
     return true;
-}
-
-Selection DeepSkyObject::toSelection()
-{
-//    std::cout << "DeepSkyObject::toSelection()\n";
-    return Selection(this);
 }

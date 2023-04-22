@@ -31,10 +31,9 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
-class DeepSkyObject : public AstroObject
+class DeepSkyObject
 {
- public:
-    virtual Selection toSelection();
+public:
     DeepSkyObject() = default;
     virtual ~DeepSkyObject() = default;
 
@@ -92,11 +91,15 @@ class DeepSkyObject : public AstroObject
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
- private:
+    AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
+    void setIndex(AstroCatalog::IndexNumber idx) { indexNumber = idx; }
+
+private:
     Eigen::Vector3d position{ Eigen::Vector3d::Zero() };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };
     float        absMag{ DSO_DEFAULT_ABS_MAGNITUDE } ;
+    AstroCatalog::IndexNumber indexNumber{ AstroCatalog::InvalidIndex };
     std::string infoURL;
 
     bool visible { true };

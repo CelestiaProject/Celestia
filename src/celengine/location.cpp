@@ -225,9 +225,3 @@ Vector3d Location::getHeliocentricPosition(double t) const
 
     return parent->getAstrocentricPosition(t) + getPlanetocentricPosition(t);
 }
-
-Selection Location::toSelection()
-{
-//    std::cout << "Location::toSelection()\n";
-    return Selection(this);
-}
