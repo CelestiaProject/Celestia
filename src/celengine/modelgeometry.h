@@ -23,7 +23,7 @@ class RenderContext;
 
 class ModelGeometry : public Geometry
 {
- public:
+public:
     ModelGeometry(std::unique_ptr<cmod::Model>&& model);
     ~ModelGeometry();
 
@@ -43,8 +43,8 @@ class ModelGeometry : public Geometry
 
     void loadTextures() override;
 
- private:
+private:
     std::unique_ptr<cmod::Model> m_model;
-    bool m_vbInitialized{ false };
     std::unique_ptr<ModelOpenGLData> m_glData;
+    bool m_vbInitialized{ false };
 };

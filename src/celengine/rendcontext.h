@@ -25,6 +25,11 @@ class Color;
 class LightingState;
 class Renderer;
 
+namespace celestia::gl
+{
+class VertexObject;
+}
+
 class RenderContext
 {
  public:
@@ -33,10 +38,8 @@ class RenderContext
     virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
-    virtual void setVertexArrays(const cmod::VertexDescription& desc,
-                                 const cmod::VWord* vertexData);
     virtual void updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType);
-    virtual void drawGroup(const cmod::PrimitiveGroup& group);
+    virtual void drawGroup(celestia::gl::VertexObject &vao, const cmod::PrimitiveGroup& group);
 
     const cmod::Material* getMaterial() const;
     void setMaterial(const cmod::Material*);
