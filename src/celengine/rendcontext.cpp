@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstddef>
 
+#include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
 #include "atmosphere.h"
 #include "body.h"
@@ -22,159 +23,31 @@
 #include "texture.h"
 
 
+namespace gl = celestia::gl;
+
 namespace
 {
 
 const cmod::Material defaultMaterial;
 
-constexpr GLenum GLPrimitiveModes[static_cast<std::size_t>(cmod::PrimitiveGroupType::PrimitiveTypeMax)] =
+constexpr gl::VertexObject::Primitive GLPrimitiveModes[static_cast<std::size_t>(cmod::PrimitiveGroupType::PrimitiveTypeMax)] =
 {
-    GL_TRIANGLES,
-    GL_TRIANGLE_STRIP,
-    GL_TRIANGLE_FAN,
-    GL_LINES,
-    GL_LINE_STRIP,
-    GL_POINTS,
-    GL_POINTS,
+    gl::VertexObject::Primitive::Triangles,
+    gl::VertexObject::Primitive::TriangleStrip,
+    gl::VertexObject::Primitive::TriangleFan,
+    gl::VertexObject::Primitive::Lines,
+    gl::VertexObject::Primitive::LineStrip,
+    gl::VertexObject::Primitive::Points,
+    gl::VertexObject::Primitive::Points
 };
 
-constexpr GLenum GLComponentTypes[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
+constexpr gl::VertexObject::Primitive
+convert(cmod::PrimitiveGroupType prim)
 {
-     GL_FLOAT,          // Float1
-     GL_FLOAT,          // Float2
-     GL_FLOAT,          // Float3
-     GL_FLOAT,          // Float4,
-     GL_UNSIGNED_BYTE,  // UByte4
-};
-
-constexpr int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
-{
-     1,  // Float1
-     2,  // Float2
-     3,  // Float3
-     4,  // Float4,
-     4,  // UByte4
-};
-
-
-void
-setStandardVertexArrays(const cmod::VertexDescription& desc,
-                        const cmod::VWord* vertexData)
-{
-    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
-    const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
-    const cmod::VertexAttribute& color0    = desc.getAttribute(cmod::VertexAttributeSemantic::Color0);
-    const cmod::VertexAttribute& texCoord0 = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0);
-
-    // Can't render anything unless we have positions
-    if (position.format != cmod::VertexAttributeFormat::Float3)
-        return;
-
-    // Set up the vertex arrays
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, desc.strideBytes,
-                          vertexData + position.offsetWords);
-
-    // Set up the normal array
-    switch (normal.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
-                              3, GLComponentTypes[static_cast<std::size_t>(normal.format)],
-                              GL_FALSE, desc.strideBytes,
-                              vertexData + normal.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-        break;
-    }
-
-    GLint normalized = GL_TRUE;
-    // Set up the color array
-    switch (color0.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-    case cmod::VertexAttributeFormat::Float4:
-        normalized = GL_FALSE;
-    case cmod::VertexAttributeFormat::UByte4:
-        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                              GLComponentCounts[static_cast<std::size_t>(color0.format)],
-                              GLComponentTypes[static_cast<std::size_t>(color0.format)],
-                              normalized, desc.strideBytes,
-                              vertexData + color0.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        break;
-    }
-
-    // Set up the texture coordinate array
-    switch (texCoord0.format)
-    {
-    case cmod::VertexAttributeFormat::Float1:
-    case cmod::VertexAttributeFormat::Float2:
-    case cmod::VertexAttributeFormat::Float3:
-    case cmod::VertexAttributeFormat::Float4:
-        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                              GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
-                              GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
-                              GL_FALSE,
-                              desc.strideBytes,
-                              vertexData + texCoord0.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        break;
-    }
-}
-
-
-void
-setExtendedVertexArrays(const cmod::VertexDescription& desc,
-                        const cmod::VWord* vertexData)
-{
-    const cmod::VertexAttribute& tangent  = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
-    switch (tangent.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
-                                      GLComponentCounts[static_cast<std::size_t>(tangent.format)],
-                                      GLComponentTypes[static_cast<std::size_t>(tangent.format)],
-                                      GL_FALSE,
-                                      desc.strideBytes,
-                                      vertexData + tangent.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-        break;
-    }
-
-    const cmod::VertexAttribute& pointsize = desc.getAttribute(cmod::VertexAttributeSemantic::PointSize);
-    switch (pointsize.format)
-    {
-    case cmod::VertexAttributeFormat::Float1:
-        glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                                      GLComponentCounts[static_cast<std::size_t>(pointsize.format)],
-                                      GLComponentTypes[static_cast<std::size_t>(pointsize.format)],
-                                      GL_FALSE,
-                                      desc.strideBytes,
-                                      vertexData + pointsize.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        break;
-    }
+    return GLPrimitiveModes[static_cast<std::size_t>(prim)];
 }
 
 } // end unnamed namespace
-
-
 
 
 RenderContext::RenderContext(Renderer* _renderer) :
@@ -258,7 +131,7 @@ RenderContext::getCameraOrientation() const
 
 
 void
-RenderContext::drawGroup(const cmod::PrimitiveGroup& group)
+RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& group)
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
@@ -282,10 +155,8 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group)
         glActiveTexture(GL_TEXTURE0);
     }
 
-    glDrawElements(GLPrimitiveModes[static_cast<int>(group.prim)],
-                   group.indicesCount,
-                   GL_UNSIGNED_INT,
-                   reinterpret_cast<void*>(group.indicesOffset*sizeof(GLuint))); //NOSONAR
+    vao.draw(convert(group.prim), group.indicesCount, group.indicesOffset);
+
 #ifndef GL_ES
     if (drawPoints)
     {
@@ -295,14 +166,6 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group)
 #endif
 }
 
-
-void
-RenderContext::setVertexArrays(const cmod::VertexDescription& desc,
-                               const cmod::VWord* vertexData)
-{
-    setStandardVertexArrays(desc, vertexData);
-    setExtendedVertexArrays(desc, vertexData);
-}
 
 void
 RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType)
@@ -376,16 +239,7 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
 }
 
 
-GLSL_RenderContext::~GLSL_RenderContext()
-{
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-}
-
+GLSL_RenderContext::~GLSL_RenderContext() = default;
 
 void
 GLSL_RenderContext::initLightingEnvironment()
@@ -728,15 +582,7 @@ GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer,
 }
 
 
-GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
-{
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-}
+GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext() = default;
 
 
 void

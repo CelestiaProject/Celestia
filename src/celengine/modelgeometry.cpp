@@ -12,6 +12,7 @@
 #include <vector>
 #include <utility>
 #include <celrender/gl/buffer.h>
+#include <celrender/gl/vertexobject.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "glsupport.h"
@@ -22,11 +23,87 @@ using celestia::util::GetLogger;
 namespace gl = celestia::gl;
 namespace util = celestia::util;
 
+namespace
+{
+
+constexpr gl::VertexObject::DataType GLComponentTypes[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
+{
+     gl::VertexObject::DataType::Float,         // Float1
+     gl::VertexObject::DataType::Float,         // Float2
+     gl::VertexObject::DataType::Float,         // Float3
+     gl::VertexObject::DataType::Float,         // Float4,
+     gl::VertexObject::DataType::UnsignedByte,  // UByte4
+};
+
+constexpr int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
+{
+     1,  // Float1
+     2,  // Float2
+     3,  // Float3
+     4,  // Float4,
+     4,  // UByte4
+};
+
+constexpr bool GLComponentNormalized[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
+{
+     false,  // Float1
+     false,  // Float2
+     false,  // Float3
+     false,  // Float4,
+     true,  // UByte4
+};
+
+constexpr int
+convert(cmod::VertexAttributeSemantic semantic)
+{
+    switch (semantic)
+    {
+    case cmod::VertexAttributeSemantic::Position:
+        return CelestiaGLProgram::VertexCoordAttributeIndex;
+    case cmod::VertexAttributeSemantic::Normal:
+        return CelestiaGLProgram::NormalAttributeIndex;
+    case cmod::VertexAttributeSemantic::Color0:
+        return CelestiaGLProgram::ColorAttributeIndex;
+    case cmod::VertexAttributeSemantic::Texture0:
+        return CelestiaGLProgram::TextureCoord0AttributeIndex;
+    case cmod::VertexAttributeSemantic::Tangent:
+        return CelestiaGLProgram::TangentAttributeIndex;
+    case cmod::VertexAttributeSemantic::PointSize:
+        return CelestiaGLProgram::PointSizeAttributeIndex;
+    default:
+        return -1; // other attributes are not supported
+        break;
+    }
+}
+
+void
+setVertexArrays(gl::VertexObject &vao, const gl::Buffer &vbo, const cmod::VertexDescription& desc)
+{
+    for (const auto &attribute : desc.attributes)
+    {
+        if (attribute.semantic == cmod::VertexAttributeSemantic::InvalidSemantic)
+            continue;
+
+        vao.addVertexBuffer(
+            vbo,
+            convert(attribute.semantic),
+            GLComponentCounts[static_cast<std::size_t>(attribute.format)],
+            GLComponentTypes[static_cast<std::size_t>(attribute.format)],
+            GLComponentNormalized[static_cast<std::size_t>(attribute.format)],
+            desc.strideBytes,
+            attribute.offsetWords * sizeof(cmod::VWord));
+    }
+}
+
+} // anonymous namespace
+
+
 class ModelOpenGLData
 {
 public:
     std::vector<gl::Buffer> vbos; // vertex buffer objects
     std::vector<gl::Buffer> vios; // vertex index objects
+    std::vector<gl::VertexObject> vaos; // vertex attributes
 };
 
 
@@ -88,6 +165,11 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             }
             m_glData->vios.emplace_back(gl::Buffer::TargetHint::ElementArray, indices);
             indices.clear();
+
+            gl::VertexObject vao;
+            setVertexArrays(vao, m_glData->vbos.back(), mesh->getVertexDescription());
+            vao.setIndexBuffer(m_glData->vios.back(), 0, gl::VertexObject::IndexType::UnsignedInt);
+            m_glData->vaos.emplace_back(std::move(vao));
         }
     }
 
@@ -105,11 +187,6 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             return;
         }
 
-        m_glData->vbos[meshIndex].bind();
-        m_glData->vios[meshIndex].bind();
-
-        rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
-
         // Iterate over all primitive groups in the mesh
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
@@ -125,11 +202,9 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             }
 
             rc.setMaterial(material);
-            rc.drawGroup(*group);
+            rc.drawGroup(m_glData->vaos[meshIndex], *group);
         }
     }
-
-    gl::VertexObject::unbind();
 }
 
 
