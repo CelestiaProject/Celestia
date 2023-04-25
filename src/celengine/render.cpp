@@ -4206,8 +4206,8 @@ Renderer::renderAnnotationLabel(const Annotation &a,
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
     Matrix4f mv = celmath::translate(*m.modelview,
-                                     (int)a.position.x() + hOffset + PixelOffset,
-                                     (int)a.position.y() + vOffset + PixelOffset,
+                                     std::trunc(a.position.x()) + hOffset + PixelOffset,
+                                     std::trunc(a.position.y()) + vOffset + PixelOffset,
                                      depth);
 
     layout.begin(*m.projection, mv);

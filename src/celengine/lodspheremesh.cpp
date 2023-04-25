@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <cmath>
 #include <limits>
 
@@ -22,6 +23,8 @@
 #include <celmath/mathlib.h>
 #include <celutil/arrayvector.h>
 #include <celutil/array_view.h>
+
+#define PTR(p) (reinterpret_cast<const void*>(static_cast<std::uintptr_t>(p)))
 
 namespace
 {
@@ -630,30 +633,29 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 {
     auto stride = static_cast<GLsizei>(vertexSize * sizeof(float));
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
-    float* vertexBase = nullptr;
 
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           3, GL_FLOAT, GL_FALSE,
-                          stride, vertexBase);
+                          stride, PTR(0));
     if ((ri.attributes & Normals) != 0)
     {
         glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
                               3, GL_FLOAT, GL_FALSE,
-                              stride, vertexBase);
+                              stride, PTR(0));
     }
 
     for (int tc = 0; tc < nTexturesUsed; tc++)
     {
         glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
                               2, GL_FLOAT, GL_FALSE,
-                              stride, vertexBase + (tc * 2) + texCoordOffset);
+                              stride, PTR(((tc * 2) + texCoordOffset) * sizeof(float)));
     }
 
     if ((ri.attributes & Tangents) != 0)
     {
         glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
                               3, GL_FLOAT, GL_FALSE,
-                              stride, vertexBase + 3); // 3 == tangentOffset
+                              stride, PTR(3 * sizeof(float))); // 3 == tangentOffset
     }
 
     // assert(ri.step >= minStep);
