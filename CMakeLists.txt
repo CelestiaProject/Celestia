@@ -112,7 +112,7 @@ add_definitions(-D_USE_MATH_DEFINES)
 
 # Let CMake handle setting C++11 (since 3.1)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
 endif()
 set(CMAKE_C_STANDARD 11)
 
