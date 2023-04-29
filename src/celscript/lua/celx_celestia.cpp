@@ -2737,7 +2737,7 @@ static int celestia_loadfont(lua_State* l)
 {
     CelxLua celx(l);
 
-    celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
+    celx.checkArgs(2, 2, "Need one argument for celestia:loadfont()");
     string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     auto font = LoadTextureFont(appCore->getRenderer(), s);
@@ -2754,7 +2754,7 @@ static int celestia_getfont(lua_State* l)
 {
     CelxLua celx(l);
 
-    celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
+    celx.checkArgs(1, 1, "No arguments expected to function celestia:getfont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     auto font = getFont(appCore);
@@ -2772,7 +2772,7 @@ static int celestia_gettitlefont(lua_State* l)
 {
     CelxLua celx(l);
 
-    celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
+    celx.checkArgs(1, 1, "No arguments expected to function celestia:gettitlefont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     auto font = getTitleFont(appCore);
@@ -2783,7 +2783,7 @@ static int celestia_gettitlefont(lua_State* l)
 
 static int celestia_settimeslice(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:settimeslice");
+    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:settimeslice()");
     //CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
@@ -2804,7 +2804,7 @@ static int celestia_settimeslice(lua_State* l)
 
 static int celestia_setluahook(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:setluahook");
+    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:setluahook()");
     CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_istable(l, 2) && !lua_isnil(l, 2))
@@ -2926,6 +2926,18 @@ static int celestia_bindtranslationdomain(lua_State *l)
 #endif
 }
 
+static int celestia_setasterisms(lua_State *l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "Need one argument for celestia:setasterisms()");
+    const char* s = celx.safeGetString(2, AllErrors, "Argument to celestia:setasterisms() must be a string");
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    appCore->loadAsterismsFile(s);
+
+    return 0;
+}
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -2942,12 +2954,12 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.registerMethod("gettitlefont", celestia_gettitlefont);
     celx.registerMethod("loadtexture", celestia_loadtexture);
     celx.registerMethod("loadfont", celestia_loadfont);
-    celx.registerMethod("loadfont", celestia_loadfont);
     celx.registerMethod("newcategory", celestia_newcategory);
     celx.registerMethod("findcategory", celestia_findcategory);
     celx.registerMethod("deletecategory", celestia_deletecategory);
     celx.registerMethod("getcategories", celestia_getcategories);
     celx.registerMethod("getrootcategories", celestia_getrootcategories);
     celx.registerMethod("bindtranslationdomain", celestia_bindtranslationdomain);
+    celx.registerMethod("setasterisms", celestia_setasterisms);
     celx.pop(1);
 }
