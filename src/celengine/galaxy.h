@@ -78,7 +78,7 @@ class Galaxy : public DeepSkyObject
     const char* getObjTypeName() const override;
 
  private:
-    void setForm(const std::string&);
+    void setForm(const std::string&, const fs::path& = {});
     float getBrightnessCorrection(const Eigen::Vector3f &) const;
     void renderGL3(const Eigen::Vector3f& offset,
                    const Eigen::Quaternionf& viewerOrientation,
