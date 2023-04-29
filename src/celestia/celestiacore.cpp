@@ -3960,20 +3960,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     // Load asterisms:
     if (!config->asterismsFile.empty())
-    {
-        ifstream asterismsFile(config->asterismsFile, ios::in);
-        if (!asterismsFile.good())
-        {
-            GetLogger()->error(_("Error opening asterisms file {}.\n"),
-                               config->asterismsFile);
-        }
-        else
-        {
-            AsterismList* asterisms = ReadAsterismList(asterismsFile,
-                                                       *universe->getStarCatalog());
-            universe->setAsterisms(asterisms);
-        }
-    }
+        loadAsterismsFile(config->asterismsFile);
 
     if (!config->boundariesFile.empty())
     {
@@ -5033,5 +5020,18 @@ void CelestiaCore::setLogFile(const fs::path &fn)
     else
     {
         GetLogger()->error("Unable to open log file {}\n", fn);
+    }
+}
+
+void CelestiaCore::loadAsterismsFile(const fs::path &path)
+{
+    if (ifstream asterismsFile(path, ios::in); !asterismsFile.good())
+    {
+        GetLogger()->error(_("Error opening asterisms file {}.\n"), path);
+    }
+    else
+    {
+        AsterismList *asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
+        universe->setAsterisms(asterisms);
     }
 }

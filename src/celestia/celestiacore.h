@@ -416,6 +416,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::PixelFormat format) const;
     bool saveScreenShot(const fs::path&, ContentType = ContentType::Unknown) const;
 
+    void loadAsterismsFile(const fs::path &path);
+
 #ifdef USE_MINIAUDIO
     bool isPlayingAudio(int channel) const;
     bool playAudio(int channel, const fs::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
