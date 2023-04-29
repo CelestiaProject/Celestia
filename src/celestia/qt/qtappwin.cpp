@@ -638,7 +638,7 @@ void CelestiaAppWindow::slotGrabImage()
 
     if (!saveAsName.isEmpty())
     {
-        QImage grabbedImage = glWidget->grabFramebuffer();
+        QImage grabbedImage = grabFramebuffer();
         grabbedImage.save(saveAsName);
     }
     settings.endGroup();
@@ -750,7 +750,7 @@ static QImage::Format toQFormat(PixelFormat format)
 
 void CelestiaAppWindow::slotCopyImage()
 {
-    QImage grabbedImage = glWidget->grabFramebuffer();
+    QImage grabbedImage = grabFramebuffer();
     QApplication::clipboard()->setImage(grabbedImage);
     m_appCore->flash(_("Captured screen shot to clipboard"));
 }
@@ -1064,7 +1064,7 @@ void CelestiaAppWindow::slotAddBookmark()
     appState.captureState();
 
     // Capture the current frame buffer to use as a bookmark icon.
-    QImage grabbedImage = glWidget->grabFramebuffer();
+    QImage grabbedImage = grabFramebuffer();
     int width = grabbedImage.width();
     int height = grabbedImage.height();
 
@@ -1689,4 +1689,20 @@ void CelestiaAppWindow::pasteTextOrURL()
         pasteText();
     else
         slotPasteURL();
+}
+
+QImage CelestiaAppWindow::grabFramebuffer() const
+{
+    // Qt uses own GL context, so we need to switch to the widget's context
+    glWidget->makeCurrent();
+
+    std::array<int, 4> viewport;
+    celestia::PixelFormat format;
+    m_appCore->getCaptureInfo(viewport, format);
+    QImage grabbedImage(viewport[2], viewport[3], toQFormat(format));
+    m_appCore->captureImage(grabbedImage.bits(), viewport, format);
+
+    // return to the Qt context
+    glWidget->doneCurrent();
+    return grabbedImage;
 }
