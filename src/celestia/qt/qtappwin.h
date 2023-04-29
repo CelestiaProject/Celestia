@@ -14,6 +14,7 @@
 #define _QTAPPWIN_H_
 
 #include <celestia/celestiacore.h>
+#include <QImage>
 #include <QMainWindow>
 #include "qttimetoolbar.h"
 
@@ -123,6 +124,8 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
 
     void switchToNormal();
     void switchToFullscreen();
+
+    QImage grabFramebuffer() const;
 
  private:
     CelestiaGlWidget* glWidget{ nullptr };
