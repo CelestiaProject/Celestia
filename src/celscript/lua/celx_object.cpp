@@ -500,7 +500,7 @@ static int object_type(lua_State* l)
     case SelectionType::Location:
         tname = "location";
         break;
-    case SelectionType::Nil:
+    case SelectionType::None:
         tname = "null";
         break;
     default:
