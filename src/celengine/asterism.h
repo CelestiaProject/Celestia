@@ -61,4 +61,4 @@ class Asterism
 
 using AsterismList = std::vector<Asterism>;
 
-AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
+std::unique_ptr<AsterismList> ReadAsterismList(std::istream&, const StarDatabase&);
