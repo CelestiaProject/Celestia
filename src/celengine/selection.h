@@ -22,7 +22,7 @@ class DeepSkyObject;
 
 enum class SelectionType
 {
-    Nil,
+    None,
     Star,
     Body,
     DeepSky,
@@ -45,7 +45,7 @@ class Selection
     Selection(Selection&&) noexcept = default;
     Selection& operator=(Selection&&) noexcept = default;
 
-    bool empty() const { return type == SelectionType::Nil; }
+    bool empty() const { return type == SelectionType::None; }
     double radius() const;
     UniversalCoord getPosition(double t) const;
     Eigen::Vector3d getVelocity(double t) const;
@@ -77,10 +77,10 @@ class Selection
     SelectionType getType() const { return type; }
 
  private:
-    SelectionType type { SelectionType::Nil };
+    SelectionType type { SelectionType::None };
     void* obj { nullptr };
 
-    void checkNull() { if (obj == nullptr) type = SelectionType::Nil; }
+    void checkNull() { if (obj == nullptr) type = SelectionType::None; }
 
     friend bool operator==(const Selection& s0, const Selection& s1);
     friend bool operator!=(const Selection& s0, const Selection& s1);

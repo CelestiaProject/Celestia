@@ -152,7 +152,7 @@ static int frame_getrefobject(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected for frame:getrefobject()");
 
     ObserverFrame* frame = this_frame(l);
-    if (frame->getRefObject().getType() == SelectionType::Nil)
+    if (frame->getRefObject().getType() == SelectionType::None)
     {
         celx.push(CelxValue());
     }
@@ -171,7 +171,7 @@ static int frame_gettargetobject(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected for frame:gettarget()");
 
     ObserverFrame* frame = this_frame(l);
-    if (frame->getTargetObject().getType() == SelectionType::Nil)
+    if (frame->getTargetObject().getType() == SelectionType::None)
     {
         lua_pushnil(l);
     }
