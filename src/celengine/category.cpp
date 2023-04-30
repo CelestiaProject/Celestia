@@ -17,8 +17,12 @@ UserCategoryManager::create(const std::string& name,
                             UserCategoryId parent,
                             const std::string& domain)
 {
-    if (parent != UserCategoryId::Invalid && static_cast<std::size_t>(parent) >= m_categories.size())
-        return UserCategoryId::Invalid;
+    if (parent != UserCategoryId::Invalid)
+    {
+        auto parentIndex = static_cast<std::size_t>(parent);
+        if (parentIndex >= m_categories.size() || m_categories[parentIndex] == nullptr)
+            return UserCategoryId::Invalid;
+    }
 
     UserCategoryId id;
     bool reusedExisting = false;
@@ -80,10 +84,21 @@ UserCategoryManager::destroy(UserCategoryId category)
     }
 
     m_categoryMap.erase(entry->m_name);
+    m_categories[categoryIndex] = nullptr;
     m_available.push_back(category);
 
     entry.reset();
     return true;
+}
+
+
+const UserCategory*
+UserCategoryManager::get(UserCategoryId category) const
+{
+    auto categoryIndex = static_cast<std::size_t>(category);
+    if (categoryIndex >= m_categories.size())
+        return nullptr;
+    return m_categories[categoryIndex].get();
 }
 
 
@@ -250,10 +265,7 @@ UserCategory::hasChild(UserCategoryId child) const
 const UserCategory*
 UserCategory::get(UserCategoryId category)
 {
-    auto categoryIndex = static_cast<std::size_t>(category);
-    if (categoryIndex >= manager.m_categories.size())
-        return nullptr;
-    return manager.m_categories[categoryIndex].get();
+    return manager.get(category);
 }
 
 

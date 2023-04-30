@@ -40,6 +40,8 @@ public:
                           UserCategoryId parent,
                           const std::string& domain);
     bool destroy(UserCategoryId);
+
+    const UserCategory* get(UserCategoryId category) const;
     UserCategoryId find(std::string_view name) const;
     UserCategoryId findOrAdd(const std::string& name,
                             const std::string& domain);
