@@ -91,12 +91,12 @@ void Universe::setDSOCatalog(DSODatabase* catalog)
 
 AsterismList* Universe::getAsterisms() const
 {
-    return asterisms;
+    return asterisms.get();
 }
 
-void Universe::setAsterisms(AsterismList* _asterisms)
+void Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
 {
-    asterisms = _asterisms;
+    asterisms = std::move(_asterisms);
 }
 
 ConstellationBoundaries* Universe::getBoundaries() const

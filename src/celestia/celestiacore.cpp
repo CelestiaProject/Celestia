@@ -5031,7 +5031,7 @@ void CelestiaCore::loadAsterismsFile(const fs::path &path)
     }
     else
     {
-        AsterismList *asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
-        universe->setAsterisms(asterisms);
+        std::unique_ptr<AsterismList> asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
+        universe->setAsterisms(std::move(asterisms));
     }
 }
