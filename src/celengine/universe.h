@@ -45,7 +45,7 @@ class Universe
     void setDSOCatalog(DSODatabase*);
 
     AsterismList* getAsterisms() const;
-    void setAsterisms(AsterismList*);
+    void setAsterisms(std::unique_ptr<AsterismList>&&);
 
     ConstellationBoundaries* getBoundaries() const;
     void setBoundaries(ConstellationBoundaries*);
@@ -128,7 +128,7 @@ class Universe
     std::unique_ptr<StarDatabase> starCatalog{nullptr};
     DSODatabase* dsoCatalog{nullptr};
     SolarSystemCatalog* solarSystemCatalog{nullptr};
-    AsterismList* asterisms{nullptr};
+    std::unique_ptr<AsterismList> asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};
     celestia::MarkerList* markers;
 

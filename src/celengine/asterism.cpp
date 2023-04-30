@@ -108,7 +108,7 @@ bool Asterism::isColorOverridden() const
 }
 
 
-AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
+std::unique_ptr<AsterismList> ReadAsterismList(std::istream& in, const StarDatabase& stardb)
 {
     auto asterisms = std::make_unique<AsterismList>();
     Tokenizer tokenizer(&in);
@@ -169,5 +169,5 @@ AsterismList* ReadAsterismList(std::istream& in, const StarDatabase& stardb)
         }
     }
 
-    return asterisms.release();
+    return asterisms;
 }
