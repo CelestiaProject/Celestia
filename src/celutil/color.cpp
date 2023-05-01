@@ -216,9 +216,49 @@ bool parseHexColor(std::string_view s, Color& c)
 
 } // end unnamed namespace
 
+/*!
+ * @brief Convert HSV to RGB.
+ * @param h Hue, [0, 360]
+ * @param s Saturation, [0, 1]
+ * @param v Value, [0, 1]
+ * @return RGBA color
+ */
+Color Color::fromHSV(float h, float s, float v)
+{
+    if (s == 0.0f)
+    {
+        // achromatic (grey)
+        return { v, v, v };
+    }
+
+
+    h /= 60.0f; // sector 0 to 5
+    float j = std::floor(h);
+
+    float f = h - j; // fractional part of h
+    float p = v * (1.0f - s);
+    float q = v * (1.0f - s * f);
+    float t = v * (1.0f - s * (1.0f - f));
+
+    switch(static_cast<int>(j))
+    {
+    case 0:
+        return { v, t, p };
+    case 1:
+        return { q, v, p };
+    case 2:
+        return { p, v, t };
+    case 3:
+        return { p, q, v };
+    case 4:
+        return { t, p, v };
+    default:
+        return { v, p, q };
+    }
+}
 
 const Color Color::White = Color(1.0f, 1.0f, 1.0f);
-const Color Color::Black = Color(0.0f,0.0f, 0.0f);
+const Color Color::Black = Color(0.0f, 0.0f, 0.0f);
 
 /*! Parse a color string and return true if it was a valid color, otherwise
  *  false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is

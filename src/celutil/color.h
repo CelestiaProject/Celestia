@@ -115,6 +115,8 @@ class Color
     static /*constexpr*/ const Color Black/* = Color(1.0f, 1.0f, 1.0f)*/;
     static /*constexpr*/ const Color White/* = Color(0.0f,0.0f, 0.0f)*/;
 
+    static Color fromHSV(float h, float s, float v);
+
     static bool parse(std::string_view, Color&);
 };
 
