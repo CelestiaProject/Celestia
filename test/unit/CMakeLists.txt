@@ -1,18 +1,24 @@
-test_case(arrayvector)
-test_case(array_view)
-test_case(category)
-if(NOT HAVE_FLOAT_CHARCONV)
-  test_case(charconv_compat)
-endif()
-test_case(greek)
-test_case(hash)
-test_case(intrusiveptr)
-test_case(logger)
-test_case(stellarclass)
-test_case(tokenizer)
-if(WIN32)
-  test_case(winutil)
-endif()
+set(UNIT_TEST_SOURCES
+  array_view_test.cpp
+  arrayvector_test.cpp
+  category_test.cpp
+  greek_test.cpp
+  hash_test.cpp
+  intrusiveptr_test.cpp
+  logger_test.cpp
+  stellarclass_test.cpp
+  tokenizer_test.cpp)
+
+#if(NOT HAVE_FLOAT_CHARCONV)
+  list(APPEND UNIT_TEST_SOURCES charconv_compat_test.cpp)
+#endif()
+
 if(USE_ICU)
-  test_case(unicode)
+  list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
 endif()
+
+if(WIN32)
+  list(APPEND UNIT_TEST_SOURCES winutil_test.cpp)
+endif()
+
+test_case(unit "${UNIT_TEST_SOURCES}")

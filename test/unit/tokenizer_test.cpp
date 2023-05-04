@@ -8,11 +8,13 @@
 #include <celutil/tokenizer.h>
 #include <celutil/utf8.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
-TEST_CASE("Tokenizer parses names", "[Tokenizer]")
+TEST_SUITE_BEGIN("Tokenizer");
+
+TEST_CASE("Tokenizer parses names")
 {
-    SECTION("Separated names")
+    SUBCASE("Separated names")
     {
         std::istringstream input("Normal "
                                 "Number2 "
@@ -39,7 +41,7 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Followed by units")
+    SUBCASE("Followed by units")
     {
         std::istringstream input("Quantity<unit>");
         Tokenizer tok(&input);
@@ -56,7 +58,7 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Buffer boundary")
+    SUBCASE("Buffer boundary")
     {
         std::string tests[] = {
             "Foo"
@@ -82,9 +84,9 @@ TEST_CASE("Tokenizer parses names", "[Tokenizer]")
     }
 }
 
-TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
+TEST_CASE("Tokenizer parses strings")
 {
-    SECTION("ASCII strings")
+    SUBCASE("ASCII strings")
     {
         std::istringstream input("\"abc 123.456 {}<>\" "
                                  "\"\"");
@@ -99,7 +101,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Standard escapes")
+    SUBCASE("Standard escapes")
     {
         std::istringstream input("\"abc\\\\def\\nghi\\\"jkl\"");
         Tokenizer tok(&input);
@@ -110,7 +112,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Unicode escapes")
+    SUBCASE("Unicode escapes")
     {
         std::istringstream input("\"\\u00ef\" "
                                  "\"\\u0900\" "
@@ -129,7 +131,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Invalid escape")
+    SUBCASE("Invalid escape")
     {
         std::istringstream input("\"abcdefghijklmnop\\qrstuvwxyz\"");
         Tokenizer tok(&input);
@@ -137,7 +139,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenError);
     }
 
-    SECTION("UTF-8 sequences")
+    SUBCASE("UTF-8 sequences")
     {
         std::istringstream input("\"\303\257\340\244\200\" "
                                  "\"\300\" "
@@ -168,7 +170,7 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Buffer boundary")
+    SUBCASE("Buffer boundary")
     {
         std::tuple<std::string, std::string> tests[] = {
             {"\"\"", ""},
@@ -196,9 +198,9 @@ TEST_CASE("Tokenizer parses strings", "[Tokenizer]")
     }
 }
 
-TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
+TEST_CASE("Tokenizer parses numbers")
 {
-    SECTION("No leading sign")
+    SUBCASE("No leading sign")
     {
         std::istringstream input("0 "
                                  "0.0 "
@@ -260,7 +262,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Explicit positive sign")
+    SUBCASE("Explicit positive sign")
     {
         std::istringstream input("+0"
                                  "+0.0"
@@ -307,7 +309,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Negative sign")
+    SUBCASE("Negative sign")
     {
         std::istringstream input("-0"
                                  "-0.0"
@@ -361,7 +363,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Buffer boundary")
+    SUBCASE("Buffer boundary")
     {
         std::tuple<std::string, double, bool> tests[] = {
             { "1", 1.0, true },
@@ -405,7 +407,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         }
     }
 
-    SECTION("Invalid numbers")
+    SUBCASE("Invalid numbers")
     {
         std::string tests[] = {
             "+",
@@ -424,7 +426,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         }
     }
 
-    SECTION("Trailing exponents")
+    SUBCASE("Trailing exponents")
     {
         std::string tests[] = {
             "1.25e",
@@ -449,7 +451,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
         }
     }
 
-    SECTION("Ending separator")
+    SUBCASE("Ending separator")
     {
         std::istringstream input("123{");
         Tokenizer tok(&input);
@@ -463,7 +465,7 @@ TEST_CASE("Tokenizer parses numbers", "[Tokenizer]")
     }
 }
 
-TEST_CASE("Tokenizer parses symbols and groups", "[Tokenizer]")
+TEST_CASE("Tokenizer parses symbols and groups")
 {
     std::istringstream input("={}|[]<>");
     Tokenizer tok(&input);
@@ -479,9 +481,9 @@ TEST_CASE("Tokenizer parses symbols and groups", "[Tokenizer]")
     REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
 }
 
-TEST_CASE("Tokenizer skips comments", "[Tokenizer]")
+TEST_CASE("Tokenizer skips comments")
 {
-    SECTION("Comment within buffer")
+    SUBCASE("Comment within buffer")
     {
         std::istringstream input("Token1 # comment\n"
                                 "Token2 # \300\n"
@@ -500,7 +502,7 @@ TEST_CASE("Tokenizer skips comments", "[Tokenizer]")
         REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
     }
 
-    SECTION("Buffer boundary")
+    SUBCASE("Buffer boundary")
     {
         for (std::size_t spaces = 0; spaces < 10; ++spaces)
         {
@@ -516,4 +518,4 @@ TEST_CASE("Tokenizer skips comments", "[Tokenizer]")
     }
 }
 
-
+TEST_SUITE_END();

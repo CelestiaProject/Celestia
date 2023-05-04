@@ -456,6 +456,6 @@ add_subdirectory(shaders)
 add_subdirectory(help)
 
 if(ENABLE_TESTS)
-  enable_testing()
+  include(CTest)
   add_subdirectory(test)
 endif()

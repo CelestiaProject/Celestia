@@ -1,4 +1,5 @@
-#include <catch.hpp>
+#include <doctest.h>
+
 #include <sstream>
 #include <iostream>
 #include <celutil/logger.h>
@@ -9,9 +10,11 @@ using celestia::util::CreateLogger;
 
 #define CLEAR(s) s.str(""); s.clear()
 
-TEST_CASE("logger", "[logger]")
+TEST_SUITE_BEGIN("Logger");
+
+TEST_CASE("logger")
 {
-    SECTION("With INFO Level")
+    SUBCASE("With INFO Level")
     {
         std::ostringstream err, log;
         auto *logger = new Logger(Level::Info, log, err);
@@ -40,7 +43,7 @@ TEST_CASE("logger", "[logger]")
         REQUIRE(log.str().empty());
     }
 
-    SECTION("With VERBOSE Level")
+    SUBCASE("With VERBOSE Level")
     {
         std::ostringstream err, log;
         auto *logger = new Logger(Level::Verbose, log, err);
@@ -70,7 +73,7 @@ TEST_CASE("logger", "[logger]")
         REQUIRE(log.str().empty());
     }
 
-    SECTION("With WARN Level")
+    SUBCASE("With WARN Level")
     {
         std::ostringstream err, log;
         auto *logger = new Logger(Level::Warning, log, err);
@@ -98,7 +101,7 @@ TEST_CASE("logger", "[logger]")
         REQUIRE(log.str().empty());
     }
 
-    SECTION("With ERROR Level")
+    SUBCASE("With ERROR Level")
     {
         std::ostringstream err, log;
         auto *logger = new Logger(Level::Error, log, err);
@@ -125,7 +128,7 @@ TEST_CASE("logger", "[logger]")
         REQUIRE(log.str().empty());
     }
 
-    SECTION("With DEBUG Level")
+    SUBCASE("With DEBUG Level")
     {
         std::ostringstream err, log;
         auto *logger = new Logger(Level::Debug, log, err);
@@ -155,3 +158,5 @@ TEST_CASE("logger", "[logger]")
         REQUIRE(log.str().empty());
     }
 }
+
+TEST_SUITE_END();

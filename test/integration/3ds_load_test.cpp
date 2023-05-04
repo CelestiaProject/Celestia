@@ -1,12 +1,14 @@
 #include <cstdint>
 #include <memory>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
 
-TEST_CASE("Load a 3DS file", "[3ds] [integration]")
+TEST_SUITE_BEGIN("3ds integration");
+
+TEST_CASE("Load a 3DS file")
 {
     std::unique_ptr<M3DScene> scene = Read3DSFile("huygens.3ds");
     REQUIRE(scene != nullptr);
@@ -35,3 +37,5 @@ TEST_CASE("Load a 3DS file", "[3ds] [integration]")
     REQUIRE(faceCount == 6098);
     REQUIRE(vertexCount == 3263);
 }
+
+TEST_SUITE_END();

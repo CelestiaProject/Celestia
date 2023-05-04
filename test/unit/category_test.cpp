@@ -1,35 +1,37 @@
-#include <catch.hpp>
+#include <doctest.h>
 
 #include <celengine/category.h>
 #include <celengine/star.h>
 
-TEST_CASE("Create category", "[Category]")
+TEST_SUITE_BEGIN("Category");
+
+TEST_CASE("Create category")
 {
     UserCategoryManager manager;
     auto categoryId = manager.create("foo", UserCategoryId::Invalid, {});
     REQUIRE(categoryId != UserCategoryId::Invalid);
 
-    SECTION("Created category is in roots")
+    SUBCASE("Created category is in roots")
     {
         auto roots = manager.roots();
         auto it = roots.find(categoryId);
         REQUIRE(it != roots.end());
     }
 
-    SECTION("Created category is active")
+    SUBCASE("Created category is active")
     {
         auto active = manager.active();
         auto it = active.find(categoryId);
         REQUIRE(it != active.end());
     }
 
-    SECTION("Can find created category")
+    SUBCASE("Can find created category")
     {
         auto foundId = manager.find("foo");
         REQUIRE(foundId == categoryId);
     }
 
-    SECTION("Created category has associated object")
+    SUBCASE("Created category has associated object")
     {
         auto category = manager.get(categoryId);
         REQUIRE(category != nullptr);
@@ -38,13 +40,13 @@ TEST_CASE("Create category", "[Category]")
         REQUIRE(category->members().empty());
     }
 
-    SECTION("Cannot create duplicate category")
+    SUBCASE("Cannot create duplicate category")
     {
         auto categoryId2 = manager.create("foo", UserCategoryId::Invalid, {});
         REQUIRE(categoryId2 == UserCategoryId::Invalid);
     }
 
-    SECTION("Create subcategory")
+    SUBCASE("Create subcategory")
     {
         auto categoryId2 = manager.create("bar", categoryId, {});
         REQUIRE(categoryId2 != UserCategoryId::Invalid);
@@ -68,14 +70,14 @@ TEST_CASE("Create category", "[Category]")
     }
 }
 
-TEST_CASE("Create category with invalid parent", "[Category]")
+TEST_CASE("Create category with invalid parent")
 {
     UserCategoryManager manager;
     auto categoryId = manager.create("foo", static_cast<UserCategoryId>(12345), {});
     REQUIRE(categoryId == UserCategoryId::Invalid);
 }
 
-TEST_CASE("Destroy category", "[Category]")
+TEST_CASE("Destroy category")
 {
     UserCategoryManager manager;
     auto categoryId = manager.create("foo", UserCategoryId::Invalid, {});
@@ -86,36 +88,36 @@ TEST_CASE("Destroy category", "[Category]")
 
     REQUIRE(manager.destroy(categoryId));
 
-    SECTION("Category removed from roots")
+    SUBCASE("Category removed from roots")
     {
         auto it = manager.roots().find(categoryId);
         REQUIRE(it == manager.roots().end());
     }
 
-    SECTION("Category removed from active")
+    SUBCASE("Category removed from active")
     {
         auto it = manager.active().find(categoryId);
         REQUIRE(it == manager.active().end());
     }
 
-    SECTION("Category cannot be found")
+    SUBCASE("Category cannot be found")
     {
         auto foundCategoryId = manager.find("foo");
         REQUIRE(foundCategoryId == UserCategoryId::Invalid);
     }
 
-    SECTION("Category is not associated with an object")
+    SUBCASE("Category is not associated with an object")
     {
         REQUIRE(manager.get(categoryId) == nullptr);
     }
 
-    SECTION("Category cannot be used as a parent")
+    SUBCASE("Category cannot be used as a parent")
     {
         auto categoryId3 = manager.create("baz", categoryId, {});
         REQUIRE(categoryId3 == UserCategoryId::Invalid);
     }
 
-    SECTION("Category ID can be re-used")
+    SUBCASE("Category ID can be re-used")
     {
         auto categoryId3 = manager.create("baz", UserCategoryId::Invalid, {});
         REQUIRE(categoryId3 != UserCategoryId::Invalid);
@@ -128,7 +130,7 @@ TEST_CASE("Destroy category", "[Category]")
         REQUIRE(categoryId4 != categoryId3);
     }
 
-    SECTION("Category name can be re-used")
+    SUBCASE("Category name can be re-used")
     {
         auto categoryId3 = manager.create("foo", UserCategoryId::Invalid, {});
         REQUIRE(categoryId3 != UserCategoryId::Invalid);
@@ -136,7 +138,7 @@ TEST_CASE("Destroy category", "[Category]")
     }
 }
 
-TEST_CASE("Cannot destroy category with child categories", "[Category]")
+TEST_CASE("Cannot destroy category with child categories")
 {
     UserCategoryManager manager;
     auto categoryId = manager.create("foo", UserCategoryId::Invalid, {});
@@ -159,7 +161,7 @@ TEST_CASE("Cannot destroy category with child categories", "[Category]")
     REQUIRE(it2 != active.end());
 }
 
-TEST_CASE("Objects in categories", "[Category]")
+TEST_CASE("Objects in categories")
 {
     UserCategoryManager manager;
     auto categoryId = manager.create("foo", UserCategoryId::Invalid, {});
@@ -170,7 +172,7 @@ TEST_CASE("Objects in categories", "[Category]")
 
     REQUIRE(manager.addObject(sel, categoryId));
 
-    SECTION("Get object categories")
+    SUBCASE("Get object categories")
     {
         auto categories = manager.getCategories(sel);
         REQUIRE(categories != nullptr);
@@ -178,12 +180,12 @@ TEST_CASE("Objects in categories", "[Category]")
         REQUIRE(categories->front() == categoryId);
     }
 
-    SECTION("Test object categories")
+    SUBCASE("Test object categories")
     {
         REQUIRE(manager.isInCategory(sel, categoryId));
     }
 
-    SECTION("Get category members")
+    SUBCASE("Get category members")
     {
         auto category = manager.get(categoryId);
         REQUIRE(category != nullptr);
@@ -192,12 +194,12 @@ TEST_CASE("Objects in categories", "[Category]")
         REQUIRE(*members.begin() == sel);
     }
 
-    SECTION("Cannot add object twice")
+    SUBCASE("Cannot add object twice")
     {
         REQUIRE(!manager.addObject(sel, categoryId));
     }
 
-    SECTION("Remove object")
+    SUBCASE("Remove object")
     {
         REQUIRE(manager.removeObject(sel, categoryId));
         REQUIRE(manager.getCategories(sel) == nullptr);
@@ -206,7 +208,7 @@ TEST_CASE("Objects in categories", "[Category]")
         REQUIRE(category->members().empty());
     }
 
-    SECTION("Clear categories")
+    SUBCASE("Clear categories")
     {
         manager.clearCategories(sel);
         REQUIRE(manager.getCategories(sel) == nullptr);
@@ -215,9 +217,11 @@ TEST_CASE("Objects in categories", "[Category]")
         REQUIRE(category->members().empty());
     }
 
-    SECTION("Destroy category")
+    SUBCASE("Destroy category")
     {
         REQUIRE(manager.destroy(categoryId));
         REQUIRE(manager.getCategories(sel) == nullptr);
     }
 }
+
+TEST_SUITE_END();

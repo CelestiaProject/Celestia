@@ -6,15 +6,16 @@
 #include <sstream>
 #include <vector>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 #include <celcompat/filesystem.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
 
+TEST_SUITE_BEGIN("CMOD integration");
 
-TEST_CASE("CMOD binary to ASCII roundtrip", "[cmod] [integration]")
+TEST_CASE("CMOD binary to ASCII roundtrip")
 {
     std::vector<fs::path> paths;
     cmod::HandleGetter handleGetter = [&](const fs::path& path)
@@ -56,3 +57,5 @@ TEST_CASE("CMOD binary to ASCII roundtrip", "[cmod] [integration]")
     REQUIRE(std::equal(std::istreambuf_iterator<char>(sourceData), end,
                        std::istreambuf_iterator<char>(roundtrippedData), end));
 }
+
+TEST_SUITE_END();

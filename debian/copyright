@@ -91,6 +91,10 @@ Copyright: 2001-2002 Marcelo E. Magallon <mmagallo@debian.org>
            2019 Celestia Development Team
 License: GPL-2+
 
+Files: test/doctest/doctest.h
+Copyright: 2016-2023 Viktor Kirilov
+License: Expat
+
 License: GPL-2+
  This program is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public
