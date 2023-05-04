@@ -5,7 +5,7 @@
 #include <celengine/value.h>
 #include <celutil/color.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 constexpr const double EPSILON = 1.0 / 255.0;
 
@@ -14,11 +14,13 @@ inline float C(float n)
 	return static_cast<float>(static_cast<unsigned char>(n * 255.99f)) / 255.0f;
 }
 
-TEST_CASE("AssociativeArray", "[AssociativeArray]")
+TEST_SUITE_BEGIN("AssociativeArray");
+
+TEST_CASE("AssociativeArray")
 {
-    SECTION("Colors")
+    SUBCASE("Colors")
     {
-        SECTION("Defined as Vector3")
+        SUBCASE("Defined as Vector3")
         {
             AssociativeArray h;
             auto ary = std::make_unique<ValueArray>();
@@ -38,13 +40,13 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
 
             auto c = h.getColor("color");
             REQUIRE(c.has_value());
-            REQUIRE(c->red()   == Approx(C(.23f)));
-            REQUIRE(c->green() == Approx(C(.34f)));
-            REQUIRE(c->blue()  == Approx(C(.45f)));
-            REQUIRE(c->alpha() == Approx(1.0));
+            REQUIRE(c->red()   == doctest::Approx(C(.23f)));
+            REQUIRE(c->green() == doctest::Approx(C(.34f)));
+            REQUIRE(c->blue()  == doctest::Approx(C(.45f)));
+            REQUIRE(c->alpha() == doctest::Approx(1.0));
         }
 
-        SECTION("Defined as Vector4")
+        SUBCASE("Defined as Vector4")
         {
             AssociativeArray h;
             auto ary = std::make_unique<ValueArray>();
@@ -66,37 +68,39 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
 
             auto c = h.getColor("color");
             REQUIRE(c.has_value());
-            REQUIRE(c->red()   == Approx(C(.23f)));
-            REQUIRE(c->green() == Approx(C(.34f)));
-            REQUIRE(c->blue()  == Approx(C(.45f)));
-            REQUIRE(c->alpha() == Approx(C(.56f)));
+            REQUIRE(c->red()   == doctest::Approx(C(.23f)));
+            REQUIRE(c->green() == doctest::Approx(C(.34f)));
+            REQUIRE(c->blue()  == doctest::Approx(C(.45f)));
+            REQUIRE(c->alpha() == doctest::Approx(C(.56f)));
 
         }
 
-        SECTION("Defined as rrggbb string")
+        SUBCASE("Defined as rrggbb string")
         {
             AssociativeArray h;
             h.addValue("color", Value("#123456"));
 
             auto c = h.getColor("color");
             REQUIRE(c.has_value());
-            REQUIRE(c->red()   == Approx(0x12 / 255.).epsilon(EPSILON));
-            REQUIRE(c->green() == Approx(0x34 / 255.).epsilon(EPSILON));
-            REQUIRE(c->blue()  == Approx(0x56 / 255.).epsilon(EPSILON));
-            REQUIRE(c->alpha() == Approx(1.0).epsilon(EPSILON));
+            REQUIRE(c->red()   == doctest::Approx(0x12 / 255.).epsilon(EPSILON));
+            REQUIRE(c->green() == doctest::Approx(0x34 / 255.).epsilon(EPSILON));
+            REQUIRE(c->blue()  == doctest::Approx(0x56 / 255.).epsilon(EPSILON));
+            REQUIRE(c->alpha() == doctest::Approx(1.0).epsilon(EPSILON));
         }
 
-        SECTION("Defined as rrggbbaa string")
+        SUBCASE("Defined as rrggbbaa string")
         {
             AssociativeArray h;
             h.addValue("color", Value("#12345678"));
 
             auto c = h.getColor("color");
             REQUIRE(c.has_value());
-            REQUIRE(c->red()   == Approx(0x12 / 255.).epsilon(EPSILON));
-            REQUIRE(c->green() == Approx(0x34 / 255.).epsilon(EPSILON));
-            REQUIRE(c->blue()  == Approx(0x56 / 255.).epsilon(EPSILON));
-            REQUIRE(c->alpha() == Approx(0x78 / 255.).epsilon(EPSILON));
+            REQUIRE(c->red()   == doctest::Approx(0x12 / 255.).epsilon(EPSILON));
+            REQUIRE(c->green() == doctest::Approx(0x34 / 255.).epsilon(EPSILON));
+            REQUIRE(c->blue()  == doctest::Approx(0x56 / 255.).epsilon(EPSILON));
+            REQUIRE(c->alpha() == doctest::Approx(0x78 / 255.).epsilon(EPSILON));
         }
     }
 }
+
+TEST_SUITE_END();

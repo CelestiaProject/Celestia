@@ -7,7 +7,7 @@
 
 #include <celcompat/charconv.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 namespace celcompat = celestia::compat;
 
@@ -20,7 +20,9 @@ struct TestCase
     std::ptrdiff_t length;
 };
 
-TEMPLATE_TEST_CASE("Floating point general format: successful", "[charconv][floating-point]", float, double, long double)
+TEST_SUITE_BEGIN("charconv");
+
+TEST_CASE_TEMPLATE("Floating point general format: successful", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "123", 3, TestType{ 123.0 }, 3 },
@@ -86,7 +88,7 @@ TEMPLATE_TEST_CASE("Floating point general format: successful", "[charconv][floa
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point general format: negative zero", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point general format: negative zero", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "-0", 2, TestType{ -0.0 }, 2 },
@@ -107,7 +109,7 @@ TEMPLATE_TEST_CASE("Floating point general format: negative zero", "[charconv][f
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point general format: NaN", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point general format: NaN", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "nan", 3, std::numeric_limits<TestType>::quiet_NaN(), 3 },
@@ -134,7 +136,7 @@ TEMPLATE_TEST_CASE("Floating point general format: NaN", "[charconv][floating-po
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point fixed format: successful", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point fixed format: successful", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "123", 3, TestType{ 123.0 }, 3 },
@@ -198,7 +200,7 @@ TEMPLATE_TEST_CASE("Floating point fixed format: successful", "[charconv][floati
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point scientific format: successful", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point scientific format: successful", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "14e2", 4, TestType { 1400.0 }, 4 },
@@ -252,7 +254,7 @@ TEMPLATE_TEST_CASE("Floating point scientific format: successful", "[charconv][f
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point scientific format: missing exponential", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point scientific format: missing exponential", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "123", 3, TestType{ 123.0 }, 3 },
@@ -278,7 +280,7 @@ TEMPLATE_TEST_CASE("Floating point scientific format: missing exponential", "[ch
     }
 }
 
-TEMPLATE_TEST_CASE("Hexadecimal floating point", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Hexadecimal floating point", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "1b", 2, TestType{ 27 }, 2 },
@@ -299,7 +301,7 @@ TEMPLATE_TEST_CASE("Hexadecimal floating point", "[charconv][floating-point]", f
     }
 }
 
-TEMPLATE_TEST_CASE("Floating point format failures", "[charconv][floating-point]", float, double, long double)
+TEST_CASE_TEMPLATE("Floating point format failures", TestType, float, double, long double)
 {
     TestCase<TestType> examples[] = {
         { "  0.5", 5, TestType{ }, 0 },
@@ -322,3 +324,5 @@ TEMPLATE_TEST_CASE("Floating point format failures", "[charconv][floating-point]
         REQUIRE(length == example.length);
     }
 }
+
+TEST_SUITE_END();

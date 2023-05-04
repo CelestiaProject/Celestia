@@ -5,7 +5,7 @@
 
 #include <celutil/intrusiveptr.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 using celestia::util::IntrusivePtr;
 
@@ -31,29 +31,30 @@ private:
 
 thread_local std::size_t TestClass::destructorCount = 0;
 
+TEST_SUITE_BEGIN("IntrusivePtr");
 
-TEST_CASE("IntrusivePtr default constructor", "[IntrusivePtr]")
+TEST_CASE("IntrusivePtr default constructor")
 {
     IntrusivePtr<TestClass> ptr;
     REQUIRE(ptr.get() == nullptr);
 }
 
 
-TEST_CASE("IntrusivePtr nullptr_t constructor", "[IntrusivePtr]")
+TEST_CASE("IntrusivePtr nullptr_t constructor")
 {
     IntrusivePtr<TestClass> ptr{std::nullptr_t{}};
     REQUIRE(ptr.get() == nullptr);
 }
 
 
-TEST_CASE("IntrusivePtr from null pointer", "[IntrusivePtr]")
+TEST_CASE("IntrusivePtr from null pointer")
 {
     IntrusivePtr<TestClass> ptr(static_cast<TestClass*>(nullptr));
     REQUIRE(ptr.get() == nullptr);
 }
 
 
-TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
+TEST_CASE("IntrusivePtr constructor from pointer")
 {
     TestClass::destructorCount = 0;
 
@@ -62,7 +63,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
 
     REQUIRE(TestClass::destructorCount == 0);
 
-    SECTION("Copy constructor")
+    SUBCASE("Copy constructor")
     {
         {
             IntrusivePtr<TestClass> intrusive2{intrusive1};
@@ -76,7 +77,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(TestClass::destructorCount == 0);
     }
 
-    SECTION("Copy constructor to const")
+    SUBCASE("Copy constructor to const")
     {
         {
             IntrusivePtr<const TestClass> intrusive2{intrusive1};
@@ -90,7 +91,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(TestClass::destructorCount == 0);
     }
 
-    SECTION("Copy assignment")
+    SUBCASE("Copy assignment")
     {
         auto intrusive2 = TestClass::create();
         REQUIRE(intrusive1->refCount() == 1);
@@ -104,7 +105,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Copy assignment (self-assignment)")
+    SUBCASE("Copy assignment (self-assignment)")
     {
         IntrusivePtr<TestClass> intrusive2{intrusive1};
         REQUIRE(TestClass::destructorCount == 0);
@@ -119,7 +120,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Copy assignment to const")
+    SUBCASE("Copy assignment to const")
     {
         IntrusivePtr<const TestClass> intrusive2 = TestClass::createConst();
         REQUIRE(intrusive1->refCount() == 1);
@@ -133,7 +134,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Move constructor")
+    SUBCASE("Move constructor")
     {
         IntrusivePtr<TestClass> intrusive2{std::move(intrusive1)};
         REQUIRE(TestClass::destructorCount == 0);
@@ -142,7 +143,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 1);
     }
 
-    SECTION("Move constructor to const")
+    SUBCASE("Move constructor to const")
     {
         IntrusivePtr<const TestClass> intrusive2{std::move(intrusive1)};
         REQUIRE(TestClass::destructorCount == 0);
@@ -151,7 +152,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 1);
     }
 
-    SECTION("Move assignment")
+    SUBCASE("Move assignment")
     {
         auto savedPtr = intrusive1.get();
         auto intrusive2 = TestClass::create();
@@ -166,7 +167,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 1);
     }
 
-    SECTION("Move assignment (self-assignment)")
+    SUBCASE("Move assignment (self-assignment)")
     {
         auto savedPtr = intrusive1.get();
         IntrusivePtr<TestClass> intrusive2{intrusive1};
@@ -182,7 +183,7 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 1);
     }
 
-    SECTION("Move assignment to const")
+    SUBCASE("Move assignment to const")
     {
         auto savedPtr = intrusive1.get();
         auto intrusive2 = TestClass::createConst();
@@ -198,11 +199,11 @@ TEST_CASE("IntrusivePtr constructor from pointer", "[IntrusivePtr]")
     }
 }
 
-TEST_CASE("Intrusive ptr reset", "[IntrusivePtr]")
+TEST_CASE("Intrusive ptr reset")
 {
     TestClass::destructorCount = 0;
 
-    SECTION("Reset a valid pointer")
+    SUBCASE("Reset a valid pointer")
     {
         auto ptr = TestClass::create();
         ptr.reset();
@@ -210,7 +211,7 @@ TEST_CASE("Intrusive ptr reset", "[IntrusivePtr]")
         REQUIRE(ptr.get() == nullptr);
     }
 
-    SECTION("Reset a null pointer")
+    SUBCASE("Reset a null pointer")
     {
         IntrusivePtr<TestClass> ptr{};
         ptr.reset();
@@ -219,7 +220,7 @@ TEST_CASE("Intrusive ptr reset", "[IntrusivePtr]")
     }
 }
 
-TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
+TEST_CASE("Intrusive ptr swap")
 {
     TestClass::destructorCount = 0;
     auto intrusive1 = TestClass::create();
@@ -232,7 +233,7 @@ TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
 
     TestClass* raw1 = intrusive1.get();
 
-    SECTION("Member swap with valid pointer")
+    SUBCASE("Member swap with valid pointer")
     {
         auto intrusive2 = TestClass::create();
         TestClass* raw2 = intrusive2.get();
@@ -244,7 +245,7 @@ TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Free function swap with valid pointer")
+    SUBCASE("Free function swap with valid pointer")
     {
         auto intrusive2 = TestClass::create();
         TestClass* raw2 = intrusive2.get();
@@ -256,7 +257,7 @@ TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Member swap with null pointer")
+    SUBCASE("Member swap with null pointer")
     {
         IntrusivePtr<TestClass> intrusive2{};
         intrusive1.swap(intrusive2);
@@ -266,7 +267,7 @@ TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
         REQUIRE(intrusive2->refCount() == 2);
     }
 
-    SECTION("Free function swap with null pointer")
+    SUBCASE("Free function swap with null pointer")
     {
         IntrusivePtr<TestClass> intrusive2{};
         celestia::util::swap(intrusive1, intrusive2);
@@ -279,13 +280,13 @@ TEST_CASE("Intrusive ptr swap", "[IntrusivePtr]")
 
 TEST_CASE("Operator bool")
 {
-    SECTION("Operator bool on valid pointer")
+    SUBCASE("Operator bool on valid pointer")
     {
         auto ptr = TestClass::create();
         REQUIRE(ptr);
     }
 
-    SECTION("Operator bool on null pointer")
+    SUBCASE("Operator bool on null pointer")
     {
         IntrusivePtr<TestClass> ptr{};
         REQUIRE(!ptr);
@@ -408,3 +409,5 @@ TEST_CASE("Intrusive pointer relational operators")
     REQUIRE((nullptr >= intrusive2) == Ge()(nullptr, raw2));
     REQUIRE((nullptr >= constIntrusive2) == Ge()(nullptr, raw2));
 }
+
+TEST_SUITE_END();

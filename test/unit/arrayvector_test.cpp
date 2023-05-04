@@ -4,7 +4,7 @@
 
 #include <celutil/arrayvector.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
 namespace celutil = celestia::util;
 
@@ -77,7 +77,9 @@ InstanceTracker& InstanceTracker::operator=(InstanceTracker&& other) noexcept
 
 } // end unnamed namespace
 
-TEST_CASE("ArrayVector constructor", "[ArrayVector]")
+TEST_SUITE_BEGIN("ArrayVector");
+
+TEST_CASE("ArrayVector constructor")
 {
     celutil::ArrayVector<int, 3> vec;
     REQUIRE(vec.max_size() == 3);
@@ -90,7 +92,7 @@ TEST_CASE("ArrayVector constructor", "[ArrayVector]")
     REQUIRE(vec.crbegin() == vec.crend());
 }
 
-TEST_CASE("ArrayVector try_push_back", "[ArrayVector]")
+TEST_CASE("ArrayVector try_push_back")
 {
     celutil::ArrayVector<int, 3> vec;
     REQUIRE(vec.try_push_back(2));
@@ -117,7 +119,7 @@ TEST_CASE("ArrayVector try_push_back", "[ArrayVector]")
     REQUIRE(*(vec.data() + 2) == 5);
 }
 
-TEST_CASE("ArrayVector modify value", "[ArrayVector]")
+TEST_CASE("ArrayVector modify value")
 {
     celutil::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
@@ -129,7 +131,7 @@ TEST_CASE("ArrayVector modify value", "[ArrayVector]")
     REQUIRE(vec.size() == 2);
 }
 
-TEST_CASE("ArrayVector forward iterators", "[ArrayVector]")
+TEST_CASE("ArrayVector forward iterators")
 {
     celutil::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
@@ -142,7 +144,7 @@ TEST_CASE("ArrayVector forward iterators", "[ArrayVector]")
     REQUIRE(std::equal(vec.cbegin(), vec.cend(), result.cbegin(), result.cend()));
 }
 
-TEST_CASE("ArrayVector reverse iterators", "[ArrayVector]")
+TEST_CASE("ArrayVector reverse iterators")
 {
     celutil::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
@@ -155,7 +157,7 @@ TEST_CASE("ArrayVector reverse iterators", "[ArrayVector]")
     REQUIRE(std::equal(vec.crbegin(), vec.crend(), result.cbegin(), result.cend()));
 }
 
-TEST_CASE("ArrayVector clear", "[ArrayVector]")
+TEST_CASE("ArrayVector clear")
 {
     celutil::ArrayVector<InstanceTracker, 5> vec;
     InstanceTracker::counter = 0;
@@ -170,7 +172,7 @@ TEST_CASE("ArrayVector clear", "[ArrayVector]")
     REQUIRE(InstanceTracker::counter == 0);
 }
 
-TEST_CASE("ArrayVector pop_back", "[ArrayVector]")
+TEST_CASE("ArrayVector pop_back")
 {
     celutil::ArrayVector<InstanceTracker, 3> vec;
     InstanceTracker::counter = 0;
@@ -184,7 +186,7 @@ TEST_CASE("ArrayVector pop_back", "[ArrayVector]")
     REQUIRE(InstanceTracker::counter == 1);
 }
 
-TEST_CASE("ArrayVector resize", "[ArrayVector]")
+TEST_CASE("ArrayVector resize")
 {
     celutil::ArrayVector<InstanceTracker, 3> vec;
     InstanceTracker::counter = 0;
@@ -198,7 +200,7 @@ TEST_CASE("ArrayVector resize", "[ArrayVector]")
     REQUIRE(InstanceTracker::counter == 1);
 }
 
-TEST_CASE("ArrayVector erase", "[ArrayVector]")
+TEST_CASE("ArrayVector erase")
 {
     celutil::ArrayVector<InstanceTracker, 5> vec;
     InstanceTracker::counter = 0;
@@ -209,7 +211,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
     REQUIRE(vec.size() == 4);
     REQUIRE(InstanceTracker::counter == 4);
 
-    SECTION("Single element erase at beginning")
+    SUBCASE("Single element erase at beginning")
     {
         auto it = vec.erase(vec.cbegin());
         REQUIRE(it == vec.begin());
@@ -220,7 +222,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(vec[2].value() == 7);
     }
 
-    SECTION("Single element erase in middle")
+    SUBCASE("Single element erase in middle")
     {
         auto it = vec.erase(vec.cbegin() + 2);
         REQUIRE(it == vec.begin() + 2);
@@ -231,7 +233,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(vec[2].value() == 7);
     }
 
-    SECTION("Single element erase at end")
+    SUBCASE("Single element erase at end")
     {
         auto it = vec.erase(vec.cend() - 1);
         REQUIRE(it == vec.end());
@@ -242,7 +244,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(vec[2].value() == 5);
     }
 
-    SECTION("Multiple element erase at beginning")
+    SUBCASE("Multiple element erase at beginning")
     {
          auto it = vec.erase(vec.cbegin(), vec.cbegin() + 2);
          REQUIRE(it == vec.begin());
@@ -252,7 +254,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
          REQUIRE(vec[1].value() == 7);
     }
 
-    SECTION("Multiple element erase in middle")
+    SUBCASE("Multiple element erase in middle")
     {
         auto it = vec.erase(vec.cbegin() + 1, vec.cbegin() + 3);
         REQUIRE(it == vec.begin() + 1);
@@ -262,7 +264,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(vec[1].value() == 7);
     }
 
-    SECTION("Multiple element erase at end")
+    SUBCASE("Multiple element erase at end")
     {
         auto it = vec.erase(vec.cbegin() + 2, vec.cend());
         REQUIRE(it == vec.begin() + 2);
@@ -272,7 +274,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(vec[1].value() == 3);
     }
 
-    SECTION("Whole vector erase")
+    SUBCASE("Whole vector erase")
     {
         auto it = vec.erase(vec.cbegin(), vec.cend());
         REQUIRE(it == vec.begin());
@@ -282,7 +284,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
         REQUIRE(InstanceTracker::counter == 0);
     }
 
-    SECTION("Erase-remove idiom")
+    SUBCASE("Erase-remove idiom")
     {
         auto it = std::remove_if(vec.begin(), vec.end(),
                                  [](const InstanceTracker& n) { return n.value() % 3 == 2; });
@@ -294,7 +296,7 @@ TEST_CASE("ArrayVector erase", "[ArrayVector]")
     }
 }
 
-TEST_CASE("ArrayVector member swap", "[ArrayVector]")
+TEST_CASE("ArrayVector member swap")
 {
     celutil::ArrayVector<int, 3> a;
     a.try_push_back(2);
@@ -316,7 +318,7 @@ TEST_CASE("ArrayVector member swap", "[ArrayVector]")
     REQUIRE(b[1] == 3);
 }
 
-TEST_CASE("ArrayVector free function swap", "[ArrayVector]")
+TEST_CASE("ArrayVector free function swap")
 {
     celutil::ArrayVector<int, 3> a;
     a.try_push_back(2);
@@ -338,7 +340,7 @@ TEST_CASE("ArrayVector free function swap", "[ArrayVector]")
     REQUIRE(b[1] == 3);
 }
 
-TEST_CASE("ArrayVector operators", "[ArrayVector]")
+TEST_CASE("ArrayVector operators")
 {
     celutil::ArrayVector<int, 3> a1;
     a1.try_push_back(2);
@@ -360,3 +362,5 @@ TEST_CASE("ArrayVector operators", "[ArrayVector]")
     REQUIRE(b >= a1);
     REQUIRE(a1 >= a2);
 }
+
+TEST_SUITE_END();

@@ -1,8 +1,10 @@
 #include <celutil/winutil.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
-TEST_CASE("CurrentCPToWide", "[CurrentCPToWide]")
+TEST_SUITE_BEGIN("WinUtil");
+
+TEST_CASE("CurrentCPToWide")
 {
     REQUIRE(CurrentCPToWide("").empty() == true);
     REQUIRE(CurrentCPToWide("").length() == 0);
@@ -10,7 +12,7 @@ TEST_CASE("CurrentCPToWide", "[CurrentCPToWide]")
     REQUIRE(CurrentCPToWide("foo").length() == 3);
 }
 
-TEST_CASE("WideToCurrentCP", "[WideToCurrentCP]")
+TEST_CASE("WideToCurrentCP")
 {
     REQUIRE(WideToCurrentCP(L"").empty() == true);
     REQUIRE(WideToCurrentCP(L"").length() == 0);
@@ -18,7 +20,7 @@ TEST_CASE("WideToCurrentCP", "[WideToCurrentCP]")
     REQUIRE(WideToCurrentCP(L"foo").length() == 3);
 }
 
-TEST_CASE("WideToUTF8","[WideToUTF8]")
+TEST_CASE("WideToUTF8")
 {
     REQUIRE(WideToUTF8(L"").empty() == true);
     REQUIRE(WideToUTF8(L"").length() == 0);
@@ -30,7 +32,7 @@ TEST_CASE("WideToUTF8","[WideToUTF8]")
     REQUIRE(WideToUTF8(L"\u2079").length() == 3);
 }
 
-TEST_CASE("UTF8ToWide", "[UTF8ToWide]")
+TEST_CASE("UTF8ToWide")
 {
     REQUIRE(UTF8ToWide("").empty() == true);
     REQUIRE(UTF8ToWide("").length() == 0);
@@ -41,3 +43,5 @@ TEST_CASE("UTF8ToWide", "[UTF8ToWide]")
     REQUIRE(UTF8ToWide("\342\201\271") == L"\u2079");
     REQUIRE(UTF8ToWide("\342\201\271").length() == 1);
 }
+
+TEST_SUITE_END();

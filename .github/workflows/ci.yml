@@ -86,13 +86,6 @@ jobs:
       shell: pwsh
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} '--' /maxcpucount:2 /nologo
 
-    - name: Copy DLL for tests
-      shell: pwsh
-      working-directory: ${{github.workspace}}/build
-      run: |
-        Copy-Item src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
-        Copy-Item src\celestia\${{env.BUILD_TYPE}}\*.dll test\integration\${{env.BUILD_TYPE}}\
-
     - name: Test
       shell: pwsh
       working-directory: ${{github.workspace}}/build

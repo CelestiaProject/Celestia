@@ -1,42 +1,50 @@
+#include <string_view>
+
 #include <celutil/greek.h>
 
-#include <catch.hpp>
+#include <doctest.h>
 
-TEST_CASE("Greek", "[Greek]")
+using namespace std::string_view_literals;
+
+TEST_SUITE_BEGIN("Greek");
+
+TEST_CASE("Greek")
 {
-    SECTION("ReplaceGreekLetterAbbr")
+    SUBCASE("ReplaceGreekLetterAbbr")
     {
-        REQUIRE(ReplaceGreekLetterAbbr("XI") == "\316\276");
-        REQUIRE(ReplaceGreekLetterAbbr("XI12") == "\316\276\302\271\302\262");
-        REQUIRE(ReplaceGreekLetterAbbr("XI Foo") == "\316\276 Foo");
-        REQUIRE(ReplaceGreekLetterAbbr("XI12 Bar") == "\316\276\302\271\302\262 Bar");
+        REQUIRE(ReplaceGreekLetterAbbr("XI") == "\316\276"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("XI12") == "\316\276\302\271\302\262"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("XI Foo") == "\316\276 Foo"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("XI12 Bar") == "\316\276\302\271\302\262 Bar"sv);
 
-        REQUIRE(ReplaceGreekLetterAbbr("xi") == "xi");
-        REQUIRE(ReplaceGreekLetterAbbr("xi12") == "xi12");
-        REQUIRE(ReplaceGreekLetterAbbr("xi Foo") == "xi Foo");
-        REQUIRE(ReplaceGreekLetterAbbr("xi12 Bar") == "xi12 Bar");
+        REQUIRE(ReplaceGreekLetterAbbr("xi") == "xi"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("xi12") == "xi12"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("xi Foo") == "xi Foo"sv);
+        REQUIRE(ReplaceGreekLetterAbbr("xi12 Bar") == "xi12 Bar"sv);
 
-        REQUIRE(ReplaceGreekLetterAbbr("alpha") == "alpha");
+        REQUIRE(ReplaceGreekLetterAbbr("alpha") == "alpha"sv);
     }
 
-    SECTION("ReplaceGreekLetter")
+    SUBCASE("ReplaceGreekLetter")
     {
-        REQUIRE(ReplaceGreekLetter("XI") == "\316\276");
-        REQUIRE(ReplaceGreekLetter("XI12") == "\316\276\302\271\302\262");
-        REQUIRE(ReplaceGreekLetter("XI Foo") == "\316\276 Foo");
-        REQUIRE(ReplaceGreekLetter("XI12 Bar") == "\316\276\302\271\302\262 Bar");
+        REQUIRE(ReplaceGreekLetter("XI") == "\316\276"sv);
+        REQUIRE(ReplaceGreekLetter("XI12") == "\316\276\302\271\302\262"sv);
+        REQUIRE(ReplaceGreekLetter("XI Foo") == "\316\276 Foo"sv);
+        REQUIRE(ReplaceGreekLetter("XI12 Bar") == "\316\276\302\271\302\262 Bar"sv);
 
-        REQUIRE(ReplaceGreekLetter("xi") == "\316\276");
-        REQUIRE(ReplaceGreekLetter("xi12") == "\316\276\302\271\302\262");
-        REQUIRE(ReplaceGreekLetter("xi Foo") == "\316\276 Foo");
-        REQUIRE(ReplaceGreekLetter("xi12 Bar") == "\316\276\302\271\302\262 Bar");
+        REQUIRE(ReplaceGreekLetter("xi") == "\316\276"sv);
+        REQUIRE(ReplaceGreekLetter("xi12") == "\316\276\302\271\302\262"sv);
+        REQUIRE(ReplaceGreekLetter("xi Foo") == "\316\276 Foo"sv);
+        REQUIRE(ReplaceGreekLetter("xi12 Bar") == "\316\276\302\271\302\262 Bar"sv);
 
-        REQUIRE(ReplaceGreekLetter("alpha") == "\316\261");
+        REQUIRE(ReplaceGreekLetter("alpha") == "\316\261"sv);
     }
 
-    SECTION("GetCanonicalGreekAbbreviation")
+    SUBCASE("GetCanonicalGreekAbbreviation")
     {
-        REQUIRE(GetCanonicalGreekAbbreviation("xi") == "XI");
-        REQUIRE(GetCanonicalGreekAbbreviation("alpha") == "ALF");
+        REQUIRE(GetCanonicalGreekAbbreviation("xi") == "XI"sv);
+        REQUIRE(GetCanonicalGreekAbbreviation("alpha") == "ALF"sv);
     }
 }
+
+TEST_SUITE_END();
