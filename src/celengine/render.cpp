@@ -589,9 +589,9 @@ void Renderer::resize(int width, int height)
 
 float Renderer::calcPixelSize(float fovY, float windowHeight)
 {
-    if (getProjectionMode() == ProjectionMode::FisheyeMode)
-        return 2.0f / windowHeight;
-    return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
+    return (getProjectionMode() == ProjectionMode::FisheyeMode)
+        ? 2.0f / windowHeight
+        : 2.0f * tan(degToRad(fovY * 0.5f)) / static_cast<float>(windowHeight);
 }
 
 void Renderer::setFieldOfView(float _fov)
@@ -1544,11 +1544,7 @@ void Renderer::draw(const Observer& observer,
 
     // Set up the projection and modelview matrices.
     // We'll usethem for positioning star and planet labels.
-    float aspectRatio = getAspectRatio();
-    if (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-        m_projMatrix = Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, NEAR_DIST, FAR_DIST);
-    else
-        m_projMatrix = Perspective(fov, aspectRatio, NEAR_DIST, FAR_DIST);
+    buildProjectionMatrix(m_projMatrix, NEAR_DIST, FAR_DIST);
     m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
     m_MVPMatrix = m_projMatrix * m_modelMatrix;
 
@@ -4049,7 +4045,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     }
 
     if ((renderFlags & ShowEcliptic) != 0)
-        renderEclipticLine();
+        m_eclipticLineRenderer->render();
 }
 
 void Renderer::labelConstellations(const AsterismList& asterisms,
@@ -5309,18 +5305,14 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
         // Set up a perspective projection using the current interval's near and
         // far clip planes.
-        float aspectRatio = getAspectRatio();
         Matrix4f proj;
-        if (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-            proj = Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearPlaneDistance, farPlaneDistance);
-        else
-            proj = Perspective(fov, aspectRatio, nearPlaneDistance, farPlaneDistance);
+        buildProjectionMatrix(proj, nearPlaneDistance, farPlaneDistance);
         Matrices m = { &proj, &m_modelMatrix };
 
         setCurrentProjectionMatrix(proj);
 
         Frustum intervalFrustum(degToRad(fov),
-                                aspectRatio,
+                                getAspectRatio(),
                                 nearPlaneDistance,
                                 farPlaneDistance);
 
@@ -5446,8 +5438,10 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
 }
 
-void Renderer::renderEclipticLine()
+void Renderer::buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ)
 {
-    if ((renderFlags & ShowEcliptic) != 0)
-        m_eclipticLineRenderer->render();
+    float aspectRatio = getAspectRatio();
+    mat = (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+        ? celmath::Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearZ, farZ)
+        : celmath::Perspective(fov, aspectRatio, nearZ, farZ);
 }
