@@ -361,6 +361,8 @@ class Renderer
         m_projectionPtr = &m_projMatrix;
     }
 
+    void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ);
+
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
@@ -503,7 +505,6 @@ class Renderer
 
     void renderAsterisms(const Universe&, float, const Matrices&);
     void renderBoundaries(const Universe&, float, const Matrices&);
-    void renderEclipticLine();
     void renderCrosshair(float size, double tsec, const Color &color, const Matrices &m);
 
     void buildNearSystemsLists(const Universe &universe,
