@@ -40,8 +40,6 @@ public:
     Eigen::Vector3d getPosition() const;
     void setPosition(const Eigen::Vector3d&);
 
-    static void hsv2rgb( float*, float*, float*, float, float, float);
-
     virtual const char* getType() const = 0;
     virtual void setType(const std::string&) = 0;
     virtual std::string getDescription() const;
