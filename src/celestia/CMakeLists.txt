@@ -105,7 +105,15 @@ if (HAVE_MESHOPTIMIZER)
   target_link_libraries(celestia meshoptimizer::meshoptimizer)
 endif()
 
-install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
+if(WIN32)
+  install(TARGETS celestia RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS celestia RUNTIME_DEPENDENCIES
+    PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
+  )
+else()
+  install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
+endif()
 
 add_subdirectory(gtk)
 add_subdirectory(qt5)
