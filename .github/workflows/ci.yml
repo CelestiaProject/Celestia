@@ -26,13 +26,14 @@ jobs:
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = '69efe9cc2df0015f0bb2d37d55acde4a75c9a25b'
+        $vcpkgCommit = '7f52deab66689f912da6d04de105c457d8ba671e'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
         git fetch --depth=1 origin $vcpkgCommit
         git reset --hard $vcpkgCommit
         ./bootstrap-vcpkg.bat
-        Add-Content -Path 'triplets\${{matrix.platform}}-windows.cmake' `
-          -Value 'set(VCPKG_BUILD_TYPE "release")'
+        Get-ChildItem -Path 'triplets\*-windows*.cmake' | ForEach-Object {
+          Add-Content -Path $_ -Value 'set(VCPKG_BUILD_TYPE "release")'
+        }
         popd
 
     - name: Setup NuGet Credentials
@@ -52,7 +53,7 @@ jobs:
       run: |
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
           cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit `
-          qt5-base qtbase qt5compat
+          qt5-base qtbase qt5compat[core]
 
     - name: Checkout source code
       uses: actions/checkout@v3

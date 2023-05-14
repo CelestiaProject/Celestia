@@ -41,4 +41,13 @@ endif()
 
 install(TARGETS celestia-qt6 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+if(WIN32)
+  qt6_generate_deploy_app_script(TARGET celestia-qt6
+    OUTPUT_SCRIPT deploy-celestia-qt6
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    NO_TRANSLATIONS
+  )
+  install(SCRIPT "${deploy-celestia-qt6}")
+endif()
+
 add_subdirectory(data)
