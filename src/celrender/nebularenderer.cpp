@@ -63,6 +63,8 @@ NebulaRenderer::render() const
 {
     for (const auto &obj : m_objects)
         renderNebula(obj);
+
+    m_objects.clear();
 }
 
 void
