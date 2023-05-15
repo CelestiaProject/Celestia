@@ -75,6 +75,9 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
 
     dragHandler = createDragHandler(this, appCore);
     cursorVisible = true;
+
+    // We use glClear directly, so we don't need it called by Qt.
+    setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 }
 
 
