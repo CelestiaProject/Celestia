@@ -30,6 +30,7 @@ constexpr float CubeCornerToCenterDistance = 1.7320508075688772f;
 
 enum class DeepSkyObjectType
 {
+    Unknown,
     Galaxy,
     Globular,
     Nebula,
@@ -50,6 +51,8 @@ GetDSOType(const DeepSkyObject* dso)
 
     if (!strcmp(dso->getObjTypeName(), "opencluster"))
         return DeepSkyObjectType::OpenCluster;
+
+    return DeepSkyObjectType::Unknown;
 }
 
 float
@@ -142,6 +145,9 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         case DeepSkyObjectType::OpenCluster:
             b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
             openClusterRenderer->add(reinterpret_cast<OpenCluster*>(dso), relPos, b, nearZ, farZ);
+            break;
+        default:
+            // Unsupported DSO
             break;
         }
     } // renderFlags check
