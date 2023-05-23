@@ -70,7 +70,7 @@ public:
     std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
 
-    const char* getObjTypeName() const override;
+    DeepSkyObjectType getObjType() const override;
 
     int getFormId() const;
 

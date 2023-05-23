@@ -46,9 +46,9 @@ void Nebula::setGeometry(ResourceHandle _geometry)
     geometry = _geometry;
 }
 
-const char* Nebula::getObjTypeName() const
+DeepSkyObjectType Nebula::getObjType() const
 {
-    return "nebula";
+    return DeepSkyObjectType::Nebula;
 }
 
 

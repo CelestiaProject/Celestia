@@ -28,33 +28,6 @@ constexpr double enhance = 4.0;
 constexpr double pc10 = 32.6167; // 10 parsecs
 constexpr float CubeCornerToCenterDistance = 1.7320508075688772f;
 
-enum class DeepSkyObjectType
-{
-    Unknown,
-    Galaxy,
-    Globular,
-    Nebula,
-    OpenCluster
-};
-
-DeepSkyObjectType
-GetDSOType(const DeepSkyObject* dso)
-{
-    if (!strcmp(dso->getObjTypeName(), "galaxy"))
-        return DeepSkyObjectType::Galaxy;
-
-    if (!strcmp(dso->getObjTypeName(), "globular"))
-        return DeepSkyObjectType::Globular;
-
-    if (!strcmp(dso->getObjTypeName(), "nebula"))
-        return DeepSkyObjectType::Nebula;
-
-    if (!strcmp(dso->getObjTypeName(), "opencluster"))
-        return DeepSkyObjectType::OpenCluster;
-
-    return DeepSkyObjectType::Unknown;
-}
-
 float
 brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, float faintestMag)
 {
@@ -126,7 +99,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         }
 
         float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
-        switch (GetDSOType(dso))
+        switch (dso->getObjType())
         {
         case DeepSkyObjectType::Galaxy:
             // -19.04f == average over 10937 galaxies in galaxies.dsc.

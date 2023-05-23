@@ -94,9 +94,9 @@ std::string Galaxy::getDescription() const
     return fmt::sprintf(_("Galaxy (Hubble type: %s)"), getType());
 }
 
-const char* Galaxy::getObjTypeName() const
+DeepSkyObjectType Galaxy::getObjType() const
 {
-    return "galaxy";
+    return DeepSkyObjectType::Galaxy;
 }
 
 int Galaxy::getFormId() const

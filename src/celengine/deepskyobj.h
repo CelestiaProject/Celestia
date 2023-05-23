@@ -31,6 +31,14 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
+enum class DeepSkyObjectType
+{
+    Galaxy,
+    Globular,
+    Nebula,
+    OpenCluster,
+};
+
 class DeepSkyObject
 {
 public:
@@ -72,8 +80,7 @@ public:
     bool isClickable() const { return clickable; }
     void setClickable(bool _clickable) { clickable = _clickable; }
 
-
-    virtual const char* getObjTypeName() const = 0;
+    virtual DeepSkyObjectType getObjType() const = 0;
 
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
