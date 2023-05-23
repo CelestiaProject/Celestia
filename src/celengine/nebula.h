@@ -33,7 +33,7 @@ public:
     void setGeometry(ResourceHandle);
     ResourceHandle getGeometry() const;
 
-    const char* getObjTypeName() const override;
+    DeepSkyObjectType getObjType() const override;
 
     enum NebulaType
     {

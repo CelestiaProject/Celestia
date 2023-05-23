@@ -67,9 +67,9 @@ std::string Globular::getDescription() const
    return fmt::sprintf(_("Globular (core radius: %4.2f', King concentration: %4.2f)"), r_c, c);
 }
 
-const char* Globular::getObjTypeName() const
+DeepSkyObjectType Globular::getObjType() const
 {
-    return "globular";
+    return DeepSkyObjectType::Globular;
 }
 
 bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,

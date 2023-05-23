@@ -63,6 +63,23 @@ static const char* bodyTypeName(int cl)
     return "unknown";
 }
 
+static const char* dsoTypeName(DeepSkyObjectType dsoType)
+{
+    switch (dsoType)
+    {
+    case DeepSkyObjectType::Galaxy:
+        return "galaxy";
+    case DeepSkyObjectType::Globular:
+        return "globular";
+    case DeepSkyObjectType::Nebula:
+        return "nebula";
+    case DeepSkyObjectType::OpenCluster:
+        return "opencluster";
+    default:
+        return "unknown";
+    }
+}
+
 static celestia::MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 {
     using namespace celestia;
@@ -495,7 +512,7 @@ static int object_type(lua_State* l)
         tname = "star";
         break;
     case SelectionType::DeepSky:
-        tname = sel->deepsky()->getObjTypeName();
+        tname = dsoTypeName(sel->deepsky()->getObjType());
         break;
     case SelectionType::Location:
         tname = "location";
@@ -699,7 +716,7 @@ static int object_getinfo(lua_State* l)
     else if (sel->deepsky() != nullptr)
     {
         DeepSkyObject* deepsky = sel->deepsky();
-        const char* objTypeName = deepsky->getObjTypeName();
+        const char* objTypeName = dsoTypeName(deepsky->getObjType());
         celx.setTable("type", objTypeName);
 
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()

@@ -39,9 +39,9 @@ string OpenCluster::getDescription() const
 
 
 
-const char* OpenCluster::getObjTypeName() const
+DeepSkyObjectType OpenCluster::getObjType() const
 {
-    return "opencluster";
+    return DeepSkyObjectType::OpenCluster;
 }
 
 
