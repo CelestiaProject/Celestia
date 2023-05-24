@@ -1,5 +1,9 @@
 #pragma once
 
+#if __cplusplus >= 202002L
+#include <version>
+#endif
+
 #if __cpp_lib_math_constants >= 201907L
 #include <numbers>
 namespace celestia::numbers
