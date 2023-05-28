@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "binder.h"
 #include "buffer.h"
 
 namespace celestia::gl
@@ -27,7 +28,7 @@ Buffer::Buffer(Buffer::TargetHint targetHint) :
 Buffer::Buffer(Buffer::TargetHint targetHint, util::array_view<const void> data, Buffer::BufferUsage usage) :
     Buffer(targetHint)
 {
-    bind();
+    Binder::get().bind(*this);
     setData(data, usage);
 }
 
@@ -37,67 +38,73 @@ Buffer::Buffer(Buffer &&other) noexcept :
     m_targetHint(other.m_targetHint),
     m_usage(other.m_usage)
 {
-    other.m_bufferSize = 0;
-    other.m_id         = 0;
-    other.m_targetHint = TargetHint::Array;
-    other.m_usage      = BufferUsage::StaticDraw;
+    other.clear();
 }
 
 Buffer& Buffer::operator=(Buffer &&other) noexcept
 {
-    clear();
+    destroy();
 
     m_bufferSize = other.m_bufferSize;
     m_id         = other.m_id;
     m_targetHint = other.m_targetHint;
     m_usage      = other.m_usage;
 
-    other.m_bufferSize = 0;
-    other.m_id         = 0;
-    other.m_targetHint = TargetHint::Array;
-    other.m_usage      = BufferUsage::StaticDraw;
+    other.clear();
 
     return *this;
 }
 
 Buffer::~Buffer()
 {
-    clear();
+    destroy();
 }
 
 void
-Buffer::clear() noexcept
+Buffer::destroy() noexcept
 {
     if (m_id != 0 && !m_wrapped)
+    {
+        unbind(); // bind operations for wrapped buffers are performed externally
         glDeleteBuffers(1, &m_id);
+    }
     m_id = 0;
+}
+
+void
+Buffer::clear()
+{
+    m_bufferSize = 0;
+    m_id         = 0;
+    m_targetHint = TargetHint::Array;
+    m_usage      = BufferUsage::StaticDraw;
 }
 
 Buffer&
 Buffer::bind()
 {
-    glBindBuffer(GLenum(m_targetHint), m_id);
+    Binder::get().bind(*this);
     return *this;
 }
 
 void
 Buffer::unbind() const
 {
-    glBindBuffer(GLenum(m_targetHint), 0);
+    Binder::get().unbind(*this);
 }
 
 void
 Buffer::unbind(Buffer::TargetHint target)
 {
-    glBindBuffer(GLenum(target), 0);
+    Binder::get().unbind(target);
 }
 
 Buffer&
 Buffer::setData(util::array_view<const void> data, Buffer::BufferUsage usage)
 {
     m_bufferSize = data.size();
-    m_usage      = usage;
-    bind();
+    m_usage = usage;
+    Binder::get().bind(*this);
     glBufferData(GLenum(m_targetHint), m_bufferSize, data.data(), GLenum(m_usage));
     return *this;
 }

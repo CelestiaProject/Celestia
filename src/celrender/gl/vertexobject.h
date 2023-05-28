@@ -16,10 +16,10 @@
 #include <celengine/glsupport.h>
 #include <celutil/nocreate.h>
 
+#include "buffer.h"
+
 namespace celestia::gl
 {
-
-class Buffer;
 
 /**
  * @brief VertexObject
@@ -219,7 +219,7 @@ public:
     VertexObject& addVertexBuffer(const Buffer &buffer, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
 
     /**
-     * @brief Add index buffer.
+     * @brief Add index buffer. The buffer is not owned by VertexObject.
      *
      * @param buffer Buffer with index data.
      * @param offset Unused.
@@ -229,28 +229,53 @@ public:
      */
     VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t /*offset*/, IndexType type);
 
+    /**
+     * @brief Add index buffer and become its owner.
+     *
+     * @param buffer Buffer with index data.
+     * @param offset Unused.
+     * @param type Index type.
+     *
+     * @see @ref IndexType
+     */
+    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t /*offset*/, IndexType type);
+
 private:
-    void clear() noexcept;
-    void enableAttribArrays();
-    void disableAttribArrays();
+    //! Reset object to initial state
+    void clear();
+    //! Destroy underlying OpenGL resources
+    void destroy() noexcept;
+    //! Enable attribute attays and bind index and vertex buffers
+    void enableAttribArrays() const;
+    //! Disable attribute attays and unbind index and vertex buffers
+    void disableAttribArrays() const;
+    //! Bind the current VertexObject if supported or call enableAttribArrays()
     void bind();
-    void unbind();
+    //! Unbind the current VertexObject if supported or call disableAttribArrays()
+    void unbind() const noexcept;
 
     struct BufferDesc;
 
+    //! VAO arrays description
     std::vector<BufferDesc> m_bufferDesc;
 
-    Primitive m_primitive{ Primitive::Triangles };
-    int m_count{ 0 };
+    //! Index buffer
+    Buffer m_indexBuffer{ util::NoCreateT{} };
 
-    GLuint m_id{ 0 };
-    GLuint m_idxBufferId{ 0 };
-
+    //! Index type
     IndexType m_indexType{ IndexType::UnsignedShort };
 
+    //! GL primitive to draw
+    Primitive m_primitive{ Primitive::Triangles };
+
+    //! GL primitive count
+    int m_count{ 0 };
+
+    //! VAO Id (OpenGL name)
+    GLuint m_id{ 0 };
+
     /* additional variables to track the state */
-    GLuint m_currBuff{ 0 };
-    bool   m_initialized{ false };
+    bool m_initialized{ false };
 };
 
 inline VertexObject::Primitive
@@ -268,7 +293,7 @@ VertexObject::count() const
 inline bool
 VertexObject::isIndexed() const
 {
-    return m_idxBufferId != 0;
+    return m_indexBuffer.id() != 0;
 }
 
 inline GLuint
