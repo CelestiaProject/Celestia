@@ -4097,12 +4097,16 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 }
 
 static std::shared_ptr<TextureFont>
-LoadFontHelper(const Renderer* renderer, const fs::path& p)
+LoadFontHelper(const Renderer *renderer, const fs::path &p)
 {
     if (p.is_absolute())
         return LoadTextureFont(renderer, p);
 
-    return LoadTextureFont(renderer, fs::path("fonts") / p);
+    int index = 0;
+    int size = TextureFont::kDefaultSize;
+    fs::path path = LocaleFilename(ParseFontName(fs::path("fonts") / p, index, size));
+
+    return LoadTextureFont(renderer, path, index, size);
 }
 
 bool CelestiaCore::initRenderer()
@@ -4134,7 +4138,7 @@ bool CelestiaCore::initRenderer()
     }
 
     if (config->mainFont.empty())
-        font = LoadTextureFont(renderer, "fonts/DejaVuSans.ttf,12");
+        font = LoadFontHelper(renderer, "DejaVuSans.ttf,12");
     else
         font = LoadFontHelper(renderer, config->mainFont);
 

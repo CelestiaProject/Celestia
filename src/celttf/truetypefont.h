@@ -19,17 +19,22 @@ class TextureFont;
 std::shared_ptr<TextureFont>
 LoadTextureFont(const Renderer *, const fs::path &, int index = 0, int size = 0);
 
+fs::path
+ParseFontName(const fs::path &, int &, int &);
+
 struct TextureFontPrivate;
 class TextureFont
 {
- public:
+public:
+    constexpr static int kDefaultSize = 12;
+
     TextureFont(const Renderer *);
     TextureFont() = delete;
     ~TextureFont() = default;
     TextureFont(const TextureFont &) = delete;
-    TextureFont(TextureFont &&)      = delete;
+    TextureFont(TextureFont &&)      = default;
     TextureFont &operator=(const TextureFont &) = delete;
-    TextureFont &operator=(TextureFont &&) = delete;
+    TextureFont &operator=(TextureFont &&) = default;
 
     void setMVPMatrices(const Eigen::Matrix4f &p,
                         const Eigen::Matrix4f &m = Eigen::Matrix4f::Identity());
@@ -53,7 +58,7 @@ class TextureFont
     void unbind();
     void flush();
 
- private:
+private:
     std::unique_ptr<TextureFontPrivate> impl;
 
     friend std::shared_ptr<TextureFont>
