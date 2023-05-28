@@ -728,6 +728,8 @@ LoadFontFace(FT_Library ft, const fs::path &path, int index, int size, int dpi)
     return face;
 }
 
+} // namespace
+
 // temporary while no fontconfig support
 fs::path
 ParseFontName(const fs::path &filename, int &index, int &size)
@@ -748,8 +750,6 @@ ParseFontName(const fs::path &filename, int &index, int &size)
     }
     return filename;
 }
-
-} // namespace
 
 using FontCache = std::map<fs::path, std::weak_ptr<TextureFont>>;
 
@@ -774,7 +774,7 @@ LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size
     std::shared_ptr<TextureFont> ret = font.lock();
     if (ret == nullptr)
     {
-        int  psize    = 12; // default size if missing
+        int  psize    = TextureFont::kDefaultSize;
         int  pindex   = 0;
         auto nameonly = ParseFontName(filename, pindex, psize);
         auto face     = LoadFontFace(ftlib, nameonly,
