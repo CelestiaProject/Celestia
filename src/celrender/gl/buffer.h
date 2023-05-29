@@ -145,6 +145,9 @@ public:
     //! Bind the default buffer (0) to target. @see @ref TargetHint @ref bind()
     static void unbind(TargetHint target);
 
+    //! Wrap an existing OpenGL buffer. @see @ref TargetHint @ref Buffer(TargetHint)
+    static Buffer wrap(GLuint id, TargetHint targetHint = TargetHint::Array);
+
 private:
     void clear() noexcept;
 
@@ -152,6 +155,7 @@ private:
     GLuint      m_id{ 0 };
     TargetHint  m_targetHint{ TargetHint::Array };
     BufferUsage m_usage{ BufferUsage::StaticDraw };
+    bool        m_wrapped{ false };
 };
 
 inline GLuint
