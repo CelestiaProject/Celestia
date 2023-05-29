@@ -70,7 +70,7 @@ Buffer::~Buffer()
 void
 Buffer::clear() noexcept
 {
-    if (m_id != 0)
+    if (m_id != 0 && !m_wrapped)
         glDeleteBuffers(1, &m_id);
     m_id = 0;
 }
@@ -123,6 +123,15 @@ Buffer::setTargetHint(Buffer::TargetHint targetHint)
 {
     m_targetHint = targetHint;
     return *this;
+}
+
+Buffer
+Buffer::wrap(GLuint id, Buffer::TargetHint targetHint)
+{
+    Buffer bo(targetHint);
+    bo.m_id = id;
+    bo.m_wrapped = true;
+    return bo;
 }
 
 } // namespace celestia::gl
