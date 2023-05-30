@@ -12,7 +12,6 @@
 #include "buffer.h"
 #include "vertexobject.h"
 
-#define GLENUM(p) (static_cast<GLenum>(p))
 #define PTR(p) (reinterpret_cast<void*>(p))
 
 namespace
@@ -184,11 +183,11 @@ VertexObject::draw(VertexObject::Primitive primitive, int count, int first)
     if (isIndexed())
     {
         auto offset = static_cast<std::ptrdiff_t>(first * (m_indexType == IndexType::UnsignedShort ? sizeof(GLushort) : sizeof(GLuint)));
-        glDrawElements(GLENUM(primitive), count, GLENUM(m_indexType), PTR(offset));
+        glDrawElements(GLenum(primitive), count, GLenum(m_indexType), PTR(offset));
     }
     else
     {
-        glDrawArrays(GLENUM(primitive), first, count);
+        glDrawArrays(GLenum(primitive), first, count);
     }
 
     unbind();

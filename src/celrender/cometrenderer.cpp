@@ -68,7 +68,7 @@ CometRenderer::initGL()
 
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
-    m_vo = std::make_unique<gl::VertexObject>();
+    m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::TriangleStrip);
     m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
     m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
 
@@ -257,17 +257,17 @@ CometRenderer::render(const Body &body,
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
-    m_bo->bind().invalidateData().setData(
-        util::array_view<CometTailVertex>(m_vertices.get(), MaxVertices),
+    m_bo->invalidateData().setData(
+        util::array_view(m_vertices.get(), MaxVertices),
         gl::Buffer::BufferUsage::StreamDraw);
 
-    m_io->bind().invalidateData().setData(
-        util::array_view<ushort>(m_indices.get(), MaxIndices),
+    m_io->invalidateData().setData(
+        util::array_view(m_indices.get(), MaxIndices),
         gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);
     int count = IndexListCapacity(nTailSlices, nTailPoints);
-    m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, count);
+    m_vo->draw(count);
     glEnable(GL_CULL_FACE);
 }
 
