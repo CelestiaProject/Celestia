@@ -117,7 +117,7 @@ LineRenderer::create_vbo_lines()
     m_lnVO = std::make_unique<gl::VertexObject>();
     m_lnBO = std::make_unique<gl::Buffer>();
 
-    m_lnBO->bind().setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+    m_lnBO->setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
 
     m_lnVO->addVertexBuffer(
         *m_lnBO,
@@ -149,7 +149,7 @@ LineRenderer::setup_vbo_lines()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_lnBO->bind().invalidateData().setData(m_vertices);
+            m_lnBO->invalidateData().setData(m_vertices);
         }
     }
     else
@@ -164,7 +164,6 @@ LineRenderer::create_vbo_triangles()
 {
     m_trVO = std::make_unique<gl::VertexObject>();
     m_trBO = std::make_unique<gl::Buffer>();
-    m_trBO->bind();
 
     GLsizei                    stride;
     std::array<std::size_t, 4> offset;
@@ -241,7 +240,7 @@ LineRenderer::setup_vbo_triangles()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_trBO->bind().invalidateData();
+            m_trBO->invalidateData();
 
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {

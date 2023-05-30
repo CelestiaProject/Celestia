@@ -260,7 +260,7 @@ initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, const GlobularForm::BlobV
         globularVtx.push_back(vtx);
     }
 
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, util::array_view<GlobularVtx>(globularVtx));
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, globularVtx);
     vo = gl::VertexObject(gl::VertexObject::Primitive::Points);
     vo.addVertexBuffer(
         bo,

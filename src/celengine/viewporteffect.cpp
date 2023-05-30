@@ -145,7 +145,7 @@ void WarpMeshViewportEffect::initialize()
     vo = gl::VertexObject();
     bo = gl::Buffer();
 
-    bo.bind().setData(mesh->scopedDataForRendering(), gl::Buffer::BufferUsage::StaticDraw);
+    bo.setData(mesh->scopedDataForRendering(), gl::Buffer::BufferUsage::StaticDraw);
 
     vo.setCount(mesh->count());
     vo.addVertexBuffer(
