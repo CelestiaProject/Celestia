@@ -1,7 +1,9 @@
-#include <unicode/ustring.h>
-
 #include <celutil/flag.h>
 #include <celutil/unicode.h>
+
+#if !defined(HAVE_WIN_ICU_COMBINED_HEADER) && !defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#include <unicode/ustring.h>
+#endif
 
 #include <doctest.h>
 

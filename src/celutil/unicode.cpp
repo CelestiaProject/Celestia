@@ -8,9 +8,14 @@
 // of the License, or (at your option) any later version.
 
 #include <vector>
+#ifdef HAVE_WIN_ICU_COMBINED_HEADER
+#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#include <icui18n.h>
+#else
 #include <unicode/ubidi.h>
 #include <unicode/ushape.h>
 #include <unicode/ustring.h>
+#endif
 
 #include "flag.h"
 #include "unicode.h"

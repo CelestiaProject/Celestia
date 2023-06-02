@@ -66,6 +66,7 @@ option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
+option(USE_WIN_ICU          "Use Windows SDK's ICU implementation (Default: off)" OFF)
 
 if(APPLE AND ENABLE_QT5 AND ENABLE_QT6)
   # If someone figures out how to resolve the include path conflicts, this can be removed
@@ -85,10 +86,51 @@ if(USE_GLSL_STRUCTS)
 endif()
 
 if(USE_ICU)
-  find_package(ICU REQUIRED COMPONENTS uc)
-  include_directories(${ICU_INCLUDE_DIRS})
-  link_libraries(${ICU_LIBRARIES})
   add_definitions(-DUSE_ICU)
+  if(WIN32 AND USE_WIN_ICU)
+    # https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-
+    try_compile(
+      HAVE_WIN_ICU_1903
+      ${CMAKE_BINARY_DIR}
+      "${CMAKE_SOURCE_DIR}/checks/winicunew.cpp"
+      LINK_LIBRARIES icu
+    )
+    if(HAVE_WIN_ICU_1903)
+      add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER)
+      link_libraries("icu")
+      message(STATUS "Found ICU with combined header and combined lib")
+    else()
+      try_compile(
+        HAVE_WIN_ICU_1709
+        ${CMAKE_BINARY_DIR}
+        "${CMAKE_SOURCE_DIR}/checks/winicunew.cpp"
+        LINK_LIBRARIES icuuc icuin
+      )
+      if(HAVE_WIN_ICU_1709)
+        add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER)
+        link_libraries("icuuc" "icuin")
+        message(STATUS "Found ICU with combined header and separate libs")
+      else()
+        try_compile(
+          HAVE_WIN_ICU_1703
+          ${CMAKE_BINARY_DIR}
+          "${CMAKE_SOURCE_DIR}/checks/winicuold.cpp"
+          LINK_LIBRARIES icuuc icuin
+        )
+        if(HAVE_WIN_ICU_1703)
+          add_definitions(-DHAVE_WIN_ICU_SEPARATE_HEADERS)
+          link_libraries("icuuc" "icuin")
+          message(STATUS "Found ICU with separate headers and separate libs")
+        else()
+          message(FATAL_ERROR "Unable to find Windows SDK's ICU implementation")
+        endif()
+      endif()
+    endif()
+  else()
+    find_package(ICU REQUIRED COMPONENTS uc)
+    include_directories(${ICU_INCLUDE_DIRS})
+    link_libraries(${ICU_LIBRARIES})
+  endif()
 endif()
 
 if(USE_GTK3)

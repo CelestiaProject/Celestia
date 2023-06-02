@@ -11,7 +11,13 @@
 
 #include <vector>
 #include <string>
+#ifdef HAVE_WIN_ICU_COMBINED_HEADER
+#include <icu.h>
+#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#include <icucommon.h>
+#else
 #include <unicode/umachine.h>
+#endif
 
 namespace celestia::util
 {
