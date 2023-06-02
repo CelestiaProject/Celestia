@@ -52,7 +52,7 @@ jobs:
       shell: pwsh
       run: |
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
-          cspice eigen3 ffmpeg[x264] fmt freetype gettext icu libepoxy libjpeg-turbo libpng luajit `
+          cspice eigen3 ffmpeg[x264] fmt freetype gettext libepoxy libjpeg-turbo libpng luajit `
           qt5-base qtbase qt5compat[core]
 
     - name: Checkout source code
@@ -81,7 +81,8 @@ jobs:
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
-            -DUSE_ICU=ON
+            -DUSE_ICU=ON          `
+            -DUSE_WIN_ICU=OFF
 
     - name: Build
       shell: pwsh
