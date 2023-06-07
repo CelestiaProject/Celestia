@@ -55,6 +55,12 @@ enum ShaderVariableType
     Shader_Sampler2DShadow,
 };
 
+enum ShaderInOut
+{
+    Shader_In,
+    Shader_Out
+};
+
 constexpr std::string_view errorVertexShaderSource = R"glsl(
 attribute vec4 in_Position;\n
 void main(void)
@@ -640,7 +646,13 @@ DeclareUniform(std::string_view name, ShaderVariableType type)
 }
 
 std::string
-DeclareVarying(std::string_view name, ShaderVariableType type)
+DeclareInput(std::string_view name, ShaderVariableType type)
+{
+    return fmt::format("varying {} {};\n", ShaderTypeString(type), name);
+}
+
+std::string
+DeclareOutput(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("varying {} {};\n", ShaderTypeString(type), name);
 }
@@ -1343,9 +1355,11 @@ TextureSamplerDeclarations(const ShaderProperties& props)
 
 
 std::string
-TextureCoordDeclarations(const ShaderProperties& props)
+TextureCoordDeclarations(const ShaderProperties& props, ShaderInOut inOut)
 {
     std::string source;
+
+    auto declare = inOut == Shader_In ? DeclareInput : DeclareOutput;
 
     if (props.hasSharedTextureCoords())
     {
@@ -1358,29 +1372,29 @@ TextureCoordDeclarations(const ShaderProperties& props)
                               ShaderProperties::EmissiveTexture |
                               ShaderProperties::OverlayTexture))
         {
-            source += DeclareVarying("diffTexCoord", Shader_Vector2);
+            source += declare("diffTexCoord", Shader_Vector2);
         }
     }
     else
     {
         if (props.texUsage & ShaderProperties::DiffuseTexture)
-            source += DeclareVarying("diffTexCoord", Shader_Vector2);
+            source += declare("diffTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::NormalTexture)
-            source += DeclareVarying("normTexCoord", Shader_Vector2);
+            source += declare("normTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::SpecularTexture)
-            source += DeclareVarying("specTexCoord", Shader_Vector2);
+            source += declare("specTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::NightTexture)
-            source += DeclareVarying("nightTexCoord", Shader_Vector2);
+            source += declare("nightTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::EmissiveTexture)
-            source += DeclareVarying("emissiveTexCoord", Shader_Vector2);
+            source += declare("emissiveTexCoord", Shader_Vector2);
         if (props.texUsage & ShaderProperties::OverlayTexture)
-            source += DeclareVarying("overlayTexCoord", Shader_Vector2);
+            source += declare("overlayTexCoord", Shader_Vector2);
     }
 
     if (props.texUsage & ShaderProperties::ShadowMapTexture)
     {
-        source += DeclareVarying("shadowTexCoord0", Shader_Vector4);
-        source += DeclareVarying("cosNormalLightDir", Shader_Float);
+        source += declare("shadowTexCoord0", Shader_Vector4);
+        source += declare("cosNormalLightDir", Shader_Float);
     }
 
     return source;
@@ -1390,7 +1404,7 @@ std::string
 PointSizeDeclaration()
 {
     std::string source;
-    source += DeclareVarying("pointFade", Shader_Float);
+    source += DeclareOutput("pointFade", Shader_Float);
     source += DeclareUniform("pointScale", Shader_Float);
     source += DeclareAttribute("in_PointSize", Shader_Float);
     return source;
@@ -1935,7 +1949,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     source += DeclareUniform("eyePosition", Shader_Vector3);
 
-    source += TextureCoordDeclarations(props);
+    source += TextureCoordDeclarations(props, Shader_Out);
     source += DeclareUniform("textureOffset", Shader_Float);
 
     if (props.hasScattering())
@@ -1951,26 +1965,26 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += DeclareAttribute("in_Tangent", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += DeclareVarying(LightDir_tan(i), Shader_Vector3);
+            source += DeclareOutput(LightDir_tan(i), Shader_Vector3);
         }
 
         if (props.isViewDependent() &&
             props.lightModel != ShaderProperties::SpecularModel)
         {
-            source += DeclareVarying("eyeDir_tan", Shader_Vector3);
+            source += DeclareOutput("eyeDir_tan", Shader_Vector3);
         }
     }
     else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
-        source += DeclareVarying("diffFactors", Shader_Vector4);
-        source += DeclareVarying("normal", Shader_Vector3);
+        source += DeclareOutput("diffFactors", Shader_Vector4);
+        source += DeclareOutput("normal", Shader_Vector3);
     }
     else if (props.usesShadows())
     {
-        source += DeclareVarying("diffFactors", Shader_Vector4);
+        source += DeclareOutput("diffFactors", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += DeclareVarying("specFactors", Shader_Vector4);
+            source += DeclareOutput("specFactors", Shader_Vector4);
         }
     }
     else
@@ -1980,10 +1994,10 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += DeclareUniform("ambientColor", Shader_Vector3);
             source += DeclareUniform("opacity", Shader_Float);
         }
-        source += DeclareVarying("diff", Shader_Vector4);
+        source += DeclareOutput("diff", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += DeclareVarying("spec", Shader_Vector4);
+            source += DeclareOutput("spec", Shader_Vector4);
         }
     }
 
@@ -1999,20 +2013,20 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     // Miscellaneous lighting values
     if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
-        source += DeclareVarying("totalLight", Shader_Float);
+        source += DeclareOutput("totalLight", Shader_Float);
     }
 
     if (props.hasScattering())
     {
-        //source += DeclareVarying("scatterIn", Shader_Vector3);
-        source += DeclareVarying("scatterEx", Shader_Vector3);
-        source += DeclareVarying("scatterColor", Shader_Vector3);
+        //source += DeclareOutput("scatterIn", Shader_Vector3);
+        source += DeclareOutput("scatterEx", Shader_Vector3);
+        source += DeclareOutput("scatterColor", Shader_Vector3);
     }
 
     // Shadow parameters
     if (props.hasEclipseShadows())
     {
-        source += DeclareVarying("position_obj", Shader_Vector3);
+        source += DeclareOutput("position_obj", Shader_Vector3);
     }
 
     if (props.hasRingShadows())
@@ -2021,7 +2035,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += DeclareUniform("ringRadius", Shader_Float);
         source += DeclareUniform("ringPlane", Shader_Vector4);
         source += DeclareUniform("ringCenter", Shader_Vector3);
-        source += DeclareVarying("ringShadowTexCoord", Shader_Vector4);
+        source += DeclareOutput("ringShadowTexCoord", Shader_Vector4);
     }
 
     if (props.hasCloudShadows())
@@ -2032,7 +2046,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         {
             if (props.hasCloudShadowForLight(i))
             {
-                source += DeclareVarying(CloudShadowTexCoord(i), Shader_Vector2);
+                source += DeclareOutput(CloudShadowTexCoord(i), Shader_Vector2);
             }
         }
     }
@@ -2297,7 +2311,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
     source += TextureSamplerDeclarations(props);
-    source += TextureCoordDeclarations(props);
+    source += TextureCoordDeclarations(props, Shader_In);
 
     // Declare lighting parameters
     if (props.usesTangentSpaceLighting())
@@ -2310,12 +2324,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             {
                 // Specular model is sort of a hybrid: all the view-dependent lighting is
                 // handled in the vertex shader, and the fragment shader is view-independent
-                source += DeclareVarying("specFactors", Shader_Vector4);
+                source += DeclareInput("specFactors", Shader_Vector4);
                 source += "vec4 spec = vec4(0.0);\n";
             }
             else
             {
-                source += DeclareVarying("eyeDir_tan", Shader_Vector3);  // tangent space eye vector
+                source += DeclareInput("eyeDir_tan", Shader_Vector3);  // tangent space eye vector
                 source += "vec4 spec = vec4(0.0);\n";
                 source += DeclareUniform("shininess", Shader_Float);
             }
@@ -2326,7 +2340,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += DeclareVarying(LightDir_tan(i), Shader_Vector3);
+            source += DeclareInput(LightDir_tan(i), Shader_Vector3);
             source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
             if (props.hasSpecular())
             {
@@ -2342,8 +2356,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += DeclareUniform("ambientColor", Shader_Vector3);
         source += DeclareUniform("opacity", Shader_Float);
-        source += DeclareVarying("diffFactors", Shader_Vector4);
-        source += DeclareVarying("normal", Shader_Vector3);
+        source += DeclareInput("diffFactors", Shader_Vector4);
+        source += DeclareInput("normal", Shader_Vector3);
         source += "vec4 spec = vec4(0.0);\n";
         source += DeclareUniform("shininess", Shader_Float);
 
@@ -2357,10 +2371,10 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += DeclareUniform("ambientColor", Shader_Vector3);
         source += DeclareUniform("opacity", Shader_Float);
-        source += DeclareVarying("diffFactors", Shader_Vector4);
+        source += DeclareInput("diffFactors", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += DeclareVarying("specFactors", Shader_Vector4);
+            source += DeclareInput("specFactors", Shader_Vector4);
             source += "vec4 spec = vec4(0.0);\n";
         }
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -2372,32 +2386,32 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
     else
     {
-        source += DeclareVarying("diff", Shader_Vector4);
+        source += DeclareInput("diff", Shader_Vector4);
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
-            source += DeclareVarying("spec", Shader_Vector4);
+            source += DeclareInput("spec", Shader_Vector4);
         }
     }
 
     if (props.hasScattering())
     {
-        //source += DeclareVarying("scatterIn", Shader_Vector3);
-        source += DeclareVarying("scatterEx", Shader_Vector3);
-        source += DeclareVarying("scatterColor", Shader_Vector3);
+        //source += DeclareInput("scatterIn", Shader_Vector3);
+        source += DeclareInput("scatterEx", Shader_Vector3);
+        source += DeclareInput("scatterColor", Shader_Vector3);
     }
 
     if ((props.texUsage & ShaderProperties::NightTexture))
     {
         if (VSComputesColorSum(props))
         {
-            source += DeclareVarying("totalLight", Shader_Float);
+            source += DeclareInput("totalLight", Shader_Float);
         }
     }
 
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
-        source += DeclareVarying("position_obj", Shader_Vector3);
+        source += DeclareInput("position_obj", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
@@ -2413,7 +2427,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.hasRingShadows())
     {
         source += DeclareUniform("ringTex", Shader_Sampler2D);
-        source += DeclareVarying("ringShadowTexCoord", Shader_Vector4);
+        source += DeclareInput("ringShadowTexCoord", Shader_Vector4);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             if (props.hasRingShadowForLight(i))
@@ -2427,11 +2441,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += DeclareUniform("cloudShadowTex", Shader_Sampler2D);
         for (unsigned int i = 0; i < props.nLights; i++)
-            source += DeclareVarying(CloudShadowTexCoord(i), Shader_Vector2);
+            source += DeclareInput(CloudShadowTexCoord(i), Shader_Vector2);
     }
 
     if (props.usePointSize())
-        source += DeclareVarying("pointFade", Shader_Float);
+        source += DeclareInput("pointFade", Shader_Float);
 
     if (props.hasShadowMap())
     {
@@ -2713,15 +2727,15 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
 
-    source += DeclareVarying("diffFactors", Shader_Vector4);
+    source += DeclareOutput("diffFactors", Shader_Vector4);
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareOutput("diffTexCoord", Shader_Vector2);
 
     if (props.shadowCounts != 0)
     {
-        source += DeclareVarying("position_obj", Shader_Vector3);
-        source += DeclareVarying("shadowDepths", Shader_Vector4);
+        source += DeclareOutput("position_obj", Shader_Vector3);
+        source += DeclareOutput("shadowDepths", Shader_Vector4);
     }
 
     source += "\nvoid main(void)\n{\n";
@@ -2770,18 +2784,18 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     for (unsigned int i = 0; i < props.nLights; i++)
         source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
 
-    source += DeclareVarying("diffFactors", Shader_Vector4);
+    source += DeclareInput("diffFactors", Shader_Vector4);
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.hasEclipseShadows())
     {
-        source += DeclareVarying("position_obj", Shader_Vector3);
-        source += DeclareVarying("shadowDepths", Shader_Vector4);
+        source += DeclareInput("position_obj", Shader_Vector3);
+        source += DeclareInput("shadowDepths", Shader_Vector4);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
@@ -2852,14 +2866,14 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     source += DeclareLights(props);
 
-    source += DeclareVarying("position_obj", Shader_Vector3);
+    source += DeclareOutput("position_obj", Shader_Vector3);
     if (props.hasEclipseShadows())
     {
-        source += DeclareVarying("shadowDepths", Shader_Vector4);
+        source += DeclareOutput("shadowDepths", Shader_Vector4);
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareOutput("diffTexCoord", Shader_Vector2);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
@@ -2905,17 +2919,17 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     source += DeclareLights(props);
 
     source += DeclareUniform("eyePosition", Shader_Vector3);
-    source += DeclareVarying("position_obj", Shader_Vector3);
+    source += DeclareInput("position_obj", Shader_Vector3);
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += DeclareVarying("diffTexCoord", Shader_Vector2);
+        source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
     if (props.hasEclipseShadows())
     {
-        source += DeclareVarying("shadowDepths", Shader_Vector4);
+        source += DeclareInput("shadowDepths", Shader_Vector4);
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
@@ -3012,11 +3026,11 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += ScatteringConstantDeclarations(props);
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        source += DeclareVarying(ScatteredColor(i), Shader_Vector3);
+        source += DeclareOutput(ScatteredColor(i), Shader_Vector3);
     }
 
-    source += DeclareVarying("scatterEx", Shader_Vector3);
-    source += DeclareVarying("eyeDir_obj", Shader_Vector3);
+    source += DeclareOutput("scatterEx", Shader_Vector3);
+    source += DeclareOutput("eyeDir_obj", Shader_Vector3);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
@@ -3049,8 +3063,8 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     std::string source(VersionHeader);
     source += CommonHeader;
 
-    source += DeclareVarying("scatterEx", Shader_Vector3);
-    source += DeclareVarying("eyeDir_obj", Shader_Vector3);
+    source += DeclareInput("scatterEx", Shader_Vector3);
+    source += DeclareInput("eyeDir_obj", Shader_Vector3);
 
     // Scattering constants
     source += DeclareUniform("mieK", Shader_Float);
@@ -3067,7 +3081,7 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 #ifndef USE_GLSL_STRUCTS
         source += DeclareUniform(LightProperty(i, "direction"), Shader_Vector3);
 #endif
-        source += DeclareVarying(ScatteredColor(i), Shader_Vector3);
+        source += DeclareInput(ScatteredColor(i), Shader_Vector3);
     }
 
     source += "\nvoid main(void)\n{\n";
@@ -3125,8 +3139,8 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     if (props.usePointSize())
         source += PointSizeDeclaration();
 
-    source += DeclareVarying("v_Color", Shader_Vector4);
-    source += DeclareVarying("v_TexCoord0", Shader_Vector2);
+    source += DeclareOutput("v_Color", Shader_Vector4);
+    source += DeclareOutput("v_TexCoord0", Shader_Vector2);
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
         source += LineDeclaration();
@@ -3184,11 +3198,11 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     if (props.usePointSize())
     {
-        source += DeclareVarying("pointFade", Shader_Float);
+        source += DeclareInput("pointFade", Shader_Float);
     }
 
-    source += DeclareVarying("v_Color", Shader_Vector4);
-    source += DeclareVarying("v_TexCoord0", Shader_Vector2);
+    source += DeclareInput("v_Color", Shader_Vector4);
+    source += DeclareInput("v_TexCoord0", Shader_Vector2);
 
     // Begin main()
     source += "\nvoid main(void)\n{\n";
@@ -3248,12 +3262,12 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     if (props.usePointSize())
         source << PointSizeDeclaration();
 
-     source << DeclareVarying("v_Color", Shader_Vector4);
+     source << DeclareOutput("v_Color", Shader_Vector4);
 
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
-        source << DeclareVarying("position_obj", Shader_Vector3);
+        source << DeclareOutput("position_obj", Shader_Vector3);
     }
 
     if (props.texUsage & ShaderProperties::LineAsTriangles)
@@ -3319,7 +3333,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     if (props.usePointSize())
     {
-        source << DeclareVarying("pointFade", Shader_Float);
+        source << DeclareInput("pointFade", Shader_Float);
     }
 
     if (props.usesShadows())
@@ -3334,7 +3348,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
-        source << DeclareVarying("position_obj", Shader_Vector3);
+        source << DeclareInput("position_obj", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
@@ -3347,7 +3361,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         }
     }
 
-    source << DeclareVarying("v_Color", Shader_Vector4);
+    source << DeclareInput("v_Color", Shader_Vector4);
 
     // Begin main()
     source << "\nvoid main(void)\n{\n";
