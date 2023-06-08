@@ -115,7 +115,6 @@ else()
   install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
 endif()
 
-add_subdirectory(gtk)
 add_subdirectory(qt5)
 add_subdirectory(qt6)
 add_subdirectory(sdl)

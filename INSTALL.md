@@ -113,18 +113,16 @@ Clang 3.3 or later), CMake, GNU Make or Ninja.
 
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
-Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, libavif, glu.
+Optional packages are gettext, Qt5, sdl2, ffmpeg, libavif, glu.
 
 For example on modern Debian-derived system you need to install the following
 packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
-libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
-libgtkglext1-dev to build with legacy Gtk2 interface; libgtk3.0-dev to build
-Gtk3 interface, or libsdl2-dev to build SDL interface. libavcodec-dev,
-libavformat-dev, libavutil-dev and libswscale-dev are required to build with
-video capture support. libavif-dev is required to build to AVIF texture
-support.
+libqt5opengl5-dev if you want to build with Qt5 interface;  or libsdl2-dev to
+build SDL interface. libavcodec-dev, libavformat-dev, libavutil-dev and
+libswscale-dev are required to build with video capture support. libavif-dev
+is required to build to AVIF texture support.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
@@ -137,14 +135,11 @@ make
 sudo make install
 ```
 
-[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", or "`SDL`"
+[*] `INTERFACE` must be replaced with one of "`QT`", or "`SDL`"
 
 Four interfaces are available for Celestia on Unix-like systems:
 - SDL: minimal interface, barebone Celestia core with no toolbar or menu...
        Disabled by default.
-- GTK: A full interface with minimal dependencies, adds a menu, a configuration
-       dialog some other utilities. Legacy interface, may lack some new
-       features. Disabled by default.
 - QT5: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities, bookmarks... A preferred option. Enabled by
        default, No need to pass -DENABLE_QT5=ON.
@@ -160,14 +155,6 @@ preferred.
 To check wether your Celestia has been compiled with Lua support, go to File
 -> Open. If you have '*.cel *.celx' in the filter box, then Lua is available
 otherwise the filter will contain only '*.cel'.
-
-The GtkGLExt widget that is required in order to build Celestia with Gtk+ may
-be downloaded from http://gtkglext.sf.net. Note that depending in your
-distribution you may also need other packages containing various files needed
-by the build process. For instance, to build under SUSE Linux, you will also
-need to have the gtk-devel package installed. GtkGLExt widget support is
-optional and own EGL-based implementation of GL widget can be used instead.
-It also required only if Gtk2 used, with Gtk3 own implementation used always.
 
 Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/celestia, but you may specify a new location with the
@@ -355,7 +342,6 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_CELX          | bool | ON      | Enable Lua scripting support
 | ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
 | ENABLE_NLS           | bool | ON      | Enable interface translation
-| ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
 | ENABLE_QT5           | bool | ON      | Build Qt5 frontend
 | ENABLE_QT6           | bool | ON      | Build Qt6 frontend
 | ENABLE_SDL           | bool | OFF     | Build SDL frontend
@@ -365,9 +351,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_MINIAUDIO     | bool | OFF     | Support audio playback using miniaudio
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
-| USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
 | USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
-| USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
 | USE_GLSL_STRUCTS     | bool | OFF     | Use structs in GLSL
 | USE_ICU              | bool | OFF     | Use ICU for UTF8 decoding for text rendering
 
@@ -376,7 +360,6 @@ Notes:
    on Windows depending on OS type (32 or 64 bit) and build configuration.
  \*\* Ignored on Windows systems.
  \*\*\* Ignored on Unix-like systems.
- `USE_GTK3` requires `ENABLE_GTK`
 
 
 Parameters of type "bool" accept ON or OFF value. Parameters of type "path"
@@ -388,8 +371,6 @@ On Windows systems two additonal options are supported:
 - `CMAKE_TOOLCHAIN_FILE` - location of vcpkg.cmake if vcpkg is used.
 
 Please note that not all options are compatible:
-- `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
-  be disabled if any of this is set.
 - `ENABLE_GLES` is not compatible with `ENABLE_QT5` or `ENABLE_QT6` if your Qt
   installation doesn't support OpenGL ES.
 - `ENABLE_QT5` and `ENABLE_QT6` are not compatible on Apple systems due to
@@ -426,6 +407,5 @@ Here's the table which provides executable file names accordingly to interface:
 |-----------|----------------|
 | Qt5       | celestia-qt5
 | Qt6       | celestia-qt6
-| GTK       | celestia-gtk
 | SDL       | celestia-sdl
 | WIN       | celestia-win

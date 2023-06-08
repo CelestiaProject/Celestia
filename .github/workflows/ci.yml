@@ -121,7 +121,6 @@ jobs:
         - os: ubuntu-20.04
           avif: OFF     # Not supported on Ubuntu20.04
           gles: ON
-          gtk3: ON
           minaudio: ON
           wayland: ON
           icu: ON
@@ -129,7 +128,6 @@ jobs:
         - os: ubuntu-22.04
           avif: ON
           gles: ON
-          gtk3: ON
           minaudio: ON
           wayland: ON
           icu: ON
@@ -149,7 +147,6 @@ jobs:
                             libjpeg-dev \
                             libpng-dev \
                             libglu1-mesa-dev \
-                            libgtk-3-dev \
                             libfreetype6-dev \
                             libsdl2-dev \
                             libluajit-5.1-dev \
@@ -180,8 +177,6 @@ jobs:
               -DENABLE_TOOLS=OFF                        \
               -DENABLE_TESTS=ON                         \
               -DENABLE_SDL=ON                           \
-              -DENABLE_GTK=ON                           \
-              -DUSE_GTK3=${{matrix.config.gtk3}}        \
               -DENABLE_QT5=ON                           \
               -DENABLE_QT6=${{matrix.config.qt6}}       \
               -DUSE_WAYLAND=${{matrix.config.wayland}}  \
@@ -207,10 +202,8 @@ jobs:
       matrix:
         config:
         - qt: Qt5
-          gtk: ON
           sdl: ON
         - qt: Qt6
-          gtk: OFF
           sdl: OFF
     runs-on: macos-latest
     steps:
@@ -233,9 +226,6 @@ jobs:
           brew install qt@5
         else
           brew install qt@6
-        fi
-        if [ "${{matrix.config.gtk}}" = "ON" ]; then
-          brew install gtk+ gtkglext
         fi
         if [ "${{matrix.config.sdl}}" = "ON" ]; then
           brew install sdl2
@@ -260,8 +250,6 @@ jobs:
               -DENABLE_TOOLS=OFF                  \
               -DENABLE_TESTS=ON                   \
               -DENABLE_SDL=${{matrix.config.sdl}} \
-              -DENABLE_GTK=${{matrix.config.gtk}} \
-              -DUSE_GTK3=OFF                      \
               -DENABLE_QT5=${UseQt5:OFF}          \
               -DENABLE_QT6=${UseQt6:OFF}          \
               -DUSE_WAYLAND=OFF                   \
@@ -291,7 +279,6 @@ jobs:
                             freetype-devel \
                             SDL2-devel \
                             lua-devel \
-                            gtk3-devel \
                             qt5-qtbase-devel \
                             qt5-qttools \
                             gettext-devel \
@@ -314,8 +301,6 @@ jobs:
               -DENABLE_TOOLS=ON               \
               -DENABLE_TESTS=ON               \
               -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
               -DENABLE_QT5=ON                 \
               -DENABLE_QT6=OFF                \
               -DENABLE_FFMPEG=OFF             \
@@ -373,7 +358,6 @@ jobs:
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=OFF             \
               -DENABLE_SDL=ON                \
-              -DENABLE_GTK=OFF               \
               -DENABLE_QT5=ON                \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_MINIAUDIO=ON          \
@@ -387,7 +371,7 @@ jobs:
           -Dsonar.organization=celestiaproject                          \
           -Dsonar.projectKey=CelestiaProject_Celestia                   \
           -Dsonar.sources=src/                                          \
-          -Dsonar.exclusions=src/celestia/win32/**,src/celestia/gtk/**,src/celutil/r128.h,src/**/*.inc \
+          -Dsonar.exclusions=src/celestia/win32/**,src/celutil/r128.h,src/**/*.inc \
           -Dsonar.test.exclusions=test/**                               \
           -Dsonar.tests=test/
       env:
