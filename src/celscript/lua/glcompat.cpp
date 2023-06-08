@@ -542,7 +542,7 @@ void fpcTexCoord2f(float x, float y) noexcept
     PushTexCoord(x, y);
 }
 
-void gluLookAt(float ix, float iy, float iz, float cx, float cy, float cz, float ux, float uy, float uz) noexcept
+void fpcLookAt(float ix, float iy, float iz, float cx, float cy, float cz, float ux, float uy, float uz) noexcept
 {
     Eigen::Vector3f forward(cx - ix, cy - iy, cz - iz);
     forward.normalize();
