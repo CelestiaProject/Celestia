@@ -272,19 +272,19 @@ class CelestiaGLProgram
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
 
-    FloatShaderParameter floatParam(const std::string&);
-    IntegerShaderParameter intParam(const std::string&);
-    IntegerShaderParameter samplerParam(const std::string&);
-    Vec3ShaderParameter vec3Param(const std::string&);
-    Vec4ShaderParameter vec4Param(const std::string&);
-    Mat3ShaderParameter mat3Param(const std::string&);
-    Mat4ShaderParameter mat4Param(const std::string&);
+    FloatShaderParameter floatParam(const char*);
+    IntegerShaderParameter intParam(const char*);
+    IntegerShaderParameter samplerParam(const char*);
+    Vec3ShaderParameter vec3Param(const char*);
+    Vec4ShaderParameter vec4Param(const char*);
+    Mat3ShaderParameter mat3Param(const char*);
+    Mat4ShaderParameter mat4Param(const char*);
 
     Mat4ShaderParameter ModelViewMatrix;
     Mat4ShaderParameter ProjectionMatrix;
     Mat4ShaderParameter MVPMatrix;
 
-    int attribIndex(const std::string&) const;
+    int attribIndex(const char*) const;
 
  private:
     void initCommonParameters();
