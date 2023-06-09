@@ -3575,57 +3575,57 @@ CelestiaGLProgram::~CelestiaGLProgram()
 
 
 FloatShaderParameter
-CelestiaGLProgram::floatParam(const std::string& paramName)
+CelestiaGLProgram::floatParam(const char *paramName)
 {
-    return FloatShaderParameter(program->getID(), paramName.c_str());
+    return FloatShaderParameter(program->getID(), paramName);
 }
 
 
 IntegerShaderParameter
-CelestiaGLProgram::intParam(const std::string& paramName)
+CelestiaGLProgram::intParam(const char *paramName)
 {
-    return IntegerShaderParameter(program->getID(), paramName.c_str());
+    return IntegerShaderParameter(program->getID(), paramName);
 }
 
 IntegerShaderParameter
-CelestiaGLProgram::samplerParam(const std::string& paramName)
+CelestiaGLProgram::samplerParam(const char *paramName)
 {
-    return IntegerShaderParameter(program->getID(), paramName.c_str());
+    return IntegerShaderParameter(program->getID(), paramName);
 }
 
 
 Vec3ShaderParameter
-CelestiaGLProgram::vec3Param(const std::string& paramName)
+CelestiaGLProgram::vec3Param(const char *paramName)
 {
-    return Vec3ShaderParameter(program->getID(), paramName.c_str());
+    return Vec3ShaderParameter(program->getID(), paramName);
 }
 
 
 Vec4ShaderParameter
-CelestiaGLProgram::vec4Param(const std::string& paramName)
+CelestiaGLProgram::vec4Param(const char *paramName)
 {
-    return Vec4ShaderParameter(program->getID(), paramName.c_str());
+    return Vec4ShaderParameter(program->getID(), paramName);
 }
 
 
 Mat3ShaderParameter
-CelestiaGLProgram::mat3Param(const std::string& paramName)
+CelestiaGLProgram::mat3Param(const char *paramName)
 {
-    return Mat3ShaderParameter(program->getID(), paramName.c_str());
+    return Mat3ShaderParameter(program->getID(), paramName);
 }
 
 
 Mat4ShaderParameter
-CelestiaGLProgram::mat4Param(const std::string& paramName)
+CelestiaGLProgram::mat4Param(const char *paramName)
 {
-    return Mat4ShaderParameter(program->getID(), paramName.c_str());
+    return Mat4ShaderParameter(program->getID(), paramName);
 }
 
 
 int
-CelestiaGLProgram::attribIndex(const std::string& paramName) const
+CelestiaGLProgram::attribIndex(const char *paramName) const
 {
-    return glGetAttribLocation(program->getID(), paramName.c_str());
+    return glGetAttribLocation(program->getID(), paramName);
 }
 
 void
@@ -3644,29 +3644,29 @@ CelestiaGLProgram::initParameters()
     initCommonParameters();
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        lights[i].direction  = vec3Param(LightProperty(i, "direction"));
-        lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse"));
-        lights[i].specular   = vec3Param(LightProperty(i, "specular"));
-        lights[i].halfVector = vec3Param(LightProperty(i, "halfVector"));
+        lights[i].direction  = vec3Param(LightProperty(i, "direction").c_str());
+        lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse").c_str());
+        lights[i].specular   = vec3Param(LightProperty(i, "specular").c_str());
+        lights[i].halfVector = vec3Param(LightProperty(i, "halfVector").c_str());
         if (props.texUsage & ShaderProperties::NightTexture)
-            lights[i].brightness = floatParam(LightProperty(i, "brightness"));
+            lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
 
-        fragLightColor[i] = vec3Param(FragLightProperty(i, "color"));
-        fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor"));
+        fragLightColor[i] = vec3Param(FragLightProperty(i, "color").c_str());
+        fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor").c_str());
         if (props.texUsage & ShaderProperties::NightTexture)
-            fragLightBrightness[i] = floatParam(FragLightProperty(i, "brightness"));
+            fragLightBrightness[i] = floatParam(FragLightProperty(i, "brightness").c_str());
         if (props.hasRingShadowForLight(i))
-            ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i));
+            ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i).c_str());
         for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
         {
             shadows[i][j].texGenS =
-                vec4Param(IndexedParameter("shadowTexGenS", i, j));
+                vec4Param(IndexedParameter("shadowTexGenS", i, j).c_str());
             shadows[i][j].texGenT =
-                vec4Param(IndexedParameter("shadowTexGenT", i, j));
+                vec4Param(IndexedParameter("shadowTexGenT", i, j).c_str());
             shadows[i][j].falloff =
-                floatParam(IndexedParameter("shadowFalloff", i, j));
+                floatParam(IndexedParameter("shadowFalloff", i, j).c_str());
             shadows[i][j].maxDepth =
-                floatParam(IndexedParameter("shadowMaxDepth", i, j));
+                floatParam(IndexedParameter("shadowMaxDepth", i, j).c_str());
         }
     }
 
