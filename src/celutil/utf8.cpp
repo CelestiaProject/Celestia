@@ -8,15 +8,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <array>
 #include <cwctype>
 #include "utf8.h"
 
 namespace
 {
 
+using WGL4Page = std::array<std::uint16_t, 256>;
+
 // clang-format off
 
-uint16_t WGL4_Normalization_00[256] = {
+constexpr WGL4Page WGL4_Normalization_00{
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
     0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f,
     0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017,
@@ -51,7 +54,7 @@ uint16_t WGL4_Normalization_00[256] = {
     0x00f8, 0x0075, 0x0075, 0x0075, 0x0075, 0x0079, 0x00fe, 0x0079,
 };
 
-uint16_t WGL4_Normalization_01[256] = {
+constexpr WGL4Page WGL4_Normalization_01{
     0x0061, 0x0061, 0x0061, 0x0061, 0x0061, 0x0061, 0x0063, 0x0063,
     0x0063, 0x0063, 0x0063, 0x0063, 0x0063, 0x0063, 0x0064, 0x0064,
     0x0111, 0x0111, 0x0065, 0x0065, 0x0065, 0x0065, 0x0065, 0x0065,
@@ -86,7 +89,7 @@ uint16_t WGL4_Normalization_01[256] = {
     0x01f8, 0x01f9, 0x00e5, 0x00e5, 0x00e6, 0x00e6, 0x00f8, 0x00f8,
 };
 
-uint16_t WGL4_Normalization_02[256] = {
+constexpr WGL4Page WGL4_Normalization_02{
     0x0200, 0x0201, 0x0202, 0x0203, 0x0204, 0x0205, 0x0206, 0x0207,
     0x0208, 0x0209, 0x020a, 0x020b, 0x020c, 0x020d, 0x020e, 0x020f,
     0x0210, 0x0211, 0x0212, 0x0213, 0x0214, 0x0215, 0x0216, 0x0217,
@@ -121,7 +124,7 @@ uint16_t WGL4_Normalization_02[256] = {
     0x02f8, 0x02f9, 0x02fa, 0x02fb, 0x02fc, 0x02fd, 0x02fe, 0x02ff,
 };
 
-uint16_t WGL4_Normalization_03[256] = {
+constexpr WGL4Page WGL4_Normalization_03{
     0x0300, 0x0301, 0x0302, 0x0303, 0x0304, 0x0305, 0x0306, 0x0307,
     0x0308, 0x0309, 0x030a, 0x030b, 0x030c, 0x030d, 0x030e, 0x030f,
     0x0310, 0x0311, 0x0312, 0x0313, 0x0314, 0x0315, 0x0316, 0x0317,
@@ -156,7 +159,7 @@ uint16_t WGL4_Normalization_03[256] = {
     0x03f8, 0x03f9, 0x03fa, 0x03fb, 0x03fc, 0x03fd, 0x03fe, 0x03ff,
 };
 
-uint16_t WGL4_Normalization_04[256] = {
+constexpr WGL4Page WGL4_Normalization_04{
     0x0400, 0x0435, 0x0452, 0x0433, 0x0454, 0x0455, 0x0456, 0x0456,
     0x0458, 0x0459, 0x045a, 0x045b, 0x043a, 0x040d, 0x0443, 0x045f,
     0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437,
@@ -191,7 +194,7 @@ uint16_t WGL4_Normalization_04[256] = {
     0x04f8, 0x04f9, 0x04fa, 0x04fb, 0x04fc, 0x04fd, 0x04fe, 0x04ff,
 };
 
-uint16_t WGL4_Normalization_1e[256] = {
+constexpr WGL4Page WGL4_Normalization_1e{
     0x1e00, 0x1e01, 0x1e02, 0x1e03, 0x1e04, 0x1e05, 0x1e06, 0x1e07,
     0x1e08, 0x1e09, 0x1e0a, 0x1e0b, 0x1e0c, 0x1e0d, 0x1e0e, 0x1e0f,
     0x1e10, 0x1e11, 0x1e12, 0x1e13, 0x1e14, 0x1e15, 0x1e16, 0x1e17,
@@ -226,7 +229,7 @@ uint16_t WGL4_Normalization_1e[256] = {
     0x1ef8, 0x1ef9, 0x1efa, 0x1efb, 0x1efc, 0x1efd, 0x1efe, 0x1eff,
 };
 
-uint16_t WGL4_Normalization_21[256] = {
+constexpr WGL4Page WGL4_Normalization_21{
     0x2100, 0x2101, 0x2102, 0x2103, 0x2104, 0x2105, 0x2106, 0x2107,
     0x2108, 0x2109, 0x210a, 0x210b, 0x210c, 0x210d, 0x210e, 0x210f,
     0x2110, 0x2111, 0x2112, 0x006c, 0x2114, 0x2115, 0x2116, 0x2117,
@@ -261,17 +264,17 @@ uint16_t WGL4_Normalization_21[256] = {
     0x21f8, 0x21f9, 0x21fa, 0x21fb, 0x21fc, 0x21fd, 0x21fe, 0x21ff,
 };
 
-uint16_t* WGL4NormalizationTables[256] = {
-    WGL4_Normalization_00,
-    WGL4_Normalization_01,
-    WGL4_Normalization_02,
-    WGL4_Normalization_03,
-    WGL4_Normalization_04,
+constexpr std::array<const WGL4Page*, 256> WGL4NormalizationTables{
+    &WGL4_Normalization_00,
+    &WGL4_Normalization_01,
+    &WGL4_Normalization_02,
+    &WGL4_Normalization_03,
+    &WGL4_Normalization_04,
     nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, WGL4_Normalization_1e, nullptr,
-    nullptr, WGL4_Normalization_21, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &WGL4_Normalization_1e, nullptr,
+    nullptr, &WGL4_Normalization_21, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -323,15 +326,16 @@ inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
 
 inline wchar_t UTF8Normalize(wchar_t ch)
 {
-    auto page = (unsigned int) ch >> 8;
+    auto page = static_cast<unsigned int>(ch) >> 8;
     if (page >= 256)
         return ch;
 
-    uint16_t* normTable = WGL4NormalizationTables[page];
+    const WGL4Page* normTable = WGL4NormalizationTables[page];
     if (normTable == nullptr)
         return ch;
 
-    return (wchar_t) normTable[(unsigned int) ch & 0xff];
+    auto index = static_cast<unsigned int>(ch) & 0xff;
+    return static_cast<wchar_t>((*normTable)[index]);
 }
 
 } // namespace
