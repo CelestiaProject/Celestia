@@ -351,14 +351,13 @@ bool LuaState::timesliceExpired()
 
 static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
 {
-    int status;
+    int status, nres;
 
     //if (!lua_checkstack(co, narg))
     //   luaL_error(L, "too many arguments to resume");
     lua_xmove(L, co, narg);
 #if LUA_VERSION_NUM >= 504
-    int nresults;
-    status = lua_resume(co, nullptr, narg, &nresults);
+    status = lua_resume(co, nullptr, narg, &nres);
 #elif LUA_VERSION_NUM >= 502
     status = lua_resume(co, nullptr, narg);
 #else
@@ -366,7 +365,9 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
 #endif
     if (status == 0 || status == LUA_YIELD)
     {
-        int nres = lua_gettop(co);
+#if LUA_VERSION_NUM < 504
+        nres = lua_gettop(co);
+#endif
         //if (!lua_checkstack(L, narg))
         //   luaL_error(L, "too many results to resume");
         lua_xmove(co, L, nres);  // move yielded values
