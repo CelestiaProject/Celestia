@@ -889,7 +889,7 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
     if (VSComputesColorSum(props))
         return fmt::format("diff.rgb += {} * ", LightProperty(lightIndex, "diffuse"));
     else
-        return fmt::format(" = {}", SeparateDiffuse(lightIndex));
+        return fmt::format("{} = ", SeparateDiffuse(lightIndex));
 }
 
 
