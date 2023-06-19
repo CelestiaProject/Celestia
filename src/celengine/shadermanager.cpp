@@ -920,16 +920,6 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         source += assign("NL", max(0.0f, dot(sh_vec3("in_Normal"), sh_vec3(LightProperty(i, "direction")))));
     }
 
-    if (props.lightModel == ShaderProperties::SpecularModel)
-    {
-        source += assign("H", normalize(sh_vec3(LightProperty(i, "direction")) + normalize(sh_vec3("eyePosition") - sh_vec3("in_Position.xyz"))));
-        source += assign("NH", max(0.0f, dot(sh_vec3("in_Normal"), sh_vec3("H"))));
-
-        // The calculation below uses the infinite viewer approximation. It's slightly faster,
-        // but results in less accurate rendering.
-        // source += "NH = max(0.0, dot(in_Normal, " + LightProperty(i, "halfVector") + "));\n";
-    }
-
     if (props.usesTangentSpaceLighting())
     {
         source += TangentSpaceTransform(LightDir_tan(i), LightProperty(i, "direction"));
@@ -1738,7 +1728,7 @@ ShaderProperties::hasSharedTextureCoords() const
 bool
 ShaderProperties::hasSpecular() const
 {
-    return lightModel == SpecularModel || (lightModel & PerPixelSpecularModel) != 0;
+    return (lightModel & PerPixelSpecularModel) != 0;
 }
 
 
@@ -1944,8 +1934,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += CommonAttribs;
 
     source += DeclareLights(props);
-    if (props.lightModel == ShaderProperties::SpecularModel)
-        source += DeclareUniform("shininess", Shader_Float);
 
     source += DeclareUniform("eyePosition", Shader_Vector3);
 
@@ -1968,8 +1956,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += DeclareOutput(LightDir_tan(i), Shader_Vector3);
         }
 
-        if (props.isViewDependent() &&
-            props.lightModel != ShaderProperties::SpecularModel)
+        if (props.isViewDependent())
         {
             source += DeclareOutput("eyeDir_tan", Shader_Vector3);
         }
@@ -1982,10 +1969,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     else if (props.usesShadows())
     {
         source += DeclareOutput("diffFactors", Shader_Vector4);
-        if (props.lightModel == ShaderProperties::SpecularModel)
-        {
-            source += DeclareOutput("specFactors", Shader_Vector4);
-        }
     }
     else
     {
@@ -1995,10 +1978,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += DeclareUniform("opacity", Shader_Float);
         }
         source += DeclareOutput("diff", Shader_Vector4);
-        if (props.lightModel == ShaderProperties::SpecularModel)
-        {
-            source += DeclareOutput("spec", Shader_Vector4);
-        }
     }
 
     // If this shader uses tangent space lighting, the diffuse term
@@ -2069,17 +2048,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "float NV = dot(in_Normal, eyeDir);\n";
         }
     }
-    else if (props.lightModel == ShaderProperties::SpecularModel)
-    {
-        source += "vec3 eyeDir = normalize(eyePosition - in_Position.xyz);\n";
-    }
 
     source += "float NL;\n";
-    if (props.lightModel == ShaderProperties::SpecularModel)
-    {
-        source += "float NH;\n";
-        source += "vec3 H;\n";
-    }
 
     if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
@@ -2089,8 +2059,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.usesTangentSpaceLighting())
     {
         source += "vec3 bitangent = cross(in_Normal, in_Tangent);\n";
-        if (props.isViewDependent() &&
-            props.lightModel != ShaderProperties::SpecularModel)
+        if (props.isViewDependent())
         {
             source += TangentSpaceTransform("eyeDir_tan", "eyeDir");
         }
@@ -2320,19 +2289,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += DeclareUniform("opacity", Shader_Float);
         if (props.isViewDependent())
         {
-            if (props.lightModel == ShaderProperties::SpecularModel)
-            {
-                // Specular model is sort of a hybrid: all the view-dependent lighting is
-                // handled in the vertex shader, and the fragment shader is view-independent
-                source += DeclareInput("specFactors", Shader_Vector4);
-                source += "vec4 spec = vec4(0.0);\n";
-            }
-            else
-            {
-                source += DeclareInput("eyeDir_tan", Shader_Vector3);  // tangent space eye vector
-                source += "vec4 spec = vec4(0.0);\n";
-                source += DeclareUniform("shininess", Shader_Float);
-            }
+            source += DeclareInput("eyeDir_tan", Shader_Vector3); // tangent space eye vector
+            source += "vec4 spec = vec4(0.0);\n";
+            source += DeclareUniform("shininess", Shader_Float);
         }
 
         if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
@@ -2372,25 +2331,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += DeclareUniform("ambientColor", Shader_Vector3);
         source += DeclareUniform("opacity", Shader_Float);
         source += DeclareInput("diffFactors", Shader_Vector4);
-        if (props.lightModel == ShaderProperties::SpecularModel)
-        {
-            source += DeclareInput("specFactors", Shader_Vector4);
-            source += "vec4 spec = vec4(0.0);\n";
-        }
+
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
-            if (props.lightModel == ShaderProperties::SpecularModel)
-                source += DeclareUniform(FragLightProperty(i, "specColor"), Shader_Vector3);
         }
     }
     else
     {
         source += DeclareInput("diff", Shader_Vector4);
-        if (props.lightModel == ShaderProperties::SpecularModel)
-        {
-            source += DeclareInput("spec", Shader_Vector4);
-        }
     }
 
     if (props.hasScattering())
@@ -2561,13 +2510,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += "diff.rgb += " + illum + " * " +
                 FragLightProperty(i, "color") + ";\n";
 
-            if (props.lightModel == ShaderProperties::SpecularModel && props.usesShadows())
-            {
-                source += "spec.rgb += " + illum + " * " + SeparateSpecular(i) +
-                    " * " + FragLightProperty(i, "specColor") +
-                    ";\n";
-            }
-            else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
+            if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
             {
                 source += "H = normalize(eyeDir_tan + " + LightDir_tan(i) + ");\n";
                 source += "NH = max(0.0, dot(n, H));\n";
@@ -2609,16 +2552,10 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         for (unsigned i = 0; i < props.nLights; i++)
         {
             source += ShadowsForLightSource(props, i);
-            source += "diff.rgb += shadow * " +
-                FragLightProperty(i, "color") + ";\n";
-            if (props.lightModel == ShaderProperties::SpecularModel)
-            {
-                source += "spec.rgb += shadow * " + SeparateSpecular(i) +
-                    " * " +
-                    FragLightProperty(i, "specColor") + ";\n";
-            }
+            source += "diff.rgb += shadow * " + FragLightProperty(i, "color") + ";\n";
+
             if (props.hasShadowMap() && i == 0)
-                ApplyShadow(props.lightModel == ShaderProperties::SpecularModel);
+                ApplyShadow(false);
         }
     }
 

@@ -77,7 +77,6 @@ class ShaderProperties
  enum
  {
      DiffuseModel          = 0x0001,
-     SpecularModel         = 0x0002,
      RingIllumModel        = 0x0004,
      PerPixelSpecularModel = 0x0008,
      OrenNayarModel        = 0x0010,
