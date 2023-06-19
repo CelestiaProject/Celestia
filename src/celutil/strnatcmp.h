@@ -24,6 +24,3 @@
 #include <string>
 
 int strnatcmp(const std::string &a, const std::string &b);
-int strnatcmp(const std::wstring &wa, const std::wstring &wb);
-int strnatcasecmp(const std::string &a, const std::string &b);
-int strnatcasecmp(const std::wstring &wa, const std::wstring &wb);

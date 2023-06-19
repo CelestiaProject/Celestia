@@ -20,14 +20,19 @@
 // 3. This notice may not be removed or altered from any source distribution.
 
 
-#include <cwctype>
-#include <celutil/utf8.h>
 #include "strnatcmp.h"
 
-static int right(const wchar_t *a, const wchar_t *b)
+#include <cwctype>
+
+#include <celutil/utf8.h>
+
+
+namespace
+{
+
+int right(const wchar_t *a, const wchar_t *b)
 {
     int bias = 0;
-    wchar_t ca, cb;
 
     // The longest run of digits wins.  That aside, the greatest value
     // wins, but we can't know that it will until we've scanned both
@@ -35,12 +40,12 @@ static int right(const wchar_t *a, const wchar_t *b)
     // it in BIAS.
     for (;; a++, b++)
     {
-        ca = *a;
-        cb = *b;
+        wchar_t ca = *a;
+        wchar_t cb = *b;
 
-        if (!iswdigit(ca))
-            return iswdigit(cb) ? -1 : bias;
-        if (!iswdigit(cb))
+        if (!std::iswdigit(ca))
+            return std::iswdigit(cb) ? -1 : bias;
+        if (!std::iswdigit(cb))
             return +1;
 
         if (ca < cb)
@@ -61,20 +66,18 @@ static int right(const wchar_t *a, const wchar_t *b)
 }
 
 
-static int left(const wchar_t *a, const wchar_t *b)
+int left(const wchar_t *a, const wchar_t *b)
 {
-    wchar_t ca, cb;
-
     // Compare two left-aligned numbers: the first to have a
     // different value wins.
     for (;; a++, b++)
     {
-        ca = *a;
-        cb = *b;
+        wchar_t ca = *a;
+        wchar_t cb = *b;
 
-        if (!iswdigit(ca))
-           return iswdigit(cb) ? -1 : 0;
-        if (!iswdigit(cb))
+        if (!std::iswdigit(ca))
+           return std::iswdigit(cb) ? -1 : 0;
+        if (!std::iswdigit(cb))
             return +1;
         if (ca < cb)
             return -1;
@@ -83,23 +86,23 @@ static int left(const wchar_t *a, const wchar_t *b)
     }
 }
 
-static int strnatcmp0(const std::wstring &a, const std::wstring &b, bool fold_case)
+int strnatcmp0(const std::wstring &a, const std::wstring &b)
 {
-    size_t ai = 0, bi = 0;
-    wchar_t ca, cb;
+    std::size_t ai = 0;
+    std::size_t bi = 0;
     for (;;)
     {
         // skip over leading spaces
-        ca = a[ai];
-        while(iswspace(ca))
+        wchar_t ca = a[ai];
+        while(std::iswspace(ca))
             ca = a[++ai];
 
-        cb = b[bi];
-        while(iswspace(cb))
+        wchar_t cb = b[bi];
+        while(std::iswspace(cb))
             cb = b[++bi];
 
         // process run of digits
-        if (iswdigit(ca) && iswdigit(cb))
+        if (std::iswdigit(ca) && std::iswdigit(cb))
         {
             bool frac = (ca == L'0' || cb == L'0');
             int r = frac ? left(&a[ai], &b[bi]) : right(&a[ai], &b[bi]);
@@ -114,12 +117,6 @@ static int strnatcmp0(const std::wstring &a, const std::wstring &b, bool fold_ca
             return 0;
         }
 
-        if (fold_case)
-        {
-            ca = towupper(ca);
-            cb = towupper(cb);
-        }
-
         if (ca < cb)
             return -1;
 
@@ -131,12 +128,12 @@ static int strnatcmp0(const std::wstring &a, const std::wstring &b, bool fold_ca
     }
 }
 
-static std::wstring utf8_to_wide(const std::string &s)
+std::wstring utf8_to_wide(const std::string &s)
 {
     std::wstring w;
-    wchar_t ch;
-    for (size_t i = 0, e = s.length(); i < e; )
+    for (std::size_t i = 0, e = s.length(); i < e; )
     {
+        wchar_t ch;
         if (!UTF8Decode(s, i, ch))
             break;
         i += UTF8EncodedSize(ch);
@@ -146,23 +143,11 @@ static std::wstring utf8_to_wide(const std::string &s)
     return w;
 }
 
+} // end unnamed namespace
+
+
 int strnatcmp(const std::string &a, const std::string &b)
 {
-    return strnatcmp0(utf8_to_wide(a), utf8_to_wide(b), false);
+    return strnatcmp0(utf8_to_wide(a), utf8_to_wide(b));
 }
 
-int strnatcmp(const std::wstring &wa, const std::wstring &wb)
-{
-    return strnatcmp0(wa, wb, false);
-}
-
-// Compare, recognizing numeric std::string and ignoring case.
-int strnatcasecmp(const std::string &a, const std::string &b)
-{
-    return strnatcmp0(utf8_to_wide(a), utf8_to_wide(b), true);
-}
-
-int strnatcasecmp(const std::wstring &wa, const std::wstring &wb)
-{
-    return strnatcmp0(wa, wb, true);
-}
