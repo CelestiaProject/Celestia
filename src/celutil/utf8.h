@@ -58,24 +58,6 @@ UTF8EncodedSize(wchar_t ch)
 #endif
 }
 
-constexpr int
-UTF8EncodedSizeChecked(std::uint32_t ch)
-{
-    if (ch < 0x80)
-        return 1;
-    if (ch < 0x800)
-        return 2;
-#if WCHAR_MAX > 0xFFFFu
-    if (ch < 0x10000)
-#endif
-        return 3;
-#if WCHAR_MAX > 0xFFFFu
-    if (ch < 0x110000)
-        return 4;
-    // out-of-range: assume U+FFFD REPLACEMENT CHARACTER
-    return 3;
-#endif
-}
 
 enum class UTF8Status
 {
