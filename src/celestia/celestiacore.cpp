@@ -1366,19 +1366,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         else
         {
-            time_t t = time(nullptr);
-            struct tm *gmt = gmtime(&t);
-            if (gmt != nullptr)
-            {
-                astro::Date d;
-                d.year = gmt->tm_year + 1900;
-                d.month = gmt->tm_mon + 1;
-                d.day = gmt->tm_mday;
-                d.hour = gmt->tm_hour;
-                d.minute = gmt->tm_min;
-                d.seconds = (int) gmt->tm_sec;
-                sim->setTime(astro::UTCtoTDB(d));
-            }
+            sim->setTime(astro::UTCtoTDB(astro::Date::systemDate()));
         }
         break;
 

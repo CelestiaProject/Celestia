@@ -461,14 +461,24 @@ astro::Date
 astro::Date::systemDate()
 {
     time_t t = time(nullptr);
-    struct tm *gmt = gmtime(&t);
+    struct tm gmt;
+#ifdef _WIN32
+    bool ok = gmtime_s(&gmt, &t) == 0;
+
+#else
+    bool ok = gmtime_r(&t, &gmt) != nullptr;
+#endif
+
     astro::Date d;
-    d.year = gmt->tm_year + 1900;
-    d.month = gmt->tm_mon + 1;
-    d.day = gmt->tm_mday;
-    d.hour = gmt->tm_hour;
-    d.minute = gmt->tm_min;
-    d.seconds = (int) gmt->tm_sec;
+    if (ok)
+    {
+        d.year = gmt.tm_year + 1900;
+        d.month = gmt.tm_mon + 1;
+        d.day = gmt.tm_mday;
+        d.hour = gmt.tm_hour;
+        d.minute = gmt.tm_min;
+        d.seconds = gmt.tm_sec;
+    }
 
     return d;
 }
@@ -604,41 +614,43 @@ astro::Date
 astro::TDBtoLocal(double tdb)
 {
     double tai = astro::TTtoTAI(astro::TDBtoTT(tdb));
-    double jdutc = astro::TAItoJDUTC(tai);
-    if (jdutc < 2465442 &&
-        jdutc > 2415733)
+
+    if (double jdutc = astro::TAItoJDUTC(tai); jdutc < 2465442 && jdutc > 2415733)
     {
-        time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5);
-        struct tm *localt = localtime(&time);
-        if (localt != nullptr)
+        auto time = static_cast<time_t>(astro::julianDateToSeconds(jdutc - 2440587.5));
+        struct tm localt;
+#ifdef _WIN32
+        bool ok = localtime_s(&localt, &time) == 0;
+#else
+        bool ok = localtime_r(&time, &localt) != nullptr;
+#endif
+        if (ok)
         {
             astro::Date d;
-            d.year = localt->tm_year + 1900;
-            d.month = localt->tm_mon + 1;
-            d.day = localt->tm_mday;
-            d.hour = localt->tm_hour;
-            d.minute = localt->tm_min;
-            d.seconds = (int) localt->tm_sec;
-            d.wday = localt->tm_wday;
-        #if defined(__GNUC__) && !defined(_WIN32)
-            d.utc_offset = localt->tm_gmtoff;
-            d.tzname = localt->tm_zone;
-        #else
-            {
-                astro::Date utcDate = astro::TAItoUTC(tai);
-                int daydiff = d.day - utcDate.day;
-                int hourdiff;
-                if (daydiff == 0)
-                    hourdiff = 0;
-                else if (daydiff > 1 || daydiff == -1)
-                    hourdiff = -24;
-                else
-                    hourdiff = 24;
-                d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600
-                             + (d.minute - utcDate.minute) * 60;
-            }
-            d.tzname = localt->tm_isdst ? _("DST"): _("STD");
-        #endif
+            d.year = localt.tm_year + 1900;
+            d.month = localt.tm_mon + 1;
+            d.day = localt.tm_mday;
+            d.hour = localt.tm_hour;
+            d.minute = localt.tm_min;
+            d.seconds = localt.tm_sec;
+            d.wday = localt.tm_wday;
+#if defined(__GNUC__) && !defined(_WIN32)
+            d.utc_offset = static_cast<int>(localt.tm_gmtoff);
+            d.tzname = localt.tm_zone;
+#else
+            astro::Date utcDate = astro::TAItoUTC(tai);
+            int daydiff = d.day - utcDate.day;
+            int hourdiff;
+            if (daydiff == 0)
+                hourdiff = 0;
+            else if (daydiff > 1 || daydiff == -1)
+                hourdiff = -24;
+            else
+                hourdiff = 24;
+            d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600
+                           + (d.minute - utcDate.minute) * 60;
+            d.tzname = localt.tm_isdst ? _("DST"): _("STD");
+#endif
             return d;
         }
     }
