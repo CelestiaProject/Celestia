@@ -23,9 +23,9 @@ class FramebufferObject
     FramebufferObject() = delete;
     FramebufferObject(GLuint width, GLuint height, unsigned int attachments);
     FramebufferObject(const FramebufferObject&) = delete;
-    FramebufferObject(FramebufferObject&&);
+    FramebufferObject(FramebufferObject&&) noexcept;
     FramebufferObject& operator=(const FramebufferObject&) = delete;
-    FramebufferObject& operator=(FramebufferObject&&);
+    FramebufferObject& operator=(FramebufferObject&&) noexcept;
     ~FramebufferObject();
 
     static inline bool isSupported();

@@ -37,7 +37,7 @@ public:
     void setInfoURL(const std::string&);
 
     bool isLabelColorOverridden() const { return overrideLabelColor; }
-    void setLabelColorOverridden(bool override) { overrideLabelColor = override; }
+    void setLabelColorOverridden(bool _override) { overrideLabelColor = _override; }
 
     Color getLabelColor() const { return labelColor; }
     void setLabelColor(Color color) { labelColor = color; }

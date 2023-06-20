@@ -29,7 +29,7 @@ class ReferenceFrame
     SHARED_TYPES(ReferenceFrame)
 
     ReferenceFrame(Selection center);
-    virtual ~ReferenceFrame() {};
+    virtual ~ReferenceFrame() = default;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
@@ -72,7 +72,7 @@ class CachingFrame : public ReferenceFrame
     SHARED_TYPES(CachingFrame)
 
     CachingFrame(Selection _center);
-    virtual ~CachingFrame() {};
+    virtual ~CachingFrame() = default;
 
     Eigen::Quaterniond getOrientation(double tjd) const;
     Eigen::Vector3d getAngularVelocity(double tjd) const;
@@ -95,7 +95,7 @@ class J2000EclipticFrame : public ReferenceFrame
     SHARED_TYPES(J2000EclipticFrame)
 
     J2000EclipticFrame(Selection center);
-    virtual ~J2000EclipticFrame() {};
+    virtual ~J2000EclipticFrame() = default;
 
     Eigen::Quaterniond getOrientation(double /* tjd */) const
     {
@@ -117,7 +117,7 @@ class J2000EquatorFrame : public ReferenceFrame
     SHARED_TYPES(J2000EquatorFrame)
 
     J2000EquatorFrame(Selection center);
-    virtual ~J2000EquatorFrame() {};
+    virtual ~J2000EquatorFrame() = default;
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
@@ -138,7 +138,7 @@ class BodyFixedFrame : public ReferenceFrame
     SHARED_TYPES(BodyFixedFrame)
 
     BodyFixedFrame(Selection center, Selection obj);
-    virtual ~BodyFixedFrame() {};
+    virtual ~BodyFixedFrame() = default;
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
     virtual bool isInertial() const;
@@ -158,7 +158,7 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
-    virtual ~BodyMeanEquatorFrame() {};
+    virtual ~BodyMeanEquatorFrame() = default;
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
     virtual bool isInertial() const;
@@ -238,7 +238,7 @@ class TwoVectorFrame : public CachingFrame
                    int primAxis,
                    const FrameVector& sec,
                    int secAxis);
-    virtual ~TwoVectorFrame() {};
+    virtual ~TwoVectorFrame() = default;
 
     Eigen::Quaterniond computeOrientation(double tjd) const;
     virtual bool isInertial() const;

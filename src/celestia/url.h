@@ -51,9 +51,9 @@ class Url
         int version = CurrentVersion,
         TimeSource timeSource = UseUrlTime);
     Url(const Url&) = default;
-    Url(Url&&) = default;
+    Url(Url&&) noexcept = default;
     Url& operator=(const Url&) = default;
-    Url& operator=(Url&&) = default;
+    Url& operator=(Url&&) noexcept = default;
     ~Url() = default;
 
     static std::string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
