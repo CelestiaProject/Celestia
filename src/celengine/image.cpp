@@ -86,6 +86,30 @@ int calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
         return h * pad(w * formatComponents(fmt));
     }
 }
+
+celestia::PixelFormat getLinearFormat(celestia::PixelFormat format)
+{
+    switch (format)
+    {
+    case PixelFormat::SRGBA:
+        return PixelFormat::RGBA;
+    case PixelFormat::SRGB:
+        return PixelFormat::RGB;
+    case PixelFormat::SLUM_ALPHA:
+        return PixelFormat::LUM_ALPHA;
+    case PixelFormat::SLUMINANCE:
+        return PixelFormat::LUMINANCE;
+    case PixelFormat::DXT1_SRGBA:
+        return PixelFormat::DXT1;
+    case PixelFormat::DXT3_SRGBA:
+        return PixelFormat::DXT3;
+    case PixelFormat::DXT5_SRGBA:
+        return PixelFormat::DXT5;
+    default:
+        return format;
+    }
+}
+
 } // anonymous namespace
 
 Image::Image(PixelFormat fmt, int w, int h, int mip) :
@@ -313,6 +337,11 @@ Image::computeNormalMap(float scale, bool wrap) const
     }
 
     return normalMap;
+}
+
+void Image::forceLinear()
+{
+    format = getLinearFormat(format);
 }
 
 std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename)

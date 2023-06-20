@@ -51,6 +51,8 @@ class Image
 
     std::unique_ptr<Image> computeNormalMap(float scale, bool wrap) const;
 
+    void forceLinear();
+
     enum
     {
         ColorChannel = 1,

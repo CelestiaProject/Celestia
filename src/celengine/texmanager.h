@@ -1,5 +1,6 @@
 // texmanager.h
 //
+// Copyright (C) 2001-present, Celestia Development Team
 // Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -19,7 +20,7 @@
 
 class TextureInfo
 {
- private:
+private:
     fs::path source;
     fs::path path;
     unsigned int flags;
@@ -28,17 +29,19 @@ class TextureInfo
 
     friend bool operator<(const TextureInfo&, const TextureInfo&);
 
- public:
+public:
     using ResourceType = Texture;
     using ResourceKey = fs::path;
 
-    enum {
+    enum
+    {
         WrapTexture      = 0x1,
         CompressTexture  = 0x2,
         NoMipMaps        = 0x4,
         AutoMipMaps      = 0x8,
         AllowSplitting   = 0x10,
         BorderClamp      = 0x20,
+        LinearColorspace = 0x40,
     };
 
     TextureInfo(const fs::path& _source,
