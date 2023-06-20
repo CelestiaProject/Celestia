@@ -1,5 +1,6 @@
 // texture.h
 //
+// Copyright (C) 2003-present, Celestia Development Team
 // Copyright (C) 2001-2003, Chris Laurel
 //
 // This program is free software; you can redistribute it and/or
@@ -39,8 +40,8 @@ struct TextureTile
 class TexelFunctionObject
 {
  public:
-    TexelFunctionObject() {};
-    virtual ~TexelFunctionObject() {};
+    TexelFunctionObject() = default;
+    virtual ~TexelFunctionObject() = default;
     virtual void operator()(float u, float v, float w,
                             std::uint8_t* pixel) = 0;
 };
@@ -99,7 +100,8 @@ class Texture
     };
 
     // Format option flags
-    enum {
+    enum
+    {
         DXT5NormalMap = 1
     };
 
@@ -129,9 +131,9 @@ class ImageTexture : public Texture
     ImageTexture(const Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
     unsigned int getName() const;
 
@@ -146,12 +148,12 @@ class TiledTexture : public Texture
     TiledTexture(const Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
-    virtual int getUTileCount(int lod) const;
-    virtual int getVTileCount(int lod) const;
+    int getUTileCount(int lod) const override;
+    int getVTileCount(int lod) const override;
 
  private:
     int uSplit;
@@ -166,9 +168,9 @@ class CubeMap : public Texture
     explicit CubeMap(celestia::util::array_view<const Image*>);
     ~CubeMap();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
  private:
     unsigned int glName;
