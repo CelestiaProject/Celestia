@@ -233,11 +233,11 @@ static int object_setorbitcoloroverridden(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected to object:setorbitcoloroverridden");
 
     Selection* sel = this_object(l);
-    bool override = celx.safeGetBoolean(2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
+    bool _override = celx.safeGetBoolean(2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
 
     if (sel->body() != nullptr)
     {
-        sel->body()->setOrbitColorOverridden(override);
+        sel->body()->setOrbitColorOverridden(_override);
     }
 
     return 0;

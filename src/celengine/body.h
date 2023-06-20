@@ -325,7 +325,7 @@ class Body
     bool isVisibleAsPoint() const { return visibleAsPoint; }
     void setVisibleAsPoint(bool _visibleAsPoint);
     bool isOrbitColorOverridden() const { return overrideOrbitColor; }
-    void setOrbitColorOverridden(bool override);
+    void setOrbitColorOverridden(bool _override);
     bool isSecondaryIlluminator() const { return secondaryIlluminator; }
     void setSecondaryIlluminator(bool enable);
 

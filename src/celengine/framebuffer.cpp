@@ -24,7 +24,7 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int a
     }
 }
 
-FramebufferObject::FramebufferObject(FramebufferObject &&other) :
+FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
     m_width(other.m_width),
     m_height(other.m_height),
     m_colorTexId(other.m_colorTexId),
@@ -36,7 +36,7 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) :
     other.m_status = GL_FRAMEBUFFER_UNSUPPORTED;
 }
 
-FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other)
+FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other) noexcept
 {
     m_width        = other.m_width;
     m_height       = other.m_height;
