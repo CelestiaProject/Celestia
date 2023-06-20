@@ -1,5 +1,6 @@
 // texture.h
 //
+// Copyright (C) 2003-present, Celestia Development Team
 // Copyright (C) 2001-2003, Chris Laurel
 //
 // This program is free software; you can redistribute it and/or
@@ -39,8 +40,8 @@ struct TextureTile
 class TexelFunctionObject
 {
  public:
-    TexelFunctionObject() {};
-    virtual ~TexelFunctionObject() {};
+    TexelFunctionObject() = default;
+    virtual ~TexelFunctionObject() = default;
     virtual void operator()(float u, float v, float w,
                             std::uint8_t* pixel) = 0;
 };
@@ -99,7 +100,8 @@ class Texture
     };
 
     // Format option flags
-    enum {
+    enum
+    {
         DXT5NormalMap = 1
     };
 

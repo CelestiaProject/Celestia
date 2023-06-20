@@ -25,39 +25,20 @@
 
 
 using namespace celestia;
-using namespace Eigen;
-using namespace std;
 using celestia::util::GetLogger;
+
+namespace
+{
 
 struct TextureCaps
 {
     GLint preferredAnisotropy;
 };
 
-static TextureCaps texCaps;
-
-#undef DUMP_TEXTURE_MIPMAP_INFO
-
-#ifdef DUMP_TEXTURE_MIPMAP_INFO
-static void DumpTextureMipmapInfo(GLenum target)
+const
+TextureCaps& GetTextureCaps()
 {
-    for (int i = 0; i < 16; i++)
-    {
-        GLint w = 0, h = 0;
-        glGetTexLevelParameteriv(target, i, GL_TEXTURE_HEIGHT, &h);
-        if (glGetError() != GL_NO_ERROR) break;
-        glGetTexLevelParameteriv(target, i, GL_TEXTURE_WIDTH, &w);
-        if (glGetError() != GL_NO_ERROR) break;
-        if (w == 0 || h == 0) break;
-        cout << w << 'x' << h << '\n';
-    }
-}
-#else
-#define DumpTextureMipmapInfo(target) (void)target
-#endif
-
-static const TextureCaps& GetTextureCaps()
-{
+    static TextureCaps texCaps;
     static bool texCapsInitialized = false;
 
     if (!texCapsInitialized)
@@ -70,7 +51,7 @@ static const TextureCaps& GetTextureCaps()
         {
             // Cap the preferred level texture anisotropy to 8; eventually, we should allow
             // the user to control this.
-            texCaps.preferredAnisotropy = min(8, gl::maxTextureAnisotropy);
+            texCaps.preferredAnisotropy = std::min(8, gl::maxTextureAnisotropy);
         }
 #endif
     }
@@ -78,8 +59,8 @@ static const TextureCaps& GetTextureCaps()
     return texCaps;
 }
 
-
-static GLenum getInternalFormat(PixelFormat format)
+GLenum
+getInternalFormat(PixelFormat format)
 {
 #ifdef GL_ES
     switch (format)
@@ -123,8 +104,8 @@ static GLenum getInternalFormat(PixelFormat format)
 #endif
 }
 
-
-static GLenum getExternalFormat(PixelFormat format)
+GLenum
+getExternalFormat(PixelFormat format)
 {
 #ifdef GL_ES
     return getInternalFormat(format);
@@ -165,7 +146,8 @@ static GLenum getExternalFormat(PixelFormat format)
 #if 0
 // Required in order to support on-the-fly compression; currently, this
 // feature is disabled.
-static int getCompressedInternalFormat(int format)
+int
+getCompressedInternalFormat(int format)
 {
     switch (format)
     {
@@ -193,8 +175,8 @@ static int getCompressedInternalFormat(int format)
 }
 #endif
 
-
-static int getCompressedBlockSize(PixelFormat format)
+int
+getCompressedBlockSize(PixelFormat format)
 {
     switch (format)
     {
@@ -206,8 +188,8 @@ static int getCompressedBlockSize(PixelFormat format)
     }
 }
 
-
-static GLenum GetGLTexAddressMode(Texture::AddressMode addressMode)
+GLenum
+GetGLTexAddressMode(Texture::AddressMode addressMode)
 {
     switch (addressMode)
     {
@@ -228,8 +210,8 @@ static GLenum GetGLTexAddressMode(Texture::AddressMode addressMode)
     return 0;
 }
 
-
-static void SetBorderColor(Color borderColor, GLenum target)
+void
+SetBorderColor(Color borderColor, GLenum target)
 {
     float bc[4] = { borderColor.red(), borderColor.green(),
                     borderColor.blue(), borderColor.alpha() };
@@ -240,10 +222,10 @@ static void SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
-
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
-static void LoadMipmapSet(const Image& img, GLenum target)
+void
+LoadMipmapSet(const Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 #ifndef GL_ES
@@ -252,8 +234,8 @@ static void LoadMipmapSet(const Image& img, GLenum target)
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
-        unsigned int mipWidth  = max((unsigned int) img.getWidth() >> mip, 1u);
-        unsigned int mipHeight = max((unsigned int) img.getHeight() >> mip, 1u);
+        int mipWidth  = std::max(img.getWidth() >> mip, 1);
+        int mipHeight = std::max(img.getHeight() >> mip, 1);
 
         if (img.isCompressed())
         {
@@ -279,9 +261,9 @@ static void LoadMipmapSet(const Image& img, GLenum target)
     }
 }
 
-
 // Load a texture without any mipmaps
-static void LoadMiplessTexture(const Image& img, GLenum target)
+void
+LoadMiplessTexture(const Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 
@@ -309,7 +291,8 @@ static void LoadMiplessTexture(const Image& img, GLenum target)
 }
 
 
-static int ilog2(unsigned int x)
+int
+ilog2(unsigned int x)
 {
     int n = -1;
 
@@ -322,12 +305,74 @@ static int ilog2(unsigned int x)
     return n;
 }
 
-
-static int CalcMipLevelCount(int w, int h)
+int
+CalcMipLevelCount(int w, int h)
 {
-    return max(ilog2(w), ilog2(h)) + 1;
+    return std::max(ilog2(w), ilog2(h)) + 1;
 }
 
+// Helper function for CreateProceduralCubeMap; return the normalized
+// vector pointing to (s, t) on the specified face.
+Eigen::Vector3f
+cubeVector(int face, float s, float t)
+{
+    Eigen::Vector3f v;
+    switch (face)
+    {
+    case 0:
+        v = Eigen::Vector3f(1.0f, -t, -s);
+        break;
+    case 1:
+        v = Eigen::Vector3f(-1.0f, -t, s);
+        break;
+    case 2:
+        v = Eigen::Vector3f(s, 1.0f, t);
+        break;
+    case 3:
+        v = Eigen::Vector3f(s, -1.0f, -t);
+        break;
+    case 4:
+        v = Eigen::Vector3f(s, -t, 1.0f);
+        break;
+    case 5:
+        v = Eigen::Vector3f(-s, -t, -1.0f);
+        break;
+    default:
+        // assert(false);
+        break;
+    }
+
+    return v.normalized();
+}
+
+std::unique_ptr<Texture>
+CreateTextureFromImage(const Image& img,
+                       Texture::AddressMode addressMode,
+                       Texture::MipMapMode mipMode)
+{
+    std::unique_ptr<Texture> tex = nullptr;
+
+    const int maxDim = gl::maxTextureSize;
+    if ((img.getWidth() > maxDim || img.getHeight() > maxDim))
+    {
+        // The texture is too large; we need to split it.
+        int uSplit = std::max(1, img.getWidth() / maxDim);
+        int vSplit = std::max(1, img.getHeight() / maxDim);
+        GetLogger()->info(_("Creating tiled texture. Width={}, max={}\n"),
+                          img.getWidth(), maxDim);
+        tex = std::make_unique<TiledTexture>(img, uSplit, vSplit, mipMode);
+    }
+    else
+    {
+        GetLogger()->info(_("Creating ordinary texture: {}x{}\n"),
+                          img.getWidth(), img.getHeight());
+        tex = std::make_unique<ImageTexture>(img, addressMode, mipMode);
+    }
+
+    return tex;
+}
+
+}
 
 Texture::Texture(int w, int h, int d) :
     width(w),
@@ -402,7 +447,7 @@ ImageTexture::ImageTexture(const Image& img,
     Texture(img.getWidth(), img.getHeight()),
     glName(0)
 {
-    glGenTextures(1, (GLuint*) &glName);
+    glGenTextures(1, &glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
     bool mipmap = mipMapMode != NoMipMaps;
@@ -430,9 +475,9 @@ ImageTexture::ImageTexture(const Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+    if (gl::EXT_texture_filter_anisotropic && GetTextureCaps().preferredAnisotropy > 1)
     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
     }
 
     bool genMipmaps = mipmap && !precomputedMipMaps;
@@ -464,7 +509,6 @@ ImageTexture::ImageTexture(const Image& img,
     }
     if (genMipmaps && FramebufferObject::isSupported())
         glGenerateMipmap(GL_TEXTURE_2D);
-    DumpTextureMipmapInfo(GL_TEXTURE_2D);
 
     alpha = img.hasAlpha();
     compressed = img.isCompressed();
@@ -474,7 +518,7 @@ ImageTexture::ImageTexture(const Image& img,
 ImageTexture::~ImageTexture()
 {
     if (glName != 0)
-        glDeleteTextures(1, (const GLuint*) &glName);
+        glDeleteTextures(1, &glName);
 }
 
 
@@ -556,7 +600,7 @@ TiledTexture::TiledTexture(const Image& img,
         for (int u = 0; u < uSplit; u++)
         {
             // Create the texture and set up sampling and addressing
-            glGenTextures(1, (GLuint*)&glNames[v * uSplit + u]);
+            glGenTextures(1, &glNames[v * uSplit + u]);
             glBindTexture(GL_TEXTURE_2D, glNames[v * uSplit + u]);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texAddress);
@@ -565,9 +609,9 @@ TiledTexture::TiledTexture(const Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-            if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+            if (gl::EXT_texture_filter_anisotropic && GetTextureCaps().preferredAnisotropy > 1)
             {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
             }
 
             // Copy texels from the subtexture area to the pixel buffer.  This
@@ -580,20 +624,19 @@ TiledTexture::TiledTexture(const Image& img,
                     for (int mip = 0; mip < tileMipLevelCount; mip++)
                     {
                         int blockSize = getCompressedBlockSize(img.getFormat());
-                        const unsigned char* imgMip =
-                            img.getMipLevel(min(mip, mipLevelCount));
-                        unsigned int mipWidth  = max((unsigned int) img.getWidth() >> mip, 1u);
-                        unsigned char* tileMip = tile->getMipLevel(mip);
-                        unsigned int tileMipWidth  = max((unsigned int) tile->getWidth() >> mip, 1u);
-                        unsigned int tileMipHeight = max((unsigned int) tile->getHeight() >> mip, 1u);
-                        int uBlocks = max(tileMipWidth / 4, 1u);
-                        int vBlocks = max(tileMipHeight / 4, 1u);
+                        int mipWidth  = std::max(img.getWidth() >> mip, 1);
+                        int tileMipWidth  = std::max(tile->getWidth() >> mip, 1);
+                        int tileMipHeight = std::max(tile->getHeight() >> mip, 1);
+                        int uBlocks = std::max(tileMipWidth / 4, 1);
+                        int vBlocks = std::max(tileMipHeight / 4, 1);
                         int destBytesPerRow = uBlocks * blockSize;
-                        int srcBytesPerRow = max(mipWidth / 4, 1u) * blockSize;
+                        int srcBytesPerRow = std::max(mipWidth / 4, 1) * blockSize;
                         int srcU = u * tileMipWidth / 4;
                         int srcV = v * tileMipHeight / 4;
-                        int tileOffset = srcV * srcBytesPerRow +
-                            srcU * blockSize;
+                        int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
+
+                        const std::uint8_t *imgMip = img.getMipLevel(std::min(mip, mipLevelCount));
+                        std::uint8_t *tileMip = tile->getMipLevel(mip);
 
                         for (int y = 0; y < vBlocks; y++)
                         {
@@ -615,14 +658,13 @@ TiledTexture::TiledTexture(const Image& img,
                 if (img.isCompressed())
                 {
                     int blockSize = getCompressedBlockSize(img.getFormat());
-                    int uBlocks = max(tileWidth / 4, 1);
-                    int vBlocks = max(tileHeight / 4, 1);
+                    int uBlocks = std::max(tileWidth / 4, 1);
+                    int vBlocks = std::max(tileHeight / 4, 1);
                     int destBytesPerRow = uBlocks * blockSize;
-                    int srcBytesPerRow = max(img.getWidth() / 4, 1) * blockSize;
+                    int srcBytesPerRow = std::max(img.getWidth() / 4, 1) * blockSize;
                     int srcU = u * tileWidth / 4;
                     int srcV = v * tileHeight / 4;
-                    int tileOffset = srcV * srcBytesPerRow +
-                            srcU * blockSize;
+                    int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
 
                     for (int y = 0; y < vBlocks; y++)
                     {
@@ -633,7 +675,7 @@ TiledTexture::TiledTexture(const Image& img,
                 }
                 else
                 {
-                    const unsigned char* tilePixels = img.getPixels() +
+                    const std::uint8_t* tilePixels = img.getPixels() +
                         (v * tileHeight * img.getWidth() + u * tileWidth) * components;
                     for (int y = 0; y < tileHeight; y++)
                     {
@@ -662,7 +704,6 @@ TiledTexture::TiledTexture(const Image& img,
                 {
                     LoadMiplessTexture(*tile, GL_TEXTURE_2D);
                 }
-                DumpTextureMipmapInfo(GL_TEXTURE_2D);
             }
         }
     }
@@ -678,7 +719,7 @@ TiledTexture::~TiledTexture()
         for (int i = 0; i < uSplit * vSplit; i++)
         {
             if (glNames[i] != 0)
-                glDeleteTextures(1, (const GLuint*) &glNames[i]);
+                glDeleteTextures(1, &glNames[i]);
         }
         delete[] glNames;
     }
@@ -731,8 +772,7 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     // Verify that all the faces are square and have the same size
     int width = faces[0]->getWidth();
     PixelFormat format = faces[0]->getFormat();
-    int i = 0;
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
         if (faces[i]->getWidth() != width ||
             faces[i]->getHeight() != width ||
@@ -755,7 +795,7 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     if (!precomputedMipMaps && faces[0]->isCompressed())
         mipmap = false;
 
-    glGenTextures(1, (GLuint*) &glName);
+    glGenTextures(1, &glName);
     glBindTexture(GL_TEXTURE_CUBE_MAP, glName);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -771,9 +811,9 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
 
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        auto targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+        auto targetFace = static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
         const Image* face = faces[i];
 
         if (mipmap)
@@ -790,14 +830,13 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     }
     if (genMipmaps && FramebufferObject::isSupported())
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-    DumpTextureMipmapInfo(GL_TEXTURE_CUBE_MAP_POSITIVE_X);
 }
 
 
 CubeMap::~CubeMap()
 {
     if (glName != 0)
-        glDeleteTextures(1, (const GLuint*) &glName);
+        glDeleteTextures(1, &glName);
 }
 
 
@@ -870,42 +909,6 @@ CreateProceduralTexture(int width, int height,
 }
 
 
-// Helper function for CreateProceduralCubeMap; return the normalized
-// vector pointing to (s, t) on the specified face.
-static Vector3f cubeVector(int face, float s, float t)
-{
-    Vector3f v;
-    switch (face)
-    {
-    case 0:
-        v = Vector3f(1.0f, -t, -s);
-        break;
-    case 1:
-        v = Vector3f(-1.0f, -t, s);
-        break;
-    case 2:
-        v = Vector3f(s, 1.0f, t);
-        break;
-    case 3:
-        v = Vector3f(s, -1.0f, -t);
-        break;
-    case 4:
-        v = Vector3f(s, -t, 1.0f);
-        break;
-    case 5:
-        v = Vector3f(-s, -t, -1.0f);
-        break;
-    default:
-        // assert(false);
-        break;
-    }
-
-    v.normalize();
-
-    return v;
-}
-
-
 std::unique_ptr<Texture>
 CreateProceduralCubeMap(int size,
                         PixelFormat format,
@@ -924,7 +927,7 @@ CreateProceduralCubeMap(int size,
             {
                 float s = ((float) x + 0.5f) / (float) size * 2 - 1;
                 float t = ((float) y + 0.5f) / (float) size * 2 - 1;
-                Vector3f v = cubeVector(i, s, t);
+                Eigen::Vector3f v = cubeVector(i, s, t);
                 func(v.x(), v.y(), v.z(),
                      face->getPixelRow(y) + x * face->getComponents());
             }
@@ -939,38 +942,11 @@ CreateProceduralCubeMap(int size,
 }
 
 
-static std::unique_ptr<Texture>
-CreateTextureFromImage(const Image& img,
-                       Texture::AddressMode addressMode,
-                       Texture::MipMapMode mipMode)
-{
-    std::unique_ptr<Texture> tex = nullptr;
-
-    const int maxDim = gl::maxTextureSize;
-    if ((img.getWidth() > maxDim || img.getHeight() > maxDim))
-    {
-        // The texture is too large; we need to split it.
-        int uSplit = max(1, img.getWidth() / maxDim);
-        int vSplit = max(1, img.getHeight() / maxDim);
-        GetLogger()->info(_("Creating tiled texture. Width={}, max={}\n"),
-                          img.getWidth(), maxDim);
-        tex = std::make_unique<TiledTexture>(img, uSplit, vSplit, mipMode);
-    }
-    else
-    {
-        GetLogger()->info(_("Creating ordinary texture: {}x{}\n"),
-                          img.getWidth(), img.getHeight());
-        tex = std::make_unique<ImageTexture>(img, addressMode, mipMode);
-    }
-
-    return tex;
-}
-
-
 std::unique_ptr<Texture>
 LoadTextureFromFile(const fs::path& filename,
                     Texture::AddressMode addressMode,
-                    Texture::MipMapMode mipMode)
+                    Texture::MipMapMode mipMode,
+                    Texture::Colorspace colorspace)
 {
     // Check for a Celestia texture--these need to be handled specially.
     ContentType contentType = DetermineFileType(filename);
@@ -1011,17 +987,15 @@ LoadHeightMapFromFile(const fs::path& filename,
                       float height,
                       Texture::AddressMode addressMode)
 {
-    std::unique_ptr<Image> img = LoadImageFromFile(filename);
+    auto img = LoadImageFromFile(filename);
     if (img == nullptr)
         return nullptr;
 
     img->forceLinear();
 
-    std::unique_ptr<Image> normalMap = img->computeNormalMap(height,
-                                                             addressMode == Texture::Wrap);
+    auto normalMap = img->computeNormalMap(height, addressMode == Texture::Wrap);
     if (normalMap == nullptr)
         return nullptr;
 
-    return CreateTextureFromImage(*normalMap, addressMode,
-                                  Texture::DefaultMipMaps);
+    return CreateTextureFromImage(*normalMap, addressMode, Texture::DefaultMipMaps);
 }

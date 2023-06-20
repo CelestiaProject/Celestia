@@ -10,9 +10,9 @@ OverlayImage::OverlayImage(fs::path f, Renderer *r) :
     filename(std::move(f)),
     renderer(r)
 {
-    texture = std::unique_ptr<Texture>(LoadTextureFromFile(fs::path("images") / filename,
-                                                           Texture::EdgeClamp,
-                                                           Texture::NoMipMaps));
+    texture = LoadTextureFromFile(fs::path("images") / filename,
+                                  Texture::EdgeClamp,
+                                  Texture::NoMipMaps);
 }
 
 void OverlayImage::setColor(const Color& c)
