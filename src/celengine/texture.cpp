@@ -984,6 +984,9 @@ LoadTextureFromFile(const fs::path& filename,
     if (img == nullptr)
         return nullptr;
 
+    if (colorspace == Texture::LinearColorspace)
+        img->forceLinear();
+
     std::unique_ptr<Texture> tex = CreateTextureFromImage(*img, addressMode, mipMode);
 
     if (contentType == ContentType::DXT5NormalMap)
@@ -1011,6 +1014,9 @@ LoadHeightMapFromFile(const fs::path& filename,
     std::unique_ptr<Image> img = LoadImageFromFile(filename);
     if (img == nullptr)
         return nullptr;
+
+    img->forceLinear();
+
     std::unique_ptr<Image> normalMap = img->computeNormalMap(height,
                                                              addressMode == Texture::Wrap);
     if (normalMap == nullptr)

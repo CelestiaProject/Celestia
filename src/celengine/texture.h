@@ -103,6 +103,13 @@ class Texture
         DXT5NormalMap = 1
     };
 
+    enum Colorspace
+    {
+        DefaultColorspace = 0,
+        LinearColorspace  = 1,
+        sRGBColorspace    = 2
+    };
+
  protected:
     bool alpha{ false };
     bool compressed{ false };
@@ -189,7 +196,8 @@ CreateProceduralCubeMap(int size, celestia::PixelFormat format,
 std::unique_ptr<Texture>
 LoadTextureFromFile(const fs::path& filename,
                     Texture::AddressMode addressMode = Texture::EdgeClamp,
-                    Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
+                    Texture::MipMapMode mipMode = Texture::DefaultMipMaps,
+                    Texture::Colorspace colorspace = Texture::DefaultColorspace);
 
 std::unique_ptr<Texture>
 LoadHeightMapFromFile(const fs::path& filename,

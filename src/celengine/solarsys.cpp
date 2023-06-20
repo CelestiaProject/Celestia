@@ -212,7 +212,7 @@ void FillinSurface(const Hash* surfaceData,
     const std::string* overlayTexture = surfaceData->getString("OverlayTexture");
 
     unsigned int baseFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
-    unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
+    unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting | TextureInfo::LinearColorspace;
     unsigned int nightFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int specularFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
 
@@ -958,7 +958,7 @@ Body* CreateBody(const std::string& name,
             {
                 atmosphere->cloudNormalMap.setTexture(*cloudNormalMap,
                                                       path,
-                                                      TextureInfo::WrapTexture);
+                                                      TextureInfo::WrapTexture | TextureInfo::LinearColorspace);
             }
 
             if (auto cloudShadowDepth = atmosData->getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())

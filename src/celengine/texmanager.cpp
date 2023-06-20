@@ -1,5 +1,6 @@
 // texmanager.cpp
 //
+// Copyright (C) 2001-present, Celestia Development Team
 // Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -93,7 +94,8 @@ std::unique_ptr<Texture>
 TextureInfo::load(const fs::path& name) const
 {
     Texture::AddressMode addressMode = Texture::EdgeClamp;
-    Texture::MipMapMode mipMode = Texture::DefaultMipMaps;
+    Texture::MipMapMode  mipMode     = Texture::DefaultMipMaps;
+    Texture::Colorspace  colorspace  = Texture::DefaultColorspace;
 
     if (flags & WrapTexture)
         addressMode = Texture::Wrap;
@@ -103,10 +105,13 @@ TextureInfo::load(const fs::path& name) const
     if (flags & NoMipMaps)
         mipMode = Texture::NoMipMaps;
 
+    if (flags & LinearColorspace)
+        colorspace = Texture::LinearColorspace;
+
     if (bumpHeight == 0.0f)
     {
         GetLogger()->debug("Loading texture: {}\n", name);
-        return LoadTextureFromFile(name, addressMode, mipMode);
+        return LoadTextureFromFile(name, addressMode, mipMode, colorspace);
     }
 
     GetLogger()->debug("Loading bump map: {}\n", name);
