@@ -29,7 +29,9 @@
 #endif // !_WIN32
 #include "fsutils.h"
 
-using namespace std;
+#ifndef PATH_MAX
+#define PATH_MAX 260
+#endif
 
 namespace celestia::util
 {
@@ -107,8 +109,7 @@ fs::path ResolveWildcard(const fs::path& wildcard,
     for (std::string_view ext : extensions)
     {
         filename.replace_extension(ext);
-        ifstream in(filename.string());
-        if (in.good())
+        if (fs::exists(filename))
             return filename;
     }
 
@@ -119,26 +120,29 @@ fs::path ResolveWildcard(const fs::path& wildcard,
 fs::path HomeDir()
 {
 #ifdef _WIN32
-    wstring p(MAX_PATH + 1, 0);
+    wchar_t p[MAX_PATH + 1];
     if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PROFILE, nullptr, 0, &p[0])))
         return fs::path(p);
 
     // fallback to environment variables
-    const auto *s = _wgetenv(L"USERPROFILE"); // FIXME: rewrite using _wgetenv_s
-    if (s != nullptr)
-        return fs::path(s);
+    std::size_t size;
+    _wgetenv_s(&size, p, L"USERPROFILE");
+    if (size != 0)
+        return fs::path(p);
 
-    auto *s1 = _wgetenv(L"HOMEDRIVE");
-    auto *s2 = _wgetenv(L"HOMEPATH");
-    if (s1 != nullptr && s2 != nullptr)
+    _wgetenv_s(&size, p, L"HOMEDRIVE");
+    if (size != 0)
     {
-        return fs::path(s1) / fs::path(s2);
+        fs::path ret(p);
+        _wgetenv_s(&size, p, L"HOMEPATH");
+        if (size != 0)
+            return ret / fs::path(p);
     }
 
     // unlikely this is defined in woe but let's check
-    s = _wgetenv(L"HOME");
-    if (s != nullptr)
-        return fs::path(s);
+    _wgetenv_s(&size, p, L"HOME");
+    if (size != 0)
+        return fs::path(p);
 #elif defined(__APPLE__)
     return AppleHomeDirectory();
 #else
@@ -146,11 +150,11 @@ fs::path HomeDir()
     if (home != nullptr)
         return home;
 
-    // FIXME: rewrite using getpwuid_r
-    struct passwd *pw = getpwuid(geteuid());
-    home = pw->pw_dir;
-    if (home != nullptr)
-        return home;
+    struct passwd pw, *result = nullptr;
+    char pw_dir[PATH_MAX];
+    getpwuid_r(geteuid(), &pw, pw_dir, sizeof(pw_dir), &result);
+    if (result != nullptr)
+        return pw_dir;
 #endif
 
     return fs::path();
@@ -159,14 +163,17 @@ fs::path HomeDir()
 fs::path WriteableDataPath()
 {
 #if defined(_WIN32)
-    char s[MAX_PATH + 1];
-    if (SUCCEEDED(SHGetFolderPathA(nullptr, CSIDL_APPDATA, nullptr, 0, &s[0])))
-        return PathExp(s) / "Celestia";
+    wchar_t p[MAX_PATH + 1];
+    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_APPDATA, nullptr, 0, &p[0])))
+        return PathExp(p) / "Celestia";
 
     // fallback to environment variables
-    const char *p = getenv("APPDATA");
-    p = p != nullptr ? p : "~\\AppData\\Roaming";
-    return PathExp(p) / "Celestia";
+    std::size_t size;
+    _wgetenv_s(&size, p, L"APPDATA");
+    if (size != 0)
+        return PathExp(p) / "Celestia";
+
+    return PathExp("~\\AppData\\Roaming") / "Celestia";
 
 #elif defined(__APPLE__)
     return PathExp(AppleApplicationSupportDirectory()) / "Celestia";
