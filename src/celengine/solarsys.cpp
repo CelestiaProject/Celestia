@@ -801,12 +801,14 @@ Body* CreateBody(const std::string& name,
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            std::string p = path.string();
-            if (p[1] == ':')
-                // Absolute Windows path, file:/// is required
-                modifiedURL = "file:///" + p + "/" + *infoURL;
-            else if (!p.empty())
-                modifiedURL = p + "/" + *infoURL;
+            if (std::string p = path.string(); !p.empty())
+            {
+                if (p.size() > 1 && p[1] == ':')
+                    // Absolute Windows path, file:/// is required
+                    modifiedURL = fmt::format("file:///{}/{}", p, *infoURL);
+                else
+                    modifiedURL = fmt::format("{}/{}", p, *infoURL);
+            }
         }
         body->setInfoURL(modifiedURL.empty() ? *infoURL : modifiedURL);
     }
@@ -1277,9 +1279,9 @@ bool LoadSolarSystemObjects(std::istream& in,
             if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                UserCategory::loadCategories(location, *objectData, disposition, directory.string());
                 if (location != nullptr)
                 {
+                    UserCategory::loadCategories(location, *objectData, disposition, directory.string());
                     location->setName(primaryName);
                     parent.body()->addLocation(location);
                 }
