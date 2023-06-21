@@ -944,8 +944,9 @@ vector<string>* Body::getAlternateSurfaceNames() const
     vector<string>* names = new vector<string>();
     if (altSurfaces)
     {
-        for (const auto& s : *altSurfaces)
-            names->push_back(s.first);
+        std::transform(altSurfaces->begin(), altSurfaces->end(),
+                       std::back_inserter(*names),
+                       [](const auto& s) { return s.first; });
     }
 
     return names;
@@ -1069,13 +1070,15 @@ Body::removeReferenceMark(const string& tag)
 ReferenceMark*
 Body::findReferenceMark(const string& tag) const
 {
-    if (referenceMarks)
+    if (!referenceMarks)
+        return nullptr;
+
+    if (auto iter = std::find_if(referenceMarks->begin(),
+                                 referenceMarks->end(),
+                                 [tag](const auto* rm) { return rm->getTag() == tag; });
+        iter != referenceMarks->end())
     {
-        for (const auto rm : *referenceMarks)
-        {
-            if (rm->getTag() == tag)
-                return rm;
-        }
+            return *iter;
     }
 
     return nullptr;
