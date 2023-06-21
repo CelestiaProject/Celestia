@@ -326,17 +326,12 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     }
 
     // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
-
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
             auto nShadows = std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
         }
     }
 
@@ -664,9 +659,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 
     // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
@@ -674,7 +666,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
             unsigned int nShadows = std::min(MaxShaderEclipseShadows,
                                              static_cast<unsigned int>(ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
         }
     }
 

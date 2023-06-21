@@ -355,9 +355,8 @@ void LODSphereMesh::render(unsigned int attributes,
 
     // If one of the textures is split into subtextures, we may have to
     // use extra patches, since there can be at most one subtexture per patch.
-    int i;
     int minSplit = 1;
-    for (i = 0; i < nTextures; i++)
+    for (int i = 0; i < nTextures; i++)
     {
         double pixelsPerTexel = pixWidth * 2.0f /
             (static_cast<float>(tex[i]->getWidth()) / 2.0f);
@@ -382,7 +381,7 @@ void LODSphereMesh::render(unsigned int attributes,
 
     // Set the current textures
     nTexturesUsed = nTextures;
-    for (i = 0; i < nTextures; i++)
+    for (int i = 0; i < nTextures; i++)
     {
         tex[i]->beginUsage();
         textures[i] = tex[i];
@@ -433,7 +432,7 @@ void LODSphereMesh::render(unsigned int attributes,
     indices.clear();
     int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
     indices.reserve(expectedIndices);
-    for (i = 0; i < nRings; i++)
+    for (int i = 0; i < nRings; i++)
     {
         if (i > 0)
         {
@@ -462,14 +461,14 @@ void LODSphereMesh::render(unsigned int attributes,
     vertexSize = 3;
     if ((attributes & Tangents) != 0)
         vertexSize += 3;
-    for (i = 0; i < nTextures; i++)
+    for (int i = 0; i < nTextures; i++)
         vertexSize += 2;
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if ((attributes & Normals) != 0)
         glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
 
-    for (i = 0; i < nTextures; i++)
+    for (int i = 0; i < nTextures; i++)
     {
         glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);
     }
@@ -530,7 +529,7 @@ void LODSphereMesh::render(unsigned int attributes,
     if ((attributes & Tangents) != 0)
         glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
 
-    for (i = 0; i < nTextures; i++)
+    for (int i = 0; i < nTextures; i++)
     {
         tex[i]->endUsage();
         glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);

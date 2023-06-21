@@ -72,7 +72,7 @@ struct _AppData {
 
 
 /* Helper functions used throughout */
-gint tzOffsetAtDate(astro::Date date);
+gint tzOffsetAtDate(const astro::Date &date);
 void updateTimeZone(AppData* app, gboolean local);
 gint buttonMake(GtkWidget *hbox, const char *txt, GCallback func, gpointer data);
 void makeRadioItems(const char* const *labels, GtkWidget *box, GCallback sigFunc, GtkToggleButton **gads, gpointer data);

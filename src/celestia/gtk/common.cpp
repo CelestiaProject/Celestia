@@ -24,7 +24,7 @@
 using namespace std;
 
 /* Returns the offset of the timezone at date */
-gint tzOffsetAtDate(astro::Date date)
+gint tzOffsetAtDate(const astro::Date& date)
 {
     #ifdef WIN32
     /* This does not correctly handle DST. Unfortunately, no way to find
