@@ -543,7 +543,7 @@ bool Renderer::OrbitPathListEntry::operator<(const Renderer::OrbitPathListEntry&
 }
 
 
-bool Renderer::init(int winWidth, int winHeight, DetailOptions& _detailOptions)
+bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOptions)
 {
     detailOptions = _detailOptions;
 

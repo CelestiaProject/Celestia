@@ -142,13 +142,15 @@ RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& grou
         return;
     }
 
+#ifndef GL_ES
     bool drawPoints = false;
+#endif
     if (group.prim == cmod::PrimitiveGroupType::SpriteList || group.prim == cmod::PrimitiveGroupType::PointList)
     {
-        drawPoints = true;
         if (group.prim == cmod::PrimitiveGroupType::PointList)
             glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, 1.0f);
 #ifndef GL_ES
+        drawPoints = true;
         glEnable(GL_POINT_SPRITE);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
@@ -249,9 +251,6 @@ GLSL_RenderContext::initLightingEnvironment()
     shaderProps.nLights = std::min(lightingState.nLights, MaxShaderLights);
 
     // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
     for (unsigned int li = 0; li < lightingState.nLights; li++)
     {
         if (lightingState.shadows[li] && !lightingState.shadows[li]->empty())
@@ -259,7 +258,6 @@ GLSL_RenderContext::initLightingEnvironment()
             unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
                                                                        lightingState.shadows[li]->size()));
             shaderProps.setEclipseShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
         }
     }
 

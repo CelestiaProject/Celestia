@@ -121,7 +121,7 @@ class Renderer
         FisheyeMode     = 1
     };
 
-    bool init(int, int, DetailOptions&);
+    bool init(int, int, const DetailOptions&);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
