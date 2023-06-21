@@ -456,10 +456,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 
     // Move the best matching stars into the vector
     stars.reserve(nStars);
-    for (const auto& star : firstStars)
-    {
-        stars.push_back(star);
-    }
+    std::copy(firstStars.begin(), firstStars.end(), stars.begin());
 
     beginInsertRows(QModelIndex(), 0, stars.size());
     endInsertRows();
