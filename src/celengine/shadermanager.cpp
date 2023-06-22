@@ -854,9 +854,9 @@ ScatteredColor(unsigned int i)
 std::string
 TangentSpaceTransform(std::string_view dst, std::string_view src)
 {
-    return fmt::format("{0}.x = dot(in_Tangent, {1});\n"
+    return fmt::format("{0}.x = dot(T, {1});\n"
                        "{0}.y = dot(-bitangent, {1});\n"
-                       "{0}.z = dot(in_Normal, {1});\n",
+                       "{0}.z = dot(N, {1});\n",
                        dst, src);
 }
 
@@ -904,7 +904,7 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 //    NH - dot product of light and half vectors
 
 std::string
-AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props, std::string_view normal)
+AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 {
     std::string source;
 
@@ -917,7 +917,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props, std::s
     }
     else
     {
-        source += assign("NL", max(0.0f, dot(sh_vec3(normal), sh_vec3(LightProperty(i, "direction")))));
+        source += assign("NL", max(0.0f, dot(sh_vec3("N"), sh_vec3(LightProperty(i, "direction")))));
     }
 
     if (props.usesTangentSpaceLighting())
@@ -977,12 +977,11 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props, std::s
         source += "diff.rgb += " + LightProperty(i, "diffuse") + " * NL;\n";
         if (props.hasSpecular())
         {
-            source += "spec.rgb += " + LightProperty(i, "specular") +
-                " * (pow(NH, shininess) * NL);\n";
+            source += "spec.rgb += " + LightProperty(i, "specular") + " * (pow(NH, shininess) * NL);\n";
         }
     }
 
-    if (((props.texUsage & ShaderProperties::NightTexture) != 0) && VSComputesColorSum(props))
+    if (((props.texUsage & ShaderProperties::NightTexture) != 0) && !props.usesTangentSpaceLighting())
     {
         source += "totalLight += NL * " + LightProperty(i, "brightness") + ";\n";
     }
@@ -1974,15 +1973,8 @@ R"glsl(
     if (props.usesTangentSpaceLighting())
     {
         source += DeclareAttribute("in_Tangent", Shader_Vector3);
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += DeclareOutput(LightDir_tan(i), Shader_Vector3);
-        }
-
-        if (props.isViewDependent())
-        {
-            source += DeclareOutput("eyeDir_tan", Shader_Vector3);
-        }
+        source += DeclareOutput("normal", Shader_Vector3);
+        source += DeclareOutput("tangent", Shader_Vector3);
     }
     else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
@@ -2018,12 +2010,6 @@ R"glsl(
     {
         if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
             source += DeclareUniform("lunarLambert", Shader_Float);
-    }
-
-    // Miscellaneous lighting values
-    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
-    {
-        source += DeclareOutput("totalLight", Shader_Float);
     }
 
     // Shadow parameters
@@ -2062,32 +2048,19 @@ R"glsl(
     source += "\nvoid main(void)\n{\n";
     if (props.isViewDependent() || props.hasScattering())
     {
-        source += "vec3 eyeDir = normalize(eyePosition - in_Position.xyz);\n";
         source += "position_obj = in_Position.xyz;\n";
         if (!props.usesTangentSpaceLighting())
-        {
             source += "normal = in_Normal;\n";
-            source += "float NV = dot(in_Normal, eyeDir);\n";
-        }
     }
     else if (props.lightModel == ShaderProperties::DiffuseModel)
     {
         source += "normal = in_Normal;\n";
     }
 
-
-    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
-    {
-        source += "totalLight = 0.0;\n";
-    }
-
     if (props.usesTangentSpaceLighting())
     {
-        source += "vec3 bitangent = cross(in_Normal, in_Tangent);\n";
-        if (props.isViewDependent())
-        {
-            source += TangentSpaceTransform("eyeDir_tan", "eyeDir");
-        }
+        source += "normal = in_Normal;\n";
+        source += "tangent = in_Tangent;\n";
     }
     else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
@@ -2110,19 +2083,6 @@ R"glsl(
     if (props.hasShadowMap())
     {
         source += "cosNormalLightDir = dot(in_Normal, " + LightProperty(0, "direction") + ");\n";
-    }
-
-    if (props.usesTangentSpaceLighting())
-    {
-        source += DeclareLocal("NL", Shader_Float);
-
-        for (unsigned int i = 0; i < props.nLights; i++)
-            source += AddDirectionalLightContrib(i, props, "in_Normal");
-    }
-
-    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
-    {
-        source += NightTextureBlend();
     }
 
     unsigned int nTexCoords = 0;
@@ -2313,16 +2273,20 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += DeclareUniform("ambientColor", Shader_Vector3);
         source += DeclareUniform("opacity", Shader_Float);
         source += "vec4 diff = vec4(ambientColor, opacity);\n";
+        source += DeclareInput("normal", Shader_Vector3);
+        source += "vec3 N = normalize(normal);\n";
+        source += DeclareInput("tangent", Shader_Vector3);
+        source += "vec3 T = normalize(tangent);\n";
         if (props.isViewDependent())
         {
-            source += DeclareInput("eyeDir_tan", Shader_Vector3); // tangent space eye vector
+            source += DeclareLocal("eyeDir_tan", Shader_Vector3); // tangent space eye vector
             source += "vec4 spec = vec4(0.0);\n";
             source += DeclareUniform("shininess", Shader_Float);
         }
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += DeclareInput(LightDir_tan(i), Shader_Vector3);
+            source += DeclareLocal(LightDir_tan(i), Shader_Vector3);
             source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
             if (props.hasSpecular())
             {
@@ -2380,14 +2344,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += DeclareInput("position_obj", Shader_Vector3);
         source += "vec3 nposition = normalize(position_obj);\n";
-    }
-
-    if ((props.texUsage & ShaderProperties::NightTexture))
-    {
-        if (VSComputesColorSum(props))
-        {
-            source += DeclareInput("totalLight", Shader_Float);
-        }
     }
 
     // Declare shadow parameters
@@ -2450,17 +2406,35 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
+    if (((props.texUsage & ShaderProperties::NightTexture) != 0))
+    {
+        source += "float totalLight = 0.0;\n";
+    }
+
     source += DeclareLocal("NL", Shader_Float);
+
+    if (props.usesTangentSpaceLighting())
+    {
+        source += "vec3 bitangent = cross(N, T);\n";
+        if (props.isViewDependent() || props.hasScattering())
+            source += "vec3 eyeDir = normalize(eyePosition - nposition);\n";
+
+        if (props.isViewDependent())
+            source += TangentSpaceTransform("eyeDir_tan", "eyeDir");
+
+        for (unsigned int i = 0; i < props.nLights; i++)
+            source += AddDirectionalLightContrib(i, props);
+    }
 
     if (props.isViewDependent() || props.hasScattering())
     {
-        source += "vec3 eyeDir = normalize(eyePosition - nposition);\n";
         if (!props.usesTangentSpaceLighting())
         {
+            source += "vec3 eyeDir = normalize(eyePosition - nposition);\n";
             source += "float NV = dot(N, eyeDir);\n";
 
             for (unsigned int i = 0; i < props.nLights; i++)
-                source += AddDirectionalLightContrib(i, props, "N");
+                source += AddDirectionalLightContrib(i, props);
         }
     }
     else if (!props.usesTangentSpaceLighting() ||
@@ -2468,7 +2442,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
          !props.usesShadows())
     {
         for (unsigned int i = 0; i < props.nLights; i++)
-            source += AddDirectionalLightContrib(i, props, "N");
+            source += AddDirectionalLightContrib(i, props);
     }
 
     if (props.usesShadows())
@@ -2544,14 +2518,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "l = max(0.0, dot(" + LightDir_tan(i) + ", n)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
 
-            if ((props.texUsage & ShaderProperties::NightTexture) &&
-                !VSComputesColorSum(props))
+            if ((props.texUsage & ShaderProperties::NightTexture) != 0)
             {
-                if (i == 0)
-                    source += "float totalLight = ";
-                else
-                    source += "totalLight += ";
-                source += "l * " + FragLightProperty(i, "brightness") + ";\n";
+                source += "totalLight += l * " + FragLightProperty(i, "brightness") + ";\n";
             }
 
             std::string illum;
@@ -2655,37 +2624,24 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor = color * diff;\n";
     }
 
-    // Add in the emissive color
-    // TODO: support a constant emissive color, not just an emissive texture
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        // If the night texture blend factor wasn't computed in the vertex
-        // shader, we need to do so now.
-        if (!VSComputesColorSum(props))
+        if (!props.usesTangentSpaceLighting() &&
+            ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0 ||
+             props.usesShadows() || props.isViewDependent() || props.hasScattering()))
         {
-            if (!props.usesTangentSpaceLighting())
-            {
-                source += "float totalLight = ";
-
-                if (props.nLights == 0)
-                {
-                    source += "0.0f;\n";
-                }
-                else
-                {
-                    int k;
-                    for (k = 0; k < props.nLights - 1; k++)
-                        source += SeparateDiffuse(k) + " + ";
-                    source += SeparateDiffuse(k) + ";\n";
-                }
-            }
-
-            source += NightTextureBlend();
+            int k;
+            for (k = 0; k < props.nLights - 1; k++)
+                source += SeparateDiffuse(k) + " + ";
+            source += SeparateDiffuse(k) + ";\n";
         }
 
+        source += NightTextureBlend();
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
     }
 
+    // Add in the emissive color
+    // TODO: support a constant emissive color, not just an emissive texture
     if (props.texUsage & ShaderProperties::EmissiveTexture)
     {
         source += "gl_FragColor += texture2D(emissiveTex, " + emissiveTexCoord + ".st);\n";
