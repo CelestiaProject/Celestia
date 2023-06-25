@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <vector>
 
@@ -214,6 +215,17 @@ const Eclipse* EventTableModel::eclipseAtIndex(const QModelIndex& index) const
 }
 
 
+constexpr std::array planets =
+{
+    N_("Earth"),
+    N_("Jupiter"),
+    N_("Saturn"),
+    N_("Uranus"),
+    N_("Neptune"),
+    N_("Pluto"),
+};
+
+
 EventFinder::EventFinder(CelestiaCore* _appCore,
                          const QString& title,
                          QWidget* parent) :
@@ -271,12 +283,8 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     layout->addWidget(subgroup);
 
     planetSelect = new QComboBox();
-    planetSelect->addItem(_("Earth"));
-    planetSelect->addItem(_("Jupiter"));
-    planetSelect->addItem(_("Saturn"));
-    planetSelect->addItem(_("Uranus"));
-    planetSelect->addItem(_("Neptune"));
-    planetSelect->addItem(_("Pluto"));
+    for (const char *planet : planets)
+        planetSelect->addItem(_(planet));
     layout->addWidget(planetSelect);
 
     QPushButton* findButton = new QPushButton(_("Find eclipses"));
@@ -329,8 +337,8 @@ void EventFinder::slotFindEclipses()
     else if (allEclipsesButton->isChecked())
         eclipseTypeMask = Eclipse::Solar | Eclipse::Lunar;
 
-    QString bodyName = QString("Sol/") + planetSelect->currentText();
-    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toStdString(), true);
+    std::string bodyName = fmt::format("Sol/{}", planets[planetSelect->currentIndex()]);
+    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName, true);
 
     if (obj.body() == nullptr)
     {
