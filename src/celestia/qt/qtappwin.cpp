@@ -492,6 +492,9 @@ void CelestiaAppWindow::readSettings()
 
     settings.endGroup();
 
+    if (settings.value("LimitOfKnowledge", false).toBool())
+        m_appCore->getSimulation()->getActiveObserver()->setDisplayedSurface("limit of knowledge");
+
     setFPS(settings.value("fps", 0).toInt());
 
     // Render settings read in qtglwidget
@@ -539,6 +542,9 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("StarsColor", static_cast<int>(colorsst));
 
     Simulation* simulation = m_appCore->getSimulation();
+
+    bool limitOfknowledge = simulation->getActiveObserver()->getDisplayedSurface() == "limit of knowledge";
+    settings.setValue("LimitOfKnowledge", limitOfknowledge);
 
     settings.beginGroup("Preferences");
     settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
