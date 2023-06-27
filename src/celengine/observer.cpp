@@ -82,6 +82,8 @@ Observer::Observer(const Observer& o) :
     trackObject(o.trackObject),
     trackingOrientation(o.trackingOrientation),
     fov(o.fov),
+    zoom(o.zoom),
+    alternateZoom(o.alternateZoom),
     reverseFlag(o.reverseFlag),
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
@@ -107,6 +109,8 @@ Observer& Observer::operator=(const Observer& o)
     trackObject = o.trackObject;
     trackingOrientation = o.trackingOrientation;
     fov = o.fov;
+    zoom = o.zoom;
+    alternateZoom = o.alternateZoom;
     reverseFlag = o.reverseFlag;
     locationFilter = o.locationFilter;
     displayedSurface = o.displayedSurface;
@@ -1348,6 +1352,25 @@ void Observer::setFOV(float _fov)
     fov = _fov;
 }
 
+float Observer::getZoom() const
+{
+    return zoom;
+}
+
+void Observer::setZoom(float _zoom)
+{
+    zoom = _zoom;
+}
+
+float Observer::getAlternateZoom() const
+{
+    return alternateZoom;
+}
+
+void Observer::setAlternateZoom(float _alternateZoom)
+{
+    alternateZoom = _alternateZoom;
+}
 
 Vector3f Observer::getPickRay(float x, float y) const
 {

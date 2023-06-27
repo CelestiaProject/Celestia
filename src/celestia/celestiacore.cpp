@@ -585,14 +585,16 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
         {
-            if ((*activeView)->zoom != 1)
+            auto observer = (*activeView)->getObserver();
+            auto currentZoom = observer->getZoom();
+            if (currentZoom != 1.0f)
             {
-                (*activeView)->alternateZoom = (*activeView)->zoom;
-                (*activeView)->zoom = 1;
+                observer->setAlternateZoom(currentZoom);
+                observer->setZoom(1.0f);
             }
             else
             {
-                (*activeView)->zoom = (*activeView)->alternateZoom;
+                observer->setZoom(observer->getAlternateZoom());
             }
             setFOVFromZoom();
 
@@ -2416,8 +2418,8 @@ void CelestiaCore::setFOVFromZoom()
                 v->observer->setFOV(MaximumFOVFisheye);
             else
             {
-                double fov = 2 * atan(height * v->height / (screenDpi / 25.4) / 2. / distanceToScreen) / v->zoom;
-                v->observer->setFOV((float) fov);
+                float fov = PerspectiveFOV(static_cast<float>(height) * v->height, screenDpi, distanceToScreen) / v->getObserver()->getZoom();
+                v->getObserver()->setFOV(fov);
             }
         }
 }
@@ -2427,7 +2429,15 @@ void CelestiaCore::setZoomFromFOV()
     for (auto v : views)
         if (v->type == View::ViewWindow)
         {
-            v->zoom = (float) (2 * atan(height * v->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  v->observer->getFOV());
+            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+            {
+                v->getObserver()->setZoom(1.0f);
+            }
+            else
+            {
+                float zoom = PerspectiveFOV(static_cast<float>(height) * v->height, screenDpi, distanceToScreen) / v->getObserver()->getFOV();
+                v->getObserver()->setZoom(zoom);
+            }
         }
 }
 
@@ -3369,9 +3379,9 @@ void CelestiaCore::renderOverlay()
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         // Field of view
-        float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        overlay->printf(_("FOV: %s (%.2fx)\n"),
-                              angleToStr(fov), (*activeView)->zoom);
+        auto activeObserver = sim->getActiveObserver();
+        float fov = radToDeg(activeObserver->getFOV());
+        overlay->printf(_("FOV: %s (%.2fx)\n"), angleToStr(fov), activeObserver->getZoom());
         overlay->endText();
         overlay->restorePos();
     }
