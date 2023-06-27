@@ -209,7 +209,6 @@ void View::split(Type type, Observer *o, float splitPos, View **split, View **vi
                      x1, y1, w2, h2);
     (*split)->child2 = *view;
     (*view)->parent = *split;
-    (*view)->zoom = zoom;
 }
 
 View* View::remove(View* v)

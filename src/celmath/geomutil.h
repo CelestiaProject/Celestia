@@ -138,6 +138,14 @@ ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
     return true;
 }
 
+/*! Return vertical FOV for perspective projection based on screen dpi, number of vertical
+ *  pixels, and screen distance
+ */
+template<class T>
+T PerspectiveFOV(T height, int screenDpi, int distanceToScreen)
+{
+    return static_cast<T>(2.0) * std::atan(height / (static_cast<T>(screenDpi) / static_cast<T>(25.4)) / static_cast<T>(2.0) / static_cast<T>(distanceToScreen));
+}
 
 /*! Return an perspective projection matrix
  */

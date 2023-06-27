@@ -62,8 +62,6 @@ class View
     float     height;
     uint64_t  renderFlags     { 0 };
     int       labelMode       { 0 };
-    float     zoom            { 1.0f };
-    float     alternateZoom   { 1.0f };
 
 private:
     std::unique_ptr<FramebufferObject> fbo;

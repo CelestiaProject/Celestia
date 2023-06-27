@@ -136,6 +136,11 @@ public:
     float          getFOV() const;
     void           setFOV(float);
 
+    float          getZoom() const;
+    void           setZoom(float);
+    float          getAlternateZoom() const;
+    void           setAlternateZoom(float);
+
     void           update(double dt, double timeScale);
 
     Eigen::Vector3f getPickRay(float x, float y) const;
@@ -314,6 +319,9 @@ public:
     Eigen::Quaterniond 	trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
 
     float fov{ static_cast<float>(celestia::numbers::pi / 4.0) };
+    float zoom{ 1.0f };
+    float alternateZoom{ 1.0f };
+
     bool reverseFlag{ false };
 
     uint64_t locationFilter{ ~0ull };
