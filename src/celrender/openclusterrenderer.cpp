@@ -24,7 +24,7 @@ OpenClusterRenderer::OpenClusterRenderer(Renderer &renderer) :
 OpenClusterRenderer::~OpenClusterRenderer() = default;
 
 void
-OpenClusterRenderer::update(const Eigen::Quaternionf &/*viewerOrientation*/, float /*pixelSize*/, float /*fov*/) const
+OpenClusterRenderer::update(const Eigen::Quaternionf &/*viewerOrientation*/, float /*pixelSize*/, float /*fov*/, float /*zoom*/) const
 {
     // See comments in render()
 }

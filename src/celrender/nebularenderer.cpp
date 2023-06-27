@@ -46,11 +46,12 @@ NebulaRenderer::NebulaRenderer(Renderer &renderer) :
 NebulaRenderer::~NebulaRenderer() = default; // define here as Object is not defined in the header file
 
 void
-NebulaRenderer::update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov)
+NebulaRenderer::update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom)
 {
     m_viewerOrientation = viewerOrientation;
     m_pixelSize = pixelSize;
     m_fov = fov;
+    m_zoom = zoom;
 }
 
 void
@@ -83,7 +84,7 @@ NebulaRenderer::renderNebula(const Object &obj) const
 
     Eigen::Matrix4f pr;
     if (obj.nearZ != 0.0f && obj.farZ != 0.0f)
-        m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ);
+        m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ, m_zoom);
     else
         pr = m_renderer.getProjectionMatrix();
 

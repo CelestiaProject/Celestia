@@ -31,7 +31,7 @@ public:
 
     void add(const Galaxy *galaxy, const Eigen::Vector3f &offset, float brightness, float nearZ, float farZ);
 
-    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov);
+    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom);
 
     void render();
 
@@ -60,6 +60,7 @@ private:
     Eigen::Matrix3f     m_viewMat{ Eigen::Matrix3f::Identity() };
     float               m_pixelSize{ 1.0f };
     float               m_fov{ 45.0f };
+    float               m_zoom{ 1.0f };
 
     bool                m_initialized{ false };
 };

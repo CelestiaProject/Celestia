@@ -339,8 +339,8 @@ SkyGrid::render(Renderer& renderer,
     // to Celestia's system.
     Quaterniond xrot90 = XRotation(-celestia::numbers::pi / 2.0);
 
-    double vfov = observer.getFOV();
-    double viewAspectRatio = (double) windowWidth / (double) windowHeight;
+    auto vfov = static_cast<double>(renderer.getProjectionMode()->getFOV(observer.getZoom()));
+    double viewAspectRatio = static_cast<double>(windowWidth) / static_cast<double>(windowHeight);
 
     // Calculate the cosine of half the maximum field of view. We'll use this for
     // fast testing of marker visibility. The stored field of view is the

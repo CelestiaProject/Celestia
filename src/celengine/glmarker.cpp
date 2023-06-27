@@ -120,7 +120,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
     double distance = position.norm();
     position *= cursorDistance / distance;
 
-    float vfov = observer.getFOV();
+    float vfov = celmath::degToRad(fov);
     float h = std::tan(vfov / 2.0f);
     float w = h * getAspectRatio();
     float diag = std::hypot(h, w);

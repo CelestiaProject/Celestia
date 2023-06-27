@@ -94,7 +94,6 @@ using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
 
-#define FOV           45.0f
 #define NEAR_DIST      0.5f
 #define FAR_DIST       1.0e9f
 
@@ -222,18 +221,6 @@ inline float sizeFade(float screenSize, float minScreenSize, float opaqueScale)
     return min(1.0f, (screenSize - minScreenSize) / (minScreenSize * (opaqueScale - 1)));
 }
 
-
-// Calculate the cosine of half the maximum field of view. We'll use this for
-// fast testing of object visibility.  The function takes the vertical FOV (in
-// degrees) as an argument. When computing the view cone, we want the field of
-// view as measured on the diagonal between viewport corners.
-double computeCosViewConeAngle(double verticalFOV, double width, double height)
-{
-    double h = tan(degToRad(verticalFOV / 2));
-    double diag = sqrt(1.0 + square(h) + square(h * width / height));
-    return 1.0 / diag;
-}
-
 inline void glVertexAttrib(GLuint index, const Color &color)
 {
 #ifdef GL_ES
@@ -246,12 +233,10 @@ inline void glVertexAttrib(GLuint index, const Color &color)
 Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
-    fov(FOV),
-    cosViewConeAngle(computeCosViewConeAngle(fov, 1, 1)),
+    fov(standardFOV),
     screenDpi(96),
     corrFac(1.12f),
     faintestAutoMag45deg(8.0f), //def. 7.0f
-    projectionMode(ProjectionMode::PerspectiveMode),
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
@@ -585,23 +570,15 @@ void Renderer::resize(int width, int height)
 {
     windowWidth = width;
     windowHeight = height;
-    cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
+    projectionMode->setSize(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
     // glViewport(windowWidth, windowHeight);
     m_orthoProjMatrix = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
-}
-
-float Renderer::calcPixelSize(float fovY, float windowHeight)
-{
-    return (getProjectionMode() == ProjectionMode::FisheyeMode)
-        ? 2.0f / windowHeight
-        : 2.0f * tan(degToRad(fovY * 0.5f)) / windowHeight;
 }
 
 void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
-    corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
-    cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
+    corrFac = (0.12f * fov / standardFOV * fov / standardFOV + 1.0f);
 }
 
 int Renderer::getScreenDpi() const
@@ -622,6 +599,7 @@ int Renderer::getWindowHeight() const
 void Renderer::setScreenDpi(int _dpi)
 {
     screenDpi = _dpi;
+    projectionMode->setScreenDpi(_dpi);
 }
 
 float Renderer::getScaleFactor() const
@@ -725,15 +703,15 @@ void Renderer::setLabelMode(int _labelMode)
     markSettingsChanged();
 }
 
-Renderer::ProjectionMode Renderer::getProjectionMode() const
+shared_ptr<celestia::engine::ProjectionMode> Renderer::getProjectionMode() const
 {
     return projectionMode;
 }
 
-void Renderer::setProjectionMode(ProjectionMode _projectionMode)
+void Renderer::setProjectionMode(shared_ptr<celestia::engine::ProjectionMode> _projectionMode)
 {
     projectionMode = _projectionMode;
-    shaderManager->setFisheyeEnabled(projectionMode == ProjectionMode::FisheyeMode);
+    projectionMode->configureShaderManager(shaderManager);
     markSettingsChanged();
 }
 
@@ -888,8 +866,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 {
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
     Vector3f win;
-    bool fisheye = projectionMode == ProjectionMode::FisheyeMode;
-    bool success = fisheye ? ProjectFisheye(pos, m_modelMatrix, m_projMatrix, view, win) : ProjectPerspective(pos, m_MVPMatrix, view, win);
+    bool success = projectionMode->project(pos, m_modelMatrix, m_projMatrix, m_MVPMatrix, view, win);
     if (success)
     {
         float depth = pos.x() * m_modelMatrix(2, 0) +
@@ -1333,14 +1310,10 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
 }
 
 
-void Renderer::autoMag(float& faintestMag)
+void Renderer::autoMag(float& faintestMag, float zoom)
 {
-    float fieldCorr;
-    if (getProjectionMode() == ProjectionMode::FisheyeMode)
-        fieldCorr = 2.0f - 2000.0f / (windowHeight / (screenDpi / 25.4f / 3.78f) + 1000.0f); // larger window height = more stars to display
-    else
-        fieldCorr= 2.0f * FOV / (fov + FOV);
-    faintestMag = (float) (faintestAutoMag45deg * sqrt(fieldCorr));
+    float fieldCorr = getProjectionMode()->getFieldCorrection(zoom);
+    faintestMag = faintestAutoMag45deg * std::sqrt(fieldCorr);
     saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
 }
 
@@ -1524,8 +1497,10 @@ void Renderer::draw(const Observer& observer,
     settingsChanged = false;
 
     // Compute the size of a pixel
-    setFieldOfView(radToDeg(observer.getFOV()));
-    pixelSize = calcPixelSize(fov, (float) windowHeight);
+    float zoom = observer.getZoom();
+    setFieldOfView(radToDeg(getProjectionMode()->getFOV(zoom)));
+    cosViewConeAngle = projectionMode->getViewConeAngleMax(zoom);
+    pixelSize = getProjectionMode()->getPixelSize(zoom);
 
     // Get the displayed surface texture set to use from the observer
     displayedSurface = observer.getDisplayedSurface();
@@ -1547,7 +1522,7 @@ void Renderer::draw(const Observer& observer,
 
     // Set up the projection and modelview matrices.
     // We'll usethem for positioning star and planet labels.
-    buildProjectionMatrix(m_projMatrix, NEAR_DIST, FAR_DIST);
+    buildProjectionMatrix(m_projMatrix, NEAR_DIST, FAR_DIST, observer.getZoom());
     m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
     m_MVPMatrix = m_projMatrix * m_modelMatrix;
 
@@ -1568,7 +1543,7 @@ void Renderer::draw(const Observer& observer,
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
     {
-        autoMag(faintestMag);
+        autoMag(faintestMag, zoom);
     }
     else
     {
@@ -3915,16 +3890,16 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 {
     DSORenderer dsoRenderer;
 
-    m_galaxyRenderer->update(observer.getOrientationf(), pixelSize, fov);
+    m_galaxyRenderer->update(observer.getOrientationf(), pixelSize, fov, observer.getZoom());
     dsoRenderer.galaxyRenderer = m_galaxyRenderer.get();
 
-    m_globularRenderer->update(observer.getOrientationf(), pixelSize, fov);
+    m_globularRenderer->update(observer.getOrientationf(), pixelSize, fov, observer.getZoom());
     dsoRenderer.globularRenderer = m_globularRenderer.get();
 
-    m_nebulaRenderer->update(observer.getOrientationf(), pixelSize, fov);
+    m_nebulaRenderer->update(observer.getOrientationf(), pixelSize, fov, observer.getZoom());
     dsoRenderer.nebulaRenderer = m_nebulaRenderer.get();
 
-    m_openClusterRenderer->update(observer.getOrientationf(), pixelSize, fov);
+    m_openClusterRenderer->update(observer.getOrientationf(), pixelSize, fov, observer.getZoom());
     dsoRenderer.openClusterRenderer = m_openClusterRenderer.get();
 
     Vector3d obsPos     = observer.getPosition().toLy();
@@ -4290,18 +4265,13 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     // Precompute values that will be used to generate the normalized device z value;
     // we're effectively just handling the projection instead of OpenGL. We use an orthographic
     // projection matrix in order to get the label text position exactly right but need to mimic
-    // the depth coordinate generation of a perspective projection. For fisheye, just apply a
-    // linear transformation since fisheye uses orthographic projection already.
-    float d0 = farDist - nearDist;
-    float d1 = -(farDist + nearDist) / d0; // Used in perspective projection
-    float d2 = -2.0f * nearDist * farDist / d0; // Used in perspective projection
-    bool fisheye = projectionMode == ProjectionMode::FisheyeMode;
+    // the depth coordinate generation of a projection.
 
     vector<Annotation>::iterator iter = startIter;
     for (; iter != endIter && iter->position.z() > nearDist; ++iter)
     {
         // Compute normalized device z
-        float z = fisheye ? (1.0f - (iter->position.z() - nearDist) / d0 * 2.0f) : (d1 + d2 / -iter->position.z());
+        float z = getProjectionMode()->getNormalizedDeviceZ(nearDist, farDist, iter->position.z());
         float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
         if (iter->markerRep != nullptr)
@@ -5326,7 +5296,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         // Set up a perspective projection using the current interval's near and
         // far clip planes.
         Matrix4f proj;
-        buildProjectionMatrix(proj, nearPlaneDistance, farPlaneDistance);
+        buildProjectionMatrix(proj, nearPlaneDistance, farPlaneDistance, observer.getZoom());
         Matrices m = { &proj, &m_modelMatrix };
 
         setCurrentProjectionMatrix(proj);
@@ -5458,10 +5428,7 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
 }
 
-void Renderer::buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ) const
+void Renderer::buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const
 {
-    float aspectRatio = getAspectRatio();
-    mat = (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-        ? celmath::Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearZ, farZ)
-        : celmath::Perspective(fov, aspectRatio, nearZ, farZ);
+    mat = projectionMode->getProjectionMatrix(nearZ, farZ, zoom);
 }

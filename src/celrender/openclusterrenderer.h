@@ -27,7 +27,7 @@ public:
 
     void add(const OpenCluster *cluster, const Eigen::Vector3f &offset, float brightness, float nearZ, float farZ) const;
 
-    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov) const;
+    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom) const;
 
     void render() const;
 

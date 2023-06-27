@@ -29,6 +29,8 @@ set(CELENGINE_SOURCES
   dsooctree.h
   dsorenderer.cpp
   dsorenderer.h
+  fisheyeprojectionmode.cpp
+  fisheyeprojectionmode.h
   frame.cpp
   frame.h
   framebuffer.cpp
@@ -85,12 +87,16 @@ set(CELENGINE_SOURCES
   parseobject.h
   parser.cpp
   parser.h
+  perspectiveprojectionmode.cpp
+  perspectiveprojectionmode.h
   planetgrid.cpp
   planetgrid.h
   pointstarrenderer.cpp
   pointstarrenderer.h
   pointstarvertexbuffer.cpp
   pointstarvertexbuffer.h
+  projectionmode.cpp
+  projectionmode.h
   rectangle.h
   referencemark.h
   rendcontext.cpp

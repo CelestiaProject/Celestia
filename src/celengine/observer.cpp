@@ -1369,30 +1369,6 @@ void Observer::setAlternateZoom(float _alternateZoom)
     alternateZoom = _alternateZoom;
 }
 
-Vector3f Observer::getPickRay(float x, float y) const
-{
-    float s = 2 * (float) tan(fov / 2.0);
-    Vector3f pickDirection(x * s, y * s, -1.0f);
-
-    return pickDirection.normalized();
-}
-
-Vector3f Observer::getPickRayFisheye(float x, float y) const
-{
-    float r = hypot(x, y);
-    float phi = celestia::numbers::pi_v<float> * r;
-    float sin_phi = sin(phi);
-    float theta = atan2(y, x);
-    float newX = sin_phi * cos(theta);
-    float newY = sin_phi * sin(theta);
-    float newZ = cos(phi);
-    Vector3f pickDirection = Vector3f(newX, newY, -newZ);
-    pickDirection.normalize();
-
-    return pickDirection;
-}
-
-
 // Internal method to update the position and orientation of the observer in
 // universal coordinates.
 void Observer::updateUniversal()
