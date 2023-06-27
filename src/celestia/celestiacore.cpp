@@ -38,6 +38,8 @@
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
 #include <celengine/framebuffer.h>
+#include <celengine/fisheyeprojectionmode.h>
+#include <celengine/perspectiveprojectionmode.h>
 #include <celimage/imageformats.h>
 #include <celmath/geomutil.h>
 #include <celutil/color.h>
@@ -92,9 +94,6 @@ static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
 static const double MinimumTimeRate = 1.0e-15;
 static const float stdFOV = degToRad(45.0f);
-static const float MaximumFOVPerspective = degToRad(120.0f);
-static const float MaximumFOVFisheye = degToRad(179.99f);
-static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 static const double OneMiInKm = 1.609344;
@@ -554,7 +553,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             if (isViewportEffectUsed)
                 viewportEffect->distortXY(pickX, pickY);
 
-            Vector3f pickRay = renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode ? sim->getActiveObserver()->getPickRayFisheye(pickX, pickY) : sim->getActiveObserver()->getPickRay(pickX, pickY);
+            Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, (*activeView)->getObserver()->getZoom());
 
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
@@ -574,7 +573,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             if (isViewportEffectUsed)
                 viewportEffect->distortXY(pickX, pickY);
 
-            Vector3f pickRay = renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode ? sim->getActiveObserver()->getPickRayFisheye(pickX, pickY) : sim->getActiveObserver()->getPickRay(pickX, pickY);
+            Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, (*activeView)->getObserver()->getZoom());
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             if (!sel.empty())
@@ -757,8 +756,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             // Mouse zoom control
             float amount = dy / height;
-            float minFOV = MinimumFOV;
-            float maxFOV = getMaximumFOV();
+            float minFOV = renderer->getProjectionMode()->getMinimumFOV();
+            float maxFOV = renderer->getProjectionMode()->getMaximumFOV();
             float fov = sim->getActiveObserver()->getFOV();
 
             // In order for the zoom to have the right feel, it should be
@@ -1471,7 +1470,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case ',':
         addToHistory();
-        if (observer->getFOV() > MinimumFOV)
+        if (observer->getFOV() > renderer->getProjectionMode()->getMinimumFOV())
         {
             observer->setFOV(observer->getFOV() / 1.05f);
             setZoomFromFOV();
@@ -1488,7 +1487,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '.':
         addToHistory();
-        if (observer->getFOV() < getMaximumFOV())
+        if (observer->getFOV() < renderer->getProjectionMode()->getMaximumFOV())
         {
             observer->setFOV(observer->getFOV() * 1.05f);
             setZoomFromFOV();
@@ -2389,44 +2388,30 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     flash(_("Added view"));
 }
 
-float CelestiaCore::getMaximumFOV() const
-{
-    if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-        return MaximumFOVFisheye;
-    else
-        return MaximumFOVPerspective;
-}
-
 void CelestiaCore::setFOVFromZoom()
 {
+    auto projectionMode = renderer->getProjectionMode();
     for (const auto v : views)
+    {
         if (v->type == View::ViewWindow)
         {
-            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-                v->observer->setFOV(MaximumFOVFisheye);
-            else
-            {
-                float fov = PerspectiveFOV(static_cast<float>(height) * v->height, screenDpi, distanceToScreen) / v->getObserver()->getZoom();
-                v->getObserver()->setFOV(fov);
-            }
+            projectionMode->setSize(v->width * static_cast<float>(width), v->height * static_cast<float>(height));
+            v->observer->setFOV(projectionMode->getFOV(v->observer->getZoom()));
         }
+    }
 }
 
 void CelestiaCore::setZoomFromFOV()
 {
+    auto projectionMode = renderer->getProjectionMode();
     for (auto v : views)
+    {
         if (v->type == View::ViewWindow)
         {
-            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
-            {
-                v->getObserver()->setZoom(1.0f);
-            }
-            else
-            {
-                float zoom = PerspectiveFOV(static_cast<float>(height) * v->height, screenDpi, distanceToScreen) / v->getObserver()->getFOV();
-                v->getObserver()->setZoom(zoom);
-            }
+            projectionMode->setSize(v->width * static_cast<float>(width), v->height * static_cast<float>(height));
+            v->observer->setZoom(projectionMode->getZoom(v->observer->getFOV()));
         }
+    }
 }
 
 void CelestiaCore::singleView(View* av)
@@ -3986,15 +3971,20 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
     }
 
-    if (!config->projectionMode.empty())
+    std::shared_ptr<ProjectionMode> projectionMode = nullptr;
+    if (compareIgnoringCase(config->projectionMode, "fisheye") == 0)
     {
-        if (config->projectionMode == "perspective")
-            renderer->setProjectionMode(Renderer::ProjectionMode::PerspectiveMode);
-        else if (config->projectionMode == "fisheye")
-            renderer->setProjectionMode(Renderer::ProjectionMode::FisheyeMode);
-        else
-            GetLogger()->warn("Unknown projection mode {}\n", config->projectionMode);
+        projectionMode = make_shared<FisheyeProjectionMode>(static_cast<float>(width), static_cast<float>(height), screenDpi);
     }
+    else
+    {
+        if (!config->projectionMode.empty() && compareIgnoringCase(config->projectionMode, "perspective") != 0)
+        {
+            GetLogger()->warn("Unknown projection mode {}\n", config->projectionMode);
+        }
+        projectionMode = make_shared<PerspectiveProjectionMode>(static_cast<float>(width), static_cast<float>(height), distanceToScreen, screenDpi);
+    }
+    renderer->setProjectionMode(projectionMode);
 
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
     {
@@ -4296,7 +4286,7 @@ void CelestiaCore::setFaintest(float magnitude)
 void CelestiaCore::setFaintestAutoMag()
 {
     float faintestMag;
-    renderer->autoMag(faintestMag);
+    renderer->autoMag(faintestMag, sim->getActiveObserver()->getZoom());
     sim->setFaintestVisible(faintestMag);
 }
 
@@ -4437,8 +4427,8 @@ int CelestiaCore::getTextEnterMode() const
 void CelestiaCore::setScreenDpi(int dpi)
 {
     screenDpi = dpi;
-    setFOVFromZoom();
     renderer->setScreenDpi(dpi);
+    setFOVFromZoom();
 }
 
 int CelestiaCore::getScreenDpi() const
@@ -4449,6 +4439,7 @@ int CelestiaCore::getScreenDpi() const
 void CelestiaCore::setDistanceToScreen(int dts)
 {
     distanceToScreen = dts;
+    renderer->getProjectionMode()->setDistanceToScreen(dts);
     setFOVFromZoom();
 }
 

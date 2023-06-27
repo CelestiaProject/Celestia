@@ -21,6 +21,7 @@
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/starcolors.h>
+#include <celengine/projectionmode.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
 #include <celengine/textlayout.h>
@@ -115,25 +116,18 @@ class Renderer
         double linearFadeFraction;
     };
 
-    enum class ProjectionMode
-    {
-        PerspectiveMode = 0,
-        FisheyeMode     = 1
-    };
-
     bool init(int, int, const DetailOptions&);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
 
-    float calcPixelSize(float fovY, float windowHeight);
     void setFaintestAM45deg(float);
     float getFaintestAM45deg() const;
     void setRTL(bool);
     bool isRTL() const;
 
     void setRenderMode(RenderMode);
-    void autoMag(float& faintestMag);
+    void autoMag(float& faintestMag, float zoom);
     void render(const Observer&,
                 const Universe&,
                 float faintestVisible,
@@ -246,8 +240,8 @@ class Renderer
     void setRenderFlags(uint64_t);
     int getLabelMode() const;
     void setLabelMode(int);
-    ProjectionMode getProjectionMode() const;
-    void setProjectionMode(ProjectionMode);
+    std::shared_ptr<celestia::engine::ProjectionMode> getProjectionMode() const;
+    void setProjectionMode(std::shared_ptr<celestia::engine::ProjectionMode>);
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
     float getTintSaturation() const;
@@ -352,7 +346,7 @@ class Renderer
         m_projectionPtr = &m_projMatrix;
     }
 
-    void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ) const;
+    void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
@@ -674,14 +668,14 @@ class Renderer
     int windowWidth;
     int windowHeight;
     float fov;
-    double cosViewConeAngle;
+    double cosViewConeAngle{ 0.0 };
     int screenDpi;
     float corrFac;
     float pixelSize{ 1.0f };
     float faintestAutoMag45deg;
     std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
-    ProjectionMode projectionMode;
+    std::shared_ptr<celestia::engine::ProjectionMode> projectionMode{ nullptr };
     int renderMode;
     int labelMode;
     bool rtl{ false };

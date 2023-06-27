@@ -186,12 +186,13 @@ GalaxyRenderer::GalaxyRenderer(Renderer &renderer) :
 GalaxyRenderer::~GalaxyRenderer() = default; // define here as Object is not defined in the header file
 
 void
-GalaxyRenderer::update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov)
+GalaxyRenderer::update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom)
 {
     m_viewerOrientation = viewerOrientation;
     m_viewMat = viewerOrientation.conjugate().toRotationMatrix();
     m_pixelSize = pixelSize;
     m_fov = fov;
+    m_zoom = zoom;
 }
 
 void
@@ -269,7 +270,7 @@ GalaxyRenderer::render()
         if (obj.nearZ != 0.0f && obj.farZ != 0.0f)
         {
             Eigen::Matrix4f pr;
-            m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ);
+            m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ, m_zoom);
             prog->setMVPMatrices(pr, m_renderer.getModelViewMatrix());
         }
         else

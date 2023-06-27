@@ -27,7 +27,7 @@ public:
 
     void add(const Nebula *nebula, const Eigen::Vector3f &offset, float brightness, float nearZ, float farZ);
 
-    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov);
+    void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom);
 
     void render();
 
@@ -44,5 +44,6 @@ private:
     Eigen::Quaternionf  m_viewerOrientation{ Eigen::Quaternionf::Identity() };
     float               m_pixelSize{ 1.0f };
     float               m_fov{ 45.0f };
+    float               m_zoom{ 1.0f };
 };
 } // namespace celestia::render

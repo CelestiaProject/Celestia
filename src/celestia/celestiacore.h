@@ -349,7 +349,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     float getPickTolerance() const;
     void setPickTolerance(float);
 
-    float getMaximumFOV() const;
     void setFOVFromZoom();
     void setZoomFromFOV();
 
