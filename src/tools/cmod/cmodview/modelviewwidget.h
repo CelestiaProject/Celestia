@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include "glsupport.h"
+
 #include <QColor>
 #include <QGLWidget>
 #include <QHash>

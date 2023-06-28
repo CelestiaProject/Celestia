@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "modelviewwidget.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -29,7 +31,6 @@
 #include "glframebuffer.h"
 #include "glshader.h"
 #include "glsupport.h"
-#include "modelviewwidget.h"
 
 
 #define DEBUG_SHADOWS 0
@@ -585,7 +586,7 @@ ModelViewWidget::paintGL()
     }
     Eigen::Vector4f ambientLight = Eigen::Vector4f::Constant(ambientLightLevel);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight.data());
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
+    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
     for (unsigned int i = 0; i < 8; i++)
     {
@@ -769,16 +770,16 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
     switch (tangent.format)
     {
     case cmod::VertexAttributeFormat::Float3:
-        glEnableVertexAttribArrayARB(TangentAttributeIndex);
-        glVertexAttribPointerARB(TangentAttributeIndex,
-                                      GLComponentCounts[static_cast<std::size_t>(tangent.format)],
-                                      GLComponentTypes[static_cast<std::size_t>(tangent.format)],
-                                      GL_FALSE,
-                                      desc.strideBytes,
-                                      vertexData + tangent.offsetWords);
+        glEnableVertexAttribArray(TangentAttributeIndex);
+        glVertexAttribPointer(TangentAttributeIndex,
+                              GLComponentCounts[static_cast<std::size_t>(tangent.format)],
+                              GLComponentTypes[static_cast<std::size_t>(tangent.format)],
+                              GL_FALSE,
+                              desc.strideBytes,
+                              vertexData + tangent.offsetWords);
         break;
     default:
-        glDisableVertexAttribArrayARB(TangentAttributeIndex);
+        glDisableVertexAttribArray(TangentAttributeIndex);
         break;
     }
 
@@ -803,7 +804,7 @@ setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexD
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glDisableVertexAttribArray(TangentAttributeIndex);
 }
 
 

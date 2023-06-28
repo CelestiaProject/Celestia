@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "mainwindow.h"
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -51,7 +53,6 @@
 #include "glshader.h"
 #include "glsupport.h"
 #include "materialwidget.h"
-#include "mainwindow.h"
 #include "modelviewwidget.h"
 
 
@@ -246,13 +247,8 @@ MainWindow::eventFilter(QObject* obj, QEvent* e)
         // Handle open file events from the desktop. Currently, these
         // are only sent on Mac OS X.
         QFileOpenEvent *fileOpenEvent = dynamic_cast<QFileOpenEvent*>(e);
-        if (fileOpenEvent)
-        {
-            if (!fileOpenEvent->file().isEmpty())
-            {
-                openModel(fileOpenEvent->file());
-            }
-        }
+        if (fileOpenEvent != nullptr && !fileOpenEvent->file().isEmpty())
+            openModel(fileOpenEvent->file());
 
         return true;
     }
@@ -271,9 +267,7 @@ MainWindow::setModel(const QString& fileName, std::unique_ptr<cmod::Model>&& mod
     // Only reset the camera when we've loaded a new model. Leaving
     // the camera fixed allows to see model changes more easily.
     if (fileName != modelFileName())
-    {
         m_modelView->resetCamera();
-    }
 
     m_materialWidget->setTextureSearchPath(modelDir);
 
@@ -351,7 +345,6 @@ bool
 MainWindow::exportSupported(const QString& fileName) const
 {
     QString ext = QFileInfo(fileName).suffix().toLower();
-
     return ext == "cmod";
 }
 
@@ -485,9 +478,7 @@ void
 MainWindow::saveModel()
 {
     if (exportSupported(modelFileName()))
-    {
         saveModel(modelFileName());
-    }
 }
 
 
@@ -511,9 +502,7 @@ MainWindow::saveModel(const QString& saveFileName)
     std::ofstream out(fileNameStd, std::ios::out | std::ios::binary);
     bool ok = false;
     if (out.good())
-    {
         ok = SaveModelBinary(m_modelView->model(), out, GetPathManager()->getSource);
-    }
 
     if (!ok)
     {
@@ -567,9 +556,7 @@ MainWindow::generateNormals()
 {
     const cmod::Model* model = m_modelView->model();
     if (!model)
-    {
         return;
-    }
 
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Generate Surface Normals"));
@@ -633,9 +620,7 @@ MainWindow::generateTangents()
 {
     const cmod::Model* model = m_modelView->model();
     if (!model)
-    {
         return;
-    }
 
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Generate Surface Tangents"));
@@ -698,9 +683,7 @@ MainWindow::uniquifyVertices()
 {
     cmod::Model* model = m_modelView->model();
     if (!model)
-    {
         return;
-    }
 
     for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
     {
@@ -718,9 +701,7 @@ MainWindow::mergeMeshes()
 {
     const cmod::Model* model = m_modelView->model();
     if (!model)
-    {
         return;
-    }
 
     setModel(modelFileName(), MergeModelMeshes(*model));
 }

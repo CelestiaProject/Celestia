@@ -14,16 +14,10 @@
 
 GLFrameBufferObject::GLFrameBufferObject(GLuint width, GLuint height, unsigned int attachments) :
     m_width(width),
-    m_height(height),
-    m_colorTexId(0),
-    m_depthTexId(0),
-    m_fboId(0),
-    m_status(GL_FRAMEBUFFER_UNSUPPORTED)
+    m_height(height)
 {
     if (attachments != 0)
-    {
         generateFbo(attachments);
-    }
 }
 
 
@@ -138,7 +132,7 @@ GLFrameBufferObject::generateFbo(unsigned int attachments)
     if ((attachments & DepthAttachment) != 0)
     {
         generateDepthTexture();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexId, 0);
         m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
@@ -149,7 +143,7 @@ GLFrameBufferObject::generateFbo(unsigned int attachments)
     }
     else
     {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
     }
 
     // Restore default frame buffer
@@ -162,31 +156,24 @@ void
 GLFrameBufferObject::cleanup()
 {
     if (m_fboId != 0)
-    {
         glDeleteFramebuffers(1, &m_fboId);
-    }
 
     if (m_colorTexId != 0)
-    {
         glDeleteTextures(1, &m_colorTexId);
-    }
 
     if (m_depthTexId != 0)
-    {
         glDeleteTextures(1, &m_depthTexId);
-    }
 }
 
 
 bool
 GLFrameBufferObject::bind()
 {
-    if (isValid())
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
-        return true;
-    }
-    return false;
+    if (!isValid())
+        return false;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
+    return true;
 }
 
 
