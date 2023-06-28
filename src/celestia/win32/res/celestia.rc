@@ -284,7 +284,7 @@ FONT 8, "Segoe UI", 0, 0, 0
     LTEXT           "Celestia", IDC_STATIC, 56, 17, 30, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "1.7.0", IDC_STATIC, 90, 17, 40, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "Copyright (C) 2001-2021, Celestia Development Team", IDC_STATIC, 56, 26, 247, 9, SS_LEFT, WS_EX_LEFT
-    LTEXT           "https://celestia.space/", IDC_CELESTIALINK, 56, 43, 150, 9, SS_LEFT, WS_EX_LEFT
+    LTEXT           "https://celestiaproject.space/", IDC_CELESTIALINK, 56, 43, 150, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "Celestia is free software and comes with absolutely no warranty.", IDC_STATIC, 56, 66, 247, 17, SS_LEFT, WS_EX_LEFT
     LTEXT           "Authors", IDC_STATIC, 56, 90, 100, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "Chris Laurel", IDC_STATIC, 56, 102, 100, 9, SS_LEFT, WS_EX_LEFT

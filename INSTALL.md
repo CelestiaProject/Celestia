@@ -2,10 +2,10 @@
 
 Stable version installation on Unix-like systems (e.g. GNU/Linux or *BSD):
 * Check your OS repository for already built packages.
-* Check https://celestia.space/download.html.
+* Check https://celestiaproject.space/download.html.
 
 Stable version installation on Windows and OSX:
-* Check https://celestia.space/download.html.
+* Check https://celestiaproject.space/download.html.
 
 Development snapshots installation on Unix-like systems:
 ### On Debian 10/11 (buster/bullseye) and derived systems:

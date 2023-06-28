@@ -13,7 +13,7 @@ $(pot_file)-update:
 	         --keyword=i18nc:1c,2 --keyword=NC_:1c,2 --keyword=C_:1c,2 \
 	         --sort-by-file --qt --add-comments \
 	         --default-domain=$(domain) --package-name=celestia --package-version=1.7.0 \
-	         --msgid-bugs-address=team@celestia.space \
+	         --msgid-bugs-address=team@celestiaproject.space \
 	         --copyright-holder="Celestia Development Team" \
 	         --output=$(pot_file) \
 	         --from-code=utf-8 \

@@ -7,9 +7,9 @@
 AppName=Celestia
 AppVerName=Celestia 1.7.0
 AppPublisher=Shatters Software
-AppPublisherURL=https://celestia.space/
-AppSupportURL=https://celestia.space/
-AppUpdatesURL=https://celestia.space/
+AppPublisherURL=https://celestiaproject.space/
+AppSupportURL=https://celestiaproject.space/
+AppUpdatesURL=https://celestiaproject.space/
 DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
@@ -676,7 +676,7 @@ Type: files; Name: "{app}\extras\minormoons.ssc";
 Type: files; Name: "{app}\extras\numberedmoons.ssc";
 
 [INI]
-Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://celestia.space/"
+Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://celestiaproject.space/"
 
 [Icons]
 Name: "{group}\Celestia";            Filename: "{app}\celestia.exe"; WorkingDir: "{app}"
