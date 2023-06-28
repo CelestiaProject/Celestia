@@ -727,7 +727,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 	                     "version", VERSION,
 	                     "copyright", _("Copyright \xc2\xa9 2001-2021 Celestia Development Team"),
 	                     "comments", FRONTEND " Front-End",
-	                     "website", "https://celestia.space",
+	                     "website", "https://celestiaproject.space",
 	                     "authors", authors,
 	                     "license", readFromFile("COPYING"),
 	                     "logo", logo,
