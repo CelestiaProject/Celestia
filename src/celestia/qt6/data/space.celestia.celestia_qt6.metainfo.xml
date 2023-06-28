@@ -19,11 +19,11 @@
     </p>
   </description>
   <launchable type="desktop-id">celestia-qt6.desktop</launchable>
-  <url type="homepage">https://celestia.space</url>
+  <url type="homepage">https://celestiaproject.space</url>
   <screenshots>
-    <screenshot type="default">https://celestia.space/images/gallery/cassini.jpg</screenshot>
-    <screenshot>https://celestia.space/images/gallery/earth.jpg</screenshot>
-    <screenshot>https://celestia.space/images/gallery/europa.jpg</screenshot>
-    <screenshot>https://celestia.space/images/gallery/proxima.png</screenshot>
+    <screenshot type="default">https://celestiaproject.space/images/gallery/cassini.jpg</screenshot>
+    <screenshot>https://celestiaproject.space/images/gallery/earth.jpg</screenshot>
+    <screenshot>https://celestiaproject.space/images/gallery/europa.jpg</screenshot>
+    <screenshot>https://celestiaproject.space/images/gallery/proxima.png</screenshot>
   </screenshots>
 </component>

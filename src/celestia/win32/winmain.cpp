@@ -105,7 +105,7 @@ static HDC deviceContext;
 
 static bool bReady = false;
 
-static LPCTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
+static LPCTSTR CelestiaRegKey = "Software\\celestiaproject.space\\Celestia1.7-dev";
 
 HINSTANCE appInstance;
 HMODULE hRes;

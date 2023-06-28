@@ -3,7 +3,7 @@ Upstream-Name: Celestia
 Source: https://github.com/CelestiaProject/Celestia
 
 Files: *
-Copyright: 2001-2020 Celestia Development Team <team@celestia.space>
+Copyright: 2001-2020 Celestia Development Team <team@celestiaproject.space>
 License: GPL-2+
 
 Files: src/celengine/curveplot.*
@@ -16,7 +16,7 @@ License: Boost
 
 Files: src/celutil/strnatcmp.*
 Copyright: 2000-2004 Martin Pool <mbp@sourcefrog.net>
-           2020 Celestia Development Team <team@celestia.space>
+           2020 Celestia Development Team <team@celestiaproject.space>
 License: zlib
 
 Files: src/tools/celestia-gaia-stardb/*
@@ -30,7 +30,7 @@ License: Expat
 
 Files: src/celutil/tee.h
 Copyright: 2009 Thomas Guest <tag@wordaligned.org>
-           2021 Celestia Development Team <team@celestia.space>
+           2021 Celestia Development Team <team@celestiaproject.space>
 License: public-domain
 
 Files: src/celutil/r128.h
