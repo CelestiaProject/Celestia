@@ -353,20 +353,14 @@ bool readMeshSmoothGroup(std::istream& in, std::int32_t contentSize, M3DTriangle
 
     for (std::int32_t i = 0; i < faceCount; ++i)
     {
-        std::int32_t groups;
-        if (!celutil::readLE<std::int32_t>(in, groups))
+        std::uint32_t groups;
+        if (!celutil::readLE<std::uint32_t>(in, groups))
         {
             GetLogger()->error("Failed to read entry {} of smoothing group array\n", i);
             return false;
         }
 
-        if (groups < 0)
-        {
-            GetLogger()->error("Invalid smoothing group entry {}\n", groups);
-            return false;
-        }
-
-        triMesh.addSmoothingGroups(static_cast<std::uint32_t>(groups));
+        triMesh.addSmoothingGroups(groups);
     }
 
     return skipTrailing(in, contentSize - expectedSize);
