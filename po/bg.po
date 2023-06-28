@@ -4552,8 +4552,8 @@ msgid "Copyright (C) 2001-2023, Celestia Development Team"
 msgstr "Авторско право (С) 2001-2023, Екипа на „Celestia“"
 
 #: src/celestia/res/resource_strings.cpp:71
-msgid "https://celestia.space"
-msgstr "https://celestia.space"
+msgid "https://celestiaproject.space"
+msgstr "https://celestiaproject.space"
 
 #: src/celestia/res/resource_strings.cpp:72
 msgid "Celestia is free software and comes with absolutely no warranty."

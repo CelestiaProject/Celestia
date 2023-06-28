@@ -4662,7 +4662,7 @@ msgstr ""
 "Авторські права на програму належать Команді з розробки Celestia, ©2001–2009."
 
 #: src/celestia/res/resource_strings.cpp:71
-msgid "https://celestia.space"
+msgid "https://celestiaproject.space"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:72

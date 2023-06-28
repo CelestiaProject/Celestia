@@ -10,9 +10,9 @@ AppName=Celestia
 AppVersion={#CelestiaVersion}
 VersionInfoVersion={#CelestiaVersion}
 AppPublisher=Celestia Development Team
-AppPublisherURL=https://celestia.space/
-AppSupportURL=https://celestia.space/
-AppUpdatesURL=https://celestia.space/
+AppPublisherURL=https://celestiaproject.space/
+AppSupportURL=https://celestiaproject.space/
+AppUpdatesURL=https://celestiaproject.space/
 AppCopyright=Copyright (C) 2001-2023 Celestia Development Team
 OutputBaseFilename=celestia-{#CelestiaVersion}
 DefaultDirName={code:DefDirRoot}\Celestia
@@ -716,7 +716,7 @@ Type: files; Name: "{app}\extras\minormoons.ssc";
 Type: files; Name: "{app}\extras\numberedmoons.ssc";
 
 [INI]
-Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://celestia.space"
+Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://celestiaproject.space"
 
 [Icons]
 Name: "{group}\Celestia";            Filename: "{app}\celestia.exe"; WorkingDir: "{app}"

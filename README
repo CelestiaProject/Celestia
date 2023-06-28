@@ -7,13 +7,13 @@
 *  Copyright (c) 2001-2020, Celestia Development Team                     *
 *                                                                         *
 *-------------------------------------------------------------------------*
-*  Celestia web site: https://celestia.space/                             *
+*  Celestia web site: https://celestiaproject.space/                      *
 *                                                                         *
 *  Celestia documentation:                                                *
-*    https://celestia.space/guides.html                                   *
+*    https://celestiaproject.space/guides.html                            *
 *    Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia            *
 *                                                                         *
-*  Celestia forums: https://celestia.space/forum/                         *
+*  Celestia forums: https://celestiaproject.space/forum/                  *
 *                                                                         *
 ***************************************************************************
 
@@ -116,7 +116,7 @@ button, and you're off.
 That covers the very basics.  For a more in-depth look at Celestia and the
 controls available to you, download the "Celestia User's Guide" (written by
 Frank Gregorio), available in several languages, from:
-  https://celestia.space/guides.html
+  https://celestiaproject.space/guides.html
 This web page also includes links to the Celestia README file translated into
 Japanese.
 
@@ -175,7 +175,7 @@ KNOWN ISSUES
 For up-to-the-minute answers to some common problems encountered when running
 Celestia, please view either the FAQ in the Help menu or take a look at the
 "Celestia User's FAQ" located on the Celestia User's Forum:
-https://celestia.space/forum/
+https://celestiaproject.space/forum/
 
 
 USER MODIFIABLE ELEMENTS
@@ -200,10 +200,10 @@ favorite text editing program.
 CELESTIA RESOURCES
 ------------------
 Celestia Web Site:
-  https://celestia.space/
+  https://celestiaproject.space/
 
 Celestia User Forums:
-  https://celestia.space/forum/
+  https://celestiaproject.space/forum/
 
 Selden's List of Resources for Celestia:
   https://www.classe.cornell.edu/~seb/celestia/
@@ -561,7 +561,7 @@ ACKNOWLEDGEMENTS
 A very big thank you for creating Celestia goes to Chris Laurel who started this
 program in the year 2001.
   <claurel@gmail.com>
-  https://celestia.space/
+  https://celestiaproject.space/
 
 Special thanks go to all Celestia users who submit bug reports, suggestions, and
 fixes. Celestia wouldn't be the program it is today, without their help.

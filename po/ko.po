@@ -4653,7 +4653,7 @@ msgid "Copyright (C) 2001-2023, Celestia Development Team"
 msgstr "Copyright (C) 2001-2008, 셀레스티아 개발팀"
 
 #: src/celestia/res/resource_strings.cpp:71
-msgid "https://celestia.space"
+msgid "https://celestiaproject.space"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:72

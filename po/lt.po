@@ -4582,7 +4582,7 @@ msgid "Copyright (C) 2001-2020, Celestia Development Team"
 msgstr "Autorinės teisės (C) 2001-2023, Celestia kūrėjų komanda"
 
 #: src/celestia/res/resource_strings.cpp:71
-msgid "https://celestia.space"
+msgid "https://celestiaproject.space"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:72
