@@ -11,109 +11,79 @@
 
 #include "glshader.h"
 
-using namespace celestia;
-using namespace std;
+#include <cstddef>
 
 
 GLShader::~GLShader()
 {
     if (m_id != 0)
-    {
-        glDeleteObjectARB(m_id);
-    }
+        glDeleteShader(m_id);
 }
 
 
 bool
-GLShader::compile(const string& source)
+GLShader::compile(const std::string& source)
 {
     switch (type())
     {
     case VertexShader:
-        m_id = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        m_id = glCreateShader(GL_VERTEX_SHADER);
         break;
     case FragmentShader:
-        m_id = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+        m_id = glCreateShader(GL_FRAGMENT_SHADER);
         break;
     default:
         break;
     }
 
     if (m_id == 0)
-    {
         return false;
-    }
 
     const char* sourceData = source.c_str();
     const GLint sourceLength = source.length();
-    glShaderSourceARB(m_id, 1, &sourceData, &sourceLength);
+    glShaderSource(m_id, 1, &sourceData, &sourceLength);
 
-    glCompileShaderARB(m_id);
+    glCompileShader(m_id);
 
     GLint compileStatus;
-    glGetObjectParameterivARB(m_id, GL_OBJECT_COMPILE_STATUS_ARB, &compileStatus);
+    glGetShaderiv(m_id, GL_COMPILE_STATUS, &compileStatus);
 
     GLint logLength = 0;
-    glGetObjectParameterivARB(m_id, GL_OBJECT_INFO_LOG_LENGTH_ARB, &logLength);
+    glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
+        m_log = std::string('\0', static_cast<std::size_t>(logLength));
         GLsizei charsWritten = 0;
-        auto* log = new char[logLength];
-        glGetInfoLogARB(m_id, logLength, &charsWritten, log);
-
-        m_log = string(log, charsWritten);
-        delete[] log;
+        glGetShaderInfoLog(m_id, logLength, &charsWritten, m_log.data());
+        m_log.resize(charsWritten);
     }
 
     return compileStatus != GL_FALSE;
 }
 
 
-GLShaderProgram::GLShaderProgram() :
-    m_vertexShader(nullptr),
-    m_fragmentShader(nullptr),
-    m_id(0),
-    m_linked(false)
-{
-    m_id = glCreateProgramObjectARB();
-}
-
-
 GLShaderProgram::~GLShaderProgram()
 {
     if (m_vertexShader)
-    {
         m_vertexShader->unref();
-    }
 
     if (m_fragmentShader)
-    {
         m_fragmentShader->unref();
-    }
 
     if (m_id != 0)
-    {
-        glDeleteObjectARB(m_id);
-    }
+        glDeleteProgram(m_id);
 }
 
 
 bool
 GLShaderProgram::addVertexShader(GLVertexShader* shader)
 {
-    if (shader == nullptr || m_vertexShader != nullptr)
-    {
+    if (shader == nullptr || m_vertexShader != nullptr || shader->id() == 0)
         return false;
-    }
-
-    if (shader->id() == 0)
-    {
-        return false;
-    }
 
     m_vertexShader = shader;
     m_vertexShader->ref();
-    glAttachObjectARB(m_id, m_vertexShader->id());
+    glAttachShader(m_id, m_vertexShader->id());
 
     return true;
 }
@@ -122,19 +92,12 @@ GLShaderProgram::addVertexShader(GLVertexShader* shader)
 bool
 GLShaderProgram::addFragmentShader(GLFragmentShader* shader)
 {
-    if (shader == nullptr || m_fragmentShader != nullptr)
-    {
+    if (shader == nullptr || m_fragmentShader != nullptr || shader->id() == 0)
         return false;
-    }
-
-    if (shader->id() == 0)
-    {
-        return false;
-    }
 
     m_fragmentShader = shader;
     m_fragmentShader->ref();
-    glAttachObjectARB(m_id, m_fragmentShader->id());
+    glAttachShader(m_id, m_fragmentShader->id());
 
     return true;
 }
@@ -143,31 +106,22 @@ GLShaderProgram::addFragmentShader(GLFragmentShader* shader)
 bool
 GLShaderProgram::link()
 {
-    if (!m_vertexShader || !m_fragmentShader)
-    {
+    if (!m_vertexShader || !m_fragmentShader || m_linked)
         return false;
-    }
 
-    if (m_linked)
-    {
-        return false;
-    }
-
-    glLinkProgramARB(m_id);
+    glLinkProgram(m_id);
 
     GLint linkStatus = 0;
-    glGetObjectParameterivARB(m_id, GL_OBJECT_LINK_STATUS_ARB, &linkStatus);
+    glGetProgramiv(m_id, GL_LINK_STATUS, &linkStatus);
 
     GLint logLength = 0;
-    glGetObjectParameterivARB(m_id, GL_OBJECT_INFO_LOG_LENGTH_ARB, &logLength);
+    glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
+        m_log = std::string('\0', static_cast<std::size_t>(logLength));
         GLsizei charsWritten = 0;
-        auto* log = new char[logLength];
-        glGetInfoLogARB(m_id, logLength, &charsWritten, log);
-
-        m_log = string(log, charsWritten);
-        delete[] log;
+        glGetProgramInfoLog(m_id, logLength, &charsWritten, m_log.data());
+        m_log.resize(charsWritten);
     }
 
     m_linked = linkStatus != GL_FALSE;
@@ -178,90 +132,77 @@ GLShaderProgram::link()
 bool
 GLShaderProgram::hasOpenGLShaderPrograms()
 {
-    return gl::ARB_shader_objects && gl::ARB_shading_language_100;
+    return celestia::gl::ARB_shader_objects && celestia::gl::ARB_shading_language_100;
 }
 
 
 bool
 GLShaderProgram::bind() const
 {
-    if (m_linked)
-    {
-        glUseProgramObjectARB(m_id);
-        return true;
-    }
-    return false;
+    if (!m_linked)
+        return false;
+
+    glUseProgram(m_id);
+    return true;
 }
 
 
 void
 GLShaderProgram::setUniformValue(const char* name, float value)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniform1fARB(location, value);
-    }
+        glUniform1f(location, value);
 }
 
 
 void
 GLShaderProgram::setSampler(const char* name, int value)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniform1iARB(location, value);
-    }
+        glUniform1i(location, value);
 }
 
 
 void
 GLShaderProgram::setSamplerArray(const char* name, const GLint* values, int count)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniform1ivARB(location, count, values);
-    }
+        glUniform1iv(location, count, values);
 }
 
 
 void
 GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Vector3f* values, int count)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniform3fvARB(location, count, values[0].data());
-    }
+        glUniform3fv(location, count, values[0].data());
 }
 
 
 void
 GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Vector4f* values, int count)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniform4fvARB(location, count, values[0].data());
-    }
+        glUniform4fv(location, count, values[0].data());
 }
 
 
 void
 GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Matrix4f* values, int count)
 {
-    GLint location = glGetUniformLocationARB(m_id, name);
+    GLint location = glGetUniformLocation(m_id, name);
     if (location >= 0)
-    {
-        glUniformMatrix4fvARB(location, count, false, values[0].data());
-    }
+        glUniformMatrix4fv(location, count, false, values[0].data());
 }
 
 
 void
 GLShaderProgram::bindAttributeLocation(const char* name, int location)
 {
-    glBindAttribLocationARB(m_id, location, name);
+    glBindAttribLocation(m_id, location, name);
 }

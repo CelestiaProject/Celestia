@@ -7,6 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "materialwidget.h"
+
 #include <QColorDialog>
 #include <QDir>
 #include <QGridLayout>
@@ -15,8 +17,6 @@
 #include <QStringList>
 
 #include "pathmanager.h"
-
-#include "materialwidget.h"
 
 namespace
 {

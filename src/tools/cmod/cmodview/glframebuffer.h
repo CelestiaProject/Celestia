@@ -51,8 +51,8 @@ private:
 private:
     GLuint m_width;
     GLuint m_height;
-    GLuint m_colorTexId;
-    GLuint m_depthTexId;
-    GLuint m_fboId;
-    GLenum m_status;
+    GLuint m_colorTexId{ 0 };
+    GLuint m_depthTexId{ 0 };
+    GLuint m_fboId{ 0 };
+    GLenum m_status{ GL_FRAMEBUFFER_UNSUPPORTED };
 };

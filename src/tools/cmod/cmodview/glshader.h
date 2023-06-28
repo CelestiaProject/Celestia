@@ -24,9 +24,6 @@ class GLFragmentShader;
 class GLShader
 {
 public:
-    friend class GLVertexShader;
-    friend class GLFragmentShader;
-
     enum ShaderType
     {
         VertexShader,
@@ -34,15 +31,6 @@ public:
         GeometryShader
     };
 
-private:
-    GLShader(ShaderType type) :
-        m_type(type),
-        m_id(0),
-        m_refCount(1)
-    {
-    }
-
-public:
     virtual ~GLShader();
 
     int ref()
@@ -64,7 +52,7 @@ public:
         return m_type;
     }
 
-    GLhandleARB id() const
+    GLuint id() const
     {
         return m_id;
     }
@@ -77,10 +65,15 @@ public:
     }
 
 private:
+    explicit GLShader(ShaderType type) : m_type(type) {}
+
     ShaderType m_type;
-    GLhandleARB m_id;
-    std::string m_log;
-    int m_refCount;
+    GLuint m_id{ 0 };
+    std::string m_log{};
+    int m_refCount{ 1 };
+
+    friend class GLVertexShader;
+    friend class GLFragmentShader;
 };
 
 
@@ -89,10 +82,6 @@ class GLVertexShader : public GLShader
 public:
     GLVertexShader() :
         GLShader(VertexShader)
-    {
-    }
-
-    virtual ~GLVertexShader()
     {
     }
 };
@@ -105,24 +94,20 @@ public:
         GLShader(FragmentShader)
     {
     }
-
-    virtual ~GLFragmentShader()
-    {
-    }
 };
 
 
 class GLShaderProgram
 {
 public:
-    GLShaderProgram();
+    GLShaderProgram() = default;
     ~GLShaderProgram();
 
     bool addVertexShader(GLVertexShader* shader);
     bool addFragmentShader(GLFragmentShader* shader);
     bool link();
 
-    GLhandleARB id() const
+    GLuint id() const
     {
         return m_id;
     }
@@ -150,48 +135,48 @@ public:
     void bindAttributeLocation(const char* name, int location);
 
 private:
-    GLVertexShader* m_vertexShader;
-    GLFragmentShader* m_fragmentShader;
-    GLhandleARB m_id;
-    std::string m_log;
-    bool m_linked;
+    GLVertexShader* m_vertexShader{ nullptr };
+    GLFragmentShader* m_fragmentShader{ nullptr };
+    GLuint m_id{ glCreateProgram() };
+    std::string m_log{};
+    bool m_linked{ false };
 };
 
 
 template<typename SCALAR, int ROWS, int COLS> inline void
-glsh_setUniformValue(GLhandleARB /*id*/, const char* /*name*/, const SCALAR* /*data*/)
+glsh_setUniformValue(GLuint /*id*/, const char* /*name*/, const SCALAR* /*data*/)
 {
 }
 
 // Template specializations to handle various Eigen types
 // TODO: add support for more matrix and vector sizes
 template<> inline void
-glsh_setUniformValue<float, 3, 1>(GLhandleARB id, const char *name, const float* data)
+glsh_setUniformValue<float, 3, 1>(GLuint id, const char *name, const float* data)
 {
-    GLint location = glGetUniformLocationARB(id, name);
+    GLint location = glGetUniformLocation(id, name);
     if (location >= 0)
     {
-        glUniform3fvARB(location, 1, data);
+        glUniform3fv(location, 1, data);
     }
 }
 
 template<> inline void
-glsh_setUniformValue<float, 4, 1>(GLhandleARB id, const char *name, const float* data)
+glsh_setUniformValue<float, 4, 1>(GLuint id, const char *name, const float* data)
 {
-    GLint location = glGetUniformLocationARB(id, name);
+    GLint location = glGetUniformLocation(id, name);
     if (location >= 0)
     {
-        glUniform4fvARB(location, 1, data);
+        glUniform4fv(location, 1, data);
     }
 }
 
 template<> inline void
-glsh_setUniformValue<float, 4, 4>(GLhandleARB id, const char *name, const float* data)
+glsh_setUniformValue<float, 4, 4>(GLuint id, const char *name, const float* data)
 {
-    GLint location = glGetUniformLocationARB(id, name);
+    GLint location = glGetUniformLocation(id, name);
     if (location >= 0)
     {
-        glUniformMatrix4fvARB(location, 1, GL_FALSE, data);
+        glUniformMatrix4fv(location, 1, GL_FALSE, data);
     }
 }
 
