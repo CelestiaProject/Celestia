@@ -114,7 +114,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
-    Eigen::Vector3f vn = renderer->getCameraOrientation().conjugate() * -Eigen::Vector3f::UnitZ();
+    Eigen::Vector3f vn = renderer->getCameraOrientationf().conjugate() * -Eigen::Vector3f::UnitZ();
     Eigen::Vector3d viewNormal = vn.cast<double>();
 
     Renderer::PipelineState ps;
