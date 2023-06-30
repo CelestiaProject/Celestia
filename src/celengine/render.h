@@ -412,7 +412,11 @@ class Renderer
     void beginObjectAnnotations();
     void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&, LabelHorizontalAlignment halign, LabelVerticalAlignment valign);
     void endObjectAnnotations();
-    const Eigen::Quaternionf& getCameraOrientation() const;
+    Eigen::Quaternionf getCameraOrientationf() const;
+    Eigen::Quaterniond getCameraOrientation() const;
+    Eigen::Matrix3d getCameraTransform() const;
+    void setCameraTransform(const Eigen::Matrix3d&);
+
     float getNearPlaneDistance() const;
 
     void invalidateOrbitCache();
@@ -696,7 +700,8 @@ class Renderer
     Color ambientColor;
     std::string displayedSurface;
 
-    Eigen::Quaternionf m_cameraOrientation;
+    Eigen::Quaterniond m_cameraOrientation;
+    Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
     PointStarVertexBuffer* pointStarVertexBuffer;
     PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
