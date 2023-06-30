@@ -334,8 +334,15 @@ jobs:
       run: ctest
 
   sonarscanner:
-    runs-on: sonarscanner
+    runs-on: ubuntu-22.04
     steps:
+    - name: 'Install sonar'
+      run: |
+        cd /opt
+        sudo wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+        sudo unzip sonar-scanner-cli-4.8.0.2856-linux.zip
+        sudo ln -s /opt/sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner /usr/bin
+
     - name: 'Install dependencies'
       run: |
         sudo apt update
@@ -355,6 +362,7 @@ jobs:
                             libsdl2-dev \
                             libluajit-5.1-dev \
                             libicu-dev \
+                            ninja-build \
                             cmake
 
     - name: 'Checkout source code'
@@ -383,6 +391,7 @@ jobs:
     - name: Analyze
       run: |
         sonar-scanner                                                   \
+          -Dsonar.host.url=https://sonarcloud.io                        \
           -Dsonar.cfamily.compile-commands=build/compile_commands.json  \
           -Dsonar.organization=celestiaproject                          \
           -Dsonar.projectKey=CelestiaProject_Celestia                   \
@@ -392,3 +401,4 @@ jobs:
           -Dsonar.tests=test/
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
