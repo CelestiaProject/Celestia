@@ -171,6 +171,15 @@ if(MINGW)
   add_compile_options(-Wno-attributes)
 endif()
 
+# G++ 10 introduced static analyzer
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  string(REPLACE "." ";" GXX_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
+  list(GET GXX_VERSION_LIST 0 MAJOR)
+  if(MAJOR GREATER 9)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Weffc++>)
+  endif()
+endif()
+
 EnableFastMath(${FAST_MATH})
 
 #
