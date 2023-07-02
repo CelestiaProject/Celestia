@@ -312,9 +312,9 @@ static void initRealize(GtkWidget* widget, AppData* app)
 /* MAIN */
 int main(int argc, char* argv[])
 {
+    setlocale(LC_ALL, "");
     /* Force number displays into C locale. */
     setlocale(LC_NUMERIC, "C");
-    setlocale(LC_ALL, "");
 
     #ifndef WIN32
     bindtextdomain("celestia", LOCALEDIR);
