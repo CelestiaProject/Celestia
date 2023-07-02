@@ -87,4 +87,4 @@ LargeStarRenderer::initialize()
         2 * sizeof(float));
 }
 
-}
+} // namespace celestia::render

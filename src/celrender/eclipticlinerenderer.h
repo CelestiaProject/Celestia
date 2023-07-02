@@ -16,6 +16,7 @@ class Renderer;
 
 namespace celestia::render
 {
+
 /*! Draw the J2000.0 ecliptic; trivial, since this forms the basis for
  *  Celestia's coordinate system.
  */
@@ -34,4 +35,5 @@ private:
     LineRenderer m_lineRenderer;
     bool         m_initialized  { false };
 };
+
 } // namespace celestia::render

@@ -22,6 +22,7 @@ class Texture;
 
 namespace celestia::render
 {
+
 class GlobularRenderer
 {
 public:
@@ -50,4 +51,5 @@ private:
     float              m_fov{ 45.0f };
     float              m_zoom{ 1.0f };
 };
+
 } // namespace celestia::render

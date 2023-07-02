@@ -59,4 +59,5 @@ EclipticLineRenderer::render()
     m_lineRenderer.render({&m_renderer.getProjectionMatrix(), &m_renderer.getModelViewMatrix()}, Renderer::EclipticColor, kEclipticCount);
     m_lineRenderer.finish();
 }
-}
+
+} // namespace celestia::render

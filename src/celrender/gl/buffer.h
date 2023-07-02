@@ -17,9 +17,10 @@
 
 namespace celestia::gl
 {
+
 /**
  * @brief Buffer.
- * 
+ *
  * Wraps an OpenGL buffer object.
  */
 class Buffer
@@ -27,7 +28,7 @@ class Buffer
 public:
     /**
      * @brief Buffer usage.
-     * 
+     *
      * Provides information how frequently buffer object is used.
      * @see @ref setData().
      */
@@ -43,9 +44,9 @@ public:
 
     /**
      * @brief Buffer target.
-     * 
+     *
      * Provides information about buffer object's purpose.
-     * 
+     *
      * @see @ref Buffer(TargetHint)
      */
     enum class TargetHint
@@ -58,31 +59,31 @@ public:
 
     /**
      * @brief Construct a new Buffer object.
-     * 
+     *
      * Create a C++ object but don't create OpenGL objects.
      */
     explicit Buffer(util::NoCreateT);
 
     /**
      * @brief Construct a new Buffer object.
-     * 
+     *
      * Create C++ and OpenGL objects.
-     * 
+     *
      * @param targetHint Buffer target.
-     * 
+     *
      * @see @ref TargetHint
      */
     explicit Buffer(TargetHint targetHint = TargetHint::Array);
 
     /**
      * @brief Construct a new Buffer object.
-     * 
+     *
      * Create C++ and OpenGL objects and upload data.
-     * 
+     *
      * @param targetHint Buffer target.
      * @param data Data.
      * @param usage Buffer usage.
-     * 
+     *
      * @see @ref TargetHint @ref BufferUsage
      */
     Buffer(
@@ -116,7 +117,7 @@ public:
 
     /**
      * @brief Copy data from a CPU buffer to GPU buffer.
-     * 
+     *
      * @param data Data.
      * @param usage Buffer usage policy. @see @ref BufferUsage
      * @return Reference to self.
@@ -125,7 +126,7 @@ public:
 
     /**
      * @brief Partially update the Buffer.
-     * 
+     *
      * @param offset Offset in bytes in GPU memory to copy data to.
      * @param data Data.
      * @return Reference to self.

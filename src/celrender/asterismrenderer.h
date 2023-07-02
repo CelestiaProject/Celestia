@@ -45,4 +45,4 @@ private:
     bool                m_initialized     { false };
 };
 
-} // end namespace celestia::render
+} // namespace celestia::render

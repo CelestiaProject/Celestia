@@ -28,6 +28,7 @@ class VertexObject;
 
 namespace celestia::render
 {
+
 class CometRenderer
 {
 public:
@@ -67,4 +68,5 @@ private:
     std::unique_ptr<gl::Buffer>        m_io;
     std::unique_ptr<gl::VertexObject>  m_vo;
 };
-}
+
+} // namespace celestia::render
