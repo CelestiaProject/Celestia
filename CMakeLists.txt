@@ -85,9 +85,13 @@ if(USE_GLSL_STRUCTS)
   add_definitions(-DUSE_GLSL_STRUCTS)
 endif()
 
+# Use our cmake files
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 if(USE_ICU)
   add_definitions(-DUSE_ICU)
   if(WIN32 AND USE_WIN_ICU)
+    include(winicu)
     EnableWinICU()
   else()
     find_package(ICU REQUIRED COMPONENTS uc)
@@ -120,9 +124,6 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 set(CMAKE_C_STANDARD 11)
-
-# Use our cmake files
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(NOT WIN32)
   include(GNUInstallDirs)
