@@ -100,4 +100,4 @@ bool AsterismRenderer::prepare()
     return true;
 }
 
-} // end namespace celestia::render
+} // namespace celestia::render

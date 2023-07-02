@@ -35,6 +35,7 @@ using ushort = unsigned short;
 
 namespace celestia::render
 {
+
 namespace
 {
 constexpr int MaxSkyRings = 32;

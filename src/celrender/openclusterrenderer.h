@@ -19,6 +19,7 @@ class OpenCluster;
 
 namespace celestia::render
 {
+
 class OpenClusterRenderer
 {
 public:
@@ -34,4 +35,5 @@ public:
 private:
     Renderer &m_renderer;
 };
+
 } // namespace celestia::render

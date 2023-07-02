@@ -34,8 +34,10 @@ namespace celestia::gl
 class Buffer;
 class VertexObject;
 }
+
 namespace celestia::render
 {
+
 class AtmosphereRenderer
 {
 public:
@@ -104,4 +106,5 @@ private:
     std::unique_ptr<gl::VertexObject> m_vo;
     bool                              m_initialized{ false };
 };
+
 } // namespace celestia::render

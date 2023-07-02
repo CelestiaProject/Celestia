@@ -38,7 +38,6 @@ namespace celestia::render
 
 namespace
 {
-
 constexpr int MaxCometTailPoints = 120;
 constexpr int MaxCometTailSlices = 48;
 constexpr int MaxVertices = MaxCometTailPoints*MaxCometTailSlices;
@@ -46,7 +45,6 @@ constexpr int MaxIndices = IndexListCapacity(MaxCometTailSlices, MaxCometTailPoi
 
 // Distance from the Sun at which comet tails will start to fade out
 constexpr float CometTailAttenDistSol = astro::AUtoKilometers(5.0f);
-
 } // end unnamed namespace
 
 CometRenderer::CometRenderer(Renderer &renderer) :
@@ -268,4 +266,5 @@ CometRenderer::render(const Body &body,
     m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, count);
     glEnable(GL_CULL_FACE);
 }
-}
+
+} // namespace celestia::render

@@ -19,6 +19,7 @@ class Nebula;
 
 namespace celestia::render
 {
+
 class NebulaRenderer
 {
 public:
@@ -46,4 +47,5 @@ private:
     float               m_fov{ 45.0f };
     float               m_zoom{ 1.0f };
 };
+
 } // namespace celestia::render

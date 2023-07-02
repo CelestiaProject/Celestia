@@ -23,6 +23,7 @@ class Renderer;
 
 namespace celestia::render
 {
+
 class GalaxyRenderer
 {
 public:
@@ -64,4 +65,5 @@ private:
 
     bool                m_initialized{ false };
 };
+
 } // namespace celestia::render

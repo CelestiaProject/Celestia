@@ -604,4 +604,5 @@ LineRenderer::setCustomShader(CelestiaGLProgram *prog)
 {
     m_prog = prog;
 }
-} // namespace
+
+} // namespace celestia::render

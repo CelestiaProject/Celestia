@@ -36,6 +36,7 @@ namespace util = celestia::util;
 
 namespace celestia::render
 {
+
 namespace
 {
 constexpr int cntrTexWidth  = 512;

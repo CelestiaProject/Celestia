@@ -15,9 +15,10 @@ class VertexObject;
 
 class Buffer;
 class VertexObject;
-namespace celestia::render
 
+namespace celestia::render
 {
+
 class LargeStarRenderer
 {
 public:
@@ -35,4 +36,5 @@ private:
     std::unique_ptr<gl::Buffer> m_bo;
     std::unique_ptr<gl::VertexObject> m_vo;
 };
+
 } // namespace celestia::render

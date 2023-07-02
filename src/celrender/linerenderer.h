@@ -30,6 +30,7 @@ class VertexObject;
 
 namespace celestia::render
 {
+
 /**
  * \class LineRenderer linerenderer.h celrender/linerenderer.h
  *
@@ -291,4 +292,5 @@ private:
     bool                                m_inUse{ false };
     CelestiaGLProgram                  *m_prog{ nullptr };
 };
+
 }
