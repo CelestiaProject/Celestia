@@ -128,6 +128,9 @@ public:
     void          setOrientation(const Eigen::Quaternionf&);
     void          setOrientation(const Eigen::Quaterniond&);
 
+    Eigen::Matrix3d getOrientationTransform() const;
+    void          setOrientationTransform(const Eigen::Matrix3d&);
+
     Eigen::Vector3d getVelocity() const;
     void          setVelocity(const Eigen::Vector3d&);
     Eigen::Vector3d getAngularVelocity() const;
@@ -282,7 +285,11 @@ public:
                                    JourneyParams &jparams,
                                    double centerTime);
 
+    void setOriginalOrientation(const Eigen::Quaternionf&);
+    void setOriginalOrientation(const Eigen::Quaterniond&);
     void updateUniversal();
+    void updateOrientation();
+    Eigen::Quaterniond undoTransform(const Eigen::Quaterniond&);
     void convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame);
 
  private:
@@ -290,14 +297,17 @@ public:
 
     // Position, orientation, and velocity in the observer's reference frame
     UniversalCoord      position{ 0.0, 0.0, 0.0 };
-    Eigen::Quaterniond  orientation{ Eigen::Quaternionf::Identity() };
+    Eigen::Quaterniond  originalOrientation{ Eigen::Quaterniond::Identity() };
+    Eigen::Quaterniond  transformedOrientation{ Eigen::Quaterniond::Identity() };
+    Eigen::Matrix3d     orientationTransform{ Eigen::Matrix3d::Identity() };
     Eigen::Vector3d     velocity{ Eigen::Vector3d::Zero() };
     Eigen::Vector3d     angularVelocity{ Eigen::Vector3d::Zero() };
 
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
     UniversalCoord      positionUniv;
-    Eigen::Quaterniond  orientationUniv;
+    Eigen::Quaterniond  originalOrientationUniv;
+    Eigen::Quaterniond  transformedOrientationUniv;
 
     ObserverFrame::SharedConstPtr frame;
 
