@@ -70,7 +70,9 @@ Observer::Observer() :
 Observer::Observer(const Observer& o) :
     simTime(o.simTime),
     position(o.position),
-    orientation(o.orientation),
+    originalOrientation(o.originalOrientation),
+    orientationTransform(o.orientationTransform),
+    transformedOrientation(o.transformedOrientation),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
     realTime(o.realTime),
@@ -96,7 +98,9 @@ Observer& Observer::operator=(const Observer& o)
 {
     simTime = o.simTime;
     position = o.position;
-    orientation = o.orientation;
+    originalOrientation = o.originalOrientation;
+    orientationTransform = o.orientationTransform;
+    transformedOrientation = o.transformedOrientation;
     velocity = o.velocity;
     angularVelocity = o.angularVelocity;
     frame = nullptr;
@@ -176,43 +180,68 @@ void Observer::setPosition(const UniversalCoord& p)
 }
 
 
-/*! Return the orientation of the observer in the universal coordinate
+/*! Return the transformed orientation of the observer in the universal coordinate
  *  system.
  */
 Quaterniond Observer::getOrientation() const
 {
-    return orientationUniv;
+    return transformedOrientationUniv;
 }
 
-/*! Reduced precision version of getOrientation()
+/*! Reduced precision version of `getOrientation()`
  */
 Quaternionf Observer::getOrientationf() const
 {
     return getOrientation().cast<float>();
 }
 
-
-/* Set the orientation of the observer. The orientation is specified in
- * the universal coordinate system.
+/*! Reduced precision version of `setOrientation`
  */
 void Observer::setOrientation(const Quaternionf& q)
+{
+    setOrientation(q.cast<double>());
+}
+
+/*! Set the transformed orientation of the observer. The orientation is specified in
+ *  the universal coordinate system.
+ */
+void Observer::setOrientation(const Quaterniond& q)
+{
+    setOriginalOrientation(undoTransform(q));
+}
+
+
+/*! Reduced precision version of `setOriginalOrientation`
+ */
+void Observer::setOriginalOrientation(const Quaternionf& q)
 {
     /*
     RigidTransform rt = frame.toUniversal(situation, getTime());
     rt.rotation = Quatd(q.w, q.x, q.y, q.z);
     situation = frame.fromUniversal(rt, getTime());
      */
-    setOrientation(q.cast<double>());
+    setOriginalOrientation(q.cast<double>());
 }
 
-
-/*! Set the orientation of the observer. The orientation is specified in
+/*! Set the non-transformed orientation of the observer. The orientation is specified in
  *  the universal coordinate system.
  */
-void Observer::setOrientation(const Quaterniond& q)
+void Observer::setOriginalOrientation(const Quaterniond& q)
 {
-    orientationUniv = q;
-    orientation = frame->convertFromUniversal(q, getTime());
+    originalOrientationUniv = q;
+    originalOrientation = frame->convertFromUniversal(q, getTime());
+    updateOrientation();
+}
+
+Eigen::Matrix3d Observer::getOrientationTransform() const
+{
+    return orientationTransform;
+}
+
+void Observer::setOrientationTransform(const Eigen::Matrix3d& transform)
+{
+    orientationTransform = transform;
+    updateOrientation();
 }
 
 
@@ -406,7 +435,7 @@ void Observer::update(double dt, double timeScale)
         }
 
         position = p;
-        orientation = q;
+        originalOrientation = undoTransform(q);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
@@ -415,7 +444,7 @@ void Observer::update(double dt, double timeScale)
             {
                 //situation = RigidTransform(journey.to, journey.finalOrientation);
                 position = journey.to;
-                orientation = journey.finalOrientation;
+                originalOrientation = undoTransform(journey.finalOrientation);
             }
             observerMode = Free;
             setVelocity(Vector3d::Zero());
@@ -441,9 +470,9 @@ void Observer::update(double dt, double timeScale)
     {
         // Update the observer's orientation
         Vector3d halfAV = getAngularVelocity() * 0.5;
-        Quaterniond dr = Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * orientation;
-        orientation = Quaterniond(orientation.coeffs() + dt * dr.coeffs());
-        orientation.normalize();
+        Quaterniond dr = Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * transformedOrientation;
+        Quaterniond expectedOrientation = Quaterniond(transformedOrientation.coeffs() + dt * dr.coeffs()).normalized();
+        originalOrientation = undoTransform(expectedOrientation);
     }
 
     updateUniversal();
@@ -459,6 +488,16 @@ void Observer::update(double dt, double timeScale)
     }
 }
 
+void Observer::updateOrientation()
+{
+    transformedOrientationUniv = Quaterniond(orientationTransform) * originalOrientationUniv;
+    transformedOrientation = frame->convertFromUniversal(transformedOrientationUniv, getTime());
+}
+
+Eigen::Quaterniond Observer::undoTransform(const Eigen::Quaterniond& transformed)
+{
+    return Quaterniond(orientationTransform).inverse() * transformed;
+}
 
 Selection Observer::getTrackedObject() const
 {
@@ -551,7 +590,7 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     if (offsetCoordSys == ObserverFrame::ObserverLocal)
     {
-        jparams.to = targetPosition.offsetKm(orientationUniv.conjugate() * offset);
+        jparams.to = targetPosition.offsetKm(transformedOrientationUniv.conjugate() * offset);
     }
     else
     {
@@ -562,7 +601,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     Vector3d upd = up.cast<double>();
     if (upCoordSys == ObserverFrame::ObserverLocal)
     {
-        upd = orientationUniv.conjugate() * upd;
+        upd = transformedOrientationUniv.conjugate() * upd;
     }
     else
     {
@@ -622,7 +661,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     Vector3d upd = up.cast<double>();
     if (upCoordSys == ObserverFrame::ObserverLocal)
     {
-        upd = orientationUniv.conjugate() * upd;
+        upd = transformedOrientationUniv.conjugate() * upd;
     }
     else
     {
@@ -758,7 +797,8 @@ void Observer::convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newF
     // Universal coordinates don't change.
     // Convert frame coordinates to the new frame.
     position = newFrame->convertFromUniversal(positionUniv, now);
-    orientation = newFrame->convertFromUniversal(orientationUniv, now);
+    originalOrientation = newFrame->convertFromUniversal(originalOrientationUniv, now);
+    transformedOrientation = newFrame->convertFromUniversal(transformedOrientationUniv, now);
 
     // Convert goto parameters to the new frame
     journey.from               = ObserverFrame::convert(frame, newFrame, journey.from, now);
@@ -816,7 +856,7 @@ const ObserverFrame::SharedConstPtr& Observer::getFrame() const
  */
 void Observer::rotate(const Quaternionf& q)
 {
-    orientation = q.cast<double>() * orientation;
+    originalOrientation = undoTransform(q.cast<double>() * transformedOrientation);
     updateUniversal();
 }
 
@@ -857,7 +897,7 @@ void Observer::orbit(const Selection& selection, const Quaternionf& q)
         // which we apply transformations later on, we can't pre-multiply.
         // To get around this, we compute a rotation q2 such
         // that q1 * r = r * q2.
-        Quaterniond qd2 = orientation.conjugate() * qd * orientation;
+        Quaterniond qd2 = transformedOrientation.conjugate() * qd * transformedOrientation;
         qd2.normalize();
 
         // Roundoff errors will accumulate and cause the distance between
@@ -867,7 +907,7 @@ void Observer::orbit(const Selection& selection, const Quaternionf& q)
         v = qd2.conjugate() * v;
         v = v.normalized() * distance;
 
-        orientation = orientation * qd2;
+        originalOrientation = undoTransform(transformedOrientation * qd2);
         position = focusPosition.offsetKm(v);
         updateUniversal();
     }
@@ -1206,7 +1246,7 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.duration = duration;
 
     journey.from = position;
-    journey.initialOrientation = orientation;
+    journey.initialOrientation = transformedOrientation;
     journey.to = toPosition;
     journey.finalOrientation = toOrientation;
 
@@ -1253,9 +1293,9 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
     v.normalize();
 
-    Vector3d viewDir = orientationUniv.conjugate() * -Vector3d::UnitZ();
-    Vector3d up      = orientationUniv.conjugate() * Vector3d::UnitY();
-    Quaterniond q = orientationUniv;
+    Vector3d viewDir = transformedOrientationUniv.conjugate() * -Vector3d::UnitZ();
+    Vector3d up      = transformedOrientationUniv.conjugate() * Vector3d::UnitY();
+    Quaterniond q = transformedOrientationUniv;
     if (v.dot(viewDir) < 0.0)
     {
         q = LookAt<double>(Vector3d::Zero(), up, v);
@@ -1389,7 +1429,8 @@ void Observer::updateUniversal()
         positionUniv = newPositionUniv;
     }
 
-    orientationUniv = frame->convertToUniversal(orientation, simTime);
+    originalOrientationUniv = frame->convertToUniversal(originalOrientation, simTime);
+    updateOrientation();
 }
 
 
