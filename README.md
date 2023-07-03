@@ -1,15 +1,15 @@
 | **`Release`** | **`Localized`** | **`License`** | **`Contribute`** |
 |-------------------|---------------|---------------|---------------|
-|[![GitHub release](https://img.shields.io/github/v/release/CelestiaProject/Celestia?label=Release)](https://celestia.space/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/github/license/CelestiaProject/Celestia?label=License)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
+|[![GitHub release](https://img.shields.io/github/v/release/CelestiaProject/Celestia?label=Release)](https://celestiaproject.space/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/github/license/CelestiaProject/Celestia?label=License)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
 
 # Celestia
 ![Celestia](celestia-logo.png)<br>
 **A real-time space simulation that lets you experience our universe in three dimensions.**
 
 **Copyright © 2001-2023, Celestia Development Team**<br>
-**Celestia website: https://celestia.space**<br>
+**Celestia website: https://celestiaproject.space**<br>
 **Celestia Wikibook: https://en.wikibooks.org/wiki/Celestia**<br>
-**Celestia forums: https://celestia.space/forum/**<br>
+**Celestia forums: https://celestiaproject.space/forum/**<br>
 **Celestia Subreddit: https://www.reddit.com/r/Celestiasoftware/**<br>
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
 ## License
@@ -53,7 +53,7 @@ zoom through space toward the selected star.  If you press G again, you'll
 approach the star even closer.
 
 Press H to select our Sun, and then G to go back to our Sun.  Right click on
-the sun to bring up a menu of planets and other objects in the solar system. 
+the sun to bring up a menu of planets and other objects in the solar system.
 After selecting a planet from the menu, hit G again to travel toward it.  Once
 there, hold down the right mouse button and drag to orbit the planet.
 
@@ -63,9 +63,9 @@ the Tour Guide window.  Choose a destination from the list, click the Goto
 button, and you're off.
 
 That covers the very basics.  For a more in-depth look at Celestia and the
-controls available to you, download the "Celestia User's Guide" (written by 
+controls available to you, download the "Celestia User's Guide" (written by
 Frank Gregorio), available in several languages, from:<br>
-  https://celestia.space/guides.html<br>
+  https://celestiaproject.space/guides.html<br>
 This web page also includes links to the Celestia README file translated into
 Japanese.
 
@@ -81,10 +81,10 @@ in the table will select it.  Use this feature along with the Center and Go
 To buttons to tour the stars visible from any night sky in the galaxy.
 
 ### Solar system browser
-The Solar System Browser displays a window with a tree view of all the objects 
+The Solar System Browser displays a window with a tree view of all the objects
 in the nearest solar system (if there is one within a light year of your current
-position.)  Clicking on the name of any object in the window will select it.  
-You can then use the Center or Go To buttons to display that object in the main 
+position.)  Clicking on the name of any object in the window will select it.
+You can then use the Center or Go To buttons to display that object in the main
 Celestia window.
 
 ### Selecting objects by name
@@ -94,16 +94,16 @@ Celestia provides several ways to select an object by name...
 3. Press Enter, type in the first few characters of the object name,
 press the Tab key to move through the displayed listing until the object is highlighted,
 then press Enter again.
- 
+
 You can use common names, Bayer designations or catalog numbers for stars.
-Celestia currently supports the HIP, HD and SAO catalogs. Catalog numbers must 
+Celestia currently supports the HIP, HD and SAO catalogs. Catalog numbers must
 be entered with a space between the prefix and the catalog number.
 
 ### Known issues
 For up-to-the-minute answers to some common problems encountered when running
-Celestia, please view either the FAQ in the Help menu or take a look at the 
-"Celestia User's FAQ" located on the Celestia User's Forum: 
-https://celestia.space/forum/
+Celestia, please view either the FAQ in the Help menu or take a look at the
+"Celestia User's FAQ" located on the Celestia User's Forum:
+https://celestiaproject.space/forum/
 
 ### User modifiable elements
 You can modify how Celestia starts up each time you run it, by defining your
@@ -133,7 +133,7 @@ See instructions in file [INSTALL.md](INSTALL.md).
 
 ### Contributing
 
-**We welcome feedback, bug reports, and pull requests!**  
+**We welcome feedback, bug reports, and pull requests!**
 
 For pull requests, please stick to the following guidelines:
 * Be sure to test your code changes.
