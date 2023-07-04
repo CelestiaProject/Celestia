@@ -443,6 +443,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(LayoutDirection);
+    void enableMessages();
+    void disableMessages();
+
+    std::string_view getCurrentMessage() const;
 
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
@@ -590,6 +594,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
 
     LayoutDirection layoutDirection { LayoutDirection::LeftToRight };
+    bool showMessage{ true };
 
     Selection lastSelection;
     std::string selectionNames;
