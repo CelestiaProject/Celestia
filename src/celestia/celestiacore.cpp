@@ -3577,26 +3577,29 @@ void CelestiaCore::renderOverlay()
     }
 
     // Text messages
-    if (messageText != "" && currentTime < messageStart + messageDuration && messageTextPosition)
+    if (showMessage)
     {
-        int x = 0;
-        int y = 0;
+        if (auto text = getCurrentMessage(); !text.empty())
+        {
+            int x = 0;
+            int y = 0;
 
-        messageTextPosition->resolvePixelPosition(this, x, y);
+            messageTextPosition->resolvePixelPosition(this, x, y);
 
-        overlay->setFont(titleFont);
-        overlay->savePos();
+            overlay->setFont(titleFont);
+            overlay->savePos();
 
-        float alpha = 1.0f;
-        if (currentTime > messageStart + messageDuration - 0.5)
-            alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
-        overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
-        overlay->moveBy(x, y);
-        overlay->beginText();
-        overlay->print(messageText);
-        overlay->endText();
-        overlay->restorePos();
-        overlay->setFont(font);
+            float alpha = 1.0f;
+            if (currentTime > messageStart + messageDuration - 0.5)
+                alpha = static_cast<float>((messageStart + messageDuration - currentTime) / 0.5);
+            overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
+            overlay->moveBy(x, y);
+            overlay->beginText();
+            overlay->print(messageText);
+            overlay->endText();
+            overlay->restorePos();
+            overlay->setFont(font);
+        }
     }
 
     if (movieCapture != nullptr)
@@ -4999,6 +5002,23 @@ void CelestiaCore::setLayoutDirection(LayoutDirection value)
     layoutDirection = value;
     overlay->setTextAlignment(layoutDirection == LayoutDirection::RightToLeft ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left);
     renderer->setRTL(layoutDirection == LayoutDirection::RightToLeft);
+}
+
+void CelestiaCore::enableMessages()
+{
+    showMessage = true;
+}
+
+void CelestiaCore::disableMessages()
+{
+    showMessage = false;
+}
+
+std::string_view CelestiaCore::getCurrentMessage() const
+{
+    if (currentTime < messageStart + messageDuration && messageTextPosition)
+        return messageText;
+    return {};
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)
