@@ -352,6 +352,8 @@ class Renderer
     StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
     unsigned int getResolution() const;
+    void enableSelectionPointer();
+    void disableSelectionPointer();
 
     void loadTextures(Body*);
 
@@ -683,6 +685,7 @@ class Renderer
     int renderMode;
     int labelMode;
     bool rtl{ false };
+    bool showSelectionPointer{ true };
     uint64_t renderFlags;
     int bodyVisibilityMask{ ~0 };
     int orbitMask;

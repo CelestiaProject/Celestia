@@ -633,6 +633,16 @@ unsigned int Renderer::getResolution() const
     return textureResolution;
 }
 
+void Renderer::enableSelectionPointer()
+{
+    showSelectionPointer = true;
+}
+
+void Renderer::disableSelectionPointer()
+{
+    showSelectionPointer = false;
+}
+
 void Renderer::setRTL(bool value)
 {
     rtl = value;
@@ -1678,7 +1688,7 @@ void Renderer::draw(const Observer& observer,
 
     renderForegroundAnnotations(FontNormal);
 
-    if (!selectionVisible && (renderFlags & ShowMarkers))
+    if (showSelectionPointer && !selectionVisible && (renderFlags & ShowMarkers) != 0)
     {
         renderSelectionPointer(observer, now, xfrustum, sel);
     }
