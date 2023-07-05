@@ -458,33 +458,26 @@ GlobularFormManager::get()
     return globularFormManager;
 }
 
-Eigen::Vector4f
-toVector4(const Eigen::Vector3f &v, float w)
-{
-    return Eigen::Vector4f(v.x(), v.y(), v.z(), w);
-}
-
 float
-CalculateSpriteSize(int w, int h, const Eigen::Matrix4f &mvp, const Eigen::Matrix3f &viewMat)
+CalculateSpriteSize(int w, int h, const Eigen::Matrix4f &pr, const Eigen::Matrix4f &mv, const Eigen::Matrix3f &viewMat, const celestia::engine::ProjectionMode *projectionMode)
 {
     /*
-     * in original code sprite was a quad with coordinates (v0, v1, v2, v3), where
+     * In the original code sprite was a quad with coordinates (v0, v1, v2, v3), where
      *   v2 = viewMat * vec3( 1, 1, 0),
      *   v3 = viewMat * vec3(-1, 1, 0).
      * So the width in world units is v2 - v3. The value remanes the same if we translate vertices by vec3(1, -1, 0).
-     * Trtanslated values are:
+     * Translated values are:
      *   v2 = viewMat * vec3(2, 0, 0)
      *   v3 = viewMat * vec3(0, 0, 0)
      * Taking into account multiplication rules v2 becomes just 2 * viewMat.col(0) and v3 is just vec3(0, 0, 0).
-     * To get normalized coordinates we convert v2 and v3 into vec4 and multiply by MVP.
-     * As v3 is zero, then MVP * vec4(v3, 1) is equivalent to taking mvp.col(3).
      */
-    Eigen::Vector4f v2 = mvp * toVector4(2.0f * viewMat.col(0), 1.0f);
-    Eigen::Vector2f ndc2(v2.head(2) / v2.w());
-    Eigen::Vector2f ndc3(mvp.col(3).head(2) / mvp(3, 3));
-    Eigen::Vector2f dev(static_cast<float>(w), static_cast<float>(h));
-    // ac - bc <=> (a - b)c
-    return 0.5f * (ndc2 - ndc3).cwiseProduct(dev).norm();
+    auto mvp = pr * mv;
+    int viewport[] = { 0, 0, w, h };
+    Eigen::Vector3f ndc2;
+    projectionMode->project(2.0f * viewMat.col(0), mv, pr, mvp, viewport, ndc2);
+    Eigen::Vector3f ndc3;
+    projectionMode->project(Eigen::Vector3f::Zero(), mv, pr, mvp, viewport, ndc3);
+    return (ndc2.head<2>() - ndc3.head<2>()).norm();
 }
 
 int
@@ -681,7 +674,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
 
     int w, h; // NOSONAR
     m_renderer.getViewport(nullptr, nullptr, &w, &h);
-    float size = CalculateSpriteSize(w, h, pr * mv, m_viewMat);
+    float size = CalculateSpriteSize(w, h, pr, mv, m_viewMat, m_renderer.getProjectionMode().get());
 
     globProg->use();
     globProg->setMVPMatrices(pr, mv);
