@@ -553,8 +553,10 @@ bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOpt
     glCullFace(GL_BACK);
 
 #ifndef GL_ES
-    if (gl::MESA_pack_invert)
+    if (detailOptions.useMesaPackInvert && gl::MESA_pack_invert)
         glPixelStorei(GL_PACK_INVERT_MESA, GL_TRUE);
+    else
+        detailOptions.useMesaPackInvert = false;
 #endif
 
     // LEQUAL rather than LESS required for multipass rendering
@@ -4609,7 +4611,7 @@ bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsi
         return false;
 
 #ifndef GL_ES
-    if (!gl::MESA_pack_invert)
+    if (!detailOptions.useMesaPackInvert)
 #endif
     {
         int realWidth = w * formatWidth(format);
