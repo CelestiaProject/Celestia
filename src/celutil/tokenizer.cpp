@@ -158,6 +158,11 @@ public:
 
     TokenizerImpl(std::istream*, std::size_t);
 
+    TokenizerImpl(const TokenizerImpl&) = delete;
+    TokenizerImpl& operator=(const TokenizerImpl&) = delete;
+    TokenizerImpl(TokenizerImpl&&) = delete;
+    TokenizerImpl& operator=(TokenizerImpl&&) = delete;
+
     Tokenizer::TokenType nextToken();
 
     const TokenValue& getTokenValue() const { return tokenValue; }

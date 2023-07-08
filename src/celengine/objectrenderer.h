@@ -24,10 +24,6 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     {
     };
 
-    void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) override
-    {
-    };
-
     const Observer* observer    { nullptr };
     Renderer*  renderer         { nullptr };
 
