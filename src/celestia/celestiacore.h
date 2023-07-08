@@ -228,7 +228,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool initSimulation(const fs::path& configFileName = fs::path(),
                         const std::vector<fs::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
-    bool initRenderer();
+    bool initRenderer(bool useMesaPackInvert = true);
     void start(double t);
     void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);

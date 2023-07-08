@@ -108,12 +108,15 @@ class Renderer
     struct DetailOptions
     {
         DetailOptions();
-        unsigned int orbitPathSamplePoints;
-        unsigned int shadowTextureSize;
-        unsigned int eclipseTextureSize;
-        double orbitWindowEnd;
-        double orbitPeriodsShown;
-        double linearFadeFraction;
+        unsigned int orbitPathSamplePoints{ 100 };
+        unsigned int shadowTextureSize{ 256 };
+        unsigned int eclipseTextureSize{ 128 };
+        double orbitWindowEnd{ 0.5 };
+        double orbitPeriodsShown{ 1.0 };
+        double linearFadeFraction{ 0.0 };
+#ifndef GL_ES
+        bool useMesaPackInvert{ true };
+#endif
     };
 
     bool init(int, int, const DetailOptions&);

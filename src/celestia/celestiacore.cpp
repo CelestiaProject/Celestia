@@ -4100,7 +4100,7 @@ LoadFontHelper(const Renderer *renderer, const fs::path &p)
     return LoadTextureFont(renderer, path, index, size);
 }
 
-bool CelestiaCore::initRenderer()
+bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 {
     renderer->setRenderFlags(Renderer::ShowStars |
                              Renderer::ShowPlanets |
@@ -4114,6 +4114,9 @@ bool CelestiaCore::initRenderer()
     detailOptions.orbitWindowEnd = config->orbitWindowEnd;
     detailOptions.orbitPeriodsShown = config->orbitPeriodsShown;
     detailOptions.linearFadeFraction = config->linearFadeFraction;
+#ifndef GL_ES
+    detailOptions.useMesaPackInvert = useMesaPackInvert;
+#endif
 
     // Prepare the scene for rendering.
     if (!renderer->init((int) width, (int) height, detailOptions))

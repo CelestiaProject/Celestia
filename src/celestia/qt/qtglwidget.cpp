@@ -115,7 +115,7 @@ void CelestiaGlWidget::initializeGL()
 
     appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
 
-    if (!appCore->initRenderer())
+    if (!appCore->initRenderer(false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);
