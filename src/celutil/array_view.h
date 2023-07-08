@@ -12,9 +12,9 @@
 #pragma once
 
 #include <array>
+#include <cstddef> // std::size_t
 #include <vector>
 #include <type_traits> // std::remove_cv
-#include <cstddef>     // std::size_t
 
 namespace celestia::util
 {
@@ -48,7 +48,7 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
         m_ptr(ary),
         m_size(N)
     {}
@@ -57,13 +57,13 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<size_t N> constexpr array_view(const std::array<element_type, N> &ary) noexcept :
+    template<std::size_t N> constexpr array_view(const std::array<element_type, N> &ary) noexcept :
         m_ptr(ary.data()),
         m_size(N)
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<size_t N> constexpr array_view(std::array<element_type, N> &&ary) noexcept :
+    template<std::size_t N> constexpr array_view(std::array<element_type, N> &&ary) noexcept :
         m_ptr(ary.data()),
         m_size(N)
     {}
@@ -205,7 +205,7 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<typename T, size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
         m_ptr(ary),
         m_size(N * sizeof(T))
     {}
@@ -214,13 +214,13 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<typename T, size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
         m_ptr(ary.data()),
         m_size(N * sizeof(T))
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
         m_ptr(ary.data()),
         m_size(N * sizeof(T))
     {}
@@ -254,7 +254,7 @@ public:
     /**
      * Assign another view.
      */
-    template<typename T> constexpr array_view<T>& operator=(const array_view<T> &ary)
+    template<typename T> constexpr array_view& operator=(const array_view<T> &ary)
     {
         m_ptr = ary.data();
         m_size = ary.size() * sizeof(T);
@@ -262,7 +262,7 @@ public:
     }
 
     /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view<T>& operator=(array_view<T> &&ary) noexcept
+    template<typename T> constexpr array_view& operator=(array_view<T> &&ary) noexcept
     {
         m_ptr = ary.data();
         m_size = ary.size() * sizeof(T);
@@ -327,7 +327,7 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<typename T, size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
         m_ptr(ary),
         m_size(N * sizeof(T))
     {}
@@ -336,13 +336,13 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<typename T, size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
         m_ptr(ary.data()),
         m_size(N * sizeof(T))
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
+    template<typename T, std::size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
         m_ptr(ary.data()),
         m_size(N * sizeof(T))
     {}
@@ -376,7 +376,7 @@ public:
     /**
      * Assign another view.
      */
-    template<typename T> constexpr array_view<T>& operator=(const array_view<T> &ary)
+    template<typename T> constexpr array_view& operator=(const array_view<T> &ary)
     {
         m_ptr = ary.data();
         m_size = ary.size() * sizeof(T);
@@ -384,7 +384,7 @@ public:
     }
 
     /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view<T>& operator=(array_view<T> &&ary) noexcept
+    template<typename T> constexpr array_view& operator=(array_view<T> &&ary) noexcept
     {
         m_ptr = ary.data();
         m_size = ary.size() * sizeof(T);

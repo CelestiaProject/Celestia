@@ -30,8 +30,7 @@ template<class T> class BlockArray
 {
 public:
     explicit BlockArray(unsigned int blockSize = 1000) :
-        m_blockSize(blockSize),
-        m_elementCount(0)
+        m_blockSize(blockSize)
     {
     }
 
@@ -88,7 +87,7 @@ private:
     }
 
     unsigned int m_blockSize;
-    unsigned int m_elementCount;
+    unsigned int m_elementCount{ 0 };
     // Fixed-size blocks with size m_blocksize
-    std::vector<std::unique_ptr<T[]>> m_blocks; //NOSONAR
+    std::vector<std::unique_ptr<T[]>> m_blocks{ }; //NOSONAR
 };

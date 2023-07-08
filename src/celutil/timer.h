@@ -14,11 +14,15 @@
 class Timer
 {
  public:
-    void reset() { start = std::chrono::high_resolution_clock::now(); }
+    void reset();
 
-    Timer() { reset(); };
+    Timer() = default;
     double getTime() const;
 
  private:
-    std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    using clock = std::chrono::high_resolution_clock;
+    std::chrono::time_point<clock> start{ clock::now() };
 };
+
+inline void
+Timer::reset() { start = clock::now(); }
