@@ -82,7 +82,7 @@ void PassthroughViewportEffect::initialize()
     };
 
     vo = gl::VertexObject();
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, quadVertices, gl::Buffer::BufferUsage::StaticDraw);
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, util::byte_view(quadVertices), gl::Buffer::BufferUsage::StaticDraw);
 
     vo.setCount(6);
     vo.addVertexBuffer(
@@ -145,7 +145,7 @@ void WarpMeshViewportEffect::initialize()
     vo = gl::VertexObject();
     bo = gl::Buffer();
 
-    bo.bind().setData(mesh->scopedDataForRendering(), gl::Buffer::BufferUsage::StaticDraw);
+    bo.bind().setData(util::byte_view(mesh->scopedDataForRendering()), gl::Buffer::BufferUsage::StaticDraw);
 
     vo.setCount(mesh->count());
     vo.addVertexBuffer(

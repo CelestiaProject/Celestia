@@ -169,7 +169,7 @@ GLRingRenderData::initializeLOD(int i, float innerRadius, float outerRadius, uns
         ringCoord.push_back(vertex);
     }
 
-    bo[i] = gl::Buffer(gl::Buffer::TargetHint::Array, ringCoord);
+    bo[i] = gl::Buffer(gl::Buffer::TargetHint::Array, util::byte_view(ringCoord));
     vo[i] = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
     vo[i]
         .setCount((nSections + 1) * 2)

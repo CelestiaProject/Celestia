@@ -8,10 +8,14 @@ TEST_SUITE_BEGIN("array_view");
 TEST_CASE("array_view")
 {
     std::array<int,4> a = {1,2,3,4};
-    util::array_view<const void> v(a);
+    util::array_view<std::byte> v = util::byte_view(a);
 
     REQUIRE(a.size() * sizeof(a[0]) == v.size());
-    REQUIRE(a.data() == v.data());
+
+    auto aptr = static_cast<const void*>(a.data());
+    auto vptr = static_cast<const void*>(v.data());
+
+    REQUIRE(aptr == vptr);
 }
 
 TEST_SUITE_END();

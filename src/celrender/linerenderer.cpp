@@ -117,7 +117,7 @@ LineRenderer::create_vbo_lines()
     m_lnVO = std::make_unique<gl::VertexObject>();
     m_lnBO = std::make_unique<gl::Buffer>();
 
-    m_lnBO->bind().setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+    m_lnBO->bind().setData(util::byte_view(m_vertices), static_cast<gl::Buffer::BufferUsage>(m_storageType));
 
     m_lnVO->addVertexBuffer(
         *m_lnBO,
@@ -149,7 +149,7 @@ LineRenderer::setup_vbo_lines()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_lnBO->bind().invalidateData().setData(m_vertices);
+            m_lnBO->bind().invalidateData().setData(util::byte_view(m_vertices));
         }
     }
     else
@@ -179,7 +179,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(util::byte_view(m_segments), static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_segments.clear();
     }
     else
@@ -193,7 +193,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(util::byte_view(m_verticesTr), static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_verticesTr.clear();
     }
     m_trVO->addVertexBuffer(
@@ -245,11 +245,11 @@ LineRenderer::setup_vbo_triangles()
 
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {
-                m_trBO->setData(m_segments);
+                m_trBO->setData(util::byte_view(m_segments));
             }
             else
             {
-                m_trBO->setData(m_verticesTr);
+                m_trBO->setData(util::byte_view(m_verticesTr));
             }
         }
     }

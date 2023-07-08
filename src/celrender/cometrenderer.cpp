@@ -254,11 +254,11 @@ CometRenderer::render(const Body &body,
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
     m_bo->bind().invalidateData().setData(
-        util::array_view<CometTailVertex>(m_vertices.get(), MaxVertices),
+        util::byte_view(m_vertices.get(), MaxVertices),
         gl::Buffer::BufferUsage::StreamDraw);
 
     m_io->bind().invalidateData().setData(
-        util::array_view<ushort>(m_indices.get(), MaxIndices),
+        util::byte_view(m_indices.get(), MaxIndices),
         gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);

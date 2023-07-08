@@ -33,7 +33,7 @@ void
 initialize(LineRenderer &lr, gl::VertexObject &vo, gl::Buffer &bo)
 {
 
-    bo.bind().setData(FilledMarkersData, gl::Buffer::BufferUsage::StaticDraw);
+    bo.bind().setData(util::byte_view(FilledMarkersData), gl::Buffer::BufferUsage::StaticDraw);
 
     vo.addVertexBuffer(
         bo,

@@ -435,7 +435,7 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
                 glVertices.push_back(v);
             }
 
-            gl::Buffer bo(gl::Buffer::TargetHint::Array, glVertices);
+            gl::Buffer bo(gl::Buffer::TargetHint::Array, util::byte_view(glVertices));
 
             gl::VertexObject vo(gl::VertexObject::Primitive::Points);
 

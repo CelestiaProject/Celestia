@@ -87,9 +87,9 @@ public:
      * @see @ref TargetHint @ref BufferUsage
      */
     Buffer(
-        TargetHint                   targetHint,
-        util::array_view<const void> data,
-        BufferUsage                  usage = BufferUsage::StaticDraw);
+        TargetHint                  targetHint,
+        util::array_view<std::byte> data,
+        BufferUsage                 usage = BufferUsage::StaticDraw);
 
     //! Copying is prohibited.
     Buffer(const Buffer &) = delete;
@@ -122,7 +122,7 @@ public:
      * @param usage Buffer usage policy. @see @ref BufferUsage
      * @return Reference to self.
      */
-    Buffer& setData(util::array_view<const void> data, BufferUsage usage = BufferUsage::StaticDraw);
+    Buffer& setData(util::array_view<std::byte> data, BufferUsage usage = BufferUsage::StaticDraw);
 
     /**
      * @brief Partially update the Buffer.
@@ -131,7 +131,7 @@ public:
      * @param data Data.
      * @return Reference to self.
      */
-    Buffer& setSubData(GLintptr offset, util::array_view<const void> data);
+    Buffer& setSubData(GLintptr offset, util::array_view<std::byte> data);
 
     //! Invalidate buffer data.
     Buffer& invalidateData();

@@ -26,7 +26,7 @@ Buffer::Buffer(Buffer::TargetHint targetHint) :
     glGenBuffers(1, &m_id);
 }
 
-Buffer::Buffer(Buffer::TargetHint targetHint, util::array_view<const void> data, Buffer::BufferUsage usage) :
+Buffer::Buffer(Buffer::TargetHint targetHint, util::array_view<std::byte> data, Buffer::BufferUsage usage) :
     Buffer(targetHint)
 {
     bind();
@@ -95,7 +95,7 @@ Buffer::unbind(Buffer::TargetHint target)
 }
 
 Buffer&
-Buffer::setData(util::array_view<const void> data, Buffer::BufferUsage usage)
+Buffer::setData(util::array_view<std::byte> data, Buffer::BufferUsage usage)
 {
     m_bufferSize = data.size();
     m_usage      = usage;
@@ -104,7 +104,7 @@ Buffer::setData(util::array_view<const void> data, Buffer::BufferUsage usage)
 }
 
 Buffer&
-Buffer::setSubData(GLintptr offset, util::array_view<const void> data)
+Buffer::setSubData(GLintptr offset, util::array_view<std::byte> data)
 {
     glBufferSubData(GLENUM(m_targetHint), offset, data.size(), data.data());
     return *this;

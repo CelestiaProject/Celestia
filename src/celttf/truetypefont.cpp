@@ -33,6 +33,7 @@
 using celestia::compat::from_chars;
 using celestia::util::GetLogger;
 namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 struct Glyph
 {
@@ -508,8 +509,8 @@ TextureFontPrivate::flush()
         indexes.push_back(index + 2);
     }
 
-    m_vbo.bind().invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vio.bind().invalidateData().setData(indexes, gl::Buffer::BufferUsage::StreamDraw);
+    m_vbo.bind().invalidateData().setData(util::byte_view(m_fontVertices), gl::Buffer::BufferUsage::StreamDraw);
+    m_vio.bind().invalidateData().setData(util::byte_view(indexes), gl::Buffer::BufferUsage::StreamDraw);
     m_vao.draw(gl::VertexObject::Primitive::Triangles, static_cast<int>(indexes.size()));
     m_vbo.unbind();
     m_vio.unbind();

@@ -65,7 +65,7 @@ LargeStarRenderer::initialize()
          0.5f, 0.5f,  1.0f, 0.0f,
     };
 
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array, texCoords);
+    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array, util::byte_view(texCoords));
     m_vo = std::make_unique<gl::VertexObject>();
 
     m_vo->setCount(6);

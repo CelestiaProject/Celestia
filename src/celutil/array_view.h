@@ -22,7 +22,7 @@ namespace celestia::util
 /**
  * Read-only view of array-like containers similar to C++20's std::span.
  */
-template<typename T>
+template<typename T, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<T>, void>>>
 class array_view
 {
 public:
@@ -48,7 +48,7 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept : //NOSONAR
         m_ptr(ary),
         m_size(N)
     {}
@@ -57,25 +57,13 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<size_t N> constexpr array_view(const std::array<element_type, N> &ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N)
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<size_t N> constexpr array_view(std::array<element_type, N> &&ary) noexcept :
+    template<std::size_t N> constexpr array_view(const std::array<element_type, N> &ary) noexcept :
         m_ptr(ary.data()),
         m_size(N)
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
     constexpr array_view(const std::vector<element_type> &vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size())
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    constexpr array_view(std::vector<element_type> &&vec) noexcept :
         m_ptr(vec.data()),
         m_size(vec.size())
     {}
@@ -176,248 +164,39 @@ private:
     size_type m_size;
 };
 
-/**
- * Specialization for API accepting opaque blobs of data.
- */
-template <>
-class array_view<void>
+template<typename T>
+inline array_view<std::byte> byte_view(const array_view<T>& view) noexcept
 {
-public:
-    using element_type = void;
-    using size_type = std::size_t;
+    return array_view<std::byte>(reinterpret_cast<const std::byte*>(view.data()), //NOSONAR
+                                 view.size() * sizeof(T));
+}
 
-    /**
-     * Create an empty array view.
-     */
-    constexpr array_view() noexcept :
-        m_ptr(nullptr),
-        m_size(0)
-    {}
-
-    /**
-     * Wrap a pointer and length
-     */
-    constexpr array_view(const void* ptr, size_type size) noexcept :
-        m_ptr(ptr),
-        m_size(size)
-    {}
-
-    /**
-     * Wrap a C-style array.
-     */
-    template<typename T, size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
-        m_ptr(ary),
-        m_size(N * sizeof(T))
-    {}
-
-    /**
-     * Wrap a std::array or std::vector or other classes which have the same
-     * memory layout and interface.
-     */
-    template<typename T, size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(const std::vector<T> &vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(std::vector<T> &&vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /**
-     * Copy another view.
-     */
-    template<typename T> constexpr array_view(const array_view<T> &ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size())
-    {}
-
-    /** @copydoc array_view::array_view(const array_view<T> &ary) */
-    template<typename T> constexpr array_view(array_view<T> &&ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size() * sizeof(T))
-    {}
-
-    /**
-     * Assign another view.
-     */
-    template<typename T> constexpr array_view<T>& operator=(const array_view<T> &ary)
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view<T>& operator=(array_view<T> &&ary) noexcept
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /**
-     * Direct access to the underlying array.
-     */
-    constexpr const element_type* data() const noexcept
-    {
-        return m_ptr;
-    }
-
-    /**
-     * Return the number of elements.
-     */
-    constexpr size_type size() const noexcept
-    {
-        return m_size;
-    }
-
-    /**
-     * Check whether the view is empty.
-     */
-    constexpr bool empty() const noexcept
-    {
-        return m_size == 0;
-    }
-
-private:
-    const element_type* m_ptr;
-    size_type m_size;
-};
-
-/**
- * Specialization for API accepting opaque blobs of data.
- */
-template <>
-class array_view<const void>
+template<typename T>
+inline array_view<std::byte> byte_view(const T* ptr, std::size_t size) noexcept
 {
-public:
-    using element_type = const void;
-    using size_type = std::size_t;
+    return array_view<std::byte>(reinterpret_cast<const std::byte*>(ptr), //NOSONAR
+                                 size * sizeof(T));
+}
 
-    /**
-     * Create an empty array view.
-     */
-    constexpr array_view() noexcept :
-        m_ptr(nullptr),
-        m_size(0)
-    {}
+template<typename T>
+inline array_view<std::byte> byte_view(const std::vector<T>& vec) noexcept
+{
+    return array_view<std::byte>(reinterpret_cast<const std::byte*>(vec.data()), //NOSONAR
+                                 vec.size() * sizeof(T));
+}
 
-    /**
-     * Wrap a pointer and length
-     */
-    constexpr array_view(const void* ptr, size_type size) noexcept :
-        m_ptr(ptr),
-        m_size(size)
-    {}
+template<typename T, std::size_t N>
+inline array_view<std::byte> byte_view(const T (&ary)[N]) noexcept //NOSONAR
+{
+    return array_view<std::byte>(reinterpret_cast<const std::byte*>(ary), //NOSONAR
+                                 N * sizeof(T));
+}
 
-    /**
-     * Wrap a C-style array.
-     */
-    template<typename T, size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
-        m_ptr(ary),
-        m_size(N * sizeof(T))
-    {}
-
-    /**
-     * Wrap a std::array or std::vector or other classes which have the same
-     * memory layout and interface.
-     */
-    template<typename T, size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(const std::vector<T> &vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(std::vector<T> &&vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /**
-     * Copy another view.
-     */
-    template<typename T> constexpr array_view(const array_view<T> &ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size())
-    {}
-
-    /** @copydoc array_view::array_view(const array_view<T> &ary) */
-    template<typename T> constexpr array_view(array_view<T> &&ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size() * sizeof(T))
-    {}
-
-    /**
-     * Assign another view.
-     */
-    template<typename T> constexpr array_view<T>& operator=(const array_view<T> &ary)
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view<T>& operator=(array_view<T> &&ary) noexcept
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /**
-     * Direct access to the underlying array.
-     */
-    constexpr const element_type* data() const noexcept
-    {
-        return m_ptr;
-    }
-
-    /**
-     * Return the number of elements.
-     */
-    constexpr size_type size() const noexcept
-    {
-        return m_size;
-    }
-
-    /**
-     * Check whether the view is empty.
-     */
-    constexpr bool empty() const noexcept
-    {
-        return m_size == 0;
-    }
-
-private:
-    const element_type* m_ptr;
-    size_type m_size;
-};
+template<typename T, std::size_t N>
+inline array_view<std::byte> byte_view(const std::array<T, N>& arr) noexcept
+{
+    return array_view<std::byte>(reinterpret_cast<const std::byte*>(arr.data()), //NOSONAR
+                                 arr.size() * sizeof(T));
+}
 
 } // end namespace celestia::util

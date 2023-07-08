@@ -56,7 +56,7 @@ void PointStarVertexBuffer::render()
             m_texture->bind();
 
         m_bo->bind().invalidateData().setData(
-            util::array_view(m_vertices.get(), m_nStars),
+            util::byte_view(m_vertices.get(), m_nStars),
             gl::Buffer::BufferUsage::StreamDraw);
 
         if (m_pointSizeFromVertex)

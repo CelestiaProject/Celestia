@@ -337,8 +337,8 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    m_bo->bind().invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_io->bind().invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
+    m_bo->bind().invalidateData().setData(util::byte_view(m_skyVertices), gl::Buffer::BufferUsage::StreamDraw);
+    m_io->bind().invalidateData().setData(util::byte_view(m_skyIndices), gl::Buffer::BufferUsage::StreamDraw);
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);

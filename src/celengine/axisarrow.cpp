@@ -139,7 +139,7 @@ GetArrowVAO()
     std::copy(annulus.begin(), annulus.end(), std::back_inserter(arrow));
     std::copy(head.begin(), head.end(), std::back_inserter(arrow));
 
-    bo->bind().setData(arrow, gl::Buffer::BufferUsage::StaticDraw);
+    bo->bind().setData(util::byte_view(arrow), gl::Buffer::BufferUsage::StaticDraw);
 
     vo->setCount(static_cast<int>(arrow.size())).addVertexBuffer(
         *bo,

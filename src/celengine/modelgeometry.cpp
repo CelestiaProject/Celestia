@@ -153,8 +153,8 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
 
             m_glData->vbos.emplace_back(
                 gl::Buffer::TargetHint::Array,
-                util::array_view<const void>(
-                    mesh->getVertexData(),
+                util::array_view<std::byte>(
+                    reinterpret_cast<const std::byte*>(mesh->getVertexData()), //NOSONAR
                     mesh->getVertexCount() * vertexDesc.strideBytes));
 
             indices.reserve(std::max(indices.capacity(), static_cast<std::size_t>(mesh->getIndexCount())));
@@ -163,7 +163,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
                 const auto* group = mesh->getGroup(groupIndex);
                 std::copy(group->indices.begin(), group->indices.end(), std::back_inserter(indices));
             }
-            m_glData->vios.emplace_back(gl::Buffer::TargetHint::ElementArray, indices);
+            m_glData->vios.emplace_back(gl::Buffer::TargetHint::ElementArray, util::byte_view(indices));
             indices.clear();
 
             gl::VertexObject vao;
