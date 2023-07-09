@@ -15,7 +15,9 @@
 #include <vector>
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
+#include <celengine/image.h>
 #include <celengine/render.h>
+#include <celengine/texture.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/logger.h>
@@ -104,22 +106,25 @@ struct TextureFontPrivate
     int m_texWidth{ 0 };
     int m_texHeight{ 0 };
 
-    GLuint             m_texName{ 0 };   // texture object
-    std::vector<Glyph> m_glyphs;         // character information
+    std::unique_ptr<ImageTexture> m_tex; // texture object
+
+    std::vector<Glyph> m_glyphs; // character information
 
     std::array<UnicodeBlock, 2> m_unicodeBlocks;
-    int                         m_commonGlyphsCount{ 0 };
 
+    int m_commonGlyphsCount{ 0 };
     int m_inserted{ 0 };
 
-    Eigen::Matrix4f         m_projection;
-    Eigen::Matrix4f         m_modelView;
-    bool                    m_shaderInUse{ false };
+    Eigen::Matrix4f m_projection;
+    Eigen::Matrix4f m_modelView;
+
     std::vector<FontVertex> m_fontVertices;
 
     gl::VertexObject m_vao;
     gl::Buffer       m_vbo{ gl::Buffer::TargetHint::Array };
     gl::Buffer       m_vio{ gl::Buffer::TargetHint::ElementArray };
+
+    bool m_shaderInUse{ false };
 
     static constexpr std::size_t MaxVertices = 256; // This gives BO size 4kB, MUST be multiply of 4
     static constexpr std::size_t MaxIndices = MaxVertices / 4 * 6;
@@ -169,8 +174,8 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
 
 TextureFontPrivate::~TextureFontPrivate()
 {
-    if (m_face != nullptr) FT_Done_Face(m_face);
-    if (m_texName != 0) glDeleteTextures(1, &m_texName);
+    if (m_face != nullptr)
+        FT_Done_Face(m_face);
 }
 
 bool
@@ -196,7 +201,8 @@ TextureFontPrivate::loadGlyphInfo(wchar_t ch, Glyph &c) const
 void
 TextureFontPrivate::initCommonGlyphs()
 {
-    if (!m_glyphs.empty()) return;
+    if (!m_glyphs.empty())
+        return;
 
     m_glyphs.reserve(256);
 
@@ -246,52 +252,22 @@ TextureFontPrivate::computeTextureSize()
 bool
 TextureFontPrivate::buildAtlas()
 {
-    FT_GlyphSlot g = m_face->glyph;
-
     initCommonGlyphs();
     computeTextureSize();
 
-    // Create a texture that will be used to hold all glyphs
-    glActiveTexture(GL_TEXTURE0);
-    if (m_texName != 0) glDeleteTextures(1, &m_texName);
-    glGenTextures(1, &m_texName);
-    if (m_texName == 0) return false;
-
-    glBindTexture(GL_TEXTURE_2D, m_texName);
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_ALPHA,
-                 m_texWidth,
-                 m_texHeight,
-                 0,
-                 GL_ALPHA,
-                 GL_UNSIGNED_BYTE,
-                 nullptr);
-
-    // We require 1 byte alignment when uploading texture data
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // Clamping to edges is important to prevent artifacts when scaling
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Linear filtering usually looks best for text
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-#ifndef GL_ES
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-#endif
+    // Create an image that will be used to hold all glyphs
+    auto img = std::make_unique<Image>(celestia::PixelFormat::LUMINANCE, m_texWidth, m_texHeight);
 
     // Paste all glyph bitmaps into the texture, remembering the offset
     int ox = 0;
     int oy = 0;
-
     int rowh = 0;
 
+    FT_GlyphSlot g = m_face->glyph;
     for (auto &c : m_glyphs)
     {
-        if (c.ch == 0) continue; // skip bad glyphs
+        if (c.ch == 0)
+            continue; // skip bad glyphs
 
         if (FT_Load_Char(m_face, c.ch, FT_LOAD_RENDER) != 0)
         {
@@ -300,6 +276,7 @@ TextureFontPrivate::buildAtlas()
             continue;
         }
 
+        // compute subimage position
         if (ox + int(g->bitmap.width) > int(m_texWidth))
         {
             oy += rowh;
@@ -307,15 +284,14 @@ TextureFontPrivate::buildAtlas()
             ox   = 0;
         }
 
-        glTexSubImage2D(GL_TEXTURE_2D,
-                        0,
-                        ox,
-                        oy,
-                        g->bitmap.width,
-                        g->bitmap.rows,
-                        GL_ALPHA,
-                        GL_UNSIGNED_BYTE,
-                        g->bitmap.buffer);
+        // copy glyph image to the destination image
+        for (int y = 0; y < g->bitmap.rows; y++)
+        {
+            std::uint8_t *dst = img->getPixelRow(oy + y) + ox * img->getComponents();
+            const std::uint8_t *src = g->bitmap.buffer + y * g->bitmap.width;
+            memcpy(dst, src, g->bitmap.width);
+        }
+
         c.tx = static_cast<float>(ox) / static_cast<float>(m_texWidth);
         c.ty = static_cast<float>(oy) / static_cast<float>(m_texHeight);
 
@@ -323,18 +299,8 @@ TextureFontPrivate::buildAtlas()
         ox += g->bitmap.width + 1;
     }
 
-#if DUMP_TEXTURE
-    fmt::print("Generated a {} x {} ({} kb) texture atlas\n",
-               m_texWidth, m_texHeight,
-               m_texWidth * m_texHeight / 1024);
-    size_t   img_size = sizeof(uint8_t) * m_texWidth * m_texHeight * 4;
-    uint8_t *raw_img  = new uint8_t[img_size];
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw_img);
-    ofstream f(fmt::format("/tmp/texture_{}x{}.data", m_texWidth, m_texHeight), ios::binary);
-    f.write(reinterpret_cast<const char *>(raw_img), img_size);
-    f.close();
-    delete[] raw_img;
-#endif
+    m_tex = std::make_unique<ImageTexture>(*img, Texture::EdgeClamp, Texture::NoMipMaps);
+
     return true;
 }
 
@@ -354,16 +320,16 @@ TextureFontPrivate::toPos(wchar_t ch) const
 {
     int pos = 0;
 
-    if (ch > m_unicodeBlocks.back().last) return -1;
+    if (ch > m_unicodeBlocks.back().last)
+        return -1;
 
     for (const auto &r : m_unicodeBlocks)
     {
-        if (ch < r.first) return -1;
+        if (ch < r.first)
+            return -1;
 
         if (ch <= r.last)
-        {
             return pos + ch - r.first;
-        }
 
         pos += r.last - r.first + 1;
     }
@@ -417,10 +383,11 @@ TextureFontPrivate::optimize()
 std::pair<float, float>
 TextureFontPrivate::render(std::wstring_view line, float x, float y)
 {
-    if (m_texName == 0) return {0, 0};
+    if (m_tex == nullptr)
+        return {0, 0};
 
     // Use the texture containing the atlas
-    glBindTexture(GL_TEXTURE_2D, m_texName);
+    m_tex->bind();
 
     for (auto ch : line)
     {
@@ -486,15 +453,16 @@ TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
 CelestiaGLProgram *
 TextureFontPrivate::getProgram()
 {
-    if (m_prog != nullptr) return m_prog;
-    m_prog = m_renderer->getShaderManager().getShader("text");
+    if (m_prog == nullptr)
+        m_prog = m_renderer->getShaderManager().getShader("text");
     return m_prog;
 }
 
 void
 TextureFontPrivate::flush()
 {
-    if (m_fontVertices.size() < 4) return;
+    if (m_fontVertices.size() < 4)
+        return;
 
     std::vector<std::uint16_t> indexes;
     indexes.reserve(MaxIndices);
@@ -639,17 +607,15 @@ void
 TextureFont::bind()
 {
     auto *prog = impl->getProgram();
-    if (prog == nullptr) return;
+    if (prog == nullptr || impl->m_tex == nullptr)
+        return;
 
-    if (impl->m_texName != 0)
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, impl->m_texName);
-        prog->use();
-        prog->samplerParam("atlasTex") = 0;
-        impl->m_shaderInUse            = true;
-        prog->setMVPMatrices(impl->m_projection, impl->m_modelView);
-    }
+    glActiveTexture(GL_TEXTURE0);
+    impl->m_tex->bind();
+    prog->use();
+    prog->samplerParam("atlasTex") = 0;
+    prog->setMVPMatrices(impl->m_projection, impl->m_modelView);
+    impl->m_shaderInUse = true;
 }
 
 /**
