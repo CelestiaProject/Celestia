@@ -348,6 +348,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int getSafeAreaBottom(int offset = 0) const;
     float getPickTolerance() const;
     void setPickTolerance(float);
+    void setAccelerationCoefficient(float);
+    void setDecelerationCoefficient(float);
 
     void setFOVFromZoom();
     void setZoomFromFOV();
@@ -498,6 +500,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool showConsole{ false };
     bool lightTravelFlag{ false };
     double flashFrameStart{ 0.0 };
+    float accelerationCoefficient{ 1.0f };
+    float decelerationCoefficient{ 1.0f };
 
     Timer* timer{ nullptr };
 

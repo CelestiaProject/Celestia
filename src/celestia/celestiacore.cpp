@@ -2078,20 +2078,25 @@ void CelestiaCore::tick()
 
     sim->getObserver().setAngularVelocity(av);
 
-    if (keysPressed[(int)'A'] || joyButtonsPressed[JoyButton2])
+    if (keysPressed[static_cast<int>('A')] || joyButtonsPressed[JoyButton2])
     {
         bSetTargetSpeed = true;
 
-        if (sim->getTargetSpeed() == 0.0f)
-            sim->setTargetSpeed(0.1f);
+        if (float currentSpeed = sim->getTargetSpeed(); currentSpeed != 0.0f)
+            sim->setTargetSpeed(currentSpeed * std::exp(static_cast<float>(dt) * 3.0f * accelerationCoefficient));
         else
-            sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
+            sim->setTargetSpeed(0.1f);
     }
-    if (keysPressed[(int)'Z'] || joyButtonsPressed[JoyButton1])
+    if (keysPressed[static_cast<int>('Z')] || joyButtonsPressed[JoyButton1])
     {
-        bSetTargetSpeed = true;
-
-        sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
+        if (float currentSpeed = sim->getTargetSpeed(); currentSpeed != 0.0f)
+        {
+            bSetTargetSpeed = true;
+            if (std::abs(currentSpeed) < 0.1f)
+                sim->setTargetSpeed(0.0f);
+            else
+                sim->setTargetSpeed(currentSpeed / std::exp(static_cast<float>(dt) * 3.0f * decelerationCoefficient));
+        }
     }
     if (!bSetTargetSpeed && av.norm() > 0.0f)
     {
@@ -2307,6 +2312,16 @@ float CelestiaCore::getPickTolerance() const
 void CelestiaCore::setPickTolerance(float newPickTolerance)
 {
     pickTolerance = newPickTolerance;
+}
+
+void CelestiaCore::setAccelerationCoefficient(float coefficient)
+{
+    accelerationCoefficient = coefficient;
+}
+
+void CelestiaCore::setDecelerationCoefficient(float coefficient)
+{
+    decelerationCoefficient = coefficient;
 }
 
 // Return true if anything changed that requires re-rendering. Otherwise, we
