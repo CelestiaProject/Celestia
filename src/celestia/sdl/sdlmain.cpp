@@ -190,10 +190,11 @@ SDL_Application::initCelestiaCore()
 {
     m_appCore = new CelestiaCore();
     m_appCore->setAlerter(new SDL_Alerter());
+    if (!m_appCore->initSimulation())
+        return false;
     if (float screenDpi = 96.0f; SDL_GetDisplayDPI(0, &screenDpi, nullptr, nullptr) == 0)
         m_appCore->setScreenDpi(static_cast<int>(screenDpi));
-    bool ret = m_appCore->initSimulation();
-    return ret;
+    return true;
 }
 
 void
