@@ -17,7 +17,7 @@
 #include <istream>
 #include <type_traits>
 
-#include <celutil/bytes.h>
+#include <celcompat/bit.h>
 #include "jpleph.h"
 
 namespace celestia::ephem
@@ -30,9 +30,7 @@ inline void getMaybeSwapUint32(std::uint32_t& dest, const char* ptr, bool swapBy
 {
     std::memcpy(&dest, ptr, sizeof(std::uint32_t));
     if (swapBytes)
-    {
-        dest = bswap_32(dest);
-    }
+        dest = compat::byteswap(dest);
 }
 
 
@@ -45,7 +43,7 @@ inline void getMaybeSwapDouble(double& dest, const char* ptr, bool swapBytes)
         // we do the swap operation on an integer, then create the double
         std::uint64_t reversed;
         std::memcpy(&reversed, ptr, sizeof(double));
-        reversed = bswap_64(reversed);
+        reversed = compat::byteswap(reversed);
         std::memcpy(&dest, &reversed, sizeof(double));
     }
     else
@@ -69,16 +67,18 @@ std::uint32_t readUint(std::istream& in, bool swap)
 {
     std::uint32_t ret;
     in.read((char*) &ret, sizeof(std::uint32_t));
-    return swap ? bswap_32(ret) : ret;
+    return swap ? compat::byteswap(ret) : ret;
 }
 
 // Read a big-endian or little endian 64-bit IEEE double.
 // If the native double format isn't IEEE 754, there will be troubles.
 double readDouble(std::istream& in, bool swap)
 {
+    char data[sizeof(double)];
+    in.read(data, sizeof(double)); /* Flawfinder: ignore */
     double d;
-    in.read((char*) &d, sizeof(double));
-    return swap ? bswap_double(d) : d;
+    getMaybeSwapDouble(d, data, swap);
+    return d;
 }
 
 #pragma pack(push, 1)
@@ -252,7 +252,7 @@ JPLEphemeris* JPLEphemeris::load(std::istream& in)
 
     decltype(JPLEFileHeader::deNum) deNum;
     std::memcpy(&deNum, fh.data() + offsetof(JPLEFileHeader, deNum), sizeof(deNum));
-    std::uint32_t deNum2 = bswap_32(deNum);
+    std::uint32_t deNum2 = compat::byteswap(deNum);
 
     bool swapBytes;
     if (deNum == INPOP_DE_COMPATIBLE)
@@ -264,7 +264,7 @@ JPLEphemeris* JPLEphemeris::load(std::istream& in)
     {
         // INPOP ephemeris with different endianess
         swapBytes = true;
-        deNum = bswap_32(deNum);
+        deNum = compat::byteswap(deNum);
     }
     else if ((deNum > (1u << 15)) && (deNum2 >= DE200))
     {

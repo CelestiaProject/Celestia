@@ -26,10 +26,10 @@
 
 #include <Eigen/Core>
 
+#include <celcompat/bit.h>
 #include <celcompat/filesystem.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
-#include <celutil/bytes.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "orbit.h"
@@ -824,10 +824,10 @@ ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
 
     decltype(XYZVBinaryHeader::byteOrder) byteOrder;
     std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-    if (byteOrder != __BYTE_ORDER__)
+    if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
     {
         GetLogger()->error(_("Unsupported byte order {}, expected {}.\n"),
-                            byteOrder, __BYTE_ORDER__);
+                            byteOrder, static_cast<int>(celestia::compat::endian::native));
         return false;
     }
 
