@@ -11,7 +11,7 @@
 #include <fmt/format.h>
 
 #include <celephem/xyzvbinary.h>
-#include <celutil/bytes.h>
+#include <celcompat/bit.h>
 
 // Scan past comments. A comment begins with the # character and ends
 // with a newline. Return true if the stream state is good. The stream
@@ -76,7 +76,7 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
     {
         std::memcpy(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.data(), XYZV_MAGIC.size());
 
-        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(__BYTE_ORDER__);
+        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(celestia::compat::endian::native);
         auto digits =    static_cast<decltype(XYZVBinaryHeader::digits)   >(std::numeric_limits<double>::digits);
 
         std::memcpy(header.data() + offsetof(XYZVBinaryHeader, byteOrder), &byteOrder, sizeof(byteOrder));
