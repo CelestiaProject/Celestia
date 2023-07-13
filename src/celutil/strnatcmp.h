@@ -21,6 +21,6 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 
-int strnatcmp(const std::string &a, const std::string &b);
+int strnatcmp(std::string_view a, std::string_view b);

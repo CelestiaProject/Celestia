@@ -7,6 +7,7 @@ set(UNIT_TEST_SOURCES
   intrusiveptr_test.cpp
   logger_test.cpp
   stellarclass_test.cpp
+  strnatcmp_test.cpp
   tokenizer_test.cpp)
 
 #if(NOT HAVE_FLOAT_CHARCONV)
