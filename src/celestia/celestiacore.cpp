@@ -3158,8 +3158,8 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
-    if (m_script != nullptr && image != nullptr)
-        image->render((float) currentTime, width, height);
+    if (showOverlayImage && m_script != nullptr && image != nullptr)
+        image->render(static_cast<float>(currentTime), width, height);
 
     if (views.size() > 1)
     {
@@ -5037,6 +5037,16 @@ std::string_view CelestiaCore::getCurrentMessage() const
     if (currentTime < messageStart + messageDuration && messageTextPosition)
         return messageText;
     return {};
+}
+
+void CelestiaCore::enableOverlayImage()
+{
+    showOverlayImage = true;
+}
+
+void CelestiaCore::disableOverlayImage()
+{
+    showOverlayImage = false;
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)

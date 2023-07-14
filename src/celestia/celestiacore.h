@@ -447,6 +447,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setLayoutDirection(LayoutDirection);
     void enableMessages();
     void disableMessages();
+    void enableOverlayImage();
+    void disableOverlayImage();
 
     std::string_view getCurrentMessage() const;
 
@@ -599,6 +601,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     LayoutDirection layoutDirection { LayoutDirection::LeftToRight };
     bool showMessage{ true };
+    bool showOverlayImage{ true };
 
     Selection lastSelection;
     std::string selectionNames;
