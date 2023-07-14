@@ -18,10 +18,10 @@
 #define UTF8_MULTIPLICATION_SIGN "\303\227"
 #define UTF8_REPLACEMENT_CHAR    "\357\277\275"
 
-bool UTF8Decode(std::string_view str, int pos, wchar_t &ch);
+bool UTF8Decode(std::string_view str, std::int32_t pos, wchar_t &ch);
 void UTF8Encode(std::uint32_t ch, std::string &dest);
 int  UTF8StringCompare(std::string_view s0, std::string_view s1);
-int  UTF8StringCompare(std::string_view s0, std::string_view s1, size_t n, bool ignoreCase = false);
+bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCase = false);
 
 class UTF8StringOrderingPredicate
 {
