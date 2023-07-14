@@ -343,13 +343,13 @@ inline wchar_t UTF8Normalize(wchar_t ch)
 //! Decode the UTF-8 characters in string str beginning at position pos.
 //! The decoded character is returned in ch; the return value of the function
 //! is true if a valid UTF-8 sequence was successfully decoded.
-bool UTF8Decode(std::string_view str, int pos, wchar_t& ch)
+bool UTF8Decode(std::string_view str, std::int32_t pos, wchar_t& ch)
 {
     auto c0 = (unsigned int) str[pos];
     int charlen = UTF8EncodedSizeFromFirstByte(c0);
 
     // Bad UTF-8 character that extends past end of string
-    if (pos + charlen > (int)str.length())
+    if (pos + charlen > static_cast<std::int32_t>(str.length()))
         return false;
 
     // TODO: Should check that the bytes of characters after the first are all
@@ -465,18 +465,18 @@ int UTF8Length(std::string_view s)
 //! translations are performed.
 int UTF8StringCompare(std::string_view s0, std::string_view s1)
 {
-    int len0 = s0.length();
-    int len1 = s1.length();
-    int i0 = 0;
-    int i1 = 0;
-    while (i0 < len0 && i1 < len1)
+    auto len0 = static_cast<std::int32_t>(s0.size());
+    auto len1 = static_cast<std::int32_t>(s1.size());
+    std::int32_t i0 = 0;
+    std::int32_t i1 = 0;
+    for (;;)
     {
-        wchar_t ch0 = 0;
-        wchar_t ch1 = 0;
-        if (!UTF8Decode(s0, i0, ch0))
+        wchar_t ch0;
+        wchar_t ch1;
+        if (i0 >= len0 || !UTF8Decode(s0, i0, ch0))
+            return (i1 >= len1 || !UTF8Decode(s1, i1, ch1)) ? 0 : -1;
+        if (i1 >= len1 || !UTF8Decode(s1, i1, ch1))
             return 1;
-        if (!UTF8Decode(s1, i1, ch1))
-            return -1;
 
         i0 += UTF8EncodedSize(ch0);
         i1 += UTF8EncodedSize(ch1);
@@ -488,34 +488,22 @@ int UTF8StringCompare(std::string_view s0, std::string_view s1)
         if (ch0 > ch1)
             return 1;
     }
-
-    if (i0 == len0 && i1 == len1)
-        return 0;
-
-    len0 = UTF8Length(s0);
-    len1 = UTF8Length(s1);
-    if (len0 > len1)
-        return 1;
-    if (len0 < len1)
-        return -1;
-    else
-        return 0;
 }
 
-int UTF8StringCompare(std::string_view s0, std::string_view s1, size_t n, bool ignoreCase)
+bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCase)
 {
-    int len0 = s0.length();
-    int len1 = s1.length();
-    int i0 = 0;
-    int i1 = 0;
-    while (i0 < len0 && i1 < len1 && n > 0)
+    auto len0 = static_cast<std::int32_t>(str.size());
+    auto len1 = static_cast<std::int32_t>(prefix.size());
+    std::int32_t i0 = 0;
+    std::int32_t i1 = 0;
+    for (;;)
     {
-        wchar_t ch0 = 0;
-        wchar_t ch1 = 0;
-        if (!UTF8Decode(s0, i0, ch0))
-            return 1;
-        if (!UTF8Decode(s1, i1, ch1))
-            return -1;
+        wchar_t ch0;
+        wchar_t ch1;
+        if (i1 >= len1)
+            return true;
+        if (i0 >= len0 || !UTF8Decode(str, i0, ch0) || !UTF8Decode(prefix, i1, ch1))
+            return false;
 
         i0 += UTF8EncodedSize(ch0);
         i1 += UTF8EncodedSize(ch1);
@@ -527,25 +515,10 @@ int UTF8StringCompare(std::string_view s0, std::string_view s1, size_t n, bool i
             ch0 = static_cast<wchar_t>(std::towlower(ch0));
             ch1 = static_cast<wchar_t>(std::towlower(ch1));
         }
-        if (ch0 < ch1)
-            return -1;
-        if (ch0 > ch1)
-            return 1;
 
-        n--;
+        if (ch0 != ch1)
+            return false;
     }
-
-    if (n == 0)
-        return 0;
-
-    len0 = UTF8Length(s0);
-    len1 = UTF8Length(s1);
-    if (len0 > len1)
-        return 1;
-    if (len0 < len1)
-        return -1;
-    else
-        return 0;
 }
 
 UTF8Status

@@ -1379,19 +1379,17 @@ void PlanetarySystem::getCompletion(std::vector<std::string>& completion,
                                     bool i18n,
                                     bool deepSearch) const
 {
-    int _name_length = UTF8Length(_name);
-
     // Search through all names in this planetary system.
     for (const auto& index : objectIndex)
     {
         const string& alias = index.first;
 
-        if (!UTF8StringCompare(alias, _name, _name_length))
+        if (UTF8StartsWith(alias, _name))
             completion.push_back(alias);
         else if (i18n)
         {
             std::string lname = D_(alias.c_str());
-            if (lname != alias && !UTF8StringCompare(lname, _name, _name_length))
+            if (lname != alias && UTF8StartsWith(lname, _name))
                 completion.push_back(lname);
         }
     }

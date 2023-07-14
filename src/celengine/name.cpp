@@ -105,18 +105,16 @@ void NameDatabase::getCompletion(std::vector<std::string>& completion, std::stri
 {
     std::string name2 = ReplaceGreekLetter(name);
 
-    const int name_length = UTF8Length(name2);
-
     for (const auto &[n, _] : nameIndex)
     {
-        if (!UTF8StringCompare(n, name2, name_length, true))
+        if (UTF8StartsWith(n, name2, true))
             completion.push_back(n);
     }
     if (i18n)
     {
         for (const auto &[n, _] : localizedNameIndex)
         {
-            if (!UTF8StringCompare(n, name2, name_length, true))
+            if (UTF8StartsWith(n, name2, true))
                 completion.push_back(n);
         }
     }

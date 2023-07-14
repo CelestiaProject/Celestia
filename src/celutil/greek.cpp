@@ -183,10 +183,10 @@ ReplaceGreekLetterAbbr(std::string_view str)
         for (int i = 0; i < nLetters; i++)
         {
             auto prefix = canonicalAbbrevs[i];
-            if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
+            if (len != prefix.length() || !UTF8StartsWith(str, prefix, true))
             {
                 prefix = greekAlphabet[i];
-                if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
+                if (len != prefix.length() || !UTF8StartsWith(str, prefix, true))
                     continue;
             }
 
@@ -249,10 +249,10 @@ ReplaceGreekLetter(std::string_view str)
             if (len != 2 || str != greekAlphabetUTF8[i])
             {
                 auto prefix = canonicalAbbrevs[i];
-                if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
+                if (len != prefix.length() || !UTF8StartsWith(str, prefix, true))
                 {
                     prefix = greekAlphabet[i];
-                    if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
+                    if (len != prefix.length() || !UTF8StartsWith(str, prefix, true))
                         continue;
                 }
             }

@@ -1092,7 +1092,6 @@ Selection Universe::findPath(std::string_view s,
 
 static void getLocationsCompletion(std::vector<std::string>& completion,
                                    std::string_view s,
-                                   int s_length,
                                    bool i18n,
                                    const std::vector<Location*>* locations)
 {
@@ -1102,14 +1101,14 @@ static void getLocationsCompletion(std::vector<std::string>& completion,
     for (const auto* location : *locations)
     {
         const std::string& name = location->getName(false);
-        if (!UTF8StringCompare(s, name, s_length))
+        if (UTF8StartsWith(name, s))
         {
             completion.push_back(name);
         }
         else if (i18n)
         {
             const std::string& lname = location->getName(true);
-            if (lname != name && !UTF8StringCompare(s, lname, s_length))
+            if (lname != name && UTF8StartsWith(lname, s))
                 completion.push_back(lname);
         }
     }
@@ -1122,14 +1121,12 @@ void Universe::getCompletion(std::vector<std::string>& completion,
                              celutil::array_view<const Selection> contexts,
                              bool withLocations) const
 {
-    int s_length = UTF8Length(s);
-
     // Solar bodies first:
     for (const Selection& context : contexts)
     {
         if (withLocations && context.getType() == SelectionType::Body)
         {
-            getLocationsCompletion(completion, s, s_length, i18n,
+            getLocationsCompletion(completion, s, i18n,
                                    context.body()->getLocations());
         }
 
@@ -1163,12 +1160,12 @@ static void getLocationsCompletionPath(std::vector<std::string>& completion,
     for (const auto location : *locations)
     {
         const std::string& name = location->getName(false);
-        if (!UTF8StringCompare(search, name, search.length()))
+        if (UTF8StartsWith(name, search))
             completion.push_back(name);
         else if (i18n)
         {
             const std::string& lname = location->getName(true);
-            if (lname != name && !UTF8StringCompare(search, lname, search.length()))
+            if (lname != name && UTF8StartsWith(lname, search))
                 completion.push_back(lname);
         }
     }
