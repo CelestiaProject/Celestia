@@ -261,6 +261,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void draw();
     void draw(View*);
     void tick();
+    // Tick with elapsed time in seconds after last update, useful when
+    // app provides a presentation time for the next frame to render
+    void tick(double dt);
 
     Simulation* getSimulation() const;
     Renderer* getRenderer() const;
