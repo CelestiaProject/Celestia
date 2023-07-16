@@ -38,22 +38,23 @@ public:
 
 private:
     struct Object;
-    struct RenderData;
 
     using BlobVector = engine::GalacticForm::BlobVector;
 
-    void renderGL2(
-        const Galaxy          *galaxy,
-        float                  size,
-        float                  minimumFeatureSize,
-        float                  brightness,
-        const Eigen::Matrix4f &m,
-        const BlobVector      &points) const;
+    bool getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const;
+
+    struct RenderDataGL2;
+    std::vector<RenderDataGL2>  m_renderDataGL2;
+    void renderGL2();
+    void initializeGL2(const CelestiaGLProgram *prog);
+
+    struct RenderDataGL3;
+    std::vector<RenderDataGL3>  m_renderDataGL3;
+    void renderGL3();
     void initializeGL3(const CelestiaGLProgram *prog);
 
     // global state
     std::vector<Object>     m_objects;
-    std::vector<RenderData> m_renderData;
     Renderer               &m_renderer;
 
     // per-frame state
