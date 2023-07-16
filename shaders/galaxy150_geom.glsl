@@ -35,22 +35,22 @@ void main()
             float alpha = (0.1 - screenFrac) * vertex[0].brightness * brightness;
             vec4 color = vec4(vertex[0].color, alpha);
 
-            gl_Position = MVPMatrix * (p + v0);
+            set_vp(p + v0);
             v_TexCoord  = vec2(0.0, 1.0);
             v_Color     = color;
             EmitVertex();
 
-            gl_Position = MVPMatrix * (p + v1);
+            set_vp(p + v1);
             v_TexCoord  = vec2(0.0, 0.0);
             v_Color     = color;
             EmitVertex();
 
-            gl_Position = MVPMatrix * (p + v2);
+            set_vp(p + v2);
             v_TexCoord  = vec2(1.0, 1.0);
             v_Color     = color;
             EmitVertex();
 
-            gl_Position = MVPMatrix * (p + v3);
+            set_vp(p + v3);
             v_TexCoord  = vec2(1.0, 0.0);
             v_Color     = color;
             EmitVertex();
