@@ -207,11 +207,7 @@ GalaxyRenderer::render()
     if (m_objects.empty())
         return;
 
-#ifdef GL_ES
-    bool useGeomShader = gl::checkVersion(gl::GLES_3_2);
-#else
-    bool useGeomShader = gl::checkVersion(gl::GL_3_2);
-#endif
+    bool useGeomShader = gl::hasGeomShader();
 
     CelestiaGLProgram *prog;
     if (useGeomShader)
