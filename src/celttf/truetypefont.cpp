@@ -7,12 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "truetypefont.h"
+
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <system_error>
 #include <vector>
+
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/image.h>
@@ -24,7 +28,6 @@
 #include <celutil/utf8.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include "truetypefont.h"
 
 #define DUMP_TEXTURE 0
 
@@ -38,7 +41,7 @@ namespace gl = celestia::gl;
 
 struct Glyph
 {
-    wchar_t ch;
+    FT_ULong ch;
 
     int ax; // advance.x
     int ay; // advance.y
@@ -55,7 +58,8 @@ struct Glyph
 
 struct UnicodeBlock
 {
-    wchar_t first, last;
+    FT_ULong first;
+    FT_ULong last;
 };
 
 struct TextureFontPrivate
@@ -79,20 +83,19 @@ struct TextureFontPrivate
     TextureFontPrivate &operator=(const TextureFontPrivate &) = delete;
     TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
-    std::pair<float, float> render(std::wstring_view line, float x, float y);
-    std::pair<float, float> render(wchar_t ch, float xoffset, float yoffset);
+    std::pair<float, float> render(std::u16string_view line, float x, float y);
 
-    bool               buildAtlas();
-    void               computeTextureSize();
-    bool               loadGlyphInfo(wchar_t /*ch*/, Glyph & /*c*/) const;
-    void               initCommonGlyphs();
-    int                getCommonGlyphsCount();
-    Glyph &            getGlyph(wchar_t /*ch*/);
-    Glyph &            getGlyph(wchar_t /*ch*/, wchar_t /*fallback*/);
-    [[nodiscard]] int  toPos(wchar_t /*ch*/) const;
-    void               optimize();
-    CelestiaGLProgram *getProgram();
-    void               flush();
+    bool                       buildAtlas();
+    void                       computeTextureSize();
+    bool                       loadGlyphInfo(FT_ULong /*ch*/, Glyph & /*c*/) const;
+    void                       initCommonGlyphs();
+    int                        getCommonGlyphsCount();
+    const Glyph &              getGlyph(std::int32_t /*ch*/, char16_t /*fallback*/);
+    const Glyph &              getGlyph(FT_ULong /* ch */);
+    [[nodiscard]] std::size_t  toPos(FT_ULong /*ch*/) const;
+    void                       optimize();
+    CelestiaGLProgram         *getProgram();
+    void                       flush();
 
     const Renderer    *m_renderer;
     CelestiaGLProgram *m_prog{ nullptr };
@@ -179,7 +182,7 @@ TextureFontPrivate::~TextureFontPrivate()
 }
 
 bool
-TextureFontPrivate::loadGlyphInfo(wchar_t ch, Glyph &c) const
+TextureFontPrivate::loadGlyphInfo(FT_ULong ch, Glyph &c) const
 {
     FT_GlyphSlot g = m_face->glyph;
     if (FT_Load_Char(m_face, ch, FT_LOAD_RENDER) != 0)
@@ -208,7 +211,7 @@ TextureFontPrivate::initCommonGlyphs()
 
     for (auto const &block : m_unicodeBlocks)
     {
-        for (wchar_t ch = block.first, e = block.last; ch <= e; ch++)
+        for (FT_ULong ch = block.first, e = block.last; ch <= e; ch++)
         {
             Glyph c;
             if (!loadGlyphInfo(ch, c))
@@ -315,10 +318,10 @@ TextureFontPrivate::getCommonGlyphsCount()
     return m_commonGlyphsCount;
 }
 
-int
-TextureFontPrivate::toPos(wchar_t ch) const
+std::size_t
+TextureFontPrivate::toPos(FT_ULong ch) const
 {
-    int pos = 0;
+    std::size_t pos = 0;
 
     if (ch > m_unicodeBlocks.back().last)
         return -1;
@@ -336,21 +339,27 @@ TextureFontPrivate::toPos(wchar_t ch) const
     return -1;
 }
 
-Glyph &
-TextureFontPrivate::getGlyph(wchar_t ch, wchar_t fallback)
+const Glyph &
+TextureFontPrivate::getGlyph(std::int32_t ch, char16_t fallback)
 {
-    auto &g = getGlyph(ch);
-    return g.ch == ch ? g : getGlyph(fallback);
+    if (ch >= 0 && ch < 0x110000)
+    {
+        const Glyph& g = getGlyph(static_cast<FT_ULong>(ch));
+        if (g.ch == ch)
+            return g;
+    }
+
+    return getGlyph(static_cast<FT_ULong>(fallback));
 }
 
-Glyph &
-TextureFontPrivate::getGlyph(wchar_t ch)
+const Glyph &
+TextureFontPrivate::getGlyph(FT_ULong ch)
 {
     if (auto pos = toPos(ch); pos != -1)
         return m_glyphs[pos];
 
-    auto it = std::find_if(m_glyphs.begin() + getCommonGlyphsCount(),
-                           m_glyphs.end(),
+    auto it = std::find_if(m_glyphs.cbegin() + getCommonGlyphsCount(),
+                           m_glyphs.cend(),
                            [ch](const Glyph &g) { return g.ch == ch; });
 
     if (it != m_glyphs.end())
@@ -381,7 +390,7 @@ TextureFontPrivate::optimize()
  * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
  */
 std::pair<float, float>
-TextureFontPrivate::render(std::wstring_view line, float x, float y)
+TextureFontPrivate::render(std::u16string_view line, float x, float y)
 {
     if (m_tex == nullptr)
         return {0, 0};
@@ -389,9 +398,31 @@ TextureFontPrivate::render(std::wstring_view line, float x, float y)
     // Use the texture containing the atlas
     m_tex->bind();
 
-    for (auto ch : line)
+    std::u16string_view::size_type i = 0;
+    while (i < line.size())
     {
-        auto &g = getGlyph(ch, L'?');
+        std::int32_t ch;
+        if (line[i] < 0xd800 || line[i] >= 0xe000)
+        {
+            // BMP character: one UTF-16 unit
+            ch = static_cast<std::int32_t>(line[i]);
+            ++i;
+        }
+        else if (line[i] < 0xdc00 && (i + 1) < line.size() &&
+            line[i + 1] >= 0xdc00 && line[i + 1] < 0xe000)
+        {
+            // Decode surrogate pair
+            ch = (((static_cast<std::int32_t>(line[i]) - 0xd7c0) << 10) |
+                  (static_cast<std::int32_t>(line[i + 1])));
+            i += 2;
+        }
+        else
+        {
+            // Invalid surrogate pair
+            ++i;
+            continue;
+        }
+        auto &g = getGlyph(ch, u'?');
 
         // Calculate the vertex and texture coordinates
         const float x1 = x + g.bl;
@@ -422,32 +453,6 @@ TextureFontPrivate::render(std::wstring_view line, float x, float y)
     }
 
     return {x, y};
-}
-
-std::pair<float, float>
-TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
-{
-    auto &g = getGlyph(ch, L'?');
-
-    // Calculate the vertex and texture coordinates
-    const float x1 = xoffset + g.bl;
-    const float y1 = yoffset + g.bt - g.bh;
-    const float x2 = x1 + g.bw;
-    const float y2 = y1 + g.bh;
-
-    const float tx1 = g.tx;
-    const float ty1 = g.ty;
-    const float tx2 = tx1 + static_cast<float>(g.bw) / m_texWidth;
-    const float ty2 = ty1 + static_cast<float>(g.bh) / m_texHeight;
-
-    m_fontVertices.emplace_back(x1, y1, tx1, ty2);
-    m_fontVertices.emplace_back(x2, y1, tx2, ty2);
-    m_fontVertices.emplace_back(x1, y2, tx1, ty1);
-    m_fontVertices.emplace_back(x2, y2, tx2, ty1);
-
-    if (m_fontVertices.size() == MaxVertices) flush();
-
-    return {g.ax, g.ay};
 }
 
 CelestiaGLProgram *
@@ -491,23 +496,6 @@ TextureFont::TextureFont(const Renderer *renderer) :
 }
 
 /**
- * Render a single character of the font with offset
- *
- * Render a single character of the font, adding the specified offset
- * to the location. Do *not* automatically update the modelview transform.
- *
- * @param ch -- wide character
- * @param xoffset -- horizontal offset
- * @param yoffset -- vertical offset
- * @return the horizontal and vertical advance of the character
- */
-std::pair<float, float>
-TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
-{
-    return impl->render(ch, xoffset, yoffset);
-}
-
-/**
  * Render a string with the specified offset
  *
  * Render a string with the specified offset. Do *not* automatically update
@@ -519,7 +507,7 @@ TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
  * @return the start position for the next glyph
  */
 std::pair<float, float>
-TextureFont::render(std::wstring_view line, float xoffset, float yoffset) const
+TextureFont::render(std::u16string_view line, float xoffset, float yoffset) const
 {
     return impl->render(line, xoffset, yoffset);
 }
@@ -533,12 +521,12 @@ TextureFont::render(std::wstring_view line, float xoffset, float yoffset) const
  * @return string width in pixels
  */
 int
-TextureFont::getWidth(std::wstring_view line) const
+TextureFont::getWidth(std::u16string_view line) const
 {
     int  width     = 0;
     for (auto ch : line)
     {
-        auto &g = impl->getGlyph(ch, L'?');
+        auto &g = impl->getGlyph(ch, u'?');
         width += g.ax;
     }
 
@@ -642,16 +630,6 @@ TextureFont::unbind()
 {
     flush();
     impl->m_shaderInUse = false;
-}
-
-/**
- * Return the advance for the wide character `ch`.
- */
-short
-TextureFont::getAdvance(wchar_t ch) const
-{
-    auto &g = impl->getGlyph(ch, L'?');
-    return g.ax;
 }
 
 /**

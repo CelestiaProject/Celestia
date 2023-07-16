@@ -9,9 +9,13 @@
 
 #pragma once
 
-#include <Eigen/Core>
-#include <celcompat/filesystem.h>
+#include <memory>
 #include <string_view>
+
+#include <Eigen/Core>
+
+#include <celcompat/filesystem.h>
+
 
 class Renderer;
 class TextureFont;
@@ -39,11 +43,9 @@ public:
     void setMVPMatrices(const Eigen::Matrix4f &p,
                         const Eigen::Matrix4f &m = Eigen::Matrix4f::Identity());
 
-    std::pair<float, float> render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
-    std::pair<float, float> render(std::wstring_view line, float xoffset = 0.0f, float yoffset = 0.0f) const;
+    std::pair<float, float> render(std::u16string_view line, float xoffset = 0.0f, float yoffset = 0.0f) const;
 
-    int getWidth(std::wstring_view) const;
-    int getWidth(int c) const;
+    int getWidth(std::u16string_view) const;
     int getMaxWidth() const;
     int getHeight() const;
 
@@ -51,8 +53,6 @@ public:
     void setMaxAscent(int);
     int  getMaxDescent() const;
     void setMaxDescent(int);
-
-    short getAdvance(wchar_t c) const;
 
     void bind();
     void unbind();

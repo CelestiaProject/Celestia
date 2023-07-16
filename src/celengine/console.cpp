@@ -37,7 +37,7 @@ Console::Console(Renderer& _renderer, int _nRows, int _nColumns) :
     nColumns(_nColumns)
 {
     sbuf.setConsole(this);
-    text.resize((nColumns + 1) * nRows, L'\0');
+    text.resize((nColumns + 1) * nRows, u'\0');
 }
 
 
@@ -52,7 +52,7 @@ bool Console::setRowCount(int _nRows)
     if (_nRows == nRows)
         return true;
 
-    text.resize((nColumns + 1) * _nRows, L'\0');
+    text.resize((nColumns + 1) * _nRows, u'\0');
     nRows = _nRows;
 
     return true;
@@ -92,14 +92,11 @@ void Console::render(int rowHeight)
     {
         //int r = (nRows - rowHeight + 1 + windowRow + i) % nRows;
         int r = pmod(row + windowRow + i, nRows);
-        for (int j = 0; j < nColumns; j++)
-        {
-            wchar_t ch = text[r * (nColumns + 1) + j];
-            if (ch == '\0')
-                break;
-            auto [ax, _] = font->render(ch, global.x + xoffset, global.y);
-            xoffset += ax;
-        }
+        std::u16string_view line{text.data() + (r * (nColumns + 1)), static_cast<std::size_t>(nColumns)};
+        if (auto endpos = line.find(u'\0'); endpos != std::u16string_view::npos)
+            line = line.substr(0, endpos);
+
+        font->render(line, global.x, global.y);
 
         // advance to the next line
         restorePos();
@@ -141,7 +138,7 @@ void Console::newline()
         windowRow = -windowHeight;
 }
 
-void Console::print(wchar_t c)
+void Console::print(char16_t c)
 {
     switch (c)
     {
@@ -226,7 +223,6 @@ void Console::restorePos()
         global = posStack.back();
         posStack.pop_back();
     }
-    xoffset = 0.0f;
 }
 
 
@@ -263,69 +259,13 @@ void ConsoleStreamBuf::setConsole(Console* c)
 
 int ConsoleStreamBuf::overflow(int c)
 {
-    if (console != nullptr)
-    {
-        switch (decodeState)
-        {
-        case UTF8DecodeState::Start:
-            if (c < 0x80)
-            {
-                // Just a normal 7-bit character
-                console->print((char) c);
-            }
-            else
-            {
-                unsigned int count;
+    if (traits_type::eq_int_type(c, traits_type::eof()))
+        return traits_type::eof();
 
-                if ((c & 0xe0) == 0xc0)
-                    count = 2;
-                else if ((c & 0xf0) == 0xe0)
-                    count = 3;
-                else if ((c & 0xf8) == 0xf0)
-                    count = 4;
-                else if ((c & 0xfc) == 0xf8)
-                    count = 5;
-                else if ((c & 0xfe) == 0xfc)
-                    count = 6;
-                else
-                    count = 1; // Invalid byte
+    // for now we don't implement non-BMP characters in the console
+    if (auto result = validator.check(static_cast<unsigned char>(c));
+        result >= 0 && result < 0x10000)
+        console->print(static_cast<char16_t>(result));
 
-                if (count > 1)
-                {
-                    unsigned int mask = (1 << (7 - count)) - 1;
-                    decodeShift = (count - 1) * 6;
-                    decodedChar = (c & mask) << decodeShift;
-                    decodeState = UTF8DecodeState::Multibyte;
-                }
-                else
-                {
-                    // If the character isn't valid multibyte sequence head,
-                    // silently skip it by leaving the decoder state alone.
-                }
-            }
-            break;
-
-        case UTF8DecodeState::Multibyte:
-            if ((c & 0xc0) == 0x80)
-            {
-                // We have a valid non-head byte in the sequence
-                decodeShift -= 6;
-                decodedChar |= (c & 0x3f) << decodeShift;
-                if (decodeShift == 0)
-                {
-                    console->print(decodedChar);
-                    decodeState = UTF8DecodeState::Start;
-                }
-            }
-            else
-            {
-                // Bad byte in UTF-8 encoded sequence; we'll silently ignore
-                // it and reset the state of the UTF-8 decoder.
-                decodeState = UTF8DecodeState::Start;
-            }
-            break;
-        }
-    }
-
-    return c;
+    return traits_type::not_eof(c);
 }

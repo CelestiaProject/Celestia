@@ -10,6 +10,12 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
+
+#include <Eigen/Core>
+
 #include <celttf/truetypefont.h>
 
 namespace celestia::engine
@@ -113,7 +119,7 @@ class TextLayout
     float positionY{ 0.0f };
     float alignmentEdgeX{ 0.0f };
 
-    std::wstring currentLine;
+    std::u16string currentLine;
     Eigen::Matrix4f modelview{ Eigen::Matrix4f::Identity() };
     Eigen::Matrix4f projection{ Eigen::Matrix4f::Identity() };
 
@@ -122,10 +128,10 @@ class TextLayout
 
     float getPixelSize(float size, Unit unit) const;
 
-    void renderLine(std::wstring_view line);
+    void renderLine(std::u16string_view line);
     void flushInternal(bool flushFont);
 
-    static bool processString(std::string_view input, std::vector<std::wstring> &output);
+    static bool processString(std::string_view input, std::vector<std::u16string> &output);
 };
 
 }

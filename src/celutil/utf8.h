@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -18,7 +19,8 @@
 #define UTF8_MULTIPLICATION_SIGN "\303\227"
 #define UTF8_REPLACEMENT_CHAR    "\357\277\275"
 
-bool UTF8Decode(std::string_view str, std::int32_t pos, wchar_t &ch);
+bool UTF8Decode(std::string_view str, std::int32_t &ch);
+bool UTF8Decode(std::string_view str, std::int32_t &pos, std::int32_t &ch);
 void UTF8Encode(std::uint32_t ch, std::string &dest);
 int  UTF8StringCompare(std::string_view s0, std::string_view s1);
 bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCase = false);
@@ -35,42 +37,17 @@ class UTF8StringOrderingPredicate
     }
 };
 
-int UTF8Length(std::string_view s);
-
-constexpr int
-UTF8EncodedSize(wchar_t ch)
-{
-    if (ch < 0x80)
-        return 1;
-    if (ch < 0x800)
-        return 2;
-#if WCHAR_MAX > 0xFFFFu
-    if (ch < 0x10000)
-#endif
-        return 3;
-#if WCHAR_MAX > 0xFFFFu
-    if (ch < 0x200000)
-        return 4;
-    if (ch < 0x4000000)
-        return 5;
-    else
-        return 6;
-#endif
-}
-
-
-enum class UTF8Status
-{
-    Ok,
-    InvalidFirstByte,
-    InvalidTrailingByte,
-};
 
 class UTF8Validator
 {
 public:
-    UTF8Status check(char c);
-    UTF8Status check(unsigned char c);
+    std::int32_t check(unsigned char c);
+    inline std::int32_t check(char c) { return check(static_cast<unsigned char>(c)); }
+    inline bool isInitial() const { return state == State::Initial; }
+
+    static constexpr std::int32_t PartialSequence = -1;
+    static constexpr std::int32_t InvalidStarter = -2;
+    static constexpr std::int32_t InvalidTrailing = -3;
 
 private:
     enum class State
@@ -79,17 +56,8 @@ private:
         Continuation1,
         Continuation2,
         Continuation3,
-        E0Continuation,
-        EDContinuation,
-        F0Continuation,
-        F4Continuation,
     };
 
     State state{ State::Initial };
+    std::array<unsigned char, 3> buffer{ };
 };
-
-inline UTF8Status
-UTF8Validator::check(char c)
-{
-    return check(static_cast<unsigned char>(c));
-}

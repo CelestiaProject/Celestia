@@ -9,15 +9,8 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
-#include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#else
-#include <unicode/umachine.h>
-#endif
+#include <string_view>
 
 namespace celestia::util
 {
@@ -29,7 +22,9 @@ enum class ConversionOption : unsigned int
     BidiReordering  = 0x02,
 };
 
-bool UTF8StringToUnicodeString(std::string_view input, std::vector<UChar> &output);
-bool UnicodeStringToWString(const std::vector<UChar> &input, std::wstring &output, ConversionOption options = ConversionOption::None);
+bool UTF8StringToUnicodeString(std::string_view input, std::u16string &output);
+bool ApplyBidiAndShaping(std::u16string_view input,
+                         std::u16string &output,
+                         ConversionOption options = ConversionOption::None);
 
 }

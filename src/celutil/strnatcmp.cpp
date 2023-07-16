@@ -31,11 +31,23 @@
 namespace
 {
 
-using MaybeChar = std::optional<wchar_t>;
+using MaybeChar = std::optional<std::int32_t>;
 
 
-bool isDigit(MaybeChar c) { return c.has_value() && std::iswdigit(*c); }
-bool isSpace(MaybeChar c) { return c.has_value() && std::iswspace(*c); }
+inline bool
+isDigit(MaybeChar c)
+{
+    return c.has_value() &&
+           c >= 0 && c <= WCHAR_MAX &&
+           std::iswdigit(static_cast<std::wint_t>(*c));
+}
+
+inline bool isSpace(MaybeChar c)
+{
+    return c.has_value() &&
+           c >= 0 && c<= WCHAR_MAX &&
+           std::iswspace(*c);
+}
 
 
 class CharMapper
@@ -45,23 +57,23 @@ public:
 
     MaybeChar next()
     {
-        if (offset >= sv.size())
+        auto svSize = static_cast<std::int32_t>(sv.size());
+        if (offset >= svSize)
             return std::nullopt;
 
-        wchar_t ch;
+        std::int32_t ch;
         if (!UTF8Decode(sv, offset, ch))
         {
-            offset = sv.size();
+            offset = svSize;
             return std::nullopt;
         }
 
-        offset += UTF8EncodedSize(ch);
         return ch;
     }
 
 private:
     std::string_view sv;
-    std::string_view::size_type offset{ 0 };
+    std::int32_t offset{ 0 };
 };
 
 
