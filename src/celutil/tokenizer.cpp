@@ -95,10 +95,11 @@ struct StringState
 bool
 StringState::checkUTF8(char c, std::string_view run)
 {
-    auto utf8Status = validator.check(c);
-    if (utf8Status == UTF8Status::Ok) { return true; }
+    auto decodedChar = validator.check(c);
+    if (decodedChar >= 0 || decodedChar == UTF8Validator::PartialSequence)
+        return true;
 
-    if (utf8Status == UTF8Status::InvalidTrailingByte)
+    if (decodedChar == UTF8Validator::InvalidTrailing)
     {
         std::size_t pos = run.size();
         while (pos > 0)
@@ -579,7 +580,7 @@ TokenizerImpl::readString()
         std::string_view run(buffer.data() + position + state.runStart,
                              state.runEnd - state.runStart);
 
-        if (!state.checkUTF8(ch, run)) { continue; }
+        if (!state.checkUTF8(ch, run) && ch != '"') { continue; }
         if (ch == '"') { break; }
         if (!parseChar(state, ch, run)) { return false;}
     }

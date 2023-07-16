@@ -58,6 +58,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cctype>
+#include <cwctype>
 #include <cstring>
 #include <cassert>
 #include <ctime>
@@ -1014,13 +1015,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     if (textEnterMode & KbAutoComplete)
     {
-        wchar_t wc = 0; // Null wide character
-        UTF8Decode(c_p, 0, wc);
-#ifdef __APPLE__
-        if ( wc && (!iscntrl(wc)) )
-#else
-        if ( wc && (!iswcntrl(wc)) )
-#endif
+        if (std::int32_t uc = 0;
+            UTF8Decode(c_p, uc) && !(uc <= WCHAR_MAX && std::iswcntrl(static_cast<std::wint_t>(uc))))
         {
             setTypedText(c_p);
         }

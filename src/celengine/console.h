@@ -17,6 +17,8 @@
 
 #include <Eigen/Core>
 
+#include <celutil/utf8.h>
+
 class Color;
 class Console;
 class TextureFont;
@@ -40,9 +42,7 @@ class ConsoleStreamBuf : public std::streambuf
     };
 
     Console* console{ nullptr };
-    UTF8DecodeState decodeState{ UTF8DecodeState::Start };
-    wchar_t decodedChar{ 0 };
-    unsigned int decodeShift{ 0 };
+    UTF8Validator validator{};
 };
 
 class Renderer;
@@ -73,7 +73,7 @@ class Console : public std::ostream
     void savePos();
     void restorePos();
 
-    void print(wchar_t);
+    void print(char16_t);
     void newline();
 
     int getWindowRow() const;
@@ -82,7 +82,7 @@ class Console : public std::ostream
     int getHeight() const;
     int getWidth() const;
 
-    std::wstring text{ };
+    std::u16string text{ };
     int nRows;
     int nColumns;
     int row{ 0 };
@@ -101,7 +101,6 @@ class Console : public std::ostream
 
     bool autoScroll{ true };
 
-    float xoffset { 0.0f };
     struct CursorPosition
     {
         void reset()

@@ -8,9 +8,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <array>
-#include <cwctype>
 #include "utf8.h"
+
+#include <cassert>
+#include <cwctype>
+
 
 namespace
 {
@@ -306,27 +308,12 @@ constexpr std::array<const WGL4Page*, 256> WGL4NormalizationTables{
 
 // clang-format on
 
-inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
+inline std::int32_t UTF8Normalize(std::int32_t ch)
 {
-    if (ch < 0x80)
-        return 1;
-    if ((ch & 0xe0) == 0xc0)
-        return 2;
-    if ((ch & 0xf0) == 0xe0)
-        return 3;
-    if ((ch & 0xf8) == 0xf0)
-        return 4;
-    if ((ch & 0xfc) == 0xf8)
-        return 5;
-    if ((ch & 0xfe) == 0xfc)
-        return 6;
-    else
-        return 1;
-}
+    if (ch < 0 || ch > 0xffff)
+        return ch;
 
-inline wchar_t UTF8Normalize(wchar_t ch)
-{
-    auto page = static_cast<unsigned int>(ch) >> 8;
+    auto page = static_cast<std::size_t>(ch) >> 8;
     if (page >= 256)
         return ch;
 
@@ -335,70 +322,42 @@ inline wchar_t UTF8Normalize(wchar_t ch)
         return ch;
 
     auto index = static_cast<unsigned int>(ch) & 0xff;
-    return static_cast<wchar_t>((*normTable)[index]);
+    return static_cast<std::int32_t>((*normTable)[index]);
 }
 
 } // namespace
 
+//! Decode the UTF-8 character at the start of the string str. The decoded
+//! character is returned in ch; the return value of the function is true if
+//! a valid UTF-8 sequence was successfully decoded.
+bool UTF8Decode(std::string_view str, std::int32_t& ch)
+{
+    std::int32_t offset = 0;
+    return UTF8Decode(str, offset, ch);
+}
+
 //! Decode the UTF-8 characters in string str beginning at position pos.
 //! The decoded character is returned in ch; the return value of the function
-//! is true if a valid UTF-8 sequence was successfully decoded.
-bool UTF8Decode(std::string_view str, std::int32_t pos, wchar_t& ch)
+//! is true if a valid UTF-8 sequence was successfully decoded. The value of
+//! pos is advanced to the next undecoded byte in the input string.
+bool UTF8Decode(std::string_view str, std::int32_t& pos, std::int32_t& ch)
 {
-    auto c0 = (unsigned int) str[pos];
-    int charlen = UTF8EncodedSizeFromFirstByte(c0);
-
-    // Bad UTF-8 character that extends past end of string
-    if (pos + charlen > static_cast<std::int32_t>(str.length()))
-        return false;
-
-    // TODO: Should check that the bytes of characters after the first are all
-    // of the form 01xxxxxx
-    // TODO: Need to reject overlong encoding sequences
-
-    switch (charlen)
+    UTF8Validator validator;
+    auto length = static_cast<std::int32_t>(str.size());
+    while (pos < length)
     {
-    case 1:
-        ch = c0;
-        return true;
-
-    case 2:
-        ch = ((c0 & 0x1f) << 6) | ((unsigned int) str[pos + 1] & 0x3f);
-        return true;
-
-    case 3:
-        ch = ((c0 & 0x0f) << 12) |
-            (((unsigned int) str[pos + 1] & 0x3f) << 6) |
-            ((unsigned int)  str[pos + 2] & 0x3f);
-        return true;
-
-    case 4:
-        ch = ((c0 & 0x07) << 18) |
-            (((unsigned int) str[pos + 1] & 0x3f) << 12) |
-            (((unsigned int) str[pos + 2] & 0x3f) << 6)  |
-            ((unsigned int)  str[pos + 3] & 0x3f);
-        return true;
-
-    case 5:
-        ch = ((c0 & 0x03) << 24) |
-            (((unsigned int) str[pos + 1] & 0x3f) << 18) |
-            (((unsigned int) str[pos + 2] & 0x3f) << 12) |
-            (((unsigned int) str[pos + 3] & 0x3f) << 6)  |
-            ((unsigned int)  str[pos + 4] & 0x3f);
-        return true;
-
-    case 6:
-        ch = ((c0 & 0x01) << 30) |
-            (((unsigned int) str[pos + 1] & 0x3f) << 24) |
-            (((unsigned int) str[pos + 2] & 0x3f) << 18) |
-            (((unsigned int) str[pos + 3] & 0x3f) << 12) |
-            (((unsigned int) str[pos + 4] & 0x3f) << 6)  |
-            ((unsigned int)  str[pos + 5] & 0x3f);
-        return true;
-
-    default:
-        return false;
+        auto result = validator.check(str[pos]);
+        ++pos;
+        if (result >= 0)
+        {
+            ch = result;
+            return true;
+        }
+        if (result != UTF8Validator::PartialSequence)
+            return false;
     }
+
+    return false;
 }
 
 //! Appends the UTF-8 encoded version of the code point ch to the
@@ -445,20 +404,6 @@ void UTF8Encode(std::uint32_t ch, std::string& dest)
     }
 }
 
-//! Return the number of characters encoded by a UTF-8 string
-int UTF8Length(std::string_view s)
-{
-    int len = s.length();
-    int count = 0;
-    for (int i = 0; i < len; i++)
-    {
-        auto c = (unsigned int) ((unsigned char) s[i]);
-        if ((c < 0x80) || (c >= 0xc2 && c <= 0xf4))
-            count++;
-    }
-
-    return count;
-}
 
 //! Perform a normalized comparison of two UTF-8 strings.  The normalization
 //! only works for characters in the WGL-4 subset, and no multicharacter
@@ -471,15 +416,13 @@ int UTF8StringCompare(std::string_view s0, std::string_view s1)
     std::int32_t i1 = 0;
     for (;;)
     {
-        wchar_t ch0;
-        wchar_t ch1;
+        std::int32_t ch0;
+        std::int32_t ch1;
         if (i0 >= len0 || !UTF8Decode(s0, i0, ch0))
             return (i1 >= len1 || !UTF8Decode(s1, i1, ch1)) ? 0 : -1;
         if (i1 >= len1 || !UTF8Decode(s1, i1, ch1))
             return 1;
 
-        i0 += UTF8EncodedSize(ch0);
-        i1 += UTF8EncodedSize(ch1);
         ch0 = UTF8Normalize(ch0);
         ch1 = UTF8Normalize(ch1);
 
@@ -498,22 +441,22 @@ bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCa
     std::int32_t i1 = 0;
     for (;;)
     {
-        wchar_t ch0;
-        wchar_t ch1;
+        std::int32_t ch0;
+        std::int32_t ch1;
         if (i1 >= len1)
             return true;
         if (i0 >= len0 || !UTF8Decode(str, i0, ch0) || !UTF8Decode(prefix, i1, ch1))
             return false;
 
-        i0 += UTF8EncodedSize(ch0);
-        i1 += UTF8EncodedSize(ch1);
         ch0 = UTF8Normalize(ch0);
         ch1 = UTF8Normalize(ch1);
 
         if (ignoreCase)
         {
-            ch0 = static_cast<wchar_t>(std::towlower(ch0));
-            ch1 = static_cast<wchar_t>(std::towlower(ch1));
+            if (ch0 >= 0 && ch0 <= WCHAR_MAX)
+                ch0 = static_cast<std::int32_t>(std::towlower(static_cast<std::wint_t>(ch0)));
+            if (ch1 >= 0 && ch1 <= WCHAR_MAX)
+                ch1 = static_cast<std::int32_t>(std::towlower(static_cast<std::wint_t>(ch1)));
         }
 
         if (ch0 != ch1)
@@ -521,44 +464,71 @@ bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCa
     }
 }
 
-UTF8Status
+std::int32_t
 UTF8Validator::check(unsigned char c)
 {
     switch (state)
     {
     case State::Initial:
-        if (c < 0x80) { return UTF8Status::Ok; }
-        if (c < 0xc2) { return UTF8Status::InvalidFirstByte; }
-        if (c < 0xe0) { state = State::Continuation1; return UTF8Status::Ok; }
-        if (c == 0xe0) { state = State::E0Continuation; return UTF8Status::Ok; }
-        if (c < 0xed) { state = State::Continuation2; return UTF8Status::Ok; }
-        if (c== 0xed) { state = State::EDContinuation; return UTF8Status::Ok; }
-        if (c < 0xf0) { state = State::Continuation2; return UTF8Status::Ok; }
-        if (c == 0xf0) { state = State::F0Continuation; return UTF8Status::Ok; }
-        if (c < 0xf4) { state = State::Continuation3; return UTF8Status::Ok; }
-        if (c == 0xf4) { state = State::F4Continuation; return UTF8Status::Ok; }
-        return UTF8Status::InvalidFirstByte;
+        if (c < 0x80)
+            return static_cast<std::int32_t>(c);
+        if (c >= 0xc2 && c <= 0xf4)
+        {
+            buffer[0] = c;
+            state = State::Continuation1;
+            return PartialSequence;
+        }
+        return InvalidStarter;
+
     case State::Continuation1:
-        if (c >= 0x80 && c < 0xc0) { state = State::Initial; return UTF8Status::Ok; }
-        break;
+        if (c < 0x80 || c > 0xbf ||
+            (buffer[0] == 0xe0 && c < 0xa0) ||
+            (buffer[0] == 0xed && c > 0x9f) ||
+            (buffer[0] == 0xf0 && c < 0x90) ||
+            (buffer[0] == 0xf4 && c > 0x8f))
+        {
+            state = State::Initial;
+            return InvalidTrailing;
+        }
+        if (buffer[0] < 0xe0)
+        {
+            state = State::Initial;
+            return ((static_cast<std::int32_t>(buffer[0]) & 0x1f) << 6) |
+                (static_cast<std::int32_t>(c) & 0x3f);
+        }
+        buffer[1] = c;
+        state = State::Continuation2;
+        return PartialSequence;
+
     case State::Continuation2:
-        if (c >= 0x80 && c < 0xc0) { state = State::Continuation1; return UTF8Status::Ok; }
-        break;
+        if (c < 0x80 || c > 0xbf)
+        {
+            state = State::Initial;
+            return InvalidTrailing;
+        }
+        if (buffer[0] < 0xf0)
+        {
+            state = State::Initial;
+            return ((static_cast<std::int32_t>(buffer[0]) & 0x0f) << 12) |
+                ((static_cast<std::int32_t>(buffer[1]) & 0x3f) << 6) |
+                (static_cast<std::int32_t>(c) & 0x3f);
+        }
+        buffer[2] = c;
+        state = State::Continuation3;
+        return PartialSequence;
+
     case State::Continuation3:
-        if (c >= 0x80 && c < 0xc0) { state = State::Continuation2; return UTF8Status::Ok; }
-        break;
-    case State::E0Continuation: // disallow overlong sequences
-        if (c >= 0xa0 && c < 0xc0) { state = State::Continuation1; return UTF8Status::Ok; }
-        break;
-    case State::EDContinuation: // disallow surrogate pairs
-        if (c >= 0x80 && c < 0xa0) { state = State::Continuation1; return UTF8Status::Ok; }
-        break;
-    case State::F0Continuation: // disallow overlong sequences
-        if (c >= 0x90 && c < 0xc0) { state = State::Continuation2; return UTF8Status::Ok; }
-        break;
-    case State::F4Continuation: // disallow out-of-range
-        if (c >= 0x80 && c < 0x90) { state = State::Continuation2; return UTF8Status::Ok; }
+        state = State::Initial;
+        if (c < 0x80 || c > 0xbf)
+            return InvalidTrailing;
+        return ((static_cast<std::int32_t>(buffer[0]) & 0x07) << 18) |
+            ((static_cast<std::int32_t>(buffer[1]) & 0x3f) << 12) |
+            ((static_cast<std::int32_t>(buffer[2]) & 0x3f) << 6) |
+            (static_cast<std::int32_t>(c) & 0x3f);
+
+    default:
+        // Should not be able to get here
+        assert(false);
+        return InvalidStarter;
     }
-    state = State::Initial;
-    return UTF8Status::InvalidTrailingByte;
 }

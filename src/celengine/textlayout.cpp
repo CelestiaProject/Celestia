@@ -7,7 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <vector>
+#include "textlayout.h"
+
+#include <cstddef>
 
 #ifdef USE_ICU
 #include <celutil/flag.h>
@@ -16,7 +18,6 @@
 #include <celutil/utf8.h>
 #endif
 
-#include "textlayout.h"
 
 namespace celestia::engine
 {
@@ -130,11 +131,11 @@ void TextLayout::render(std::string_view text)
     if (!began)
         return;
 
-    std::vector<std::wstring> lines;
+    std::vector<std::u16string> lines;
     if (!processString(text, lines) || lines.empty())
         return;
 
-    for (size_t i = 0; i < lines.size(); i += 1)
+    for (std::size_t i = 0; i < lines.size(); i += 1)
     {
         auto lineToRender = lines[i];
         if (i == 0)
@@ -152,7 +153,7 @@ void TextLayout::render(std::string_view text)
             {
                 // This line is still continuing, clear line and do not render yet
                 currentLine = lineToRender;
-                lineToRender = L"";
+                lineToRender = {};
             }
         }
         else
@@ -164,7 +165,7 @@ void TextLayout::render(std::string_view text)
             {
                 // Last line (and size != 1), clear line do not render
                 currentLine = lines[i];
-                lineToRender = L"";
+                lineToRender = {};
             }
         }
         if (!lineToRender.empty())
@@ -200,7 +201,7 @@ int TextLayout::getLineHeight() const
 
 int TextLayout::getTextWidth(std::string_view text, const TextureFont *font)
 {
-    std::vector<std::wstring> lines;
+    std::vector<std::u16string> lines;
     if (font == nullptr || !processString(text, lines))
         return 0;
 
@@ -217,7 +218,7 @@ float TextLayout::getPixelSize(float size, Unit unit) const
     return size;
 }
 
-void TextLayout::renderLine(std::wstring_view line)
+void TextLayout::renderLine(std::u16string_view line)
 {
     float x = positionX;
     switch (horizontalAlignment)
@@ -258,35 +259,40 @@ void TextLayout::flushInternal(bool flushFont)
         font->flush();
 }
 
-bool TextLayout::processString(std::string_view input, std::vector<std::wstring> &output)
+bool TextLayout::processString(std::string_view input, std::vector<std::u16string> &output)
 {
 #ifdef USE_ICU
     using namespace celestia::util;
 
-    std::vector<UChar> ustr;
-    if (!UTF8StringToUnicodeString(input, ustr))
-        return false;
-
-    int lineStart = 0;
     const ConversionOption options = ConversionOption::ArabicShaping | ConversionOption::BidiReordering;
-    for (int i = 0; i < ustr.size(); i += 1)
+    std::u16string u16line;
+    for (;;)
     {
-        if (ustr[i] == u'\n')
-        {
-            std::wstring line;
-            if (!UnicodeStringToWString({ ustr.begin() + lineStart, ustr.begin() + i }, line, options))
-                return false;
-            output.push_back(line);
-            lineStart = i + 1;
-        }
-    }
+        auto linePos = input.find('\n');
 
-    if (lineStart <= ustr.size())
-    {
-        std::wstring line;
-        if (!UnicodeStringToWString({ ustr.begin() + lineStart, ustr.end() }, line, options))
-            return false;
-        output.push_back(line);
+        std::string_view line = linePos == std::string_view::npos
+            ? input
+            : input.substr(0, linePos);
+
+        // For readability, declare `line` outside the if statement
+        if (line.empty()) // NOSONAR
+            output.emplace_back();
+        else
+        {
+            if (!UTF8StringToUnicodeString(line, u16line))
+                return false;
+
+            std::u16string shapedLine;
+            if (!ApplyBidiAndShaping(u16line, shapedLine, options))
+                return false;
+
+            output.emplace_back(std::move(shapedLine));
+        }
+
+        if (linePos == std::string_view::npos)
+            break;
+
+        input = input.substr(linePos + 1);
     }
 #else
     // Loop through all characters
@@ -295,16 +301,15 @@ bool TextLayout::processString(std::string_view input, std::vector<std::wstring>
     int  i                  = 0;
     bool endsWithLineBreak  = false;
 
-    std::wstring currentLine;
+    std::u16string currentLine;
     while (i < len && validChar)
     {
-        wchar_t ch = 0;
-        validChar  = UTF8Decode(input, i, ch);
+        std::int32_t ch = 0;
+        validChar = UTF8Decode(input, i, ch);
         if (!validChar)
             return false;
-        i += UTF8EncodedSize(ch);
 
-        if (ch == L'\n')
+        if (ch == u'\n')
         {
             output.push_back(currentLine);
             currentLine.clear();
