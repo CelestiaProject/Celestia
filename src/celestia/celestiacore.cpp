@@ -1940,23 +1940,19 @@ void CelestiaCore::setStartURL(const string &url)
     }
 }
 
-
 void CelestiaCore::tick()
 {
-    double lastTime = sysTime;
-    sysTime = timer->getTime();
+    tick(timer->getTime() - sysTime);
+}
+
+void CelestiaCore::tick(double dt)
+{
+    sysTime += dt;
 
     // The time step is normally driven by the system clock; however, when
     // recording a movie, we fix the time step the frame rate of the movie.
-    double dt = 0.0;
     if (movieCapture != nullptr && recording)
-    {
-        dt = 1.0 / movieCapture->getFrameRate();
-    }
-    else
-    {
-        dt = sysTime - lastTime;
-    }
+        dt = 1.0 / static_cast<double>(movieCapture->getFrameRate());
 
     // Pause script execution
     if (scriptState == ScriptPaused)
