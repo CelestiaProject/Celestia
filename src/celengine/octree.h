@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_OCTREE_H_
-#define _CELENGINE_OCTREE_H_
+#pragma once
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -409,6 +408,3 @@ void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistic
             _children[i]->computeStatistics(stats, level + 1);
     }
 }
-
-
-#endif // _OCTREE_H_

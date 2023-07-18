@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _SURFACE_H_
-#define _SURFACE_H_
+#pragma once
 
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
@@ -55,6 +54,3 @@ class Surface
     float bumpHeight;               // scale of bump map relief
     float lunarLambert;             // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
 };
-
-#endif // _SURFACE_H_
-

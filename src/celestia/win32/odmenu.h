@@ -1,5 +1,4 @@
-#ifndef _ODMENU_CLW
-#define _ODMENU_CLW
+#pragma once
 
 #include <windows.h>
 #include <map>
@@ -91,5 +90,3 @@ public:
     void AddItem(HMENU hMenu, int index, MENUITEMINFO* pItemInfo=NULL);
     void DeleteItem(HMENU hMenu, int index);
 };
-
-#endif

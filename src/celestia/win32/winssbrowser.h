@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINSSBROWSER_H_
-#define _WINSSBROWSER_H_
+#pragma once
 
 #include "celestia/celestiacore.h"
 
@@ -26,6 +25,3 @@ class SolarSystemBrowser
     HWND parent;
     HWND hwnd;
 };
-
-
-#endif // _WINSTARBROWSER_H_

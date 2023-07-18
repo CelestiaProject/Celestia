@@ -15,8 +15,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_OBSERVER_H_
-#define _CELENGINE_OBSERVER_H_
+#pragma once
 
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
@@ -333,5 +332,3 @@ public:
     uint64_t locationFilter{ ~0ull };
     std::string displayedSurface;
 };
-
-#endif // _CELENGINE_OBSERVER_H_

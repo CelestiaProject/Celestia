@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_CELESTIA_H_
-#define _CELX_CELESTIA_H_
+#pragma once
 
 struct lua_State;
 
@@ -19,5 +18,3 @@ CelestiaCore* to_celestia(lua_State*, int);
 CelestiaCore* this_celestia(lua_State*);
 void CreateCelestiaMetaTable(lua_State*);
 void ExtendCelestiaMetaTable(lua_State*);
-
-#endif // _CELX_CELESTIA_H_

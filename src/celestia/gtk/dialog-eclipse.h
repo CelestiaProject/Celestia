@@ -10,8 +10,7 @@
  *  $Id: dialog-eclipse.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
-#ifndef GTK_DIALOG_ECLIPSE_H
-#define GTK_DIALOG_ECLIPSE_H
+#pragma once
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -80,5 +79,3 @@ const char * const eclipsePlanetTitles[] =
     "Pluto",
     NULL
 };
-
-#endif /* GTK_DIALOG_ECLIPSE_H */

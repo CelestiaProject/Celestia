@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTEVENTFINDER_H_
-#define _QTEVENTFINDER_H_
+#pragma once
 
 #include <QDockWidget>
 #include <QElapsedTimer>
@@ -70,5 +69,3 @@ class EventFinder : public QDockWidget, EclipseFinderWatcher
 
     const Eclipse* activeEclipse{ nullptr };
 };
-
-#endif // _QTEVENTFINDER_H_

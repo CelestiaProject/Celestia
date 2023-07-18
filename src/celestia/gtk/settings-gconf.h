@@ -10,8 +10,7 @@
  *  $Id: settings-gconf.h,v 1.1 2005-12-06 03:19:36 suwalski Exp $
  */
 
-#ifndef GTK_SETTINGS_GCONF_H
-#define GTK_SETTINGS_GCONF_H
+#pragma once
 
 #include <gconf/gconf-client.h>
 
@@ -40,5 +39,3 @@ enum {
     Orbit = 1,
     Label = 2,
 };
-
-#endif /* GTK_SETTINGS_GCONF_H */

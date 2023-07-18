@@ -11,8 +11,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef QTGLWIDGET_H
-#define QTGLWIDGET_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -67,5 +66,3 @@ private:
     //KActionCollection* actionColl;
 
 };
-
-#endif

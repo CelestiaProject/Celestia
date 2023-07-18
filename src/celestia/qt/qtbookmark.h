@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_QTBOOKMARK_H_
-#define _CELESTIA_QTBOOKMARK_H_
+#pragma once
 
 #include <QString>
 #include <QList>
@@ -232,6 +231,3 @@ public slots:
 private:
     BookmarkManager* m_manager;
 };
-
-
-#endif // _CELESTIA_QT_BOOKMARK_H_

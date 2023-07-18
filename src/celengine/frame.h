@@ -8,8 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_FRAME_H_
-#define _CELENGINE_FRAME_H_
+#pragma once
 
 #include <celengine/astro.h>
 #include <celengine/selection.h>
@@ -256,5 +255,3 @@ class TwoVectorFrame : public CachingFrame
     int secondaryAxis;
     int tertiaryAxis;
 };
-
-#endif // _CELENGINE_FRAME_H_

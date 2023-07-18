@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINTOURGUIDE_H_
-#define _WINTOURGUIDE_H_
+#pragma once
 
 #include "celestia/celestiacore.h"
 
@@ -26,7 +25,3 @@ class TourGuide
     HWND parent;
     HWND hwnd;
 };
-
-
-#endif // _TOURGUIDE_H_
-

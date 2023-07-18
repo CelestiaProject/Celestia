@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_BODY_H_
-#define _CELENGINE_BODY_H_
+#pragma once
 
 #include <celengine/astroobj.h>
 #include <celengine/surface.h>
@@ -426,5 +425,3 @@ class Body
     bool secondaryIlluminator{ true };
     bool primaryNameLocalized { false };
 };
-
-#endif // _CELENGINE_BODY_H_

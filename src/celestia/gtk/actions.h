@@ -10,8 +10,7 @@
  *  $Id: actions.h,v 1.7 2008-01-21 04:55:19 suwalski Exp $
  */
 
-#ifndef GTK_ACTIONS_H
-#define GTK_ACTIONS_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -141,6 +140,3 @@ void resyncTextureResolutionActions(AppData* app);
 #else
 #define FRONTEND "GTK+"
 #endif
-
-
-#endif /* GTK_ACTIONS_H */

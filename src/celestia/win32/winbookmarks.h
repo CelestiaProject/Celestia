@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_WINBOOKMARKS_H_
-#define _CELESTIA_WINBOOKMARKS_H_
+#pragma once
 
 
 #include <windows.h>
@@ -34,5 +33,3 @@ void OrganizeBookmarksOnMouseMove(HWND, LONG, LONG);
 void OrganizeBookmarksOnLButtonUp(HWND);
 void DragDropAutoScroll(HWND);
 //HTREEITEM GetTreeViewItemHandle(HWND, char*, HTREEITEM);
-
-#endif // _CELESTIA_WINBOOKMARKS_H_

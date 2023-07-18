@@ -10,8 +10,7 @@
  *  $Id: ui.h,v 1.6 2006-12-12 00:31:01 suwalski Exp $
  */
 
-#ifndef GTK_UI_H
-#define GTK_UI_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -192,5 +191,3 @@ static const GtkToggleActionEntry actionsLabelFlags[] = {
     { "LabelsLatin", NULL, "Labels in Latin", NULL, NULL, NULL, FALSE },
     */
 };
-
-#endif /* GTK_UI_H */

@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIAACTIONS_H_
-#define _CELESTIAACTIONS_H_
+#pragma once
 
 #include <QObject>
 #include "celengine/render.h"
@@ -120,5 +119,3 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 };
-
-#endif // _CELESTIAACTIONS_H_

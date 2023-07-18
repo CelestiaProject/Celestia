@@ -10,8 +10,7 @@
  *  $Id: dialog-time.h,v 1.2 2005-12-12 06:08:11 suwalski Exp $
  */
 
-#ifndef GTK_DIALOG_TIME_H
-#define GTK_DIALOG_TIME_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -24,5 +23,3 @@ void dialogSetTime(AppData* app);
 
 /* Labels for TimeZone dropdown */
 static const char* timeOptions[] = { "UTC", "Local", NULL };
-
-#endif /* GTK_DIALOG_TIME_H */

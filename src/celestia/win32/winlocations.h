@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_WINLOCATIONS_H_
-#define _CELESTIA_WINLOCATIONS_H_
+#pragma once
 
 #include <windows.h>
 #include <commctrl.h>
@@ -33,6 +32,3 @@ class LocationsDialog : public CelestiaWatcher
     uint64_t initialLocationFlags;
     float initialFeatureSize;
 };
-
-#endif // _CELESTIA_WINLOCATIONS_H_
-

@@ -10,8 +10,7 @@
  *  $Id: splash.h,v 1.1 2006-01-01 23:43:52 suwalski Exp $
  */
 
-#ifndef GTK_SPLASH_H
-#define GTK_SPLASH_H
+#pragma once
 
 #include "common.h"
 
@@ -50,6 +49,3 @@ struct _SplashData {
 SplashData* splashStart(AppData* app, gboolean showSplash, const gchar* installDir, const gchar* defaultDir);
 void splashEnd(SplashData* ss);
 void splashSetText(SplashData* ss, const char* text);
-
-
-#endif /* GTK_SPLASH_H */

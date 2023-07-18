@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_MULTITEXTURE_H_
-#define _CELENGINE_MULTITEXTURE_H_
+#pragma once
 
 #include <string>
 #include "texture.h"
@@ -46,5 +45,3 @@ class MultiResTexture
  public:
     ResourceHandle tex[3];
 };
-
-#endif // _CELENGINE_MULTITEXTURE_H_

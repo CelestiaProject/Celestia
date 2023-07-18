@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_FRAMETREE_H_
-#define _CELENGINE_FRAMETREE_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -102,5 +101,3 @@ private:
 
     ReferenceFrame::SharedConstPtr defaultFrame;
 };
-
-#endif // _CELENGINE_FRAMETREE_H_

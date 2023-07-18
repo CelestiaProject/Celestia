@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_INTERNAL_H_
-#define _CELX_INTERNAL_H_
+#pragma once
 
 #include <iterator>
 #include <memory>
@@ -360,5 +359,3 @@ lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors =
 bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
                               const char* errorMsg = "Boolean argument expected",
                               bool defaultValue = false);
-
-#endif // _CELX_INTERNAL_H_

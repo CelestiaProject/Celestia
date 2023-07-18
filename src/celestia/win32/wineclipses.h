@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINECLIPSES_H_
-#define _WINECLIPSES_H_
+#pragma once
 
 #include <vector>
 
@@ -33,6 +32,3 @@ class EclipseFinderDialog
     Body* BodytoSet_;
     int type;
 };
-
-#endif // _WINECLIPSES_H_
-

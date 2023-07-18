@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_OBSERVER_H_
-#define _CELX_OBSERVER_H_
+#pragma once
 
 struct lua_State;
 class Observer;
@@ -18,5 +17,3 @@ class Observer;
 extern void CreateObserverMetaTable(lua_State* l);
 extern int observer_new(lua_State* l, Observer* obs);
 extern Observer* to_observer(lua_State* l, int index);
-
-#endif // _CELX_OBSERVER_H_

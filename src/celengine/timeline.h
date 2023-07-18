@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_TIMELINE_H_
-#define _CELENGINE_TIMELINE_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -37,5 +36,3 @@ public:
 private:
     std::vector<TimelinePhase::SharedConstPtr> phases;
 };
-
-#endif // _CELENGINE_TIMELINE_H_
