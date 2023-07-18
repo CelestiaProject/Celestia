@@ -435,7 +435,7 @@ ParseResult parsePrintCommand(const Hash& paramList, const ScriptMaps&)
     if (text == nullptr)
         return makeError("Missing text parameter to print");
 
-    auto duration = paramList.getNumber<double>("duration").value_or(1e9);
+    auto duration = paramList.getNumber<float>("duration").value_or(1e9f);
     auto voff     = paramList.getNumber<int>("row").value_or(0);
     auto hoff     = paramList.getNumber<int>("column").value_or(0);
     int horig = -1;

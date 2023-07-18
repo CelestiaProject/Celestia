@@ -44,7 +44,7 @@ bool BoundariesRenderer::prepare()
 {
     auto chains = m_boundaries->getChains();
     auto lineCount = std::accumulate(chains.begin(), chains.end(), 0,
-                                     [](int a, const ConstellationBoundaries::Chain* b) { return a + b->size() - 1; });
+                                     [](int a, const ConstellationBoundaries::Chain* b) { return a + static_cast<int>(b->size()) - 1; });
 
     if (lineCount == 0)
         return false;
