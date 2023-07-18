@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_REFERENCEMARK_H_
-#define _CELENGINE_REFERENCEMARK_H_
+#pragma once
 
 #include <string>
 #include <Eigen/Core>
@@ -68,5 +67,3 @@ class ReferenceMark
 private:
     std::string tag;
 };
-
-#endif // _CELENGINE_REFERENCEMARK_H_

@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _INFOPANEL_H_
-#define _INFOPANEL_H_
+#pragma once
 
 #include <QDockWidget>
 #include <QTextStream>
@@ -53,5 +52,3 @@ class InfoPanel : public QDockWidget
  public:
     QTextBrowser* textBrowser{nullptr};
 };
-
-#endif // _INFOPANEL_H_

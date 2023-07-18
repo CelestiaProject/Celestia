@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _MOVIECAPTURE_H_
-#define _MOVIECAPTURE_H_
+#pragma once
 
 #include <celcompat/filesystem.h>
 
@@ -38,6 +37,3 @@ class MovieCapture
  protected:
     const Renderer *renderer{ nullptr };
 };
-
-#endif // _MOVIECAPTURE_H_
-

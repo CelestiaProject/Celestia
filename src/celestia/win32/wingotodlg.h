@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINGOTODLG_H_
-#define _WINGOTODLG_H_
+#pragma once
 
 #include "celestia/celestiacore.h"
 
@@ -25,6 +24,3 @@ class GotoObjectDialog
     HWND parent;
     HWND hwnd;
 };
-
-
-#endif // _WINGOTODLG_H_

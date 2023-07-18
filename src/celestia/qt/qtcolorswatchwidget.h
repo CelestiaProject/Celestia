@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTCOLORSWATCHWIDGET_H_
-#define _QTCOLORSWATCHWIDGET_H_
+#pragma once
 
 #include <QLabel>
 #include <QColor>
@@ -33,5 +32,3 @@ Q_OBJECT
  private:
     QColor m_color;
 };
-
-#endif // _QTCOLORSWATCHWIDGET_H_

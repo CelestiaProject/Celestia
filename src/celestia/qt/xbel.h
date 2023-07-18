@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_XBEL_H_
-#define _CELESTIA_XBEL_H_
+#pragma once
 
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -49,5 +48,3 @@ public:
 private:
     void writeItem(const BookmarkItem* item);
 };
-
-#endif // _CELESTIA_XBEL_H_

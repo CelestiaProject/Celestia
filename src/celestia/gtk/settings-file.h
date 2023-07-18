@@ -10,8 +10,7 @@
  *  $Id: settings-file.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
-#ifndef GTK_SETTINGS_FILE_H
-#define GTK_SETTINGS_FILE_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -29,5 +28,3 @@ void applySettingsFileMain(AppData* app, GKeyFile* file);
 
 /* Save Settings to File */
 void saveSettingsFile(AppData* app);
-
-#endif /* GTK_SETTINGS_FILE_H */

@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_STARBROWSER_H_
-#define _CELENGINE_STARBROWSER_H_
+#pragma once
 
 #include "star.h"
 #include "stardb.h"
@@ -46,5 +45,3 @@ class StarBrowser
     Simulation *appSim;
     int predicate;
 };
-
-#endif // _CELENGINE_STARBROWSER_H_

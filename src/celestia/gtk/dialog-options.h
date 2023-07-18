@@ -10,8 +10,7 @@
  *  $Id: dialog-options.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
-#ifndef GTK_DIALOG_OPTIONS_H
-#define GTK_DIALOG_OPTIONS_H
+#pragma once
 
 #include "common.h"
 
@@ -35,5 +34,3 @@ static const char * const infoLabels[]=
     "Verbose",
     NULL
 };
-
-#endif /* GTK_DIALOG_OPTIONS_H */

@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_PHASE_H_
-#define _CELX_PHASE_H_
+#pragma once
 
 #include <memory>
 
@@ -24,5 +23,3 @@ inline int celxClassId(const TimelinePhase::SharedConstPtr&)
 
 extern void CreatePhaseMetaTable(lua_State* l);
 extern int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase);
-
-#endif // _CELX_PHASE_H_

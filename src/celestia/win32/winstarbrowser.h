@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINSTARBROWSER_H_
-#define _WINSTARBROWSER_H_
+#pragma once
 
 #include "celestia/celestiacore.h"
 
@@ -35,6 +34,3 @@ class StarBrowser
     int predicate;
     int nStars;
 };
-
-
-#endif // _WINSTARBROWSER_H_

@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef CELENGINE_MARKER_H_
-#define CELENGINE_MARKER_H_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -119,5 +118,3 @@ class Marker
 
 typedef std::vector<Marker> MarkerList;
 }
-
-#endif // CELENGINE_MARKER_H_

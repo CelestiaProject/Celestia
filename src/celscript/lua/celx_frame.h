@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_FRAME_H_
-#define _CELX_FRAME_H_
+#pragma once
 
 struct lua_State;
 class ObserverFrame;
@@ -18,5 +17,3 @@ class ObserverFrame;
 extern void CreateFrameMetaTable(lua_State* l);
 extern int frame_new(lua_State* l, const ObserverFrame& frame);
 extern ObserverFrame* to_frame(lua_State* l, int index);
-
-#endif // _CELX_FRAME_H_

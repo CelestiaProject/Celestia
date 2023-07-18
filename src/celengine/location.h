@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_LOCATION_H_
-#define _CELENGINE_LOCATION_H_
+#pragma once
 
 #include <string>
 #include <celengine/astroobj.h>
@@ -136,5 +135,3 @@ public:
     Color labelColor{ 1.0f, 1.0f, 1.0f };
     std::string infoURL;
 };
-
-#endif // _CELENGINE_LOCATION_H_

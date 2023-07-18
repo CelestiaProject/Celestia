@@ -10,8 +10,7 @@
  *  $Id: common.h,v 1.5 2008-01-18 04:36:11 suwalski Exp $
  */
 
-#ifndef GTK_COMMON_H
-#define GTK_COMMON_H
+#pragma once
 
 #include <config.h>
 #include <gtk/gtk.h>
@@ -138,5 +137,3 @@ static const int resolutions[] =
 
 /* This is the spacing used for widgets throughout the program */
 #define CELSPACING 8
-
-#endif /* GTK_COMMON_H */

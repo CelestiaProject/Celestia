@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTSELECTIONPOPUP_H_
-#define _QTSELECTIONPOPUP_H_
+#pragma once
 
 #include <QMenu>
 #include <celengine/selection.h>
@@ -72,5 +71,3 @@ Q_OBJECT
     QAction* centerAction;
     QAction* gotoAction;
 };
-
-#endif // _QTSELECTIONPOPUP_H_

@@ -9,8 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINVIEWOPTSDLG_H_
-#define _WINVIEWOPTSDLG_H_
+#pragma once
 
 #include "celestia/celestiacore.h"
 
@@ -32,6 +31,3 @@ class ViewOptionsDialog : public CelestiaWatcher
     int initialLabelMode;
     int initialHudDetail;
 };
-
-
-#endif // _WINVIEWOPTSDLG_H_

@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTSOLARSYSTEMBROWSER_H_
-#define _QTSOLARSYSTEMBROWSER_H_
+#pragma once
 
 #include <QWidget>
 #include "celengine/selection.h"
@@ -71,5 +70,3 @@ Q_OBJECT
 
     InfoPanel* infoPanel{nullptr};
 };
-
-#endif // _QTSOLARSYSTEMBROWSER_H_

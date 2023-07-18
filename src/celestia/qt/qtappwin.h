@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTAPPWIN_H_
-#define _QTAPPWIN_H_
+#pragma once
 
 #include <celestia/celestiacore.h>
 #include <QImage>
@@ -161,6 +160,3 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
 
     QTimer *timer;
 };
-
-
-#endif // _QTAPPWIN_H_

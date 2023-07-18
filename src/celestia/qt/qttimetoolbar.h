@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTTIMETOOLBAR_H_
-#define _QTTIMETOOLBAR_H_
+#pragma once
 
 #include <QToolBar>
 
@@ -40,5 +39,3 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 };
-
-#endif // _QTTIMETOOLBAR_H_

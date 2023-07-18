@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_LIGHTENV_H_
-#define _CELENGINE_LIGHTENV_H_
+#pragma once
 
 #include <celutil/color.h>
 #include <Eigen/Core>
@@ -91,5 +90,3 @@ public:
 
     Eigen::Vector3f ambientColor;
 };
-
-#endif // _CELENGINE_LIGHTENV_H_

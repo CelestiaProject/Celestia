@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_WATCHER_H_
-#define _CELUTIL_WATCHER_H_
+#pragma once
 
 template<class T> class Watcher
 {
@@ -28,5 +27,3 @@ template<class T> class Watcher
 
     virtual void notifyChange(T*, int) = 0;
 };
-
-#endif // _CELUTIL_WATCHER_H_

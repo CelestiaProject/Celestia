@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTCELESTIALBROWSER_H_
-#define _QTCELESTIALBROWSER_H_
+#pragma once
 
 #include <QWidget>
 #include <celengine/body.h>
@@ -75,5 +74,3 @@ Q_OBJECT
     ColorSwatchWidget* colorSwatch{nullptr};
     InfoPanel* infoPanel{nullptr};
 };
-
-#endif // _QTCELESTIALBROWSER_H_

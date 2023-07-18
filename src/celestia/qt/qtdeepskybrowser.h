@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _QTDEEPSKYBROWSER_H_
-#define _QTDEEPSKYBROWSER_H_
+#pragma once
 
 #include <QWidget>
 #include "celengine/selection.h"
@@ -72,5 +71,3 @@ Q_OBJECT
 
     InfoPanel* infoPanel{nullptr};
 };
-
-#endif // _QTDEEPSKYBROWSER_H_

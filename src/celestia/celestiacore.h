@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIACORE_H_
-#define _CELESTIACORE_H_
+#pragma once
 
 #include <array>
 #include <fstream>
@@ -622,5 +621,3 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     friend std::shared_ptr<TextureFont> getTitleFont(CelestiaCore*);
 #endif
 };
-
-#endif // _CELESTIACORE_H_

@@ -10,8 +10,7 @@
  *  $Id: dialog-tour.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
-#ifndef GTK_DIALOG_TOUR_H
-#define GTK_DIALOG_TOUR_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -30,5 +29,3 @@ struct _TourData {
     Destination* selected;
     GtkWidget* descLabel;
 };
-
-#endif /* GTK_DIALOG_TOUR_H */

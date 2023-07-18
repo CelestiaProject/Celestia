@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _ECLIPSEFINDER_H_
-#define _ECLIPSEFINDER_H_
+#pragma once
 
 #include <vector>
 #include "celestiacore.h"
@@ -57,5 +56,3 @@ class EclipseFinder
     Body* body;
     EclipseFinderWatcher* watcher;
 };
-#endif // _ECLIPSEFINDER_H_
-

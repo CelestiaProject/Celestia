@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_VISIBLEREGION_H_
-#define _CELENGINE_VISIBLEREGION_H_
+#pragma once
 
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
@@ -48,6 +47,3 @@ private:
     Color m_color;
     float m_opacity;
 };
-
-#endif // _CELENGINE_TERMINATOR_H_
-

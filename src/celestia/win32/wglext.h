@@ -1,5 +1,4 @@
-#ifndef __wglext_h_
-#define __wglext_h_
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -510,7 +509,3 @@ typedef BOOL (WINAPI * PFNWGLSETPBUFFERATTRIBARBPROC) (HPBUFFERARB hPbuffer, con
 #include <string>
 void InitWGLExtensions(HINSTANCE);
 bool WGLExtensionSupported(const std::string& extName);
-
-#endif
-
-

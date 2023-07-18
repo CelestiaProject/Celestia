@@ -10,8 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_STAROCTREE_H_
-#define _CELENGINE_STAROCTREE_H_
+#pragma once
 
 #include <celengine/star.h>
 #include <celengine/octree.h>
@@ -20,5 +19,3 @@
 typedef DynamicOctree  <Star, float> DynamicStarOctree;
 typedef StaticOctree   <Star, float> StarOctree;
 typedef OctreeProcessor<Star, float> StarHandler;
-
-#endif  // _CELENGINE_STAROCTREE_H_
