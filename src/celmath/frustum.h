@@ -18,11 +18,12 @@ namespace celmath
 
 class Frustum
 {
- public:
+public:
     using PlaneType = Eigen::Hyperplane<float, 3>;
 
     Frustum(float fov, float aspectRatio, float nearDist);
     Frustum(float fov, float aspectRatio, float nearDist, float farDist);
+    Frustum(float left, float right, float top, float bottom, float nearDist, float farDist);
 
     inline Eigen::Hyperplane<float, 3> plane(unsigned int which) const
     {
@@ -51,8 +52,9 @@ class Frustum
     Aspect testSphere(const Eigen::Vector3f& center, float radius) const;
     Aspect testSphere(const Eigen::Vector3d& center, double radius) const;
 
- private:
-    void init(float, float, float, float);
+private:
+    void init(float fov, float aspectRatio, float nearDist, float farDist);
+    void init(float left, float right, float top, float bottom, float nearDist, float farDist);
 
     Eigen::Hyperplane<float, 3> planes[6];
     bool infinite;

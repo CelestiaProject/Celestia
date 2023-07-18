@@ -535,7 +535,7 @@ class Renderer
 
     void renderObject(const Eigen::Vector3f& pos,
                       float distance,
-                      double now,
+                      const Observer& observer,
                       float nearPlaneDistance,
                       float farPlaneDistance,
                       RenderProperties& obj,
@@ -554,7 +554,7 @@ class Renderer
                     const Eigen::Vector3f& pos,
                     float distance,
                     float appMag,
-                    double now,
+                    const Observer& observer,
                     float, float,
                     const Matrices&);
 

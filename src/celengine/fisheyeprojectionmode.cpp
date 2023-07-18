@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "fisheyeprojectionmode.h"
+#include <celmath/frustum.h>
 #include <celmath/geomutil.h>
 #include <celengine/shadermanager.h>
 
@@ -55,6 +56,12 @@ float FisheyeProjectionMode::getPixelSize(float /*zoom*/) const
 float FisheyeProjectionMode::getFieldCorrection(float /*zoom*/) const
 {
     return 2.0f - 2000.0f / (height / (static_cast<float>(screenDpi) / 25.4f / 3.78f) + 1000.0f); // larger window height = more stars to display
+}
+
+celmath::Frustum
+FisheyeProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
+{
+    return celmath::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
 double FisheyeProjectionMode::getViewConeAngleMax(float /*zoom*/) const
