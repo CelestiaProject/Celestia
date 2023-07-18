@@ -47,7 +47,11 @@ class AssociativeArray
     template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
     std::optional<T> getNumber(std::string_view key) const
     {
-        return getNumberImpl(key);
+        auto number = getNumberImpl(key);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return number;
+        else
+            return convertNumeric<T>(number);
     }
 
     const std::string* getString(std::string_view) const;
@@ -57,35 +61,21 @@ class AssociativeArray
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<Eigen::Matrix<T, 3, 1>> getVector3(std::string_view key) const
     {
-        if constexpr (std::is_same_v<T, double>)
-        {
-            return getVector3Impl(key);
-        }
-        else if (auto vec3 = getVector3Impl(key); vec3.has_value())
-        {
-            return std::make_optional<Eigen::Matrix<T, 3, 1>>(vec3->cast<T>());
-        }
+        auto vec3 = getVector3Impl(key);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return vec3;
         else
-        {
-            return std::nullopt;
-        }
+            return convertMatrix<T>(vec3);
     }
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<Eigen::Matrix<T, 4, 1>> getVector4(std::string_view key) const
     {
-        if constexpr (std::is_same_v<T, double>)
-        {
-            return getVector4Impl(key);
-        }
-        else if (auto vec4 = getVector4Impl(key); vec4.has_value())
-        {
-            return std::make_optional<Eigen::Matrix<T, 4, 1>>(vec4->cast<T>());
-        }
+        auto vec4 = getVector4Impl(key);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return vec4;
         else
-        {
-            return std::nullopt;
-        }
+            return convertMatrix<T>(vec4);
     }
 
     std::optional<Eigen::Quaternionf> getRotation(std::string_view) const;
@@ -95,25 +85,41 @@ class AssociativeArray
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<T> getAngle(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
-        return getAngleImpl(key, outputScale, defaultScale);
+        auto angle = getAngleImpl(key, outputScale, defaultScale);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return angle;
+        else
+            return convertNumeric<T>(angle);
     }
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<T> getLength(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
-        return getLengthImpl(key, outputScale, defaultScale);
+        auto length = getLengthImpl(key, outputScale, defaultScale);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return length;
+        else
+            return convertNumeric<T>(length);
     }
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<T> getTime(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
-        return getTimeImpl(key, outputScale, defaultScale);
+        auto time = getTimeImpl(key, outputScale, defaultScale);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return time;
+        else
+            return convertNumeric<T>(time);
     }
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     std::optional<T> getMass(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
-        return getMassImpl(key, outputScale, defaultScale);
+        auto mass = getMassImpl(key, outputScale, defaultScale);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return mass;
+        else
+            return convertNumeric<T>(mass);
     }
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
@@ -121,18 +127,11 @@ class AssociativeArray
                                                           double outputScale = 1.0,
                                                           double defaultScale = 0.0) const
     {
-        if constexpr (std::is_same_v<T, double>)
-        {
-            return getLengthVectorImpl(key, outputScale, defaultScale);
-        }
-        else if (auto vec = getLengthVectorImpl(key, outputScale, defaultScale); vec.has_value())
-        {
-            return std::make_optional<Eigen::Matrix<T, 3, 1>>(vec->cast<T>());
-        }
+        auto vec = getLengthVectorImpl(key, outputScale, defaultScale);
+        if constexpr (std::is_same_v<std::remove_cv_t<T>, double>)
+            return vec;
         else
-        {
-            return std::nullopt;
-        }
+            return convertMatrix<T>(vec);
     }
 
     std::optional<Eigen::Vector3d> getSphericalTuple(std::string_view) const;
@@ -162,6 +161,25 @@ class AssociativeArray
     std::optional<double> getMassImpl(std::string_view, double, double) const;
 
     std::optional<Eigen::Vector3d> getLengthVectorImpl(std::string_view, double, double) const;
+
+    template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+    inline static std::optional<T>
+    convertNumeric(const std::optional<double>& maybeDouble)
+    {
+        return maybeDouble.has_value()
+            ? std::optional<T>{ static_cast<T>(*maybeDouble) }
+            : std::nullopt;
+    }
+
+    template<typename T, int X, int Y,
+             std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    inline static std::optional<Eigen::Matrix<T, X, Y>>
+    convertMatrix(const std::optional<Eigen::Matrix<double, X, Y>>& maybeMatrix)
+    {
+        return maybeMatrix.has_value()
+            ? std::make_optional<Eigen::Matrix<T, X, Y>>(maybeMatrix->template cast<T>())
+            : std::nullopt;
+    }
 };
 
 using Hash = AssociativeArray;

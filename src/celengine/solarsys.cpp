@@ -826,8 +826,8 @@ Body* CreateBody(const std::string& name,
         {
             body->setGeomAlbedo(*albedo);
             // Set the BondAlbedo and Reflectivity values if it is <1, otherwise as 1.
-            if (*albedo > 1.0)
-                albedo = 1.0;
+            if (*albedo > 1.0f)
+                albedo = 1.0f;
             body->setBondAlbedo(*albedo);
             body->setReflectivity(*albedo);
         }

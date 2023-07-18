@@ -141,18 +141,11 @@ if(MSVC)
   string(REGEX REPLACE "/W[3|4]" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REGEX REPLACE "/W[3|4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-  # Disabled warnings
-  # C4244, C4267, C4503: implicit type conversion to a smaller type
-  # C4786: long names in templates
-  # C4800: forcing value to bool
-  # C4455: reserved literals (no undescore at the beginning)
-  # C5030: not recognized attribute
-  # C5105: macro expansion producing 'defined' has undefined behavior
   # Additional options
   # bigobj: generate more object sections than allowed by default
   # Promoted to errors
   # C4316: object allocated on the heap may not be aligned 16
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/wd5105" "/bigobj" "/we4316")
+  add_compile_options("/bigobj" "/we4316")
 
   if(MSVC_VERSION GREATER_EQUAL 1914)
     # /Zc:__cplusplus: correctly set __cplusplus macro value

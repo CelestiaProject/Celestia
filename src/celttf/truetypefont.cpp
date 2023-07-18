@@ -393,7 +393,7 @@ std::pair<float, float>
 TextureFontPrivate::render(std::u16string_view line, float x, float y)
 {
     if (m_tex == nullptr)
-        return {0, 0};
+        return {0.0f, 0.0f};
 
     // Use the texture containing the atlas
     m_tex->bind();
