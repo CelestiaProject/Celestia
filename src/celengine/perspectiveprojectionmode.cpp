@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "perspectiveprojectionmode.h"
+#include <celmath/frustum.h>
 #include <celmath/geomutil.h>
 #include <celengine/shadermanager.h>
 
@@ -52,6 +53,12 @@ float PerspectiveProjectionMode::getPixelSize(float zoom) const
 float PerspectiveProjectionMode::getFieldCorrection(float zoom) const
 {
     return 2.0f * standardFOV / (celmath::radToDeg(getFOV(zoom)) + standardFOV);
+}
+
+celmath::Frustum
+PerspectiveProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
+{
+    return celmath::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
 double PerspectiveProjectionMode::getViewConeAngleMax(float zoom) const

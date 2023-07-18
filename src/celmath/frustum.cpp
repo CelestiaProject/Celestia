@@ -23,24 +23,34 @@ Frustum::Frustum(float fov, float aspectRatio, float n) :
     init(fov, aspectRatio, n, n);
 }
 
-
 Frustum::Frustum(float fov, float aspectRatio, float n, float f) :
-    infinite(false)
+    infinite(std::isinf(f))
 {
-    init(fov, aspectRatio, n, f);
+    init(fov, aspectRatio, n, infinite ? n : f);
 }
 
+Frustum::Frustum(float l, float r, float t, float b, float n, float f) :
+    infinite(std::isinf(f))
+{
+    init(l, r, t, b, n, infinite ? n : f);
+}
 
 void Frustum::init(float fov, float aspectRatio, float n, float f)
 {
     float h = std::tan(fov / 2.0f);
     float w = h * aspectRatio;
 
+    init(-w * n, w * n, h * n, -h * n, n, f);
+}
+
+void
+Frustum::init(float l, float r, float t, float b, float n, float f)
+{
     Eigen::Vector3f normals[4];
-    normals[Bottom] = Eigen::Vector3f( 0.0f,  1.0f, -h);
-    normals[Top]    = Eigen::Vector3f( 0.0f, -1.0f, -h);
-    normals[Left]   = Eigen::Vector3f( 1.0f,  0.0f, -w);
-    normals[Right]  = Eigen::Vector3f(-1.0f,  0.0f, -w);
+    normals[Bottom] = Eigen::Vector3f(0.0f,    n,  b);
+    normals[Top]    = Eigen::Vector3f(0.0f,   -n, -t);
+    normals[Left]   = Eigen::Vector3f(   n, 0.0f,  l);
+    normals[Right]  = Eigen::Vector3f(  -n, 0.0f, -r);
     for (unsigned int i = 0; i < 4; i++)
     {
         planes[i] = Eigen::Hyperplane<float, 3>(normals[i].normalized(), 0.0f);
@@ -49,7 +59,6 @@ void Frustum::init(float fov, float aspectRatio, float n, float f)
     planes[Near] = Eigen::Hyperplane<float, 3>(Eigen::Vector3f(0.0f, 0.0f, -1.0f), -n);
     planes[Far]  = Eigen::Hyperplane<float, 3>(Eigen::Vector3f(0.0f, 0.0f,  1.0f),  f);
 }
-
 
 Frustum::Aspect
 Frustum::test(const Eigen::Vector3f& point) const

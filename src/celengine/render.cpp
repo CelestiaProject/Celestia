@@ -1463,7 +1463,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
                    rle.position,
                    rle.distance,
                    rle.appMag,
-                   observer.getTime(),
+                   observer,
                    nearPlaneDistance, farPlaneDistance,
                    m);
         break;
@@ -1539,7 +1539,7 @@ void Renderer::draw(const Observer& observer,
     m_cameraOrientation = Quaterniond(m_cameraTransform) * observer.getOrientation();
 
     // Get the view frustum used for culling in camera space.
-    Frustum frustum(degToRad(fov), getAspectRatio(), MinNearPlaneDistance);
+    auto frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), zoom);
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
@@ -2225,7 +2225,7 @@ setupObjectLighting(const vector<LightSource>& suns,
 
 void Renderer::renderObject(const Vector3f& pos,
                             float distance,
-                            double now,
+                            const Observer& observer,
                             float nearPlaneDistance,
                             float farPlaneDistance,
                             RenderProperties& obj,
@@ -2233,6 +2233,7 @@ void Renderer::renderObject(const Vector3f& pos,
                             const Matrices &m)
 {
     RenderInfo ri;
+    double now = observer.getTime();
 
     float altitude = distance - obj.radius;
     float discSizeInPixels = obj.radius / (max(nearPlaneDistance, altitude) * pixelSize);
@@ -2381,9 +2382,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // normalized coordinate system where the 1 unit = 1 planet
     // radius (for an ellipsoidal planet, radius is taken to be
     // largest semiaxis.)
-    Frustum viewFrustum(degToRad(fov),
-                        getAspectRatio(),
-                        nearPlaneDistance / radius, frustumFarPlane / radius);
+    auto viewFrustum = projectionMode->getFrustum(nearPlaneDistance / radius, frustumFarPlane / radius, observer.getZoom());
     viewFrustum.transform(invMV);
 
     // Get cloud layer parameters
@@ -2980,7 +2979,7 @@ void Renderer::renderPlanet(Body& body,
             }
         }
 
-        renderObject(pos, distance, now,
+        renderObject(pos, distance, observer,
                      nearPlaneDistance, farPlaneDistance,
                      rp, lights, m);
 
@@ -3017,7 +3016,7 @@ void Renderer::renderStar(const Star& star,
                           const Vector3f& pos,
                           float distance,
                           float appMag,
-                          double now,
+                          const Observer& observer,
                           float nearPlaneDistance,
                           float farPlaneDistance,
                           const Matrices &m)
@@ -3072,9 +3071,9 @@ void Renderer::renderStar(const Star& star,
             rp.atmosphere = nullptr;
         }
 
-        rp.orientation = star.getRotationModel()->orientationAtTime(now).cast<float>();
+        rp.orientation = star.getRotationModel()->orientationAtTime(observer.getTime()).cast<float>();
 
-        renderObject(pos, distance, now,
+        renderObject(pos, distance, observer,
                      nearPlaneDistance, farPlaneDistance,
                      rp, LightingState(), m);
     }
@@ -3947,9 +3946,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
 
-    dsoRenderer.frustum = Frustum(degToRad(fov),
-                                  getAspectRatio(),
-                                  MinNearPlaneDistance);
+    dsoRenderer.frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), observer.getZoom());
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -5329,10 +5326,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
         setCurrentProjectionMatrix(proj);
 
-        Frustum intervalFrustum(degToRad(fov),
-                                getAspectRatio(),
-                                nearPlaneDistance,
-                                farPlaneDistance);
+        auto intervalFrustum = projectionMode->getFrustum(nearPlaneDistance, farPlaneDistance, observer.getZoom());
 
         int firstInInterval = i;
 
