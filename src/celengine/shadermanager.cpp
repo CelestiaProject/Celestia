@@ -870,10 +870,7 @@ ShadowDepth(unsigned int i)
 std::string
 TexCoord2D(unsigned int i, bool transform)
 {
-    auto str = fmt::format("in_TexCoord{}.st", i);
-    if (!transform)
-        return str;
-    return fmt::format("(texCoordBase{} + texCoordDelta{} * {})", i, i, str);
+    return transform ? fmt::format("(texCoordBase{} + texCoordDelta{} * in_TexCoord{}.st)", i, i, i) : fmt::format("in_TexCoord{}.st", i);
 }
 
 
@@ -3496,7 +3493,7 @@ CelestiaGLProgram::initParameters()
 
     if (props.hasTextureCoordTransform())
     {
-        for (unsigned int i = 0; i < maxTextureCount; ++i)
+        for (unsigned int i = 0; i < texCoordTransforms.size(); ++i)
         {
             texCoordTransforms[i].base = vec2Param(fmt::format("texCoordBase{}", i).c_str());
             texCoordTransforms[i].delta = vec2Param(fmt::format("texCoordDelta{}", i).c_str());

@@ -111,11 +111,6 @@ GLShader::~GLShader()
 
 //************* GLxxxProperty **********
 
-FloatShaderParameter::FloatShaderParameter() :
-    slot(-1)
-{
-}
-
 FloatShaderParameter::FloatShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -129,11 +124,6 @@ FloatShaderParameter::operator=(float f)
     return *this;
 }
 
-
-Vec2ShaderParameter::Vec2ShaderParameter() :
-    slot(-1)
-{
-}
 
 Vec2ShaderParameter::Vec2ShaderParameter(GLuint obj, const char* name)
 {
@@ -149,11 +139,6 @@ Vec2ShaderParameter::operator=(const Eigen::Vector2f& v)
 }
 
 
-Vec3ShaderParameter::Vec3ShaderParameter() :
-    slot(-1)
-{
-}
-
 Vec3ShaderParameter::Vec3ShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -167,10 +152,6 @@ Vec3ShaderParameter::operator=(const Eigen::Vector3f& v)
     return *this;
 }
 
-Vec4ShaderParameter::Vec4ShaderParameter() :
-    slot(-1)
-{
-}
 
 Vec4ShaderParameter::Vec4ShaderParameter(GLuint obj, const char* name)
 {
@@ -186,11 +167,6 @@ Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
 }
 
 
-IntegerShaderParameter::IntegerShaderParameter() :
-    slot(-1)
-{
-}
-
 IntegerShaderParameter::IntegerShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -205,11 +181,6 @@ IntegerShaderParameter::operator=(int i)
 }
 
 
-Mat3ShaderParameter::Mat3ShaderParameter() :
-    slot(-1)
-{
-}
-
 Mat3ShaderParameter::Mat3ShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -223,11 +194,6 @@ Mat3ShaderParameter::operator=(const Eigen::Matrix3f& v)
     return *this;
 }
 
-
-Mat4ShaderParameter::Mat4ShaderParameter() :
-    slot(-1)
-{
-}
 
 Mat4ShaderParameter::Mat4ShaderParameter(GLuint obj, const char* name)
 {
