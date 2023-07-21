@@ -108,6 +108,19 @@ class FloatShaderParameter
 };
 
 
+class Vec2ShaderParameter
+{
+ public:
+    Vec2ShaderParameter();
+    Vec2ShaderParameter(GLuint obj, const char* name);
+
+    Vec2ShaderParameter& operator=(const Eigen::Vector2f&);
+
+ private:
+    int slot;
+};
+
+
 class Vec3ShaderParameter
 {
  public:

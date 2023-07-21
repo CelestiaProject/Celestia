@@ -25,6 +25,8 @@ namespace celmath
 class Frustum;
 }
 
+class CelestiaGLProgram;
+
 class LODSphereMesh
 {
 public:
@@ -40,12 +42,12 @@ public:
     LODSphereMesh& operator=(LODSphereMesh&&) = delete;
 
     void render(unsigned int attributes, const celmath::Frustum&, float pixWidth,
-                Texture** tex, int nTextures);
-    void render(unsigned int attributes, const celmath::Frustum&, float pixWidth,
+                Texture** tex, int nTextures, CelestiaGLProgram *);
+    void render(unsigned int attributes, const celmath::Frustum&, float pixWidth, CelestiaGLProgram *,
                 Texture* tex0 = nullptr, Texture* tex1 = nullptr,
                 Texture* tex2 = nullptr, Texture* tex3 = nullptr);
     void render(const celmath::Frustum&, float pixWidth,
-                Texture** tex, int nTextures);
+                Texture** tex, int nTextures, CelestiaGLProgram *);
 
     enum
     {
@@ -74,9 +76,10 @@ public:
     void renderPatches(int phi0, int theta0,
                        int extent,
                        int level,
-                       const RenderInfo&);
+                       const RenderInfo&,
+                       CelestiaGLProgram *);
 
-    void renderSection(int phi0, int theta0, int extent, const RenderInfo&);
+    void renderSection(int phi0, int theta0, int extent, const RenderInfo&, CelestiaGLProgram *);
 
     int vertexSize{ 0 };
 
