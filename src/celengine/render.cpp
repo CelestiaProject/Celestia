@@ -1842,11 +1842,12 @@ static void renderSphereUnlit(const RenderInfo& ri,
     celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
     {
-        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
         textures.try_push_back(ri.baseTex);
     }
     if (ri.nightTex != nullptr)
@@ -1877,7 +1878,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
     r->setPipelineState(ps);
 
     g_lodSphere->render(frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()));
+                        textures.data(), static_cast<int>(textures.size()), prog);
 }
 
 
@@ -1889,7 +1890,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
                               Renderer *r)
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::DiffuseTexture;
+    shadprop.texUsage = ShaderProperties::DiffuseTexture | ShaderProperties::TextureCoordTransform;
     shadprop.lightModel = ShaderProperties::UnlitModel;
 
     // Get a shader for the current rendering configuration
@@ -1906,7 +1907,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
-    g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1);
+    g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1, prog);
 }
 
 void

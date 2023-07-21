@@ -48,6 +48,7 @@ class ShaderProperties
 
     bool hasShadowsForLight(unsigned int) const;
     bool hasSharedTextureCoords() const;
+    bool hasTextureCoordTransform() const;
     bool hasSpecular() const;
     bool hasScattering() const;
     bool isViewDependent() const;
@@ -72,6 +73,7 @@ class ShaderProperties
      SharedTextureCoords     =  0x8000,
      StaticPointSize         = 0x10000,
      LineAsTriangles         = 0x20000,
+     TextureCoordTransform   = 0x40000,
  };
 
  enum
@@ -161,6 +163,12 @@ struct CelestiaGLProgramShadow
     FloatShaderParameter maxDepth;
 };
 
+struct CelestiaGLProgramTextureTransform
+{
+    Vec2ShaderParameter base;
+    Vec2ShaderParameter delta;
+};
+
 class CelestiaGLProgram
 {
  public:
@@ -226,6 +234,9 @@ class CelestiaGLProgram
     FloatShaderParameter cloudHeight;
     FloatShaderParameter shadowTextureOffset;
 
+    static constexpr std::size_t maxTextureCount = 4;
+    CelestiaGLProgramTextureTransform texCoordTransforms[maxTextureCount];
+
     // Parameters for atmospheric scattering; all distances are normalized for
     // a unit sphere.
     FloatShaderParameter mieCoeff;
@@ -274,6 +285,7 @@ class CelestiaGLProgram
     FloatShaderParameter floatParam(const char*);
     IntegerShaderParameter intParam(const char*);
     IntegerShaderParameter samplerParam(const char*);
+    Vec2ShaderParameter vec2Param(const char*);
     Vec3ShaderParameter vec3Param(const char*);
     Vec4ShaderParameter vec4Param(const char*);
     Mat3ShaderParameter mat3Param(const char*);

@@ -171,6 +171,17 @@ attribute vec4 in_TexCoord3;
 attribute vec4 in_Color;
 )glsl"sv;
 
+constexpr std::string_view TextureTransformUniforms = R"glsl(
+uniform vec2 texCoordBase0;
+uniform vec2 texCoordBase1;
+uniform vec2 texCoordBase2;
+uniform vec2 texCoordBase3;
+uniform vec2 texCoordDelta0;
+uniform vec2 texCoordDelta1;
+uniform vec2 texCoordDelta2;
+uniform vec2 texCoordDelta3;
+)glsl"sv;
+
 std::string
 LightProperty(unsigned int i, std::string_view property)
 {
@@ -851,9 +862,12 @@ ShadowDepth(unsigned int i)
 
 
 std::string
-TexCoord2D(unsigned int i)
+TexCoord2D(unsigned int i, bool transform)
 {
-    return fmt::format("in_TexCoord{}.st", i);
+    auto str = fmt::format("in_TexCoord{}.st", i);
+    if (!transform)
+        return str;
+    return fmt::format("(texCoordBase{} + texCoordDelta{} * {})", i, i, str);
 }
 
 
@@ -1718,6 +1732,11 @@ ShaderProperties::hasSharedTextureCoords() const
     return (texUsage & SharedTextureCoords) != 0;
 }
 
+bool
+ShaderProperties::hasTextureCoordTransform() const
+{
+    return (texUsage & TextureCoordTransform) != 0;
+}
 
 bool
 ShaderProperties::hasSpecular() const
@@ -1952,6 +1971,8 @@ R"glsl(
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source += TextureTransformUniforms;
 
     source += DeclareLights(props);
     source += TextureCoordDeclarations(props, Shader_Out);
@@ -2029,6 +2050,7 @@ R"glsl(
     // Output the texture coordinates. Use just a single texture coordinate if all textures are mapped
     // identically. The texture offset is added for cloud maps; specular and night texture are not offset
     // because cloud layers never have these textures.
+    bool hasTexCoordTransform = props.hasTextureCoordTransform();
     if (props.hasSharedTextureCoords())
     {
         if (props.texUsage & (ShaderProperties::DiffuseTexture  |
@@ -2038,7 +2060,7 @@ R"glsl(
                               ShaderProperties::EmissiveTexture |
                               ShaderProperties::OverlayTexture))
         {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             source += "diffTexCoord.x += textureOffset;\n";
         }
     }
@@ -2046,7 +2068,7 @@ R"glsl(
     {
         if (props.texUsage & ShaderProperties::DiffuseTexture)
         {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
             nTexCoords++;
         }
 
@@ -2054,25 +2076,25 @@ R"glsl(
         {
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
-                source += "normTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
+                source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
                 nTexCoords++;
             }
 
             if (props.texUsage & ShaderProperties::SpecularTexture)
             {
-                source += "specTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                source += "specTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
                 nTexCoords++;
             }
 
             if (props.texUsage & ShaderProperties::NightTexture)
             {
-                source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                source += "nightTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
                 nTexCoords++;
             }
 
             if (props.texUsage & ShaderProperties::EmissiveTexture)
             {
-                source += "emissiveTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
                 nTexCoords++;
             }
         }
@@ -2144,7 +2166,7 @@ R"glsl(
 
     if ((props.texUsage & ShaderProperties::OverlayTexture) && !props.hasSharedTextureCoords())
     {
-        source += "overlayTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+        source += "overlayTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
         nTexCoords++;
     }
 
@@ -2544,6 +2566,8 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source += TextureTransformUniforms;
 
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
@@ -2684,6 +2708,8 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source += TextureTransformUniforms;
 
     source += DeclareLights(props);
 
@@ -2704,7 +2730,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
+        source += "diffTexCoord = " + TexCoord2D(0, props.hasTextureCoordTransform()) + ";\n";
 
     source += "position = in_Position.xyz;\n";
     if (props.hasEclipseShadows())
@@ -2842,6 +2868,8 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source += TextureTransformUniforms;
 
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
@@ -2928,6 +2956,8 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source += TextureTransformUniforms;
 
     source += DeclareUniform("opacity", Shader_Float);
 
@@ -2956,7 +2986,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     // Optional texture coordinates (generated automatically for point
     // sprites.)
     if ((props.texUsage & ShaderProperties::DiffuseTexture) && !props.usePointSize())
-        source += "    v_TexCoord0.st = " + TexCoord2D(0) + ";\n";
+        source += "    v_TexCoord0.st = " + TexCoord2D(0, props.hasTextureCoordTransform()) + ";\n";
 
     // Set the color.
 
@@ -3043,6 +3073,8 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << CommonHeader;
     source << VertexHeader;
     source << CommonAttribs;
+    if (props.hasTextureCoordTransform())
+        source << TextureTransformUniforms;
 
     source << "// PARTICLE SHADER\n";
     source << "// shadow count: " << props.shadowCounts << std::endl;
@@ -3373,6 +3405,13 @@ CelestiaGLProgram::samplerParam(const char *paramName)
 }
 
 
+Vec2ShaderParameter
+CelestiaGLProgram::vec2Param(const char *paramName)
+{
+    return Vec2ShaderParameter(program->getID(), paramName);
+}
+
+
 Vec3ShaderParameter
 CelestiaGLProgram::vec3Param(const char *paramName)
 {
@@ -3446,6 +3485,15 @@ CelestiaGLProgram::initParameters()
                 floatParam(IndexedParameter("shadowFalloff", i, j).c_str());
             shadows[i][j].maxDepth =
                 floatParam(IndexedParameter("shadowMaxDepth", i, j).c_str());
+        }
+    }
+
+    if (props.hasTextureCoordTransform())
+    {
+        for (unsigned int i = 0; i < maxTextureCount; ++i)
+        {
+            texCoordTransforms[i].base = vec2Param(fmt::format("texCoordBase{}", i).c_str());
+            texCoordTransforms[i].delta = vec2Param(fmt::format("texCoordDelta{}", i).c_str());
         }
     }
 
