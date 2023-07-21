@@ -173,6 +173,8 @@ animatedcollapse.addDiv('byname', 'fade=1')
 animatedcollapse.addDiv('solbrowser', 'fade=1')
 animatedcollapse.addDiv('gettingstarted', 'fade=1')
 animatedcollapse.addDiv('installing', 'fade=1')
+animatedcollapse.addDiv('cmdline', 'fade=1')
+animatedcollapse.addDiv('addcontent', 'fade=1')
 
 
 animatedcollapse.addDiv('faq1', 'fade=1')

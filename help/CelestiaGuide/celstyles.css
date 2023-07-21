@@ -191,8 +191,13 @@ h1 {
 	width:720px;
 	border:1px #dfe5ed solid;
 	}
+
 .list-table {
 	width:720px;
+	}
+
+.list-table2 {
+	width:640px;
 	}
 
 .txtcontent .list h2{	
@@ -274,6 +279,13 @@ h1 {
 	}
 .titlecell a,.titlecell a:hover, .subtitlecell a, .subtitlecell a:hover {color:#555555;}
 
+.titlecell2{
+	padding-bottom:5px;
+	padding-top:30px;
+	border-bottom:1px #dfe5ed solid;
+	color:#000066;
+	}
+
 .subtitlecell {
 	padding-bottom:5px;
 	padding-top:5px;
@@ -299,7 +311,22 @@ h1 {
 	padding-left:5px;
 	font-size:90%;
 	}
-	
+
+
+.leftcell2 {
+	font-family:courier new,courier,monospace;
+	color:#CC0033;
+	padding-right:10px;
+	padding-bottom:4px;
+	padding-top:4px;
+	font-weight:bold;
+	border-bottom:1px #dfe5ed solid;	
+	border-left:1px #dfe5ed solid;
+	padding-left:5px;
+	font-size:110%;
+	}	
+
+
 .rightcell{
 	padding-bottom:4px;
 	padding-top:4px;
