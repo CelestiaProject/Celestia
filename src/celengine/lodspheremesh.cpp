@@ -268,7 +268,7 @@ createVertices(std::vector<float>& vertices,
                 vertices.push_back(-ctheta);
             }
 
-            for (int tex = 0; tex < tc.nTexturesUsed; tex++)
+            if (tc.nTexturesUsed > 0)
             {
                 vertices.push_back(static_cast<float>(theta));
                 vertices.push_back(static_cast<float>(phi));
@@ -464,7 +464,7 @@ void LODSphereMesh::render(unsigned int attributes,
     vertexSize = 3;
     if ((attributes & Tangents) != 0)
         vertexSize += 3;
-    for (int i = 0; i < nTextures; i++)
+    if (nTextures > 0)
         vertexSize += 2;
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
@@ -651,7 +651,7 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     {
         glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
                               2, GL_FLOAT, GL_FALSE,
-                              stride, PTR(((tc * 2) + texCoordOffset) * sizeof(float)));
+                              stride, PTR(texCoordOffset * sizeof(float)));
     }
 
     if ((ri.attributes & Tangents) != 0)
@@ -731,7 +731,7 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     vertices.clear();
     int perVertexFloats = (ri.attributes & Tangents) == 0 ? 3 : 6;
     int expectedVertices = ((phi1 - phi0) / ri.step + 1) *
-                           ((theta1 - theta0) / ri.step + 1) * (perVertexFloats + nTexturesUsed * 2);
+                           ((theta1 - theta0) / ri.step + 1) * (perVertexFloats + (nTexturesUsed > 0 ? 2 : 0));
     assert(expectedVertices <= maxVertices * MaxVertexSize);
     vertices.reserve(expectedVertices);
     if ((ri.attributes & Tangents) == 0)

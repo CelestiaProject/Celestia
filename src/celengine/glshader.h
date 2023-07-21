@@ -98,91 +98,91 @@ class GLProgram
 class FloatShaderParameter
 {
  public:
-    FloatShaderParameter();
+    FloatShaderParameter() = default;
     FloatShaderParameter(GLuint obj, const char* name);
 
     FloatShaderParameter& operator=(float);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class Vec2ShaderParameter
 {
  public:
-    Vec2ShaderParameter();
+    Vec2ShaderParameter() = default;
     Vec2ShaderParameter(GLuint obj, const char* name);
 
     Vec2ShaderParameter& operator=(const Eigen::Vector2f&);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class Vec3ShaderParameter
 {
  public:
-    Vec3ShaderParameter();
+    Vec3ShaderParameter() = default;
     Vec3ShaderParameter(GLuint obj, const char* name);
 
     Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class Vec4ShaderParameter
 {
  public:
-    Vec4ShaderParameter();
+    Vec4ShaderParameter() = default;
     Vec4ShaderParameter(GLuint obj, const char* name);
 
     Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class IntegerShaderParameter
 {
  public:
-    IntegerShaderParameter();
+    IntegerShaderParameter() = default;
     IntegerShaderParameter(GLuint obj, const char* name);
 
     IntegerShaderParameter& operator=(int);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class Mat3ShaderParameter
 {
  public:
-    Mat3ShaderParameter();
+    Mat3ShaderParameter() = default;
     Mat3ShaderParameter(GLuint obj, const char* name);
 
     Mat3ShaderParameter& operator=(const Eigen::Matrix3f&);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 
 class Mat4ShaderParameter
 {
  public:
-    Mat4ShaderParameter();
+    Mat4ShaderParameter() = default;
     Mat4ShaderParameter(GLuint obj, const char* name);
 
     Mat4ShaderParameter& operator=(const Eigen::Matrix4f&);
 
  private:
-    int slot;
+    int slot{ -1 };
 };
 
 

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -235,8 +236,7 @@ class CelestiaGLProgram
     FloatShaderParameter cloudHeight;
     FloatShaderParameter shadowTextureOffset;
 
-    static constexpr std::size_t maxTextureCount = 4;
-    CelestiaGLProgramTextureTransform texCoordTransforms[maxTextureCount];
+    std::array<CelestiaGLProgramTextureTransform, 4> texCoordTransforms;
 
     // Parameters for atmospheric scattering; all distances are normalized for
     // a unit sphere.
