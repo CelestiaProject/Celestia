@@ -31,6 +31,8 @@
 #include <QRegExp>
 #include <QFontMetrics>
 #include <QCollator>
+#include <algorithm>
+#include <iterator>
 #include <vector>
 #include <set>
 
@@ -456,7 +458,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 
     // Move the best matching stars into the vector
     stars.reserve(nStars);
-    std::copy(firstStars.begin(), firstStars.end(), stars.begin());
+    std::copy(firstStars.begin(), firstStars.end(), std::back_inserter(stars));
 
     beginInsertRows(QModelIndex(), 0, stars.size());
     endInsertRows();
