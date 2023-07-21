@@ -222,12 +222,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
     shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
     {
-        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
         textures.try_push_back(ri.baseTex);
     }
 
@@ -435,7 +436,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     textures.erase(endTextures, textures.end());
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()));
+                        textures.data(), static_cast<int>(textures.size()), prog);
 }
 
 
@@ -630,12 +631,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
     celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
     shadprop.nLights = ls.nLights;
 
     // Set up the textures used by this object
     if (cloudTex != nullptr)
     {
-        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
         textures.try_push_back(cloudTex);
     }
 
@@ -718,7 +720,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     textures.erase(endTextures, textures.end());
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()));
+                        textures.data(), static_cast<int>(textures.size()), prog);
 
     prog->textureOffset = 0.0f;
 }

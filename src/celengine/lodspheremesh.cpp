@@ -270,8 +270,8 @@ createVertices(std::vector<float>& vertices,
 
             for (int tex = 0; tex < tc.nTexturesUsed; tex++)
             {
-                vertices.push_back(tc.u0[tex] - static_cast<float>(theta) * tc.du[tex]);
-                vertices.push_back(tc.v0[tex] - static_cast<float>(phi)   * tc.dv[tex]);
+                vertices.push_back(static_cast<float>(theta));
+                vertices.push_back(static_cast<float>(phi));
             }
         }
     }
@@ -292,9 +292,10 @@ void
 LODSphereMesh::render(const celmath::Frustum& frustum,
                       float pixWidth,
                       Texture** tex,
-                      int nTextures)
+                      int nTextures,
+                      CelestiaGLProgram *program)
 {
-    render(Normals, frustum, pixWidth, tex, nTextures);
+    render(Normals, frustum, pixWidth, tex, nTextures, program);
 }
 
 
@@ -302,6 +303,7 @@ void
 LODSphereMesh::render(unsigned int attributes,
                       const celmath::Frustum& frustum,
                       float pixWidth,
+                      CelestiaGLProgram *program,
                       Texture* tex0,
                       Texture* tex1,
                       Texture* tex2,
@@ -317,7 +319,7 @@ LODSphereMesh::render(unsigned int attributes,
     if (tex3 != nullptr)
         tex.try_push_back(tex3);
     render(attributes, frustum, pixWidth,
-           tex.data(), static_cast<int>(tex.size()));
+           tex.data(), static_cast<int>(tex.size()), program);
 }
 
 
@@ -325,7 +327,8 @@ void LODSphereMesh::render(unsigned int attributes,
                            const celmath::Frustum& frustum,
                            float pixWidth,
                            Texture** tex,
-                           int nTextures)
+                           int nTextures,
+                           CelestiaGLProgram *program)
 {
     int lod = 64;
     int lodBias = getSphereLOD(pixWidth);
@@ -478,7 +481,7 @@ void LODSphereMesh::render(unsigned int attributes,
 
     if (split == 1)
     {
-        renderSection(0, 0, thetaExtent, ri);
+        renderSection(0, 0, thetaExtent, ri, program);
     }
     else
     {
@@ -517,7 +520,7 @@ void LODSphereMesh::render(unsigned int attributes,
             for (int j = 0; j < 2; j++)
             {
                 renderPatches(i * extent / 2, j * extent,
-                              extent, split / 2, ri);
+                              extent, split / 2, ri, program);
             }
         }
     }
@@ -549,7 +552,8 @@ void
 LODSphereMesh::renderPatches(int phi0, int theta0,
                              int extent,
                              int level,
-                             const RenderInfo& ri)
+                             const RenderInfo& ri,
+                             CelestiaGLProgram *program)
 {
     int thetaExtent = extent;
     int phiExtent = extent / 2;
@@ -606,7 +610,7 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
 
     if (level == 1)
     {
-        renderSection(phi0, theta0, thetaExtent, ri);
+        renderSection(phi0, theta0, thetaExtent, ri, program);
         return;
     }
 
@@ -618,7 +622,8 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
                           theta0 + thetaExtent / 2 * j,
                           extent / 2,
                           level / 2,
-                          ri);
+                          ri,
+                          program);
         }
     }
 }
@@ -626,7 +631,7 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
 
 void
 LODSphereMesh::renderSection(int phi0, int theta0, int extent,
-                             const RenderInfo& ri)
+                             const RenderInfo& ri, CelestiaGLProgram *program)
 
 {
     auto stride = static_cast<GLsizei>(vertexSize * sizeof(float));
@@ -709,6 +714,9 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             tc.dv[tex] *= tile.dv;
             tc.u0[tex] = tc.u0[tex] * tile.du + tile.u;
             tc.v0[tex] = tc.v0[tex] * tile.dv + tile.v;
+
+            program->texCoordTransforms[tex].base = Eigen::Vector2f(tc.u0[tex], tc.v0[tex]);
+            program->texCoordTransforms[tex].delta = Eigen::Vector2f(-tc.du[tex], -tc.dv[tex]);
 
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
