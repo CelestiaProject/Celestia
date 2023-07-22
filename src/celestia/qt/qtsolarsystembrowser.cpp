@@ -845,10 +845,10 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
 
 void SolarSystemBrowser::slotRefreshTree()
 {
-    Simulation* sim = appCore->getSimulation();
+    const Simulation* sim = appCore->getSimulation();
 
     // Update the browser with the solar system closest to the active observer
-    SolarSystem* solarSys = sim->getUniverse()->getNearestSolarSystem(sim->getActiveObserver()->getPosition());
+    const SolarSystem* solarSys = sim->getNearestSolarSystem();
 
     // Don't update the solar system browser if no solar system is nearby
     if (!solarSys)

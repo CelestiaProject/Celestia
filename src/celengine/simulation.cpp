@@ -10,15 +10,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "simulation.h"
+
 #include <algorithm>
+#include <cstddef>
+
 #include <celutil/strnatcmp.h>
 #include "body.h"
 #include "location.h"
 #include "render.h"
-#include "simulation.h"
 
-using namespace Eigen;
-using namespace std;
 
 namespace celutil = celestia::util;
 
@@ -122,8 +123,8 @@ void Simulation::update(double dt)
         observer->update(dt, timeScale);
     }
 
-    // Find the closest solar system
-    closestSolarSystem = universe->getNearestSolarSystem(activeObserver->getPosition());
+    // Reset nearest solar system
+    closestSolarSystem = std::nullopt;
 }
 
 
@@ -151,7 +152,9 @@ void Simulation::setTrackedObject(const Selection& sel)
 }
 
 
-Selection Simulation::pickObject(const Vector3f& pickRay, uint64_t renderFlags, float tolerance)
+Selection Simulation::pickObject(const Eigen::Vector3f& pickRay,
+                                 std::uint64_t renderFlags,
+                                 float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),
                           activeObserver->getOrientationf().conjugate() * pickRay,
@@ -183,7 +186,7 @@ Observer* Simulation::addObserver()
 
 void Simulation::removeObserver(Observer* o)
 {
-    auto iter = find(observers.begin(), observers.end(), o);
+    auto iter = std::find(observers.begin(), observers.end(), o);
     if (iter != observers.end())
         observers.erase(iter);
 }
@@ -197,7 +200,7 @@ Observer* Simulation::getActiveObserver()
 
 void Simulation::setActiveObserver(Observer* o)
 {
-    auto iter = find(observers.begin(), observers.end(), o);
+    auto iter = std::find(observers.begin(), observers.end(), o);
     if (iter != observers.end())
         activeObserver = o;
 }
@@ -208,7 +211,7 @@ void Simulation::setObserverPosition(const UniversalCoord& pos)
     activeObserver->setPosition(pos);
 }
 
-void Simulation::setObserverOrientation(const Quaternionf& orientation)
+void Simulation::setObserverOrientation(const Eigen::Quaternionf& orientation)
 {
     activeObserver->setOrientation(orientation);
 }
@@ -243,14 +246,14 @@ const ObserverFrame::SharedConstPtr& Simulation::getFrame() const
 }
 
 // Rotate the observer about its center.
-void Simulation::rotate(const Quaternionf& q)
+void Simulation::rotate(const Eigen::Quaternionf& q)
 {
     activeObserver->rotate(q);
 }
 
 // Orbit around the selection (if there is one.)  This involves changing
 // both the observer's position and orientation.
-void Simulation::orbit(const Quaternionf& q)
+void Simulation::orbit(const Eigen::Quaternionf& q)
 {
     activeObserver->orbit(selection, q);
 }
@@ -275,7 +278,7 @@ float Simulation::getTargetSpeed()
 }
 
 void Simulation::gotoSelection(double gotoTime,
-                               const Vector3f& up,
+                               const Eigen::Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
     if (selection.getType() == SelectionType::Location)
@@ -292,7 +295,7 @@ void Simulation::gotoSelection(double gotoTime,
 
 void Simulation::gotoSelection(double gotoTime,
                                double distance,
-                               const Vector3f& up,
+                               const Eigen::Vector3f& up,
                                ObserverFrame::CoordinateSystem upCoordSys)
 {
     activeObserver->gotoSelection(selection, gotoTime, distance, up, upCoordSys);
@@ -302,7 +305,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
                                       double distance,
                                       float longitude,
                                       float latitude,
-                                      const Vector3f& up)
+                                      const Eigen::Vector3f& up)
 {
     activeObserver->gotoSelectionLongLat(selection, gotoTime, distance,
                                          longitude, latitude, up);
@@ -310,7 +313,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
 
 
 void Simulation::gotoLocation(const UniversalCoord& position,
-                              const Quaterniond& orientation,
+                              const Eigen::Quaterniond& orientation,
                               double duration)
 {
     activeObserver->gotoLocation(position, orientation, duration);
@@ -394,7 +397,7 @@ void Simulation::selectPlanet(int index)
         if (star != nullptr)
             solarSystem = universe->getSolarSystem(star);
         else
-            solarSystem = closestSolarSystem;
+            solarSystem = getNearestSolarSystem();
 
         if (solarSystem != nullptr &&
             index < solarSystem->getPlanets()->getSystemSize())
@@ -419,8 +422,8 @@ Selection Simulation::findObject(std::string_view s, bool i18n) const
     if (!selection.empty())
         path[nPathEntries++] = selection;
 
-    if (closestSolarSystem != nullptr)
-        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
+    if (auto nearestSolarSystem = getNearestSolarSystem(); nearestSolarSystem != nullptr)
+        path[nPathEntries++] = Selection(nearestSolarSystem->getStar());
 
     return universe->find(s, {path, nPathEntries}, i18n);
 }
@@ -437,8 +440,8 @@ Selection Simulation::findObjectFromPath(std::string_view s, bool i18n) const
     if (!selection.empty())
         path[nPathEntries++] = selection;
 
-    if (closestSolarSystem != nullptr)
-        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
+    if (auto nearestSolarSystem = getNearestSolarSystem(); nearestSolarSystem != nullptr)
+        path[nPathEntries++] = Selection(nearestSolarSystem->getStar());
 
     return universe->findPath(s, {path, nPathEntries}, i18n);
 }
@@ -464,10 +467,10 @@ void Simulation::getObjectCompletion(std::vector<std::string>& completion,
         }
     }
 
-    if (closestSolarSystem != nullptr &&
-        closestSolarSystem != universe->getSolarSystem(selection))
+    if (auto nearestSolarSystem = getNearestSolarSystem();
+        nearestSolarSystem != nullptr && nearestSolarSystem != universe->getSolarSystem(selection))
     {
-        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
+        path[nPathEntries++] = Selection(nearestSolarSystem->getStar());
     }
 
     universe->getCompletionPath(completion, s, i18n, {path, nPathEntries}, withLocations);
@@ -549,5 +552,7 @@ void Simulation::setFaintestVisible(float magnitude)
 
 SolarSystem* Simulation::getNearestSolarSystem() const
 {
-    return closestSolarSystem;
+    if (!closestSolarSystem.has_value())
+        closestSolarSystem = universe->getNearestSolarSystem(activeObserver->getPosition());
+    return *closestSolarSystem;
 }
