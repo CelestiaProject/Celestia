@@ -33,7 +33,7 @@ buildGalacticForm(const fs::path& filename)
     GalacticForm::BlobVector galacticPoints;
 
     // Load templates in standard .png format
-    int width, height, rgb, j = 0, kmin = 9;
+    int kmin = 9;
     float h = 0.75f;
     std::unique_ptr<Image> img = LoadImageFromFile(filename);
     if (img == nullptr)
@@ -41,9 +41,9 @@ buildGalacticForm(const fs::path& filename)
         celestia::util::GetLogger()->error("The galaxy template *** {} *** could not be loaded!\n", filename);
         return std::nullopt;
     }
-    width  = img->getWidth();
-    height = img->getHeight();
-    rgb    = img->getComponents();
+    int width  = img->getWidth();
+    int height = img->getHeight();
+    int rgb    = img->getComponents();
 
     auto& rng = celmath::getRNG();
     rng.seed(1312);
@@ -97,7 +97,6 @@ buildGalacticForm(const fs::path& filename)
             b.position = Eigen::Vector3f(x, y, z);
             b.colorIndex = static_cast<std::uint8_t>(std::min(b.position.norm() * 511.0f, 255.0f));
             galacticPoints.push_back(b);
-            j++;
         }
     }
 

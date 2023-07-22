@@ -735,18 +735,6 @@ void CelestiaAppWindow::slotCaptureVideo()
 #endif
 }
 
-static QImage::Format toQFormat(PixelFormat format)
-{
-    switch (format)
-    {
-    case PixelFormat::RGB:
-        return QImage::Format_RGB888;
-    case PixelFormat::RGBA:
-        return QImage::Format_RGBA8888;
-    default:
-        return QImage::Format_Invalid;
-    }
-}
 
 void CelestiaAppWindow::slotCopyImage()
 {

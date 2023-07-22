@@ -42,7 +42,9 @@ namespace gl = celestia::gl;
 
 namespace
 {
+#if GL_ONLY_SHADOWS
 constexpr const int ShadowSampleKernelWidth = 2;
+#endif
 
 enum ShaderVariableType
 {
@@ -477,6 +479,7 @@ Sh_Expression operator*(const Sh_Expression& left, const Sh_Expression& right)
     return makeExpression<Sh_MultiplicationExpression>(left, right);
 }
 
+[[maybe_unused]]
 Sh_Expression operator/(const Sh_Expression& left, const Sh_Expression& right)
 {
     return makeExpression<Sh_DivisionExpression>(left, right);
@@ -558,6 +561,7 @@ Sh_Expression vec2(const Sh_Expression& x, const Sh_Expression& y)
     return makeExpression<Sh_BinaryFunctionExpression>("vec2", x, y);
 }
 
+[[maybe_unused]]
 Sh_Expression vec3(const Sh_Expression& x, const Sh_Expression& y, const Sh_Expression& z)
 {
     return makeExpression<Sh_TernaryFunctionExpression>("vec3", x, y, z);
@@ -568,21 +572,25 @@ Sh_Expression dot(const Sh_Expression& v0, const Sh_Expression& v1)
     return makeExpression<Sh_BinaryFunctionExpression>("dot", v0, v1);
 }
 
+[[maybe_unused]]
 Sh_Expression cross(const Sh_Expression& v0, const Sh_Expression& v1)
 {
     return makeExpression<Sh_BinaryFunctionExpression>("cross", v0, v1);
 }
 
+[[maybe_unused]]
 Sh_Expression sqrt(const Sh_Expression& v0)
 {
     return makeExpression<Sh_UnaryFunctionExpression>("sqrt", v0);
 }
 
+[[maybe_unused]]
 Sh_Expression length(const Sh_Expression& v0)
 {
     return makeExpression<Sh_UnaryFunctionExpression>("length", v0);
 }
 
+[[maybe_unused]]
 Sh_Expression normalize(const Sh_Expression& v0)
 {
     return makeExpression<Sh_UnaryFunctionExpression>("normalize", v0);
@@ -598,6 +606,7 @@ Sh_Expression mix(const Sh_Expression& v0, const Sh_Expression& v1, const Sh_Exp
     return makeExpression<Sh_TernaryFunctionExpression>("mix", v0, v1, alpha);
 }
 
+[[maybe_unused]]
 Sh_Expression min(const Sh_Expression& v0, const Sh_Expression& v1)
 {
     return makeExpression<Sh_BinaryFunctionExpression>("min", v0, v1);
@@ -702,7 +711,7 @@ assign(std::string_view variableName, const Sh_Expression& expr)
     return fmt::format("{} = {};\n", variableName, expr.toString());
 }
 
-std::string
+[[maybe_unused]] std::string
 addAssign(std::string_view variableName, const Sh_Expression& expr)
 {
     return fmt::format("{} += {};\n", variableName, expr.toString());

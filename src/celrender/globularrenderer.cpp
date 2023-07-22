@@ -287,7 +287,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
 
     float rRatio = std::pow(10.0f, c); //  = r_t / r_c
     float cc = 1.0f + rRatio * rRatio;
-    unsigned int i = 0, k = 0;
+    unsigned int i = 0;
 
     // Value of King_1962 luminosity profile at center:
 
@@ -335,8 +335,6 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * correcting the power distribution of eta into the exact,
          * desired King form 'prob'!
          */
-
-        k++;
 
         if (celmath::RealDists<float>::Unit(rng) < prob / cH)
         {

@@ -67,8 +67,6 @@ ConstellationBoundaries* ReadBoundaries(std::istream& in)
 {
     auto* boundaries = new ConstellationBoundaries();
     std::string lastCon;
-    int conCount = 0;
-    int ptCount = 0;
 
     for (;;)
     {
@@ -91,13 +89,11 @@ ConstellationBoundaries* ReadBoundaries(std::istream& in)
         {
             boundaries->moveto(ra, dec);
             lastCon = con;
-            conCount++;
         }
         else
         {
             boundaries->lineto(ra, dec);
         }
-        ptCount++;
     }
 
     return boundaries;

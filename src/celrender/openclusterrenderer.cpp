@@ -16,8 +16,7 @@
 namespace celestia::render
 {
 
-OpenClusterRenderer::OpenClusterRenderer(Renderer &renderer) :
-    m_renderer(renderer)
+OpenClusterRenderer::OpenClusterRenderer(Renderer&)
 {
 }
 

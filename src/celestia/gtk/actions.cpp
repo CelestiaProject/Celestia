@@ -1442,9 +1442,8 @@ void resyncStarStyleActions(AppData* app)
 /* Placeholder for when galaxy brightness is added as an action */
 void resyncGalaxyGainActions(AppData* app)
 {
-    float gain = Galaxy::getLightGain();
-
     #ifdef GNOME
+    float gain = Galaxy::getLightGain();
     gconf_client_set_float(app->client, "/apps/celestia/galaxyLightGain", gain, NULL);
     #endif
 }
@@ -1453,9 +1452,8 @@ void resyncGalaxyGainActions(AppData* app)
 /* Synchronizes the Texture Resolution with the state of the core */
 void resyncTextureResolutionActions(AppData* app)
 {
-    int resolution = app->renderer->getResolution();
-
     #ifdef GNOME
+    int resolution = app->renderer->getResolution();
     gconf_client_set_int(app->client, "/apps/celestia/textureResolution", resolution, NULL);
     #endif /* GNOME */
 }

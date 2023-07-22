@@ -47,9 +47,9 @@ class Logger
 
     Logger();
     Logger(Level level, Stream &log, Stream &err) :
-        m_level(level),
         m_log(log),
-        m_err(err)
+        m_err(err),
+        m_level(level)
     {}
 
     void setLevel(Level level)

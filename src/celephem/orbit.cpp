@@ -239,8 +239,6 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
     Eigen::Vector3d lastP = positionAtTime(t);
     Eigen::Vector3d lastV = velocityAtTime(t);
     proc.sample(t, lastP, lastV);
-    int sampCount = 0;
-    int nTests = 0;
 
     while (t < endTime)
     {
@@ -256,7 +254,6 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
         Eigen::Vector3d pInterp = cubicInterpolate(lastP, lastV * dt,
                                                    p1, v1 * dt,
                                                    0.5);
-        ++nTests;
 
         double positionError = (pInterp - pTest).norm();
 
@@ -276,7 +273,6 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
                 pInterp = cubicInterpolate(lastP, lastV * dt,
                                            p1, v1 * dt,
                                            0.5);
-                nTests++;
 
                 positionError = (pInterp - pTest).norm();
             }
@@ -297,7 +293,6 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
                 pInterp = cubicInterpolate(lastP, lastV * dt,
                                            p1, v1 * dt,
                                            0.5);
-                nTests++;
 
                 positionError = (pInterp - pTest).norm();
             }
@@ -308,11 +303,7 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
         lastV = v1;
 
         proc.sample(t, lastP, lastV);
-        sampCount++;
     }
-
-    // Statistics for debugging
-    // clog << "Orbit samples: " << sampCount << ", nTests: " << nTests << endl;
 }
 
 

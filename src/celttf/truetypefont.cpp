@@ -136,12 +136,6 @@ struct TextureFontPrivate
 namespace
 {
 
-inline float
-pt_to_px(float pt, int dpi = 96)
-{
-    return dpi == 0 ? pt : pt / 72.0f * static_cast<float>(dpi);
-}
-
 Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
 
 } // namespace
