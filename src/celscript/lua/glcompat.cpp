@@ -155,9 +155,9 @@ enum ShaderAttributes
 };
 
 GLenum gPrimitive = GL_NONE;
-int gVertexCounter = 0;
-int gTexCoordCounter = 0;
-int gColorCounter = 0;
+GLsizei gVertexCounter = 0;
+GLsizei gTexCoordCounter = 0;
+GLsizei gColorCounter = 0;
 
 struct Vertex
 {
@@ -260,7 +260,7 @@ void Draw()
 
 void PushVertex(float x, float y)
 {
-    if (gVertexCounter < vertices.size())
+    if (gVertexCounter < static_cast<GLsizei>(vertices.size()))
     {
         vertices[gVertexCounter].x = x;
         vertices[gVertexCounter].y = y;
@@ -270,7 +270,7 @@ void PushVertex(float x, float y)
 
 void PushTexCoord(float u, float v)
 {
-    if (gTexCoordCounter < vertices.size())
+    if (gTexCoordCounter < static_cast<GLsizei>(vertices.size()))
     {
         vertices[gTexCoordCounter].u = u;
         vertices[gTexCoordCounter].v = v;
@@ -280,7 +280,7 @@ void PushTexCoord(float u, float v)
 
 void PushColor(float r, float g, float b, float a)
 {
-    if (gColorCounter < vertices.size())
+    if (gColorCounter < static_cast<GLsizei>(vertices.size()))
     {
         vertices[gColorCounter].r = r;
         vertices[gColorCounter].g = g;

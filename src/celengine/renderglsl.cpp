@@ -839,7 +839,7 @@ void renderRings_GLSL(RingSystem& rings,
     auto data = static_cast<GLRingRenderData*>(rings.renderData.get());
 
     unsigned nSections = 180;
-    std::size_t i = 0;
+    int i = 0;
     for (i = 0; i < data->count() - 1; i++)
     {
         float s = segmentSizeInPixels * tan(celestia::numbers::pi / nSections);

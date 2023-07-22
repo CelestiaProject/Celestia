@@ -741,7 +741,8 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
 
             unsigned int index;
             if (auto tokenValue = tok.getIntegerValue();
-                !tokenValue.has_value() || *tokenValue < 0 || *tokenValue >= vertexCount)
+                !tokenValue.has_value() || *tokenValue < 0 ||
+                static_cast<std::uint32_t>(*tokenValue) >= vertexCount)
             {
                 reportError("Index out of range");
                 return false;

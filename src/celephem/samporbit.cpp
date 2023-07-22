@@ -196,7 +196,7 @@ template <typename T> Eigen::Vector3d SampledOrbit<T>::computePosition(double jd
         {
             auto iter = std::lower_bound(samples.begin(), samples.end(), samp);
             n = iter == samples.end()
-                ? n = samples.size()
+                ? samples.size()
                 : iter - samples.begin();
 
             lastSample = n;
