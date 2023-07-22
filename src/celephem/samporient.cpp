@@ -228,7 +228,6 @@ LoadSampledOrientation(const fs::path& filename)
         return nullptr;
 
     auto sampOrientation = std::make_unique<SampledOrientation>();
-    int nSamples = 0;
     while (in.good())
     {
         double tjd;
@@ -243,7 +242,6 @@ LoadSampledOrientation(const fs::path& filename)
         if (in.good())
         {
             sampOrientation->addSample(tjd, q);
-            nSamples++;
         }
     }
 

@@ -32,9 +32,9 @@ constexpr int pmod(int n, int m)
 
 Console::Console(Renderer& _renderer, int _nRows, int _nColumns) :
     std::ostream(&sbuf),
-    renderer(_renderer),
     nRows(_nRows),
-    nColumns(_nColumns)
+    nColumns(_nColumns),
+    renderer(_renderer)
 {
     sbuf.setConsole(this);
     text.resize((nColumns + 1) * nRows, u'\0');

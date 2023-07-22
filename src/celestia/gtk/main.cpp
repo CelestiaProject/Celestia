@@ -337,9 +337,6 @@ int main(int argc, char* argv[])
     app->fullScreen = FALSE;
     app->startURL = NULL;
 
-    /* Watcher enables sending signals from inside of core */
-    GtkWatcher* gtkWatcher;
-
     /* Command line option parsing */
     GError *error = NULL;
     GOptionContext* context = g_option_context_new("");
@@ -539,8 +536,8 @@ int main(int argc, char* argv[])
     gtk_widget_set_can_focus(GTK_WIDGET(app->glArea), true);
     gtk_widget_grab_focus(GTK_WIDGET(app->glArea));
 
-    /* Initialize the Watcher */
-    gtkWatcher = new GtkWatcher(app->core, app);
+    /* Watcher enables sending signals from inside of core */
+    GtkWatcher* gtkWatcher = new GtkWatcher(app->core, app);
 
     /* Unload the splash screen */
     splashEnd(ss);
@@ -559,6 +556,8 @@ int main(int argc, char* argv[])
 
     /* Call Main GTK Loop */
     gtk_main();
+
+    delete gtkWatcher;
 
     g_free(app);
 

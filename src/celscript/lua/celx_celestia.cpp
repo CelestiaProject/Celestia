@@ -2246,6 +2246,7 @@ static int celestia_verbosity(lua_State* l)
 }
 
 
+#ifdef USE_MINIAUDIO
 static std::optional<int> celestia_getchannel(lua_State *l, const std::string &method)
 {
     string errorMessage = fmt::format("First argument for celestia:{} must be a number", method);
@@ -2256,6 +2257,7 @@ static std::optional<int> celestia_getchannel(lua_State *l, const std::string &m
     }
     return max(static_cast<int>(Celx_SafeGetNumber(l, 2, AllErrors, errorMessage.c_str(), static_cast<lua_Number>(defaultAudioChannel))), minAudioChannel);
 }
+#endif
 
 static int celestia_play(lua_State *l)
 {

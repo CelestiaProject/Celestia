@@ -51,8 +51,8 @@ convert(cmod::PrimitiveGroupType prim)
 
 
 RenderContext::RenderContext(Renderer* _renderer) :
-    material(&defaultMaterial),
-    renderer(_renderer)
+    renderer(_renderer),
+    material(&defaultMaterial)
 {
 }
 

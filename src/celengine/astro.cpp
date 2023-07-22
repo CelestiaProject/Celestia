@@ -268,10 +268,10 @@ astro::Date::Date(int Y, int M, int D) :
     day(D),
     hour(0),
     minute(0),
-    seconds(0.0),
     wday(0),
     utc_offset(0),
-    tzname("UTC")
+    tzname("UTC"),
+    seconds(0.0)
 {
 }
 

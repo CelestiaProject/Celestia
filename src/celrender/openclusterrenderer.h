@@ -31,9 +31,6 @@ public:
     void update(const Eigen::Quaternionf &viewerOrientation, float pixelSize, float fov, float zoom) const;
 
     void render() const;
-
-private:
-    Renderer &m_renderer;
 };
 
 } // namespace celestia::render

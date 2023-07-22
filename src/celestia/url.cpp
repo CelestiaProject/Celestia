@@ -142,8 +142,8 @@ Url::Url(CelestiaCore *core) :
 }
 
 Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource) :
-    m_appCore(appState.m_appCore),
     m_state(appState),
+    m_appCore(appState.m_appCore),
     m_version(version),
     m_timeSource(timeSource)
 {
@@ -287,9 +287,9 @@ Url::goTo()
     // Position and orientation stored in frame coordinates; convert them
     // to universal and set the observer position.
     double tdb = sim->getTime();
-    auto coord = sim->getObserver().getFrame()->convertToUniversal(m_state.m_observerPosition, m_state.m_tdb);
+    auto coord = sim->getObserver().getFrame()->convertToUniversal(m_state.m_observerPosition, tdb);
     Eigen::Quaterniond q = m_state.m_observerOrientation.cast<double>();
-    q = sim->getObserver().getFrame()->convertToUniversal(q, m_state.m_tdb);
+    q = sim->getObserver().getFrame()->convertToUniversal(q, tdb);
     sim->setObserverPosition(coord);
     sim->setObserverOrientation(q.cast<float>());
 

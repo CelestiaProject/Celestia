@@ -34,7 +34,6 @@ namespace
 
 constexpr std::string_view::size_type MAX_CANONICAL_LENGTH = 256;
 constexpr unsigned int FIRST_NUMBERED_VARIABLE = 335;
-constexpr unsigned int INVALID_BAYER = static_cast<unsigned int>(-1);
 
 // Try parsing the first word of a name as a Flamsteed number or variable star
 // designation. Single-letter variable star designations are handled by the

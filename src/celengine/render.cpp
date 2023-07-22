@@ -150,10 +150,6 @@ static Texture* gaussianGlareTex = nullptr;
 
 static const float CoronaHeight = 0.2f;
 
-static const int MaxSkyRings = 32;
-static const int MaxSkySlices = 180;
-static const int MinSkySlices = 30;
-
 // Size at which the orbit cache will be flushed of old orbit paths
 static const unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
@@ -4674,10 +4670,10 @@ static void draw_rectangle_solid(const Renderer &renderer,
     };
 
     array<RectVtx, 4> vertices = {
-        r.x,       r.y,       0.0f, 1.0f, {},
-        r.x + r.w, r.y,       1.0f, 1.0f, {},
-        r.x + r.w, r.y + r.h, 1.0f, 0.0f, {},
-        r.x,       r.y + r.h, 0.0f, 0.0f, {},
+        RectVtx{ r.x,       r.y,       0.0f, 1.0f, {} },
+        RectVtx{ r.x + r.w, r.y,       1.0f, 1.0f, {} },
+        RectVtx{ r.x + r.w, r.y + r.h, 1.0f, 0.0f, {} },
+        RectVtx{ r.x,       r.y + r.h, 0.0f, 0.0f, {} },
     };
 
     if (r.hasColors)
