@@ -1662,7 +1662,7 @@ void StarDatabaseBuilder::buildIndexes()
 
     starDB->catalogNumberIndex.clear();
     starDB->catalogNumberIndex.reserve(starDB->nStars);
-    for (int i = 0; i < starDB->nStars; ++i)
+    for (std::uint32_t i = 0; i < starDB->nStars; ++i)
         starDB->catalogNumberIndex.push_back(&starDB->stars[i]);
 
     std::sort(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),

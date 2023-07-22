@@ -262,8 +262,8 @@ void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewid
 
 void View::updateFBO(int gWidth, int gHeight)
 {
-    int newWidth = width * gWidth;
-    int newHeight = height * gHeight;
+    auto newWidth = static_cast<GLuint>(width * gWidth);
+    auto newHeight = static_cast<GLuint>(height * gHeight);
     if (fbo && fbo.get()->width() == newWidth && fbo.get()->height() == newHeight)
         return;
 

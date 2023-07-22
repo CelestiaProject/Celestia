@@ -2510,7 +2510,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         if (useSeparateDiffuse)
         {
-            for (unsigned k = 0; k < props.nLights - 1; k++)
+            for (int k = 0; k < props.nLights - 1; k++)
                 source += SeparateDiffuse(k) + " + ";
             source += SeparateDiffuse(props.nLights - 1) + ";\n";
         }

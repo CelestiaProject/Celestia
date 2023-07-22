@@ -296,9 +296,9 @@ bool TextLayout::processString(std::string_view input, std::vector<std::u16strin
     }
 #else
     // Loop through all characters
-    auto len                = input.length();
+    auto len                = static_cast<std::int32_t>(input.length());
     bool validChar          = true;
-    int  i                  = 0;
+    std::int32_t i          = 0;
     bool endsWithLineBreak  = false;
 
     std::u16string currentLine;

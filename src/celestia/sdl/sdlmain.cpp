@@ -675,7 +675,7 @@ sdlmain(int /* argc */, char ** /* argv */)
     auto app = SDL_Application::init("Celestia", 640, 480);
     if (app == nullptr)
     {
-        FatalError("Could not initialize SDL! Error: {}", app->getError());
+        FatalError("Could not initialize SDL! Error: {}", SDL_GetError());
         return 2;
     }
 

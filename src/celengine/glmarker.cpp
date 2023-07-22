@@ -9,6 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include <array>
+#include <cstddef>
+
 #include <celcompat/numbers.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
@@ -45,7 +47,7 @@ initialize(LineRenderer &lr, gl::VertexObject &vo, gl::Buffer &bo)
 
     lr.setHints(LineRenderer::DISABLE_FISHEYE_TRANFORMATION);
 
-    for (int i = 0; i < HollowMarkersData.size(); i+=2)
+    for (std::size_t i = 0; i < HollowMarkersData.size(); i+=2)
         lr.addVertex(HollowMarkersData[i], HollowMarkersData[i+1]);
 }
 

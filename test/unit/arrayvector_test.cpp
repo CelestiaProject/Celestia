@@ -43,6 +43,7 @@ InstanceTracker::~InstanceTracker()
         --counter;
 }
 
+[[maybe_unused]]
 InstanceTracker::InstanceTracker(const InstanceTracker& other)
     : m_value(other.m_value)
 {
@@ -60,6 +61,7 @@ InstanceTracker& InstanceTracker::operator=(const InstanceTracker& other)
     return *this;
 }
 
+[[maybe_unused]]
 InstanceTracker::InstanceTracker(InstanceTracker&& other) noexcept
     : m_value(other.m_value)
 {

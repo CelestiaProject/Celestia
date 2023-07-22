@@ -392,7 +392,7 @@ globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 const GlobularForm*
 GlobularFormManager::getForm(int form) const
 {
-    return form < globularForms.size()
+    return form < static_cast<int>(globularForms.size())
         ? &globularForms[form]
         : nullptr;
 }

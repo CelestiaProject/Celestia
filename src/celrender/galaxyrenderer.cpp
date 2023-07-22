@@ -302,7 +302,7 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
                 v.colorIndex = points[i].colorIndex;
                 v.brightness = points[i].brightness;
 
-                for (int j = 0; j < texCoords.size(); ++j)
+                for (std::size_t j = 0; j < texCoords.size(); ++j)
                 {
                     v.texCoord   = texCoords[j];
                     glVertices.push_back(v);

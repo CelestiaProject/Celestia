@@ -39,6 +39,9 @@ using celestia::compat::from_chars;
 using celestia::util::GetLogger;
 namespace gl = celestia::gl;
 
+namespace
+{
+
 struct Glyph
 {
     FT_ULong ch;
@@ -61,6 +64,11 @@ struct UnicodeBlock
     FT_ULong first;
     FT_ULong last;
 };
+
+constexpr Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
+constexpr auto INVALID_POS = static_cast<std::size_t>(-1);
+
+} // end unnamed namespace
 
 struct TextureFontPrivate
 {
@@ -133,17 +141,6 @@ struct TextureFontPrivate
     static constexpr std::size_t MaxIndices = MaxVertices / 4 * 6;
 };
 
-namespace
-{
-
-Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
-
-} // namespace
-
-/*
-   first = ((c / 32) + 1) * 32  == c & ~0xdf
-   last  = first + 32
-*/
 
 TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(renderer)
 {
@@ -228,7 +225,7 @@ TextureFontPrivate::computeTextureSize()
     {
         if (c.ch == 0) continue; // skip bad glyphs
 
-        if (roww + c.bw + 1 >= celestia::gl::maxTextureSize)
+        if (roww + static_cast<int>(c.bw) + 1 >= celestia::gl::maxTextureSize)
         {
             w = std::max(w, roww);
             h += rowh;
@@ -282,7 +279,8 @@ TextureFontPrivate::buildAtlas()
         }
 
         // copy glyph image to the destination image
-        for (int y = 0; y < g->bitmap.rows; y++)
+        auto bitmapRows = static_cast<int>(g->bitmap.rows);
+        for (int y = 0; y < bitmapRows; y++)
         {
             std::uint8_t *dst = img->getPixelRow(oy + y) + ox * img->getComponents();
             const std::uint8_t *src = g->bitmap.buffer + y * g->bitmap.width;
@@ -318,19 +316,19 @@ TextureFontPrivate::toPos(FT_ULong ch) const
     std::size_t pos = 0;
 
     if (ch > m_unicodeBlocks.back().last)
-        return -1;
+        return INVALID_POS;
 
     for (const auto &r : m_unicodeBlocks)
     {
         if (ch < r.first)
-            return -1;
+            return INVALID_POS;
 
         if (ch <= r.last)
             return pos + ch - r.first;
 
         pos += r.last - r.first + 1;
     }
-    return -1;
+    return INVALID_POS;
 }
 
 const Glyph &
@@ -338,8 +336,9 @@ TextureFontPrivate::getGlyph(std::int32_t ch, char16_t fallback)
 {
     if (ch >= 0 && ch < 0x110000)
     {
-        const Glyph& g = getGlyph(static_cast<FT_ULong>(ch));
-        if (g.ch == ch)
+        auto ulch = static_cast<FT_ULong>(ch);
+        const Glyph& g = getGlyph(ulch);
+        if (g.ch == ulch)
             return g;
     }
 
@@ -349,7 +348,7 @@ TextureFontPrivate::getGlyph(std::int32_t ch, char16_t fallback)
 const Glyph &
 TextureFontPrivate::getGlyph(FT_ULong ch)
 {
-    if (auto pos = toPos(ch); pos != -1)
+    if (auto pos = toPos(ch); pos != INVALID_POS)
         return m_glyphs[pos];
 
     auto it = std::find_if(m_glyphs.cbegin() + getCommonGlyphsCount(),
@@ -488,6 +487,9 @@ TextureFont::TextureFont(const Renderer *renderer) :
     impl(std::make_unique<TextureFontPrivate>(renderer))
 {
 }
+
+// Needs to have the definition of TextureFontPrivate visible when we define this
+TextureFont::~TextureFont() = default;
 
 /**
  * Render a string with the specified offset

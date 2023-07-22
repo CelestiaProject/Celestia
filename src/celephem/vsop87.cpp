@@ -40,7 +40,8 @@ struct VSOPSeries
     template<typename std::size_t N>
     explicit constexpr VSOPSeries(const std::array<VSOPTerm, N>& arr)
         : terms(arr.data()), nTerms(arr.size())
-    {};
+    {
+    }
 
     const VSOPTerm* terms;
     std::size_t nTerms;
@@ -10996,7 +10997,7 @@ double SumSeries(const VSOPSeries& series, double t)
 
     double x = 0.0;
     const VSOPTerm* term = &series.terms[0];
-    for (int i = 0; i < series.nTerms; i++, term++)
+    for (std::size_t i = 0; i < series.nTerms; i++, term++)
         x += term->A * std::cos(term->B + term->C * t);
 
     return x;
@@ -11027,7 +11028,8 @@ class VSOP87Orbit : public CachingOrbit
         period(_period),
         boundingRadius(_boundingRadius)
     {
-    };
+    }
+
     ~VSOP87Orbit() override = default;
 
     double getPeriod() const override
@@ -11138,7 +11140,8 @@ class VSOP87OrbitRect : public CachingOrbit
         period(_period),
         boundingRadius(_boundingRadius)
     {
-    };
+    }
+
     ~VSOP87OrbitRect() override = default;
 
     double getPeriod() const override

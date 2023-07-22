@@ -34,7 +34,7 @@ public:
 
     TextureFont(const Renderer *);
     TextureFont() = delete;
-    ~TextureFont() = default;
+    ~TextureFont();
     TextureFont(const TextureFont &) = delete;
     TextureFont(TextureFont &&)      = default;
     TextureFont &operator=(const TextureFont &) = delete;
