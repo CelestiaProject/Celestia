@@ -9,7 +9,16 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/astro.h>
@@ -18,9 +27,6 @@
 #include <celengine/texmanager.h>
 #include <celengine/frame.h>
 #include <celengine/observer.h>
-#include <Eigen/Core>
-#include <string_view>
-#include <vector>
 
 
 class Renderer;
@@ -42,7 +48,7 @@ class Simulation
     void draw(Renderer&);
     void render(Renderer&, Observer&);
 
-    Selection pickObject(const Eigen::Vector3f& pickRay, uint64_t renderFlags, float tolerance = 0.0f);
+    Selection pickObject(const Eigen::Vector3f& pickRay, std::uint64_t renderFlags, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 
@@ -130,7 +136,7 @@ class Simulation
 
     Universe* universe;
 
-    SolarSystem* closestSolarSystem{ nullptr };
+    mutable std::optional<SolarSystem*> closestSolarSystem{ std::nullopt };
     Selection selection;
 
     Observer* activeObserver;
