@@ -8,64 +8,44 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
-#include <istream>
-
-#include "astro.h"
 #include "boundaries.h"
 
-constexpr const float BoundariesDrawDistance = 10000.0f;
+#include <istream>
+#include <string>
+#include <utility>
 
-ConstellationBoundaries::ConstellationBoundaries()
+#include "astro.h"
+
+
+namespace
 {
-    currentChain = new Chain();
-    currentChain->emplace_back(Eigen::Vector3f::Zero());
-}
 
-ConstellationBoundaries::~ConstellationBoundaries()
-{
-    for (const auto chain : chains)
-        delete chain;
-    chains.clear();
+constexpr float BoundariesDrawDistance = 10000.0f;
 
-    delete currentChain;
 }
 
 
-const std::vector<ConstellationBoundaries::Chain*>&
+ConstellationBoundaries::ConstellationBoundaries(std::vector<Chain>&& _chains) :
+    chains(std::move(_chains))
+{
+}
+
+
+const std::vector<ConstellationBoundaries::Chain>&
 ConstellationBoundaries::getChains() const
 {
     return chains;
 }
 
 
-void ConstellationBoundaries::moveto(float ra, float dec)
+std::unique_ptr<ConstellationBoundaries>
+ReadBoundaries(std::istream& in)
 {
-    assert(currentChain != nullptr);
+    std::vector<ConstellationBoundaries::Chain> chains;
+    ConstellationBoundaries::Chain currentChain;
 
-    Eigen::Vector3f v = astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance);
-    if (currentChain->size() > 1)
-    {
-        chains.emplace_back(currentChain);
-        currentChain = new Chain();
-        currentChain->emplace_back(v);
-    }
-    else
-    {
-        (*currentChain)[0] = v;
-    }
-}
-
-
-void ConstellationBoundaries::lineto(float ra, float dec)
-{
-    currentChain->emplace_back(astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance));
-}
-
-
-std::unique_ptr<ConstellationBoundaries> ReadBoundaries(std::istream& in)
-{
-    auto boundaries = std::make_unique<ConstellationBoundaries>();
+    std::string pt;
+    std::string con;
     std::string lastCon;
 
     for (;;)
@@ -77,8 +57,8 @@ std::unique_ptr<ConstellationBoundaries> ReadBoundaries(std::istream& in)
             break;
         in >> dec;
 
-        std::string pt;
-        std::string con;
+        con.clear();
+        pt.clear();
 
         in >> con;
         in >> pt;
@@ -87,14 +67,19 @@ std::unique_ptr<ConstellationBoundaries> ReadBoundaries(std::istream& in)
 
         if (con != lastCon)
         {
-            boundaries->moveto(ra, dec);
+            if (currentChain.size() > 1)
+                chains.emplace_back(std::move(currentChain));
+
             lastCon = con;
+            currentChain.clear();
         }
-        else
-        {
-            boundaries->lineto(ra, dec);
-        }
+
+        currentChain.emplace_back(astro::equatorialToCelestialCart(ra, dec,
+                                                                   BoundariesDrawDistance));
     }
 
-    return boundaries;
+    if (currentChain.size() > 1)
+        chains.emplace_back(std::move(currentChain));
+
+    return std::make_unique<ConstellationBoundaries>(std::move(chains));
 }
