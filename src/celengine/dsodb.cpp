@@ -12,7 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <memory>
+#include <utility>
 
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -177,13 +177,13 @@ void DSODatabase::findCloseDSOs(DSOHandler& dsoHandler,
 
 DSONameDatabase* DSODatabase::getNameDatabase() const
 {
-    return namesDB;
+    return namesDB.get();
 }
 
 
-void DSODatabase::setNameDatabase(DSONameDatabase* _namesDB)
+void DSODatabase::setNameDatabase(std::unique_ptr<DSONameDatabase>&& _namesDB)
 {
-    namesDB    = _namesDB;
+    namesDB = std::move(_namesDB);
 }
 
 

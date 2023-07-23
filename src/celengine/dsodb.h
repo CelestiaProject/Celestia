@@ -14,6 +14,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -63,7 +64,7 @@ class DSODatabase
     std::string getDSONameList(const DeepSkyObject* const &, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
     DSONameDatabase* getNameDatabase() const;
-    void setNameDatabase(DSONameDatabase*);
+    void setNameDatabase(std::unique_ptr<DSONameDatabase>&&);
 
     bool load(std::istream&, const fs::path& resourcePath = fs::path());
     bool loadBinary(std::istream&);
@@ -81,7 +82,7 @@ private:
     int              nDSOs{ 0 };
     int              capacity{ 0 };
     DeepSkyObject**  DSOs{ nullptr };
-    DSONameDatabase* namesDB{ nullptr };
+    std::unique_ptr<DSONameDatabase> namesDB{ nullptr };
     DeepSkyObject**  catalogNumberIndex{ nullptr };
     DSOOctree*       octreeRoot{ nullptr };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };

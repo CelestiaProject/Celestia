@@ -44,17 +44,8 @@ constexpr double ANGULAR_RES = 3.5e-6;
 } // end unnamed namespace
 
 
-Universe::Universe()
-{
-    markers = new celestia::MarkerList();
-}
-
-Universe::~Universe()
-{
-    delete markers;
-    // TODO: Clean up!
-}
-
+// Needs definition of ConstellationBoundaries
+Universe::~Universe() = default;
 
 StarDatabase* Universe::getStarCatalog() const
 {
@@ -69,23 +60,23 @@ void Universe::setStarCatalog(std::unique_ptr<StarDatabase>&& catalog)
 
 SolarSystemCatalog* Universe::getSolarSystemCatalog() const
 {
-    return solarSystemCatalog;
+    return solarSystemCatalog.get();
 }
 
-void Universe::setSolarSystemCatalog(SolarSystemCatalog* catalog)
+void Universe::setSolarSystemCatalog(std::unique_ptr<SolarSystemCatalog>&& catalog)
 {
-    solarSystemCatalog = catalog;
+    solarSystemCatalog = std::move(catalog);
 }
 
 
 DSODatabase* Universe::getDSOCatalog() const
 {
-    return dsoCatalog;
+    return dsoCatalog.get();
 }
 
-void Universe::setDSOCatalog(DSODatabase* catalog)
+void Universe::setDSOCatalog(std::unique_ptr<DSODatabase>&& catalog)
 {
-    dsoCatalog = catalog;
+    dsoCatalog = std::move(catalog);
 }
 
 
@@ -101,12 +92,12 @@ void Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
 
 ConstellationBoundaries* Universe::getBoundaries() const
 {
-    return boundaries;
+    return boundaries.get();
 }
 
-void Universe::setBoundaries(ConstellationBoundaries* _boundaries)
+void Universe::setBoundaries(std::unique_ptr<ConstellationBoundaries>&& _boundaries)
 {
-    boundaries = _boundaries;
+    boundaries = std::move(_boundaries);
 }
 
 // Return the planetary system of a star, or nullptr if it has no planets.
@@ -173,7 +164,7 @@ SolarSystem* Universe::createSolarSystem(Star* star) const
 }
 
 
-celestia::MarkerList* Universe::getMarkers() const
+const celestia::MarkerList& Universe::getMarkers() const
 {
     return markers;
 }
@@ -185,50 +176,46 @@ void Universe::markObject(const Selection& sel,
                           bool occludable,
                           celestia::MarkerSizing sizing)
 {
-    auto iter = std::find_if(markers->begin(), markers->end(),
+    auto iter = std::find_if(markers.begin(), markers.end(),
                              [&sel](const auto& m) { return m.object() == sel; });
-    if (iter != markers->end())
+    if (iter != markers.end())
     {
         // Handle the case when the object is already marked.  If the
         // priority is higher or equal to the existing marker, replace it.
         // Otherwise, do nothing.
         if (priority < iter->priority())
             return;
-        markers->erase(iter);
+        markers.erase(iter);
     }
 
-    celestia::Marker marker(sel);
+    celestia::Marker& marker = markers.emplace_back(sel);
     marker.setRepresentation(rep);
     marker.setPriority(priority);
     marker.setOccludable(occludable);
     marker.setSizing(sizing);
-    markers->push_back(marker);
 }
 
 
 void Universe::unmarkObject(const Selection& sel, int priority)
 {
-    auto iter = std::find_if(markers->begin(), markers->end(),
+    auto iter = std::find_if(markers.begin(), markers.end(),
                              [&sel](const auto& m) { return m.object() == sel; });
-    if (iter != markers->end() && priority >= iter->priority())
-        markers->erase(iter);
+    if (iter != markers.end() && priority >= iter->priority())
+        markers.erase(iter);
 }
 
 
 void Universe::unmarkAll()
 {
-    markers->erase(markers->begin(), markers->end());
+    markers.clear();
 }
 
 
 bool Universe::isMarked(const Selection& sel, int priority) const
 {
-    auto iter = std::find_if(markers->begin(), markers->end(),
+    auto iter = std::find_if(markers.begin(), markers.end(),
                              [&sel](const auto& m) { return m.object() == sel; });
-    if (iter != markers->end())
-        return iter->priority() >= priority;
-
-    return false;
+    return iter != markers.end() && iter->priority() >= priority;
 }
 
 

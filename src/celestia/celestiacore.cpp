@@ -3850,9 +3850,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    DSONameDatabase* dsoNameDB  = new DSONameDatabase;
-    DSODatabase*     dsoDB      = new DSODatabase;
-    dsoDB->setNameDatabase(dsoNameDB);
+    auto dsoDB = std::make_unique<DSODatabase>();
+    dsoDB->setNameDatabase(std::make_unique<DSONameDatabase>());
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
 
@@ -3874,8 +3873,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     // Next, read all the deep sky files in the extras directories
     {
-        vector<fs::path> entries;
-        DeepSkyLoader loader(dsoDB, "deep sky object",
+        std::vector<fs::path> entries;
+        DeepSkyLoader loader(dsoDB.get(), "deep sky object",
                              ContentType::CelestiaDeepSkyCatalog,
                              progressNotifier,
                              config->skipExtras);
@@ -3900,29 +3899,26 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
     }
     dsoDB->finish();
-    universe->setDSOCatalog(dsoDB);
+    universe->setDSOCatalog(std::move(dsoDB));
 
 
     /***** Load the solar system catalogs *****/
     // First read the solar system files listed individually in the
     // config file.
+    universe->setSolarSystemCatalog(std::make_unique<SolarSystemCatalog>());
+    for (const auto& file : config->solarSystemFiles)
     {
-        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
-        universe->setSolarSystemCatalog(solarSystemCatalog);
-        for (const auto& file : config->solarSystemFiles)
-        {
-            if (progressNotifier)
-                progressNotifier->update(file.string());
+        if (progressNotifier)
+            progressNotifier->update(file.string());
 
-            ifstream solarSysFile(file, ios::in);
-            if (!solarSysFile.good())
-            {
-                GetLogger()->error(_("Error opening solar system catalog {}.\n"), file);
-            }
-            else
-            {
-                LoadSolarSystemObjects(solarSysFile, *universe);
-            }
+        std::ifstream solarSysFile(file, std::ios::in);
+        if (!solarSysFile.good())
+        {
+            GetLogger()->error(_("Error opening solar system catalog {}.\n"), file);
+        }
+        else
+        {
+            LoadSolarSystemObjects(solarSysFile, *universe);
         }
     }
 
@@ -3957,7 +3953,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     if (!config->boundariesFile.empty())
     {
-        ifstream boundariesFile(config->boundariesFile, ios::in);
+        std::ifstream boundariesFile(config->boundariesFile, ios::in);
         if (!boundariesFile.good())
         {
             GetLogger()->error(_("Error opening constellation boundaries file {}.\n"),
@@ -3965,8 +3961,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
         else
         {
-            ConstellationBoundaries* boundaries = ReadBoundaries(boundariesFile);
-            universe->setBoundaries(boundaries);
+            universe->setBoundaries(ReadBoundaries(boundariesFile));
         }
     }
 

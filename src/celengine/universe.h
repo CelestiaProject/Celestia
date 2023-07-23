@@ -32,28 +32,28 @@ class ConstellationBoundaries;
 class Universe
 {
  public:
-    Universe();
+    Universe() = default;
     ~Universe();
 
     StarDatabase* getStarCatalog() const;
     void setStarCatalog(std::unique_ptr<StarDatabase>&&);
 
     SolarSystemCatalog* getSolarSystemCatalog() const;
-    void setSolarSystemCatalog(SolarSystemCatalog*);
+    void setSolarSystemCatalog(std::unique_ptr<SolarSystemCatalog>&&);
 
     DSODatabase* getDSOCatalog() const;
-    void setDSOCatalog(DSODatabase*);
+    void setDSOCatalog(std::unique_ptr<DSODatabase>&&);
 
     AsterismList* getAsterisms() const;
     void setAsterisms(std::unique_ptr<AsterismList>&&);
 
     ConstellationBoundaries* getBoundaries() const;
-    void setBoundaries(ConstellationBoundaries*);
+    void setBoundaries(std::unique_ptr<ConstellationBoundaries>&&);
 
     Selection pick(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   uint64_t renderFlags,
+                   std::uint64_t renderFlags,
                    float faintestMag,
                    float tolerance = 0.0f);
 
@@ -89,7 +89,7 @@ class Universe
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
-    celestia::MarkerList* getMarkers() const;
+    const celestia::MarkerList& getMarkers() const;
 
  private:
     void getCompletion(std::vector<std::string>& completion,
@@ -126,11 +126,11 @@ class Universe
 
  private:
     std::unique_ptr<StarDatabase> starCatalog{nullptr};
-    DSODatabase* dsoCatalog{nullptr};
-    SolarSystemCatalog* solarSystemCatalog{nullptr};
+    std::unique_ptr<DSODatabase> dsoCatalog{nullptr};
+    std::unique_ptr<SolarSystemCatalog> solarSystemCatalog{nullptr};
     std::unique_ptr<AsterismList> asterisms{nullptr};
-    ConstellationBoundaries* boundaries{nullptr};
-    celestia::MarkerList* markers;
+    std::unique_ptr<ConstellationBoundaries> boundaries{nullptr};
 
-    std::vector<const Star*> closeStars;
+    celestia::MarkerList markers{ };
+    std::vector<const Star*> closeStars{ };
 };
