@@ -105,24 +105,24 @@ class Universe
                                   std::string_view name,
                                   bool i18n = false) const;
 
-    Selection pickPlanet(SolarSystem& solarSystem,
+    Selection pickPlanet(const SolarSystem& solarSystem,
                          const UniversalCoord& origin,
                          const Eigen::Vector3f& direction,
                          double when,
                          float faintestMag,
-                         float tolerance);
+                         float tolerance) const;
 
     Selection pickStar(const UniversalCoord& origin,
                        const Eigen::Vector3f& direction,
                        double when,
                        float faintest,
-                       float tolerance = 0.0f);
+                       float tolerance = 0.0f) const;
 
     Selection pickDeepSkyObject(const UniversalCoord& origin,
                                 const Eigen::Vector3f& direction,
                                 uint64_t renderFlags,
                                 float faintest,
-                                float tolerance = 0.0f);
+                                float tolerance = 0.0f) const;
 
  private:
     std::unique_ptr<StarDatabase> starCatalog{nullptr};
