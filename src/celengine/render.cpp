@@ -1655,7 +1655,7 @@ void Renderer::draw(const Observer& observer,
 
     if ((renderFlags & ShowMarkers) != 0)
     {
-        markersToAnnotations(*universe.getMarkers(), observer, now);
+        markersToAnnotations(universe.getMarkers(), observer, now);
     }
 
     // Draw the selection cursor

@@ -63,9 +63,9 @@ void ConstellationBoundaries::lineto(float ra, float dec)
 }
 
 
-ConstellationBoundaries* ReadBoundaries(std::istream& in)
+std::unique_ptr<ConstellationBoundaries> ReadBoundaries(std::istream& in)
 {
-    auto* boundaries = new ConstellationBoundaries();
+    auto boundaries = std::make_unique<ConstellationBoundaries>();
     std::string lastCon;
 
     for (;;)

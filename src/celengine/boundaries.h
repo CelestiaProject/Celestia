@@ -11,6 +11,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
@@ -37,4 +38,4 @@ class ConstellationBoundaries
     std::vector<Chain*> chains;
 };
 
-ConstellationBoundaries* ReadBoundaries(std::istream&);
+std::unique_ptr<ConstellationBoundaries> ReadBoundaries(std::istream&);
