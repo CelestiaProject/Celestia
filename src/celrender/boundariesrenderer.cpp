@@ -42,19 +42,19 @@ void BoundariesRenderer::render(const Color &color, const Matrices &mvp)
 
 bool BoundariesRenderer::prepare()
 {
-    auto chains = m_boundaries->getChains();
+    const auto& chains = m_boundaries->getChains();
     auto lineCount = std::accumulate(chains.begin(), chains.end(), 0,
-                                     [](int a, const ConstellationBoundaries::Chain* b) { return a + static_cast<int>(b->size()) - 1; });
+                                     [](int a, const auto& b) { return a + static_cast<int>(b.size()) - 1; });
 
     if (lineCount == 0)
         return false;
 
     m_lineCount = lineCount;
 
-    for (const auto chain : chains)
+    for (const auto& chain : chains)
     {
-        for (unsigned i = 1; i < chain->size(); i++)
-            m_lineRenderer.addSegment((*chain)[i - 1], (*chain)[i]);
+        for (ConstellationBoundaries::Chain::size_type i = 1; i < chain.size(); i++)
+            m_lineRenderer.addSegment(chain[i - 1], chain[i]);
     }
 
     return true;
