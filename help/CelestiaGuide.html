@@ -56,7 +56,7 @@
 			<br><a href="#crashes">Crashes</a>
 			<br><a href="#features">Features</a>
 			<br><a href="#general">General questions</a>
-			<br><a href="#vista">Vista questions</a>
+			<br><a href="#vista">Windows questions</a>
 			</div>
 		</div>
 
@@ -79,7 +79,7 @@
 	<div class="txtcontent">
 		<b> A real-time space simulation that lets you experience our universe in three dimensions.
 		<br>
-		Copyright © 2001-2022, Celestia Development Team</b>
+		Copyright © 2001-2023, Celestia Development Team</b>
 		<br>
 		<br>
 		<b>Celestia web site:</b> <a href="https://celestiaproject.space/">https://celestiaproject.space/</a>
@@ -90,7 +90,11 @@
 		<br>
 		<b>Celestia forums:</b> <a href="https://celestiaproject.space/forum/">https://celestiaproject.space/forum/</a>
 		<br>
-		<b>Celestia.mobi:</b> <a href="https://celestia.mobi/">https://celestia.mobi/</a>
+		<b>Celestia mobile:</b> <a href="https://celestia.mobi/">https://celestia.mobi/</a>
+		<br>
+		<b>Celestia GitHub repository:</b> <a href="https://github.com/CelestiaProject/Celestia">https://github.com/CelestiaProject/Celestia</a>
+		<br>
+		<b>Celestia content repository:</b> <a href="https://github.com/CelestiaProject/CelestiaContent">https://github.com/CelestiaProject/CelestiaContent</a>
 
 
 	<br>
@@ -99,53 +103,441 @@
 	<h2>Getting Started Topics</h2>
 
 	<ol>
-		<li><a href="javascript:animatedcollapse.toggle('installing')">Installing in Unix and Linux</a>
+		<li><a href="javascript:animatedcollapse.toggle('installing')">Installing Celestia</a>
 		<div fade="1" id="installing" class="guide">
-			Type <span class="string">./configure --help</span> for a list of options.  The basic commands are shown below.  For more detailed information, refer to the INSTALL file.
+			Celestia comes in a number of pre-built packages for multiple operating systems. Due to the large file size, many Celestia distributions have split this into two sections.  One section is the Celestia program.  The second section is content files with planet maps, stellar names/positions and some simple spacecraft.  See <a href="#morecontent"><u>Additional Celestia Content</u></a>.
 			<br>
 			<br>
-			The GTK version is built with...
-			<br>
-			<span class="string">./configure --with-gtk
-			<br>
-			make
-			<br>
-			make install
-			</span>
+			<b>NOTE:</b> Celestia has a number of helper applications - including SPICE support, audio support, video recording support and Lua scripting support. Pre-built packages have options selected when they were prepared. You may desire different options, and compiling from source gives you more flexibility to make a custom version of Celestia. The Celestia sources are found at the Celestia GitHub repository.  Instructions on compiling the source code is found in the <b>Install</b> file with the code.
 			<br>
 			<br>
-			The KDE3 version is built with...
-			<br>
-			<span class="string">
-			./configure --with-kde
-			<br>
-			make
-			<br>
-			make install
-			</span>
-			<br>
-			<br>
-			<b>Note:</b> some systems may require configure to be executed with
-			<br>
-			<span class="string"> --with-qt-includes=/usr/include/qt3</span>
-			<br>
-			<br>
-			The Gnome version is built with...
-			<br>
-			<span class="string">./configure --with-gnome
-			<br>
-			make
-			<br>
-			make install
-			</span>
+			<ul>
+				<li><b>Windows</b>
+				<br>
+				- Release version <b>1.6.x</b> is available in the native Windows User Interface. For Win64(x64) it can be found at the Celestia web site in the downloads section. It is also available from the Microsoft store. Other sites contain pre-built versions with special options, including a Win32(x86) version. Check the Celestia forums for additional links and downloads. After downloading the installation executable, run the .exe file to install Celestia. Celestia 1.6.x will work when installed in any version of Windows from Vista and later; however, more recent releases of Celestia are geared to and tested on recent releases of Windows. If you are running an older version of Windows, you may need to run a previous version of Celestia. <i>Be aware that Windows is protective of software installed in the Program Files directory tree.</i> You will have far fewer problems modifying Celestia if you install it somewhere else, for example creating the directory C:\MyPrograms\ and installing Celestia there. The installation program will let you browse to wherever you want to install Celestia.
+				<br>
+				<br>
+				
+				- Developmental version <b>1.7.x</b> is available in both native Windows user interface and Qt (5 and 6) user interface. The compiled files are found on the Celestia GitHub repository through GitHub actions and require a GitHub account (free) to download. From the Celestia GitHub page, click on the <i>Actions</i> link at the top. You will be presented with a list of recent builds. Click on the latest build at the top of the list. Under <i>Artifacts</i>, click on either "celestia-windows-x64" (64-bit) or "celestia-windows-x86" (32-bit) and download the file. All user interfaces for that version of Windows are contained in the file. Unzip the downloaded file. Create a folder for programs, for example "c:\\MyPrograms". In this folder create a new folder named "Celestia". From the downloaded file, copy the folder <i>shaders</i> to your Celestia folder. In the downloaded file, open the <i>build</i> folder, and then open the <i>src</i> folder. If you wish to use the additional tools that can modify or create Celestia models and data files, copy the <i>tools</i> folder to your Celestia folder. In the downloaded file, open the <i>celestia</i> folder. Copy the contents of the <i>RelWithDebInfo</i> folder to your Celestia folder.
+				<br>
+				<br>
+					<ul>
+					<li>
+					For the native Windows user interface, open the <i>win32</i> folder in the downloaded file. Copy the contents of the <i>RelWithDebInfo</i> folder to your Celestia folder. The Celestia program can be started by clicking on the <i>celestia-win.exe</i> file in the Celestia folder. You can create links or menu items to this file for easier starting. <b>Note:</b> Be sure your active directory is the Celestia folder when starting Celestia - or configuration files, data files, textures and models will not be found.
+					</li>
+					<li>
+					For the Qt Windows user interfaces, open the desired <i>Qt</i> folder in the downloaded file. Copy the contents of the <i>RelWithDebInfo</i> folder to your Celestia folder. The Celestia program can be started by clicking on the <i>celestia-qt5.exe</i> or <i>celestia-qt6.exe</i> file in the Celestia folder. You can create links or menu items to this file for easier starting. <b>Note:</b> Be sure your active directory is the Celestia folder when starting Celestia - or configuration files, data files, textures and models will not be found.
+					</li>
+				</ul>
+				<br>
+				Return to the main page of the Celestia GitHub repository. Click on the green "Code" button in the upper right hand corner, and select download as zip file. Unzip the file to find the Celestia-master folder. From this folder copy the files <i>*.cel</i>, <i>*.png</i>, <i>celestia.cfg</i>, <i>controls.txt</i> and the folders <i>fonts</i>, <i>help</i>, <i>images</i>, and <i>scripts</i> to your Celestia folder.  If multi-language support is desired, the artifacts files have <i>*.gmo</i> and <i>res_*.dll</i> files in <i>po</i> and <i>res</i> folders that can be used for individual languages. This will complete the installation of the Celestia program section. <b>The developmental version does not come with the data files needed to run Celestia.</b> See <a href="#morecontent"><u>Additional Celestia Content</u></a> for information to download and install these necessary files.
+				</li>
+				<br>
+
+				<li><b>Linux and Unix</b>
+				<br>
+				- Release version <b>1.6.x</b> can be found in four user interface styles. <b>GTK</b> is a full windowed graphical user interface with a menu and dialogs. <b>Gnome</b> is a full GTK interface that has been integrated into the Gnome desktop. <b>KDE</b> is a full windowed graphical user interface with menus, toolbars and integration into the KDE3 desktop. <b>GLUT</b> is a bare-bone core without menus or toolbars, using special keys and the mouse to navigate within Celestia. Many Linux distributions maintain a copy of Celestia in their software repositories, see the repository content lists for your distribution. There is also an experimental AppImage file which is a single executable file for the GTK interface with the program, data content and most of the libraries needed to run it on many Linux distributions. It can be found at <u><a href="https://download.opensuse.org/repositories/home:/munix9/AppImage/">https://download.opensuse.org/repositories/home:/munix9/AppImage/</a></u>. Simply download the AppImage file, change the file properties to executable, and execute the program. The program is not limited to the planetary textures and spacecraft found in the program release, but can access <a href="#morecontent"><u>additional Celestia content</u></a>. The AppImage program responds to the <a href= "#cmdlineoptions"><u>Command Line Options</u></a> of its GTK user interface. By using the <i>dir</i> and <i>extrasdir</i> options you can create directories to access additional data, images, scripts and models from the AppImage.
+				<br>
+				<b>Note:</b> You must separately obtain and install openGL and the libraries needed for each user interface. There are several optional helper programs to Celestia - these may/may not have been compiled into your Celestia version.  They will require additional libraries. These will be found in your Linux distribution's software repository. Often the package manager (software install program) for a Linux distribution has automated these repositories, so installing Celestia will automatically call for, download and install the additional needed packages.
+				<br>
+				<b>Note:</b> In the case of Ubuntu and other Debian derivatives, if downloading directly from the distribution's repositories, Celestia is split into free and non-free versions because of their strict interpretation of how licensing should be handled. Both are needed for Celestia to work properly.
+				<br>
+				<br>
+				- Developmental version <b>1.7.x</b> can be found in three user interface styles. <b>GTK</b> is a simpler, but full windowed graphical user interface with a menu and dialogs. <b>Qt</b> is a more advanced, full windowed graphical user interface with menus, toolbars and bookmarks. It is available in Qt5 and Qt6 versions. <b>SDL</b> is a bare-bone core without menus or toolbars, using special keys and the mouse to navigate within Celestia. Versions are available for Debian, Ubuntu and openSUSE via the openSUSE Open Build Service. See the Celestia website download section for links and instructions. The files can also be directly downloaded from the software repository at <u><a href="https://download.opensuse.org/repositories/home:/munix9:/unstable/">https://download.opensuse.org/repositories/home:/munix9:/unstable/</a></u>. There is also an experimental AppImage file which is a single executable file for the Qt interface with the program, data content and most of the libraries needed to run it on many Linux distributions. It can be found at <u><a href="https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/">https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/</a></u>. Simply download the AppImage file, change the file properties to executable, and execute the program. The program is limited to the planetary textures and spacecraft found in the program directories, it cannot access <a href="#morecontent"><u>additional Celestia content</u></a>.
+				</li>
+				<br>
+
+				<li><b>macOS</b>
+				<br>
+				- Release version <b>1.6.x</b> is available in the native macOS user interface. It can be downloaded from the Celestia website in the downloads section. It is also available from the Celestia GitHub repository. On the right side of the main page is a "Releases" section which provides a link to program releases. This link will provide a page of the available releases and a list of "assets" for each release which includes the macOS file. The file is a zipped bundle of the program, data files, planetary textures and simple spacecraft. Download the file, unzip it and place the contents into the proper macOS directories to access the program.
+				<br>
+				<br>
+				- Developmental version <b>1.7.x</b> is not available in the native macOS user interface.  You must use the cross-platform Qt interface version. A user interface modified version of 1.7.x can be downloaded from the Celestia mobile website in the download section. It comes complete with data, planetary textures and models. It has its own release numbers and release schedule, and is slightly behind the code found in the Celestia GitHub repository.
+				</li>
+				<br>
+				
+				<li><b>iOS</b>
+				<br>
+				iOS is an Apple Inc. operating system used on iPhone, iPad, etc. Celestia has been ported to this operating system as a separate project. It is based on Celestia 1.7.0, but has its own release numbers, release schedule and additional code base. It comes complete with data, planetary textures and models. Release version <b>1.5.x</b> can be downloaded from the Celestia mobile website in the download section. It can also be directly downloaded from the Apple App Store. 
+				</li>
+				<br>
+
+				<li><b>Android</b>
+				<br>				
+				Android is a Google operating system used on many cell phones. Celestia has been ported to this operating system as a separate project. It is based on Celestia 1.7.0, but has its own release numbers, release schedule and additional code base.  It comes complete with data, planetary textures and models. Release version <b>1.5.x</b> can be downloaded from the Celestia mobile website in the download section. It can also be directly downloaded as an app from Google Play. 
+				</li>
+
+			</ul>
+
 			<br>
 			<br>
 			<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('installing')" type="button">
 		</div>
+		</li>
+
+
+		<li><a name="cmdlineoptions" href="javascript:animatedcollapse.toggle('cmdline')">Command Line Options</a>
+		<div fade="1" id="cmdline" class="guide">
+			Celestia can be started either by clicking on its icon or by typing a command into a terminal window. Under Windows, the terminal window is often called a DOS window or CMD window or Powershell. When starting from the command line, a series of options (switches) can be used to modify the behavior of Celestia. These options are different depending on which interface Celestia was built for. Options used by the programming language are activated first, followed by application options. The options for the Celestia application are as follows:
+			
+			
+			
+		<table class="list-table2" border="0" cellpadding="0" cellspacing="0">
+
+		<tbody><tr>
+		<td colspan="2" class="titlecell2" align="left" valign="middle">
+		<h3>Windows (native)</h3>
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--dir <i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia data installation directory to <i>path</i>.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--conf <i>file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia configuration file to <i>file</i> where <i>file</i> contains both the path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--extrasdir <i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Use additional "extras" directory at <i>path</i>. This option may be used multiple times.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--url <i>url/file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start at the given cel:// URL or start with the given script file at path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--fullscreen
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start Celestia in full screen mode.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--once
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Send the command line to a running instance of Celestia. If no running instance exists, a new one is started.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--verbose
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Output run and/or debug information.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Option names are preceded by two dashes (hyphens). Options which have a settable value must have a space between the option name and value.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Without options being set, upon startup the current (console window) directory is assumed to be the installation directory. File paths may be either an absolute file path or a relative file path from the installation directory.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Cel urls from other operating systems may fail on Windows. Some characters in the url are being intercepted by Windows for internal use. To overcome this problem, place the url in double quotes --url <i>"url"</i>.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" class="titlecell2" align="left" valign="middle">
+		<h3>KDE</h3>
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--dir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia data installation directory to <i>path</i>
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--conf=<i>file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia configuration file to <i>file</i> where <i>file</i> contains both the path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--extrasdir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Use additional "extras" directory at <i>path</i>. This option may be used multiple times.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--fullscreen
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start Celestia in full screen mode.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--nosplash
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Disable the startup splash screen.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--help
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Display command line help.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		<i>url/file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start at the given cel:// URL or start with the given script file.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Option names are preceded by two dashes (hyphens). Options which have a settable value may have either a space or an = sign between the option name and value.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> File paths may be either an absolute file path or a relative file path from the current (console window) directory.
+
+		<tr>
+		<td colspan="2" class="titlecell2" align="left" valign="middle">
+		<h3>GTK/Gnome</h3>
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-d, --dir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia data installation directory to <i>path</i>.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-c, --conf=<i>file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia configuration file to <i>file</i> where <i>file</i> contains both the path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-e, --extrasdir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Use additional "extras" directory at <i>path</i>. This option may be used multiple times.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-f, --fullscreen
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start Celestia in full screen mode.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-s, --nosplash
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Disable the startup splash screen.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-h, --help
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Display command line help.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		<i>url</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start at the given cel:// URL.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Option names with multiple characters are preceded by two dashes (hyphens). Options with a single character are preceded by a single dash (hyphen).  Option names with multiple characters which have a settable value may have either a space or an = sign between the option name and value.  Option names which are a single character may only have a space between the option name and value.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> File paths may be either an absolute file path or a relative file path from the installation directory. The only exception is option <i>dir</i> which may have a relative file path from the current (console window) directory.
+		</td>
+		</tr>
+
+
+		<tr>
+		<td colspan="2" class="titlecell2" align="left" valign="middle">	
+		<h3>Qt</h3>
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--dir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia data installation directory to <i>path</i>.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--conf=<i>file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Set the Celestia configuration file to <i>file</i> where <i>file</i> contains both the path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--extrasdir=<i>path</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Use additional "extras" directory at <i>path</i>. This option may be used multiple times.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-l, --log=<i>file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Write a log file at <i>file</i> where file contains both the path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-u, --url=<i>url/file</i>
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start at the given cel:// URL or start with the given script file at path and filename.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		--fullscreen
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Start Celestia in full screen mode.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-s, --nosplash
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Disable the startup splash screen.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-v, --version
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Output the version number of Celestia.
+		</td>
+		</tr>
+
+		<tr>
+		<td class="leftcell2" align="left" nowrap="nowrap" valign="middle">
+		-h, --help
+		</td>
+		<td class="rightcell" align="left" valign="middle">
+		Display command line help.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> Option names with multiple characters are preceded by two dashes (hyphens). Options with a single character are preceded by a single dash.  Options which have a settable value may have either a space or an = sign between the option name and value.
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="2" align="left" valign="middle">
+		<b>Note:</b> File paths may be either an absolute file path or a relative file path from the current (console window) directory.
+		</td>
+		</tr>
+
+		</tbody></table>			
+		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('cmdline')" type="button">
+	</div>
 	</li>
 
 
-	<li><a href="javascript:animatedcollapse.toggle('gettingstarted')">Basic navigation</a>
+	<li><a href="javascript:animatedcollapse.toggle('gettingstarted')">Basic Navigation</a>
 	<div fade="1" id="gettingstarted" class="guide">
 		Celestia will start up in a window, and if everything is working correctly, you'll see Earth in front of a field of stars. Displayed on-screen, is some information about your target (Earth), your speed, and the current time (Universal Time, so it'll probably be a few hours off from your computer's clock).
 		<br>
@@ -162,7 +554,7 @@
 		The <i>Tour Guide</i> is a list of some of the more interesting objects you can visit in Celestia. Select the <i>Tour Guide</i> option in the <i>Navigation menu</i> to display the Tour Guide window. Choose a destination from the list, click the <b>Goto</b> button, and you're off.
 		<br>
 		<br>
-		That covers the very basics. For a more in-depth look at Celestia and the controls available to you, download the "Celestia User's Guide" (written by Frank Gregorio), available in several languages, from: <a href="https://celestiaproject.space/guides.html">https://celestiaproject.space/guides.html</a>.
+		That covers the very basics. For a more in-depth look at Celestia and the controls available to you, download the "Celestia User's Guide" (written by Frank Gregorio), available in several languages, from: <a href="https://celestiaproject.space/guides.html"><u>https://celestiaproject.space/guides.html</u></a>.
 		<br>
 		<br>
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('gettingstarted')" type="button">
@@ -192,7 +584,7 @@
 	</li>
 
 
-	<li><a href="javascript:animatedcollapse.toggle('byname')">Selecting objects by name</a>
+	<li><a href="javascript:animatedcollapse.toggle('byname')">Selecting Objects by Name</a>
 	<div fade="1" id="byname" class="guide">
 		Celestia provides several ways to select an object by name:
 		<ul>
@@ -208,17 +600,7 @@
 	</li>
 
 
-	<li><a href="javascript:animatedcollapse.toggle('knownissues')">Known Issues</a>
-	<div fade="1" id="knownissues" class="guide">
-		For up-to-the-minute answers to some common problems encountered when running Celestia, please view either the FAQ under <i>Table of Contents</i> (to the left) or take a look at the "Celestia User's FAQ" located on the Celestia User's Forum: <a href="https://celestiaproject.space/forum/">celestiaproject.space/forum</a>.
-		<br>
-		<br>
-		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('knownissues')" type="button">
-	</div>
-	</li>
-
-
-	<li><a href="javascript:animatedcollapse.toggle('usermodifiable')">User-modifiable elements</a>
+	<li><a href="javascript:animatedcollapse.toggle('usermodifiable')">User-modifiable Elements</a>
 	<div fade="1" id="usermodifiable" class="guide">
 		You can modify how Celestia starts up each time you run it, by defining your own start-up settings. Simply open the file "start.cel" in a plain text editor and follow the in-file instructions. Also, view the celestia.cfg file in a plain text editor to see additional settings.
 		<br>
@@ -236,6 +618,38 @@
 		<br>
 		<br>
 		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('usermodifiable')" type="button">
+	</div>
+	</li>
+
+
+	<li><a name="morecontent" href="javascript:animatedcollapse.toggle('addcontent')">Additional Celestia Content</a>
+	<div fade="1" id="addcontent" class="guide">
+		The files for Celestia have grown to a large size, causing some distributions to split the files into two separate files - one for the program and one for the data/models/textures. Most releases of version 1.6.x are of a single file, and the GitHub source is one single site. Beginning with version 1.7.x the Celestia GitHub repository has been split into two sites, the original GitHub repository that contains the program (CelestiaProject/Celestia), and a new content repository (CelestiaProject/CelestiaContent). In order for Celestia 1.7.x to run, the files from both sites must be combined. Many distributions provide the separate data content files already pre-packaged. If these are not available, then go to the Celestia content repository and click on the green "Code" button in the upper right corner. Select the download as zip file option, and download the content file. Unzip this file to find the CelestiaContent-master directory. The directories that must be added to the main Celestia program (install) directory are:
+		<br>
+		<br>* data
+		<br>* extras
+		<br>* extras-standard
+		<br>* models
+		<br>* textures
+		<br>* warp
+		<br>
+		<b>Note:</b> If multi-language support is desired, the CMAKE program can be run to generate language files from the <i>po</i> directory and individual languages can be installed.
+		<br>
+		<br>
+		Celestia also has a wide and talented user community. This community is constantly updating content, producing highly detailed models (many are spacecraft), improved planetary textures and incorporating recent astronomical discoveries. Their work can be found on multiple websites. The Celestia Forum has many spacecraft models and other addons for Celestia. This includes highly detailed models of the International Space Station, the Chinese Space Station Tiangong, the Hubble Space Telescope, the James Webb Space Telescope and most of the spacecraft that have been flown or are in development. The Celestia MotherLode has spacecraft, including ships from fictional universes such as Star Trek, Star Wars, Babylon 5 and 2001. The Celestia Mobile site has a collection of spacecraft and astronomical objects found under the "Addons" tab. The Celestia Origins project seeks to update the astronomical database of Celestia with planetary/moon locations, recently discovered moons and other objects. There are several efforts to add a large database of newly discovered exo-planets to Celestia. Searching for Celestia on the internet will give multiple sites to find additional content. Links for some of these websites can be found in the <a href="#resources"><u>Resources</u></a> section below.		
+		<br>
+		<br>
+		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('addcontent')" type="button">
+	</div>
+	</li>
+
+
+	<li><a href="javascript:animatedcollapse.toggle('knownissues')">Known Issues</a>
+	<div fade="1" id="knownissues" class="guide">
+		For up-to-the-minute answers to some common problems encountered when running Celestia, please view either the FAQ under <i>Table of Contents</i> (to the left) or take a look at the "Celestia User's FAQ" located on the Celestia User's Forum: <a href="https://celestiaproject.space/forum/">celestiaproject.space/forum</a>.
+		<br>
+		<br>
+		<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('knownissues')" type="button">
 	</div>
 	</li>
 
@@ -2758,8 +3172,25 @@
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq49')">I have created pictures/videos with Celestia. May I sell them or use them for or in commercial productions?</a>
-			<div fade="1" id="faq49" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq38')">What is SPICE?  </a>
+			<div fade="1" id="faq38" class="answer">
+				<h3>Answer:</h3>
+					SPICE is a project of the NASA Navigation and Ancillary Information Facility (NAIF). It allows calculations of positions and velocities of planets, satellites, comets, asteroids and spacecraft. It is used by NASA, ESA, JAXA and other space agencies as well as individual space missions. It consists of a "SPICE toolkit" of computer software and "SPICE kernels" or data files. SPICE kernels are available from multiple mission websites as well as the main NAIF website <a href="https://naif.jpl.nasa.gov/naif/"><u>https://naif.jpl.nasa.gov/naif/</u></a>.
+					<br>
+					<br>
+					SPICE data is highly detailed, and will provide improved positional accuracy over the standard Celestia positioning model. It can be incorporated into the *.ssc Celestia data files. There is also a spice2xyzv tool that converts SPICE kernels to a Celestia xyzv format. See the Celestia WikiBooks for information on obtaining and using SPICE data.
+					<br>
+					<br>
+					SPICE support is an option when compiling Celestia. To see if your copy of Celestia has SPICE support, click on Help -> About Celestia. If SPICE or NAIF is listed as supported, then SPICE support is present.
+					<div class="solution">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq38')" type="button">
+					</div>
+				</div>
+			</li>
+
+
+			<li><a href="javascript:animatedcollapse.toggle('faq39')">I have created pictures/videos with Celestia. May I sell them or use them for or in commercial productions?</a>
+			<div fade="1" id="faq39" class="answer">
 				<h3>Answer:</h3>
 					The answer to that question is twofold.
 					<br>
@@ -2769,7 +3200,7 @@
 					<br>
 					2. If you create pictures or movies using Addons, however, then you have to abide by the license of that Addon. Most Addon creators allow their works to be used freely for educational purposes, but forbid commercial use. In any case it is a good idea to contact the creator of the Addon and ask for his permission.
 					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq49')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq39')" type="button">
 					</div>
 				</div>
 			</li>
@@ -2778,10 +3209,10 @@
 		</ol>
 
 
-		<h2><a name="vista">Vista questions</a></h2>
+		<h2><a name="vista">Windows questions</a></h2>
 		<ol>
-			<li><a href="javascript:animatedcollapse.toggle('faq38')">General information</a>
-			<div fade="1" id="faq38" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq40')">General information</a>
+			<div fade="1" id="faq40" class="answer">
 				A lot, if not all problems described are due to the fact that windows doesn't allow data to be placed in the program files directory. That is part of the security system (UAC) and can be turned off completely, or partly.
 				<br>
 				<br>
@@ -2790,14 +3221,14 @@
 				<br>
 				Another way would be to install the complete Celestia program, including its sub-directories anywhere, away from the "<I>Program Files</I>" directory. Some people have reported having fewer problems if they install Celestia somewhere else than in "<I>Program Files</I>".
 				<div class="solution">
-					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq38')" type="button">
+					<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq40')" type="button">
 				</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq39')">When trying to install the program on my windows Vista machine the installer says it needs administrator rights which I don't have.</a>
-			<div fade="1" id="faq39" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq41')">When trying to install the program on my Windows machine the installer says it needs administrator rights which I don't have.</a>
+			<div fade="1" id="faq41" class="answer">
 				<i>In earlier versions there was no need for administrator rights. Why does this version require administrator rights, and is this something that can be fixed?</i>
 				<br>
 				<br>
@@ -2806,25 +3237,45 @@
 					<div class="solution">
 						<h3>Solution:</h3>
 						Set up a different folder for Celestia and simply copy all the original files to the new folder. That is if you can.
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq39')" type="button">
+						<br>
+						<br>
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq41')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq40')">Why can't I make changes to files in the Celestia data directory?</a>
-				<div fade="1" id="faq40" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq42')">Celestia does not start and reports missing dlls.</a>
+				<div fade="1" id="faq42" class="answer">
+				What do I do if Celestia fails to start with messages that files <i>MSVCP140.DLL</i>, <i>VCRUNTIME140.DLL</i> and <i>VCRUNTIME140_1.DLL</i> are missing?
+				<br>
+				<br>
+				<h3>Answer:</h3>
+				These are runtime files of Microsoft Visual C++, the programming language used to compile Celestia. They are not shipped with Windows, although some programs do come with them. You need to add them to your computer.
+					<div class="solution">
+					<h3>Solution:</h3>
+						Microsoft has a download site with a "Visual C++ Redistributable" file in Win64(x64) and Win32(x86) versions. You must select a Visual Studio version of 2015 or later. As the files are backwards compatible, it is best to use the most recent version. Download and run the file to install the needed dlls.
+						<br>
+						<br>
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq42')" type="button">
+					</div>
+				</div>
+			</li>
+
+
+			<li><a href="javascript:animatedcollapse.toggle('faq43')">Why can't I make changes to files in the Celestia data directory?</a>
+				<div fade="1" id="faq43" class="answer">
 				<h3>Answer:</h3>
 					The short answer is &#8211; when installed with the default options &#8211;	Celestia takes ownership of the directory, so you simply <B>cannot</B> make any changes to the files in the data directory.
 					<br>
 					<br>
-					Well, you <B>can</B> make the changes, it's just that you simply <B>cannot save</B> the changes to the data directory. This problem can be overcome by some work with permissions and security within Vista.
+					Well, you <B>can</B> make the changes, it's just that you simply <B>cannot save</B> the changes to the data directory. This problem can be overcome by some work with permissions and security within Windows.
 					<br>
 					<br>
 					You cannot change the <i>celestia.cfg</i> file, by the way.
 					<div class="solution">
 					<h3>Solution:</h3>
-						To avoid having to deal with all of these "permissions" issues, Vista users (on a single home PC) can simply copy a SSC file to a different directory.
+						To avoid having to deal with all of these "permissions" issues, Windows users (on a single home PC) can simply copy a SSC file to a different directory.
 						<br>
 						<br>
 						Make any changes to the copied version, then copy it back to the <I>C:\Program Files\Celestia\data</I> folder.
@@ -2833,16 +3284,16 @@
 						You will be asked if it's okay to allow this copy, and you can respond Yes. Once you have done this you will be able to edit the copied file in the Celestia directory without trouble.
 						<br>
 						<br>
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq40')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq43')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq41')">What are compatibility directories?</a>
-				<div fade="1" id="faq41" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq44')">What are compatibility directories?</a>
+				<div fade="1" id="faq44" class="answer">
 				<h3>Answer:</h3>
-					Generally, the compatibility directories are created when you try to install Celestia as an application defined as being associated with a previous version of Windows, i.e. XP, 98, etc.
+					Beginning with Windows Vista, the compatibility directories are created when you try to install Celestia as an application defined as being associated with a previous version of Windows, i.e. XP, 98, etc.
 					<div class="solution">
 					<h3>Solution:</h3>
 						Most of the compatibility directories will not be created if you install Celestia as a native Windows Vista application.
@@ -2852,14 +3303,14 @@
 						<br>
 						<br>If you also use other programs to perform functions like editing plain text SSC files using previous Windows version compatible programs, these will also cause compatibility directories. So, it is the best to use Vista-ready programs for all of the Celestia-related functions.
 						<br>
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq41')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq44')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq42')">I can't find/see those compatibility directories. Why? </a>
-				<div fade="1" id="faq42" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq45')">I can't find/see those compatibility directories. Why? </a>
+				<div fade="1" id="faq45" class="answer">
 				<h3>Answer:</h3>
 					These files are "hidden" in the normal Vista environment (and in Windows Explorer) if you use the default values of Windows.
 					<br>
@@ -2875,14 +3326,14 @@
 					<br>
 					After this has been done, you can then look to the previously hidden folder named "<I>AppData</I>" to see if compatibility files are in use for Celestia.
 					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq42')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq45')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq43')">Where are the files that I just edited and saved? </a>
-				<div fade="1" id="faq43" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq46')">Where are the files that I just edited and saved? </a>
+				<div fade="1" id="faq46" class="answer">
 				<h3>Answer:</h3>
 					On occasion Vista creates copies of your textures or other Celestia files when they were modified. Your new textures may not show up in the Celestia textures directory, but may be transported to an entirely different directory used for compatibility issues.
 					<br>
@@ -2897,55 +3348,44 @@
 					<br>
 					It is possible to go to the compatibility directory, and <B>move</B> or <B>copy</B> the compatibility file directly back to the Celestia directory.
 					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq43')" type="button">
-					</div>
-				</div>
-			</li>
-
-
-			<li><a href="javascript:animatedcollapse.toggle('faq44')">How do I use the 3dstocmod converter? </a>
-				<div fade="1" id="faq44" class="answer">
-				<h3>Answer:</h3>
-					In order to use the 3dstocmod converter in Vista, you have to convert the elements via Vista's "compatibility" mode under the file's "properties" dialog.
-					<br>
-					<br>
-					For every .exe and .dll file, you must specify compatibility for Windows XP, <B>and</B> you must specify that "Visual Themes" are to be disabled.
-					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq44')" type="button">
-					</div>
-				</div>
-			</li>
-
-
-			<li><a href="javascript:animatedcollapse.toggle('faq45')">What causes Celestia to crash on Vista? </a>
-				<div fade="1" id="faq45" class="answer">
-				<h3>Answer:</h3>
-					Celestia will crash if you do not have up-to-date graphics drivers. The graphics drivers included with Vista are buggy and <B>not</B> up-to-date. You must download and install updated drivers from the Web site of the manufacturer of your graphics hardware.
-					<br>
-					<br>
-					Do <b>NOT</b> use Microsoft offered graphics drivers, since they have not the support for the latest OpenGL features, even if your graphics card is capable of providing them.
-					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq45')" type="button">
-					</div>
-				</div>
-			</li>
-
-
-
-			<li><a href="javascript:animatedcollapse.toggle('faq46')">Addressing limitations </a>
-				<div fade="1" id="faq46" class="answer">
-					Celestia is a 32 bit application, so it's limited to somewhat more than 2GB. However, it works fine under both Vista 32 and Vista 64.
-					<div class="solution">
 						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq46')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq47')">Do Cel:// URLs work under Vista? </a>
+			<li><a href="javascript:animatedcollapse.toggle('faq47')">How do I use the 3dstocmod converter? </a>
 				<div fade="1" id="faq47" class="answer">
 				<h3>Answer:</h3>
-					Cel:// URLs work fine under Vista with Word 2007.
+					In order to use the 3dstocmod converter in Vista, you have to convert the elements via Vista's "compatibility" mode under the file's "properties" dialog.
+					<br>
+					<br>
+					For every .exe and .dll file, you must specify compatibility for Windows XP, <B>and</B> you must specify that "Visual Themes" are to be disabled.
+					<div class="solution">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq47')" type="button">
+					</div>
+				</div>
+			</li>
+
+
+			<li><a href="javascript:animatedcollapse.toggle('faq48')">What causes Celestia to crash on Windows? </a>
+				<div fade="1" id="faq48" class="answer">
+				<h3>Answer:</h3>
+					Celestia will crash if you do not have up-to-date graphics drivers. The graphics drivers included with Windows are frequently buggy and <B>not</B> up-to-date. You must download and install updated drivers from the Web site of the manufacturer of your graphics hardware.
+					<br>
+					<br>
+					Do <b>NOT</b> use Microsoft offered graphics drivers, since they frequently have not the support for the latest OpenGL features, even if your graphics card is capable of providing them.
+					<div class="solution">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq48')" type="button">
+					</div>
+				</div>
+			</li>
+
+
+			<li><a href="javascript:animatedcollapse.toggle('faq49')">Do Cel:// URLs work under Windows? </a>
+				<div fade="1" id="faq49" class="answer">
+				<h3>Answer:</h3>
+					Cel:// URLs work fine under Windows with MS Word.
 					<br>
 					<br>
 					MS Word automatically requires the use of <B>[Ctrl]</B> + click to launch a hyperlink, but there is a menu item to eliminate the need to press <B>[Ctrl]</B>.
@@ -2955,18 +3395,18 @@
 					</ul>
 					From that point forward, simply pointing and clicking once on a cel:url or hyperlink will launch it.
 					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq47')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq49')" type="button">
 					</div>
 				</div>
 			</li>
 
 
-			<li><a href="javascript:animatedcollapse.toggle('faq48')">Are the security impacts from Vista on Celestia? </a>
-				<div fade="1" id="faq48" class="answer">
+			<li><a href="javascript:animatedcollapse.toggle('faq50')">Are there security impacts from Windows on Celestia? </a>
+				<div fade="1" id="faq50" class="answer">
 				<h3>Answer:</h3>
-					Vista enforces some security requirements which usually are optional under earlier versions of Windows. You may have to select options to disable that enforcement for Celestia. E.g. allowing URLs to run programs.
+					Since Vista, Windows enforces some security requirements which usually are optional under earlier versions of Windows. You may have to select options to disable that enforcement for Celestia. E.g. allowing URLs to run programs.
 					<div class="solution">
-						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq48')" type="button">
+						<input value=" Close " class="closebtn" onclick="javascript:animatedcollapse.toggle('faq50')" type="button">
 					</div>
 				</div>
 			</li>
@@ -2985,8 +3425,6 @@
 		<b>Selden's List of Resources for Celestia:</b> <a href="https://www.classe.cornell.edu/~seb/celestia/">https://www.classe.cornell.edu/~seb/celestia/</a>
 		<br>
 		<b>Celestia Wikibook:</b> <a href="https://en.wikibooks.org/wiki/Celestia">https://en.wikibooks.org/wiki/Celestia</a>
-		<br>
-		<b>Celestial Matters Website and Forums:</b> <a href="http://www.celestialmatters.org/">http://www.celestialmatters.org/</a> -  <a href="http://forum.celestialmatters.org/">http://forum.celestialmatters.org/</a>
 		<br>
 		<b>Celestia Motherlode:</b> <a href="http://www.celestiamotherlode.net/">http://www.celestiamotherlode.net/</a>
 		<br>
@@ -3340,6 +3778,8 @@ POSSIBILITY OF SUCH DAMAGES.</textarea>
 					<b>Vincent Giangiulio</b> - <a href="mailto:vince.gian@free.fr">vince.gian@free.fr</a>
 					<br>
 					<b>Andrew Tribick</b>
+					<br>
+					<b>Hleb Valoshka</b>
 					<br>
 					<b>Levin Li</b>
 					<br>
