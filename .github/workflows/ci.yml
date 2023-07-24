@@ -139,31 +139,31 @@ jobs:
     steps:
     - name: 'Install dependencies'
       run: |
-        sudo apt update
-        sudo apt install -y libeigen3-dev \
-                            libepoxy-dev \
-                            libavcodec-dev \
-                            libavformat-dev \
-                            libavutil-dev \
-                            libswscale-dev \
-                            libjpeg-dev \
-                            libpng-dev \
-                            libglu1-mesa-dev \
-                            libgtk-3-dev \
-                            libfreetype6-dev \
-                            libsdl2-dev \
-                            libluajit-5.1-dev \
-                            libfmt-dev \
-                            libicu-dev \
-                            libwayland-dev \
-                            wayland-protocols \
-                            ninja-build \
-                            qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+        sudo apt-get update
+        sudo apt-get install -y libeigen3-dev \
+                                libepoxy-dev \
+                                libavcodec-dev \
+                                libavformat-dev \
+                                libavutil-dev \
+                                libswscale-dev \
+                                libjpeg-dev \
+                                libpng-dev \
+                                libglu1-mesa-dev \
+                                libgtk-3-dev \
+                                libfreetype6-dev \
+                                libsdl2-dev \
+                                libluajit-5.1-dev \
+                                libfmt-dev \
+                                libicu-dev \
+                                libwayland-dev \
+                                wayland-protocols \
+                                ninja-build \
+                                qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
-            sudo apt install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
+            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
-            sudo apt install -y libavif-dev
+            sudo apt-get install -y libavif-dev
         fi
 
     - name: 'Checkout source code'
@@ -345,25 +345,25 @@ jobs:
 
     - name: 'Install dependencies'
       run: |
-        sudo apt update
-        sudo apt install -y libeigen3-dev \
-                            libepoxy-dev \
-                            libavcodec-dev \
-                            libavformat-dev \
-                            libavutil-dev \
-                            libswscale-dev \
-                            libjpeg-dev \
-                            libpng-dev \
-                            libglu1-mesa-dev \
-                            qtbase5-dev \
-                            qtbase5-dev-tools \
-                            libqt5opengl5-dev \
-                            libfreetype6-dev \
-                            libsdl2-dev \
-                            libluajit-5.1-dev \
-                            libicu-dev \
-                            ninja-build \
-                            cmake
+        sudo apt-get update
+        sudo apt-get install -y libeigen3-dev \
+                                libepoxy-dev \
+                                libavcodec-dev \
+                                libavformat-dev \
+                                libavutil-dev \
+                                libswscale-dev \
+                                libjpeg-dev \
+                                libpng-dev \
+                                libglu1-mesa-dev \
+                                qtbase5-dev \
+                                qtbase5-dev-tools \
+                                libqt5opengl5-dev \
+                                libfreetype6-dev \
+                                libsdl2-dev \
+                                libluajit-5.1-dev \
+                                libicu-dev \
+                                ninja-build \
+                                cmake
 
     - name: 'Checkout source code'
       uses: actions/checkout@v3
