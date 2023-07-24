@@ -8,7 +8,7 @@ Stable version installation on Windows and OSX:
 * Check https://celestiaproject.space/download.html.
 
 Development snapshots installation on Unix-like systems:
-### On Debian 10/11 (buster/bullseye) and derived systems:
+### On Debian 11/12 (bullseye/bookworm) and derived systems:
 
 Download and check the GPG public key fingerprint and expiration date:
 ```
@@ -29,7 +29,7 @@ Deploy GPG public key and set up sources.list file:
 ❯ sudo apt update && sudo apt install celestia
 ```
 
-Where ${VERSION} is 10 or 11.
+Where ${VERSION} is 11 or 12.
 
 When the public key has expired, `apt update` complains:
 
@@ -71,7 +71,7 @@ sudo zypper refresh
 sudo zypper install celestia
 ```
 
-Where VERSION is '15.3', '15.4', '15.5' or 'openSUSE_Tumbleweed'.
+Where VERSION is '15.4', '15.5' or 'openSUSE_Tumbleweed'.
 
 See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
 
