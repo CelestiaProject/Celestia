@@ -35,6 +35,11 @@ class Universe
     Universe() = default;
     ~Universe();
 
+    Universe(const Universe&) = delete;
+    Universe& operator=(const Universe&) = delete;
+    Universe(Universe&&) = delete;
+    Universe& operator=(Universe&&) = delete;
+
     StarDatabase* getStarCatalog() const;
     void setStarCatalog(std::unique_ptr<StarDatabase>&&);
 

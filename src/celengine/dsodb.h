@@ -39,6 +39,10 @@ class DSODatabase
     DSODatabase() = default;
     ~DSODatabase();
 
+    DSODatabase(const DSODatabase&) = delete;
+    DSODatabase& operator=(const DSODatabase&) = delete;
+    DSODatabase(DSODatabase&&) = delete;
+    DSODatabase& operator=(DSODatabase&&) = delete;
 
     inline DeepSkyObject* getDSO(const std::uint32_t) const;
     inline std::uint32_t size() const;
