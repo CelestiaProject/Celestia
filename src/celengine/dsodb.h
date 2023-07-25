@@ -24,8 +24,7 @@
 
 #include <celcompat/filesystem.h>
 #include <celengine/dsooctree.h>
-
-class DSONameDatabase;
+#include <celengine/dsoname.h>
 
 constexpr inline unsigned int MAX_DSO_NAMES = 10;
 
