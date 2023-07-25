@@ -16,6 +16,7 @@
 #include <string_view>
 #include <vector>
 
+#include <celengine/boundaries.h>
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/dsodb.h>
@@ -26,8 +27,6 @@
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
 
-
-class ConstellationBoundaries;
 
 class Universe
 {
