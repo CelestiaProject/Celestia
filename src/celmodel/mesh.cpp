@@ -361,6 +361,9 @@ Mesh::optimize()
 
     auto &g = groups.front();
 
+    if (g.prim != PrimitiveGroupType::TriList)
+        return;
+
     meshopt_optimizeVertexCache(g.indices.data(), g.indices.data(), g.indices.size(), nVertices);
     meshopt_optimizeOverdraw(g.indices.data(), g.indices.data(), g.indices.size(), reinterpret_cast<float*>(vertices.data()), nVertices, vertexDesc.strideBytes, 1.05f);
     meshopt_optimizeVertexFetch(vertices.data(), g.indices.data(), g.indices.size(), vertices.data(), nVertices, vertexDesc.strideBytes);
