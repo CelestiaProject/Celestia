@@ -815,7 +815,11 @@ CreateOrbit(const Selection& centralObject,
         Body* centralBody = centralObject.body();
         if (centralBody != nullptr)
         {
+#if 0 // TODO: This should be enabled after #542 is fixed
+            Vector3d pos = centralBody->geodeticToCartesian(*longlat);
+#else
             Vector3d pos = centralBody->planetocentricToCartesian(longlat->x(), longlat->y(), longlat->z());
+#endif
             return new celestia::ephem::SynchronousOrbit(*centralBody, pos);
         }
         // TODO: Allow fixing objects to the surface of stars.
