@@ -720,16 +720,15 @@ Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
  */
 Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
 {
-    //return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
-    Matrix4d m = Eigen::Transform<double, 3, Affine>(getEquatorialToBodyFixed(tdb)).matrix();
+    Matrix4d m = Eigen::Affine3d(getEquatorialToBodyFixed(tdb)).matrix();
     return m * getLocalToAstrocentric(tdb);
 }
 
-
 Vector3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
+
     using celestia::numbers::pi;
-    double phi = -degToRad(lat) + pi / 2;
+    double phi = -degToRad(lat) + pi * 0.5;
     double theta = degToRad(lon) - pi;
 
     Vector3d pos(cos(theta) * sin(phi),
@@ -743,6 +742,44 @@ Vector3d Body::planetocentricToCartesian(double lon, double lat, double alt) con
 Vector3d Body::planetocentricToCartesian(const Vector3d& lonLatAlt) const
 {
     return planetocentricToCartesian(lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z());
+}
+
+
+/*! Convert planetocentric coordinates to geodetic ones.
+ *
+ * Formulae are taken from DOI 10.1007/s00190-011-0514-7.
+ *
+ * @param lon longitude
+ * @param lat latitude
+ * @param alt altitude (height above the surface)
+ *
+ * @return geodetic coordinates
+ */
+Vector3d Body::geodeticToCartesian(double lon, double lat, double alt) const
+{
+    using celestia::numbers::pi;
+    double phi = degToRad(lat);
+    double theta = degToRad(lon) + pi;
+    double a2x = square(semiAxes.x());
+    double a2y = square(semiAxes.z()); // swap y & z to convert from Celestia axes
+    double b2  = square(semiAxes.y());
+    double e2x = (a2x - b2) / a2x;
+    double e2e = (a2x - a2y) / a2x;
+    double sinphi, cosphi;
+    sincos(phi, sinphi, cosphi);
+    double sintheta, costheta;
+    sincos(theta, sintheta, costheta);
+    double v = semiAxes.x() / std::sqrt(1.0 - e2x * square(sinphi) - e2e  * square(cosphi) * square(sintheta));
+    double xg = (v + alt) * cosphi * costheta;
+    double yg = (v * (1.0 - e2e) + alt) * cosphi * sintheta;
+    double zg = (v * (1.0 - e2x) + alt) * sinphi;
+    return { xg, zg, -yg }; // convert to Celestia coordinates
+}
+
+
+Vector3d Body::geodeticToCartesian(const Vector3d& lonLatAlt) const
+{
+    return geodeticToCartesian(lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z());
 }
 
 
