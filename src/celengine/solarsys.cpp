@@ -160,7 +160,7 @@ Location* CreateLocation(const Hash* locationData,
     Location* location = new Location();
 
     auto longlat = locationData->getSphericalTuple("LongLat").value_or(Eigen::Vector3d::Zero());
-    Eigen::Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
+    Eigen::Vector3f position = body->geodeticToCartesian(longlat).cast<float>();
     location->setPosition(position);
 
     auto size = locationData->getLength<float>("Size").value_or(1.0f);
