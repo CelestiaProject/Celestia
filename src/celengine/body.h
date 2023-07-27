@@ -302,6 +302,9 @@ class Body
     Eigen::Vector3d planetocentricToCartesian(const Eigen::Vector3d& lonLatAlt) const;
     Eigen::Vector3d cartesianToPlanetocentric(const Eigen::Vector3d& v) const;
 
+    Eigen::Vector3d geodeticToCartesian(double lon, double lat, double alt) const;
+    Eigen::Vector3d geodeticToCartesian(const Eigen::Vector3d& lonLatAlt) const;
+
     Eigen::Vector3d eclipticToPlanetocentric(const Eigen::Vector3d& ecl, double tdb) const;
 
     bool extant(double) const;
