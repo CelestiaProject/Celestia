@@ -76,7 +76,7 @@ void Overlay::endText()
     restorePos();
 }
 
-void Overlay::print_impl(const std::string& s)
+void Overlay::print(std::string_view s)
 {
     layout->render(s);
 }

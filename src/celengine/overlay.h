@@ -56,20 +56,24 @@ class Overlay
 
     void beginText();
     void endText();
+
+    void print(std::string_view);
+
     template <typename... T>
     void print(std::string_view format, const T&... args)
     {
-        print_impl(fmt::format(format, args...));
+        static_assert(sizeof...(args) > 0);
+        print(fmt::format(format, args...));
     }
+
     template <typename... T>
     void printf(std::string_view format, const T&... args)
     {
-        print_impl(fmt::sprintf(format, args...));
+        static_assert(sizeof...(args) > 0);
+        print(fmt::sprintf(format, args...));
     }
 
  private:
-    void print_impl(const std::string&);
-
     int windowWidth{ 1 };
     int windowHeight{ 1 };
 
