@@ -53,7 +53,7 @@ jobs:
       run: |
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
           cspice eigen3 ffmpeg[x264] fmt freetype gettext libepoxy libjpeg-turbo libpng luajit `
-          qt5-base qtbase qt5compat[core]
+          miniaudio qt5-base qtbase qt5compat[core]
 
     - name: Checkout source code
       uses: actions/checkout@v3

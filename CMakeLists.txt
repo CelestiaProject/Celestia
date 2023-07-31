@@ -42,6 +42,11 @@ if(POLICY CMP0004)
   cmake_policy(SET CMP0004 NEW)
 endif()
 
+# Set extracted timestamps of external projects to the time of extraction
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
 set(DISPLAY_NAME "Celestia")
 #
@@ -154,11 +159,9 @@ if(MSVC)
   endif()
 endif()
 
-if(NOT WIN32)
-  # Qt requires -fPIC, so build all code with it
-  # It's always set on windows
-  add_compile_options(-fPIC)
-endif()
+# Qt requires -fPIC, so build all code with it
+# It's always set on windows
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(MINGW)
   # MinGW has a bug which causes too many false-positive warnings
@@ -220,13 +223,12 @@ if(ENABLE_FFMPEG)
 endif()
 
 if(ENABLE_MINIAUDIO)
-  include_directories("${CMAKE_SOURCE_DIR}/thirdparty/miniaudio")
-  add_definitions(-DUSE_MINIAUDIO)
-  if(UNIX AND (NOT APPLE))
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
-    link_libraries(Threads::Threads)
+  find_package(Miniaudio QUIET)
+  if(NOT MINIAUDIO_FOUND)
+    include(FetchMiniaudio)
   endif()
+  add_definitions(-DUSE_MINIAUDIO)
+  link_libraries(miniaudio::miniaudio)
 endif()
 
 if(ENABLE_LIBAVIF)
@@ -258,8 +260,7 @@ link_libraries(Eigen3::Eigen)
 
 find_package(fmt 6.1.0 CONFIG QUIET)
 if(NOT fmt_FOUND)
-  message(STATUS "Using fmt submodule")
-  add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/fmt")
+  include(FetchFmt)
 endif()
 link_libraries(fmt::fmt)
 
