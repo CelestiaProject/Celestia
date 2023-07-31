@@ -157,6 +157,7 @@ jobs:
                                 libicu-dev \
                                 libwayland-dev \
                                 wayland-protocols \
+                                gettext \
                                 ninja-build \
                                 qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
