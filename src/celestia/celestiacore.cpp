@@ -3199,11 +3199,10 @@ void CelestiaCore::renderOverlay()
 
         double tdb = sim->getTime() + lt;
         string dateStr;
-        if (customDateFormatter)
-        {
+        if (customDateFormatter != nullptr)
             dateStr = customDateFormatter(tdb);
-        }
-        else
+
+        if (dateStr.empty())
         {
             astro::Date d = timeZoneBias != 0 ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
             dateStr = d.toCStr(dateFormat);
