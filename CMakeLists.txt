@@ -68,6 +68,9 @@ option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU          "Use Windows SDK's ICU implementation (Default: off)" OFF)
 
+# Qt requires -fPIC, so build all code with it
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if(APPLE AND ENABLE_QT5 AND ENABLE_QT6)
   # If someone figures out how to resolve the include path conflicts, this can be removed
   message(FATAL_ERROR "Simultaneous builds of Qt5 and Qt6 are not supported on Apple systems")
@@ -152,12 +155,6 @@ if(MSVC)
     # /Zc:__cplusplus: correctly set __cplusplus macro value
     add_compile_options("/Zc:__cplusplus")
   endif()
-endif()
-
-if(NOT WIN32)
-  # Qt requires -fPIC, so build all code with it
-  # It's always set on windows
-  add_compile_options(-fPIC)
 endif()
 
 if(MINGW)
