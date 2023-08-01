@@ -222,8 +222,10 @@ IDR_MAIN_MENU MENU
         }
         POPUP "Star &Color"
         {
-            MENUITEM "&Disabled", ID_STARCOLOR_DISABLED, CHECKED
-            MENUITEM "&Enabled", ID_STARCOLOR_ENABLED
+            MENUITEM "Blackbody D65", ID_STARCOLOR_D65, CHECKED
+            MENUITEM "Blackbody (Solar Whitepoint)", ID_STARCOLOR_SOLAR
+            MENUITEM "Blackbody (Vega Whitepoint)", ID_STARCOLOR_VEGA
+            MENUITEM "Classic colors", ID_STARCOLOR_CLASSIC
         }
         MENUITEM SEPARATOR
         POPUP "&Ambient Light"

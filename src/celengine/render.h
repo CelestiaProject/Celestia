@@ -285,8 +285,8 @@ class Renderer
     void drawRectangle(const celestia::Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
-    const ColorTemperatureTable* getStarColorTable() const;
-    void setStarColorTable(const ColorTemperatureTable*);
+    ColorTableType getStarColorTable() const;
+    void setStarColorTable(ColorTableType);
     [[deprecated]] bool getVideoSync() const;
     [[deprecated]] void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
@@ -751,7 +751,8 @@ class Renderer
     float minFeatureSize;
     uint64_t locationFilter;
 
-    const ColorTemperatureTable* colorTemp;
+    ColorTemperatureTable starColors{ ColorTableType::Blackbody_D65 };
+    ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;
 

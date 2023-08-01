@@ -75,17 +75,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     uint64_t locationFlags = observer->getLocationFilter();
     int labelMode = renderer->getLabelMode();
 
-    ColorTableType colors;
-    const ColorTemperatureTable* current = renderer->getStarColorTable();
-    if (current->type() == ColorTableType::Blackbody_D65)
-    {
-        colors = ColorTableType::Blackbody_D65;
-    }
-    else // if (current->type() == ColorTableType::Enhanced)
-    {
-        // TODO: Figure out what we should do if we have an unknown color table
-        colors = ColorTableType::Enhanced;
-    }
+    ColorTableType colors = renderer->getStarColorTable();
 
     ui.starsCheck->setChecked((renderFlags & Renderer::ShowStars) != 0);
     ui.planetsCheck->setChecked((renderFlags & Renderer::ShowPlanets) != 0);
@@ -188,9 +178,9 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     auto tint = static_cast<int>(renderer->getTintSaturation() * 100.0f);
     ui.tintSaturationSlider->setValue(tint);
-    ui.tintSaturationSlider->setEnabled(colors == ColorTableType::Blackbody_D65);
+    ui.tintSaturationSlider->setEnabled(colors != ColorTableType::Enhanced);
     ui.tintSaturationSpinBox->setValue(tint);
-    ui.tintSaturationSpinBox->setEnabled(colors == ColorTableType::Blackbody_D65);
+    ui.tintSaturationSpinBox->setEnabled(colors != ColorTableType::Enhanced);
 
     int starStyle = renderer->getStarStyle();
 
@@ -209,6 +199,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     }
 
     ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
+    ui.starColorBox->addItem(_("Blackbody (Solar Whitepoint)"), static_cast<int>(ColorTableType::SunWhite));
+    ui.starColorBox->addItem(_("Blackbody (Vega Whitepoint)"), static_cast<int>(ColorTableType::VegaWhite));
     ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
     SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
 
@@ -837,8 +829,8 @@ void PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
     Renderer* renderer = appCore->getRenderer();
     QVariant itemData = ui.starColorBox->itemData(index, Qt::UserRole);
     ColorTableType value = static_cast<ColorTableType>(itemData.toInt());
-    renderer->setStarColorTable(GetStarColorTable(value));
-    bool enableTintSaturation = value == ColorTableType::Blackbody_D65;
+    renderer->setStarColorTable(value);
+    bool enableTintSaturation = value != ColorTableType::Enhanced;
     ui.tintSaturationSlider->setEnabled(enableTintSaturation);
     ui.tintSaturationSpinBox->setEnabled(enableTintSaturation);
 }

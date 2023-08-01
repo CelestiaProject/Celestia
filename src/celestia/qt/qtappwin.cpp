@@ -534,12 +534,7 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("TintSaturation", renderer->getTintSaturation());
     settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("TextureResolution", renderer->getResolution());
-    ColorTableType colorsst;
-    if (renderer->getStarColorTable()->type() == ColorTableType::Blackbody_D65)
-        colorsst = ColorTableType::Blackbody_D65;
-    else // if (renderer->getStarColorTable()->type() == ColorTableType::Enhanced)
-        colorsst = ColorTableType::Enhanced;
-    settings.setValue("StarsColor", static_cast<int>(colorsst));
+    settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 
     Simulation* simulation = m_appCore->getSimulation();
 
@@ -1678,4 +1673,3 @@ void CelestiaAppWindow::pasteTextOrURL()
     else
         slotPasteURL();
 }
-

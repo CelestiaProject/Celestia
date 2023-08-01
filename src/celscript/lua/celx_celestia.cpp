@@ -1718,12 +1718,24 @@ static int celestia_getstarcolor(lua_State* l)
         return 0;
     }
 
-    if (auto starColor = renderer->getStarColorTable()->type(); starColor == ColorTableType::Enhanced)
+    switch (renderer->getStarColorTable())
+    {
+    case ColorTableType::Enhanced:
         lua_pushstring(l, "enhanced");
-    else if (starColor == ColorTableType::Blackbody_D65)
+        break;
+    case ColorTableType::Blackbody_D65:
         lua_pushstring(l, "blackbody_d65");
-    else
+        break;
+    case ColorTableType::SunWhite:
+        lua_pushstring(l, "sunwhite");
+        break;
+    case ColorTableType::VegaWhite:
+        lua_pushstring(l, "vegawhite");
+        break;
+    default:
         lua_pushstring(l, "invalid starcolor");
+        break;
+    }
 
     return 1;
 }
@@ -1742,9 +1754,13 @@ static int celestia_setstarcolor(lua_State* l)
     }
 
     if (starColor == "blackbody_d65")
-        renderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
+        renderer->setStarColorTable(ColorTableType::Blackbody_D65);
     else if (starColor == "enhanced")
-        renderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
+        renderer->setStarColorTable(ColorTableType::Enhanced);
+    else if (starColor == "sunwhite")
+        renderer->setStarColorTable(ColorTableType::SunWhite);
+    else if (starColor == "vegawhite")
+        renderer->setStarColorTable(ColorTableType::VegaWhite);
     else
         Celx_DoError(l, "Invalid starcolor");
     appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
