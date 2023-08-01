@@ -1368,25 +1368,31 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '%':
+        switch (renderer->getStarColorTable())
         {
-            const ColorTemperatureTable* current = renderer->getStarColorTable();
+        case ColorTableType::Enhanced:
+            renderer->setStarColorTable(ColorTableType::Blackbody_D65);
+            flash(_("Star color: Blackbody D65"));
+            notifyWatchers(RenderFlagsChanged);
+            break;
 
-            if (current->type() == ColorTableType::Enhanced)
-            {
-                renderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
-                flash(_("Star color: Blackbody D65"));
-                notifyWatchers(RenderFlagsChanged);
-            }
-            else if (current->type() == ColorTableType::Blackbody_D65)
-            {
-                renderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
-                flash(_("Star color: Enhanced"));
-                notifyWatchers(RenderFlagsChanged);
-            }
-            else
-            {
-                // Unknown color table
-            }
+        case ColorTableType::Blackbody_D65:
+            renderer->setStarColorTable(ColorTableType::SunWhite);
+            flash(_("Star color: Blackbody (Solar Whitepoint)"));
+            notifyWatchers(RenderFlagsChanged);
+            break;
+
+        case ColorTableType::SunWhite:
+            renderer->setStarColorTable(ColorTableType::VegaWhite);
+            flash(_("Star color: Blackbody (Vega Whitepoint)"));
+            notifyWatchers(RenderFlagsChanged);
+            break;
+
+        case ColorTableType::VegaWhite:
+            renderer->setStarColorTable(ColorTableType::Enhanced);
+            flash(_("Star color: Classic"));
+            notifyWatchers(RenderFlagsChanged);
+            break;
         }
         break;
 

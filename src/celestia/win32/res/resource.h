@@ -269,9 +269,11 @@
 #define ID_RENDER_VELOCITY_VECTOR       40086
 #define ID_RENDER_PLANETOGRAPHIC_GRID   40087
 #define ID_RENDER_TERMINATOR            40088
-#define ID_STARCOLOR_DISABLED           40089
-#define ID_STARCOLOR_ENABLED            40090
-#define ID_SELECT_PRIMARY_BODY          40091
+#define ID_STARCOLOR_CLASSIC            40089
+#define ID_STARCOLOR_D65                40090
+#define ID_STARCOLOR_SOLAR              40091
+#define ID_STARCOLOR_VEGA               40092
+#define ID_SELECT_PRIMARY_BODY          40093
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 #define ID_FIRST_SCRIPT                 42000
 

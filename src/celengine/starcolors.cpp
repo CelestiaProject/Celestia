@@ -11,9 +11,9 @@
 
 #include "starcolors.h"
 
+#include <algorithm>
 #include <array>
-#include <cmath>
-#include <cstddef>
+#include <iterator>
 #include <memory>
 
 #include <Eigen/Core>
@@ -27,7 +27,8 @@ constexpr float MaxTemperature = 40000.0f;
 constexpr float TemperatureStep = MaxTemperature / static_cast<float>(BlackbodyTableEntries - 1);
 
 // Temperature of the color table bucket containing the Sun
-const float SolarTemperatureBucket = std::trunc(5772.0f / TemperatureStep) * TemperatureStep;
+const float SolarTemperatureBucket = std::nearbyint(5772.0f / TemperatureStep) * TemperatureStep;
+const float VegaTemperatureBucket = std::nearbyint(9602.0f / TemperatureStep) * TemperatureStep;
 
 // D65 whitepoint and SRGB primary chromaticities
 const Eigen::Vector3d D65_XYZ(0.95047, 1.00000, 1.08883);
@@ -663,66 +664,67 @@ Eigen::Vector3d temperatureToXYZ(float temp)
 }
 
 
-std::unique_ptr<BlackbodyTable>
-createBlackbodyTable(const Eigen::Vector3d& whitepoint)
+const Eigen::Vector3d SunXYZ = temperatureToXYZ(SolarTemperatureBucket);
+const Eigen::Vector3d VegaXYZ = temperatureToXYZ(VegaTemperatureBucket);
+
+
+void
+createBlackbodyTable(const Eigen::Vector3d& whitepoint,
+                     float& tempScale,
+                     std::vector<Color>& colors)
 {
-    auto table = std::make_unique<BlackbodyTable>();
+    tempScale = (BlackbodyTableEntries - 1) / MaxTemperature;
+    colors.clear();
+    colors.reserve(BlackbodyTableEntries);
+    colors.emplace_back(0.0f, 0.0f, 0.0f);
+
     XYZRGBConverter converter(whitepoint, SRGB_R_xy, SRGB_G_xy, SRGB_B_xy);
 
-    for (std::size_t i = 0; i < table->size(); ++i)
+    for (std::size_t i = 1; i < BlackbodyTableEntries; ++i)
     {
-        if (i == 0)
-        {
-            (*table)[i] = Color(0.0f, 0.0f, 0.0f);
-            continue;
-        }
-
         float teff = static_cast<float>(i) * TemperatureStep;
         Eigen::Vector3d xyz = temperatureToXYZ(teff);
         Eigen::Vector3f rgb = converter.convert(xyz);
-
-        (*table)[i] = Color(rgb);
+        colors.emplace_back(rgb);
     }
-
-    return table;
 }
 
 } // end unnamed namespace
 
-const ColorTemperatureTable*
-GetStarColorTable(ColorTableType ct)
+
+ColorTemperatureTable::ColorTemperatureTable(ColorTableType _type)
 {
-    switch (ct)
-    {
-    case ColorTableType::Enhanced:
-        static const ColorTemperatureTable* enhanced =
-            std::make_unique<ColorTemperatureTable>(StarColors_Enhanced,
-                                                    MaxTemperature,
-                                                    ColorTableType::Enhanced).release();
-        return enhanced;
-
-    case ColorTableType::Blackbody_D65:
-        static const BlackbodyTable* starColors_Blackbody_2deg_D65 =
-            createBlackbodyTable(D65_XYZ).release();
-        static const ColorTemperatureTable* blackbodyD65 =
-            std::make_unique<ColorTemperatureTable>(*starColors_Blackbody_2deg_D65,
-                                                    MaxTemperature,
-                                                    ColorTableType::Blackbody_D65).release();
-        return blackbodyD65;
-
-    default:
-        return nullptr;
-    }
+    if (!setType(_type))
+        setType(ColorTableType::Enhanced);
 }
 
-const ColorTemperatureTable*
-GetTintColorTable()
+
+bool
+ColorTemperatureTable::setType(ColorTableType _type)
 {
-    static const BlackbodyTable* starColors_Blackbody_2deg_Sol =
-        createBlackbodyTable(temperatureToXYZ(SolarTemperatureBucket)).release();
-    static const ColorTemperatureTable* blackbodySol =
-        std::make_unique<ColorTemperatureTable>(*starColors_Blackbody_2deg_Sol,
-                                                MaxTemperature,
-                                                ColorTableType::Blackbody_D65).release();
-    return blackbodySol;
+    tableType = _type;
+    switch (tableType)
+    {
+    case ColorTableType::Enhanced:
+        colors.clear();
+        colors.reserve(StarColors_Enhanced.size());
+        std::copy(StarColors_Enhanced.cbegin(), StarColors_Enhanced.cend(), std::back_inserter(colors));
+        tempScale = static_cast<float>(StarColors_Enhanced.size() - 1) / MaxTemperature;
+        return true;
+
+    case ColorTableType::Blackbody_D65:
+        createBlackbodyTable(D65_XYZ, tempScale, colors);
+        return true;
+
+    case ColorTableType::SunWhite:
+        createBlackbodyTable(SunXYZ, tempScale, colors);
+        return true;
+
+    case ColorTableType::VegaWhite:
+        createBlackbodyTable(VegaXYZ, tempScale, colors);
+        return true;
+
+    default:
+        return false;
+    }
 }

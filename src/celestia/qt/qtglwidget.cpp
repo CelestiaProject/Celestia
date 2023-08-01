@@ -133,10 +133,7 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
     appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
 
-    if (settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt() == static_cast<int>(ColorTableType::Enhanced))
-        appRenderer->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
-    else
-        appRenderer->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
+    appRenderer->setStarColorTable(static_cast<ColorTableType>(settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt()));
 
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 

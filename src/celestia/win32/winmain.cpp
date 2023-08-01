@@ -2308,9 +2308,11 @@ static void syncMenusWithRendererState()
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
-    const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
-    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color->type() == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color->type() == ColorTableType::Blackbody_D65 ? MF_CHECKED : MF_UNCHECKED);
+    auto colorType = appCore->getRenderer()->getStarColorTable();
+    CheckMenuItem(menuBar, ID_STARCOLOR_CLASSIC, colorType == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_D65,  colorType == ColorTableType::Blackbody_D65 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_SOLAR,  colorType == ColorTableType::SunWhite ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -2654,11 +2656,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.lastVersion = 0x01040100;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
-    const ColorTemperatureTable* current = appCore->getRenderer()->getStarColorTable();
-    if (current->type() == ColorTableType::Enhanced)
-        prefs.starsColor = static_cast<int>(ColorTableType::Enhanced);
-    if (current->type() == ColorTableType::Blackbody_D65)
-        prefs.starsColor = static_cast<int>(ColorTableType::Blackbody_D65);
+    prefs.starsColor = static_cast<int>(appCore->getRenderer()->getStarColorTable());
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
@@ -3512,10 +3510,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getRenderer()->setStarStyle(prefs.starStyle);
         appCore->setHudDetail(prefs.hudDetail);
 
-        if (prefs.starsColor == static_cast<int>(ColorTableType::Enhanced))
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
-        if (prefs.starsColor == static_cast<int>(ColorTableType::Blackbody_D65))
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
+        appCore->getRenderer()->setStarColorTable(static_cast<ColorTableType>(prefs.starsColor));
 
         if (prefs.showLocalTime == 1)
             ShowLocalTime(appCore);
@@ -3954,17 +3949,17 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             cerr << "[" << utf8CharCode << "]" << endl;*/
 
             Renderer::StarStyle oldStarStyle = r->getStarStyle();
+            auto oldResolution = r->getResolution();
+            auto oldColorTable = r->getStarColorTable();
             appCore->charEntered(utf8CharCode, modifiers);
             if (r->getRenderFlags() != oldRenderFlags ||
                 r->getLabelMode() != oldLabelMode ||
-                r->getStarStyle() != oldStarStyle)
+                r->getStarStyle() != oldStarStyle ||
+                r->getResolution() != oldResolution ||
+                r->getStarColorTable() != oldColorTable)
             {
                 syncMenusWithRendererState();
             }
-            if (r->getResolution())
-                syncMenusWithRendererState();
-            if (r->getStarColorTable())
-                syncMenusWithRendererState();
         }
         break;
 
@@ -4181,13 +4176,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             syncMenusWithRendererState();
             break;
 
-        case ID_STARCOLOR_DISABLED:
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Enhanced));
+        case ID_STARCOLOR_CLASSIC:
+            appCore->getRenderer()->setStarColorTable(ColorTableType::Enhanced);
             syncMenusWithRendererState();
             break;
-
-        case ID_STARCOLOR_ENABLED:
-            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTableType::Blackbody_D65));
+        case ID_STARCOLOR_D65:
+            appCore->getRenderer()->setStarColorTable(ColorTableType::Blackbody_D65);
+            syncMenusWithRendererState();
+            break;
+        case ID_STARCOLOR_SOLAR:
+            appCore->getRenderer()->setStarColorTable(ColorTableType::SunWhite);
+            syncMenusWithRendererState();
+            break;
+        case ID_STARCOLOR_VEGA:
+            appCore->getRenderer()->setStarColorTable(ColorTableType::VegaWhite);
             syncMenusWithRendererState();
             break;
 

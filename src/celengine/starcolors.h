@@ -11,30 +11,31 @@
 
 #pragma once
 
+#include <cmath>
+#include <cstddef>
+#include <vector>
+
+#include <Eigen/Core>
+
 #include <celmath/vecgl.h>
 #include <celutil/color.h>
-#include <celutil/array_view.h>
 
 enum class ColorTableType
 {
-    Enhanced,
-    Blackbody_D65,
+    Enhanced = 0,
+    Blackbody_D65 = 1,
+    SunWhite = 2,
+    VegaWhite = 3,
 };
 
 class ColorTemperatureTable
 {
  public:
-    ColorTemperatureTable(celestia::util::array_view<const Color> _colors,
-                          float maxTemp,
-                          ColorTableType _type) :
-        colors(_colors),
-        tempScale(static_cast<float>(_colors.size() - 1) / maxTemp),
-        tableType(_type)
-    {};
+    explicit ColorTemperatureTable(ColorTableType _type);
 
     Color lookupColor(float temp) const
     {
-        auto colorTableIndex = static_cast<unsigned int>(temp * tempScale);
+        auto colorTableIndex = static_cast<std::size_t>(std::nearbyint(temp * tempScale));
         if (colorTableIndex >= colors.size())
             return colors.back();
         else
@@ -54,11 +55,10 @@ class ColorTemperatureTable
         return tableType;
     }
 
+    bool setType(ColorTableType _type);
+
  private:
-    celestia::util::array_view<const Color> colors;
+    std::vector<Color> colors{ };
     float tempScale;
     ColorTableType tableType;
 };
-
-const ColorTemperatureTable* GetStarColorTable(ColorTableType);
-const ColorTemperatureTable* GetTintColorTable();

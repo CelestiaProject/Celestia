@@ -252,7 +252,6 @@ Renderer::Renderer() :
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0ull),
-    colorTemp(nullptr),
     settingsChanged(true),
     objectAnnotationSetOpen(false),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
@@ -268,7 +267,6 @@ Renderer::Renderer() :
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    colorTemp = GetStarColorTable(ColorTableType::Blackbody_D65);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -735,17 +733,17 @@ void Renderer::setOrbitMask(int mask)
 }
 
 
-const ColorTemperatureTable*
+ColorTableType
 Renderer::getStarColorTable() const
 {
-    return colorTemp;
+    return starColors.type();
 }
 
 
 void
-Renderer::setStarColorTable(const ColorTemperatureTable* ct)
+Renderer::setStarColorTable(ColorTableType ct)
 {
-    colorTemp = ct;
+    starColors.setType(ct);
     markSettingsChanged();
 }
 
@@ -1372,7 +1370,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                   double t,
                   vector<LightSource>& lightSources,
                   float tintSaturation,
-                  bool useBlackbodyColors)
+                  const ColorTemperatureTable* tintColors)
 {
     // Fade out the illumination from cool objects. Objects at the Draper
     // point (798 K) should be visibly glowing, so set the minimum temperature
@@ -1396,7 +1394,9 @@ setupLightSources(const vector<const Star*>& nearStars,
             if (temp <= DARK_POINT)
                 continue;
 
-            if (useBlackbodyColors)
+            if (tintColors == nullptr)
+                ls.color = legacyTintColor(temp);
+            else
             {
                 float fadeFactor = temp < FADE_POINT
                     ? (temp - DARK_POINT) / (FADE_POINT - DARK_POINT)
@@ -1410,11 +1410,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                 // Use a variant of the blackbody colors with the whitepoint
                 // set to Sol being white, to ensure consistency of the Solar
                 // System textures.
-                ls.color = GetTintColorTable()->lookupTintColor(temp, tintSaturation, fadeFactor);
-            }
-            else
-            {
-                ls.color = legacyTintColor(temp);
+                ls.color = tintColors->lookupTintColor(temp, tintSaturation, fadeFactor);
             }
 
             lightSources.push_back(ls);
@@ -3020,7 +3016,7 @@ void Renderer::renderStar(const Star& star,
     if (!star.getVisibility())
         return;
 
-    Color color = colorTemp->lookupColor(star.getTemperature());
+    Color color = starColors.lookupColor(star.getTemperature());
     float radius = star.getRadius();
     float discSizeInPixels = radius / (distance * pixelSize);
 
@@ -3858,7 +3854,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
-    starRenderer.colorTemp = colorTemp;
+    starRenderer.colorTemp = &starColors;
 
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
@@ -5105,7 +5101,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
                           now,
                           lightSourceList,
                           tintSaturation,
-                          colorTemp->type() == ColorTableType::Blackbody_D65);
+                          starColors.type() == ColorTableType::Enhanced ? nullptr : &tintColors);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
