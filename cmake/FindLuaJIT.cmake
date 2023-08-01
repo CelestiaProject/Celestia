@@ -105,3 +105,27 @@ find_package_handle_standard_args(LuaJIT
                                   VERSION_VAR LUAJIT_VERSION_STRING)
 
 mark_as_advanced(LUA_INCLUDE_DIR LUA_LIBRARIES LUA_LIBRARY LUA_MATH_LIBRARY)
+
+if(LUAJIT_FOUND)
+  if(NOT TARGET LuaJIT::LuaJIT)
+    add_library(LuaJIT::LuaJIT UNKNOWN IMPORTED)
+    set_target_properties(
+      LuaJIT::LuaJIT PROPERTIES
+      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+      INTERFACE_INCLUDE_DIRECTORIES "${LUA_INCLUDE_DIR}"
+      IMPORTED_LOCATION "${LUA_LIBRARY}"
+    )
+
+    list(LENGTH LUA_LIBRARIES LUA_LIB_COUNT)
+    if(LUA_LIB_COUNT GREATER 1)
+      math(EXPR LUA_LIB_LAST_INDEX "${LUA_LIB_COUNT} - 1")
+      foreach(LUA_INDEX RANGE 1 ${LUA_LIB_LAST_INDEX})
+        list(GET LUA_LIBRARIES ${LUA_INDEX} LUA_DEP_LIB)
+        set_property(
+          TARGET LuaJIT::LuaJIT APPEND
+          PROPERTY INTERFACE_LINK_LIBRARIES "${LUA_DEP_LIB}"
+        )
+      endforeach()
+    endif()
+  endif()
+endif()
