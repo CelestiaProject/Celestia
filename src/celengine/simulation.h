@@ -126,9 +126,6 @@ class Simulation
     const ObserverFrame::SharedConstPtr& getFrame() const;
 
  private:
-    SolarSystem* getSolarSystem(const Star* star);
-
- private:
     double realTime{ 0.0 };
     double timeScale{ 1.0 };
     double storedTimeScale{ 1.0 };
