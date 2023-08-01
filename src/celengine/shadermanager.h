@@ -142,8 +142,9 @@ class ShaderProperties
 };
 
 
-static const unsigned int MaxShaderLights = 4;
-static const unsigned int MaxShaderEclipseShadows = 3;
+constexpr inline unsigned int MaxShaderLights = 4;
+constexpr inline unsigned int MaxShaderEclipseShadows = 3;
+
 struct CelestiaGLProgramLight
 {
     Vec3ShaderParameter direction;
