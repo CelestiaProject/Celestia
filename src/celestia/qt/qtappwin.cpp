@@ -219,8 +219,10 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
         QString dataDir = CONFIG_DATA_DIR;
         QString celestia_data_dir = dataDir;
         QDir::setCurrent(celestia_data_dir);
+        m_celestia_data_dir = QDir::currentPath();
     } else if (QDir(celestia_data_dir).isReadable()) {
         QDir::setCurrent(celestia_data_dir);
+        m_celestia_data_dir = QDir::currentPath();
     } else {
         QMessageBox::critical(0, "Celestia",
             _("Celestia is unable to run because the data directory was not "
@@ -1089,12 +1091,13 @@ void CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
 
 void CelestiaAppWindow::slotManual()
 {
-#if 0
-    QString MANUAL_FILE = "CelestiaGuide.html";
-    QDesktopServices::openUrl(QUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE)));
-#else
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(m_celestia_data_dir) + QDir::toNativeSeparators("/help/CelestiaGuide.html")));
+}
+
+
+void CelestiaAppWindow::slotWiki()
+{
     QDesktopServices::openUrl(QUrl("https://en.wikibooks.org/wiki/Celestia"));
-#endif
 }
 
 
@@ -1536,9 +1539,12 @@ void CelestiaAppWindow::createMenus()
     /****** Help Menu ******/
     helpMenu = menuBar()->addMenu(_("&Help"));
 
-    QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Celestia Manual"), this);
+    QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Celestia Guide"), this);
     connect(helpManualAct, SIGNAL(triggered()), this, SLOT(slotManual()));
     helpMenu->addAction(helpManualAct);
+    QAction* helpWikiAct = new QAction(QIcon(":/icons/book.png"), _("Celestia Wiki"), this);
+    connect(helpWikiAct, SIGNAL(triggered()), this, SLOT(slotWiki()));
+    helpMenu->addAction(helpWikiAct);
     helpMenu->addSeparator();
 
     QAction* glInfoAct = new QAction(QIcon(":/icons/report_GL.png"), _("OpenGL Info"), this);

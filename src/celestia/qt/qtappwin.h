@@ -57,6 +57,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
     void slotManual();
+    void slotWiki();
     void setCheckedFPS();
     void setFPS(int);
     void setCustomFPS();
@@ -157,6 +158,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     BookmarkToolBar* m_bookmarkToolBar{ nullptr };
 
     QString m_dataDirPath;
+    QString m_celestia_data_dir;
 
     QTimer *timer;
 };
