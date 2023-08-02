@@ -86,4 +86,4 @@ public:
     std::string layoutDirection;
 };
 
-CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);
+bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config);

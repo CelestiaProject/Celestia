@@ -20,13 +20,13 @@ using namespace std;
 using namespace celestia::util;
 
 
-CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *config)
+bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config)
 {
     ifstream configFile(filename);
     if (!configFile.good())
     {
         GetLogger()->error("Error opening config file '{}'.\n", filename);
-        return config;
+        return false;
     }
 
     Tokenizer tokenizer(&configFile);
@@ -37,7 +37,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         GetLogger()->error("{}:{} 'Configuration' expected.\n", filename,
                            tokenizer.getLineNumber());
-        return config;
+        return false;
     }
 
     Value configParamsValue = parser.readValue();
@@ -45,88 +45,85 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     if (configParams == nullptr)
     {
         GetLogger()->error("{}: Bad configuration file.\n", filename);
-        return config;
+        return false;
     }
 
-    if (config == nullptr)
-        config = new CelestiaConfig();
-
-    config->faintestVisible = configParams->getNumber<float>("FaintestVisibleMagnitude").value_or(6.0f);
+    config.faintestVisible = configParams->getNumber<float>("FaintestVisibleMagnitude").value_or(6.0f);
     if (auto path = configParams->getPath("FavoritesFile"); path.has_value())
-        config->favoritesFile = *path;
+        config.favoritesFile = *path;
     if (auto path = configParams->getPath("DestinationFile"); path.has_value())
-        config->destinationsFile = *path;
+        config.destinationsFile = *path;
     if (auto path = configParams->getPath("InitScript"); path.has_value())
-        config->initScriptFile = *path;
+        config.initScriptFile = *path;
     if (auto path = configParams->getPath("DemoScript"); path.has_value())
-        config->demoScriptFile = *path;
+        config.demoScriptFile = *path;
     if (auto path = configParams->getPath("AsterismsFile"); path.has_value())
-        config->asterismsFile = *path;
+        config.asterismsFile = *path;
     if (auto path = configParams->getPath("BoundariesFile"); path.has_value())
-        config->boundariesFile = *path;
+        config.boundariesFile = *path;
     if (auto path = configParams->getPath("StarDatabase"); path.has_value())
-        config->starDatabaseFile = *path;
+        config.starDatabaseFile = *path;
     if (auto path = configParams->getPath("StarNameDatabase"); path.has_value())
-        config->starNamesFile = *path;
+        config.starNamesFile = *path;
     if (auto path = configParams->getPath("HDCrossIndex"); path.has_value())
-        config->HDCrossIndexFile = *path;
+        config.HDCrossIndexFile = *path;
     if (auto path = configParams->getPath("SAOCrossIndex"); path.has_value())
-        config->SAOCrossIndexFile = *path;
+        config.SAOCrossIndexFile = *path;
     if (auto path = configParams->getPath("GlieseCrossIndex"); path.has_value())
-        config->GlieseCrossIndexFile = *path;
+        config.GlieseCrossIndexFile = *path;
     if (auto path = configParams->getPath("LeapSecondsFile"); path.has_value())
-        config->leapSecondsFile = *path;
+        config.leapSecondsFile = *path;
     if (const std::string* font = configParams->getString("Font"); font != nullptr)
-        config->mainFont = *font;
+        config.mainFont = *font;
     if (const std::string* labelFont = configParams->getString("LabelFont"); labelFont != nullptr)
-        config->labelFont = *labelFont;
+        config.labelFont = *labelFont;
     if (const std::string* titleFont = configParams->getString("TitleFont"); titleFont != nullptr)
-        config->titleFont = *titleFont;
+        config.titleFont = *titleFont;
     if (const std::string* logoTextureFile = configParams->getString("LogoTexture"); logoTextureFile != nullptr)
-        config->logoTextureFile = *logoTextureFile;
+        config.logoTextureFile = *logoTextureFile;
     if (const std::string* cursor = configParams->getString("Cursor"); cursor != nullptr)
-        config->cursor = *cursor;
+        config.cursor = *cursor;
     if (const std::string* projectionMode = configParams->getString("ProjectionMode"); projectionMode != nullptr)
-        config->projectionMode = *projectionMode;
+        config.projectionMode = *projectionMode;
     if (const std::string* viewportEffect = configParams->getString("ViewportEffect"); viewportEffect != nullptr)
-        config->viewportEffect = *viewportEffect;
+        config.viewportEffect = *viewportEffect;
     if (const std::string* warpMeshFile = configParams->getString("WarpMeshFile"); warpMeshFile != nullptr)
-        config->warpMeshFile = *warpMeshFile;
+        config.warpMeshFile = *warpMeshFile;
     if (const std::string* x264EncoderOptions = configParams->getString("X264EncoderOptions"); x264EncoderOptions != nullptr)
-        config->x264EncoderOptions = *x264EncoderOptions;
+        config.x264EncoderOptions = *x264EncoderOptions;
     if (const std::string* ffvhEncoderOptions = configParams->getString("FFVHEncoderOptions"); ffvhEncoderOptions != nullptr)
-        config->ffvhEncoderOptions = *ffvhEncoderOptions;
+        config.ffvhEncoderOptions = *ffvhEncoderOptions;
     if (const std::string* measurementSystem = configParams->getString("MeasurementSystem"); measurementSystem != nullptr)
-        config->measurementSystem = *measurementSystem;
+        config.measurementSystem = *measurementSystem;
     if (const std::string* temperatureScale = configParams->getString("TemperatureScale"); temperatureScale != nullptr)
-        config->temperatureScale = *temperatureScale;
+        config.temperatureScale = *temperatureScale;
     if (const std::string* layoutDirection = configParams->getString("LayoutDirection"); layoutDirection != nullptr)
-        config->layoutDirection = *layoutDirection;
+        config.layoutDirection = *layoutDirection;
 
     auto maxDist = configParams->getNumber<float>("SolarSystemMaxDistance").value_or(1.0f);
-    config->SolarSystemMaxDistance = std::clamp(maxDist, 1.0f, 10.0f);
+    config.SolarSystemMaxDistance = std::clamp(maxDist, 1.0f, 10.0f);
 
-    config->ShadowMapSize = configParams->getNumber<unsigned int>("ShadowMapSize").value_or(0u);
+    config.ShadowMapSize = configParams->getNumber<unsigned int>("ShadowMapSize").value_or(0u);
 
-    config->aaSamples = configParams->getNumber<unsigned int>("AntialiasingSamples").value_or(1u);
+    config.aaSamples = configParams->getNumber<unsigned int>("AntialiasingSamples").value_or(1u);
 
-    config->rotateAcceleration = configParams->getNumber<float>("RotateAcceleration").value_or(120.0f);
-    config->mouseRotationSensitivity = configParams->getNumber<float>("MouseRotationSensitivity").value_or(1.0f);
-    config->reverseMouseWheel = configParams->getBoolean("ReverseMouseWheel").value_or(false);
+    config.rotateAcceleration = configParams->getNumber<float>("RotateAcceleration").value_or(120.0f);
+    config.mouseRotationSensitivity = configParams->getNumber<float>("MouseRotationSensitivity").value_or(1.0f);
+    config.reverseMouseWheel = configParams->getBoolean("ReverseMouseWheel").value_or(false);
     if (auto path = configParams->getPath("ScriptScreenshotDirectory"); path.has_value())
-        config->scriptScreenshotDirectory = *path;
+        config.scriptScreenshotDirectory = *path;
     if (const std::string* scriptSystemAccessPolicy = configParams->getString("ScriptSystemAccessPolicy"); scriptSystemAccessPolicy != nullptr)
-        config->scriptSystemAccessPolicy = *scriptSystemAccessPolicy;
+        config.scriptSystemAccessPolicy = *scriptSystemAccessPolicy;
 
-    config->orbitWindowEnd = configParams->getNumber<float>("OrbitWindowEnd").value_or(0.5f);
-    config->orbitPeriodsShown = configParams->getNumber<float>("OrbitPeriodsShown").value_or(1.0f);
-    config->linearFadeFraction = configParams->getNumber<float>("LinearFadeFraction").value_or(0.0f);
+    config.orbitWindowEnd = configParams->getNumber<float>("OrbitWindowEnd").value_or(0.5f);
+    config.orbitPeriodsShown = configParams->getNumber<float>("OrbitPeriodsShown").value_or(1.0f);
+    config.linearFadeFraction = configParams->getNumber<float>("LinearFadeFraction").value_or(0.0f);
 
-    config->orbitPathSamplePoints = configParams->getNumber<unsigned int>("OrbitPathSamplePoints").value_or(100u);
-    config->shadowTextureSize = configParams->getNumber<unsigned int>("ShadowTextureSize").value_or(256u);
-    config->eclipseTextureSize = configParams->getNumber<unsigned int>("EclipseTextureSize").value_or(128u);
+    config.orbitPathSamplePoints = configParams->getNumber<unsigned int>("OrbitPathSamplePoints").value_or(100u);
+    config.shadowTextureSize = configParams->getNumber<unsigned int>("ShadowTextureSize").value_or(256u);
+    config.eclipseTextureSize = configParams->getNumber<unsigned int>("EclipseTextureSize").value_or(128u);
 
-    config->consoleLogRows = configParams->getNumber<unsigned int>("LogSize").value_or(200u);
+    config.consoleLogRows = configParams->getNumber<unsigned int>("LogSize").value_or(200u);
 
     if (const Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs"); solarSystemsVal != nullptr)
     {
@@ -145,7 +142,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->solarSystemFiles.push_back(PathExp(*catalogName));
+                config.solarSystemFiles.push_back(PathExp(*catalogName));
             }
         }
     }
@@ -167,7 +164,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->starCatalogFiles.push_back(PathExp(*catalogName));
+                config.starCatalogFiles.push_back(PathExp(*catalogName));
             }
         }
     }
@@ -189,7 +186,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->dsoCatalogFiles.push_back(PathExp(*catalogName));
+                config.dsoCatalogFiles.push_back(PathExp(*catalogName));
             }
         }
     }
@@ -207,12 +204,12 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->extrasDirs.push_back(PathExp(*dirName));
+                config.extrasDirs.push_back(PathExp(*dirName));
             }
         }
         else if (const std::string* dirName = extrasDirsVal->getString(); dirName != nullptr)
         {
-            config->extrasDirs.push_back(PathExp(*dirName));
+            config.extrasDirs.push_back(PathExp(*dirName));
         }
         else
         {
@@ -233,12 +230,12 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->skipExtras.push_back(PathExp(*fileName));
+                config.skipExtras.push_back(PathExp(*fileName));
             }
         }
         else if (const std::string* fileName = skipExtrasVal->getString(); fileName != nullptr)
         {
-            config->skipExtras.push_back(PathExp(*fileName));
+            config.skipExtras.push_back(PathExp(*fileName));
         }
         else
         {
@@ -263,7 +260,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                     continue;
                 }
 
-                config->ignoreGLExtensions.push_back(*ext);
+                config.ignoreGLExtensions.push_back(*ext);
             }
         }
     }
@@ -321,16 +318,16 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 starTexNames[StellarClass::Spectral_D] = *texName;
 
             if (const std::string* texName = starTexTable->getString("NeutronStar"); texName != nullptr)
-                config->starTextures.neutronStarTex.setTexture(*texName, "textures");
+                config.starTextures.neutronStarTex.setTexture(*texName, "textures");
 
             if (const std::string* texName = starTexTable->getString("Default"); texName != nullptr)
-                config->starTextures.defaultTex.setTexture(*texName, "textures");
+                config.starTextures.defaultTex.setTexture(*texName, "textures");
 
             for (unsigned int i = 0; i < (unsigned int) StellarClass::Spectral_Count; i++)
             {
                 if (starTexNames[i] != "")
                 {
-                    config->starTextures.starTex[i].setTexture(starTexNames[i], "textures");
+                    config.starTextures.starTex[i].setTexture(starTexNames[i], "textures");
                 }
             }
         }
@@ -338,10 +335,10 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
 #ifdef CELX
     if (auto path = configParams->getPath("LuaHook"); path.has_value())
-        config->luaHook = *path;
+        config.luaHook = *path;
     // Move the value into the config object to retain ownership of the hash
-    config->configParams = std::move(configParamsValue);
+    config.configParams = std::move(configParamsValue);
 #endif
 
-    return config;
+    return true;
 }
