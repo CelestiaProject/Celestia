@@ -10,7 +10,6 @@ macro(MakeIntlTarget)
     add_library(Intl::Intl INTERFACE IMPORTED)
     set_target_properties(
       Intl::Intl PROPERTIES
-      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
       INTERFACE_INCLUDE_DIRECTORIES "${Intl_INCLUDE_DIRS}"
       INTERFACE_LINK_LIBRARIES "${Intl_LIBRARIES}"
     )
