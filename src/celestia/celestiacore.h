@@ -358,7 +358,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void flash(const std::string&, double duration = 1.0);
 
-    CelestiaConfig* getConfig() const;
+    const CelestiaConfig* getConfig() const;
 
     void notifyWatchers(int);
 
@@ -462,7 +462,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #endif // CELX
 
  private:
-    CelestiaConfig* config{ nullptr };
+    std::unique_ptr<CelestiaConfig> config{ nullptr };
 
     Universe* universe{ nullptr };
 

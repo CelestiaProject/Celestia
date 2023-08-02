@@ -3772,24 +3772,26 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                                   const vector<fs::path>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
+    config = std::make_unique<CelestiaConfig>();
+    bool hasConfig = false;
     if (!configFileName.empty())
     {
-        config = ReadCelestiaConfig(configFileName);
+        hasConfig = ReadCelestiaConfig(configFileName, *config);
     }
     else
     {
-        config = ReadCelestiaConfig("celestia.cfg");
+        hasConfig = ReadCelestiaConfig("celestia.cfg", *config);
 
         fs::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
-            ReadCelestiaConfig(localConfigFile, config);
+            hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
 
         localConfigFile = PathExp("~/.celestia-1.7.cfg");
         if (!localConfigFile.empty())
-            ReadCelestiaConfig(localConfigFile, config);
+            hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
     }
 
-    if (config == nullptr)
+    if (!hasConfig)
     {
         fatalError(_("Error reading configuration file."), false);
         return false;
@@ -4573,9 +4575,9 @@ void CelestiaCore::flash(const string& s, double duration)
 }
 
 
-CelestiaConfig* CelestiaCore::getConfig() const
+const CelestiaConfig* CelestiaCore::getConfig() const
 {
-    return config;
+    return config.get();
 }
 
 
@@ -4781,7 +4783,7 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
 #ifdef CELX
 bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 {
-    return CreateLuaEnvironment(this, config, progressNotifier);
+    return CreateLuaEnvironment(this, config.get(), progressNotifier);
 }
 #endif
 
