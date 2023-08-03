@@ -452,11 +452,24 @@ set(BASE_DATA_SOURCES
   controls.txt
   COPYING
 )
-install(FILES ${BASE_DATA_SOURCES} DESTINATION ${DATADIR})
-install(FILES "splash.png" DESTINATION "${DATADIR}/splash")
+install(
+  FILES ${BASE_DATA_SOURCES}
+  DESTINATION ${DATADIR}
+  COMPONENT core
+)
+install(
+  FILES "splash.png"
+  DESTINATION "${DATADIR}/splash"
+  COMPONENT core
+)
 
 if(NOT WIN32)
-  install(FILES celestia-logo.png DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps" RENAME celestia.png)
+  install(
+    FILES celestia-logo.png
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps"
+    RENAME celestia.png
+    COMPONENT core
+  )
 endif()
 
 add_subdirectory(src)

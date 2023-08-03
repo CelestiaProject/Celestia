@@ -25,7 +25,11 @@ macro(build_cmod_tool)
   target_link_libraries(${__target} celestia cmodcommon)
   add_dependencies(${__target} celestia cmodcommon)
 
-  install(TARGETS ${__target} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(
+    TARGETS ${__target}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT tools
+  )
 endmacro()
 
 add_subdirectory(common)

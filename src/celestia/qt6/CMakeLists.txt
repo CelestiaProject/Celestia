@@ -39,7 +39,11 @@ if(APPLE)
   set_property(TARGET celestia-qt6 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
 endif()
 
-install(TARGETS celestia-qt6 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(
+  TARGETS celestia-qt6
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT qt6gui
+)
 
 if(WIN32)
   qt6_generate_deploy_app_script(TARGET celestia-qt6
@@ -47,7 +51,10 @@ if(WIN32)
     NO_UNSUPPORTED_PLATFORM_ERROR
     NO_TRANSLATIONS
   )
-  install(SCRIPT "${deploy-celestia-qt6}")
+  install(
+    SCRIPT "${deploy-celestia-qt6}"
+    COMPONENT qt6gui
+  )
 endif()
 
 add_subdirectory(data)

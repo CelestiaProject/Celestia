@@ -97,6 +97,10 @@ if (ENABLE_GLES)
   target_link_libraries(celestia-gtk celestia ${GLESv2_LIBRARIES})
 endif()
 
-install(TARGETS celestia-gtk RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(
+  TARGETS celestia-gtk
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT gtkgui
+)
 
 add_subdirectory(data)

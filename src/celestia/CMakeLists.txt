@@ -106,13 +106,21 @@ if (HAVE_MESHOPTIMIZER)
 endif()
 
 if(WIN32)
-  install(TARGETS celestia RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  install(TARGETS celestia RUNTIME_DEPENDENCIES
-    PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
-    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
+  install(
+    TARGETS celestia
+    RUNTIME_DEPENDENCIES
+      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
+      POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT core
   )
 else()
-  install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
+  install(
+    TARGETS celestia
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    NAMELINK_SKIP
+    COMPONENT core
+  )
 endif()
 
 add_subdirectory(gtk)
