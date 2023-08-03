@@ -340,9 +340,9 @@ jobs:
     - name: 'Install sonar'
       run: |
         cd /opt
-        sudo wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-        sudo unzip sonar-scanner-cli-4.8.0.2856-linux.zip
-        sudo ln -s /opt/sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner /usr/bin
+        sudo wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.0.2966-linux.zip
+        sudo unzip sonar-scanner-cli-5.0.0.2966-linux.zip
+        sudo ln -s /opt/sonar-scanner-5.0.0.2966-linux/bin/sonar-scanner /usr/bin
 
     - name: 'Install dependencies'
       run: |
