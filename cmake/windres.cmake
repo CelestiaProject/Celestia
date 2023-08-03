@@ -38,7 +38,11 @@ macro(WINDRES_CREATE_TRANSLATIONS _rcFile _firstPoFileArg)
       set_target_properties(${_dllFile} PROPERTIES LINK_FLAGS "/MANIFEST:NO /NODEFAULTLIB /NOENTRY")
     endif()
 
-    install(TARGETS ${_dllFile} LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}/locale)
+    install(
+      TARGETS ${_dllFile}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}/locale
+      COMPONENT core
+    )
     set(_dllFiles ${_dllFiles} ${_dllFile})
   endforeach()
 

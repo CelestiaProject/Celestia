@@ -46,6 +46,10 @@ if(APPLE)
   set_property(TARGET celestia-qt5 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
 endif()
 
-install(TARGETS celestia-qt5 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(
+  TARGETS celestia-qt5
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT qt5gui
+)
 
 add_subdirectory(data)

@@ -5,7 +5,11 @@ macro(install_perl_tools)
 
   set(__sources ${ARGV})
 
-  install(PROGRAMS ${__sources} DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(
+    PROGRAMS ${__sources}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT tools
+  )
 endmacro()
 
 add_subdirectory(atmosphere)

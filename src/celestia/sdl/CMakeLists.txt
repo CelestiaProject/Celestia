@@ -17,4 +17,8 @@ else()
   target_include_directories(celestia-sdl PRIVATE ${SDL2_INCLUDE_DIRS})
   target_link_libraries(celestia-sdl PRIVATE ${SDL2_LIBRARIES})
 endif()
-install(TARGETS celestia-sdl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(
+  TARGETS celestia-sdl
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT sdlgui
+)
