@@ -274,6 +274,7 @@
 #define ID_STARCOLOR_SOLAR              40091
 #define ID_STARCOLOR_VEGA               40092
 #define ID_SELECT_PRIMARY_BODY          40093
+#define ID_FILE_RUNDEMO                 40094
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 #define ID_FIRST_SCRIPT                 42000
 

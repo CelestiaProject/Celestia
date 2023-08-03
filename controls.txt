@@ -134,7 +134,7 @@ Ctrl+D ................................ Delete all views except active one (rese
  Shift+Left/Right Arrow ........ Orbit object: right/left
  Shift+Up/Down Arrow ........ Orbit object: down/up
 
- 
+
 --- Navigation via number Pad Keys (with NumLock active) ---
 
  8 ...................................... Pitch down [Down arrow]
@@ -173,7 +173,6 @@ Ctrl+D ................................ Delete all views except active one (rese
  ` ...................................... Toggle display of "frames per second" (FPS) being rendered
  Ctrl+O .............................. Display "Select Object" dialog box
  @ .................................... Edit Mode toggle (to assist in the placement of objects)
- D ..................................... Run demo script (/celestia/demo.cel)
  Enter ............................... Toggle Name entry Mode (use Tab / Shift+Tab to highlight
                                           an item, Esc to exit)
 
@@ -188,4 +187,3 @@ Ctrl+D ................................ Delete all views except active one (rese
  R trigger ........................... Roll Right
  Button 1 ........................... Move slower
  Button 2 ........................... Move faster
-

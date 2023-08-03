@@ -8,7 +8,7 @@ Rueda: Ajustar distancia al objeto
 Botones der. + izq. y arrastrar: Ajustar distancia a selección
 Ctrl + Botón izq. y arastrar: Ajustar distancia a selección
 Shift + Botón izq. y arrastrar: Cambiar ancho de campo (p.ej. => visión telescópica)
-Botón rueda (botón central): Cambiar ancho del campo entre 45 grados y el ancho 
+Botón rueda (botón central): Cambiar ancho del campo entre 45 grados y el ancho
 anterior (p.ej. visión telescópica)
 Botón izquierdo: Seleccionar objeto
 Botón izquierdo (doble click): Centrar selección
@@ -23,14 +23,14 @@ G    : Ir al objeto seleccionado
 F    : Seguir al objeto seleccionado
 Y    : Orbitar el objeto seleccionado a velocidad sincrónica con su rotación
 :    : Trabar el objeto seleccionado
-"    : Perseguir al objeto seleccionado (con orientación basada en la velocidad 
+"    : Perseguir al objeto seleccionado (con orientación basada en la velocidad
        de la selección)
 T    : Rastrear el objeto seleccionado (mantenerlo centrado en la vista)
 HOME : Acercarse
 *    : Mirar hacia atrás
 END  : Move farther from object
 ESC  : Cancelar movimiento o script
-Shift+C : Centrar/orbitar--centrar el objeto seleccionado sin cambiar la posición 
+Shift+C : Centrar/orbitar--centrar el objeto seleccionado sin cambiar la posición
        del objeto de referencia
 Flechas Izquierda/Derecha : Rolar la cámara
 Flechas Arriba/Abajo : Apuntar hacia arriba/abajo
@@ -45,7 +45,7 @@ K       : Tiempo 10x más lento
 Shift+K : Tiempo 2x más lento
 J       : Invertir el tiempo
 !       : Establecer tiempo actual
-?       : Mostrar la demora por velocidad de la luz entre el observador y el 
+?       : Mostrar la demora por velocidad de la luz entre el observador y el
           objeto seleccionado
 -       : Substraer del tiempo de simulación la demora por velocidad de la luz
 
@@ -91,9 +91,9 @@ Ctrl+T : Mostrar colas de cometas
 Ctrl+V : Cambiar entre los procesos OpenGL soportados
 Ctrl+W : Cambiar a modo alambres
 Ctrl+X : Cambiar a suavizado de líneas
-Ctrl+Y : Cambiar autoMag = adaptación automática de la visibilidad estelar al 
+Ctrl+Y : Cambiar autoMag = adaptación automática de la visibilidad estelar al
 campo visual
-+  : Cambiar entre representación artística y límite del conocimiento en las 
++  : Cambiar entre representación artística y límite del conocimiento en las
      texturas planetarias
 
 Multivisión:
@@ -134,7 +134,6 @@ Botón 1 : Más lento
 Botón 2 : Más rápido
 
 Otros:
-D   : Correr script de demostración
 F8  : Habilitar joystick
 F10 : Capturar imagen
 `   : Mostrar cuadros por segundo

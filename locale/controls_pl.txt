@@ -20,19 +20,19 @@ Kółko (w górę/dół).................................................. Zmian
 Ctrl+Lewy przycisk (przeciągnięcie w górę/dół) ..... Zmiana odległości do wybranego obiektu
 					 (Home/End)
 Shift+Lewy przycisk (przeciągnięcie w górę/dół) ... Zmiana pola widzenia (FOV) (. / ,)
-Środkowy przycisk (kółko)...................................... Przełączenie o 45 stopni pomiędzy 
+Środkowy przycisk (kółko)...................................... Przełączenie o 45 stopni pomiędzy
 					 bieżącym a poprzednim polem widzenia
 Lewy przycisk (na obiekcie) ................................... Wybór obiektu
 					 (Klawisz Enter -- poprzez nazwę obiektu)
 Lewy przycisk (nie na obiekcie) ............................. Anulowanie wyboru
 Podwójne kliknięcie lewym przyciskiem (na obiekcie) ... Wybór i centrowanie obiektu
 Prawy przycisk (na obiekcie) .................................. Wywołanie menu kontekstowego
- 
- 
+
+
 ------------------------------------------------
     FUNKCJE KLAWIATURY
 ------------------------------------------------
- 
+
  --- Nawigacja ---
 
 1-9 (klawiatura numeryczna) ...... Wybierz planetę według odległości od słońca
@@ -108,7 +108,7 @@ Shift+K ........ Czynnik czasu: 2x wolniej
 
 
  --- Wyświetlanie nazw (włączanie lub wyłączanie) ---
- 
+
 E ................. Galaktyki
 Shift+E ........ Gromady kuliste
 B ................. Gwiazdy
@@ -189,7 +189,6 @@ Ctrl+Insert .... Kopiuj URL aktualnego miejsca do schowka
 ` .................. Pokaż renderowane klatki na sekundę (FPS)
 Ctrl+O ......... Pokaż okno dialogowe "Wybierz obiekt"
 @ ............... Przełącz tryb edycji (pomoc w umieszczaniu obiektów)
-D ................ Uruchom demo (/celestia/demo.cel)
 Enter ........... Wybierz gwiazdę lub planetę, wpisując jej nazwę
 	      (użyj klawiszy Tab/Shift+Tab aby podświetlić pozycję, Esc anuluje)
 
@@ -205,4 +204,3 @@ Lewy spust ..... Obrót w lewo
 Prawy spust .... Obrót w prawo
 Przycisk 1 ....... Zwolnij
 Przycisk 2 ....... Przyspiesz
-

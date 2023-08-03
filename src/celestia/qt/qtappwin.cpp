@@ -253,7 +253,6 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     QGuiApplication::setDesktopFileName("celestia-qt5");
 #endif
 
-
     if (!options.logFilename.isEmpty())
     {
         fs::path fn = logPath.absolutePath().toStdString();
@@ -914,6 +913,17 @@ void CelestiaAppWindow::slotOpenScript()
 }
 
 
+void CelestiaAppWindow::slotRunDemo()
+{
+    const auto& demoScriptFile = m_appCore->getConfig()->demoScriptFile;
+    if (!demoScriptFile.empty())
+    {
+        m_appCore->cancelScript();
+        m_appCore->runScript(demoScriptFile);
+    }
+}
+
+
 void CelestiaAppWindow::slotShowTimeDialog()
 {
     SetTimeDialog* timeDialog = new SetTimeDialog(m_appCore->getSimulation()->getTime(),
@@ -1306,6 +1316,14 @@ void CelestiaAppWindow::createMenus()
     QMenu* scriptsMenu = buildScriptsMenu();
     if (scriptsMenu != nullptr)
         fileMenu->addMenu(scriptsMenu);
+
+    if (!m_appCore->getConfig()->demoScriptFile.empty())
+    {
+        fileMenu->addSeparator();
+        QAction* runDemoAction = new QAction(_("Run &Demo"), this);
+        connect(runDemoAction, SIGNAL(triggered()), this, SLOT(slotRunDemo()));
+        fileMenu->addAction(runDemoAction);
+    }
 
     fileMenu->addSeparator();
 

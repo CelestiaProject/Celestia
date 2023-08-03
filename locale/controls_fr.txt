@@ -1,7 +1,7 @@
 Commandes de contrôle Souris/Clavier/Joystick pour Celestia
 
 ------------------------------------------------------
-     CONTRÔLE À LA SOURIS   
+     CONTRÔLE À LA SOURIS
 ------------------------------------------------------
 Drag gauche .......................	Orientation de la caméra (haut, bas, gauche droite)
 clic sur aucun objet..............	Désélectionne l'objet actuellement sélectionné
@@ -36,7 +36,7 @@ Clic gauche sur un objet........	Sélectionne l'objet
 			position de l'objet de référence.
  " ...........................	Chasser l'objet sélectionné. (L'orientation est basée sur la
 			vitesse de l'objet).
- Retour arrière .......	Sélectionne le parent de l'obj. courant ou annule la sélection 
+ Retour arrière .......	Sélectionne le parent de l'obj. courant ou annule la sélection
 		si l'objet est une étoile ou un objet du ciel lointain : annule
 		sinon :	- sélectionne le parent de l'objet
  F ...........................	Suivre la sélection
@@ -48,11 +48,11 @@ Clic gauche sur un objet........	Sélectionne l'objet
  Début (Home) .......	Se rapproche de la sélection
  Fin ........................	S'éloigne de l'objet
  * ...........................	Tourne la vue de 180° (rétroviseur)
- H ..........................	Sélection notre Soleil. 
+ H ..........................	Sélection notre Soleil.
  Y ..........................	Orbite synchrone. (synchro avec la rotation de l'objet)
  T ..........................	Pister l'objet (il reste centré à l'écran)
 
- 
+
 --- Navigation par les flèches du clavier ---
 
 Flèche ..................	Incline l'observateur dans le sens de la flèche
@@ -72,7 +72,7 @@ Maj + flèche .........	En orbite autour de l'objet dans le sens de la flèche.
  4 ...........................	Virage à gauche (lacet)
  6 ...........................	Virage à droite
 
- 
+
 --- Mouvement (vol spatial) ---
 
  Z ..........................	Diminue la vitesse
@@ -86,7 +86,7 @@ Maj + flèche .........	En orbite autour de l'objet dans le sens de la flèche.
  F6 .........................	Règle la vitesse à 1 UA (Unité Astronomique) par seconde
  F7 .........................	Règle la vitesse à 1 al/s (année lumière par seconde)
 
-F1 ou S...................	Arrête le mouvement 
+F1 ou S...................	Arrête le mouvement
 
 
 --- Contrôle du  temps ---
@@ -95,15 +95,15 @@ F1 ou S...................	Arrête le mouvement
  J ........................... Permute l'écoulement du temps vers l'avenir ou vers le passé
  \ ...........................	Cours du temps normal. Annule un défilement + ou - rapide
  L ...........................	Accélère 10 fois l'écoulement du temps ( avant ou arrière)
- Maj + L .................	Accélère  2  fois l'écoulement du temps 
+ Maj + L .................	Accélère  2  fois l'écoulement du temps
  K ..........................	Ralentit   10 fois l'écoulement du temps ( avant ou arrière)
- Maj + K .................	Ralentit    2  fois l'écoulement du temps 
+ Maj + K .................	Ralentit    2  fois l'écoulement du temps
  ! ............................	Remet Celestia à au jour et à l'heure actuels (du système)
 
  ? ........................ Affiche le trajet de la lumière de l'observateur à l'objet sélect.
  - (tiret)................. Soustrait le temps de trajet de la lumière à celui de la simulation
 
- 
+
 --- Pour afficher ou masquer le NOM des objets (on/off) ---
 
  W .........................	Astéroïdes
@@ -119,7 +119,7 @@ F1 ou S...................	Arrête le mouvement
  N ..........................	Astronefs
  B ..........................	Étoiles
 
- 
+
 --- Pour afficher ou masquer certains objets (on/off) ---
 
  Ctrl + A .................	Atmosphères
@@ -136,7 +136,7 @@ F1 ou S...................	Arrête le mouvement
  Ctrl + L ..................	Lumières nocturnes
  O (comme Orbite) 	Affiche TOUTES les orbites sélectionnées (v. plus bas)
 
- 
+
 --- Options d'affichage et de rendu ---
 
  { ...........................	Diminue la lumière ambiante
@@ -155,12 +155,12 @@ F1 ou S...................	Arrête le mouvement
 		- Sinon il s'agit de la magnitude pour un CdV de 45 degrés.
  ] ...........................	Augmente la magnitude limite (on voit plus d'étoiles)
 		- Même fonctionnement que ci-dessus
- Ctrl + P .................	Marque l'objet sélectionné. L'option d'activation des 
+ Ctrl + P .................	Marque l'objet sélectionné. L'option d'activation des
 		marqueurs doit être active (Ctrl + K)
  Ctrl + V ................	Cycle parmi les différents modes de rendu disponibles.
  + ..........................	Bascule entre les textures de surface normales/ connues
  % .........................	Bascule  entre les différentes tables de couleur des étoiles
- Ctrl + S .................	Cycle entre les styles d'étoiles : 
+ Ctrl + S .................	Cycle entre les styles d'étoiles :
 		points flous, points et échelle de disques.
  V ..........................	Contrôle du texte d'information (aucun, concis, complet).
  Ctr + W .................	Affichage "fil de fer"
@@ -169,11 +169,11 @@ F1 ou S...................	Arrête le mouvement
 
 Tabulation ............	Parcourt les différentes vues affichées
  Suppr ...................	Supprime la vue active
- Ctrl + D .................	Supprime toutes les vues sauf la vue active. 
+ Ctrl + D .................	Supprime toutes les vues sauf la vue active.
  Ctrl + U .................	Partage la vue horizontalement
  Ctrl + U ................. Partage la vue verticalement
 
- 
+
 --- Autres fonctions ---
 
  Ctrl + F ..................	Permute le mode Alt-azimuth. Utilisé avec Ctrl-G
@@ -188,17 +188,16 @@ Tabulation ............	Parcourt les différentes vues affichées
 
 
  `  + Espace............	Bascule l'affichage du nombre d'images par secondes
- Ctrl + O .................	Affichage de la boîte de dialogue "sélectionner un objet" 
+ Ctrl + O .................	Affichage de la boîte de dialogue "sélectionner un objet"
  @ .........................	Bascule le mode Édition (pour aider au placement des objets)
  F8 .........................	Active / désactive le joystick
- D ..........................	Lance le script de démo. (/celestia/demo.cel )
  Entrée ..................	Active le mode d'entrée d'un objet par son nom.
 	Échap pour annuler. Tapez le nom d'un objet ou d'un point de repère et
 	tapez Entrée de nouveau. Vous pouvez saisir le nom partiellement et
 	utiliser les touches Tab et Maj+Tab pour naviguer dans la liste et choisir
 	un élément. Entrée pour sélectionner l'élément en surbrillance.
 
-    
+
 -------------------------------------------------------------
          CONTRÔLES AU JOYSTICK
 -------------------------------------------------------------

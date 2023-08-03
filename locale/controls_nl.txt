@@ -10,7 +10,7 @@ Ctrl  + links slepen:        afstand tot selectie aanpassen
 Shift + links slepen:        verander weergaveveld (bijv. => telescoop weergave)
 Wiel (middelste knop) klik:  verander weergaveveld tussen 45 graden
                              en het vorige weergaveveld (bijv. telescoop weergave)
-Links - klik:                selecteer object 
+Links - klik:                selecteer object
 Links dubbelklik:            selectie centreren
 Rechts - klik:               context menu weergeven
 
@@ -68,9 +68,9 @@ O  : Planeetomloopbanen weergave (de)activeren
 %  : Sterrenkleur tabellen (de)activeren
 ;  : Een Aarde-gebaseerd equatoriaal coordinaten bol weergeven (de)activeren
 [  : Als autoMag UIT is: Verminder schijnbare helderheid limiet (minder sterren zichtbaar)
-     Als autoMag AAN is: Verminder schijnbare helderheid limiet bij 45 graden zichtsveld 
+     Als autoMag AAN is: Verminder schijnbare helderheid limiet bij 45 graden zichtsveld
 ]  : Als autoMag UIT is: Vergroot schijnbare helderheid limiet (meer sterren zichtbaar)
-     Als autoMag AAN is: Vergroot schijnbare helderheid limiet bij 45 graden zichtsveld 
+     Als autoMag AAN is: Vergroot schijnbare helderheid limiet bij 45 graden zichtsveld
 {  : Verminder omgevingslicht
 }  : Vergroot omgevingslicht
 (  : Verminder sterrenstelsel helderheid onafhankelijk van helderheid van sterren
@@ -79,7 +79,7 @@ O  : Planeetomloopbanen weergave (de)activeren
 .  : Zichtsveld vergroten
 Backspace: Huidige selectie annuleren
 Ctrl+A : Atmosferen weergave (de)activeren
-Ctrl+B : Sterrenbeeldgrenzen weergave (de)activeren 
+Ctrl+B : Sterrenbeeldgrenzen weergave (de)activeren
 Ctrl+E : Eclips schaduw weergave (de)activeren
 Ctrl+K : Markers weergave (de)activeren
 Ctrl+L : Nachtzijde (lichtvervuiling) van planeetkaarten weergave (de)activeren
@@ -89,7 +89,7 @@ Ctrl+T : weergave van komeetstaarten (de)activeren
 Ctrl+V : Verander ondersteunde OpenGL weergave methoden
 Ctrl+W : Draadmodel modus (de)activeren
 Ctrl+X : Antialias lijnen (de)activeren
-Ctrl+Y : autoMag (de)activeren = auto adaptatie van ster zichtbaarheid aan zichtsveld   
+Ctrl+Y : autoMag (de)activeren = auto adaptatie van ster zichtbaarheid aan zichtsveld
 +  : Verander tussen artistieke en limiet van kennis planeet texturen
 
 MeerdereVensters:
@@ -100,7 +100,7 @@ DEL    : Verwijder actieve weergave
 Ctrl+D : Verwijder alle weergaves behalve de actieve weergave
 
 Ruimtevlucht:
-F1 : Stop 
+F1 : Stop
 F2 : Zet snelheid naar 1 km/s
 F3 : Zet snelheid naar 1,000 km/s
 F4 : Zet snelheid naar lichtsnelheid
@@ -130,7 +130,6 @@ Button 1 : langzamer
 Button 2 : sneller
 
 Andere:
-D   : Start demo
 F8  : Joystick activeren
 F10 : Afbeelding naar bestand opslaan
 `   : Weergegeven frames per seconde weergeven
