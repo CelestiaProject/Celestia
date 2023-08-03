@@ -34,7 +34,7 @@ Controis do Rato, Teclado e Joystick para Celestia
  Y ........................................ Orbita-lo obxecto seleccionado nunha órbita sincrónica
  : ........................................ Bloquearse sobre o obxecto seleccionado
  " ........................................ Persegui-lo obxecto seleccionado
- Shift+C .................................. Centrar/orbitar --centra-lo obxecto seleccionado sen cambia-la posición do obxecto de referencia                                           
+ Shift+C .................................. Centrar/orbitar --centra-lo obxecto seleccionado sen cambia-la posición do obxecto de referencia
  Ctrl+G ................................... Ir a superficie do obxecto seleccionado
  Ctrl+F ................................... Intercambiar modo Alt-acimut
  Home ..................................... Moverse preto do obxecto
@@ -133,7 +133,7 @@ Ctrl+D ................................ Borrar tódalas vistas excepto a que est
  Frecha Dereita/Esquerda + Maiús.......... Orbita-lo obxecto: dereita/esquerda
  Frecha Arriba/Abaixo + Maiús. ........... Orbita-lo obxecto: abaixo/arriba
 
- 
+
 --- Navegación vía Teclado Numúrico (co NumLock activo) ---
 
  8 ...................................... Apuntar cara arriba (Ir) [Frecha abaixo]
@@ -172,7 +172,6 @@ Ctrl+D ................................ Borrar tódalas vistas excepto a que est
  ` ...................................... Cambiar amosar "fotogramas por segundo" (FPS) por comezar a procesar
  Ctrl+O ................................. Amosar-la caixa de diálogo "Seleccionar Obxecto"
  @ ...................................... Cambiar Modos de Edición (para asisti-la colocación de obxectos)
- D ...................................... Inicia-lo script da demo (/celestia/demo.cel)
  Enter .................................. Cambiar a modo de entrada por Nomes (escoller un obxecto escribindo o seu nome) (usar Tab / Shift+Tab para remarcar un elemento, Esc para saír)
 
 
@@ -186,4 +185,3 @@ Ctrl+D ................................ Borrar tódalas vistas excepto a que est
  Gatillo R ............................. Desprazarse a dereita
  Button 1 .............................. Moverse máis lento
  Button 2 .............................. Moverse máis rápido
-

@@ -1565,12 +1565,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             sim->centerSelectionCO();
         break;
 
-    case 'D':
-        addToHistory();
-        if (config->demoScriptFile != "")
-           runScript(config->demoScriptFile);
-        break;
-
     case 'E':
         if (c == 'e')
             renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);

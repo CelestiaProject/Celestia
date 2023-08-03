@@ -126,18 +126,8 @@ Botão 1	: mais devagar
 Botão 2	: mais depressa
 
 Outros:
-D	: Rodar demonstração
 F8 	: Ativar o joystick
 F10	: Capturar imagem para arquivo
 `	: Mostrar os frames renderizados por segundo
 ENTER	: Escolher um objeto escrevendo o seu nome
 Ctrl+C, Ctrl+INS : Copiar localização de um URL para o clipboard
-
-
-
-
-
-
-
-
-

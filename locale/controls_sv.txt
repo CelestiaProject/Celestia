@@ -8,9 +8,9 @@ Mushjul:             ändra avståndet till markerat objekt
 Höger + vänsterdrag: ändra avståndet till markerat objekt
 Ctrl  + vänsterdrag: ändra avståndet till markerat objekt
 Skift + vänsterdrag: ändra synfält (t.ex. => teleskopvy)
-Hjulklick (mittenknappen):  växla mellan 45-graders synfält och 
+Hjulklick (mittenknappen):  växla mellan 45-graders synfält och
                             och det föregående synfälktet(t.ex. teleskopvy)
-Vänster - klick:     markera objekt 
+Vänster - klick:     markera objekt
 Vänster dubbelklick: centrera markering
 Höger - klick:       visa snabbvalsmeny
 
@@ -21,7 +21,7 @@ H    : Markera solen (Hem)
 C    : Centrera markerat objekt
 G    : Gå till markerat objekt
 F    : Följ markerat objekt
-Y    : Kretsa runt ett markerat objekt i en hastighet som är 
+Y    : Kretsa runt ett markerat objekt i en hastighet som är
        synkroniserad med objektets rotation
 :    : Lås på markerat objekt
 "    : Jaga markerat objekt (orientering är baserad på markeringens hastighet)
@@ -100,7 +100,7 @@ DEL    : Ta bort aktiv vy
 Ctrl+D : Ta bort alla vyer förutom den aktiva
 
 Rymdfärd:
-F1 : Stanna 
+F1 : Stanna
 F2 : Ställ in hastighet till 1 km/s
 F3 : Ställ in hastighet till 1000 km/s
 F4 : Ställ in hastighet till ljusets hastighet
@@ -130,7 +130,6 @@ Knapp 1 : långsammare
 Knapp 2 : snabbare
 
 Övrigt:
-D     : Kör demonstration
 F8    : Aktivera styrspak
 F10   : Fånga bild till fil
 `     : Visa antalet utritade bilder per sekund

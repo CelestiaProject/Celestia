@@ -88,6 +88,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
 
     void slotOpenScriptDialog();
     void slotOpenScript();
+    void slotRunDemo();
 
     void slotShowTimeDialog();
 

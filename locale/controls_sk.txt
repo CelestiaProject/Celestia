@@ -135,7 +135,7 @@
  Shift+Šípka doľava/doprava ........ Obiehať objekt: doprava/doľava
  Shift+Šípka hore/dole ........ Obiehať objekt: dole/hore
 
- 
+
 --- Navigácia cez numerickú klávesnicu (s aktívnym NumLockom) ---
 
  8 ...................................... Kamera dole [šípka dole]
@@ -175,7 +175,6 @@
  ` ...................................... Prepnúť zobrazenie "počtu snímok za sekundu" (FPS), ktoré sú vykresľované
  Ctrl+O .............................. Zobraziť dialógové okno "Zvoliť objekt"
  @ .................................... Prepnúť režim editácie (na pomoc pri umiestňovaní objektov)
- D ..................................... Spustiť ukážkový skript (/celestia/demo.cel)
  Enter ............................... Prepnúť režim zadávania názvov (použiť Tab / Shift+Tab na zvýraznenie
                                           položky, Esc na ukončenie)
 
@@ -190,4 +189,3 @@
  R spínač ............................ Rotovať doprava
  Tlačidlo 1 ........................... Pomalší pohyb
  Tlačidlo 2 ........................... Rýchlejší pohyb
-

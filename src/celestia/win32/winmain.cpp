@@ -2232,6 +2232,13 @@ void handleKey(WPARAM key, bool down)
 }
 
 
+static void DisableDemoMenu(HMENU menuBar)
+{
+    HMENU fileMenu = GetSubMenu(menuBar, 0);
+    DeleteMenu(fileMenu, ID_FILE_RUNDEMO, MF_BYCOMMAND);
+}
+
+
 static void BuildScriptsMenu(HMENU menuBar, const fs::path& scriptsDir)
 {
     HMENU fileMenu = GetSubMenu(menuBar, 0);
@@ -2897,11 +2904,22 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
         // If you got here, a path and file has been specified.
         // Ofn.lpstrFile contains full path to specified file
         // Ofn.lpstrFileTitle contains just the filename with extension
+        appCore->cancelScript();
         appCore->runScript(Ofn.lpstrFile);
     }
 
     if (strlen(currentDir) != 0)
         SetCurrentDirectory(currentDir);
+}
+
+static void HandleRunDemo(CelestiaCore* appCore)
+{
+    const auto& demoScriptFile = appCore->getConfig()->demoScriptFile;
+    if (!demoScriptFile.empty())
+    {
+        appCore->cancelScript();
+        appCore->runScript(demoScriptFile);
+    }
 }
 
 
@@ -3526,6 +3544,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
     }
 
+    if (appCore->getConfig()->demoScriptFile.empty())
+        DisableDemoMenu(menuBar);
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     BuildScriptsMenu(menuBar, ScriptsDirectory);
     syncMenusWithRendererState();
@@ -4341,6 +4361,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_FILE_OPENSCRIPT:
             HandleOpenScript(hWnd, appCore);
+            break;
+
+        case ID_FILE_RUNDEMO:
+            HandleRunDemo(appCore);
             break;
 
         case ID_FILE_CAPTUREIMAGE:
