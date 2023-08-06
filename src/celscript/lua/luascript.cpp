@@ -162,7 +162,7 @@ static string lua_path(const CelestiaConfig *config)
     string LuaPath = "?.lua;celxx/?.lua;";
 
     // Find the path for lua files in the extras directories
-    for (const auto& dir : config->extrasDirs)
+    for (const auto& dir : config->paths.extrasDirs)
     {
         if (dir.empty())
             continue;
@@ -207,16 +207,16 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
 
     int status = 0;
     // Execute the Lua hook initialization script
-    if (!config->luaHook.empty())
+    if (!config->paths.luaHook.empty())
     {
-        ifstream scriptfile(config->luaHook);
+        ifstream scriptfile(config->paths.luaHook);
         if (!scriptfile.good())
-            appCore->fatalError(fmt::format(_("Error opening LuaHook {}"), config->luaHook));
+            appCore->fatalError(fmt::format(_("Error opening LuaHook {}"), config->paths.luaHook));
 
         if (progressNotifier != nullptr)
-            progressNotifier->update(config->luaHook.string());
+            progressNotifier->update(config->paths.luaHook.string());
 
-        status = luaHook->loadScript(scriptfile, config->luaHook);
+        status = luaHook->loadScript(scriptfile, config->paths.luaHook);
     }
     else
     {

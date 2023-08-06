@@ -279,9 +279,9 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     // TODO: Make this settable via the GUI
     QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
     glformat.setAlphaBufferSize(0);
-    if (m_appCore->getConfig()->aaSamples > 1)
+    if (m_appCore->getConfig()->renderDetails.aaSamples > 1)
     {
-        glformat.setSamples(m_appCore->getConfig()->aaSamples);
+        glformat.setSamples(m_appCore->getConfig()->renderDetails.aaSamples);
     }
     QSurfaceFormat::setDefaultFormat(glformat);
 
@@ -916,7 +916,7 @@ void CelestiaAppWindow::slotOpenScript()
 
 void CelestiaAppWindow::slotRunDemo()
 {
-    const auto& demoScriptFile = m_appCore->getConfig()->demoScriptFile;
+    const auto& demoScriptFile = m_appCore->getConfig()->paths.demoScriptFile;
     if (!demoScriptFile.empty())
     {
         m_appCore->cancelScript();
@@ -1319,7 +1319,7 @@ void CelestiaAppWindow::createMenus()
     if (scriptsMenu != nullptr)
         fileMenu->addMenu(scriptsMenu);
 
-    if (!m_appCore->getConfig()->demoScriptFile.empty())
+    if (!m_appCore->getConfig()->paths.demoScriptFile.empty())
     {
         fileMenu->addSeparator();
         QAction* runDemoAction = new QAction(_("Run &Demo"), this);

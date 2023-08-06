@@ -252,7 +252,8 @@ static void initRealize(GtkWidget* widget, AppData* app)
 #else
     constexpr int reqVersion = gl::GL_2_1;
 #endif
-    bool ok = gl::init(app->core->getConfig()->ignoreGLExtensions) && gl::checkVersion(reqVersion);
+    bool ok = gl::init(app->core->getConfig()->renderDetails.ignoreGLExtensions) &&
+              gl::checkVersion(reqVersion);
     if (!ok)
     {
         GtkWidget *message;
@@ -408,8 +409,8 @@ int main(int argc, char* argv[])
     app->simulation = app->core->getSimulation();
     g_assert(app->simulation);
 
-    app->renderer->setSolarSystemMaxDistance(app->core->getConfig()->SolarSystemMaxDistance);
-    app->renderer->setShadowMapSize(app->core->getConfig()->ShadowMapSize);
+    app->renderer->setSolarSystemMaxDistance(app->core->getConfig()->renderDetails.SolarSystemMaxDistance);
+    app->renderer->setShadowMapSize(app->core->getConfig()->renderDetails.ShadowMapSize);
 
     #ifdef GNOME
     /* Create the main window (GNOME) */
