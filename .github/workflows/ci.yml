@@ -1,4 +1,4 @@
-name: Celestia
+name: Build
 
 on:
   push:
