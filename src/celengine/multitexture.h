@@ -29,12 +29,12 @@ class MultiResTexture
     MultiResTexture(ResourceHandle loTex,
                     ResourceHandle medTex = InvalidResource,
                     ResourceHandle hiTex = InvalidResource);
-    MultiResTexture(const std::string& source, const fs::path& path);
+    MultiResTexture(const fs::path& source, const fs::path& path);
     ~MultiResTexture() {};
-    void setTexture(const std::string& source,
+    void setTexture(const fs::path& source,
                     const fs::path& path,
                     unsigned int flags = 0);
-    void setTexture(const std::string& source,
+    void setTexture(const fs::path& source,
                     const fs::path& path,
                     float bumpHeight,
                     unsigned int flags);

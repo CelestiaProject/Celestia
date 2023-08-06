@@ -13,7 +13,7 @@
 #include <iosfwd>
 
 class LuaState;
-class CelestiaConfig;
+struct CelestiaConfig;
 class CelestiaCore;
 class ProgressNotifier;
 

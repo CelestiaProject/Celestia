@@ -271,8 +271,8 @@ void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
     fs::path path;
-    if (!config->favoritesFile.empty())
-        path = config->favoritesFile;
+    if (!config->paths.favoritesFile.empty())
+        path = config->paths.favoritesFile;
     else
         path = "favorites.cel";
 
@@ -293,8 +293,8 @@ void CelestiaCore::readFavoritesFile()
 void CelestiaCore::writeFavoritesFile()
 {
     fs::path path;
-    if (!config->favoritesFile.empty())
-        path = config->favoritesFile;
+    if (!config->paths.favoritesFile.empty())
+        path = config->paths.favoritesFile;
     else
         path = "favorites.cel";
 
@@ -609,7 +609,7 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
     setViewChanged();
 
-    if (config->reverseMouseWheel) motion = -motion;
+    if (config->mouse.reverseWheel) motion = -motion;
     if (motion != 0.0)
     {
         if ((modifiers & ShiftKey) != 0)
@@ -1902,13 +1902,13 @@ void CelestiaCore::start()
 
 void CelestiaCore::start(double t)
 {
-    if (!config->initScriptFile.empty())
+    if (!config->paths.initScriptFile.empty())
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
-        fs::path filename(config->initScriptFile);
+        fs::path filename(config->paths.initScriptFile);
         // Don't use {} as it will throw error C2593 on MSVC
-        config->initScriptFile = fs::path();
+        config->paths.initScriptFile = fs::path();
         runScript(filename);
     }
 
@@ -1928,11 +1928,11 @@ void CelestiaCore::setStartURL(const string &url)
     {
         startURL = url;
         // Don't use {} as it will throw error C2593 on MSVC
-        config->initScriptFile = fs::path();
+        config->paths.initScriptFile = fs::path();
     }
     else
     {
-        config->initScriptFile = url;
+        config->paths.initScriptFile = url;
     }
 }
 
@@ -3795,8 +3795,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (config->consoleLogRows > 100)
         console->setRowCount(config->consoleLogRows);
 
-    if (!config->leapSecondsFile.empty())
-        ReadLeapSecondsFile(config->leapSecondsFile, leapSeconds);
+    if (!config->paths.leapSecondsFile.empty())
+        ReadLeapSecondsFile(config->paths.leapSecondsFile, leapSeconds);
 
 #ifdef USE_SPICE
     if (!celestia::ephem::InitializeSpice())
@@ -3816,10 +3816,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // additional extras directories should be small.
     for (const auto& dir : extrasDirs)
     {
-        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir) ==
-            config->extrasDirs.end())
+        if (find(config->paths.extrasDirs.begin(), config->paths.extrasDirs.end(), dir) ==
+            config->paths.extrasDirs.end())
         {
-            config->extrasDirs.push_back(dir);
+            config->paths.extrasDirs.push_back(dir);
         }
     }
 
@@ -3827,8 +3827,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     initLuaHook(progressNotifier);
 #endif
 
-    KeyRotationAccel = degToRad(config->rotateAcceleration);
-    MouseRotationSensitivity = degToRad(config->mouseRotationSensitivity);
+    KeyRotationAccel = degToRad(config->mouse.rotateAcceleration);
+    MouseRotationSensitivity = degToRad(config->mouse.rotationSensitivity);
 
     readFavoritesFile();
 
@@ -3856,7 +3856,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
 
-    for (const auto& file : config->dsoCatalogFiles)
+    for (const auto& file : config->paths.dsoCatalogFiles)
     {
         if (progressNotifier)
             progressNotifier->update(file.string());
@@ -3878,8 +3878,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         DeepSkyLoader loader(dsoDB.get(), "deep sky object",
                              ContentType::CelestiaDeepSkyCatalog,
                              progressNotifier,
-                             config->skipExtras);
-        for (const auto& dir : config->extrasDirs)
+                             config->paths.skipExtras);
+        for (const auto& dir : config->paths.extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
@@ -3907,7 +3907,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // First read the solar system files listed individually in the
     // config file.
     universe->setSolarSystemCatalog(std::make_unique<SolarSystemCatalog>());
-    for (const auto& file : config->solarSystemFiles)
+    for (const auto& file : config->paths.solarSystemFiles)
     {
         if (progressNotifier)
             progressNotifier->update(file.string());
@@ -3926,8 +3926,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Next, read all the solar system files in the extras directories
     {
         vector<fs::path> entries;
-        SolarSystemLoader loader(universe, progressNotifier, config->skipExtras);
-        for (const auto& dir : config->extrasDirs)
+        SolarSystemLoader loader(universe, progressNotifier, config->paths.skipExtras);
+        for (const auto& dir : config->paths.extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
@@ -3949,16 +3949,16 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     // Load asterisms:
-    if (!config->asterismsFile.empty())
-        loadAsterismsFile(config->asterismsFile);
+    if (!config->paths.asterismsFile.empty())
+        loadAsterismsFile(config->paths.asterismsFile);
 
-    if (!config->boundariesFile.empty())
+    if (!config->paths.boundariesFile.empty())
     {
-        std::ifstream boundariesFile(config->boundariesFile, ios::in);
+        std::ifstream boundariesFile(config->paths.boundariesFile, ios::in);
         if (!boundariesFile.good())
         {
             GetLogger()->error(_("Error opening constellation boundaries file {}.\n"),
-                               config->boundariesFile);
+                               config->paths.boundariesFile);
         }
         else
         {
@@ -3967,9 +3967,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     // Load destinations list
-    if (!config->destinationsFile.empty())
+    if (!config->paths.destinationsFile.empty())
     {
-        fs::path localeDestinationsFile = LocaleFilename(config->destinationsFile);
+        fs::path localeDestinationsFile = LocaleFilename(config->paths.destinationsFile);
         ifstream destfile(localeDestinationsFile, ios::in);
         if (destfile.good())
         {
@@ -3998,18 +3998,18 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             viewportEffect = unique_ptr<ViewportEffect>(new PassthroughViewportEffect);
         else if (config->viewportEffect == "warpmesh")
         {
-            if (config->warpMeshFile.empty())
+            if (config->paths.warpMeshFile.empty())
             {
                 GetLogger()->warn("No warp mesh file specified for this effect\n");
             }
             else
             {
                 WarpMeshManager *manager = GetWarpMeshManager();
-                WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->warpMeshFile)));
+                WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->paths.warpMeshFile)));
                 if (mesh != nullptr)
                     viewportEffect = unique_ptr<ViewportEffect>(new WarpMeshViewportEffect(mesh));
                 else
-                    GetLogger()->error("Failed to read warp mesh file {}\n", config->warpMeshFile);
+                    GetLogger()->error("Failed to read warp mesh file {}\n", config->paths.warpMeshFile);
             }
         }
         else
@@ -4065,19 +4065,19 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     sim = new Simulation(universe);
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
-        sim->setFaintestVisible(config->faintestVisible);
+        sim->setFaintestVisible(config->renderDetails.faintestVisible);
     }
 
     View* view = new View(View::ViewWindow, renderer, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
     views.push_back(view);
     activeView = views.begin();
 
-    if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair"))
+    if (!compareIgnoringCase(getConfig()->mouse.cursor, "inverting crosshair"))
     {
         defaultCursorShape = CelestiaCore::InvertedCrossCursor;
     }
 
-    if (!compareIgnoringCase(getConfig()->cursor, "arrow"))
+    if (!compareIgnoringCase(getConfig()->mouse.cursor, "arrow"))
     {
         defaultCursorShape = CelestiaCore::ArrowCursor;
     }
@@ -4111,12 +4111,12 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
                              Renderer::ShowAutoMag);
 
     Renderer::DetailOptions detailOptions;
-    detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
-    detailOptions.shadowTextureSize = config->shadowTextureSize;
-    detailOptions.eclipseTextureSize = config->eclipseTextureSize;
-    detailOptions.orbitWindowEnd = config->orbitWindowEnd;
-    detailOptions.orbitPeriodsShown = config->orbitPeriodsShown;
-    detailOptions.linearFadeFraction = config->linearFadeFraction;
+    detailOptions.orbitPathSamplePoints = config->renderDetails.orbitPathSamplePoints;
+    detailOptions.shadowTextureSize = config->renderDetails.shadowTextureSize;
+    detailOptions.eclipseTextureSize = config->renderDetails.eclipseTextureSize;
+    detailOptions.orbitWindowEnd = config->renderDetails.orbitWindowEnd;
+    detailOptions.orbitPeriodsShown = config->renderDetails.orbitPeriodsShown;
+    detailOptions.linearFadeFraction = config->renderDetails.linearFadeFraction;
 #ifndef GL_ES
     detailOptions.useMesaPackInvert = useMesaPackInvert;
 #endif
@@ -4134,16 +4134,16 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
         setFaintestAutoMag();
     }
 
-    if (config->mainFont.empty())
+    if (config->fonts.mainFont.empty())
         font = LoadFontHelper(renderer, "DejaVuSans.ttf,12");
     else
-        font = LoadFontHelper(renderer, config->mainFont);
+        font = LoadFontHelper(renderer, config->fonts.mainFont);
 
     if (font == nullptr)
         cout << _("Error loading font; text will not be visible.\n");
 
-    if (!config->titleFont.empty())
-        titleFont = LoadFontHelper(renderer, config->titleFont);
+    if (!config->fonts.titleFont.empty())
+        titleFont = LoadFontHelper(renderer, config->fonts.titleFont);
     if (titleFont == nullptr)
         titleFont = font;
 
@@ -4152,13 +4152,13 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     overlay->setTextAlignment(layoutDirection == LayoutDirection::RightToLeft ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left);
     overlay->setWindowSize(width, height);
 
-    if (config->labelFont.empty())
+    if (config->fonts.labelFont.empty())
     {
         renderer->setFont(Renderer::FontNormal, font);
     }
     else
     {
-        auto labelFont = LoadFontHelper(renderer, config->labelFont);
+        auto labelFont = LoadFontHelper(renderer, config->fonts.labelFont);
         renderer->setFont(Renderer::FontNormal, labelFont == nullptr ? font : labelFont);
     }
 
@@ -4192,7 +4192,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     StarDetails::SetStarTextures(cfg.starTextures);
 
     std::unique_ptr<StarNameDatabase> starNameDB = nullptr;
-    ifstream starNamesFile(cfg.starNamesFile, ios::in);
+    ifstream starNamesFile(cfg.paths.starNamesFile, ios::in);
     if (starNamesFile.good())
     {
         starNameDB = StarNameDatabase::readNames(starNamesFile);
@@ -4201,21 +4201,21 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     }
     else
     {
-        GetLogger()->error(_("Error opening {}\n"), cfg.starNamesFile);
+        GetLogger()->error(_("Error opening {}\n"), cfg.paths.starNamesFile);
     }
 
     // First load the binary star database file.  The majority of stars
     // will be defined here.
     StarDatabaseBuilder starDBBuilder;
-    if (!cfg.starDatabaseFile.empty())
+    if (!cfg.paths.starDatabaseFile.empty())
     {
         if (progressNotifier)
-            progressNotifier->update(cfg.starDatabaseFile.string());
+            progressNotifier->update(cfg.paths.starDatabaseFile.string());
 
-        ifstream starFile(cfg.starDatabaseFile, ios::in | ios::binary);
+        ifstream starFile(cfg.paths.starDatabaseFile, ios::in | ios::binary);
         if (!starFile.good())
         {
-            GetLogger()->error(_("Error opening {}\n"), cfg.starDatabaseFile);
+            GetLogger()->error(_("Error opening {}\n"), cfg.paths.starDatabaseFile);
             return false;
         }
 
@@ -4230,13 +4230,13 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         starNameDB = std::make_unique<StarNameDatabase>();
     starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, cfg.HDCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::SAO,         cfg.SAOCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::Gliese,      cfg.GlieseCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, cfg.paths.HDCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::SAO,         cfg.paths.SAOCrossIndexFile);
+    loadCrossIndex(starDBBuilder, StarCatalog::Gliese,      cfg.paths.GlieseCrossIndexFile);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs
     // list.
-    for (const auto& file : config->starCatalogFiles)
+    for (const auto& file : config->paths.starCatalogFiles)
     {
         if (file.empty())
             continue;
@@ -4255,8 +4255,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                           "star",
                           ContentType::CelestiaStarCatalog,
                           progressNotifier,
-                          config->skipExtras);
-        for (const auto& dir : config->extrasDirs)
+                          config->paths.skipExtras);
+        for (const auto& dir : config->paths.extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;

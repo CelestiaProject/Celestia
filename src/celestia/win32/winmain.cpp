@@ -1864,7 +1864,7 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
 bool SetDCPixelFormat(HDC hDC)
 {
     bool msaa = false;
-    if (appCore->getConfig()->aaSamples > 1 &&
+    if (appCore->getConfig()->renderDetails.aaSamples > 1 &&
         WGLExtensionSupported("WGL_ARB_pixel_format") &&
         WGLExtensionSupported("WGL_ARB_multisample"))
     {
@@ -1911,19 +1911,19 @@ bool SetDCPixelFormat(HDC hDC)
         PIXELFORMATDESCRIPTOR pfd;
 
         int ifmtList[] = {
-            WGL_DRAW_TO_WINDOW_ARB,        TRUE,
-            WGL_SUPPORT_OPENGL_ARB,        TRUE,
-            WGL_DOUBLE_BUFFER_ARB,         TRUE,
-            WGL_PIXEL_TYPE_ARB,            WGL_TYPE_RGBA_ARB,
-            WGL_DEPTH_BITS_ARB,            24,
-            WGL_COLOR_BITS_ARB,            24,
-            WGL_RED_BITS_ARB,               8,
-            WGL_GREEN_BITS_ARB,             8,
-            WGL_BLUE_BITS_ARB,              8,
-            WGL_ALPHA_BITS_ARB,             0,
-            WGL_ACCUM_BITS_ARB,             0,
-            WGL_STENCIL_BITS_ARB,           0,
-            WGL_SAMPLE_BUFFERS_ARB,         appCore->getConfig()->aaSamples > 1,
+            WGL_DRAW_TO_WINDOW_ARB, TRUE,
+            WGL_SUPPORT_OPENGL_ARB, TRUE,
+            WGL_DOUBLE_BUFFER_ARB,  TRUE,
+            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+            WGL_DEPTH_BITS_ARB,     24,
+            WGL_COLOR_BITS_ARB,     24,
+            WGL_RED_BITS_ARB,       8,
+            WGL_GREEN_BITS_ARB,     8,
+            WGL_BLUE_BITS_ARB,      8,
+            WGL_ALPHA_BITS_ARB,     0,
+            WGL_ACCUM_BITS_ARB,     0,
+            WGL_STENCIL_BITS_ARB,   0,
+            WGL_SAMPLE_BUFFERS_ARB, appCore->getConfig()->renderDetails.aaSamples > 1,
             0
         };
 
@@ -1935,7 +1935,7 @@ bool SetDCPixelFormat(HDC hDC)
 
         pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
                                                      numFormats,
-                                                     appCore->getConfig()->aaSamples);
+                                                     appCore->getConfig()->renderDetails.aaSamples);
 
         DescribePixelFormat(hDC, pixelFormatIndex,
                             sizeof(PIXELFORMATDESCRIPTOR), &pfd);
@@ -2914,7 +2914,7 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
 
 static void HandleRunDemo(CelestiaCore* appCore)
 {
-    const auto& demoScriptFile = appCore->getConfig()->demoScriptFile;
+    const auto& demoScriptFile = appCore->getConfig()->paths.demoScriptFile;
     if (!demoScriptFile.empty())
     {
         appCore->cancelScript();
@@ -3412,15 +3412,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                    MB_OK | MB_ICONERROR);
         return 1;
     }
-    if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
+    if (!compareIgnoringCase(appCore->getConfig()->mouse.cursor, "arrow"))
         hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
-    else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
+    else if (!compareIgnoringCase(appCore->getConfig()->mouse.cursor, "inverting crosshair"))
         hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
     else
         hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
 
-    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-    appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
+    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
+    appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
@@ -3431,8 +3431,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!ignoreOldFavorites)
     { // move favorites to the new location
         fs::path path;
-        if (appCore->getConfig() != nullptr && !appCore->getConfig()->favoritesFile.empty())
-            path = appCore->getConfig()->favoritesFile;
+        if (appCore->getConfig() != nullptr && !appCore->getConfig()->paths.favoritesFile.empty())
+            path = appCore->getConfig()->paths.favoritesFile;
         else
             path = L"favorites.cel";
 
@@ -3463,7 +3463,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         hWnd = CreateOpenGLWindow(0, 0, 800, 600,
                                   lastFullScreenMode, currentScreenMode,
-                                  appCore->getConfig()->ignoreGLExtensions);
+                                  appCore->getConfig()->renderDetails.ignoreGLExtensions);
 
         // Prevent unnecessary destruction and recreation of OpenGLWindow in
         // while() loop below.
@@ -3474,7 +3474,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         hWnd = CreateOpenGLWindow(prefs.winX, prefs.winY,
                                   prefs.winWidth, prefs.winHeight,
                                   0, currentScreenMode,
-                                  appCore->getConfig()->ignoreGLExtensions);
+                                  appCore->getConfig()->renderDetails.ignoreGLExtensions);
     }
 
     if (hWnd == NULL)
@@ -3544,7 +3544,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
     }
 
-    if (appCore->getConfig()->demoScriptFile.empty())
+    if (appCore->getConfig()->paths.demoScriptFile.empty())
         DisableDemoMenu(menuBar);
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     BuildScriptsMenu(menuBar, ScriptsDirectory);

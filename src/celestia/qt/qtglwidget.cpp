@@ -100,13 +100,15 @@ void CelestiaGlWidget::initializeGL()
 {
     using namespace celestia;
 #ifdef GL_ES
-    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GLES_2))
+    if (!gl::init(appCore->getConfig()->renderDetails.ignoreGLExtensions) ||
+        !gl::checkVersion(gl::GLES_2))
     {
         QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGLES 2.0."));
         exit(1);
     }
 #else
-    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
+    if (!gl::init(appCore->getConfig()->renderDetails.ignoreGLExtensions) ||
+        !gl::checkVersion(gl::GL_2_1))
     {
         QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
         exit(1);
@@ -137,8 +139,8 @@ void CelestiaGlWidget::initializeGL()
 
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
-    appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-    appRenderer->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
+    appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
+    appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
 }
 
 
