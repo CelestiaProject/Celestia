@@ -1,4 +1,4 @@
-name: Celestia
+name: Process translations
 
 on:
   push:
