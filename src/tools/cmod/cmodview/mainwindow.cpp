@@ -70,8 +70,7 @@ MainWindow::MainWindow() :
     m_materialWidget(nullptr),
     m_statusBarLabel(nullptr),
     m_saveAction(nullptr),
-    m_saveAsAction(nullptr),
-    m_gl2Action(nullptr)
+    m_saveAsAction(nullptr)
 {
     m_modelView = new ModelViewWidget(this);
     m_statusBarLabel = new QLabel(this);
@@ -106,14 +105,6 @@ MainWindow::MainWindow() :
     QAction* wireFrameStyleAction = new QAction(tr("&Wireframe"), styleGroup);
     wireFrameStyleAction->setCheckable(true);
     wireFrameStyleAction->setData((int) ModelViewWidget::WireFrameStyle);
-    QActionGroup* renderPathGroup = new QActionGroup(styleMenu);
-    QAction* fixedFunctionAction = new QAction(tr("Fixed Function"), renderPathGroup);
-    fixedFunctionAction->setCheckable(true);
-    fixedFunctionAction->setChecked(true);
-    fixedFunctionAction->setData((int) ModelViewWidget::FixedFunctionPath);
-    m_gl2Action = new QAction(tr("OpenGL 2.0"), renderPathGroup);
-    m_gl2Action->setCheckable(true);
-    m_gl2Action->setData((int) ModelViewWidget::OpenGL2Path);
     QAction* backgroundColorAction = new QAction(tr("&Background Color..."), this);
     QAction* ambientLightAction = new QAction(tr("&Ambient Light"), this);
     ambientLightAction->setCheckable(true);
@@ -123,9 +114,6 @@ MainWindow::MainWindow() :
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
-    styleMenu->addSeparator();
-    styleMenu->addAction(fixedFunctionAction);
-    styleMenu->addAction(m_gl2Action);
     styleMenu->addSeparator();
     styleMenu->addAction(ambientLightAction);
     styleMenu->addAction(shadowsAction);
@@ -166,7 +154,6 @@ MainWindow::MainWindow() :
 
     // Connect Style menu
     connect(styleGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderStyle(QAction*)));
-    connect(renderPathGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderPath(QAction*)));
     connect(backgroundColorAction, SIGNAL(triggered()), this, SLOT(editBackgroundColor()));
     connect(ambientLightAction, SIGNAL(toggled(bool)), m_modelView, SLOT(setAmbientLight(bool)));
     connect(shadowsAction, SIGNAL(toggled(bool)), m_modelView, SLOT(setShadows(bool)));
@@ -193,8 +180,6 @@ MainWindow::MainWindow() :
     connect(m_modelView, SIGNAL(selectionChanged()), this, SLOT(updateSelectionInfo()));
     connect(m_materialWidget, SIGNAL(materialEdited(const cmod::Material&)), this, SLOT(changeCurrentMaterial(const cmod::Material&)));
     toolsMenu->addAction(materialDock->toggleViewAction());
-
-    connect(m_modelView, SIGNAL(contextCreated()), this, SLOT(initializeGL()));
 }
 
 
@@ -219,24 +204,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
     saveSettings();
     event->accept();
 }
-
-
-// Initialization that occurs only after an OpenGL context has been created
-void MainWindow::initializeGL()
-{
-    // Enable the GL2 path by default if OpenGL 2.0 shaders are available
-    if (GLShaderProgram::hasOpenGLShaderPrograms())
-    {
-        m_gl2Action->setChecked(true);
-        m_modelView->setRenderPath(ModelViewWidget::OpenGL2Path);
-    }
-    else
-    {
-        m_gl2Action->setEnabled(false);
-    }
-}
-
-
 
 
 bool
@@ -528,22 +495,6 @@ MainWindow::setRenderStyle(QAction* action)
     case ModelViewWidget::NormalStyle:
     case ModelViewWidget::WireFrameStyle:
         m_modelView->setRenderStyle(renderStyle);
-        break;
-    default:
-        break;
-    }
-}
-
-
-void
-MainWindow::setRenderPath(QAction* action)
-{
-    ModelViewWidget::RenderPath renderPath = (ModelViewWidget::RenderPath) action->data().toInt();
-    switch (renderPath)
-    {
-    case ModelViewWidget::FixedFunctionPath:
-    case ModelViewWidget::OpenGL2Path:
-        m_modelView->setRenderPath(renderPath);
         break;
     default:
         break;

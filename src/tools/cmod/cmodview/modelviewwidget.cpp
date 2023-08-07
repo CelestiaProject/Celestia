@@ -271,7 +271,6 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
    m_cameraPosition(Eigen::Vector3d::Zero()),
    m_cameraOrientation(Eigen::Quaterniond::Identity()),
    m_renderStyle(NormalStyle),
-   m_renderPath(FixedFunctionPath),
    m_materialLibrary(nullptr),
    m_lightOrientation(Eigen::Quaterniond::Identity()),
    m_lightingEnabled(true),
@@ -357,17 +356,6 @@ ModelViewWidget::setRenderStyle(RenderStyle style)
     if (style != m_renderStyle)
     {
         m_renderStyle = style;
-        update();
-    }
-}
-
-
-void
-ModelViewWidget::setRenderPath(RenderPath path)
-{
-    if (path != m_renderPath)
-    {
-        m_renderPath = path;
         update();
     }
 }
@@ -537,7 +525,6 @@ void
 ModelViewWidget::initializeGL()
 {
     celestia::gl::init();
-    emit contextCreated();
 }
 
 
@@ -895,7 +882,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     GLShaderProgram* shader = nullptr;
 
     ShaderKey shaderKey;
-    if (renderPath() == OpenGL2Path && !gl2Fail)
+    if (!gl2Fail)
     {
         shaderKey = ShaderKey::Create(material, lighting, vertexDesc);
 
@@ -1180,15 +1167,12 @@ ModelViewWidget::renderSelection(cmod::Model* model)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
 
-    if (renderPath() == OpenGL2Path)
-    {
-        cmod::Material selectionMaterial;
-        selectionMaterial.diffuse = cmod::Color(0.0f, 1.0f, 0.0f);
-        selectionMaterial.opacity = 0.5f;
+    cmod::Material selectionMaterial;
+    selectionMaterial.diffuse = cmod::Color(0.0f, 1.0f, 0.0f);
+    selectionMaterial.opacity = 0.5f;
 
-        LightingEnvironment lightsOff;
-        bindMaterial(&selectionMaterial, &lightsOff, nullptr);
-    }
+    LightingEnvironment lightsOff;
+    bindMaterial(&selectionMaterial, &lightsOff, nullptr);
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
     {
