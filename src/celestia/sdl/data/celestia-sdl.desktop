@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Celestia (SDL)
+GenericName=Space Simulator
+Comment=Explore the Universe in this detailed space simulation
+Type=Application
+Categories=Astronomy;Education;Science;
+Icon=celestia
+Exec=celestia-sdl %f
+Terminal=false
+MimeType=application/x-celestia-script;
