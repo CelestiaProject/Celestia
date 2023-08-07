@@ -61,7 +61,6 @@ public slots:
     void saveModel(const QString& saveFileName);
     void revertModel();
     void setRenderStyle(QAction* action);
-    void setRenderPath(QAction* action);
 
     void generateNormals();
     void generateTangents();
@@ -72,9 +71,6 @@ public slots:
     void updateSelectionInfo();
     void editBackgroundColor();
 
-private slots:
-    void initializeGL();
-
 private:
     ModelViewWidget* m_modelView;
     MaterialWidget* m_materialWidget;
@@ -82,5 +78,4 @@ private:
     QString m_modelFileName;
     QAction* m_saveAction;
     QAction* m_saveAsAction;
-    QAction* m_gl2Action;
 };

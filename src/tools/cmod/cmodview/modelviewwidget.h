@@ -160,12 +160,6 @@ public:
         WireFrameStyle,
     };
 
-    enum RenderPath
-    {
-        FixedFunctionPath = 0,
-        OpenGL2Path       = 1,
-    };
-
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -180,11 +174,6 @@ public:
     RenderStyle renderStyle() const
     {
         return m_renderStyle;
-    }
-
-    RenderPath renderPath() const
-    {
-        return m_renderPath;
     }
 
     QColor backgroundColor() const
@@ -210,11 +199,9 @@ public:
 
 signals:
     void selectionChanged();
-    void contextCreated();
 
 public slots:
     void setBackgroundColor(const QColor& color);
-    void setRenderPath(RenderPath path);
     void setRenderStyle(RenderStyle style);
     void setLighting(bool enable);
     void setAmbientLight(bool enable);
@@ -245,7 +232,6 @@ private:
     QPoint m_lastMousePosition;
     QPoint m_mouseDownPosition;
     RenderStyle m_renderStyle;
-    RenderPath m_renderPath;
 
     MaterialLibrary* m_materialLibrary;
 
