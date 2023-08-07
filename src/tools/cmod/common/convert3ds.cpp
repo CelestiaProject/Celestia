@@ -21,6 +21,9 @@
 
 #include "convert3ds.h"
 
+namespace cmodtools
+{
+
 namespace
 {
 
@@ -210,3 +213,4 @@ Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
     return model;
 }
 
+} // end namespace cmodtools

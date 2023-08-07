@@ -22,6 +22,9 @@
 #include <celmodel/model.h>
 
 
+namespace cmodtools
+{
+
 class WavefrontLoader
 {
 public:
@@ -102,3 +105,5 @@ private:
 
     std::string m_errorMessage;
 };
+
+} // end namespace cmodtools

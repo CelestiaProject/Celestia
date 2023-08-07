@@ -1,6 +1,9 @@
 #include "pathmanager.h"
 
 
+namespace cmodtools
+{
+
 PathManager::PathManager()
 {
     getHandle = [&](const fs::path& path)
@@ -35,3 +38,5 @@ GetPathManager()
     static PathManager pathManager;
     return &pathManager;
 }
+
+} // end namespace cmodtools

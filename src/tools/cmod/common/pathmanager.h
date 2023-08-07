@@ -7,6 +7,10 @@
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
 
+
+namespace cmodtools
+{
+
 class PathManager
 {
 public:
@@ -24,3 +28,5 @@ private:
 
 
 extern PathManager* GetPathManager();
+
+} // end namespace cmodtools

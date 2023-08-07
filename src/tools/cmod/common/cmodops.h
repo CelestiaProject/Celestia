@@ -25,6 +25,9 @@ class Model;
 }
 
 
+namespace cmodtools
+{
+
 // Mesh operations
 extern cmod::Mesh GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance = 0.0f);
 extern cmod::Mesh GenerateTangents(const cmod::Mesh& mesh, bool weld);
@@ -39,3 +42,5 @@ extern std::unique_ptr<cmod::Model> GenerateModelNormals(const cmod::Model& mode
 #ifdef TRISTRIP
 extern bool ConvertToStrips(cmod::Mesh& mesh);
 #endif
+
+}

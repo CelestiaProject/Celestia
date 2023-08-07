@@ -345,7 +345,7 @@ MainWindow::openModel(const QString& fileName)
         std::string fileNameStd = std::string(fileName.toUtf8().data());
 
         QFileInfo info(fileName);
-        GetPathManager()->reset();
+        cmodtools::GetPathManager()->reset();
 
         if (info.suffix().toLower() == "3ds")
         {
@@ -356,7 +356,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, GetPathManager()->getHandle);
+            auto model = cmodtools::Convert3DSModel(*scene, cmodtools::GetPathManager()->getHandle);
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Internal error converting 3DS file %1").arg(fileName));
@@ -368,10 +368,10 @@ MainWindow::openModel(const QString& fileName)
             double weldTolerance = 1.0e-6;
             bool weldVertices = true;
 
-            model = GenerateModelNormals(*model,
-                                         celmath::degToRad(smoothAngle),
-                                         weldVertices,
-                                         weldTolerance);
+            model = cmodtools::GenerateModelNormals(*model,
+                                                    celmath::degToRad(smoothAngle),
+                                                    weldVertices,
+                                                    weldTolerance);
 
             if (!model)
             {
@@ -383,7 +383,7 @@ MainWindow::openModel(const QString& fileName)
                 for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
                 {
                     cmod::Mesh* mesh = model->getMesh(i);
-                    UniquifyVertices(*mesh);
+                    cmodtools::UniquifyVertices(*mesh);
                 }
 
                 setModel(fileName, std::move(model));
@@ -398,7 +398,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            WavefrontLoader loader(in);
+            cmodtools::WavefrontLoader loader(in);
             std::unique_ptr<cmod::Model> model = loader.load();
 
             if (model == nullptr)
@@ -411,7 +411,7 @@ MainWindow::openModel(const QString& fileName)
             for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
             {
                 cmod::Mesh* mesh = model->getMesh(i);
-                UniquifyVertices(*mesh);
+                cmodtools::UniquifyVertices(*mesh);
             }
 
             setModel(fileName, std::move(model));
@@ -425,7 +425,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            std::unique_ptr<cmod::Model> model = cmod::LoadModel(in, GetPathManager()->getHandle);
+            std::unique_ptr<cmod::Model> model = cmod::LoadModel(in, cmodtools::GetPathManager()->getHandle);
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading CMOD file %1").arg(fileName));
@@ -470,7 +470,7 @@ MainWindow::saveModel(const QString& saveFileName)
     std::ofstream out(fileNameStd, std::ios::out | std::ios::binary);
     bool ok = false;
     if (out.good())
-        ok = SaveModelBinary(m_modelView->model(), out, GetPathManager()->getSource);
+        ok = SaveModelBinary(m_modelView->model(), out, cmodtools::GetPathManager()->getSource);
 
     if (!ok)
     {
@@ -548,10 +548,10 @@ MainWindow::generateNormals()
         double weldTolerance = toleranceEdit->text().toDouble();
         bool weldVertices = true;
 
-        std::unique_ptr<cmod::Model> newModel = GenerateModelNormals(*model,
-                                                                     celmath::degToRad(smoothAngle),
-                                                                     weldVertices,
-                                                                     weldTolerance);
+        auto newModel = cmodtools::GenerateModelNormals(*model,
+                                                        celmath::degToRad(smoothAngle),
+                                                        weldVertices,
+                                                        weldTolerance);
         if (!newModel)
         {
             QMessageBox::warning(this, tr("Internal Error"), tr("Out of memory error during normal generation"));
@@ -611,7 +611,7 @@ MainWindow::generateTangents()
         for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
         {
             const cmod::Mesh* mesh = model->getMesh(i);
-            cmod::Mesh newMesh = GenerateTangents(*mesh, weldVertices);
+            cmod::Mesh newMesh = cmodtools::GenerateTangents(*mesh, weldVertices);
             if (newMesh.getVertexCount() == 0)
             {
                 std::cerr << "Error generating normals!\n";
@@ -640,7 +640,7 @@ MainWindow::uniquifyVertices()
     for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
     {
         cmod::Mesh* mesh = model->getMesh(i);
-        UniquifyVertices(*mesh);
+        cmodtools::UniquifyVertices(*mesh);
     }
 
     showModelStatistics();
@@ -655,7 +655,7 @@ MainWindow::mergeMeshes()
     if (!model)
         return;
 
-    setModel(modelFileName(), MergeModelMeshes(*model));
+    setModel(modelFileName(), cmodtools::MergeModelMeshes(*model));
 }
 
 

@@ -442,7 +442,7 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
         // Bit 16 is set if the normal map is compressed
         if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource &&
             hasTangents &&
-            GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
+            cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
         {
             info |= CompressedNormalMapMask;
         }
@@ -494,22 +494,22 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
             if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             }
             if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
+                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
             }
             if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
+                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
             }
             if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
+                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
             }
         }
     }
@@ -956,7 +956,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         if (shaderKey.hasDiffuseMap())
         {
             GLuint diffuseMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+                toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
             setSampler(*shader, "diffuseMap", 0);
@@ -965,7 +965,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         if (shaderKey.hasNormalMap())
         {
             GLuint normalMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
+                toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -976,7 +976,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         if (shaderKey.hasSpecularMap())
         {
             GLuint specularMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
+                toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -987,7 +987,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         if (shaderKey.hasEmissiveMap())
         {
             GLuint emissiveMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
+                toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
@@ -1087,7 +1087,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
         {
             baseTexId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+                toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
         }
 
         if (baseTexId != 0)

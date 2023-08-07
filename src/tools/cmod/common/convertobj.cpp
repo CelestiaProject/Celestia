@@ -21,6 +21,9 @@
 #include "convertobj.h"
 
 
+namespace cmodtools
+{
+
 namespace
 {
 
@@ -391,3 +394,5 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
 
     m_model->addMesh(std::move(mesh));
 }
+
+} // end namespace cmodtools

@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     }
 
     std::cerr << "Converting...\n";
-    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, GetPathManager()->getHandle);
+    std::unique_ptr<cmod::Model> model = cmodtools::Convert3DSModel(*scene, cmodtools::GetPathManager()->getHandle);
     if (!model)
     {
         std::cerr << "Error converting 3DS file to Celestia model\n";
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     double weldTolerance = 1.0e-6;
     bool weldVertices = true;
 
-    model = GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
+    model = cmodtools::GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
 
     if (!model)
     {
@@ -74,10 +74,10 @@ int main(int argc, char* argv[])
     for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
     {
         cmod::Mesh* mesh = model->getMesh(i);
-        UniquifyVertices(*mesh);
+        cmodtools::UniquifyVertices(*mesh);
     }
 
-    SaveModelAscii(model.get(), std::cout, GetPathManager()->getSource);
+    SaveModelAscii(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
 
     return 0;
 }
