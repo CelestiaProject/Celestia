@@ -25,6 +25,9 @@
 #include "cmodops.h"
 
 
+namespace cmodtools
+{
+
 namespace
 {
 struct Vertex
@@ -1288,3 +1291,5 @@ ConvertToStrips(cmod::Mesh& mesh)
     return true;
 }
 #endif
+
+} // end namespace cmodtools

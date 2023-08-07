@@ -19,6 +19,9 @@
 #include <celmodel/modelfile.h>
 
 
+namespace cmodtools
+{
+
 extern void Convert3DSMesh(cmod::Model& model,
                            M3DTriangleMesh& mesh3ds,
                            const M3DScene& scene,
@@ -26,3 +29,5 @@ extern void Convert3DSMesh(cmod::Model& model,
 
 extern std::unique_ptr<cmod::Model> Convert3DSModel(const M3DScene& scene,
                                                     cmod::HandleGetter handleGetter);
+
+}

@@ -152,8 +152,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    PathManager pathManager;
-
     std::unique_ptr<cmod::Model> model = nullptr;
     if (!inputFilename.empty())
     {
@@ -163,11 +161,11 @@ int main(int argc, char* argv[])
             std::cerr << "Error opening " << inputFilename << "\n";
             return 1;
         }
-        model = cmod::LoadModel(in, GetPathManager()->getHandle);
+        model = cmod::LoadModel(in, cmodtools::GetPathManager()->getHandle);
     }
     else
     {
-        model = cmod::LoadModel(std::cin, GetPathManager()->getHandle);
+        model = cmod::LoadModel(std::cin, cmodtools::GetPathManager()->getHandle);
     }
 
     if (model == nullptr)
@@ -191,9 +189,9 @@ int main(int argc, char* argv[])
 
             if (genNormals)
             {
-                cmod::Mesh newMesh = GenerateNormals(mesh,
-                                                     celmath::degToRad(smoothAngle),
-                                                     weldVertices);
+                cmod::Mesh newMesh = cmodtools::GenerateNormals(mesh,
+                                                                celmath::degToRad(smoothAngle),
+                                                                weldVertices);
                 if (newMesh.getVertexCount() == 0)
                 {
                     std::cerr << "Error generating normals!\n";
@@ -205,7 +203,7 @@ int main(int argc, char* argv[])
 
             if (genTangents)
             {
-                cmod::Mesh newMesh = GenerateTangents(mesh, weldVertices);
+                cmod::Mesh newMesh = cmodtools::GenerateTangents(mesh, weldVertices);
                 if (newMesh.getVertexCount() == 0)
                 {
                     std::cerr << "Error generating tangents!\n";
@@ -223,7 +221,7 @@ int main(int argc, char* argv[])
 
     if (mergeMeshes)
     {
-        model = MergeModelMeshes(*model);
+        model = cmodtools::MergeModelMeshes(*model);
     }
 
     if (uniquify)
@@ -231,7 +229,7 @@ int main(int argc, char* argv[])
         for (std::uint32_t i = 0; model->getMesh(i) != nullptr; i++)
         {
             cmod::Mesh* mesh = model->getMesh(i);
-            UniquifyVertices(*mesh);
+            cmodtools::UniquifyVertices(*mesh);
         }
     }
 
@@ -242,7 +240,7 @@ int main(int argc, char* argv[])
         for (std::uint32_t i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
-            ConvertToStrips(*mesh);
+            cmodtools::ConvertToStrips(*mesh);
         }
     }
 #endif
@@ -250,9 +248,9 @@ int main(int argc, char* argv[])
     if (outputFilename.empty())
     {
         if (outputBinary)
-            SaveModelBinary(model.get(), std::cout, GetPathManager()->getSource);
+            SaveModelBinary(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
         else
-            SaveModelAscii(model.get(), std::cout, GetPathManager()->getSource);
+            SaveModelAscii(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
     }
     else
     {
@@ -271,9 +269,9 @@ int main(int argc, char* argv[])
         }
 
         if (outputBinary)
-            SaveModelBinary(model.get(), out, GetPathManager()->getSource);
+            SaveModelBinary(model.get(), out, cmodtools::GetPathManager()->getSource);
         else
-            SaveModelAscii(model.get(), out, GetPathManager()->getSource);
+            SaveModelAscii(model.get(), out, cmodtools::GetPathManager()->getSource);
     }
 
     return 0;
