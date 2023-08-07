@@ -50,11 +50,12 @@
 #include "convertobj.h"
 #include "pathmanager.h"
 
-#include "glshader.h"
-#include "glsupport.h"
 #include "materialwidget.h"
 #include "modelviewwidget.h"
 
+
+namespace cmodview
+{
 
 namespace
 {
@@ -707,3 +708,5 @@ MainWindow::editBackgroundColor()
         m_modelView->setBackgroundColor(originalColor);
     }
 }
+
+} // end namespace cmodview

@@ -5,21 +5,21 @@ namespace celestia::gl
 {
 
 #ifdef GL_ES
-bool OES_vertex_array_object        = false;
-bool OES_texture_border_clamp       = false;
-bool OES_geometry_shader            = false;
+CELAPI bool OES_vertex_array_object        = false;
+CELAPI bool OES_texture_border_clamp       = false;
+CELAPI bool OES_geometry_shader            = false;
 #else
-bool ARB_vertex_array_object        = false;
-bool ARB_framebuffer_object         = false;
+CELAPI bool ARB_vertex_array_object        = false;
+CELAPI bool ARB_framebuffer_object         = false;
 #endif
-bool ARB_shader_texture_lod         = false;
-bool EXT_texture_compression_s3tc   = false;
-bool EXT_texture_filter_anisotropic = false;
-bool MESA_pack_invert               = false;
-GLint maxPointSize                  = 0;
-GLint maxTextureSize                = 0;
-GLfloat maxLineWidth                = 0.0f;
-GLint maxTextureAnisotropy          = 0;
+CELAPI bool ARB_shader_texture_lod         = false;
+CELAPI bool EXT_texture_compression_s3tc   = false;
+CELAPI bool EXT_texture_filter_anisotropic = false;
+CELAPI bool MESA_pack_invert               = false;
+CELAPI GLint maxPointSize                  = 0;
+CELAPI GLint maxTextureSize                = 0;
+CELAPI GLfloat maxLineWidth                = 0.0f;
+CELAPI GLint maxTextureAnisotropy          = 0;
 
 namespace
 {

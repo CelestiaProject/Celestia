@@ -5,6 +5,13 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#ifdef IMPORT_GLSUPPORT
+#define CELAPI __declspec(dllimport)
+#else
+#define CELAPI __declspec(dllexport)
+#endif
+#else
+#define CELAPI
 #endif
 #include <epoxy/gl.h>
 
@@ -33,22 +40,22 @@ enum Version
     GLES_3_2 = 32,
 };
 
-extern bool ARB_shader_texture_lod;
-extern bool EXT_texture_compression_s3tc;
-extern bool EXT_texture_filter_anisotropic;
-extern bool MESA_pack_invert;
+extern CELAPI bool ARB_shader_texture_lod; //NOSONAR
+extern CELAPI bool EXT_texture_compression_s3tc; //NOSONAR
+extern CELAPI bool EXT_texture_filter_anisotropic; //NOSONAR
+extern CELAPI bool MESA_pack_invert; //NOSONAR
 #ifdef GL_ES
-extern bool OES_vertex_array_object;
-extern bool OES_texture_border_clamp;
-extern bool OES_geometry_shader;
+extern CELAPI bool OES_vertex_array_object; //NOSONAR
+extern CELAPI bool OES_texture_border_clamp; //NOSONAR
+extern CELAPI bool OES_geometry_shader; //NOSONAR
 #else
-extern bool ARB_vertex_array_object;
-extern bool ARB_framebuffer_object;
+extern CELAPI bool ARB_vertex_array_object; //NOSONAR
+extern CELAPI bool ARB_framebuffer_object; //NOSONAR
 #endif
-extern GLint maxPointSize;
-extern GLint maxTextureSize;
-extern GLfloat maxLineWidth;
-extern GLint maxTextureAnisotropy;
+extern CELAPI GLint maxPointSize; //NOSONAR
+extern CELAPI GLint maxTextureSize; //NOSONAR
+extern CELAPI GLfloat maxLineWidth; //NOSONAR
+extern CELAPI GLint maxTextureAnisotropy; //NOSONAR
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;

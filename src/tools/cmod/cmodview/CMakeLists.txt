@@ -17,9 +17,10 @@ set(CMAKE_AUTOMOC ON)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-build_cmod_tool(cmodview WIN32 cmodview.cpp glframebuffer.cpp  glshader.cpp  mainwindow.cpp  materialwidget.cpp  modelviewwidget.cpp glsupport.cpp)
+build_cmod_tool(cmodview WIN32 cmodview.cpp mainwindow.cpp materialwidget.cpp modelviewwidget.cpp)
 target_include_directories(cmodview PRIVATE ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(cmodview Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES})
+target_compile_definitions(cmodview PRIVATE IMPORT_GLSUPPORT)
+target_link_libraries(cmodview Qt5::Widgets ${OPENGL_LIBRARIES})
 
 if(NOT MSVC)
   target_compile_options(cmodview PRIVATE "-frtti")

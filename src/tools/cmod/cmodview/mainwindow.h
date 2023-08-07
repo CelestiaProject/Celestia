@@ -21,14 +21,19 @@
 #include <QString>
 
 
-class MaterialWidget;
-class ModelViewWidget;
 
 namespace cmod
 {
 class Material;
 class Model;
 }
+
+
+namespace cmodview
+{
+
+class MaterialWidget;
+class ModelViewWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -79,3 +84,5 @@ private:
     QAction* m_saveAction;
     QAction* m_saveAsAction;
 };
+
+} // end namespace cmodview

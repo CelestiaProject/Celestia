@@ -12,14 +12,14 @@
 
 #include <memory>
 
-#include "glsupport.h"
+#include <celengine/glsupport.h>
 
 #include <QColor>
-#include <QGLWidget>
 #include <QHash>
 #include <QList>
 #include <QMouseEvent>
 #include <QObject>
+#include <QOpenGLWidget>
 #include <QPoint>
 #include <QSet>
 #include <QString>
@@ -38,9 +38,13 @@ namespace cmod
 class Model;
 }
 
+class FramebufferObject;
+class GLProgram;
+
+namespace cmodview
+{
+
 class MaterialLibrary;
-class GLFrameBufferObject;
-class GLShaderProgram;
 
 class LightingEnvironment
 {
@@ -137,11 +141,11 @@ private:
 
 inline unsigned int qHash(const ShaderKey& key)
 {
-    return qHash(key.hash());
+    return ::qHash(key.hash());
 }
 
 
-class ModelViewWidget : public QGLWidget
+class ModelViewWidget : public QOpenGLWidget
 {
 Q_OBJECT
 public:
@@ -222,7 +226,7 @@ private:
                       const cmod::VertexDescription* vertexDesc);
 
     void setupDefaultLightSources();
-    GLShaderProgram* createShader(const ShaderKey& shaderKey);
+    GLProgram* createShader(const ShaderKey& shaderKey);
 
 private:
     std::unique_ptr<cmod::Model> m_model;
@@ -236,15 +240,17 @@ private:
     MaterialLibrary* m_materialLibrary;
 
     QSet<const cmod::PrimitiveGroup*> m_selection;
-    QHash<ShaderKey, GLShaderProgram*> m_shaderCache;
+    QHash<ShaderKey, GLProgram*> m_shaderCache;
 
     QColor m_backgroundColor;
 
     QList<LightSource> m_lightSources;
     Eigen::Quaterniond m_lightOrientation;
-    QList<GLFrameBufferObject*> m_shadowBuffers;
+    QList<FramebufferObject*> m_shadowBuffers;
 
     bool m_lightingEnabled;
     bool m_ambientLightEnabled;
     bool m_shadowsEnabled;
 };
+
+} // end namespace cmodview
