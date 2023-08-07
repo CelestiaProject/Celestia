@@ -10,7 +10,7 @@
 
 #include "mainwindow.h"
 #include <QApplication>
-#include <QGLFormat>
+#include <QSurfaceFormat>
 #include <celutil/logger.h>
 
 using celestia::util::CreateLogger;
@@ -25,10 +25,10 @@ main(int argc, char *argv[])
     QCoreApplication::setApplicationName("cmodview");
 
     // Enable multisample antialiasing
-    QGLFormat format;
-    format.setSampleBuffers(true);
+    QSurfaceFormat format;
     format.setSamples(4);
-    QGLFormat::setDefaultFormat(format);
+    format.setVersion(2, 0);
+    QSurfaceFormat::setDefaultFormat(format);
 
     QStringList arguments = app.arguments();
     QString fileName;
@@ -37,7 +37,7 @@ main(int argc, char *argv[])
         fileName = arguments.at(1);
     }
 
-    MainWindow window;
+    cmodview::MainWindow window;
 
     window.resize(QSize(800, 600));
     window.readSettings();

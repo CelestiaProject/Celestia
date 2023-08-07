@@ -18,6 +18,9 @@
 
 #include "pathmanager.h"
 
+namespace cmodview
+{
+
 namespace
 {
 
@@ -353,3 +356,5 @@ MaterialWidget::setTextureSearchPath(const QString& path)
         }
     }
 }
+
+} // end namespace cmodview

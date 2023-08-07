@@ -19,6 +19,8 @@
 
 #include <celmodel/material.h>
 
+namespace cmodview
+{
 
 class MaterialWidget : public QWidget
 {
@@ -69,3 +71,5 @@ private:
 
     cmod::Material m_material;
 };
+
+} // end namespace cmodview

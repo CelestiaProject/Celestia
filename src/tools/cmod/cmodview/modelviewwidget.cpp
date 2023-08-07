@@ -11,29 +11,34 @@
 #include "modelviewwidget.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
-#include <iostream>
+#include <type_traits>
 #include <utility>
 
+#include <QDebug>
 #include <QFileInfo>
+#include <QImage>
 #include <QIODevice>
 #include <QMap>
-#include <QPixmap>
 #include <QTextStream>
 
+#include <celengine/framebuffer.h>
+#include <celengine/glshader.h>
+#include <celengine/image.h>
+#include <celengine/texture.h>
+#include <celimage/imageformats.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
 
 #include "pathmanager.h"
 
-#include "glframebuffer.h"
-#include "glshader.h"
-#include "glsupport.h"
-
-
 #define DEBUG_SHADOWS 0
+
+namespace cmodview
+{
 
 namespace
 {
@@ -105,97 +110,292 @@ shadowProjectionMatrix(float objectRadius)
                                     -objectRadius, objectRadius);
 }
 
+
+constexpr auto VertexAttributeCount = static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax);
+
+
+constexpr std::array<GLenum, VertexAttributeCount> GLComponentTypes
+{
+     GL_FLOAT,          // Float1
+     GL_FLOAT,          // Float2
+     GL_FLOAT,          // Float3
+     GL_FLOAT,          // Float4,
+     GL_UNSIGNED_BYTE,  // UByte4
+};
+
+
+constexpr std::array<int, VertexAttributeCount> GLComponentCounts
+{
+     1,  // Float1
+     2,  // Float2
+     3,  // Float3
+     4,  // Float4,
+     4,  // UByte4
+};
+
+
+void
+setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
+{
+    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
+    const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
+    const cmod::VertexAttribute& color0    = desc.getAttribute(cmod::VertexAttributeSemantic::Color0);
+    const cmod::VertexAttribute& texCoord0 = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0);
+    const cmod::VertexAttribute& tangent   = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
+
+    // Can't render anything unless we have positions
+    if (position.format != cmod::VertexAttributeFormat::Float3)
+        return;
+
+    // Set up the vertex arrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes, vertexData + position.offsetWords);
+
+    // Set up the normal array
+    switch (normal.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GLComponentTypes[static_cast<std::size_t>(normal.format)],
+                        desc.strideBytes, vertexData + normal.offsetWords);
+        break;
+    default:
+        glDisableClientState(GL_NORMAL_ARRAY);
+        break;
+    }
+
+    // Set up the color array
+    switch (color0.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
+    case cmod::VertexAttributeFormat::UByte4:
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(GLComponentCounts[static_cast<std::size_t>(color0.format)],
+                       GLComponentTypes[static_cast<std::size_t>(color0.format)],
+                       desc.strideBytes, vertexData + color0.offsetWords);
+        break;
+    default:
+        glDisableClientState(GL_COLOR_ARRAY);
+        break;
+    }
+
+    // Set up the texture coordinate array
+    switch (texCoord0.format)
+    {
+    case cmod::VertexAttributeFormat::Float1:
+    case cmod::VertexAttributeFormat::Float2:
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
+                          GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
+                          desc.strideBytes, vertexData + texCoord0.offsetWords);
+        break;
+    default:
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        break;
+    }
+
+    switch (tangent.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+        glEnableVertexAttribArray(TangentAttributeIndex);
+        glVertexAttribPointer(TangentAttributeIndex,
+                              GLComponentCounts[static_cast<std::size_t>(tangent.format)],
+                              GLComponentTypes[static_cast<std::size_t>(tangent.format)],
+                              GL_FALSE,
+                              desc.strideBytes,
+                              vertexData + tangent.offsetWords);
+        break;
+    default:
+        glDisableVertexAttribArray(TangentAttributeIndex);
+        break;
+    }
+}
+
+
+// Set just the vertex pointer
+void
+setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
+{
+    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
+
+    // Can't render anything unless we have positions
+    if (position.format != cmod::VertexAttributeFormat::Float3)
+        return;
+
+    // Set up the vertex arrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes,
+                    vertexData + position.offsetWords);
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableVertexAttribArray(TangentAttributeIndex);
+}
+
+
+GLenum
+getGLMode(cmod::PrimitiveGroupType primitive)
+{
+    switch (primitive)
+    {
+    case cmod::PrimitiveGroupType::TriList:
+        return GL_TRIANGLES;
+    case cmod::PrimitiveGroupType::TriStrip:
+        return GL_TRIANGLE_STRIP;
+    case cmod::PrimitiveGroupType::TriFan:
+        return GL_TRIANGLE_FAN;
+    case cmod::PrimitiveGroupType::LineList:
+        return GL_LINES;
+    case cmod::PrimitiveGroupType::LineStrip:
+        return GL_LINE_STRIP;
+    case cmod::PrimitiveGroupType::PointList:
+        return GL_POINTS;
+    default:
+        return GL_POINTS;
+    }
+}
+
+
+bool gl2Fail = false;
+
+
+void
+setUniformValue(const GLProgram& program, const char* name, float value)
+{
+    GLint location = glGetUniformLocation(program.getID(), name);
+    if (location >= 0)
+        glUniform1f(location, value);
+}
+
+
+template<typename T, std::enable_if_t<std::is_same_v<typename T::Scalar, float>, int> = 0>
+void
+setUniformValue(const GLProgram& program, const char* name, const T& values)
+{
+    GLint location = glGetUniformLocation(program.getID(), name);
+    if (location < 0)
+        return;
+    constexpr int R = T::RowsAtCompileTime;
+    constexpr int C = T::ColsAtCompileTime;
+    if constexpr (R == 3 && C == 1)
+        glUniform3fv(location, 1, values.eval().data());
+    else if constexpr (R == 4 && C == 1)
+        glUniform4fv(location, 1, values.eval().data());
+    else if constexpr (R == 4 && C == 4)
+        glUniformMatrix4fv(location, 1, GL_FALSE, values.eval().data());
+    else
+        static_assert(R <= 0 || C <= 0, "Unhandled matrix size");
+}
+
+
+void setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Vector3f* values, GLsizei count)
+{
+    GLint location = glGetUniformLocation(program.getID(), name);
+    if (location >= 0)
+        glUniform3fv(location, count, values[0].data());
+}
+
+
+void setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Matrix4f* values, GLsizei count)
+{
+    GLint location = glGetUniformLocation(program.getID(), name);
+    if (location >= 0)
+        glUniformMatrix4fv(location, count, GL_FALSE, values[0].data());
+}
+
+
+void
+setSampler(const GLProgram& program, const char* name, GLint value)
+{
+    GLint location = glGetUniformLocation(program.getID(), name);
+    if (location >= 0)
+        glUniform1i(location, value);
+}
+
+
 } // end unnamed namespace
 
 
 class MaterialLibrary
 {
 public:
-    MaterialLibrary(QGLWidget* glWidget,
-                    const QString& modelDirPath) :
-       m_glWidget(glWidget),
+    explicit MaterialLibrary(const QString& modelDirPath) :
        m_modelDirPath(modelDirPath)
     {
     }
 
-    ~MaterialLibrary()
-    {
-        flush();
-    }
+    ~MaterialLibrary();
 
-    GLuint loadTexture(const QString& fileName)
-    {
-        QFileInfo info(fileName);
-        if (!info.exists())
-        {
-            return 0;
-        }
-
-        QString ext = info.suffix().toLower();
-        if (ext == "dds" || ext == "dxt5nm")
-        {
-            GLuint texId = m_glWidget->bindTexture(fileName);
-            // Qt doesn't seem to enable mipmap filtering automatically
-            // TODO: Check whether the texture has mipmaps:
-            //    glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLevel);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            return texId;
-        }
-
-
-        QPixmap texturePixmap(fileName);
-
-        // Mipmaps and linear filtering enabled by default.
-#if QT_VERSION >= 0x040600
-        return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA, QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
-#else
-        return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA);
-#endif
-    }
-
-
-    GLuint getTexture(const QString& resourceName)
-    {
-        if (m_textures.contains(resourceName))
-        {
-            return m_textures[resourceName];
-        }
-        else
-        {
-            if (m_glWidget)
-            {
-                GLuint texId = loadTexture(m_modelDirPath + "/" + resourceName);
-                if (texId == 0)
-                {
-                    // Try textures/medres...
-                    texId = loadTexture(m_modelDirPath + "/../textures/medres/" + resourceName);
-                }
-
-                std::cout << "Load " << resourceName.toStdString() << ", texId = " << texId << std::endl;
-                m_textures[resourceName] = texId;
-                return texId;
-            }
-        }
-
-        return 0;
-    }
-
-    void flush()
-    {
-        foreach (GLuint texId, m_textures)
-        {
-            if (texId != 0 && m_glWidget)
-            {
-                m_glWidget->deleteTexture(texId);
-            }
-        }
-    }
+    GLuint getTexture(const QString& resourceName);
 
 private:
-    QGLWidget* m_glWidget;
+    static ImageTexture* loadTexture(const QString& fileName);
+
     QString m_modelDirPath;
-    QMap<QString, GLuint> m_textures;
+    QMap<QString, ImageTexture*> m_textures;
 };
+
+
+MaterialLibrary::~MaterialLibrary()
+{
+    for (ImageTexture* tex : m_textures)
+    {
+        delete tex;
+    }
+}
+
+
+GLuint
+MaterialLibrary::getTexture(const QString& resourceName)
+{
+    ImageTexture* texture;
+    auto it = m_textures.constFind(resourceName);
+    if (it == m_textures.constEnd())
+    {
+        texture = loadTexture(m_modelDirPath + "/" + resourceName);
+        if (texture == nullptr)
+        {
+            // Try textures/medres...
+            texture = loadTexture(m_modelDirPath + "/../textures/medres/" + resourceName);
+            if (texture == nullptr)
+                qWarning() << "Failed to load" << resourceName;
+            else
+                qInfo() << "Loaded" << resourceName;
+        }
+
+        m_textures[resourceName] = texture;
+    }
+    else
+    {
+        texture = *it;
+    }
+
+    return texture == nullptr ? 0 : texture->getName();
+}
+
+
+ImageTexture*
+MaterialLibrary::loadTexture(const QString& fileName)
+{
+    QFileInfo info(fileName);
+    if (!info.exists())
+        return nullptr;
+
+    std::unique_ptr<Image> image;
+    if constexpr (std::is_same_v<fs::path::value_type, wchar_t>)
+        image = LoadImageFromFile(fileName.toStdWString());
+    else
+        image = LoadImageFromFile(fileName.toStdString());
+
+    if (image == nullptr)
+        return nullptr;
+
+    return new ImageTexture(*image, Texture::EdgeClamp, Texture::DefaultMipMaps);
+}
 
 
 ShaderKey
@@ -231,32 +431,20 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
     if (hasTexCoords)
     {
         if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
-        {
             info |= DiffuseMapMask;
-        }
-
         if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
-        {
             info |= SpecularMapMask;
-        }
-
         if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
-        {
             info |= NormalMapMask;
-        }
-
         if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
-        {
             info |= EmissiveMapMask;
-        }
 
         // Bit 16 is set if the normal map is compressed
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource && hasTangents)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource &&
+            hasTangents &&
+            GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
         {
-            if (GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
-            {
-                info |= CompressedNormalMapMask;
-            }
+            info |= CompressedNormalMapMask;
         }
     }
 
@@ -265,7 +453,7 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
 
 
 ModelViewWidget::ModelViewWidget(QWidget *parent) :
-   QGLWidget(parent),
+   QOpenGLWidget(parent),
    m_model(nullptr),
    m_modelBoundingRadius(1.0),
    m_cameraPosition(Eigen::Vector3d::Zero()),
@@ -293,7 +481,7 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
     m_model = std::move(model);
     delete m_materialLibrary;
 
-    m_materialLibrary = new MaterialLibrary(this, modelDirPath);
+    m_materialLibrary = new MaterialLibrary(modelDirPath);
 
     m_selection.clear();
 
@@ -513,6 +701,7 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     update();
 }
 
+
 void
 ModelViewWidget::setBackgroundColor(const QColor& color)
 {
@@ -532,7 +721,7 @@ void
 ModelViewWidget::paintGL()
 {
     // Generate the shadow buffers for each light source
-    if (m_shadowsEnabled && m_shadowBuffers.size() > 0)
+    if (m_shadowsEnabled && !m_shadowBuffers.empty())
     {
         cmod::Material defaultMaterial;
         defaultMaterial.diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
@@ -542,7 +731,7 @@ ModelViewWidget::paintGL()
 
         for (int lightIndex = 0; lightIndex < m_lightSources.size(); ++lightIndex)
         {
-            GLFrameBufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
+            FramebufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
             if (shadowBuffer && shadowBuffer->isValid())
             {
                 renderShadow(lightIndex);
@@ -618,7 +807,7 @@ ModelViewWidget::paintGL()
 #if DEBUG_SHADOWS
     // Debugging for shadows: show the first shadow buffer in the corner of the
     // viewport.
-    if (m_shadowsEnabled && m_shadowBuffers.size() > 0)
+    if (m_shadowsEnabled && !m_shadowBuffers.empty())
     {
         GLFrameBufferObject* shadowBuffer = m_shadowBuffers[0];
         if (shadowBuffer && shadowBuffer->isValid())
@@ -660,7 +849,7 @@ ModelViewWidget::paintGL()
     GLenum errorCode = glGetError();
     if (errorCode != GL_NO_ERROR)
     {
-        std::cout << "OpenGL error: " << errorCode << std::endl;
+        qWarning() << "OpenGL error:" << errorCode;
     }
 }
 
@@ -670,155 +859,6 @@ ModelViewWidget::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
-
-static GLenum GLComponentTypes[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
-{
-     GL_FLOAT,          // Float1
-     GL_FLOAT,          // Float2
-     GL_FLOAT,          // Float3
-     GL_FLOAT,          // Float4,
-     GL_UNSIGNED_BYTE,  // UByte4
-};
-
-static int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
-{
-     1,  // Float1
-     2,  // Float2
-     3,  // Float3
-     4,  // Float4,
-     4,  // UByte4
-};
-
-
-static void
-setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
-{
-    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
-    const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
-    const cmod::VertexAttribute& color0    = desc.getAttribute(cmod::VertexAttributeSemantic::Color0);
-    const cmod::VertexAttribute& texCoord0 = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0);
-    const cmod::VertexAttribute& tangent   = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
-
-    // Can't render anything unless we have positions
-    if (position.format != cmod::VertexAttributeFormat::Float3)
-        return;
-
-    // Set up the vertex arrays
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.strideBytes, vertexData + position.offsetWords);
-
-    // Set up the normal array
-    switch (normal.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GLComponentTypes[static_cast<std::size_t>(normal.format)],
-                        desc.strideBytes, vertexData + normal.offsetWords);
-        break;
-    default:
-        glDisableClientState(GL_NORMAL_ARRAY);
-        break;
-    }
-
-    // Set up the color array
-    switch (color0.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-    case cmod::VertexAttributeFormat::Float4:
-    case cmod::VertexAttributeFormat::UByte4:
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(GLComponentCounts[static_cast<std::size_t>(color0.format)],
-                       GLComponentTypes[static_cast<std::size_t>(color0.format)],
-                       desc.strideBytes, vertexData + color0.offsetWords);
-        break;
-    default:
-        glDisableClientState(GL_COLOR_ARRAY);
-        break;
-    }
-
-    // Set up the texture coordinate array
-    switch (texCoord0.format)
-    {
-    case cmod::VertexAttributeFormat::Float1:
-    case cmod::VertexAttributeFormat::Float2:
-    case cmod::VertexAttributeFormat::Float3:
-    case cmod::VertexAttributeFormat::Float4:
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
-                          GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
-                          desc.strideBytes, vertexData + texCoord0.offsetWords);
-        break;
-    default:
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        break;
-    }
-
-    switch (tangent.format)
-    {
-    case cmod::VertexAttributeFormat::Float3:
-        glEnableVertexAttribArray(TangentAttributeIndex);
-        glVertexAttribPointer(TangentAttributeIndex,
-                              GLComponentCounts[static_cast<std::size_t>(tangent.format)],
-                              GLComponentTypes[static_cast<std::size_t>(tangent.format)],
-                              GL_FALSE,
-                              desc.strideBytes,
-                              vertexData + tangent.offsetWords);
-        break;
-    default:
-        glDisableVertexAttribArray(TangentAttributeIndex);
-        break;
-    }
-
-}
-
-
-// Set just the vertex pointer
-void
-setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
-{
-    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
-
-    // Can't render anything unless we have positions
-    if (position.format != cmod::VertexAttributeFormat::Float3)
-        return;
-
-    // Set up the vertex arrays
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.strideBytes,
-                    vertexData + position.offsetWords);
-
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArray(TangentAttributeIndex);
-}
-
-
-static GLenum
-getGLMode(cmod::PrimitiveGroupType primitive)
-{
-    switch (primitive)
-    {
-    case cmod::PrimitiveGroupType::TriList:
-        return GL_TRIANGLES;
-    case cmod::PrimitiveGroupType::TriStrip:
-        return GL_TRIANGLE_STRIP;
-    case cmod::PrimitiveGroupType::TriFan:
-        return GL_TRIANGLE_FAN;
-    case cmod::PrimitiveGroupType::LineList:
-        return GL_LINES;
-    case cmod::PrimitiveGroupType::LineStrip:
-        return GL_LINE_STRIP;
-    case cmod::PrimitiveGroupType::PointList:
-        return GL_POINTS;
-    default:
-        return GL_POINTS;
-    }
-}
-
-
-static bool gl2Fail = false;
 
 
 void
@@ -850,23 +890,23 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::setShadows(bool enable)
 {
-    if (!celestia::gl::EXT_framebuffer_object)
-    {
+    if (!FramebufferObject::isSupported())
         return;
-    }
 
     if (enable != m_shadowsEnabled)
     {
         m_shadowsEnabled = enable;
         if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
         {
-            auto* fb0 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
-            auto* fb1 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
+            makeCurrent();
+            auto* fb0 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
+            auto* fb1 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
             m_shadowBuffers << fb0 << fb1;
             if (!fb0->isValid() || !fb1->isValid())
             {
                 qWarning("Error creating shadow buffers.");
             }
+            doneCurrent();
         }
 
         update();
@@ -879,7 +919,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
                               const LightingEnvironment* lighting,
                               const cmod::VertexDescription* vertexDesc)
 {
-    GLShaderProgram* shader = nullptr;
+    GLProgram* shader = nullptr;
 
     ShaderKey shaderKey;
     if (!gl2Fail)
@@ -904,14 +944,14 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
 
     if (shader)
     {
-        shader->bind();
+        shader->use();
 
-        shader->setUniformValue("modelView", cameraTransform().matrix().cast<float>());
+        setUniformValue(*shader, "modelView", cameraTransform().matrix().cast<float>());
 
-        shader->setUniformValue("diffuseColor", Eigen::Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
-        shader->setUniformValue("specularColor", Eigen::Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
-        shader->setUniformValue("opacity", material->opacity);
-        shader->setUniformValue("specularPower", material->specularPower);
+        setUniformValue(*shader, "diffuseColor", Eigen::Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
+        setUniformValue(*shader, "specularColor", Eigen::Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
+        setUniformValue(*shader, "opacity", material->opacity);
+        setUniformValue(*shader, "specularPower", material->specularPower);
 
         if (shaderKey.hasDiffuseMap())
         {
@@ -919,7 +959,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
                 toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
-            shader->setSampler("diffuseMap", 0);
+            setSampler(*shader, "diffuseMap", 0);
         }
 
         if (shaderKey.hasNormalMap())
@@ -929,7 +969,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
-            shader->setSampler("normalMap", 1);
+            setSampler(*shader, "normalMap", 1);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -940,7 +980,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
-            shader->setSampler("specularMap", 2);
+            setSampler(*shader, "specularMap", 2);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -951,7 +991,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
-            shader->setSampler("emissiveMap", 3);
+            setSampler(*shader, "emissiveMap", 3);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -972,10 +1012,10 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
             lightIndex++;
         }
 
-        if (m_lightSources.size() > 0)
+        if (!m_lightSources.empty())
         {
-            shader->setUniformValueArray("lightDirection", lightDirections, m_lightSources.size());
-            shader->setUniformValueArray("lightColor", lightColors, m_lightSources.size());
+            setUniformValueArray(*shader, "lightDirection", lightDirections, m_lightSources.size());
+            setUniformValueArray(*shader, "lightColor", lightColors, m_lightSources.size());
         }
 
         float ambientLightLevel = 0.0f;
@@ -983,11 +1023,11 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         {
             ambientLightLevel = 0.2f;
         }
-        shader->setUniformValue("ambientLightColor", Eigen::Vector3f::Constant(ambientLightLevel));
+        setUniformValue(*shader, "ambientLightColor", Eigen::Vector3f::Constant(ambientLightLevel));
 
         // Get the eye position in model space
         Eigen::Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Eigen::Vector4f::UnitW();
-        shader->setUniformValue("eyePosition", eyePosition.head(3));
+        setUniformValue(*shader, "eyePosition", eyePosition.head(3));
 
         // Set all shadow related values
         if (shaderKey.shadowCount() > 0)
@@ -1004,7 +1044,8 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
                 glActiveTexture(GL_TEXTURE4 + i);
                 glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, m_shadowBuffers[i]->depthTexture());
-                shader->setSampler(samplerName, 4 + i);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+                setSampler(*shader, samplerName, 4 + i);
                 glActiveTexture(GL_TEXTURE0);
             }
 
@@ -1024,15 +1065,12 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
                 //shadowMatrixes[i].col(3).w() = 1.0f;
             }
 
-            shader->setUniformValueArray("shadowMatrix", shadowMatrixes, shaderKey.shadowCount());
+            setUniformValueArray(*shader, "shadowMatrix", shadowMatrixes, shaderKey.shadowCount());
         }
     }
     else
     {
-        if (GLShaderProgram::hasOpenGLShaderPrograms())
-        {
-            glUseProgram(0);
-        }
+        glUseProgram(0);
 
         Eigen::Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), material->opacity);
         Eigen::Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
@@ -1231,7 +1269,7 @@ ModelViewWidget::setupDefaultLightSources()
 }
 
 
-GLShaderProgram*
+GLProgram*
 ModelViewWidget::createShader(const ShaderKey& shaderKey)
 {
     QString vertexShaderSource;
@@ -1476,40 +1514,21 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
         /*** End fragment shader ***/
     }
 
-    auto* glShader = new GLShaderProgram();
-    auto* vertexShader = new GLVertexShader();
-    if (!vertexShader->compile(vertexShaderSource.toStdString()))
+    GLProgram* glShader;
+    if (GLShaderLoader::CreateProgram(vertexShaderSource.toStdString(),
+                                      fragmentShaderSource.toStdString(),
+                                      &glShader) != ShaderStatus_OK)
     {
-        qWarning("Vertex shader error: %s", vertexShader->log().c_str());
-        std::cerr << vertexShaderSource.toStdString() << std::endl;
-        delete vertexShader;
-        delete glShader;
+        qWarning("Failed to create GL program");
         return nullptr;
     }
 
-    auto* fragmentShader = new GLFragmentShader();
-    if (!fragmentShader->compile(fragmentShaderSource.toStdString()))
-    {
-        qWarning("Fragment shader error: %s", fragmentShader->log().c_str());
-        std::cerr << fragmentShaderSource.toStdString() << std::endl;
-        delete vertexShader;
-        delete fragmentShader;
-        delete glShader;
-        return nullptr;
-    }
-
-    glShader->addVertexShader(vertexShader);
-    glShader->addFragmentShader(fragmentShader);
     if (shaderKey.hasNormalMap())
-    {
-        glShader->bindAttributeLocation("tangentAtt", TangentAttributeIndex);
-    }
+        glBindAttribLocation(glShader->getID(), TangentAttributeIndex, "tangentAtt");
 
-    if (!glShader->link())
+    if (glShader->link() != ShaderStatus_OK)
     {
-        qWarning("Shader link error: %s", glShader->log().c_str());
-        delete vertexShader;
-        delete fragmentShader;
+        qWarning("Failed to link shader");
         delete glShader;
         return nullptr;
     }
@@ -1528,11 +1547,16 @@ ModelViewWidget::renderShadow(unsigned int lightIndex)
         return;
     }
 
-    GLFrameBufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
+    FramebufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
     Eigen::Vector3f lightDirection = (m_lightOrientation * m_lightSources[lightIndex].direction).cast<float>();
+
+    GLint oldFboId;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
 
     shadowBuffer->bind();
     glViewport(0, 0, shadowBuffer->width(), shadowBuffer->height());
+
+    glUseProgram(0);
 
     // Write only to the depth buffer
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -1544,7 +1568,6 @@ ModelViewWidget::renderShadow(unsigned int lightIndex)
     // Render backfaces only in order to reduce self-shadowing artifacts
     glCullFace(GL_FRONT);
 
-    glUseProgram(0);
     glDisable(GL_LIGHTING);
 
     glMatrixMode(GL_PROJECTION);
@@ -1554,10 +1577,11 @@ ModelViewWidget::renderShadow(unsigned int lightIndex)
 
     renderDepthOnly(m_model.get());
 
-    shadowBuffer->unbind();
+    shadowBuffer->unbind(oldFboId);
 
     // Re-enable the color buffer and culling
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glCullFace(GL_BACK);
 }
 
+} // end namespace cmodview
