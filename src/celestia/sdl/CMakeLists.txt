@@ -22,3 +22,5 @@ install(
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT sdlgui
 )
+
+add_subdirectory(data)
