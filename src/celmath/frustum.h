@@ -12,6 +12,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <optional>
 
 namespace celmath
 {
@@ -22,8 +23,8 @@ public:
     using PlaneType = Eigen::Hyperplane<float, 3>;
 
     Frustum(float fov, float aspectRatio, float nearDist);
-    Frustum(float fov, float aspectRatio, float nearDist, float farDist);
-    Frustum(float left, float right, float top, float bottom, float nearDist, float farDist);
+    Frustum(float fov, float aspectRatio, float nearDist, std::optional<float> farDist);
+    Frustum(float left, float right, float top, float bottom, float nearDist, std::optional<float> farDist);
 
     inline Eigen::Hyperplane<float, 3> plane(unsigned int which) const
     {

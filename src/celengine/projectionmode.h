@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <optional>
 
 class ShaderManager;
 
@@ -36,7 +37,7 @@ public:
     virtual float getZoom(float fov) const = 0;
     virtual float getPixelSize(float zoom) const = 0;
     virtual float getFieldCorrection(float zoom) const = 0;
-    virtual celmath::Frustum getFrustum(float nearZ, float farZ, float zoom) const = 0;
+    virtual celmath::Frustum getFrustum(float nearZ, std::optional<float> farZ, float zoom) const = 0;
 
     // Calculate the cosine of half the maximum field of view. We'll use this for
     // fast testing of object visibility.

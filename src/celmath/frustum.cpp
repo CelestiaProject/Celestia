@@ -23,16 +23,16 @@ Frustum::Frustum(float fov, float aspectRatio, float n) :
     init(fov, aspectRatio, n, n);
 }
 
-Frustum::Frustum(float fov, float aspectRatio, float n, float f) :
-    infinite(std::isinf(f))
+Frustum::Frustum(float fov, float aspectRatio, float n, std::optional<float> f) :
+    infinite(!f.has_value())
 {
-    init(fov, aspectRatio, n, infinite ? n : f);
+    init(fov, aspectRatio, n, infinite ? n : f.value());
 }
 
-Frustum::Frustum(float l, float r, float t, float b, float n, float f) :
-    infinite(std::isinf(f))
+Frustum::Frustum(float l, float r, float t, float b, float n, std::optional<float> f) :
+    infinite(!f.has_value())
 {
-    init(l, r, t, b, n, infinite ? n : f);
+    init(l, r, t, b, n, infinite ? n : f.value());
 }
 
 void Frustum::init(float fov, float aspectRatio, float n, float f)

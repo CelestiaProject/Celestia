@@ -1531,7 +1531,7 @@ void Renderer::draw(const Observer& observer,
     m_cameraOrientation = Quaterniond(m_cameraTransform) * observer.getOrientation();
 
     // Get the view frustum used for culling in camera space.
-    auto frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), zoom);
+    auto frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::nullopt, zoom);
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
@@ -3939,7 +3939,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
 
-    dsoRenderer.frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), observer.getZoom());
+    dsoRenderer.frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::nullopt, observer.getZoom());
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();

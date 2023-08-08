@@ -32,7 +32,7 @@ public:
     float getZoom(float fov) const override;
     float getPixelSize(float zoom) const override;
     float getFieldCorrection(float zoom) const override;
-    celmath::Frustum getFrustum(float nearZ, float farZ, float zoom) const override;
+    celmath::Frustum getFrustum(float nearZ, std::optional<float> farZ, float zoom) const override;
     double getViewConeAngleMax(float zoom) const override;
 
     float getNormalizedDeviceZ(float nearZ, float farZ, float z) const override;

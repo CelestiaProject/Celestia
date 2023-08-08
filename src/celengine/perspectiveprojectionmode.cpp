@@ -56,7 +56,7 @@ float PerspectiveProjectionMode::getFieldCorrection(float zoom) const
 }
 
 celmath::Frustum
-PerspectiveProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
+PerspectiveProjectionMode::getFrustum(float nearZ, std::optional<float> farZ, float zoom) const
 {
     return celmath::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
