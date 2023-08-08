@@ -76,7 +76,7 @@ static int phase_timespan(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to phase:timespan");
 
     auto phase = this_phase(l);
-    celx.push(phase->startTime(), phase->endTime());
+    celx.push(phase->startTime().value_or(-std::numeric_limits<double>::infinity()), phase->endTime().value_or(std::numeric_limits<double>::infinity()));
     //lua_pushnumber(l, phase->startTime());
     //lua_pushnumber(l, phase->endTime());
 
@@ -135,10 +135,7 @@ static int phase_getposition(lua_State* l)
     auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getposition() must be number", 0.0);
-    if (tdb < phase->startTime())
-        tdb = phase->startTime();
-    else if (tdb > phase->endTime())
-        tdb = phase->endTime();
+    tdb = phase->clamp(tdb);
     celx.newPosition(UniversalCoord(phase->orbit()->positionAtTime(tdb) * astro::kilometersToMicroLightYears(1.0)));
 
     return 1;
@@ -160,10 +157,7 @@ static int phase_getorientation(lua_State* l)
     auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getorientation() must be number", 0.0);
-    if (tdb < phase->startTime())
-        tdb = phase->startTime();
-    else if (tdb > phase->endTime())
-        tdb = phase->endTime();
+    tdb = phase->clamp(tdb);
     celx.newRotation(phase->rotationModel()->orientationAtTime(tdb));
 
     return 1;

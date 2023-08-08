@@ -13,6 +13,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include "frame.h"
 
 class FrameTree;
@@ -36,12 +37,12 @@ public:
         return m_body;
     }
 
-    double startTime() const
+    std::optional<double> startTime() const
     {
         return m_startTime;
     }
 
-    double endTime() const
+    std::optional<double> endTime() const
     {
         return m_endTime;
     }
@@ -79,13 +80,26 @@ public:
      */
     bool includes(double t) const
     {
-        return m_startTime <= t && t < m_endTime;
+        if (m_startTime.has_value() && t < m_startTime.value())
+            return false;
+        if (m_endTime.has_value() && t >= m_endTime.value())
+            return false;
+        return true;
+    }
+
+    double clamp(double t) const
+    {
+        if (m_startTime.has_value() && t < m_startTime.value())
+            return m_startTime.value();
+        if (m_endTime.has_value() && t > m_endTime.value())
+            return m_endTime.value();
+        return t;
     }
 
     static TimelinePhase::SharedConstPtr CreateTimelinePhase(Universe& universe,
                                                              Body* body,
-                                                             double startTime,
-                                                             double endTime,
+                                                             std::optional<double> startTime,
+                                                             std::optional<double> endTime,
                                                              const ReferenceFrame::SharedConstPtr& orbitFrame,
                                                              celestia::ephem::Orbit& orbit,
                                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
@@ -94,8 +108,8 @@ public:
     ~TimelinePhase() = default;
 
     TimelinePhase(Body* _body,
-                  double _startTime,
-                  double _endTime,
+                  std::optional<double> _startTime,
+                  std::optional<double> _endTime,
                   const ReferenceFrame::SharedConstPtr& _orbitFrame,
                   celestia::ephem::Orbit* _orbit,
                   const ReferenceFrame::SharedConstPtr& _bodyFrame,
@@ -108,8 +122,8 @@ public:
 private:
     Body* m_body;
 
-    double m_startTime;
-    double m_endTime;
+    std::optional<double> m_startTime;
+    std::optional<double> m_endTime;
 
     ReferenceFrame::SharedConstPtr m_orbitFrame;
     celestia::ephem::Orbit* m_orbit;

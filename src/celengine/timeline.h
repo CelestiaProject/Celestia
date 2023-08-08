@@ -13,6 +13,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 #include "timelinephase.h"
 
@@ -27,8 +28,8 @@ public:
     const TimelinePhase::SharedConstPtr& getPhase(unsigned int n) const;
     unsigned int phaseCount() const;
 
-    double startTime() const;
-    double endTime() const;
+    std::optional<double> startTime() const;
+    std::optional<double> endTime() const;
     bool includes(double t) const;
 
     void markChanged();

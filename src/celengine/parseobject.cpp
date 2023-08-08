@@ -87,26 +87,30 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
 bool
 ParseDate(const Hash* hash, const string& name, double& jd)
 {
-    // Check first for a number value representing a Julian date
-    if (auto jdVal = hash->getNumber<double>(name); jdVal.has_value())
+    if (auto value = ParseDate(hash, name); value.has_value())
     {
-        jd = *jdVal;
+        jd = value.value();
         return true;
     }
+    return false;
+}
+
+std::optional<double>
+ParseDate(const Hash* hash, const string& name)
+{
+    // Check first for a number value representing a Julian date
+    if (auto jdVal = hash->getNumber<double>(name); jdVal.has_value())
+        return *jdVal;
 
     if (const std::string* dateString = hash->getString(name); dateString != nullptr)
     {
         astro::Date date(1, 1, 1);
         if (astro::parseDate(*dateString, date))
-        {
-            jd = (double) date;
-            return true;
-        }
+            return static_cast<double>(date);
     }
 
-    return false;
+    return std::nullopt;
 }
-
 
 /*!
  * Create a new Keplerian orbit from an ssc property table:

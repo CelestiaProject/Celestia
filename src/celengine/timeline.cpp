@@ -40,7 +40,8 @@ Timeline::appendPhase(TimelinePhase::SharedConstPtr &phase)
     // no gaps and no overlaps.
     if (!phases.empty())
     {
-        if (phase->startTime() != phases.back()->endTime())
+        auto startTime = phase->startTime();
+        if (!startTime.has_value() || startTime.value() != phases.back()->endTime())
             return false;
     }
 
@@ -64,7 +65,8 @@ Timeline::findPhase(double t) const
     {
         for (const auto& phase : phases)
         {
-            if (t < phase->endTime())
+            auto endTime = phase->endTime();
+            if (!endTime.has_value() || t < endTime.value())
                 return phase;
         }
 
@@ -92,14 +94,14 @@ Timeline::phaseCount() const
 }
 
 
-double
+std::optional<double>
 Timeline::startTime() const
 {
     return phases.front()->startTime();
 }
 
 
-double
+std::optional<double>
 Timeline::endTime() const
 {
     return phases.back()->endTime();
@@ -114,7 +116,11 @@ Timeline::endTime() const
 bool
 Timeline::includes(double t) const
 {
-    return phases.front()->startTime() <= t && t <= phases.back()->endTime();
+    if (auto startTime = phases.front()->startTime(); startTime.has_value() && t < startTime.value())
+        return false;
+    if (auto endTime = phases.back()->endTime(); endTime.has_value() && t > endTime.value())
+        return false;
+    return true;
 }
 
 

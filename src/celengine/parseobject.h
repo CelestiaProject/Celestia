@@ -14,6 +14,7 @@
 
 #include <string>
 #include <memory>
+#include <optional>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celcompat/filesystem.h>
@@ -34,6 +35,7 @@ enum class DataDisposition
 
 
 bool ParseDate(const Hash* hash, const std::string& name, double& jd);
+std::optional<double> ParseDate(const Hash* hash, const std::string& name);
 
 celestia::ephem::Orbit* CreateOrbit(const Selection& centralObject,
                                     const Hash* planetData,

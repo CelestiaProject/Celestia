@@ -813,7 +813,7 @@ bool Body::extant(double t) const
 }
 
 
-void Body::getLifespan(double& begin, double& end) const
+void Body::getLifespan(std::optional<double>& begin, std::optional<double>& end) const
 {
     begin = timeline->startTime();
     end = timeline->endTime();

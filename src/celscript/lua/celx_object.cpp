@@ -670,10 +670,11 @@ static int object_getinfo(lua_State* l)
         float eqRadius = max(semiAxes.x(), semiAxes.z());
         celx.setTable("oblateness", (eqRadius - polarRadius) / eqRadius);
 
-        double lifespanStart, lifespanEnd;
+        std::optional<double> lifespanStart;
+        std::optional<double> lifespanEnd;
         body->getLifespan(lifespanStart, lifespanEnd);
-        celx.setTable("lifespanStart", (lua_Number)lifespanStart);
-        celx.setTable("lifespanEnd", (lua_Number)lifespanEnd);
+        celx.setTable("lifespanStart", static_cast<lua_Number>(lifespanStart.value_or(-std::numeric_limits<double>::infinity())));
+        celx.setTable("lifespanEnd", static_cast<lua_Number>(lifespanEnd.value_or(std::numeric_limits<double>::infinity())));
         // TODO: atmosphere, surfaces ?
 
         PlanetarySystem* system = body->getSystem();

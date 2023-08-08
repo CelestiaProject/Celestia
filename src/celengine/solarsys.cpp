@@ -272,24 +272,30 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
                                                   bool isFirstPhase,
                                                   bool isLastPhase,
-                                                  double previousPhaseEnd)
+                                                  std::optional<double> previousPhaseEnd)
 {
-    double beginning = previousPhaseEnd;
-    double ending = std::numeric_limits<double>::infinity();
+    std::optional<double> beginning = previousPhaseEnd;
+    std::optional<double> ending = std::nullopt;
 
     // Beginning is optional for the first phase of a timeline, and not
     // allowed for the other phases, where beginning is always the ending
     // of the previous phase.
-    bool hasBeginning = ParseDate(phaseData, "Beginning", beginning);
-    if (!isFirstPhase && hasBeginning)
+    if (auto newBeginning = ParseDate(phaseData, "Beginning"); newBeginning.has_value())
     {
-        GetLogger()->error("Error: Beginning can only be specified for initial phase of timeline.\n");
-        return nullptr;
+        beginning = newBeginning.value();
+        if (!isFirstPhase)
+        {
+            GetLogger()->error("Error: Beginning can only be specified for initial phase of timeline.\n");
+            return nullptr;
+        }
     }
 
     // Ending is required for all phases except for the final one.
-    bool hasEnding = ParseDate(phaseData, "Ending", ending);
-    if (!isLastPhase && !hasEnding)
+    if (auto newEnding = ParseDate(phaseData, "Ending"); newEnding.has_value())
+    {
+        ending = newEnding.value();
+    }
+    else if (!isLastPhase)
     {
         GetLogger()->error("Error: Ending is required for all timeline phases other than the final one.\n");
         return nullptr;
@@ -375,7 +381,7 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
     auto timeline = std::make_unique<Timeline>();
-    double previousEnding = -std::numeric_limits<double>::infinity();
+    std::optional<double> previousEnding = std::nullopt;
 
     if (timelineArray->empty())
     {
@@ -487,8 +493,8 @@ bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr bodyFrame;
     celestia::ephem::Orbit* orbit = nullptr;
     celestia::ephem::RotationModel* rotationModel  = nullptr;
-    double beginning  = -std::numeric_limits<double>::infinity();
-    double ending     =  std::numeric_limits<double>::infinity();
+    std::optional<double> beginning  = std::nullopt;
+    std::optional<double> ending     = std::nullopt;
 
     // If any new timeline values are specified, we need to overrideOldTimeline will
     // be set to true.
@@ -601,10 +607,16 @@ bool CreateTimeline(Body* body,
         rotationModel = CreateDefaultRotationModel(syncRotationPeriod);
     }
 
-    if (ParseDate(planetData, "Beginning", beginning))
+    if (auto newBeginning = ParseDate(planetData, "Beginning"); newBeginning.has_value())
+    {
+        beginning = newBeginning.value();
         overrideOldTimeline = true;
-    if (ParseDate(planetData, "Ending", ending))
+    }
+    if (auto newEnding = ParseDate(planetData, "Ending"); newEnding.has_value())
+    {
+        ending = newEnding.value();
         overrideOldTimeline = true;
+    }
 
     // Something went wrong if the disposition isn't modify and no timeline
     // is to be created.
@@ -612,7 +624,7 @@ bool CreateTimeline(Body* body,
 
     if (overrideOldTimeline)
     {
-        if (beginning >= ending)
+        if (beginning.has_value() && ending.has_value() && beginning.value() >= ending.value())
         {
             GetLogger()->error("Beginning time must be before Ending time.\n");
             delete rotationModel;

@@ -308,8 +308,7 @@ class Body
     Eigen::Vector3d eclipticToPlanetocentric(const Eigen::Vector3d& ecl, double tdb) const;
 
     bool extant(double) const;
-    void setLifespan(double, double);
-    void getLifespan(double&, double&) const;
+    void getLifespan(std::optional<double>&, std::optional<double>&) const;
 
     Surface* getAlternateSurface(const std::string&) const;
     void addAlternateSurface(const std::string&, Surface*);

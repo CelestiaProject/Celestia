@@ -23,8 +23,8 @@
 using namespace std;
 
 TimelinePhase::TimelinePhase(Body* _body,
-                             double _startTime,
-                             double _endTime,
+                             std::optional<double> _startTime,
+                             std::optional<double> _endTime,
                              const ReferenceFrame::SharedConstPtr& _orbitFrame,
                              celestia::ephem::Orbit* _orbit,
                              const ReferenceFrame::SharedConstPtr& _bodyFrame,
@@ -47,15 +47,15 @@ TimelinePhase::TimelinePhase(Body* _body,
 TimelinePhase::SharedConstPtr
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
-                                   double startTime,
-                                   double endTime,
+                                   std::optional<double> startTime,
+                                   std::optional<double> endTime,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,
                                    celestia::ephem::Orbit& orbit,
                                    const ReferenceFrame::SharedConstPtr& bodyFrame,
                                    celestia::ephem::RotationModel& rotationModel)
 {
     // Validate the time range.
-    if (endTime <= startTime)
+    if (endTime.has_value() && startTime.has_value() && endTime.value() <= startTime.value())
         return nullptr;
 
     // Get the frame tree to add the new phase to. Verify that the reference frame

@@ -226,15 +226,15 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             stream << QString(_("<b>Has atmosphere</b>")) << "<br>\n";
 
         // Start and end dates
-        double startTime = 0.0;
-        double endTime = 0.0;
+        std::optional<double> startTime = std::nullopt;
+        std::optional<double> endTime = std::nullopt;
         body->getLifespan(startTime, endTime);
 
-        if (startTime > -1.0e9)
-            stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime).toCStr()) << "<br>\n";
+        if (startTime.has_value())
+            stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime.value()).toCStr()) << "<br>\n";
 
-        if (endTime < 1.0e9)
-            stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime).toCStr()) << "<br>\n";
+        if (endTime.has_value())
+            stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime.value()).toCStr()) << "<br>\n";
 
         stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
         stream << QString(_("Osculating elements for %1")).arg(astro::TDBtoUTC(t).toCStr()) << "<br>\n";

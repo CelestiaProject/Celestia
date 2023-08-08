@@ -65,26 +65,26 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         addAction(boldTextItem(QString::fromStdString(sel.body()->getName(true))));
 
         // Start and end dates
-        double startTime = 0.0;
-        double endTime = 0.0;
+        std::optional<double> startTime = std::nullopt;
+        std::optional<double> endTime = std::nullopt;
         sel.body()->getLifespan(startTime, endTime);
 
-        if (startTime > -1.0e9 || endTime < 1.0e9)
+        if (startTime.has_value() || endTime.has_value())
         {
             addSeparator();
 
-            if (startTime > -1.0e9)
+            if (startTime.has_value())
             {
-                QString startDateStr = QString(_("Start: %1")).arg(astro::TDBtoUTC(startTime).toCStr());
+                QString startDateStr = QString(_("Start: %1")).arg(astro::TDBtoUTC(startTime.value()).toCStr());
                 QAction* startDateAct = new QAction(startDateStr, this);
                 connect(startDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoStartDate()));
                 addAction(startDateAct);
             }
 
-            if (endTime < 1.0e9)
+            if (endTime.has_value())
             {
-                QString endDateStr = QString(_("End: %1")).arg(astro::TDBtoUTC(endTime).toCStr());
+                QString endDateStr = QString(_("End: %1")).arg(astro::TDBtoUTC(endTime.value()).toCStr());
                 QAction* endDateAct = new QAction(endDateStr, this);
                 connect(endDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoEndDate()));
@@ -646,20 +646,22 @@ void SelectionPopup::slotToggleTerminator()
 void SelectionPopup::slotGotoStartDate()
 {
     assert(selection.body() != nullptr);
-    double startDate = 0.0;
-    double endDate = 0.0;
+    std::optional<double> startDate = std::nullopt;
+    std::optional<double> endDate = std::nullopt;
     selection.body()->getLifespan(startDate, endDate);
-    appCore->getSimulation()->setTime(startDate);
+    if (startDate.has_value())
+        appCore->getSimulation()->setTime(startDate.value());
 }
 
 
 void SelectionPopup::slotGotoEndDate()
 {
     assert(selection.body() != nullptr);
-    double startDate = 0.0;
-    double endDate = 0.0;
+    std::optional<double> startDate = std::nullopt;
+    std::optional<double> endDate = std::nullopt;
     selection.body()->getLifespan(startDate, endDate);
-    appCore->getSimulation()->setTime(endDate);
+    if (endDate.has_value())
+        appCore->getSimulation()->setTime(endDate.value());
 }
 
 
