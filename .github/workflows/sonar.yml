@@ -46,6 +46,8 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: true
+        repository: ${{ github.event.workflow_run.head_repository.full_name }}
+        ref: ${{ github.event.workflow_run.head_branch }}
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
 
