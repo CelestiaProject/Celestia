@@ -85,7 +85,7 @@ constexpr std::array<SubclassValues, 3> tempK
 
 constexpr std::array<SubclassValues, 3> tempM
 {
-    SubclassValues{ 3850, 3660, 3560, 3430, 3210, 3060, 2810, 2680, 2570, 2380 },
+    SubclassValues{ 3850, 3660, 3560, 3430, 3210, 3060, 2810, 2680, 2570, 2389 },
     SubclassValues{ 3800, 3720, 3620, 3530, 3430, 3330, 3240, 3240, 3240, 3240 },
     SubclassValues{ 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
