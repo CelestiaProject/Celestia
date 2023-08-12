@@ -10,8 +10,7 @@ task:
                    eigen            \
                    libepoxy         \
                    gettext          \
-                   ffmpeg           \
-                   libjpeg-turbo    \
+                   jpeg-turbo       \
                    png              \
                    mesa-libs        \
                    meshoptimizer    \
@@ -34,8 +33,8 @@ task:
           -DENABLE_TESTS=ON         \
           -DENABLE_SDL=ON           \
           -DENABLE_GTK=OFF          \
-          -DENABLE_QT5=OFF           \
-          -DENABLE_FFMPEG=ON        \
+          -DENABLE_QT5=OFF          \
+          -DENABLE_FFMPEG=OFF       \
           -DENABLE_LIBAVIF=OFF      \
           -DENABLE_MINIAUDIO=ON     \
           -DUSE_ICU=OFF # tests fail on freebsd
