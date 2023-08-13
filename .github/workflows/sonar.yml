@@ -14,7 +14,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     steps:
     - name: 'Install sonar'
-      uses: SonarSource/sonarcloud-github-c-cpp@v1
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
 
     - name: 'Install dependencies'
       run: |
