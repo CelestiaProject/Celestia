@@ -1828,6 +1828,9 @@ static void renderSphereUnlit(const RenderInfo& ri,
         textures.push_back(ri.overlayTex);
     }
 
+    if (ri.isStar)
+        shadprop.lightModel = LightingModel::StarModel;
+
     // Get a shader for the current rendering configuration
     auto* prog = r->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -1838,6 +1841,8 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->textureOffset = 0.0f;
     prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
+    if (ri.isStar)
+        prog->eyePosition = ri.eyePos_obj;
 
     Renderer::PipelineState ps;
     ps.depthMask = true;
@@ -2388,6 +2393,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
+            ri.isStar = obj.isStar;
             renderSphereUnlit(ri, viewFrustum, planetMVP, this);
         }
     }
@@ -3014,6 +3020,7 @@ void Renderer::renderStar(const Star& star,
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
+        rp.isStar = true;
         rp.surface = &surface;
         rp.rings = nullptr;
         rp.radius = star.getRadius();
