@@ -5,7 +5,7 @@
 
 function(process_file src dest)
   get_filename_component(src_name "${src}" NAME)
-  message("Copying ${src_name} to ${dest}")
+  message(STATUS "Copying ${src_name} to ${dest}")
   file(COPY_FILE "${src}" "${dest}/${src_name}")
 endfunction()
 
