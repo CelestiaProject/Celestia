@@ -27,6 +27,7 @@ static const GtkActionEntry actionsPlain[] = {
     { "OpenScript", GTK_STOCK_OPEN, "_Open Script...", NULL, NULL, G_CALLBACK(actionOpenScript) },
     { "CaptureImage", GTK_STOCK_SAVE_AS, "_Capture Image...", NULL, NULL, G_CALLBACK(actionCaptureImage) },
     { "CaptureMovie", GTK_STOCK_SAVE_AS, "Capture _Movie...", NULL, NULL, G_CALLBACK(actionCaptureMovie) },
+    { "RunDemo", GTK_STOCK_EXECUTE, "Run _Demo", NULL, NULL, G_CALLBACK(actionRunDemo) },
     { "Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", NULL, G_CALLBACK(actionQuit) },
 
     { "NavigationMenu", NULL, "_Navigation", NULL, NULL, NULL },
@@ -79,7 +80,6 @@ static const GtkActionEntry actionsPlain[] = {
     /* "Synchronize Time" in toggle actions */
 
     { "HelpMenu", NULL, "_Help", NULL, NULL, NULL },
-    { "RunDemo", GTK_STOCK_EXECUTE, "Run _Demo", "D", NULL, G_CALLBACK(actionRunDemo) },
     { "HelpControls", GTK_STOCK_HELP, "_Controls", NULL, NULL, G_CALLBACK(actionHelpControls) },
     #if GTK_CHECK_VERSION(2, 7, 0)
     { "HelpOpenGL", GTK_STOCK_INFO, "OpenGL _Info", NULL, NULL, G_CALLBACK(actionHelpOpenGL) },

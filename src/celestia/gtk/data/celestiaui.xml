@@ -8,6 +8,8 @@
       <menuitem action='CaptureImage'/>
       <menuitem action='CaptureMovie'/>
       <separator/>
+      <menuitem action='RunDemo'/>
+      <separator/>
       <menuitem action='Quit'/>
     </menu>
     <menu action='NavigationMenu'>
@@ -130,8 +132,6 @@
       <menuitem action='MultiSyncTime'/>
     </menu>
     <menu action='HelpMenu'>
-      <menuitem action='RunDemo'/>
-      <separator/>
       <menuitem action='HelpControls'/>
       <menuitem action='HelpOpenGL'/>
       <separator/>
