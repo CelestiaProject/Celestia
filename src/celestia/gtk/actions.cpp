@@ -346,6 +346,18 @@ void actionCaptureMovie(GtkAction*, AppData* app)
 }
 
 
+/* File -> Run Demo... */
+void actionRunDemo(GtkAction*, AppData* app)
+{
+    const auto& demoScriptFile = app->core->getConfig()->paths.demoScriptFile;    
+    if (!demoScriptFile.empty())
+    {
+        app->core->cancelScript();
+        app->core->runScript(demoScriptFile);
+    }
+}
+
+
 void actionQuit(GtkAction*, AppData* app)
 {
     #ifdef GNOME
@@ -688,12 +700,6 @@ void actionMultiShowActive(GtkToggleAction* action, AppData* app)
 void actionMultiSyncTime(GtkToggleAction* action, AppData* app)
 {
     app->simulation->setSyncTime(gtk_toggle_action_get_active(action));
-}
-
-
-void actionRunDemo(GtkAction*, AppData* app)
-{
-    app->core->charEntered('D');
 }
 
 
