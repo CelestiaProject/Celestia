@@ -820,6 +820,8 @@ DeclareLights(const ShaderProperties& props)
         }
         if (props.texUsage & ShaderProperties::NightTexture)
             stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
+        if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+            stream << DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
     }
 
 #else
@@ -1181,7 +1183,7 @@ AtmosphericEffects(const ShaderProperties& props)
     std::string scatter;
     if (hasAbsorption)
     {
-        source += "    vec3 sunColor = exp(-extinctionCoeff * density * distSun);\n";
+        source += "    vec3 sunColor = " + LightProperty(0, "color") + " * exp(-extinctionCoeff * density * distSun);\n";
         source += "    vec3 ex = exp(-extinctionCoeff * density * distAtm);\n";
 
         scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
@@ -3449,6 +3451,8 @@ CelestiaGLProgram::initParameters()
         lights[i].halfVector = vec3Param(LightProperty(i, "halfVector").c_str());
         if (props.texUsage & ShaderProperties::NightTexture)
             lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
+        if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+            lights[i].color = vec3Param(LightProperty(i, "color").c_str());
 
         if (props.hasRingShadowForLight(i))
             ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i).c_str());
@@ -3627,6 +3631,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         const DirectionalLight& light = ls.lights[i];
 
         Eigen::Vector3f lightColor = light.color.toVector3() * light.irradiance;
+        lights[i].color = light.color.toVector3();
         lights[i].direction = light.direction_obj;
 
         // Include a phase-based normalization factor to prevent planets from appearing
