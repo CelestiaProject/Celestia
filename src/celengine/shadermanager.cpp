@@ -192,12 +192,6 @@ LightProperty(unsigned int i, std::string_view property)
 }
 
 std::string
-FragLightProperty(unsigned int i, std::string_view property)
-{
-    return fmt::format("light{}{}", property, i);
-}
-
-std::string
 ApplyShadow(bool hasSpecular)
 {
     std::string_view code = R"glsl(
@@ -2247,18 +2241,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.hasSpecular())
         source += DeclareUniform("shininess", Shader_Float);
 
-    if (props.usesTangentSpaceLighting() || props.hasSpecular() || props.usesShadows())
-    {
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
-            if (props.hasSpecular())
-                source += DeclareUniform(FragLightProperty(i, "specColor"), Shader_Vector3);
-            if ((props.texUsage & ShaderProperties::NightTexture) != 0)
-                source += DeclareUniform(FragLightProperty(i, "brightness"), Shader_Float);
-        }
-    }
-
     // Declare shadow parameters
     if (props.hasEclipseShadows())
     {
@@ -2431,19 +2413,19 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
 
             if ((props.texUsage & ShaderProperties::NightTexture) != 0)
-                source += "totalLight += l * " + FragLightProperty(i, "brightness") + ";\n";
+                source += "totalLight += l * " + LightProperty(i, "brightness") + ";\n";
 
             if (props.hasShadowsForLight(i))
                 source += ShadowsForLightSource(props, i);
 
             std::string illum(props.hasShadowsForLight(i) ? "l * shadow" : "l");
-            source += "diff.rgb += " + illum + " * " + FragLightProperty(i, "color") + ";\n";
+            source += "diff.rgb += " + illum + " * " + LightProperty(i, "diffuse") + ";\n";
 
             if (props.hasSpecular())
             {
                 source += "H = normalize(eyeDir_tan + " + LightDir_tan(i) + ");\n";
                 source += "NH = max(0.0, dot(n, H));\n";
-                source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
+                source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + LightProperty(i, "specular") + ";\n";
             }
         }
     }
@@ -2459,9 +2441,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += ShadowsForLightSource(props, i);
 
             std::string illum(props.hasShadowsForLight(i) ? "shadow" : SeparateDiffuse(i));
-            source += "diff.rgb += " + illum + " * " + FragLightProperty(i, "color") + ";\n";
+            source += "diff.rgb += " + illum + " * " + LightProperty(i, "diffuse") + ";\n";
             source += "NH = max(0.0, dot(N, normalize(" + LightProperty(i, "halfVector") + ")));\n";
-            source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
+            source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + LightProperty(i, "specular") + ";\n";
             if (props.hasShadowMap() && i == 0)
                 source += ApplyShadow(true);
         }
@@ -2474,7 +2456,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         for (unsigned i = 0; i < props.nLights; i++)
         {
             source += ShadowsForLightSource(props, i);
-            source += "diff.rgb += shadow * " + FragLightProperty(i, "color") + ";\n";
+            source += "diff.rgb += shadow * " + LightProperty(i, "diffuse") + ";\n";
 
             if (props.hasShadowMap() && i == 0)
                 ApplyShadow(false);
@@ -2763,8 +2745,6 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     source += CommonHeader;
 
     source += DeclareUniform("ambientColor", Shader_Vector3);
-    for (unsigned int i = 0; i < props.nLights; i++)
-        source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
 
     source += DeclareLights(props);
 
@@ -2835,11 +2815,11 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
             source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
                 FragLightProperty(i, "color") + ";\n";
 #endif
-            source += "diff.rgb += (shadow * intensity) * " + FragLightProperty(i, "color") + ";\n";
+            source += "diff.rgb += (shadow * intensity) * " + LightProperty(i, "diffuse") + ";\n";
         }
         else
         {
-            source += "diff.rgb += intensity * " + FragLightProperty(i, "color") + ";\n";
+            source += "diff.rgb += intensity * " + LightProperty(i, "diffuse") + ";\n";
 #if 0
             source += SeparateDiffuse(i) + " = (dot(" +
                 LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
@@ -3159,8 +3139,6 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     if (props.usesShadows())
     {
         source << DeclareUniform("ambientColor", Shader_Vector3);
-        for (unsigned int i = 0; i < props.nLights; i++)
-            source << DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
     }
 
     // Declare shadow parameters
@@ -3472,10 +3450,6 @@ CelestiaGLProgram::initParameters()
         if (props.texUsage & ShaderProperties::NightTexture)
             lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
 
-        fragLightColor[i] = vec3Param(FragLightProperty(i, "color").c_str());
-        fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor").c_str());
-        if (props.texUsage & ShaderProperties::NightTexture)
-            fragLightBrightness[i] = floatParam(FragLightProperty(i, "brightness").c_str());
         if (props.hasRingShadowForLight(i))
             ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i).c_str());
         for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
@@ -3664,23 +3638,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
             lightColor *= photometricNormFactor;
         }
 
-        if (props.usesShadows() ||
-            (props.texUsage & ShaderProperties::NormalTexture) != 0 ||
-            props.hasSpecular() ||
-            props.lightModel == ShaderProperties::RingIllumModel)
-        {
-            fragLightColor[i] = lightColor.cwiseProduct(diffuseColor);
-            if (props.hasSpecular())
-            {
-                fragLightSpecColor[i] = lightColor.cwiseProduct(specularColor);
-            }
-            fragLightBrightness[i] = lightColor.maxCoeff();
-        }
-        else
-        {
-            lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
-        }
-
+        lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         lights[i].brightness = lightColor.maxCoeff();
         lights[i].specular = lightColor.cwiseProduct(specularColor);
 
