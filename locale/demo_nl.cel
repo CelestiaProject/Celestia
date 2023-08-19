@@ -31,7 +31,7 @@
 	wait { duration 5.5 }
 	print { text "Let op de Aarde en de Zon als we rond de Maan draaien." row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	
+
 	print { text "Op naar de Zon." row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
@@ -43,7 +43,7 @@
 	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
-	
+
 	print { text "Activeren van labels bij de planeten . . ." row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
@@ -66,7 +66,7 @@
 	labels { clear "planets" }
 	print { text "Diverse manen van Saturnus zijn zichtbaar als heldere stippen" row -3 duration 3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
-	
+
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	print { text "Het meest prominente kenmerk op Saturnus' maan Mimas is de grote inslagkrater Herschel." row -3 duration 9 }
@@ -94,7 +94,7 @@
 	wait { duration 2 }
 	print { text "Polaris bevindt zich in het sterrenbeeld Kleine Beer." row -3}
 	wait { duration 2 }
-	print { text "Om ons te helpen oriënteren kan Celestia de sterrenbeelden tekenen . . ." row -3}
+	print { text "Om ons te helpen oriÃ«nteren kan Celestia de sterrenbeelden tekenen . . ." row -3}
 	renderflags { set "constellations" }
 	wait { duration 2 }
 	print { text ". . . en de bijbehorende namen" row -3}
