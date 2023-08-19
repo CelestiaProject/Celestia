@@ -4,23 +4,23 @@
 #****************************************************************************
 #                                                                           *
 #               START.CEL - Script de inicio para Celestia                  *
-#  (version 2.1) (TraducciÛn de Guillermo Abramson <g.abramson@gmail.com>)  *
+#  (version 2.1) (Traducci√≥n de Guillermo Abramson <g.abramson@gmail.com>)  *
 #                                                                           *
 #---------------------------------------------------------------------------*
 #                                                                           *
-#  Este script se corre autom·ticamente cada vez que se ejecuta Celestia.   *
+#  Este script se corre autom√°ticamente cada vez que se ejecuta Celestia.   *
 #                                                                           *
-#  NOTA: No remueva las llaves colocadas en el primer y ˙ltimo caracteres   *
+#  NOTA: No remueva las llaves colocadas en el primer y √∫ltimo caracteres   *
 #        de este archivo. Ellas definen a este archivo como un script CEL.  *
 #                                                                           *
-#  Puede modificar este script de diversas maneras, seg˙n sus preferencias. *
-#  Simplemente descomente las lÌneas, seg˙n se indica. Cada lÌnea o secciÛn *
-#  de cÛdigo contiene comentarios que describen lo que hace. Para           *
-#  DEScomentar una lÌnea remueva el sÌmbolo "#" de su comienzo.             *
+#  Puede modificar este script de diversas maneras, seg√∫n sus preferencias. *
+#  Simplemente descomente las l√≠neas, seg√∫n se indica. Cada l√≠nea o secci√≥n *
+#  de c√≥digo contiene comentarios que describen lo que hace. Para           *
+#  DEScomentar una l√≠nea remueva el s√≠mbolo "#" de su comienzo.             *
 #                                                                           *
 #                                                                           *
-#  Si decide modificar este script, por favor cÛpielo en un lugar seguro    *
-#  ANTES de comenzar, asÌ tendr· una copia de referencia en el futuro.      *
+#  Si decide modificar este script, por favor c√≥pielo en un lugar seguro    *
+#  ANTES de comenzar, as√≠ tendr√° una copia de referencia en el futuro.      *
 #                                                                           *
 #****************************************************************************
 
@@ -48,90 +48,90 @@
   wait   {duration 3.0}
 
 #****************************************************************************
-#  Las lÌneas aquÌ arriba son todo el script start.cel. Veamos una          *
-#  descripciÛn de cada comando. Vamos primero al Sol, de modo que cuando    *
+#  Las l√≠neas aqu√≠ arriba son todo el script start.cel. Veamos una          *
+#  descripci√≥n de cada comando. Vamos primero al Sol, de modo que cuando    *
 #  vamos a la Tierra, muestra su lado iluminado, independientemente de      *
 #  la hora local...                                                         *
 #                                                                           *
 #  preloadtex: Instruye a Celestia a cargar texturas de los objetos citados.*
-#          De otro modo, Celestia las cargarÌa cuando el objeto entrase     *
-#          en la imagen, produciendo una pequeÒa demora.                    *
+#          De otro modo, Celestia las cargar√≠a cuando el objeto entrase     *
+#          en la imagen, produciendo una peque√±a demora.                    *
 #                                                                           *
-#  select: Instruye a Celestia quÈ objetos (planeta, satÈlite, nave, etc.)  *
+#  select: Instruye a Celestia qu√© objetos (planeta, sat√©lite, nave, etc.)  *
 #          definir como seleccionado. Sol define nuestro sistema solar,     *
-#          la "/" es un separador de jerarquÌa, la Tierra es el             *
-#          objecto que seleccionamos. Si quisiÈramos seleccionar nuestra    *
-#          Luna, el comando serÌa:                                          *
+#          la "/" es un separador de jerarqu√≠a, la Tierra es el             *
+#          objecto que seleccionamos. Si quisi√©ramos seleccionar nuestra    *
+#          Luna, el comando ser√≠a:                                          *
 #            select {object "Sol/Earth/Moon"}                               *
 #                                                                           *
 #  goto:   Instruye a Celestia a viajar al objeto seleccionado, como cuando *
-#          se presiona "G" en el teclado. El par·metro "time" define los    *
-#          segundos que dura el viaje. El par·metro "distance" define       *
+#          se presiona "G" en el teclado. El par√°metro "time" define los    *
+#          segundos que dura el viaje. El par√°metro "distance" define       *
 #          la distancia al objeto a la que nos detenemos, en unidades       *
-#          del radio del objeto, m·s 1. Por ejemplo, si el radio es de      *
+#          del radio del objeto, m√°s 1. Por ejemplo, si el radio es de      *
 #          10000 km, y se especifica una distancia de 6.0, el viaje         *
-#          se detendr· a 50000 km del centro del objeto.                    *
+#          se detendr√° a 50000 km del centro del objeto.                    *
 #                                                                           *
 #                                                                           *
 #  wait:   Puesto que el comando "goto" instruye a Celestia a demorar       *
 #          cierto tiempo haciendo algo, necesitamos darle el mismo tiempo   *
 #          para llevarlo a cabo. Cuando vamos al Sol, el comando "wait" le  *
 #          indica a Celestia que espere 3 segundos mientras el "goto" se    *
-#          ejecuta (en 3 segundos). El valor del par·metro "duration" es    *
+#          ejecuta (en 3 segundos). El valor del par√°metro "duration" es    *
 #          normalmente el mismo que el del "goto". Sin embargo, puede haber *
 #          excepciones.                                                     *
 #                                                                           *
 #          Cuando vamos a la Tierra, el "wait" que sigue al "goto" espera   *
-#          sÛlo 2 segundos. El siguiente comando es un "print", que muestra *
-#          cierto texto en la pantalla y tiene otro "wait" a continuaciÛn,  *
-#          otros 3 segundos. Es todo cuestiÛn de tiempos. El "goto" permite *
+#          s√≥lo 2 segundos. El siguiente comando es un "print", que muestra *
+#          cierto texto en la pantalla y tiene otro "wait" a continuaci√≥n,  *
+#          otros 3 segundos. Es todo cuesti√≥n de tiempos. El "goto" permite *
 #          mostrar algo de texto MIENTRAS se ejecuta. Entonces, simplemente *
-#          nos aseguramos de que el valor total de valores "wait", despuÈs  *
+#          nos aseguramos de que el valor total de valores "wait", despu√©s  *
 #          de un "goto", sumen POR LO MENOS el tiempo especificado en el    *
-#          "goto". Si se lo desea, puede ser m·s largo.                     *
+#          "goto". Si se lo desea, puede ser m√°s largo.                     *
 #                                                                           *
 #                                                                           *
 #  follow: Instruye a Celestia a seguir al objeto seleccionado por el       *
 #          espacio, como al presionar la tecla "F" en el teclado. Se puede  *
 #          reemplazar el comando "follow {}" con "synchronous {}", que      *
-#          permite posicionarse en una Ûrbita estacionaria, geosincrÛnica,  *
+#          permite posicionarse en una √≥rbita estacionaria, geosincr√≥nica,  *
 #          sobre el objeto seleccionado.                                    *
 #                                                                           *
-#   print: Instruye a Celestia a mostrar texto en la pantalla. El par·metro *
-#          "text" define el texto a mostrar. El par·metro "row" define a    *
-#          cu·ntas filas desde el borde inferior de la ventana comienza     *
-#          el texto. El par·metro "column" define a cu·ntas columnas del    *
-#          borde izquierdo comienza el texto. El par·metro "duration"       *
-#          define durante cu·ntos segundos se muestra el texto. A           *
-#          continuaciÛn el comando "wait" funciona como se ha descripto m·s *
+#   print: Instruye a Celestia a mostrar texto en la pantalla. El par√°metro *
+#          "text" define el texto a mostrar. El par√°metro "row" define a    *
+#          cu√°ntas filas desde el borde inferior de la ventana comienza     *
+#          el texto. El par√°metro "column" define a cu√°ntas columnas del    *
+#          borde izquierdo comienza el texto. El par√°metro "duration"       *
+#          define durante cu√°ntos segundos se muestra el texto. A           *
+#          continuaci√≥n el comando "wait" funciona como se ha descripto m√°s *
 #          arriba.                                                          *
 #****************************************************************************
 
 
 #****************************************************************************
-#  Si desea posicionarse sobre un lugar especÌfico de la Tierra, use el     *
+#  Si desea posicionarse sobre un lugar espec√≠fico de la Tierra, use el     *
 #  comando "gotolonglat" como se muestra abajo. Instrucciones detalladas... *
 #                                                                           *
-#  * Copie la lÌnea entera de cÛdigo.                                       *
+#  * Copie la l√≠nea entera de c√≥digo.                                       *
 #                                                                           *
-#  * PÈguela debajo del comando "goto" descripto arriba.                    *
+#  * P√©guela debajo del comando "goto" descripto arriba.                    *
 #                                                                           *
-#  * Remueva el sÌmbolo "#" al comienzo de la lÌnea. Esto la DEScomenta,    *
-#    de manera que se ejecutar·.                                            *
+#  * Remueva el s√≠mbolo "#" al comienzo de la l√≠nea. Esto la DEScomenta,    *
+#    de manera que se ejecutar√°.                                            *
 #                                                                           *
 #  * Agregue un "#" al comienzo del comando "goto" original. Esto convierte *
-#    a la lÌnea entera en un comentario, de manera que NO se ejecutar·.     *
+#    a la l√≠nea entera en un comentario, de manera que NO se ejecutar√°.     *
 #                                                                           *
-#  * Cambie la longitud y latitud a aquÈllas de su preferencia.             *
+#  * Cambie la longitud y latitud a aqu√©llas de su preferencia.             *
 #                                                                           *
-#  * Puesto que estar· yendo a un lugar especÌfico de la Tierra, puede que  *
-#    no sea de dÌa allÌ. Si lo prefiere, comente las lÌneas aquÌ indicadas  *
-#    agregando un "#" delante. AsÌ no har· la escala inicial en el Sol.     *
+#  * Puesto que estar√° yendo a un lugar espec√≠fico de la Tierra, puede que  *
+#    no sea de d√≠a all√≠. Si lo prefiere, comente las l√≠neas aqu√≠ indicadas  *
+#    agregando un "#" delante. As√≠ no har√° la escala inicial en el Sol.     *
 #      select {object "Sol"}                                                *
 #      goto   {time 3.0 distance 30}                                        *
 #      wait   {duration 3.0}                                                *
-#    Si QUIERE que sea de dÌa cuando llegue a su destino, use el comando    *
-#    "time" que se describe m·s abajo.                                      *
+#    Si QUIERE que sea de d√≠a cuando llegue a su destino, use el comando    *
+#    "time" que se describe m√°s abajo.                                      *
 #****************************************************************************
 
 #  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
@@ -139,25 +139,25 @@
 
 #****************************************************************************
 #  Si desea que Celestia empiece siempre con una fecha y hora especificadas,*
-#  use el comando "time", como se muestra aquÌ abajo.                       *
+#  use el comando "time", como se muestra aqu√≠ abajo.                       *
 #                                                                           *
-#  ATENCI”N: Al comenzar Celestia con una fecha y hora predeterminada,      *
-#            recuerde oprimir la tecla "!" (exclamaciÛn) para restablecer   *
+#  ATENCI√ìN: Al comenzar Celestia con una fecha y hora predeterminada,      *
+#            recuerde oprimir la tecla "!" (exclamaci√≥n) para restablecer   *
 #            la hora al valor "actual", cuando quiera Ud. realizar alguna   *
-#            exploraciÛn en la que la fecha y hora sean relevantes.         *
+#            exploraci√≥n en la que la fecha y hora sean relevantes.         *
 #                                                                           *
 #  Instrucciones detalladas...                                              *
 #                                                                           *
 #  * Determine si desea establecer la fecha mediante una cadena de          *
-#    caracteres en formado fecha/hora universal, o mediante un dÌa Juliano  *
+#    caracteres en formado fecha/hora universal, o mediante un d√≠a Juliano  *
 #    (ver abajo).                                                           *
 #                                                                           *
-#  * Copie la lÌnea de cÛdigo con el comando "time" que vaya a usar.        *
+#  * Copie la l√≠nea de c√≥digo con el comando "time" que vaya a usar.        *
 #                                                                           *
-#  * PÈguela sobre el comando "goto" que est· cerca del tope del archivo.   *
+#  * P√©guela sobre el comando "goto" que est√° cerca del tope del archivo.   *
 #                                                                           *
-#  * Remueva el "#" al comienzo de la lÌnea. Esto la DEScomenta, de modo    *
-#    tal que ser· ejecutada.                                                *
+#  * Remueva el "#" al comienzo de la l√≠nea. Esto la DEScomenta, de modo    *
+#    tal que ser√° ejecutada.                                                *
 #                                                                           *
 #  * Cambie la fecha/hora al las de su preferencia.                         *
 #****************************************************************************
@@ -165,9 +165,9 @@
 # Establecer la hora en formato de tiempo universal coordinado (UTC)...
 #  time { utc "2003-08-11T09:29:24.0000" }
 #              YYYY-MM-DDTHH:MM:SS.SSSS
-# ObsÈrvese la "T" ......^..... (es obligatoria)
+# Obs√©rvese la "T" ......^..... (es obligatoria)
 
-# Establecer la hora mediante un dÌa Juliano...
+# Establecer la hora mediante un d√≠a Juliano...
 #  time { jd JulianDate }
 # Conversor de fecha/hora calendarias a fecha/hora Juliana (U.S. Navy):
 # http://aa.usno.navy.mil/data/docs/JulianDate.html
@@ -175,12 +175,12 @@
 
 #****************************************************************************
 #  Los comandos listados abajo permiten definir varias de las               *
-#  configuraciones de Celestia, que se establecer·n cada vez que se inicie  *
-#  el programa. ModifÌquelos seg˙n su voluntad.                             *
+#  configuraciones de Celestia, que se establecer√°n cada vez que se inicie  *
+#  el programa. Modif√≠quelos seg√∫n su voluntad.                             *
 #****************************************************************************
 
 # Campo visual (DEScomentar / modificar a voluntad)...
-# Default es 25 grados, a una resoluciÛn de 1024 x 768
+# Default es 25 grados, a una resoluci√≥n de 1024 x 768
 #  set {name "FOV" value 25.0}
 
 
@@ -189,14 +189,14 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Magnitud (brillo) estelar m·s dÈbil visible...
+# Magnitud (brillo) estelar m√°s d√©bil visible...
 # (DEScomentar / modificar a voluntad)
 # Celestia UI: 0.8 to 15.2, default is 6.0
 #
 #  setvisibilitylimit {magnitude 6.0}
 
 
-# Automag: brillo m·s dÈbil visible a 45 grados de campo visual, default es 8.5...
+# Automag: brillo m√°s d√©bil visible a 45 grados de campo visual, default es 8.5...
 # (DEScomentar / modificar a voluntad)
 #  setfaintestautomag45deg {magnitude 8.5}
 
@@ -223,7 +223,7 @@
 
 
 # Items a ser representados (rendered):
-# SÕ representar los siguientes objetos (DEScomentar a voluntad)...
+# S√ç representar los siguientes objetos (DEScomentar a voluntad)...
 #  renderflags {set "atmospheres"}
 #  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
@@ -255,7 +255,7 @@
 
 
 # Etiquetas textuales:
-# SÕ etiquetar los siguientes objetos (DEScomentar a voluntad)...
+# S√ç etiquetar los siguientes objetos (DEScomentar a voluntad)...
 #  labels {set "asteroids"}
 #  labels {set "constellations"}
 #  labels {set "galaxies"}
@@ -271,29 +271,29 @@
 #  unmarkall { }
 
 
-# MÌnimo di·metro orbital a ser representado (en pixels)...
+# M√≠nimo di√°metro orbital a ser representado (en pixels)...
 # (DEScomente / modifique a voluntad)
 #  set {name "MinOrbitSize"  value 1.0}
 
 
-# Distancia estelar m·s lejana visible, default es 1000000...
+# Distancia estelar m√°s lejana visible, default es 1000000...
 # (DEScomente / modifique a voluntad)
 #  set {name "StarDistanceLimit"  value 1000000}
 
 
-# Velocidad de simulaciÛn (tasa temporal: 1x, 100x, 1000x, etc.)...
+# Velocidad de simulaci√≥n (tasa temporal: 1x, 100x, 1000x, etc.)...
 # (DEScomente / modifique a voluntad)
-#    Valor negativo = InversiÛn temporal (la simulaciÛn avanza hacia el pasado)
-#               0   = Pausar simulaciÛn
+#    Valor negativo = Inversi√≥n temporal (la simulaci√≥n avanza hacia el pasado)
+#               0   = Pausar simulaci√≥n
 #               1.0 = Tiempo real (default)
-#            1000.0 = Buena elecciÛn para ver la Luna en su Ûrbita
+#            1000.0 = Buena elecci√≥n para ver la Luna en su √≥rbita
 #
 #  timerate {rate 1.0}
 
 
 #****************************************************************************
 #  Si usa texturas grandes, puede hacer que Celestia las pre-cargue en la   *
-#  tarjeta gr·fica, list·ndolas aquÌ.                                       *
+#  tarjeta gr√°fica, list√°ndolas aqu√≠.                                       *
 #****************************************************************************
 # Ejemplos...
 #  preloadtex {object "earth.*"}
@@ -302,21 +302,21 @@
 
 #****************************************************************************
 #  El comando "orbit" es divertido. El eje se especifica como [X Y Z], con  *
-#  cada valor 0 Û 1. "rate" = cu·n r·pido, "duration" en segundos. SÛlo     *
-#  aseg˙rese de tener un objeto seleccionado.                               *
+#  cada valor 0 √≥ 1. "rate" = cu√°n r√°pido, "duration" en segundos. S√≥lo     *
+#  aseg√∫rese de tener un objeto seleccionado.                               *
 #****************************************************************************
 #  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
 
 
 #****************************************************************************
-#  Para aprender m·s sobre los scripts en Celestia, visite (en inglÈs):     *
+#  Para aprender m√°s sobre los scripts en Celestia, visite (en ingl√©s):     *
 #                                                                           *
 #   * Scripting forum: (http://www.shatters.net/forum/viewforum.php?f=9)    *
 #   * Don G's Celestia page: (http://www.donandcarla.com/Celestia/)         *
 #   * Harald's Celestia page: (http://www.h-schmidt.net/celestia/)          *
 #                                                                           *
-#  La p·gina de Don G incluye una guÌa del lenguaje CEL. La p·gina de       * 
-#  Harald incluye una guÌa del lenguaje CELX (Lua). Ambas tienen ejemplos   *
+#  La p√°gina de Don G incluye una gu√≠a del lenguaje CEL. La p√°gina de       *
+#  Harald incluye una gu√≠a del lenguaje CELX (Lua). Ambas tienen ejemplos   *
 #  de scripts y otros recursos.                                             *
 #****************************************************************************
 

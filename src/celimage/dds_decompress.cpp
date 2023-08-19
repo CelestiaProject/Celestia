@@ -11,7 +11,7 @@ PackRGBA order.
 
 ---
 
-Copyright (c) 2012, Matth�us G. "Anteru" Chajdas (http://anteru.net)
+Copyright (c) 2012, Matthäus G. "Anteru" Chajdas (http://anteru.net)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
