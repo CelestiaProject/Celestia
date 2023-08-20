@@ -82,14 +82,14 @@ void main(void)
 }
 )glsl"sv;
 
-#ifndef GL_ES
-constexpr std::string_view VersionHeader = "#version 120\n"sv;
-constexpr std::string_view VersionHeaderGL3 = "#version 150\n"sv;
-constexpr std::string_view CommonHeader = "\n"sv;
-#else
+#ifdef GL_ES
 constexpr std::string_view VersionHeader = "#version 100\n"sv;
 constexpr std::string_view VersionHeaderGL3 = "#version 320 es\n"sv;
 constexpr std::string_view CommonHeader = "precision highp float;\n"sv;
+#else
+constexpr std::string_view VersionHeader = "#version 120\n"sv;
+constexpr std::string_view VersionHeaderGL3 = "#version 150\n"sv;
+constexpr std::string_view CommonHeader = "\n"sv;
 #endif
 constexpr std::string_view VertexHeader = R"glsl(
 uniform mat4 ModelViewMatrix;
@@ -184,10 +184,10 @@ uniform vec2 texCoordDelta3;
 std::string
 LightProperty(unsigned int i, std::string_view property)
 {
-#ifndef USE_GLSL_STRUCTS
-    return fmt::format("light{}_{}", i, property);
-#else
+#ifdef USE_GLSL_STRUCTS
     return fmt::format("lights[{}].{}", i, property);
+#else
+    return fmt::format("light{}_{}", i, property);
 #endif
 }
 
@@ -808,7 +808,18 @@ DeclareLights(const ShaderProperties& props)
         return {};
 
     std::ostringstream stream;
-#ifndef USE_GLSL_STRUCTS
+#ifdef USE_GLSL_STRUCTS
+    stream << "uniform struct {\n";
+    stream << "   vec3 direction;\n";
+    stream << "   vec3 diffuse;\n";
+    stream << "   vec3 specular;\n";
+    stream << "   vec3 halfVector;\n";
+    if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+        stream << "   vec3 color;\n";
+    if (props.texUsage & ShaderProperties::NightTexture)
+        stream << "   float brightness;\n";
+    stream << "} lights[" << props.nLights << "];\n";
+#else
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         stream << DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
@@ -818,21 +829,11 @@ DeclareLights(const ShaderProperties& props)
             stream << DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
             stream << DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
         }
-        if (props.texUsage & ShaderProperties::NightTexture)
-            stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
         if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
             stream << DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
+        if (props.texUsage & ShaderProperties::NightTexture)
+            stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
     }
-
-#else
-    stream << "uniform struct {\n";
-    stream << "   vec3 direction;\n";
-    stream << "   vec3 diffuse;\n";
-    stream << "   vec3 specular;\n";
-    stream << "   vec3 halfVector;\n";
-    if (props.texUsage & ShaderProperties::NightTexture)
-        stream << "   float brightness;\n";
-    stream << "} lights[" << props.nLights << "];\n";
 #endif
 
     return stream.str();
@@ -2951,10 +2952,10 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     // models, the material color is premultiplied with the light color.
     // Emissive shaders interoperate better with other shaders if they also
     // take the color from light source 0.
-#ifndef USE_GLSL_STRUCTS
-    source += DeclareUniform("light0_diffuse", Shader_Vector3);
-#else
+#ifdef USE_GLSL_STRUCTS
     source += std::string("uniform struct {\n   vec3 diffuse;\n} lights[1];\n");
+#else
+    source += DeclareUniform("light0_diffuse", Shader_Vector3);
 #endif
 
     if (props.usePointSize())
