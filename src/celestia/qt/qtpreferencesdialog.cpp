@@ -172,7 +172,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.highResolutionButton->setChecked(true);
     }
 
-    auto ambient = static_cast<int>(renderer->getAmbientLightLevel());
+    auto ambient = static_cast<int>(renderer->getAmbientLightLevel() * 100.0f);
     ui.ambientLightSlider->setValue(ambient);
     ui.ambientLightSpinBox->setValue(ambient);
 
