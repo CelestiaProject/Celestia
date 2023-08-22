@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(icons);
 
     QCoreApplication::setOrganizationName("Celestia Development Team");
+    QCoreApplication::setOrganizationDomain("celestiaproject.space");
     QCoreApplication::setApplicationName("Celestia QT");
     QCoreApplication::setApplicationVersion(VERSION);
 
