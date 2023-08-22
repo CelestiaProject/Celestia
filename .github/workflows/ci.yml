@@ -8,6 +8,10 @@ on:
     branches: [ master ]
     paths: [ src/**, test/**, cmake/**, .github/workflows/ci.yml, CMakeLists.txt ]
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 env:
   BUILD_TYPE: RelWithDebInfo
   CTEST_OUTPUT_ON_FAILURE: 1
