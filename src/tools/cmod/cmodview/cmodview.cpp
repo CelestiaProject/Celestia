@@ -20,8 +20,8 @@ main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QCoreApplication::setOrganizationName("Celestia");
-    QCoreApplication::setOrganizationDomain("shatters.net");
+    QCoreApplication::setOrganizationName("Celestia Development Team");
+    QCoreApplication::setOrganizationDomain("celestiaproject.space");
     QCoreApplication::setApplicationName("cmodview");
 
     // Enable multisample antialiasing
@@ -36,6 +36,8 @@ main(int argc, char *argv[])
     {
         fileName = arguments.at(1);
     }
+
+    CreateLogger();
 
     cmodview::MainWindow window;
 
@@ -53,7 +55,6 @@ main(int argc, char *argv[])
     // open events.
     app.installEventFilter(&window);
 
-    CreateLogger();
 
     return app.exec();
 }
