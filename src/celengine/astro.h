@@ -75,6 +75,7 @@ namespace astro
             TZName          = 1,
             UTCOffset       = 2,
             ISO8601         = 3,
+            FormatCount     = 4,
         };
 
         const char* toCStr(Format format = Locale) const;
@@ -320,7 +321,3 @@ namespace astro
     }
     }
 }
-
-// Convert a date structure to a Julian date
-
-std::ostream& operator<<(std::ostream& s, const astro::Date&);
