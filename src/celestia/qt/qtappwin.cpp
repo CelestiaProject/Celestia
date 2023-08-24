@@ -1441,13 +1441,13 @@ void CelestiaAppWindow::createMenus()
 
     QAction* splitViewVertAction = new QAction(QIcon(":/icons/split-vert.png"),
                                                _("Split view vertically"), this);
-    splitViewVertAction->setShortcut(QString(_("Ctrl+R")));
+    splitViewVertAction->setShortcut(QString(_("Ctrl+U")));
     connect(splitViewVertAction, SIGNAL(triggered()), this, SLOT(slotSplitViewVertically()));
     multiviewMenu->addAction(splitViewVertAction);
 
     QAction* splitViewHorizAction = new QAction(QIcon(":/icons/split-horiz.png"),
                                                 _("Split view horizontally"), this);
-    splitViewHorizAction->setShortcut(QString(_("Ctrl+U")));
+    splitViewHorizAction->setShortcut(QString(_("Ctrl+R")));
     connect(splitViewHorizAction, SIGNAL(triggered()), this, SLOT(slotSplitViewHorizontally()));
     multiviewMenu->addAction(splitViewHorizAction);
 
