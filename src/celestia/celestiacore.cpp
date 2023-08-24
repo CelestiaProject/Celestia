@@ -234,6 +234,7 @@ CelestiaCore::CelestiaCore() :
 #endif
     m_scriptMaps(new ScriptMaps()),
     oldFOV(stdFOV),
+    dateFormatter(std::make_unique<celestia::engine::DateFormatter>()),
     console(new Console(*renderer, 200, 120)),
     m_tee(std::cout, std::cerr)
 {
@@ -3203,10 +3204,7 @@ void CelestiaCore::renderOverlay()
             dateStr = customDateFormatter(tdb);
 
         if (dateStr.empty())
-        {
-            astro::Date d = timeZoneBias != 0 ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
-            dateStr = d.toCStr(dateFormat);
-        }
+            dateStr = dateFormatter->formatDate(tdb, timeZoneBias != 0, dateFormat);
         int dateWidth = (TextLayout::getTextWidth(dateStr, font.get()) / (emWidth * 3) + 2) * emWidth * 3;
         if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
 

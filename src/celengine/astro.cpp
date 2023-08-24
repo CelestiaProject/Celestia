@@ -484,13 +484,6 @@ astro::Date::systemDate()
 }
 
 
-ostream& operator<<(ostream& s, const astro::Date& d)
-{
-    s << d.toCStr();
-    return s;
-}
-
-
 /********* Time scale conversion functions ***********/
 
 // Convert from Atomic Time to UTC

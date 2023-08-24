@@ -320,7 +320,3 @@ namespace astro
     }
     }
 }
-
-// Convert a date structure to a Julian date
-
-std::ostream& operator<<(std::ostream& s, const astro::Date&);

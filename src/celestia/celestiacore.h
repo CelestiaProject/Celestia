@@ -19,6 +19,7 @@
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
+#include <celengine/dateformatter.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/pixelformat.h>
@@ -566,6 +567,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
+    std::unique_ptr<celestia::engine::DateFormatter> dateFormatter;
     std::function<std::string(double)> customDateFormatter{ nullptr };
 
     std::vector<Url> history;
