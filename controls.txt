@@ -120,10 +120,10 @@ N ...................................... Spacecraft
 
 --- Multiview Options ---
 
-Ctrl+U ................................ Split view horizontally
-Ctrl+R ................................ Split view vertically
+Ctrl+R ................................ Split view horizontally into upper and lower sections
+Ctrl+U ................................ Split view vertically into left and right sections
 Tab ................................... Cycle through all active views
-Del .................................... Delete active view
+Del ................................... Delete active view
 Ctrl+D ................................ Delete all views except active one (reset to Single view)
 
 
