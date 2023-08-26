@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include "winbookmarks.h"
+
 #include "res/resource.h"
 #include <celutil/logger.h>
 #include <celutil/winutil.h>

@@ -4,7 +4,6 @@
 #include <celutil/array_view.h>
 
 #ifdef _WIN32
-#include <windows.h>
 #ifdef IMPORT_GLSUPPORT
 #define CELAPI __declspec(dllimport)
 #else

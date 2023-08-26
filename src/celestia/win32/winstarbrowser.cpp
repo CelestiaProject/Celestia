@@ -9,6 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "winstarbrowser.h"
+
 #include <string>
 #include <algorithm>
 #include <set>
@@ -19,7 +21,6 @@
 #include <celutil/winutil.h>
 #include "winuiutils.h"
 #include <celmath/mathlib.h>
-#include "winstarbrowser.h"
 #include "res/resource.h"
 #include "winuiutils.h"
 

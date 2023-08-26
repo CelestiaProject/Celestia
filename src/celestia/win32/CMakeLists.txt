@@ -5,7 +5,6 @@ endif()
 
 set(WIN32_SOURCES
   odmenu.cpp
-  wglext.cpp
   winbookmarks.cpp
   windatepicker.cpp
   wineclipses.cpp
@@ -24,7 +23,6 @@ set(WIN32_SOURCES
 
 set(WIN32_HEADERS
   odmenu.h
-  wglext.h
   winbookmarks.h
   wineclipses.h
   wingotodlg.h

@@ -8,14 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "wineclipses.h"
+
 #include <string>
 #include <sstream>
 #include <algorithm>
 #include <set>
 #include <cassert>
-
-#include <windows.h>
-#include <commctrl.h>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -27,8 +27,9 @@
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
 #include "res/resource.h"
-#include "wineclipses.h"
 #include "winuiutils.h"
+
+#include <commctrl.h>
 
 using namespace Eigen;
 using namespace std;
