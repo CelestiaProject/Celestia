@@ -13,6 +13,8 @@
 
 #include "celestia/celestiacore.h"
 
+#include <Windows.h>
+
 
 class SolarSystemBrowser
 {

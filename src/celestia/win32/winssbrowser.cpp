@@ -9,18 +9,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "winssbrowser.h"
+
 #include <string>
 #include <sstream>
 #include <algorithm>
 #include <set>
 
-#include <windows.h>
-#include <commctrl.h>
-
 #include <celengine/body.h>
 #include <celutil/winutil.h>
 #include "res/resource.h"
-#include "winssbrowser.h"
+
+#include <commctrl.h>
 
 
 using namespace std;

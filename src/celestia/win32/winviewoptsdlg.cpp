@@ -9,16 +9,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream>
+#include "winviewoptsdlg.h"
 
-#include <windows.h>
-#include <commctrl.h>
+#include <iostream>
 
 #include <celengine/body.h>
 #include <celengine/render.h>
 #include "res/resource.h"
-#include "winviewoptsdlg.h"
 
+#include <commctrl.h>
 
 using namespace std;
 

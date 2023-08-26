@@ -21,15 +21,6 @@
 #include <clocale>
 #include <string_view>
 #include <tuple>
-#include <process.h>
-#include <time.h>
-#include <windows.h>
-#include <windowsx.h>
-#include <oleidl.h>
-#include <commctrl.h>
-#include <mmsystem.h>
-#include <commdlg.h>
-#include <shellapi.h>
 
 #include <fmt/format.h>
 
@@ -69,11 +60,21 @@
 #include "winuiutils.h"
 
 #include "res/resource.h"
-#include "wglext.h"
 
 #ifdef USE_FFMPEG
 #include "celestia/ffmpegcapture.h"
 #endif
+
+#include <epoxy/wgl.h>
+#include <process.h>
+#include <time.h>
+#include <windows.h>
+#include <windowsx.h>
+#include <oleidl.h>
+#include <commctrl.h>
+#include <mmsystem.h>
+#include <commdlg.h>
+#include <shellapi.h>
 
 using namespace celestia;
 using namespace celestia::util;
@@ -1865,8 +1866,8 @@ bool SetDCPixelFormat(HDC hDC)
 {
     bool msaa = false;
     if (appCore->getConfig()->renderDetails.aaSamples > 1 &&
-        WGLExtensionSupported("WGL_ARB_pixel_format") &&
-        WGLExtensionSupported("WGL_ARB_multisample"))
+        epoxy_has_wgl_extension(hDC, "WGL_ARB_pixel_format") &&
+        epoxy_has_wgl_extension(hDC, "WGL_ARB_multisample"))
     {
         msaa = true;
     }
@@ -3424,8 +3425,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
-
-    InitWGLExtensions(appInstance);
 
 #ifndef PORTABLE_BUILD
     if (!ignoreOldFavorites)

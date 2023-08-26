@@ -12,11 +12,13 @@
 #pragma once
 
 
-#include <windows.h>
-#include <commctrl.h>
 #include "celestia/favorites.h"
 #include "celestia/celestiacore.h"
 #include "odmenu.h"
+
+#include <Windows.h>
+#include <commctrl.h>
+
 
 void BuildFavoritesMenu(HMENU, CelestiaCore*, HINSTANCE, ODMenu*);
 HTREEITEM PopulateBookmarkFolders(HWND, CelestiaCore*, HINSTANCE);

@@ -9,17 +9,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "wintourguide.h"
+
 #include <string>
 #include <sstream>
 #include <algorithm>
 #include <set>
-#include <windows.h>
-#include <commctrl.h>
-#include "wintourguide.h"
 
 #include <celutil/winutil.h>
 
 #include "res/resource.h"
+
+#include <commctrl.h>
+
 
 using namespace Eigen;
 using namespace std;
