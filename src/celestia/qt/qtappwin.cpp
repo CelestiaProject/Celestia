@@ -415,7 +415,12 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     QAction* fullScreenAction = new QAction(_("Full screen"), this);
     fullScreenAction->setCheckable(true);
-    fullScreenAction->setShortcut(QString(_("Shift+F11")));
+
+    // Qt defines Key_Return as enter key on keyboard and Key_Enter as enter key on numeric keypad
+    // Capture both keys
+    QList<QKeySequence> shortcuts;
+    shortcuts << QKeySequence(_("ALT+Enter")) << QKeySequence(_("ALT+Return"));
+    fullScreenAction->setShortcuts(shortcuts);
 
     // Set the full screen check state only after reading settings
     fullScreenAction->setChecked(isFullScreen());
