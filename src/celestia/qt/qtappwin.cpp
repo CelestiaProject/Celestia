@@ -415,7 +415,6 @@ void CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     QAction* fullScreenAction = new QAction(_("Full screen"), this);
     fullScreenAction->setCheckable(true);
-
     // Qt defines Key_Return as enter key on keyboard and Key_Enter as enter key on numeric keypad
     // Capture both keys
     QList<QKeySequence> shortcuts;
