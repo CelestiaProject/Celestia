@@ -81,18 +81,6 @@ std::string getBodyName(Universe* universe, Body* body)
     return name;
 }
 
-// We use std::string here because we pass result to C API (gettext())
-std::string getBodyShortName(const std::string &body)
-{
-    if (!body.empty())
-    {
-        auto pos = body.rfind(":");
-        if (pos != std::string::npos)
-            return D_(body.substr(pos + 1).c_str());
-    }
-    return D_(body.c_str());
-}
-
 std::string_view
 getCoordSysName(ObserverFrame::CoordinateSystem mode)
 {
@@ -221,7 +209,6 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     m_url = u.str();
     m_valid = true;
-    evalName();
 }
 
 bool
@@ -540,7 +527,6 @@ bool Url::parse(std::string_view urlStr)
     else if (!initVersion3(params, timeStr))
         return false;
     m_valid = true;
-    evalName();
 
     return true;
 }
@@ -675,19 +661,4 @@ bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::str
         params["rf"] = fmt::format("{}", _rf);
     }
     return initVersion3(params, timeStr);
-}
-
-void Url::evalName()
-{
-    std::string name;
-    auto it = std::back_inserter(name);
-    if (!m_state.m_refBodyName.empty())
-        fmt::format_to(it, " {}", getBodyShortName(m_state.m_refBodyName));
-    if (!m_state.m_targetBodyName.empty())
-        fmt::format_to(it, " {}", getBodyShortName(m_state.m_targetBodyName));
-    if (!m_state.m_trackedBodyName.empty())
-        fmt::format_to(it, " -> {}", getBodyShortName(m_state.m_trackedBodyName));
-    if (!m_state.m_selectedBodyName.empty())
-        fmt::format_to(it, " [{}]", getBodyShortName(m_state.m_selectedBodyName));
-    m_name = std::move(name);
 }
