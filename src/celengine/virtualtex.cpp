@@ -81,7 +81,7 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
 }
 
 
-const TextureTile VirtualTexture::getTile(int lod, int u, int v)
+TextureTile VirtualTexture::getTile(int lod, int u, int v)
 {
     tilesRequested++;
 

@@ -528,7 +528,7 @@ void ImageTexture::bind()
 }
 
 
-const TextureTile ImageTexture::getTile(int lod, int u, int v)
+TextureTile ImageTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u != 0 || v != 0)
         return TextureTile(0);
@@ -756,7 +756,7 @@ int TiledTexture::getVTileCount(int /*lod*/) const
 }
 
 
-const TextureTile TiledTexture::getTile(int lod, int u, int v)
+TextureTile TiledTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u >= uSplit || u < 0 || v >= vSplit || v < 0)
         return TextureTile(0);
@@ -846,7 +846,7 @@ void CubeMap::bind()
 }
 
 
-const TextureTile CubeMap::getTile(int lod, int u, int v)
+TextureTile CubeMap::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u != 0 || v != 0)
         return TextureTile(0);

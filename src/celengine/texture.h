@@ -53,7 +53,7 @@ class Texture
     Texture(int w, int h, int d = 1);
     virtual ~Texture() = default;
 
-    virtual const TextureTile getTile(int lod, int u, int v) = 0;
+    virtual TextureTile getTile(int lod, int u, int v) = 0;
     virtual void bind() = 0;
 
     virtual int getLODCount() const;
@@ -131,7 +131,7 @@ class ImageTexture : public Texture
     ImageTexture(const Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
 
-    const TextureTile getTile(int lod, int u, int v) override;
+    TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
     void setBorderColor(Color) override;
 
@@ -148,7 +148,7 @@ class TiledTexture : public Texture
     TiledTexture(const Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
-    const TextureTile getTile(int lod, int u, int v) override;
+    TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
     void setBorderColor(Color) override;
 
@@ -168,7 +168,7 @@ class CubeMap : public Texture
     explicit CubeMap(celestia::util::array_view<const Image*>);
     ~CubeMap();
 
-    const TextureTile getTile(int lod, int u, int v) override;
+    TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
     void setBorderColor(Color) override;
 
