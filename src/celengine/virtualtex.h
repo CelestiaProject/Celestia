@@ -26,7 +26,7 @@ class VirtualTexture : public Texture
                    const std::string& _tileType);
     ~VirtualTexture() = default;
 
-    const TextureTile getTile(int lod, int u, int v) override;
+    TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
 
     int getLODCount() const override;
