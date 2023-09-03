@@ -10,9 +10,9 @@
 
 #include <png.h>
 #include <zlib.h>
-#include <celengine/image.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include "image.h"
 
 using celestia::PixelFormat;
 using celestia::util::GetLogger;

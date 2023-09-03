@@ -17,8 +17,8 @@ extern "C"
 #include <vector>
 #include <fmt/format.h>
 
-#include <celengine/pixelformat.h>
 #include <celengine/render.h>
+#include <celimage/pixelformat.h>
 
 using namespace std;
 using namespace celestia;

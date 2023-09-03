@@ -14,8 +14,8 @@
 extern "C" {
 #include <jpeglib.h>
 }
-#include <celengine/image.h>
 #include <celutil/logger.h>
+#include "image.h"
 
 using celestia::PixelFormat;
 using celestia::util::GetLogger;
@@ -44,7 +44,7 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 }
 } // anonymous namespace
 
-Image* LoadJPEGImage(const fs::path& filename, int /*unused*/)
+Image* LoadJPEGImage(const fs::path& filename)
 {
     Image* img = nullptr;
 

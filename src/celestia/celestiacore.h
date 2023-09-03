@@ -22,13 +22,13 @@
 #include <celengine/dateformatter.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
-#include <celengine/pixelformat.h>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
 #include <celengine/viewporteffect.h>
+#include <celimage/pixelformat.h>
 #include <celutil/tee.h>
 #include "configfile.h"
 #include "favorites.h"

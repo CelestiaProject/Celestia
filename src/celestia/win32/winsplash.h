@@ -11,7 +11,7 @@
 
 #include <windows.h>
 #include <string>
-#include <celengine/image.h>
+#include <celimage/image.h>
 
 
 class SplashWindow

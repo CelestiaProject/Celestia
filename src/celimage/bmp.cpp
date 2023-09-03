@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include <celengine/image.h>
 #include <celutil/binaryread.h>
 #include <celutil/logger.h>
+#include "image.h"
 
 namespace celutil = celestia::util;
 using celestia::util::GetLogger;

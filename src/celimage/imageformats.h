@@ -11,10 +11,9 @@
 #pragma once
 
 #include <celcompat/filesystem.h>
-#include <celengine/image.h>
+#include <celimage/image.h>
 
-Image* LoadJPEGImage(const fs::path& filename,
-                     int channels = Image::ColorChannel);
+Image* LoadJPEGImage(const fs::path& filename);
 Image* LoadBMPImage(const fs::path& filename);
 Image* LoadPNGImage(const fs::path& filename);
 Image* LoadDDSImage(const fs::path& filename);

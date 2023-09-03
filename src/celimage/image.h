@@ -10,9 +10,11 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
+
 #include <celcompat/filesystem.h>
-#include <celengine/pixelformat.h>
+#include "pixelformat.h"
 
 // The image class supports multiple GL formats, including compressed ones.
 // Mipmaps may be stored within an image as well.  The mipmaps are stored in
@@ -37,12 +39,12 @@ class Image
     int getMipLevelCount() const;
     celestia::PixelFormat getFormat() const;
     int getComponents() const;
-    uint8_t* getPixels();
-    const uint8_t* getPixels() const;
-    uint8_t* getPixelRow(int row);
-    uint8_t* getPixelRow(int mip, int row);
-    uint8_t* getMipLevel(int mip);
-    const uint8_t* getMipLevel(int mip) const;
+    std::uint8_t* getPixels();
+    const std::uint8_t* getPixels() const;
+    std::uint8_t* getPixelRow(int row);
+    std::uint8_t* getPixelRow(int mip, int row);
+    std::uint8_t* getMipLevel(int mip);
+    const std::uint8_t* getMipLevel(int mip) const;
     int getSize() const;
     int getMipLevelSize(int mip) const;
 
@@ -53,12 +55,6 @@ class Image
 
     void forceLinear();
 
-    enum
-    {
-        ColorChannel = 1,
-        AlphaChannel = 2
-    };
-
  private:
     int width;
     int height;
@@ -67,7 +63,7 @@ class Image
     int components;
     celestia::PixelFormat format;
     int size;
-    std::unique_ptr<uint8_t[]> pixels;
+    std::unique_ptr<std::uint8_t[]> pixels;
 };
 
 std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename);
