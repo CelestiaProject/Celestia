@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/image.h>
+#include <celimage/image.h>
 #include <celutil/logger.h>
 
 extern "C" {

@@ -7,28 +7,32 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cassert>
-#include <celengine/glsupport.h>
-#include <celutil/logger.h>
-#include <celutil/filetype.h>
-#include <celutil/gettext.h>
-#include <celimage/imageformats.h>
 #include "image.h"
 
-using namespace std;
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <tuple>
+
+#include <celutil/filetype.h>
+#include <celutil/gettext.h>
+#include <celutil/logger.h>
+#include "imageformats.h"
+
 using celestia::PixelFormat;
 using celestia::util::GetLogger;
 
 namespace
 {
 // All rows are padded to a size that's a multiple of 4 bytes
-int pad(int n)
+int
+pad(int n)
 {
     return (n + 3) & ~0x3;
 }
 
-int formatComponents(PixelFormat fmt)
+int
+formatComponents(PixelFormat fmt)
 {
     switch (fmt)
     {
@@ -64,10 +68,11 @@ int formatComponents(PixelFormat fmt)
     }
 }
 
-int calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
+int
+calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
 {
-    w = max(w >> mip, 1);
-    h = max(h >> mip, 1);
+    w = std::max(w >> mip, 1);
+    h = std::max(h >> mip, 1);
 
     switch (fmt)
     {
@@ -87,7 +92,17 @@ int calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
     }
 }
 
-celestia::PixelFormat getLinearFormat(celestia::PixelFormat format)
+int
+calcTotalMipSize(PixelFormat fmt, int w, int h, int mipLevels)
+{
+    int size = 1;
+    for (int i = 0; i < mipLevels; i++)
+        size += calcMipLevelSize(fmt, w, h, i);
+    return size;
+}
+
+celestia::PixelFormat
+getLinearFormat(celestia::PixelFormat format)
 {
     switch (format)
     {
@@ -110,80 +125,97 @@ celestia::PixelFormat getLinearFormat(celestia::PixelFormat format)
     }
 }
 
+inline std::tuple<int, int>
+handleEdge(int i, int size, bool wrap)
+{
+    assert(i >= 0 && size > 0);
+    if (i > 0)
+        return {i, i - 1};
+    if (wrap)
+        return {0, size - 1};
+    return {1, 0};
+}
+
 } // anonymous namespace
 
 Image::Image(PixelFormat fmt, int w, int h, int mip) :
     width(w),
     height(h),
     mipLevels(mip),
-    format(fmt)
+    components(formatComponents(fmt)),
+    format(fmt),
+    size(calcTotalMipSize(fmt, w, h, mip))
 {
-    components = formatComponents(fmt);
     assert(components != 0);
 
     pitch = pad(w * components);
-
-    size = 1;
-    for (int i = 0; i < mipLevels; i++)
-        size += calcMipLevelSize(fmt, w, h, i);
-    pixels = make_unique<uint8_t[]>(size);
+    pixels = std::make_unique<std::uint8_t[]>(size);
 }
 
-bool Image::isValid() const noexcept
+bool
+Image::isValid() const noexcept
 {
     return pixels != nullptr;
 }
 
-int Image::getWidth() const
+int
+Image::getWidth() const
 {
     return width;
 }
 
-int Image::getHeight() const
+int
+Image::getHeight() const
 {
     return height;
 }
 
-int Image::getPitch() const
+int
+Image::getPitch() const
 {
     return pitch;
 }
 
-int Image::getMipLevelCount() const
+int
+Image::getMipLevelCount() const
 {
     return mipLevels;
 }
 
-int Image::getSize() const
+int
+Image::getSize() const
 {
     return size;
 }
 
-PixelFormat Image::getFormat() const
+PixelFormat
+Image::getFormat() const
 {
     return format;
 }
 
-int Image::getComponents() const
+int
+Image::getComponents() const
 {
     return components;
 }
 
-uint8_t* Image::getPixels()
+std::uint8_t*
+Image::getPixels()
 {
     return pixels.get();
 }
 
-const uint8_t* Image::getPixels() const
+const std::uint8_t*
+Image::getPixels() const
 {
     return pixels.get();
 }
 
-uint8_t* Image::getPixelRow(int mip, int row)
+std::uint8_t*
+Image::getPixelRow(int mip, int row)
 {
-    /*int w = max(width >> mip, 1); Unused*/
-    int h = max(height >> mip, 1);
-    if (mip >= mipLevels || row >= h)
+    if (mip >= mipLevels || row >= std::max(height >> mip, 1))
         return nullptr;
 
     // Row addressing of compressed textures is not allowed
@@ -193,12 +225,14 @@ uint8_t* Image::getPixelRow(int mip, int row)
     return getMipLevel(mip) + row * pitch;
 }
 
-uint8_t* Image::getPixelRow(int row)
+std::uint8_t*
+Image::getPixelRow(int row)
 {
     return getPixelRow(0, row);
 }
 
-uint8_t* Image::getMipLevel(int mip)
+std::uint8_t*
+Image::getMipLevel(int mip)
 {
     if (mip >= mipLevels)
         return nullptr;
@@ -210,7 +244,8 @@ uint8_t* Image::getMipLevel(int mip)
     return pixels.get() + offset;
 }
 
-const uint8_t* Image::getMipLevel(int mip) const
+const std::uint8_t*
+Image::getMipLevel(int mip) const
 {
     if (mip >= mipLevels)
         return nullptr;
@@ -222,7 +257,8 @@ const uint8_t* Image::getMipLevel(int mip) const
     return pixels.get() + offset;
 }
 
-int Image::getMipLevelSize(int mip) const
+int
+Image::getMipLevelSize(int mip) const
 {
     if (mip >= mipLevels)
         return 0;
@@ -230,7 +266,8 @@ int Image::getMipLevelSize(int mip) const
     return calcMipLevelSize(format, width, height, mip);
 }
 
-bool Image::isCompressed() const
+bool
+Image::isCompressed() const
 {
     switch (format)
     {
@@ -246,7 +283,8 @@ bool Image::isCompressed() const
     }
 }
 
-bool Image::hasAlpha() const
+bool
+Image::hasAlpha() const
 {
     switch (format)
     {
@@ -281,57 +319,31 @@ Image::computeNormalMap(float scale, bool wrap) const
 
     auto normalMap = std::make_unique<Image>(PixelFormat::RGBA, width, height);
 
-    uint8_t* nmPixels = normalMap->getPixels();
+    std::uint8_t* nmPixels = normalMap->getPixels();
     int nmPitch = normalMap->getPitch();
 
     // Compute normals using differences between adjacent texels.
     for (int i = 0; i < height; i++)
     {
+        const auto rowBase = i * nmPitch;
+        const auto [i0, i1] = handleEdge(i, height, wrap);
         for (int j = 0; j < width; j++)
         {
-            int i0 = i;
-            int j0 = j;
-            int i1 = i - 1;
-            int j1 = j - 1;
-            if (i1 < 0)
-            {
-                if (wrap)
-                {
-                    i1 = height - 1;
-                }
-                else
-                {
-                    i0++;
-                    i1++;
-                }
-            }
-            if (j1 < 0)
-            {
-                if (wrap)
-                {
-                    j1 = width - 1;
-                }
-                else
-                {
-                    j0++;
-                    j1++;
-                }
-            }
+            const auto [j0, j1] = handleEdge(j, width, wrap);
 
-            auto h00 = (int) pixels[i0 * pitch + j0 * components];
-            auto h10 = (int) pixels[i0 * pitch + j1 * components];
-            auto h01 = (int) pixels[i1 * pitch + j0 * components];
+            auto h00 = static_cast<int>(pixels[i0 * pitch + j0 * components]);
+            auto h10 = static_cast<int>(pixels[i0 * pitch + j1 * components]);
+            auto h01 = static_cast<int>(pixels[i1 * pitch + j0 * components]);
 
-            float dx = (float) (h10 - h00) * (1.0f / 255.0f) * scale;
-            float dy = (float) (h01 - h00) * (1.0f / 255.0f) * scale;
+            auto dx = static_cast<float>(h10 - h00) * (1.0f / 255.0f) * scale;
+            auto dy = static_cast<float>(h01 - h00) * (1.0f / 255.0f) * scale;
 
-            auto mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
-            float rmag = 1.0f / mag;
+            float rmag = 1.0f / std::sqrt(dx * dx + dy * dy + 1.0f);
 
-            int n = i * nmPitch + j * 4;
-            nmPixels[n]     = (uint8_t) (128 + 127 * dx * rmag);
-            nmPixels[n + 1] = (uint8_t) (128 + 127 * dy * rmag);
-            nmPixels[n + 2] = (uint8_t) (128 + 127 * rmag);
+            int n = rowBase + j * 4;
+            nmPixels[n]     = static_cast<std::uint8_t>(128 + 127 * dx * rmag);
+            nmPixels[n + 1] = static_cast<std::uint8_t>(128 + 127 * dy * rmag);
+            nmPixels[n + 2] = static_cast<std::uint8_t>(128 + 127 * rmag);
             nmPixels[n + 3] = 255;
         }
     }

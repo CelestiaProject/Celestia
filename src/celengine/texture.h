@@ -14,10 +14,10 @@
 #include <memory>
 #include <string>
 
-#include <celutil/color.h>
 #include <celcompat/filesystem.h>
-#include <celengine/image.h>
+#include <celimage/image.h>
 #include <celutil/array_view.h>
+#include <celutil/color.h>
 
 typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 

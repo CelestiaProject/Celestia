@@ -13,10 +13,10 @@
 #include <algorithm>
 #include <memory>
 #include <celengine/glsupport.h>
-#include <celengine/image.h>
 #include <celutil/logger.h>
 #include <celutil/bytes.h>
 #include "dds_decompress.h"
+#include "image.h"
 
 using namespace celestia;
 using namespace std;

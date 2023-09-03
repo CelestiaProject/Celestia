@@ -11,10 +11,9 @@
 #include <cassert>
 #include <memory>
 
+#include <celimage/image.h>
 #include <celmath/randutils.h>
 #include <celutil/logger.h>
-
-#include "image.h"
 #include "render.h"
 #include "texture.h"
 #include "galaxy.h"

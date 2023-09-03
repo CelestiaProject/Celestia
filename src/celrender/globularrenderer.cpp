@@ -20,10 +20,10 @@
 
 #include <celengine/globular.h>
 #include <celengine/glsupport.h>
-#include <celengine/pixelformat.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
 #include <celengine/texture.h>
+#include <celimage/pixelformat.h>
 #include <celmath/geomutil.h>
 #include <celmath/randutils.h>
 #include <celrender/gl/buffer.h>

@@ -3,8 +3,11 @@ set(CELIMAGE_SOURCES
   dds.cpp
   dds_decompress.cpp
   dds_decompress.h
+  image.cpp
+  image.h
   imageformats.h
   jpeg.cpp
+  pixelformat.h
   png.cpp
 )
 

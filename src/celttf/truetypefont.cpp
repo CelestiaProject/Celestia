@@ -19,9 +19,9 @@
 
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
-#include <celengine/image.h>
 #include <celengine/render.h>
 #include <celengine/texture.h>
+#include <celimage/image.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/logger.h>

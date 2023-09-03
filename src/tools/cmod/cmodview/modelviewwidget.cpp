@@ -26,8 +26,8 @@
 
 #include <celengine/framebuffer.h>
 #include <celengine/glshader.h>
-#include <celengine/image.h>
 #include <celengine/texture.h>
+#include <celimage/image.h>
 #include <celimage/imageformats.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
