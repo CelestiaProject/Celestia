@@ -10,17 +10,58 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "qtbookmark.h"
+
+#include <QAction>
+#include <QApplication>
+#include <QByteArray>
+#include <QChar>
+#include <QDataStream>
+#include <QFlag>
+#include <QIODevice>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QModelIndex>
+#include <QModelIndexList>
+#include <QPixmap>
+#include <QSortFilterProxyModel>
+#include <QStyle>
+#include <QTreeView>
+#include <QVariant>
+
 #include <celestia/url.h>
 #include <celutil/gettext.h>
-#include "qtbookmark.h"
 #include "xbel.h"
-#include <QAbstractItemModel>
-#include <QSortFilterProxyModel>
-#include <QMessageBox>
-#include <QHeaderView>
-#include <QMimeData>
-#include <QStringList>
-#include <QMenu>
+
+
+namespace
+{
+
+// Proxy model that filters out all items in the bookmark list which
+// are not folders.
+class OnlyFoldersProxyModel : public QSortFilterProxyModel
+{
+public:
+    OnlyFoldersProxyModel(QObject* parent)
+        : QSortFilterProxyModel(parent)
+    {
+    }
+
+    bool filterAcceptsRow(int row, const QModelIndex& parent) const
+    {
+        QModelIndex index = sourceModel()->index(row, 0, parent);
+        BookmarkItem::Type type = static_cast<BookmarkItem::Type>(sourceModel()->data(index, BookmarkTreeModel::TypeRole).toInt());
+        return type == BookmarkItem::Folder;
+    }
+
+    int columnCount(const QModelIndex& parent) const
+    {
+        return qMin(QSortFilterProxyModel::columnCount(parent), 1);
+    }
+};
+
+} // end unnamed namespace
 
 
 BookmarkItem::BookmarkItem(Type type, BookmarkItem* parent) :
@@ -772,30 +813,6 @@ BookmarkToolBar::rebuild()
         }
     }
 }
-
-
-// Proxy model that filters out all items in the bookmark list which
-// are not folders.
-class OnlyFoldersProxyModel : public QSortFilterProxyModel
-{
-public:
-    OnlyFoldersProxyModel(QObject* parent)
-        : QSortFilterProxyModel(parent)
-    {
-    }
-
-    bool filterAcceptsRow(int row, const QModelIndex& parent) const
-    {
-        QModelIndex index = sourceModel()->index(row, 0, parent);
-        BookmarkItem::Type type = static_cast<BookmarkItem::Type>(sourceModel()->data(index, BookmarkTreeModel::TypeRole).toInt());
-        return type == BookmarkItem::Folder;
-    }
-
-    int columnCount(const QModelIndex& parent) const
-    {
-        return qMin(QSortFilterProxyModel::columnCount(parent), 1);
-    }
-};
 
 
 int AddBookmarkDialog::m_lastTimeSourceIndex = 0;

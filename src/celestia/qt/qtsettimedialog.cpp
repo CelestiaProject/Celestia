@@ -10,19 +10,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celestia/celestiacore.h>
-#include <celengine/astro.h>
-#include <celutil/gettext.h>
-#include <QPushButton>
-#include <QDialogButtonBox>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QComboBox>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QGroupBox>
-#include <QGridLayout>
 #include "qtsettimedialog.h"
+
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QVBoxLayout>
+
+#include <celengine/astro.h>
+#include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
+
 
 namespace
 {
@@ -42,6 +43,7 @@ void setValueNoSignal(TControl* target, TValue value)
 }
 
 } // end unnamed namespace
+
 
 SetTimeDialog::SetTimeDialog(double currentTimeTDB,
                              QWidget* parent,
@@ -167,14 +169,17 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
 }
 
 
-void SetTimeDialog::slotSetSimulationTime()
+void
+SetTimeDialog::slotSetSimulationTime()
 {
     double tdb = astro::TTtoTDB(astro::TAItoTT(astro::JDUTCtoTAI(julianDateSpin->value())));
 
     appCore->getSimulation()->setTime(tdb);
 }
 
-void SetTimeDialog::slotSetDateTime()
+
+void
+SetTimeDialog::slotSetDateTime()
 {
     double tdb = astro::TTtoTDB(astro::TAItoTT(astro::JDUTCtoTAI(julianDateSpin->value())));
     int tzb = appCore->getTimeZoneBias();
@@ -192,7 +197,9 @@ void SetTimeDialog::slotSetDateTime()
     setValueNoSignal(secSpin, static_cast<int>(date.seconds));
 }
 
-void SetTimeDialog::slotDateTimeChanged()
+
+void
+SetTimeDialog::slotDateTimeChanged()
 {
     int year = yearSpin->value();
     int month = monthSpin->value();
@@ -227,7 +234,9 @@ void SetTimeDialog::slotDateTimeChanged()
             timeZoneBox->setEnabled(true);
 }
 
-void SetTimeDialog::slotTimeZoneChanged()
+
+void
+SetTimeDialog::slotTimeZoneChanged()
 {
     int tzb = 0;
 
@@ -256,7 +265,8 @@ void SetTimeDialog::slotTimeZoneChanged()
 }
 
 
-void SetTimeDialog::accept()
+void
+SetTimeDialog::accept()
 {
     slotSetSimulationTime();
 

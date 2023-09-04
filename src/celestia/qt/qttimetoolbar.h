@@ -14,19 +14,23 @@
 
 #include <QToolBar>
 
+class QString;
+class QWidget;
+
 class CelestiaCore;
+
 
 class TimeToolBar : public QToolBar
 {
-Q_OBJECT
+    Q_OBJECT
 
- public:
+public:
     TimeToolBar(CelestiaCore* _appCore,
                 const QString& title,
                 QWidget* parent = nullptr);
     ~TimeToolBar() = default;
 
- public slots:
+public slots:
     void slotPauseTime();
     void slotReverseTime();
     void slotRealTime();
@@ -36,6 +40,6 @@ Q_OBJECT
     void slotSlower();
     void slotCurrentTime();
 
- private:
+private:
     CelestiaCore* appCore;
 };

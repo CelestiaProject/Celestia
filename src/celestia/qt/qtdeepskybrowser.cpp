@@ -10,35 +10,58 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celestia/celestiacore.h>
-#include <celutil/gettext.h>
-#include <celutil/greek.h>
 #include "qtdeepskybrowser.h"
-#include "qtcolorswatchwidget.h"
-#include "qtinfopanel.h"
-#include <QAbstractItemModel>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QComboBox>
+
+#include <algorithm>
+#include <cstring>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <Eigen/Core>
+
+#include <Qt>
+#include <QAbstractItemView>
+#include <QAbstractTableModel>
 #include <QCheckBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QCollator>
+#include <QColor>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
+#include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
+#include <QModelIndex>
+#include <QModelIndexList>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QRegExp>
-#include <QCollator>
-#include <vector>
-#include <set>
+#include <QString>
+#include <QTreeView>
+#include <QVariant>
+#include <QVBoxLayout>
 
-using namespace Eigen;
-using namespace std;
+#include <celengine/astro.h>
+#include <celengine/deepskyobj.h>
+#include <celengine/dsodb.h>
+#include <celengine/marker.h>
+#include <celengine/render.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/universe.h>
+#include <celestia/celestiacore.h>
+#include <celutil/color.h>
+#include <celutil/gettext.h>
+#include <celutil/greek.h>
+#include "qtcolorswatchwidget.h"
+#include "qtinfopanel.h"
 
+namespace
+{
 
-static const int MAX_LISTED_DSOS = 20000;
+constexpr int MAX_LISTED_DSOS = 20000;
 
 class DSOFilterPredicate
 {
@@ -50,6 +73,31 @@ public:
     bool typeFilterEnabled{false};
     QRegExp typeFilter;
 };
+
+
+DSOFilterPredicate::DSOFilterPredicate() :
+    objectTypeMask(Renderer::ShowGalaxies)
+
+{
+}
+
+
+bool
+DSOFilterPredicate::operator()(const DeepSkyObject* dso) const
+{
+    if ((objectTypeMask & dso->getRenderMask()) == 0)
+    {
+        return true;
+    }
+
+    if (typeFilterEnabled)
+    {
+        if (!typeFilter.exactMatch(dso->getType()))
+            return true;
+    }
+
+    return false;
+}
 
 
 class DSOPredicate
@@ -64,19 +112,65 @@ public:
         ObjectType
     };
 
-    DSOPredicate(Criterion _criterion, const Vector3d& _observerPos, const Universe* _universe);
+    DSOPredicate(Criterion _criterion, const Eigen::Vector3d& _observerPos, const Universe* _universe);
 
     bool operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const;
 
 private:
     Criterion criterion;
-    Vector3d pos;
+    Eigen::Vector3d pos;
     const Universe *universe;
     QCollator coll;
 };
 
 
-class DSOTableModel : public QAbstractTableModel, public ModelHelper
+DSOPredicate::DSOPredicate(Criterion _criterion,
+                           const Eigen::Vector3d& _observerPos,
+                           const Universe* _universe) :
+    criterion(_criterion),
+    pos(_observerPos),
+    universe(_universe)
+{
+    coll.setNumericMode(true);
+}
+
+
+bool
+DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const
+{
+    switch (criterion)
+    {
+    case Distance:
+        return ((pos - dso0->getPosition()).squaredNorm() <
+                (pos - dso1->getPosition()).squaredNorm());
+
+    case Brightness:
+        {
+            double d0 = (pos - dso0->getPosition()).norm();
+            double d1 = (pos - dso1->getPosition()).norm();
+            return astro::absToAppMag((double) dso0->getAbsoluteMagnitude(), d0) <
+                   astro::absToAppMag((double) dso1->getAbsoluteMagnitude(), d1);
+        }
+
+    case IntrinsicBrightness:
+        return dso0->getAbsoluteMagnitude() < dso1->getAbsoluteMagnitude();
+
+    case ObjectType:
+        return std::strcmp(dso0->getType(), dso1->getType()) < 0;
+
+    case Alphabetical:
+        return coll.compare(universe->getDSOCatalog()->getDSOName(dso0, true).c_str(),
+                            universe->getDSOCatalog()->getDSOName(dso1, true).c_str()) < 0;
+
+    default:
+        return false;
+    }
+}
+
+} // end unnamed namespace
+
+
+class DeepSkyBrowser::DSOTableModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     DSOTableModel(const Universe* _universe);
@@ -119,33 +213,36 @@ public:
 
 private:
     const Universe* universe;
-    Vector3d observerPos;
-    vector<DeepSkyObject*> dsos;
+    Eigen::Vector3d observerPos;
+    std::vector<DeepSkyObject*> dsos;
 };
 
 
-DSOTableModel::DSOTableModel(const Universe* _universe) :
+DeepSkyBrowser::DSOTableModel::DSOTableModel(const Universe* _universe) :
     universe(_universe),
-    observerPos(Vector3d::Zero())
+    observerPos(Eigen::Vector3d::Zero())
 {
 }
 
-Selection DSOTableModel::objectAtIndex(const QModelIndex& _index) const
+
+Selection
+DeepSkyBrowser::DSOTableModel::objectAtIndex(const QModelIndex& _index) const
 {
     return itemAtRow((unsigned int) _index.row());
 }
 
 /****** Virtual methods from QAbstractTableModel *******/
 
-// Override QAbstractTableModel::flags()
-Qt::ItemFlags DSOTableModel::flags(const QModelIndex& /*unused*/) const
+Qt::ItemFlags
+DeepSkyBrowser::DSOTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 
 // Override QAbstractTableModel::data()
-QVariant DSOTableModel::data(const QModelIndex& index, int role) const
+QVariant
+DeepSkyBrowser::DSOTableModel::data(const QModelIndex& index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= (int) dsos.size())
@@ -163,7 +260,7 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
     {
     case NameColumn:
         {
-            string dsoNameString = ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(dso, true));
+            std::string dsoNameString = ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(dso, true));
             return QString::fromStdString(dsoNameString);
         }
     case DistanceColumn:
@@ -182,7 +279,8 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant DSOTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
+QVariant
+DeepSkyBrowser::DSOTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -204,94 +302,32 @@ QVariant DSOTableModel::headerData(int section, Qt::Orientation /* orientation *
 
 
 // Override QAbstractDataModel::rowCount()
-int DSOTableModel::rowCount(const QModelIndex& /*unused*/) const
+int
+DeepSkyBrowser::DSOTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) dsos.size();
 }
 
 
 // Override QAbstractDataModel::columnCount()
-int DSOTableModel::columnCount(const QModelIndex& /*unused*/) const
+int
+DeepSkyBrowser::DSOTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 4;
 }
 
 
-Selection DSOTableModel::itemForInfoPanel(const QModelIndex& _index)
+Selection
+DeepSkyBrowser::DSOTableModel::itemForInfoPanel(const QModelIndex& _index)
 {
     Selection sel = itemAtRow((unsigned int) _index.row());
     return sel;
 }
 
-DSOPredicate::DSOPredicate(Criterion _criterion,
-                           const Vector3d& _observerPos,
-                           const Universe* _universe) :
-    criterion(_criterion),
-    pos(_observerPos),
-    universe(_universe)
-{
-    coll.setNumericMode(true);
-}
-
-
-bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const
-{
-    switch (criterion)
-    {
-    case Distance:
-        return ((pos - dso0->getPosition()).squaredNorm() <
-                (pos - dso1->getPosition()).squaredNorm());
-
-    case Brightness:
-        {
-            double d0 = (pos - dso0->getPosition()).norm();
-            double d1 = (pos - dso1->getPosition()).norm();
-            return astro::absToAppMag((double) dso0->getAbsoluteMagnitude(), d0) <
-                   astro::absToAppMag((double) dso1->getAbsoluteMagnitude(), d1);
-        }
-
-    case IntrinsicBrightness:
-        return dso0->getAbsoluteMagnitude() < dso1->getAbsoluteMagnitude();
-
-    case ObjectType:
-        return strcmp(dso0->getType(), dso1->getType()) < 0;
-
-    case Alphabetical:
-        return coll.compare(universe->getDSOCatalog()->getDSOName(dso0, true).c_str(),
-                            universe->getDSOCatalog()->getDSOName(dso1, true).c_str()) < 0;
-
-    default:
-        return false;
-    }
-}
-
-
-DSOFilterPredicate::DSOFilterPredicate() :
-    objectTypeMask(Renderer::ShowGalaxies)
-
-{
-}
-
-
-bool DSOFilterPredicate::operator()(const DeepSkyObject* dso) const
-{
-    if ((objectTypeMask & dso->getRenderMask()) == 0)
-    {
-        return true;
-    }
-
-    if (typeFilterEnabled)
-    {
-        if (!typeFilter.exactMatch(dso->getType()))
-            return true;
-    }
-
-    return false;
-}
-
 
 // Override QAbstractDataMode::sort()
-void DSOTableModel::sort(int column, Qt::SortOrder order)
+void
+DeepSkyBrowser::DSOTableModel::sort(int column, Qt::SortOrder order)
 {
     DSOPredicate::Criterion criterion = DSOPredicate::Alphabetical;
 
@@ -316,27 +352,28 @@ void DSOTableModel::sort(int column, Qt::SortOrder order)
     std::sort(dsos.begin(), dsos.end(), pred);
 
     if (order == Qt::DescendingOrder)
-        reverse(dsos.begin(), dsos.end());
+        std::reverse(dsos.begin(), dsos.end());
 
     dataChanged(index(0, 0), index(dsos.size() - 1, 4));
 }
 
 
-void DSOTableModel::populate(const UniversalCoord& _observerPos,
-                             DSOFilterPredicate& filterPred,
-                             DSOPredicate::Criterion criterion,
-                             unsigned int nDSOs)
+void
+DeepSkyBrowser::DSOTableModel::populate(const UniversalCoord& _observerPos,
+                                        DSOFilterPredicate& filterPred,
+                                        DSOPredicate::Criterion criterion,
+                                        unsigned int nDSOs)
 {
     const DSODatabase& dsodb = *universe->getDSOCatalog();
 
     observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
 
-    typedef multiset<DeepSkyObject*, DSOPredicate> DSOSet;
+    using DSOSet = std::multiset<DeepSkyObject*, DSOPredicate>;
 
     DSOPredicate pred(criterion, observerPos, universe);
 
     // Apply the filter
-    vector<DeepSkyObject*> filteredDSOs;
+    std::vector<DeepSkyObject*> filteredDSOs;
     unsigned int totalDSOs = dsodb.size();
     unsigned int i = 0;
     filteredDSOs.reserve(totalDSOs);
@@ -398,7 +435,8 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 }
 
 
-DeepSkyObject* DSOTableModel::itemAtRow(unsigned int row) const
+DeepSkyObject*
+DeepSkyBrowser::DSOTableModel::itemAtRow(unsigned int row) const
 {
     return row >= dsos.size() ? nullptr : dsos[row];
 }
@@ -545,7 +583,8 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPane
 
 /******* Slots ********/
 
-void DeepSkyBrowser::slotRefreshTable()
+void
+DeepSkyBrowser::slotRefreshTable()
 {
     UniversalCoord observerPos = appCore->getSimulation()->getActiveObserver()->getPosition();
 
@@ -586,7 +625,8 @@ void DeepSkyBrowser::slotRefreshTable()
 }
 
 
-void DeepSkyBrowser::slotContextMenu(const QPoint& pos)
+void
+DeepSkyBrowser::slotContextMenu(const QPoint& pos)
 {
     QModelIndex index = treeView->indexAt(pos);
     Selection sel = dsoModel->itemAtRow((unsigned int) index.row());
@@ -598,7 +638,8 @@ void DeepSkyBrowser::slotContextMenu(const QPoint& pos)
 }
 
 
-void DeepSkyBrowser::slotMarkSelected()
+void
+DeepSkyBrowser::slotMarkSelected()
 {
     using namespace celestia;
 
@@ -616,7 +657,7 @@ void DeepSkyBrowser::slotMarkSelected()
                 (float) markerColor.blueF());
 
     Universe* universe = appCore->getSimulation()->getUniverse();
-    string label;
+    std::string label;
 
     int nRows = dsoModel->rowCount(QModelIndex());
     for (int row = 0; row < nRows; row++)
@@ -650,7 +691,9 @@ void DeepSkyBrowser::slotMarkSelected()
     } // for
 }
 
-void DeepSkyBrowser::slotUnmarkSelected()
+
+void
+DeepSkyBrowser::slotUnmarkSelected()
 {
     QModelIndexList rows = treeView->selectionModel()->selectedRows();
     Universe* universe = appCore->getSimulation()->getUniverse();
@@ -663,13 +706,16 @@ void DeepSkyBrowser::slotUnmarkSelected()
     } // for
 }
 
-void DeepSkyBrowser::slotClearMarkers()
+
+void
+DeepSkyBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
 
 
-void DeepSkyBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+void
+DeepSkyBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
 {
     if (infoPanel)
         infoPanel->updateHelper(dsoModel, newSel, oldSel);

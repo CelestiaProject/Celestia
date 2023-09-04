@@ -1,12 +1,22 @@
-#include <QPushButton>
-#include <QLocale>
-
-#include <celengine/body.h>
-#include <celestia/celestiacore.h>
 #include "qtgotoobjectdialog.h"
 
-using namespace Eigen;
-using namespace celmath;
+#include <string>
+
+#include <Eigen/Core>
+
+#include <QDialogButtonBox>
+#include <QLocale>
+#include <QPushButton>
+#include <QString>
+
+#include <celengine/astro.h>
+#include <celengine/body.h>
+#include <celengine/observer.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celestia/celestiacore.h>
+#include <celmath/mathlib.h>
+
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),
@@ -38,7 +48,9 @@ GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     ui.kmButton->setChecked(true);
 }
 
-void GoToObjectDialog::on_buttonBox_accepted()
+
+void
+GoToObjectDialog::on_buttonBox_accepted()
 {
     QString objectName = ui.objectName->text();
 
@@ -76,20 +88,22 @@ void GoToObjectDialog::on_buttonBox_accepted()
     {
         simulation->gotoSelectionLongLat(5.0,
                                          distance,
-                                         degToRad(longitude),
-                                         degToRad(latitude),
-                                         Vector3f::UnitY());
+                                         celmath::degToRad(longitude),
+                                         celmath::degToRad(latitude),
+                                         Eigen::Vector3f::UnitY());
     }
     else
     {
         simulation->gotoSelection(5.0,
                                   distance,
-                                  Vector3f::UnitY(),
+                                  Eigen::Vector3f::UnitY(),
                                   ObserverFrame::ObserverLocal);
     }
 }
 
-void GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
+
+void
+GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
 {
     QPushButton *okButton = ui.buttonBox->button(QDialogButtonBox::Ok);
 

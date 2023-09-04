@@ -1,12 +1,21 @@
 #pragma once
 
-#include "qtdraghandler.h"
-
-#include <QWidget>
+#include <cstdint>
 #include <memory>
+
+#include <QtGlobal>
+
 #include <pointer-constraints-unstable-v1-client-protocol.h>
 #include <relative-pointer-unstable-v1-client-protocol.h>
 #include <wayland-client.h>
+
+#include "qtdraghandler.h"
+
+class QMouseEvent;
+class QWidget;
+
+class CelestiaCore;
+
 
 class WaylandDragHandler : public DragHandler
 {

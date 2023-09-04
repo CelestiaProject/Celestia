@@ -11,14 +11,15 @@
 
 #pragma once
 
-#include <QMouseEvent>
-#include <QPoint>
 #include <memory>
-#ifdef USE_WAYLAND
-#include <QWidget>
-#endif
+
 #include <QtGlobal>
-#include <celestia/celestiacore.h>
+#include <QPoint>
+
+class QMouseEvent;
+class QWidget;
+
+class CelestiaCore;
 
 // The base version of DragHandler is the fallback implementation for
 // platforms which do not support pointer warping

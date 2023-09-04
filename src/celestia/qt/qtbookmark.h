@@ -12,19 +12,29 @@
 
 #pragma once
 
-#include <QString>
-#include <QList>
+#include <Qt>
 #include <QAbstractItemModel>
-#include <QToolBar>
+#include <QDialog>
 #include <QIcon>
 #include <QImage>
+#include <QList>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QToolBar>
 
 #include "ui_addbookmark.h"
 #include "ui_newbookmarkfolder.h"
 #include "ui_organizebookmarks.h"
 
-class QSortFilterProxyModel;
+class QIODevice;
 class QMenu;
+class QMimeData;
+class QModelIndex;
+class QSortFilterProxyModel;
+class QVariant;
+class QWidget;
+
 class CelestiaState;
 
 class BookmarkItem
@@ -38,7 +48,7 @@ public:
         None
     };
 
-    static const int ICON_SIZE = 24;
+    static constexpr int ICON_SIZE = 24;
 
     BookmarkItem() = default;
 
@@ -74,7 +84,6 @@ private:
     void setParent(BookmarkItem* parent);
     void reindex(int startIndex);
 
-private:
     Type m_type{ None };
     BookmarkItem* m_parent{ nullptr };
     QString m_title;
@@ -98,24 +107,24 @@ public:
         TypeRole = Qt::UserRole + 1
     };
 
-    QModelIndex index(int row, int /* column */, const QModelIndex& parent) const;
-    QModelIndex parent(const QModelIndex& index) const;
+    QModelIndex index(int row, int /* column */, const QModelIndex& parent) const override;
+    QModelIndex parent(const QModelIndex& index) const override;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount(const QModelIndex& /* parent */) const;
-    QVariant data(const QModelIndex& index, int role) const;
-    QVariant headerData(int /* section */, Qt::Orientation /* orientation */, int /* role */) const   ;
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& /* parent */) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QVariant headerData(int /* section */, Qt::Orientation /* orientation */, int /* role */) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     // Modifying operations
-    bool setData(const QModelIndex& index, const QVariant& value, int role);
-    bool removeRows(int row, int count, const QModelIndex& parent);
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 
     // Drag and drop support
-    Qt::DropActions supportedDropActions() const;
-    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
-    QStringList mimeTypes() const;
-    QMimeData* mimeData(const QModelIndexList& indexes) const;
+    Qt::DropActions supportedDropActions() const override;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+    QStringList mimeTypes() const override;
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     QModelIndex itemIndex(BookmarkItem* item);
     const BookmarkItem* getItem(const QModelIndex& index) const;
@@ -123,7 +132,6 @@ public:
 
     void addItem(BookmarkItem* item, int position);
     void removeItem(BookmarkItem* item);
-    void modifyItem(BookmarkItem* item);
 
 public:
     BookmarkItem* m_root{ nullptr };

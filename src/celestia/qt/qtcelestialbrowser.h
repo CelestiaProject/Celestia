@@ -13,32 +13,31 @@
 #pragma once
 
 #include <QWidget>
-#include <celengine/body.h>
-#include "qtselectionpopup.h"
 
-class QAbstractItemModel;
-class QItemSelection;
-class QTreeView;
-class QRadioButton;
-class QComboBox;
 class QCheckBox;
+class QComboBox;
+class QItemSelection;
 class QLabel;
 class QLineEdit;
-class ColorSwatchWidget;
-class CelestiaCore;
-class InfoPanel;
+class QPoint;
+class QRadioButton;
+class QTreeView;
 
-class StarTableModel;
+class CelestiaCore;
+class Selection;
+
+class ColorSwatchWidget;
+class InfoPanel;
 
 class CelestialBrowser : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
- public:
+public:
     CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~CelestialBrowser() = default;
 
- public slots:
+public slots:
     void slotUncheckMultipleFilterBox();
     void slotUncheckBarycentersFilterBox();
     void slotRefreshTable();
@@ -48,10 +47,12 @@ Q_OBJECT
     void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
- signals:
+signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
 
- private:
+private:
+    class StarTableModel;
+
     CelestiaCore* appCore;
 
     StarTableModel* starModel{nullptr};

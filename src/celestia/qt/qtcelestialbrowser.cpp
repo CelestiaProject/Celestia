@@ -10,35 +10,56 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celestia/celestiacore.h>
-#include <celutil/gettext.h>
-#include <celutil/greek.h>
 #include "qtcelestialbrowser.h"
-#include "qtcolorswatchwidget.h"
-#include "qtinfopanel.h"
-#include <QAbstractItemModel>
-#include <QTreeView>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QComboBox>
+
+#include <algorithm>
+#include <cstring>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <Eigen/Core>
+
+#include <Qt>
+#include <QAbstractItemView>
+#include <QAbstractTableModel>
 #include <QCheckBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QCollator>
+#include <QColor>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
+#include <QModelIndex>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QRegExp>
-#include <QFontMetrics>
-#include <QCollator>
-#include <algorithm>
-#include <iterator>
-#include <vector>
-#include <set>
+#include <QString>
+#include <QTreeView>
+#include <QVariant>
+#include <QVBoxLayout>
 
-using namespace Eigen;
-using namespace std;
+#include <celengine/astro.h>
+#include <celengine/astroobj.h>
+#include <celengine/marker.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/solarsys.h>
+#include <celengine/star.h>
+#include <celengine/stardb.h>
+#include <celengine/univcoord.h>
+#include <celengine/universe.h>
+#include <celestia/celestiacore.h>
+#include <celutil/color.h>
+#include <celutil/gettext.h>
+#include <celutil/greek.h>
+#include "qtcolorswatchwidget.h"
+#include "qtinfopanel.h"
 
+namespace
+{
 
 class StarFilterPredicate
 {
@@ -54,6 +75,54 @@ public:
     QRegExp spectralTypeFilter;
     SolarSystemCatalog* solarSystems;
 };
+
+
+StarFilterPredicate::StarFilterPredicate() :
+
+    solarSystems(nullptr)
+{
+}
+
+
+bool
+StarFilterPredicate::operator()(const Star* star) const
+{
+    if (omitBarycenters)
+    {
+        if (!star->getVisibility())
+            return true;
+    }
+
+    if (planetsFilterEnabled)
+    {
+        if (solarSystems == nullptr)
+            return true;
+
+        auto iter = solarSystems->find(star->getIndex());
+        if (iter == solarSystems->end())
+            return true;
+    }
+
+    if (multipleFilterEnabled)
+    {
+        if (!star->getOrbitBarycenter() || star->getIndex() == 0)
+            return true;
+    }
+
+    if (barycentersFilterEnabled)
+    {
+        if (star->getVisibility())
+            return true;
+    }
+
+    if (spectralTypeFilterEnabled)
+    {
+        if (!spectralTypeFilter.exactMatch(star->getSpectralType()))
+            return true;
+    }
+
+    return false;
+}
 
 
 class StarPredicate
@@ -74,14 +143,69 @@ public:
 
 private:
     Criterion criterion;
-    Vector3f pos;
+    Eigen::Vector3f pos;
     UniversalCoord ucPos;
     const Universe* universe;
     QCollator coll;
 };
 
 
-class StarTableModel : public QAbstractTableModel, public ModelHelper
+StarPredicate::StarPredicate(Criterion _criterion,
+                             const UniversalCoord& _observerPos,
+                             const Universe *_universe) :
+    criterion(_criterion),
+    ucPos(_observerPos),
+    universe(_universe)
+{
+    pos = ucPos.toLy().cast<float>();
+    coll.setNumericMode(true);
+}
+
+
+bool
+StarPredicate::operator()(const Star* star0, const Star* star1) const
+{
+    switch (criterion)
+    {
+    case Distance:
+        return ((pos - star0->getPosition()).squaredNorm() <
+                (pos - star1->getPosition()).squaredNorm());
+
+    case Brightness:
+        {
+            float d0 = (pos - star0->getPosition()).norm();
+            float d1 = (pos - star1->getPosition()).norm();
+
+            // If the stars are closer than one light year, use
+            // a more precise distance estimate.
+            if (d0 < 1.0f)
+                d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
+            if (d1 < 1.0f)
+                d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
+
+            return (star0->getApparentMagnitude(d0) <
+                    star1->getApparentMagnitude(d1));
+        }
+
+    case IntrinsicBrightness:
+        return star0->getAbsoluteMagnitude() < star1->getAbsoluteMagnitude();
+
+    case SpectralType:
+        return std::strcmp(star0->getSpectralType(), star1->getSpectralType()) < 0;
+
+    case Alphabetical:
+        return coll.compare(universe->getStarCatalog()->getStarName(*star0, true).c_str(),
+                            universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
+
+    default:
+        return false;
+    }
+}
+
+} // end unnamed namespace
+
+
+class CelestialBrowser::StarTableModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     StarTableModel(const Universe* _universe) : universe(_universe) {};
@@ -128,10 +252,12 @@ private:
     const Universe* universe;
     UniversalCoord observerPos{ 0.0, 0.0, 0.0 };
     double now{ astro::J2000 };
-    vector<Star*> stars;
+    std::vector<Star*> stars;
 };
 
-Selection StarTableModel::objectAtIndex(const QModelIndex& _index) const
+
+Selection
+CelestialBrowser::StarTableModel::objectAtIndex(const QModelIndex& _index) const
 {
     return itemAtRow((unsigned int) _index.row());
 }
@@ -140,14 +266,16 @@ Selection StarTableModel::objectAtIndex(const QModelIndex& _index) const
 /****** Virtual methods from QAbstractTableModel *******/
 
 // Override QAbstractTableModel::flags()
-Qt::ItemFlags StarTableModel::flags(const QModelIndex& /*unused*/) const
+Qt::ItemFlags
+CelestialBrowser::StarTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 
 // Override QAbstractTableModel::data()
-QVariant StarTableModel::data(const QModelIndex& index, int role) const
+QVariant
+CelestialBrowser::StarTableModel::data(const QModelIndex& index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= (int) stars.size())
@@ -164,7 +292,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         {
         case NameColumn:
             {
-                string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
+                std::string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
                 return QString::fromStdString(starNameString);
             }
         case DistanceColumn:
@@ -213,7 +341,8 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
+QVariant
+CelestialBrowser::StarTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -237,127 +366,32 @@ QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation 
 
 
 // Override QAbstractDataModel::rowCount()
-int StarTableModel::rowCount(const QModelIndex& /*unused*/) const
+int
+CelestialBrowser::StarTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) stars.size();
 }
 
 
 // Override QAbstractDataModel::columnCount()
-int StarTableModel::columnCount(const QModelIndex& /*unused*/) const
+int
+CelestialBrowser::StarTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 5;
 }
 
 
-Selection StarTableModel::itemForInfoPanel(const QModelIndex& _index)
+Selection
+CelestialBrowser::StarTableModel::itemForInfoPanel(const QModelIndex& _index)
 {
     Selection sel = itemAtRow((unsigned int) _index.row());
     return sel;
 }
 
 
-StarPredicate::StarPredicate(Criterion _criterion,
-                             const UniversalCoord& _observerPos,
-                             const Universe *_universe) :
-    criterion(_criterion),
-    ucPos(_observerPos),
-    universe(_universe)
-{
-    pos = ucPos.toLy().cast<float>();
-    coll.setNumericMode(true);
-}
-
-
-bool StarPredicate::operator()(const Star* star0, const Star* star1) const
-{
-    switch (criterion)
-    {
-    case Distance:
-        return ((pos - star0->getPosition()).squaredNorm() <
-                (pos - star1->getPosition()).squaredNorm());
-
-    case Brightness:
-        {
-            float d0 = (pos - star0->getPosition()).norm();
-            float d1 = (pos - star1->getPosition()).norm();
-
-            // If the stars are closer than one light year, use
-            // a more precise distance estimate.
-            if (d0 < 1.0f)
-                d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
-            if (d1 < 1.0f)
-                d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
-
-            return (star0->getApparentMagnitude(d0) <
-                    star1->getApparentMagnitude(d1));
-        }
-
-    case IntrinsicBrightness:
-        return star0->getAbsoluteMagnitude() < star1->getAbsoluteMagnitude();
-
-    case SpectralType:
-        return strcmp(star0->getSpectralType(), star1->getSpectralType()) < 0;
-
-    case Alphabetical:
-        return coll.compare(universe->getStarCatalog()->getStarName(*star0, true).c_str(),
-                            universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
-
-    default:
-        return false;
-    }
-}
-
-
-StarFilterPredicate::StarFilterPredicate() :
-
-    solarSystems(nullptr)
-{
-}
-
-
-bool StarFilterPredicate::operator()(const Star* star) const
-{
-    if (omitBarycenters)
-    {
-        if (!star->getVisibility())
-            return true;
-    }
-
-    if (planetsFilterEnabled)
-    {
-        if (solarSystems == nullptr)
-            return true;
-
-        SolarSystemCatalog::iterator iter = solarSystems->find(star->getIndex());
-        if (iter == solarSystems->end())
-            return true;
-    }
-
-    if (multipleFilterEnabled)
-    {
-        if (!star->getOrbitBarycenter() || star->getIndex() == 0)
-            return true;
-    }
-
-    if (barycentersFilterEnabled)
-    {
-        if (star->getVisibility())
-            return true;
-    }
-
-    if (spectralTypeFilterEnabled)
-    {
-        if (!spectralTypeFilter.exactMatch(star->getSpectralType()))
-            return true;
-    }
-
-    return false;
-}
-
-
 // Override QAbstractDataMode::sort()
-void StarTableModel::sort(int column, Qt::SortOrder order)
+void
+CelestialBrowser::StarTableModel::sort(int column, Qt::SortOrder order)
 {
     StarPredicate::Criterion criterion = StarPredicate::Alphabetical;
 
@@ -385,28 +419,29 @@ void StarTableModel::sort(int column, Qt::SortOrder order)
     std::sort(stars.begin(), stars.end(), pred);
 
     if (order == Qt::DescendingOrder)
-        reverse(stars.begin(), stars.end());
+        std::reverse(stars.begin(), stars.end());
 
     dataChanged(index(0, 0), index(stars.size() - 1, 4));
 }
 
 
-void StarTableModel::populate(const UniversalCoord& _observerPos,
-                              double _now,
-                              StarFilterPredicate& filterPred,
-                              StarPredicate::Criterion criterion,
-                              unsigned int nStars)
+void
+CelestialBrowser::StarTableModel::populate(const UniversalCoord& _observerPos,
+                                           double _now,
+                                           StarFilterPredicate& filterPred,
+                                           StarPredicate::Criterion criterion,
+                                           unsigned int nStars)
 {
     const StarDatabase& stardb = *universe->getStarCatalog();
 
     observerPos = _observerPos;
     now = _now;
 
-    typedef multiset<Star*, StarPredicate> StarSet;
+    using StarSet = std::multiset<Star*, StarPredicate>;
     StarPredicate pred(criterion, observerPos, universe);
 
     // Apply the filter
-    vector<Star*> filteredStars;
+    std::vector<Star*> filteredStars;
     unsigned int totalStars = stardb.size();
     unsigned int i = 0;
     filteredStars.reserve(totalStars);
@@ -465,7 +500,8 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 }
 
 
-Selection StarTableModel::itemAtRow(unsigned int row) const
+Selection
+CelestialBrowser::StarTableModel::itemAtRow(unsigned int row) const
 {
     if (row >= stars.size())
         return Selection();
@@ -489,13 +525,6 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, Info
 
     starModel = new StarTableModel(appCore->getSimulation()->getUniverse());
     treeView->setModel(starModel);
-
-#if 0
-    QFontMetrics fm = fontMetrics();
-    treeView->setColumnWidth(StarTableModel::DistanceColumn, fm.width(starModel->headerData(StarTableModel::DistanceColumn)));
-    treeView->setColumnWidth(StarTableModel::AppMagColumn, 30);
-    treeView->setColumnWidth(StarTableModel::AbsMagColumn, 30);
-#endif
 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -626,19 +655,22 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, Info
 
 
 /******* Slots ********/
-void CelestialBrowser::slotUncheckMultipleFilterBox()
+void
+CelestialBrowser::slotUncheckMultipleFilterBox()
 {
     multipleFilterBox->setChecked(false);
     slotRefreshTable();
 }
 
-void CelestialBrowser::slotUncheckBarycentersFilterBox()
+void
+CelestialBrowser::slotUncheckBarycentersFilterBox()
 {
     barycentersFilterBox->setChecked(false);
     slotRefreshTable();
 }
 
-void CelestialBrowser::slotRefreshTable()
+void
+CelestialBrowser::slotRefreshTable()
 {
     UniversalCoord observerPos = appCore->getSimulation()->getActiveObserver()->getPosition();
     double now = appCore->getSimulation()->getTime();
@@ -680,7 +712,8 @@ void CelestialBrowser::slotRefreshTable()
 }
 
 
-void CelestialBrowser::slotContextMenu(const QPoint& pos)
+void
+CelestialBrowser::slotContextMenu(const QPoint& pos)
 {
     QModelIndex index = treeView->indexAt(pos);
     Selection sel = starModel->itemAtRow((unsigned int) index.row());
@@ -692,7 +725,8 @@ void CelestialBrowser::slotContextMenu(const QPoint& pos)
 }
 
 
-void CelestialBrowser::slotMarkSelected()
+void
+CelestialBrowser::slotMarkSelected()
 {
     using namespace celestia;
 
@@ -709,7 +743,7 @@ void CelestialBrowser::slotMarkSelected()
                 (float) markerColor.blueF());
 
     Universe* universe = appCore->getSimulation()->getUniverse();
-    string label;
+    std::string label;
 
     for (int row = 0; row < starModel->rowCount(QModelIndex()); row++)
     {
@@ -742,7 +776,8 @@ void CelestialBrowser::slotMarkSelected()
     }
 }
 
-void CelestialBrowser::slotUnmarkSelected()
+void
+CelestialBrowser::slotUnmarkSelected()
 {
     QModelIndexList rows = treeView->selectionModel()->selectedRows();
     Universe* universe = appCore->getSimulation()->getUniverse();
@@ -755,12 +790,14 @@ void CelestialBrowser::slotUnmarkSelected()
     } // for
 }
 
-void CelestialBrowser::slotClearMarkers()
+void
+CelestialBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
 
-void CelestialBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+void
+CelestialBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
 {
     if (infoPanel)
         infoPanel->updateHelper(starModel, newSel, oldSel);

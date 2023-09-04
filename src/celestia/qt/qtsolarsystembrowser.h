@@ -13,43 +13,42 @@
 #pragma once
 
 #include <QWidget>
-#include "celengine/selection.h"
 
-class QAbstractItemModel;
-class QTreeView;
 class QCheckBox;
 class QComboBox;
 class QItemSelection;
-class ColorSwatchWidget;
+class QPoint;
+class QTreeView;
+
 class CelestiaCore;
+class Selection;
+
+class ColorSwatchWidget;
 class InfoPanel;
 
-class SolarSystemTreeModel;
 
 class SolarSystemBrowser : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
- public:
+public:
     SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~SolarSystemBrowser() = default;
 
- public slots:
+public slots:
     void slotRefreshTree();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     void slotUnmarkSelected();
-    //void slotChooseMarkerColor();
     void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
- signals:
+signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
 
- private:
-    void setMarkerColor(QColor color);
+private:
+    class SolarSystemTreeModel;
 
- private:
     CelestiaCore* appCore;
 
     SolarSystemTreeModel* solarSystemModel{nullptr};

@@ -2,9 +2,15 @@
 
 #include <QCursor>
 #include <QGuiApplication>
+#include <QMouseEvent>
+#include <QString>
+
+#include <celestia/celestiacore.h>
+
 #ifdef USE_WAYLAND
 #include "qtwaylanddraghandler.h"
 #endif
+
 
 void
 DragHandler::begin(const QMouseEvent &m, qreal s, int b)
@@ -13,6 +19,7 @@ DragHandler::begin(const QMouseEvent &m, qreal s, int b)
     scale         = s;
     buttons       = b;
 }
+
 
 void
 DragHandler::move(const QMouseEvent &m, qreal s)
@@ -27,17 +34,20 @@ DragHandler::move(const QMouseEvent &m, qreal s)
     saveCursorPos = m.globalPos();
 }
 
+
 void
 DragHandler::setButton(int button)
 {
     buttons |= button;
 }
 
+
 void
 DragHandler::clearButton(int button)
 {
     buttons &= ~button;
 }
+
 
 int
 DragHandler::effectiveButtons() const
@@ -67,11 +77,13 @@ WarpingDragHandler::move(const QMouseEvent &m, qreal s)
     QCursor::setPos(saveCursorPos);
 }
 
+
 void
 WarpingDragHandler::finish()
 {
     QCursor::setPos(saveCursorPos);
 }
+
 
 std::unique_ptr<DragHandler>
 createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)

@@ -14,7 +14,10 @@
 #include <QDialog>
 #include "ui_preferences.h"
 
+class QWidget;
+
 class CelestiaCore;
+
 
 class PreferencesDialog : public QDialog
 {

@@ -10,33 +10,118 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <QAbstractItemModel>
-#include <QItemSelection>
-#include <QTreeView>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QLabel>
+#include "qtsolarsystembrowser.h"
+
+#include <string>
 #include <vector>
-#ifdef TEST_MODEL
-#include <QAbstractItemModelTester>
-#endif
+
+#include <Qt>
+#include <QAbstractItemView>
+#include <QAbstractItemModel>
+#include <QCheckBox>
+#include <QColor>
+#include <QComboBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QItemSelectionModel>
+#include <QModelIndex>
+#include <QModelIndexList>
+#include <QPushButton>
+#include <QString>
+#include <QTreeView>
+#include <QVariant>
+#include <QVBoxLayout>
 
 #include <celengine/body.h>
+#include <celengine/marker.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/solarsys.h>
+#include <celengine/star.h>
+#include <celengine/stardb.h>
+#include <celengine/universe.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
-#include "qtsolarsystembrowser.h"
-#include "qtinfopanel.h"
 #include "qtcolorswatchwidget.h"
+#include "qtinfopanel.h"
 
-using namespace std;
+
+namespace
+{
+
+QString
+objectTypeName(const Selection& sel)
+{
+    if (sel.star() != nullptr)
+    {
+        if (!sel.star()->getVisibility())
+            return _("Barycenter");
+        else
+            return _("Star");
+    }
+    if (sel.body() != nullptr)
+    {
+        int classification = sel.body()->getClassification();
+        switch (classification)
+        {
+        case Body::Planet:
+            return _("Planet");
+        case Body::DwarfPlanet:
+            return _("Dwarf planet");
+        case Body::Moon:
+            return _("Moon");
+        case Body::MinorMoon:
+            return _("Minor moon");
+        case Body::Asteroid:
+            return _("Asteroid");
+        case Body::Comet:
+            return _("Comet");
+        case Body::Spacecraft:
+            return _("Spacecraft");
+        case Body::Invisible:
+            return _("Reference point");
+        case Body::Component:
+            return _("Component");
+        case Body::SurfaceFeature:
+            return _("Surface feature");
+        }
+    }
+
+    return _("Unknown");
+}
 
 
-class SolarSystemTreeModel : public QAbstractItemModel, public ModelHelper
+QString
+classificationName(int classification)
+{
+    switch (classification)
+    {
+    case Body::Planet:
+        return _("Planets");
+    case Body::Moon:
+        return _("Moons");
+    case Body::Spacecraft:
+        return C_("plural", "Spacecraft");
+    case Body::Asteroid:
+        return _("Asteroids & comets");
+    case Body::Invisible:
+        return _("Reference points");
+    case Body::MinorMoon:
+        return _("Minor moons");
+    case Body::Component:
+        return _("Components");
+    case Body::SurfaceFeature:
+        return _("Surface features");
+    default:
+        return _("Other objects");
+    }
+}
+
+} // end unnamed namespace
+
+
+class SolarSystemBrowser::SolarSystemTreeModel : public QAbstractItemModel, public ModelHelper
 {
 public:
     SolarSystemTreeModel(const Universe* _universe);
@@ -85,15 +170,15 @@ private:
     TreeItem* createTreeItem(Selection sel, TreeItem* parent, int childIndex);
     void addTreeItemChildren(TreeItem* item,
                              PlanetarySystem* sys,
-                             const vector<Star*>* orbitingStars);
+                             const std::vector<Star*>* orbitingStars);
     void addTreeItemChildrenFiltered(TreeItem* item,
                                      PlanetarySystem* sys);
     void addTreeItemChildrenGrouped(TreeItem* item,
                                     PlanetarySystem* sys,
-                                    const vector<Star*>* orbitingStars,
+                                    const std::vector<Star*>* orbitingStars,
                                     Selection parent);
     TreeItem* createGroupTreeItem(int classification,
-                                  const vector<Body*>& objects,
+                                  const std::vector<Body*>& objects,
                                   TreeItem* parent,
                                   int childIndex);
 
@@ -107,7 +192,7 @@ private:
 };
 
 
-SolarSystemTreeModel::TreeItem::~TreeItem()
+SolarSystemBrowser::SolarSystemTreeModel::TreeItem::~TreeItem()
 {
     if (children != nullptr)
     {
@@ -118,7 +203,7 @@ SolarSystemTreeModel::TreeItem::~TreeItem()
 }
 
 
-SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
+SolarSystemBrowser::SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
     universe(_universe)
 {
     // Initialize an empty model
@@ -127,7 +212,8 @@ SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
 
 
 // Call createTreeItem() to build the parallel tree structure
-void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, int _bodyFilter)
+void
+SolarSystemBrowser::SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, int _bodyFilter)
 {
     beginResetModel();
     groupByClass = _groupByClass;
@@ -158,17 +244,17 @@ void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, int _bodyF
 // their classification. It also simplifies the code because stars
 // and solar system bodies can be treated almost identically once
 // the new tree is built.
-SolarSystemTreeModel::TreeItem*
-SolarSystemTreeModel::createTreeItem(Selection sel,
-                                     TreeItem* parent,
-                                     int childIndex)
+SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
+SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
+                                                         TreeItem* parent,
+                                                         int childIndex)
 {
     auto* item = new TreeItem();
     item->parent = parent;
     item->obj = sel;
     item->childIndex = childIndex;
 
-    const vector<Star*>* orbitingStars = nullptr;
+    const std::vector<Star*>* orbitingStars = nullptr;
 
     PlanetarySystem* sys = nullptr;
     if (sel.body() != nullptr)
@@ -201,9 +287,9 @@ SolarSystemTreeModel::createTreeItem(Selection sel,
 
 
 void
-SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
-                                          PlanetarySystem* sys,
-                                          const vector<Star*>* orbitingStars)
+SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
+                                                              PlanetarySystem* sys,
+                                                              const std::vector<Star*>* orbitingStars)
 {
     // Calculate the number of children: the number of orbiting stars plus
     // the number of orbiting solar system bodies.
@@ -244,10 +330,10 @@ SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
 
 
 void
-SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
-                                                  PlanetarySystem* sys)
+SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
+                                                                      PlanetarySystem* sys)
 {
-    vector<Body*> bodies;
+    std::vector<Body*> bodies;
 
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
@@ -278,18 +364,18 @@ SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
 // asteroids, and spacecraft a grouped together, as there tend to be
 // large collections of such objects.
 void
-SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
-                                                 PlanetarySystem* sys,
-                                                 const vector<Star*>* orbitingStars,
-                                                 Selection parent)
+SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
+                                                                     PlanetarySystem* sys,
+                                                                     const std::vector<Star*>* orbitingStars,
+                                                                     Selection parent)
 {
-    vector<Body*> asteroids;
-    vector<Body*> spacecraft;
-    vector<Body*> minorMoons;
-    vector<Body*> surfaceFeatures;
-    vector<Body*> components;
-    vector<Body*> other;
-    vector<Body*> normal;
+    std::vector<Body*> asteroids;
+    std::vector<Body*> spacecraft;
+    std::vector<Body*> minorMoons;
+    std::vector<Body*> surfaceFeatures;
+    std::vector<Body*> components;
+    std::vector<Body*> other;
+    std::vector<Body*> normal;
 
     bool groupAsteroids = true;
     bool groupSpacecraft = true;
@@ -446,11 +532,11 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
 }
 
 
-SolarSystemTreeModel::TreeItem*
-SolarSystemTreeModel::createGroupTreeItem(int classification,
-                                          const vector<Body*>& objects,
-                                          TreeItem* parent,
-                                          int childIndex)
+SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
+SolarSystemBrowser::SolarSystemTreeModel::createGroupTreeItem(int classification,
+                                                              const std::vector<Body*>& objects,
+                                                              TreeItem* parent,
+                                                              int childIndex)
 {
     auto* item = new TreeItem();
     item->parent = parent;
@@ -471,8 +557,8 @@ SolarSystemTreeModel::createGroupTreeItem(int classification,
 }
 
 
-SolarSystemTreeModel::TreeItem*
-SolarSystemTreeModel::itemAtIndex(const QModelIndex& index) const
+SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
+SolarSystemBrowser::SolarSystemTreeModel::itemAtIndex(const QModelIndex& index) const
 {
     if (!index.isValid())
         return rootItem;
@@ -482,7 +568,7 @@ SolarSystemTreeModel::itemAtIndex(const QModelIndex& index) const
 
 
 Selection
-SolarSystemTreeModel::objectAtIndex(const QModelIndex& index) const
+SolarSystemBrowser::SolarSystemTreeModel::objectAtIndex(const QModelIndex& index) const
 {
     return itemAtIndex(index)->obj;
 }
@@ -491,7 +577,8 @@ SolarSystemTreeModel::objectAtIndex(const QModelIndex& index) const
 /****** Virtual methods from QAbstractTableModel *******/
 
 // Override QAbstractTableModel::index()
-QModelIndex SolarSystemTreeModel::index(int row, int column, const QModelIndex& parent) const
+QModelIndex
+SolarSystemBrowser::SolarSystemTreeModel::index(int row, int column, const QModelIndex& parent) const
 {
     if (!hasIndex(row, column, parent))
         return QModelIndex();
@@ -511,7 +598,8 @@ QModelIndex SolarSystemTreeModel::index(int row, int column, const QModelIndex& 
 
 
 // Override QAbstractTableModel::parent()
-QModelIndex SolarSystemTreeModel::parent(const QModelIndex& index) const
+QModelIndex
+SolarSystemBrowser::SolarSystemTreeModel::parent(const QModelIndex& index) const
 {
     if (!index.isValid())
         return QModelIndex();
@@ -526,7 +614,8 @@ QModelIndex SolarSystemTreeModel::parent(const QModelIndex& index) const
 
 
 // Override QAbstractTableModel::flags()
-Qt::ItemFlags SolarSystemTreeModel::flags(const QModelIndex& index) const
+Qt::ItemFlags
+SolarSystemBrowser::SolarSystemTreeModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
         return {};
@@ -535,75 +624,9 @@ Qt::ItemFlags SolarSystemTreeModel::flags(const QModelIndex& index) const
 }
 
 
-static QString objectTypeName(const Selection& sel)
-{
-    if (sel.star() != nullptr)
-    {
-        if (!sel.star()->getVisibility())
-            return _("Barycenter");
-        else
-            return _("Star");
-    }
-    if (sel.body() != nullptr)
-    {
-        int classification = sel.body()->getClassification();
-        switch (classification)
-        {
-        case Body::Planet:
-            return _("Planet");
-        case Body::DwarfPlanet:
-            return _("Dwarf planet");
-        case Body::Moon:
-            return _("Moon");
-        case Body::MinorMoon:
-            return _("Minor moon");
-        case Body::Asteroid:
-            return _("Asteroid");
-        case Body::Comet:
-            return _("Comet");
-        case Body::Spacecraft:
-            return _("Spacecraft");
-        case Body::Invisible:
-            return _("Reference point");
-        case Body::Component:
-            return _("Component");
-        case Body::SurfaceFeature:
-            return _("Surface feature");
-        }
-    }
-
-    return _("Unknown");
-}
-
-
-static QString classificationName(int classification)
-{
-    switch (classification)
-    {
-    case Body::Planet:
-        return _("Planets");
-    case Body::Moon:
-        return _("Moons");
-    case Body::Spacecraft:
-        return C_("plural", "Spacecraft");
-    case Body::Asteroid:
-        return _("Asteroids & comets");
-    case Body::Invisible:
-        return _("Reference points");
-    case Body::MinorMoon:
-        return _("Minor moons");
-    case Body::Component:
-        return _("Components");
-    case Body::SurfaceFeature:
-        return _("Surface features");
-    default:
-        return _("Other objects");
-    }
-}
-
-
 // Override QAbstractTableModel::data()
-QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
+QVariant
+SolarSystemBrowser::SolarSystemTreeModel::data(const QModelIndex& index, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -628,7 +651,7 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
     case NameColumn:
         if (sel.star() != nullptr)
         {
-            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
+            std::string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
             return QString::fromStdString(starNameString);
         }
         if (sel.body() != nullptr)
@@ -646,7 +669,8 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
+QVariant
+SolarSystemBrowser::SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -664,7 +688,8 @@ QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orient
 
 
 // Override QAbstractDataModel::rowCount()
-int SolarSystemTreeModel::rowCount(const QModelIndex& parent) const
+int
+SolarSystemBrowser::SolarSystemTreeModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.column() > 0)
         return 0;
@@ -677,13 +702,15 @@ int SolarSystemTreeModel::rowCount(const QModelIndex& parent) const
 
 
 // Override QAbstractDataModel::columnCount()
-int SolarSystemTreeModel::columnCount(const QModelIndex& /*unused*/) const
+int
+SolarSystemBrowser::SolarSystemTreeModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 2;
 }
 
 // Override QAbstractDataModel::sibling()
-QModelIndex SolarSystemTreeModel::sibling(int row, int column, const QModelIndex &index) const
+QModelIndex
+SolarSystemBrowser::SolarSystemTreeModel::sibling(int row, int column, const QModelIndex &index) const
 {
     if (row == index.row() && column < columnCount(index))
         // cheap sibling operation: just adjust the column:
@@ -694,12 +721,15 @@ QModelIndex SolarSystemTreeModel::sibling(int row, int column, const QModelIndex
     return QAbstractItemModel::sibling(row, column, index);
 }
 
-void SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
+
+void
+SolarSystemBrowser::SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
 {
 }
 
 
-Selection SolarSystemTreeModel::itemForInfoPanel(const QModelIndex& _index)
+Selection
+SolarSystemBrowser::SolarSystemTreeModel::itemForInfoPanel(const QModelIndex& _index)
 {
     return objectAtIndex(_index);
 }
@@ -843,7 +873,8 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
 
 /******* Slots ********/
 
-void SolarSystemBrowser::slotRefreshTree()
+void
+SolarSystemBrowser::slotRefreshTree()
 {
     const Simulation* sim = appCore->getSimulation();
 
@@ -896,7 +927,8 @@ void SolarSystemBrowser::slotRefreshTree()
 }
 
 
-void SolarSystemBrowser::slotContextMenu(const QPoint& pos)
+void
+SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 {
     QModelIndex index = treeView->indexAt(pos);
     Selection sel = solarSystemModel->objectAtIndex(index);
@@ -908,7 +940,8 @@ void SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 }
 
 
-void SolarSystemBrowser::slotMarkSelected()
+void
+SolarSystemBrowser::slotMarkSelected()
 {
     using namespace celestia;
 
@@ -927,7 +960,7 @@ void SolarSystemBrowser::slotMarkSelected()
                 (float) markerColor.blueF());
 
     Universe* universe = appCore->getSimulation()->getUniverse();
-    string label;
+    std::string label;
 
     for (const auto& index : rows)
     {

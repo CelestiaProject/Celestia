@@ -13,10 +13,14 @@
 #pragma once
 
 #include <QObject>
-#include "celengine/render.h"
 
-class QMenu;
+#include <celengine/render.h>
+
+
 class QAction;
+class QMenu;
+class QString;
+
 class CelestiaCore;
 
 
