@@ -3199,12 +3199,7 @@ void CelestiaCore::renderOverlay()
         }
 
         double tdb = sim->getTime() + lt;
-        string dateStr;
-        if (customDateFormatter != nullptr)
-            dateStr = customDateFormatter(tdb);
-
-        if (dateStr.empty())
-            dateStr = dateFormatter->formatDate(tdb, timeZoneBias != 0, dateFormat);
+        auto dateStr = dateFormatter->formatDate(tdb, timeZoneBias != 0, dateFormat);
         int dateWidth = (TextLayout::getTextWidth(dateStr, font.get()) / (emWidth * 3) + 2) * emWidth * 3;
         if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
 
