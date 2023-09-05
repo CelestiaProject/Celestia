@@ -396,8 +396,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-    void setCustomDateFormatter(std::function<std::string(double)> df) { customDateFormatter = df; };
-
     bool setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
@@ -568,7 +566,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
     std::unique_ptr<celestia::engine::DateFormatter> dateFormatter;
-    std::function<std::string(double)> customDateFormatter{ nullptr };
 
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent{ 0 };
