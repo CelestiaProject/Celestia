@@ -12,33 +12,40 @@
 
 #pragma once
 
-#include <celestia/celestiacore.h>
 #include <QImage>
 #include <QMainWindow>
-#include "qttimetoolbar.h"
+#include <QString>
+#include <QTimer>
 
+#include <celestia/celestiacore.h>
 
-class QMenu;
 class QCloseEvent;
+class QColor;
 class QDockWidget;
+class QMenu;
+class QPoint;
+class QToolBar;
+class QUrl;
+class QWidget;
+
+class Selection;
+
+class BookmarkManager;
+class BookmarkToolBar;
+class CelestiaActions;
 struct CelestiaCommandLineOptions;
 class CelestiaGlWidget;
 class CelestialBrowser;
-class InfoPanel;
 class EventFinder;
-class CelestiaActions;
-class FPSActionGroup;
-
+class InfoPanel;
 class PreferencesDialog;
-class BookmarkManager;
-class BookmarkToolBar;
-class QUrl;
+class TimeToolBar;
 
 class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHandler
 {
- Q_OBJECT
+     Q_OBJECT
 
- public:
+public:
     CelestiaAppWindow(QWidget* parent = nullptr);
     ~CelestiaAppWindow();
 
@@ -49,11 +56,11 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     bool loadBookmarks();
     void saveBookmarks();
 
-    void requestContextMenu(float x, float y, Selection sel);
+    void requestContextMenu(float x, float y, Selection sel) override;
 
     void loadingProgressUpdate(const QString& s);
 
- public slots:
+public slots:
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
     void slotManual();
@@ -62,7 +69,7 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     void setFPS(int);
     void setCustomFPS();
 
- private slots:
+private slots:
     void slotGrabImage();
     void slotCaptureVideo();
     void slotCopyImage();
@@ -110,10 +117,12 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     void copyTextOrURL();
     void pasteTextOrURL();
 
- signals:
+signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
 
- private:
+private:
+    class FPSActionGroup;
+
     void initAppDataDirectory();
 
     void createActions();
@@ -121,14 +130,13 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     QMenu* buildScriptsMenu();
     void populateBookmarkMenu();
 
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void switchToNormal();
     void switchToFullscreen();
 
     QImage grabFramebuffer() const;
 
- private:
     CelestiaGlWidget* glWidget{ nullptr };
     QDockWidget* toolsDock{ nullptr };
     CelestialBrowser* celestialBrowser{ nullptr };

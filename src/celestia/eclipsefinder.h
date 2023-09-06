@@ -13,7 +13,9 @@
 #pragma once
 
 #include <vector>
-#include "celestiacore.h"
+
+class Body;
+
 
 struct Eclipse
 {
@@ -30,6 +32,7 @@ struct Eclipse
     double endTime{ 0.0 };
 };
 
+
 class EclipseFinderWatcher
 {
  public:
@@ -42,6 +45,7 @@ class EclipseFinderWatcher
     virtual Status eclipseFinderProgressUpdate(double t) = 0;
     virtual ~EclipseFinderWatcher() = default;
 };
+
 
 class EclipseFinder
 {

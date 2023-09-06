@@ -11,30 +11,45 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <QMainWindow>
-#include <QPushButton>
-#include <QTextEdit>
-#include <QComboBox>
-#include <QFrame>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QSlider>
-#include <QSpinBox>
-#include <QLabel>
-#include <QLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-
-#include <celengine/body.h>
-#include <celengine/location.h>
-#include <celengine/render.h>
-#include <celestia/celestiacore.h>
-#include <celutil/gettext.h>
-#include "qtappwin.h"
 #include "qtpreferencesdialog.h"
 
+#include <cstdint>
 
-static void SetComboBoxValue(QComboBox* combo, const QVariant& value)
+#include <Qt>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QSlider>
+#include <QSpinBox>
+#include <QVariant>
+
+#include <celengine/astro.h>
+#include <celengine/body.h>
+#include <celengine/location.h>
+#include <celengine/observer.h>
+#include <celengine/render.h>
+#include <celengine/simulation.h>
+#include <celengine/starcolors.h>
+#include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
+
+
+namespace
+{
+
+constexpr std::uint64_t FilterOtherLocations = ~(Location::City |
+                                                 Location::Observatory |
+                                                 Location::LandingSite |
+                                                 Location::Mons |
+                                                 Location::Mare |
+                                                 Location::Crater |
+                                                 Location::Vallis |
+                                                 Location::Terra |
+                                                 Location::EruptiveCenter);
+
+
+void
+SetComboBoxValue(QComboBox* combo, const QVariant& value)
 {
     int index;
     int count = combo->count();
@@ -49,15 +64,52 @@ static void SetComboBoxValue(QComboBox* combo, const QVariant& value)
 }
 
 
-static uint64_t FilterOtherLocations = ~(Location::City |
-                                         Location::Observatory |
-                                         Location::LandingSite |
-                                         Location::Mons |
-                                         Location::Mare |
-                                         Location::Crater |
-                                         Location::Vallis |
-                                         Location::Terra |
-                                         Location::EruptiveCenter);
+static void setRenderFlag(CelestiaCore* appCore,
+                          std::uint64_t flag,
+                          int state)
+{
+    bool isActive = (state == Qt::Checked);
+    Renderer* renderer = appCore->getRenderer();
+    std::uint64_t renderFlags = renderer->getRenderFlags() & ~flag;
+    renderer->setRenderFlags(renderFlags | (isActive ? flag : 0));
+}
+
+
+static void setOrbitFlag(CelestiaCore* appCore,
+                         int flag,
+                         int state)
+{
+    bool isActive = (state == Qt::Checked);
+    Renderer* renderer = appCore->getRenderer();
+    int orbitMask = renderer->getOrbitMask() & ~flag;
+    renderer->setOrbitMask(orbitMask | (isActive ? flag : 0));
+}
+
+
+void
+setLocationFlag(CelestiaCore* appCore,
+                std::uint64_t flag,
+                int state)
+{
+    bool isActive = (state == Qt::Checked);
+    Observer* observer = appCore->getSimulation()->getActiveObserver();
+    std::uint64_t locationFilter = observer->getLocationFilter() & ~flag;
+    observer->setLocationFilter(locationFilter | (isActive ? flag : 0));
+}
+
+
+void
+setLabelFlag(CelestiaCore* appCore,
+             int flag,
+             int state)
+{
+    bool isActive = (state == Qt::Checked);
+    Renderer* renderer = appCore->getRenderer();
+    int labelMode = renderer->getLabelMode() & ~flag;
+    renderer->setLabelMode(labelMode | (isActive ? flag : 0));
+}
+
+} // end unnamed namespace
 
 
 PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
@@ -70,9 +122,9 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     Renderer* renderer = appCore->getRenderer();
     Observer* observer = appCore->getSimulation()->getActiveObserver();
 
-    uint64_t renderFlags = renderer->getRenderFlags();
+    std::uint64_t renderFlags = renderer->getRenderFlags();
     int orbitMask = renderer->getOrbitMask();
-    uint64_t locationFlags = observer->getLocationFilter();
+    std::uint64_t locationFlags = observer->getLocationFilter();
     int labelMode = renderer->getLabelMode();
 
     ColorTableType colors = renderer->getStarColorTable();
@@ -216,49 +268,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     SetComboBoxValue(ui.dateFormatBox, dateFormat);
 }
 
-
-static void setRenderFlag(CelestiaCore* appCore,
-                          uint64_t flag,
-                          int state)
-{
-    bool isActive = (state == Qt::Checked);
-    Renderer* renderer = appCore->getRenderer();
-    uint64_t renderFlags = renderer->getRenderFlags() & ~flag;
-    renderer->setRenderFlags(renderFlags | (isActive ? flag : 0));
-}
-
-
-static void setOrbitFlag(CelestiaCore* appCore,
-                         int flag,
-                         int state)
-{
-    bool isActive = (state == Qt::Checked);
-    Renderer* renderer = appCore->getRenderer();
-    int orbitMask = renderer->getOrbitMask() & ~flag;
-    renderer->setOrbitMask(orbitMask | (isActive ? flag : 0));
-}
-
-
-static void setLocationFlag(CelestiaCore* appCore,
-                            uint64_t flag,
-                            int state)
-{
-    bool isActive = (state == Qt::Checked);
-    Observer* observer = appCore->getSimulation()->getActiveObserver();
-    uint64_t locationFilter = observer->getLocationFilter() & ~flag;
-    observer->setLocationFilter(locationFilter | (isActive ? flag : 0));
-}
-
-
-static void setLabelFlag(CelestiaCore* appCore,
-                         int flag,
-                         int state)
-{
-    bool isActive = (state == Qt::Checked);
-    Renderer* renderer = appCore->getRenderer();
-    int labelMode = renderer->getLabelMode() & ~flag;
-    renderer->setLabelMode(labelMode | (isActive ? flag : 0));
-}
 
 // Objects
 

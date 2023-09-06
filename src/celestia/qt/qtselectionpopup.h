@@ -13,10 +13,15 @@
 #pragma once
 
 #include <QMenu>
+
 #include <celengine/selection.h>
-#include <celengine/body.h>
+
+class QAction;
+class QPoint;
+class QWidget;
 
 class CelestiaCore;
+class PlanetarySystem;
 
 class SelectionPopup : public QMenu
 {

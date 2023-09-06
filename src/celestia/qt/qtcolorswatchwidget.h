@@ -12,8 +12,12 @@
 
 #pragma once
 
-#include <QLabel>
 #include <QColor>
+#include <QLabel>
+
+class QMouseEvent;
+class QWidget;
+
 
 class ColorSwatchWidget : public QLabel
 {

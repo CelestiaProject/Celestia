@@ -1,9 +1,14 @@
 #pragma once
 
 #include <QDialog>
+
 #include "ui_gotoobjectdialog.h"
 
+class QString;
+class QWidget;
+
 class CelestiaCore;
+
 
 class GoToObjectDialog : public QDialog
 {

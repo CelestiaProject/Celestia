@@ -8,7 +8,9 @@
  ***************************************************************************/
 
 
+#include <QString>
 #include <QTranslator>
+
 #include <celutil/gettext.h>
 
 class CelestiaQTranslator : public QTranslator

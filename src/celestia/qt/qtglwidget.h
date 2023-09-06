@@ -13,15 +13,22 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <memory>
+
+#include <celengine/glsupport.h>
 
 #include <QOpenGLWidget>
 
-#include "celestia/celestiacore.h"
-#include "celengine/simulation.h"
-#include <celengine/starbrowser.h>
-#include "qtdraghandler.h"
+#include <celestia/celestiacore.h>
+
+class QKeyEvent;
+class QMouseEvent;
+class QWheelEvent;
+class QWidget;
+
+class Renderer;
+
+class DragHandler;
 
 /**
   *@author Christophe Teyssier
@@ -33,7 +40,7 @@ class CelestiaGlWidget : public QOpenGLWidget, public CelestiaCore::CursorHandle
 
 public:
     CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core);
-    ~CelestiaGlWidget() = default;
+    ~CelestiaGlWidget();
 
     void setCursorShape(CelestiaCore::CursorShape);
     CelestiaCore::CursorShape getCursorShape() const;
@@ -53,16 +60,11 @@ protected:
     virtual QSize sizeHint() const;
 
 private:
-
     CelestiaCore* appCore;
     Renderer* appRenderer;
-    Simulation* appSim;
     int lastX{ 0 };
     int lastY{ 0 };
     bool cursorVisible;
     std::unique_ptr<DragHandler> dragHandler;
     CelestiaCore::CursorShape currentCursor;
-
-    //KActionCollection* actionColl;
-
 };

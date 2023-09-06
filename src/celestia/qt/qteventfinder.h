@@ -14,28 +14,33 @@
 
 #include <QDockWidget>
 #include <QElapsedTimer>
+
 #include <celestia/eclipsefinder.h>
 
-class QTreeView;
-class QRadioButton;
-class QDateEdit;
 class QComboBox;
-class QProgressDialog;
+class QDateEdit;
 class QMenu;
-class EventTableModel;
+class QPoint;
+class QProgressDialog;
+class QRadioButton;
+class QString;
+class QTreeView;
+class QWidget;
+
 class CelestiaCore;
+
 
 class EventFinder : public QDockWidget, EclipseFinderWatcher
 {
     Q_OBJECT
 
- public:
+public:
     EventFinder(CelestiaCore* _appCore, const QString& title, QWidget* parent);
     ~EventFinder() = default;
 
     EclipseFinderWatcher::Status eclipseFinderProgressUpdate(double t);
 
- public slots:
+public slots:
     void slotFindEclipses();
     void slotContextMenu(const QPoint&);
 
@@ -45,7 +50,9 @@ class EventFinder : public QDockWidget, EclipseFinderWatcher
     void slotViewOccluderSurface();
     void slotViewBehindOccluder();
 
- private:
+private:
+    class EventTableModel;
+
     CelestiaCore* appCore;
 
     QRadioButton* solarOnlyButton{ nullptr };

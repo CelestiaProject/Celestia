@@ -15,6 +15,8 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
+class QIODevice;
+
 class BookmarkItem;
 
 

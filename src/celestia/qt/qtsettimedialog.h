@@ -15,10 +15,11 @@
 #include <QDialog>
 
 class QAbstractItemModel;
-
 class QComboBox;
-class QSpinBox;
 class QDoubleSpinBox;
+class QSpinBox;
+class QWidget;
+
 class CelestiaCore;
 
 

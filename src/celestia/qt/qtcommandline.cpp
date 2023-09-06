@@ -5,6 +5,7 @@
 
 #include <celutil/gettext.h>
 
+
 CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication& app)
 {
     QCommandLineParser parser;

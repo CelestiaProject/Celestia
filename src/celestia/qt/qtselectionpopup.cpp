@@ -10,23 +10,39 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+
+#include "qtselectionpopup.h"
+
+#include <array>
 #include <cassert>
-#include <sstream>
+#include <cmath>
+#include <string>
+
+#include <Eigen/Core>
+
+#include <fmt/format.h>
+
+#include <QAction>
+#include <QFont>
+#include <QString>
+
+#include <celengine/body.h>
+#include <celengine/marker.h>
+#include <celengine/render.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/solarsys.h>
 #include <celestia/celestiacore.h>
 #include <celestia/helper.h>
-#include <celengine/axisarrow.h>
-#include <celengine/planetgrid.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
-#include <fmt/format.h>
-#include "qtselectionpopup.h"
-#include "qtappwin.h"
-
-using namespace Eigen;
-using namespace std;
 
 
-static QAction* boldTextItem(const QString& s)
+namespace
+{
+
+QAction*
+boldTextItem(const QString& s)
 {
     QAction* act = new QAction(s, nullptr);
     QFont boldFont = act->font();
@@ -37,7 +53,8 @@ static QAction* boldTextItem(const QString& s)
 }
 
 
-static QAction* italicTextItem(const QString& s)
+QAction*
+italicTextItem(const QString& s)
 {
     QAction* act = new QAction(s, nullptr);
     QFont italicFont = act->font();
@@ -46,6 +63,8 @@ static QAction* italicTextItem(const QString& s)
 
     return act;
 }
+
+} // end unnamed namespace
 
 
 SelectionPopup::SelectionPopup(const Selection& sel,
@@ -58,7 +77,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     gotoAction(nullptr)
 {
     Simulation* sim = appCore->getSimulation();
-    Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
+    Eigen::Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
 
     if (sel.body() != nullptr)
     {
@@ -101,15 +120,15 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         // Add some text items giving additional information about
         // the star.
         double distance = astro::kilometersToLightYears(v.norm());
-        string buff;
+        std::string buff;
 
         setlocale(LC_NUMERIC, "");
 
-        if (abs(distance) >= astro::AUtoLightYears(1000.0f))
+        if (std::abs(distance) >= astro::AUtoLightYears(1000.0f))
             buff = fmt::format(_("{:.3f} ly"), distance);
-        else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
+        else if (std::abs(distance) >= astro::kilometersToLightYears(10000000.0))
             buff = fmt::format(_("{:.3f} au"), astro::lightYearsToAU(distance));
-        else if (abs(distance) > astro::kilometersToLightYears(1.0f))
+        else if (std::abs(distance) > astro::kilometersToLightYears(1.0f))
             buff = fmt::format(_("{:.3f} km"), astro::lightYearsToKilometers(distance));
         else
             buff = fmt::format(_("{:.3f} m"), astro::lightYearsToKilometers(distance) * 1000.0f);
@@ -206,7 +225,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     {
         // Child object menus for star
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getIndex());
+        auto iter = solarSystemCatalog->find(selection.star()->getIndex());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -221,11 +240,12 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 }
 
 
-QMenu* SelectionPopup::createMarkMenu()
+QMenu*
+SelectionPopup::createMarkMenu()
 {
     using namespace celestia;
 
-    const MarkerRepresentation::Symbol MARKER_SYMBOLS[] = {
+    constexpr std::array<MarkerRepresentation::Symbol, 12> MARKER_SYMBOLS{
         MarkerRepresentation::Diamond,
         MarkerRepresentation::Triangle,
         MarkerRepresentation::Square,
@@ -240,7 +260,7 @@ QMenu* SelectionPopup::createMarkMenu()
         MarkerRepresentation::Disk,
     };
 
-    const char* MARKER_NAMES[] = {
+    const std::array<const char*, 12> MARKER_NAMES{
         gettext_noop("Diamond"),
         gettext_noop("Triangle"),
         gettext_noop("Square"),
@@ -267,7 +287,9 @@ QMenu* SelectionPopup::createMarkMenu()
     return markMenu;
 }
 
-QMenu* SelectionPopup::createReferenceVectorMenu()
+
+QMenu*
+SelectionPopup::createReferenceVectorMenu()
 {
     assert(selection.body() != nullptr);
 
@@ -333,7 +355,8 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
 }
 
 
-QMenu* SelectionPopup::createAlternateSurfacesMenu()
+QMenu*
+SelectionPopup::createAlternateSurfacesMenu()
 {
     QMenu* surfacesMenu = nullptr;
     std::vector<std::string>* altSurfaces = selection.body()->getAlternateSurfaceNames();
@@ -366,8 +389,9 @@ QMenu* SelectionPopup::createAlternateSurfacesMenu()
 }
 
 
-QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
-                                        unsigned int classification)
+QMenu*
+SelectionPopup::createObjectMenu(PlanetarySystem* sys,
+                                 unsigned int classification)
 {
     QMenu* menu = nullptr;
 
@@ -424,7 +448,8 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
 }
 
 
-void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
+void
+SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 {
     setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
@@ -457,13 +482,15 @@ void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 }
 
 
-void SelectionPopup::popupAtGoto(const QPoint& pt)
+void
+SelectionPopup::popupAtGoto(const QPoint& pt)
 {
     exec(pt, gotoAction);
 }
 
 
-void SelectionPopup::popupAtCenter(const QPoint& pt)
+void
+SelectionPopup::popupAtCenter(const QPoint& pt)
 {
     exec(pt, centerAction);
 }
@@ -471,41 +498,47 @@ void SelectionPopup::popupAtCenter(const QPoint& pt)
 
 /******** Slots *********/
 
-void SelectionPopup::slotSelect()
+void
+SelectionPopup::slotSelect()
 {
     appCore->getSimulation()->setSelection(selection);
 }
 
 
-void SelectionPopup::slotCenterSelection()
+void
+SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("c");
 }
 
 
-void SelectionPopup::slotGotoSelection()
+void
+SelectionPopup::slotGotoSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("g");
 }
 
 
-void SelectionPopup::slotFollowSelection()
+void
+SelectionPopup::slotFollowSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("f");
 }
 
 
-void SelectionPopup::slotSyncOrbitSelection()
+void
+SelectionPopup::slotSyncOrbitSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("y");
 }
 
 
-void SelectionPopup::slotSelectAlternateSurface()
+void
+SelectionPopup::slotSelectAlternateSurface()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
@@ -517,7 +550,8 @@ void SelectionPopup::slotSelectAlternateSurface()
 }
 
 
-void SelectionPopup::slotSelectPrimary()
+void
+SelectionPopup::slotSelectPrimary()
 {
     Body *selectedBody = selection.body();
     if (selectedBody != nullptr)
@@ -528,7 +562,8 @@ void SelectionPopup::slotSelectPrimary()
 }
 
 
-void SelectionPopup::slotSelectChildObject()
+void
+SelectionPopup::slotSelectChildObject()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
@@ -546,7 +581,7 @@ void SelectionPopup::slotSelectChildObject()
             else if (selection.star())
             {
                 SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getIndex());
+                auto iter = solarSystemCatalog->find(selection.star()->getIndex());
                 if (iter != solarSystemCatalog->end())
                 {
                     SolarSystem* solarSys = iter->second;
@@ -565,7 +600,8 @@ void SelectionPopup::slotSelectChildObject()
 }
 
 
-void SelectionPopup::slotMark()
+void
+SelectionPopup::slotMark()
 {
     using namespace celestia;
 
@@ -587,7 +623,9 @@ void SelectionPopup::slotMark()
     }
 }
 
-void SelectionPopup::slotUnmark()
+
+void
+SelectionPopup::slotUnmark()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
@@ -597,53 +635,65 @@ void SelectionPopup::slotUnmark()
     }
 }
 
-void SelectionPopup::slotToggleBodyAxes()
+
+void
+SelectionPopup::slotToggleBodyAxes()
 {
     appCore->toggleReferenceMark("body axes", selection);
 }
 
 
-void SelectionPopup::slotToggleFrameAxes()
+void
+SelectionPopup::slotToggleFrameAxes()
 {
     appCore->toggleReferenceMark("frame axes", selection);
 }
 
 
-void SelectionPopup::slotToggleSunDirection()
+void
+SelectionPopup::slotToggleSunDirection()
 {
     appCore->toggleReferenceMark("sun direction", selection);
 }
 
-void SelectionPopup::slotToggleVelocityVector()
+
+void
+SelectionPopup::slotToggleVelocityVector()
 {
     appCore->toggleReferenceMark("velocity vector", selection);
 }
 
-void SelectionPopup::slotToggleSpinVector()
+
+void
+SelectionPopup::slotToggleSpinVector()
 {
     appCore->toggleReferenceMark("spin vector", selection);
 }
 
 
-void SelectionPopup::slotToggleFrameCenterDirection()
+void
+SelectionPopup::slotToggleFrameCenterDirection()
 {
     appCore->toggleReferenceMark("frame center direction", selection);
 }
 
 
-void SelectionPopup::slotTogglePlanetographicGrid()
+void
+SelectionPopup::slotTogglePlanetographicGrid()
 {
     appCore->toggleReferenceMark("planetographic grid", selection);
 }
 
 
-void SelectionPopup::slotToggleTerminator()
+void
+SelectionPopup::slotToggleTerminator()
 {
     appCore->toggleReferenceMark("terminator", selection);
 }
 
 
-void SelectionPopup::slotGotoStartDate()
+void
+SelectionPopup::slotGotoStartDate()
 {
     assert(selection.body() != nullptr);
     double startDate = 0.0;
@@ -653,7 +703,8 @@ void SelectionPopup::slotGotoStartDate()
 }
 
 
-void SelectionPopup::slotGotoEndDate()
+void
+SelectionPopup::slotGotoEndDate()
 {
     assert(selection.body() != nullptr);
     double startDate = 0.0;
@@ -663,13 +714,15 @@ void SelectionPopup::slotGotoEndDate()
 }
 
 
-void SelectionPopup::slotInfo()
+void
+SelectionPopup::slotInfo()
 {
     emit selectionInfoRequested(selection);
 }
 
 
-void SelectionPopup::slotToggleVisibility(bool visible)
+void
+SelectionPopup::slotToggleVisibility(bool visible)
 {
     assert(selection.body() != nullptr);
     selection.body()->setVisible(visible);

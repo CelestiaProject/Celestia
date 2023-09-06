@@ -11,9 +11,11 @@
 
 #pragma once
 
-#include <QCoreApplication>
 #include <QString>
 #include <QStringList>
+
+class QCoreApplication;
+
 
 struct CelestiaCommandLineOptions
 {

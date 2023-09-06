@@ -13,31 +13,32 @@
 #pragma once
 
 #include <QWidget>
-#include "celengine/selection.h"
 
-class QAbstractItemModel;
-class QItemSelection;
-class QTreeView;
-class QRadioButton;
-class QComboBox;
 class QCheckBox;
+class QComboBox;
+class QItemSelection;
 class QLabel;
 class QLineEdit;
-class ColorSwatchWidget;
+class QPoint;
+class QRadioButton;
+class QTreeView;
+
 class CelestiaCore;
+class Selection;
+
+class ColorSwatchWidget;
 class InfoPanel;
 
-class DSOTableModel;
 
 class DeepSkyBrowser : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
- public:
+public:
     DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~DeepSkyBrowser() = default;
 
- public slots:
+public slots:
     void slotRefreshTable();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
@@ -45,10 +46,12 @@ Q_OBJECT
     void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
- signals:
+signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
 
- private:
+private:
+    class DSOTableModel;
+
     CelestiaCore* appCore;
 
     DSOTableModel* dsoModel{nullptr};
