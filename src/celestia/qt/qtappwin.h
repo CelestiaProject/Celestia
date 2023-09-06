@@ -43,7 +43,7 @@ class TimeToolBar;
 
 class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHandler
 {
-   Q_OBJECT
+     Q_OBJECT
 
 public:
     CelestiaAppWindow(QWidget* parent = nullptr);
