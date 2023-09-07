@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
 #include <string>
 
@@ -18,7 +19,7 @@
 
 class VirtualTexture : public Texture
 {
- public:
+public:
     VirtualTexture(const fs::path& _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
@@ -35,32 +36,28 @@ class VirtualTexture : public Texture
     void beginUsage() override;
     void endUsage() override;
 
- private:
+private:
     struct Tile
     {
         Tile() = default;
         unsigned int lastUsed{ 0 };
-        ImageTexture* tex{ nullptr };
+        std::unique_ptr<ImageTexture> tex{ nullptr };
         bool loadFailed{ false };
     };
 
     struct TileQuadtreeNode
     {
         TileQuadtreeNode() = default;
-        Tile* tile{ nullptr };
-        TileQuadtreeNode* children[4]{ nullptr, nullptr, nullptr, nullptr};
+        std::unique_ptr<Tile> tile{ nullptr };
+        std::array<std::unique_ptr<TileQuadtreeNode>, 4> children{ nullptr, nullptr, nullptr, nullptr };
     };
 
     void populateTileTree();
-    void addTileToTree(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
+    void addTileToTree(std::unique_ptr<Tile> tile, unsigned int lod, unsigned int u, unsigned int v);
     void makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
-    ImageTexture* loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
+    std::unique_ptr<ImageTexture> loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
 
-    Tile* tiles{ nullptr };
-    Tile* findTile(unsigned int lod,
-                   unsigned int u, unsigned int v);
-
- private:
+private:
     fs::path tilePath;
     fs::path tileExt;
     std::string tilePrefix;
@@ -76,7 +73,7 @@ class VirtualTexture : public Texture
         TileLoadFailed = -2,
     };
 
-    TileQuadtreeNode* tileTree[2];
+    std::array<TileQuadtreeNode, 2> tileTree{};
 };
 
 
