@@ -1140,11 +1140,11 @@ msgstr "Неизвестный компилятор"
 
 #: ../src/celestia/qt/qtappwin.cpp:1129 ../src/celestia/qt/qtappwin.cpp:1134
 msgid "supported"
-msgstr "поддерживаются"
+msgstr "supported"
 
 #: ../src/celestia/qt/qtappwin.cpp:1131 ../src/celestia/qt/qtappwin.cpp:1136
 msgid "not supported"
-msgstr "не поддерживаются"
+msgstr "not supported"
 
 #: ../src/celestia/qt/qtappwin.cpp:1139 ../src/celestia/qt/qtappwin.cpp:1533
 #: ../src/celestia/win32/res/resource_strings.cpp:70
