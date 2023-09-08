@@ -2866,7 +2866,7 @@ msgstr "Удалить"
 #. i18n: ectx: property (windowTitle), widget (QDialog, preferencesDialog)
 #: ../src/celestia/qt/rc.cpp:63
 msgid "Preferences"
-msgstr "&Настройки"
+msgstr "Настройки"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:27
 #. i18n: ectx: attribute (title), widget (QWidget, objectsTab)
