@@ -3356,7 +3356,7 @@ msgstr "&АЧТ стандарта D65"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:44
 msgid "&Ambient Light"
-msgstr "&Рассеянный свет"
+msgstr "&Подсветка"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:45
 msgid "&No"
