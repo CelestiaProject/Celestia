@@ -144,9 +144,7 @@ StarNameDatabase::findFlamsteedOrVariable(std::string_view prefix,
     if (!isFlamsteedOrVariable(prefix))
         return AstroCatalog::InvalidIndex;
 
-    std::string_view::size_type offset;
-    std::string_view constellationAbbrev = ParseConstellation(remainder, offset);
-    auto suffix = remainder.substr(offset);
+    auto [constellationAbbrev, suffix] = ParseConstellation(remainder);
     if (constellationAbbrev.empty() || (!suffix.empty() && suffix.front() != ' '))
         return AstroCatalog::InvalidIndex;
 
@@ -182,9 +180,7 @@ StarNameDatabase::findBayer(std::string_view prefix,
     if (bayerLetter.letter.empty())
         return AstroCatalog::InvalidIndex;
 
-    std::string_view::size_type offset;
-    std::string_view constellationAbbrev = ParseConstellation(remainder, offset);
-    auto suffix = remainder.substr(offset);
+    auto [constellationAbbrev, suffix] = ParseConstellation(remainder);
     if (constellationAbbrev.empty() || (!suffix.empty() && suffix.front() != ' '))
         return AstroCatalog::InvalidIndex;
 

@@ -2,6 +2,7 @@ set(UNIT_TEST_SOURCES
   array_view_test.cpp
   arrayvector_test.cpp
   category_test.cpp
+  constellation_test.cpp
   greek_test.cpp
   hash_test.cpp
   intrusiveptr_test.cpp
