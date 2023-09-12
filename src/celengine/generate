@@ -1,4 +1,9 @@
 #!/usr/bin/make -f
 
+all: constellation.cpp markers.inc
+
+constellation.cpp: genconstellations.py
+	python genconstellations.py > constellation.cpp
+
 markers.inc: genmarkers.py
 	python genmarkers.py > markers.inc

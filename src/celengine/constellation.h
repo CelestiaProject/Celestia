@@ -10,5 +10,6 @@
 #pragma once
 
 #include <string_view>
+#include <tuple>
 
-std::string_view ParseConstellation(std::string_view name, std::string_view::size_type& offset);
+std::tuple<std::string_view, std::string_view> ParseConstellation(std::string_view name);
