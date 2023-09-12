@@ -1,0 +1,66 @@
+%struct-type
+%language=C++
+%define lookup-function-name getCommand
+%define class-name LegacyCommands
+%compare-strncmp
+%readonly-tables
+%enum
+struct LegacyCommand { const char* name; ParseCommandPtr parser; };
+%%
+"wait",                    &parseWaitCommand
+"set",                     &parseSetCommand
+"select",                  &parseSelectCommand
+"setframe",                &parseSetFrameCommand
+"setsurface",              &parseSetSurfaceCommand
+"goto",                    &parseGotoCommand
+"gotolonglat",             &parseGotoLongLatCommand
+"gotoloc",                 &parseGotoLocCommand
+"seturl",                  &parseSetUrlCommand
+"center",                  &parseCenterCommand
+"follow",                  &parseParameterlessCommand<CommandFollow>
+"synchronous",             &parseParameterlessCommand<CommandSynchronous>
+"lock",                    &parseParameterlessCommand<CommandLock>
+"chase",                   &parseParameterlessCommand<CommandChase>
+"track",                   &parseParameterlessCommand<CommandTrack>
+"cancel",                  &parseParameterlessCommand<CommandCancel>
+"exit",                    &parseParameterlessCommand<CommandExit>
+"print",                   &parsePrintCommand
+"cls",                     &parseParameterlessCommand<CommandClearScreen>
+"time",                    &parseTimeCommand
+"timerate",                &parseTimeRateCommand
+"changedistance",          &parseChangeDistanceCommand
+"orbit",                   &parseOrbitCommand
+"rotate",                  &parseRotateCommand
+"move",                    &parseMoveCommand
+"setposition",             &parseSetPositionCommand
+"setorientation",          &parseSetOrientationCommand
+"lookback",                &parseParameterlessCommand<CommandLookBack>
+"renderflags",             &parseRenderFlagsCommand
+"labels",                  &parseLabelsCommand
+"orbitflags",              &parseOrbitFlagsCommand
+"constellations",          &parseConstellationsCommand
+"constellationcolor",      &parseConstellationColorCommand
+"setvisibilitylimit",      &parseSetVisibilityLimitCommand
+"setfaintestautomag45deg", &parseSetFaintestAutoMag45DegCommand
+"setambientlight",         &parseSetAmbientLightCommand
+"setgalaxylightgain",      &parseSetGalaxyLightGainCommand
+"settextureresolution",    &parseSetTextureResolutionCommand
+"preloadtex",              &parsePreloadTexCommand
+"mark",                    &parseMarkCommand
+"unmark",                  &parseUnmarkCommand
+"unmarkall",               &parseParameterlessCommand<CommandUnmarkAll>
+"capture",                 &parseCaptureCommand
+"renderpath",              &parseParameterlessCommand<CommandNoOp>
+"splitview",               &parseSplitViewCommand
+"deleteview",              &parseDeleteViewCommand
+"singleview",              &parseParameterlessCommand<CommandSingleView>
+"setactiveview",           &parseSetActiveViewCommand
+"setradius",               &parseSetRadiusCommand
+"setlinecolor",            &parseSetLineColorCommand
+"setlabelcolor",           &parseSetLabelColorCommand
+"settextcolor",            &parseSetTextColorCommand
+"play",                    &parsePlayCommand
+"overlay",                 &parseOverlayCommand
+"verbosity",               &parseVerbosityCommand
+"setwindowbordersvisible", &parseSetWindowBordersVisibleCommand
+"setringstexture",         &parseSetRingsTextureCommand

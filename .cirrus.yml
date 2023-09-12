@@ -10,6 +10,7 @@ task:
                    eigen            \
                    libepoxy         \
                    gettext          \
+                   gperf            \
                    jpeg-turbo       \
                    png              \
                    mesa-libs        \

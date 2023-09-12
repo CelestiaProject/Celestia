@@ -316,6 +316,8 @@ if(USE_WAYLAND)
   target_include_directories(wayland-protocols-helper INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
+find_package(gperf REQUIRED)
+
 #[[
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)

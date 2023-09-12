@@ -11,3 +11,5 @@ set(LEGACY_SOURCES
 )
 
 add_library(cellegacyscript OBJECT ${LEGACY_SOURCES})
+
+gperf_add_table(cellegacyscript commands.gperf cmdparser.cpp 4)
