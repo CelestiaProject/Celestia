@@ -33,6 +33,7 @@ jobs:
                                 libluajit-5.1-dev \
                                 libicu-dev \
                                 ninja-build \
+                                gperf \
                                 cmake
 
     - name: 'Checkout source code'

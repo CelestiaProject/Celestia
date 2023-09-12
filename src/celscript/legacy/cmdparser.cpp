@@ -981,72 +981,8 @@ ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&
 
 
 using ParseCommandPtr = ParseResult (*)(const Hash&, const ScriptMaps&);
-using ParseCommandMap = std::map<std::string_view, ParseCommandPtr>;
 
-std::unique_ptr<ParseCommandMap> createParseCommandMap()
-{
-    return std::make_unique<ParseCommandMap>(
-        std::initializer_list<ParseCommandMap::value_type>
-        {
-            { "wait"sv,                    &parseWaitCommand                              },
-            { "set"sv,                     &parseSetCommand                               },
-            { "select"sv,                  &parseSelectCommand                            },
-            { "setframe"sv,                &parseSetFrameCommand                          },
-            { "setsurface"sv,              &parseSetSurfaceCommand                        },
-            { "goto"sv,                    &parseGotoCommand                              },
-            { "gotolonglat"sv,             &parseGotoLongLatCommand                       },
-            { "gotoloc"sv,                 &parseGotoLocCommand                           },
-            { "seturl"sv,                  &parseSetUrlCommand                            },
-            { "center"sv,                  &parseCenterCommand                            },
-            { "follow"sv,                  &parseParameterlessCommand<CommandFollow>      },
-            { "synchronous"sv,             &parseParameterlessCommand<CommandSynchronous> },
-            { "lock"sv,                    &parseParameterlessCommand<CommandLock>        },
-            { "chase"sv,                   &parseParameterlessCommand<CommandChase>       },
-            { "track"sv,                   &parseParameterlessCommand<CommandTrack>       },
-            { "cancel"sv,                  &parseParameterlessCommand<CommandCancel>      },
-            { "exit"sv,                    &parseParameterlessCommand<CommandExit>        },
-            { "print"sv,                   &parsePrintCommand                             },
-            { "cls"sv,                     &parseParameterlessCommand<CommandClearScreen> },
-            { "time"sv,                    &parseTimeCommand                              },
-            { "timerate"sv,                &parseTimeRateCommand                          },
-            { "changedistance"sv,          &parseChangeDistanceCommand                    },
-            { "orbit"sv,                   &parseOrbitCommand                             },
-            { "rotate"sv,                  &parseRotateCommand                            },
-            { "move"sv,                    &parseMoveCommand                              },
-            { "setposition"sv,             &parseSetPositionCommand                       },
-            { "setorientation"sv,          &parseSetOrientationCommand                    },
-            { "lookback"sv,                &parseParameterlessCommand<CommandLookBack>    },
-            { "renderflags"sv,             &parseRenderFlagsCommand                       },
-            { "labels"sv,                  &parseLabelsCommand                            },
-            { "orbitflags"sv,              &parseOrbitFlagsCommand                        },
-            { "constellations"sv,          &parseConstellationsCommand                    },
-            { "constellationcolor"sv,      &parseConstellationColorCommand                },
-            { "setvisibilitylimit"sv,      &parseSetVisibilityLimitCommand                },
-            { "setfaintestautomag45deg"sv, &parseSetFaintestAutoMag45DegCommand           },
-            { "setambientlight"sv,         &parseSetAmbientLightCommand                   },
-            { "setgalaxylightgain"sv,      &parseSetGalaxyLightGainCommand                },
-            { "settextureresolution"sv,    &parseSetTextureResolutionCommand              },
-            { "preloadtex"sv,              &parsePreloadTexCommand                        },
-            { "mark"sv,                    &parseMarkCommand                              },
-            { "unmark"sv,                  &parseUnmarkCommand                            },
-            { "unmarkall"sv,               &parseParameterlessCommand<CommandUnmarkAll>   },
-            { "capture"sv,                 &parseCaptureCommand                           },
-            { "renderpath"sv,              &parseParameterlessCommand<CommandNoOp>        },
-            { "splitview"sv,               &parseSplitViewCommand                         },
-            { "deleteview"sv,              &parseDeleteViewCommand                        },
-            { "singleview"sv,              &parseParameterlessCommand<CommandSingleView>  },
-            { "setactiveview"sv,           &parseSetActiveViewCommand                     },
-            { "setradius"sv,               &parseSetRadiusCommand                         },
-            { "setlinecolor"sv,            &parseSetLineColorCommand                      },
-            { "setlabelcolor"sv,           &parseSetLabelColorCommand                     },
-            { "settextcolor"sv,            &parseSetTextColorCommand                      },
-            { "play"sv,                    &parsePlayCommand                              },
-            { "overlay"sv,                 &parseOverlayCommand                           },
-            { "verbosity"sv,               &parseVerbosityCommand                         },
-            { "setwindowbordersvisible"sv, &parseSetWindowBordersVisibleCommand           },
-            { "setringstexture"sv,         &parseSetRingsTextureCommand                   },
-        });
-}
+#include "commands.inc"
 
 } // end unnamed namespace
 
@@ -1133,16 +1069,15 @@ std::unique_ptr<Command> CommandParser::parseCommand()
         return nullptr;
     }
 
-    static const ParseCommandMap* parseCommandMap = createParseCommandMap().release();
-    auto it = parseCommandMap->find(commandName);
-    if (it == parseCommandMap->end())
+    auto ptr = LegacyCommands::getCommand(commandName.data(), commandName.size());
+    if (ptr == nullptr)
     {
         error(fmt::format("Unknown command name '{}'", commandName));
         return nullptr;
     }
 
     return std::visit(ParseResultVisitor([this](std::string&& s) { error(std::move(s)); }),
-                      it->second(*paramList, *scriptMaps));
+                      ptr->parser(*paramList, *scriptMaps));
 }
 
 } // end namespace celestia::scripts

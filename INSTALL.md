@@ -108,8 +108,8 @@ git submodule update --init
 
 ## Celestia Install instructions for UNIX
 
-First you need a C++ compiler able to compile C++11 code (GCC 4.8.1 or later,
-Clang 3.3 or later), CMake, GNU Make or Ninja.
+First you need a C++ compiler able to compile C++17 code (GCC 7 or later,
+Clang 5 or later), CMake, GNU Make or Ninja, and gperf.
 
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
@@ -182,7 +182,7 @@ and vcpkg (*).
 Install required packages:
 
 ```
-vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype
+vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
 ```
 
 Install optional packages:
@@ -311,7 +311,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype
+brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype
 ```
 
 Install optional packages:
