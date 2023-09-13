@@ -18,6 +18,8 @@
 #include <memory>
 #include <utility>
 
+#include <config.h>
+
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
@@ -43,9 +45,7 @@ struct VSOPSeries
     {
     }
 
-#ifdef __ANDROID__
-    // The libc++ headers in the latest stable NDK (r25) does not expose empty array methods as constexpr
-    // https://github.com/android/ndk/issues/1530
+#ifndef HAVE_CONSTEXPR_EMPTY_ARRAY
     explicit constexpr VSOPSeries(const std::array<VSOPTerm, 0>&)
         : terms(nullptr), nTerms(0)
     {

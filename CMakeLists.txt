@@ -420,6 +420,9 @@ check_include_files(byteswap.h HAVE_BYTESWAP_H)
 
 try_compile(HAVE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/sincos.cpp")
 try_compile(HAVE_APPLE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/applesincos.cpp")
+# The libc++ headers in the latest stable NDK (r25) does not expose empty array methods as constexpr
+# https://github.com/android/ndk/issues/1530
+try_compile(HAVE_CONSTEXPR_EMPTY_ARRAY ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/constexpremptyarray.cpp")
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
 if(CXX_FILESYSTEM_IS_EXPERIMENTAL)
