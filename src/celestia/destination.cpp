@@ -69,13 +69,21 @@ DestinationList* ReadDestinationList(std::istream& in)
                     dest->description = *description;
                 if (auto distance = destParams->getNumber<double>("Distance"); distance.has_value())
                     dest->distance = *distance;
-                // Default unit of distance is the kilometer
+                // Convert distance to goto distance of kilometers
+                // User default unit of distance is the light year
                 if (const std::string* distanceUnits = destParams->getString("DistanceUnits"); distanceUnits != nullptr)
                 {
                     if (!compareIgnoringCase(*distanceUnits, "ly"))
                         dest->distance = astro::lightYearsToKilometers(dest->distance);
                     else if (!compareIgnoringCase(*distanceUnits, "au"))
                         dest->distance = astro::AUtoKilometers(dest->distance);
+                    else if (!compareIgnoringCase(*distanceUnits, "km"));
+                    else
+                        dest->distance = astro::lightYearsToKilometers(dest->distance);
+                }
+                else
+                {
+                    dest->distance = astro::lightYearsToKilometers(dest->distance);
                 }
                 destinations->push_back(dest);
             }   
