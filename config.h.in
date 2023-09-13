@@ -6,4 +6,5 @@
 #cmakedefine HAVE_MESHOPTIMIZER
 #cmakedefine HAVE_SINCOS
 #cmakedefine HAVE_APPLE_SINCOS
+#cmakedefine HAVE_CONSTEXPR_EMPTY_ARRAY
 #cmakedefine WORDS_BIGENDIAN
