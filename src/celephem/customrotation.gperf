@@ -1,0 +1,50 @@
+%struct-type
+%language=C++
+%define lookup-function-name getModelType
+%define class-name CustomRotationMap
+%compare-strncmp
+%readonly-tables
+%enum
+struct CustomRotationEntry { const char* name; CustomRotationModelType modelType; };
+%%
+"earth-p03lp",    CustomRotationModelType::EarthP03lp
+"iau-mercury",    CustomRotationModelType::IAUMercury
+"iau-venus",      CustomRotationModelType::IAUVenus
+"iau-earth",      CustomRotationModelType::IAUEarth
+"iau-mars",       CustomRotationModelType::IAUMars
+"iau-jupiter",    CustomRotationModelType::IAUJupiter
+"iau-saturn",     CustomRotationModelType::IAUSaturn
+"iau-uranus",     CustomRotationModelType::IAUUranus
+"iau-neptune",    CustomRotationModelType::IAUNeptune
+"iau-pluto",      CustomRotationModelType::IAUPluto
+"iau-moon",       CustomRotationModelType::IAUMoon
+"iau-phobos",     CustomRotationModelType::IAUPhobos
+"iau-deimos",     CustomRotationModelType::IAUDeimos
+"iau-metis",      CustomRotationModelType::IAUMetis
+"iau-adrastea",   CustomRotationModelType::IAUAdrastea
+"iau-amalthea",   CustomRotationModelType::IAUAmalthea
+"iau-thebe",      CustomRotationModelType::IAUThebe
+"iau-io",         CustomRotationModelType::IAUIo
+"iau-europa",     CustomRotationModelType::IAUEuropa
+"iau-ganymede",   CustomRotationModelType::IAUGanymede
+"iau-callisto",   CustomRotationModelType::IAUCallisto
+"iau-pan",        CustomRotationModelType::IAUPan
+"iau-atlas",      CustomRotationModelType::IAUAtlas
+"iau-prometheus", CustomRotationModelType::IAUPrometheus
+"iau-pandora",    CustomRotationModelType::IAUPandora
+"iau-mimas",      CustomRotationModelType::IAUMimas
+"iau-enceladus",  CustomRotationModelType::IAUEnceladus
+"iau-tethys",     CustomRotationModelType::IAUTethys
+"iau-telesto",    CustomRotationModelType::IAUTelesto
+"iau-calypso",    CustomRotationModelType::IAUCalypso
+"iau-dione",      CustomRotationModelType::IAUDione
+"iau-helene",     CustomRotationModelType::IAUHelene
+"iau-rhea",       CustomRotationModelType::IAURhea
+"iau-titan",      CustomRotationModelType::IAUTitan
+"iau-iapetus",    CustomRotationModelType::IAUIapetus
+"iau-phoebe",     CustomRotationModelType::IAUPhoebe
+"iau-miranda",    CustomRotationModelType::IAUMiranda
+"iau-ariel",      CustomRotationModelType::IAUAriel
+"iau-umbriel",    CustomRotationModelType::IAUUmbriel
+"iau-titania",    CustomRotationModelType::IAUTitania
+"iau-oberon",     CustomRotationModelType::IAUOberon

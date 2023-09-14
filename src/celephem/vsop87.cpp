@@ -12,6 +12,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "vsop87.h"
+
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -24,7 +26,6 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include "orbit.h"
-#include "vsop87.h"
 
 namespace celestia::ephem
 {
@@ -10999,7 +11000,8 @@ constexpr std::array sun_Z {
 };
 
 
-double SumSeries(const VSOPSeries& series, double t)
+double
+SumSeries(const VSOPSeries& series, double t)
 {
     if (series.nTerms < 1)
         return 0.0;
@@ -11011,6 +11013,7 @@ double SumSeries(const VSOPSeries& series, double t)
 
     return x;
 }
+
 
 class VSOP87Orbit : public CachingOrbit
 {
@@ -11041,17 +11044,20 @@ class VSOP87Orbit : public CachingOrbit
 
     ~VSOP87Orbit() override = default;
 
-    double getPeriod() const override
+    double
+    getPeriod() const override
     {
         return period;
     }
 
-    double getBoundingRadius() const override
+    double
+    getBoundingRadius() const override
     {
         return boundingRadius;
     }
 
-    Eigen::Vector3d computePosition(double jd) const override
+    Eigen::Vector3d
+    computePosition(double jd) const override
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;
@@ -11103,7 +11109,8 @@ class VSOP87Orbit : public CachingOrbit
     /** Custom implementation of sample() for VSOP87 orbits. The default
       * implementation runs too slowly and produces too many samples.
       */
-    void sample(double startTime, double endTime, OrbitSampleProc& proc) const override
+    void
+    sample(double startTime, double endTime, OrbitSampleProc& proc) const override
     {
         double span = getPeriod();
 
@@ -11119,7 +11126,6 @@ class VSOP87Orbit : public CachingOrbit
 
         adaptiveSample(startTime, endTime, proc, samplingParams);
     }
-
 };
 
 
@@ -11153,22 +11159,26 @@ class VSOP87OrbitRect : public CachingOrbit
 
     ~VSOP87OrbitRect() override = default;
 
-    double getPeriod() const override
+    double
+    getPeriod() const override
     {
         return period;
     }
 
-    bool isPeriodic() const override
+    bool
+    isPeriodic() const override
     {
         return period != 0.0;
     }
 
-    double getBoundingRadius() const override
+    double
+    getBoundingRadius() const override
     {
         return boundingRadius;
     }
 
-    Eigen::Vector3d computePosition(double jd) const override
+    Eigen::Vector3d
+    computePosition(double jd) const override
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;
@@ -11211,110 +11221,112 @@ class VSOP87OrbitRect : public CachingOrbit
 
 
 
-double yearToJD(int year)
+double
+yearToJD(int year)
 {
     return static_cast<double>(astro::Date(year, 1, 1));
 }
 
+
+std::unique_ptr<Orbit>
+MakeVSOP87Orbit(std::unique_ptr<Orbit>&& orbit, int t0, int t1)
+{
+    return std::make_unique<MixedOrbit>(std::move(orbit),
+                                        yearToJD(t0),
+                                        yearToJD(t1),
+                                        astro::SolarMass);
+}
+
 } // end unnamed namespace
 
-std::unique_ptr<Orbit> CreateVSOP87Orbit(CustomOrbitType type)
+
+std::unique_ptr<Orbit>
+CreateVSOP87MercuryOrbit()
 {
-    switch (type)
-    {
-    case CustomOrbitType::VSOP87Mercury:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(mercury_L,
-                                               mercury_B,
-                                               mercury_R,
-                                               0.2408 * 365.25,
-                                               60000000.0);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Venus:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(venus_L,
-                                               venus_B,
-                                               venus_R,
-                                               0.6152 * 365.25,
-                                               100000000.0);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Earth:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(earth_L,
-                                               earth_B,
-                                               earth_R,
-                                               365.25,
-                                               160000000.0);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Mars:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(mars_L,
-                                               mars_B,
-                                               mars_R,
-                                               1.8809 * 365.25,
-                                               240000000);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Jupiter:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(jupiter_L,
-                                               jupiter_B,
-                                               jupiter_R,
-                                               11.86 * 365.25,
-                                               800000000.0);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Saturn:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(saturn_L,
-                                               saturn_B,
-                                               saturn_R,
-                                               29.4577 * 365.25,
-                                               1.5e9);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Uranus:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(uranus_L,
-                                               uranus_B,
-                                               uranus_R,
-                                               84.0139 * 365.25,
-                                               3.0e9);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Neptune:
-    {
-        auto o = std::make_unique<VSOP87Orbit>(neptune_L,
-                                               neptune_B,
-                                               neptune_R,
-                                               164.793 * 365.25,
-                                               4.7e9);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(4000),
-                                            astro::SolarMass);
-    }
-    case CustomOrbitType::VSOP87Sun:
-    {
-        auto o = std::make_unique<VSOP87OrbitRect>(sun_X,
-                                                   sun_Y,
-                                                   sun_Z,
-                                                   0.0,
-                                                   2000000);
-        return std::make_unique<MixedOrbit>(std::move(o), yearToJD(-4000), yearToJD(6000),
-                                            astro::SolarMass);
-    }
-    default:
-        return nullptr;
-    }
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(mercury_L, mercury_B, mercury_R,
+                                                         0.2408 * 365.25,
+                                                         60000000.0),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87VenusOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(venus_L, venus_B, venus_R,
+                                                         0.6152 * 365.25,
+                                                         100000000.0),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87EarthOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(earth_L, earth_B, earth_R,
+                                                         365.25,
+                                                         160000000.0),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87MarsOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(mars_L, mars_B, mars_R,
+                                                         1.8809 * 365.25,
+                                                         240000000),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87JupiterOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(jupiter_L, jupiter_B, jupiter_R,
+                                                         11.86 * 365.25,
+                                                         800000000.0),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87SaturnOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(saturn_L, saturn_B, saturn_R,
+                                                         29.4577 * 365.25,
+                                                         1.5e9),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87UranusOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(uranus_L, uranus_B, uranus_R,
+                                                         84.0139 * 365.25,
+                                                         3.0e9),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87NeptuneOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(neptune_L, neptune_B, neptune_R,
+                                                         164.793 * 365.25,
+                                                         4.7e9),
+                           -4000, 4000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateVSOP87SunOrbit()
+{
+    return MakeVSOP87Orbit(std::make_unique<VSOP87OrbitRect>(sun_X, sun_Y, sun_Z,
+                                                             0.0,
+                                                             2000000),
+                           -4000, 6000);
 }
 
 } // end namespace celestia::ephem
