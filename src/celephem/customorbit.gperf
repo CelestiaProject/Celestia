@@ -1,0 +1,99 @@
+%struct-type
+%language=C++
+%define lookup-function-name getOrbitType
+%define class-name CustomOrbitMap
+%compare-strncmp
+%readonly-tables
+%enum
+struct CustomOrbitEntry { const char* name; CustomOrbitFactory factory; };
+%%
+"mercury",         &CreateMercuryOrbit
+"venus",           &CreateVenusOrbit
+"earth",           &CreateEarthOrbit
+"moon",            &CreateMoonOrbit
+"mars",            &CreateMarsOrbit
+"jupiter",         &CreateJupiterOrbit
+"saturn",          &CreateSaturnOrbit
+"uranus",          &CreateUranusOrbit
+"neptune",         &CreateNeptuneOrbit
+"pluto",           &CreatePlutoOrbit
+#
+# Two styles of custom orbit name are permitted for JPL ephemeris
+# orbits. The preferred is <ephemeris>-<object>, e.g.
+# jpl-mercury-sun. But the reverse form is still supported for
+# backward compatibility.
+#
+"jpl-mercury-sun", &CreateJplMercurySunOrbit
+"jpl-venus-sun",   &CreateJplVenusSunOrbit
+"jpl-earth-sun",   &CreateJplEarthSunOrbit
+"jpl-mars-sun",    &CreateJplMarsSunOrbit
+"jpl-jupiter-sun", &CreateJplJupiterSunOrbit
+"jpl-saturn-sun",  &CreateJplSaturnSunOrbit
+"jpl-uranus-sun",  &CreateJplUranusSunOrbit
+"jpl-neptune-sun", &CreateJplNeptuneSunOrbit
+"jpl-pluto-sun",   &CreateJplPlutoSunOrbit
+"mercury-jpl",     &CreateJplMercurySunOrbit
+"venus-jpl",       &CreateJplVenusSunOrbit
+"earth-sun",       &CreateJplEarthSunOrbit
+"mars-sun",        &CreateJplMarsSunOrbit
+"jupiter-sun",     &CreateJplJupiterSunOrbit
+"saturn-sun",      &CreateJplSaturnSunOrbit
+"uranus-sun",      &CreateJplUranusSunOrbit
+"neptune-sun",     &CreateJplNeptuneSunOrbit
+"pluto-sun",       &CreateJplPlutoSunOrbit
+#
+"jpl-mercury-ssb", &CreateJplMercurySsbOrbit
+"jpl-venus-ssb",   &CreateJplVenusSsbOrbit
+"jpl-earth-ssb",   &CreateJplEarthSsbOrbit
+"jpl-mars-ssb",    &CreateJplMarsSsbOrbit
+"jpl-jupiter-ssb", &CreateJplJupiterSsbOrbit
+"jpl-saturn-ssb",  &CreateJplSaturnSsbOrbit
+"jpl-uranus-ssb",  &CreateJplUranusSsbOrbit
+"jpl-neptune-ssb", &CreateJplNeptuneSsbOrbit
+"jpl-pluto-ssb",   &CreateJplPlutoSsbOrbit
+#
+"jpl-emb-sun",     &CreateJplEmbSunOrbit
+"jpl-emb-ssb",     &CreateJplEmbSsbOrbit
+"jpl-moon-emb",    &CreateJplMoonEmbOrbit
+"jpl-moon-earth",  &CreateJplMoonEarthOrbit
+"jpl-earth-emb",   &CreateJplEarthEmbOrbit
+#
+"jpl-sun-ssb",     &CreateJplSunSsbOrbit
+#
+"htc20-helene",    &CreateHeleneOrbit
+"htc20-telesto",   &CreateTelestoOrbit
+"htc20-calypso",   &CreateCalypsoOrbit
+#
+"phobos",          &CreatePhobosOrbit
+"deimos",          &CreateDeimosOrbit
+"io",              &CreateIoOrbit
+"europa",          &CreateEuropaOrbit
+"ganymede",        &CreateGanymedeOrbit
+"callisto",        &CreateCallistoOrbit
+"mimas",           &CreateMimasOrbit
+"enceladus",       &CreateEnceladusOrbit
+"tethys",          &CreateTethysOrbit
+"dione",           &CreateDioneOrbit
+"rhea",            &CreateRheaOrbit
+"titan",           &CreateTitanOrbit
+"hyperion",        &CreateHyperionOrbit
+"iapetus",         &CreateIapetusOrbit
+"phoebe",          &CreatePhoebeOrbit
+"miranda",         &CreateMirandaOrbit
+"ariel",           &CreateArielOrbit
+"umbriel",         &CreateUmbrielOrbit
+"titania",         &CreateTitaniaOrbit
+"oberon",          &CreateOberonOrbit
+"triton",          &CreateTritonOrbit
+#
+# VSOP orbits
+#
+"vsop87-mercury",  &CreateVSOP87MercuryOrbit
+"vsop87-venus",    &CreateVSOP87VenusOrbit
+"vsop87-earth",    &CreateVSOP87EarthOrbit
+"vsop87-mars",     &CreateVSOP87MarsOrbit
+"vsop87-jupiter",  &CreateVSOP87JupiterOrbit
+"vsop87-saturn",   &CreateVSOP87SaturnOrbit
+"vsop87-uranus",   &CreateVSOP87UranusOrbit
+"vsop87-neptune",  &CreateVSOP87NeptuneOrbit
+"vsop87-sun",      &CreateVSOP87SunOrbit

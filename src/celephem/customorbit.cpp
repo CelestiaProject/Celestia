@@ -12,9 +12,9 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <cstring>
 #include <cmath>
 #include <fstream>
-#include <initializer_list>
 #include <map>
 #include <memory>
 #include <utility>
@@ -24,12 +24,14 @@
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
-#include "customorbittype.h"
 #include "jpleph.h"
 #include "orbit.h"
 #include "vsop87.h"
 
 using namespace std::string_view_literals;
+// size_t and strncmp are used by the gperf output code
+using std::size_t;
+using std::strncmp;
 using celestia::util::GetLogger;
 
 namespace celestia::ephem
@@ -3029,22 +3031,6 @@ class HTC20Orbit : public CachingOrbit
     const double* amplitudes;
     HTC20Angles angles;
     double period;
-
- public:
-     static std::unique_ptr<Orbit> CreateHeleneOrbit()
-     {
-         return std::make_unique<HTC20Orbit>(24, HeleneTerms.data(), HeleneAmps.data(), HeleneAngles, 2.736915, 380000);
-     }
-
-     static std::unique_ptr<Orbit> CreateTelestoOrbit()
-     {
-         return std::make_unique<HTC20Orbit>(12, TelestoTerms.data(), TelestoAmps.data(), TelestoAngles, 1.887802, 300000);
-     }
-
-     static std::unique_ptr<HTC20Orbit> CreateCalypsoOrbit()
-     {
-         return std::make_unique<HTC20Orbit>(24, CalypsoTerms.data(), CalypsoAmps.data(), CalypsoAngles, 1.887803, 300000);
-     }
 };
 
 
@@ -3168,248 +3154,441 @@ double yearToJD(int year)
 }
 
 
-CustomOrbitType parseCustomOrbit(std::string_view name)
+std::unique_ptr<Orbit>
+CreateMercuryOrbit()
 {
-    using CustomOrbitMap = std::map<std::string_view, CustomOrbitType>;
-    static const CustomOrbitMap* customOrbitMap = std::make_unique<CustomOrbitMap>(
-        std::initializer_list<CustomOrbitMap::value_type>
-        {
-            { "mercury"sv,         CustomOrbitType::Mercury       },
-            { "venus"sv,           CustomOrbitType::Venus         },
-            { "earth"sv,           CustomOrbitType::Earth         },
-            { "moon"sv,            CustomOrbitType::Moon          },
-            { "mars"sv,            CustomOrbitType::Mars          },
-            { "jupiter"sv,         CustomOrbitType::Jupiter       },
-            { "saturn"sv,          CustomOrbitType::Saturn        },
-            { "uranus"sv,          CustomOrbitType::Uranus        },
-            { "neptune"sv,         CustomOrbitType::Neptune       },
-            { "pluto"sv,           CustomOrbitType::Pluto         },
-
-            // Two styles of custom orbit name are permitted for JPL ephemeris
-            // orbits. The preferred is <ephemeris>-<object>, e.g.
-            // jpl-mercury-sun. But the reverse form is still supported for
-            // backward compatibility.
-            { "jpl-mercury-sun"sv, CustomOrbitType::JplMercurySun },
-            { "jpl-venus-sun"sv,   CustomOrbitType::JplVenusSun   },
-            { "jpl-earth-sun"sv,   CustomOrbitType::JplEarthSun   },
-            { "jpl-mars-sun"sv,    CustomOrbitType::JplMarsSun    },
-            { "jpl-jupiter-sun"sv, CustomOrbitType::JplJupiterSun },
-            { "jpl-saturn-sun"sv,  CustomOrbitType::JplSaturnSun  },
-            { "jpl-uranus-sun"sv,  CustomOrbitType::JplUranusSun  },
-            { "jpl-neptune-sun"sv, CustomOrbitType::JplNeptuneSun },
-            { "jpl-pluto-sun"sv,   CustomOrbitType::JplPlutoSun   },
-            { "mercury-jpl"sv,     CustomOrbitType::JplMercurySun },
-            { "venus-jpl"sv,       CustomOrbitType::JplVenusSun   },
-            { "earth-sun"sv,       CustomOrbitType::JplEarthSun   },
-            { "mars-sun"sv,        CustomOrbitType::JplMarsSun    },
-            { "jupiter-sun"sv,     CustomOrbitType::JplJupiterSun },
-            { "saturn-sun"sv,      CustomOrbitType::JplSaturnSun  },
-            { "uranus-sun"sv,      CustomOrbitType::JplUranusSun  },
-            { "neptune-sun"sv,     CustomOrbitType::JplNeptuneSun },
-            { "pluto-sun"sv,       CustomOrbitType::JplPlutoSun   },
-
-            { "jpl-mercury-ssb"sv, CustomOrbitType::JplMercurySsb },
-            { "jpl-venus-ssb"sv,   CustomOrbitType::JplVenusSsb   },
-            { "jpl-earth-ssb"sv,   CustomOrbitType::JplEarthSsb   },
-            { "jpl-mars-ssb"sv,    CustomOrbitType::JplMarsSsb    },
-            { "jpl-jupiter-ssb"sv, CustomOrbitType::JplJupiterSsb },
-            { "jpl-saturn-ssb"sv,  CustomOrbitType::JplSaturnSsb  },
-            { "jpl-uranus-ssb"sv,  CustomOrbitType::JplUranusSsb  },
-            { "jpl-neptune-ssb"sv, CustomOrbitType::JplNeptuneSsb },
-            { "jpl-pluto-ssb"sv,   CustomOrbitType::JplPlutoSsb   },
-
-            { "jpl-emb-sun"sv,     CustomOrbitType::JplEmbSun     },
-            { "jpl-emb-ssb"sv,     CustomOrbitType::JplEmbSsb     },
-            { "jpl-moon-emb"sv,    CustomOrbitType::JplMoonEmb    },
-            { "jpl-moon-earth"sv,  CustomOrbitType::JplMoonEarth  },
-            { "jpl-earth-emb"sv,   CustomOrbitType::JplEarthEmb   },
-
-            { "jpl-sun-ssb"sv,     CustomOrbitType::JplSunSsb     },
-
-            { "htc20-helene"sv,    CustomOrbitType::Htc20Helene   },
-            { "htc20-telesto"sv,   CustomOrbitType::Htc20Telesto  },
-            { "htc20-calypso"sv,   CustomOrbitType::Htc20Calypso  },
-
-            { "phobos"sv,          CustomOrbitType::Phobos        },
-            { "deimos"sv,          CustomOrbitType::Deimos        },
-            { "io"sv,              CustomOrbitType::Io            },
-            { "europa"sv,          CustomOrbitType::Europa        },
-            { "ganymede"sv,        CustomOrbitType::Ganymede      },
-            { "callisto"sv,        CustomOrbitType::Callisto      },
-            { "mimas"sv,           CustomOrbitType::Mimas         },
-            { "enceladus"sv,       CustomOrbitType::Enceladus     },
-            { "tethys"sv,          CustomOrbitType::Tethys        },
-            { "dione"sv,           CustomOrbitType::Dione         },
-            { "rhea"sv,            CustomOrbitType::Rhea          },
-            { "titan"sv,           CustomOrbitType::Titan         },
-            { "hyperion"sv,        CustomOrbitType::Hyperion      },
-            { "iapetus"sv,         CustomOrbitType::Iapetus       },
-            { "phoebe"sv,          CustomOrbitType::Phoebe        },
-            { "miranda"sv,         CustomOrbitType::Miranda       },
-            { "ariel"sv,           CustomOrbitType::Ariel         },
-            { "umbriel"sv,         CustomOrbitType::Umbriel       },
-            { "titania"sv,         CustomOrbitType::Titania       },
-            { "oberon"sv,          CustomOrbitType::Oberon        },
-            { "triton"sv,          CustomOrbitType::Triton        },
-
-            // VSOP orbits
-            { "vsop87-mercury"sv,  CustomOrbitType::VSOP87Mercury },
-            { "vsop87-venus"sv,    CustomOrbitType::VSOP87Venus   },
-            { "vsop87-earth"sv,    CustomOrbitType::VSOP87Earth   },
-            { "vsop87-mars"sv,     CustomOrbitType::VSOP87Mars    },
-            { "vsop87-jupiter"sv,  CustomOrbitType::VSOP87Jupiter },
-            { "vsop87-saturn"sv,   CustomOrbitType::VSOP87Saturn  },
-            { "vsop87-uranus"sv,   CustomOrbitType::VSOP87Uranus  },
-            { "vsop87-neptune"sv,  CustomOrbitType::VSOP87Neptune },
-            { "vsop87-sun"sv,      CustomOrbitType::VSOP87Sun     },
-        }).release();
-
-    auto it = customOrbitMap->find(name);
-    return it == customOrbitMap->end()
-        ? CustomOrbitType::Unknown
-        : it->second;
+    return std::make_unique<MixedOrbit>(std::make_unique<MercuryOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
+
+
+std::unique_ptr<Orbit>
+CreateVenusOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<VenusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateEarthOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<EarthOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateMoonOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<LunarOrbit>(), yearToJD(-2000), yearToJD(4000), astro::EarthMass + astro::LunarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateMarsOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<MarsOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJupiterOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<JupiterOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateSaturnOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<SaturnOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+std::unique_ptr<Orbit>
+CreateUranusOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<UranusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreateNeptuneOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<NeptuneOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+std::unique_ptr<Orbit>
+CreatePlutoOrbit()
+{
+    return std::make_unique<MixedOrbit>(std::make_unique<PlutoOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+}
+
+
+// JPL ephemerides for planets (relative to the Sun)
+
+std::unique_ptr<Orbit>
+CreateJplMercurySunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::Sun, 0.2408 * 365.25, 6.0e7);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplVenusSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Venus, JPLEphemItem::Sun, 0.6152 * 365.25, 1.0e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplEarthSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::Sun, 365.25, 1.6e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplMarsSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Mars, JPLEphemItem::Sun, 1.8809 * 365.25, 2.4e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplJupiterSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::Sun, 11.86 * 365.25, 8.0e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplSaturnSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Saturn, JPLEphemItem::Sun, 29.4577 * 365.25, 1.5e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplUranusSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Uranus, JPLEphemItem::Sun, 84.0139 * 365.25, 3.0e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplNeptuneSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::Sun, 164.793 * 365.25, 4.7e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplPlutoSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Pluto, JPLEphemItem::Sun, 248.54 * 365.25, 6.0e9);
+}
+
+
+// JPL ephemerides for planets (relative to Solar System barycenter)
+
+std::unique_ptr<Orbit>
+CreateJplMercurySsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::SSB, 0.2408 * 365.25, 6.0e7);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplVenusSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Venus, JPLEphemItem::SSB, 0.6152 * 365.25, 1.0e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplEarthSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::SSB, 365.25, 1.6e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplMarsSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Mars, JPLEphemItem::SSB, 1.8809 * 365.25, 2.4e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplJupiterSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::SSB, 11.86   * 365.25, 8.0e8);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplSaturnSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Saturn, JPLEphemItem::SSB, 29.4577 * 365.25, 1.5e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplUranusSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Uranus, JPLEphemItem::SSB, 84.0139 * 365.25, 3.0e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplNeptuneSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::SSB, 164.793 * 365.25, 4.7e9);
+}
+
+
+std::unique_ptr<Orbit>
+CreateJplPlutoSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Pluto, JPLEphemItem::SSB, 248.54 * 365.25, 6.0e9);
+}
+
+
+// JPL ephemerides for Earth-Moon system
+
+// Earth-Moon barycenter, heliocentric
+std::unique_ptr<Orbit>
+CreateJplEmbSunOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::Sun, 365.25, 1.6e8);
+}
+
+
+// Earth-Moon barycenter, relative to ssb
+std::unique_ptr<Orbit>
+CreateJplEmbSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::SSB, 365.25, 1.6e8);
+}
+
+
+// Moon, barycentric
+std::unique_ptr<Orbit>
+CreateJplMoonEmbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Moon, JPLEphemItem::EarthMoonBary, 27.321661, 5.0e5);
+}
+
+
+// Moon, geocentric
+std::unique_ptr<Orbit>
+CreateJplMoonEarthOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Moon, JPLEphemItem::Earth, 27.321661, 5.0e5);
+}
+
+
+// Earth, barycentric
+std::unique_ptr<Orbit>
+CreateJplEarthEmbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::EarthMoonBary, 27.321, 1.0e5);
+}
+
+
+// Position of Sun relative to SSB
+std::unique_ptr<Orbit>
+CreateJplSunSsbOrbit()
+{
+    return CreateJPLEphOrbit(JPLEphemItem::Sun, JPLEphemItem::SSB, 11.861773 * 365.25, 2000000);
+}
+
+
+// HTC2.0 ephemerides for Saturnian satellites in Lagrange points of Tethys and Dione
+
+std::unique_ptr<Orbit>
+CreateHeleneOrbit()
+{
+    return std::make_unique<HTC20Orbit>(24, HeleneTerms.data(), HeleneAmps.data(), HeleneAngles, 2.736915, 380000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateTelestoOrbit()
+{
+    return std::make_unique<HTC20Orbit>(12, TelestoTerms.data(), TelestoAmps.data(), TelestoAngles, 1.887802, 300000);
+}
+
+
+std::unique_ptr<Orbit>
+CreateCalypsoOrbit()
+{
+    return std::make_unique<HTC20Orbit>(24, CalypsoTerms.data(), CalypsoAmps.data(), CalypsoAngles, 1.887803, 300000);
+}
+
+
+// various planetary satellite orbits
+std::unique_ptr<Orbit>
+CreatePhobosOrbit()
+{
+    return std::make_unique<PhobosOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateDeimosOrbit()
+{
+    return std::make_unique<DeimosOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateIoOrbit()
+{
+    return std::make_unique<IoOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateEuropaOrbit()
+{
+    return std::make_unique<EuropaOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateGanymedeOrbit()
+{
+    return std::make_unique<GanymedeOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateCallistoOrbit()
+{
+    return std::make_unique<CallistoOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateMimasOrbit()
+{
+    return std::make_unique<MimasOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateEnceladusOrbit()
+{
+    return std::make_unique<EnceladusOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateTethysOrbit()
+{
+    return std::make_unique<TethysOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateDioneOrbit()
+{
+    return std::make_unique<DioneOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateRheaOrbit()
+{
+    return std::make_unique<RheaOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateTitanOrbit()
+{
+    return std::make_unique<TitanOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateHyperionOrbit()
+{
+    return std::make_unique<HyperionOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateIapetusOrbit()
+{
+    return std::make_unique<IapetusOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreatePhoebeOrbit()
+{
+    return std::make_unique<PhoebeOrbit>();
+}
+
+
+std::unique_ptr<Orbit>
+CreateMirandaOrbit()
+{
+    return CreateUranianSatelliteOrbit(1);
+}
+
+
+std::unique_ptr<Orbit>
+CreateArielOrbit()
+{
+    return CreateUranianSatelliteOrbit(2);
+}
+
+
+std::unique_ptr<Orbit>
+CreateUmbrielOrbit()
+{
+    return CreateUranianSatelliteOrbit(3);
+}
+
+
+std::unique_ptr<Orbit>
+CreateTitaniaOrbit()
+{
+    return CreateUranianSatelliteOrbit(4);
+}
+
+
+std::unique_ptr<Orbit>
+CreateOberonOrbit()
+{
+    return CreateUranianSatelliteOrbit(5);
+}
+
+
+std::unique_ptr<Orbit>
+CreateTritonOrbit()
+{
+    return std::make_unique<TritonOrbit>();
+}
+
+
+using CustomOrbitFactory = std::unique_ptr<Orbit> (*)();
+
+// lookup table generated by gperf (customorbit.gperf)
+#include "customorbit.inc"
 
 } // end unnamed namespace
 
 
 std::unique_ptr<Orbit> GetCustomOrbit(std::string_view name)
 {
-    CustomOrbitType type = parseCustomOrbit(name);
-    switch (type)
-    {
-    case CustomOrbitType::Unknown:
+    auto ptr = CustomOrbitMap::getOrbitType(name.data(), name.size());
+    if (ptr == nullptr)
         return nullptr;
-    case CustomOrbitType::Mercury:
-        return std::make_unique<MixedOrbit>(std::make_unique<MercuryOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Venus:
-        return std::make_unique<MixedOrbit>(std::make_unique<VenusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Earth:
-        return std::make_unique<MixedOrbit>(std::make_unique<EarthOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Moon:
-        return std::make_unique<MixedOrbit>(std::make_unique<LunarOrbit>(), yearToJD(-2000), yearToJD(4000), astro::EarthMass + astro::LunarMass);
-    case CustomOrbitType::Mars:
-        return std::make_unique<MixedOrbit>(std::make_unique<MarsOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Jupiter:
-        return std::make_unique<MixedOrbit>(std::make_unique<JupiterOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Saturn:
-        return std::make_unique<MixedOrbit>(std::make_unique<SaturnOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Uranus:
-        return std::make_unique<MixedOrbit>(std::make_unique<UranusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Neptune:
-        return std::make_unique<MixedOrbit>(std::make_unique<NeptuneOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    case CustomOrbitType::Pluto:
-        return std::make_unique<MixedOrbit>(std::make_unique<PlutoOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 
-    // JPL ephemerides for planets (relative to the Sun)
-    case CustomOrbitType::JplMercurySun:
-        return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::Sun,  0.2408  * 365.25, 6.0e7);
-    case CustomOrbitType::JplVenusSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Venus,   JPLEphemItem::Sun,  0.6152  * 365.25, 1.0e8);
-    case CustomOrbitType::JplEarthSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Earth,   JPLEphemItem::Sun,            365.25, 1.6e8);
-    case CustomOrbitType::JplMarsSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Mars,    JPLEphemItem::Sun,  1.8809 * 365.25, 2.4e8);
-    case CustomOrbitType::JplJupiterSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::Sun, 11.86   * 365.25, 8.0e8);
-    case CustomOrbitType::JplSaturnSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Saturn,  JPLEphemItem::Sun, 29.4577 * 365.25, 1.5e9);
-    case CustomOrbitType::JplUranusSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Uranus,  JPLEphemItem::Sun, 84.0139 * 365.25, 3.0e9);
-    case CustomOrbitType::JplNeptuneSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::Sun, 164.793  * 365.25, 4.7e9);
-    case CustomOrbitType::JplPlutoSun:
-        return CreateJPLEphOrbit(JPLEphemItem::Pluto,   JPLEphemItem::Sun, 248.54   * 365.25, 6.0e9);
-
-    // JPL ephemerides for planets (relative to Solar System barycenter)
-    case CustomOrbitType::JplMercurySsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::SSB,  0.2408  * 365.25, 6.0e7);
-    case CustomOrbitType::JplVenusSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Venus,   JPLEphemItem::SSB,  0.6152  * 365.25, 1.0e8);
-    case CustomOrbitType::JplEarthSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Earth,   JPLEphemItem::SSB,            365.25, 1.6e8);
-    case CustomOrbitType::JplMarsSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Mars,    JPLEphemItem::SSB,  1.8809 * 365.25, 2.4e8);
-    case CustomOrbitType::JplJupiterSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::SSB, 11.86   * 365.25, 8.0e8);
-    case CustomOrbitType::JplSaturnSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Saturn,  JPLEphemItem::SSB, 29.4577 * 365.25, 1.5e9);
-    case CustomOrbitType::JplUranusSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Uranus,  JPLEphemItem::SSB, 84.0139 * 365.25, 3.0e9);
-    case CustomOrbitType::JplNeptuneSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::SSB, 164.793  * 365.25, 4.7e9);
-    case CustomOrbitType::JplPlutoSsb:
-        return CreateJPLEphOrbit(JPLEphemItem::Pluto,   JPLEphemItem::SSB, 248.54   * 365.25, 6.0e9);
-
-    // JPL ephemerides for Earth-Moon system
-    case CustomOrbitType::JplEmbSun: // Earth-Moon barycenter, heliocentric
-        return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::Sun,       365.25,           1.6e8);
-    case CustomOrbitType::JplEmbSsb: // Earth-Moon barycenter, relative to ssb
-        return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::SSB,       365.25,           1.6e8);
-    case CustomOrbitType::JplMoonEmb: // Moon, barycentric
-        return CreateJPLEphOrbit(JPLEphemItem::Moon,    JPLEphemItem::EarthMoonBary,   27.321661,        5.0e5);
-    case CustomOrbitType::JplMoonEarth: // Moon, geocentric
-        return CreateJPLEphOrbit(JPLEphemItem::Moon,    JPLEphemItem::Earth,           27.321661,        5.0e5);
-    case CustomOrbitType::JplEarthEmb: // Earth, barycentric
-        return CreateJPLEphOrbit(JPLEphemItem::Earth,   JPLEphemItem::EarthMoonBary,   27.321,           1.0e5);
-
-    case CustomOrbitType::JplSunSsb:   // Position of Sun relative to SSB
-        return CreateJPLEphOrbit(JPLEphemItem::Sun,     JPLEphemItem::SSB,             11.861773 * 365.25, 2000000);
-
-    // HTC2.0 ephemeris for Saturnian satellites in Lagrange points of Tethys and Dione
-    case CustomOrbitType::Htc20Helene:
-        return HTC20Orbit::CreateHeleneOrbit();
-    case CustomOrbitType::Htc20Telesto:
-        return HTC20Orbit::CreateTelestoOrbit();
-    case CustomOrbitType::Htc20Calypso:
-        return HTC20Orbit::CreateCalypsoOrbit();
-
-    // various planetary satellite orbits
-    case CustomOrbitType::Phobos:
-        return std::make_unique<PhobosOrbit>();
-    case CustomOrbitType::Deimos:
-        return std::make_unique<DeimosOrbit>();
-    case CustomOrbitType::Io:
-        return std::make_unique<IoOrbit>();
-    case CustomOrbitType::Europa:
-        return std::make_unique<EuropaOrbit>();
-    case CustomOrbitType::Ganymede:
-        return std::make_unique<GanymedeOrbit>();
-    case CustomOrbitType::Callisto:
-        return std::make_unique<CallistoOrbit>();
-    case CustomOrbitType::Mimas:
-        return std::make_unique<MimasOrbit>();
-    case CustomOrbitType::Enceladus:
-        return std::make_unique<EnceladusOrbit>();
-    case CustomOrbitType::Tethys:
-        return std::make_unique<TethysOrbit>();
-    case CustomOrbitType::Dione:
-        return std::make_unique<DioneOrbit>();
-    case CustomOrbitType::Rhea:
-        return std::make_unique<RheaOrbit>();
-    case CustomOrbitType::Titan:
-        return std::make_unique<TitanOrbit>();
-    case CustomOrbitType::Hyperion:
-        return std::make_unique<HyperionOrbit>();
-    case CustomOrbitType::Iapetus:
-        return std::make_unique<IapetusOrbit>();
-    case CustomOrbitType::Phoebe:
-        return std::make_unique<PhoebeOrbit>();
-    case CustomOrbitType::Miranda:
-        return CreateUranianSatelliteOrbit(1);
-    case CustomOrbitType::Ariel:
-        return CreateUranianSatelliteOrbit(2);
-    case CustomOrbitType::Umbriel:
-        return CreateUranianSatelliteOrbit(3);
-    case CustomOrbitType::Titania:
-        return CreateUranianSatelliteOrbit(4);
-    case CustomOrbitType::Oberon:
-        return CreateUranianSatelliteOrbit(5);
-    case CustomOrbitType::Triton:
-        return std::make_unique<TritonOrbit>();
-    default:
-        return CreateVSOP87Orbit(type);
-    }
+    return ptr->factory();
 }
 
 } // end namespace celestia::ephem

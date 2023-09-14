@@ -46,3 +46,6 @@ endif()
 
 # These object files are merged in the celegine library
 add_library(celephem OBJECT ${CELEPHEM_SOURCES})
+
+gperf_add_table(celephem customrotation.gperf customrotation.cpp 4)
+gperf_add_table(celephem customorbit.gperf    customorbit.cpp    4)
