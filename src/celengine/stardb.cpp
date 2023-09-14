@@ -428,9 +428,6 @@ StarDatabase::~StarDatabase()
 Star*
 StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 {
-    Star refStar;
-    refStar.setIndex(catalogNumber);
-
     auto star = std::lower_bound(catalogNumberIndex.cbegin(), catalogNumberIndex.cend(),
                                  catalogNumber,
                                  [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
