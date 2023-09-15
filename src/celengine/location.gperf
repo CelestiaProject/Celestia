@@ -1,0 +1,76 @@
+%struct-type
+%language=C++
+%define lookup-function-name getFeatureType
+%define class-name FeatureNamesMap
+%compare-strncmp
+%readonly-tables
+%enum
+struct FeatureNameEntry { const char* name; Location::FeatureType featureType; };
+%%
+"AA",           Location::Crater
+"AL",           Location::Albedo
+"AR",           Location::Arcus
+"AS",           Location::Astrum
+"CA",           Location::Catena
+"CB",           Location::Cavus
+"CH",           Location::Chaos
+"CM",           Location::Chasma
+"CO",           Location::Colles
+"CR",           Location::Corona
+"DO",           Location::Dorsum
+"ER",           Location::EruptiveCenter
+"FA",           Location::Facula
+"FE",           Location::Flexus
+"FL",           Location::Fluctus
+"FM",           Location::Flumen
+"FO",           Location::Fossa
+"FR",           Location::Farrum
+"FT",           Location::Fretum
+"IN",           Location::Insula
+"LA",           Location::Labes
+"LB",           Location::Labyrinthus
+"LU",           Location::Lacuna
+"LC",           Location::Lacus
+"LF",           Location::LandingSite
+"LG",           Location::LargeRinged
+"LE",           Location::Lenticula
+"LI",           Location::Linea
+"LN",           Location::Lingula
+"MA",           Location::Macula
+"ME",           Location::Mare
+"MN",           Location::Mensa
+"MO",           Location::Mons
+"OC",           Location::Oceanus
+"PA",           Location::Palus
+"PE",           Location::Patera
+"PL",           Location::Planitia
+"PM",           Location::Planum
+"PU",           Location::Plume
+"PR",           Location::Promontorium
+"RE",           Location::Regio
+"RG",           Location::Ring
+"RI",           Location::Rima
+"RT",           Location::Reticulum
+"RU",           Location::Rupes
+"SA",           Location::Saxum
+"SF",           Location::Satellite
+"SC",           Location::Scopulus
+"SE",           Location::Serpens
+"SI",           Location::Sinus
+"SU",           Location::Sulcus
+"TA",           Location::Terra
+"TE",           Location::Tessera
+"TH",           Location::Tholus
+"UN",           Location::Undae
+"VA",           Location::Vallis
+"VS",           Location::Vastitas
+"VI",           Location::Virga
+"XX",           Location::Other
+"City",         Location::City
+"Observatory",  Location::Observatory
+"Landing Site", Location::LandingSite
+"Crater",       Location::Crater
+"Capital",      Location::Capital
+"Cosmodrome",   Location::Cosmodrome
+"Ring",         Location::Ring
+"Historical",   Location::Historical
