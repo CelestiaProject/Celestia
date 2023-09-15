@@ -75,7 +75,7 @@ DestinationList* ReadDestinationList(std::istream& in)
                 {
                     if (!compareIgnoringCase(*distanceUnits, "ly"))
                         dest->distance = astro::lightYearsToKilometers(dest->distance);
-                    else if (!compareIgnoringCase(*distanceUnits, "au"))
+                    else if (compareIgnoringCase(*distanceUnits, "au") == 0)
                         dest->distance = astro::AUtoKilometers(dest->distance);
                     else if (compareIgnoringCase(*distanceUnits, "km") ! = 0)
                         dest->distance = astro::lightYearsToKilometers(dest->distance);
