@@ -2129,7 +2129,7 @@ msgstr "Пропустить экран заставки."
 
 #: ../src/celestia/qt/qtcommandline.cpp:21
 msgid "Set the start cel:// URL or startup script path."
-msgstr "Выставите cel:// URL или путь сценария запуска."
+msgstr "Выставить cel:// URL или путь сценария запуска."
 
 #: ../src/celestia/qt/qtcommandline.cpp:21
 msgid "url"
@@ -2137,7 +2137,7 @@ msgstr "url"
 
 #: ../src/celestia/qt/qtcommandline.cpp:22
 msgid "Set the path to the log file."
-msgstr "Выставите путь файла логирования."
+msgstr "Выставить путь файла логирования."
 
 #: ../src/celestia/qt/qtcommandline.cpp:22
 msgid "logpath"
