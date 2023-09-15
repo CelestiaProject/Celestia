@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-09-09 12:01+0200\n"
+"POT-Creation-Date: 2023-09-15 14:52+0300\n"
 "PO-Revision-Date: 2019-02-14 21:31+0300\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
 "Language-Team: Polish (https://www.transifex.com/celestia/teams/93131/pl/)\n"
@@ -19,9 +19,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
-"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
-"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Generator: Poedit 1.8.11\n"
 
 #: ../src/celengine/astro.cpp:645
@@ -31,6 +31,11 @@ msgstr "DST"
 #: ../src/celengine/astro.cpp:645
 msgid "STD"
 msgstr "STD"
+
+#: ../src/celengine/dateformatter.cpp:87 ../src/celestia/win32/winmain.cpp:3356
+#: ../src/celutil/fsutils.cpp:41
+msgid "LANGUAGE"
+msgstr "pl"
 
 #.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
@@ -128,53 +133,53 @@ msgstr "zła zastępcza powierzchnia"
 msgid "bad location"
 msgstr "zła lokalizacja"
 
-#: ../src/celengine/stardb.cpp:290
+#: ../src/celengine/stardb.cpp:344
 msgid "Error in .stc file (line {}): {}\n"
 msgstr ""
 
-#: ../src/celengine/stardb.cpp:725
+#: ../src/celengine/stardb.cpp:760
 msgid "Bad spectral type in star database, star #{}\n"
 msgstr ""
 
-#: ../src/celengine/stardb.cpp:746
+#: ../src/celengine/stardb.cpp:781
 msgid "{} stars in binary database\n"
 msgstr ""
 
-#: ../src/celengine/stardb.cpp:1044
+#: ../src/celengine/stardb.cpp:1071
 msgid "Bad header for cross index\n"
 msgstr "Zły nagłówek indeksu skrośnego\n"
 
-#: ../src/celengine/stardb.cpp:1054
+#: ../src/celengine/stardb.cpp:1079
 msgid "Bad version for cross index\n"
 msgstr "Zła wersja indeksu skrośnego\n"
 
-#: ../src/celengine/stardb.cpp:1071
+#: ../src/celengine/stardb.cpp:1096
 #, fuzzy
 msgid "Loading cross index failed\n"
 msgstr "Zła wersja indeksu skrośnego\n"
 
-#: ../src/celengine/stardb.cpp:1082
+#: ../src/celengine/stardb.cpp:1107
 #, fuzzy
 msgid "Loading cross index failed - unexpected EOF\n"
 msgstr "Zła wersja indeksu skrośnego\n"
 
-#: ../src/celengine/stardb.cpp:1116
+#: ../src/celengine/stardb.cpp:1137
 msgid "Total star count: {}\n"
 msgstr ""
 
-#: ../src/celengine/stardb.cpp:1216
+#: ../src/celengine/stardb.cpp:1235
 msgid "Invalid star: missing right ascension\n"
 msgstr "Nieprawidłowa gwiazda: brak poprawnej rektascencji\n"
 
-#: ../src/celengine/stardb.cpp:1227
+#: ../src/celengine/stardb.cpp:1246
 msgid "Invalid star: missing declination.\n"
 msgstr "Nieprawidłowa gwiazda: brak deklinacji\n"
 
-#: ../src/celengine/stardb.cpp:1238
+#: ../src/celengine/stardb.cpp:1257
 msgid "Invalid star: missing distance.\n"
 msgstr "Nieprawidłowa gwiazda: brak odległości\n"
 
-#: ../src/celengine/stardb.cpp:1280
+#: ../src/celengine/stardb.cpp:1299
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -182,20 +187,20 @@ msgstr ""
 "Nieprawidłowa gwiazda: bezwzględna (nie pozorna) wielkość musi być określona "
 "dla gwiazdy w pobliżu pochodzenia\n"
 
-#: ../src/celengine/stardb.cpp:1287
+#: ../src/celengine/stardb.cpp:1306
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Nieprawidłowa gwiazda: brak wielkości\n"
 
-#: ../src/celengine/stardb.cpp:1338
+#: ../src/celengine/stardb.cpp:1357
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Nieprawidłowa gwiazda: zły typ spektralny.\n"
 
 #. Spectral type is required for new stars
-#: ../src/celengine/stardb.cpp:1345
+#: ../src/celengine/stardb.cpp:1364
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Nieprawidłowa gwiazda: brak typu spektralnego.\n"
 
-#: ../src/celengine/stardb.cpp:1499 ../src/celengine/stardb.cpp:1503
+#: ../src/celengine/stardb.cpp:1515 ../src/celengine/stardb.cpp:1517
 #, fuzzy
 msgid "Barycenter {} does not exist.\n"
 msgstr "Katalog z dodatkami %1 nie istnieje"
@@ -908,6 +913,16 @@ msgstr "Obsługiwane rozszerzenia:"
 msgid "Error opening asterisms file {}.\n"
 msgstr "Błąd podczas otwierania pliku astronomów."
 
+#: ../src/celestia/gtk/actions.cpp:90 ../src/celestia/qt/qtappwin.cpp:742
+#: ../src/celestia/win32/winmain.cpp:163
+msgid "Lossless"
+msgstr ""
+
+#: ../src/celestia/gtk/actions.cpp:91 ../src/celestia/qt/qtappwin.cpp:743
+#: ../src/celestia/win32/winmain.cpp:164
+msgid "Lossy (H.264)"
+msgstr ""
+
 #: ../src/celestia/gtk/actions.cpp:745 ../src/celestia/qt/qtappwin.cpp:1245
 #: ../src/celestia/qt/qtappwin.cpp:1654
 #: ../src/celestia/win32/res/resource_strings.cpp:73
@@ -1042,17 +1057,17 @@ msgstr "Obiekty głębokiego nieba"
 msgid "Event Finder"
 msgstr "Wyszukiwarka wydarzeń"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1138
-#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:1034
+#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/qtappwin.cpp:399 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Czas"
 
+#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:406 ../src/celestia/qt/rc.cpp:139
 msgid "Guides"
 msgstr "Przewodniki"
@@ -1110,14 +1125,6 @@ msgstr "Tempo klatek:"
 
 #: ../src/celestia/qt/qtappwin.cpp:740
 msgid "Video codec:"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:742
-msgid "Lossless"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:743
-msgid "Lossy (H.264)"
 msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:747
@@ -1575,7 +1582,6 @@ msgstr "Linia ekliptyki"
 msgid "M"
 msgstr ""
 
-#. Controls for marking selected objects
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
@@ -1622,13 +1628,13 @@ msgstr ""
 msgid "Orbits"
 msgstr "Orbity"
 
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:94
 #: ../src/celestia/qt/qtcelestiaactions.cpp:121
 #: ../src/celestia/qt/qtselectionpopup.cpp:412
@@ -1701,6 +1707,7 @@ msgstr "Asteroidy"
 msgid "Comets"
 msgstr "Komety"
 
+#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1710,7 +1717,6 @@ msgstr "Komety"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:100
 #: ../src/celestia/qt/qtcelestiaactions.cpp:127
 #: ../src/celestia/qt/qtselectionpopup.cpp:430
@@ -1739,11 +1745,11 @@ msgstr ""
 msgid "Labels"
 msgstr "Nazwy"
 
-#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtcelestiaactions.cpp:152
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:478 ../src/celestia/qt/rc.cpp:97
@@ -1834,21 +1840,21 @@ msgstr "Cienie zaćmień"
 msgid "Cloud Shadows"
 msgstr "Cienie chmur"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:828
+#. i18n: file: ../src/celestia/qt/preferences.ui:815
 #. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:309
+#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:312
 msgid "Low"
 msgstr "Niska"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:835
+#. i18n: file: ../src/celestia/qt/preferences.ui:822
 #. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:312
+#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:315
 msgid "Medium"
 msgstr "Średnia"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:842
+#. i18n: file: ../src/celestia/qt/preferences.ui:829
 #. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:315
+#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:318
 msgid "High"
 msgstr "Wysoka"
 
@@ -1868,7 +1874,7 @@ msgstr "Pokazuj więcej gwiazd"
 msgid "Fewer Stars Visible"
 msgstr "Pokazuj mniej gwiazd"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1050
+#. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:209 ../src/celestia/qt/rc.cpp:336
 msgid "Points"
@@ -2166,6 +2172,36 @@ msgstr ""
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:526
 msgid "Unmark DSOs selected in list view"
 msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:67
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Earth"
+msgstr "Ziemia"
+
+#: ../src/celestia/qt/qteventfinder.cpp:68
+#: ../src/celestia/win32/wineclipses.cpp:296
+msgid "Jupiter"
+msgstr "Jowisz"
+
+#: ../src/celestia/qt/qteventfinder.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:297
+msgid "Saturn"
+msgstr "Saturn"
+
+#: ../src/celestia/qt/qteventfinder.cpp:70
+#: ../src/celestia/win32/wineclipses.cpp:298
+msgid "Uranus"
+msgstr "Uran"
+
+#: ../src/celestia/qt/qteventfinder.cpp:71
+#: ../src/celestia/win32/wineclipses.cpp:299
+msgid "Neptune"
+msgstr "Neptun"
+
+#: ../src/celestia/qt/qteventfinder.cpp:72
+#: ../src/celestia/win32/wineclipses.cpp:300
+msgid "Pluto"
+msgstr "Pluton"
 
 #: ../src/celestia/qt/qteventfinder.cpp:216
 msgid "Eclipsed body"
@@ -3135,81 +3171,81 @@ msgstr "Inne miejsca"
 msgid "Minimum labelled feature size:"
 msgstr ""
 
+#. i18n: file: ../src/celestia/qt/preferences.ui:772
+#. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
+#: ../src/celestia/qt/rc.cpp:303
+msgid "000; "
+msgstr ""
+
 #. i18n: file: ../src/celestia/qt/preferences.ui:801
 #. i18n: ectx: attribute (title), widget (QWidget, renderTab)
-#: ../src/celestia/qt/rc.cpp:303
+#: ../src/celestia/qt/rc.cpp:306
 msgid "Render"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:822
+#. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
-#: ../src/celestia/qt/rc.cpp:306
+#: ../src/celestia/qt/rc.cpp:309
 msgid "Texture resolution"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:865
+#. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
-#: ../src/celestia/qt/rc.cpp:318
-#, fuzzy
-msgid "Lighting"
-msgstr "Lekkie wzmocnienie"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:871
-#. i18n: ectx: property (text), widget (QLabel, label_4)
 #: ../src/celestia/qt/rc.cpp:321
 #, fuzzy
-msgid "Ambient light:"
+msgid "Ambient light"
 msgstr "Światło otoczenia"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:932
-#. i18n: ectx: property (text), widget (QLabel, label_5)
+#. i18n: file: ../src/celestia/qt/preferences.ui:874
+#. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
 #: ../src/celestia/qt/rc.cpp:324
-msgid "Tinted illumination saturation:"
-msgstr ""
+#, fuzzy
+msgid "Tinted illumination"
+msgstr "Gwiazdozbiory"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:991
+#. i18n: file: ../src/celestia/qt/preferences.ui:900
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/rc.cpp:327
 msgid "Render path"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1004
+#. i18n: file: ../src/celestia/qt/preferences.ui:913
 #. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
 #: ../src/celestia/qt/rc.cpp:330
 msgid "Antialiased lines"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1044
+#. i18n: file: ../src/celestia/qt/preferences.ui:940
 #. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/rc.cpp:333
 msgid "Star style"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1057
+#. i18n: file: ../src/celestia/qt/preferences.ui:953
 #. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
 #: ../src/celestia/qt/rc.cpp:339
 msgid "Fuzzy points"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1064
+#. i18n: file: ../src/celestia/qt/preferences.ui:960
 #. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
 #: ../src/celestia/qt/rc.cpp:342
 msgid "Scaled discs"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1087
+#. i18n: file: ../src/celestia/qt/preferences.ui:983
 #. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/rc.cpp:345
 msgid "Auto-magnitude"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1110
+#. i18n: file: ../src/celestia/qt/preferences.ui:1006
 #. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
 #: ../src/celestia/qt/rc.cpp:348
 msgid "Star colors"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1147
+#. i18n: file: ../src/celestia/qt/preferences.ui:1043
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:354
 msgid "Date display format:"
@@ -3912,30 +3948,6 @@ msgstr "Data"
 msgid "Start"
 msgstr "Start"
 
-#: ../src/celestia/win32/wineclipses.cpp:295
-msgid "Earth"
-msgstr "Ziemia"
-
-#: ../src/celestia/win32/wineclipses.cpp:296
-msgid "Jupiter"
-msgstr "Jowisz"
-
-#: ../src/celestia/win32/wineclipses.cpp:297
-msgid "Saturn"
-msgstr "Saturn"
-
-#: ../src/celestia/win32/wineclipses.cpp:298
-msgid "Uranus"
-msgstr "Uran"
-
-#: ../src/celestia/win32/wineclipses.cpp:299
-msgid "Neptune"
-msgstr "Neptun"
-
-#: ../src/celestia/win32/wineclipses.cpp:300
-msgid "Pluto"
-msgstr "Pluton"
-
 #: ../src/celestia/win32/winmain.cpp:539
 msgid ""
 "License file missing!\n"
@@ -4249,6 +4261,10 @@ msgid "Error opening {} or {}.\n"
 msgstr "Błąd otwarcia skryptu"
 
 #, fuzzy
+#~ msgid "Lighting"
+#~ msgstr "Lekkie wzmocnienie"
+
+#, fuzzy
 #~ msgid "Error opening config file '{}'.\n"
 #~ msgstr "Błąd podczas otwierania pliku astronomów."
 
@@ -4256,7 +4272,7 @@ msgstr "Błąd otwarcia skryptu"
 #~ msgid "{}:{} 'Configuration' expected.\n"
 #~ msgstr "Błąd odczytu pliku konfiguracyjnego."
 
-#, fuzzy, qt-format
+#, fuzzy
 #~ msgid ""
 #~ "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
 #~ "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
@@ -4277,17 +4293,13 @@ msgstr "Błąd otwarcia skryptu"
 #~ "jest wolnym oprogramowaniem. Mona ją redystrybuować i/lub modyfikować na "
 #~ "warunkach licencji GNU General Public License wersja&nbsp;2.</"
 #~ "p><b>Celestia w sieci</b><br>Strona główna:<a href=\"https://"
-#~ "celestiaproject.space/\">https://celestia.space/</a><br>Forum:<a "
-#~ "href=\"https://celestiaproject.space/forum/\">https://celestiaproject."
-#~ "space/forum/</a><br>Repozytorium GitHub: https://github.com/"
-#~ "CelestiaProject/Celestia<a href=\"https://github.com/CelestiaProject/"
-#~ "Celestia\"><br></a>"
+#~ "celestiaproject.space/\">https://celestia.space/</a><br>Forum:<a href="
+#~ "\"https://celestiaproject.space/forum/\">https://celestiaproject.space/"
+#~ "forum/</a><br>Repozytorium GitHub: https://github.com/CelestiaProject/"
+#~ "Celestia<a href=\"https://github.com/CelestiaProject/Celestia\"><br></a>"
 
 #~ msgid "S&ynch Orbit"
 #~ msgstr "S&ynch. Orbit"
-
-#~ msgid "LANGUAGE"
-#~ msgstr "pl"
 
 #, fuzzy
 #~ msgid "Render path: OpenGL 2.1"
@@ -6528,8 +6540,8 @@ msgstr "Błąd otwarcia skryptu"
 #~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
 #~ "%dx%d offset (%dx%d)\n"
 #~ msgstr ""
-#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps jakość %d "
-#~ "%dx%d offset (%dx%d)\n"
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps jakość %d %dx"
+#~ "%d offset (%dx%d)\n"
 
 #~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 #~ msgstr "OggTheoraCapture::cleanup() - napisano %d klatek\n"

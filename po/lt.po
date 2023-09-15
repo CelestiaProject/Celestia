@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia lt\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-09-09 12:01+0200\n"
+"POT-Creation-Date: 2023-09-15 14:52+0300\n"
 "PO-Revision-Date: 2020-07-14 06:47+0300\n"
 "Last-Translator: Mantas Kriaučiūnas <baltix@gmail.com>\n"
 "Language-Team: \n"
@@ -19,6 +19,11 @@ msgstr "DST"
 #: ../src/celengine/astro.cpp:645
 msgid "STD"
 msgstr "STD"
+
+#: ../src/celengine/dateformatter.cpp:87 ../src/celestia/win32/winmain.cpp:3356
+#: ../src/celutil/fsutils.cpp:41
+msgid "LANGUAGE"
+msgstr "lt"
 
 #.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
@@ -119,57 +124,57 @@ msgstr "blogas alternatyvus paviršius"
 msgid "bad location"
 msgstr "bloga vieta"
 
-#: ../src/celengine/stardb.cpp:290
+#: ../src/celengine/stardb.cpp:344
 #, fuzzy
 msgid "Error in .stc file (line {}): {}\n"
 msgstr "Klaida .stc faile (eilutėje  "
 
-#: ../src/celengine/stardb.cpp:725
+#: ../src/celengine/stardb.cpp:760
 #, fuzzy
 msgid "Bad spectral type in star database, star #{}\n"
 msgstr "Blogas spektrinis tipas žvaigždžių  bazėje, žvaigždė #"
 
-#: ../src/celengine/stardb.cpp:746
+#: ../src/celengine/stardb.cpp:781
 #, fuzzy
 msgid "{} stars in binary database\n"
 msgstr "žvaigždžių dvejetainėje bazėje yra\n"
 
-#: ../src/celengine/stardb.cpp:1044
+#: ../src/celengine/stardb.cpp:1071
 msgid "Bad header for cross index\n"
 msgstr "Bloga antraštė cross rodikliui\n"
 
-#: ../src/celengine/stardb.cpp:1054
+#: ../src/celengine/stardb.cpp:1079
 msgid "Bad version for cross index\n"
 msgstr "Bloga versija cross rodikliui\n"
 
-#: ../src/celengine/stardb.cpp:1071
+#: ../src/celengine/stardb.cpp:1096
 #, fuzzy
 msgid "Loading cross index failed\n"
 msgstr "Įvyko klaida įkeliant ir įrašant cross rodiklius"
 
-#: ../src/celengine/stardb.cpp:1082
+#: ../src/celengine/stardb.cpp:1107
 #, fuzzy
 msgid "Loading cross index failed - unexpected EOF\n"
 msgstr "Įvyko klaida įkeliant ir įrašant cross rodiklius"
 
-#: ../src/celengine/stardb.cpp:1116
+#: ../src/celengine/stardb.cpp:1137
 #, fuzzy
 msgid "Total star count: {}\n"
 msgstr "Viso žvaigždžių: "
 
-#: ../src/celengine/stardb.cpp:1216
+#: ../src/celengine/stardb.cpp:1235
 msgid "Invalid star: missing right ascension\n"
 msgstr "Negaliojanti žvaigždė: prarasta prieeiga\n"
 
-#: ../src/celengine/stardb.cpp:1227
+#: ../src/celengine/stardb.cpp:1246
 msgid "Invalid star: missing declination.\n"
 msgstr "Negaliojanti žvaigždė: prarasta deklinacija.\n"
 
-#: ../src/celengine/stardb.cpp:1238
+#: ../src/celengine/stardb.cpp:1257
 msgid "Invalid star: missing distance.\n"
 msgstr "Negaliojanti žvaigždė: prarastas atstumas.\n"
 
-#: ../src/celengine/stardb.cpp:1280
+#: ../src/celengine/stardb.cpp:1299
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -177,20 +182,20 @@ msgstr ""
 "Negaliojanti žvaigždė: turi būti nurodytas absoliutus (neįžiūrimas) "
 "žvaigždės ryškis\n"
 
-#: ../src/celengine/stardb.cpp:1287
+#: ../src/celengine/stardb.cpp:1306
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Negaliojanti žvaigždė: prarastas ryškis.\n"
 
-#: ../src/celengine/stardb.cpp:1338
+#: ../src/celengine/stardb.cpp:1357
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Negaliojanti žvaigždė: blogas spektrinis tipas.\n"
 
 #. Spectral type is required for new stars
-#: ../src/celengine/stardb.cpp:1345
+#: ../src/celengine/stardb.cpp:1364
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Negaliojanti žvaigždė: prarastas spektrinis tipas.\n"
 
-#: ../src/celengine/stardb.cpp:1499 ../src/celengine/stardb.cpp:1503
+#: ../src/celengine/stardb.cpp:1515 ../src/celengine/stardb.cpp:1517
 #, fuzzy
 msgid "Barycenter {} does not exist.\n"
 msgstr " neegzistuoja.\n"
@@ -923,6 +928,16 @@ msgstr ""
 msgid "Error opening asterisms file {}.\n"
 msgstr "Klaida atveriant asterisms failą."
 
+#: ../src/celestia/gtk/actions.cpp:90 ../src/celestia/qt/qtappwin.cpp:742
+#: ../src/celestia/win32/winmain.cpp:163
+msgid "Lossless"
+msgstr ""
+
+#: ../src/celestia/gtk/actions.cpp:91 ../src/celestia/qt/qtappwin.cpp:743
+#: ../src/celestia/win32/winmain.cpp:164
+msgid "Lossy (H.264)"
+msgstr ""
+
 #: ../src/celestia/gtk/actions.cpp:745 ../src/celestia/qt/qtappwin.cpp:1245
 #: ../src/celestia/qt/qtappwin.cpp:1654
 #: ../src/celestia/win32/res/resource_strings.cpp:73
@@ -1057,17 +1072,17 @@ msgstr "Rodyti objektus"
 msgid "Event Finder"
 msgstr "Užtemimų paiška"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1138
-#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:1034
+#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/qtappwin.cpp:399 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Laikas"
 
+#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:406 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
@@ -1130,14 +1145,6 @@ msgstr "Rėmelio norma:"
 
 #: ../src/celestia/qt/qtappwin.cpp:740
 msgid "Video codec:"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:742
-msgid "Lossless"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:743
-msgid "Lossy (H.264)"
 msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:747
@@ -1631,7 +1638,6 @@ msgstr "Ekliptikos linija"
 msgid "M"
 msgstr ""
 
-#. Controls for marking selected objects
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
@@ -1680,13 +1686,13 @@ msgstr "Gerai"
 msgid "Orbits"
 msgstr "Orbitos"
 
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:94
 #: ../src/celestia/qt/qtcelestiaactions.cpp:121
 #: ../src/celestia/qt/qtselectionpopup.cpp:412
@@ -1759,6 +1765,7 @@ msgstr "Asteroidai"
 msgid "Comets"
 msgstr "Kometos"
 
+#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1768,7 +1775,6 @@ msgstr "Kometos"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:100
 #: ../src/celestia/qt/qtcelestiaactions.cpp:127
 #: ../src/celestia/qt/qtselectionpopup.cpp:430
@@ -1797,11 +1803,11 @@ msgstr ""
 msgid "Labels"
 msgstr "Pavadinimai"
 
-#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtcelestiaactions.cpp:152
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:478 ../src/celestia/qt/rc.cpp:97
@@ -1893,21 +1899,21 @@ msgstr "Užtemimų šešėliai"
 msgid "Cloud Shadows"
 msgstr "Debesų šešėliai"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:828
+#. i18n: file: ../src/celestia/qt/preferences.ui:815
 #. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:309
+#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:312
 msgid "Low"
 msgstr "Žema"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:835
+#. i18n: file: ../src/celestia/qt/preferences.ui:822
 #. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:312
+#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:315
 msgid "Medium"
 msgstr "Vidutinė"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:842
+#. i18n: file: ../src/celestia/qt/preferences.ui:829
 #. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:315
+#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:318
 msgid "High"
 msgstr "Aukšta"
 
@@ -1930,7 +1936,7 @@ msgstr "Daugiau žvaigždžių\t]"
 msgid "Fewer Stars Visible"
 msgstr "Mažiau žvaigždžių\t["
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1050
+#. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:209 ../src/celestia/qt/rc.cpp:336
 #, fuzzy
@@ -2241,6 +2247,36 @@ msgstr ""
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:526
 msgid "Unmark DSOs selected in list view"
 msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:67
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Earth"
+msgstr "Žemė"
+
+#: ../src/celestia/qt/qteventfinder.cpp:68
+#: ../src/celestia/win32/wineclipses.cpp:296
+msgid "Jupiter"
+msgstr "Jupiteris"
+
+#: ../src/celestia/qt/qteventfinder.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:297
+msgid "Saturn"
+msgstr "Saturnas"
+
+#: ../src/celestia/qt/qteventfinder.cpp:70
+#: ../src/celestia/win32/wineclipses.cpp:298
+msgid "Uranus"
+msgstr "Uranas"
+
+#: ../src/celestia/qt/qteventfinder.cpp:71
+#: ../src/celestia/win32/wineclipses.cpp:299
+msgid "Neptune"
+msgstr "Neptūnas"
+
+#: ../src/celestia/qt/qteventfinder.cpp:72
+#: ../src/celestia/win32/wineclipses.cpp:300
+msgid "Pluto"
+msgstr "Plutonas"
 
 #: ../src/celestia/qt/qteventfinder.cpp:216
 #, fuzzy
@@ -3281,91 +3317,90 @@ msgstr "Kitos savybės"
 msgid "Minimum labelled feature size:"
 msgstr "Minimalus pavadinimo ypatybės dydis"
 
+#. i18n: file: ../src/celestia/qt/preferences.ui:772
+#. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
+#: ../src/celestia/qt/rc.cpp:303
+msgid "000; "
+msgstr ""
+
 #. i18n: file: ../src/celestia/qt/preferences.ui:801
 #. i18n: ectx: attribute (title), widget (QWidget, renderTab)
-#: ../src/celestia/qt/rc.cpp:303
+#: ../src/celestia/qt/rc.cpp:306
 #, fuzzy
 msgid "Render"
 msgstr "Vaizdavimas"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:822
+#. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
-#: ../src/celestia/qt/rc.cpp:306
+#: ../src/celestia/qt/rc.cpp:309
 #, fuzzy
 msgid "Texture resolution"
 msgstr "&Tekstūrų rezoliucijos"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:865
+#. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
-#: ../src/celestia/qt/rc.cpp:318
-#, fuzzy
-msgid "Lighting"
-msgstr "Šviesos lygis"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:871
-#. i18n: ectx: property (text), widget (QLabel, label_4)
 #: ../src/celestia/qt/rc.cpp:321
 #, fuzzy
-msgid "Ambient light:"
+msgid "Ambient light"
 msgstr "Aplinkos šviesa"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:932
-#. i18n: ectx: property (text), widget (QLabel, label_5)
+#. i18n: file: ../src/celestia/qt/preferences.ui:874
+#. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
 #: ../src/celestia/qt/rc.cpp:324
 #, fuzzy
-msgid "Tinted illumination saturation:"
+msgid "Tinted illumination"
 msgstr "Žvaigždynai"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:991
+#. i18n: file: ../src/celestia/qt/preferences.ui:900
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/rc.cpp:327
 #, fuzzy
 msgid "Render path"
 msgstr "atvaizdavimas:"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1004
+#. i18n: file: ../src/celestia/qt/preferences.ui:913
 #. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
 #: ../src/celestia/qt/rc.cpp:330
 #, fuzzy
 msgid "Antialiased lines"
 msgstr "Grafinis glotninimas"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1044
+#. i18n: file: ../src/celestia/qt/preferences.ui:940
 #. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/rc.cpp:333
 #, fuzzy
 msgid "Star style"
 msgstr "Žvaigždžių _stilius"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1057
+#. i18n: file: ../src/celestia/qt/preferences.ui:953
 #. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
 #: ../src/celestia/qt/rc.cpp:339
 #, fuzzy
 msgid "Fuzzy points"
 msgstr "_Išplaukę taškai"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1064
+#. i18n: file: ../src/celestia/qt/preferences.ui:960
 #. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
 #: ../src/celestia/qt/rc.cpp:342
 #, fuzzy
 msgid "Scaled discs"
 msgstr "Scaled &diskai"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1087
+#. i18n: file: ../src/celestia/qt/preferences.ui:983
 #. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/rc.cpp:345
 #, fuzzy
 msgid "Auto-magnitude"
 msgstr "Auto ryškis"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1110
+#. i18n: file: ../src/celestia/qt/preferences.ui:1006
 #. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
 #: ../src/celestia/qt/rc.cpp:348
 #, fuzzy
 msgid "Star colors"
 msgstr "Žvaigždės"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1147
+#. i18n: file: ../src/celestia/qt/preferences.ui:1043
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:354
 msgid "Date display format:"
@@ -4077,30 +4112,6 @@ msgstr "Data"
 msgid "Start"
 msgstr "Pradžia"
 
-#: ../src/celestia/win32/wineclipses.cpp:295
-msgid "Earth"
-msgstr "Žemė"
-
-#: ../src/celestia/win32/wineclipses.cpp:296
-msgid "Jupiter"
-msgstr "Jupiteris"
-
-#: ../src/celestia/win32/wineclipses.cpp:297
-msgid "Saturn"
-msgstr "Saturnas"
-
-#: ../src/celestia/win32/wineclipses.cpp:298
-msgid "Uranus"
-msgstr "Uranas"
-
-#: ../src/celestia/win32/wineclipses.cpp:299
-msgid "Neptune"
-msgstr "Neptūnas"
-
-#: ../src/celestia/win32/wineclipses.cpp:300
-msgid "Pluto"
-msgstr "Plutonas"
-
 #: ../src/celestia/win32/winmain.cpp:539
 msgid ""
 "License file missing!\n"
@@ -4407,6 +4418,10 @@ msgid "Error opening {} or {}.\n"
 msgstr "Klaida atveriant"
 
 #, fuzzy
+#~ msgid "Lighting"
+#~ msgstr "Šviesos lygis"
+
+#, fuzzy
 #~ msgid "Error opening config file '{}'.\n"
 #~ msgstr "Klaida įkeliant atvaizdo failą "
 
@@ -4432,9 +4447,6 @@ msgstr "Klaida atveriant"
 #, fuzzy
 #~ msgid "&Disabled"
 #~ msgstr "Bloom išjungtas"
-
-#~ msgid "LANGUAGE"
-#~ msgstr "lt"
 
 #, fuzzy
 #~ msgid "Render path: OpenGL 2.1"

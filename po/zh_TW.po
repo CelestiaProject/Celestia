@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-09-09 12:01+0200\n"
+"POT-Creation-Date: 2023-09-15 14:52+0300\n"
 "PO-Revision-Date: 2018-05-28 21:03+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -25,6 +25,11 @@ msgstr "日光節約時間"
 #: ../src/celengine/astro.cpp:645
 msgid "STD"
 msgstr "標準時間"
+
+#: ../src/celengine/dateformatter.cpp:87 ../src/celestia/win32/winmain.cpp:3356
+#: ../src/celutil/fsutils.cpp:41
+msgid "LANGUAGE"
+msgstr "zh_TW"
 
 #.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
@@ -124,76 +129,76 @@ msgstr "錯誤的替代表面"
 msgid "bad location"
 msgstr "錯誤的位置"
 
-#: ../src/celengine/stardb.cpp:290
+#: ../src/celengine/stardb.cpp:344
 #, fuzzy
 msgid "Error in .stc file (line {}): {}\n"
 msgstr " .stc檔案內有錯誤 (行號:"
 
-#: ../src/celengine/stardb.cpp:725
+#: ../src/celengine/stardb.cpp:760
 #, fuzzy
 msgid "Bad spectral type in star database, star #{}\n"
 msgstr "恆星資料庫內的光譜類型錯誤，恆星 #"
 
-#: ../src/celengine/stardb.cpp:746
+#: ../src/celengine/stardb.cpp:781
 #, fuzzy
 msgid "{} stars in binary database\n"
 msgstr " 個恆星在雙星資料庫裡\n"
 
-#: ../src/celengine/stardb.cpp:1044
+#: ../src/celengine/stardb.cpp:1071
 msgid "Bad header for cross index\n"
 msgstr "錯誤的跨索引標頭\n"
 
-#: ../src/celengine/stardb.cpp:1054
+#: ../src/celengine/stardb.cpp:1079
 msgid "Bad version for cross index\n"
 msgstr "錯誤的跨索引版本\n"
 
-#: ../src/celengine/stardb.cpp:1071
+#: ../src/celengine/stardb.cpp:1096
 #, fuzzy
 msgid "Loading cross index failed\n"
 msgstr "載入跨索引失敗，於紀錄 "
 
-#: ../src/celengine/stardb.cpp:1082
+#: ../src/celengine/stardb.cpp:1107
 #, fuzzy
 msgid "Loading cross index failed - unexpected EOF\n"
 msgstr "載入跨索引失敗，於紀錄 "
 
-#: ../src/celengine/stardb.cpp:1116
+#: ../src/celengine/stardb.cpp:1137
 #, fuzzy
 msgid "Total star count: {}\n"
 msgstr "全部恆星數: "
 
-#: ../src/celengine/stardb.cpp:1216
+#: ../src/celengine/stardb.cpp:1235
 msgid "Invalid star: missing right ascension\n"
 msgstr "無效的恆星內容:遺漏赤經\n"
 
-#: ../src/celengine/stardb.cpp:1227
+#: ../src/celengine/stardb.cpp:1246
 msgid "Invalid star: missing declination.\n"
 msgstr "無效的恆星內容:遺漏赤緯。\n"
 
-#: ../src/celengine/stardb.cpp:1238
+#: ../src/celengine/stardb.cpp:1257
 msgid "Invalid star: missing distance.\n"
 msgstr "無效的恆星內容:遺漏距離。\n"
 
-#: ../src/celengine/stardb.cpp:1280
+#: ../src/celengine/stardb.cpp:1299
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr "無效的恆星內容:靠近原點恆星的絕對星等(非視星等)一定要輸入\n"
 
-#: ../src/celengine/stardb.cpp:1287
+#: ../src/celengine/stardb.cpp:1306
 msgid "Invalid star: missing magnitude.\n"
 msgstr "無效的恆星內容:遺漏星等。\n"
 
-#: ../src/celengine/stardb.cpp:1338
+#: ../src/celengine/stardb.cpp:1357
 msgid "Invalid star: bad spectral type.\n"
 msgstr "無效的恆星內容:錯誤的光譜型。\n"
 
 #. Spectral type is required for new stars
-#: ../src/celengine/stardb.cpp:1345
+#: ../src/celengine/stardb.cpp:1364
 msgid "Invalid star: missing spectral type.\n"
 msgstr "無效的恆星內容:遺漏光譜型。\n"
 
-#: ../src/celengine/stardb.cpp:1499 ../src/celengine/stardb.cpp:1503
+#: ../src/celengine/stardb.cpp:1515 ../src/celengine/stardb.cpp:1517
 #, fuzzy
 msgid "Barycenter {} does not exist.\n"
 msgstr " 不存在。\n"
@@ -934,6 +939,16 @@ msgstr "支援的延伸功能:"
 msgid "Error opening asterisms file {}.\n"
 msgstr "開啟星群檔時發生錯誤。"
 
+#: ../src/celestia/gtk/actions.cpp:90 ../src/celestia/qt/qtappwin.cpp:742
+#: ../src/celestia/win32/winmain.cpp:163
+msgid "Lossless"
+msgstr ""
+
+#: ../src/celestia/gtk/actions.cpp:91 ../src/celestia/qt/qtappwin.cpp:743
+#: ../src/celestia/win32/winmain.cpp:164
+msgid "Lossy (H.264)"
+msgstr ""
+
 #: ../src/celestia/gtk/actions.cpp:745 ../src/celestia/qt/qtappwin.cpp:1245
 #: ../src/celestia/qt/qtappwin.cpp:1654
 #: ../src/celestia/win32/res/resource_strings.cpp:73
@@ -1068,17 +1083,17 @@ msgstr "深太空天體"
 msgid "Event Finder"
 msgstr "食相尋找器"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1138
-#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:1034
+#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/qtappwin.cpp:399 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "時間"
 
+#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:406 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
@@ -1143,14 +1158,6 @@ msgstr "影像速率:"
 
 #: ../src/celestia/qt/qtappwin.cpp:740
 msgid "Video codec:"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:742
-msgid "Lossless"
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:743
-msgid "Lossy (H.264)"
 msgstr ""
 
 #: ../src/celestia/qt/qtappwin.cpp:747
@@ -1661,7 +1668,6 @@ msgstr "黃道"
 msgid "M"
 msgstr "m/s"
 
-#. Controls for marking selected objects
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
@@ -1712,13 +1718,13 @@ msgstr "確定"
 msgid "Orbits"
 msgstr "軌道"
 
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:94
 #: ../src/celestia/qt/qtcelestiaactions.cpp:121
 #: ../src/celestia/qt/qtselectionpopup.cpp:412
@@ -1791,6 +1797,7 @@ msgstr "小行星"
 msgid "Comets"
 msgstr "彗星"
 
+#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1800,7 +1807,6 @@ msgstr "彗星"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:100
 #: ../src/celestia/qt/qtcelestiaactions.cpp:127
 #: ../src/celestia/qt/qtselectionpopup.cpp:430
@@ -1830,11 +1836,11 @@ msgstr "10x 快轉(&F)\tL"
 msgid "Labels"
 msgstr "標籤"
 
-#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtcelestiaactions.cpp:152
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:478 ../src/celestia/qt/rc.cpp:97
@@ -1926,21 +1932,21 @@ msgstr "日月食陰影"
 msgid "Cloud Shadows"
 msgstr "雲層陰影"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:828
+#. i18n: file: ../src/celestia/qt/preferences.ui:815
 #. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:309
+#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:312
 msgid "Low"
 msgstr "低"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:835
+#. i18n: file: ../src/celestia/qt/preferences.ui:822
 #. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:312
+#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:315
 msgid "Medium"
 msgstr "中"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:842
+#. i18n: file: ../src/celestia/qt/preferences.ui:829
 #. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:315
+#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:318
 msgid "High"
 msgstr "高"
 
@@ -1963,7 +1969,7 @@ msgstr "讓更多星體可見\t]"
 msgid "Fewer Stars Visible"
 msgstr "讓較少星體可見\t]"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1050
+#. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:209 ../src/celestia/qt/rc.cpp:336
 #, fuzzy
@@ -2281,6 +2287,36 @@ msgstr ""
 #, fuzzy
 msgid "Unmark DSOs selected in list view"
 msgstr "標示(&M)"
+
+#: ../src/celestia/qt/qteventfinder.cpp:67
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Earth"
+msgstr "地球"
+
+#: ../src/celestia/qt/qteventfinder.cpp:68
+#: ../src/celestia/win32/wineclipses.cpp:296
+msgid "Jupiter"
+msgstr "木星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:297
+msgid "Saturn"
+msgstr "土星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:70
+#: ../src/celestia/win32/wineclipses.cpp:298
+msgid "Uranus"
+msgstr "天王星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:71
+#: ../src/celestia/win32/wineclipses.cpp:299
+msgid "Neptune"
+msgstr "海王星"
+
+#: ../src/celestia/qt/qteventfinder.cpp:72
+#: ../src/celestia/win32/wineclipses.cpp:300
+msgid "Pluto"
+msgstr "冥王星"
 
 #: ../src/celestia/qt/qteventfinder.cpp:216
 #, fuzzy
@@ -3334,91 +3370,90 @@ msgstr "其他特徵"
 msgid "Minimum labelled feature size:"
 msgstr "最小已標記特徵的尺寸"
 
+#. i18n: file: ../src/celestia/qt/preferences.ui:772
+#. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
+#: ../src/celestia/qt/rc.cpp:303
+msgid "000; "
+msgstr ""
+
 #. i18n: file: ../src/celestia/qt/preferences.ui:801
 #. i18n: ectx: attribute (title), widget (QWidget, renderTab)
-#: ../src/celestia/qt/rc.cpp:303
+#: ../src/celestia/qt/rc.cpp:306
 #, fuzzy
 msgid "Render"
 msgstr "成像(&R)"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:822
+#. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
-#: ../src/celestia/qt/rc.cpp:306
+#: ../src/celestia/qt/rc.cpp:309
 #, fuzzy
 msgid "Texture resolution"
 msgstr "紋理解析度"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:865
+#. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
-#: ../src/celestia/qt/rc.cpp:318
-#, fuzzy
-msgid "Lighting"
-msgstr "增光"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:871
-#. i18n: ectx: property (text), widget (QLabel, label_4)
 #: ../src/celestia/qt/rc.cpp:321
 #, fuzzy
-msgid "Ambient light:"
+msgid "Ambient light"
 msgstr "環境光線"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:932
-#. i18n: ectx: property (text), widget (QLabel, label_5)
+#. i18n: file: ../src/celestia/qt/preferences.ui:874
+#. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
 #: ../src/celestia/qt/rc.cpp:324
 #, fuzzy
-msgid "Tinted illumination saturation:"
+msgid "Tinted illumination"
 msgstr "星座"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:991
+#. i18n: file: ../src/celestia/qt/preferences.ui:900
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/rc.cpp:327
 #, fuzzy
 msgid "Render path"
 msgstr "成像路徑:"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1004
+#. i18n: file: ../src/celestia/qt/preferences.ui:913
 #. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
 #: ../src/celestia/qt/rc.cpp:330
 #, fuzzy
 msgid "Antialiased lines"
 msgstr "平滑軌道線"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1044
+#. i18n: file: ../src/celestia/qt/preferences.ui:940
 #. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/rc.cpp:333
 #, fuzzy
 msgid "Star style"
 msgstr "恆星樣式:點"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1057
+#. i18n: file: ../src/celestia/qt/preferences.ui:953
 #. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
 #: ../src/celestia/qt/rc.cpp:339
 #, fuzzy
 msgid "Fuzzy points"
 msgstr "模糊點(&U)"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1064
+#. i18n: file: ../src/celestia/qt/preferences.ui:960
 #. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
 #: ../src/celestia/qt/rc.cpp:342
 #, fuzzy
 msgid "Scaled discs"
 msgstr "按比例的盤面(&D)"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1087
+#. i18n: file: ../src/celestia/qt/preferences.ui:983
 #. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/rc.cpp:345
 #, fuzzy
 msgid "Auto-magnitude"
 msgstr "自動調整星等\tCtrl+Y"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1110
+#. i18n: file: ../src/celestia/qt/preferences.ui:1006
 #. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
 #: ../src/celestia/qt/rc.cpp:348
 #, fuzzy
 msgid "Star colors"
 msgstr "恆星樣式(&Y)"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1147
+#. i18n: file: ../src/celestia/qt/preferences.ui:1043
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:354
 #, fuzzy
@@ -4127,30 +4162,6 @@ msgstr "日期"
 msgid "Start"
 msgstr "開始"
 
-#: ../src/celestia/win32/wineclipses.cpp:295
-msgid "Earth"
-msgstr "地球"
-
-#: ../src/celestia/win32/wineclipses.cpp:296
-msgid "Jupiter"
-msgstr "木星"
-
-#: ../src/celestia/win32/wineclipses.cpp:297
-msgid "Saturn"
-msgstr "土星"
-
-#: ../src/celestia/win32/wineclipses.cpp:298
-msgid "Uranus"
-msgstr "天王星"
-
-#: ../src/celestia/win32/wineclipses.cpp:299
-msgid "Neptune"
-msgstr "海王星"
-
-#: ../src/celestia/win32/wineclipses.cpp:300
-msgid "Pluto"
-msgstr "冥王星"
-
 #: ../src/celestia/win32/winmain.cpp:539
 msgid ""
 "License file missing!\n"
@@ -4457,6 +4468,10 @@ msgid "Error opening {} or {}.\n"
 msgstr "發生錯誤於開啟 "
 
 #, fuzzy
+#~ msgid "Lighting"
+#~ msgstr "增光"
+
+#, fuzzy
 #~ msgid "Error opening config file '{}'.\n"
 #~ msgstr "影像檔案開啟失敗"
 
@@ -4494,9 +4509,6 @@ msgstr "發生錯誤於開啟 "
 #, fuzzy
 #~ msgid "&Enabled"
 #~ msgstr "經緯儀模式啟動"
-
-#~ msgid "LANGUAGE"
-#~ msgstr "zh_TW"
 
 #, fuzzy
 #~ msgid "Render path: OpenGL 2.1"
