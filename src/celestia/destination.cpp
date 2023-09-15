@@ -73,7 +73,7 @@ DestinationList* ReadDestinationList(std::istream& in)
                 // User default unit of distance is the light year
                 if (const std::string* distanceUnits = destParams->getString("DistanceUnits"); distanceUnits != nullptr)
                 {
-                    if (!compareIgnoringCase(*distanceUnits, "ly"))
+                    if (compareIgnoringCase(*distanceUnits, "ly") == 0)
                         dest->distance = astro::lightYearsToKilometers(dest->distance);
                     else if (compareIgnoringCase(*distanceUnits, "au") == 0)
                         dest->distance = astro::AUtoKilometers(dest->distance);
