@@ -14,13 +14,17 @@
 
 fs::path AppleHomeDirectory()
 {
-    return [NSHomeDirectory() UTF8String];
+    @autoreleasepool {
+        return [NSHomeDirectory() UTF8String];
+    }
 }
 
 fs::path AppleApplicationSupportDirectory()
 {
-    NSArray *directories = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-    if ([directories count] > 0)
-        return [[directories firstObject] UTF8String];
-    return "~/Library/Application Support";
+    @autoreleasepool {
+        NSArray *directories = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+        if ([directories count] > 0)
+            return [[directories firstObject] UTF8String];
+         return "~/Library/Application Support";
+    }
 }
