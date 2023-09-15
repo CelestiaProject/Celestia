@@ -3150,7 +3150,7 @@ msgstr "000; "
 #. i18n: ectx: attribute (title), widget (QWidget, renderTab)
 #: ../src/celestia/qt/rc.cpp:306
 msgid "Render"
-msgstr "&Вид"
+msgstr "Вид"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
