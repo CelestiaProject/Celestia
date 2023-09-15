@@ -3156,7 +3156,7 @@ msgstr "Вид"
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
 #: ../src/celestia/qt/rc.cpp:309
 msgid "Texture resolution"
-msgstr "&Качество текстур"
+msgstr "Качество текстур"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
