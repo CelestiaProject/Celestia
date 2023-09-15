@@ -2096,7 +2096,7 @@ msgstr "Найдено объектов: %1"
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "Set the data directory."
-msgstr "Выставите папку «data»."
+msgstr "Выставить папку «data»."
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "datadir"
@@ -2104,7 +2104,7 @@ msgstr "папка data"
 
 #: ../src/celestia/qt/qtcommandline.cpp:17
 msgid "Set the configuraton file."
-msgstr "Выставите конфигурационный файл."
+msgstr "Выставить конфигурационный файл."
 
 #: ../src/celestia/qt/qtcommandline.cpp:17
 msgid "conf"
