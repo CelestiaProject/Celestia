@@ -163,3 +163,5 @@ set(CELENGINE_SOURCES
 )
 
 add_library(celengine OBJECT ${CELENGINE_SOURCES})
+
+gperf_add_table(celengine location.gperf location.cpp 4)
