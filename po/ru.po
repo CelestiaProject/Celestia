@@ -2121,7 +2121,7 @@ msgstr "папка extras"
 
 #: ../src/celestia/qt/qtcommandline.cpp:19
 msgid "Start in fullscreen mode."
-msgstr "Запуск в полноэкранном режиме."
+msgstr "Запустить в полноэкранном режиме."
 
 #: ../src/celestia/qt/qtcommandline.cpp:20
 msgid "Skip the splash screen."
