@@ -313,18 +313,6 @@ void Body::setDensity(float _density)
 }
 
 
-float Body::getAlbedo() const
-{
-    return getGeomAlbedo();
-}
-
-
-void Body::setAlbedo(float _albedo)
-{
-    setGeomAlbedo(_albedo);
-}
-
-
 float Body::getGeomAlbedo() const
 {
     return geomAlbedo;
