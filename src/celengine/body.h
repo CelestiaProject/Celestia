@@ -226,8 +226,6 @@ class Body
     void setDensity(float);
 
     // Albedo functions and temperature
-    [[deprecated]] float getAlbedo() const;
-    [[deprecated]] void setAlbedo(float);
     float getGeomAlbedo() const;
     void setGeomAlbedo(float);
     float getBondAlbedo() const;
