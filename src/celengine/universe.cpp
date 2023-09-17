@@ -121,37 +121,32 @@ struct PlanetPickInfo
 
 
 bool
-ApproxPlanetPickTraversal(Body* body, void* info)
+ApproxPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
 {
-    auto* pickInfo = (PlanetPickInfo*) info;
-
     // Reject invisible bodies and bodies that don't exist at the current time
-    if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
+    if (!body->isVisible() || !body->extant(pickInfo.jd) || !body->isClickable())
         return true;
 
-    Eigen::Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
-    Eigen::Vector3d bodyDir = bpos - pickInfo->pickRay.origin();
+    Eigen::Vector3d bpos = body->getAstrocentricPosition(pickInfo.jd);
+    Eigen::Vector3d bodyDir = bpos - pickInfo.pickRay.origin();
     double distance = bodyDir.norm();
 
     // Check the apparent radius of the orbit against our tolerance factor.
     // This check exists to make sure than when picking a distant, we select
     // the planet rather than one of its satellites.
-    float appOrbitRadius = (float) (body->getOrbit(pickInfo->jd)->getBoundingRadius() / distance);
-
-    if (std::max((double) pickInfo->atanTolerance, ANGULAR_RES) > appOrbitRadius)
+    if (auto appOrbitRadius = static_cast<float>(body->getOrbit(pickInfo.jd)->getBoundingRadius() / distance);
+        std::max(static_cast<double>(pickInfo.atanTolerance), ANGULAR_RES) > appOrbitRadius)
     {
         return true;
     }
 
     bodyDir.normalize();
-    Eigen::Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction();
-    double sinAngle2 = bodyMiss.norm() / 2.0;
-
-    if (sinAngle2 <= pickInfo->sinAngle2Closest)
+    Eigen::Vector3d bodyMiss = bodyDir - pickInfo.pickRay.direction();
+    if (double sinAngle2 = bodyMiss.norm() / 2.0; sinAngle2 <= pickInfo.sinAngle2Closest)
     {
-        pickInfo->sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
-        pickInfo->closestBody = body;
-        pickInfo->closestApproxDistance = distance;
+        pickInfo.sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
+        pickInfo.closestBody = body;
+        pickInfo.closestApproxDistance = distance;
     }
 
     return true;
@@ -160,16 +155,15 @@ ApproxPlanetPickTraversal(Body* body, void* info)
 
 // Perform an intersection test between the pick ray and a body
 bool
-ExactPlanetPickTraversal(Body* body, void* info)
+ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
 {
-    auto* pickInfo = static_cast<PlanetPickInfo*>(info);
-    Eigen::Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
+    Eigen::Vector3d bpos = body->getAstrocentricPosition(pickInfo.jd);
     float radius = body->getRadius();
     double distance = -1.0;
 
     // Test for intersection with the bounding sphere
-    if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable() ||
-        !celmath::testIntersection(pickInfo->pickRay, celmath::Sphered(bpos, radius), distance))
+    if (!body->isVisible() || !body->extant(pickInfo.jd) || !body->isClickable() ||
+        !celmath::testIntersection(pickInfo.pickRay, celmath::Sphered(bpos, radius), distance))
         return true;
 
     if (body->getGeometry() == InvalidResource)
@@ -182,8 +176,8 @@ ExactPlanetPickTraversal(Body* body, void* info)
             Eigen::Vector3d ellipsoidAxes = body->getSemiAxes().cast<double>();
 
             // Transform rotate the pick ray into object coordinates
-            Eigen::Matrix3d m = body->getEclipticToEquatorial(pickInfo->jd).toRotationMatrix();
-            Eigen::ParametrizedLine<double, 3> r(pickInfo->pickRay.origin() - bpos, pickInfo->pickRay.direction());
+            Eigen::Matrix3d m = body->getEclipticToEquatorial(pickInfo.jd).toRotationMatrix();
+            Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
             r = celmath::transformRay(r, m);
             if (!celmath::testIntersection(r, celmath::Ellipsoidd(ellipsoidAxes), distance))
                 distance = -1.0;
@@ -193,8 +187,8 @@ ExactPlanetPickTraversal(Body* body, void* info)
     {
         // Transform rotate the pick ray into object coordinates
         Eigen::Quaterniond qd = body->getGeometryOrientation().cast<double>();
-        Eigen::Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo->jd)).toRotationMatrix();
-        Eigen::ParametrizedLine<double, 3> r(pickInfo->pickRay.origin() - bpos, pickInfo->pickRay.direction());
+        Eigen::Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo.jd)).toRotationMatrix();
+        Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
         r = celmath::transformRay(r, m);
 
         Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
@@ -215,16 +209,16 @@ ExactPlanetPickTraversal(Body* body, void* info)
     // Make also sure that the pickRay does not intersect the body in the
     // opposite hemisphere! Hence, need again the "bodyMiss" angle
 
-    Eigen::Vector3d bodyDir = bpos - pickInfo->pickRay.origin();
+    Eigen::Vector3d bodyDir = bpos - pickInfo.pickRay.origin();
     bodyDir.normalize();
-    Eigen::Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction();
+    Eigen::Vector3d bodyMiss = bodyDir - pickInfo.pickRay.direction();
 
     if (double sinAngle2 = bodyMiss.norm() / 2.0;
         sinAngle2 < std::sin(celestia::numbers::pi/4.0) && distance > 0.0 &&
-        distance <= pickInfo->closestDistance)
+        distance <= pickInfo.closestDistance)
     {
-        pickInfo->closestDistance = distance;
-        pickInfo->closestBody = body;
+        pickInfo.closestDistance = distance;
+        pickInfo.closestBody = body;
     }
 
     return true;
@@ -237,11 +231,12 @@ ExactPlanetPickTraversal(Body* body, void* info)
 // TODO: This function works, but could use some cleanup:
 //   * Make it a member of the frame tree class
 //   * Combine info and func into a traversal callback class
+template<typename F>
 bool
 traverseFrameTree(const FrameTree* frameTree,
                   double tdb,
-                  PlanetarySystem::TraversalFunc func,
-                  void* info)
+                  F func,
+                  PlanetPickInfo& info)
 {
     for (unsigned int i = 0; i < frameTree->childCount(); i++)
     {
@@ -822,7 +817,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
 
     // First see if there's a planet|moon that the pick ray intersects.
     // Select the closest planet|moon intersected.
-    traverseFrameTree(solarSystem.getFrameTree(), when, ExactPlanetPickTraversal, (void*) &pickInfo);
+    traverseFrameTree(solarSystem.getFrameTree(), when, &ExactPlanetPickTraversal, pickInfo);
 
     if (pickInfo.closestBody != nullptr)
     {
@@ -831,7 +826,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
 
         // Check if there is a satellite in front of the primary body that is
         // sufficiently close to the pickRay
-        traverseFrameTree(solarSystem.getFrameTree(), when, ApproxPlanetPickTraversal, (void*) &pickInfo);
+        traverseFrameTree(solarSystem.getFrameTree(), when, &ApproxPlanetPickTraversal, pickInfo);
 
         if (pickInfo.closestBody == closestBody)
             return  Selection(closestBody);
@@ -853,7 +848,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
     // clicks on a pixel where the planet's disc has been rendered--in order
     // to make distant planets visible on the screen at all, their apparent
     // size has to be greater than their actual disc size.
-    traverseFrameTree(solarSystem.getFrameTree(), when, ApproxPlanetPickTraversal, (void*) &pickInfo);
+    traverseFrameTree(solarSystem.getFrameTree(), when, &ApproxPlanetPickTraversal, pickInfo);
 
     if (pickInfo.sinAngle2Closest <= sinTol2)
         return Selection(pickInfo.closestBody);
