@@ -331,7 +331,7 @@ void VirtualTexture::populateTileTree()
 
         for (const auto& d : fs::directory_iterator(path, ec))
         {
-            if (!d.is_regular_file(ec))
+            if (!fs::is_regular_file(d, ec))
                 continue;
 
             int u = -1;
