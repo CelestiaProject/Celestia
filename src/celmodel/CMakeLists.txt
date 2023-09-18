@@ -7,6 +7,7 @@ set(CELMODEL_SOURCES
   modelfile.cpp
   modelfile.h
   model.h
+  tangents.cpp
 )
 
 add_library(celmodel OBJECT ${CELMODEL_SOURCES})
