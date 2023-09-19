@@ -1,5 +1,20 @@
+// cmodops.cpp
+//
+// Copyright (C) 2023-present, Celestia Development Team
+// Original version (C) 2004-2010, Chris Laurel <claurel@gmail.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
+#include <array>
 #include <cassert>
+#include <cstdint>
+#include <cstring> // std::memcpy
 #include <numeric> // std::iota
+#include <vector>
+#include <utility>
 #include <Eigen/Core>
 #include <celmodel/mesh.h>
 #include <celutil/logger.h>
@@ -12,8 +27,8 @@ namespace
 struct Face
 {
     Eigen::Vector3f normal;
-    std::uint32_t i[3];    // vertex attribute indices
-    std::uint32_t vi[3];   // vertex point indices -- same as above unless welding
+    std::array<cmod::Index32, 3> i;    // vertex attribute indices
+    std::array<cmod::Index32, 3> vi;   // vertex point indices -- same as above unless welding
 };
 
 void
@@ -21,7 +36,7 @@ copyVertex(cmod::VWord* newVertexData,
            const cmod::VertexDescription& newDesc,
            const cmod::VWord* oldVertexData,
            const cmod::VertexDescription& oldDesc,
-           std::uint32_t oldIndex,
+           cmod::Index32 oldIndex,
            const std::uint32_t fromOffsets[])
 {
     unsigned int stride = oldDesc.strideBytes / sizeof(cmod::VWord);
@@ -42,31 +57,30 @@ Eigen::Vector3f
 getVertex(const cmod::VWord* vertexData,
           int positionOffset,
           std::uint32_t strideWords,
-          std::uint32_t index)
+          cmod::Index32 index)
 {
-    float fdata[3];
-    std::memcpy(fdata, vertexData + strideWords * index + positionOffset, sizeof(float) * 3);
-    return Eigen::Vector3f(fdata);
+    std::array<float, 3> fdata;
+    std::memcpy(fdata.data(), vertexData + strideWords * index + positionOffset, sizeof(float) * 3);
+    return Eigen::Vector3f::Map(fdata.data());
 }
 
 
 Eigen::Vector2f
 getTexCoord(const cmod::VWord* vertexData,
             int texCoordOffset,
-            uint32_t strideWords,
-            uint32_t index)
+            std::uint32_t strideWords,
+            cmod::Index32 index)
 {
-    float fdata[2];
-    std::memcpy(fdata, vertexData + strideWords * index + texCoordOffset, sizeof(float) * 2);
-    return Eigen::Vector2f(fdata);
+    std::array<float, 2> fdata;
+    std::memcpy(fdata.data(), vertexData + strideWords * index + texCoordOffset, sizeof(float) * 2);
+    return Eigen::Vector2f::Map(fdata.data());
 }
 
 Eigen::Vector3f
 averageFaceVectors(const std::vector<Face>& faces,
                    std::uint32_t thisFace,
-                   std::uint32_t* vertexFaces,
-                   std::uint32_t vertexFaceCount,
-                   float cosSmoothingAngle)
+                   const std::uint32_t* vertexFaces,
+                   std::uint32_t vertexFaceCount)
 {
     const Face& face = faces[thisFace];
 
@@ -75,7 +89,7 @@ averageFaceVectors(const std::vector<Face>& faces,
     {
         std::uint32_t f = vertexFaces[i];
         float cosAngle = face.normal.dot(faces[f].normal);
-        if (f == thisFace || cosAngle > cosSmoothingAngle)
+        if (f == thisFace || cosAngle > 0.0f)
             v += faces[f].normal;
     }
 
@@ -92,19 +106,20 @@ augmentVertexDescription(cmod::VertexDescription& desc,
 
     auto it = desc.attributes.begin();
     auto end = desc.attributes.end();
-    for (auto i = desc.attributes.begin(); i != end; ++i)
+    for (auto &attr : desc.attributes)
     {
-        if (semantic == i->semantic && format != i->format)
+        if (semantic == attr.semantic && format != attr.format)
         {
             // The semantic matches, but the format does not; skip this
             // item.
             continue;
         }
 
-        foundMatch |= (semantic == i->semantic);
-        i->offsetWords = stride;
-        stride += cmod::VertexAttribute::getFormatSizeWords(i->format);
-        *it++ = std::move(*i);
+        foundMatch |= (semantic == attr.semantic);
+        attr.offsetWords = stride;
+        stride += cmod::VertexAttribute::getFormatSizeWords(attr.format);
+        *it = std::move(attr);
+        ++it;
     }
 
     desc.attributes.erase(it, end);
@@ -157,9 +172,8 @@ GenerateTangents(const Mesh& mesh)
 
     // Count the number of faces in the mesh.
     // (All geometry should already converted to triangle lists)
-    std::uint32_t i;
     std::uint32_t nFaces = 0;
-    for (i = 0; mesh.getGroup(i) != nullptr; i++)
+    for (std::uint32_t i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const PrimitiveGroup* group = mesh.getGroup(i);
         if (group->prim == PrimitiveGroupType::TriList)
@@ -178,26 +192,20 @@ GenerateTangents(const Mesh& mesh)
     // and fans into triangle lists.
     std::vector<Face> faces(nFaces);
 
-    std::uint32_t f = 0;
-    for (i = 0; mesh.getGroup(i) != nullptr; i++)
+    for (std::uint32_t i = 0, f = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const PrimitiveGroup* group = mesh.getGroup(i);
 
-        switch (group->prim)
-        {
-        case PrimitiveGroupType::TriList:
-            for (std::uint32_t j = 0; j < group->indices.size() / 3; j++)
-            {
-                assert(f < nFaces);
-                faces[f].i[0] = group->indices[j * 3];
-                faces[f].i[1] = group->indices[j * 3 + 1];
-                faces[f].i[2] = group->indices[j * 3 + 2];
-                f++;
-            }
-            break;
+        if (group->prim != PrimitiveGroupType::TriList)
+            continue;
 
-        default:
-            break;
+        for (std::uint32_t j = 0; j < group->indices.size() / 3; j++)
+        {
+            assert(f < nFaces);
+            faces[f].i[0] = group->indices[j * 3];
+            faces[f].i[1] = group->indices[j * 3 + 1];
+            faces[f].i[2] = group->indices[j * 3 + 2];
+            f++;
         }
     }
 
@@ -208,7 +216,7 @@ GenerateTangents(const Mesh& mesh)
     const VWord* vertexData = mesh.getVertexData();
 
     // Compute tangents for faces
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
         Eigen::Vector3f p0 = getVertex(vertexData, posOffset, stride, face.i[0]);
@@ -229,17 +237,11 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // For each vertex, create a list of faces that contain it
-    std::uint32_t* faceCounts = new std::uint32_t[nVertices];
-    std::uint32_t** vertexFaces = new std::uint32_t*[nVertices];
+    std::vector<std::uint32_t> faceCounts(nVertices, 0);
+    std::vector<std::uint32_t*> vertexFaces(nVertices, nullptr);
 
     // Initialize the lists
-    for (i = 0; i < nVertices; i++)
-    {
-        faceCounts[i] = 0;
-        vertexFaces[i] = nullptr;
-    }
-
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
         faces[f].vi[0] = faces[f].i[0];
         faces[f].vi[1] = faces[f].i[1];
@@ -247,16 +249,16 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // Count the number of faces in which each vertex appears
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
-        Face& face = faces[f];
+        const Face& face = faces[f];
         faceCounts[face.vi[0]]++;
         faceCounts[face.vi[1]]++;
         faceCounts[face.vi[2]]++;
     }
 
     // Allocate space for the per-vertex face lists
-    for (i = 0; i < nVertices; i++)
+    for (std::uint32_t i = 0; i < nVertices; i++)
     {
         if (faceCounts[i] > 0)
         {
@@ -266,9 +268,9 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // Fill in the vertex/face lists
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
-        Face& face = faces[f];
+        const Face& face = faces[f];
         vertexFaces[face.vi[0]][faceCounts[face.vi[0]]--] = f;
         vertexFaces[face.vi[1]][faceCounts[face.vi[1]]--] = f;
         vertexFaces[face.vi[2]][faceCounts[face.vi[2]]--] = f;
@@ -276,16 +278,14 @@ GenerateTangents(const Mesh& mesh)
 
     // Compute the vertex tangents by averaging
     std::vector<Eigen::Vector3f> vertexTangents(nFaces * 3);
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
-        Face& face = faces[f];
+        const Face& face = faces[f];
         for (std::uint32_t j = 0; j < 3; j++)
         {
-            vertexTangents[f * 3 + j] =
-                averageFaceVectors(faces, f,
-                                   &vertexFaces[face.vi[j]][1],
-                                   vertexFaces[face.vi[j]][0],
-                                   0.0f);
+            vertexTangents[f * 3 + j] = averageFaceVectors(faces, f,
+                                                           &vertexFaces[face.vi[j]][1],
+                                                           vertexFaces[face.vi[j]][0]);
         }
     }
 
@@ -298,8 +298,8 @@ GenerateTangents(const Mesh& mesh)
     // in the new vertex description.  The fromOffsets array will contain
     // this mapping.
     std::uint32_t tangentOffset = 0;
-    std::uint32_t fromOffsets[16];
-    for (i = 0; i < newDesc.attributes.size(); i++)
+    std::array<std::uint32_t, 16> fromOffsets;
+    for (std::uint32_t i = 0; i < newDesc.attributes.size(); i++)
     {
         fromOffsets[i] = ~0;
 
@@ -325,9 +325,9 @@ GenerateTangents(const Mesh& mesh)
     // new vertex data buffer.
     unsigned int newStride = newDesc.strideBytes / sizeof(VWord);
     std::vector<VWord> newVertexData(newStride * nFaces * 3);
-    for (f = 0; f < nFaces; f++)
+    for (std::uint32_t f = 0; f < nFaces; f++)
     {
-        Face& face = faces[f];
+        const Face& face = faces[f];
 
         for (std::uint32_t j = 0; j < 3; j++)
         {
@@ -335,8 +335,8 @@ GenerateTangents(const Mesh& mesh)
             copyVertex(newVertex, newDesc,
                        vertexData, desc,
                        face.i[j],
-                       fromOffsets);
-            std::memcpy(newVertex + tangentOffset, &vertexTangents[f * 3 + j], 3 * sizeof(float));
+                       fromOffsets.data());
+            std::memcpy(newVertex + tangentOffset, vertexTangents[f * 3 + j].data(), 3 * sizeof(float));
         }
     }
 
@@ -346,7 +346,7 @@ GenerateTangents(const Mesh& mesh)
     newMesh.setVertices(nFaces * 3, std::move(newVertexData));
 
     std::uint32_t firstIndex = 0;
-    for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
+    for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != nullptr; ++groupIndex)
     {
         const PrimitiveGroup* group = mesh.getGroup(groupIndex);
         unsigned int faceCount = 0;
@@ -354,11 +354,11 @@ GenerateTangents(const Mesh& mesh)
         switch (group->prim)
         {
         case PrimitiveGroupType::TriList:
-            faceCount = group->indices.size() / 3;
+            faceCount = static_cast<std::uint32_t>(group->indices.size()) / 3u;
             break;
         case PrimitiveGroupType::TriStrip:
         case PrimitiveGroupType::TriFan:
-            faceCount = group->indices.size() - 2;
+            faceCount = static_cast<std::uint32_t>(group->indices.size()) - 2u;
             break;
         default:
             assert(0);
@@ -376,13 +376,11 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // Clean up
-    delete[] faceCounts;
-    for (i = 0; i < nVertices; i++)
+    for (std::uint32_t i = 0; i < nVertices; i++)
     {
         if (vertexFaces[i] != nullptr)
             delete[] vertexFaces[i];
     }
-    delete[] vertexFaces;
 
     return newMesh;
 }
