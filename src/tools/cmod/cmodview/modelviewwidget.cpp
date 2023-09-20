@@ -1517,7 +1517,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     GLProgram* glShader;
     if (GLShaderLoader::CreateProgram(vertexShaderSource.toStdString(),
                                       fragmentShaderSource.toStdString(),
-                                      &glShader) != ShaderStatus_OK)
+                                      &glShader) != GLShaderStatus::OK)
     {
         qWarning("Failed to create GL program");
         return nullptr;
@@ -1526,7 +1526,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     if (shaderKey.hasNormalMap())
         glBindAttribLocation(glShader->getID(), TangentAttributeIndex, "tangentAtt");
 
-    if (glShader->link() != ShaderStatus_OK)
+    if (glShader->link() != GLShaderStatus::OK)
     {
         qWarning("Failed to link shader");
         delete glShader;
