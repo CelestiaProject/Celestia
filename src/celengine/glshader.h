@@ -19,13 +19,13 @@
 
 class GLShaderLoader;
 
-enum GLShaderStatus
+enum class GLShaderStatus
 {
-    ShaderStatus_OK,
-    ShaderStatus_CompileError,
-    ShaderStatus_LinkError,
-    ShaderStatus_OutOfMemory,
-    ShaderStatus_EmptyProgram,
+    OK,
+    CompileError,
+    LinkError,
+    OutOfMemory,
+    EmptyProgram,
 };
 
 class GLShader
@@ -189,6 +189,7 @@ class Mat4ShaderParameter
 class GLShaderLoader
 {
  public:
+    explicit GLShaderLoader() = delete;
     static GLShaderStatus CreateVertexShader(const std::vector<std::string>&,
                                              GLVertexShader**);
     static GLShaderStatus CreateGeometryShader(const std::vector<std::string>&,

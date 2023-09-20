@@ -79,7 +79,7 @@ GLShaderStatus
 GLShader::compile(const std::vector<std::string>& source)
 {
     if (source.empty())
-        return ShaderStatus_EmptyProgram;
+        return GLShaderStatus::EmptyProgram;
 
     // Convert vector of shader source strings to an array for OpenGL
     const auto** sourceStrings = new const char*[source.size()];
@@ -96,9 +96,9 @@ GLShader::compile(const std::vector<std::string>& source)
     GLint compileSuccess;
     glGetShaderiv(id, GL_COMPILE_STATUS, &compileSuccess);
     if (compileSuccess != GL_TRUE)
-        return ShaderStatus_CompileError;
+        return GLShaderStatus::CompileError;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -251,10 +251,10 @@ GLProgram::link()
             *g_shaderLogFile << "Error linking shader program:\n";
             *g_shaderLogFile << GetInfoLog(getID());
         }
-        return ShaderStatus_LinkError;
+        return GLShaderStatus::LinkError;
     }
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -269,7 +269,7 @@ GLShaderLoader::CreateVertexShader(const std::vector<std::string>& source,
     auto* shader = new GLVertexShader(vsid);
 
     GLShaderStatus status = shader->compile(source);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         if (g_shaderLogFile != nullptr)
         {
@@ -282,7 +282,7 @@ GLShaderLoader::CreateVertexShader(const std::vector<std::string>& source,
 
     *vs = shader;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -295,7 +295,7 @@ GLShaderLoader::CreateFragmentShader(const std::vector<std::string>& source,
     auto* shader = new GLFragmentShader(fsid);
 
     GLShaderStatus status = shader->compile(source);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         if (g_shaderLogFile != nullptr)
         {
@@ -308,7 +308,7 @@ GLShaderLoader::CreateFragmentShader(const std::vector<std::string>& source,
 
     *fs = shader;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -321,7 +321,7 @@ GLShaderLoader::CreateGeometryShader(const std::vector<std::string>& source,
     auto* shader = new GLGeometryShader(vsid);
 
     GLShaderStatus status = shader->compile(source);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         if (g_shaderLogFile != nullptr)
         {
@@ -334,7 +334,7 @@ GLShaderLoader::CreateGeometryShader(const std::vector<std::string>& source,
 
     *gs = shader;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 GLShaderStatus
@@ -372,7 +372,7 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
 
     *progOut = prog;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -383,12 +383,12 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 {
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = CreateVertexShader(vsSource, &vs);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
         return status;
 
     GLFragmentShader* fs = nullptr;
     status = CreateFragmentShader(fsSource, &fs);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete vs;
         return status;
@@ -396,7 +396,7 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 
     GLProgram* prog = nullptr;
     status = CreateProgram(*vs, *fs, &prog);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete vs;
         delete fs;
@@ -409,7 +409,7 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
     delete vs;
     delete fs;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -429,7 +429,7 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
 
     *progOut = prog;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 
@@ -441,12 +441,12 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 {
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = CreateVertexShader(vsSource, &vs);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
         return status;
 
     GLFragmentShader* fs = nullptr;
     status = CreateFragmentShader(fsSource, &fs);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete vs;
         return status;
@@ -454,7 +454,7 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 
     GLGeometryShader* gs = nullptr;
     status = CreateGeometryShader(gsSource, &gs);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete vs;
         delete fs;
@@ -463,7 +463,7 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
 
     GLProgram* prog = nullptr;
     status = CreateProgram(*vs, *gs, *fs, &prog);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete vs;
         delete gs;
@@ -478,7 +478,7 @@ GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
     delete gs;
     delete fs;
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 

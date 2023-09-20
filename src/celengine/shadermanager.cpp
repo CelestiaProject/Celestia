@@ -1540,21 +1540,21 @@ CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
     std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, errorFragmentShaderSource);
 
     auto status = GLShaderLoader::CreateProgram(_vs, _fs, prog);
-    if (status == ShaderStatus_OK)
+    if (status == GLShaderStatus::OK)
     {
         BindAttribLocations(*prog);
         status = (*prog)->link();
     }
 
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         if (g_shaderLogFile != nullptr)
             *g_shaderLogFile << "Failed to create error shader!\n";
 
-        return ShaderStatus_LinkError;
+        return GLShaderStatus::LinkError;
     }
 
-    return ShaderStatus_OK;
+    return GLShaderStatus::OK;
 }
 
 constexpr std::string_view
@@ -2182,7 +2182,7 @@ R"glsl(
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -2542,7 +2542,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
 
@@ -2602,7 +2602,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -2684,7 +2684,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 #endif
 
@@ -2737,7 +2737,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -2842,7 +2842,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
 
@@ -2875,7 +2875,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -2929,7 +2929,7 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
 
@@ -2995,7 +2995,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -3046,7 +3046,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
 
@@ -3122,7 +3122,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
+    return status == GLShaderStatus::OK ? vs : nullptr;
 }
 
 
@@ -3177,7 +3177,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
+    return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
 CelestiaGLProgram*
@@ -3218,7 +3218,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     if (vs != nullptr && fs != nullptr)
     {
         status = GLShaderLoader::CreateProgram(*vs, *fs, &prog);
-        if (status == ShaderStatus_OK)
+        if (status == GLShaderStatus::OK)
         {
             BindAttribLocations(prog);
             status = prog->link();
@@ -3226,17 +3226,17 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     }
     else
     {
-        status = ShaderStatus_CompileError;
+        status = GLShaderStatus::CompileError;
     }
 
     delete vs;
     delete fs;
 
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
             return nullptr;
     }
 
@@ -3255,17 +3255,17 @@ ShaderManager::buildProgram(std::string_view vs, std::string_view fs)
     DumpFSSource(_fs);
 
     status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
-    if (status == ShaderStatus_OK)
+    if (status == GLShaderStatus::OK)
     {
         BindAttribLocations(prog);
         status = prog->link();
     }
 
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
             return nullptr;
     }
 
@@ -3284,17 +3284,17 @@ ShaderManager::buildProgramGL3(std::string_view vs, std::string_view fs)
     DumpFSSource(_fs);
 
     status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
-    if (status == ShaderStatus_OK)
+    if (status == GLShaderStatus::OK)
     {
         BindAttribLocations(prog);
         status = prog->link();
     }
 
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
             return nullptr;
     }
 
@@ -3325,17 +3325,17 @@ ShaderManager::buildProgramGL3(std::string_view vs, std::string_view gs, std::st
     DumpFSSource(_fs);
 
     status = GLShaderLoader::CreateProgram(_vs, _gs, _fs, &prog);
-    if (status == ShaderStatus_OK)
+    if (status == GLShaderStatus::OK)
     {
         BindAttribLocations(prog);
         status = prog->link();
     }
 
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != ShaderStatus_OK)
+        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
             return nullptr;
     }
 

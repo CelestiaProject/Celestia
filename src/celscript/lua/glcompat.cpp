@@ -170,7 +170,7 @@ GLProgram* BuildProgram(const std::string &vertex, const std::string &fragment)
 {
     GLProgram* prog = nullptr;
     auto status = GLShaderLoader::CreateProgram(vertex, fragment, &prog);
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete prog;
         return nullptr;
@@ -179,7 +179,7 @@ GLProgram* BuildProgram(const std::string &vertex, const std::string &fragment)
     glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
     glBindAttribLocation(prog->getID(), CelestiaGLProgram::ColorAttributeIndex, "in_Color");
     status = prog->link();
-    if (status != ShaderStatus_OK)
+    if (status != GLShaderStatus::OK)
     {
         delete prog;
         return nullptr;
