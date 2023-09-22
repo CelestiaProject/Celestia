@@ -17,9 +17,11 @@
 #include <utility>
 #include <Eigen/Core>
 #include <celmodel/mesh.h>
+#include <celutil/array_view.h>
 #include <celutil/logger.h>
 
 using celestia::util::GetLogger;
+using celestia::util::array_view;
 
 namespace
 {
@@ -37,7 +39,7 @@ copyVertex(cmod::VWord* newVertexData,
            const cmod::VWord* oldVertexData,
            const cmod::VertexDescription& oldDesc,
            cmod::Index32 oldIndex,
-           const std::uint32_t fromOffsets[])
+           array_view<std::uint32_t> fromOffsets)
 {
     unsigned int stride = oldDesc.strideBytes / sizeof(cmod::VWord);
     const cmod::VWord* oldVertex = oldVertexData + stride * oldIndex;
@@ -340,7 +342,7 @@ GenerateTangents(const Mesh& mesh)
             copyVertex(newVertex, newDesc,
                        vertexData, desc,
                        face.i[j],
-                       fromOffsets.data());
+                       fromOffsets);
             std::memcpy(newVertex + tangentOffset, vertexTangents[f * 3 + j].data(), 3 * sizeof(float));
         }
     }
