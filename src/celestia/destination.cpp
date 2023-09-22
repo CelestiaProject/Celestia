@@ -57,23 +57,35 @@ DestinationList* ReadDestinationList(std::istream& in)
         else
         {
             dest->name = *destName;
-            if (const std::string* target = destParams->getString("Target"); target != nullptr)
-                dest->target = *target;
-            if (const std::string* description = destParams->getString("Description"); description != nullptr)
-                dest->description = *description;
-            if (auto distance = destParams->getNumber<double>("Distance"); distance.has_value())
-                dest->distance = *distance;
-
-            // Default unit of distance is the light year
-            if (const std::string* distanceUnits = destParams->getString("DistanceUnits"); distanceUnits != nullptr)
+            if (const std::string* target = destParams->getString("Target"); target == nullptr)
             {
-                if (!compareIgnoringCase(*distanceUnits, "km"))
-                    dest->distance = astro::kilometersToLightYears(dest->distance);
-                else if (!compareIgnoringCase(*distanceUnits, "au"))
-                    dest->distance = astro::AUtoLightYears(dest->distance);
-            }
-
-            destinations->push_back(dest);
+                GetLogger()->warn("Skipping destination without target\n");
+                delete dest;
+            }                
+            else    
+            {    
+                dest->target = *target;
+                if (const std::string* description = destParams->getString("Description"); description != nullptr)
+                    dest->description = *description;
+                if (auto distance = destParams->getNumber<double>("Distance"); distance.has_value())
+                    dest->distance = *distance;
+                // Convert distance to goto distance of kilometers
+                // User default unit of distance is the light year
+                if (const std::string* distanceUnits = destParams->getString("DistanceUnits"); distanceUnits != nullptr)
+                {
+                    if (compareIgnoringCase(*distanceUnits, "ly") == 0)
+                        dest->distance = astro::lightYearsToKilometers(dest->distance);
+                    else if (compareIgnoringCase(*distanceUnits, "au") == 0)
+                        dest->distance = astro::AUtoKilometers(dest->distance);
+                    else if (compareIgnoringCase(*distanceUnits, "km") != 0)
+                        dest->distance = astro::lightYearsToKilometers(dest->distance);
+                }
+                else
+                {
+                    dest->distance = astro::lightYearsToKilometers(dest->distance);
+                }
+                destinations->push_back(dest);
+            }   
         }
     }
 
