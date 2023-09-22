@@ -12,7 +12,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring> // std::memcpy
-#include <numeric> // std::iota
+#include <numeric> // std::iota, std::accumulate
 #include <vector>
 #include <utility>
 #include <Eigen/Core>
@@ -236,10 +236,6 @@ GenerateTangents(const Mesh& mesh)
             face.normal = Eigen::Vector3f::Zero();
     }
 
-    // For each vertex, create a list of faces that contain it
-    std::vector<std::uint32_t> faceCounts(nVertices, 0);
-    std::vector<std::uint32_t*> vertexFaces(nVertices, nullptr);
-
     // Initialize the lists
     for (std::uint32_t f = 0; f < nFaces; f++)
     {
@@ -249,6 +245,7 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // Count the number of faces in which each vertex appears
+    std::vector<std::uint32_t> faceCounts(nVertices, 0);
     for (std::uint32_t f = 0; f < nFaces; f++)
     {
         const Face& face = faces[f];
@@ -257,13 +254,21 @@ GenerateTangents(const Mesh& mesh)
         faceCounts[face.vi[2]]++;
     }
 
-    // Allocate space for the per-vertex face lists
-    for (std::uint32_t i = 0; i < nVertices; i++)
+    // Calculate space ammount for the per-vertex face lists
+    std::uint32_t vertexTotal = std::accumulate(faceCounts.begin(), faceCounts.end(), 0u) + nVertices;
+    // Use a single buffer for all vertex faces lists
+    std::vector<std::uint32_t> vertexFacesData(vertexTotal, 0u);
+    // Store pointers to actual vertex faces data lists
+    std::vector<std::uint32_t*> vertexFaces(nVertices, nullptr);
+
+    for (std::uint32_t i = 0, offset = 0u; i < nVertices; i++)
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new std::uint32_t[faceCounts[i] + 1];
+            std::uint32_t count = faceCounts[i] + 1;
+            vertexFaces[i] = vertexFacesData.data() + offset;
             vertexFaces[i][0] = faceCounts[i];
+            offset += count;
         }
     }
 
@@ -373,13 +378,6 @@ GenerateTangents(const Mesh& mesh)
                          mesh.getGroup(groupIndex)->materialIndex,
                          std::move(indices));
         firstIndex += faceCount * 3;
-    }
-
-    // Clean up
-    for (std::uint32_t i = 0; i < nVertices; i++)
-    {
-        if (vertexFaces[i] != nullptr)
-            delete[] vertexFaces[i];
     }
 
     return newMesh;
