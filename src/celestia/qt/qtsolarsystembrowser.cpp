@@ -265,11 +265,10 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
     {
         // Stars may have both a solar system and other stars orbiting
         // them.
-        SolarSystemCatalog* solarSystems = universe->getSolarSystemCatalog();
-        auto iter = solarSystems->find(sel.star()->getIndex());
-        if (iter != solarSystems->end())
+        if (const SolarSystem* solarSys = universe->getSolarSystem(sel.star());
+            solarSys != nullptr)
         {
-            sys = iter->second->getPlanets();
+            sys = solarSys->getPlanets();
         }
 
         orbitingStars = sel.star()->getOrbitingStars();

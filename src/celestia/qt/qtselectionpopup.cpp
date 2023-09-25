@@ -217,24 +217,19 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         }
 
         // Child object menus
-        PlanetarySystem* sys = selection.body()->getSatellites();
+        const PlanetarySystem* sys = selection.body()->getSatellites();
         if (sys != nullptr)
             addObjectMenus(sys);
     }
     else if (selection.star() != nullptr)
     {
         // Child object menus for star
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        auto iter = solarSystemCatalog->find(selection.star()->getIndex());
-        if (iter != solarSystemCatalog->end())
+        const SolarSystem* solarSys = sim->getUniverse()->getSolarSystem(selection.star());
+        if (solarSys != nullptr)
         {
-            SolarSystem* solarSys = iter->second;
-            if (solarSys)
-            {
-                PlanetarySystem* sys = solarSys->getPlanets();
-                if (sys != nullptr)
-                    addObjectMenus(sys);
-            }
+            const PlanetarySystem* sys = solarSys->getPlanets();
+            if (sys != nullptr)
+                addObjectMenus(sys);
         }
     }
 }
@@ -390,7 +385,7 @@ SelectionPopup::createAlternateSurfacesMenu()
 
 
 QMenu*
-SelectionPopup::createObjectMenu(PlanetarySystem* sys,
+SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
                                  unsigned int classification)
 {
     QMenu* menu = nullptr;
@@ -449,7 +444,7 @@ SelectionPopup::createObjectMenu(PlanetarySystem* sys,
 
 
 void
-SelectionPopup::addObjectMenus(PlanetarySystem* sys)
+SelectionPopup::addObjectMenus(const PlanetarySystem* sys)
 {
     setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
@@ -566,37 +561,29 @@ void
 SelectionPopup::slotSelectChildObject()
 {
     QAction* action = qobject_cast<QAction*>(sender());
-    if (action)
-    {
-        bool convertOK = false;
-        int childIndex = action->data().toInt(&convertOK);
-        if (convertOK)
-        {
-            Simulation* sim = appCore->getSimulation();
-            PlanetarySystem* sys = nullptr;
-            if (selection.body() != nullptr)
-            {
-                sys = selection.body()->getSatellites();
-            }
-            else if (selection.star())
-            {
-                SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                auto iter = solarSystemCatalog->find(selection.star()->getIndex());
-                if (iter != solarSystemCatalog->end())
-                {
-                    SolarSystem* solarSys = iter->second;
-                    if (solarSys)
-                        sys = solarSys->getPlanets();
-                }
-            }
+    if (action == nullptr)
+        return;
 
-            if (sys != nullptr)
-            {
-                if (childIndex >= 0 && childIndex < sys->getSystemSize())
-                    sim->setSelection(Selection(sys->getBody(childIndex)));
-            }
-        }
+    bool convertOK = false;
+    int childIndex = action->data().toInt(&convertOK);
+    if (!convertOK)
+        return;
+
+    Simulation* sim = appCore->getSimulation();
+    const PlanetarySystem* sys = nullptr;
+    if (selection.body() != nullptr)
+    {
+        sys = selection.body()->getSatellites();
     }
+    else if (selection.star() != nullptr)
+    {
+        const SolarSystem* solarSys = sim->getUniverse()->getSolarSystem(selection.star());
+        if (solarSys != nullptr)
+            sys = solarSys->getPlanets();
+    }
+
+    if (sys != nullptr && childIndex >= 0 && childIndex < sys->getSystemSize())
+        sim->setSelection(Selection(sys->getBody(childIndex)));
 }
 
 

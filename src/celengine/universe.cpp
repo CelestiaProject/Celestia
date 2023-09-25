@@ -672,10 +672,9 @@ Universe::getSolarSystem(const Star* star) const
 
     auto starNum = star->getIndex();
     auto iter = solarSystemCatalog->find(starNum);
-    if (iter != solarSystemCatalog->end())
-        return iter->second;
-
-    return nullptr;
+    return iter == solarSystemCatalog->end()
+        ? nullptr
+        : iter->second.get();
 }
 
 
@@ -717,16 +716,13 @@ Universe::getSolarSystem(const Selection& sel) const
 SolarSystem*
 Universe::createSolarSystem(Star* star) const
 {
-    SolarSystem* solarSystem = getSolarSystem(star);
-    if (solarSystem != nullptr)
-        return solarSystem;
+    auto starNum = star->getIndex();
+    auto iter = solarSystemCatalog->lower_bound(starNum);
+    if (iter != solarSystemCatalog->end() && iter->first == starNum)
+        return iter->second.get();
 
-    solarSystem = new SolarSystem(star);
-    solarSystemCatalog->insert(SolarSystemCatalog::
-                               value_type(star->getIndex(),
-                                          solarSystem));
-
-    return solarSystem;
+    iter = solarSystemCatalog->emplace_hint(iter, starNum, std::make_unique<SolarSystem>(star));
+    return iter->second.get();
 }
 
 

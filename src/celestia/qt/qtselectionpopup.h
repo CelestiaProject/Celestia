@@ -67,8 +67,8 @@ Q_OBJECT
     QMenu* createMarkMenu();
     QMenu* createReferenceVectorMenu();
     QMenu* createAlternateSurfacesMenu();
-    QMenu* createObjectMenu(PlanetarySystem* sys, unsigned int classification);
-    void addObjectMenus(PlanetarySystem* sys);
+    QMenu* createObjectMenu(const PlanetarySystem* sys, unsigned int classification);
+    void addObjectMenus(const PlanetarySystem* sys);
 
  private:
     Selection selection;

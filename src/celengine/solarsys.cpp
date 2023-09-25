@@ -1303,19 +1303,13 @@ bool LoadSolarSystemObjects(std::istream& in,
 
 
 SolarSystem::SolarSystem(Star* _star) :
-    star(_star),
-    planets(nullptr),
-    frameTree(nullptr)
+    star(_star)
 {
-    planets = new PlanetarySystem(star);
-    frameTree = new FrameTree(star);
+    planets = std::make_unique<PlanetarySystem>(star);
+    frameTree = std::make_unique<FrameTree>(star);
 }
 
-SolarSystem::~SolarSystem()
-{
-    delete planets;
-    delete frameTree;
-}
+SolarSystem::~SolarSystem() = default;
 
 
 Star* SolarSystem::getStar() const
@@ -1333,10 +1327,10 @@ Eigen::Vector3f SolarSystem::getCenter() const
 
 PlanetarySystem* SolarSystem::getPlanets() const
 {
-    return planets;
+    return planets.get();
 }
 
 FrameTree* SolarSystem::getFrameTree() const
 {
-    return frameTree;
+    return frameTree.get();
 }

@@ -106,11 +106,9 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
             /* Add info eventually:
              * AppendMenu(popup, NULL, "_Info", 0); */
 
-            SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getIndex());
-            if (iter != solarSystemCatalog->end())
+            const SolarSystem* solarSys = sim->getUniverse()->getSolarSystem(sel.star());
+            if (solarSys != nullptr)
             {
-                SolarSystem* solarSys = iter->second;
                 GtkMenu* planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
                     gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "Orbiting Bodies", 0), GTK_WIDGET(planetsMenu));
