@@ -1685,11 +1685,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
 
-            SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getIndex());
-            if (iter != solarSystemCatalog->end())
+            const SolarSystem* solarSys = sim->getUniverse()->getSolarSystem(sel.star());
+            if (solarSys != nullptr)
             {
-                SolarSystem* solarSys = iter->second;
                 HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) planetsMenu, UTF8ToCurrentCP(_("Orbiting Bodies")).c_str());

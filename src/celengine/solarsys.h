@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <map>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -36,11 +37,11 @@ class SolarSystem
 
  private:
     Star* star;
-    PlanetarySystem* planets;
-    FrameTree* frameTree;
+    std::unique_ptr<PlanetarySystem> planets;
+    std::unique_ptr<FrameTree> frameTree;
 };
 
-using SolarSystemCatalog = std::map<std::uint32_t, SolarSystem*>;
+using SolarSystemCatalog = std::map<std::uint32_t, std::unique_ptr<SolarSystem>>;
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,

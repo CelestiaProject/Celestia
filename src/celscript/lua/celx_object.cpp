@@ -872,11 +872,9 @@ static int object_getchildren(lua_State* l)
     lua_newtable(l);
     if (sel->star() != nullptr)
     {
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getIndex());
-        if (iter != solarSystemCatalog->end())
+        const SolarSystem* solarSys = sim->getUniverse()->getSolarSystem(sel->star());
+        if (solarSys != nullptr)
         {
-            SolarSystem* solarSys = iter->second;
             for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
             {
                 Body* body = solarSys->getPlanets()->getBody(i);
