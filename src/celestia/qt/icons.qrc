@@ -32,5 +32,6 @@
 <file alias="clip_paste.png">data/clip_paste.png</file>
 <file alias="picture_copy.png">data/picture_copy.png</file>
 <file alias="split-cycle.png">data/split-cycle.png</file>
+<file alias="tour.png">data/tour.png</file>
 </qresource>
 </RCC>

@@ -40,6 +40,7 @@ class EventFinder;
 class InfoPanel;
 class PreferencesDialog;
 class TimeToolBar;
+class TourGuideDialog;
 
 class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHandler
 {
@@ -80,6 +81,7 @@ private slots:
     void gotoSelection();
     void gotoObject();
     void selectSun();
+    void tourGuide();
 
     void slotPreferences();
 
