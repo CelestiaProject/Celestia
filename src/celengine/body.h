@@ -303,7 +303,6 @@ class Body
     Eigen::Vector3d eclipticToPlanetocentric(const Eigen::Vector3d& ecl, double tdb) const;
 
     bool extant(double) const;
-    void setLifespan(double, double);
     void getLifespan(double&, double&) const;
 
     Surface* getAlternateSurface(const std::string&) const;
@@ -348,16 +347,10 @@ class Body
         VelocityVector =   0x10,
     };
 
-    bool referenceMarkVisible(uint32_t) const;
-    uint32_t getVisibleReferenceMarks() const;
-    void setVisibleReferenceMarks(uint32_t);
     void addReferenceMark(ReferenceMark* refMark);
     void removeReferenceMark(const std::string& tag);
     ReferenceMark* findReferenceMark(const std::string& tag) const;
     const std::list<ReferenceMark*>* getReferenceMarks() const;
-
-    Star* getReferenceStar() const;
-    Star* getFrameReferenceStar() const;
 
     void markChanged();
     void markUpdated();
