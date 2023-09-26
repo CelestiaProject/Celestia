@@ -30,7 +30,6 @@ struct Face
 {
     Eigen::Vector3f normal;
     std::array<cmod::Index32, 3> i;    // vertex attribute indices
-    std::array<cmod::Index32, 3> vi;   // vertex point indices -- same as above unless welding
 };
 
 void
@@ -238,22 +237,14 @@ GenerateTangents(const Mesh& mesh)
             face.normal = Eigen::Vector3f::Zero();
     }
 
-    // Initialize the lists
-    for (std::uint32_t f = 0; f < nFaces; f++)
-    {
-        faces[f].vi[0] = faces[f].i[0];
-        faces[f].vi[1] = faces[f].i[1];
-        faces[f].vi[2] = faces[f].i[2];
-    }
-
     // Count the number of faces in which each vertex appears
     std::vector<std::uint32_t> faceCounts(nVertices, 0);
     for (std::uint32_t f = 0; f < nFaces; f++)
     {
         const Face& face = faces[f];
-        faceCounts[face.vi[0]]++;
-        faceCounts[face.vi[1]]++;
-        faceCounts[face.vi[2]]++;
+        faceCounts[face.i[0]]++;
+        faceCounts[face.i[1]]++;
+        faceCounts[face.i[2]]++;
     }
 
     // Calculate space ammount for the per-vertex face lists
@@ -278,9 +269,9 @@ GenerateTangents(const Mesh& mesh)
     for (std::uint32_t f = 0; f < nFaces; f++)
     {
         const Face& face = faces[f];
-        vertexFaces[face.vi[0]][faceCounts[face.vi[0]]--] = f;
-        vertexFaces[face.vi[1]][faceCounts[face.vi[1]]--] = f;
-        vertexFaces[face.vi[2]][faceCounts[face.vi[2]]--] = f;
+        vertexFaces[face.i[0]][faceCounts[face.i[0]]--] = f;
+        vertexFaces[face.i[1]][faceCounts[face.i[1]]--] = f;
+        vertexFaces[face.i[2]][faceCounts[face.i[2]]--] = f;
     }
 
     // Compute the vertex tangents by averaging
@@ -291,8 +282,8 @@ GenerateTangents(const Mesh& mesh)
         for (std::uint32_t j = 0; j < 3; j++)
         {
             vertexTangents[f * 3 + j] = averageFaceVectors(faces, f,
-                                                           &vertexFaces[face.vi[j]][1],
-                                                           vertexFaces[face.vi[j]][0]);
+                                                           &vertexFaces[face.i[j]][1],
+                                                           vertexFaces[face.i[j]][0]);
         }
     }
 
