@@ -69,7 +69,7 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
     }
 
     connect(ui.selectionComboBox, SIGNAL(currentIndexChanged(int)), SLOT(slotSelectionChanged()));
-    connect ( ui.gotoButton, SIGNAL(clicked(bool)), SLOT(slotGotoSelection()));
+    connect(ui.gotoButton, SIGNAL(clicked(bool)), SLOT(slotGotoSelection()));
 
 }
 
