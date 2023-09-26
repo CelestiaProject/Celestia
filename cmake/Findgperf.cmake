@@ -23,6 +23,7 @@ function(gperf_add_table target gperffile src_file num_iters)
   set(OUTPUT_PATH "${OUTPUT_DIR}/${BASE_NAME}.inc")
   add_custom_command(
     OUTPUT "${OUTPUT_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}"
     COMMAND gperf::gperf "${CMAKE_CURRENT_SOURCE_DIR}/${gperffile}" -m${num_iters} --output-file=${OUTPUT_PATH}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${gperffile}
     VERBATIM
