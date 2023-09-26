@@ -68,7 +68,7 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
         ui.selectionComboBox->setEnabled(false);
     }
 
-    connect ( ui.selectionComboBox, SIGNAL(currentIndexChanged(int)), SLOT(slotSelectionChanged()));
+    connect(ui.selectionComboBox, SIGNAL(currentIndexChanged(int)), SLOT(slotSelectionChanged()));
     connect ( ui.gotoButton, SIGNAL(clicked(bool)), SLOT(slotGotoSelection()));
 
 }
