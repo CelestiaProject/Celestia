@@ -1,4 +1,4 @@
-// cmodops.cpp
+// tangents.cpp
 //
 // Copyright (C) 2023-present, Celestia Development Team
 // Original version (C) 2004-2010, Chris Laurel <claurel@gmail.com>
