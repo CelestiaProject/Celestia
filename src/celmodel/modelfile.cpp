@@ -284,6 +284,13 @@ parseTextureSemantic(std::string_view name)
 }
 
 
+bool
+hasTangents(const Mesh &mesh)
+{
+    const auto& desc = mesh.getVertexDescription();
+    return desc.getAttribute(VertexAttributeSemantic::Tangent).format == VertexAttributeFormat::Float3;
+}
+
 class AsciiModelLoader : public ModelLoader
 {
 public:
@@ -767,6 +774,7 @@ AsciiModelLoader::load()
 {
     auto model = std::make_unique<Model>();
     bool seenMeshes = false;
+    bool hasNormalMap = false;
 
     // Parse material and mesh definitions
     for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
@@ -789,6 +797,9 @@ AsciiModelLoader::load()
                     return nullptr;
                 }
 
+                if (material.getMap(TextureSemantic::NormalMap) != InvalidResource)
+                    hasNormalMap = true;
+
                 model->addMaterial(std::move(material));
             }
             else if (*tokenValue == "mesh")
@@ -801,7 +812,10 @@ AsciiModelLoader::load()
                     return nullptr;
                 }
 
-                model->addMesh(std::move(mesh));
+                if (hasNormalMap && !hasTangents(mesh))
+                    model->addMesh(GenerateTangents(mesh));
+                else
+                    model->addMesh(std::move(mesh));
             }
             else
             {
@@ -1371,6 +1385,9 @@ BinaryModelLoader::load()
 {
     auto model = std::make_unique<Model>();
     bool seenMeshes = false;
+    bool hasNormalMap = false;
+
+    celutil::GetLogger()->info("start loading\n");
 
     // Parse material and mesh definitions
     for (;;)
@@ -1397,6 +1414,12 @@ BinaryModelLoader::load()
                 return nullptr;
             }
 
+            if (material.getMap(TextureSemantic::NormalMap) != InvalidResource)
+                hasNormalMap = true;
+
+
+            celutil::GetLogger()->info("has normal map: {}\n", hasNormalMap);
+
             model->addMaterial(std::move(material));
         }
         else if (tok == CmodToken::Mesh)
@@ -1409,7 +1432,12 @@ BinaryModelLoader::load()
                 return nullptr;
             }
 
-            model->addMesh(std::move(mesh));
+            celutil::GetLogger()->info("has tangents: {}\n", hasTangents(mesh));
+
+            if (hasNormalMap && !hasTangents(mesh))
+                model->addMesh(GenerateTangents(mesh));
+            else
+                model->addMesh(std::move(mesh));
         }
         else
         {

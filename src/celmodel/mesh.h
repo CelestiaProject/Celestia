@@ -255,4 +255,6 @@ class Mesh
     std::string name;
 };
 
+Mesh GenerateTangents(const Mesh& mesh);
+
 } // namespace cmod
