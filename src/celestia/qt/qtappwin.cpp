@@ -865,6 +865,7 @@ CelestiaAppWindow::gotoObject()
 void
 CelestiaAppWindow::tourGuide()
 {
+    // use show() to display dialog in non-modal format since exec() is automatically modal
     TourGuideDialog* tourDialog = new TourGuideDialog(this, m_appCore);
     tourDialog->show();
 }

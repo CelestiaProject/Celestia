@@ -17,6 +17,7 @@
 #include <celengine/selection.h>
 #include <celestia/celestiacore.h>
 #include <celengine/observer.h>
+#include <celutil/gettext.h>
 
 #include <string>
 
@@ -39,37 +40,35 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
     ui.setupUi(this);
 
     destinations = appCore->getDestinations();
-    int index = -1;
-    if (destinations != NULL)
+    bool hasDestinations = false;
+    if (destinations != nullptr)
     {
-        for (DestinationList::const_iterator iter = destinations->begin();
-            iter != destinations->end(); iter++)
+        for (DestinationList::const_iterator iter = destinations->begin(); iter != destinations->end(); iter++)
         {
-            Destination* dest = *iter;
-            if (dest != NULL)
-            {
-                index = 0;
-                ui.selectionComboBox->addItem(QString::fromStdString(dest->name));
-            }
+            auto dest = *iter;
+            if (dest == nullptr)
+                continue;
+            hasDestinations = true;
+            ui.selectionComboBox->addItem(QString::fromStdString(dest->name));
         }
 
-        if (index == 0)
+        if (hasDestinations)
         {
-            Destination* dest;
-            dest = (*destinations)[0];
+            auto dest = (*destinations)[0];
             ui.selectionDescription->setText(QString::fromStdString(dest->description));
         }        
     }
 
-    if ((destinations == NULL) && (index != 0))
+    if ((destinations == nullptr) || !hasDestinations)
     {
-        ui.selectionDescription->setText("No guide destinations were found.");
+        ui.selectionDescription->setText(_("No guide destinations were found."));
         ui.gotoButton->setEnabled(false);
         ui.selectionComboBox->setEnabled(false);
     }
 
     connect(ui.selectionComboBox, SIGNAL(currentIndexChanged(int)), SLOT(slotSelectionChanged()));
     connect(ui.gotoButton, SIGNAL(clicked(bool)), SLOT(slotGotoSelection()));
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
 }
 
@@ -78,8 +77,7 @@ void
 TourGuideDialog::slotSelectionChanged()
 {
     int index = ui.selectionComboBox->currentIndex();    
-    Destination* dest;
-    dest = (*destinations)[index];
+    auto dest = (*destinations)[index];
     ui.selectionDescription->setText(QString::fromStdString(dest->description));  
 }
 
@@ -90,8 +88,7 @@ TourGuideDialog::slotGotoSelection()
     Simulation *simulation = appCore->getSimulation();
 
     int index = ui.selectionComboBox->currentIndex();    
-    Destination* dest;
-    dest = (*destinations)[index];
+    auto dest = (*destinations)[index];
 
     Selection sel = simulation->findObjectFromPath(dest->target);
 
@@ -103,8 +100,5 @@ TourGuideDialog::slotGotoSelection()
 
     simulation->setSelection(sel);
     simulation->follow();    
-    simulation->gotoSelection(5.0,
-                                  distance,
-                                  Eigen::Vector3f::UnitY(),
-                                  ObserverFrame::ObserverLocal);
+    simulation->gotoSelection(5.0, distance, Eigen::Vector3f::UnitY(), ObserverFrame::ObserverLocal);
 }

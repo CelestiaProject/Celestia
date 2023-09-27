@@ -25,7 +25,7 @@ class TourGuideDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TourGuideDialog(QWidget *parent, CelestiaCore* appCore);
+    TourGuideDialog(QWidget *parent, CelestiaCore* appCore);
     ~TourGuideDialog() = default;
 
 private slots:
