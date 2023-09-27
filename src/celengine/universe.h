@@ -74,7 +74,7 @@ class Universe
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* getSolarSystem(const Selection&) const;
-    SolarSystem* createSolarSystem(Star* star) const;
+    SolarSystem* getOrCreateSolarSystem(Star* star) const;
 
     void getNearStars(const UniversalCoord& position,
                       float maxDistance,
