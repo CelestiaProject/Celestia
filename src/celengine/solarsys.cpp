@@ -436,9 +436,7 @@ bool CreateTimeline(Body* body,
     }
     else if (parentObject.star())
     {
-        SolarSystem* solarSystem = universe.getSolarSystem(parentObject.star());
-        if (solarSystem == nullptr)
-            solarSystem = universe.createSolarSystem(parentObject.star());
+        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parentObject.star());
         parentFrameTree = solarSystem->getFrameTree();
     }
     else
@@ -1204,13 +1202,7 @@ bool LoadSolarSystemObjects(std::istream& in,
             //bool orbitsPlanet = false;
             if (parent.star() != nullptr)
             {
-                SolarSystem* solarSystem = universe.getSolarSystem(parent.star());
-                if (solarSystem == nullptr)
-                {
-                    // No solar system defined for this star yet, so we need
-                    // to create it.
-                    solarSystem = universe.createSolarSystem(parent.star());
-                }
+                const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parent.star());
                 parentSystem = solarSystem->getPlanets();
             }
             else if (parent.body() != nullptr)

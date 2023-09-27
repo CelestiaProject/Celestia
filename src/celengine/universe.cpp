@@ -714,7 +714,7 @@ Universe::getSolarSystem(const Selection& sel) const
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
 SolarSystem*
-Universe::createSolarSystem(Star* star) const
+Universe::getOrCreateSolarSystem(Star* star) const
 {
     auto starNum = star->getIndex();
     auto iter = solarSystemCatalog->lower_bound(starNum);

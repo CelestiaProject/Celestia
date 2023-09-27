@@ -68,13 +68,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     }
     else if (center.star() != nullptr)
     {
-        SolarSystem* solarSystem = universe.getSolarSystem(center.star());
-        if (solarSystem == nullptr)
-        {
-            // No solar system defined for this star yet, so we need
-            // to create it.
-            solarSystem = universe.createSolarSystem(center.star());
-        }
+        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(center.star());
         frameTree = solarSystem->getFrameTree();
     }
     else
