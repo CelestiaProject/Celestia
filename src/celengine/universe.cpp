@@ -240,18 +240,18 @@ traverseFrameTree(const FrameTree* frameTree,
 {
     for (unsigned int i = 0; i < frameTree->childCount(); i++)
     {
-        auto phase = frameTree->getChild(i);
-        if (phase->includes(tdb))
-        {
-            Body* body = phase->body();
-            if (!func(body, info))
-                return false;
+        const TimelinePhase* phase = frameTree->getChild(i);
+        if (!phase->includes(tdb))
+            continue;
 
-            if (body->getFrameTree() != nullptr)
-            {
-                if (!traverseFrameTree(body->getFrameTree(), tdb, func, info))
-                    return false;
-            }
+        Body* body = phase->body();
+        if (!func(body, info))
+            return false;
+
+        if (const FrameTree* bodyFrameTree = body->getFrameTree();
+            bodyFrameTree != nullptr && !traverseFrameTree(bodyFrameTree, tdb, func, info))
+        {
+            return false;
         }
     }
 

@@ -3317,7 +3317,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
     unsigned int nChildren = tree != nullptr ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
     {
-        auto phase = tree->getChild(i);
+        const TimelinePhase* phase = tree->getChild(i);
 
         // No need to do anything if the phase isn't active now
         if (!phase->includes(now))
@@ -3330,8 +3330,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
         // Get the position of the body relative to the sun.
         Vector3d p = phase->orbit()->positionAtTime(now);
-        auto frame = phase->orbitFrame();
-        Vector3d pos_s = frameCenter + frame->getOrientation(now).conjugate() * p;
+        Vector3d pos_s = frameCenter + phase->orbitFrame()->getOrientation(now).conjugate() * p;
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
@@ -3537,7 +3536,7 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
     unsigned int nChildren = tree != nullptr ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
     {
-        auto phase = tree->getChild(i);
+        const TimelinePhase* phase = tree->getChild(i);
 
         // No need to do anything if the phase isn't active now
         if (!phase->includes(now))
@@ -3681,7 +3680,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
         if (body->getName().empty())
             continue;
 
-        auto phase = body->getTimeline()->findPhase(now);
+        const TimelinePhase* phase = body->getTimeline()->findPhase(now).get();
         Body* primary = phase->orbitFrame()->getCenter().body();
         if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
         {

@@ -186,16 +186,18 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
     unsigned int orbitFrameDepth = depth;
     unsigned int bodyFrameDepth = depth;
     // TODO: need to check /all/ orbit frames of body
-    if (body->getOrbitFrame(0.0) != nullptr && frameType == ReferenceFrame::PositionFrame)
+    if (const ReferenceFrame* orbitFrame = body->getOrbitFrame(0.0).get();
+        orbitFrame != nullptr && frameType == ReferenceFrame::PositionFrame)
     {
-        orbitFrameDepth = body->getOrbitFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
+        orbitFrameDepth = orbitFrame->nestingDepth(depth + 1, maxDepth, frameType);
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
 
-    if (body->getBodyFrame(0.0) != nullptr && frameType == ReferenceFrame::OrientationFrame)
+    if (const ReferenceFrame* bodyFrame = body->getBodyFrame(0.0).get();
+        bodyFrame != nullptr && frameType == ReferenceFrame::OrientationFrame)
     {
-        bodyFrameDepth = body->getBodyFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
+        bodyFrameDepth = bodyFrame->nestingDepth(depth + 1, maxDepth, frameType);
     }
 
     return max(orbitFrameDepth, bodyFrameDepth);

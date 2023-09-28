@@ -28,6 +28,9 @@ class RotationModel;
 
 class TimelinePhase
 {
+private:
+    struct CreateToken {};
+
 public:
     using SharedPtr = std::shared_ptr<TimelinePhase>;
     using SharedConstPtr = std::shared_ptr<const TimelinePhase>;
@@ -91,9 +94,8 @@ public:
                                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
                                                              celestia::ephem::RotationModel& rotationModel);
 
-    ~TimelinePhase() = default;
-
-    TimelinePhase(Body* _body,
+    TimelinePhase(CreateToken,
+                  Body* _body,
                   double _startTime,
                   double _endTime,
                   const ReferenceFrame::SharedConstPtr& _orbitFrame,
@@ -101,6 +103,7 @@ public:
                   const ReferenceFrame::SharedConstPtr& _bodyFrame,
                   celestia::ephem::RotationModel* _rotationModel,
                   FrameTree* _owner);
+    ~TimelinePhase() = default;
 
     TimelinePhase(const TimelinePhase& phase) = delete;
     TimelinePhase& operator=(const TimelinePhase& phase) = delete;
