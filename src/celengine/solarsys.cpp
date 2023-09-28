@@ -503,7 +503,7 @@ bool CreateTimeline(Body* body,
         const Timeline* timeline = body->getTimeline();
         if (timeline->phaseCount() == 1)
         {
-            auto phase = timeline->getPhase(0).get();
+            auto phase    = timeline->getPhase(0).get();
             orbitFrame    = phase->orbitFrame();
             bodyFrame     = phase->bodyFrame();
             orbit         = phase->orbit();

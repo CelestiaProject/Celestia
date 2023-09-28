@@ -113,7 +113,7 @@ static int phase_bodyframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to phase:bodyframe");
 
     auto phase = this_phase(l);
-    auto f = phase->bodyFrame();
+    const auto& f = phase->bodyFrame();
     celx.newFrame(ObserverFrame(f));
 
     return 1;

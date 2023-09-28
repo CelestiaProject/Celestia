@@ -40,7 +40,7 @@ public:
 
     void addChild(const TimelinePhase::SharedConstPtr &phase);
     void removeChild(const TimelinePhase::SharedConstPtr &phase);
-    const TimelinePhase::SharedConstPtr &getChild(unsigned int n) const;
+    const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;
 
     void markChanged();

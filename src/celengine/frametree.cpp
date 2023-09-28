@@ -175,10 +175,10 @@ FrameTree::removeChild(const TimelinePhase::SharedConstPtr &phase)
 
 
 /*! Return the child at the specified index. */
-const TimelinePhase::SharedConstPtr&
+const TimelinePhase*
 FrameTree::getChild(unsigned int n) const
 {
-    return children[n];
+    return children[n].get();
 }
 
 

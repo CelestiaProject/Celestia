@@ -1155,7 +1155,7 @@ static int object_orbitframe(lua_State* l)
     }
     else
     {
-        auto f = sel->body()->getOrbitFrame(t);
+        const auto& f = sel->body()->getOrbitFrame(t);
         celx.newFrame(ObserverFrame(f));
     }
 
@@ -1196,7 +1196,7 @@ static int object_bodyframe(lua_State* l)
     }
     else
     {
-        auto f = sel->body()->getBodyFrame(t);
+        const auto& f = sel->body()->getBodyFrame(t);
         celx.newFrame(ObserverFrame(f));
     }
 
@@ -1279,7 +1279,7 @@ static int object_phases_iter(lua_State* l)
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
-        auto phase = timeline->getPhase(i);
+        const auto& phase = timeline->getPhase(i);
         celx.newPhase(phase);
 
         return 1;
