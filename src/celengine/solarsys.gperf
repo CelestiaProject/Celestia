@@ -1,0 +1,21 @@
+%struct-type
+%ignore-case
+%language=C++
+%define lookup-function-name getClassification
+%define class-name ClassificationMap
+%compare-strncmp
+%readonly-tables
+%enum
+struct ClassificationEntry { const char* name; int classification; };
+%%
+"planet",         Body::Planet
+"dwarfplanet",    Body::DwarfPlanet
+"moon",           Body::Moon
+"minormoon",      Body::MinorMoon
+"comet",          Body::Comet
+"asteroid",       Body::Asteroid
+"spacecraft",     Body::Spacecraft
+"invisible",      Body::Invisible
+"surfacefeature", Body::SurfaceFeature
+"component",      Body::Component
+"diffuse",        Body::Diffuse
