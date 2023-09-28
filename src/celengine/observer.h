@@ -24,6 +24,14 @@
 #include <Eigen/Geometry>
 #include "shared.h"
 
+/*! ObserverFrame is a wrapper class for ReferenceFrame which adds some
+ * annotation data. The goal is to place some restrictions on what reference
+ * frame can be set for an observer. General reference frames can be
+ * arbitrarily complex, with multiple levels of nesting. This makes it
+ * difficult to store them in a cel:// URL or display information about
+ * them for the user. The restricted set of reference frames wrapped by
+ * the ObserverFrame class does not suffer from such problems.
+ */
 class ObserverFrame
 {
 public:
@@ -96,14 +104,6 @@ private:
 };
 
 
-/*! ObserverFrame is a wrapper class for ReferenceFrame which adds some
- * annotation data. The goal is to place some restrictions on what reference
- * frame can be set for an observer. General reference frames can be
- * arbitrarily complex, with multiple levels of nesting. This makes it
- * difficult to store them in a cel:// URL or display information about
- * them for the user. The restricted set of reference frames wrapped by
- * the ObserverFrame class does not suffer from such problems.
- */
 class Observer
 {
 public:
