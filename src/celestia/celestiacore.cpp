@@ -4693,34 +4693,34 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
     {
         if (refMark == "body axes")
         {
-            body->addReferenceMark(new BodyAxisArrows(*body));
+            body->addReferenceMark(std::make_unique<BodyAxisArrows>(*body));
         }
         else if (refMark == "frame axes")
         {
-            body->addReferenceMark(new FrameAxisArrows(*body));
+            body->addReferenceMark(std::make_unique<FrameAxisArrows>(*body));
         }
         else if (refMark == "sun direction")
         {
-            body->addReferenceMark(new SunDirectionArrow(*body));
+            body->addReferenceMark(std::make_unique<SunDirectionArrow>(*body));
         }
         else if (refMark == "velocity vector")
         {
-            body->addReferenceMark(new VelocityVectorArrow(*body));
+            body->addReferenceMark(std::make_unique<VelocityVectorArrow>(*body));
         }
         else if (refMark == "spin vector")
         {
-            body->addReferenceMark(new SpinVectorArrow(*body));
+            body->addReferenceMark(std::make_unique<SpinVectorArrow>(*body));
         }
         else if (refMark == "frame center direction")
         {
             double now = getSimulation()->getTime();
-            BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, body->getOrbitFrame(now)->getCenter());
+            auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, body->getOrbitFrame(now)->getCenter());
             arrow->setTag(refMark);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (refMark == "planetographic grid")
         {
-            body->addReferenceMark(new PlanetographicGrid(*body));
+            body->addReferenceMark(std::make_unique<PlanetographicGrid>(*body));
         }
         else if (refMark == "terminator")
         {
@@ -4737,9 +4737,9 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
 
             if (sun != nullptr)
             {
-                VisibleRegion* visibleRegion = new VisibleRegion(*body, Selection(sun));
+                auto visibleRegion = std::make_unique<VisibleRegion>(*body, Selection(sun));
                 visibleRegion->setTag("terminator");
-                body->addReferenceMark(visibleRegion);
+                body->addReferenceMark(std::move(visibleRegion));
             }
         }
     }

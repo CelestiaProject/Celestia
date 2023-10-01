@@ -25,6 +25,7 @@
 #include <map>
 #include <memory>
 #include <list>
+#include <functional>
 
 class Selection;
 class ReferenceFrame;
@@ -43,15 +44,10 @@ class PlanetarySystem
     Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
-    Body* getBody(int i) const { return satellites[i]; };
+    Body* getBody(int i) const { return satellites[i].get(); };
 
     void addAlias(Body* body, const std::string& alias);
-    void removeAlias(const Body* body, const std::string& alias);
-    void addBody(Body* body);
-    void removeBody(Body* body);
-    void replaceBody(Body* oldBody, Body* newBody);
-
-    int getOrder(const Body* body) const;
+    void addBody(std::unique_ptr<Body>&& body);
 
     enum TraversalResult
     {
@@ -64,7 +60,6 @@ class PlanetarySystem
 
  private:
     void addBodyToNameIndex(Body* body);
-    void removeBodyFromNameIndex(const Body* body);
 
  private:
     using ObjectIndex = std::map<std::string, Body*, UTF8StringOrderingPredicate>;
@@ -72,7 +67,7 @@ class PlanetarySystem
  private:
     Star* star;
     Body* primary{nullptr};
-    std::vector<Body*> satellites;
+    std::vector<std::unique_ptr<Body>> satellites;
     ObjectIndex objectIndex;  // index of bodies by name
 };
 
@@ -96,7 +91,7 @@ class RingSystem
     float outerRadius;
     Color color;
     MultiResTexture texture;
-    std::shared_ptr<RingRenderData> renderData;
+    std::unique_ptr<RingRenderData> renderData;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),
@@ -115,7 +110,7 @@ class RingSystem
 class Body
 {
  public:
-     Body(PlanetarySystem*, const std::string& name);
+     explicit Body(const std::string& name);
      ~Body();
 
     // Object class enumeration:
@@ -192,13 +187,14 @@ class Body
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
+    void setSystem(PlanetarySystem*);
     const std::vector<std::string>& getNames() const;
     std::string getName(bool i18n = false) const;
     std::string getLocalizedName() const;
     bool hasLocalizedName() const;
     void addAlias(const std::string& alias);
 
-    void setTimeline(Timeline* timeline);
+    void setTimeline(std::unique_ptr<Timeline>&& timeline);
     const Timeline* getTimeline() const;
 
     FrameTree* getFrameTree() const;
@@ -240,16 +236,18 @@ class Body
     void setInfoURL(const std::string&);
 
     PlanetarySystem* getSatellites() const;
-    void setSatellites(PlanetarySystem*);
+    PlanetarySystem* getOrCreateSatellites();
 
     float getBoundingRadius() const;
     float getCullingRadius() const;
 
     RingSystem* getRings() const;
-    void setRings(const RingSystem&);
+    void setRings(std::unique_ptr<RingSystem>&&);
+    void scaleRings(float);
+
     const Atmosphere* getAtmosphere() const;
     Atmosphere* getAtmosphere();
-    void setAtmosphere(const Atmosphere&);
+    void setAtmosphere(std::unique_ptr<Atmosphere>&&);
 
     ResourceHandle getGeometry() const { return geometry; }
     void setGeometry(ResourceHandle);
@@ -306,11 +304,11 @@ class Body
     void getLifespan(double&, double&) const;
 
     Surface* getAlternateSurface(const std::string&) const;
-    void addAlternateSurface(const std::string&, Surface*);
+    void addAlternateSurface(const std::string&, std::unique_ptr<Surface>&&);
     std::vector<std::string>* getAlternateSurfaceNames() const;
 
-    std::vector<Location*>* getLocations() const;
-    void addLocation(Location*);
+    const std::vector<std::unique_ptr<Location>>* getLocations() const;
+    void addLocation(std::unique_ptr<Location>&&);
     Location* findLocation(std::string_view, bool i18n = false) const;
     void computeLocations();
 
@@ -347,30 +345,30 @@ class Body
         VelocityVector =   0x10,
     };
 
-    void addReferenceMark(ReferenceMark* refMark);
+    void addReferenceMark(std::unique_ptr<ReferenceMark>&& refMark);
     void removeReferenceMark(const std::string& tag);
-    ReferenceMark* findReferenceMark(const std::string& tag) const;
-    const std::list<ReferenceMark*>* getReferenceMarks() const;
+    const ReferenceMark* findReferenceMark(const std::string& tag) const;
+    const std::list<std::unique_ptr<ReferenceMark>>* getReferenceMarks() const;
 
     void markChanged();
     void markUpdated();
+    void recomputeCullingRadius();
 
  private:
     void setName(const std::string& name);
-    void recomputeCullingRadius();
 
  private:
     std::vector<std::string> names{ 1 };
     std::string localizedName;
 
     // Parent in the name hierarchy
-    PlanetarySystem* system;
+    PlanetarySystem* system{ nullptr };
     // Children in the name hierarchy
-    PlanetarySystem* satellites{ nullptr };
+    std::unique_ptr<PlanetarySystem> satellites;
 
-    Timeline* timeline{ nullptr };
+    std::unique_ptr<Timeline> timeline;
     // Children in the frame hierarchy
-    FrameTree* frameTree{ nullptr };
+    std::unique_ptr<FrameTree> frameTree;
 
     float radius{ 1.0f };
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
@@ -390,20 +388,20 @@ class Body
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
-    Atmosphere* atmosphere{ nullptr };
-    RingSystem* rings{ nullptr };
+    std::unique_ptr<Atmosphere> atmosphere;
+    std::unique_ptr<RingSystem> rings;
 
     int classification{ Unknown };
 
     std::string infoURL;
 
-    typedef std::map<std::string, Surface*> AltSurfaceTable;
-    AltSurfaceTable *altSurfaces{ nullptr };
+    using AltSurfaceTable = std::map<std::string, std::unique_ptr<Surface>, std::less<>>;
+    std::unique_ptr<AltSurfaceTable> altSurfaces;
 
-    std::vector<Location*>* locations{ nullptr };
+    std::unique_ptr<std::vector<std::unique_ptr<Location>>> locations;
     mutable bool locationsComputed{ false };
 
-    std::list<ReferenceMark*>* referenceMarks{ nullptr };
+    std::unique_ptr<std::list<std::unique_ptr<ReferenceMark>>> referenceMarks;
 
     Color orbitColor;
     Color cometTailColor{ 0.5f, 0.5f, 0.75f };

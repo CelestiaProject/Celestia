@@ -837,7 +837,7 @@ void renderRings_GLSL(RingSystem& rings,
         ringsTex->bind();
 
     if (rings.renderData == nullptr)
-        rings.renderData = std::make_shared<GLRingRenderData>();
+        rings.renderData = std::make_unique<GLRingRenderData>();
     auto data = static_cast<GLRingRenderData*>(rings.renderData.get());
 
     unsigned nSections = 180;
