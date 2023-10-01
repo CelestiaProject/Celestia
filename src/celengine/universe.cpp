@@ -542,21 +542,22 @@ void
 getLocationsCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        bool i18n,
-                       const std::vector<Location*>* locations)
+                       const std::vector<std::unique_ptr<Location>>* locations)
 {
     if (locations == nullptr)
         return;
 
-    for (const auto* location : *locations)
+    for (const auto& location : *locations)
     {
-        const std::string& name = location->getName(false);
+        const Location* loc = location.get();
+        const std::string& name = loc->getName(false);
         if (UTF8StartsWith(name, s))
         {
             completion.push_back(name);
         }
         else if (i18n)
         {
-            const std::string& lname = location->getName(true);
+            const std::string& lname = loc->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
                 completion.push_back(lname);
         }
@@ -568,19 +569,20 @@ void
 getLocationsCompletionPath(std::vector<std::string>& completion,
                            std::string_view search,
                            bool i18n,
-                           const std::vector<Location*>* locations)
+                           const std::vector<std::unique_ptr<Location>>* locations)
 {
     if (locations == nullptr)
         return;
 
-    for (const auto location : *locations)
+    for (const auto& location : *locations)
     {
-        const std::string& name = location->getName(false);
+        const Location* loc = location.get();
+        const std::string& name = loc->getName(false);
         if (UTF8StartsWith(name, search))
             completion.push_back(name);
         else if (i18n)
         {
-            const std::string& lname = location->getName(true);
+            const std::string& lname = loc->getName(true);
             if (lname != name && UTF8StartsWith(lname, search))
                 completion.push_back(lname);
         }

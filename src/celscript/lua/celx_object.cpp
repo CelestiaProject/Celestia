@@ -359,72 +359,71 @@ static int object_addreferencemark(lua_State* l)
 
         if (compareIgnoringCase(rmtype, "body axes") == 0)
         {
-            BodyAxisArrows* arrow = new BodyAxisArrows(*body);
+            auto arrow = std::make_unique<BodyAxisArrows>(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmopacity >= 0.0f)
                 arrow->setOpacity(rmopacity);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "frame axes") == 0)
         {
-            FrameAxisArrows* arrow = new FrameAxisArrows(*body);
+            auto arrow = std::make_unique<FrameAxisArrows>(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmopacity >= 0.0f)
                 arrow->setOpacity(rmopacity);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "sun direction") == 0)
         {
-            SunDirectionArrow* arrow = new SunDirectionArrow(*body);
+            auto arrow = std::make_unique<SunDirectionArrow>(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "velocity vector") == 0)
         {
-            VelocityVectorArrow* arrow = new VelocityVectorArrow(*body);
+            auto arrow = std::make_unique<VelocityVectorArrow>(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "spin vector") == 0)
         {
-            SpinVectorArrow* arrow = new SpinVectorArrow(*body);
+            auto arrow = std::make_unique<SpinVectorArrow>(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != nullptr)
         {
-            BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, *rmtarget);
+            auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, *rmtarget);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
             if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
+            body->addReferenceMark(std::move(arrow));
         }
         else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != nullptr)
         {
-            VisibleRegion* region = new VisibleRegion(*body, *rmtarget);
+            auto region = std::make_unique<VisibleRegion>(*body, *rmtarget);
             region->setTag(rmtag);
             if (rmopacity >= 0.0f)
                 region->setOpacity(rmopacity);
             if (rmcolorstring != nullptr)
                 region->setColor(rmcolor);
-            body->addReferenceMark(region);
+            body->addReferenceMark(std::move(region));
         }
         else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
         {
-            PlanetographicGrid* grid = new PlanetographicGrid(*body);
-            body->addReferenceMark(grid);
+            body->addReferenceMark(std::make_unique<PlanetographicGrid>(*body));
         }
     }
 
@@ -471,27 +470,18 @@ static int object_setradius(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected to object:setradius()");
 
     Selection* sel = this_object(l);
-    if (sel->body() != nullptr)
-    {
-        Body* body = sel->body();
-        float iradius = body->getRadius();
-        double radius = celx.safeGetNumber(2, AllErrors, "Argument to object:setradius() must be a number");
-        if ((radius > 0))
-        {
-            body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
-        }
+    if (sel->body() == nullptr)
+        return 0;
 
-        if (body->getRings() != nullptr)
-        {
-            RingSystem rings(0.0f, 0.0f);
-            rings = *body->getRings();
-            float inner = rings.innerRadius;
-            float outer = rings.outerRadius;
-            rings.innerRadius = inner * (float) radius / iradius;
-            rings.outerRadius = outer * (float) radius / iradius;
-            body->setRings(rings);
-        }
-    }
+    Body* body = sel->body();
+    float iradius = body->getRadius();
+    double radius = celx.safeGetNumber(2, AllErrors, "Argument to object:setradius() must be a number");
+    if (radius <= 0)
+        return 0;
+
+    float scaleFactor = static_cast<float>(radius) / iradius;
+    body->setSemiAxes(body->getSemiAxes() * scaleFactor);
+    body->scaleRings(scaleFactor);
 
     return 0;
 }
@@ -705,7 +695,7 @@ static int object_getinfo(lua_State* l)
 
         const celestia::ephem::Orbit* orbit = body->getOrbit(0.0);
         celx.setTable("orbitPeriod", orbit->getPeriod());
-        Atmosphere* atmosphere = body->getAtmosphere();
+        const Atmosphere* atmosphere = body->getAtmosphere();
         if (atmosphere != nullptr)
         {
             celx.setTable("atmosphereHeight", (double)atmosphere->height);
@@ -1019,7 +1009,7 @@ static int object_locations_iter(lua_State* l)
     // Get the current counter value
     uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
 
-    vector<Location*>* locations = nullptr;
+    const vector<std::unique_ptr<Location>>* locations = nullptr;
     if (sel->body() != nullptr)
     {
         locations = sel->body()->getLocations();
@@ -1031,7 +1021,7 @@ static int object_locations_iter(lua_State* l)
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
-        Location* loc = locations->at(i);
+        Location* loc = (*locations)[i].get();
         if (loc == nullptr)
             lua_pushnil(l);
         else
@@ -1460,50 +1450,50 @@ static int object_setatmosphere(lua_State* l)
     Selection* sel = this_object(l);
     //CelestiaCore* appCore = getAppCore(l, AllErrors);
 
-    if (sel->body() != nullptr)
-    {
-        Body* body = sel->body();
-        Atmosphere* atmosphere = body->getAtmosphere();
-        if (atmosphere != nullptr)
-        {
-            float r = (float) celx.safeGetNumber(2, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            float g = (float) celx.safeGetNumber(3, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            float b = (float) celx.safeGetNumber(4, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //            Color testColor(0.0f, 1.0f, 0.0f);
-            Color testColor(r, g, b);
-            atmosphere->lowerColor = testColor;
-            r = (float) celx.safeGetNumber(5, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) celx.safeGetNumber(6, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) celx.safeGetNumber(7, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->upperColor = Color(r, g, b);
-            r = (float) celx.safeGetNumber(8, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) celx.safeGetNumber(9, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) celx.safeGetNumber(10, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->skyColor = Color(r, g, b);
-            r = (float) celx.safeGetNumber(11, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) celx.safeGetNumber(12, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) celx.safeGetNumber(13, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->sunsetColor = Color(r, g, b);
-            r = (float) celx.safeGetNumber(14, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) celx.safeGetNumber(15, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) celx.safeGetNumber(16, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //HWR            atmosphere->rayleighCoeff = Vector3(r, g, b);
-            r = (float) celx.safeGetNumber(17, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) celx.safeGetNumber(18, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) celx.safeGetNumber(19, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //HWR            atmosphere->absorptionCoeff = Vector3(r, g, b);
-            b = (float) celx.safeGetNumber(20, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->mieCoeff = b;
-            b = (float) celx.safeGetNumber(21, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->mieScaleHeight = b;
-            b = (float) celx.safeGetNumber(22, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->miePhaseAsymmetry = b;
-            b = (float) celx.safeGetNumber(23, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->rayleighScaleHeight = b;
+    Body* body = sel->body();
+    if (body == nullptr)
+        return 0;
 
-            body->setAtmosphere(*atmosphere);
-        }
-    }
+    Atmosphere* atmosphere = body->getAtmosphere();
+    if (atmosphere == nullptr)
+        return 0;
+
+    auto r = static_cast<float>(celx.safeGetNumber(2, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    auto g = static_cast<float>(celx.safeGetNumber(3, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    auto b = static_cast<float>(celx.safeGetNumber(4, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    //            Color testColor(0.0f, 1.0f, 0.0f);
+    Color testColor(r, g, b);
+    atmosphere->lowerColor = testColor;
+    r = static_cast<float>(celx.safeGetNumber(5, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    g = static_cast<float>(celx.safeGetNumber(6, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    b = static_cast<float>(celx.safeGetNumber(7, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->upperColor = Color(r, g, b);
+    r = static_cast<float>(celx.safeGetNumber(8, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    g = static_cast<float>(celx.safeGetNumber(9, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    b = static_cast<float>(celx.safeGetNumber(10, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->skyColor = Color(r, g, b);
+    r = static_cast<float>(celx.safeGetNumber(11, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    g = static_cast<float>(celx.safeGetNumber(12, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    b = static_cast<float>(celx.safeGetNumber(13, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->sunsetColor = Color(r, g, b);
+    /* r = */ celx.safeGetNumber(14, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    /* g = */ celx.safeGetNumber(15, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    /* b = */ celx.safeGetNumber(16, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    //HWR            atmosphere->rayleighCoeff = Vector3(r, g, b);
+    /* r = */ celx.safeGetNumber(17, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    /* g = */ celx.safeGetNumber(18, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    /* b = */ celx.safeGetNumber(19, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+    //HWR            atmosphere->absorptionCoeff = Vector3(r, g, b);
+    b = static_cast<float>(celx.safeGetNumber(20, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->mieCoeff = b;
+    b = static_cast<float>(celx.safeGetNumber(21, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->mieScaleHeight = b;
+    b = static_cast<float>(celx.safeGetNumber(22, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->miePhaseAsymmetry = b;
+    b = static_cast<float>(celx.safeGetNumber(23, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
+    atmosphere->rayleighScaleHeight = b;
+
+    body->recomputeCullingRadius();
 
     return 0;
 }

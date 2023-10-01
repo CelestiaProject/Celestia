@@ -798,26 +798,17 @@ CommandSetRadius::CommandSetRadius(std::string _object, double _radius) :
 void CommandSetRadius::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(object);
-    if (sel.body() != nullptr)
-    {
-        Body* body = sel.body();
-        float iradius = body->getRadius();
-        if ((radius > 0))
-        {
-            body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
-        }
+    if (sel.body() == nullptr)
+        return;
 
-        if (body->getRings() != nullptr)
-        {
-            RingSystem rings(0.0f, 0.0f);
-            rings = *body->getRings();
-            float inner = rings.innerRadius;
-            float outer = rings.outerRadius;
-            rings.innerRadius = inner * (float) radius / iradius;
-            rings.outerRadius = outer * (float) radius / iradius;
-            body->setRings(rings);
-        }
-    }
+    Body* body = sel.body();
+    float iradius = body->getRadius();
+    float scaleFactor = static_cast<float>(radius) / iradius;
+    if (radius <= 0)
+        return;
+
+    body->setSemiAxes(body->getSemiAxes() * scaleFactor);
+    body->scaleRings(scaleFactor);
 }
 
 

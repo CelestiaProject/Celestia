@@ -1907,7 +1907,7 @@ Renderer::locationsToAnnotations(const Body& body,
                                  const Vector3d& bodyPosition,
                                  const Quaterniond& bodyOrientation)
 {
-    const vector<Location*>* locations = body.getLocations();
+    const std::vector<std::unique_ptr<Location>>* locations = body.getLocations();
 
     if (locations == nullptr)
         return;
@@ -1928,86 +1928,88 @@ Renderer::locationsToAnnotations(const Body& body,
 
     Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
 
-    for (const auto location : *locations)
+    for (const auto& location : *locations)
     {
-        auto featureType = location->getFeatureType();
-        if ((featureType & locationFilter) != 0)
+        const Location* loc = location.get();
+        auto featureType = loc->getFeatureType();
+        if ((featureType & locationFilter) == 0)
+            continue;
+
+        // Get the position of the location with respect to the planet center
+        Vector3f ppos = loc->getPosition();
+
+        // Compute the bodycentric position of the location
+        Vector3d locPos = ppos.cast<double>();
+
+        // Get the planetocentric position of the label.  Add a slight scale factor
+        // to keep the point from being exactly on the surface.
+        Vector3d pcLabelPos = locPos * (1.0 + labelOffset);
+
+        // Get the camera space label position
+        Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
+
+        float effSize = loc->getImportance();
+        if (effSize < 0.0f)
+            effSize = loc->getSize();
+
+        if (float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
+            pixSize <= minFeatureSize || labelPos.dot(viewNormal) <= 0.0)
         {
-            // Get the position of the location with respect to the planet center
-            Vector3f ppos = location->getPosition();
-
-            // Compute the bodycentric position of the location
-            Vector3d locPos = ppos.cast<double>();
-
-            // Get the planetocentric position of the label.  Add a slight scale factor
-            // to keep the point from being exactly on the surface.
-            Vector3d pcLabelPos = locPos * (1.0 + labelOffset);
-
-            // Get the camera space label position
-            Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
-
-            float effSize = location->getImportance();
-            if (effSize < 0.0f)
-                effSize = location->getSize();
-
-            float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
-
-            if (pixSize > minFeatureSize && labelPos.dot(viewNormal) > 0.0)
-            {
-                // Labels on non-ellipsoidal bodies need special handling; the
-                // ellipsoid visibility test will always fail for them, since they
-                // will lie on the surface of the mesh, which is inside the
-                // the bounding ellipsoid. The following code projects location positions
-                // onto the bounding sphere.
-                if (!body.isEllipsoid())
-                {
-                    double r = locPos.norm();
-                    if (r < boundingRadius)
-                        pcLabelPos = locPos * (boundingRadius * 1.01 / r);
-                }
-
-                double t = 0.0;
-
-                // Test for an intersection of the eye-to-location ray with
-                // the planet ellipsoid.  If we hit the planet first, then
-                // the label is obscured by the planet.  An exact calculation
-                // for irregular objects would be too expensive, and the
-                // ellipsoid approximation works reasonably well for them.
-                Eigen::ParametrizedLine<double, 3> testRay(viewRayOrigin, pcLabelPos - viewRayOrigin);
-                bool hit = testIntersection(testRay, bodyEllipsoid, t);
-
-                if (!hit || t >= 1.0)
-                {
-                    // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
-                    // the view normal that touches the front of the object's bounding sphere
-                    double planetZ = viewNormal.dot(bodyCenter) - boundingRadius;
-                    if (planetZ < -nearDist * 1.001)
-                        planetZ = -nearDist * 1.001;
-                    double z = viewNormal.dot(labelPos);
-                    labelPos *= planetZ / z;
-
-                    celestia::MarkerRepresentation* locationMarker = nullptr;
-                    if (featureType & Location::City)
-                        locationMarker = &cityRep;
-                    else if (featureType & (Location::LandingSite | Location::Observatory))
-                        locationMarker = &observatoryRep;
-                    else if (featureType & (Location::Crater | Location::Patera))
-                        locationMarker = &craterRep;
-                    else if (featureType & (Location::Mons | Location::Tholus))
-                        locationMarker = &mountainRep;
-                    else if (featureType & (Location::EruptiveCenter))
-                        locationMarker = &genericLocationRep;
-
-                    Color labelColor = location->isLabelColorOverridden() ? location->getLabelColor() : LocationLabelColor;
-                    addObjectAnnotation(locationMarker,
-                                        location->getName(true),
-                                        labelColor,
-                                        labelPos.cast<float>(),
-                                        LabelHorizontalAlignment::Start,
-                                        LabelVerticalAlignment::Bottom);
-                }
-            }
+            continue;
         }
+
+        // Labels on non-ellipsoidal bodies need special handling; the
+        // ellipsoid visibility test will always fail for them, since they
+        // will lie on the surface of the mesh, which is inside the
+        // the bounding ellipsoid. The following code projects location positions
+        // onto the bounding sphere.
+        if (!body.isEllipsoid())
+        {
+            double r = locPos.norm();
+            if (r < boundingRadius)
+                pcLabelPos = locPos * (boundingRadius * 1.01 / r);
+        }
+
+        double t = 0.0;
+
+        // Test for an intersection of the eye-to-location ray with
+        // the planet ellipsoid.  If we hit the planet first, then
+        // the label is obscured by the planet.  An exact calculation
+        // for irregular objects would be too expensive, and the
+        // ellipsoid approximation works reasonably well for them.
+        Eigen::ParametrizedLine<double, 3> testRay(viewRayOrigin, pcLabelPos - viewRayOrigin);
+
+        if (bool hit = testIntersection(testRay, bodyEllipsoid, t);
+            hit && t < 1.0)
+        {
+            continue;
+        }
+
+        // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
+        // the view normal that touches the front of the object's bounding sphere
+        double planetZ = std::max(viewNormal.dot(bodyCenter) - boundingRadius, -nearDist * 1.001);
+        double z = viewNormal.dot(labelPos);
+        labelPos *= planetZ / z;
+
+        celestia::MarkerRepresentation* locationMarker = nullptr;
+        if (featureType & Location::City)
+            locationMarker = &cityRep;
+        else if (featureType & (Location::LandingSite | Location::Observatory))
+            locationMarker = &observatoryRep;
+        else if (featureType & (Location::Crater | Location::Patera))
+            locationMarker = &craterRep;
+        else if (featureType & (Location::Mons | Location::Tholus))
+            locationMarker = &mountainRep;
+        else if (featureType & (Location::EruptiveCenter))
+            locationMarker = &genericLocationRep;
+
+        Color labelColor = loc->isLabelColorOverridden() ? loc->getLabelColor() : LocationLabelColor;
+        addObjectAnnotation(locationMarker,
+                            loc->getName(true),
+                            labelColor,
+                            labelPos.cast<float>(),
+                            LabelHorizontalAlignment::Start,
+                            LabelVerticalAlignment::Bottom);
     }
 }
 
@@ -3284,17 +3286,17 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         }
     }
 
-    const list<ReferenceMark*>* refMarks = body.getReferenceMarks();
-    if (refMarks != nullptr)
+    const std::list<std::unique_ptr<ReferenceMark>>* refMarks = body.getReferenceMarks();
+    if (refMarks == nullptr)
+        return;
+
+    for (const auto& rm : *refMarks)
     {
-        for (const auto rm : *refMarks)
-        {
-            rle.renderableType = RenderListEntry::RenderableReferenceMark;
-            rle.refMark = rm;
-            rle.isOpaque = rm->isOpaque();
-            rle.radius = rm->boundingSphereRadius();
-            renderList.push_back(rle);
-        }
+        rle.renderableType = RenderListEntry::RenderableReferenceMark;
+        rle.refMark = rm.get();
+        rle.isOpaque = rm->isOpaque();
+        rle.radius = rm->boundingSphereRadius();
+        renderList.push_back(rle);
     }
 }
 
