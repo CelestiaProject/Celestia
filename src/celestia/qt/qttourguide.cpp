@@ -43,9 +43,8 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
     bool hasDestinations = false;
     if (destinations != nullptr)
     {
-        for (DestinationList::const_iterator iter = destinations->begin(); iter != destinations->end(); iter++)
+        for (const Destination* dest : *destinations)
         {
-            auto dest = *iter;
             if (dest == nullptr)
                 continue;
             hasDestinations = true;
