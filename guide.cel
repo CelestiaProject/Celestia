@@ -83,6 +83,12 @@
 }
 
 {
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b is the first planet discovered to be orbiting a red dwarf star.  It is a gas giant planet with no solid surface - similar to Jupiter.  It is estimated to have about twice the mass of Jupiter.  It is in a 1:2:4 orbital resonance with the inner planet Gliese 876 c and the outer planet Gliese 876 e.  This is an artist's concept of the planet."
+}
+
+{
 	Name "PSR B1919+21"
 	Target "PSR B1919+21"
 	Distance 50
