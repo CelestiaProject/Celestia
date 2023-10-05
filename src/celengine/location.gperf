@@ -71,6 +71,7 @@ struct FeatureNameEntry { const char* name; Location::FeatureType featureType; }
 "Landing Site", Location::LandingSite
 "Crater",       Location::Crater
 "Capital",      Location::Capital
-"Cosmodrome",   Location::Cosmodrome
+"Spaceport",    Location::Spaceport
+"Cosmodrome",   Location::Spaceport
 "Ring",         Location::Ring
 "Historical",   Location::Historical

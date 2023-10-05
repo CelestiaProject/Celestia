@@ -114,7 +114,7 @@ public:
         Saxum          = 0x0400000000000000,
         // Custom locations, part II
         Capital        = 0x0800000000000000,
-        Cosmodrome     = 0x1000000000000000,
+        Spaceport      = 0x1000000000000000,
         Ring           = 0x2000000000000000,
         Historical     = 0x4000000000000000,
         Other          = 0x8000000000000000,

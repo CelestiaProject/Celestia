@@ -146,7 +146,8 @@ void initLocationFlagMap(FlagMap64 &LocationFlagMap)
     LocationFlagMap["other"sv]             = Location::Other;
     LocationFlagMap["saxum"sv]             = Location::Saxum;
     LocationFlagMap["capital"sv]           = Location::Capital;
-    LocationFlagMap["cosmodrome"sv]        = Location::Cosmodrome;
+    LocationFlagMap["spaceport"sv]         = Location::Spaceport;
+    LocationFlagMap["cosmodrome"sv]        = Location::Spaceport;
     LocationFlagMap["ring"sv]              = Location::Ring;
     LocationFlagMap["historical"sv]        = Location::Historical;
 }
