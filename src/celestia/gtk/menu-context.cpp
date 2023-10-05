@@ -11,6 +11,8 @@
  */
 
 #include <algorithm>
+#include <iterator>
+
 #include <gtk/gtk.h>
 
 #include <celengine/simulation.h>
@@ -35,7 +37,8 @@ static void handleContextSurface(gpointer data);
 /* Definitions: Helpers */
 static GtkMenuItem* AppendMenu(GtkWidget* parent, GCallback callback, const gchar* name, gpointer extra);
 static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySystem* psys);
-static GtkMenu* CreateAlternateSurfaceMenu(const vector<string>& surfaces);
+template<typename T>
+static GtkMenu* CreateAlternateSurfaceMenu(const T& surfaces);
 
 
 /* There is no way to pass the AppData struct to the menu at this time. This
@@ -76,22 +79,18 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
                 AppendMenu(popup, G_CALLBACK(handleContextPrimary), "Select _Primary Body", NULL);
             }
 
-            const PlanetarySystem* satellites = sel.body()->getSatellites();
-            if (satellites != NULL && satellites->getSystemSize() != 0)
+            if (const PlanetarySystem* satellites = sel.body()->getSatellites();
+                satellites != nullptr && satellites->getSystemSize() != 0)
             {
                 GtkMenu* satMenu = CreatePlanetarySystemMenu(name, satellites);
                 gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "_Satellites", 0), GTK_WIDGET(satMenu));
             }
 
-            vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
-            if (altSurfaces != NULL)
+            if (auto altSurfaces = sel.body()->getAlternateSurfaceNames();
+                altSurfaces.has_value() && !altSurfaces->empty())
             {
-                if (altSurfaces->size() > 0)
-                {
-                    GtkMenu* surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
-                    gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "_Alternate Surfaces", 0), GTK_WIDGET(surfMenu));
-                    delete altSurfaces;
-                }
+                GtkMenu* surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
+                gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "_Alternate Surfaces", 0), GTK_WIDGET(surfMenu));
             }
         }
         break;
@@ -230,18 +229,24 @@ static void handleContextSurface(gpointer data)
 
     /* Handle the alternate surface submenu */
     Selection sel = app->simulation->getSelection();
-    if (sel.body() != NULL)
+    const Body* body = sel.body();
+    if (body == nullptr)
+        return;
+
+    guint index = value - 1;
+    auto surfNames = body->getAlternateSurfaceNames();
+    if (!surfNames.has_value())
+        return;
+
+    if (index < surfNames->size())
     {
-        guint index = value - 1;
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
-        {
-            string surfName;
-            if (index < surfNames->size())
-                surfName = surfNames->at(index);
-            app->simulation->getActiveObserver()->setDisplayedSurface(surfName);
-            delete surfNames;
-        }
+        auto it = surfNames->begin();
+        std::advance(it, index);
+        app->simulation->getActiveObserver()->setDisplayedSurface(*it);
+    }
+    else
+    {
+        app->simulation->getActiveObserver()->setDisplayedSurface({});
     }
 }
 
@@ -434,14 +439,17 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
 
 
 /* HELPER: Create surface submenu for context menu, return menu pointer. */
-static GtkMenu* CreateAlternateSurfaceMenu(const vector<string>& surfaces)
+template<typename T>
+static GtkMenu* CreateAlternateSurfaceMenu(const T& surfaces)
 {
     GtkWidget* menu = gtk_menu_new();
 
     AppendMenu(menu, G_CALLBACK(handleContextSurface), "Normal", 0);
-    for (guint i = 0; i < surfaces.size(); i++)
+    guint i = 0;
+    for (const auto& surface : surfaces)
     {
-        AppendMenu(menu, G_CALLBACK(handleContextSurface), surfaces[i].c_str(), GINT_TO_POINTER(i+1));
+        ++i;
+        AppendMenu(menu, G_CALLBACK(handleContextSurface), surface.c_str(), GINT_TO_POINTER(i));
     }
 
     return GTK_MENU(menu);

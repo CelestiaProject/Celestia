@@ -17,6 +17,7 @@ set(CELUTIL_SOURCES
   intrusiveptr.h
   logger.cpp
   logger.h
+  ranges.h
   r128.h
   r128util.cpp
   r128util.h

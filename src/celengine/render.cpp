@@ -1907,10 +1907,8 @@ Renderer::locationsToAnnotations(const Body& body,
                                  const Vector3d& bodyPosition,
                                  const Quaterniond& bodyOrientation)
 {
-    const std::vector<std::unique_ptr<Location>>* locations = body.getLocations();
-
-    if (locations == nullptr)
-        return;
+    assert(body.hasLocations());
+    auto locations = body.getLocations();
 
     Vector3f semiAxes = body.getSemiAxes();
 
@@ -1928,15 +1926,14 @@ Renderer::locationsToAnnotations(const Body& body,
 
     Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
 
-    for (const auto& location : *locations)
+    for (const auto location : *locations)
     {
-        const Location* loc = location.get();
-        auto featureType = loc->getFeatureType();
+        auto featureType = location->getFeatureType();
         if ((featureType & locationFilter) == 0)
             continue;
 
         // Get the position of the location with respect to the planet center
-        Vector3f ppos = loc->getPosition();
+        Vector3f ppos = location->getPosition();
 
         // Compute the bodycentric position of the location
         Vector3d locPos = ppos.cast<double>();
@@ -1948,9 +1945,9 @@ Renderer::locationsToAnnotations(const Body& body,
         // Get the camera space label position
         Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
 
-        float effSize = loc->getImportance();
+        float effSize = location->getImportance();
         if (effSize < 0.0f)
-            effSize = loc->getSize();
+            effSize = location->getSize();
 
         if (float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
             pixSize <= minFeatureSize || labelPos.dot(viewNormal) <= 0.0)
@@ -2003,9 +2000,12 @@ Renderer::locationsToAnnotations(const Body& body,
         else if (featureType & (Location::EruptiveCenter))
             locationMarker = &genericLocationRep;
 
-        Color labelColor = loc->isLabelColorOverridden() ? loc->getLabelColor() : LocationLabelColor;
+        Color labelColor = location->isLabelColorOverridden()
+            ? location->getLabelColor()
+            : LocationLabelColor;
+
         addObjectAnnotation(locationMarker,
-                            loc->getName(true),
+                            location->getName(true),
                             labelColor,
                             labelPos.cast<float>(),
                             LabelHorizontalAlignment::Start,
@@ -2782,7 +2782,7 @@ void Renderer::renderPlanet(Body& body,
 
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
 
-        if (body.getLocations() != nullptr && (labelMode & LocationLabels) != 0)
+        if ((labelMode & LocationLabels) != 0)
             body.computeLocations();
 
         Vector3f scaleFactors;
@@ -2978,7 +2978,7 @@ void Renderer::renderPlanet(Body& body,
                      nearPlaneDistance, farPlaneDistance,
                      rp, lights, m);
 
-        if (body.getLocations() != nullptr && (labelMode & LocationLabels) != 0)
+        if (body.hasLocations() && (labelMode & LocationLabels) != 0)
         {
             // Set up location markers for this body
             using namespace celestia;
@@ -3286,14 +3286,14 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         }
     }
 
-    const std::list<std::unique_ptr<ReferenceMark>>* refMarks = body.getReferenceMarks();
-    if (refMarks == nullptr)
+    auto refMarks = body.getReferenceMarks();
+    if (!refMarks.has_value())
         return;
 
-    for (const auto& rm : *refMarks)
+    for (const auto rm : *refMarks)
     {
         rle.renderableType = RenderListEntry::RenderableReferenceMark;
-        rle.refMark = rm.get();
+        rle.refMark = rm;
         rle.isOpaque = rm->isOpaque();
         rle.radius = rm->boundingSphereRadius();
         renderList.push_back(rle);

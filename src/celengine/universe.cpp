@@ -542,22 +542,22 @@ void
 getLocationsCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        bool i18n,
-                       const std::vector<std::unique_ptr<Location>>* locations)
+                       const Body& body)
 {
-    if (locations == nullptr)
+    auto locations = body.getLocations();
+    if (!locations.has_value() || locations->empty())
         return;
 
-    for (const auto& location : *locations)
+    for (const auto location : *locations)
     {
-        const Location* loc = location.get();
-        const std::string& name = loc->getName(false);
+        const std::string& name = location->getName(false);
         if (UTF8StartsWith(name, s))
         {
             completion.push_back(name);
         }
         else if (i18n)
         {
-            const std::string& lname = loc->getName(true);
+            const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
                 completion.push_back(lname);
         }
@@ -569,20 +569,20 @@ void
 getLocationsCompletionPath(std::vector<std::string>& completion,
                            std::string_view search,
                            bool i18n,
-                           const std::vector<std::unique_ptr<Location>>* locations)
+                           const Body& body)
 {
-    if (locations == nullptr)
+    auto locations = body.getLocations();
+    if (!locations.has_value() || locations->empty())
         return;
 
-    for (const auto& location : *locations)
+    for (const auto location : *locations)
     {
-        const Location* loc = location.get();
-        const std::string& name = loc->getName(false);
+        const std::string& name = location->getName(false);
         if (UTF8StartsWith(name, search))
             completion.push_back(name);
         else if (i18n)
         {
-            const std::string& lname = loc->getName(true);
+            const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, search))
                 completion.push_back(lname);
         }
@@ -1171,7 +1171,7 @@ Universe::getCompletion(std::vector<std::string>& completion,
         if (withLocations && context.getType() == SelectionType::Body)
         {
             getLocationsCompletion(completion, s, i18n,
-                                   context.body()->getLocations());
+                                   *context.body());
         }
 
         const SolarSystem* sys = getSolarSystem(context);
@@ -1242,7 +1242,7 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
         getLocationsCompletionPath(completion,
                                    s.substr(pos + 1),
                                    i18n,
-                                   sel.body()->getLocations());
+                                   *sel.body());
     }
 }
 

@@ -16,9 +16,11 @@
 #include <celengine/timeline.h>
 #include <celephem/rotation.h>
 #include <celephem/orbit.h>
+#include <celutil/ranges.h>
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -305,9 +307,32 @@ class Body
 
     Surface* getAlternateSurface(const std::string&) const;
     void addAlternateSurface(const std::string&, std::unique_ptr<Surface>&&);
-    std::vector<std::string>* getAlternateSurfaceNames() const;
+    auto getAlternateSurfaceNames() const
+    {
+        using range_type = decltype(celestia::util::keysView(*altSurfaces));
+        return altSurfaces
+            ? std::make_optional(celestia::util::keysView(*altSurfaces))
+            : std::optional<range_type>();
+    }
 
-    const std::vector<std::unique_ptr<Location>>* getLocations() const;
+    bool hasLocations() const { return locations != nullptr && !locations->empty(); }
+
+    auto getLocations()
+    {
+        using range_type = decltype(celestia::util::pointerView(*locations));
+        return locations
+            ? std::make_optional(celestia::util::pointerView(*locations))
+            : std::optional<range_type>();
+    }
+
+    auto getLocations() const
+    {
+        using range_type = decltype(celestia::util::constPointerView(*locations));
+        return locations
+            ? std::make_optional(celestia::util::constPointerView(*locations))
+            : std::optional<range_type>();
+    }
+
     void addLocation(std::unique_ptr<Location>&&);
     Location* findLocation(std::string_view, bool i18n = false) const;
     void computeLocations();
@@ -348,7 +373,13 @@ class Body
     void addReferenceMark(std::unique_ptr<ReferenceMark>&& refMark);
     void removeReferenceMark(const std::string& tag);
     const ReferenceMark* findReferenceMark(const std::string& tag) const;
-    const std::list<std::unique_ptr<ReferenceMark>>* getReferenceMarks() const;
+    auto getReferenceMarks() const
+    {
+        using range_type = decltype(celestia::util::constPointerView(*referenceMarks));
+        return referenceMarks
+            ? std::make_optional(celestia::util::constPointerView(*referenceMarks))
+            : std::optional<range_type>();
+    }
 
     void markChanged();
     void markUpdated();

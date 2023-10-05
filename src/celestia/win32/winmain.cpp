@@ -13,6 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <iterator>
 #include <set>
 #include <cstdlib>
 #include <cctype>
@@ -1601,16 +1602,18 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
 }
 
 
-static HMENU CreateAlternateSurfaceMenu(const vector<string>& surfaces)
+template<typename T>
+static HMENU CreateAlternateSurfaceMenu(const T& surfaces)
 {
     HMENU menu = CreatePopupMenu();
 
     // TRANSLATORS: normal texture in an alternative surface menu
     AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, _("Normal"));
-    for (unsigned int i = 0; i < surfaces.size(); i++)
+    unsigned int i = 0;
+    for (const auto& surface : surfaces)
     {
-        AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i + 1,
-                   surfaces[i].c_str());
+        ++i;
+        AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i, surface.c_str());
     }
 
     return menu;
@@ -1654,24 +1657,20 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 
             AppendMenu(hMenu, MF_STRING, ID_SELECT_PRIMARY_BODY, UTF8ToCurrentCP(_("Select &Primary Body")).c_str());
 
-            const PlanetarySystem* satellites = sel.body()->getSatellites();
-            if (satellites != NULL && satellites->getSystemSize() != 0)
+            if (const PlanetarySystem* satellites = sel.body()->getSatellites();
+                satellites != nullptr && satellites->getSystemSize() != 0)
             {
                 HMENU satMenu = CreatePlanetarySystemMenu(name, satellites);
                 AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) satMenu,
                            UTF8ToCurrentCP(_("&Satellites")).c_str());
             }
 
-            vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
-            if (altSurfaces != NULL)
+            if (auto altSurfaces = sel.body()->getAlternateSurfaceNames();
+                altSurfaces.has_value() && !altSurfaces->empty())
             {
-                if (!altSurfaces->empty())
-                {
-                    HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
-                               UTF8ToCurrentCP(_("&Alternate Surfaces")).c_str());
-                }
-                delete altSurfaces;
+                HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
+                AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
+                            UTF8ToCurrentCP(_("&Alternate Surfaces")).c_str());
             }
         }
         break;
@@ -4462,18 +4461,23 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                          LOWORD(wParam) < MENU_CHOOSE_SURFACE + 1000)
                 {
                     // Handle the alternate surface submenu
-                    Selection sel = appCore->getSimulation()->getSelection();
-                    if (sel.body() != NULL)
+                    Body* body = appCore->getSimulation()->getSelection().body();
+                    if (body != nullptr)
                     {
                         int index = (int) LOWORD(wParam) - MENU_CHOOSE_SURFACE - 1;
-                        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-                        if (surfNames != NULL)
+                        auto surfNames = body->getAlternateSurfaceNames();
+                        if (surfNames.has_value())
                         {
-                            string surfName;
-                            if (index >= 0 && index < (int) surfNames->size())
-                                surfName = surfNames->at(index);
-                            appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
-                            delete surfNames;
+                            if (index >= 0 && index < static_cast<int>(surfNames->size()))
+                            {
+                                auto it = surfNames->begin();
+                                std::advance(it, index);
+                                appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(*it);
+                            }
+                            else
+                            {
+                                appCore->getSimulation()->getActiveObserver()->setDisplayedSurface({});
+                            }
                         }
                     }
                 }
