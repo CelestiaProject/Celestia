@@ -67,6 +67,7 @@ option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU          "Use Windows SDK's ICU implementation (Default: off)" OFF)
+option(USE_WEFFCPP          "Use the -Weffc++ option when compiling with GCC (Default: off)" OFF)
 
 # Qt requires -fPIC, so build all code with it
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -163,7 +164,7 @@ if(MINGW)
 endif()
 
 # G++ 10 introduced static analyzer
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(USE_WEFFCPP AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(REPLACE "." ";" GXX_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
   list(GET GXX_VERSION_LIST 0 MAJOR)
   if(MAJOR GREATER 9)
