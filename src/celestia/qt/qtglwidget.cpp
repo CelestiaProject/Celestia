@@ -136,6 +136,8 @@ CelestiaGlWidget::initializeGL()
 
     appRenderer->setStarColorTable(static_cast<ColorTableType>(settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt()));
 
+    appCore->getSimulation()->getActiveObserver()->setLocationFilter(settings.value("LocationFilter", static_cast<quint64>(Observer::DefaultLocationFilter)).toULongLong());
+
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
