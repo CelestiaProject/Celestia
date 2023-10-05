@@ -944,20 +944,6 @@ void Body::addAlternateSurface(const string& name, std::unique_ptr<Surface>&& al
 }
 
 
-vector<string>* Body::getAlternateSurfaceNames() const
-{
-    vector<string>* names = new vector<string>();
-    if (altSurfaces)
-    {
-        std::transform(altSurfaces->begin(), altSurfaces->end(),
-                       std::back_inserter(*names),
-                       [](const auto& s) { return s.first; });
-    }
-
-    return names;
-}
-
-
 void Body::addLocation(std::unique_ptr<Location>&& loc)
 {
     if (!loc)
@@ -967,12 +953,6 @@ void Body::addLocation(std::unique_ptr<Location>&& loc)
         locations = std::make_unique<std::vector<std::unique_ptr<Location>>>();
     loc->setParentBody(this);
     locations->push_back(std::move(loc));
-}
-
-
-const std::vector<std::unique_ptr<Location>>* Body::getLocations() const
-{
-    return locations.get();
 }
 
 
@@ -1003,6 +983,9 @@ void Body::computeLocations()
         return;
 
     locationsComputed = true;
+
+    if (locations == nullptr)
+        return;
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     if (geometry == InvalidResource)
@@ -1084,16 +1067,6 @@ Body::findReferenceMark(const string& tag) const
     return iter == referenceMarks->end()
         ? nullptr
         : iter->get();
-}
-
-
-/*! Get the list of reference marks associated with this body. May return
- *  nullptr if there are no reference marks.
- */
-const std::list<std::unique_ptr<ReferenceMark>>*
-Body::getReferenceMarks() const
-{
-    return referenceMarks.get();
 }
 
 

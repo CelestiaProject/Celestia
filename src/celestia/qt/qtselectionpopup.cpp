@@ -353,32 +353,26 @@ SelectionPopup::createReferenceVectorMenu()
 QMenu*
 SelectionPopup::createAlternateSurfacesMenu()
 {
-    QMenu* surfacesMenu = nullptr;
-    std::vector<std::string>* altSurfaces = selection.body()->getAlternateSurfaceNames();
-    if (altSurfaces != nullptr)
+    auto altSurfaces = selection.body()->getAlternateSurfaceNames();
+    if (!altSurfaces.has_value() || altSurfaces->empty())
+        return nullptr;
+
+    QMenu* surfacesMenu = new QMenu(_("&Alternate Surfaces"), this);
+    QAction* normalAct = new QAction(_("Normal"), surfacesMenu);
+    normalAct->setData(QString(""));
+    surfacesMenu->addAction(normalAct);
+    connect(normalAct, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
+
+    for (const auto& surface : *altSurfaces)
     {
-        if (!altSurfaces->empty())
-        {
-            surfacesMenu = new QMenu(_("&Alternate Surfaces"), this);
-            QAction* normalAct = new QAction(_("Normal"), surfacesMenu);
-            normalAct->setData(QString(""));
-            surfacesMenu->addAction(normalAct);
-            connect(normalAct, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
-
-            for (const auto& surface : *altSurfaces)
-            {
-                QString surfaceName(surface.c_str());
-                QAction* act = new QAction(surfaceName, surfacesMenu);
-                act->setData(surfaceName);
-                surfacesMenu->addAction(act);
-                connect(act, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
-            }
-
-            addMenu(surfacesMenu);
-        }
-
-        delete altSurfaces;
+        QString surfaceName(surface.c_str());
+        QAction* act = new QAction(surfaceName, surfacesMenu);
+        act->setData(surfaceName);
+        surfacesMenu->addAction(act);
+        connect(act, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
     }
+
+    addMenu(surfacesMenu);
 
     return surfacesMenu;
 }

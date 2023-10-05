@@ -1009,30 +1009,29 @@ static int object_locations_iter(lua_State* l)
     // Get the current counter value
     uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
 
-    const vector<std::unique_ptr<Location>>* locations = nullptr;
-    if (sel->body() != nullptr)
+    Body* body = sel->body();
+    if (body == nullptr)
+        return 0;
+
+    auto locations = body->getLocations();
+    if (!locations.has_value() || i >= locations->size())
     {
-        locations = sel->body()->getLocations();
+        // Return nil when we've enumerated all the locations (or if
+        // there were no locations associated with the object.)
+        return 0;
     }
 
-    if (locations != nullptr && i < locations->size())
-    {
-        // Increment the counter
-        lua_pushnumber(l, i + 1);
-        lua_replace(l, lua_upvalueindex(2));
+    // Increment the counter
+    lua_pushnumber(l, i + 1);
+    lua_replace(l, lua_upvalueindex(2));
 
-        Location* loc = (*locations)[i].get();
-        if (loc == nullptr)
-            lua_pushnil(l);
-        else
-            object_new(l, Selection(loc));
+    Location* loc = (*locations)[i];
+    if (loc == nullptr)
+        lua_pushnil(l);
+    else
+        object_new(l, Selection(loc));
 
-        return 1;
-    }
-
-    // Return nil when we've enumerated all the locations (or if
-    // there were no locations associated with the object.)
-    return 0;
+    return 1;
 }
 
 
