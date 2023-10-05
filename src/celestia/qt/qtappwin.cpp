@@ -574,7 +574,7 @@ CelestiaAppWindow::writeSettings()
     settings.endGroup();
 
     // Renderer settings
-    Renderer* renderer = m_appCore->getRenderer();
+    const Renderer* renderer = m_appCore->getRenderer();
     settings.setValue("RenderFlags", static_cast<quint64>(renderer->getRenderFlags()));
     settings.setValue("OrbitMask", renderer->getOrbitMask());
     settings.setValue("LabelMode", renderer->getLabelMode());
@@ -586,8 +586,10 @@ CelestiaAppWindow::writeSettings()
 
     Simulation* simulation = m_appCore->getSimulation();
 
-    bool limitOfknowledge = simulation->getActiveObserver()->getDisplayedSurface() == "limit of knowledge";
+    const Observer* observer = simulation->getActiveObserver();
+    bool limitOfknowledge = observer->getDisplayedSurface() == "limit of knowledge";
     settings.setValue("LimitOfKnowledge", limitOfknowledge);
+    settings.setValue("LocationFilter", static_cast<quint64>(observer->getLocationFilter()));
 
     settings.beginGroup("Preferences");
     settings.setValue("VisualMagnitude", simulation->getFaintestVisible());

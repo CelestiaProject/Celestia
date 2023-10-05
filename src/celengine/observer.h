@@ -107,6 +107,8 @@ private:
 class Observer
 {
 public:
+    static constexpr std::uint64_t DefaultLocationFilter = ~UINT64_C(0);
+
     static constexpr const double JourneyDuration    = 5.0;
     static constexpr const double StartInterpolation = 0.25;
     static constexpr const double EndInterpolation   = 0.75;
@@ -329,6 +331,6 @@ public:
 
     bool reverseFlag{ false };
 
-    uint64_t locationFilter{ ~0ull };
+    std::uint64_t locationFilter{ DefaultLocationFilter };
     std::string displayedSurface;
 };
