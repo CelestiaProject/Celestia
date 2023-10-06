@@ -61,7 +61,7 @@ class StarDatabase
     Star* find(std::string_view, bool i18n) const;
     AstroCatalog::IndexNumber findCatalogNumberByName(std::string_view, bool i18n) const;
 
-    void getCompletion(std::vector<std::string>&, std::string_view, bool i18n) const;
+    void getCompletion(std::vector<std::string>&, std::string_view) const;
 
     void findVisibleStars(StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,

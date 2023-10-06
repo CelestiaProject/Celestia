@@ -1305,7 +1305,6 @@ Body* PlanetarySystem::find(std::string_view _name, bool deepSearch, bool i18n) 
 
 void PlanetarySystem::getCompletion(std::vector<std::string>& completion,
                                     std::string_view _name,
-                                    bool i18n,
                                     bool deepSearch) const
 {
     // Search through all names in this planetary system.
@@ -1314,8 +1313,10 @@ void PlanetarySystem::getCompletion(std::vector<std::string>& completion,
         const string& alias = index.first;
 
         if (UTF8StartsWith(alias, _name))
+        {
             completion.push_back(alias);
-        else if (i18n)
+        }
+        else
         {
             std::string lname = D_(alias.c_str());
             if (lname != alias && UTF8StartsWith(lname, _name))
@@ -1331,6 +1332,6 @@ void PlanetarySystem::getCompletion(std::vector<std::string>& completion,
     {
         const PlanetarySystem* satelliteSystem = sat->getSatellites();
         if (satelliteSystem != nullptr)
-            satelliteSystem->getCompletion(completion, _name, i18n);
+            satelliteSystem->getCompletion(completion, _name);
     }
 }

@@ -529,11 +529,11 @@ StarDatabase::searchCrossIndex(StarCatalog catalog, AstroCatalog::IndexNumber nu
 
 
 void
-StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const
+StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
 {
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        namesDB->getCompletion(completion, name, i18n);
+        namesDB->getCompletion(completion, name);
 }
 
 

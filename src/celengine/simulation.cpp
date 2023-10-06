@@ -449,7 +449,6 @@ Selection Simulation::findObjectFromPath(std::string_view s, bool i18n) const
 
 void Simulation::getObjectCompletion(std::vector<std::string>& completion,
                                      std::string_view s,
-                                     bool i18n,
                                      bool withLocations) const
 {
     Selection path[2];
@@ -473,7 +472,7 @@ void Simulation::getObjectCompletion(std::vector<std::string>& completion,
         path[nPathEntries++] = Selection(nearestSolarSystem->getStar());
     }
 
-    universe->getCompletionPath(completion, s, i18n, {path, nPathEntries}, withLocations);
+    universe->getCompletionPath(completion, s, {path, nPathEntries}, withLocations);
 
     std::sort(completion.begin(), completion.end(),
               [](const std::string &s1, const std::string &s2) { return strnatcmp(s1, s2) < 0; });

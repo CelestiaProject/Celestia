@@ -101,21 +101,18 @@ NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
     return numberIndex.end();
 }
 
-void NameDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name, bool i18n) const
+void NameDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
 {
     std::string name2 = ReplaceGreekLetter(name);
-
     for (const auto &[n, _] : nameIndex)
     {
         if (UTF8StartsWith(n, name2, true))
             completion.push_back(n);
     }
-    if (i18n)
+
+    for (const auto &[n, _] : localizedNameIndex)
     {
-        for (const auto &[n, _] : localizedNameIndex)
-        {
-            if (UTF8StartsWith(n, name2, true))
-                completion.push_back(n);
-        }
+        if (UTF8StartsWith(n, name2, true))
+            completion.push_back(n);
     }
 }

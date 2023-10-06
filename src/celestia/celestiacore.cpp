@@ -1043,7 +1043,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
                     typedTextCompletion.clear();
                     if (!typedText.empty())
-                         sim->getObjectCompletion(typedTextCompletion, typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+                         sim->getObjectCompletion(typedTextCompletion, typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
 #ifdef AUTO_COMPLETION
                 } while (!typedText.empty() && typedTextCompletion.size() == 1);
 #endif
@@ -4778,7 +4778,7 @@ void CelestiaCore::setTypedText(const char *c_p)
 {
     typedText.append(c_p);
     typedTextCompletion.clear();
-    sim->getObjectCompletion(typedTextCompletion, typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    sim->getObjectCompletion(typedTextCompletion, typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
     typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
     if (typedTextCompletion.size() == 1)
