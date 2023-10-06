@@ -440,7 +440,7 @@ bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
-        defaultOrbitFrame = std::shared_ptr<BodyFixedFrame>(new BodyFixedFrame(parentObject, parentObject));
+        defaultOrbitFrame = std::make_shared<BodyFixedFrame>(parentObject, parentObject);
         defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
     }
     else
@@ -779,15 +779,13 @@ Body* CreateBody(const std::string& name,
                  BodyType bodyType)
 {
     Body* body = nullptr;
-    std::unique_ptr<Body> newBody = nullptr;
 
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
         body = existingBody;
 
     if (body == nullptr)
     {
-        newBody = std::make_unique<Body>(name);
-        body = newBody.get();
+        body = system->addBody(name);
         // If the body doesn't exist, always treat the disposition as 'Add'
         disposition = DataDisposition::Add;
 
@@ -802,11 +800,10 @@ Body* CreateBody(const std::string& name,
     if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType))
     {
         // No valid timeline given; give up.
+        if (body != existingBody)
+            system->removeBody(body);
         return nullptr;
     }
-
-    if (newBody != nullptr)
-        system->addBody(std::move(newBody));
 
     // Three values control the shape and size of an ellipsoidal object:
     // semiAxes, radius, and oblateness. It is an error if neither the
@@ -1016,8 +1013,6 @@ Body* CreateReferencePoint(const std::string& name,
                            DataDisposition disposition)
 {
     Body* body = nullptr;
-    std::unique_ptr<Body> newBody = nullptr;
-
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
     {
         body = existingBody;
@@ -1025,8 +1020,7 @@ Body* CreateReferencePoint(const std::string& name,
 
     if (body == nullptr)
     {
-        newBody = std::make_unique<Body>(name);
-        body = newBody.get();
+        body = system->addBody(name);
         // If the point doesn't exist, always treat the disposition as 'Add'
         disposition = DataDisposition::Add;
     }
@@ -1040,11 +1034,10 @@ Body* CreateReferencePoint(const std::string& name,
     if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint))
     {
         // No valid timeline given; give up.
+        if (body != existingBody)
+            system->removeBody(body);
         return nullptr;
     }
-
-    if (newBody != nullptr)
-        system->addBody(std::move(newBody));
 
     // Reference points can be marked visible; no geometry is shown, but the label and orbit
     // will be.

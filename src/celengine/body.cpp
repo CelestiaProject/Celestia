@@ -31,7 +31,8 @@ using namespace std;
 using namespace celmath;
 
 
-Body::Body(const string& _name) :
+Body::Body(PlanetarySystem* _system, const std::string& _name) :
+    system(_system),
     orbitVisibility(UseClassVisibility)
 {
     setName(_name);
@@ -146,12 +147,6 @@ void Body::addAlias(const string& alias)
 PlanetarySystem* Body::getSystem() const
 {
     return system;
-}
-
-
-void Body::setSystem(PlanetarySystem* planetarySystem)
-{
-    system = planetarySystem;
 }
 
 
@@ -1218,21 +1213,48 @@ void PlanetarySystem::addAlias(Body* body, const string& alias)
 }
 
 
-void PlanetarySystem::addBody(std::unique_ptr<Body>&& body)
+Body* PlanetarySystem::addBody(const std::string& name)
 {
-    body->setSystem(this);
+    auto body = std::make_unique<Body>(this, name);
     addBodyToNameIndex(body.get());
-    satellites.push_back(std::move(body));
+    return satellites.emplace_back(std::move(body)).get();
+}
+
+
+void PlanetarySystem::removeBody(const Body* body)
+{
+    if (body->getSystem() != this)
+        return;
+    auto iter = std::find_if(satellites.begin(), satellites.end(),
+                             [body](const auto& sat) { return sat.get() == body; });
+    if (iter == satellites.end())
+        return;
+
+    removeBodyFromNameIndex(body);
+    satellites.erase(iter);
 }
 
 
 // Add all aliases for the body to the name index
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
-    const vector<string>& names = body->getNames();
+    const std::vector<std::string>& names = body->getNames();
     for (const auto& name : names)
     {
         objectIndex.try_emplace(name, body);
+    }
+}
+
+
+void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
+{
+    const std::vector<std::string>& names = body->getNames();
+    for (const auto& name : names)
+    {
+        auto iter = objectIndex.find(name);
+        if (iter == objectIndex.end() || iter->second != body)
+            continue;
+        objectIndex.erase(iter);
     }
 }
 
