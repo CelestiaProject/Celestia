@@ -68,7 +68,6 @@ class Simulation
     Selection findObjectFromPath(std::string_view s, bool i18n = false) const;
     void getObjectCompletion(std::vector<std::string>& completion,
                              std::string_view s,
-                             bool i18n,
                              bool withLocations = false) const;
     void gotoSelection(double gotoTime,
                        const Eigen::Vector3f& up,

@@ -59,7 +59,7 @@ class PlanetarySystem
     };
 
     Body* find(std::string_view, bool deepSearch = false, bool i18n = false) const;
-    void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool i18n, bool rec = true) const;
+    void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool rec = true) const;
 
  private:
     void addBodyToNameIndex(Body* body);
