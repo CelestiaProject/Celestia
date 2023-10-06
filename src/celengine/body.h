@@ -49,7 +49,8 @@ class PlanetarySystem
     Body* getBody(int i) const { return satellites[i].get(); };
 
     void addAlias(Body* body, const std::string& alias);
-    void addBody(std::unique_ptr<Body>&& body);
+    Body* addBody(const std::string& name);
+    void removeBody(const Body* body);
 
     enum TraversalResult
     {
@@ -62,6 +63,7 @@ class PlanetarySystem
 
  private:
     void addBodyToNameIndex(Body* body);
+    void removeBodyFromNameIndex(const Body* body);
 
  private:
     using ObjectIndex = std::map<std::string, Body*, UTF8StringOrderingPredicate>;
@@ -112,7 +114,7 @@ class RingSystem
 class Body
 {
  public:
-     explicit Body(const std::string& name);
+     Body(PlanetarySystem*, const std::string& name);
      ~Body();
 
     // Object class enumeration:
@@ -189,7 +191,6 @@ class Body
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
-    void setSystem(PlanetarySystem*);
     const std::vector<std::string>& getNames() const;
     std::string getName(bool i18n = false) const;
     std::string getLocalizedName() const;
@@ -393,7 +394,7 @@ class Body
     std::string localizedName;
 
     // Parent in the name hierarchy
-    PlanetarySystem* system{ nullptr };
+    PlanetarySystem* system;
     // Children in the name hierarchy
     std::unique_ptr<PlanetarySystem> satellites;
 
