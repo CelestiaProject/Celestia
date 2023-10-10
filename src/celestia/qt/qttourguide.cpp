@@ -12,7 +12,6 @@
 
 #include "qttourguide.h"
 
-#include <celestia/destination.h>
 #include <celengine/simulation.h>
 #include <celengine/selection.h>
 #include <celestia/celestiacore.h>

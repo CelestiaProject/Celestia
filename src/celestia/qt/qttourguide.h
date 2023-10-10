@@ -13,6 +13,7 @@
  
 #include <QDialog>
 #include <QObject>
+#include <celestia/destination.h>
 
 #include "ui_tourguide.h"
 
