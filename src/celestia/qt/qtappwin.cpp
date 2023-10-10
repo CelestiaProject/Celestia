@@ -866,7 +866,7 @@ void
 CelestiaAppWindow::tourGuide()
 {
     // use show() to display dialog in non-modal format since exec() is automatically modal
-    TourGuideDialog* tourDialog = new TourGuideDialog(this, m_appCore);
+    TourGuideDialog *tourDialog = new TourGuideDialog(this, m_appCore);
     tourDialog->show();
 }
 
@@ -1458,7 +1458,7 @@ CelestiaAppWindow::createMenus()
 
     navMenu->addSeparator();
 
-    QAction* tourAct = new QAction(QIcon(":/icons/tour.png"), _("Tour Guide"), this);
+    QAction *tourAct = new QAction(QIcon(":/icons/tour.png"), _("Tour Guide"), this);
     connect(tourAct, SIGNAL(triggered()), this, SLOT(tourGuide()));
     navMenu->addAction(tourAct);
 

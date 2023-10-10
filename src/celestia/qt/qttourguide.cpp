@@ -31,9 +31,9 @@
 
 
 
-TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
+TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore *appCore) :
     QDialog(parent),
-    appCore(_appCore)
+    appCore(appCore)
 {
     ui.setupUi(this);
 
@@ -41,7 +41,7 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
     bool hasDestinations = false;
     if (destinations != nullptr)
     {
-        for (const Destination* dest : *destinations)
+        for (const Destination *dest : *destinations)
         {
             if (dest == nullptr)
                 continue;

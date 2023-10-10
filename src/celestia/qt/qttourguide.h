@@ -26,7 +26,7 @@ class TourGuideDialog : public QDialog
     Q_OBJECT
 
 public:
-    TourGuideDialog(QWidget *parent, CelestiaCore* appCore);
+    TourGuideDialog(QWidget *parent, CelestiaCore *appCore);
     ~TourGuideDialog() = default;
 
 private slots:
@@ -36,5 +36,5 @@ private slots:
 private:
     Ui_tourGuideDialog ui;
     CelestiaCore *appCore;
-    const DestinationList* destinations{ nullptr };
+    const DestinationList *destinations{ nullptr };
 };
