@@ -35,4 +35,5 @@ private slots:
 private:
     Ui_tourGuideDialog ui;
     CelestiaCore *appCore;
+    const DestinationList* destinations{ nullptr };
 };

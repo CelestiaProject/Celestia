@@ -30,7 +30,6 @@
 #include <QLabel>
 #include <QWidget>
 
-const DestinationList* destinations;
 
 
 TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
@@ -68,7 +67,6 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore* _appCore) :
     connect(ui.selectionComboBox, SIGNAL(currentIndexChanged(int)), SLOT(slotSelectionChanged()));
     connect(ui.gotoButton, SIGNAL(clicked(bool)), SLOT(slotGotoSelection()));
     this->setAttribute(Qt::WA_DeleteOnClose, true);
-
 }
 
 
@@ -93,9 +91,7 @@ TourGuideDialog::slotGotoSelection()
 
     double distance = dest->distance;
     if (distance <= sel.radius())
-    {
         distance = sel.radius() * 5.0;
-    }
 
     simulation->setSelection(sel);
     simulation->follow();    
