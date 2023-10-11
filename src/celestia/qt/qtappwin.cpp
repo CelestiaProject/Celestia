@@ -98,6 +98,7 @@
 #include "qtsettimedialog.h"
 #include "qtsolarsystembrowser.h"
 #include "qttimetoolbar.h"
+#include "qttourguide.h"
 
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
@@ -864,6 +865,15 @@ CelestiaAppWindow::gotoObject()
 
 
 void
+CelestiaAppWindow::tourGuide()
+{
+    // use show() to display dialog in non-modal format since exec() is automatically modal
+    TourGuideDialog *tourDialog = new TourGuideDialog(this, m_appCore);
+    tourDialog->show();
+}
+
+
+void
 CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, m_appCore);
@@ -1447,6 +1457,14 @@ CelestiaAppWindow::createMenus()
     QAction* gotoObjAct = new QAction(QIcon(":/icons/go-jump.png"), _("Goto Object..."), this);
     connect(gotoObjAct, SIGNAL(triggered()), this, SLOT(gotoObject()));
     navMenu->addAction(gotoObjAct);
+
+    navMenu->addSeparator();
+
+    QAction *tourAct = new QAction(QIcon(":/icons/tour.png"), _("Tour Guide"), this);
+    connect(tourAct, SIGNAL(triggered()), this, SLOT(tourGuide()));
+    navMenu->addAction(tourAct);
+
+    navMenu->addSeparator();
 
     QAction *copyAction = new QAction(QIcon(":/icons/clip_copy.png"), _("Copy URL / console text"), this);
     copyAction->setShortcut(QString("Ctrl+C"));

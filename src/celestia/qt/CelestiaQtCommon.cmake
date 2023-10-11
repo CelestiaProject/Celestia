@@ -21,6 +21,7 @@ function(GetQtSources UseWayland)
     qtsettimedialog.cpp
     qtsolarsystembrowser.cpp
     qttimetoolbar.cpp
+    qttourguide.cpp
     xbel.cpp
   )
 
@@ -43,6 +44,7 @@ function(GetQtSources UseWayland)
     qtsettimedialog.h
     qtsolarsystembrowser.h
     qttimetoolbar.h
+    qttourguide.h
     xbel.h
   )
 
