@@ -1,0 +1,14 @@
+-- This snippet assigns Titan's atmosphere to Earth
+
+sel = celestia:find("Sol/Earth")
+
+t = {}
+
+t.height = 950
+t.miescaleheight = 130
+t.rayleigh = { 0.00125, 0.00176, 0.00274 }
+t.absorption = { 0.0001, 0.0005, 0.001 }
+t.mieasymmetry = 0
+t.mie = 0
+
+sel:setatmosphere(t)
