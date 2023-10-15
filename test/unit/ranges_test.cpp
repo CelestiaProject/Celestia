@@ -11,6 +11,9 @@
 
 using namespace std::string_view_literals;
 
+namespace
+{
+
 class UniqueString
 {
 public:
@@ -38,6 +41,8 @@ bool operator==(const UniqueString& lhs, std::string_view rhs)
 {
     return lhs.value() == rhs;
 }
+
+} // end unnamed namespace
 
 TEST_SUITE_BEGIN("Ranges");
 

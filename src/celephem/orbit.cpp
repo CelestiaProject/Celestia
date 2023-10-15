@@ -32,6 +32,9 @@ namespace
 // override velocityAtTime().
 constexpr double ORBITAL_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
+// Follow hyperbolic orbit trajectories out to at least 1000 au
+constexpr double HyperbolicMinBoundingRadius = 1000.0 * KM_PER_AU<double>;
+
 Eigen::Vector3d cubicInterpolate(const Eigen::Vector3d& p0, const Eigen::Vector3d& v0,
                                  const Eigen::Vector3d& p1, const Eigen::Vector3d& v1,
                                  double t)
@@ -119,63 +122,13 @@ struct SolveKeplerLaguerreConwayHyp
     }
 };
 
-
-std::unique_ptr<EllipticalOrbit>
-StateVectorToOrbit(const Eigen::Vector3d& position,
-                   const Eigen::Vector3d& v,
-                   double mass,
-                   double t)
+std::unique_ptr<Orbit>
+CreateKeplerOrbit(const astro::KeplerElements& elements, double epoch)
 {
-    Eigen::Vector3d R = position;
-    Eigen::Vector3d L = R.cross(v);
-    double magR = R.norm();
-    double magL = L.norm();
-    double magV = v.norm();
-    L *= (1.0 / magL);
+    if (elements.eccentricity < 1.0)
+        return std::make_unique<EllipticalOrbit>(elements, epoch);
 
-    Eigen::Vector3d W = L.cross(R / magR);
-
-    double G = astro::G * 1e-9; // convert from meters to kilometers
-    double GM = G * mass;
-
-    // Compute the semimajor axis
-    double a = 1.0 / (2.0 / magR - celmath::square(magV) / GM);
-
-    // Compute the eccentricity
-    double p = celmath::square(magL) / GM;
-    double q = R.dot(v);
-    double ex = 1.0 - magR / a;
-    double ey = q / std::sqrt(a * GM);
-    double e = std::sqrt(ex * ex + ey * ey);
-
-    // Compute the mean anomaly
-    double E = std::atan2(ey, ex);
-    double M = E - e * std::sin(E);
-
-    // Compute the inclination
-    double cosi = L.dot(Eigen::Vector3d::UnitY());
-    double i = 0.0;
-    if (cosi < 1.0)
-        i = std::acos(cosi);
-
-    // Compute the longitude of ascending node
-    double Om = std::atan2(L.x(), L.z());
-
-    // Compute the argument of pericenter
-    Eigen::Vector3d U = R / magR;
-    double s_nu = (v.dot(U)) * std::sqrt(p / GM);
-    double c_nu = (v.dot(W)) * std::sqrt(p / GM) - 1;
-    s_nu /= e;
-    c_nu /= e;
-    Eigen::Vector3d P = U * c_nu - W * s_nu;
-    Eigen::Vector3d Q = U * s_nu + W * c_nu;
-    double om = std::atan2(P.y(), Q.y());
-
-    // Compute the period
-    double T = 2 * celestia::numbers::pi * std::sqrt(celmath::cube(a) / GM);
-    T /= 86400.0; // Convert from seconds to days
-
-    return std::make_unique<EllipticalOrbit>(a * (1.0 - e), e, i, Om, om, M, T, t);
+    return std::make_unique<HyperbolicOrbit>(elements, epoch);
 }
 
 } // end unnamed namespace
@@ -307,31 +260,28 @@ void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& pr
 }
 
 
-EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
-                                 double _eccentricity,
-                                 double _inclination,
-                                 double _ascendingNode,
-                                 double _argOfPeriapsis,
-                                 double _meanAnomalyAtEpoch,
-                                 double _period,
-                                 double _epoch) :
-    pericenterDistance(_pericenterDistance),
-    eccentricity(_eccentricity),
-    meanAnomalyAtEpoch(_meanAnomalyAtEpoch),
-    period(_period),
-    epoch(_epoch),
-    orbitPlaneRotation((celmath::ZRotation(_ascendingNode) *
-                        celmath::XRotation(_inclination) *
-                        celmath::ZRotation(_argOfPeriapsis)).toRotationMatrix())
-{
-}
-
-
 Eigen::Vector3d Orbit::velocityAtTime(double tdb) const
 {
     Eigen::Vector3d p0 = positionAtTime(tdb);
     Eigen::Vector3d p1 = positionAtTime(tdb + ORBITAL_VELOCITY_DIFF_DELTA);
     return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
+}
+
+
+EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double _epoch) :
+    semiMajorAxis(_elements.semimajorAxis),
+    eccentricity(_elements.eccentricity),
+    meanAnomalyAtEpoch(_elements.meanAnomaly),
+    period(_elements.period),
+    epoch(_epoch),
+    orbitPlaneRotation((celmath::ZRotation(_elements.longAscendingNode) *
+                        celmath::XRotation(_elements.inclination) *
+                        celmath::ZRotation(_elements.argPericenter)).toRotationMatrix())
+{
+    assert(eccentricity >= 0.0 && eccentricity < 1.0);
+    assert(semiMajorAxis >= 0.0);
+    assert(period != 0.0);
+    semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - celmath::square(eccentricity));
 }
 
 
@@ -347,32 +297,18 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
         // Low eccentricity, so use the standard iteration technique
         return celmath::solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5).first;
     }
-    else if (eccentricity < 0.9)
+    if (eccentricity < 0.9)
     {
         // Higher eccentricity elliptical orbit; use a more complex but
         // much faster converging iteration.
         return celmath::solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6).first;
     }
-    else if (eccentricity < 1.0)
-    {
-        // Extremely stable Laguerre-Conway method for solving Kepler's
-        // equation.  Only use this for high-eccentricity orbits, as it
-        // requires more calcuation.
-        double E = M + 0.85 * eccentricity * celmath::sign(std::sin(M));
-        return celmath::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
-    }
-    else if (eccentricity == 1.0)
-    {
-        // Nearly parabolic orbit; very common for comets
-        // TODO: handle this
-        return M;
-    }
-    else
-    {
-        // Laguerre-Conway method for hyperbolic (ecc > 1) orbits.
-        double E = std::log(2.0 * M / eccentricity + 1.85);
-        return celmath::solve_iteration_fixed(SolveKeplerLaguerreConwayHyp(eccentricity, M), E, 30).first;
-    }
+
+    // Extremely stable Laguerre-Conway method for solving Kepler's
+    // equation.  Only use this for high-eccentricity orbits, as it
+    // requires more calcuation.
+    double E = M + 0.85 * eccentricity * celmath::sign(std::sin(M));
+    return celmath::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
 }
 
 
@@ -380,26 +316,8 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
 // anomaly E.
 Eigen::Vector3d EllipticalOrbit::positionAtE(double E) const
 {
-    double x, y;
-
-    if (eccentricity < 1.0)
-    {
-        double a = pericenterDistance / (1.0 - eccentricity);
-        x = a * (std::cos(E) - eccentricity);
-        y = a * std::sqrt(1.0 - celmath::square(eccentricity)) * std::sin(E);
-    }
-    else if (eccentricity > 1.0)
-    {
-        double a = pericenterDistance / (1.0 - eccentricity);
-        x = -a * (eccentricity - std::cosh(E));
-        y = -a * std::sqrt(celmath::square(eccentricity) - 1.0) * std::sinh(E);
-    }
-    else
-    {
-        // TODO: Handle parabolic orbits
-        x = 0.0;
-        y = 0.0;
-    }
+    double x = semiMajorAxis * (std::cos(E) - eccentricity);
+    double y = semiMinorAxis * std::sin(E);
 
     Eigen::Vector3d p = orbitPlaneRotation * Eigen::Vector3d(x, y, 0);
 
@@ -410,36 +328,16 @@ Eigen::Vector3d EllipticalOrbit::positionAtE(double E) const
 
 // Compute the velocity at the specified eccentric
 // anomaly E.
-Eigen::Vector3d EllipticalOrbit::velocityAtE(double E) const
+Eigen::Vector3d EllipticalOrbit::velocityAtE(double E, double meanMotion) const
 {
-    double x, y;
+    double sinE;
+    double cosE;
+    celmath::sincos(E, sinE, cosE);
 
-    if (eccentricity < 1.0)
-    {
-        double a = pericenterDistance / (1.0 - eccentricity);
-        double b = a * std::sqrt(1.0 - celmath::square(eccentricity));
-        double sinE;
-        double cosE;
-        celmath::sincos(E, sinE, cosE);
+    double edot = meanMotion / (1.0 - eccentricity * cosE);
 
-        double meanMotion = 2.0 * celestia::numbers::pi / period;
-        double edot = meanMotion / (1.0 - eccentricity * cosE);
-
-        x = -a * sinE * edot;
-        y =  b * cosE * edot;
-    }
-    else if (eccentricity > 1.0)
-    {
-        double a = pericenterDistance / (1.0 - eccentricity);
-        x = -a * (eccentricity - std::cosh(E));
-        y = -a * std::sqrt(celmath::square(eccentricity) - 1.0) * std::sinh(E);
-    }
-    else
-    {
-        // TODO: Handle parabolic orbits
-        x = 0.0;
-        y = 0.0;
-    }
+    double x = -semiMajorAxis * sinE * edot;
+    double y =  semiMinorAxis * cosE * edot;
 
     Eigen::Vector3d v = orbitPlaneRotation * Eigen::Vector3d(x, y, 0);
 
@@ -467,7 +365,7 @@ Eigen::Vector3d EllipticalOrbit::velocityAtTime(double t) const
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
 
-    return velocityAtE(E);
+    return velocityAtE(E, meanMotion);
 }
 
 
@@ -480,8 +378,124 @@ double EllipticalOrbit::getPeriod() const
 double EllipticalOrbit::getBoundingRadius() const
 {
     // TODO: watch out for unbounded parabolic and hyperbolic orbits
-    return pericenterDistance * ((1.0 + eccentricity) / (1.0 - eccentricity));
+    return semiMajorAxis * (1.0 + eccentricity);
 }
+
+
+HyperbolicOrbit::HyperbolicOrbit(const astro::KeplerElements& _elements, double _epoch) :
+    semiMajorAxis(_elements.semimajorAxis),
+    eccentricity(_elements.eccentricity),
+    meanAnomalyAtEpoch(_elements.meanAnomaly),
+    epoch(_epoch),
+    orbitPlaneRotation((celmath::ZRotation(_elements.longAscendingNode) *
+                        celmath::XRotation(_elements.inclination) *
+                        celmath::ZRotation(_elements.argPericenter)).toRotationMatrix())
+{
+    assert(eccentricity > 1.0);
+    assert(semiMajorAxis <= 0.0);
+    assert(_elements.period != 0.0);
+    semiMinorAxis = semiMajorAxis * std::sqrt(celmath::square(eccentricity) - 1.0);
+    meanMotion = 2.0 * celestia::numbers::pi / _elements.period;
+
+    // determine start and end epoch from when the object hits the bounding radius
+    double pericenterDistance = semiMajorAxis * (1.0 - eccentricity);
+    double boundingRadius = getBoundingRadius();
+    double cosTrueAnomaly = (pericenterDistance / boundingRadius - 1.0) / eccentricity;
+    double eccAnomaly = std::acosh((eccentricity + cosTrueAnomaly) / (1.0 + eccentricity * cosTrueAnomaly));
+    double meanAnomaly = eccentricity * std::sinh(eccAnomaly) - eccAnomaly;
+    double deltaT = std::abs(meanAnomaly / meanMotion);
+    startEpoch = epoch - deltaT;
+    endEpoch = epoch + deltaT;
+}
+
+
+double HyperbolicOrbit::eccentricAnomaly(double M) const
+{
+    // Laguerre-Conway method for hyperbolic (ecc > 1) orbits.
+    if (M == 0.0)
+        return 0.0;
+    double E = std::log(2.0 * std::abs(M) / eccentricity + 1.85);
+    return std::copysign(celmath::solve_iteration_fixed(SolveKeplerLaguerreConwayHyp(eccentricity, std::abs(M)), E, 30).first, M);
+}
+
+
+// Compute the position at the specified eccentric
+// anomaly E.
+Eigen::Vector3d HyperbolicOrbit::positionAtE(double E) const
+{
+    double x = -semiMajorAxis * (eccentricity - std::cosh(E));
+    double y = -semiMinorAxis * std::sinh(E);
+
+    Eigen::Vector3d p = orbitPlaneRotation * Eigen::Vector3d(x, y, 0);
+
+    // Convert to Celestia's internal coordinate system
+    return Eigen::Vector3d(p.x(), p.z(), -p.y());
+}
+
+
+// Compute the velocity at the specified eccentric
+// anomaly E.
+Eigen::Vector3d HyperbolicOrbit::velocityAtE(double E) const
+{
+    double coshE = std::cosh(E);
+    double edot = meanMotion / (eccentricity * coshE - 1);
+
+    double x =  semiMajorAxis * std::sinh(E) * edot;
+    double y = -semiMinorAxis * coshE * edot;
+
+    Eigen::Vector3d v = orbitPlaneRotation * Eigen::Vector3d(x, y, 0);
+
+    // Convert to Celestia's coordinate system
+    return Eigen::Vector3d(v.x(), v.z(), -v.y());
+}
+
+
+// Return the offset from the center
+Eigen::Vector3d HyperbolicOrbit::positionAtTime(double t) const
+{
+    t = t - epoch;
+    double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
+    double E = eccentricAnomaly(meanAnomaly);
+
+    return positionAtE(E);
+}
+
+
+Eigen::Vector3d HyperbolicOrbit::velocityAtTime(double t) const
+{
+    t = t - epoch;
+    double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
+    double E = eccentricAnomaly(meanAnomaly);
+
+    return velocityAtE(E);
+}
+
+
+double HyperbolicOrbit::getPeriod() const
+{
+    // As this is a non-periodic orbit, we return the sample window here
+    return endEpoch - startEpoch;
+}
+
+
+double HyperbolicOrbit::getBoundingRadius() const
+{
+    return std::max(2.0 * semiMajorAxis * (1.0 - eccentricity), HyperbolicMinBoundingRadius);
+}
+
+
+bool HyperbolicOrbit::isPeriodic() const
+{
+    return false;
+}
+
+
+void HyperbolicOrbit::getValidRange(double& begin, double& end) const
+{
+    begin = startEpoch;
+    end = endEpoch;
+}
+
 
 
 Eigen::Vector3d CachingOrbit::positionAtTime(double jd) const
@@ -543,8 +557,6 @@ Eigen::Vector3d CachingOrbit::computeVelocity(double jd) const
 
 MixedOrbit::MixedOrbit(std::unique_ptr<Orbit>&& orbit, double t0, double t1, double mass) :
     primary(std::move(orbit)),
-    afterApprox(nullptr),
-    beforeApprox(nullptr),
     begin(t0),
     end(t1),
     boundingRadius(0.0)
@@ -557,8 +569,14 @@ MixedOrbit::MixedOrbit(std::unique_ptr<Orbit>&& orbit, double t0, double t1, dou
     Eigen::Vector3d p1 = primary->positionAtTime(t1);
     Eigen::Vector3d v0 = (primary->positionAtTime(t0 + dt) - p0) / (86400.0 * dt);
     Eigen::Vector3d v1 = (primary->positionAtTime(t1 + dt) - p1) / (86400.0 * dt);
-    beforeApprox = StateVectorToOrbit(p0, v0, mass, t0);
-    afterApprox = StateVectorToOrbit(p1, v1, mass, t1);
+
+    constexpr double G = astro::G * 1e-9; // convert from meters to kilometers
+    double Gmass = G * mass;
+
+    auto keplerElements = astro::StateVectorToElements(p0, v0, Gmass);
+    beforeApprox = CreateKeplerOrbit(keplerElements, t0);
+    keplerElements = astro::StateVectorToElements(p1, v1, Gmass);
+    afterApprox = CreateKeplerOrbit(keplerElements, t1);
 
     boundingRadius = beforeApprox->getBoundingRadius();
     if (primary->getBoundingRadius() > boundingRadius)

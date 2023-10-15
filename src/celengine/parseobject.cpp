@@ -143,8 +143,8 @@ ParseDate(const Hash* hash, const string& name, double& jd)
  *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
 static std::unique_ptr<celestia::ephem::Orbit>
-CreateEllipticalOrbit(const Hash* orbitData,
-                      bool usePlanetUnits)
+CreateKeplerianOrbit(const Hash* orbitData,
+                     bool usePlanetUnits)
 {
 
     // default units for planets are AU and years, otherwise km and days
@@ -153,48 +153,62 @@ CreateEllipticalOrbit(const Hash* orbitData,
     double timeScale;
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
 
-    // SemiMajorAxis and Period are absolutely required; everything
-    // else has a reasonable default.
-    double pericenterDistance = 0.0;
-    std::optional<double> semiMajorAxis = orbitData->getLength<double>("SemiMajorAxis", 1.0, distanceScale);
-    if (!semiMajorAxis.has_value())
-    {
-        if (auto pericenter = orbitData->getLength<double>("PericenterDistance", 1.0, distanceScale); pericenter.has_value())
-        {
-            pericenterDistance = *pericenter;
-        }
-        else
-        {
-            GetLogger()->error("SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
-            return nullptr;
-        }
-    }
+    astro::KeplerElements elements;
 
-    double period = 0.0;
-    if (auto periodValue = orbitData->getTime<double>("Period", 1.0, timeScale); periodValue.has_value())
+    elements.eccentricity = orbitData->getNumber<double>("Eccentricity").value_or(0.0);
+    if (elements.eccentricity < 0.0)
     {
-        period = *periodValue;
+        GetLogger()->error("Negative eccentricity is invalid.\n");
+        return nullptr;
     }
-    else
+    else if (elements.eccentricity == 1.0)
     {
-        GetLogger()->error("Period missing!  Skipping planet . . .\n");
+        GetLogger()->error("Parabolic orbits are not supported.\n");
         return nullptr;
     }
 
-    auto eccentricity = orbitData->getNumber<double>("Eccentricity").value_or(0.0);
+    // SemiMajorAxis and Period are absolutely required; everything
+    // else has a reasonable default.
+    if (auto semiMajorAxisValue = orbitData->getLength<double>("SemiMajorAxis", 1.0, distanceScale); semiMajorAxisValue.has_value())
+    {
+        elements.semimajorAxis = *semiMajorAxisValue;
+    }
+    else if (auto pericenter = orbitData->getLength<double>("PericenterDistance", 1.0, distanceScale); pericenter.has_value())
+    {
+        elements.semimajorAxis = *pericenter / (1.0 - elements.eccentricity);
+    }
+    else
+    {
+        GetLogger()->error("SemiMajorAxis/PericenterDistance missing from orbit definition.\n");
+        return nullptr;
+    }
 
-    auto inclination = orbitData->getAngle<double>("Inclination").value_or(0.0);
+    if (auto periodValue = orbitData->getTime<double>("Period", 1.0, timeScale); periodValue.has_value())
+    {
+        elements.period = *periodValue;
+        if (elements.period == 0.0)
+        {
+            GetLogger()->error("Period cannot be zero.\n");
+            return nullptr;
+        }
+    }
+    else
+    {
+        GetLogger()->error("Period must be specified in EllipticalOrbit.\n");
+        return nullptr;
+    }
 
-    double ascendingNode = orbitData->getAngle<double>("AscendingNode").value_or(0.0);
+    elements.inclination = orbitData->getAngle<double>("Inclination").value_or(0.0);
 
-    double argOfPericenter = 0.0;
+    elements.longAscendingNode = orbitData->getAngle<double>("AscendingNode").value_or(0.0);
+
     if (auto argPeri = orbitData->getAngle<double>("ArgOfPericenter"); argPeri.has_value())
     {
-        argOfPericenter = *argPeri;
+        elements.argPericenter = *argPeri;
     }
     else if (auto longPeri = orbitData->getAngle<double>("LongOfPericenter"); longPeri.has_value())
     {
-        argOfPericenter = *longPeri - ascendingNode;
+        elements.argPericenter = *longPeri - elements.longAscendingNode;
     }
 
     double epoch = astro::J2000;
@@ -202,29 +216,22 @@ CreateEllipticalOrbit(const Hash* orbitData,
 
     // Accept either the mean anomaly or mean longitude--use mean anomaly
     // if both are specified.
-    double anomalyAtEpoch = 0.0;
     if (auto meanAnomaly = orbitData->getAngle<double>("MeanAnomaly"); meanAnomaly.has_value())
-    {
-        anomalyAtEpoch = *meanAnomaly;
-    }
+        elements.meanAnomaly = *meanAnomaly;
     else if (auto meanLongitude = orbitData->getAngle<double>("MeanLongitude"); meanLongitude.has_value())
+        elements.meanAnomaly = *meanLongitude - (elements.argPericenter + elements.longAscendingNode);
+
+    elements.inclination = celmath::degToRad(elements.inclination);
+    elements.longAscendingNode = celmath::degToRad(elements.longAscendingNode);
+    elements.argPericenter = celmath::degToRad(elements.argPericenter);
+    elements.meanAnomaly = celmath::degToRad(elements.meanAnomaly);
+
+    if (elements.eccentricity < 1.0)
     {
-        anomalyAtEpoch = *meanLongitude - (argOfPericenter + ascendingNode);
+        return std::make_unique<celestia::ephem::EllipticalOrbit>(elements, epoch);
     }
 
-    // If we read the semi-major axis, use it to compute the pericenter
-    // distance.
-    if (semiMajorAxis.has_value())
-        pericenterDistance = *semiMajorAxis * (1.0 - eccentricity);
-
-    return std::make_unique<celestia::ephem::EllipticalOrbit>(pericenterDistance,
-                                                              eccentricity,
-                                                              degToRad(inclination),
-                                                              degToRad(ascendingNode),
-                                                              degToRad(argOfPericenter),
-                                                              degToRad(anomalyAtEpoch),
-                                                              period,
-                                                              epoch);
+    return std::make_unique<celestia::ephem::HyperbolicOrbit>(elements, epoch);
 }
 
 
@@ -310,7 +317,7 @@ CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool u
     {
         if (centralObject.getType() != SelectionType::Body)
         {
-            GetLogger()->error("FixedPosition planetographic coordinates aren't valid for stars.\n");
+            GetLogger()->error("FixedPosition planetographic coordinates are not valid for stars.\n");
             return nullptr;
         }
 
@@ -770,7 +777,7 @@ CreateOrbit(const Selection& centralObject,
             return nullptr;
         }
 
-        return CreateEllipticalOrbit(orbitData, usePlanetUnits).release();
+        return CreateKeplerianOrbit(orbitData, usePlanetUnits).release();
     }
 
     // Create an 'orbit' that places the object at a fixed point in its

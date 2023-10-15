@@ -320,4 +320,19 @@ namespace astro
         return astro::speedOfLight * n;
     }
     }
-}
+
+    struct KeplerElements
+    {
+        double semimajorAxis{ 0.0 };
+        double eccentricity{ 0.0 };
+        double inclination{ 0.0 };
+        double longAscendingNode{ 0.0 };
+        double argPericenter{ 0.0 };
+        double meanAnomaly{ 0.0 };
+        double period{ 0.0 };
+    };
+
+    KeplerElements StateVectorToElements(const Eigen::Vector3d&,
+                                         const Eigen::Vector3d&,
+                                         double);
+} // end namespace astro
