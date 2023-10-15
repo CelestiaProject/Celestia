@@ -44,85 +44,12 @@ using celestia::util::GetLogger;
 namespace
 {
 
-// TODO: This should be moved to astro.cpp
-struct OrbitalElements
-{
-    double semimajorAxis;
-    double eccentricity;
-    double inclination;
-    double longAscendingNode;
-    double argPericenter;
-    double meanAnomaly;
-    double period;
-};
+const QString DegreeSign = QString::fromUtf8(UTF8_DEGREE_SIGN);
 
-
-void
-StateVectorToElements(const Eigen::Vector3d& position,
-                      const Eigen::Vector3d& v,
-                      double GM,
-                      OrbitalElements* elements)
-{
-    Eigen::Vector3d R = position;
-    Eigen::Vector3d L = R.cross(v);
-    double magR = R.norm();
-    double magL = L.norm();
-    double magV = v.norm();
-    L *= (1.0 / magL);
-
-    Eigen::Vector3d W = L.cross(R / magR);
-
-    // Compute the semimajor axis
-    double a = 1.0 / (2.0 / magR - celmath::square(magV) / GM);
-
-    // Compute the eccentricity
-    double p = celmath::square(magL) / GM;
-    double q = R.dot(v);
-    double ex = 1.0 - magR / a;
-    double ey = q / std::sqrt(a * GM);
-    double e = std::sqrt(ex * ex + ey * ey);
-
-    // Compute the mean anomaly
-    double E = std::atan2(ey, ex);
-    double M = E - e * std::sin(E);
-
-    // Compute the inclination
-    double cosi = L.dot(Eigen::Vector3d::UnitY());
-    double i = 0.0;
-    if (cosi < 1.0)
-        i = std::acos(cosi);
-
-    // Compute the longitude of ascending node
-    double Om = std::atan2(L.x(), L.z());
-
-    // Compute the argument of pericenter
-    Eigen::Vector3d U = R / magR;
-    double s_nu = v.dot(U) * sqrt(p / GM);
-    double c_nu = v.dot(W) * sqrt(p / GM) - 1;
-    s_nu /= e;
-    c_nu /= e;
-    Eigen::Vector3d P = U * c_nu - W * s_nu;
-    Eigen::Vector3d Q = U * s_nu + W * c_nu;
-    double om = std::atan2(P.y(), Q.y());
-
-    // Compute the period
-    double T = 2 * celestia::numbers::pi * std::sqrt(celmath::cube(a) / GM);
-
-    elements->semimajorAxis     = a;
-    elements->eccentricity      = e;
-    elements->inclination       = i;
-    elements->longAscendingNode = Om;
-    elements->argPericenter     = om;
-    elements->meanAnomaly       = M;
-    elements->period            = T;
-}
-
-
-void
+astro::KeplerElements
 CalculateOsculatingElements(const celestia::ephem::Orbit& orbit,
                             double t,
-                            double dt,
-                            OrbitalElements* elements)
+                            double dt)
 {
     double sdt = dt;
 
@@ -154,7 +81,7 @@ CalculateOsculatingElements(const celestia::ephem::Orbit& orbit,
     GetLogger()->debug("vel (est): {}\n", (p1 - p0).norm() / sdt / 86400);
     GetLogger()->debug("osc: {}, {}, {}, GM={}\n", t, dt, accel, GM);
 
-    StateVectorToElements(p0, v0, GM, elements);
+    return astro::StateVectorToElements(p0, v0, GM);
 }
 
 
@@ -333,16 +260,29 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     }
 
     // Orbit information
-    if (orbitalPeriod != 0.0 || 1)
-    {
-        if (orbitalPeriod == 0.0)
-            orbitalPeriod = 365.25;
+    auto elements = CalculateOsculatingElements(*orbit, t, orbitalPeriod > 0.0 ? orbitalPeriod * 1e-6 : 3.6525e-4);
+    if (body->getRings() != nullptr)
+        stream << QString(_("<b>Has rings</b>")) << "<br>\n";
+    if (body->getAtmosphere() != nullptr)
+        stream << QString(_("<b>Has atmosphere</b>")) << "<br>\n";
 
-        OrbitalElements elements;
-        CalculateOsculatingElements(*orbit,
-                                    t,
-                                    orbitalPeriod * 1.0e-6,
-                                    &elements);
+    // Start and end dates
+    double startTime = 0.0;
+    double endTime = 0.0;
+    body->getLifespan(startTime, endTime);
+
+    if (startTime > -1.0e9)
+        stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime).toCStr()) << "<br>\n";
+
+    if (endTime < 1.0e9)
+        stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime).toCStr()) << "<br>\n";
+
+    stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
+    stream << QString(_("Osculating elements for %1")).arg(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
+    stream << "<br>\n";
+
+    if (orbitalPeriod > 0.0)
+    {
         if (orbitalPeriod < 2.0)
         {
             orbitalPeriod *= 24.0;
@@ -358,53 +298,42 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             orbitalPeriod /= 365.25;
         }
 
-        if (body->getRings() != nullptr)
-            stream << QString(_("<b>Has rings</b>")) << "<br>\n";
-        if (body->getAtmosphere() != nullptr)
-            stream << QString(_("<b>Has atmosphere</b>")) << "<br>\n";
-
-        // Start and end dates
-        double startTime = 0.0;
-        double endTime = 0.0;
-        body->getLifespan(startTime, endTime);
-
-        if (startTime > -1.0e9)
-            stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime).toCStr()) << "<br>\n";
-
-        if (endTime < 1.0e9)
-            stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime).toCStr()) << "<br>\n";
-
-        stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-        stream << QString(_("Osculating elements for %1")).arg(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
-        stream << "<br>\n";
-//        stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
         stream << QString(_("<b>Period:</b> %L1 %2")).arg(orbitalPeriod).arg(units) << "<br>\n";
+    }
 
-        double sma = elements.semimajorAxis;
-        if (sma > 2.5e7)
-        {
-            units = _("AU");
-            sma = astro::kilometersToAU(sma);
-        }
-        else
-        {
-            units = _("km");
-        }
+    double sma = elements.semimajorAxis;
+    if (std::abs(sma) > 2.5e7)
+    {
+        units = _("AU");
+        sma = astro::kilometersToAU(sma);
+    }
+    else
+    {
+        units = _("km");
+    }
 
-        stream << QString(_("<b>Semi-major axis:</b> %L1 %2")).arg(sma).arg(units) << "<br>\n";
-        stream << QString(_("<b>Eccentricity:</b> %L1")).arg(elements.eccentricity) << "<br>\n";
-        stream << QString(_("<b>Inclination:</b> %L1%2")).arg(celmath::radToDeg(elements.inclination))
-                                                         .arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
-        stream << QString(_("<b>Pericenter distance:</b> %L1 %2")).arg(sma * (1 - elements.eccentricity)).arg(units) << "<br>\n";
+    stream << QString(_("<b>Semi-major axis:</b> %L1 %2")).arg(sma).arg(units) << "<br>\n";
+    stream << QString(_("<b>Eccentricity:</b> %L1")).arg(elements.eccentricity) << "<br>\n";
+    stream << QString(_("<b>Inclination:</b> %L1%2")).arg(celmath::radToDeg(elements.inclination))
+                                                     .arg(DegreeSign) << "<br>\n";
+    stream << QString(_("<b>Pericenter distance:</b> %L1 %2")).arg(sma * (1 - elements.eccentricity)).arg(units) << "<br>\n";
+    if (elements.eccentricity < 1.0)
         stream << QString(_("<b>Apocenter distance:</b> %L1 %2")).arg(sma * (1 + elements.eccentricity)).arg(units) << "<br>\n";
 
-        stream << QString(_("<b>Ascending node:</b> %L1%2")).arg(celmath::radToDeg(elements.longAscendingNode))
-                                                            .arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
-        stream << QString(_("<b>Argument of periapsis:</b> %L1%2")).arg(celmath::radToDeg(elements.argPericenter))
-                                                                   .arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
-        stream << QString(_("<b>Mean anomaly:</b> %L1%2")).arg(celmath::radToDeg(elements.meanAnomaly))
-                                                          .arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
-        stream << QString(_("<b>Period (calculated):</b> %L1 %2")).arg(elements.period).arg(_("days")) << "<br>\n";;
+    stream << QString(_("<b>Ascending node:</b> %L1%2")).arg(celmath::radToDeg(elements.longAscendingNode))
+                                                        .arg(DegreeSign) << "<br>\n";
+    stream << QString(_("<b>Argument of periapsis:</b> %L1%2")).arg(celmath::radToDeg(elements.argPericenter))
+                                                               .arg(DegreeSign) << "<br>\n";
+    stream << QString(_("<b>Mean anomaly:</b> %L1%2")).arg(celmath::radToDeg(elements.meanAnomaly))
+                                                      .arg(DegreeSign) << "<br>\n";
+    if (elements.eccentricity < 1.0)
+    {
+        stream << QString(_("<b>Period (calculated):</b> %L1 %2")).arg(elements.period).arg(_("days")) << "<br>\n";
+    }
+    else
+    {
+        stream << QString(_("<b>Mean motion (calculated):</b> %L1%2/day")).arg(360.0 / elements.period)
+                                                                          .arg(DegreeSign) << "<br>\n";
     }
 }
 
@@ -431,7 +360,7 @@ InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb,
 
     int degrees = 0;
     astro::decimalToDegMinSec(celmath::radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
                                                         .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 
@@ -454,7 +383,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 
     int degrees = 0;
     astro::decimalToDegMinSec(celmath::radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
                                                         .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 
     Eigen::Vector3d galPos = astro::equatorialToGalactic(eqPos);
@@ -462,11 +391,11 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 
     astro::decimalToDegMinSec(celmath::radToDeg(sph.x()), degrees, minutes, seconds);
     // TRANSLATORS: Galactic longitude
-    stream << QString(_("<b>L:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+    stream << QString(_("<b>L:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
                                                       .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
     astro::decimalToDegMinSec(celmath::radToDeg(sph.y()), degrees, minutes, seconds);
     // TRANSLATORS: Galactic latitude
-    stream << QString(_("<b>B:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+    stream << QString(_("<b>B:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
                                                       .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 

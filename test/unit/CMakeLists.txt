@@ -6,6 +6,7 @@ set(UNIT_TEST_SOURCES
   greek_test.cpp
   hash_test.cpp
   intrusiveptr_test.cpp
+  kepler_test.cpp
   logger_test.cpp
   ranges_test.cpp
   stellarclass_test.cpp

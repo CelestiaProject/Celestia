@@ -18,7 +18,7 @@ macro(test_case)
   endif()
   target_compile_definitions(${tgt} PRIVATE
     DOCTEST_CONFIG_USE_STD_HEADERS
-    DOCTEST_CONFIG_NO_TRY_CATCH_IN_ASSERTS)
+  )
   target_include_directories(${tgt} PRIVATE "${_CELESTIA_TESTS_BASE_DIR}/doctest")
   if(WIN32)
     # Need to copy the dlls before test discovery

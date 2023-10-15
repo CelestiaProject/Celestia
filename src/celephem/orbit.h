@@ -13,6 +13,8 @@
 
 #include <Eigen/Core>
 
+#include <celengine/astro.h>
+
 class Body;
 
 namespace celestia::ephem
@@ -22,7 +24,7 @@ class OrbitSampleProc;
 
 class Orbit
 {
- public:
+public:
     virtual ~Orbit() = default;
 
     /*! Return the position in the orbit's reference frame at the specified
@@ -65,11 +67,10 @@ protected:
 };
 
 
-class EllipticalOrbit : public Orbit
+class EllipticalOrbit final : public Orbit
 {
- public:
-    EllipticalOrbit(double, double, double, double, double, double, double,
-                    double _epoch = 2451545.0);
+public:
+    EllipticalOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
     ~EllipticalOrbit() override = default;
 
     // Compute the orbit for a specified Julian date
@@ -78,12 +79,13 @@ class EllipticalOrbit : public Orbit
     double getPeriod() const override;
     double getBoundingRadius() const override;
 
- private:
+private:
     double eccentricAnomaly(double) const;
     Eigen::Vector3d positionAtE(double) const;
-    Eigen::Vector3d velocityAtE(double) const;
+    Eigen::Vector3d velocityAtE(double, double) const;
 
-    double pericenterDistance;
+    double semiMajorAxis;
+    double semiMinorAxis;
     double eccentricity;
     double meanAnomalyAtEpoch;
     double period;
@@ -93,9 +95,41 @@ class EllipticalOrbit : public Orbit
 };
 
 
+class HyperbolicOrbit final : public Orbit
+{
+public:
+    HyperbolicOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
+    ~HyperbolicOrbit() override = default;
+
+    // Compute the orbit for a specified Julian date
+    Eigen::Vector3d positionAtTime(double) const override;
+    Eigen::Vector3d velocityAtTime(double) const override;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
+    bool isPeriodic() const override;
+    void getValidRange(double& begin, double& end) const override;
+
+private:
+    double eccentricAnomaly(double) const;
+    Eigen::Vector3d positionAtE(double) const;
+    Eigen::Vector3d velocityAtE(double) const;
+
+    double semiMajorAxis;
+    double semiMinorAxis;
+    double eccentricity;
+    double meanAnomalyAtEpoch;
+    double meanMotion;
+    double epoch;
+    double startEpoch;
+    double endEpoch;
+
+    Eigen::Matrix3d orbitPlaneRotation;
+};
+
+
 class OrbitSampleProc
 {
- public:
+public:
     virtual ~OrbitSampleProc() = default;
 
     virtual void sample(double t, const Eigen::Vector3d& position, const Eigen::Vector3d& velocity) = 0;
@@ -151,8 +185,8 @@ class MixedOrbit : public Orbit
 
  private:
     std::unique_ptr<Orbit> primary;
-    std::unique_ptr<EllipticalOrbit> afterApprox;
-    std::unique_ptr<EllipticalOrbit> beforeApprox;
+    std::unique_ptr<Orbit> afterApprox;
+    std::unique_ptr<Orbit> beforeApprox;
     double begin;
     double end;
     double boundingRadius;

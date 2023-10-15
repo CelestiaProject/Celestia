@@ -1090,15 +1090,16 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     if (cachedOrbit == nullptr)
     {
         double startTime = t;
-#if 0
-        int nSamples = detailOptions.orbitPathSamplePoints;
-#endif
 
         // Adjust the number of samples used for aperiodic orbits--these aren't
         // true orbits, but are sampled trajectories, generally of spacecraft.
         // Better control is really needed--some sort of adaptive sampling would
         // be ideal.
-        if (!orbit->isPeriodic())
+        if (orbit->isPeriodic())
+        {
+            startTime = t - orbit->getPeriod();
+        }
+        else
         {
             double begin = 0.0, end = 0.0;
             orbit->getValidRange(begin, end);
@@ -1106,26 +1107,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             if (begin != end)
             {
                 startTime = begin;
-#if 0
-                nSamples = (int) (orbit->getPeriod() * 100.0);
-                nSamples = std::clamp(nSamples, 100, 1000);
-#endif
             }
-#if 0
-            else
-            {
-                // If the orbit is aperiodic and doesn't have a
-                // finite duration, we don't render it. A compromise
-                // would be to pick some time window centered at the
-                // current time, but we'd have to pick some arbitrary
-                // duration.
-                nSamples = 0;
-            }
-#endif
-        }
-        else
-        {
-            startTime = t - orbit->getPeriod();
         }
 
         cachedOrbit = new CurvePlot(*this);
