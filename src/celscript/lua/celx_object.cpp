@@ -781,25 +781,18 @@ static int object_mark(lua_State* l)
     if (colorString != nullptr)
         Color::parse(colorString, markColor);
 
-    celestia::MarkerRepresentation::Symbol markSymbol = celestia::MarkerRepresentation::Diamond;
+    auto markSymbol = celestia::MarkerRepresentation::Diamond;
     const char* markerString = celx.safeGetString(3, WrongType, "Second argument to object:mark must be a string");
     if (markerString != nullptr)
         markSymbol = parseMarkerSymbol(markerString);
 
     float markSize = (float)celx.safeGetNumber(4, WrongType, "Third arg to object:mark must be a number", 10.0);
-    if (markSize < 1.0f)
-        markSize = 1.0f;
-    else if (markSize > 10000.0f)
-        markSize = 10000.0f;
+    markSize = std::clamp(markSize, 1.0f, 10000.0f);
 
     float markAlpha = (float)celx.safeGetNumber(5, WrongType, "Fourth arg to object:mark must be a number", 0.9);
-    if (markAlpha < 0.0f)
-        markAlpha = 0.0f;
-    else if (markAlpha > 1.0f)
-        markAlpha = 1.0f;
+    markAlpha = std::clamp(markAlpha, 0.0f, 1.0f);
 
-    Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
-    markColorAlpha = Color(markColor, markAlpha);
+    Color markColorAlpha(markColor, markAlpha);
 
     const char* markLabel = celx.safeGetString(6, WrongType, "Fifth argument to object:mark must be a string");
     if (markLabel == nullptr)
@@ -1439,12 +1432,64 @@ void CreateObjectMetaTable(lua_State* l)
 
 // ==================== object extensions ====================
 
-// TODO: This should be replaced by an actual Atmosphere object
+static const char* gettablekey(lua_State *l, const char *error)
+{
+    if (!lua_isstring(l, -2))
+    {
+        Celx_DoError(l, error);
+        return nullptr;
+    }
+    return lua_tostring(l, -2);
+}
+
+static bool gettablevaluefloat(lua_State *l, const char *key, float *value)
+{
+    if (!lua_isnumber(l, -1))
+    {
+        Celx_DoError(l, fmt::format("Value of {} must be number", key).c_str());
+        return false;
+    }
+
+    *value = static_cast<float>(lua_tonumber(l, -1));
+    return true;
+}
+
+#if LUA_VERSION_NUM < 502
+inline std::size_t lua_rawlen(lua_State *l, int idx)
+{
+    return lua_objlen(l, -1);
+}
+#endif
+
+static bool gettablevaluevector3(lua_State *l, const char *key, Eigen::Vector3f *value)
+{
+    if (!lua_istable(l, -1) || lua_rawlen(l, -1) != 3)
+    {
+        Celx_DoError(l, fmt::format("Value of {} must be array of 3 numbers", key).c_str());
+        return false;
+    }
+
+    for (int i = 1; i <= 3; i++)
+    {
+        lua_rawgeti(l, -1, i);
+        (*value)[i - 1] = static_cast<float>(lua_tonumber(l, -1));
+        lua_pop(l, 1);
+    }
+    return true;
+
+}
+
 static int object_setatmosphere(lua_State* l)
 {
     CelxLua celx(l);
 
-    celx.checkArgs(23, 23, "22 arguments (!) expected to function object:setatmosphere");
+    celx.checkArgs(2, 2, "One parameter expected to function object:setatmosphere");
+
+    if (!lua_istable(l, 2))
+    {
+        Celx_DoError(l, "Argument to celestia:setatmosphere() must be a table");
+        return 0;
+    }
 
     Selection* sel = this_object(l);
     //CelestiaCore* appCore = getAppCore(l, AllErrors);
@@ -1457,40 +1502,87 @@ static int object_setatmosphere(lua_State* l)
     if (atmosphere == nullptr)
         return 0;
 
-    auto r = static_cast<float>(celx.safeGetNumber(2, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    auto g = static_cast<float>(celx.safeGetNumber(3, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    auto b = static_cast<float>(celx.safeGetNumber(4, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    //            Color testColor(0.0f, 1.0f, 0.0f);
-    Color testColor(r, g, b);
-    atmosphere->lowerColor = testColor;
-    r = static_cast<float>(celx.safeGetNumber(5, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    g = static_cast<float>(celx.safeGetNumber(6, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    b = static_cast<float>(celx.safeGetNumber(7, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->upperColor = Color(r, g, b);
-    r = static_cast<float>(celx.safeGetNumber(8, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    g = static_cast<float>(celx.safeGetNumber(9, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    b = static_cast<float>(celx.safeGetNumber(10, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->skyColor = Color(r, g, b);
-    r = static_cast<float>(celx.safeGetNumber(11, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    g = static_cast<float>(celx.safeGetNumber(12, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    b = static_cast<float>(celx.safeGetNumber(13, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->sunsetColor = Color(r, g, b);
-    /* r = */ celx.safeGetNumber(14, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    /* g = */ celx.safeGetNumber(15, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    /* b = */ celx.safeGetNumber(16, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    //HWR            atmosphere->rayleighCoeff = Vector3(r, g, b);
-    /* r = */ celx.safeGetNumber(17, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    /* g = */ celx.safeGetNumber(18, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    /* b = */ celx.safeGetNumber(19, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-    //HWR            atmosphere->absorptionCoeff = Vector3(r, g, b);
-    b = static_cast<float>(celx.safeGetNumber(20, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->mieCoeff = b;
-    b = static_cast<float>(celx.safeGetNumber(21, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->mieScaleHeight = b;
-    b = static_cast<float>(celx.safeGetNumber(22, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->miePhaseAsymmetry = b;
-    b = static_cast<float>(celx.safeGetNumber(23, AllErrors, "Arguments to observer:setatmosphere() must be numbers"));
-    atmosphere->rayleighScaleHeight = b;
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
+    {
+        const char *key = gettablekey(l, "Keys in table-argument to celestia:setatmosphere() must be strings");
+        if (key == nullptr)
+            return 0;
+
+        float value;
+        Eigen::Vector3f array;
+        if (strcmp(key, "height") == 0)
+        {
+            if (!gettablevaluefloat(l, "height", &value))
+                return 0;
+            atmosphere->height = value;
+        }
+        else if (strcmp(key, "mie") == 0)
+        {
+            if (!gettablevaluefloat(l, "mie", &value))
+                return 0;
+            atmosphere->mieCoeff = value;
+        }
+        else if (strcmp(key, "miescaleheight") == 0)
+        {
+            if (!gettablevaluefloat(l, "miescaleheight", &value))
+                return 0;
+            atmosphere->mieScaleHeight = value;
+        }
+        else if (strcmp(key, "mieasymmetry") == 0)
+        {
+            if (!gettablevaluefloat(l, "mieasymmetry", &value))
+                return 0;
+            atmosphere->miePhaseAsymmetry = value;
+        }
+#if 0
+        else if (strcmp(key, "rayleighscaleheight") == 0)
+        {
+            if (!gettablevaluefloat(l, "rayleighscaleheight", &value))
+                return 0;
+            atmosphere->rayleighScaleHeight = value;
+        }
+#endif
+        else if (strcmp(key, "rayleigh") == 0) {
+            if (!gettablevaluevector3(l, "rayleigh", &array))
+                return 0;
+            atmosphere->rayleighCoeff = array;
+        }
+        else if (strcmp(key, "absorption") == 0) {
+            if (!gettablevaluevector3(l, "absorption", &array))
+                return 0;
+            atmosphere->absorptionCoeff = array;
+        }
+        else if (strcmp(key, "lowercolor") == 0)
+        {
+            if (!gettablevaluevector3(l, "lowercolor", &array))
+                return 0;
+            atmosphere->lowerColor = array;
+        }
+        else if (strcmp(key, "uppercolor") == 0)
+        {
+            if (!gettablevaluevector3(l, "uppercolor", &array))
+                return 0;
+            atmosphere->upperColor = array;
+        }
+        else if (strcmp(key, "skycolor") == 0)
+        {
+            if (!gettablevaluevector3(l, "skycolor", &array))
+                return 0;
+            atmosphere->skyColor = array;
+        }
+        else if (strcmp(key, "sunsetcolor") == 0)
+        {
+            if (!gettablevaluevector3(l, "sunsetcolor", &array))
+                return 0;
+            atmosphere->sunsetColor = array;
+        }
+        else
+        {
+            GetLogger()->warn("Unknown key: {}\n", key);
+        }
+        lua_pop(l, 1);
+    }
 
     body->recomputeCullingRadius();
 
