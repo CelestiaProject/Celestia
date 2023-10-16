@@ -159,7 +159,7 @@ Image* LoadPNGImage(const fs::path& filename)
         // badness
         break;
     }
-    GetLogger()->info("File: {}, gamma: {}, linear: {}, format: {:X}\n", filename.c_str(), gamma, isLinear ? "yes" : "no", (int)format);
+    GetLogger()->info("File: {}, gamma: {}, linear: {}, format: {:X}\n", filename, gamma, isLinear ? "yes" : "no", (int)format);
 
     img = new Image(format, width, height);
 
