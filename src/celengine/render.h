@@ -848,6 +848,8 @@ class Renderer
 
     static Color SelectionCursorColor;
 
+    static bool linearMode;
+
     friend class PointStarRenderer;
 };
 

@@ -155,47 +155,49 @@ static const unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
 static const uint32_t OrbitCacheRetireAge = 16;
 
-Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
-Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
-Color Renderer::DwarfPlanetLabelColor   (0.557f, 0.235f, 0.576f);
-Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
-Color Renderer::MinorMoonLabelColor     (0.231f, 0.733f, 0.792f);
-Color Renderer::AsteroidLabelColor      (0.596f, 0.305f, 0.164f);
-Color Renderer::CometLabelColor         (0.768f, 0.607f, 0.227f);
-Color Renderer::SpacecraftLabelColor    (0.93f,  0.93f,  0.93f);
-Color Renderer::LocationLabelColor      (0.24f,  0.89f,  0.43f);
-Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
-Color Renderer::GlobularLabelColor      (0.8f,   0.45f,  0.5f);
-Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
-Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
-Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
-Color Renderer::EquatorialGridLabelColor(0.64f,  0.72f,  0.88f);
-Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
-Color Renderer::GalacticGridLabelColor  (0.88f,  0.72f,  0.64f);
-Color Renderer::EclipticGridLabelColor  (0.72f,  0.64f,  0.88f);
-Color Renderer::HorizonGridLabelColor   (0.72f,  0.72f,  0.72f);
+Color Renderer::StarLabelColor               (0.471f, 0.356f, 0.682f);
+Color Renderer::PlanetLabelColor             (0.407f, 0.333f, 0.964f);
+Color Renderer::DwarfPlanetLabelColor        (0.557f, 0.235f, 0.576f);
+Color Renderer::MoonLabelColor               (0.231f, 0.733f, 0.792f);
+Color Renderer::MinorMoonLabelColor          (0.231f, 0.733f, 0.792f);
+Color Renderer::AsteroidLabelColor           (0.596f, 0.305f, 0.164f);
+Color Renderer::CometLabelColor              (0.768f, 0.607f, 0.227f);
+Color Renderer::SpacecraftLabelColor         (0.93f,  0.93f,  0.93f);
+Color Renderer::LocationLabelColor           (0.24f,  0.89f,  0.43f);
+Color Renderer::GalaxyLabelColor             (0.0f,   0.45f,  0.5f);
+Color Renderer::GlobularLabelColor           (0.8f,   0.45f,  0.5f);
+Color Renderer::NebulaLabelColor             (0.541f, 0.764f, 0.278f);
+Color Renderer::OpenClusterLabelColor        (0.239f, 0.572f, 0.396f);
+Color Renderer::ConstellationLabelColor      (0.225f, 0.301f, 0.36f);
+Color Renderer::EquatorialGridLabelColor     (0.64f,  0.72f,  0.88f);
+Color Renderer::PlanetographicGridLabelColor (0.8f, 0.8f, 0.8f);
+Color Renderer::GalacticGridLabelColor       (0.88f,  0.72f,  0.64f);
+Color Renderer::EclipticGridLabelColor       (0.72f,  0.64f,  0.88f);
+Color Renderer::HorizonGridLabelColor        (0.72f,  0.72f,  0.72f);
 
-Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
-Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
-Color Renderer::DwarfPlanetOrbitColor   (0.557f, 0.235f, 0.576f);
-Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
-Color Renderer::MinorMoonOrbitColor     (0.08f,  0.407f, 0.392f);
-Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);
-Color Renderer::CometOrbitColor         (0.639f, 0.487f, 0.168f);
-Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
-Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
+Color Renderer::StarOrbitColor               (0.5f,   0.5f,   0.8f);
+Color Renderer::PlanetOrbitColor             (0.3f,   0.323f, 0.833f);
+Color Renderer::DwarfPlanetOrbitColor        (0.557f, 0.235f, 0.576f);
+Color Renderer::MoonOrbitColor               (0.08f,  0.407f, 0.392f);
+Color Renderer::MinorMoonOrbitColor          (0.08f,  0.407f, 0.392f);
+Color Renderer::AsteroidOrbitColor           (0.58f,  0.152f, 0.08f);
+Color Renderer::CometOrbitColor              (0.639f, 0.487f, 0.168f);
+Color Renderer::SpacecraftOrbitColor         (0.4f,   0.4f,   0.4f);
+Color Renderer::SelectionOrbitColor          (1.0f,   0.0f,   0.0f);
 
-Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
-Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
-Color Renderer::EquatorialGridColor     (0.28f,  0.28f,  0.38f);
-Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
-Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
-Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
-Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
-Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
-Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
+Color Renderer::ConstellationColor           (0.0f,   0.24f,  0.36f);
+Color Renderer::BoundaryColor                (0.24f,  0.10f,  0.12f);
+Color Renderer::EquatorialGridColor          (0.28f,  0.28f,  0.38f);
+Color Renderer::PlanetographicGridColor      (0.8f,   0.8f,   0.8f);
+Color Renderer::PlanetEquatorColor           (0.5f,   1.0f,   1.0f);
+Color Renderer::GalacticGridColor            (0.38f,  0.38f,  0.28f);
+Color Renderer::EclipticGridColor            (0.38f,  0.28f,  0.38f);
+Color Renderer::HorizonGridColor             (0.38f,  0.38f,  0.38f);
+Color Renderer::EclipticColor                (0.5f,   0.1f,   0.1f);
 
-Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
+Color Renderer::SelectionCursorColor         (1.0f,   0.0f,   0.0f);
+
+bool Renderer::linearMode = false;
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -236,7 +238,7 @@ Renderer::Renderer() :
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
-    labelMode(LocationLabels), //def. NoLabels
+    labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
     orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     brightnessBias(0.0f),
@@ -355,7 +357,9 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
             float x = (float) j - size / 2;
             float r2 = x * x + y * y;
             float f = s * (float) exp(-r2 * isig2) * power;
-
+#if GL_ES
+            f = f <= 0.04045f ? f * (1.0f/12.92f) : std::pow((f + 0.055f)/1.055f, 2.4f);
+#endif
             mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
         }
     }
@@ -377,6 +381,9 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
             float x = (float) j - size / 2;
             auto r = (float) sqrt(x * x + y * y);
             auto f = (float) pow(base, r * scale);
+#if GL_ES
+            f = f <= 0.04045f ? f * (1.0f/12.92f) : std::pow((f + 0.055f)/1.055f, 2.4f);
+#endif
             mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
         }
     }
@@ -414,7 +421,11 @@ static void BuildGlareMipLevel2(unsigned char* mipPixels,
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
+#if GL_ES
     Image* img = new Image(PixelFormat::LUMINANCE, size, size, log2size + 1);
+#else
+    Image* img = new Image(PixelFormat::SLUMINANCE, size, size, log2size + 1);
+#endif
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -438,7 +449,11 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
+#if GL_ES
     Image* img = new Image(PixelFormat::LUMINANCE, size, size, log2size + 1);
+#else
+    Image* img = new Image(PixelFormat::SLUMINANCE, size, size, log2size + 1);
+#endif
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -541,6 +556,51 @@ bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOpt
         gaussianGlareTex = BuildGaussianGlareTexture(9);
 
         commonDataInitialized = true;
+    }
+
+    if (!linearMode)
+    {
+        StarLabelColor.linearize();
+        PlanetLabelColor.linearize();
+        DwarfPlanetLabelColor.linearize();
+        MoonLabelColor.linearize();
+        MinorMoonLabelColor.linearize();
+        AsteroidLabelColor.linearize();
+        CometLabelColor.linearize();
+        SpacecraftLabelColor.linearize();
+        LocationLabelColor.linearize();
+        GalaxyLabelColor.linearize();
+        GlobularLabelColor.linearize();
+        NebulaLabelColor.linearize();
+        OpenClusterLabelColor.linearize();
+        ConstellationLabelColor.linearize();
+        EquatorialGridLabelColor.linearize();
+        PlanetographicGridLabelColor.linearize();
+        GalacticGridLabelColor.linearize();
+        EclipticGridLabelColor.linearize();
+        HorizonGridLabelColor.linearize();
+
+        StarOrbitColor.linearize();
+        PlanetOrbitColor.linearize();
+        DwarfPlanetOrbitColor.linearize();
+        MoonOrbitColor.linearize();
+        MinorMoonOrbitColor.linearize();
+        AsteroidOrbitColor.linearize();
+        CometOrbitColor.linearize();
+        SpacecraftOrbitColor.linearize();
+        SelectionOrbitColor.linearize();
+
+        ConstellationColor.linearize();
+        BoundaryColor.linearize();
+        EquatorialGridColor.linearize();
+        PlanetographicGridColor.linearize();
+        PlanetEquatorColor.linearize();
+        GalacticGridColor.linearize();
+        EclipticGridColor.linearize();
+        HorizonGridColor.linearize();
+        EclipticColor.linearize();
+
+        SelectionCursorColor.linearize();
     }
 
     glEnable(GL_CULL_FACE);
@@ -1605,7 +1665,7 @@ void Renderer::draw(const Observer& observer,
     // Calculate saturation magnitude
     satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale;
 
-    ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+    ambientColor = Color::srgb(ambientLightLevel, ambientLightLevel, ambientLightLevel);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2319,8 +2379,8 @@ void Renderer::renderObject(const Vector3f& pos,
         ri.color = obj.surface->color;
     }
 
-    ri.ambientColor = ambientColor;
-    ri.specularColor = obj.surface->specularColor;
+    ri.ambientColor = linearMode ? ambientColor : Color::srgb(ambientColor);
+    ri.specularColor = linearMode ? obj.surface->specularColor : Color::srgb(obj.surface->specularColor);
     ri.specularPower = obj.surface->specularPower;
     ri.lunarLambert = obj.surface->lunarLambert;
 
@@ -2366,8 +2426,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 // If there's an atmosphere, we need to move the far plane
                 // out so that the clouds and atmosphere shell aren't clipped.
                 float atmosphereRadius = eradius + atmosphereHeight;
-                frustumFarPlane += (float) sqrt(square(atmosphereRadius) -
-                                                square(eradius));
+                frustumFarPlane += std::sqrt(square(atmosphereRadius) - square(eradius));
             }
         }
     }
@@ -2509,8 +2568,16 @@ void Renderer::renderObject(const Vector3f& pos,
             {
                 Eigen::Matrix4f modelView = celmath::rotate(getCameraOrientationf());
                 Matrices mvp = { m.projection, &modelView };
+                Atmosphere atm(*atmosphere);
+                if (!linearMode)
+                {
+                    atm.lowerColor = Color::srgb(atm.lowerColor);
+                    atm.upperColor = Color::srgb(atm.upperColor);
+                    atm.skyColor = Color::srgb(atm.skyColor);
+                    atm.sunsetColor = Color::srgb(atm.sunsetColor);
+                }
                 m_atmosphereRenderer->renderLegacy(
-                    *atmosphere,
+                    atm,
                     ls,
                     pos,
                     obj.orientation,
@@ -3053,7 +3120,7 @@ void Renderer::renderStar(const Star& star,
         // Use atmosphere effect to give stars a fuzzy fringe
         if (star.hasCorona() && rp.geometry == InvalidResource)
         {
-            Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
+            Color atmColor = color * 0.5f;
             atmosphere.height = radius * CoronaHeight;
             atmosphere.lowerColor = atmColor;
             atmosphere.upperColor = atmColor;

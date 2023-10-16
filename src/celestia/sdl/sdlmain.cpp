@@ -127,7 +127,7 @@ SDL_Application::init(std::string_view name, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 #ifdef GL_ES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
     return std::make_shared<SDL_Application>(name, w, h);
@@ -647,6 +647,9 @@ DumpGLInfo()
     s = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
     if (s != nullptr)
         std::cout << s << '\n';
+#if GL_ES
+    std::cout << celestia::gl::EXT_sRGB << '\n';
+#endif
 }
 
 int
@@ -672,7 +675,13 @@ sdlmain(int /* argc */, char ** /* argv */)
         return 1;
     }
 
-    auto app = SDL_Application::init("Celestia", 640, 480);
+#if GL_ES
+    const char appName[] = "Celestia (OpenGL ES)";
+#else
+    const char appName[] = "Celestia (OpenGL)";
+#endif
+
+    auto app = SDL_Application::init(appName, 640, 480);
     if (app == nullptr)
     {
         FatalError("Could not initialize SDL! Error: {}", SDL_GetError());

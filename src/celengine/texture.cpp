@@ -74,6 +74,15 @@ getInternalFormat(PixelFormat format)
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
         return static_cast<GLenum>(format);
+    case PixelFormat::SRGB:
+    case PixelFormat::SRGB8:
+	return GL_SRGB8;
+    case PixelFormat::SRGBA:
+    case PixelFormat::SRGBA8:
+    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT5_SRGBA:
+        return GL_SRGB8_ALPHA8;
     default:
         return GL_NONE;
     }
@@ -108,7 +117,17 @@ GLenum
 getExternalFormat(PixelFormat format)
 {
 #ifdef GL_ES
-    return getInternalFormat(format);
+    switch (format)
+    {
+    case PixelFormat::SRGB:
+    case PixelFormat::SRGB8:
+        return GL_RGB;
+    case PixelFormat::SRGBA:
+    case PixelFormat::SRGBA8:
+	return GL_RGBA;
+    default:
+        return getInternalFormat(format);
+    }
 #else
     switch (format)
     {
@@ -267,6 +286,8 @@ LoadMiplessTexture(const Image& img, GLenum target)
 {
     int internalFormat = getInternalFormat(img.getFormat());
 
+    GetLogger()->info("Format, internal: {:X}, external {:X}\n", internalFormat, getExternalFormat(img.getFormat()));
+
     if (img.isCompressed())
     {
         glCompressedTexImage2D(target,
@@ -279,6 +300,7 @@ LoadMiplessTexture(const Image& img, GLenum target)
     }
     else
     {
+        while (glGetError() != 0);
         glTexImage2D(target,
                      0,
                      internalFormat,
@@ -287,6 +309,8 @@ LoadMiplessTexture(const Image& img, GLenum target)
                      getExternalFormat(img.getFormat()),
                      GL_UNSIGNED_BYTE,
                      img.getMipLevel(0));
+	if (internalFormat >= 0x8c40 && internalFormat <= 0x8c43)
+		GetLogger()->info("GL error: {:X}\n", glGetError());
     }
 }
 
