@@ -691,7 +691,7 @@ ParseFontName(const fs::path &filename, int &index, int &size)
     return filename;
 }
 
-using FontCache = std::map<fs::path, std::weak_ptr<TextureFont>>;
+using FontCache = std::map<std::pair<fs::path, int>, std::weak_ptr<TextureFont>>;
 
 std::shared_ptr<TextureFont>
 LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
@@ -710,7 +710,7 @@ LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size
         fontCache = new FontCache;
 
     // Lookup for an existing cached font
-    std::weak_ptr<TextureFont> &font = (*fontCache)[filename];
+    std::weak_ptr<TextureFont> &font = (*fontCache)[std::make_pair(filename, index)];
     std::shared_ptr<TextureFont> ret = font.lock();
     if (ret == nullptr)
     {
