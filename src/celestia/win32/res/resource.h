@@ -229,7 +229,6 @@
 #define ID_BOOKMARKS_ADDBOOKMARK        40034
 #define ID_RENDER_LOCATIONS             40035
 #define ID_INFO                         40040
-#define ID_HELP_RUNDEMO                 40041
 #define ID_RENDER_MORESTARS             40042
 #define ID_RENDER_FEWERSTARS            40043
 #define ID_RENDER_AUTOMAG               40044
