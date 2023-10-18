@@ -39,6 +39,7 @@ using celestia::ephem::TrajectoryInterpolation;
 using celestia::ephem::TrajectoryPrecision;
 using celestia::util::GetLogger;
 
+namespace astro = celestia::astro;
 namespace celephem = celestia::ephem;
 
 /**
@@ -57,8 +58,8 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 {
     if(usePlanetUnits)
     {
-        distanceScale = KM_PER_AU<double>;
-        timeScale = DAYS_PER_YEAR;
+        distanceScale = astro::KM_PER_AU<double>;
+        timeScale = astro::DAYS_PER_YEAR;
     }
     else
     {
@@ -80,7 +81,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 static void
 GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
 {
-    distanceScale = usePlanetUnits ? KM_PER_AU<double> : 1.0;
+    distanceScale = usePlanetUnits ? astro::KM_PER_AU<double> : 1.0;
 }
 
 
@@ -599,7 +600,7 @@ CreateSpiceRotation(const Hash* rotationData,
     // The period of the rotation may be specified if appropriate; a value
     // of zero for the period (the default), means that the rotation will
     // be considered aperiodic.
-    auto period = rotationData->getTime<double>("Period", 1.0, 1.0 / HOURS_PER_DAY).value_or(0.0);
+    auto period = rotationData->getTime<double>("Period", 1.0, 1.0 / astro::HOURS_PER_DAY).value_or(0.0);
 
     // Either a complete time interval must be specified with Beginning/Ending, or
     // else neither field can be present.
@@ -855,7 +856,7 @@ CreateUniformRotationModel(const Hash* rotationData,
                            double syncRotationPeriod)
 {
     // Default to synchronous rotation
-    auto period = rotationData->getTime<double>("Period", 1.0, 1.0 / HOURS_PER_DAY).value_or(syncRotationPeriod);
+    auto period = rotationData->getTime<double>("Period", 1.0, 1.0 / astro::HOURS_PER_DAY).value_or(syncRotationPeriod);
 
     auto offset = degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
 
@@ -919,7 +920,7 @@ CreatePrecessingRotationModel(const Hash* rotationData,
                               double syncRotationPeriod)
 {
     // Default to synchronous rotation
-    double period = rotationData->getTime<double>("Period", 1.0, 1.0 / HOURS_PER_DAY).value_or(syncRotationPeriod);
+    double period = rotationData->getTime<double>("Period", 1.0, 1.0 / astro::HOURS_PER_DAY).value_or(syncRotationPeriod);
 
     auto offset = degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
 
@@ -931,7 +932,7 @@ CreatePrecessingRotationModel(const Hash* rotationData,
 
     // The default value of 0 is handled specially, interpreted to indicate
     // that there's no precession.
-    auto precessionPeriod = rotationData->getTime<double>("PrecessionPeriod", 1.0, DAYS_PER_YEAR).value_or(0.0);
+    auto precessionPeriod = rotationData->getTime<double>("PrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
 
 
     // No period was specified, and the default synchronous

@@ -33,7 +33,7 @@ namespace
 constexpr double ORBITAL_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
 // Follow hyperbolic orbit trajectories out to at least 1000 au
-constexpr double HyperbolicMinBoundingRadius = 1000.0 * KM_PER_AU<double>;
+constexpr double HyperbolicMinBoundingRadius = 1000.0 * astro::KM_PER_AU<double>;
 
 Eigen::Vector3d cubicInterpolate(const Eigen::Vector3d& p0, const Eigen::Vector3d& v0,
                                  const Eigen::Vector3d& p1, const Eigen::Vector3d& v1,

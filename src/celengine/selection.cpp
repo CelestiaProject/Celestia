@@ -19,6 +19,8 @@
 #include <celengine/location.h>
 #include <celengine/deepskyobj.h>
 
+namespace astro = celestia::astro;
+
 namespace
 {
 // Some velocities are computed by differentiation; units

@@ -14,6 +14,7 @@
 
 using namespace Eigen;
 
+namespace astro = celestia::astro;
 
 // The octree node into which a dso is placed is dependent on two properties:
 // its obsPosition and its luminosity--the fainter the dso, the deeper the node
@@ -100,7 +101,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     double minDistance = (obsPosition - cellCenterPos).norm() - scale * DSOOctree::SQRT3;
 
     // Process the objects in this node
-    double dimmest     = minDistance > 0.0 ? astro::appToAbsMag((double) limitingFactor, minDistance) : 1000.0;
+    double dimmest = minDistance > 0.0 ? astro::appToAbsMag((double) limitingFactor, minDistance) : 1000.0;
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
@@ -115,7 +116,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
             double distance    = (obsPosition - _obj->getPosition()).norm() - _obj->getBoundingSphereRadius();
             float appMag = (float) ((distance >= 32.6167) ? astro::absToAppMag((double) absMag, distance) : absMag);
 
-            if ( appMag < limitingFactor)
+            if (appMag < limitingFactor)
                 processor.process(_obj, distance, absMag);
         }
     }

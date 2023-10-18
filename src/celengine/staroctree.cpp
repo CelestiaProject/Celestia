@@ -14,6 +14,8 @@
 
 using namespace Eigen;
 
+namespace astro = celestia::astro;
+
 // Maximum permitted orbital radius for stars, in light years. Orbital
 // radii larger than this value are not guaranteed to give correct
 // results. The problem case is extremely faint stars (such as brown
@@ -117,7 +119,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
     float minDistance = (obsPosition - cellCenterPos).norm() - scale * StarOctree::SQRT3;
 
     // Process the objects in this node
-    float dimmest     = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
+    float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
 
     for (unsigned int i=0; i<nObjects; ++i)
     {

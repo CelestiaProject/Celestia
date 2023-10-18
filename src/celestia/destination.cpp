@@ -20,6 +20,8 @@
 
 using celestia::util::GetLogger;
 
+namespace astro = celestia::astro;
+
 DestinationList* ReadDestinationList(std::istream& in)
 {
     Tokenizer tokenizer(&in);
@@ -61,9 +63,9 @@ DestinationList* ReadDestinationList(std::istream& in)
             {
                 GetLogger()->warn("Skipping destination without target\n");
                 delete dest;
-            }                
-            else    
-            {    
+            }
+            else
+            {
                 dest->target = *target;
                 if (const std::string* description = destParams->getString("Description"); description != nullptr)
                     dest->description = *description;
@@ -85,7 +87,7 @@ DestinationList* ReadDestinationList(std::istream& in)
                     dest->distance = astro::lightYearsToKilometers(dest->distance);
                 }
                 destinations->push_back(dest);
-            }   
+            }
         }
     }
 

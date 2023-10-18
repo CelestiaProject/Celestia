@@ -14,6 +14,7 @@
 #include <cmath>
 #include <utility>
 
+#include <celcompat/numbers.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
@@ -28,6 +29,8 @@
 #include "value.h"
 
 using celestia::util::GetLogger;
+
+namespace astro = celestia::astro;
 
 constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
 //constexpr const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
@@ -336,7 +339,7 @@ void DSODatabase::finish()
 void DSODatabase::buildOctree()
 {
     GetLogger()->debug("Sorting DSOs into octree . . .\n");
-    float absMag             = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
+    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
 
     // TODO: investigate using a different center--it's possible that more
     // objects end up straddling the base level nodes when the center of the

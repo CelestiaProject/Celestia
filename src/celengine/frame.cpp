@@ -20,6 +20,7 @@
 using namespace Eigen;
 using namespace std;
 
+namespace astro = celestia::astro;
 
 // Velocity for two-vector frames is computed by differentiation; units
 // are Julian days.

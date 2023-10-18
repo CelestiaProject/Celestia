@@ -24,6 +24,7 @@
 
 using celestia::util::GetLogger;
 
+
 namespace celestia::ephem
 {
 

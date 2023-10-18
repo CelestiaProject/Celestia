@@ -22,6 +22,7 @@
 #include "astro.h"
 #include "hash.h"
 
+
 enum class ValueType : std::uint8_t
 {
     NullType       = 0,
@@ -49,10 +50,10 @@ class Value //NOSONAR
  public:
     struct Units
     {
-        astro::LengthUnit length{ astro::LengthUnit::Default };
-        astro::TimeUnit time{ astro::TimeUnit::Default };
-        astro::AngleUnit angle{ astro::AngleUnit::Default };
-        astro::MassUnit mass{ astro::MassUnit::Default };
+        celestia::astro::LengthUnit length{ celestia::astro::LengthUnit::Default };
+        celestia::astro::TimeUnit time{ celestia::astro::TimeUnit::Default };
+        celestia::astro::AngleUnit angle{ celestia::astro::AngleUnit::Default };
+        celestia::astro::MassUnit mass{ celestia::astro::MassUnit::Default };
     };
 
     Value() = default;
@@ -140,10 +141,10 @@ class Value //NOSONAR
             : std::nullopt;
     }
 
-    astro::LengthUnit getLengthUnit() const { return units.length; }
-    astro::TimeUnit getTimeUnit() const { return units.time; }
-    astro::AngleUnit getAngleUnit() const { return units.angle; }
-    astro::MassUnit getMassUnit() const { return units.mass; }
+    celestia::astro::LengthUnit getLengthUnit() const { return units.length; }
+    celestia::astro::TimeUnit getTimeUnit() const { return units.time; }
+    celestia::astro::AngleUnit getAngleUnit() const { return units.angle; }
+    celestia::astro::MassUnit getMassUnit() const { return units.mass; }
 
  private:
     union Data

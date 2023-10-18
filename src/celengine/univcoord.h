@@ -50,7 +50,7 @@ class UniversalCoord
       */
     UniversalCoord offsetKm(const Eigen::Vector3d& v)
     {
-        Eigen::Vector3d vUly = v * astro::kilometersToMicroLightYears(1.0);
+        Eigen::Vector3d vUly = v * celestia::astro::kilometersToMicroLightYears(1.0);
         return *this + UniversalCoord(vUly);
     }
 
@@ -74,7 +74,7 @@ class UniversalCoord
     {
         return Eigen::Vector3d(static_cast<double>(x - uc.x),
                                static_cast<double>(y - uc.y),
-                               static_cast<double>(z - uc.z)) * astro::microLightYearsToKilometers(1.0);
+                               static_cast<double>(z - uc.z)) * celestia::astro::microLightYearsToKilometers(1.0);
     }
 
     /** Get the offset in light years of this coordinate from a point (also with
@@ -122,7 +122,7 @@ class UniversalCoord
 
     double distanceFromLy(const UniversalCoord& uc)
     {
-        return astro::kilometersToLightYears(offsetFromKm(uc).norm());
+        return celestia::astro::kilometersToLightYears(offsetFromKm(uc).norm());
     }
 
     static UniversalCoord Zero()
@@ -136,7 +136,7 @@ class UniversalCoord
       */
     static UniversalCoord CreateKm(const Eigen::Vector3d& v)
     {
-        Eigen::Vector3d vUly = v * astro::microLightYearsToKilometers(1.0);
+        Eigen::Vector3d vUly = v * celestia::astro::microLightYearsToKilometers(1.0);
         return UniversalCoord(vUly.x(), vUly.y(), vUly.z());
     }
 

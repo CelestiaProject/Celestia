@@ -8,29 +8,42 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cmath>
-#include <ostream>
-#include <utility>
-#include <ctime>
 #include "astro.h"
-#include "univcoord.h"
-#include <celcompat/numbers.h>
-#include <celutil/gettext.h>
+
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <locale>
+#include <string_view>
+
+#if defined(__GNUC__) && !defined(_WIN32)
+#include <fmt/chrono.h>
+#endif
+#include <fmt/format.h>
+
 #include <celmath/geomutil.h>
+#include <celutil/gettext.h>
+
+using namespace std::string_view_literals;
 
 
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
+namespace celestia::astro
+{
 
-static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
-static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
+namespace
+{
 
-static const Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
-    Quaterniond(AngleAxis<double>(-astro::J2000Obliquity, Vector3d::UnitX()));
-static const Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
-static const Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
+const Eigen::Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = celmath::XRotation(-J2000Obliquity);
+const Eigen::Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
+
+const Eigen::Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
+    Eigen::Quaterniond(Eigen::AngleAxis<double>(-J2000Obliquity, Eigen::Vector3d::UnitX()));
+const Eigen::Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
+const Eigen::Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
 
 // Equatorial to galactic coordinate transformation
 // North galactic pole at:
@@ -38,99 +51,141 @@ static const Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_M
 // Dec 27 d 07' 42.01" (27.1283361 deg)
 // Zero longitude at position angle 122.932
 // (J2000 coordinates)
-static const double GALACTIC_NODE = 282.85958;
-static const double GALACTIC_INCLINATION = 90.0 - 27.1283361;
-static const double GALACTIC_LONGITUDE_AT_NODE = 32.932;
+constexpr double GALACTIC_NODE = 282.85958;
+constexpr double GALACTIC_INCLINATION = 90.0 - 27.1283361;
+constexpr double GALACTIC_LONGITUDE_AT_NODE = 32.932;
 
-static const Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
-    ZRotation(degToRad(GALACTIC_NODE)) *
-    XRotation(degToRad(GALACTIC_INCLINATION)) *
-    ZRotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
-static const Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
-
-// epoch B1950: 22:09 UT on 21 Dec 1949
-#define B1950         2433282.423
+const Eigen::Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
+    celmath::ZRotation(celmath::degToRad(GALACTIC_NODE)) *
+    celmath::XRotation(celmath::degToRad(GALACTIC_INCLINATION)) *
+    celmath::ZRotation(celmath::degToRad(-GALACTIC_LONGITUDE_AT_NODE));
+const Eigen::Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
 
 // Difference in seconds between Terrestrial Time and International
 // Atomic Time
-static const double dTA = 32.184;
+constexpr double dTA = 32.184;
 
 
 // Table of leap second insertions. The leap second always
 // appears as the last second of the day immediately prior
 // to the date in the table.
-static const astro::LeapSecondRecord LeapSeconds[] =
+constexpr std::array<LeapSecondRecord, 28> LeapSeconds
 {
-    { 10, 2441317.5 }, // 1 Jan 1972
-    { 11, 2441499.5 }, // 1 Jul 1972
-    { 12, 2441683.5 }, // 1 Jan 1973
-    { 13, 2442048.5 }, // 1 Jan 1974
-    { 14, 2442413.5 }, // 1 Jan 1975
-    { 15, 2442778.5 }, // 1 Jan 1976
-    { 16, 2443144.5 }, // 1 Jan 1977
-    { 17, 2443509.5 }, // 1 Jan 1978
-    { 18, 2443874.5 }, // 1 Jan 1979
-    { 19, 2444239.5 }, // 1 Jan 1980
-    { 20, 2444786.5 }, // 1 Jul 1981
-    { 21, 2445151.5 }, // 1 Jul 1982
-    { 22, 2445516.5 }, // 1 Jul 1983
-    { 23, 2446247.5 }, // 1 Jul 1985
-    { 24, 2447161.5 }, // 1 Jan 1988
-    { 25, 2447892.5 }, // 1 Jan 1990
-    { 26, 2448257.5 }, // 1 Jan 1991
-    { 27, 2448804.5 }, // 1 Jul 1992
-    { 28, 2449169.5 }, // 1 Jul 1993
-    { 29, 2449534.5 }, // 1 Jul 1994
-    { 30, 2450083.5 }, // 1 Jan 1996
-    { 31, 2450630.5 }, // 1 Jul 1997
-    { 32, 2451179.5 }, // 1 Jan 1999
-    { 33, 2453736.5 }, // 1 Jan 2006
-    { 34, 2454832.5 }, // 1 Jan 2009
-    { 35, 2456109.5 }, // 1 Jul 2012
-    { 36, 2457204.5 }, // 1 Jul 2015
-    { 37, 2457754.5 }, // 1 Jan 2017
+    LeapSecondRecord{ 10, 2441317.5 }, // 1 Jan 1972
+    LeapSecondRecord{ 11, 2441499.5 }, // 1 Jul 1972
+    LeapSecondRecord{ 12, 2441683.5 }, // 1 Jan 1973
+    LeapSecondRecord{ 13, 2442048.5 }, // 1 Jan 1974
+    LeapSecondRecord{ 14, 2442413.5 }, // 1 Jan 1975
+    LeapSecondRecord{ 15, 2442778.5 }, // 1 Jan 1976
+    LeapSecondRecord{ 16, 2443144.5 }, // 1 Jan 1977
+    LeapSecondRecord{ 17, 2443509.5 }, // 1 Jan 1978
+    LeapSecondRecord{ 18, 2443874.5 }, // 1 Jan 1979
+    LeapSecondRecord{ 19, 2444239.5 }, // 1 Jan 1980
+    LeapSecondRecord{ 20, 2444786.5 }, // 1 Jul 1981
+    LeapSecondRecord{ 21, 2445151.5 }, // 1 Jul 1982
+    LeapSecondRecord{ 22, 2445516.5 }, // 1 Jul 1983
+    LeapSecondRecord{ 23, 2446247.5 }, // 1 Jul 1985
+    LeapSecondRecord{ 24, 2447161.5 }, // 1 Jan 1988
+    LeapSecondRecord{ 25, 2447892.5 }, // 1 Jan 1990
+    LeapSecondRecord{ 26, 2448257.5 }, // 1 Jan 1991
+    LeapSecondRecord{ 27, 2448804.5 }, // 1 Jul 1992
+    LeapSecondRecord{ 28, 2449169.5 }, // 1 Jul 1993
+    LeapSecondRecord{ 29, 2449534.5 }, // 1 Jul 1994
+    LeapSecondRecord{ 30, 2450083.5 }, // 1 Jan 1996
+    LeapSecondRecord{ 31, 2450630.5 }, // 1 Jul 1997
+    LeapSecondRecord{ 32, 2451179.5 }, // 1 Jan 1999
+    LeapSecondRecord{ 33, 2453736.5 }, // 1 Jan 2006
+    LeapSecondRecord{ 34, 2454832.5 }, // 1 Jan 2009
+    LeapSecondRecord{ 35, 2456109.5 }, // 1 Jul 2012
+    LeapSecondRecord{ 36, 2457204.5 }, // 1 Jul 2015
+    LeapSecondRecord{ 37, 2457754.5 }, // 1 Jan 2017
 };
 
 
-static inline void negateIf(double& d, bool condition)
+inline void
+negateIf(double& d, bool condition)
 {
     if (condition)
         d = -d;
 }
 
 
-static celestia::util::array_view<astro::LeapSecondRecord> g_leapSeconds = LeapSeconds;
+celestia::util::array_view<LeapSecondRecord> g_leapSeconds = LeapSeconds; //NOSONAR
 
 
 #if !defined(__GNUC__) || defined(_WIN32)
-static const char* MonthAbbrList[12] =
-{ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const std::array<const char*, 12> MonthAbbrList{
+    N_("Jan"),
+    N_("Feb"),
+    N_("Mar"),
+    N_("Apr"),
+    N_("May"),
+    N_("Jun"),
+    N_("Jul"),
+    N_("Aug"),
+    N_("Sep"),
+    N_("Oct"),
+    N_("Nov"),
+    N_("Dec"),
+};
 #endif
 
 
-float astro::lumToAbsMag(float lum)
+inline bool
+timeToLocal(const std::time_t& time, std::tm& localt)
 {
-    return SOLAR_ABSMAG - log(lum) * LN_MAG;
+#ifdef _WIN32
+    return localtime_s(&localt, &time) == 0;
+#else
+    return localtime_r(&time, &localt) != nullptr;
+#endif
+}
+
+
+inline bool
+timeToUTC(const std::time_t& time, std::tm& utct)
+{
+#ifdef _WIN32
+    return gmtime_s(&utct, &time) == 0;
+#else
+    return gmtime_r(&time, &utct) != nullptr;
+#endif
+}
+
+} // end unnamed namespace
+
+
+float
+lumToAbsMag(float lum)
+{
+    return SOLAR_ABSMAG - std::log(lum) * LN_MAG;
 }
 
 // Return the apparent magnitude of a star with lum times solar
 // luminosity viewed at lyrs light years
-float astro::lumToAppMag(float lum, float lyrs)
+float
+lumToAppMag(float lum, float lyrs)
 {
     return absToAppMag(lumToAbsMag(lum), lyrs);
 }
 
-float astro::absMagToLum(float mag)
+
+float
+absMagToLum(float mag)
 {
-    return exp((SOLAR_ABSMAG - mag) / LN_MAG);
+    return std::exp((SOLAR_ABSMAG - mag) / LN_MAG);
 }
 
-float astro::appMagToLum(float mag, float lyrs)
+
+float
+appMagToLum(float mag, float lyrs)
 {
     return absMagToLum(appToAbsMag(mag, lyrs));
 }
 
-void astro::decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
+
+void
+decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
 {
     double A, B, C;
 
@@ -143,12 +198,16 @@ void astro::decimalToDegMinSec(double angle, int& degrees, int& minutes, double&
     seconds = C * 60.0;
 }
 
-double astro::degMinSecToDecimal(int degrees, int minutes, double seconds)
+
+double
+degMinSecToDecimal(int degrees, int minutes, double seconds)
 {
     return (double)degrees + (seconds/60.0 + (double)minutes)/60.0;
 }
 
-void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
+
+void
+decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
 {
     double A, B;
 
@@ -159,57 +218,71 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
     seconds = (B - (double) minutes) * 60.0;
 }
 
+
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
 Eigen::Vector3f
-astro::equatorialToCelestialCart(float ra, float dec, float distance)
+equatorialToCelestialCart(float ra, float dec, float distance)
 {
     using celestia::numbers::pi;
     double theta = ra / 24.0 * pi * 2 + pi;
     double phi = (dec / 90.0 - 1.0) * pi / 2;
-    double x = cos(theta) * sin(phi) * distance;
-    double y = cos(phi) * distance;
-    double z = -sin(theta) * sin(phi) * distance;
+    double stheta;
+    double ctheta;
+    celmath::sincos(theta, stheta, ctheta);
+    double sphi;
+    double cphi;
+    celmath::sincos(phi, sphi, cphi);
+    auto x = static_cast<float>(ctheta * sphi * distance);
+    auto y = static_cast<float>(cphi * distance);
+    auto z = static_cast<float>(-stheta * sphi * distance);
 
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Vector3f((float) x, (float) y, (float) z);
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f(x, y, z);
 }
 
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
 Eigen::Vector3d
-astro::equatorialToCelestialCart(double ra, double dec, double distance)
+equatorialToCelestialCart(double ra, double dec, double distance)
 {
     using celestia::numbers::pi;
     double theta = ra / 24.0 * pi * 2 + pi;
     double phi = (dec / 90.0 - 1.0) * pi / 2;
-    double x = cos(theta) * sin(phi) * distance;
-    double y = cos(phi) * distance;
-    double z = -sin(theta) * sin(phi) * distance;
+    double stheta;
+    double ctheta;
+    celmath::sincos(theta, stheta, ctheta);
+    double sphi;
+    double cphi;
+    celmath::sincos(phi, sphi, cphi);
+    double x = ctheta * sphi * distance;
+    double y = cphi * distance;
+    double z = -stheta * sphi * distance;
 
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX * Vector3d(x, y, z);
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX * Eigen::Vector3d(x, y, z);
 }
 
 
-void astro::anomaly(double meanAnomaly, double eccentricity,
-                    double& trueAnomaly, double& eccentricAnomaly)
+void
+anomaly(double meanAnomaly, double eccentricity,
+        double& trueAnomaly, double& eccentricAnomaly)
 {
     using celestia::numbers::pi;
     double e, delta, err;
     double tol = 0.00000001745;
     int iterations = 20;    // limit while() to maximum of 20 iterations.
 
-    e = meanAnomaly - 2*pi * (int) (meanAnomaly / (2*pi));
+    e = meanAnomaly - 2.0 * pi * (int) (meanAnomaly / (2.0 * pi));
     err = 1;
-    while(abs(err) > tol && iterations > 0)
+    while(std::abs(err) > tol && iterations > 0)
     {
-        err = e - eccentricity*sin(e) - meanAnomaly;
-        delta = err / (1 - eccentricity * cos(e));
+        err = e - eccentricity * std::sin(e) - meanAnomaly;
+        delta = err / (1 - eccentricity * std::cos(e));
         e -= delta;
         iterations--;
     }
 
-    trueAnomaly = 2*atan(sqrt((1+eccentricity)/(1-eccentricity))*tan(e/2));
+    trueAnomaly = 2.0 * std::atan(std::sqrt((1.0 + eccentricity) / (1.0 - eccentricity)) * std::tan(0.5 * e));
     eccentricAnomaly = e;
 }
 
@@ -218,7 +291,8 @@ void astro::anomaly(double meanAnomaly, double eccentricity,
  *  the specified Julian date.
  */
 // TODO: replace this with a better precession model
-double astro::meanEclipticObliquity(double jd)
+double
+meanEclipticObliquity(double jd)
 {
     double t, de;
     jd -= 2451545.0;
@@ -232,7 +306,8 @@ double astro::meanEclipticObliquity(double jd)
 /*! Return a quaternion giving the transformation from the J2000 ecliptic
  *  coordinate system to the J2000 Earth equatorial coordinate system.
  */
-Quaterniond astro::eclipticToEquatorial()
+Eigen::Quaterniond
+eclipticToEquatorial()
 {
     return ECLIPTIC_TO_EQUATORIAL_ROTATION;
 }
@@ -241,7 +316,8 @@ Quaterniond astro::eclipticToEquatorial()
 /*! Rotate a vector in the J2000 ecliptic coordinate system to
  *  the J2000 Earth equatorial coordinate system.
  */
-Vector3d astro::eclipticToEquatorial(const Vector3d& v)
+Eigen::Vector3d
+eclipticToEquatorial(const Eigen::Vector3d& v)
 {
     return ECLIPTIC_TO_EQUATORIAL_MATRIX.transpose() * v;
 }
@@ -250,7 +326,8 @@ Vector3d astro::eclipticToEquatorial(const Vector3d& v)
 /*! Return a quaternion giving the transformation from the J2000 Earth
  *  equatorial coordinate system to the galactic coordinate system.
  */
-Quaterniond astro::equatorialToGalactic()
+Eigen::Quaterniond
+equatorialToGalactic()
 {
     return EQUATORIAL_TO_GALACTIC_ROTATION;
 }
@@ -259,18 +336,20 @@ Quaterniond astro::equatorialToGalactic()
 /*! Rotate a vector int the J2000 Earth equatorial coordinate system to
  *  the galactic coordinate system.
  */
-Vector3d astro::equatorialToGalactic(const Vector3d& v)
+Eigen::Vector3d
+equatorialToGalactic(const Eigen::Vector3d& v)
 {
     return EQUATORIAL_TO_GALACTIC_MATRIX.transpose() * v;
 }
 
 
 
-astro::Date::Date() : Date(0, 0, 0)
+Date::Date() : Date(0, 0, 0)
 {
 }
 
-astro::Date::Date(int Y, int M, int D) :
+
+Date::Date(int Y, int M, int D) :
     year(Y),
     month(M),
     day(D),
@@ -283,9 +362,10 @@ astro::Date::Date(int Y, int M, int D) :
 {
 }
 
-astro::Date::Date(double jd)
+
+Date::Date(double jd)
 {
-    auto a = (int64_t) floor(jd + 0.5);
+    auto a = (std::int64_t) std::floor(jd + 0.5);
     wday = (a + 1) % 7;
     double c;
     if (a < 2299161)
@@ -294,20 +374,20 @@ astro::Date::Date(double jd)
     }
     else
     {
-        double b = (double) ((int64_t) floor((a - 1867216.25) / 36524.25));
-        c = a + b - (int64_t) floor(b / 4) + 1525;
+        auto b = (double) ((std::int64_t) std::floor((a - 1867216.25) / 36524.25)); //NOSONAR
+        c = a + b - (std::int64_t) std::floor(b / 4) + 1525; //NOSONAR
     }
 
-    auto d = (int64_t) floor((c - 122.1) / 365.25);
-    auto e = (int64_t) floor(365.25 * d);
-    auto f = (int64_t) floor((c - e) / 30.6001);
+    auto d = (std::int64_t) std::floor((c - 122.1) / 365.25);
+    auto e = (std::int64_t) std::floor(365.25 * d); //NOSONAR
+    auto f = (std::int64_t) std::floor((c - e) / 30.6001); //NOSONAR
 
-    double dday = c - e - (int64_t) floor(30.6001 * f) + ((jd + 0.5) - a);
+    double dday = c - e - (std::int64_t) std::floor(30.6001 * f) + ((jd + 0.5) - a); //NOSONAR
 
     // This following used to be 14.0, but gcc was computing it incorrectly, so
     // it was changed to 14
-    month = (int) (f - 1 - 12 * (int64_t) (f / 14));
-    year = (int) (d - 4715 - (int64_t) ((7.0 + month) / 10.0));
+    month = (int) (f - 1 - 12 * (std::int64_t) (f / 14)); //NOSONAR
+    year = (int) (d - 4715 - (std::int64_t) ((7.0 + month) / 10.0));
     day = (int) dday;
 
     double dhour = (dday - day) * 24;
@@ -321,15 +401,14 @@ astro::Date::Date(double jd)
     tzname = "UTC";
 }
 
-const char* astro::Date::toCStr(Format format) const
-{
-    static char date[255];
 
+std::string
+Date::toString(Format format) const
+{
     if (format == ISO8601)
     {
-        snprintf(date, sizeof(date), "%04d-%02d-%02dT%02d:%02d:%08.5fZ",
-                 year, month, day, hour, minute, seconds);
-        return date;
+        return fmt::format("{:04}-{:02}-{:02}T{:02}:{:02}:{:02}:{:08.5f}Z"sv,
+                           year, month, day, hour, minute, seconds);
     }
     // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
     // struct tm.
@@ -350,49 +429,38 @@ const char* astro::Date::toCStr(Format format) const
     cal_time.tm_zone = tzname.c_str();
 #endif
 
-    const char* strftime_format;
     switch(format)
     {
     case Locale:
-        strftime_format = "%c";
-        break;
+        return fmt::format(std::locale(""), "{:%c}"sv, cal_time);
     case TZName:
-        strftime_format = "%Y %b %d %H:%M:%S %Z";
-        break;
+        return fmt::format(std::locale(""), "{:%Y %b %d %H:%M:%S %Z}"sv, cal_time);
     default:
-        strftime_format = "%Y %b %d %H:%M:%S %z";
-        break;
+        return fmt::format(std::locale(""), "{:%Y %b %d %H:%M:%S %z}"sv, cal_time);
     }
-
-    strftime(date, sizeof(date), strftime_format, &cal_time);
 #else
     switch(format)
     {
     case Locale:
     case TZName:
-        snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %s",
-                 year, _(MonthAbbrList[month-1]), day,
-                 hour, minute, (int)seconds, tzname.c_str());
-        break;
-    case UTCOffset:
+        return fmt::format("{:04} {} {:02} {:02}:{:02}:{:02} {}"sv,
+                           year, _(MonthAbbrList[month - 1]), day,
+                           hour, minute, static_cast<int>(seconds), tzname);
+    default:
         {
-            int sign = utc_offset < 0 ? -1:1;
-            int h_offset = sign * utc_offset / 3600;
-            int m_offset = (sign * utc_offset - h_offset * 3600) / 60;
-            snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %c%02d%02d",
-                    year, _(MonthAbbrList[month-1]), day,
-                    hour, minute, (int)seconds, (sign==1?'+':'-'), h_offset, m_offset);
+            char sign = utc_offset < 0 ? '-' : '+';
+            auto offsets = std::div(std::abs(utc_offset), 3600);
+            return fmt::format("{:04} {} {:02} {:02}:{:02}:{:02} {}{:02}{:02}"sv,
+                               year, _(MonthAbbrList[month - 1]), day,
+                               hour, minute, static_cast<int>(seconds),
+                               sign, offsets.quot, offsets.rem / 60);
         }
-        break;
     }
 #endif
-
-    return date;
-
 }
 
 // Convert a calendar date to a Julian date
-astro::Date::operator double() const
+Date::operator double() const
 {
     int y = year, m = month;
     if (month <= 2)
@@ -409,14 +477,15 @@ astro::Date::operator double() const
         B = y / 400 - y / 100;
     }
 
-    return (floor(365.25 * y) +
-            floor(30.6001 * (m + 1)) + B + 1720996.5 +
+    return (std::floor(365.25 * y) +
+            std::floor(30.6001 * (m + 1)) + B + 1720996.5 +
             day + hour / HOURS_PER_DAY + minute / MINUTES_PER_DAY + seconds / SECONDS_PER_DAY);
 }
 
 
 // TODO: need option to parse UTC times (with leap seconds)
-bool astro::parseDate(const string& s, astro::Date& date)
+bool
+parseDate(const std::string& s, Date& date)
 {
     int year = 0;
     unsigned int month = 1;
@@ -425,60 +494,54 @@ bool astro::parseDate(const string& s, astro::Date& date)
     unsigned int minute = 0;
     double second = 0.0;
 
-    if (sscanf(s.c_str(), "%d-%u-%uT%u:%u:%lf",
-               &year, &month, &day, &hour, &minute, &second) == 6 ||
-        sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
-               &year, &month, &day, &hour, &minute, &second) == 6 ||
-        sscanf(s.c_str(), " %d %u %u %u:%u ",
-               &year, &month, &day, &hour, &minute) == 5 ||
-        sscanf(s.c_str(), " %d %u %u ", &year, &month, &day) == 3)
+    if (std::sscanf(s.c_str(), "%d-%u-%uT%u:%u:%lf",
+                    &year, &month, &day, &hour, &minute, &second) != 6 &&
+        std::sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
+                    &year, &month, &day, &hour, &minute, &second) != 6 &&
+        std::sscanf(s.c_str(), " %d %u %u %u:%u ",
+                    &year, &month, &day, &hour, &minute) != 5 &&
+        std::sscanf(s.c_str(), " %d %u %u ", &year, &month, &day) != 3)
     {
-        if (month < 1 || month > 12)
-            return false;
-        if (hour > 23 || minute > 59 || second >= 60.0 || second < 0.0)
-            return false;
-
-        // Days / month calculation . . .
-        int maxDay = 31 - ((0xa50 >> month) & 0x1);
-        if (month == 2)
-        {
-            // Check for a leap year
-            if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
-                maxDay = 29;
-            else
-                maxDay = 28;
-        }
-        if (day > (unsigned int) maxDay || day < 1)
-            return false;
-
-        date.year = year;
-        date.month = month;
-        date.day = day;
-        date.hour = hour;
-        date.minute = minute;
-        date.seconds = second;
-
-        return true;
+        return false;
     }
 
-    return false;
+    if (month < 1 || month > 12)
+        return false;
+    if (hour > 23 || minute > 59 || second >= 60.0 || second < 0.0)
+        return false;
+
+    // Days / month calculation . . .
+    int maxDay = 31 - ((0xa50 >> month) & 0x1);
+    if (month == 2)
+    {
+        // Check for a leap year
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
+            maxDay = 29;
+        else
+            maxDay = 28;
+    }
+    if (day > (unsigned int) maxDay || day < 1)
+        return false;
+
+    date.year = year;
+    date.month = month;
+    date.day = day;
+    date.hour = hour;
+    date.minute = minute;
+    date.seconds = second;
+
+    return true;
 }
 
 
-astro::Date
-astro::Date::systemDate()
+Date
+Date::systemDate()
 {
     time_t t = time(nullptr);
-    struct tm gmt;
-#ifdef _WIN32
-    bool ok = gmtime_s(&gmt, &t) == 0;
+    tm gmt;
 
-#else
-    bool ok = gmtime_r(&t, &gmt) != nullptr;
-#endif
-
-    astro::Date d;
-    if (ok)
+    Date d;
+    if (timeToUTC(t, gmt))
     {
         d.year = gmt.tm_year + 1900;
         d.month = gmt.tm_mon + 1;
@@ -495,14 +558,13 @@ astro::Date::systemDate()
 /********* Time scale conversion functions ***********/
 
 // Convert from Atomic Time to UTC
-astro::Date
-astro::TAItoUTC(double tai)
+Date
+TAItoUTC(double tai)
 {
-    double dAT = g_leapSeconds[0].seconds;
-    /*double dD = 0.0;  Unused*/
+    int dAT = g_leapSeconds[0].seconds;
     int extraSecs = 0;
 
-    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
+    for (std::size_t i = g_leapSeconds.size() - 1; i > 0; i--) //NOSONAR
     {
         if (tai - secsToDays(g_leapSeconds[i].seconds) >= g_leapSeconds[i].t)
         {
@@ -526,12 +588,12 @@ astro::TAItoUTC(double tai)
 
 // Convert from UTC to Atomic Time
 double
-astro::UTCtoTAI(const astro::Date& utc)
+UTCtoTAI(const Date& utc)
 {
     double dAT = g_leapSeconds[0].seconds;
-    double utcjd = (double) Date(utc.year, utc.month, utc.day);
+    auto utcjd = (double) Date(utc.year, utc.month, utc.day);
 
-    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
+    for (std::size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
         if (utcjd >= g_leapSeconds[i].t)
         {
@@ -548,7 +610,7 @@ astro::UTCtoTAI(const astro::Date& utc)
 
 // Convert from Terrestrial Time to Atomic Time
 double
-astro::TTtoTAI(double tt)
+TTtoTAI(double tt)
 {
     return tt - secsToDays(dTA);
 }
@@ -556,39 +618,40 @@ astro::TTtoTAI(double tt)
 
 // Convert from Atomic Time to Terrestrial TIme
 double
-astro::TAItoTT(double tai)
+TAItoTT(double tai)
 {
     return tai + secsToDays(dTA);
 }
 
 
-// Correction for converting from Terrestrial Time to Barycentric Dynamical
-// Time. Constants and algorithm from "Time Routines in CSPICE",
-// http://sohowww.nascom.nasa.gov/solarsoft/stereo/gen/exe/icy/doc/time.req
-static const double K  = 1.657e-3;
-static const double EB = 1.671e-2;
-static const double M0 = 6.239996;
-static const double M1 = 1.99096871e-7;
-
 // Input is a TDB Julian Date; result is in seconds
-double TDBcorrection(double tdb)
+double
+TDBcorrection(double tdb)
 {
+    // Correction for converting from Terrestrial Time to Barycentric Dynamical
+    // Time. Constants and algorithm from "Time Routines in CSPICE",
+    // http://sohowww.nascom.nasa.gov/solarsoft/stereo/gen/exe/icy/doc/time.req
+    constexpr double K  = 1.657e-3;
+    constexpr double EB = 1.671e-2;
+    constexpr double M0 = 6.239996;
+    constexpr double M1 = 1.99096871e-7;
+
     // t is seconds from J2000.0
-    double t = astro::daysToSecs(tdb - astro::J2000);
+    double t = daysToSecs(tdb - J2000);
 
     // Approximate calculation of Earth's mean anomaly
     double M = M0 + M1 * t;
 
     // Compute the eccentric anomaly
-    double E = M + EB * sin(M);
+    double E = M + EB * std::sin(M);
 
-    return K * sin(E);
+    return K * std::sin(E);
 }
 
 
 // Convert from Terrestrial Time to Barycentric Dynamical Time
 double
-astro::TTtoTDB(double tt)
+TTtoTDB(double tt)
 {
     return tt + secsToDays(TDBcorrection(tt));
 }
@@ -596,71 +659,68 @@ astro::TTtoTDB(double tt)
 
 // Convert from Barycentric Dynamical Time to Terrestrial Time
 double
-astro::TDBtoTT(double tdb)
+TDBtoTT(double tdb)
 {
     return tdb - secsToDays(TDBcorrection(tdb));
 }
 
 
 // Convert from Coordinated Universal time to Barycentric Dynamical Time
-astro::Date
-astro::TDBtoUTC(double tdb)
+Date
+TDBtoUTC(double tdb)
 {
     return TAItoUTC(TTtoTAI(TDBtoTT(tdb)));
 }
 
 // Convert from Barycentric Dynamical Time to local calendar if possible
 // otherwise convert to UTC
-astro::Date
-astro::TDBtoLocal(double tdb)
+Date
+TDBtoLocal(double tdb)
 {
-    double tai = astro::TTtoTAI(astro::TDBtoTT(tdb));
+    double tai = TTtoTAI(TDBtoTT(tdb));
 
-    if (double jdutc = astro::TAItoJDUTC(tai); jdutc < 2465442 && jdutc > 2415733)
-    {
-        auto time = static_cast<time_t>(astro::julianDateToSeconds(jdutc - 2440587.5));
-        struct tm localt;
-#ifdef _WIN32
-        bool ok = localtime_s(&localt, &time) == 0;
-#else
-        bool ok = localtime_r(&time, &localt) != nullptr;
-#endif
-        if (ok)
-        {
-            astro::Date d;
-            d.year = localt.tm_year + 1900;
-            d.month = localt.tm_mon + 1;
-            d.day = localt.tm_mday;
-            d.hour = localt.tm_hour;
-            d.minute = localt.tm_min;
-            d.seconds = localt.tm_sec;
-            d.wday = localt.tm_wday;
+    double jdutc = TAItoJDUTC(tai);
+    if (jdutc <= 2415733 || jdutc >= 2465442)
+        return TDBtoUTC(tdb);
+
+    auto time = static_cast<time_t>(julianDateToSeconds(jdutc - 2440587.5));
+    struct tm localt;
+
+    if (!timeToLocal(time, localt)) //NOSONAR
+        return TDBtoUTC(tdb);
+
+    Date d;
+    d.year = localt.tm_year + 1900;
+    d.month = localt.tm_mon + 1;
+    d.day = localt.tm_mday;
+    d.hour = localt.tm_hour;
+    d.minute = localt.tm_min;
+    d.seconds = localt.tm_sec;
+    d.wday = localt.tm_wday;
 #if defined(__GNUC__) && !defined(_WIN32)
-            d.utc_offset = static_cast<int>(localt.tm_gmtoff);
-            d.tzname = localt.tm_zone;
+    d.utc_offset = static_cast<int>(localt.tm_gmtoff);
+    d.tzname = localt.tm_zone;
 #else
-            astro::Date utcDate = astro::TAItoUTC(tai);
-            int daydiff = d.day - utcDate.day;
-            int hourdiff;
-            if (daydiff == 0)
-                hourdiff = 0;
-            else if (daydiff > 1 || daydiff == -1)
-                hourdiff = -24;
-            else
-                hourdiff = 24;
-            d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600
-                           + (d.minute - utcDate.minute) * 60;
-            d.tzname = localt.tm_isdst ? _("DST"): _("STD");
+    Date utcDate = TAItoUTC(tai);
+    int daydiff = d.day - utcDate.day;
+    int hourdiff;
+    if (daydiff == 0)
+        hourdiff = 0;
+    else if (daydiff > 1 || daydiff == -1)
+        hourdiff = -24;
+    else
+        hourdiff = 24;
+    d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600
+                    + (d.minute - utcDate.minute) * 60;
+    d.tzname = localt.tm_isdst ? _("DST"): _("STD");
 #endif
-            return d;
-        }
-    }
-    return astro::TDBtoUTC(tdb);
+    return d;
 }
+
 
 // Convert from Barycentric Dynamical Time to UTC
 double
-astro::UTCtoTDB(const astro::Date& utc)
+UTCtoTDB(const Date& utc)
 {
     return TTtoTDB(TAItoTT(UTCtoTAI(utc)));
 }
@@ -670,11 +730,11 @@ astro::UTCtoTDB(const astro::Date& utc)
 // generally be avoided because there's no provision for dealing with leap
 // seconds.
 double
-astro::JDUTCtoTAI(double utc)
+JDUTCtoTAI(double utc)
 {
     double dAT = g_leapSeconds[0].seconds;
 
-    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
+    for (std::size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
         if (utc > g_leapSeconds[i].t)
         {
@@ -689,11 +749,11 @@ astro::JDUTCtoTAI(double utc)
 
 // Convert from Julian Date UTC to TAI
 double
-astro::TAItoJDUTC(double tai)
+TAItoJDUTC(double tai)
 {
     double dAT = g_leapSeconds[0].seconds;
 
-    for (size_t i = g_leapSeconds.size() - 1; i > 0; i--)
+    for (std::size_t i = g_leapSeconds.size() - 1; i > 0; i--)
     {
         if (tai - secsToDays(g_leapSeconds[i - 1].seconds) > g_leapSeconds[i].t)
         {
@@ -707,7 +767,8 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-std::optional<double> astro::getLengthScale(LengthUnit unit)
+std::optional<double>
+getLengthScale(LengthUnit unit)
 {
     switch (unit)
     {
@@ -727,7 +788,8 @@ std::optional<double> astro::getLengthScale(LengthUnit unit)
 
 
 // Get scale of given time unit in days
-std::optional<double> astro::getTimeScale(TimeUnit unit)
+std::optional<double>
+getTimeScale(TimeUnit unit)
 {
     switch (unit)
     {
@@ -742,7 +804,8 @@ std::optional<double> astro::getTimeScale(TimeUnit unit)
 
 
 // Get scale of given angle unit in degrees
-std::optional<double> astro::getAngleScale(AngleUnit unit)
+std::optional<double>
+getAngleScale(AngleUnit unit)
 {
     switch (unit)
     {
@@ -757,27 +820,30 @@ std::optional<double> astro::getAngleScale(AngleUnit unit)
 }
 
 
-std::optional<double> astro::getMassScale(MassUnit unit)
+std::optional<double>
+getMassScale(MassUnit unit)
 {
     switch (unit)
     {
-    case MassUnit::Kilogram: return 1.0 / astro::EarthMass;
+    case MassUnit::Kilogram: return 1.0 / EarthMass;
     case MassUnit::EarthMass: return 1.0;
-    case MassUnit::JupiterMass: return astro::JupiterMass / astro::EarthMass;
+    case MassUnit::JupiterMass: return JupiterMass / EarthMass;
     default: return std::nullopt;
     }
 }
 
 
-void astro::setLeapSeconds(celestia::util::array_view<astro::LeapSecondRecord> leapSeconds)
+void
+setLeapSeconds(celestia::util::array_view<LeapSecondRecord> leapSeconds)
 {
     g_leapSeconds = leapSeconds;
 }
 
 
-astro::KeplerElements astro::StateVectorToElements(const Eigen::Vector3d& r,
-                                                   const Eigen::Vector3d& v,
-                                                   double mu)
+KeplerElements
+StateVectorToElements(const Eigen::Vector3d& r,
+                      const Eigen::Vector3d& v,
+                      double mu)
 {
     constexpr double tolerance = 1e-9;
 
@@ -865,3 +931,5 @@ astro::KeplerElements astro::StateVectorToElements(const Eigen::Vector3d& r,
 
     return result;
 }
+
+} // end namespace celestia::astro

@@ -10,12 +10,20 @@
 
 #pragma once
 
-#include <Eigen/Geometry>
-#include <iosfwd>
+#include <cmath>
+#include <cstdint>
 #include <optional>
 #include <string>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
+
+
+namespace celestia::astro
+{
 
 constexpr inline float SOLAR_ABSMAG = 4.83f;
 constexpr inline float LN_MAG = 1.085736f;
@@ -25,9 +33,6 @@ constexpr inline T LY_PER_PARSEC = static_cast<T>(3.26167);
 
 template<typename T>
 constexpr inline T KM_PER_LY = static_cast<T>(9460730472580.8);
-
-// Old incorrect value; will be required for cel:// URL compatibility
-// #define OLD_KM_PER_LY     9466411842000.000
 
 template<typename T>
 constexpr inline T KM_PER_AU = static_cast<T>(149597870.7);
@@ -58,281 +63,296 @@ constexpr inline T JUPITER_RADIUS = static_cast<T>(71492.0);
 template<typename T>
 constexpr inline T SOLAR_RADIUS = static_cast<T>(696000.0);
 
-class UniversalCoord;
-
-namespace astro
+class Date
 {
-    class Date
+public:
+    Date();
+    Date(int Y, int M, int D);
+    Date(double);
+
+    enum Format
     {
-    public:
-        Date();
-        Date(int Y, int M, int D);
-        Date(double);
-
-        enum Format
-        {
-            Locale          = 0,
-            TZName          = 1,
-            UTCOffset       = 2,
-            ISO8601         = 3,
-            FormatCount     = 4,
-        };
-
-        const char* toCStr(Format format = Locale) const;
-
-        operator double() const;
-
-        static Date systemDate();
-
-
-    public:
-        int year;
-        int month;
-        int day;
-        int hour;
-        int minute;
-        int wday;           // week day, 0 Sunday to 6 Saturday
-        int utc_offset;     // offset from utc in seconds
-        std::string tzname; // timezone name
-        double seconds;
+        Locale          = 0,
+        TZName          = 1,
+        UTCOffset       = 2,
+        ISO8601         = 3,
+        FormatCount     = 4,
     };
 
-    bool parseDate(const std::string&, Date&);
+    std::string toString(Format format = Locale) const;
 
-    // Time scale conversions
-    // UTC - Coordinated Universal Time
-    // TAI - International Atomic Time
-    // TT  - Terrestrial Time
-    // TCB - Barycentric Coordinate Time
-    // TDB - Barycentric Dynamical Time
+    operator double() const;
 
-    constexpr double secsToDays(double s)
-    {
-        return s * (1.0 / SECONDS_PER_DAY);
-    }
+    static Date systemDate();
 
-    constexpr double daysToSecs(double d)
-    {
-        return d * SECONDS_PER_DAY;
-    }
+    int year;
+    int month;
+    int day;
+    int hour;
+    int minute;
+    int wday;           // week day, 0 Sunday to 6 Saturday
+    int utc_offset;     // offset from utc in seconds
+    std::string tzname; // timezone name
+    double seconds;
+};
 
-    // Convert to and from UTC dates
-    double UTCtoTAI(const astro::Date& utc);
-    astro::Date TAItoUTC(double tai);
-    double UTCtoTDB(const astro::Date& utc);
-    astro::Date TDBtoUTC(double tdb);
-    astro::Date TDBtoLocal(double tdb);
+bool parseDate(const std::string&, Date&);
 
-    // Convert among uniform time scales
-    double TTtoTAI(double tt);
-    double TAItoTT(double tai);
-    double TTtoTDB(double tt);
-    double TDBtoTT(double tdb);
+// Time scale conversions
+// UTC - Coordinated Universal Time
+// TAI - International Atomic Time
+// TT  - Terrestrial Time
+// TCB - Barycentric Coordinate Time
+// TDB - Barycentric Dynamical Time
 
-    // Conversions to and from Julian Date UTC--other time systems
-    // should be preferred, since UTC Julian Dates aren't defined
-    // during leapseconds.
-    double JDUTCtoTAI(double utc);
-    double TAItoJDUTC(double tai);
+constexpr double secsToDays(double s)
+{
+    return s * (1.0 / SECONDS_PER_DAY);
+}
 
-    // Magnitude conversions
-    float lumToAbsMag(float lum);
-    float lumToAppMag(float lum, float lyrs);
-    float absMagToLum(float mag);
-    float appMagToLum(float mag, float lyrs);
+constexpr double daysToSecs(double d)
+{
+    return d * SECONDS_PER_DAY;
+}
 
-    template<class T> constexpr T absToAppMag(T absMag, T lyrs)
-    {
-        using std::log10;
-        return (T) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC<T>));
-    }
+// Convert to and from UTC dates
+double UTCtoTAI(const Date& utc);
+Date TAItoUTC(double tai);
+double UTCtoTDB(const Date& utc);
+Date TDBtoUTC(double tdb);
+Date TDBtoLocal(double tdb);
 
-    template<class T> constexpr T appToAbsMag(T appMag, T lyrs)
-    {
-        using std::log10;
-        return (T) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC<T>));
-    }
+// Convert among uniform time scales
+double TTtoTAI(double tt);
+double TAItoTT(double tai);
+double TTtoTDB(double tt);
+double TDBtoTT(double tdb);
 
-    // Distance conversions
-    template<class T> constexpr T lightYearsToParsecs(T ly)
-    {
-        return ly / LY_PER_PARSEC<T>;
-    }
-    template<class T> constexpr T parsecsToLightYears(T pc)
-    {
-        return pc * LY_PER_PARSEC<T>;
-    }
-    template<class T> constexpr T lightYearsToKilometers(T ly)
-    {
-        return ly * KM_PER_LY<T>;
-    }
-    template<class T> constexpr T kilometersToLightYears(T km)
-    {
-        return km / KM_PER_LY<T>;
-    }
-    template<class T> constexpr T lightYearsToAU(T ly)
-    {
-        return ly * AU_PER_LY<T>;
-    }
-    template<class T> constexpr T AUtoLightYears(T au)
-    {
-        return au / AU_PER_LY<T>;
-    }
-    template<class T> constexpr T AUtoKilometers(T au)
-    {
-        return au * KM_PER_AU<T>;
-    }
-    template<class T> constexpr T kilometersToAU(T km)
-    {
-        return km / KM_PER_AU<T>;
-    }
+// Conversions to and from Julian Date UTC--other time systems
+// should be preferred, since UTC Julian Dates aren't defined
+// during leapseconds.
+double JDUTCtoTAI(double utc);
+double TAItoJDUTC(double tai);
 
-    template<class T> constexpr T microLightYearsToKilometers(T ly)
-    {
-        return ly * (KM_PER_LY<T> * 1e-6);
-    }
-    template<class T> constexpr T kilometersToMicroLightYears(T km)
-    {
-        return km / (KM_PER_LY<T> * 1e-6);
-    }
-    template<class T> constexpr T microLightYearsToAU(T ly)
-    {
-        return ly * (AU_PER_LY<T> * 1e-6);
-    }
-    template<class T> constexpr T AUtoMicroLightYears(T au)
-    {
-        return au / (AU_PER_LY<T> * 1e-6);
-    }
+// Magnitude conversions
+float lumToAbsMag(float lum);
+float lumToAppMag(float lum, float lyrs);
+float absMagToLum(float mag);
+float appMagToLum(float mag, float lyrs);
+
+template<class T> constexpr T absToAppMag(T absMag, T lyrs)
+{
+    using std::log10;
+    return (T) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC<T>));
+}
+
+template<class T> constexpr T appToAbsMag(T appMag, T lyrs)
+{
+    using std::log10;
+    return (T) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC<T>));
+}
+
+// Distance conversions
+template<class T> constexpr T lightYearsToParsecs(T ly)
+{
+    return ly / LY_PER_PARSEC<T>;
+}
+
+template<class T> constexpr T parsecsToLightYears(T pc)
+{
+    return pc * LY_PER_PARSEC<T>;
+}
+
+template<class T> constexpr T lightYearsToKilometers(T ly)
+{
+    return ly * KM_PER_LY<T>;
+}
+
+template<class T> constexpr T kilometersToLightYears(T km)
+{
+    return km / KM_PER_LY<T>;
+}
+
+template<class T> constexpr T lightYearsToAU(T ly)
+{
+    return ly * AU_PER_LY<T>;
+}
+
+template<class T> constexpr T AUtoLightYears(T au)
+{
+    return au / AU_PER_LY<T>;
+}
+
+template<class T> constexpr T AUtoKilometers(T au)
+{
+    return au * KM_PER_AU<T>;
+}
+
+template<class T> constexpr T kilometersToAU(T km)
+{
+    return km / KM_PER_AU<T>;
+}
+
+template<class T> constexpr T microLightYearsToKilometers(T ly)
+{
+    return ly * (KM_PER_LY<T> * 1e-6);
+}
+
+template<class T> constexpr T kilometersToMicroLightYears(T km)
+{
+    return km / (KM_PER_LY<T> * 1e-6);
+}
+
+template<class T> constexpr T microLightYearsToAU(T ly)
+{
+    return ly * (AU_PER_LY<T> * 1e-6);
+}
+
+template<class T> constexpr T AUtoMicroLightYears(T au)
+{
+    return au / (AU_PER_LY<T> * 1e-6);
+}
+
+constexpr double secondsToJulianDate(double sec)
+{
+    return sec / SECONDS_PER_DAY;
+}
+constexpr double julianDateToSeconds(double jd)
+{
+    return jd * SECONDS_PER_DAY;
+}
 
 
-    constexpr double secondsToJulianDate(double sec)
-    {
-        return sec / SECONDS_PER_DAY;
-    }
-    constexpr double julianDateToSeconds(double jd)
-    {
-        return jd * SECONDS_PER_DAY;
-    }
+enum class LengthUnit : std::uint8_t
+{
+    Default = 0,
+    Kilometer,
+    Meter,
+    EarthRadius,
+    JupiterRadius,
+    SolarRadius,
+    AstronomicalUnit,
+    LightYear,
+    Parsec,
+    Kiloparsec,
+    Megaparsec,
+};
 
-    enum class LengthUnit : std::uint8_t
-    {
-        Default = 0,
-        Kilometer,
-        Meter,
-        EarthRadius,
-        JupiterRadius,
-        SolarRadius,
-        AstronomicalUnit,
-        LightYear,
-        Parsec,
-        Kiloparsec,
-        Megaparsec,
-    };
 
-    enum class TimeUnit : std::uint8_t
-    {
-        Default = 0,
-        Second,
-        Minute,
-        Hour,
-        Day,
-        JulianYear,
-    };
+enum class TimeUnit : std::uint8_t
+{
+    Default = 0,
+    Second,
+    Minute,
+    Hour,
+    Day,
+    JulianYear,
+};
 
-    enum class AngleUnit : std::uint8_t
-    {
-        Default = 0,
-        Milliarcsecond,
-        Arcsecond,
-        Arcminute,
-        Degree,
-        Hour,
-        Radian,
-    };
 
-    enum class MassUnit : std::uint8_t
-    {
-        Default = 0,
-        Kilogram,
-        EarthMass,
-        JupiterMass,
-    };
+enum class AngleUnit : std::uint8_t
+{
+    Default = 0,
+    Milliarcsecond,
+    Arcsecond,
+    Arcminute,
+    Degree,
+    Hour,
+    Radian,
+};
 
-    std::optional<double> getLengthScale(LengthUnit unit);
-    std::optional<double> getTimeScale(TimeUnit unit);
-    std::optional<double> getAngleScale(AngleUnit unit);
-    std::optional<double> getMassScale(MassUnit unit);
 
-    void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
-    double degMinSecToDecimal(int degrees, int minutes, double seconds);
-    void decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds);
+enum class MassUnit : std::uint8_t
+{
+    Default = 0,
+    Kilogram,
+    EarthMass,
+    JupiterMass,
+};
 
-    Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
-    Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    Eigen::Quaterniond eclipticToEquatorial();
-    Eigen::Vector3d eclipticToEquatorial(const Eigen::Vector3d& v);
-    Eigen::Quaterniond equatorialToGalactic();
-    Eigen::Vector3d equatorialToGalactic(const Eigen::Vector3d& v);
+std::optional<double> getLengthScale(LengthUnit unit);
+std::optional<double> getTimeScale(TimeUnit unit);
+std::optional<double> getAngleScale(AngleUnit unit);
+std::optional<double> getMassScale(MassUnit unit);
 
-    void anomaly(double meanAnomaly, double eccentricity,
-                 double& trueAnomaly, double& eccentricAnomaly);
-    double meanEclipticObliquity(double jd);
+void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
+double degMinSecToDecimal(int degrees, int minutes, double seconds);
+void decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds);
 
-    // epoch J2000: 12 UT on 1 Jan 2000
-    constexpr inline double J2000            = 2451545.0;
-    constexpr inline double speedOfLight     = 299792.458; // km/s
-    constexpr inline double G                = 6.672e-11; // N m^2 / kg^2; gravitational constant
-    constexpr inline double SolarMass        = 1.989e30;
-    constexpr inline double EarthMass        = 5.972e24;
-    constexpr inline double LunarMass        = 7.346e22;
-    constexpr inline double JupiterMass      = 1.898e27;
+Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
+Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    // Angle between J2000 mean equator and the ecliptic plane.
-    // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
-    // Astronomical Almanac_ (1992), eqn 3.222-1.
-    constexpr inline double J2000Obliquity   = 23.4392911_deg;
+Eigen::Quaterniond eclipticToEquatorial();
+Eigen::Vector3d eclipticToEquatorial(const Eigen::Vector3d& v);
+Eigen::Quaterniond equatorialToGalactic();
+Eigen::Vector3d equatorialToGalactic(const Eigen::Vector3d& v);
 
-    constexpr inline double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
-    constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
+void anomaly(double meanAnomaly, double eccentricity,
+             double& trueAnomaly, double& eccentricAnomaly);
+double meanEclipticObliquity(double jd);
 
-    struct LeapSecondRecord
-    {
-        int seconds;
-        double t;
-    };
+// epoch J2000: 12 UT on 1 Jan 2000
+constexpr inline double J2000            = 2451545.0;
+constexpr inline double speedOfLight     = 299792.458; // km/s
+constexpr inline double G                = 6.672e-11; // N m^2 / kg^2; gravitational constant
+constexpr inline double SolarMass        = 1.989e30;
+constexpr inline double EarthMass        = 5.972e24;
+constexpr inline double LunarMass        = 7.346e22;
+constexpr inline double JupiterMass      = 1.898e27;
 
-    // Provide leap seconds data loaded from an external source
-    void setLeapSeconds(celestia::util::array_view<LeapSecondRecord>);
+// Angle between J2000 mean equator and the ecliptic plane.
+// 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
+// Astronomical Almanac_ (1992), eqn 3.222-1.
+constexpr inline double J2000Obliquity   = 23.4392911_deg;
 
-    namespace literals
-    {
-    constexpr long double operator "" _au (long double au)
-    {
-        return AUtoKilometers(au);
-    }
-    constexpr long double operator "" _ly (long double ly)
-    {
-        return lightYearsToKilometers(ly);
-    }
-    constexpr long double operator "" _c (long double n)
-    {
-        return astro::speedOfLight * n;
-    }
-    }
+constexpr inline double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
+constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
 
-    struct KeplerElements
-    {
-        double semimajorAxis{ 0.0 };
-        double eccentricity{ 0.0 };
-        double inclination{ 0.0 };
-        double longAscendingNode{ 0.0 };
-        double argPericenter{ 0.0 };
-        double meanAnomaly{ 0.0 };
-        double period{ 0.0 };
-    };
 
-    KeplerElements StateVectorToElements(const Eigen::Vector3d&,
-                                         const Eigen::Vector3d&,
-                                         double);
-} // end namespace astro
+struct LeapSecondRecord
+{
+    int seconds;
+    double t;
+};
+
+
+// Provide leap seconds data loaded from an external source
+void setLeapSeconds(celestia::util::array_view<LeapSecondRecord>);
+
+
+namespace literals
+{
+
+constexpr long double operator "" _au (long double au)
+{
+    return AUtoKilometers(au);
+}
+constexpr long double operator "" _ly (long double ly)
+{
+    return lightYearsToKilometers(ly);
+}
+constexpr long double operator "" _c (long double n)
+{
+    return speedOfLight * n;
+}
+
+} // end namespace celestia::astro::literals
+
+
+struct KeplerElements
+{
+    double semimajorAxis{ 0.0 };
+    double eccentricity{ 0.0 };
+    double inclination{ 0.0 };
+    double longAscendingNode{ 0.0 };
+    double argPericenter{ 0.0 };
+    double meanAnomaly{ 0.0 };
+    double period{ 0.0 };
+};
+
+
+KeplerElements StateVectorToElements(const Eigen::Vector3d&,
+                                     const Eigen::Vector3d&,
+                                     double);
+} // end namespace celestia::astro

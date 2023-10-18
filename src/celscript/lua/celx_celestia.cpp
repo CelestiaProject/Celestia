@@ -38,12 +38,12 @@
 #include "celx_vector.h"
 #include "celx_category.h"
 
-
 using namespace std;
 using namespace Eigen;
 using namespace celestia;
 using namespace celestia::scripts;
 using celestia::util::GetLogger;
+
 
 extern const char* KbdCallback;
 extern const char* CleanupCallback;

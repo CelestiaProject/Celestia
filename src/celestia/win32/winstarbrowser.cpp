@@ -28,10 +28,11 @@ using namespace Eigen;
 using namespace std;
 using namespace celestia::win32;
 
+namespace astro = celestia::astro;
+
 static const int MinListStars = 10;
 static const int MaxListStars = 500;
 static const int DefaultListStars = 100;
-
 
 // TODO: More of the functions in this module should be converted to
 // methods of the StarBrowser class.

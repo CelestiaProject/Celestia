@@ -17,6 +17,7 @@
 #include <celestia/celestiacore.h>
 #include <celmath/mathlib.h>
 
+namespace astro = celestia::astro;
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),

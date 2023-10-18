@@ -25,6 +25,8 @@
 using namespace std::string_view_literals;
 using celestia::util::IntrusivePtr;
 
+namespace astro = celestia::astro;
+
 namespace
 {
 
@@ -1080,7 +1082,7 @@ float Star::getRadius() const
 
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
-    return SOLAR_RADIUS<float> * std::sqrt(lum) *
+    return astro::SOLAR_RADIUS<float> * std::sqrt(lum) *
         celmath::square(SOLAR_TEMPERATURE / getTemperature());
 }
 
@@ -1247,7 +1249,7 @@ float Star::getBolometricLuminosity() const
     // visual magnitude of the star.
     float solarBMag = SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
-    return std::exp((solarBMag - bmag) / LN_MAG);
+    return std::exp((solarBMag - bmag) / astro::LN_MAG);
 #endif
 }
 

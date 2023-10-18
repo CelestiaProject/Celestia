@@ -77,12 +77,14 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace astro::literals;
 using namespace celmath;
 using namespace celestia;
+using namespace celestia::astro::literals;
 using namespace celestia::engine;
 using namespace celestia::scripts;
 using namespace celestia::util;
+
+namespace astro = celestia::astro;
 
 static const int DragThreshold = 3;
 

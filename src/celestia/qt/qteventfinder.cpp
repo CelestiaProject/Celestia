@@ -58,6 +58,7 @@
 #include <celmath/sphere.h>
 #include <celutil/gettext.h>
 
+namespace astro = celestia::astro;
 
 namespace
 {

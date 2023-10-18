@@ -14,6 +14,8 @@
 #include <celutil/gettext.h>
 #endif
 
+namespace astro = celestia::astro;
+
 namespace celestia::engine
 {
 
@@ -69,7 +71,7 @@ std::string DateFormatter::formatDate(double tdb, bool local, astro::Date::Forma
     return utf8FormattedDate;
 #else
     astro::Date d = local ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
-    return d.toCStr(format);
+    return d.toString(format);
 #endif
 }
 

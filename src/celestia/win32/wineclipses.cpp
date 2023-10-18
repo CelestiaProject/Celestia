@@ -36,6 +36,8 @@ using namespace std;
 using namespace celmath;
 using namespace celestia::win32;
 
+namespace astro = celestia::astro;
+
 static vector<Eclipse> eclipseList;
 
 const char* MonthNames[12] =

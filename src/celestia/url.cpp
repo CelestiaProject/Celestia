@@ -40,6 +40,8 @@ using celestia::util::GetLogger;
 using celestia::util::DecodeFromBase64;
 using celestia::util::EncodeAsBase64;
 
+namespace astro = celestia::astro;
+
 namespace
 {
 
@@ -160,7 +162,7 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
     }
 
     m_date = astro::Date(m_state.m_tdb);
-    u << '/' << m_date.toCStr(astro::Date::ISO8601);
+    u << '/' << m_date.toString(astro::Date::ISO8601);
 
     // observer position
     fmt::print(u, "?x={}&y={}&z={}",

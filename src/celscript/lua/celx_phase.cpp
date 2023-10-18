@@ -19,6 +19,8 @@
 
 using namespace std;
 
+namespace astro = celestia::astro;
+
 int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase)
 {
     CelxLua celx(l);

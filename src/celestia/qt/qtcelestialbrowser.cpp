@@ -58,6 +58,8 @@
 #include "qtcolorswatchwidget.h"
 #include "qtinfopanel.h"
 
+namespace astro = celestia::astro;
+
 namespace
 {
 

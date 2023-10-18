@@ -25,8 +25,9 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
-#define VELOCITY_CHANGE_TIME      0.25f
+namespace astro = celestia::astro;
 
+#define VELOCITY_CHANGE_TIME      0.25f
 
 static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
 {
@@ -569,14 +570,9 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      ObserverFrame::CoordinateSystem upCoordSys)
 {
     if (frame->getCoordinateSystem() == ObserverFrame::PhaseLock)
-    {
-        //setFrame(FrameOfReference(astro::Ecliptical, destination));
         setFrame(ObserverFrame::Ecliptical, destination);
-    }
     else
-    {
         setFrame(frame->getCoordinateSystem(), destination);
-    }
 
     UniversalCoord targetPosition = destination.getPosition(getTime());
     //Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();

@@ -17,6 +17,8 @@
 #include "astro.h"
 #include "hash.h"
 
+namespace astro = celestia::astro;
+
 Eigen::Vector3d DeepSkyObject::getPosition() const
 {
     return position;
@@ -86,14 +88,14 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
-    if (auto position = params->getLengthVector<double>("Position", KM_PER_LY<double>); position.has_value())
+    if (auto pos = params->getLengthVector<double>("Position", astro::KM_PER_LY<double>); pos.has_value())
     {
-        setPosition(*position);
+        setPosition(*pos);
     }
     else
     {
-        auto distance = params->getLength<double>("Distance", KM_PER_LY<double>).value_or(1.0);
-        auto RA = params->getAngle<double>("RA", DEG_PER_HRA).value_or(0.0);
+        auto distance = params->getLength<double>("Distance", astro::KM_PER_LY<double>).value_or(1.0);
+        auto RA = params->getAngle<double>("RA", astro::DEG_PER_HRA).value_or(0.0);
         auto dec = params->getAngle<double>("Dec").value_or(0.0);
 
         Eigen::Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
@@ -107,7 +109,7 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(angle)),
                                                         axis.cast<float>().normalized())));
 
-    setRadius(params->getLength<float>("Radius", KM_PER_LY<double>).value_or(1.0f));
+    setRadius(params->getLength<float>("Radius", astro::KM_PER_LY<double>).value_or(1.0f));
 
     if (auto absMagValue = params->getNumber<float>("AbsMag"); absMagValue.has_value())
         setAbsoluteMagnitude(*absMagValue);

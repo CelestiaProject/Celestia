@@ -16,6 +16,7 @@
 
 #include "astro.h"
 
+namespace astro = celestia::astro;
 
 namespace
 {

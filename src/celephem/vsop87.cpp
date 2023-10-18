@@ -11094,7 +11094,7 @@ class VSOP87Orbit : public CachingOrbit
             T = t * T;
         }
 
-        r *= KM_PER_AU<double>;
+        r *= astro::KM_PER_AU<double>;
 
         // Corrections for internal coordinate system
         b -= celestia::numbers::pi / 2;
@@ -11212,7 +11212,7 @@ class VSOP87OrbitRect : public CachingOrbit
             T = t * T;
         }
 
-        v *= KM_PER_AU<double>;
+        v *= astro::KM_PER_AU<double>;
 
         // Corrections for internal coordinate system
         return Eigen::Vector3d(v.x(), v.z(), -v.y());

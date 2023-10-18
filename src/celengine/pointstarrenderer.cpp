@@ -18,6 +18,8 @@
 using namespace std;
 using namespace Eigen;
 
+namespace astro = celestia::astro;
+
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
 static Vector3d astrocentricPosition(const UniversalCoord& pos,

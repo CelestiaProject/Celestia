@@ -68,19 +68,19 @@ class Url
     bool initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr);
     bool initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr);
 
-    CelestiaState   m_state;
+    CelestiaState          m_state;
 
-    std::string     m_url;
-    astro::Date     m_date;
-    CelestiaCore   *m_appCore       { nullptr };
+    std::string            m_url;
+    celestia::astro::Date  m_date;
+    CelestiaCore          *m_appCore       { nullptr };
 
-    ObserverFrame   m_ref;
-    Selection       m_selected;
-    Selection       m_tracked;
+    ObserverFrame          m_ref;
+    Selection              m_selected;
+    Selection              m_tracked;
 
-    int             m_version       { CurrentVersion };
-    TimeSource      m_timeSource    { UseUrlTime };
+    int                    m_version       { CurrentVersion };
+    TimeSource             m_timeSource    { UseUrlTime };
 
-    int             m_nBodies       { -1 };
-    bool            m_valid         { false };
+    int                    m_nBodies       { -1 };
+    bool                   m_valid         { false };
 };

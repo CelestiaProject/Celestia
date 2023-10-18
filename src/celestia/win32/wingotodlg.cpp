@@ -19,6 +19,7 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
+namespace astro = celestia::astro;
 
 static bool GetDialogFloat(HWND hDlg, int id, float& f)
 {

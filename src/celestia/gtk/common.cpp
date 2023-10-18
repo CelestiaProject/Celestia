@@ -23,6 +23,8 @@
 
 using namespace std;
 
+namespace astro = celestia::astro;
+
 /* Returns the offset of the timezone at date */
 gint tzOffsetAtDate(const astro::Date& date)
 {

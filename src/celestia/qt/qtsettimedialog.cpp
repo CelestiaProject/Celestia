@@ -24,6 +24,7 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
+namespace astro = celestia::astro;
 
 namespace
 {

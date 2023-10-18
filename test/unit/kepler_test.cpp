@@ -9,6 +9,8 @@
 
 #include <doctest.h>
 
+namespace astro = celestia::astro;
+
 namespace
 {
 constexpr double GMsun = 0.000296014912;

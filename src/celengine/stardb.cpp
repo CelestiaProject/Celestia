@@ -40,6 +40,7 @@ using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 using celestia::util::IntrusivePtr;
 
+namespace astro = celestia::astro;
 namespace celutil = celestia::util;
 
 // Enable the below to switch back to parsing coordinates as float to match
@@ -1194,7 +1195,7 @@ StarDatabaseBuilder::createStar(Star* star,
     // orbit and barycenter, its position is the position of the barycenter.
     if (barycenterPosition.has_value())
         star->setPosition(*barycenterPosition);
-    else if (auto rectangularPos = starData->getLengthVector<float>("Position", KM_PER_LY<double>); rectangularPos.has_value())
+    else if (auto rectangularPos = starData->getLengthVector<float>("Position", astro::KM_PER_LY<double>); rectangularPos.has_value())
     {
         // "Position" allows the position of the star to be specified in
         // coordinates matching those used in stars.dat, allowing an exact
@@ -1219,13 +1220,13 @@ StarDatabaseBuilder::createStar(Star* star,
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = celmath::radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
+                ra = celmath::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA;
                 dec = celmath::radToDeg(std::asin(v.z()));
             }
         }
 
         bool modifyPosition = false;
-        if (auto raValue = starData->getAngle<double>("RA", DEG_PER_HRA, 1.0); raValue.has_value())
+        if (auto raValue = starData->getAngle<double>("RA", astro::DEG_PER_HRA, 1.0); raValue.has_value())
         {
             ra = *raValue;
             modifyPosition = true;
@@ -1247,7 +1248,7 @@ StarDatabaseBuilder::createStar(Star* star,
             return false;
         }
 
-        if (auto dist = starData->getLength<double>("Distance", KM_PER_LY<double>); dist.has_value())
+        if (auto dist = starData->getLength<double>("Distance", astro::KM_PER_LY<double>); dist.has_value())
         {
             distance = *dist;
             modifyPosition = true;
