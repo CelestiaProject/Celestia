@@ -37,6 +37,7 @@
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 
+namespace astro = celestia::astro;
 
 namespace
 {
@@ -94,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (startTime > -1.0e9)
             {
-                QString startDateStr = QString(_("Start: %1")).arg(astro::TDBtoUTC(startTime).toCStr());
+                QString startDateStr = QString(_("Start: %1")).arg(QString::fromStdString(astro::TDBtoUTC(startTime).toString()));
                 QAction* startDateAct = new QAction(startDateStr, this);
                 connect(startDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoStartDate()));
@@ -103,7 +104,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (endTime < 1.0e9)
             {
-                QString endDateStr = QString(_("End: %1")).arg(astro::TDBtoUTC(endTime).toCStr());
+                QString endDateStr = QString(_("End: %1")).arg(QString::fromStdString(astro::TDBtoUTC(endTime).toString()));
                 QAction* endDateAct = new QAction(endDateStr, this);
                 connect(endDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoEndDate()));

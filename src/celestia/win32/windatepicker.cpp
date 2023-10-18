@@ -17,6 +17,8 @@
 
 using namespace std;
 
+namespace astro = celestia::astro;
+
 // DatePicker is a Win32 control for setting the date. It replaces the
 // date picker from commctl, adding a number of features appropriate
 // for astronomical applications:

@@ -26,6 +26,7 @@ using namespace Eigen;
 using namespace celmath;
 using celestia::util::GetLogger;
 
+namespace astro = celestia::astro;
 
 // ==================== Observer ====================
 
@@ -393,8 +394,6 @@ static int observer_gotolonglat(lua_State* l)
     double latitude   = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotolonglat must be a number", 0.0);
     double distance   = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:gotolonglat must be a number", defaultDistance);
     double travelTime = celx.safeGetNumber(6, WrongType, "Fifth arg to observer:gotolonglat must be a number", 5.0);
-
-    //distance = distance / KM_PER_LY;
 
     Vector3f up = Vector3f::UnitY();
     if (lua_gettop(l) >= 7)

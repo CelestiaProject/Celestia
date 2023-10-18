@@ -18,6 +18,7 @@
 
 using namespace std::string_view_literals;
 
+namespace astro = celestia::astro;
 
 namespace
 {

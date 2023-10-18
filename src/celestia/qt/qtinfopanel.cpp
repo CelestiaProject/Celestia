@@ -38,8 +38,9 @@
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 
-
 using celestia::util::GetLogger;
+
+namespace astro = celestia::astro;
 
 namespace
 {
@@ -272,13 +273,13 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     body->getLifespan(startTime, endTime);
 
     if (startTime > -1.0e9)
-        stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime).toCStr()) << "<br>\n";
+        stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(QString::fromStdString(astro::TDBtoUTC(startTime).toString())) << "<br>\n";
 
     if (endTime < 1.0e9)
-        stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime).toCStr()) << "<br>\n";
+        stream << "<br>" << QString(_("<b>End:</b> %1")).arg(QString::fromStdString(astro::TDBtoUTC(endTime).toString())) << "<br>\n";
 
     stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-    stream << QString(_("Osculating elements for %1")).arg(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
+    stream << QString(_("Osculating elements for %1")).arg(QString::fromStdString(astro::TDBtoUTC(t).toString())) << "<br>\n";
     stream << "<br>\n";
 
     if (orbitalPeriod > 0.0)

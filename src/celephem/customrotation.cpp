@@ -28,6 +28,7 @@
 #include "rotation.h"
 
 using namespace std::string_view_literals;
+
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
 using std::strncmp;

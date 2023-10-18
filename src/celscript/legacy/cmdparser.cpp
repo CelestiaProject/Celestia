@@ -509,7 +509,7 @@ ParseResult parseTimeCommand(const Hash& paramList, const ScriptMaps&)
         if (utc == nullptr)
             return makeError("Missing either time or utc parameter to time");
 
-        astro::Date date = astro::Date(0.0);
+        astro::Date date(0.0);
         std::sscanf(utc->c_str(), "%d-%d-%dT%d:%d:%lf",
                     &date.year, &date.month, &date.day,
                     &date.hour, &date.minute, &date.seconds);

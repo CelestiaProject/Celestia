@@ -82,6 +82,8 @@ using namespace celestia::util;
 using namespace std;
 using namespace celestia::win32;
 
+namespace astro = celestia::astro;
+
 typedef pair<int,string> IntStrPair;
 typedef vector<IntStrPair> IntStrPairVec;
 

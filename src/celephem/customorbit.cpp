@@ -29,6 +29,7 @@
 #include "vsop87.h"
 
 using namespace std::string_view_literals;
+
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
 using std::strncmp;
@@ -205,7 +206,7 @@ PlanetOrbitMixin::computePlanetCoords(int p, double map, double da, double dhl, 
     if (clo < 0)
         eclLong += celestia::numbers::pi;
     eclLong = celmath::pfmod(eclLong, TWOPI);
-    distance *= KM_PER_AU<double>;
+    distance *= astro::KM_PER_AU<double>;
 }
 
 
@@ -599,7 +600,7 @@ class EarthOrbit : public CachingOrbit
 
         eclLong = nu+celmath::degToRad(ls-ms+dl) + celestia::numbers::pi;
         eclLong = celmath::pfmod(eclLong, TWOPI);
-        distance = KM_PER_AU<double> * (1.0000002*(1.0-s*std::cos(ea))+dr);
+        distance = astro::KM_PER_AU<double> * (1.0000002*(1.0-s*std::cos(ea))+dr);
 
         // Correction for internal coordinate system
         eclLong += celestia::numbers::pi;
@@ -1463,7 +1464,7 @@ class DeimosOrbit : public CachingOrbit
         double d = jd - 2441266.5;  // days since 11 Nov 1971
         double D = d / 365.25;      // years
 
-        double a = 1.56828e-4 * KM_PER_AU;
+        double a = 1.56828e-4 * astro::KM_PER_AU;
         double n = 285.161888;
         double e = 0.0004;
         double gamma = celmath::degToRad(1.79);

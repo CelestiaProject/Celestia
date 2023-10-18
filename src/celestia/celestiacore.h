@@ -44,9 +44,7 @@
 #include <celscript/common/scriptmaps.h>
 
 class Url;
-// class CelestiaWatcher;
 class CelestiaCore;
-// class astro::Date;
 class Console;
 
 namespace celestia
@@ -310,8 +308,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setHudDetail(int);
     Color getTextColor();
     void setTextColor(Color);
-    astro::Date::Format getDateFormat() const;
-    void setDateFormat(astro::Date::Format format);
+    celestia::astro::Date::Format getDateFormat() const;
+    void setDateFormat(celestia::astro::Date::Format format);
     int getOverlayElements() const;
     void setOverlayElements(int);
 
@@ -494,7 +492,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int typedTextCompletionIdx{ -1 };
     int textEnterMode{ KbNormal };
     int hudDetail{ 2 }; // def 1
-    astro::Date::Format dateFormat{ astro::Date::Locale };
+    celestia::astro::Date::Format dateFormat{ celestia::astro::Date::Locale };
     int dateStrWidth{ 0 };
     int overlayElements{ ShowTime | ShowVelocity | ShowSelection | ShowFrame };
     bool wireframe{ false };
@@ -611,7 +609,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::ofstream m_logfile;
     teestream m_tee;
 
-    std::vector<astro::LeapSecondRecord> leapSeconds;
+    std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
 
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);

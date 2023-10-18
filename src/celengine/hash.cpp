@@ -15,8 +15,8 @@
 #include "hash.h"
 #include "value.h"
 
+namespace astro = celestia::astro;
 namespace celutil = celestia::util;
-
 
 // Define these here: at declaration the vector member contains an incomplete type
 AssociativeArray::~AssociativeArray() = default;

@@ -19,6 +19,8 @@
 #include "dialog-time.h"
 #include "common.h"
 
+namespace astro = celestia::astro;
+
 /* Labels for TimeZone dropdown */
 static const char* timeOptions[] = { "UTC", "Local", NULL };
 

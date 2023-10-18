@@ -30,6 +30,7 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
+namespace astro = celestia::astro;
 
 Body::Body(PlanetarySystem* _system, const std::string& _name) :
     system(_system),

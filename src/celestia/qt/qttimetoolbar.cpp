@@ -23,6 +23,7 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
+namespace astro = celestia::astro;
 
 TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
                          const QString& title,

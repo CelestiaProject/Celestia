@@ -17,6 +17,7 @@
 #include "render.h"
 #include "dsorenderer.h"
 
+namespace astro = celestia::astro;
 
 namespace
 {

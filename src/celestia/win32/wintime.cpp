@@ -21,6 +21,8 @@
 
 using namespace std;
 
+namespace astro = celestia::astro;
+
 class SetTimeDialog
 {
 public:

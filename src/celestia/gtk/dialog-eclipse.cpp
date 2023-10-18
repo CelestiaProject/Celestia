@@ -26,6 +26,8 @@ using namespace Eigen;
 using namespace celmath;
 using namespace std;
 
+namespace astro = celestia::astro;
+
 /* Definitions: Callbacks */
 static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button);
 static void showCalPopup(GtkToggleButton *button, EclipseData *ed);

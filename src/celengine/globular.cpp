@@ -25,6 +25,8 @@
 #include <celutil/gettext.h>
 #include "globular.h"
 
+namespace astro = celestia::astro;
+
 namespace
 {
 
@@ -100,8 +102,11 @@ bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
     if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())
         detail = *detailVal;
 
-    if (auto coreRadius = params->getAngle<float>("CoreRadius", 1.0 / MINUTES_PER_DEG); coreRadius.has_value())
+    if (auto coreRadius = params->getAngle<float>("CoreRadius", 1.0 / astro::MINUTES_PER_DEG);
+        coreRadius.has_value())
+    {
         r_c = *coreRadius;
+    }
 
     if (auto king = params->getNumber<float>("KingConcentration"); king.has_value())
         c = *king;

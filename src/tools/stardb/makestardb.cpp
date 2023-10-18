@@ -20,6 +20,7 @@
 
 using namespace std;
 
+namespace astro = celestia::astro;
 
 static string inputFilename;
 static string outputFilename;

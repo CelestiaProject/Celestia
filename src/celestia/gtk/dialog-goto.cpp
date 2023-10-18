@@ -22,6 +22,7 @@
 using namespace Eigen;
 using namespace celmath;
 
+namespace astro = celestia::astro;
 
 /* Declarations: Callbacks */
 static int changeGotoUnits(GtkButton* w, gpointer choice);
