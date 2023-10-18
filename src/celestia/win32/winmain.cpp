@@ -3697,6 +3697,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         //Associate some menu items with bitmap resources
         odAppMenu.SetItemImage(appInstance, ID_FILE_OPENSCRIPT, IDB_SCRIPT);
+        odAppMenu.SetItemImage(appInstance, ID_FILE_RUNDEMO, IDB_SCRIPT);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREMOVIE, IDB_CAMCORDER);
         odAppMenu.SetItemImage(appInstance, ID_FILE_EXIT, IDB_EXIT);
@@ -3704,7 +3705,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         odAppMenu.SetItemImage(appInstance, ID_TIME_FREEZE, IDB_STOP);
         odAppMenu.SetItemImage(appInstance, ID_RENDER_VIEWOPTIONS, IDB_SUNGLASSES);
         odAppMenu.SetItemImage(appInstance, ID_RENDER_LOCATIONS, IDB_GLOBE);
-        odAppMenu.SetItemImage(appInstance, ID_HELP_RUNDEMO, IDB_SCRIPT);
         odAppMenu.SetItemImage(appInstance, ID_HELP_CONTROLS, IDB_CONFIG);
         odAppMenu.SetItemImage(appInstance, ID_HELP_ABOUT, IDB_ABOUT);
         odAppMenu.SetItemImage(appInstance, ID_BOOKMARKS_ADDBOOKMARK, IDB_BOOKMARK_ADD);
@@ -4321,10 +4321,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_BOOKMARKS_ORGANIZE:
             DialogBox(hRes, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, (DLGPROC)OrganizeBookmarksProc);
-            break;
-
-        case ID_HELP_RUNDEMO:
-            appCore->charEntered('D');
             break;
 
         case ID_HELP_GUIDE:
