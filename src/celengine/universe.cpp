@@ -33,7 +33,7 @@
 #include "render.h"
 #include "timelinephase.h"
 
-namespace celutil = celestia::util;
+namespace util = celestia::util;
 
 namespace
 {
@@ -1085,7 +1085,7 @@ Universe::findObjectInContext(const Selection& sel,
 //      to us to search.
 Selection
 Universe::find(std::string_view s,
-               celutil::array_view<const Selection> contexts,
+               util::array_view<const Selection> contexts,
                bool i18n) const
 {
     if (starCatalog != nullptr)
@@ -1127,7 +1127,7 @@ Universe::find(std::string_view s,
 // in which the user is currently located.
 Selection
 Universe::findPath(std::string_view s,
-                   celutil::array_view<const Selection> contexts,
+                   util::array_view<const Selection> contexts,
                    bool i18n) const
 {
     std::string_view::size_type pos = s.find('/', 0);
@@ -1161,7 +1161,7 @@ Universe::findPath(std::string_view s,
 void
 Universe::getCompletion(std::vector<std::string>& completion,
                         std::string_view s,
-                        celutil::array_view<const Selection> contexts,
+                        util::array_view<const Selection> contexts,
                         bool withLocations) const
 {
     // Solar bodies first:
@@ -1194,7 +1194,7 @@ Universe::getCompletion(std::vector<std::string>& completion,
 void
 Universe::getCompletionPath(std::vector<std::string>& completion,
                             std::string_view s,
-                            celutil::array_view<const Selection> contexts,
+                            util::array_view<const Selection> contexts,
                             bool withLocations) const
 {
     std::string_view::size_type pos = s.rfind('/', s.length());

@@ -18,14 +18,14 @@
 using namespace std;
 using namespace Eigen;
 
-namespace celutil = celestia::util;
+namespace util = celestia::util;
 
 int vector_new(lua_State* l, const Vector3d& v)
 {
     CelxLua celx(l);
 
-    constexpr std::size_t size = celutil::aligned_sizeof<Vector3d>();
-    auto v3 = celutil::aligned_addr<Vector3d>(lua_newuserdata(l, size));
+    constexpr std::size_t size = util::aligned_sizeof<Vector3d>();
+    auto v3 = util::aligned_addr<Vector3d>(lua_newuserdata(l, size));
     *v3 = v;
     celx.setClass(Celx_Vec3);
 
@@ -35,7 +35,7 @@ int vector_new(lua_State* l, const Vector3d& v)
 Vector3d* to_vector(lua_State* l, int index)
 {
     CelxLua celx(l);
-    return celutil::aligned_addr<Vector3d>(celx.checkUserData(index, Celx_Vec3));
+    return util::aligned_addr<Vector3d>(celx.checkUserData(index, Celx_Vec3));
 }
 
 static Vector3d* this_vector(lua_State* l)

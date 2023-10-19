@@ -6,7 +6,7 @@
 
 #include <doctest.h>
 
-namespace celutil = celestia::util;
+namespace util = celestia::util;
 
 namespace
 {
@@ -83,7 +83,7 @@ TEST_SUITE_BEGIN("ArrayVector");
 
 TEST_CASE("ArrayVector constructor")
 {
-    celutil::ArrayVector<int, 3> vec;
+    util::ArrayVector<int, 3> vec;
     REQUIRE(vec.max_size() == 3);
     REQUIRE(vec.capacity() == 3);
     REQUIRE(vec.size() == 0);
@@ -96,7 +96,7 @@ TEST_CASE("ArrayVector constructor")
 
 TEST_CASE("ArrayVector try_push_back")
 {
-    celutil::ArrayVector<int, 3> vec;
+    util::ArrayVector<int, 3> vec;
     REQUIRE(vec.try_push_back(2));
     REQUIRE(vec.size() == 1);
     REQUIRE(!vec.empty());
@@ -123,7 +123,7 @@ TEST_CASE("ArrayVector try_push_back")
 
 TEST_CASE("ArrayVector modify value")
 {
-    celutil::ArrayVector<int, 3> vec;
+    util::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
     vec.try_push_back(3);
 
@@ -135,7 +135,7 @@ TEST_CASE("ArrayVector modify value")
 
 TEST_CASE("ArrayVector forward iterators")
 {
-    celutil::ArrayVector<int, 3> vec;
+    util::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
     vec.try_push_back(3);
 
@@ -148,7 +148,7 @@ TEST_CASE("ArrayVector forward iterators")
 
 TEST_CASE("ArrayVector reverse iterators")
 {
-    celutil::ArrayVector<int, 3> vec;
+    util::ArrayVector<int, 3> vec;
     vec.try_push_back(2);
     vec.try_push_back(3);
 
@@ -161,7 +161,7 @@ TEST_CASE("ArrayVector reverse iterators")
 
 TEST_CASE("ArrayVector clear")
 {
-    celutil::ArrayVector<InstanceTracker, 5> vec;
+    util::ArrayVector<InstanceTracker, 5> vec;
     InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
@@ -176,7 +176,7 @@ TEST_CASE("ArrayVector clear")
 
 TEST_CASE("ArrayVector pop_back")
 {
-    celutil::ArrayVector<InstanceTracker, 3> vec;
+    util::ArrayVector<InstanceTracker, 3> vec;
     InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
@@ -190,7 +190,7 @@ TEST_CASE("ArrayVector pop_back")
 
 TEST_CASE("ArrayVector resize")
 {
-    celutil::ArrayVector<InstanceTracker, 3> vec;
+    util::ArrayVector<InstanceTracker, 3> vec;
     InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker(1));
     vec.try_push_back(InstanceTracker(1));
@@ -204,7 +204,7 @@ TEST_CASE("ArrayVector resize")
 
 TEST_CASE("ArrayVector erase")
 {
-    celutil::ArrayVector<InstanceTracker, 5> vec;
+    util::ArrayVector<InstanceTracker, 5> vec;
     InstanceTracker::counter = 0;
     vec.try_push_back(InstanceTracker{ 2 });
     vec.try_push_back(InstanceTracker{ 3 });
@@ -300,10 +300,10 @@ TEST_CASE("ArrayVector erase")
 
 TEST_CASE("ArrayVector member swap")
 {
-    celutil::ArrayVector<int, 3> a;
+    util::ArrayVector<int, 3> a;
     a.try_push_back(2);
     a.try_push_back(3);
-    celutil::ArrayVector<int, 3> b;
+    util::ArrayVector<int, 3> b;
     b.try_push_back(1);
     b.try_push_back(4);
     b.try_push_back(9);
@@ -322,10 +322,10 @@ TEST_CASE("ArrayVector member swap")
 
 TEST_CASE("ArrayVector free function swap")
 {
-    celutil::ArrayVector<int, 3> a;
+    util::ArrayVector<int, 3> a;
     a.try_push_back(2);
     a.try_push_back(3);
-    celutil::ArrayVector<int, 3> b;
+    util::ArrayVector<int, 3> b;
     b.try_push_back(1);
     b.try_push_back(4);
     b.try_push_back(9);
@@ -344,15 +344,15 @@ TEST_CASE("ArrayVector free function swap")
 
 TEST_CASE("ArrayVector operators")
 {
-    celutil::ArrayVector<int, 3> a1;
+    util::ArrayVector<int, 3> a1;
     a1.try_push_back(2);
     a1.try_push_back(3);
 
-    celutil::ArrayVector<int, 5> a2;
+    util::ArrayVector<int, 5> a2;
     a2.try_push_back(2);
     a2.try_push_back(3);
 
-    celutil::ArrayVector<int, 3> b;
+    util::ArrayVector<int, 3> b;
     b.try_push_back(5);
 
     REQUIRE(a1 == a2);

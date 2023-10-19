@@ -40,7 +40,7 @@ using celestia::ephem::TrajectoryPrecision;
 using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
-namespace celephem = celestia::ephem;
+namespace ephem = celestia::ephem;
 
 /**
  * Returns the default units scale for orbits.
@@ -696,7 +696,7 @@ CreateOrbit(const Selection& centralObject,
 {
     if (const std::string* customOrbitName = planetData->getString("CustomOrbit"); customOrbitName != nullptr)
     {
-        if (auto orbit = celephem::GetCustomOrbit(*customOrbitName); orbit != nullptr)
+        if (auto orbit = ephem::GetCustomOrbit(*customOrbitName); orbit != nullptr)
             return orbit.release();
         GetLogger()->error("Could not find custom orbit named '{}'\n", *customOrbitName);
     }
