@@ -18,8 +18,8 @@
 #include <celutil/logger.h>
 #include "image.h"
 
-namespace celutil = celestia::util;
-using celestia::util::GetLogger;
+namespace util = celestia::util;
+using util::GetLogger;
 
 namespace
 {
@@ -54,30 +54,30 @@ Image* LoadBMPImage(std::istream& in)
     BMPFileHeader fileHeader;
     BMPImageHeader imageHeader;
 
-    if (!celutil::readLE<unsigned char>(in, fileHeader.magic[0])
+    if (!util::readLE<unsigned char>(in, fileHeader.magic[0])
         || fileHeader.magic[0] != 'B'
-        || !celutil::readLE<unsigned char>(in, fileHeader.magic[1])
+        || !util::readLE<unsigned char>(in, fileHeader.magic[1])
         || fileHeader.magic[1] != 'M'
-        || !celutil::readLE<std::uint32_t>(in, fileHeader.size)
-        || !celutil::readLE<std::uint32_t>(in, fileHeader.reserved)
-        || !celutil::readLE<std::uint32_t>(in, fileHeader.offset)
-        || !celutil::readLE<std::uint32_t>(in, imageHeader.size)
-        || !celutil::readLE<std::int32_t>(in, imageHeader.width)
+        || !util::readLE<std::uint32_t>(in, fileHeader.size)
+        || !util::readLE<std::uint32_t>(in, fileHeader.reserved)
+        || !util::readLE<std::uint32_t>(in, fileHeader.offset)
+        || !util::readLE<std::uint32_t>(in, imageHeader.size)
+        || !util::readLE<std::int32_t>(in, imageHeader.width)
         || imageHeader.width <= 0
-        || !celutil::readLE<std::int32_t>(in, imageHeader.height)
+        || !util::readLE<std::int32_t>(in, imageHeader.height)
         || imageHeader.height <= 0
-        || !celutil::readLE<std::uint16_t>(in, imageHeader.planes)
-        || !celutil::readLE<std::uint16_t>(in, imageHeader.bpp)
+        || !util::readLE<std::uint16_t>(in, imageHeader.planes)
+        || !util::readLE<std::uint16_t>(in, imageHeader.bpp)
         // We don't handle 1-, 2-, or 4-bpp images
         || (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
-        || !celutil::readLE<std::uint32_t>(in, imageHeader.compression)
+        || !util::readLE<std::uint32_t>(in, imageHeader.compression)
         // We currently don't support compressed BMPs
         || imageHeader.compression != 0
-        || !celutil::readLE<std::uint32_t>(in, imageHeader.imageSize)
-        || !celutil::readLE<std::int32_t>(in, imageHeader.widthPPM)
-        || !celutil::readLE<std::int32_t>(in, imageHeader.heightPPM)
-        || !celutil::readLE<std::uint32_t>(in, imageHeader.colorsUsed)
-        || !celutil::readLE<std::uint32_t>(in, imageHeader.colorsImportant))
+        || !util::readLE<std::uint32_t>(in, imageHeader.imageSize)
+        || !util::readLE<std::int32_t>(in, imageHeader.widthPPM)
+        || !util::readLE<std::int32_t>(in, imageHeader.heightPPM)
+        || !util::readLE<std::uint32_t>(in, imageHeader.colorsUsed)
+        || !util::readLE<std::uint32_t>(in, imageHeader.colorsImportant))
     {
         return nullptr;
     }

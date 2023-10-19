@@ -32,7 +32,7 @@
 
 using namespace std::string_view_literals;
 
-namespace celutil = celestia::util;
+namespace util = celestia::util;
 
 
 namespace cmod
@@ -1235,7 +1235,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
 bool readToken(std::istream& in, CmodToken& value)
 {
     std::int16_t num;
-    if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
+    if (!util::readLE<std::int16_t>(in, num)) { return false; }
     value = static_cast<CmodToken>(num);
     return true;
 }
@@ -1244,7 +1244,7 @@ bool readToken(std::istream& in, CmodToken& value)
 bool readType(std::istream& in, CmodType& value)
 {
     std::int16_t num;
-    if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
+    if (!util::readLE<std::int16_t>(in, num)) { return false; }
     value = static_cast<CmodType>(num);
     return true;
 }
@@ -1255,7 +1255,7 @@ bool readTypeFloat1(std::istream& in, float& f)
     CmodType cmodType;
     return readType(in, cmodType)
         && cmodType == CmodType::Float1
-        && celutil::readLE<float>(in, f);
+        && util::readLE<float>(in, f);
 }
 
 
@@ -1265,9 +1265,9 @@ bool readTypeColor(std::istream& in, Color& c)
     float r, g, b;
     if (!readType(in, cmodType)
         || cmodType != CmodType::Color
-        || !celutil::readLE<float>(in, r)
-        || !celutil::readLE<float>(in, g)
-        || !celutil::readLE<float>(in, b))
+        || !util::readLE<float>(in, r)
+        || !util::readLE<float>(in, g)
+        || !util::readLE<float>(in, b))
     {
         return false;
     }
@@ -1283,7 +1283,7 @@ bool readTypeString(std::istream& in, std::string& s)
     uint16_t len;
     if (!readType(in, cmodType)
         || cmodType != CmodType::String
-        || !celutil::readLE<std::uint16_t>(in, len))
+        || !util::readLE<std::uint16_t>(in, len))
     {
         return false;
     }
@@ -1332,7 +1332,7 @@ bool ignoreValue(std::istream& in)
     case CmodType::String:
         {
             std::uint16_t len;
-            if (!celutil::readLE<std::uint16_t>(in, len)) { return false; }
+            if (!util::readLE<std::uint16_t>(in, len)) { return false; }
             size = len;
         }
         break;
@@ -1387,7 +1387,7 @@ BinaryModelLoader::load()
     bool seenMeshes = false;
     bool hasNormalMap = false;
 
-    celutil::GetLogger()->info("start loading\n");
+    util::GetLogger()->info("start loading\n");
 
     // Parse material and mesh definitions
     for (;;)
@@ -1418,7 +1418,7 @@ BinaryModelLoader::load()
                 hasNormalMap = true;
 
 
-            celutil::GetLogger()->info("has normal map: {}\n", hasNormalMap);
+            util::GetLogger()->info("has normal map: {}\n", hasNormalMap);
 
             model->addMaterial(std::move(material));
         }
@@ -1432,7 +1432,7 @@ BinaryModelLoader::load()
                 return nullptr;
             }
 
-            celutil::GetLogger()->info("has tangents: {}\n", hasTangents(mesh));
+            util::GetLogger()->info("has tangents: {}\n", hasTangents(mesh));
 
             if (hasNormalMap && !hasTangents(mesh))
                 model->addMesh(GenerateTangents(mesh));
@@ -1513,7 +1513,7 @@ BinaryModelLoader::loadMaterial(Material& material)
         case CmodToken::Blend:
             {
                 std::int16_t blendMode;
-                if (!celutil::readLE<std::int16_t>(*in, blendMode)
+                if (!util::readLE<std::int16_t>(*in, blendMode)
                     || blendMode < 0 || blendMode >= static_cast<std::int16_t>(BlendMode::BlendMax))
                 {
                     reportError("Bad blend mode");
@@ -1526,7 +1526,7 @@ BinaryModelLoader::loadMaterial(Material& material)
         case CmodToken::Texture:
             {
                 std::int16_t texType;
-                if (!celutil::readLE<std::int16_t>(*in, texType)
+                if (!util::readLE<std::int16_t>(*in, texType)
                     || texType < 0 || texType >= static_cast<std::int16_t>(TextureSemantic::TextureSemanticMax))
                 {
                     reportError("Bad texture type");
@@ -1583,7 +1583,7 @@ BinaryModelLoader::loadVertexDescription()
     for (;;)
     {
         std::int16_t tok;
-        if (!celutil::readLE<std::int16_t>(*in, tok))
+        if (!util::readLE<std::int16_t>(*in, tok))
         {
             reportError("Could not read token");
             return {};
@@ -1596,7 +1596,7 @@ BinaryModelLoader::loadVertexDescription()
         if (tok >= 0 && tok < static_cast<std::int16_t>(VertexAttributeSemantic::SemanticMax))
         {
             std::int16_t vfmt;
-            if (!celutil::readLE<std::int16_t>(*in, vfmt)
+            if (!util::readLE<std::int16_t>(*in, vfmt)
                 || vfmt < 0 || vfmt >= static_cast<std::int16_t>(VertexAttributeFormat::FormatMax))
             {
                 reportError("Invalid vertex attribute type");
@@ -1649,7 +1649,7 @@ BinaryModelLoader::loadMesh(Mesh& mesh)
     for (;;)
     {
         std::int16_t tok;
-        if (!celutil::readLE<std::int16_t>(*in, tok))
+        if (!util::readLE<std::int16_t>(*in, tok))
         {
             reportError("Failed to read token type");
             return false;
@@ -1667,8 +1667,8 @@ BinaryModelLoader::loadMesh(Mesh& mesh)
 
         PrimitiveGroupType type = static_cast<PrimitiveGroupType>(tok);
         std::uint32_t materialIndex, indexCount;
-        if (!celutil::readLE<std::uint32_t>(*in, materialIndex)
-            || !celutil::readLE<std::uint32_t>(*in, indexCount))
+        if (!util::readLE<std::uint32_t>(*in, materialIndex)
+            || !util::readLE<std::uint32_t>(*in, indexCount))
         {
             reportError("Could not read primitive indices");
             return false;
@@ -1680,7 +1680,7 @@ BinaryModelLoader::loadMesh(Mesh& mesh)
         for (unsigned int i = 0; i < indexCount; i++)
         {
             std::uint32_t index;
-            if (!celutil::readLE<std::uint32_t>(*in, index) || index >= vertexCount)
+            if (!util::readLE<std::uint32_t>(*in, index) || index >= vertexCount)
             {
                 reportError("Index out of range");
                 return false;
@@ -1706,7 +1706,7 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
         return {};
     }
 
-    if (!celutil::readLE<std::uint32_t>(*in, vertexCount))
+    if (!util::readLE<std::uint32_t>(*in, vertexCount))
     {
         reportError("Vertex count expected");
         return {};
@@ -1741,7 +1741,7 @@ BinaryModelLoader::loadAttribute(const VertexAttribute& attr,
     destination += attr.offsetWords;
     if (attr.format == VertexAttributeFormat::UByte4)
     {
-        return celutil::readNative<std::uint32_t>(*in, *destination);
+        return util::readNative<std::uint32_t>(*in, *destination);
     }
 
     std::array<float, 4> f;
@@ -1766,7 +1766,7 @@ BinaryModelLoader::loadAttribute(const VertexAttribute& attr,
 
     for (std::size_t i = 0; i < readCount; ++i)
     {
-        if (!celutil::readLE<float>(*in, f[i])) { return false; }
+        if (!util::readLE<float>(*in, f[i])) { return false; }
     }
 
     std::memcpy(destination, f.data(), sizeof(float) * readCount);
@@ -1778,28 +1778,28 @@ BinaryModelLoader::loadAttribute(const VertexAttribute& attr,
 
 bool writeToken(std::ostream& out, CmodToken val)
 {
-    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
+    return util::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
 }
 
 
 bool writeType(std::ostream& out, CmodType val)
 {
-    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
+    return util::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
 }
 
 
 bool writeTypeFloat1(std::ostream& out, float f)
 {
-    return writeType(out, CmodType::Float1) && celutil::writeLE<float>(out, f);
+    return writeType(out, CmodType::Float1) && util::writeLE<float>(out, f);
 }
 
 
 bool writeTypeColor(std::ostream& out, const Color& c)
 {
     return writeType(out, CmodType::Color)
-        && celutil::writeLE<float>(out, c.red())
-        && celutil::writeLE<float>(out, c.green())
-        && celutil::writeLE<float>(out, c.blue());
+        && util::writeLE<float>(out, c.red())
+        && util::writeLE<float>(out, c.green())
+        && util::writeLE<float>(out, c.blue());
 }
 
 
@@ -1807,7 +1807,7 @@ bool writeTypeString(std::ostream& out, const std::string& s)
 {
     return s.length() <= INT16_MAX
         && writeType(out, CmodType::String)
-        && celutil::writeLE<std::int16_t>(out, s.length())
+        && util::writeLE<std::int16_t>(out, s.length())
         && out.write(s.c_str(), s.length()).good();
 }
 
@@ -1860,16 +1860,16 @@ BinaryModelWriter::write(const Model& model)
 bool
 BinaryModelWriter::writeGroup(const PrimitiveGroup& group)
 {
-    if (!celutil::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(group.prim))
-        || !celutil::writeLE<std::uint32_t>(*out, group.materialIndex)
-        || !celutil::writeLE<std::uint32_t>(*out, static_cast<std::uint32_t>(group.indices.size())))
+    if (!util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(group.prim))
+        || !util::writeLE<std::uint32_t>(*out, group.materialIndex)
+        || !util::writeLE<std::uint32_t>(*out, static_cast<std::uint32_t>(group.indices.size())))
     {
         return false;
     }
 
     for (auto index : group.indices)
     {
-        if (!celutil::writeLE<std::uint32_t>(*out, index)) { return false; }
+        if (!util::writeLE<std::uint32_t>(*out, index)) { return false; }
     }
 
     return true;
@@ -1904,7 +1904,7 @@ BinaryModelWriter::writeVertices(const VWord* vertexData,
                                  unsigned int strideWords,
                                  const VertexDescription& desc)
 {
-    if (!writeToken(*out, CmodToken::Vertices) || !celutil::writeLE<std::uint32_t>(*out, nVertices))
+    if (!writeToken(*out, CmodToken::Vertices) || !util::writeLE<std::uint32_t>(*out, nVertices))
     {
         return false;
     }
@@ -1921,28 +1921,28 @@ BinaryModelWriter::writeVertices(const VWord* vertexData,
             {
             case VertexAttributeFormat::Float1:
                 std::memcpy(fdata.data(), cdata, sizeof(float));
-                result = celutil::writeLE<float>(*out, fdata[0]);
+                result = util::writeLE<float>(*out, fdata[0]);
                 break;
             case VertexAttributeFormat::Float2:
                 std::memcpy(fdata.data(), cdata, sizeof(float) * 2);
-                result = celutil::writeLE<float>(*out, fdata[0])
-                    && celutil::writeLE<float>(*out, fdata[1]);
+                result = util::writeLE<float>(*out, fdata[0])
+                    && util::writeLE<float>(*out, fdata[1]);
                 break;
             case VertexAttributeFormat::Float3:
                 std::memcpy(fdata.data(), cdata, sizeof(float) * 3);
-                result = celutil::writeLE<float>(*out, fdata[0])
-                    && celutil::writeLE<float>(*out, fdata[1])
-                    && celutil::writeLE<float>(*out, fdata[2]);
+                result = util::writeLE<float>(*out, fdata[0])
+                    && util::writeLE<float>(*out, fdata[1])
+                    && util::writeLE<float>(*out, fdata[2]);
                 break;
             case VertexAttributeFormat::Float4:
                 std::memcpy(fdata.data(), cdata, sizeof(float) * 4);
-                result = celutil::writeLE<float>(*out, fdata[0])
-                    && celutil::writeLE<float>(*out, fdata[1])
-                    && celutil::writeLE<float>(*out, fdata[2])
-                    && celutil::writeLE<float>(*out, fdata[3]);
+                result = util::writeLE<float>(*out, fdata[0])
+                    && util::writeLE<float>(*out, fdata[1])
+                    && util::writeLE<float>(*out, fdata[2])
+                    && util::writeLE<float>(*out, fdata[3]);
                 break;
             case VertexAttributeFormat::UByte4:
-                result = celutil::writeNative<std::uint32_t>(*out, *cdata);
+                result = util::writeNative<std::uint32_t>(*out, *cdata);
                 break;
             default:
                 assert(0);
@@ -1965,8 +1965,8 @@ BinaryModelWriter::writeVertexDescription(const VertexDescription& desc)
 
     for (const auto& attr : desc.attributes)
     {
-        if (!celutil::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(attr.semantic))
-            || !celutil::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(attr.format)))
+        if (!util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(attr.semantic))
+            || !util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(attr.format)))
         {
             return false;
         }
@@ -2013,7 +2013,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
 
     if (material.blend != DefaultBlend
         && (!writeToken(*out, CmodToken::Blend)
-            || !celutil::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(material.blend))))
+            || !util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(material.blend))))
     {
         return false;
     }
@@ -2025,7 +2025,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
             fs::path texSource = getSource(material.maps[i]);
             if (!texSource.empty()
                 && (!writeToken(*out, CmodToken::Texture)
-                    || !celutil::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(i))
+                    || !util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(i))
                     || !writeTypeString(*out, texSource.string())))
             {
                 return false;
@@ -2043,7 +2043,7 @@ openModel(std::istream& in, HandleGetter&& getHandle)
     std::array<char, CEL_MODEL_HEADER_LENGTH> header;
     if (!in.read(header.data(), header.size()).good())
     {
-        celutil::GetLogger()->error("Could not read model header\n");
+        util::GetLogger()->error("Could not read model header\n");
         return nullptr;
     }
 
@@ -2058,7 +2058,7 @@ openModel(std::istream& in, HandleGetter&& getHandle)
     }
     else
     {
-        celutil::GetLogger()->error("Model file has invalid header.\n");
+        util::GetLogger()->error("Model file has invalid header.\n");
         return nullptr;
     }
 }
@@ -2077,7 +2077,7 @@ LoadModel(std::istream& in, HandleGetter handleGetter)
     std::unique_ptr<Model> model = loader->load();
     if (model == nullptr)
     {
-        celutil::GetLogger()->error("Error in model file: {}\n", loader->getErrorMessage());
+        util::GetLogger()->error("Error in model file: {}\n", loader->getErrorMessage());
     }
 
     return model;

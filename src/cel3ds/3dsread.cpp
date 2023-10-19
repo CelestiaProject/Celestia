@@ -26,8 +26,8 @@
 #include <celutil/logger.h>
 #include "3dsmodel.h"
 
-namespace celutil = celestia::util;
-using celestia::util::GetLogger;
+namespace util = celestia::util;
+using util::GetLogger;
 
 namespace
 {
@@ -105,7 +105,7 @@ namespace
 bool readChunkType(std::istream& in, M3DChunkType& chunkType)
 {
     std::uint16_t value;
-    if (!celutil::readLE<std::uint16_t>(in, value)) { return false; }
+    if (!util::readLE<std::uint16_t>(in, value)) { return false; }
     chunkType = static_cast<M3DChunkType>(value);
     return true;
 }
@@ -185,7 +185,7 @@ bool readChunks(std::istream& in, std::int32_t contentSize, T& obj, ProcessFunc 
         GetLogger()->debug("Found chunk type {}\n", chunkType);
 
         std::int32_t chunkSize;
-        if (!celutil::readLE<std::int32_t>(in, chunkSize))
+        if (!util::readLE<std::int32_t>(in, chunkSize))
         {
             GetLogger()->error("Failed to read chunk size\n", chunkType);
             return false;
@@ -224,7 +224,7 @@ bool readPointArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh&
     }
 
     std::uint16_t nPoints;
-    if (!celutil::readLE<std::uint16_t>(in, nPoints))
+    if (!util::readLE<std::uint16_t>(in, nPoints))
     {
         GetLogger()->error("Failed to read point array count\n");
         return false;
@@ -241,9 +241,9 @@ bool readPointArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh&
     for (std::int32_t i = 0; i < pointsCount; ++i)
     {
         Eigen::Vector3f vertex;
-        if (!celutil::readLE<float>(in, vertex.x())
-            || !celutil::readLE<float>(in, vertex.y())
-            || !celutil::readLE<float>(in, vertex.z()))
+        if (!util::readLE<float>(in, vertex.x())
+            || !util::readLE<float>(in, vertex.y())
+            || !util::readLE<float>(in, vertex.z()))
         {
             GetLogger()->error("Failed to read entry {} of point array\n", i);
             return false;
@@ -266,7 +266,7 @@ bool readTextureCoordArray(std::istream& in, std::int32_t contentSize, M3DTriang
     }
 
     std::uint16_t nTexCoords;
-    if (!celutil::readLE<std::uint16_t>(in, nTexCoords))
+    if (!util::readLE<std::uint16_t>(in, nTexCoords))
     {
         GetLogger()->error("Failed to read texture coord array count\n");
         return false;
@@ -283,8 +283,8 @@ bool readTextureCoordArray(std::istream& in, std::int32_t contentSize, M3DTriang
     for (std::int32_t i = 0; i < texCoordsCount; ++i)
     {
         Eigen::Vector2f texCoord;
-        if (!celutil::readLE<float>(in, texCoord.x())
-            || !celutil::readLE<float>(in, texCoord.y()))
+        if (!util::readLE<float>(in, texCoord.x())
+            || !util::readLE<float>(in, texCoord.y()))
         {
             GetLogger()->error("Failed to read entry {} of texture coord array\n", i);
             return false;
@@ -310,7 +310,7 @@ bool readMeshMaterialGroup(std::istream& in, std::int32_t contentSize, M3DTriang
     }
 
     std::uint16_t nFaces;
-    if (!celutil::readLE<std::uint16_t>(in, nFaces))
+    if (!util::readLE<std::uint16_t>(in, nFaces))
     {
         GetLogger()->error("Failed to read material group face array count\n");
         return false;
@@ -327,7 +327,7 @@ bool readMeshMaterialGroup(std::istream& in, std::int32_t contentSize, M3DTriang
     for (std::int32_t i = 0; i < faceCount; ++i)
     {
         std::uint16_t faceIndex;
-        if (!celutil::readLE(in, faceIndex))
+        if (!util::readLE(in, faceIndex))
         {
             GetLogger()->error("Failed to read entry {} of material group face array\n", i);
             return false;
@@ -354,7 +354,7 @@ bool readMeshSmoothGroup(std::istream& in, std::int32_t contentSize, M3DTriangle
     for (std::int32_t i = 0; i < faceCount; ++i)
     {
         std::uint32_t groups;
-        if (!celutil::readLE<std::uint32_t>(in, groups))
+        if (!util::readLE<std::uint32_t>(in, groups))
         {
             GetLogger()->error("Failed to read entry {} of smoothing group array\n", i);
             return false;
@@ -395,7 +395,7 @@ bool readFaceArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& 
     }
 
     std::uint16_t nFaces;
-    if (!celutil::readLE<std::uint16_t>(in, nFaces))
+    if (!util::readLE<std::uint16_t>(in, nFaces))
     {
         GetLogger()->error("Failed to read face array count\n");
         return false;
@@ -412,10 +412,10 @@ bool readFaceArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& 
     for (std::int32_t i = 0; i < faceCount; ++i)
     {
         std::uint16_t v0, v1, v2, flags;
-        if (!celutil::readLE<std::uint16_t>(in, v0)
-            || !celutil::readLE<std::uint16_t>(in, v1)
-            || !celutil::readLE<std::uint16_t>(in, v2)
-            || !celutil::readLE<std::uint16_t>(in, flags))
+        if (!util::readLE<std::uint16_t>(in, v0)
+            || !util::readLE<std::uint16_t>(in, v1)
+            || !util::readLE<std::uint16_t>(in, v2)
+            || !util::readLE<std::uint16_t>(in, flags))
         {
             GetLogger()->error("Failed to read entry {} of face array\n", i);
             return false;
@@ -445,7 +445,7 @@ bool readMeshMatrix(std::istream& in, std::int32_t contentSize, M3DTriangleMesh&
     float elements[12];
     for (std::size_t i = 0; i < 12; ++i)
     {
-        if (!celutil::readLE<float>(in, elements[i]))
+        if (!util::readLE<float>(in, elements[i]))
         {
             GetLogger()->error("Failed to read element {} of mesh matrix\n", i);
             return false;
@@ -537,9 +537,9 @@ bool readColorFloat(std::istream& in, std::int32_t contentSize, M3DColor& color)
         return skipTrailing(in, contentSize);
     }
 
-    if (!celutil::readLE<float>(in, color.red)
-        || !celutil::readLE<float>(in, color.green)
-        || !celutil::readLE<float>(in, color.blue))
+    if (!util::readLE<float>(in, color.red)
+        || !util::readLE<float>(in, color.green)
+        || !util::readLE<float>(in, color.blue))
     {
         GetLogger()->error("Error reading ColorFloat RGB values");
         return false;
@@ -578,7 +578,7 @@ bool readIntPercentage(std::istream& in, std::int32_t contentSize, float& percen
     }
 
     std::int16_t value;
-    if (!celutil::readLE<std::int16_t>(in, value))
+    if (!util::readLE<std::int16_t>(in, value))
     {
         GetLogger()->error("Error reading IntPercentage\n");
         return false;
@@ -598,7 +598,7 @@ bool readFloatPercentage(std::istream& in, std::int32_t contentSize, float& perc
         return skipTrailing(in, contentSize);
     }
 
-    if (!celutil::readLE<float>(in, percentage))
+    if (!util::readLE<float>(in, percentage))
     {
         GetLogger()->error("Error reading FloatPercentage\n");
         return false;
@@ -786,7 +786,7 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
     }
 
     std::int32_t chunkSize;
-    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < chunkHeaderSize)
+    if (!util::readLE<std::int32_t>(in, chunkSize) || chunkSize < chunkHeaderSize)
     {
         GetLogger()->error("Read3DSFile: Error reading 3DS file top level chunk size\n");
         return nullptr;

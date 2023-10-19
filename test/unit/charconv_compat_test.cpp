@@ -9,7 +9,7 @@
 
 #include <doctest.h>
 
-namespace celcompat = celestia::compat;
+namespace compat = celestia::compat;
 
 template<typename T>
 struct TestCase
@@ -80,7 +80,7 @@ TEST_CASE_TEMPLATE("Floating point general format: successful", TestType, float,
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::general);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::general);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(actual == example.expected);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
@@ -99,7 +99,7 @@ TEST_CASE_TEMPLATE("Floating point general format: negative zero", TestType, flo
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::general);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::general);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(actual == -0.0f);
         float signum = std::copysign(1.0f, actual);
@@ -128,7 +128,7 @@ TEST_CASE_TEMPLATE("Floating point general format: NaN", TestType, float, double
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::general);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::general);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(std::isnan(actual));
         auto length = static_cast<std::size_t>(result.ptr - example.source);
@@ -192,7 +192,7 @@ TEST_CASE_TEMPLATE("Floating point fixed format: successful", TestType, float, d
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::fixed);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::fixed);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(actual == example.expected);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
@@ -246,7 +246,7 @@ TEST_CASE_TEMPLATE("Floating point scientific format: successful", TestType, flo
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::scientific);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::scientific);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(actual == example.expected);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
@@ -273,7 +273,7 @@ TEST_CASE_TEMPLATE("Floating point scientific format: missing exponential", Test
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::scientific);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::scientific);
         REQUIRE(result.ec == std::errc::invalid_argument);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
         REQUIRE(length == 0);
@@ -293,7 +293,7 @@ TEST_CASE_TEMPLATE("Hexadecimal floating point", TestType, float, double, long d
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::hex);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::hex);
         REQUIRE(result.ec == std::errc{});
         REQUIRE(actual == example.expected);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
@@ -318,7 +318,7 @@ TEST_CASE_TEMPLATE("Floating point format failures", TestType, float, double, lo
     for (const auto& example : examples)
     {
         TestType actual;
-        auto result = celcompat::from_chars(example.source, example.source + example.size, actual, celcompat::chars_format::general);
+        auto result = compat::from_chars(example.source, example.source + example.size, actual, compat::chars_format::general);
         REQUIRE(result.ec == std::errc::invalid_argument);
         auto length = static_cast<std::size_t>(result.ptr - example.source);
         REQUIRE(length == example.length);

@@ -21,8 +21,6 @@
 #include "render.h"
 
 
-namespace celutil = celestia::util;
-
 Simulation::Simulation(Universe* _universe) :
     universe(_universe)
 {

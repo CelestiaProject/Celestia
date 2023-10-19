@@ -41,7 +41,6 @@ using celestia::util::GetLogger;
 using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
-namespace celutil = celestia::util;
 
 // Enable the below to switch back to parsing coordinates as float to match
 // legacy behaviour. This shouldn't be necessary since stars.dat stores
