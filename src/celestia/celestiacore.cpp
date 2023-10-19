@@ -188,6 +188,8 @@ bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondReco
         leapSeconds.push_back({seconds, jd});
     }
 
+    std::sort(leapSeconds.begin(), leapSeconds.end(), [](const auto& a, const auto& b) { return a.t < b.t; });
+
     astro::setLeapSeconds(leapSeconds);
     return true;
 }
