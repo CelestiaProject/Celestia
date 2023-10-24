@@ -14,6 +14,7 @@
 #include <Eigen/Geometry>
 #include <fmt/format.h>
 #include <celcompat/numbers.h>
+#include <celmath/geomutil.h>
 #include <celmath/intersect.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
@@ -99,8 +100,7 @@ PlanetographicGrid::render(Renderer* renderer,
     InitializeGeometry(*renderer);
 
     // Compatibility
-    Eigen::Quaterniond q(Eigen::AngleAxis(celestia::numbers::pi, Eigen::Vector3d::UnitY()));
-    q *= body.getEclipticToBodyFixed(tdb);
+    Eigen::Quaterniond q = celmath::YRot180<double> * body.getEclipticToBodyFixed(tdb);
     Eigen::Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or

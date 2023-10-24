@@ -1366,8 +1366,8 @@ class PhobosOrbit : public CachingOrbit
 
         // Orientation of the orbital plane with respect to the Laplacian plane
         Eigen::Matrix3d Rorbit = (celmath::YRotation(node) *
-                                 celmath::XRotation(celmath::degToRad(i)) *
-                                 celmath::YRotation(w)).toRotationMatrix();
+                                  celmath::XRotation(celmath::degToRad(i)) *
+                                  celmath::YRotation(w)).toRotationMatrix();
 
         // Rotate to the Earth's equatorial plane
         constexpr double N = celmath::degToRad(refplane_RA);

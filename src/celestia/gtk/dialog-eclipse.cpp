@@ -332,7 +332,7 @@ static gint eclipseGoto(GtkButton*, EclipseData* ed)
 
     double distance = target.radius() * 4.0;
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                                  (YRotation(-celestia::numbers::pi / 2) * XRotation(-celestia::numbers::pi / 2)), 2.5);
+                      (celmath::YRot90Conjugate<double> * celmath::XRot90Conjugate<double>), 2.5);
 
     return TRUE;
 }

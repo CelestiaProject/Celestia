@@ -182,9 +182,10 @@ SpiceRotation::computeSpin(double jd) const
         Eigen::Quaterniond q = Eigen::Quaterniond(Eigen::Map<Eigen::Matrix3d>(matrixData)).conjugate();
 
         // Transform into Celestia's coordinate system
-        static const Eigen::Quaterniond Rx90 = celmath::XRotation(celestia::numbers::pi / 2.0);
-        static const Eigen::Quaterniond Ry180 = celmath::YRotation(celestia::numbers::pi);
-        return Ry180 * Rx90.conjugate() * q.conjugate() * Rx90;
+        return celmath::YRot180<double> *
+               celmath::XRot90Conjugate<double> *
+               q.conjugate() *
+               celmath::XRot90<double>;
     }
 }
 

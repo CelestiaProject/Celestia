@@ -15,35 +15,85 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celcompat/numbers.h>
 #include "mathlib.h"
 
 namespace celmath
 {
 
+template<class T>
+const inline Eigen::Quaternion<T> XRot90{ celestia::numbers::sqrt2_v<T> * T{0.5},
+                                          celestia::numbers::sqrt2_v<T> * T{0.5},
+                                          T{0},
+                                          T{0} };
+
+template<class T>
+const inline Eigen::Quaternion<T> XRot180{ T{0}, T{1}, T{0}, T{0} };
+
+// Conjugate of 90 degree rotation = -90 degree rotation
+template<class T>
+const inline Eigen::Quaternion<T> XRot90Conjugate{ celestia::numbers::sqrt2_v<T> * T{0.5},
+                                                   -(celestia::numbers::sqrt2_v<T> * T{0.5}),
+                                                   T{0},
+                                                   T{0} };
+
+template<class T>
+const inline Eigen::Quaternion<T> YRot180{ T{0}, T{0}, T{1}, T{0} };
+
+template<class T>
+const inline Eigen::Quaternion<T> YRot90Conjugate{ celestia::numbers::sqrt2_v<T> * T{0.5},
+                                                   T{0},
+                                                   -(celestia::numbers::sqrt2_v<T> * T{0.5}),
+                                                   T{0} };
+
+template<class T>
+const inline Eigen::Matrix<T, 4, 4> XRot270Matrix = (Eigen::Matrix<T, 4, 4>() <<
+                                                     T{ 1}, T{ 0}, T{ 0}, T{ 0},
+                                                     T{ 0}, T{ 0}, T{ 1}, T{ 0},
+                                                     T{ 0}, T{-1}, T{ 0}, T{ 0},
+                                                     T{ 0}, T{ 0}, T{ 0}, T{ 1}).finished();
+
+template<class T>
+const inline Eigen::Matrix<T, 4, 4> YRot90Matrix = (Eigen::Matrix<T, 4, 4>() <<
+                                                    T{ 0}, T{ 0}, T{ 1}, T{ 0},
+                                                    T{ 0}, T{ 1}, T{ 0}, T{ 0},
+                                                    T{-1}, T{ 0}, T{ 0}, T{ 0},
+                                                    T{ 0}, T{ 0}, T{ 0}, T{ 1}).finished();
+
+template<class T>
+const inline Eigen::Matrix<T, 4, 4> YRot180Matrix = (Eigen::Matrix<T, 4, 4>() <<
+                                                     T{-1}, T{ 0}, T{ 0}, T{ 0},
+                                                     T{ 0}, T{ 1}, T{ 0}, T{ 0},
+                                                     T{ 0}, T{ 0}, T{-1}, T{ 0},
+                                                     T{ 0}, T{ 0}, T{ 0}, T{ 1}).finished();
+
 template<class T> Eigen::Quaternion<T>
 XRotation(T radians)
 {
-    using std::cos, std::sin;
-    T halfAngle = radians * static_cast<T>(0.5);
-    return Eigen::Quaternion<T>(cos(halfAngle), sin(halfAngle), 0, 0);
+    T s;
+    T c;
+    sincos(radians * static_cast<T>(0.5), s, c);
+    return Eigen::Quaternion<T>(c, s, 0, 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 YRotation(T radians)
 {
-    using std::cos, std::sin;
-    T halfAngle = radians * static_cast<T>(0.5);
-    return Eigen::Quaternion<T>(cos(halfAngle), 0, sin(halfAngle), 0);
+    T s;
+    T c;
+    sincos(radians * static_cast<T>(0.5), s, c);
+    return Eigen::Quaternion<T>(c, 0, s, 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 ZRotation(T radians)
 {
-    using std::cos, std::sin;
-    T halfAngle = radians * static_cast<T>(0.5);
-    return Eigen::Quaternion<T>(cos(halfAngle), 0, 0, sin(halfAngle));
+    T s;
+    T c;
+    sincos(radians * static_cast<T>(0.5), s, c);
+    return Eigen::Quaternion<T>(c, 0, 0, s);
 }
 
 

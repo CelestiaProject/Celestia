@@ -538,7 +538,7 @@ void Observer::setLocationFilter(uint64_t _locationFilter)
 
 void Observer::reverseOrientation()
 {
-    setOrientation(getOrientation() * Quaterniond(AngleAxisd(celestia::numbers::pi, Vector3d::UnitY())));
+    setOrientation(getOrientation() * celmath::YRot180<double>);
     reverseFlag = !reverseFlag;
 }
 

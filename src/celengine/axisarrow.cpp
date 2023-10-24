@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <vector>
 #include <celcompat/numbers.h>
+#include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
@@ -308,19 +309,19 @@ AxesReferenceMark::render(Renderer* renderer,
     Eigen::Matrix4f labelTransformMatrix = labelTransform.matrix();
 
     // x-axis
-    Eigen::Matrix4f xModelView = modelView * celmath::rotate(Eigen::AngleAxisf(90.0_deg, Eigen::Vector3f::UnitY()));
+    Eigen::Matrix4f xModelView = modelView * celmath::YRot90Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
     GetArrowVAO().draw();
 
     // y-axis
-    Eigen::Matrix4f yModelView = modelView * celmath::rotate(Eigen::AngleAxisf(180.0_deg, Eigen::Vector3f::UnitY()));
+    Eigen::Matrix4f yModelView = modelView * celmath::YRot180Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
     GetArrowVAO().draw();
 
     // z-axis
-    Eigen::Matrix4f zModelView = modelView * celmath::rotate(Eigen::AngleAxisf(-90.0_deg, Eigen::Vector3f::UnitX()));
+    Eigen::Matrix4f zModelView = modelView * celmath::XRot270Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
     GetArrowVAO().draw();
@@ -455,7 +456,7 @@ BodyAxisArrows::BodyAxisArrows(const Body& _body) :
 Eigen::Quaterniond
 BodyAxisArrows::getOrientation(double tdb) const
 {
-    return (Eigen::Quaterniond(Eigen::AngleAxis<double>(celestia::numbers::pi, Eigen::Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb)).conjugate();
+    return (celmath::YRot180<double> * body.getEclipticToBodyFixed(tdb)).conjugate();
 }
 
 
