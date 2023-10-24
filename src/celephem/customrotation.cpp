@@ -90,7 +90,7 @@ public:
         double inclination = 90.0 - poleDec;
 
         if (flipped)
-            return celmath::XRotation(celestia::numbers::pi) *
+            return celmath::XRot180<double> *
                    celmath::XRotation(celmath::degToRad(-inclination)) *
                    celmath::YRotation(celmath::degToRad(-node));
         else
@@ -176,9 +176,7 @@ public:
         Eigen::Quaterniond q = celmath::XRotation(obliquity) * celmath::ZRotation(-precession) * eclRotation.conjugate();
 
         // convert to Celestia's coordinate system
-        return celmath::XRotation(celestia::numbers::pi / 2.0) *
-               q *
-               celmath::XRotation(-celestia::numbers::pi / 2.0);
+        return celmath::XRot90<double> * q * celmath::XRot90Conjugate<double>;
     }
 
     double getPeriod() const override

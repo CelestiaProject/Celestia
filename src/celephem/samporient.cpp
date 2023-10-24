@@ -111,14 +111,12 @@ private:
 void
 SampledOrientation::addSample(double t, const Eigen::Quaternionf& q)
 {
-    // 90 degree rotation about x-axis to convert orientation to Celestia's
-    // coordinate system.
-    static const Eigen::Quaternionf coordSysCorrection = celmath::XRotation((float) (celestia::numbers::pi / 2.0));
-
     // TODO: add a check for out of sequence samples
     OrientationSample& samp = samples.emplace_back();
     samp.t = t;
-    samp.q = q * coordSysCorrection;
+    // 90 degree rotation about x-axis to convert orientation to Celestia's
+    // coordinate system.
+    samp.q = q * celmath::XRot90<float>;
 }
 
 
