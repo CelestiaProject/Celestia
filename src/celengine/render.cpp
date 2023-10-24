@@ -269,7 +269,7 @@ Renderer::Renderer() :
 
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
+    //glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -282,7 +282,7 @@ Renderer::Renderer() :
 Renderer::~Renderer()
 {
     delete pointStarVertexBuffer;
-    delete glareVertexBuffer;
+    //delete glareVertexBuffer;
     delete shaderManager;
 
     m_atmosphereRenderer->deinitGL();
@@ -1806,8 +1806,10 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
                 m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
+            /*
             else
                 glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
+            */
         }
     }
 }
@@ -3829,7 +3831,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
-    starRenderer.glareVertexBuffer = glareVertexBuffer;
+    //starRenderer.glareVertexBuffer = glareVertexBuffer;
     starRenderer.fov               = fov;
     starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
@@ -3848,11 +3850,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
     starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
-    starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
+    //starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
+    //starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();
-    starRenderer.glareVertexBuffer->startSprites();
+    //starRenderer.glareVertexBuffer->startSprites();
     if (starStyle == PointStars)
         starRenderer.starVertexBuffer->startBasicPoints();
     else
@@ -3881,7 +3883,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 #endif
 
     starRenderer.starVertexBuffer->finish();
-    starRenderer.glareVertexBuffer->finish();
+    //starRenderer.glareVertexBuffer->finish();
     PointStarVertexBuffer::disable();
 
 #ifndef GL_ES
@@ -5366,9 +5368,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         setPipelineState(ps);
 
         PointStarVertexBuffer::enable();
-        glareVertexBuffer->startSprites();
-        glareVertexBuffer->render();
-        glareVertexBuffer->finish();
+        //glareVertexBuffer->startSprites();
+        //glareVertexBuffer->render();
+        //glareVertexBuffer->finish();
         if (starStyle == PointStars)
             pointStarVertexBuffer->startBasicPoints();
         else
