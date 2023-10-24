@@ -407,7 +407,7 @@ Date::toString(Format format) const
 {
     if (format == ISO8601)
     {
-        return fmt::format("{:04}-{:02}-{:02}T{:02}:{:02}:{:02}:{:08.5f}Z"sv,
+        return fmt::format("{:04}-{:02}-{:02}T{:02}:{:02}:{:08.5f}Z"sv,
                            year, month, day, hour, minute, seconds);
     }
     // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
