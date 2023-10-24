@@ -48,7 +48,7 @@ void PointStarVertexBuffer::startBasicPoints()
 
 void PointStarVertexBuffer::render()
 {
-    if (m_nStars != 0)
+    if (m_nStars != 0 && m_prog != nullptr)
     {
         makeCurrent();
 
@@ -69,7 +69,7 @@ void PointStarVertexBuffer::render()
 
 void PointStarVertexBuffer::makeCurrent()
 {
-    if (current == this || m_prog == nullptr)
+    if (current == this)
         return;
 
     if (current != nullptr)
@@ -79,6 +79,9 @@ void PointStarVertexBuffer::makeCurrent()
 
     m_prog->use();
     m_prog->setMVPMatrices(m_renderer.getCurrentProjectionMatrix(), m_renderer.getCurrentModelViewMatrix());
+    int x, y, w, h;
+    m_renderer.getViewport(&x, &y, &w, &h);
+    m_prog->vec2Param("viewportSize") = Eigen::Vector2f(w-x, h-y);
     if (m_pointSizeFromVertex)
     {
         m_prog->samplerParam("starTex") = 0;

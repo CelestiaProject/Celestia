@@ -11,9 +11,12 @@
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
+#include <cmath>
 #include "pointstarvertexbuffer.h"
 #include "render.h"
 #include "pointstarrenderer.h"
+
+#include <fmt/format.h>
 
 using namespace std;
 using namespace Eigen;
@@ -95,19 +98,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-            float pointSize, alpha, glareSize, glareAlpha;
-            float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-            renderer->calculatePointSize(appMag,
-                                         size,
-                                         pointSize,
-                                         alpha,
-                                         glareSize,
-                                         glareAlpha);
-
-            if (glareSize != 0.0f)
-                glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
-            if (pointSize != 0.0f)
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
+            if (appMag < faintestMag)
+            {
+                starVertexBuffer->addStar(relPos, starColor, faintestMag - appMag);
+            }
 
             // Place labels for stars brighter than the specified label threshold brightness
             if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
