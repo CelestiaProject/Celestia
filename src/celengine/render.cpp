@@ -48,6 +48,7 @@
 #include "orbitsampler.h"
 #include "rendcontext.h"
 #include "textlayout.h"
+#include <celcompat/numbers.h>
 #include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -347,7 +348,9 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
     unsigned int size = 1 << log2size;
     float sigma = fwhm / 2.3548f;
     float isig2 = 1.0f / (2.0f * sigma * sigma);
-    float s = 1.0f / (sigma * (float) sqrt(2.0 * celestia::numbers::pi));
+    // Store 1/sqrt(2*pi) in constexpr sfactor
+    constexpr auto sfactor = static_cast<float>(0.5 * celestia::numbers::sqrt2 * celestia::numbers::inv_sqrtpi);
+    float s = sfactor / sigma;
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -2381,7 +2384,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 cloudNormalMap = atmosphere->cloudNormalMap.find(textureResolution);
         }
         if (atmosphere->cloudSpeed != 0.0f)
-            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * celestia::numbers::pi), 1.0));
+            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
     }
 
     if (obj.geometry == InvalidResource)

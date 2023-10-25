@@ -475,10 +475,10 @@ SkyGrid::render(Renderer& renderer,
     int raIncrement  = meridianSpacing(idealMeridianSpacing);
     int decIncrement = parallelSpacing(idealParallelSpacing);
 
-    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (celestia::numbers::pi * 2.0)) / (double) raIncrement) * raIncrement;
-    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (celestia::numbers::pi * 2.0)) / (double) raIncrement) * raIncrement;
-    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / celestia::numbers::pi) / (double) decIncrement) * decIncrement;
-    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / celestia::numbers::pi) / (double) decIncrement) * decIncrement;
+    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta * 0.5 * celestia::numbers::inv_pi) / (double) raIncrement) * raIncrement;
+    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta * 0.5 * celestia::numbers::inv_pi) / (double) raIncrement) * raIncrement;
+    int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec * celestia::numbers::inv_pi) / (double) decIncrement) * decIncrement;
+    int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec * celestia::numbers::inv_pi) / (double) decIncrement) * decIncrement;
 
     // Get the orientation at single precision
     Quaterniond q = xrot90 * m_orientation * xrot90.conjugate();
