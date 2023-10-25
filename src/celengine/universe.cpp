@@ -214,8 +214,8 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
     Eigen::Vector3d bodyMiss = bodyDir - pickInfo.pickRay.direction();
 
     if (double sinAngle2 = bodyMiss.norm() / 2.0;
-        sinAngle2 < std::sin(celestia::numbers::pi/4.0) && distance > 0.0 &&
-        distance <= pickInfo.closestDistance)
+        sinAngle2 < (celestia::numbers::sqrt2 * 0.5) && // sin(45 degrees) = sqrt(2)/2
+        distance > 0.0 && distance <= pickInfo.closestDistance)
     {
         pickInfo.closestDistance = distance;
         pickInfo.closestBody = body;

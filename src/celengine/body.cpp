@@ -233,7 +233,7 @@ float Body::getBoundingRadius() const
     if (geometry == InvalidResource)
         return radius;
 
-    return radius * celestia::numbers::sqrt3_v<float>; // sqrt(3)
+    return radius * celestia::numbers::sqrt3_v<float>;
 }
 
 
@@ -354,7 +354,7 @@ float Body::getTemperature(double time) const
             float lum = square(s->getRadius()) * pow(s->getTemperature(), 4.0f);
             flux += lum / square(distFromSun);
         }
-        temp = (float) pow((1.0f - getBondAlbedo()) * flux, 0.25f) / sqrt(2.0f);
+        temp = std::pow((1.0f - getBondAlbedo()) * flux, 0.25f) * (celestia::numbers::sqrt2_v<float> * 0.5f);
     }
     return getTempDiscrepancy() + temp;
 }

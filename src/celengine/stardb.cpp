@@ -26,6 +26,7 @@
 
 #include <celcompat/bit.h>
 #include <celcompat/charconv.h>
+#include <celcompat/numbers.h>
 #include <celutil/gettext.h>
 #include <celutil/intrusiveptr.h>
 #include <celutil/logger.h>
@@ -1622,7 +1623,7 @@ void StarDatabaseBuilder::buildOctree()
 
     GetLogger()->debug("Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
-                                      STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
+                                      STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
     DynamicStarOctree* root = new DynamicStarOctree(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
     for (unsigned int i = 0; i < unsortedStars.size(); ++i)
