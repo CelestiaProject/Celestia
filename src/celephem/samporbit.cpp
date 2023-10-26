@@ -14,25 +14,25 @@
 
 #include <algorithm>
 #include <array>
-#include <cctype>
-#include <cmath>
-#include <cstddef>
+#include <cassert>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <istream>
-#include <limits>
 #include <string_view>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Core>
 
 #include <celcompat/bit.h>
-#include <celcompat/filesystem.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "orbit.h"
+#include "sampfile.h"
 #include "xyzvbinary.h"
 
 using celestia::util::GetLogger;
@@ -43,6 +43,35 @@ namespace celestia::ephem
 namespace
 {
 
+struct InterpolationParameters
+{
+    Eigen::Vector3d p0;
+    Eigen::Vector3d v0;
+    Eigen::Vector3d p1;
+    Eigen::Vector3d v1;
+    double t;
+    double ih;
+};
+
+
+Eigen::Vector3d
+cubicInterpolate(const InterpolationParameters& params)
+{
+    Eigen::Vector3d a = 2.0 * (params.p0 - params.p1) + params.v1 + params.v0;
+    Eigen::Vector3d b = 3.0 * (params.p1 - params.p0) - 2.0 * params.v0 - params.v1;
+    return params.p0 + params.t * (params.v0 + params.t * (b + params.t * a));
+}
+
+
+Eigen::Vector3d
+cubicInterpolateVelocity(const InterpolationParameters& params)
+{
+    Eigen::Vector3d a3 = 3.0 * (2.0 * (params.p0 - params.p1) + params.v1 + params.v0);
+    Eigen::Vector3d b2 = 2.0 * (3.0 * (params.p1 - params.p0) - 2.0 * params.v0 - params.v1);
+    return (params.v0 + params.t * (b2 + params.t * a3)) * params.ih;
+}
+
+
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
 // is the maximum time (in days) between samples.  The threshold angle
 // is the maximum angle allowed between path segments.
@@ -50,40 +79,15 @@ namespace
 //static const double MaxSampleInterval = 50.0;
 //static const double SampleThresholdAngle = 2.0;
 
-// Position-only sample
-template<typename T> struct Sample
-{
-    double t;
-    Eigen::Matrix<T, 3, 1> position;
-};
 
-// Position + velocity sample
-template<typename T> struct SampleXYZV
-{
-    double t;
-    Eigen::Matrix<T, 3, 1> position;
-    Eigen::Matrix<T, 3, 1> velocity;
-};
-
-
-template<typename T> bool operator<(const Sample<T>& a, const Sample<T>& b)
-{
-    return a.t < b.t;
-}
-
-template<typename T> bool operator<(const SampleXYZV<T>& a, const SampleXYZV<T>& b)
-{
-    return a.t < b.t;
-}
-
-
-template<typename T> class SampledOrbit : public CachingOrbit
+template<typename T>
+class SampledOrbit : public CachingOrbit
 {
 public:
-    SampledOrbit(TrajectoryInterpolation /*_interpolation*/);
+    SampledOrbit(TrajectoryInterpolation,
+                 std::vector<double>&&,
+                 std::vector<Eigen::Matrix<T, 3, 1>>&&);
     ~SampledOrbit() override = default;
-
-    void addSample(double t, const Eigen::Matrix<T, 3, 1>& position);
 
     double getPeriod() const override;
     double getBoundingRadius() const override;
@@ -96,337 +100,260 @@ public:
     void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
 private:
-    std::vector<Sample<T>> samples;
-    double boundingRadius;
-    double period;
-    mutable int lastSample;
+    std::vector<double> sampleTimes;
+    std::vector<Eigen::Matrix<T, 3, 1>> positions;
+    double boundingRadius{ 0.0 };
+    mutable std::uint32_t lastSample{ 0 };
 
     TrajectoryInterpolation interpolation;
 
-    Eigen::Vector3d computePositionLinear(double jd, int n) const;
-    Eigen::Vector3d computePositionCubic(double jd, int n) const;
-    Eigen::Vector3d computeVelocityLinear(double jd, int n) const;
-    Eigen::Vector3d computeVelocityCubic(double jd, int n) const;
+    Eigen::Vector3d computePositionLinear(double, std::uint32_t) const;
+    Eigen::Vector3d computePositionCubic(double, std::uint32_t, std::uint32_t) const;
+    Eigen::Vector3d computeVelocityLinear(std::uint32_t) const;
+    Eigen::Vector3d computeVelocityCubic(double, std::uint32_t, std::uint32_t) const;
+
+    void initializeCubic(double, std::uint32_t, std::uint32_t, InterpolationParameters&) const;
 };
 
 
-template<typename T> SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _interpolation) :
-    boundingRadius(0.0),
-    period(1.0),
-    lastSample(0),
+template<typename T>
+SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _interpolation,
+                              std::vector<double>&& _sampleTimes,
+                              std::vector<Eigen::Matrix<T, 3, 1>>&& _positions) :
+    sampleTimes(std::move(_sampleTimes)),
+    positions(std::move(_positions)),
     interpolation(_interpolation)
 {
+    assert(!sampleTimes.empty() && sampleTimes.size() == positions.size());
+    sampleTimes.shrink_to_fit();
+    positions.shrink_to_fit();
+
+    // Apply correction for Celestia's coordinate system
+    for (Eigen::Matrix<T, 3, 1>& position : positions)
+    {
+        boundingRadius = std::max(boundingRadius, position.template cast<double>().norm());
+        position.template tail<2>().reverseInPlace();
+        position.z() = -position.z();
+    }
 }
 
 
-template<typename T> void SampledOrbit<T>::addSample(double t, const Eigen::Matrix<T, 3, 1>& position)
+template<typename T>
+double
+SampledOrbit<T>::getPeriod() const
 {
-    double r = position.template cast<double>().norm();
-    if (r > boundingRadius)
-        boundingRadius = r;
-
-    Sample<T>& samp = samples.emplace_back();
-    samp.position = position;
-    samp.t = t;
-}
-
-template<typename T> double SampledOrbit<T>::getPeriod() const
-{
-    return samples[samples.size() - 1].t - samples[0].t;
+    return sampleTimes.back() - sampleTimes.front();
 }
 
 
-template<typename T> bool SampledOrbit<T>::isPeriodic() const
+template<typename T>
+bool
+SampledOrbit<T>::isPeriodic() const
 {
     return false;
 }
 
 
-template<typename T> void SampledOrbit<T>::getValidRange(double& begin, double& end) const
+template<typename T>
+void
+SampledOrbit<T>::getValidRange(double& begin, double& end) const
 {
-    begin = samples[0].t;
-    end = samples[samples.size() - 1].t;
+    begin = sampleTimes.front();
+    end = sampleTimes.back();
 }
 
 
-template<typename T> double SampledOrbit<T>::getBoundingRadius() const
+template<typename T>
+double
+SampledOrbit<T>::getBoundingRadius() const
 {
     return boundingRadius;
 }
 
 
-Eigen::Vector3d cubicInterpolate(const Eigen::Vector3d& p0, const Eigen::Vector3d& v0,
-                                 const Eigen::Vector3d& p1, const Eigen::Vector3d& v1,
-                                 double t)
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computePosition(double jd) const
 {
-    return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
-                 ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
-                 (v0 * t));
-}
+    if (sampleTimes.size() == 1)
+        return positions.front().template cast<double>();
 
+    std::uint32_t n = GetSampleIndex(jd, lastSample, sampleTimes);
+    if (n == 0)
+        return positions.front().template cast<double>();
+    if (n == sampleTimes.size())
+        return positions.back().template cast<double>();
 
-Eigen::Vector3d cubicInterpolateVelocity(const Eigen::Vector3d& p0, const Eigen::Vector3d& v0,
-                                         const Eigen::Vector3d& p1, const Eigen::Vector3d& v1,
-                                         double t)
-{
-    return ((2.0 * (p0 - p1) + v1 + v0) * (3.0 * t * t)) +
-           ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (2.0 * t)) +
-           v0;
-}
-
-
-template <typename T> Eigen::Vector3d SampledOrbit<T>::computePosition(double jd) const
-{
-    Eigen::Vector3d pos;
-    if (samples.size() == 0)
+    switch (interpolation)
     {
-        pos = Eigen::Vector3d::Zero();
+    case TrajectoryInterpolation::Linear:
+        return computePositionLinear(jd, n);
+    case TrajectoryInterpolation::Cubic:
+        return computePositionCubic(jd, n, static_cast<std::uint32_t>(sampleTimes.size() - 1));
+    default: // Unknown interpolation type
+        assert(0);
+        return Eigen::Vector3d::Zero();
     }
-    else if (samples.size() == 1)
-    {
-        pos = samples[0].position.template cast<double>();
-    }
-    else
-    {
-        Sample<T> samp;
-        samp.t = jd;
-        int n = lastSample;
-
-        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
-        {
-            auto iter = std::lower_bound(samples.begin(), samples.end(), samp);
-            n = iter == samples.end()
-                ? samples.size()
-                : iter - samples.begin();
-
-            lastSample = n;
-        }
-
-        if (n == 0)
-        {
-            pos = samples[n].position.template cast<double>();
-        }
-        else if (n < (int) samples.size())
-        {
-            switch (interpolation)
-            {
-            case TrajectoryInterpolation::Linear:
-                pos = computePositionLinear(jd, n);
-                break;
-            case TrajectoryInterpolation::Cubic:
-                pos = computePositionCubic(jd, n);
-                break;
-            default: // Unknown interpolation type
-                pos = Eigen::Vector3d::Zero();
-                break;
-            }
-        }
-        else
-        {
-            pos = samples[n - 1].position.template cast<double>();
-        }
-    }
-
-    // Add correction for Celestia's coordinate system
-    return Eigen::Vector3d(pos.x(), pos.z(), -pos.y());
 }
 
 
-template<typename T> Eigen::Vector3d SampledOrbit<T>::computePositionLinear(double jd,
-                                                                            int n) const
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computePositionLinear(double jd, std::uint32_t n) const
 {
-    Sample<T> s0 = samples[n - 1];
-    Sample<T> s1 = samples[n];
+    assert(n > 0);
+    double t = (jd - sampleTimes[n - 1]) / (sampleTimes[n] - sampleTimes[n - 1]);
 
-    double t = (jd - s0.t) / (s1.t - s0.t);
-    return Eigen::Vector3d(celmath::lerp(t, (double) s0.position.x(), (double) s1.position.x()),
-                           celmath::lerp(t, (double) s0.position.y(), (double) s1.position.y()),
-                           celmath::lerp(t, (double) s0.position.z(), (double) s1.position.z()));
+    const Eigen::Matrix<T, 3, 1>& s0 = positions[n - 1];
+    const Eigen::Matrix<T, 3, 1>& s1 = positions[n];
+    return Eigen::Vector3d(celmath::lerp(t, static_cast<double>(s0.x()), static_cast<double>(s1.x())),
+                           celmath::lerp(t, static_cast<double>(s0.y()), static_cast<double>(s1.y())),
+                           celmath::lerp(t, static_cast<double>(s0.z()), static_cast<double>(s1.z())));
 }
 
 
-template<typename T> Eigen::Vector3d SampledOrbit<T>::computePositionCubic(double jd,
-                                                                           int n) const
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computePositionCubic(double jd, std::uint32_t n2, std::uint32_t nMax) const
 {
-    Sample<T> s0 = n > 1
-        ? samples[n - 2]
-        : samples[n - 1];
-    Sample<T> s1 = samples[n - 1];
-    Sample<T> s2 = samples[n];
-    Sample<T> s3 = n < (int) samples.size() - 1
-        ? samples[n + 1]
-        : samples[n];
+    InterpolationParameters params;
+    initializeCubic(jd, n2, nMax, params);
+    return cubicInterpolate(params);
+}
 
-    double h = s2.t - s1.t;
-    double ih = 1.0 / h;
-    double t = (jd - s1.t) * ih;
-    Eigen::Vector3d p0 = s1.position.template cast<double>();
-    Eigen::Vector3d p1 = s2.position.template cast<double>();
 
-    Eigen::Vector3d v10 = p0 - s0.position.template cast<double>();
-    Eigen::Vector3d v21 = p1 - p0;
-    Eigen::Vector3d v32 = s3.position.template cast<double>() - p1;
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computeVelocity(double jd) const
+{
+    if (sampleTimes.size() < 2)
+        return Eigen::Vector3d::Zero();
+
+    std::uint32_t n = GetSampleIndex(jd, lastSample, sampleTimes);
+    if (n == 0 || n == sampleTimes.size())
+        return Eigen::Vector3d::Zero();
+
+    switch (interpolation)
+    {
+    case TrajectoryInterpolation::Linear:
+        return computeVelocityLinear(n);
+    case TrajectoryInterpolation::Cubic:
+        return computeVelocityCubic(jd, n, static_cast<std::uint32_t>(sampleTimes.size() - 1));
+    default: // Unknown interpolation type
+        assert(0);
+        return Eigen::Vector3d::Zero();
+    }
+}
+
+
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computeVelocityLinear(std::uint32_t n) const
+{
+    assert(n > 0);
+    double dtRecip = 1.0 / (sampleTimes[n] - sampleTimes[n - 1]);
+    return (positions[n].template cast<double>() - positions[n - 1].template cast<double>()) * dtRecip;
+}
+
+
+template<typename T>
+Eigen::Vector3d
+SampledOrbit<T>::computeVelocityCubic(double jd, std::uint32_t n2, std::uint32_t nMax) const
+{
+    InterpolationParameters params;
+    initializeCubic(jd, n2, nMax, params);
+    return cubicInterpolateVelocity(params);
+}
+
+
+template<typename T>
+void
+SampledOrbit<T>::initializeCubic(double jd,
+                                 std::uint32_t n2,
+                                 std::uint32_t nMax,
+                                 InterpolationParameters& params) const
+{
+    assert(n2 > 0 && n2 <= nMax);
+    std::uint32_t n0 = std::max(n2, std::uint32_t(2)) - 2;
+    std::uint32_t n1 = n2 - 1;
+    std::uint32_t n3 = std::min(n2 + 1, nMax);
+
+    double h = sampleTimes[n2] - sampleTimes[n1];
+    params.ih = 1.0 / h;
+    params.t = (jd - sampleTimes[n1]) * params.ih;
+    params.p0 = positions[n1].template cast<double>();
+    params.p1 = positions[n2].template cast<double>();
+
+    Eigen::Vector3d v10 = params.p0 - positions[n0].template cast<double>();
+    Eigen::Vector3d v21 = params.p1 - params.p0;
+    Eigen::Vector3d v32 = positions[n3].template cast<double>() - params.p1;
 
     // Estimate velocities by averaging the differences at adjacent spans
     // (except at the end spans, where we just use a single velocity.)
-    Eigen::Vector3d v0 = n > 1
-        ? (v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih)) * h
+    params.v0 = n2 > 1
+        ? (v10 * (0.5 / (sampleTimes[n1] - sampleTimes[n0])) + v21 * (0.5 * params.ih)) * h
         : v21;
 
-    Eigen::Vector3d v1 = n < ((int) samples.size() - 1)
-        ? (v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t))) * h
+    params.v1 = n2 < nMax
+        ? (v21 * (0.5 * params.ih) + v32 * (0.5 / (sampleTimes[n3] - sampleTimes[n2]))) * h
         : v21;
-
-    return cubicInterpolate(p0, v0, p1, v1, t);
 }
 
 
-template<typename T> Eigen::Vector3d SampledOrbit<T>::computeVelocity(double jd) const
+template<typename T>
+void SampledOrbit<T>::sample(double /* startTime */, double /* endTime */,
+                             OrbitSampleProc& proc) const
 {
-    Eigen::Vector3d vel;
-    if (samples.size() < 2)
-    {
-        vel = Eigen::Vector3d::Zero();
-    }
-    else
-    {
-        Sample<T> samp;
-        samp.t = jd;
-        int n = lastSample;
-
-        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
-        {
-            auto iter = std::lower_bound(samples.begin(), samples.end(), samp);
-            n = iter == samples.end()
-                ? samples.size()
-                : iter - samples.begin();
-            lastSample = n;
-        }
-
-        if (n == 0)
-        {
-            vel = Eigen::Vector3d::Zero();
-        }
-        else if (n < (int) samples.size())
-        {
-            switch (interpolation)
-            {
-            case TrajectoryInterpolation::Linear:
-                vel = computeVelocityLinear(jd, n);
-                break;
-            case TrajectoryInterpolation::Cubic:
-                vel = computeVelocityCubic(jd, n);
-                break;
-            default: // Unknown interpolation type
-                vel = Eigen::Vector3d::Zero();
-                break;
-            }
-        }
-        else
-        {
-            vel = Eigen::Vector3d::Zero();
-        }
-    }
-
-    return Eigen::Vector3d(vel.x(), vel.z(), -vel.y());
-}
-
-
-template<typename T> Eigen::Vector3d SampledOrbit<T>::computeVelocityLinear(double jd,
-                                                                            int n) const
-{
-    Sample<T> s0 = samples[n - 1];
-    Sample<T> s1 = samples[n];
-
-    double dtRecip = 1.0 / (s1.t - s0.t);
-    return (s1.position.template cast<double>() - s0.position.template cast<double>()) * dtRecip;
-}
-
-
-template<typename T> Eigen::Vector3d SampledOrbit<T>::computeVelocityCubic(double jd,
-                                                                           int n) const
-{
-    Sample<T> s0 = n > 1
-        ? samples[n - 2]
-        : samples[n - 1];
-    Sample<T> s1 = samples[n - 1];
-    Sample<T> s2 = samples[n];
-    Sample<T> s3 = n < ((int) samples.size() - 1)
-        ? samples[n + 1]
-        : samples[n];
-
-    double h = s2.t - s1.t;
-    double ih = 1.0 / h;
-    double t = (jd - s1.t) * ih;
-    Eigen::Vector3d p0 = s1.position.template cast<double>();
-    Eigen::Vector3d p1 = s2.position.template cast<double>();
-
-    Eigen::Vector3d v10 = p0 - s0.position.template cast<double>();
-    Eigen::Vector3d v21 = p1 - p0;
-    Eigen::Vector3d v32 = s3.position.template cast<double>() - p1;
-
-    // Estimate velocities by averaging the differences at adjacent spans
-    // (except at the end spans, where we just use a single velocity.)
-    Eigen::Vector3d v0 = n > 1
-        ? (v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih)) * h
-        : v21;
-
-    Eigen::Vector3d v1 = n < ((int) samples.size() - 1)
-        ? (v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t))) * h
-        : v21;
-
-    return cubicInterpolateVelocity(p0, v0, p1, v1, t) * (1.0 / h);
-}
-
-
-template<typename T> void SampledOrbit<T>::sample(double /* startTime */, double /* endTime */,
-                                                  OrbitSampleProc& proc) const
-{
-    for (unsigned int i = 0; i < samples.size(); i++)
+    for (std::uint32_t i = 0; i < sampleTimes.size(); ++i)
     {
         Eigen::Vector3d v;
-        Eigen::Vector3d p = samples[i].position.template cast<double>();
+        Eigen::Vector3d p = positions[i].template cast<double>();
 
-        if (samples.size() == 1)
+        if (sampleTimes.size() == 1)
         {
             v = Eigen::Vector3d::Zero();
         }
         else if (i == 0)
         {
-            double dtRecip = 1.0 / (samples[i + 1].t - samples[i].t);
-            v = (samples[i + 1].position.template cast<double>() - p) * dtRecip;
+            double dtRecip = 1.0 / (sampleTimes[i + 1] - sampleTimes[i]);
+            v = (positions[i + 1].template cast<double>() - p) * dtRecip;
         }
-        else if (i == samples.size() - 1)
+        else if (i == sampleTimes.size() - 1)
         {
-            double dtRecip = 1.0 / (samples[i].t - samples[i - 1].t);
-            v = (p - samples[i - 1].position.template cast<double>()) * dtRecip;
+            double dtRecip = 1.0 / (sampleTimes[i] - sampleTimes[i - 1]);
+            v = (p - positions[i - 1].template cast<double>()) * dtRecip;
         }
         else
         {
-            double dt0Recip = 1.0 / (samples[i + 1].t - samples[i].t);
-            Eigen::Vector3d v0 = (samples[i + 1].position.template cast<double>() - p) * dt0Recip;
-            double dt1Recip = 1.0 / (samples[i].t - samples[i - 1].t);
-            Eigen::Vector3d v1 = (p - samples[i - 1].position.template cast<double>()) * dt1Recip;
+            double dt0Recip = 1.0 / (sampleTimes[i + 1] - sampleTimes[i]);
+            Eigen::Vector3d v0 = (positions[i + 1].template cast<double>() - p) * dt0Recip;
+            double dt1Recip = 1.0 / (sampleTimes[i] - sampleTimes[i - 1]);
+            Eigen::Vector3d v1 = (p - positions[i - 1].template cast<double>()) * dt1Recip;
             v = (v0 + v1) * 0.5;
         }
 
-        proc.sample(samples[i].t,
-                    Eigen::Vector3d(p.x(), p.z(), -p.y()),
-                    Eigen::Vector3d(v.x(), v.z(), -v.y()));
+        proc.sample(sampleTimes[i], p, v);
     }
 }
 
 
+template<typename T>
+struct SampleXYZV
+{
+    Eigen::Matrix<T, 3, 1> position;
+    Eigen::Matrix<T, 3, 1> velocity;
+};
+
+
 // Sampled orbit with positions and velocities
-template <typename T> class SampledOrbitXYZV : public CachingOrbit
+template<typename T>
+class SampledOrbitXYZV : public CachingOrbit
 {
 public:
-    SampledOrbitXYZV(TrajectoryInterpolation /*_interpolation*/);
+    SampledOrbitXYZV(TrajectoryInterpolation,
+                     std::vector<double>&&,
+                     std::vector<SampleXYZV<T>>&&);
     ~SampledOrbitXYZV() override = default;
-
-    void addSample(double t,
-                   const Eigen::Matrix<T, 3, 1>& position,
-                   const Eigen::Matrix<T, 3, 1>& velocity);
 
     double getPeriod() const override;
     double getBoundingRadius() const override;
@@ -439,257 +366,172 @@ public:
     void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
 private:
+    void initializeCubic(double, std::uint32_t, InterpolationParameters&) const;
+
+    std::vector<double> sampleTimes;
     std::vector<SampleXYZV<T>> samples;
-    double boundingRadius;
-    double period;
-    mutable int lastSample;
+    double boundingRadius{ 0.0 };
+    mutable std::uint32_t lastSample{ 0 };
 
     TrajectoryInterpolation interpolation;
 };
 
 
-template <typename T> SampledOrbitXYZV<T>::SampledOrbitXYZV(TrajectoryInterpolation _interpolation) :
-    boundingRadius(0.0),
-    period(1.0),
-    lastSample(0),
+template<typename T>
+SampledOrbitXYZV<T>::SampledOrbitXYZV(TrajectoryInterpolation _interpolation,
+                                      std::vector<double>&& _sampleTimes,
+                                      std::vector<SampleXYZV<T>>&& _samples) :
+    sampleTimes(std::move(_sampleTimes)),
+    samples(std::move(_samples)),
     interpolation(_interpolation)
 {
+    assert(!sampleTimes.empty() && sampleTimes.size() == samples.size());
+    sampleTimes.shrink_to_fit();
+    samples.shrink_to_fit();
+
+    // Apply correction for Celestia's coordinate system
+    for (SampleXYZV<T>& sample: samples)
+    {
+        boundingRadius = std::max(boundingRadius,
+                                  sample.position.template cast<double>().norm());
+        sample.position.template tail<2>().reverseInPlace();
+        sample.position.z() = -sample.position.z();
+        sample.velocity.template tail<2>().reverseInPlace();
+        sample.velocity.z() = -sample.velocity.z();
+    }
 }
 
 
-// Add a new sample to the trajectory:
-//    Position in km
-//    Velocity in km/Julian day
-template<typename T> void SampledOrbitXYZV<T>::addSample(double t,
-                                                         const Eigen::Matrix<T, 3, 1>& position,
-                                                         const Eigen::Matrix<T, 3, 1>& velocity)
+template<typename T>
+double
+SampledOrbitXYZV<T>::getPeriod() const
 {
-    double r = position.template cast<double>().norm();
-    if (r > boundingRadius)
-        boundingRadius = r;
-
-    SampleXYZV<T>& samp = samples.emplace_back();
-    samp.t = t;
-    samp.position = position;
-    samp.velocity = velocity;
-}
-
-template <typename T> double SampledOrbitXYZV<T>::getPeriod() const
-{
-    if (samples.empty())
-        return 0.0;
-
-    return samples[samples.size() - 1].t - samples[0].t;
+    return sampleTimes.back() - sampleTimes.front();
 }
 
 
-template <typename T> bool SampledOrbitXYZV<T>::isPeriodic() const
+template<typename T>
+bool
+SampledOrbitXYZV<T>::isPeriodic() const
 {
     return false;
 }
 
 
-template <typename T> void SampledOrbitXYZV<T>::getValidRange(double& begin, double& end) const
+template<typename T>
+void
+SampledOrbitXYZV<T>::getValidRange(double& begin, double& end) const
 {
-    begin = samples[0].t;
-    end = samples[samples.size() - 1].t;
+    begin = sampleTimes.front();
+    end = sampleTimes.back();
 }
 
 
-template <typename T> double SampledOrbitXYZV<T>::getBoundingRadius() const
+template<typename T>
+double
+SampledOrbitXYZV<T>::getBoundingRadius() const
 {
     return boundingRadius;
 }
 
 
-template <typename T> Eigen::Vector3d SampledOrbitXYZV<T>::computePosition(double jd) const
+template<typename T>
+Eigen::Vector3d
+SampledOrbitXYZV<T>::computePosition(double jd) const
 {
-    Eigen::Vector3d pos;
-    if (samples.size() == 0)
+    if (sampleTimes.size() == 1)
+        return samples.front().position.template cast<double>();
+
+    std::uint32_t n = GetSampleIndex(jd, lastSample, sampleTimes);
+    if (n == 0)
+        return samples.front().position.template cast<double>();
+    if (n == sampleTimes.size())
+        return samples.back().position.template cast<double>();
+
+    if (interpolation == TrajectoryInterpolation::Linear)
     {
-        pos = Eigen::Vector3d::Zero();
-    }
-    else if (samples.size() == 1)
-    {
-        pos = samples[0].position.template cast<double>();
-    }
-    else
-    {
-        SampleXYZV<T> samp;
-        samp.t = jd;
-        int n = lastSample;
+        double t = (jd - sampleTimes[n - 1]) / (sampleTimes[n] - sampleTimes[n - 1]);
 
-        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
-        {
-            auto iter = std::lower_bound(samples.begin(), samples.end(), samp);
-            if (iter == samples.end())
-                n = samples.size();
-            else
-                n = iter - samples.begin();
-
-            lastSample = n;
-        }
-
-        if (n == 0)
-        {
-            pos = samples[n].position.template cast<double>();
-        }
-        else if (n < (int) samples.size())
-        {
-            SampleXYZV<T> s0 = samples[n - 1];
-            SampleXYZV<T> s1 = samples[n];
-
-            if (interpolation == TrajectoryInterpolation::Linear)
-            {
-                double t = (jd - s0.t) / (s1.t - s0.t);
-
-                Eigen::Vector3d p0 = s0.position.template cast<double>();
-                Eigen::Vector3d p1 = s1.position.template cast<double>();
-                pos = p0 + t * (p1 - p0);
-            }
-            else if (interpolation == TrajectoryInterpolation::Cubic)
-            {
-                double h = s1.t - s0.t;
-                double ih = 1.0 / h;
-                double t = (jd - s0.t) * ih;
-
-                Eigen::Vector3d p0 = s0.position.template cast<double>();
-                Eigen::Vector3d v0 = s0.velocity.template cast<double>();
-                Eigen::Vector3d p1 = s1.position.template cast<double>();
-                Eigen::Vector3d v1 = s1.velocity.template cast<double>();
-                pos = cubicInterpolate(p0, v0 * h, p1, v1 * h, t);
-            }
-            else
-            {
-                // Unknown interpolation type
-                pos = Eigen::Vector3d::Zero();
-            }
-        }
-        else
-        {
-            pos = samples[n - 1].position.template cast<double>();
-        }
+        Eigen::Vector3d p0 = samples[n - 1].position.template cast<double>();
+        Eigen::Vector3d p1 = samples[n].position.template cast<double>();
+        return p0 + t * (p1 - p0);
     }
 
-    // Add correction for Celestia's coordinate system
-    return Eigen::Vector3d(pos.x(), pos.z(), -pos.y());
+    if (interpolation == TrajectoryInterpolation::Cubic)
+    {
+        InterpolationParameters params;
+        initializeCubic(jd, n, params);
+        return cubicInterpolate(params);
+    }
+
+    // Unknown interpolation type
+    assert(0);
+    return Eigen::Vector3d::Zero();
 }
 
 
 // Velocity is computed as the derivative of the interpolating function
 // for position.
-template<typename T> Eigen::Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) const
+template<typename T>
+Eigen::Vector3d
+SampledOrbitXYZV<T>::computeVelocity(double jd) const
 {
-    Eigen::Vector3d vel(Eigen::Vector3d::Zero());
+    if (sampleTimes.size() < 2)
+        return Eigen::Vector3d::Zero();
 
-    if (samples.size() >= 2)
+    std::uint32_t n = GetSampleIndex(jd, lastSample, sampleTimes);
+    if (n == 0 || n == sampleTimes.size())
+        return Eigen::Vector3d::Zero();
+
+    if (interpolation == TrajectoryInterpolation::Linear)
     {
-        SampleXYZV<T> samp;
-        samp.t = jd;
-        int n = lastSample;
-
-        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
-        {
-            auto iter = std::lower_bound(samples.begin(), samples.end(), samp);
-            if (iter == samples.end())
-                n = samples.size();
-            else
-                n = iter - samples.begin();
-
-            lastSample = n;
-        }
-
-        if (n > 0 && n < (int) samples.size())
-        {
-            SampleXYZV<T> s0 = samples[n - 1];
-            SampleXYZV<T> s1 = samples[n];
-
-            if (interpolation == TrajectoryInterpolation::Linear)
-            {
-                double hRecip = 1.0 / (s1.t - s0.t);
-                vel = (s1.position.template cast<double>() - s0.position.template cast<double>()) *
-                      hRecip *
-                      astro::daysToSecs(1.0);
-            }
-            else if (interpolation == TrajectoryInterpolation::Cubic)
-            {
-                double h = s1.t - s0.t;
-                double ih = 1.0 / h;
-                double t = (jd - s0.t) * ih;
-
-                Eigen::Vector3d p0 = s0.position.template cast<double>();
-                Eigen::Vector3d p1 = s1.position.template cast<double>();
-                Eigen::Vector3d v0 = s0.velocity.template cast<double>();
-                Eigen::Vector3d v1 = s1.velocity.template cast<double>();
-
-                vel = cubicInterpolateVelocity(p0, v0 * h, p1, v1 * h, t) * ih;
-            }
-            else
-            {
-                // Unknown interpolation type
-                vel = Eigen::Vector3d::Zero();
-            }
-        }
+        double hRecip = 1.0 / (sampleTimes[n] - sampleTimes[n - 1]);
+        return (samples[n].position.template cast<double>() - samples[n - 1].position.template cast<double>()) *
+                hRecip *
+                astro::daysToSecs(1.0);
     }
 
-    // Add correction for Celestia's coordinate system
-    return Eigen::Vector3d(vel.x(), vel.z(), -vel.y());
+    if (interpolation == TrajectoryInterpolation::Cubic)
+    {
+        InterpolationParameters params;
+        initializeCubic(jd, n, params);
+        return cubicInterpolateVelocity(params);
+    }
+
+    // Unknown interpolation type
+    assert(0);
+    return Eigen::Vector3d::Zero();
 }
 
 
-template<typename T> void SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
-                                                      OrbitSampleProc& proc) const
+template<typename T>
+void
+SampledOrbitXYZV<T>::initializeCubic(double jd,
+                                     std::uint32_t n,
+                                     InterpolationParameters& params) const
 {
-    for (const auto& sample : samples)
-    {
-        proc.sample(sample.t,
-                    Eigen::Vector3d(sample.position.x(), sample.position.z(), -sample.position.y()),
-                    Eigen::Vector3d(sample.velocity.x(), sample.velocity.z(), -sample.velocity.y()));
-    }
+    assert(n > 0);
+    double h = sampleTimes[n] - sampleTimes[n - 1];
+    params.ih = 1.0 / h;
+    params.t = (jd - sampleTimes[n - 1]) * params.ih;
+    params.p0 = samples[n - 1].position.template cast<double>();
+    params.v0 = samples[n - 1].velocity.template cast<double>() * h;
+    params.p1 = samples[n].position.template cast<double>();
+    params.v1 = samples[n].velocity.template cast<double>() * h;
 }
 
 
-// Scan past comments. A comment begins with the # character and ends
-// with a newline. Return true if the stream state is good. The stream
-// position will be at the first non-comment, non-whitespace character.
-bool SkipComments(std::istream& in)
+template<typename T>
+void
+SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
+                            OrbitSampleProc& proc) const
 {
-    bool inComment = false;
-    bool done = false;
-
-    int c = in.get();
-    while (!done)
+    for (std::uint32_t i = 0; i < sampleTimes.size(); ++i)
     {
-        if (in.eof())
-        {
-            done = true;
-        }
-        else
-        {
-            if (inComment)
-            {
-                if (c == '\n')
-                    inComment = false;
-            }
-            else
-            {
-                if (c == '#')
-                {
-                    inComment = true;
-                }
-                else if (std::isspace(static_cast<unsigned char>(c)) == 0)
-                {
-                    in.unget();
-                    done = true;
-                }
-            }
-        }
-
-        if (!done)
-            c = in.get();
+        proc.sample(sampleTimes[i],
+                    samples[i].position.template cast<double>(),
+                    samples[i].velocity.template cast<double>());
     }
-
-    return in.good();
 }
 
 
@@ -710,38 +552,35 @@ bool SkipComments(std::istream& in)
 template<typename T> std::unique_ptr<SampledOrbit<T>>
 LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    std::ifstream in(filename);
-    if (!in.good())
-        return nullptr;
+    using SampleType = Eigen::Matrix<T, 3, 1>;
 
-    if (!SkipComments(in))
-        return nullptr;
-
-    auto orbit = std::make_unique<SampledOrbit<T>>(interpolation);
-
-    double lastSampleTime = -std::numeric_limits<double>::infinity();
-    while (in.good())
+    std::vector<double> sampleTimes;
+    std::vector<SampleType> samples;
+    if (!LoadAsciiSamples(filename, sampleTimes, samples,
+                          [](std::istream& in, double& tdb, SampleType& s)
+                          {
+                              return (in >> tdb >> s.x() >> s.y() >> s.z()).good();
+                          }))
     {
-        double tdb;
-        Eigen::Matrix<T, 3, 1> position;
-        in >> tdb;
-        in >> position.x();
-        in >> position.y();
-        in >> position.z();
-
-        if (in.good())
-        {
-            // Skip samples with duplicate times; such trajectories are invalid, but
-            // are unfortunately used in some existing add-ons.
-            if (tdb != lastSampleTime)
-            {
-                orbit->addSample(tdb, position);
-                lastSampleTime = tdb;
-            }
-        }
+        return nullptr;
     }
 
-    return orbit;
+    return std::make_unique<SampledOrbit<T>>(interpolation, std::move(sampleTimes), std::move(samples));
+}
+
+
+template<typename T>
+bool
+ReadAsciiSampleXYZV(std::istream& in, double& tdb, SampleXYZV<T>& sample)
+{
+    in >> tdb
+       >> sample.position.x() >> sample.position.y() >> sample.position.z()
+       >> sample.velocity.x() >> sample.velocity.y() >> sample.velocity.z();
+    if (!in.good())
+        return false;
+
+    sample.velocity *= astro::daysToSecs(1.0);
+    return true;
 }
 
 
@@ -762,48 +601,18 @@ LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
 
-template <typename T> std::unique_ptr<SampledOrbitXYZV<T>>
+template<typename T>
+std::unique_ptr<SampledOrbitXYZV<T>>
 LoadSampledOrbitXYZV(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    std::ifstream in(filename);
-    if (!in.good())
+    std::vector<double> sampleTimes;
+    std::vector<SampleXYZV<T>> samples;
+    if (!LoadAsciiSamples(filename, sampleTimes, samples, &ReadAsciiSampleXYZV<T>))
         return nullptr;
 
-    if (!SkipComments(in))
-        return nullptr;
-
-    auto orbit = std::make_unique<SampledOrbitXYZV<T>>(interpolation);
-
-    double lastSampleTime = -std::numeric_limits<double>::infinity();
-    while (in.good())
-    {
-        double tdb = 0.0;
-        Eigen::Matrix<T, 3, 1> position;
-        Eigen::Matrix<T, 3, 1> velocity;
-
-        in >> tdb;
-        in >> position.x();
-        in >> position.y();
-        in >> position.z();
-        in >> velocity.x();
-        in >> velocity.y();
-        in >> velocity.z();
-
-        // Convert velocities from km/sec to km/Julian day
-        velocity = velocity * astro::daysToSecs(1.0);
-
-        if (in.good())
-        {
-            if (tdb != lastSampleTime)
-            {
-                orbit->addSample(tdb, position, velocity);
-                lastSampleTime = tdb;
-            }
-        }
-    }
-
-    return orbit;
+    return std::make_unique<SampledOrbitXYZV<T>>(interpolation, std::move(sampleTimes), std::move(samples));
 }
+
 
 bool
 ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
@@ -826,8 +635,8 @@ ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
     std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
     if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
     {
-        GetLogger()->error(_("Unsupported byte order {}, expected {}.\n"),
-                            byteOrder, static_cast<int>(celestia::compat::endian::native));
+        GetLogger()->error(_("Unsupported byte order {}, expected {} in {}.\n"),
+                           byteOrder, static_cast<int>(celestia::compat::endian::native), filename);
         return false;
     }
 
@@ -835,8 +644,8 @@ ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
     std::memcpy(&digits, header.data() + offsetof(XYZVBinaryHeader, digits), sizeof(digits));
     if (digits != std::numeric_limits<double>::digits)
     {
-        GetLogger()->error(_("Unsupported digits number {}, expected {}.\n"),
-                            digits, std::numeric_limits<double>::digits);
+        GetLogger()->error(_("Unsupported digits number {}, expected {} in {}.\n"),
+                            digits, std::numeric_limits<double>::digits, filename);
         return false;
     }
 
@@ -844,59 +653,82 @@ ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
     std::memcpy(&count, header.data() + offsetof(XYZVBinaryHeader, count), sizeof(count));
     if (count == 0)
     {
+        GetLogger()->error(_("Invalid record count {} in {}.\n"), count, filename);
         return false;
     }
 
     return true;
 }
 
-/* Load a binary xyzv sampled trajectory file.
- */
-template <typename T> std::unique_ptr<SampledOrbitXYZV<T>>
-LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation)
+
+template<typename T>
+bool
+ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
 {
-    std::ifstream in(filename, std::ios::binary);
-    if (!in.good())
+    std::array<char, sizeof(XYZVBinaryData)> data;
+    if (!in.read(data.data(), data.size())) /* Flawfinder: ignore */
+        return false;
+
+    std::memcpy(&tdb, data.data() + offsetof(XYZVBinaryData, tdb), sizeof(double));
+
+    if constexpr (std::is_same_v<T, double>)
     {
-        GetLogger()->error(_("Error opening {}.\n"), filename);
-        return nullptr;
+        std::memcpy(sample.position.data(), data.data() + offsetof(XYZVBinaryData, position), sizeof(double) * 3);
+        std::memcpy(sample.velocity.data(), data.data() + offsetof(XYZVBinaryData, velocity), sizeof(double) * 3);
+
+        sample.velocity *= astro::daysToSecs(1.0);
     }
-
-    ParseXYZVBinaryHeader(in, filename);
-
-    auto orbit = std::make_unique<SampledOrbitXYZV<T>>(interpolation);
-    double lastSampleTime = -std::numeric_limits<T>::infinity();
-
-    while (in.good())
+    else
     {
-        std::array<char, sizeof(XYZVBinaryData)> data;
-        if (!in.read(data.data(), data.size())) /* Flawfinder: ignore */
-            break;
-
-        double tdb;
         Eigen::Vector3d position;
         Eigen::Vector3d velocity;
 
-        std::memcpy(&tdb,            data.data() + offsetof(XYZVBinaryData, tdb),      sizeof(tdb));
         std::memcpy(position.data(), data.data() + offsetof(XYZVBinaryData, position), sizeof(double) * 3);
         std::memcpy(velocity.data(), data.data() + offsetof(XYZVBinaryData, velocity), sizeof(double) * 3);
 
-        // Convert velocities from km/sec to km/Julian day
-        velocity *= astro::daysToSecs(1.0);
-
-        if (tdb != lastSampleTime)
-        {
-            Eigen::Matrix<T, 3, 1> pos = position.cast<T>();
-            Eigen::Matrix<T, 3, 1> vel = velocity.cast<T>();
-            orbit->addSample(tdb, pos, vel);
-            lastSampleTime = tdb;
-        }
+        sample.position = position.template cast<T>();
+        sample.velocity = (velocity * astro::daysToSecs(1.0)).template cast<T>();
     }
 
-    return orbit;
+    return true;
+}
+
+
+
+/* Load a binary xyzv sampled trajectory file.
+ */
+template <typename T>
+std::unique_ptr<SampledOrbitXYZV<T>>
+LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation)
+{
+    using SampleType = SampleXYZV<T>;
+
+    std::vector<double> sampleTimes;
+    std::vector<SampleType> samples;
+
+    std::ifstream in(filename, std::ios::in | std::ios::binary);
+    if (!in.good())
+    {
+        GetLogger()->error(_("Error opening binary sample file {}.\n"), filename);
+        return nullptr;
+    }
+
+    if (!ParseXYZVBinaryHeader(in, filename))
+    {
+        GetLogger()->error(_("Could not read XYZV binary file {}.\n"), filename);
+        return nullptr;
+    }
+
+    if (!LoadSamples(in, filename, sampleTimes, samples, &ReadXYZVBinarySample<T>))
+        return nullptr;
+
+    return std::make_unique<SampledOrbitXYZV<T>>(interpolation,
+                                                 std::move(sampleTimes),
+                                                 std::move(samples));
 }
 
 } // end unnamed namespace
+
 
 /*! Load a trajectory file containing single precision positions.
  */
