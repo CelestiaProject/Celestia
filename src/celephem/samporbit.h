@@ -37,4 +37,4 @@ std::unique_ptr<Orbit> LoadXYZVTrajectorySinglePrec(const fs::path& filename, Tr
 std::unique_ptr<Orbit> LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 std::unique_ptr<Orbit> LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 
-}
+} // end namespace celestia::ephem
