@@ -12,10 +12,6 @@ attribute vec4 in_Position;
 attribute vec3 in_Color;
 attribute float in_PointSize; // scaled brightness measured in Vegas
 
-float psf_max_theta(float br)
-{
-    return 0.012 + 1.488 / (sqrt(br_limit * 1000000.0 / (11.0 * br)) + 1.0);
-}
 
 void main(void)
 {
