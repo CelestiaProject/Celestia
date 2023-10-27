@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.9)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
@@ -404,6 +404,16 @@ else()
       add_compile_options(
         $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
       )
+    endif()
+  endif()
+  if("${build_type_lc}" STREQUAL "release")
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT lto_supported)
+    if(lto_supported)
+      message(STATUS "LTO is supported")
+      set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+    else()
+        message(STATUS "LTO is not supported")
     endif()
   endif()
 endif()
