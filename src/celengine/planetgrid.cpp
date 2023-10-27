@@ -26,8 +26,6 @@ using namespace celmath;
 using namespace celestia;
 using celestia::render::LineRenderer;
 
-namespace astro = celestia::astro;
-
 LineRenderer *PlanetographicGrid::latitudeRenderer = nullptr;
 LineRenderer *PlanetographicGrid::equatorRenderer = nullptr;
 LineRenderer *PlanetographicGrid::longitudeRenderer = nullptr;

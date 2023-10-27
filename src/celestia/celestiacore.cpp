@@ -84,8 +84,6 @@ using namespace celestia::engine;
 using namespace celestia::scripts;
 using namespace celestia::util;
 
-namespace astro = celestia::astro;
-
 static const int DragThreshold = 3;
 
 // Perhaps you'll want to put this stuff in configuration file.
