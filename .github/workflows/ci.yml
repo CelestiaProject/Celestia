@@ -74,6 +74,7 @@ jobs:
         }
 
         cmake -B '${{github.workspace}}/build' `
+            -G Ninja `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
