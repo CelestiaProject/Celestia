@@ -95,8 +95,6 @@ using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
 
-namespace astro = celestia::astro;
-
 #define NEAR_DIST      0.5f
 #define FAR_DIST       1.0e9f
 
