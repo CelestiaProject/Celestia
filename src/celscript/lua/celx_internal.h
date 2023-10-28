@@ -16,6 +16,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -335,7 +336,7 @@ public:
     }
 
     LuaState* getLuaStateObject();
-    static const char* ClassNames[];
+    static std::string_view classNameForId(int id);
 
 private:
     lua_State* m_lua;

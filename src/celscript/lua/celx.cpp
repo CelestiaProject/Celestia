@@ -11,11 +11,14 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
+
+#include <array>
 #include <cassert>
 #include <ctime>
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <string_view>
 #include <utility>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
@@ -45,27 +48,26 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 
-const char* CelxLua::ClassNames[] =
+static constexpr std::array CelxClassNames
 {
-    "class_celestia",
-    "class_observer",
-    "class_object",
-    "class_vec3",
-    "class_matrix",
-    "class_rotation",
-    "class_position",
-    "class_frame",
-    "class_celscript",
-    "class_font",
-    "class_image",
-    "class_texture",
-    "class_phase",
-    "class_category"
+    "class_celestia"sv,
+    "class_observer"sv,
+    "class_object"sv,
+    "class_vec3"sv,
+    "class_matrix"sv,
+    "class_rotation"sv,
+    "class_position"sv,
+    "class_frame"sv,
+    "class_celscript"sv,
+    "class_font"sv,
+    "class_image"sv,
+    "class_texture"sv,
+    "class_phase"sv,
+    "class_category"sv,
 };
-
-#define CLASS(i) ClassNames[(i)]
 
 // Maximum timeslice a script may run without
 // returning control to celestia
@@ -112,7 +114,7 @@ static void openLuaLibrary(lua_State* l,
 // Push a class name onto the Lua stack
 void PushClass(lua_State* l, int id)
 {
-    lua_pushlstring(l, CelxLua::ClassNames[id], strlen(CelxLua::ClassNames[id]));
+    lua_pushlstring(l, CelxClassNames[id].data(), CelxClassNames[id].size());
 }
 
 // Set the class (metatable) of the object on top of the stack
@@ -121,9 +123,9 @@ void Celx_SetClass(lua_State* l, int id)
     PushClass(l, id);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << CelxLua::ClassNames[id] << " not found!\n";
+        cout << "Metatable for " << CelxClassNames[id] << " not found!\n";
     if (lua_setmetatable(l, -2) == 0)
-        cout << "Error setting metatable for " << CelxLua::ClassNames[id] << '\n';
+        cout << "Error setting metatable for " << CelxClassNames[id] << '\n';
 }
 
 // Initialize the metatable for a class; sets the appropriate registry
@@ -170,7 +172,7 @@ bool Celx_istype(lua_State* l, int index, int id)
     }
 
     const char* classname = lua_tostring(l, -1);
-    bool result = classname != nullptr && strcmp(classname, CelxLua::ClassNames[id]) == 0;
+    bool result = classname != nullptr && CelxClassNames[id] == std::string_view(classname);
     lua_pop(l, 1);
     return result;
 }
@@ -1483,11 +1485,15 @@ void CelxLua::setClass(int id)
     Celx_SetClass(m_lua, id);
 }
 
+std::string_view CelxLua::classNameForId(int id)
+{
+    return CelxClassNames[id];
+}
 
 // Push a class name onto the Lua stack
 void CelxLua::pushClassName(int id)
 {
-    lua_pushlstring(m_lua, ClassNames[id], strlen(ClassNames[id]));
+    lua_pushlstring(m_lua, CelxClassNames[id].data(), CelxClassNames[id].size());
 }
 
 
