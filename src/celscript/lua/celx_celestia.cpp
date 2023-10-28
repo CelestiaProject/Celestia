@@ -2962,7 +2962,7 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.pushClassName(Celx_Celestia);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        std::cout << "Metatable for " << CelxLua::ClassNames[Celx_Celestia] << " not found!\n";
+        std::cout << "Metatable for " << CelxLua::classNameForId(Celx_Celestia) << " not found!\n";
     celx.registerMethod("log", celestia_log);
     celx.registerMethod("settimeslice", celestia_settimeslice);
     celx.registerMethod("setluahook", celestia_setluahook);

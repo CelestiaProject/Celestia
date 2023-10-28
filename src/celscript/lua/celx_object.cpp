@@ -1566,7 +1566,7 @@ void ExtendObjectMetaTable(lua_State* l)
     celx.pushClassName(Celx_Object);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        std::cout << "Metatable for " << CelxLua::ClassNames[Celx_Object] << " not found!\n";
+        std::cout << "Metatable for " << CelxLua::classNameForId(Celx_Object) << " not found!\n";
     celx.registerMethod("setatmosphere", object_setatmosphere);
     celx.registerMethod("getcategories", object_getcategories);
     celx.registerMethod("addtocategory", object_addtocategory);
