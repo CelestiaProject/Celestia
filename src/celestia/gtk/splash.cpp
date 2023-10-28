@@ -72,9 +72,6 @@ SplashData* splashStart(AppData* app, gboolean showSplash, const gchar* installD
     }
     #endif
 
-    GtkWidget* gf = gtk_fixed_new();
-    gtk_container_add(GTK_CONTAINER(ss->splash), gf);
-
     fs::path splashFile = fs::path(defaultDir) / "splash/splash.png";
     if (installDir != nullptr)
     {
@@ -83,7 +80,18 @@ SplashData* splashStart(AppData* app, gboolean showSplash, const gchar* installD
             splashFile = std::move(newSplashFile);
     }
 
-    GtkWidget* i = gtk_image_new_from_file(splashFile.string().c_str());
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(splashFile.string().c_str(), nullptr);
+    if (pixbuf == nullptr)
+    {
+        gtk_widget_destroy(ss->splash);
+        ss->splash = nullptr;
+        return ss;
+    }
+
+    GtkWidget* gf = gtk_fixed_new();
+    gtk_container_add(GTK_CONTAINER(ss->splash), gf);
+
+    GtkWidget* i = gtk_image_new_from_pixbuf(pixbuf);
     gtk_fixed_put(GTK_FIXED(gf), i, 0, 0);
 
     /* The information label is right-aligned and biased to the lower-right
