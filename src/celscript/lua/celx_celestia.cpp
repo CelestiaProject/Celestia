@@ -18,6 +18,7 @@
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celestia/audiosession.h>
+#include <celestia/hud.h>
 #include <celestia/url.h>
 #include <celestia/celestiacore.h>
 #include <celestia/view.h>
@@ -404,10 +405,10 @@ static int celestia_getlayoutdirection(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getlayoutdirection");
     switch (this_celestia(l)->getLayoutDirection())
     {
-    case CelestiaCore::LayoutDirection::LeftToRight:
+    case celestia::LayoutDirection::LeftToRight:
         lua_pushstring(l, "ltr");
         break;
-    case CelestiaCore::LayoutDirection::RightToLeft:
+    case celestia::LayoutDirection::RightToLeft:
         lua_pushstring(l, "rtl");
         break;
     default:
@@ -424,9 +425,9 @@ static int celestia_setlayoutdirection(lua_State* l)
 
     string layoutDirection = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setlayoutdirection must be a string");
     if (layoutDirection == "ltr") // NOSONAR
-        appCore->setLayoutDirection(CelestiaCore::LayoutDirection::LeftToRight);
+        appCore->setLayoutDirection(LayoutDirection::LeftToRight);
     else if (layoutDirection == "rtl")
-        appCore->setLayoutDirection(CelestiaCore::LayoutDirection::RightToLeft);
+        appCore->setLayoutDirection(LayoutDirection::RightToLeft);
     else
        Celx_DoError(l, "Invalid layoutDirection");
     return 0;
@@ -1984,7 +1985,7 @@ static int celestia_requestkeyboard(lua_State* l)
         return 0;
     }
 
-    int mode = appCore->getTextEnterMode();
+    unsigned int mode = appCore->getTextEnterMode();
 
     if (lua_toboolean(l, 2))
     {
@@ -1996,11 +1997,11 @@ static int celestia_requestkeyboard(lua_State* l)
         }
         lua_remove(l, -1);
 
-        mode = mode | CelestiaCore::KbPassToScript;
+        mode = mode | Hud::TextEnterPassToScript;
     }
     else
     {
-        mode = mode & ~CelestiaCore::KbPassToScript;
+        mode = mode & ~Hud::TextEnterPassToScript;
     }
     appCore->setTextEnterMode(mode);
 
@@ -2192,7 +2193,7 @@ static int celestia_seturl(lua_State* l)
     Observer* obs = to_observer(l, 3);
     if (obs == nullptr)
         obs = appCore->getSimulation()->getActiveObserver();
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
 
     appCore->goToUrl(url);
@@ -2208,7 +2209,7 @@ static int celestia_geturl(lua_State* l)
     Observer* obs = to_observer(l, 2);
     if (obs == nullptr)
         obs = appCore->getSimulation()->getActiveObserver();
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
 
     CelestiaState appState(appCore);
@@ -2765,7 +2766,7 @@ static int celestia_loadfont(lua_State* l)
 
 std::shared_ptr<TextureFont> getFont(CelestiaCore* appCore)
 {
-    return appCore->font;
+    return appCore->hud->getFont();
 }
 
 static int celestia_getfont(lua_State* l)
@@ -2783,7 +2784,7 @@ static int celestia_getfont(lua_State* l)
 
 std::shared_ptr<TextureFont> getTitleFont(CelestiaCore* appCore)
 {
-    return appCore->titleFont;
+    return appCore->hud->getTitleFont();
 }
 
 static int celestia_gettitlefont(lua_State* l)

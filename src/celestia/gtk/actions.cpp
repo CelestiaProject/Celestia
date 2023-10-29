@@ -349,7 +349,7 @@ void actionCaptureMovie(GtkAction*, AppData* app)
 /* File -> Run Demo... */
 void actionRunDemo(GtkAction*, AppData* app)
 {
-    const auto& demoScriptFile = app->core->getConfig()->paths.demoScriptFile;    
+    const auto& demoScriptFile = app->core->getConfig()->paths.demoScriptFile;
     if (!demoScriptFile.empty())
     {
         app->core->cancelScript();
@@ -656,13 +656,13 @@ void actionMenuBarVisible(GtkToggleAction* action, AppData* app)
 
 void actionMultiSplitH(GtkAction*, AppData* app)
 {
-    app->core->splitView(View::HorizontalSplit);
+    app->core->splitView(celestia::View::HorizontalSplit);
 }
 
 
 void actionMultiSplitV(GtkAction*, AppData* app)
 {
-    app->core->splitView(View::VerticalSplit);
+    app->core->splitView(celestia::View::VerticalSplit);
 }
 
 

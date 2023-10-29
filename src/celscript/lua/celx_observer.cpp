@@ -804,13 +804,15 @@ static int observer_splitview(lua_State* l)
     Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
     const char* splitType = celx.safeGetString(2, AllErrors, "First argument to observer:splitview() must be a string");
-    View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
+    celestia::View::Type type = (compareIgnoringCase(splitType, "h") == 0)
+        ? celestia::View::HorizontalSplit
+        : celestia::View::VerticalSplit;
     double splitPos = celx.safeGetNumber(3, WrongType, "Number expected as argument to observer:splitview()", 0.5);
     if (splitPos < 0.1)
         splitPos = 0.1;
     if (splitPos > 0.9)
         splitPos = 0.9;
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->splitView(type, view, (float)splitPos);
     return 0;
 }
@@ -822,7 +824,7 @@ static int observer_deleteview(lua_State* l)
 
     Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->deleteView(view);
     return 0;
 }
@@ -834,7 +836,7 @@ static int observer_singleview(lua_State* l)
 
     Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->singleView(view);
     return 0;
 }
@@ -846,7 +848,7 @@ static int observer_makeactiveview(lua_State* l)
 
     Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
     return 0;
 }

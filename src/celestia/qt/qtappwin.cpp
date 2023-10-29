@@ -1791,7 +1791,8 @@ CelestiaAppWindow::buildScriptsMenu()
 void
 CelestiaAppWindow::copyText()
 {
-    QString text(m_appCore->getTypedText().c_str());
+    auto typedText = m_appCore->getTypedText();
+    QString text = QString::fromUtf8(typedText.data(), typedText.size());
     if (!text.isEmpty())
         QGuiApplication::clipboard()->setText(text);
 }

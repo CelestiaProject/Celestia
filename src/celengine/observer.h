@@ -151,7 +151,7 @@ public:
     void rotate(const Eigen::Quaternionf &q);
     void changeOrbitDistance(const Selection&, float d);
     void setTargetSpeed(float s);
-    float getTargetSpeed();
+    float getTargetSpeed() const;
 
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
