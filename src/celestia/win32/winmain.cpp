@@ -4287,11 +4287,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_VIEW_HSPLIT:
-            appCore->splitView(View::HorizontalSplit);
+            appCore->splitView(celestia::View::HorizontalSplit);
             break;
 
         case ID_VIEW_VSPLIT:
-            appCore->splitView(View::VerticalSplit);
+            appCore->splitView(celestia::View::VerticalSplit);
             break;
 
         case ID_VIEW_SINGLE:

@@ -15,7 +15,7 @@ class Renderer;
 
 class MovieCapture
 {
- public:
+public:
     MovieCapture(const Renderer *r) : renderer(r) {};
     virtual ~MovieCapture() = default;
 
@@ -32,8 +32,18 @@ class MovieCapture
 
     virtual void setAspectRatio(int aspectNumerator, int aspectDenominator) = 0;
     virtual void setQuality(float) = 0;
-    virtual void recordingStatus(bool started) = 0; /* to update UI recording status indicator */
+    bool recordingStatus() const { return m_recordingStatus; }
+    void recordingStatus(bool started)
+    {
+        m_recordingStatus = started;
+        recordingStatusUpdated(started);
+    }
 
- protected:
+protected:
     const Renderer *renderer{ nullptr };
+
+    virtual void recordingStatusUpdated(bool started) = 0;
+
+private:
+    bool m_recordingStatus;
 };

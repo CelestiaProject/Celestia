@@ -23,6 +23,7 @@
 
 #include <celengine/body.h>
 #include <celengine/simulation.h>
+#include <celestia/hud.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
@@ -393,7 +394,7 @@ CelestiaActions::slotAdjustLimitingMagnitude()
         // HACK!HACK!HACK!
         // Consider removal relevant entries from menus.
         // If search console is open then pass keys to it.
-        if (appCore->getTextEnterMode() != CelestiaCore::KbNormal)
+        if (appCore->getTextEnterMode() != celestia::Hud::TextEnterNormal)
         {
             appCore->charEntered(act->shortcut().toString().toUtf8().data());
             return;

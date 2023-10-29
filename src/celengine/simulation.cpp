@@ -166,11 +166,15 @@ Observer& Simulation::getObserver()
 }
 
 
-Observer* Simulation::addObserver()
+const Observer& Simulation::getObserver() const
 {
-    Observer* o = new Observer();
-    observers.push_back(o);
-    return o;
+    return *activeObserver;
+}
+
+
+Observer* Simulation::duplicateActiveObserver()
+{
+    return observers.emplace_back(new Observer(*getActiveObserver()));
 }
 
 
@@ -183,6 +187,12 @@ void Simulation::removeObserver(Observer* o)
 
 
 Observer* Simulation::getActiveObserver()
+{
+    return activeObserver;
+}
+
+
+const Observer* Simulation::getActiveObserver() const
 {
     return activeObserver;
 }
@@ -262,7 +272,7 @@ void Simulation::setTargetSpeed(float s)
     activeObserver->setTargetSpeed(s);
 }
 
-float Simulation::getTargetSpeed()
+float Simulation::getTargetSpeed() const
 {
     return activeObserver->getTargetSpeed();
 }

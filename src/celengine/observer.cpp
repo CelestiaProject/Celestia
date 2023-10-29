@@ -979,9 +979,9 @@ void Observer::setTargetSpeed(float s)
 }
 
 
-float Observer::getTargetSpeed()
+float Observer::getTargetSpeed() const
 {
-    return (float) targetSpeed;
+    return static_cast<float>(targetSpeed);
 }
 
 
