@@ -1796,3 +1796,8 @@ Bug fixes
 
 Translations
 * Update Bulgarian translation
+
+1.6.4
+Update domain to celestiaproject.space
+Bug fixes
+* Fix building with Lua 5.4
