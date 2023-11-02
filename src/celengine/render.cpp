@@ -1484,14 +1484,6 @@ void Renderer::render(const Observer& observer,
                       float faintestMagNight,
                       const Selection& sel)
 {
-    draw(observer, universe, faintestMagNight, sel);
-}
-
-void Renderer::draw(const Observer& observer,
-                    const Universe& universe,
-                    float faintestMagNight,
-                    const Selection& sel)
-{
     // Get the observer's time
     double now = observer.getTime();
     realTime = observer.getRealTime();

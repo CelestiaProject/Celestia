@@ -51,14 +51,6 @@ void Simulation::render(Renderer& renderer)
                     selection);
 }
 
-void Simulation::draw(Renderer& renderer)
-{
-    renderer.draw(*activeObserver,
-                  *universe,
-                  faintestVisible,
-                  selection);
-}
-
 
 void Simulation::render(Renderer& renderer, Observer& observer)
 {

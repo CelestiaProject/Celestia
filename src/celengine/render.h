@@ -135,10 +135,6 @@ class Renderer
                 const Universe&,
                 float faintestVisible,
                 const Selection& sel);
-    void draw(const Observer&,
-              const Universe&,
-              float faintestVisible,
-              const Selection& sel);
 
     bool getInfo(std::map<std::string, std::string>& info) const;
 
