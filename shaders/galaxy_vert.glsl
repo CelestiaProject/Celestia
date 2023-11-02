@@ -27,10 +27,11 @@ void main(void)
         return;
     }
 
-    vec4 v = vec4(viewMat * vec3(in_TexCoord0.s * 2.0 - 1.0, in_TexCoord0.t * 2.0 - 1.0, 0.0) * s, 0.0);
+    vec4 v = vec4(viewMat * vec3(in_TexCoord0 * 2.0 - 1.0, 0.0) * s, 0.0);
     float alpha = (0.1 - screenFrac) * in_Brightness * brightness;
 
-    color = vec4(texture2D(colorTex, vec2(in_ColorIndex, 0.0)).rgb, alpha);
+    float premultalpha = sqrt(alpha); // faster and no so presize srgb->linear
+    color = vec4(texture2D(colorTex, vec2(in_ColorIndex, 0.0)).rgb * premultalpha, alpha);
     texCoord = in_TexCoord0;
     set_vp(p + v);
 }

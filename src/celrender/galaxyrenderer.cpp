@@ -24,7 +24,6 @@
 #include "galaxyrenderer.h"
 
 using celestia::engine::GalacticFormManager;
-using celestia::engine::GalacticForm;
 
 namespace celestia::render
 {
@@ -56,15 +55,15 @@ colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
 void
 BindTextures()
 {
-    static Texture* galaxyTex = nullptr;
-    static Texture* colorTex  = nullptr;
+    static std::unique_ptr<Texture> galaxyTex = nullptr;
+    static std::unique_ptr<Texture> colorTex  = nullptr;
 
     if (galaxyTex == nullptr)
     {
         galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
                                             kGalaxyTextureSize,
                                             celestia::PixelFormat::LUMINANCE,
-                                            galaxyTextureEval).release();
+                                            galaxyTextureEval);
     }
     assert(galaxyTex != nullptr);
     glActiveTexture(GL_TEXTURE0);
@@ -72,10 +71,15 @@ BindTextures()
 
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
+        colorTex = CreateProceduralTexture(256, 1,
+#ifdef GL_ES
+                                           celestia::PixelFormat::RGBA,
+#else
+                                           celestia::PixelFormat::SRGBA,
+#endif
                                            colorTextureEval,
                                            Texture::EdgeClamp,
-                                           Texture::NoMipMaps).release();
+                                           Texture::NoMipMaps);
     }
     assert(colorTex != nullptr);
     glActiveTexture(GL_TEXTURE1);
@@ -97,7 +101,7 @@ struct GalaxyRenderer::Object
 
     Eigen::Vector3f offset; // distance to the galaxy
     float           brightness;
-    float           nearZ;  // if nearZ != & farZ != then use custom projection matrix
+    float           nearZ;  // if nearZ != 0 & farZ != 0 then use custom projection matrix
     float           farZ;
     const Galaxy   *galaxy;
 };
@@ -132,7 +136,7 @@ GalaxyRenderer::render()
     if (m_objects.empty())
         return;
 
-    if (gl::hasGeomShader())
+    if (/*gl::hasGeomShader()*/false)
         renderGL3();
     else
         renderGL2();
@@ -232,9 +236,9 @@ GalaxyRenderer::renderGL2()
 
         prog->setMVPMatrices(pr, m_renderer.getModelViewMatrix());
 
-        prog->floatParam("size")               = size;
-        prog->floatParam("brightness")         = brightness;
-        prog->mat4Param("m")                   = m;
+        prog->floatParam("size")       = size;
+        prog->floatParam("brightness") = brightness;
+        prog->mat4Param("m")           = m;
 
         m_renderDataGL2[obj.galaxy->getFormId()].vo.draw(nPoints * 6);
     }

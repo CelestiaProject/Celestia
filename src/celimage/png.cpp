@@ -99,29 +99,6 @@ Image* LoadPNGImage(const fs::path& filename)
                  &color_type, &interlace_type,
                  nullptr, nullptr);
 
-    PixelFormat format = PixelFormat::RGB;
-    switch (color_type)
-    {
-    case PNG_COLOR_TYPE_GRAY:
-        format = PixelFormat::LUMINANCE;
-        break;
-    case PNG_COLOR_TYPE_GRAY_ALPHA:
-        format = PixelFormat::LUM_ALPHA;
-        break;
-    case PNG_COLOR_TYPE_RGB:
-        format = PixelFormat::RGB;
-        break;
-    case PNG_COLOR_TYPE_PALETTE:
-    case PNG_COLOR_TYPE_RGB_ALPHA:
-        format = PixelFormat::RGBA;
-        break;
-    default:
-        // badness
-        break;
-    }
-
-    img = new Image(format, width, height);
-
     // TODO: consider using paletted textures if they're available
     if (color_type == PNG_COLOR_TYPE_PALETTE)
     {
@@ -144,6 +121,47 @@ Image* LoadPNGImage(const fs::path& filename)
         png_set_strip_16(png_ptr);
     else if (bit_depth < 8)
         png_set_packing(png_ptr);
+
+    double gamma = 1.0/2.2;
+#ifdef GL_ES
+    bool isLinear = true;
+#else
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA))
+        png_get_gAMA(png_ptr, info_ptr, &gamma);
+    bool isLinear = bit_depth != 8 || gamma < 0.454 || gamma > 0.455; // treat images with nonstandard gamma as linear
+#endif
+
+    PixelFormat format = PixelFormat::RGB;
+    switch (color_type)
+    {
+    case PNG_COLOR_TYPE_GRAY:
+#ifdef GL_ES
+        format = PixelFormat::LUMINANCE;
+#else
+        format = isLinear ? PixelFormat::LUMINANCE : PixelFormat::SLUMINANCE;
+#endif
+        break;
+    case PNG_COLOR_TYPE_GRAY_ALPHA:
+#ifdef GL_ES
+        format = PixelFormat::LUM_ALPHA;
+#else
+        format = isLinear ? PixelFormat::LUM_ALPHA : PixelFormat::SLUM_ALPHA;
+#endif
+        break;
+    case PNG_COLOR_TYPE_RGB:
+        format = isLinear ? PixelFormat::RGB : PixelFormat::SRGB;
+        break;
+    case PNG_COLOR_TYPE_PALETTE:
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+        format = isLinear ? PixelFormat::RGBA : PixelFormat::SRGBA;
+        break;
+    default:
+        // badness
+        break;
+    }
+    GetLogger()->info("File: {}, gamma: {}, linear: {}, format: {:X}\n", filename, gamma, isLinear ? "yes" : "no", (int)format);
+
+    img = new Image(format, width, height);
 
     row_pointers = new png_bytep[height];
     for (unsigned int i = 0; i < height; i++)
