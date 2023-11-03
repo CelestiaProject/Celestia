@@ -70,7 +70,7 @@ public:
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
- public:
+public:
     enum
     {
         LeftButton   = 0x01,
@@ -179,15 +179,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         TintSaturationChanged       = 0x0800,
     };
 
-    enum
-    {
-        ShowNoElement = 0x001,
-        ShowTime      = 0x002,
-        ShowVelocity  = 0x004,
-        ShowSelection = 0x008,
-        ShowFrame     = 0x010,
-    };
-
     enum class ScriptSystemAccessPolicy
     {
         Ask         = 0,
@@ -195,7 +186,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Deny        = 2,
     };
 
- public:
     CelestiaCore();
     ~CelestiaCore();
 
@@ -257,7 +247,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     FavoritesList* getFavorites();
 
     bool viewUpdateRequired() const;
-    void setViewChanged();
 
     const DestinationList* getDestinations();
 
@@ -265,8 +254,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTimeZoneBias(int);
     std::string getTimeZoneName() const;
     void setTimeZoneName(const std::string&);
-    void setTextEnterMode(unsigned int);
-    unsigned int getTextEnterMode() const;
+    void setTextEnterMode(celestia::Hud::TextEnterMode);
+    celestia::Hud::TextEnterMode getTextEnterMode() const;
 
     void initMovieCapture(MovieCapture*);
     void recordBegin();
@@ -280,12 +269,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int getHudDetail();
     void setHudDetail(int);
-    Color getTextColor();
-    void setTextColor(Color);
+    const Color& getTextColor() const;
+    void setTextColor(const Color&);
     celestia::astro::Date::Format getDateFormat() const;
     void setDateFormat(celestia::astro::Date::Format format);
-    int getOverlayElements() const;
-    void setOverlayElements(int);
+    celestia::HudElements getOverlayElements() const;
+    void setOverlayElements(celestia::HudElements);
 
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
@@ -296,9 +285,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::vector<Observer*> getObservers() const;
     celestia::View* getViewByObserver(const Observer*) const;
     void splitView(celestia::View::Type type, celestia::View* av = nullptr, float splitPos = 0.5f);
-    void singleView(celestia::View* av = nullptr);
+    void singleView(const celestia::View* av = nullptr);
     void deleteView(celestia::View* v = nullptr);
-    void setActiveView(celestia::View* v = nullptr);
+    void setActiveView(const celestia::View* v = nullptr);
     bool getFramesVisible() const;
     void setFramesVisible(bool);
     bool getActiveFrameVisible() const;
@@ -409,14 +398,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
 
- protected:
+private:
+    void charEnteredAutoComplete(const char*);
+    void updateSelectionFromInput();
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
 
- private:
     std::unique_ptr<CelestiaConfig> config{ nullptr };
 
     Universe* universe{ nullptr };
@@ -471,8 +461,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     double sysTime{ 0.0 };
 
-    bool viewChanged{ true };
-
     Eigen::Vector3f joystickRotation{ Eigen::Vector3f::Zero() };
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
@@ -516,8 +504,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
 
 #ifdef CELX
-    friend celestia::View* getViewByObserver(CelestiaCore*, Observer*);
-    friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
+    friend celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);
+    friend void getObservers(const CelestiaCore*, std::vector<Observer*>&);
     friend std::shared_ptr<TextureFont> getFont(CelestiaCore*);
     friend std::shared_ptr<TextureFont> getTitleFont(CelestiaCore*);
 #endif

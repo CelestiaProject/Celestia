@@ -29,6 +29,7 @@
 #include <celestia/windowmetrics.h>
 #include <celttf/truetypefont.h>
 #include <celutil/color.h>
+#include <celutil/flag.h>
 
 class MovieCapture;
 class Overlay;
@@ -83,46 +84,63 @@ private:
     int m_titleEmWidth{ 0 };
 };
 
+enum class HudElements : int
+{
+    ShowTime       = 0x01,
+    ShowVelocity   = 0x02,
+    ShowSelection  = 0x04,
+    ShowFrame      = 0x08,
+    Default        = 0x0f,
+};
+
+ENUM_CLASS_BITWISE_OPS(HudElements);
+
+struct HudSettings
+{
+    Color textColor{ 1.0f, 1.0f, 1.0f };
+
+    MeasurementSystem measurementSystem{ MeasurementSystem::Metric };
+    TemperatureScale temperatureScale{ TemperatureScale::Kelvin };
+
+    HudElements overlayElements{ HudElements::Default };
+    bool showFPSCounter{ false };
+    bool showOverlayImage{ true };
+    bool showMessage{ true };
+};
+
 class Hud
 {
 public:
-    enum OverlayElements : unsigned int
-    {
-        ShowNoElement  = 0x01,
-        ShowTime       = 0x02,
-        ShowVelocity   = 0x04,
-        ShowSelection  = 0x08,
-        ShowFrame      = 0x10,
-    };
 
-    enum TextEnterMode : unsigned int
+
+    enum class TextEnterMode : unsigned int
     {
-        TextEnterNormal       = 0x00,
-        TextEnterAutoComplete = 0x01,
-        TextEnterPassToScript = 0x02,
+        Normal       = 0x00,
+        AutoComplete = 0x01,
+        PassToScript = 0x02,
     };
 
     Hud() = default;
     ~Hud();
 
-    int getDetail() const;
-    void setDetail(int);
-    astro::Date::Format getDateFormat() const;
-    void setDateFormat(astro::Date::Format);
+    int detail() const;
+    void detail(int);
+    astro::Date::Format dateFormat() const;
+    void dateFormat(astro::Date::Format);
     TextInput& textInput();
-    unsigned int getTextEnterMode() const;
-    void setTextEnterMode(unsigned int mode);
+    TextEnterMode textEnterMode() const;
+    void textEnterMode(TextEnterMode mode);
 
     void setOverlay(std::unique_ptr<Overlay>&&);
     void setWindowSize(int, int);
     void setTextAlignment(LayoutDirection);
 
     int getTextWidth(std::string_view) const;
-    const std::shared_ptr<TextureFont>& getFont() const;
-    const std::shared_ptr<TextureFont>& getTitleFont() const;
-    bool setFont(const std::shared_ptr<TextureFont>&);
-    bool setTitleFont(const std::shared_ptr<TextureFont>&);
-    std::tuple<int, int> getTitleMetrics() const;
+    const std::shared_ptr<TextureFont>& font() const;
+    const std::shared_ptr<TextureFont>& titleFont() const;
+    bool trySetFont(const std::shared_ptr<TextureFont>&);
+    bool trySetTitleFont(const std::shared_ptr<TextureFont>&);
+    std::tuple<int, int> titleMetrics() const;
 
     void renderOverlay(const WindowMetrics&,
                        const Simulation*,
@@ -135,15 +153,8 @@ public:
     void showText(const TextPrintPosition&, std::string_view, double duration, double currentTime);
     void setImage(std::unique_ptr<OverlayImage>&&, double);
 
-    Color textColor{ 1.0f, 1.0f, 1.0f };
-
-    MeasurementSystem measurementSystem{ MeasurementSystem::Metric };
-    TemperatureScale temperatureScale{ TemperatureScale::Kelvin };
-
-    OverlayElements overlayElements{ ShowTime | ShowVelocity | ShowSelection | ShowFrame };
-    bool showFPSCounter{ false };
-    bool showOverlayImage{ true };
-    bool showMessage{ true };
+    HudSettings& hudSettings() noexcept { return m_hudSettings; }
+    const HudSettings& hudSettings() const noexcept { return m_hudSettings; }
 
 private:
     void renderTimeInfo(const WindowMetrics&, const Simulation*, const TimeInfo&);
@@ -152,32 +163,31 @@ private:
     void renderTextMessages(const WindowMetrics&, double);
     void renderMovieCapture(const WindowMetrics&, const MovieCapture&);
 
-    std::string_view getCurrentMessage(double) const;
+    HudSettings m_hudSettings;
+    HudFonts m_hudFonts;
 
-    Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
+    std::unique_ptr<Overlay> m_overlay;
 
-    HudFonts hudFonts;
+    std::unique_ptr<OverlayImage> m_image;
 
-    std::unique_ptr<Overlay> overlay;
+    std::unique_ptr<celestia::engine::DateFormatter> m_dateFormatter{ std::make_unique<celestia::engine::DateFormatter>() };
+    celestia::astro::Date::Format m_dateFormat{ celestia::astro::Date::Locale };
+    int m_dateStrWidth{ 0 };
 
-    std::unique_ptr<OverlayImage> image;
-
-    std::unique_ptr<celestia::engine::DateFormatter> dateFormatter{ std::make_unique<celestia::engine::DateFormatter>() };
-    celestia::astro::Date::Format dateFormat{ celestia::astro::Date::Locale };
-    int dateStrWidth{ 0 };
-
-    int hudDetail{ 2 };
+    int m_hudDetail{ 2 };
 
     TextInput m_textInput;
-    TextEnterMode m_textEnterMode{ TextEnterMode::TextEnterNormal };
+    TextEnterMode m_textEnterMode{ TextEnterMode::Normal };
 
-    std::string messageText;
-    TextPrintPosition messageTextPosition;
-    double messageStart{ -std::numeric_limits<double>::infinity() };
-    double messageDuration{ 0.0 };
+    std::string m_messageText;
+    TextPrintPosition m_messageTextPosition;
+    double m_messageStart{ -std::numeric_limits<double>::infinity() };
+    double m_messageDuration{ 0.0 };
 
-    Selection lastSelection;
-    std::string selectionNames;
+    Selection m_lastSelection;
+    std::string m_selectionNames;
 };
+
+ENUM_CLASS_BITWISE_OPS(Hud::TextEnterMode);
 
 }

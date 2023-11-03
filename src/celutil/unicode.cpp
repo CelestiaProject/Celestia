@@ -26,8 +26,9 @@
 #include <unicode/ustring.h>
 #endif
 
-#include "flag.h"
+#include <celutil/flag.h>
 
+using celestia::util::is_set;
 
 static_assert(std::is_same_v<UChar, char16_t>);
 

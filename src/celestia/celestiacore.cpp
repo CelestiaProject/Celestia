@@ -366,8 +366,8 @@ void CelestiaCore::cancelScript()
 {
     if (m_script != nullptr)
     {
-        if ((hud->getTextEnterMode() & Hud::TextEnterPassToScript) != 0)
-            setTextEnterMode(hud->getTextEnterMode() & ~Hud::TextEnterPassToScript);
+        if (is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript))
+            setTextEnterMode(hud->textEnterMode() & ~Hud::TextEnterMode::PassToScript);
         scriptState = ScriptCompleted;
         m_script = nullptr;
     }
@@ -407,8 +407,6 @@ static bool checkMask(int modifiers, int mask)
 
 void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
-    setViewChanged();
-
     mouseMotion = 0.0f;
 
 #ifdef CELX
@@ -425,8 +423,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
         return;
 
     // To select the clicked into view before a drag.
-    if (viewManager->pickView(sim, metrics, x, y) && viewManager->showActiveViewFrame)
-        viewManager->flashFrameStart(timeInfo.currentTime);
+    viewManager->pickView(sim, metrics, x, y);
 
     if (button == LeftButton) // look if click is near a view border
         viewManager->tryStartResizing(metrics, x, y);
@@ -434,10 +431,8 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
-    setViewChanged();
-
     // Four pixel tolerance for picking
-    float pickTolerance = sim->getActiveObserver()->getFOV() / metrics.height * this->pickTolerance;
+    float obsPickTolerance = sim->getActiveObserver()->getFOV() / static_cast<float>(metrics.height) * this->pickTolerance;
 
     if (viewManager->stopResizing())
         return;
@@ -459,13 +454,13 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            if (viewManager->pickView(sim, metrics, x, y) && viewManager->showActiveViewFrame)
-                viewManager->flashFrameStart(timeInfo.currentTime);
+            viewManager->pickView(sim, metrics, x, y);
 
-            float pickX, pickY;
-            float aspectRatio = ((float) metrics.width / (float) metrics.height);
-            viewManager->activeView()->mapWindowToView((float) x / (float) metrics.width,
-                                                       (float) y / (float) metrics.height,
+            float pickX;
+            float pickY;
+            float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
+            viewManager->activeView()->mapWindowToView(x / static_cast<float>(metrics.width),
+                                                       y / static_cast<float>(metrics.height),
                                                        pickX, pickY);
             pickX *= aspectRatio;
             if (isViewportEffectUsed)
@@ -474,7 +469,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, viewManager->activeView()->getObserver()->getZoom());
 
             Selection oldSel = sim->getSelection();
-            Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
+            Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), obsPickTolerance);
             addToHistory();
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
@@ -483,9 +478,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         else if (button == RightButton)
         {
             float pickX, pickY;
-            float aspectRatio = ((float) metrics.width / (float) metrics.height);
-            viewManager->activeView()->mapWindowToView((float) x / (float) metrics.width,
-                                                       (float) y / (float) metrics.height,
+            float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
+            viewManager->activeView()->mapWindowToView(x / static_cast<float>(metrics.width),
+                                                       y / static_cast<float>(metrics.height),
                                                        pickX, pickY);
             pickX *= aspectRatio;
             if (isViewportEffectUsed)
@@ -493,7 +488,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
             Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, viewManager->activeView()->getObserver()->getZoom());
 
-            Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
+            Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), obsPickTolerance);
             if (!sel.empty())
             {
                 if (contextMenuHandler != nullptr)
@@ -524,8 +519,6 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
 void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
-    setViewChanged();
-
     if (config->mouse.reverseWheel) motion = -motion;
     if (motion != 0.0)
     {
@@ -569,9 +562,6 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
-    if (modifiers != 0)
-        setViewChanged();
-
     if (viewManager->resizeViews(metrics, dx, dy))
     {
         setFOVFromZoom();
@@ -594,7 +584,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else if (sel.getType() == SelectionType::Body)
                 q = sel.body()->getGeometryOrientation();
 
-            q = XRotation(dy / metrics.height) * YRotation(dx / metrics.width) * q;
+            q = XRotation(dy / static_cast<float>(metrics.height)) *
+                YRotation(dx / static_cast<float>(metrics.width)) * q;
 
             if (sel.getType() == SelectionType::DeepSky)
                 sel.deepsky()->setOrientation(q);
@@ -612,7 +603,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 Vector3d v = sel.getPosition(t).offsetFromKm(sim->getObserver().getPosition());
                 Vector3f axis = v.cast<float>().normalized();
 
-                Quaternionf r(AngleAxisf(dx / metrics.width, axis));
+                Quaternionf r(AngleAxisf(dx / static_cast<float>(metrics.width), axis));
 
                 Quaternionf q = sel.deepsky()->getOrientation();
                 sel.deepsky()->setOrientation(r * q);
@@ -623,7 +614,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             // Y-axis controls distance (exponentially), and x-axis motion
             // rotates the camera about the view normal.
-            float amount = dy / metrics.height;
+            float amount = dy / static_cast<float>(metrics.height);
             sim->changeOrbitDistance(amount * 5);
             if (dx * dx > dy * dy)
             {
@@ -641,7 +632,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         else if (checkMask(modifiers, LeftButton | ShiftKey))
         {
             // Mouse zoom control
-            float amount = dy / metrics.height;
+            float amount = dy / static_cast<float>(metrics.height);
             float minFOV = renderer->getProjectionMode()->getMinimumFOV();
             float maxFOV = renderer->getProjectionMode()->getMaximumFOV();
             float fov = sim->getActiveObserver()->getFOV();
@@ -678,7 +669,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 coarseness = ComputeRotationCoarseness(*sim);
             }
 
-            Quaternionf q = XRotation(dy / metrics.height * coarseness) * YRotation(dx / metrics.width * coarseness);
+            Quaternionf q = XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
+                            YRotation(dx / static_cast<float>(metrics.width) * coarseness);
             if ((modifiers & RightButton) != 0)
                 sim->orbit(q);
             else
@@ -692,8 +684,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 
 void CelestiaCore::joystickAxis(int axis, float amount)
 {
-    setViewChanged();
-
     float deadZone = 0.25f;
 
     if (abs(amount) < deadZone)
@@ -712,8 +702,6 @@ void CelestiaCore::joystickAxis(int axis, float amount)
 
 void CelestiaCore::joystickButton(int button, bool down)
 {
-    setViewChanged();
-
     if (button >= 0 && button < JoyButtonCount)
         joyButtonsPressed[button] = down;
 }
@@ -721,8 +709,6 @@ void CelestiaCore::joystickButton(int button, bool down)
 
 void CelestiaCore::keyDown(int key, int modifiers)
 {
-    setViewChanged();
-
     if (m_scriptHook != nullptr && m_scriptHook->call("keydown", float(key), float(modifiers)))
         return;
 
@@ -802,7 +788,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     // Only process alphanumeric keys if we're not in text enter mode
     if (std::islower(key))
         key = std::toupper(key);
-    if (!(key >= 'A' && key <= 'Z' && (hud->getTextEnterMode() != Hud::TextEnterNormal) ))
+    if (!(key >= 'A' && key <= 'Z' && (hud->textEnterMode() != Hud::TextEnterMode::Normal) ))
     {
         if (modifiers & ShiftKey)
             shiftKeysPressed[key] = true;
@@ -813,7 +799,6 @@ void CelestiaCore::keyDown(int key, int modifiers)
 
 void CelestiaCore::keyUp(int key, int)
 {
-    setViewChanged();
     KeyAccel = 1.0;
     if (std::islower(key))
         key = std::toupper(key);
@@ -841,7 +826,6 @@ static string getKeyName(const char* c, int modifiers)
 
 void CelestiaCore::charEntered(char c, int modifiers)
 {
-    setViewChanged();
     char C[2];
     C[0] = c;
     C[1] = '\0';
@@ -850,54 +834,26 @@ void CelestiaCore::charEntered(char c, int modifiers)
 
 void CelestiaCore::charEntered(const char *c_p, int modifiers)
 {
-    setViewChanged();
-
     Observer* observer = sim->getActiveObserver();
 
     char c = *c_p;
 
 
 #ifdef CELX
-    if (m_script != nullptr && (hud->getTextEnterMode() & Hud::TextEnterPassToScript) != 0)
+    if (m_script != nullptr &&
+        is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript) &&
+        c != '\033' &&
+        m_script->charEntered(c_p))
     {
-        if (c != '\033' && m_script->charEntered(c_p))
-        {
-            return;
-        }
+        return;
     }
 
 #endif
 
-    if ((hud->getTextEnterMode() & Hud::TextEnterAutoComplete) != 0)
+    if (is_set(hud->textEnterMode(), Hud::TextEnterMode::AutoComplete))
     {
-        switch (hud->textInput().charEntered(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0))
-        {
-        case CharEnteredResult::Finished:
-            if (auto typedText = hud->textInput().getTypedText(); !typedText.empty())
-            {
-                Selection sel = sim->findObjectFromPath(typedText, true);
-                if (sel.empty())
-                {
-                    auto completion = hud->textInput().getCompletion();
-                    if (!completion.empty())
-                        sel = sim->findObjectFromPath(completion.front(), true);
-                }
-
-                if (!sel.empty())
-                {
-                    addToHistory();
-                    sim->setSelection(sel);
-                }
-            }
-            [[fallthrough]];
-
-        case CharEnteredResult::Cancelled:
-            setTextEnterMode(hud->getTextEnterMode() & ~Hud::TextEnterAutoComplete);
-            [[fallthrough]];
-
-        default: // CharEnteredResult::Normal
-            return;
-        }
+        charEnteredAutoComplete(c_p);
+        return;
     }
 
 #ifdef CELX
@@ -929,7 +885,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\n':
     case '\r':
-        setTextEnterMode(hud->getTextEnterMode() | Hud::TextEnterAutoComplete);
+        setTextEnterMode(hud->textEnterMode() | Hud::TextEnterMode::AutoComplete);
         break;
 
     case '\b':
@@ -981,8 +937,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\011': // TAB
         viewManager->nextView(sim);
-        if (!viewManager->showActiveViewFrame)
-            viewManager->flashFrameStart(timeInfo.currentTime);
         break;
 
     case '\020':  // Ctrl+P
@@ -1084,9 +1038,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\033': // Escape
         cancelScript();
         addToHistory();
-        if (hud->getTextEnterMode() != Hud::TextEnterNormal)
+        if (hud->textEnterMode() != Hud::TextEnterMode::Normal)
         {
-            setTextEnterMode(Hud::TextEnterNormal);
+            setTextEnterMode(Hud::TextEnterMode::Normal);
         }
         else
         {
@@ -1588,7 +1542,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '`':
-        hud->showFPSCounter = !hud->showFPSCounter;
+        hud->hudSettings().showFPSCounter = !hud->hudSettings().showFPSCounter;
         break;
 
     case '{':
@@ -1652,6 +1606,46 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         // with a Lua script.
         editMode = !editMode;
         break;
+    }
+}
+
+
+void CelestiaCore::charEnteredAutoComplete(const char* c_p)
+{
+    switch (hud->textInput().charEntered(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0))
+    {
+    case CharEnteredResult::Finished:
+        updateSelectionFromInput();
+        [[fallthrough]];
+
+    case CharEnteredResult::Cancelled:
+        setTextEnterMode(hud->textEnterMode() & ~Hud::TextEnterMode::AutoComplete);
+        [[fallthrough]];
+
+    default: // CharEnteredResult::Normal
+        return;
+    }
+}
+
+
+void CelestiaCore::updateSelectionFromInput()
+{
+    auto typedText = hud->textInput().getTypedText();
+    if (typedText.empty())
+        return;
+
+    Selection sel = sim->findObjectFromPath(typedText, true);
+    if (sel.empty())
+    {
+        auto completion = hud->textInput().getCompletion();
+        if (!completion.empty())
+            sel = sim->findObjectFromPath(completion.front(), true);
+    }
+
+    if (!sel.empty())
+    {
+        addToHistory();
+        sim->setSelection(sel);
     }
 }
 
@@ -1926,7 +1920,6 @@ void CelestiaCore::draw()
 {
     if (!viewUpdateRequired())
         return;
-    viewChanged = false;
 
     // Render each view
     for (const auto view : viewManager->views())
@@ -1943,10 +1936,10 @@ void CelestiaCore::draw()
     renderOverlay();
     if (showConsole)
     {
-        console->setFont(hud->getFont());
+        console->setFont(hud->font());
         console->setColor(1.0f, 1.0f, 1.0f, 1.0f);
         console->begin();
-        console->moveBy(metrics.insetLeft, metrics.screenDpi / 25.4f * 53.0f);
+        console->moveBy(static_cast<float>(metrics.insetLeft), static_cast<float>(metrics.screenDpi) / 25.4f * 53.0f);
         console->render(Console::PageRows);
         console->end();
     }
@@ -1961,7 +1954,7 @@ void CelestiaCore::draw()
     nFrames++;
     if (nFrames == 100 || sysTime - fpsCounterStartTime > 10.0)
     {
-        timeInfo.fps = (float) nFrames / (sysTime - fpsCounterStartTime);
+        timeInfo.fps = static_cast<float>(nFrames / (sysTime - fpsCounterStartTime));
         nFrames = 0;
         fpsCounterStartTime = sysTime;
     }
@@ -2003,10 +1996,10 @@ void CelestiaCore::draw(View* view)
     }
     bool process = fbo != nullptr && viewportEffect->preprocess(renderer, fbo);
 
-    int x = view->x * metrics.width;
-    int y = view->y * metrics.height;
-    int viewWidth = view->width * metrics.width;
-    int viewHeight = view->height * metrics.height;
+    auto x = static_cast<int>(view->x * static_cast<float>(metrics.width));
+    auto y = static_cast<int>(view->y * static_cast<float>(metrics.height));
+    auto viewWidth = static_cast<int>(view->width * static_cast<float>(metrics.width));
+    auto viewHeight = static_cast<int>(view->height * static_cast<float>(metrics.height));
     // If we need to process, we draw to the FBO which starts at point zero
     renderer->setRenderRegion(process ? 0 : x, process ? 0 : y, viewWidth, viewHeight, !view->isRootView());
 
@@ -2097,12 +2090,6 @@ bool CelestiaCore::viewUpdateRequired() const
 }
 
 
-void CelestiaCore::setViewChanged()
-{
-    viewChanged = true;
-}
-
-
 void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
     switch (viewManager->splitView(sim, type, av, splitPos))
@@ -2113,7 +2100,6 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
         flash(_("View too small to be split"));
         return;
     default: // ViewSplitResult::SplitOk
-        setViewChanged();
         setFOVFromZoom();
         flash(_("Added view"));
         break;
@@ -2147,48 +2133,41 @@ void CelestiaCore::setZoomFromFOV()
     }
 }
 
-void CelestiaCore::singleView(View* av)
+void CelestiaCore::singleView(const View* av)
 {
     viewManager->singleView(sim, av);
-    setViewChanged();
     setFOVFromZoom();
 }
 
-void CelestiaCore::setActiveView(View* v)
+void CelestiaCore::setActiveView(const View* v)
 {
     viewManager->setActiveView(sim, v);
 }
 
 void CelestiaCore::deleteView(View* v)
 {
-    if (!viewManager->deleteView(sim, v))
-        return;
-
-    if (!viewManager->showActiveViewFrame)
-        viewManager->flashFrameStart(timeInfo.currentTime);
-    setFOVFromZoom();
+    if (viewManager->deleteView(sim, v))
+        setFOVFromZoom();
 }
 
 bool CelestiaCore::getFramesVisible() const
 {
-    return viewManager->showViewFrames;
+    return viewManager->showViewFrames();
 }
 
 void CelestiaCore::setFramesVisible(bool visible)
 {
-    setViewChanged();
-    viewManager->showViewFrames = visible;
+    viewManager->showViewFrames(visible);
 }
 
 bool CelestiaCore::getActiveFrameVisible() const
 {
-    return viewManager->showActiveViewFrame;
+    return viewManager->showActiveViewFrame();
 }
 
 void CelestiaCore::setActiveFrameVisible(bool visible)
 {
-    setViewChanged();
-    viewManager->showActiveViewFrame = visible;
+    viewManager->showActiveViewFrame(visible);
 }
 
 
@@ -2207,7 +2186,7 @@ void CelestiaCore::showText(std::string_view s,
                             int hoff, int voff,
                             double duration)
 {
-    auto [emWidth, height] = hud->getTitleMetrics();
+    auto [emWidth, height] = hud->titleMetrics();
     hud->showText(TextPrintPosition::relative(horig, vorig, hoff, voff, emWidth, height),
                   s, duration, timeInfo.currentTime);
 }
@@ -2592,9 +2571,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (!config->measurementSystem.empty())
     {
         if (compareIgnoringCase(config->measurementSystem, "imperial") == 0)
-            hud->measurementSystem = MeasurementSystem::Imperial;
+            hud->hudSettings().measurementSystem = MeasurementSystem::Imperial;
         else if (compareIgnoringCase(config->measurementSystem, "metric") == 0)
-            hud->measurementSystem = MeasurementSystem::Metric;
+            hud->hudSettings().measurementSystem = MeasurementSystem::Metric;
         else
             GetLogger()->warn("Unknown measurement system {}\n", config->measurementSystem);
     }
@@ -2602,11 +2581,11 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (!config->temperatureScale.empty())
     {
         if (compareIgnoringCase(config->temperatureScale, "kelvin") == 0)
-            hud->temperatureScale = TemperatureScale::Kelvin;
+            hud->hudSettings().temperatureScale = TemperatureScale::Kelvin;
         else if (compareIgnoringCase(config->temperatureScale, "celsius") == 0)
-            hud->temperatureScale = TemperatureScale::Celsius;
+            hud->hudSettings().temperatureScale = TemperatureScale::Celsius;
         else if (compareIgnoringCase(config->temperatureScale, "fahrenheit") == 0)
-            hud->temperatureScale = TemperatureScale::Fahrenheit;
+            hud->hudSettings().temperatureScale = TemperatureScale::Fahrenheit;
         else
             GetLogger()->warn("Unknown temperature scale {}\n", config->temperatureScale);
     }
@@ -2639,7 +2618,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         sim->setFaintestVisible(config->renderDetails.faintestVisible);
     }
 
-    viewManager = std::make_unique<ViewManager>(new View(View::ViewWindow, renderer, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f));
+    viewManager = std::make_unique<ViewManager>(new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f));
 
     if (!compareIgnoringCase(getConfig()->mouse.cursor, "inverting crosshair"))
     {
@@ -2705,15 +2684,15 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
         setFaintestAutoMag();
     }
 
-    hud->setFont(config->fonts.mainFont.empty()
+    hud->trySetFont(config->fonts.mainFont.empty()
         ? LoadFontHelper(renderer, "DejaVuSans.ttf,12")
         : LoadFontHelper(renderer, config->fonts.mainFont));
 
-    if (hud->getFont() == nullptr)
+    if (hud->font() == nullptr)
         cout << _("Error loading font; text will not be visible.\n");
 
-    if (config->fonts.titleFont.empty() || !hud->setTitleFont(LoadFontHelper(renderer, config->fonts.titleFont)))
-        hud->setTitleFont(hud->getFont());
+    if (config->fonts.titleFont.empty() || !hud->trySetTitleFont(LoadFontHelper(renderer, config->fonts.titleFont)))
+        hud->trySetTitleFont(hud->font());
 
     // Set up the overlay
     {
@@ -2727,15 +2706,15 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 
     if (config->fonts.labelFont.empty())
     {
-        renderer->setFont(Renderer::FontNormal, hud->getFont());
+        renderer->setFont(Renderer::FontNormal, hud->font());
     }
     else
     {
         auto labelFont = LoadFontHelper(renderer, config->fonts.labelFont);
-        renderer->setFont(Renderer::FontNormal, labelFont == nullptr ? hud->getFont() : labelFont);
+        renderer->setFont(Renderer::FontNormal, labelFont == nullptr ? hud->font() : labelFont);
     }
 
-    renderer->setFont(Renderer::FontLarge, hud->getTitleFont());
+    renderer->setFont(Renderer::FontLarge, hud->titleFont());
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
     return true;
 }
@@ -2922,12 +2901,12 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
 
 bool CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    return hud->setFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
+    return hud->trySetFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
 }
 
 bool CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    return hud->setTitleFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
+    return hud->trySetTitleFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
 }
 
 bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
@@ -2955,18 +2934,18 @@ void CelestiaCore::setLightDelayActive(bool lightDelayActive)
     timeInfo.lightTravelFlag = lightDelayActive;
 }
 
-void CelestiaCore::setTextEnterMode(unsigned int mode)
+void CelestiaCore::setTextEnterMode(Hud::TextEnterMode mode)
 {
-    if (mode != hud->getTextEnterMode())
+    if (mode != hud->textEnterMode())
     {
-        hud->setTextEnterMode(mode);
+        hud->textEnterMode(mode);
         notifyWatchers(TextEnterModeChanged);
     }
 }
 
-unsigned int CelestiaCore::getTextEnterMode() const
+Hud::TextEnterMode CelestiaCore::getTextEnterMode() const
 {
-    return hud->getTextEnterMode();
+    return hud->textEnterMode();
 }
 
 void CelestiaCore::setScreenDpi(int dpi)
@@ -3014,45 +2993,45 @@ void CelestiaCore::setTimeZoneName(const string& zone)
 
 int CelestiaCore::getHudDetail()
 {
-    return hud->getDetail();
+    return hud->detail();
 }
 
 void CelestiaCore::setHudDetail(int newHudDetail)
 {
-    hud->setDetail(newHudDetail);
+    hud->detail(newHudDetail);
     notifyWatchers(VerbosityLevelChanged);
 }
 
 
-Color CelestiaCore::getTextColor()
+const Color& CelestiaCore::getTextColor() const
 {
-    return hud->textColor;
+    return hud->hudSettings().textColor;
 }
 
-void CelestiaCore::setTextColor(Color newTextColor)
+void CelestiaCore::setTextColor(const Color& newTextColor)
 {
-    hud->textColor = newTextColor;
+    hud->hudSettings().textColor = newTextColor;
 }
 
 
 astro::Date::Format CelestiaCore::getDateFormat() const
 {
-    return hud->getDateFormat();
+    return hud->dateFormat();
 }
 
 void CelestiaCore::setDateFormat(astro::Date::Format format)
 {
-    hud->setDateFormat(format);
+    hud->dateFormat(format);
 }
 
-int CelestiaCore::getOverlayElements() const
+HudElements CelestiaCore::getOverlayElements() const
 {
-    return hud->overlayElements;
+    return hud->hudSettings().overlayElements;
 }
 
-void CelestiaCore::setOverlayElements(int _overlayElements)
+void CelestiaCore::setOverlayElements(HudElements _overlayElements)
 {
-    hud->overlayElements = static_cast<Hud::OverlayElements>(_overlayElements);
+    hud->hudSettings().overlayElements = _overlayElements;
 }
 
 void CelestiaCore::initMovieCapture(MovieCapture* mc)
@@ -3099,7 +3078,7 @@ bool CelestiaCore::isRecording()
 
 void CelestiaCore::flash(const string& s, double duration)
 {
-    if (hud->getDetail() > 0)
+    if (hud->detail() > 0)
         showText(s, -1, -1, 0, 5, duration);
 }
 
@@ -3339,7 +3318,7 @@ View* CelestiaCore::getViewByObserver(const Observer *obs) const
 {
     auto end = viewManager->views().end();
     auto it = std::find_if(viewManager->views().begin(), end,
-                           [obs](View* view) { return view->observer == obs; });
+                           [obs](const View* view) { return view->observer == obs; });
     return it == end ? nullptr : *it;
 }
 
@@ -3489,30 +3468,30 @@ void CelestiaCore::resumeAudioIfNeeded()
 
 void CelestiaCore::setMeasurementSystem(MeasurementSystem newMeasurement)
 {
-    if (hud->measurementSystem != newMeasurement)
+    if (hud->hudSettings().measurementSystem != newMeasurement)
     {
-        hud->measurementSystem = newMeasurement;
+        hud->hudSettings().measurementSystem = newMeasurement;
         notifyWatchers(MeasurementSystemChanged);
     }
 }
 
 MeasurementSystem CelestiaCore::getMeasurementSystem() const
 {
-    return hud->measurementSystem;
+    return hud->hudSettings().measurementSystem;
 }
 
 void CelestiaCore::setTemperatureScale(TemperatureScale newScale)
 {
-    if (hud->temperatureScale != newScale)
+    if (hud->hudSettings().temperatureScale != newScale)
     {
-        hud->temperatureScale = newScale;
+        hud->hudSettings().temperatureScale = newScale;
         notifyWatchers(TemperatureScaleChanged);
     }
 }
 
 TemperatureScale CelestiaCore::getTemperatureScale() const
 {
-    return hud->temperatureScale;
+    return hud->hudSettings().temperatureScale;
 }
 
 void CelestiaCore::setScriptSystemAccessPolicy(ScriptSystemAccessPolicy newPolicy)

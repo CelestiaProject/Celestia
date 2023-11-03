@@ -448,7 +448,7 @@ bool LuaState::charEntered(const char* c_p)
             GetLogger()->error("ERROR: appCore not found\n");
             return true;
         }
-        appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterPassToScript);
+        appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
         appCore->showText("", 0, 0, 0, 0);
         // Restore renderflags:
         lua_pushstring(costate, "celestia-savedrenderflags");
@@ -784,7 +784,7 @@ bool LuaState::tick(double dt)
                               "y = yes, ESC = cancel script, any other key = no"),
                               0, 0,
                               -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() | celestia::Hud::TextEnterPassToScript);
+            appCore->setTextEnterMode(appCore->getTextEnterMode() | celestia::Hud::TextEnterMode::PassToScript);
         }
         else
         {
@@ -794,7 +794,7 @@ bool LuaState::tick(double dt)
                               "Do you trust the script and want to allow this?"),
                               0, 0,
                               -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterPassToScript);
+            appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
         }
 
         return false;
@@ -922,7 +922,7 @@ LuaState* getLuaStateObject(lua_State* l)
 
 // Map the observer to its View. Return nullptr if no view exists
 // for this observer (anymore).
-celestia::View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
+celestia::View* getViewByObserver(const CelestiaCore* appCore, const Observer* obs)
 {
     for (const auto view : appCore->viewManager->views())
         if (view->observer == obs)
@@ -931,7 +931,7 @@ celestia::View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 }
 
 // Fill list with all Observers
-void getObservers(CelestiaCore* appCore, vector<Observer*>& observerList)
+void getObservers(const CelestiaCore* appCore, vector<Observer*>& observerList)
 {
     for (const auto view : appCore->viewManager->views())
         if (view->type == celestia::View::ViewWindow)

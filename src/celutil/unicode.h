@@ -12,6 +12,8 @@
 #include <string>
 #include <string_view>
 
+#include <celutil/flag.h>
+
 namespace celestia::util
 {
 
@@ -21,6 +23,8 @@ enum class ConversionOption : unsigned int
     ArabicShaping   = 0x01,
     BidiReordering  = 0x02,
 };
+
+ENUM_CLASS_BITWISE_OPS(ConversionOption);
 
 bool UTF8StringToUnicodeString(std::string_view input, std::u16string &output);
 bool ApplyBidiAndShaping(std::u16string_view input,

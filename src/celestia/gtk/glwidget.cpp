@@ -237,8 +237,11 @@ static gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, AppData* app
                 if ((event->string != NULL) && (*(event->string)))
                 {
                     /* See if our key accelerators will handle this event. */
-                    if((!app->core->getTextEnterMode()) && gtk_accel_groups_activate (G_OBJECT (app->mainWindow), event->keyval, GDK_SHIFT_MASK))
+                    if (app->core->getTextEnterMode() != celestia::Hud::TextEnterMode::Normal &&
+                        gtk_accel_groups_activate (G_OBJECT (app->mainWindow), event->keyval, GDK_SHIFT_MASK))
+                    {
                         return TRUE;
+                    }
 
                     char* s = event->string;
 

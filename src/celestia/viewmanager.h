@@ -12,11 +12,12 @@
 
 #pragma once
 
+#include <limits>
 #include <list>
 
-#include <celutil/color.h>
 #include "view.h"
 
+class Overlay;
 class Simulation;
 
 namespace celestia
@@ -45,12 +46,10 @@ public:
 
     const std::list<View*>& views() const;
     const View* activeView() const;
-    void flashFrameStart(double);
-    bool isResizing() const;
 
     ViewBorderType checkViewBorder(const WindowMetrics&, float x, float y) const;
 
-    bool pickView(Simulation*, const WindowMetrics&, float x, float y);
+    void pickView(Simulation*, const WindowMetrics&, float x, float y);
     void nextView(Simulation*);
 
     void tryStartResizing(const WindowMetrics&, float x, float y);
@@ -62,19 +61,23 @@ public:
     void setActiveView(Simulation*, const View*);
     bool deleteView(Simulation*, View*);
 
-    void renderBorders(const WindowMetrics&, double) const;
+    void renderBorders(Overlay*, const WindowMetrics&, double) const;
 
-    bool showViewFrames{ true };
-    bool showActiveViewFrame{ false };
+    bool showViewFrames() const noexcept { return m_showViewFrames; }
+    void showViewFrames(bool value) noexcept { m_showViewFrames = value; }
+    bool showActiveViewFrame() const noexcept { return m_showActiveViewFrame; }
+    void showActiveViewFrame(bool value) noexcept { m_showActiveViewFrame = value; }
 
 private:
     std::list<View*> m_views;
     std::list<View*>::iterator m_activeView;
     View* m_resizeSplit{ nullptr };
-    double m_flashFrameStart{ 0.0 };
 
-    Color frameColor{ 0.5f, 0.5f, 0.5f, 1.0f };
-    Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
+    mutable double m_flashFrameStart{ -std::numeric_limits<double>::infinity() };
+    mutable bool m_startFlash{ false };
+
+    bool m_showViewFrames{ true };
+    bool m_showActiveViewFrame{ false };
 };
 
 }

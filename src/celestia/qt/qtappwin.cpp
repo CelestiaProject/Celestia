@@ -1792,7 +1792,7 @@ void
 CelestiaAppWindow::copyText()
 {
     auto typedText = m_appCore->getTypedText();
-    QString text = QString::fromUtf8(typedText.data(), typedText.size());
+    QString text = QString::fromUtf8(typedText.data(), static_cast<int>(typedText.size()));
     if (!text.isEmpty())
         QGuiApplication::clipboard()->setText(text);
 }
@@ -1810,18 +1810,18 @@ CelestiaAppWindow::pasteText()
 void
 CelestiaAppWindow::copyTextOrURL()
 {
-    if (m_appCore->getTextEnterMode()) // True when the search console is opened
-        copyText();
-    else
+    if (m_appCore->getTextEnterMode() == celestia::Hud::TextEnterMode::Normal)
         slotCopyURL();
+    else
+        copyText();
 }
 
 
 void
 CelestiaAppWindow::pasteTextOrURL()
 {
-    if (m_appCore->getTextEnterMode()) // True when the search console is opened
-        pasteText();
-    else
+    if (m_appCore->getTextEnterMode() == celestia::Hud::TextEnterMode::Normal)
         slotPasteURL();
+    else
+        pasteText();
 }

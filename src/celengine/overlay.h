@@ -41,6 +41,7 @@ class Overlay
 
     void setColor(float r, float g, float b, float a);
     void setColor(const Color& c);
+    void setColor(const Color& c, float a);
 
     void moveBy(float dx, float dy);
     void moveBy(int dx, int dy);

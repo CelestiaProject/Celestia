@@ -19,6 +19,7 @@
 
 #include <celengine/observer.h>
 #include <celengine/simulation.h>
+#include <celutil/color.h>
 #include "windowmetrics.h"
 
 namespace celestia
@@ -28,6 +29,10 @@ namespace
 {
 
 constexpr float borderSize = 2.0f;
+constexpr double flashDuration = 0.5;
+
+constexpr Color frameColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+constexpr Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
 
 inline std::pair<float, float>
 metricsSizeFloat(const WindowMetrics& metrics)
@@ -85,18 +90,6 @@ ViewManager::activeView() const
     return *m_activeView;
 }
 
-void
-ViewManager::flashFrameStart(double currentTime)
-{
-    m_flashFrameStart = currentTime;
-}
-
-bool
-ViewManager::isResizing() const
-{
-    return m_resizeSplit != nullptr;
-}
-
 ViewBorderType
 ViewManager::checkViewBorder(const WindowMetrics& metrics, float x, float y) const
 {
@@ -118,13 +111,15 @@ ViewManager::checkViewBorder(const WindowMetrics& metrics, float x, float y) con
 }
 
 /// Makes the view under x, y the active view.
-bool
-ViewManager::pickView(Simulation* sim, const WindowMetrics& metrics, float x, float y)
+void
+ViewManager::pickView(Simulation* sim,
+                      const WindowMetrics& metrics,
+                      float x, float y)
 {
     // Clang does not support capturing structured bindings, so work with the pair here
     auto msize = metricsSizeFloat(metrics);
     if (!pointOutsideView(**m_activeView, msize.first, msize.second, x, y))
-        return false;
+        return;
 
     m_activeView = std::find_if(m_views.begin(), m_views.end(),
                                 [&msize, x, y](const View* view) {
@@ -137,7 +132,8 @@ ViewManager::pickView(Simulation* sim, const WindowMetrics& metrics, float x, fl
         m_activeView = m_views.begin();
 
     sim->setActiveObserver((*m_activeView)->observer);
-    return true;
+    if (!m_showActiveViewFrame)
+        m_startFlash = true;
 }
 
 void
@@ -150,6 +146,8 @@ ViewManager::nextView(Simulation* sim)
             m_activeView = m_views.begin();
     } while ((*m_activeView)->type != View::ViewWindow);
     sim->setActiveObserver((*m_activeView)->observer);
+    if (!m_showActiveViewFrame)
+        m_startFlash = true;
 }
 
 void
@@ -199,25 +197,27 @@ ViewManager::tryStartResizing(const WindowMetrics& metrics, float x, float y)
 bool
 ViewManager::resizeViews(const WindowMetrics& metrics, float dx, float dy)
 {
-    if (!isResizing())
+    if (m_resizeSplit == nullptr)
         return false;
 
     switch(m_resizeSplit->type)
     {
     case View::HorizontalSplit:
-        if (m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, dy / metrics.height, true) &&
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, dy / metrics.height, true))
+        if (float delta = dy / static_cast<float>(metrics.height);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, delta, true) &&
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, delta, true))
         {
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, dy / metrics.height, false);
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, dy / metrics.height, false);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, delta, false);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, delta, false);
         }
         break;
     case View::VerticalSplit:
-        if (m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, dx / metrics.width, true) &&
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, dx / metrics.width, true))
+        if (float delta = dx / static_cast<float>(metrics.width);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, delta, true) &&
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, delta, true))
         {
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, dx / metrics.width, false);
-            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, dx / metrics.width, false);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child1, delta, false);
+            m_resizeSplit->walkTreeResizeDelta(m_resizeSplit->child2, delta, false);
         }
         break;
     case View::ViewWindow:
@@ -323,38 +323,46 @@ ViewManager::deleteView(Simulation* sim, View* v)
         nextActiveView = nextActiveView->child1;
     m_activeView = std::find(m_views.begin(), m_views.end(), nextActiveView);
     sim->setActiveObserver((*m_activeView)->observer);
+    if (!m_showActiveViewFrame)
+        m_startFlash = true;
 
     return true;
 }
 
 void
-ViewManager::renderBorders(const WindowMetrics& metrics, double currentTime) const
+ViewManager::renderBorders(Overlay* overlay, const WindowMetrics& metrics, double currentTime) const
 {
     if (m_views.size() < 2)
         return;
 
     // Render a thin border arround all views
-    if (showViewFrames || m_resizeSplit)
+    if (m_showViewFrames || m_resizeSplit)
     {
         for(const auto v : m_views)
         {
             if (v->type == View::ViewWindow)
-                v->drawBorder(metrics.width, metrics.height, frameColor);
+                v->drawBorder(overlay, metrics.width, metrics.height, frameColor);
         }
     }
 
     // Render a very simple border around the active view
     const View* av = *m_activeView;
 
-    if (showActiveViewFrame)
+    if (m_showActiveViewFrame)
     {
-        av->drawBorder(metrics.width, metrics.height, activeFrameColor, 2);
+        av->drawBorder(overlay, metrics.width, metrics.height, activeFrameColor, 2);
     }
 
-    if (currentTime < m_flashFrameStart + 0.5)
+    if (m_startFlash)
     {
-        float alpha = (float) (1.0 - (currentTime - m_flashFrameStart) / 0.5);
-        av->drawBorder(metrics.width, metrics.height, {activeFrameColor, alpha}, 8);
+        m_flashFrameStart = currentTime;
+        m_startFlash = false;
+    }
+
+    if (currentTime < m_flashFrameStart + flashDuration)
+    {
+        auto alpha = static_cast<float>(1.0 - (currentTime - m_flashFrameStart) / flashDuration);
+        av->drawBorder(overlay, metrics.width, metrics.height, {activeFrameColor, alpha}, 8);
     }
 }
 

@@ -15,8 +15,7 @@
 class Color;
 class FramebufferObject;
 class Observer;
-class Renderer;
-
+class Overlay;
 
 namespace celestia
 {
@@ -31,7 +30,7 @@ public:
         VerticalSplit   = 3
     };
 
-    View(Type, Renderer*, Observer*, float, float, float, float);
+    View(Type, Observer*, float, float, float, float);
     View() = delete;
     ~View();
     View(const View&) = delete;
@@ -45,17 +44,16 @@ public:
 
     Observer* getObserver() const;
     bool isRootView() const;
-    bool isSplittable(Type type) const;
-    void split(Type type, Observer *o, float splitPos, View **split, View **view);
+    bool isSplittable(Type _type) const;
+    void split(Type _type, Observer *o, float splitPos, View **split, View **view);
     void reset();
     static View* remove(View*);
-    void drawBorder(int gWidth, int gHeight, const Color &color, float linewidth = 1.0f) const;
+    void drawBorder(Overlay*, int gWidth, int gHeight, const Color &color, float linewidth = 1.0f) const;
     void updateFBO(int gWidth, int gHeight);
     FramebufferObject *getFBO() const;
 
     Type           type;
 
-    Renderer      *renderer;
     Observer      *observer;
     View          *parent          { nullptr };
     View          *child1          { nullptr };
@@ -64,8 +62,6 @@ public:
     float          y;
     float          width;
     float          height;
-    std::uint64_t  renderFlags     { 0 };
-    int            labelMode       { 0 };
 
 private:
     std::unique_ptr<FramebufferObject> fbo;
