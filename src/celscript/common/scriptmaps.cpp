@@ -4,6 +4,7 @@
 #include <celengine/location.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
+#include <celestia/hud.h>
 
 using namespace std::string_view_literals;
 
@@ -151,10 +152,10 @@ void initLocationFlagMap(FlagMap64 &LocationFlagMap)
 
 void initOverlayElementMap(FlagMap &OverlayElementMap)
 {
-    OverlayElementMap["Time"sv]            = CelestiaCore::ShowTime;
-    OverlayElementMap["Velocity"sv]        = CelestiaCore::ShowVelocity;
-    OverlayElementMap["Selection"sv]       = CelestiaCore::ShowSelection;
-    OverlayElementMap["Frame"sv]           = CelestiaCore::ShowFrame;
+    OverlayElementMap["Time"sv]            = static_cast<std::uint32_t>(HudElements::ShowTime);
+    OverlayElementMap["Velocity"sv]        = static_cast<std::uint32_t>(HudElements::ShowVelocity);
+    OverlayElementMap["Selection"sv]       = static_cast<std::uint32_t>(HudElements::ShowSelection);
+    OverlayElementMap["Frame"sv]           = static_cast<std::uint32_t>(HudElements::ShowFrame);
 }
 
 void initOrbitVisibilityMap(FlagMap &OrbitVisibilityMap)

@@ -726,7 +726,7 @@ void CommandSplitView::processInstantaneous(ExecutionEnvironment& env)
     std::vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
+        const Observer* obs = observer_list[view - 1];
         View* view = env.getCelestiaCore()->getViewByObserver(obs);
         View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
         env.getCelestiaCore()->splitView(type, view, static_cast<float>(splitPos));
@@ -748,7 +748,7 @@ void CommandDeleteView::processInstantaneous(ExecutionEnvironment& env)
 
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
+        const Observer* obs = observer_list[view - 1];
         View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->deleteView(view);
     }
@@ -760,7 +760,7 @@ void CommandDeleteView::processInstantaneous(ExecutionEnvironment& env)
 
 void CommandSingleView::processInstantaneous(ExecutionEnvironment& env)
 {
-    View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
+    const View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
     env.getCelestiaCore()->singleView(view);
 }
 
@@ -779,8 +779,8 @@ void CommandSetActiveView::processInstantaneous(ExecutionEnvironment& env)
 
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
-        View* view = env.getCelestiaCore()->getViewByObserver(obs);
+        const Observer* obs = observer_list[view - 1];
+        const View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->setActiveView(view);
     }
 }

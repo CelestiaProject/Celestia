@@ -19,6 +19,7 @@
 #include <celengine/overlay.h>
 #include <celengine/rectangle.h>
 #include <celengine/simulation.h>
+#include <celutil/color.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include "hud.h"
@@ -26,6 +27,11 @@
 
 namespace celestia
 {
+
+namespace
+{
+constexpr Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
+}
 
 std::string_view
 TextInput::getTypedText() const
@@ -71,6 +77,8 @@ TextInput::charEntered(const Simulation* sim, std::string_view c_p, bool withLoc
         return CharEnteredResult::Cancelled; // ESC
     case '\177':
         doBackTab();
+        break;
+    default:
         break;
     }
 
@@ -128,8 +136,8 @@ TextInput::doBackTab()
 {
     if (m_completionIdx > 0)
         m_completionIdx--;
-    else if (m_completionIdx == 0 || m_completion.size() > 0)
-        m_completionIdx = m_completion.size() - 1;
+    else if (m_completionIdx == 0 || !m_completion.empty())
+        m_completionIdx = static_cast<int>(m_completion.size() - 1);
 
     if (m_completionIdx >= 0)
     {
@@ -167,13 +175,14 @@ TextInput::reset()
 void
 TextInput::render(Overlay* overlay,
                   const HudFonts& hudFonts,
-                  const WindowMetrics& metrics,
-                  const Color& consoleColor) const
+                  const WindowMetrics& metrics) const
 {
     overlay->setFont(hudFonts.titleFont());
     overlay->savePos();
-    int rectHeight = hudFonts.fontHeight() * 3.0f + metrics.screenDpi / 25.4f * 9.3f + hudFonts.titleFontHeight();
-    celestia::Rect r(0, 0, metrics.width, metrics.insetBottom + rectHeight);
+    auto rectHeight = static_cast<int>(static_cast<float>(hudFonts.fontHeight()) * 3.0f +
+                                       static_cast<float>(metrics.screenDpi) / 25.4f * 9.3f +
+                                       static_cast<float>(hudFonts.titleFontHeight()));
+    celestia::Rect r(0, 0, static_cast<float>(metrics.width), static_cast<float>(metrics.insetBottom + rectHeight));
     r.setColor(consoleColor);
     overlay->drawRectangle(r);
     overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaBottom(rectHeight - hudFonts.titleFontHeight()));

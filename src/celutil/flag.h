@@ -11,23 +11,52 @@
 
 #include <type_traits>
 
-template<typename flag, typename = typename std::enable_if_t<std::is_enum_v<flag>>>
-constexpr inline flag operator|(flag f1, flag f2)
-{
-    using type = std::underlying_type_t<flag>;
-    return flag(type(f1) | type(f2));
+#define ENUM_CLASS_BITWISE_OPS(E)                                       \
+constexpr E& operator|=(E& f1, E f2)                                    \
+{                                                                       \
+    using type = std::underlying_type_t<E>;                             \
+    f1 = static_cast<E>(static_cast<type>(f1) | static_cast<type>(f2)); \
+    return f1;                                                          \
+}                                                                       \
+constexpr E& operator&=(E& f1, E f2)                                    \
+{                                                                       \
+    using type = std::underlying_type_t<E>;                             \
+    f1 = static_cast<E>(static_cast<type>(f1) & static_cast<type>(f2)); \
+    return f1;                                                          \
+}                                                                       \
+constexpr E& operator^=(E& f1, E f2)                                    \
+{                                                                       \
+    using type = std::underlying_type_t<E>;                             \
+    f1 = static_cast<E>(static_cast<type>(f1) ^ static_cast<type>(f2)); \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator|(E f1, E f2)                                       \
+{                                                                       \
+    f1 |= f2;                                                           \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator&(E f1, E f2)                                       \
+{                                                                       \
+    f1 &= f2;                                                           \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator^(E f1, E f2)                                       \
+{                                                                       \
+    f1 ^= f2;                                                           \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator~(E f)                                              \
+{                                                                       \
+    return static_cast<E>(~static_cast<std::underlying_type_t<E>>(f));  \
 }
 
-template<typename flag, typename = typename std::enable_if_t<std::is_enum_v<flag>>>
-constexpr inline flag operator&(flag f1, flag f2)
+namespace celestia::util
 {
-    using type = std::underlying_type_t<flag>;
-    return flag(type(f1) & type(f2));
+
+template<typename E, std::enable_if_t<std::is_enum_v<E>, int> = 0>
+constexpr bool is_set(E f, E t)
+{
+    return (f & t) != static_cast<E>(0);
 }
 
-template<typename flag, typename = typename std::enable_if_t<std::is_enum_v<flag>>>
-constexpr inline bool is_set(flag f, flag t)
-{
-    using type = std::underlying_type_t<flag>;
-    return ((type(f) & type(t)) != 0);
 }

@@ -11,8 +11,8 @@
 
 #include <celengine/framebuffer.h>
 #include <celengine/glsupport.h>
+#include <celengine/overlay.h>
 #include <celengine/rectangle.h>
-#include <celengine/render.h>
 #include <celengine/shadermanager.h>
 #include <celutil/logger.h>
 
@@ -22,12 +22,10 @@ namespace celestia
 {
 
 View::View(View::Type _type,
-           Renderer *_renderer,
            Observer *_observer,
            float _x, float _y,
            float _width, float _height) :
     type(_type),
-    renderer(_renderer),
     observer(_observer),
     x(_x),
     y(_y),
@@ -81,7 +79,7 @@ View::walkTreeResize(View* sibling, int sign)
             sibling->x = parent->x + (sibling->x - (x + width) ) * ratio;
         }
         break;
-    case View::ViewWindow:
+    default:
         break;
     }
     if (sibling->child1 != nullptr)
@@ -170,11 +168,11 @@ View::getObserver() const
 
 
 bool
-View::isSplittable(Type type) const
+View::isSplittable(Type _type) const
 {
     // If active view is too small, don't split it.
-    return (type == View::HorizontalSplit && height >= 0.2f) ||
-           (type == View::VerticalSplit && width >= 0.2f);
+    return (_type == View::HorizontalSplit && height >= 0.2f) ||
+           (_type == View::VerticalSplit && width >= 0.2f);
 }
 
 
@@ -186,14 +184,15 @@ View::isRootView() const
 
 
 void
-View::split(Type type, Observer *o, float splitPos, View **split, View **view)
+View::split(Type _type, Observer *o, float splitPos, View **split, View **view)
 {
-    float w1, h1, w2, h2, x1, y1;
-    w1 = w2 = width;
-    h1 = h2 = height;
-    x1 = x;
-    y1 = y;
-    if (type == View::VerticalSplit)
+    float w1 = width;
+    float h1 = height;
+    float w2 = width;
+    float h2 = height;
+    float x1 = x;
+    float y1 = y;
+    if (_type == View::VerticalSplit)
     {
         w1 *= splitPos;
         w2 -= w1;
@@ -206,8 +205,7 @@ View::split(Type type, Observer *o, float splitPos, View **split, View **view)
         y1 += h1;
     }
 
-    *split = new View(type,
-                      renderer,
+    *split = new View(_type,
                       nullptr,
                       x, y, width, height);
     (*split)->parent = parent;
@@ -225,7 +223,6 @@ View::split(Type type, Observer *o, float splitPos, View **split, View **view)
     parent = *split;
 
     *view = new View(View::ViewWindow,
-                     renderer,
                      o,
                      x1, y1, w2, h2);
     (*split)->child2 = *view;
@@ -278,13 +275,13 @@ View::reset()
 
 
 void
-View::drawBorder(int gWidth, int gHeight, const Color &color, float linewidth) const
+View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, float linewidth) const
 {
     celestia::Rect r(x * gWidth, y * gHeight, width * gWidth - 1, height * gHeight - 1);
     r.setColor(color);
     r.setType(celestia::Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
-    renderer->drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, renderer->getOrthoProjectionMatrix());
+    overlay->drawRectangle(r);
 }
 
 

@@ -35,6 +35,7 @@
 #include <celengine/universe.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celutil/flag.h>
 #include <celutil/formatnum.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
@@ -81,30 +82,21 @@ SigDigitNum(double v, int digits)
 std::string
 KelvinToStr(float value, int digits, TemperatureScale temperatureScale)
 {
-    const char* unitTemplate = "";
-
     switch (temperatureScale)
     {
         case TemperatureScale::Celsius:
-            value = KelvinToCelsius(value);
-            unitTemplate = "{} °C";
-            break;
+            return fmt::format("{} °C", SigDigitNum(KelvinToCelsius(value), digits));
         case TemperatureScale::Fahrenheit:
-            value = KelvinToFahrenheit(value);
-            unitTemplate = "{} °F";
-            break;
+            return fmt::format("{} °F", SigDigitNum(KelvinToFahrenheit(value), digits));
         default: // TemperatureScale::Kelvin
-            unitTemplate = "{} K";
-            break;
+            return fmt::format("{} K", SigDigitNum(value, digits));
     }
-    return fmt::format(unitTemplate, SigDigitNum(value, digits));
 }
 
 std::string
 DistanceLyToStr(double distance, int digits, MeasurementSystem measurement)
 {
-    const char* units = "";
-
+    const char* units;
     if (std::abs(distance) >= astro::parsecsToLightYears(1e+6))
     {
         units = _("Mpc");
@@ -126,7 +118,7 @@ DistanceLyToStr(double distance, int digits, MeasurementSystem measurement)
     }
     else if (measurement == MeasurementSystem::Imperial)
     {
-        if (abs(distance) > astro::kilometersToLightYears(OneMiInKm))
+        if (std::abs(distance) > astro::kilometersToLightYears(OneMiInKm))
         {
             units = _("mi");
             distance = astro::lightYearsToKilometers(distance) / OneMiInKm;
@@ -137,18 +129,15 @@ DistanceLyToStr(double distance, int digits, MeasurementSystem measurement)
             distance = astro::lightYearsToKilometers(distance) / OneFtInKm;
         }
     }
+    else if (std::abs(distance) > astro::kilometersToLightYears(1.0f))
+    {
+        units = _("km");
+        distance = astro::lightYearsToKilometers(distance);
+    }
     else
     {
-        if (std::abs(distance) > astro::kilometersToLightYears(1.0f))
-        {
-            units = _("km");
-            distance = astro::lightYearsToKilometers(distance);
-        }
-        else
-        {
-            units = _("m");
-            distance = astro::lightYearsToKilometers(distance) * 1000.0f;
-        }
+        units = _("m");
+        distance = astro::lightYearsToKilometers(distance) * 1000.0f;
     }
 
     return fmt::format("{} {}", SigDigitNum(distance, digits), units);
@@ -262,7 +251,8 @@ displaySpeed(Overlay& overlay, float speed, MeasurementSystem measurement)
 std::string
 angleToStr(double angle)
 {
-    int degrees, minutes;
+    int degrees;
+    int minutes;
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
@@ -297,7 +287,8 @@ displayApparentDiameter(Overlay& overlay, double radius, double distance)
 void
 displayDeclination(Overlay& overlay, double angle)
 {
-    int degrees, minutes;
+    int degrees;
+    int minutes;
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
@@ -309,7 +300,8 @@ displayDeclination(Overlay& overlay, double angle)
 void
 displayRightAscension(Overlay& overlay, double angle)
 {
-    int hours, minutes;
+    int hours;
+    int minutes;
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
@@ -391,9 +383,9 @@ displayPlanetocentricCoords(Overlay& overlay,
         Eigen::Quaterniond q = body.getEclipticToEquatorial(astro::J2000);
         bool retrograde = (q * Eigen::Vector3d::UnitY()).y() < 0.0;
 
-        if ((latitude < 0.0) ^ retrograde)
+        if ((latitude < 0.0) != retrograde)
             nsHemi = 'S';
-        else if ((latitude > 0.0) ^ retrograde)
+        else if ((latitude > 0.0) != retrograde)
             nsHemi = 'N';
 
         if (retrograde)
@@ -416,13 +408,13 @@ displayPlanetocentricCoords(Overlay& overlay,
 void
 displayStarInfo(Overlay& overlay,
                 int detail,
-                Star& star,
+                const Star& star,
                 const Universe& universe,
                 double distance,
-                MeasurementSystem measurement,
-                TemperatureScale temperatureScale)
+                const HudSettings& hudSettings)
 {
-    overlay.printf(_("Distance: %s\n"), DistanceLyToStr(distance, 5, measurement));
+    overlay.printf(_("Distance: %s\n"),
+                   DistanceLyToStr(distance, 5, hudSettings.measurementSystem));
 
     if (!star.getVisibility())
     {
@@ -448,7 +440,7 @@ displayStarInfo(Overlay& overlay,
             break;
         default:
             star_class = star.getSpectralType();
-        };
+        }
         overlay.printf(_("Class: %s\n"), star_class);
 
         displayApparentDiameter(overlay, star.getRadius(),
@@ -456,24 +448,24 @@ displayStarInfo(Overlay& overlay,
 
         if (detail > 1)
         {
-            overlay.printf(_("Surface temp: %s\n"), KelvinToStr(star.getTemperature(), 3, temperatureScale));
-            float solarRadii = star.getRadius() / 6.96e5f;
+            overlay.printf(_("Surface temp: %s\n"),
+                           KelvinToStr(star.getTemperature(), 3, hudSettings.temperatureScale));
 
-            if (solarRadii > 0.01f)
+            if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
                 overlay.print(_("Radius: {} Rsun  ({})\n"),
                               SigDigitNum(star.getRadius() / 696000.0f, 2),
-                              DistanceKmToStr(star.getRadius(), 3, measurement));
+                              DistanceKmToStr(star.getRadius(), 3, hudSettings.measurementSystem));
             }
             else
             {
                 overlay.print(_("Radius: {}\n"),
-                              DistanceKmToStr(star.getRadius(), 3, measurement));
+                              DistanceKmToStr(star.getRadius(), 3, hudSettings.measurementSystem));
             }
 
             if (star.getRotationModel()->isPeriodic())
             {
-                float period = (float) star.getRotationModel()->getPeriod();
+                auto period = static_cast<float>(star.getRotationModel()->getPeriod());
                 displayRotationPeriod(overlay, period);
             }
         }
@@ -481,7 +473,7 @@ displayStarInfo(Overlay& overlay,
 
     if (detail > 1)
     {
-        SolarSystem* sys = universe.getSolarSystem(&star);
+        const SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != nullptr && sys->getPlanets()->getSystemSize() != 0)
             overlay.print(_("Planetary companions present\n"));
     }
@@ -522,20 +514,21 @@ displayPlanetInfo(Overlay& overlay,
                   int detail,
                   Body& body,
                   double t,
-                  double distanceKm,
                   const Eigen::Vector3d& viewVec,
-                  MeasurementSystem measurement,
-                  TemperatureScale temperatureScale)
+                  const HudSettings& hudSettings)
 {
+    double distanceKm = viewVec.norm();
     double distance = distanceKm - body.getRadius();
-    overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
+    overlay.printf(_("Distance: %s\n"),
+                   DistanceKmToStr(distance, 5, hudSettings.measurementSystem));
 
     if (body.getClassification() == Body::Invisible)
     {
         return;
     }
 
-    overlay.printf(_("Radius: %s\n"), DistanceKmToStr(body.getRadius(), 5, measurement));
+    overlay.printf(_("Radius: %s\n"),
+                   DistanceKmToStr(body.getRadius(), 5, hudSettings.measurementSystem));
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm);
 
@@ -583,12 +576,11 @@ displayPlanetInfo(Overlay& overlay,
             displayRotationPeriod(overlay, body.getRotationModel(t)->getPeriod());
 
         if (body.getName() != "Earth" && body.getMass() > 0)
-            displayMass(overlay, body.getMass(), measurement);
+            displayMass(overlay, body.getMass(), hudSettings.measurementSystem);
 
-        float density = body.getDensity();
-        if (density > 0)
+        if (float density = body.getDensity(); density > 0)
         {
-            if (measurement == MeasurementSystem::Imperial)
+            if (hudSettings.measurementSystem == MeasurementSystem::Imperial)
                 overlay.printf(_("Density: %.2f x 1000 lb/ft^3\n"), density / (float) OneLbPerFt3InKgPerM3 / 1000.0f);
             else
                 overlay.printf(_("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
@@ -596,19 +588,19 @@ displayPlanetInfo(Overlay& overlay,
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
-            overlay.printf(_("Temperature: %s\n"), KelvinToStr(planetTemp, 3, temperatureScale));
+            overlay.printf(_("Temperature: %s\n"), KelvinToStr(planetTemp, 3, hudSettings.temperatureScale));
     }
 }
 
 void
 displayLocationInfo(Overlay& overlay,
-                    Location& location,
+                    const Location& location,
                     double distanceKm,
                     MeasurementSystem measurement)
 {
     overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distanceKm, 5, measurement));
 
-    Body* body = location.getParentBody();
+    const Body* body = location.getParentBody();
     if (body == nullptr)
         return;
 
@@ -695,28 +687,28 @@ HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
 Hud::~Hud() = default;
 
 int
-Hud::getDetail() const
+Hud::detail() const
 {
-    return hudDetail;
+    return m_hudDetail;
 }
 
 void
-Hud::setDetail(int detail)
+Hud::detail(int value)
 {
-    hudDetail = detail % 3;
+    m_hudDetail = value % 3;
 }
 
 astro::Date::Format
-Hud::getDateFormat() const
+Hud::dateFormat() const
 {
-    return dateFormat;
+    return m_dateFormat;
 }
 
 void
-Hud::setDateFormat(astro::Date::Format format)
+Hud::dateFormat(astro::Date::Format format)
 {
-    dateFormat = format;
-    dateStrWidth = 0;
+    m_dateFormat = format;
+    m_dateStrWidth = 0;
 }
 
 TextInput&
@@ -725,63 +717,63 @@ Hud::textInput()
     return m_textInput;
 }
 
-unsigned int
-Hud::getTextEnterMode() const
+Hud::TextEnterMode
+Hud::textEnterMode() const
 {
     return m_textEnterMode;
 }
 
 void
-Hud::setTextEnterMode(unsigned int value)
+Hud::textEnterMode(TextEnterMode value)
 {
-    m_textEnterMode = static_cast<TextEnterMode>(value);
-    if ((value & TextEnterAutoComplete) == 0)
+    m_textEnterMode = value;
+    if (!util::is_set(m_textEnterMode, TextEnterMode::AutoComplete))
         m_textInput.reset();
 }
 
 void
 Hud::setOverlay(std::unique_ptr<Overlay>&& _overlay)
 {
-    overlay = std::move(_overlay);
+    m_overlay = std::move(_overlay);
 }
 
 void
 Hud::setWindowSize(int w, int h)
 {
-    if (overlay != nullptr)
-        overlay->setWindowSize(w, h);
+    if (m_overlay != nullptr)
+        m_overlay->setWindowSize(w, h);
 }
 
 void
 Hud::setTextAlignment(LayoutDirection dir)
 {
-    overlay->setTextAlignment(dir == LayoutDirection::RightToLeft
-                                  ? engine::TextLayout::HorizontalAlignment::Right
-                                  : engine::TextLayout::HorizontalAlignment::Left);
+    m_overlay->setTextAlignment(dir == LayoutDirection::RightToLeft
+                                    ? engine::TextLayout::HorizontalAlignment::Right
+                                    : engine::TextLayout::HorizontalAlignment::Left);
 }
 
 int
 Hud::getTextWidth(std::string_view text) const
 {
-    return engine::TextLayout::getTextWidth(text, hudFonts.titleFont().get());
+    return engine::TextLayout::getTextWidth(text, m_hudFonts.titleFont().get());
 }
 
 const std::shared_ptr<TextureFont>&
-Hud::getFont() const
+Hud::font() const
 {
-    return hudFonts.font();
+    return m_hudFonts.font();
 }
 
 const std::shared_ptr<TextureFont>&
-Hud::getTitleFont() const
+Hud::titleFont() const
 {
-    return hudFonts.titleFont();
+    return m_hudFonts.titleFont();
 }
 
 std::tuple<int, int>
-Hud::getTitleMetrics() const
+Hud::titleMetrics() const
 {
-    return std::make_tuple(hudFonts.titleEmWidth(), hudFonts.titleFontHeight());
+    return std::make_tuple(m_hudFonts.titleEmWidth(), m_hudFonts.titleFontHeight());
 }
 
 void
@@ -793,55 +785,55 @@ Hud::renderOverlay(const WindowMetrics& metrics,
                    bool isScriptRunning,
                    bool editMode)
 {
-    overlay->setFont(hudFonts.font());
+    m_overlay->setFont(m_hudFonts.font());
 
-    overlay->begin();
+    m_overlay->begin();
 
-    if (showOverlayImage && isScriptRunning && image != nullptr)
-        image->render(static_cast<float>(timeInfo.currentTime), metrics.width, metrics.height);
+    if (m_hudSettings.showOverlayImage && isScriptRunning && m_image != nullptr)
+        m_image->render(static_cast<float>(timeInfo.currentTime), metrics.width, metrics.height);
 
-    views.renderBorders(metrics, timeInfo.currentTime);
+    views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
 
     setlocale(LC_NUMERIC, "");
 
-    if (hudDetail > 0 && (overlayElements & OverlayElements::ShowTime) != 0)
+    if (m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowTime))
         renderTimeInfo(metrics, sim, timeInfo);
 
-    if (hudDetail > 0 && (overlayElements & OverlayElements::ShowVelocity) != 0)
+    if (m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowVelocity))
     {
         // Speed
-        overlay->savePos();
-        overlay->moveBy(metrics.getSafeAreaStart(),
-                        metrics.getSafeAreaBottom(hudFonts.fontHeight() * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
-        overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->savePos();
+        m_overlay->moveBy(metrics.getSafeAreaStart(),
+                          metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
+        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
-        overlay->beginText();
-        overlay->print("\n");
-        if (showFPSCounter)
-            overlay->printf(_("FPS: %.1f\n"), timeInfo.fps);
+        m_overlay->beginText();
+        m_overlay->print("\n");
+        if (m_hudSettings.showFPSCounter)
+            m_overlay->printf(_("FPS: %.1f\n"), timeInfo.fps);
         else
-            overlay->print("\n");
+            m_overlay->print("\n");
 
-        displaySpeed(*overlay, sim->getObserver().getVelocity().norm(), measurementSystem);
+        displaySpeed(*m_overlay, static_cast<float>(sim->getObserver().getVelocity().norm()), m_hudSettings.measurementSystem);
 
-        overlay->endText();
-        overlay->restorePos();
+        m_overlay->endText();
+        m_overlay->restorePos();
     }
 
-    if (hudDetail > 0 && (overlayElements & OverlayElements::ShowFrame) != 0)
+    if (m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowFrame))
         renderFrameInfo(metrics, sim);
 
     if (Selection sel = sim->getSelection();
-        !sel.empty() && hudDetail > 0 && (overlayElements & OverlayElements::ShowSelection) != 0)
+        !sel.empty() && m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowSelection))
     {
         Eigen::Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
         renderSelectionInfo(metrics, sim, sel, v);
     }
 
-    if ((m_textEnterMode & TextEnterAutoComplete) != 0)
-        m_textInput.render(overlay.get(), hudFonts, metrics, consoleColor);
+    if (util::is_set(m_textEnterMode, TextEnterMode::AutoComplete))
+        m_textInput.render(m_overlay.get(), m_hudFonts, metrics);
 
-    if (showMessage)
+    if (m_hudSettings.showMessage)
         renderTextMessages(metrics, timeInfo.currentTime);
 
     if (movieCapture != nullptr)
@@ -849,17 +841,17 @@ Hud::renderOverlay(const WindowMetrics& metrics,
 
     if (editMode)
     {
-        overlay->savePos();
-        overlay->beginText();
-        int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), hudFonts.font().get())) / 2;
-        overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(hudFonts.fontHeight()));
-        overlay->setColor(1, 0, 1, 1);
-        overlay->print(_("Edit Mode"));
-        overlay->endText();
-        overlay->restorePos();
+        m_overlay->savePos();
+        m_overlay->beginText();
+        int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), m_hudFonts.font().get())) / 2;
+        m_overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
+        m_overlay->setColor(1, 0, 1, 1);
+        m_overlay->print(_("Edit Mode"));
+        m_overlay->endText();
+        m_overlay->restorePos();
     }
 
-    overlay->end();
+    m_overlay->end();
     setlocale(LC_NUMERIC, "C");
 }
 
@@ -869,139 +861,134 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
     double lt = 0.0;
 
     if (sim->getSelection().getType() == SelectionType::Body &&
-        (sim->getTargetSpeed() < 0.99_c))
+        sim->getTargetSpeed() < 0.99_c &&
+        timeInfo.lightTravelFlag)
     {
-        if (timeInfo.lightTravelFlag)
-        {
-            Eigen::Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
-            // light travel time in days
-            lt = v.norm() / (86400.0_c);
-        }
+        Eigen::Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
+        // light travel time in days
+        lt = v.norm() / static_cast<double>(86400.0_c);
     }
 
     double tdb = sim->getTime() + lt;
-    auto dateStr = dateFormatter->formatDate(tdb, timeInfo.timeZoneBias != 0, dateFormat);
-    int dateWidth = (engine::TextLayout::getTextWidth(dateStr, hudFonts.font().get()) / (hudFonts.emWidth() * 3) + 2) * hudFonts.emWidth() * 3;
-    if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
+    auto dateStr = m_dateFormatter->formatDate(tdb, timeInfo.timeZoneBias != 0, m_dateFormat);
+    m_dateStrWidth = std::max(m_dateStrWidth,
+                              (engine::TextLayout::getTextWidth(dateStr, m_hudFonts.font().get()) /
+                               (m_hudFonts.emWidth() * 3) + 2) *
+                               m_hudFonts.emWidth() * 3);
 
     // Time and date
-    overlay->savePos();
-    overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-    overlay->moveBy(metrics.getSafeAreaEnd(dateStrWidth), metrics.getSafeAreaTop(hudFonts.fontHeight()));
-    overlay->beginText();
+    m_overlay->savePos();
+    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->moveBy(metrics.getSafeAreaEnd(m_dateStrWidth), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
+    m_overlay->beginText();
 
-    overlay->print(dateStr);
+    m_overlay->print(dateStr);
 
     if (timeInfo.lightTravelFlag && lt > 0.0)
     {
-        overlay->setColor(0.42f, 1.0f, 1.0f, 1.0f);
-        overlay->print(_("  LT"));
-        overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->setColor(0.42f, 1.0f, 1.0f, 1.0f);
+        m_overlay->print(_("  LT"));
+        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
     }
-    overlay->print("\n");
+    m_overlay->print("\n");
 
+    if (std::abs(std::abs(sim->getTimeScale()) - 1.0) < 1e-6)
     {
-        if (std::abs(std::abs(sim->getTimeScale()) - 1.0) < 1e-6)
-        {
-            if (celmath::sign(sim->getTimeScale()) == 1)
-                overlay->print(_("Real time"));
-            else
-                overlay->print(_("-Real time"));
-        }
-        else if (std::abs(sim->getTimeScale()) < TimeInfo::MinimumTimeRate)
-        {
-            overlay->print(_("Time stopped"));
-        }
-        else if (std::abs(sim->getTimeScale()) > 1.0)
-        {
-            overlay->printf(_("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
-        }
+        if (celmath::sign(sim->getTimeScale()) == 1)
+            m_overlay->print(_("Real time"));
         else
-        {
-            overlay->printf(_("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
-        }
-
-        if (sim->getPauseState() == true)
-        {
-            overlay->setColor(1.0f, 0.0f, 0.0f, 1.0f);
-            overlay->print(_(" (Paused)"));
-        }
+            m_overlay->print(_("-Real time"));
+    }
+    else if (std::abs(sim->getTimeScale()) < TimeInfo::MinimumTimeRate)
+    {
+        m_overlay->print(_("Time stopped"));
+    }
+    else if (std::abs(sim->getTimeScale()) > 1.0)
+    {
+        m_overlay->printf(_("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
+    }
+    else
+    {
+        m_overlay->printf(_("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
     }
 
-    overlay->endText();
-    overlay->restorePos();
+    if (sim->getPauseState() == true)
+    {
+        m_overlay->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+        m_overlay->print(_(" (Paused)"));
+    }
+
+    m_overlay->endText();
+    m_overlay->restorePos();
 }
 
 void
 Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
 {
     // Field of view and camera mode in lower right corner
-    overlay->savePos();
-    overlay->moveBy(metrics.getSafeAreaEnd(hudFonts.emWidth() * 15),
-                    metrics.getSafeAreaBottom(hudFonts.fontHeight() * 3 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
-    overlay->beginText();
-    overlay->setColor(0.6f, 0.6f, 1.0f, 1);
+    m_overlay->savePos();
+    m_overlay->moveBy(metrics.getSafeAreaEnd(m_hudFonts.emWidth() * 15),
+                      metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 3 +
+                          static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
+    m_overlay->beginText();
+    m_overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
     if (sim->getObserverMode() == Observer::Travelling)
     {
         double timeLeft = sim->getArrivalTime() - sim->getRealTime();
         if (timeLeft >= 1)
-            overlay->print(_("Travelling ({})\n"),
-                            FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
+            m_overlay->print(_("Travelling ({})\n"),
+                             FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
         else
-            overlay->print(_("Travelling\n"));
+            m_overlay->print(_("Travelling\n"));
     }
     else
     {
-        overlay->print("\n");
+        m_overlay->print("\n");
     }
 
     const Universe& u = *sim->getUniverse();
 
     if (!sim->getTrackedObject().empty())
-        overlay->printf(_("Track %s\n"), CX_("Track", getSelectionName(sim->getTrackedObject(), u)));
+        m_overlay->printf(_("Track %s\n"), CX_("Track", getSelectionName(sim->getTrackedObject(), u)));
     else
-        overlay->print("\n");
+        m_overlay->print("\n");
 
+    Selection refObject = sim->getFrame()->getRefObject();
+    switch (sim->getFrame()->getCoordinateSystem())
     {
-        Selection refObject = sim->getFrame()->getRefObject();
-        ObserverFrame::CoordinateSystem coordSys = sim->getFrame()->getCoordinateSystem();
+    case ObserverFrame::Ecliptical:
+        m_overlay->printf(_("Follow %s\n"),
+                          CX_("Follow", getSelectionName(refObject, u)));
+        break;
+    case ObserverFrame::BodyFixed:
+        m_overlay->printf(_("Sync Orbit %s\n"),
+                          CX_("Sync", getSelectionName(refObject, u)));
+        break;
+    case ObserverFrame::PhaseLock:
+        m_overlay->printf(_("Lock %s -> %s\n"),
+                          CX_("Lock", getSelectionName(refObject, u)),
+                          CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), u)));
+        break;
 
-        switch (coordSys)
-        {
-        case ObserverFrame::Ecliptical:
-            overlay->printf(_("Follow %s\n"),
-                            CX_("Follow", getSelectionName(refObject, u)));
-            break;
-        case ObserverFrame::BodyFixed:
-            overlay->printf(_("Sync Orbit %s\n"),
-                            CX_("Sync", getSelectionName(refObject, u)));
-            break;
-        case ObserverFrame::PhaseLock:
-            overlay->printf(_("Lock %s -> %s\n"),
-                            CX_("Lock", getSelectionName(refObject, u)),
-                            CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), u)));
-            break;
+    case ObserverFrame::Chase:
+        m_overlay->printf(_("Chase %s\n"),
+                          CX_("Chase", getSelectionName(refObject, u)));
+        break;
 
-        case ObserverFrame::Chase:
-            overlay->printf(_("Chase %s\n"),
-                            CX_("Chase", getSelectionName(refObject, u)));
-            break;
-
-        default:
-            overlay->print("\n");
-            break;
-        }
+    default:
+        m_overlay->print("\n");
+        break;
     }
 
-    overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
     float fov = celmath::radToDeg(activeObserver->getFOV());
-    overlay->printf(_("FOV: %s (%.2fx)\n"), angleToStr(fov), activeObserver->getZoom());
-    overlay->endText();
-    overlay->restorePos();
+    m_overlay->printf(_("FOV: %s (%.2fx)\n"), angleToStr(fov), activeObserver->getZoom());
+    m_overlay->endText();
+    m_overlay->restorePos();
 }
 
 void
@@ -1010,85 +997,82 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                          Selection sel,
                          const Eigen::Vector3d& v)
 {
-    overlay->savePos();
-    overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-    overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(hudFonts.titleFontHeight()));
+    m_overlay->savePos();
+    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(m_hudFonts.titleFontHeight()));
 
-    overlay->beginText();
+    m_overlay->beginText();
 
     switch (sel.getType())
     {
     case SelectionType::Star:
         {
-            if (sel != lastSelection)
+            if (sel != m_lastSelection)
             {
-                lastSelection = sel;
-                selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
+                m_lastSelection = sel;
+                m_selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
             }
 
-            overlay->setFont(hudFonts.titleFont());
-            overlay->print(selectionNames);
-            overlay->setFont(hudFonts.font());
-            overlay->print("\n");
-            displayStarInfo(*overlay,
-                            hudDetail,
+            m_overlay->setFont(m_hudFonts.titleFont());
+            m_overlay->print(m_selectionNames);
+            m_overlay->setFont(m_hudFonts.font());
+            m_overlay->print("\n");
+            displayStarInfo(*m_overlay,
+                             m_hudDetail,
                             *(sel.star()),
                             *(sim->getUniverse()),
-                            astro::kilometersToLightYears(v.norm()),
-                            measurementSystem,
-                            temperatureScale);
+                             astro::kilometersToLightYears(v.norm()),
+                             m_hudSettings);
         }
         break;
 
     case SelectionType::DeepSky:
         {
-            if (sel != lastSelection)
+            if (sel != m_lastSelection)
             {
-                lastSelection = sel;
-                selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
+                m_lastSelection = sel;
+                m_selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
             }
 
-            overlay->setFont(hudFonts.titleFont());
-            overlay->print(selectionNames);
-            overlay->setFont(hudFonts.font());
-            overlay->print("\n");
-            displayDSOinfo(*overlay,
-                            *sel.deepsky(),
+            m_overlay->setFont(m_hudFonts.titleFont());
+            m_overlay->print(m_selectionNames);
+            m_overlay->setFont(m_hudFonts.font());
+            m_overlay->print("\n");
+            displayDSOinfo(*m_overlay,
+                           *sel.deepsky(),
                             astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius(),
-                            measurementSystem);
+                            m_hudSettings.measurementSystem);
         }
         break;
 
     case SelectionType::Body:
         {
             // Show all names for the body
-            if (sel != lastSelection)
+            if (sel != m_lastSelection)
             {
-                lastSelection = sel;
-                selectionNames = getBodySelectionNames(*sel.body());
+                m_lastSelection = sel;
+                m_selectionNames = getBodySelectionNames(*sel.body());
             }
 
-            overlay->setFont(hudFonts.titleFont());
-            overlay->print(selectionNames);
-            overlay->setFont(hudFonts.font());
-            overlay->print("\n");
-            displayPlanetInfo(*overlay,
-                               hudDetail,
+            m_overlay->setFont(m_hudFonts.titleFont());
+            m_overlay->print(m_selectionNames);
+            m_overlay->setFont(m_hudFonts.font());
+            m_overlay->print("\n");
+            displayPlanetInfo(*m_overlay,
+                               m_hudDetail,
                               *(sel.body()),
                                sim->getTime(),
-                               v.norm(),
                                v,
-                               measurementSystem,
-                               temperatureScale);
+                               m_hudSettings);
         }
         break;
 
     case SelectionType::Location:
-        overlay->setFont(hudFonts.titleFont());
-        overlay->print(sel.location()->getName(true).c_str());
-        overlay->setFont(hudFonts.font());
-        overlay->print("\n");
-        displayLocationInfo(*overlay, *(sel.location()), v.norm(), measurementSystem);
+        m_overlay->setFont(m_hudFonts.titleFont());
+        m_overlay->print(sel.location()->getName(true).c_str());
+        m_overlay->setFont(m_hudFonts.font());
+        m_overlay->print("\n");
+        displayLocationInfo(*m_overlay, *(sel.location()), v.norm(), m_hudSettings.measurementSystem);
         break;
 
     default:
@@ -1097,59 +1081,55 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
 
     // Display RA/Dec for the selection, but only when the observer is near
     // the Earth.
-    Selection refObject = sim->getFrame()->getRefObject();
-    if (refObject.body() && refObject.body()->getName() == "Earth")
+    if (Selection refObject = sim->getFrame()->getRefObject();
+        refObject.body() && refObject.body()->getName() == "Earth")
     {
         Body* earth = refObject.body();
 
         UniversalCoord observerPos = sim->getObserver().getPosition();
         double distToEarthCenter = observerPos.offsetFromKm(refObject.getPosition(sim->getTime())).norm();
         double altitude = distToEarthCenter - earth->getRadius();
-        if (altitude < 1000.0)
+        if (altitude < 1000.0 && (sel.getType() == SelectionType::Star || sel.getType() == SelectionType::DeepSky))
         {
             // Code to show the geocentric RA/Dec
 
             // Only show the coordinates for stars and deep sky objects, where
             // the geocentric values will match the apparent values for observers
             // near the Earth.
-            if (sel.star() != nullptr || sel.deepsky() != nullptr)
-            {
-                Eigen::Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(Selection(earth).getPosition(sim->getTime()));
-                v = celmath::XRotation(astro::J2000Obliquity) * v;
-                displayRADec(*overlay, v);
-            }
+            Eigen::Vector3d vEarth = sel.getPosition(sim->getTime()).offsetFromKm(Selection(earth).getPosition(sim->getTime()));
+            vEarth = celmath::XRotation(astro::J2000Obliquity) * vEarth;
+            displayRADec(*m_overlay, vEarth);
         }
     }
 
-    overlay->endText();
-    overlay->restorePos();
+    m_overlay->endText();
+    m_overlay->restorePos();
 }
 
 void
 Hud::renderTextMessages(const WindowMetrics& metrics, double currentTime)
 {
-    std::string_view text = getCurrentMessage(currentTime);
-    if (text.empty())
+    if (currentTime >= m_messageStart + m_messageDuration)
         return;
 
     int x = 0;
     int y = 0;
 
-    messageTextPosition.resolvePixelPosition(metrics, x, y);
+    m_messageTextPosition.resolvePixelPosition(metrics, x, y);
 
-    overlay->setFont(hudFonts.titleFont());
-    overlay->savePos();
+    m_overlay->setFont(m_hudFonts.titleFont());
+    m_overlay->savePos();
 
     float alpha = 1.0f;
-    if (currentTime > messageStart + messageDuration - 0.5)
-        alpha = static_cast<float>((messageStart + messageDuration - currentTime) / 0.5);
-    overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
-    overlay->moveBy(x, y);
-    overlay->beginText();
-    overlay->print(messageText);
-    overlay->endText();
-    overlay->restorePos();
-    overlay->setFont(hudFonts.font());
+    if (currentTime > m_messageStart + m_messageDuration - 0.5)
+        alpha = static_cast<float>((m_messageStart + m_messageDuration - currentTime) / 0.5);
+    m_overlay->setColor(m_hudSettings.textColor, alpha);
+    m_overlay->moveBy(x, y);
+    m_overlay->beginText();
+    m_overlay->print(m_messageText);
+    m_overlay->endText();
+    m_overlay->restorePos();
+    m_overlay->setFont(m_hudFonts.font());
 }
 
 void
@@ -1157,48 +1137,47 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
 {
     int movieWidth = movieCapture.getWidth();
     int movieHeight = movieCapture.getHeight();
-    overlay->savePos();
+    m_overlay->savePos();
     Color color(1.0f, 0.0f, 0.0f, 1.0f);
-    overlay->setColor(color);
-    celestia::Rect r((metrics.width - movieWidth) / 2 - 1,
-                     (metrics.height - movieHeight) / 2 - 1,
-                     movieWidth + 1,
-                     movieHeight + 1);
+    m_overlay->setColor(color);
+    celestia::Rect r(static_cast<float>((metrics.width - movieWidth) / 2 - 1),
+                     static_cast<float>((metrics.height - movieHeight) / 2 - 1),
+                     static_cast<float>(movieWidth + 1),
+                     static_cast<float>(movieHeight + 1));
     r.setColor(color);
     r.setType(celestia::Rect::Type::BorderOnly);
-    overlay->drawRectangle(r);
-    overlay->moveBy((float) ((metrics.width - movieWidth) / 2),
-                    (float) ((metrics.height + movieHeight) / 2 + 2));
-    overlay->beginText();
-    overlay->printf(_("%dx%d at %.2f fps  %s"),
-                    movieWidth, movieHeight,
-                    movieCapture.getFrameRate(),
-                    movieCapture.recordingStatus() ? _("Recording") : _("Paused"));
+    m_overlay->drawRectangle(r);
+    m_overlay->moveBy(static_cast<float>((metrics.width - movieWidth) / 2),
+                      static_cast<float>((metrics.height + movieHeight) / 2 + 2));
+    m_overlay->beginText();
+    m_overlay->printf(_("%dx%d at %.2f fps  %s"),
+                      movieWidth, movieHeight,
+                      movieCapture.getFrameRate(),
+                      movieCapture.recordingStatus() ? _("Recording") : _("Paused"));
 
-    overlay->endText();
-    overlay->restorePos();
+    m_overlay->endText();
+    m_overlay->restorePos();
 
-    overlay->savePos();
-    overlay->moveBy((float) ((metrics.width + movieWidth) / 2 - hudFonts.emWidth() * 5),
-                    (float) ((metrics.height + movieHeight) / 2 + 2));
-    float sec = movieCapture.getFrameCount() /
-        movieCapture.getFrameRate();
-    auto min = (int) (sec / 60);
-    sec -= min * 60.0f;
-    overlay->beginText();
-    overlay->print("{:3d}:{:05.2f}", min, sec);
-    overlay->endText();
-    overlay->restorePos();
+    m_overlay->savePos();
+    m_overlay->moveBy(static_cast<float>((metrics.width + movieWidth) / 2 - m_hudFonts.emWidth() * 5),
+                      static_cast<float>((metrics.height + movieHeight) / 2 + 2));
+    float sec = static_cast<float>(movieCapture.getFrameCount()) / movieCapture.getFrameRate();
+    auto min = static_cast<int>(sec / 60.0f);
+    sec -= static_cast<float>(min) * 60.0f;
+    m_overlay->beginText();
+    m_overlay->print("{:3d}:{:05.2f}", min, sec);
+    m_overlay->endText();
+    m_overlay->restorePos();
 
-    overlay->savePos();
-    overlay->moveBy((float) ((metrics.width - movieWidth) / 2),
-                    (float) ((metrics.height - movieHeight) / 2 - hudFonts.fontHeight() - 2));
-    overlay->beginText();
-    overlay->print(_("F11 Start/Pause    F12 Stop"));
-    overlay->endText();
-    overlay->restorePos();
+    m_overlay->savePos();
+    m_overlay->moveBy(static_cast<float>((metrics.width - movieWidth) / 2),
+                      static_cast<float>((metrics.height - movieHeight) / 2 - m_hudFonts.fontHeight() - 2));
+    m_overlay->beginText();
+    m_overlay->print(_("F11 Start/Pause    F12 Stop"));
+    m_overlay->endText();
+    m_overlay->restorePos();
 
-    overlay->restorePos();
+    m_overlay->restorePos();
 }
 
 void
@@ -1207,47 +1186,40 @@ Hud::showText(const TextPrintPosition& position,
               double duration,
               double currentTime)
 {
-    if (!hudFonts.titleFont())
+    if (!m_hudFonts.titleFont())
         return;
 
-    messageText.replace(messageText.begin(), messageText.end(), message);
-    messageTextPosition = position;
-    messageStart = currentTime;
-    messageDuration = duration;
-}
-
-std::string_view
-Hud::getCurrentMessage(double currentTime) const
-{
-    if (currentTime < messageStart + messageDuration)
-        return messageText;
-    return {};
+    m_messageText.clear();
+    m_messageText.append(message);
+    m_messageTextPosition = position;
+    m_messageStart = currentTime;
+    m_messageDuration = duration;
 }
 
 void
 Hud::setImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
 {
-    image = std::move(_image);
-    image->setStartTime(static_cast<float>(currentTime));
+    m_image = std::move(_image);
+    m_image->setStartTime(static_cast<float>(currentTime));
 }
 
 bool
-Hud::setFont(const std::shared_ptr<TextureFont>& f)
+Hud::trySetFont(const std::shared_ptr<TextureFont>& f)
 {
     if (f == nullptr)
         return false;
 
-    hudFonts.setFont(f);
+    m_hudFonts.setFont(f);
     return true;
 }
 
 bool
-Hud::setTitleFont(const std::shared_ptr<TextureFont>& f)
+Hud::trySetTitleFont(const std::shared_ptr<TextureFont>& f)
 {
     if (f == nullptr)
         return false;
 
-    hudFonts.setTitleFont(f);
+    m_hudFonts.setTitleFont(f);
     return true;
 }
 

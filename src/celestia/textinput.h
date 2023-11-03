@@ -46,7 +46,7 @@ public:
     void appendText(const Simulation*, std::string_view, bool withLocations);
     void reset();
 
-    void render(Overlay*, const HudFonts&, const WindowMetrics&, const Color&) const;
+    void render(Overlay*, const HudFonts&, const WindowMetrics&) const;
 
 private:
     void doBackspace(const Simulation*, bool);

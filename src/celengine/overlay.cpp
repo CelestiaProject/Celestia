@@ -99,6 +99,13 @@ void Overlay::setColor(const Color& c)
                      c.red(), c.green(), c.blue(), c.alpha());
 }
 
+void Overlay::setColor(const Color& c, float a)
+{
+    layout->flush();
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
+                     c.red(), c.green(), c.blue(), a);
+}
+
 void Overlay::moveBy(float dx, float dy)
 {
     layout->moveRelative(dx, dy);

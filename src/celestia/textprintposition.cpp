@@ -62,8 +62,8 @@ TextPrintPosition::resolvePixelPosition(const WindowMetrics& metrics, int& x, in
         return;
     }
 
-    auto horizontalOffset = flags & Flags::HorizontalOffset;
-    if (horizontalOffset == Flags::HorizontalMiddle)
+    if (auto horizontalOffset = flags & Flags::HorizontalOffset;
+        horizontalOffset == Flags::HorizontalMiddle)
     {
         // Align horizontal center with offsetX adjusted to layout direction
         x += (metrics.getSafeAreaStart() + metrics.getSafeAreaEnd()) / 2;
@@ -83,8 +83,8 @@ TextPrintPosition::resolvePixelPosition(const WindowMetrics& metrics, int& x, in
         x = metrics.getSafeAreaEnd(-offsetX);
     }
 
-    auto verticalOffset = flags & Flags::VerticalOffset;
-    if (verticalOffset == Flags::VerticalMiddle)
+    if (auto verticalOffset = flags & Flags::VerticalOffset;
+        verticalOffset == Flags::VerticalMiddle)
     {
         // Align vertical center
         y = (metrics.getSafeAreaTop() + metrics.getSafeAreaBottom()) / 2 + offsetY;
