@@ -34,7 +34,7 @@ public:
     void setEncoderOptions(const std::string&);
 
 protected:
-    void recordingStatusUpdated(bool) override {};
+    void recordingStatusUpdated(bool) override { /* no action necessary */ };
 
 private:
     FFMPEGCapturePrivate *d{ nullptr };

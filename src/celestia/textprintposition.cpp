@@ -5,41 +5,65 @@
 namespace celestia
 {
 
-AbsoluteTextPrintPosition::AbsoluteTextPrintPosition(int x, int y) :
-    TextPrintPosition(), x(x), y(y)
+TextPrintPosition::Flags&
+operator|=(TextPrintPosition::Flags& flags, TextPrintPosition::Flags other)
+{
+    flags = static_cast<TextPrintPosition::Flags>(flags | other);
+    return flags;
+}
+
+TextPrintPosition::TextPrintPosition(Flags _flags,
+                                     int _offsetX,
+                                     int _offsetY,
+                                     int _fontHeight) :
+    flags(_flags), offsetX(_offsetX), offsetY(_offsetY), fontHeight(_fontHeight)
 {
 }
 
 
-void
-AbsoluteTextPrintPosition::resolvePixelPosition(const WindowMetrics&, int& x, int& y)
+TextPrintPosition
+TextPrintPosition::absolute(int x, int y)
 {
-    x = this->x;
-    y = this->y;
+    return TextPrintPosition(Flags::Absolute, x, y, 0);
 }
 
-
-RelativeTextPrintPosition::RelativeTextPrintPosition(int hOrigin, int vOrigin,
-                                                     int hOffset, int vOffset,
-                                                     int emWidth, int fontHeight) :
-    TextPrintPosition(),
-    messageHOrigin(hOrigin),
-    messageVOrigin(vOrigin),
-    messageHOffset(hOffset),
-    messageVOffset(vOffset),
-    emWidth(emWidth),
-    fontHeight(fontHeight)
+TextPrintPosition
+TextPrintPosition::relative(int hOrigin, int vOrigin,
+                            int hOffset, int vOffset,
+                            int emWidth, int fontHeight)
 {
-};
+    int offsetX = hOffset * emWidth;
+    int offsetY = vOffset * fontHeight;
+    Flags flags = Flags::Relative;
+    if (hOrigin < 0)
+        flags |= Flags::HorizontalStart;
+    else if (hOrigin == 0)
+        flags |= Flags::HorizontalMiddle;
+    else
+        flags |= Flags::HorizontalEnd;
 
+    if (vOrigin < 0)
+        flags |= Flags::VerticalBottom;
+    else if (vOrigin == 0)
+        flags |= Flags::VerticalMiddle;
+    else
+        flags |= Flags::VerticalTop;
+
+    return TextPrintPosition(flags, offsetX, offsetY, fontHeight);
+}
 
 void
-RelativeTextPrintPosition::resolvePixelPosition(const WindowMetrics& metrics, int& x, int& y)
+TextPrintPosition::resolvePixelPosition(const WindowMetrics& metrics, int& x, int& y) const
 {
-    auto offsetX = messageHOffset * emWidth;
-    auto offsetY = messageVOffset * fontHeight;
+    if ((flags & Flags::PositionType) == Flags::Absolute)
+    {
+        x = offsetX;
+        y = offsetY;
+        return;
+    }
 
-    if (messageHOrigin == 0)
+    auto horizontalOffset = flags & Flags::HorizontalOffset;
+    if (horizontalOffset == Flags::HorizontalMiddle)
     {
         // Align horizontal center with offsetX adjusted to layout direction
         x += (metrics.getSafeAreaStart() + metrics.getSafeAreaEnd()) / 2;
@@ -48,32 +72,33 @@ RelativeTextPrintPosition::resolvePixelPosition(const WindowMetrics& metrics, in
         else
             x += offsetX;
     }
-    else if (messageHOrigin > 0)
-    {
-        // Align horizontal end
-        x = metrics.getSafeAreaEnd(-offsetX);
-    }
-    else
+    else if (horizontalOffset == Flags::HorizontalStart)
     {
         // Align horizontal start
         x = metrics.getSafeAreaStart(offsetX);
     }
+    else
+    {
+        // Align horizontal end
+        x = metrics.getSafeAreaEnd(-offsetX);
+    }
 
-    if (messageVOrigin == 0)
+    auto verticalOffset = flags & Flags::VerticalOffset;
+    if (verticalOffset == Flags::VerticalMiddle)
     {
         // Align vertical center
         y = (metrics.getSafeAreaTop() + metrics.getSafeAreaBottom()) / 2 + offsetY;
     }
-    else if (messageVOrigin > 0)
-    {
-        // Align top
-        y = metrics.getSafeAreaTop(-offsetY);
-    }
-    else
+    else if (verticalOffset == Flags::VerticalBottom)
     {
         // Align bottom
         y = metrics.getSafeAreaBottom(offsetY - fontHeight);
     }
+    else
+    {
+        // Align top
+        y = metrics.getSafeAreaTop(-offsetY);
+    }
 }
 
-}
+} // end namespace celestia

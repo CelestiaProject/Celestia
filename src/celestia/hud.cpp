@@ -517,14 +517,15 @@ void displayDSOinfo(Overlay& overlay,
     }
 }
 
-static void displayPlanetInfo(Overlay& overlay,
-                              int detail,
-                              Body& body,
-                              double t,
-                              double distanceKm,
-                              const Eigen::Vector3d& viewVec,
-                              MeasurementSystem measurement,
-                              TemperatureScale temperatureScale)
+void
+displayPlanetInfo(Overlay& overlay,
+                  int detail,
+                  Body& body,
+                  double t,
+                  double distanceKm,
+                  const Eigen::Vector3d& viewVec,
+                  MeasurementSystem measurement,
+                  TemperatureScale temperatureScale)
 {
     double distance = distanceKm - body.getRadius();
     overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
@@ -675,6 +676,22 @@ getBodySelectionNames(const Body& body)
 
 } // end unnamed namespace
 
+void
+HudFonts::setFont(const std::shared_ptr<TextureFont>& f)
+{
+    m_font = f;
+    m_fontHeight = f->getHeight();
+    m_emWidth = engine::TextLayout::getTextWidth("M", f.get());
+}
+
+void
+HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
+{
+    m_titleFont = f;
+    m_titleFontHeight = f->getHeight();
+    m_titleEmWidth = engine::TextLayout::getTextWidth("M", f.get());
+}
+
 Hud::~Hud() = default;
 
 int
@@ -746,25 +763,25 @@ Hud::setTextAlignment(LayoutDirection dir)
 int
 Hud::getTextWidth(std::string_view text) const
 {
-    return engine::TextLayout::getTextWidth(text, titleFont.get());
+    return engine::TextLayout::getTextWidth(text, hudFonts.titleFont().get());
 }
 
 const std::shared_ptr<TextureFont>&
 Hud::getFont() const
 {
-    return font;
+    return hudFonts.font();
 }
 
 const std::shared_ptr<TextureFont>&
 Hud::getTitleFont() const
 {
-    return titleFont;
+    return hudFonts.titleFont();
 }
 
 std::tuple<int, int>
 Hud::getTitleMetrics() const
 {
-    return std::make_tuple(titleEmWidth, titleFontHeight);
+    return std::make_tuple(hudFonts.titleEmWidth(), hudFonts.titleFontHeight());
 }
 
 void
@@ -776,15 +793,14 @@ Hud::renderOverlay(const WindowMetrics& metrics,
                    bool isScriptRunning,
                    bool editMode)
 {
-    overlay->setFont(font);
+    overlay->setFont(hudFonts.font());
 
     overlay->begin();
 
     if (showOverlayImage && isScriptRunning && image != nullptr)
         image->render(static_cast<float>(timeInfo.currentTime), metrics.width, metrics.height);
 
-    if (views.views().size() > 1)
-        renderViewBorders(metrics, timeInfo.currentTime, views, views.isResizing());
+    views.renderBorders(metrics, timeInfo.currentTime);
 
     setlocale(LC_NUMERIC, "");
 
@@ -796,7 +812,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         // Speed
         overlay->savePos();
         overlay->moveBy(metrics.getSafeAreaStart(),
-                        metrics.getSafeAreaBottom(fontHeight * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
+                        metrics.getSafeAreaBottom(hudFonts.fontHeight() * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -823,7 +839,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
     }
 
     if ((m_textEnterMode & TextEnterAutoComplete) != 0)
-        renderTextInput(metrics);
+        m_textInput.render(overlay.get(), hudFonts, metrics, consoleColor);
 
     if (showMessage)
         renderTextMessages(metrics, timeInfo.currentTime);
@@ -835,8 +851,8 @@ Hud::renderOverlay(const WindowMetrics& metrics,
     {
         overlay->savePos();
         overlay->beginText();
-        int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), font.get())) / 2;
-        overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(fontHeight));
+        int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), hudFonts.font().get())) / 2;
+        overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(hudFonts.fontHeight()));
         overlay->setColor(1, 0, 1, 1);
         overlay->print(_("Edit Mode"));
         overlay->endText();
@@ -845,37 +861,6 @@ Hud::renderOverlay(const WindowMetrics& metrics,
 
     overlay->end();
     setlocale(LC_NUMERIC, "C");
-}
-
-void
-Hud::renderViewBorders(const WindowMetrics& metrics,
-                       double currentTime,
-                       const ViewManager& views,
-                       bool resizeSplit)
-{
-    // Render a thin border arround all views
-    if (showViewFrames || resizeSplit)
-    {
-        for(const auto v : views.views())
-        {
-            if (v->type == View::ViewWindow)
-                v->drawBorder(metrics.width, metrics.height, frameColor);
-        }
-    }
-
-    // Render a very simple border around the active view
-    const View* av = views.activeView();
-
-    if (showActiveViewFrame)
-    {
-        av->drawBorder(metrics.width, metrics.height, activeFrameColor, 2);
-    }
-
-    if (currentTime < views.flashFrameStart() + 0.5)
-    {
-        float alpha = (float) (1.0 - (currentTime - views.flashFrameStart()) / 0.5);
-        av->drawBorder(metrics.width, metrics.height, {activeFrameColor, alpha}, 8);
-    }
 }
 
 void
@@ -896,13 +881,13 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     double tdb = sim->getTime() + lt;
     auto dateStr = dateFormatter->formatDate(tdb, timeInfo.timeZoneBias != 0, dateFormat);
-    int dateWidth = (engine::TextLayout::getTextWidth(dateStr, font.get()) / (emWidth * 3) + 2) * emWidth * 3;
+    int dateWidth = (engine::TextLayout::getTextWidth(dateStr, hudFonts.font().get()) / (hudFonts.emWidth() * 3) + 2) * hudFonts.emWidth() * 3;
     if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
 
     // Time and date
     overlay->savePos();
     overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-    overlay->moveBy(metrics.getSafeAreaEnd(dateStrWidth), metrics.getSafeAreaTop(fontHeight));
+    overlay->moveBy(metrics.getSafeAreaEnd(dateStrWidth), metrics.getSafeAreaTop(hudFonts.fontHeight()));
     overlay->beginText();
 
     overlay->print(dateStr);
@@ -952,8 +937,8 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
 {
     // Field of view and camera mode in lower right corner
     overlay->savePos();
-    overlay->moveBy(metrics.getSafeAreaEnd(emWidth * 15),
-                    metrics.getSafeAreaBottom(fontHeight * 3 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
+    overlay->moveBy(metrics.getSafeAreaEnd(hudFonts.emWidth() * 15),
+                    metrics.getSafeAreaBottom(hudFonts.fontHeight() * 3 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
     overlay->beginText();
     overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
@@ -1027,7 +1012,7 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
 {
     overlay->savePos();
     overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-    overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(titleFont->getHeight()));
+    overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(hudFonts.titleFontHeight()));
 
     overlay->beginText();
 
@@ -1041,9 +1026,9 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                 selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
             }
 
-            overlay->setFont(titleFont);
+            overlay->setFont(hudFonts.titleFont());
             overlay->print(selectionNames);
-            overlay->setFont(font);
+            overlay->setFont(hudFonts.font());
             overlay->print("\n");
             displayStarInfo(*overlay,
                             hudDetail,
@@ -1063,9 +1048,9 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                 selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
             }
 
-            overlay->setFont(titleFont);
+            overlay->setFont(hudFonts.titleFont());
             overlay->print(selectionNames);
-            overlay->setFont(font);
+            overlay->setFont(hudFonts.font());
             overlay->print("\n");
             displayDSOinfo(*overlay,
                             *sel.deepsky(),
@@ -1083,9 +1068,9 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                 selectionNames = getBodySelectionNames(*sel.body());
             }
 
-            overlay->setFont(titleFont);
+            overlay->setFont(hudFonts.titleFont());
             overlay->print(selectionNames);
-            overlay->setFont(font);
+            overlay->setFont(hudFonts.font());
             overlay->print("\n");
             displayPlanetInfo(*overlay,
                                hudDetail,
@@ -1099,9 +1084,9 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
         break;
 
     case SelectionType::Location:
-        overlay->setFont(titleFont);
+        overlay->setFont(hudFonts.titleFont());
         overlay->print(sel.location()->getName(true).c_str());
-        overlay->setFont(font);
+        overlay->setFont(hudFonts.font());
         overlay->print("\n");
         displayLocationInfo(*overlay, *(sel.location()), v.norm(), measurementSystem);
         break;
@@ -1141,58 +1126,6 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
 }
 
 void
-Hud::renderTextInput(const WindowMetrics& metrics)
-{
-    overlay->setFont(titleFont);
-    overlay->savePos();
-    int rectHeight = fontHeight * 3.0f + metrics.screenDpi / 25.4f * 9.3f + titleFontHeight;
-    celestia::Rect r(0, 0, metrics.width, metrics.insetBottom + rectHeight);
-    r.setColor(consoleColor);
-    overlay->drawRectangle(r);
-    overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaBottom(rectHeight - titleFontHeight));
-    overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
-    overlay->beginText();
-    overlay->print(_("Target name: {}"), m_textInput.getTypedText());
-    overlay->endText();
-    overlay->setFont(font);
-    if (auto typedTextCompletion = m_textInput.getCompletion(); !typedTextCompletion.empty())
-    {
-        int nb_cols = 4;
-        int nb_lines = 3;
-        int start = 0;
-        overlay->moveBy(3, -font->getHeight() - 3);
-        auto iter = typedTextCompletion.begin();
-        auto typedTextCompletionIdx = m_textInput.getCompletionIndex();
-        if (typedTextCompletionIdx >= nb_cols * nb_lines)
-        {
-            start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
-            iter += start;
-        }
-        int columnWidth = metrics.getSafeAreaWidth() / nb_cols;
-        for (int i = 0; iter < typedTextCompletion.end() && i < nb_cols; i++)
-        {
-            overlay->savePos();
-            overlay->beginText();
-            for (int j = 0; iter < typedTextCompletion.end() && j < nb_lines; iter++, j++)
-            {
-                if (i * nb_lines + j == typedTextCompletionIdx - start)
-                    overlay->setColor(1.0f, 0.6f, 0.6f, 1);
-                else
-                    overlay->setColor(0.6f, 0.6f, 1.0f, 1);
-                overlay->print(*iter);
-                overlay->print("\n");
-            }
-            overlay->endText();
-            overlay->restorePos();
-            overlay->moveBy(metrics.layoutDirection == LayoutDirection::RightToLeft ? -columnWidth : columnWidth, 0);
-        }
-    }
-
-    overlay->restorePos();
-    overlay->setFont(font);
-}
-
-void
 Hud::renderTextMessages(const WindowMetrics& metrics, double currentTime)
 {
     std::string_view text = getCurrentMessage(currentTime);
@@ -1202,9 +1135,9 @@ Hud::renderTextMessages(const WindowMetrics& metrics, double currentTime)
     int x = 0;
     int y = 0;
 
-    messageTextPosition->resolvePixelPosition(metrics, x, y);
+    messageTextPosition.resolvePixelPosition(metrics, x, y);
 
-    overlay->setFont(titleFont);
+    overlay->setFont(hudFonts.titleFont());
     overlay->savePos();
 
     float alpha = 1.0f;
@@ -1216,7 +1149,7 @@ Hud::renderTextMessages(const WindowMetrics& metrics, double currentTime)
     overlay->print(messageText);
     overlay->endText();
     overlay->restorePos();
-    overlay->setFont(font);
+    overlay->setFont(hudFonts.font());
 }
 
 void
@@ -1246,7 +1179,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     overlay->restorePos();
 
     overlay->savePos();
-    overlay->moveBy((float) ((metrics.width + movieWidth) / 2 - emWidth * 5),
+    overlay->moveBy((float) ((metrics.width + movieWidth) / 2 - hudFonts.emWidth() * 5),
                     (float) ((metrics.height + movieHeight) / 2 + 2));
     float sec = movieCapture.getFrameCount() /
         movieCapture.getFrameRate();
@@ -1259,7 +1192,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
 
     overlay->savePos();
     overlay->moveBy((float) ((metrics.width - movieWidth) / 2),
-                    (float) ((metrics.height - movieHeight) / 2 - fontHeight - 2));
+                    (float) ((metrics.height - movieHeight) / 2 - hudFonts.fontHeight() - 2));
     overlay->beginText();
     overlay->print(_("F11 Start/Pause    F12 Stop"));
     overlay->endText();
@@ -1268,10 +1201,25 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     overlay->restorePos();
 }
 
+void
+Hud::showText(const TextPrintPosition& position,
+              std::string_view message,
+              double duration,
+              double currentTime)
+{
+    if (!hudFonts.titleFont())
+        return;
+
+    messageText.replace(messageText.begin(), messageText.end(), message);
+    messageTextPosition = position;
+    messageStart = currentTime;
+    messageDuration = duration;
+}
+
 std::string_view
 Hud::getCurrentMessage(double currentTime) const
 {
-    if (currentTime < messageStart + messageDuration && messageTextPosition)
+    if (currentTime < messageStart + messageDuration)
         return messageText;
     return {};
 }
@@ -1289,10 +1237,7 @@ Hud::setFont(const std::shared_ptr<TextureFont>& f)
     if (f == nullptr)
         return false;
 
-    font = f;
-    fontHeight = font->getHeight();
-    emWidth = engine::TextLayout::getTextWidth("M", font.get());
-    assert(emWidth > 0);
+    hudFonts.setFont(f);
     return true;
 }
 
@@ -1302,23 +1247,8 @@ Hud::setTitleFont(const std::shared_ptr<TextureFont>& f)
     if (f == nullptr)
         return false;
 
-    titleFont = f;
-    titleFontHeight = titleFont->getHeight();
-    titleEmWidth = engine::TextLayout::getTextWidth("M", titleFont.get());
-    assert(titleEmWidth > 0);
+    hudFonts.setTitleFont(f);
     return true;
-}
-
-void
-Hud::clearFonts()
-{
-    if (overlay)
-        overlay->setFont(nullptr);
-
-    dateStrWidth = 0;
-    titleFont = nullptr;
-    font = nullptr;
-
 }
 
 } // end namespace celestia

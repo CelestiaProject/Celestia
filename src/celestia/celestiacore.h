@@ -362,7 +362,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
-    void clearFonts();
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;

@@ -14,6 +14,7 @@
 
 #include <list>
 
+#include <celutil/color.h>
 #include "view.h"
 
 class Simulation;
@@ -44,7 +45,6 @@ public:
 
     const std::list<View*>& views() const;
     const View* activeView() const;
-    double flashFrameStart() const;
     void flashFrameStart(double);
     bool isResizing() const;
 
@@ -62,11 +62,19 @@ public:
     void setActiveView(Simulation*, const View*);
     bool deleteView(Simulation*, View*);
 
+    void renderBorders(const WindowMetrics&, double) const;
+
+    bool showViewFrames{ true };
+    bool showActiveViewFrame{ false };
+
 private:
     std::list<View*> m_views;
     std::list<View*>::iterator m_activeView;
     View* m_resizeSplit{ nullptr };
     double m_flashFrameStart{ 0.0 };
+
+    Color frameColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+    Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
 };
 
 }
