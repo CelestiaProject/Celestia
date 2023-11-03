@@ -85,12 +85,6 @@ ViewManager::activeView() const
     return *m_activeView;
 }
 
-double
-ViewManager::flashFrameStart() const
-{
-    return m_flashFrameStart;
-}
-
 void
 ViewManager::flashFrameStart(double currentTime)
 {
@@ -331,6 +325,37 @@ ViewManager::deleteView(Simulation* sim, View* v)
     sim->setActiveObserver((*m_activeView)->observer);
 
     return true;
+}
+
+void
+ViewManager::renderBorders(const WindowMetrics& metrics, double currentTime) const
+{
+    if (m_views.size() < 2)
+        return;
+
+    // Render a thin border arround all views
+    if (showViewFrames || m_resizeSplit)
+    {
+        for(const auto v : m_views)
+        {
+            if (v->type == View::ViewWindow)
+                v->drawBorder(metrics.width, metrics.height, frameColor);
+        }
+    }
+
+    // Render a very simple border around the active view
+    const View* av = *m_activeView;
+
+    if (showActiveViewFrame)
+    {
+        av->drawBorder(metrics.width, metrics.height, activeFrameColor, 2);
+    }
+
+    if (currentTime < m_flashFrameStart + 0.5)
+    {
+        float alpha = (float) (1.0 - (currentTime - m_flashFrameStart) / 0.5);
+        av->drawBorder(metrics.width, metrics.height, {activeFrameColor, alpha}, 8);
+    }
 }
 
 } // end namespace celestia

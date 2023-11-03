@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -24,6 +25,7 @@
 #include <celengine/dateformatter.h>
 #include <celengine/selection.h>
 #include <celestia/textinput.h>
+#include <celestia/textprintposition.h>
 #include <celestia/windowmetrics.h>
 #include <celttf/truetypefont.h>
 #include <celutil/color.h>
@@ -36,7 +38,6 @@ class Simulation;
 namespace celestia
 {
 
-class TextPrintPosition;
 class TimeInfo;
 class ViewManager;
 
@@ -56,6 +57,30 @@ enum class TemperatureScale
     Kelvin      = 0,
     Celsius     = 1,
     Fahrenheit  = 2,
+};
+
+class HudFonts
+{
+public:
+    HudFonts() = default;
+
+    void setFont(const std::shared_ptr<TextureFont>&);
+    void setTitleFont(const std::shared_ptr<TextureFont>&);
+
+    inline const std::shared_ptr<TextureFont>& font() const noexcept { return m_font; }
+    inline const std::shared_ptr<TextureFont>& titleFont() const noexcept { return m_titleFont; }
+    inline int fontHeight() const noexcept { return m_fontHeight; }
+    inline int titleFontHeight() const noexcept { return m_titleFontHeight; }
+    inline int emWidth() const noexcept { return m_emWidth; }
+    inline int titleEmWidth() const noexcept { return m_titleEmWidth; }
+
+private:
+    std::shared_ptr<TextureFont> m_font;
+    std::shared_ptr<TextureFont> m_titleFont;
+    int m_fontHeight{ 0 };
+    int m_titleFontHeight{ 0 };
+    int m_emWidth{ 0 };
+    int m_titleEmWidth{ 0 };
 };
 
 class Hud
@@ -97,7 +122,6 @@ public:
     const std::shared_ptr<TextureFont>& getTitleFont() const;
     bool setFont(const std::shared_ptr<TextureFont>&);
     bool setTitleFont(const std::shared_ptr<TextureFont>&);
-    void clearFonts();
     std::tuple<int, int> getTitleMetrics() const;
 
     void renderOverlay(const WindowMetrics&,
@@ -108,18 +132,7 @@ public:
                        bool isScriptRunning,
                        bool editMode);
 
-    template<typename T, typename... Args>
-    void showText(std::string_view s, double duration, double currentTime, Args&&... args)
-    {
-        if (!titleFont)
-            return;
-
-        messageText.replace(messageText.begin(), messageText.end(), s);
-        messageTextPosition = std::make_unique<T>(std::forward<Args>(args)...);
-        messageStart = currentTime;
-        messageDuration = duration;
-    }
-
+    void showText(const TextPrintPosition&, std::string_view, double duration, double currentTime);
     void setImage(std::unique_ptr<OverlayImage>&&, double);
 
     Color textColor{ 1.0f, 1.0f, 1.0f };
@@ -128,33 +141,22 @@ public:
     TemperatureScale temperatureScale{ TemperatureScale::Kelvin };
 
     OverlayElements overlayElements{ ShowTime | ShowVelocity | ShowSelection | ShowFrame };
-    bool showViewFrames{ true };
-    bool showActiveViewFrame{ false };
     bool showFPSCounter{ false };
     bool showOverlayImage{ true };
     bool showMessage{ true };
 
 private:
-    void renderViewBorders(const WindowMetrics&, double, const ViewManager&, bool);
     void renderTimeInfo(const WindowMetrics&, const Simulation*, const TimeInfo&);
     void renderFrameInfo(const WindowMetrics&, const Simulation*);
     void renderSelectionInfo(const WindowMetrics&, const Simulation*, Selection, const Eigen::Vector3d&);
-    void renderTextInput(const WindowMetrics&);
     void renderTextMessages(const WindowMetrics&, double);
     void renderMovieCapture(const WindowMetrics&, const MovieCapture&);
 
     std::string_view getCurrentMessage(double) const;
 
-    Color frameColor{ 0.5f, 0.5f, 0.5f, 1.0f };
-    Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
     Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
 
-    std::shared_ptr<TextureFont> font;
-    std::shared_ptr<TextureFont> titleFont;
-    int fontHeight{ 0 };
-    int titleFontHeight{ 0 };
-    int emWidth{ 0 };
-    int titleEmWidth{ 0 };
+    HudFonts hudFonts;
 
     std::unique_ptr<Overlay> overlay;
 
@@ -170,8 +172,8 @@ private:
     TextEnterMode m_textEnterMode{ TextEnterMode::TextEnterNormal };
 
     std::string messageText;
-    std::unique_ptr<TextPrintPosition> messageTextPosition;
-    double messageStart{ 0.0 };
+    TextPrintPosition messageTextPosition;
+    double messageStart{ -std::numeric_limits<double>::infinity() };
     double messageDuration{ 0.0 };
 
     Selection lastSelection;

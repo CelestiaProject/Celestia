@@ -425,7 +425,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
         return;
 
     // To select the clicked into view before a drag.
-    if (viewManager->pickView(sim, metrics, x, y) && hud->showActiveViewFrame)
+    if (viewManager->pickView(sim, metrics, x, y) && viewManager->showActiveViewFrame)
         viewManager->flashFrameStart(timeInfo.currentTime);
 
     if (button == LeftButton) // look if click is near a view border
@@ -459,7 +459,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            if (viewManager->pickView(sim, metrics, x, y) && hud->showActiveViewFrame)
+            if (viewManager->pickView(sim, metrics, x, y) && viewManager->showActiveViewFrame)
                 viewManager->flashFrameStart(timeInfo.currentTime);
 
             float pickX, pickY;
@@ -981,7 +981,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\011': // TAB
         viewManager->nextView(sim);
-        if (!hud->showActiveViewFrame)
+        if (!viewManager->showActiveViewFrame)
             viewManager->flashFrameStart(timeInfo.currentTime);
         break;
 
@@ -2164,31 +2164,31 @@ void CelestiaCore::deleteView(View* v)
     if (!viewManager->deleteView(sim, v))
         return;
 
-    if (!hud->showActiveViewFrame)
+    if (!viewManager->showActiveViewFrame)
         viewManager->flashFrameStart(timeInfo.currentTime);
     setFOVFromZoom();
 }
 
 bool CelestiaCore::getFramesVisible() const
 {
-    return hud->showViewFrames;
+    return viewManager->showViewFrames;
 }
 
 void CelestiaCore::setFramesVisible(bool visible)
 {
     setViewChanged();
-    hud->showViewFrames = visible;
+    viewManager->showViewFrames = visible;
 }
 
 bool CelestiaCore::getActiveFrameVisible() const
 {
-    return hud->showActiveViewFrame;
+    return viewManager->showActiveViewFrame;
 }
 
 void CelestiaCore::setActiveFrameVisible(bool visible)
 {
     setViewChanged();
-    hud->showActiveViewFrame = visible;
+    viewManager->showActiveViewFrame = visible;
 }
 
 
@@ -2208,13 +2208,13 @@ void CelestiaCore::showText(std::string_view s,
                             double duration)
 {
     auto [emWidth, height] = hud->getTitleMetrics();
-    hud->showText<RelativeTextPrintPosition>(s, duration, timeInfo.currentTime,
-                                             horig, vorig, hoff, voff, emWidth, height);
+    hud->showText(TextPrintPosition::relative(horig, vorig, hoff, voff, emWidth, height),
+                  s, duration, timeInfo.currentTime);
 }
 
 void CelestiaCore::showTextAtPixel(std::string_view s, int x, int y, double duration)
 {
-    hud->showText<AbsoluteTextPrintPosition>(s, duration, timeInfo.currentTime, x, y);
+    hud->showText(TextPrintPosition::absolute(x, y), s, duration, timeInfo.currentTime);
 }
 
 
@@ -2938,22 +2938,6 @@ bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex
         return true;
     }
     return false;
-}
-
-void CelestiaCore::clearFonts()
-{
-    hud->clearFonts();
-
-    if (console)
-        console->setFont(nullptr);
-
-    if (renderer)
-    {
-        for (int i = Renderer::FontNormal; i < Renderer::FontCount; i += 1)
-        {
-            renderer->setFont((Renderer::FontStyle)i, nullptr);
-        }
-    }
 }
 
 int CelestiaCore::getTimeZoneBias() const

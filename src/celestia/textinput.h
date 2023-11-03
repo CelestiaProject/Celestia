@@ -18,10 +18,15 @@
 
 #include <celutil/array_view.h>
 
+class Color;
+class Overlay;
 class Simulation;
 
 namespace celestia
 {
+
+class HudFonts;
+struct WindowMetrics;
 
 enum class CharEnteredResult
 {
@@ -41,7 +46,15 @@ public:
     void appendText(const Simulation*, std::string_view, bool withLocations);
     void reset();
 
+    void render(Overlay*, const HudFonts&, const WindowMetrics&, const Color&) const;
+
 private:
+    void doBackspace(const Simulation*, bool);
+    void doTab();
+    void doBackTab();
+
+    void renderCompletion(Overlay*, const WindowMetrics&, int) const;
+
     std::string m_text;
     std::vector<std::string> m_completion;
     int m_completionIdx{ -1 };
