@@ -1,0 +1,4174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Celestia Development Team
+# This file is distributed under the same license as the celestia package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Translators:
+# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2023
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia 1.7.0\n"
+"Report-Msgid-Bugs-To: team@celestiaproject.space\n"
+"POT-Creation-Date: 2023-09-15 14:52+0300\n"
+"PO-Revision-Date: 2023-11-03 13:48+0200\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2023\n"
+"Language-Team: Georgian (https://app.transifex.com/celestia/teams/93131/"
+"ka/)\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: Poedit 2.0.6\n"
+
+#: ../src/celengine/astro.cpp:645
+msgid "DST"
+msgstr "DST"
+
+#: ../src/celengine/astro.cpp:645
+msgid "STD"
+msgstr "STD"
+
+#: ../src/celengine/dateformatter.cpp:87 ../src/celestia/win32/winmain.cpp:3356
+#: ../src/celutil/fsutils.cpp:41
+msgid "LANGUAGE"
+msgstr "ka"
+
+#.
+#. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
+#. for (int i = 0; i < nDSOs; ++i)
+#. {
+#. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
+#. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
+#. }
+#.
+#: ../src/celengine/dsodb.cpp:332
+msgid "Loaded {} deep space objects\n"
+msgstr "ჩატვირთულია {} ღრმა კოსმოსის ობიექტი\n"
+
+#: ../src/celengine/galaxy.cpp:94
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "გალაქტიკა (ჰაბლის ტიპი: %s)"
+
+#: ../src/celengine/globular.cpp:67
+#, c-format, qt-format
+msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
+msgstr ""
+
+#: ../src/celengine/meshmanager.cpp:451
+msgid "Loading model: {}\n"
+msgstr "მოდელის ჩატვირთვა:{}\n"
+
+#: ../src/celengine/meshmanager.cpp:466
+msgid "Unknown model format '{}'\n"
+msgstr "უცნობი მოდელის ფორმატი '{}'\n"
+
+#: ../src/celengine/meshmanager.cpp:472
+msgid "Error loading model '{}'\n"
+msgstr "მოდელის ჩატვირთვის შეცდომა '{}'\n"
+
+#. Display some statics for the model
+#: ../src/celengine/meshmanager.cpp:493
+msgid ""
+"   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
+msgstr ""
+
+#: ../src/celengine/modelgeometry.cpp:186
+msgid "Mesh index {} is higher than VBO count {}!"
+msgstr ""
+
+#: ../src/celengine/nebula.cpp:34
+msgid "Nebula"
+msgstr "ნისლეული"
+
+#: ../src/celengine/opencluster.cpp:37
+msgid "Open cluster"
+msgstr "კლასტერის გახსნა"
+
+#: ../src/celengine/solarsys.cpp:96
+msgid "Error in .ssc file (line {}): {}\n"
+msgstr "შეცდომა .ssc ფაილში (ხაზი {}): {}\n"
+
+#: ../src/celengine/solarsys.cpp:836
+msgid "Incorrect GeomAlbedo value: {}\n"
+msgstr "არასწორი GeomAlbedo მნიშვნელობა: {}\n"
+
+#: ../src/celengine/solarsys.cpp:845
+msgid "Incorrect Reflectivity value: {}\n"
+msgstr "არასწორი Reflectivity მნიშვნელობა: {}\n"
+
+#: ../src/celengine/solarsys.cpp:853
+msgid "Incorrect BondAlbedo value: {}\n"
+msgstr "არასწორი BondAlbedo მნიშვნელობა: {}\n"
+
+#: ../src/celengine/solarsys.cpp:899
+msgid "Atmosphere must be an associative array.\n"
+msgstr "ატმოსფერო ასოცირებული მასივი უნდა იყოს.\n"
+
+#: ../src/celengine/solarsys.cpp:981
+msgid "Rings must be an associative array.\n"
+msgstr "რგოლები ასოცირებული მასივი უნდა იყოს.\n"
+
+#: ../src/celengine/solarsys.cpp:1231 ../src/celengine/solarsys.cpp:1295
+#, c-format
+msgid "parent body '%s' of '%s' not found.\n"
+msgstr "მშობლის სხეული '%s' '%s'-სთვის ვერ ვიპოვე.\n"
+
+#: ../src/celengine/solarsys.cpp:1241
+#, c-format
+msgid "warning duplicate definition of %s %s\n"
+msgstr "გაფრთხილება: %s ორჯერაა აღწერილი %s\n"
+
+#: ../src/celengine/solarsys.cpp:1273
+msgid "bad alternate surface"
+msgstr "არასწორი ალტერნატიული ზედაპირი"
+
+#: ../src/celengine/solarsys.cpp:1290
+msgid "bad location"
+msgstr "ცუდი მდებარეობა"
+
+#: ../src/celengine/stardb.cpp:344
+msgid "Error in .stc file (line {}): {}\n"
+msgstr "შეცდომა .stc ფაილში (ხაზი {}): {}\n"
+
+#: ../src/celengine/stardb.cpp:760
+msgid "Bad spectral type in star database, star #{}\n"
+msgstr "არასწორი სპექტრის ტიპი ვარსკვლავების ბაზაში. ვარსკვლავის #{}\n"
+
+#: ../src/celengine/stardb.cpp:781
+msgid "{} stars in binary database\n"
+msgstr "{} ვარსკვლავი ბინარულ ბაზაში\n"
+
+#: ../src/celengine/stardb.cpp:1071
+msgid "Bad header for cross index\n"
+msgstr "არასწორი თავსართი ჯვარედინი ინდექსისთვის\n"
+
+#: ../src/celengine/stardb.cpp:1079
+msgid "Bad version for cross index\n"
+msgstr "არასწორი ვერსია ჯვარედინი ინდექსისთვის\n"
+
+#: ../src/celengine/stardb.cpp:1096
+msgid "Loading cross index failed\n"
+msgstr "ჯვარედინი ინდექსის ჩატვირთვა ჩავარდა\n"
+
+#: ../src/celengine/stardb.cpp:1107
+msgid "Loading cross index failed - unexpected EOF\n"
+msgstr "ჯვარედინი ინდექსის ჩატვირთვა ჩავარდა - მოულოდნელი EOF\n"
+
+#: ../src/celengine/stardb.cpp:1137
+msgid "Total star count: {}\n"
+msgstr "ვარსკვლავების ჯამური რაოდენობა: {}\n"
+
+#: ../src/celengine/stardb.cpp:1235
+msgid "Invalid star: missing right ascension\n"
+msgstr "არასწორი ვარსკვლავი: აკლია ვარსკვლავის ამოსვლა\n"
+
+#: ../src/celengine/stardb.cpp:1246
+msgid "Invalid star: missing declination.\n"
+msgstr "არასწორი ვარსკვლავი: აკლია ვარსკვლავის ჩასვლა\n"
+
+#: ../src/celengine/stardb.cpp:1257
+msgid "Invalid star: missing distance.\n"
+msgstr "არასწორი ვარსკვლავი: აკლია მანძილი.\n"
+
+#: ../src/celengine/stardb.cpp:1299
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+
+#: ../src/celengine/stardb.cpp:1306
+msgid "Invalid star: missing magnitude.\n"
+msgstr "არასწორი ვარსკვლავი: აკლია ვარსკვლავური სიდიდე.\n"
+
+#: ../src/celengine/stardb.cpp:1357
+msgid "Invalid star: bad spectral type.\n"
+msgstr "არასწორი ვარსკვლავი: არასწორი სპექტრის ტიპი.\n"
+
+#. Spectral type is required for new stars
+#: ../src/celengine/stardb.cpp:1364
+msgid "Invalid star: missing spectral type.\n"
+msgstr "არასწორი ვარსკვლავი: სპექტრის ტიპი მითითებული არაა.\n"
+
+#: ../src/celengine/stardb.cpp:1515 ../src/celengine/stardb.cpp:1517
+msgid "Barycenter {} does not exist.\n"
+msgstr "ბარიცენტრი {} არ არსებობს.\n"
+
+#: ../src/celengine/texture.cpp:361
+msgid "Creating tiled texture. Width={}, max={}\n"
+msgstr ""
+
+#: ../src/celengine/texture.cpp:367
+msgid "Creating ordinary texture: {}x{}\n"
+msgstr "ჩვეულებრივი ტექსტურის შექმნა:{}x{}\n"
+
+#: ../src/celephem/samporbit.cpp:815 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
+msgid "Error reading header of {}.\n"
+msgstr "{}-ის თავსართის წაკითხვის შეცდომა.\n"
+
+#: ../src/celephem/samporbit.cpp:821 ../src/tools/xyzv2bin/bin2xyzv.cpp:41
+msgid "Bad binary xyzv file {}.\n"
+msgstr "არასწორი ბინარული xyzv ფაილი {}.\n"
+
+#: ../src/celephem/samporbit.cpp:829 ../src/tools/xyzv2bin/bin2xyzv.cpp:49
+msgid "Unsupported byte order {}, expected {}.\n"
+msgstr "მხარდაუჭერელი ბაიტების რიგი {}. მოველოდი {}-ს.\n"
+
+#: ../src/celephem/samporbit.cpp:838 ../src/tools/xyzv2bin/bin2xyzv.cpp:58
+msgid "Unsupported digits number {}, expected {}.\n"
+msgstr "მხარდაუჭერელი ციფრების რაოდენობა {}. მოველოდი {}-ს.\n"
+
+#: ../src/celephem/samporbit.cpp:861
+msgid "Error opening {}.\n"
+msgstr "{}-ის გახსნის შეცდომა.\n"
+
+#: ../src/celestia/celestiacore.cpp:154 ../src/celestia/scriptmenu.cpp:86
+#: ../src/celscript/lua/luascript.cpp:173
+msgid "Path {} doesn't exist or isn't a directory\n"
+msgstr "ბილიკი {} არ არსებობს ან საქაღალდე არაა\n"
+
+#: ../src/celestia/celestiacore.cpp:290
+msgid "Error reading favorites file {}.\n"
+msgstr "შეცდომა სანიშეების ფაილის {} წაკითხვისას,\n"
+
+#: ../src/celestia/celestiacore.cpp:311
+msgid "Failed to check directory existance for favorites file {}\n"
+msgstr "საქაღალდეში სანიშნეების ფაილის {} არსებობის შემოწმება ჩავარდა\n"
+
+#: ../src/celestia/celestiacore.cpp:319
+msgid "Failed to create a directory for favorites file {}\n"
+msgstr "სანიშნეების ფაილისთვის {} საქაღალდის შექმნა ჩავარდა\n"
+
+#: ../src/celestia/celestiacore.cpp:439
+msgid "Invalid filetype"
+msgstr "არასწორი ფაილის ტიპი"
+
+#: ../src/celestia/celestiacore.cpp:779 ../src/celestia/celestiacore.cpp:1484
+#: ../src/celestia/celestiacore.cpp:1501
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "ვარსკვლავური სიდიდის ზღვარი: %.2f"
+
+#: ../src/celestia/celestiacore.cpp:1152
+msgid "Markers enabled"
+msgstr "მარკერები ჩართულია"
+
+#: ../src/celestia/celestiacore.cpp:1155
+msgid "Markers disabled"
+msgstr "მარკერები გამორთულია"
+
+#. Ctrl+G
+#: ../src/celestia/celestiacore.cpp:1165
+msgid "Goto surface"
+msgstr "ზედაპირზე გადასვლა"
+
+#: ../src/celestia/celestiacore.cpp:1176
+msgid "Alt-azimuth mode enabled"
+msgstr "ალტ-აზიმუტის რეჟიმი ჩართულია"
+
+#: ../src/celestia/celestiacore.cpp:1179
+msgid "Alt-azimuth mode disabled"
+msgstr "ალტ-აზიმუტის რეჟიმი გამორთულია"
+
+#: ../src/celestia/celestiacore.cpp:1235
+msgid "Star style: fuzzy points"
+msgstr "ვარსკვლავის სტილი: ბუნდოვანი წერტილები"
+
+#: ../src/celestia/celestiacore.cpp:1238
+msgid "Star style: points"
+msgstr "ვარსკვლავის სტილი: წერტილები"
+
+#: ../src/celestia/celestiacore.cpp:1241
+msgid "Star style: scaled discs"
+msgstr "ვარსკვლავის სტილი: გადიდებული დისკები"
+
+#: ../src/celestia/celestiacore.cpp:1254
+msgid "Comet tails enabled"
+msgstr "კომეტის კუდები ჩართულია"
+
+#: ../src/celestia/celestiacore.cpp:1257
+msgid "Comet tails disabled"
+msgstr "კომეტის კუდები გამორთულია"
+
+#: ../src/celestia/celestiacore.cpp:1270
+msgid "Anti-aliasing enabled"
+msgstr "მომრგვალება ჩართულია"
+
+#: ../src/celestia/celestiacore.cpp:1274
+msgid "Anti-aliasing disabled"
+msgstr "მომრგვალება გამორთულია"
+
+#: ../src/celestia/celestiacore.cpp:1283
+msgid "Auto-magnitude enabled"
+msgstr "ავტომატური ვარსკვლავური სიდიდე ჩართულია"
+
+#: ../src/celestia/celestiacore.cpp:1288
+msgid "Auto-magnitude disabled"
+msgstr "ავტომატური ვარსკვლავური სიდიდე გამორთულია"
+
+#: ../src/celestia/celestiacore.cpp:1310
+#: ../src/celestia/win32/res/resource_strings.cpp:96
+#: ../src/celestia/win32/res/resource_strings.cpp:101
+#: ../src/celestia/win32/res/resource_strings.cpp:108
+#: ../src/celestia/win32/res/resource_strings.cpp:121
+#: ../src/celestia/win32/res/resource_strings.cpp:130
+#: ../src/celestia/win32/res/resource_strings.cpp:150
+#: ../src/celestia/win32/res/resource_strings.cpp:160
+#: ../src/celestia/win32/res/resource_strings.cpp:166
+#: ../src/celestia/win32/res/resource_strings.cpp:174
+#: ../src/celestia/win32/res/resource_strings.cpp:240
+msgid "Cancel"
+msgstr "გაუქმება"
+
+#: ../src/celestia/celestiacore.cpp:1350
+msgid "Time and script are paused"
+msgstr "დრო და სკრიპტი შეჩერებულია"
+
+#: ../src/celestia/celestiacore.cpp:1352
+msgid "Time is paused"
+msgstr "დრო შეჩერებულია"
+
+#: ../src/celestia/celestiacore.cpp:1356
+msgid "Resume"
+msgstr "გაგრძელება"
+
+#: ../src/celestia/celestiacore.cpp:1376
+msgid "Star color: Blackbody D65"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1382
+msgid "Star color: Blackbody (Solar Whitepoint)"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1388
+msgid "Star color: Blackbody (Vega Whitepoint)"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1394
+msgid "Star color: Classic"
+msgstr "ვარსკვლავის ფერი: კლასიკური"
+
+#. Light travel time in years, if >= 1day
+#: ../src/celestia/celestiacore.cpp:1427
+#, c-format
+msgid "Light travel time:  %.4f yr"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1436
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1441
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1459
+msgid "Light travel delay included"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1464
+msgid "Light travel delay switched off"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1470
+msgid "Light travel delay ignored"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1513
+msgid "Using normal surface textures."
+msgstr "ნორმალური ზედაპირის ტექსტურიების გამოყენება."
+
+#: ../src/celestia/celestiacore.cpp:1518
+msgid "Using limit of knowledge surface textures."
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1579
+msgid "Follow"
+msgstr "გამოწერა"
+
+#: ../src/celestia/celestiacore.cpp:1604
+msgid "Time: Forward"
+msgstr "დრო: წინ"
+
+#: ../src/celestia/celestiacore.cpp:1606
+msgid "Time: Backward"
+msgstr "დრო: უკან"
+
+#: ../src/celestia/celestiacore.cpp:1618 ../src/celestia/celestiacore.cpp:1633
+#, c-format
+msgid "Time rate: %.6g"
+msgstr "დროის სიჩქარე: %.6g"
+
+#: ../src/celestia/celestiacore.cpp:1673
+msgid "Low res textures"
+msgstr "დაბ. ხარისხ. ტექსტურები"
+
+#: ../src/celestia/celestiacore.cpp:1676
+msgid "Medium res textures"
+msgstr "საშ. ხარისხ. ტექსტურები"
+
+#: ../src/celestia/celestiacore.cpp:1679
+msgid "High res textures"
+msgstr "მაღ. ხარისხ. ტექსტურები"
+
+#: ../src/celestia/celestiacore.cpp:1726
+msgid "Sync Orbit"
+msgstr "ორბიტის სინქრონიზაცია"
+
+#: ../src/celestia/celestiacore.cpp:1732
+msgid "Lock"
+msgstr "ჩაკეტვა"
+
+#: ../src/celestia/celestiacore.cpp:1738
+msgid "Chase"
+msgstr "მიდევნება"
+
+#: ../src/celestia/celestiacore.cpp:1751 ../src/celestia/celestiacore.cpp:1782
+#, c-format
+msgid "Magnitude limit:  %.2f"
+msgstr "ვარსკვლავური სიდიდის ზღვარი:  %.2f"
+
+#: ../src/celestia/celestiacore.cpp:1762 ../src/celestia/celestiacore.cpp:1793
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:1812 ../src/celestia/celestiacore.cpp:1827
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "გარემოს განათების დონე:  %.2f"
+
+#: ../src/celestia/celestiacore.cpp:1838 ../src/celestia/celestiacore.cpp:1849
+#, c-format
+msgid "Light gain"
+msgstr "სინათლის გაძლიერება"
+
+#: ../src/celestia/celestiacore.cpp:2183
+msgid "GL error: "
+msgstr "GL-ის შეცდომა: "
+
+#: ../src/celestia/celestiacore.cpp:2376
+msgid "View too small to be split"
+msgstr "ძალიან პატარაა გასაყოფად"
+
+#: ../src/celestia/celestiacore.cpp:2396
+msgid "Added view"
+msgstr "ხედი დამატებულია"
+
+#: ../src/celestia/celestiacore.cpp:2563
+msgid "Mpc"
+msgstr "მპს"
+
+#: ../src/celestia/celestiacore.cpp:2568
+msgid "kpc"
+msgstr "კპს"
+
+#: ../src/celestia/celestiacore.cpp:2573
+msgid "ly"
+msgstr "სწ"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
+#. i18n: ectx: property (text), widget (QRadioButton, auButton)
+#: ../src/celestia/celestiacore.cpp:2577 ../src/celestia/qt/rc.cpp:36
+#: ../src/celestia/win32/res/resource_strings.cpp:128
+msgid "au"
+msgstr "აე"
+
+#: ../src/celestia/celestiacore.cpp:2584
+msgid "mi"
+msgstr "მი"
+
+#: ../src/celestia/celestiacore.cpp:2589
+msgid "ft"
+msgstr "ფტ"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
+#. i18n: ectx: property (text), widget (QRadioButton, kmButton)
+#: ../src/celestia/celestiacore.cpp:2597 ../src/celestia/qt/qtinfopanel.cpp:264
+#: ../src/celestia/qt/qtinfopanel.cpp:391 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/win32/res/resource_strings.cpp:126
+msgid "km"
+msgstr "კმ"
+
+#: ../src/celestia/celestiacore.cpp:2602 ../src/celestia/qt/qtinfopanel.cpp:268
+msgid "m"
+msgstr "წთ"
+
+#: ../src/celestia/celestiacore.cpp:2625 ../src/celestia/qt/qtinfopanel.cpp:320
+#: ../src/celestia/qt/qtinfopanel.cpp:353
+#: ../src/celestia/qt/qtinfopanel.cpp:407
+msgid "days"
+msgstr "დღე"
+
+#: ../src/celestia/celestiacore.cpp:2630 ../src/celestia/qt/qtinfopanel.cpp:316
+#: ../src/celestia/qt/qtinfopanel.cpp:349
+msgid "hours"
+msgstr "საათი"
+
+#: ../src/celestia/celestiacore.cpp:2635
+msgid "minutes"
+msgstr "წუთი"
+
+#: ../src/celestia/celestiacore.cpp:2640
+msgid "seconds"
+msgstr "წამი"
+
+#: ../src/celestia/celestiacore.cpp:2643
+msgid "Rotation period: {} {}\n"
+msgstr "ბრუნვის პერიოდი: {} {}\n"
+
+#: ../src/celestia/celestiacore.cpp:2651
+#, c-format
+msgid "Mass: %.6g lb\n"
+msgstr "მასა: %.6g ფუნტი\n"
+
+#: ../src/celestia/celestiacore.cpp:2653
+#, c-format
+msgid "Mass: %.6g kg\n"
+msgstr "Mass: %.6g კგ\n"
+
+#: ../src/celestia/celestiacore.cpp:2656
+#, c-format
+msgid "Mass: %.2f Mj\n"
+msgstr "მასა: %.2f მჯ\n"
+
+#: ../src/celestia/celestiacore.cpp:2658
+#, c-format
+msgid "Mass: %.2f Me\n"
+msgstr "მასა: %.2f მე\n"
+
+#: ../src/celestia/celestiacore.cpp:2669
+msgid "ly/s"
+msgstr "სწ/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2674
+msgid "AU/s"
+msgstr "აე/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2686
+msgid "mi/s"
+msgstr "მილ/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2691
+msgid "ft/s"
+msgstr "ფწ/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2699
+msgid "km/s"
+msgstr "კმ/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2704
+msgid "m/s"
+msgstr "მ/წმ"
+
+#: ../src/celestia/celestiacore.cpp:2707
+msgid "Speed: {} {}\n"
+msgstr "სიჩქარე: {} {}\n"
+
+#: ../src/celestia/celestiacore.cpp:2739
+#, c-format, qt-format
+msgid "Dec: %+d%s %02d' %.1f\"\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2751
+#, c-format, qt-format
+msgid "RA: %dh %02dm %.1fs\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2767
+#, c-format
+msgid "Apparent diameter: %s\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2780
+#, c-format
+msgid "Apparent magnitude: %.1f\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2784
+#, c-format
+msgid "Absolute magnitude: %.1f\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2865
+#, c-format
+msgid "%.6f%c %.6f%c %s"
+msgstr "%.6f%c %.6f%c %s"
+
+#: ../src/celestia/celestiacore.cpp:2893 ../src/celestia/celestiacore.cpp:2966
+#: ../src/celestia/celestiacore.cpp:2997 ../src/celestia/celestiacore.cpp:3075
+#, c-format
+msgid "Distance: %s\n"
+msgstr "დაშორება: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:2897
+msgid "Star system barycenter\n"
+msgstr "ვარსკვლავური სისტემის ბარიცენტრი\n"
+
+#: ../src/celestia/celestiacore.cpp:2901
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2906
+msgid "Luminosity: {}x Sun\n"
+msgstr "სიკაშკაშე: {}x მზე\n"
+
+#: ../src/celestia/celestiacore.cpp:2912
+msgid "Neutron star"
+msgstr "ნეიტრონული ვარსკვლავი"
+
+#: ../src/celestia/celestiacore.cpp:2915
+msgid "Black hole"
+msgstr "შავი ხვრელი"
+
+#: ../src/celestia/celestiacore.cpp:2920
+#, c-format
+msgid "Class: %s\n"
+msgstr "კლასი: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:2927
+#, c-format
+msgid "Surface temp: %s\n"
+msgstr "ზედაპირის ტემპერატურა: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:2932
+msgid "Radius: {} Rsun  ({})\n"
+msgstr "რადიუსი: {} Rმზის  ({})\n"
+
+#: ../src/celestia/celestiacore.cpp:2938
+msgid "Radius: {}\n"
+msgstr "რადიუსი: {}\n"
+
+#: ../src/celestia/celestiacore.cpp:2954
+msgid "Planetary companions present\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2971
+#, c-format
+msgid "Distance from center: %s\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2974 ../src/celestia/celestiacore.cpp:3004
+#, c-format
+msgid "Radius: %s\n"
+msgstr "რადიუსი: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3042
+#, c-format
+msgid "Phase angle: %.1f%s\n"
+msgstr "ფაზის კუთხე: %.1f%s\n"
+
+#: ../src/celestia/celestiacore.cpp:3058
+#, c-format
+msgid "Density: %.2f x 1000 lb/ft^3\n"
+msgstr "სიმკვრივე: %.2f x 1000 გირვ/ფტ^3\n"
+
+#: ../src/celestia/celestiacore.cpp:3060
+#, c-format
+msgid "Density: %.2f x 1000 kg/m^3\n"
+msgstr "სიმკვრივე: %.2f x 1000 კგ/მ^3\n"
+
+#: ../src/celestia/celestiacore.cpp:3065
+#, c-format
+msgid "Temperature: %s\n"
+msgstr "ტემპერატურა: %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3217
+msgid "  LT"
+msgstr "  LT"
+
+#: ../src/celestia/celestiacore.cpp:3226
+#: ../src/celestia/qt/qttimetoolbar.cpp:46
+msgid "Real time"
+msgstr "რეალურ დროში"
+
+#: ../src/celestia/celestiacore.cpp:3228
+msgid "-Real time"
+msgstr "-რეალური დრო"
+
+#: ../src/celestia/celestiacore.cpp:3232
+msgid "Time stopped"
+msgstr "დრო გაჩერებულია"
+
+#: ../src/celestia/celestiacore.cpp:3236
+#, c-format
+msgid "%.6g x faster"
+msgstr "%.6g x სწრაფად"
+
+#: ../src/celestia/celestiacore.cpp:3240
+#, c-format
+msgid "%.6g x slower"
+msgstr "%.6g x ნელა"
+
+#: ../src/celestia/celestiacore.cpp:3246
+msgid " (Paused)"
+msgstr " (შეჩერებულია)"
+
+#: ../src/celestia/celestiacore.cpp:3265
+#, c-format
+msgid ""
+"FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
+"%zu : %zu ]\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3274
+#, c-format
+msgid "FPS: %.1f\n"
+msgstr "კადრი/წმ: %.1f\n"
+
+#: ../src/celestia/celestiacore.cpp:3299
+msgid "Travelling ({})\n"
+msgstr "მოგზაურობა ({})\n"
+
+#: ../src/celestia/celestiacore.cpp:3302
+msgid "Travelling\n"
+msgstr "მოგზაურობა\n"
+
+#: ../src/celestia/celestiacore.cpp:3311
+#, c-format
+msgid "Track %s\n"
+msgstr "ტრეკი %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3327
+#, c-format
+msgid "Follow %s\n"
+msgstr "%s-ის მიყოლა\n"
+
+#: ../src/celestia/celestiacore.cpp:3331
+#, c-format
+msgid "Sync Orbit %s\n"
+msgstr "სინქ. ორბიტა %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3335
+#, c-format
+msgid "Lock %s -> %s\n"
+msgstr "დაბლოკე %s -> %s\n"
+
+#: ../src/celestia/celestiacore.cpp:3341
+#, c-format
+msgid "Chase %s\n"
+msgstr "%s-ის დევნა\n"
+
+#: ../src/celestia/celestiacore.cpp:3356
+#, c-format
+msgid "FOV: %s (%.2fx)\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3540
+#, c-format
+msgid "Target name: %s"
+msgstr "სამიზნის სახელი: %s"
+
+#: ../src/celestia/celestiacore.cpp:3621
+#, c-format
+msgid "%dx%d at %.2f fps  %s"
+msgstr "%dx%d %.2f კ/წმ  %s"
+
+#: ../src/celestia/celestiacore.cpp:3624
+msgid "Paused"
+msgstr "შეჩერება"
+
+#: ../src/celestia/celestiacore.cpp:3624
+msgid "Recording"
+msgstr "ჩანაწერი"
+
+#: ../src/celestia/celestiacore.cpp:3645
+msgid "F11 Start/Pause    F12 Stop"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3656 ../src/celestia/celestiacore.cpp:3659
+msgid "Edit Mode"
+msgstr "ჩასწორების რეჟიმი"
+
+#: ../src/celestia/celestiacore.cpp:3692
+msgid "Skipping solar system catalog: {}\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3695
+msgid "Loading solar system catalog: {}\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3738
+msgid "Skipping {} catalog: {}\n"
+msgstr "{}-ის გამოტოვება. კატალოგი: {}\n"
+
+#: ../src/celestia/celestiacore.cpp:3741
+msgid "Loading {} catalog: {}\n"
+msgstr "იტვირთება {} კატალოგი: {}\n"
+
+#: ../src/celestia/celestiacore.cpp:3749
+msgid "Error reading {} catalog file: {}\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3783
+msgid "Error reading configuration file."
+msgstr "შეცდომა კონფიგურაციის ფაილის წაკითხვისას."
+
+#: ../src/celestia/celestiacore.cpp:3797
+msgid "Initialization of SPICE library failed."
+msgstr "SPICE ბიბლიოთეკის ინიციალიზაცია ჩავარდა."
+
+#: ../src/celestia/celestiacore.cpp:3840
+msgid "Cannot read star database."
+msgstr "ვარსკვლავების ბაზის წაკითხვა შეუძლებელია."
+
+#: ../src/celestia/celestiacore.cpp:3860
+msgid "Error opening deepsky catalog file {}.\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3864
+msgid "Cannot read Deep Sky Objects database {}.\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3911
+msgid "Error opening solar system catalog {}.\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:3953
+msgid "Error opening constellation boundaries file {}.\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:4120
+msgid "Failed to initialize renderer"
+msgstr "რენდერერის ინიციალიზაცია ჩავარდა"
+
+#: ../src/celestia/celestiacore.cpp:4136
+msgid "Error loading font; text will not be visible.\n"
+msgstr "ფონტის ჩატვირთვა ცავარდა. ტექსტი ხილული არ იქნება.\n"
+
+#: ../src/celestia/celestiacore.cpp:4174
+msgid "Error reading cross index {}\n"
+msgstr "ჯვარედინი ინდექსის {} წაკითხვის შეცდომა\n"
+
+#: ../src/celestia/celestiacore.cpp:4176
+msgid "Loaded cross index {}\n"
+msgstr "ჩაიტვირთა ჯვარედინი ინდექსი {}\n"
+
+#: ../src/celestia/celestiacore.cpp:4193
+msgid "Error reading star names file\n"
+msgstr "ვარსკვლავის სახელების ფაილის წაკითხვის შეცდომა\n"
+
+#: ../src/celestia/celestiacore.cpp:4197 ../src/celestia/celestiacore.cpp:4211
+msgid "Error opening {}\n"
+msgstr "{}-ის გახსნის შეცდომა.\n"
+
+#: ../src/celestia/celestiacore.cpp:4217
+msgid "Error reading stars file\n"
+msgstr "ვარსკვლავების ფაილის წაკითხვის შეცდომა\n"
+
+#: ../src/celestia/celestiacore.cpp:4241
+msgid "Error opening star catalog {}\n"
+msgstr "ვარსკვლავების კატალოგის {} გახსნის შეცდომა\n"
+
+#: ../src/celestia/celestiacore.cpp:4599
+msgid "Invalid URL"
+msgstr "არასწორი URL"
+
+#: ../src/celestia/celestiacore.cpp:4829
+msgid "Unable to capture a frame!\n"
+msgstr "კადრის გადაღება შეუძლებელია!\n"
+
+#: ../src/celestia/celestiacore.cpp:4840
+msgid "Unsupported image type: {}!\n"
+msgstr "გამოსახულების ფალის მხარდაუჭერელი ტიპი: {}!\n"
+
+#: ../src/celestia/celestiacore.cpp:5052
+msgid "Error opening asterisms file {}.\n"
+msgstr ""
+
+#: ../src/celestia/gtk/actions.cpp:90 ../src/celestia/qt/qtappwin.cpp:742
+#: ../src/celestia/win32/winmain.cpp:163
+msgid "Lossless"
+msgstr "კარგვის გარეშე"
+
+#: ../src/celestia/gtk/actions.cpp:91 ../src/celestia/qt/qtappwin.cpp:743
+#: ../src/celestia/win32/winmain.cpp:164
+msgid "Lossy (H.264)"
+msgstr "კარგვით (H.264)"
+
+#: ../src/celestia/gtk/actions.cpp:745 ../src/celestia/qt/qtappwin.cpp:1245
+#: ../src/celestia/qt/qtappwin.cpp:1654
+#: ../src/celestia/win32/res/resource_strings.cpp:73
+msgid "About Celestia"
+msgstr "Celestia-ს შესახებ"
+
+#: ../src/celestia/gtk/actions.cpp:1107 ../src/celestia/win32/winmain.cpp:2729
+msgid "Please use a name ending in '.jpg' or '.png'."
+msgstr ""
+
+#: ../src/celestia/helper.cpp:106 ../src/celestia/helper.cpp:115
+#, c-format
+msgid "%s Version: %s\n"
+msgstr "%s ვერსია: %s\n"
+
+#: ../src/celestia/helper.cpp:109
+#, c-format
+msgid "Vendor: %s\n"
+msgstr "მომწოდებელი: %s\n"
+
+#: ../src/celestia/helper.cpp:112
+#, c-format
+msgid "Renderer: %s\n"
+msgstr "რენდერერი: %s\n"
+
+#: ../src/celestia/helper.cpp:118
+#, c-format
+msgid "Color component: %s\n"
+msgstr "ფერის კომპონენტი: %s\n"
+
+#: ../src/celestia/helper.cpp:121
+#, c-format
+msgid "Depth component: %s\n"
+msgstr "სიღრმის კომპონენტი: %s\n"
+
+#: ../src/celestia/helper.cpp:124
+#, c-format
+msgid "Max simultaneous textures: %s\n"
+msgstr "მაქს. ერთდროული ტექსტურა: %s\n"
+
+#: ../src/celestia/helper.cpp:127
+#, c-format
+msgid "Max texture size: %s\n"
+msgstr "ტექსტურის მაქს. ზომა: %s\n"
+
+#: ../src/celestia/helper.cpp:130
+#, c-format
+msgid "Point size range: %s - %s\n"
+msgstr "წერტილის ზომის დიაპაზონი: %s - %s\n"
+
+#: ../src/celestia/helper.cpp:133
+#, c-format
+msgid "Line width range: %s - %s\n"
+msgstr "ხაზი შუალედით: %s - %s\n"
+
+#: ../src/celestia/helper.cpp:136
+#, c-format
+msgid "Point size granularity: %s\n"
+msgstr ""
+
+#: ../src/celestia/helper.cpp:139
+#, c-format
+msgid "Max cube map size: %s\n"
+msgstr ""
+
+#: ../src/celestia/helper.cpp:142
+#, c-format
+msgid "Number of interpolators: %s\n"
+msgstr ""
+
+#: ../src/celestia/helper.cpp:145
+#, c-format
+msgid "Max anisotropy filtering: %s\n"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:207
+msgid "Auto"
+msgstr "ავტო"
+
+#: ../src/celestia/qt/qtappwin.cpp:213
+msgid "Custom"
+msgstr "ხელით"
+
+#: ../src/celestia/qt/qtappwin.cpp:254
+msgid "Error getting path for log filename!"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:269
+msgid ""
+"Celestia is unable to run because the data directory was not found, probably "
+"due to improper installation."
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:346
+msgid "Celestial Browser"
+msgstr ""
+
+#. Info browser for a selected object
+#: ../src/celestia/qt/qtappwin.cpp:352
+msgid "Info Browser"
+msgstr "ინფორმაციის ბრაუზერი"
+
+#. Set up the browser tabs
+#: ../src/celestia/qt/qtappwin.cpp:381
+#: ../src/celestia/win32/res/resource_strings.cpp:177
+msgid "Solar System"
+msgstr "მზის სისტემა"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:42
+#. i18n: ectx: property (text), widget (QCheckBox, starsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:279
+#. i18n: ectx: property (text), widget (QCheckBox, starOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:499
+#. i18n: ectx: property (text), widget (QCheckBox, starLabelsCheck)
+#: ../src/celestia/qt/qtappwin.cpp:382
+#: ../src/celestia/qt/qtcelestiaactions.cpp:93
+#: ../src/celestia/qt/qtcelestiaactions.cpp:120 ../src/celestia/qt/rc.cpp:72
+#: ../src/celestia/qt/rc.cpp:154 ../src/celestia/qt/rc.cpp:221
+#: ../src/celestia/win32/res/resource_strings.cpp:217
+msgid "Stars"
+msgstr "ვარსკვლავი"
+
+#: ../src/celestia/qt/qtappwin.cpp:383
+msgid "Deep Sky Objects"
+msgstr "ღრმა კოსმოსის ობიექტები"
+
+#: ../src/celestia/qt/qtappwin.cpp:390 ../src/celestia/qt/qteventfinder.cpp:412
+#: ../src/celestia/qt/qteventfinder.cpp:422
+msgid "Event Finder"
+msgstr "მოვლენის მომძებნი"
+
+#. addDockWidget(Qt::DockWidgetArea, eventFinder);
+#. Create the time toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:1034
+#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
+#: ../src/celestia/qt/qtappwin.cpp:399 ../src/celestia/qt/rc.cpp:351
+msgid "Time"
+msgstr "დრო"
+
+#. Create the guides toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:228
+#. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
+#: ../src/celestia/qt/qtappwin.cpp:406 ../src/celestia/qt/rc.cpp:139
+msgid "Guides"
+msgstr "გიდები"
+
+#: ../src/celestia/qt/qtappwin.cpp:458
+msgid "Full screen"
+msgstr "მთელ ეკრანზე"
+
+#: ../src/celestia/qt/qtappwin.cpp:463
+msgid "ALT+Enter"
+msgstr "ALT+Enter"
+
+#: ../src/celestia/qt/qtappwin.cpp:463
+msgid "ALT+Return"
+msgstr "ALT+Return"
+
+#: ../src/celestia/qt/qtappwin.cpp:621
+msgid "Error opening bookmarks file"
+msgstr "სანიშნეების ფაილის გახსნიშ შეცდომა"
+
+#: ../src/celestia/qt/qtappwin.cpp:641
+msgid "Error Saving Bookmarks"
+msgstr "სანიშნების შენახვის შეცდომა"
+
+#: ../src/celestia/qt/qtappwin.cpp:682
+msgid "Save Image"
+msgstr "გრაფიკული გამოსახულების შენახვა"
+
+#: ../src/celestia/qt/qtappwin.cpp:684
+msgid "Images (*.png *.jpg)"
+msgstr "გამოსახულებები (*.png *.jpg)"
+
+#: ../src/celestia/qt/qtappwin.cpp:711 ../src/celestia/qt/qtappwin.cpp:723
+msgid "Capture Video"
+msgstr "ვიდეოს ჩაწერა"
+
+#: ../src/celestia/qt/qtappwin.cpp:713
+msgid "Matroska Video (*.mkv)"
+msgstr "Matroska-ის ვიდეო (*.mkv)"
+
+#: ../src/celestia/qt/qtappwin.cpp:728
+msgid "Resolution:"
+msgstr "გარჩევადობა:"
+
+#: ../src/celestia/qt/qtappwin.cpp:731
+#, qt-format
+msgid "%1 x %2"
+msgstr "%1 x %2"
+
+#: ../src/celestia/qt/qtappwin.cpp:734
+#: ../src/celestia/win32/res/resource_strings.cpp:155
+msgid "Frame rate:"
+msgstr "კადრების სიხშირე:"
+
+#: ../src/celestia/qt/qtappwin.cpp:740
+msgid "Video codec:"
+msgstr "ვიდეო კოდეკი:"
+
+#: ../src/celestia/qt/qtappwin.cpp:747
+#: ../src/celestia/win32/res/resource_strings.cpp:157
+msgid "Bitrate:"
+msgstr "სიჩქარე:"
+
+#: ../src/celestia/qt/qtappwin.cpp:794
+msgid "Captured screen shot to clipboard"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:806 ../src/celestia/sdl/sdlmain.cpp:596
+#: ../src/celestia/win32/winmain.cpp:3919
+msgid "Copied URL"
+msgstr "URL კოპირებულია"
+
+#: ../src/celestia/qt/qtappwin.cpp:817 ../src/celestia/sdl/sdlmain.cpp:608
+msgid "Pasting URL"
+msgstr "URL-ის ჩასმა"
+
+#: ../src/celestia/qt/qtappwin.cpp:955
+msgid "Open Script"
+msgstr "სკრიპტის გახსნა"
+
+#: ../src/celestia/qt/qtappwin.cpp:958
+msgid "Celestia Scripts (*.celx *.cel)"
+msgstr "Celestia-ის სკრიპტები (*.celx *.cel)"
+
+#: ../src/celestia/qt/qtappwin.cpp:960
+msgid "Celestia Scripts (*.cel)"
+msgstr "Celestia-ის სკრიპტები (*.cel)"
+
+#: ../src/celestia/qt/qtappwin.cpp:1134
+msgid "New bookmark"
+msgstr "ახალი სანიშნე"
+
+#: ../src/celestia/qt/qtappwin.cpp:1195
+msgid "<html><h1>Celestia "
+msgstr "<html><h1>Celestia "
+
+#: ../src/celestia/qt/qtappwin.cpp:1231
+msgid "Unknown compiler"
+msgstr "უცნობი კომპილატორი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1235 ../src/celestia/qt/qtappwin.cpp:1240
+msgid "supported"
+msgstr "მხარდაჭერილი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1237 ../src/celestia/qt/qtappwin.cpp:1242
+msgid "not supported"
+msgstr "მხარდაუჭერელია"
+
+#: ../src/celestia/qt/qtappwin.cpp:1265
+#, qt-format
+msgid "<b>%1 version:</b> %2"
+msgstr "<b>%1 ვერსია:</b> %2"
+
+#: ../src/celestia/qt/qtappwin.cpp:1271
+#, qt-format
+msgid "<b>Vendor:</b> %1"
+msgstr "<b>მომწოდებელი:</b> %1"
+
+#: ../src/celestia/qt/qtappwin.cpp:1277
+#, qt-format
+msgid "<b>Renderer:</b> %1"
+msgstr "<b>რენდერერი:</b> %1"
+
+#: ../src/celestia/qt/qtappwin.cpp:1284
+#, qt-format
+msgid "<b>%1 Version:</b> %2"
+msgstr "<b>%1 ვერსია:</b> %2"
+
+#: ../src/celestia/qt/qtappwin.cpp:1291
+#, qt-format
+msgid "<b>Max simultaneous textures:</b> %1"
+msgstr "<b>მაქს. ერთდროული ტექსტურა:</b> %1"
+
+#: ../src/celestia/qt/qtappwin.cpp:1297
+#, qt-format
+msgid "<b>Maximum texture size:</b> %1"
+msgstr "<b>ტექსტურების მაქს. ზომა:</b> %1"
+
+#: ../src/celestia/qt/qtappwin.cpp:1303
+#, qt-format
+msgid "<b>Point size range:</b> %1 - %2"
+msgstr "<b>წერტილის ზომის დიაპაზონი:</b> %1 - %2"
+
+#: ../src/celestia/qt/qtappwin.cpp:1309
+#, qt-format
+msgid "<b>Point size granularity:</b> %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:1315
+#, qt-format
+msgid "<b>Max cube map size:</b> %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:1321
+#, qt-format
+msgid "<b>Number of interpolators:</b> %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:1327
+#, qt-format
+msgid "<b>Max anisotropy filtering:</b> %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:1337
+msgid "<b>Supported extensions:</b><br>\n"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:1351
+msgid "Renderer Info"
+msgstr "რენდერერის ინფორმაცია"
+
+#. ***** File menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1378
+#: ../src/celestia/win32/res/resource_strings.cpp:1
+msgid "&File"
+msgstr "&ფაილი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1381
+msgid "&Grab image"
+msgstr "&გამოსახულების დათრევა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1382
+msgid "F10"
+msgstr "F10"
+
+#: ../src/celestia/qt/qtappwin.cpp:1387
+msgid "Capture &video"
+msgstr "&ვიდეოს ჩაწერა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1391
+msgid "Shift+F10"
+msgstr "Shift+F10"
+
+#: ../src/celestia/qt/qtappwin.cpp:1395
+msgid "&Copy image"
+msgstr "გამოსახულების &კოპირება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1396
+msgid "Ctrl+Shift+C"
+msgstr "Ctrl+Shift+C"
+
+#: ../src/celestia/qt/qtappwin.cpp:1402
+#: ../src/celestia/win32/res/resource_strings.cpp:2
+msgid "&Open Script..."
+msgstr "სკრიპტის &გახსნა..."
+
+#: ../src/celestia/qt/qtappwin.cpp:1413
+#: ../src/celestia/win32/res/resource_strings.cpp:5
+#: ../src/celestia/win32/res/resource_strings.cpp:67
+msgid "Run &Demo"
+msgstr "&დემოს გაშვება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1421
+msgid "&Preferences..."
+msgstr "&გამართვა..."
+
+#: ../src/celestia/qt/qtappwin.cpp:1425
+#: ../src/celestia/win32/res/resource_strings.cpp:8
+msgid "E&xit"
+msgstr "&გამოსვლა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1426
+msgid "Ctrl+Q"
+msgstr "Ctrl+Q"
+
+#. ***** Navigation menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1431
+#: ../src/celestia/win32/res/resource_strings.cpp:9
+msgid "&Navigation"
+msgstr "&ნავიგაცია"
+
+#: ../src/celestia/qt/qtappwin.cpp:1433
+msgid "Select Sun"
+msgstr "მზის მონიშვნა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1437
+msgid "Center Selection"
+msgstr "მონიშვნის ცენტრირება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1441
+msgid "Goto Selection"
+msgstr "მონიშნულზე გადასვლა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1445
+#: ../src/celestia/win32/res/resource_strings.cpp:13
+msgid "Goto Object..."
+msgstr "ობიექტზე გადასვლა..."
+
+#: ../src/celestia/qt/qtappwin.cpp:1449
+msgid "Copy URL / console text"
+msgstr "ბმულის / კონსოლის ტექსტის კოპირება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1454
+msgid "Paste URL / console text"
+msgstr "ბმულის / კონსოლის ტექსტის ჩასმა"
+
+#. ***** Time menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1460
+#: ../src/celestia/win32/res/resource_strings.cpp:22
+msgid "&Time"
+msgstr "&დრო"
+
+#: ../src/celestia/qt/qtappwin.cpp:1462
+msgid "Set &time"
+msgstr "&დროის დაყენება"
+
+#. ***** Display menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1470
+msgid "&Display"
+msgstr "&ჩვენება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1476
+msgid "Dee&p Sky Objects"
+msgstr "ღრმა კოსმოსის &ობიექტები"
+
+#: ../src/celestia/qt/qtappwin.cpp:1482
+msgid "&Shadows"
+msgstr "ჩრდილები"
+
+#: ../src/celestia/qt/qtappwin.cpp:1493
+#: ../src/celestia/win32/res/resource_strings.cpp:38
+msgid "Star St&yle"
+msgstr "ვარსკვლავის &სტილი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1500
+msgid "Texture &Resolution"
+msgstr "ტექსტურის &გაფართოება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1505
+msgid "&FPS control"
+msgstr "&FPS-ის კონტროლი"
+
+#. ***** Bookmark menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1522
+#: ../src/celestia/win32/res/resource_strings.cpp:63
+msgid "&Bookmarks"
+msgstr "&სანიშნები"
+
+#. ***** View menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1525
+#: ../src/celestia/win32/res/resource_strings.cpp:56
+msgid "&View"
+msgstr "&ხედი"
+
+#. ***** MultiView menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1528
+msgid "&MultiView"
+msgstr "&მრავალხედიანობა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1531
+msgid "Split view vertically"
+msgstr "ხედის გაყოფა ვერტიკალურად"
+
+#: ../src/celestia/qt/qtappwin.cpp:1532
+msgid "Ctrl+U"
+msgstr "Ctrl+U"
+
+#: ../src/celestia/qt/qtappwin.cpp:1537
+msgid "Split view horizontally"
+msgstr "ხედის გაყოფა ჰორიზონტალურად"
+
+#: ../src/celestia/qt/qtappwin.cpp:1538
+msgid "Ctrl+R"
+msgstr "Ctrl+R"
+
+#: ../src/celestia/qt/qtappwin.cpp:1543
+msgid "Cycle views"
+msgstr "ხედებს შორის გადართვა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1544
+msgid "Tab"
+msgstr "Tab"
+
+#: ../src/celestia/qt/qtappwin.cpp:1549
+msgid "Single view"
+msgstr "ერთ ხედი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1550
+msgid "Ctrl+D"
+msgstr "Ctrl+D"
+
+#: ../src/celestia/qt/qtappwin.cpp:1555
+msgid "Delete view"
+msgstr "ხედის წაშლა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1556
+#: ../src/celestia/win32/res/resource_strings.cpp:163
+msgid "Delete"
+msgstr "წაშლა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1562
+msgid "Frames visible"
+msgstr "ჩარჩოები ხილულია"
+
+#: ../src/celestia/qt/qtappwin.cpp:1583
+msgid "Active frame visible"
+msgstr "აქტიური ცარჩო ხილულია"
+
+#: ../src/celestia/qt/qtappwin.cpp:1599
+msgid "Synchronize time"
+msgstr "დროის სინქრონიზაცია"
+
+#. ***** Help Menu *****
+#: ../src/celestia/qt/qtappwin.cpp:1640
+#: ../src/celestia/win32/res/resource_strings.cpp:66
+msgid "&Help"
+msgstr "&დახმარება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1642
+msgid "Celestia Guide"
+msgstr "Celestia-ის გიდი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1645
+msgid "Celestia Wiki"
+msgstr "Celestia-ის ვიკი"
+
+#: ../src/celestia/qt/qtappwin.cpp:1650
+msgid "OpenGL Info"
+msgstr "OpenGL-ის ინფორმაცია"
+
+#: ../src/celestia/qt/qtappwin.cpp:1671
+msgid "Add Bookmark..."
+msgstr "სანიშნის დამატება..."
+
+#: ../src/celestia/qt/qtappwin.cpp:1675
+msgid "Organize Bookmarks..."
+msgstr "სანიშნეების დალაგება..."
+
+#: ../src/celestia/qt/qtappwin.cpp:1720
+msgid "Set custom FPS"
+msgstr "FPS-ის ხელით დაყენება"
+
+#: ../src/celestia/qt/qtappwin.cpp:1721
+msgid "FPS value"
+msgstr "FPS მნიშვნელობა"
+
+#: ../src/celestia/qt/qtappwin.cpp:1745
+#, qt-format
+msgid ""
+"Loading data files: %1\n"
+"\n"
+msgstr ""
+"მონაცემის ფაილების ჩატვირთვა: %1\n"
+"\n"
+
+#: ../src/celestia/qt/qtappwin.cpp:1757
+#: ../src/celestia/win32/res/resource_strings.cpp:3
+msgid "Scripts"
+msgstr "სკრიპტები"
+
+#: ../src/celestia/qt/qtbookmark.cpp:436
+msgid "Title"
+msgstr "სათაური"
+
+#: ../src/celestia/qt/qtbookmark.cpp:438
+msgid "Description"
+msgstr "აღწერა"
+
+#: ../src/celestia/qt/qtbookmark.cpp:623
+msgid "Bookmarks Menu"
+msgstr "სანიშნების მენიუ"
+
+#: ../src/celestia/qt/qtbookmark.cpp:624
+msgid "Add bookmarks to this folder to see them in the bookmarks menu."
+msgstr ""
+
+#: ../src/celestia/qt/qtbookmark.cpp:629
+msgid "Bookmarks Toolbar"
+msgstr "სანიშნების ზოლი"
+
+#: ../src/celestia/qt/qtbookmark.cpp:630
+msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
+msgstr ""
+
+#: ../src/celestia/qt/qtbookmark.cpp:644
+msgid "Error reading bookmarks file"
+msgstr "სანიშნეების ფაილის წაკითხვის შეცდომა"
+
+#: ../src/celestia/qt/qtbookmark.cpp:761
+msgid "Bookmarks"
+msgstr "სანიშნეები"
+
+#: ../src/celestia/qt/qtbookmark.cpp:850
+msgid "Current simulation time"
+msgstr ""
+
+#: ../src/celestia/qt/qtbookmark.cpp:851
+msgid "Simulation time at activation"
+msgstr ""
+
+#: ../src/celestia/qt/qtbookmark.cpp:852
+msgid "System time at activation"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
+#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
+#. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
+#: ../src/celestia/qt/qtbookmark.cpp:897 ../src/celestia/qt/rc.cpp:39
+#: ../src/celestia/qt/rc.cpp:54
+msgid "New Folder"
+msgstr "ახალი საქაღალდე"
+
+#. Create the render flags actions
+#: ../src/celestia/qt/qtcelestiaactions.cpp:36
+msgid "Eq"
+msgstr "ეკვ"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:37
+msgid "Equatorial coordinate grid"
+msgstr "ეკვატორული კოორდინატების ბადე"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:41
+msgid "Ga"
+msgstr "გა"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:42
+msgid "Galactic coordinate grid"
+msgstr "გალაქტიკური კოორდინატების ბადე"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:46
+msgid "Ec"
+msgstr "ეკ"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:47
+msgid "Ecliptic coordinate grid"
+msgstr "ეკლიპტიკური კოორდინატების ბადე"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:51
+msgid "Hz"
+msgstr "ჰც"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:52
+msgid "Horizontal coordinate grid"
+msgstr "ჰორიზონტალური კოორდინატების ბადე"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:56
+msgid "Ecl"
+msgstr "ეკლ"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:461
+#. i18n: ectx: property (text), widget (QCheckBox, eclipticLineCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:57 ../src/celestia/qt/rc.cpp:212
+msgid "Ecliptic line"
+msgstr "ეკლიპტიკური ხაზი"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:61
+msgid "M"
+msgstr "ორ"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:454
+#. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
+#. Controls for marking selected objects
+#: ../src/celestia/qt/qtcelestiaactions.cpp:62
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:590
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:517
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:807
+#: ../src/celestia/qt/rc.cpp:209
+#: ../src/celestia/win32/res/resource_strings.cpp:209
+msgid "Markers"
+msgstr "სანიშნები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:66
+msgid "C"
+msgstr "კ"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:405
+#. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
+#. i18n: file: ../src/celestia/qt/preferences.ui:583
+#. i18n: ectx: property (text), widget (QCheckBox, constellationLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:67
+#: ../src/celestia/qt/qtcelestiaactions.cpp:133 ../src/celestia/qt/rc.cpp:194
+#: ../src/celestia/qt/rc.cpp:258
+#: ../src/celestia/win32/res/resource_strings.cpp:229
+msgid "Constellations"
+msgstr "თანავარსკვლავედები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:71
+msgid "B"
+msgstr "ბ"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:72
+msgid "Constellation boundaries"
+msgstr "თანავარსკვლავედების საზღვრები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:76
+msgid "O"
+msgstr "O"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:236
+#. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:77 ../src/celestia/qt/rc.cpp:142
+#: ../src/celestia/win32/res/resource_strings.cpp:206
+msgid "Orbits"
+msgstr "ორბიტები"
+
+#. Skip sorting if we are dealing with the planets in our own Solar System.
+#. i18n: file: ../src/celestia/qt/preferences.ui:49
+#. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:286
+#. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:506
+#. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:94
+#: ../src/celestia/qt/qtcelestiaactions.cpp:121
+#: ../src/celestia/qt/qtselectionpopup.cpp:412
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101 ../src/celestia/qt/rc.cpp:75
+#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/win32/res/resource_strings.cpp:218
+#: ../src/celestia/win32/winmain.cpp:1539
+#: ../src/celestia/win32/winmain.cpp:1577
+#: ../src/celestia/win32/winmain.cpp:1697
+msgid "Planets"
+msgstr "პლანეტები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:95
+#: ../src/celestia/qt/qtcelestiaactions.cpp:122
+#: ../src/celestia/win32/res/resource_strings.cpp:219
+msgid "Dwarf Planets"
+msgstr "ჯუჯა პლანეტები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:63
+#. i18n: ectx: property (text), widget (QCheckBox, moonsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:300
+#. i18n: ectx: property (text), widget (QCheckBox, moonOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:520
+#. i18n: ectx: property (text), widget (QCheckBox, moonLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:96
+#: ../src/celestia/qt/qtcelestiaactions.cpp:123
+#: ../src/celestia/qt/qtselectionpopup.cpp:418
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103 ../src/celestia/qt/rc.cpp:81
+#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/win32/res/resource_strings.cpp:220
+#: ../src/celestia/win32/winmain.cpp:1535
+msgid "Moons"
+msgstr "მთვარეები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:97
+#: ../src/celestia/qt/qtcelestiaactions.cpp:124
+#: ../src/celestia/win32/res/resource_strings.cpp:221
+msgid "Minor Moons"
+msgstr "მცირე მთვარეები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:77
+#. i18n: ectx: property (text), widget (QCheckBox, asteroidsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:314
+#. i18n: ectx: property (text), widget (QCheckBox, asteroidOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:534
+#. i18n: ectx: property (text), widget (QCheckBox, asteroidLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:98
+#: ../src/celestia/qt/qtcelestiaactions.cpp:125
+#: ../src/celestia/qt/qtselectionpopup.cpp:424
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775 ../src/celestia/qt/rc.cpp:87
+#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/win32/res/resource_strings.cpp:222
+#: ../src/celestia/win32/winmain.cpp:1529
+msgid "Asteroids"
+msgstr "ასტეროიდები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:84
+#. i18n: ectx: property (text), widget (QCheckBox, cometsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:321
+#. i18n: ectx: property (text), widget (QCheckBox, cometOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:541
+#. i18n: ectx: property (text), widget (QCheckBox, cometLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:99
+#: ../src/celestia/qt/qtcelestiaactions.cpp:126
+#: ../src/celestia/qt/qtselectionpopup.cpp:427
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:783 ../src/celestia/qt/rc.cpp:90
+#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/win32/res/resource_strings.cpp:223
+#: ../src/celestia/win32/winmain.cpp:1531
+msgid "Comets"
+msgstr "კომეტები"
+
+#. TRANSLATORS: translate this as plural
+#. i18n: TRANSLATORS: translate this as plural
+#. i18n: file: ../src/celestia/qt/preferences.ui:91
+#. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
+#. i18n: TRANSLATORS: translate this as plural
+#. i18n: file: ../src/celestia/qt/preferences.ui:328
+#. i18n: ectx: property (text), widget (QCheckBox, spacecraftOrbitsCheck)
+#. i18n: TRANSLATORS: translate this as plural
+#. i18n: file: ../src/celestia/qt/preferences.ui:548
+#. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:100
+#: ../src/celestia/qt/qtcelestiaactions.cpp:127
+#: ../src/celestia/qt/qtselectionpopup.cpp:430
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:105
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779 ../src/celestia/qt/rc.cpp:94
+#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/win32/res/resource_strings.cpp:224
+#: ../src/celestia/win32/winmain.cpp:1544
+msgctxt "plural"
+msgid "Spacecraft"
+msgstr "კოსმოსური ხომალდი"
+
+#. Label actions
+#: ../src/celestia/qt/qtcelestiaactions.cpp:116
+msgid "L"
+msgstr "L"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:487
+#. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
+#. i18n: file: ../src/celestia/qt/preferences.ui:493
+#. i18n: ectx: property (title), widget (QGroupBox, labelsGroupBox)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:117 ../src/celestia/qt/rc.cpp:215
+#: ../src/celestia/qt/rc.cpp:218
+#: ../src/celestia/win32/res/resource_strings.cpp:232
+msgid "Labels"
+msgstr "ჭდეები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:98
+#. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:555
+#. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#. Buttons to select filtering criterion for dsos
+#: ../src/celestia/qt/qtcelestiaactions.cpp:128
+#: ../src/celestia/qt/qtcelestiaactions.cpp:152
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:478 ../src/celestia/qt/rc.cpp:97
+#: ../src/celestia/qt/rc.cpp:246
+#: ../src/celestia/win32/res/resource_strings.cpp:225
+msgid "Galaxies"
+msgstr "გალაქტიკები"
+
+#. galaxiesAction->setShortcut(QString("U"));
+#: ../src/celestia/qt/qtcelestiaactions.cpp:129
+#: ../src/celestia/qt/qtcelestiaactions.cpp:154
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:482
+#: ../src/celestia/win32/res/resource_strings.cpp:226
+msgid "Globulars"
+msgstr "გლობულარები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:112
+#. i18n: ectx: property (text), widget (QCheckBox, openClustersCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:569
+#. i18n: ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:130 ../src/celestia/qt/rc.cpp:103
+#: ../src/celestia/qt/rc.cpp:252
+msgid "Open clusters"
+msgstr "კლასტერების გახსნა"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:105
+#. i18n: ectx: property (text), widget (QCheckBox, nebulaeCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:562
+#. i18n: ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:131
+#: ../src/celestia/qt/qtcelestiaactions.cpp:156
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:486 ../src/celestia/qt/rc.cpp:100
+#: ../src/celestia/qt/rc.cpp:249
+#: ../src/celestia/win32/res/resource_strings.cpp:228
+msgid "Nebulae"
+msgstr "ნისლეულები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:606
+#. i18n: ectx: property (title), widget (QGroupBox, locationsGroupBox)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:132 ../src/celestia/qt/rc.cpp:261
+#: ../src/celestia/win32/res/resource_strings.cpp:137
+msgid "Locations"
+msgstr "მდებარეობები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:155
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:490
+#: ../src/celestia/win32/res/resource_strings.cpp:227
+msgid "Open Clusters"
+msgstr "ღია კლასტერები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:155
+#. i18n: ectx: property (text), widget (QCheckBox, cloudsCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:163 ../src/celestia/qt/rc.cpp:115
+#: ../src/celestia/win32/res/resource_strings.cpp:198
+msgid "Clouds"
+msgstr "ღრუბლები"
+
+#. cloudsAction->setShortcut(QString("I"));
+#: ../src/celestia/qt/qtcelestiaactions.cpp:165
+#: ../src/celestia/win32/res/resource_strings.cpp:202
+msgid "Night Side Lights"
+msgstr "ღამის მხრის სინათლეები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:167
+#: ../src/celestia/win32/res/resource_strings.cpp:203
+msgid "Comet Tails"
+msgstr "კომეტის კუდები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:148
+#. i18n: ectx: property (text), widget (QCheckBox, atmospheresCheck)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:168 ../src/celestia/qt/rc.cpp:112
+#: ../src/celestia/win32/res/resource_strings.cpp:197
+msgid "Atmospheres"
+msgstr "ატმოსფერო"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:175
+#: ../src/celestia/win32/res/resource_strings.cpp:200
+msgid "Ring Shadows"
+msgstr "რგოლის ჩრდილები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:176
+#: ../src/celestia/win32/res/resource_strings.cpp:201
+msgid "Eclipse Shadows"
+msgstr "ოვალის ჩრდილები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:178
+#: ../src/celestia/win32/res/resource_strings.cpp:199
+msgid "Cloud Shadows"
+msgstr "ღრუბლის ჩრდილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:815
+#. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:312
+msgid "Low"
+msgstr "დაბალი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:822
+#. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:315
+msgid "Medium"
+msgstr "საშუალო"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:829
+#. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:318
+msgid "High"
+msgstr "მაღალი"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:195
+msgid "Auto Magnitude"
+msgstr "ავტომატური ვარსკვლავური სიდიდე"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:197
+msgid "Faintest visible magnitude based on field of view"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:200
+msgid "More Stars Visible"
+msgstr "მეტი ხილული ვარსკვლავი"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:203
+msgid "Fewer Stars Visible"
+msgstr "ნაკლები ხილული ვარსკვლავი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:946
+#. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
+#: ../src/celestia/qt/qtcelestiaactions.cpp:209 ../src/celestia/qt/rc.cpp:336
+msgid "Points"
+msgstr "წერტილები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:210
+msgid "Fuzzy Points"
+msgstr "ბუნდოვანი წერტილები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:211
+msgid "Scaled Discs"
+msgstr "გადიდებული დისკები"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:221
+msgid "Light Time Delay"
+msgstr "სინათლის დროის დაყოვნება"
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:412
+#, qt-format
+msgid "Auto magnitude limit at 45 degrees: %L1"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestiaactions.cpp:419
+#, qt-format
+msgid "Magnitude limit: %L1"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:353
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:291
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:681
+#: ../src/celestia/win32/res/resource_strings.cpp:94
+#: ../src/celestia/win32/winstarbrowser.cpp:62
+msgid "Name"
+msgstr "სახელი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:355
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:293
+#: ../src/celestia/win32/winstarbrowser.cpp:63
+msgid "Distance (ly)"
+msgstr "დაშორება (ს.წ.)"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:357
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:295
+#: ../src/celestia/win32/winstarbrowser.cpp:64
+msgid "App. mag"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:359
+#: ../src/celestia/win32/winstarbrowser.cpp:65
+msgid "Abs. mag"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:361
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:297
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:683
+#: ../src/celestia/win32/winstarbrowser.cpp:66
+msgid "Type"
+msgstr "ტიპი"
+
+#. Buttons to select filtering criterion for stars
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:546
+msgid "Closest Stars"
+msgstr "უახლოესი ვარსკვლავები"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:550
+msgid "Brightest Stars"
+msgstr "ყველაზე კაშკაშა ვარსკვლავები"
+
+#. Additional filtering controls
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:560
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:500
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:791
+msgid "Filter"
+msgstr "ფილტრი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:563
+msgid "With Planets"
+msgstr "პლანეტებით"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:567
+msgid "Multiple Stars"
+msgstr "ერთზე მეტი ვარსკვლავი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:570
+msgid "Barycenters"
+msgstr "ბარიცენტრები"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:576
+msgid "Spectral Type"
+msgstr "სპექტრის ტიპი"
+
+#. End filtering controls
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:585
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
+msgid "Refresh"
+msgstr "განახლება"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:593
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:520
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:810
+msgid "Mark Selected"
+msgstr "მონიშნულზე მარკერის დასმა"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
+msgid "Mark stars selected in list view"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:598
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:525
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:815
+msgid "Unmark Selected"
+msgstr "მონიშნულზე მარკერის მოხსნა"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:599
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:816
+msgid "Unmark stars selected in list view"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:603
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:530
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:820
+msgid "Clear Markers"
+msgstr "მარკერების გასუფტავება"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:605
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:822
+msgid "Remove all existing markers"
+msgstr ""
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:612
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:539
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
+#: ../src/celestia/win32/res/resource_strings.cpp:235
+msgid "None"
+msgstr "არაფერი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:613
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:540
+#: ../src/celestia/qt/qtselectionpopup.cpp:264
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:830
+msgid "Diamond"
+msgstr "პრიზმა"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:614
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:541
+#: ../src/celestia/qt/qtselectionpopup.cpp:265
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:831
+msgid "Triangle"
+msgstr "სამკუთხედი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:542
+#: ../src/celestia/qt/qtselectionpopup.cpp:266
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:832
+msgid "Square"
+msgstr "კვადრატი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:616
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:543
+#: ../src/celestia/qt/qtselectionpopup.cpp:268
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:833
+msgid "Plus"
+msgstr "პლუსი"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:617
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:544
+#: ../src/celestia/qt/qtselectionpopup.cpp:269
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:834
+msgid "X"
+msgstr "X"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:618
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:545
+#: ../src/celestia/qt/qtselectionpopup.cpp:274
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:835
+msgid "Circle"
+msgstr "წრე"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:619
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:546
+#: ../src/celestia/qt/qtselectionpopup.cpp:270
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:836
+msgid "Left Arrow"
+msgstr "ისარი მარცხნივ"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:620
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:547
+#: ../src/celestia/qt/qtselectionpopup.cpp:271
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:837
+msgid "Right Arrow"
+msgstr "ისარი მარჯვნივ"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:621
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:548
+#: ../src/celestia/qt/qtselectionpopup.cpp:272
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:838
+msgid "Up Arrow"
+msgstr "ისარი ზემოთ"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:622
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:549
+#: ../src/celestia/qt/qtselectionpopup.cpp:273
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:839
+msgid "Down Arrow"
+msgstr "ისარი ქვემოთ"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:624
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:551
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:841
+msgid "Select marker symbol"
+msgstr "აირჩიეთ მარკერის სიმბოლო"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:637
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:564
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:854
+msgid "Select marker size"
+msgstr "აირჩიეთ მარკერის ზომა"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:641
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:568
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:858
+msgid "Click to select marker color"
+msgstr "დააწკაპუნეთ მარკერის ფერის ასარჩევად"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:644
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:571
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:861
+msgid "Label"
+msgstr "ჭდე"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:711
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:624
+#, qt-format
+msgid "%1 objects found"
+msgstr "აღმოჩენილია %1 ობიექტი"
+
+#: ../src/celestia/qt/qtcommandline.cpp:16
+msgid "Set the data directory."
+msgstr "აირჩიეთ მონაცემების საქაღალდე."
+
+#: ../src/celestia/qt/qtcommandline.cpp:16
+msgid "datadir"
+msgstr "datadir"
+
+#: ../src/celestia/qt/qtcommandline.cpp:17
+msgid "Set the configuraton file."
+msgstr "დააყენეთ კონფიგურაციის ფაილი."
+
+#: ../src/celestia/qt/qtcommandline.cpp:17
+msgid "conf"
+msgstr "conf"
+
+#: ../src/celestia/qt/qtcommandline.cpp:18
+msgid "Add an extras directory. This option may be specified multiple times."
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:18
+msgid "extrasdir"
+msgstr "extrasdir"
+
+#: ../src/celestia/qt/qtcommandline.cpp:19
+msgid "Start in fullscreen mode."
+msgstr "მთელ ეკრანზე გაშვება."
+
+#: ../src/celestia/qt/qtcommandline.cpp:20
+msgid "Skip the splash screen."
+msgstr "მისასალმებელი ეკრანის გამოტოვება."
+
+#: ../src/celestia/qt/qtcommandline.cpp:21
+msgid "Set the start cel:// URL or startup script path."
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:21
+msgid "url"
+msgstr "url"
+
+#: ../src/celestia/qt/qtcommandline.cpp:22
+msgid "Set the path to the log file."
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:22
+msgid "logpath"
+msgstr "logpath"
+
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:521
+msgid "Mark DSOs selected in list view"
+msgstr ""
+
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:526
+msgid "Unmark DSOs selected in list view"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:67
+#: ../src/celestia/win32/wineclipses.cpp:295
+msgid "Earth"
+msgstr "დედამიწა"
+
+#: ../src/celestia/qt/qteventfinder.cpp:68
+#: ../src/celestia/win32/wineclipses.cpp:296
+msgid "Jupiter"
+msgstr "იუპიტერი"
+
+#: ../src/celestia/qt/qteventfinder.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:297
+msgid "Saturn"
+msgstr "სატურნი"
+
+#: ../src/celestia/qt/qteventfinder.cpp:70
+#: ../src/celestia/win32/wineclipses.cpp:298
+msgid "Uranus"
+msgstr "ურანი"
+
+#: ../src/celestia/qt/qteventfinder.cpp:71
+#: ../src/celestia/win32/wineclipses.cpp:299
+msgid "Neptune"
+msgstr "ნეპტუნი"
+
+#: ../src/celestia/qt/qteventfinder.cpp:72
+#: ../src/celestia/win32/wineclipses.cpp:300
+msgid "Pluto"
+msgstr "პლუტონი"
+
+#: ../src/celestia/qt/qteventfinder.cpp:216
+msgid "Eclipsed body"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:218
+msgid "Occulter"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:220
+msgid "Start time"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:222
+#: ../src/celestia/win32/wineclipses.cpp:67
+msgid "Duration"
+msgstr "ხანგრძლოვობა"
+
+#: ../src/celestia/qt/qteventfinder.cpp:318
+msgid "Solar eclipses"
+msgstr "მზის დაბნელებები"
+
+#: ../src/celestia/qt/qteventfinder.cpp:319
+msgid "Lunar eclipses"
+msgstr "მთვარის დაბნელებები"
+
+#: ../src/celestia/qt/qteventfinder.cpp:320
+msgid "All eclipses"
+msgstr "ყველა დაბნელება"
+
+#. Search the search range box
+#: ../src/celestia/qt/qteventfinder.cpp:328
+msgid "Search range"
+msgstr "შუალედის ძებნა"
+
+#: ../src/celestia/qt/qteventfinder.cpp:354
+msgid "Find eclipses"
+msgstr "დაბნელებების ძებნა"
+
+#: ../src/celestia/qt/qteventfinder.cpp:411
+#, qt-format
+msgid "%1 is not a valid object"
+msgstr "%1 სწორი ობიექტი არაა"
+
+#: ../src/celestia/qt/qteventfinder.cpp:423
+msgid "End date is earlier than start date."
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:437
+msgid "Finding eclipses..."
+msgstr "დაბნელებების ძებნა..."
+
+#: ../src/celestia/qt/qteventfinder.cpp:470
+msgid "Set time to mid-eclipse"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:474
+#, qt-format
+msgid "Near %1"
+msgstr "%1-თან ახლოს"
+
+#: ../src/celestia/qt/qteventfinder.cpp:478
+#: ../src/celestia/qt/qteventfinder.cpp:482
+#, qt-format
+msgid "From surface of %1"
+msgstr ""
+
+#: ../src/celestia/qt/qteventfinder.cpp:486
+#, qt-format
+msgid "Behind %1"
+msgstr "%1-ის უკან"
+
+#: ../src/celestia/qt/qtglwidget.cpp:105
+msgid "Celestia was unable to initialize OpenGLES 2.0."
+msgstr ""
+
+#: ../src/celestia/qt/qtglwidget.cpp:112
+msgid "Celestia was unable to initialize OpenGL 2.1."
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:225
+msgid "Error: no object selected!\n"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:237
+#: ../src/celestia/qt/qtselectionpopup.cpp:177
+msgid "Info"
+msgstr "ინფორმაცია"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:257
+#, qt-format
+msgid "Web info: %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:273
+#, qt-format
+msgid "<b>Equatorial radius:</b> %L1 %2"
+msgstr "<b>ეკვატორული რადიუსი:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:275
+#, qt-format
+msgid "<b>Size:</b> %L1 %2"
+msgstr "<b>ზომა:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:280
+msgid "<b>Oblateness: "
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:323
+#, qt-format
+msgid "<b>Sidereal rotation period:</b> %L1 %2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:326
+msgid "Prograde"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:326
+msgid "Retrograde"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:327
+#, qt-format
+msgid "<b>Rotation direction:</b> %1"
+msgstr "<b>ბრუნვის მიმართულება:</b> %1"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:331
+#, qt-format
+msgid "<b>Length of day:</b> %L1 %2"
+msgstr "<b>დღის სიგრძე:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:357
+msgid "years"
+msgstr "წელი"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:362
+msgid "<b>Has rings</b>"
+msgstr "<b>აქვს რგოლები</b>"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:364
+msgid "<b>Has atmosphere</b>"
+msgstr "<b>აქვს ატმოსფერო</b>"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:372
+#, qt-format
+msgid "<b>Start:</b> %1"
+msgstr "<b>დასაწყისი:</b> %1"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:375
+#, qt-format
+msgid "<b>End:</b> %1"
+msgstr "<b>დასასრული:</b> %1"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:377
+msgid "Orbit information"
+msgstr "ორბიტის ინფორმაცია"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:378
+#, qt-format
+msgid "Osculating elements for %1"
+msgstr ""
+
+#. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
+#: ../src/celestia/qt/qtinfopanel.cpp:381
+#, qt-format
+msgid "<b>Period:</b> %L1 %2"
+msgstr "<b>პერიოდი:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:386
+msgid "AU"
+msgstr "აე"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:394
+#, qt-format
+msgid "<b>Semi-major axis:</b> %L1 %2"
+msgstr "<b>ნახევრად-მნიშვნელოვანი ღერძი:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:395
+#, qt-format
+msgid "<b>Eccentricity:</b> %L1"
+msgstr "<b>ექსცენტრულობა:</b> %L1"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:396
+#, qt-format
+msgid "<b>Inclination:</b> %L1%2"
+msgstr "<b>დახრა:</b> %L1%2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:398
+#, qt-format
+msgid "<b>Pericenter distance:</b> %L1 %2"
+msgstr "<b>პერიცენტრს დაშორება:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:399
+#, qt-format
+msgid "<b>Apocenter distance:</b> %L1 %2"
+msgstr "<b>აპოცენტრის დაშორება:</b> %L1 %2"
+
+#: ../src/celestia/qt/qtinfopanel.cpp:401
+#, qt-format
+msgid "<b>Ascending node:</b> %L1%2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:403
+#, qt-format
+msgid "<b>Argument of periapsis:</b> %L1%2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:405
+#, qt-format
+msgid "<b>Mean anomaly:</b> %L1%2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:407
+#, qt-format
+msgid "<b>Period (calculated):</b> %L1 %2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:430
+#: ../src/celestia/qt/qtinfopanel.cpp:453
+#, qt-format
+msgid "<b>RA:</b> %L1h %L2m %L3s"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:434
+#: ../src/celestia/qt/qtinfopanel.cpp:457
+#, qt-format
+msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
+msgstr ""
+
+#. TRANSLATORS: Galactic longitude
+#: ../src/celestia/qt/qtinfopanel.cpp:465
+#, qt-format
+msgid "<b>L:</b> %L1%2 %L3' %L4\""
+msgstr ""
+
+#. TRANSLATORS: Galactic latitude
+#: ../src/celestia/qt/qtinfopanel.cpp:469
+#, qt-format
+msgid "<b>B:</b> %L1%2 %L3' %L4\""
+msgstr ""
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:209
+msgid "OpenGL 2.1"
+msgstr "OpenGL 2.1"
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:253
+#: ../src/celestia/win32/res/resource_strings.cpp:43
+msgid "Blackbody D65"
+msgstr ""
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:254
+#: ../src/celestia/win32/res/resource_strings.cpp:44
+msgid "Blackbody (Solar Whitepoint)"
+msgstr ""
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:255
+#: ../src/celestia/win32/res/resource_strings.cpp:45
+msgid "Blackbody (Vega Whitepoint)"
+msgstr ""
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:256
+#: ../src/celestia/win32/res/resource_strings.cpp:46
+msgid "Classic colors"
+msgstr "კლასტიკური ფერები"
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:262
+msgid "Local format"
+msgstr "ლოკალური ფორმატი"
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:264
+msgid "Time zone name"
+msgstr "დროის სარტყლის სახელი"
+
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:265
+msgid "UTC offset"
+msgstr "UTC წანაცვლება"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:97
+#, qt-format
+msgid "Start: %1"
+msgstr "დასაწყისი: %1"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:106
+#, qt-format
+msgid "End: %1"
+msgstr "დასასრული: %1"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:128
+msgid "{:.3f} ly"
+msgstr "{:.3f} სწ"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:130
+msgid "{:.3f} au"
+msgstr "{:.3f} აე"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:132
+msgid "{:.3f} km"
+msgstr "{:.3f} კმ"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:134
+msgid "{:.3f} m"
+msgstr "{:.3f} მ"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:136
+msgid "Distance: "
+msgstr "მანძილი: "
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:141
+msgid "Abs (app) mag: "
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:143
+msgid "Class: "
+msgstr "კლასი: "
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:154
+msgid "&Select"
+msgstr "&მონიშნული"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:158
+#: ../src/celestia/win32/res/resource_strings.cpp:178
+#: ../src/celestia/win32/res/resource_strings.cpp:185
+msgid "&Center"
+msgstr "ცენტრი"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:162
+#: ../src/celestia/win32/winmain.cpp:1635
+#: ../src/celestia/win32/winmain.cpp:1685
+#: ../src/celestia/win32/winmain.cpp:1708
+msgid "&Goto"
+msgstr "&გადასვლა"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:166
+#: ../src/celestia/win32/winmain.cpp:1636
+#: ../src/celestia/win32/winmain.cpp:1709
+msgid "&Follow"
+msgstr "&მიყოლა"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:172
+#: ../src/celestia/win32/winmain.cpp:1637
+msgid "S&ync Orbit"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:183
+msgid "Visible"
+msgstr "ხილული"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:196
+#: ../src/celestia/win32/winmain.cpp:1722
+msgid "&Unmark"
+msgstr "&მარკერის მოცილება"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:214
+#: ../src/celestia/win32/winmain.cpp:1655
+msgid "Select &Primary Body"
+msgstr "აირციეთ ძირითადი &სხეული"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:267
+msgid "Filled Square"
+msgstr "შევსებული მართკუთხედ"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:275
+msgid "Disk"
+msgstr "დისკი"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:278
+#: ../src/celestia/win32/winmain.cpp:1724
+msgid "&Mark"
+msgstr "&დანიშვნა"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:297
+#: ../src/celestia/win32/winmain.cpp:1640
+msgid "&Reference Marks"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:299
+msgid "Show &Body Axes"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:305
+msgid "Show &Frame Axes"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:311
+msgid "Show &Sun Direction"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:317
+msgid "Show &Velocity Vector"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:323
+msgid "Show S&pin Vector"
+msgstr ""
+
+#. Only show the frame center menu item if the selection orbits another
+#. a non-stellar object. If it orbits a star, this is generally identical
+#. to the sun direction entry.
+#: ../src/celestia/qt/qtselectionpopup.cpp:335
+#, qt-format
+msgid "Show &Direction to %1"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:342
+msgid "Show Planetographic &Grid"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:348
+msgid "Show &Terminator"
+msgstr ""
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:367
+#: ../src/celestia/win32/winmain.cpp:1672
+msgid "&Alternate Surfaces"
+msgstr "&ალტერნატიული ზედაპირები"
+
+#. TRANSLATORS: normal texture in an alternative surface menu
+#: ../src/celestia/qt/qtselectionpopup.cpp:368
+#: ../src/celestia/win32/winmain.cpp:1609
+msgid "Normal"
+msgstr "ნორმალი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:56
+#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:293
+#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:513
+#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
+#: ../src/celestia/qt/qtselectionpopup.cpp:415 ../src/celestia/qt/rc.cpp:78
+#: ../src/celestia/qt/rc.cpp:160 ../src/celestia/qt/rc.cpp:227
+#: ../src/celestia/win32/winmain.cpp:1541
+msgid "Dwarf planets"
+msgstr "ჯუჯა პლანეტები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:70
+#. i18n: ectx: property (text), widget (QCheckBox, minorMoonsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:307
+#. i18n: ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:527
+#. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
+#: ../src/celestia/qt/qtselectionpopup.cpp:421
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111 ../src/celestia/qt/rc.cpp:84
+#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
+#: ../src/celestia/win32/winmain.cpp:1537
+msgid "Minor moons"
+msgstr "მცირე მთვარეები"
+
+#: ../src/celestia/qt/qtselectionpopup.cpp:433
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:117
+msgid "Other objects"
+msgstr "სხვა ობიექტები"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:62
+msgid "Set Time"
+msgstr "დროის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:68
+#: ../src/celestia/win32/res/resource_strings.cpp:169
+msgid "Time Zone: "
+msgstr "დროის სარტყელი: "
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:73
+#: ../src/celestia/win32/wintime.cpp:94
+msgid "Universal Time"
+msgstr "უნივერსალური დრო"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:74
+#: ../src/celestia/win32/wintime.cpp:95
+msgid "Local Time"
+msgstr "ლოკალური დრო"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:79
+msgid "Select Time Zone"
+msgstr "აირჩიეთ დროის სარტყელი"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:83
+msgid "Date: "
+msgstr "თარიღი: "
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:101
+msgid "Set Year"
+msgstr "წლის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:104
+msgid "Set Month"
+msgstr "თვის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:107
+msgid "Set Day"
+msgstr "დღის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:111
+msgid "Time: "
+msgstr "დრო: "
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:130
+msgid "Set Hours"
+msgstr "საათის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:133
+#: ../src/celestia/qt/qtsettimedialog.cpp:137
+msgid ":"
+msgstr ":"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:134
+msgid "Set Minutes"
+msgstr "წუთის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:138
+msgid "Set Seconds"
+msgstr "წამის დაყენება"
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:142
+#: ../src/celestia/win32/res/resource_strings.cpp:171
+msgid "Julian Date: "
+msgstr "იულიუსისეული თარიღი: "
+
+#: ../src/celestia/qt/qtsettimedialog.cpp:154
+msgid "Set Julian Date"
+msgstr ""
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:59
+msgid "Barycenter"
+msgstr "ბარიცენტრი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:61
+msgid "Star"
+msgstr "ვარსკვლავი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:63
+msgid "Planet"
+msgstr "პლანეტა"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:71
+msgid "Dwarf planet"
+msgstr "ჯუჯა პლანეტა"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:73
+msgid "Moon"
+msgstr "მთვარის"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:75
+msgid "Minor moon"
+msgstr "მცირე მთვარე"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:77
+msgid "Asteroid"
+msgstr "ასტეროიდი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:79
+msgid "Comet"
+msgstr "კომეტა"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:81
+msgid "Spacecraft"
+msgstr "კოსმოსური ხომალდი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:83
+msgid "Reference point"
+msgstr ""
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:85
+msgid "Component"
+msgstr "კომპონენტი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:87
+msgid "Surface feature"
+msgstr "ზედაპირის თვისება"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:91
+msgid "Unknown"
+msgstr "უცნობი"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:107
+msgid "Asteroids & comets"
+msgstr "ასტეროიდები და კომეტები"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:109
+msgid "Reference points"
+msgstr ""
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:113
+msgid "Components"
+msgstr "კომპონენტები"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:115
+msgid "Surface features"
+msgstr "ზედაპირის თვისებები"
+
+#. Buttons to select filtering criterion for objects
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771
+msgid "Planets and moons"
+msgstr "პლანეტები და მთვარეები"
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
+msgid "Group objects by class"
+msgstr ""
+
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:812
+msgid "Mark bodies selected in list view"
+msgstr ""
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:34
+msgid "Reverse time"
+msgstr "დროის რევერსი"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:36
+msgid "10x slower"
+msgstr "10x ნელა"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:38
+msgid "2x slower"
+msgstr "2x ნელა"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:40
+msgid "Pause time"
+msgstr "დროის შეჩერება"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:42
+msgid "2x faster"
+msgstr "2x სწრაფად"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:44
+msgid "10x faster"
+msgstr "10x სწრაფად"
+
+#: ../src/celestia/qt/qttimetoolbar.cpp:48
+msgid "Set to current time"
+msgstr "მიმდინარე დროზე გადასვლა"
+
+#. i18n: file: ../src/celestia/qt/addbookmark.ui:16
+#. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
+#: ../src/celestia/qt/rc.cpp:3
+msgid "Bookmark Location"
+msgstr "სანიშნეს მდებარეობა"
+
+#. i18n: file: ../src/celestia/qt/addbookmark.ui:24
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/rc.cpp:6
+msgid "Bookmark name:"
+msgstr "სანიშნის სახელი:"
+
+#. i18n: file: ../src/celestia/qt/addbookmark.ui:37
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:44
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/rc.cpp:9 ../src/celestia/qt/rc.cpp:45
+msgid "Create in:"
+msgstr "შექმნის მდებარეობა:"
+
+#. i18n: file: ../src/celestia/qt/addbookmark.ui:44
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/rc.cpp:12
+msgid "Time source:"
+msgstr "დროის წყარო:"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:14
+#. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
+#: ../src/celestia/qt/rc.cpp:15
+msgid "Dialog"
+msgstr "ფანჯარა"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:56
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/rc.cpp:18
+msgid "Object name:"
+msgstr "ობიექტის სახელი:"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:75
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/rc.cpp:21
+msgid "Longitude:"
+msgstr "გეოლოკაციის გრძედი:"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:88
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: ../src/celestia/qt/rc.cpp:24
+msgid "Distance:"
+msgstr "მანძილი:"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:166
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/rc.cpp:27
+msgid "Latitude:"
+msgstr "გეოლოკაციის განედი:"
+
+#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:187
+#. i18n: ectx: property (text), widget (QRadioButton, radiiButton)
+#: ../src/celestia/qt/rc.cpp:33
+#: ../src/celestia/win32/res/resource_strings.cpp:127
+msgid "radii"
+msgstr "radii"
+
+#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:21
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/rc.cpp:42
+msgid "Name:"
+msgstr "სახელი:"
+
+#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:63
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/rc.cpp:48
+msgid "Description:"
+msgstr "აღწერა:"
+
+#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
+#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#: ../src/celestia/qt/rc.cpp:51
+#: ../src/celestia/win32/res/resource_strings.cpp:158
+msgid "Organize Bookmarks"
+msgstr "სანიშნეების დალაგება"
+
+#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:31
+#. i18n: ectx: property (text), widget (QPushButton, newSeparatorButton)
+#: ../src/celestia/qt/rc.cpp:57
+msgid "New Separator"
+msgstr "ახალი გამყოფი"
+
+#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:38
+#. i18n: ectx: property (text), widget (QPushButton, removeItemButton)
+#: ../src/celestia/qt/rc.cpp:60
+msgid "Remove Item"
+msgstr "ჩანაწერისწაშლა"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:14
+#. i18n: ectx: property (windowTitle), widget (QDialog, preferencesDialog)
+#: ../src/celestia/qt/rc.cpp:63
+msgid "Preferences"
+msgstr "მორგება"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:27
+#. i18n: ectx: attribute (title), widget (QWidget, objectsTab)
+#. i18n: file: ../src/celestia/qt/preferences.ui:33
+#. i18n: ectx: property (title), widget (QGroupBox, objectsGroupBox)
+#: ../src/celestia/qt/rc.cpp:66 ../src/celestia/qt/rc.cpp:69
+msgid "Objects"
+msgstr "ობიექტები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:119
+#. i18n: ectx: property (text), widget (QCheckBox, globularClustersCheck)
+#. i18n: file: ../src/celestia/qt/preferences.ui:576
+#. i18n: ectx: property (text), widget (QCheckBox, globularClusterLabelsCheck)
+#: ../src/celestia/qt/rc.cpp:106 ../src/celestia/qt/rc.cpp:255
+msgid "Globular clusters"
+msgstr "სფეროსებრი კლასტერები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:142
+#. i18n: ectx: property (title), widget (QGroupBox, featuresGroupBox)
+#: ../src/celestia/qt/rc.cpp:109
+msgid "Features"
+msgstr "თვისებები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:162
+#. i18n: ectx: property (text), widget (QCheckBox, cloudShadowsCheck)
+#: ../src/celestia/qt/rc.cpp:118
+msgid "Cloud shadows"
+msgstr "ღრუბლის ჩრდილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:169
+#. i18n: ectx: property (text), widget (QCheckBox, eclipseShadowsCheck)
+#: ../src/celestia/qt/rc.cpp:121
+msgid "Eclipse shadows"
+msgstr "დაბნელების ჩრდილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:176
+#. i18n: ectx: property (text), widget (QCheckBox, ringShadowsCheck)
+#: ../src/celestia/qt/rc.cpp:124
+msgid "Ring shadows"
+msgstr "რგოლის ჩრდილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:183
+#. i18n: ectx: property (text), widget (QCheckBox, planetRingsCheck)
+#: ../src/celestia/qt/rc.cpp:127
+msgid "Planet's rings"
+msgstr "პლანეტის რგოლები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:190
+#. i18n: ectx: property (text), widget (QCheckBox, nightsideLightsCheck)
+#: ../src/celestia/qt/rc.cpp:130
+msgid "Nightside lights"
+msgstr "ღამის მხარეს სინათლე"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:197
+#. i18n: ectx: property (text), widget (QCheckBox, cometTailsCheck)
+#: ../src/celestia/qt/rc.cpp:133
+msgid "Comet tails"
+msgstr "კომეტის კუდები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:204
+#. i18n: ectx: property (text), widget (QCheckBox, limitOfKnowledgeCheck)
+#: ../src/celestia/qt/rc.cpp:136
+msgid "Limit of knowledge textures"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:242
+#. i18n: ectx: property (text), widget (QCheckBox, orbitsCheck)
+#: ../src/celestia/qt/rc.cpp:145
+msgid "Show orbits"
+msgstr "ორბიტების ჩვენება"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:249
+#. i18n: ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
+#: ../src/celestia/qt/rc.cpp:148
+#: ../src/celestia/win32/res/resource_strings.cpp:207
+msgid "Fading orbits"
+msgstr "მინავლებადი ორბიტები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:256
+#. i18n: ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
+#: ../src/celestia/qt/rc.cpp:151
+#: ../src/celestia/win32/res/resource_strings.cpp:208
+msgid "Partial trajectories"
+msgstr "ნაწილობრივი ტრაექტორიები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:355
+#. i18n: ectx: property (title), widget (QGroupBox, gridsGroupBox)
+#: ../src/celestia/qt/rc.cpp:179
+#: ../src/celestia/win32/res/resource_strings.cpp:211
+msgid "Grids"
+msgstr "ბადეები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:361
+#. i18n: ectx: property (text), widget (QCheckBox, equatorialGridCheck)
+#: ../src/celestia/qt/rc.cpp:182
+#: ../src/celestia/win32/res/resource_strings.cpp:212
+msgid "Equatorial"
+msgstr "ეკვატორული"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:368
+#. i18n: ectx: property (text), widget (QCheckBox, eclipticGridCheck)
+#: ../src/celestia/qt/rc.cpp:185
+#: ../src/celestia/win32/res/resource_strings.cpp:215
+msgid "Ecliptic"
+msgstr "ეკლიპტიკური"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:375
+#. i18n: ectx: property (text), widget (QCheckBox, galacticGridCheck)
+#: ../src/celestia/qt/rc.cpp:188
+#: ../src/celestia/win32/res/resource_strings.cpp:214
+msgid "Galactic"
+msgstr "გალაქტინა"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:382
+#. i18n: ectx: property (text), widget (QCheckBox, horizontalGridCheck)
+#: ../src/celestia/qt/rc.cpp:191
+#: ../src/celestia/win32/res/resource_strings.cpp:213
+msgid "Horizontal"
+msgstr "ჰორიზონტალური"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:411
+#. i18n: ectx: property (text), widget (QCheckBox, diagramsCheck)
+#: ../src/celestia/qt/rc.cpp:197
+#: ../src/celestia/win32/res/resource_strings.cpp:230
+msgid "Diagrams"
+msgstr "დიაგრამები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:418
+#. i18n: ectx: property (text), widget (QCheckBox, boundariesCheck)
+#: ../src/celestia/qt/rc.cpp:200
+#: ../src/celestia/win32/res/resource_strings.cpp:231
+msgid "Boundaries"
+msgstr "საზღვრები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:425
+#. i18n: ectx: property (text), widget (QCheckBox, latinNamesCheck)
+#: ../src/celestia/qt/rc.cpp:203
+msgid "Latin names"
+msgstr "ლათინური სახელები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:448
+#. i18n: ectx: property (title), widget (QGroupBox, miscellaneousGroupBox)
+#: ../src/celestia/qt/rc.cpp:206
+msgid "Miscellaneous"
+msgstr "სხვადასხვა"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:615
+#. i18n: ectx: property (text), widget (QCheckBox, locationsCheck)
+#: ../src/celestia/qt/rc.cpp:264
+msgid "Show locations"
+msgstr "მდებარეობების ჩვენება"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:638
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/rc.cpp:267
+msgid "Location types:"
+msgstr "მდებარეობის ტიპები:"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:647
+#. i18n: ectx: property (text), widget (QCheckBox, citiesCheck)
+#: ../src/celestia/qt/rc.cpp:270
+#: ../src/celestia/win32/res/resource_strings.cpp:138
+msgid "Cities"
+msgstr "ქალაქები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:654
+#. i18n: ectx: property (text), widget (QCheckBox, landingSitesCheck)
+#: ../src/celestia/qt/rc.cpp:273
+msgid "Landing sites"
+msgstr "დაჯდომის ადგილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:661
+#. i18n: ectx: property (text), widget (QCheckBox, volcanoesCheck)
+#: ../src/celestia/qt/rc.cpp:276
+#: ../src/celestia/win32/res/resource_strings.cpp:146
+msgid "Volcanoes"
+msgstr "ვულკანები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:668
+#. i18n: ectx: property (text), widget (QCheckBox, observatoriesCheck)
+#: ../src/celestia/qt/rc.cpp:279
+#: ../src/celestia/win32/res/resource_strings.cpp:139
+msgid "Observatories"
+msgstr "ობსერვატორიები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:675
+#. i18n: ectx: property (text), widget (QCheckBox, cratersCheck)
+#: ../src/celestia/qt/rc.cpp:282
+#: ../src/celestia/win32/res/resource_strings.cpp:143
+msgid "Craters"
+msgstr "კრატერები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:682
+#. i18n: ectx: property (text), widget (QCheckBox, montesCheck)
+#: ../src/celestia/qt/rc.cpp:285
+msgid "Montes (mountains)"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:689
+#. i18n: ectx: property (text), widget (QCheckBox, terraeCheck)
+#: ../src/celestia/qt/rc.cpp:288
+msgid "Terrae (land masses)"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:696
+#. i18n: ectx: property (text), widget (QCheckBox, vallesCheck)
+#: ../src/celestia/qt/rc.cpp:291
+msgid "Valles (valleys)"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:703
+#. i18n: ectx: property (text), widget (QCheckBox, mariaCheck)
+#: ../src/celestia/qt/rc.cpp:294
+msgid "Maria (seas)"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:710
+#. i18n: ectx: property (text), widget (QCheckBox, otherLocationsCheck)
+#: ../src/celestia/qt/rc.cpp:297
+#: ../src/celestia/win32/res/resource_strings.cpp:147
+msgid "Other features"
+msgstr "სხვა ფუნქციები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:735
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/rc.cpp:300
+msgid "Minimum labelled feature size:"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:772
+#. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
+#: ../src/celestia/qt/rc.cpp:303
+msgid "000; "
+msgstr "000; "
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:801
+#. i18n: ectx: attribute (title), widget (QWidget, renderTab)
+#: ../src/celestia/qt/rc.cpp:306
+msgid "Render"
+msgstr "რენდერი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:809
+#. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
+#: ../src/celestia/qt/rc.cpp:309
+msgid "Texture resolution"
+msgstr "ტექსტურის გაფართოება"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:852
+#. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
+#: ../src/celestia/qt/rc.cpp:321
+msgid "Ambient light"
+msgstr "გარემოს განათება"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:874
+#. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
+#: ../src/celestia/qt/rc.cpp:324
+msgid "Tinted illumination"
+msgstr ""
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:900
+#. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
+#: ../src/celestia/qt/rc.cpp:327
+msgid "Render path"
+msgstr "რენდერის ბილიკი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:913
+#. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
+#: ../src/celestia/qt/rc.cpp:330
+msgid "Antialiased lines"
+msgstr "მომრგვალებული ხაზები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:940
+#. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
+#: ../src/celestia/qt/rc.cpp:333
+msgid "Star style"
+msgstr "ვარსკვლავის სტილი"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:953
+#. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
+#: ../src/celestia/qt/rc.cpp:339
+msgid "Fuzzy points"
+msgstr "ბუნდოვანი წერტილები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:960
+#. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
+#: ../src/celestia/qt/rc.cpp:342
+msgid "Scaled discs"
+msgstr "გადიდებული დისკები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:983
+#. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
+#: ../src/celestia/qt/rc.cpp:345
+msgid "Auto-magnitude"
+msgstr "ავტომატური ვარსკვლავური სიდიდე"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:1006
+#. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
+#: ../src/celestia/qt/rc.cpp:348
+msgid "Star colors"
+msgstr "ვარსკვლავის ფერები"
+
+#. i18n: file: ../src/celestia/qt/preferences.ui:1043
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/rc.cpp:354
+msgid "Date display format:"
+msgstr "თარიღის ჩვენების ფორმატი:"
+
+#: ../src/celestia/qt/xbel.cpp:78
+msgid "Not an XBEL version 1.0 file."
+msgstr ""
+
+#: ../src/celestia/url.cpp:346
+msgid "Incorrect hex value \"{}\"\n"
+msgstr "არასწორი თექვსმეტობითი მნიშვნელობა \"{}\"\n"
+
+#: ../src/celestia/url.cpp:413
+msgid "URL must start with \"{}\"!\n"
+msgstr "URL \"{}\"-ით უნდა იწყებოდეს!\n"
+
+#: ../src/celestia/url.cpp:429
+msgid "URL must have at least mode and time!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:440
+msgid "Unsupported URL mode \"{}\"!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:458
+msgid "URL must contain only one body\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:470
+msgid "URL must contain 2 bodies\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:511
+msgid "Invalid URL version \"{}\"!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:518
+msgid "Unsupported URL version: {}\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:549
+msgid "URL parameter must look like key=value\n"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:4
+msgid "Placeholder"
+msgstr "შემავსებელი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:6
+msgid "Capture &Image...\tF10"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:7
+msgid "Capture &Movie...\tShift+F10"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:10
+msgid "Select &Sol\tH"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:11
+msgid "Tour G&uide..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:12
+msgid "Select &Object..."
+msgstr "აირჩიეთ &ობიექტი..."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:14
+msgid "&Center Selection\tC"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:15
+msgid "&Go to Selection\tG"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:16
+msgid "&Follow Selection\tF"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:17
+msgid "S&ync Orbit Selection\tY"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:18
+msgid "&Track Selection\tT"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:19
+msgid "Solar System &Browser..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:20
+msgid "Star B&rowser..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:21
+msgid "&Eclipse Finder"
+msgstr "&დაბნელების პოვნა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:23
+msgid "10x &Faster\tL"
+msgstr "10x სწრაფად\tL"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:24
+msgid "10x &Slower\tK"
+msgstr "10x ნელა\tK"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:25
+msgid "Free&ze\tSpace"
+msgstr "&გაყინვა\tSpace"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:26
+msgid "&Real Time\t\\"
+msgstr "&რეალური დრო\t\\"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:27
+msgid "Re&verse Time\tJ"
+msgstr "დროის &რევერსი\tJ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:28
+msgid "Set &Time..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:29
+msgid "Show Local Time"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:30
+msgid "&Render"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:31
+msgid "Select Display Mode..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:32
+msgid "Toggle Full Screen\tAlt+Enter"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:33
+msgid "View Options..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:34
+msgid "Locations..."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:35
+msgid "More Stars Visible\t]"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:36
+msgid "Fewer Stars Visible\t["
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:37
+msgid "Auto Magnitude\tCtrl+Y"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:39
+msgid "&Points"
+msgstr "&წერტილები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:40
+msgid "&Fuzzy Points"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:41
+msgid "Scaled &Discs"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:42
+msgid "Star &Color"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:47
+msgid "&Ambient Light"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:48
+msgid "&No"
+msgstr "&არა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:49
+msgid "&Weakly"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:50
+msgid "&Moderately"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:51
+msgid "&Texture Resolution"
+msgstr "ტექსტურის &გაფართოება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:52
+msgid "&Low"
+msgstr "&დაბალი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:53
+msgid "&Medium"
+msgstr "&საშუალო"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:54
+msgid "&High"
+msgstr "&მაღალი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:55
+msgid "Antialiasing\tCtrl+X"
+msgstr "მომრგვალება\tCtrl+X"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:57
+msgid "Split &Horizontally\tCtrl+R"
+msgstr "&ჰორიზონტალურად გაყოფა\tCtrl+R"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:58
+msgid "Split &Vertically\tCtrl+U"
+msgstr "&ვერტიკალურად გაყოფა\tCtrl+U"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:59
+msgid "&Delete Active View\tDEL"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:60
+msgid "&Single View\tCtrl+D"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:61
+msgid "Show &Frames"
+msgstr "&კადრების ჩვენება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:62
+msgid "Synchronize &Time"
+msgstr "&დროის სინქრონიზაცია"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:64
+msgid "&Add Bookmarks..."
+msgstr "სანიშნეებში &დამატება..."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:65
+msgid "&Organize Bookmarks..."
+msgstr "სანიშნეების &დალაგება..."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:68
+msgid "User &Guide"
+msgstr "მომხმარებლის &სახელმძღვანელო"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:69
+msgid "&Controls"
+msgstr "&მმართველები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:70
+msgid "&OpenGL Info"
+msgstr "&OpenGL-ის ინფორმაცია"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:71
+msgid "&License"
+msgstr "&ლიცენზია"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:72
+msgid "&About Celestia"
+msgstr "&Celestia-ს შესახებ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:74
+#: ../src/celestia/win32/res/resource_strings.cpp:95
+#: ../src/celestia/win32/res/resource_strings.cpp:100
+#: ../src/celestia/win32/res/resource_strings.cpp:104
+#: ../src/celestia/win32/res/resource_strings.cpp:107
+#: ../src/celestia/win32/res/resource_strings.cpp:120
+#: ../src/celestia/win32/res/resource_strings.cpp:124
+#: ../src/celestia/win32/res/resource_strings.cpp:136
+#: ../src/celestia/win32/res/resource_strings.cpp:149
+#: ../src/celestia/win32/res/resource_strings.cpp:159
+#: ../src/celestia/win32/res/resource_strings.cpp:165
+#: ../src/celestia/win32/res/resource_strings.cpp:173
+#: ../src/celestia/win32/res/resource_strings.cpp:176
+#: ../src/celestia/win32/res/resource_strings.cpp:188
+#: ../src/celestia/win32/res/resource_strings.cpp:192
+#: ../src/celestia/win32/res/resource_strings.cpp:239
+msgid "OK"
+msgstr "დიახ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:75
+msgid "Celestia"
+msgstr "Celestia"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:76
+msgid "1.7.0"
+msgstr "1.7.0"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:77
+msgid "Copyright (C) 2001-2021, Celestia Development Team"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:78
+msgid "https://celestiaproject.space/"
+msgstr "https://celestiaproject.space/"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:79
+msgid "Celestia is free software and comes with absolutely no warranty."
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:80
+msgid "Authors"
+msgstr "ავტორები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:81
+msgid "Chris Laurel"
+msgstr "Chris Laurel"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:82
+msgid "Clint Weisbrod"
+msgstr "Clint Weisbrod"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:83
+msgid "Fridger Schrempp"
+msgstr "Fridger Schrempp"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:84
+msgid "Christophe Teyssier"
+msgstr "Christophe Teyssier"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:85
+msgid "Grant Hutchison"
+msgstr "Grant Hutchison"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:86
+msgid "Pat Suwalski"
+msgstr "Pat Suwalski"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:87
+msgid "Toti"
+msgstr "Toti"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:88
+msgid "Da Woon Jung"
+msgstr "Da Woon Jung"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:89
+msgid "Hank Ramsey"
+msgstr "Hank Ramsey"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:90
+msgid "Bob Ippolito"
+msgstr "Bob Ippolito"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:91
+msgid "Vincent Giangiulio"
+msgstr "Vincent Giangiulio"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:92
+msgid "Andrew Tribick"
+msgstr "Andrew Tribick"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:93
+msgid "Add Bookmark"
+msgstr "სანიშნის დამატება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:97
+msgid "Create in >>"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:98
+#: ../src/celestia/win32/res/resource_strings.cpp:161
+msgid "New Folder..."
+msgstr "ახალი საქაღალდე..."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:99
+msgid "Add New Bookmark Folder"
+msgstr "ახალი სანიშნის საქაღალდის დამატება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:102
+msgid "Folder Name"
+msgstr "საქაღალდის სახელი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:103
+msgid "Celestia Controls"
+msgstr "Celestia-ის კონტროლი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:105
+msgid "Select Display Mode"
+msgstr "აირჩიეთ ჩვენების რეჟიმი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:106
+msgid "Resolution"
+msgstr "გაფართოება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:109
+msgid "Eclipse Finder"
+msgstr "&დაბნელების პოვნა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:110
+msgid "Compute"
+msgstr "გამოთვლა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:111
+msgid "Set Date and Go to Planet"
+msgstr "თარიღის დაყენება და პლანეტაზე გადასვლა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:112
+msgid "Close"
+msgstr "დახურვა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:113
+msgid "From:"
+msgstr "ვისგან:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:114
+msgid "To:"
+msgstr "ვის:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:115
+msgid "On:"
+msgstr "დრო:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:116
+msgid "Search parameters"
+msgstr "ძიების პარამეტრები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:117
+msgid "Solar Eclipses"
+msgstr "მზის დაბნელებები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:118
+msgid "Lunar Eclipses"
+msgstr "მთვარის დაბნელებები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:119
+msgid "Select Object"
+msgstr "აირჩიეთ ობიექტი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:122
+msgid "Object Name"
+msgstr "ობიექტის სახელი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:123
+msgid "OpenGL Driver Info"
+msgstr "OpenGL-ის დრაივერის ინფორმაცია"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:125
+msgid "Go to Object"
+msgstr "ობიექტზე გადასვლა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:129
+#: ../src/celestia/win32/res/resource_strings.cpp:193
+msgid "Go To"
+msgstr "გადასვლა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:131
+msgid "Object"
+msgstr "ობიექტი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:132
+msgid "Long."
+msgstr "გრძედი."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:133
+msgid "Lat."
+msgstr "განედი."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:134
+#: ../src/celestia/win32/res/resource_strings.cpp:238
+msgid "Distance"
+msgstr "მანძილი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:135
+msgid "License"
+msgstr "ლიცენზია"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:140
+msgid "Landing Sites"
+msgstr "დაჯდომის ადგილები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:141
+msgid "Montes (Mountains)"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:142
+msgid "Maria (Seas)"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:144
+msgid "Valles (Valleys)"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:145
+msgid "Terrae (Land masses)"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:148
+msgid "Label Features"
+msgstr "ფუნქციების დანიშვნა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:151
+msgid "Show Features"
+msgstr "ფუნქციების ჩვენება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:152
+msgid "Show Label"
+msgstr "ჭდის ჩვენება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:153
+msgid "Minimum Labeled Feature Size"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:154
+msgid "Size:"
+msgstr "ზომა:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:156
+msgid "Codec:"
+msgstr "კოდეკი:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:162
+msgid "Rename..."
+msgstr "სახელის გადარქმევა..."
+
+#: ../src/celestia/win32/res/resource_strings.cpp:164
+msgid "Rename Bookmark or Folder"
+msgstr "სანიშნის ან საქაღალდის სახელის გადარქმევა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:167
+msgid "New Name"
+msgstr "ახალი სახელი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:168
+msgid "Set Simulation Time"
+msgstr "სიმულაციის დროის დაყენება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:170
+msgid "Format: "
+msgstr "ფორმატი: "
+
+#: ../src/celestia/win32/res/resource_strings.cpp:172
+msgid "Set To Current Time"
+msgstr "მიმდინარე დროზე დაყენება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:175
+msgid "Solar System Browser"
+msgstr "მზის სისტემის ბრაუზერი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:179
+#: ../src/celestia/win32/res/resource_strings.cpp:186
+msgid "&Go To"
+msgstr "&გადასვლა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:180
+msgid "Solar System Objects"
+msgstr "მზის სისტემის ობიექტები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:181
+msgid "Star Browser"
+msgstr "ვარსკლავის ძებნა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:182
+msgid "Nearest"
+msgstr "უახლოესი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:183
+msgid "Brightest"
+msgstr "ყველაზე კაშკაშა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:184
+msgid "With planets"
+msgstr "პლანეტებით"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:187
+msgid "&Refresh"
+msgstr "&განახლება"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:189
+msgid "Star Search Criteria"
+msgstr "ვარსკლავის ძებნის პირობა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:190
+msgid "Maximum Stars Displayed in List"
+msgstr "სიაში ნაჩვენები ვარსკვლავების მაქსიმალური რაოდენობა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:191
+msgid "Tour Guide"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:194
+msgid "Select your destination:"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:195
+msgid "View Options"
+msgstr "პარამეტრების ნახვა"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:196
+msgid "Show:"
+msgstr "ჩვენება:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:204
+msgid "Rings"
+msgstr "ბეჭდები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:205
+msgid "Display:"
+msgstr "ჩვენება:"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:210
+msgid "Ecliptic Line"
+msgstr "ეკლიპტიკური ხაზი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:216
+msgid "Body / Orbit / Label display"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:233
+msgid "Latin Names"
+msgstr "ლათინური სახელები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:234
+msgid "Information Text"
+msgstr "ინფორმაციის ტექსტი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:236
+msgid "Terse"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:237
+msgid "Verbose"
+msgstr "დამატებითი შეტყობინებები"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+#: ../src/celestia/win32/winmain.cpp:3365
+msgid "WinLangID"
+msgstr ""
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Apr"
+msgstr "აპრ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Feb"
+msgstr "თებ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Jan"
+msgstr "იან"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Jun"
+msgstr "ივნ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Mar"
+msgstr "მარ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "May"
+msgstr "მაისი"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Aug"
+msgstr "აგვ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Dec"
+msgstr "დეკ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Jul"
+msgstr "ივლ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Nov"
+msgstr "ნოემ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Oct"
+msgstr "ოქტ"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:243
+msgid "Sep"
+msgstr "სექ"
+
+#: ../src/celestia/win32/wineclipses.cpp:64
+msgid "Satellite"
+msgstr "თანამგზავრი"
+
+#: ../src/celestia/win32/wineclipses.cpp:65
+msgid "Date"
+msgstr "თარიღი"
+
+#: ../src/celestia/win32/wineclipses.cpp:66
+msgid "Start"
+msgstr "დაწყება"
+
+#: ../src/celestia/win32/winmain.cpp:539
+msgid ""
+"License file missing!\n"
+"See http://www.gnu.org/copyleft/gpl.html"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:705
+#, c-format
+msgid "%d x %d"
+msgstr "%d x %d"
+
+#. Add windowed mode as the first item on the menu
+#: ../src/celestia/win32/winmain.cpp:1398
+msgid "Windowed Mode"
+msgstr "ფანჯრის რეჟიმი"
+
+#: ../src/celestia/win32/winmain.cpp:1533
+msgid "Invisibles"
+msgstr "უჩინრები"
+
+#: ../src/celestia/win32/winmain.cpp:1638
+#: ../src/celestia/win32/winmain.cpp:1686
+#: ../src/celestia/win32/winmain.cpp:1710
+msgid "&Info"
+msgstr "&ინფო"
+
+#: ../src/celestia/win32/winmain.cpp:1641
+msgid "Show Body Axes"
+msgstr "სხეულის ღერძებს ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1642
+msgid "Show Frame Axes"
+msgstr "ჩარჩოს ღერძების ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1643
+msgid "Show Sun Direction"
+msgstr "მზის მიმართულების ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1644
+msgid "Show Velocity Vector"
+msgstr "აჩქარების ვექტორის ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1645
+msgid "Show Planetographic Grid"
+msgstr "პლანეტოგრაფიული ბადის ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1646
+msgid "Show Terminator"
+msgstr "ტერმინატორის ჩვენება"
+
+#: ../src/celestia/win32/winmain.cpp:1662
+msgid "&Satellites"
+msgstr "&თანამგზავრები"
+
+#: ../src/celestia/win32/winmain.cpp:1695
+msgid "Orbiting Bodies"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:1814
+msgid "Unable to switch to full screen mode; running in window mode"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:1815
+#: ../src/celestia/win32/winmain.cpp:2087
+#: ../src/celestia/win32/winmain.cpp:2730
+#: ../src/celestia/win32/winmain.cpp:2741
+#: ../src/celestia/win32/winmain.cpp:2758
+#: ../src/celestia/win32/winmain.cpp:2839
+#: ../src/celestia/win32/winmain.cpp:2862
+msgid "Error"
+msgstr "შეცდომა"
+
+#: ../src/celestia/win32/winmain.cpp:1979
+msgid "Failed to register the window class."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:1980
+#: ../src/celestia/win32/winmain.cpp:2031
+#: ../src/celestia/win32/winmain.cpp:2055
+#: ../src/celestia/win32/winmain.cpp:2374
+#: ../src/celestia/win32/winmain.cpp:3412
+#: ../src/celestia/win32/winmain.cpp:3483
+msgid "Fatal Error"
+msgstr "ფატალური შეცდომა"
+
+#: ../src/celestia/win32/winmain.cpp:2030
+msgid "Could not get appropriate pixel format for OpenGL rendering."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2054
+msgid "Your system doesn't support OpenGL 2.1!"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2086
+msgid "Releasing device context failed."
+msgstr ""
+
+#. Comment this out if you just want the standard "Save As" caption.
+#: ../src/celestia/win32/winmain.cpp:2696
+msgid "Save As - Specify File to Capture Image"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2740
+msgid "Could not save image file."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2757
+msgid "Stop current movie capture before starting another one."
+msgstr ""
+
+#. Comment this out if you just want the standard "Save As" caption.
+#: ../src/celestia/win32/winmain.cpp:2783
+msgid "Save As - Specify Output File for Capture Movie"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2838
+msgid "Unknown file extension specified for movie capture."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2858
+msgid "Specified file extension is not recognized."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:2860
+msgid "Could not capture movie."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3106
+msgid "Directory expected after --dir"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3107
+#: ../src/celestia/win32/winmain.cpp:3120
+#: ../src/celestia/win32/winmain.cpp:3134
+#: ../src/celestia/win32/winmain.cpp:3147
+#: ../src/celestia/win32/winmain.cpp:3163
+msgid "Celestia Command Line Error"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3119
+msgid "Configuration file name expected after --conf"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3133
+msgid "Directory expected after --extrasdir"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3146
+msgid "URL expected after --url"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3161
+#, c-format
+msgid "Invalid command line option '%s'"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3184
+msgid "Loading: "
+msgstr "ჩატვირთვა : "
+
+#: ../src/celestia/win32/winmain.cpp:3249
+msgid "Loading data files..."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3411
+msgid "Configuration file missing!"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3447
+msgid ""
+"Old favorites file detected.\n"
+"Copy to the new location?"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3448
+msgid "Copy favorites?"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:3482
+msgid "Failed to create the application window."
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:4017
+msgid "Loading URL"
+msgstr "ბმულის ჩატვირთვა"
+
+#. string s;
+#. s += UTF8ToCurrentCP(_("Version: "));
+#: ../src/celestia/win32/winsplash.cpp:141
+msgid "Version: "
+msgstr "ვერსია: "
+
+#: ../src/celestia/win32/wintime.cpp:96
+msgid "Time Zone Name"
+msgstr "დროის სარტყლის სახელი"
+
+#: ../src/celestia/win32/wintime.cpp:97
+msgid "UTC Offset"
+msgstr "UTC დროიდან წანაცვლება"
+
+#: ../src/celimage/image.cpp:363
+msgid "Loading image from file {}\n"
+msgstr "გამოსახულების ჩატვირთვა ფაილიდან {}\n"
+
+#: ../src/celimage/png.cpp:53
+msgid "Error opening image file {}.\n"
+msgstr "გამოსახულების ფაილის გახსნის შეცდომა {}.\n"
+
+#: ../src/celimage/png.cpp:61
+msgid "Error: {} is not a PNG file.\n"
+msgstr "შეცდომა: {} PNG ფაილი არაა.\n"
+
+#: ../src/celimage/png.cpp:87
+msgid "Error reading PNG image file {}\n"
+msgstr "შეცდომა PNG ფაილის წაკითხვისას: {}\n"
+
+#: ../src/celimage/png.cpp:177
+msgid "Can't open screen capture file '{}'\n"
+msgstr "ეკრანის ანაბეჭდის ფაილის '{}' გახსნა შეუძლებელია\n"
+
+#: ../src/celimage/png.cpp:226
+msgid "Error writing PNG file '{}'\n"
+msgstr "PNG ფაილის '{}' ჩაწერის შეცდომა\n"
+
+#: ../src/celscript/legacy/legacyscript.cpp:101
+msgid "Error opening script file."
+msgstr "სკრიპტის ფაილის გახსნის შეცდომა."
+
+#: ../src/celscript/legacy/legacyscript.cpp:110
+#: ../src/celscript/lua/luascript.cpp:99
+msgid "Unknown error loading script"
+msgstr "უცნობი შეცდომა სკრიპტის ჩატვირთვისას"
+
+#. TRANSLATORS: Y is first letter of Yes
+#: ../src/celscript/lua/celx.cpp:430
+msgid "Y"
+msgstr "Y"
+
+#: ../src/celscript/lua/celx.cpp:731
+msgid "In line {}: {}"
+msgstr "ხაზზე {}: {}"
+
+#: ../src/celscript/lua/celx.cpp:776
+msgid ""
+"WARNING:\n"
+"\n"
+"This script requests permission to read/write files\n"
+"and execute external programs. Allowing this can be\n"
+"dangerous.\n"
+"Do you trust the script and want to allow this?\n"
+"\n"
+"y = yes, ESC = cancel script, any other key = no"
+msgstr ""
+
+#: ../src/celscript/lua/celx.cpp:787
+msgid ""
+"WARNING:\n"
+"\n"
+"This script requests permission to read/write files\n"
+"and execute external programs. Allowing this can be\n"
+"dangerous.\n"
+"Do you trust the script and want to allow this?"
+msgstr ""
+
+#: ../src/celscript/lua/luascript.cpp:90
+msgid "Error opening script {}"
+msgstr ""
+
+#: ../src/celscript/lua/luascript.cpp:107
+#: ../src/celscript/lua/luascript.cpp:242
+msgid "Script coroutine initialization failed"
+msgstr ""
+
+#: ../src/celscript/lua/luascript.cpp:214
+msgid "Error opening LuaHook {}"
+msgstr ""
+
+#: ../src/celscript/lua/luascript.cpp:231
+msgid "Unknown error loading hook script"
+msgstr ""
+
+#: ../src/celutil/tzutil.cpp:48
+msgid "Unknown value returned by GetTimeZoneInformation()\n"
+msgstr ""
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:27
+msgid "Error opening {} or {}.\n"
+msgstr ""
