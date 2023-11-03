@@ -47,6 +47,9 @@ add_executable(celestia-win WIN32 ${WIN32_SOURCES} ${RESOURCES})
 add_dependencies(celestia-win celestia)
 target_link_libraries(celestia-win celestia ${OPENGL_LIBRARIES})
 target_include_directories(celestia-win PRIVATE ${OPENGL_INCLUDE_DIRS})
+
+set_target_properties(celestia-win PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
 install(
   TARGETS celestia-win
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
