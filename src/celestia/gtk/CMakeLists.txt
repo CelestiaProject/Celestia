@@ -97,6 +97,8 @@ if (ENABLE_GLES)
   target_link_libraries(celestia-gtk celestia ${GLESv2_LIBRARIES})
 endif()
 
+set_target_properties(celestia-gtk PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
 install(
   TARGETS celestia-gtk
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

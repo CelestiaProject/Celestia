@@ -34,6 +34,8 @@ if(USE_WAYLAND)
   target_include_directories(celestia-qt6 PRIVATE ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
 endif()
 
+set_target_properties(celestia-qt6 PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
 if(APPLE)
   set_property(TARGET celestia-qt6 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
   set_property(TARGET celestia-qt6 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
