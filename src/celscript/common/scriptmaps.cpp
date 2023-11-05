@@ -127,8 +127,8 @@ void initLocationFlagMap(FlagMap64 &LocationFlagMap)
     LocationFlagMap["lacuna"sv]            = Location::Lacuna;
     LocationFlagMap["lacus"sv]             = Location::Lacus;
     LocationFlagMap["largeringed"sv]       = Location::LargeRinged;
-    LocationFlagMap["lenticula"sv]         = Location::Lenticula;
     LocationFlagMap["lingula"sv]           = Location::Lingula;
+    LocationFlagMap["lobus"sv]             = Location::Lobus;
     LocationFlagMap["macula"sv]            = Location::Macula;
     LocationFlagMap["oceanus"sv]           = Location::Oceanus;
     LocationFlagMap["palus"sv]             = Location::Palus;
