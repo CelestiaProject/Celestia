@@ -579,7 +579,7 @@ SDL_Application::toggleFullscreen()
         // First try to activate real fullscreen mode
         ret = SDL_SetWindowFullscreen(m_mainWindow, SDL_WINDOW_FULLSCREEN);
         // Then try to emulate fulscreen resizing to the desktop size
-        if (ret == 0)
+        if (ret < 0)
             ret = SDL_SetWindowFullscreen(m_mainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
         if (ret == 0)
             m_fullscreen = true;
