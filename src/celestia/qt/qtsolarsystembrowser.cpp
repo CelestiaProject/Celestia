@@ -342,18 +342,15 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
     }
 
     // Calculate the total number of children
-    if ((item->nChildren = bodies.size()) == 0)
+    // WARN: max(size_t) > max(int) so in theory it's possible to have a negative value
+    if ((item->nChildren = static_cast<int>(bodies.size())) <= 0)
         return;
 
-    int childIndex = 0;
     item->children = new TreeItem*[item->nChildren];
 
     // Add the direct children
     for (int i = 0; i < (int) bodies.size(); i++)
-    {
-        item->children[childIndex] = createTreeItem(bodies[i], item, childIndex);
-        childIndex++;
-    }
+        item->children[i] = createTreeItem(bodies[i], item, i);
 }
 
 
