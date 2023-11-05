@@ -97,8 +97,8 @@ public:
         Lacuna         = 0x0000020000000000,
         Lacus          = 0x0000040000000000,
         LargeRinged    = 0x0000080000000000,
-        Lenticula      = 0x0000100000000000,
         Lingula        = 0x0000200000000000,
+	Lobus          = 0x0000100000000000, // Lobus uses value of removed Lenticula
         Macula         = 0x0000400000000000,
         Oceanus        = 0x0000800000000000,
         Palus          = 0x0001000000000000,
