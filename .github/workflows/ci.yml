@@ -74,7 +74,6 @@ jobs:
         }
 
         cmake -B '${{github.workspace}}/build' `
-            -G Ninja `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
@@ -86,6 +85,7 @@ jobs:
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
+            -DENABLE_LTO=ON       `
             -DUSE_ICU=ON          `
             -DUSE_WIN_ICU=OFF
 
