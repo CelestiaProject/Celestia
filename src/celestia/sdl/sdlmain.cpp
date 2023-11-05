@@ -8,8 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cctype>
+#include <cstdio>
 #include <cstring>
-#include <iostream>
 #include <memory>
 #include <string_view>
 #include <system_error>
@@ -619,7 +619,7 @@ FatalErrorImpl(fmt::string_view format, fmt::format_args args)
                                        message.c_str(),
                                        nullptr);
     if (ret < 0)
-        std::cerr << message << std::endl;
+        fmt::print(stderr, "{}\n", message);
 }
 
 template <typename... Args> void
@@ -634,19 +634,19 @@ DumpGLInfo()
     const char* s;
     s = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     if (s != nullptr)
-        std::cout << s << '\n';
+        fmt::print("GL Version: {}\n", s);
 
     s = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
     if (s != nullptr)
-        std::cout << s << '\n';
+        fmt::print("GL Vendor: {}\n", s);
 
     s = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     if (s != nullptr)
-        std::cout << s << '\n';
+        fmt::print("GL Renderer: {}\n", s);
 
     s = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
     if (s != nullptr)
-        std::cout << s << '\n';
+        fmt::print("GLSL Version: {}\n", s);
 }
 
 int
