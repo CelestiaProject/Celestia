@@ -85,6 +85,7 @@ jobs:
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
+            -DENABLE_LTO=ON       `
             -DUSE_ICU=ON          `
             -DUSE_WIN_ICU=OFF
 

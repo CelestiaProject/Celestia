@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.9)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
@@ -58,9 +58,10 @@ option(ENABLE_WIN           "Build Windows native frontend? (Default: on)" ON)
 option(ENABLE_FFMPEG        "Support video capture using FFMPEG (Default: off)" OFF)
 option(ENABLE_MINIAUDIO     "Support audio playback using miniaudio (Default: off)" OFF)
 option(ENABLE_TOOLS         "Build different tools? (Default: off)" OFF)
-option(FAST_MATH            "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_FAST_MATH     "Build with unsafe fast-math compiller option (Default: off)" OFF)
 option(ENABLE_TESTS         "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES          "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
+option(ENABLE_LTO           "Enable link time optimizations (Default: off)" OFF)
 option(USE_GTKGLEXT         "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
 option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
@@ -172,7 +173,7 @@ if(USE_WEFFCPP AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
-EnableFastMath(${FAST_MATH})
+EnableFastMath(${ENABLE_FAST_MATH})
 
 #
 # NLS (Gettext) support
@@ -404,6 +405,22 @@ else()
       add_compile_options(
         $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
       )
+    endif()
+  endif()
+endif()
+
+if(ENABLE_LTO)
+  if(WIN32)
+    message(WARNING "LTO is not supported yet when building for Windows")
+    set(ENABLE_LTO OFF)
+  else()
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT lto_supported)
+    if(lto_supported)
+      message(STATUS "LTO is supported")
+    else()
+      message(WARNING "LTO is not supported")
+      set(ENABLE_LTO OFF)
     endif()
   endif()
 endif()

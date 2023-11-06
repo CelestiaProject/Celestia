@@ -101,8 +101,12 @@ if(ENABLE_FFMPEG)
   target_link_libraries(celestia ${FFMPEG_LIBRARIES})
 endif()
 
-if (HAVE_MESHOPTIMIZER)
+if(HAVE_MESHOPTIMIZER)
   target_link_libraries(celestia meshoptimizer::meshoptimizer)
+endif()
+
+if(ENABLE_LTO)
+  set_target_properties(celestia PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
 if(WIN32)

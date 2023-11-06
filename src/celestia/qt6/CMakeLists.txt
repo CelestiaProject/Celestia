@@ -47,6 +47,10 @@ install(
   COMPONENT qt6gui
 )
 
+if(ENABLE_LTO)
+  set_target_properties(celestia-qt6 PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+endif()
+
 if(WIN32)
   qt6_generate_deploy_app_script(TARGET celestia-qt6
     OUTPUT_SCRIPT deploy-celestia-qt6

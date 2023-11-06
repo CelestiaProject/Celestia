@@ -48,6 +48,10 @@ if(APPLE)
   set_property(TARGET celestia-qt5 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
 endif()
 
+if(ENABLE_LTO)
+  set_target_properties(celestia-qt5 PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+endif()
+
 install(
   TARGETS celestia-qt5
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
