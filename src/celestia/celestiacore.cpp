@@ -3263,18 +3263,7 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         overlay->print("\n");
         if (showFPSCounter)
-#ifdef OCTREE_DEBUG
-            overlay->printf(_("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
-                         fps,
-                         getRenderer()->m_starProcStats.objects,
-                         getRenderer()->m_starProcStats.nodes,
-                         getRenderer()->m_starProcStats.height,
-                         getRenderer()->m_dsoProcStats.objects,
-                         getRenderer()->m_dsoProcStats.nodes,
-                         getRenderer()->m_dsoProcStats.height);
-#else
             overlay->printf(_("FPS: %.1f\n"), fps);
-#endif
         else
             overlay->print("\n");
 

@@ -3853,22 +3853,12 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
     setPipelineState(ps);
 
-#ifdef OCTREE_DEBUG
-    m_starProcStats.nodes = 0;
-    m_starProcStats.height = 0;
-    m_starProcStats.objects = 0;
-#endif
     starDB.findVisibleStars(starRenderer,
                             obsPos.cast<float>(),
                             getCameraOrientationf(),
                             degToRad(fov),
                             getAspectRatio(),
-                            faintestMagNight,
-#ifdef OCTREE_DEBUG
-                            &m_starProcStats);
-#else
-                            nullptr);
-#endif
+                            faintestMagNight);
 
     starRenderer.starVertexBuffer->finish();
     starRenderer.glareVertexBuffer->finish();
@@ -3930,23 +3920,12 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
     globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, GlobularLabelColor);
 
-#ifdef OCTREE_DEBUG
-    m_dsoProcStats.objects = 0;
-    m_dsoProcStats.nodes = 0;
-    m_dsoProcStats.height = 0;
-#endif
-
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
                            cameraOrientation,
                            degToRad(fov),
                            getAspectRatio(),
-                           2 * faintestMagNight,
-#ifdef OCTREE_DEBUG
-                           &m_dsoProcStats);
-#else
-                            nullptr);
-#endif
+                           2 * faintestMagNight);
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();

@@ -467,11 +467,6 @@ class Renderer
         LightingState::EclipseShadowVector* eclipseShadows;
     };
 
-#ifdef OCTREE_DEBUG
-    OctreeProcStats m_starProcStats;
-    OctreeProcStats m_dsoProcStats;
-#endif
-
     struct DepthBufferPartition
     {
         int index;
