@@ -237,7 +237,7 @@ Renderer::Renderer() :
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
-    labelMode(LocationLabels), //def. NoLabels
+    labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
     orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     brightnessBias(0.0f),
