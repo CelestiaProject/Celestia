@@ -38,7 +38,7 @@ bool check_extension(util::array_view<std::string> list, const char *name) noexc
            && has_extension(name);
 }
 
-void enable_workarouds()
+void enable_workarounds()
 {
     bool isMesa = false;
     bool isAMD = false;
@@ -105,7 +105,7 @@ bool init(util::array_view<std::string> ignore) noexcept
     if (gl::EXT_texture_filter_anisotropic)
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxTextureAnisotropy);
 
-    enable_workarouds();
+    enable_workarounds();
 
     return true;
 }
