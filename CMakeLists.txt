@@ -425,11 +425,6 @@ if(ENABLE_LTO)
   endif()
 endif()
 
-# Turning all debug on dramatically decreases performance
-if(OCTREE_DEBUG)
-  add_definitions(-DOCTREE_DEBUG)
-endif()
-
 include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 
 # configure a header file to pass some of the CMake settings

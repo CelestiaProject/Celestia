@@ -24,13 +24,6 @@
 // OBJ's limiting property defined by the octree particular specialization: ie. we use [absolute magnitude] for star octrees, etc.
 // For details, see notes below.
 
-struct OctreeProcStats
-{
-    size_t nodes { 0 };
-    size_t height { 0 };
-    size_t objects { 0 };
-};
-
 template <class OBJ, class PREC> class OctreeProcessor
 {
  public:
@@ -133,8 +126,7 @@ template <class OBJ, class PREC> class StaticOctree
                                const PointType&                  obsPosition,
                                const Eigen::Hyperplane<PREC, 3>* frustumPlanes,
                                float                             limitingFactor,
-                               PREC                              scale,
-                               OctreeProcStats * = nullptr) const;
+                               PREC                              scale) const;
 
     void processCloseObjects(OctreeProcessor<OBJ, PREC>&        processor,
                              const PointType&                   obsPosition,

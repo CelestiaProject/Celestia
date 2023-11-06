@@ -654,8 +654,7 @@ StarDatabase::findVisibleStars(StarHandler& starHandler,
                                const Eigen::Quaternionf& orientation,
                                float fovY,
                                float aspectRatio,
-                               float limitingMag,
-                               OctreeProcStats *stats) const
+                               float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
     Eigen::Hyperplane<float, 3> frustumPlanes[5];
@@ -678,8 +677,7 @@ StarDatabase::findVisibleStars(StarHandler& starHandler,
                                       position,
                                       frustumPlanes,
                                       limitingMag,
-                                      STAR_OCTREE_ROOT_SIZE,
-                                      stats);
+                                      STAR_OCTREE_ROOT_SIZE);
 }
 
 
