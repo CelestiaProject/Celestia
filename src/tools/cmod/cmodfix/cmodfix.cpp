@@ -22,10 +22,12 @@
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
+#include <celutil/logger.h>
 
 #include "cmodops.h"
 #include "pathmanager.h"
 
+using celestia::util::CreateLogger;
 
 std::string inputFilename;
 std::string outputFilename;
@@ -151,6 +153,9 @@ int main(int argc, char* argv[])
         usage();
         return 1;
     }
+
+
+    CreateLogger();
 
     std::unique_ptr<cmod::Model> model = nullptr;
     if (!inputFilename.empty())
