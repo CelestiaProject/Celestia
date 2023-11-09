@@ -3245,6 +3245,8 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
             rle.isOpaque = true;
         }
         rle.radius = body.getRadius();
+        if (body.getRings() != nullptr)
+            rle.radius += body.getRings()->outerRadius;
         renderList.push_back(rle);
     }
 
