@@ -348,8 +348,6 @@ public:
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-    bool setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    bool setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());

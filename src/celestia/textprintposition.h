@@ -19,17 +19,20 @@ public:
 private:
     enum Flags : unsigned int
     {
+        // bit 0: relative/absolute
+        PositionType       = 0x01, // mask
         Relative           = 0x00,
         Absolute           = 0x01,
-        PositionType       = 0x01,
+        // bits 1-2: horizontal offset
+        HorizontalOffset   = 0x06, // mask
         HorizontalStart    = 0x00,
         HorizontalMiddle   = 0x02,
         HorizontalEnd      = 0x04,
-        HorizontalOffset   = 0x06,
+        // bits 3-4: vertical offset
+        VerticalOffset     = 0x18, // mask
         VerticalBottom     = 0x00,
         VerticalMiddle     = 0x08,
-        VerticalTop        = 0x0f,
-        VerticalOffset     = 0x18,
+        VerticalTop        = 0x10,
     };
 
     explicit TextPrintPosition(Flags, int, int, int);

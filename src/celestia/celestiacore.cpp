@@ -2684,15 +2684,23 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
         setFaintestAutoMag();
     }
 
-    hud->trySetFont(config->fonts.mainFont.empty()
-        ? LoadFontHelper(renderer, "DejaVuSans.ttf,12")
-        : LoadFontHelper(renderer, config->fonts.mainFont));
+    auto mainFont = config->fonts.mainFont.empty()
+                ? LoadFontHelper(renderer, "DejaVuSans.ttf,12")
+                : LoadFontHelper(renderer, config->fonts.mainFont);
+    if (mainFont)
+        hud->font(mainFont);
+    else
+        std::cout << _("Error loading font; text will not be visible.\n");
 
-    if (hud->font() == nullptr)
-        cout << _("Error loading font; text will not be visible.\n");
-
-    if (config->fonts.titleFont.empty() || !hud->trySetTitleFont(LoadFontHelper(renderer, config->fonts.titleFont)))
-        hud->trySetTitleFont(hud->font());
+    if (auto titleFont = config->fonts.titleFont.empty() ? nullptr : LoadFontHelper(renderer, config->fonts.titleFont);
+        titleFont)
+    {
+        hud->titleFont(titleFont);
+    }
+    else
+    {
+        hud->titleFont(mainFont);
+    }
 
     // Set up the overlay
     {
@@ -2897,16 +2905,6 @@ void CelestiaCore::setContextMenuHandler(ContextMenuHandler* handler)
 CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
 {
     return contextMenuHandler;
-}
-
-bool CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
-{
-    return hud->trySetFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
-}
-
-bool CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
-{
-    return hud->trySetTitleFont(LoadTextureFont(renderer, fontPath, collectionIndex, fontSize));
 }
 
 bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
