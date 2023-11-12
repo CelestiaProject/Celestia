@@ -137,9 +137,9 @@ public:
 
     int getTextWidth(std::string_view) const;
     const std::shared_ptr<TextureFont>& font() const;
+    void font(const std::shared_ptr<TextureFont>&);
     const std::shared_ptr<TextureFont>& titleFont() const;
-    bool trySetFont(const std::shared_ptr<TextureFont>&);
-    bool trySetTitleFont(const std::shared_ptr<TextureFont>&);
+    void titleFont(const std::shared_ptr<TextureFont>&);
     std::tuple<int, int> titleMetrics() const;
 
     void renderOverlay(const WindowMetrics&,

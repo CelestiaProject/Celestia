@@ -189,7 +189,7 @@ displayMass(Overlay& overlay, float mass, MeasurementSystem measurement)
         else
             overlay.printf(_("Mass: %.6g kg\n"), mass * astro::EarthMass);
     }
-    else if (mass > 50)
+    else if (mass > 50.0f)
         overlay.printf(_("Mass: %.2f Mj\n"), mass * astro::EarthMass / astro::JupiterMass);
     else
         overlay.printf(_("Mass: %.2f Me\n"), mass);
@@ -329,14 +329,14 @@ void
 displayRADec(Overlay& overlay, const Eigen::Vector3d& v)
 {
     double phi = std::atan2(v.x(), v.z()) - celestia::numbers::pi / 2;
-    if (phi < 0)
-        phi = phi + 2 * celestia::numbers::pi;
+    if (phi < 0.0)
+        phi = phi + 2.0 * celestia::numbers::pi;
 
     double theta = std::atan2(std::hypot(v.x(), v.z()), v.y());
     if (theta > 0)
-        theta = celestia::numbers::pi / 2 - theta;
+        theta = celestia::numbers::pi * 0.5 - theta;
     else
-        theta = -celestia::numbers::pi / 2 - theta;
+        theta = -celestia::numbers::pi * 0.5 - theta;
 
 
     displayRightAscension(overlay, celmath::radToDeg(phi));
@@ -487,7 +487,7 @@ void displayDSOinfo(Overlay& overlay,
     overlay.print(dso.getDescription());
     overlay.print("\n");
 
-    if (distance >= 0)
+    if (distance >= 0.0)
     {
         overlay.printf(_("Distance: %s\n"),
                      DistanceLyToStr(distance, 5, measurement));
@@ -764,10 +764,22 @@ Hud::font() const
     return m_hudFonts.font();
 }
 
+void
+Hud::font(const std::shared_ptr<TextureFont>& f)
+{
+    m_hudFonts.setFont(f);
+}
+
 const std::shared_ptr<TextureFont>&
 Hud::titleFont() const
 {
     return m_hudFonts.titleFont();
+}
+
+void
+Hud::titleFont(const std::shared_ptr<TextureFont>& f)
+{
+    m_hudFonts.setTitleFont(f);
 }
 
 std::tuple<int, int>
@@ -1201,26 +1213,6 @@ Hud::setImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
 {
     m_image = std::move(_image);
     m_image->setStartTime(static_cast<float>(currentTime));
-}
-
-bool
-Hud::trySetFont(const std::shared_ptr<TextureFont>& f)
-{
-    if (f == nullptr)
-        return false;
-
-    m_hudFonts.setFont(f);
-    return true;
-}
-
-bool
-Hud::trySetTitleFont(const std::shared_ptr<TextureFont>& f)
-{
-    if (f == nullptr)
-        return false;
-
-    m_hudFonts.setTitleFont(f);
-    return true;
 }
 
 } // end namespace celestia
