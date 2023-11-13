@@ -27,7 +27,7 @@
 
 using celestia::render::LineRenderer;
 namespace gl = celestia::gl;
-namespace util = celestia::util;
+namespace math = celestia::math;
 
 // draw a simple circle or annulus
 #define DRAW_ANNULUS 0
@@ -69,7 +69,7 @@ GetArrowVAO()
     for (unsigned i = 0; i <= nSections; i++)
     {
         float c, s;
-        celmath::sincos((i * 2.0f * celestia::numbers::pi_v<float>) / nSections, c, s);
+        math::sincos((i * 2.0f * celestia::numbers::pi_v<float>) / nSections, c, s);
 
         // circle at bottom
         Eigen::Vector3f v0(shaftRadius * c, shaftRadius * s, 0.0f);
@@ -309,19 +309,19 @@ AxesReferenceMark::render(Renderer* renderer,
     Eigen::Matrix4f labelTransformMatrix = labelTransform.matrix();
 
     // x-axis
-    Eigen::Matrix4f xModelView = modelView * celmath::YRot90Matrix<float>;
+    Eigen::Matrix4f xModelView = modelView * math::YRot90Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
     GetArrowVAO().draw();
 
     // y-axis
-    Eigen::Matrix4f yModelView = modelView * celmath::YRot180Matrix<float>;
+    Eigen::Matrix4f yModelView = modelView * math::YRot180Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
     GetArrowVAO().draw();
 
     // z-axis
-    Eigen::Matrix4f zModelView = modelView * celmath::XRot270Matrix<float>;
+    Eigen::Matrix4f zModelView = modelView * math::XRot270Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
     GetArrowVAO().draw();
@@ -456,7 +456,7 @@ BodyAxisArrows::BodyAxisArrows(const Body& _body) :
 Eigen::Quaterniond
 BodyAxisArrows::getOrientation(double tdb) const
 {
-    return (celmath::YRot180<double> * body.getEclipticToBodyFixed(tdb)).conjugate();
+    return (math::YRot180<double> * body.getEclipticToBodyFixed(tdb)).conjugate();
 }
 
 

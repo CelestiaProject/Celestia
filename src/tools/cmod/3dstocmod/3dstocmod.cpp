@@ -22,6 +22,7 @@
 #include "pathmanager.h"
 
 using celestia::util::CreateLogger;
+namespace math = celestia::math;
 
 void usage()
 {
@@ -62,7 +63,7 @@ int main(int argc, char* argv[])
     double weldTolerance = 1.0e-6;
     bool weldVertices = true;
 
-    model = cmodtools::GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
+    model = cmodtools::GenerateModelNormals(*model, math::degToRad(smoothAngle), weldVertices, weldTolerance);
 
     if (!model)
     {

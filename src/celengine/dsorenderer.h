@@ -27,7 +27,7 @@ public:
 
     Eigen::Vector3d     obsPos;
     Eigen::Matrix3f     orientationMatrixT;
-    celmath::Frustum    frustum         { celmath::degToRad(celestia::engine::standardFOV), 1.0f, 1.0f };
+    celestia::math::Frustum    frustum         { celestia::math::degToRad(celestia::engine::standardFOV), 1.0f, 1.0f };
     DSODatabase*        dsoDB           { nullptr };
 
     float               avgAbsMag       { 0.0f };

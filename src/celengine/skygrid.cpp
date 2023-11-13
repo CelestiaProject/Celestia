@@ -26,7 +26,6 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 using namespace celestia;
 using celestia::render::LineRenderer;
 
@@ -344,7 +343,7 @@ SkyGrid::render(Renderer& renderer,
     // diagonal between viewport corners.
     double h = tan(vfov / 2);
     double w = h * viewAspectRatio;
-    double diag = sqrt(1.0 + square(h) + square(h * viewAspectRatio));
+    double diag = sqrt(1.0 + math::square(h) + math::square(h * viewAspectRatio));
     double cosHalfFov = 1.0 / diag;
     double halfFov = acos(cosHalfFov);
 
@@ -369,9 +368,9 @@ SkyGrid::render(Renderer& renderer,
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
     Matrix3d r = (cameraOrientation *
-                  celmath::XRot90Conjugate<double> *
+                  math::XRot90Conjugate<double> *
                   m_orientation.conjugate() *
-                  celmath::XRot90<double>).toRotationMatrix().transpose();
+                  math::XRot90<double>).toRotationMatrix().transpose();
 
     // Transform the frustum corners by the camera and grid
     // rotations.
@@ -483,16 +482,16 @@ SkyGrid::render(Renderer& renderer,
     int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec * celestia::numbers::inv_pi) / (double) decIncrement) * decIncrement;
 
     // Get the orientation at single precision
-    Quaterniond q = celmath::XRot90Conjugate<double> * m_orientation * celmath::XRot90<double>;
+    Quaterniond q = math::XRot90Conjugate<double> * m_orientation * math::XRot90<double>;
     Quaternionf orientationf = q.cast<float>();
 
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
     Matrix4f m = renderer.getModelViewMatrix() *
-                 celmath::rotate((celmath::XRot90Conjugate<double> *
+                 math::rotate((math::XRot90Conjugate<double> *
                                   m_orientation.conjugate() *
-                                  celmath::XRot90<double>).cast<float>()) *
-                 celmath::scale(1000.0f);
+                                  math::XRot90<double>).cast<float>()) *
+                 math::scale(1000.0f);
     Matrices matrices = {&renderer.getProjectionMatrix(), &m};
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
@@ -529,8 +528,8 @@ SkyGrid::render(Renderer& renderer,
             Vector3d isect0(Vector3d::Zero());
             Vector3d isect1(Vector3d::Zero());
 
-            if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
-                                        &isect0, &isect1))
+            if (math::planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
+                                              &isect0, &isect1))
             {
                 string labelText = latitudeLabel(dec, decIncrement);
 
@@ -604,8 +603,8 @@ SkyGrid::render(Renderer& renderer,
             Vector3d isect0(Vector3d::Zero());
             Vector3d isect1(Vector3d::Zero());
 
-            if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
-                                        &isect0, &isect1))
+            if (math::planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
+                                              &isect0, &isect1))
             {
                 string labelText = longitudeLabel(ra, raIncrement);
 

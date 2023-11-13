@@ -53,6 +53,7 @@
 #include "materialwidget.h"
 #include "modelviewwidget.h"
 
+namespace math = celestia::math;
 
 namespace cmodview
 {
@@ -369,7 +370,7 @@ MainWindow::openModel(const QString& fileName)
             bool weldVertices = true;
 
             model = cmodtools::GenerateModelNormals(*model,
-                                                    celmath::degToRad(smoothAngle),
+                                                    math::degToRad(smoothAngle),
                                                     weldVertices,
                                                     weldTolerance);
 
@@ -549,7 +550,7 @@ MainWindow::generateNormals()
         bool weldVertices = true;
 
         auto newModel = cmodtools::GenerateModelNormals(*model,
-                                                        celmath::degToRad(smoothAngle),
+                                                        math::degToRad(smoothAngle),
                                                         weldVertices,
                                                         weldTolerance);
         if (!newModel)

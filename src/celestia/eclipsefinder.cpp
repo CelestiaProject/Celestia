@@ -22,6 +22,8 @@
 #include <celmath/distance.h>
 
 
+namespace math = celestia::math;
+
 namespace
 {
 
@@ -83,7 +85,7 @@ testEclipse(const Body& receiver, const Body& caster, double now)
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
-        double dist = celmath::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
+        double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
         if (dist < R)
         {
             // Ignore "eclipses" where the caster and receiver have

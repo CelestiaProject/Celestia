@@ -17,7 +17,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace celmath
+namespace celestia::math
 {
 template<typename T>
 inline Eigen::Matrix<T,4,4>
@@ -143,4 +143,4 @@ mix(const T &x, const U &y, typename T::Scalar a)
     return x * (static_cast<typename T::Scalar>(1.0) - a) + y * a;
 }
 
-} // end namespace celestia::vecgl
+} // end namespace celestia::math

@@ -33,6 +33,7 @@
 #include "render.h"
 #include "timelinephase.h"
 
+namespace math = celestia::math;
 namespace util = celestia::util;
 
 namespace
@@ -163,7 +164,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
 
     // Test for intersection with the bounding sphere
     if (!body->isVisible() || !body->extant(pickInfo.jd) || !body->isClickable() ||
-        !celmath::testIntersection(pickInfo.pickRay, celmath::Sphered(bpos, radius), distance))
+        !math::testIntersection(pickInfo.pickRay, math::Sphered(bpos, radius), distance))
         return true;
 
     if (body->getGeometry() == InvalidResource)
@@ -178,8 +179,8 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
             // Transform rotate the pick ray into object coordinates
             Eigen::Matrix3d m = body->getEclipticToEquatorial(pickInfo.jd).toRotationMatrix();
             Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
-            r = celmath::transformRay(r, m);
-            if (!celmath::testIntersection(r, celmath::Ellipsoidd(ellipsoidAxes), distance))
+            r = math::transformRay(r, m);
+            if (!math::testIntersection(r, math::Ellipsoidd(ellipsoidAxes), distance))
                 distance = -1.0;
         }
     }
@@ -189,7 +190,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         Eigen::Quaterniond qd = body->getGeometryOrientation().cast<double>();
         Eigen::Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo.jd)).toRotationMatrix();
         Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
-        r = celmath::transformRay(r, m);
+        r = math::transformRay(r, m);
 
         Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
         float scaleFactor = body->getGeometryScale();
@@ -306,9 +307,9 @@ StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
         // no intersection, then just use normal calculation.  We actually test
         // intersection with a larger sphere to make sure we don't miss a star
         // right on the edge of the sphere.
-        if (celmath::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickRay),
-                                      celmath::Spheref(relativeStarPos, orbitalRadius * 2.0f),
-                                      distance))
+        if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickRay),
+                                   math::Spheref(relativeStarPos, orbitalRadius * 2.0f),
+                                   distance))
         {
             Eigen::Vector3d starPos = star.getPosition(when).toLy();
             starDir = (starPos - pickOrigin.cast<double>()).cast<float>().normalized();
@@ -379,8 +380,8 @@ CloseStarPicker::process(const Star& star,
 
     float distance = 0.0f;
 
-     if (celmath::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickDir),
-                                   celmath::Spheref(starDir, star.getRadius()), distance))
+     if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickDir),
+                                math::Spheref(starDir, star.getRadius()), distance))
     {
         if (distance > 0.0f)
         {
@@ -458,8 +459,8 @@ DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused
     Eigen::Vector3d dsoDir = relativeDSOPos;
 
     if (double distance2 = 0.0;
-        celmath::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), pickDir),
-                                  celmath::Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
+        math::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), pickDir),
+                               math::Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
     {
         Eigen::Vector3d dsoPos = dso->getPosition();
         dsoDir = dsoPos * 1.0e-6 - pickOrigin;

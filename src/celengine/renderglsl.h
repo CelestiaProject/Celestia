@@ -29,7 +29,7 @@ struct RenderInfo;
 class RingSystem;
 class Texture;
 
-namespace celmath
+namespace celestia::math
 {
 class Frustum;
 }
@@ -42,7 +42,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           unsigned int textureRes,
                           std::uint64_t renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
-                          const celmath::Frustum& frustum,
+                          const celestia::math::Frustum& frustum,
                           const Matrices &m,
                           Renderer* renderer);
 
@@ -68,7 +68,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        unsigned int textureRes,
                        std::uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
-                       const celmath::Frustum& frustum,
+                       const celestia::math::Frustum& frustum,
                        const Matrices &m,
                        Renderer* renderer);
 

@@ -78,12 +78,13 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 using namespace celestia;
 using namespace celestia::astro::literals;
 using namespace celestia::engine;
 using namespace celestia::scripts;
 using namespace celestia::util;
+
+namespace math = celestia::math;
 
 static const int DragThreshold = 3;
 
@@ -94,9 +95,9 @@ static const double fMaxKeyAccel = 20.0;
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
-static const float stdFOV = degToRad(45.0f);
-static float KeyRotationAccel = degToRad(120.0f);
-static float MouseRotationSensitivity = degToRad(1.0f);
+static const float stdFOV = 45.0_deg;
+static float KeyRotationAccel = 120.0_deg;
+static float MouseRotationSensitivity = 1.0_deg;
 
 namespace
 {
@@ -358,7 +359,7 @@ void showSelectionInfo(const Selection& sel)
 
     AngleAxisf aa(orientation);
 
-    GetLogger()->info("{}\nOrientation: [{}, {}, {}], {:.1f}\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
+    GetLogger()->info("{}\nOrientation: [{}, {}, {}], {:.1f}\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), math::radToDeg(aa.angle()));
 }
 
 
@@ -584,8 +585,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else if (sel.getType() == SelectionType::Body)
                 q = sel.body()->getGeometryOrientation();
 
-            q = XRotation(dy / static_cast<float>(metrics.height)) *
-                YRotation(dx / static_cast<float>(metrics.width)) * q;
+            q = math::XRotation(dy / static_cast<float>(metrics.height)) *
+                math::YRotation(dx / static_cast<float>(metrics.width)) * q;
 
             if (sel.getType() == SelectionType::DeepSky)
                 sel.deepsky()->setOrientation(q);
@@ -660,7 +661,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             float coarseness = 1.5f;
             if ((modifiers & RightButton) == 0)
             {
-                coarseness = radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
+                coarseness = math::radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
             }
             else
             {
@@ -669,8 +670,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 coarseness = ComputeRotationCoarseness(*sim);
             }
 
-            Quaternionf q = XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
-                            YRotation(dx / static_cast<float>(metrics.width) * coarseness);
+            Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
+                            math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
             if ((modifiers & RightButton) != 0)
                 sim->orbit(q);
             else
@@ -691,7 +692,7 @@ void CelestiaCore::joystickAxis(int axis, float amount)
     else
         amount = (amount - deadZone) * (1.0f / (1.0f - deadZone));
 
-    amount = sign(amount) * square(amount);
+    amount = math::sign(amount) * math::square(amount);
 
     if (axis == Joy_XAxis)
         joystickRotation.y() = amount;
@@ -1888,13 +1889,13 @@ void CelestiaCore::tick(double dt)
         float coarseness = ComputeRotationCoarseness(*sim);
 
         if (shiftKeysPressed[Key_Left])
-            q = q * YRotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * math::YRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Right])
-            q = q * YRotation((float) (dt *  KeyRotationAccel * coarseness));
+            q = q * math::YRotation((float) (dt *  KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Up])
-            q = q * XRotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * math::XRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Down])
-            q = q * XRotation((float) (dt *  KeyRotationAccel * coarseness));
+            q = q * math::XRotation((float) (dt *  KeyRotationAccel * coarseness));
         sim->orbit(q);
     }
 
@@ -2372,8 +2373,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     initLuaHook(progressNotifier);
 #endif
 
-    KeyRotationAccel = degToRad(config->mouse.rotateAcceleration);
-    MouseRotationSensitivity = degToRad(config->mouse.rotationSensitivity);
+    KeyRotationAccel = math::degToRad(config->mouse.rotateAcceleration);
+    MouseRotationSensitivity = math::degToRad(config->mouse.rotationSensitivity);
 
     readFavoritesFile();
 

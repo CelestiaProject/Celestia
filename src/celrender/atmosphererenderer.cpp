@@ -176,7 +176,7 @@ AtmosphereRenderer::computeLegacy(
         else
         {
             Eigen::Vector3f v = (rot * -sunDirection) * static_cast<float>(centerDist);
-            Eigen::Vector3f tangentPoint = center + irot * celmath::ellipsoidTangent(recipSemiAxes, v, e, e_, ee);
+            Eigen::Vector3f tangentPoint = center + irot * math::ellipsoidTangent(recipSemiAxes, v, e, e_, ee);
             Eigen::Vector3f tangentDir = (tangentPoint - eyePos).normalized();
             cosSunAltitude = sunDirection.dot(tangentDir);
         }
@@ -210,7 +210,7 @@ AtmosphereRenderer::computeLegacy(
         Eigen::Vector3f w = std::cos(theta) * uAxis + std::sin(theta) * vAxis;
         w *= static_cast<float>(centerDist);
 
-        Eigen::Vector3f toCenter = celmath::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        Eigen::Vector3f toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         p.v = irot * toCenter;
         p.centerDist = p.v.norm();
         p.eyeDir = p.v + (center - eyePos);
@@ -255,7 +255,7 @@ AtmosphereRenderer::computeLegacy(
         float hh = std::sqrt(h);
         float u = i <= nHorizonRings ? 0.0f :
             static_cast<float>(i - nHorizonRings) / static_cast<float>(nRings - nHorizonRings);
-        float r = celmath::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
+        float r = math::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
 
         for (int j = 0; j < nSlices; j++)
         {
@@ -263,7 +263,7 @@ AtmosphereRenderer::computeLegacy(
             if (i <= nHorizonRings)
                 v = m_skyContour[j].v * r;
             else
-                v = celmath::mix(m_skyContour[j].v, zenith, u) * r;
+                v = math::mix(m_skyContour[j].v, zenith, u) * r;
             Eigen::Vector3f p = center + v;
 
             Eigen::Vector3f viewDir = p.normalized();
@@ -292,10 +292,10 @@ AtmosphereRenderer::computeLegacy(
             std::memcpy(&vtx.position[0], p.data(), vtx.position.size() * sizeof(vtx.position[0]));
 
             float atten = 1.0f - hh;
-            Eigen::Vector3f color = celmath::mix(botColor, topColor, hh);
+            Eigen::Vector3f color = math::mix(botColor, topColor, hh);
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             if (coloration != 0.0f)
-                color = celmath::mix(color, sunsetColor, coloration);
+                color = math::mix(color, sunsetColor, coloration);
 
             Color(brightness * color.x(),
                   brightness * color.y(),
@@ -355,7 +355,7 @@ AtmosphereRenderer::render(
     const LightingState      &ls,
     const Eigen::Quaternionf &/*planetOrientation*/,
     float                     radius,
-    const celmath::Frustum   &frustum,
+    const math::Frustum      &frustum,
     const Matrices           &m)
 {
     // Currently, we just skip rendering an atmosphere when there are no
@@ -392,7 +392,7 @@ AtmosphereRenderer::render(
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::scale(atmScale));
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
 
     glFrontFace(GL_CW);
 

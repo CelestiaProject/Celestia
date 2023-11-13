@@ -169,7 +169,7 @@ PlanetOrbitMixin::computePlanetElements(double t, const int* pList, std::size_t 
         PlanetElements& pp = gPlanetElements[planet];
         double aa = ep[1]*t;
         pp[0] = ep[0] + 360*(aa-(int)aa) + (ep[3]*t + ep[2])*t*t;
-        pp[0] = celmath::pfmod(pp[0], 360.0);
+        pp[0] = math::pfmod(pp[0], 360.0);
         pp[1] = (ep[1]*9.856263e-3) + (ep[2] + ep[3])/36525;
 
         for(unsigned j = 4; j < 20; j += 4)
@@ -192,20 +192,20 @@ PlanetOrbitMixin::computePlanetCoords(int p, double map, double da, double dhl, 
     ma = map + dm;
     astro::anomaly(ma, s, nu, ea);
     distance = (gPlanetElements[p][6] + da)*(1 - s*s)/(1 + s*std::cos(nu));
-    lp = celmath::radToDeg(nu) + gPlanetElements[p][2] + celmath::radToDeg(dml - dm);
-    lp = celmath::degToRad(lp);
-    om = celmath::degToRad(gPlanetElements[p][5]);
+    lp = math::radToDeg(nu) + gPlanetElements[p][2] + math::radToDeg(dml - dm);
+    lp = math::degToRad(lp);
+    om = math::degToRad(gPlanetElements[p][5]);
     lo = lp - om;
-    celmath::sincos(lo, slo, clo);
-    inc = celmath::degToRad(gPlanetElements[p][4]);
+    math::sincos(lo, slo, clo);
+    inc = math::degToRad(gPlanetElements[p][4]);
     distance += dr;
     spsi = slo*std::sin(inc);
     y = slo*std::cos(inc);
     eclLat = std::asin(spsi) + dhl;
-    eclLong = std::atan(y/clo) + om + celmath::degToRad(dl);
+    eclLong = std::atan(y/clo) + om + math::degToRad(dl);
     if (clo < 0)
         eclLong += celestia::numbers::pi;
-    eclLong = celmath::pfmod(eclLong, TWOPI);
+    eclLong = math::pfmod(eclLong, TWOPI);
     distance *= astro::KM_PER_AU<double>;
 }
 
@@ -214,12 +214,12 @@ PlanetOrbitMixin::computePlanetCoords(int p, double map, double da, double dhl, 
 // of radians.
 double sinD(double theta)
 {
-    return std::sin(celmath::degToRad(theta));
+    return std::sin(math::degToRad(theta));
 }
 
 double cosD(double theta)
 {
-    return std::cos(celmath::degToRad(theta));
+    return std::cos(math::degToRad(theta));
 }
 
 
@@ -227,10 +227,10 @@ inline Eigen::Vector3d from_polar(double lon, double lat, double distance)
 {
     double sLon;
     double cLon;
-    celmath::sincos(lon, sLon, cLon);
+    math::sincos(lon, sLon, cLon);
     double sLat;
     double cLat;
-    celmath::sincos(lat, sLat, cLat);
+    math::sincos(lat, sLat, cLat);
     return Eigen::Vector3d(cLon * sLat * distance,
                            cLat * distance,
                            -sLon * sLat * distance);
@@ -242,7 +242,7 @@ double Obliquity(double t)
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
 
-    return celmath::degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
+    return math::degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
 }
 
 void Nutation(double t, double &deps, double& dpsi)
@@ -280,12 +280,12 @@ void Nutation(double t, double &deps, double& dpsi)
     nm = 259.183+.002078*t2-b;
 
     //convert to radian forms for use with trig functions.
-    tls = 2*celmath::degToRad(ls);
-    nm = celmath::degToRad(nm);
-    tnm = 2*celmath::degToRad(nm);
-    ms = celmath::degToRad(ms);
-    tld = 2*celmath::degToRad(ld);
-    md = celmath::degToRad(md);
+    tls = 2*math::degToRad(ls);
+    nm = math::degToRad(nm);
+    tnm = 2*math::degToRad(nm);
+    ms = math::degToRad(ms);
+    tld = 2*math::degToRad(ld);
+    md = math::degToRad(md);
 
     // find delta psi and eps, in arcseconds.
     dpsi = (-17.2327-.01737*t)*std::sin(nm)+(-1.2729-.00013*t)*std::sin(tls)
@@ -299,8 +299,8 @@ void Nutation(double t, double &deps, double& dpsi)
         -.0066*std::cos(tls-nm);
 
     // convert to radians.
-    dpsi = celmath::degToRad(dpsi/3600);
-    deps = celmath::degToRad(deps/3600);
+    dpsi = math::degToRad(dpsi/3600);
+    deps = math::degToRad(deps/3600);
 }
 
 void EclipticToEquatorial(double fEclLat, double fEclLon,
@@ -320,18 +320,18 @@ void EclipticToEquatorial(double fEclLat, double fEclLon,
     eps = Obliquity(t);        // mean obliquity for date
     Nutation(t, deps, dpsi);
     eps += deps;
-    celmath::sincos(eps, seps, ceps);
+    math::sincos(eps, seps, ceps);
 
-    celmath::sincos(fEclLat, sy, cy /* always non-negative*/);
+    math::sincos(fEclLat, sy, cy /* always non-negative*/);
     if (std::fabs(cy)<1e-20)
         cy = 1e-20;        // insure > 0
     ty = sy/cy;
-    celmath::sincos(fEclLon, sx, cx);
+    math::sincos(fEclLon, sx, cx);
     dec = std::asin((sy*ceps)+(cy*seps*sx));
     RA = std::atan(((sx*ceps)-(ty*seps))/cx);
     if (cx<0)
         RA += celestia::numbers::pi; // account for atan quad ambiguity
-    RA = celmath::pfmod(RA, TWOPI);
+    RA = math::pfmod(RA, TWOPI);
 }
 
 
@@ -350,9 +350,9 @@ void EpochConvert(double jdFrom, double jdTo,
         (1.09468 + 0.000066 * T) * t * t + 0.018203 * t * t * t;
     double theta = (2004.3109 - 0.85330 * T - 0.000217 * T * T) * t -
         (0.42665 + 0.000217 * T) * t * t - 0.041833 * t * t * t;
-    zeta  = celmath::degToRad(zeta / 3600.0);
-    z     = celmath::degToRad(z / 3600.0);
-    theta = celmath::degToRad(theta / 3600.0);
+    zeta  = math::degToRad(zeta / 3600.0);
+    z     = math::degToRad(z / 3600.0);
+    theta = math::degToRad(theta / 3600.0);
 
     double A = std::cos(d0) * std::sin(a0 + zeta);
     double B = std::cos(theta) * std::cos(d0) * std::cos(a0 + zeta) -
@@ -373,16 +373,16 @@ double meanAnomalySun(double t)
     a = 9.999736042e1*t;
     b = 360*(a - (int)a);
 
-    return celmath::degToRad(3.5847583e2 - (1.5e-4 + 3.3e-6*t)*t2 + b);
+    return math::degToRad(3.5847583e2 - (1.5e-4 + 3.3e-6*t)*t2 + b);
 }
 
 void auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
              double* x5, double* x6)
 {
     *x1 = t/5+0.1;
-    *x2 = celmath::pfmod(4.14473+5.29691e1*t, TWOPI);
-    *x3 = celmath::pfmod(4.641118+2.132991e1*t, TWOPI);
-    *x4 = celmath::pfmod(4.250177+7.478172*t, TWOPI);
+    *x2 = math::pfmod(4.14473+5.29691e1*t, TWOPI);
+    *x3 = math::pfmod(4.641118+2.132991e1*t, TWOPI);
+    *x4 = math::pfmod(4.250177+7.478172*t, TWOPI);
     *x5 = 5 * *x3 - 2 * *x2;
     *x6 = 2 * *x2 - 6 * *x3 + 3 * *x4;
 }
@@ -447,10 +447,10 @@ class MercuryOrbit : public CachingOrbit, private PlanetOrbitMixin
         computePlanetElements(t, pList.data(), pList.size());
 
         // Compute necessary planet mean anomalies
-        map[0] = celmath::degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
-        map[1] = celmath::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
+        map[0] = math::degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
+        map[1] = math::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
         map[2] = 0.0;
-        map[3] = celmath::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
+        map[3] = math::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
 
         // Compute perturbations
         dl = 2.04e-3*std::cos(5*map[1]-2*map[0]+2.1328e-1)+
@@ -511,12 +511,12 @@ class VenusOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         //Compute necessary planet mean anomalies
         map[0] = 0.0;
-        map[1] = celmath::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
+        map[1] = math::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
         map[2] = 0.0;
-        map[3] = celmath::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
+        map[3] = math::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
 
         //Compute perturbations
-        dml = celmath::degToRad(7.7e-4*std::sin(4.1406+t*2.6227));
+        dml = math::degToRad(7.7e-4*std::sin(4.1406+t*2.6227));
         dm = dml;
 
         dl = 3.13e-3*std::cos(2*mas-2*map[1]-2.587)+
@@ -576,30 +576,30 @@ class EarthOrbit : public CachingOrbit
         ls = 279.69668+.0003025*t2+b;
         ms = meanAnomalySun(t);
         s = .016751-.0000418*t-1.26e-07*t2;
-        astro::anomaly(celmath::degToRad(ms), s, nu, ea);
+        astro::anomaly(math::degToRad(ms), s, nu, ea);
         a = 62.55209472000015*t;
         b = 360*(a-(int)a);
-        a1 = celmath::degToRad(153.23+b);
+        a1 = math::degToRad(153.23+b);
         a = 125.1041894*t;
         b = 360*(a-(int)a);
-        b1 = celmath::degToRad(216.57+b);
+        b1 = math::degToRad(216.57+b);
         a = 91.56766028*t;
         b = 360*(a-(int)a);
-        c1 = celmath::degToRad(312.69+b);
+        c1 = math::degToRad(312.69+b);
         a = 1236.853095*t;
         b = 360*(a-(int)a);
-        d1 = celmath::degToRad(350.74-.00144*t2+b);
-        e1 = celmath::degToRad(231.19+20.2*t);
+        d1 = math::degToRad(350.74-.00144*t2+b);
+        e1 = math::degToRad(231.19+20.2*t);
         a = 183.1353208*t;
         b = 360*(a-(int)a);
-        h1 = celmath::degToRad(353.4+b);
+        h1 = math::degToRad(353.4+b);
         dl = .00134*std::cos(a1)+.00154*std::cos(b1)+.002*std::cos(c1)+.00179*std::sin(d1)+
             .00178*std::sin(e1);
         dr = 5.43e-06*std::sin(a1)+1.575e-05*std::sin(b1)+1.627e-05*std::sin(c1)+
             3.076e-05*std::cos(d1)+9.27e-06*std::sin(h1);
 
-        eclLong = nu+celmath::degToRad(ls-ms+dl) + celestia::numbers::pi;
-        eclLong = celmath::pfmod(eclLong, TWOPI);
+        eclLong = nu+math::degToRad(ls-ms+dl) + celestia::numbers::pi;
+        eclLong = math::pfmod(eclLong, TWOPI);
         distance = astro::KM_PER_AU<double> * (1.0000002*(1.0-s*std::cos(ea))+dr);
 
         // Correction for internal coordinate system
@@ -607,7 +607,7 @@ class EarthOrbit : public CachingOrbit
 
         double seclLong;
         double ceclLong;
-        celmath::sincos(eclLong, seclLong, ceclLong);
+        math::sincos(eclLong, seclLong, ceclLong);
 
         return Eigen::Vector3d(-ceclLong * distance,
                                0,
@@ -666,12 +666,12 @@ class LunarOrbit : public CachingOrbit
         f = 11.250889+m5-(.003211+.0000003*t)*t2;
         n = 259.183275-m6+(.002078+.000022*t)*t2;
 
-        a = celmath::degToRad(51.2+20.2*t);
+        a = math::degToRad(51.2+20.2*t);
         sa = std::sin(a);
-        sn = std::sin(celmath::degToRad(n));
+        sn = std::sin(math::degToRad(n));
         b = 346.56+(132.87-.0091731*t)*t;
-        sb = .003964*std::sin(celmath::degToRad(b));
-        c = celmath::degToRad(n+275.05-2.3*t);
+        sb = .003964*std::sin(math::degToRad(b));
+        c = math::degToRad(n+275.05-2.3*t);
         sc = std::sin(c);
         ld = ld+.000233*sa+sb+.001964*sn;
         ms = ms-.001778*sa;
@@ -681,12 +681,12 @@ class LunarOrbit : public CachingOrbit
         e = 1-(.002495+7.52e-06*t)*t;
         e2 = e*e;
 
-        ld = celmath::degToRad(ld);
-        ms = celmath::degToRad(ms);
-        n = celmath::degToRad(n);
-        de = celmath::degToRad(de);
-        f = celmath::degToRad(f);
-        md = celmath::degToRad(md);
+        ld = math::degToRad(ld);
+        ms = math::degToRad(ms);
+        n = math::degToRad(n);
+        de = math::degToRad(de);
+        f = math::degToRad(f);
+        md = math::degToRad(md);
 
         l = 6.28875*std::sin(md)+1.27402*std::sin(2*de-md)+.658309*std::sin(2*de)+
             .213616*std::sin(2*md)-e*.185596*std::sin(ms)-.114336*std::sin(2*f)+
@@ -710,8 +710,8 @@ class LunarOrbit : public CachingOrbit
             e*.000598*std::sin(2*(de-f)-ms)+.00055*std::sin(md+4*de)+.000538*std::sin(4*md)+
             e*.000521*std::sin(4*de-ms)+.000486*std::sin(2*md-de);
         l = l+e2*.000717*std::sin(md-2*ms);
-            eclLon = ld+celmath::degToRad(l);
-            eclLon = celmath::pfmod(eclLon, TWOPI);
+            eclLon = ld+math::degToRad(l);
+            eclLon = math::pfmod(eclLon, TWOPI);
 
         g = 5.12819*std::sin(f)+.280606*std::sin(md+f)+.277693*std::sin(md-f)+
             .173238*std::sin(2*de-f)+.055413*std::sin(2*de+f-md)+.046272*std::sin(2*de-f-md)+
@@ -735,7 +735,7 @@ class LunarOrbit : public CachingOrbit
             .000283*std::sin(md+3*f);
         w1 = .0004664*std::cos(n);
         w2 = .0000754*std::cos(c);
-        eclLat = celmath::degToRad(g)*(1-w1-w2);
+        eclLat = math::degToRad(g)*(1-w1-w2);
 
         hp = .950724+.051818*std::cos(md)+.009531*std::cos(2*de-md)+.007843*std::cos(2*de)+
              .002824*std::cos(2*md)+.000857*std::cos(2*de+md)+e*.000533*std::cos(2*de-ms)+
@@ -750,7 +750,7 @@ class LunarOrbit : public CachingOrbit
              .00003*std::cos(md+de)-.000029*std::cos(2*(f-de))-e*.000029*std::cos(2*md+ms)+
              e2*.000026*std::cos(2*(de-ms))-.000023*std::cos(2*(f-de)+md)+
              e*.000019*std::cos(4*de-ms-md);
-        horzPar = celmath::degToRad(hp);
+        horzPar = math::degToRad(hp);
 
         // At this point we have values of ecliptic longitude, latitude and
         // horizontal parallax (eclLong, eclLat, horzPar) in radians.
@@ -814,13 +814,13 @@ class MarsOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         //Compute necessary planet mean anomalies
         map[0] = 0.0;
-        map[1] = celmath::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
-        map[2] = celmath::degToRad(gPlanetElements[2][0] - gPlanetElements[2][2]);
-        map[3] = celmath::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
+        map[1] = math::degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
+        map[2] = math::degToRad(gPlanetElements[2][0] - gPlanetElements[2][2]);
+        map[3] = math::degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
 
         //Compute perturbations
         a = 3*map[3]-8*map[2]+4*mas;
-        dml = celmath::degToRad(-1*(1.133e-2*std::sin(a)+9.33e-3*std::cos(a)));
+        dml = math::degToRad(-1*(1.133e-2*std::sin(a)+9.33e-3*std::cos(a)));
         dm = dml;
         dl = 7.05e-3*std::cos(map[3]-map[2]-8.5448e-1)+
              6.07e-3*std::cos(2*map[3]-map[2]-3.2873)+
@@ -895,21 +895,21 @@ class JupiterOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         computePlanetElements(t, pList.data(), pList.size());
 
-        map = celmath::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
+        map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
         //Compute perturbations
         s = gPlanetElements[p][3];
         auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
         x7 = x3-x2;
-        celmath::sincos(x3, sx3, cx3);
-        celmath::sincos(2*x3, s2x3, c2x3);
-        celmath::sincos(x5, sx5, cx5);
+        math::sincos(x3, sx3, cx3);
+        math::sincos(2*x3, s2x3, c2x3);
+        math::sincos(x5, sx5, cx5);
         s2x5 = sin(2*x5);
         sx6 = sin(x6);
-        celmath::sincos(x7, sx7, cx7);
-        celmath::sincos(2*x7, s2x7, c2x7);
-        celmath::sincos(3*x7, s3x7, c3x7);
-        celmath::sincos(4*x7, s4x7, c4x7);
+        math::sincos(x7, sx7, cx7);
+        math::sincos(2*x7, s2x7, c2x7);
+        math::sincos(3*x7, s3x7, c3x7);
+        math::sincos(4*x7, s4x7, c4x7);
         c5x7 = std::cos(5*x7);
         dml = (3.31364e-1-(1.0281e-2+4.692e-3*x1)*x1)*sx5+
               (3.228e-3-(6.4436e-2-2.075e-3*x1)*x1)*cx5-
@@ -924,7 +924,7 @@ class JupiterOrbit : public CachingOrbit, private PlanetOrbitMixin
               2.178e-3*cx3-6.675e-3*c2x7*cx3-2.664e-3*c3x7*cx3-
               2.572e-3*sx7*s2x3-3.567e-3*s2x7*s2x3+2.094e-3*cx7*c2x3+
               3.342e-3*c2x7*c2x3;
-        dml = celmath::degToRad(dml);
+        dml = math::degToRad(dml);
         ds = (3606+(130-43*x1)*x1)*sx5+(1289-580*x1)*cx5-6764*sx7*sx3-
              1110*s2x7*sx3-224*s3x7*sx3-204*sx3+(1284+116*x1)*cx7*sx3+
              188*c2x7*sx3+(1460+130*x1)*sx7*cx3+224*s2x7*cx3-817*cx3+
@@ -944,7 +944,7 @@ class JupiterOrbit : public CachingOrbit, private PlanetOrbitMixin
              6.603e-3*cx7*cx3-5.356e-3*sx7*s2x3+2.722e-3*s2x7*s2x3+
              4.483e-3*cx7*s2x3-2.642e-3*c2x7*s2x3+4.403e-3*sx7*c2x3-
              2.536e-3*s2x7*c2x3+5.547e-3*cx7*c2x3-2.689e-3*c2x7*c2x3;
-        dm = dml-(celmath::degToRad(dp)/s);
+        dm = dml-(math::degToRad(dp)/s);
         da = 205*cx7-263*cx5+693*c2x7+312*c3x7+147*c4x7+299*sx7*sx3+
              181*c2x7*sx3+204*s2x7*cx3+111*s3x7*cx3-337*cx7*cx3-
              111*c2x7*cx3;
@@ -1000,29 +1000,29 @@ class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         computePlanetElements(t, pList.data(), pList.size());
 
-        map = celmath::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
+        map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
         //Compute perturbations
         s = gPlanetElements[p][3];
         auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
         x7 = x3-x2;
-        celmath::sincos(x3, sx3, cx3);
-        celmath::sincos(2*x3, s2x3, c2x3);
-        celmath::sincos(x5, sx5, cx5);
+        math::sincos(x3, sx3, cx3);
+        math::sincos(2*x3, s2x3, c2x3);
+        math::sincos(x5, sx5, cx5);
         s2x5 = std::sin(2*x5);
         sx6 = std::sin(x6);
-        celmath::sincos(x7, sx7, cx7);
-        celmath::sincos(2*x7, s2x7, c2x7);
-        celmath::sincos(3*x7, s3x7, c3x7);
-        celmath::sincos(4*x7, s4x7, c4x7);
+        math::sincos(x7, sx7, cx7);
+        math::sincos(2*x7, s2x7, c2x7);
+        math::sincos(3*x7, s3x7, c3x7);
+        math::sincos(4*x7, s4x7, c4x7);
         c5x7 = std::cos(5*x7);
-        celmath::sincos(3*x3, s3x3, c3x3);
-        celmath::sincos(4*x3, s4x3, c4x3);
+        math::sincos(3*x3, s3x3, c3x3);
+        math::sincos(4*x3, s4x3, c4x3);
         c2x5 = std::cos(2*x5);
         s5x7 = std::sin(5*x7);
         x8 = x4-x3;
-        celmath::sincos(2*x8, s2x8, c2x8);
-        celmath::sincos(3*x8, s3x8, c3x8);
+        math::sincos(2*x8, s2x8, c2x8);
+        math::sincos(3*x8, s3x8, c3x8);
         dml = 7.581e-3*s2x5-7.986e-3*sx6-1.48811e-1*sx7-4.0786e-2*s2x7-
               (8.14181e-1-(1.815e-2-1.6714e-2*x1)*x1)*sx5-
               (1.0497e-2-(1.60906e-1-4.1e-3*x1)*x1)*cx5-1.5208e-2*s3x7-
@@ -1034,7 +1034,7 @@ class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
               6.319e-3*c3x7*cx3+6.369e-3*sx7*s2x3+9.156e-3*s2x7*s2x3+
               7.525e-3*s3x8*s2x3-5.236e-3*cx7*c2x3-7.736e-3*c2x7*c2x3-
               7.528e-3*c3x8*c2x3;
-        dml = celmath::degToRad(dml);
+        dml = math::degToRad(dml);
         ds = (-7927+(2548+91*x1)*x1)*sx5+(13381+(1226-253*x1)*x1)*cx5+
              (248-121*x1)*s2x5-(305+91*x1)*c2x5+412*s2x7+12415*sx3+
              (390-617*x1)*sx7*sx3+(165-204*x1)*s2x7*sx3+26599*cx7*sx3-
@@ -1062,7 +1062,7 @@ class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
              (1.3667e-2-1.239e-3*x1)*sx7*c2x3+
              (1.4861e-2+1.136e-3*x1)*cx7*c2x3-
              (1.3064e-2+1.628e-3*x1)*c2x7*c2x3;
-        dm = dml-(celmath::degToRad(dp)/s);
+        dm = dml-(math::degToRad(dp)/s);
         da = 572*sx5-1590*s2x7*cx3+2933*cx5-647*s3x7*cx3+33629*cx7-
              344*s4x7*cx3-3081*c2x7+2885*cx7*cx3-1423*c3x7+
              (2172+102*x1)*c2x7*cx3-671*c4x7+296*c3x7*cx3-320*c5x7-
@@ -1075,7 +1075,7 @@ class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
         da *= 1e-6;
         dhl = 7.47e-4*cx7*sx3+1.069e-3*cx7*cx3+2.108e-3*s2x7*s2x3+
               1.261e-3*c2x7*s2x3+1.236e-3*s2x7*c2x3-2.075e-3*c2x7*c2x3;
-        dhl = celmath::degToRad(dhl);
+        dhl = math::degToRad(dhl);
 
         computePlanetCoords(p, map, da, dhl, dl, dm, dml, dr, ds,
                             eclLong, eclLat, distance);
@@ -1126,23 +1126,23 @@ class UranusOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         computePlanetElements(t, pList.data(), pList.size());
 
-        map = celmath::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
+        map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
         //Compute perturbations
         s = gPlanetElements[p][3];
         auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
-        x8 = celmath::pfmod(1.46205+3.81337*t, TWOPI);
+        x8 = math::pfmod(1.46205+3.81337*t, TWOPI);
         x9 = 2*x8-x4;
-        celmath::sincos(x9, sx9, cx9);
-        celmath::sincos(2*x9, s2x9, c2x9);
+        math::sincos(x9, sx9, cx9);
+        math::sincos(2*x9, s2x9, c2x9);
         x10 = x4-x2;
         x11 = x4-x3;
         x12 = x8-x4;
         dml = (8.64319e-1-1.583e-3*x1)*sx9+(8.2222e-2-6.833e-3*x1)*cx9+
               3.6017e-2*s2x9-3.019e-3*c2x9+8.122e-3*sin(x6);
-        dml = celmath::degToRad(dml);
+        dml = math::degToRad(dml);
         dp = 1.20303e-1*sx9+6.197e-3*s2x9+(1.9472e-2-9.47e-4*x1)*cx9;
-        dm = dml-(celmath::degToRad(dp)/s);
+        dm = dml-(math::degToRad(dp)/s);
         ds = (163*x1-3349)*sx9+20981*cx9+1311*c2x9;
         ds *= 1e-7;
         da = -3.825e-3*cx9;
@@ -1152,13 +1152,13 @@ class UranusOrbit : public CachingOrbit, private PlanetOrbitMixin
              5.594e-3*std::sin(x4+3*x12)-1.4808e-2*std::sin(x10)-
              5.794e-3*std::sin(x11)+2.347e-3*std::cos(x11)+9.872e-3*std::sin(x12)+
              8.803e-3*std::sin(2*x12)-4.308e-3*std::sin(3*x12);
-        celmath::sincos(x11, sx11, cx11);
-        celmath::sincos(x4, sx4, cx4);
-        celmath::sincos(2*x4, s2x4, c2x4);
+        math::sincos(x11, sx11, cx11);
+        math::sincos(x4, sx4, cx4);
+        math::sincos(2*x4, s2x4, c2x4);
         dhl = (4.58e-4*sx11-6.42e-4*cx11-5.17e-4*std::cos(4*x12))*sx4-
               (3.47e-4*sx11+8.53e-4*cx11+5.17e-4*std::sin(4*x11))*cx4+
               4.03e-4*(std::cos(2*x12)*s2x4+std::sin(2*x12)*c2x4);
-        dhl = celmath::degToRad(dhl);
+        dhl = math::degToRad(dhl);
 
         dr = -25948+4985*std::cos(x10)-1230*cx4+3354*std::cos(x11)+904*std::cos(2*x12)+
              894*(std::cos(x12)-std::cos(3*x12))+(5795*cx4-1165*sx4+1388*c2x4)*sx11+
@@ -1214,33 +1214,33 @@ class NeptuneOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         computePlanetElements(t, pList.data(), pList.size());
 
-        map = celmath::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
+        map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
         //Compute perturbations
         s = gPlanetElements[p][3];
         auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
-        x8 = celmath::pfmod(1.46205+3.81337*t, TWOPI);
+        x8 = math::pfmod(1.46205+3.81337*t, TWOPI);
         x9 = 2*x8-x4;
-        celmath::sincos(x9, sx9, cx9);
-        celmath::sincos(2*x9, s2x9, c2x9);
+        math::sincos(x9, sx9, cx9);
+        math::sincos(2*x9, s2x9, c2x9);
         x10 = x8-x2;
         x11 = x8-x3;
         x12 = x8-x4;
         dml = (1.089e-3*x1-5.89833e-1)*sx9+(4.658e-3*x1-5.6094e-2)*cx9-
               2.4286e-2*s2x9;
-        dml = celmath::degToRad(dml);
+        dml = math::degToRad(dml);
         dp = 2.4039e-2*sx9-2.5303e-2*cx9+6.206e-3*s2x9-5.992e-3*c2x9;
-        dm = dml-(celmath::degToRad(dp)/s);
+        dm = dml-(math::degToRad(dp)/s);
         ds = 4389*sx9+1129*s2x9+4262*cx9+1089*c2x9;
         ds *= 1e-7;
         da = 8189*cx9-817*sx9+781*c2x9;
         da *= 1e-6;
-        celmath::sincos(2*x12, s2x12, c2x12);
-        celmath::sincos(x8, sx8, cx8);
+        math::sincos(2*x12, s2x12, c2x12);
+        math::sincos(x8, sx8, cx8);
         dl = -9.556e-3*std::sin(x10)-5.178e-3*std::sin(x11)+2.572e-3*s2x12-
              2.972e-3*c2x12*sx8-2.833e-3*s2x12*cx8;
         dhl = 3.36e-4*c2x12*sx8+3.64e-4*s2x12*cx8;
-        dhl = celmath::degToRad(dhl);
+        dhl = math::degToRad(dhl);
         dr = -40596+4992*std::cos(x10)+2744*std::cos(x11)+2044*std::cos(x12)+1051*c2x12;
         dr *= 1e-6;
 
@@ -1287,7 +1287,7 @@ class PlutoOrbit : public CachingOrbit, private PlanetOrbitMixin
 
         computePlanetElements(t, pList.data(), pList.size());
 
-        map = celmath::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
+        map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
         computePlanetCoords(p, map, da, dhl, dl, dm, dml, dr, ds,
                             eclLong, eclLat, distance);
@@ -1325,7 +1325,7 @@ Eigen::Vector3d ellipsePosition(double a, double e, double M)
 
     return Eigen::Vector3d(a * (std::cos(E) - e),
                            0.0,
-                           a * std::sqrt(1 - celmath::square(e)) * -std::sin(E));
+                           a * std::sqrt(1 - math::square(e)) * -std::sin(E));
 }
 
 
@@ -1358,30 +1358,30 @@ class PhobosOrbit : public CachingOrbit
 
         constexpr double dnode = 360.0 / Pnode;
         constexpr double dw    = 360.0 / Pw;
-        double node = celmath::degToRad(node0 + T * dnode);
-        double w    = celmath::degToRad(w0 + T * dw - T * dnode);
-        double M    = celmath::degToRad(M0 + t * n  - T * dw);
+        double node = math::degToRad(node0 + T * dnode);
+        double w    = math::degToRad(w0 + T * dw - T * dnode);
+        double M    = math::degToRad(M0 + t * n  - T * dw);
 
         Eigen::Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Eigen::Matrix3d Rorbit = (celmath::YRotation(node) *
-                                  celmath::XRotation(celmath::degToRad(i)) *
-                                  celmath::YRotation(w)).toRotationMatrix();
+        Eigen::Matrix3d Rorbit = (math::YRotation(node) *
+                                  math::XRotation(math::degToRad(i)) *
+                                  math::YRotation(w)).toRotationMatrix();
 
         // Rotate to the Earth's equatorial plane
-        constexpr double N = celmath::degToRad(refplane_RA);
-        constexpr double J = celmath::degToRad(90.0 - refplane_Dec);
-        Eigen::Matrix3d RLaplacian = (celmath::YRotation( N) *
-                                      celmath::XRotation( J) *
-                                      celmath::YRotation(-N)).toRotationMatrix();
+        constexpr double N = math::degToRad(refplane_RA);
+        constexpr double J = math::degToRad(90.0 - refplane_Dec);
+        Eigen::Matrix3d RLaplacian = (math::YRotation( N) *
+                                      math::XRotation( J) *
+                                      math::YRotation(-N)).toRotationMatrix();
 
         // Rotate to the Martian equatorial plane
-        constexpr double Nmars = celmath::degToRad(marspole_RA);
-        constexpr double Jmars = celmath::degToRad(90.0 - marspole_Dec);
-        Eigen::Matrix3d RMars_eq = (celmath::YRotation( Nmars) *
-                                    celmath::XRotation(-Jmars) *
-                                    celmath::YRotation(-Nmars)).toRotationMatrix();
+        constexpr double Nmars = math::degToRad(marspole_RA);
+        constexpr double Jmars = math::degToRad(90.0 - marspole_Dec);
+        Eigen::Matrix3d RMars_eq = (math::YRotation( Nmars) *
+                                    math::XRotation(-Jmars) *
+                                    math::YRotation(-Nmars)).toRotationMatrix();
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -1427,30 +1427,30 @@ class DeimosOrbit : public CachingOrbit
 
         constexpr double dnode = 360.0 / Pnode;
         constexpr double dw    = 360.0 / Pw;
-        double node = celmath::degToRad(node0 + T * dnode);
-        double w    = celmath::degToRad(w0 + T * dw - T * dnode);
-        double M    = celmath::degToRad(M0 + t * n  - T * dw);
+        double node = math::degToRad(node0 + T * dnode);
+        double w    = math::degToRad(w0 + T * dw - T * dnode);
+        double M    = math::degToRad(M0 + t * n  - T * dw);
 
         Eigen::Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Eigen::Matrix3d Rorbit = (celmath::YRotation(node) *
-                                  celmath::XRotation(celmath::degToRad(i)) *
-                                  celmath::YRotation(w)).toRotationMatrix();
+        Eigen::Matrix3d Rorbit = (math::YRotation(node) *
+                                  math::XRotation(math::degToRad(i)) *
+                                  math::YRotation(w)).toRotationMatrix();
 
         // Rotate to the Earth's equatorial plane
-        constexpr double N = celmath::degToRad(refplane_RA);
-        constexpr double J = celmath::degToRad(90 - refplane_Dec);
-        Eigen::Matrix3d RLaplacian = (celmath::YRotation( N) *
-                                      celmath::XRotation( J) *
-                                      celmath::YRotation(-N)).toRotationMatrix();
+        constexpr double N = math::degToRad(refplane_RA);
+        constexpr double J = math::degToRad(90 - refplane_Dec);
+        Eigen::Matrix3d RLaplacian = (math::YRotation( N) *
+                                      math::XRotation( J) *
+                                      math::YRotation(-N)).toRotationMatrix();
 
         // Rotate to the Martian equatorial plane
-        constexpr double Nmars = celmath::degToRad(marspole_RA);
-        constexpr double Jmars = celmath::degToRad(90 - marspole_Dec);
-        Eigen::Matrix3d RMars_eq = (celmath::YRotation( Nmars) *
-                                    celmath::XRotation(-Jmars) *
-                                    celmath::YRotation(-Nmars)).toRotationMatrix();
+        constexpr double Nmars = math::degToRad(marspole_RA);
+        constexpr double Jmars = math::degToRad(90 - marspole_Dec);
+        Eigen::Matrix3d RMars_eq = (math::YRotation( Nmars) *
+                                    math::XRotation(-Jmars) *
+                                    math::YRotation(-Nmars)).toRotationMatrix();
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -1467,19 +1467,19 @@ class DeimosOrbit : public CachingOrbit
         double a = 1.56828e-4 * astro::KM_PER_AU;
         double n = 285.161888;
         double e = 0.0004;
-        double gamma = celmath::degToRad(1.79);
-        double theta = celmath::degToRad(240.38 - 0.01801 * d);
+        double gamma = math::degToRad(1.79);
+        double theta = math::degToRad(240.38 - 0.01801 * d);
 
-        double h = celmath::degToRad(196.55 - 0.01801 * d);
-        double L = celmath::degToRad(28.96 + n * d - 0.27 * std::sin(h));
-        double P = celmath::degToRad(111.7 + 0.01798 * d);
+        double h = math::degToRad(196.55 - 0.01801 * d);
+        double L = math::degToRad(28.96 + n * d - 0.27 * std::sin(h));
+        double P = math::degToRad(111.7 + 0.01798 * d);
 
         // N and J give the orientation of the Laplacian plane with respect
         // to the Earth's equator and equinox.
         //    N - longitude of ascending node
         //    J - inclination
-        double N = celmath::degToRad(46.37 - 0.0014 * D);
-        double J = celmath::degToRad(36.62 + 0.0008 * D);
+        double N = math::degToRad(46.37 - 0.0014 * D);
+        double J = math::degToRad(36.62 + 0.0008 * D);
 
         // Compute the mean anomaly
         double M = L - P;
@@ -1492,24 +1492,24 @@ class DeimosOrbit : public CachingOrbit
 
         // Compute the position in the orbital plane (y = 0)
         double x = a * (std::cos(E) - e);
-        double z = a * std::sqrt(1 - celmath::square(e)) * -std::sin(E);
+        double z = a * std::sqrt(1 - math::square(e)) * -std::sin(E);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Eigen::Matrix3d Rorbit     = (celmath::YRotation(theta) *
-                                      celmath::XRotation(gamma) *
-                                      celmath::YRotation(P - theta));
+        Eigen::Matrix3d Rorbit     = (math::YRotation(theta) *
+                                      math::XRotation(gamma) *
+                                      math::YRotation(P - theta));
 
-        Eigen::Matrix3d RLaplacian = (celmath::YRotation( N) *
-                                      celmath::XRotation(-J) *
-                                      celmath::YRotation(-N));
+        Eigen::Matrix3d RLaplacian = (math::YRotation( N) *
+                                      math::XRotation(-J) *
+                                      math::YRotation(-N));
 
         double marspole_RA  = 317.681;
         double marspole_Dec =  52.886;
-        double Nm = celmath::degToRad(marspole_RA + 90);
-        double Jm = celmath::degToRad(90 - marspole_Dec);
-        Eigen::Matrix3d RMars_eq   = (celmath::YRotation( Nm) *
-                                      celmath::XRotation( Jm) *
-                                      celmath::YRotation(-Nm));
+        double Nm = math::degToRad(marspole_RA + 90);
+        double Jm = math::degToRad(90 - marspole_Dec);
+        Eigen::Matrix3d RMars_eq   = (math::YRotation( Nm) *
+                                      math::XRotation( Jm) *
+                                      math::YRotation(-Nm));
 
         // Celestia wants the position of a satellite with respect to the
         // equatorial plane of the planet it orbits.
@@ -1537,7 +1537,7 @@ class DeimosOrbit : public CachingOrbit
 };
 
 
-constexpr double JupAscendingNode = celmath::degToRad(22.203);
+constexpr double JupAscendingNode = math::degToRad(22.203);
 
 class IoOrbit : public CachingOrbit
 {
@@ -1576,8 +1576,8 @@ class IoOrbit : public CachingOrbit
               - 1.15e-3*std::sin(2*(l1 - 2*l2 + w2)) + 8.9e-4*std::sin(p2 - p4)
               + 8.5e-4*std::sin(l1 + p3 - 2*LPEJ - 2*G) + 8.3e-4*std::sin(w2 - w3)
               + 5.3e-4*std::sin(psi - w2);
-        sigma = celmath::pfmod(sigma, 360.0);
-        sigma = celmath::degToRad(sigma);
+        sigma = math::pfmod(sigma, 360.0);
+        sigma = math::degToRad(sigma);
         L = l1 + sigma;
 
         // Calculate periodic terms for the tangent of the latitude
@@ -1596,7 +1596,7 @@ class IoOrbit : public CachingOrbit
 
         T = (jd - 2433282.423) / 36525.0;
         P = 1.3966626*T + 3.088e-4*T*T;
-        L += celmath::degToRad(P);
+        L += math::degToRad(P);
 
         L += JupAscendingNode;
 
@@ -1663,8 +1663,8 @@ class EuropaOrbit : public CachingOrbit
               - 4.3e-4*std::sin(l1 - p3) + 4.1e-4*std::sin(5*(l2 - l3))
               + 4.1e-4*std::sin(p4 - LPEJ) + 3.2e-4*std::sin(w2 - w3)
               + 3.2e-4*std::sin(2*(l3 - G - LPEJ));
-        sigma = celmath::pfmod(sigma, 360.0);
-        sigma = celmath::degToRad(sigma);
+        sigma = math::pfmod(sigma, 360.0);
+        sigma = math::degToRad(sigma);
         L = l2 + sigma;
 
         // Calculate periodic terms for the tangent of the latitude
@@ -1686,7 +1686,7 @@ class EuropaOrbit : public CachingOrbit
 
         T = (jd - 2433282.423) / 36525.0;
         P = 1.3966626*T + 3.088e-4*T*T;
-        L += celmath::degToRad(P);
+        L += math::degToRad(P);
 
         L += JupAscendingNode;
 
@@ -1756,8 +1756,8 @@ class GanymedeOrbit : public CachingOrbit
               + 2.6e-4*std::sin(l3 - LPEJ - G) + 2.4e-4*std::sin(l2 - 3*l3 + 2*l4)
               + 2.1e-4*std::sin(2*(l3 - LPEJ - G)) - 2.1e-4*std::sin(l3 - p2)
               + 1.7e-4*std::sin(l3 - p3);
-        sigma = celmath::pfmod(sigma, 360.0);
-        sigma = celmath::degToRad(sigma);
+        sigma = math::pfmod(sigma, 360.0);
+        sigma = math::degToRad(sigma);
         L = l3 + sigma;
 
         //Calculate periodic terms for the tangent of the latitude
@@ -1779,7 +1779,7 @@ class GanymedeOrbit : public CachingOrbit
 
         T = (jd - 2433282.423) / 36525.0;
         P = 1.3966626*T + 3.088e-4*T*T;
-        L += celmath::degToRad(P);
+        L += math::degToRad(P);
 
         L += JupAscendingNode;
 
@@ -1878,8 +1878,8 @@ class CallistoOrbit : public CachingOrbit
             - 1.9e-4*std::sin(2*l4 - p3 - p4)
             - 1.8e-4*std::sin(l4 - p4 + G)
             - 1.6e-4*std::sin(l4 + p3 - 2*LPEJ - 2*G);
-        sigma = celmath::pfmod(sigma, 360.0);
-        sigma = celmath::degToRad(sigma);
+        sigma = math::pfmod(sigma, 360.0);
+        sigma = math::degToRad(sigma);
         L = l4 + sigma;
 
         //Calculate periodic terms for the tangent of the latitude
@@ -1917,7 +1917,7 @@ class CallistoOrbit : public CachingOrbit
 
         T = (jd - 2433282.423) / 36525.0;
         P = 1.3966626*T + 3.088e-4*T*T;
-        L += celmath::degToRad(P);
+        L += math::degToRad(P);
 
         L += JupAscendingNode;
 
@@ -1985,9 +1985,9 @@ Eigen::Vector3d SaturnMoonPosition(double lam, double gam, double Om, double r)
     double u = lam - Om;
     double w = Om - SatAscendingNode;
 
-    u = celmath::degToRad(u);
-    w = celmath::degToRad(w);
-    gam = -celmath::degToRad(gam);
+    u = math::degToRad(u);
+    w = math::degToRad(w);
+    gam = -math::degToRad(gam);
     r = r * SaturnRadius;
 
     // Corrections for Celestia's coordinate system
@@ -1996,13 +1996,13 @@ Eigen::Vector3d SaturnMoonPosition(double lam, double gam, double Om, double r)
 
     double cu;
     double su;
-    celmath::sincos(u, su, cu);
+    math::sincos(u, su, cu);
     double cw;
     double sw;
-    celmath::sincos(w, sw, cw);
+    math::sincos(w, sw, cw);
     double cgam;
     double sgam;
-    celmath::sincos(gam, sgam, cgam);
+    math::sincos(gam, sgam, cgam);
 
     double x = r * (cu * cw - su * sw * cgam);
     double y = r * su * sgam;
@@ -2030,13 +2030,13 @@ void OuterSaturnMoonParams(double a, double e, double i,
     double g = Om_ - SatAscendingNode;
     double a1 = sinD(i) * sinD(g);
     double a2 = c1 * sinD(i) * cosD(g) - s1 * cosD(i);
-    double u = celmath::radToDeg(std::atan2(a1, a2));
+    double u = math::radToDeg(std::atan2(a1, a2));
     double h = c1 * sinD(i) - s1 * cosD(i) * cosD(g);
-    double psi = celmath::radToDeg(std::atan2(s1 * sinD(g), h));
+    double psi = math::radToDeg(std::atan2(s1 * sinD(g), h));
 
-    C = celmath::radToDeg(C);
+    C = math::radToDeg(C);
     lam = lam_ + C + u - g - psi;
-    gam = celmath::radToDeg(std::asin(std::sqrt(celmath::square(a1) + celmath::square(a2))));
+    gam = math::radToDeg(std::asin(std::sqrt(math::square(a1) + math::square(a2))));
     r = a * (1 - e * e) / (1 + e * cosD(M + C));
     w = SatAscendingNode + u;
 }
@@ -2224,8 +2224,8 @@ class RheaOrbit : public CachingOrbit
         double p_ = 342.7 + 10.057 * t2;
         double a1 = 0.000265 * sinD(p_) + 0.01 * sinD(W4);
         double a2 = 0.000265 * cosD(p_) + 0.01 * cosD(W4);
-        double e = std::sqrt(celmath::square(a1) + celmath::square(a2));
-        double p = celmath::radToDeg(std::atan2(a1, a2));
+        double e = std::sqrt(math::square(a1) + math::square(a2));
+        double p = math::radToDeg(std::atan2(a1, a2));
         double N = 345 - 10.057 * t2;
         double lam_ = 359.244 + 79.69004720 * t1 + 0.086754 * sinD(N);
         double i = 28.0362 + 0.346898 * cosD(N) + 0.01930 * cosD(W3);
@@ -2276,8 +2276,8 @@ class TitanOrbit : public CachingOrbit
         double a1 = sinD(W7) * sinD(Om_ - W8);
         double a2 = cosD(W7) * sinD(i_) - sinD(W7) * cosD(i_) * cosD(Om_ - W8);
         double g0 = 102.8623;
-        double psi = celmath::radToDeg(std::atan2(a1, a2));
-        double s = std::sqrt(celmath::square(a1) + celmath::square(a2));
+        double psi = math::radToDeg(std::atan2(a1, a2));
+        double s = std::sqrt(math::square(a1) + math::square(a2));
         double g = W4 - Om_ - psi;
 
         // Three successive approximations will always be enough
@@ -2292,12 +2292,12 @@ class TitanOrbit : public CachingOrbit
         double q = 2 * (W5 - om);
         double b1 = sinD(i_) * sinD(Om_ - W8);
         double b2 = cosD(W7) * sinD(i_) * cosD(Om_ - W8) - sinD(W7) * cosD(i_);
-        double theta = celmath::radToDeg(std::atan2(b1, b2)) + W8;
+        double theta = math::radToDeg(std::atan2(b1, b2)) + W8;
         double e = e_ + 0.002778797 * e_ * cosD(q);
         double p = om + 0.159215 * sinD(q);
         double u = 2 * W5 - 2 * theta + psi;
-        double h = 0.9375 * celmath::square(e_) * sinD(q) + 0.1875 * celmath::square(s) * sinD(2 * (W5 - theta));
-        double lam_ = L - 0.254744 * (e1 * sinD(W6) + 0.75 * celmath::square(e1) * sinD(2 * W6) + h);
+        double h = 0.9375 * math::square(e_) * sinD(q) + 0.1875 * math::square(s) * sinD(2 * (W5 - theta));
+        double lam_ = L - 0.254744 * (e1 * sinD(W6) + 0.75 * math::square(e1) * sinD(2 * W6) + h);
         double i = i_ + 0.031843 * s * cosD(u);
         double Om = Om_ + (0.031843 * s * sinD(u)) / sinD(i_);
         double a = 20.216193;
@@ -2428,10 +2428,10 @@ class IapetusOrbit : public CachingOrbit
         double e_ = 0.028298 + 0.001156 * t11;
         double om0 = 352.91 + 11.71 * t11;
         double mu = 76.3852 + 4.53795125 * t10;
-        double i_ = 18.4602 - 0.9518 * t11 - 0.072 * celmath::square(t11) +
-            0.0054 * celmath::cube(t11);
-        double Om_ = 143.198 - 3.919 * t11 + 0.116 * celmath::square(t11) +
-            0.008 * celmath::cube(t11);
+        double i_ = 18.4602 - 0.9518 * t11 - 0.072 * math::square(t11) +
+            0.0054 * math::cube(t11);
+        double Om_ = 143.198 - 3.919 * t11 + 0.116 * math::square(t11) +
+            0.008 * math::cube(t11);
         double l = mu - om0;
         double g = om0 - Om_ - psi;
         double g1 = om0 - Om_ - phi;
@@ -2591,7 +2591,7 @@ class UranianSatelliteOrbit : public CachingOrbit
             double w = z_theta[i] * t + z_phi[i];
             double sw;
             double cw;
-            celmath::sincos(w, sw, cw);
+            math::sincos(w, sw, cw);
             a0 += z_k[i] * cw;
             a1 += z_k[i] * sw;
         }
@@ -2603,17 +2603,17 @@ class UranianSatelliteOrbit : public CachingOrbit
             double w = zeta_theta[i] * t + zeta_phi[i];
             double sw;
             double cw;
-            celmath::sincos(w, sw, cw);
+            math::sincos(w, sw, cw);
             b0 += zeta_k[i] * cw;
             b1 += zeta_k[i] * sw;
         }
 
-        double e = std::sqrt(celmath::square(a0) + celmath::square(a1));
+        double e = std::sqrt(math::square(a0) + math::square(a1));
         double p = std::atan2(a1, a0);
-        double gamma = 2.0 * std::asin(std::sqrt(celmath::square(b0) + celmath::square(b1)));
+        double gamma = 2.0 * std::asin(std::sqrt(math::square(b0) + math::square(b1)));
         double theta = std::atan2(b1, b0);
 
-        L += celmath::degToRad(174.99);
+        L += math::degToRad(174.99);
 
         // Now that we have all the orbital elements, compute the position
         double M = L - p;
@@ -2625,11 +2625,11 @@ class UranianSatelliteOrbit : public CachingOrbit
             ecc = M + e * std::sin(ecc);
 
         double x = a * (std::cos(ecc) - e);
-        double z = a * std::sqrt(1 - celmath::square(e)) * -std::sin(ecc);
+        double z = a * std::sqrt(1 - math::square(e)) * -std::sin(ecc);
 
-        Eigen::Matrix3d R = (celmath::YRotation(theta) *
-                             celmath::XRotation(gamma) *
-                             celmath::YRotation(p - theta)).toRotationMatrix();
+        Eigen::Matrix3d R = (math::YRotation(theta) *
+                             math::XRotation(gamma) *
+                             math::YRotation(p - theta)).toRotationMatrix();
         return R * Eigen::Vector3d(x, 0, z);
     }
 };
@@ -2739,14 +2739,14 @@ class TritonOrbit : public CachingOrbit
 
         // Compute the position of Triton in its orbital plane
         constexpr double a = 354800;                // Semi-major axis (488.49")
-        constexpr double n = celmath::degToRad(61.2588532);  // mean motion
-        constexpr double L0 = celmath::degToRad(200.913);
+        constexpr double n = math::degToRad(61.2588532);  // mean motion
+        constexpr double L0 = math::degToRad(200.913);
         double L  = L0 + n * t;
 
         double E = L;   // Triton's orbit is circular, so E = mean anomaly
         double sinE;
         double cosE;
-        celmath::sincos(E, sinE, cosE);
+        math::sincos(E, sinE, cosE);
         Eigen::Vector3d p(a * cosE, a * sinE, 0.0);
 
         // Transform to the invariable plane:
@@ -2754,21 +2754,21 @@ class TritonOrbit : public CachingOrbit
         //   theta is the angle from the intersection of the invariable plane
         //      with the Earth equatorial plane of 1950.0 to the ascending node
         //      of the orbit on the invariable plane.
-        constexpr double gamma = celmath::degToRad(158.996);
-        double theta = celmath::degToRad(151.401 + 0.57806 * t / 365.25);
-        Eigen::Quaterniond toInvariable = celmath::XRotation(-gamma) * celmath::ZRotation(-theta);
+        constexpr double gamma = math::degToRad(158.996);
+        double theta = math::degToRad(151.401 + 0.57806 * t / 365.25);
+        Eigen::Quaterniond toInvariable = math::XRotation(-gamma) * math::ZRotation(-theta);
 
         // Compute the RA and declination of the pole of the fixed reference plane
         // (epoch is J2000.0)
         double T = (jd - astro::J2000) / 36525;
-        double N = celmath::degToRad(359.28 + 54.308 * T);
+        double N = math::degToRad(359.28 + 54.308 * T);
         double refplane_RA  = 298.72 + 2.58 * std::sin(N) - 0.04 * std::sin(2 * N);
         double refplane_Dec =  42.63 - 1.90 * std::cos(N) - 0.01 * std::cos(2 * N);
 
         // Rotate to the Earth's equatorial plane
-        double Nr = celmath::degToRad(refplane_RA - 90.0);
-        double Jr = celmath::degToRad(90.0 - refplane_Dec);
-        Eigen::Quaterniond toEarthEq = celmath::XRotation(Jr) * celmath::ZRotation(Nr);
+        double Nr = math::degToRad(refplane_RA - 90.0);
+        double Jr = math::degToRad(90.0 - refplane_Dec);
+        Eigen::Quaterniond toEarthEq = math::XRotation(Jr) * math::ZRotation(Nr);
 
         Eigen::Quaterniond q = toEarthEq * toInvariable;
         //Quatd q = toInvariable * toEarthEq;
@@ -3093,7 +3093,7 @@ class JPLEphOrbit : public CachingOrbit
         }
 
         // Rotate from the J2000 mean equator to the ecliptic
-        pos = celmath::XRotation(-astro::J2000Obliquity) * pos;
+        pos = math::XRotation(-astro::J2000Obliquity) * pos;
 
         // Convert to Celestia's coordinate system
         return Eigen::Vector3d(pos.x(), pos.z(), -pos.y());

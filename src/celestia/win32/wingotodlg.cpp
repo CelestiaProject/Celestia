@@ -17,9 +17,9 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 static bool GetDialogFloat(HWND hDlg, int id, float& f)
 {
@@ -125,8 +125,8 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                 {
                     sim->gotoSelectionLongLat(5.0,
                                               distance,
-                                              degToRad(longitude),
-                                              degToRad(latitude),
+                                              math::degToRad(longitude),
+                                              math::degToRad(latitude),
                                               Vector3f::UnitY());
                 }
                 else

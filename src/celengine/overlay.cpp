@@ -19,8 +19,8 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace celmath;
 using namespace celestia::engine;
+namespace math = celestia::math;
 
 Overlay::Overlay(Renderer& r) :
     layout(make_unique<TextLayout>(r.getScreenDpi())),
@@ -33,7 +33,7 @@ void Overlay::begin()
     layout->setLayoutDirectionFollowTextAlignment(true);
     layout->setScreenDpi(renderer.getScreenDpi());
 
-    projection = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    projection = math::Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     // ModelView is Identity
 
     Renderer::PipelineState ps;

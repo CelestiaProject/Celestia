@@ -576,7 +576,7 @@ void CommandSet::processInstantaneous(ExecutionEnvironment& env)
     else if (compareIgnoringCase(name, "FOV") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getSimulation()->getActiveObserver()->setFOV(celmath::degToRad(static_cast<float>(value)));
+            env.getSimulation()->getActiveObserver()->setFOV(math::degToRad(static_cast<float>(value)));
     }
     else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
     {

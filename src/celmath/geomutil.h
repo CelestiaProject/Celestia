@@ -18,7 +18,7 @@
 #include <celcompat/numbers.h>
 #include "mathlib.h"
 
-namespace celmath
+namespace celestia::math
 {
 
 template<class T>
@@ -249,4 +249,4 @@ Ortho2D(T left, T right, T bottom, T top)
     return Ortho(left, right, bottom, top, static_cast<T>(-1), static_cast<T>(1));
 }
 
-} // namespace celmath
+} // namespace celestia::math

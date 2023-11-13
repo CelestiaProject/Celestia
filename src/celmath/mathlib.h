@@ -17,7 +17,7 @@
 
 #include <celcompat/numbers.h>
 
-namespace celmath
+namespace celestia::math
 {
 template<typename T> inline void sincos(T angle, T& s, T& c)
 {
@@ -54,11 +54,13 @@ template<> inline void sincos(double angle, double& s, double& c)
 // Apple's version does not have __sincosl
 #endif
 
-#ifndef HAVE_LERP
+#if __cplusplus < 202002L
 template<typename T> constexpr T lerp(T t, T a, T b)
 {
     return a + t * (b - a);
 }
+#else
+using lerp = std::lerp;
 #endif
 
 template<typename T> inline constexpr T degToRad(T d)
@@ -97,10 +99,9 @@ template<typename T> T pfmod(T x, T y)
     using std::abs, std::floor;
 
     T quotient = floor(abs(x / y));
-    if (x < 0.0)
-        return x + (quotient + 1) * y;
-    else
-        return x - quotient * y;
+    return x < 0.0
+        ? x + (quotient + static_cast<T>(1)) * y
+        : x - quotient * y;
 }
 
 template<typename T> inline constexpr T circleArea(T r)
@@ -228,9 +229,9 @@ template<typename T> bool planeCircleIntersection(const Eigen::Matrix<T, 3, 1>& 
 
     return true;
 }
-} // namespace celmath
+} // namespace celestia::math
 
 constexpr long double operator"" _deg (long double deg)
 {
-    return celmath::degToRad(deg);
+    return celestia::math::degToRad(deg);
 }

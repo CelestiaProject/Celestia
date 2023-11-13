@@ -33,10 +33,10 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 using namespace celestia::win32;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 static vector<Eclipse> eclipseList;
 
@@ -390,7 +390,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
 
                 double distance = target.radius() * 4.0;
                 sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                                  celmath::YRot90Conjugate<double> * celmath::XRot90Conjugate<double>,
+                                  math::YRot90Conjugate<double> * math::XRot90Conjugate<double>,
                                   2.5);
             }
             break;

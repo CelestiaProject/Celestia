@@ -8,7 +8,7 @@
 #include <celcompat/numbers.h>
 #include "mathlib.h"
 
-namespace celmath
+namespace celestia::math
 {
 extern float turbulence(const Eigen::Vector2f& p, float freq);
 extern float turbulence(const Eigen::Vector3f& p, float freq);

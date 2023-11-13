@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace celmath;
 using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
@@ -778,7 +777,7 @@ static int observer_setfov(lua_State* l)
 
     Observer* obs = this_observer(l);
     double fov = celx.safeGetNumber(2, AllErrors, "Argument to observer:setfov() must be a number");
-    if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
+    if ((fov >= 0.001_deg) && (fov <= 120.0_deg))
     {
         obs->setFOV((float) fov);
         celx.appCore(AllErrors)->setZoomFromFOV();

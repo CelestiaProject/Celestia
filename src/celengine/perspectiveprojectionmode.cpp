@@ -22,27 +22,27 @@ PerspectiveProjectionMode::PerspectiveProjectionMode(float width, float height, 
 
 Eigen::Matrix4f PerspectiveProjectionMode::getProjectionMatrix(float nearZ, float farZ, float zoom) const
 {
-    return celmath::Perspective(celmath::radToDeg(getFOV(zoom)), width / height, nearZ, farZ);
+    return math::Perspective(math::radToDeg(getFOV(zoom)), width / height, nearZ, farZ);
 }
 
 float PerspectiveProjectionMode::getMinimumFOV() const
 {
-    return celmath::degToRad(0.001f);
+    return math::degToRad(0.001f);
 }
 
 float PerspectiveProjectionMode::getMaximumFOV() const
 {
-    return celmath::degToRad(120.0f);
+    return math::degToRad(120.0f);
 }
 
 float PerspectiveProjectionMode::getFOV(float zoom) const
 {
-    return celmath::PerspectiveFOV(height, screenDpi, distanceToScreen) / zoom;
+    return math::PerspectiveFOV(height, screenDpi, distanceToScreen) / zoom;
 }
 
 float PerspectiveProjectionMode::getZoom(float fov) const
 {
-    return celmath::PerspectiveFOV(height, screenDpi, distanceToScreen) / fov;
+    return math::PerspectiveFOV(height, screenDpi, distanceToScreen) / fov;
 }
 
 float PerspectiveProjectionMode::getPixelSize(float zoom) const
@@ -52,13 +52,13 @@ float PerspectiveProjectionMode::getPixelSize(float zoom) const
 
 float PerspectiveProjectionMode::getFieldCorrection(float zoom) const
 {
-    return 2.0f * standardFOV / (celmath::radToDeg(getFOV(zoom)) + standardFOV);
+    return 2.0f * standardFOV / (math::radToDeg(getFOV(zoom)) + standardFOV);
 }
 
-celmath::Frustum
+math::Frustum
 PerspectiveProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
 {
-    return celmath::Frustum(getFOV(zoom), width / height, nearZ, farZ);
+    return math::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
 double PerspectiveProjectionMode::getViewConeAngleMax(float zoom) const
@@ -94,7 +94,7 @@ void PerspectiveProjectionMode::configureShaderManager(ShaderManager *shaderMana
 
 bool PerspectiveProjectionMode::project(const Eigen::Vector3f& pos, const Eigen::Matrix4f /*existingModelViewMatrix*/, const Eigen::Matrix4f /*existingProjectionMatrix*/, const Eigen::Matrix4f existingMVPMatrix, const int viewport[4], Eigen::Vector3f& result) const
 {
-    return celmath::ProjectPerspective(pos, existingMVPMatrix, viewport, result);
+    return math::ProjectPerspective(pos, existingMVPMatrix, viewport, result);
 }
 
 }

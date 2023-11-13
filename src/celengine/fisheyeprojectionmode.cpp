@@ -15,7 +15,7 @@
 namespace celestia::engine
 {
 
-constexpr float fisheyeFOV = celmath::degToRad(179.99f);
+constexpr float fisheyeFOV = math::degToRad(179.99f);
 
 FisheyeProjectionMode::FisheyeProjectionMode(float width, float height, int screenDpi) :
     ProjectionMode(width, height, 0, screenDpi)
@@ -25,7 +25,7 @@ FisheyeProjectionMode::FisheyeProjectionMode(float width, float height, int scre
 Eigen::Matrix4f FisheyeProjectionMode::getProjectionMatrix(float nearZ, float farZ, float /*zoom*/) const
 {
     float aspectRatio = width / height;
-    return celmath::Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearZ, farZ);
+    return math::Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearZ, farZ);
 }
 
 float FisheyeProjectionMode::getMinimumFOV() const
@@ -58,10 +58,10 @@ float FisheyeProjectionMode::getFieldCorrection(float /*zoom*/) const
     return 2.0f - 2000.0f / (height / (static_cast<float>(screenDpi) / 25.4f / 3.78f) + 1000.0f); // larger window height = more stars to display
 }
 
-celmath::Frustum
+math::Frustum
 FisheyeProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
 {
-    return celmath::Frustum(getFOV(zoom), width / height, nearZ, farZ);
+    return math::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
 double FisheyeProjectionMode::getViewConeAngleMax(float /*zoom*/) const
@@ -99,7 +99,7 @@ void FisheyeProjectionMode::configureShaderManager(ShaderManager *shaderManager)
 
 bool FisheyeProjectionMode::project(const Eigen::Vector3f& pos, const Eigen::Matrix4f existingModelViewMatrix, const Eigen::Matrix4f existingProjectionMatrix, const Eigen::Matrix4f /*existingMVPMatrix*/, const int viewport[4], Eigen::Vector3f& result) const
 {
-    return celmath::ProjectFisheye(pos, existingModelViewMatrix, existingProjectionMatrix, viewport, result);
+    return math::ProjectFisheye(pos, existingModelViewMatrix, existingProjectionMatrix, viewport, result);
 }
 
 }

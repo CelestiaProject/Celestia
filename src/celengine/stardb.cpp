@@ -42,6 +42,7 @@ using celestia::util::GetLogger;
 using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 // Enable the below to switch back to parsing coordinates as float to match
 // legacy behaviour. This shouldn't be necessary since stars.dat stores
@@ -1218,8 +1219,8 @@ StarDatabaseBuilder::createStar(Star* star,
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = celmath::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA;
-                dec = celmath::radToDeg(std::asin(v.z()));
+                ra = math::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA;
+                dec = math::radToDeg(std::asin(v.z()));
             }
         }
 

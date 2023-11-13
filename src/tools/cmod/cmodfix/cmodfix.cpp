@@ -28,6 +28,7 @@
 #include "pathmanager.h"
 
 using celestia::util::CreateLogger;
+namespace math = celestia::math;
 
 std::string inputFilename;
 std::string outputFilename;
@@ -195,7 +196,7 @@ int main(int argc, char* argv[])
             if (genNormals)
             {
                 cmod::Mesh newMesh = cmodtools::GenerateNormals(mesh,
-                                                                celmath::degToRad(smoothAngle),
+                                                                math::degToRad(smoothAngle),
                                                                 weldVertices);
                 if (newMesh.getVertexCount() == 0)
                 {
