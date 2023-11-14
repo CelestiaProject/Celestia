@@ -2687,17 +2687,17 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     auto mainFont = config->fonts.mainFont.empty()
                 ? LoadFontHelper(renderer, "DejaVuSans.ttf,12")
                 : LoadFontHelper(renderer, config->fonts.mainFont);
-    if (mainFont)
+    if (mainFont != nullptr)
         hud->font(mainFont);
     else
         std::cout << _("Error loading font; text will not be visible.\n");
 
     if (auto titleFont = config->fonts.titleFont.empty() ? nullptr : LoadFontHelper(renderer, config->fonts.titleFont);
-        titleFont)
+        titleFont != nullptr)
     {
         hud->titleFont(titleFont);
     }
-    else
+    else if (mainFont != nullptr)
     {
         hud->titleFont(mainFont);
     }
