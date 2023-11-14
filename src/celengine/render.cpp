@@ -90,7 +90,6 @@
 using namespace Eigen;
 using namespace std;
 using namespace celestia;
-using namespace celmath;
 using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
@@ -571,7 +570,7 @@ void Renderer::resize(int width, int height)
     windowHeight = height;
     projectionMode->setSize(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
     // glViewport(windowWidth, windowHeight);
-    m_orthoProjMatrix = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    m_orthoProjMatrix = math::Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
 }
 
 void Renderer::setFieldOfView(float _fov)
@@ -1071,7 +1070,7 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
 void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            double t,
                            const Quaterniond& cameraOrientation,
-                           const Frustum& frustum,
+                           const math::Frustum& frustum,
                            float nearDist,
                            float farDist)
 {
@@ -1410,7 +1409,7 @@ static void
 setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
                            const vector<LightSource>& primaryIlluminators)
 {
-    constexpr float au2 = square(astro::kilometersToAU(1.0f));
+    constexpr float au2 = math::square(astro::kilometersToAU(1.0f));
 
     for (auto& i : secondaryIlluminators)
     {
@@ -1493,7 +1492,7 @@ void Renderer::render(const Observer& observer,
 
     // Compute the size of a pixel
     float zoom = observer.getZoom();
-    setFieldOfView(radToDeg(getProjectionMode()->getFOV(zoom)));
+    setFieldOfView(math::radToDeg(getProjectionMode()->getFOV(zoom)));
     cosViewConeAngle = projectionMode->getViewConeAngleMax(zoom);
     pixelSize = getProjectionMode()->getPixelSize(zoom);
 
@@ -1512,7 +1511,7 @@ void Renderer::render(const Observer& observer,
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
-    Frustum xfrustum(frustum);
+    math::Frustum xfrustum(frustum);
     xfrustum.transform(getCameraOrientationf().conjugate().toRotationMatrix());
 
     // Set up the projection and modelview matrices.
@@ -1608,7 +1607,7 @@ void Renderer::render(const Observer& observer,
     Vector3f observerPosLY = -observer.getPosition().offsetFromLy(Vector3f::Zero());
 
     Matrix4f projection = getProjectionMatrix();
-    Matrix4f modelView = getModelViewMatrix() * celmath::translate(observerPosLY);
+    Matrix4f modelView = getModelViewMatrix() * math::translate(observerPosLY);
 
     Matrices asterismMVP = { &projection, &modelView };
 
@@ -1804,7 +1803,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 
 
 static void renderSphereUnlit(const RenderInfo& ri,
-                              const Frustum& frustum,
+                              const math::Frustum& frustum,
                               const Matrices &m,
                               Renderer *r)
 {
@@ -1852,7 +1851,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
 
 
 static void renderCloudsUnlit(const RenderInfo& ri,
-                              const Frustum& frustum,
+                              const math::Frustum& frustum,
                               Texture *cloudTex,
                               float cloudTexOffset,
                               const Matrices &m,
@@ -1899,7 +1898,7 @@ Renderer::locationsToAnnotations(const Body& body,
     Vector3f vn  = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     Vector3d viewNormal = vn.cast<double>();
 
-    Ellipsoidd bodyEllipsoid(semiAxes.cast<double>());
+    math::Ellipsoidd bodyEllipsoid(semiAxes.cast<double>());
 
     Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
 
@@ -2082,7 +2081,7 @@ setupObjectLighting(const vector<LightSource>& suns,
         for (auto& illuminator : secondaryIlluminators)
         {
             Vector3d toIllum = illuminator.position_v - objpos;  // reflector-to-object vector
-            float distSquared = (float) toIllum.squaredNorm() / square(illuminator.radius);
+            float distSquared = (float) toIllum.squaredNorm() / math::square(illuminator.radius);
 
             if (distSquared > 0.01f)
             {
@@ -2327,7 +2326,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             // Include a fudge factor to eliminate overaggressive clipping
             // due to limited floating point precision
-            frustumFarPlane = (float) sqrt(square(d) - square(eradius)) * 1.1f;
+            frustumFarPlane = std::sqrt(math::square(d) - math::square(eradius)) * 1.1f;
         }
         else
         {
@@ -2343,8 +2342,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 // If there's an atmosphere, we need to move the far plane
                 // out so that the clouds and atmosphere shell aren't clipped.
                 float atmosphereRadius = eradius + atmosphereHeight;
-                frustumFarPlane += (float) sqrt(square(atmosphereRadius) -
-                                                square(eradius));
+                frustumFarPlane += (float) sqrt(math::square(atmosphereRadius) - math::square(eradius));
             }
         }
     }
@@ -2374,7 +2372,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 cloudNormalMap = atmosphere->cloudNormalMap.find(textureResolution);
         }
         if (atmosphere->cloudSpeed != 0.0f)
-            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
+            cloudTexOffset = (float) (-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
     }
 
     if (obj.geometry == InvalidResource)
@@ -2484,7 +2482,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
             else
             {
-                Eigen::Matrix4f modelView = celmath::rotate(getCameraOrientationf());
+                Eigen::Matrix4f modelView = math::rotate(getCameraOrientationf());
                 Matrices mvp = { m.projection, &modelView };
                 m_atmosphereRenderer->renderLegacy(
                     *atmosphere,
@@ -2503,7 +2501,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (cloudTex != nullptr)
         {
             float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-            Matrix4f cmv = celmath::scale(planetMV, cloudScale);
+            Matrix4f cmv = math::scale(planetMV, cloudScale);
             Matrices mvp = { m.projection, &cmv };
 
             // If we're beneath the cloud level, render the interior of
@@ -2636,8 +2634,8 @@ bool Renderer::testEclipse(const Body& receiver,
         Vector3d lightToCasterDir = posCaster - lightPosition;
         Vector3d receiverToCasterDir = posReceiver - posCaster;
 
-        double dist = distance(posReceiver,
-                               Eigen::ParametrizedLine<double, 3>(posCaster, lightToCasterDir));
+        double dist = math::distance(posReceiver,
+                                     Eigen::ParametrizedLine<double, 3>(posCaster, lightToCasterDir));
         if (dist < R && lightToCasterDir.dot(receiverToCasterDir) > 0.0)
         {
             Vector3d sunDir = lightToCasterDir.normalized();
@@ -2655,7 +2653,7 @@ bool Renderer::testEclipse(const Body& receiver,
             // 1. For annular eclipses and transits, it is less than 1.
             shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
-            shadow.maxDepth = std::min(1.0f, square(appOccluderRadius / appSunRadius));
+            shadow.maxDepth = std::min(1.0f, math::square(appOccluderRadius / appSunRadius));
             shadow.caster = &caster;
 
             // Ignore transits that don't produce a visible shadow.
@@ -3177,11 +3175,11 @@ static float luminosityAtOpposition(float sunLuminosity,
     double power = astro::SOLAR_POWER * sunLuminosity;
 
     // Compute the irradiance at the body's distance from the star
-    double irradiance = power / sphereArea(distanceFromSun * 1000);
+    double irradiance = power / math::sphereArea(distanceFromSun * 1000);
 
     // Compute the total energy hitting the planet; assume an albedo of 1.0, so
     // reflected energy = incident energy.
-    double incidentEnergy = irradiance * circleArea(objRadius * 1000);
+    double incidentEnergy = irradiance * math::circleArea(objRadius * 1000);
 
     // Compute the luminosity (i.e. power relative to solar power)
     return (float) (incidentEnergy / astro::SOLAR_POWER);
@@ -3281,7 +3279,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 
 
 void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
-                                const Frustum& viewFrustum,
+                                const math::Frustum& viewFrustum,
                                 const Vector3d& viewPlaneNormal,
                                 const Vector3d& frameCenter,
                                 const FrameTree* tree,
@@ -3293,7 +3291,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
     Matrix3f viewMat = getCameraOrientationf().toRotationMatrix();
     Vector3f viewMatZ = viewMat.row(2);
     double invCosViewAngle = 1.0 / cosViewConeAngle;
-    double sinViewAngle = sqrt(1.0 - square(cosViewConeAngle));
+    double sinViewAngle = sqrt(1.0 - math::square(cosViewConeAngle));
 
     unsigned int nChildren = tree != nullptr ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
@@ -3465,7 +3463,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::Frustum::Outside)
                 {
                     traverseSubtree = true;
                 }
@@ -3507,7 +3505,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
 void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
                                const Quaterniond& observerOrientation,
-                               const Frustum& viewFrustum,
+                               const math::Frustum& viewFrustum,
                                const FrameTree* tree,
                                double now)
 {
@@ -3598,7 +3596,7 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
             if (traverseSubtree)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::Frustum::Outside)
                 {
                     buildOrbitLists(astrocentricObserverPos,
                                     observerOrientation,
@@ -3635,12 +3633,12 @@ static Color getBodyLabelColor(int classification)
     }
 }
 
-void Renderer::buildLabelLists(const Frustum& viewFrustum,
+void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
                                double now)
 {
     int labelClassMask = translateLabelModeToClassMask(labelMode);
     Body* lastPrimary = nullptr;
-    Sphered primarySphere;
+    math::Sphered primarySphere;
 
     for (auto &ri : renderList)
     {
@@ -3650,7 +3648,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
         if ((ri.body->getOrbitClassification() & labelClassMask) == 0)
             continue;
 
-        if (viewFrustum.testSphere(ri.position, ri.radius) == Frustum::Outside)
+        if (viewFrustum.testSphere(ri.position, ri.radius) == math::Frustum::Outside)
             continue;
 
         const Body* body = ri.body;
@@ -3701,7 +3699,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                              phase->orbit()->positionAtTime(now);
                 Vector3d v = ri.position.cast<double>() - p;
 
-                primarySphere = Sphered(v, primary->getRadius());
+                primarySphere = math::Sphered(v, primary->getRadius());
                 lastPrimary = primary;
             }
 
@@ -3792,10 +3790,10 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
 // a frustum with the specified aspect ratio (width/height) and vertical field of
 // view. We follow the convention used elsewhere and use units of degrees for
 // the field of view angle.
-static double calcMaxFOV(double fovY_degrees, double aspectRatio)
+static float calcMaxFOV(float fovY_degrees, float aspectRatio)
 {
-    double l = 1.0 / tan(degToRad(fovY_degrees / 2.0));
-    return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
+    float l = 1.0f / std::tan(math::degToRad(fovY_degrees * 0.5f));
+    return math::radToDeg(std::atan(std::sqrt(aspectRatio * aspectRatio + 1.0f) / l)) * 2.0f;
 }
 
 
@@ -3823,7 +3821,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
     starRenderer.glareVertexBuffer = glareVertexBuffer;
     starRenderer.fov               = fov;
-    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
+    starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
     starRenderer.faintestMag       = faintestMag;
@@ -3858,7 +3856,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starDB.findVisibleStars(starRenderer,
                             obsPos.cast<float>(),
                             getCameraOrientationf(),
-                            degToRad(fov),
+                            math::degToRad(fov),
                             getAspectRatio(),
                             faintestMagNight);
 
@@ -3925,7 +3923,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
                            cameraOrientation,
-                           degToRad(fov),
+                           math::degToRad(fov),
                            getAspectRatio(),
                            2 * faintestMagNight);
 
@@ -4092,7 +4090,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = celmath::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
+    Matrix4f mv = math::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
     Matrices mm = { m.projection, &mv };
 
     if (markerRep.symbol() == celestia::MarkerRepresentation::Crosshair)
@@ -4125,7 +4123,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
 {
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = celmath::translate(*m.modelview,
+    Matrix4f mv = math::translate(*m.modelview,
                                      std::trunc(a.position.x()) + hOffset + PixelOffset,
                                      std::trunc(a.position.y()) + vOffset + PixelOffset,
                                      depth);
@@ -4828,7 +4826,7 @@ Renderer::setShadowMapSize(unsigned size)
 }
 
 void
-Renderer::removeInvisibleItems(const Frustum &frustum)
+Renderer::removeInvisibleItems(const math::Frustum &frustum)
 {
     // Remove objects from the render list that lie completely outside the
     // view frustum.
@@ -4881,11 +4879,11 @@ Renderer::removeInvisibleItems(const Frustum &frustum)
 
         Vector3f center = getCameraOrientationf().toRotationMatrix() * ri.position;
         // Test the object's bounding sphere against the view frustum
-        if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
+        if (frustum.testSphere(center, cullRadius) != math::Frustum::Outside)
         {
             float nearZ = center.norm() - radius;
             float maxSpan = hypot((float) windowWidth, (float) windowHeight);
-            float nearZcoeff = cos(degToRad(fov / 2.0f)) * ((float) windowHeight / maxSpan);
+            float nearZcoeff = cos(math::degToRad(fov / 2.0f)) * ((float) windowHeight / maxSpan);
             nearZ = -nearZ * nearZcoeff;
 
             if (nearZ > -MinNearPlaneDistance)
@@ -4928,7 +4926,7 @@ Renderer::removeInvisibleItems(const Frustum &frustum)
                     // If there's a cloud layer, we need to move the
                     // far plane out so that the clouds aren't clipped
                     float cloudLayerRadius = eradius + cloudHeight;
-                    ri.farZ -= sqrt(square(cloudLayerRadius) - square(eradius));
+                    ri.farZ -= sqrt(math::square(cloudLayerRadius) - math::square(eradius));
                 }
             }
 
@@ -4951,13 +4949,13 @@ Renderer::removeInvisibleItems(const Frustum &frustum)
 bool
 Renderer::selectionToAnnotation(const Selection &sel,
                                 const Observer &observer,
-                                const Frustum &xfrustum,
+                                const math::Frustum &xfrustum,
                                 double jd)
 {
     Vector3d offset = sel.getPosition(jd).offsetFromKm(observer.getPosition());
 
     static celestia::MarkerRepresentation cursorRep(celestia::MarkerRepresentation::Crosshair);
-    if (xfrustum.testSphere(offset, sel.radius()) == Frustum::Outside)
+    if (xfrustum.testSphere(offset, sel.radius()) == math::Frustum::Outside)
         return false;
 
     double distance = offset.norm();
@@ -5045,7 +5043,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
 void
 Renderer::buildNearSystemsLists(const Universe &universe,
                                 const Observer &observer,
-                                const Frustum &xfrustum,
+                                const math::Frustum &xfrustum,
                                 double now)
 {
     UniversalCoord observerPos = observer.getPosition();
@@ -5298,7 +5296,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         // Render orbit paths
         if (!orbitPathList.empty())
         {
-            celmath::Frustum intervalFrustum = projectionMode->getFrustum(nearPlaneDistance, farPlaneDistance, observer.getZoom());
+            math::Frustum intervalFrustum = projectionMode->getFrustum(nearPlaneDistance, farPlaneDistance, observer.getZoom());
 
             // Scan through the list of orbits and render any that overlap this interval
             for (const auto& orbit : orbitPathList)

@@ -102,7 +102,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(.001f, .001f);
 
-    Eigen::Matrix4f projMat = celmath::Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
+    Eigen::Matrix4f projMat = math::Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
     Eigen::Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
     *lightMatrix = projMat * modelViewMat;
     prog->setMVPMatrices(projMat, modelViewMat);
@@ -149,7 +149,7 @@ GLRingRenderData::initializeLOD(int i, float innerRadius, float outerRadius, uns
     {
         float theta = angle * i / nSections; // NOSONAR
         float s, c;
-        celmath::sincos(theta, s, c);
+        math::sincos(theta, s, c);
 
         RingVertex vertex;
         // inner point
@@ -213,7 +213,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           unsigned int textureRes,
                           std::uint64_t renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
-                          const celmath::Frustum& frustum,
+                          const math::Frustum& frustum,
                           const Matrices &m,
                           Renderer* renderer)
 {
@@ -622,7 +622,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        unsigned int /*textureRes*/,
                        std::uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
-                       const celmath::Frustum& frustum,
+                       const math::Frustum& frustum,
                        const Matrices &m,
                        Renderer* renderer)
 {
@@ -800,7 +800,7 @@ void renderRings_GLSL(RingSystem& rings,
             // Calculate the radius of the ellipse at the incident angle of the
             // light on the ring plane + 90 degrees.
             float r = a * std::sqrt((1.0f - ecc2) /
-                                    (1.0f - ecc2 * celmath::square(cosAngle)));
+                                    (1.0f - ecc2 * math::square(cosAngle)));
 
             tScale *= a / r;
         }

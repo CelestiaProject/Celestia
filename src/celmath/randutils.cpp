@@ -6,7 +6,7 @@
 
 #include "randutils.h"
 
-namespace celmath
+namespace celestia::math
 {
 namespace
 {
@@ -224,4 +224,4 @@ std::mt19937& getRNG()
     static std::mt19937 rng = createRNG();
     return rng;
 }
-} // end namespace celmath
+} // end namespace celestia::math

@@ -23,10 +23,10 @@
 #include "common.h"
 
 using namespace Eigen;
-using namespace celmath;
 using namespace std;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 /* Definitions: Callbacks */
 static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button);
@@ -332,7 +332,7 @@ static gint eclipseGoto(GtkButton*, EclipseData* ed)
 
     double distance = target.radius() * 4.0;
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                      (celmath::YRot90Conjugate<double> * celmath::XRot90Conjugate<double>), 2.5);
+                      (math::YRot90Conjugate<double> * math::XRot90Conjugate<double>), 2.5);
 
     return TRUE;
 }

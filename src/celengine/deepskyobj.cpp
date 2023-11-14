@@ -18,6 +18,7 @@
 #include "hash.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 Eigen::Vector3d DeepSkyObject::getPosition() const
 {
@@ -74,14 +75,10 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                          double& distanceToPicker,
                          double& cosAngleToBoundCenter) const
 {
-    if (isVisible())
-        return celmath::testIntersection(ray,
-                                         celmath::Sphered(position, static_cast<double>(radius)),
-                                         distanceToPicker,
-                                         cosAngleToBoundCenter);
-    else
-        return false;
-
+    return isVisible() && math::testIntersection(ray,
+                                                 math::Sphered(position, static_cast<double>(radius)),
+                                                 distanceToPicker,
+                                                 cosAngleToBoundCenter);
 }
 
 
@@ -106,7 +103,7 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     auto axis = params->getVector3<double>("Axis").value_or(Eigen::Vector3d::UnitX());
     auto angle = params->getAngle<double>("Angle").value_or(0.0);
 
-    setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(angle)),
+    setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(math::degToRad(angle)),
                                                         axis.cast<float>().normalized())));
 
     setRadius(params->getLength<float>("Radius", astro::KM_PER_LY<double>).value_or(1.0f));

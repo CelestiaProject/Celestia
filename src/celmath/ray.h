@@ -12,7 +12,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace celmath
+namespace celestia::math
 {
 // Eigen 3.4 will support a transform method on ParametrizedLine, which may enable
 // removing at least one of the below overloads.
@@ -34,4 +34,4 @@ Eigen::ParametrizedLine<T, 3> transformRay(const Eigen::ParametrizedLine<T, 3>& 
     d.head(3) = line.direction();
     return Eigen::ParametrizedLine<T, 3>((m * o).head(3), (m * d).head(3));
 }
-} // end namespace celmath
+} // end namespace celestia::math

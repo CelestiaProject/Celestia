@@ -13,7 +13,7 @@
 #include <Eigen/Geometry>
 
 
-namespace celmath
+namespace celestia::math
 {
 
 class Frustum
@@ -60,4 +60,4 @@ private:
     bool infinite;
 };
 
-} // namespace celmath
+} // namespace celestia::math

@@ -73,7 +73,7 @@ struct SolveKeplerFunc2
     {
         double s;
         double c;
-        celmath::sincos(x, s, c);
+        math::sincos(x, s, c);
         return x + (M + ecc * s - x) / (1.0 - ecc * c);
     }
 };
@@ -90,13 +90,13 @@ struct SolveKeplerLaguerreConway
     {
         double s;
         double c;
-        celmath::sincos(x, s, c);
+        math::sincos(x, s, c);
         s *= ecc;
         c *= ecc;
         double f = x - s - M;
         double f1 = 1.0 - c;
         double f2 = s;
-        x += -5.0 * f / (f1 + celmath::sign(f1) * std::sqrt(std::abs(16.0 * f1 * f1 - 20.0 * f * f2)));
+        x += -5.0 * f / (f1 + math::sign(f1) * std::sqrt(std::abs(16.0 * f1 * f1 - 20.0 * f * f2)));
 
         return x;
     }
@@ -116,7 +116,7 @@ struct SolveKeplerLaguerreConwayHyp
         double f = s - x - M;
         double f1 = c - 1.0;
         double f2 = s;
-        x += -5.0 * f / (f1 + celmath::sign(f1) * std::sqrt(std::abs(16.0 * f1 * f1 - 20.0 * f * f2)));
+        x += -5.0 * f / (f1 + math::sign(f1) * std::sqrt(std::abs(16.0 * f1 * f1 - 20.0 * f * f2)));
 
         return x;
     }
@@ -274,14 +274,14 @@ EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double 
     meanAnomalyAtEpoch(_elements.meanAnomaly),
     period(_elements.period),
     epoch(_epoch),
-    orbitPlaneRotation((celmath::ZRotation(_elements.longAscendingNode) *
-                        celmath::XRotation(_elements.inclination) *
-                        celmath::ZRotation(_elements.argPericenter)).toRotationMatrix())
+    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
+                        math::XRotation(_elements.inclination) *
+                        math::ZRotation(_elements.argPericenter)).toRotationMatrix())
 {
     assert(eccentricity >= 0.0 && eccentricity < 1.0);
     assert(semiMajorAxis >= 0.0);
     assert(period != 0.0);
-    semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - celmath::square(eccentricity));
+    semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - math::square(eccentricity));
 }
 
 
@@ -295,20 +295,20 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
     if (eccentricity < 0.2)
     {
         // Low eccentricity, so use the standard iteration technique
-        return celmath::solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5).first;
+        return math::solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5).first;
     }
     if (eccentricity < 0.9)
     {
         // Higher eccentricity elliptical orbit; use a more complex but
         // much faster converging iteration.
-        return celmath::solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6).first;
+        return math::solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6).first;
     }
 
     // Extremely stable Laguerre-Conway method for solving Kepler's
     // equation.  Only use this for high-eccentricity orbits, as it
     // requires more calcuation.
-    double E = M + 0.85 * eccentricity * celmath::sign(std::sin(M));
-    return celmath::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
+    double E = M + 0.85 * eccentricity * math::sign(std::sin(M));
+    return math::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
 }
 
 
@@ -332,7 +332,7 @@ Eigen::Vector3d EllipticalOrbit::velocityAtE(double E, double meanMotion) const
 {
     double sinE;
     double cosE;
-    celmath::sincos(E, sinE, cosE);
+    math::sincos(E, sinE, cosE);
 
     double edot = meanMotion / (1.0 - eccentricity * cosE);
 
@@ -387,14 +387,14 @@ HyperbolicOrbit::HyperbolicOrbit(const astro::KeplerElements& _elements, double 
     eccentricity(_elements.eccentricity),
     meanAnomalyAtEpoch(_elements.meanAnomaly),
     epoch(_epoch),
-    orbitPlaneRotation((celmath::ZRotation(_elements.longAscendingNode) *
-                        celmath::XRotation(_elements.inclination) *
-                        celmath::ZRotation(_elements.argPericenter)).toRotationMatrix())
+    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
+                        math::XRotation(_elements.inclination) *
+                        math::ZRotation(_elements.argPericenter)).toRotationMatrix())
 {
     assert(eccentricity > 1.0);
     assert(semiMajorAxis <= 0.0);
     assert(_elements.period != 0.0);
-    semiMinorAxis = semiMajorAxis * std::sqrt(celmath::square(eccentricity) - 1.0);
+    semiMinorAxis = semiMajorAxis * std::sqrt(math::square(eccentricity) - 1.0);
     meanMotion = 2.0 * celestia::numbers::pi / _elements.period;
 
     // determine start and end epoch from when the object hits the bounding radius
@@ -415,7 +415,7 @@ double HyperbolicOrbit::eccentricAnomaly(double M) const
     if (M == 0.0)
         return 0.0;
     double E = std::log(2.0 * std::abs(M) / eccentricity + 1.85);
-    return std::copysign(celmath::solve_iteration_fixed(SolveKeplerLaguerreConwayHyp(eccentricity, std::abs(M)), E, 30).first, M);
+    return std::copysign(math::solve_iteration_fixed(SolveKeplerLaguerreConwayHyp(eccentricity, std::abs(M)), E, 30).first, M);
 }
 
 

@@ -22,8 +22,8 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace celmath;
 using celestia::render::LineRenderer;
+namespace math = celestia::math;
 
 
 /*! Construct a new reference mark that shows the outline of the
@@ -153,7 +153,7 @@ VisibleRegion::render(Renderer* renderer,
         double theta = (double) i / (double) (nSections) * 2.0 * celestia::numbers::pi;
         Vector3d w = cos(theta) * uAxis + sin(theta) * vAxis;
 
-        Vector3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        Vector3d toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         toCenter *= maxSemiAxis * scale;
         lr.addVertex(Vector3f(toCenter.cast<float>()));
     }

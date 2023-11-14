@@ -59,6 +59,7 @@
 #include <celutil/gettext.h>
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
@@ -107,9 +108,9 @@ findMaxEclipsePoint(const Eigen::Vector3d& toCasterDir,
                     double eclipsedBodyRadius)
 {
     double distance = 0.0;
-    bool intersect = celmath::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), toCasterDir),
-                                               celmath::Sphered(toReceiver, eclipsedBodyRadius),
-                                               distance);
+    bool intersect = math::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), toCasterDir),
+                                            math::Sphered(toReceiver, eclipsedBodyRadius),
+                                            distance);
 
     Eigen::Vector3d maxEclipsePoint;
     if (intersect)
@@ -524,7 +525,7 @@ EventFinder::slotViewNearEclipsed()
 
     Eigen::Vector3d up = activeEclipse->receiver->getEclipticToBodyFixed(now).conjugate() * Eigen::Vector3d::UnitY();
     Eigen::Vector3d viewerPos = maxEclipsePoint * 4.0; // 4 radii from center
-    Eigen::Quaterniond viewOrientation = celmath::LookAt(viewerPos, maxEclipsePoint, up);
+    Eigen::Quaterniond viewOrientation = math::LookAt(viewerPos, maxEclipsePoint, up);
 
     sim->setFrame(ObserverFrame::Ecliptical, receiver);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(viewerPos), viewOrientation, 5.0);
@@ -555,7 +556,7 @@ EventFinder::slotViewEclipsedSurface()
     Eigen::Vector3d up = maxEclipsePoint.normalized();
     // TODO: Select alternate up direction when eclipse is directly overhead
 
-    Eigen::Quaterniond viewOrientation = celmath::LookAt<double>(maxEclipsePoint, -toReceiver, up);
+    Eigen::Quaterniond viewOrientation = math::LookAt<double>(maxEclipsePoint, -toReceiver, up);
     Eigen::Vector3d v = maxEclipsePoint * 1.0001;
 
     sim->setFrame(ObserverFrame::Ecliptical, receiver);
@@ -584,7 +585,7 @@ EventFinder::slotViewOccluderSurface()
     Eigen::Vector3d toReceiverDir = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
 
     Eigen::Vector3d surfacePoint = toCasterDir * caster.radius() / toCasterDir.norm() * 1.0001;
-    Eigen::Quaterniond viewOrientation = celmath::LookAt<double>(surfacePoint, toReceiverDir, up);
+    Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
     sim->setFrame(ObserverFrame::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);
@@ -614,7 +615,7 @@ EventFinder::slotViewBehindOccluder()
     Eigen::Vector3d toReceiverDir = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
 
     Eigen::Vector3d surfacePoint = toCasterDir * caster.radius() / toCasterDir.norm() * 20.0;
-    Eigen::Quaterniond viewOrientation = celmath::LookAt<double>(surfacePoint, toReceiverDir, up);
+    Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
     sim->setFrame(ObserverFrame::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);

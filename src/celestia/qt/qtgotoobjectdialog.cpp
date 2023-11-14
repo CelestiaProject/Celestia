@@ -18,6 +18,7 @@
 #include <celmath/mathlib.h>
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),
@@ -89,8 +90,8 @@ GoToObjectDialog::on_buttonBox_accepted()
     {
         simulation->gotoSelectionLongLat(5.0,
                                          distance,
-                                         celmath::degToRad(longitude),
-                                         celmath::degToRad(latitude),
+                                         math::degToRad(longitude),
+                                         math::degToRad(latitude),
                                          Eigen::Vector3f::UnitY());
     }
     else

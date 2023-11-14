@@ -11,7 +11,7 @@
 
 #include <Eigen/Core>
 
-namespace celmath
+namespace celestia::math
 {
 
 template<class T> class Sphere
@@ -42,4 +42,4 @@ template<class T> class Sphere
 
 using Spheref = Sphere<float>;
 using Sphered = Sphere<double>;
-} // namespace celmath
+} // namespace celestia::math

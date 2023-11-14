@@ -57,7 +57,7 @@ namespace
 constexpr double OneMiInKm = 1.609344;
 constexpr double OneFtInKm = 0.0003048;
 constexpr double OneLbInKg = 0.45359237;
-constexpr double OneLbPerFt3InKgPerM3 = OneLbInKg / celmath::cube(OneFtInKm * 1000.0);
+constexpr double OneLbPerFt3InKgPerM3 = OneLbInKg / math::cube(OneFtInKm * 1000.0);
 
 constexpr float
 KelvinToCelsius(float kelvin)
@@ -276,7 +276,7 @@ displayApparentDiameter(Overlay& overlay, double radius, double distance)
     if (distance < radius)
         return;
 
-    double arcSize = celmath::radToDeg(std::asin(radius / distance) * 2.0);
+    double arcSize = math::radToDeg(std::asin(radius / distance) * 2.0);
 
     // Only display the arc size if it's less than 160 degrees and greater
     // than one second--otherwise, it's probably not interesting data.
@@ -339,8 +339,8 @@ displayRADec(Overlay& overlay, const Eigen::Vector3d& v)
         theta = -celestia::numbers::pi * 0.5 - theta;
 
 
-    displayRightAscension(overlay, celmath::radToDeg(phi));
-    displayDeclination(overlay, celmath::radToDeg(theta));
+    displayRightAscension(overlay, math::radToDeg(phi));
+    displayDeclination(overlay, math::radToDeg(theta));
 }
 
 // Display nicely formatted planetocentric/planetographic coordinates.
@@ -374,8 +374,8 @@ displayPlanetocentricCoords(Overlay& overlay,
         else if (longitude > 0.0f)
             ewHemi = 'E';
 
-        lon = static_cast<float>(std::abs(celmath::radToDeg(longitude)));
-        lat = static_cast<float>(std::abs(celmath::radToDeg(latitude)));
+        lon = static_cast<float>(std::abs(math::radToDeg(longitude)));
+        lat = static_cast<float>(std::abs(math::radToDeg(latitude)));
     }
     else
     {
@@ -393,10 +393,10 @@ displayPlanetocentricCoords(Overlay& overlay,
         else
             ewHemi = 'W';
 
-        lon = -celmath::radToDeg(longitude);
+        lon = -math::radToDeg(longitude);
         if (lon < 0.0)
             lon += 360.0;
-        lat = std::abs(celmath::radToDeg(latitude));
+        lat = std::abs(math::radToDeg(latitude));
     }
 
     if (showAltitude)
@@ -566,7 +566,7 @@ displayPlanetInfo(Overlay& overlay,
             sunVec.normalize();
             double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.printf(_("Phase angle: %.1f%s\n"), celmath::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            overlay.printf(_("Phase angle: %.1f%s\n"), math::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
         }
     }
 
@@ -906,7 +906,7 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     if (std::abs(std::abs(sim->getTimeScale()) - 1.0) < 1e-6)
     {
-        if (celmath::sign(sim->getTimeScale()) == 1)
+        if (math::sign(sim->getTimeScale()) == 1)
             m_overlay->print(_("Real time"));
         else
             m_overlay->print(_("-Real time"));
@@ -997,7 +997,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
 
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
-    float fov = celmath::radToDeg(activeObserver->getFOV());
+    float fov = math::radToDeg(activeObserver->getFOV());
     m_overlay->printf(_("FOV: %s (%.2fx)\n"), angleToStr(fov), activeObserver->getZoom());
     m_overlay->endText();
     m_overlay->restorePos();
@@ -1109,7 +1109,7 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
             // the geocentric values will match the apparent values for observers
             // near the Earth.
             Eigen::Vector3d vEarth = sel.getPosition(sim->getTime()).offsetFromKm(Selection(earth).getPosition(sim->getTime()));
-            vEarth = celmath::XRotation(astro::J2000Obliquity) * vEarth;
+            vEarth = math::XRotation(astro::J2000Obliquity) * vEarth;
             displayRADec(*m_overlay, vEarth);
         }
     }

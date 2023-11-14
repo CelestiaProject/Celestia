@@ -98,7 +98,7 @@ SampledOrientation::SampledOrientation(std::vector<double>&& _sampleTimes,
     // to Celestia's coordinate system
     for (Eigen::Quaternionf& rotation : rotations)
     {
-        rotation *= celmath::XRot90<float>;
+        rotation *= math::XRot90<float>;
     }
 }
 

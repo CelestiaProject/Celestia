@@ -50,6 +50,7 @@ using std::size_t;
 using std::strncmp;
 
 using celestia::util::GetLogger;
+namespace math = celestia::math;
 
 namespace
 {
@@ -696,7 +697,7 @@ void ReadAtmosphere(Body* body,
     if (auto cloudHeight = atmosData->getLength<float>("CloudHeight"); cloudHeight.has_value())
         atmosphere->cloudHeight = *cloudHeight;
     if (auto cloudSpeed = atmosData->getNumber<float>("CloudSpeed"); cloudSpeed.has_value())
-        atmosphere->cloudSpeed = celmath::degToRad(*cloudSpeed);
+        atmosphere->cloudSpeed = math::degToRad(*cloudSpeed);
 
     if (const std::string* cloudTexture = atmosData->getString("CloudMap"); cloudTexture != nullptr)
     {

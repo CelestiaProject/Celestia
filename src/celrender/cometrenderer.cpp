@@ -144,7 +144,7 @@ CometRenderer::render(const Body &body,
         {
             Eigen::Vector3d p = star->getPosition(now).offsetFromKm(observer.getPosition());
             float distanceFromSun = static_cast<float>((pos.cast<double>() - p).norm());
-            float irradiance = star->getBolometricLuminosity() / celmath::square(distanceFromSun);
+            float irradiance = star->getBolometricLuminosity() / math::square(distanceFromSun);
 
             if (irradiance > irradiance_max)
             {
@@ -223,7 +223,7 @@ CometRenderer::render(const Body &body,
         {
             float theta = 2.0f * numbers::pi_v<float> * static_cast<float>(j) / static_cast<float>(nTailSlices);
             float s, c;
-            celmath::sincos(theta, s, c);
+            math::sincos(theta, s, c);
             CometTailVertex& vtx = m_vertices[i * nTailSlices + j];
             vtx.normal = u * (s * w1) + w * (c * w1) + v * w0;
             vtx.normal.normalize();
@@ -248,7 +248,7 @@ CometRenderer::render(const Body &body,
     m_renderer.setPipelineState(ps);
 
     m_prog->use();
-    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::translate(pos));
+    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * math::translate(pos));
     m_prog->vec3Param("color") = body.getCometTailColor().toVector3();
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;

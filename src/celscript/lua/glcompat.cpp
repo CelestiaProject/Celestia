@@ -17,8 +17,10 @@
 #include <fmt/format.h>
 #include <celengine/glsupport.h>
 #include <celengine/shadermanager.h>    // CelestiaGLProgram::*Index
-#include <celmath/vecgl.h>              // celmath::translate
+#include <celmath/vecgl.h>              // math::translate
 #include "glcompat.h"
+
+namespace math = celestia::math;
 
 namespace
 {
@@ -393,7 +395,7 @@ void fpcTranslatef(float x, float y, float z) noexcept
         assert(g_modelViewPosition < MODELVIEW_STACK_DEPTH);
         if (g_modelViewPosition < MODELVIEW_STACK_DEPTH)
         {
-            result = celmath::translate(g_modelViewStack[g_modelViewPosition], x, y, z);
+            result = math::translate(g_modelViewStack[g_modelViewPosition], x, y, z);
             g_modelViewStack[g_modelViewPosition] = result;
         }
         break;
@@ -402,7 +404,7 @@ void fpcTranslatef(float x, float y, float z) noexcept
         assert(g_projectionPosition < PROJECTION_STACK_DEPTH);
         if (g_projectionPosition < PROJECTION_STACK_DEPTH)
         {
-            result = celmath::translate(g_projectionStack[g_projectionPosition], x, y, z);
+            result = math::translate(g_projectionStack[g_projectionPosition], x, y, z);
             g_projectionStack[g_projectionPosition] = result;
         }
         break;

@@ -4,8 +4,6 @@
 #include "rectangle.h"
 #include "render.h"
 
-using namespace celmath;
-
 OverlayImage::OverlayImage(fs::path f, Renderer *r) :
     filename(std::move(f)),
     renderer(r)

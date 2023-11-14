@@ -29,6 +29,7 @@ using namespace std;
 using namespace celestia::win32;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 static const int MinListStars = 10;
 static const int MaxListStars = 500;
@@ -297,7 +298,7 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
         {
             float d0 = (sortInfo->pos - star0->getPosition()).norm();
             float d1 = (sortInfo->pos - star1->getPosition()).norm();
-            return (int) celmath::sign(d0 - d1);
+            return (int) math::sign(d0 - d1);
         }
 
     case 2:
@@ -308,12 +309,12 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
                 d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition()).norm();
             if (d1 < 1.0f)
                 d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
-            return (int) celmath::sign(star0->getApparentMagnitude(d0) -
-                                       star1->getApparentMagnitude(d1));
+            return (int) math::sign(star0->getApparentMagnitude(d0) -
+                                    star1->getApparentMagnitude(d1));
         }
 
     case 3:
-        return (int) celmath::sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
+        return (int) math::sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
 
     case 4:
         return strcmp(star0->getSpectralType(), star1->getSpectralType());

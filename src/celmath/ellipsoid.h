@@ -11,7 +11,7 @@
 
 #include <Eigen/Core>
 
-namespace celmath
+namespace celestia::math
 {
 template<class T>
 class Ellipsoid
@@ -61,4 +61,4 @@ class Ellipsoid
 
 using Ellipsoidf = Ellipsoid<float>;
 using Ellipsoidd = Ellipsoid<double>;
-} // namespace celmath
+} // namespace celestia::math

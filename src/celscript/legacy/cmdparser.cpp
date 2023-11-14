@@ -381,8 +381,8 @@ ParseResult parseGotoLongLatCommand(const Hash& paramList, const ScriptMaps&)
 
     return std::make_unique<CommandGotoLongLat>(t,
                                                 distance,
-                                                static_cast<float>(celmath::degToRad(longitude)),
-                                                static_cast<float>(celmath::degToRad(latitude)),
+                                                static_cast<float>(math::degToRad(longitude)),
+                                                static_cast<float>(math::degToRad(latitude)),
                                                 up.cast<float>());
 }
 
@@ -397,9 +397,9 @@ ParseResult parseGotoLocCommand(const Hash& paramList, const ScriptMaps&)
         auto xrot = paramList.getNumber<double>("xrot").value_or(0.0);
         auto yrot = paramList.getNumber<double>("yrot").value_or(0.0);
         auto zrot = paramList.getNumber<double>("zrot").value_or(0.0);
-        auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(celmath::degToRad(xrot), Eigen::Vector3d::UnitX()) *
-                                           Eigen::AngleAxisd(celmath::degToRad(yrot), Eigen::Vector3d::UnitY()) *
-                                           Eigen::AngleAxisd(celmath::degToRad(zrot), Eigen::Vector3d::UnitZ()));
+        auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(math::degToRad(xrot), Eigen::Vector3d::UnitX()) *
+                                           Eigen::AngleAxisd(math::degToRad(yrot), Eigen::Vector3d::UnitY()) *
+                                           Eigen::AngleAxisd(math::degToRad(zrot), Eigen::Vector3d::UnitZ()));
         return std::make_unique<CommandGotoLocation>(t, *pos, rotation);
     }
 
@@ -542,7 +542,7 @@ ParseResult parseOrbitCommand(const Hash& paramList, const ScriptMaps&)
     auto axis     = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
     return std::make_unique<CommandOrbit>(duration,
                                           axis.cast<float>(),
-                                          static_cast<float>(celmath::degToRad(rate)));
+                                          static_cast<float>(math::degToRad(rate)));
 }
 
 
@@ -553,7 +553,7 @@ ParseResult parseRotateCommand(const Hash& paramList, const ScriptMaps&)
     auto axis     = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
     return std::make_unique<CommandRotate>(duration,
                                            axis.cast<float>(),
-                                           static_cast<float>(celmath::degToRad(rate)));
+                                           static_cast<float>(math::degToRad(rate)));
 }
 
 
@@ -591,7 +591,7 @@ ParseResult parseSetOrientationCommand(const Hash& paramList, const ScriptMaps&)
     if (auto angle = paramList.getNumber<double>("angle"); angle.has_value())
     {
         auto axis = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
-        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(*angle)),
+        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(math::degToRad(*angle)),
                                                                 axis.cast<float>().normalized()));
         return std::make_unique<CommandSetOrientation>(orientation);
     }

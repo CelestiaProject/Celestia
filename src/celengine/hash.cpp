@@ -16,6 +16,7 @@
 #include "value.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 namespace util = celestia::util;
 
 // Define these here: at declaration the vector member contains an incomplete type
@@ -150,7 +151,7 @@ std::optional<Eigen::Quaternionf> AssociativeArray::getRotation(std::string_view
                          static_cast<float>(*z));
 
     double angScale = astro::getAngleScale(v->getAngleUnit()).value_or(1.0);
-    auto angle = static_cast<float>(celmath::degToRad(*w * angScale));
+    auto angle = static_cast<float>(math::degToRad(*w * angScale));
 
     return std::make_optional<Eigen::Quaternionf>(Eigen::AngleAxisf(angle, axis.normalized()));
 }

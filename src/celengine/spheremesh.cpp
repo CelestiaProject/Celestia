@@ -21,6 +21,7 @@
 
 #include "spheremesh.h"
 
+namespace math = celestia::math;
 
 namespace {
 
@@ -38,7 +39,7 @@ float SphereMeshParameters::value(float u, float v) const
                                         std::sin(phi),
                                         std::cos(phi) * std::sin(theta))
                       + offset;
-    return celmath::fractalsum(p, octaves) * featureHeight;
+    return math::fractalsum(p, octaves) * featureHeight;
 }
 
 SphereMesh::SphereMesh(const Eigen::Vector3f& size,

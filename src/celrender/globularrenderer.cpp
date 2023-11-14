@@ -300,7 +300,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
      *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
      */
 
-    auto& rng = celmath::getRNG();
+    auto& rng = math::getRNG();
     rng.seed(1312);
     while (i < kGlobularPoints)
     {
@@ -313,7 +313,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * parameters and variables!
          */
 
-        float uu = celmath::RealDists<float>::Unit(rng);
+        float uu = math::RealDists<float>::Unit(rng);
 
         /* First step: eta distributed as inverse power distribution (~1/Z^2)
          * that majorizes the exact King profile. Compute eta in terms of uniformly
@@ -336,15 +336,15 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * desired King form 'prob'!
          */
 
-        if (celmath::RealDists<float>::Unit(rng) < prob / cH)
+        if (math::RealDists<float>::Unit(rng) < prob / cH)
         {
             /* Generate 3d points of globular cluster stars in polar coordinates:
              * Distribution in eta (<=> r) according to King's profile.
              * Uniform distribution on any spherical surface for given eta.
              * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
              */
-            float u = celmath::RealDists<float>::SignedUnit(rng);
-            float theta = celmath::RealDists<float>::SignedFullAngle(rng);
+            float u = math::RealDists<float>::SignedUnit(rng);
+            float theta = math::RealDists<float>::SignedFullAngle(rng);
             float sthetu2 = std::sin(theta) * std::sqrt(1.0f - u * u);
 
             // x,y,z points within -0.5..+0.5, as required for consistency:
@@ -641,7 +641,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
     glActiveTexture(GL_TEXTURE1);
     globularFormManager->getCenterTex(obj.globular->getFormId())->bind();
 
-    Eigen::Matrix4f mv = celmath::translate(m_renderer.getModelViewMatrix(), obj.offset);
+    Eigen::Matrix4f mv = math::translate(m_renderer.getModelViewMatrix(), obj.offset);
     Eigen::Matrix4f pr;
     if (obj.nearZ != 0.0f && obj.farZ != 0.0f)
         m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ, m_zoom);

@@ -21,6 +21,7 @@
 using namespace std::literals::string_view_literals;
 
 using celestia::engine::GalacticFormManager;
+namespace math = celestia::math;
 
 struct GalaxyTypeName
 {
@@ -123,10 +124,10 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   getRadius()*(galacticForm->scale.z() + kRadiusCorrection));
     Eigen::Matrix3d rotation = getOrientation().cast<double>().toRotationMatrix();
 
-    return celmath::testIntersection(
-        celmath::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
-                              rotation),
-        celmath::Ellipsoidd(ellipsoidAxes),
+    return math::testIntersection(
+        math::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
+                           rotation),
+        math::Ellipsoidd(ellipsoidAxes),
         distanceToPicker,
         cosAngleToBoundCenter);
 }

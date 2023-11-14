@@ -20,9 +20,9 @@
 #include "common.h"
 
 using namespace Eigen;
-using namespace celmath;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 /* Declarations: Callbacks */
 static int changeGotoUnits(GtkButton* w, gpointer choice);
@@ -214,8 +214,8 @@ static void GotoObject(gotoObjectData* gotoObjectDlg)
             {
                 simulation->gotoSelectionLongLat(5.0,
                                                  distance,
-                                                 degToRad(longitude),
-                                                 degToRad(latitude),
+                                                 math::degToRad(longitude),
+                                                 math::degToRad(latitude),
                                                  Vector3f::UnitY());
             }
             else

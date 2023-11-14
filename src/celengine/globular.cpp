@@ -26,6 +26,7 @@
 #include "globular.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
@@ -61,7 +62,7 @@ float Globular::getHalfMassRadius() const
     // Aproximation to the half-mass radius r_h [ly]
     // (~ 20% accuracy)
 
-    return std::tan(celmath::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm()) * std::pow(10.0f, 0.6f * c - 0.4f);
+    return std::tan(math::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm()) * std::pow(10.0f, 0.6f * c - 0.4f);
 }
 
 std::string Globular::getDescription() const
@@ -86,11 +87,11 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
      * when they are drawn.
      */
     Eigen::Vector3d p = getPosition();
-    return celmath::testIntersection(celmath::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
-                                                           getOrientation().cast<double>().toRotationMatrix()),
-                                     celmath::Sphered(getRadius() * (1.0f + kRadiusCorrection)),
-                                     distanceToPicker,
-                                     cosAngleToBoundCenter);
+    return math::testIntersection(math::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
+                                                     getOrientation().cast<double>().toRotationMatrix()),
+                                  math::Sphered(getRadius() * (1.0f + kRadiusCorrection)),
+                                  distanceToPicker,
+                                  cosAngleToBoundCenter);
 }
 
 bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
@@ -132,7 +133,7 @@ void Globular::recomputeTidalRadius()
     // Convert the core radius from arcminutes to light years
     // Compute the tidal radius in light years
 
-    float coreRadiusLy = std::tan(celmath::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm());
+    float coreRadiusLy = std::tan(math::degToRad(r_c / 60.0f)) * static_cast<float>(getPosition().norm());
     tidalRadius = coreRadiusLy * std::pow(10.0f, c);
 }
 

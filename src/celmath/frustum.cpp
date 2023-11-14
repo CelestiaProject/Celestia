@@ -14,7 +14,7 @@
 #include "frustum.h"
 
 
-namespace celmath
+namespace celestia::math
 {
 
 Frustum::Frustum(float fov, float aspectRatio, float n) :

@@ -37,7 +37,7 @@ namespace celestia::astro
 namespace
 {
 
-const Eigen::Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = celmath::XRotation(-J2000Obliquity);
+const Eigen::Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = math::XRotation(-J2000Obliquity);
 const Eigen::Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
 
 const Eigen::Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
@@ -56,9 +56,9 @@ constexpr double GALACTIC_INCLINATION = 90.0 - 27.1283361;
 constexpr double GALACTIC_LONGITUDE_AT_NODE = 32.932;
 
 const Eigen::Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
-    celmath::ZRotation(celmath::degToRad(GALACTIC_NODE)) *
-    celmath::XRotation(celmath::degToRad(GALACTIC_INCLINATION)) *
-    celmath::ZRotation(celmath::degToRad(-GALACTIC_LONGITUDE_AT_NODE));
+    math::ZRotation(math::degToRad(GALACTIC_NODE)) *
+    math::XRotation(math::degToRad(GALACTIC_INCLINATION)) *
+    math::ZRotation(math::degToRad(-GALACTIC_LONGITUDE_AT_NODE));
 const Eigen::Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
 
 // Difference in seconds between Terrestrial Time and International
@@ -229,10 +229,10 @@ equatorialToCelestialCart(float ra, float dec, float distance)
     double phi = (dec / 90.0 - 1.0) * pi / 2;
     double stheta;
     double ctheta;
-    celmath::sincos(theta, stheta, ctheta);
+    math::sincos(theta, stheta, ctheta);
     double sphi;
     double cphi;
-    celmath::sincos(phi, sphi, cphi);
+    math::sincos(phi, sphi, cphi);
     auto x = static_cast<float>(ctheta * sphi * distance);
     auto y = static_cast<float>(cphi * distance);
     auto z = static_cast<float>(-stheta * sphi * distance);
@@ -251,10 +251,10 @@ equatorialToCelestialCart(double ra, double dec, double distance)
     double phi = (dec / 90.0 - 1.0) * pi / 2;
     double stheta;
     double ctheta;
-    celmath::sincos(theta, stheta, ctheta);
+    math::sincos(theta, stheta, ctheta);
     double sphi;
     double cphi;
-    celmath::sincos(phi, sphi, cphi);
+    math::sincos(phi, sphi, cphi);
     double x = ctheta * sphi * distance;
     double y = cphi * distance;
     double z = -stheta * sphi * distance;
@@ -908,10 +908,10 @@ StateVectorToElements(const Eigen::Vector3d& r,
 
     double s_nu;
     double c_nu;
-    celmath::sincos(nu, s_nu, c_nu);
+    math::sincos(nu, s_nu, c_nu);
 
     // compute mean anomaly
-    double e2 = celmath::square(result.eccentricity);
+    double e2 = math::square(result.eccentricity);
     if (result.eccentricity < 1.0)
     {
         double E = std::atan2(std::sqrt(1.0 - e2) * s_nu,
@@ -927,7 +927,7 @@ StateVectorToElements(const Eigen::Vector3d& r,
 
     // compute semimajor axis
     result.semimajorAxis = 1.0 / (2.0 / rNorm - v.squaredNorm() / mu);
-    result.period = 2.0 * celestia::numbers::pi * std::sqrt(celmath::cube(std::abs(result.semimajorAxis)) / mu);
+    result.period = 2.0 * celestia::numbers::pi * std::sqrt(math::cube(std::abs(result.semimajorAxis)) / mu);
 
     return result;
 }

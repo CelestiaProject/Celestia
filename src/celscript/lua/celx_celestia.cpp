@@ -45,8 +45,6 @@ using namespace celestia;
 using namespace celestia::scripts;
 using celestia::util::GetLogger;
 
-namespace util = celestia::util;
-
 extern const char* KbdCallback;
 extern const char* CleanupCallback;
 

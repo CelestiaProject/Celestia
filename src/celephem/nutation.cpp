@@ -129,19 +129,19 @@ constexpr std::array IAU2000BNutationTable =
 
 constexpr double arcsecToRad(double as)
 {
-    return celmath::degToRad(as / 3600.0);
+    return math::degToRad(as / 3600.0);
 }
 
 
 constexpr double milliarcsecToRad(double as)
 {
-    return celmath::degToRad(as / 3600000.0);
+    return math::degToRad(as / 3600000.0);
 }
 
 
 constexpr double microarcsecToRad(double as)
 {
-    return celmath::degToRad(as / 3600000000.0);
+    return math::degToRad(as / 3600000000.0);
 }
 
 } // end unnamed namespace
@@ -211,7 +211,7 @@ Nutation_IAU2000B(double T)
                       Om * ent.OmMult);
         double S;
         double C;
-        celmath::sincos(arg, S, C);
+        math::sincos(arg, S, C);
 
         longitude += (ent.l1 + ent.l2 * T) * S + ent.l3 * C;
         obliquity += (ent.o1 + ent.o2 * T) * C + ent.o3 * S;

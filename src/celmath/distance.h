@@ -14,7 +14,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace celmath
+namespace celestia::math
 {
 template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Eigen::ParametrizedLine<T, 3>& r)
 {

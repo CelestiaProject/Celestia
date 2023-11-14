@@ -24,7 +24,7 @@ struct RenderInfo;
 class LightingState;
 struct Matrices;
 
-namespace celmath
+namespace celestia::math
 {
 class Frustum;
 }
@@ -65,7 +65,7 @@ public:
         const LightingState      &ls,
         const Eigen::Quaternionf &planetOrientation,
         float                     radius,
-        const celmath::Frustum   &frustum,
+        const math::Frustum      &frustum,
         const Matrices           &m);
 
     void initGL();

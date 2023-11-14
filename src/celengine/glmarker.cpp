@@ -68,7 +68,7 @@ Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
     }
 
     float s = size / 2.0f * getScaleFactor();
-    Eigen::Matrix4f mv = (*m.modelview) * celmath::scale(Eigen::Vector3f(s, s, 0));
+    Eigen::Matrix4f mv = (*m.modelview) * math::scale(Eigen::Vector3f(s, s, 0));
 
     switch (symbol)
     {
@@ -99,7 +99,7 @@ Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 void
 Renderer::renderSelectionPointer(const Observer& observer,
                                  double now,
-                                 const celmath::Frustum& viewFrustum,
+                                 const math::Frustum& viewFrustum,
                                  const Selection& sel)
 {
     constexpr float cursorDistance = 20.0f;
@@ -108,7 +108,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
 
     // Get the position of the cursor relative to the eye
     Eigen::Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
-    if (viewFrustum.testSphere(position, sel.radius()) != celmath::Frustum::Outside)
+    if (viewFrustum.testSphere(position, sel.radius()) != math::Frustum::Outside)
         return;
 
     assert(shaderManager != nullptr);
@@ -122,7 +122,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
     double distance = position.norm();
     position *= cursorDistance / distance;
 
-    float vfov = celmath::degToRad(fov);
+    float vfov = math::degToRad(fov);
     float h = std::tan(vfov / 2.0f);
     float w = h * getAspectRatio();
     float diag = std::hypot(h, w);
@@ -131,7 +131,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
     float x = u.dot(posf);
     float y = v.dot(posf);
     float c, s;
-    celmath::sincos(std::atan2(y, x), s, c);
+    math::sincos(std::atan2(y, x), s, c);
 
     float x0 = c * diag;
     float y0 = s * diag;
@@ -153,7 +153,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
 
     prog->use();
     Eigen::Vector3f center = cameraMatrix.col(2);
-    prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * celmath::translate(Eigen::Vector3f(-center)));
+    prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * math::translate(Eigen::Vector3f(-center)));
     prog->vec4Param("color") = Color(SelectionCursorColor, 0.6f).toVector4();
     prog->floatParam("pixelSize") = pixelSize * getScaleFactor();
     prog->floatParam("s") = s;

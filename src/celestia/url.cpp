@@ -41,6 +41,7 @@ using celestia::util::DecodeFromBase64;
 using celestia::util::EncodeAsBase64;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
@@ -225,7 +226,7 @@ Url::goTo()
 
     sim->update(0.0);
     sim->setFrame(m_ref.getCoordinateSystem(), m_ref.getRefObject(), m_ref.getTargetObject());
-    sim->getActiveObserver()->setFOV(celmath::degToRad(m_state.m_fieldOfView));
+    sim->getActiveObserver()->setFOV(math::degToRad(m_state.m_fieldOfView));
     m_appCore->setZoomFromFOV();
     sim->setTimeScale(m_state.m_timeScale);
     sim->setPauseState(m_state.m_pauseState);

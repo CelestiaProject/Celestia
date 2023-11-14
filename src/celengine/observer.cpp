@@ -23,9 +23,9 @@ static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 #define VELOCITY_CHANGE_TIME      0.25f
 
@@ -43,7 +43,7 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
     double cosTheta = u.dot(v1 / r1);
     double theta = acos(cosTheta);
 
-    return (cos(theta * t) * u + sin(theta * t) * v) * lerp(t, r0, r1);
+    return (cos(theta * t) * u + sin(theta * t) * v) * math::lerp(t, r0, r1);
 }
 
 
@@ -485,7 +485,7 @@ void Observer::update(double dt, double timeScale)
         Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
         Vector3d viewDir = trackObject.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
 
-        setOrientation(LookAt<double>(Vector3d::Zero(), viewDir, up));
+        setOrientation(math::LookAt<double>(Vector3d::Zero(), viewDir, up));
     }
 }
 
@@ -538,7 +538,7 @@ void Observer::setLocationFilter(uint64_t _locationFilter)
 
 void Observer::reverseOrientation()
 {
-    setOrientation(getOrientation() * celmath::YRot180<double>);
+    setOrientation(getOrientation() * math::YRot180<double>);
     reverseFlag = !reverseFlag;
 }
 
@@ -607,15 +607,15 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
     jparams.accelTime = accelTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, jparams.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     jparams.expFactor = sol.first;
 
     // Convert to frame coordinates
@@ -667,15 +667,15 @@ void Observer::computeGotoParametersGC(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(StartInterpolation, EndInterpolation);
     jparams.endInterpolation   = max(StartInterpolation, EndInterpolation);
 
     jparams.accelTime = AccelerationTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, jparams.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     jparams.expFactor = sol.first;
 
     // Convert to frame coordinates
@@ -704,7 +704,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, up);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, up);
     jparams.startInterpolation = 0;
     jparams.endInterpolation   = 1;
 
@@ -989,9 +989,9 @@ void Observer::gotoJourney(const JourneyParams& params)
 {
     journey = params;
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     journey.expFactor = sol.first;
     journey.startTime = realTime;
     observerMode = Travelling;
@@ -1251,9 +1251,9 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
 
     journey.accelTime = AccelerationTime;
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     journey.expFactor = sol.first;
 
     observerMode = Travelling;
@@ -1278,8 +1278,8 @@ void Observer::getSelectionLongLat(const Selection& selection,
         double z = bfPos.y();
 
         distance = bfPos.norm();
-        longitude = radToDeg(atan2(y, x));
-        latitude = radToDeg(celestia::numbers::pi/2.0 - acos(z / distance));
+        longitude = math::radToDeg(atan2(y, x));
+        latitude = math::radToDeg(celestia::numbers::pi/2.0 - acos(z / distance));
     }
 }
 
@@ -1294,7 +1294,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     Quaterniond q = transformedOrientationUniv;
     if (v.dot(viewDir) < 0.0)
     {
-        q = LookAt<double>(Vector3d::Zero(), up, v);
+        q = math::LookAt<double>(Vector3d::Zero(), up, v);
     }
 
     ObserverFrame frame(ObserverFrame::BodyFixed, sel);
