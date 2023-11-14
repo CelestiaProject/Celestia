@@ -10,11 +10,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
+#include <iterator>
+
+#include <fmt/format.h>
 
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
@@ -208,24 +209,27 @@ getCoordLabelVAlign(int planeIndex)
 string
 SkyGrid::latitudeLabel(int latitude, int latitudeStep) const
 {
-    // Produce a sexigesimal string
-    ostringstream out;
-    if (latitude < 0)
-        out << '-';
-    out << std::abs(latitude / DEG) << UTF8_DEGREE_SIGN;
-    if (latitudeStep % DEG != 0)
-    {
-        out << ' ' << setw(2) << setfill('0') << std::abs((latitude / MIN) % 60) << '\'';
-        if (latitudeStep % MIN != 0)
-        {
-            out << ' ' << setw(2) << setfill('0') << std::abs((latitude / SEC) % 60);
-            if (latitudeStep % SEC != 0)
-                out << '.' << setw(3) << setfill('0') << latitude % SEC;
-            out << '"';
-        }
-    }
+    using namespace std::string_literals;
 
-    return out.str();
+    // Produce a sexigesimal string
+    std::string result = latitude == 0 ? "0°"s
+                       : latitude < 0 ? fmt::format("-{}°", -latitude / DEG)
+                       : fmt::format("+{}°", latitude / DEG);
+    if (latitudeStep % DEG == 0)
+        return result;
+
+    latitude = std::abs(latitude);
+
+    fmt::format_to(std::back_inserter(result), " {:02}'", (latitude / MIN) % 60);
+    if (latitudeStep % MIN == 0)
+        return result;
+
+    fmt::format_to(std::back_inserter(result), " {:02}", (latitude / SEC) % 60);
+    if (latitudeStep % SEC != 0)
+        fmt::format_to(std::back_inserter(result), ".{:03}", latitude % SEC);
+
+    result.push_back('"');
+    return result;
 }
 
 
@@ -250,7 +254,6 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
     }
 
     // Produce a sexigesimal string
-    ostringstream out;
     if (longitude < 0)
         longitude += totalUnits;
 
@@ -260,20 +263,20 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
     if (m_longitudeDirection == IncreasingClockwise)
         longitude = (totalUnits - longitude) % totalUnits;
 
-    out << longitude / baseUnit << baseUnitSymbol;
-    if (longitudeStep % baseUnit != 0)
-    {
-        out << ' ' << setw(2) << setfill('0') << (longitude / MIN) % 60 << minuteSymbol;
-        if (longitudeStep % MIN != 0)
-        {
-            out << ' ' << setw(2) << setfill('0') << (longitude / SEC) % 60;
-            if (longitudeStep % SEC != 0)
-                out << '.' << setw(3) << setfill('0') << longitude % SEC;
-            out << secondSymbol;
-        }
-    }
+    std::string result = fmt::format("{}{}", longitude / baseUnit, baseUnitSymbol);
+    if (longitudeStep % baseUnit == 0)
+        return result;
 
-    return out.str();
+    fmt::format_to(std::back_inserter(result), " {:02}{}", (longitude / MIN) % 60, minuteSymbol);
+    if (longitudeStep % MIN == 0)
+        return result;
+
+    fmt::format_to(std::back_inserter(result), " {:02}", (longitude / SEC) % 60);
+    if (longitudeStep % SEC != 0)
+        fmt::format_to(std::back_inserter(result), ".{:03}", longitude % SEC);
+
+    result.push_back(secondSymbol);
+    return result;
 }
 
 
