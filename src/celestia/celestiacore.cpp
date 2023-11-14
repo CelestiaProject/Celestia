@@ -2906,6 +2906,26 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
+bool CelestiaCore::setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+{
+    if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
+    {
+        hud->font(f);
+        return true;
+    }
+    return false;
+}
+
+bool CelestiaCore::setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+{
+    if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
+    {
+        hud->titleFont(f);
+        return true;
+    }
+    return false;
+}
+
 bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
@@ -2962,6 +2982,11 @@ void CelestiaCore::setDistanceToScreen(int dts)
     distanceToScreen = dts;
     renderer->getProjectionMode()->setDistanceToScreen(dts);
     setFOVFromZoom();
+}
+
+void CelestiaCore::setPickTolerance(float value)
+{
+    pickTolerance = value;
 }
 
 int CelestiaCore::getDistanceToScreen() const
