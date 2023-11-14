@@ -581,9 +581,11 @@ displayPlanetInfo(Overlay& overlay,
         if (float density = body.getDensity(); density > 0)
         {
             if (hudSettings.measurementSystem == MeasurementSystem::Imperial)
-                overlay.printf(_("Density: %.2f x 1000 lb/ft^3\n"), density / (float) OneLbPerFt3InKgPerM3 / 1000.0f);
+                overlay.print(_("Density: {} lb/ft³\n"),
+                              FormattedNumber(density / static_cast<float>(OneLbPerFt3InKgPerM3), 4, FormattedNumber::SignificantDigits | FormattedNumber::GroupThousands));
             else
-                overlay.printf(_("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
+                overlay.print(_("Density: {} kg/m³\n"),
+                              FormattedNumber(density, 4, FormattedNumber::SignificantDigits | FormattedNumber::GroupThousands));
         }
 
         float planetTemp = body.getTemperature(t);
