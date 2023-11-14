@@ -75,15 +75,10 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                          double& distanceToPicker,
                          double& cosAngleToBoundCenter) const
 {
-    if (isVisible())
-    {
-        return math::testIntersection(ray,
-                                         math::Sphered(position, static_cast<double>(radius)),
-                                         distanceToPicker,
-                                         cosAngleToBoundCenter);
-    }
-    return false;
-
+    return isVisible() && math::testIntersection(ray,
+                                                 math::Sphered(position, static_cast<double>(radius)),
+                                                 distanceToPicker,
+                                                 cosAngleToBoundCenter);
 }
 
 

@@ -310,7 +310,7 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
             if (d1 < 1.0f)
                 d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
             return (int) math::sign(star0->getApparentMagnitude(d0) -
-                                       star1->getApparentMagnitude(d1));
+                                    star1->getApparentMagnitude(d1));
         }
 
     case 3:

@@ -93,7 +93,6 @@ using namespace celestia;
 using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
-namespace math = celestia::math;
 
 #define NEAR_DIST      0.5f
 #define FAR_DIST       1.0e9f

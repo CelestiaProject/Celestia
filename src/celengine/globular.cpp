@@ -88,10 +88,10 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
      */
     Eigen::Vector3d p = getPosition();
     return math::testIntersection(math::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
-                                                           getOrientation().cast<double>().toRotationMatrix()),
-                                     math::Sphered(getRadius() * (1.0f + kRadiusCorrection)),
-                                     distanceToPicker,
-                                     cosAngleToBoundCenter);
+                                                     getOrientation().cast<double>().toRotationMatrix()),
+                                  math::Sphered(getRadius() * (1.0f + kRadiusCorrection)),
+                                  distanceToPicker,
+                                  cosAngleToBoundCenter);
 }
 
 bool Globular::load(const AssociativeArray* params, const fs::path& resPath)

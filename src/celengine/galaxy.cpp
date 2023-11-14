@@ -126,7 +126,7 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 
     return math::testIntersection(
         math::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
-                              rotation),
+                           rotation),
         math::Ellipsoidd(ellipsoidAxes),
         distanceToPicker,
         cosAngleToBoundCenter);
