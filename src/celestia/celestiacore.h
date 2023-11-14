@@ -298,6 +298,7 @@ public:
     void setAltAzimuthMode(bool);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    void setPickTolerance(float);
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
     void setSafeAreaInsets(int left, int top, int right, int bottom);
@@ -348,6 +349,8 @@ public:
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
+    bool setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize);
+    bool setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
