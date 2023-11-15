@@ -3336,7 +3336,7 @@ msgstr "URL 必须只包含一个物体\n"
 
 #: ../src/celestia/url.cpp:473
 msgid "URL must contain 2 bodies\n"
-msgstr "URL 必须包含两个物体\n"
+msgstr "URL 必须包含 2 个物体\n"
 
 #: ../src/celestia/url.cpp:514
 msgid "Invalid URL version \"{}\"!\n"
