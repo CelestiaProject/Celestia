@@ -3316,7 +3316,7 @@ msgstr "目标名称：{}"
 
 #: ../src/celestia/url.cpp:349
 msgid "Incorrect hex value \"{}\"\n"
-msgstr "无效的十六进制数值 “{}”\n"
+msgstr "错误的十六进制数值 “{}”\n"
 
 #: ../src/celestia/url.cpp:416
 msgid "URL must start with \"{}\"!\n"
