@@ -2882,7 +2882,7 @@ msgstr "设置为当前时间"
 
 #: ../src/celestia/qt/qttourguide.cpp:61
 msgid "No guide destinations were found."
-msgstr "未找到引导目的地。"
+msgstr "未找到向导目的地。"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:16
 #. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
