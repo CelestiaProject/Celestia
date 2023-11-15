@@ -2319,7 +2319,7 @@ msgstr "在 %1 后"
 
 #: ../src/celestia/qt/qtglwidget.cpp:105
 msgid "Celestia was unable to initialize OpenGLES 2.0."
-msgstr "Celesita 无法加载 OpenGL ES 2.0."
+msgstr "Celesita 无法初始化 OpenGL ES 2.0."
 
 #: ../src/celestia/qt/qtglwidget.cpp:112
 msgid "Celestia was unable to initialize OpenGL 2.1."
