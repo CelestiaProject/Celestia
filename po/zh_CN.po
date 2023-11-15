@@ -3324,7 +3324,7 @@ msgstr "URL 开头必须为“{}”。\n"
 
 #: ../src/celestia/url.cpp:432
 msgid "URL must have at least mode and time!\n"
-msgstr "URL 需要至少包含模式和时间！\n"
+msgstr "URL 需要至少包含模式和时间。\n"
 
 #: ../src/celestia/url.cpp:443
 msgid "Unsupported URL mode \"{}\"!\n"
