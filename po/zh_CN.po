@@ -2291,7 +2291,7 @@ msgstr "%1 不是有效的天体"
 
 #: ../src/celestia/qt/qteventfinder.cpp:425
 msgid "End date is earlier than start date."
-msgstr "结束日期早于开始日期"
+msgstr "结束日期早于开始日期。"
 
 #: ../src/celestia/qt/qteventfinder.cpp:439
 msgid "Finding eclipses..."
