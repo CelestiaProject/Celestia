@@ -1019,7 +1019,7 @@ msgstr "追逐 %s\n"
 #: ../src/celestia/hud.cpp:1003
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
-msgstr "FOV：%s（%.2f×）\n"
+msgstr "FOV：%s（%.2fx）\n"
 
 #: ../src/celestia/hud.cpp:1167
 #, c-format
