@@ -261,19 +261,18 @@ void Body::setMass(float _mass)
 
 float Body::getDensity() const
 {
-    if (density > 0)
+    if (density > 0.0f)
         return density;
 
-    if (radius == 0 || !isSphere())
-        return 0;
+    if (radius == 0.0f || !isEllipsoid())
+        return 0.0f;
 
-    // assume that we have a spherical body
     // @mass unit is mass of Earth
     // @astro::EarthMass unit is kg
     // @radius unit km
     // so we divide density by 1e9 to have kg/m^3
-    double volume = 4.0 / 3.0 * celestia::numbers::pi * ::pow(radius, 3);
-    return (float) mass * astro::EarthMass / 1e9 / volume;
+    float volume = 4.0f / 3.0f * celestia::numbers::pi_v<float> * semiAxes.prod();
+    return mass * static_cast<float>(astro::EarthMass / 1e9) / volume;
 }
 
 
