@@ -277,7 +277,7 @@ class Renderer
 
     void setPipelineState(const PipelineState &ps) noexcept;
 
-    celestia::PixelFormat getPreferredCaptureFormat() const noexcept;
+    celestia::engine::PixelFormat getPreferredCaptureFormat() const noexcept;
 
     void drawRectangle(const celestia::Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
@@ -289,7 +289,7 @@ class Renderer
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
 
-    bool captureFrame(int, int, int, int, celestia::PixelFormat format, unsigned char*) const;
+    bool captureFrame(int, int, int, int, celestia::engine::PixelFormat format, unsigned char*) const;
 
     void renderMarker(celestia::MarkerRepresentation::Symbol symbol,
                       float size,

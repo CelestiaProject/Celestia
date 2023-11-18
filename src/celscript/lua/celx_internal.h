@@ -45,6 +45,11 @@ enum
     Celx_Category = 13
 };
 
+template<typename T> int celxClassId(T)
+{
+    assert(false);
+    return -1;
+}
 
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead

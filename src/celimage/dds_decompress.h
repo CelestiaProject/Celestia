@@ -1,16 +1,51 @@
 #pragma once
 
-void DecompressBlockDXT1(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
-    bool transparent0,
-    uint32_t* image);
+#include <cstddef>
+#include <cstdint>
 
-void DecompressBlockDXT3(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
-    bool transparent0,
-    uint32_t* image);
+namespace celestia::engine
+{
 
-void DecompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width,
-    const uint8_t* blockStorage,
-    bool transparent0,
-    uint32_t* image);
+/**
+ * @brief Decompresses one block of a DXT1 texture.
+ * Decompresses one block of a DXT1 texture and stores the resulting pixels at the appropriate offset in 'image'.
+ *
+ * @param x - x-coordinate of the first pixel in the block.
+ * @param y - y-coordinate of the first pixel in the block.
+ * @param width - width of the texture being decompressed.
+ * @param blockStorage - pointer to the block to decompress.
+ * @param image - pointer to image where the decompressed pixel data should be stored.
+*/
+void DecompressBlockDXT1(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+                         const std::uint8_t *blockStorage, bool transparent0,
+                         std::uint32_t *image);
+
+/*
+ * @brief Decompresses one block of a DXT3 texture.
+ * Decompresses one block of a DXT3 texture and stores the resulting pixels at the appropriate offset in 'image'.
+ *
+ * @param x - x-coordinate of the first pixel in the block.
+ * @param y - y-coordinate of the first pixel in the block.
+ * @param height - height of the texture being decompressed.
+ * @param blockStorage - pointer to the block to decompress.
+ * @param image - pointer to image where the decompressed pixel data should be stored.
+*/
+void DecompressBlockDXT3(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+                         const std::uint8_t *blockStorage, bool transparent0,
+                         std::uint32_t *image);
+
+/**
+ * @brief Decompresses one block of a DXT5 texture.
+ * Decompresses one block of a DXT5 texture and stores the resulting pixels at the appropriate offset in 'image'.
+ *
+ * @param x - x-coordinate of the first pixel in the block.
+ * @param y - y-coordinate of the first pixel in the block.
+ * @param width - width of the texture being decompressed.
+ * @param blockStorage - pointer to the block to decompress.
+ * @param image - pointer to image where the decompressed pixel data should be stored.
+*/
+void DecompressBlockDXT5(std::uint32_t x, std::uint32_t y, std::uint32_t width,
+                         const std::uint8_t *blockStorage, bool transparent0,
+                         std::uint32_t *image);
+
+} // namespace celestia::engine

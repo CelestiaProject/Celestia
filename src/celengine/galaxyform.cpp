@@ -34,7 +34,7 @@ buildGalacticForm(const fs::path& filename)
     // Load templates in standard .png format
     int kmin = 9;
     float h = 0.75f;
-    std::unique_ptr<Image> img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = Image::load(filename);
     if (img == nullptr)
     {
         celestia::util::GetLogger()->error("The galaxy template *** {} *** could not be loaded!\n", filename);

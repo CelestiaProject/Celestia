@@ -26,6 +26,8 @@
 
 using namespace celestia;
 using celestia::util::GetLogger;
+using celestia::engine::Image;
+using celestia::engine::PixelFormat;
 
 namespace
 {
@@ -67,9 +69,9 @@ getInternalFormat(PixelFormat format)
     {
     case PixelFormat::RGBA:
     case PixelFormat::RGB:
-    case PixelFormat::LUM_ALPHA:
-    case PixelFormat::ALPHA:
-    case PixelFormat::LUMINANCE:
+    case PixelFormat::LumAlpha:
+    case PixelFormat::Alpha:
+    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
@@ -84,19 +86,19 @@ getInternalFormat(PixelFormat format)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LUM_ALPHA:
-    case PixelFormat::ALPHA:
-    case PixelFormat::LUMINANCE:
+    case PixelFormat::LumAlpha:
+    case PixelFormat::Alpha:
+    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
-    case PixelFormat::SLUM_ALPHA:
-    case PixelFormat::SLUMINANCE:
-    case PixelFormat::SRGB:
-    case PixelFormat::SRGBA:
-    case PixelFormat::DXT1_SRGBA:
-    case PixelFormat::DXT3_SRGBA:
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::sLumAlpha:
+    case PixelFormat::sLuminance:
+    case PixelFormat::sRGB:
+    case PixelFormat::sRGBA:
+    case PixelFormat::DXT1_sRGBA:
+    case PixelFormat::DXT3_sRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(format);
     default:
         return GL_NONE;
@@ -116,26 +118,28 @@ getExternalFormat(PixelFormat format)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LUM_ALPHA:
-    case PixelFormat::ALPHA:
-    case PixelFormat::LUMINANCE:
+    case PixelFormat::LumAlpha:
+    case PixelFormat::Alpha:
+    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
         return static_cast<GLenum>(format);
-    case PixelFormat::SLUM_ALPHA:
-        return static_cast<GLenum>(PixelFormat::LUM_ALPHA);
-    case PixelFormat::SLUMINANCE:
-        return static_cast<GLenum>(PixelFormat::LUMINANCE);
-    case PixelFormat::SRGB:
+    case PixelFormat::sLumAlpha:
+        return static_cast<GLenum>(PixelFormat::LumAlpha);
+    case PixelFormat::sLuminance:
+        return static_cast<GLenum>(PixelFormat::Luminance);
+    case PixelFormat::sRGB:
+    case PixelFormat::sRGB8:
         return static_cast<GLenum>(PixelFormat::RGB);
-    case PixelFormat::SRGBA:
+    case PixelFormat::sRGBA:
+    case PixelFormat::sRGBA8:
         return static_cast<GLenum>(PixelFormat::RGBA);
-    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT1_sRGBA:
         return static_cast<GLenum>(PixelFormat::DXT1);
-    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT3_sRGBA:
         return static_cast<GLenum>(PixelFormat::DXT3);
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(PixelFormat::DXT5);
     default:
         return GL_NONE;
@@ -181,7 +185,7 @@ getCompressedBlockSize(PixelFormat format)
     switch (format)
     {
     case PixelFormat::DXT1:
-    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT1_sRGBA:
         return 8;
     default:
         return 16;
@@ -956,7 +960,7 @@ LoadTextureFromFile(const fs::path& filename,
 
     // All other texture types are handled by first loading an image, then
     // creating a texture from that image.
-    std::unique_ptr<Image> img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = Image::load(filename);
     if (img == nullptr)
         return nullptr;
 
@@ -987,7 +991,7 @@ LoadHeightMapFromFile(const fs::path& filename,
                       float height,
                       Texture::AddressMode addressMode)
 {
-    auto img = LoadImageFromFile(filename);
+    auto img = Image::load(filename);
     if (img == nullptr)
         return nullptr;
 

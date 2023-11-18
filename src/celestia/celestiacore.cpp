@@ -41,7 +41,6 @@
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/perspectiveprojectionmode.h>
-#include <celimage/imageformats.h>
 #include <celmath/geomutil.h>
 #include <celutil/color.h>
 #include <celutil/filetype.h>
@@ -3319,7 +3318,7 @@ View* CelestiaCore::getViewByObserver(const Observer *obs) const
     return it == end ? nullptr : *it;
 }
 
-void CelestiaCore::getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelFormat& format) const
+void CelestiaCore::getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const
 {
     renderer->getViewport(viewport);
     format = renderer->getPreferredCaptureFormat();
@@ -3327,7 +3326,7 @@ void CelestiaCore::getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelF
 
 bool CelestiaCore::captureImage(std::uint8_t* buffer,
                                 const std::array<int, 4>& viewport,
-                                celestia::PixelFormat format) const
+                                celestia::engine::PixelFormat format) const
 {
     if (renderer->captureFrame(viewport[0], viewport[1],
                                viewport[2], viewport[3],
@@ -3345,7 +3344,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     if (type == ContentType::Unknown)
         type = DetermineFileType(filename);
 
-    if (type != ContentType::JPEG && type != ContentType::PNG)
+    if (!Image::canSave(type))
     {
         GetLogger()->error(_("Unsupported image type: {}!\n"), filename);
         return false;
@@ -3358,16 +3357,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     if (!captureImage(image.getPixels(), viewport, format))
         return false;
 
-    switch (type)
-    {
-    case ContentType::JPEG:
-        return SaveJPEGImage(filename, image);
-    case ContentType::PNG:
-        return SavePNGImage(filename, image);
-    default:
-        break;
-    }
-    return false;
+    return image.save(filename, type);
 }
 
 #ifdef USE_MINIAUDIO

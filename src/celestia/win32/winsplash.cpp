@@ -21,6 +21,7 @@
 
 using namespace std;
 using namespace celestia::win32;
+using namespace celestia::engine;
 
 
 // Required for transparent Windows, but not present in VC6 headers. Only present
@@ -158,7 +159,7 @@ SplashWindow::init()
     if (winSetLayeredWindowAttributes != NULL && winUpdateLayeredWindow != NULL)
         useLayeredWindow = true;
 
-    image = LoadImageFromFile(imageFileName).release();
+    image = Image::load(imageFileName).release();
 }
 
 

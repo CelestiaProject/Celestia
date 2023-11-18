@@ -36,7 +36,7 @@ private:
     HWND hwnd;
     const char* className;
     std::string imageFileName;
-    Image* image;
+    celestia::engine::Image* image;
     HBITMAP hBitmap;
     HBITMAP hCompositionBitmap;
     bool useLayeredWindow;

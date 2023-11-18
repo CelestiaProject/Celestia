@@ -18,11 +18,11 @@
 #include <celutil/logger.h>
 #include "image.h"
 
-namespace util = celestia::util;
-using util::GetLogger;
-
+namespace celestia::engine
+{
 namespace
 {
+
 // BMP file definitions--can't use windows.h because we might not be
 // built on Windows!
 typedef struct
@@ -85,7 +85,7 @@ Image* LoadBMPImage(std::istream& in)
     std::vector<uint8_t> palette;
     if (imageHeader.bpp == 8)
     {
-        GetLogger()->debug("Reading {} color palette\n", imageHeader.colorsUsed);
+        util::GetLogger()->debug("Reading {} color palette\n", imageHeader.colorsUsed);
         palette.resize(imageHeader.colorsUsed * 4);
         if (!in.read(reinterpret_cast<char*>(palette.data()), imageHeader.colorsUsed * 4).good())
         {
@@ -108,7 +108,7 @@ Image* LoadBMPImage(std::istream& in)
 
     // check for truncated file
 
-    auto img = std::make_unique<Image>(celestia::PixelFormat::RGB, imageHeader.width, imageHeader.height);
+    auto img = std::make_unique<Image>(PixelFormat::RGB, imageHeader.width, imageHeader.height);
 
     // Copy the image and perform any necessary conversions
     for (std::int32_t y = 0; y < imageHeader.height; y++)
@@ -169,3 +169,5 @@ Image* LoadBMPImage(const fs::path& filename)
 
     return nullptr;
 }
+
+} // namespace celestia::engine
