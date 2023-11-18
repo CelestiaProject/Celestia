@@ -862,7 +862,7 @@ Body* CreateBody(const std::string& name,
         auto oblateness = planetData->getNumber<float>("Oblateness");
         if (oblateness.has_value())
         {
-            if (*oblateness > 0.0f && *oblateness < 1.0f)
+            if (*oblateness >= 0.0f && *oblateness < 1.0f)
             {
                 body->setSemiAxes(body->getRadius() * Eigen::Vector3f(1.0f, 1.0f - *oblateness, 1.0f));
             }
