@@ -272,7 +272,7 @@ float Body::getDensity() const
     // @radius unit km
     // so we divide density by 1e9 to have kg/m^3
     float volume = 4.0f / 3.0f * celestia::numbers::pi_v<float> * semiAxes.prod();
-    return mass * static_cast<float>(astro::EarthMass / 1e9) / volume;
+    return volume == 0.0f ? 0.0f : mass * static_cast<float>(astro::EarthMass / 1e9) / volume;
 }
 
 
