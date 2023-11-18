@@ -403,7 +403,7 @@ GlobularFormManager::getCenterTex(int form)
     if(centerTex[form] == nullptr)
     {
         centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                  celestia::PixelFormat::LUMINANCE,
+                                                  engine::PixelFormat::Luminance,
                                                   centerCloudTexEval).release();
     }
 
@@ -417,7 +417,7 @@ GlobularFormManager::getGlobularTex()
     if (globularTex == nullptr)
     {
         globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              celestia::PixelFormat::LUMINANCE,
+                                              engine::PixelFormat::Luminance,
                                               globularTextureEval);
     }
     assert(globularTex != nullptr);
@@ -429,7 +429,7 @@ GlobularFormManager::getColorTex()
 {
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
+        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
                                            colorTextureEval,
                                            Texture::EdgeClamp,
                                            Texture::NoMipMaps);

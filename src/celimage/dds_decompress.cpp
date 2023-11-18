@@ -1,5 +1,6 @@
-#include <stddef.h>
-#include <stdint.h>
+#include <array>
+
+#include "dds_decompress.h"
 
 /*
 DXT1/DXT3/DXT5 texture decompression
@@ -55,58 +56,60 @@ SOFTWARE.
 
 ---
 */
-constexpr uint32_t PackRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+
+namespace celestia::engine
 {
-    return r | (g << 8) | (b << 16) | (a << 24);
+namespace
+{
+
+constexpr std::uint32_t PackRGBA(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
+{
+    return static_cast<std::uint32_t>(r) |
+           static_cast<std::uint32_t>(g) << 8 |
+           static_cast<std::uint32_t>(b) << 16 |
+           static_cast<std::uint32_t>(a) << 24;
 }
 
-static void DecompressBlockDXT1Internal(const uint8_t* block,
-                                        uint32_t* output,
-                                        uint32_t outputStride,
-                                        bool transparent0,
-                                        const uint8_t* alphaValues)
+constexpr std::uint16_t PackRG(std::uint8_t r, std::uint8_t g)
 {
-    uint32_t temp, code;
+    return static_cast<std::uint16_t>(r) | static_cast<std::uint16_t>(g) << 8;
+}
 
-    uint16_t color0, color1;
-    uint8_t r0, g0, b0, r1, g1, b1;
+void DecompressBlockDXT1Internal(const std::uint8_t* block,
+                                 std::uint32_t* output,
+                                 std::uint32_t outputStride,
+                                 bool transparent0,
+                                 const std::uint8_t* alphaValues)
+{
+    std::uint16_t color0 = *reinterpret_cast<const std::uint16_t*>(block);
+    std::uint16_t color1 = *reinterpret_cast<const std::uint16_t*>(block + 2);
 
-    int i, j;
-
-    color0 = *(const uint16_t*)(block);
-    color1 = *(const uint16_t*)(block + 2);
-
-    temp = (color0 >> 11) * 255 + 16;
-    r0 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint32_t temp = (color0 >> 11) * 255 + 16;
+    std::uint8_t r0 = static_cast<std::uint8_t>((temp / 32 + temp) / 32);
     temp = ((color0 & 0x07E0) >> 5) * 255 + 32;
-    g0 = (uint8_t)((temp / 64 + temp) / 64);
+    std::uint8_t g0 = static_cast<std::uint8_t>((temp / 64 + temp) / 64);
     temp = (color0 & 0x001F) * 255 + 16;
-    b0 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t b0 = static_cast<std::uint8_t>((temp / 32 + temp) / 32);
 
     temp = (color1 >> 11) * 255 + 16;
-    r1 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t r1 = static_cast<std::uint8_t>((temp / 32 + temp) / 32);
     temp = ((color1 & 0x07E0) >> 5) * 255 + 32;
-    g1 = (uint8_t)((temp / 64 + temp) / 64);
+    std::uint8_t g1 = static_cast<std::uint8_t>((temp / 64 + temp) / 64);
     temp = (color1 & 0x001F) * 255 + 16;
-    b1 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t b1 = static_cast<std::uint8_t>((temp / 32 + temp) / 32);
 
-    code = *(const uint32_t*)(block + 4);
+    std::uint32_t code = *reinterpret_cast<const std::uint32_t*>(block + 4);
 
     if (color0 > color1)
     {
-        for (j = 0; j < 4; ++j)
+        for (int j = 0; j < 4; ++j)
         {
-            for (i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
-                uint32_t finalColor, positionCode;
-                uint8_t alpha;
+                std::uint8_t alpha = alphaValues[j * 4 + i];
+                std::uint32_t finalColor = 0u;
 
-                alpha = alphaValues[j * 4 + i];
-
-                finalColor = 0;
-                positionCode = (code >> 2 * (4 * j + i)) & 0x03;
-
-                switch (positionCode)
+                switch (std::uint32_t positionCode = (code >> 2 * (4 * j + i)) & 0x03; positionCode)
                 {
                 case 0:
                     finalColor = PackRGBA(r0, g0, b0, alpha);
@@ -126,7 +129,7 @@ static void DecompressBlockDXT1Internal(const uint8_t* block,
                 if (transparent0 && (finalColor == PackRGBA(0, 0, 0, 0xff)))
                 {
                     alpha = 0;
-                    finalColor = 0;
+                    finalColor = 0u;
                 }
                 output[j * outputStride + i] = finalColor;
             }
@@ -134,17 +137,14 @@ static void DecompressBlockDXT1Internal(const uint8_t* block,
     }
     else
     {
-        for (j = 0; j < 4; ++j)
+        for (int j = 0; j < 4; ++j)
         {
-            for (i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
-                uint32_t finalColor, positionCode;
-                uint8_t alpha;
+                std::uint8_t alpha = alphaValues[j * 4 + i];
 
-                alpha = alphaValues[j * 4 + i];
-
-                finalColor = 0;
-                positionCode = (code >> 2 * (4 * j + i)) & 0x03;
+                std::uint32_t finalColor = 0u;
+                std::uint32_t positionCode = (code >> 2 * (4 * j + i)) & 0x03;
 
                 switch (positionCode)
                 {
@@ -174,94 +174,70 @@ static void DecompressBlockDXT1Internal(const uint8_t* block,
     }
 }
 
-/*
-void DecompressBlockDXT1(): Decompresses one block of a DXT1 texture and stores the resulting pixels at the appropriate offset in 'image'.
+} // namespace
 
-uint32_t x:                     x-coordinate of the first pixel in the block.
-uint32_t y:                     y-coordinate of the first pixel in the block.
-uint32_t width:                 width of the texture being decompressed.
-const uint8_t *blockStorage:    pointer to the block to decompress.
-uint32_t *image:                pointer to image where the decompressed pixel data should be stored.
-*/
-void DecompressBlockDXT1(uint32_t x,
-                         uint32_t y,
-                         uint32_t width,
-                         const uint8_t* blockStorage,
+void DecompressBlockDXT1(std::uint32_t x,
+                         std::uint32_t y,
+                         std::uint32_t width,
+                         const std::uint8_t* blockStorage,
                          bool transparent0,
-                         uint32_t* image)
+                         std::uint32_t* image)
 {
-    static const uint8_t const_alpha[] = { 255, 255, 255, 255, 255, 255,
-                                           255, 255, 255, 255, 255, 255,
-                                           255, 255, 255, 255 };
+    static std::array<const std::uint8_t, 16> constAlpha = {
+        255, 255, 255, 255,
+        255, 255, 255, 255,
+        255, 255, 255, 255,
+        255, 255, 255, 255
+    };
 
-    DecompressBlockDXT1Internal(blockStorage, image + x + (y * width), width,
-                                transparent0, const_alpha);
+    DecompressBlockDXT1Internal(blockStorage, 
+                                image + x + (y * width),
+                                width,
+                                transparent0,
+                                constAlpha.data());
 }
 
-/*
-void DecompressBlockDXT5(): Decompresses one block of a DXT5 texture and stores the resulting pixels at the appropriate offset in 'image'.
-
-uint32_t x:                     x-coordinate of the first pixel in the block.
-uint32_t y:                     y-coordinate of the first pixel in the block.
-uint32_t width:                 width of the texture being decompressed.
-const uint8_t *blockStorage:    pointer to the block to decompress.
-uint32_t *image:                pointer to image where the decompressed pixel data should be stored.
-*/
-void DecompressBlockDXT5(uint32_t x,
-                         uint32_t y,
-                         uint32_t width,
-                         const uint8_t* blockStorage,
+void DecompressBlockDXT5(std::uint32_t x,
+                         std::uint32_t y,
+                         std::uint32_t width,
+                         const std::uint8_t* blockStorage,
                          bool transparent0,
-                         uint32_t* image)
+                         std::uint32_t* image)
 {
-    uint8_t alpha0, alpha1;
-    const uint8_t* bits;
-    uint32_t alphaCode1;
-    uint16_t alphaCode2;
+    std::uint8_t alpha0 = *(blockStorage);
+    std::uint8_t alpha1 = *(blockStorage + 1);
 
-    uint16_t color0, color1;
-    uint8_t r0, g0, b0, r1, g1, b1;
+    const std::uint8_t* bits = blockStorage + 2;
+    std::uint32_t alphaCode1 = PackRGBA(bits[2], bits[3], bits[4], bits[5]);
+    std::uint16_t alphaCode2 = PackRG(bits[0], bits[1]);
 
-    int i, j;
+    std::uint16_t color0 = *reinterpret_cast<const std::uint16_t*>(blockStorage + 8);
+    std::uint16_t color1 = *reinterpret_cast<const std::uint16_t*>(blockStorage + 10);
 
-    uint32_t temp, code;
-
-    alpha0 = *(blockStorage);
-    alpha1 = *(blockStorage + 1);
-
-    bits = blockStorage + 2;
-    alphaCode1 = bits[2] | (bits[3] << 8) | (bits[4] << 16) | (bits[5] << 24);
-    alphaCode2 = bits[0] | (bits[1] << 8);
-
-    color0 = *(const uint16_t*)(blockStorage + 8);
-    color1 = *(const uint16_t*)(blockStorage + 10);
-
-    temp = (color0 >> 11) * 255 + 16;
-    r0 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint32_t temp = (color0 >> 11) * 255 + 16;
+    std::uint8_t r0 = (uint8_t)((temp / 32 + temp) / 32);
     temp = ((color0 & 0x07E0) >> 5) * 255 + 32;
-    g0 = (uint8_t)((temp / 64 + temp) / 64);
+    std::uint8_t g0 = (uint8_t)((temp / 64 + temp) / 64);
     temp = (color0 & 0x001F) * 255 + 16;
-    b0 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t b0 = (uint8_t)((temp / 32 + temp) / 32);
 
     temp = (color1 >> 11) * 255 + 16;
-    r1 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t r1 = (uint8_t)((temp / 32 + temp) / 32);
     temp = ((color1 & 0x07E0) >> 5) * 255 + 32;
-    g1 = (uint8_t)((temp / 64 + temp) / 64);
+    std::uint8_t g1 = (uint8_t)((temp / 64 + temp) / 64);
     temp = (color1 & 0x001F) * 255 + 16;
-    b1 = (uint8_t)((temp / 32 + temp) / 32);
+    std::uint8_t b1 = (uint8_t)((temp / 32 + temp) / 32);
 
-    code = *(const uint32_t*)(blockStorage + 12);
+    std::uint32_t code = *reinterpret_cast<const std::uint32_t*>(blockStorage + 12);
 
-    for (j = 0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
     {
-        for (i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            uint8_t finalAlpha;
-            int alphaCode, alphaCodeIndex;
-            uint8_t colorCode;
-            uint32_t finalColor;
+            std::uint8_t finalAlpha;
+            int alphaCode;
+            int alphaCodeIndex = 3 * (4 * j + i);
 
-            alphaCodeIndex = 3 * (4 * j + i);
             if (alphaCodeIndex <= 12)
             {
                 alphaCode = (alphaCode2 >> alphaCodeIndex) & 0x07;
@@ -287,7 +263,7 @@ void DecompressBlockDXT5(uint32_t x,
             {
                 if (alpha0 > alpha1)
                 {
-                    finalAlpha = (uint8_t)(((8 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 7);
+                    finalAlpha = static_cast<std::uint8_t>(((8 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 7);
                 }
                 else
                 {
@@ -301,13 +277,13 @@ void DecompressBlockDXT5(uint32_t x,
                     }
                     else
                     {
-                        finalAlpha = (uint8_t)(((6 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 5);
+                        finalAlpha = static_cast<std::uint8_t>(((6 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 5);
                     }
                 }
             }
 
-            colorCode = (code >> 2 * (4 * j + i)) & 0x03;
-            finalColor = 0;
+            std::uint8_t colorCode = (code >> 2 * (4 * j + i)) & 0x03;
+            std::uint32_t finalColor = 0;
 
             switch (colorCode)
             {
@@ -332,29 +308,18 @@ void DecompressBlockDXT5(uint32_t x,
     }
 }
 
-/*
-void DecompressBlockDXT3(): Decompresses one block of a DXT3 texture and stores the resulting pixels at the appropriate offset in 'image'.
-
-uint32_t x:                     x-coordinate of the first pixel in the block.
-uint32_t y:                     y-coordinate of the first pixel in the block.
-uint32_t height:                height of the texture being decompressed.
-const uint8_t *blockStorage:    pointer to the block to decompress.
-uint32_t *image:                pointer to image where the decompressed pixel data should be stored.
-*/
-void DecompressBlockDXT3(uint32_t x,
-                         uint32_t y,
-                         uint32_t width,
-                         const uint8_t* blockStorage,
+void DecompressBlockDXT3(std::uint32_t x,
+                         std::uint32_t y,
+                         std::uint32_t width,
+                         const std::uint8_t* blockStorage,
                          bool transparent0,
-                         uint32_t* image)
+                         std::uint32_t* image)
 {
-    int i;
+    std::array<std::uint8_t, 16> alphaValues = { 0 };
 
-    uint8_t alphaValues[16] = { 0 };
-
-    for (i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
-        const uint16_t* alphaData = (const uint16_t*)(blockStorage);
+        const std::uint16_t* alphaData = reinterpret_cast<const std::uint16_t*>(blockStorage);
 
         alphaValues[i * 4 + 0] = (((*alphaData) >> 0) & 0xF) * 17;
         alphaValues[i * 4 + 1] = (((*alphaData) >> 4) & 0xF) * 17;
@@ -364,6 +329,11 @@ void DecompressBlockDXT3(uint32_t x,
         blockStorage += 2;
     }
 
-    DecompressBlockDXT1Internal(blockStorage, image + x + (y * width), width,
-                                transparent0, alphaValues);
+    DecompressBlockDXT1Internal(blockStorage,
+                                image + x + (y * width),
+                                width,
+                                transparent0,
+                                alphaValues.data());
 }
+
+} // namespace celestia::engine

@@ -8,22 +8,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <memory>
 #include <png.h>
 #include <zlib.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
 #include "image.h"
 
-using celestia::PixelFormat;
-using celestia::util::GetLogger;
-
+namespace celestia::engine
+{
 namespace
 {
+
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     if (fread((void*) data, 1, length, fp) != length)
-        GetLogger()->error("Error reading PNG data");
+        util::GetLogger()->error(_("Error reading PNG data"));
 }
 
 void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
@@ -31,6 +32,105 @@ void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
     auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     fwrite((void*) data, 1, length, fp);
 }
+
+bool SavePNGImage(const fs::path& filename,
+                  int width, int height,
+                  int rowStride,
+                  const std::uint8_t *pixels,
+                  bool removeAlpha)
+{
+#ifdef _WIN32
+    FILE* out = _wfopen(filename.c_str(), L"wb");
+#else
+    FILE* out = fopen(filename.c_str(), "wb");
+#endif
+    if (out == nullptr)
+    {
+        util::GetLogger()->error(_("Can't open screen capture file '{}'\n"), filename);
+        return false;
+    }
+
+    std::unique_ptr<png_byte> outData;
+    if (removeAlpha)
+        outData = std::make_unique<png_byte>(width * 3 * height);
+
+    auto row_pointers = std::make_unique<png_bytep[]>(height);
+    for (int i = 0; i < height; i++)
+    {
+        const std::uint8_t *rowHead = &pixels[rowStride * i];
+        // Strip alpha values if we are in RGBA format
+        if (removeAlpha)
+        {
+            png_bytep ptr = &outData.get()[i * width * 3];
+            for (int x = 0; x < width; x++)
+            {
+                const std::uint8_t* pixelIn = &rowHead[x * 4];
+                std::uint8_t* pixelOut = &ptr[x * 3];
+                pixelOut[0] = pixelIn[0];
+                pixelOut[1] = pixelIn[1];
+                pixelOut[2] = pixelIn[2];
+            }
+            row_pointers.get()[i] = ptr;
+        }
+        else
+        {
+            row_pointers.get()[i] = const_cast<png_bytep>(rowHead); //NOSONAR
+        }
+    }
+
+    png_structp png_ptr;
+    png_infop info_ptr;
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                      nullptr, nullptr, nullptr);
+
+    if (png_ptr == nullptr)
+    {
+        util::GetLogger()->error("Error allocating png_ptr\n");
+        fclose(out);
+        return false;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == nullptr)
+    {
+        util::GetLogger()->error("Error allocating info_ptr\n");
+        fclose(out);
+        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
+        return false;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        util::GetLogger()->error(_("Error writing PNG file '{}'\n"), filename);
+        fclose(out);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        return false;
+    }
+
+    // png_init_io(png_ptr, out);
+    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, nullptr);
+
+    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
+    png_set_IHDR(png_ptr, info_ptr,
+                 width, height,
+                 8,
+                 PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+
+    png_write_info(png_ptr, info_ptr);
+    png_write_image(png_ptr, row_pointers.get());
+    png_write_end(png_ptr, info_ptr);
+
+    // Clean up everything . . .
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    fclose(out);
+
+    return true;
+}
+
 } // anonymous namespace
 
 Image* LoadPNGImage(const fs::path& filename)
@@ -50,15 +150,15 @@ Image* LoadPNGImage(const fs::path& filename)
 #endif
     if (fp == nullptr)
     {
-        GetLogger()->error(_("Error opening image file {}.\n"), filename);
+        util::GetLogger()->error(_("Error opening image file {}.\n"), filename);
         return nullptr;
     }
 
     size_t elements_read;
     elements_read = fread(header, 1, sizeof(header), fp);
-    if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
+    if (elements_read == 0 || png_sig_cmp((std::uint8_t*) header, 0, sizeof(header)))
     {
-        GetLogger()->error(_("Error: {} is not a PNG file.\n"), filename);
+        util::GetLogger()->error(_("Error: {} is not a PNG file.\n"), filename);
         fclose(fp);
         return nullptr;
     }
@@ -84,7 +184,7 @@ Image* LoadPNGImage(const fs::path& filename)
         fclose(fp);
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
+        util::GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
         return nullptr;
     }
 
@@ -103,10 +203,10 @@ Image* LoadPNGImage(const fs::path& filename)
     switch (color_type)
     {
     case PNG_COLOR_TYPE_GRAY:
-        format = PixelFormat::LUMINANCE;
+        format = PixelFormat::Luminance;
         break;
     case PNG_COLOR_TYPE_GRAY_ALPHA:
-        format = PixelFormat::LUM_ALPHA;
+        format = PixelFormat::LumAlpha;
         break;
     case PNG_COLOR_TYPE_RGB:
         format = PixelFormat::RGB;
@@ -161,100 +261,7 @@ Image* LoadPNGImage(const fs::path& filename)
     return img;
 }
 
-bool SavePNGImage(const fs::path& filename,
-                  int width, int height,
-                  int rowStride,
-                  unsigned char *pixels,
-                  bool removeAlpha)
-{
-#ifdef _WIN32
-    FILE* out = _wfopen(filename.c_str(), L"wb");
-#else
-    FILE* out = fopen(filename.c_str(), "wb");
-#endif
-    if (out == nullptr)
-    {
-        GetLogger()->error(_("Can't open screen capture file '{}'\n"), filename);
-        return false;
-    }
-
-    auto* row_pointers = new png_bytep[height];
-    for (int i = 0; i < height; i++)
-    {
-        unsigned char *rowHead = &pixels[rowStride * i];
-        // Strip alpha values if we are in RGBA format
-        if (removeAlpha)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                const unsigned char* pixelIn = &rowHead[x * 4];
-                unsigned char* pixelOut = &rowHead[x * 3];
-                pixelOut[0] = pixelIn[0];
-                pixelOut[1] = pixelIn[1];
-                pixelOut[2] = pixelIn[2];
-            }
-        }
-        row_pointers[i] = (png_bytep) rowHead;
-    }
-
-    png_structp png_ptr;
-    png_infop info_ptr;
-
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                      nullptr, nullptr, nullptr);
-
-    if (png_ptr == nullptr)
-    {
-        GetLogger()->error("Error allocating png_ptr\n");
-        fclose(out);
-        delete[] row_pointers;
-        return false;
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == nullptr)
-    {
-        GetLogger()->error("Error allocating info_ptr\n");
-        fclose(out);
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
-        return false;
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr)))
-    {
-        GetLogger()->error(_("Error writing PNG file '{}'\n"), filename);
-        fclose(out);
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        return false;
-    }
-
-    // png_init_io(png_ptr, out);
-    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, nullptr);
-
-    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-    png_set_IHDR(png_ptr, info_ptr,
-                 width, height,
-                 8,
-                 PNG_COLOR_TYPE_RGB,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
-
-    png_write_info(png_ptr, info_ptr);
-    png_write_image(png_ptr, row_pointers);
-    png_write_end(png_ptr, info_ptr);
-
-    // Clean up everything . . .
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    delete[] row_pointers;
-    fclose(out);
-
-    return true;
-}
-
-bool SavePNGImage(const fs::path& filename, Image& image)
+bool SavePNGImage(const fs::path& filename, const Image& image)
 {
     return SavePNGImage(filename,
                         image.getWidth(),
@@ -263,3 +270,5 @@ bool SavePNGImage(const fs::path& filename, Image& image)
                         image.getPixels(),
                         image.hasAlpha());
 }
+
+} // namespace celestia::engine

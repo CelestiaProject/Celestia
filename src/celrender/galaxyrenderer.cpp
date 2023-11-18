@@ -63,7 +63,7 @@ BindTextures()
     {
         galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
                                             kGalaxyTextureSize,
-                                            celestia::PixelFormat::LUMINANCE,
+                                            engine::PixelFormat::Luminance,
                                             galaxyTextureEval).release();
     }
     assert(galaxyTex != nullptr);
@@ -72,7 +72,7 @@ BindTextures()
 
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
+        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
                                            colorTextureEval,
                                            Texture::EdgeClamp,
                                            Texture::NoMipMaps).release();

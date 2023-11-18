@@ -19,11 +19,11 @@
 #include <celutil/logger.h>
 #include "imageformats.h"
 
-using celestia::PixelFormat;
-using celestia::util::GetLogger;
-
+namespace celestia::engine
+{
 namespace
 {
+
 // All rows are padded to a size that's a multiple of 4 bytes
 int
 pad(int n)
@@ -38,28 +38,28 @@ formatComponents(PixelFormat fmt)
     {
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
-    case PixelFormat::SRGBA:
+    case PixelFormat::sRGBA:
         return 4;
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::SRGB:
+    case PixelFormat::sRGB:
         return 3;
-    case PixelFormat::LUM_ALPHA:
-    case PixelFormat::SLUM_ALPHA:
+    case PixelFormat::LumAlpha:
+    case PixelFormat::sLumAlpha:
         return 2;
-    case PixelFormat::ALPHA:
-    case PixelFormat::LUMINANCE:
-    case PixelFormat::SLUMINANCE:
+    case PixelFormat::Alpha:
+    case PixelFormat::Luminance:
+    case PixelFormat::sLuminance:
         return 1;
 
     // Compressed formats
     case PixelFormat::DXT1:
-    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT1_sRGBA:
         return 3;
     case PixelFormat::DXT3:
-    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return 4;
 
     // Unknown format
@@ -77,13 +77,13 @@ calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
     switch (fmt)
     {
     case PixelFormat::DXT1:
-    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT1_sRGBA:
         // 4x4 blocks, 8 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 8;
     case PixelFormat::DXT3:
-    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT5_sRGBA:
         // 4x4 blocks, 16 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 16;
     default:
@@ -101,24 +101,28 @@ calcTotalMipSize(PixelFormat fmt, int w, int h, int mipLevels)
     return size;
 }
 
-celestia::PixelFormat
-getLinearFormat(celestia::PixelFormat format)
+PixelFormat
+getLinearFormat(PixelFormat format)
 {
     switch (format)
     {
-    case PixelFormat::SRGBA:
+    case PixelFormat::sRGBA:
         return PixelFormat::RGBA;
-    case PixelFormat::SRGB:
+    case PixelFormat::sRGB:
         return PixelFormat::RGB;
-    case PixelFormat::SLUM_ALPHA:
-        return PixelFormat::LUM_ALPHA;
-    case PixelFormat::SLUMINANCE:
-        return PixelFormat::LUMINANCE;
-    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::sRGBA8:
+        return PixelFormat::RGBA8;
+    case PixelFormat::sRGB8:
+        return PixelFormat::RGB8;
+    case PixelFormat::sLuminance:
+        return PixelFormat::Luminance;
+    case PixelFormat::sLumAlpha:
+        return PixelFormat::LumAlpha;
+    case PixelFormat::DXT1_sRGBA:
         return PixelFormat::DXT1;
-    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT3_sRGBA:
         return PixelFormat::DXT3;
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return PixelFormat::DXT5;
     default:
         return format;
@@ -274,9 +278,9 @@ Image::isCompressed() const
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
-    case PixelFormat::DXT1_SRGBA:
-    case PixelFormat::DXT3_SRGBA:
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT1_sRGBA:
+    case PixelFormat::DXT3_sRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return true;
     default:
         return false;
@@ -289,14 +293,14 @@ Image::hasAlpha() const
     switch (format)
     {
     case PixelFormat::DXT3:
-    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
-    case PixelFormat::DXT5_SRGBA:
+    case PixelFormat::DXT5_sRGBA:
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
-    case PixelFormat::LUM_ALPHA:
-    case PixelFormat::SLUM_ALPHA:
-    case PixelFormat::ALPHA:
+    case PixelFormat::LumAlpha:
+    case PixelFormat::sLumAlpha:
+    case PixelFormat::Alpha:
         return true;
     default:
         return false;
@@ -356,11 +360,29 @@ void Image::forceLinear()
     format = getLinearFormat(format);
 }
 
-std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename)
+bool Image::canSave(ContentType type)
+{
+    return type == ContentType::PNG || type == ContentType::JPEG;
+}
+
+bool Image::save(const fs::path &path, ContentType type) const
+{
+    switch (type)
+    {
+    case ContentType::PNG:
+        return SavePNGImage(path, *this);
+    case ContentType::JPEG:
+        return SaveJPEGImage(path, *this);
+    default:
+        return false;
+    }
+}
+
+std::unique_ptr<Image> Image::load(const fs::path& filename)
 {
     ContentType type = DetermineFileType(filename);
 
-    GetLogger()->verbose(_("Loading image from file {}\n"), filename);
+    util::GetLogger()->verbose(_("Loading image from file {}\n"), filename);
     Image* img = nullptr;
 
     switch (type)
@@ -384,9 +406,11 @@ std::unique_ptr<Image> LoadImageFromFile(const fs::path& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        GetLogger()->error("{}: unrecognized or unsupported image file type.\n", filename);
+        util::GetLogger()->error(_("{}: unrecognized or unsupported image file type.\n"), filename);
         break;
     }
 
     return std::unique_ptr<Image>(img);
 }
+
+} // namespace celestia::engine

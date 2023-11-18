@@ -36,6 +36,8 @@
 #endif
 
 using celestia::compat::from_chars;
+using celestia::engine::Image;
+using celestia::engine::PixelFormat;
 using celestia::util::GetLogger;
 namespace gl = celestia::gl;
 
@@ -250,7 +252,7 @@ TextureFontPrivate::buildAtlas()
     computeTextureSize();
 
     // Create an image that will be used to hold all glyphs
-    auto img = std::make_unique<Image>(celestia::PixelFormat::LUMINANCE, m_texWidth, m_texHeight);
+    auto img = std::make_unique<Image>(PixelFormat::Luminance, m_texWidth, m_texHeight);
 
     // Paste all glyph bitmaps into the texture, remembering the offset
     int ox = 0;

@@ -363,8 +363,8 @@ public:
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
 
-    void getCaptureInfo(std::array<int, 4>& viewport, celestia::PixelFormat& format) const;
-    bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::PixelFormat format) const;
+    void getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const;
+    bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::engine::PixelFormat format) const;
     bool saveScreenShot(const fs::path&, ContentType = ContentType::Unknown) const;
 
     void loadAsterismsFile(const fs::path &path);

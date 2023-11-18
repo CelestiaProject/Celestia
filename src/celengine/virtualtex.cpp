@@ -26,6 +26,7 @@
 
 
 using celestia::util::GetLogger;
+using celestia::engine::Image;
 
 namespace
 {
@@ -277,7 +278,7 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
                 fmt::format("level{:d}", lod) /
                 fmt::format("{:s}{:d}_{:d}{:s}", tilePrefix, u, v, tileExt.string());
 
-    std::unique_ptr<Image> img = LoadImageFromFile(path);
+    auto img = Image::load(path);
     if (img == nullptr)
         return nullptr;
 
