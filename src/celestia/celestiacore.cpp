@@ -2366,6 +2366,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
     }
 
+    hud = std::make_unique<Hud>();
+
 #ifdef CELX
     initLuaHook(progressNotifier);
 #endif
@@ -2632,8 +2634,6 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         cursorHandler->setCursorShape(defaultCursorShape);
     }
-
-    hud = std::make_unique<Hud>();
 
     return true;
 }
