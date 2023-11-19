@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-11-14 22:14+0100\n"
+"POT-Creation-Date: 2023-11-18 13:30+0200\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Askaniy Anpilogov, 2023\n"
 "Language-Team: Russian (https://app.transifex.com/celestia/teams/93131/ru/)\n"
@@ -160,41 +160,49 @@ msgstr "Ошибка в файле .ssc (строка {}): {}\n"
 msgid "Ring system needs inner and outer radii.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:914
+#: ../src/celengine/solarsys.cpp:836
+msgid "Invalid SemiAxes value for object {}: [{}, {}, {}]\n"
+msgstr ""
+
+#: ../src/celengine/solarsys.cpp:871
+msgid "Invalid Oblateness value for object {}: {}\n"
+msgstr ""
+
+#: ../src/celengine/solarsys.cpp:937
 msgid "Incorrect GeomAlbedo value: {}\n"
 msgstr "Недопустимое значение GeomAlbedo: {}\n"
 
-#: ../src/celengine/solarsys.cpp:923
+#: ../src/celengine/solarsys.cpp:946
 msgid "Incorrect Reflectivity value: {}\n"
 msgstr "Недопустимое значение Reflectivity: {}\n"
 
-#: ../src/celengine/solarsys.cpp:931
+#: ../src/celengine/solarsys.cpp:954
 msgid "Incorrect BondAlbedo value: {}\n"
 msgstr "Недопустимое значение BondAlbedo: {}\n"
 
-#: ../src/celengine/solarsys.cpp:973
+#: ../src/celengine/solarsys.cpp:996
 msgid "Atmosphere must be an associative array.\n"
 msgstr "Атмосфера должна быть ассоциативным массивом.\n"
 
-#: ../src/celengine/solarsys.cpp:982
+#: ../src/celengine/solarsys.cpp:1005
 msgid "Rings must be an associative array.\n"
 msgstr "Кольца должны быть ассоциативным массивом.\n"
 
-#: ../src/celengine/solarsys.cpp:1193 ../src/celengine/solarsys.cpp:1250
+#: ../src/celengine/solarsys.cpp:1216 ../src/celengine/solarsys.cpp:1273
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
 msgstr "родитель '%s' объекта '%s' не найден.\n"
 
-#: ../src/celengine/solarsys.cpp:1202
+#: ../src/celengine/solarsys.cpp:1225
 #, c-format
 msgid "warning duplicate definition of %s %s\n"
 msgstr "предупреждение о дубликате определения %s %s\n"
 
-#: ../src/celengine/solarsys.cpp:1230
+#: ../src/celengine/solarsys.cpp:1253
 msgid "bad alternate surface"
 msgstr "ошибка с альтернативной поверхностью"
 
-#: ../src/celengine/solarsys.cpp:1245
+#: ../src/celengine/solarsys.cpp:1268
 msgid "bad location"
 msgstr "ошибка с местоположением"
 
@@ -1116,17 +1124,17 @@ msgstr "Объекты глубокого космоса"
 msgid "Event Finder"
 msgstr "Поиск затмений"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:1138
-#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
+#. i18n: file: ../src/celestia/qt/preferences.ui:1138
+#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/qtappwin.cpp:400 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Время"
 
+#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:407 ../src/celestia/qt/rc.cpp:139
 msgid "Guides"
 msgstr "Вспомогательные элементы"
@@ -1690,13 +1698,13 @@ msgstr "О"
 msgid "Orbits"
 msgstr "Орбиты"
 
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:95
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtselectionpopup.cpp:402
@@ -1769,6 +1777,7 @@ msgstr "Астероиды"
 msgid "Comets"
 msgstr "Кометы"
 
+#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1778,7 +1787,6 @@ msgstr "Кометы"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:101
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtselectionpopup.cpp:420
@@ -1806,11 +1814,11 @@ msgstr "Н"
 msgid "Labels"
 msgstr "Названия"
 
-#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:129
 #: ../src/celestia/qt/qtcelestiaactions.cpp:153
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:480 ../src/celestia/qt/rc.cpp:97
