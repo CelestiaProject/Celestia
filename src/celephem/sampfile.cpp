@@ -43,7 +43,7 @@ checkSampleOrdering(double tdb,
 
     if (!hasOutOfOrderSamples)
     {
-        GetLogger()->warn(_("Skipping out-of-order samples in {}."), filename);
+        GetLogger()->warn(_("Skipping out-of-order samples in {}.\n"), filename);
         hasOutOfOrderSamples = true;
     }
 
