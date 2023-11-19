@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-11-18 13:30+0200\n"
+"POT-Creation-Date: 2023-11-19 18:43+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: LBV 2012-26 <lbv2012-26@outlook.com>, 2023\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/celestia/"
@@ -24,71 +24,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../src/celengine/astro.cpp:118
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Jan"
-msgstr "1"
-
-#: ../src/celengine/astro.cpp:119
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Feb"
-msgstr "2"
-
-#: ../src/celengine/astro.cpp:120
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Mar"
-msgstr "3"
-
-#: ../src/celengine/astro.cpp:121
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Apr"
-msgstr "4"
-
-#: ../src/celengine/astro.cpp:122
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "May"
-msgstr "5"
-
-#: ../src/celengine/astro.cpp:123
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Jun"
-msgstr "6"
-
-#: ../src/celengine/astro.cpp:124
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Jul"
-msgstr "7"
-
-#: ../src/celengine/astro.cpp:125
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Aug"
-msgstr "8"
-
-#: ../src/celengine/astro.cpp:126
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Sep"
-msgstr "9"
-
-#: ../src/celengine/astro.cpp:127
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Oct"
-msgstr "10"
-
-#: ../src/celengine/astro.cpp:128
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Nov"
-msgstr "11"
-
-#: ../src/celengine/astro.cpp:129
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Dec"
-msgstr "12"
-
-#: ../src/celengine/astro.cpp:715
+#: ../src/celastro/date.cpp:496
 msgid "DST"
 msgstr "夏令时"
 
-#: ../src/celengine/astro.cpp:715
+#: ../src/celastro/date.cpp:496
 msgid "STD"
 msgstr "标准时间"
 
@@ -141,11 +81,11 @@ msgstr "模型统计数据：{} 顶点，{} 原语，{} 材质（{} 专有）\n"
 msgid "Mesh index {} is higher than VBO count {}!"
 msgstr "网格索引 {} 高于 VBO 数量 {}"
 
-#: ../src/celengine/nebula.cpp:34
+#: ../src/celengine/nebula.cpp:33
 msgid "Nebula"
 msgstr "星云"
 
-#: ../src/celengine/opencluster.cpp:36
+#: ../src/celengine/opencluster.cpp:35
 msgid "Open cluster"
 msgstr "疏散星团"
 
@@ -270,11 +210,11 @@ msgstr "无效恒星数据：缺少恒星光谱类型。\n"
 msgid "Barycenter {} does not exist.\n"
 msgstr "质心 {} 不存在。\n"
 
-#: ../src/celengine/texture.cpp:361
+#: ../src/celengine/texture.cpp:365
 msgid "Creating tiled texture. Width={}, max={}\n"
 msgstr "正在创建块贴图。Width={}，max={}\n"
 
-#: ../src/celengine/texture.cpp:367
+#: ../src/celengine/texture.cpp:371
 msgid "Creating ordinary texture: {}x{}\n"
 msgstr "正在创建一般纹理：{}×{}\n"
 
@@ -585,23 +525,23 @@ msgstr "读取配置文件时出错。"
 msgid "Initialization of SPICE library failed."
 msgstr "Spice 库初始化失败。"
 
-#: ../src/celestia/celestiacore.cpp:2391
+#: ../src/celestia/celestiacore.cpp:2393
 msgid "Cannot read star database."
 msgstr "无法读取星体数据库。"
 
-#: ../src/celestia/celestiacore.cpp:2411
+#: ../src/celestia/celestiacore.cpp:2413
 msgid "Error opening deepsky catalog file {}.\n"
 msgstr "读取深空天体目录文件 {} 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:2415
+#: ../src/celestia/celestiacore.cpp:2417
 msgid "Cannot read Deep Sky Objects database {}.\n"
 msgstr "深空天体数据库 {} 无法读取。\n"
 
-#: ../src/celestia/celestiacore.cpp:2462
+#: ../src/celestia/celestiacore.cpp:2464
 msgid "Error opening solar system catalog {}.\n"
 msgstr "打开太阳系目录文件 {} 时出错。\n"
 
-#: ../src/celestia/celestiacore.cpp:2504
+#: ../src/celestia/celestiacore.cpp:2506
 msgid "Error opening constellation boundaries file {}.\n"
 msgstr "打开星座边界文件 {} 时出错。\n"
 
@@ -649,7 +589,7 @@ msgstr "无法捕获当前帧\n"
 msgid "Unsupported image type: {}!\n"
 msgstr "不支持的图像格式：{}\n"
 
-#: ../src/celestia/celestiacore.cpp:3535
+#: ../src/celestia/celestiacore.cpp:3526
 msgid "Error opening asterisms file {}.\n"
 msgstr "打开星群文件 {} 时出错。\n"
 
@@ -767,24 +707,24 @@ msgstr "ft"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/hud.cpp:134 ../src/celestia/qt/qtinfopanel.cpp:193
-#: ../src/celestia/qt/qtinfopanel.cpp:314 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/hud.cpp:134 ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/qt/qtinfopanel.cpp:315 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/hud.cpp:139 ../src/celestia/qt/qtinfopanel.cpp:197
+#: ../src/celestia/hud.cpp:139 ../src/celestia/qt/qtinfopanel.cpp:198
 msgid "m"
 msgstr "m"
 
-#: ../src/celestia/hud.cpp:161 ../src/celestia/qt/qtinfopanel.cpp:249
-#: ../src/celestia/qt/qtinfopanel.cpp:295
-#: ../src/celestia/qt/qtinfopanel.cpp:333
+#: ../src/celestia/hud.cpp:161 ../src/celestia/qt/qtinfopanel.cpp:250
+#: ../src/celestia/qt/qtinfopanel.cpp:296
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 msgid "days"
 msgstr "天"
 
-#: ../src/celestia/hud.cpp:166 ../src/celestia/qt/qtinfopanel.cpp:245
-#: ../src/celestia/qt/qtinfopanel.cpp:291
+#: ../src/celestia/hud.cpp:166 ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:292
 msgid "hours"
 msgstr "小时"
 
@@ -1105,17 +1045,17 @@ msgstr "深空天体"
 msgid "Event Finder"
 msgstr "事件查找器"
 
-#. addDockWidget(Qt::DockWidgetArea, eventFinder);
-#. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1138
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
+#. addDockWidget(Qt::DockWidgetArea, eventFinder);
+#. Create the time toolbar
 #: ../src/celestia/qt/qtappwin.cpp:400 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "时间"
 
-#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
+#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:407 ../src/celestia/qt/rc.cpp:139
 msgid "Guides"
 msgstr "向导"
@@ -1679,13 +1619,13 @@ msgstr "O"
 msgid "Orbits"
 msgstr "轨道"
 
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:95
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtselectionpopup.cpp:402
@@ -1758,7 +1698,6 @@ msgstr "小行星"
 msgid "Comets"
 msgstr "彗星"
 
-#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1768,6 +1707,7 @@ msgstr "彗星"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
+#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:101
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtselectionpopup.cpp:420
@@ -1795,11 +1735,11 @@ msgstr "L"
 msgid "Labels"
 msgstr "标签"
 
+#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
-#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:129
 #: ../src/celestia/qt/qtcelestiaactions.cpp:153
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:480 ../src/celestia/qt/rc.cpp:97
@@ -2329,167 +2269,167 @@ msgstr "Celesita 无法初始化 OpenGL ES 2.0。"
 msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr "Celestia 无法初始化 OpenGL 2.1。"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:154
+#: ../src/celestia/qt/qtinfopanel.cpp:155
 msgid "Error: no object selected!\n"
 msgstr "错误：未选择天体\n"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/qt/qtinfopanel.cpp:167
 #: ../src/celestia/qt/qtselectionpopup.cpp:178
 msgid "Info"
 msgstr "信息"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:186
+#: ../src/celestia/qt/qtinfopanel.cpp:187
 #, qt-format
 msgid "Web info: %1"
 msgstr "Web 信息：%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:202
+#: ../src/celestia/qt/qtinfopanel.cpp:203
 #, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr "<b>赤道半径：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:204
+#: ../src/celestia/qt/qtinfopanel.cpp:205
 #, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "<b>大小：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:209
+#: ../src/celestia/qt/qtinfopanel.cpp:210
 msgid "<b>Oblateness: "
 msgstr "<b>扁率："
 
-#: ../src/celestia/qt/qtinfopanel.cpp:252
+#: ../src/celestia/qt/qtinfopanel.cpp:253
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "<b>自转周期：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:255
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 msgid "Prograde"
 msgstr "Prograde"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:255
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 msgid "Retrograde"
 msgstr "Retrograde"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:256
+#: ../src/celestia/qt/qtinfopanel.cpp:257
 #, qt-format
 msgid "<b>Rotation direction:</b> %1"
 msgstr "<b>旋转方向：</b>%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:260
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "<b>太阳日：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:267
+#: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
 msgstr "<b>拥有光环</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:269
+#: ../src/celestia/qt/qtinfopanel.cpp:270
 msgid "<b>Has atmosphere</b>"
 msgstr "<b>拥有大气层</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:277
+#: ../src/celestia/qt/qtinfopanel.cpp:278
 #, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "<b>开始：</b>%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:280
+#: ../src/celestia/qt/qtinfopanel.cpp:281
 #, qt-format
 msgid "<b>End:</b> %1"
 msgstr "<b>结束：</b>%1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:282
+#: ../src/celestia/qt/qtinfopanel.cpp:283
 msgid "Orbit information"
 msgstr "轨道信息"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:283
+#: ../src/celestia/qt/qtinfopanel.cpp:284
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr "密切元素 %1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:299
+#: ../src/celestia/qt/qtinfopanel.cpp:300
 msgid "years"
 msgstr "yr"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:303
+#: ../src/celestia/qt/qtinfopanel.cpp:304
 #, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "<b>周期：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:309
+#: ../src/celestia/qt/qtinfopanel.cpp:310
 msgid "AU"
 msgstr "AU"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:317
+#: ../src/celestia/qt/qtinfopanel.cpp:318
 #, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "<b>半长轴：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:318
+#: ../src/celestia/qt/qtinfopanel.cpp:319
 #, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "<b>离心率：</b> %L1"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:319
+#: ../src/celestia/qt/qtinfopanel.cpp:320
 #, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "<b>倾角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:321
+#: ../src/celestia/qt/qtinfopanel.cpp:322
 #, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "<b>近心点距离：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:323
+#: ../src/celestia/qt/qtinfopanel.cpp:324
 #, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "<b>远心点距离：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:325
+#: ../src/celestia/qt/qtinfopanel.cpp:326
 #, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "<b>升交点经度：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:327
+#: ../src/celestia/qt/qtinfopanel.cpp:328
 #, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "<b>近心点幅角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:329
+#: ../src/celestia/qt/qtinfopanel.cpp:330
 #, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "<b>平近点角：</b> %L1%2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:333
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 #, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "<b>周期（计算结果）：</b> %L1 %2"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:337
+#: ../src/celestia/qt/qtinfopanel.cpp:338
 #, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1%2/day"
 msgstr "<b>网格动作（已计算）：</b>%L1%2/天"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:361
-#: ../src/celestia/qt/qtinfopanel.cpp:384
+#: ../src/celestia/qt/qtinfopanel.cpp:362
+#: ../src/celestia/qt/qtinfopanel.cpp:385
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "<b>赤经：</b> %L1h %L2m %L3s"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:365
-#: ../src/celestia/qt/qtinfopanel.cpp:388
+#: ../src/celestia/qt/qtinfopanel.cpp:366
+#: ../src/celestia/qt/qtinfopanel.cpp:389
 #, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "<b>赤纬：</b> %L1%2 %L3' %L4\""
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:396
+#: ../src/celestia/qt/qtinfopanel.cpp:397
 #, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "<b>L：</b> %L1%2 %L3' %L4\""
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:400
+#: ../src/celestia/qt/qtinfopanel.cpp:401
 #, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "<b>B：</b> %L1%2 %L3' %L4\""
@@ -3928,6 +3868,54 @@ msgstr "详细"
 msgid "WinLangID"
 msgstr "804"
 
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Apr"
+msgstr "4"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Feb"
+msgstr "2"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Jan"
+msgstr "1"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Jun"
+msgstr "6"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Mar"
+msgstr "3"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "May"
+msgstr "5"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Aug"
+msgstr "8"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Dec"
+msgstr "12"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Jul"
+msgstr "7"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Nov"
+msgstr "11"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Oct"
+msgstr "10"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Sep"
+msgstr "9"
+
 #: ../src/celestia/win32/wineclipses.cpp:66
 msgid "Satellite"
 msgstr "卫星"
@@ -4132,7 +4120,7 @@ msgstr "加载 URL"
 
 #. string s;
 #. s += UTF8ToCurrentCP(_("Version: "));
-#: ../src/celestia/win32/winsplash.cpp:141
+#: ../src/celestia/win32/winsplash.cpp:142
 msgid "Version: "
 msgstr "版本："
 
@@ -4144,29 +4132,38 @@ msgstr "时区名称"
 msgid "UTC Offset"
 msgstr "与 UTC 的差异"
 
-#: ../src/celimage/image.cpp:363
+#: ../src/celimage/image.cpp:385
 msgid "Loading image from file {}\n"
 msgstr "正在从 {} 中加载图片\n"
 
-#: ../src/celimage/png.cpp:53
-msgid "Error opening image file {}.\n"
-msgstr "打开图像文件 {} 时出错。\n"
+#: ../src/celimage/image.cpp:409
+msgid "{}: unrecognized or unsupported image file type.\n"
+msgstr ""
 
-#: ../src/celimage/png.cpp:61
-msgid "Error: {} is not a PNG file.\n"
-msgstr "错误：{} 不是一个 PNG 文件。\n"
-
-#: ../src/celimage/png.cpp:87
-msgid "Error reading PNG image file {}\n"
+#: ../src/celimage/png.cpp:27
+#, fuzzy
+msgid "Error reading PNG data"
 msgstr "读取 PNG 图像文件 {} 时出错\n"
 
-#: ../src/celimage/png.cpp:177
+#: ../src/celimage/png.cpp:49
 msgid "Can't open screen capture file '{}'\n"
 msgstr "无法打开录屏文件“{}”\n"
 
-#: ../src/celimage/png.cpp:226
+#: ../src/celimage/png.cpp:105
 msgid "Error writing PNG file '{}'\n"
 msgstr "写入 PNG 文件“{}”时出错\n"
+
+#: ../src/celimage/png.cpp:153
+msgid "Error opening image file {}.\n"
+msgstr "打开图像文件 {} 时出错。\n"
+
+#: ../src/celimage/png.cpp:161
+msgid "Error: {} is not a PNG file.\n"
+msgstr "错误：{} 不是一个 PNG 文件。\n"
+
+#: ../src/celimage/png.cpp:187
+msgid "Error reading PNG image file {}\n"
+msgstr "读取 PNG 图像文件 {} 时出错\n"
 
 #: ../src/celscript/legacy/legacyscript.cpp:101
 msgid "Error opening script file."

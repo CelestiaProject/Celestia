@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-11-18 13:30+0200\n"
+"POT-Creation-Date: 2023-11-19 18:43+0100\n"
 "PO-Revision-Date: 2018-05-28 20:49+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -19,71 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
 
-#: ../src/celengine/astro.cpp:118
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Jan"
-msgstr "Jan"
-
-#: ../src/celengine/astro.cpp:119
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Feb"
-msgstr "Feb"
-
-#: ../src/celengine/astro.cpp:120
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Mar"
-msgstr "Mar"
-
-#: ../src/celengine/astro.cpp:121
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Apr"
-msgstr "Apr"
-
-#: ../src/celengine/astro.cpp:122
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "May"
-msgstr "Mai"
-
-#: ../src/celengine/astro.cpp:123
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-msgid "Jun"
-msgstr "Jūn"
-
-#: ../src/celengine/astro.cpp:124
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Jul"
-msgstr "Jūl"
-
-#: ../src/celengine/astro.cpp:125
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Aug"
-msgstr "Aug"
-
-#: ../src/celengine/astro.cpp:126
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Sep"
-msgstr "Sep"
-
-#: ../src/celengine/astro.cpp:127
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Oct"
-msgstr "Okt"
-
-#: ../src/celengine/astro.cpp:128
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Nov"
-msgstr "Nov"
-
-#: ../src/celengine/astro.cpp:129
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Dec"
-msgstr "Dec"
-
-#: ../src/celengine/astro.cpp:715
+#: ../src/celastro/date.cpp:496
 msgid "DST"
 msgstr "DST"
 
-#: ../src/celengine/astro.cpp:715
+#: ../src/celastro/date.cpp:496
 msgid "STD"
 msgstr "STD"
 
@@ -139,11 +79,11 @@ msgstr ""
 msgid "Mesh index {} is higher than VBO count {}!"
 msgstr ""
 
-#: ../src/celengine/nebula.cpp:34
+#: ../src/celengine/nebula.cpp:33
 msgid "Nebula"
 msgstr "Miglājus"
 
-#: ../src/celengine/opencluster.cpp:36
+#: ../src/celengine/opencluster.cpp:35
 msgid "Open cluster"
 msgstr "Vaļējās kopas"
 
@@ -278,12 +218,12 @@ msgstr "Kļūdaina zvaigzne: nav norādīta spektra klase.\n"
 msgid "Barycenter {} does not exist.\n"
 msgstr " neeksistē.\n"
 
-#: ../src/celengine/texture.cpp:361
+#: ../src/celengine/texture.cpp:365
 #, fuzzy
 msgid "Creating tiled texture. Width={}, max={}\n"
 msgstr "Tiek veidota sadalīta tekstūra. Platums="
 
-#: ../src/celengine/texture.cpp:367
+#: ../src/celengine/texture.cpp:371
 #, fuzzy
 msgid "Creating ordinary texture: {}x{}\n"
 msgstr "Tiek veidota parasta tekstūra: "
@@ -618,26 +558,26 @@ msgstr "Kļūda nolasot konfigurācijas failu."
 msgid "Initialization of SPICE library failed."
 msgstr "SPICE bibliotēkas inicializācija neizdevās."
 
-#: ../src/celestia/celestiacore.cpp:2391
+#: ../src/celestia/celestiacore.cpp:2393
 msgid "Cannot read star database."
 msgstr "Nevar ielasīt zvaigžņu datubāzi."
 
-#: ../src/celestia/celestiacore.cpp:2411
+#: ../src/celestia/celestiacore.cpp:2413
 #, fuzzy
 msgid "Error opening deepsky catalog file {}.\n"
 msgstr "Kļūda atverot deespky kataloga failu."
 
-#: ../src/celestia/celestiacore.cpp:2415
+#: ../src/celestia/celestiacore.cpp:2417
 #, fuzzy
 msgid "Cannot read Deep Sky Objects database {}.\n"
 msgstr "Nevar ielasīt zvaigžņu datubāzi."
 
-#: ../src/celestia/celestiacore.cpp:2462
+#: ../src/celestia/celestiacore.cpp:2464
 #, fuzzy
 msgid "Error opening solar system catalog {}.\n"
 msgstr "Kļūda atverot zvaigžņu sistēmas katalogu.\n"
 
-#: ../src/celestia/celestiacore.cpp:2504
+#: ../src/celestia/celestiacore.cpp:2506
 #, fuzzy
 msgid "Error opening constellation boundaries file {}.\n"
 msgstr "Kļūda atverot zvaigznāju robežu failus."
@@ -691,7 +631,7 @@ msgstr ""
 msgid "Unsupported image type: {}!\n"
 msgstr "Atbalstītie paplašinājumi:"
 
-#: ../src/celestia/celestiacore.cpp:3535
+#: ../src/celestia/celestiacore.cpp:3526
 #, fuzzy
 msgid "Error opening asterisms file {}.\n"
 msgstr "Kļūda atverot asterismu failu."
@@ -811,26 +751,26 @@ msgstr ""
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/hud.cpp:134 ../src/celestia/qt/qtinfopanel.cpp:193
-#: ../src/celestia/qt/qtinfopanel.cpp:314 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/hud.cpp:134 ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/qt/qtinfopanel.cpp:315 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/hud.cpp:139 ../src/celestia/qt/qtinfopanel.cpp:197
+#: ../src/celestia/hud.cpp:139 ../src/celestia/qt/qtinfopanel.cpp:198
 #, fuzzy
 msgid "m"
 msgstr " m/s"
 
-#: ../src/celestia/hud.cpp:161 ../src/celestia/qt/qtinfopanel.cpp:249
-#: ../src/celestia/qt/qtinfopanel.cpp:295
-#: ../src/celestia/qt/qtinfopanel.cpp:333
+#: ../src/celestia/hud.cpp:161 ../src/celestia/qt/qtinfopanel.cpp:250
+#: ../src/celestia/qt/qtinfopanel.cpp:296
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 #, fuzzy
 msgid "days"
 msgstr " dienas"
 
-#: ../src/celestia/hud.cpp:166 ../src/celestia/qt/qtinfopanel.cpp:245
-#: ../src/celestia/qt/qtinfopanel.cpp:291
+#: ../src/celestia/hud.cpp:166 ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:292
 #, fuzzy
 msgid "hours"
 msgstr " stundas"
@@ -1172,17 +1112,17 @@ msgstr " dziļā kosmosa objekti"
 msgid "Event Finder"
 msgstr "Aptumsumu meklētājs"
 
-#. addDockWidget(Qt::DockWidgetArea, eventFinder);
-#. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1138
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
+#. addDockWidget(Qt::DockWidgetArea, eventFinder);
+#. Create the time toolbar
 #: ../src/celestia/qt/qtappwin.cpp:400 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Laiks"
 
-#. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
+#. Create the guides toolbar
 #: ../src/celestia/qt/qtappwin.cpp:407 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
@@ -1815,13 +1755,13 @@ msgstr "Labi"
 msgid "Orbits"
 msgstr "Orbītas"
 
-#. Skip sorting if we are dealing with the planets in our own Solar System.
 #. i18n: file: ../src/celestia/qt/preferences.ui:49
 #. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:286
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
+#. Skip sorting if we are dealing with the planets in our own Solar System.
 #: ../src/celestia/qt/qtcelestiaactions.cpp:95
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtselectionpopup.cpp:402
@@ -1894,7 +1834,6 @@ msgstr "Asteroīdiem"
 msgid "Comets"
 msgstr "Komētām"
 
-#. TRANSLATORS: translate this as plural
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
@@ -1904,6 +1843,7 @@ msgstr "Komētām"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
+#. TRANSLATORS: translate this as plural
 #: ../src/celestia/qt/qtcelestiaactions.cpp:101
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtselectionpopup.cpp:420
@@ -1933,11 +1873,11 @@ msgstr "10x Ā&trāk\tL"
 msgid "Labels"
 msgstr "Nosaukumus"
 
+#. Buttons to select filtering criterion for dsos
 #. i18n: file: ../src/celestia/qt/preferences.ui:98
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
-#. Buttons to select filtering criterion for dsos
 #: ../src/celestia/qt/qtcelestiaactions.cpp:129
 #: ../src/celestia/qt/qtcelestiaactions.cpp:153
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:480 ../src/celestia/qt/rc.cpp:97
@@ -2503,172 +2443,172 @@ msgstr ""
 msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:154
+#: ../src/celestia/qt/qtinfopanel.cpp:155
 msgid "Error: no object selected!\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/qt/qtinfopanel.cpp:167
 #: ../src/celestia/qt/qtselectionpopup.cpp:178
 #, fuzzy
 msgid "Info"
 msgstr "&Informācija"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:186
+#: ../src/celestia/qt/qtinfopanel.cpp:187
 #, fuzzy, qt-format
 msgid "Web info: %1"
 msgstr "OpenGL informācija"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:202
+#: ../src/celestia/qt/qtinfopanel.cpp:203
 #, fuzzy, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr "Ekvatoriālais"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:204
+#: ../src/celestia/qt/qtinfopanel.cpp:205
 #, fuzzy, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:209
+#: ../src/celestia/qt/qtinfopanel.cpp:210
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:252
+#: ../src/celestia/qt/qtinfopanel.cpp:253
 #, fuzzy, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "Rotācijas periods: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:255
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy
 msgid "Prograde"
 msgstr "Belgrada"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:255
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy
 msgid "Retrograde"
 msgstr "Belgrada"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:256
+#: ../src/celestia/qt/qtinfopanel.cpp:257
 #, fuzzy, qt-format
 msgid "<b>Rotation direction:</b> %1"
 msgstr "<b>Nepaplašināts OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:260
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, fuzzy, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:267
+#: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:269
+#: ../src/celestia/qt/qtinfopanel.cpp:270
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:277
+#: ../src/celestia/qt/qtinfopanel.cpp:278
 #, fuzzy, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:280
+#: ../src/celestia/qt/qtinfopanel.cpp:281
 #, fuzzy, qt-format
 msgid "<b>End:</b> %1"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:282
+#: ../src/celestia/qt/qtinfopanel.cpp:283
 #, fuzzy
 msgid "Orbit information"
 msgstr "Informatīvais teksts"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:283
+#: ../src/celestia/qt/qtinfopanel.cpp:284
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:299
+#: ../src/celestia/qt/qtinfopanel.cpp:300
 msgid "years"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:303
+#: ../src/celestia/qt/qtinfopanel.cpp:304
 #, fuzzy, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:309
+#: ../src/celestia/qt/qtinfopanel.cpp:310
 #, fuzzy
 msgid "AU"
 msgstr "au"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:317
+#: ../src/celestia/qt/qtinfopanel.cpp:318
 #, fuzzy, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "Ekvatoriālais"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:318
+#: ../src/celestia/qt/qtinfopanel.cpp:319
 #, fuzzy, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:319
+#: ../src/celestia/qt/qtinfopanel.cpp:320
 #, fuzzy, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:321
+#: ../src/celestia/qt/qtinfopanel.cpp:322
 #, fuzzy, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:323
+#: ../src/celestia/qt/qtinfopanel.cpp:324
 #, fuzzy, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:325
+#: ../src/celestia/qt/qtinfopanel.cpp:326
 #, fuzzy, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "Attālums(ly)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:327
+#: ../src/celestia/qt/qtinfopanel.cpp:328
 #, fuzzy, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "Ekvatoriālais"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:329
+#: ../src/celestia/qt/qtinfopanel.cpp:330
 #, fuzzy, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:333
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 #, fuzzy, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "Rotācijas periods: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:337
+#: ../src/celestia/qt/qtinfopanel.cpp:338
 #, fuzzy, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1%2/day"
 msgstr "Rotācijas periods: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:361
-#: ../src/celestia/qt/qtinfopanel.cpp:384
+#: ../src/celestia/qt/qtinfopanel.cpp:362
+#: ../src/celestia/qt/qtinfopanel.cpp:385
 #, fuzzy, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "Izmērs: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:365
-#: ../src/celestia/qt/qtinfopanel.cpp:388
+#: ../src/celestia/qt/qtinfopanel.cpp:366
+#: ../src/celestia/qt/qtinfopanel.cpp:389
 #, fuzzy, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "Izmērs: %1 MB"
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:396
+#: ../src/celestia/qt/qtinfopanel.cpp:397
 #, fuzzy, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "Izmērs: %1 MB"
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:400
+#: ../src/celestia/qt/qtinfopanel.cpp:401
 #, fuzzy, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "Izmērs: %1 MB"
@@ -4215,6 +4155,54 @@ msgstr "pilnīgs"
 msgid "WinLangID"
 msgstr "0426"
 
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Apr"
+msgstr "Apr"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Feb"
+msgstr "Feb"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Jan"
+msgstr "Jan"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Jun"
+msgstr "Jūn"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "Mar"
+msgstr "Mar"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:241
+msgid "May"
+msgstr "Mai"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Aug"
+msgstr "Aug"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Dec"
+msgstr "Dec"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Jul"
+msgstr "Jūl"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Nov"
+msgstr "Nov"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Oct"
+msgstr "Okt"
+
+#: ../src/celestia/win32/res/resource_strings.cpp:242
+msgid "Sep"
+msgstr "Sep"
+
 #: ../src/celestia/win32/wineclipses.cpp:66
 msgid "Satellite"
 msgstr "Pavadonis"
@@ -4421,7 +4409,7 @@ msgstr "Ielādē URL"
 
 #. string s;
 #. s += UTF8ToCurrentCP(_("Version: "));
-#: ../src/celestia/win32/winsplash.cpp:141
+#: ../src/celestia/win32/winsplash.cpp:142
 msgid "Version: "
 msgstr "Versija: "
 
@@ -4433,33 +4421,43 @@ msgstr "Laika zona"
 msgid "UTC Offset"
 msgstr "UTC nobīde"
 
-#: ../src/celimage/image.cpp:363
+#: ../src/celimage/image.cpp:385
 #, fuzzy
 msgid "Loading image from file {}\n"
 msgstr "Ielādē attēlu no faila"
 
-#: ../src/celimage/png.cpp:53
+#: ../src/celimage/image.cpp:409
+#, fuzzy
+msgid "{}: unrecognized or unsupported image file type.\n"
+msgstr ": neatpazīts vai neatbalstīts attēla faila tips.\n"
+
+#: ../src/celimage/png.cpp:27
+#, fuzzy
+msgid "Error reading PNG data"
+msgstr "Kļūda ielādējot PNG attēla failu"
+
+#: ../src/celimage/png.cpp:49
+msgid "Can't open screen capture file '{}'\n"
+msgstr ""
+
+#: ../src/celimage/png.cpp:105
+#, fuzzy
+msgid "Error writing PNG file '{}'\n"
+msgstr "Kļūda ielādējot PNG attēla failu"
+
+#: ../src/celimage/png.cpp:153
 #, fuzzy
 msgid "Error opening image file {}.\n"
 msgstr "Kļūda atverot attēla failu"
 
-#: ../src/celimage/png.cpp:61
+#: ../src/celimage/png.cpp:161
 #, fuzzy
 msgid "Error: {} is not a PNG file.\n"
 msgstr " nav PNG fails. \n"
 
-#: ../src/celimage/png.cpp:87
+#: ../src/celimage/png.cpp:187
 #, fuzzy
 msgid "Error reading PNG image file {}\n"
-msgstr "Kļūda ielādējot PNG attēla failu"
-
-#: ../src/celimage/png.cpp:177
-msgid "Can't open screen capture file '{}'\n"
-msgstr ""
-
-#: ../src/celimage/png.cpp:226
-#, fuzzy
-msgid "Error writing PNG file '{}'\n"
 msgstr "Kļūda ielādējot PNG attēla failu"
 
 #: ../src/celscript/legacy/legacyscript.cpp:101
@@ -6772,10 +6770,6 @@ msgstr "Atbalstītie paplašinājumi:"
 
 #~ msgid "Initializing ARB fragment programs . . .\n"
 #~ msgstr "Inicializē ARB fragmentprogrammas . . .\n"
-
-#, fuzzy
-#~ msgid "%s: unrecognized or unsupported image file type.\n"
-#~ msgstr ": neatpazīts vai neatbalstīts attēla faila tips.\n"
 
 #~ msgid "Loading NV vertex program: "
 #~ msgstr "Ielādē NV verteksu programmu: "
