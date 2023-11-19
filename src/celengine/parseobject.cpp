@@ -701,9 +701,9 @@ CreateOrbit(const Selection& centralObject,
         GetLogger()->error("Could not find custom orbit named '{}'\n", *customOrbitName);
     }
 
-#ifdef USE_SPICE
     if (const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit"); spiceOrbitDataValue != nullptr)
     {
+#ifdef USE_SPICE
         const Hash* spiceOrbitData = spiceOrbitDataValue->getHash();
         if (spiceOrbitData == nullptr)
         {
@@ -720,8 +720,10 @@ CreateOrbit(const Selection& centralObject,
             GetLogger()->error("Bad spice orbit\n");
             GetLogger()->error("Could not load SPICE orbit\n");
         }
-    }
+#else
+        GetLogger()->warn("Spice support is not enabled, ignoring SpiceOrbit definition\n");
 #endif
+    }
 
     // Trajectory calculated by Lua script
     if (const Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit"); scriptedOrbitValue != nullptr)
@@ -1013,9 +1015,9 @@ CreateRotationModel(const Hash* planetData,
                            *customRotationModelName);
     }
 
-#ifdef USE_SPICE
     if (const Value* spiceRotationDataValue = planetData->getValue("SpiceRotation"); spiceRotationDataValue != nullptr)
     {
+#ifdef USE_SPICE
         const Hash* spiceRotationData = spiceRotationDataValue->getHash();
         if (spiceRotationData == nullptr)
         {
@@ -1030,8 +1032,10 @@ CreateRotationModel(const Hash* planetData,
             }
             GetLogger()->error("Bad spice rotation model\nCould not load SPICE rotation model\n");
         }
-    }
+#else
+        GetLogger()->warn("Spice support is not enabled, ignoring SpiceRotation definition\n");
 #endif
+    }
 
     if (const Value* scriptedRotationValue = planetData->getValue("ScriptedRotation"); scriptedRotationValue != nullptr)
     {
