@@ -15,7 +15,7 @@
 #include <commctrl.h>
 #include <time.h>
 #include "res/resource.h"
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
 

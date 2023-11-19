@@ -13,6 +13,7 @@
 #include <cmath>
 #include <Eigen/Geometry>
 #include <fmt/format.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/intersect.h>

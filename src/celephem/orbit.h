@@ -13,7 +13,7 @@
 
 #include <Eigen/Core>
 
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 
 class Body;
 

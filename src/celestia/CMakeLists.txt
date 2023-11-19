@@ -64,6 +64,7 @@ if(ENABLE_MINIAUDIO)
 endif()
 
 set(CELESTIA_CORE_LIBS $<TARGET_OBJECTS:cel3ds>
+                       $<TARGET_OBJECTS:celastro>
                        $<TARGET_OBJECTS:celengine>
                        $<TARGET_OBJECTS:celephem>
                        $<TARGET_OBJECTS:celimage>

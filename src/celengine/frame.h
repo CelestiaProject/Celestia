@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <celengine/astro.h>
 #include <celengine/selection.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>

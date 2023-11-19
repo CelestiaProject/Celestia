@@ -41,7 +41,7 @@
 #include <QVariant>
 #include <QVBoxLayout>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/astroobj.h>
 #include <celengine/marker.h>
 #include <celengine/selection.h>

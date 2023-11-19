@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QString>
 
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 #include <celengine/body.h>
 #include <celengine/observer.h>
 #include <celengine/selection.h>

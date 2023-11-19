@@ -13,7 +13,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/simulation.h>
 
 #include "dialog-time.h"

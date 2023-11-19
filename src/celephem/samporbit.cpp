@@ -26,8 +26,8 @@
 
 #include <Eigen/Core>
 
+#include <celastro/date.h>
 #include <celcompat/bit.h>
-#include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>

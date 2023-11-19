@@ -21,7 +21,7 @@
 
 #include <Eigen/Geometry>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include "precession.h"

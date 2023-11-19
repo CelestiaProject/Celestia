@@ -16,10 +16,9 @@
 
 #include <Eigen/Core>
 
+#include <celastro/astro.h>
 #include <celutil/r128.h>
 #include <celutil/r128util.h>
-
-#include "astro.h"
 
 
 class UniversalCoord

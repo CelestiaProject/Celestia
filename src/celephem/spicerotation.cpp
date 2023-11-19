@@ -16,8 +16,8 @@
 
 #include <SpiceUsr.h>
 
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
 #include "spiceinterface.h"

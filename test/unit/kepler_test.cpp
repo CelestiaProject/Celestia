@@ -1,8 +1,8 @@
 #include <array>
 #include <cmath>
 
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celephem/orbit.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>

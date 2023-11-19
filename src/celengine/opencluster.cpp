@@ -9,7 +9,6 @@
 
 #include <config.h>
 #include "render.h"
-#include "astro.h"
 #include "opencluster.h"
 #include "meshmanager.h"
 #include <celmath/mathlib.h>

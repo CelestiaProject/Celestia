@@ -15,8 +15,8 @@
 
 #include <Eigen/Geometry>
 
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
 #include <celengine/observer.h>

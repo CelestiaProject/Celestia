@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-#include "astro.h"
+#include <celastro/units.h>
 #include "hash.h"
 
 

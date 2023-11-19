@@ -22,9 +22,10 @@
 
 #include <config.h>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
-#include <celengine/astro.h>
 #include "orbit.h"
 
 namespace celestia::ephem

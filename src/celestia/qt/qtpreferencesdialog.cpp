@@ -23,7 +23,7 @@
 #include <QSpinBox>
 #include <QVariant>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/observer.h>

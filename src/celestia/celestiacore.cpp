@@ -18,8 +18,9 @@
 #include "textprintposition.h"
 #include "url.h"
 #include "viewmanager.h"
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include <celengine/body.h>
 #include <celengine/boundaries.h>

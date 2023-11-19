@@ -11,6 +11,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celengine/star.h>
 #include <celengine/body.h>
 #include <celengine/deepskyobj.h>

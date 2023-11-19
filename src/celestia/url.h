@@ -16,7 +16,7 @@
 
 #include <Eigen/Geometry>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/observer.h>
 #include <celengine/selection.h>
 

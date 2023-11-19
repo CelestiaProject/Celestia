@@ -1,6 +1,6 @@
-// astro.cpp
+// date.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2023, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -8,28 +8,31 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "astro.h"
+#include "date.h"
 
-#include <algorithm>
 #include <array>
-#include <cassert>
+#include <cmath>
 #include <cstddef>
-#include <cstdio>
-#include <cstdlib>
+#include <cstdint>
 #include <ctime>
 #include <locale>
 #include <string_view>
 
-#if defined(__GNUC__) && !defined(_WIN32)
-#include <fmt/chrono.h>
-#endif
 #include <fmt/format.h>
 
-#include <celmath/geomutil.h>
+#include "astro.h"
+
+#if defined(__GNUC__) && !defined(_WIN32)
+#include <fmt/chrono.h>
+#else
+#include <iomanip>
+#include <sstream>
+
 #include <celutil/gettext.h>
+#include <celutil/winutil.h>
+#endif
 
 using namespace std::string_view_literals;
-
 
 namespace celestia::astro
 {
@@ -37,34 +40,9 @@ namespace celestia::astro
 namespace
 {
 
-const Eigen::Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = math::XRotation(-J2000Obliquity);
-const Eigen::Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
-
-const Eigen::Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
-    Eigen::Quaterniond(Eigen::AngleAxis<double>(-J2000Obliquity, Eigen::Vector3d::UnitX()));
-const Eigen::Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
-const Eigen::Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
-
-// Equatorial to galactic coordinate transformation
-// North galactic pole at:
-// RA 12h 51m 26.282s (192.85958 deg)
-// Dec 27 d 07' 42.01" (27.1283361 deg)
-// Zero longitude at position angle 122.932
-// (J2000 coordinates)
-constexpr double GALACTIC_NODE = 282.85958;
-constexpr double GALACTIC_INCLINATION = 90.0 - 27.1283361;
-constexpr double GALACTIC_LONGITUDE_AT_NODE = 32.932;
-
-const Eigen::Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
-    math::ZRotation(math::degToRad(GALACTIC_NODE)) *
-    math::XRotation(math::degToRad(GALACTIC_INCLINATION)) *
-    math::ZRotation(math::degToRad(-GALACTIC_LONGITUDE_AT_NODE));
-const Eigen::Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
-
 // Difference in seconds between Terrestrial Time and International
 // Atomic Time
 constexpr double dTA = 32.184;
-
 
 // Table of leap second insertions. The leap second always
 // appears as the last second of the day immediately prior
@@ -101,35 +79,35 @@ constexpr std::array<LeapSecondRecord, 28> LeapSeconds
     LeapSecondRecord{ 37, 2457754.5 }, // 1 Jan 2017
 };
 
-
-inline void
-negateIf(double& d, bool condition)
-{
-    if (condition)
-        d = -d;
-}
-
-
 celestia::util::array_view<LeapSecondRecord> g_leapSeconds = LeapSeconds; //NOSONAR
 
+#if !(defined(__GNUC__) && !defined(_WIN32))
+class MonthAbbreviations
+{
+public:
+    MonthAbbreviations();
+    std::string_view operator[](int i) const { return abbreviations[static_cast<std::size_t>(i)]; }
 
-#if !defined(__GNUC__) || defined(_WIN32)
-const std::array<const char*, 12> MonthAbbrList{
-    N_("Jan"),
-    N_("Feb"),
-    N_("Mar"),
-    N_("Apr"),
-    N_("May"),
-    N_("Jun"),
-    N_("Jul"),
-    N_("Aug"),
-    N_("Sep"),
-    N_("Oct"),
-    N_("Nov"),
-    N_("Dec"),
+private:
+    std::array<std::string, 12> abbreviations;
 };
-#endif
 
+MonthAbbreviations::MonthAbbreviations()
+{
+    auto loc = std::locale("");
+    for (int i = 0; i < 12; ++i)
+    {
+        std::tm tm;
+        tm.tm_mon = i;
+        std::wostringstream stream;
+        stream.imbue(loc);
+        stream << std::put_time(&tm, L"%b");
+        abbreviations[i] = WideToUTF8(stream.str());
+    }
+}
+
+const MonthAbbreviations monthAbbreviations;
+#endif
 
 inline bool
 timeToLocal(const std::time_t& time, std::tm& localt)
@@ -140,7 +118,6 @@ timeToLocal(const std::time_t& time, std::tm& localt)
     return localtime_r(&time, &localt) != nullptr;
 #endif
 }
-
 
 inline bool
 timeToUTC(const std::time_t& time, std::tm& utct)
@@ -154,214 +131,18 @@ timeToUTC(const std::time_t& time, std::tm& utct)
 
 } // end unnamed namespace
 
-
-float
-lumToAbsMag(float lum)
-{
-    return SOLAR_ABSMAG - std::log(lum) * LN_MAG;
-}
-
-// Return the apparent magnitude of a star with lum times solar
-// luminosity viewed at lyrs light years
-float
-lumToAppMag(float lum, float lyrs)
-{
-    return absToAppMag(lumToAbsMag(lum), lyrs);
-}
-
-
-float
-absMagToLum(float mag)
-{
-    return std::exp((SOLAR_ABSMAG - mag) / LN_MAG);
-}
-
-
-float
-appMagToLum(float mag, float lyrs)
-{
-    return absMagToLum(appToAbsMag(mag, lyrs));
-}
-
-
 void
-decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
+setLeapSeconds(celestia::util::array_view<LeapSecondRecord> leapSeconds)
 {
-    double A, B, C;
-
-    degrees = (int) angle;
-
-    A = angle - (double) degrees;
-    B = A * 60.0;
-    minutes = (int) B;
-    C = B - (double) minutes;
-    seconds = C * 60.0;
+    g_leapSeconds = leapSeconds;
 }
-
-
-double
-degMinSecToDecimal(int degrees, int minutes, double seconds)
-{
-    return (double)degrees + (seconds/60.0 + (double)minutes)/60.0;
-}
-
-
-void
-decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
-{
-    double A, B;
-
-    A = angle / 15.0;
-    hours = (int) A;
-    B = (A - (double) hours) * 60.0;
-    minutes = (int) (B);
-    seconds = (B - (double) minutes) * 60.0;
-}
-
-
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
-Eigen::Vector3f
-equatorialToCelestialCart(float ra, float dec, float distance)
-{
-    using celestia::numbers::pi;
-    double theta = ra / 24.0 * pi * 2 + pi;
-    double phi = (dec / 90.0 - 1.0) * pi / 2;
-    double stheta;
-    double ctheta;
-    math::sincos(theta, stheta, ctheta);
-    double sphi;
-    double cphi;
-    math::sincos(phi, sphi, cphi);
-    auto x = static_cast<float>(ctheta * sphi * distance);
-    auto y = static_cast<float>(cphi * distance);
-    auto z = static_cast<float>(-stheta * sphi * distance);
-
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f(x, y, z);
-}
-
-
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
-Eigen::Vector3d
-equatorialToCelestialCart(double ra, double dec, double distance)
-{
-    using celestia::numbers::pi;
-    double theta = ra / 24.0 * pi * 2 + pi;
-    double phi = (dec / 90.0 - 1.0) * pi / 2;
-    double stheta;
-    double ctheta;
-    math::sincos(theta, stheta, ctheta);
-    double sphi;
-    double cphi;
-    math::sincos(phi, sphi, cphi);
-    double x = ctheta * sphi * distance;
-    double y = cphi * distance;
-    double z = -stheta * sphi * distance;
-
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX * Eigen::Vector3d(x, y, z);
-}
-
-
-void
-anomaly(double meanAnomaly, double eccentricity,
-        double& trueAnomaly, double& eccentricAnomaly)
-{
-    using celestia::numbers::pi;
-    double e, delta, err;
-    double tol = 0.00000001745;
-    int iterations = 20;    // limit while() to maximum of 20 iterations.
-
-    e = meanAnomaly - 2.0 * pi * (int) (meanAnomaly / (2.0 * pi));
-    err = 1;
-    while(std::abs(err) > tol && iterations > 0)
-    {
-        err = e - eccentricity * std::sin(e) - meanAnomaly;
-        delta = err / (1 - eccentricity * std::cos(e));
-        e -= delta;
-        iterations--;
-    }
-
-    trueAnomaly = 2.0 * std::atan(std::sqrt((1.0 + eccentricity) / (1.0 - eccentricity)) * std::tan(0.5 * e));
-    eccentricAnomaly = e;
-}
-
-
-/*! Return the angle between the mean ecliptic plane and mean equator at
- *  the specified Julian date.
- */
-// TODO: replace this with a better precession model
-double
-meanEclipticObliquity(double jd)
-{
-    double t, de;
-    jd -= 2451545.0;
-    t = jd / 36525;
-    de = (46.815 * t + 0.0006 * t * t - 0.00181 * t * t * t) / 3600;
-
-    return J2000Obliquity - de;
-}
-
-
-/*! Return a quaternion giving the transformation from the J2000 ecliptic
- *  coordinate system to the J2000 Earth equatorial coordinate system.
- */
-Eigen::Quaterniond
-eclipticToEquatorial()
-{
-    return ECLIPTIC_TO_EQUATORIAL_ROTATION;
-}
-
-
-/*! Rotate a vector in the J2000 ecliptic coordinate system to
- *  the J2000 Earth equatorial coordinate system.
- */
-Eigen::Vector3d
-eclipticToEquatorial(const Eigen::Vector3d& v)
-{
-    return ECLIPTIC_TO_EQUATORIAL_MATRIX.transpose() * v;
-}
-
-
-/*! Return a quaternion giving the transformation from the J2000 Earth
- *  equatorial coordinate system to the galactic coordinate system.
- */
-Eigen::Quaterniond
-equatorialToGalactic()
-{
-    return EQUATORIAL_TO_GALACTIC_ROTATION;
-}
-
-
-/*! Rotate a vector int the J2000 Earth equatorial coordinate system to
- *  the galactic coordinate system.
- */
-Eigen::Vector3d
-equatorialToGalactic(const Eigen::Vector3d& v)
-{
-    return EQUATORIAL_TO_GALACTIC_MATRIX.transpose() * v;
-}
-
-
-
-Date::Date() : Date(0, 0, 0)
-{
-}
-
 
 Date::Date(int Y, int M, int D) :
     year(Y),
     month(M),
-    day(D),
-    hour(0),
-    minute(0),
-    wday(0),
-    utc_offset(0),
-    tzname("UTC"),
-    seconds(0.0)
+    day(D)
 {
 }
-
 
 Date::Date(double jd)
 {
@@ -401,7 +182,6 @@ Date::Date(double jd)
     tzname = "UTC";
 }
 
-
 std::string
 Date::toString(Format format) const
 {
@@ -410,6 +190,7 @@ Date::toString(Format format) const
         return fmt::format("{:04}-{:02}-{:02}T{:02}:{:02}:{:08.5f}Z"sv,
                            year, month, day, hour, minute, seconds);
     }
+
     // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
     // struct tm.
 #if defined(__GNUC__) && !defined(_WIN32)
@@ -444,14 +225,14 @@ Date::toString(Format format) const
     case Locale:
     case TZName:
         return fmt::format("{:04} {} {:02} {:02}:{:02}:{:02} {}"sv,
-                           year, _(MonthAbbrList[month - 1]), day,
+                           year, monthAbbreviations[month - 1], day,
                            hour, minute, static_cast<int>(seconds), tzname);
     default:
         {
             char sign = utc_offset < 0 ? '-' : '+';
             auto offsets = std::div(std::abs(utc_offset), 3600);
             return fmt::format("{:04} {} {:02} {:02}:{:02}:{:02} {}{:02}{:02}"sv,
-                               year, _(MonthAbbrList[month - 1]), day,
+                               year, monthAbbreviations[month - 1], day,
                                hour, minute, static_cast<int>(seconds),
                                sign, offsets.quot, offsets.rem / 60);
         }
@@ -482,6 +263,25 @@ Date::operator double() const
             day + hour / HOURS_PER_DAY + minute / MINUTES_PER_DAY + seconds / SECONDS_PER_DAY);
 }
 
+Date
+Date::systemDate()
+{
+    time_t t = time(nullptr);
+    tm gmt;
+
+    Date d;
+    if (timeToUTC(t, gmt))
+    {
+        d.year = gmt.tm_year + 1900;
+        d.month = gmt.tm_mon + 1;
+        d.day = gmt.tm_mday;
+        d.hour = gmt.tm_hour;
+        d.minute = gmt.tm_min;
+        d.seconds = gmt.tm_sec;
+    }
+
+    return d;
+}
 
 // TODO: need option to parse UTC times (with leap seconds)
 bool
@@ -533,28 +333,6 @@ parseDate(const std::string& s, Date& date)
     return true;
 }
 
-
-Date
-Date::systemDate()
-{
-    time_t t = time(nullptr);
-    tm gmt;
-
-    Date d;
-    if (timeToUTC(t, gmt))
-    {
-        d.year = gmt.tm_year + 1900;
-        d.month = gmt.tm_mon + 1;
-        d.day = gmt.tm_mday;
-        d.hour = gmt.tm_hour;
-        d.minute = gmt.tm_min;
-        d.seconds = gmt.tm_sec;
-    }
-
-    return d;
-}
-
-
 /********* Time scale conversion functions ***********/
 
 // Convert from Atomic Time to UTC
@@ -585,7 +363,6 @@ TAItoUTC(double tai)
     return utcDate;
 }
 
-
 // Convert from UTC to Atomic Time
 double
 UTCtoTAI(const Date& utc)
@@ -607,7 +384,6 @@ UTCtoTAI(const Date& utc)
     return tai;
 }
 
-
 // Convert from Terrestrial Time to Atomic Time
 double
 TTtoTAI(double tt)
@@ -615,14 +391,12 @@ TTtoTAI(double tt)
     return tt - secsToDays(dTA);
 }
 
-
 // Convert from Atomic Time to Terrestrial TIme
 double
 TAItoTT(double tai)
 {
     return tai + secsToDays(dTA);
 }
-
 
 // Input is a TDB Julian Date; result is in seconds
 double
@@ -648,7 +422,6 @@ TDBcorrection(double tdb)
     return K * std::sin(E);
 }
 
-
 // Convert from Terrestrial Time to Barycentric Dynamical Time
 double
 TTtoTDB(double tt)
@@ -656,14 +429,12 @@ TTtoTDB(double tt)
     return tt + secsToDays(TDBcorrection(tt));
 }
 
-
 // Convert from Barycentric Dynamical Time to Terrestrial Time
 double
 TDBtoTT(double tdb)
 {
     return tdb - secsToDays(TDBcorrection(tdb));
 }
-
 
 // Convert from Coordinated Universal time to Barycentric Dynamical Time
 Date
@@ -717,14 +488,12 @@ TDBtoLocal(double tdb)
     return d;
 }
 
-
 // Convert from Barycentric Dynamical Time to UTC
 double
 UTCtoTDB(const Date& utc)
 {
     return TTtoTDB(TAItoTT(UTCtoTAI(utc)));
 }
-
 
 // Convert from TAI to Julian Date UTC. The Julian Date UTC functions should
 // generally be avoided because there's no provision for dealing with leap
@@ -746,7 +515,6 @@ JDUTCtoTAI(double utc)
     return utc + secsToDays(dAT);
 }
 
-
 // Convert from Julian Date UTC to TAI
 double
 TAItoJDUTC(double tai)
@@ -763,173 +531,6 @@ TAItoJDUTC(double tai)
     }
 
     return tai - secsToDays(dAT);
-}
-
-
-// Get scale of given length unit in kilometers
-std::optional<double>
-getLengthScale(LengthUnit unit)
-{
-    switch (unit)
-    {
-    case LengthUnit::Kilometer: return 1.0;
-    case LengthUnit::Meter: return 1e-3;
-    case LengthUnit::EarthRadius: return EARTH_RADIUS<double>;
-    case LengthUnit::JupiterRadius: return JUPITER_RADIUS<double>;
-    case LengthUnit::SolarRadius: return SOLAR_RADIUS<double>;
-    case LengthUnit::AstronomicalUnit: return KM_PER_AU<double>;
-    case LengthUnit::LightYear: return KM_PER_LY<double>;
-    case LengthUnit::Parsec: return KM_PER_PARSEC<double>;
-    case LengthUnit::Kiloparsec: return 1e3 * KM_PER_PARSEC<double>;
-    case LengthUnit::Megaparsec: return 1e6 * KM_PER_PARSEC<double>;
-    default: return std::nullopt;
-    }
-}
-
-
-// Get scale of given time unit in days
-std::optional<double>
-getTimeScale(TimeUnit unit)
-{
-    switch (unit)
-    {
-    case TimeUnit::Second: return 1.0 / SECONDS_PER_DAY;
-    case TimeUnit::Minute: return 1.0 / MINUTES_PER_DAY;
-    case TimeUnit::Hour: return 1.0 / HOURS_PER_DAY;
-    case TimeUnit::Day: return 1.0;
-    case TimeUnit::JulianYear: return DAYS_PER_YEAR;
-    default: return std::nullopt;
-    }
-}
-
-
-// Get scale of given angle unit in degrees
-std::optional<double>
-getAngleScale(AngleUnit unit)
-{
-    switch (unit)
-    {
-    case AngleUnit::Milliarcsecond: return 1e-3 / SECONDS_PER_DEG;
-    case AngleUnit::Arcsecond: return 1.0 / SECONDS_PER_DEG;
-    case AngleUnit::Arcminute: return 1.0 / MINUTES_PER_DEG;
-    case AngleUnit::Degree: return 1.0;
-    case AngleUnit::Hour: return DEG_PER_HRA;
-    case AngleUnit::Radian: return 180.0 / celestia::numbers::pi;
-    default: return std::nullopt;
-    }
-}
-
-
-std::optional<double>
-getMassScale(MassUnit unit)
-{
-    switch (unit)
-    {
-    case MassUnit::Kilogram: return 1.0 / EarthMass;
-    case MassUnit::EarthMass: return 1.0;
-    case MassUnit::JupiterMass: return JupiterMass / EarthMass;
-    default: return std::nullopt;
-    }
-}
-
-
-void
-setLeapSeconds(celestia::util::array_view<LeapSecondRecord> leapSeconds)
-{
-    g_leapSeconds = leapSeconds;
-}
-
-
-KeplerElements
-StateVectorToElements(const Eigen::Vector3d& r,
-                      const Eigen::Vector3d& v,
-                      double mu)
-{
-    constexpr double tolerance = 1e-9;
-
-    Eigen::Vector3d h = r.cross(v);
-    double rNorm = r.norm();
-
-    KeplerElements result;
-
-    // Compute eccentricity
-    Eigen::Vector3d evec = v.cross(h) / mu - r / rNorm;
-    result.eccentricity = evec.norm();
-
-    // Compute inclination
-    result.inclination = std::acos(std::clamp(h.y() / h.norm(), -1.0, 1.0));
-
-    // Normal vector (UnitY x h)
-    Eigen::Vector3d nvec(h[2], 0, -h[0]);
-    double nNorm = nvec.norm();
-
-    // compute longAscendingNode and argPericenter
-    if (result.inclination < tolerance)
-    {
-        // handle face-on orbit: by convention Omega = 0.0
-        if (result.eccentricity >= tolerance)
-        {
-            result.argPericenter = std::acos(evec.x() / result.eccentricity);
-            negateIf(result.argPericenter, evec.z() >= 0.0);
-        }
-    }
-    else
-    {
-        result.longAscendingNode = std::acos(nvec.x() / nNorm);
-        negateIf(result.longAscendingNode, nvec.z() >= 0.0);
-        if (result.eccentricity >= tolerance)
-        {
-            result.argPericenter = std::acos(std::clamp(nvec.dot(evec) / (nNorm * result.eccentricity), -1.0, 1.0));
-            negateIf(result.argPericenter, evec.y() < 0.0);
-        }
-    }
-
-    // compute true anomaly
-    double nu;
-    if (result.eccentricity >= tolerance)
-    {
-        nu = std::acos(std::clamp(evec.dot(r) / (result.eccentricity * rNorm), -1.0, 1.0));
-        negateIf(nu, r.dot(v) < 0.0);
-    }
-    else
-    {
-        if (result.inclination < tolerance)
-        {
-            // circular face-on orbit
-            nu = std::acos(r.x() / rNorm);
-            negateIf(nu, v.x() > 0.0);
-        }
-        else
-        {
-            nu = std::acos(std::clamp(nvec.dot(r) / (nNorm * rNorm), -1.0, 1.0));
-            negateIf(nu, nvec.dot(v) > 0.0);
-        }
-    }
-
-    double s_nu;
-    double c_nu;
-    math::sincos(nu, s_nu, c_nu);
-
-    // compute mean anomaly
-    double e2 = math::square(result.eccentricity);
-    if (result.eccentricity < 1.0)
-    {
-        double E = std::atan2(std::sqrt(1.0 - e2) * s_nu,
-                              result.eccentricity + c_nu);
-        result.meanAnomaly = E - result.eccentricity * std::sin(E);
-    }
-    else
-    {
-        double sinhE = std::sqrt(e2 - 1.0) * s_nu / (1.0 + result.eccentricity * c_nu);
-        double E = std::asinh(sinhE);
-        result.meanAnomaly = result.eccentricity * sinhE - E;
-    }
-
-    // compute semimajor axis
-    result.semimajorAxis = 1.0 / (2.0 / rNorm - v.squaredNorm() / mu);
-    result.period = 2.0 * celestia::numbers::pi * std::sqrt(math::cube(std::abs(result.semimajorAxis)) / mu);
-
-    return result;
 }
 
 } // end namespace celestia::astro

@@ -21,7 +21,7 @@
 
 #include <Eigen/Core>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/dateformatter.h>
 #include <celengine/selection.h>
 #include <celestia/textinput.h>

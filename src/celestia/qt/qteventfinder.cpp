@@ -46,7 +46,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/body.h>
 #include <celengine/observer.h>
 #include <celengine/selection.h>

@@ -24,7 +24,6 @@
 #include <celutil/greek.h>
 #include <celutil/utf8.h>
 #include "asterism.h"
-#include "astro.h"
 #include "body.h"
 #include "boundaries.h"
 #include "frametree.h"

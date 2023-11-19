@@ -24,8 +24,9 @@
 #include <QTextBrowser>
 #include <QTextStream>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celengine/body.h>
 #include <celengine/selection.h>
 #include <celengine/universe.h>

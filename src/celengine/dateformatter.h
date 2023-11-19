@@ -24,7 +24,7 @@
 #include <array>
 #endif
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 
 namespace celestia::engine
 {
