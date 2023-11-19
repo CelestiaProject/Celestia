@@ -13,7 +13,7 @@
 
 #include <SpiceUsr.h>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celutil/logger.h>
 #include "spiceinterface.h"
 #include "spiceorbit.h"

@@ -19,8 +19,9 @@
 #include <memory>
 #include <utility>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>

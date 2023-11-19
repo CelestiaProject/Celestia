@@ -12,9 +12,9 @@
 
 #include <cmath>
 
+#include <celastro/astro.h>
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
-#include "astro.h"
 #include "hash.h"
 
 namespace astro = celestia::astro;

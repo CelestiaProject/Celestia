@@ -18,6 +18,8 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celephem/customorbit.h>
 #include <celephem/customrotation.h>

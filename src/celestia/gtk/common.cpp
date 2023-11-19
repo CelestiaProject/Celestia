@@ -14,7 +14,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celengine/galaxy.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>

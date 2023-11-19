@@ -14,8 +14,8 @@
 #include <iomanip>
 #include <cctype>
 #include <cassert>
+#include <celastro/astro.h>
 #include <celutil/bytes.h>
-#include <celengine/astro.h>
 #include <celengine/star.h>
 
 using namespace std;

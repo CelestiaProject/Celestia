@@ -11,7 +11,7 @@
 
 #include <windows.h>
 #include <commctrl.h>
-#include "celengine/astro.h"
+#include "celastro/date.h"
 #include "celutil/gettext.h"
 #include "celutil/winutil.h"
 

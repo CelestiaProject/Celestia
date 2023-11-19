@@ -31,7 +31,6 @@
 #include "gtkegl.h"
 #endif
 
-#include <celengine/astro.h>
 #include <celengine/galaxy.h>
 #include <celengine/glsupport.h>
 #include <celengine/simulation.h>

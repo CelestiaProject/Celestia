@@ -1,8 +1,6 @@
 set(CELENGINE_SOURCES
   asterism.cpp
   asterism.h
-  astro.cpp
-  astro.h
   astroobj.h
   atmosphere.h
   axisarrow.cpp

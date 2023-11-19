@@ -29,6 +29,8 @@
 #include <Eigen/Core>
 #include <fmt/format.h>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celengine/hash.h>
 #include <celengine/parser.h>
 #include <celengine/render.h>

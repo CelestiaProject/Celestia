@@ -20,7 +20,7 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 

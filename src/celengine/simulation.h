@@ -21,7 +21,6 @@
 
 #include <celengine/texture.h>
 #include <celengine/universe.h>
-#include <celengine/astro.h>
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
 #include <celengine/texmanager.h>

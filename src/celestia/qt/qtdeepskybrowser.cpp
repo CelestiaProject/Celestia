@@ -43,7 +43,7 @@
 #include <QVariant>
 #include <QVBoxLayout>
 
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/dsodb.h>
 #include <celengine/marker.h>

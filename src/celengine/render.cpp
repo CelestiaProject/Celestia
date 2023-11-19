@@ -23,7 +23,6 @@
 #include "boundaries.h"
 #include "dsorenderer.h"
 #include "asterism.h"
-#include "astro.h"
 #include "glshader.h"
 #include "shadermanager.h"
 #include "spheremesh.h"
@@ -48,6 +47,8 @@
 #include "orbitsampler.h"
 #include "rendcontext.h"
 #include "textlayout.h"
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celengine/observer.h>
 #include <celmath/frustum.h>

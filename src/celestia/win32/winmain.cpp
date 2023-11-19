@@ -28,6 +28,7 @@
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
 
+#include <celastro/date.h>
 #include <celcompat/charconv.h>
 #include <celcompat/filesystem.h>
 #include <celmath/mathlib.h>
@@ -39,7 +40,6 @@
 #include <celutil/filetype.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
-#include <celengine/astro.h>
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"

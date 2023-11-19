@@ -12,8 +12,8 @@
 
 #include <gtk/gtk.h>
 
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celengine/body.h>
 #include <celengine/simulation.h>
 #include <celestia/eclipsefinder.h>

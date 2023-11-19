@@ -20,7 +20,7 @@
 #include <sstream>
 #include <string_view>
 #include <utility>
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 #include <celengine/asterism.h>
 #include <celscript/legacy/cmdparser.h>
 #include <celscript/legacy/execution.h>

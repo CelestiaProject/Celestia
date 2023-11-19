@@ -8,10 +8,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celastro/units.h>
 #include <celmath/mathlib.h>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
-#include "astro.h"
 #include "hash.h"
 #include "value.h"
 

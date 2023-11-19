@@ -18,6 +18,8 @@
 
 #include <fmt/format.h>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include "univcoord.h"

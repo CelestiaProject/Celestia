@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 #include <celengine/hash.h>
 #include <celengine/parser.h>
 #include <celengine/value.h>

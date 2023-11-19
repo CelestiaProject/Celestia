@@ -11,7 +11,6 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/gettext.h>
-#include "astro.h"
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
