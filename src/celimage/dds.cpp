@@ -101,7 +101,7 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
         blocksize = 16;
         break;
     default:
-        assert("We should never get here");
+        assert(0);
         return nullptr;
     }
     auto pixels = std::make_unique<std::uint32_t>(((width + 3) & ~3) * ((height + 3) & ~3));
@@ -114,7 +114,7 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
                 return nullptr;
 
             in.read(reinterpret_cast<char*>(block.data()), blocksize); /* Flawfinder: ignore */
-            switch(format)
+            switch (format)
             {
             case PixelFormat::DXT1:
                 DecompressBlockDXT1(x, y, width, block.data(), transparent0, pixels.get());
@@ -125,6 +125,9 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
             case PixelFormat::DXT5:
                 DecompressBlockDXT5(x, y, width, block.data(), transparent0, pixels.get());
                 break;
+            default:
+                assert(0);
+                return nullptr;
             }
         }
     }
