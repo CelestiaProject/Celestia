@@ -50,9 +50,9 @@ bool SavePNGImage(const fs::path& filename,
         return false;
     }
 
-    std::unique_ptr<png_byte> outData;
+    std::unique_ptr<png_byte[]> outData;
     if (removeAlpha)
-        outData = std::make_unique<png_byte>(width * 3 * height);
+        outData = std::make_unique<png_byte[]>(width * 3 * height);
 
     auto row_pointers = std::make_unique<png_bytep[]>(height);
     for (int i = 0; i < height; i++)
