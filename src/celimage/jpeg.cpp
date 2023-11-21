@@ -83,13 +83,13 @@ bool SaveJPEGImage(const fs::path& filename,
 
     jpeg_start_compress(&cinfo, TRUE);
 
-    std::unique_ptr<std::uint8_t> rowOut;
+    std::unique_ptr<std::uint8_t[]> rowOut;
     if (removeAlpha)
-        rowOut = std::make_unique<std::uint8_t>(width * 3);
+        rowOut = std::make_unique<std::uint8_t[]>(width * 3);
 
     while (cinfo.next_scanline < cinfo.image_height)
     {
-        const std::uint8_t *rowHead = &pixels[rowStride * cinfo.next_scanline * 3];
+        const std::uint8_t *rowHead = &pixels[rowStride * cinfo.next_scanline];
         // Strip alpha values if we are in RGBA format
         if (removeAlpha)
         {
