@@ -85,7 +85,7 @@ constexpr std::uint32_t FourCC(const char *s)
 }
 
 // decompress a DXTc texture to a RGBA texture, taken from https://github.com/ptitSeb/gl4es
-std::unique_ptr<std::uint32_t>
+std::unique_ptr<std::uint32_t[]>
 DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bool transparent0, std::ifstream &in)
 {
     // TODO: check with the size of the input data stream if the stream is in fact decompressed
@@ -104,7 +104,7 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
         assert(0);
         return nullptr;
     }
-    auto pixels = std::make_unique<std::uint32_t>(((width + 3) & ~3) * ((height + 3) & ~3));
+    auto pixels = std::make_unique<std::uint32_t[]>(((width + 3) & ~3) * ((height + 3) & ~3));
     std::array<std::uint8_t, DDS_MAX_BLOCK_SIZE> block; // enough to hold DXT1/3/5 blocks
     for (std::uint32_t y = 0; y < height; y += 4)
     {
@@ -247,7 +247,7 @@ Image* LoadDDSImage(const fs::path& filename)
         if (!gl::EXT_texture_compression_s3tc)
         {
             // DXTc texture not supported, decompress DXTc to RGB/RGBA
-            std::unique_ptr<std::uint32_t>pixels = nullptr;
+            std::unique_ptr<std::uint32_t[]>pixels = nullptr;
             bool transparent0 = format == PixelFormat::DXT1;
             if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
             {
@@ -256,13 +256,11 @@ Image* LoadDDSImage(const fs::path& filename)
                 auto tmp = DecompressDXTc(nw, nh, format, transparent0, in);
                 if (tmp != nullptr)
                 {
-                    pixels = std::make_unique<std::uint32_t>(ddsd.width * ddsd.height);
+                    pixels = std::make_unique<std::uint32_t[]>(ddsd.width * ddsd.height);
                     // crop
                     for (std::uint32_t y = 0; y < ddsd.height; y++)
                     {
-                        std::memcpy(reinterpret_cast<char*>(pixels.get() + y * ddsd.width * 4),
-                                    reinterpret_cast<char*>(tmp.get() + y * nw * 4),
-                                    ddsd.width * 4);
+                        std::memcpy(pixels.get() + y * ddsd.width, tmp.get() + y * nw, ddsd.width * 4);
                     }
                 }
             }
