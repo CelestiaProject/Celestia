@@ -2,10 +2,10 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2023
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,15 +14,12 @@ msgstr ""
 "POT-Creation-Date: 2023-11-19 18:43+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2023\n"
-"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/"
-"be/)\n"
-"Language: be\n"
+"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Language: be\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../src/celastro/date.cpp:496
 msgid "DST"
@@ -32,19 +29,17 @@ msgstr "DST"
 msgid "STD"
 msgstr "STD"
 
-#: ../src/celengine/dateformatter.cpp:89 ../src/celestia/win32/winmain.cpp:3355
-#: ../src/celutil/fsutils.cpp:41
+#: ../src/celengine/dateformatter.cpp:89
+#: ../src/celestia/win32/winmain.cpp:3355 ../src/celutil/fsutils.cpp:41
 msgid "LANGUAGE"
 msgstr "be"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:333
 msgid "Loaded {} deep space objects\n"
 msgstr "Загружага {} аб'ектаў глыбокага космасу\n"
@@ -97,15 +92,15 @@ msgstr "Памылка ў фале .ssc (радок {}): {}\n"
 
 #: ../src/celengine/solarsys.cpp:744
 msgid "Ring system needs inner and outer radii.\n"
-msgstr ""
+msgstr "Сыстэма кольцаў мусіць мець вонкавы й нутраны радыюсы.\n"
 
 #: ../src/celengine/solarsys.cpp:836
 msgid "Invalid SemiAxes value for object {}: [{}, {}, {}]\n"
-msgstr ""
+msgstr "Няправільнае значэньне SemiAxes для аб'екта {}: [{}, {}, {}]\n"
 
 #: ../src/celengine/solarsys.cpp:871
 msgid "Invalid Oblateness value for object {}: {}\n"
-msgstr ""
+msgstr "Няправільнае значэньне Oblateness для аб'екта {}: {}\n"
 
 #: ../src/celengine/solarsys.cpp:937
 msgid "Incorrect GeomAlbedo value: {}\n"
@@ -225,27 +220,23 @@ msgstr "Стварэньне звычайнае тэкстуры: {}×{}\n"
 
 #: ../src/celephem/sampfile.cpp:46
 msgid "Skipping out-of-order samples in {}."
-msgstr ""
+msgstr "Прапушчаю ў {} сэмплы, якія ідуць не па парадку."
 
 #: ../src/celephem/sampfile.cpp:58
-#, fuzzy
 msgid "No samples found in sample file {}.\n"
-msgstr "Памылка адкрыцьця файла відарыса {}.\n"
+msgstr "Файл {} ня мае ніякіх сэмплаў.\n"
 
 #: ../src/celephem/sampfile.cpp:67
-#, fuzzy
 msgid "Error reading sample file {}.\n"
-msgstr "Памылка падчас чытаньня файла абранага {}.\n"
+msgstr "Памылка чытаньня фйла сэмплаў {}.\n"
 
 #: ../src/celephem/sampfile.cpp:74
-#, fuzzy
 msgid "Error opening ASCII sample file {}.\n"
-msgstr "Памылка адкрыцьця файла відарыса {}.\n"
+msgstr "Памылка адкрыцьця ASCII-файла сэймплаў {}.\n"
 
 #: ../src/celephem/sampfile.cpp:81
-#, fuzzy
 msgid "Error finding data in ASCII sample file {}.\n"
-msgstr "Памылка падчас адкрыцьця файла астэрызму {}.\n"
+msgstr "Не адтрымалася знайсьці даньні ў ASCII-файле сэмплаў {}.\n"
 
 #: ../src/celephem/samporbit.cpp:624 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
 msgid "Error reading header of {}.\n"
@@ -256,28 +247,24 @@ msgid "Bad binary xyzv file {}.\n"
 msgstr "Кепскі двайковы файл xyzv {}.\n"
 
 #: ../src/celephem/samporbit.cpp:638
-#, fuzzy
 msgid "Unsupported byte order {}, expected {} in {}.\n"
-msgstr "Парадак байтаў {} не падтрымліваецца, чакаўся {}.\n"
+msgstr "Парадак байтаў {} не падтрымліваецца, чакаўся {} ў {}.\n"
 
 #: ../src/celephem/samporbit.cpp:647
-#, fuzzy
 msgid "Unsupported digits number {}, expected {} in {}.\n"
-msgstr "Колькасьць лічбаў {} не падтрымліваецца, чакалася {}.\n"
+msgstr "Колькасьць лічбаў {} не падтрымліваецца, чакалася {} ў {}.\n"
 
 #: ../src/celephem/samporbit.cpp:656
 msgid "Invalid record count {} in {}.\n"
-msgstr ""
+msgstr "Няправільная колькасьць запісаў {} у {}.\n"
 
 #: ../src/celephem/samporbit.cpp:712
-#, fuzzy
 msgid "Error opening binary sample file {}.\n"
-msgstr "Памылка адкрыцьця файла відарыса {}.\n"
+msgstr "Памылка адкрыцьця двайковага файла сэймплаў {}.\n"
 
 #: ../src/celephem/samporbit.cpp:718
-#, fuzzy
 msgid "Could not read XYZV binary file {}.\n"
-msgstr "Не атрымалася захаваць відарыс."
+msgstr "Не атрымалася прачытаць двайковы XYZV-файл {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:111 ../src/celestia/scriptmenu.cpp:86
 #: ../src/celscript/lua/luascript.cpp:173
@@ -757,22 +744,22 @@ msgstr "Пэрыяд авароту: {} {}\n"
 #: ../src/celestia/hud.cpp:188
 #, c-format
 msgid "Mass: %.6g lb\n"
-msgstr "Маса:%.6g фунтаў\n"
+msgstr "Маса: %.6g фунтаў\n"
 
 #: ../src/celestia/hud.cpp:190
 #, c-format
 msgid "Mass: %.6g kg\n"
-msgstr "Маса:%.6g кг\n"
+msgstr "Маса: %.6g кг\n"
 
 #: ../src/celestia/hud.cpp:193
 #, c-format
 msgid "Mass: %.2f Mj\n"
-msgstr "Маса:%.2f Mj\n"
+msgstr "Маса: %.2f Mj\n"
 
 #: ../src/celestia/hud.cpp:195
 #, c-format
 msgid "Mass: %.2f Me\n"
-msgstr "Маса:%.2f Me\n"
+msgstr "Маса: %.2f Me\n"
 
 #: ../src/celestia/hud.cpp:207
 msgid "ly/s"
@@ -897,14 +884,12 @@ msgid "Phase angle: %.1f%s\n"
 msgstr "Фазавы вугал: %.1f%s\n"
 
 #: ../src/celestia/hud.cpp:584
-#, fuzzy
 msgid "Density: {} lb/ft³\n"
-msgstr "Шчыльнасьць: %.2f × 1000 фунтаў/фут³\n"
+msgstr "Шчыльнасьць: {} фунтаў/фут³\n"
 
 #: ../src/celestia/hud.cpp:587
-#, fuzzy
 msgid "Density: {} kg/m³\n"
-msgstr "Шчыльнасьць: %.2f × 1000 кг/м³\n"
+msgstr "Шчыльнасьць: {} кґ/м³\n"
 
 #: ../src/celestia/hud.cpp:593
 #, c-format
@@ -1019,8 +1004,8 @@ msgstr "Памылка атрыманьня шляху для файла час�
 
 #: ../src/celestia/qt/qtappwin.cpp:270
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia ня можа працаваць, бо каталёґ за зьвесткамі адсутнічае, магчыма "
 "праз няправільнае ўсталяваньне."
@@ -1058,7 +1043,8 @@ msgstr "Зоркі"
 msgid "Deep Sky Objects"
 msgstr "Аб'екты глыбокага космасу"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:414
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:414
 #: ../src/celestia/qt/qteventfinder.cpp:424
 msgid "Event Finder"
 msgstr "Пошук падзей"
@@ -1535,7 +1521,8 @@ msgid "System time at activation"
 msgstr "Сыстэмныя дата й час пры актывацыі"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:897 ../src/celestia/qt/rc.cpp:39
@@ -1647,8 +1634,9 @@ msgstr "Арбіты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:95
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtselectionpopup.cpp:402
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:157
+#: ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:217
 #: ../src/celestia/win32/winmain.cpp:1542
 #: ../src/celestia/win32/winmain.cpp:1580
@@ -1671,8 +1659,9 @@ msgstr "Карлікавыя плянэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:97
 #: ../src/celestia/qt/qtcelestiaactions.cpp:124
 #: ../src/celestia/qt/qtselectionpopup.cpp:408
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:163
+#: ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:219
 #: ../src/celestia/win32/winmain.cpp:1538
 msgid "Moons"
@@ -1693,8 +1682,9 @@ msgstr "Малыя месяцы"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:99
 #: ../src/celestia/qt/qtcelestiaactions.cpp:126
 #: ../src/celestia/qt/qtselectionpopup.cpp:414
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771
+#: ../src/celestia/qt/rc.cpp:87 ../src/celestia/qt/rc.cpp:169
+#: ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:221
 #: ../src/celestia/win32/winmain.cpp:1532
 msgid "Asteroids"
@@ -1709,8 +1699,9 @@ msgstr "Астэроіды"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:100
 #: ../src/celestia/qt/qtcelestiaactions.cpp:127
 #: ../src/celestia/qt/qtselectionpopup.cpp:417
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779
+#: ../src/celestia/qt/rc.cpp:90 ../src/celestia/qt/rc.cpp:172
+#: ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:222
 #: ../src/celestia/win32/winmain.cpp:1534
 msgid "Comets"
@@ -1730,8 +1721,9 @@ msgstr "Камэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtselectionpopup.cpp:420
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:105
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775
+#: ../src/celestia/qt/rc.cpp:94 ../src/celestia/qt/rc.cpp:176
+#: ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:223
 #: ../src/celestia/win32/winmain.cpp:1547
 msgctxt "plural"
@@ -2140,7 +2132,8 @@ msgstr "файл"
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "Add an extras directory. This option may be specified multiple times."
-msgstr "Дадаць каталёґ extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
+msgstr ""
+"Дадаць каталёґ extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "extrasdir"
@@ -2424,9 +2417,9 @@ msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "<b>Пэрыяд (разьлічаны):</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:338
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1%2/day"
-msgstr "<b>Пэрыяд (разьлічаны):</b> %L1 %2"
+msgstr "<b>Сярэдні рух (разьлічаны):</b> %L1%2/дзень"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:362
 #: ../src/celestia/qt/qtinfopanel.cpp:385
@@ -2652,9 +2645,9 @@ msgstr "Карлікавыя плянэты"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:411
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1540
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:166
+#: ../src/celestia/qt/rc.cpp:233 ../src/celestia/win32/winmain.cpp:1540
 msgid "Minor moons"
 msgstr "Малыя месяцы"
 
@@ -2844,7 +2837,7 @@ msgstr "Цяперашні час"
 
 #: ../src/celestia/qt/qttourguide.cpp:61
 msgid "No guide destinations were found."
-msgstr ""
+msgstr "Напрамкі падарожжаў не адшуканыя."
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:16
 #. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
@@ -2922,7 +2915,8 @@ msgid "Description:"
 msgstr "Апісаньне:"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:157
 msgid "Organize Bookmarks"
@@ -3189,23 +3183,20 @@ msgstr "Разрозьненьне тэкстур"
 #. i18n: file: ../src/celestia/qt/preferences.ui:865
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
 #: ../src/celestia/qt/rc.cpp:318
-#, fuzzy
 msgid "Lighting"
-msgstr "Узмацненьне сьвятла"
+msgstr "Асьвятленьне"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:871
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #: ../src/celestia/qt/rc.cpp:321
-#, fuzzy
 msgid "Ambient light:"
-msgstr "Сьвятло навакольля"
+msgstr "Навакольнае сьвятло:"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:932
 #. i18n: ectx: property (text), widget (QLabel, label_5)
 #: ../src/celestia/qt/rc.cpp:324
-#, fuzzy
 msgid "Tinted illumination saturation:"
-msgstr "Танаванае асьвятленьне"
+msgstr "Начычанасьць танаванага асьвятленьня:"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:991
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
@@ -3275,9 +3266,8 @@ msgid "Not an XBEL version 1.0 file."
 msgstr "Не зьяўляецца файлам XBEL вэрсіі 1.0."
 
 #: ../src/celestia/textinput.cpp:191
-#, fuzzy
 msgid "Target name: {}"
-msgstr "Назва мэты: %s"
+msgstr "Назва мэты: {}"
 
 #: ../src/celestia/url.cpp:349
 msgid "Incorrect hex value \"{}\"\n"
@@ -3573,8 +3563,8 @@ msgstr "https://celestiaproject.space/"
 #: ../src/celestia/win32/res/resource_strings.cpp:78
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr ""
-"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае "
-"ґарантыі."
+"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае"
+" ґарантыі."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:79
 msgid "Authors"
@@ -4162,12 +4152,11 @@ msgstr "Загрузка відарыса з файла {}\n"
 
 #: ../src/celimage/image.cpp:409
 msgid "{}: unrecognized or unsupported image file type.\n"
-msgstr ""
+msgstr "{}: тып файла не апазнаны або не падтрымліваецца.\n"
 
 #: ../src/celimage/png.cpp:27
-#, fuzzy
 msgid "Error reading PNG data"
-msgstr "Памылка чытаньня файла відарыса PNG {}\n"
+msgstr "Памылка чытаньня даньняў PNG"
 
 #: ../src/celimage/png.cpp:49
 msgid "Can't open screen capture file '{}'\n"
@@ -4274,20 +4263,3 @@ msgstr "Парадак байтаў {} не падтрымліваецца, ча
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:58
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Колькасьць лічбаў {} не падтрымліваецца, чакалася {}.\n"
-
-#~ msgid "Error opening {}.\n"
-#~ msgstr "Памылка адкрыцьця {}.\n"
-
-#~ msgid "GL error: "
-#~ msgstr "Памылка GL: "
-
-#, c-format
-#~ msgid ""
-#~ "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: "
-#~ "[ %zu : %zu : %zu ]\n"
-#~ msgstr ""
-#~ "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: "
-#~ "[ %zu : %zu : %zu ]\n"
-
-#~ msgid "000; "
-#~ msgstr "000; "
