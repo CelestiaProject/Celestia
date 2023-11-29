@@ -220,7 +220,7 @@ msgstr "Стварэньне звычайнае тэкстуры: {}×{}\n"
 
 #: ../src/celephem/sampfile.cpp:46
 msgid "Skipping out-of-order samples in {}."
-msgstr "Сэмплы, якія ідуць не па парадку, прапушчаныя ў {}."
+msgstr "Прапушчаю ў {} сэмплы, якія ідуць не па парадку."
 
 #: ../src/celephem/sampfile.cpp:58
 msgid "No samples found in sample file {}.\n"
