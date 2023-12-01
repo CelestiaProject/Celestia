@@ -21,16 +21,22 @@
 }
 
 {
+	Name "Titan"
+	Target "Sol/Saturn/Titan"
+	Description "Saturn's largest moon Titan has a rocky core surrounded by water ice, salty liquid water and a water ice outer crust.  The dense atmosphere is 97% nitrogen with methane, hydrogen and traces of hydrocarbons.  Seasonal weather patterns form from clouds of methane and liquid methane rain.  A thick, orange smog hides a surface of mountains, hills and valleys but few impact craters.  Dark dunes of hydrocarbon sand stretch across the equator.  Polar regions are carved with lakes, rivers and seas of liquid methane.  While described as the most Earth-like object in the Solar System, it has a different chemistry and a temperature of -179 degrees centigrade."
+}
+
+{
 	Name "Enceladus"
 	Target "Sol/Saturn/Enceladus"
-	Distance 1000
+	Distance 1500
 	DistanceUnits "km"
-        Description "Enceladus is the sixth-largest moon of Saturn.  Some surface areas are covered by fresh, clean ice; but Enceladus also has old, heavily cratered regions and young, tectonically formed terrain.  The Cassini spacecraft discovered cryovolcanoes near the south pole -- shooting out geyser-like jets of water vapor, molecular hydrogen and volatile gases, plus solid sodium chloride crystals and water-ice particles.  Some of this material escapes from Enceladus and forms Saturn's E ring.  Analysis of the plumes shows evidence for an environment that could support hydrothermal vent microorganisms."
+	Description "Enceladus is the sixth-largest moon of Saturn.  Some surface areas are covered by fresh, clean ice; but Enceladus also has old, heavily cratered regions and young, tectonically formed terrain.  The Cassini spacecraft discovered cryovolcanoes near the south pole -- shooting out geyser-like jets of water vapor, molecular hydrogen and volatile gases, plus solid sodium chloride crystals and water-ice particles.  Some of this material escapes from Enceladus and forms Saturn's E ring.  Analysis of the plumes shows evidence for an environment that could support hydrothermal vent microorganisms."
 }
 
 {
 	Name "Pluto and Charon"
-	Target "Sol/Pluto"
+	Target "Sol/Pluto-Charon"
 	Distance 60000
 	DistanceUnits "km"
 	Description "The dwarf planet Pluto orbits our sun at a average distance of 5.8 billion kilometers.  Pluto is about two-thirds the width of our Moon and its largest moon Charon is half the width of Pluto.  Charon is so large compared to Pluto that the two orbit each other and are often referred to as a 'dwarf double planet'.  The spacecraft New Horizons flew by Pluto-Charon in July 2015 and revealed a large, heart-shaped feature on Pluto."
@@ -74,6 +80,12 @@
 	Distance 30
 	DistanceUnits "ly"
 	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is located about 153 light years from Earth, making it the nearest star cluster.  It is estimated that the stars of the Hyades are approximately 625 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby."
+}
+
+{
+	Name "Poltergeist"
+	Target "PSR B1257+12/PSR B1257+12 c"
+	Description "Poltergeist (PSR B1257+12 c) and Phobetor (PSR B1257+12 d) are exoplanets orbiting the pulsar Lich (PSR B1257+12).  They are approximately 2,300 light-years away from Earth.  In 1992 they became the first planets ever discovered and confirmed outside the Solar System.  They were discovered using the pulsar timing method, where the regular pulses of a pulsar are measured to determine if there are variations in the data that could be caused by a planet.  Bathed in intense radiation from the pulsar, they cannot support life.  This is an artist's concept of the planet."
 }
 
 {
