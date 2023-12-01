@@ -37,7 +37,7 @@
 {
 	Name "Pluto and Charon"
 	Target "Sol/Pluto-Charon"
-	Distance 60000
+	Distance 75000
 	DistanceUnits "km"
 	Description "The dwarf planet Pluto orbits our sun at a average distance of 5.8 billion kilometers.  Pluto is about two-thirds the width of our Moon and its largest moon Charon is half the width of Pluto.  Charon is so large compared to Pluto that the two orbit each other and are often referred to as a 'dwarf double planet'.  The spacecraft New Horizons flew by Pluto-Charon in July 2015 and revealed a large, heart-shaped feature on Pluto."
 }
