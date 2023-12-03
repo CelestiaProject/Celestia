@@ -45,7 +45,6 @@
 #include <celmath/geomutil.h>
 #include <celutil/color.h>
 #include <celutil/filetype.h>
-#include <celutil/formatnum.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>

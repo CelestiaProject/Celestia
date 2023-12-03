@@ -13,6 +13,7 @@
 #pragma once
 
 #include <limits>
+#include <locale>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -30,6 +31,7 @@
 #include <celttf/truetypefont.h>
 #include <celutil/color.h>
 #include <celutil/flag.h>
+#include <celutil/formatnum.h>
 
 class MovieCapture;
 class Overlay;
@@ -111,8 +113,6 @@ struct HudSettings
 class Hud
 {
 public:
-
-
     enum class TextEnterMode : unsigned int
     {
         Normal       = 0x00,
@@ -170,7 +170,8 @@ private:
 
     std::unique_ptr<OverlayImage> m_image;
 
-    std::unique_ptr<celestia::engine::DateFormatter> m_dateFormatter{ std::make_unique<celestia::engine::DateFormatter>() };
+    std::unique_ptr<engine::DateFormatter> m_dateFormatter{ std::make_unique<engine::DateFormatter>() };
+    std::unique_ptr<const util::NumberFormatter> m_numberFormatter{ std::make_unique<util::NumberFormatter>(std::locale("")) };
     celestia::astro::Date::Format m_dateFormat{ celestia::astro::Date::Locale };
     int m_dateStrWidth{ 0 };
 
