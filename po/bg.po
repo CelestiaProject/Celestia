@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-11-19 18:43+0100\n"
+"POT-Creation-Date: 2023-12-03 18:02+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Georgi Georgiev (Жоро) <g.georgiev.shumen@gmail.com>, 2023\n"
 "Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
@@ -23,11 +23,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/celastro/date.cpp:496
+#: ../src/celastro/date.cpp:486
 msgid "DST"
 msgstr "ЛЧВ"
 
-#: ../src/celastro/date.cpp:496
+#: ../src/celastro/date.cpp:486
 msgid "STD"
 msgstr "СЧВ"
 
@@ -222,7 +222,7 @@ msgid "Creating ordinary texture: {}x{}\n"
 msgstr "Създаване на обикновена текстура: {}х{}\n"
 
 #: ../src/celephem/sampfile.cpp:46
-msgid "Skipping out-of-order samples in {}."
+msgid "Skipping out-of-order samples in {}.\n"
 msgstr ""
 
 #: ../src/celephem/sampfile.cpp:58
@@ -277,91 +277,91 @@ msgstr "Грешка при отваряне на изображение {}.\n"
 msgid "Could not read XYZV binary file {}.\n"
 msgstr "Изображението не може да бъде запазено."
 
-#: ../src/celestia/celestiacore.cpp:111 ../src/celestia/scriptmenu.cpp:86
+#: ../src/celestia/celestiacore.cpp:110 ../src/celestia/scriptmenu.cpp:86
 #: ../src/celscript/lua/luascript.cpp:173
 msgid "Path {} doesn't exist or isn't a directory\n"
 msgstr "{} не съществува или не е папка\n"
 
-#: ../src/celestia/celestiacore.cpp:248
+#: ../src/celestia/celestiacore.cpp:247
 msgid "Error reading favorites file {}.\n"
 msgstr "Грешка при четене на файла с фаворити {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:269
+#: ../src/celestia/celestiacore.cpp:268
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr "Неуспешна проверка на папката за файла с фаворити {}\n"
 
-#: ../src/celestia/celestiacore.cpp:277
+#: ../src/celestia/celestiacore.cpp:276
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr "Неуспешно създаване на папката за файла с фаворити {}\n"
 
-#: ../src/celestia/celestiacore.cpp:397
+#: ../src/celestia/celestiacore.cpp:396
 msgid "Invalid filetype"
 msgstr "Невалиден файлов формат"
 
-#: ../src/celestia/celestiacore.cpp:653 ../src/celestia/celestiacore.cpp:1227
-#: ../src/celestia/celestiacore.cpp:1244
+#: ../src/celestia/celestiacore.cpp:652 ../src/celestia/celestiacore.cpp:1226
+#: ../src/celestia/celestiacore.cpp:1243
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Лимит на звездната величина: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:903
+#: ../src/celestia/celestiacore.cpp:902
 msgid "Markers enabled"
 msgstr "Маркерите са включени"
 
-#: ../src/celestia/celestiacore.cpp:906
+#: ../src/celestia/celestiacore.cpp:905
 msgid "Markers disabled"
 msgstr "Маркерите са изключени"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:916
+#: ../src/celestia/celestiacore.cpp:915
 msgid "Goto surface"
 msgstr "Отиди до повърхността"
 
-#: ../src/celestia/celestiacore.cpp:927
+#: ../src/celestia/celestiacore.cpp:926
 msgid "Alt-azimuth mode enabled"
 msgstr "Алт-азимуталният режим е включен"
 
-#: ../src/celestia/celestiacore.cpp:930
+#: ../src/celestia/celestiacore.cpp:929
 msgid "Alt-azimuth mode disabled"
 msgstr "Алт-азимуталният режим е изключен"
 
-#: ../src/celestia/celestiacore.cpp:978
+#: ../src/celestia/celestiacore.cpp:977
 msgid "Star style: fuzzy points"
 msgstr "Стил на звездите: неясни точки"
 
-#: ../src/celestia/celestiacore.cpp:981
+#: ../src/celestia/celestiacore.cpp:980
 msgid "Star style: points"
 msgstr "Стил на звездите: точки"
 
-#: ../src/celestia/celestiacore.cpp:984
+#: ../src/celestia/celestiacore.cpp:983
 msgid "Star style: scaled discs"
 msgstr "Стил на звездите: мащабирани дискове"
 
-#: ../src/celestia/celestiacore.cpp:997
+#: ../src/celestia/celestiacore.cpp:996
 msgid "Comet tails enabled"
 msgstr "Опашките на кометите са включени"
 
-#: ../src/celestia/celestiacore.cpp:1000
+#: ../src/celestia/celestiacore.cpp:999
 msgid "Comet tails disabled"
 msgstr "Опашките на кометите са изключени"
 
-#: ../src/celestia/celestiacore.cpp:1013
+#: ../src/celestia/celestiacore.cpp:1012
 msgid "Anti-aliasing enabled"
 msgstr "Изглаждането е включено"
 
-#: ../src/celestia/celestiacore.cpp:1017
+#: ../src/celestia/celestiacore.cpp:1016
 msgid "Anti-aliasing disabled"
 msgstr "Изглаждането е изключено"
 
-#: ../src/celestia/celestiacore.cpp:1026
+#: ../src/celestia/celestiacore.cpp:1025
 msgid "Auto-magnitude enabled"
 msgstr "Автоматичната звездна величина е включена"
 
-#: ../src/celestia/celestiacore.cpp:1031
+#: ../src/celestia/celestiacore.cpp:1030
 msgid "Auto-magnitude disabled"
 msgstr "Автоматичната звездна величина е изключена"
 
-#: ../src/celestia/celestiacore.cpp:1053
+#: ../src/celestia/celestiacore.cpp:1052
 #: ../src/celestia/win32/res/resource_strings.cpp:95
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 #: ../src/celestia/win32/res/resource_strings.cpp:107
@@ -375,235 +375,235 @@ msgstr "Автоматичната звездна величина е изклю
 msgid "Cancel"
 msgstr "Отказ"
 
-#: ../src/celestia/celestiacore.cpp:1093
+#: ../src/celestia/celestiacore.cpp:1092
 msgid "Time and script are paused"
 msgstr "Времето и скрипта са спрени"
 
-#: ../src/celestia/celestiacore.cpp:1095
+#: ../src/celestia/celestiacore.cpp:1094
 msgid "Time is paused"
 msgstr "Времето е спряно"
 
-#: ../src/celestia/celestiacore.cpp:1099
+#: ../src/celestia/celestiacore.cpp:1098
 msgid "Resume"
 msgstr "Продължи"
 
-#: ../src/celestia/celestiacore.cpp:1119
+#: ../src/celestia/celestiacore.cpp:1118
 msgid "Star color: Blackbody D65"
 msgstr "Звезден цвят: Цветови стандарт D65"
 
-#: ../src/celestia/celestiacore.cpp:1125
+#: ../src/celestia/celestiacore.cpp:1124
 #, fuzzy
 msgid "Star color: Blackbody (Solar Whitepoint)"
 msgstr "Звезден цвят: Цветови стандарт D65"
 
-#: ../src/celestia/celestiacore.cpp:1131
+#: ../src/celestia/celestiacore.cpp:1130
 #, fuzzy
 msgid "Star color: Blackbody (Vega Whitepoint)"
 msgstr "Звезден цвят: Цветови стандарт D65"
 
-#: ../src/celestia/celestiacore.cpp:1137
+#: ../src/celestia/celestiacore.cpp:1136
 #, fuzzy
 msgid "Star color: Classic"
 msgstr "Звездни цветове"
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1170
+#: ../src/celestia/celestiacore.cpp:1169
 #, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "Време за пътуване на светлината:  %.4f г"
 
-#: ../src/celestia/celestiacore.cpp:1179
+#: ../src/celestia/celestiacore.cpp:1178
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Време за пътуване на светлината:  %d м  %.1f с"
 
-#: ../src/celestia/celestiacore.cpp:1184
+#: ../src/celestia/celestiacore.cpp:1183
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Време за пътуване на светлината:  %d ч  %d м  %.1f с"
 
-#: ../src/celestia/celestiacore.cpp:1202
+#: ../src/celestia/celestiacore.cpp:1201
 msgid "Light travel delay included"
 msgstr "Забавянето на светлината е включено"
 
-#: ../src/celestia/celestiacore.cpp:1207
+#: ../src/celestia/celestiacore.cpp:1206
 msgid "Light travel delay switched off"
 msgstr "Забавянето на светлината е изключено"
 
-#: ../src/celestia/celestiacore.cpp:1213
+#: ../src/celestia/celestiacore.cpp:1212
 msgid "Light travel delay ignored"
 msgstr "Забавянето на светлината е игнорирано"
 
-#: ../src/celestia/celestiacore.cpp:1256
+#: ../src/celestia/celestiacore.cpp:1255
 msgid "Using normal surface textures."
 msgstr "Използване на нормални повърхностни текстури."
 
-#: ../src/celestia/celestiacore.cpp:1261
+#: ../src/celestia/celestiacore.cpp:1260
 msgid "Using limit of knowledge surface textures."
 msgstr "Използване на ограничени повърхностни текстури."
 
-#: ../src/celestia/celestiacore.cpp:1322
+#: ../src/celestia/celestiacore.cpp:1321
 msgid "Follow"
 msgstr "Следвай"
 
-#: ../src/celestia/celestiacore.cpp:1347
+#: ../src/celestia/celestiacore.cpp:1346
 msgid "Time: Forward"
 msgstr "Време: Напред"
 
-#: ../src/celestia/celestiacore.cpp:1349
+#: ../src/celestia/celestiacore.cpp:1348
 msgid "Time: Backward"
 msgstr "Време: Назад"
 
-#: ../src/celestia/celestiacore.cpp:1361 ../src/celestia/celestiacore.cpp:1376
+#: ../src/celestia/celestiacore.cpp:1360 ../src/celestia/celestiacore.cpp:1375
 #, c-format
 msgid "Time rate: %.6g"
 msgstr "Времева ставка: %.6g"
 
-#: ../src/celestia/celestiacore.cpp:1416
+#: ../src/celestia/celestiacore.cpp:1415
 msgid "Low res textures"
 msgstr "Текстури с ниско качество"
 
-#: ../src/celestia/celestiacore.cpp:1419
+#: ../src/celestia/celestiacore.cpp:1418
 msgid "Medium res textures"
 msgstr "Текстури със средно качество"
 
-#: ../src/celestia/celestiacore.cpp:1422
+#: ../src/celestia/celestiacore.cpp:1421
 msgid "High res textures"
 msgstr "Текстури с високо качество"
 
-#: ../src/celestia/celestiacore.cpp:1469
+#: ../src/celestia/celestiacore.cpp:1468
 msgid "Sync Orbit"
 msgstr "Синхронизирай с орбитата"
 
-#: ../src/celestia/celestiacore.cpp:1475
+#: ../src/celestia/celestiacore.cpp:1474
 msgid "Lock"
 msgstr "Заключи"
 
-#: ../src/celestia/celestiacore.cpp:1481
+#: ../src/celestia/celestiacore.cpp:1480
 msgid "Chase"
 msgstr "Преследвай"
 
-#: ../src/celestia/celestiacore.cpp:1494 ../src/celestia/celestiacore.cpp:1525
+#: ../src/celestia/celestiacore.cpp:1493 ../src/celestia/celestiacore.cpp:1524
 #, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "Лимит на звездната величина:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1505 ../src/celestia/celestiacore.cpp:1536
+#: ../src/celestia/celestiacore.cpp:1504 ../src/celestia/celestiacore.cpp:1535
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Автоматичен лимит на звездната величина при 45°:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1555 ../src/celestia/celestiacore.cpp:1570
+#: ../src/celestia/celestiacore.cpp:1554 ../src/celestia/celestiacore.cpp:1569
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Яркост на фоновата светлина:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1581 ../src/celestia/celestiacore.cpp:1592
+#: ../src/celestia/celestiacore.cpp:1580 ../src/celestia/celestiacore.cpp:1591
 #, c-format
 msgid "Light gain"
 msgstr "Увеличение на светлината"
 
-#: ../src/celestia/celestiacore.cpp:2099
+#: ../src/celestia/celestiacore.cpp:2098
 msgid "View too small to be split"
 msgstr "Изгледът е прекалено малък, за да бъде раздвоен"
 
-#: ../src/celestia/celestiacore.cpp:2103
+#: ../src/celestia/celestiacore.cpp:2102
 msgid "Added view"
 msgstr "Изгледът е добавен"
 
-#: ../src/celestia/celestiacore.cpp:2243
+#: ../src/celestia/celestiacore.cpp:2242
 msgid "Skipping solar system catalog: {}\n"
 msgstr "Пропускане на системен каталог: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2246
+#: ../src/celestia/celestiacore.cpp:2245
 msgid "Loading solar system catalog: {}\n"
 msgstr "Зареждане на системен каталог: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2289
+#: ../src/celestia/celestiacore.cpp:2288
 msgid "Skipping {} catalog: {}\n"
 msgstr "Пропускане на {} каталог: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2292
+#: ../src/celestia/celestiacore.cpp:2291
 msgid "Loading {} catalog: {}\n"
 msgstr "Зареждане на {} каталог: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2300
+#: ../src/celestia/celestiacore.cpp:2299
 msgid "Error reading {} catalog file: {}\n"
 msgstr "Грешка при четене на {} каталог: {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2334
+#: ../src/celestia/celestiacore.cpp:2333
 msgid "Error reading configuration file."
 msgstr "Грешка при четене на конфигурационния файл."
 
-#: ../src/celestia/celestiacore.cpp:2348
+#: ../src/celestia/celestiacore.cpp:2347
 msgid "Initialization of SPICE library failed."
 msgstr "Създаването на библиотеката „SPICE“ се провали."
 
-#: ../src/celestia/celestiacore.cpp:2393
+#: ../src/celestia/celestiacore.cpp:2392
 msgid "Cannot read star database."
 msgstr "Звездната база данни не може да бъде прочетена."
 
-#: ../src/celestia/celestiacore.cpp:2413
+#: ../src/celestia/celestiacore.cpp:2412
 msgid "Error opening deepsky catalog file {}.\n"
 msgstr "Грешка при отваряне на каталога за ОДН {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:2417
+#: ../src/celestia/celestiacore.cpp:2416
 msgid "Cannot read Deep Sky Objects database {}.\n"
 msgstr "Базата от данни с ОДН не може да бъде прочетена {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:2464
+#: ../src/celestia/celestiacore.cpp:2463
 msgid "Error opening solar system catalog {}.\n"
 msgstr "Грешка при отваряне на системния каталог {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:2506
+#: ../src/celestia/celestiacore.cpp:2505
 msgid "Error opening constellation boundaries file {}.\n"
 msgstr "Грешка при отваряне на очертанията на съзвездията {}.\n"
 
-#: ../src/celestia/celestiacore.cpp:2676
+#: ../src/celestia/celestiacore.cpp:2675
 msgid "Failed to initialize renderer"
 msgstr "Неуспешно стартиране на възпроизвеждането"
 
-#: ../src/celestia/celestiacore.cpp:2692
+#: ../src/celestia/celestiacore.cpp:2691
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Грешка при зареждане на шрифта, текстът няма да е видим.\n"
 
-#: ../src/celestia/celestiacore.cpp:2740
+#: ../src/celestia/celestiacore.cpp:2739
 msgid "Error reading cross index {}\n"
 msgstr "Грешка при четене на кръстосаното индексиране {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2742
+#: ../src/celestia/celestiacore.cpp:2741
 msgid "Loaded cross index {}\n"
 msgstr "Кръстосаното индексиране {} е заредено\n"
 
-#: ../src/celestia/celestiacore.cpp:2759
+#: ../src/celestia/celestiacore.cpp:2758
 msgid "Error reading star names file\n"
 msgstr "Грешка при четене на файла с имената на звездите\n"
 
-#: ../src/celestia/celestiacore.cpp:2763 ../src/celestia/celestiacore.cpp:2777
+#: ../src/celestia/celestiacore.cpp:2762 ../src/celestia/celestiacore.cpp:2776
 msgid "Error opening {}\n"
 msgstr "Грешка при отваряне на {}\n"
 
-#: ../src/celestia/celestiacore.cpp:2783
+#: ../src/celestia/celestiacore.cpp:2782
 msgid "Error reading stars file\n"
 msgstr "Грешка при четене на файла с звездите\n"
 
-#: ../src/celestia/celestiacore.cpp:2807
+#: ../src/celestia/celestiacore.cpp:2806
 msgid "Error opening star catalog {}\n"
 msgstr "Грешка при отваряне на звездния каталог {}\n"
 
-#: ../src/celestia/celestiacore.cpp:3117
+#: ../src/celestia/celestiacore.cpp:3141
 msgid "Invalid URL"
 msgstr "Невалидна връзка"
 
-#: ../src/celestia/celestiacore.cpp:3339
+#: ../src/celestia/celestiacore.cpp:3363
 msgid "Unable to capture a frame!\n"
 msgstr "Неуспешно прихващане на кадъра!\n"
 
-#: ../src/celestia/celestiacore.cpp:3350
+#: ../src/celestia/celestiacore.cpp:3374
 msgid "Unsupported image type: {}!\n"
 msgstr "Неподдържан формат на изображението: {}!\n"
 
-#: ../src/celestia/celestiacore.cpp:3526
+#: ../src/celestia/celestiacore.cpp:3550
 msgid "Error opening asterisms file {}.\n"
 msgstr "Грешка при отваряне на астеризмите {}.\n"
 
@@ -692,201 +692,201 @@ msgstr "Брой на интерполаторите: %s\n"
 msgid "Max anisotropy filtering: %s\n"
 msgstr "Максимално анизотропно филтриране: %s\n"
 
-#: ../src/celestia/hud.cpp:102
+#: ../src/celestia/hud.cpp:96
 msgid "Mpc"
 msgstr "Мпк"
 
-#: ../src/celestia/hud.cpp:107
+#: ../src/celestia/hud.cpp:101
 msgid "kpc"
 msgstr "кпк"
 
-#: ../src/celestia/hud.cpp:112
+#: ../src/celestia/hud.cpp:106
 msgid "ly"
 msgstr "сг"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/hud.cpp:116 ../src/celestia/qt/rc.cpp:36
+#: ../src/celestia/hud.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:127
 msgid "au"
 msgstr "ае"
 
-#: ../src/celestia/hud.cpp:123
+#: ../src/celestia/hud.cpp:117
 msgid "mi"
 msgstr "ми"
 
-#: ../src/celestia/hud.cpp:128
+#: ../src/celestia/hud.cpp:122
 msgid "ft"
 msgstr "фт"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/hud.cpp:134 ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/hud.cpp:128 ../src/celestia/qt/qtinfopanel.cpp:194
 #: ../src/celestia/qt/qtinfopanel.cpp:315 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "km"
 msgstr "км"
 
-#: ../src/celestia/hud.cpp:139 ../src/celestia/qt/qtinfopanel.cpp:198
+#: ../src/celestia/hud.cpp:133 ../src/celestia/qt/qtinfopanel.cpp:198
 msgid "m"
 msgstr "м"
 
-#: ../src/celestia/hud.cpp:161 ../src/celestia/qt/qtinfopanel.cpp:250
+#: ../src/celestia/hud.cpp:155 ../src/celestia/qt/qtinfopanel.cpp:250
 #: ../src/celestia/qt/qtinfopanel.cpp:296
 #: ../src/celestia/qt/qtinfopanel.cpp:334
 msgid "days"
 msgstr "дни"
 
-#: ../src/celestia/hud.cpp:166 ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/hud.cpp:160 ../src/celestia/qt/qtinfopanel.cpp:246
 #: ../src/celestia/qt/qtinfopanel.cpp:292
 msgid "hours"
 msgstr "часа"
 
-#: ../src/celestia/hud.cpp:171
+#: ../src/celestia/hud.cpp:165
 msgid "minutes"
 msgstr "минути"
 
-#: ../src/celestia/hud.cpp:176
+#: ../src/celestia/hud.cpp:170
 msgid "seconds"
 msgstr "секунди"
 
-#: ../src/celestia/hud.cpp:179
+#: ../src/celestia/hud.cpp:173
 msgid "Rotation period: {} {}\n"
 msgstr "Период на въртене: {} {}\n"
 
-#: ../src/celestia/hud.cpp:188
-#, c-format
-msgid "Mass: %.6g lb\n"
-msgstr "Маса: %.6g лб\n"
+#: ../src/celestia/hud.cpp:182
+#, fuzzy
+msgid "Mass: {} lb\n"
+msgstr "Маса: {} лб\n"
 
-#: ../src/celestia/hud.cpp:190
-#, c-format
-msgid "Mass: %.6g kg\n"
-msgstr "Маса: %.6g кг\n"
+#: ../src/celestia/hud.cpp:185
+#, fuzzy
+msgid "Mass: {} kg\n"
+msgstr "Маса: {} кг\n"
 
-#: ../src/celestia/hud.cpp:193
-#, c-format
-msgid "Mass: %.2f Mj\n"
-msgstr "Маса: %.2f Юп\n"
+#: ../src/celestia/hud.cpp:189
+#, fuzzy
+msgid "Mass: {} Mj\n"
+msgstr "Маса: {} Юп\n"
 
-#: ../src/celestia/hud.cpp:195
-#, c-format
-msgid "Mass: %.2f Me\n"
-msgstr "Маса: %.2f Зем\n"
+#: ../src/celestia/hud.cpp:192
+#, fuzzy
+msgid "Mass: {} Me\n"
+msgstr "Маса: {} Зем\n"
 
-#: ../src/celestia/hud.cpp:207
+#: ../src/celestia/hud.cpp:205
 msgid "ly/s"
 msgstr "сг/с"
 
-#: ../src/celestia/hud.cpp:212
+#: ../src/celestia/hud.cpp:210
 msgid "AU/s"
 msgstr "АЕ/с"
 
-#: ../src/celestia/hud.cpp:224
+#: ../src/celestia/hud.cpp:222
 msgid "mi/s"
 msgstr "ми/с"
 
-#: ../src/celestia/hud.cpp:229
+#: ../src/celestia/hud.cpp:227
 msgid "ft/s"
 msgstr "фт/с"
 
-#: ../src/celestia/hud.cpp:237
+#: ../src/celestia/hud.cpp:235
 msgid "km/s"
 msgstr "км/с"
 
-#: ../src/celestia/hud.cpp:242
+#: ../src/celestia/hud.cpp:240
 msgid "m/s"
 msgstr "м/с"
 
-#: ../src/celestia/hud.cpp:245
+#: ../src/celestia/hud.cpp:243
 msgid "Speed: {} {}\n"
 msgstr "Скорост: {} {}\n"
 
-#: ../src/celestia/hud.cpp:284
+#: ../src/celestia/hud.cpp:282
 #, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "Видим диаметър: %s\n"
 
-#: ../src/celestia/hud.cpp:295
+#: ../src/celestia/hud.cpp:293
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr "δ: %+d%s %02d' %.1f\"\n"
 
-#: ../src/celestia/hud.cpp:308
+#: ../src/celestia/hud.cpp:306
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr "α: %dч %02dм %.1fс\n"
 
-#: ../src/celestia/hud.cpp:320
+#: ../src/celestia/hud.cpp:318
 #, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "Видима звездна величина: %.1f\n"
 
-#: ../src/celestia/hud.cpp:324
+#: ../src/celestia/hud.cpp:322
 #, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "Абсолютна звездна величина: %.1f\n"
 
-#: ../src/celestia/hud.cpp:405
+#: ../src/celestia/hud.cpp:400
 #, c-format
 msgid "%.6f%c %.6f%c %s"
 msgstr "%.6f%c %.6f%c %s"
 
-#: ../src/celestia/hud.cpp:416 ../src/celestia/hud.cpp:492
-#: ../src/celestia/hud.cpp:522 ../src/celestia/hud.cpp:603
+#: ../src/celestia/hud.cpp:414 ../src/celestia/hud.cpp:491
+#: ../src/celestia/hud.cpp:522 ../src/celestia/hud.cpp:607
 #, c-format
 msgid "Distance: %s\n"
 msgstr "Разстояние: %s\n"
 
-#: ../src/celestia/hud.cpp:421
+#: ../src/celestia/hud.cpp:419
 msgid "Star system barycenter\n"
 msgstr "Център на масата на звездната система\n"
 
-#: ../src/celestia/hud.cpp:425
+#: ../src/celestia/hud.cpp:423
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Абс. (видима) величина: %.2f (%.2f)\n"
 
-#: ../src/celestia/hud.cpp:430
+#: ../src/celestia/hud.cpp:428
 msgid "Luminosity: {}x Sun\n"
 msgstr "Яркост: {} слънца\n"
 
-#: ../src/celestia/hud.cpp:436
+#: ../src/celestia/hud.cpp:434
 msgid "Neutron star"
 msgstr "Неутронна звезда"
 
-#: ../src/celestia/hud.cpp:439
+#: ../src/celestia/hud.cpp:437
 msgid "Black hole"
 msgstr "Черна дупка"
 
-#: ../src/celestia/hud.cpp:444
+#: ../src/celestia/hud.cpp:442
 #, c-format
 msgid "Class: %s\n"
 msgstr "Спектрален клас: %s\n"
 
-#: ../src/celestia/hud.cpp:451
+#: ../src/celestia/hud.cpp:449
 #, c-format
 msgid "Surface temp: %s\n"
 msgstr "Температура на повърхността: %s\n"
 
-#: ../src/celestia/hud.cpp:456
+#: ../src/celestia/hud.cpp:454
 msgid "Radius: {} Rsun  ({})\n"
 msgstr "Радиус: {} сл. рад.  ({})\n"
 
-#: ../src/celestia/hud.cpp:462
+#: ../src/celestia/hud.cpp:460
 msgid "Radius: {}\n"
 msgstr "Радиус: {}\n"
 
-#: ../src/celestia/hud.cpp:478
+#: ../src/celestia/hud.cpp:476
 msgid "Planetary companions present\n"
 msgstr "Налични са планетарни спътници\n"
 
-#: ../src/celestia/hud.cpp:497
+#: ../src/celestia/hud.cpp:496
 #, c-format
 msgid "Distance from center: %s\n"
 msgstr "Разстояние от центъра: %s\n"
 
-#: ../src/celestia/hud.cpp:500 ../src/celestia/hud.cpp:530
+#: ../src/celestia/hud.cpp:499 ../src/celestia/hud.cpp:530
 #, c-format
 msgid "Radius: %s\n"
 msgstr "Радиус: %s\n"
@@ -896,112 +896,112 @@ msgstr "Радиус: %s\n"
 msgid "Phase angle: %.1f%s\n"
 msgstr "Фазов ъгъл: %.1f%s\n"
 
-#: ../src/celestia/hud.cpp:584
+#: ../src/celestia/hud.cpp:585
 #, fuzzy
 msgid "Density: {} lb/ft³\n"
 msgstr "Плътност: %.2f х 1000 лб/фт^3\n"
 
-#: ../src/celestia/hud.cpp:587
+#: ../src/celestia/hud.cpp:590
 #, fuzzy
 msgid "Density: {} kg/m³\n"
 msgstr "Плътност: %.2f х 1000 кг/м^3\n"
 
-#: ../src/celestia/hud.cpp:593
+#: ../src/celestia/hud.cpp:596
 #, c-format
 msgid "Temperature: %s\n"
 msgstr "Температура: %s\n"
 
-#: ../src/celestia/hud.cpp:827
+#: ../src/celestia/hud.cpp:831
 #, c-format
 msgid "FPS: %.1f\n"
 msgstr "ЧКС: %.1f\n"
 
-#: ../src/celestia/hud.cpp:860 ../src/celestia/hud.cpp:863
+#: ../src/celestia/hud.cpp:864 ../src/celestia/hud.cpp:867
 msgid "Edit Mode"
 msgstr "Режим на редактиране"
 
-#: ../src/celestia/hud.cpp:904
+#: ../src/celestia/hud.cpp:908
 msgid "  LT"
 msgstr "  LT"
 
-#: ../src/celestia/hud.cpp:912 ../src/celestia/qt/qttimetoolbar.cpp:47
+#: ../src/celestia/hud.cpp:916 ../src/celestia/qt/qttimetoolbar.cpp:47
 msgid "Real time"
 msgstr "Реално време"
 
-#: ../src/celestia/hud.cpp:914
+#: ../src/celestia/hud.cpp:918
 msgid "-Real time"
 msgstr "-Реално време"
 
-#: ../src/celestia/hud.cpp:918
+#: ../src/celestia/hud.cpp:922
 msgid "Time stopped"
 msgstr "Времето е спряно"
 
-#: ../src/celestia/hud.cpp:922
+#: ../src/celestia/hud.cpp:926
 #, c-format
 msgid "%.6g x faster"
 msgstr "%.6g пъти по-бързо"
 
-#: ../src/celestia/hud.cpp:926
+#: ../src/celestia/hud.cpp:930
 #, c-format
 msgid "%.6g x slower"
 msgstr "%.6g пъти по-бавно"
 
-#: ../src/celestia/hud.cpp:932
+#: ../src/celestia/hud.cpp:936
 msgid " (Paused)"
 msgstr " (На пауза)"
 
-#: ../src/celestia/hud.cpp:954
+#: ../src/celestia/hud.cpp:958
 msgid "Travelling ({})\n"
 msgstr "Придвижване ({})\n"
 
-#: ../src/celestia/hud.cpp:957
+#: ../src/celestia/hud.cpp:960
 msgid "Travelling\n"
 msgstr "Придвижване\n"
 
-#: ../src/celestia/hud.cpp:967
+#: ../src/celestia/hud.cpp:970
 #, c-format
 msgid "Track %s\n"
 msgstr "Следвай %s\n"
 
-#: ../src/celestia/hud.cpp:975
+#: ../src/celestia/hud.cpp:978
 #, c-format
 msgid "Follow %s\n"
 msgstr "Следвай %s\n"
 
-#: ../src/celestia/hud.cpp:979
+#: ../src/celestia/hud.cpp:982
 #, c-format
 msgid "Sync Orbit %s\n"
 msgstr "Синхронизирай с орбитата %s\n"
 
-#: ../src/celestia/hud.cpp:983
+#: ../src/celestia/hud.cpp:986
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr "Заключи %s -> %s\n"
 
-#: ../src/celestia/hud.cpp:989
+#: ../src/celestia/hud.cpp:992
 #, c-format
 msgid "Chase %s\n"
 msgstr "Преследвай %s\n"
 
-#: ../src/celestia/hud.cpp:1003
+#: ../src/celestia/hud.cpp:1006
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr "ЗП: %s (%.2f пъти)\n"
 
-#: ../src/celestia/hud.cpp:1167
+#: ../src/celestia/hud.cpp:1177
 #, c-format
 msgid "%dx%d at %.2f fps  %s"
 msgstr "%dx%d при %.2f ЧКС  %s"
 
-#: ../src/celestia/hud.cpp:1170
+#: ../src/celestia/hud.cpp:1180
 msgid "Paused"
 msgstr "На пауза"
 
-#: ../src/celestia/hud.cpp:1170
+#: ../src/celestia/hud.cpp:1180
 msgid "Recording"
 msgstr "Записване"
 
-#: ../src/celestia/hud.cpp:1190
+#: ../src/celestia/hud.cpp:1200
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
