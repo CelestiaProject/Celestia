@@ -16,7 +16,7 @@
 #include "celestia/celestiacore.h"
 #include "odmenu.h"
 
-#include <Windows.h>
+#include <windows.h>
 #include <commctrl.h>
 
 

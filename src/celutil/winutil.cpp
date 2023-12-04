@@ -12,7 +12,7 @@
 
 #include "winutil.h"
 
-#include <Windows.h>
+#include <windows.h>
 
 namespace celestia::util
 {

@@ -13,7 +13,7 @@
 
 #include "celestia/celestiacore.h"
 
-#include <Windows.h>
+#include <windows.h>
 #include <commctrl.h>
 
 class LocationsDialog : public CelestiaWatcher
