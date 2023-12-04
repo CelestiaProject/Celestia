@@ -200,7 +200,7 @@ public:
 
     // URLs and history navigation
     void setStartURL(const std::string& url);
-    bool goToUrl(const std::string& urlStr);
+    bool goToUrl(std::string_view urlStr);
     void addToHistory();
     void back();
     void forward();
@@ -412,7 +412,7 @@ private:
 
     Universe* universe{ nullptr };
 
-    FavoritesList* favorites{ nullptr };
+    std::unique_ptr<FavoritesList> favorites;
     DestinationList* destinations{ nullptr };
 
     Simulation* sim{ nullptr };

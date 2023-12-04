@@ -11,121 +11,106 @@
 
 #include "winssbrowser.h"
 
-#include <string>
-#include <sstream>
-#include <algorithm>
-#include <set>
-
-#include <celengine/body.h>
-#include <celutil/winutil.h>
-#include "res/resource.h"
-
 #include <commctrl.h>
 
+#include <celengine/body.h>
+#include <celengine/selection.h>
+#include <celengine/simulation.h>
+#include <celengine/solarsys.h>
+#include <celengine/universe.h>
+#include <celestia/celestiacore.h>
+#include "res/resource.h"
+#include "tstring.h"
 
-using namespace std;
-
-namespace util = celestia::util;
-
-
-HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
-                        HTREEITEM parent)
+namespace celestia::win32
 {
-    TVITEM tvi;
-    TVINSERTSTRUCT tvins;
-    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST;
 
-#if 0
-    tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
-#endif
+namespace
+{
+
+HTREEITEM
+AddItemToTree(HWND hwndTV, tstring_view itemText, int nLevel, const void* data, HTREEITEM parent)
+{
+    static HTREEITEM hPrev = TVI_FIRST;
+
+    TVITEM tvi;
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
 
     // Set the text of the item.
-    tvi.pszText = lpszItem;
-    tvi.cchTextMax = lstrlen(lpszItem);
+    tvi.pszText = const_cast<TCHAR*>(itemText.data());
+    tvi.cchTextMax = static_cast<int>(itemText.size());
 
     // Save the heading level in the item's application-defined
     // data area.
-    tvi.lParam = (LPARAM) data;
+    tvi.lParam = reinterpret_cast<LPARAM>(data);
 
+    TVINSERTSTRUCT tvins;
     tvins.item = tvi;
     tvins.hInsertAfter = hPrev;
     tvins.hParent = parent;
 
     // Add the item to the tree view control.
-    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0,
-                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins);
-
-#if 0
-    // The new item is a child item. Give the parent item a
-    // closed folder bitmap to indicate it now has child items.
-    if (nLevel > 1)
-    {
-        hti = TreeView_GetParent(hwndTV, hPrev);
-        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-        tvi.hItem = hti;
-        // tvi.iImage = g_nClosed;
-        // tvi.iSelectedImage = g_nClosed;
-        TreeView_SetItem(hwndTV, &tvi);
-    }
-#endif
+    hPrev = reinterpret_cast<HTREEITEM>(SendMessage(hwndTV, TVM_INSERTITEM, 0,
+                                                    reinterpret_cast<LPARAM>(&tvins)));
 
     return hPrev;
 }
 
-
-void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, HTREEITEM parent)
+void
+AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, HTREEITEM parent)
 {
-    for (int i = 0; i < sys->getSystemSize(); i++)
+    for (int i = 0; i < sys->getSystemSize(); ++i)
     {
-        Body* world = sys->getBody(i);
-        if (world != NULL && world->getClassification() != Body::Invisible && !world->getName().empty())
+        const Body* world = sys->getBody(i);
+        if (world != nullptr && world->getClassification() != Body::Invisible && !world->getName().empty())
         {
             HTREEITEM item;
             item = AddItemToTree(treeView,
-                                 const_cast<char*>(util::UTF8ToCurrentCP(world->getName(true)).c_str()),
+                                 UTF8ToTString(world->getName(true)),
                                  level,
-                                 static_cast<void*>(world),
+                                 world,
                                  parent);
 
             const PlanetarySystem* satellites = world->getSatellites();
-            if (satellites != NULL)
+            if (satellites != nullptr)
                 AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
         }
     }
 }
 
-
-BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
-                                     UINT message,
-                                     WPARAM wParam,
-                                     LPARAM lParam)
+INT_PTR CALLBACK
+SolarSystemBrowserProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(GetWindowLongPtr(hDlg, DWLP_USER));
+    if (message == WM_INITDIALOG)
+    {
+        SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(lParam);
+        if (browser == nullptr)
+            return EndDialog(hDlg, 0);
+
+        SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+
+        HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
+        const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
+        if (solarSys != NULL)
+        {
+            const Universe* u = browser->appCore->getSimulation()->getUniverse();
+            tstring starNameString = UTF8ToTString(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
+            HTREEITEM rootItem = AddItemToTree(hwnd, starNameString, 1, nullptr, TVI_ROOT);
+            const PlanetarySystem* planets = solarSys->getPlanets();
+            if (planets != NULL)
+                AddPlanetarySystemToTree(planets, hwnd, 2, rootItem);
+
+            SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, reinterpret_cast<LPARAM>(rootItem));
+        }
+        return TRUE;
+    }
+
+    auto browser = reinterpret_cast<SolarSystemBrowser*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
     case WM_INITDIALOG:
         {
-            SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(lParam);
-            if (browser == NULL)
-                return EndDialog(hDlg, 0);
-            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
-
-            HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
-            const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
-            if (solarSys != NULL)
-            {
-                Universe* u = browser->appCore->getSimulation()->getUniverse();
-                string starNameString = util::UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
-                HTREEITEM rootItem = AddItemToTree(hwnd, const_cast<char*>(starNameString.c_str()), 1, NULL,
-                                                   (HTREEITEM) TVI_ROOT);
-                const PlanetarySystem* planets = solarSys->getPlanets();
-                if (planets != NULL)
-                    AddPlanetarySystemToTree(planets, hwnd, 2, rootItem);
-
-                SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem);
-            }
         }
         return(TRUE);
 
@@ -160,13 +145,13 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
 
     case WM_NOTIFY:
         {
-            LPNMHDR hdr = (LPNMHDR) lParam;
+            auto hdr = reinterpret_cast<LPNMHDR>(lParam);
 
             if (hdr->code == TVN_SELCHANGED)
             {
-                LPNMTREEVIEW nm = (LPNMTREEVIEW) lParam;
-                Body* body = reinterpret_cast<Body*>(nm->itemNew.lParam);
-                if (body != NULL)
+                auto nm = reinterpret_cast<LPNMTREEVIEW>(lParam);
+                auto body = reinterpret_cast<Body*>(nm->itemNew.lParam);
+                if (body != nullptr)
                 {
                     browser->appCore->getSimulation()->setSelection(Selection(body));
                 }
@@ -176,7 +161,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
                     // the sun.
                     const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
                     if (solarSys != NULL && solarSys->getStar() != NULL)
-                        browser->appCore->getSimulation()->setSelection(Selection(const_cast<Star*>(solarSys->getStar())));
+                        browser->appCore->getSimulation()->setSelection(Selection(solarSys->getStar()));
                 }
             }
         }
@@ -185,6 +170,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
     return FALSE;
 }
 
+} // end unnamed namespace
 
 SolarSystemBrowser::SolarSystemBrowser(HINSTANCE appInstance,
                                        HWND _parent,
@@ -192,15 +178,17 @@ SolarSystemBrowser::SolarSystemBrowser(HINSTANCE appInstance,
     appCore(_appCore),
     parent(_parent)
 {
+    DLGPROC dlg;
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_SSBROWSER),
                              parent,
-                             (DLGPROC)SolarSystemBrowserProc,
+                             &SolarSystemBrowserProc,
                              reinterpret_cast<LONG_PTR>(this));
 }
-
 
 SolarSystemBrowser::~SolarSystemBrowser()
 {
     SetWindowLongPtr(hwnd, DWLP_USER, 0);
 }
+
+} // end namespace celestia::win32

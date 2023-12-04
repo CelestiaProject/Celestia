@@ -2,10 +2,102 @@
 //
 
 #include "odmenu.h"
+
+#include <algorithm>
+#include <iterator>
+
 #include "winuiutils.h"
 
-using namespace std;
 using namespace celestia::win32;
+
+namespace celestia::win32
+{
+
+namespace
+{
+
+void
+GenerateDisplayText(ODMENUITEM& item)
+{
+    TCHAR* pChr;
+    int i;
+
+    item.displayText = {};
+    item.rawDisplayText = {};
+    item.shortcutText = {};
+
+    auto tabPos = item.rawText.find(TEXT('\t'));
+    if (tabPos == tstring::npos)
+        tabPos = item.rawText.size();
+    else
+        item.shortcutText = item.rawText.substr(tabPos + 1);
+
+    item.rawDisplayText = item.rawText.substr(0, tabPos);
+
+    item.displayText.reserve(item.rawDisplayText.size());
+    std::copy_if(item.rawDisplayText.cbegin(), item.rawDisplayText.cend(),
+                 std::back_inserter(item.displayText),
+                 [](TCHAR ch) { return ch != TEXT('&'); });
+}
+
+COLORREF
+LightenColor(COLORREF col, double factor)
+{
+    if (factor <= 0.0 || factor > 1.0)
+        return col;
+
+    BYTE red = GetRValue(col);
+    BYTE green = GetGValue(col);
+    BYTE blue = GetBValue(col);
+    auto lightred = static_cast<BYTE>((factor*(255 - red)) + red);
+    auto lightgreen = static_cast<BYTE>((factor*(255 - green)) + green);
+    auto lightblue = static_cast<BYTE>((factor*(255 - blue)) + blue);
+    return RGB(lightred, lightgreen, lightblue);
+}
+
+COLORREF
+DarkenColor(COLORREF col, double factor)
+{
+    if (factor <= 0.0 || factor > 1.0)
+        return col;
+
+    BYTE red = GetRValue(col);
+    BYTE green = GetGValue(col);
+    BYTE blue = GetBValue(col);
+    auto lightred = static_cast<BYTE>(red - (factor*red));
+    auto lightgreen = static_cast<BYTE>(green - (factor*green));
+    auto lightblue = static_cast<BYTE>(blue - (factor*blue));
+    return RGB(lightred, lightgreen, lightblue);
+}
+
+COLORREF
+AverageColor(COLORREF col1, COLORREF col2, double weight)
+{
+    if (weight <= 0.0)
+        return col1;
+    if (weight > 1.0)
+        return col2;
+
+    auto avgRed   = static_cast<BYTE>(GetRValue(col1) * weight + GetRValue(col2) * (1.0 - weight));
+    auto avgGreen = static_cast<BYTE>(GetGValue(col1) * weight + GetGValue(col2) * (1.0 - weight));
+    auto avgBlue  = static_cast<BYTE>(GetBValue(col1) * weight + GetBValue(col2) * (1.0 - weight));
+
+    return RGB(avgRed, avgGreen, avgBlue);
+}
+
+double
+GetColorIntensity(COLORREF col)
+{
+    BYTE red = GetRValue(col);
+    BYTE green = GetGValue(col);
+    BYTE blue = GetBValue(col);
+
+    //denominator of 765 is (255*3)
+    constexpr double factor = 255.0 * 3.0;
+    return (static_cast<double>(red) + static_cast<double>(green) + static_cast<double>(blue)) / factor;
+}
+
+} // end unnamed namespace
 
 ODMenu::ODMenu()
 {
@@ -76,7 +168,8 @@ ODMenu::~ODMenu()
         DeleteObject(m_hHighlightItemBackgroundBrush);
 }
 
-bool ODMenu::Init(HWND hOwnerWnd, HMENU hMenu)
+bool
+ODMenu::Init(HWND hOwnerWnd, HMENU hMenu)
 {
     m_hRootMenu = hMenu;
 
@@ -99,63 +192,59 @@ bool ODMenu::Init(HWND hOwnerWnd, HMENU hMenu)
     return true;
 }
 
-void ODMenu::EnumMenuItems(HMENU hMenu)
+void
+ODMenu::EnumMenuItems(HMENU hMenu)
 {
-    int i, numItems;
+    int numItems = GetMenuItemCount(hMenu);
+    if (numItems <= 0)
+        return;
+
     MENUITEMINFO miInfo;
+    miInfo.cbSize = sizeof(MENUITEMINFO);
+    miInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
+    miInfo.dwTypeData = m_szItemText.data();
+    miInfo.cch = m_szItemText.size();
 
-    numItems = GetMenuItemCount(hMenu);
-    if(numItems > 0)
+    for (int i = 0; i < numItems; ++i)
     {
-        miInfo.cbSize = sizeof(MENUITEMINFO);
-        miInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
-        miInfo.dwTypeData = m_szItemText;
-        miInfo.cch = sizeof(m_szItemText);
+        if(GetMenuItemInfo(hMenu, i, TRUE, &miInfo))
+            AddItem(hMenu, i, &miInfo);
 
-        for(i=0; i<numItems; i++)
+        if(miInfo.hSubMenu)
         {
-            if(GetMenuItemInfo(hMenu, i, TRUE, &miInfo))
-                AddItem(hMenu, i, &miInfo);
-
-            if(miInfo.hSubMenu)
-            {
-                //Resursive call
-                EnumMenuItems(miInfo.hSubMenu);
-            }
-
-            miInfo.cch = sizeof(m_szItemText);
-            miInfo.dwTypeData = m_szItemText;
+            //Resursive call
+            EnumMenuItems(miInfo.hSubMenu);
         }
+
+        miInfo.cch = m_szItemText.size();
+        miInfo.dwTypeData = m_szItemText.data();
     }
 }
 
-void ODMenu::DeleteSubMenu(HMENU hMenu)
+void
+ODMenu::DeleteSubMenu(HMENU hMenu)
 {
     //Recursively remove map items according to menu structure
-    int i;
     MENUITEMINFO miInfo;
-
-    i = 0;
     miInfo.cbSize = sizeof(MENUITEMINFO);
     miInfo.fMask = MIIM_SUBMENU | MIIM_DATA;
-    while(GetMenuItemInfo(hMenu, i, TRUE, &miInfo))
+
+    for (int i = 0; GetMenuItemInfo(hMenu, i, TRUE, &miInfo); ++i)
     {
         //Make recursive call
-        if(miInfo.hSubMenu)
+        if (miInfo.hSubMenu)
             DeleteSubMenu(miInfo.hSubMenu);
 
         //Remove this item from map
         m_menuItems.erase(miInfo.dwItemData);
-
-        i++;
     }
 }
 
-void ODMenu::SetMenuItemOwnerDrawn(HMENU hMenu, UINT item, UINT type)
+void
+ODMenu::SetMenuItemOwnerDrawn(HMENU hMenu, UINT item, UINT type)
 {
     //Set menu item type to owner-drawn and set itemdata to sequence number.
     MENUITEMINFO miInfo;
-
     miInfo.cbSize = sizeof(MENUITEMINFO);
     miInfo.fMask = MIIM_TYPE | MIIM_DATA;
     miInfo.fType = type | MFT_OWNERDRAW;
@@ -164,65 +253,34 @@ void ODMenu::SetMenuItemOwnerDrawn(HMENU hMenu, UINT item, UINT type)
     SetMenuItemInfo(hMenu, item, TRUE, &miInfo);
 }
 
-void ODMenu::GenerateDisplayText(ODMENUITEM& item)
+void
+ODMenu::DrawItemText(const DRAWITEMSTRUCT* lpdis, const ODMENUITEM& item) const
 {
-    TCHAR* pChr;
-    int i;
-
-    item.displayText = "";
-    item.rawDisplayText = "";
-    item.shortcutText = "";
-
-    //Does shortcut text exist?
-    if(pChr = strchr((LPTSTR)item.rawText.c_str(), '\t'))
-        item.shortcutText = pChr + 1;
-
-    i = 0;
-    pChr = (LPTSTR)item.rawText.c_str();
-    while(*(pChr + i) != '\t' && *(pChr + i) != '\0')
-    {
-        if(*(pChr + i) == '&')
-        {
-            item.rawDisplayText.append(pChr + i, 1);
-            i++;
-
-            continue;
-        }
-
-        item.rawDisplayText.append(pChr + i, 1);
-        item.displayText.append(pChr + i, 1);
-        i++;
-    }
-}
-
-void ODMenu::DrawItemText(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
-{
-    int x, y;
-    SIZE size;
-    RECT rectText;
-    RECT rectItem;
-
-    memcpy(&rectItem, &lpdis->rcItem, sizeof(RECT));
+    RECT rectItem = lpdis->rcItem;
 
     //Get size of text to draw
+    SIZE size;
     GetTextExtentPoint32(lpdis->hDC, item.displayText.c_str(), item.displayText.length(), &size);
 
     // Determine where to draw.
+    int x;
+    int y;
     ComputeMenuTextPos(lpdis, item, x, y, size);
 
+    RECT rectText;
     rectText.left = x;
     rectText.right = lpdis->rcItem.right - m_textRightMargin;
     rectText.top = y;
     rectText.bottom = lpdis->rcItem.bottom;
 
     //Adjust rectangle that will contain the menu item
-    if(!item.topMost)
+    if (!item.topMost)
     {
         rectItem.left += (m_iconWidth + 2*m_iconBarMargin);
     }
 
     //Draw the item rectangle with appropriate background color
-    ExtTextOut(lpdis->hDC, x, y, ETO_OPAQUE, &rectItem, "", 0, NULL);
+    ExtTextOut(lpdis->hDC, x, y, ETO_OPAQUE, &rectItem, TEXT(""), 0, NULL);
 
     //Draw the text
     DrawText(lpdis->hDC, item.rawDisplayText.c_str(), item.rawDisplayText.length(),
@@ -231,13 +289,15 @@ void ODMenu::DrawItemText(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
         &rectText, DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
 }
 
-void ODMenu::DrawIconBar(HWND hWnd, DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
+void
+ODMenu::DrawIconBar(HWND hWnd,
+                    const DRAWITEMSTRUCT* lpdis,
+                    const ODMENUITEM& item) const
 {
-    RECT rectBar;
-    memcpy(&rectBar, &lpdis->rcItem, sizeof(RECT));
+    RECT rectBar = lpdis->rcItem;
 
     //Draw icon bar if not top level
-    if(!item.topMost)
+    if (!item.topMost)
     {
         rectBar.right = rectBar.left + m_iconWidth + 2*m_iconBarMargin + 1;
         if(lpdis->itemState & ODS_SELECTED &&
@@ -249,23 +309,20 @@ void ODMenu::DrawIconBar(HWND hWnd, DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
         {
             FillRect(lpdis->hDC, &rectBar, m_hIconBarBrush);
         }
-
     }
 
-    int x, y;
-
     //Draw icon for menu item if handle is valid
-    if(item.hBitmap)
+    if (item.hBitmap)
     {
-        x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
-        y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
+        int x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
+        int y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
 
-        if(lpdis->itemState & ODS_DISABLED || lpdis->itemState & ODS_GRAYED)
+        if (lpdis->itemState & ODS_DISABLED || lpdis->itemState & ODS_GRAYED)
         {
             //Draw disabled icon in normal position
             DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eDisabled);
         }
-        else if(lpdis->itemState & ODS_SELECTED)
+        else if (lpdis->itemState & ODS_SELECTED)
         {
             //Draw icon "raised"
             //Draw shadow right one pixel and down one pixel from normal position
@@ -280,67 +337,66 @@ void ODMenu::DrawIconBar(HWND hWnd, DRAWITEMSTRUCT* lpdis, ODMENUITEM& item)
             DrawTransparentBitmap(hWnd, lpdis->hDC, item.hBitmap, x, y, m_clrTranparent, eFaded);
         }
     }
-    else if(lpdis->itemState & ODS_CHECKED)
+    else if (lpdis->itemState & ODS_CHECKED)
     {
-        HBRUSH hPrevBrush;
-        HPEN hPrevPen;
-        RECT rect;
-
         //Draw filled, outlined rectangle around checkmark first
-        if(lpdis->itemState & ODS_SELECTED)
-            hPrevBrush = (HBRUSH)SelectObject(lpdis->hDC, m_hCheckMarkBackgroundHighlightBrush);
-        else
-            hPrevBrush = (HBRUSH)SelectObject(lpdis->hDC, m_hCheckMarkBackgroundBrush);
-        hPrevPen = (HPEN)SelectObject(lpdis->hDC, m_hSelectionOutlinePen);
+        auto hPrevBrush = static_cast<HBRUSH>((lpdis->itemState & ODS_SELECTED)
+                                                  ? SelectObject(lpdis->hDC, m_hCheckMarkBackgroundHighlightBrush)
+                                                  : SelectObject(lpdis->hDC, m_hCheckMarkBackgroundBrush));
+
+        auto hPrevPen = static_cast<HPEN>(SelectObject(lpdis->hDC, m_hSelectionOutlinePen));
+
+        RECT rect;
         rect.left = m_iconBarMargin;
         rect.right = rect.left + m_iconWidth;
         rect.top = rectBar.top + (rectBar.bottom - rectBar.top - m_iconHeight) / 2;
         rect.bottom = rect.top + m_iconHeight;
+
         Rectangle(lpdis->hDC, rect.left, rect.top, rect.right, rect.bottom);
         SelectObject(lpdis->hDC, hPrevBrush);
         SelectObject(lpdis->hDC, hPrevPen);
 
         // Draw check mark
-        x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
-        y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
+        int x = rectBar.left + m_iconBarMargin + m_iconWidth / 2;
+        int y = rectBar.top + (rectBar.bottom - rectBar.top) / 2;
         DrawCheckMark(hWnd, lpdis->hDC, x, y, true);
     }
 }
 
-void ODMenu::ComputeMenuTextPos(DRAWITEMSTRUCT* lpdis, ODMENUITEM& item, int& x, int& y, SIZE& size)
+void
+ODMenu::ComputeMenuTextPos(const DRAWITEMSTRUCT* lpdis,
+                           const ODMENUITEM& item,
+                           int& x, int& y,
+                           const SIZE& size) const
 {
     x = lpdis->rcItem.left;
     y = lpdis->rcItem.top;
-//    y += ((lpdis->rcItem.bottom - lpdis->rcItem.top - size.cy) / 2);
 
-    if(!item.topMost)
+    if (!item.topMost)
     {
         //Correct position for drop down menus. Leave space for a bitmap
-        x += (m_iconWidth + 2*m_iconBarMargin + m_textLeftMargin);
+        x += m_iconWidth + 2 * m_iconBarMargin + m_textLeftMargin;
     }
     else
     {
         //Center horizontally for top level menu items
-        x += ((lpdis->rcItem.right - lpdis->rcItem.left - size.cx) / 2);
+        x += (lpdis->rcItem.right - lpdis->rcItem.left - size.cx) / 2;
     }
 }
 
-void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short centerX,
-                                   short centerY, COLORREF cTransparentColor,
-                                   bitmapType eType)
+void
+ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short centerX,
+                              short centerY, COLORREF cTransparentColor,
+                              bitmapType eType) const
 {
-    BITMAP     bm;
-    COLORREF   cColor;
-    HBITMAP    bmAndBack, bmAndObject, bmAndMem, bmSave;
-    HBITMAP    bmBackOld, bmObjectOld, bmMemOld, bmSaveOld;
-    HDC        hdcMem, hdcBack, hdcObject, hdcTemp, hdcSave;
-    POINT      ptSize;
     HBRUSH     hOldBrush;
 
-    hdcTemp = CreateCompatibleDC(hDC);
+    HDC hdcTemp = CreateCompatibleDC(hDC);
     SelectObject(hdcTemp, hBitmap);   // Select the bitmap
 
-    GetObject(hBitmap, sizeof(BITMAP), (LPSTR)&bm);
+    BITMAP bm;
+    GetObject(hBitmap, sizeof(BITMAP), &bm);
+    POINT ptSize;
     ptSize.x = bm.bmWidth;            // Get width of bitmap
     ptSize.y = bm.bmHeight;           // Get height of bitmap
     DPtoLP(hdcTemp, &ptSize, 1);      // Convert from device
@@ -350,28 +406,28 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
     auto iconHeight = DpToPixels(ptSize.y, hWnd);
 
     // Create some DCs to hold temporary data.
-    hdcBack   = CreateCompatibleDC(hDC);
-    hdcObject = CreateCompatibleDC(hDC);
-    hdcMem    = CreateCompatibleDC(hDC);
-    hdcSave   = CreateCompatibleDC(hDC);
+    HDC hdcBack   = CreateCompatibleDC(hDC);
+    HDC hdcObject = CreateCompatibleDC(hDC);
+    HDC hdcMem    = CreateCompatibleDC(hDC);
+    HDC hdcSave   = CreateCompatibleDC(hDC);
 
     // Create a bitmap for each DC. DCs are required for a number of
     // GDI functions.
 
     // Monochrome DC
-    bmAndBack   = CreateBitmap(ptSize.x, ptSize.y, 1, 1, NULL);
+    HBITMAP bmAndBack   = CreateBitmap(ptSize.x, ptSize.y, 1, 1, NULL);
 
     // Monochrome DC
-    bmAndObject = CreateBitmap(ptSize.x, ptSize.y, 1, 1, NULL);
+    HBITMAP bmAndObject = CreateBitmap(ptSize.x, ptSize.y, 1, 1, NULL);
 
-    bmAndMem    = CreateCompatibleBitmap(hDC, iconWidth, iconHeight);
-    bmSave      = CreateCompatibleBitmap(hDC, ptSize.x, ptSize.y);
+    HBITMAP bmAndMem    = CreateCompatibleBitmap(hDC, iconWidth, iconHeight);
+    HBITMAP bmSave      = CreateCompatibleBitmap(hDC, ptSize.x, ptSize.y);
 
     // Each DC must select a bitmap object to store pixel data.
-    bmBackOld   = (HBITMAP)SelectObject(hdcBack, bmAndBack);
-    bmObjectOld = (HBITMAP)SelectObject(hdcObject, bmAndObject);
-    bmMemOld    = (HBITMAP)SelectObject(hdcMem, bmAndMem);
-    bmSaveOld   = (HBITMAP)SelectObject(hdcSave, bmSave);
+    auto bmBackOld   = static_cast<HBITMAP>(SelectObject(hdcBack, bmAndBack));
+    auto bmObjectOld = static_cast<HBITMAP>(SelectObject(hdcObject, bmAndObject));
+    auto bmMemOld    = static_cast<HBITMAP>(SelectObject(hdcMem, bmAndMem));
+    auto bmSaveOld   = static_cast<HBITMAP>(SelectObject(hdcSave, bmSave));
 
     // Set proper mapping mode.
     SetMapMode(hdcTemp, GetMapMode(hDC));
@@ -384,7 +440,7 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
 
     // Set the background color of the source DC to the color.
     // contained in the parts of the bitmap that should be transparent
-    cColor = SetBkColor(hdcTemp, cTransparentColor);
+    COLORREF cColor = SetBkColor(hdcTemp, cTransparentColor);
 
     // Create the object mask for the bitmap by performing a BitBlt
     // from the source bitmap to a monochrome bitmap.
@@ -404,7 +460,7 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
     // where the transparent pixels reside.
     StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcObject, 0, 0, ptSize.x, ptSize.y, SRCAND);
 
-    if(eType == eNormal)
+    if (eType == eNormal)
     {
         // Mask out the transparent colored pixels on the bitmap.
         // hdcTemp then contains only the non-transparent pixels.
@@ -414,10 +470,10 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
         // hdcMem then contains the required result.
         StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
     }
-    else if(eType == eShadow)
+    else if (eType == eShadow)
     {
         //Select shadow brush into hdcTemp
-        hOldBrush = (HBRUSH)SelectObject(hdcTemp, m_hIconShadowBrush);
+        auto hOldBrush = static_cast<HBRUSH>(SelectObject(hdcTemp, m_hIconShadowBrush));
 
         //Copy shadow brush pixels for all non-transparent pixels to hdcTemp
         BitBlt(hdcTemp, 0, 0, ptSize.x, ptSize.y, hdcBack, 0, 0, MERGECOPY);
@@ -429,17 +485,14 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
         //Restore the brush in hdcTemp
         SelectObject(hdcTemp, hOldBrush);
     }
-    else if(eType == eFaded)
+    else if (eType == eFaded)
     {
-        COLORREF col;
-        int x, y;
-
         //Lighten the color of each pixel in hdcTemp
-        for(x=0; x<ptSize.x; x++)
+        for (int x = 0; x < ptSize.x; ++x)
         {
-            for(y=0; y<ptSize.y; y++)
+            for (int y = 0; y < ptSize.y; ++y)
             {
-                col = GetPixel(hdcTemp, x, y);
+                COLORREF col = GetPixel(hdcTemp, x, y);
                 col = LightenColor(col, 0.3);
                 SetPixel(hdcTemp, x, y, col);
             }
@@ -453,27 +506,21 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
         // hdcMem then contains the required result.
         StretchBlt(hdcMem, 0, 0, iconWidth, iconHeight, hdcTemp, 0, 0, ptSize.x, ptSize.y, SRCPAINT);
     }
-    else if(eType == eDisabled)
+    else if (eType == eDisabled)
     {
-        COLORREF discol, col;
-        BYTE r, g, b;
-        int x, y;
-        int avgcol;
-        double factor;
-
-        //Lighten the color of COLOR_BTNSHADOW by a weighted average of the color at each pixel in hdcTemp.
-        //Set the pixel to the lightened color.
-        discol = GetSysColor(COLOR_BTNSHADOW);
-        for(x=0; x<ptSize.x; x++)
+        // Lighten the color of COLOR_BTNSHADOW by a weighted average of the color at each pixel in hdcTemp.
+        // Set the pixel to the lightened color.
+        COLORREF discol = GetSysColor(COLOR_BTNSHADOW);
+        for (int x = 0; x < ptSize.x; ++x)
         {
-            for(y=0; y<ptSize.y; y++)
+            for (int y = 0; y < ptSize.y; ++y)
             {
-                col = GetPixel(hdcTemp, x, y);
-                r = GetRValue(col);
-                g = GetGValue(col);
-                b = GetBValue(col);
-                avgcol = (r + g + b) / 3;
-                factor = avgcol / 255.0;
+                COLORREF col = GetPixel(hdcTemp, x, y);
+                BYTE r = GetRValue(col);
+                BYTE g = GetGValue(col);
+                BYTE b = GetBValue(col);
+                int avgcol = (r + g + b) / 3;
+                double factor = avgcol / 255.0;
                 SetPixel(hdcTemp, x, y, LightenColor(discol, factor));
             }
         }
@@ -507,16 +554,15 @@ void ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short ce
     DeleteDC(hdcTemp);
 }
 
-void ODMenu::DrawCheckMark(HWND hWnd, HDC hDC, short centerX, short centerY, bool bNarrow)
+void
+ODMenu::DrawCheckMark(HWND hWnd, HDC hDC,
+                      short centerX, short centerY,
+                      bool bNarrow) const
 {
-    HPEN hOldPen;
-    int dp = 0;
-
-    if(bNarrow)
-        dp = 1;
+    int dp = bNarrow ? 1 : 0;
 
     // Select check mark pen
-    hOldPen = (HPEN)SelectObject(hDC, m_hCheckMarkPen);
+    auto hOldPen = static_cast<HPEN>(SelectObject(hDC, m_hCheckMarkPen));
 
     // Draw the check mark
     auto minLeftX = centerX - DpToPixels(4, hWnd);
@@ -540,135 +586,65 @@ void ODMenu::DrawCheckMark(HWND hWnd, HDC hDC, short centerX, short centerY, boo
     SelectObject(hDC, hOldPen);
 }
 
-COLORREF ODMenu::LightenColor(COLORREF col, double factor)
+void
+ODMenu::MeasureItem(HWND hWnd, LPARAM lParam) const
 {
-    if(factor > 0.0 && factor <= 1.0)
-    {
-        BYTE red, green, blue, lightred, lightgreen, lightblue;
-        red = GetRValue(col);
-        green = GetGValue(col);
-        blue = GetBValue(col);
-        lightred = (BYTE)((factor*(255 - red)) + red);
-        lightgreen = (BYTE)((factor*(255 - green)) + green);
-        lightblue = (BYTE)((factor*(255 - blue)) + blue);
-        col = RGB(lightred, lightgreen, lightblue);
-    }
+    auto lpmis = reinterpret_cast<MEASUREITEMSTRUCT*>(lParam);
 
-    return col;
-}
-
-COLORREF ODMenu::DarkenColor(COLORREF col, double factor)
-{
-    if(factor > 0.0 && factor <= 1.0)
-    {
-        BYTE red, green, blue, lightred, lightgreen, lightblue;
-        red = GetRValue(col);
-        green = GetGValue(col);
-        blue = GetBValue(col);
-        lightred = (BYTE)(red - (factor*red));
-        lightgreen = (BYTE)(green - (factor*green));
-        lightblue = (BYTE)(blue - (factor*blue));
-        col = RGB(lightred, lightgreen, lightblue);
-    }
-    return col;
-}
-
-COLORREF ODMenu::AverageColor(COLORREF col1, COLORREF col2, double weight)
-{
-    BYTE avgRed, avgGreen, avgBlue;
-
-    if (weight <= 0.0)
-        return col1;
-    else if (weight > 1.0)
-        return col2;
-
-    avgRed   = (BYTE) (GetRValue(col1) * weight + GetRValue(col2) * (1.0 - weight));
-    avgGreen = (BYTE) (GetGValue(col1) * weight + GetGValue(col2) * (1.0 - weight));
-    avgBlue  = (BYTE) (GetBValue(col1) * weight + GetBValue(col2) * (1.0 - weight));
-
-    return RGB(avgRed, avgGreen, avgBlue);
-}
-
-double ODMenu::GetColorIntensity(COLORREF col)
-{
-    BYTE red, green, blue;
-
-    red = GetRValue(col);
-    green = GetGValue(col);
-    blue = GetBValue(col);
-
-    //denominator of 765 is (255*3)
-    return (double)red/765.0 + (double)green/765.0 + (double)blue/765.0;
-}
-
-void ODMenu::MeasureItem(HWND hWnd, LPARAM lParam)
-{
-    MEASUREITEMSTRUCT* lpmis = (MEASUREITEMSTRUCT*)lParam;
-    ODMENUITEMS::iterator it;
-    ODMENUITEM item;
-    HDC hDC;
-    HFONT hfntOld;
-    RECT rect;
-
-    it = m_menuItems.find(lpmis->itemData);
+    auto it = m_menuItems.find(lpmis->itemData);
     if(it == m_menuItems.end())
         return;
 
-    hDC = GetDC(hWnd);
-    hfntOld = (HFONT)SelectObject(hDC, m_hFont);
+    HDC hDC = GetDC(hWnd);
+    auto hfntOld = static_cast<HFONT>(SelectObject(hDC, m_hFont));
 
-    item = it->second;
-    if(item.displayText.length() > 0)
+    const ODMENUITEM& item = it->second;
+    if (!item.displayText.empty())
     {
+        RECT rect;
         DrawText(hDC, item.rawText.c_str(), item.rawText.length(), &rect,
-            DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_CALCRECT);
+                 DT_SINGLELINE | DT_LEFT | DT_VCENTER | DT_CALCRECT);
         lpmis->itemWidth = rect.right - rect.left;
         lpmis->itemHeight = m_iconHeight;
 
-        if(!item.topMost)
+        if (!item.topMost)
         {
             //Correct size for drop down menus
             lpmis->itemWidth += (m_iconWidth + 2*m_iconBarMargin + m_textLeftMargin + m_textRightMargin);
             lpmis->itemHeight += m_verticalSpacing;
         }
-     }
-    else if(item.dwType & MFT_SEPARATOR)
+    }
+    else if ((item.dwType & MFT_SEPARATOR) && !item.topMost)
     {
         //Correct size for drop down menus
-        if(!item.topMost)
-        {
-            lpmis->itemWidth += (m_iconWidth + 2*m_iconBarMargin + m_textLeftMargin + m_textRightMargin);
-            lpmis->itemHeight = 3;
-        }
+        lpmis->itemWidth += (m_iconWidth + 2*m_iconBarMargin + m_textLeftMargin + m_textRightMargin);
+        lpmis->itemHeight = 3;
     }
 
     SelectObject(hDC, hfntOld);
     ReleaseDC(hWnd, hDC);
 }
 
-void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
+void
+ODMenu::DrawItem(HWND hWnd, LPARAM lParam) const
 {
-    DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
-    ODMENUITEMS::iterator it;
-    ODMENUITEM item;
-    COLORREF clrPrevText, clrPrevBkgnd;
-    HFONT hPrevFnt;
-    HPEN hPrevPen;
-    HBRUSH hPrevBrush;
+    auto lpdis = reinterpret_cast<const DRAWITEMSTRUCT*>(lParam);
 
-    it = m_menuItems.find(lpdis->itemData);
+    auto it = m_menuItems.find(lpdis->itemData);
     if(it == m_menuItems.end())
         return;
 
-    item = it->second;
+    const ODMENUITEM& item = it->second;
 
     //Draw based on type of item
-    if(item.displayText.length() > 0)
+    if (!item.displayText.empty())
     {
+        COLORREF clrPrevText;
+        COLORREF clrPrevBkgnd;
         // Set the appropriate foreground and background colors.
-        if(item.topMost)
+        if (item.topMost)
         {
-            if(lpdis->itemState & ODS_SELECTED)
+            if (lpdis->itemState & ODS_SELECTED)
             {
                 clrPrevText = SetTextColor(lpdis->hDC, m_clrHighlightItemText);
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrHighlightItemBackground);
@@ -681,12 +657,12 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
         }
         else
         {
-            if(lpdis->itemState & ODS_GRAYED || lpdis->itemState & ODS_DISABLED)
+            if (lpdis->itemState & ODS_GRAYED || lpdis->itemState & ODS_DISABLED)
             {
                 clrPrevText = SetTextColor(lpdis->hDC, GetSysColor(COLOR_3DSHADOW));
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrItemBackground);
             }
-            else if(lpdis->itemState & ODS_SELECTED)
+            else if (lpdis->itemState & ODS_SELECTED)
             {
                 clrPrevText = SetTextColor(lpdis->hDC, m_clrHighlightItemText);
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrHighlightItemBackground);
@@ -699,7 +675,7 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
         }
 
         // Select the font.
-        hPrevFnt = (HFONT)SelectObject(lpdis->hDC, m_hFont);
+        auto hPrevFnt = static_cast<HFONT>(SelectObject(lpdis->hDC, m_hFont));
 
         //Draw the text
         DrawItemText(lpdis, item);
@@ -710,16 +686,15 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
         SetTextColor(lpdis->hDC, clrPrevText);
         SetBkColor(lpdis->hDC, clrPrevBkgnd);
     }
-    else if(item.dwType & MFT_SEPARATOR)
+    else if (item.dwType & MFT_SEPARATOR)
     {
         //Fill menu space with menu background, first.
-        RECT rect;
-        memcpy(&rect, &lpdis->rcItem, sizeof(RECT));
+        RECT rect = lpdis->rcItem;
         rect.left += (m_iconWidth + 2*m_iconBarMargin);
         FillRect(lpdis->hDC, &rect, m_hItemBackground);
 
         //Draw the separator line
-        hPrevPen = (HPEN)SelectObject(lpdis->hDC, m_hSeparatorPen);
+        auto hPrevPen = static_cast<HPEN>(SelectObject(lpdis->hDC, m_hSeparatorPen));
         MoveToEx(lpdis->hDC, lpdis->rcItem.left + m_iconWidth + 2*m_iconBarMargin + m_textLeftMargin,
             lpdis->rcItem.top+1, NULL);
         LineTo(lpdis->hDC, lpdis->rcItem.right, lpdis->rcItem.top+1);
@@ -732,10 +707,11 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
     DrawIconBar(hWnd, lpdis, item);
 
     //Draw selection outline if drawing a selected item
-    if(lpdis->itemState & ODS_SELECTED && !(lpdis->itemState & ODS_GRAYED || lpdis->itemState & ODS_DISABLED))
+    if (lpdis->itemState & ODS_SELECTED && !(lpdis->itemState & ODS_GRAYED || lpdis->itemState & ODS_DISABLED))
     {
-        hPrevBrush = (HBRUSH)SelectObject(lpdis->hDC, (HBRUSH)GetStockObject(NULL_BRUSH));
-        hPrevPen = (HPEN)SelectObject(lpdis->hDC, m_hSelectionOutlinePen);
+        auto hPrevBrush = static_cast<HBRUSH>(SelectObject(lpdis->hDC,
+                                                           static_cast<HBRUSH>(GetStockObject(NULL_BRUSH))));
+        auto hPrevPen = static_cast<HPEN>(SelectObject(lpdis->hDC, m_hSelectionOutlinePen));
         Rectangle(lpdis->hDC, lpdis->rcItem.left, lpdis->rcItem.top,
             lpdis->rcItem.right, lpdis->rcItem.bottom);
 
@@ -745,48 +721,25 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
     }
 }
 
-void ODMenu::OnDestroy()
+void
+ODMenu::OnDestroy()
 {
 }
 
-bool ODMenu::GetItem(UINT id, ODMENUITEM** ppItem)
+void
+ODMenu::SetItemImage(HINSTANCE hInst, UINT wID, UINT idBitmap)
 {
-    bool bRC = true;
-
-    if(!ppItem)
-        return false;
-
-    ODMENUITEMS::iterator it = m_menuItems.find(id);
-    if(it != m_menuItems.end())
-        *ppItem = &it->second;
-
-    return bRC;
-}
-
-void ODMenu::SetItemImage(HINSTANCE hInst, UINT wID, UINT idBitmap)
-{
-    // Get iterator to ODMENUITEM
-    ODMENUITEMS::iterator it;
-    HBITMAP hBitmap;
-
     // Load the bitmap resource
-    hBitmap = (HBITMAP) LoadImage(hInst,
-                                  MAKEINTRESOURCE(idBitmap),
-                                  IMAGE_BITMAP, 0, 0, LR_SHARED);
+    auto hBitmap = static_cast<HBITMAP>(LoadImage(hInst,
+                                                  MAKEINTRESOURCE(idBitmap),
+                                                  IMAGE_BITMAP, 0, 0, LR_SHARED));
     if (hBitmap)
     {
         // Find menu item having specified wID.
-        it = m_menuItems.begin();
-        while(it != m_menuItems.end())
-        {
-            if(it->second.wID == wID)
-            {
-                it->second.hBitmap = hBitmap;
-                break;
-            }
-
-            it++;
-        }
+        auto it = std::find_if(m_menuItems.begin(), m_menuItems.end(),
+                               [wID](const auto& item) { return item.second.wID == wID; });
+        if (it != m_menuItems.end())
+            it->second.hBitmap = hBitmap;
     }
     else
     {
@@ -795,61 +748,63 @@ void ODMenu::SetItemImage(HINSTANCE hInst, UINT wID, UINT idBitmap)
     }
 }
 
-void ODMenu::AddItem(HMENU hMenu, int index, MENUITEMINFO* pItemInfo)
+void
+ODMenu::AddItem(HMENU hMenu, int index, MENUITEMINFO* pItemInfo)
 {
     MENUITEMINFO miInfo;
-    ODMENUITEM odInfo;
 
     //Obtain menu item info if not supplied
-    if(!pItemInfo)
+    if (!pItemInfo)
     {
         miInfo.cbSize = sizeof(MENUITEMINFO);
         miInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
-        miInfo.dwTypeData = m_szItemText;
-        miInfo.cch = sizeof(m_szItemText);
+        miInfo.dwTypeData = m_szItemText.data();
+        miInfo.cch = m_szItemText.size();
 
-        if(GetMenuItemInfo(hMenu, index, TRUE, &miInfo))
-            pItemInfo = &miInfo;
+        if (!GetMenuItemInfo(hMenu, index, TRUE, &miInfo))
+            return;
+
+        pItemInfo = &miInfo;
     }
 
     //Add menu info to map of menu items
-    if(pItemInfo)
+    ODMENUITEM odInfo;
+    odInfo.topMost = pItemInfo->hSubMenu != NULL && hMenu == m_hRootMenu;
+
+    if (pItemInfo->fType == MFT_STRING)
     {
-        if(pItemInfo->hSubMenu != NULL && hMenu == m_hRootMenu)
-            odInfo.topMost = true;
-        else
-            odInfo.topMost = false;
-        if(pItemInfo->fType == MFT_STRING)
-        {
-            odInfo.rawText = pItemInfo->dwTypeData;
-            GenerateDisplayText(odInfo);
-        }
-        else
-        {
-            odInfo.rawText = "";
-            odInfo.displayText = "";
-        }
-        odInfo.dwType = pItemInfo->fType;
-        odInfo.wID = pItemInfo->wID;
-        odInfo.hBitmap = NULL;
-        m_menuItems[m_seqNumber] = odInfo;
-        SetMenuItemOwnerDrawn(hMenu, index, pItemInfo->fType);
+        odInfo.rawText = pItemInfo->dwTypeData;
+        GenerateDisplayText(odInfo);
     }
+    else
+    {
+        odInfo.rawText = {};
+        odInfo.displayText = {};
+    }
+
+    odInfo.dwType = pItemInfo->fType;
+    odInfo.wID = pItemInfo->wID;
+    odInfo.hBitmap = NULL;
+    m_menuItems[m_seqNumber] = odInfo;
+    SetMenuItemOwnerDrawn(hMenu, index, pItemInfo->fType);
 }
 
-void ODMenu::DeleteItem(HMENU hMenu, int index)
+void
+ODMenu::DeleteItem(HMENU hMenu, int index)
 {
     //Item data for item is map index
     MENUITEMINFO miInfo;
 
     miInfo.cbSize = sizeof(MENUITEMINFO);
     miInfo.fMask = MIIM_SUBMENU | MIIM_DATA;
-    if(GetMenuItemInfo(hMenu, index, TRUE, &miInfo))
-    {
-        if(miInfo.hSubMenu)
-            DeleteSubMenu(miInfo.hSubMenu);
+    if (!GetMenuItemInfo(hMenu, index, TRUE, &miInfo))
+        return;
 
-        //Remove this item from map
-        m_menuItems.erase(miInfo.dwItemData);
-    }
+    if(miInfo.hSubMenu)
+        DeleteSubMenu(miInfo.hSubMenu);
+
+    //Remove this item from map
+    m_menuItems.erase(miInfo.dwItemData);
 }
+
+} // end namespace celestia::win32

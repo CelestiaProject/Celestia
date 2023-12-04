@@ -1,5 +1,8 @@
 // wingotodlg.cpp
 //
+// Copyright (C) 2023, Celestia Development Team
+//
+// Original version:
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Goto object dialog for Windows.
@@ -11,96 +14,111 @@
 
 #include "wingotodlg.h"
 
+#include <array>
+#include <cstddef>
+#include <cwctype>
+#include <string_view>
+#include <system_error>
+
+#include <Eigen/Core>
+
+#include <fmt/format.h>
+#ifdef _UNICODE
+#include <fmt/xchar.h>
+#endif
+
+#include <celastro/astro.h>
 #include <celengine/body.h>
-#include <celutil/winutil.h>
+#include <celengine/observer.h>
+#include <celengine/simulation.h>
+#include <celestia/celestiacore.h>
+#include <celmath/mathlib.h>
 #include "res/resource.h"
+#include "tcharconv.h"
+#include "tstring.h"
 
-using namespace Eigen;
-using namespace std;
-
-namespace astro = celestia::astro;
-namespace math = celestia::math;
-namespace util = celestia::util;
-
-static bool GetDialogFloat(HWND hDlg, int id, float& f)
+namespace celestia::win32
 {
-    char buf[128];
 
-    if (GetDlgItemText(hDlg, id, buf, sizeof buf) > 0 &&
-        sscanf(buf, " %f", &f) == 1)
-        return true;
-    else
+namespace
+{
+
+bool
+GetDialogFloat(HWND hDlg, int id, float& f)
+{
+    std::array<TCHAR, 128> buf;
+    UINT size = GetDlgItemText(hDlg, id, buf.data(), buf.size());
+    if (size == 0)
         return false;
+
+    const TCHAR* start = buf.data();
+    const TCHAR* end = buf.data() + size;
+    while (start != end && std::iswspace(static_cast<std::wint_t>(*start)))
+        ++start;
+
+    if (start == end)
+        return false;
+
+    return from_tchars(start, end, f).ec == std::errc{};
 }
 
-static bool SetDialogFloat(HWND hDlg, int id, const char* format, float f)
+bool
+SetDialogFloat(HWND hDlg, int id, unsigned int precision, float f)
 {
-    char buf[128];
-
-    sprintf(buf, format, f);
-
-    return (SetDlgItemText(hDlg, id, buf) == TRUE);
+    std::array<TCHAR, 128> buf;
+    auto it = fmt::format_to_n(buf.begin(), buf.size() - 1, TEXT("{:.{}f}"), f, precision).out;
+    *it = TEXT('\0');
+    return (SetDlgItemText(hDlg, id, buf.data()) == TRUE);
 }
 
-
-static BOOL APIENTRY GotoObjectProc(HWND hDlg,
-                                    UINT message,
-                                    WPARAM wParam,
-                                    LPARAM lParam)
+INT_PTR CALLBACK
+GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
+    if (message == WM_INITDIALOG)
+    {
+        auto gotoDlg = reinterpret_cast<GotoObjectDialog*>(lParam);
+        if (gotoDlg == NULL)
+            return EndDialog(hDlg, 0);
+        SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+        CheckRadioButton(hDlg,
+                         IDC_RADIO_KM, IDC_RADIO_RADII,
+                         IDC_RADIO_KM);
 
+        //Initialize name, distance, latitude and longitude edit boxes with current values.
+        Simulation* sim = gotoDlg->appCore->getSimulation();
+        double distance, longitude, latitude;
+        sim->getSelectionLongLat(distance, longitude, latitude);
+
+        //Display information in format appropriate for object
+        if (sim->getSelection().body() != NULL)
+        {
+            distance = distance - (double) sim->getSelection().body()->getRadius();
+            SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, 1, (float)distance);
+            SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, 5, (float)longitude);
+            SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, 5, (float)latitude);
+            SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
+                const_cast<TCHAR*>(UTF8ToTString(sim->getSelection().body()->getName(true)).c_str()));
+        }
+
+        return TRUE;
+    }
+
+    auto gotoDlg = reinterpret_cast<GotoObjectDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
     switch (message)
     {
-    case WM_INITDIALOG:
-        {
-            GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(lParam);
-            if (gotoDlg == NULL)
-                return EndDialog(hDlg, 0);
-            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
-            CheckRadioButton(hDlg,
-                             IDC_RADIO_KM, IDC_RADIO_RADII,
-                             IDC_RADIO_KM);
-
-            //Initialize name, distance, latitude and longitude edit boxes with current values.
-            Simulation* sim = gotoDlg->appCore->getSimulation();
-            double distance, longitude, latitude;
-            sim->getSelectionLongLat(distance, longitude, latitude);
-
-            //Display information in format appropriate for object
-            if (sim->getSelection().body() != NULL)
-            {
-                distance = distance - (double) sim->getSelection().body()->getRadius();
-                SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, "%.1f", (float)distance);
-                SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
-                SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
-                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
-                 const_cast<char*>(util::UTF8ToCurrentCP(sim->getSelection().body()->getName(true)).c_str()));
-            }
-//            else if (sim->getSelection().star != NULL)
-//            {
-//                //Code to obtain searchable star name
-//               SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*)sim->getSelection().star->);
-//            }
-
-            return(TRUE);
-        }
-        break;
-
     case WM_COMMAND:
         if (LOWORD(wParam) == IDC_BUTTON_GOTO)
         {
-            char buf[1024], out[1024];
-            wchar_t wbuff[1024];
-            int len = GetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, buf, sizeof buf);
+            std::array<TCHAR, 1024> buf;
+            int len = GetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, buf.data(), buf.size());
 
             Simulation* sim = gotoDlg->appCore->getSimulation();
             Selection sel;
             if (len > 0)
             {
-                int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
-                WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
-                sel = sim->findObjectFromPath(string(out), true);
+                fmt::memory_buffer path;
+                AppendTCharToUTF8(tstring_view(buf.data(), static_cast<std::size_t>(len)), path);
+                sel = sim->findObjectFromPath(std::string_view(path.data(), path.size()), true);
             }
 
             if (!sel.empty())
@@ -115,9 +133,9 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                     if (IsDlgButtonChecked(hDlg, IDC_RADIO_AU) == BST_CHECKED)
                         distance = astro::AUtoKilometers(distance);
                     else if (IsDlgButtonChecked(hDlg, IDC_RADIO_RADII) == BST_CHECKED)
-                        distance = distance * (float) sel.radius();
+                        distance = distance * static_cast<float>(sel.radius());
 
-                    distance += (float) sel.radius();
+                    distance += static_cast<float>(sel.radius());
                 }
 
                 float longitude, latitude;
@@ -128,13 +146,13 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                                               distance,
                                               math::degToRad(longitude),
                                               math::degToRad(latitude),
-                                              Vector3f::UnitY());
+                                              Eigen::Vector3f::UnitY());
                 }
                 else
                 {
                     sim->gotoSelection(5.0,
                                        distance,
-                                       Vector3f::UnitY(),
+                                       Eigen::Vector3f::UnitY(),
                                        ObserverFrame::ObserverLocal);
                 }
             }
@@ -165,6 +183,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
     return FALSE;
 }
 
+} // end unnamed namespace
 
 GotoObjectDialog::GotoObjectDialog(HINSTANCE appInstance,
                                    HWND _parent,
@@ -175,6 +194,8 @@ GotoObjectDialog::GotoObjectDialog(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_GOTO_OBJECT),
                              parent,
-                             (DLGPROC)GotoObjectProc,
+                             &GotoObjectProc,
                              reinterpret_cast<LPARAM>(this));
 }
+
+} // end namespace celestia::win32

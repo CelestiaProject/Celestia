@@ -11,10 +11,15 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
+#include <cstdint>
 
 #include <windows.h>
 #include <commctrl.h>
+
+#include <celestia/celestiacore.h>
+
+namespace celestia::win32
+{
 
 class LocationsDialog : public CelestiaWatcher
 {
@@ -30,6 +35,8 @@ class LocationsDialog : public CelestiaWatcher
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
-    uint64_t initialLocationFlags;
+    std::uint64_t initialLocationFlags;
     float initialFeatureSize;
 };
+
+} // end namespace celestia::win32

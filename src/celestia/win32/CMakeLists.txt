@@ -4,14 +4,24 @@ if(NOT ((WIN32 OR MINGW) AND ENABLE_WIN))
 endif()
 
 set(WIN32_SOURCES
+  datetimehelpers.cpp
   odmenu.cpp
+  tstring.cpp
   winbookmarks.cpp
+  wincontextmenu.cpp
   windatepicker.cpp
+  windisplaymodedlg.cpp
+  windroptarget.cpp
   wineclipses.cpp
+  winfiledlgs.cpp
+  winfinddlg.cpp
   wingotodlg.cpp
+  winhelpdlgs.cpp
   winhyperlinks.cpp
   winlocations.cpp
   winmain.cpp
+  winmainwindow.cpp
+  winpreferences.cpp
   winsplash.cpp
   winssbrowser.cpp
   winstarbrowser.cpp
@@ -22,12 +32,24 @@ set(WIN32_SOURCES
 )
 
 set(WIN32_HEADERS
+  datetimehelpers.h
   odmenu.h
+  tcharconv.h
+  tstring.h
   winbookmarks.h
+  wincontextmenu.h
+  windatepicker.h
+  windisplaymodedlg.h
+  windroptarget.h
   wineclipses.h
+  winfiledlgs.h
+  winfinddlg.h
   wingotodlg.h
+  winhelpdlgs.h
   winhyperlinks.h
   winlocations.h
+  winmainwindow.h
+  winpreferences.h
   winsplash.h
   winssbrowser.h
   winstarbrowser.h
@@ -36,6 +58,11 @@ set(WIN32_HEADERS
   winuiutils.h
   winviewoptsdlg.h
 )
+
+if(ENABLE_FFMPEG)
+  list(APPEND WIN32_SOURCES winmoviecapture.cpp)
+  list(APPEND WIN32_HEADERS winmoviecapture.h)
+endif()
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
 

@@ -11,6 +11,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -34,7 +35,7 @@ struct FavoritesEntry
     ObserverFrame::CoordinateSystem coordSys;
 };
 
-using FavoritesList = std::vector<FavoritesEntry*>;
+using FavoritesList = std::vector<std::unique_ptr<FavoritesEntry>>;
 
-FavoritesList* ReadFavoritesList(std::istream&);
+std::unique_ptr<FavoritesList> ReadFavoritesList(std::istream&);
 void WriteFavoritesList(FavoritesList&, std::ostream&);

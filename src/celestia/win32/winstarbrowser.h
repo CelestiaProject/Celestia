@@ -18,7 +18,9 @@
 #include <windows.h>
 
 class CelestiaCore;
-class Star;
+
+namespace celestia::win32
+{
 
 class StarBrowser
 {
@@ -37,3 +39,5 @@ public:
     celestia::engine::StarBrowser starBrowser;
     std::vector<celestia::engine::StarBrowserRecord> stars;
 };
+
+} // end namespace celestia::win32

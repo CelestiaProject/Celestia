@@ -10,18 +10,27 @@
 // of the License, or (at your option) any later version.
 
 #include "scriptmenu.h"
-#include <celcompat/filesystem.h>
+
+#include <algorithm>
+#include <array>
+#include <fstream>
+#include <string_view>
+
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
-#include <fstream>
 
-using namespace std;
+using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 
-static const char TitleTag[] = "Title:";
+namespace
+{
 
-static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
+constexpr std::string_view TitleTag = "Title:"sv;
+
+
+
+void process(const fs::path& p, std::vector<ScriptMenuItem>& menuItems)
 {
     auto type = DetermineFileType(p);
 #ifndef CELX
@@ -35,47 +44,53 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
     // Scan the script file for metainformation. At the moment,
     // the only thing searched for is the script title, which must
     // appear on the first line after the string 'Title:'
-    ifstream in(p);
-    if (in.good())
-    {
-        ScriptMenuItem item;
-        item.filename = p;
+    std::ifstream in(p);
+    if (!in.good())
+        return;
 
-        // Read the first line, handling various newline conventions
-        char firstLineBuf[512];
-        size_t count = 0;
-        while (count < sizeof(firstLineBuf) - 1 && in.good())
-        {
-            int c = in.get();
-            if (c == '\n' || c == '\r')
-                break;
-            firstLineBuf[count++] = c;
-        }
+    ScriptMenuItem& item = menuItems.emplace_back();
+    item.title = p.filename().string();
+    item.filename = p;
 
-        string firstLine(firstLineBuf, count);
-        auto titlePos = firstLine.find(TitleTag);
+    // Read the first line, handling various newline conventions
+    std::array<char, 512> buffer;
+    in.getline(buffer.data(), buffer.size());
+    if (!(in.good() || in.eof()))
+        return;
 
-        // Skip spaces after the Title: tag
-        if (titlePos != string::npos)
-            titlePos = firstLine.find_first_not_of(' ', titlePos + (sizeof(TitleTag) - 1));
+    std::string_view line(buffer.data(), static_cast<std::size_t>(in.gcount()));
 
-        if (titlePos != string::npos)
-        {
-            item.title = firstLine.substr(titlePos);
-        }
-        else
-        {
-            // No title tag--just use the filename
-            item.title = p.filename().string();
-        }
-        menuItems->push_back(item);
-    }
+    // Skip whitespace before 'Title:' tag
+    if (auto pos = line.find_first_not_of(" \t"sv); pos == std::string_view::npos)
+        return;
+    else
+        line = line.substr(pos);
+
+    // Check for 'Title:' tag
+    if (line.size() < TitleTag.size() || line.substr(0, TitleTag.size()) != TitleTag)
+        return;
+    else
+        line = line.substr(TitleTag.size());
+
+    // Skip whitespace after 'Title: tag
+    if (auto pos = line.find_first_not_of(" \t"sv); pos == std::string_view::npos)
+        return;
+    else
+        line = line.substr(pos);
+
+    // Trim trailing whitespace
+    if (auto pos = line.find_last_not_of(" \t"sv); pos == std::string_view::npos)
+        return;
+    else
+        item.title = line.substr(0, pos + 1);
 }
 
-vector<ScriptMenuItem>*
+} // end unnamed namespace
+
+std::vector<ScriptMenuItem>
 ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 {
-    vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
+    std::vector<ScriptMenuItem> scripts;
 
     if (scriptsDir.empty())
         return scripts;
@@ -89,8 +104,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 
     if (deep)
     {
-        auto iter = fs::recursive_directory_iterator(scriptsDir, ec);
-        for (; iter != end(iter); iter.increment(ec))
+        for (auto iter = fs::recursive_directory_iterator(scriptsDir, ec); iter != end(iter); iter.increment(ec))
         {
             if (ec)
                 continue;
@@ -100,7 +114,11 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
     else
     {
         for (const auto& p : fs::directory_iterator(scriptsDir, ec))
+        {
+            if (ec)
+                continue;
             process(p, scripts);
+        }
     }
 
     return scripts;

@@ -18,7 +18,6 @@
 namespace celestia::util
 {
 
-std::string UTF8ToCurrentCP(std::string_view str);
 std::string WideToUTF8(std::wstring_view ws);
 
 }

@@ -11,9 +11,14 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
+#include <cstdint>
 
 #include <windows.h>
+
+#include <celestia/celestiacore.h>
+
+namespace celestia::win32
+{
 
 class ViewOptionsDialog : public CelestiaWatcher
 {
@@ -29,7 +34,9 @@ class ViewOptionsDialog : public CelestiaWatcher
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
-    uint64_t initialRenderFlags;
+    std::uint64_t initialRenderFlags;
     int initialLabelMode;
     int initialHudDetail;
 };
+
+} // end namespace celestia::win32

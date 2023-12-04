@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <limits>
 #include <ostream>
+#include <utility>
 
 #include <celengine/hash.h>
 #include <celengine/parser.h>
@@ -22,9 +23,10 @@
 
 using celestia::util::GetLogger;
 
-FavoritesList* ReadFavoritesList(std::istream& in)
+std::unique_ptr<FavoritesList>
+ReadFavoritesList(std::istream& in)
 {
-    auto* favorites = new FavoritesList();
+    auto favorites = std::make_unique<FavoritesList>();
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
@@ -33,12 +35,10 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
             GetLogger()->error("Error parsing favorites file.\n");
-            std::for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
-            delete favorites;
             return nullptr;
         }
 
-        FavoritesEntry* fav = new FavoritesEntry(); // FIXME: check
+        auto fav = std::make_unique<FavoritesEntry>(); // FIXME: check
         fav->name = *tokenizer.getStringValue();
 
         const Value favParamsValue = parser.readValue();
@@ -46,17 +46,14 @@ FavoritesList* ReadFavoritesList(std::istream& in)
         if (favParams == nullptr)
         {
             GetLogger()->error("Error parsing favorites entry {}\n", fav->name);
-            std::for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
-            delete favorites;
-            delete fav;
             return nullptr;
         }
 
         //If this is a folder, don't get any other params.
         fav->isFolder = favParams->getBoolean("isFolder").value_or(false);
-        if(fav->isFolder)
+        if (fav->isFolder)
         {
-            favorites->push_back(fav);
+            favorites->push_back(std::move(fav));
             continue;
         }
 
@@ -94,7 +91,7 @@ FavoritesList* ReadFavoritesList(std::istream& in)
                 fav->coordSys = ObserverFrame::Universal;
         }
 
-        favorites->push_back(fav);
+        favorites->push_back(std::move(fav));
     }
 
     return favorites;
@@ -103,7 +100,7 @@ FavoritesList* ReadFavoritesList(std::istream& in)
 
 void WriteFavoritesList(FavoritesList& favorites, std::ostream& out)
 {
-    for (const auto fav : favorites)
+    for (const auto& fav : favorites)
     {
         Eigen::AngleAxisf aa(fav->orientation);
         Eigen::Vector3f axis = aa.axis();

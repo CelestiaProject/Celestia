@@ -11,54 +11,55 @@
 
 #include "winviewoptsdlg.h"
 
-#include <iostream>
-
-#include <celengine/body.h>
-#include <celengine/render.h>
-#include "res/resource.h"
+#include <array>
+#include <cmath>
 
 #include <commctrl.h>
 
-using namespace std;
+#include <celengine/body.h>
+#include "res/resource.h"
 
-static const int DistanceSliderRange = 10000;
-static const float MinDistanceLimit = 1.0f;
-static const float MaxDistanceLimit = 1.0e6f;
-
-static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
-                                     UINT message,
-                                     WPARAM wParam,
-                                     LPARAM lParam)
+namespace celestia::win32
 {
+
+namespace
+{
+
+constexpr int DistanceSliderRange = 10000;
+constexpr float MinDistanceLimit = 1.0f;
+constexpr float MaxDistanceLimit = 1.0e6f;
+
+BOOL APIENTRY
+ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (message == WM_INITDIALOG)
+    {
+        ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(lParam);
+        if (Dlg == NULL)
+            return EndDialog(hDlg, 0);
+        SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+
+        //Read labelMode, renderFlags and hud detail
+        Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
+        Dlg->initialLabelMode = Dlg->appCore->getRenderer()->getLabelMode();
+        Dlg->initialHudDetail = Dlg->appCore->getHudDetail();
+
+        //Set dialog controls to reflect current label and render modes
+        Dlg->SetControls(hDlg);
+
+        return TRUE;
+    }
+
     ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
-    case WM_INITDIALOG:
-        {
-            ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(lParam);
-            if (Dlg == NULL)
-                return EndDialog(hDlg, 0);
-            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
-
-            //Read labelMode, renderFlags and hud detail
-            Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
-            Dlg->initialLabelMode = Dlg->appCore->getRenderer()->getLabelMode();
-            Dlg->initialHudDetail = Dlg->appCore->getHudDetail();
-
-            //Set dialog controls to reflect current label and render modes
-            Dlg->SetControls(hDlg);
-
-            return(TRUE);
-        }
-        break;
-
     case WM_COMMAND:
     {
         Renderer* renderer = Dlg->appCore->getRenderer();
-        uint64_t renderFlags = renderer->getRenderFlags();
-        uint32_t labelMode = renderer->getLabelMode();
-        uint32_t orbitMask = renderer->getOrbitMask();
+        std::uint64_t renderFlags = renderer->getRenderFlags();
+        std::uint32_t labelMode = renderer->getLabelMode();
+        std::uint32_t orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
@@ -269,29 +270,19 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             case SB_THUMBTRACK:
                 // case SB_ENDSCROLL:
                 {
-                    char val[16];
                     HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
-                    float logDistanceLimit = (float) HIWORD(wParam) /
-                        (float) DistanceSliderRange;
-                    float distanceLimit = (float) pow(MaxDistanceLimit,
-                                                 logDistanceLimit);
-                    sprintf(val, "%d", (int) distanceLimit);
-                    SetWindowText(hwnd, val);
+                    float logDistanceLimit = static_cast<float>(HIWORD(wParam)) /
+                        static_cast<float>(DistanceSliderRange);
+                    auto distanceLimit = static_cast<int>(std::pow(MaxDistanceLimit, logDistanceLimit));
+
+                    SetDlgItemInt(hDlg, IDC_EDIT_FILTER_DISTANCE, distanceLimit, FALSE);
+
                     Dlg->appCore->getRenderer()->setDistanceLimit(distanceLimit);
                     break;
                 }
 
             default:
-                std::cout << "Slider msg: " << sbValue << '\n';
                 break;
-#if 0
-            case SB_THUMBPOSITION:
-                {
-                    browser->nStars = (int)HIWORD(wParam);
-                    RefreshItems(hDlg, browser);
-                    break;
-                }
-#endif
             }
         }
     }
@@ -299,6 +290,21 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
     return FALSE;
 }
 
+void
+dlgCheck(HWND hDlg, WORD item, std::uint32_t flags, std::uint32_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+void
+dlgCheck64(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+} // end unnamed namespace
 
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                                      HWND _parent,
@@ -314,22 +320,9 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                              reinterpret_cast<LONG_PTR>(this));
 }
 
-
-static void dlgCheck(HWND hDlg, WORD item, uint32_t flags, uint32_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
-static void dlgCheck64(HWND hDlg, WORD item, uint64_t flags, uint64_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
-    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
     int orbitMask = appCore->getRenderer()->getOrbitMask();
@@ -399,18 +392,14 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
                        (WPARAM)TRUE,
                        (LPARAM) MAKELONG(0, DistanceSliderRange));
     float distanceLimit = appCore->getRenderer()->getDistanceLimit();
-    float logDistanceLimit = (float) (log(distanceLimit) /
-                                      log(MaxDistanceLimit));
+    float logDistanceLimit = std::log(distanceLimit) / std::log(MaxDistanceLimit);
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FILTER_DISTANCE,
                        TBM_SETPOS,
                        (WPARAM) TRUE,
                        (LPARAM) (logDistanceLimit * DistanceSliderRange));
 
-    char val[16];
-    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
-    sprintf(val, "%d", (int) distanceLimit);
-    SetWindowText(hwnd, val);
+    SetDlgItemInt(hDlg, IDC_EDIT_FILTER_DISTANCE, static_cast<UINT>(distanceLimit), FALSE);
 }
 
 
@@ -426,3 +415,5 @@ void ViewOptionsDialog::notifyChange(CelestiaCore*, int)
     if (parent != NULL)
         SetControls(hwnd);
 }
+
+} // end namespace celestia::win32
