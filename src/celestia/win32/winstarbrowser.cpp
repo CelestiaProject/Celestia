@@ -30,6 +30,7 @@ using namespace celestia::win32;
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 static const int MinListStars = 10;
 static const int MaxListStars = 500;
@@ -61,11 +62,11 @@ bool InitStarBrowserColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
-    string header0 = UTF8ToCurrentCP(_("Name"));
-    string header1 = UTF8ToCurrentCP(_("Distance (ly)"));
-    string header2 = UTF8ToCurrentCP(_("App. mag"));
-    string header3 = UTF8ToCurrentCP(_("Abs. mag"));
-    string header4 = UTF8ToCurrentCP(_("Type"));
+    string header0 = util::UTF8ToCurrentCP(_("Name"));
+    string header1 = util::UTF8ToCurrentCP(_("Distance (ly)"));
+    string header2 = util::UTF8ToCurrentCP(_("App. mag"));
+    string header3 = util::UTF8ToCurrentCP(_("Abs. mag"));
+    string header4 = util::UTF8ToCurrentCP(_("Type"));
 
     columns[0].pszText = const_cast<char*>(header0.c_str());
     columns[0].cx = DpToPixels(100, listView);
@@ -341,7 +342,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            starNameString = UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*star));
+            starNameString = util::UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*star));
             nm->item.pszText = const_cast<char*>(starNameString.c_str());
         }
         break;

@@ -23,6 +23,8 @@ using namespace std;
 using namespace celestia::win32;
 using namespace celestia::engine;
 
+namespace util = celestia::util;
+
 
 // Required for transparent Windows, but not present in VC6 headers. Only present
 // on Win2k or later.
@@ -137,9 +139,7 @@ SplashWindow::paint(HDC hDC)
 
     HFONT hFont = reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
     SelectObject(hDC, hFont);
- //   string s;
- //   s += UTF8ToCurrentCP(_("Version: "));
-    string text = UTF8ToCurrentCP(_("Version: ")) + string(VERSION_STRING "\n") + message;
+    string text = util::UTF8ToCurrentCP(_("Version: ")) + string(VERSION_STRING "\n") + message;
     DrawText(hDC, text.c_str(), text.length(), &r, DT_LEFT | DT_VCENTER);
 }
 

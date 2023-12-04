@@ -22,6 +22,7 @@
 using namespace std;
 
 namespace astro = celestia::astro;
+namespace util = celestia::util;
 
 class SetTimeDialog
 {
@@ -93,10 +94,10 @@ SetTimeDialog::init(HWND _hDlg)
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
 
-    string item0 = UTF8ToCurrentCP(_("Universal Time"));
-    string item1 = UTF8ToCurrentCP(_("Local Time"));
-    string item2 = UTF8ToCurrentCP(_("Time Zone Name"));
-    string item3 = UTF8ToCurrentCP(_("UTC Offset"));
+    string item0 = util::UTF8ToCurrentCP(_("Universal Time"));
+    string item1 = util::UTF8ToCurrentCP(_("Local Time"));
+    string item2 = util::UTF8ToCurrentCP(_("Time Zone Name"));
+    string item3 = util::UTF8ToCurrentCP(_("UTC Offset"));
 
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item0.c_str()));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item1.c_str()));

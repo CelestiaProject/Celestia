@@ -14,6 +14,9 @@
 #include "winutil.h"
 #include "gettext.h"
 #include "logger.h"
+
+namespace util = celestia::util;
+
 #else
 // we need the C version of this header to get the POSIX function localtime_r
 #include <time.h>
@@ -49,7 +52,7 @@ bool GetTZInfo(std::string& tzName, int& dstBias)
         return false;
     }
 
-    tzName = name == nullptr ? "   " : WideToUTF8(name);
+    tzName = name == nullptr ? "   " : util::WideToUTF8(name);
     dstBias = (tzi.Bias + bias) * -60;
     return true;
 #else
