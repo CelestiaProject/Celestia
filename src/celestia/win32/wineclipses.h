@@ -15,7 +15,7 @@
 
 #include "celestia/celestiacore.h"
 
-#include <Windows.h>
+#include <windows.h>
 
 
 class EclipseFinderDialog
