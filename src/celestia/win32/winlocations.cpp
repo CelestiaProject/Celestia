@@ -11,30 +11,36 @@
 
 #include "winlocations.h"
 
+#include <array>
+
 #include <celengine/location.h>
-#include <celutil/winutil.h>
+#include <celengine/observer.h>
+#include <celengine/render.h>
+#include <celengine/simulation.h>
 #include "res/resource.h"
 
-using namespace std;
+namespace celestia::win32
+{
 
-static const int FeatureSizeSliderRange = 100;
-static const float MinFeatureSize = 1.0f;
-static const float MaxFeatureSize = 100.0f;
+namespace
+{
 
-static const uint64_t FilterOther = ~(Location::City |
-                                    Location::Observatory |
-                                    Location::LandingSite |
-                                    Location::Crater |
-                                    Location::Mons |
-                                    Location::Terra |
-                                    Location::EruptiveCenter |
-                                    Location::Vallis |
-                                    Location::Mare);
+constexpr int FeatureSizeSliderRange = 100;
+constexpr float MinFeatureSize = 1.0f;
+constexpr float MaxFeatureSize = 100.0f;
 
-static BOOL APIENTRY LocationsProc(HWND hDlg,
-                                   UINT message,
-                                   WPARAM wParam,
-                                   LPARAM lParam)
+constexpr std::uint64_t FilterOther = ~(Location::City |
+                                        Location::Observatory |
+                                        Location::LandingSite |
+                                        Location::Crater |
+                                        Location::Mons |
+                                        Location::Terra |
+                                        Location::EruptiveCenter |
+                                        Location::Vallis |
+                                        Location::Mare);
+
+BOOL APIENTRY
+LocationsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LocationsDialog* dlg = reinterpret_cast<LocationsDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
@@ -62,7 +68,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
     case WM_COMMAND:
     {
         Observer* obs = dlg->appCore->getSimulation()->getActiveObserver();
-        uint64_t locationFilter = obs->getLocationFilter();
+        std::uint64_t locationFilter = obs->getLocationFilter();
 
         switch (LOWORD(wParam))
         {
@@ -99,7 +105,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
         case IDC_LABELFEATURES:
             {
                 Renderer* renderer = dlg->appCore->getRenderer();
-                uint32_t labelMode = renderer->getLabelMode();
+                std::uint32_t labelMode = renderer->getLabelMode();
                 renderer->setLabelMode(labelMode ^ Renderer::LocationLabels);
                 break;
             }
@@ -144,12 +150,10 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
             else
                 sliderPos = SendMessage(GetDlgItem(hDlg, IDC_SLIDER_FEATURE_SIZE), TBM_GETPOS, 0, 0);
 
-            char val[16];
-            HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
             float featureSize = (float) sliderPos / (float) FeatureSizeSliderRange;
             featureSize = MinFeatureSize + (MaxFeatureSize - MinFeatureSize) * featureSize;
-            sprintf(val, "%d", (int) featureSize);
-            SetWindowText(hwnd, val);
+
+            SetDlgItemInt(hDlg, IDC_EDIT_FEATURE_SIZE, static_cast<UINT>(featureSize), FALSE);
 
             dlg->appCore->getRenderer()->setMinimumFeatureSize(featureSize);
         }
@@ -158,6 +162,14 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
     return FALSE;
 }
 
+void
+dlgCheck(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+} // end unnamed namespace
 
 LocationsDialog::LocationsDialog(HINSTANCE appInstance,
                                  HWND _parent,
@@ -173,18 +185,11 @@ LocationsDialog::LocationsDialog(HINSTANCE appInstance,
                              reinterpret_cast<LPARAM>(this));
 }
 
-
-static void dlgCheck(HWND hDlg, WORD item, uint64_t flags, uint64_t f)
+void
+LocationsDialog::SetControls(HWND hDlg)
 {
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
-
-void LocationsDialog::SetControls(HWND hDlg)
-{
-    Observer* obs = appCore->getSimulation()->getActiveObserver();
-    uint64_t locFilter = obs->getLocationFilter();
+    const Observer* obs = appCore->getSimulation()->getActiveObserver();
+    std::uint64_t locFilter = obs->getLocationFilter();
 
     dlgCheck(hDlg, IDC_SHOW_CITIES,        locFilter, Location::City);
     dlgCheck(hDlg, IDC_SHOW_OBSERVATORIES, locFilter, Location::Observatory);
@@ -194,41 +199,41 @@ void LocationsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_SHOW_CRATERS,       locFilter, Location::Crater);
     dlgCheck(hDlg, IDC_SHOW_VALLES,        locFilter, Location::Vallis);
     dlgCheck(hDlg, IDC_SHOW_TERRAE,        locFilter, Location::Terra);
-    dlgCheck(hDlg, IDC_SHOW_VOLCANOES,        locFilter, Location::EruptiveCenter);
+    dlgCheck(hDlg, IDC_SHOW_VOLCANOES,     locFilter, Location::EruptiveCenter);
     dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
 
-    uint32_t labelMode = appCore->getRenderer()->getLabelMode();
+    std::uint32_t labelMode = appCore->getRenderer()->getLabelMode();
     dlgCheck(hDlg, IDC_LABELFEATURES,     labelMode, Renderer::LocationLabels);
 
     // Set up feature size slider
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FEATURE_SIZE,
                        TBM_SETRANGE,
-                       (WPARAM)TRUE,
-                       (LPARAM) MAKELONG(0, FeatureSizeSliderRange));
+                       static_cast<WPARAM>(TRUE),
+                       static_cast<LPARAM>(MAKELONG(0, FeatureSizeSliderRange)));
     float featureSize = appCore->getRenderer()->getMinimumFeatureSize();
-    int sliderPos = (int) (FeatureSizeSliderRange *
-                           (featureSize - MinFeatureSize) /
-                           (MaxFeatureSize - MinFeatureSize));
+    auto sliderPos = static_cast<int>(FeatureSizeSliderRange *
+                                      (featureSize - MinFeatureSize) /
+                                      (MaxFeatureSize - MinFeatureSize));
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FEATURE_SIZE,
                        TBM_SETPOS,
-                       (WPARAM) TRUE,
-                       (LPARAM) sliderPos);
+                       static_cast<WPARAM>(TRUE),
+                       static_cast<LPARAM>(sliderPos));
 
-    char val[16];
-    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
-    sprintf(val, "%d", (int) featureSize);
-    SetWindowText(hwnd, val);
+    SetDlgItemInt(hDlg, IDC_EDIT_FEATURE_SIZE, static_cast<UINT>(featureSize), FALSE);
 }
 
-
-void LocationsDialog::RestoreSettings(HWND hDlg)
+void
+LocationsDialog::RestoreSettings(HWND hDlg)
 {
 }
 
-void LocationsDialog::notifyChange(CelestiaCore*, int)
+void
+LocationsDialog::notifyChange(CelestiaCore*, int)
 {
     if (parent != NULL)
         SetControls(hwnd);
 }
+
+} // end namespace celestia::win32

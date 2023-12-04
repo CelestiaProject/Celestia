@@ -11,19 +11,24 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
-
 #include <windows.h>
 
+class CelestiaCore;
+class Destination;
+
+namespace celestia::win32
+{
 
 class TourGuide
 {
- public:
+public:
     TourGuide(HINSTANCE, HWND, CelestiaCore*);
 
- public:
+public:
     CelestiaCore* appCore;
     Destination* selectedDest;
     HWND parent;
     HWND hwnd;
 };
+
+} // end namespace celestia::win32

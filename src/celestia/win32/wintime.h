@@ -9,8 +9,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestia/celestiacore.h"
+#pragma once
+
 #include <windows.h>
 
+class CelestiaCore;
+
+namespace celestia::win32
+{
 
 void ShowSetTimeDialog(HINSTANCE appInstance, HWND appWindow, CelestiaCore* appCore);
+
+}

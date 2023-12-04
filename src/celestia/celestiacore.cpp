@@ -300,7 +300,7 @@ void CelestiaCore::addFavorite(const string &name, const string &parentFolder, F
         pos = favorites->end();
     else
         pos = *iter;
-    auto* fav = new FavoritesEntry();
+    auto fav = std::make_unique<FavoritesEntry>();
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
     fav->orientation = sim->getObserver().getOrientationf();
@@ -316,7 +316,7 @@ void CelestiaCore::addFavorite(const string &name, const string &parentFolder, F
 
     fav->coordSys = sim->getFrame()->getCoordinateSystem();
 
-    favorites->insert(pos, fav);
+    favorites->insert(pos, std::move(fav));
 }
 
 void CelestiaCore::addFavoriteFolder(const string &name, FavoritesList::iterator* iter)
@@ -326,16 +326,16 @@ void CelestiaCore::addFavoriteFolder(const string &name, FavoritesList::iterator
         pos = favorites->end();
     else
         pos = *iter;
-    auto* fav = new FavoritesEntry();
+    auto fav = std::make_unique<FavoritesEntry>();
     fav->name = name;
     fav->isFolder = true;
 
-    favorites->insert(pos, fav);
+    favorites->insert(pos, std::move(fav));
 }
 
 FavoritesList* CelestiaCore::getFavorites()
 {
-    return favorites;
+    return favorites.get();
 }
 
 
@@ -2380,7 +2380,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // If we couldn't read the favorites list from a file, allocate
     // an empty list.
     if (favorites == nullptr)
-        favorites = new FavoritesList();
+        favorites = std::make_unique<FavoritesList>();
 
     universe = new Universe();
 
@@ -3133,7 +3133,7 @@ void CelestiaCore::notifyWatchers(int property)
 }
 
 
-bool CelestiaCore::goToUrl(const string& urlStr)
+bool CelestiaCore::goToUrl(std::string_view urlStr)
 {
     Url url(this);
     if (!url.parse(urlStr))

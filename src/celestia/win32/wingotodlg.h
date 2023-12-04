@@ -11,18 +11,22 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
-
 #include <windows.h>
 
+class CelestiaCore;
+
+namespace celestia::win32
+{
 
 class GotoObjectDialog
 {
- public:
+public:
     GotoObjectDialog(HINSTANCE, HWND, CelestiaCore*);
 
- public:
+public:
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
 };
+
+} // end namespace celestia::win32

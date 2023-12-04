@@ -139,7 +139,7 @@ addEclipse(const Body& receiver, const Body& occulter,
 } // end unnamed namespace
 
 
-EclipseFinder::EclipseFinder(Body* _body,
+EclipseFinder::EclipseFinder(const Body* _body,
                              EclipseFinderWatcher* _watcher) :
     body(_body),
     watcher(_watcher)

@@ -12,35 +12,41 @@
 
 #include "winuiutils.h"
 
+namespace celestia::win32
+{
+
 namespace
 {
+
 using GetDpiForWindowFn = UINT STDAPICALLTYPE(HWND hWnd);
 using GetDpiForSystemFn = UINT STDAPICALLTYPE();
 using GetSystemMetricsForDpiFn = UINT STDAPICALLTYPE(int nIndex, UINT dpi);
+
 GetDpiForWindowFn *pfnGetDpiForWindow = nullptr;
 GetDpiForSystemFn *pfnGetDpiForSystem = nullptr;
 GetSystemMetricsForDpiFn *pfnGetSystemMetricsForDpi = nullptr;
 bool dpiFunctionPointersInitialized = false;
 
-void InitializeDPIFunctionPointersIfNeeded()
+void
+InitializeDPIFunctionPointersIfNeeded()
 {
     if (dpiFunctionPointersInitialized)
         return;
 
-    HMODULE hUser = GetModuleHandle("user32.dll");
+    HMODULE hUser = GetModuleHandleW(L"user32.dll");
     if (!hUser)
         return;
+
     pfnGetDpiForWindow = reinterpret_cast<GetDpiForWindowFn *>(GetProcAddress(hUser, "GetDpiForWindow"));
     pfnGetDpiForSystem = reinterpret_cast<GetDpiForSystemFn *>(GetProcAddress(hUser, "GetDpiForSystem"));
     pfnGetSystemMetricsForDpi = reinterpret_cast<GetSystemMetricsForDpiFn *>(GetProcAddress(hUser, "GetSystemMetricsForDpi"));
     dpiFunctionPointersInitialized = true;
 }
-}
 
-namespace celestia::win32
-{
+} // end unnamed namespace
 
-void SetMouseCursor(LPCTSTR lpCursor)
+void
+SetMouseCursor(LPCTSTR lpCursor)
 {
     HCURSOR hNewCrsr;
 
@@ -48,68 +54,75 @@ void SetMouseCursor(LPCTSTR lpCursor)
         SetCursor(hNewCrsr);
 }
 
-void CenterWindow(HWND hParent, HWND hWnd)
+void
+CenterWindow(HWND hParent, HWND hWnd)
 {
     //Center window with hWnd handle relative to hParent.
-    if (hParent && hWnd)
-    {
-        RECT ort, irt;
-        if (GetWindowRect(hParent, &ort))
-        {
-            if (GetWindowRect(hWnd, &irt))
-            {
-                int x, y;
+    if (!hParent || !hWnd)
+        return;
 
-                x = ort.left + (ort.right - ort.left - (irt.right - irt.left)) / 2;
-                y = ort.top + (ort.bottom - ort.top - (irt.bottom - irt.top)) / 2;;
-                SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-            }
-        }
-    }
+    RECT ort;
+    if (!GetWindowRect(hParent, &ort))
+        return;
+
+    RECT irt;
+    if (!GetWindowRect(hWnd, &irt))
+        return;
+
+    int x = ort.left + (ort.right - ort.left - (irt.right - irt.left)) / 2;
+    int y = ort.top + (ort.bottom - ort.top - (irt.bottom - irt.top)) / 2;;
+    SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void RemoveButtonDefaultStyle(HWND hWnd)
+void
+RemoveButtonDefaultStyle(HWND hWnd)
 {
-    SetWindowLongPtr(hWnd, GWL_STYLE,
-                     ::GetWindowLongPtr(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
+    SetWindowLong(hWnd, GWL_STYLE,
+                  ::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
     InvalidateRect(hWnd, nullptr, TRUE);
 }
 
-void AddButtonDefaultStyle(HWND hWnd)
+void
+AddButtonDefaultStyle(HWND hWnd)
 {
-    SetWindowLongPtr(hWnd, GWL_STYLE,
-                     ::GetWindowLongPtr(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
+    SetWindowLong(hWnd, GWL_STYLE,
+                  ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
     InvalidateRect(hWnd, nullptr, TRUE);
 }
 
-UINT GetBaseDPI()
+UINT
+GetBaseDPI()
 {
     return 96;
 }
 
-UINT GetDPIForWindow(HWND hWnd)
+UINT
+GetDPIForWindow(HWND hWnd)
 {
     InitializeDPIFunctionPointersIfNeeded();
     if (hWnd && pfnGetDpiForWindow)
         return pfnGetDpiForWindow(hWnd);
     if (pfnGetDpiForSystem)
         return pfnGetDpiForSystem();
-    HDC hDC = GetDC(hWnd);
-    if (hDC)
+
+    if (HDC hDC = GetDC(hWnd); hDC)
     {
         auto dpi = GetDeviceCaps(hDC, LOGPIXELSX);
         ReleaseDC(hWnd, hDC);
         return dpi;
     }
+
     return GetBaseDPI();
 }
 
-int DpToPixels(int dp, HWND hWnd)
+int
+DpToPixels(int dp, HWND hWnd)
 {
     return dp * GetDPIForWindow(hWnd) / GetBaseDPI();
 }
 
-int GetSystemMetricsForWindow(int index, HWND hWnd)
+int
+GetSystemMetricsForWindow(int index, HWND hWnd)
 {
     InitializeDPIFunctionPointersIfNeeded();
     auto dpi = GetDPIForWindow(hWnd);

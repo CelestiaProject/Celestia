@@ -11,10 +11,12 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
-
 #include <windows.h>
 
+class CelestiaCore;
+
+namespace celestia::win32
+{
 
 class SolarSystemBrowser
 {
@@ -27,3 +29,5 @@ class SolarSystemBrowser
     HWND parent;
     HWND hwnd;
 };
+
+} // end namespace celestia::win32

@@ -9,40 +9,58 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <windows.h>
-#include <string>
-#include <celimage/image.h>
+#include <memory>
+#include <string_view>
 
+#include <windows.h>
+
+#include <celcompat/filesystem.h>
+#include "tstring.h"
+
+namespace celestia
+{
+
+namespace engine
+{
+class Image;
+} // end namespace celestia::engine
+
+namespace win32
+{
 
 class SplashWindow
 {
 public:
-    SplashWindow(const std::string& _imageFileName);
+    SplashWindow(const fs::path& _imageFileName);
     ~SplashWindow();
 
+    void showSplash();
+    int close();
+    void setMessage(std::string_view msg);
+
     LRESULT CALLBACK windowProc(HWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+private:
     void init();
     void paint(HDC hDC);
     HWND createWindow();
     int messageLoop();
-    void showSplash();
-    int close();
     bool createBitmap();
     void updateWindow();
 
-    void setMessage(const std::string& msg);
-
-private:
-    HWND hwnd;
-    const char* className;
-    std::string imageFileName;
-    celestia::engine::Image* image;
-    HBITMAP hBitmap;
-    HBITMAP hCompositionBitmap;
-    bool useLayeredWindow;
-    std::string message;
-    unsigned int winWidth;
-    unsigned int winHeight;
-    unsigned int imageWidth;
-    unsigned int imageHeight;
+    HWND hwnd{ NULL };
+    fs::path imageFileName;
+    std::unique_ptr<celestia::engine::Image> image;
+    HBITMAP hBitmap{ NULL };
+    HBITMAP hCompositionBitmap{ NULL };
+    tstring versionString;
+    tstring message;
+    unsigned int winWidth{ 640U };
+    unsigned int winHeight{ 480U };
+    unsigned int imageWidth{ 0U };
+    unsigned int imageHeight{ 0U };
 };
+
+} // end namespace celestia::win32
+
+} // end namespace celestia
