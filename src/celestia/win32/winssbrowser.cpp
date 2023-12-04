@@ -25,6 +25,8 @@
 
 using namespace std;
 
+namespace util = celestia::util;
+
 
 HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
                         HTREEITEM parent)
@@ -81,7 +83,7 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
         {
             HTREEITEM item;
             item = AddItemToTree(treeView,
-                                 const_cast<char*>(UTF8ToCurrentCP(world->getName(true)).c_str()),
+                                 const_cast<char*>(util::UTF8ToCurrentCP(world->getName(true)).c_str()),
                                  level,
                                  static_cast<void*>(world),
                                  parent);
@@ -115,7 +117,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
             if (solarSys != NULL)
             {
                 Universe* u = browser->appCore->getSimulation()->getUniverse();
-                string starNameString = UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
+                string starNameString = util::UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
                 HTREEITEM rootItem = AddItemToTree(hwnd, const_cast<char*>(starNameString.c_str()), 1, NULL,
                                                    (HTREEITEM) TVI_ROOT);
                 const PlanetarySystem* planets = solarSys->getPlanets();

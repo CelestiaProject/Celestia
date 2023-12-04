@@ -20,6 +20,7 @@ using namespace std;
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 static bool GetDialogFloat(HWND hDlg, int id, float& f)
 {
@@ -74,7 +75,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                 SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
                 SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
                 SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
-                 const_cast<char*>(UTF8ToCurrentCP(sim->getSelection().body()->getName(true)).c_str()));
+                 const_cast<char*>(util::UTF8ToCurrentCP(sim->getSelection().body()->getName(true)).c_str()));
             }
 //            else if (sim->getSelection().star != NULL)
 //            {
