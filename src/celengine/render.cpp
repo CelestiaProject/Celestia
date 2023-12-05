@@ -4888,7 +4888,7 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
             nearZ = -nearZ * nearZcoeff;
 
             if (nearZ > -MinNearPlaneDistance)
-                ri.nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+                ri.nearZ = -std::min(MinNearPlaneDistance, radius / 2000.0f);
             else
                 ri.nearZ = nearZ;
 
