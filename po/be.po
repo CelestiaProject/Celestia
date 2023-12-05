@@ -2,10 +2,10 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2023
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,15 +14,12 @@ msgstr ""
 "POT-Creation-Date: 2023-12-03 18:02+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2023\n"
-"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/"
-"be/)\n"
-"Language: be\n"
+"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Language: be\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../src/celastro/date.cpp:486
 msgid "DST"
@@ -32,22 +29,20 @@ msgstr "DST"
 msgid "STD"
 msgstr "STD"
 
-#: ../src/celengine/dateformatter.cpp:89 ../src/celestia/win32/winmain.cpp:3355
-#: ../src/celutil/fsutils.cpp:41
+#: ../src/celengine/dateformatter.cpp:89
+#: ../src/celestia/win32/winmain.cpp:3355 ../src/celutil/fsutils.cpp:41
 msgid "LANGUAGE"
 msgstr "be"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:333
 msgid "Loaded {} deep space objects\n"
-msgstr "Загружага {} аб'ектаў глыбокага космасу\n"
+msgstr "Загружана {} аб'ектаў глыбокага космасу\n"
 
 #: ../src/celengine/galaxy.cpp:95
 #, c-format
@@ -224,9 +219,8 @@ msgid "Creating ordinary texture: {}x{}\n"
 msgstr "Стварэньне звычайнае тэкстуры: {}×{}\n"
 
 #: ../src/celephem/sampfile.cpp:46
-#, fuzzy
 msgid "Skipping out-of-order samples in {}.\n"
-msgstr "Прапушчаю ў {} сэмплы, якія ідуць не па парадку."
+msgstr "Прапушчаю ў {} сэмплы, якія ідуць не па парадку.\n"
 
 #: ../src/celephem/sampfile.cpp:58
 msgid "No samples found in sample file {}.\n"
@@ -402,7 +396,7 @@ msgstr "Колер зорак: Клясычны"
 #: ../src/celestia/celestiacore.cpp:1169
 #, c-format
 msgid "Light travel time:  %.4f yr"
-msgstr "Сьвятло даходзіць за:  %.4f с.г."
+msgstr "Сьвятло даходзіць за:  %.4f года"
 
 #: ../src/celestia/celestiacore.cpp:1178
 #, c-format
@@ -748,22 +742,18 @@ msgid "Rotation period: {} {}\n"
 msgstr "Пэрыяд авароту: {} {}\n"
 
 #: ../src/celestia/hud.cpp:182
-#, fuzzy
 msgid "Mass: {} lb\n"
 msgstr "Маса: {} фунтаў\n"
 
 #: ../src/celestia/hud.cpp:185
-#, fuzzy
 msgid "Mass: {} kg\n"
-msgstr "Маса: {} кг\n"
+msgstr "Маса: {} кґ\n"
 
 #: ../src/celestia/hud.cpp:189
-#, fuzzy
 msgid "Mass: {} Mj\n"
 msgstr "Маса: {} Mj\n"
 
 #: ../src/celestia/hud.cpp:192
-#, fuzzy
 msgid "Mass: {} Me\n"
 msgstr "Маса: {} Me\n"
 
@@ -1010,8 +1000,8 @@ msgstr "Памылка атрыманьня шляху для файла час�
 
 #: ../src/celestia/qt/qtappwin.cpp:270
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia ня можа працаваць, бо каталёґ за зьвесткамі адсутнічае, магчыма "
 "праз няправільнае ўсталяваньне."
@@ -1049,7 +1039,8 @@ msgstr "Зоркі"
 msgid "Deep Sky Objects"
 msgstr "Аб'екты глыбокага космасу"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:414
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:414
 #: ../src/celestia/qt/qteventfinder.cpp:424
 msgid "Event Finder"
 msgstr "Пошук падзей"
@@ -1526,7 +1517,8 @@ msgid "System time at activation"
 msgstr "Сыстэмныя дата й час пры актывацыі"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:897 ../src/celestia/qt/rc.cpp:39
@@ -1638,8 +1630,9 @@ msgstr "Арбіты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:95
 #: ../src/celestia/qt/qtcelestiaactions.cpp:122
 #: ../src/celestia/qt/qtselectionpopup.cpp:402
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:157
+#: ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:217
 #: ../src/celestia/win32/winmain.cpp:1542
 #: ../src/celestia/win32/winmain.cpp:1580
@@ -1662,8 +1655,9 @@ msgstr "Карлікавыя плянэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:97
 #: ../src/celestia/qt/qtcelestiaactions.cpp:124
 #: ../src/celestia/qt/qtselectionpopup.cpp:408
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:163
+#: ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:219
 #: ../src/celestia/win32/winmain.cpp:1538
 msgid "Moons"
@@ -1684,8 +1678,9 @@ msgstr "Малыя месяцы"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:99
 #: ../src/celestia/qt/qtcelestiaactions.cpp:126
 #: ../src/celestia/qt/qtselectionpopup.cpp:414
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771
+#: ../src/celestia/qt/rc.cpp:87 ../src/celestia/qt/rc.cpp:169
+#: ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:221
 #: ../src/celestia/win32/winmain.cpp:1532
 msgid "Asteroids"
@@ -1700,8 +1695,9 @@ msgstr "Астэроіды"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:100
 #: ../src/celestia/qt/qtcelestiaactions.cpp:127
 #: ../src/celestia/qt/qtselectionpopup.cpp:417
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779
+#: ../src/celestia/qt/rc.cpp:90 ../src/celestia/qt/rc.cpp:172
+#: ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:222
 #: ../src/celestia/win32/winmain.cpp:1534
 msgid "Comets"
@@ -1721,8 +1717,9 @@ msgstr "Камэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:128
 #: ../src/celestia/qt/qtselectionpopup.cpp:420
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:105
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775
+#: ../src/celestia/qt/rc.cpp:94 ../src/celestia/qt/rc.cpp:176
+#: ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:223
 #: ../src/celestia/win32/winmain.cpp:1547
 msgctxt "plural"
@@ -2131,7 +2128,8 @@ msgstr "файл"
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "Add an extras directory. This option may be specified multiple times."
-msgstr "Дадаць каталёґ extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
+msgstr ""
+"Дадаць каталёґ extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "extrasdir"
@@ -2143,7 +2141,7 @@ msgstr "Запусьціць на поўны экран."
 
 #: ../src/celestia/qt/qtcommandline.cpp:20
 msgid "Skip the splash screen."
-msgstr "Прпусьціць запуск вітальнага відарыса"
+msgstr "Прапусьціць запуск вітальнага відарыса."
 
 #: ../src/celestia/qt/qtcommandline.cpp:21
 msgid "Set the start cel:// URL or startup script path."
@@ -2643,9 +2641,9 @@ msgstr "Карлікавыя плянэты"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:411
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1540
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:166
+#: ../src/celestia/qt/rc.cpp:233 ../src/celestia/win32/winmain.cpp:1540
 msgid "Minor moons"
 msgstr "Малыя месяцы"
 
@@ -2913,7 +2911,8 @@ msgid "Description:"
 msgstr "Апісаньне:"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:157
 msgid "Organize Bookmarks"
@@ -3560,8 +3559,8 @@ msgstr "https://celestiaproject.space/"
 #: ../src/celestia/win32/res/resource_strings.cpp:78
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr ""
-"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае "
-"ґарантыі."
+"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае"
+" ґарантыі."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:79
 msgid "Authors"
