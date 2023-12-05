@@ -205,13 +205,15 @@ CelestiaAppWindow::FPSActionGroup::FPSActionGroup(QObject *p)
     m_actionGroup = new QActionGroup(p);
     for (auto ifps : fps_array)
     {
-        fps = new QAction(ifps == 0 ? _("Auto") : QString::number(ifps), p);
+        // TRANSLATORS: fps == frames per second
+        fps = new QAction(ifps == 0 ? C_("fps", "Auto") : QString::number(ifps), p);
         fps->setCheckable(true);
         fps->setData(ifps);
         m_actions[ifps] = fps;
         m_actionGroup->addAction(fps);
     }
-    m_customAction = new QAction(_("Custom"), p);
+    // TRANSLATORS: fps == frames per second
+    m_customAction = new QAction(C_("fps", "Custom"), p);
     m_customAction->setCheckable(true);
     m_customAction->setShortcut(QString("Ctrl+`"));
     m_actionGroup->addAction(m_customAction);
@@ -1203,9 +1205,9 @@ CelestiaAppWindow::slotWiki()
 void
 CelestiaAppWindow::slotShowAbout()
 {
-    const char* aboutText = gettext_noop(
+    const char* aboutText = _(
         "<html>"
-        "<h1>Celestia " VERSION "</h1>"
+        "<h1>Celestia 1.7.0 </h1>"
         "<p>Development snapshot, commit <b>%1</b>.</p>"
 
         "<p>Built for %2 bit CPU<br>"
@@ -1215,7 +1217,7 @@ CelestiaAppWindow::slotShowAbout()
         "AVIF images are %8</p>"
         "Runtime Qt version: %6</p>"
 
-        "<p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>"
+        "<p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>"
         "Celestia is free software. You can redistribute it and/or modify "
         "it under the terms of the GNU General Public License as published "
         "by the Free Software Foundation; either version 2 of the License, "
@@ -1230,7 +1232,7 @@ CelestiaAppWindow::slotShowAbout()
         "</html>"
     );
 
-    auto qAboutText = QString(_(aboutText))
+    auto qAboutText = QString(aboutText)
                                 .arg(GIT_COMMIT)
                                 .arg(QSysInfo::WordSize)
 #if defined(_MSC_VER)
