@@ -243,7 +243,7 @@ SplashWindow::createWindow()
         // style to layered.
         if (useLayeredWindow)
         {
-            SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+            SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
         }
 
         ShowWindow(hwnd, SW_SHOW);

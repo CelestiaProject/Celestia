@@ -70,15 +70,15 @@ void CenterWindow(HWND hParent, HWND hWnd)
 
 void RemoveButtonDefaultStyle(HWND hWnd)
 {
-    SetWindowLong(hWnd, GWL_STYLE,
-        ::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
+    SetWindowLongPtr(hWnd, GWL_STYLE,
+                     ::GetWindowLongPtr(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
     InvalidateRect(hWnd, nullptr, TRUE);
 }
 
 void AddButtonDefaultStyle(HWND hWnd)
 {
-    SetWindowLong(hWnd, GWL_STYLE,
-        ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
+    SetWindowLongPtr(hWnd, GWL_STYLE,
+                     ::GetWindowLongPtr(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
     InvalidateRect(hWnd, nullptr, TRUE);
 }
 
