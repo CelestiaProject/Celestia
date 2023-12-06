@@ -166,18 +166,18 @@ BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
             if (origProc != _HyperlinkParentProc)
             {
                 SetProp(hParent, hyperLinkOriginalProc, (HANDLE)origProc);
-                SetWindowLong(hParent, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkParentProc);
+                SetWindowLongPtr(hParent, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkParentProc);
             }
         }
 
         // Make sure the control will send notifications.
-        DWORD dwStyle = GetWindowLong(hCtrl, GWL_STYLE);
-        SetWindowLong(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
+        LONG_PTR dwStyle = GetWindowLongPtr(hCtrl, GWL_STYLE);
+        SetWindowLongPtr(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
 
         // Subclass the existing control.
         WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hCtrl, GWLP_WNDPROC);
         SetProp(hCtrl, hyperLinkOriginalProc, (HANDLE)origProc);
-        SetWindowLong(hCtrl, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkProc);
+        SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkProc);
 
         // Create an updated font by adding an underline.
         HFONT hOrigFont = (HFONT) SendMessage(hCtrl, WM_GETFONT, 0, 0);
