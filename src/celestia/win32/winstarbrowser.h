@@ -11,28 +11,29 @@
 
 #pragma once
 
-#include "celestia/celestiacore.h"
+#include <vector>
+
+#include <celengine/starbrowser.h>
 
 #include <windows.h>
 
+class CelestiaCore;
+class Star;
 
 class StarBrowser
 {
- public:
+public:
     StarBrowser(HINSTANCE, HWND, CelestiaCore*);
     ~StarBrowser();
 
- public:
+public:
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
 
-    // The star browser data is valid for a particular point
-    // in space, and for performance issues is not continuously
-    // updated.
-    Eigen::Vector3f pos;
-    UniversalCoord ucPos;
+    int sortColumn{-1};
+    bool sortColumnReverse{false};
 
-    int predicate;
-    int nStars;
+    celestia::engine::StarBrowser starBrowser;
+    std::vector<celestia::engine::StarBrowserRecord> stars;
 };
