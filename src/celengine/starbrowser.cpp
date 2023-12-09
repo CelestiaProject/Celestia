@@ -1,6 +1,11 @@
 // starbrowser.cpp
 //
+// Copyright (C) 2023, The Celestia Development Team
+//
+// Original version:
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Incorporates elements from qtcelestialbrowser.cpp
+// Copyright (C) 2007-2008, Celestia Development Team
 //
 // Star browser tool for Celestia.
 //
@@ -9,222 +14,372 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <string>
-#include <algorithm>
-#include <set>
 #include "starbrowser.h"
 
-using namespace Eigen;
-using namespace std;
+#include <algorithm>
+#include <cassert>
+#include <cmath>
 
-struct CloserStarPredicate
+#include "star.h"
+#include "stardb.h"
+#include "univcoord.h"
+#include "universe.h"
+
+namespace celestia::engine
 {
-    Vector3f pos;
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        return (pos - star0->getPosition()).squaredNorm() < (pos - star1->getPosition()).squaredNorm();
-    }
-};
 
-struct BrighterStarPredicate
+namespace
 {
-    Vector3f pos;
-    UniversalCoord ucPos;
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        float d0 = (pos - star0->getPosition()).norm();
-        float d1 = (pos - star1->getPosition()).norm();
 
-        // If the stars are closer than one light year, use
-        // a more precise distance estimate.
-        if (d0 < 1.0f)
-            d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
-        if (d1 < 1.0f)
-            d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
-
-        return star0->getApparentMagnitude(d0) < star1->getApparentMagnitude(d1);
-    }
-};
-
-struct BrightestStarPredicate
+inline float
+distanceSquared(const Star* star,
+                double jd,
+                const Eigen::Vector3f& pos,
+                const UniversalCoord& ucPos)
 {
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        return star0->getAbsoluteMagnitude() < star1->getAbsoluteMagnitude();
-    }
-};
+    // For the purposes of building the list, we can use the squared distance
+    // to avoid evaluating unnecessary square roots.
+    float distance = (pos - star->getPosition()).squaredNorm();
 
-struct SolarSystemPredicate
-{
-    Vector3f pos;
-    SolarSystemCatalog* solarSystems;
+    // If the stars are closer than one light year, use
+    // a more precise distance estimate.
+    if (distance < 1.0f)
+        distance = static_cast<float>((ucPos - star->getPosition(jd)).toLy().squaredNorm());
 
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        SolarSystemCatalog::iterator iter;
-
-        iter = solarSystems->find(star0->getIndex());
-        bool hasPlanets0 = (iter != solarSystems->end());
-        iter = solarSystems->find(star1->getIndex());
-        bool hasPlanets1 = (iter != solarSystems->end());
-        if (hasPlanets1 == hasPlanets0)
-        {
-            return ((pos - star0->getPosition()).squaredNorm() < (pos - star1->getPosition()).squaredNorm());
-        }
-        else
-        {
-            return hasPlanets0;
-        }
-    }
-};
-
-
-// Find the nearest/brightest/X-est N stars in a database.  The
-// supplied predicate determines which of two stars is a better match.
-template<class Pred> static std::vector<const Star*>*
-findStars(const StarDatabase& stardb, Pred pred, int nStars)
-{
-    std::vector<const Star*>* finalStars = new std::vector<const Star*>();
-    if (nStars == 0)
-        return finalStars;
-    if(nStars > 500)
-        nStars = 500;
-
-    typedef std::multiset<const Star*, Pred> StarSet;
-    StarSet firstStars(pred);
-
-    int totalStars = stardb.size();
-    if (totalStars < nStars)
-        nStars = totalStars;
-
-    // We'll need at least nStars in the set, so first fill
-    // up the list indiscriminately.
-    int i = 0;
-    for (i = 0; i < nStars; i++)
-        firstStars.insert(stardb.getStar(i));
-
-    // From here on, only add a star to the set if it's
-    // a better match than the worst matching star already
-    // in the set.
-    const Star* lastStar = *--firstStars.end();
-    for (; i < totalStars; i++)
-    {
-        Star* star = stardb.getStar(i);
-        if (pred(star, lastStar))
-        {
-            firstStars.insert(star);
-            firstStars.erase(--firstStars.end());
-            lastStar = *--firstStars.end();
-        }
-    }
-
-    // Move the best matching stars into the vector
-    finalStars->reserve(nStars);
-    for (const auto& star : firstStars)
-        finalStars->push_back(star);
-
-    return finalStars;
+    return distance;
 }
 
-
-const Star* StarBrowser::nearestStar()
+class DistanceComparison
 {
-    Universe* univ = appSim->getUniverse();
-    CloserStarPredicate closerPred;
-    closerPred.pos = pos;
-    std::vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
-    const Star *star = (*stars)[0];
-    delete stars;
-    return star;
+public:
+    DistanceComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
+
+    StarBrowserRecord createRecord(const Star*) const;
+    void finalizeRecord(StarBrowserRecord&) const;
+
+    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
+
+private:
+    double m_jd;
+    Eigen::Vector3f m_pos;
+    UniversalCoord m_ucPos;
+};
+
+DistanceComparison::DistanceComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
+    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
+{
 }
 
-
-std::vector<const Star*>*
-StarBrowser::listStars(unsigned int nStars)
+StarBrowserRecord
+DistanceComparison::createRecord(const Star* star) const
 {
-    Universe* univ = appSim->getUniverse();
-    switch(predicate)
+    StarBrowserRecord result(star);
+    result.distance = distanceSquared(star, m_jd, m_pos, m_ucPos);
+    return result;
+}
+
+void
+DistanceComparison::finalizeRecord(StarBrowserRecord& record) const
+{
+    record.distance = std::sqrt(record.distance);
+    record.appMag = record.star->getApparentMagnitude(record.distance);
+}
+
+bool
+DistanceComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
+{
+    return lhs.distance < rhs.distance;
+}
+
+class AppMagComparison
+{
+public:
+    AppMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
+
+    StarBrowserRecord createRecord(const Star*) const;
+    void finalizeRecord(const StarBrowserRecord&) const { /* no-op */ }
+
+    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
+
+private:
+    double m_jd;
+    Eigen::Vector3f m_pos;
+    UniversalCoord m_ucPos;
+};
+
+AppMagComparison::AppMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
+    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
+{
+}
+
+StarBrowserRecord
+AppMagComparison::createRecord(const Star* star) const
+{
+    StarBrowserRecord result(star);
+    result.distance = std::sqrt(distanceSquared(star, m_jd, m_pos, m_ucPos));
+    result.appMag = result.star->getApparentMagnitude(result.distance);
+    return result;
+}
+
+bool
+AppMagComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
+{
+    return lhs.appMag < rhs.appMag;
+}
+
+class AbsMagComparison
+{
+public:
+    AbsMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
+
+    StarBrowserRecord createRecord(const Star*) const;
+    void finalizeRecord(StarBrowserRecord&) const;
+
+    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
+
+private:
+    double m_jd;
+    Eigen::Vector3f m_pos;
+    UniversalCoord m_ucPos;
+};
+
+AbsMagComparison::AbsMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
+    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
+{
+}
+
+StarBrowserRecord
+AbsMagComparison::createRecord(const Star* star) const
+{
+    return StarBrowserRecord(star);
+}
+
+void
+AbsMagComparison::finalizeRecord(StarBrowserRecord& record) const
+{
+    record.distance = std::sqrt(distanceSquared(record.star, m_jd, m_pos, m_ucPos));
+    record.appMag = record.star->getApparentMagnitude(record.distance);
+}
+
+bool
+AbsMagComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
+{
+    return lhs.star->getAbsoluteMagnitude() < rhs.star->getAbsoluteMagnitude();
+}
+
+class StarFilter
+{
+public:
+    StarFilter(StarBrowser::Filter, const SolarSystemCatalog*);
+    bool operator()(const Star*) const;
+
+    void setFilter(StarBrowser::Filter filter);
+    void setSpectralTypeFilter(const std::function<bool(const char*)>&);
+
+private:
+    StarBrowser::Filter m_filter;
+    const SolarSystemCatalog* m_solarSystems;
+    std::function<bool(const char*)> m_spectralTypeFilter{ nullptr };
+};
+
+StarFilter::StarFilter(StarBrowser::Filter filter, const SolarSystemCatalog* solarSystems) :
+    m_filter(filter), m_solarSystems(solarSystems)
+{
+}
+
+void
+StarFilter::setFilter(StarBrowser::Filter filter)
+{
+    m_filter = filter;
+}
+
+void
+StarFilter::setSpectralTypeFilter(const std::function<bool(const char*)>& filter)
+{
+    m_spectralTypeFilter = filter;
+}
+
+bool
+parentHasPlanets(const SolarSystemCatalog* solarSystems, const Star* star)
+{
+    // When searching for visible stars only, also take planets orbiting the
+    // parent barycenters into account
+    const auto end = solarSystems->end();
+    for (;;)
     {
-    case BrighterStars:
-        {
-            BrighterStarPredicate brighterPred;
-            brighterPred.pos = pos;
-            brighterPred.ucPos = ucPos;
-            return findStars(*(univ->getStarCatalog()), brighterPred, nStars);
-        }
-        break;
+        star = star->getOrbitBarycenter();
+        if (star == nullptr || star->getVisibility())
+            return false;
 
-    case BrightestStars:
-        {
-            BrightestStarPredicate brightestPred;
-            return findStars(*(univ->getStarCatalog()), brightestPred, nStars);
-        }
-        break;
-
-    case StarsWithPlanets:
-        {
-            SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
-            if (!solarSystems)
-                return nullptr;
-            SolarSystemPredicate solarSysPred;
-            solarSysPred.pos = pos;
-            solarSysPred.solarSystems = solarSystems;
-            return findStars(*(univ->getStarCatalog()), solarSysPred,
-                             min((size_t) nStars, solarSystems->size()));
-        }
-        break;
-
-    case NearestStars:
-    default:
-        {
-            CloserStarPredicate closerPred;
-            closerPred.pos = pos;
-            return findStars(*(univ->getStarCatalog()), closerPred, nStars);
-        }
-        break;
+        if (solarSystems->find(star->getIndex()) != end)
+            return true;
     }
-
-    return nullptr;  // keep compiler happy
 }
 
-
-bool StarBrowser::setPredicate(int pred)
+bool
+StarFilter::operator()(const Star* star) const
 {
-    if ((pred < NearestStars) || (pred > StarsWithPlanets))
+    // If ordering is done by brightness, filter out barycenters by default
+    bool visibleOnly = util::is_set(m_filter, StarBrowser::Filter::Visible);
+    if (visibleOnly && !star->getVisibility())
         return false;
-    predicate = pred;
+
+    if (util::is_set(m_filter, StarBrowser::Filter::Multiple))
+    {
+        auto barycenter = star->getOrbitBarycenter();
+
+        // Check the number of stars orbiting the barycenter to handle cases
+        // like the Sun orbiting the Solar System Barycenter
+        if (barycenter == nullptr || barycenter->getOrbitingStars()->size() < 2)
+            return false;
+    }
+
+    if (util::is_set(m_filter, StarBrowser::Filter::WithPlanets) &&
+        m_solarSystems->find(star->getIndex()) == m_solarSystems->end() &&
+        !(visibleOnly && parentHasPlanets(m_solarSystems, star)))
+    {
+        return false;
+    }
+
+    return (util::is_set(m_filter, StarBrowser::Filter::SpectralType) && m_spectralTypeFilter)
+        ? m_spectralTypeFilter(star->getSpectralType())
+        : true;
+}
+
+template<typename C>
+void populateRecords(std::vector<StarBrowserRecord>& records,
+                     const C& comparison,
+                     const StarFilter& filter,
+                     std::uint32_t size,
+                     const StarDatabase& stardb)
+{
+    records.clear();
+    if (size == 0)
+        return;
+
+    records.reserve(size);
+
+    std::uint32_t totalStars = stardb.size();
+    if (totalStars == 0)
+        return;
+
+    records.reserve(size);
+    std::uint32_t index = 0;
+
+    // Add all stars that match the filter until we fill up the list
+    for (;;)
+    {
+        if (index == totalStars)
+        {
+            std::sort(records.begin(), records.end(), comparison);
+            for (StarBrowserRecord& record : records)
+            {
+                comparison.finalizeRecord(record);
+            }
+            return;
+        }
+
+        if (const Star* star = stardb.getStar(index); filter(star))
+        {
+            if (records.size() == size)
+                break;
+
+            records.push_back(comparison.createRecord(star));
+        }
+
+        ++index;
+    }
+
+    // We have filled up the number of requested stars, so only add stars that
+    // are better than the worst star in the list according to the predicate.
+    std::make_heap(records.begin(), records.end(), comparison);
+
+    for (; index < totalStars; ++index)
+    {
+        const Star* star = stardb.getStar(index);
+        if (!filter(star))
+            continue;
+
+        StarBrowserRecord record = comparison.createRecord(star);
+        if (comparison(record, records.front()))
+        {
+            std::pop_heap(records.begin(), records.end(), comparison);
+            records.back() = record;
+            std::push_heap(records.begin(), records.end(), comparison);
+        }
+    }
+
+    std::sort_heap(records.begin(), records.end(), comparison);
+    for (StarBrowserRecord& record : records)
+    {
+        comparison.finalizeRecord(record);
+    }
+}
+
+} // end unnamed namespace
+
+StarBrowser::StarBrowser(const Universe* universe,
+                         std::uint32_t size,
+                         Comparison comparison,
+                         Filter filter) :
+    m_universe(universe),
+    m_size(size),
+    m_comparison(comparison),
+    m_filter(filter)
+{
+    if (m_size < MinListStars)
+        m_size = MinListStars;
+    else if (m_size > MaxListStars)
+        m_size = MaxListStars;
+}
+
+bool
+StarBrowser::setSize(std::uint32_t size)
+{
+    m_size = size;
+    if (m_size < MinListStars)
+    {
+        m_size = MinListStars;
+        return false;
+    }
+    if (m_size > MaxListStars)
+    {
+        m_size = MaxListStars;
+        return false;
+    }
     return true;
 }
 
-
-void StarBrowser::refresh()
+void
+StarBrowser::setPosition(const UniversalCoord& ucPos)
 {
-    ucPos = appSim->getObserver().getPosition();
-    pos = ucPos.toLy().cast<float>();
+    m_ucPos = ucPos;
+    m_pos = m_ucPos.toLy().cast<float>();
 }
 
-
-void StarBrowser::setSimulation(Simulation *_appSim)
+void
+StarBrowser::populate(std::vector<StarBrowserRecord>& records) const
 {
-    appSim = _appSim;
-    refresh();
+    StarFilter filter(m_filter, m_universe->getSolarSystemCatalog());
+    const auto stardb = m_universe->getStarCatalog();
+    if (stardb == nullptr)
+        return;
+
+    switch (m_comparison)
+    {
+    case Comparison::Nearest:
+        populateRecords(records, DistanceComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        return;
+    case Comparison::ApparentMagnitude:
+        populateRecords(records, AppMagComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        return;
+    case Comparison::AbsoluteMagnitude:
+        populateRecords(records, AbsMagComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        return;
+    default:
+        assert(0);
+        return;
+    }
 }
 
-
-StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
-    appSim(_appSim)
-{
-    ucPos = appSim->getObserver().getPosition();
-    pos = ucPos.toLy().cast<float>();
-
-    predicate = pred;
-}
-
-
-StarBrowser::StarBrowser() :
-    pos(Vector3f::Zero()),
-    ucPos(UniversalCoord::Zero()),
-    appSim(nullptr),
-    predicate(NearestStars)
-{
-}
+} // end namespace celestia::engine
