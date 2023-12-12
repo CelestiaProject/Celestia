@@ -3,7 +3,6 @@ set(UNIT_TEST_SOURCES
   arrayvector_test.cpp
   category_test.cpp
   constellation_test.cpp
-  formatnum_test.cpp
   greek_test.cpp
   hash_test.cpp
   intrusiveptr_test.cpp
@@ -20,6 +19,8 @@ set(UNIT_TEST_SOURCES
 
 if(USE_ICU)
   list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
+else()
+  list(APPEND UNIT_TEST_SOURCES formatnum_test.cpp)
 endif()
 
 if(WIN32)
