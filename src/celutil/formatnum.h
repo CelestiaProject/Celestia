@@ -13,7 +13,9 @@
 
 #include <cassert>
 #include <iterator>
+#ifndef USE_ICU
 #include <locale>
+#endif
 #include <string_view>
 #include <type_traits>
 
@@ -61,7 +63,11 @@ private:
 class NumberFormatter
 {
 public:
+#ifdef USE_ICU
+    NumberFormatter();
+#else
     explicit NumberFormatter(const std::locale& loc);
+#endif
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
     inline FormattedFloat<T> format(T value,

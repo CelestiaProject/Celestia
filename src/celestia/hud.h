@@ -13,7 +13,9 @@
 #pragma once
 
 #include <limits>
+#ifndef USE_ICU
 #include <locale>
+#endif
 #include <memory>
 #include <string>
 #include <string_view>
@@ -171,7 +173,11 @@ private:
     std::unique_ptr<OverlayImage> m_image;
 
     std::unique_ptr<engine::DateFormatter> m_dateFormatter{ std::make_unique<engine::DateFormatter>() };
+#ifdef USE_ICU
+    std::unique_ptr<const util::NumberFormatter> m_numberFormatter{ std::make_unique<util::NumberFormatter>() };
+#else
     std::unique_ptr<const util::NumberFormatter> m_numberFormatter{ std::make_unique<util::NumberFormatter>(std::locale("")) };
+#endif
     celestia::astro::Date::Format m_dateFormat{ celestia::astro::Date::Locale };
     int m_dateStrWidth{ 0 };
 
