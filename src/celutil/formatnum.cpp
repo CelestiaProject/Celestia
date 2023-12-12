@@ -19,6 +19,19 @@
 #include <celcompat/charconv.h>
 #include "utf8.h"
 
+#ifdef USE_ICU
+#ifdef HAVE_WIN_ICU_COMBINED_HEADER
+#include <icu.h>
+#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#include <icucommon.h>
+#include <icui18n.h>
+#else
+#include <unicode/decimfmt.h>
+#include <unicode/ustring.h>
+#endif
+#include <celutil/gettext.h>
+#endif
+
 using namespace std::string_view_literals;
 
 namespace
@@ -146,8 +159,66 @@ parseExponential(fmt::memory_buffer& buffer, ParseExpResult& result)
     return ec == std::errc{} && ptr == exponentEnd;
 }
 
+#ifdef USE_ICU
+bool getNumberSymbol(const UNumberFormat *numFormat, UNumberFormatSymbol symbol, std::string &output)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    auto requiredSize = unum_getSymbol(numFormat, symbol, nullptr, 0, &status);
+    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+        return false;
+
+    status = U_ZERO_ERROR;
+    std::u16string symbolString;
+    symbolString.resize(requiredSize);
+    unum_getSymbol(numFormat, symbol, symbolString.data(), requiredSize, &status);
+
+    if (U_FAILURE(status))
+        return false;
+
+    u_strToUTF8(nullptr, 0, &requiredSize, symbolString.data(), symbolString.size(), &status);
+    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+        return false;
+
+    status = U_ZERO_ERROR;
+    output.resize(requiredSize);
+
+    u_strToUTF8(output.data(), requiredSize, nullptr, symbolString.data(), symbolString.size(), &status);
+    return U_SUCCESS(status);
+}
+#endif
+
 } // end unnamed namespace
 
+#ifdef USE_ICU
+NumberFormatter::NumberFormatter()
+{
+    const char *orig = N_("LANGUAGE");
+    const char *lang = _(orig);
+
+    UErrorCode status = U_ZERO_ERROR;
+    UNumberFormat* numFormat = unum_open(UNUM_DECIMAL, nullptr, 0, lang == orig ? "en" : lang, nullptr, &status);
+    if (U_FAILURE(status))
+        return;
+
+    getNumberSymbol(numFormat, UNUM_DECIMAL_SEPARATOR_SYMBOL, m_decimal);
+
+    // attribute == -1 means the attribute is missing
+    int32_t groupingUsed = unum_getAttribute(numFormat, UNUM_GROUPING_USED);
+    int32_t groupingSize = unum_getAttribute(numFormat, UNUM_GROUPING_SIZE);
+    if (groupingUsed != -1 && groupingUsed != 0 &&
+        groupingSize != -1 && groupingSize != 0 &&
+        getNumberSymbol(numFormat, UNUM_GROUPING_SEPARATOR_SYMBOL, m_thousands))
+    {
+        m_grouping.push_back(static_cast<char>(groupingSize));
+
+        int32_t secondaryGroupingSize = unum_getAttribute(numFormat, UNUM_SECONDARY_GROUPING_SIZE);
+        if (secondaryGroupingSize != -1 && secondaryGroupingSize != 0)
+            m_grouping.push_back(static_cast<char>(secondaryGroupingSize));
+    }
+
+    unum_close(numFormat);
+}
+#else
 NumberFormatter::NumberFormatter(const std::locale& loc)
 {
     if (!std::has_facet<std::numpunct<wchar_t>>(loc))
@@ -169,6 +240,7 @@ NumberFormatter::NumberFormatter(const std::locale& loc)
     else
         m_grouping.clear();
 }
+#endif
 
 fmt::format_context::iterator
 NumberFormatter::format_fixed(fmt::format_context::iterator out,
