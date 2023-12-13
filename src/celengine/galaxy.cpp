@@ -161,9 +161,7 @@ float Galaxy::getBrightnessCorrection(const Eigen::Vector3f &offset) const
 
     // corrections to avoid excessive brightening if viewed e.g. edge-on
     float brightness_corr = 1.0f;
-    if (type != GalaxyType::Irr
-        && (type < GalaxyType::E0
-            || type > GalaxyType::E3)) // all galaxies, except ~round elliptics and irregular
+    if (type != GalaxyType::Irr && (type < GalaxyType::E0 || type > GalaxyType::E3)) // all galaxies, except ~round elliptics and irregular
     {
         float cosi      = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
         brightness_corr = std::max(0.2f, std::sqrt(std::abs(cosi)));
