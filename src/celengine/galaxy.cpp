@@ -161,17 +161,16 @@ float Galaxy::getBrightnessCorrection(const Eigen::Vector3f &offset) const
 
     // corrections to avoid excessive brightening if viewed e.g. edge-on
     float brightness_corr = 1.0f;
-    if (type != GalaxyType::Irr && (type < GalaxyType::E0 || type > GalaxyType::E3))  // all galaxies, except ~round elliptics and irregular
+    if (type != GalaxyType::Irr
+        && (type < GalaxyType::E0
+            || type > GalaxyType::E3)) // all galaxies, except ~round elliptics and irregular
     {
-        if (type < GalaxyType::E0 || type > GalaxyType::E3) // all galaxies, except ~round elliptics
+        float cosi      = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
+        brightness_corr = std::max(0.2f, std::sqrt(std::abs(cosi)));
+        if (type > GalaxyType::E3) // only elliptics with higher ellipticities
         {
-            float cosi      = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
-            brightness_corr = std::max(0.2f, std::sqrt(std::abs(cosi)));
-            if (type > GalaxyType::E3) // only elliptics with higher ellipticities
-            {
-                float cosi = (orientation * Eigen::Vector3f::UnitX()).dot(offset) / offset.norm();
-                brightness_corr = std::max(0.45f, brightness_corr * std::abs(cosi));
-            }
+            float cosi      = (orientation * Eigen::Vector3f::UnitX()).dot(offset) / offset.norm();
+            brightness_corr = std::max(0.45f, brightness_corr * std::abs(cosi));
         }
     }
 
