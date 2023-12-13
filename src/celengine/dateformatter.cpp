@@ -10,9 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include "dateformatter.h"
-#ifdef USE_ICU
-#include <celutil/gettext.h>
-#endif
 
 namespace astro = celestia::astro;
 
@@ -83,14 +80,6 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
     if (auto formatter = formatters[index]; formatter != nullptr)
         return formatter;
 
-    static const char *locale = nullptr;
-    if (locale == nullptr)
-    {
-        const char *orig = N_("LANGUAGE");
-        const char *lang = _(orig);
-        locale = lang == orig ? "en" : lang;
-    }
-
     const UChar *pattern;
     UDateFormatStyle dateStyle;
     UDateFormatStyle timeStyle;
@@ -119,7 +108,7 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
     }
 
     UErrorCode error = U_ZERO_ERROR;
-    auto formatter = udat_open(timeStyle, dateStyle, locale, local ? nullptr : u"UTC", -1, pattern, -1, &error);
+    auto formatter = udat_open(timeStyle, dateStyle, nullptr, local ? nullptr : u"UTC", -1, pattern, -1, &error);
     if (U_FAILURE(error))
         return nullptr;
 
