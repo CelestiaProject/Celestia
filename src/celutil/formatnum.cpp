@@ -29,7 +29,6 @@
 #include <unicode/decimfmt.h>
 #include <unicode/ustring.h>
 #endif
-#include <celutil/gettext.h>
 #endif
 
 using namespace std::string_view_literals;
@@ -192,26 +191,23 @@ bool getNumberSymbol(const UNumberFormat *numFormat, UNumberFormatSymbol symbol,
 #ifdef USE_ICU
 NumberFormatter::NumberFormatter()
 {
-    const char *orig = N_("LANGUAGE");
-    const char *lang = _(orig);
-
     UErrorCode status = U_ZERO_ERROR;
-    UNumberFormat* numFormat = unum_open(UNUM_DECIMAL, nullptr, 0, lang == orig ? "en" : lang, nullptr, &status);
+    UNumberFormat* numFormat = unum_open(UNUM_DECIMAL, nullptr, 0, nullptr, nullptr, &status);
     if (U_FAILURE(status))
         return;
 
     getNumberSymbol(numFormat, UNUM_DECIMAL_SEPARATOR_SYMBOL, m_decimal);
 
     // attribute == -1 means the attribute is missing
-    int32_t groupingUsed = unum_getAttribute(numFormat, UNUM_GROUPING_USED);
-    int32_t groupingSize = unum_getAttribute(numFormat, UNUM_GROUPING_SIZE);
+    std::int32_t groupingUsed = unum_getAttribute(numFormat, UNUM_GROUPING_USED);
+    std::int32_t groupingSize = unum_getAttribute(numFormat, UNUM_GROUPING_SIZE);
     if (groupingUsed != -1 && groupingUsed != 0 &&
         groupingSize != -1 && groupingSize != 0 &&
         getNumberSymbol(numFormat, UNUM_GROUPING_SEPARATOR_SYMBOL, m_thousands))
     {
         m_grouping.push_back(static_cast<char>(groupingSize));
 
-        int32_t secondaryGroupingSize = unum_getAttribute(numFormat, UNUM_SECONDARY_GROUPING_SIZE);
+        std::int32_t secondaryGroupingSize = unum_getAttribute(numFormat, UNUM_SECONDARY_GROUPING_SIZE);
         if (secondaryGroupingSize != -1 && secondaryGroupingSize != 0)
             m_grouping.push_back(static_cast<char>(secondaryGroupingSize));
     }
