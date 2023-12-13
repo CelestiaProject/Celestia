@@ -889,10 +889,8 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     double tdb = sim->getTime() + lt;
     auto dateStr = m_dateFormatter->formatDate(tdb, timeInfo.timeZoneBias != 0, m_dateFormat);
-    m_dateStrWidth = std::max(m_dateStrWidth,
-                              (engine::TextLayout::getTextWidth(dateStr, m_hudFonts.font().get()) /
-                               (m_hudFonts.emWidth() * 3) + 2) *
-                               m_hudFonts.emWidth() * 3);
+
+    m_dateStrWidth = std::max(m_dateStrWidth, engine::TextLayout::getTextWidth(dateStr, m_hudFonts.font().get()) + 6 * m_hudFonts.emWidth());
 
     // Time and date
     m_overlay->savePos();
