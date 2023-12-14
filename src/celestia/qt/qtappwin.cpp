@@ -1214,7 +1214,7 @@ CelestiaAppWindow::slotShowAbout()
         "Using %3 %4<br>"
         "Built against Qt library: %5<br>"
         "NAIF kernels are %7<br>"
-        "AVIF images are %8</p>"
+        "AVIF images are %8<br>"
         "Runtime Qt version: %6</p>"
 
         "<p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>"

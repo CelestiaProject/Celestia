@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-12-05 23:35+0200\n"
+"POT-Creation-Date: 2023-12-14 21:26+0200\n"
 "PO-Revision-Date: 2010-02-25 17:50+0100\n"
 "Last-Translator: Bjørn Steensrud <bjornst@skogkatt.homelinux.org>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
@@ -1225,7 +1225,7 @@ msgstr "Bokmerker"
 msgid ""
 "<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
 "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8</p>Runtime Qt version: %6</"
+"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
 "p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
 "is free software. You can redistribute it and/or modify it under the terms "
 "of the GNU General Public License as published by the Free Software "
@@ -1696,7 +1696,7 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
 #: ../src/celestia/qt/qtcelestiaactions.cpp:63
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:592
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:470
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:519
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:803
 #: ../src/celestia/qt/rc.cpp:209
@@ -2021,223 +2021,223 @@ msgstr "Automatisk størrelsesgrense ved 45 grader:  %.2f"
 msgid "Magnitude limit: %L1"
 msgstr "Størrelsesgrense: %.2f"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:355
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:233
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:293
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:677
 #: ../src/celestia/win32/res/resource_strings.cpp:93
-#: ../src/celestia/win32/winstarbrowser.cpp:65
+#: ../src/celestia/win32/winstarbrowser.cpp:55
 msgid "Name"
 msgstr "Navn"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:357
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:235
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:295
-#: ../src/celestia/win32/winstarbrowser.cpp:66
+#: ../src/celestia/win32/winstarbrowser.cpp:56
 msgid "Distance (ly)"
 msgstr "Avstand (lå)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:359
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:237
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:297
-#: ../src/celestia/win32/winstarbrowser.cpp:67
+#: ../src/celestia/win32/winstarbrowser.cpp:57
 msgid "App. mag"
 msgstr "Tils. størr"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:361
-#: ../src/celestia/win32/winstarbrowser.cpp:68
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:239
+#: ../src/celestia/win32/winstarbrowser.cpp:58
 msgid "Abs. mag"
 msgstr "Abs. størr"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:363
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:241
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:299
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:505
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:679
-#: ../src/celestia/win32/winstarbrowser.cpp:69
+#: ../src/celestia/win32/winstarbrowser.cpp:59
 msgid "Type"
 msgstr "Type"
 
 #. Buttons to select filtering criterion for stars
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:548
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:426
 #, fuzzy
 msgid "Closest Stars"
 msgstr "Filtrer stjener"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:552
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:430
 #, fuzzy
 msgid "Brightest Stars"
 msgstr "Lyssterkest"
 
 #. Additional filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:562
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:440
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:502
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:787
 #, fuzzy
 msgid "Filter"
 msgstr "Filtrer stjener"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:565
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:443
 msgid "With Planets"
 msgstr "Med planeter"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:569
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:447
 #, fuzzy
 msgid "Multiple Stars"
 msgstr "Filtrer stjener"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:572
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:450
 #, fuzzy
 msgid "Barycenters"
 msgstr "Tyngdesenter"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:578
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:456
 msgid "Spectral Type"
 msgstr ""
 
 #. End filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:587
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:465
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:514
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:794
 msgid "Refresh"
 msgstr "Frisk opp"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:473
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:522
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
 #, fuzzy
 msgid "Mark Selected"
 msgstr "Markører på"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:597
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:475
 #, fuzzy
 msgid "Mark stars selected in list view"
 msgstr "Høyeste antall stjerner som vises i lista"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:600
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:478
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:527
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:811
 #, fuzzy
 msgid "Unmark Selected"
 msgstr "Fjern merking fra &alle"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:601
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:479
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:812
 msgid "Unmark stars selected in list view"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:605
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:483
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:532
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:816
 #, fuzzy
 msgid "Clear Markers"
 msgstr "Markører"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:607
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:485
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:534
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:818
 msgid "Remove all existing markers"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:614
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:492
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:541
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:825
 #: ../src/celestia/win32/res/resource_strings.cpp:234
 msgid "None"
 msgstr "Ingen"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:493
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:542
 #: ../src/celestia/qt/qtselectionpopup.cpp:260
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
 msgid "Diamond"
 msgstr "Rombe"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:616
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:494
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:543
 #: ../src/celestia/qt/qtselectionpopup.cpp:261
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:827
 msgid "Triangle"
 msgstr "Trekant"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:617
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:495
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:544
 #: ../src/celestia/qt/qtselectionpopup.cpp:262
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:828
 msgid "Square"
 msgstr "Kvadrat"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:618
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:496
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:545
 #: ../src/celestia/qt/qtselectionpopup.cpp:264
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
 msgid "Plus"
 msgstr "Pluss"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:619
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:497
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:546
 #: ../src/celestia/qt/qtselectionpopup.cpp:265
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:830
 msgid "X"
 msgstr "X"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:620
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:498
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:547
 #: ../src/celestia/qt/qtselectionpopup.cpp:270
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:831
 msgid "Circle"
 msgstr "Sirkel"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:621
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:499
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:548
 #: ../src/celestia/qt/qtselectionpopup.cpp:266
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:832
 msgid "Left Arrow"
 msgstr "Pil venstre"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:622
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:500
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:549
 #: ../src/celestia/qt/qtselectionpopup.cpp:267
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:833
 msgid "Right Arrow"
 msgstr "Pil høyre"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:623
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:501
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:550
 #: ../src/celestia/qt/qtselectionpopup.cpp:268
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:834
 msgid "Up Arrow"
 msgstr "Pil opp"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:624
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:502
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:551
 #: ../src/celestia/qt/qtselectionpopup.cpp:269
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:835
 msgid "Down Arrow"
 msgstr "Pil ned"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:626
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:504
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:553
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:837
 msgid "Select marker symbol"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:639
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:517
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:566
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:850
 msgid "Select marker size"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:643
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:521
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:570
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:854
 msgid "Click to select marker color"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:646
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:524
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:573
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:857
 #, fuzzy
 msgid "Label"
 msgstr "Etiketter"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:713
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:586
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:626
 #, fuzzy, qt-format
 msgid "%1 objects found"
@@ -2304,32 +2304,32 @@ msgid "Unmark DSOs selected in list view"
 msgstr ""
 
 #: ../src/celestia/qt/qteventfinder.cpp:69
-#: ../src/celestia/win32/wineclipses.cpp:298
+#: ../src/celestia/win32/wineclipses.cpp:296
 msgid "Earth"
 msgstr "Jorden"
 
 #: ../src/celestia/qt/qteventfinder.cpp:70
-#: ../src/celestia/win32/wineclipses.cpp:299
+#: ../src/celestia/win32/wineclipses.cpp:297
 msgid "Jupiter"
 msgstr "Jupiter"
 
 #: ../src/celestia/qt/qteventfinder.cpp:71
-#: ../src/celestia/win32/wineclipses.cpp:300
+#: ../src/celestia/win32/wineclipses.cpp:298
 msgid "Saturn"
 msgstr "Saturn"
 
 #: ../src/celestia/qt/qteventfinder.cpp:72
-#: ../src/celestia/win32/wineclipses.cpp:301
+#: ../src/celestia/win32/wineclipses.cpp:299
 msgid "Uranus"
 msgstr "Uranus"
 
 #: ../src/celestia/qt/qteventfinder.cpp:73
-#: ../src/celestia/win32/wineclipses.cpp:302
+#: ../src/celestia/win32/wineclipses.cpp:300
 msgid "Neptune"
 msgstr "Neptun"
 
 #: ../src/celestia/qt/qteventfinder.cpp:74
-#: ../src/celestia/win32/wineclipses.cpp:303
+#: ../src/celestia/win32/wineclipses.cpp:301
 msgid "Pluto"
 msgstr "Pluto"
 
