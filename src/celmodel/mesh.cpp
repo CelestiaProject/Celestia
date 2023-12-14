@@ -508,7 +508,8 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                         i1 = i2;
                         i2 = group.indices[index];
                     }
-                    else if (index == nIndices - 1) {
+                    else if (index == nIndices - 1)
+                    {
                         i1 = i2;
                         i2 = group.indices[index];
                     }
