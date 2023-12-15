@@ -357,9 +357,9 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
         {
             float x = (float) j - size / 2;
             float r2 = x * x + y * y;
-            float f = s * (float) exp(-r2 * isig2) * power;
+            float f = s * std::exp(-r2 * isig2) * power;
 
-            mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+            mipPixels[i * size + j] = (unsigned char) (255.99f * std::min(f, 1.0f));
         }
     }
 }
@@ -378,9 +378,9 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
         for (unsigned int j = 0; j < size; j++)
         {
             float x = (float) j - size / 2;
-            auto r = (float) sqrt(x * x + y * y);
-            auto f = (float) pow(base, r * scale);
-            mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+            float r = std::sqrt(x * x + y * y);
+            float f = std::pow(base, r * scale);
+            mipPixels[i * size + j] = (unsigned char) (255.99f * std::min(f, 1.0f));
         }
     }
 }
@@ -421,11 +421,11 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
-        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+        float fwhm = std::pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
         BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
-                                  (float) pow(2.0f, (float) (log2size - mipLevel)));
+                                  std::pow(2.0f, (float) (log2size - mipLevel)));
     }
 
     ImageTexture* texture = new ImageTexture(*img,
@@ -1059,6 +1059,7 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
             orbitColor = Renderer::DwarfPlanetOrbitColor;
             break;
         case Body::Planet:
+            [[fallthrough]];
         default:
             orbitColor = Renderer::PlanetOrbitColor;
             break;
@@ -1075,15 +1076,14 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            float nearDist,
                            float farDist)
 {
-    Body* body = orbitPath.body;
+    const Body* body = orbitPath.body;
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
 
     const auto* orbit = body != nullptr ? body->getOrbit(t) : orbitPath.star->getOrbit();
 
     CurvePlot* cachedOrbit = nullptr;
-    OrbitCache::iterator cached = orbitCache.find(orbit);
-    if (cached != orbitCache.end())
+    if (auto cached = orbitCache.find(orbit); cached != orbitCache.end())
     {
         cachedOrbit = cached->second;
         cachedOrbit->setLastUsed(frameCount);
@@ -1965,7 +1965,7 @@ Renderer::locationsToAnnotations(const Body& body,
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
 
-        celestia::MarkerRepresentation* locationMarker = nullptr;
+        const celestia::MarkerRepresentation* locationMarker = nullptr;
         if (featureType & Location::City)
             locationMarker = &cityRep;
         else if (featureType & (Location::LandingSite | Location::Observatory))
@@ -2016,9 +2016,7 @@ estimateReflectedLightFraction(const Vector3d& toSun,
 {
     // Theta is half the arc length visible to the reflector
     double d = toObject.norm();
-    auto cosTheta = (float) (radius / d);
-    if (cosTheta > 0.999f)
-        cosTheta = 0.999f;
+    float cosTheta = std::min((float) (radius / d), 0.999f);
 
     // Phi is the angle between the light vector and receiver-to-reflector vector.
     // cos(phi) is thus the illumination at the sub-point. The horizon points are
@@ -2029,13 +2027,13 @@ estimateReflectedLightFraction(const Vector3d& toSun,
     //   cos(phi + theta) = cos(phi) * cos(theta) - sin(phi) * sin(theta)
 
     // s = sin(phi) * sin(theta)
-    auto s = (float) sqrt((1.0f - cosPhi * cosPhi) * (1.0f - cosTheta * cosTheta));
+    float s = std::sqrt((1.0f - cosPhi * cosPhi) * (1.0f - cosTheta * cosTheta));
 
     float cosPhi1 = cosPhi * cosTheta - s;  // cos(phi + theta)
     float cosPhi2 = cosPhi * cosTheta + s;  // cos(phi - theta)
 
     // Calculate a weighted average of illumination at the three points
-    return (2.0f * max(cosPhi, 0.0f) + max(cosPhi1, 0.0f) + max(cosPhi2, 0.0f)) * 0.25f;
+    return (2.0f * std::max(cosPhi, 0.0f) + std::max(cosPhi1, 0.0f) + std::max(cosPhi2, 0.0f)) * 0.25f;
 }
 
 
@@ -2343,7 +2341,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 // If there's an atmosphere, we need to move the far plane
                 // out so that the clouds and atmosphere shell aren't clipped.
                 float atmosphereRadius = eradius + atmosphereHeight;
-                frustumFarPlane += (float) sqrt(math::square(atmosphereRadius) - math::square(eradius));
+                frustumFarPlane += std::sqrt(math::square(atmosphereRadius) - math::square(eradius));
             }
         }
     }
@@ -2738,13 +2736,13 @@ void Renderer::renderPlanet(Body& body,
 
         if (displayedSurface.empty())
         {
-            rp.surface = const_cast<Surface*>(&body.getSurface());
+            rp.surface = &body.getSurface();
         }
         else
         {
             rp.surface = body.getAlternateSurface(displayedSurface);
             if (rp.surface == nullptr)
-                rp.surface = const_cast<Surface*>(&body.getSurface());
+                rp.surface = &body.getSurface();
         }
         rp.atmosphere = body.getAtmosphere();
         rp.rings = body.getRings();
@@ -2763,7 +2761,7 @@ void Renderer::renderPlanet(Body& body,
 
         Vector3f scaleFactors;
         bool isNormalized = false;
-        Geometry* geometry = nullptr;
+        const Geometry* geometry = nullptr;
         if (rp.geometry != InvalidResource)
             geometry = GetGeometryManager()->find(rp.geometry);
         if (geometry == nullptr || geometry->isNormalized())
@@ -2811,16 +2809,13 @@ void Renderer::renderPlanet(Body& body,
         }
 
         // Calculate eclipse circumstances
-        if ((renderFlags & ShowEclipseShadows) != 0 &&
-            body.getSystem() != nullptr)
+        if ((renderFlags & ShowEclipseShadows) != 0 && body.getSystem() != nullptr)
         {
-            PlanetarySystem* system = body.getSystem();
-            if (system->getPrimaryBody() == nullptr)
+            if (const auto *system = body.getSystem(); system->getPrimaryBody() == nullptr)
             {
                 // The body is a planet.  Check for eclipse shadows
                 // from all of its satellites.
-                PlanetarySystem* satellites = body.getSatellites();
-                if (satellites != nullptr)
+                if (const auto *satellites = body.getSatellites(); satellites != nullptr)
                 {
                     int nSatellites = satellites->getSystemSize();
                     for (unsigned int li = 0; li < lights.nLights; li++)
@@ -2846,7 +2841,7 @@ void Renderer::renderPlanet(Body& body,
                         // Traverse up the hierarchy so that any parent objects
                         // of the parent are also considered (TODO: their child
                         // objects will not be checked for shadows.)
-                        Body* planet = system->getPrimaryBody();
+                        const Body* planet = system->getPrimaryBody();
                         while (planet != nullptr)
                         {
                             testEclipse(body, *planet, lights, li, now);
@@ -2891,7 +2886,7 @@ void Renderer::renderPlanet(Body& body,
                 float ringWidth = rings->outerRadius - rings->innerRadius;
                 float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
                 float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
-                Texture* ringsTex = rings->texture.find(textureResolution);
+                const Texture* ringsTex = rings->texture.find(textureResolution);
                 if (ringsTex != nullptr)
                 {
                     // Calculate the approximate distance from the shadowed object to the rings
@@ -3233,7 +3228,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 
         if (body.getGeometry() != InvalidResource && rle.discSizeInPixels > 1)
         {
-            Geometry* geometry = GetGeometryManager()->find(body.getGeometry());
+            const Geometry* geometry = GetGeometryManager()->find(body.getGeometry());
             if (geometry == nullptr)
                 rle.isOpaque = true;
             else
@@ -3388,10 +3383,10 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             // light from all nearby stars, we just consider the one with the
             // highest apparent brightness.
             float appMag = 100.0f;
-            for (unsigned int li = 0; li < lightSourceList.size(); li++)
+            for (const auto &lightSource : lightSourceList)
             {
-                Vector3d sunPos = pos_v - lightSourceList[li].position;
-                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, pos_v));
+                Eigen::Vector3d sunPos = pos_v - lightSource.position;
+                appMag = std::min(appMag, body->getApparentMagnitude(lightSource.luminosity, sunPos, pos_v));
             }
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
@@ -3432,8 +3427,8 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             // true or when a subtree object could potentially illuminate something
             // in the view cone.
             auto minPossibleDistance = (float) (dist_v - subtree->boundingSphereRadius());
-            float brightestPossible = 0.0;
-            float largestPossible = 0.0;
+            float brightestPossible = 0.0f;
+            float largestPossible = 0.0f;
 
             // If the viewer is not within the subtree bounding sphere, see if we can cull it because
             // it contains no objects brighter than the limiting magnitude and no objects that will
@@ -3444,13 +3439,13 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
                 // Compute the luminosity from reflected light of the largest object in the subtree
                 float lum = 0.0f;
-                for (unsigned int li = 0; li < lightSourceList.size(); li++)
+                for (const auto &lightSource : lightSourceList)
                 {
-                    Vector3d sunPos = pos_v - lightSourceList[li].position;
-                    lum += luminosityAtOpposition(lightSourceList[li].luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
+                    Eigen::Vector3d sunPos = pos_v - lightSource.position;
+                    lum += luminosityAtOpposition(lightSource.luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
                 }
                 brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
-                largestPossible = (float) subtree->maxChildRadius() / (float) minPossibleDistance / pixelSize;
+                largestPossible = (float) subtree->maxChildRadius() / minPossibleDistance / pixelSize;
             }
             else
             {
@@ -3638,10 +3633,10 @@ void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
                                double now)
 {
     int labelClassMask = translateLabelModeToClassMask(labelMode);
-    Body* lastPrimary = nullptr;
+    const Body* lastPrimary = nullptr;
     math::Sphered primarySphere;
 
-    for (auto &ri : renderList)
+    for (const auto &ri : renderList)
     {
         if (ri.renderableType != RenderListEntry::RenderableBody)
             continue;
@@ -3832,7 +3827,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
-    starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+    starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
 
     starRenderer.colorTemp = &starColors;
 
@@ -3978,7 +3973,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     {
         double tdb = observer.getTime();
         auto frame = observer.getFrame();
-        Body* body = frame->getRefObject().body();
+        const Body* body = frame->getRefObject().body();
 
         if (body != nullptr)
         {
@@ -4053,8 +4048,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     // We'll linearly fade the labels as a function of the
                     // observer's distance to the origin of coordinates:
                     float opacity = 1.0f;
-                    float dist = observerPos.norm();
-                    if (dist > MaxAsterismLabelsConstDist)
+                    if (float dist = observerPos.norm(); dist > MaxAsterismLabelsConstDist)
                     {
                         opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
                                              / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
@@ -4149,23 +4143,23 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
 
-    for (int i = 0; i < (int) annotations.size(); i++)
+    for (const auto &annotation : annotations)
     {
-        if (annotations[i].markerRep != nullptr)
+        if (annotation.markerRep != nullptr)
         {
-            renderAnnotationMarker(annotations[i], layout, 0.0f, m);
+            renderAnnotationMarker(annotation, layout, 0.0f, m);
         }
 
-        if (!annotations[i].labelText.empty())
+        if (!annotation.labelText.empty())
         {
             TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
             float hOffset = 0.0f;
             float vOffset = 0.0f;
 
-            getLabelAlignmentInfo(annotations[i], font.get(), alignment, hOffset, vOffset);
+            getLabelAlignmentInfo(annotation, font.get(), alignment, hOffset, vOffset);
 
             layout.setHorizontalAlignment(alignment);
-            renderAnnotationLabel(annotations[i], layout, hOffset, vOffset, 0.0f, m);
+            renderAnnotationLabel(annotation, layout, hOffset, vOffset, 0.0f, m);
         }
     }
 }
@@ -4867,7 +4861,7 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
             cullRadius = radius;
             if (ri.body->getAtmosphere() != nullptr)
             {
-                auto *a = ri.body->getAtmosphere();
+                const auto *a = ri.body->getAtmosphere();
                 cullRadius += a->height;
                 cloudHeight = max(a->cloudHeight,
                                   a->mieScaleHeight * -log(AtmosphereExtinctionThreshold));
@@ -5071,7 +5065,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
         if ((renderFlags & ShowSolarSystemObjects) == 0)
             continue;
 
-        SolarSystem* solarSystem = universe.getSolarSystem(sun);
+        const SolarSystem* solarSystem = universe.getSolarSystem(sun);
         if (solarSystem == nullptr)
             continue;
 

@@ -100,9 +100,9 @@ M3DMaterial::getTextureMap() const
 }
 
 void
-M3DMaterial::setTextureMap(const std::string& _texmap)
+M3DMaterial::setTextureMap(std::string&& _texmap)
 {
-    texmap = _texmap;
+    texmap = std::move(_texmap);
 }
 
 
@@ -233,9 +233,9 @@ M3DModel::addTriMesh(M3DTriangleMesh&& triMesh)
 }
 
 void
-M3DModel::setName(const std::string& _name)
+M3DModel::setName(std::string&& _name)
 {
-    name = _name;
+    name = std::move(_name);
 }
 
 std::string

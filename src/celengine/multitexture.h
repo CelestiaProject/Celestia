@@ -15,7 +15,8 @@
 
 #define TEXTURE_RESOLUTION 3
 
-enum {
+enum
+{
     lores  = 0,
     medres = 1,
     hires  = 2
@@ -24,7 +25,7 @@ enum {
 
 class MultiResTexture
 {
- public:
+public:
     MultiResTexture();
     MultiResTexture(ResourceHandle loTex,
                     ResourceHandle medTex = InvalidResource,
@@ -42,6 +43,5 @@ class MultiResTexture
 
     bool isValid() const;
 
- public:
-    ResourceHandle tex[3];
+    ResourceHandle tex[TEXTURE_RESOLUTION];
 };

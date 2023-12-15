@@ -15,7 +15,7 @@ using celestia::util::GetLogger;
 
 namespace
 {
-const std::string
+std::string
 GetInfoLog(GLuint obj)
 {
     GLint logLength = 0;

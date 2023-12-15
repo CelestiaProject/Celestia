@@ -637,7 +637,7 @@ bool processTexmapChunk(std::istream& in, M3DChunkType chunkType, std::int32_t c
     GetLogger()->debug("Processing MaterialMapname chunk\n");
     std::string name;
     if (!readString(in, contentSize, name)) { return false; }
-    material.setTextureMap(name);
+    material.setTextureMap(std::move(name));
     return skipTrailing(in, contentSize);
 }
 
@@ -715,7 +715,7 @@ bool readNamedObject(std::istream& in, std::int32_t contentSize, M3DScene& scene
     std::string name;
     if (!readString(in, contentSize, name)) { return false; }
     M3DModel model;
-    model.setName(name);
+    model.setName(std::move(name));
     if (!readChunks(in, contentSize, model, processModelChunk)) { return false; }
     scene.addModel(std::move(model));
     return true;
@@ -778,8 +778,7 @@ bool processTopLevelChunk(std::istream& in, M3DChunkType chunkType, std::int32_t
 
 std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
 {
-    M3DChunkType chunkType;
-    if (!readChunkType(in, chunkType) || chunkType != M3DChunkType::Magic)
+    if (M3DChunkType chunkType; !readChunkType(in, chunkType) || chunkType != M3DChunkType::Magic)
     {
         GetLogger()->error("Read3DSFile: Wrong magic number in header\n");
         return nullptr;

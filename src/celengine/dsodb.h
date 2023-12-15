@@ -39,8 +39,8 @@ class DSODatabase
     ~DSODatabase();
 
 
-    inline DeepSkyObject* getDSO(const std::uint32_t) const;
-    inline std::uint32_t size() const;
+    DeepSkyObject* getDSO(const std::uint32_t) const;
+    std::uint32_t size() const;
 
     DeepSkyObject* find(const AstroCatalog::IndexNumber catalogNumber) const;
     DeepSkyObject* find(std::string_view, bool i18n) const;
@@ -89,13 +89,13 @@ private:
 };
 
 
-DeepSkyObject* DSODatabase::getDSO(const std::uint32_t n) const
+inline DeepSkyObject* DSODatabase::getDSO(const std::uint32_t n) const
 {
     return *(DSOs + n);
 }
 
 
-std::uint32_t DSODatabase::size() const
+inline std::uint32_t DSODatabase::size() const
 {
     return nDSOs;
 }

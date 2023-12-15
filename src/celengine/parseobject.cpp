@@ -1490,8 +1490,7 @@ CreateFrameVector(const Universe& universe,
             // The frame for the vector is optional; a nullptr frame indicates
             // J2000 ecliptic.
             ReferenceFrame::SharedConstPtr f;
-            const Value* frameValue = constVecData->getValue("Frame");
-            if (frameValue != nullptr)
+            if (const Value* frameValue = constVecData->getValue("Frame"); frameValue != nullptr)
             {
                 f = CreateReferenceFrame(universe, frameValue, center, nullptr);
                 if (f == nullptr)

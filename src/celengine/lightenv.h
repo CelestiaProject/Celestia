@@ -17,7 +17,7 @@
 #include <Eigen/Geometry>
 #include <vector>
 
-static const unsigned int MaxLights = 8;
+constexpr unsigned int MaxLights = 8;
 
 class Body;
 class RingSystem;
@@ -62,7 +62,7 @@ public:
 class LightingState
 {
 public:
-    typedef std::vector<EclipseShadow> EclipseShadowVector;
+    using EclipseShadowVector = std::vector<EclipseShadow>;
 
     LightingState() :
         nLights(0),
@@ -71,9 +71,9 @@ public:
         eyePos_obj(-Eigen::Vector3f::UnitZ())
     {
         shadows[0] = nullptr;
-        for (unsigned int i = 0; i < MaxLights; ++i)
+        for (auto &ringShadow : ringShadows)
         {
-            ringShadows[i].ringSystem = nullptr;
+            ringShadow.ringSystem = nullptr;
         }
     };
 

@@ -65,10 +65,8 @@ class PlanetarySystem
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
 
- private:
     using ObjectIndex = std::map<std::string, Body*, UTF8StringOrderingPredicate>;
 
- private:
     Star* star;
     Body* primary{nullptr};
     std::vector<std::unique_ptr<Body>> satellites;
@@ -236,7 +234,7 @@ class Body
     int getClassification() const;
     void setClassification(int);
     const std::string& getInfoURL() const;
-    void setInfoURL(const std::string&);
+    void setInfoURL(std::string&&);
 
     PlanetarySystem* getSatellites() const;
     PlanetarySystem* getOrCreateSatellites();
@@ -389,7 +387,6 @@ class Body
  private:
     void setName(const std::string& name);
 
- private:
     std::vector<std::string> names{ 1 };
     std::string localizedName;
 

@@ -345,7 +345,7 @@ void Observer::update(double dt, double timeScale)
                 Selection centerObj = frame->getRefObject();
                 if (centerObj.body() != nullptr)
                 {
-                    Body* body = centerObj.body();
+                    const Body* body = centerObj.body();
                     if (body->getSystem())
                     {
                         if (body->getSystem()->getPrimaryBody() != nullptr)

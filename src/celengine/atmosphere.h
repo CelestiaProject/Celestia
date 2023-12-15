@@ -38,7 +38,6 @@ class Atmosphere
         cloudShadowDepth(0.0f)
     {};
 
- public:
     float height;
     Color lowerColor;
     Color upperColor;
