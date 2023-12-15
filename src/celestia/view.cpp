@@ -21,16 +21,16 @@ using celestia::util::GetLogger;
 namespace celestia
 {
 
-View::View(View::Type _type,
-           Observer *_observer,
-           float _x, float _y,
-           float _width, float _height) :
-    type(_type),
-    observer(_observer),
-    x(_x),
-    y(_y),
-    width(_width),
-    height(_height)
+View::View(View::Type type,
+           Observer *observer,
+           float x, float y,
+           float width, float height) :
+    type(type),
+    observer(observer),
+    x(x),
+    y(y),
+    width(width),
+    height(height)
 {
 }
 
@@ -49,35 +49,24 @@ View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
 
 
 void
-View::walkTreeResize(View* sibling, int sign)
+View::walkTreeResize(View *sibling, int sign)
 {
     float ratio;
+    float diff;
     switch (parent->type)
     {
     case View::HorizontalSplit:
         ratio = parent->height / (parent->height -  height);
         sibling->height *= ratio;
-        if (sign == 1)
-        {
-            sibling->y = parent->y + (sibling->y - parent->y) * ratio;
-        }
-        else
-        {
-            sibling->y = parent->y + (sibling->y - (y + height)) * ratio;
-        }
+        diff = sign == 1 ? parent->y : y + height;
+        sibling->y = parent->y + (sibling->y - diff) * ratio;
         break;
 
     case View::VerticalSplit:
         ratio = parent->width / (parent->width - width);
         sibling->width *= ratio;
-        if (sign == 1)
-        {
-            sibling->x = parent->x + (sibling->x - parent->x) * ratio;
-        }
-        else
-        {
-            sibling->x = parent->x + (sibling->x - (x + width) ) * ratio;
-        }
+        diff = sign == 1 ? parent->x : x + width;
+        sibling->x = parent->x + (sibling->x - diff) * ratio;
         break;
     default:
         break;
@@ -90,12 +79,11 @@ View::walkTreeResize(View* sibling, int sign)
 
 
 bool
-View::walkTreeResizeDelta(View* v, float delta, bool check)
+View::walkTreeResizeDelta(View *v, float delta, bool check)
 {
     View *p = v;
     int sign = -1;
-    float ratio;
-    double newSize;
+    float ratio, newSize;
 
     if (v->child1 != nullptr)
     {
@@ -109,7 +97,8 @@ View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
     }
 
-    while ( p != child1 && p != child2 && (p = p->parent) != nullptr ) ;
+    while (p != child1 && p != child2 && p->parent != nullptr)
+        p = p->parent;
 
     if (p == child1)
         sign = 1;
@@ -124,15 +113,10 @@ View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
         if (check)
             return true;
-        v->height = (float) newSize;
-        if (sign == 1)
-        {
-            v->y = p->y + (v->y - p->y) * ratio;
-        }
-        else
-        {
-            v->y = p->y + delta + (v->y - p->y) * ratio;
-        }
+        v->height = newSize;
+        v->y = p->y + (v->y - p->y) * ratio;
+        if (sign != 1)
+            v->y += delta;
         break;
 
     case View::VerticalSplit:
@@ -142,15 +126,10 @@ View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
         if (check)
             return true;
-        v->width = (float) newSize;
-        if (sign == 1)
-        {
-            v->x = p->x + (v->x - p->x) * ratio;
-        }
-        else
-        {
-            v->x = p->x + delta + (v->x - p->x) * ratio;
-        }
+        v->width = newSize;
+        v->x = p->x + (v->x - p->x) * ratio;
+        if (sign != 1)
+            v->x += delta;
         break;
     case View::ViewWindow:
         break;
@@ -205,9 +184,7 @@ View::split(Type _type, Observer *o, float splitPos, View **split, View **view)
         y1 += h1;
     }
 
-    *split = new View(_type,
-                      nullptr,
-                      x, y, width, height);
+    *split = new View(_type, nullptr, x, y, width, height);
     (*split)->parent = parent;
     if (parent != nullptr)
     {
@@ -222,9 +199,7 @@ View::split(Type _type, Observer *o, float splitPos, View **split, View **view)
     height = h1;
     parent = *split;
 
-    *view = new View(View::ViewWindow,
-                     o,
-                     x1, y1, w2, h2);
+    *view = new View(View::ViewWindow, o, x1, y1, w2, h2);
     (*split)->child2 = *view;
     (*view)->parent = *split;
 }
