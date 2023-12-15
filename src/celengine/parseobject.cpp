@@ -1435,7 +1435,7 @@ getVectorObserver(const Universe& universe, const Hash* vectorData)
 }
 
 
-static FrameVector*
+static std::unique_ptr<FrameVector>
 CreateFrameVector(const Universe& universe,
                   const Selection& center,
                   const Hash* vectorData)
@@ -1453,7 +1453,7 @@ CreateFrameVector(const Universe& universe,
             if (observer.empty() || target.empty())
                 return nullptr;
 
-            return new FrameVector(FrameVector::createRelativePositionVector(observer, target));
+            return std::make_unique<FrameVector>(FrameVector::createRelativePositionVector(observer, target));
         }
     }
 
@@ -1470,7 +1470,7 @@ CreateFrameVector(const Universe& universe,
             if (observer.empty() || target.empty())
                 return nullptr;
 
-            return new FrameVector(FrameVector::createRelativeVelocityVector(observer, target));
+            return std::make_unique<FrameVector>(FrameVector::createRelativeVelocityVector(observer, target));
         }
     }
 
@@ -1498,7 +1498,7 @@ CreateFrameVector(const Universe& universe,
                     return nullptr;
             }
 
-            return new FrameVector(FrameVector::createConstantVector(vec, f));
+            return std::make_unique<FrameVector>(FrameVector::createConstantVector(vec, f));
         }
     }
 
@@ -1562,22 +1562,23 @@ CreateTwoVectorFrame(const Universe& universe,
         return nullptr;
     }
 
-    FrameVector* primaryVector = CreateFrameVector(universe,
-                                                   center,
-                                                   primaryData);
-    FrameVector* secondaryVector = CreateFrameVector(universe,
-                                                     center,
-                                                     secondaryData);
+    std::unique_ptr<FrameVector> primaryVector = CreateFrameVector(universe,
+                                                                   center,
+                                                                   primaryData);
+    std::unique_ptr<FrameVector> secondaryVector = CreateFrameVector(universe,
+                                                                     center,
+                                                                     secondaryData);
 
-    TwoVectorFrame *frame = nullptr;
     if (primaryVector != nullptr && secondaryVector != nullptr)
     {
-        frame = new TwoVectorFrame(center,
-                                   *primaryVector, primaryAxis,
-                                   *secondaryVector, secondaryAxis);
+        return std::make_shared<TwoVectorFrame>(center,
+                                                *primaryVector,
+                                                primaryAxis,
+                                                *secondaryVector,
+                                                secondaryAxis);
     }
 
-    return shared_ptr<const TwoVectorFrame>(frame);
+    return nullptr;
 }
 
 
