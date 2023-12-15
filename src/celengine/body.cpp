@@ -911,9 +911,9 @@ const string& Body::getInfoURL() const
     return infoURL;
 }
 
-void Body::setInfoURL(const string& _infoURL)
+void Body::setInfoURL(string&& _infoURL)
 {
-    infoURL = _infoURL;
+    infoURL = std::move(_infoURL);
 }
 
 
@@ -985,7 +985,7 @@ void Body::computeLocations()
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     if (geometry == InvalidResource)
         return;
-    Geometry* g = GetGeometryManager()->find(geometry);
+    const Geometry* g = GetGeometryManager()->find(geometry);
     if (g == nullptr)
         return;
 
@@ -1269,8 +1269,7 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
  */
 Body* PlanetarySystem::find(std::string_view _name, bool deepSearch, bool i18n) const
 {
-    auto firstMatch = objectIndex.find(_name);
-    if (firstMatch != objectIndex.end())
+    if (auto firstMatch = objectIndex.find(_name); firstMatch != objectIndex.end())
     {
         Body* matchedBody = firstMatch->second;
 

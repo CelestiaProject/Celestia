@@ -26,6 +26,7 @@
 #include <celmath/mathlib.h>
 #include <celutil/color.h>
 #include <celutil/gettext.h>
+#include <celutil/infourl.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
@@ -898,21 +899,9 @@ Body* CreateBody(const std::string& name,
     if (classification & CLASSES_UNCLICKABLE)
         body->setClickable(false);
 
-    // FIXME: should be own class
-    if (const std::string* infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
-    {
-        std::string modifiedURL;
-        if (infoURL->find(':') == std::string::npos && !path.empty())
-        {
-            // Relative URL, the base directory is the current one,
-            // not the main installation directory
-            std::string p = path.string();
-            modifiedURL = p.size() > 1 && p[1] == ':'
-                ? fmt::format("file:///{}/{}", p, *infoURL)
-                : fmt::format("{}/{}", p, *infoURL);
-        }
-        body->setInfoURL(modifiedURL.empty() ? *infoURL : modifiedURL);
-    }
+    // TODO: should be own class
+    if (const auto *infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
+        body->setInfoURL(std::move(BuildInfoURL(*infoURL, path)));
 
     if (auto albedo = planetData->getNumber<float>("Albedo"); albedo.has_value())
     {

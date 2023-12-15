@@ -73,7 +73,7 @@ public:
     void setAbsoluteMagnitude(float);
 
     const std::string& getInfoURL() const;
-    void setInfoURL(const std::string&);
+    void setInfoURL(std::string&&);
 
     bool isVisible() const { return visible; }
     void setVisible(bool _visible) { visible = _visible; }

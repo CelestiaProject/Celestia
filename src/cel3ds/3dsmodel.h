@@ -21,7 +21,6 @@ class M3DColor
     M3DColor();
     M3DColor(float, float, float);
 
- public:
     float red, green, blue;
 };
 
@@ -49,7 +48,7 @@ class M3DMaterial
     float getOpacity() const;
     void setOpacity(float);
     std::string getTextureMap() const;
-    void setTextureMap(const std::string&);
+    void setTextureMap(std::string&&);
 
  private:
     std::string name{};
@@ -133,7 +132,7 @@ class M3DModel
     const M3DTriangleMesh* getTriMesh(std::uint32_t) const;
     std::uint32_t getTriMeshCount() const;
     void addTriMesh(M3DTriangleMesh&&);
-    void setName(const std::string&);
+    void setName(std::string&&);
     std::string getName() const;
 
  private:

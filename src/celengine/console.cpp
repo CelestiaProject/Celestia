@@ -142,17 +142,16 @@ void Console::newline()
 
 void Console::print(char16_t c)
 {
-    switch (c)
+    if (c == '\n')
     {
-    case '\n':
         newline();
-        break;
-    default:
+    }
+    else
+    {
         if (column == nColumns)
             newline();
         text[row * (nColumns + 1) + column] = c;
         column++;
-        break;
     }
 }
 

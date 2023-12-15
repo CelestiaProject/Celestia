@@ -11,10 +11,12 @@
 #include "deepskyobj.h"
 
 #include <cmath>
+#include <fmt/format.h>
 
 #include <celastro/astro.h>
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
+#include <celutil/infourl.h>
 #include "hash.h"
 
 namespace astro = celestia::astro;
@@ -65,9 +67,9 @@ const std::string& DeepSkyObject::getInfoURL() const
     return infoURL;
 }
 
-void DeepSkyObject::setInfoURL(const std::string& s)
+void DeepSkyObject::setInfoURL(std::string&& s)
 {
-    infoURL = s;
+    infoURL = std::move(s);
 }
 
 
@@ -111,32 +113,15 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     if (auto absMagValue = params->getNumber<float>("AbsMag"); absMagValue.has_value())
         setAbsoluteMagnitude(*absMagValue);
 
-    // FIXME: infourl class
-    if (const std::string* infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
-    {
-        std::string modifiedURL;
-        if (infoURLValue->find(':') == std::string::npos)
-        {
-            // Relative URL, the base directory is the current one,
-            // not the main installation directory
-            if (resPath.c_str()[1] == ':')
-                // Absolute Windows path, file:/// is required
-                modifiedURL = "file:///" + resPath.string() + "/" + *infoURLValue;
-            else if (!resPath.empty())
-                modifiedURL = resPath.string() + "/" + *infoURLValue;
-        }
-        setInfoURL(modifiedURL.empty() ? *infoURLValue : modifiedURL);
-    }
+    // TODO: infourl class
+    if (const auto *infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
+        setInfoURL(std::move(BuildInfoURL(*infoURLValue, resPath)));
 
     if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
-    {
         setVisible(*visibleValue);
-    }
 
     if (auto clickableValue = params->getBoolean("Clickable"); clickableValue.has_value())
-    {
         setClickable(*clickableValue);
-    }
 
     return true;
 }
