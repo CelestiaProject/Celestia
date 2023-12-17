@@ -24,7 +24,7 @@ class RenderContext;
 class ModelGeometry : public Geometry
 {
 public:
-    ModelGeometry(std::unique_ptr<cmod::Model>&& model);
+    explicit ModelGeometry(std::unique_ptr<cmod::Model>&& model);
     ~ModelGeometry();
 
     /*! Find the closest intersection between the ray and the

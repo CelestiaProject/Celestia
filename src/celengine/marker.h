@@ -39,20 +39,16 @@ public:
         Crosshair  = 12,
     };
 
-    MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
-                         float size = 10.0f,
-                         Color color = Color::White,
-                         std::string label = {}) :
+    explicit MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
+                                  float size = 10.0f,
+                                  Color color = Color::White,
+                                  std::string label = {}) :
         m_symbol(symbol),
         m_size(size),
         m_color(color),
         m_label(std::move(label))
     {
     }
-
-    MarkerRepresentation(const MarkerRepresentation& rep);
-
-    MarkerRepresentation& operator=(const MarkerRepresentation& rep);
 
     Symbol symbol() const { return m_symbol; }
     Color color() const { return m_color; }

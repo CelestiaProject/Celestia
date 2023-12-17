@@ -40,7 +40,7 @@ std::string Asterism::getName(bool i18n) const
 
 int Asterism::getChainCount() const
 {
-    return chains.size();
+    return static_cast<int>(chains.size());
 }
 
 const Asterism::Chain& Asterism::getChain(int index) const

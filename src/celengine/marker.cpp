@@ -75,27 +75,6 @@ void Marker::render(Renderer& r, float size, const Matrices &m) const
 }
 
 
-MarkerRepresentation::MarkerRepresentation(const MarkerRepresentation& rep) :
-    m_symbol(rep.m_symbol),
-    m_size(rep.m_size),
-    m_color(rep.m_color),
-    m_label(rep.m_label)
-{
-}
-
-
-MarkerRepresentation&
-MarkerRepresentation::operator=(const MarkerRepresentation& rep)
-{
-    m_symbol = rep.m_symbol;
-    m_size = rep.m_size;
-    m_color = rep.m_color;
-    m_label = rep.m_label;
-
-    return *this;
-}
-
-
 void MarkerRepresentation::setColor(Color color)
 {
     m_color = color;
