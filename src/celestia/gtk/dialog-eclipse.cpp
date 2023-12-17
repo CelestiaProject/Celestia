@@ -353,8 +353,6 @@ static gint eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed)
 /* CALLBACK: Compute button in Eclipse Finder */
 static void eclipseCompute(GtkButton* button, EclipseData* ed)
 {
-    GtkTreeIter iter;
-
     /* Set the cursor to a watch and force redraw */
     gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_WATCH));
     gtk_main_iteration();
@@ -394,21 +392,22 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
 
         /* Add item to the list.
          * Entries 5-10 are not displayed and store data. */
+        GtkTreeIter iter;
         gtk_list_store_append(ed->eclipseListStore, &iter);
-        const char *planet, *satellite;
+        std::string planet, satellite;
         if (ed->type == Eclipse::Solar)
         {
-            planet = e.receiver->getName().c_str();
-            satellite = e.occulter->getName().c_str();
+            planet = e.receiver->getName();
+            satellite = e.occulter->getName();
         }
         else
         {
-            satellite = e.receiver->getName().c_str();
-            planet = e.occulter->getName().c_str();
+            satellite = e.receiver->getName();
+            planet = e.occulter->getName();
         }
         gtk_list_store_set(ed->eclipseListStore, &iter,
-                           0, planet,
-                           1, satellite,
+                           0, planet.c_str(),
+                           1, satellite.c_str(),
                            2, d,
                            3, strStart,
                            4, strEnd,
@@ -418,6 +417,7 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
                            8, timeToSet.hour,
                            9, timeToSet.minute,
                            10, (int)timeToSet.seconds,
+                           11, e.receiver,
                            -1);
     }
 
