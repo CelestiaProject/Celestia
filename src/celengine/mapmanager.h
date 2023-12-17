@@ -43,7 +43,9 @@ class WarpMeshInfo
     using ResourceType = WarpMesh;
     using ResourceKey = fs::path;
 
-    WarpMeshInfo(const fs::path& source) : source(source) {};
+    explicit WarpMeshInfo(const fs::path& source) :
+        source(source)
+    {};
 
     fs::path resolve(const fs::path&) const;
     std::unique_ptr<WarpMesh> load(const fs::path&) const;

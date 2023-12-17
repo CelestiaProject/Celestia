@@ -231,8 +231,8 @@ void setSaneStarStyle(AppData* app, Renderer::StarStyle value)
 /* Sanitizes and sets Texture Resolution */
 void setSaneTextureResolution(AppData* app, int value)
 {
-    if (value < 0 || value > TEXTURE_RESOLUTION)
-        value = 1; /* Default to "Medium" */
+    if (value < 0 || value > MultiResTexture::kTextureResolution)
+        value = medres; /* Default to "Medium" */
 
     app->renderer->setResolution(value);
 }

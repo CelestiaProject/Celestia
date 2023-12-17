@@ -13,8 +13,6 @@
 #include "texture.h"
 #include <celutil/reshandle.h>
 
-#define TEXTURE_RESOLUTION 3
-
 enum
 {
     lores  = 0,
@@ -26,12 +24,14 @@ enum
 class MultiResTexture
 {
 public:
+    static constexpr int kTextureResolution = 3;
+
     MultiResTexture();
     MultiResTexture(ResourceHandle loTex,
                     ResourceHandle medTex = InvalidResource,
                     ResourceHandle hiTex = InvalidResource);
     MultiResTexture(const fs::path& source, const fs::path& path);
-    ~MultiResTexture() {};
+
     void setTexture(const fs::path& source,
                     const fs::path& path,
                     unsigned int flags = 0);
@@ -43,5 +43,5 @@ public:
 
     bool isValid() const;
 
-    ResourceHandle tex[TEXTURE_RESOLUTION];
+    ResourceHandle tex[kTextureResolution];
 };

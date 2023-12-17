@@ -665,34 +665,6 @@ TwoVectorFrame::nestingDepth(unsigned int depth,
 }
 
 
-
-// Copy constructor
-FrameVector::FrameVector(const FrameVector& fv) :
-    vecType(fv.vecType),
-    observer(fv.observer),
-    target(fv.target),
-    vec(fv.vec),
-    frame(fv.frame)
-{
-}
-
-
-// Assignment operator (since we have a copy constructor)
-FrameVector&
-FrameVector::operator=(const FrameVector& fv)
-{
-    vecType = fv.vecType;
-    observer = fv.observer;
-    target = fv.target;
-    vec = fv.vec;
-
-    frame = fv.frame;
-
-    return *this;
-}
-
-
-
 FrameVector::FrameVector(FrameVectorType t) :
     vecType(t),
     observer(),
@@ -701,6 +673,7 @@ FrameVector::FrameVector(FrameVectorType t) :
     frame(nullptr)
 {
 }
+
 
 FrameVector
 FrameVector::createRelativePositionVector(const Selection& _observer,

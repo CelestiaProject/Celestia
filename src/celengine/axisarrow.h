@@ -22,7 +22,7 @@ class Body;
 class ArrowReferenceMark : public ReferenceMark
 {
 public:
-    ArrowReferenceMark(const Body& _body);
+    explicit ArrowReferenceMark(const Body& _body);
 
     void setSize(float _size);
     void setColor(const Color& _color);
@@ -57,7 +57,7 @@ private:
 class AxesReferenceMark : public ReferenceMark
 {
 public:
-    AxesReferenceMark(const Body& _body);
+    explicit AxesReferenceMark(const Body& _body);
 
     void setSize(float _size);
     void setOpacity(float _opacity);
@@ -92,7 +92,7 @@ private:
 class BodyAxisArrows : public AxesReferenceMark
 {
 public:
-    BodyAxisArrows(const Body& _body);
+    explicit BodyAxisArrows(const Body& _body);
     Eigen::Quaterniond getOrientation(double tdb) const override;
 };
 
@@ -100,7 +100,7 @@ public:
 class FrameAxisArrows : public AxesReferenceMark
 {
 public:
-    FrameAxisArrows(const Body& _body);
+    explicit FrameAxisArrows(const Body& _body);
     Eigen::Quaterniond getOrientation(double tdb) const override;
 };
 
@@ -108,7 +108,7 @@ public:
 class SunDirectionArrow : public ArrowReferenceMark
 {
 public:
-    SunDirectionArrow(const Body& _body);
+    explicit SunDirectionArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
 };
 
@@ -116,7 +116,7 @@ public:
 class VelocityVectorArrow : public ArrowReferenceMark
 {
 public:
-    VelocityVectorArrow(const Body& _body);
+    explicit VelocityVectorArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
 };
 
@@ -124,7 +124,7 @@ public:
 class SpinVectorArrow : public ArrowReferenceMark
 {
 public:
-    SpinVectorArrow(const Body& _body);
+    explicit SpinVectorArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
 };
 

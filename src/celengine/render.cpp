@@ -654,7 +654,7 @@ bool Renderer::isRTL() const
 
 void Renderer::setResolution(unsigned int resolution)
 {
-    if (resolution < TEXTURE_RESOLUTION)
+    if (resolution < MultiResTexture::kTextureResolution)
         textureResolution = resolution;
     markSettingsChanged();
 }

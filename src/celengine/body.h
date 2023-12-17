@@ -39,8 +39,8 @@ class Atmosphere;
 class PlanetarySystem
 {
  public:
-    PlanetarySystem(Body* _primary);
-    PlanetarySystem(Star* _star);
+    explicit PlanetarySystem(Body* _primary);
+    explicit PlanetarySystem(Star* _star);
     ~PlanetarySystem() = default;
 
     Star* getStar() const { return star; };

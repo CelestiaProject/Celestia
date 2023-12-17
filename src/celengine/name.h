@@ -30,9 +30,6 @@ class NameDatabase
     using NumberIndex = std::multimap<AstroCatalog::IndexNumber, std::string>;
 
  public:
-    NameDatabase() {};
-
-
     std::uint32_t getNameCount() const;
 
     void add(const AstroCatalog::IndexNumber, const std::string&, bool parseGreek = true);

@@ -383,7 +383,7 @@ LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 
     std::unique_ptr<cmod::Model> model = cmod::LoadModel(
         in,
-        [&](const fs::path& name)
+        [&path](const fs::path& name)
         {
             return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
         });

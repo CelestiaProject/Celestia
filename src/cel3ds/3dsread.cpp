@@ -442,7 +442,7 @@ bool readMeshMatrix(std::istream& in, std::int32_t contentSize, M3DTriangleMesh&
         return false;
     }
 
-    float elements[12];
+    std::array<float, 12> elements;
     for (std::size_t i = 0; i < 12; ++i)
     {
         if (!util::readLE<float>(in, elements[i]))
@@ -681,24 +681,24 @@ bool processMaterialChunk(std::istream& in, M3DChunkType chunkType, std::int32_t
 
     case M3DChunkType::MaterialAmbient:
         GetLogger()->debug("Processing MaterialAmbient chunk\n");
-        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setAmbientColor(color); });
+        return readMaterialColor(in, contentSize, [&material](M3DColor color) { material.setAmbientColor(color); });
 
     case M3DChunkType::MaterialDiffuse:
         GetLogger()->debug("Processing MaterialDiffuse chunk\n");
-        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setDiffuseColor(color); });
+        return readMaterialColor(in, contentSize, [&material](M3DColor color) { material.setDiffuseColor(color); });
 
     case M3DChunkType::MaterialSpecular:
         GetLogger()->debug("Processing MaterialSpecular chunk\n");
-        return readMaterialColor(in, contentSize, [&](M3DColor color) { material.setSpecularColor(color); });
+        return readMaterialColor(in, contentSize, [&material](M3DColor color) { material.setSpecularColor(color); });
 
     case M3DChunkType::MaterialShininess:
         GetLogger()->debug("Processing MaterialShininess chunk\n");
-        return readMaterialPercentage(in, contentSize, [&](float percentage) { material.setShininess(percentage); });
+        return readMaterialPercentage(in, contentSize, [&material](float percentage) { material.setShininess(percentage); });
 
     case M3DChunkType::MaterialTransparency:
         GetLogger()->debug("Processing MaterialTransparency chunk\n");
         return readMaterialPercentage(in, contentSize,
-                                      [&](float percentage) { material.setOpacity(1.0f - percentage / 100.0f); });
+                                      [&material](float percentage) { material.setOpacity(1.0f - percentage / 100.0f); });
 
     case M3DChunkType::MaterialTexmap:
         GetLogger()->debug("Processing MaterialTexmap chunk\n");

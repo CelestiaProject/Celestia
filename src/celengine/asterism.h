@@ -25,7 +25,7 @@ class StarDatabase;
 class Asterism
 {
  public:
-    Asterism(std::string_view);
+    explicit Asterism(std::string_view);
     ~Asterism() = default;
     Asterism() = delete;
     Asterism(const Asterism&) = delete;

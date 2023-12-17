@@ -24,8 +24,8 @@ class Body;
 class FrameTree
 {
 public:
-    FrameTree(Star*);
-    FrameTree(Body*);
+    explicit FrameTree(Star*);
+    explicit FrameTree(Body*);
     ~FrameTree() = default;
 
     /*! Return the star that this tree is associated with; it will be
