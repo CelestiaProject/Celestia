@@ -459,7 +459,7 @@ static bool CopyStateURLToClipboard()
 
     CelestiaState appState;
     appState.captureState(appCore);
-    
+
     Url url(appState, Url::CurrentVersion);
     string urlString = url.getAsString();
 
@@ -1852,7 +1852,7 @@ bool SetDCPixelFormat(HDC hDC)
     {
         msaa = true;
     }
-        
+
     if (!msaa)
     {
         static PIXELFORMATDESCRIPTOR pfd = {
@@ -2208,7 +2208,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
         EnableMenuItem(fileMenu, ID_FILE_SCRIPTS, MF_GRAYED);
         return;
     }
-    
+
     MENUITEMINFO info;
     memset(&info, 0, sizeof(info));
     info.cbSize = sizeof(info);
@@ -2310,7 +2310,7 @@ public:
     {
 		if (s_splash != NULL)
 			s_splash->close();
-			
+
         MessageBox(NULL,
                    msg.c_str(),
                    "Fatal Error",
@@ -3147,12 +3147,12 @@ class WinSplashProgressNotifier : public ProgressNotifier
 public:
     WinSplashProgressNotifier(SplashWindow* _splash) : splash(_splash) {};
     virtual ~WinSplashProgressNotifier() {};
-    
+
     virtual void update(const string& filename)
     {
         splash->setMessage(UTF8ToCurrentCP(_("Loading: ")) + filename);
     }
-    
+
 private:
     SplashWindow* splash;
 };
@@ -3162,7 +3162,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
-        
+
     // Say we're not ready to render yet.
     bReady = false;
 
@@ -3211,7 +3211,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     s_splash->setMessage("Loading data files...");
     if (!skipSplashScreen)
         s_splash->showSplash();
-    
+
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
     if (dropTarget)
@@ -3301,10 +3301,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             delete s_splash;
             s_splash = NULL;
         }
-		
+
         MessageBox(NULL,
                    "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR | MB_TOPMOST);		   
+                   MB_OK | MB_ICONERROR | MB_TOPMOST);
         return false;
     }
 
@@ -3313,13 +3313,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     GetCurrentDirectory(_MAX_PATH - 1, appPath);
 
     // Gettext integration
-    setlocale(LC_ALL, ""); 
-    setlocale(LC_NUMERIC, "C"); 
+    setlocale(LC_ALL, "");
+    setlocale(LC_NUMERIC, "C");
     string localeDir = (string)appPath + "/locale";
     bindtextdomain("celestia", localeDir.c_str());
-    bind_textdomain_codeset("celestia", "UTF-8"); 
+    bind_textdomain_codeset("celestia", "UTF-8");
     bindtextdomain("celestia_constellations", localeDir.c_str());
-    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
+    bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
     // Loading localized resources
@@ -3328,7 +3328,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     int langID = 0;
     if (sscanf(_("WinLangID"), "%x", &langID) == 1)
         SetThreadLocale(langID);
-    if ((hRes = LoadLibrary(res)) == NULL) {
+    hRes = LoadLibraryEx(res, nullptr,
+                         LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
+    if (hRes == NULL) {
         cout << "Couldn't load localized resources: "<< res<< "\n";
         hRes = hInstance;
     }
@@ -3338,10 +3340,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     WinSplashProgressNotifier* progressNotifier = NULL;
     if (!skipSplashScreen)
         progressNotifier = new WinSplashProgressNotifier(s_splash);
-        
+
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
     bool initSucceeded = appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier);
-    
+
     delete progressNotifier;
 
     // Close the splash screen after all data has been loaded
@@ -3351,7 +3353,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		delete s_splash;
         s_splash = NULL;
 	}
-	
+
 	// Give up now if we failed initialization
 	if (!initSucceeded)
 		return 1;
@@ -3494,7 +3496,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         // Set default render flags for a new installation
         appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
     }
-    
+
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     BuildScriptsMenu(menuBar, ScriptsDirectory);
     syncMenusWithRendererState();
@@ -3502,7 +3504,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
-    
+
     // Get the current time
     time_t systime = time(NULL);
     struct tm *gmt = gmtime(&systime);
@@ -4227,7 +4229,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
         case ID_TIME_SETTIME:
             ShowSetTimeDialog(hRes, hWnd, appCore);
-            
+
             // Update the local time menu item--since the set time dialog handles setting the time zone,
             // should we just get rid of the menu item?
             if (appCore->getTimeZoneBias() == 0)
@@ -4351,7 +4353,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     MarkerRepresentation markerRep(MarkerRepresentation::Diamond,
                                                    10.0f,
                                                    Color(0.0f, 1.0f, 0.0f, 0.9f));
-						 
+
                     sim->getUniverse()->markObject(sim->getSelection(),
                                                    markerRep,
                                                    1);
