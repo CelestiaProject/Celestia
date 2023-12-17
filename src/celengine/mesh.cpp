@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <functional>
 #include <iostream>
 #include "mesh.h"
 #include "rendcontext.h"
