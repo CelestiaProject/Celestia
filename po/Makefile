@@ -7,8 +7,8 @@ all: po-update
 $(pot_file): $(pot_file)-update
 
 $(pot_file)-update:
-	PATH=${PATH}:$(shell pwd) make -f Rules-win-resource $@
-	PATH=${PATH}:$(shell pwd) make -f Rules-qt $@
+	PATH=${PATH}:$(shell pwd) make -f Rules-win-resource.mak $@
+	PATH=${PATH}:$(shell pwd) make -f Rules-qt.mak $@
 	xgettext --keyword=_ --keyword=N_ --keyword=i18n \
 	         --keyword=i18nc:1c,2 --keyword=NC_:1c,2 --keyword=C_:1c,2 \
 	         --sort-by-file --qt --add-comments \
@@ -25,5 +25,5 @@ po-update: $(po_files)
 	msgmerge --update $@ $(pot_file)
 
 clean:
-	make -f Rules-win-resource $@
-	make -f Rules-qt $@
+	make -f Rules-win-resource.mak $@
+	make -f Rules-qt.mak $@
