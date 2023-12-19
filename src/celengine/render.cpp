@@ -2966,13 +2966,13 @@ void Renderer::renderPlanet(Body& body,
         }
     }
 
-    if (body.isVisibleAsPoint())
+    if (body.isVisibleAsPoint() && body.getSurface().color.toVector3().maxCoeff() > 0.0f)
     {
         renderObjectAsPoint(pos,
                             body.getRadius(),
                             appMag,
                             discSizeInPixels,
-                            body.getSurface().color,
+                            body.getSurface().color / body.getSurface().color.maxCoeff(),
                             false, false, m);
     }
 }
