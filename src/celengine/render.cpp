@@ -2972,7 +2972,7 @@ void Renderer::renderPlanet(Body& body,
                             body.getRadius(),
                             appMag,
                             discSizeInPixels,
-                            body.getSurface().color / body.getSurface().color.maxCoeff(),
+                            body.getSurface().color / body.getSurface().color.toVector3().maxCoeff(),
                             false, false, m);
     }
 }
