@@ -2978,6 +2978,7 @@ void Renderer::renderPlanet(Body& body,
                                 false, false, m);
         }
     }
+}
 
 
 void Renderer::renderStar(const Star& star,
