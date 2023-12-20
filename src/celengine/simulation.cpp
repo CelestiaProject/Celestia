@@ -258,6 +258,12 @@ void Simulation::orbit(const Eigen::Quaternionf& q)
     activeObserver->orbit(selection, q);
 }
 
+// Orbit around the selection (if there is one.)  This involves changing
+// both the observer's position and orientation.
+bool Simulation::orbit(const Eigen::Vector3f& from, const Eigen::Vector3f& to)
+{
+    return activeObserver->orbit(selection, from, to);
+}
 
 // Exponential camera dolly--move toward or away from the selected object
 // at a rate dependent on the observer's distance from the object.

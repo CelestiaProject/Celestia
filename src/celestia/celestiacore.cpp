@@ -412,6 +412,8 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
     newLocation.y = y;
     dragLocation = newLocation;
 
+    dragStartFromSurface = std::nullopt;
+
 #ifdef CELX
     if (m_script != nullptr)
     {
@@ -435,6 +437,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
     dragLocation = std::nullopt;
+    dragStartFromSurface = std::nullopt;
 
     // Four pixel tolerance for picking
     float obsPickTolerance = sim->getActiveObserver()->getFOV() / static_cast<float>(metrics.height) * this->pickTolerance;
@@ -656,21 +659,36 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 flash(fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible()));
             }
         }
-        else if ((modifiers & RightButton) != 0)
-        {
-            // Adjust the rotation rate based on the distance from the reference object.
-            float coarseness = ComputeRotationCoarseness(*sim);
-
-            Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
-                            math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
-            sim->orbit(q);
-        }
         else if (oldLocation.has_value() && dragLocation.has_value())
         {
             auto view = viewManager->activeView();
             auto oldPickRay = getPickRay(oldLocation.value().x, oldLocation.value().y, view);
             auto newPickRay = getPickRay(dragLocation.value().x, dragLocation.value().y, view);
-            sim->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay, newPickRay));
+            if ((modifiers & RightButton) != 0)
+            {
+                if (bool isDragStartDetermined = dragStartFromSurface.has_value(); !isDragStartDetermined || dragStartFromSurface.value())
+                {
+                    // The drag started from the surface or we are not sure yet, try to perform a surface drag
+                    bool surfaceDrag = sim->orbit(oldPickRay, newPickRay);
+
+                    if (!isDragStartDetermined)
+                        dragStartFromSurface = surfaceDrag;
+                }
+
+                if (!dragStartFromSurface.value())
+                {
+                    // Adjust the rotation rate based on the distance from the reference object.
+                    float coarseness = ComputeRotationCoarseness(*sim);
+
+                    Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
+                    math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
+                    sim->orbit(q);
+                }
+            }
+            else
+            {
+                sim->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay, newPickRay));
+            }
         }
 
         mouseMotion += abs(dy) + abs(dx);
@@ -2220,8 +2238,8 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
     float pickY;
     float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
     view->mapWindowToView(x / static_cast<float>(metrics.width),
-                                               y / static_cast<float>(metrics.height),
-                                               pickX, pickY);
+                          y / static_cast<float>(metrics.height),
+                          pickX, pickY);
     pickX *= aspectRatio;
     if (isViewportEffectUsed)
         viewportEffect->distortXY(pickX, pickY);
