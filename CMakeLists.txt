@@ -185,7 +185,6 @@ if(ENABLE_NLS)
   if(NOT GETTEXT_FOUND)
     message(WARNING "Gettext is not found, traslations won't be created.")
   endif()
-  include(FixGettext)
 
   find_package(Intl REQUIRED)
   include(FixIntl)
