@@ -2974,7 +2974,7 @@ void Renderer::renderPlanet(Body& body,
                                 body.getRadius(),
                                 appMag,
                                 discSizeInPixels,
-                                body.getSurface().color / maxCoeff, // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
+                                body.getSurface().color * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
                                 false, false, m);
         }
     }
