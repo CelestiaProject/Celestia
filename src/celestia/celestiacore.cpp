@@ -407,6 +407,11 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
+    MouseLocation newLocation;
+    newLocation.x = x;
+    newLocation.y = y;
+    dragLocation = newLocation;
+
 #ifdef CELX
     if (m_script != nullptr)
     {
@@ -429,6 +434,8 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+    dragLocation = std::nullopt;
+
     // Four pixel tolerance for picking
     float obsPickTolerance = sim->getActiveObserver()->getFOV() / static_cast<float>(metrics.height) * this->pickTolerance;
 
@@ -454,17 +461,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         {
             viewManager->pickView(sim, metrics, x, y);
 
-            float pickX;
-            float pickY;
-            float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
-            viewManager->activeView()->mapWindowToView(x / static_cast<float>(metrics.width),
-                                                       y / static_cast<float>(metrics.height),
-                                                       pickX, pickY);
-            pickX *= aspectRatio;
-            if (isViewportEffectUsed)
-                viewportEffect->distortXY(pickX, pickY);
-
-            Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, viewManager->activeView()->getObserver()->getZoom());
+            Vector3f pickRay = getPickRay(x, y, viewManager->activeView());
 
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), obsPickTolerance);
@@ -560,6 +557,13 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
+    auto oldLocation = dragLocation;
+    if (dragLocation.has_value())
+    {
+        dragLocation.value().x += dx;
+        dragLocation.value().y += dy;
+    }
+
     if (viewManager->resizeViews(metrics, dx, dy))
     {
         setFOVFromZoom();
@@ -652,27 +656,21 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 flash(fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible()));
             }
         }
-        else
+        else if ((modifiers & RightButton) != 0)
         {
-            // For a small field of view, rotate the camera more finely
-            float coarseness = 1.5f;
-            if ((modifiers & RightButton) == 0)
-            {
-                coarseness = math::radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
-            }
-            else
-            {
-                // If right dragging to rotate, adjust the rotation rate
-                // based on the distance from the reference object.
-                coarseness = ComputeRotationCoarseness(*sim);
-            }
+            // Adjust the rotation rate based on the distance from the reference object.
+            float coarseness = ComputeRotationCoarseness(*sim);
 
             Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
                             math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
-            if ((modifiers & RightButton) != 0)
-                sim->orbit(q);
-            else
-                sim->rotate(q.conjugate());
+            sim->orbit(q);
+        }
+        else if (oldLocation.has_value() && dragLocation.has_value())
+        {
+            auto view = viewManager->activeView();
+            auto oldPickRay = getPickRay(oldLocation.value().x, oldLocation.value().y, view);
+            auto newPickRay = getPickRay(dragLocation.value().x, dragLocation.value().y, view);
+            sim->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay, newPickRay));
         }
 
         mouseMotion += abs(dy) + abs(dx);
@@ -2213,6 +2211,22 @@ void CelestiaCore::renderOverlay()
         m_scriptHook->call("renderoverlay");
 
     hud->renderOverlay(metrics, sim, *viewManager, movieCapture, timeInfo, m_script != nullptr, editMode);
+}
+
+
+Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View *view)
+{
+    float pickX;
+    float pickY;
+    float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
+    view->mapWindowToView(x / static_cast<float>(metrics.width),
+                                               y / static_cast<float>(metrics.height),
+                                               pickX, pickY);
+    pickX *= aspectRatio;
+    if (isViewportEffectUsed)
+        viewportEffect->distortXY(pickX, pickY);
+
+    return renderer->getProjectionMode()->getPickRay(pickX, pickY, view->getObserver()->getZoom());
 }
 
 
