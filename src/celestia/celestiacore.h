@@ -15,6 +15,7 @@
 #include <functional>
 #include <string_view>
 #include <tuple>
+#include <optional>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -404,6 +405,7 @@ private:
     void updateSelectionFromInput();
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
+    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
@@ -492,6 +494,13 @@ private:
     int distanceToScreen{ 400 };
 
     float pickTolerance { 4.0f };
+
+    struct MouseLocation
+    {
+        float x;
+        float y;
+    };
+    std::optional<MouseLocation> dragLocation{ std::nullopt };
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };
