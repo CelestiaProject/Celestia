@@ -495,14 +495,21 @@ private:
 
     float pickTolerance { 4.0f };
 
-#ifdef ENABLE_RAY_BASED_DRAGGING
+#if defined(ENABLE_RAY_BASED_DRAGGING) || defined(ENABLE_FOCUS_ZOOMING)
     struct MouseLocation
     {
         float x;
         float y;
     };
+
+#ifdef ENABLE_RAY_BASED_DRAGGING
     std::optional<MouseLocation> dragLocation { std::nullopt };
     std::optional<bool> dragStartFromSurface { std::nullopt };
+#endif
+
+#ifdef ENABLE_FOCUS_ZOOMING
+    std::optional<MouseLocation> dragStart{ std::nullopt };
+#endif
 #endif
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
