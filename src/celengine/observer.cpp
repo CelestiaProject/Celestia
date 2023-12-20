@@ -9,7 +9,9 @@
 // of the License, or (at your option) any later version.
 
 #include <numeric>
+#include <optional>
 #include <celmath/geomutil.h>
+#include <celmath/intersect.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include "body.h"
@@ -29,7 +31,10 @@ namespace math = celestia::math;
 
 #define VELOCITY_CHANGE_TIME      0.25f
 
-static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
+namespace
+{
+
+Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
 {
     double r0 = v0.norm();
     double r1 = v1.norm();
@@ -44,6 +49,19 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
     double theta = acos(cosTheta);
 
     return (cos(theta * t) * u + sin(theta * t) * v) * math::lerp(t, r0, r1);
+}
+
+std::optional<Eigen::Vector3d> getNearIntersectionPoint(const Eigen::ParametrizedLine<double, 3>& ray,
+                                         const math::Sphered& sphere)
+{
+    double distance;
+    bool intersects = math::testIntersection(ray, sphere, distance);
+    if (intersects)
+        return ray.origin() + distance * ray.direction();
+    else
+        return std::nullopt;
+}
+
 }
 
 
@@ -907,6 +925,50 @@ void Observer::orbit(const Selection& selection, const Quaternionf& q)
         position = focusPosition.offsetKm(v);
         updateUniversal();
     }
+}
+
+/*! Orbit around the reference object (if there is one.)  rotating the object with intersection point from
+ *  a direction to another. If there is no intersection point, return false.
+ */
+bool Observer::orbit(const Selection& selection, const Eigen::Vector3f &from, const Eigen::Vector3f &to)
+{
+    Selection center = frame->getRefObject();
+    if (center.empty())
+    {
+        if (selection.empty())
+            return false;
+        center = selection;
+    }
+
+    double radius = center.radius();
+    if (radius <= 0.0)
+        return false;
+
+    // Get the focus position (center of rotation) in frame
+    // coordinates; in order to make this function work in all
+    // frames of reference, it's important to work in frame
+    // coordinates.
+    UniversalCoord focusPosition = center.getPosition(getTime());
+    focusPosition = frame->convertFromUniversal(focusPosition, getTime());
+
+    Eigen::Vector3d objectCenter = focusPosition.offsetFromKm(position);
+
+    // Get the rays adjusted to orientation
+    Eigen::Vector3d transformedFrom = getOrientation().conjugate() * from.cast<double>();
+    Eigen::Vector3d transformedTo = getOrientation().conjugate() * to.cast<double>();
+
+    // Find intersections for the rays, if no intersection, return false
+    math::Sphered sphere { objectCenter, radius };
+    auto orbitStartPosition = getNearIntersectionPoint(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), transformedFrom), sphere);
+    if (!orbitStartPosition.has_value())
+        return false;
+
+    auto orbitEndPosition = getNearIntersectionPoint(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), transformedTo), sphere);
+    if (!orbitEndPosition.has_value())
+        return false;
+
+    orbit(selection, Eigen::Quaterniond::FromTwoVectors(transformedOrientation * (orbitStartPosition.value() - objectCenter), transformedOrientation * (orbitEndPosition.value() - objectCenter)).cast<float>());
+    return true;
 }
 
 

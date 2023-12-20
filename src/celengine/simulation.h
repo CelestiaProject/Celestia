@@ -50,6 +50,7 @@ class Simulation
 
     Universe* getUniverse() const;
 
+    bool orbit(const Eigen::Vector3f& from, const Eigen::Vector3f& to);
     void orbit(const Eigen::Quaternionf& q);
     void rotate(const Eigen::Quaternionf& q);
     void changeOrbitDistance(float d);

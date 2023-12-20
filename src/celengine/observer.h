@@ -148,6 +148,7 @@ public:
     void           update(double dt, double timeScale);
 
     void orbit(const Selection&, const Eigen::Quaternionf &q);
+    bool orbit(const Selection&, const Eigen::Vector3f &from, const Eigen::Vector3f &to);
     void rotate(const Eigen::Quaternionf &q);
     void changeOrbitDistance(const Selection&, float d);
     void setTargetSpeed(float s);

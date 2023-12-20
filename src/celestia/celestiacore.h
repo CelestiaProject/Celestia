@@ -500,7 +500,8 @@ private:
         float x;
         float y;
     };
-    std::optional<MouseLocation> dragLocation{ std::nullopt };
+    std::optional<MouseLocation> dragLocation { std::nullopt };
+    std::optional<bool> dragStartFromSurface { std::nullopt };
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };
