@@ -2966,7 +2966,10 @@ void Renderer::renderPlanet(Body& body,
         }
     }
 
-    if (body.isVisibleAsPoint() && body.getSurface().color.toVector3().maxCoeff() > 0.0f)
+    if (body.isVisibleAsPoint())
+    {
+        if (float maxCoeff = body.getSurface().color.toVector3().maxCoeff(); maxCoeff > 0.0f)
+        {
     {
         renderObjectAsPoint(pos,
                             body.getRadius(),
