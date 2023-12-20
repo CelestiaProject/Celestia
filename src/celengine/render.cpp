@@ -2968,17 +2968,16 @@ void Renderer::renderPlanet(Body& body,
 
     if (body.isVisibleAsPoint())
     {
-        if (float maxCoeff = body.getSurface().color.toVector3().maxCoeff(); maxCoeff > 0.0f)
+        if (float maxCoeff = body.getSurface().color.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
-    {
-        renderObjectAsPoint(pos,
-                            body.getRadius(),
-                            appMag,
-                            discSizeInPixels,
-                            body.getSurface().color / maxCoeff,
-                            false, false, m);
+            renderObjectAsPoint(pos,
+                                body.getRadius(),
+                                appMag,
+                                discSizeInPixels,
+                                body.getSurface().color / maxCoeff, // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
+                                false, false, m);
+        }
     }
-}
 
 
 void Renderer::renderStar(const Star& star,
