@@ -221,6 +221,7 @@ public:
     void mouseMove(float, float);
     void joystickAxis(int axis, float amount);
     void joystickButton(int button, bool down);
+    void pinchUpdate(float focusX, float focusY, float scale);
     void resize(GLsizei w, GLsizei h);
     void draw();
     void draw(celestia::View*);
@@ -401,11 +402,18 @@ public:
     void setLayoutDirection(celestia::LayoutDirection);
 
 private:
+    struct MouseLocation
+    {
+        float x;
+        float y;
+    };
+
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
     Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
+    void updateFOV(float fov, std::optional<MouseLocation> focus, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
@@ -495,13 +503,6 @@ private:
 
     float pickTolerance { 4.0f };
 
-#if defined(ENABLE_RAY_BASED_DRAGGING) || defined(ENABLE_FOCUS_ZOOMING)
-    struct MouseLocation
-    {
-        float x;
-        float y;
-    };
-
 #ifdef ENABLE_RAY_BASED_DRAGGING
     std::optional<MouseLocation> dragLocation { std::nullopt };
     std::optional<bool> dragStartFromSurface { std::nullopt };
@@ -509,7 +510,6 @@ private:
 
 #ifdef ENABLE_FOCUS_ZOOMING
     std::optional<MouseLocation> dragStart{ std::nullopt };
-#endif
 #endif
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
