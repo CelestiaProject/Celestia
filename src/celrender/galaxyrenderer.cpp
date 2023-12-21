@@ -24,7 +24,6 @@
 #include "galaxyrenderer.h"
 
 using celestia::engine::GalacticFormManager;
-using celestia::engine::GalacticForm;
 
 namespace celestia::render
 {
@@ -183,16 +182,14 @@ GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightne
     return true;
 }
 
-struct GalaxyRenderer::RenderDataGL2
+struct GalaxyRenderer::RenderData
 {
-    RenderDataGL2(gl::Buffer &&bo, gl::Buffer &&io, gl::VertexObject &&vo) :
+    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
         bo(std::move(bo)),
-        io(std::move(io)),
         vo(std::move(vo))
     {
     }
     gl::Buffer       bo{ util::NoCreateT{} };
-    gl::Buffer       io{ util::NoCreateT{} };
     gl::VertexObject vo{ util::NoCreateT{} };
 };
 
@@ -236,7 +233,7 @@ GalaxyRenderer::renderGL2()
         prog->floatParam("brightness")         = brightness;
         prog->mat4Param("m")                   = m;
 
-        m_renderDataGL2[obj.galaxy->getFormId()].vo.draw(nPoints * 6);
+        m_renderData[obj.galaxy->getFormId()].vo.draw(nPoints * 6);
     }
 
     glActiveTexture(GL_TEXTURE0);
@@ -338,28 +335,17 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
                 bo, CelestiaGLProgram::TextureCoord0AttributeIndex, 2, gl::VertexObject::DataType::UnsignedByte,
                 true, sizeof(GalaxyVtx), offsetof(GalaxyVtx, texCoord));
             gl::Buffer io(gl::Buffer::TargetHint::ElementArray, indices);
-            vo.setIndexBuffer(io, 0, gl::VertexObject::IndexType::UnsignedInt);
-            m_renderDataGL2.emplace_back(std::move(bo), std::move(io), std::move(vo));
+            vo.setIndexBuffer(std::move(io), 0, gl::VertexObject::IndexType::UnsignedInt);
+            m_renderData.emplace_back(std::move(bo), std::move(vo));
         }
         else
         {
-            m_renderDataGL2.emplace_back(gl::Buffer(util::NoCreateT{}), gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
         }
         glVertices.clear();
         indices.clear();
     }
 }
-
-struct GalaxyRenderer::RenderDataGL3
-{
-    RenderDataGL3(gl::Buffer &&bo, gl::VertexObject &&vo) :
-        bo(std::move(bo)),
-        vo(std::move(vo))
-    {
-    }
-    gl::Buffer       bo{ util::NoCreateT{} };
-    gl::VertexObject vo{ util::NoCreateT{} };
-};
 
 void
 GalaxyRenderer::renderGL3()
@@ -403,7 +389,7 @@ GalaxyRenderer::renderGL3()
         prog->floatParam("minimumFeatureSize") = minimumFeatureSize;
         prog->mat4Param("m")                   = m;
 
-        m_renderDataGL3[obj.galaxy->getFormId()].vo.draw(nPoints);
+        m_renderData[obj.galaxy->getFormId()].vo.draw(nPoints);
     }
 
     glActiveTexture(GL_TEXTURE0);
@@ -475,11 +461,11 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
                 bo, brightnessLoc, 1, gl::VertexObject::DataType::UnsignedByte,
                 true, sizeof(GalaxyVtx), offsetof(GalaxyVtx, brightness));
 
-            m_renderDataGL3.emplace_back(std::move(bo), std::move(vo));
+            m_renderData.emplace_back(std::move(bo), std::move(vo));
         }
         else
         {
-            m_renderDataGL3.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
         }
         glVertices.clear();
     }
