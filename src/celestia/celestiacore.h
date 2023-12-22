@@ -495,6 +495,7 @@ private:
 
     float pickTolerance { 4.0f };
 
+#ifdef ENABLE_RAY_BASED_DRAGGING
     struct MouseLocation
     {
         float x;
@@ -502,6 +503,7 @@ private:
     };
     std::optional<MouseLocation> dragLocation { std::nullopt };
     std::optional<bool> dragStartFromSurface { std::nullopt };
+#endif
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };

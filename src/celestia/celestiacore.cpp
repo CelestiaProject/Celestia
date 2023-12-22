@@ -407,12 +407,14 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
+#ifdef ENABLE_RAY_BASED_DRAGGING
     MouseLocation newLocation;
     newLocation.x = x;
     newLocation.y = y;
     dragLocation = newLocation;
 
     dragStartFromSurface = std::nullopt;
+#endif
 
 #ifdef CELX
     if (m_script != nullptr)
@@ -436,8 +438,10 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+#ifdef ENABLE_RAY_BASED_DRAGGING
     dragLocation = std::nullopt;
     dragStartFromSurface = std::nullopt;
+#endif
 
     // Four pixel tolerance for picking
     float obsPickTolerance = sim->getActiveObserver()->getFOV() / static_cast<float>(metrics.height) * this->pickTolerance;
@@ -560,12 +564,14 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
+#ifdef ENABLE_RAY_BASED_DRAGGING
     auto oldLocation = dragLocation;
     if (dragLocation.has_value())
     {
         dragLocation.value().x += dx;
         dragLocation.value().y += dy;
     }
+#endif
 
     if (viewManager->resizeViews(metrics, dx, dy))
     {
@@ -659,6 +665,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 flash(fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible()));
             }
         }
+#ifdef ENABLE_RAY_BASED_DRAGGING
         else if (oldLocation.has_value() && dragLocation.has_value())
         {
             auto view = viewManager->activeView();
@@ -681,7 +688,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                     float coarseness = ComputeRotationCoarseness(*sim);
 
                     Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
-                    math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
+                                    math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
                     sim->orbit(q);
                 }
             }
@@ -690,6 +697,30 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 sim->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay, newPickRay));
             }
         }
+#else
+        else
+        {
+            // For a small field of view, rotate the camera more finely
+            float coarseness = 1.5f;
+            if ((modifiers & RightButton) == 0)
+            {
+                coarseness = math::radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
+            }
+            else
+            {
+                // If right dragging to rotate, adjust the rotation rate
+                // based on the distance from the reference object.
+                coarseness = ComputeRotationCoarseness(*sim);
+            }
+
+            Quaternionf q = math::XRotation(dy / static_cast<float>(metrics.height) * coarseness) *
+                            math::YRotation(dx / static_cast<float>(metrics.width) * coarseness);
+            if ((modifiers & RightButton) != 0)
+                sim->orbit(q);
+            else
+                sim->rotate(q.conjugate());
+        }
+#endif
 
         mouseMotion += abs(dy) + abs(dx);
     }
