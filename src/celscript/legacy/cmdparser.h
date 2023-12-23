@@ -29,21 +29,21 @@ class ScriptMaps;
 
 class CommandParser
 {
- public:
-    CommandParser(std::istream&, const std::shared_ptr<celestia::scripts::ScriptMaps> &sm);
+public:
+    CommandParser(std::istream&, const celestia::scripts::ScriptMaps &sm);
     ~CommandParser();
 
     CommandSequence parse();
     celestia::util::array_view<std::string> getErrors() const;
 
- private:
+private:
     std::unique_ptr<Command> parseCommand();
     void error(std::string&&);
 
     std::unique_ptr<Parser> parser;
     std::unique_ptr<Tokenizer> tokenizer;
     std::vector<std::string> errorList;
-    std::shared_ptr<celestia::scripts::ScriptMaps> scriptMaps;
+    const celestia::scripts::ScriptMaps &scriptMaps;
 };
 
 } // end namespace celestia::scripts

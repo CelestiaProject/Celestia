@@ -823,14 +823,14 @@ CommandSetLineColor::CommandSetLineColor(std::string _item, const Color& _color)
 
 void CommandSetLineColor::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto &LineColorMap = env.getCelestiaCore()->scriptMaps()->LineColorMap;
+    auto &LineColorMap = env.getCelestiaCore()->scriptMaps().LineColorMap;
     if (LineColorMap.count(item) == 0)
     {
         GetLogger()->warn("Unknown line style: {}\n", item);
     }
     else
     {
-        *LineColorMap[item] = color;
+        *(LineColorMap[item]) = color;
     }
 }
 
@@ -846,14 +846,14 @@ CommandSetLabelColor::CommandSetLabelColor(std::string _item, const Color& _colo
 
 void CommandSetLabelColor::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto &LabelColorMap = env.getCelestiaCore()->scriptMaps()->LabelColorMap;
+    auto &LabelColorMap = env.getCelestiaCore()->scriptMaps().LabelColorMap;
     if (LabelColorMap.count(item) == 0)
     {
         GetLogger()->error("Unknown label style: {}\n", item);
     }
     else
     {
-        *LabelColorMap[item] = color;
+        *(LabelColorMap[item]) = color;
     }
 }
 

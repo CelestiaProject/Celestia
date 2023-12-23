@@ -355,7 +355,7 @@ public:
     void setTypedText(const char *);
 
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
-    const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
+    celestia::scripts::ScriptMaps& scriptMaps() { return m_scriptMaps; }
 
     void getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const;
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::engine::PixelFormat format) const;
@@ -428,7 +428,8 @@ private:
 #ifdef CELX
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
 #endif
-    std::shared_ptr<celestia::scripts::ScriptMaps>          m_scriptMaps;
+
+    celestia::scripts::ScriptMaps m_scriptMaps;
 
     enum ScriptState
     {

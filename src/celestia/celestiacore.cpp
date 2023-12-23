@@ -191,7 +191,6 @@ CelestiaCore::CelestiaCore() :
 #ifdef CELX
     m_luaPlugin(std::make_unique<LuaScriptPlugin>(this)),
 #endif
-    m_scriptMaps(new ScriptMaps()),
     oldFOV(stdFOV),
     console(new Console(*renderer, 200, 120)),
     m_tee(std::cout, std::cerr)
