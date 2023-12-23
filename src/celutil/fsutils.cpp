@@ -14,6 +14,7 @@
 #include <fstream>
 #include <fmt/format.h>
 #include "gettext.h"
+#include "logger.h"
 #ifdef _WIN32
 #include <shlobj.h>
 #include "winutil.h"
@@ -114,6 +115,20 @@ fs::path ResolveWildcard(const fs::path& wildcard,
     }
 
     return fs::path();
+}
+
+bool IsValidDirectory(const fs::path& dir)
+{
+    if (dir.empty())
+        return false;
+
+    if (std::error_code ec; !fs::is_directory(dir, ec))
+    {
+        GetLogger()->error(_("Path {} doesn't exist or isn't a directory\n"), dir);
+        return false;
+    }
+
+    return true;
 }
 
 #ifndef PORTABLE_BUILD

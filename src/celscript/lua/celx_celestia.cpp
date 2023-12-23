@@ -18,6 +18,7 @@
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celestia/audiosession.h>
+#include <celestia/configfile.h>
 #include <celestia/hud.h>
 #include <celestia/url.h>
 #include <celestia/celestiacore.h>

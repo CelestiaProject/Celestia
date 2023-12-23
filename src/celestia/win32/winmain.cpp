@@ -31,6 +31,7 @@
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
+#include <celestia/progressnotifier.h>
 #include <celestia/scriptmenu.h>
 #include <celutil/array_view.h>
 #include <celutil/fsutils.h>

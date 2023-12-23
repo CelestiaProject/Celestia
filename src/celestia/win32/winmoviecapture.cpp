@@ -24,6 +24,7 @@
 
 #include <celcompat/filesystem.h>
 #include <celestia/celestiacore.h>
+#include <celestia/configfile.h>
 #include <celestia/ffmpegcapture.h>
 #include <celutil/gettext.h>
 

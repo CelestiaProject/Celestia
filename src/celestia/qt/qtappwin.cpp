@@ -76,6 +76,8 @@
 #include <celengine/simulation.h>
 #include <celengine/universe.h>
 #include <celestia/celestiastate.h>
+#include <celestia/configfile.h>
+#include <celestia/progressnotifier.h>
 #ifdef USE_FFMPEG
 #include <celestia/ffmpegcapture.h>
 #endif
