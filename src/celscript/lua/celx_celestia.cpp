@@ -224,7 +224,7 @@ static int celestia_show(lua_State* l)
 
     int argc = lua_gettop(l);
     uint64_t flags = 0;
-    auto &RenderFlagMap = appCore->scriptMaps()->RenderFlagMap;
+    auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
         string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
@@ -248,7 +248,7 @@ static int celestia_hide(lua_State* l)
 
     int argc = lua_gettop(l);
     uint64_t flags = 0;
-    auto &RenderFlagMap = appCore->scriptMaps()->RenderFlagMap;
+    auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
         string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
@@ -303,9 +303,9 @@ static int celestia_setrenderflags(lua_State* l)
         {
             appCore->setLightDelayActive(value);
         }
-        else if (appCore->scriptMaps()->RenderFlagMap.count(key) > 0)
+        else if (appCore->scriptMaps().RenderFlagMap.count(key) > 0)
         {
-            uint64_t flag = appCore->scriptMaps()->RenderFlagMap[key];
+            uint64_t flag = appCore->scriptMaps().RenderFlagMap[key];
             if (value)
                 renderFlags |= flag;
             else
@@ -331,7 +331,7 @@ static int celestia_getrenderflags(lua_State* l)
     const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     std::string rfmString;
     rfmString.reserve(FlagMapNameLength);
-    for (const auto& rfm : appCore->scriptMaps()->RenderFlagMap)
+    for (const auto& rfm : appCore->scriptMaps().RenderFlagMap)
     {
         rfmString.clear();
         rfmString.append(rfm.first);
@@ -440,7 +440,7 @@ static int celestia_showlabel(lua_State* l)
 
     int argc = lua_gettop(l);
     int flags = 0;
-    auto &LabelFlagMap = appCore->scriptMaps()->LabelFlagMap;
+    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
         string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
@@ -462,7 +462,7 @@ static int celestia_hidelabel(lua_State* l)
 
     int argc = lua_gettop(l);
     int flags = 0;
-    auto &LabelFlagMap = appCore->scriptMaps()->LabelFlagMap;
+    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
         string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
@@ -488,7 +488,7 @@ static int celestia_setlabelflags(lua_State* l)
     }
 
     int labelFlags = appCore->getRenderer()->getLabelMode();
-    auto &LabelFlagMap = appCore->scriptMaps()->LabelFlagMap;
+    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     lua_pushnil(l);
     while (lua_next(l, -2) != 0)
     {
@@ -540,7 +540,7 @@ static int celestia_getlabelflags(lua_State* l)
     const int labelFlags = appCore->getRenderer()->getLabelMode();
     std::string lfmString;
     lfmString.reserve(FlagMapNameLength);
-    for (const auto& lfm : appCore->scriptMaps()->LabelFlagMap)
+    for (const auto& lfm : appCore->scriptMaps().LabelFlagMap)
     {
         lfmString.clear();
         lfmString.append(lfm.first);
@@ -563,7 +563,7 @@ static int celestia_setorbitflags(lua_State* l)
 
     int orbitFlags = appCore->getRenderer()->getOrbitMask();
     lua_pushnil(l);
-    auto &BodyTypeMap = appCore->scriptMaps()->BodyTypeMap;
+    auto &BodyTypeMap = appCore->scriptMaps().BodyTypeMap;
     while (lua_next(l, -2) != 0)
     {
         string key;
@@ -612,7 +612,7 @@ static int celestia_getorbitflags(lua_State* l)
     const int orbitFlags = appCore->getRenderer()->getOrbitMask();
     std::string btmString;
     btmString.reserve(FlagMapNameLength);
-    for (const auto& btm : appCore->scriptMaps()->BodyTypeMap)
+    for (const auto& btm : appCore->scriptMaps().BodyTypeMap)
     {
         btmString.clear();
         btmString.append(btm.first);
@@ -772,7 +772,7 @@ static int celestia_setoverlayelements(lua_State* l)
 
     auto overlayElements = appCore->getOverlayElements();
     lua_pushnil(l);
-    const auto &OverlayElementMap = appCore->scriptMaps()->OverlayElementMap;
+    const auto &OverlayElementMap = appCore->scriptMaps().OverlayElementMap;
     while (lua_next(l, -2) != 0)
     {
         string key;
@@ -821,7 +821,7 @@ static int celestia_getoverlayelements(lua_State* l)
     const auto overlayElements = appCore->getOverlayElements();
     std::string oemString;
     oemString.reserve(FlagMapNameLength);
-    for (const auto& oem : appCore->scriptMaps()->OverlayElementMap)
+    for (const auto& oem : appCore->scriptMaps().OverlayElementMap)
     {
         oemString.clear();
         oemString.append(oem.first);
@@ -878,7 +878,7 @@ static int celestia_setlabelcolor(lua_State* l)
     Color* color = nullptr;
     string key;
     key = lua_tostring(l, 2);
-    auto &LabelColorMap = this_celestia(l)->scriptMaps()->LabelColorMap;
+    auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
     if (LabelColorMap.count(key) == 0)
     {
         GetLogger()->warn("Unknown label style: {}\n", key);
@@ -910,7 +910,7 @@ static int celestia_getlabelcolor(lua_State* l)
     string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlabelcolor() must be a string");
 
     Color* labelColor = nullptr;
-    auto &LabelColorMap = this_celestia(l)->scriptMaps()->LabelColorMap;
+    auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
     if (LabelColorMap.count(key) == 0)
     {
         GetLogger()->error("Unknown label style: {}\n", key);
@@ -938,7 +938,7 @@ static int celestia_setlinecolor(lua_State* l)
     Color* color = nullptr;
     string key;
     key = lua_tostring(l, 2);
-    auto &LineColorMap = this_celestia(l)->scriptMaps()->LineColorMap;
+    auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
     if (LineColorMap.count(key) == 0)
     {
         GetLogger()->warn("Unknown line style: {}\n", key);
@@ -969,7 +969,7 @@ static int celestia_getlinecolor(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlinecolor()");
     string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlinecolor() must be a string");
 
-    auto &LineColorMap = this_celestia(l)->scriptMaps()->LineColorMap;
+    auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
     if (LineColorMap.count(key) == 0)
     {
         GetLogger()->error("Unknown line style: {}\n", key);

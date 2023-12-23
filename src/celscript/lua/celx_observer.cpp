@@ -899,7 +899,7 @@ static int observer_setlocationflags(lua_State* l)
             celx.doError("Values in table-argument to observer:setlocationflags() must be boolean");
             return 0;
         }
-        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
         if (LocationFlagMap.count(key) == 0)
         {
             GetLogger()->warn("Unknown key: {}\n", key);
@@ -929,7 +929,7 @@ static int observer_getlocationflags(lua_State* l)
     Observer* obs = this_observer(l);
     lua_newtable(l);
     const auto locationFlags = obs->getLocationFilter();
-    auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+    auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
     std::string itString;
     itString.reserve(celestia::scripts::FlagMapNameLength);
     for (const auto& it : LocationFlagMap)

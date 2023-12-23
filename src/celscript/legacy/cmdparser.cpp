@@ -995,7 +995,7 @@ using ParseCommandPtr = ParseResult (*)(const Hash&, const ScriptMaps&);
 } // end unnamed namespace
 
 
-CommandParser::CommandParser(std::istream& in, const std::shared_ptr<ScriptMaps> &sm) :
+CommandParser::CommandParser(std::istream& in, const ScriptMaps &sm) :
     tokenizer(std::make_unique<Tokenizer>(&in)),
     scriptMaps(sm)
 {
@@ -1085,7 +1085,7 @@ std::unique_ptr<Command> CommandParser::parseCommand()
     }
 
     return std::visit(ParseResultVisitor([this](std::string&& s) { error(std::move(s)); }),
-                      ptr->parser(*paramList, *scriptMaps));
+                      ptr->parser(*paramList, scriptMaps));
 }
 
 } // end namespace celestia::scripts

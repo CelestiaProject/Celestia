@@ -284,7 +284,7 @@ static int object_setorbitvisibility(lua_State* l)
     string key;
     key = lua_tostring(l, 2);
 
-    auto &OrbitVisibilityMap = celx.appCore(AllErrors)->scriptMaps()->OrbitVisibilityMap;
+    auto &OrbitVisibilityMap = celx.appCore(AllErrors)->scriptMaps().OrbitVisibilityMap;
     if (OrbitVisibilityMap.count(key) == 0)
     {
         GetLogger()->warn("Unknown visibility policy: {}\n", key);
@@ -729,7 +729,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("infoURL", location->getInfoURL().c_str());
 
         auto featureType = location->getFeatureType();
-        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
         auto iter = std::find_if(LocationFlagMap.begin(),
                                  LocationFlagMap.end(),
                                  [&featureType](auto& it){ return it.second == featureType; });
