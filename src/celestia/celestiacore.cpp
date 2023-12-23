@@ -6,7 +6,7 @@
 // keyboard events.  CelestiaCore then turns those events into calls
 // to Renderer and Simulation.
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2023, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,46 +14,7 @@
 // of the License, or (at your option) any later version.
 
 #include "celestiacore.h"
-#include "favorites.h"
-#include "textprintposition.h"
-#include "url.h"
-#include "viewmanager.h"
-#include <celastro/astro.h>
-#include <celastro/date.h>
-#include <celcompat/numbers.h>
-#include <celengine/asterism.h>
-#include <celengine/body.h>
-#include <celengine/boundaries.h>
-#include <celengine/dsoname.h>
-#include <celengine/location.h>
-#include <celengine/overlay.h>
-#include <celengine/console.h>
-#include <celengine/starname.h>
-#include <celengine/textlayout.h>
-#include <celscript/legacy/execution.h>
-#include <celscript/legacy/cmdparser.h>
-#include <celengine/multitexture.h>
-#ifdef USE_SPICE
-#include <celephem/spiceinterface.h>
-#endif
-#include <celengine/axisarrow.h>
-#include <celengine/planetgrid.h>
-#include <celengine/visibleregion.h>
-#include <celengine/framebuffer.h>
-#include <celengine/fisheyeprojectionmode.h>
-#include <celengine/perspectiveprojectionmode.h>
-#include <celmath/geomutil.h>
-#include <celutil/color.h>
-#include <celutil/filetype.h>
-#include <celutil/fsutils.h>
-#include <celutil/logger.h>
-#include <celutil/gettext.h>
-#include <celutil/utf8.h>
-#include <celcompat/filesystem.h>
-#include <Eigen/Geometry>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
@@ -62,10 +23,58 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <iterator>
+#include <memory>
 #include <set>
-#include <celengine/rectangle.h>
-#include <celengine/mapmanager.h>
+
+#include <Eigen/Geometry>
 #include <fmt/ostream.h>
+
+#include <celastro/astro.h>
+#include <celastro/date.h>
+#include <celcompat/filesystem.h>
+#include <celcompat/numbers.h>
+#include <celengine/asterism.h>
+#include <celengine/axisarrow.h>
+#include <celengine/body.h>
+#include <celengine/boundaries.h>
+#include <celengine/console.h>
+#include <celengine/dsoname.h>
+#include <celengine/framebuffer.h>
+#include <celengine/fisheyeprojectionmode.h>
+#include <celengine/location.h>
+#include <celengine/mapmanager.h>
+#include <celengine/multitexture.h>
+#include <celengine/overlay.h>
+#include <celengine/perspectiveprojectionmode.h>
+#include <celengine/planetgrid.h>
+#include <celengine/starname.h>
+#include <celengine/textlayout.h>
+#include <celengine/rectangle.h>
+#include <celengine/visibleregion.h>
+#include <celestia/configfile.h>
+#include <celestia/favorites.h>
+#include <celestia/loaddso.h>
+#include <celestia/loadsso.h>
+#include <celestia/loadstars.h>
+#include <celestia/progressnotifier.h>
+#include <celestia/textprintposition.h>
+#include <celestia/viewmanager.h>
+#include <celestia/url.h>
+#include <celmath/geomutil.h>
+#include <celscript/legacy/execution.h>
+#include <celscript/legacy/cmdparser.h>
+#include <celttf/truetypefont.h>
+#include <celutil/color.h>
+#include <celutil/filetype.h>
+#include <celutil/fsutils.h>
+#include <celutil/logger.h>
+#include <celutil/gettext.h>
+#include <celutil/utf8.h>
+
 #ifdef USE_MINIAUDIO
 #include "miniaudiosession.h"
 #endif
@@ -73,7 +82,9 @@
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
-#include <celttf/truetypefont.h>
+#ifdef USE_SPICE
+#include <celephem/spiceinterface.h>
+#endif
 
 using namespace Eigen;
 using namespace std;
@@ -83,72 +94,61 @@ using namespace celestia::engine;
 using namespace celestia::scripts;
 using namespace celestia::util;
 
-static const int DragThreshold = 3;
+constexpr int DragThreshold = 3;
 
 // Perhaps you'll want to put this stuff in configuration file.
-static const double CoarseTimeScaleFactor = 10.0;
-static const double FineTimeScaleFactor = 2.0;
-static const double fMaxKeyAccel = 20.0;
-static const float RotationBraking = 10.0f;
-static const float RotationDecay = 2.0f;
-static const double MaximumTimeRate = 1.0e15;
-static const float stdFOV = 45.0_deg;
+constexpr double CoarseTimeScaleFactor = 10.0;
+constexpr double FineTimeScaleFactor = 2.0;
+constexpr double fMaxKeyAccel = 20.0;
+constexpr float RotationBraking = 10.0f;
+constexpr float RotationDecay = 2.0f;
+constexpr double MaximumTimeRate = 1.0e15;
+constexpr float stdFOV = 45.0_deg;
 static float KeyRotationAccel = 120.0_deg;
 static float MouseRotationSensitivity = 1.0_deg;
 
 namespace
 {
 
-bool is_valid_directory(const fs::path& dir)
-{
-    if (dir.empty())
-        return false;
-
-    std::error_code ec;
-    if (!fs::is_directory(dir, ec))
-    {
-        GetLogger()->error(_("Path {} doesn't exist or isn't a directory\n"), dir);
-        return false;
-    }
-
-    return true;
-}
-
 bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
 {
     std::ifstream file(path);
     if (!file.good())
     {
-        GetLogger()->error("Failed to open leapseconds file {}\n", path);
+        GetLogger()->error(_("Failed to open leapseconds file {}\n"), path);
         return false;
     }
-
 
     std::string s;
     for (int line = 1; std::getline(file, s); line++)
     {
+        // skip comments and empty lines
         const char *ptr = &s[0];
-        while (*ptr != 0 && std::isspace(static_cast<unsigned char>(*ptr))) ptr++;
-        if (*ptr == '#' || *ptr == 0)
+        while (*ptr != 0 && std::isspace(static_cast<unsigned char>(*ptr)))
+            ptr++;
+        if (*ptr == '#' || *ptr == '\0')
             continue;
 
-        unsigned timestamp = 0u; // NTP timestamp is 32 bit unsigned value
+        std::uint_least32_t timestamp = UINT32_C(0); // NTP timestamp is 32 bit unsigned value
         int seconds = 0;
-        if (sscanf(ptr, "%u %i", &timestamp, &seconds) != 2)
+        if (std::sscanf(ptr, "%" SCNuLEAST32 " %i", &timestamp, &seconds) != 2)
         {
-            GetLogger()->error("Failed to parse leapseconds file {}, line {}, column {}\n", path, line, ptr - &s[0]);
+            GetLogger()->error(_("Failed to parse leapseconds file {}, line {}, column {}\n"),
+                               path, line, ptr - &s[0]);
             leapSeconds.clear();
             return false;
         }
-        double jd = (timestamp - 2208988800) / 86400.0 + 2440587.5;
+        double jd = static_cast<double>(timestamp - UINT32_C(2208988800)) / 86400.0 + 2440587.5;
         leapSeconds.push_back({seconds, jd});
     }
 
-    std::sort(leapSeconds.begin(), leapSeconds.end(), [](const auto& a, const auto& b) { return a.t < b.t; });
+    std::sort(std::begin(leapSeconds), std::end(leapSeconds), [](const auto &a, const auto &b)
+    {
+        return a.t < b.t;
+    });
 
     astro::setLeapSeconds(leapSeconds);
     return true;
-}
 }
 
 // If right dragging to rotate, adjust the rotation rate based on the
@@ -156,7 +156,7 @@ bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondReco
 // useful even when the camera is very near the surface of an object.
 // Disable adjustments if the reference is a deep sky object, since they
 // have no true surface (and the observer is likely to be inside one.)
-float ComputeRotationCoarseness(Simulation& sim)
+float ComputeRotationCoarseness(const Simulation& sim)
 {
     float coarseness = 1.5f;
 
@@ -172,13 +172,14 @@ float ComputeRotationCoarseness(Simulation& sim)
         double altitude = distance - radius;
         if (altitude > 0.0 && altitude < radius)
         {
-            coarseness *= (float) max(0.01, altitude / radius);
+            coarseness *= static_cast<float>(std::max(0.01, altitude / radius));
         }
     }
 
     return coarseness;
 }
 
+} // anonymous namespace
 
 CelestiaCore::CelestiaCore() :
     /* Get a renderer here so it may be queried for capabilities of the
@@ -186,9 +187,9 @@ CelestiaCore::CelestiaCore() :
        routine will be called much later. */
     renderer(new Renderer()),
     timer(new Timer()),
-    m_legacyPlugin(new LegacyScriptPlugin(this)),
+    m_legacyPlugin(std::make_unique<LegacyScriptPlugin>(this)),
 #ifdef CELX
-    m_luaPlugin(new LuaScriptPlugin(this)),
+    m_luaPlugin(std::make_unique<LuaScriptPlugin>(this)),
 #endif
     m_scriptMaps(new ScriptMaps()),
     oldFOV(stdFOV),
@@ -198,13 +199,9 @@ CelestiaCore::CelestiaCore() :
 
     CreateLogger();
 
-    for (int i = 0; i < KeyCount; i++)
-    {
-        keysPressed[i] = false;
-        shiftKeysPressed[i] = false;
-    }
-    for (int i = 0; i < JoyButtonCount; i++)
-        joyButtonsPressed[i] = false;
+    std::fill(std::begin(keysPressed), std::end(keysPressed), false);
+    std::fill(std::begin(shiftKeysPressed), std::end(shiftKeysPressed), false);
+    std::fill(std::begin(joyButtonsPressed), std::end(joyButtonsPressed), false);
 
     clog.rdbuf(console->rdbuf());
     cerr.rdbuf(console->rdbuf());
@@ -2312,95 +2309,6 @@ void CelestiaCore::updateFOV(float newFOV, std::optional<Eigen::Vector2f> focus,
 }
 
 
-class SolarSystemLoader
-{
-    Universe* universe;
-    ProgressNotifier* notifier;
-    const vector<fs::path>& skip;
-
- public:
-    SolarSystemLoader(Universe* u,
-                      ProgressNotifier* pn,
-                      const vector<fs::path>& skip) :
-        universe(u),
-        notifier(pn),
-        skip(skip)
-    {
-    }
-
-    void process(const fs::path& filepath)
-    {
-        if (DetermineFileType(filepath) != ContentType::CelestiaCatalog)
-            return;
-
-        if (find(begin(skip), end(skip), filepath) != end(skip))
-        {
-            GetLogger()->info(_("Skipping solar system catalog: {}\n"), filepath);
-            return;
-        }
-        GetLogger()->info(_("Loading solar system catalog: {}\n"), filepath);
-        if (notifier != nullptr)
-            notifier->update(filepath.filename().string());
-
-        ifstream solarSysFile(filepath, ios::in);
-        if (solarSysFile.good())
-        {
-            LoadSolarSystemObjects(solarSysFile,
-                                   *universe,
-                                   filepath.parent_path());
-        }
-    }
-};
-
-template <class OBJDB> class CatalogLoader
-{
-    OBJDB*      objDB;
-    string      typeDesc;
-    ContentType contentType;
-    ProgressNotifier* notifier;
-    const vector<fs::path>& skip;
-
- public:
-    CatalogLoader(OBJDB* db,
-                  const std::string& typeDesc,
-                  const ContentType& contentType,
-                  ProgressNotifier* pn,
-                  const vector<fs::path>& skip) :
-        objDB      (db),
-        typeDesc   (typeDesc),
-        contentType(contentType),
-        notifier   (pn),
-        skip       (skip)
-    {
-    }
-
-    void process(const fs::path& filepath)
-    {
-        if (DetermineFileType(filepath) != contentType)
-            return;
-
-        if (find(begin(skip), end(skip), filepath) != end(skip))
-        {
-            GetLogger()->info(_("Skipping {} catalog: {}\n"), typeDesc, filepath);
-            return;
-        }
-        GetLogger()->info(_("Loading {} catalog: {}\n"), typeDesc, filepath);
-        if (notifier != nullptr)
-            notifier->update(filepath.filename().string());
-
-        ifstream catalogFile(filepath, ios::in);
-        if (catalogFile.good())
-        {
-            if (!objDB->load(catalogFile, filepath.parent_path()))
-                GetLogger()->error(_("Error reading {} catalog file: {}\n"), typeDesc, filepath);
-        }
-    }
-};
-
-using StarLoader = CatalogLoader<StarDatabaseBuilder>;
-using DeepSkyLoader = CatalogLoader<DSODatabase>;
-
-
 bool CelestiaCore::initSimulation(const fs::path& configFileName,
                                   const vector<fs::path>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
@@ -2480,114 +2388,31 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     universe = new Universe();
 
-
     /***** Load star catalogs *****/
 
-    if (!readStars(*config, progressNotifier))
+    StarDetails::SetStarTextures(config->starTextures);
+
+    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier);
+    if (starCatalog == nullptr)
     {
         fatalError(_("Cannot read star database."), false);
         return false;
     }
-
+    universe->setStarCatalog(std::move(starCatalog));
 
     /***** Load the deep sky catalogs *****/
 
-    auto dsoDB = std::make_unique<DSODatabase>();
-    dsoDB->setNameDatabase(std::make_unique<DSONameDatabase>());
-
-    // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
-
-    for (const auto& file : config->paths.dsoCatalogFiles)
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier);
+    if (dsoCatalog == nullptr)
     {
-        if (progressNotifier)
-            progressNotifier->update(file.string());
-
-        ifstream dsoFile(file, ios::in);
-        if (!dsoFile.good())
-        {
-            GetLogger()->error(_("Error opening deepsky catalog file {}.\n"), file);
-        }
-        if (!dsoDB->load(dsoFile, ""))
-        {
-            GetLogger()->error(_("Cannot read Deep Sky Objects database {}.\n"), file);
-        }
+        fatalError(_("Cannot read DSO database."), false);
+        return false;
     }
-
-    // Next, read all the deep sky files in the extras directories
-    {
-        std::vector<fs::path> entries;
-        DeepSkyLoader loader(dsoDB.get(), "deep sky object",
-                             ContentType::CelestiaDeepSkyCatalog,
-                             progressNotifier,
-                             config->paths.skipExtras);
-        for (const auto& dir : config->paths.extrasDirs)
-        {
-            if (!is_valid_directory(dir))
-                continue;
-
-            entries.clear();
-            std::error_code ec;
-            auto iter = fs::recursive_directory_iterator(dir, ec);
-            for (; iter != end(iter); iter.increment(ec))
-            {
-                if (ec)
-                    continue;
-                if (!fs::is_directory(iter->path(), ec))
-                    entries.push_back(iter->path());
-            }
-            std::sort(begin(entries), end(entries));
-            for (const auto& fn : entries)
-                loader.process(fn);
-        }
-    }
-    dsoDB->finish();
-    universe->setDSOCatalog(std::move(dsoDB));
-
+    universe->setDSOCatalog(std::move(dsoCatalog));
 
     /***** Load the solar system catalogs *****/
-    // First read the solar system files listed individually in the
-    // config file.
-    universe->setSolarSystemCatalog(std::make_unique<SolarSystemCatalog>());
-    for (const auto& file : config->paths.solarSystemFiles)
-    {
-        if (progressNotifier)
-            progressNotifier->update(file.string());
-
-        std::ifstream solarSysFile(file, std::ios::in);
-        if (!solarSysFile.good())
-        {
-            GetLogger()->error(_("Error opening solar system catalog {}.\n"), file);
-        }
-        else
-        {
-            LoadSolarSystemObjects(solarSysFile, *universe);
-        }
-    }
-
-    // Next, read all the solar system files in the extras directories
-    {
-        vector<fs::path> entries;
-        SolarSystemLoader loader(universe, progressNotifier, config->paths.skipExtras);
-        for (const auto& dir : config->paths.extrasDirs)
-        {
-            if (!is_valid_directory(dir))
-                continue;
-
-            entries.clear();
-            std::error_code ec;
-            auto iter = fs::recursive_directory_iterator(dir, ec);
-            for (; iter != end(iter); iter.increment(ec))
-            {
-                if (ec)
-                    continue;
-                if (!fs::is_directory(iter->path(), ec))
-                    entries.push_back(iter->path());
-            }
-            sort(begin(entries), end(entries));
-            for(const auto& fn : entries)
-                loader.process(fn);
-        }
-    }
+    
+    loadSSO(*config, progressNotifier, universe);
 
     // Load asterisms:
     if (!config->paths.asterismsFile.empty())
@@ -2820,121 +2645,6 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
     return true;
 }
-
-
-static void loadCrossIndex(StarDatabaseBuilder& starDBBuilder,
-                           StarCatalog catalog,
-                           const fs::path& filename)
-{
-    if (!filename.empty())
-    {
-        ifstream xrefFile(filename, ios::in | ios::binary);
-        if (xrefFile.good())
-        {
-            if (!starDBBuilder.loadCrossIndex(catalog, xrefFile))
-                GetLogger()->error(_("Error reading cross index {}\n"), filename);
-            else
-                GetLogger()->info(_("Loaded cross index {}\n"), filename);
-        }
-    }
-}
-
-
-bool CelestiaCore::readStars(const CelestiaConfig& cfg,
-                             ProgressNotifier* progressNotifier)
-{
-    StarDetails::SetStarTextures(cfg.starTextures);
-
-    std::unique_ptr<StarNameDatabase> starNameDB = nullptr;
-    ifstream starNamesFile(cfg.paths.starNamesFile, ios::in);
-    if (starNamesFile.good())
-    {
-        starNameDB = StarNameDatabase::readNames(starNamesFile);
-        if (starNameDB == nullptr)
-            GetLogger()->error(_("Error reading star names file\n"));
-    }
-    else
-    {
-        GetLogger()->error(_("Error opening {}\n"), cfg.paths.starNamesFile);
-    }
-
-    // First load the binary star database file.  The majority of stars
-    // will be defined here.
-    StarDatabaseBuilder starDBBuilder;
-    if (!cfg.paths.starDatabaseFile.empty())
-    {
-        if (progressNotifier)
-            progressNotifier->update(cfg.paths.starDatabaseFile.string());
-
-        ifstream starFile(cfg.paths.starDatabaseFile, ios::in | ios::binary);
-        if (!starFile.good())
-        {
-            GetLogger()->error(_("Error opening {}\n"), cfg.paths.starDatabaseFile);
-            return false;
-        }
-
-        if (!starDBBuilder.loadBinary(starFile))
-        {
-            GetLogger()->error(_("Error reading stars file\n"));
-            return false;
-        }
-    }
-
-    if (starNameDB == nullptr)
-        starNameDB = std::make_unique<StarNameDatabase>();
-    starDBBuilder.setNameDatabase(std::move(starNameDB));
-
-    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, cfg.paths.HDCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::SAO,         cfg.paths.SAOCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::Gliese,      cfg.paths.GlieseCrossIndexFile);
-
-    // Next, read any ASCII star catalog files specified in the StarCatalogs
-    // list.
-    for (const auto& file : config->paths.starCatalogFiles)
-    {
-        if (file.empty())
-            continue;
-
-        ifstream starFile(file, ios::in);
-        if (starFile.good())
-            starDBBuilder.load(starFile);
-        else
-            GetLogger()->error(_("Error opening star catalog {}\n"), file);
-    }
-
-    // Now, read supplemental star files from the extras directories
-    {
-        vector<fs::path> entries;
-        StarLoader loader(&starDBBuilder,
-                          "star",
-                          ContentType::CelestiaStarCatalog,
-                          progressNotifier,
-                          config->paths.skipExtras);
-        for (const auto& dir : config->paths.extrasDirs)
-        {
-            if (!is_valid_directory(dir))
-                continue;
-
-            entries.clear();
-            std::error_code ec;
-            auto iter = fs::recursive_directory_iterator(dir, ec);
-            for (; iter != end(iter); iter.increment(ec))
-            {
-                if (ec)
-                    continue;
-                if (!fs::is_directory(iter->path(), ec))
-                    entries.push_back(iter->path());
-            }
-            std::sort(begin(entries), end(entries));
-            for (const auto& fn : entries)
-                loader.process(fn);
-        }
-    }
-
-    universe->setStarCatalog(starDBBuilder.finish());
-    return true;
-}
-
 
 /// Set the faintest visible star magnitude; adjust the renderer's
 /// brightness parameters appropriately.

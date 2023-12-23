@@ -35,6 +35,7 @@
 #include <celengine/glsupport.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
+#include <celestia/configfile.h>
 #include <celutil/gettext.h>
 
 /* Includes for the GNOME front-end */

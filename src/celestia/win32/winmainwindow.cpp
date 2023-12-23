@@ -34,6 +34,7 @@
 #include <celengine/universe.h>
 #include <celestia/celestiacore.h>
 #include <celestia/celestiastate.h>
+#include <celestia/configfile.h>
 #include <celestia/helper.h>
 #include <celestia/scriptmenu.h>
 #include <celestia/url.h>

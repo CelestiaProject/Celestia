@@ -16,6 +16,9 @@
 #include <fmt/format.h>
 #include <celcompat/filesystem.h>
 #include <celengine/glsupport.h>
+#include <celestia/celestiacore.h>
+#include <celestia/configfile.h>
+#include <celestia/url.h>
 #include <celutil/gettext.h>
 #include <celutil/tzutil.h>
 #include <SDL.h>
@@ -27,8 +30,6 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
-#include <celestia/celestiacore.h>
-#include <celestia/url.h>
 
 namespace celestia
 {

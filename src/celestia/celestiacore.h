@@ -29,7 +29,6 @@
 #include <celengine/viewporteffect.h>
 #include <celimage/pixelformat.h>
 #include <celutil/tee.h>
-#include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
 #include "hud.h"
@@ -46,8 +45,8 @@
 #include <celscript/common/scriptmaps.h>
 
 class Url;
-class CelestiaCore;
 class Console;
+class ProgressNotifier;
 
 namespace celestia
 {
@@ -59,15 +58,6 @@ class AudioSession;
 }
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
-
-class ProgressNotifier
-{
-public:
-    ProgressNotifier() = default;
-    virtual ~ProgressNotifier() = default;
-
-    virtual void update(const std::string&) = 0;
-};
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
@@ -405,7 +395,6 @@ public:
 private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
-    bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
     Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
     void updateFOV(float fov, std::optional<Eigen::Vector2f> focus, const celestia::View *view);

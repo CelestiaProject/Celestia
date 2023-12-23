@@ -36,6 +36,7 @@
 #include <celengine/body.h>
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
+#include <celestia/configfile.h>
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
 

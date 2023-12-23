@@ -14,6 +14,7 @@
 
 #include "common.h"
 
+#include <celestia/progressnotifier.h>
 
 typedef struct _SplashData SplashData;
 

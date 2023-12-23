@@ -25,6 +25,7 @@
 #include <celengine/simulation.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
+#include <celestia/configfile.h>
 #include <celestia/helper.h>
 #include <celestia/url.h>
 #include <celcompat/charconv.h>

@@ -1,4 +1,5 @@
 set(CELESTIA_SOURCES
+  catalogloader.h
   celestiacore.cpp
   celestiacore.h
   celestiastate.cpp
@@ -15,6 +16,12 @@ set(CELESTIA_SOURCES
   helper.h
   hud.cpp
   hud.h
+  loaddso.cpp
+  loaddso.h
+  loadsso.cpp
+  loadsso.h
+  loadstars.cpp
+  loadstars.h
   moviecapture.h
   scriptmenu.cpp
   scriptmenu.h
