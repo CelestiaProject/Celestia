@@ -489,16 +489,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == RightButton)
         {
-            float pickX, pickY;
-            float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
-            viewManager->activeView()->mapWindowToView(x / static_cast<float>(metrics.width),
-                                                       y / static_cast<float>(metrics.height),
-                                                       pickX, pickY);
-            pickX *= aspectRatio;
-            if (isViewportEffectUsed)
-                viewportEffect->distortXY(pickX, pickY);
-
-            Vector3f pickRay = renderer->getProjectionMode()->getPickRay(pickX, pickY, viewManager->activeView()->getObserver()->getZoom());
+            Eigen::Vector3f pickRay = getPickRay(x, y, viewManager->activeView());
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), obsPickTolerance);
             if (!sel.empty())
@@ -655,7 +646,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // Mouse zoom control
             float amount = dy / static_cast<float>(metrics.height);
             float minFOV = renderer->getProjectionMode()->getMinimumFOV();
-            float maxFOV = renderer->getProjectionMode()->getMaximumFOV();
             const View *view = viewManager->activeView();
             float fov = view->getObserver()->getFOV();
 
@@ -2264,15 +2254,26 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
 {
     float pickX;
     float pickY;
-    float aspectRatio = static_cast<float>(metrics.width) / static_cast<float>(metrics.height);
-    view->mapWindowToView(x / static_cast<float>(metrics.width),
-                          y / static_cast<float>(metrics.height),
+    float windowWidth = static_cast<float>(metrics.width);
+    float windowHeight = static_cast<float>(metrics.height);
+
+    float aspectRatio = windowWidth / windowHeight;
+    view->mapWindowToView(x / windowWidth,
+                          y / windowHeight,
                           pickX, pickY);
     pickX *= aspectRatio;
     if (isViewportEffectUsed)
         viewportEffect->distortXY(pickX, pickY);
 
-    return renderer->getProjectionMode()->getPickRay(pickX, pickY, view->getObserver()->getZoom());
+    // Pick ray depends on view size, setting the size from the view
+    // and then restore to the size of the window
+    auto projectionMode = renderer->getProjectionMode();
+    projectionMode->setSize(view->width * windowWidth, view->height * windowHeight);
+
+    Eigen::Vector3f pickRay = projectionMode->getPickRay(pickX, pickY, view->getObserver()->getZoom());
+
+    projectionMode->setSize(windowWidth, windowHeight);
+    return pickRay;
 }
 
 void CelestiaCore::updateFOV(float newFOV, std::optional<MouseLocation> focus, const celestia::View *view)
