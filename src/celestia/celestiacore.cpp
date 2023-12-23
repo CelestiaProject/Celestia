@@ -24,6 +24,7 @@
 #include <cassert>
 #include <ctime>
 #include <fstream>
+#include <future>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -2307,6 +2308,11 @@ void CelestiaCore::updateFOV(float newFOV, std::optional<Eigen::Vector2f> focus,
     }
 }
 
+template<typename T>
+bool ready(const std::future<T> &future)
+{
+    return future.wait_for(std::chrono::seconds(1)) == std::future_status::ready;
+}
 
 bool CelestiaCore::initSimulation(const fs::path& configFileName,
                                   const vector<fs::path>& extrasDirs,
@@ -2391,23 +2397,46 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     StarDetails::SetStarTextures(config->starTextures);
 
-    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier);
-    if (starCatalog == nullptr)
-    {
-        fatalError(_("Cannot read star database."), false);
-        return false;
-    }
-    universe->setStarCatalog(std::move(starCatalog));
+    progressNotifier->update(_("Deep Space Objects and Star catalogs"));
 
-    /***** Load the deep sky catalogs *****/
+    auto *cfg = config.get();
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier);
-    if (dsoCatalog == nullptr)
+    std::future<std::unique_ptr<StarDatabase>> starsLoader = std::async(std::launch::async, [cfg]() {
+        return loadStars(*cfg, nullptr);
+    });
+
+    std::future<std::unique_ptr<DSODatabase>> dsoLoader = std::async(std::launch::async, [cfg]() {
+        return loadDSO(*cfg, nullptr);
+    });
+
+    for (bool starsReady = false, dsoReady = false; !starsReady || !dsoReady;)
     {
-        fatalError(_("Cannot read DSO database."), false);
-        return false;
+        if (!starsReady && ready(starsLoader))
+        {
+            starsReady = true;
+
+            std::unique_ptr<StarDatabase> starCatalog = starsLoader.get();
+            if (starCatalog == nullptr)
+            {
+                fatalError(_("Cannot read star database."), false);
+                return false;
+            }
+            universe->setStarCatalog(std::move(starCatalog));
+        }
+
+        if (!dsoReady && ready(dsoLoader))
+        {
+            dsoReady = true;
+
+            std::unique_ptr<DSODatabase> dsoCatalog = dsoLoader.get();
+            if (dsoCatalog == nullptr)
+            {
+                fatalError(_("Cannot read DSO database."), false);
+                return false;
+            }
+            universe->setDSOCatalog(std::move(dsoCatalog));
+        }
     }
-    universe->setDSOCatalog(std::move(dsoCatalog));
 
     /***** Load the solar system catalogs *****/
     
@@ -3270,14 +3299,14 @@ void CelestiaCore::setAudioNoPause(int channel, bool nopause)
 
 void CelestiaCore::pauseAudioIfNeeded()
 {
-    for (auto const &[_, value] : audioSessions)
+    for (const auto &[_, value] : audioSessions)
         if (!value->nopause())
             value->stop();
 }
 
 void CelestiaCore::resumeAudioIfNeeded()
 {
-    for (auto const &[_, value] : audioSessions)
+    for (const auto &[_, value] : audioSessions)
         if (!value->nopause())
             value->play();
 }
