@@ -10,6 +10,7 @@
 #pragma once
 
 #include <map>
+#include <future>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -18,16 +19,19 @@
 #include <celutil/reshandle.h>
 
 
-enum class ResourceState {
+enum class ResourceState
+{
     NotLoaded     = 0,
     Loaded        = 1,
     LoadingFailed = 2,
+    LoadingAsync  = 3,
 };
 
 
-template<class T> class ResourceManager
+template<class T, bool A = false> class ResourceManager
 {
- public:
+    static constexpr bool async = A;
+public:
     explicit ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
     ~ResourceManager() = default;
 
@@ -63,13 +67,17 @@ template<class T> class ResourceManager
         {
             loadResource(resources[h]);
         }
+        else if (resources[h].state == ResourceState::LoadingAsync)
+        {
+            handleAsyncLoad(resources[h]);
+        }
 
         return resources[h].state == ResourceState::Loaded
             ? resources[h].resource.get()
             : nullptr;
     }
 
- private:
+private:
     using KeyType = typename T::ResourceKey;
 
     struct InfoType
@@ -77,6 +85,7 @@ template<class T> class ResourceManager
         T info;
         ResourceState state{ ResourceState::NotLoaded };
         std::shared_ptr<ResourceType> resource{ nullptr };
+        std::future<bool> future;
 
         explicit InfoType(T _info) : info(std::move(_info)) {}
         InfoType(const InfoType&) = delete;
@@ -113,7 +122,39 @@ template<class T> class ResourceManager
             info.resource = std::move(resource);
             info.state = ResourceState::Loaded;
         }
-        else if (info.load(resolvedKey))
+        else
+        {
+            if constexpr (async)
+            {
+                info.future = std::async(std::launch::async, [&info, key = std::move(resolvedKey)]()
+                {
+                    return info.load(key);
+                });
+                info.state = ResourceState::LoadingAsync;
+            }
+            else
+            {
+                bool good = info.load(resolvedKey);
+                finish(good, info, resolvedKey);
+            }
+        }
+    }
+
+    void handleAsyncLoad(InfoType& info)
+    {
+        if constexpr (async)
+        {
+            if (info.future.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+            {
+                bool good = info.future.get();
+                finish(good, info, info.resolve(baseDir));
+            }
+        }
+    }
+
+    void finish(bool good, InfoType& info, const KeyType &resolvedKey)
+    {
+        if (good)
         {
             info.state = ResourceState::Loaded;
             if (auto [iter, inserted] = loadedResources.try_emplace(std::move(resolvedKey), info.resource); !inserted)
