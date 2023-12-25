@@ -408,9 +408,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
     mouseMotion = 0.0f;
 
 #if defined(ENABLE_RAY_BASED_DRAGGING) || defined(ENABLE_FOCUS_ZOOMING)
-    MouseLocation newLocation;
-    newLocation.x = x;
-    newLocation.y = y;
+    auto newLocation = Eigen::Vector2f(x, y);
 
 #ifdef ENABLE_RAY_BASED_DRAGGING
     dragLocation = newLocation;
@@ -569,8 +567,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
     auto oldLocation = dragLocation;
     if (dragLocation.has_value())
     {
-        dragLocation.value().x += dx;
-        dragLocation.value().y += dy;
+        dragLocation.value().x() += dx;
+        dragLocation.value().y() += dy;
     }
 #endif
 
@@ -663,8 +661,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         else if (oldLocation.has_value() && dragLocation.has_value())
         {
             auto view = viewManager->activeView();
-            auto oldPickRay = getPickRay(oldLocation.value().x, oldLocation.value().y, view);
-            auto newPickRay = getPickRay(dragLocation.value().x, dragLocation.value().y, view);
+            auto oldPickRay = getPickRay(oldLocation.value().x(), oldLocation.value().y(), view);
+            auto newPickRay = getPickRay(dragLocation.value().x(), dragLocation.value().y(), view);
             if ((modifiers & RightButton) != 0)
             {
                 if (bool isDragStartDetermined = dragStartFromSurface.has_value(); !isDragStartDetermined || dragStartFromSurface.value())
@@ -753,9 +751,7 @@ void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale)
     const View *view = viewManager->activeView();
     float fov = view->getObserver()->getFOV();
 
-    MouseLocation focus;
-    focus.x = focusX;
-    focus.y = focusY;
+    auto focus = Eigen::Vector2f(focusX, focusY);
 
     updateFOV(fov / scale, focus, view);
 }
@@ -2276,12 +2272,10 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
     return pickRay;
 }
 
-void CelestiaCore::updateFOV(float newFOV, std::optional<MouseLocation> focus, const celestia::View *view)
+void CelestiaCore::updateFOV(float newFOV, std::optional<Eigen::Vector2f> focus, const celestia::View *view)
 {
     float minFOV = renderer->getProjectionMode()->getMinimumFOV();
     float maxFOV = renderer->getProjectionMode()->getMaximumFOV();
-    Observer *observer = view->getObserver();
-
     newFOV = std::clamp(newFOV, minFOV, maxFOV);
 
     // Calculate the rays at the position where the
@@ -2289,18 +2283,19 @@ void CelestiaCore::updateFOV(float newFOV, std::optional<MouseLocation> focus, c
     // that the original position's ray stays there
     std::optional<Eigen::Vector3f> oldPickRay = std::nullopt;
     if (focus.has_value())
-        oldPickRay = getPickRay(focus.value().x, focus.value().y, view);
+        oldPickRay = getPickRay(focus.value().x(), focus.value().y(), view);
 
+    Observer *observer = view->getObserver();
     observer->setFOV(newFOV);
     setZoomFromFOV();
 
     if (oldPickRay.has_value())
     {
-        Eigen::Vector3f newPickRay = getPickRay(focus.value().x, focus.value().y, view);
+        Eigen::Vector3f newPickRay = getPickRay(focus.value().x(), focus.value().y(), view);
         observer->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay.value(), newPickRay));
     }
 
-    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
     {
         setFaintestAutoMag();
         setlocale(LC_NUMERIC, "");
