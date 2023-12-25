@@ -9,48 +9,74 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cstdlib>
 #include <iostream>
+#include <memory>
 
 #ifdef _MSC_VER
-#include <windows.h>
+#    include <windows.h>
 #endif
-#include <fmt/ostream.h>
 #include "logger.h"
+
+#include <fmt/ostream.h>
 
 namespace celestia::util
 {
 
-Logger* Logger::g_logger = nullptr;
-
-Logger* GetLogger()
+namespace
 {
-    return Logger::g_logger;
+std::unique_ptr<Logger> globalLogger = nullptr;
 }
 
-Logger* CreateLogger(Level level)
+Logger *
+GetLogger()
+{
+    return globalLogger.get();
+}
+
+Logger *
+CreateLogger(Level level)
 {
     return CreateLogger(level, std::clog, std::cerr);
 }
 
-Logger* CreateLogger(Level level, Logger::Stream &log, Logger::Stream &err)
+Logger *
+CreateLogger(Level level, Logger::Stream &log, Logger::Stream &err)
 {
-    if (Logger::g_logger == nullptr)
-        Logger::g_logger = new Logger(level, log, err);
-    return Logger::g_logger;
+    if (globalLogger == nullptr)
+    {
+        globalLogger = std::make_unique<Logger>(level, log, err);
+        std::atexit(DestroyLogger);
+    }
+    return globalLogger.get();
 }
 
-void DestroyLogger()
+void
+DestroyLogger()
 {
-    delete Logger::g_logger;
+    globalLogger = nullptr;
 }
 
 Logger::Logger() :
-    m_log(std::clog),
-    m_err(std::cerr)
+    Logger(Level::Info, std::clog, std::cerr)
 {
 }
 
-void Logger::vlog(Level level, fmt::string_view format, fmt::format_args args) const
+Logger::Logger(Level level, Stream &log, Stream &err) :
+    m_log(log),
+    m_err(err),
+    m_level(level)
+{
+}
+
+void
+Logger::setLevel(Level level)
+{
+    m_level = level;
+}
+
+void
+Logger::vlog(Level level, std::string_view format, fmt::format_args args) const
 {
 #ifdef _MSC_VER
     if (level == Level::Debug && IsDebuggerPresent())
