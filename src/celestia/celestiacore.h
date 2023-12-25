@@ -82,6 +82,7 @@ public:
 #ifdef __APPLE__
         AltKey       = 0x20,
 #endif
+        Touch        = 0x40,
     };
 
     enum CursorShape

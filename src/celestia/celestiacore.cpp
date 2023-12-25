@@ -565,10 +565,17 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
 #ifdef ENABLE_RAY_BASED_DRAGGING
     auto oldLocation = dragLocation;
-    if (dragLocation.has_value())
+    auto proposedLocation = oldLocation;
+
+    if (proposedLocation.has_value())
     {
-        dragLocation.value().x() += dx;
-        dragLocation.value().y() += dy;
+        proposedLocation.value().x() += dx;
+        proposedLocation.value().y() += dy;
+
+        // In touch mode, it is not possible to warp the touch
+        // location so always update dragLocation
+        if ((modifiers & Touch) != 0)
+            dragLocation = proposedLocation;
     }
 #endif
 
@@ -658,11 +665,11 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 #endif
         }
 #ifdef ENABLE_RAY_BASED_DRAGGING
-        else if (oldLocation.has_value() && dragLocation.has_value())
+        else if (proposedLocation.has_value())
         {
             auto view = viewManager->activeView();
             auto oldPickRay = getPickRay(oldLocation.value().x(), oldLocation.value().y(), view);
-            auto newPickRay = getPickRay(dragLocation.value().x(), dragLocation.value().y(), view);
+            auto newPickRay = getPickRay(proposedLocation.value().x(), proposedLocation.value().y(), view);
             if ((modifiers & RightButton) != 0)
             {
                 if (bool isDragStartDetermined = dragStartFromSurface.has_value(); !isDragStartDetermined || dragStartFromSurface.value())
