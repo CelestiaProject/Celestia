@@ -29,6 +29,7 @@
 #include <celengine/viewporteffect.h>
 #include <celimage/pixelformat.h>
 #include <celutil/tee.h>
+#include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
 #include "hud.h"

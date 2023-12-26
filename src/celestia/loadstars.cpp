@@ -9,9 +9,9 @@
 
 #include "loadstars.h"
 
-#include <filesystem>
 #include <fstream>
 
+#include <celcompat/filesystem.h>
 #include <celengine/stardb.h>
 #include <celestia/catalogloader.h>
 #include <celestia/configfile.h>
