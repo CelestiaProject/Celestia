@@ -126,7 +126,7 @@ jobs:
           avif: OFF     # Not supported on Ubuntu20.04
           gles: ON
           gtk3: ON
-          minaudio: ON
+          minaudio: OFF
           wayland: OFF
           icu: ON
           qt6: OFF
