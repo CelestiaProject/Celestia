@@ -5,6 +5,8 @@ set(CELUTIL_SOURCES
   bytes.h
   color.cpp
   color.h
+  dateformatter.cpp
+  dateformatter.h
   filetype.cpp
   filetype.h
   flag.h

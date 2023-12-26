@@ -25,13 +25,13 @@
 #include <Eigen/Core>
 
 #include <celastro/date.h>
-#include <celengine/dateformatter.h>
 #include <celengine/selection.h>
 #include <celestia/textinput.h>
 #include <celestia/textprintposition.h>
 #include <celestia/windowmetrics.h>
 #include <celttf/truetypefont.h>
 #include <celutil/color.h>
+#include <celutil/dateformatter.h>
 #include <celutil/flag.h>
 #include <celutil/formatnum.h>
 

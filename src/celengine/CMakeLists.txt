@@ -17,8 +17,6 @@ set(CELENGINE_SOURCES
   constellation.h
   curveplot.cpp
   curveplot.h
-  dateformatter.cpp
-  dateformatter.h
   deepskyobj.cpp
   deepskyobj.h
   dsodb.cpp
