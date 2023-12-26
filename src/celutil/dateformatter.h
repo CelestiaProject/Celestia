@@ -22,6 +22,7 @@
 #include <unicode/ustring.h>
 #endif
 #include <array>
+#include "uniquedel.h"
 #endif
 
 #include <celastro/date.h>
@@ -33,18 +34,22 @@ class DateFormatter
 {
 public:
     DateFormatter() = default;
-    ~DateFormatter();
+    ~DateFormatter() = default;
     DateFormatter(const DateFormatter &) = delete;
-    DateFormatter(DateFormatter &&) = default;
+    DateFormatter(DateFormatter &&) noexcept = default;
     DateFormatter &operator=(const DateFormatter &) = delete;
-    DateFormatter &operator=(DateFormatter &&) = delete;
+    DateFormatter &operator=(DateFormatter &&) noexcept = default;
 
     std::string formatDate(double tdb, bool local, astro::Date::Format format);
 
 #ifdef USE_ICU
 private:
-    std::array<UDateFormat*, static_cast<size_t>(astro::Date::FormatCount)> localFormatters;
-    std::array<UDateFormat*, static_cast<size_t>(astro::Date::FormatCount)> utcFormatters;
+    using UniqueDateFormat = util::UniquePtrDel<UDateFormat, udat_close>;
+
+    static constexpr auto FormatCount = static_cast<std::size_t>(astro::Date::FormatCount);
+
+    std::array<UniqueDateFormat, FormatCount> localFormatters;
+    std::array<UniqueDateFormat, FormatCount> utcFormatters;
 
     UDateFormat *getFormatter(bool local, astro::Date::Format format);
 #endif
