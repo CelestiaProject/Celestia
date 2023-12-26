@@ -87,7 +87,7 @@ Logger::vlog(Level level, std::string_view format, fmt::format_args args) const
 #endif
 
     auto &stream = (level <= Level::Warning || level == Level::Debug) ? m_err : m_log;
-    fmt::vprint(stream, format, args);
+    fmt::print(stream, fmt::vformat(format, args));
 }
 
 } // end namespace celestia::util
