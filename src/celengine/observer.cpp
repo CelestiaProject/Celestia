@@ -977,11 +977,11 @@ bool Observer::orbit(const Selection& selection, const Eigen::Vector3f &from, co
  */
 void Observer::changeOrbitDistance(const Selection& selection, float d)
 {
-    scaleOrbitDistance(selection, std::exp(-d));
+    scaleOrbitDistance(selection, std::exp(-d), std::nullopt);
 }
 
 
-void Observer::scaleOrbitDistance(const Selection& selection, float scale)
+void Observer::scaleOrbitDistance(const Selection& selection, float scale, const std::optional<Eigen::Vector3f> &focus)
 {
     Selection center = frame->getRefObject();
     if (center.empty())
@@ -993,11 +993,12 @@ void Observer::scaleOrbitDistance(const Selection& selection, float scale)
         setFrame(frame->getCoordinateSystem(), center);
     }
 
-    UniversalCoord focusPosition = center.getPosition(getTime());
+    UniversalCoord centerPosition = center.getPosition(getTime());
 
     // Determine distance and direction to the selected object
-    Eigen::Vector3d v = getPosition().offsetFromKm(focusPosition);
-    double currentDistance = v.norm();
+    auto currentPosition = getPosition();
+    Eigen::Vector3d positionFromCenter = currentPosition.offsetFromKm(centerPosition);
+    double currentDistance = positionFromCenter.norm();
 
     double minOrbitDistance = center.radius();
     if (currentDistance < minOrbitDistance)
@@ -1005,10 +1006,28 @@ void Observer::scaleOrbitDistance(const Selection& selection, float scale)
 
     double span = currentDistance - minOrbitDistance;
     double newDistance = minOrbitDistance + span / static_cast<double>(scale);
-    v = v * (newDistance / currentDistance);
+    positionFromCenter *= (newDistance / currentDistance);
 
-    position = frame->convertFromUniversal(focusPosition.offsetKm(v), getTime());
+    std::optional<UniversalCoord> controlPoint1 = std::nullopt;
+    std::optional<Eigen::Vector3d> focusRay = std::nullopt;
+    if (focus.has_value())
+    {
+        focusRay = getOrientation().conjugate() * focus.value().cast<double>();
+        // The control points are the intersection points of the original focus ray and
+        // the sphere with radius = span (distance to center - min distance) before and
+        // after the distance change
+        controlPoint1 = currentPosition.offsetKm(focusRay.value() * span);
+    }
+
+    auto newPosition = centerPosition.offsetKm(positionFromCenter);
+    position = frame->convertFromUniversal(newPosition, getTime());
     updateUniversal();
+
+    if (controlPoint1.has_value())
+    {
+        auto controlPoint2 = newPosition.offsetKm(focusRay.value() * (newDistance - minOrbitDistance));
+        orbit(selection, Eigen::Quaterniond::FromTwoVectors(transformedOrientation * controlPoint1.value().offsetFromKm(centerPosition), transformedOrientation * controlPoint2.offsetFromKm(centerPosition)).cast<float>());
+    }
 }
 
 

@@ -54,7 +54,7 @@ class Simulation
     void orbit(const Eigen::Quaternionf& q);
     void rotate(const Eigen::Quaternionf& q);
     void changeOrbitDistance(float d);
-    void scaleOrbitDistance(float scale);
+    void scaleOrbitDistance(float scale, const std::optional<Eigen::Vector3f>& focus);
     void setTargetSpeed(float s);
     float getTargetSpeed() const;
 
