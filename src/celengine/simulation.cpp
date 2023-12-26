@@ -272,6 +272,10 @@ void Simulation::changeOrbitDistance(float d)
     activeObserver->changeOrbitDistance(selection, d);
 }
 
+void Simulation::scaleOrbitDistance(float scale)
+{
+    activeObserver->scaleOrbitDistance(selection, scale);
+}
 
 void Simulation::setTargetSpeed(float s)
 {

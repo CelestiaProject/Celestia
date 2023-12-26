@@ -212,7 +212,7 @@ public:
     void mouseMove(float, float);
     void joystickAxis(int axis, float amount);
     void joystickButton(int button, bool down);
-    void pinchUpdate(float focusX, float focusY, float scale);
+    void pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV);
     void resize(GLsizei w, GLsizei h);
     void draw();
     void draw(celestia::View*);
@@ -397,7 +397,7 @@ private:
     void updateSelectionFromInput();
     void renderOverlay();
     Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
-    void updateFOV(float fov, std::optional<Eigen::Vector2f> focus, const celestia::View *view);
+    void updateFOV(float fov, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
