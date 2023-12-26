@@ -130,6 +130,7 @@ jobs:
           wayland: ON
           icu: ON
           qt6: OFF
+          cspice: OFF
         - os: ubuntu:latest
           avif: ON
           gles: ON
@@ -138,6 +139,7 @@ jobs:
           wayland: ON
           icu: ON
           qt6: ON
+          cspice: ON
           analysis_artifacts: 1
 
     runs-on: ubuntu-latest
@@ -195,7 +197,7 @@ jobs:
         cd build
         cmake -G Ninja                                  \
               -DENABLE_GLES=${{matrix.config.gles}}     \
-              -DENABLE_SPICE=ON                         \
+              -DENABLE_SPICE=${{matrix.config.cspice}   \
               -DENABLE_TOOLS=OFF                        \
               -DENABLE_TESTS=ON                         \
               -DENABLE_SDL=ON                           \
