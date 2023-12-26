@@ -2053,12 +2053,12 @@ R"glsl(
     bool hasTexCoordTransform = props.hasTextureCoordTransform();
     if (props.hasSharedTextureCoords())
     {
-        if (props.texUsage & (ShaderProperties::DiffuseTexture  |
-                              ShaderProperties::NormalTexture   |
-                              ShaderProperties::SpecularTexture |
-                              ShaderProperties::NightTexture    |
-                              ShaderProperties::EmissiveTexture |
-                              ShaderProperties::OverlayTexture))
+        if ((props.texUsage & (ShaderProperties::DiffuseTexture  |
+                               ShaderProperties::NormalTexture   |
+                               ShaderProperties::SpecularTexture |
+                               ShaderProperties::NightTexture    |
+                               ShaderProperties::EmissiveTexture |
+                               ShaderProperties::OverlayTexture)) != 0)
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             source += "diffTexCoord.x += textureOffset;\n";
@@ -2066,37 +2066,34 @@ R"glsl(
     }
     else
     {
-        if (props.texUsage & ShaderProperties::DiffuseTexture)
+        if ((props.texUsage & ShaderProperties::DiffuseTexture) != 0)
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
             nTexCoords++;
         }
 
-        if (!props.hasSharedTextureCoords())
+        if ((props.texUsage & ShaderProperties::NormalTexture) != 0)
         {
-            if (props.texUsage & ShaderProperties::NormalTexture)
-            {
-                source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
-                nTexCoords++;
-            }
+            source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
+            nTexCoords++;
+        }
 
-            if (props.texUsage & ShaderProperties::SpecularTexture)
-            {
-                source += "specTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-                nTexCoords++;
-            }
+        if ((props.texUsage & ShaderProperties::SpecularTexture) != 0)
+        {
+            source += "specTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
+            nTexCoords++;
+        }
 
-            if (props.texUsage & ShaderProperties::NightTexture)
-            {
-                source += "nightTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-                nTexCoords++;
-            }
+        if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+        {
+            source += "nightTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
+            nTexCoords++;
+        }
 
-            if (props.texUsage & ShaderProperties::EmissiveTexture)
-            {
-                source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-                nTexCoords++;
-            }
+        if ((props.texUsage & ShaderProperties::EmissiveTexture) != 0)
+        {
+            source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
+            nTexCoords++;
         }
     }
 
