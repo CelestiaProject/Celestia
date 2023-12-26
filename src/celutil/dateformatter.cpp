@@ -67,7 +67,7 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
     if (auto formatter = formatters[index].get(); formatter != nullptr)
         return formatter;
 
-    UChar* pattern;
+    const UChar* pattern;
     UDateFormatStyle dateStyle;
     UDateFormatStyle timeStyle;
     switch (format)
