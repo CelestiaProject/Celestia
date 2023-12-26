@@ -169,7 +169,11 @@ jobs:
                            ninja-build \
                            qtbase5-dev \
                            qtbase5-dev-tools \
-                           qtbase5-private-dev
+                           qtbase5-private-dev \
+                           git \
+                           cmake \
+                           ninja-build \
+                           g++
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
             apt-get install -y qt6-base-dev \
                                qt6-base-dev-tools \
@@ -181,9 +185,8 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
-      with:
-        submodules: true
+      run:|
+        git clone --recurse-submodules -j2 https://github.com/CelestiaProject/Celestia.git
 
     - name: 'Configure CMake'
       run: |
