@@ -23,6 +23,7 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <cinttypes>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
