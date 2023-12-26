@@ -29,6 +29,7 @@
 #include <celengine/viewporteffect.h>
 #include <celimage/pixelformat.h>
 #include <celutil/tee.h>
+#include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
 #include "hud.h"
@@ -402,7 +403,7 @@ private:
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
 
-    std::unique_ptr<CelestiaConfig> config{ nullptr };
+    std::unique_ptr<CelestiaConfig> config;
 
     Universe* universe{ nullptr };
 
