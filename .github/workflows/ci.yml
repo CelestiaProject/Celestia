@@ -185,7 +185,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      run:|
+      run: |
         git clone --recurse-submodules -j2 https://github.com/CelestiaProject/Celestia.git
 
     - name: 'Configure CMake'
