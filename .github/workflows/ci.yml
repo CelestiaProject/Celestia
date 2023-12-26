@@ -189,6 +189,7 @@ jobs:
 
     - name: 'Checkout source code'
       run: |
+        git config --global --add safe.directory $(pwd)
         git clone --depth=1 --recurse-submodules -j2 https://github.com/CelestiaProject/Celestia.git .
         git checkout "$GITHUB_REF"
 
