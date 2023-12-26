@@ -16,19 +16,6 @@ namespace astro = celestia::astro;
 namespace celestia::engine
 {
 
-DateFormatter::~DateFormatter()
-{
-#ifdef USE_ICU
-    for (const auto &formatter : localFormatters)
-        if (formatter != nullptr)
-            udat_close(formatter);
-    for (const auto &formatter : utcFormatters)
-        if (formatter != nullptr)
-            udat_close(formatter);
-#endif
-}
-
-
 std::string DateFormatter::formatDate(double tdb, bool local, astro::Date::Format format)
 {
 #ifdef USE_ICU
@@ -77,10 +64,10 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
 {
     auto& formatters = local ? localFormatters : utcFormatters;
     auto index = static_cast<size_t>(format);
-    if (auto formatter = formatters[index]; formatter != nullptr)
+    if (auto formatter = formatters[index].get(); formatter != nullptr)
         return formatter;
 
-    const UChar *pattern;
+    UChar* pattern;
     UDateFormatStyle dateStyle;
     UDateFormatStyle timeStyle;
     switch (format)
@@ -108,12 +95,14 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
     }
 
     UErrorCode error = U_ZERO_ERROR;
-    auto formatter = udat_open(timeStyle, dateStyle, nullptr, local ? nullptr : u"UTC", -1, pattern, -1, &error);
+    formatters[index] = UniqueDateFormat(udat_open(timeStyle, dateStyle, nullptr,
+                                                   local ? nullptr : u"UTC", -1,
+                                                   pattern, -1,
+                                                   &error));
     if (U_FAILURE(error))
-        return nullptr;
+        formatters[index].reset();
 
-    formatters[index] = formatter;
-    return formatter;
+    return formatters[index].get();
 }
 #endif
 

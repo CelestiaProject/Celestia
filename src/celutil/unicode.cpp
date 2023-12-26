@@ -27,6 +27,7 @@
 #endif
 
 #include <celutil/flag.h>
+#include <celutil/uniquedel.h>
 
 using celestia::util::is_set;
 
@@ -59,27 +60,24 @@ ApplyArabicShaping(std::u16string_view input, std::u16string &output)
 bool
 ApplyBidiReordering(std::u16string_view input, std::u16string &output)
 {
-    auto ubidi = ubidi_open();
+    using UniqueBiDi = UniquePtrDel<UBiDi, ubidi_close>;
+    UniqueBiDi ubidi(ubidi_open());
     UErrorCode error = U_ZERO_ERROR;
     auto inputSize = static_cast<std::int32_t>(input.size());
-    ubidi_setPara(ubidi, input.data(), inputSize, UBIDI_DEFAULT_LTR, nullptr, &error);
+    ubidi_setPara(ubidi.get(), input.data(), inputSize, UBIDI_DEFAULT_LTR, nullptr, &error);
 
     std::uint16_t options = UBIDI_DO_MIRRORING | UBIDI_REMOVE_BIDI_CONTROLS;
 
-    auto requiredSize = ubidi_writeReordered(ubidi, nullptr, 0, options, &error);
+    auto requiredSize = ubidi_writeReordered(ubidi.get(), nullptr, 0, options, &error);
     if (U_FAILURE(error) && error != U_BUFFER_OVERFLOW_ERROR)
-    {
-        ubidi_close(ubidi);
         return false;
-    }
 
     output.resize(requiredSize);
 
     // Clear the error to be reused
     error = U_ZERO_ERROR;
 
-    ubidi_writeReordered(ubidi, output.data(), requiredSize, options, &error);
-    ubidi_close(ubidi);
+    ubidi_writeReordered(ubidi.get(), output.data(), requiredSize, options, &error);
     return U_SUCCESS(error);
 }
 

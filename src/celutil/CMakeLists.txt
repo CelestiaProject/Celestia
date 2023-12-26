@@ -35,6 +35,7 @@ set(CELUTIL_SOURCES
   tokenizer.h
   tzutil.cpp
   tzutil.h
+  uniquedel.h
   utf8.cpp
   utf8.h
   watcher.h
