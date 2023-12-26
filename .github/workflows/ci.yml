@@ -175,7 +175,8 @@ jobs:
                            git \
                            cmake \
                            ninja-build \
-                           g++
+                           g++ \
+                           zip
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
             apt-get install -y qt6-base-dev \
                                qt6-base-dev-tools \
