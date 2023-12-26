@@ -197,7 +197,7 @@ jobs:
         cd build
         cmake -G Ninja                                  \
               -DENABLE_GLES=${{matrix.config.gles}}     \
-              -DENABLE_SPICE=${{matrix.config.cspice}   \
+              -DENABLE_SPICE=${{matrix.config.cspice}}  \
               -DENABLE_TOOLS=OFF                        \
               -DENABLE_TESTS=ON                         \
               -DENABLE_SDL=ON                           \
