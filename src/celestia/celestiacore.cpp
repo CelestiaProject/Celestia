@@ -750,18 +750,17 @@ void CelestiaCore::joystickButton(int button, bool down)
 void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV)
 {
     viewManager->pickView(sim, metrics, focusX, focusY);
+    const View *view = viewManager->activeView();
 
     if (zoomFOV)
     {
-        const View *view = viewManager->activeView();
         float fov = view->getObserver()->getFOV();
-
-        auto focus = Eigen::Vector2f(focusX, focusY);
-        updateFOV(fov / scale, focus, view);
+        updateFOV(fov / scale, Eigen::Vector2f(focusX, focusY), view);
     }
     else
     {
-        sim->scaleOrbitDistance(scale);
+        auto focusRay = getPickRay(focusX, focusY, view);
+        sim->scaleOrbitDistance(scale, focusRay);
     }
 }
 
