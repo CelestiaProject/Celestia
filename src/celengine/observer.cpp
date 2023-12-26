@@ -977,41 +977,38 @@ bool Observer::orbit(const Selection& selection, const Eigen::Vector3f &from, co
  */
 void Observer::changeOrbitDistance(const Selection& selection, float d)
 {
+    scaleOrbitDistance(selection, std::exp(-d));
+}
+
+
+void Observer::scaleOrbitDistance(const Selection& selection, float scale)
+{
     Selection center = frame->getRefObject();
-    if (center.empty() && !selection.empty())
+    if (center.empty())
     {
+        if (selection.empty())
+            return;
+
         center = selection;
         setFrame(frame->getCoordinateSystem(), center);
     }
 
-    if (!center.empty())
-    {
-        UniversalCoord focusPosition = center.getPosition(getTime());
+    UniversalCoord focusPosition = center.getPosition(getTime());
 
-        double size = center.radius();
+    // Determine distance and direction to the selected object
+    Eigen::Vector3d v = getPosition().offsetFromKm(focusPosition);
+    double currentDistance = v.norm();
 
-        // Somewhat arbitrary parameters to chosen to give the camera movement
-        // a nice feel.  They should probably be function parameters.
-        double minOrbitDistance = size;
-        double naturalOrbitDistance = 4.0 * size;
+    double minOrbitDistance = center.radius();
+    if (currentDistance < minOrbitDistance)
+        minOrbitDistance = currentDistance * 0.5;
 
-        // Determine distance and direction to the selected object
-        Vector3d v = getPosition().offsetFromKm(focusPosition);
-        double currentDistance = v.norm();
+    double span = currentDistance - minOrbitDistance;
+    double newDistance = minOrbitDistance + span / static_cast<double>(scale);
+    v = v * (newDistance / currentDistance);
 
-        if (currentDistance < minOrbitDistance)
-            minOrbitDistance = currentDistance * 0.5;
-
-        if (currentDistance >= minOrbitDistance && naturalOrbitDistance != 0)
-        {
-            double r = (currentDistance - minOrbitDistance) / naturalOrbitDistance;
-            double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
-            v = v * (newDistance / currentDistance);
-
-            position = frame->convertFromUniversal(focusPosition.offsetKm(v), getTime());
-            updateUniversal();
-        }
-    }
+    position = frame->convertFromUniversal(focusPosition.offsetKm(v), getTime());
+    updateUniversal();
 }
 
 

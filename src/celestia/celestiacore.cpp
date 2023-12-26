@@ -747,16 +747,22 @@ void CelestiaCore::joystickButton(int button, bool down)
 }
 
 
-void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale)
+void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV)
 {
     viewManager->pickView(sim, metrics, focusX, focusY);
 
-    const View *view = viewManager->activeView();
-    float fov = view->getObserver()->getFOV();
+    if (zoomFOV)
+    {
+        const View *view = viewManager->activeView();
+        float fov = view->getObserver()->getFOV();
 
-    auto focus = Eigen::Vector2f(focusX, focusY);
-
-    updateFOV(fov / scale, focus, view);
+        auto focus = Eigen::Vector2f(focusX, focusY);
+        updateFOV(fov / scale, focus, view);
+    }
+    else
+    {
+        sim->scaleOrbitDistance(scale);
+    }
 }
 
 
@@ -2275,7 +2281,7 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
     return pickRay;
 }
 
-void CelestiaCore::updateFOV(float newFOV, std::optional<Eigen::Vector2f> focus, const celestia::View *view)
+void CelestiaCore::updateFOV(float newFOV, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view)
 {
     float minFOV = renderer->getProjectionMode()->getMinimumFOV();
     float maxFOV = renderer->getProjectionMode()->getMaximumFOV();
