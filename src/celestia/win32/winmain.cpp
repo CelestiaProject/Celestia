@@ -627,11 +627,11 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #ifdef ENABLE_NLS
     std::error_code ec;
-    std::string localedir = (fs::current_path(ec) / LOCALEDIR).string();
+    fs::path localedir = (fs::current_path(ec) / LOCALEDIR);
 
-    bindtextdomain("celestia", localedir.c_str());
+    wbindtextdomain("celestia", localedir.c_str());
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia-data", localedir.c_str());
+    wbindtextdomain("celestia-data", localedir.c_str());
     bind_textdomain_codeset("celestia-data", "UTF-8");
     textdomain("celestia");
 
