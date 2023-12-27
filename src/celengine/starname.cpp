@@ -287,53 +287,62 @@ StarNameDatabase::findWithComponentSuffix(std::string_view name, bool i18n) cons
 std::unique_ptr<StarNameDatabase>
 StarNameDatabase::readNames(std::istream& in)
 {
+    using celestia::compat::from_chars;
+
+    constexpr std::size_t maxLength = 1024;
     auto db = std::make_unique<StarNameDatabase>();
-    bool failed = false;
-    std::string s;
-
-    while (!failed)
+    std::string buffer(maxLength, '\0');
+    while (!in.eof())
     {
+        in.getline(buffer.data(), maxLength);
+        // Delimiter is extracted and contributes to gcount() but is not stored
+        std::size_t lineLength;
+
+        if (in.good())
+            lineLength = static_cast<std::size_t>(in.gcount() - 1);
+        else if (in.eof())
+            lineLength = static_cast<std::size_t>(in.gcount());
+        else
+            return nullptr;
+
+        auto line = static_cast<std::string_view>(buffer).substr(0, lineLength);
+
+        if (line.empty() || line.front() == '#')
+            continue;
+
+        auto pos = line.find(':');
+        if (pos == std::string_view::npos)
+            return nullptr;
+
         auto catalogNumber = AstroCatalog::InvalidIndex;
-
-        in >> catalogNumber;
-        if (in.eof())
-            break;
-        if (in.bad())
+        if (auto [ptr, ec] = from_chars(line.data(), line.data() + pos, catalogNumber);
+            ec != std::errc{} || ptr != line.data() + pos)
         {
-            failed = true;
-            break;
-        }
-
-        // in.get(); // skip a space (or colon);
-
-        std::string name;
-        std::getline(in, name);
-        if (in.bad())
-        {
-            failed = true;
-            break;
+            return nullptr;
         }
 
         // Iterate through the string for names delimited
         // by ':', and insert them into the star database. Note that
         // db->add() will skip empty names.
-        std::string::size_type startPos = 0;
-        while (startPos != std::string::npos)
+        line = line.substr(pos + 1);
+        while (!line.empty())
         {
-            ++startPos;
-            std::string::size_type next = name.find(':', startPos);
-            std::string::size_type length = std::string::npos;
+            std::string_view name;
+            pos = line.find(':');
+            if (pos == std::string_view::npos)
+            {
+                name = line;
+                line = {};
+            }
+            else
+            {
+                name = line.substr(0, pos);
+                line = line.substr(pos + 1);
+            }
 
-            if (next != std::string::npos)
-                length = next - startPos;
-
-            db->add(catalogNumber, name.substr(startPos, length));
-            startPos = next;
+            db->add(catalogNumber, name);
         }
     }
-
-    if (failed)
-        return nullptr;
 
     return db;
 }

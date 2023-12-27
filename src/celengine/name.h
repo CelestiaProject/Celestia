@@ -32,7 +32,7 @@ class NameDatabase
  public:
     std::uint32_t getNameCount() const;
 
-    void add(const AstroCatalog::IndexNumber, const std::string&, bool parseGreek = true);
+    void add(const AstroCatalog::IndexNumber, std::string_view);
 
     // delete all names associated with the specified catalog number
     void erase(const AstroCatalog::IndexNumber);

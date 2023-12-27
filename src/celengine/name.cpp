@@ -11,26 +11,27 @@ std::uint32_t NameDatabase::getNameCount() const
     return nameIndex.size();
 }
 
-void NameDatabase::add(const AstroCatalog::IndexNumber catalogNumber, const std::string& name, bool /*replaceGreek*/)
+void
+NameDatabase::add(const AstroCatalog::IndexNumber catalogNumber, std::string_view name)
 {
-    if (name.length() != 0)
-    {
-#ifdef DEBUG
-        AstroCatalog::IndexNumber tmp;
-        if ((tmp = getCatalogNumberByName(name, false)) != AstroCatalog::InvalidIndex)
-            celestia::util::GetLogger()->debug("Duplicated name '{}' on object with catalog numbers: {} and {}\n", name, tmp, catalogNumber);
-#endif
-        // Add the new name
-        //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
-        std::string fname = ReplaceGreekLetterAbbr(name);
+    if (name.empty())
+        return;
 
-        nameIndex[fname] = catalogNumber;
-        std::string lname = D_(fname.c_str());
-        if (lname != fname)
-            localizedNameIndex[lname] = catalogNumber;
-        numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));
-    }
+#ifdef DEBUG
+    if (AstroCatalog::IndexNumber tmp = getCatalogNumberByName(name, false); tmp != AstroCatalog::InvalidIndex)
+        celestia::util::GetLogger()->debug("Duplicated name '{}' on object with catalog numbers: {} and {}\n", name, tmp, catalogNumber);
+#endif
+    // Add the new name
+    //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
+    std::string fname = ReplaceGreekLetterAbbr(name);
+
+    nameIndex[fname] = catalogNumber;
+    std::string lname = D_(fname.c_str());
+    if (lname != fname)
+        localizedNameIndex[lname] = catalogNumber;
+    numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));
 }
+
 void NameDatabase::erase(const AstroCatalog::IndexNumber catalogNumber)
 {
     numberIndex.erase(catalogNumber);
