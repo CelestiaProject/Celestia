@@ -55,10 +55,16 @@ void process(const fs::path& p, std::vector<ScriptMenuItem>& menuItems)
     // Read the first line, handling various newline conventions
     std::array<char, 512> buffer;
     in.getline(buffer.data(), buffer.size());
-    if (!(in.good() || in.eof()))
+    // Delimiter is extracted and contributes to gcount() but is not stored
+    std::size_t lineLength;
+    if (in.good())
+        lineLength = static_cast<std::size_t>(in.gcount() - 1);
+    else if (in.eof())
+        lineLength = static_cast<std::size_t>(in.gcount());
+    else
         return;
 
-    std::string_view line(buffer.data(), static_cast<std::size_t>(in.gcount()));
+    std::string_view line(buffer.data(), lineLength);
 
     // Skip whitespace before 'Title:' tag
     if (auto pos = line.find_first_not_of(" \t"sv); pos == std::string_view::npos)
