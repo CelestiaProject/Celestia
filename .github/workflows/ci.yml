@@ -60,7 +60,7 @@ jobs:
           qtbase qt5compat[core]
 
     - name: Checkout source code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -174,7 +174,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -279,7 +279,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -339,7 +339,7 @@ jobs:
                             gcc-toolset-11-gcc-c++
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
