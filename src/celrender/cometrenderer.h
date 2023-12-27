@@ -46,7 +46,7 @@ public:
                 float discSizeInPixels,
                 const Matrices &m);
 
-    void initGL();
+    bool initGL();
     void deinitGL();
 
 private:
