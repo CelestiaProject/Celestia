@@ -37,7 +37,7 @@ jobs:
                                 cmake
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
         repository: ${{ github.event.workflow_run.head_repository.full_name }}
