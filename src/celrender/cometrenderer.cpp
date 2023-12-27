@@ -56,15 +56,16 @@ CometRenderer::CometRenderer(Renderer &renderer) :
 
 CometRenderer::~CometRenderer() = default;
 
-void
+bool
 CometRenderer::initGL()
 {
     if (m_initialized)
-        return;
-
-    m_initialized = true;
+        return true;
 
     m_prog = m_renderer.getShaderManager().getShader("comet");
+    if (m_prog == nullptr)
+        return false;
+
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
     m_vo = std::make_unique<gl::VertexObject>();
@@ -96,6 +97,9 @@ CometRenderer::initGL()
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, brightness))
         .setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
+
+    m_initialized = true;
+    return true;
 }
 
 void

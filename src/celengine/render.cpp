@@ -530,7 +530,8 @@ bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOpt
     detailOptions = _detailOptions;
 
     m_atmosphereRenderer->initGL();
-    m_cometRenderer->initGL();
+    if (!m_cometRenderer->initGL())
+        return false;
 
     m_markerVO = std::make_unique<celestia::gl::VertexObject>();
     m_markerBO = std::make_unique<celestia::gl::Buffer>();
