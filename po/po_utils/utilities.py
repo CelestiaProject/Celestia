@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import codecs
 import os
 from typing import Optional, NamedTuple, Union
 
@@ -28,8 +29,6 @@ class Location(NamedTuple):
     line: int
     comments: list[str]
 
-
-import codecs
 
 _ESCAPES = {
     "\a": "\\a",

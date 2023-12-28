@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 
 if __name__ == "__main__":
@@ -52,17 +53,18 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    po_dir = args.po_dir if args.po_dir else os.path.dirname(__file__)
     if args.command == "extract":
         from po_utils.extract import extract_strings
 
         extract_strings(
             args.gettext_dir,
-            args.po_dir if args.po_dir else ".",
+            po_dir,
         )
     elif args.command == "merge":
         from po_utils.merge import merge_po
 
         merge_po(
             args.gettext_dir,
-            args.po_dir if args.po_dir else ".",
+            po_dir,
         )

@@ -41,14 +41,11 @@ def _write_po(file: TextIO, messages: Mapping[Message, list[Location]]) -> None:
         print('msgstr ""', file=file)
 
 
-def _get_files(
-    po_dir: Union[str, os.PathLike]
-) -> tuple[list[str], list[str], list[str]]:
+def _get_files() -> tuple[list[str], list[str], list[str]]:
     c_files = []
     rc_files = []
     ui_files = []
-    root_path = os.path.normpath(os.path.join(po_dir, "../src"))
-    for root, _dirs, files in os.walk(root_path, topdown=True):
+    for root, _dirs, files in os.walk("../src", topdown=True):
         for file in files:
             extension = os.path.splitext(file)[1]
             file_path = pathlib.Path(os.path.join(root, file)).as_posix()
@@ -78,8 +75,12 @@ def extract_strings(
     po_dir: Union[str, os.PathLike],
 ) -> None:
     """Extracts strings from the Celestia sources"""
+
+    # Set current directory to get consistent file path output
+    os.chdir(po_dir)
+
     xgettext = exe_path(gettext_dir, "xgettext")
-    c_files, rc_files, ui_files = _get_files(po_dir)
+    c_files, rc_files, ui_files = _get_files()
     extra_messages = defaultdict(list)
     for file in rc_files:
         for message, location in extract_rc(file):
