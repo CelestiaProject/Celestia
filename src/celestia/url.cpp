@@ -52,13 +52,14 @@ constexpr std::string_view PROTOCOL = "cel://"sv;
 // ShowDwarfPlanets = bit 27 (0x0000000008000000)
 constexpr unsigned int NEW_FLAG_BIT_1_7 = 27;
 constexpr std::uint64_t NEW_SHOW_PLANETS_BIT_MASK = (UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1));
-constexpr std::uint64_t RF_MASK = (UINT64_C(1) << NEW_FLAG_BIT_1_7) - 1;
+constexpr std::uint64_t RF_MASK = NEW_SHOW_PLANETS_BIT_MASK - 1;
 
 
-std::string getBodyName(Universe* universe, Body* body)
+std::string
+getBodyName(const Universe *universe, const Body *body)
 {
     std::string name = body->getName();
-    PlanetarySystem* parentSystem = body->getSystem();
+    const PlanetarySystem* parentSystem = body->getSystem();
     const Body* parentBody = nullptr;
 
     if (parentSystem != nullptr)
@@ -77,8 +78,7 @@ std::string getBodyName(Universe* universe, Body* body)
         parentBody = parentSystem->getPrimaryBody();
     }
 
-    auto *star = body->getSystem()->getStar();
-    if (star != nullptr)
+    if (auto *star = body->getSystem()->getStar(); star != nullptr)
         name = universe->getStarCatalog()->getStarName(*star) + ":" + name;
 
     return name;
@@ -108,6 +108,32 @@ getCoordSysName(ObserverFrame::CoordinateSystem mode)
     }
 }
 
+std::map<std::string_view, std::string>
+parseURLParams(std::string_view paramsStr)
+{
+    std::map<std::string_view, std::string> params;
+    if (paramsStr.empty())
+        return params;
+
+    constexpr auto npos = std::string_view::npos;
+    for (auto iter = paramsStr;;)
+    {
+        auto pos = iter.find('&');
+        auto kv = iter.substr(0, pos);
+        auto vpos = kv.find('=');
+        if (vpos == npos)
+        {
+            GetLogger()->error(_("URL parameter must look like key=value\n"));
+            break;
+        }
+        params[kv.substr(0, vpos)] = Url::decodeString(kv.substr(vpos + 1));
+        if (pos == npos)
+            break;
+        iter.remove_prefix(pos + 1);
+    }
+
+    return params;
+}
 
 struct Mode
 {
@@ -336,10 +362,9 @@ Url::decodeString(std::string_view str)
     b = str.find('%');
     while (b != std::string_view::npos && a < str.length())
     {
-        auto s = str.substr(a, b - a);
-        out.append(s);
+        out.append(str.substr(a, b - a));
         std::string_view c_code = str.substr(b + 1, 2);
-        uint8_t c;
+        std::uint8_t c;
         if (to_number(c_code, c, 16))
         {
             out += static_cast<std::string::value_type>(c);
@@ -348,16 +373,14 @@ Url::decodeString(std::string_view str)
         {
             GetLogger()->warn(_("Incorrect hex value \"{}\"\n"), c_code);
             out += '%';
-            out.append(c_code.data(), c_code.length());
+            out.append(c_code);
         }
         a = b + 1 + c_code.length();
         b = str.find('%', a);
     }
+
     if (a < str.length())
-    {
-        auto s = str.substr(a);
-        out.append(s.data(), s.length());
-    }
+        out.append(str.substr(a));
 
     return out;
 }
@@ -403,10 +426,8 @@ Url::encodeString(std::string_view str)
     return enc.str();
 }
 
-auto ParseURLParams(std::string_view paramsStr)
-    -> std::map<std::string_view, std::string>;
-
-bool Url::parse(std::string_view urlStr)
+bool
+Url::parse(std::string_view urlStr)
 {
     constexpr auto npos = std::string_view::npos;
 
@@ -501,7 +522,7 @@ bool Url::parse(std::string_view urlStr)
         break;
     }
 
-    auto params = ParseURLParams(paramsStr);
+    auto params = parseURLParams(paramsStr);
 
     // Version labelling of cel URLs was only added in Celestia 1.5, cel URL
     // version 2. Assume any URL without a version is version 1.
@@ -534,34 +555,8 @@ bool Url::parse(std::string_view urlStr)
     return true;
 }
 
-auto ParseURLParams(std::string_view paramsStr)
-   -> std::map<std::string_view, std::string>
-{
-    std::map<std::string_view, std::string> params;
-    if (paramsStr.empty())
-        return params;
-
-    constexpr auto npos = std::string_view::npos;
-    for (auto iter = paramsStr;;)
-    {
-        auto pos = iter.find('&');
-        auto kv = iter.substr(0, pos);
-        auto vpos = kv.find('=');
-        if (vpos == npos)
-        {
-            GetLogger()->error(_("URL parameter must look like key=value\n"));
-            break;
-        }
-        params[kv.substr(0, vpos)] = Url::decodeString(kv.substr(vpos + 1));
-        if (pos == npos)
-            break;
-        iter.remove_prefix(pos + 1);
-    }
-
-    return params;
-}
-
-bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool
+Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
     m_version = 3;
 
@@ -649,7 +644,8 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
     return true;
 }
 
-bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool
+Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
     if (params.count("rf") != 0)
     {
