@@ -206,7 +206,6 @@ class Renderer
                                   ShowMinorMoons        |
                                   ShowAsteroids         |
                                   ShowComets            |
-                                  ShowPlanetRings       |
                                   ShowSpacecrafts,
         ShowDeepSpaceObjects    = ShowGalaxies          |
                                   ShowGlobulars         |
@@ -214,6 +213,7 @@ class Renderer
                                   ShowOpenClusters,
         DefaultRenderFlags      = ShowStars             |
                                   ShowSolarSystemObjects|
+                                  ShowPlanetRings       |
                                   ShowDeepSpaceObjects  |
                                   ShowCloudMaps         |
                                   ShowNightMaps         |
