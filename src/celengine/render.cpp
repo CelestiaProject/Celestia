@@ -3026,25 +3026,7 @@ void Renderer::renderStar(const Star& star,
         rp.radius = star.getRadius();
         rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.geometry = star.getGeometry();
-
-        Atmosphere atmosphere;
-
-        // Use atmosphere effect to give stars a fuzzy fringe
-        if (star.hasCorona() && rp.geometry == InvalidResource)
-        {
-            Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
-            atmosphere.height = radius * CoronaHeight;
-            atmosphere.lowerColor = atmColor;
-            atmosphere.upperColor = atmColor;
-            atmosphere.skyColor = atmColor;
-
-            rp.atmosphere = &atmosphere;
-        }
-        else
-        {
-            rp.atmosphere = nullptr;
-        }
-
+        rp.atmosphere = nullptr;
         rp.orientation = star.getRotationModel()->orientationAtTime(observer.getTime()).cast<float>();
 
         renderObject(pos, distance, observer,
