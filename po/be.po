@@ -4,7 +4,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Hleb Valoshka <375gnu@gmail.com>, 2023
+# Hleb Valoshka <375gnu@gmail.com>, 2024
 # 
 #, fuzzy
 msgid ""
@@ -13,7 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2023-12-17 11:09+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2023\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2024\n"
 "Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -42,7 +42,7 @@ msgstr "Загружана {} аб'ектаў глыбокага космасу\
 #: ../src/celengine/galaxy.cpp:95
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
-msgstr "Ґаляктыка (Габлаў тып: %s)"
+msgstr "Галяктыка (Габлаў тып: %s)"
 
 #: ../src/celengine/globular.cpp:70
 #, c-format, qt-format
@@ -264,7 +264,7 @@ msgstr "Не атрымалася прачытаць двайковы XYZV-фа�
 #: ../src/celestia/celestiacore.cpp:110 ../src/celestia/scriptmenu.cpp:108
 #: ../src/celscript/lua/luascript.cpp:173
 msgid "Path {} doesn't exist or isn't a directory\n"
-msgstr "Шлях {} ці то не існуе, ці то не зьяўляецца каталёґам\n"
+msgstr "Шлях {} ці то не існуе, ці то не зьяўляецца каталёгам\n"
 
 #: ../src/celestia/celestiacore.cpp:247
 msgid "Error reading favorites file {}.\n"
@@ -272,11 +272,11 @@ msgstr "Памылка падчас чытаньня файла абранага
 
 #: ../src/celestia/celestiacore.cpp:268
 msgid "Failed to check directory existance for favorites file {}\n"
-msgstr "Не атрымалася праверыць існаваньне каталёґу для файла абранага {}\n"
+msgstr "Не атрымалася праверыць існаваньне каталёгу для файла абранага {}\n"
 
 #: ../src/celestia/celestiacore.cpp:276
 msgid "Failed to create a directory for favorites file {}\n"
-msgstr "Не атрымалася стварыць каталёґ для файла абранага {}\n"
+msgstr "Не атрымалася стварыць каталёг для файла абранага {}\n"
 
 #: ../src/celestia/celestiacore.cpp:396
 msgid "Invalid filetype"
@@ -381,7 +381,7 @@ msgstr "Колер зорак: Чорнае цела (Белы пункт Сон
 
 #: ../src/celestia/celestiacore.cpp:1130
 msgid "Star color: Blackbody (Vega Whitepoint)"
-msgstr "Колер зорак: Чорнае цела (Белы пункт Вэґі)"
+msgstr "Колер зорак: Чорнае цела (Белы пункт Вэгі)"
 
 #: ../src/celestia/celestiacore.cpp:1136
 msgid "Star color: Classic"
@@ -413,7 +413,7 @@ msgstr "Затрымка руху сьвятла ня ўлучаная"
 
 #: ../src/celestia/celestiacore.cpp:1212
 msgid "Light travel delay ignored"
-msgstr "Час руху сьвятла іґнаруецца"
+msgstr "Час руху сьвятла ігнаруецца"
 
 #: ../src/celestia/celestiacore.cpp:1255
 msgid "Using normal surface textures."
@@ -494,19 +494,19 @@ msgstr "Даданы прагляд"
 
 #: ../src/celestia/celestiacore.cpp:2242
 msgid "Skipping solar system catalog: {}\n"
-msgstr "Абмінаем каталёґ сонечнай сыстэмы: {}\n"
+msgstr "Абмінаем каталёг сонечнай сыстэмы: {}\n"
 
 #: ../src/celestia/celestiacore.cpp:2245
 msgid "Loading solar system catalog: {}\n"
-msgstr "Загрузка каталёґу сонечнай сыстэмы: {}\n"
+msgstr "Загрузка каталёгу сонечнай сыстэмы: {}\n"
 
 #: ../src/celestia/celestiacore.cpp:2288
 msgid "Skipping {} catalog: {}\n"
-msgstr "Абмінаем каталёґ \"{}\": {}\n"
+msgstr "Абмінаем каталёг \"{}\": {}\n"
 
 #: ../src/celestia/celestiacore.cpp:2291
 msgid "Loading {} catalog: {}\n"
-msgstr "Загрузка каталёґу \"{}\": {}\n"
+msgstr "Загрузка каталёгу \"{}\": {}\n"
 
 #: ../src/celestia/celestiacore.cpp:2299
 msgid "Error reading {} catalog file: {}\n"
@@ -526,7 +526,7 @@ msgstr "Немагчыма прачытаць базу зорак."
 
 #: ../src/celestia/celestiacore.cpp:2412
 msgid "Error opening deepsky catalog file {}.\n"
-msgstr "Памылка адкрыцьця файла каталёґу глыбокага космасу {}.\n"
+msgstr "Памылка адкрыцьця файла каталёгу глыбокага космасу {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:2416
 msgid "Cannot read Deep Sky Objects database {}.\n"
@@ -534,7 +534,7 @@ msgstr "Немагчыма прачытаць базу аб'ектаў глыб�
 
 #: ../src/celestia/celestiacore.cpp:2463
 msgid "Error opening solar system catalog {}.\n"
-msgstr "Памылка падчас адкрыцьця каталёґу сонечнай сыстэмы {}.\n"
+msgstr "Памылка падчас адкрыцьця каталёгу сонечнай сыстэмы {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:2505
 msgid "Error opening constellation boundaries file {}.\n"
@@ -570,7 +570,7 @@ msgstr "Памылка падчас чытаньня файла зорак\n"
 
 #: ../src/celestia/celestiacore.cpp:2806
 msgid "Error opening star catalog {}\n"
-msgstr "Памылка адкрыцьця каталёґу зорак {}\n"
+msgstr "Памылка адкрыцьця каталёгу зорак {}\n"
 
 #: ../src/celestia/celestiacore.cpp:3141
 msgid "Invalid URL"
@@ -743,7 +743,7 @@ msgstr "Маса: {} фунтаў\n"
 
 #: ../src/celestia/hud.cpp:185
 msgid "Mass: {} kg\n"
-msgstr "Маса: {} кґ\n"
+msgstr "Маса: {} кг\n"
 
 #: ../src/celestia/hud.cpp:189
 msgid "Mass: {} Mj\n"
@@ -881,7 +881,7 @@ msgstr "Шчыльнасьць: {} фунтаў/фут³\n"
 
 #: ../src/celestia/hud.cpp:590
 msgid "Density: {} kg/m³\n"
-msgstr "Шчыльнасьць: {} кґ/м³\n"
+msgstr "Шчыльнасьць: {} кг/м³\n"
 
 #: ../src/celestia/hud.cpp:596
 #, c-format
@@ -1003,12 +1003,12 @@ msgid ""
 "Celestia is unable to run because the data directory was not found, probably"
 " due to improper installation."
 msgstr ""
-"Celestia ня можа працаваць, бо каталёґ за зьвесткамі адсутнічае, магчыма "
+"Celestia ня можа працаваць, бо каталёг са зьвесткамі адсутнічае, магчыма "
 "праз няправільнае ўсталяваньне."
 
 #: ../src/celestia/qt/qtappwin.cpp:349
 msgid "Celestial Browser"
-msgstr "Нябесны каталёґ"
+msgstr "Нябесны каталёг"
 
 #. Info browser for a selected object
 #: ../src/celestia/qt/qtappwin.cpp:355
@@ -1169,9 +1169,9 @@ msgstr ""
 "<b>%1</b>.</p><p>Пабудаваная для %2-бітавага працэсара.<br>Выкарыстоўваючы "
 "%3 %4<br>Пабудаваная зь бібліятэкай Qt: %5<br>Ядры NAIF %7<br>Відарысы AVIF "
 "%8<br>Выкарыстоўвае вэрсію Qt: %6</p><p>Аўтарскія правы © 2001-2023 каманда "
-"распрацоўкі Celestia.<br>Celestia - вольнае праґрамнае забесьпячэньне. Яго "
+"распрацоўкі Celestia.<br>Celestia - вольнае праграмнае забесьпячэньне. Яго "
 "можна распаўсюджваць і/або зьмяняць на ўмовах Агульнай грамадзкай ліцэнзіі "
-"GNU, апублікаванай Фондам свабоднага праґрамнага забесьпячэньня; вэрсіі "
+"GNU, апублікаванай Фондам свабоднага праграмнага забесьпячэньня; вэрсіі "
 "ліцэнзіі 2 або (на тваё гледзішча) любой пазьнейшай вэрсіі.</p><p>Асноўная "
 "пляцоўка: <a "
 "href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
@@ -1313,7 +1313,7 @@ msgstr "Ctrl+Q"
 #: ../src/celestia/qt/qtappwin.cpp:1445
 #: ../src/celestia/win32/res/resource_strings.cpp:9
 msgid "&Navigation"
-msgstr "&Навіґацыя"
+msgstr "&Навігацыя"
 
 #: ../src/celestia/qt/qtappwin.cpp:1447
 msgid "Select Sun"
@@ -1556,7 +1556,7 @@ msgstr "Сыстэмныя дата й час пры актывацыі"
 #: ../src/celestia/qt/qtbookmark.cpp:897 ../src/celestia/qt/rc.cpp:39
 #: ../src/celestia/qt/rc.cpp:54
 msgid "New Folder"
-msgstr "Новы каталёґ"
+msgstr "Новы каталёг"
 
 #. Create the render flags actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:37
@@ -1569,11 +1569,11 @@ msgstr "Экватарыяльная каардынатная сетка"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:42
 msgid "Ga"
-msgstr "Ґа"
+msgstr "Га"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:43
 msgid "Galactic coordinate grid"
-msgstr "Ґаляктычная каардынатная сетка"
+msgstr "Галяктычная каардынатная сетка"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:47
 msgid "Ec"
@@ -1782,7 +1782,7 @@ msgstr "Назвы"
 #: ../src/celestia/qt/rc.cpp:246
 #: ../src/celestia/win32/res/resource_strings.cpp:223
 msgid "Galaxies"
-msgstr "Ґаляктыкі"
+msgstr "Галяктыкі"
 
 #. galaxiesAction->setShortcut(QString("U"));
 #: ../src/celestia/qt/qtcelestiaactions.cpp:130
@@ -2142,11 +2142,11 @@ msgstr "адшукана %1 абʼектаў"
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "Set the data directory."
-msgstr "Задаць каталёґ з файламі даньняў."
+msgstr "Задаць каталёг з файламі даньняў."
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "datadir"
-msgstr "каталёґ"
+msgstr "каталёг"
 
 #: ../src/celestia/qt/qtcommandline.cpp:17
 msgid "Set the configuraton file."
@@ -2159,11 +2159,11 @@ msgstr "файл"
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "Add an extras directory. This option may be specified multiple times."
 msgstr ""
-"Дадаць каталёґ extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
+"Дадаць каталёг extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "extrasdir"
-msgstr "каталёґ"
+msgstr "каталёг"
 
 #: ../src/celestia/qt/qtcommandline.cpp:19
 msgid "Start in fullscreen mode."
@@ -2342,11 +2342,11 @@ msgstr "<b>Сыдэрычны пэрыяд авароту:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:256
 msgid "Prograde"
-msgstr "Праґрадны"
+msgstr "Праградны"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:256
 msgid "Retrograde"
-msgstr "Рэтраґрадны"
+msgstr "Рэтраградны"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:257
 #, qt-format
@@ -2489,7 +2489,7 @@ msgstr "Чорнае цела (Белы пункт Сонца)"
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:256
 #: ../src/celestia/win32/res/resource_strings.cpp:45
 msgid "Blackbody (Vega Whitepoint)"
-msgstr "Чорнае цела (Белы пункт Вэґі)"
+msgstr "Чорнае цела (Белы пункт Вэгі)"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:257
 #: ../src/celestia/win32/res/resource_strings.cpp:46
@@ -2636,7 +2636,7 @@ msgstr "Паказваць &напрамак на %1"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:338
 msgid "Show Planetographic &Grid"
-msgstr "Паказваць плянэтаґрафічную &сетку"
+msgstr "Паказваць плянэтаграфічную &сетку"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:344
 msgid "Show &Terminator"
@@ -2827,7 +2827,7 @@ msgstr "Плянэты і месяцы"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
 msgid "Group objects by class"
-msgstr "Ґрупаваць аб'екты паводле клясы"
+msgstr "Групаваць аб'екты паводле клясы"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:808
 msgid "Mark bodies selected in list view"
@@ -2895,7 +2895,7 @@ msgstr "Крыніца часу:"
 #. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
 #: ../src/celestia/qt/rc.cpp:15
 msgid "Dialog"
-msgstr "Дыялёґ"
+msgstr "Дыялёг"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:56
 #. i18n: ectx: property (text), widget (QLabel, label)
@@ -3076,7 +3076,7 @@ msgstr "Экліптычная"
 #: ../src/celestia/qt/rc.cpp:188
 #: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Galactic"
-msgstr "Ґаляктычная"
+msgstr "Галяктычная"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:382
 #. i18n: ectx: property (text), widget (QCheckBox, horizontalGridCheck)
@@ -3090,7 +3090,7 @@ msgstr "Гарызантальная"
 #: ../src/celestia/qt/rc.cpp:197
 #: ../src/celestia/win32/res/resource_strings.cpp:228
 msgid "Diagrams"
-msgstr "Дыяґрамы"
+msgstr "Дыяграмы"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:418
 #. i18n: ectx: property (text), widget (QCheckBox, boundariesCheck)
@@ -3228,7 +3228,7 @@ msgstr "Начычанасьць танаванага асьвятленьня:"
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/rc.cpp:327
 msgid "Render path"
-msgstr "Спосаб рэндэрынґу"
+msgstr "Спосаб рэндэрынгу"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:1004
 #. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
@@ -3377,11 +3377,11 @@ msgstr "&Трымаць вылучэньне\tT"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:19
 msgid "Solar System &Browser..."
-msgstr "&Каталёґ сонечнай сыстэмы…"
+msgstr "&Каталёг сонечнай сыстэмы…"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:20
 msgid "Star B&rowser..."
-msgstr "&Каталёґ зорак…"
+msgstr "&Каталёг зорак…"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Eclipse Finder"
@@ -3585,8 +3585,8 @@ msgstr "Аўтарскія правы (C) 2001-2021, Каманда распра
 #: ../src/celestia/win32/res/resource_strings.cpp:77
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr ""
-"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае"
-" ґарантыі."
+"Celestia зьяўляецца свабоднай праграмай і пастаўляецца абсалютна без аніякае"
+" гарантыі."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:78
 msgid "Authors"
@@ -3651,15 +3651,15 @@ msgstr "Стварыць у >>"
 #: ../src/celestia/win32/res/resource_strings.cpp:96
 #: ../src/celestia/win32/res/resource_strings.cpp:159
 msgid "New Folder..."
-msgstr "Новы каталёґ…"
+msgstr "Новы каталёг…"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:97
 msgid "Add New Bookmark Folder"
-msgstr "Дадаць новы каталёґ закладак"
+msgstr "Дадаць новы каталёг закладак"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 msgid "Folder Name"
-msgstr "Назва каталёґу"
+msgstr "Назва каталёгу"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:101
 msgid "Celestia Controls"
@@ -3800,7 +3800,7 @@ msgstr "Перайменаваць…"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:162
 msgid "Rename Bookmark or Folder"
-msgstr "Перайменаваць закладку ці каталёґ"
+msgstr "Перайменаваць закладку ці каталёг"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:165
 msgid "New Name"
@@ -3820,7 +3820,7 @@ msgstr "Цяперашні час"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:173
 msgid "Solar System Browser"
-msgstr "Каталёґ сонечнай сыстэмы"
+msgstr "Каталёг сонечнай сыстэмы"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:177
 #: ../src/celestia/win32/res/resource_strings.cpp:184
@@ -3833,7 +3833,7 @@ msgstr "Аб'екты сонечнай сыстэмы"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:179
 msgid "Star Browser"
-msgstr "Каталёґ зорак"
+msgstr "Каталёг зорак"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:180
 msgid "Nearest"
@@ -3983,7 +3983,7 @@ msgstr "Паказваць вэктар хуткасьці"
 
 #: ../src/celestia/win32/wincontextmenu.cpp:273
 msgid "Show Planetographic Grid"
-msgstr "Паказваць плянэтаґрафічную сетку"
+msgstr "Паказваць плянэтаграфічную сетку"
 
 #: ../src/celestia/win32/wincontextmenu.cpp:274
 msgid "Show Terminator"
@@ -4068,7 +4068,7 @@ msgstr "Фатальная памылка"
 
 #: ../src/celestia/win32/winmain.cpp:407
 msgid "Directory expected after --dir"
-msgstr "Пасьля --dir мусіць быць каталёґ"
+msgstr "Пасьля --dir мусіць быць каталёг"
 
 #: ../src/celestia/win32/winmain.cpp:408 ../src/celestia/win32/winmain.cpp:420
 #: ../src/celestia/win32/winmain.cpp:433 ../src/celestia/win32/winmain.cpp:445
@@ -4082,7 +4082,7 @@ msgstr "Пасьля --conf мусіць быць файл настаўлень�
 
 #: ../src/celestia/win32/winmain.cpp:432
 msgid "Directory expected after --extrasdir"
-msgstr "Пасьля --extrasdir мусіць быць каталёґ"
+msgstr "Пасьля --extrasdir мусіць быць каталёг"
 
 #: ../src/celestia/win32/winmain.cpp:444
 msgid "URL expected after --url"
@@ -4130,7 +4130,7 @@ msgstr "Ці капіяваць абранае?"
 
 #: ../src/celestia/win32/winmain.cpp:776
 msgid "Failed to create the application window."
-msgstr "Не атрымалася стварыць вакно праґрамы."
+msgstr "Не атрымалася стварыць вакно праграмы."
 
 #: ../src/celestia/win32/winmain.cpp:785
 msgid "Error locking drop target\n"
@@ -4138,7 +4138,7 @@ msgstr "Памылка блякаваньня мэты перацягваньн�
 
 #: ../src/celestia/win32/winmain.cpp:794
 msgid "Failed to register drop target as OLE object.\n"
-msgstr "Не атрымалася зарэґістраваць мэту перацягваньня як аб’ект OLE.\n"
+msgstr "Не атрымалася зарэгістраваць мэту перацягваньня як аб’ект OLE.\n"
 
 #: ../src/celestia/win32/winmainwindow.cpp:260
 msgid "Error getting joystick caps.\n"
@@ -4166,7 +4166,7 @@ msgstr "Не атрымалася вызваліць кантэкст прыла
 
 #: ../src/celestia/win32/winmainwindow.cpp:1568
 msgid "Failed to register the window class."
-msgstr "Не атрымалася зарэґістраваць клясу вакна."
+msgstr "Не атрымалася зарэгістраваць клясу вакна."
 
 #: ../src/celestia/win32/winmoviecapture.cpp:228
 msgid "Stop current movie capture before starting another one."
@@ -4278,7 +4278,7 @@ msgstr ""
 "УВАГА:\n"
 "\n"
 "Гэты сцэнар патрабуе дазвол на чытаньне/запіс файлаў\n"
-"і запуск вонкавых праґрам. Гэта — даволі небясьпечныя\n"
+"і запуск вонкавых праграм. Гэта — даволі небясьпечныя\n"
 "дзеяньні.\n"
 "Ці давяраеш сцэнару й хочаш дазволіць гэта?\n"
 "y = так, ESC = спыніць сцэнар, іншая клявіша = не"
@@ -4295,7 +4295,7 @@ msgstr ""
 "УВАГА:\n"
 "\n"
 "Гэты сцэнар патрабуе дазвол на чытаньне/запіс файлаў\n"
-"і запуск вонкавых праґрам. Гэта — даволі небясьпечныя\n"
+"і запуск вонкавых праграм. Гэта — даволі небясьпечныя\n"
 "дзеяньні.\n"
 "Ці давяраеш сцэнару й хочаш дазволіць гэта?"
 
