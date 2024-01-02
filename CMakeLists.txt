@@ -93,6 +93,12 @@ endif()
 # Use our cmake files
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+# Require Windows 7
+if(WIN32)
+  set(WINVER 0x0601)
+  set(NTDDI_VER 0x06010000)
+endif()
+
 if(USE_ICU)
   add_definitions(-DUSE_ICU)
   if(WIN32 AND USE_WIN_ICU)
@@ -378,8 +384,9 @@ if(WIN32)
     -DWIN32_LEAN_AND_MEAN
     -DUNICODE
     -D_UNICODE
-    -DWINVER=0x0601
-    -D_WIN32_WINNT=0x0601
+    -DWINVER=${WINVER}
+    -D_WIN32_WINNT=${WINVER}
+    -DNTDDI_VERSION=${NTDDI_VER}
   )
   # Fix the issue: https://github.com/CelestiaProject/Celestia/issues/364
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
