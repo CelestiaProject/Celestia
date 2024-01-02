@@ -62,8 +62,6 @@ option(ENABLE_FAST_MATH             "Build with unsafe fast-math compiller optio
 option(ENABLE_TESTS                 "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES                  "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(ENABLE_LTO                   "Enable link time optimizations (Default: off)" OFF)
-option(ENABLE_RAY_BASED_DRAGGING    "Enable the dragging behavior that based on change of pick rays instead of screen coordinates (Default: off)" OFF)
-option(ENABLE_FOCUS_ZOOMING         "Enable the zooming behavior where the focus location on screen is kept (Default: off)" OFF)
 option(USE_GTKGLEXT                 "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
 option(USE_GTK3                     "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND                  "Use Wayland in Qt frontend (Default: off)" OFF)
@@ -238,14 +236,6 @@ if(ENABLE_LIBAVIF)
   link_libraries(libavif::libavif)
   include_directories(${LIBAVIF_INCLUDE_DIR})
   add_definitions(-DUSE_LIBAVIF)
-endif()
-
-if (ENABLE_RAY_BASED_DRAGGING)
-  add_definitions(-DENABLE_RAY_BASED_DRAGGING)
-endif()
-
-if (ENABLE_FOCUS_ZOOMING)
-  add_definitions(-DENABLE_FOCUS_ZOOMING)
 endif()
 
 if(_UNIX)

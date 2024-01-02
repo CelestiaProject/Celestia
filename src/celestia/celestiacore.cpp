@@ -404,18 +404,11 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
-#if defined(ENABLE_RAY_BASED_DRAGGING) || defined(ENABLE_FOCUS_ZOOMING)
-    auto newLocation = Eigen::Vector2f(x, y);
+    Eigen::Vector2f newLocation(x, y);
 
-#ifdef ENABLE_RAY_BASED_DRAGGING
     dragLocation = newLocation;
     dragStartFromSurface = std::nullopt;
-#endif
-
-#ifdef ENABLE_FOCUS_ZOOMING
     dragStart = newLocation;
-#endif
-#endif
 
 #ifdef CELX
     if (m_script != nullptr)
@@ -439,14 +432,9 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
-#ifdef ENABLE_RAY_BASED_DRAGGING
     dragLocation = std::nullopt;
     dragStartFromSurface = std::nullopt;
-#endif
-
-#ifdef ENABLE_FOCUS_ZOOMING
     dragStart = std::nullopt;
-#endif
 
     // Four pixel tolerance for picking
     float obsPickTolerance = sim->getActiveObserver()->getFOV() / static_cast<float>(metrics.height) * this->pickTolerance;
@@ -517,7 +505,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
 void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
-    if (config->mouse.reverseWheel) motion = -motion;
+    if (is_set(interactionFlags, InteractionFlags::ReverseWheel))
+        motion = -motion;
+
     if (motion != 0.0)
     {
         if ((modifiers & ShiftKey) != 0)
@@ -560,7 +550,6 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
-#ifdef ENABLE_RAY_BASED_DRAGGING
     auto oldLocation = dragLocation;
     auto proposedLocation = oldLocation;
 
@@ -574,7 +563,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         if ((modifiers & Touch) != 0)
             dragLocation = proposedLocation;
     }
-#endif
 
     if (viewManager->resizeViews(metrics, dx, dy))
     {
@@ -655,14 +643,9 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // exponential.
             float newFOV = minFOV + (float) exp(log(fov - minFOV) + amount * 4);
 
-#ifdef ENABLE_FOCUS_ZOOMING
-            updateFOV(newFOV, dragStart, view);
-#else
-            updateFOV(newFOV, std::nullopt, view);
-#endif
+            updateFOV(newFOV, is_set(interactionFlags, InteractionFlags::FocusZooming) ? dragStart : std::nullopt, view);
         }
-#ifdef ENABLE_RAY_BASED_DRAGGING
-        else if (proposedLocation.has_value())
+        else if (is_set(interactionFlags, InteractionFlags::RayBasedDragging) && proposedLocation.has_value())
         {
             auto view = viewManager->activeView();
             auto oldPickRay = getPickRay(oldLocation.value().x(), oldLocation.value().y(), view);
@@ -693,7 +676,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 sim->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay, newPickRay));
             }
         }
-#else
         else
         {
             // For a small field of view, rotate the camera more finely
@@ -716,7 +698,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else
                 sim->rotate(q.conjugate());
         }
-#endif
 
         mouseMotion += abs(dy) + abs(dx);
     }
@@ -752,15 +733,17 @@ void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale, bool zoo
 {
     viewManager->pickView(sim, metrics, focusX, focusY);
     const View *view = viewManager->activeView();
+    bool focusZoomingEnabled = is_set(interactionFlags, InteractionFlags::FocusZooming);
 
     if (zoomFOV)
     {
+        auto focus = focusZoomingEnabled ? std::make_optional(Eigen::Vector2f(focusX, focusY)) : std::nullopt;
         float fov = view->getObserver()->getFOV();
-        updateFOV(fov / scale, Eigen::Vector2f(focusX, focusY), view);
+        updateFOV(fov / scale, focus, view);
     }
     else
     {
-        auto focusRay = getPickRay(focusX, focusY, view);
+        auto focusRay = focusZoomingEnabled ? std::make_optional(getPickRay(focusX, focusY, view)) : std::nullopt;
         sim->scaleOrbitDistance(scale, focusRay);
     }
 }
@@ -2087,6 +2070,16 @@ void CelestiaCore::setDecelerationCoefficient(float coefficient)
     decelerationCoefficient = coefficient;
 }
 
+CelestiaCore::InteractionFlags CelestiaCore::getInteractionFlags() const
+{
+    return interactionFlags;
+}
+
+void CelestiaCore::setInteractionFlags(InteractionFlags flags)
+{
+    interactionFlags = flags;
+}
+
 // Return true if anything changed that requires re-rendering. Otherwise, we
 // can skip rendering, keep the GPU idle, and save power.
 bool CelestiaCore::viewUpdateRequired() const
@@ -2537,6 +2530,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         else
             GetLogger()->warn("Unknown layout direction {}\n", config->layoutDirection);
     }
+
+    set_or_unset(interactionFlags, InteractionFlags::ReverseWheel, config->mouse.reverseWheel);
+    set_or_unset(interactionFlags, InteractionFlags::RayBasedDragging, config->mouse.rayBasedDragging);
+    set_or_unset(interactionFlags, InteractionFlags::FocusZooming, config->mouse.focusZooming);
 
     sim = new Simulation(universe);
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)

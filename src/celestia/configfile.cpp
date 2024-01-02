@@ -173,6 +173,8 @@ applyMouse(CelestiaConfig::Mouse& mouse, const Hash& hash)
     applyNumber(mouse.rotateAcceleration, hash, "RotateAcceleration"sv);
     applyNumber(mouse.rotationSensitivity, hash, "MouseRotationSensitivity"sv);
     applyBoolean(mouse.reverseWheel, hash, "ReverseMouseWheel"sv);
+    applyBoolean(mouse.rayBasedDragging, hash, "RayBasedDragging"sv);
+    applyBoolean(mouse.focusZooming, hash, "FocusZooming"sv);
 }
 
 

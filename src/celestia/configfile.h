@@ -59,7 +59,9 @@ struct CelestiaConfig
         std::string cursor{ };
         float rotateAcceleration{ 120.0f };
         float rotationSensitivity{ 1.0f };
-        bool  reverseWheel{ false };
+        bool reverseWheel{ false };
+        bool rayBasedDragging{ false };
+        bool focusZooming{ false };
     };
 
     struct RenderDetails
