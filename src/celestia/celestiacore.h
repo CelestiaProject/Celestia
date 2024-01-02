@@ -28,6 +28,7 @@
 #include <celengine/overlayimage.h>
 #include <celengine/viewporteffect.h>
 #include <celimage/pixelformat.h>
+#include <celutil/flag.h>
 #include <celutil/tee.h>
 #include "configfile.h"
 #include "favorites.h"
@@ -179,6 +180,14 @@ public:
         Deny        = 2,
     };
 
+    enum class InteractionFlags : unsigned int
+    {
+        None                = 0x0,
+        ReverseWheel        = 0x1,
+        RayBasedDragging    = 0x2,
+        FocusZooming        = 0x4,
+    };
+
     CelestiaCore();
     ~CelestiaCore();
 
@@ -300,6 +309,9 @@ public:
     std::tuple<int, int> getWindowDimension() const;
     void setAccelerationCoefficient(float);
     void setDecelerationCoefficient(float);
+
+    InteractionFlags getInteractionFlags() const;
+    void setInteractionFlags(InteractionFlags);
 
     void setFOVFromZoom();
     void setZoomFromFOV();
@@ -489,14 +501,11 @@ private:
 
     float pickTolerance { 4.0f };
 
-#ifdef ENABLE_RAY_BASED_DRAGGING
+    InteractionFlags interactionFlags { InteractionFlags::None };
+
     std::optional<Eigen::Vector2f> dragLocation { std::nullopt };
     std::optional<bool> dragStartFromSurface { std::nullopt };
-#endif
-
-#ifdef ENABLE_FOCUS_ZOOMING
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
-#endif
 
     std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };
@@ -516,3 +525,5 @@ private:
     friend std::shared_ptr<TextureFont> getTitleFont(CelestiaCore*);
 #endif
 };
+
+ENUM_CLASS_BITWISE_OPS(CelestiaCore::InteractionFlags);

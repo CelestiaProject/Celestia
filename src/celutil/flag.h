@@ -59,4 +59,13 @@ constexpr bool is_set(E f, E t)
     return (f & t) != static_cast<E>(0);
 }
 
+template<typename E, std::enable_if_t<std::is_enum_v<E>, int> = 0>
+constexpr void set_or_unset(E& f, E t, bool set)
+{
+    if (set)
+        f |= t;
+    else
+        f &= ~t;
+}
+
 }
