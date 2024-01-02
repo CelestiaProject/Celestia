@@ -1,52 +1,51 @@
 function(EnableWinICU)
   # https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-
+  # https://learn.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers
+
+  # Combined header/library - requires Windows 10 1903
   try_compile(
     HAVE_WIN_ICU_1903
     ${CMAKE_BINARY_DIR}
     "${CMAKE_SOURCE_DIR}/checks/winicunew.cpp"
-    COMPILE_DEFINITIONS
-      -D_WIN32_WINNT=_WIN32_WINNT_WIN10
-      -DNTDDI_VERSION=NTDDI_WIN10_19H1
     LINK_LIBRARIES icu
   )
-  # _WIN32_WINNT and NTDDI_VERSION need to be set to enable the icu header to work properly.
-  # https://learn.microsoft.com/en-gb/windows/win32/winprog/using-the-windows-headers
-  add_definitions(-D_WIN32_WINNT=_WIN32_WINNT_WIN10)
+  set(WINVER 0x0A00 PARENT_SCOPE)
   if(HAVE_WIN_ICU_1903)
-    add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER -DNTDDI_VERSION=NTDDI_WIN10_19H1)
+    set(NTDDI_VER 0x0A000007 PARENT_SCOPE)
+    add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER)
     link_libraries("icu")
     message(STATUS "Found ICU with combined header and combined lib")
+    return()
+  endif()
+
+  # Combined header/separate libraries - requires Windows 10 1709
+  try_compile(
+    HAVE_WIN_ICU_1709
+    ${CMAKE_BINARY_DIR}
+    "${CMAKE_SOURCE_DIR}/checks/winicunew.cpp"
+    LINK_LIBRARIES icuuc icuin
+  )
+  if(HAVE_WIN_ICU_1709)
+    set(NTDDI_VER 0x0A000004 PARENT_SCOPE)
+    add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER)
+    link_libraries("icuuc" "icuin")
+    message(STATUS "Found ICU with combined header and separate libs")
+    return()
+  endif()
+
+  # Separate headers/separate libraries - requires Windows 10 1703
+  try_compile(
+    HAVE_WIN_ICU_1703
+    ${CMAKE_BINARY_DIR}
+    "${CMAKE_SOURCE_DIR}/checks/winicuold.cpp"
+    LINK_LIBRARIES icuuc icuin
+  )
+  if(HAVE_WIN_ICU_1703)
+    set(NTDDI_VER 0x0A000003 PARENT_SCOPE)
+    add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER)
+    link_libraries("icuuc" "icuin")
+    message(STATUS "Found ICU with separate headers and separate libs")
   else()
-    try_compile(
-      HAVE_WIN_ICU_1709
-      ${CMAKE_BINARY_DIR}
-      "${CMAKE_SOURCE_DIR}/checks/winicunew.cpp"
-      COMPILE_DEFINITIONS
-        -D_WIN32_WINNT=_WIN32_WINNT_WIN10
-        -DNTDDI_VERSION=NTDDI_WIN10_RS3
-      LINK_LIBRARIES icuuc icuin
-    )
-    if(HAVE_WIN_ICU_1709)
-      add_definitions(-DHAVE_WIN_ICU_COMBINED_HEADER -DNTDDI_VERSION=NTDDI_WIN10_RS3)
-      link_libraries("icuuc" "icuin")
-      message(STATUS "Found ICU with combined header and separate libs")
-    else()
-      try_compile(
-        HAVE_WIN_ICU_1703
-        ${CMAKE_BINARY_DIR}
-        "${CMAKE_SOURCE_DIR}/checks/winicuold.cpp"
-        COMPILE_DEFINITIONS
-          -D_WIN32_WINNT=_WIN32_WINNT_WIN10
-          -DNTDDI_VERSION=NTDDI_WIN10_RS2
-        LINK_LIBRARIES icuuc icuin
-      )
-      if(HAVE_WIN_ICU_1703)
-        add_definitions(-DHAVE_WIN_ICU_SEPARATE_HEADERS -DNTDDI_VERSION=NTDDI_WIN10_RS2)
-        link_libraries("icuuc" "icuin")
-        message(STATUS "Found ICU with separate headers and separate libs")
-      else()
-        message(FATAL_ERROR "Unable to find Windows SDK's ICU implementation")
-      endif()
-    endif()
+    message(FATAL_ERROR "Unable to find Windows SDK's ICU implementation")
   endif()
 endfunction()
