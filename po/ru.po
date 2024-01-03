@@ -2160,7 +2160,7 @@ msgstr "конфиг"
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "Add an extras directory. This option may be specified multiple times."
 msgstr ""
-"Добавить папку «extras». Поддерживается добавление больше одной папки."
+"Добавить папку «extras». Этот параметр можно использовать несколько раз."
 
 #: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "extrasdir"
