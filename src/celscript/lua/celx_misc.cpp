@@ -271,6 +271,14 @@ static int font_tostring(lua_State* l)
     return celx.push("[Font]");
 }
 
+static int font_gc(lua_State* l)
+{
+    CelxLua celx(l);
+    auto *font = celx.getThis<std::shared_ptr<TextureFont>>();
+    font->~shared_ptr();
+    return 0;
+}
+
 void CreateFontMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -278,6 +286,7 @@ void CreateFontMetaTable(lua_State* l)
     celx.createClassMetatable(Celx_Font);
 
     celx.registerMethod("__tostring", font_tostring);
+    celx.registerMethod("__gc", font_gc);
     celx.registerMethod("bind", font_bind);
     celx.registerMethod("render", font_render);
     celx.registerMethod("unbind", font_unbind);
