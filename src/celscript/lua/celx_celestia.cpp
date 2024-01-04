@@ -9,8 +9,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+#include <cstdint>
 #include <iostream>
-#include <optional>
+#include <string_view>
 
 #include <fmt/format.h>
 
@@ -41,6 +43,7 @@
 #include "celx_category.h"
 
 using namespace std;
+using namespace std::string_view_literals;
 using namespace Eigen;
 using namespace celestia;
 using namespace celestia::scripts;
@@ -60,7 +63,7 @@ LuaState *getLuaStateObject(lua_State*);
 
 void PushClass(lua_State*, int);
 void setTable(lua_State*, const char*, lua_Number);
-ObserverFrame::CoordinateSystem parseCoordSys(const string&);
+ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
 
 static fs::path GetScriptPath(lua_State* l)
 {
@@ -224,14 +227,14 @@ static int celestia_show(lua_State* l)
 
     int argc = lua_gettop(l);
     uint64_t flags = 0;
-    auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
+    const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
-        if (renderFlag == "lightdelay")
+        std::string_view renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
+        if (renderFlag == "lightdelay"sv)
             appCore->setLightDelayActive(true);
-        else if (RenderFlagMap.count(renderFlag) > 0)
-            flags |= RenderFlagMap[renderFlag];
+        else if (auto it = RenderFlagMap.find(renderFlag); it != RenderFlagMap.end())
+            flags |= it->second;
     }
 
     Renderer* r = appCore->getRenderer();
@@ -248,14 +251,14 @@ static int celestia_hide(lua_State* l)
 
     int argc = lua_gettop(l);
     uint64_t flags = 0;
-    auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
+    const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
-        if (renderFlag == "lightdelay")
+        std::string_view renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
+        if (renderFlag == "lightdelay"sv)
             appCore->setLightDelayActive(false);
-        else if (RenderFlagMap.count(renderFlag) > 0)
-            flags |= RenderFlagMap[renderFlag];
+        else if (auto it = RenderFlagMap.find(renderFlag); it != RenderFlagMap.end())
+            flags |= it->second;
     }
 
     Renderer* r = appCore->getRenderer();
@@ -277,10 +280,10 @@ static int celestia_setrenderflags(lua_State* l)
 
     uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     lua_pushnil(l);
+    const auto& renderFlagMap = appCore->scriptMaps().RenderFlagMap;
     while (lua_next(l, -2) != 0)
     {
-        string key;
-        bool value = false;
+        std::string_view key;
         if (lua_isstring(l, -2))
         {
             key = lua_tostring(l, -2);
@@ -290,6 +293,8 @@ static int celestia_setrenderflags(lua_State* l)
             Celx_DoError(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
             return 0;
         }
+
+        bool value = false;
         if (lua_isboolean(l, -1))
         {
             value = lua_toboolean(l, -1) != 0;
@@ -299,17 +304,17 @@ static int celestia_setrenderflags(lua_State* l)
             Celx_DoError(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
             return 0;
         }
-        if (key == "lightdelay")
+
+        if (key == "lightdelay"sv)
         {
             appCore->setLightDelayActive(value);
         }
-        else if (appCore->scriptMaps().RenderFlagMap.count(key) > 0)
+        else if (auto it = renderFlagMap.find(key); it != renderFlagMap.end())
         {
-            uint64_t flag = appCore->scriptMaps().RenderFlagMap[key];
             if (value)
-                renderFlags |= flag;
+                renderFlags |= it->second;
             else
-                renderFlags &= ~flag;
+                renderFlags &= ~(it->second);
         }
         else
         {
@@ -329,13 +334,9 @@ static int celestia_getrenderflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
-    std::string rfmString;
-    rfmString.reserve(FlagMapNameLength);
     for (const auto& rfm : appCore->scriptMaps().RenderFlagMap)
     {
-        rfmString.clear();
-        rfmString.append(rfm.first);
-        lua_pushstring(l, rfmString.c_str());
+        lua_pushlstring(l, rfm.first.data(), rfm.first.size());
         lua_pushboolean(l, (rfm.second & renderFlags) != 0);
         lua_settable(l,-3);
     }
@@ -440,12 +441,12 @@ static int celestia_showlabel(lua_State* l)
 
     int argc = lua_gettop(l);
     int flags = 0;
-    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
+    const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
-        if (LabelFlagMap.count(labelFlag) > 0)
-            flags |= LabelFlagMap[labelFlag];
+        std::string_view labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
+        if (auto it = LabelFlagMap.find(labelFlag); it != LabelFlagMap.end())
+            flags |= it->second;
     }
 
     Renderer* r = appCore->getRenderer();
@@ -462,12 +463,12 @@ static int celestia_hidelabel(lua_State* l)
 
     int argc = lua_gettop(l);
     int flags = 0;
-    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
+    const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
-        if (LabelFlagMap.count(labelFlag) > 0)
-            flags |= LabelFlagMap[labelFlag];
+        std::string_view labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
+        if (auto it = LabelFlagMap.find(labelFlag); it != LabelFlagMap.end())
+            flags |= it->second;
     }
 
     Renderer* r = appCore->getRenderer();
@@ -488,12 +489,11 @@ static int celestia_setlabelflags(lua_State* l)
     }
 
     int labelFlags = appCore->getRenderer()->getLabelMode();
-    auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
+    const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     lua_pushnil(l);
     while (lua_next(l, -2) != 0)
     {
-        string key;
-        bool value = false;
+        std::string_view key;
         if (lua_isstring(l, -2))
         {
             key = lua_tostring(l, -2);
@@ -503,6 +503,8 @@ static int celestia_setlabelflags(lua_State* l)
             Celx_DoError(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
             return 0;
         }
+
+        bool value = false;
         if (lua_isboolean(l, -1))
         {
             value = lua_toboolean(l, -1) != 0;
@@ -512,13 +514,14 @@ static int celestia_setlabelflags(lua_State* l)
             Celx_DoError(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
             return 0;
         }
-        if (LabelFlagMap.count(key) == 0)
+
+        if (auto it = LabelFlagMap.find(key); it == LabelFlagMap.end())
         {
             GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {
-            int flag = LabelFlagMap[key];
+            int flag = it->second;
             if (value)
                 labelFlags |= flag;
             else
@@ -538,13 +541,9 @@ static int celestia_getlabelflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const int labelFlags = appCore->getRenderer()->getLabelMode();
-    std::string lfmString;
-    lfmString.reserve(FlagMapNameLength);
     for (const auto& lfm : appCore->scriptMaps().LabelFlagMap)
     {
-        lfmString.clear();
-        lfmString.append(lfm.first);
-        lua_pushstring(l, lfmString.c_str());
+        lua_pushlstring(l, lfm.first.data(), lfm.first.size());
         lua_pushboolean(l, (lfm.second & labelFlags) != 0);
         lua_settable(l,-3);
     }
@@ -563,11 +562,10 @@ static int celestia_setorbitflags(lua_State* l)
 
     int orbitFlags = appCore->getRenderer()->getOrbitMask();
     lua_pushnil(l);
-    auto &BodyTypeMap = appCore->scriptMaps().BodyTypeMap;
+    const auto &BodyTypeMap = appCore->scriptMaps().BodyTypeMap;
     while (lua_next(l, -2) != 0)
     {
-        string key;
-        bool value = false;
+        std::string_view key;
         if (lua_isstring(l, -2))
         {
             key = lua_tostring(l, -2);
@@ -577,6 +575,8 @@ static int celestia_setorbitflags(lua_State* l)
             Celx_DoError(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
             return 0;
         }
+
+        bool value = false;
         if (lua_isboolean(l, -1))
         {
             value = lua_toboolean(l, -1) != 0;
@@ -586,13 +586,14 @@ static int celestia_setorbitflags(lua_State* l)
             Celx_DoError(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
             return 0;
         }
-        if (BodyTypeMap.count(key) == 0)
+
+        if (auto it = BodyTypeMap.find(key); it == BodyTypeMap.end())
         {
             GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {
-            int flag = BodyTypeMap[key];
+            int flag = it->second;
             if (value)
                 orbitFlags |= flag;
             else
@@ -610,13 +611,9 @@ static int celestia_getorbitflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const int orbitFlags = appCore->getRenderer()->getOrbitMask();
-    std::string btmString;
-    btmString.reserve(FlagMapNameLength);
     for (const auto& btm : appCore->scriptMaps().BodyTypeMap)
     {
-        btmString.clear();
-        btmString.append(btm.first);
-        lua_pushstring(l, btmString.c_str());
+        lua_pushlstring(l, btm.first.data(), btm.first.size());
         lua_pushboolean(l, (btm.second & orbitFlags) != 0);
         lua_settable(l,-3);
     }
@@ -635,34 +632,40 @@ static int celestia_showconstellations(lua_State* l)
     {
         for (auto& ast : *asterisms)
             ast.setActive(true);
+        return 0;
     }
-    else if (!lua_istable(l, 2))
+
+    if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:showconstellations() must be a table");
         return 0;
     }
-    else
+
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
     {
-        lua_pushnil(l);
-        while (lua_next(l, -2) != 0)
+        std::string_view constellation;
+        if (lua_isstring(l, -1))
         {
-            const char* constellation = "";
-            if (lua_isstring(l, -1))
-            {
-                constellation = lua_tostring(l, -1);
-            }
-            else
-            {
-                Celx_DoError(l, "Values in table-argument to celestia:showconstellations() must be strings");
-                return 0;
-            }
-            for (auto& ast : *asterisms)
-            {
-                if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
-                    ast.setActive(true);
-            }
-            lua_pop(l,1);
+            constellation = lua_tostring(l, -1);
         }
+        else
+        {
+            Celx_DoError(l, "Values in table-argument to celestia:showconstellations() must be strings");
+            return 0;
+        }
+
+        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
+                                    [&constellation](const auto& ast)
+                                    {
+                                        return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                    });
+            it != asterisms->end())
+        {
+            it->setActive(true);
+        }
+
+        lua_pop(l,1);
     }
 
     return 0;
@@ -680,34 +683,40 @@ static int celestia_hideconstellations(lua_State* l)
     {
         for (auto& ast : *asterisms)
             ast.setActive(false);
+        return 0;
     }
-    else if (!lua_istable(l, 2))
+
+    if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:hideconstellations() must be a table");
         return 0;
     }
-    else
+
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
     {
-        lua_pushnil(l);
-        while (lua_next(l, -2) != 0)
+        std::string_view constellation;
+        if (lua_isstring(l, -1))
         {
-            const char* constellation = "";
-            if (lua_isstring(l, -1))
-            {
-                constellation = lua_tostring(l, -1);
-            }
-            else
-            {
-                Celx_DoError(l, "Values in table-argument to celestia:hideconstellations() must be strings");
-                return 0;
-            }
-            for (auto& ast : *asterisms)
-            {
-                if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
-                    ast.setActive(false);
-            }
-            lua_pop(l,1);
+            constellation = lua_tostring(l, -1);
         }
+        else
+        {
+            Celx_DoError(l, "Values in table-argument to celestia:hideconstellations() must be strings");
+            return 0;
+        }
+
+        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
+                                   [&constellation](const auto& ast)
+                                   {
+                                       return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                   });
+            it != asterisms->end())
+        {
+            it->setActive(false);
+        }
+
+        lua_pop(l,1);
     }
 
     return 0;
@@ -730,31 +739,36 @@ static int celestia_setconstellationcolor(lua_State* l)
     {
         for (auto& ast : *asterisms)
             ast.setOverrideColor(constellationColor);
+        return 0;
     }
-    else if (!lua_istable(l, 5))
+
+    if (!lua_istable(l, 5))
     {
         Celx_DoError(l, "Fourth argument to celestia:setconstellationcolor() must be a table");
         return 0;
     }
-    else
+
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
     {
-        lua_pushnil(l);
-        while (lua_next(l, -2) != 0)
+        if (!lua_isstring(l, -1))
         {
-            if (lua_isstring(l, -1))
-            {
-                const char* constellation = lua_tostring(l, -1);
-                for (auto& ast : *asterisms)
-                    if (compareIgnoringCase(constellation, ast.getName(false)) == 0)
-                        ast.setOverrideColor(constellationColor);
-            }
-            else
-            {
-                Celx_DoError(l, "Values in table-argument to celestia:setconstellationcolor() must be strings");
-                return 0;
-            }
-            lua_pop(l,1);
+            Celx_DoError(l, "Values in table-argument to celestia:setconstellationcolor() must be strings");
+            return 0;
         }
+
+        std::string_view constellation = lua_tostring(l, -1);
+        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
+                                    [&constellation](const auto& ast)
+                                    {
+                                        return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                    });
+            it != asterisms->end())
+        {
+            it->setOverrideColor(constellationColor);
+        }
+
+        lua_pop(l,1);
     }
 
     return 0;
@@ -775,8 +789,7 @@ static int celestia_setoverlayelements(lua_State* l)
     const auto &OverlayElementMap = appCore->scriptMaps().OverlayElementMap;
     while (lua_next(l, -2) != 0)
     {
-        string key;
-        bool value = false;
+        std::string_view key;
         if (lua_isstring(l, -2))
         {
             key = lua_tostring(l, -2);
@@ -786,6 +799,8 @@ static int celestia_setoverlayelements(lua_State* l)
             Celx_DoError(l, "Keys in table-argument to celestia:setoverlayelements() must be strings");
             return 0;
         }
+
+        bool value = false;
         if (lua_isboolean(l, -1))
         {
             value = lua_toboolean(l, -1) != 0;
@@ -795,6 +810,7 @@ static int celestia_setoverlayelements(lua_State* l)
             Celx_DoError(l, "Values in table-argument to celestia:setoverlayelements() must be boolean");
             return 0;
         }
+
         if (auto it = OverlayElementMap.find(key); it == OverlayElementMap.end())
         {
             GetLogger()->warn("Unknown key: {}\n", key);
@@ -807,6 +823,7 @@ static int celestia_setoverlayelements(lua_State* l)
             else
                 overlayElements &= ~element;
         }
+
         lua_pop(l,1);
     }
     appCore->setOverlayElements(overlayElements);
@@ -819,13 +836,9 @@ static int celestia_getoverlayelements(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
     const auto overlayElements = appCore->getOverlayElements();
-    std::string oemString;
-    oemString.reserve(FlagMapNameLength);
     for (const auto& oem : appCore->scriptMaps().OverlayElementMap)
     {
-        oemString.clear();
-        oemString.append(oem.first);
-        lua_pushstring(l, oemString.c_str());
+        lua_pushlstring(l, oem.first.data(), oem.first.size());
         lua_pushboolean(l, util::is_set(overlayElements, static_cast<HudElements>(oem.second)));
         lua_settable(l,-3);
     }
@@ -876,17 +889,12 @@ static int celestia_setlabelcolor(lua_State* l)
     }
 
     Color* color = nullptr;
-    string key;
-    key = lua_tostring(l, 2);
-    auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
-    if (LabelColorMap.count(key) == 0)
-    {
+    std::string_view key = lua_tostring(l, 2);
+    const auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
+    if (auto it = LabelColorMap.find(key); it == LabelColorMap.end())
         GetLogger()->warn("Unknown label style: {}\n", key);
-    }
     else
-    {
-        color = LabelColorMap[key];
-    }
+        color = it->second;
 
     double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
     double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
@@ -907,17 +915,20 @@ static int celestia_setlabelcolor(lua_State* l)
 static int celestia_getlabelcolor(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlabelcolor()");
-    string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlabelcolor() must be a string");
+    std::string_view key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlabelcolor() must be a string");
 
     Color* labelColor = nullptr;
-    auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
-    if (LabelColorMap.count(key) == 0)
+    const auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
+    if (auto it = LabelColorMap.find(key); it == LabelColorMap.end())
     {
         GetLogger()->error("Unknown label style: {}\n", key);
         return 0;
     }
+    else
+    {
+        labelColor = it->second;
+    }
 
-    labelColor = LabelColorMap[key];
     lua_pushnumber(l, labelColor->red());
     lua_pushnumber(l, labelColor->green());
     lua_pushnumber(l, labelColor->blue());
@@ -936,17 +947,12 @@ static int celestia_setlinecolor(lua_State* l)
     }
 
     Color* color = nullptr;
-    string key;
-    key = lua_tostring(l, 2);
-    auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
-    if (LineColorMap.count(key) == 0)
-    {
+    std::string_view key = lua_tostring(l, 2);
+    const auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
+    if (auto it = LineColorMap.find(key); it == LineColorMap.end())
         GetLogger()->warn("Unknown line style: {}\n", key);
-    }
     else
-    {
-        color = LineColorMap[key];
-    }
+        color = it->second;
 
     double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
     double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
@@ -967,19 +973,19 @@ static int celestia_setlinecolor(lua_State* l)
 static int celestia_getlinecolor(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlinecolor()");
-    string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlinecolor() must be a string");
+    std::string_view key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlinecolor() must be a string");
 
-    auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
-    if (LineColorMap.count(key) == 0)
+    const auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
+    const auto it = LineColorMap.find(key);
+    if (it == LineColorMap.end())
     {
         GetLogger()->error("Unknown line style: {}\n", key);
         return 0;
     }
 
-    Color* lineColor = LineColorMap[key];
-    lua_pushnumber(l, lineColor->red());
-    lua_pushnumber(l, lineColor->green());
-    lua_pushnumber(l, lineColor->blue());
+    lua_pushnumber(l, it->second->red());
+    lua_pushnumber(l, it->second->green());
+    lua_pushnumber(l, it->second->blue());
 
     return 3;
 }
@@ -1683,7 +1689,7 @@ static int celestia_setstarstyle(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
     CelestiaCore* appCore = this_celestia(l);
 
-    string starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
+    std::string_view starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == nullptr)
     {
@@ -1691,11 +1697,11 @@ static int celestia_setstarstyle(lua_State* l)
         return 0;
     }
 
-    if (starStyle == "fuzzy")
+    if (starStyle == "fuzzy"sv)
         renderer->setStarStyle(Renderer::FuzzyPointStars);
-    else if (starStyle == "point")
+    else if (starStyle == "point"sv)
         renderer->setStarStyle(Renderer::PointStars);
-    else if (starStyle == "disc")
+    else if (starStyle == "disc"sv)
         renderer->setStarStyle(Renderer::ScaledDiscStars);
     else
        Celx_DoError(l, "Invalid starstyle");
@@ -1746,7 +1752,7 @@ static int celestia_setstarcolor(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarcolor");
     CelestiaCore* appCore = this_celestia(l);
 
-    string starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
+    std::string_view starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == nullptr)
     {
@@ -1754,13 +1760,13 @@ static int celestia_setstarcolor(lua_State* l)
         return 0;
     }
 
-    if (starColor == "blackbody_d65")
+    if (starColor == "blackbody_d65"sv)
         renderer->setStarColorTable(ColorTableType::Blackbody_D65);
-    else if (starColor == "enhanced")
+    else if (starColor == "enhanced"sv)
         renderer->setStarColorTable(ColorTableType::Enhanced);
-    else if (starColor == "sunwhite")
+    else if (starColor == "sunwhite"sv)
         renderer->setStarColorTable(ColorTableType::SunWhite);
-    else if (starColor == "vegawhite")
+    else if (starColor == "vegawhite"sv)
         renderer->setStarColorTable(ColorTableType::VegaWhite);
     else
         Celx_DoError(l, "Invalid starcolor");
@@ -2121,7 +2127,7 @@ static int celestia_takescreenshot(lua_State* l)
 static int celestia_createcelscript(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:createcelscript()");
-    string scripttext = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
+    const char* scripttext = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
     return celscript_from_string(l, scripttext);
 }
 
@@ -2148,7 +2154,7 @@ static int celestia_getscriptpath(lua_State* l)
 static int celestia_runscript(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
-    string scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
+    const char* scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
 
     fs::path base_dir = GetScriptPath(l);
     CelestiaCore* appCore = this_celestia(l);
@@ -2189,7 +2195,7 @@ static int celestia_seturl(lua_State* l)
     Celx_CheckArgs(l, 2, 3, "One or two arguments expected for celestia:seturl");
     CelestiaCore* appCore = this_celestia(l);
 
-    string url = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:seturl must be a string");
+    const char* url = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:seturl must be a string");
     const Observer* obs = to_observer(l, 3);
     if (obs == nullptr)
         obs = appCore->getSimulation()->getActiveObserver();
@@ -2238,7 +2244,7 @@ static int celestia_overlay(lua_State* l)
     else
         fitscreen = (bool) Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number or a boolean(fitscreen)", 0);
 
-    auto image = unique_ptr<OverlayImage>(new OverlayImage(filename, appCore->getRenderer()));
+    auto image = std::make_unique<OverlayImage>(filename, appCore->getRenderer());
     image->setDuration(duration);
     image->setFadeAfter(duration); // FIXME
     image->setOffset(xoffset, yoffset);
@@ -2264,15 +2270,14 @@ static int celestia_verbosity(lua_State* l)
 
 
 #ifdef USE_MINIAUDIO
-static std::optional<int> celestia_getchannel(lua_State *l, const std::string &method)
+static int celestia_getchannel(lua_State *l, const char* errorMessage)
 {
-    string errorMessage = fmt::format("First argument for celestia:{} must be a number", method);
     if (!lua_isnumber(l, 2))
     {
-        Celx_DoError(l, errorMessage.c_str());
-        return nullopt;
+        Celx_DoError(l, errorMessage);
+        return 0; // we do not get here due to longjmp in lua_error
     }
-    return max(static_cast<int>(Celx_SafeGetNumber(l, 2, AllErrors, errorMessage.c_str(), static_cast<lua_Number>(defaultAudioChannel))), minAudioChannel);
+    return max(static_cast<int>(Celx_SafeGetNumber(l, 2, AllErrors, errorMessage, static_cast<lua_Number>(defaultAudioChannel))), minAudioChannel);
 }
 #endif
 
@@ -2280,12 +2285,9 @@ static int celestia_play(lua_State *l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 7, "Two to six arguments expected to function celestia:play");
-    auto optionalChannel = celestia_getchannel(l, "play");
-    if (!optionalChannel.has_value())
-        return 0;
+    int channel = celestia_getchannel(l, "First argument for celestia:play must be a number");
 
     CelestiaCore* appCore = this_celestia(l);
-    auto channel = optionalChannel.value();
     auto volume = static_cast<float>(Celx_SafeGetNumber(l, 3, AllErrors, "Second argument to celestia:play must be a number (volume)", static_cast<lua_Number>(defaultAudioVolume)));
     float pan = clamp(static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:play must be a number (pan)", static_cast<lua_Number>(defaultAudioPan))), minAudioPan, maxAudioPan);
     bool loopSet = !lua_isnil(l, 5) && lua_isnumber(l, 5);
@@ -2302,8 +2304,9 @@ static int celestia_play(lua_State *l)
         if (loopSet)
             appCore->setAudioLoop(channel, loop);
     }
-    else if (string(filename).empty())
+    else if (*filename == '\0')
     {
+        // empty filename
         appCore->stopAudio(channel);
     }
     else
@@ -2320,14 +2323,7 @@ static int celestia_isplayingaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 2, 2, "Function celestia:isplayingaudio requires one argument");
-    auto optionalChannel = celestia_getchannel(l, "isplayingaudio");
-    if (!optionalChannel.has_value())
-    {
-        lua_pushboolean(l, false);
-        return 1;
-    }
-
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:isplayingaudio must be a number");
     CelestiaCore* appCore = this_celestia(l);
     lua_pushboolean(l, appCore->isPlayingAudio(channel));
 #else
@@ -2341,13 +2337,7 @@ static int celestia_playaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 7, "Function celestia:playaudio requires two to seven arguments");
-    auto optionalChannel = celestia_getchannel(l, "playaudio");
-    if (!optionalChannel.has_value())
-    {
-        lua_pushboolean(l, false);
-        return 1;
-    }
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:playaudio must be a number");
 
     const char* path = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:playaudio must be a string");
     if (path == nullptr)
@@ -2374,14 +2364,7 @@ static int celestia_resumeaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 2, 2, "Function celestia:resumeaudio requires one argument");
-    auto optionalChannel = celestia_getchannel(l, "resumeaudio");
-    if (!optionalChannel.has_value())
-    {
-        lua_pushboolean(l, false);
-        return 1;
-    }
-    int channel = optionalChannel.value();
-
+    int channel = celestia_getchannel(l, "First argument for celestia:resumeaudio must be a number");
     CelestiaCore* appCore = this_celestia(l);
     lua_pushboolean(l, appCore->resumeAudio(channel));
 #else
@@ -2395,11 +2378,7 @@ static int celestia_pauseaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 2, 2, "Function celestia:pauseaudio requires one argument");
-    auto optionalChannel = celestia_getchannel(l, "pauseaudio");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
-
+    int channel = celestia_getchannel(l, "First argument for celestia:pauseaudio must be a number");
     CelestiaCore* appCore = this_celestia(l);
     appCore->pauseAudio(channel);
 #else
@@ -2412,11 +2391,7 @@ static int celestia_stopaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 2, 2, "Function celestia:stopaudio requires one argument");
-    auto optionalChannel = celestia_getchannel(l, "stopaudio");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
-
+    int channel = celestia_getchannel(l, "First argument for celestia:stopaudio must be a number");
     CelestiaCore* appCore = this_celestia(l);
     appCore->stopAudio(channel);
 #else
@@ -2429,13 +2404,7 @@ static int celestia_seekaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 3, "Function celestia:seekaudio requires two arguments");
-    auto optionalChannel = celestia_getchannel(l, "seekaudio");
-    if (!optionalChannel.has_value())
-    {
-        lua_pushboolean(l, false);
-        return 1;
-    }
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:seekaudio must be a number");
 
     if (!lua_isnumber(l, 3))
     {
@@ -2458,10 +2427,7 @@ static int celestia_setaudiovolume(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 3, "Function celestia:setaudiovolume requires two arguments");
-    auto optionalChannel = celestia_getchannel(l, "setaudiovolume");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:setaudiovolume must be a number");
 
     if (!lua_isnumber(l, 3))
     {
@@ -2482,10 +2448,7 @@ static int celestia_setaudiopan(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 3, "Function celestia:setaudiopan requires two arguments");
-    auto optionalChannel = celestia_getchannel(l, "setaudiopan");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:setaudiopan must be a number");
 
     if (!lua_isnumber(l, 3))
     {
@@ -2506,10 +2469,7 @@ static int celestia_setaudioloop(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 3, "Function celestia:setaudioloop requires two arguments");
-    auto optionalChannel = celestia_getchannel(l, "setaudioloop");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:setaudioloop must be a number");
 
     if (!lua_isboolean(l, 3))
     {
@@ -2531,10 +2491,7 @@ static int celestia_setaudionopause(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
     Celx_CheckArgs(l, 3, 3, "Function celestia:setaudionopause requires two arguments");
-    auto optionalChannel = celestia_getchannel(l, "setaudionopause");
-    if (!optionalChannel.has_value())
-        return 0;
-    int channel = optionalChannel.value();
+    int channel = celestia_getchannel(l, "First argument for celestia:setaudionopause must be a number");
 
     if (!lua_isboolean(l, 3))
     {
@@ -2708,7 +2665,10 @@ static int celestia_getparamstring(lua_State* l)
     if (auto params = config->configParams.getHash(); params != nullptr)
     {
         const std::string* paramString = params->getString(s);
-        lua_pushstring(l, paramString == nullptr ? "" : paramString->c_str());
+        if (paramString == nullptr)
+            lua_pushstring(l, "");
+        else
+            lua_pushlstring(l, paramString->data(), paramString->size());
     }
     return 1;
 }
@@ -2718,38 +2678,38 @@ static int celestia_loadtexture(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 4, "Need one to three arguments for celestia:loadtexture()");
-    string s = celx.safeGetString(2, AllErrors, "First argument to celestia:loadtexture() must be a string");
+    std::string_view s = celx.safeGetString(2, AllErrors, "First argument to celestia:loadtexture() must be a string");
     auto argc = lua_gettop(l);
     auto addressMode = Texture::AddressMode::EdgeClamp;
     auto mipMapMode = Texture::MipMapMode::DefaultMipMaps;
     if (argc >= 3)
     {
-        string addressModeString = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:loadtexture must be a string");
+        std::string_view addressModeString = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:loadtexture must be a string");
 
-        if (addressModeString == "wrap")
+        if (addressModeString == "wrap"sv)
             addressMode = Texture::AddressMode::Wrap;
-        else if (addressModeString == "borderclamp")
+        else if (addressModeString == "borderclamp"sv)
             addressMode = Texture::AddressMode::BorderClamp;
-        else if (addressModeString == "edgeclamp")
+        else if (addressModeString == "edgeclamp"sv)
             addressMode = Texture::AddressMode::EdgeClamp;
         else
            Celx_DoError(l, "Invalid addressMode");
     }
     if (argc >= 4)
     {
-        string mipMapModeString = Celx_SafeGetString(l, 4, AllErrors, "Third argument to celestia:loadtexture must be a string");
+        std::string_view mipMapModeString = Celx_SafeGetString(l, 4, AllErrors, "Third argument to celestia:loadtexture must be a string");
 
-        if (mipMapModeString == "default")
+        if (mipMapModeString == "default"sv)
             mipMapMode = Texture::MipMapMode::DefaultMipMaps;
-        else if (mipMapModeString == "none")
+        else if (mipMapModeString == "none"sv)
             mipMapMode = Texture::MipMapMode::NoMipMaps;
         else
            Celx_DoError(l, "Invalid mipMapMode");
     }
     fs::path base_dir = GetScriptPath(l);
-    Texture* t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode).release();
+    auto t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode);
     if (t == nullptr) return 0;
-    return celx.pushClass(t);
+    return celx.pushClass(t.release());
 }
 
 static int celestia_loadfont(lua_State* l)
@@ -2757,7 +2717,7 @@ static int celestia_loadfont(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need one argument for celestia:loadfont()");
-    string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
+    std::string_view s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     auto font = LoadTextureFont(appCore->getRenderer(), s);
     if (font == nullptr) return 0;
@@ -2849,7 +2809,7 @@ static int celestia_newcategory(lua_State *l)
 {
     CelxLua celx(l);
 
-    const char *emsg = "Argument of celestia:newcategory must be a string!";
+    constexpr const char emsg[] = "Argument of celestia:newcategory must be a string!";
     const char *name = celx.safeGetString(2, AllErrors, emsg);
     const char *domain = "";
     if (name == nullptr)
@@ -2869,7 +2829,7 @@ static int celestia_findcategory(lua_State *l)
 {
     CelxLua celx(l);
 
-    const char *emsg = "Argument of celestia:fndcategory must be a string.";
+    constexpr const char emsg[] = "Argument of celestia:fndcategory must be a string.";
     const char *name = celx.safeGetString(2, AllErrors, emsg);
     if (name == nullptr)
     {
@@ -2887,7 +2847,7 @@ static int celestia_deletecategory(lua_State *l)
     CelxLua celx(l);
 
     bool ret;
-    const char *emsg = "Argument of celestia:deletecategory() must be a string or userdata.";
+    constexpr const char emsg[] = "Argument of celestia:deletecategory() must be a string or userdata.";
     if (celx.isString(2))
     {
         const char *n = celx.safeGetString(2, AllErrors, emsg);

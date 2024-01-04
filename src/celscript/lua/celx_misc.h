@@ -14,7 +14,7 @@
 class TextureFont;
 class Texture;
 
-int celscript_from_string(lua_State* l, std::string& script_text);
+int celscript_from_string(lua_State* l, const char* script_text);
 void CreateCelscriptMetaTable(lua_State* l);
 
 inline int celxClassId(const std::shared_ptr<TextureFont>&)
