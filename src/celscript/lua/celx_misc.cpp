@@ -19,6 +19,7 @@
 #include <celengine/textlayout.h>
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
+#include <celutil/gettext.h>
 #include "glcompat.h"
 
 using namespace std;
@@ -106,25 +107,41 @@ int celxClassId(CelScriptWrapper*)
 }
 
 // create a CelScriptWrapper from a string:
-int celscript_from_string(lua_State* l, string& script_text)
+int celscript_from_string(lua_State* l, const char* script_text)
 {
     CelxLua celx(l);
-    istringstream scriptfile(script_text);
 
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
-    if (celscript->getErrorMessage() != "")
+
     {
-        string error = celscript->getErrorMessage();
-        delete celscript;
-        celx.doError(error.c_str());
-    }
-    else
-    {
-        celx.pushClass(celscript);
+        // we can't have anything with a non-trivial destructor around when
+        // we do the lua_error call (which does a longjmp), so do this stuff within
+        // its own block
+        istringstream scriptfile(script_text);
+        auto celscript = std::make_unique<CelScriptWrapper>(*appCore, scriptfile);
+        const auto& error = celscript->getErrorMessage();
+        if (error.empty())
+        {
+            celx.pushClass(celscript.release());
+            return 1;
+        }
+
+        // we can't use Celx_DoError here since we need to destroy the error string
+        // before doing the longjmp
+        lua_Debug debug;
+        if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
+        {
+            std::string buf = fmt::format(_("In line {}: {}"), debug.currentline, error);
+            lua_pushlstring(l, buf.data(), buf.size());
+        }
+        else
+        {
+            lua_pushlstring(l, error.data(), error.size());
+        }
     }
 
-    return 1;
+    lua_error(l);
+    return 1; // not reachable but here to fix warnings
 }
 
 static int celscript_tostring(lua_State* l)

@@ -869,26 +869,26 @@ void Celx_CheckArgs(lua_State* l,
 }
 
 
-ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
+ObserverFrame::CoordinateSystem parseCoordSys(std::string_view name)
 {
     // 'planetographic' is a deprecated name for bodyfixed, but maintained here
     // for compatibility with older scripts.
 
-    if (compareIgnoringCase(name, "universal") == 0)
+    if (compareIgnoringCase(name, "universal"sv) == 0)
         return ObserverFrame::Universal;
-    if (compareIgnoringCase(name, "ecliptic") == 0)
+    if (compareIgnoringCase(name, "ecliptic"sv) == 0)
         return ObserverFrame::Ecliptical;
-    if (compareIgnoringCase(name, "equatorial") == 0)
+    if (compareIgnoringCase(name, "equatorial"sv) == 0)
         return ObserverFrame::Equatorial;
-    if (compareIgnoringCase(name, "bodyfixed") == 0)
+    if (compareIgnoringCase(name, "bodyfixed"sv) == 0)
         return ObserverFrame::BodyFixed;
-    if (compareIgnoringCase(name, "planetographic") == 0)
+    if (compareIgnoringCase(name, "planetographic"sv) == 0)
         return ObserverFrame::BodyFixed;
-    if (compareIgnoringCase(name, "observer") == 0)
+    if (compareIgnoringCase(name, "observer"sv) == 0)
         return ObserverFrame::ObserverLocal;
-    if (compareIgnoringCase(name, "lock") == 0)
+    if (compareIgnoringCase(name, "lock"sv) == 0)
         return ObserverFrame::PhaseLock;
-    if (compareIgnoringCase(name, "chase") == 0)
+    if (compareIgnoringCase(name, "chase"sv) == 0)
         return ObserverFrame::Chase;
 
     return ObserverFrame::Universal;
