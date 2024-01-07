@@ -12,6 +12,7 @@
 
 #include <config.h> // HAVE_WORDEXP
 #include <fstream>
+#include <utility>
 #include <fmt/format.h>
 #include "gettext.h"
 #include "logger.h"
@@ -58,21 +59,21 @@ fs::path LocaleFilename(const fs::path &p)
 }
 
 
-fs::path PathExp(const fs::path& filename)
+fs::path PathExp(fs::path&& filename)
 {
 #ifdef PORTABLE_BUILD
-    return filename;
+    return std::move(filename);
 #elif defined(_WIN32)
-    auto str = filename.native();
-    if (str[0] == '~')
+    const auto& str = filename.native();
+    if (str[0] == L'~')
     {
         if (str.size() == 1)
             return HomeDir();
-        if (str[1] == '\\' || str[1] == '/')
+        if (str[1] == L'\\' || str[1] == L'/')
             return HomeDir() / str.substr(2);
     }
 
-    return filename;
+    return std::move(filename);
 #elif defined(HAVE_WORDEXP)
     wordexp_t result;
 
@@ -85,20 +86,20 @@ fs::path PathExp(const fs::path& filename)
         // then perhaps part of the result was allocated.
         wordfree(&result);
     default: // some other error
-        return filename;
+        return std::move(filename);
     }
 
     if (result.we_wordc != 1)
     {
         wordfree(&result);
-        return filename;
+        return std::move(filename);
     }
 
     fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
 #else
-    return filename;
+    return std::move(filename);
 #endif
 }
 

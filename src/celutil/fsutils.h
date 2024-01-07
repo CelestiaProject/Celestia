@@ -21,7 +21,7 @@ namespace celestia::util
 {
 
 fs::path LocaleFilename(const fs::path& filename);
-fs::path PathExp(const fs::path& filename);
+fs::path PathExp(fs::path&& filename);
 fs::path ResolveWildcard(const fs::path& wildcard,
                          array_view<std::string_view> extensions);
 bool IsValidDirectory(const fs::path &dir);
