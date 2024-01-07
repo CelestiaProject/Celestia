@@ -62,7 +62,7 @@ applyPath(fs::path& target, const Hash& hash, std::string_view key)
 {
     auto path = hash.getPath(key);
     if (path.has_value())
-        target = celestia::util::PathExp(*path);
+        target = *path;
 }
 
 
@@ -119,11 +119,11 @@ applyPathArray(std::vector<fs::path>& target, const Hash& hash, std::string_view
                 break;
             }
 
-            target.emplace_back(celestia::util::PathExp(*itemStr));
+            target.emplace_back(celestia::util::PathExp(fs::u8path(*itemStr)));
         }
     }
     else if (auto str = value->getString(); str != nullptr)
-        target.emplace_back(celestia::util::PathExp(*str));
+        target.emplace_back(celestia::util::PathExp(fs::u8path(*str)));
     else
         GetLogger()->error("{} must be a string or an array of strings.\n", key);
 }

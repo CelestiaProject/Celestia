@@ -64,7 +64,7 @@ std::optional<fs::path> AssociativeArray::getPath(std::string_view key) const
     const std::string* v = getString(key);
     if (v == nullptr) { return std::nullopt; }
 
-    return std::make_optional(util::PathExp(*v));
+    return std::make_optional(util::PathExp(fs::u8path(*v)));
 }
 
 
