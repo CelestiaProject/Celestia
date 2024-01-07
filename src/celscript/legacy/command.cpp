@@ -673,7 +673,7 @@ void CommandPreloadTextures::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Capture command
 
-CommandCapture::CommandCapture(std::string _type, std::string _filename)
+CommandCapture::CommandCapture(std::string _type, fs::path _filename)
     : type(std::move(_type)), filename(std::move(_filename))
 {
 }
@@ -1078,8 +1078,8 @@ void CommandSetWindowBordersVisible::processInstantaneous(ExecutionEnvironment& 
 ///////////////
 // SetRingsTexture command
 CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
-                                               std::string _textureName,
-                                               std::string _path) :
+                                               fs::path _textureName,
+                                               fs::path _path) :
     object(std::move(_object)),
     textureName(std::move(_textureName)),
     path(std::move(_path))

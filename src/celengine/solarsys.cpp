@@ -25,6 +25,7 @@
 
 #include <celmath/mathlib.h>
 #include <celutil/color.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
@@ -49,9 +50,11 @@
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
 using std::strncmp;
+using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -182,6 +185,20 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
         dst &= ~flag;
 }
 
+std::optional<fs::path>
+GetFilename(const Hash& hash, std::string_view key, const char* errorMessage)
+{
+    const std::string* value = hash.getString(key);
+    if (value == nullptr)
+        return std::nullopt;
+
+    auto result = util::U8FileName(*value);
+    if (!result.has_value())
+        GetLogger()->error(errorMessage);
+
+    return result;
+}
+
 
 void FillinSurface(const Hash* surfaceData,
                    Surface* surface,
@@ -196,12 +213,12 @@ void FillinSurface(const Hash* surfaceData,
     if (auto lunarLambert = surfaceData->getNumber<float>("LunarLambert"); lunarLambert.has_value())
         surface->lunarLambert = *lunarLambert;
 
-    const std::string* baseTexture = surfaceData->getString("Texture");
-    const std::string* bumpTexture = surfaceData->getString("BumpMap");
-    const std::string* nightTexture = surfaceData->getString("NightTexture");
-    const std::string* specularTexture = surfaceData->getString("SpecularTexture");
-    const std::string* normalTexture = surfaceData->getString("NormalMap");
-    const std::string* overlayTexture = surfaceData->getString("OverlayTexture");
+    auto baseTexture = GetFilename(*surfaceData, "Texture"sv, "Invalid filename in Texture\n");
+    auto bumpTexture = GetFilename(*surfaceData, "BumpMap"sv, "Invalid filename in BumpMap\n");
+    auto nightTexture = GetFilename(*surfaceData, "NightTexture"sv, "Invalid filename in NightTexture\n");
+    auto specularTexture = GetFilename(*surfaceData, "SpecularTexture"sv, "Invalid filename in SpecularTexture\n");
+    auto normalTexture = GetFilename(*surfaceData, "NormalMap"sv, "Invalid filename in NormalMap\n");
+    auto overlayTexture = GetFilename(*surfaceData, "OverlayTexture"sv, "Invalid filename in OverlayTexture\n");
 
     unsigned int baseFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting | TextureInfo::LinearColorspace;
@@ -218,27 +235,27 @@ void FillinSurface(const Hash* surfaceData,
 
     SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
     SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture != nullptr);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture != nullptr || normalTexture != nullptr));
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture != nullptr);
-    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture != nullptr);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture != nullptr);
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture.has_value());
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture.has_value());
+    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture.has_value());
+    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture.has_value());
     SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
-    if (baseTexture != nullptr)
+    if (baseTexture.has_value())
         surface->baseTexture.setTexture(*baseTexture, path, baseFlags);
-    if (nightTexture != nullptr)
+    if (nightTexture.has_value())
         surface->nightTexture.setTexture(*nightTexture, path, nightFlags);
-    if (specularTexture != nullptr)
+    if (specularTexture.has_value())
         surface->specularTexture.setTexture(*specularTexture, path, specularFlags);
 
     // If both are present, NormalMap overrides BumpMap
-    if (normalTexture != nullptr)
+    if (normalTexture.has_value())
         surface->bumpTexture.setTexture(*normalTexture, path, bumpFlags);
-    else if (bumpTexture != nullptr)
+    else if (bumpTexture.has_value())
         surface->bumpTexture.setTexture(*bumpTexture, path, bumpHeight, bumpFlags);
 
-    if (overlayTexture != nullptr)
+    if (overlayTexture.has_value())
         surface->overlayTexture.setTexture(*overlayTexture, path, baseFlags);
 }
 
@@ -700,14 +717,16 @@ void ReadAtmosphere(Body* body,
     if (auto cloudSpeed = atmosData->getNumber<float>("CloudSpeed"); cloudSpeed.has_value())
         atmosphere->cloudSpeed = math::degToRad(*cloudSpeed);
 
-    if (const std::string* cloudTexture = atmosData->getString("CloudMap"); cloudTexture != nullptr)
+    if (auto cloudTexture = GetFilename(*atmosData, "CloudMap"sv, "Invalid filename in CloudMap\n");
+        cloudTexture.has_value())
     {
         atmosphere->cloudTexture.setTexture(*cloudTexture,
                                             path,
                                             TextureInfo::WrapTexture);
     }
 
-    if (const std::string* cloudNormalMap = atmosData->getString("CloudNormalMap"); cloudNormalMap != nullptr)
+    if (auto cloudNormalMap = GetFilename(*atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
+        cloudNormalMap.has_value())
     {
         atmosphere->cloudNormalMap.setTexture(*cloudNormalMap,
                                               path,
@@ -760,8 +779,11 @@ void ReadRings(Body* body,
     if (auto color = ringsData->getColor("Color"); color.has_value())
         rings->color = *color;
 
-    if (const std::string* textureName = ringsData->getString("Texture"); textureName != nullptr)
+    if (auto textureName = GetFilename(*ringsData, "Texture"sv, "Invalid filename in rings Texture\n");
+        textureName.has_value())
+    {
         rings->texture = MultiResTexture(*textureName, path);
+    }
 
     if (newRings != nullptr)
         body->setRings(std::move(newRings));
@@ -964,7 +986,8 @@ Body* CreateBody(const std::string& name,
     FillinSurface(planetData, &surface, path);
     body->setSurface(surface);
 
-    if (const std::string* geometry = planetData->getString("Mesh"); geometry != nullptr)
+    if (auto geometry = GetFilename(*planetData, "Mesh"sv, "Invalid filename in Mesh\n");
+        geometry.has_value())
     {
         auto geometryCenter = planetData->getVector3<float>("MeshCenter").value_or(Eigen::Vector3f::Zero());
         // TODO: Adjust bounding radius if model center isn't

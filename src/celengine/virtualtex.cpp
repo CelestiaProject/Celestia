@@ -274,9 +274,12 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
     lod >>= baseSplit;
     assert(lod < (unsigned)MaxResolutionLevels);
 
+    auto filename = fs::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
+    filename += tileExt;
+
     auto path = tilePath /
                 fmt::format("level{:d}", lod) /
-                fmt::format("{:s}{:d}_{:d}{:s}", tilePrefix, u, v, tileExt.string());
+                filename;
 
     auto img = Image::load(path);
     if (img == nullptr)

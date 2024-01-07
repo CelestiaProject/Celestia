@@ -30,6 +30,7 @@
 #include <celephem/scriptorbit.h>
 #include <celephem/scriptrotation.h>
 #include <celmath/geomutil.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include <cassert>
@@ -43,6 +44,8 @@ using celestia::util::GetLogger;
 namespace astro = celestia::astro;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
+namespace numbers = celestia::numbers;
+namespace util = celestia::util;
 
 /**
  * Returns the default units scale for orbits.
@@ -145,7 +148,7 @@ ParseDate(const Hash* hash, const string& name, double& jd)
  *     Period is in Julian days
  *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
-static std::unique_ptr<celestia::ephem::Orbit>
+static std::unique_ptr<ephem::Orbit>
 CreateKeplerianOrbit(const Hash* orbitData,
                      bool usePlanetUnits)
 {
@@ -224,17 +227,17 @@ CreateKeplerianOrbit(const Hash* orbitData,
     else if (auto meanLongitude = orbitData->getAngle<double>("MeanLongitude"); meanLongitude.has_value())
         elements.meanAnomaly = *meanLongitude - (elements.argPericenter + elements.longAscendingNode);
 
-    elements.inclination = celestia::math::degToRad(elements.inclination);
-    elements.longAscendingNode = celestia::math::degToRad(elements.longAscendingNode);
-    elements.argPericenter = celestia::math::degToRad(elements.argPericenter);
-    elements.meanAnomaly = celestia::math::degToRad(elements.meanAnomaly);
+    elements.inclination = math::degToRad(elements.inclination);
+    elements.longAscendingNode = math::degToRad(elements.longAscendingNode);
+    elements.argPericenter = math::degToRad(elements.argPericenter);
+    elements.meanAnomaly = math::degToRad(elements.meanAnomaly);
 
     if (elements.eccentricity < 1.0)
     {
-        return std::make_unique<celestia::ephem::EllipticalOrbit>(elements, epoch);
+        return std::make_unique<ephem::EllipticalOrbit>(elements, epoch);
     }
 
-    return std::make_unique<celestia::ephem::HyperbolicOrbit>(elements, epoch);
+    return std::make_unique<ephem::HyperbolicOrbit>(elements, epoch);
 }
 
 
@@ -251,13 +254,20 @@ CreateKeplerianOrbit(const Hash* orbitData,
  * Source is the only required field. Interpolation defaults to cubic, and
  * DoublePrecision defaults to true.
  */
-static celestia::ephem::Orbit*
+static ephem::Orbit*
 CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
 {
-    const std::string* sourceName = trajData->getString("Source");
-    if (sourceName == nullptr)
+    const std::string* source = trajData->getString("Source");
+    if (source == nullptr)
     {
         GetLogger()->error("SampledTrajectory is missing a source.\n");
+        return nullptr;
+    }
+
+    auto sourceFile = util::U8FileName(*source);
+    if (!sourceFile.has_value())
+    {
+        GetLogger()->error("Invalid Source filename for SampledTrajectory\n");
         return nullptr;
     }
 
@@ -278,12 +288,12 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
     bool useDoublePrecision = trajData->getBoolean("DoublePrecision").value_or(true);
     TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecision::Double : TrajectoryPrecision::Single;
 
-    GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *sourceName);
-    ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(*sourceName, path, interpolation, precision));
-    celestia::ephem::Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
+    GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *source);
+    ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(*sourceFile, path, interpolation, precision));
+    ephem::Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
     if (orbit == nullptr)
     {
-        GetLogger()->error("Could not load sampled trajectory from '{}'\n", *sourceName);
+        GetLogger()->error("Could not load sampled trajectory from '{}'\n", *source);
     }
 
     return orbit;
@@ -303,7 +313,7 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
  * and planetocentric coordinates are only practical when the coordinate system
  * is BodyFixed.
  */
-static std::unique_ptr<celestia::ephem::Orbit>
+static std::unique_ptr<ephem::Orbit>
 CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
 {
     double distanceScale;
@@ -349,7 +359,7 @@ CreateFixedPosition(const Hash* trajData, const Selection& centralObject, bool u
         return nullptr;
     }
 
-    return std::make_unique<celestia::ephem::FixedOrbit>(position);
+    return std::make_unique<ephem::FixedOrbit>(position);
 }
 
 
@@ -423,7 +433,7 @@ ParseStringList(const Hash* table,
  *  kernel pool. If the coverage window is noncontiguous, the first interval is
  *  used.
  */
-static std::unique_ptr<celestia::ephem::SpiceOrbit>
+static std::unique_ptr<ephem::SpiceOrbit>
 CreateSpiceOrbit(const Hash* orbitData,
                  const fs::path& path,
                  bool usePlanetUnits)
@@ -492,7 +502,7 @@ CreateSpiceOrbit(const Hash* orbitData,
         return nullptr;
     }
 
-    std::unique_ptr<celestia::ephem::SpiceOrbit> orbit = nullptr;
+    std::unique_ptr<ephem::SpiceOrbit> orbit = nullptr;
     if (beginningDate != nullptr && endingDate != nullptr)
     {
         double beginningTDBJD = 0.0;
@@ -509,21 +519,21 @@ CreateSpiceOrbit(const Hash* orbitData,
             return nullptr;
         }
 
-        orbit = std::make_unique<celestia::ephem::SpiceOrbit>(*targetBodyName,
-                                                              *originName,
-                                                              period,
-                                                              boundingRadius,
-                                                              beginningTDBJD,
-                                                              endingTDBJD);
+        orbit = std::make_unique<ephem::SpiceOrbit>(*targetBodyName,
+                                                    *originName,
+                                                    period,
+                                                    boundingRadius,
+                                                    beginningTDBJD,
+                                                    endingTDBJD);
     }
     else
     {
         // No time interval given; we'll use whatever coverage window is given
         // in the SPICE kernel.
-        orbit = std::make_unique<celestia::ephem::SpiceOrbit>(*targetBodyName,
-                                                              *originName,
-                                                              period,
-                                                              boundingRadius);
+        orbit = std::make_unique<ephem::SpiceOrbit>(*targetBodyName,
+                                                    *originName,
+                                                    period,
+                                                    boundingRadius);
     }
 
     if (!orbit->init(path, kernelList.cbegin(), kernelList.cend()))
@@ -565,7 +575,7 @@ CreateSpiceOrbit(const Hash* orbitData,
  *  period; it is only used by Celestia for displaying object information such
  *  as sidereal day length.
  */
-static std::unique_ptr<celestia::ephem::SpiceRotation>
+static std::unique_ptr<ephem::SpiceRotation>
 CreateSpiceRotation(const Hash* rotationData,
                     const fs::path& path)
 {
@@ -620,7 +630,7 @@ CreateSpiceRotation(const Hash* rotationData,
         return nullptr;
     }
 
-    std::unique_ptr<celestia::ephem::SpiceRotation> rotation = nullptr;
+    std::unique_ptr<ephem::SpiceRotation> rotation = nullptr;
     if (beginningDate != nullptr && endingDate != nullptr)
     {
         double beginningTDBJD = 0.0;
@@ -637,18 +647,18 @@ CreateSpiceRotation(const Hash* rotationData,
             return nullptr;
         }
 
-        rotation = std::make_unique<celestia::ephem::SpiceRotation>(*frameName,
-                                                                    baseFrameName,
-                                                                    period,
-                                                                    beginningTDBJD,
-                                                                    endingTDBJD);
+        rotation = std::make_unique<ephem::SpiceRotation>(*frameName,
+                                                          baseFrameName,
+                                                          period,
+                                                          beginningTDBJD,
+                                                          endingTDBJD);
     }
     else
     {
         // No time interval given; rotation is valid at any time.
-        rotation = std::make_unique<celestia::ephem::SpiceRotation>(*frameName,
-                                                                    baseFrameName,
-                                                                    period);
+        rotation = std::make_unique<ephem::SpiceRotation>(*frameName,
+                                                          baseFrameName,
+                                                          period);
     }
 
     if (!rotation->init(path, kernelList.cbegin(), kernelList.cend()))
@@ -662,7 +672,7 @@ CreateSpiceRotation(const Hash* rotationData,
 #endif
 
 
-static celestia::ephem::Orbit*
+static ephem::Orbit*
 CreateScriptedOrbit(const Hash* orbitData,
                     const fs::path& path)
 {
@@ -685,12 +695,12 @@ CreateScriptedOrbit(const Hash* orbitData,
     //Value* pathValue = new Value(path.string());
     //orbitData->addValue("AddonPath", *pathValue);
 
-    return celestia::ephem::CreateScriptedOrbit(moduleName, *funcName, *orbitData, path).release();
+    return ephem::CreateScriptedOrbit(moduleName, *funcName, *orbitData, path).release();
 #endif
 }
 
 
-celestia::ephem::Orbit*
+ephem::Orbit*
 CreateOrbit(const Selection& centralObject,
             const Hash* planetData,
             const fs::path& path,
@@ -760,17 +770,23 @@ CreateOrbit(const Selection& centralObject,
     // single precision.
     if (const std::string* sampOrbitFile = planetData->getString("SampledOrbit"); sampOrbitFile != nullptr)
     {
-        GetLogger()->verbose("Attempting to load sampled orbit file '{}'\n", *sampOrbitFile);
-        ResourceHandle orbitHandle =
-            GetTrajectoryManager()->getHandle(TrajectoryInfo(*sampOrbitFile,
-                                                             path,
-                                                             TrajectoryInterpolation::Cubic,
-                                                             TrajectoryPrecision::Single));
-        if (auto orbit = GetTrajectoryManager()->find(orbitHandle); orbit != nullptr)
+        if (auto sampOrbitFileName = util::U8FileName(*sampOrbitFile); sampOrbitFileName.has_value())
         {
-            return orbit;
+            GetLogger()->verbose("Attempting to load sampled orbit file '{}'\n", *sampOrbitFile);
+            ResourceHandle orbitHandle =
+                GetTrajectoryManager()->getHandle(TrajectoryInfo(*sampOrbitFileName,
+                                                                path,
+                                                                TrajectoryInterpolation::Cubic,
+                                                                TrajectoryPrecision::Single));
+            if (auto orbit = GetTrajectoryManager()->find(orbitHandle); orbit != nullptr)
+                return orbit;
+
+            GetLogger()->error("Could not load sampled orbit file '{}'\n", *sampOrbitFile);
         }
-        GetLogger()->error("Could not load sampled orbit file '{}'\n", *sampOrbitFile);
+        else
+        {
+            GetLogger()->error("Invalid filename in SampledOrbit\n");
+        }
     }
 
     if (const Value* orbitDataValue = planetData->getValue("EllipticalOrbit"); orbitDataValue != nullptr)
@@ -807,7 +823,7 @@ CreateOrbit(const Selection& centralObject,
         {
             // Convert to Celestia's coordinate system
             Eigen::Vector3d fixedPosition(fixed->x(), fixed->z(), -fixed->y());
-            return new celestia::ephem::FixedOrbit(fixedPosition);
+            return new ephem::FixedOrbit(fixedPosition);
         }
 
         if (auto fixedPositionData = fixedPositionValue->getHash(); fixedPositionData != nullptr)
@@ -832,7 +848,7 @@ CreateOrbit(const Selection& centralObject,
 #else
             Vector3d pos = centralBody->planetocentricToCartesian(longlat->x(), longlat->y(), longlat->z());
 #endif
-            return new celestia::ephem::SynchronousOrbit(*centralBody, pos);
+            return new ephem::SynchronousOrbit(*centralBody, pos);
         }
         // TODO: Allow fixing objects to the surface of stars.
         return nullptr;
@@ -842,20 +858,20 @@ CreateOrbit(const Selection& centralObject,
 }
 
 
-static std::unique_ptr<celestia::ephem::ConstantOrientation>
+static std::unique_ptr<ephem::ConstantOrientation>
 CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
 {
-    Quaterniond q = math::YRotation(-celestia::numbers::pi - offset) *
+    Quaterniond q = math::YRotation(-numbers::pi - offset) *
                     math::XRotation(-inclination) *
                     math::YRotation(-ascendingNode);
 
-    return std::make_unique<celestia::ephem::ConstantOrientation>(q);
+    return std::make_unique<ephem::ConstantOrientation>(q);
 }
 
 
-static std::unique_ptr<celestia::ephem::RotationModel>
+static std::unique_ptr<ephem::RotationModel>
 CreateUniformRotationModel(const Hash* rotationData,
                            double syncRotationPeriod)
 {
@@ -880,46 +896,46 @@ CreateUniformRotationModel(const Hash* rotationData,
     }
     else
     {
-        return std::make_unique<celestia::ephem::UniformRotationModel>(period,
-                                                                       static_cast<float>(offset),
-                                                                       epoch,
-                                                                       static_cast<float>(inclination),
-                                                                       static_cast<float>(ascendingNode));
+        return std::make_unique<ephem::UniformRotationModel>(period,
+                                                             static_cast<float>(offset),
+                                                             epoch,
+                                                             static_cast<float>(inclination),
+                                                             static_cast<float>(ascendingNode));
     }
 }
 
 
-static std::unique_ptr<celestia::ephem::ConstantOrientation>
+static std::unique_ptr<ephem::ConstantOrientation>
 CreateFixedRotationModel(const Hash* rotationData)
 {
     auto offset = math::degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
     auto inclination = math::degToRad(rotationData->getAngle<double>("Inclination").value_or(0.0));
     auto ascendingNode = math::degToRad(rotationData->getAngle<double>("AscendingNode").value_or(0.0));
 
-    Quaterniond q = math::YRotation(-celestia::numbers::pi - offset) *
+    Quaterniond q = math::YRotation(-numbers::pi - offset) *
                     math::XRotation(-inclination) *
                     math::YRotation(-ascendingNode);
 
-    return std::make_unique<celestia::ephem::ConstantOrientation>(q);
+    return std::make_unique<ephem::ConstantOrientation>(q);
 }
 
 
-static std::unique_ptr<celestia::ephem::ConstantOrientation>
+static std::unique_ptr<ephem::ConstantOrientation>
 CreateFixedAttitudeRotationModel(const Hash* rotationData)
 {
     auto heading = math::degToRad(rotationData->getAngle<double>("Heading").value_or(0.0));
     auto tilt = math::degToRad(rotationData->getAngle<double>("Tilt").value_or(0.0));
     auto roll = math::degToRad(rotationData->getAngle<double>("Roll").value_or(0.0));
 
-    Quaterniond q = math::YRotation(-celestia::numbers::pi - heading) *
+    Quaterniond q = math::YRotation(-numbers::pi - heading) *
                     math::XRotation(-tilt) *
                     math::ZRotation(-roll);
 
-    return std::make_unique<celestia::ephem::ConstantOrientation>(q);
+    return std::make_unique<ephem::ConstantOrientation>(q);
 }
 
 
-static std::unique_ptr<celestia::ephem::RotationModel>
+static std::unique_ptr<ephem::RotationModel>
 CreatePrecessingRotationModel(const Hash* rotationData,
                               double syncRotationPeriod)
 {
@@ -949,17 +965,17 @@ CreatePrecessingRotationModel(const Hash* rotationData,
     }
     else
     {
-        return std::make_unique<celestia::ephem::PrecessingRotationModel>(period,
-                                                                          static_cast<float>(offset),
-                                                                          epoch,
-                                                                          static_cast<float>(inclination),
-                                                                          static_cast<float>(ascendingNode),
-                                                                          precessionPeriod);
+        return std::make_unique<ephem::PrecessingRotationModel>(period,
+                                                                static_cast<float>(offset),
+                                                                epoch,
+                                                                static_cast<float>(inclination),
+                                                                static_cast<float>(ascendingNode),
+                                                                precessionPeriod);
     }
 }
 
 
-static std::unique_ptr<celestia::ephem::RotationModel>
+static std::unique_ptr<ephem::RotationModel>
 CreateScriptedRotation(const Hash* rotationData,
                        const fs::path& path)
 {
@@ -982,7 +998,7 @@ CreateScriptedRotation(const Hash* rotationData,
     //Value* pathValue = new Value(path.string());
     //rotationData->addValue("AddonPath", *pathValue);
 
-    return celestia::ephem::CreateScriptedRotation(moduleName, *funcName, *rotationData, path);
+    return ephem::CreateScriptedRotation(moduleName, *funcName, *rotationData, path);
 #endif
 }
 
@@ -993,7 +1009,7 @@ CreateScriptedRotation(const Hash* rotationData,
  * grouped into a single subobject--the ssc fields relevant for rotation just
  * appear in the top level structure.
  */
-celestia::ephem::RotationModel*
+ephem::RotationModel*
 CreateRotationModel(const Hash* planetData,
                     const fs::path& path,
                     double syncRotationPeriod)
@@ -1008,7 +1024,7 @@ CreateRotationModel(const Hash* planetData,
     //   legacy rotation parameters
     if (const std::string* customRotationModelName = planetData->getString("CustomRotation"); customRotationModelName != nullptr)
     {
-        if (auto rotationModel = celestia::ephem::GetCustomRotationModel(*customRotationModelName);
+        if (auto rotationModel = ephem::GetCustomRotationModel(*customRotationModelName);
             rotationModel != nullptr)
         {
             return rotationModel;
@@ -1055,15 +1071,22 @@ CreateRotationModel(const Hash* planetData,
 
     if (const std::string* sampOrientationFile = planetData->getString("SampledOrientation"); sampOrientationFile != nullptr)
     {
-        GetLogger()->verbose("Attempting to load orientation file '{}'\n", *sampOrientationFile);
-        ResourceHandle orientationHandle =
-            GetRotationModelManager()->getHandle(RotationModelInfo(*sampOrientationFile, path));
-        if (auto rotationModel = GetRotationModelManager()->find(orientationHandle); rotationModel != nullptr)
+        if (auto sampOrientationFileName = util::U8FileName(*sampOrientationFile); sampOrientationFileName.has_value())
         {
-            return rotationModel;
-        }
+            GetLogger()->verbose("Attempting to load orientation file '{}'\n", *sampOrientationFile);
+            ResourceHandle orientationHandle =
+                GetRotationModelManager()->getHandle(RotationModelInfo(*sampOrientationFileName, path));
+            if (auto rotationModel = GetRotationModelManager()->find(orientationHandle); rotationModel != nullptr)
+            {
+                return rotationModel;
+            }
 
-        GetLogger()->error("Could not load rotation model file '{}'\n", *sampOrientationFile);
+            GetLogger()->error("Could not load rotation model file '{}'\n", *sampOrientationFile);
+        }
+        else
+        {
+            GetLogger()->error("Invalid filename in SampledOrientation\n");
+        }
     }
 
     if (const Value* precessingRotationValue = planetData->getValue("PrecessingRotation"); precessingRotationValue != nullptr)
@@ -1162,7 +1185,7 @@ CreateRotationModel(const Hash* planetData,
 
     if (specified)
     {
-        std::unique_ptr<celestia::ephem::RotationModel> rm = nullptr;
+        std::unique_ptr<ephem::RotationModel> rm = nullptr;
         if (period == 0.0)
         {
             // No period was specified, and the default synchronous
@@ -1173,20 +1196,20 @@ CreateRotationModel(const Hash* planetData,
         }
         else if (precessionRate == 0.0)
         {
-            rm = std::make_unique<celestia::ephem::UniformRotationModel>(period,
-                                                                         offset,
-                                                                         epoch,
-                                                                         inclination,
-                                                                         ascendingNode);
+            rm = std::make_unique<ephem::UniformRotationModel>(period,
+                                                               offset,
+                                                               epoch,
+                                                               inclination,
+                                                               ascendingNode);
         }
         else
         {
-            rm = std::make_unique<celestia::ephem::PrecessingRotationModel>(period,
-                                                                            offset,
-                                                                            epoch,
-                                                                            inclination,
-                                                                            ascendingNode,
-                                                                            -360.0 / precessionRate);
+            rm = std::make_unique<ephem::PrecessingRotationModel>(period,
+                                                                  offset,
+                                                                  epoch,
+                                                                  inclination,
+                                                                  ascendingNode,
+                                                                  -360.0 / precessionRate);
         }
 
         return rm.release();
@@ -1199,23 +1222,23 @@ CreateRotationModel(const Hash* planetData,
 }
 
 
-celestia::ephem::RotationModel*
+ephem::RotationModel*
 CreateDefaultRotationModel(double syncRotationPeriod)
 {
-    std::unique_ptr<celestia::ephem::RotationModel> rotation;
+    std::unique_ptr<ephem::RotationModel> rotation;
     if (syncRotationPeriod == 0.0)
     {
         // If syncRotationPeriod is 0, the orbit of the object is
         // aperiodic and we'll just return a FixedRotation.
-        rotation = std::make_unique<celestia::ephem::ConstantOrientation>(Quaterniond::Identity());
+        rotation = std::make_unique<ephem::ConstantOrientation>(Quaterniond::Identity());
     }
     else
     {
-        rotation = std::make_unique<celestia::ephem::UniformRotationModel>(syncRotationPeriod,
-                                                                           0.0f,
-                                                                           astro::J2000,
-                                                                           0.0f,
-                                                                           0.0f);
+        rotation = std::make_unique<ephem::UniformRotationModel>(syncRotationPeriod,
+                                                                 0.0f,
+                                                                 astro::J2000,
+                                                                 0.0f,
+                                                                 0.0f);
     }
 
     return rotation.release();

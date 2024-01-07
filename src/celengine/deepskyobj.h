@@ -84,7 +84,7 @@ public:
 
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const = 0;
+                      double& cosAngleToBoundCenter) const;
     virtual bool load(const AssociativeArray*, const fs::path& resPath);
 
     virtual uint64_t getRenderMask() const { return 0; }
