@@ -27,6 +27,7 @@
 #include <celcompat/bit.h>
 #include <celcompat/charconv.h>
 #include <celcompat/numbers.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/intrusiveptr.h>
 #include <celutil/logger.h>
@@ -43,6 +44,7 @@ using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 // Enable the below to switch back to parsing coordinates as float to match
 // legacy behaviour. This shouldn't be necessary since stars.dat stores
@@ -53,8 +55,8 @@ namespace math = celestia::math;
 struct StarDatabaseBuilder::CustomStarDetails
 {
     bool hasCustomDetails{false};
-    const std::string* modelName{nullptr};
-    const std::string* textureName{nullptr};
+    fs::path modelName;
+    fs::path textureName;
     celestia::ephem::Orbit* orbit{nullptr};
     celestia::ephem::RotationModel* rm{nullptr};
     std::optional<Eigen::Vector3d> semiAxes{std::nullopt};
@@ -387,8 +389,21 @@ parseCustomStarDetails(const Hash* starData,
 {
     StarDatabaseBuilder::CustomStarDetails customDetails;
 
-    customDetails.modelName = starData->getString("Mesh");
-    customDetails.textureName = starData->getString("Texture");
+    if (const std::string* mesh = starData->getString("Mesh"); mesh != nullptr)
+    {
+        if (auto meshPath = util::U8FileName(*mesh); meshPath.has_value())
+            customDetails.modelName = std::move(*meshPath);
+        else
+            GetLogger()->error("Invalid filename in Mesh\n");
+    }
+
+    if (const std::string* texture = starData->getString("Texture"); texture != nullptr)
+    {
+        if (auto texturePath = util::U8FileName(*texture); texturePath.has_value())
+            customDetails.textureName = std::move(*texturePath);
+        else
+            GetLogger()->error("Invalid filename in Texture\n");
+    }
 
     customDetails.orbit = CreateOrbit(Selection(), starData, path, true);
     customDetails.rm = CreateRotationModel(starData, path, 1.0);
@@ -398,8 +413,8 @@ parseCustomStarDetails(const Hash* starData,
     customDetails.bolometricCorrection = starData->getNumber<float>("BoloCorrection");
     customDetails.infoURL = starData->getString("InfoURL");
 
-    customDetails.hasCustomDetails = customDetails.modelName != nullptr ||
-                                     customDetails.textureName != nullptr ||
+    customDetails.hasCustomDetails = !customDetails.modelName.empty() ||
+                                     !customDetails.textureName.empty() ||
                                      customDetails.orbit != nullptr ||
                                      customDetails.rm != nullptr ||
                                      customDetails.semiAxes.has_value() ||
@@ -1397,15 +1412,15 @@ StarDatabaseBuilder::applyCustomStarDetails(const Star* star,
     StarDetails* details = star->getDetails();
     assert(!details->shared());
 
-    if (customDetails.textureName != nullptr)
+    if (!customDetails.textureName.empty())
     {
-        details->setTexture(MultiResTexture(*customDetails.textureName, path));
+        details->setTexture(MultiResTexture(customDetails.textureName, path));
         details->addKnowledge(StarDetails::KnowTexture);
     }
 
-    if (customDetails.modelName != nullptr)
+    if (!customDetails.modelName.empty())
     {
-        ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*customDetails.modelName,
+        ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(customDetails.modelName,
                                                                                      path,
                                                                                      Eigen::Vector3f::Zero(),
                                                                                      1.0f,

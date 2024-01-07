@@ -41,7 +41,7 @@ class TrajectoryInfo
     };
 
  private:
-    std::string source;
+    fs::path source;
     fs::path path;
     celestia::ephem::TrajectoryInterpolation interpolation;
     celestia::ephem::TrajectoryPrecision precision;
@@ -51,7 +51,7 @@ class TrajectoryInfo
  public:
     using ResourceType = celestia::ephem::Orbit;
 
-    TrajectoryInfo(const std::string& _source,
+    TrajectoryInfo(const fs::path& _source,
                    const fs::path& _path = "",
                    celestia::ephem::TrajectoryInterpolation _interpolation = celestia::ephem::TrajectoryInterpolation::Cubic,
                    celestia::ephem::TrajectoryPrecision _precision = celestia::ephem::TrajectoryPrecision::Single) :

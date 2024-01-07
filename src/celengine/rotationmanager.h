@@ -21,7 +21,7 @@
 class RotationModelInfo
 {
  private:
-    std::string source;
+    fs::path source;
     fs::path path;
 
     friend bool operator<(const RotationModelInfo&, const RotationModelInfo&);
@@ -30,7 +30,7 @@ class RotationModelInfo
     using ResourceType = celestia::ephem::RotationModel;
     using ResourceKey = fs::path;
 
-    RotationModelInfo(const std::string& _source,
+    RotationModelInfo(const fs::path& _source,
                       const fs::path& _path = "") :
         source(_source), path(_path) {};
 

@@ -601,14 +601,14 @@ class CommandUnmarkAll : public InstantaneousCommand
 class CommandCapture : public InstantaneousCommand
 {
  public:
-    CommandCapture(std::string, std::string);
+    CommandCapture(std::string, fs::path);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
     std::string type;
-    std::string filename;
+    fs::path filename;
 };
 
 
@@ -732,7 +732,12 @@ class CommandSetTextColor : public InstantaneousCommand
 class CommandPlay : public InstantaneousCommand
 {
  public:
-    CommandPlay(int channel, std::optional<float> volume, float pan, std::optional<bool> loop, const std::optional<fs::path> &filename, bool nopause);
+    CommandPlay(int channel,
+                std::optional<float> volume,
+                float pan,
+                std::optional<bool> loop,
+                const std::optional<fs::path> &filename,
+                bool nopause);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
@@ -794,13 +799,15 @@ class CommandSetWindowBordersVisible : public InstantaneousCommand
 class CommandSetRingsTexture : public InstantaneousCommand
 {
  public:
-    CommandSetRingsTexture(std::string, std::string, std::string);
+    CommandSetRingsTexture(std::string, fs::path, fs::path);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    std::string object, textureName, path;
+    std::string object;
+    fs::path textureName;
+    fs::path path;
 };
 
 } // end namespace celestia::scripts

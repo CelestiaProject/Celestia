@@ -24,6 +24,7 @@
 #include <map>
 #include <optional>
 #include <sstream>
+#include <utility>
 #include <variant>
 
 #include <Eigen/Core>
@@ -40,6 +41,7 @@
 #endif
 #include <celmath/mathlib.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/r128util.h>
 #include <celutil/stringutils.h>
@@ -51,7 +53,6 @@ using std::size_t;
 using std::strncmp;
 using celestia::util::GetLogger;
 using celestia::util::DecodeFromBase64;
-
 
 namespace celestia::scripts
 {
@@ -793,8 +794,8 @@ ParseResult parseUnmarkCommand(const Hash& paramList, const ScriptMaps&)
 
 ParseResult parseCaptureCommand(const Hash& paramList, const ScriptMaps&)
 {
-    const std::string* filename = paramList.getString("filename");
-    if (filename == nullptr)
+    auto filename = paramList.getPath("filename");
+    if (!filename.has_value())
         return makeError("Missing filename parameter to capture");
 
     std::string type;
@@ -893,9 +894,13 @@ ParseResult parsePlayCommand(const Hash& paramList, const ScriptMaps&)
     std::optional<bool> optionalLoop = std::nullopt;
     if (auto loop = paramList.getNumber<int>("loop"); loop.has_value())
         optionalLoop = *loop == 1;
-    std::optional<std::string> optionalFilename = std::nullopt;
+    std::optional<fs::path> optionalFilename = std::nullopt;
     if (auto filename = paramList.getString("filename"); filename != nullptr)
-        optionalFilename = *filename;
+    {
+        optionalFilename = util::U8FileName(*filename);
+        if (!optionalFilename.has_value())
+            return makeError("Invalid filename in play command");
+    }
 
     return std::make_unique<CommandPlay>(channel, optionalVolume, pan, optionalLoop, optionalFilename, nopause == 1);
 #else
@@ -911,9 +916,18 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
     auto yoffset  = paramList.getNumber<float>("yoffset").value_or(0.0f);
     std::optional<float> alpha = paramList.getNumber<float>("alpha");
 
-    const std::string* filename = paramList.getString("filename");
-    if (filename == nullptr)
+    fs::path filename;
+    if (const std::string* fname = paramList.getString("filename"); fname != nullptr)
+    {
+        if (auto path = util::U8FileName(*fname); path.has_value())
+            filename = std::move(*path);
+        else
+            return makeError("Invalid filename parameter to overlay");
+    }
+    else
+    {
         return makeError("Missing filename parameter to overlay");
+    }
 
     bool fitscreen = false;
     // The below triggers a Sonar rule to use value_or in the outer condition,
@@ -947,7 +961,7 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
                                                 fadeafter,
                                                 xoffset,
                                                 yoffset,
-                                                *filename,
+                                                filename,
                                                 fitscreen,
                                                 colors);
 }
@@ -973,17 +987,26 @@ ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&
     if (object == nullptr)
         return makeError("Missing object parameter to setringstexture");
 
-    const std::string* texture = paramList.getString("texture");
-    if (texture == nullptr)
-        return makeError("Missing texture parameter to setringstexture");
-
-    std::string path;
-    if (const std::string* pathStr = paramList.getString("path"); pathStr != nullptr)
+    fs::path texture;
+    if (const std::string* textureValue = paramList.getString("texture"); textureValue != nullptr)
     {
-        path = *pathStr;
+        if (auto textureFilename = util::U8FileName(*textureValue); textureFilename.has_value())
+            texture = std::move(*textureFilename);
+        else
+            return makeError("Invalid filename in setringstexture");
+    }
+    else
+    {
+        return makeError("Missing texture parameter to setringstexture");
     }
 
-    return std::make_unique<CommandSetRingsTexture>(*object, *texture, path);
+    fs::path path;
+    if (auto pathStr = paramList.getPath("path"); pathStr.has_value())
+    {
+        path = std::move(*pathStr);
+    }
+
+    return std::make_unique<CommandSetRingsTexture>(*object, texture, path);
 }
 
 
