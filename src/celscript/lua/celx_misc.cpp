@@ -28,6 +28,9 @@ using namespace celestia::scripts;
 
 LuaState *getLuaStateObject(lua_State*);
 
+namespace
+{
+
 // Wrapper for a CEL-script, including the needed Execution Environment
 class CelScriptWrapper : public ExecutionEnvironment
 {
@@ -97,6 +100,8 @@ class CelScriptWrapper : public ExecutionEnvironment
     double tickTime { 0.0 };
     string errorMessage;
 };
+
+} // end unnamed namespace
 
 // ==================== Celscript-object ====================
 
@@ -190,8 +195,8 @@ static int font_bind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:bind()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    font->bind();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    (*font)->bind();
     return 0;
 }
 
@@ -201,8 +206,8 @@ static int font_unbind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:unbind()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    font->unbind();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    (*font)->unbind();
     return 0;
 }
 
@@ -213,12 +218,12 @@ static int font_render(lua_State* l)
     celx.checkArgs(2, 2, "One argument required for font:render");
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
     TextLayout layout;
-    layout.setFont(font);
+    layout.setFont(*font);
     layout.begin(p, m);
     layout.render(s);
     layout.end();
@@ -231,8 +236,8 @@ static int font_getwidth(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument expected for font:getwidth");
     const char* s = celx.safeGetString(2, AllErrors, "Argument to font:getwidth must be a string");
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    return celx.push(TextLayout::getTextWidth(s, font.get()));
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    return celx.push(TextLayout::getTextWidth(s, font->get()));
 }
 
 static int font_getheight(lua_State* l)
@@ -241,8 +246,8 @@ static int font_getheight(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getheight()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getHeight());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getHeight());
     return 1;
 }
 
@@ -252,8 +257,8 @@ static int font_getmaxascent(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getmaxascent()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getMaxAscent());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getMaxAscent());
     return 1;
 }
 
@@ -263,8 +268,8 @@ static int font_getmaxdescent(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getmaxdescent()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getMaxDescent());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getMaxDescent());
     return 1;
 }
 
@@ -274,10 +279,12 @@ static int font_gettextwidth(lua_State* l)
 
     Celx_CheckArgs(l, 2, 2, "One argument expected to function font:gettextwidth");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    // Do not put the shared_ptr on the stack, otherwise the destructor may be skipped
+    // if Celx_SafeGetString calls lua_error (longjmp)
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:gettextwidth must be a string");
 
-    lua_pushnumber(l, TextLayout::getTextWidth(s, font.get()));
+    lua_pushnumber(l, TextLayout::getTextWidth(s, font->get()));
 
     return 1;
 }
