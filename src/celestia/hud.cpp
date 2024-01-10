@@ -201,7 +201,7 @@ displaySpeed(const util::NumberFormatter& formatter, Overlay& overlay, float spe
 
     if (speed >= (float) 1000.0_au)
     {
-        unitValue = speed;
+        unitValue = astro::kilometersToLightYears(speed);
         unitStr = _("ly/s");
     }
     else if (speed >= (float) 100.0_c)
