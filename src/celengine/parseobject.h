@@ -12,18 +12,23 @@
 
 #pragma once
 
-#include <string>
 #include <memory>
-#include <celephem/orbit.h>
-#include <celephem/rotation.h>
+#include <string_view>
+
 #include <celcompat/filesystem.h>
 #include "frame.h"
-#include "parser.h"
 
+class AssociativeArray;
 class Body;
-class Star;
 class Universe;
+class Value;
 class Selection;
+
+namespace celestia::ephem
+{
+class Orbit;
+class RotationModel;
+}
 
 enum class DataDisposition
 {
@@ -32,25 +37,30 @@ enum class DataDisposition
     Replace
 };
 
+bool
+ParseDate(const AssociativeArray* hash, std::string_view name, double& jd);
 
-bool ParseDate(const Hash* hash, const std::string& name, double& jd);
+std::shared_ptr<const celestia::ephem::Orbit>
+CreateOrbit(const Selection& centralObject,
+            const AssociativeArray* planetData,
+            const fs::path& path,
+            bool usePlanetUnits);
 
-celestia::ephem::Orbit* CreateOrbit(const Selection& centralObject,
-                                    const Hash* planetData,
-                                    const fs::path& path,
-                                    bool usePlanetUnits);
+std::shared_ptr<const celestia::ephem::RotationModel>
+CreateRotationModel(const AssociativeArray* rotationData,
+                    const fs::path& path,
+                    double syncRotationPeriod);
 
-celestia::ephem::RotationModel* CreateRotationModel(const Hash* rotationData,
-                                                    const fs::path& path,
-                                                    double syncRotationPeriod);
+std::shared_ptr<const celestia::ephem::RotationModel>
+CreateDefaultRotationModel(double syncRotationPeriod);
 
-celestia::ephem::RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
+ReferenceFrame::SharedConstPtr
+CreateReferenceFrame(const Universe& universe,
+                     const Value* frameValue,
+                     const Selection& defaultCenter,
+                     Body* defaultObserver);
 
-ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
-                                                    const Value* frameValue,
-                                                    const Selection& defaultCenter,
-                                                    Body* defaultObserver);
-
-std::shared_ptr<const TwoVectorFrame> CreateTopocentricFrame(const Selection& center,
-                                                             const Selection& target,
-                                                             const Selection& observer);
+std::shared_ptr<const TwoVectorFrame>
+CreateTopocentricFrame(const Selection& center,
+                       const Selection& target,
+                       const Selection& observer);

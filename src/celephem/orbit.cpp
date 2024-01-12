@@ -555,8 +555,8 @@ Eigen::Vector3d CachingOrbit::computeVelocity(double jd) const
 }
 
 
-MixedOrbit::MixedOrbit(std::unique_ptr<Orbit>&& orbit, double t0, double t1, double mass) :
-    primary(std::move(orbit)),
+MixedOrbit::MixedOrbit(const std::shared_ptr<const Orbit>& orbit, double t0, double t1, double mass) :
+    primary(orbit),
     begin(t0),
     end(t1),
     boundingRadius(0.0)

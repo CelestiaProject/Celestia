@@ -23,9 +23,10 @@ namespace celestia::ephem
 
 class Orbit;
 
-std::unique_ptr<Orbit> CreateScriptedOrbit(const std::string* moduleName,
-                                           const std::string& funcName,
-                                           const AssociativeArray& parameters,
-                                           const fs::path& path);
+std::shared_ptr<const Orbit>
+CreateScriptedOrbit(const std::string* moduleName,
+                    const std::string& funcName,
+                    const AssociativeArray& parameters,
+                    const fs::path& path);
 
 }

@@ -9,75 +9,73 @@
 
 #pragma once
 
+#include <cstddef>
+#include <functional>
 #include <memory>
-#include <string>
-#include <tuple>
-#include <utility>
+#include <unordered_map>
 
 #include <celcompat/filesystem.h>
 #include <celephem/orbit.h>
 #include <celephem/samporbit.h>
-#include <celutil/resmanager.h>
 
-
-class TrajectoryInfo
+namespace celestia::engine
 {
- public:
-    // Ensure that trajectories with different interpolation or precision get resolved to different objects by
-    // storing the interpolation and precision in the resource key.
-    struct ResourceKey
-    {
-        fs::path resolvedPath;
-        celestia::ephem::TrajectoryInterpolation interpolation;
-        celestia::ephem::TrajectoryPrecision precision;
 
-        ResourceKey(fs::path&& _resolvedPath,
-                    celestia::ephem::TrajectoryInterpolation _interpolation,
-                    celestia::ephem::TrajectoryPrecision _precision) :
-            resolvedPath(std::move(_resolvedPath)),
-            interpolation(_interpolation),
-            precision(_precision)
-        {}
+class TrajectoryManager
+{
+public:
+    TrajectoryManager() = default;
+    ~TrajectoryManager() = default;
+
+    TrajectoryManager(const TrajectoryManager&) = delete;
+    TrajectoryManager& operator=(const TrajectoryManager&) = delete;
+
+    std::shared_ptr<const ephem::Orbit> find(const fs::path& source,
+                                             const fs::path& path,
+                                             ephem::TrajectoryInterpolation interpolation,
+                                             ephem::TrajectoryPrecision precision);
+
+private:
+    struct Key
+    {
+        fs::path path;
+        ephem::TrajectoryInterpolation interpolation;
+        ephem::TrajectoryPrecision precision;
+
+        friend bool operator==(const Key& lhs, const Key& rhs) noexcept
+        {
+            return lhs.path == rhs.path && lhs.interpolation == rhs.interpolation && lhs.precision == rhs.precision;
+        }
+
+        friend bool operator!=(const Key& lhs, const Key& rhs) noexcept
+        {
+            return !(lhs == rhs);
+        }
     };
 
- private:
-    fs::path source;
-    fs::path path;
-    celestia::ephem::TrajectoryInterpolation interpolation;
-    celestia::ephem::TrajectoryPrecision precision;
+    struct KeyHasher
+    {
+        std::size_t operator()(const Key& key) const noexcept
+        {
+            // Only support 32-bit and 64-bit size_t for now
+            static_assert(sizeof(std::size_t) == sizeof(std::uint32_t) || sizeof(std::size_t) == sizeof(std::uint64_t));
 
-    friend bool operator<(const TrajectoryInfo&, const TrajectoryInfo&);
+            // Based on documentation of boost::hash_combine
+            // Prevent Sonar complaining about platform-dependent casts that happen to be redundant on the system it runs on
+            constexpr std::size_t phi = sizeof(std::size_t) == sizeof(std::uint32_t)
+                ? static_cast<std::size_t>(0x9e3779b9) //NOSONAR
+                : static_cast<std::size_t>(0x9e3779b97f4a7c15); //NOSONAR
 
- public:
-    using ResourceType = celestia::ephem::Orbit;
+            auto seed = fs::hash_value(key.path);
+            seed ^= std::hash<ephem::TrajectoryInterpolation>{}(key.interpolation) + phi + (seed << 6) + (seed >> 2);
+            seed ^= std::hash<ephem::TrajectoryPrecision>{}(key.precision) + phi + (seed << 6) + (seed >> 2);
+            return seed;
+        }
+    };
 
-    TrajectoryInfo(const fs::path& _source,
-                   const fs::path& _path = "",
-                   celestia::ephem::TrajectoryInterpolation _interpolation = celestia::ephem::TrajectoryInterpolation::Cubic,
-                   celestia::ephem::TrajectoryPrecision _precision = celestia::ephem::TrajectoryPrecision::Single) :
-        source(_source), path(_path), interpolation(_interpolation), precision(_precision) {}
-
-    ResourceKey resolve(const fs::path&) const;
-    std::unique_ptr<celestia::ephem::Orbit> load(const ResourceKey&) const;
+    std::unordered_map<Key, std::weak_ptr<const ephem::Orbit>, KeyHasher> orbits;
 };
 
-// Sort trajectory info records. The same trajectory can be loaded multiple times with
-// different attributes for precision and interpolation. How the ordering is defined isn't
-// as important making this operator distinguish between trajectories with either different
-// sources or different attributes.
-inline bool operator<(const TrajectoryInfo& ti0, const TrajectoryInfo& ti1)
-{
-    return std::tie(ti0.interpolation, ti0.precision, ti0.source, ti0.path) <
-           std::tie(ti1.interpolation, ti1.precision, ti1.source, ti1.path);
-}
+inline TrajectoryManager trajectoryManager;
 
-inline bool operator<(const TrajectoryInfo::ResourceKey& k0,
-                      const TrajectoryInfo::ResourceKey& k1)
-{
-    return std::tie(k0.resolvedPath, k0.interpolation, k0.precision) <
-           std::tie(k1.resolvedPath, k1.interpolation, k1.precision);
-}
-
-using TrajectoryManager = ResourceManager<TrajectoryInfo>;
-
-TrajectoryManager* GetTrajectoryManager();
+} // end namespace celestia::engine

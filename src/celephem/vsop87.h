@@ -16,14 +16,14 @@ namespace celestia::ephem
 
 class Orbit;
 
-std::unique_ptr<Orbit> CreateVSOP87MercuryOrbit();
-std::unique_ptr<Orbit> CreateVSOP87VenusOrbit();
-std::unique_ptr<Orbit> CreateVSOP87EarthOrbit();
-std::unique_ptr<Orbit> CreateVSOP87MarsOrbit();
-std::unique_ptr<Orbit> CreateVSOP87JupiterOrbit();
-std::unique_ptr<Orbit> CreateVSOP87SaturnOrbit();
-std::unique_ptr<Orbit> CreateVSOP87UranusOrbit();
-std::unique_ptr<Orbit> CreateVSOP87NeptuneOrbit();
-std::unique_ptr<Orbit> CreateVSOP87SunOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87MercuryOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87VenusOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87EarthOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87MarsOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87JupiterOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87SaturnOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87UranusOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87NeptuneOrbit();
+std::shared_ptr<const Orbit> CreateVSOP87SunOrbit();
 
 }

@@ -60,7 +60,6 @@ constexpr double BoundingRadiusSlack = 1.2;
 using PlanetElements = std::array<double, 9>;
 using StaticElements = std::array<double, 23>;
 
-
 constexpr std::array<StaticElements, 8> gElements{
     StaticElements{
         /*     mercury... */
@@ -143,7 +142,6 @@ constexpr std::array<StaticElements, 8> gElements{
     }
 };
 
-
 class PlanetOrbitMixin
 {
 protected:
@@ -210,21 +208,22 @@ PlanetOrbitMixin::computePlanetCoords(int p, double map, double da, double dhl, 
     distance *= astro::KM_PER_AU<double>;
 }
 
-
 // Useful version of trig functions which operate on values in degrees instead
 // of radians.
-double sinD(double theta)
+double
+sinD(double theta)
 {
     return std::sin(math::degToRad(theta));
 }
 
-double cosD(double theta)
+double
+cosD(double theta)
 {
     return std::cos(math::degToRad(theta));
 }
 
-
-inline Eigen::Vector3d from_polar(double lon, double lat, double distance)
+inline Eigen::Vector3d
+from_polar(double lon, double lat, double distance)
 {
     double sLon;
     double cLon;
@@ -237,8 +236,8 @@ inline Eigen::Vector3d from_polar(double lon, double lat, double distance)
                            -sLon * sLat * distance);
 }
 
-
-double Obliquity(double t)
+double
+Obliquity(double t)
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
@@ -246,7 +245,8 @@ double Obliquity(double t)
     return math::degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
 }
 
-void Nutation(double t, double &deps, double& dpsi)
+void
+Nutation(double t, double &deps, double& dpsi)
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
@@ -304,8 +304,9 @@ void Nutation(double t, double &deps, double& dpsi)
     deps = math::degToRad(deps/3600);
 }
 
-void EclipticToEquatorial(double fEclLat, double fEclLon,
-                          double& RA, double& dec)
+void
+EclipticToEquatorial(double fEclLat, double fEclLon,
+                     double& RA, double& dec)
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
@@ -335,12 +336,12 @@ void EclipticToEquatorial(double fEclLat, double fEclLon,
     RA = math::pfmod(RA, TWOPI);
 }
 
-
 // Convert equatorial coordinates from one epoch to another.  Method is from
 // Chapter 21 of Meeus's _Astronomical Algorithms_
-void EpochConvert(double jdFrom, double jdTo,
-                  double a0, double d0,
-                  double& a, double& d)
+void
+EpochConvert(double jdFrom, double jdTo,
+             double a0, double d0,
+             double& a, double& d)
 {
     double T = (jdFrom - astro::J2000) / 36525.0;
     double t = (jdTo - jdFrom) / 36525.0;
@@ -365,8 +366,8 @@ void EpochConvert(double jdFrom, double jdTo,
     d = std::asin(C);
 }
 
-
-double meanAnomalySun(double t)
+double
+meanAnomalySun(double t)
 {
     double t2, a, b;
 
@@ -377,8 +378,9 @@ double meanAnomalySun(double t)
     return math::degToRad(3.5847583e2 - (1.5e-4 + 3.3e-6*t)*t2 + b);
 }
 
-void auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
-             double* x5, double* x6)
+void
+auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
+        double* x5, double* x6)
 {
     *x1 = t/5+0.1;
     *x2 = math::pfmod(4.14473+5.29691e1*t, TWOPI);
@@ -388,13 +390,13 @@ void auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
     *x6 = 2 * *x2 - 6 * *x3 + 3 * *x4;
 }
 
-
-void ComputeGalileanElements(double t,
-                             double& l1, double& l2, double& l3, double& l4,
-                             double& p1, double& p2, double& p3, double& p4,
-                             double& w1, double& w2, double& w3, double& w4,
-                             double& gamma, double& phi, double& psi,
-                             double& G, double& Gp)
+void
+ComputeGalileanElements(double t,
+                        double& l1, double& l2, double& l3, double& l4,
+                        double& p1, double& p2, double& p3, double& p4,
+                        double& w1, double& w2, double& w3, double& w4,
+                        double& gamma, double& phi, double& psi,
+                        double& G, double& Gp)
 {
     // Parameter t is Julian days, epoch 1950.0.
     l1 = 1.8513962 + 3.551552269981*t;
@@ -419,17 +421,15 @@ void ComputeGalileanElements(double t,
     Gp = 0.5581306 + 5.83982523e-4*t;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 
 class MercuryOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     // Specify which planets we must compute elements for
     static constexpr std::array<int, 3> pList{0, 1, 3};
 
- public:
+public:
     ~MercuryOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -487,10 +487,10 @@ class MercuryOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class VenusOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     //Specify which planets we must compute elements for
     static constexpr std::array<int, 2> pList{1, 3};
- public:
+public:
     ~VenusOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -557,7 +557,7 @@ class VenusOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class EarthOrbit : public CachingOrbit
 {
- public:
+public:
     ~EarthOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -626,10 +626,9 @@ class EarthOrbit : public CachingOrbit
     };
 };
 
-
 class LunarOrbit : public CachingOrbit
 {
- public:
+public:
     ~LunarOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -789,11 +788,11 @@ class LunarOrbit : public CachingOrbit
 
 class MarsOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     // Specify which planets we must compute elements for
     static constexpr std::array<int, 3> pList{1, 2, 3};
 
- public:
+public:
     ~MarsOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -870,10 +869,10 @@ class MarsOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class JupiterOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     static constexpr std::array<int, 1> pList{3};
 
- public:
+public:
     ~JupiterOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -974,10 +973,10 @@ class JupiterOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     static constexpr std::array<int, 1> pList{4};
 
- public:
+public:
     ~SaturnOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1101,10 +1100,10 @@ class SaturnOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class UranusOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     static constexpr std::array<int, 1> pList{5};
 
- public:
+public:
     ~UranusOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1189,10 +1188,10 @@ class UranusOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class NeptuneOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     static constexpr std::array<int, 1> pList{6};
 
- public:
+public:
     ~NeptuneOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1268,10 +1267,10 @@ class NeptuneOrbit : public CachingOrbit, private PlanetOrbitMixin
 
 class PlutoOrbit : public CachingOrbit, private PlanetOrbitMixin
 {
- private:
+private:
     static constexpr std::array<int, 1> pList{7};
 
- public:
+public:
     ~PlutoOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1311,12 +1310,12 @@ class PlutoOrbit : public CachingOrbit, private PlanetOrbitMixin
     };
 };
 
-
 // Compute for mean anomaly M the point on the ellipse with
 // semimajor axis a and eccentricity e.  This helper function assumes
 // a low eccentricity; orbit.cpp has functions appropriate for solving
 // Kepler's equation for larger values of e.
-Eigen::Vector3d ellipsePosition(double a, double e, double M)
+Eigen::Vector3d
+ellipsePosition(double a, double e, double M)
 {
     // Solve Kepler's equation--for a low eccentricity orbit, just a few
     // iterations is enough.
@@ -1329,10 +1328,9 @@ Eigen::Vector3d ellipsePosition(double a, double e, double M)
                            a * std::sqrt(1 - math::square(e)) * -std::sin(E));
 }
 
-
 class PhobosOrbit : public CachingOrbit
 {
- public:
+public:
     ~PhobosOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1398,10 +1396,9 @@ class PhobosOrbit : public CachingOrbit
     }
 };
 
-
 class DeimosOrbit : public CachingOrbit
 {
- public:
+public:
     ~DeimosOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1537,12 +1534,11 @@ class DeimosOrbit : public CachingOrbit
     }
 };
 
-
 constexpr double JupAscendingNode = math::degToRad(22.203);
 
 class IoOrbit : public CachingOrbit
 {
- public:
+public:
     ~IoOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1621,7 +1617,7 @@ class IoOrbit : public CachingOrbit
 
 class EuropaOrbit : public CachingOrbit
 {
- public:
+public:
     ~EuropaOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1711,7 +1707,7 @@ class EuropaOrbit : public CachingOrbit
 
 class GanymedeOrbit : public CachingOrbit
 {
- public:
+public:
     ~GanymedeOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1804,7 +1800,7 @@ class GanymedeOrbit : public CachingOrbit
 
 class CallistoOrbit : public CachingOrbit
 {
- public:
+public:
     ~CallistoOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -1940,7 +1936,6 @@ class CallistoOrbit : public CachingOrbit
     };
 };
 
-
 constexpr double SatAscendingNode = 168.8112;
 constexpr double SatTilt = 28.0817;
 
@@ -1948,14 +1943,15 @@ constexpr double SatTilt = 28.0817;
 // Titan, Hyperion, and Iapetus are from Jean Meeus's Astronomical Algorithms,
 // and were originally derived by Gerard Dourneau.
 
-void ComputeSaturnianElements(double t,
-                              double& t1, double& t2, double& t3,
-                              double& t4, double& t5, double& t6,
-                              double& t7, double& t8, double& t9,
-                              double& t10, double& t11,
-                              double& W0, double& W1, double& W2,
-                              double& W3, double& W4, double& W5,
-                              double& W6, double& W7, double& W8)
+void
+ComputeSaturnianElements(double t,
+                         double& t1, double& t2, double& t3,
+                         double& t4, double& t5, double& t6,
+                         double& t7, double& t8, double& t9,
+                         double& t10, double& t11,
+                         double& W0, double& W1, double& W2,
+                         double& W3, double& W4, double& W5,
+                         double& W6, double& W7, double& W8)
 {
     t1 = t - 2411093.0;
     t2 = t1 / 365.25;
@@ -1980,8 +1976,8 @@ void ComputeSaturnianElements(double t,
     W8 = 113.35 - 0.2597 * t7;
 }
 
-
-Eigen::Vector3d SaturnMoonPosition(double lam, double gam, double Om, double r)
+Eigen::Vector3d
+SaturnMoonPosition(double lam, double gam, double Om, double r)
 {
     double u = lam - Om;
     double w = Om - SatAscendingNode;
@@ -2012,11 +2008,11 @@ Eigen::Vector3d SaturnMoonPosition(double lam, double gam, double Om, double r)
     return Eigen::Vector3d(x, y, z);
 }
 
-
-void OuterSaturnMoonParams(double a, double e, double i,
-                           double Om_, double M, double lam_,
-                           double& lam, double& gam,
-                           double& r, double& w)
+void
+OuterSaturnMoonParams(double a, double e, double i,
+                      double Om_, double M, double lam_,
+                      double& lam, double& gam,
+                      double& r, double& w)
 {
     double s1 = sinD(SatTilt);
     double c1 = cosD(SatTilt);
@@ -2042,10 +2038,9 @@ void OuterSaturnMoonParams(double a, double e, double i,
     w = SatAscendingNode + u;
 }
 
-
 class MimasOrbit : public CachingOrbit
 {
- public:
+public:
     ~MimasOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2084,10 +2079,9 @@ class MimasOrbit : public CachingOrbit
     };
 };
 
-
 class EnceladusOrbit : public CachingOrbit
 {
- public:
+public:
     ~EnceladusOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2125,10 +2119,9 @@ class EnceladusOrbit : public CachingOrbit
     };
 };
 
-
 class TethysOrbit : public CachingOrbit
 {
- public:
+public:
     ~TethysOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2162,10 +2155,9 @@ class TethysOrbit : public CachingOrbit
     };
 };
 
-
 class DioneOrbit : public CachingOrbit
 {
- public:
+public:
     ~DioneOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2204,10 +2196,9 @@ class DioneOrbit : public CachingOrbit
     };
 };
 
-
 class RheaOrbit : public CachingOrbit
 {
- public:
+public:
     ~RheaOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2253,10 +2244,9 @@ class RheaOrbit : public CachingOrbit
     };
 };
 
-
 class TitanOrbit : public CachingOrbit
 {
- public:
+public:
     ~TitanOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2321,10 +2311,9 @@ class TitanOrbit : public CachingOrbit
     };
 };
 
-
 class HyperionOrbit : public CachingOrbit
 {
- public:
+public:
     ~HyperionOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2404,10 +2393,9 @@ class HyperionOrbit : public CachingOrbit
     };
 };
 
-
 class IapetusOrbit : public CachingOrbit
 {
- public:
+public:
     ~IapetusOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2496,10 +2484,9 @@ class IapetusOrbit : public CachingOrbit
     };
 };
 
-
 class PhoebeOrbit : public CachingOrbit
 {
- public:
+public:
     ~PhoebeOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2532,14 +2519,13 @@ class PhoebeOrbit : public CachingOrbit
     };
 };
 
-
 using LTerms = std::array<double, 3>;
 using ZTerms = std::array<double, 5>;
 using ZetaTerms = std::array<double, 2>;
 
 class UranianSatelliteOrbit : public CachingOrbit
 {
- private:
+private:
     double a;
     double n;
     double L0;
@@ -2548,7 +2534,7 @@ class UranianSatelliteOrbit : public CachingOrbit
     const ZTerms &z_k, &z_theta, &z_phi;
     const ZetaTerms &zeta_k, &zeta_theta, &zeta_phi;
 
- public:
+public:
     UranianSatelliteOrbit(double _a,
                           double _n,
                           double _L0, double _L1,
@@ -2635,7 +2621,6 @@ class UranianSatelliteOrbit : public CachingOrbit
     }
 };
 
-
 constexpr std::array<double, 5> uran_n
 { 4.44352267, 2.49254257, 1.51595490, 0.72166316, 0.46658054 };
 constexpr std::array<double, 5> uran_a
@@ -2708,12 +2693,13 @@ constexpr std::array<ZetaTerms, 5> uran_zeta_phi{
     ZetaTerms{ 1.75, 4.21 },
 };
 
-std::unique_ptr<Orbit> CreateUranianSatelliteOrbit(int n)
+std::shared_ptr<const Orbit>
+CreateUranianSatelliteOrbit(int n)
 {
     assert(n >= 1 && n <= 5);
     --n;
 
-    return std::make_unique<UranianSatelliteOrbit>(uran_a[n], uran_n[n],
+    return std::make_shared<UranianSatelliteOrbit>(uran_a[n], uran_n[n],
                                                    uran_L0[n], uran_L1[n],
                                                    uran_L_k[n], uran_L_theta[n],
                                                    uran_L_phi[n], uran_z_k[n],
@@ -2722,7 +2708,6 @@ std::unique_ptr<Orbit> CreateUranianSatelliteOrbit(int n)
                                                    uran_zeta_phi[n]);
 }
 
-
 /*! Orbit of Triton, from Seidelmann, _Explanatory Supplement to the
  *  Astronomical Almanac_ (1992), p.373-374. The position of Triton
  *  is calculated in Neptunocentric coordinates referred to the
@@ -2730,7 +2715,7 @@ std::unique_ptr<Orbit> CreateUranianSatelliteOrbit(int n)
  */
 class TritonOrbit : public CachingOrbit
 {
- public:
+public:
     ~TritonOrbit() override = default;
 
     Eigen::Vector3d computePosition(double jd) const override
@@ -2791,7 +2776,6 @@ class TritonOrbit : public CachingOrbit
     }
 };
 
-
 /*! Ephemeris for Helene, Telesto, and Calypso, from
  *  "An upgraded theory for Helene, Telesto, and Calypso"
  *  Oberti P., Vienne A., 2002, A&A
@@ -2849,7 +2833,6 @@ constexpr std::array<double, 24 * 6> HeleneAmps
      -0.000003,0.,0.,0.,0.,0.,-0.000003,0.,0.,0.,0.,0.,0.,0.000005,
      0.000010,0.,0.,0.,0.,0.000003,0.,0.,0.,0.,0.,0.000003,0.
 };
-
 
 constexpr std::array<double, 12 * 5> TelestoTerms
 {
@@ -2943,7 +2926,6 @@ struct HTC20Angles
     double theta;
 };
 
-
 constexpr HTC20Angles HeleneAngles =
 {
     2.29427177,
@@ -2982,7 +2964,7 @@ constexpr HTC20Angles CalypsoAngles =
 
 class HTC20Orbit : public CachingOrbit
 {
- public:
+public:
     HTC20Orbit(int _nTerms, const double* _args, const double* _amplitudes,
                const HTC20Angles& _angles,
                double _period, double /*_boundingRadius*/) :
@@ -3027,7 +3009,7 @@ class HTC20Orbit : public CachingOrbit
         return 354800 * BoundingRadiusSlack;
     }
 
- private:
+private:
     int nTerms;
     const double* args;
     const double* amplitudes;
@@ -3035,10 +3017,9 @@ class HTC20Orbit : public CachingOrbit
     double period;
 };
 
-
 class JPLEphOrbit : public CachingOrbit
 {
- public:
+public:
     JPLEphOrbit(const JPLEphemeris& e,
                 JPLEphemItem _target,
                 JPLEphemItem _center,
@@ -3100,7 +3081,7 @@ class JPLEphOrbit : public CachingOrbit
         return Eigen::Vector3d(pos.x(), pos.z(), -pos.y());
     }
 
- private:
+private:
     const JPLEphemeris& ephem;
     JPLEphemItem target;
     JPLEphemItem center;
@@ -3108,11 +3089,11 @@ class JPLEphOrbit : public CachingOrbit
     double boundingRadius;
 };
 
-
-std::unique_ptr<Orbit> CreateJPLEphOrbit(JPLEphemItem target,
-                                         JPLEphemItem center,
-                                         double period,
-                                         double boundingRadius)
+std::shared_ptr<const Orbit>
+CreateJPLEphOrbit(JPLEphemItem target,
+                  JPLEphemItem center,
+                  double period,
+                  double boundingRadius)
 {
     static bool jplephInitialized = false;
     static JPLEphemeris* jpleph = nullptr;
@@ -3142,455 +3123,572 @@ std::unique_ptr<Orbit> CreateJPLEphOrbit(JPLEphemItem target,
     if (jpleph == nullptr)
         return nullptr;
 
-    auto o = std::make_unique<JPLEphOrbit>(*jpleph, target, center, period, boundingRadius);
-    return std::make_unique<MixedOrbit>(std::move(o),
+    auto o = std::make_shared<JPLEphOrbit>(*jpleph, target, center, period, boundingRadius);
+    return std::make_shared<MixedOrbit>(std::move(o),
                                         jpleph->getStartDate(),
                                         jpleph->getEndDate(),
                                         astro::SolarMass);
 }
 
-
-double yearToJD(int year)
+double
+yearToJD(int year)
 {
     return static_cast<double>(astro::Date(year, 1, 1));
 }
 
+enum class CustomOrbitType
+{
+    Mercury = 0,
+    Venus,
+    Earth,
+    Moon,
+    Mars,
+    Jupiter,
+    Saturn,
+    Uranus,
+    Neptune,
+    Pluto,
+    JplMercurySun,
+    JplVenusSun,
+    JplEarthSun,
+    JplMarsSun,
+    JplJupiterSun,
+    JplSaturnSun,
+    JplUranusSun,
+    JplNeptuneSun,
+    JplPlutoSun,
+    JplMercurySsb,
+    JplVenusSsb,
+    JplEarthSsb,
+    JplMarsSsb,
+    JplJupiterSsb,
+    JplSaturnSsb,
+    JplUranusSsb,
+    JplNeptuneSsb,
+    JplPlutoSsb,
+    JplEmbSun,
+    JplEmbSsb,
+    JplMoonEmb,
+    JplMoonEarth,
+    JplEarthEmb,
+    JplSunSsb,
+    Helene,
+    Telesto,
+    Calypso,
+    Phobos,
+    Deimos,
+    Io,
+    Europa,
+    Ganymede,
+    Callisto,
+    Mimas,
+    Enceladus,
+    Tethys,
+    Dione,
+    Rhea,
+    Titan,
+    Hyperion,
+    Iapetus,
+    Phoebe,
+    Miranda,
+    Ariel,
+    Umbriel,
+    Titania,
+    Oberon,
+    Triton,
+    VSOP87Mercury,
+    VSOP87Venus,
+    VSOP87Earth,
+    VSOP87Mars,
+    VSOP87Jupiter,
+    VSOP87Saturn,
+    VSOP87Uranus,
+    VSOP87Neptune,
+    VSOP87Sun,
+    _Count,
+};
 
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateMercuryOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<MercuryOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<MercuryOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVenusOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<VenusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<VenusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateEarthOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<EarthOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<EarthOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateMoonOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<LunarOrbit>(), yearToJD(-2000), yearToJD(4000), astro::EarthMass + astro::LunarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<LunarOrbit>(), yearToJD(-2000), yearToJD(4000), astro::EarthMass + astro::LunarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateMarsOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<MarsOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<MarsOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJupiterOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<JupiterOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<JupiterOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateSaturnOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<SaturnOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<SaturnOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateUranusOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<UranusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<UranusOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateNeptuneOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<NeptuneOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<NeptuneOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreatePlutoOrbit()
 {
-    return std::make_unique<MixedOrbit>(std::make_unique<PlutoOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    return std::make_shared<MixedOrbit>(std::make_shared<PlutoOrbit>(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
 }
-
 
 // JPL ephemerides for planets (relative to the Sun)
 
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMercurySunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::Sun, 0.2408 * 365.25, 6.0e7);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplVenusSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Venus, JPLEphemItem::Sun, 0.6152 * 365.25, 1.0e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplEarthSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::Sun, 365.25, 1.6e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMarsSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Mars, JPLEphemItem::Sun, 1.8809 * 365.25, 2.4e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplJupiterSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::Sun, 11.86 * 365.25, 8.0e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplSaturnSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Saturn, JPLEphemItem::Sun, 29.4577 * 365.25, 1.5e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplUranusSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Uranus, JPLEphemItem::Sun, 84.0139 * 365.25, 3.0e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplNeptuneSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::Sun, 164.793 * 365.25, 4.7e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplPlutoSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Pluto, JPLEphemItem::Sun, 248.54 * 365.25, 6.0e9);
 }
 
-
 // JPL ephemerides for planets (relative to Solar System barycenter)
 
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMercurySsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Mercury, JPLEphemItem::SSB, 0.2408 * 365.25, 6.0e7);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplVenusSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Venus, JPLEphemItem::SSB, 0.6152 * 365.25, 1.0e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplEarthSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::SSB, 365.25, 1.6e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMarsSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Mars, JPLEphemItem::SSB, 1.8809 * 365.25, 2.4e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplJupiterSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Jupiter, JPLEphemItem::SSB, 11.86   * 365.25, 8.0e8);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplSaturnSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Saturn, JPLEphemItem::SSB, 29.4577 * 365.25, 1.5e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplUranusSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Uranus, JPLEphemItem::SSB, 84.0139 * 365.25, 3.0e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplNeptuneSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Neptune, JPLEphemItem::SSB, 164.793 * 365.25, 4.7e9);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplPlutoSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Pluto, JPLEphemItem::SSB, 248.54 * 365.25, 6.0e9);
 }
 
-
 // JPL ephemerides for Earth-Moon system
 
 // Earth-Moon barycenter, heliocentric
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplEmbSunOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::Sun, 365.25, 1.6e8);
 }
 
-
 // Earth-Moon barycenter, relative to ssb
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplEmbSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::EarthMoonBary, JPLEphemItem::SSB, 365.25, 1.6e8);
 }
 
-
 // Moon, barycentric
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMoonEmbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Moon, JPLEphemItem::EarthMoonBary, 27.321661, 5.0e5);
 }
 
-
 // Moon, geocentric
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplMoonEarthOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Moon, JPLEphemItem::Earth, 27.321661, 5.0e5);
 }
 
-
 // Earth, barycentric
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplEarthEmbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Earth, JPLEphemItem::EarthMoonBary, 27.321, 1.0e5);
 }
 
-
 // Position of Sun relative to SSB
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateJplSunSsbOrbit()
 {
     return CreateJPLEphOrbit(JPLEphemItem::Sun, JPLEphemItem::SSB, 11.861773 * 365.25, 2000000);
 }
 
-
 // HTC2.0 ephemerides for Saturnian satellites in Lagrange points of Tethys and Dione
 
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateHeleneOrbit()
 {
-    return std::make_unique<HTC20Orbit>(24, HeleneTerms.data(), HeleneAmps.data(), HeleneAngles, 2.736915, 380000);
+    return std::make_shared<HTC20Orbit>(24, HeleneTerms.data(), HeleneAmps.data(), HeleneAngles, 2.736915, 380000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateTelestoOrbit()
 {
-    return std::make_unique<HTC20Orbit>(12, TelestoTerms.data(), TelestoAmps.data(), TelestoAngles, 1.887802, 300000);
+    return std::make_shared<HTC20Orbit>(12, TelestoTerms.data(), TelestoAmps.data(), TelestoAngles, 1.887802, 300000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateCalypsoOrbit()
 {
-    return std::make_unique<HTC20Orbit>(24, CalypsoTerms.data(), CalypsoAmps.data(), CalypsoAngles, 1.887803, 300000);
+    return std::make_shared<HTC20Orbit>(24, CalypsoTerms.data(), CalypsoAmps.data(), CalypsoAngles, 1.887803, 300000);
 }
-
 
 // various planetary satellite orbits
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreatePhobosOrbit()
 {
-    return std::make_unique<PhobosOrbit>();
+    return std::make_shared<PhobosOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateDeimosOrbit()
 {
-    return std::make_unique<DeimosOrbit>();
+    return std::make_shared<DeimosOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateIoOrbit()
 {
-    return std::make_unique<IoOrbit>();
+    return std::make_shared<IoOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateEuropaOrbit()
 {
-    return std::make_unique<EuropaOrbit>();
+    return std::make_shared<EuropaOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateGanymedeOrbit()
 {
-    return std::make_unique<GanymedeOrbit>();
+    return std::make_shared<GanymedeOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateCallistoOrbit()
 {
-    return std::make_unique<CallistoOrbit>();
+    return std::make_shared<CallistoOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateMimasOrbit()
 {
-    return std::make_unique<MimasOrbit>();
+    return std::make_shared<MimasOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateEnceladusOrbit()
 {
-    return std::make_unique<EnceladusOrbit>();
+    return std::make_shared<EnceladusOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateTethysOrbit()
 {
-    return std::make_unique<TethysOrbit>();
+    return std::make_shared<TethysOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateDioneOrbit()
 {
-    return std::make_unique<DioneOrbit>();
+    return std::make_shared<DioneOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateRheaOrbit()
 {
-    return std::make_unique<RheaOrbit>();
+    return std::make_shared<RheaOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateTitanOrbit()
 {
-    return std::make_unique<TitanOrbit>();
+    return std::make_shared<TitanOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateHyperionOrbit()
 {
-    return std::make_unique<HyperionOrbit>();
+    return std::make_shared<HyperionOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateIapetusOrbit()
 {
-    return std::make_unique<IapetusOrbit>();
+    return std::make_shared<IapetusOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreatePhoebeOrbit()
 {
-    return std::make_unique<PhoebeOrbit>();
+    return std::make_shared<PhoebeOrbit>();
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateMirandaOrbit()
 {
     return CreateUranianSatelliteOrbit(1);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateArielOrbit()
 {
     return CreateUranianSatelliteOrbit(2);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateUmbrielOrbit()
 {
     return CreateUranianSatelliteOrbit(3);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateTitaniaOrbit()
 {
     return CreateUranianSatelliteOrbit(4);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateOberonOrbit()
 {
     return CreateUranianSatelliteOrbit(5);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateTritonOrbit()
 {
-    return std::make_unique<TritonOrbit>();
+    return std::make_shared<TritonOrbit>();
 }
 
+using CustomOrbitFactory = std::shared_ptr<const Orbit> (*)();
 
-using CustomOrbitFactory = std::unique_ptr<Orbit> (*)();
+constexpr auto OrbitTypeCount = static_cast<std::size_t>(CustomOrbitType::_Count);
+
+constexpr std::array<CustomOrbitFactory, OrbitTypeCount> factories
+{
+    &CreateMercuryOrbit,
+    &CreateVenusOrbit,
+    &CreateEarthOrbit,
+    &CreateMoonOrbit,
+    &CreateMarsOrbit,
+    &CreateJupiterOrbit,
+    &CreateSaturnOrbit,
+    &CreateUranusOrbit,
+    &CreateNeptuneOrbit,
+    &CreatePlutoOrbit,
+    &CreateJplMercurySunOrbit,
+    &CreateJplVenusSunOrbit,
+    &CreateJplEarthSunOrbit,
+    &CreateJplMarsSunOrbit,
+    &CreateJplJupiterSunOrbit,
+    &CreateJplSaturnSunOrbit,
+    &CreateJplUranusSunOrbit,
+    &CreateJplNeptuneSunOrbit,
+    &CreateJplPlutoSunOrbit,
+    &CreateJplMercurySsbOrbit,
+    &CreateJplVenusSsbOrbit,
+    &CreateJplEarthSsbOrbit,
+    &CreateJplMarsSsbOrbit,
+    &CreateJplJupiterSsbOrbit,
+    &CreateJplSaturnSsbOrbit,
+    &CreateJplUranusSsbOrbit,
+    &CreateJplNeptuneSsbOrbit,
+    &CreateJplPlutoSsbOrbit,
+    &CreateJplEmbSunOrbit,
+    &CreateJplEmbSsbOrbit,
+    &CreateJplMoonEmbOrbit,
+    &CreateJplMoonEarthOrbit,
+    &CreateJplEarthEmbOrbit,
+    &CreateJplSunSsbOrbit,
+    &CreateHeleneOrbit,
+    &CreateTelestoOrbit,
+    &CreateCalypsoOrbit,
+    &CreatePhobosOrbit,
+    &CreateDeimosOrbit,
+    &CreateIoOrbit,
+    &CreateEuropaOrbit,
+    &CreateGanymedeOrbit,
+    &CreateCallistoOrbit,
+    &CreateMimasOrbit,
+    &CreateEnceladusOrbit,
+    &CreateTethysOrbit,
+    &CreateDioneOrbit,
+    &CreateRheaOrbit,
+    &CreateTitanOrbit,
+    &CreateHyperionOrbit,
+    &CreateIapetusOrbit,
+    &CreatePhoebeOrbit,
+    &CreateMirandaOrbit,
+    &CreateArielOrbit,
+    &CreateUmbrielOrbit,
+    &CreateTitaniaOrbit,
+    &CreateOberonOrbit,
+    &CreateTritonOrbit,
+    &CreateVSOP87MercuryOrbit,
+    &CreateVSOP87VenusOrbit,
+    &CreateVSOP87EarthOrbit,
+    &CreateVSOP87MarsOrbit,
+    &CreateVSOP87JupiterOrbit,
+    &CreateVSOP87SaturnOrbit,
+    &CreateVSOP87UranusOrbit,
+    &CreateVSOP87NeptuneOrbit,
+    &CreateVSOP87SunOrbit,
+};
 
 // lookup table generated by gperf (customorbit.gperf)
 #include "customorbit.inc"
 
+class CustomOrbitsManager
+{
+public:
+    CustomOrbitsManager() = default;
+    ~CustomOrbitsManager() = default;
+
+    CustomOrbitsManager(const CustomOrbitsManager&) = delete;
+    CustomOrbitsManager& operator=(const CustomOrbitsManager&) = delete;
+
+    std::shared_ptr<const Orbit> getOrbit(CustomOrbitType type);
+
+private:
+    std::array<std::weak_ptr<const Orbit>, OrbitTypeCount> models;
+};
+
+std::shared_ptr<const Orbit>
+CustomOrbitsManager::getOrbit(CustomOrbitType type)
+{
+    auto index = static_cast<std::size_t>(type);
+    auto& weak_ptr = models[index];
+    if (auto cachedOrbit = weak_ptr.lock(); cachedOrbit != nullptr)
+        return cachedOrbit;
+
+    auto orbit = factories[index]();
+    weak_ptr = orbit;
+    return orbit;
+}
+
 } // end unnamed namespace
 
-
-std::unique_ptr<Orbit> GetCustomOrbit(std::string_view name)
+std::shared_ptr<const Orbit>
+GetCustomOrbit(std::string_view name)
 {
     auto ptr = CustomOrbitMap::getOrbitType(name.data(), name.size());
     if (ptr == nullptr)
         return nullptr;
 
-    return ptr->factory();
+    static CustomOrbitsManager manager;
+
+    return manager.getOrbit(ptr->orbitType);
 }
 
 } // end namespace celestia::ephem

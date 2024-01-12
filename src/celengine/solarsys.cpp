@@ -53,6 +53,7 @@ using std::strncmp;
 using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
+namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -343,7 +344,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     bool usePlanetUnits = orbitFrame->getCenter().star() != nullptr;
 
     // Get the orbit
-    celestia::ephem::Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
+    auto orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
     if (!orbit)
     {
         GetLogger()->error("Error: missing orbit in timeline phase.\n");
@@ -353,25 +354,24 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     // Get the rotation model
     // TIMELINE-TODO: default rotation model is UniformRotation with a period
     // equal to the orbital period. Should we do something else?
-    celestia::ephem::RotationModel* rotationModel = CreateRotationModel(phaseData, path, orbit->getPeriod());
+    auto rotationModel = CreateRotationModel(phaseData, path, orbit->getPeriod());
     if (!rotationModel)
     {
         // TODO: Should distinguish between a missing rotation model (where it's
         // appropriate to use a default one) and a bad rotation model (where
         // we should report an error.)
-        rotationModel = new celestia::ephem::ConstantOrientation(Eigen::Quaterniond::Identity());
+        rotationModel = ephem::ConstantOrientation::identity();
     }
 
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body,
                                                     beginning, ending,
                                                     orbitFrame,
-                                                    *orbit,
+                                                    orbit,
                                                     bodyFrame,
-                                                    *rotationModel);
+                                                    rotationModel);
 
     // Frame ownership transfered to phase; release local references
-
     return phase;
 }
 
@@ -493,8 +493,8 @@ bool CreateTimeline(Body* body,
     // Information required for the object timeline.
     ReferenceFrame::SharedConstPtr orbitFrame;
     ReferenceFrame::SharedConstPtr bodyFrame;
-    celestia::ephem::Orbit* orbit = nullptr;
-    celestia::ephem::RotationModel* rotationModel  = nullptr;
+    std::shared_ptr<const ephem::Orbit> orbit = nullptr;
+    std::shared_ptr<const ephem::RotationModel> rotationModel = nullptr;
     double beginning  = -std::numeric_limits<double>::infinity();
     double ending     =  std::numeric_limits<double>::infinity();
 
@@ -561,7 +561,7 @@ bool CreateTimeline(Body* body,
     // in AU; otherwise, use kilometers.
     orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
 
-    celestia::ephem::Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
+    auto newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
     if (newOrbit == nullptr && orbit == nullptr)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)
@@ -590,7 +590,7 @@ bool CreateTimeline(Body* body,
 
     // Get the rotation model for this body
     double syncRotationPeriod = orbit->getPeriod();
-    celestia::ephem::RotationModel* newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
+    auto newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
 
     // If a new rotation model was given, override the old one
     if (newRotationModel != nullptr)
@@ -623,7 +623,6 @@ bool CreateTimeline(Body* body,
         if (beginning >= ending)
         {
             GetLogger()->error("Beginning time must be before Ending time.\n");
-            delete rotationModel;
             return false;
         }
 
@@ -633,9 +632,9 @@ bool CreateTimeline(Body* body,
                                                         body,
                                                         beginning, ending,
                                                         orbitFrame,
-                                                        *orbit,
+                                                        orbit,
                                                         bodyFrame,
-                                                        *rotationModel);
+                                                        rotationModel);
 
         // We've already checked that beginning < ending; nothing else should go
         // wrong during the creation of a TimelinePhase.

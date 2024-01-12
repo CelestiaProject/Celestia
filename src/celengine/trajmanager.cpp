@@ -9,95 +9,36 @@
 
 #include "trajmanager.h"
 
-#include <cassert>
-#include <fstream>
+#include <utility>
 
-#include <celutil/filetype.h>
-#include <celutil/logger.h>
+#include <celephem/samporbit.h>
 
-using celestia::ephem::TrajectoryInterpolation;
-using celestia::ephem::TrajectoryPrecision;
-using celestia::util::GetLogger;
-
-TrajectoryManager*
-GetTrajectoryManager()
+namespace celestia::engine
 {
-    static TrajectoryManager* trajectoryManager = nullptr;
-    if (trajectoryManager == nullptr)
-        trajectoryManager = std::make_unique<TrajectoryManager>("data").release();
-    return trajectoryManager;
+
+std::shared_ptr<const ephem::Orbit>
+TrajectoryManager::find(const fs::path& source,
+                        const fs::path& path,
+                        ephem::TrajectoryInterpolation interpolation,
+                        ephem::TrajectoryPrecision precision)
+{
+    auto filename = path.empty()
+        ? "data" / source
+        : path / "data" / source;
+
+    auto it = orbits.try_emplace(Key { std::move(filename), interpolation, precision }).first;
+    if (auto cachedOrbit = it->second.lock(); cachedOrbit != nullptr)
+        return cachedOrbit;
+
+    auto orbit = ephem::LoadSampledTrajectory(it->first.path, interpolation, precision);
+    if (orbit == nullptr)
+    {
+        orbits.erase(it);
+        return nullptr;
+    }
+
+    it->second = orbit;
+    return orbit;
 }
 
-
-TrajectoryInfo::ResourceKey
-TrajectoryInfo::resolve(const fs::path& baseDir) const
-{
-    if (!path.empty())
-    {
-        fs::path filename = path / "data" / source;
-        std::ifstream in(filename);
-        if (in.good())
-            return ResourceKey(std::move(filename), interpolation, precision);
-    }
-
-    return ResourceKey(baseDir / source, interpolation, precision);
-}
-
-std::unique_ptr<celestia::ephem::Orbit>
-TrajectoryInfo::load(const ResourceKey& key) const
-{
-    ContentType filetype = DetermineFileType(key.resolvedPath);
-
-    GetLogger()->debug("Loading trajectory: {}\n", key.resolvedPath);
-
-    // TODO use unique_ptr here and replace the use of .release()
-    std::unique_ptr<celestia::ephem::Orbit> sampTrajectory = nullptr;
-
-    if (filetype == ContentType::CelestiaXYZVTrajectory)
-    {
-        switch (key.precision)
-        {
-        case TrajectoryPrecision::Single:
-            sampTrajectory = LoadXYZVTrajectorySinglePrec(key.resolvedPath, key.interpolation);
-            break;
-        case TrajectoryPrecision::Double:
-            sampTrajectory = LoadXYZVTrajectoryDoublePrec(key.resolvedPath, key.interpolation);
-            break;
-        default:
-            assert(0);
-            break;
-        }
-    }
-    else if (filetype == ContentType::CelestiaXYZVBinary)
-    {
-        switch (key.precision)
-        {
-        case TrajectoryPrecision::Single:
-            sampTrajectory = LoadXYZVBinarySinglePrec(key.resolvedPath, key.interpolation);
-            break;
-        case TrajectoryPrecision::Double:
-            sampTrajectory = LoadXYZVBinaryDoublePrec(key.resolvedPath, key.interpolation);
-            break;
-        default:
-            assert(0);
-            break;
-        }
-    }
-    else
-    {
-        switch (precision)
-        {
-        case TrajectoryPrecision::Single:
-            sampTrajectory = LoadSampledTrajectorySinglePrec(key.resolvedPath, interpolation);
-            break;
-        case TrajectoryPrecision::Double:
-            sampTrajectory = LoadSampledTrajectoryDoublePrec(key.resolvedPath, interpolation);
-            break;
-        default:
-            assert(0);
-            break;
-        }
-    }
-
-    return sampTrajectory;
-}
+} // end namespace celestia::engine

@@ -21,6 +21,7 @@
 #include <istream>
 #include <string_view>
 #include <type_traits>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -29,6 +30,8 @@
 #include <celastro/date.h>
 #include <celcompat/bit.h>
 #include <celmath/mathlib.h>
+#include <celutil/filetype.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "orbit.h"
@@ -43,6 +46,19 @@ namespace celestia::ephem
 namespace
 {
 
+template<typename T>
+struct Samples
+{
+    Samples(std::vector<double>&& _times, std::vector<T>&& _samples) :
+        times(std::move(_times)),
+        samples(std::move(_samples))
+    {
+    }
+
+    std::vector<double> times;
+    std::vector<T> samples;
+};
+
 struct InterpolationParameters
 {
     Eigen::Vector3d p0;
@@ -53,7 +69,6 @@ struct InterpolationParameters
     double ih;
 };
 
-
 Eigen::Vector3d
 cubicInterpolate(const InterpolationParameters& params)
 {
@@ -61,7 +76,6 @@ cubicInterpolate(const InterpolationParameters& params)
     Eigen::Vector3d b = 3.0 * (params.p1 - params.p0) - 2.0 * params.v0 - params.v1;
     return params.p0 + params.t * (params.v0 + params.t * (b + params.t * a));
 }
-
 
 Eigen::Vector3d
 cubicInterpolateVelocity(const InterpolationParameters& params)
@@ -71,7 +85,6 @@ cubicInterpolateVelocity(const InterpolationParameters& params)
     return (params.v0 + params.t * (b2 + params.t * a3)) * params.ih;
 }
 
-
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
 // is the maximum time (in days) between samples.  The threshold angle
 // is the maximum angle allowed between path segments.
@@ -79,14 +92,14 @@ cubicInterpolateVelocity(const InterpolationParameters& params)
 //static const double MaxSampleInterval = 50.0;
 //static const double SampleThresholdAngle = 2.0;
 
+template<typename T>
+using SampleXYZ = Eigen::Matrix<T, 3, 1>;
 
 template<typename T>
 class SampledOrbit : public CachingOrbit
 {
 public:
-    SampledOrbit(TrajectoryInterpolation,
-                 std::vector<double>&&,
-                 std::vector<Eigen::Matrix<T, 3, 1>>&&);
+    SampledOrbit(TrajectoryInterpolation, const std::shared_ptr<const Samples<SampleXYZ<T>>>&);
     ~SampledOrbit() override = default;
 
     double getPeriod() const override;
@@ -100,9 +113,10 @@ public:
     void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
 private:
-    std::vector<double> sampleTimes;
-    std::vector<Eigen::Matrix<T, 3, 1>> positions;
-    double boundingRadius{ 0.0 };
+    std::shared_ptr<const Samples<SampleXYZ<T>>> samples;
+    util::array_view<double> sampleTimes;
+    util::array_view<SampleXYZ<T>> positions;
+    double boundingRadius;
     mutable std::uint32_t lastSample{ 0 };
 
     TrajectoryInterpolation interpolation;
@@ -115,28 +129,20 @@ private:
     void initializeCubic(double, std::uint32_t, std::uint32_t, InterpolationParameters&) const;
 };
 
-
 template<typename T>
 SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _interpolation,
-                              std::vector<double>&& _sampleTimes,
-                              std::vector<Eigen::Matrix<T, 3, 1>>&& _positions) :
-    sampleTimes(std::move(_sampleTimes)),
-    positions(std::move(_positions)),
+                              const std::shared_ptr<const Samples<SampleXYZ<T>>>& _samples) :
+    samples(_samples),
+    sampleTimes(_samples->times),
+    positions(_samples->samples),
     interpolation(_interpolation)
 {
     assert(!sampleTimes.empty() && sampleTimes.size() == positions.size());
-    sampleTimes.shrink_to_fit();
-    positions.shrink_to_fit();
 
-    // Apply correction for Celestia's coordinate system
-    for (Eigen::Matrix<T, 3, 1>& position : positions)
-    {
-        boundingRadius = std::max(boundingRadius, position.template cast<double>().norm());
-        position.template tail<2>().reverseInPlace();
-        position.z() = -position.z();
-    }
+    auto it = std::max_element(positions.begin(), positions.end(),
+                               [](const auto& a, const auto& b) { return a.squaredNorm() < b.squaredNorm(); });
+    boundingRadius = it->template cast<double>().norm();
 }
-
 
 template<typename T>
 double
@@ -145,14 +151,12 @@ SampledOrbit<T>::getPeriod() const
     return sampleTimes.back() - sampleTimes.front();
 }
 
-
 template<typename T>
 bool
 SampledOrbit<T>::isPeriodic() const
 {
     return false;
 }
-
 
 template<typename T>
 void
@@ -162,14 +166,12 @@ SampledOrbit<T>::getValidRange(double& begin, double& end) const
     end = sampleTimes.back();
 }
 
-
 template<typename T>
 double
 SampledOrbit<T>::getBoundingRadius() const
 {
     return boundingRadius;
 }
-
 
 template<typename T>
 Eigen::Vector3d
@@ -196,7 +198,6 @@ SampledOrbit<T>::computePosition(double jd) const
     }
 }
 
-
 template<typename T>
 Eigen::Vector3d
 SampledOrbit<T>::computePositionLinear(double jd, std::uint32_t n) const
@@ -211,7 +212,6 @@ SampledOrbit<T>::computePositionLinear(double jd, std::uint32_t n) const
                            math::lerp(t, static_cast<double>(s0.z()), static_cast<double>(s1.z())));
 }
 
-
 template<typename T>
 Eigen::Vector3d
 SampledOrbit<T>::computePositionCubic(double jd, std::uint32_t n2, std::uint32_t nMax) const
@@ -220,7 +220,6 @@ SampledOrbit<T>::computePositionCubic(double jd, std::uint32_t n2, std::uint32_t
     initializeCubic(jd, n2, nMax, params);
     return cubicInterpolate(params);
 }
-
 
 template<typename T>
 Eigen::Vector3d
@@ -245,7 +244,6 @@ SampledOrbit<T>::computeVelocity(double jd) const
     }
 }
 
-
 template<typename T>
 Eigen::Vector3d
 SampledOrbit<T>::computeVelocityLinear(std::uint32_t n) const
@@ -255,7 +253,6 @@ SampledOrbit<T>::computeVelocityLinear(std::uint32_t n) const
     return (positions[n].template cast<double>() - positions[n - 1].template cast<double>()) * dtRecip;
 }
 
-
 template<typename T>
 Eigen::Vector3d
 SampledOrbit<T>::computeVelocityCubic(double jd, std::uint32_t n2, std::uint32_t nMax) const
@@ -264,7 +261,6 @@ SampledOrbit<T>::computeVelocityCubic(double jd, std::uint32_t n2, std::uint32_t
     initializeCubic(jd, n2, nMax, params);
     return cubicInterpolateVelocity(params);
 }
-
 
 template<typename T>
 void
@@ -298,7 +294,6 @@ SampledOrbit<T>::initializeCubic(double jd,
         ? (v21 * (0.5 * params.ih) + v32 * (0.5 / (sampleTimes[n3] - sampleTimes[n2]))) * h
         : v21;
 }
-
 
 template<typename T>
 void SampledOrbit<T>::sample(double /* startTime */, double /* endTime */,
@@ -336,7 +331,6 @@ void SampledOrbit<T>::sample(double /* startTime */, double /* endTime */,
     }
 }
 
-
 template<typename T>
 struct SampleXYZV
 {
@@ -344,15 +338,13 @@ struct SampleXYZV
     Eigen::Matrix<T, 3, 1> velocity;
 };
 
-
 // Sampled orbit with positions and velocities
 template<typename T>
 class SampledOrbitXYZV : public CachingOrbit
 {
 public:
     SampledOrbitXYZV(TrajectoryInterpolation,
-                     std::vector<double>&&,
-                     std::vector<SampleXYZV<T>>&&);
+                     const std::shared_ptr<const Samples<SampleXYZV<T>>>& samples);
     ~SampledOrbitXYZV() override = default;
 
     double getPeriod() const override;
@@ -368,39 +360,32 @@ public:
 private:
     void initializeCubic(double, std::uint32_t, InterpolationParameters&) const;
 
-    std::vector<double> sampleTimes;
-    std::vector<SampleXYZV<T>> samples;
-    double boundingRadius{ 0.0 };
+    std::shared_ptr<const Samples<SampleXYZV<T>>> samples;
+    util::array_view<double> sampleTimes;
+    util::array_view<SampleXYZV<T>> posvels;
+    double boundingRadius;
     mutable std::uint32_t lastSample{ 0 };
 
     TrajectoryInterpolation interpolation;
 };
 
-
 template<typename T>
 SampledOrbitXYZV<T>::SampledOrbitXYZV(TrajectoryInterpolation _interpolation,
-                                      std::vector<double>&& _sampleTimes,
-                                      std::vector<SampleXYZV<T>>&& _samples) :
-    sampleTimes(std::move(_sampleTimes)),
-    samples(std::move(_samples)),
+                                      const std::shared_ptr<const Samples<SampleXYZV<T>>>& _samples) :
+    samples(_samples),
+    sampleTimes(_samples->times),
+    posvels(_samples->samples),
     interpolation(_interpolation)
 {
-    assert(!sampleTimes.empty() && sampleTimes.size() == samples.size());
-    sampleTimes.shrink_to_fit();
-    samples.shrink_to_fit();
+    assert(!sampleTimes.empty() && sampleTimes.size() == posvels.size());
 
-    // Apply correction for Celestia's coordinate system
-    for (SampleXYZV<T>& sample: samples)
-    {
-        boundingRadius = std::max(boundingRadius,
-                                  sample.position.template cast<double>().norm());
-        sample.position.template tail<2>().reverseInPlace();
-        sample.position.z() = -sample.position.z();
-        sample.velocity.template tail<2>().reverseInPlace();
-        sample.velocity.z() = -sample.velocity.z();
-    }
+    auto it = std::max_element(posvels.begin(), posvels.end(),
+                               [](const auto& a, const auto& b)
+                               {
+                                   return a.position.squaredNorm() < b.position.squaredNorm();
+                               });
+    boundingRadius = it->position.template cast<double>().norm();
 }
-
 
 template<typename T>
 double
@@ -409,14 +394,12 @@ SampledOrbitXYZV<T>::getPeriod() const
     return sampleTimes.back() - sampleTimes.front();
 }
 
-
 template<typename T>
 bool
 SampledOrbitXYZV<T>::isPeriodic() const
 {
     return false;
 }
-
 
 template<typename T>
 void
@@ -426,7 +409,6 @@ SampledOrbitXYZV<T>::getValidRange(double& begin, double& end) const
     end = sampleTimes.back();
 }
 
-
 template<typename T>
 double
 SampledOrbitXYZV<T>::getBoundingRadius() const
@@ -434,26 +416,25 @@ SampledOrbitXYZV<T>::getBoundingRadius() const
     return boundingRadius;
 }
 
-
 template<typename T>
 Eigen::Vector3d
 SampledOrbitXYZV<T>::computePosition(double jd) const
 {
     if (sampleTimes.size() == 1)
-        return samples.front().position.template cast<double>();
+        return posvels.front().position.template cast<double>();
 
     std::uint32_t n = GetSampleIndex(jd, lastSample, sampleTimes);
     if (n == 0)
-        return samples.front().position.template cast<double>();
+        return posvels.front().position.template cast<double>();
     if (n == sampleTimes.size())
-        return samples.back().position.template cast<double>();
+        return posvels.back().position.template cast<double>();
 
     if (interpolation == TrajectoryInterpolation::Linear)
     {
         double t = (jd - sampleTimes[n - 1]) / (sampleTimes[n] - sampleTimes[n - 1]);
 
-        Eigen::Vector3d p0 = samples[n - 1].position.template cast<double>();
-        Eigen::Vector3d p1 = samples[n].position.template cast<double>();
+        Eigen::Vector3d p0 = posvels[n - 1].position.template cast<double>();
+        Eigen::Vector3d p1 = posvels[n].position.template cast<double>();
         return p0 + t * (p1 - p0);
     }
 
@@ -468,7 +449,6 @@ SampledOrbitXYZV<T>::computePosition(double jd) const
     assert(0);
     return Eigen::Vector3d::Zero();
 }
-
 
 // Velocity is computed as the derivative of the interpolating function
 // for position.
@@ -486,7 +466,7 @@ SampledOrbitXYZV<T>::computeVelocity(double jd) const
     if (interpolation == TrajectoryInterpolation::Linear)
     {
         double hRecip = 1.0 / (sampleTimes[n] - sampleTimes[n - 1]);
-        return (samples[n].position.template cast<double>() - samples[n - 1].position.template cast<double>()) *
+        return (posvels[n].position.template cast<double>() - posvels[n - 1].position.template cast<double>()) *
                 hRecip *
                 astro::daysToSecs(1.0);
     }
@@ -503,7 +483,6 @@ SampledOrbitXYZV<T>::computeVelocity(double jd) const
     return Eigen::Vector3d::Zero();
 }
 
-
 template<typename T>
 void
 SampledOrbitXYZV<T>::initializeCubic(double jd,
@@ -514,12 +493,11 @@ SampledOrbitXYZV<T>::initializeCubic(double jd,
     double h = sampleTimes[n] - sampleTimes[n - 1];
     params.ih = 1.0 / h;
     params.t = (jd - sampleTimes[n - 1]) * params.ih;
-    params.p0 = samples[n - 1].position.template cast<double>();
-    params.v0 = samples[n - 1].velocity.template cast<double>() * h;
-    params.p1 = samples[n].position.template cast<double>();
-    params.v1 = samples[n].velocity.template cast<double>() * h;
+    params.p0 = posvels[n - 1].position.template cast<double>();
+    params.v0 = posvels[n - 1].velocity.template cast<double>() * h;
+    params.p1 = posvels[n].position.template cast<double>();
+    params.v1 = posvels[n].velocity.template cast<double>() * h;
 }
-
 
 template<typename T>
 void
@@ -529,11 +507,10 @@ SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
     for (std::uint32_t i = 0; i < sampleTimes.size(); ++i)
     {
         proc.sample(sampleTimes[i],
-                    samples[i].position.template cast<double>(),
-                    samples[i].velocity.template cast<double>());
+                    posvels[i].position.template cast<double>(),
+                    posvels[i].velocity.template cast<double>());
     }
 }
-
 
 // Load an ASCII xyz trajectory file. The file contains records with 4 double
 // precision values each:
@@ -548,16 +525,14 @@ SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
 // The numeric data may be preceeded by a comment block. Commented lines begin
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
-
-template<typename T> std::unique_ptr<SampledOrbit<T>>
-LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
+template<typename T>
+std::shared_ptr<const Samples<SampleXYZ<T>>>
+LoadSamplesXYZAscii(const fs::path& filename)
 {
-    using SampleType = Eigen::Matrix<T, 3, 1>;
-
     std::vector<double> sampleTimes;
-    std::vector<SampleType> samples;
+    std::vector<SampleXYZ<T>> samples;
     if (!LoadAsciiSamples(filename, sampleTimes, samples,
-                          [](std::istream& in, double& tdb, SampleType& s)
+                          [](std::istream& in, double& tdb, SampleXYZ<T>& s)
                           {
                               return (in >> tdb >> s.x() >> s.y() >> s.z()).good();
                           }))
@@ -565,61 +540,23 @@ LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation
         return nullptr;
     }
 
-    return std::make_unique<SampledOrbit<T>>(interpolation, std::move(sampleTimes), std::move(samples));
+    // Apply correction for Celestia's coordinate system
+    for (SampleXYZ<T>& sample : samples)
+    {
+        sample.template tail<2>().reverseInPlace();
+        sample.z() = -sample.z();
+    }
+
+    return std::make_shared<Samples<SampleXYZ<T>>>(std::move(sampleTimes), std::move(samples));
 }
-
-
-template<typename T>
-bool
-ReadAsciiSampleXYZV(std::istream& in, double& tdb, SampleXYZV<T>& sample)
-{
-    in >> tdb
-       >> sample.position.x() >> sample.position.y() >> sample.position.z()
-       >> sample.velocity.x() >> sample.velocity.y() >> sample.velocity.z();
-    if (!in.good())
-        return false;
-
-    sample.velocity *= astro::daysToSecs(1.0);
-    return true;
-}
-
-
-// Load an xyzv sampled trajectory file. The file contains records with 7 double
-// precision values:
-//
-// 1: TDB time
-// 2: Position x
-// 3: Position y
-// 4: Position z
-// 5: Velocity x
-// 6: Velocity y
-// 7: Velocity z
-//
-// Positions are in kilometers, velocities are kilometers per second.
-//
-// The numeric data may be preceeded by a comment block. Commented lines begin
-// with a #; data is read start fromt the first non-whitespace character outside
-// of a comment.
-
-template<typename T>
-std::unique_ptr<SampledOrbitXYZV<T>>
-LoadSampledOrbitXYZV(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
-{
-    std::vector<double> sampleTimes;
-    std::vector<SampleXYZV<T>> samples;
-    if (!LoadAsciiSamples(filename, sampleTimes, samples, &ReadAsciiSampleXYZV<T>))
-        return nullptr;
-
-    return std::make_unique<SampledOrbitXYZV<T>>(interpolation, std::move(sampleTimes), std::move(samples));
-}
-
 
 bool
 ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
 {
     std::array<char, sizeof(XYZVBinaryHeader)> header;
 
-    if (!in.read(header.data(), header.size())) /* Flawfinder: ignore */
+    // Sonar detects this as being in a critical section for some reason
+    if (!in.read(header.data(), header.size())) /* Flawfinder: ignore */ //NOSONAR
     {
         GetLogger()->error(_("Error reading header of {}.\n"), filename);
         return false;
@@ -660,7 +597,6 @@ ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
     return true;
 }
 
-
 template<typename T>
 bool
 ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
@@ -693,18 +629,14 @@ ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
     return true;
 }
 
-
-
 /* Load a binary xyzv sampled trajectory file.
  */
 template <typename T>
-std::unique_ptr<SampledOrbitXYZV<T>>
-LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation)
+std::shared_ptr<const Samples<SampleXYZV<T>>>
+LoadSamplesXYZVBinary(const fs::path& filename)
 {
-    using SampleType = SampleXYZV<T>;
-
     std::vector<double> sampleTimes;
-    std::vector<SampleType> samples;
+    std::vector<SampleXYZV<T>> samples;
 
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())
@@ -722,80 +654,197 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     if (!LoadSamples(in, filename, sampleTimes, samples, &ReadXYZVBinarySample<T>))
         return nullptr;
 
-    return std::make_unique<SampledOrbitXYZV<T>>(interpolation,
-                                                 std::move(sampleTimes),
-                                                 std::move(samples));
+    return std::make_shared<Samples<SampleXYZV<T>>>(std::move(sampleTimes),
+                                                    std::move(samples));
+}
+
+template<typename T>
+bool
+ReadAsciiSampleXYZV(std::istream& in, double& tdb, SampleXYZV<T>& sample)
+{
+    in >> tdb
+       >> sample.position.x() >> sample.position.y() >> sample.position.z()
+       >> sample.velocity.x() >> sample.velocity.y() >> sample.velocity.z();
+    if (!in.good())
+        return false;
+
+    sample.velocity *= astro::daysToSecs(1.0);
+    return true;
+}
+
+// Load an xyzv sampled trajectory file. The file contains records with 7 double
+// precision values:
+//
+// 1: TDB time
+// 2: Position x
+// 3: Position y
+// 4: Position z
+// 5: Velocity x
+// 6: Velocity y
+// 7: Velocity z
+//
+// Positions are in kilometers, velocities are kilometers per second.
+//
+// The numeric data may be preceeded by a comment block. Commented lines begin
+// with a #; data is read start fromt the first non-whitespace character outside
+// of a comment.
+
+template<typename T>
+std::shared_ptr<const Samples<SampleXYZV<T>>>
+LoadSamplesXYZVAscii(const fs::path& filename)
+{
+    auto binname = filename;
+    binname += "bin";
+    if (fs::exists(binname))
+    {
+        if (auto binsamples = LoadSamplesXYZVBinary<T>(binname); binsamples != nullptr)
+            return binsamples;
+    }
+
+    std::vector<double> sampleTimes;
+    std::vector<SampleXYZV<T>> samples;
+    if (!LoadAsciiSamples(filename, sampleTimes, samples, &ReadAsciiSampleXYZV<T>))
+        return nullptr;
+
+    return std::make_shared<Samples<SampleXYZV<T>>>(std::move(sampleTimes), std::move(samples));
+}
+
+template<typename T>
+using SamplesMap = std::unordered_map<fs::path, std::weak_ptr<const Samples<T>>, util::PathHasher>;
+
+template<typename T, typename F>
+std::shared_ptr<const Samples<T>>
+findSamples(SamplesMap<T>& cache, const fs::path& filename, F loader)
+{
+    auto it = cache.try_emplace(filename).first;
+    if (auto cachedSamples = it->second.lock(); cachedSamples != nullptr)
+        return cachedSamples;
+
+    auto samples = loader(filename);
+    if (samples == nullptr)
+    {
+        cache.erase(it);
+        return nullptr;
+    }
+
+    it->second = samples;
+    return samples;
+}
+
+class SamplesManager
+{
+public:
+    SamplesManager() = default;
+    ~SamplesManager() = default;
+
+    SamplesManager(const SamplesManager&) = delete;
+    SamplesManager& operator=(const SamplesManager&) = delete;
+
+    std::shared_ptr<const Samples<SampleXYZ<float>>> findXYZSingle(const fs::path&);
+    std::shared_ptr<const Samples<SampleXYZ<double>>> findXYZDouble(const fs::path&);
+    std::shared_ptr<const Samples<SampleXYZV<float>>> findXYZVSingle(const fs::path&);
+    std::shared_ptr<const Samples<SampleXYZV<double>>> findXYZVDouble(const fs::path&);
+
+private:
+    SamplesMap<SampleXYZ<float>> samplesXYZSingle;
+    SamplesMap<SampleXYZ<double>> samplesXYZDouble;
+    SamplesMap<SampleXYZV<float>> samplesXYZVSingle;
+    SamplesMap<SampleXYZV<double>> samplesXYZVDouble;
+};
+
+std::shared_ptr<const Samples<SampleXYZ<float>>>
+SamplesManager::findXYZSingle(const fs::path& filename)
+{
+    return findSamples(samplesXYZSingle, filename, &LoadSamplesXYZAscii<float>);
+}
+
+std::shared_ptr<const Samples<SampleXYZ<double>>>
+SamplesManager::findXYZDouble(const fs::path& filename)
+{
+    return findSamples(samplesXYZDouble, filename, &LoadSamplesXYZAscii<double>);
+}
+
+std::shared_ptr<const Samples<SampleXYZV<float>>>
+SamplesManager::findXYZVSingle(const fs::path& filename)
+{
+    switch (DetermineFileType(filename))
+    {
+    case ContentType::CelestiaXYZVTrajectory:
+        return findSamples(samplesXYZVSingle, filename, &LoadSamplesXYZVAscii<float>);
+    case ContentType::CelestiaXYZVBinary:
+        return findSamples(samplesXYZVSingle, filename, &LoadSamplesXYZVBinary<float>);
+    default:
+        assert(0);
+        return nullptr;
+    }
+}
+
+std::shared_ptr<const Samples<SampleXYZV<double>>>
+SamplesManager::findXYZVDouble(const fs::path& filename)
+{
+    switch (DetermineFileType(filename))
+    {
+    case ContentType::CelestiaXYZVTrajectory:
+        return findSamples(samplesXYZVDouble, filename, &LoadSamplesXYZVAscii<double>);
+    case ContentType::CelestiaXYZVBinary:
+        return findSamples(samplesXYZVDouble, filename, &LoadSamplesXYZVBinary<double>);
+    default:
+        assert(0);
+        return nullptr;
+    }
 }
 
 } // end unnamed namespace
 
-
-/*! Load a trajectory file containing single precision positions.
+/*! Load a trajectory file containing positions without velocities.
  */
-std::unique_ptr<Orbit>
-LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
+std::shared_ptr<const Orbit>
+LoadSampledTrajectory(const fs::path& filename,
+                      TrajectoryInterpolation interpolation,
+                      TrajectoryPrecision precision)
 {
-    return LoadSampledOrbit(filename, interpolation, 0.0f);
-}
-
-
-/*! Load a trajectory file containing double precision positions.
- */
-std::unique_ptr<Orbit>
-LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
-{
-    return LoadSampledOrbit(filename, interpolation, 0.0);
-}
-
-
-/*! Load a trajectory file with single precision positions and velocities.
- */
-std::unique_ptr<Orbit>
-LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
-{
-    auto binname = filename;
-    binname += "bin";
-    if (fs::exists(binname))
+    static SamplesManager samplesManager;
+    switch (DetermineFileType(filename))
     {
-        std::unique_ptr<Orbit> ret = LoadSampledOrbitXYZVBinary<float>(binname, interpolation);
-        if (ret != nullptr) return ret;
+    case ContentType::CelestiaXYZTrajectory:
+        switch (precision)
+        {
+        case TrajectoryPrecision::Single:
+            if (auto samples = samplesManager.findXYZSingle(filename); samples != nullptr)
+                return std::make_shared<SampledOrbit<float>>(interpolation, samples);
+            break;
+        case TrajectoryPrecision::Double:
+            if (auto samples = samplesManager.findXYZDouble(filename); samples != nullptr)
+                return std::make_shared<SampledOrbit<double>>(interpolation, samples);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+        return nullptr;
+
+    case ContentType::CelestiaXYZVTrajectory:
+    case ContentType::CelestiaXYZVBinary:
+        switch (precision)
+        {
+        case TrajectoryPrecision::Single:
+            if (auto samples = samplesManager.findXYZVSingle(filename); samples != nullptr)
+                return std::make_shared<SampledOrbitXYZV<float>>(interpolation, samples);
+            break;
+        case TrajectoryPrecision::Double:
+            if (auto samples = samplesManager.findXYZVDouble(filename); samples != nullptr)
+                return std::make_shared<SampledOrbitXYZV<double>>(interpolation, samples);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+        return nullptr;
+
+    default:
+        assert(0);
+        return nullptr;
     }
-
-    return LoadSampledOrbitXYZV(filename, interpolation, 0.0f);
-}
-
-
-/*! Load a trajectory file with double precision positions and velocities.
- */
-std::unique_ptr<Orbit>
-LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
-{
-    auto binname = filename;
-    binname += "bin";
-    if (fs::exists(binname))
-    {
-        std::unique_ptr<Orbit> ret = LoadSampledOrbitXYZVBinary<double>(binname, interpolation);
-        if (ret != nullptr) return ret;
-    }
-
-    return LoadSampledOrbitXYZV(filename, interpolation, 0.0);
-}
-
-/*! Load a binary trajectory file with single precision positions and velocities.
- */
-std::unique_ptr<Orbit>
-LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
-{
-    return LoadSampledOrbitXYZVBinary<float>(filename, interpolation);
-}
-
-
-/*! Load a trajectory file with double precision positions and velocities.
- */
-std::unique_ptr<Orbit>
-LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
-{
-    return LoadSampledOrbitXYZVBinary<double>(filename, interpolation);
 }
 
 } // end namespace celestia::ephem

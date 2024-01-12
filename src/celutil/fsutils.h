@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <optional>
 #include <string_view>
 
@@ -20,6 +21,16 @@
 
 namespace celestia::util
 {
+
+// Since std::hash<std::filesystem::path> was not in the original C++17 standard
+// we need to implement a custom hasher for older compilers.
+struct PathHasher
+{
+    std::size_t operator()(const fs::path& path) const noexcept
+    {
+        return fs::hash_value(path);
+    }
+};
 
 std::optional<fs::path> U8FileName(std::string_view source,
                                    bool allowWildcardExtension = true);

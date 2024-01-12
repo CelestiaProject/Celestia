@@ -23,7 +23,7 @@ namespace celestia::ephem
 
 class RotationModel;
 
-std::unique_ptr<RotationModel>
+std::shared_ptr<const RotationModel>
 CreateScriptedRotation(const std::string* moduleName,
                        const std::string& funcName,
                        const AssociativeArray& parameters,
