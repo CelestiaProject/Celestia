@@ -18,6 +18,6 @@ namespace celestia::ephem
 
 class RotationModel;
 
-std::unique_ptr<RotationModel> LoadSampledOrientation(const fs::path& filename);
+std::shared_ptr<const RotationModel> LoadSampledOrientation(const fs::path& filename);
 
 }

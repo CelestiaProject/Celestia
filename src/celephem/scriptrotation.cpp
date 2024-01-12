@@ -171,7 +171,7 @@ ScriptedRotation::getValidRange(double& begin, double& end) const
  *         input (TDB Julian day) and returns three values which are the the
  *         quaternion (w, x, y, z).
  */
-std::unique_ptr<RotationModel>
+std::shared_ptr<const RotationModel>
 CreateScriptedRotation(const std::string* moduleName,
                             const std::string& funcName,
                             const AssociativeArray& parameters,
@@ -266,7 +266,7 @@ CreateScriptedRotation(const std::string* moduleName,
         return nullptr;
     }
 
-    return std::make_unique<ScriptedRotation>(luaState,
+    return std::make_shared<ScriptedRotation>(luaState,
                                               std::move(luaRotationObjectName),
                                               period,
                                               validRangeBegin,

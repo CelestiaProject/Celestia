@@ -174,7 +174,7 @@ class CachingOrbit : public Orbit
 class MixedOrbit : public Orbit
 {
  public:
-    MixedOrbit(std::unique_ptr<Orbit>&& orbit, double t0, double t1, double mass);
+    MixedOrbit(const std::shared_ptr<const Orbit>& orbit, double t0, double t1, double mass);
     ~MixedOrbit() override = default;
 
     Eigen::Vector3d positionAtTime(double jd) const override;
@@ -184,9 +184,9 @@ class MixedOrbit : public Orbit
     void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
  private:
-    std::unique_ptr<Orbit> primary;
-    std::unique_ptr<Orbit> afterApprox;
-    std::unique_ptr<Orbit> beforeApprox;
+    std::shared_ptr<const Orbit> primary;
+    std::shared_ptr<const Orbit> afterApprox;
+    std::shared_ptr<const Orbit> beforeApprox;
     double begin;
     double end;
     double boundingRadius;

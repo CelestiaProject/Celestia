@@ -151,7 +151,7 @@ SampledOrientation::getOrientation(double tjd) const
 
 } // end unnamed namespace
 
-std::unique_ptr<RotationModel>
+std::shared_ptr<const RotationModel>
 LoadSampledOrientation(const fs::path& filename)
 {
     std::vector<double> sampleTimes;
@@ -166,7 +166,7 @@ LoadSampledOrientation(const fs::path& filename)
         return nullptr;
     }
 
-    return std::make_unique<SampledOrientation>(std::move(sampleTimes),
+    return std::make_shared<SampledOrientation>(std::move(sampleTimes),
                                                 std::move(samples));
 }
 

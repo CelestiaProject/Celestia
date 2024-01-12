@@ -72,8 +72,8 @@ class CachingFrame : public ReferenceFrame
     explicit CachingFrame(Selection _center);
     ~CachingFrame() override = default;
 
-    Eigen::Quaterniond getOrientation(double tjd) const;
-    Eigen::Vector3d getAngularVelocity(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    Eigen::Vector3d getAngularVelocity(double tjd) const override;
     virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
@@ -95,7 +95,7 @@ class J2000EclipticFrame : public ReferenceFrame
     explicit J2000EclipticFrame(Selection center);
     ~J2000EclipticFrame() override = default;
 
-    Eigen::Quaterniond getOrientation(double /* tjd */) const
+    Eigen::Quaterniond getOrientation(double /* tjd */) const override
     {
         return Eigen::Quaterniond::Identity();
     }
@@ -234,7 +234,7 @@ class TwoVectorFrame : public CachingFrame
                    int secAxis);
     ~TwoVectorFrame() override = default;
 
-    Eigen::Quaterniond computeOrientation(double tjd) const;
+    Eigen::Quaterniond computeOrientation(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth,

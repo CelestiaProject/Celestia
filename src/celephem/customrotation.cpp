@@ -936,8 +936,6 @@ public:
     }
 };
 
-
-
 enum class CustomRotationModelType
 {
     EarthP03lp = 0,
@@ -981,154 +979,167 @@ enum class CustomRotationModelType
     IAUUmbriel,
     IAUTitania,
     IAUOberon,
-    RotationModelsCount,
+    _Count,
 };
 
 class CustomRotationsManager
 {
-private:
-    static constexpr auto ArraySize = static_cast<std::size_t>(CustomRotationModelType::RotationModelsCount);
-    static std::unique_ptr<RotationModel> createModel(CustomRotationModelType);
-    std::array<std::unique_ptr<RotationModel>, ArraySize> models{ nullptr };
-
 public:
-    RotationModel* getModel(CustomRotationModelType type)
-    {
-        auto index = static_cast<std::size_t>(type);
-        auto& model = models[index];
-        if (model == nullptr)
-            model = createModel(type);
-        return model.get();
-    }
+    CustomRotationsManager() = default;
+    ~CustomRotationsManager() = default;
+
+    CustomRotationsManager(const CustomRotationsManager&) = delete;
+    CustomRotationsManager& operator=(const CustomRotationsManager&) = delete;
+
+    std::shared_ptr<const RotationModel> getModel(CustomRotationModelType type);
+
+private:
+    static constexpr auto ArraySize = static_cast<std::size_t>(CustomRotationModelType::_Count);
+    static std::shared_ptr<const RotationModel> createModel(CustomRotationModelType);
+    std::array<std::weak_ptr<const RotationModel>, ArraySize> models;
 };
 
-std::unique_ptr<RotationModel>
+std::shared_ptr<const RotationModel>
+CustomRotationsManager::getModel(CustomRotationModelType type)
+{
+    auto index = static_cast<std::size_t>(type);
+    auto model = models[index].lock();
+    if (model == nullptr)
+    {
+        model = createModel(type);
+        models[index] = model;
+    }
+
+    return model;
+}
+
+std::shared_ptr<const RotationModel>
 CustomRotationsManager::createModel(CustomRotationModelType type)
 {
     switch (type)
     {
     case CustomRotationModelType::EarthP03lp:
-        return std::make_unique<EarthRotationModel>();
+        return std::make_shared<EarthRotationModel>();
 
     // IAU rotation elements for the planets
     case CustomRotationModelType::IAUMercury:
-        return std::make_unique<IAUPrecessingRotationModel>(281.01, -0.033,
+        return std::make_shared<IAUPrecessingRotationModel>(281.01, -0.033,
                                                             61.45, -0.005,
                                                             329.548, 6.1385025);
     case CustomRotationModelType::IAUVenus:
-        return std::make_unique<IAUPrecessingRotationModel>(272.76, 0.0,
+        return std::make_shared<IAUPrecessingRotationModel>(272.76, 0.0,
                                                             67.16, 0.0,
                                                             160.20, -1.4813688);
     case CustomRotationModelType::IAUEarth:
-        return std::make_unique<IAUPrecessingRotationModel>(0.0, -0.641,
+        return std::make_shared<IAUPrecessingRotationModel>(0.0, -0.641,
                                                             90.0, -0.557,
                                                             190.147, 360.9856235);
     case CustomRotationModelType::IAUMars:
-        return std::make_unique<IAUPrecessingRotationModel>(317.68143, -0.1061,
+        return std::make_shared<IAUPrecessingRotationModel>(317.68143, -0.1061,
                                                             52.88650, -0.0609,
                                                             176.630, 350.89198226);
     case CustomRotationModelType::IAUJupiter:
-        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+        return std::make_shared<IAUPrecessingRotationModel>(268.05, -0.009,
                                                             64.49, -0.003,
                                                             284.95, 870.5366420);
     case CustomRotationModelType::IAUSaturn:
-        return std::make_unique<IAUPrecessingRotationModel>(40.589, -0.036,
+        return std::make_shared<IAUPrecessingRotationModel>(40.589, -0.036,
                                                             83.537, -0.004,
                                                             38.90, 810.7939024);
     case CustomRotationModelType::IAUUranus:
-        return std::make_unique<IAUPrecessingRotationModel>(257.311, 0.0,
+        return std::make_shared<IAUPrecessingRotationModel>(257.311, 0.0,
                                                             -15.175, 0.0,
                                                             203.81, -501.1600928);
     case CustomRotationModelType::IAUNeptune:
-        return std::make_unique<IAUNeptuneRotationModel>();
+        return std::make_shared<IAUNeptuneRotationModel>();
     case CustomRotationModelType::IAUPluto:
-        return std::make_unique<IAUPrecessingRotationModel>(313.02, 0.0,
+        return std::make_shared<IAUPrecessingRotationModel>(313.02, 0.0,
                                                             9.09, 0.0,
                                                             236.77, -56.3623195);
 
     // IAU rotation elements for the Moon
     case CustomRotationModelType::IAUMoon:
-        return std::make_unique<IAULunarRotationModel>();
+        return std::make_shared<IAULunarRotationModel>();
 
     // IAU rotation elements for satellites of Mars
     case CustomRotationModelType::IAUPhobos:
-        return std::make_unique<IAUPhobosRotationModel>();
+        return std::make_shared<IAUPhobosRotationModel>();
     case CustomRotationModelType::IAUDeimos:
-        return std::make_unique<IAUDeimosRotationModel>();
+        return std::make_shared<IAUDeimosRotationModel>();
 
     // IAU rotation elements for satellites of Jupiter
     case CustomRotationModelType::IAUMetis:
-        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+        return std::make_shared<IAUPrecessingRotationModel>(268.05, -0.009,
                                                             64.49, 0.003,
                                                             346.09, 1221.2547301);
     case CustomRotationModelType::IAUAdrastea:
-        return std::make_unique<IAUPrecessingRotationModel>(268.05, -0.009,
+        return std::make_shared<IAUPrecessingRotationModel>(268.05, -0.009,
                                                             64.49, 0.003,
                                                             33.29, 1206.9986602);
     case CustomRotationModelType::IAUAmalthea:
-        return std::make_unique<IAUAmaltheaRotationModel>();
+        return std::make_shared<IAUAmaltheaRotationModel>();
     case CustomRotationModelType::IAUThebe:
-        return std::make_unique<IAUThebeRotationModel>();
+        return std::make_shared<IAUThebeRotationModel>();
     case CustomRotationModelType::IAUIo:
-        return std::make_unique<IAUIoRotationModel>();
+        return std::make_shared<IAUIoRotationModel>();
     case CustomRotationModelType::IAUEuropa:
-        return std::make_unique<IAUEuropaRotationModel>();
+        return std::make_shared<IAUEuropaRotationModel>();
     case CustomRotationModelType::IAUGanymede:
-        return std::make_unique<IAUGanymedeRotationModel>();
+        return std::make_shared<IAUGanymedeRotationModel>();
     case CustomRotationModelType::IAUCallisto:
-        return std::make_unique<IAUCallistoRotationModel>();
+        return std::make_shared<IAUCallistoRotationModel>();
 
     // IAU rotation elements for satellites of Saturn
     case CustomRotationModelType::IAUPan:
-        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+        return std::make_shared<IAUPrecessingRotationModel>(40.6, -0.036,
                                                             83.5, -0.004,
                                                             48.8, 626.0440000);
     case CustomRotationModelType::IAUAtlas:
-        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+        return std::make_shared<IAUPrecessingRotationModel>(40.6, -0.036,
                                                             83.5, -0.004,
                                                             137.88, 598.3060000);
     case CustomRotationModelType::IAUPrometheus:
-        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+        return std::make_shared<IAUPrecessingRotationModel>(40.6, -0.036,
                                                             83.5, -0.004,
                                                             296.14, 587.289000);
     case CustomRotationModelType::IAUPandora:
-        return std::make_unique<IAUPrecessingRotationModel>(40.6, -0.036,
+        return std::make_shared<IAUPrecessingRotationModel>(40.6, -0.036,
                                                             83.5, -0.004,
                                                             162.92, 572.7891000);
     case CustomRotationModelType::IAUMimas:
-        return std::make_unique<IAUMimasRotationModel>();
+        return std::make_shared<IAUMimasRotationModel>();
     case CustomRotationModelType::IAUEnceladus:
-        return std::make_unique<IAUEnceladusRotationModel>();
+        return std::make_shared<IAUEnceladusRotationModel>();
     case CustomRotationModelType::IAUTethys:
-        return std::make_unique<IAUTethysRotationModel>();
+        return std::make_shared<IAUTethysRotationModel>();
     case CustomRotationModelType::IAUTelesto:
-        return std::make_unique<IAUTelestoRotationModel>();
+        return std::make_shared<IAUTelestoRotationModel>();
     case CustomRotationModelType::IAUCalypso:
-        return std::make_unique<IAUCalypsoRotationModel>();
+        return std::make_shared<IAUCalypsoRotationModel>();
     case CustomRotationModelType::IAUDione:
-        return std::make_unique<IAUDioneRotationModel>();
+        return std::make_shared<IAUDioneRotationModel>();
     case CustomRotationModelType::IAUHelene:
-        return std::make_unique<IAUHeleneRotationModel>();
+        return std::make_shared<IAUHeleneRotationModel>();
     case CustomRotationModelType::IAURhea:
-        return std::make_unique<IAURheaRotationModel>();
+        return std::make_shared<IAURheaRotationModel>();
     case CustomRotationModelType::IAUTitan:
-        return std::make_unique<IAUTitanRotationModel>();
+        return std::make_shared<IAUTitanRotationModel>();
     case CustomRotationModelType::IAUIapetus:
-        return std::make_unique<IAUIapetusRotationModel>();
+        return std::make_shared<IAUIapetusRotationModel>();
     case CustomRotationModelType::IAUPhoebe:
-        return std::make_unique<IAUPhoebeRotationModel>();
+        return std::make_shared<IAUPhoebeRotationModel>();
 
     // IAU rotation elements for satellites of Uranus
     case CustomRotationModelType::IAUMiranda:
-        return std::make_unique<IAUMirandaRotationModel>();
+        return std::make_shared<IAUMirandaRotationModel>();
     case CustomRotationModelType::IAUAriel:
-        return std::make_unique<IAUArielRotationModel>();
+        return std::make_shared<IAUArielRotationModel>();
     case CustomRotationModelType::IAUUmbriel:
-        return std::make_unique<IAUUmbrielRotationModel>();
+        return std::make_shared<IAUUmbrielRotationModel>();
     case CustomRotationModelType::IAUTitania:
-        return std::make_unique<IAUTitaniaRotationModel>();
+        return std::make_shared<IAUTitaniaRotationModel>();
     case CustomRotationModelType::IAUOberon:
-        return std::make_unique<IAUOberonRotationModel>();
+        return std::make_shared<IAUOberonRotationModel>();
     default:
         return nullptr;
     }
@@ -1139,16 +1150,15 @@ CustomRotationsManager::createModel(CustomRotationModelType type)
 
 } // end unnamed namespace
 
-
-RotationModel*
+std::shared_ptr<const RotationModel>
 GetCustomRotationModel(std::string_view name)
 {
     auto ptr = CustomRotationMap::getModelType(name.data(), name.size());
     if (ptr == nullptr)
         return nullptr;
 
-    static CustomRotationsManager* manager = std::make_unique<CustomRotationsManager>().release();
-    return manager->getModel(ptr->modelType);
+    static CustomRotationsManager manager;
+    return manager.getModel(ptr->modelType);
 }
 
 } // end namespace celestia::ephem

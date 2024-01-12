@@ -59,13 +59,13 @@ class StarDetails
     float getTemperature() const;
     ResourceHandle getGeometry() const;
     MultiResTexture getTexture() const;
-    celestia::ephem::Orbit* getOrbit() const;
+    const celestia::ephem::Orbit* getOrbit() const;
     float getOrbitalRadius() const;
     const char* getSpectralType() const;
     float getBolometricCorrection() const;
     Star* getOrbitBarycenter() const;
     bool getVisibility() const;
-    const celestia::ephem::RotationModel* getRotationModel() const;
+    const std::shared_ptr<const celestia::ephem::RotationModel>& getRotationModel() const;
     Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
 
@@ -75,12 +75,12 @@ class StarDetails
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
     void setGeometry(ResourceHandle);
-    void setOrbit(celestia::ephem::Orbit*);
+    void setOrbit(const std::shared_ptr<const celestia::ephem::Orbit>&);
     void setOrbitBarycenter(Star*);
     void setOrbitalRadius(float);
     void computeOrbitalRadius();
     void setVisibility(bool);
-    void setRotationModel(const celestia::ephem::RotationModel*);
+    void setRotationModel(const std::shared_ptr<const celestia::ephem::RotationModel>&);
     void setEllipsoidSemiAxes(const Eigen::Vector3f&);
     void setInfoURL(std::string_view _infoURL);
 
@@ -131,11 +131,11 @@ class StarDetails
     MultiResTexture texture{ InvalidResource };
     ResourceHandle geometry{ InvalidResource };
 
-    celestia::ephem::Orbit* orbit{ nullptr };
+    std::shared_ptr<const celestia::ephem::Orbit> orbit;
     float orbitalRadius{ 0.0f };
     Star* barycenter{ nullptr };
 
-    const celestia::ephem::RotationModel* rotationModel{ nullptr };
+    std::shared_ptr<const celestia::ephem::RotationModel> rotationModel;
 
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
 
@@ -170,10 +170,10 @@ StarDetails::getTexture() const
     return texture;
 }
 
-inline celestia::ephem::Orbit*
+inline const celestia::ephem::Orbit*
 StarDetails::getOrbit() const
 {
-    return orbit;
+    return orbit.get();
 }
 
 inline float
@@ -218,7 +218,7 @@ StarDetails::getVisibility() const
     return visible;
 }
 
-inline const celestia::ephem::RotationModel*
+inline const std::shared_ptr<const celestia::ephem::RotationModel>&
 StarDetails::getRotationModel() const
 {
     return rotationModel;
@@ -284,8 +284,6 @@ public:
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
-    void setRotationModel(const celestia::ephem::RotationModel*);
-
     void addOrbitingStar(Star*);
     const std::vector<Star*>* getOrbitingStars() const;
 
@@ -299,7 +297,7 @@ public:
     float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
     ResourceHandle getGeometry() const;
-    celestia::ephem::Orbit* getOrbit() const;
+    const celestia::ephem::Orbit* getOrbit() const;
     float getOrbitalRadius() const;
     Star* getOrbitBarycenter() const;
     bool getVisibility() const;
@@ -337,7 +335,7 @@ Star::getBolometricMagnitude() const
     return absMag + details->getBolometricCorrection();
 }
 
-inline celestia::ephem::Orbit*
+inline const celestia::ephem::Orbit*
 Star::getOrbit() const
 {
     return details->getOrbit();
@@ -364,7 +362,7 @@ Star::getVisibility() const
 inline const celestia::ephem::RotationModel*
 Star::getRotationModel() const
 {
-    return details->getRotationModel();
+    return details->getRotationModel().get();
 }
 
 inline Eigen::Vector3f

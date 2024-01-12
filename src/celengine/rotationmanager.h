@@ -10,40 +10,32 @@
 #pragma once
 
 #include <memory>
-#include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include <celcompat/filesystem.h>
 #include <celephem/rotation.h>
-#include <celutil/resmanager.h>
+#include <celutil/fsutils.h>
 
-
-class RotationModelInfo
+namespace celestia::engine
 {
- private:
-    fs::path source;
-    fs::path path;
 
-    friend bool operator<(const RotationModelInfo&, const RotationModelInfo&);
+class RotationModelManager
+{
+public:
+    RotationModelManager() = default;
+    ~RotationModelManager() = default;
 
- public:
-    using ResourceType = celestia::ephem::RotationModel;
-    using ResourceKey = fs::path;
+    RotationModelManager(const RotationModelManager&) = delete;
+    RotationModelManager& operator=(const RotationModelManager&) = delete;
 
-    RotationModelInfo(const fs::path& _source,
-                      const fs::path& _path = "") :
-        source(_source), path(_path) {};
+    std::shared_ptr<const ephem::RotationModel> find(const fs::path& source,
+                                                     const fs::path& path);
 
-    fs::path resolve(const fs::path&) const;
-    std::unique_ptr<celestia::ephem::RotationModel> load(const fs::path&) const;
+private:
+    std::unordered_map<fs::path, std::weak_ptr<const ephem::RotationModel>, util::PathHasher> rotationModels;
 };
 
-inline bool operator<(const RotationModelInfo& ti0,
-                      const RotationModelInfo& ti1)
-{
-    return std::tie(ti0.source, ti0.path) < std::tie(ti1.source, ti1.path);
-}
+inline RotationModelManager rotationModelManager;
 
-typedef ResourceManager<RotationModelInfo> RotationModelManager;
-
-extern RotationModelManager* GetRotationModelManager();
+} // end namespace celestia::engine

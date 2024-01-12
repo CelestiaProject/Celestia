@@ -6,11 +6,10 @@
 
 #include <celutil/gettext.h>
 #include "hash.h"
-
+#include "value.h"
 
 UserCategoryManager::UserCategoryManager() = default;
 UserCategoryManager::~UserCategoryManager() = default;
-
 
 UserCategoryId
 UserCategoryManager::create(const std::string& name,
@@ -44,7 +43,6 @@ UserCategoryManager::create(const std::string& name,
 
     return createNew(id, name, parent, domain);
 }
-
 
 bool
 UserCategoryManager::destroy(UserCategoryId category)
@@ -91,7 +89,6 @@ UserCategoryManager::destroy(UserCategoryId category)
     return true;
 }
 
-
 const UserCategory*
 UserCategoryManager::get(UserCategoryId category) const
 {
@@ -100,7 +97,6 @@ UserCategoryManager::get(UserCategoryId category) const
         return nullptr;
     return m_categories[categoryIndex].get();
 }
-
 
 UserCategoryId
 UserCategoryManager::find(std::string_view name) const
@@ -111,7 +107,6 @@ UserCategoryManager::find(std::string_view name) const
         : it->second;
 }
 
-
 UserCategoryId
 UserCategoryManager::findOrAdd(const std::string& name, const std::string& domain)
 {
@@ -121,7 +116,6 @@ UserCategoryManager::findOrAdd(const std::string& name, const std::string& domai
 
     return createNew(id, name, UserCategoryId::Invalid, domain);
 }
-
 
 UserCategoryId
 UserCategoryManager::createNew(UserCategoryId id,
@@ -151,7 +145,6 @@ UserCategoryManager::createNew(UserCategoryId id,
     return id;
 }
 
-
 bool
 UserCategoryManager::addObject(Selection selection, UserCategoryId category)
 {
@@ -168,7 +161,6 @@ UserCategoryManager::addObject(Selection selection, UserCategoryId category)
         it->second.push_back(category);
     return true;
 }
-
 
 bool
 UserCategoryManager::removeObject(Selection selection, UserCategoryId category)
@@ -198,7 +190,6 @@ UserCategoryManager::removeObject(Selection selection, UserCategoryId category)
     return true;
 }
 
-
 void
 UserCategoryManager::clearCategories(Selection selection)
 {
@@ -214,7 +205,6 @@ UserCategoryManager::clearCategories(Selection selection)
     m_objectMap.erase(selection);
 }
 
-
 bool
 UserCategoryManager::isInCategory(Selection selection, UserCategoryId category) const
 {
@@ -226,7 +216,6 @@ UserCategoryManager::isInCategory(Selection selection, UserCategoryId category) 
     return members.find(selection) != members.end();
 }
 
-
 const std::vector<UserCategoryId>*
 UserCategoryManager::getCategories(Selection selection) const
 {
@@ -235,7 +224,6 @@ UserCategoryManager::getCategories(Selection selection) const
         ? nullptr
         : &it->second;
 }
-
 
 UserCategory::UserCategory(UserCategoryManager::ConstructorToken,
                            const std::string& name,
@@ -246,13 +234,11 @@ UserCategory::UserCategory(UserCategoryManager::ConstructorToken,
     m_i18nName(std::move(i18nName))
 {}
 
-
 const std::string&
 UserCategory::getName(bool i18n) const
 {
     return i18n ? m_i18nName : m_name;
 }
-
 
 bool
 UserCategory::hasChild(UserCategoryId child) const
@@ -261,13 +247,11 @@ UserCategory::hasChild(UserCategoryId child) const
     return it != m_children.end();
 }
 
-
 const UserCategory*
 UserCategory::get(UserCategoryId category)
 {
     return manager.get(category);
 }
-
 
 void
 UserCategory::loadCategories(Selection selection,

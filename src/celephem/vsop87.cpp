@@ -11000,7 +11000,6 @@ constexpr std::array sun_Z {
     VSOPSeries(sun_Z0), VSOPSeries(sun_Z1), VSOPSeries(sun_Z2),
 };
 
-
 double
 SumSeries(const VSOPSeries& series, double t)
 {
@@ -11014,7 +11013,6 @@ SumSeries(const VSOPSeries& series, double t)
 
     return x;
 }
-
 
 class VSOP87Orbit : public CachingOrbit
 {
@@ -11129,7 +11127,6 @@ class VSOP87Orbit : public CachingOrbit
     }
 };
 
-
 // VSOP87 orbit with rectangular variables
 class VSOP87OrbitRect : public CachingOrbit
 {
@@ -11220,19 +11217,16 @@ class VSOP87OrbitRect : public CachingOrbit
     }
 };
 
-
-
 double
 yearToJD(int year)
 {
     return static_cast<double>(astro::Date(year, 1, 1));
 }
 
-
-std::unique_ptr<Orbit>
-MakeVSOP87Orbit(std::unique_ptr<Orbit>&& orbit, int t0, int t1)
+std::shared_ptr<const Orbit>
+MakeVSOP87Orbit(const std::shared_ptr<Orbit>& orbit, int t0, int t1)
 {
-    return std::make_unique<MixedOrbit>(std::move(orbit),
+    return std::make_unique<MixedOrbit>(orbit,
                                         yearToJD(t0),
                                         yearToJD(t1),
                                         astro::SolarMass);
@@ -11240,91 +11234,82 @@ MakeVSOP87Orbit(std::unique_ptr<Orbit>&& orbit, int t0, int t1)
 
 } // end unnamed namespace
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87MercuryOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(mercury_L, mercury_B, mercury_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(mercury_L, mercury_B, mercury_R,
                                                          0.2408 * 365.25,
                                                          60000000.0),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87VenusOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(venus_L, venus_B, venus_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(venus_L, venus_B, venus_R,
                                                          0.6152 * 365.25,
                                                          100000000.0),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87EarthOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(earth_L, earth_B, earth_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(earth_L, earth_B, earth_R,
                                                          365.25,
                                                          160000000.0),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87MarsOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(mars_L, mars_B, mars_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(mars_L, mars_B, mars_R,
                                                          1.8809 * 365.25,
                                                          240000000),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87JupiterOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(jupiter_L, jupiter_B, jupiter_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(jupiter_L, jupiter_B, jupiter_R,
                                                          11.86 * 365.25,
                                                          800000000.0),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87SaturnOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(saturn_L, saturn_B, saturn_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(saturn_L, saturn_B, saturn_R,
                                                          29.4577 * 365.25,
                                                          1.5e9),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87UranusOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(uranus_L, uranus_B, uranus_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(uranus_L, uranus_B, uranus_R,
                                                          84.0139 * 365.25,
                                                          3.0e9),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87NeptuneOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87Orbit>(neptune_L, neptune_B, neptune_R,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87Orbit>(neptune_L, neptune_B, neptune_R,
                                                          164.793 * 365.25,
                                                          4.7e9),
                            -4000, 4000);
 }
 
-
-std::unique_ptr<Orbit>
+std::shared_ptr<const Orbit>
 CreateVSOP87SunOrbit()
 {
-    return MakeVSOP87Orbit(std::make_unique<VSOP87OrbitRect>(sun_X, sun_Y, sun_Z,
+    return MakeVSOP87Orbit(std::make_shared<VSOP87OrbitRect>(sun_X, sun_Y, sun_Z,
                                                              0.0,
                                                              2000000),
                            -4000, 6000);

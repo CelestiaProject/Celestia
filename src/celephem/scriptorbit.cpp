@@ -172,10 +172,11 @@ ScriptedOrbit::getBoundingRadius() const
  *         (TDB Julian day) and returns three values which are the x, y, and
  *         z coordinates. Units for the position are kilometers.
  */
-std::unique_ptr<Orbit> CreateScriptedOrbit(const std::string* moduleName,
-                                           const std::string& funcName,
-                                           const AssociativeArray& parameters,
-                                           const fs::path& path)
+std::shared_ptr<const Orbit>
+CreateScriptedOrbit(const std::string* moduleName,
+                    const std::string& funcName,
+                    const AssociativeArray& parameters,
+                    const fs::path& path)
 {
     lua_State* luaState = GetScriptedObjectContext();
     if (luaState == nullptr)
@@ -287,7 +288,7 @@ std::unique_ptr<Orbit> CreateScriptedOrbit(const std::string* moduleName,
         return nullptr;
     }
 
-    return std::make_unique<ScriptedOrbit>(luaState,
+    return std::make_shared<ScriptedOrbit>(luaState,
                                            std::move(luaOrbitObjectName),
                                            boundingRadius,
                                            period,

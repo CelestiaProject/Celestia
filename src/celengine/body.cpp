@@ -200,7 +200,7 @@ const ReferenceFrame::SharedConstPtr& Body::getOrbitFrame(double tdb) const
 
 const celestia::ephem::Orbit* Body::getOrbit(double tdb) const
 {
-    return timeline->findPhase(tdb)->orbit();
+    return timeline->findPhase(tdb)->orbit().get();
 }
 
 
@@ -213,7 +213,7 @@ const ReferenceFrame::SharedConstPtr& Body::getBodyFrame(double tdb) const
 const celestia::ephem::RotationModel*
 Body::getRotationModel(double tdb) const
 {
-    return timeline->findPhase(tdb)->rotationModel();
+    return timeline->findPhase(tdb)->rotationModel().get();
 }
 
 

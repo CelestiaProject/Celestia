@@ -9,41 +9,36 @@
 
 #include "rotationmanager.h"
 
-#include <fstream>
-
 #include <celephem/samporient.h>
 #include <celutil/logger.h>
 
 using celestia::util::GetLogger;
 
-
-RotationModelManager* GetRotationModelManager()
+namespace celestia::engine
 {
-    static RotationModelManager* rotationModelManager = nullptr;
-    if (rotationModelManager == nullptr)
-        rotationModelManager = std::make_unique<RotationModelManager>("data").release();
-    return rotationModelManager;
-}
 
-
-fs::path RotationModelInfo::resolve(const fs::path& baseDir) const
+std::shared_ptr<const ephem::RotationModel>
+RotationModelManager::find(const fs::path& source,
+                           const fs::path& path)
 {
-    if (!path.empty())
+    auto filename = path.empty()
+        ? "data" / source
+        : path / "data" / source;
+
+    auto it = rotationModels.try_emplace(filename).first;
+    if (auto cachedModel = it->second.lock(); cachedModel != nullptr)
+        return cachedModel;
+
+    GetLogger()->verbose("Loading rotation model: {}\n", filename);
+    auto model = ephem::LoadSampledOrientation(filename);
+    if (model == nullptr)
     {
-        fs::path filename = path / "data" / source;
-        std::ifstream in(filename);
-        if (in.good())
-            return filename;
+        rotationModels.erase(it);
+        return nullptr;
     }
 
-    return baseDir / source;
+    it->second = model;
+    return model;
 }
 
-
-std::unique_ptr<celestia::ephem::RotationModel>
-RotationModelInfo::load(const fs::path& filename) const
-{
-    GetLogger()->verbose("Loading rotation model: {}\n", filename);
-
-    return celestia::ephem::LoadSampledOrientation(filename);
-}
+} // end namespace celestia::engine

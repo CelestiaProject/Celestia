@@ -28,6 +28,7 @@ using namespace std::string_view_literals;
 using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
+namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 
 namespace
@@ -576,11 +577,11 @@ CreateStandardStarType(std::string_view specTypeName,
     details->setTemperature(_temperature);
     details->setSpectralType(specTypeName);
 
-    details->setRotationModel(new celestia::ephem::UniformRotationModel(_rotationPeriod,
-                                                                        0.0f,
-                                                                        astro::J2000,
-                                                                        0.0f,
-                                                                        0.0f));
+    details->setRotationModel(std::make_shared<ephem::UniformRotationModel>(_rotationPeriod,
+                                                                            0.0f,
+                                                                            astro::J2000,
+                                                                            0.0f,
+                                                                            0.0f));
 
     return details;
 }
@@ -1007,7 +1008,7 @@ StarDetails::setGeometry(ResourceHandle rh)
 
 
 void
-StarDetails::setOrbit(celestia::ephem::Orbit* o)
+StarDetails::setOrbit(const std::shared_ptr<const ephem::Orbit>& o)
 {
     orbit = o;
     computeOrbitalRadius();
@@ -1054,7 +1055,7 @@ StarDetails::setVisibility(bool b)
 
 
 void
-StarDetails::setRotationModel(const celestia::ephem::RotationModel* rm)
+StarDetails::setRotationModel(const std::shared_ptr<const ephem::RotationModel>& rm)
 {
     rotationModel = rm;
 }
@@ -1119,7 +1120,7 @@ StarDetails::addOrbitingStar(Star* star)
 UniversalCoord
 Star::getPosition(double t) const
 {
-    const celestia::ephem::Orbit* orbit = getOrbit();
+    const ephem::Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
         return UniversalCoord::CreateLy(position.cast<double>());
@@ -1162,7 +1163,7 @@ Star::getOrbitBarycenterPosition(double t) const
 Eigen::Vector3d
 Star::getVelocity(double t) const
 {
-    const celestia::ephem::Orbit* orbit = getOrbit();
+    const ephem::Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
         // The star doesn't have a defined orbit, so the velocity is just
@@ -1277,12 +1278,6 @@ void Star::setOrbitBarycenter(Star* s)
 void Star::computeOrbitalRadius()
 {
     details->computeOrbitalRadius();
-}
-
-void
-Star::setRotationModel(const celestia::ephem::RotationModel* rm)
-{
-    details->setRotationModel(rm);
 }
 
 void

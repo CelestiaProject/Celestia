@@ -12,13 +12,15 @@
 
 #pragma once
 
+#include <memory>
 #include <string_view>
-
 
 namespace celestia::ephem
 {
 
 class RotationModel;
-RotationModel* GetCustomRotationModel(std::string_view name);
+
+std::shared_ptr<const RotationModel>
+GetCustomRotationModel(std::string_view name);
 
 }

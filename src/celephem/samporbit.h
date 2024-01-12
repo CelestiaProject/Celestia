@@ -27,14 +27,11 @@ enum class TrajectoryInterpolation
 enum class TrajectoryPrecision
 {
     Single,
-    Double
+    Double,
 };
 
-std::unique_ptr<Orbit> LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-std::unique_ptr<Orbit> LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-std::unique_ptr<Orbit> LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-std::unique_ptr<Orbit> LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-std::unique_ptr<Orbit> LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-std::unique_ptr<Orbit> LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+std::shared_ptr<const Orbit> LoadSampledTrajectory(const fs::path&,
+                                                   TrajectoryInterpolation,
+                                                   TrajectoryPrecision);
 
 } // end namespace celestia::ephem
