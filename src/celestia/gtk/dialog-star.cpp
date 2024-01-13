@@ -234,7 +234,7 @@ static void starDestroy(GtkWidget* w, gint responseId, sbData* sb)
 {
     gtk_widget_destroy(GTK_WIDGET(w));
 
-    if (responseId = GTK_RESPONSE_DELETE_EVENT)
+    if (responseId == GTK_RESPONSE_DELETE_EVENT)
         delete sb;
 }
 

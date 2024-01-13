@@ -146,11 +146,10 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
     tilePath(_tilePath),
     tilePrefix(_tilePrefix),
     baseSplit(_baseSplit),
-    tileSize(_tileSize),
     ticks(0),
     nResolutionLevels(0)
 {
-    assert(tileSize != 0 && isPow2(tileSize));
+    assert(_tileSize != 0 && isPow2(_tileSize));
     tileExt = fmt::format(".{:s}", _tileType);
     populateTileTree();
 

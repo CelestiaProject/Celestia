@@ -325,7 +325,6 @@ bool FFMPEGCapturePrivate::start()
 bool FFMPEGCapturePrivate::openVideo()
 {
     AVDictionary *opts = nullptr;
-    const char *str = "";
 
     if (av_dict_parse_string(&opts, vc_options.c_str(), "=", ",", 0) != 0)
         cout << "Failed to parse error codec parameters\n";

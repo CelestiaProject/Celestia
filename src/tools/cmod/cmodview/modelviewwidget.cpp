@@ -1,4 +1,4 @@
-// cmoddview - An application for previewing cmod and other 3D file formats
+// cmodview - An application for previewing cmod and other 3D file formats
 // supported by Celestia.
 //
 // Copyright (C) 2010, Chris Laurel <claurel@gmail.com>
@@ -33,6 +33,7 @@
 #include <celmodel/model.h>
 
 #include "pathmanager.h"
+#include "utils.h"
 
 #define DEBUG_SHADOWS 0
 
@@ -55,18 +56,6 @@ enum {
     TangentAttributeIndex = 6,
     PointSizeAttributeIndex = 7,
 };
-
-
-inline QString toQString(const wchar_t *s)
-{
-    return QString::fromWCharArray(s);
-}
-
-
-inline QString toQString(const char *s)
-{
-    return QString::fromLocal8Bit(s);
-}
 
 
 // Calculate the matrix used to render the model from the

@@ -99,21 +99,15 @@ public:
 
         return p0 < p1;
     }
-
-private:
-    int ignore;
 };
 
 
 class PointTexCoordOrderingPredicate : public VertexComparator
 {
 public:
-    PointTexCoordOrderingPredicate(std::uint32_t _posOffset,
-                                   std::uint32_t _texCoordOffset,
-                                   bool _wrap) :
+    PointTexCoordOrderingPredicate(std::uint32_t _posOffset, std::uint32_t _texCoordOffset) :
         posOffset(_posOffset),
-        texCoordOffset(_texCoordOffset),
-        wrap(_wrap)
+        texCoordOffset(_texCoordOffset)
     {
     }
 
@@ -133,7 +127,6 @@ public:
 private:
     std::uint32_t posOffset;
     std::uint32_t texCoordOffset;
-    bool wrap;
 };
 
 
@@ -176,11 +169,9 @@ class PointTexCoordEquivalencePredicate : public VertexComparator
 public:
     PointTexCoordEquivalencePredicate(std::uint32_t _posOffset,
                                       std::uint32_t _texCoordOffset,
-                                      bool _wrap,
                                       float _tolerance) :
         posOffset(_posOffset),
         texCoordOffset(_texCoordOffset),
-        wrap(_wrap),
         tolerance(_tolerance)
     {
     }
@@ -202,7 +193,6 @@ public:
 private:
     std::uint32_t posOffset;
     std::uint32_t texCoordOffset;
-    bool wrap;
     float tolerance;
 };
 
@@ -210,18 +200,6 @@ private:
 bool equal(const Vertex& a, const Vertex& b, std::uint32_t vertexSize)
 {
     return std::equal(a.attributes, a.attributes + vertexSize, b.attributes);
-}
-
-
-bool equalPoint(const Vertex& a, const Vertex& b)
-{
-    std::array<float, 3> p0;
-    std::memcpy(p0.data(), a.attributes, sizeof(float) * 3);
-
-    std::array<float, 3> p1;
-    std::memcpy(p1.data(), b.attributes, sizeof(float) * 3);
-
-    return p0 == p1;
 }
 
 
@@ -392,13 +370,11 @@ joinVertices(std::vector<Face>& faces,
     // Build the vertex merge map
     std::vector<std::uint32_t> mergeMap(nVertices);
     std::uint32_t lastUnique = 0;
-    std::uint32_t uniqueCount = 0;
     for (std::uint32_t i = 0; i < nVertices; i++)
     {
         if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
         {
             lastUnique = i;
-            uniqueCount++;
         }
 
         mergeMap[vertices[i].index] = vertices[lastUnique].index;
@@ -844,8 +820,8 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     if (weld)
     {
         joinVertices(faces, vertexData, desc,
-                     PointTexCoordOrderingPredicate(posOffset, texCoordOffset, true),
-                     PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, true, 1.0e-5f));
+                     PointTexCoordOrderingPredicate(posOffset, texCoordOffset),
+                     PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, 1.0e-5f));
     }
     else
     {

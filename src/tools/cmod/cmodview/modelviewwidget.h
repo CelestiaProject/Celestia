@@ -1,4 +1,4 @@
-// cmoddview - An application for previewing cmod and other 3D file formats
+// cmodview - An application for previewing cmod and other 3D file formats
 // supported by Celestia.
 //
 // Copyright (C) 2010, Chris Laurel <claurel@gmail.com>

@@ -53,8 +53,7 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
     m_period(period),
     m_spiceErr(false),
     m_validIntervalBegin(beginning),
-    m_validIntervalEnd(ending),
-    m_useDefaultTimeInterval(false)
+    m_validIntervalEnd(ending)
 {
 }
 
@@ -75,8 +74,7 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
     m_period(period),
     m_spiceErr(false),
     m_validIntervalBegin(-std::numeric_limits<double>::infinity()),
-    m_validIntervalEnd(std::numeric_limits<double>::infinity()),
-    m_useDefaultTimeInterval(true)
+    m_validIntervalEnd(std::numeric_limits<double>::infinity())
 {
 }
 

@@ -28,9 +28,6 @@ using namespace celestia::scripts;
 
 LuaState *getLuaStateObject(lua_State*);
 
-namespace
-{
-
 // Wrapper for a CEL-script, including the needed Execution Environment
 class CelScriptWrapper : public ExecutionEnvironment
 {
@@ -101,10 +98,7 @@ class CelScriptWrapper : public ExecutionEnvironment
     string errorMessage;
 };
 
-} // end unnamed namespace
-
 // ==================== Celscript-object ====================
-
 
 int celxClassId(CelScriptWrapper*)
 {

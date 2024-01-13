@@ -43,7 +43,7 @@ class Simulation;
 namespace celestia
 {
 
-class TimeInfo;
+struct TimeInfo;
 class ViewManager;
 
 namespace engine
