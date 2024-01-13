@@ -17,6 +17,7 @@
 #include <QStringList>
 
 #include "pathmanager.h"
+#include "utils.h"
 
 namespace cmodview
 {
@@ -43,18 +44,6 @@ static void setWidgetColor(QLabel* widget, const cmod::Color& color)
     widget->setPalette(QPalette(toQtColor(color)));
     widget->setAutoFillBackground(true);
     widget->setText(QString("%1, %2, %3").arg(color.red(), 0, 'g', 3).arg(color.green(), 0, 'g', 3).arg(color.blue(), 0, 'g', 3));
-}
-
-
-inline QString toQString(const wchar_t *s)
-{
-    return QString::fromWCharArray(s);
-}
-
-
-inline QString toQString(const char *s)
-{
-    return QString::fromLocal8Bit(s);
 }
 
 

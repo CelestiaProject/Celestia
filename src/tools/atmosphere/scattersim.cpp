@@ -1580,6 +1580,11 @@ Scene::raytrace_LUT(const Eigen::ParametrizedLine<double, 3>& ray) const
             inscatter = phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh);
             inscatter = inscatter * 4.0 * pi;
         }
+        else
+        {
+            // fix GCC warning about possibly uninitialized variable
+            inscatter = Eigen::Vector3d::Zero();
+        }
 
         return Color((float) inscatter.x(), (float) inscatter.y(), (float) inscatter.z()) +
             baseColor;

@@ -62,7 +62,6 @@ private:
     fs::path tileExt;
     std::string tilePrefix;
     unsigned int baseSplit{ 0 };
-    unsigned int tileSize{ 0 };
     unsigned int ticks{ 0 };
     unsigned int tilesRequested{ 0 };
     unsigned int nResolutionLevels{ 0 };

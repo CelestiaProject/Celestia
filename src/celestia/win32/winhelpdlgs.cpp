@@ -75,7 +75,7 @@ LoadItemTextFromFile(const fs::path& filename, tstring& message)
     std::vector<char> buffer(bufferSize, '\0');
     while (!f.eof())
     {
-        f.read(buffer.data(), buffer.size()); /* FlawFinder: ignore */
+        f.read(buffer.data(), buffer.size()); /* Flawfinder: ignore */
         if (!f.good() && !f.eof())
             return false;
 

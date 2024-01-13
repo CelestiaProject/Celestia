@@ -1,5 +1,5 @@
-// qttxf - a Qt-based application to generate GLUT txf files from
-// system fonts
+// cmodview - An application for previewing cmod and other 3D file formats
+// supported by Celestia.
 //
 // Copyright (C) 2009, Chris Laurel <claurel@gmail.com>
 //

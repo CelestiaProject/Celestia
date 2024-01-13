@@ -173,7 +173,6 @@ public:
     StarFilter(StarBrowser::Filter, const SolarSystemCatalog*);
     bool operator()(const Star*) const;
 
-    void setFilter(StarBrowser::Filter filter);
     void setSpectralTypeFilter(const std::function<bool(const char*)>&);
 
 private:
@@ -185,12 +184,6 @@ private:
 StarFilter::StarFilter(StarBrowser::Filter filter, const SolarSystemCatalog* solarSystems) :
     m_filter(filter), m_solarSystems(solarSystems)
 {
-}
-
-void
-StarFilter::setFilter(StarBrowser::Filter filter)
-{
-    m_filter = filter;
 }
 
 void
@@ -361,6 +354,8 @@ void
 StarBrowser::populate(std::vector<StarBrowserRecord>& records) const
 {
     StarFilter filter(m_filter, m_universe->getSolarSystemCatalog());
+    if (m_spectralTypeFilter)
+        filter.setSpectralTypeFilter(m_spectralTypeFilter);
     const auto stardb = m_universe->getStarCatalog();
     if (stardb == nullptr)
         return;

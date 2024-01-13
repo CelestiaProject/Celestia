@@ -32,11 +32,6 @@ private:
     std::string m_str;
 };
 
-bool operator==(std::string_view lhs, const UniqueString& rhs)
-{
-    return lhs == rhs.value();
-}
-
 bool operator==(const UniqueString& lhs, std::string_view rhs)
 {
     return lhs.value() == rhs;

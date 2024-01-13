@@ -923,7 +923,7 @@ Body* CreateBody(const std::string& name,
 
     // TODO: should be own class
     if (const auto *infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
-        body->setInfoURL(std::move(BuildInfoURL(*infoURL, path)));
+        body->setInfoURL(BuildInfoURL(*infoURL, path));
 
     if (auto albedo = planetData->getNumber<float>("Albedo"); albedo.has_value())
     {

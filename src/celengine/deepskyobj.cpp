@@ -115,7 +115,7 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
 
     // TODO: infourl class
     if (const auto *infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
-        setInfoURL(std::move(BuildInfoURL(*infoURLValue, resPath)));
+        setInfoURL(BuildInfoURL(*infoURLValue, resPath));
 
     if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
         setVisible(*visibleValue);
