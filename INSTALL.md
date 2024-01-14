@@ -407,6 +407,7 @@ installed:
 git clone https://github.com/CelestiaProject/CelestiaContent.git
 cd CelestiaContent
 mkdir build
+cd build
 cmake ..
 make
 sudo make install
