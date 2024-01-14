@@ -30,6 +30,7 @@ using namespace Eigen;
 using namespace std;
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 
 Body::Body(PlanetarySystem* _system, const std::string& _name) :
@@ -985,7 +986,7 @@ void Body::computeLocations()
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     if (geometry == InvalidResource)
         return;
-    const Geometry* g = GetGeometryManager()->find(geometry);
+    const Geometry* g = engine::GetGeometryManager()->find(geometry);
     if (g == nullptr)
         return;
 

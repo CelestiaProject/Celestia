@@ -32,8 +32,10 @@
 #include "texmanager.h"
 #include "value.h"
 
-
 using celestia::util::GetLogger;
+
+namespace celestia::engine
+{
 
 namespace
 {
@@ -90,7 +92,6 @@ LoadCelestiaMesh(const fs::path& filename)
 
     return model;
 }
-
 
 cmod::Mesh
 ConvertTriangleMesh(const M3DTriangleMesh& mesh,
@@ -292,7 +293,6 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     return newMesh;
 }
 
-
 std::unique_ptr<cmod::Model>
 Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
 {
@@ -355,7 +355,6 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
     return model;
 }
 
-
 std::unique_ptr<cmod::Model>
 Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 {
@@ -372,7 +371,6 @@ Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 
     return model;
 }
-
 
 std::unique_ptr<cmod::Model>
 LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
@@ -399,7 +397,6 @@ LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
     return model;
 }
 
-
 std::unique_ptr<cmod::Model>
 LoadCMSModel(const GeometryInfo::ResourceKey& key)
 {
@@ -417,20 +414,13 @@ LoadCMSModel(const GeometryInfo::ResourceKey& key)
 
 } // end unnamed namespace
 
-
-GeometryManager*
-GetGeometryManager()
-{
-    static GeometryManager* geometryManager = nullptr;
-    if (geometryManager == nullptr)
-        geometryManager = std::make_unique<GeometryManager>("models").release();
-    return geometryManager;
-}
-
-
 GeometryInfo::ResourceKey
 GeometryInfo::resolve(const fs::path& baseDir) const
 {
+    // All empty meshes resolve to the same resource regardless of center/scaling
+    if (source.empty())
+        return ResourceKey({}, Eigen::Vector3f::Zero(), 1.0f, true, false);
+
     if (!path.empty())
     {
         fs::path filename = path / "models" / source;
@@ -444,10 +434,13 @@ GeometryInfo::resolve(const fs::path& baseDir) const
     return ResourceKey(baseDir / source, center, scale, isNormalized, false);
 }
 
-
 std::unique_ptr<Geometry>
 GeometryInfo::load(const ResourceKey& key) const
 {
+    // empty mesh
+    if (key.resolvedPath.empty())
+        return std::make_unique<EmptyGeometry>();
+
     GetLogger()->info(_("Loading model: {}\n"), key.resolvedPath);
     std::unique_ptr<cmod::Model> model = nullptr;
 
@@ -498,3 +491,14 @@ GeometryInfo::load(const ResourceKey& key) const
 
     return std::make_unique<ModelGeometry>(std::move(model));
 }
+
+GeometryManager*
+GetGeometryManager()
+{
+    static GeometryManager* geometryManager = nullptr;
+    if (geometryManager == nullptr)
+        geometryManager = std::make_unique<GeometryManager>("models").release();
+    return geometryManager;
+}
+
+} // end namespace celestia::engine
