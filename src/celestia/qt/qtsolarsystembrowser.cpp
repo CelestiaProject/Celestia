@@ -169,12 +169,13 @@ private:
 
     TreeItem* createTreeItem(Selection sel, TreeItem* parent, int childIndex);
     void addTreeItemChildren(TreeItem* item,
-                             PlanetarySystem* sys,
+                             const PlanetarySystem* sys,
                              const std::vector<Star*>* orbitingStars);
     void addTreeItemChildrenFiltered(TreeItem* item,
-                                     PlanetarySystem* sys);
+                                     const PlanetarySystem* sys,
+                                     const std::vector<Star*>* orbitingStars);
     void addTreeItemChildrenGrouped(TreeItem* item,
-                                    PlanetarySystem* sys,
+                                    const PlanetarySystem* sys,
                                     const std::vector<Star*>* orbitingStars,
                                     Selection parent);
     TreeItem* createGroupTreeItem(int classification,
@@ -256,7 +257,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
 
     const std::vector<Star*>* orbitingStars = nullptr;
 
-    PlanetarySystem* sys = nullptr;
+    const PlanetarySystem* sys = nullptr;
     if (sel.body() != nullptr)
     {
         sys = sel.body()->getSatellites();
@@ -277,7 +278,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
     if (groupByClass && sys != nullptr)
         addTreeItemChildrenGrouped(item, sys, orbitingStars, sel);
     else if (bodyFilter != 0 && sys != nullptr)
-        addTreeItemChildrenFiltered(item, sys);
+        addTreeItemChildrenFiltered(item, sys, orbitingStars);
     else
         addTreeItemChildren(item, sys, orbitingStars);
 
@@ -287,7 +288,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
 
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
-                                                              PlanetarySystem* sys,
+                                                              const PlanetarySystem* sys,
                                                               const std::vector<Star*>* orbitingStars)
 {
     // Calculate the number of children: the number of orbiting stars plus
@@ -330,7 +331,8 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
 
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
-                                                                      PlanetarySystem* sys)
+                                                                      const PlanetarySystem* sys,
+                                                                      const std::vector<Star*>* orbitingStars)
 {
     std::vector<Body*> bodies;
 
@@ -343,14 +345,32 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 
     // Calculate the total number of children
     // WARN: max(size_t) > max(int) so in theory it's possible to have a negative value
-    if ((item->nChildren = static_cast<int>(bodies.size())) <= 0)
+    item->nChildren = static_cast<int>(bodies.size());
+    if (orbitingStars != nullptr)
+        item->nChildren += static_cast<int>(orbitingStars->size());
+
+    if (item->nChildren == 0)
         return;
 
     item->children = new TreeItem*[item->nChildren];
 
+    // Add the orbiting stars
+    int childIndex = 0;
+    if (orbitingStars != nullptr)
+    {
+        for (Star* star : *orbitingStars)
+        {
+            item->children[childIndex] = createTreeItem(star, item, childIndex);
+            ++childIndex;
+        }
+    }
+
     // Add the direct children
-    for (int i = 0; i < (int) bodies.size(); i++)
-        item->children[i] = createTreeItem(bodies[i], item, i);
+    for (Body* body : bodies)
+    {
+        item->children[childIndex] = createTreeItem(body, item, childIndex);
+        ++childIndex;
+    }
 }
 
 
@@ -361,7 +381,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 // large collections of such objects.
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
-                                                                     PlanetarySystem* sys,
+                                                                     const PlanetarySystem* sys,
                                                                      const std::vector<Star*>* orbitingStars,
                                                                      Selection parent)
 {
@@ -460,19 +480,18 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
             // Add the stars
             if (orbitingStars != nullptr)
             {
-                for (unsigned int i = 0; i < orbitingStars->size(); i++)
+                for (Star* star : *orbitingStars)
                 {
-                    Selection child(orbitingStars->at(i));
-                    item->children[childIndex] = createTreeItem(child, item, childIndex);
-                    childIndex++;
+                    item->children[childIndex] = createTreeItem(star, item, childIndex);
+                    ++childIndex;
                 }
             }
 
             // Add the direct children
-            for (int i = 0; i < (int) normal.size(); i++)
+            for (Body* body : normal)
             {
-                item->children[childIndex] = createTreeItem(normal[i], item, childIndex);
-                childIndex++;
+                item->children[childIndex] = createTreeItem(body, item, childIndex);
+                ++childIndex;
             }
 
             // Add the groups
@@ -481,7 +500,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::MinorMoon,
                                                                  minorMoons,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
 
             if (!asteroids.empty())
@@ -489,7 +508,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::Asteroid,
                                                                  asteroids,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
 
             if (!spacecraft.empty())
@@ -497,7 +516,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::Spacecraft,
                                                                  spacecraft,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
 
             if (!surfaceFeatures.empty())
@@ -505,7 +524,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::SurfaceFeature,
                                                                  surfaceFeatures,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
 
             if (!components.empty())
@@ -513,7 +532,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::Component,
                                                                  components,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
 
             if (!other.empty())
@@ -521,7 +540,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
                 item->children[childIndex] = createGroupTreeItem(Body::Unknown,
                                                                  other,
                                                                  item, childIndex);
-                childIndex++;
+                ++childIndex;
             }
         }
     }
