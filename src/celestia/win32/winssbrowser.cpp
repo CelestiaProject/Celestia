@@ -178,7 +178,6 @@ SolarSystemBrowser::SolarSystemBrowser(HINSTANCE appInstance,
     appCore(_appCore),
     parent(_parent)
 {
-    DLGPROC dlg;
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_SSBROWSER),
                              parent,

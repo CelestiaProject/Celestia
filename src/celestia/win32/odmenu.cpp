@@ -19,9 +19,6 @@ namespace
 void
 GenerateDisplayText(ODMENUITEM& item)
 {
-    TCHAR* pChr;
-    int i;
-
     item.displayText = {};
     item.rawDisplayText = {};
     item.shortcutText = {};
@@ -389,8 +386,6 @@ ODMenu::DrawTransparentBitmap(HWND hWnd, HDC hDC, HBITMAP hBitmap, short centerX
                               short centerY, COLORREF cTransparentColor,
                               bitmapType eType) const
 {
-    HBRUSH     hOldBrush;
-
     HDC hdcTemp = CreateCompatibleDC(hDC);
     SelectObject(hdcTemp, hBitmap);   // Select the bitmap
 
