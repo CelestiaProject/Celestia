@@ -32,6 +32,7 @@
 #include "render.h"
 #include "timelinephase.h"
 
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -191,7 +192,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
         r = math::transformRay(r, m);
 
-        Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+        const Geometry* geometry = engine::GetGeometryManager()->find(body->getGeometry());
         float scaleFactor = body->getGeometryScale();
         if (geometry != nullptr && geometry->isNormalized())
             scaleFactor = radius;

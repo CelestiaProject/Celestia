@@ -19,10 +19,14 @@
 #include <celutil/resmanager.h>
 #include "geometry.h"
 
+namespace celestia::engine
+{
 
 class GeometryInfo
 {
- public:
+public:
+    using ResourceType = Geometry;
+
     // Ensure that models with different centers get resolved to different objects by
     // encoding the center, scale and normalization state in the key.
     struct ResourceKey
@@ -46,26 +50,12 @@ class GeometryInfo
         {}
     };
 
- private:
-    fs::path source;
-    fs::path path;
-    Eigen::Vector3f center;
-    float scale;
-    bool isNormalized;
-
-    friend bool operator<(const GeometryInfo&, const GeometryInfo&);
-
- public:
-    using ResourceType = Geometry;
-
     GeometryInfo(const fs::path& _source,
                  const fs::path& _path = "") :
         source(_source),
-        path(_path),
-        center(Eigen::Vector3f::Zero()),
-        scale(1.0f),
-        isNormalized(true)
-        {}
+        path(_path)
+    {
+    }
 
     GeometryInfo(const fs::path& _source,
                  const fs::path& _path,
@@ -77,10 +67,20 @@ class GeometryInfo
         center(_center),
         scale(_scale),
         isNormalized(_isNormalized)
-        {}
+    {
+    }
 
     ResourceKey resolve(const fs::path&) const;
     std::unique_ptr<Geometry> load(const ResourceKey&) const;
+
+private:
+    fs::path source;
+    fs::path path;
+    Eigen::Vector3f center{ Eigen::Vector3f::Zero() };
+    float scale{ 1.0f };
+    bool isNormalized{ true };
+
+    friend bool operator<(const GeometryInfo&, const GeometryInfo&);
 };
 
 inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)
@@ -99,4 +99,6 @@ inline bool operator<(const GeometryInfo::ResourceKey& k0,
 
 using GeometryManager = ResourceManager<GeometryInfo>;
 
-extern GeometryManager* GetGeometryManager();
+GeometryManager* GetGeometryManager();
+
+} // end namespace celestia::engine

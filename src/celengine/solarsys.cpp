@@ -53,6 +53,7 @@ using std::strncmp;
 using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
+namespace engine = celestia::engine;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
@@ -670,6 +671,41 @@ bool CreateTimeline(Body* body,
     return true;
 }
 
+void
+ReadMesh(const Hash& planetData, Body& body, const fs::path& path)
+{
+    using engine::GeometryInfo;
+    using engine::GetGeometryManager;
+
+    auto mesh = planetData.getString("Mesh"sv);
+    if (mesh == nullptr)
+        return;
+
+    ResourceHandle geometryHandle;
+    float geometryScale = 1.0f;
+    if (auto geometry = util::U8FileName(*mesh); geometry.has_value())
+    {
+        auto geometryCenter = planetData.getVector3<float>("MeshCenter"sv).value_or(Eigen::Vector3f::Zero());
+        // TODO: Adjust bounding radius if model center isn't
+        // (0.0f, 0.0f, 0.0f)
+
+        bool isNormalized = planetData.getBoolean("NormalizeMesh"sv).value_or(true);
+        if (auto meshScale = planetData.getLength<float>("MeshScale"sv); meshScale.has_value())
+            geometryScale = meshScale.value();
+
+        geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*geometry, path, geometryCenter, 1.0f, isNormalized));
+    }
+    else
+    {
+        // Some add-ons appear to be using Mesh "" to switch off the geometry
+        if (!mesh->empty())
+            GetLogger()->error("Invalid filename in Mesh\n");
+        geometryHandle = GetGeometryManager()->getHandle(GeometryInfo({}));
+    }
+
+    body.setGeometry(geometryHandle);
+    body.setGeometryScale(geometryScale);
+}
 
 void ReadAtmosphere(Body* body,
                     const Hash* atmosData,
@@ -985,20 +1021,7 @@ Body* CreateBody(const std::string& name,
     FillinSurface(planetData, &surface, path);
     body->setSurface(surface);
 
-    if (auto geometry = GetFilename(*planetData, "Mesh"sv, "Invalid filename in Mesh\n");
-        geometry.has_value())
-    {
-        auto geometryCenter = planetData->getVector3<float>("MeshCenter").value_or(Eigen::Vector3f::Zero());
-        // TODO: Adjust bounding radius if model center isn't
-        // (0.0f, 0.0f, 0.0f)
-
-        bool isNormalized = planetData->getBoolean("NormalizeMesh").value_or(true);
-        auto geometryScale = planetData->getLength<float>("MeshScale").value_or(1.0f);
-
-        ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*geometry, path, geometryCenter, 1.0f, isNormalized));
-        body->setGeometry(geometryHandle);
-        body->setGeometryScale(geometryScale);
-    }
+    ReadMesh(*planetData, *body, path);
 
     // Read the atmosphere
     if (const Value* atmosDataValue = planetData->getValue("Atmosphere"); atmosDataValue != nullptr)

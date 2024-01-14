@@ -2225,7 +2225,7 @@ void Renderer::renderObject(const Vector3f& pos,
     if (obj.geometry != InvalidResource)
     {
         // This is a model loaded from a file
-        geometry = GetGeometryManager()->find(obj.geometry);
+        geometry = engine::GetGeometryManager()->find(obj.geometry);
     }
 
     // Get the textures . . .
@@ -2764,7 +2764,7 @@ void Renderer::renderPlanet(Body& body,
         bool isNormalized = false;
         const Geometry* geometry = nullptr;
         if (rp.geometry != InvalidResource)
-            geometry = GetGeometryManager()->find(rp.geometry);
+            geometry = engine::GetGeometryManager()->find(rp.geometry);
         if (geometry == nullptr || geometry->isNormalized())
         {
             scaleFactors = rp.semiAxes * rp.radius;
@@ -3232,7 +3232,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 
         if (body.getGeometry() != InvalidResource && rle.discSizeInPixels > 1)
         {
-            const Geometry* geometry = GetGeometryManager()->find(body.getGeometry());
+            const Geometry* geometry = engine::GetGeometryManager()->find(body.getGeometry());
             if (geometry == nullptr)
                 rle.isOpaque = true;
             else
@@ -4368,7 +4368,7 @@ void Renderer::loadTextures(Body* body)
 
     if (body->getGeometry() != InvalidResource)
     {
-        Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+        Geometry* geometry = engine::GetGeometryManager()->find(body->getGeometry());
         if (geometry != nullptr)
         {
             geometry->loadTextures();

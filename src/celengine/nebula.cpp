@@ -18,6 +18,7 @@
 #include "rendcontext.h"
 #include "render.h"
 
+namespace engine = celestia::engine;
 namespace util = celestia::util;
 using util::GetLogger;
 
@@ -69,7 +70,7 @@ Nebula::load(const AssociativeArray* params, const fs::path& resPath)
         }
 
         ResourceHandle geometryHandle =
-            GetGeometryManager()->getHandle(GeometryInfo(*geometryFileName, resPath));
+            engine::GetGeometryManager()->getHandle(engine::GeometryInfo(*geometryFileName, resPath));
         setGeometry(geometryHandle);
     }
 

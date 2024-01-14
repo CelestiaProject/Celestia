@@ -43,6 +43,7 @@ using celestia::util::GetLogger;
 using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -1420,6 +1421,8 @@ StarDatabaseBuilder::applyCustomStarDetails(const Star* star,
 
     if (!customDetails.modelName.empty())
     {
+        using engine::GeometryInfo;
+        using engine::GetGeometryManager;
         ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(customDetails.modelName,
                                                                                      path,
                                                                                      Eigen::Vector3f::Zero(),
