@@ -24,6 +24,7 @@ class QColor;
 class QDockWidget;
 class QMenu;
 class QPoint;
+class QSettings;
 class QToolBar;
 class QUrl;
 class QWidget;
@@ -51,14 +52,9 @@ public:
     ~CelestiaAppWindow();
 
     void init(const CelestiaCommandLineOptions&);
-
-    void readSettings();
-    void writeSettings();
-    bool loadBookmarks();
-    void saveBookmarks();
+    void startAppCore();
 
     void requestContextMenu(float x, float y, Selection sel) override;
-
     void loadingProgressUpdate(const QString& s);
 
 public slots:
@@ -131,6 +127,11 @@ private:
     void createMenus();
     QMenu* buildScriptsMenu();
     void populateBookmarkMenu();
+
+    void readSettings();
+    void writeSettings();
+    bool loadBookmarks();
+    void saveBookmarks();
 
     void closeEvent(QCloseEvent* event) override;
 

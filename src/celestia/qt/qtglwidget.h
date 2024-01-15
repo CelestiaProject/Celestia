@@ -40,26 +40,27 @@ class CelestiaGlWidget : public QOpenGLWidget, public CelestiaCore::CursorHandle
 
 public:
     CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core);
-    ~CelestiaGlWidget();
+    ~CelestiaGlWidget() override;
 
-    void setCursorShape(CelestiaCore::CursorShape);
-    CelestiaCore::CursorShape getCursorShape() const;
+    void setCursorShape(CelestiaCore::CursorShape) override;
+    CelestiaCore::CursorShape getCursorShape() const override;
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL( int w, int h );
-    virtual void mouseMoveEvent(QMouseEvent* m );
-    virtual void mousePressEvent(QMouseEvent* m );
-    virtual void mouseReleaseEvent(QMouseEvent* m );
-    virtual void wheelEvent(QWheelEvent* w );
-    virtual void keyPressEvent(QKeyEvent* e );
-    virtual void keyReleaseEvent(QKeyEvent* e );
-    bool handleSpecialKey(QKeyEvent* e, bool down);
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
+    void mouseMoveEvent(QMouseEvent* m) override;
+    void mousePressEvent(QMouseEvent* m) override;
+    void mouseReleaseEvent(QMouseEvent* m) override;
+    void wheelEvent(QWheelEvent* w) override;
+    void keyPressEvent(QKeyEvent* e) override;
+    void keyReleaseEvent(QKeyEvent* e ) override;
 
-    virtual QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 private:
+    bool handleSpecialKey(QKeyEvent* e, bool down);
+
     CelestiaCore* appCore;
     Renderer* appRenderer;
     int lastX{ 0 };

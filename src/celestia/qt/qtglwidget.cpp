@@ -40,7 +40,6 @@
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
 
-
 namespace
 {
 
@@ -54,7 +53,6 @@ constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 } // end unnamed namespace
-
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
     QOpenGLWidget(parent)
@@ -75,9 +73,7 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 }
 
-
 CelestiaGlWidget::~CelestiaGlWidget() = default;
-
 
 /*!
   Paint the box. The actual openGL commands for drawing the box are
@@ -89,7 +85,6 @@ CelestiaGlWidget::paintGL()
 {
     appCore->draw();
 }
-
 
 /*!
   Set up the OpenGL rendering state, and define display list
@@ -145,7 +140,6 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
 }
 
-
 void
 CelestiaGlWidget::resizeGL(int w, int h)
 {
@@ -154,7 +148,6 @@ CelestiaGlWidget::resizeGL(int w, int h)
     auto height = static_cast<int>(h * scale);
     appCore->resize(width, height);
 }
-
 
 void
 CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
@@ -202,7 +195,6 @@ CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
     }
 }
 
-
 void
 CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
 {
@@ -226,7 +218,6 @@ CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
         appCore->mouseButtonDown(x, y, CelestiaCore::RightButton);
     }
 }
-
 
 void
 CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
@@ -266,7 +257,6 @@ CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
     }
 }
 
-
 void
 CelestiaGlWidget::wheelEvent(QWheelEvent* w)
 {
@@ -283,7 +273,6 @@ CelestiaGlWidget::wheelEvent(QWheelEvent* w)
         appCore->mouseWheel(1.0f, 0);
     }
 }
-
 
 bool
 CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
@@ -412,7 +401,6 @@ CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
     return false;
 }
 
-
 void
 CelestiaGlWidget::keyPressEvent(QKeyEvent* e)
 {
@@ -466,7 +454,6 @@ CelestiaGlWidget::keyPressEvent(QKeyEvent* e)
     }
 }
 
-
 void
 CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
 {
@@ -482,7 +469,6 @@ CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
     dragHandler->clearButton(modifiers);
     handleSpecialKey(e, false);
 }
-
 
 void
 CelestiaGlWidget::setCursorShape(CelestiaCore::CursorShape shape)
@@ -552,13 +538,11 @@ CelestiaGlWidget::setCursorShape(CelestiaCore::CursorShape shape)
     }
 }
 
-
 CelestiaCore::CursorShape
 CelestiaGlWidget::getCursorShape() const
 {
     return currentCursor;
 }
-
 
 QSize
 CelestiaGlWidget::sizeHint() const
