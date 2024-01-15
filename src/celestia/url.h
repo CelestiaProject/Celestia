@@ -65,7 +65,7 @@ class Url
     std::string getAsString() const;
 
  private:
-    bool initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr);
+    bool initVersion3(const std::map<std::string_view, std::string> &params, std::string_view timeStr);
     bool initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr);
 
     CelestiaState          m_state;
