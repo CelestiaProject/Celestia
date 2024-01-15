@@ -527,14 +527,10 @@ Url::parse(std::string_view urlStr)
     // Version labelling of cel URLs was only added in Celestia 1.5, cel URL
     // version 2. Assume any URL without a version is version 1.
     int version = 1;
-    if (params.count("ver") != 0)
+    if (auto it = params.find("ver"sv); it != params.end() && !to_number(it->second, version))
     {
-        auto &p = params["ver"];
-        if (!to_number(p, version))
-        {
-            GetLogger()->error(_("Invalid URL version \"{}\"!\n"), p);
-            return false;
-        }
+        GetLogger()->error(_("Invalid URL version \"{}\"!\n"), it->second);
+        return false;
     }
 
     if (version != 3 && version != 4)
@@ -556,7 +552,7 @@ Url::parse(std::string_view urlStr)
 }
 
 bool
-Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+Url::initVersion3(const std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
     m_version = 3;
 
@@ -564,52 +560,63 @@ Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_v
         return false;
     m_state.m_tdb = (double) m_date;
 
-    if (params.count("x") == 0 || params.count("y") == 0 || params.count("z") == 0)
+    if (auto itx = params.find("x"sv), ity = params.find("y"sv), itz = params.find("z"sv);
+        itx == params.end() || ity == params.end() || itz == params.end())
+    {
         return false;
-    m_state.m_observerPosition = UniversalCoord(DecodeFromBase64(params["x"]),
-                                                DecodeFromBase64(params["y"]),
-                                                DecodeFromBase64(params["z"]));
+    }
+    else
+    {
+        m_state.m_observerPosition = UniversalCoord(DecodeFromBase64(itx->second),
+                                                    DecodeFromBase64(ity->second),
+                                                    DecodeFromBase64(itz->second));
+    }
 
     float ow, ox, oy, oz;
-    if (to_number(params["ow"], ow) &&
-        to_number(params["ox"], ox) &&
-        to_number(params["oy"], oy) &&
-        to_number(params["oz"], oz))
+    if (auto itw = params.find("ow"sv), itx = params.find("ox"sv), ity = params.find("oy"sv), itz = params.find("oz"sv);
+        itw != params.end() && to_number(itw->second, ow) &&
+        itx != params.end() && to_number(itx->second, ox) &&
+        ity != params.end() && to_number(ity->second, oy) &&
+        itz != params.end() && to_number(itz->second, oz))
+    {
         m_state.m_observerOrientation = Eigen::Quaternionf(ow, ox, oy, oz);
+    }
     else
+    {
+        return false;
+    }
+
+    if (auto it = params.find("select"sv); it != params.end())
+        m_state.m_selectedBodyName = it->second;
+    if (auto it = params.find("track"sv); it != params.end())
+        m_state.m_trackedBodyName = it->second;
+    if (auto it = params.find("ltd"sv); it != params.end())
+        m_state.m_lightTimeDelay = it->second != "0"sv;
+
+    if (auto it = params.find("fov"sv); it != params.end() && !to_number(it->second, m_state.m_fieldOfView))
+        return false;
+    if (auto it = params.find("ts"sv); it != params.end() && !to_number(it->second, m_state.m_timeScale))
         return false;
 
-    if (params.count("select") != 0)
-        m_state.m_selectedBodyName = params["select"];
-    if (params.count("track") != 0)
-        m_state.m_trackedBodyName = params["track"];
-    if (params.count("ltd") != 0)
-        m_state.m_lightTimeDelay = params["ltd"] != "0";
-
-    if (params.count("fov") != 0 && !to_number(params["fov"], m_state.m_fieldOfView))
-        return false;
-    if (params.count("ts") != 0 && !to_number(params["ts"], m_state.m_timeScale))
-        return false;
-
-    if (params.count("p") != 0)
-        m_state.m_pauseState = params["p"] != "0";
+    if (auto it = params.find("p"sv); it != params.end())
+        m_state.m_pauseState = it->second != "0"sv;
 
     // Render settings
     bool hasNewRenderFlags = false;
     std::uint64_t newFlags = 0;
-    if (params.count("nrf") != 0)
+    if (auto it = params.find("nrf"sv); it != params.end())
     {
         hasNewRenderFlags = true;
         int nrf;
-        if (!to_number(params["nrf"], nrf))
+        if (!to_number(it->second, nrf))
             return false;
         newFlags = static_cast<std::uint64_t>(nrf) << NEW_FLAG_BIT_1_7;
     }
-    if (params.count("rf") != 0)
+    if (auto it = params.find("rf"sv); it != params.end())
     {
         // old renderer flags are int
         int rf;
-        if (!to_number(params["rf"], rf))
+        if (!to_number(it->second, rf))
             return false;
         // older celestia versions don't know about the new renderer flags
         std::uint64_t oldFlags;
@@ -632,11 +639,11 @@ Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_v
         }
         m_state.m_renderFlags = newFlags | oldFlags;
     }
-    if (params.count("lm") != 0 && !to_number(params["lm"], m_state.m_labelMode))
+    if (auto it = params.find("lm"sv); it != params.end() && !to_number(it->second, m_state.m_labelMode))
         return false;
 
     int tsrc = 0;
-    if (params.count("tsrc") != 0 && !to_number(params["tsrc"], tsrc))
+    if (auto it = params.find("tsrc"sv); it != params.end() && !to_number(it->second, tsrc))
         return false;
     if (tsrc >= 0 && tsrc < TimeSourceCount)
         m_timeSource = static_cast<TimeSource>(tsrc);
@@ -647,17 +654,17 @@ Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_v
 bool
 Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
-    if (params.count("rf") != 0)
+    if (auto it = params.find("rf"sv); it != params.end())
     {
         std::uint64_t rf;
-        if (!to_number(params["rf"], rf))
+        if (!to_number(it->second, rf))
             return false;
         auto nrf = static_cast<int>(rf >> NEW_FLAG_BIT_1_7);
         int _rf = rf & RF_MASK;
         if ((rf & Renderer::ShowPlanets) != 0)
             _rf |= NEW_SHOW_PLANETS_BIT_MASK; // Set the 26th bit to ShowPlanets
+        it->second = fmt::format("{}", _rf);
         params["nrf"] = fmt::format("{}", nrf);
-        params["rf"] = fmt::format("{}", _rf);
     }
     return initVersion3(params, timeStr);
 }
