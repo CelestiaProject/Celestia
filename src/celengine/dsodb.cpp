@@ -310,13 +310,6 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
 }
 
 
-bool DSODatabase::loadBinary(std::istream&)
-{
-    // TODO: define a binary dso file format
-    return true;
-}
-
-
 void DSODatabase::finish()
 {
     buildOctree();
