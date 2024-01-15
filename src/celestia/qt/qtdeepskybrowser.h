@@ -29,7 +29,6 @@ class Selection;
 class ColorSwatchWidget;
 class InfoPanel;
 
-
 class DeepSkyBrowser : public QWidget
 {
     Q_OBJECT

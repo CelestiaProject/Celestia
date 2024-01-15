@@ -38,7 +38,6 @@ class DSODatabase
     DSODatabase() = default;
     ~DSODatabase();
 
-
     DeepSkyObject* getDSO(const std::uint32_t) const;
     std::uint32_t size() const;
 
@@ -65,10 +64,7 @@ class DSODatabase
     void setNameDatabase(std::unique_ptr<DSONameDatabase>&&);
 
     bool load(std::istream&, const fs::path& resourcePath = fs::path());
-    bool loadBinary(std::istream&);
     void finish();
-
-    static DSODatabase* read(std::istream&);
 
     float getAverageAbsoluteMagnitude() const;
 

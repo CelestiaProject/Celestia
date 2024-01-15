@@ -14,8 +14,8 @@
 
 #include <algorithm>
 #include <cstring>
-#include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Core>
@@ -37,7 +37,11 @@
 #include <QModelIndexList>
 #include <QPushButton>
 #include <QRadioButton>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QRegExp>
+#else
+#include <QRegularExpression>
+#endif
 #include <QString>
 #include <QTreeView>
 #include <QVariant>
@@ -47,7 +51,6 @@
 #include <celengine/deepskyobj.h>
 #include <celengine/dsodb.h>
 #include <celengine/marker.h>
-#include <celengine/render.h>
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
 #include <celengine/universe.h>
@@ -68,39 +71,33 @@ constexpr int MAX_LISTED_DSOS = 20000;
 class DSOFilterPredicate
 {
 public:
-    DSOFilterPredicate();
+    DSOFilterPredicate() = default;
     bool operator()(const DeepSkyObject* dso) const;
 
-    unsigned int objectTypeMask;
+    DeepSkyObjectType objectType{ DeepSkyObjectType::Galaxy };
     bool typeFilterEnabled{false};
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QRegExp typeFilter;
+#else
+    QRegularExpression typeFilter;
+#endif
 };
-
-
-DSOFilterPredicate::DSOFilterPredicate() :
-    objectTypeMask(Renderer::ShowGalaxies)
-
-{
-}
-
 
 bool
 DSOFilterPredicate::operator()(const DeepSkyObject* dso) const
 {
-    if ((objectTypeMask & dso->getRenderMask()) == 0)
-    {
+    if (dso->getObjType() != objectType)
+        return false;
+
+    if (!typeFilterEnabled)
         return true;
-    }
 
-    if (typeFilterEnabled)
-    {
-        if (!typeFilter.exactMatch(dso->getType()))
-            return true;
-    }
-
-    return false;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    return typeFilter.exactMatch(dso->getType());
+#else
+    return typeFilter.match(dso->getType()).hasMatch();
+#endif
 }
-
 
 class DSOPredicate
 {
@@ -125,7 +122,6 @@ private:
     QCollator coll;
 };
 
-
 DSOPredicate::DSOPredicate(Criterion _criterion,
                            const Eigen::Vector3d& _observerPos,
                            const Universe* _universe) :
@@ -135,7 +131,6 @@ DSOPredicate::DSOPredicate(Criterion _criterion,
 {
     coll.setNumericMode(true);
 }
-
 
 bool
 DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const
@@ -169,8 +164,55 @@ DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) c
     }
 }
 
-} // end unnamed namespace
+void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
+                       const DSODatabase& dsodb,
+                       const DSOFilterPredicate& filter,
+                       const DSOPredicate& comparison,
+                       unsigned int nDSOs)
+{
+    const std::uint32_t size = dsodb.size();
+    std::uint32_t index = 0;
 
+    // Add all DSOs that match the filter until we reach the limit
+    for (;;++index)
+    {
+        if (index == size)
+        {
+            std::sort(dsos.begin(), dsos.end(), comparison);
+            return;
+        }
+
+        if (DeepSkyObject* dso = dsodb.getDSO(index); filter(dso))
+        {
+            if (dsos.size() == nDSOs)
+                break;
+
+            dsos.push_back(dso);
+        }
+    }
+
+    // We have filled up the number of requested DSOs, so only add DSOs that
+    // are better than the worst DSO in the list according to the predicate.
+    std::make_heap(dsos.begin(), dsos.end(), comparison);
+
+    for (; index < size; ++index)
+    {
+        DeepSkyObject* dso = dsodb.getDSO(index);
+        if (!filter(dso))
+            continue;
+
+        if (comparison(dso, dsos.front()))
+        {
+            std::pop_heap(dsos.begin(), dsos.end(), comparison);
+            dsos.back() = dso;
+            std::push_heap(dsos.begin(), dsos.end(), comparison);
+        }
+    }
+
+    std::sort_heap(dsos.begin(), dsos.end(), comparison);
+}
+
+} // end unnamed namespace
 
 class DeepSkyBrowser::DSOTableModel : public QAbstractTableModel, public ModelHelper
 {
@@ -207,7 +249,7 @@ public:
     };
 
     void populate(const UniversalCoord& _observerPos,
-                  DSOFilterPredicate& filterPred,
+                  const DSOFilterPredicate& filterPred,
                   DSOPredicate::Criterion criterion,
                   unsigned int nDSOs);
 
@@ -217,15 +259,14 @@ private:
     const Universe* universe;
     Eigen::Vector3d observerPos;
     std::vector<DeepSkyObject*> dsos;
+    bool showType{ false };
 };
-
 
 DeepSkyBrowser::DSOTableModel::DSOTableModel(const Universe* _universe) :
     universe(_universe),
     observerPos(Eigen::Vector3d::Zero())
 {
 }
-
 
 Selection
 DeepSkyBrowser::DSOTableModel::objectAtIndex(const QModelIndex& _index) const
@@ -240,7 +281,6 @@ DeepSkyBrowser::DSOTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
-
 
 // Override QAbstractTableModel::data()
 QVariant
@@ -279,7 +319,6 @@ DeepSkyBrowser::DSOTableModel::data(const QModelIndex& index, int role) const
     }
 }
 
-
 // Override QAbstractDataModel::headerData()
 QVariant
 DeepSkyBrowser::DSOTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
@@ -302,7 +341,6 @@ DeepSkyBrowser::DSOTableModel::headerData(int section, Qt::Orientation /* orient
     }
 }
 
-
 // Override QAbstractDataModel::rowCount()
 int
 DeepSkyBrowser::DSOTableModel::rowCount(const QModelIndex& /*unused*/) const
@@ -310,14 +348,12 @@ DeepSkyBrowser::DSOTableModel::rowCount(const QModelIndex& /*unused*/) const
     return (int) dsos.size();
 }
 
-
 // Override QAbstractDataModel::columnCount()
 int
 DeepSkyBrowser::DSOTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
-    return 4;
+    return showType ? 4 : 3;
 }
-
 
 Selection
 DeepSkyBrowser::DSOTableModel::itemForInfoPanel(const QModelIndex& _index)
@@ -325,7 +361,6 @@ DeepSkyBrowser::DSOTableModel::itemForInfoPanel(const QModelIndex& _index)
     Selection sel = itemAtRow((unsigned int) _index.row());
     return sel;
 }
-
 
 // Override QAbstractDataMode::sort()
 void
@@ -359,90 +394,39 @@ DeepSkyBrowser::DSOTableModel::sort(int column, Qt::SortOrder order)
     dataChanged(index(0, 0), index(dsos.size() - 1, 4));
 }
 
-
 void
 DeepSkyBrowser::DSOTableModel::populate(const UniversalCoord& _observerPos,
-                                        DSOFilterPredicate& filterPred,
+                                        const DSOFilterPredicate& filterPred,
                                         DSOPredicate::Criterion criterion,
                                         unsigned int nDSOs)
 {
+    showType = filterPred.objectType == DeepSkyObjectType::Galaxy;
     const DSODatabase& dsodb = *universe->getDSOCatalog();
 
     observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
 
-    using DSOSet = std::multiset<DeepSkyObject*, DSOPredicate>;
-
     DSOPredicate pred(criterion, observerPos, universe);
 
     // Apply the filter
-    std::vector<DeepSkyObject*> filteredDSOs;
-    unsigned int totalDSOs = dsodb.size();
-    unsigned int i = 0;
-    filteredDSOs.reserve(totalDSOs);
-    for (i = 0; i < totalDSOs; i++)
-    {
-        DeepSkyObject* dso = dsodb.getDSO(i);
-        if (!filterPred(dso))
-            filteredDSOs.push_back(dso);
-    }
-
-    // Don't try and show more DSOs than remain after the filter
-    if (filteredDSOs.size() < nDSOs)
-        nDSOs = filteredDSOs.size();
-
-    // Clear out the results of the previous populate() call
-    if (dsos.size() != 0)
+    if (!dsos.empty())
     {
         beginResetModel();
         dsos.clear();
         endResetModel();
     }
 
-    if (filteredDSOs.empty())
-        return;
-
-    DSOSet firstDSOs(pred);
-
-    // We'll need at least nDSOs in the set, so first fill
-    // up the list indiscriminately.
-    for (i = 0; i < nDSOs; i++)
-    {
-        firstDSOs.insert(filteredDSOs[i]);
-    }
-
-    // From here on, only add a dso to the set if it's
-    // A better match than the worst matching dso already
-    // in the set.
-    const DeepSkyObject* lastDSO = *--firstDSOs.end();
-    for (; i < filteredDSOs.size(); i++)
-    {
-        DeepSkyObject* dso = filteredDSOs[i];
-        if (pred(dso, lastDSO))
-        {
-            firstDSOs.insert(dso);
-            firstDSOs.erase(--firstDSOs.end());
-            lastDSO = *--firstDSOs.end();
-        }
-    }
-
-    // Move the best matching DSOs into the vector
     dsos.reserve(nDSOs);
-    for (const auto& dso : firstDSOs)
-    {
-        dsos.push_back(dso);
-    }
+    populateDsoVector(dsos, dsodb, filterPred, pred, nDSOs);
 
-    beginInsertRows(QModelIndex(), 0, dsos.size());
+    beginInsertRows(QModelIndex(), 0, static_cast<int>(dsos.size()));
     endInsertRows();
 }
-
 
 DeepSkyObject*
 DeepSkyBrowser::DSOTableModel::itemAtRow(unsigned int row) const
 {
     return row >= dsos.size() ? nullptr : dsos[row];
 }
-
 
 DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* _infoPanel) :
     QWidget(parent),
@@ -582,7 +566,6 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPane
     setLayout(layout);
 }
 
-
 /******* Slots ********/
 
 void
@@ -598,25 +581,43 @@ DeepSkyBrowser::slotRefreshTable()
     DSOFilterPredicate filterPred;
 
     if (globularsButton->isChecked())
-        filterPred.objectTypeMask = Renderer::ShowGlobulars;
+        filterPred.objectType = DeepSkyObjectType::Globular;
     else if (galaxiesButton->isChecked())
-        filterPred.objectTypeMask = Renderer::ShowGalaxies;
+        filterPred.objectType = DeepSkyObjectType::Galaxy;
     else if (nebulaeButton->isChecked())
-        filterPred.objectTypeMask = Renderer::ShowNebulae;
+        filterPred.objectType = DeepSkyObjectType::Nebula;
     else
-        filterPred.objectTypeMask = Renderer::ShowOpenClusters;
+        filterPred.objectType = DeepSkyObjectType::OpenCluster;
 
-    QRegExp re(objectTypeFilterBox->text(),
-               Qt::CaseInsensitive,
-               QRegExp::Wildcard);
-    if (!re.isEmpty() && re.isValid())
+    if (filterPred.objectType == DeepSkyObjectType::Galaxy)
     {
-        filterPred.typeFilter = re;
-        filterPred.typeFilterEnabled = true;
+        objectTypeFilterBox->setEnabled(true);
     }
     else
     {
-        filterPred.typeFilterEnabled = false;
+        objectTypeFilterBox->setEnabled(false);
+        objectTypeFilterBox->clear();
+    }
+
+    filterPred.typeFilterEnabled = false;
+    if (auto filterText = objectTypeFilterBox->text(); !filterText.isEmpty())
+    {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QRegExp re(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
+#elif QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
+        auto re = QRegularExpression::fromWildcard(filterText, Qt::CaseInsensitive, QRegularExpression::DefaultWildcardConversion);
+#else
+        auto re = QRegularExpression::fromWildcard(filterText, Qt::CaseInsensitive, QRegularExpression::NonPathWildcardConversion);
+#endif
+        if (re.isValid())
+        {
+#if QT_VERSION < QT_VERSION_CHECK(6, 1, 0)
+            filterPred.typeFilter = re;
+#else
+            filterPred.typeFilter = std::move(re);
+#endif
+            filterPred.typeFilterEnabled = true;
+        }
     }
 
     dsoModel->populate(observerPos, filterPred, criterion, MAX_LISTED_DSOS);
@@ -625,7 +626,6 @@ DeepSkyBrowser::slotRefreshTable()
 
     searchResultLabel->setText(QString(_("%1 objects found")).arg(dsoModel->rowCount(QModelIndex())));
 }
-
 
 void
 DeepSkyBrowser::slotContextMenu(const QPoint& pos)
@@ -638,7 +638,6 @@ DeepSkyBrowser::slotContextMenu(const QPoint& pos)
         emit selectionContextMenuRequested(treeView->mapToGlobal(pos), sel);
     }
 }
-
 
 void
 DeepSkyBrowser::slotMarkSelected()
@@ -693,7 +692,6 @@ DeepSkyBrowser::slotMarkSelected()
     } // for
 }
 
-
 void
 DeepSkyBrowser::slotUnmarkSelected()
 {
@@ -708,13 +706,11 @@ DeepSkyBrowser::slotUnmarkSelected()
     } // for
 }
 
-
 void
 DeepSkyBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
-
 
 void
 DeepSkyBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
