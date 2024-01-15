@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 
     window.init(options);
     window.show();
+    window.startAppCore();
 
     if (splash.has_value())
     {
