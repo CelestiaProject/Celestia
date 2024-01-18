@@ -650,7 +650,9 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         int langID = 0;
 
         hRes = LoadLibraryExW(resPath.c_str(), nullptr,
-                              LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
+                              LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE
+                                  | LOAD_LIBRARY_AS_IMAGE_RESOURCE
+                                  | LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
         if (hRes == nullptr)
         {
             GetLogger()->error(_("Could not load localized resources: {}\n"), resPath);
