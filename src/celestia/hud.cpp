@@ -774,6 +774,7 @@ void
 Hud::font(const std::shared_ptr<TextureFont>& f)
 {
     m_hudFonts.setFont(f);
+    m_dateStrWidth = 0;
 }
 
 const std::shared_ptr<TextureFont>&
@@ -889,8 +890,9 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     double tdb = sim->getTime() + lt;
     auto dateStr = m_dateFormatter->formatDate(tdb, timeInfo.timeZoneBias != 0, m_dateFormat);
+    auto fullDateStr = timeInfo.lightTravelFlag ? dateStr + _("  LT") : dateStr;
 
-    m_dateStrWidth = std::max(m_dateStrWidth, engine::TextLayout::getTextWidth(dateStr, m_hudFonts.font().get()) + 6 * m_hudFonts.emWidth());
+    m_dateStrWidth = std::max(m_dateStrWidth, engine::TextLayout::getTextWidth(fullDateStr, m_hudFonts.font().get()) + 2 * m_hudFonts.emWidth());
 
     // Time and date
     m_overlay->savePos();
