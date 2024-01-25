@@ -20,6 +20,11 @@ ProjectionMode::ProjectionMode(float width, float height, int distanceToScreen, 
 {
 }
 
+std::tuple<float, float> ProjectionMode::getDefaultDepthRange() const
+{
+    return std::make_tuple(0.5f, 1.0e9f);
+}
+
 void ProjectionMode::setScreenDpi(int dpi)
 {
     screenDpi = dpi;
