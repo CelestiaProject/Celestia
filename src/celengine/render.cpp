@@ -95,9 +95,6 @@ using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
 
-#define NEAR_DIST      0.5f
-#define FAR_DIST       1.0e9f
-
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 // Contribution from planetshine beyond this distance (in units of object radius)
@@ -1518,7 +1515,8 @@ void Renderer::render(const Observer& observer,
 
     // Set up the projection and modelview matrices.
     // We'll usethem for positioning star and planet labels.
-    buildProjectionMatrix(m_projMatrix, NEAR_DIST, FAR_DIST, observer.getZoom());
+    auto [nearZ, farZ] = projectionMode->getDefaultDepthRange();
+    buildProjectionMatrix(m_projMatrix, nearZ, farZ, observer.getZoom());
     m_modelMatrix = Affine3f(getCameraOrientationf()).matrix();
     m_MVPMatrix = m_projMatrix * m_modelMatrix;
 

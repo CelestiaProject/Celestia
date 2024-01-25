@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <tuple>
 #include <Eigen/Core>
 
 class ShaderManager;
@@ -30,6 +31,9 @@ public:
     virtual ~ProjectionMode() = default;
 
     virtual Eigen::Matrix4f getProjectionMatrix(float nearZ, float farZ, float zoom) const = 0;
+    // Some rendering systems provide nearZ, farZ. We'll use this value to set up
+    // the basic projection matrix for rendering.
+    virtual std::tuple<float, float> getDefaultDepthRange() const;
     virtual float getMinimumFOV() const = 0;
     virtual float getMaximumFOV() const = 0;
     virtual float getFOV(float zoom) const = 0;
