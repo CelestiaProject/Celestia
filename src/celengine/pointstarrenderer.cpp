@@ -37,6 +37,10 @@ PointStarRenderer::PointStarRenderer() :
 {
 }
 
+//const float br_limit = 1.0f / (255.0f * 12.92f);
+const float br_limit = 1.0f / 255.0f;
+const float exposure = 1.0f;
+
 void PointStarRenderer::process(const Star& star, float distance, float appMag)
 {
     if (distance > distanceLimit)
