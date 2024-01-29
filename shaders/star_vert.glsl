@@ -61,6 +61,8 @@ void main(void)
         pointSize = 1.0;
         // use max_theta == -1 as as signal that the point size is 1px
         max_theta = -1.0;
+
+        v_color = scaled_color;
     }
     else
     {
@@ -79,9 +81,10 @@ void main(void)
         // py: xx, yy = np.meshgrid(x, y)
         // we just set a point size. all iteration over every px is done in the fragment shader
         pointSize = 2.0 * half_sq - 1.0;
+
+        v_color = color;
     }
 
     gl_PointSize = pointSize;
-    v_color = scaled_color;
     set_vp(in_Position);
 }
