@@ -47,6 +47,15 @@ namespace
 {
 
 template<typename T>
+inline void
+convertToCelestiaCoordinates(Eigen::Matrix<T, 3, 1>& vector)
+{
+    auto y = vector.y();
+    vector.y() = vector.z();
+    vector.z() = -y;
+}
+
+template<typename T>
 struct Samples
 {
     Samples(std::vector<double>&& _times, std::vector<T>&& _samples) :
@@ -512,6 +521,18 @@ SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
     }
 }
 
+template<typename T>
+bool
+ReadAsciiSampleXYZ(std::istream& in, double& tdb, SampleXYZ<T>& sample)
+{
+    in >> tdb >> sample.x() >> sample.y() >> sample.z();
+    if (!in.good())
+        return false;
+
+    convertToCelestiaCoordinates(sample);
+    return true;
+}
+
 // Load an ASCII xyz trajectory file. The file contains records with 4 double
 // precision values each:
 //
@@ -531,20 +552,9 @@ LoadSamplesXYZAscii(const fs::path& filename)
 {
     std::vector<double> sampleTimes;
     std::vector<SampleXYZ<T>> samples;
-    if (!LoadAsciiSamples(filename, sampleTimes, samples,
-                          [](std::istream& in, double& tdb, SampleXYZ<T>& s)
-                          {
-                              return (in >> tdb >> s.x() >> s.y() >> s.z()).good();
-                          }))
+    if (!LoadAsciiSamples(filename, sampleTimes, samples, &ReadAsciiSampleXYZ<T>))
     {
         return nullptr;
-    }
-
-    // Apply correction for Celestia's coordinate system
-    for (SampleXYZ<T>& sample : samples)
-    {
-        sample.template tail<2>().reverseInPlace();
-        sample.z() = -sample.z();
     }
 
     return std::make_shared<Samples<SampleXYZ<T>>>(std::move(sampleTimes), std::move(samples));
@@ -626,6 +636,9 @@ ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
         sample.velocity = (velocity * astro::daysToSecs(1.0)).template cast<T>();
     }
 
+    convertToCelestiaCoordinates(sample.position);
+    convertToCelestiaCoordinates(sample.velocity);
+
     return true;
 }
 
@@ -669,6 +682,9 @@ ReadAsciiSampleXYZV(std::istream& in, double& tdb, SampleXYZV<T>& sample)
         return false;
 
     sample.velocity *= astro::daysToSecs(1.0);
+    convertToCelestiaCoordinates(sample.position);
+    convertToCelestiaCoordinates(sample.velocity);
+
     return true;
 }
 
