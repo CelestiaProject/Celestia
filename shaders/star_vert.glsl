@@ -13,7 +13,7 @@ const float max_br = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.
 varying vec3 v_color;
 varying float max_theta;
 varying float pointSize;
-varying float br0;
+varying float br;
 
 attribute vec4 in_Position;
 attribute vec3 in_Color;
@@ -46,7 +46,7 @@ void main(void)
 {
     // py: linear_br = 10**(-0.4 * star_mag) * exposure # scaled brightness measured in Vegas
     // here i use +0.4 because `in_PointSize` is not the actual magnitude but `faintest` - `actual`
-    br0 = pow(10.0, 0.4 * in_PointSize) * exposure;
+    float br0 = pow(10.0, 0.4 * in_PointSize) * exposure;
 
     // py: color = auxiliary.green_normalization(color0)
     vec3 color = green_normalization(in_Color);
@@ -65,11 +65,11 @@ void main(void)
     else
     {
         // py: br = np.arctan(br0 / max_br) * max_br # dimmed brightness
-        float br = atan(br0 / max_br) * max_br; // dimmed brightness
+        br = atan(br0 / max_br) * max_br; // dimmed brightness
         // py: max_theta = a * np.sqrt(br) # glow radius
         max_theta = a * sqrt(br); // glow radius
         // py: half_sq = floor(max_theta / degree_per_px)
-        float half_sq = floor(max_theta / degree_per_px);
+        float half_sq = max_theta / degree_per_px;
         // py: x_min = -min(half_sq, center[0])
         // py: x_max = min(half_sq+1, width-center[0])
         // py: y_min = -min(half_sq, center[1])
@@ -78,7 +78,7 @@ void main(void)
         // py: y = np.arange(y_min, y_max)
         // py: xx, yy = np.meshgrid(x, y)
         // we just set a point size. all iteration over every px is done in the fragment shader
-        pointSize = 2.0 * half_sq;
+        pointSize = 2.0 * half_sq - 1.0;
     }
 
     gl_PointSize = pointSize;
