@@ -22,6 +22,18 @@
 
 #include <fmt/format.h>
 
+#ifdef USE_ICU
+#ifdef HAVE_WIN_ICU_COMBINED_HEADER
+#include <icu.h>
+#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#include <icucommon.h>
+#include <icui18n.h>
+#else
+#include <unicode/uloc.h>
+#include <unicode/ulocdata.h>
+#endif
+#endif
+
 #include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celengine/location.h>
@@ -38,6 +50,7 @@
 #include <celutil/flag.h>
 #include <celutil/formatnum.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include "moviecapture.h"
 #include "textprintposition.h"
@@ -795,6 +808,35 @@ Hud::titleMetrics() const
     return std::make_tuple(m_hudFonts.titleEmWidth(), m_hudFonts.titleFontHeight());
 }
 
+#ifdef USE_ICU
+MeasurementSystem
+defaultMeasurementSystem()
+{
+    UErrorCode status = U_ZERO_ERROR;
+    auto icuSystem = ulocdata_getMeasurementSystem(uloc_getDefault(), &status);
+    if (U_SUCCESS(status))
+    {
+        switch (icuSystem)
+        {
+        case UMS_SI:
+            return MeasurementSystem::Metric;
+        case UMS_US:
+            return MeasurementSystem::Imperial;
+        case UMS_UK:
+            return MeasurementSystem::Imperial;
+        default:
+            util::GetLogger()->error(_("Unknown measurement system {}, fallback to Metric system"), icuSystem);
+            return MeasurementSystem::Metric;
+        }
+    }
+    else
+    {
+        util::GetLogger()->error(_("Failed to get default measurement system {}, fallback to Metric system"), status);
+        return MeasurementSystem::Metric;
+    }
+}
+#endif
+
 void
 Hud::renderOverlay(const WindowMetrics& metrics,
                    const Simulation* sim,
@@ -804,6 +846,11 @@ Hud::renderOverlay(const WindowMetrics& metrics,
                    bool isScriptRunning,
                    bool editMode)
 {
+#ifdef USE_ICU
+    if (m_hudSettings.measurementSystem == MeasurementSystem::System)
+        m_hudSettings.measurementSystem = defaultMeasurementSystem();
+#endif
+
     m_overlay->setFont(m_hudFonts.font());
 
     m_overlay->begin();

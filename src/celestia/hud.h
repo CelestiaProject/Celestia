@@ -55,6 +55,9 @@ enum class MeasurementSystem
 {
     Metric      = 0,
     Imperial    = 1,
+#ifdef USE_ICU
+    System      = 2,
+#endif
 };
 
 enum class TemperatureScale

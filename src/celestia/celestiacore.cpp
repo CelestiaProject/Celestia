@@ -2493,6 +2493,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             hud->hudSettings().measurementSystem = MeasurementSystem::Imperial;
         else if (compareIgnoringCase(config->measurementSystem, "metric") == 0)
             hud->hudSettings().measurementSystem = MeasurementSystem::Metric;
+#ifdef USE_ICU
+        else if (compareIgnoringCase(config->measurementSystem, "system") == 0)
+            hud->hudSettings().measurementSystem = MeasurementSystem::System;
+#endif
         else
             GetLogger()->warn("Unknown measurement system {}\n", config->measurementSystem);
     }
