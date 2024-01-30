@@ -20,15 +20,7 @@
 #include "utf8.h"
 
 #ifdef USE_ICU
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
-#include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#include <icui18n.h>
-#else
-#include <unicode/decimfmt.h>
-#include <unicode/ustring.h>
-#endif
+#include <celutil/icu.h>
 #include <celutil/uniquedel.h>
 #endif
 

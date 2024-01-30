@@ -12,15 +12,7 @@
 #pragma once
 
 #ifdef USE_ICU
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
-#include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#include <icui18n.h>
-#else
-#include <unicode/udat.h>
-#include <unicode/ustring.h>
-#endif
+#include <celutil/icu.h>
 #include <array>
 #include "uniquedel.h"
 #endif

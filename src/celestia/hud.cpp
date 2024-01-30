@@ -22,18 +22,6 @@
 
 #include <fmt/format.h>
 
-#ifdef USE_ICU
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
-#include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#include <icui18n.h>
-#else
-#include <unicode/uloc.h>
-#include <unicode/ulocdata.h>
-#endif
-#endif
-
 #include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celengine/location.h>
@@ -50,6 +38,7 @@
 #include <celutil/flag.h>
 #include <celutil/formatnum.h>
 #include <celutil/gettext.h>
+#include <celutil/icu.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include "moviecapture.h"
@@ -825,13 +814,13 @@ defaultMeasurementSystem()
         case UMS_UK:
             return MeasurementSystem::Imperial;
         default:
-            util::GetLogger()->error(_("Unknown measurement system {}, fallback to Metric system"), icuSystem);
+            util::GetLogger()->error(_("Unknown measurement system {}, fallback to Metric system"), static_cast<int>(icuSystem));
             return MeasurementSystem::Metric;
         }
     }
     else
     {
-        util::GetLogger()->error(_("Failed to get default measurement system {}, fallback to Metric system"), status);
+        util::GetLogger()->error(_("Failed to get default measurement system {}, fallback to Metric system"), static_cast<int>(status));
         return MeasurementSystem::Metric;
     }
 }

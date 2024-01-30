@@ -14,19 +14,8 @@
 #include <utility>
 #include <vector>
 
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
-#include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#include <icui18n.h>
-#else
-#include <unicode/ubidi.h>
-#include <unicode/umachine.h>
-#include <unicode/ushape.h>
-#include <unicode/ustring.h>
-#endif
-
 #include <celutil/flag.h>
+#include <celutil/icu.h>
 #include <celutil/uniquedel.h>
 
 using celestia::util::is_set;
