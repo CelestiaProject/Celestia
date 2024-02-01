@@ -12,7 +12,7 @@
 #pragma once
 
 #ifdef USE_ICU
-#include <celutil/icu.h>
+#include <celutil/includeicu.h>
 #include <array>
 #include "uniquedel.h"
 #endif

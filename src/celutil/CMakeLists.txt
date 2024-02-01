@@ -16,7 +16,7 @@ set(CELUTIL_SOURCES
   fsutils.h
   greek.cpp
   greek.h
-  icu.h
+  includeicu.h
   intrusiveptr.h
   logger.cpp
   logger.h

@@ -38,7 +38,7 @@
 #include <celutil/flag.h>
 #include <celutil/formatnum.h>
 #include <celutil/gettext.h>
-#include <celutil/icu.h>
+#include <celutil/includeicu.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include "moviecapture.h"
