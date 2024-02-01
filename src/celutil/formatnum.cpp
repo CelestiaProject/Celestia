@@ -20,7 +20,7 @@
 #include "utf8.h"
 
 #ifdef USE_ICU
-#include <celutil/icu.h>
+#include <celutil/includeicu.h>
 #include <celutil/uniquedel.h>
 #endif
 

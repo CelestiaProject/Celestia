@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <celutil/flag.h>
-#include <celutil/icu.h>
+#include <celutil/includeicu.h>
 #include <celutil/uniquedel.h>
 
 using celestia::util::is_set;
