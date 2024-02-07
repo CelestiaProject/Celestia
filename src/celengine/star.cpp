@@ -652,8 +652,6 @@ private:
     IntrusivePtr<StarDetails> neutronStarDetails{ };
     IntrusivePtr<StarDetails> blackHoleDetails{ };
     IntrusivePtr<StarDetails> barycenterDetails{ };
-
-    static inline StarDetailsManager* manager = std::make_unique<StarDetailsManager>().release();
 };
 
 
@@ -667,6 +665,7 @@ StarDetailsManager::StarDetailsManager()
 StarDetailsManager&
 StarDetailsManager::getManager()
 {
+    static StarDetailsManager* const manager = std::make_unique<StarDetailsManager>().release();
     return *manager;
 }
 

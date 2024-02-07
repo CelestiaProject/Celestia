@@ -495,9 +495,7 @@ GeometryInfo::load(const ResourceKey& key) const
 GeometryManager*
 GetGeometryManager()
 {
-    static GeometryManager* geometryManager = nullptr;
-    if (geometryManager == nullptr)
-        geometryManager = std::make_unique<GeometryManager>("models").release();
+    static GeometryManager* const geometryManager = std::make_unique<GeometryManager>("models").release(); //NOSONAR
     return geometryManager;
 }
 

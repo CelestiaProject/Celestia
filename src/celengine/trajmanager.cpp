@@ -41,4 +41,11 @@ TrajectoryManager::find(const fs::path& source,
     return orbit;
 }
 
+TrajectoryManager*
+GetTrajectoryManager()
+{
+    static TrajectoryManager* const manager = std::make_unique<TrajectoryManager>().release(); //NOSONAR
+    return manager;
+}
+
 } // end namespace celestia::engine

@@ -280,7 +280,7 @@ CreateSampledTrajectory(const Hash* trajData, const fs::path& path)
     TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecision::Double : TrajectoryPrecision::Single;
 
     GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *source);
-    auto orbit = engine::trajectoryManager.find(*sourceFile, path, interpolation, precision);
+    auto orbit = engine::GetTrajectoryManager()->find(*sourceFile, path, interpolation, precision);
     if (orbit == nullptr)
         GetLogger()->error("Could not load sampled trajectory from '{}'\n", *source);
 
@@ -1470,10 +1470,10 @@ CreateOrbit(const Selection& centralObject,
         if (auto sampOrbitFileName = util::U8FileName(*sampOrbitFile); sampOrbitFileName.has_value())
         {
             GetLogger()->verbose("Attempting to load sampled orbit file '{}'\n", *sampOrbitFile);
-            if (auto orbit = engine::trajectoryManager.find(*sampOrbitFileName,
-                                                            path,
-                                                            TrajectoryInterpolation::Cubic,
-                                                            TrajectoryPrecision::Single);
+            if (auto orbit = engine::GetTrajectoryManager()->find(*sampOrbitFileName,
+                                                                  path,
+                                                                  TrajectoryInterpolation::Cubic,
+                                                                  TrajectoryPrecision::Single);
                 orbit != nullptr)
             {
                 return orbit;
@@ -1626,7 +1626,7 @@ CreateRotationModel(const Hash* planetData,
         {
             GetLogger()->verbose("Attempting to load orientation file '{}'\n", *sampOrientationFile);
 
-            if (auto rotationModel = engine::rotationModelManager.find(*sampOrientationFile, path);
+            if (auto rotationModel = engine::GetRotationModelManager()->find(*sampOrientationFile, path);
                 rotationModel != nullptr)
             {
                 return rotationModel;

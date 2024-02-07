@@ -41,4 +41,11 @@ RotationModelManager::find(const fs::path& source,
     return model;
 }
 
+RotationModelManager*
+GetRotationModelManager()
+{
+    static RotationModelManager* const manager = std::make_unique<RotationModelManager>().release(); //NOSONAR
+    return manager;
+}
+
 } // end namespace celestia::engine
