@@ -1,6 +1,6 @@
 #include <celutil/unicode.h>
 
-#if !defined(HAVE_WIN_ICU_COMBINED_HEADER) && !defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
+#ifndef HAVE_WIN_ICU
 #include <unicode/ustring.h>
 #endif
 

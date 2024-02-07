@@ -10,11 +10,8 @@
 #pragma once
 
 #ifdef USE_ICU
-#ifdef HAVE_WIN_ICU_COMBINED_HEADER
+#ifdef HAVE_WIN_ICU
 #include <icu.h>
-#elif defined(HAVE_WIN_ICU_SEPARATE_HEADERS)
-#include <icucommon.h>
-#include <icui18n.h>
 #else
 #include <unicode/ubidi.h>
 #include <unicode/udat.h>
