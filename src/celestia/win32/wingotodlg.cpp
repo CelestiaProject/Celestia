@@ -16,9 +16,13 @@
 
 #include <array>
 #include <cstddef>
-#include <cwctype>
 #include <string_view>
 #include <system_error>
+#ifdef _UNICODE
+#include <cwctype>
+#else
+#include <cctype>
+#endif
 
 #include <Eigen/Core>
 
@@ -53,7 +57,11 @@ GetDialogFloat(HWND hDlg, int id, float& f)
 
     const TCHAR* start = buf.data();
     const TCHAR* end = buf.data() + size;
+#ifdef _UNICODE
     while (start != end && std::iswspace(static_cast<std::wint_t>(*start)))
+#else
+    while (start != end && std::isspace(static_cast<unsigned char>(*start)))
+#endif
         ++start;
 
     if (start == end)

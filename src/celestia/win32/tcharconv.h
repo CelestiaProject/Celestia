@@ -38,7 +38,7 @@ fill_buffer(fmt::basic_memory_buffer<char, N>& buffer, const wchar_t* first, con
     buffer.reserve(static_cast<std::size_t>(last - first));
     auto it = std::back_inserter(buffer);
     auto ptr = first;
-    while (ptr != last && *ptr > L'0' && *ptr < L'\177')
+    while (ptr != last && *ptr >= L'0' && *ptr < L'\177')
     {
         *it = static_cast<char>(*ptr);
         ++ptr;
