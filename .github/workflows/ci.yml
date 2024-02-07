@@ -57,7 +57,7 @@ jobs:
       run: |
         vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
           cspice eigen3 ffmpeg[x264] fmt freetype gettext gperf libepoxy libjpeg-turbo libpng luajit `
-          qtbase qt5compat[core]
+          qtbase
 
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -167,7 +167,7 @@ jobs:
                                 ninja-build \
                                 qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
-            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
+            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-base-private-dev
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
             sudo apt-get install -y libavif-dev

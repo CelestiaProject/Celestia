@@ -5,12 +5,7 @@ endif()
 
 include(../cmodview/CmodviewCommon.cmake)
 
-find_package(Qt6 COMPONENTS Core CONFIG REQUIRED)
-# Work around a bug in the Core5Compat cmake files which reference the
-# non-versioned Qt::Core and Qt::CorePrivate libraries
-add_library(Qt::Core ALIAS Qt6::Core)
-add_library(Qt::CorePrivate ALIAS Qt6::CorePrivate)
-find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets Core5Compat CONFIG REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
 
 GetCmodviewSources()
 
@@ -20,7 +15,7 @@ set(CMAKE_AUTOMOC ON)
 build_cmod_tool(cmodview-qt6 WIN32 ${CMODVIEW_SOURCES})
 target_include_directories(cmodview-qt6 PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_compile_definitions(cmodview-qt6 PRIVATE IMPORT_GLSUPPORT)
-target_link_libraries(cmodview-qt6 Qt6::Widgets Qt6::OpenGLWidgets Qt6::Core5Compat ${OPENGL_LIBRARIES})
+target_link_libraries(cmodview-qt6 Qt6::Widgets Qt6::OpenGLWidgets ${OPENGL_LIBRARIES})
 
 if(APPLE)
   set_property(TARGET cmodview-qt6 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
