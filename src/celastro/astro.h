@@ -49,9 +49,9 @@ template<typename T>
 constexpr inline auto AU_PER_LY = detail::enable_if_fp<T>(63241.077084266280268653583182317313558L);
 
 // calculated in Sollya with a precision of 128 bits
-// =648000*149597870700/pi
+// =648000*149597870.700/pi
 template<typename T>
-constexpr inline auto KM_PER_PARSEC = detail::enable_if_fp<T>(3.08567758149136727891393795779647161073e16L);
+constexpr inline auto KM_PER_PARSEC = detail::enable_if_fp<T>(3.08567758149136727891393795779647161073e13L);
 
 constexpr inline double MINUTES_PER_DEG = 60.0;
 constexpr inline double SECONDS_PER_DEG = 3600.0;
