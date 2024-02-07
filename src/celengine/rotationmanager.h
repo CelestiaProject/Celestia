@@ -36,6 +36,6 @@ private:
     std::unordered_map<fs::path, std::weak_ptr<const ephem::RotationModel>, util::PathHasher> rotationModels;
 };
 
-inline RotationModelManager rotationModelManager;
+RotationModelManager* GetRotationModelManager();
 
 } // end namespace celestia::engine

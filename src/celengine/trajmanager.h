@@ -76,6 +76,6 @@ private:
     std::unordered_map<Key, std::weak_ptr<const ephem::Orbit>, KeyHasher> orbits;
 };
 
-inline TrajectoryManager trajectoryManager;
+TrajectoryManager* GetTrajectoryManager();
 
 } // end namespace celestia::engine

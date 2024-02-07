@@ -121,9 +121,7 @@ bool WarpMesh::mapVertex(float x, float y, float* u, float* v) const
 
 WarpMeshManager* GetWarpMeshManager()
 {
-    static WarpMeshManager* warpMeshManager = nullptr;
-    if (warpMeshManager == nullptr)
-        warpMeshManager = std::make_unique<WarpMeshManager>("warp").release();
+    static WarpMeshManager* const warpMeshManager = std::make_unique<WarpMeshManager>("warp").release(); //NOSONAR
     return warpMeshManager;
 }
 
