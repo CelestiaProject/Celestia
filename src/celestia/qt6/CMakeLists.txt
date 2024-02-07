@@ -10,12 +10,7 @@ set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
 
-# Work around a bug in the Core5Compat cmake files which reference the
-# non-versioned Qt::Core and Qt::CorePrivate libraries
-find_package(Qt6 COMPONENTS Core CONFIG REQUIRED)
-add_library(Qt::Core ALIAS Qt6::Core)
-add_library(Qt::CorePrivate ALIAS Qt6::CorePrivate)
-find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets Core5Compat CONFIG REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
 qt6_add_resources(RC_SRC "../qt/icons.qrc")
 
 if(USE_WAYLAND)
@@ -26,7 +21,7 @@ endif()
 
 add_executable(celestia-qt6 WIN32 ${QT_SOURCES} ${RES} ${RC_SRC})
 add_dependencies(celestia-qt6 celestia)
-target_link_libraries(celestia-qt6 Qt6::Widgets Qt6::OpenGLWidgets Qt6::Core5Compat celestia)
+target_link_libraries(celestia-qt6 Qt6::Widgets Qt6::OpenGLWidgets celestia)
 
 if(USE_WAYLAND)
   target_link_libraries(celestia-qt6 Wayland::Client wayland-protocols-helper)
