@@ -55,9 +55,34 @@ jobs:
     - name: Install dependencies
       shell: pwsh
       run: |
-        vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
-          cspice eigen3 ffmpeg[x264] fmt freetype gettext gperf libepoxy libjpeg-turbo libpng luajit `
-          qtbase
+        $packages = @(
+          'cspice',
+          'eigen3',
+          'ffmpeg[x264]',
+          'fmt',
+          'freetype',
+          'gettext',
+          'gperf',
+          'libepoxy',
+          'libjpeg-turbo',
+          'libpng',
+          'luajit',
+          'qtbase[core,opengl,widgets,freetype,harfbuzz,icu,jpeg,png]'
+        )
+
+        # We treat x86 builds as native, other builds keep host as x64-windows.
+        # Currently this is equivalent to the platform triplet, but this would
+        # differ if we enable arm64-windows builds in future
+
+        if ( '${{matrix.platform}}' -eq 'x86' ) {
+          $hostTriplet = 'x86-windows'
+        } else {
+          $hostTriplet = 'x64-windows'
+        }
+
+        vcpkg --triplet=${{matrix.platform}}-windows `
+              --host-triplet=$hostTriplet `
+              install --recurse @packages
 
     - name: Checkout source code
       uses: actions/checkout@v4
