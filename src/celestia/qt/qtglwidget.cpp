@@ -18,6 +18,7 @@
 #include "qtglwidget.h"
 
 #include <cstdlib>
+#include <utility>
 
 #include <config.h>
 
@@ -51,6 +52,17 @@ constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::Blackbody_D
 constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
 constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
+
+std::pair<float, float>
+mousePosition(const QMouseEvent& m, qreal scale)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    return { static_cast<float>(m.x() * scale), static_cast<float>(m.y() * scale) };
+#else
+    auto position = m.position();
+    return { static_cast<float>(position.x() * scale), static_cast<float>(position.y() * scale) };
+#endif
+}
 
 } // end unnamed namespace
 
@@ -153,8 +165,7 @@ void
 CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     int buttons = 0;
     if (m->buttons() & Qt::LeftButton)
@@ -199,8 +210,7 @@ void
 CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     if (m->button() == Qt::LeftButton)
     {
@@ -223,8 +233,7 @@ void
 CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     if (m->button() == Qt::LeftButton)
     {

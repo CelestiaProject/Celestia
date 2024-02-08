@@ -14,7 +14,11 @@
 #include <memory>
 
 #include <QtGlobal>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QPoint>
+#else
+#include <QPointF>
+#endif
 
 class QMouseEvent;
 class QWidget;
@@ -44,8 +48,14 @@ public:
     void clearButton(int);
 
 protected:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    using PointType = QPoint;
+#else
+    using PointType = QPointF;
+#endif
+
     CelestiaCore *appCore;
-    QPoint        saveCursorPos{};
+    PointType     saveCursorPos{};
     qreal         scale{};
     int           buttons{ 0 };
 
@@ -61,6 +71,9 @@ public:
 
     void move(const QMouseEvent &, qreal) override;
     void finish() override;
+
+private:
+    void restoreCursorPosition() const;
 };
 
 std::unique_ptr<DragHandler> createDragHandler(QWidget *, CelestiaCore *);
