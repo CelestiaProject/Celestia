@@ -144,7 +144,7 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     timeLayout->addWidget(julianDateLabel, 3, 0);
 
     julianDateSpin = new QDoubleSpinBox(this);
-    julianDateSpin->setDecimals(10);
+    julianDateSpin->setDecimals(6);
     julianDateSpin->setMinimum(-1931442.5); // -10000 Jan 01 00:00:00
     julianDateSpin->setMaximum(5373850.5); // 10000 Dec 31 23:59:59
     julianDateSpin->setAccelerated(true);
