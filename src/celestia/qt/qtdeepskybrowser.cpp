@@ -21,6 +21,7 @@
 #include <Eigen/Core>
 
 #include <Qt>
+#include <QtGlobal>
 #include <QAbstractItemView>
 #include <QAbstractTableModel>
 #include <QCheckBox>

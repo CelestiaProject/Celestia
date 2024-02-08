@@ -9,6 +9,7 @@
 
 #include "materialwidget.h"
 
+#include <QtGlobal>
 #include <QColorDialog>
 #include <QDir>
 #include <QGridLayout>

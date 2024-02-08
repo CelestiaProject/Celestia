@@ -543,19 +543,35 @@ ModelViewWidget::setRenderStyle(RenderStyle style)
 void
 ModelViewWidget::mousePressEvent(QMouseEvent *event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_lastMousePosition = event->pos();
     m_mouseDownPosition = event->pos();
+#else
+    m_lastMousePosition = event->position();
+    m_mouseDownPosition = event->position();
+#endif
 }
 
 
 void
 ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     int moveDistance = (event->pos() - m_mouseDownPosition).manhattanLength();
-    if (moveDistance < 3)
+    constexpr int threshold = 3;
+#else
+    qreal moveDistance = (event->position() - m_mouseDownPosition).manhattanLength();
+    constexpr auto threshold = qreal(3);
+#endif
+    if (moveDistance < threshold)
     {
-        float x = static_cast<float>(event->pos().x()) / static_cast<float>(size().width()) * 2.0f - 1.0f;
-        float y = static_cast<float>(event->pos().y()) / static_cast<float>(size().height()) * -2.0f + 1.0f;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto position = event->pos();
+#else
+        auto position = event->position();
+#endif
+        float x = static_cast<float>(position.x()) / static_cast<float>(size().width()) * 2.0f - 1.0f;
+        float y = static_cast<float>(position.y()) / static_cast<float>(size().height()) * -2.0f + 1.0f;
         select(Eigen::Vector2f(x, y));
     }
 }
@@ -585,11 +601,14 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
         rotateLights = true;
     }
 
-    int dx = event->x() - m_lastMousePosition.x();
-    int dy = event->y() - m_lastMousePosition.y();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    auto delta = event->pos() - m_lastMousePosition;
+#else
+    auto delta = event->position() - m_lastMousePosition;
+#endif
 
-    double xrotation = static_cast<double>(dy) / 100.0;
-    double yrotation = static_cast<double>(dx) / 100.0;
+    double xrotation = static_cast<double>(delta.y()) / 100.0;
+    double yrotation = static_cast<double>(delta.x()) / 100.0;
     Eigen::Quaterniond q = Eigen::AngleAxis<double>(-xrotation, Eigen::Vector3d::UnitX()) *
                            Eigen::AngleAxis<double>(-yrotation, Eigen::Vector3d::UnitY());
 
@@ -608,7 +627,11 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
         m_cameraOrientation = r * m_cameraOrientation;
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_lastMousePosition = event->pos();
+#else
+    m_lastMousePosition = event->position();
+#endif
 
     update();
 }
