@@ -262,17 +262,7 @@ jobs:
   build-macos:
     # Because of include path conflicts when both Qt5 and Qt6 are installed,
     # we run these as separate builds
-    name: "macos-latest with ${{matrix.config.qt}}"
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - qt: Qt5
-          gtk: ON
-          sdl: ON
-        - qt: Qt6
-          gtk: OFF
-          sdl: OFF
+    name: "macos-latest"
     runs-on: macos-latest
     steps:
     - name: 'Install dependencies'
@@ -290,18 +280,9 @@ jobs:
                      lua \
                      freetype \
                      libepoxy \
-                     libavif
-        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
-          brew install qt@5
-        else
-          brew install qt@6
-        fi
-        if [ "${{matrix.config.gtk}}" = "ON" ]; then
-          brew install gtk+ gtkglext
-        fi
-        if [ "${{matrix.config.sdl}}" = "ON" ]; then
-          brew install sdl2
-        fi
+                     libavif \
+                     qt@6 \
+                     sdl2
 
     - name: 'Checkout source code'
       uses: actions/checkout@v4
@@ -310,26 +291,21 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
-        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
-          UseQt5=ON
-        else
-          UseQt6=ON
-        fi
-        cmake -B ${{github.workspace}}/build      \
-              -G Ninja                            \
-              -DENABLE_GLES=OFF                   \
-              -DENABLE_SPICE=ON                   \
-              -DENABLE_TOOLS=OFF                  \
-              -DENABLE_TESTS=ON                   \
-              -DENABLE_SDL=${{matrix.config.sdl}} \
-              -DENABLE_GTK=${{matrix.config.gtk}} \
-              -DUSE_GTK3=OFF                      \
-              -DENABLE_QT5=${UseQt5:OFF}          \
-              -DENABLE_QT6=${UseQt6:OFF}          \
-              -DUSE_WAYLAND=OFF                   \
-              -DENABLE_FFMPEG=ON                  \
-              -DENABLE_LIBAVIF=ON                 \
-              -DENABLE_MINIAUDIO=ON               \
+        cmake -B ${{github.workspace}}/build \
+              -G Ninja                       \
+              -DENABLE_GLES=OFF              \
+              -DENABLE_SPICE=ON              \
+              -DENABLE_TOOLS=OFF             \
+              -DENABLE_TESTS=ON              \
+              -DENABLE_SDL=ON                \
+              -DENABLE_GTK=OFF               \
+              -DUSE_GTK3=OFF                 \
+              -DENABLE_QT5=OFF               \
+              -DENABLE_QT6=ON                \
+              -DUSE_WAYLAND=OFF              \
+              -DENABLE_FFMPEG=ON             \
+              -DENABLE_LIBAVIF=ON            \
+              -DENABLE_MINIAUDIO=ON          \
               -DUSE_ICU=OFF
 
     - name: Build
