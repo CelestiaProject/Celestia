@@ -1,6 +1,6 @@
 // logger.h
 //
-// Copyright (C) 2021, Celestia Development Team
+// Copyright (C) 2021-present, Celestia Development Team
 //
 // Logging functions.
 //
@@ -11,20 +11,17 @@
 
 #pragma once
 
+#include <celcompat/filesystem.h>
+#include <fmt/format.h>
 #include <iosfwd>
 #include <string>
+#include <string_view>
 
-#include <fmt/format.h>
-
-#include <celcompat/filesystem.h>
-
-template <>
-struct fmt::formatter<fs::path> : formatter<std::string>
+template<> struct fmt::formatter<fs::path> : formatter<std::string>
 {
-    template <typename FormatContext>
-    auto format(const fs::path &path, FormatContext &ctx)
+    template<typename FormatContext> auto format(const fs::path &path, FormatContext &ctx)
     {
-        return formatter<std::string>::format(path.string(), ctx);
+        return formatter<std::string>::format(path.u8string(), ctx);
     }
 };
 
@@ -42,91 +39,111 @@ enum class Level
 
 class Logger
 {
- public:
+public:
     using Stream = std::basic_ostream<char>;
 
+    /** Create a default logger with Info verbocity writing to std::clog and std::cerr */
     Logger();
-    Logger(Level level, Stream &log, Stream &err) :
-        m_log(log),
-        m_err(err),
-        m_level(level)
-    {}
 
-    void setLevel(Level level)
-    {
-        m_level = level;
-    }
+    /**
+     * Create a logger with custom verbocity and output streams
+     * @param level verbosibility level
+     * @param log stream used to output normal messages
+     * @param err stream used to output errors, warnings and debug messages
+     */
+    Logger(Level level, Stream &log, Stream &err);
 
-    template <typename... Args> inline void
-    debug(const char *format, const Args&... args) const;
+    /**
+     * Set verbocity level
+     *
+     * @param level verbosibility level
+     */
+    void setLevel(Level level);
 
-    template <typename... Args> inline void
-    info(const char *format, const Args&... args) const;
+    template<typename... Args>
+    inline void debug(std::string_view format, const Args &...args) const;
 
-    template <typename... Args> inline void
-    verbose(const char *format, const Args&... args) const;
+    template<typename... Args>
+    inline void info(std::string_view format, const Args &...args) const;
 
-    template <typename... Args> inline void
-    warn(const char *format, const Args&... args) const;
+    template<typename... Args>
+    inline void verbose(std::string_view format, const Args &...args) const;
 
-    template <typename... Args> inline void
-    error(const char *format, const Args&... args) const;
+    template<typename... Args>
+    inline void warn(std::string_view format, const Args &...args) const;
 
-    template <typename... Args> void
-    log(Level, const char *format, const Args&... args) const;
+    template<typename... Args>
+    inline void error(std::string_view format, const Args &...args) const;
 
-    static Logger* g_logger;
+    template<typename... Args>
+    void log(Level, std::string_view format, const Args &...args) const;
 
- private:
-    void vlog(Level level, fmt::string_view format, fmt::format_args args) const;
+private:
+    void vlog(Level level, std::string_view format, fmt::format_args args) const;
 
     Stream &m_log;
     Stream &m_err;
-    Level   m_level { Level::Info };
+    Level   m_level;
 };
 
-template <typename... Args> void
-Logger::log(Level level, const char *format, const Args&... args) const
+template<typename... Args> void
+Logger::log(Level level, std::string_view format, const Args &...args) const
 {
     if (level <= m_level)
-        vlog(level, fmt::string_view(format), fmt::make_format_args(args...));
+        vlog(level, format, fmt::make_format_args(args...));
 }
 
-template <typename... Args> void
-Logger::debug(const char *format, const Args&... args) const
+template<typename... Args> void
+Logger::debug(std::string_view format, const Args &...args) const
 {
     log(Level::Debug, format, args...);
 }
 
-template <typename... Args> inline void
-Logger::info(const char *format, const Args&... args) const
+template<typename... Args> inline void
+Logger::info(std::string_view format, const Args &...args) const
 {
     log(Level::Info, format, args...);
 }
 
-template <typename... Args> inline void
-Logger::verbose(const char *format, const Args&... args) const
+template<typename... Args> inline void
+Logger::verbose(std::string_view format, const Args &...args) const
 {
     log(Level::Verbose, format, args...);
 }
 
-template <typename... Args> inline void
-Logger::warn(const char *format, const Args&... args) const
+template<typename... Args> inline void
+Logger::warn(std::string_view format, const Args &...args) const
 {
     log(Level::Warning, format, args...);
 }
 
-template <typename... Args> inline void
-Logger::error(const char *format, const Args&... args) const
+template<typename... Args> inline void
+Logger::error(std::string_view format, const Args &...args) const
 {
     log(Level::Error, format, args...);
 }
 
-Logger* GetLogger();
-Logger* CreateLogger(Level level = Level::Info);
-Logger* CreateLogger(Level level,
-                     Logger::Stream &log,
-                     Logger::Stream &err);
+/** Return a pointer to the default global Logger instance */
+Logger *GetLogger();
+
+/**
+ * Initiliaze the default global Logger instance writing to std::clog and std::cerr
+ *
+ * @param level verbosibility level
+ * @return pointer to the default global Logger instance
+ */
+Logger *CreateLogger(Level level = Level::Info);
+
+/**
+ * Initiliaze the default global Logger instance writing to custom streams
+ *
+ * @param level verbosibility level
+ * @param log stream used to output normal messages
+ * @param err stream used to output errors, warnings and debug messages
+*/
+Logger *CreateLogger(Level level, Logger::Stream &log, Logger::Stream &err);
+
+/** Destroy the default global Logger instance */
 void DestroyLogger();
 
 } // end namespace celestia::util

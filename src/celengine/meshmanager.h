@@ -97,7 +97,7 @@ inline bool operator<(const GeometryInfo::ResourceKey& k0,
            std::tie(k1.resolvedPath, k1.center.x(), k1.center.y(), k1.center.z(), k1.scale, k1.isNormalized);
 }
 
-using GeometryManager = ResourceManager<GeometryInfo>;
+using GeometryManager = ResourceManager<GeometryInfo, true>;
 
 GeometryManager* GetGeometryManager();
 

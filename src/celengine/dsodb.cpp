@@ -230,7 +230,7 @@ bool DSODatabase::load(std::istream& in, const fs::path& resourcePath)
         const Hash* objParams = objParamsValue.getHash();
         if (objParams == nullptr)
         {
-            GetLogger()->error("Error parsing deep sky catalog entry {}\n", objName.c_str());
+            GetLogger()->error("Error parsing deep sky catalog entry {}\n", objName);
             return false;
         }
 
