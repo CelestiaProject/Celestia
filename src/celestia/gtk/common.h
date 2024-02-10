@@ -13,16 +13,15 @@
 #pragma once
 
 #include <config.h>
+#include <array>
 #include <gtk/gtk.h>
-
-#ifdef GNOME
-#include <gconf/gconf-client.h>
-#endif /* GNOME */
 
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 
+namespace celestia::gtk
+{
 
 typedef struct _AppData AppData;
 struct _AppData {
@@ -48,11 +47,7 @@ struct _AppData {
     GtkActionGroup* agAmbient;
 
     /* Settings */
-    #ifdef GNOME
-    GConfClient* client;
-    #else
     GKeyFile* settingsFile;
-    #endif /* GNOME */
 
     /* Ready to render? */
     gboolean bReady;
@@ -96,9 +91,8 @@ void setSaneWinSize(AppData* app, int x, int y);
 void setSaneWinPosition(AppData* app, int x, int y);
 void setDefaultRenderFlags(AppData* app);
 
-
 /* Constants used throughout */
-const char * const monthOptions[] =
+constexpr inline std::array monthOptions
 {
     "January",
     "February",
@@ -112,17 +106,17 @@ const char * const monthOptions[] =
     "October",
     "November",
     "December",
-    NULL
+    static_cast<const char*>(nullptr),
 };
 
-static const float amLevels[] =
+constexpr inline std::array<float, 3> amLevels
 {
-    0.0,
-    0.1,
-    0.25
+    0.0f,
+    0.1f,
+    0.25f,
 };
 
-static const int resolutions[] =
+constexpr inline std::array resolutions =
 {
     0,        /* Must start with 0 */
     640,
@@ -136,4 +130,6 @@ static const int resolutions[] =
 };
 
 /* This is the spacing used for widgets throughout the program */
-#define CELSPACING 8
+constexpr inline gint CELSPACING = 8;
+
+} // end namespace celestia::gtk

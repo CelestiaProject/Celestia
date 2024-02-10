@@ -16,6 +16,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Entry Function */
 void dialogSetTime(AppData* app);
+
+} // end namespace celestia::gtk

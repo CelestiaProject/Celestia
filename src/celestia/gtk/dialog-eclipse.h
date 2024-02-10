@@ -17,65 +17,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Entry Function */
 void dialogEclipseFinder(AppData* app);
 
-
-/* Local Data Structures */
-/* Date selection data type */
-typedef struct _selDate selDate;
-struct _selDate {
-    int year;
-    int month;
-    int day;
-};
-
-typedef struct _EclipseData EclipseData;
-struct _EclipseData {
-    AppData* app;
-
-    /* Start Time */
-    selDate* d1;
-
-    /* End Time */
-    selDate* d2;
-
-    int type;
-    const char* body;
-    GtkTreeSelection* sel;
-
-    GtkWidget *eclipseList;
-    GtkListStore *eclipseListStore;
-
-    GtkDialog* window;
-};
-
-
-const char * const eclipseTitles[] =
-{
-    "Planet",
-    "Satellite",
-    "Date",
-    "Start",
-    "End",
-    NULL
-};
-
-const char * const eclipseTypeTitles[] =
-{
-    "solar",
-    "moon",
-    NULL
-};
-
-const char * const eclipsePlanetTitles[] =
-{
-    "Earth",
-    "Jupiter",
-    "Saturn",
-    "Uranus",
-    "Neptune",
-    "Pluto",
-    NULL
-};
+} // end namespace celestia::gtk

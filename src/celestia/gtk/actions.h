@@ -16,6 +16,8 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Main Actions */
 void actionCopyURL(GtkAction*, AppData*);
@@ -133,10 +135,7 @@ void resyncStarStyleActions(AppData* app);
 void resyncGalaxyGainActions(AppData* app);
 void resyncTextureResolutionActions(AppData* app);
 
-
 /* Information for the about box */
-#ifdef GNOME
-#define FRONTEND "GNOME"
-#else
 #define FRONTEND "GTK+"
-#endif
+
+} // end namespace celestia::gtk

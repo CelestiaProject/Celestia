@@ -14,6 +14,7 @@
 
 #include <cinttypes>
 #include <cstdint>
+#include <cstdio>
 #include <string_view>
 #include <system_error>
 #include <vector>
@@ -32,8 +33,8 @@
 #include "actions.h"
 #include "common.h"
 
-using namespace std;
-namespace engine = celestia::engine;
+namespace celestia::gtk
+{
 
 namespace
 {
@@ -57,7 +58,8 @@ constexpr std::array<const char*, 5> sbRadioLabels
 };
 
 /* Local Data Structures */
-struct sbData {
+struct sbData
+{
     explicit sbData(AppData*);
 
     AppData* app;
@@ -75,9 +77,9 @@ sbData::sbData(AppData* appData) :
 {
 }
 
-
 /* HELPER: Clear and Add stars to the starListStore */
-static void addStars(sbData* sb)
+void
+addStars(sbData* sb)
 {
     const char *values[5];
     GtkTreeIter iter;
@@ -103,13 +105,13 @@ static void addStars(sbData* sb)
         values[0] = g_strdup(ReplaceGreekLetterAbbr((stardb->getStarName(*record.star, true))).c_str());
 
         /* Calculate distance to star */
-        sprintf(buf, " %.3f ", record.distance);
+        std::sprintf(buf, " %.3f ", record.distance);
         values[1] = g_strdup(buf);
 
-        sprintf(buf, " %.2f ", record.appMag);
+        std::sprintf(buf, " %.2f ", record.appMag);
         values[2] = g_strdup(buf);
 
-        sprintf(buf, " %.2f ", record.star->getAbsoluteMagnitude());
+        std::sprintf(buf, " %.2f ", record.star->getAbsoluteMagnitude());
         values[3] = g_strdup(buf);
 
         gtk_list_store_append(sb->starListStore, &iter);
@@ -123,9 +125,9 @@ static void addStars(sbData* sb)
     }
 }
 
-
 /* CALLBACK: When Star is selected in Star Browser */
-static void listStarSelect(GtkTreeSelection* sel, AppData* app)
+void
+listStarSelect(GtkTreeSelection* sel, AppData* app)
 {
     GValue value = { 0, {{0}} }; /* Initialize GValue to 0 */
     GtkTreeIter iter;
@@ -143,16 +145,16 @@ static void listStarSelect(GtkTreeSelection* sel, AppData* app)
         app->simulation->setSelection(Selection(const_cast<Star*>(record->star)));
 }
 
-
 /* CALLBACK: Refresh button is pressed. */
-static void refreshBrowser(GtkWidget*, sbData* sb)
+void
+refreshBrowser(GtkWidget*, sbData* sb)
 {
     addStars(sb);
 }
 
-
 /* CALLBACK: One of the RadioButtons is pressed */
-static void radioClicked(GtkButton* r, gpointer choice)
+void
+radioClicked(GtkButton* r, gpointer choice)
 {
     sbData* sb = (sbData*)g_object_get_data(G_OBJECT(r), "data");
     gint selection = GPOINTER_TO_INT(choice);
@@ -179,16 +181,16 @@ static void radioClicked(GtkButton* r, gpointer choice)
             return;
     }
 
-    refreshBrowser(NULL, sb);
+    refreshBrowser(nullptr, sb);
 }
 
-
 /* CALLBACK: Maximum stars EntryBox changed. */
-static void listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, sbData* sb)
+void
+listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, sbData* sb)
 {
     /* If not called by the slider, but rather by user.
        Prevents infinite recursion. */
-    if (event != NULL)
+    if (event != nullptr)
     {
         std::string_view entryText = gtk_entry_get_text(entry);
         std::uint32_t numListStars;
@@ -198,7 +200,7 @@ static void listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, sbData* s
             if (!sb->browser.setSize(numListStars))
             {
                 /* Call self to set text (NULL event = no recursion) */
-                listStarEntryChange(entry, NULL, sb);
+                listStarEntryChange(entry, nullptr, sb);
             }
 
             gtk_range_set_value(GTK_RANGE(sb->scale), static_cast<gdouble>(numListStars));
@@ -206,31 +208,31 @@ static void listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, sbData* s
         else
         {
             /* Call self to set text (NULL event = no recursion) */
-            listStarEntryChange(entry, NULL, sb);
+            listStarEntryChange(entry, nullptr, sb);
         }
     }
 
     /* Update value of this box */
     char stars[4];
-    sprintf(stars, "%" PRIu32, sb->browser.size());
+    std::sprintf(stars, "%" PRIu32, sb->browser.size());
     gtk_entry_set_text(entry, stars);
 }
 
-
 /* CALLBACK: Maximum stars RangeSlider changed. */
-static void listStarSliderChange(GtkRange *range, sbData* sb)
+void
+listStarSliderChange(GtkRange *range, sbData* sb)
 {
     /* Update the value of the text entry box */
     sb->browser.setSize(static_cast<std::uint32_t>(gtk_range_get_value(GTK_RANGE(range))));
-    listStarEntryChange(GTK_ENTRY(sb->entry), NULL, sb);
+    listStarEntryChange(GTK_ENTRY(sb->entry), nullptr, sb);
 
     /* Refresh the browser listbox */
-    refreshBrowser(NULL, sb);
+    refreshBrowser(nullptr, sb);
 }
 
-
 /* CALLBACK: Destroy Window */
-static void starDestroy(GtkWidget* w, gint responseId, sbData* sb)
+void
+starDestroy(GtkWidget* w, gint responseId, sbData* sb)
 {
     gtk_widget_destroy(GTK_WIDGET(w));
 
@@ -238,12 +240,11 @@ static void starDestroy(GtkWidget* w, gint responseId, sbData* sb)
         delete sb;
 }
 
-
 } // end unnamed namespace
 
-
 /* ENTRY: Navigation -> Star Browser... */
-void dialogStarBrowser(AppData* app)
+void
+dialogStarBrowser(AppData* app)
 {
     auto sb = new sbData(app);
 
@@ -251,14 +252,14 @@ void dialogStarBrowser(AppData* app)
                                                      GTK_WINDOW(app->mainWindow),
                                                      GTK_DIALOG_DESTROY_WITH_PARENT,
                                                      GTK_STOCK_OK, GTK_RESPONSE_OK,
-                                                     NULL);
+                                                     nullptr);
     app->simulation->setSelection(Selection());
 
     /* Star System Browser */
     GtkWidget *mainbox = gtk_dialog_get_content_area(GTK_DIALOG(browser));
     gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
 
-    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scrolled_win = gtk_scrolled_window_new (nullptr, nullptr);
 
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_win),
                                    GTK_POLICY_AUTOMATIC,
@@ -284,11 +285,11 @@ void dialogStarBrowser(AppData* app)
     /* Add the columns */
     for (int i=0; i<5; i++) {
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes (sbTitles[i], renderer, "text", i, NULL);
+        column = gtk_tree_view_column_new_with_attributes (sbTitles[i], renderer, "text", i, nullptr);
         if (i > 0 && i < 4) {
             /* Right align */
             gtk_tree_view_column_set_alignment(column, 1.0);
-            g_object_set(G_OBJECT(renderer), "xalign", 1.0, NULL);
+            g_object_set(G_OBJECT(renderer), "xalign", 1.0, nullptr);
         }
         gtk_tree_view_append_column(GTK_TREE_VIEW(starList), column);
     }
@@ -327,13 +328,13 @@ void dialogStarBrowser(AppData* app)
     if (sb->browser.size() == engine::StarBrowser::MinListStars)
     {
         /* Force update manually (scale won't trigger event) */
-        listStarEntryChange(GTK_ENTRY(sb->entry), NULL, sb);
-        refreshBrowser(NULL, sb);
+        listStarEntryChange(GTK_ENTRY(sb->entry), nullptr, sb);
+        refreshBrowser(nullptr, sb);
     }
 
     /* Radio Buttons */
     vbox = gtk_vbox_new(TRUE, 0);
-    makeRadioItems(sbRadioLabels.data(), vbox, G_CALLBACK(radioClicked), NULL, sb);
+    makeRadioItems(sbRadioLabels.data(), vbox, G_CALLBACK(radioClicked), nullptr, sb);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
     /* Common Buttons */
@@ -351,3 +352,5 @@ void dialogStarBrowser(AppData* app)
     gtk_widget_set_size_request(browser, -1, 400); /* Absolute Size, urghhh */
     gtk_widget_show_all(browser);
 }
+
+} // end namespace celestia::gtk

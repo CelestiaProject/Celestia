@@ -10,6 +10,10 @@
  *  $Id: dialog-goto.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
+#include <cstdio>
+
+#include <Eigen/Core>
+
 #include <gtk/gtk.h>
 
 #include <celengine/body.h>
@@ -19,22 +23,134 @@
 #include "dialog-goto.h"
 #include "common.h"
 
-using namespace Eigen;
+namespace celestia::gtk
+{
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
+namespace
+{
 
-/* Declarations: Callbacks */
-static int changeGotoUnits(GtkButton* w, gpointer choice);
-static void responseGotoObject(GtkDialog* w, gint response, gotoObjectData* d);
+/* Local Data Structures */
+typedef struct _gotoObjectData gotoObjectData;
+struct _gotoObjectData {
+    AppData* app;
 
-/* Declarations: Helpers */
-static gboolean GetEntryFloat(GtkWidget* w, float& f);
-static void GotoObject(gotoObjectData* gotoObjectDlg);
+    GtkWidget* dialog;
+    GtkWidget* nameEntry;
+    GtkWidget* latEntry;
+    GtkWidget* longEntry;
+    GtkWidget* distEntry;
 
+    int units;
+};
+
+constexpr std::array unitLabels
+{
+    "km",
+    "radii",
+    "au",
+    static_cast<const char*>(nullptr),
+};
+
+/* HELPER: Get the float value from one of the GtkEntrys */
+gboolean
+GetEntryFloat(GtkWidget* w, float& f)
+{
+    GtkEntry* entry = GTK_ENTRY(w);
+    bool tmp;
+    if (entry == nullptr)
+        return false;
+
+    gchar* text = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+    f = 0.0;
+    if (text == nullptr)
+        return false;
+
+    tmp = std::sscanf(text, " %f", &f) == 1;
+    g_free(text);
+    return tmp;
+}
+
+/* HELPER: Goes to the object specified by gotoObjectData */
+void
+GotoObject(gotoObjectData* gotoObjectDlg)
+{
+    const gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
+
+    if (objectName != nullptr)
+    {
+        Simulation* simulation = gotoObjectDlg->app->simulation;
+        Selection sel = simulation->findObjectFromPath(objectName);
+
+        if (!sel.empty())
+        {
+            simulation->setSelection(sel);
+            simulation->follow();
+
+            auto distance = static_cast<float>(sel.radius() * 5.0f);
+            if (GetEntryFloat(gotoObjectDlg->distEntry, distance))
+            {
+                /* Adjust for km (0), radii (1), au (2) */
+                if (gotoObjectDlg->units == 2)
+                    distance = astro::AUtoKilometers(distance);
+                else if (gotoObjectDlg->units == 1)
+                    distance = distance * (float) sel.radius();
+
+                distance += (float) sel.radius();
+            }
+
+            float longitude, latitude;
+            if (GetEntryFloat(gotoObjectDlg->latEntry, latitude) &&
+                GetEntryFloat(gotoObjectDlg->longEntry, longitude))
+            {
+                simulation->gotoSelectionLongLat(5.0,
+                                                 distance,
+                                                 math::degToRad(longitude),
+                                                 math::degToRad(latitude),
+                                                 Eigen::Vector3f::UnitY());
+            }
+            else
+            {
+                simulation->gotoSelection(5.0,
+                                          distance,
+                                          Eigen::Vector3f::UnitY(),
+                                          ObserverFrame::ObserverLocal);
+            }
+        }
+    }
+}
+
+/* CALLBACK: for km|radii|au in Goto Object dialog */
+int
+changeGotoUnits(GtkButton* w, gpointer choice)
+{
+    gotoObjectData* data = (gotoObjectData *)g_object_get_data(G_OBJECT(w), "data");
+    gint selection = GPOINTER_TO_INT(choice);
+
+    data->units = selection;
+
+    return TRUE;
+}
+
+/* CALLBACK: response from this dialog.
+ * Need this because gtk_dialog_run produces a modal window. */
+void
+responseGotoObject(GtkDialog* w, gint response, gotoObjectData* d)
+{
+    switch (response) {
+        case GTK_RESPONSE_OK:
+            GotoObject(d);
+            break;
+        case GTK_RESPONSE_CLOSE:
+            gtk_widget_destroy(GTK_WIDGET(w));
+            g_free(d);
+    }
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Navigation->Goto Object */
-void dialogGotoObject(AppData* app)
+void
+dialogGotoObject(AppData* app)
 {
     gotoObjectData *data = g_new0(gotoObjectData, 1);
     data->app = app;
@@ -46,17 +162,17 @@ void dialogGotoObject(AppData* app)
                                                GTK_RESPONSE_OK,
                                                GTK_STOCK_CLOSE,
                                                GTK_RESPONSE_CLOSE,
-                                               NULL);
+                                               nullptr);
     data->nameEntry = gtk_entry_new();
     data->latEntry = gtk_entry_new();
     data->longEntry = gtk_entry_new();
     data->distEntry = gtk_entry_new();
 
-    if (data->dialog == NULL ||
-        data->nameEntry == NULL ||
-        data->latEntry == NULL ||
-        data->longEntry == NULL ||
-        data->distEntry == NULL)
+    if (data->dialog == nullptr ||
+        data->nameEntry == nullptr ||
+        data->latEntry == nullptr ||
+        data->longEntry == nullptr ||
+        data->distEntry == nullptr)
     {
         /* Potential memory leak here ... */
         return;
@@ -67,15 +183,15 @@ void dialogGotoObject(AppData* app)
     app->simulation->getSelectionLongLat(distance, longitude, latitude);
 
     /* Display information in format appropriate for object */
-    if (app->simulation->getSelection().body() != NULL)
+    if (app->simulation->getSelection().body() != nullptr)
     {
         char temp[20];
         distance = distance - (double) app->simulation->getSelection().body()->getRadius();
-        sprintf(temp, "%.1f", (float)distance);
+        std::sprintf(temp, "%.1f", (float)distance);
         gtk_entry_set_text(GTK_ENTRY(data->distEntry), temp);
-        sprintf(temp, "%.5f", (float)longitude);
+        std::sprintf(temp, "%.5f", (float)longitude);
         gtk_entry_set_text(GTK_ENTRY(data->longEntry), temp);
-        sprintf(temp, "%.5f", (float)latitude);
+        std::sprintf(temp, "%.5f", (float)latitude);
         gtk_entry_set_text(GTK_ENTRY(data->latEntry), temp);
         gtk_entry_set_text(GTK_ENTRY(data->nameEntry), (char*) app->simulation->getSelection().body()->getName().c_str());
     }
@@ -83,9 +199,9 @@ void dialogGotoObject(AppData* app)
     GtkWidget* vbox = gtk_dialog_get_content_area(GTK_DIALOG(data->dialog));
     gtk_container_set_border_width(GTK_CONTAINER(vbox), CELSPACING);
 
-    GtkWidget* align = NULL;
-    GtkWidget* hbox = NULL;
-    GtkWidget* label = NULL;
+    GtkWidget* align = nullptr;
+    GtkWidget* hbox = nullptr;
+    GtkWidget* label = nullptr;
 
     /* Object name label and entry */
     align = gtk_alignment_new(1, 0, 0, 0);
@@ -125,7 +241,7 @@ void dialogGotoObject(AppData* app)
     /* Distance Options */
     data->units = 0;
     hbox = gtk_hbox_new(FALSE, CELSPACING);
-    makeRadioItems(unitLabels, hbox, G_CALLBACK(changeGotoUnits), NULL, data);
+    makeRadioItems(unitLabels.data(), hbox, G_CALLBACK(changeGotoUnits), nullptr, data);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 
     g_signal_connect(data->dialog, "response",
@@ -134,97 +250,4 @@ void dialogGotoObject(AppData* app)
     gtk_widget_show_all(data->dialog);
 }
 
-
-/* CALLBACK: for km|radii|au in Goto Object dialog */
-static int changeGotoUnits(GtkButton* w, gpointer choice)
-{
-    gotoObjectData* data = (gotoObjectData *)g_object_get_data(G_OBJECT(w), "data");
-    gint selection = GPOINTER_TO_INT(choice);
-
-    data->units = selection;
-
-    return TRUE;
-}
-
-
-/* CALLBACK: response from this dialog.
- * Need this because gtk_dialog_run produces a modal window. */
-static void responseGotoObject(GtkDialog* w, gint response, gotoObjectData* d)
-{
-    switch (response) {
-        case GTK_RESPONSE_OK:
-            GotoObject(d);
-            break;
-        case GTK_RESPONSE_CLOSE:
-            gtk_widget_destroy(GTK_WIDGET(w));
-            g_free(d);
-    }
-}
-
-
-/* HELPER: Get the float value from one of the GtkEntrys */
-static gboolean GetEntryFloat(GtkWidget* w, float& f)
-{
-    GtkEntry* entry = GTK_ENTRY(w);
-    bool tmp;
-    if (entry == NULL)
-        return false;
-
-    gchar* text = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-    f = 0.0;
-    if (text == NULL)
-        return false;
-
-    tmp = sscanf(text, " %f", &f) == 1;
-    g_free(text);
-    return tmp;
-}
-
-
-/* HELPER: Goes to the object specified by gotoObjectData */
-static void GotoObject(gotoObjectData* gotoObjectDlg)
-{
-    const gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
-
-    if (objectName != NULL)
-    {
-        Simulation* simulation = gotoObjectDlg->app->simulation;
-        Selection sel = simulation->findObjectFromPath(objectName);
-
-        if (!sel.empty())
-        {
-            simulation->setSelection(sel);
-            simulation->follow();
-
-            float distance = (float) (sel.radius() * 5.0f);
-            if (GetEntryFloat(gotoObjectDlg->distEntry, distance))
-            {
-                /* Adjust for km (0), radii (1), au (2) */
-                if (gotoObjectDlg->units == 2)
-                    distance = astro::AUtoKilometers(distance);
-                else if (gotoObjectDlg->units == 1)
-                    distance = distance * (float) sel.radius();
-
-                distance += (float) sel.radius();
-            }
-
-            float longitude, latitude;
-            if (GetEntryFloat(gotoObjectDlg->latEntry, latitude) &&
-                GetEntryFloat(gotoObjectDlg->longEntry, longitude))
-            {
-                simulation->gotoSelectionLongLat(5.0,
-                                                 distance,
-                                                 math::degToRad(longitude),
-                                                 math::degToRad(latitude),
-                                                 Vector3f::UnitY());
-            }
-            else
-            {
-                simulation->gotoSelection(5.0,
-                                          distance,
-                                          Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
-            }
-        }
-    }
-}
+} // end namespace celestia::gtk

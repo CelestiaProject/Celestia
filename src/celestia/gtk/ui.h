@@ -12,182 +12,193 @@
 
 #pragma once
 
+#include <array>
+
 #include <gtk/gtk.h>
 
 #include "actions.h"
+
+namespace celestia::gtk
+{
 
 /* By default all action widgets are turned off. They will be set later when
  * they are being synchronized with settings and with the core. */
 
 /* Regular Actions */
-static const GtkActionEntry actionsPlain[] = {
-    { "FileMenu", NULL, "_File", NULL, NULL, NULL },
-    { "CopyURL", GTK_STOCK_COPY, "Copy _URL", NULL, NULL, G_CALLBACK(actionCopyURL) },
-    { "OpenURL", NULL, "Open UR_L", NULL, NULL, G_CALLBACK(actionOpenURL) },
-    { "OpenScript", GTK_STOCK_OPEN, "_Open Script...", NULL, NULL, G_CALLBACK(actionOpenScript) },
-    { "CaptureImage", GTK_STOCK_SAVE_AS, "_Capture Image...", NULL, NULL, G_CALLBACK(actionCaptureImage) },
-    { "CaptureMovie", GTK_STOCK_SAVE_AS, "Capture _Movie...", NULL, NULL, G_CALLBACK(actionCaptureMovie) },
-    { "RunDemo", GTK_STOCK_EXECUTE, "Run _Demo", NULL, NULL, G_CALLBACK(actionRunDemo) },
-    { "Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", NULL, G_CALLBACK(actionQuit) },
+const inline std::array<GtkActionEntry, 50> actionsPlain
+{
+    GtkActionEntry{ "FileMenu", nullptr, "_File", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "CopyURL", GTK_STOCK_COPY, "Copy _URL", nullptr, nullptr, G_CALLBACK(actionCopyURL) },
+    GtkActionEntry{ "OpenURL", nullptr, "Open UR_L", nullptr, nullptr, G_CALLBACK(actionOpenURL) },
+    GtkActionEntry{ "OpenScript", GTK_STOCK_OPEN, "_Open Script...", nullptr, nullptr, G_CALLBACK(actionOpenScript) },
+    GtkActionEntry{ "CaptureImage", GTK_STOCK_SAVE_AS, "_Capture Image...", nullptr, nullptr, G_CALLBACK(actionCaptureImage) },
+    GtkActionEntry{ "CaptureMovie", GTK_STOCK_SAVE_AS, "Capture _Movie...", nullptr, nullptr, G_CALLBACK(actionCaptureMovie) },
+    GtkActionEntry{ "RunDemo", GTK_STOCK_EXECUTE, "Run _Demo", nullptr, nullptr, G_CALLBACK(actionRunDemo) },
+    GtkActionEntry{ "Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", nullptr, G_CALLBACK(actionQuit) },
 
-    { "NavigationMenu", NULL, "_Navigation", NULL, NULL, NULL },
-    { "SelectSol", GTK_STOCK_HOME, "Select _Sol", "H", NULL, G_CALLBACK(actionSelectSol) },
-    { "TourGuide", NULL, "Tour G_uide...", NULL, NULL, G_CALLBACK(actionTourGuide) },
-    { "SearchObject", GTK_STOCK_FIND, "Search for _Object...", NULL, NULL, G_CALLBACK(actionSearchObject) },
-    { "GotoObject", NULL, "Go to Object...", NULL, NULL, G_CALLBACK(actionGotoObject) },
-    { "CenterSelection", NULL, "_Center Selection", "c", NULL, G_CALLBACK(actionCenterSelection) },
-    { "GotoSelection", GTK_STOCK_JUMP_TO, "_Go to Selection", "G", NULL, G_CALLBACK(actionGotoSelection) },
-    { "FollowSelection", NULL, "_Follow Selection", "F", NULL, G_CALLBACK(actionFollowSelection) },
-    { "SyncSelection", NULL, "S_ync Orbit Selection", "Y", NULL, G_CALLBACK(actionSyncSelection) },
-    { "TrackSelection", NULL, "_Track Selection", "T", NULL, G_CALLBACK(actionTrackSelection) },
-    { "SystemBrowser", NULL, "Solar System _Browser...", NULL, NULL, G_CALLBACK(actionSystemBrowser) },
-    { "StarBrowser", NULL, "Star B_rowser...", NULL, NULL, G_CALLBACK(actionStarBrowser) },
-    { "EclipseFinder", NULL, "_Eclipse Finder...", NULL, NULL, G_CALLBACK(actionEclipseFinder) },
+    GtkActionEntry{ "NavigationMenu", nullptr, "_Navigation", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "SelectSol", GTK_STOCK_HOME, "Select _Sol", "H", nullptr, G_CALLBACK(actionSelectSol) },
+    GtkActionEntry{ "TourGuide", nullptr, "Tour G_uide...", nullptr, nullptr, G_CALLBACK(actionTourGuide) },
+    GtkActionEntry{ "SearchObject", GTK_STOCK_FIND, "Search for _Object...", nullptr, nullptr, G_CALLBACK(actionSearchObject) },
+    GtkActionEntry{ "GotoObject", nullptr, "Go to Object...", nullptr, nullptr, G_CALLBACK(actionGotoObject) },
+    GtkActionEntry{ "CenterSelection", nullptr, "_Center Selection", "c", nullptr, G_CALLBACK(actionCenterSelection) },
+    GtkActionEntry{ "GotoSelection", GTK_STOCK_JUMP_TO, "_Go to Selection", "G", nullptr, G_CALLBACK(actionGotoSelection) },
+    GtkActionEntry{ "FollowSelection", nullptr, "_Follow Selection", "F", nullptr, G_CALLBACK(actionFollowSelection) },
+    GtkActionEntry{ "SyncSelection", nullptr, "S_ync Orbit Selection", "Y", nullptr, G_CALLBACK(actionSyncSelection) },
+    GtkActionEntry{ "TrackSelection", nullptr, "_Track Selection", "T", nullptr, G_CALLBACK(actionTrackSelection) },
+    GtkActionEntry{ "SystemBrowser", nullptr, "Solar System _Browser...", nullptr, nullptr, G_CALLBACK(actionSystemBrowser) },
+    GtkActionEntry{ "StarBrowser", nullptr, "Star B_rowser...", nullptr, nullptr, G_CALLBACK(actionStarBrowser) },
+    GtkActionEntry{ "EclipseFinder", nullptr, "_Eclipse Finder...", nullptr, nullptr, G_CALLBACK(actionEclipseFinder) },
 
-    { "TimeMenu", NULL, "_Time", NULL, NULL, NULL },
-    { "TimeFaster", NULL, "2x _Faster", "L", NULL, G_CALLBACK(actionTimeFaster) },
-    { "TimeSlower", NULL, "2x _Slower", "K", NULL, G_CALLBACK(actionTimeSlower) },
-    { "TimeFreeze", NULL, "Free_ze", "space", NULL, G_CALLBACK(actionTimeFreeze) },
-    { "TimeReal", NULL, "_Real Time", "backslash", NULL, G_CALLBACK(actionTimeReal) },
-    { "TimeReverse", NULL, "Re_verse Time", "J", NULL, G_CALLBACK(actionTimeReverse) },
-    { "TimeSet", NULL, "Set _Time...", NULL, NULL, G_CALLBACK(actionTimeSet) },
+    GtkActionEntry{ "TimeMenu", nullptr, "_Time", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "TimeFaster", nullptr, "2x _Faster", "L", nullptr, G_CALLBACK(actionTimeFaster) },
+    GtkActionEntry{ "TimeSlower", nullptr, "2x _Slower", "K", nullptr, G_CALLBACK(actionTimeSlower) },
+    GtkActionEntry{ "TimeFreeze", nullptr, "Free_ze", "space", nullptr, G_CALLBACK(actionTimeFreeze) },
+    GtkActionEntry{ "TimeReal", nullptr, "_Real Time", "backslash", nullptr, G_CALLBACK(actionTimeReal) },
+    GtkActionEntry{ "TimeReverse", nullptr, "Re_verse Time", "J", nullptr, G_CALLBACK(actionTimeReverse) },
+    GtkActionEntry{ "TimeSet", nullptr, "Set _Time...", nullptr, nullptr, G_CALLBACK(actionTimeSet) },
     /* "Show Local Time" in toggle actions */
 
-    { "OptionsMenu", NULL, "_Options", NULL, NULL, NULL },
-    { "ViewOptions", GTK_STOCK_PREFERENCES, "View _Options...", NULL, NULL, G_CALLBACK(actionViewOptions) },
-    { "ShowObjectsMenu", NULL, "Show Objects", NULL, NULL, NULL },
-    { "ShowGridsMenu", NULL, "Show Grids", NULL, NULL, NULL },
-    { "ShowLabelsMenu", NULL, "Show Labels", NULL, NULL, NULL },
-    { "ShowOrbitsMenu", NULL, "Show Orbits", NULL, NULL, NULL },
-    { "InfoTextMenu", NULL, "Info Text", NULL, NULL, NULL },
-        /* "Info Text" in radio actions */
-    { "StarStyleMenu", NULL, "Star St_yle", NULL, NULL, NULL },
-        /* "Star Style" in radio actions */
-    { "AmbientLightMenu", NULL, "_Ambient Light", NULL, NULL, NULL },
-        /* "Ambient Light" in radio actions */
-    { "StarsMore", NULL, "_More Stars Visible", "bracketright", NULL, G_CALLBACK(actionStarsMore) },
-    { "StarsFewer", NULL, "_Fewer Stars Visible", "bracketleft", NULL, G_CALLBACK(actionStarsFewer) },
+    GtkActionEntry{ "OptionsMenu", nullptr, "_Options", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "ViewOptions", GTK_STOCK_PREFERENCES, "View _Options...", nullptr, nullptr, G_CALLBACK(actionViewOptions) },
+    GtkActionEntry{ "ShowObjectsMenu", nullptr, "Show Objects", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "ShowGridsMenu", nullptr, "Show Grids", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "ShowLabelsMenu", nullptr, "Show Labels", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "ShowOrbitsMenu", nullptr, "Show Orbits", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "InfoTextMenu", nullptr, "Info Text", nullptr, nullptr, nullptr },
+    /* "Info Text" in radio actions */
+    GtkActionEntry{ "StarStyleMenu", nullptr, "Star St_yle", nullptr, nullptr, nullptr },
+    /* "Star Style" in radio actions */
+    GtkActionEntry{ "AmbientLightMenu", nullptr, "_Ambient Light", nullptr, nullptr, nullptr },
+    /* "Ambient Light" in radio actions */
+    GtkActionEntry{ "StarsMore", nullptr, "_More Stars Visible", "bracketright", nullptr, G_CALLBACK(actionStarsMore) },
+    GtkActionEntry{ "StarsFewer", nullptr, "_Fewer Stars Visible", "bracketleft", nullptr, G_CALLBACK(actionStarsFewer) },
 
-    { "WindowMenu", NULL, "_Window", NULL, NULL, NULL },
-    { "ViewerSize", GTK_STOCK_ZOOM_FIT, "Set Window Size...", NULL, NULL, G_CALLBACK(actionViewerSize) },
+    GtkActionEntry{ "WindowMenu", nullptr, "_Window", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "ViewerSize", GTK_STOCK_ZOOM_FIT, "Set Window Size...", nullptr, nullptr, G_CALLBACK(actionViewerSize) },
     /* "Full Screen" in toggle actions */
-    { "MultiSplitH", NULL, "Split _Horizontally", "<control>R", NULL, G_CALLBACK(actionMultiSplitH) },
-    { "MultiSplitV", NULL, "Split _Vertically", "<control>U", NULL, G_CALLBACK(actionMultiSplitV) },
-    { "MultiCycle", NULL, "Cycle View", "Tab", NULL, G_CALLBACK(actionMultiCycle) },
-    { "MultiDelete", NULL, "_Delete Active View", "Delete", NULL, G_CALLBACK(actionMultiDelete) },
-    { "MultiSingle", NULL, "_Single View", "<control>D", NULL, G_CALLBACK(actionMultiSingle) },
+    GtkActionEntry{ "MultiSplitH", nullptr, "Split _Horizontally", "<control>R", nullptr, G_CALLBACK(actionMultiSplitH) },
+    GtkActionEntry{ "MultiSplitV", nullptr, "Split _Vertically", "<control>U", nullptr, G_CALLBACK(actionMultiSplitV) },
+    GtkActionEntry{ "MultiCycle", nullptr, "Cycle View", "Tab", nullptr, G_CALLBACK(actionMultiCycle) },
+    GtkActionEntry{ "MultiDelete", nullptr, "_Delete Active View", "Delete", nullptr, G_CALLBACK(actionMultiDelete) },
+    GtkActionEntry{ "MultiSingle", nullptr, "_Single View", "<control>D", nullptr, G_CALLBACK(actionMultiSingle) },
     /* "Show Frames" in toggle actions */
     /* "Synchronize Time" in toggle actions */
 
-    { "HelpMenu", NULL, "_Help", NULL, NULL, NULL },
-    { "HelpControls", GTK_STOCK_HELP, "_Controls", NULL, NULL, G_CALLBACK(actionHelpControls) },
+    GtkActionEntry{ "HelpMenu", nullptr, "_Help", nullptr, nullptr, nullptr },
+    GtkActionEntry{ "HelpControls", GTK_STOCK_HELP, "_Controls", nullptr, nullptr, G_CALLBACK(actionHelpControls) },
     #if GTK_CHECK_VERSION(2, 7, 0)
-    { "HelpOpenGL", GTK_STOCK_INFO, "OpenGL _Info", NULL, NULL, G_CALLBACK(actionHelpOpenGL) },
+    GtkActionEntry{ "HelpOpenGL", GTK_STOCK_INFO, "OpenGL _Info", nullptr, nullptr, G_CALLBACK(actionHelpOpenGL) },
     #else
-    { "HelpOpenGL", NULL, "OpenGL _Info", NULL, NULL, G_CALLBACK(actionHelpOpenGL) },
+    GtkActionEntry{ "HelpOpenGL", nullptr, "OpenGL _Info", nullptr, nullptr, G_CALLBACK(actionHelpOpenGL) },
     #endif
-    { "HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, NULL, G_CALLBACK(actionHelpAbout) },
+    GtkActionEntry{ "HelpAbout", GTK_STOCK_ABOUT, "_About", nullptr, nullptr, G_CALLBACK(actionHelpAbout) },
 };
-
 
 /* Regular Checkbox Actions */
-static const GtkToggleActionEntry actionsToggle[] = {
-    { "TimeLocal", NULL, "Show _Local Time", NULL, NULL, G_CALLBACK(actionTimeLocal), FALSE },
+const inline std::array<GtkToggleActionEntry, 6> actionsToggle
+{
+    GtkToggleActionEntry{ "TimeLocal", nullptr, "Show _Local Time", nullptr, nullptr, G_CALLBACK(actionTimeLocal), FALSE },
     #if GTK_CHECK_VERSION(2, 7, 0)
-    { "FullScreen", GTK_STOCK_FULLSCREEN, "_Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+    GtkToggleActionEntry{ "FullScreen", GTK_STOCK_FULLSCREEN, "_Full Screen", "<alt>Return",  nullptr, G_CALLBACK(actionFullScreen), FALSE },
     #else
-    { "FullScreen", NULL, "_Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+    GtkToggleActionEntry{ "FullScreen", nullptr, "_Full Screen", "<alt>Return",  nullptr, G_CALLBACK(actionFullScreen), FALSE },
     #endif /* GTK_CHECK_VERSION */
-    { "MenuBarVisible", NULL, "_Menu Bar", "<control>M", NULL, G_CALLBACK(actionMenuBarVisible), TRUE },
-    { "MultiShowFrames", NULL, "Show _Frames", NULL, NULL, G_CALLBACK(actionMultiShowFrames), FALSE },
-    { "MultiShowActive", NULL, "Active Frame Highlighted", NULL, NULL, G_CALLBACK(actionMultiShowActive), FALSE },
-    { "MultiSyncTime", NULL, "Synchronize _Time", NULL, NULL, G_CALLBACK(actionMultiSyncTime), FALSE },
+    GtkToggleActionEntry{ "MenuBarVisible", nullptr, "_Menu Bar", "<control>M", nullptr, G_CALLBACK(actionMenuBarVisible), TRUE },
+    GtkToggleActionEntry{ "MultiShowFrames", nullptr, "Show _Frames", nullptr, nullptr, G_CALLBACK(actionMultiShowFrames), FALSE },
+    GtkToggleActionEntry{ "MultiShowActive", nullptr, "Active Frame Highlighted", nullptr, nullptr, G_CALLBACK(actionMultiShowActive), FALSE },
+    GtkToggleActionEntry{ "MultiSyncTime", nullptr, "Synchronize _Time", nullptr, nullptr, G_CALLBACK(actionMultiSyncTime), FALSE },
 };
-
 
 /* Regular Radio Button Actions */
-static const GtkRadioActionEntry actionsVerbosity[] = {
-    { "HudNone", NULL, "_None", NULL, NULL, 0 },
-    { "HudTerse", NULL, "_Terse", NULL, NULL, 1},
-    { "HudVerbose", NULL, "_Verbose", NULL, NULL, 2},
+constexpr inline std::array<GtkRadioActionEntry, 3> actionsVerbosity
+{
+    GtkRadioActionEntry{ "HudNone", nullptr, "_None", nullptr, nullptr, 0 },
+    GtkRadioActionEntry{ "HudTerse", nullptr, "_Terse", nullptr, nullptr, 1},
+    GtkRadioActionEntry{ "HudVerbose", nullptr, "_Verbose", nullptr, nullptr, 2},
 };
 
-static const GtkRadioActionEntry actionsStarStyle[] = {
-    { "StarsFuzzy", NULL, "_Fuzzy Points", NULL, NULL, Renderer::FuzzyPointStars },
-    { "StarsPoints", NULL, "_Points", NULL, NULL, Renderer::PointStars },
-    { "StarsDiscs", NULL, "Scaled _Discs", NULL, NULL, Renderer::ScaledDiscStars },
+constexpr inline std::array<GtkRadioActionEntry, 3> actionsStarStyle
+{
+    GtkRadioActionEntry{ "StarsFuzzy", nullptr, "_Fuzzy Points", nullptr, nullptr, Renderer::FuzzyPointStars },
+    GtkRadioActionEntry{ "StarsPoints", nullptr, "_Points", nullptr, nullptr, Renderer::PointStars },
+    GtkRadioActionEntry{ "StarsDiscs", nullptr, "Scaled _Discs", nullptr, nullptr, Renderer::ScaledDiscStars },
 };
 
-static const GtkRadioActionEntry actionsAmbientLight[] = {
-    { "AmbientNone", NULL, "_None", NULL, NULL, 0 },
-    { "AmbientLow", NULL, "_Low", NULL, NULL, 1 },
-    { "AmbientMedium", NULL, "_Medium", NULL, NULL, 2},
+constexpr inline std::array<GtkRadioActionEntry, 3> actionsAmbientLight
+{
+    GtkRadioActionEntry{ "AmbientNone", nullptr, "_None", nullptr, nullptr, 0 },
+    GtkRadioActionEntry{ "AmbientLow", nullptr, "_Low", nullptr, nullptr, 1 },
+    GtkRadioActionEntry{ "AmbientMedium", nullptr, "_Medium", nullptr, nullptr, 2},
 };
-
 
 /* Render-Flag Actions */
-static const GtkToggleActionEntry actionsRenderFlags[] = {
-    { "RenderAA", NULL, "Antialiasing", "<control>X", NULL, G_CALLBACK(actionRenderAA), FALSE },
-    { "RenderAtmospheres", NULL, "Atmospheres", "<control>A", NULL, G_CALLBACK(actionRenderAtmospheres), FALSE },
-    { "RenderAutoMagnitude", NULL, "Auto Magnitude", "<control>Y", NULL, G_CALLBACK(actionRenderAutoMagnitude), FALSE },
-    { "RenderClouds", NULL, "Clouds", "I", NULL, G_CALLBACK(actionRenderClouds), FALSE },
-    { "RenderCometTails", NULL, "Comet Tails", "<control>T", NULL, G_CALLBACK(actionRenderCometTails), FALSE },
-    { "RenderConstellationBoundaries", NULL, "Constellation Boundaries", NULL, NULL, G_CALLBACK(actionRenderConstellationBoundaries), FALSE },
-    { "RenderConstellations", NULL, "Constellations", "slash", NULL, G_CALLBACK(actionRenderConstellations), FALSE },
-    { "RenderEclipseShadows", NULL, "Eclipse Shadows", "<control>E", NULL, G_CALLBACK(actionRenderEclipseShadows), FALSE },
-    { "RenderGalaxies", NULL, "Galaxies", "U", NULL, G_CALLBACK(actionRenderGalaxies), FALSE },
-    { "RenderGlobulars", NULL, "Globulars", "<shift>U", NULL, G_CALLBACK(actionRenderGlobulars), FALSE },
-    { "RenderCelestialGrid", NULL, "Grid: Celestial", "semicolon", NULL, G_CALLBACK(actionRenderCelestialGrid), FALSE },
-    { "RenderEclipticGrid", NULL, "Grid: Ecliptic", NULL, NULL, G_CALLBACK(actionRenderEclipticGrid), FALSE },
-    { "RenderGalacticGrid", NULL, "Grid: Galactic", NULL, NULL, G_CALLBACK(actionRenderGalacticGrid), FALSE },
-    { "RenderHorizontalGrid", NULL, "Grid: Horizontal", NULL, NULL, G_CALLBACK(actionRenderHorizontalGrid), FALSE },
-    { "RenderMarkers", NULL, "Markers", "<control>M", NULL, G_CALLBACK(actionRenderMarkers), FALSE },
-    { "RenderNebulae", NULL, "Nebulae", "asciicircum", NULL, G_CALLBACK(actionRenderNebulae), FALSE },
-    { "RenderNightLights", NULL, "Night Side Lights", "<control>L", NULL, G_CALLBACK(actionRenderNightLights), FALSE },
-    { "RenderOpenClusters", NULL, "Open Clusters", NULL, NULL, G_CALLBACK(actionRenderOpenClusters), FALSE },
-    { "RenderOrbits", NULL, "Orbits", "O", NULL, G_CALLBACK(actionRenderOrbits), FALSE },
-    { "RenderFadingOrbits", NULL, "Fading Orbits", NULL, NULL, G_CALLBACK(actionRenderFadingOrbits), FALSE },
-    { "RenderPlanets", NULL, "Planets", NULL, NULL, G_CALLBACK(actionRenderPlanets), FALSE },
-    { "RenderDwarfPlanets", NULL, "Dwarf Planets", NULL, NULL, G_CALLBACK(actionRenderDwarfPlanets), FALSE },
-    { "RenderMoons", NULL, "Moons", NULL, NULL, G_CALLBACK(actionRenderMoons), FALSE },
-    { "RenderMinorMoons", NULL, "Minor Moons", NULL, NULL, G_CALLBACK(actionRenderMinorMoons), FALSE },
-    { "RenderComets", NULL, "Comets", NULL, NULL, G_CALLBACK(actionRenderComets), FALSE },
-    { "RenderAsteroids", NULL, "Asteroids", NULL, NULL, G_CALLBACK(actionRenderAsteroids), FALSE },
-    { "RenderSpacecrafts", NULL, "Spacecraft", NULL, NULL, G_CALLBACK(actionRenderSpacecrafts), FALSE },
-    { "RenderPlanetRings", NULL, "Planet Rings", NULL, NULL, G_CALLBACK(actionRenderPlanetRings), FALSE },
-    { "RenderRingShadows", NULL, "Ring Shadows", NULL, NULL, G_CALLBACK(actionRenderRingShadows), FALSE },
-    { "RenderStars", NULL, "Stars", NULL, NULL, G_CALLBACK(actionRenderStars), FALSE },
+const inline std::array<GtkToggleActionEntry, 30> actionsRenderFlags
+{
+    GtkToggleActionEntry{ "RenderAA", nullptr, "Antialiasing", "<control>X", nullptr, G_CALLBACK(actionRenderAA), FALSE },
+    GtkToggleActionEntry{ "RenderAtmospheres", nullptr, "Atmospheres", "<control>A", nullptr, G_CALLBACK(actionRenderAtmospheres), FALSE },
+    GtkToggleActionEntry{ "RenderAutoMagnitude", nullptr, "Auto Magnitude", "<control>Y", nullptr, G_CALLBACK(actionRenderAutoMagnitude), FALSE },
+    GtkToggleActionEntry{ "RenderClouds", nullptr, "Clouds", "I", nullptr, G_CALLBACK(actionRenderClouds), FALSE },
+    GtkToggleActionEntry{ "RenderCometTails", nullptr, "Comet Tails", "<control>T", nullptr, G_CALLBACK(actionRenderCometTails), FALSE },
+    GtkToggleActionEntry{ "RenderConstellationBoundaries", nullptr, "Constellation Boundaries", nullptr, nullptr, G_CALLBACK(actionRenderConstellationBoundaries), FALSE },
+    GtkToggleActionEntry{ "RenderConstellations", nullptr, "Constellations", "slash", nullptr, G_CALLBACK(actionRenderConstellations), FALSE },
+    GtkToggleActionEntry{ "RenderEclipseShadows", nullptr, "Eclipse Shadows", "<control>E", nullptr, G_CALLBACK(actionRenderEclipseShadows), FALSE },
+    GtkToggleActionEntry{ "RenderGalaxies", nullptr, "Galaxies", "U", nullptr, G_CALLBACK(actionRenderGalaxies), FALSE },
+    GtkToggleActionEntry{ "RenderGlobulars", nullptr, "Globulars", "<shift>U", nullptr, G_CALLBACK(actionRenderGlobulars), FALSE },
+    GtkToggleActionEntry{ "RenderCelestialGrid", nullptr, "Grid: Celestial", "semicolon", nullptr, G_CALLBACK(actionRenderCelestialGrid), FALSE },
+    GtkToggleActionEntry{ "RenderEclipticGrid", nullptr, "Grid: Ecliptic", nullptr, nullptr, G_CALLBACK(actionRenderEclipticGrid), FALSE },
+    GtkToggleActionEntry{ "RenderGalacticGrid", nullptr, "Grid: Galactic", nullptr, nullptr, G_CALLBACK(actionRenderGalacticGrid), FALSE },
+    GtkToggleActionEntry{ "RenderHorizontalGrid", nullptr, "Grid: Horizontal", nullptr, nullptr, G_CALLBACK(actionRenderHorizontalGrid), FALSE },
+    GtkToggleActionEntry{ "RenderMarkers", nullptr, "Markers", "<control>M", nullptr, G_CALLBACK(actionRenderMarkers), FALSE },
+    GtkToggleActionEntry{ "RenderNebulae", nullptr, "Nebulae", "asciicircum", nullptr, G_CALLBACK(actionRenderNebulae), FALSE },
+    GtkToggleActionEntry{ "RenderNightLights", nullptr, "Night Side Lights", "<control>L", nullptr, G_CALLBACK(actionRenderNightLights), FALSE },
+    GtkToggleActionEntry{ "RenderOpenClusters", nullptr, "Open Clusters", nullptr, nullptr, G_CALLBACK(actionRenderOpenClusters), FALSE },
+    GtkToggleActionEntry{ "RenderOrbits", nullptr, "Orbits", "O", nullptr, G_CALLBACK(actionRenderOrbits), FALSE },
+    GtkToggleActionEntry{ "RenderFadingOrbits", nullptr, "Fading Orbits", nullptr, nullptr, G_CALLBACK(actionRenderFadingOrbits), FALSE },
+    GtkToggleActionEntry{ "RenderPlanets", nullptr, "Planets", nullptr, nullptr, G_CALLBACK(actionRenderPlanets), FALSE },
+    GtkToggleActionEntry{ "RenderDwarfPlanets", nullptr, "Dwarf Planets", nullptr, nullptr, G_CALLBACK(actionRenderDwarfPlanets), FALSE },
+    GtkToggleActionEntry{ "RenderMoons", nullptr, "Moons", nullptr, nullptr, G_CALLBACK(actionRenderMoons), FALSE },
+    GtkToggleActionEntry{ "RenderMinorMoons", nullptr, "Minor Moons", nullptr, nullptr, G_CALLBACK(actionRenderMinorMoons), FALSE },
+    GtkToggleActionEntry{ "RenderComets", nullptr, "Comets", nullptr, nullptr, G_CALLBACK(actionRenderComets), FALSE },
+    GtkToggleActionEntry{ "RenderAsteroids", nullptr, "Asteroids", nullptr, nullptr, G_CALLBACK(actionRenderAsteroids), FALSE },
+    GtkToggleActionEntry{ "RenderSpacecrafts", nullptr, "Spacecraft", nullptr, nullptr, G_CALLBACK(actionRenderSpacecrafts), FALSE },
+    GtkToggleActionEntry{ "RenderPlanetRings", nullptr, "Planet Rings", nullptr, nullptr, G_CALLBACK(actionRenderPlanetRings), FALSE },
+    GtkToggleActionEntry{ "RenderRingShadows", nullptr, "Ring Shadows", nullptr, nullptr, G_CALLBACK(actionRenderRingShadows), FALSE },
+    GtkToggleActionEntry{ "RenderStars", nullptr, "Stars", nullptr, nullptr, G_CALLBACK(actionRenderStars), FALSE },
 };
 
-
 /* Orbit-Flag Actions */
-static const GtkToggleActionEntry actionsOrbitFlags[] = {
-    { "OrbitAsteroids", NULL, "Asteroids", NULL, NULL, G_CALLBACK(actionOrbitAsteroids), FALSE },
-    { "OrbitComets", NULL, "Comets", NULL, NULL, G_CALLBACK(actionOrbitComets), FALSE },
-    { "OrbitMoons", NULL, "Moons", NULL, NULL, G_CALLBACK(actionOrbitMoons), FALSE },
-    { "OrbitPlanets", NULL, "Planets", NULL, NULL, G_CALLBACK(actionOrbitPlanets), FALSE },
-    { "OrbitSpacecraft", NULL, "Spacecraft", NULL, NULL, G_CALLBACK(actionOrbitSpacecraft), FALSE },
+const inline std::array<GtkToggleActionEntry, 5> actionsOrbitFlags
+{
+    GtkToggleActionEntry{ "OrbitAsteroids", nullptr, "Asteroids", nullptr, nullptr, G_CALLBACK(actionOrbitAsteroids), FALSE },
+    GtkToggleActionEntry{ "OrbitComets", nullptr, "Comets", nullptr, nullptr, G_CALLBACK(actionOrbitComets), FALSE },
+    GtkToggleActionEntry{ "OrbitMoons", nullptr, "Moons", nullptr, nullptr, G_CALLBACK(actionOrbitMoons), FALSE },
+    GtkToggleActionEntry{ "OrbitPlanets", nullptr, "Planets", nullptr, nullptr, G_CALLBACK(actionOrbitPlanets), FALSE },
+    GtkToggleActionEntry{ "OrbitSpacecraft", nullptr, "Spacecraft", nullptr, nullptr, G_CALLBACK(actionOrbitSpacecraft), FALSE },
 };
 
 /* Label-Flag Actions */
-static const GtkToggleActionEntry actionsLabelFlags[] = {
-    { "LabelAsteroids", NULL, "Asteroids", "W", NULL, G_CALLBACK(actionLabelAsteroids), FALSE },
-    { "LabelComets", NULL, "Comets", "<shift>W", NULL, G_CALLBACK(actionLabelComets), FALSE },
-    { "LabelConstellations", NULL, "Constellations", "equal", NULL, G_CALLBACK(actionLabelConstellations), FALSE },
-    { "LabelGalaxies", NULL, "Galaxies", "E", NULL, G_CALLBACK(actionLabelGalaxies), FALSE },
-    { "LabelGlobulars", NULL, "Globulars", "<shift>E", NULL, G_CALLBACK(actionLabelGlobulars), FALSE },
-    { "LabelLocations", NULL, "Locations", NULL, NULL, G_CALLBACK(actionLabelLocations), FALSE },
-    { "LabelMoons", NULL, "Moons", "M", NULL, G_CALLBACK(actionLabelMoons), FALSE },
-    { "LabelMinorMoons", NULL, "Minor Moons", "M", NULL, G_CALLBACK(actionLabelMinorMoons), FALSE },
-    { "LabelNebulae", NULL, "Nebulae", NULL, NULL, G_CALLBACK(actionLabelNebulae), FALSE },
-    { "LabelOpenClusters", NULL, "Open Clusters", NULL, NULL, G_CALLBACK(actionLabelOpenClusters), FALSE },
-    { "LabelPlanets", NULL, "Planets", "P", NULL, G_CALLBACK(actionLabelPlanets), FALSE },
-    { "LabelDwarfPlanets", NULL, "Dwarf Planets", "P", NULL, G_CALLBACK(actionLabelDwarfPlanets), FALSE },
-    { "LabelSpacecraft", NULL, "Spacecraft", "N", NULL, G_CALLBACK(actionLabelSpacecraft), FALSE },
-    { "LabelStars", NULL, "Stars", "B", NULL, G_CALLBACK(actionLabelStars), FALSE },
+const inline std::array<GtkToggleActionEntry, 14> actionsLabelFlags
+{
+    GtkToggleActionEntry{ "LabelAsteroids", nullptr, "Asteroids", "W", nullptr, G_CALLBACK(actionLabelAsteroids), FALSE },
+    GtkToggleActionEntry{ "LabelComets", nullptr, "Comets", "<shift>W", nullptr, G_CALLBACK(actionLabelComets), FALSE },
+    GtkToggleActionEntry{ "LabelConstellations", nullptr, "Constellations", "equal", nullptr, G_CALLBACK(actionLabelConstellations), FALSE },
+    GtkToggleActionEntry{ "LabelGalaxies", nullptr, "Galaxies", "E", nullptr, G_CALLBACK(actionLabelGalaxies), FALSE },
+    GtkToggleActionEntry{ "LabelGlobulars", nullptr, "Globulars", "<shift>E", nullptr, G_CALLBACK(actionLabelGlobulars), FALSE },
+    GtkToggleActionEntry{ "LabelLocations", nullptr, "Locations", nullptr, nullptr, G_CALLBACK(actionLabelLocations), FALSE },
+    GtkToggleActionEntry{ "LabelMoons", nullptr, "Moons", "M", nullptr, G_CALLBACK(actionLabelMoons), FALSE },
+    GtkToggleActionEntry{ "LabelMinorMoons", nullptr, "Minor Moons", "M", nullptr, G_CALLBACK(actionLabelMinorMoons), FALSE },
+    GtkToggleActionEntry{ "LabelNebulae", nullptr, "Nebulae", nullptr, nullptr, G_CALLBACK(actionLabelNebulae), FALSE },
+    GtkToggleActionEntry{ "LabelOpenClusters", nullptr, "Open Clusters", nullptr, nullptr, G_CALLBACK(actionLabelOpenClusters), FALSE },
+    GtkToggleActionEntry{ "LabelPlanets", nullptr, "Planets", "P", nullptr, G_CALLBACK(actionLabelPlanets), FALSE },
+    GtkToggleActionEntry{ "LabelDwarfPlanets", nullptr, "Dwarf Planets", "P", nullptr, G_CALLBACK(actionLabelDwarfPlanets), FALSE },
+    GtkToggleActionEntry{ "LabelSpacecraft", nullptr, "Spacecraft", "N", nullptr, G_CALLBACK(actionLabelSpacecraft), FALSE },
+    GtkToggleActionEntry{ "LabelStars", nullptr, "Stars", "B", nullptr, G_CALLBACK(actionLabelStars), FALSE },
 
     /*
     Does not appear to do anything yet:
-    { "LabelsLatin", NULL, "Labels in Latin", NULL, NULL, NULL, FALSE },
+    GtkToggleActionEntry{ "LabelsLatin", nullptr, "Labels in Latin", nullptr, nullptr, nullptr, FALSE },
     */
 };
+
+} // end namespace celestia::gtk

@@ -20,6 +20,9 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
+
 class GTKContextMenuHandler : public CelestiaCore::ContextMenuHandler
 {
  public:
@@ -27,3 +30,5 @@ class GTKContextMenuHandler : public CelestiaCore::ContextMenuHandler
 
     void requestContextMenu(float, float, Selection sel);
 };
+
+} // end namespace celestia::gtk

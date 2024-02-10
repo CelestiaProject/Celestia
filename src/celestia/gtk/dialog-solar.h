@@ -14,18 +14,12 @@
 
 #include <gtk/gtk.h>
 
-#include <celengine/body.h>
-
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Entry Function */
 void dialogSolarBrowser(AppData* app);
 
-
-/* Local Data */
-static const char * const ssTitles[] =
-{
-    "Name",
-    "Type"
-};
+} // end namespace celestia::gtk

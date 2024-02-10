@@ -10,6 +10,8 @@
  *  $Id: dialog-tour.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
  */
 
+#include <Eigen/Core>
+
 #include <glib.h>
 #include <gtk/gtk.h>
 
@@ -18,18 +20,88 @@
 #include "dialog-tour.h"
 #include "common.h"
 
-using namespace Eigen;
+namespace celestia::gtk
+{
 
+namespace
+{
 
+/* Local Data Struct */
+typedef struct _TourData TourData;
+struct _TourData {
+    AppData* app;
 
-/* Declarations: Callbacks */
-static gint TourGuideSelect(GtkComboBox* comboBox, TourData* td);
-static gint TourGuideGoto(GtkWidget*, TourData* td);
-static void TourGuideDestroy(GtkWidget* w, gint, TourData* td);
+    Destination* selected;
+    GtkWidget* descLabel;
+};
 
+/* CALLBACK: tour list object selected */
+gint
+TourGuideSelect(GtkComboBox* comboBox, TourData* td)
+{
+    int itemIndex = gtk_combo_box_get_active(comboBox);
+
+    const DestinationList* destinations = td->app->core->getDestinations();
+    if (destinations != nullptr &&
+        itemIndex >= 0 && itemIndex < (int) destinations->size())
+    {
+        td->selected = (*destinations)[itemIndex];
+    }
+
+    if (td->descLabel != nullptr && td->selected != nullptr)
+    {
+        gtk_label_set_text(GTK_LABEL(td->descLabel), td->selected->description.c_str());
+    }
+
+    return TRUE;
+}
+
+/* CALLBACK: Goto button clicked */
+gint
+TourGuideGoto(GtkWidget*, TourData* td)
+{
+    Simulation* simulation = td->app->simulation;
+
+    if (td->selected != nullptr && simulation != nullptr)
+    {
+        Selection sel = simulation->findObjectFromPath(td->selected->target);
+        if (!sel.empty())
+        {
+            simulation->follow();
+            simulation->setSelection(sel);
+            if (td->selected->distance <= 0)
+            {
+                /* Use the default distance */
+                simulation->gotoSelection(5.0,
+                                          Eigen::Vector3f::UnitY(),
+                                          ObserverFrame::ObserverLocal);
+            }
+            else
+            {
+                simulation->gotoSelection(5.0,
+                                          td->selected->distance,
+                                          Eigen::Vector3f::UnitY(),
+                                          ObserverFrame::ObserverLocal);
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+/* CALLBACK: Destroy Window */
+void
+TourGuideDestroy(GtkWidget* w, gint, TourData* td)
+{
+    gtk_widget_destroy(GTK_WIDGET(w));
+    g_free(td);
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Navigation->Tour Guide... */
-void dialogTourGuide(AppData* app)
+void
+dialogTourGuide(AppData* app)
 {
     TourData* td = g_new0(TourData, 1);
     td->app = app;
@@ -39,7 +111,7 @@ void dialogTourGuide(AppData* app)
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_STOCK_CLOSE,
                                                     GTK_RESPONSE_CLOSE,
-                                                    NULL);
+                                                    nullptr);
 
     GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING);
     gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
@@ -66,13 +138,11 @@ void dialogTourGuide(AppData* app)
 
     const DestinationList* destinations = app->core->getDestinations();
     int index = -1;
-    if (destinations != NULL)
+    if (destinations != nullptr)
     {
-        for (DestinationList::const_iterator iter = destinations->begin();
-             iter != destinations->end(); iter++)
+        for (const Destination* dest : *destinations)
         {
-            Destination* dest = *iter;
-            if (dest != NULL)
+            if (dest != nullptr)
             {
                 index = 0;
                 gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboBox), dest->name.c_str());
@@ -100,64 +170,4 @@ void dialogTourGuide(AppData* app)
     gtk_widget_show_all(dialog);
 }
 
-
-/* CALLBACK: tour list object selected */
-static gint TourGuideSelect(GtkComboBox* comboBox, TourData* td)
-{
-    int itemIndex = gtk_combo_box_get_active(comboBox);
-
-    const DestinationList* destinations = td->app->core->getDestinations();
-    if (destinations != NULL &&
-        itemIndex >= 0 && itemIndex < (int) destinations->size())
-    {
-        td->selected = (*destinations)[itemIndex];
-    }
-
-    if (td->descLabel != NULL && td->selected != NULL)
-    {
-        gtk_label_set_text(GTK_LABEL(td->descLabel), td->selected->description.c_str());
-    }
-
-    return TRUE;
-}
-
-
-/* CALLBACK: Goto button clicked */
-static gint TourGuideGoto(GtkWidget*, TourData* td)
-{
-    Simulation* simulation = td->app->simulation;
-
-    if (td->selected != NULL && simulation != NULL)
-    {
-        Selection sel = simulation->findObjectFromPath(td->selected->target);
-        if (!sel.empty())
-        {
-            simulation->follow();
-            simulation->setSelection(sel);
-            if (td->selected->distance <= 0)
-            {
-                /* Use the default distance */
-                simulation->gotoSelection(5.0,
-                                          Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
-            }
-            else
-            {
-                simulation->gotoSelection(5.0,
-                                          td->selected->distance,
-                                          Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
-            }
-        }
-    }
-
-    return TRUE;
-}
-
-
-/* CALLBACK: Destroy Window */
-static void TourGuideDestroy(GtkWidget* w, gint, TourData* td)
-{
-    gtk_widget_destroy(GTK_WIDGET(w));
-    g_free(td);
-}
+} // end namespace celestia::gtk

@@ -10,6 +10,13 @@
  *  $Id: dialog-eclipse.cpp,v 1.2 2005-12-10 06:34:21 suwalski Exp $
  */
 
+#include <array>
+#include <cstdio>
+#include <string>
+#include <vector>
+
+#include <Eigen/Core>
+
 #include <gtk/gtk.h>
 
 #include <celastro/date.h>
@@ -22,29 +29,348 @@
 #include "dialog-eclipse.h"
 #include "common.h"
 
-using namespace Eigen;
-using namespace std;
+namespace celestia::gtk
+{
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
+namespace
+{
 
-/* Definitions: Callbacks */
-static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button);
-static void showCalPopup(GtkToggleButton *button, EclipseData *ed);
-static gint eclipseGoto(GtkButton*, EclipseData* ed);
-static gint eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed);
-static void eclipseCompute(GtkButton* button, EclipseData* ed);
-static void eclipseBodySelect(GtkComboBox* comboBox, EclipseData* ed);
-static void eclipseTypeSelect(GtkComboBox* comboBox, EclipseData* ed);
-static void listEclipseSelect(GtkTreeSelection* sel, EclipseData* ed);
-static void eclipseDestroy(GtkWidget* w, gint, EclipseData* ed);
+/* Local Data Structures */
+/* Date selection data type */
+typedef struct _selDate selDate;
+struct _selDate {
+    int year;
+    int month;
+    int day;
+};
 
-/* Definitions: Helpers */
-static void setButtonDateString(GtkToggleButton *button, int year, int month, int day);
+typedef struct _EclipseData EclipseData;
+struct _EclipseData {
+    AppData* app;
 
+    /* Start Time */
+    selDate* d1;
+
+    /* End Time */
+    selDate* d2;
+
+    int type;
+    const char* body;
+    GtkTreeSelection* sel;
+
+    GtkWidget *eclipseList;
+    GtkListStore *eclipseListStore;
+
+    GtkDialog* window;
+};
+
+constexpr std::array eclipseTitles
+{
+    "Planet",
+    "Satellite",
+    "Date",
+    "Start",
+    "End",
+    static_cast<const char*>(nullptr),
+};
+
+constexpr std::array eclipseTypeTitles
+{
+    "solar",
+    "moon",
+    static_cast<const char*>(nullptr),
+};
+
+constexpr std::array eclipsePlanetTitles
+{
+    "Earth",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    static_cast<const char*>(nullptr),
+};
+
+/* HELPER: set a date string in a button */
+void
+setButtonDateString(GtkToggleButton *button, int year, int month, int day)
+{
+    char date[50];
+    std::sprintf(date, "%d %s %d", day, monthOptions[month - 1], year);
+
+    gtk_button_set_label(GTK_BUTTON(button), date);
+}
+
+/* CALLBACK: When the GtkCalendar date is selected */
+void
+calDateSelect(GtkCalendar *calendar, GtkToggleButton *button)
+{
+    /* Set the selected date */
+    guint year, month, day;
+    gtk_calendar_get_date(calendar, &year, &month, &day);
+
+    /* A button stores its own date */
+    selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
+    date->year = year;
+    date->month = month + 1;
+    date->day = day;
+
+    /* Update the button text */
+    setButtonDateString(button, year, month + 1, day);
+
+    /* Close the calendar window */
+    gtk_toggle_button_set_active(button, !gtk_toggle_button_get_active(button));
+}
+
+/* CALLBACK: When a button is clicked to show a GtkCalendar */
+void
+showCalPopup(GtkToggleButton *button, EclipseData *ed)
+{
+    GtkWidget* calwindow = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "calendar"));
+
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+    {
+        /* Pushed in */
+        if (!calwindow)
+        {
+            calwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+            /* FIXME: should be a transient, but then there are focus issues */
+            gtk_window_set_modal(GTK_WINDOW(calwindow), TRUE);
+            gtk_window_set_type_hint(GTK_WINDOW(calwindow), GDK_WINDOW_TYPE_HINT_DOCK);
+            gtk_window_set_decorated(GTK_WINDOW(calwindow), FALSE);
+            gtk_window_set_resizable(GTK_WINDOW(calwindow), FALSE);
+            gtk_window_stick(GTK_WINDOW(calwindow));
+
+            GtkWidget* calendar = gtk_calendar_new();
+
+            /* Load date structure stored in the button's data */
+            selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
+
+            gtk_calendar_select_month(GTK_CALENDAR(calendar), date->month - 1, date->year);
+            gtk_calendar_select_day(GTK_CALENDAR(calendar), date->day);
+
+            gtk_container_add(GTK_CONTAINER(calwindow), calendar);
+            gtk_widget_show(calendar);
+
+            int x, y, i, j;
+            gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(button)), &x, &y);
+            gtk_widget_translate_coordinates(GTK_WIDGET(button), GTK_WIDGET(ed->window), 10, 10, &i, &j);
+
+            gtk_window_move(GTK_WINDOW(calwindow), x + i, y + j);
+
+            g_signal_connect(calendar, "day-selected-double-click", G_CALLBACK(calDateSelect), button);
+
+            gtk_window_present(GTK_WINDOW(calwindow));
+
+            g_object_set_data_full(G_OBJECT(button), "calendar",
+                                   calwindow, (GDestroyNotify)gtk_widget_destroy);
+        }
+    }
+    else
+    {
+        /* Pushed out */
+        if (calwindow)
+        {
+            /* Destroys the calendar */
+            g_object_set_data(G_OBJECT(button), "calendar", NULL);
+            calwindow = NULL;
+        }
+    }
+}
+
+/* CALLBACK: "SetTime/Goto" in Eclipse Finder */
+gint
+eclipseGoto(GtkButton*, EclipseData* ed)
+{
+    GValue value = { 0, {{0}} }; /* Initialize GValue to 0 */
+    GtkTreeIter iter;
+    GtkTreeModel* model;
+    int time[6];
+    Simulation* sim = ed->app->simulation;
+
+    /* Nothing selected */
+    if (ed->sel == NULL)
+        return FALSE;
+
+    /* IF prevents selection while list is being updated */
+    if (!gtk_tree_selection_get_selected(ed->sel, &model, &iter))
+        return FALSE;
+
+    /* Tedious method of extracting the desired time.
+     * However, still better than parsing a single string. */
+    for (int i = 0; i < 6; i++)
+    {
+        gtk_tree_model_get_value(model, &iter, i+5, &value);
+        time[i] = g_value_get_int(&value);
+        g_value_unset(&value);
+    }
+
+    /* Retrieve the selected body */
+    gtk_tree_model_get_value(model, &iter, 11, &value);
+    Body* body  = (Body *)g_value_get_pointer(&value);
+    g_value_unset(&value);
+
+    /* Set time based on retrieved values */
+    astro::Date d(time[0], time[1], time[2]);
+    d.hour = time[3];
+    d.minute = time[4];
+    d.seconds = (double)time[5];
+    sim->setTime((double)d);
+
+    /* The rest is directly from the Windows eclipse code */
+    Selection target(body);
+    Selection ref(body->getSystem()->getStar());
+
+    /* Use the phase lock coordinate system to set a position
+     * on the line between the sun and the body where the eclipse
+     * is occurring. */
+    sim->setFrame(ObserverFrame::PhaseLock, target, ref);
+    sim->update(0.0);
+
+    double distance = target.radius() * 4.0;
+    sim->gotoLocation(UniversalCoord::Zero().offsetKm(Eigen::Vector3d::UnitX() * distance),
+                      (math::YRot90Conjugate<double> * math::XRot90Conjugate<double>), 2.5);
+
+    return TRUE;
+}
+
+/* CALLBACK: Double-click on the Eclipse Finder Listbox */
+gint
+eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed)
+{
+    if (event->type == GDK_2BUTTON_PRESS) {
+        /* Double-click, same as hitting the select and go button */
+        return eclipseGoto(NULL, ed);
+    }
+
+    return FALSE;
+}
+
+/* CALLBACK: Compute button in Eclipse Finder */
+void
+eclipseCompute(GtkButton* button, EclipseData* ed)
+{
+    /* Set the cursor to a watch and force redraw */
+    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_WATCH));
+    gtk_main_iteration();
+
+    /* Clear the listbox */
+    gtk_list_store_clear(ed->eclipseListStore);
+
+    /* Create the dates in a more suitable format */
+    astro::Date from(ed->d1->year, ed->d1->month, ed->d1->day);
+    astro::Date to(ed->d2->year, ed->d2->month, ed->d2->day);
+
+    /* Initialize the eclipse finder */
+    std::vector<Eclipse> eclipseListRaw;
+    const SolarSystem* sys = ed->app->core->getSimulation()->getNearestSolarSystem();
+    if (sys != nullptr && sys->getStar()->getIndex() == 0)
+    {
+        Body* planete = sys->getPlanets()->find(ed->body);
+        if (planete != nullptr)
+        {
+            EclipseFinder ef(planete);
+            ef.findEclipses((double)from, (double)to, ed->type, eclipseListRaw);
+        }
+    }
+
+    for (const auto& e : eclipseListRaw)
+    {
+        char d[12], strStart[10], strEnd[10];
+        astro::Date start(e.startTime);
+        astro::Date end(e.endTime);
+
+        std::sprintf(d, "%d-%02d-%02d", start.year, start.month, start.day);
+        std::sprintf(strStart, "%02d:%02d:%02d", start.hour, start.minute, (int)start.seconds);
+        std::sprintf(strEnd, "%02d:%02d:%02d", end.hour, end.minute, (int)end.seconds);
+
+        /* Set time to middle time so that eclipse it right on earth */
+        astro::Date timeToSet = (start + end) / 2.0f;
+
+        /* Add item to the list.
+         * Entries 5-10 are not displayed and store data. */
+        GtkTreeIter iter;
+        gtk_list_store_append(ed->eclipseListStore, &iter);
+        std::string planet, satellite;
+        if (ed->type == Eclipse::Solar)
+        {
+            planet = e.receiver->getName();
+            satellite = e.occulter->getName();
+        }
+        else
+        {
+            satellite = e.receiver->getName();
+            planet = e.occulter->getName();
+        }
+        gtk_list_store_set(ed->eclipseListStore, &iter,
+                           0, planet.c_str(),
+                           1, satellite.c_str(),
+                           2, d,
+                           3, strStart,
+                           4, strEnd,
+                           5, timeToSet.year,
+                           6, timeToSet.month,
+                           7, timeToSet.day,
+                           8, timeToSet.hour,
+                           9, timeToSet.minute,
+                           10, (int)timeToSet.seconds,
+                           11, e.receiver,
+                           -1);
+    }
+
+    /* Set the cursor back */
+    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_LEFT_PTR));
+}
+
+/* CALLBACK: When Eclipse Body is selected */
+void
+eclipseBodySelect(GtkComboBox* comboBox, EclipseData* ed)
+{
+    int itemIndex = gtk_combo_box_get_active(comboBox);
+
+    /* Set string according to body array */
+    ed->body = eclipsePlanetTitles[itemIndex];
+}
+
+/* CALLBACK: When Eclipse Type (Solar:Moon) is selected */
+void
+eclipseTypeSelect(GtkComboBox* comboBox, EclipseData* ed)
+{
+    int itemIndex = gtk_combo_box_get_active(comboBox);
+
+    /* Solar eclipse */
+    if (itemIndex == 0)
+        ed->type = Eclipse::Solar;
+    /* Moon eclipse */
+    else
+        ed->type = Eclipse::Lunar;
+}
+
+/* CALLBACK: When Eclipse is selected in Eclipse Finder */
+void
+listEclipseSelect(GtkTreeSelection* sel, EclipseData* ed)
+{
+    /* Simply set the selection pointer to this data item */
+    ed->sel = sel;
+}
+
+/* CALLBACK: Destroy Window */
+void
+eclipseDestroy(GtkWidget* w, gint, EclipseData* ed)
+{
+    gtk_widget_destroy(GTK_WIDGET(w));
+    g_free(ed->d1);
+    g_free(ed->d2);
+    g_free(ed);
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Navigation -> Eclipse Finder */
-void dialogEclipseFinder(AppData* app)
+void
+dialogEclipseFinder(AppData* app)
 {
     EclipseData* ed = g_new0(EclipseData, 1);
     selDate* d1 = g_new0(selDate, 1);
@@ -203,276 +529,4 @@ void dialogEclipseFinder(AppData* app)
     gtk_widget_show_all(GTK_WIDGET(ed->window));
 }
 
-
-/* CALLBACK: When the GtkCalendar date is selected */
-static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button)
-{
-    /* Set the selected date */
-    guint year, month, day;
-    gtk_calendar_get_date(calendar, &year, &month, &day);
-
-    /* A button stores its own date */
-    selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
-    date->year = year;
-    date->month = month + 1;
-    date->day = day;
-
-    /* Update the button text */
-    setButtonDateString(button, year, month + 1, day);
-
-    /* Close the calendar window */
-    gtk_toggle_button_set_active(button, !gtk_toggle_button_get_active(button));
-}
-
-
-/* CALLBACK: When a button is clicked to show a GtkCalendar */
-static void showCalPopup(GtkToggleButton *button, EclipseData *ed)
-{
-    GtkWidget* calwindow = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "calendar"));
-
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
-    {
-        /* Pushed in */
-        if (!calwindow)
-        {
-            calwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-            /* FIXME: should be a transient, but then there are focus issues */
-            gtk_window_set_modal(GTK_WINDOW(calwindow), TRUE);
-            gtk_window_set_type_hint(GTK_WINDOW(calwindow), GDK_WINDOW_TYPE_HINT_DOCK);
-            gtk_window_set_decorated(GTK_WINDOW(calwindow), FALSE);
-            gtk_window_set_resizable(GTK_WINDOW(calwindow), FALSE);
-            gtk_window_stick(GTK_WINDOW(calwindow));
-
-            GtkWidget* calendar = gtk_calendar_new();
-
-            /* Load date structure stored in the button's data */
-            selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
-
-            gtk_calendar_select_month(GTK_CALENDAR(calendar), date->month - 1, date->year);
-            gtk_calendar_select_day(GTK_CALENDAR(calendar), date->day);
-
-            gtk_container_add(GTK_CONTAINER(calwindow), calendar);
-            gtk_widget_show(calendar);
-
-            int x, y, i, j;
-            gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(button)), &x, &y);
-            gtk_widget_translate_coordinates(GTK_WIDGET(button), GTK_WIDGET(ed->window), 10, 10, &i, &j);
-
-            gtk_window_move(GTK_WINDOW(calwindow), x + i, y + j);
-
-            g_signal_connect(calendar, "day-selected-double-click", G_CALLBACK(calDateSelect), button);
-
-            gtk_window_present(GTK_WINDOW(calwindow));
-
-            g_object_set_data_full(G_OBJECT(button), "calendar",
-                                   calwindow, (GDestroyNotify)gtk_widget_destroy);
-        }
-    }
-    else
-    {
-        /* Pushed out */
-        if (calwindow)
-        {
-            /* Destroys the calendar */
-            g_object_set_data(G_OBJECT(button), "calendar", NULL);
-            calwindow = NULL;
-        }
-    }
-}
-
-
-/* CALLBACK: "SetTime/Goto" in Eclipse Finder */
-static gint eclipseGoto(GtkButton*, EclipseData* ed)
-{
-    GValue value = { 0, {{0}} }; /* Initialize GValue to 0 */
-    GtkTreeIter iter;
-    GtkTreeModel* model;
-    int time[6];
-    Simulation* sim = ed->app->simulation;
-
-    /* Nothing selected */
-    if (ed->sel == NULL)
-        return FALSE;
-
-    /* IF prevents selection while list is being updated */
-    if (!gtk_tree_selection_get_selected(ed->sel, &model, &iter))
-        return FALSE;
-
-    /* Tedious method of extracting the desired time.
-     * However, still better than parsing a single string. */
-    for (int i = 0; i < 6; i++)
-    {
-        gtk_tree_model_get_value(model, &iter, i+5, &value);
-        time[i] = g_value_get_int(&value);
-        g_value_unset(&value);
-    }
-
-    /* Retrieve the selected body */
-    gtk_tree_model_get_value(model, &iter, 11, &value);
-    Body* body  = (Body *)g_value_get_pointer(&value);
-    g_value_unset(&value);
-
-    /* Set time based on retrieved values */
-    astro::Date d(time[0], time[1], time[2]);
-    d.hour = time[3];
-    d.minute = time[4];
-    d.seconds = (double)time[5];
-    sim->setTime((double)d);
-
-    /* The rest is directly from the Windows eclipse code */
-    Selection target(body);
-    Selection ref(body->getSystem()->getStar());
-
-    /* Use the phase lock coordinate system to set a position
-     * on the line between the sun and the body where the eclipse
-     * is occurring. */
-    sim->setFrame(ObserverFrame::PhaseLock, target, ref);
-    sim->update(0.0);
-
-    double distance = target.radius() * 4.0;
-    sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
-                      (math::YRot90Conjugate<double> * math::XRot90Conjugate<double>), 2.5);
-
-    return TRUE;
-}
-
-
-/* CALLBACK: Double-click on the Eclipse Finder Listbox */
-static gint eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed)
-{
-    if (event->type == GDK_2BUTTON_PRESS) {
-        /* Double-click, same as hitting the select and go button */
-        return eclipseGoto(NULL, ed);
-    }
-
-    return FALSE;
-}
-
-
-/* CALLBACK: Compute button in Eclipse Finder */
-static void eclipseCompute(GtkButton* button, EclipseData* ed)
-{
-    /* Set the cursor to a watch and force redraw */
-    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_WATCH));
-    gtk_main_iteration();
-
-    /* Clear the listbox */
-    gtk_list_store_clear(ed->eclipseListStore);
-
-    /* Create the dates in a more suitable format */
-    astro::Date from(ed->d1->year, ed->d1->month, ed->d1->day);
-    astro::Date to(ed->d2->year, ed->d2->month, ed->d2->day);
-
-    /* Initialize the eclipse finder */
-    vector<Eclipse> eclipseListRaw;
-    const SolarSystem* sys = ed->app->core->getSimulation()->getNearestSolarSystem();
-    if (sys != nullptr && sys->getStar()->getIndex() == 0)
-    {
-        Body* planete = sys->getPlanets()->find(ed->body);
-        if (planete != nullptr)
-        {
-            EclipseFinder ef(planete);
-            ef.findEclipses((double)from, (double)to, ed->type, eclipseListRaw);
-        }
-    }
-
-    for (const auto& e : eclipseListRaw)
-    {
-        char d[12], strStart[10], strEnd[10];
-        astro::Date start(e.startTime);
-        astro::Date end(e.endTime);
-
-        sprintf(d, "%d-%02d-%02d", start.year, start.month, start.day);
-        sprintf(strStart, "%02d:%02d:%02d", start.hour, start.minute, (int)start.seconds);
-        sprintf(strEnd, "%02d:%02d:%02d", end.hour, end.minute, (int)end.seconds);
-
-        /* Set time to middle time so that eclipse it right on earth */
-        astro::Date timeToSet = (start + end) / 2.0f;
-
-        /* Add item to the list.
-         * Entries 5-10 are not displayed and store data. */
-        GtkTreeIter iter;
-        gtk_list_store_append(ed->eclipseListStore, &iter);
-        std::string planet, satellite;
-        if (ed->type == Eclipse::Solar)
-        {
-            planet = e.receiver->getName();
-            satellite = e.occulter->getName();
-        }
-        else
-        {
-            satellite = e.receiver->getName();
-            planet = e.occulter->getName();
-        }
-        gtk_list_store_set(ed->eclipseListStore, &iter,
-                           0, planet.c_str(),
-                           1, satellite.c_str(),
-                           2, d,
-                           3, strStart,
-                           4, strEnd,
-                           5, timeToSet.year,
-                           6, timeToSet.month,
-                           7, timeToSet.day,
-                           8, timeToSet.hour,
-                           9, timeToSet.minute,
-                           10, (int)timeToSet.seconds,
-                           11, e.receiver,
-                           -1);
-    }
-
-    /* Set the cursor back */
-    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_LEFT_PTR));
-}
-
-
-/* CALLBACK: When Eclipse Body is selected */
-static void eclipseBodySelect(GtkComboBox* comboBox, EclipseData* ed)
-{
-    int itemIndex = gtk_combo_box_get_active(comboBox);
-
-    /* Set string according to body array */
-    ed->body = eclipsePlanetTitles[itemIndex];
-}
-
-
-/* CALLBACK: When Eclipse Type (Solar:Moon) is selected */
-static void eclipseTypeSelect(GtkComboBox* comboBox, EclipseData* ed)
-{
-    int itemIndex = gtk_combo_box_get_active(comboBox);
-
-    /* Solar eclipse */
-    if (itemIndex == 0)
-        ed->type = Eclipse::Solar;
-    /* Moon eclipse */
-    else
-        ed->type = Eclipse::Lunar;
-}
-
-
-/* CALLBACK: When Eclipse is selected in Eclipse Finder */
-static void listEclipseSelect(GtkTreeSelection* sel, EclipseData* ed)
-{
-    /* Simply set the selection pointer to this data item */
-    ed->sel = sel;
-}
-
-
-/* CALLBACK: Destroy Window */
-static void eclipseDestroy(GtkWidget* w, gint, EclipseData* ed)
-{
-    gtk_widget_destroy(GTK_WIDGET(w));
-    g_free(ed->d1);
-    g_free(ed->d2);
-    g_free(ed);
-}
-
-
-/* HELPER: set a date string in a button */
-static void setButtonDateString(GtkToggleButton *button, int year, int month, int day)
-{
-    char date[50];
-    sprintf(date, "%d %s %d", day, monthOptions[month - 1], year);
-
-    gtk_button_set_label(GTK_BUTTON(button), date);
-}
+} // end namespace celestia::gtk
