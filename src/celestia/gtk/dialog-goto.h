@@ -16,29 +16,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Entry Function */
 void dialogGotoObject(AppData* app);
 
-
-/* Local Data Structures */
-typedef struct _gotoObjectData gotoObjectData;
-struct _gotoObjectData {
-    AppData* app;
-
-    GtkWidget* dialog;
-    GtkWidget* nameEntry;
-    GtkWidget* latEntry;
-    GtkWidget* longEntry;
-    GtkWidget* distEntry;
-
-    int units;
-};
-
-static const char * const unitLabels[] =
-{
-    "km",
-    "radii",
-    "au",
-    NULL
-};
+} // end namespace celestia::gtk

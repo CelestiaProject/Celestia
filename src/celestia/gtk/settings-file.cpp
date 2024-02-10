@@ -10,6 +10,9 @@
  *  $Id: settings-file.cpp,v 1.5 2008-01-18 04:36:11 suwalski Exp $
  */
 
+#include <cstdint>
+#include <cstdio>
+
 #include <gtk/gtk.h>
 
 #include <celengine/body.h>
@@ -19,24 +22,51 @@
 #include "settings-file.h"
 #include "common.h"
 
+namespace celestia::gtk
+{
 
-/* Definitions: Helpers */
-static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors);
-static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors);
+namespace
+{
+
+/* HELPER: gets an or-group flag and handles error checking */
+void
+getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors)
+{
+    GError* e = nullptr;
+
+    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
+
+    if (e != nullptr)
+        *errors += 1;
+}
+
+void
+getFlag64(GKeyFile* file, std::uint64_t *flags, std::uint64_t setting, const gchar* section, const gchar* key, int* errors)
+{
+    GError* e = nullptr;
+
+    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
+
+    if (e != nullptr)
+        *errors += 1;
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Initializes and reads into memory the preferences */
-void initSettingsFile(AppData* app)
+void
+initSettingsFile(AppData* app)
 {
-    GError *error = NULL;
+    GError *error = nullptr;
     app->settingsFile = g_key_file_new();
 
-    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, NULL);
+    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
 
     g_key_file_load_from_file(app->settingsFile, fn, G_KEY_FILE_NONE, &error);
 
     /* Should check G_KEY_FILE_ERROR_NOT_FOUND, but bug in glib returns wrong
      * error code. */
-    if (error != NULL && g_file_test(fn, G_FILE_TEST_EXISTS))
+    if (error != nullptr && g_file_test(fn, G_FILE_TEST_EXISTS))
     {
         g_print("Error reading '%s': %s.\n", fn, error->message);
         exit(1);
@@ -45,9 +75,9 @@ void initSettingsFile(AppData* app)
     g_free(fn);
 }
 
-
 /* ENTRY: Applies preferences needed before initializing the core */
-void applySettingsFilePre(AppData* app, GKeyFile* file)
+void
+applySettingsFilePre(AppData* app, GKeyFile* file)
 {
     int sizeX, sizeY, positionX, positionY;
     GError* e;
@@ -55,26 +85,26 @@ void applySettingsFilePre(AppData* app, GKeyFile* file)
     /* Numbers require special treatment because if they are not found they
      * are not set to NULL like strings. So, if that is the case, we set them
      * to values that will cause setSane*() to set defaults. */
-    e= NULL;
+    e= nullptr;
     sizeX = g_key_file_get_integer(file, "Window", "width", &e);
-    if (e != NULL) sizeX = -1;
+    if (e != nullptr) sizeX = -1;
 
-    e= NULL;
+    e= nullptr;
     sizeY = g_key_file_get_integer(file, "Window", "height", &e);
-    if (e != NULL) sizeY = -1;
+    if (e != nullptr) sizeY = -1;
 
-    e= NULL;
+    e= nullptr;
     positionX = g_key_file_get_integer(file, "Window", "x", &e);
-    if (e != NULL) positionX = -1;
+    if (e != nullptr) positionX = -1;
 
-    e= NULL;
+    e= nullptr;
     positionY = g_key_file_get_integer(file, "Window", "y", &e);
-    if (e != NULL) positionY = -1;
+    if (e != nullptr) positionY = -1;
 
     /* These next two cannot be checked for sanity, default set here */
-    e= NULL;
+    e= nullptr;
     app->fullScreen = g_key_file_get_boolean(file, "Window", "fullScreen", &e);
-    if (e != NULL) app->fullScreen = FALSE;
+    if (e != nullptr) app->fullScreen = FALSE;
 
     /* Nothing is set here. The prefs structure is used to set things at the
      * corrent times. */
@@ -82,47 +112,47 @@ void applySettingsFilePre(AppData* app, GKeyFile* file)
     setSaneWinPosition(app, positionX, positionY);
 }
 
-
 /* ENTRY: Applies preferences after the core is initialized */
-void applySettingsFileMain(AppData* app, GKeyFile* file)
+void
+applySettingsFileMain(AppData* app, GKeyFile* file)
 {
     GError* e;
     float ambientLight, visualMagnitude, galaxyLightGain;
     int errors, verbosity, starStyle, textureResolution, distanceLimit, om, lm;
-    uint64_t rf;
+    std::uint64_t rf;
 
     /* See comment in applySettingsFilePrefs() */
-    e = NULL;
+    e = nullptr;
     ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
-    if (e != NULL) ambientLight = -1.0;
+    if (e != nullptr) ambientLight = -1.0;
 
-    e = NULL;
+    e = nullptr;
     visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
-    if (e != NULL) visualMagnitude = -1.0;
+    if (e != nullptr) visualMagnitude = -1.0;
 
-    e = NULL;
+    e = nullptr;
     galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
-    if (e != NULL) galaxyLightGain = -1.0;
+    if (e != nullptr) galaxyLightGain = -1.0;
 
-    e = NULL;
+    e = nullptr;
     distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
-    if (e != NULL) distanceLimit = -1;
+    if (e != nullptr) distanceLimit = -1;
 
-    e = NULL;
+    e = nullptr;
     verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
-    if (e != NULL) verbosity = -1;
+    if (e != nullptr) verbosity = -1;
 
-    e = NULL;
+    e = nullptr;
     starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
-    if (e != NULL) starStyle = -1;
+    if (e != nullptr) starStyle = -1;
 
-    e = NULL;
+    e = nullptr;
     textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
-    if (e != NULL) textureResolution = -1;
+    if (e != nullptr) textureResolution = -1;
 
-    e = NULL;
+    e = nullptr;
     app->showLocalTime = g_key_file_get_boolean(file, "Main", "localTime", &e);
-    if (e != NULL) app->showLocalTime = FALSE;
+    if (e != nullptr) app->showLocalTime = FALSE;
 
     /* All settings that need sanity checks get them */
     setSaneAmbientLight(app, ambientLight);
@@ -132,7 +162,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     setSaneVerbosity(app, verbosity);
     setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
     setSaneTextureResolution(app, textureResolution);
-    setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", NULL));
+    setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", nullptr));
 
     /* Render Flags */
     errors = 0;
@@ -215,32 +245,32 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
         app->renderer->setLabelMode(lm);
 }
 
-
 /* ENTRY: Saves settings to file */
-void saveSettingsFile(AppData* app)
+void
+saveSettingsFile(AppData* app)
 {
     int om, lm;
-    uint64_t rf;
+    std::uint64_t rf;
     GKeyFile* file = app->settingsFile;
-    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, NULL);
-    FILE* outfile;
+    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
+    std::FILE* outfile;
 
     g_key_file_set_integer(file, "Main", "ambientLight", (int)(1000 * app->renderer->getAmbientLightLevel()));
-    g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", NULL);
+    g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", nullptr);
     g_key_file_set_integer(file, "Main", "visualMagnitude", (int)(1000 * app->simulation->getFaintestVisible()));
-    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", NULL);
+    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", nullptr);
     g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
-    g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", NULL);
+    g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", nullptr);
     g_key_file_set_integer(file, "Main", "distanceLimit", (int)app->renderer->getDistanceLimit());
-    g_key_file_set_comment(file, "Main", "distanceLimit", "Rendering limit in light-years", NULL);
+    g_key_file_set_comment(file, "Main", "distanceLimit", "Rendering limit in light-years", nullptr);
     g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
-    g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", NULL);
+    g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", nullptr);
     g_key_file_set_integer(file, "Main", "verbosity", app->core->getHudDetail());
-    g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", NULL);
+    g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", nullptr);
     g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
-    g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", NULL);
+    g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", nullptr);
     g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
-    g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", NULL);
+    g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", nullptr);
     g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
 
     g_key_file_set_integer(file, "Window", "width", getWinWidth(app));
@@ -308,40 +338,19 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "LabelMode", "i18n", lm & Renderer::I18nConstellationLabels);
     g_key_file_set_boolean(file, "LabelMode", "globular", lm & Renderer::GlobularLabels);
 
-    g_key_file_set_comment(file, "RenderFlags", NULL, "All Render Flag values must be true or false", NULL);
-    g_key_file_set_comment(file, "OrbitMask", NULL, "All Orbit Mask values must be true or false", NULL);
-    g_key_file_set_comment(file, "LabelMode", NULL, "All Label Mode values must be true or false", NULL);
+    g_key_file_set_comment(file, "RenderFlags", nullptr, "All Render Flag values must be true or false", nullptr);
+    g_key_file_set_comment(file, "OrbitMask", nullptr, "All Orbit Mask values must be true or false", nullptr);
+    g_key_file_set_comment(file, "LabelMode", nullptr, "All Label Mode values must be true or false", nullptr);
 
     /* Write the settings to a file */
-    outfile = fopen(fn, "w");
+    outfile = std::fopen(fn, "w");
 
-    if (outfile == NULL)
+    if (outfile == nullptr)
         g_print("Error writing '%s'.\n", fn);
 
-    fputs(g_key_file_to_data(file, NULL, NULL), outfile);
+    std::fputs(g_key_file_to_data(file, nullptr, nullptr), outfile);
 
     g_free(fn);
 }
 
-
-/* HELPER: gets an or-group flag and handles error checking */
-static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors)
-{
-    GError* e = NULL;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
-
-    if (e != NULL)
-        *errors += 1;
-}
-
-
-static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors)
-{
-    GError* e = NULL;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
-
-    if (e != NULL)
-        *errors += 1;
-}
+} // end namespace celestia::gtk

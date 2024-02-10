@@ -12,11 +12,30 @@
 
 #pragma once
 
+#include <string>
+
 #include "common.h"
 
 #include <celestia/progressnotifier.h>
 
+namespace celestia::gtk
+{
+
+class GtkSplashProgressNotifier;
+
+/* Struct holds all information relevant to the splash screen. */
 typedef struct _SplashData SplashData;
+struct _SplashData {
+    AppData* app;
+
+    GtkWidget* splash;
+    GtkWidget* label;
+
+    GtkSplashProgressNotifier* notifier;
+
+    gboolean hasARGB;
+    gboolean redraw;
+};
 
 /* This class overrides the ProgressNotifier to receive splash event updates
  * from the core. */
@@ -32,21 +51,9 @@ class GtkSplashProgressNotifier : public ProgressNotifier
         SplashData* splash;
 };
 
-/* Struct holds all information relevant to the splash screen. */
-struct _SplashData {
-    AppData* app;
-
-    GtkWidget* splash;
-    GtkWidget* label;
-
-    GtkSplashProgressNotifier* notifier;
-
-    gboolean hasARGB;
-    gboolean redraw;
-};
-
-
 /* Entry Functions */
 SplashData* splashStart(AppData* app, gboolean showSplash, const gchar* installDir, const gchar* defaultDir);
 void splashEnd(SplashData* ss);
 void splashSetText(SplashData* ss, const char* text);
+
+} // end namespace celestia::gtk

@@ -10,34 +10,132 @@
  *  $Id: dialog-options.cpp,v 1.7 2008-01-21 04:55:19 suwalski Exp $
  */
 
+#include <array>
+#include <cmath>
+
 #include <gtk/gtk.h>
 
 #include "dialog-options.h"
 #include "common.h"
 #include "ui.h"
 
+namespace celestia::gtk
+{
 
-/* Definitions: Callbacks */
-static gint changeDistanceLimit(GtkRange *slider, AppData* app);
-static gint changeTextureResolution(GtkRange *slider, AppData* app);
-static gchar* formatTextureSlider(GtkRange*, gdouble value);
+namespace
+{
 
-/* Definitions: Helpers */
-static void checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box);
-static void toggleButtonsFromAG(const GtkRadioActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box);
-static float makeDistanceLimit(float value);
+/* Local data */
+constexpr int DistanceSliderRange = 10000;
+constexpr float MaxDistanceLimit = 1.0e6f;
 
+constexpr std::array ambientLabels
+{
+    "None",
+    "Low",
+    "Medium",
+    static_cast<const char*>(nullptr),
+};
 
-static const int DistanceSliderRange = 10000;
-static const float MaxDistanceLimit = 1.0e6f;
+constexpr std::array infoLabels
+{
+    "None",
+    "Terse",
+    "Verbose",
+    static_cast<const char*>(nullptr),
+};
 
+/* HELPER: Creates check buttons from a GtkActionGroup */
+void
+checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box)
+{
+    for (int i = 0; i < size; i++)
+    {
+        GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
+
+        /* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
+         * is not set with action proxy. */
+        GtkWidget* w = gtk_check_button_new_with_mnemonic(actions[i].label);
+
+        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
+        gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
+    }
+}
+
+/* HELPER: Creates toggle (instead of radio) buttons from a GtkActionGroup.
+ *         Cannot be GtkRadioButtons because of GTK limitations/bugs. */
+void
+toggleButtonsFromAG(const GtkRadioActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box)
+{
+    for (int i = 0; i < size; i++)
+    {
+        GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
+
+        /* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
+         * is not set with action proxy. */
+        GtkWidget* w = gtk_toggle_button_new_with_mnemonic(actions[i].label);
+
+        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
+        gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
+    }
+}
+
+/* HELPER: gives a logarithmic value based on linear value */
+float
+makeDistanceLimit(float value)
+{
+    float logDistanceLimit = value / DistanceSliderRange;
+    return std::pow(MaxDistanceLimit, logDistanceLimit);
+}
+
+/* CALLBACK: React to changes in the star distance limit slider */
+gint
+changeDistanceLimit(GtkRange *slider, AppData* app)
+{
+    GtkLabel* magLabel = (GtkLabel*)g_object_get_data(G_OBJECT(slider), "valueLabel");
+    float limit = makeDistanceLimit(gtk_range_get_value(slider));
+    app->renderer->setDistanceLimit(limit);
+
+    char labeltext[16] = "100000 ly";
+    sprintf(labeltext, "%ld ly", (long)(limit + 0.5));
+    gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
+
+    return TRUE;
+}
+
+/* CALLBACK: React to changes in the texture resolution slider */
+gint
+changeTextureResolution(GtkRange *slider, AppData* app)
+{
+    app->renderer->setResolution((int)gtk_range_get_value(slider));
+
+    /* Seeing as this is not a GtkAction, kick off the update function */
+    resyncTextureResolutionActions(app);
+
+    return TRUE;
+}
+
+/* CALLBACK: Format the label under the texture detail slider */
+gchar*
+formatTextureSlider(GtkRange*, gdouble value)
+{
+    switch ((int)value) {
+        case 0: return g_strdup("Low");
+        case 1: return g_strdup("Medium");
+        case 2: return g_strdup("High");
+        default: return g_strdup("Error");
+    }
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Options -> View Options... */
-void dialogViewOptions(AppData* app)
+void
+dialogViewOptions(AppData* app)
 {
     /* This dialog is hidden and shown because it is likely to be used a lot
      * and the actions->widgets operations are fairly intensive. */
-    if (app->optionDialog != NULL)
+    if (app->optionDialog != nullptr)
     {
         gtk_window_present(GTK_WINDOW(app->optionDialog));
         return;
@@ -48,7 +146,7 @@ void dialogViewOptions(AppData* app)
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_STOCK_OK,
                                                     GTK_RESPONSE_OK,
-                                                    NULL);
+                                                    nullptr);
 
     /* Create the main layout boxes */
     GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING);
@@ -116,12 +214,11 @@ void dialogViewOptions(AppData* app)
     gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
     float logDistanceLimit = log(app->renderer->getDistanceLimit()) / log((float)MaxDistanceLimit);
-    GtkAdjustment *adj = (GtkAdjustment *)
-                            gtk_adjustment_new((gfloat)(logDistanceLimit * DistanceSliderRange),
-                            0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
+    GtkAdjustment *adj = gtk_adjustment_new(static_cast<gfloat>(logDistanceLimit * DistanceSliderRange),
+                                            0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
 
     /* Distance limit slider */
-    GtkWidget* magLabel = gtk_label_new(NULL);
+    GtkWidget* magLabel = gtk_label_new(nullptr);
     GtkWidget* slider = gtk_hscale_new(adj);
     g_object_set_data(G_OBJECT(slider), "valueLabel", magLabel);
     gtk_scale_set_draw_value(GTK_SCALE(slider), 0);
@@ -137,13 +234,13 @@ void dialogViewOptions(AppData* app)
     gtk_range_set_value(GTK_RANGE(textureSlider), app->renderer->getResolution());
     gtk_box_pack_start(GTK_BOX(textureBox), textureSlider, TRUE, TRUE, 0);
     g_signal_connect(G_OBJECT(textureSlider), "value-changed", G_CALLBACK(changeTextureResolution), app);
-    g_signal_connect(G_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), NULL);
+    g_signal_connect(G_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), nullptr);
 
-    checkButtonsFromAG(actionsRenderFlags, G_N_ELEMENTS(actionsRenderFlags), app->agRender, showBox);
-    checkButtonsFromAG(actionsOrbitFlags, G_N_ELEMENTS(actionsOrbitFlags), app->agOrbit, orbitBox);
-    checkButtonsFromAG(actionsLabelFlags, G_N_ELEMENTS(actionsLabelFlags), app->agLabel, labelBox);
-    toggleButtonsFromAG(actionsVerbosity, G_N_ELEMENTS(actionsVerbosity), app->agVerbosity, infoBox);
-    toggleButtonsFromAG(actionsAmbientLight, G_N_ELEMENTS(actionsAmbientLight), app->agAmbient, ambientBox);
+    checkButtonsFromAG(actionsRenderFlags.data(), static_cast<guint>(actionsRenderFlags.size()), app->agRender, showBox);
+    checkButtonsFromAG(actionsOrbitFlags.data(), static_cast<guint>(actionsOrbitFlags.size()), app->agOrbit, orbitBox);
+    checkButtonsFromAG(actionsLabelFlags.data(), static_cast<guint>(actionsLabelFlags.size()), app->agLabel, labelBox);
+    toggleButtonsFromAG(actionsVerbosity.data(), static_cast<guint>(actionsVerbosity.size()), app->agVerbosity, infoBox);
+    toggleButtonsFromAG(actionsAmbientLight.data(), static_cast<guint>(actionsAmbientLight.size()), app->agAmbient, ambientBox);
 
     g_signal_connect(app->optionDialog, "delete-event",
                      G_CALLBACK(gtk_widget_hide_on_delete), GTK_WIDGET(app->optionDialog));
@@ -156,88 +253,4 @@ void dialogViewOptions(AppData* app)
     gtk_window_present(GTK_WINDOW(app->optionDialog));
 }
 
-
-/* CALLBACK: React to changes in the star distance limit slider */
-static gint changeDistanceLimit(GtkRange *slider, AppData* app)
-{
-    GtkLabel* magLabel = (GtkLabel*)g_object_get_data(G_OBJECT(slider), "valueLabel");
-    float limit = makeDistanceLimit(gtk_range_get_value(slider));
-    app->renderer->setDistanceLimit(limit);
-
-    char labeltext[16] = "100000 ly";
-    sprintf(labeltext, "%ld ly", (long)(limit + 0.5));
-    gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
-
-    #ifdef GNOME
-    /* Distance limit changes do not trigger an event like the other
-     * render settings. Save setting here. */
-    gconf_client_set_int(app->client, "/apps/celestia/distanceLimit", (int)(limit + 0.5), NULL);
-    #endif /* GNOME */
-
-    return TRUE;
-}
-
-
-/* CALLBACK: React to changes in the texture resolution slider */
-static gint changeTextureResolution(GtkRange *slider, AppData* app)
-{
-    app->renderer->setResolution((int)gtk_range_get_value(slider));
-
-    /* Seeing as this is not a GtkAction, kick off the update function */
-    resyncTextureResolutionActions(app);
-
-    return TRUE;
-}
-
-
-/* CALLBACK: Format the label under the texture detail slider */
-static gchar* formatTextureSlider(GtkRange*, gdouble value)
-{
-    switch ((int)value) {
-        case 0: return g_strdup("Low");
-        case 1: return g_strdup("Medium");
-        case 2: return g_strdup("High");
-        default: return g_strdup("Error");
-    }
-}
-
-
-/* HELPER: Creates check buttons from a GtkActionGroup */
-static void checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box)
-{
-    for (int i = 0; i < size; i++) {
-        GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
-
-        /* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
-         * is not set with action proxy. */
-        GtkWidget* w = gtk_check_button_new_with_mnemonic(actions[i].label);
-
-        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
-        gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
-    }
-}
-
-
-/* HELPER: Creates toggle (instead of radio) buttons from a GtkActionGroup.
- *         Cannot be GtkRadioButtons because of GTK limitations/bugs. */
-static void toggleButtonsFromAG(const GtkRadioActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box)
-{
-    for (int i = 0; i < size; i++) {
-        GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
-
-        /* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
-         * is not set with action proxy. */
-        GtkWidget* w = gtk_toggle_button_new_with_mnemonic(actions[i].label);
-
-        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
-        gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
-    }
-}
-
-
-/* HELPER: gives a logarithmic value based on linear value */
-static float makeDistanceLimit(float value)
-{
-    float logDistanceLimit = value / DistanceSliderRange;
-    return (float) pow(MaxDistanceLimit, logDistanceLimit);
-}
+} // end namespace celestia::gtk

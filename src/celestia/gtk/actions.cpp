@@ -11,14 +11,11 @@
  */
 
 #include <config.h>
+#include <array>
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
 #include <fmt/format.h>
-
-#ifdef GNOME
-#include <gconf/gconf-client.h>
-#endif /* GNOME */
 
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
@@ -45,40 +42,164 @@
 #include "dialog-time.h"
 #include "dialog-tour.h"
 
-#ifdef GNOME
-#include "settings-gconf.h"
-#else
 #include "settings-file.h"
-#endif /* GNOME */
 
-using namespace std;
-
-/* Declarations: Action Helpers */
-static void openScript(const char* filename, AppData* app);
-static void captureImage(const char* filename, AppData* app);
-#ifdef USE_FFMPEG
-static void captureMovie(const char* filename, const int resolution[], float fps,
-                         AVCodecID codec, float bitrate, AppData* app);
-#endif
-static void textInfoDialog(const char *txt, const char *title, AppData* app);
-static void setRenderFlag(AppData* a, uint64_t flag, gboolean state);
-static void setOrbitMask(AppData* a, int mask, gboolean state);
-static void setLabelMode(AppData* a, int mode, gboolean state);
-
-#ifdef USE_FFMPEG
-static const int MovieSizes[][2] =
+namespace celestia::gtk
 {
-    { 160,  120  },
-    { 320,  240  },
-    { 640,  480  },
-    { 720,  480  },
-    { 720,  576  },
-    { 1024, 768  },
-    { 1280, 720  },
-    { 1920, 1080 }
+
+namespace
+{
+
+/* Script opening helper called by actionOpenScript() */
+void
+openScript(const char* filename, AppData* app)
+{
+    /* Modified From Win32 HandleOpenScript */
+    if (filename)
+    {
+        /* If you got here, a path and file has been specified.
+         * filename contains full path to specified file. */
+        app->core->runScript(filename);
+    }
+}
+
+/* Image capturing helper called by actionCaptureImage() */
+void
+captureImage(const char* filename, AppData* app)
+{
+    ContentType type = DetermineFileType(filename);
+    if (type != ContentType::JPEG && type != ContentType::PNG)
+    {
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   _("Please use a name ending in '.jpg' or '.png'."));
+        gtk_dialog_run(GTK_DIALOG(errBox));
+        gtk_widget_destroy(errBox);
+        return;
+    }
+
+    if (!app->core->saveScreenShot(filename))
+    {
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   _("Error writing captured image."));
+        gtk_dialog_run(GTK_DIALOG(errBox));
+        gtk_widget_destroy(errBox);
+    }
+}
+
+/* Image capturing helper called by actionCaptureImage() */
+#ifdef USE_FFMPEG
+void
+captureMovie(const char* filename, const int resolution[], float fps,
+             AVCodecID codec, float bitrate, AppData* app)
+{
+    auto* movieCapture = new FFMPEGCapture(app->renderer);
+    movieCapture->setVideoCodec(codec);
+    movieCapture->setBitRate(bitrate);
+    if (codec == AV_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(app->core->getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(app->core->getConfig()->ffvhEncoderOptions);
+
+    bool success = movieCapture->start(filename, resolution[0], resolution[1], fps);
+    if (success)
+    {
+        app->core->initMovieCapture(movieCapture);
+    }
+    else
+    {
+        delete movieCapture;
+
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "Error initializing movie capture.");
+        gtk_dialog_run(GTK_DIALOG(errBox));
+        gtk_widget_destroy(errBox);
+    }
+}
+#endif
+
+/* Runs a dialog that displays text; should be replaced at some point with
+   a more elegant solution. */
+void
+textInfoDialog(const char *txt, const char *title, AppData* app)
+{
+    /* I would use a gnome_message_box dialog for this, except they don't seem
+     * to notice that the texts are so big that they create huge windows, and
+     * would work better with a scrolled window. Deon */
+    GtkWidget* dialog = gtk_dialog_new_with_buttons(title,
+                                                    GTK_WINDOW(app->mainWindow),
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                                    NULL);
+
+    GtkWidget* scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), scrolled_window, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                   GTK_POLICY_AUTOMATIC,
+                                   GTK_POLICY_AUTOMATIC);
+    gtk_widget_show(scrolled_window);
+
+    GtkWidget *text = gtk_label_new(txt);
+    gtk_widget_modify_font(text, pango_font_description_from_string("mono"));
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), GTK_WIDGET(text));
+    gtk_widget_show(text);
+
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 400); /* Absolute Size, urghhh */
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+/* Calculates and sets the render-flag int */
+void
+setRenderFlag(AppData* a, std::uint64_t flag, gboolean state)
+{
+    std::uint64_t rf = (a->renderer->getRenderFlags() & ~flag) | (state ? flag : 0);
+    a->renderer->setRenderFlags(rf);
+}
+
+/* Calculates and sets the orbit-mask int */
+void
+setOrbitMask(AppData* a, int mask, gboolean state)
+{
+    int om = (a->renderer->getOrbitMask() & ~mask) | (state ? mask : 0);
+    a->renderer->setOrbitMask(om);
+}
+
+/* Calculates and sets the label-mode int */
+void
+setLabelMode(AppData* a, int mode, gboolean state)
+{
+    int lm = (a->renderer->getLabelMode() & ~mode) | (state ? mode : 0);
+    a->renderer->setLabelMode(lm);
+}
+
+#ifdef USE_FFMPEG
+using MovieSize = std::array<int, 2>;
+
+constexpr std::array MovieSizes
+{
+    MovieSize{ 160,  120  },
+    MovieSize{ 320,  240  },
+    MovieSize{ 640,  480  },
+    MovieSize{ 720,  480  },
+    MovieSize{ 720,  576  },
+    MovieSize{ 1024, 768  },
+    MovieSize{ 1280, 720  },
+    MovieSize{ 1920, 1080 }
 };
 
-static const float MovieFramerates[] = { 15.0f, 23.976f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f };
+constexpr std::array MovieFramerates{ 15.0f, 23.976f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f };
 
 struct MovieCodec
 {
@@ -86,13 +207,14 @@ struct MovieCodec
     const char *codecDesc;
 };
 
-static MovieCodec MovieCodecs[2] =
+constexpr std::array<MovieCodec, 2> MovieCodecs
 {
-    { AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
-    { AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
+    MovieCodec{ AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
+    MovieCodec{ AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
 };
 
-static void insert_text_event(GtkEditable *editable, const gchar *text, gint length, gint *position, gpointer data)
+void
+insert_text_event(GtkEditable *editable, const gchar *text, gint length, gint *position, gpointer data)
 {
     for (int i = 0; i < length; i++)
     {
@@ -105,8 +227,11 @@ static void insert_text_event(GtkEditable *editable, const gchar *text, gint len
 }
 #endif
 
+} // end unnamed namespace
+
 /* File -> Copy URL */
-void actionCopyURL(GtkAction*, AppData* app)
+void
+actionCopyURL(GtkAction*, AppData* app)
 {
     GtkClipboard* cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     CelestiaState appState(app->core);
@@ -117,7 +242,8 @@ void actionCopyURL(GtkAction*, AppData* app)
 
 
 /* File -> Open URL */
-void actionOpenURL(GtkAction*, AppData* app)
+void
+actionOpenURL(GtkAction*, AppData* app)
 {
     GtkWidget* dialog = gtk_dialog_new_with_buttons("Enter cel:// URL",
                                                     GTK_WINDOW(app->mainWindow),
@@ -145,7 +271,8 @@ void actionOpenURL(GtkAction*, AppData* app)
 
 
 /* File -> Open Script... */
-void actionOpenScript(GtkAction*, AppData* app)
+void
+actionOpenScript(GtkAction*, AppData* app)
 {
     GtkWidget* fs = gtk_file_chooser_dialog_new("Open Script.",
                                                 GTK_WINDOW(app->mainWindow),
@@ -183,9 +310,9 @@ void actionOpenScript(GtkAction*, AppData* app)
     gtk_widget_destroy(fs);
 }
 
-
 /* File -> Capture Image... */
-void actionCaptureImage(GtkAction*, AppData* app)
+void
+actionCaptureImage(GtkAction*, AppData* app)
 {
     GtkWidget* fs = gtk_file_chooser_dialog_new("Save Image to File",
                                                 GTK_WINDOW(app->mainWindow),
@@ -224,7 +351,8 @@ void actionCaptureImage(GtkAction*, AppData* app)
 }
 
 /* File -> Capture Movie... */
-void actionCaptureMovie(GtkAction*, AppData* app)
+void
+actionCaptureMovie(GtkAction*, AppData* app)
 {
 #ifdef USE_FFMPEG
     // TODO: The menu item should be disable so that the user doesn't even
@@ -318,7 +446,7 @@ void actionCaptureMovie(GtkAction*, AppData* app)
         int fridx = gtk_combo_box_get_active(GTK_COMBO_BOX(frcombo));
         int vcidx = gtk_combo_box_get_active(GTK_COMBO_BOX(vccombo));
         const gchar *brtext = gtk_entry_get_text(GTK_ENTRY(brentry));
-        const int *resolution = MovieSizes[vsidx];
+        const int *resolution = MovieSizes[vsidx].data();
         float fps = MovieFramerates[fridx];
         AVCodecID codec = MovieCodecs[vcidx].codecId;
         float bitrate = 400000;
@@ -346,9 +474,9 @@ void actionCaptureMovie(GtkAction*, AppData* app)
 #endif
 }
 
-
 /* File -> Run Demo... */
-void actionRunDemo(GtkAction*, AppData* app)
+void
+actionRunDemo(GtkAction*, AppData* app)
 {
     const auto& demoScriptFile = app->core->getConfig()->paths.demoScriptFile;
     if (!demoScriptFile.empty())
@@ -358,32 +486,27 @@ void actionRunDemo(GtkAction*, AppData* app)
     }
 }
 
-
-void actionQuit(GtkAction*, AppData* app)
+void
+actionQuit(GtkAction*, AppData* app)
 {
-    #ifdef GNOME
-    saveSettingsGConf(app);
-    #else
     saveSettingsFile(app);
-    #endif /* GNOME */
-
     gtk_main_quit();
 }
 
-
-void actionSelectSol(GtkAction*, AppData* app)
+void
+actionSelectSol(GtkAction*, AppData* app)
 {
     app->core->charEntered('H');
 }
 
-
-void actionTourGuide(GtkAction*, AppData* app)
+void
+actionTourGuide(GtkAction*, AppData* app)
 {
     dialogTourGuide(app);
 }
 
-
-void actionSearchObject(GtkAction*, AppData* app)
+void
+actionSearchObject(GtkAction*, AppData* app)
 {
     GtkWidget* dialog = gtk_dialog_new_with_buttons("Select Object",
                                                     GTK_WINDOW(app->mainWindow),
@@ -420,109 +543,105 @@ void actionSearchObject(GtkAction*, AppData* app)
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
-
-void actionGotoObject(GtkAction*, AppData* app)
+void
+actionGotoObject(GtkAction*, AppData* app)
 {
     dialogGotoObject(app);
 }
 
-
-void actionCenterSelection(GtkAction*, AppData* app)
+void
+actionCenterSelection(GtkAction*, AppData* app)
 {
     app->core->charEntered('c');
 }
 
-
-void actionGotoSelection(GtkAction*, AppData* app)
+void
+actionGotoSelection(GtkAction*, AppData* app)
 {
     app->core->charEntered('G');
 }
 
-
-void actionFollowSelection(GtkAction*, AppData* app)
+void
+actionFollowSelection(GtkAction*, AppData* app)
 {
     app->core->charEntered('F');
 }
 
-
-void actionSyncSelection(GtkAction*, AppData* app)
+void
+actionSyncSelection(GtkAction*, AppData* app)
 {
     app->core->charEntered('Y');
 }
 
-
-void actionTrackSelection(GtkAction*, AppData* app)
+void
+actionTrackSelection(GtkAction*, AppData* app)
 {
     app->core->charEntered('T');
 }
 
-
-void actionSystemBrowser(GtkAction*, AppData* app)
+void
+actionSystemBrowser(GtkAction*, AppData* app)
 {
     dialogSolarBrowser(app);
 }
 
-
-void actionStarBrowser(GtkAction*, AppData* app)
+void
+actionStarBrowser(GtkAction*, AppData* app)
 {
     dialogStarBrowser(app);
 }
 
-
-void actionEclipseFinder(GtkAction*, AppData* app)
+void
+actionEclipseFinder(GtkAction*, AppData* app)
 {
     dialogEclipseFinder(app);
 }
 
-
-void actionTimeFaster(GtkAction*, AppData* app)
+void
+actionTimeFaster(GtkAction*, AppData* app)
 {
     app->core->charEntered('L');
 }
 
-
-void actionTimeSlower(GtkAction*, AppData* app)
+void
+actionTimeSlower(GtkAction*, AppData* app)
 {
     app->core->charEntered('K');
 }
 
-
-void actionTimeFreeze(GtkAction*, AppData* app)
+void
+actionTimeFreeze(GtkAction*, AppData* app)
 {
     app->core->charEntered(' ');
 }
 
-
-void actionTimeReal(GtkAction*, AppData* app)
+void
+actionTimeReal(GtkAction*, AppData* app)
 {
     app->core->charEntered('\\');
 }
 
-
-void actionTimeReverse(GtkAction*, AppData* app)
+void
+actionTimeReverse(GtkAction*, AppData* app)
 {
     app->core->charEntered('J');
 }
 
-
-void actionTimeSet(GtkAction*, AppData* app)
+void
+actionTimeSet(GtkAction*, AppData* app)
 {
     dialogSetTime(app);
 }
 
-
-void actionTimeLocal(GtkAction* action, AppData* app)
+void
+actionTimeLocal(GtkAction* action, AppData* app)
 {
     app->showLocalTime = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
     updateTimeZone(app, app->showLocalTime);
-
-    #ifdef GNOME
-    gconf_client_set_bool(app->client, "/apps/celestia/showLocalTime", app->showLocalTime, NULL);
-    #endif /* GNOME */
 }
 
-
-void actionViewerSize(GtkAction*, AppData* app)
+void
+actionViewerSize(GtkAction*, AppData* app)
 {
     GtkWidget* dialog;
     int newX, currentX, currentY, winX, winY, screenX, i = 1, position = -1;
@@ -552,12 +671,12 @@ void actionViewerSize(GtkAction*, AppData* app)
     {
         if (position == -1 && resolutions[i-1] < currentX && resolutions[i] >= currentX)
         {
-            sprintf(res, "%d x %d (current)", currentX, currentY);
+            std::sprintf(res, "%d x %d (current)", currentX, currentY);
             position = i - 1;
         }
         else if (resolutions[i] < screenX)
         {
-            sprintf(res, "%d x %d", resolutions[i], int(0.75 * resolutions[i]));
+            std::sprintf(res, "%d x %d", resolutions[i], int(0.75 * resolutions[i]));
             i++;
         }
         else
@@ -592,8 +711,8 @@ void actionViewerSize(GtkAction*, AppData* app)
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
-
-void actionFullScreen(GtkAction* action, AppData* app)
+void
+actionFullScreen(GtkAction* action, AppData* app)
 {
     int positionX, positionY;
     app->fullScreen = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
@@ -616,110 +735,98 @@ void actionFullScreen(GtkAction* action, AppData* app)
 
     /* Enable/Disable the Viewer Size action */
     gtk_action_set_sensitive(gtk_action_group_get_action(app->agMain, "ViewerSize"), !app->fullScreen);
-
-    #ifdef GNOME
-    gconf_client_set_bool(app->client, "/apps/celestia/fullScreen", app->fullScreen, NULL);
-    #endif
 }
 
-
-void actionViewOptions(GtkAction*, AppData* app)
+void
+actionViewOptions(GtkAction*, AppData* app)
 {
     dialogViewOptions(app);
 }
 
-
-void actionStarsMore(GtkAction*, AppData* app)
+void
+actionStarsMore(GtkAction*, AppData* app)
 {
     app->core->charEntered(']');
-
-    #ifdef GNOME
-    gconf_client_set_float(app->client, "/apps/celestia/visualMagnitude", app->simulation->getFaintestVisible(), NULL);
-    #endif
 }
 
-
-void actionStarsFewer(GtkAction*, AppData* app)
+void
+actionStarsFewer(GtkAction*, AppData* app)
 {
     app->core->charEntered('[');
-
-    #ifdef GNOME
-    gconf_client_set_float(app->client, "/apps/celestia/visualMagnitude", app->simulation->getFaintestVisible(), NULL);
-    #endif
 }
 
-
-void actionMenuBarVisible(GtkToggleAction* action, AppData* app)
+void
+actionMenuBarVisible(GtkToggleAction* action, AppData* app)
 {
     g_object_set(G_OBJECT(app->mainMenu), "visible", gtk_toggle_action_get_active(action), NULL);
 }
 
-
-void actionMultiSplitH(GtkAction*, AppData* app)
+void
+actionMultiSplitH(GtkAction*, AppData* app)
 {
     app->core->splitView(celestia::View::HorizontalSplit);
 }
 
-
-void actionMultiSplitV(GtkAction*, AppData* app)
+void
+actionMultiSplitV(GtkAction*, AppData* app)
 {
     app->core->splitView(celestia::View::VerticalSplit);
 }
 
-
-void actionMultiCycle(GtkAction*, AppData* app)
+void
+actionMultiCycle(GtkAction*, AppData* app)
 {
     /* Pass a Tab character */
     app->core->charEntered('\011');
 }
 
-
-void actionMultiDelete(GtkAction*, AppData* app)
+void
+actionMultiDelete(GtkAction*, AppData* app)
 {
     app->core->deleteView();
 }
 
-
-void actionMultiSingle(GtkAction*, AppData* app)
+void
+actionMultiSingle(GtkAction*, AppData* app)
 {
     app->core->singleView();
 }
 
-
-void actionMultiShowFrames(GtkToggleAction* action, AppData* app)
+void
+actionMultiShowFrames(GtkToggleAction* action, AppData* app)
 {
     app->core->setFramesVisible(gtk_toggle_action_get_active(action));
 }
 
-
-void actionMultiShowActive(GtkToggleAction* action, AppData* app)
+void
+actionMultiShowActive(GtkToggleAction* action, AppData* app)
 {
     app->core->setActiveFrameVisible(gtk_toggle_action_get_active(action));
 }
 
-
-void actionMultiSyncTime(GtkToggleAction* action, AppData* app)
+void
+actionMultiSyncTime(GtkToggleAction* action, AppData* app)
 {
     app->simulation->setSyncTime(gtk_toggle_action_get_active(action));
 }
 
-
-void actionHelpControls(GtkAction*, AppData* app)
+void
+actionHelpControls(GtkAction*, AppData* app)
 {
     char *txt = readFromFile("controls.txt");
     textInfoDialog(txt, "Mouse and Keyboard Controls", app);
     g_free(txt);
 }
 
-
-void actionHelpOpenGL(GtkAction*, AppData* app)
+void
+actionHelpOpenGL(GtkAction*, AppData* app)
 {
-    string s = Helper::getRenderInfo(app->renderer);
+    std::string s = Helper::getRenderInfo(app->renderer);
     textInfoDialog(s.c_str(), "Renderer Info", app);
 }
 
-
-void actionHelpAbout(GtkAction*, AppData* app)
+void
+actionHelpAbout(GtkAction*, AppData* app)
 {
     const gchar* authors[] = {
         "Chris Laurel <claurel@shatters.net>",
@@ -738,9 +845,9 @@ void actionHelpAbout(GtkAction*, AppData* app)
 
     GdkPixbuf *logo = gdk_pixbuf_new_from_file ("celestia-logo.png", NULL);
 
-    string comments = fmt::format("GTK+ Front-End, built using gtk+ version {}.{}",
-                                  GTK_MAJOR_VERSION,
-                                  GTK_MINOR_VERSION);
+    std::string comments = fmt::format("GTK+ Front-End, built using gtk+ version {}.{}",
+                                       GTK_MAJOR_VERSION,
+                                       GTK_MINOR_VERSION);
 
     gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
                          "title", _("About Celestia"),
@@ -756,490 +863,332 @@ void actionHelpAbout(GtkAction*, AppData* app)
     g_object_unref(logo);
 }
 
-
-void actionVerbosity(GtkRadioAction* action, GtkRadioAction*, AppData* app)
+void
+actionVerbosity(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     int value = gtk_radio_action_get_current_value(action);
     app->core->setHudDetail(value);
-
-    #ifdef GNOME
-    gconf_client_set_int(app->client, "/apps/celestia/verbosity", value, NULL);
-    #endif
 }
 
-
-void actionStarStyle(GtkRadioAction* action, GtkRadioAction*, AppData* app)
+void
+actionStarStyle(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     int value = gtk_radio_action_get_current_value(action);
     app->renderer->setStarStyle((Renderer::StarStyle)value);
-
-    #ifdef GNOME
-    gconf_client_set_int(app->client, "/apps/celestia/starStyle", value, NULL);
-    #endif
 }
 
-
-void actionAmbientLight(GtkRadioAction* action, GtkRadioAction*, AppData* app)
+void
+actionAmbientLight(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     float value = amLevels[gtk_radio_action_get_current_value(action)];
     app->renderer->setAmbientLightLevel(value);
-
-    #ifdef GNOME
-    gconf_client_set_float(app->client, "/apps/celestia/ambientLight", value, NULL);
-    #endif
 }
 
 /* Render-Flag Actions */
-void actionRenderAA(GtkToggleAction* action, AppData* app)
+void
+actionRenderAA(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowSmoothLines, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderAtmospheres(GtkToggleAction* action, AppData* app)
+void
+actionRenderAtmospheres(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowAtmospheres, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderAutoMagnitude(GtkToggleAction* action, AppData* app)
+void
+actionRenderAutoMagnitude(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowAutoMag, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderCelestialGrid(GtkToggleAction* action, AppData* app)
+void
+actionRenderCelestialGrid(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowCelestialSphere, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderClouds(GtkToggleAction* action, AppData* app)
+void
+actionRenderClouds(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowCloudMaps, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderCometTails(GtkToggleAction* action, AppData* app)
+void
+actionRenderCometTails(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowCometTails, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderConstellationBoundaries(GtkToggleAction* action, AppData* app)
+void
+actionRenderConstellationBoundaries(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowBoundaries, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderConstellations(GtkToggleAction* action, AppData* app)
+void
+actionRenderConstellations(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowDiagrams, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderEclipticGrid(GtkToggleAction* action, AppData* app)
+void
+actionRenderEclipticGrid(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowEclipticGrid, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderEclipseShadows(GtkToggleAction* action, AppData* app)
+void
+actionRenderEclipseShadows(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowEclipseShadows, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderGalacticGrid(GtkToggleAction* action, AppData* app)
+void
+actionRenderGalacticGrid(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowGalacticGrid, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderGalaxies(GtkToggleAction* action, AppData* app)
+void
+actionRenderGalaxies(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowGalaxies, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderGlobulars(GtkToggleAction* action, AppData* app)
+void
+actionRenderGlobulars(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowGlobulars, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderHorizontalGrid(GtkToggleAction* action, AppData* app)
+void
+actionRenderHorizontalGrid(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowHorizonGrid, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderMarkers(GtkToggleAction* action, AppData* app)
+void
+actionRenderMarkers(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowMarkers, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderNebulae(GtkToggleAction* action, AppData* app)
+void
+actionRenderNebulae(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowNebulae, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderNightLights(GtkToggleAction* action, AppData* app)
+void
+actionRenderNightLights(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowNightMaps, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderOpenClusters(GtkToggleAction* action, AppData* app)
+void
+actionRenderOpenClusters(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowOpenClusters, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderOrbits(GtkToggleAction* action, AppData* app)
+void
+actionRenderOrbits(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowOrbits, gtk_toggle_action_get_active(action));
 }
 
-void actionRenderFadingOrbits(GtkToggleAction* action, AppData* app)
+void
+actionRenderFadingOrbits(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowFadingOrbits, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderPlanets(GtkToggleAction* action, AppData* app)
+void
+actionRenderPlanets(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowPlanets, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderDwarfPlanets(GtkToggleAction* action, AppData* app)
+void
+actionRenderDwarfPlanets(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowDwarfPlanets, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderMoons(GtkToggleAction* action, AppData* app)
+void
+actionRenderMoons(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowMoons, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderMinorMoons(GtkToggleAction* action, AppData* app)
+void
+actionRenderMinorMoons(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowMinorMoons, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderAsteroids(GtkToggleAction* action, AppData* app)
+void
+actionRenderAsteroids(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowAsteroids, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderComets(GtkToggleAction* action, AppData* app)
+void
+actionRenderComets(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowComets, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
+void
+actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowSpacecrafts, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderPlanetRings(GtkToggleAction* action, AppData* app)
+void
+actionRenderPlanetRings(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowPlanetRings, gtk_toggle_action_get_active(action));
 }
 
-void actionRenderRingShadows(GtkToggleAction* action, AppData* app)
+void
+actionRenderRingShadows(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowRingShadows, gtk_toggle_action_get_active(action));
 }
 
-
-void actionRenderStars(GtkToggleAction* action, AppData* app)
+void
+actionRenderStars(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowStars, gtk_toggle_action_get_active(action));
 }
 
-
-void actionOrbitAsteroids(GtkToggleAction* action, AppData* app)
+void
+actionOrbitAsteroids(GtkToggleAction* action, AppData* app)
 {
     setOrbitMask(app, Body::Asteroid, gtk_toggle_action_get_active(action));
 }
 
-
-void actionOrbitComets(GtkToggleAction* action, AppData* app)
+void
+actionOrbitComets(GtkToggleAction* action, AppData* app)
 {
     setOrbitMask(app, Body::Comet, gtk_toggle_action_get_active(action));
 }
 
-
-void actionOrbitMoons(GtkToggleAction* action, AppData* app)
+void
+actionOrbitMoons(GtkToggleAction* action, AppData* app)
 {
     setOrbitMask(app, Body::Moon, gtk_toggle_action_get_active(action));
 }
 
-
-void actionOrbitPlanets(GtkToggleAction* action, AppData* app)
+void
+actionOrbitPlanets(GtkToggleAction* action, AppData* app)
 {
     setOrbitMask(app, Body::Planet, gtk_toggle_action_get_active(action));
 }
 
-
-void actionOrbitSpacecraft(GtkToggleAction* action, AppData* app)
+void
+actionOrbitSpacecraft(GtkToggleAction* action, AppData* app)
 {
     setOrbitMask(app, Body::Spacecraft, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelAsteroids(GtkToggleAction* action, AppData* app)
+void
+actionLabelAsteroids(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::AsteroidLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelComets(GtkToggleAction* action, AppData* app)
+void
+actionLabelComets(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::CometLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelConstellations(GtkToggleAction* action, AppData* app)
+void
+actionLabelConstellations(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::ConstellationLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelGalaxies(GtkToggleAction* action, AppData* app)
+void
+actionLabelGalaxies(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::GalaxyLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelGlobulars(GtkToggleAction* action, AppData* app)
+void
+actionLabelGlobulars(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::GlobularLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelLocations(GtkToggleAction* action, AppData* app)
+void
+actionLabelLocations(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::LocationLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelMoons(GtkToggleAction* action, AppData* app)
+void
+actionLabelMoons(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::MoonLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelMinorMoons(GtkToggleAction* action, AppData* app)
+void
+actionLabelMinorMoons(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::MinorMoonLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelNebulae(GtkToggleAction* action, AppData* app)
+void
+actionLabelNebulae(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::NebulaLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelOpenClusters(GtkToggleAction* action, AppData* app)
+void
+actionLabelOpenClusters(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::OpenClusterLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelPlanets(GtkToggleAction* action, AppData* app)
+void
+actionLabelPlanets(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::PlanetLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelDwarfPlanets(GtkToggleAction* action, AppData* app)
+void
+actionLabelDwarfPlanets(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::DwarfPlanetLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelSpacecraft(GtkToggleAction* action, AppData* app)
+void
+actionLabelSpacecraft(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::SpacecraftLabels, gtk_toggle_action_get_active(action));
 }
 
-
-void actionLabelStars(GtkToggleAction* action, AppData* app)
+void
+actionLabelStars(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::StarLabels, gtk_toggle_action_get_active(action));
 }
 
-
-/* Script opening helper called by actionOpenScript() */
-static void openScript(const char* filename, AppData* app)
-{
-    /* Modified From Win32 HandleOpenScript */
-    if (filename)
-    {
-        /* If you got here, a path and file has been specified.
-         * filename contains full path to specified file. */
-        app->core->runScript(filename);
-    }
-}
-
-
-/* Image capturing helper called by actionCaptureImage() */
-static void captureImage(const char* filename, AppData* app)
-{
-    ContentType type = DetermineFileType(filename);
-    if (type != ContentType::JPEG && type != ContentType::PNG)
-    {
-        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_OK,
-                                                   _("Please use a name ending in '.jpg' or '.png'."));
-        gtk_dialog_run(GTK_DIALOG(errBox));
-        gtk_widget_destroy(errBox);
-        return;
-    }
-
-    if (!app->core->saveScreenShot(filename))
-    {
-        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_OK,
-                                                   "Error writing captured image.");
-        gtk_dialog_run(GTK_DIALOG(errBox));
-        gtk_widget_destroy(errBox);
-    }
-}
-
-/* Image capturing helper called by actionCaptureImage() */
-#ifdef USE_FFMPEG
-static void captureMovie(const char* filename, const int resolution[], float fps,
-                         AVCodecID codec, float bitrate, AppData* app)
-{
-    auto* movieCapture = new FFMPEGCapture(app->renderer);
-    movieCapture->setVideoCodec(codec);
-    movieCapture->setBitRate(bitrate);
-    if (codec == AV_CODEC_ID_H264)
-        movieCapture->setEncoderOptions(app->core->getConfig()->x264EncoderOptions);
-    else
-        movieCapture->setEncoderOptions(app->core->getConfig()->ffvhEncoderOptions);
-
-    bool success = movieCapture->start(filename, resolution[0], resolution[1], fps);
-    if (success)
-    {
-        app->core->initMovieCapture(movieCapture);
-    }
-    else
-    {
-        delete movieCapture;
-
-        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_OK,
-                                                   "Error initializing movie capture.");
-        gtk_dialog_run(GTK_DIALOG(errBox));
-        gtk_widget_destroy(errBox);
-    }
-}
-#endif
-
-/* Runs a dialog that displays text; should be replaced at some point with
-   a more elegant solution. */
-static void textInfoDialog(const char *txt, const char *title, AppData* app)
-{
-    /* I would use a gnome_message_box dialog for this, except they don't seem
-     * to notice that the texts are so big that they create huge windows, and
-     * would work better with a scrolled window. Deon */
-    GtkWidget* dialog = gtk_dialog_new_with_buttons(title,
-                                                    GTK_WINDOW(app->mainWindow),
-                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                    GTK_STOCK_OK, GTK_RESPONSE_OK,
-                                                    NULL);
-
-    GtkWidget* scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-    gtk_box_pack_start(GTK_BOX(content_area), scrolled_window, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-                                   GTK_POLICY_AUTOMATIC,
-                                   GTK_POLICY_AUTOMATIC);
-    gtk_widget_show(scrolled_window);
-
-    GtkWidget *text = gtk_label_new(txt);
-    gtk_widget_modify_font(text, pango_font_description_from_string("mono"));
-    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), GTK_WIDGET(text));
-    gtk_widget_show(text);
-
-    gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 400); /* Absolute Size, urghhh */
-    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
-
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
-
-
-/* Calculates and sets the render-flag int */
-static void setRenderFlag(AppData* a, uint64_t flag, gboolean state)
-{
-    uint64_t rf = (a->renderer->getRenderFlags() & ~flag) | (state ? flag : 0);
-    a->renderer->setRenderFlags(rf);
-
-    #ifdef GNOME
-    /* Update GConf */
-    gcSetRenderFlag(flag, state, a->client);
-    #endif /* GNOME */
-}
-
-
-/* Calculates and sets the orbit-mask int */
-static void setOrbitMask(AppData* a, int mask, gboolean state)
-{
-    int om = (a->renderer->getOrbitMask() & ~mask) | (state ? mask : 0);
-    a->renderer->setOrbitMask(om);
-
-    #ifdef GNOME
-    /* Update GConf */
-    gcSetOrbitMask(mask, state, a->client);
-    #endif /* GNOME */
-}
-
-
-/* Calculates and sets the label-mode int */
-static void setLabelMode(AppData* a, int mode, gboolean state)
-{
-    int lm = (a->renderer->getLabelMode() & ~mode) | (state ? mode : 0);
-    a->renderer->setLabelMode(lm);
-
-    #ifdef GNOME
-    /* Update GConf */
-    gcSetLabelMode(mode, state, a->client);
-    #endif /* GNOME */
-}
-
-
 /* Synchronizes the Label Actions with the state of the core */
-void resyncLabelActions(AppData* app)
+void
+resyncLabelActions(AppData* app)
 {
-    GtkAction* action;
-    const char* actionName;
-
     /* Simply for readability */
     int f = app->renderer->getLabelMode();
 
     for (int i = Renderer::StarLabels; i <= Renderer::GlobularLabels; i *= 2)
     {
+        const char* actionName;
         switch (i)
         {
             case Renderer::StarLabels: actionName = "LabelStars"; break;
@@ -1257,13 +1206,13 @@ void resyncLabelActions(AppData* app)
             case Renderer::OpenClusterLabels: actionName = "LabelOpenClusters"; break;
             case Renderer::GlobularLabels: actionName = "LabelGlobulars"; break;
             case Renderer::I18nConstellationLabels: /* Not used yet */
-            default: actionName = NULL;
+            default: actionName = nullptr; break;
         }
 
-        if (actionName != NULL)
+        if (actionName != nullptr)
         {
             /* Get the action */
-            action = gtk_action_group_get_action(app->agLabel, actionName);
+            GtkAction* action = gtk_action_group_get_action(app->agLabel, actionName);
 
             /* The current i anded with the labelMode gives state of flag */
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & f));
@@ -1271,22 +1220,20 @@ void resyncLabelActions(AppData* app)
     }
 }
 
-
 /* Synchronizes the Render Actions with the state of the core */
-void resyncRenderActions(AppData* app)
+void
+resyncRenderActions(AppData* app)
 {
-    GtkAction* action;
-    const char* actionName;
-
     /* Simply for readability */
-    uint64_t rf = app->renderer->getRenderFlags();
+    const std::uint64_t rf = app->renderer->getRenderFlags();
 
     /* Unlike the other interfaces, which go through each menu item and set
      * the corresponding renderFlag, we go the other way and set the menu
      * based on the renderFlag. Last one is ShowPlanetRings. */
 
-    for (uint64_t i = Renderer::ShowStars; i <= Renderer::ShowPlanetRings; i *= 2)
+    for (std::uint64_t i = Renderer::ShowStars; i <= Renderer::ShowPlanetRings; i *= 2)
     {
+        const char* actionName;
         switch (i)
         {
             case Renderer::ShowStars: actionName = "RenderStars"; break;
@@ -1313,22 +1260,22 @@ void resyncRenderActions(AppData* app)
             case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
             case Renderer::ShowCometTails: actionName = "RenderCometTails"; break;
             case Renderer::ShowMarkers: actionName = "RenderMarkers"; break;
-            case Renderer::ShowPartialTrajectories: actionName = NULL; break; /* Not useful yet */
+            case Renderer::ShowPartialTrajectories: actionName = nullptr; break; /* Not useful yet */
             case Renderer::ShowNebulae: actionName = "RenderNebulae"; break;
             case Renderer::ShowOpenClusters: actionName = "RenderOpenClusters"; break;
             case Renderer::ShowGlobulars: actionName = "RenderGlobulars"; break;
-            case Renderer::ShowCloudShadows: actionName = NULL; break; /* Not implemented yet */
+            case Renderer::ShowCloudShadows: actionName = nullptr; break; /* Not implemented yet */
             case Renderer::ShowGalacticGrid: actionName = "RenderGalacticGrid"; break;
             case Renderer::ShowEclipticGrid: actionName = "RenderEclipticGrid"; break;
             case Renderer::ShowHorizonGrid: actionName = "RenderHorizontalGrid"; break;
-            case Renderer::ShowEcliptic: actionName = NULL; break; /* Not implemented yet */
-            default: actionName = NULL;
+            case Renderer::ShowEcliptic: actionName = nullptr; break; /* Not implemented yet */
+            default: actionName = nullptr; break;
         }
 
-        if (actionName != NULL)
+        if (actionName != nullptr)
         {
             /* Get the action */
-            action = gtk_action_group_get_action(app->agRender, actionName);
+            GtkAction* action = gtk_action_group_get_action(app->agRender, actionName);
 
             /* The current i anded with the renderFlags gives state of flag */
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & rf) != 0);
@@ -1336,18 +1283,16 @@ void resyncRenderActions(AppData* app)
     }
 }
 
-
 /* Synchronizes the Orbit Actions with the state of the core */
-void resyncOrbitActions(AppData* app)
+void
+resyncOrbitActions(AppData* app)
 {
-    GtkAction* action;
-    const char* actionName;
-
     /* Simply for readability */
     int om = app->renderer->getOrbitMask();
 
     for (int i = Body::Planet; i <= Body::Spacecraft; i *= 2)
     {
+        const char* actionName;
         switch (i)
         {
             case Body::Planet: actionName = "OrbitPlanets"; break;
@@ -1355,13 +1300,13 @@ void resyncOrbitActions(AppData* app)
             case Body::Asteroid: actionName = "OrbitAsteroids"; break;
             case Body::Comet: actionName = "OrbitComets"; break;
             case Body::Spacecraft: actionName = "OrbitSpacecraft"; break;
-            default: actionName = NULL;
+            default: actionName = nullptr; break;
         }
 
-        if (actionName != NULL)
+        if (actionName != nullptr)
         {
             /* Get the action */
-            action = gtk_action_group_get_action(app->agOrbit, actionName);
+            GtkAction* action = gtk_action_group_get_action(app->agOrbit, actionName);
 
             /* The current i anded with the orbitMask gives state of flag */
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & om));
@@ -1369,13 +1314,11 @@ void resyncOrbitActions(AppData* app)
     }
 }
 
-
 /* Synchronizes the Verbosity Actions with the state of the core */
-void resyncVerbosityActions(AppData* app)
+void
+resyncVerbosityActions(AppData* app)
 {
-    GtkAction* action;
     const char* actionName;
-
     switch (app->core->getHudDetail())
     {
         case 0: actionName = "HudNone"; break;
@@ -1385,22 +1328,22 @@ void resyncVerbosityActions(AppData* app)
     }
 
     /* Get the action, set the widget */
-    action = gtk_action_group_get_action(app->agVerbosity, actionName);
+    GtkAction* action = gtk_action_group_get_action(app->agVerbosity, actionName);
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
 }
 
-
 /* Synchronizes the TimeZone Action with the state of the core */
-void resyncTimeZoneAction(AppData* app)
+void
+resyncTimeZoneAction(AppData* app)
 {
     /* Get the action, set the widget */
     GtkAction* action = gtk_action_group_get_action(app->agMain, "TimeLocal");
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), app->showLocalTime);
 }
 
-
 /* Synchronizes the Ambient Light Actions with the state of the core */
-void resyncAmbientActions(AppData* app)
+void
+resyncAmbientActions(AppData* app)
 {
     GtkAction* action;
 
@@ -1417,17 +1360,11 @@ void resyncAmbientActions(AppData* app)
         action = gtk_action_group_get_action(app->agAmbient, "AmbientMedium");
 
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
-
-    #ifdef GNOME
-    /* The action callback only occurs when one of the None/Low/Medium barriers
-     * is surpassed, so an update is forced. */
-    gconf_client_set_float(app->client, "/apps/celestia/ambientLight", ambient, NULL);
-    #endif
 }
 
-
 /* Synchronizes the Verbosity Actions with the state of the core */
-void resyncStarStyleActions(AppData* app)
+void
+resyncStarStyleActions(AppData* app)
 {
     GtkAction* action;
     const char* actionName;
@@ -1445,22 +1382,18 @@ void resyncStarStyleActions(AppData* app)
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
 }
 
-
 /* Placeholder for when galaxy brightness is added as an action */
-void resyncGalaxyGainActions(AppData* app)
+void
+resyncGalaxyGainActions(AppData* app)
 {
-    #ifdef GNOME
-    float gain = Galaxy::getLightGain();
-    gconf_client_set_float(app->client, "/apps/celestia/galaxyLightGain", gain, NULL);
-    #endif
+    /* no-op */
 }
-
 
 /* Synchronizes the Texture Resolution with the state of the core */
-void resyncTextureResolutionActions(AppData* app)
+void
+resyncTextureResolutionActions(AppData* app)
 {
-    #ifdef GNOME
-    int resolution = app->renderer->getResolution();
-    gconf_client_set_int(app->client, "/apps/celestia/textureResolution", resolution, NULL);
-    #endif /* GNOME */
+    /* no-op */
 }
+
+} // end namespace celestia::gtk

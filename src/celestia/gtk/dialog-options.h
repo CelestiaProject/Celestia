@@ -14,23 +14,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
+
 /* Entry Function */
 void dialogViewOptions(AppData* app);
 
-
-/* Local data */
-static const char * const ambientLabels[]=
-{
-    "None",
-    "Low",
-    "Medium",
-    NULL
-};
-
-static const char * const infoLabels[]=
-{
-    "None",
-    "Terse",
-    "Verbose",
-    NULL
-};
+} // end namespace celestia::gtk
