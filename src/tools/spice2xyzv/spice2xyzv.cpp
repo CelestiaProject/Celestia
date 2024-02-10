@@ -9,34 +9,99 @@
 //
 // Create a Celestia xyzv file from a pool of SPICE SPK files
 
-#include "SpiceUsr.h"
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
+#include <algorithm>
+#include <cctype>
 #include <cmath>
+#include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <type_traits>
+#include <vector>
 
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#include <Eigen/Core>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <dlfcn.h>
 #endif
 
-using namespace std;
+namespace
+{
 
+// Various definitions from SpiceCel.h
 
-const double J2000 = 2451545.0;
+using SpiceChar = char;
+using SpiceDouble = double;
+using SpiceBoolean = int;
+using SpiceInt = std::conditional_t<sizeof(long) * 2 == sizeof(SpiceDouble), long, int>;
+static_assert(sizeof(SpiceInt) * 2 == sizeof(SpiceDouble));
 
+using ConstSpiceChar = const SpiceChar;
+
+constexpr SpiceBoolean SPICEFALSE = 0;
+constexpr SpiceBoolean SPICETRUE = 1;
+
+void (*bodn2c_c)(ConstSpiceChar* name, SpiceInt* code, SpiceBoolean* found);
+void (*et2utc_c)(SpiceDouble et, ConstSpiceChar* format, SpiceInt prec, SpiceInt utclen, SpiceChar* utcstr);
+void (*furnsh_c)(ConstSpiceChar* file);
+void (*spkgeo_c)(SpiceInt targ, SpiceDouble et, ConstSpiceChar* ref, SpiceInt obs, SpiceDouble state[6], SpiceDouble* lt);
+void (*str2et_c)(ConstSpiceChar* timstr, SpiceDouble* et);
+
+template<typename H, typename T>
+bool
+InitializeProc(H handle, T& destination, const char* name)
+{
+#ifdef _WIN32
+    destination = reinterpret_cast<T>(GetProcAddress(handle, name));
+#else
+    destination = reinterpret_cast<T>(dlsym(handle, name));
+#endif
+    if (!destination)
+    {
+        std::cerr << "Could not find symbol " << name << " in cspice library\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool
+InitializeSpice()
+{
+#if defined(_WIN32)
+    HMODULE handle = LoadLibraryExW(L"plugins\\cspice.dll", NULL, LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
+    if (!handle)
+    {
+        std::cerr << "Could not find cspice library\n";
+        return false;
+    }
+#elif defined(__APPLE__)
+    void* handle = dlopen("libcspice.dylib", RTLD_LAZY | RTLD_LOCAL);
+#else
+    void* handle = dlopen("libcspice.so", RTLD_LAZY | RTLD_LOCAL);
+#endif
+
+    return InitializeProc(handle, bodn2c_c, "bodn2c_c") &&
+           InitializeProc(handle, et2utc_c, "et2utc_c") &&
+           InitializeProc(handle, furnsh_c, "furnsh_c") &&
+           InitializeProc(handle, spkgeo_c, "spkgeo_c") &&
+           InitializeProc(handle, str2et_c, "str2et_c");
+}
+
+constexpr double J2000 = 2451545.0;
 
 // Default values
 // Units are seconds
-const double MIN_STEP_SIZE = 60.0;
-const double MAX_STEP_SIZE = 5 * 86400.0;
+constexpr double MIN_STEP_SIZE = 60.0;
+constexpr double MAX_STEP_SIZE = 5 * 86400.0;
 
 // Units are kilometers
-const double TOLERANCE     = 20.0;
-
+constexpr double TOLERANCE     = 20.0;
 
 class Configuration
 {
@@ -50,67 +115,17 @@ public:
     {
     }
 
-    string kernelDirectory;
-    vector<string> kernelList;
-    string startDate;
-    string endDate;
-    string observerName;
-    string targetName;
-    string frameName;
+    std::string kernelDirectory;
+    std::vector<std::string> kernelList;
+    std::string startDate;
+    std::string endDate;
+    std::string observerName;
+    std::string targetName;
+    std::string frameName;
     double minStepSize;
     double maxStepSize;
     double tolerance;
 };
-
-
-// Very basic 3-vector class
-class Vec3d
-{
-public:
-    Vec3d() : x(0.0), y(0.0), z(0.0) {}
-    Vec3d(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
-    Vec3d(const double v[]) : x(v[0]), y(v[1]), z(v[2]) {}
-
-    double length() const { return std::sqrt(x * x + y * y + z * z); }
-
-    double x, y, z;
-};
-
-// Vector add
-Vec3d operator+(const Vec3d& v0, const Vec3d& v1)
-{
-    return Vec3d(v0.x + v1.x, v0.y + v1.y, v0.z + v1.z);
-}
-
-// Vector subtract
-Vec3d operator-(const Vec3d& v0, const Vec3d& v1)
-{
-    return Vec3d(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z);
-}
-
-// Additive inverse
-Vec3d operator-(const Vec3d& v)
-{
-    return Vec3d(-v.x, -v.y, -v.z);
-}
-
-// Scalar multiply
-Vec3d operator*(const Vec3d& v, double d)
-{
-    return Vec3d(v.x * d, v.y * d, v.z * d);
-}
-
-// Scalar multiply
-Vec3d operator*(double d, const Vec3d& v)
-{
-    return Vec3d(v.x * d, v.y * d, v.z * d);
-}
-
-ostream& operator<<(ostream& o, const Vec3d& v)
-{
-    return o << v.x << ' ' << v.y << ' ' << v.z;
-}
-
 
 // The StateVector object just contains the position and velocity
 // in 3D.
@@ -122,20 +137,20 @@ public:
     StateVector(const double v[]) :
         position(v), velocity(v + 3) {};
 
-    Vec3d position;
-    Vec3d velocity;
+    Eigen::Vector3d position;
+    Eigen::Vector3d velocity;
 };
-
 
 // QuotedString is used read a double quoted string from a C++ input
 // stream.
 class QuotedString
 {
 public:
-    string value;
+    std::string value;
 };
 
-istream& operator>>(istream& in, QuotedString& qs)
+std::istream&
+operator>>(std::istream& in, QuotedString& qs)
 {
     char c = '\0';
 
@@ -147,11 +162,11 @@ istream& operator>>(istream& in, QuotedString& qs)
 
     if (c != '"')
     {
-        in.setstate(ios::failbit);
+        in.setstate(std::ios::failbit);
         return in;
     }
 
-    string s;
+    std::string s;
 
     in >> c;
     while (in && c != '"')
@@ -166,17 +181,16 @@ istream& operator>>(istream& in, QuotedString& qs)
     return in;
 }
 
-
-
 // QuoteStringList is used to read a list of double quoted strings from
 // a C++ input stream. The string list must be enclosed by square brackets.
 class QuotedStringList
 {
 public:
-    vector<string> value;
+    std::vector<std::string> value;
 };
 
-istream& operator>>(istream& in, QuotedStringList& qsl)
+std::istream&
+operator>>(std::istream& in, QuotedStringList& qsl)
 {
     qsl.value.clear();
     char c = '\0';
@@ -184,7 +198,7 @@ istream& operator>>(istream& in, QuotedStringList& qsl)
     in >> c;
     if (c != '[')
     {
-        in.setstate(ios::failbit);
+        in.setstate(std::ios::failbit);
         return in;
     }
 
@@ -202,54 +216,53 @@ istream& operator>>(istream& in, QuotedStringList& qsl)
     }
 
     if (c != ']')
-        in.setstate(ios::failbit);
+        in.setstate(std::ios::failbit);
 
     return in;
 }
 
-
-
-static Vec3d cubicInterpolate(const Vec3d& p0, const Vec3d& v0,
-                              const Vec3d& p1, const Vec3d& v1,
-                              double t)
+Eigen::Vector3d
+cubicInterpolate(const Eigen::Vector3d& p0, const Eigen::Vector3d& v0,
+                 const Eigen::Vector3d& p1, const Eigen::Vector3d& v1,
+                 double t)
 {
     return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
                  ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
                  (v0 * t));
 }
 
-
-double et2jd(double et)
+double
+et2jd(double et)
 {
     return J2000 + et / 86400.0;
 }
 
-
-string etToString(double et)
+std::string
+etToString(double et)
 {
     char buf[200];
     et2utc_c(et, "C", 3, sizeof(buf), buf);
-    return string(buf);
+    return buf;
 }
 
-
-void printRecord(ostream& out, double et, const StateVector& state)
+void
+printRecord(std::ostream& out, double et, const StateVector& state)
 {
     // < 1 second error around J2000
-    out << setprecision(12) << et2jd(et) << " ";
+    out << std::setprecision(12) << et2jd(et) << ' ';
 
     // < 1 meter error at 1 billion km
-    out << setprecision(12) << state.position << " ";
+    out << std::setprecision(12) << state.position << ' ';
 
     // < 0.1 mm/s error at 10 km/s
-    out << setprecision(8) << state.velocity << endl;
+    out << std::setprecision(8) << state.velocity << '\n';
 }
 
-
-StateVector getStateVector(SpiceInt targetID,
-                           double et,
-                           const string& frameName,
-                           SpiceInt observerID)
+StateVector
+getStateVector(SpiceInt targetID,
+               double et,
+               const std::string& frameName,
+               SpiceInt observerID)
 {
     double stateVector[6];
     double lightTime = 0.0;
@@ -274,7 +287,7 @@ bool bodyNameToId(const std::string& name, SpiceInt* naifId)
     }
 
     // Check to see whether the string is actually a numeric ID
-    istringstream str(name, istringstream::in);
+    std::istringstream str(name, std::ios::in);
     int id = 0;
     str >> id;
     if (str.eof())
@@ -287,11 +300,9 @@ bool bodyNameToId(const std::string& name, SpiceInt* naifId)
         return false;
     }
 }
-
-
 // Dump information about the xyzv file in the comment header
-void writeCommentHeader(const Configuration& config,
-                        ostream& out)
+void
+writeCommentHeader(const Configuration& config, std::ostream& out)
 {
     SpiceInt observerID = 0;
     SpiceInt targetID = 0;
@@ -304,29 +315,28 @@ void writeCommentHeader(const Configuration& config,
     out << "# Celestia xyzv file generated by spice2xyzv\n";
     out << "#\n";
 
-    time_t now = 0;
-    time(&now);
+    std::time_t now = 0;
+    std::time(&now);
     out << "# Creation date: " << ctime(&now);
     out << "#\n";
 
     out << "# SPICE kernel files used:\n";
-    for (vector<string>::const_iterator iter = config.kernelList.begin();
-         iter != config.kernelList.end(); iter++)
+    for (const auto& kernel : config.kernelList)
     {
-        out << "#   " << *iter << endl;
+        out << "#   " << kernel << '\n';
     }
     out << "#\n";
 
-    out << "# Start date: " << config.startDate << endl;
-    out << "# End date:   " << config.endDate << endl;
-    out << "# Observer:   " << config.observerName << " (" << observerID << ")" << endl;
-    out << "# Target:     " << config.targetName << " (" << targetID << ")" << endl;
-    out << "# Frame:      " << config.frameName << endl;
+    out << "# Start date: " << config.startDate << '\n';
+    out << "# End date:   " << config.endDate << '\n';
+    out << "# Observer:   " << config.observerName << " (" << observerID << ")" << '\n';
+    out << "# Target:     " << config.targetName << " (" << targetID << ")" << '\n';
+    out << "# Frame:      " << config.frameName << '\n';
     out << "#\n";
 
-    out << "# Min step size: " << config.minStepSize << " s" << endl;
-    out << "# Max step size: " << config.maxStepSize << " s" << endl;
-    out << "# Tolerance:     " << config.tolerance << " km" << endl;
+    out << "# Min step size: " << config.minStepSize << " s" << '\n';
+    out << "# Max step size: " << config.maxStepSize << " s" << '\n';
+    out << "# Tolerance:     " << config.tolerance << " km" << '\n';
     out << "#\n";
 
     out << "# Records are <jd> <x> <y> <z> <vel x> <vel y> <vel z>\n";
@@ -334,18 +344,17 @@ void writeCommentHeader(const Configuration& config,
     out << "#   Position in km\n";
     out << "#   Velocity in km/sec\n";
 
-    out << endl;
+    out << '\n';
 }
 
-
-bool convertSpkToXyzv(const Configuration& config,
-                      ostream& out)
+bool
+convertSpkToXyzv(const Configuration& config,
+                 std::ostream& out)
 {
     // Load the required SPICE kernels
-    for (vector<string>::const_iterator iter = config.kernelList.begin();
-         iter != config.kernelList.end(); iter++)
+    for (const auto& kernel : config.kernelList)
     {
-        string pathname = config.kernelDirectory + "/" + *iter;
+        std::string pathname = config.kernelDirectory + "/" + kernel;
         furnsh_c(pathname.c_str());
     }
 
@@ -359,13 +368,13 @@ bool convertSpkToXyzv(const Configuration& config,
     SpiceInt targetID = 0;
     if (!bodyNameToId(config.observerName, &observerID))
     {
-        cerr << "Observer object " << config.observerName << " not found. Aborting.\n";
+        std::cerr << "Observer object " << config.observerName << " not found. Aborting.\n";
         return false;
     }
 
     if (!bodyNameToId(config.targetName, &targetID))
     {
-        cerr << "Target object " << config.targetName << " not found. Aborting.\n";
+        std::cerr << "Target object " << config.targetName << " not found. Aborting.\n";
         return false;
     }
 
@@ -384,20 +393,20 @@ bool convertSpkToXyzv(const Configuration& config,
     while (t < endET)
     {
         // Make sure that we don't go past the end of the sample interval
-        maxStepSize = min(maxStepSize, endET - t);
-        double dt = min(maxStepSize, startStepSize * 2.0);
+        maxStepSize = std::min(maxStepSize, endET - t);
+        double dt = std::min(maxStepSize, startStepSize * 2.0);
 
         StateVector s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
 
         double tmid = t + dt / 2.0;
-        Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
-        Vec3d pInterp = cubicInterpolate(lastState.position,
-                                         lastState.velocity * dt,
-                                         s1.position,
-                                         s1.velocity * dt,
-                                         0.5);
+        Eigen::Vector3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+        Eigen::Vector3d pInterp = cubicInterpolate(lastState.position,
+                                                   lastState.velocity * dt,
+                                                   s1.position,
+                                                   s1.velocity * dt,
+                                                   0.5);
 
-        double positionError = (pInterp - pTest).length();
+        double positionError = (pInterp - pTest).norm();
 
         // Error is greater than tolerance; decrease the step until the
         // error is within the tolerance.
@@ -410,14 +419,14 @@ bool convertSpkToXyzv(const Configuration& config,
                 s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
 
                 tmid = t + dt / 2.0;
-                Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+                Eigen::Vector3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
                 pInterp = cubicInterpolate(lastState.position,
                                            lastState.velocity * dt,
                                            s1.position,
                                            s1.velocity * dt,
                                            0.5);
 
-                positionError = (pInterp - pTest).length();
+                positionError = (pInterp - pTest).norm();
             }
         }
         else
@@ -427,19 +436,19 @@ bool convertSpkToXyzv(const Configuration& config,
             while (positionError < tolerance && dt < maxStepSize)
             {
                 dt *= stepFactor;
-                dt = min(maxStepSize, dt);
+                dt = std::min(maxStepSize, dt);
 
                 s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
 
                 tmid = t + dt / 2.0;
-                Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+                Eigen::Vector3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
                 pInterp = cubicInterpolate(lastState.position,
                                            lastState.velocity * dt,
                                            s1.position,
                                            s1.velocity * dt,
                                            0.5);
 
-                positionError = (pInterp - pTest).length();
+                positionError = (pInterp - pTest).norm();
             }
         }
 
@@ -452,14 +461,14 @@ bool convertSpkToXyzv(const Configuration& config,
     return true;
 }
 
-
-bool readConfig(istream& in, Configuration& config)
+bool
+readConfig(std::istream& in, Configuration& config)
 {
     QuotedString qs;
 
     while (in && !in.eof())
     {
-        string key;
+        std::string key;
 
         in >> key;
         if (in.eof())
@@ -523,60 +532,66 @@ bool readConfig(istream& in, Configuration& config)
     return in.good();
 }
 
+} // end unnamed namespace
 
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
+    if (!InitializeSpice())
+    {
+        return EXIT_FAILURE;
+    }
+
     if (argc < 2)
     {
-        cerr << "Usage: spice2xyzv <config filename> [output filename]\n";
-        return 1;
+        std::cerr << "Usage: spice2xyzv <config filename> [output filename]\n";
+        return EXIT_FAILURE;
     }
 
 
-    ifstream configFile(argv[1]);
+    std::ifstream configFile(argv[1]);
     if (!configFile)
     {
-        cerr << "Error opening configuration file.\n";
-        return 1;
+        std::cerr << "Error opening configuration file.\n";
+        return EXIT_FAILURE;
     }
-
 
     Configuration config;
     if (!readConfig(configFile, config))
     {
-        cerr << "Error in configuration file.\n";
-        return 1;
+        std::cerr << "Error in configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     // Check that all required parameters are present.
     if (config.startDate.empty())
     {
-        cerr << "StartDate missing from configuration file.\n";
-        return 1;
+        std::cerr << "StartDate missing from configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     if (config.endDate.empty())
     {
-        cerr << "EndDate missing from configuration file.\n";
-        return 1;
+        std::cerr << "EndDate missing from configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     if (config.targetName.empty())
     {
-        cerr << "Target missing from configuration file.\n";
-        return 1;
+        std::cerr << "Target missing from configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     if (config.observerName.empty())
     {
-        cerr << "Observer missing from configuration file.\n";
-        return 1;
+        std::cerr << "Observer missing from configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     if (config.kernelList.empty())
     {
-        cerr << "Kernels missing from configuration file.\n";
-        return 1;
+        std::cerr << "Kernels missing from configuration file.\n";
+        return EXIT_FAILURE;
     }
 
     // Load the leap second kernel
@@ -586,8 +601,8 @@ int main(int argc, char* argv[])
     furnsh_c(CONFIG_DATA_DIR "/" "naif0012.tls");
 #endif
 
-    writeCommentHeader(config, cout);
-    convertSpkToXyzv(config, cout);
+    writeCommentHeader(config, std::cout);
+    convertSpkToXyzv(config, std::cout);
 
-    return 0;
+    return EXIT_SUCCESS;
 }

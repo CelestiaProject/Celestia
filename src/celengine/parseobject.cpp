@@ -47,6 +47,7 @@
 #endif
 
 #ifdef USE_SPICE
+#include <celephem/spiceinterface.h>
 #include <celephem/spiceorbit.h>
 #include <celephem/spicerotation.h>
 #endif
@@ -1413,24 +1414,28 @@ CreateOrbit(const Selection& centralObject,
 
     if (const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit"); spiceOrbitDataValue != nullptr)
     {
-#ifdef USE_SPICE
         const Hash* spiceOrbitData = spiceOrbitDataValue->getHash();
-        if (spiceOrbitData == nullptr)
+        if (spiceOrbitData == nullptr) //NOSONAR
         {
             GetLogger()->error("Object has incorrect spice orbit syntax.\n");
             return nullptr;
         }
-        else
+
+#ifdef USE_SPICE
+        if (ephem::GetSpiceInterface())
         {
             auto orbit = CreateSpiceOrbit(spiceOrbitData, path, usePlanetUnits);
             if (orbit != nullptr)
                 return orbit;
 
-            GetLogger()->error("Bad spice orbit\n");
             GetLogger()->error("Could not load SPICE orbit\n");
         }
-#else
-        GetLogger()->warn("Spice support is not enabled, ignoring SpiceOrbit definition\n");
+        else
+        {
+#endif
+            GetLogger()->warn("SPICE support is not enabled, ignoring SpiceOrbit definition\n");
+#ifdef USE_SPICE
+        }
 #endif
     }
 
@@ -1587,22 +1592,27 @@ CreateRotationModel(const Hash* planetData,
 
     if (const Value* spiceRotationDataValue = planetData->getValue("SpiceRotation"); spiceRotationDataValue != nullptr)
     {
-#ifdef USE_SPICE
         const Hash* spiceRotationData = spiceRotationDataValue->getHash();
-        if (spiceRotationData == nullptr)
+        if (spiceRotationData == nullptr) //NOSONAR
         {
             GetLogger()->error("Object has incorrect spice rotation syntax.\n");
             return nullptr;
         }
-        else
+
+#ifdef USE_SPICE
+        if (ephem::GetSpiceInterface())
         {
             if (auto rotationModel = CreateSpiceRotation(spiceRotationData, path); rotationModel != nullptr)
                 return rotationModel;
 
-            GetLogger()->error("Bad spice rotation model\nCould not load SPICE rotation model\n");
+            GetLogger()->error("Could not load SPICE rotation model\n");
         }
-#else
-        GetLogger()->warn("Spice support is not enabled, ignoring SpiceRotation definition\n");
+        else
+        {
+#endif
+            GetLogger()->warn("Spice support is not enabled, ignoring SpiceRotation definition\n");
+#ifdef USE_SPICE
+        }
 #endif
     }
 

@@ -12,9 +12,8 @@
 
 #include "spicerotation.h"
 
+#include <cassert>
 #include <limits>
-
-#include <SpiceUsr.h>
 
 #include <celastro/date.h>
 #include <celcompat/numbers.h>
@@ -112,6 +111,10 @@ SpiceRotation::loadRequiredKernel(const fs::path& path,
 bool
 SpiceRotation::init()
 {
+    auto spice = GetSpiceInterface();
+    if (!spice)
+        return false;
+
     // Reduce valid interval by a millisecond at each end.
     m_validIntervalBegin += MILLISEC;
     m_validIntervalEnd -= MILLISEC;
@@ -120,16 +123,16 @@ SpiceRotation::init()
     // adequate data in the kernel.
     double beginning = astro::daysToSecs(m_validIntervalBegin - astro::J2000);
     double xform[3][3];
-    pxform_c(m_frameName.c_str(), m_frameName.c_str(), beginning, xform);
-    if (failed_c())
+    spice->pxform_c(m_frameName.c_str(), m_frameName.c_str(), beginning, xform);
+    if (spice->failed_c())
     {
         // Print the error message
         char errMsg[1024];
-        getmsg_c("long", sizeof(errMsg), errMsg);
+        spice->getmsg_c("long", sizeof(errMsg), errMsg);
         GetLogger()->error("{}\n", errMsg);
         m_spiceErr = true;
 
-        reset_c();
+        spice->reset_c();
     }
 
     return !m_spiceErr;
@@ -139,6 +142,9 @@ SpiceRotation::init()
 Eigen::Quaterniond
 SpiceRotation::computeSpin(double jd) const
 {
+    auto spice = GetSpiceInterface();
+    assert(spice != nullptr);
+
     if (jd < m_validIntervalBegin)
         jd = m_validIntervalBegin;
     else if (jd > m_validIntervalEnd)
@@ -154,17 +160,17 @@ SpiceRotation::computeSpin(double jd) const
         double t = astro::daysToSecs(jd - astro::J2000);
         double xform[3][3];
 
-        pxform_c(m_frameName.c_str(), m_baseFrameName.c_str(), t, xform);
+        spice->pxform_c(m_frameName.c_str(), m_baseFrameName.c_str(), t, xform);
 
-        if (failed_c())
+        if (spice->failed_c())
         {
             // Print the error message
             char errMsg[1024];
-            getmsg_c("long", sizeof(errMsg), errMsg);
+            spice->getmsg_c("long", sizeof(errMsg), errMsg);
             GetLogger()->error("{}\n", errMsg);
 
             // Reset the error state
-            reset_c();
+            spice->reset_c();
         }
 
         // Eigen stores matrices in column-major order...

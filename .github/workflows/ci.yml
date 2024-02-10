@@ -56,7 +56,6 @@ jobs:
       shell: pwsh
       run: |
         $packages = @(
-          'cspice',
           'eigen3',
           'ffmpeg[x264]',
           'fmt',
@@ -271,7 +270,6 @@ jobs:
                      ninja \
                      eigen \
                      ffmpeg \
-                     cspice \
                      fmt \
                      jpeg \
                      gettext \

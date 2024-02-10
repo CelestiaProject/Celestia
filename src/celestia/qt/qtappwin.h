@@ -18,6 +18,9 @@
 #include <QTimer>
 
 #include <celestia/celestiacore.h>
+#ifdef USE_SPICE
+#include <celestia/cspiceloader.h>
+#endif
 
 class QCloseEvent;
 class QColor;
@@ -145,6 +148,9 @@ private:
     CelestialBrowser* celestialBrowser{ nullptr };
 
     CelestiaCore* m_appCore{ nullptr };
+#ifdef USE_SPICE
+    std::unique_ptr<celestia::SpiceLibraryWrapper> m_spiceLibrary;
+#endif
 
     CelestiaActions* actions{ nullptr };
 

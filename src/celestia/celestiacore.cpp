@@ -2343,14 +2343,6 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (!config->paths.leapSecondsFile.empty())
         ReadLeapSecondsFile(config->paths.leapSecondsFile, leapSeconds);
 
-#ifdef USE_SPICE
-    if (!celestia::ephem::InitializeSpice())
-    {
-        fatalError(_("Initialization of SPICE library failed."), false);
-        return false;
-    }
-#endif
-
     // Insert additional extras directories into the configuration. These
     // additional directories typically come from the command line. It may
     // be useful to permit other command line overrides of config file fields.
@@ -2409,7 +2401,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     universe->setDSOCatalog(std::move(dsoCatalog));
 
     /***** Load the solar system catalogs *****/
-    
+
     loadSSO(*config, progressNotifier, universe);
 
     // Load asterisms:

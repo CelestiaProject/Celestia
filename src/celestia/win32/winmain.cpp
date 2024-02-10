@@ -30,6 +30,9 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
+#ifdef USE_SPICE
+#include <celestia/cspiceloader.h>
+#endif
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
 #include <celestia/scriptmenu.h>
@@ -663,6 +666,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
             GetLogger()->info(_("Loaded localized resource: {}\n"), resPath);
         }
     }
+#endif
+
+#ifdef USE_SPICE
+    auto spiceLibrary = celestia::LoadSpiceLibrary();
 #endif
 
     auto alerter = std::make_unique<WinAlerter>(splash);

@@ -37,6 +37,10 @@
 #include "qtcommandline.h"
 #include "qtgettext.h"
 
+#ifdef USE_SPICE
+#include <celestia/cspiceloader.h>
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifndef GL_ES

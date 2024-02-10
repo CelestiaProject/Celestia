@@ -11,9 +11,9 @@
 
 #include "spiceinterface.h"
 
+#include <cstdio>
+#include <memory>
 #include <set>
-
-#include <SpiceUsr.h>
 
 #include <celutil/logger.h>
 
@@ -27,29 +27,21 @@ namespace
 
 using ResidentKernelsSet = std::set<fs::path>;
 
-ResidentKernelsSet* getResidentKernelsSet()
-{
-    // Track loaded SPICE kernels in order to avoid loading the same kernel
-    // multiple times. This is a static variable because SPICE uses a global
-    // kernel pool.
-    static ResidentKernelsSet* residentKernelsSet = new std::set<fs::path>;
-    return residentKernelsSet;
-}
+const SpiceInterface* spiceInterface{ nullptr };
 
 } // end unnamed namespace
 
-/*! Perform one-time initialization of SPICE.
- */
-bool
-InitializeSpice()
+const SpiceInterface*
+GetSpiceInterface()
 {
-    // Set the error behavior to the RETURN action, so that
-    // Celestia do its own handling of SPICE errors.
-    erract_c("SET", 0, (SpiceChar*)"RETURN");
-
-    return true;
+    return spiceInterface;
 }
 
+void
+SetSpiceInterface(const SpiceInterface* spice)
+{
+    spiceInterface = spice;
+}
 
 /*! Convert an object name to a NAIF integer ID. Return true if the name
  *  refers to a known object, false if not. Both names and numeric IDs are
@@ -57,6 +49,10 @@ InitializeSpice()
  */
 bool GetNaifId(const std::string& name, int* id)
 {
+    auto spice = GetSpiceInterface();
+    if (spice == nullptr)
+        return false;
+
     SpiceInt spiceID = 0;
     SpiceBoolean found = SPICEFALSE;
 
@@ -64,19 +60,19 @@ bool GetNaifId(const std::string& name, int* id)
     // an error if we do.
     if (!name.empty())
     {
-        bodn2c_c(name.c_str(), &spiceID, &found);
+        spice->bodn2c_c(name.c_str(), &spiceID, &found);
         if (found)
         {
-            *id = (int) spiceID;
+            *id = static_cast<int>(spiceID);
         }
         else   // Is it a numeric ID?
         {
             // SpiceInt maps to an int on those architectures where sizeof(long) != sizeof(double)/2.
             // Otherwise it maps to a long. This avoids GCC complaints about type mismatches:
             long spiceIDlng;
-            if (sscanf(name.c_str(), " %ld", &spiceIDlng) == 1)
+            if (std::sscanf(name.c_str(), " %ld", &spiceIDlng) == 1)
             {
-                *id = (int) spiceIDlng;
+                *id = static_cast<int>(spiceIDlng);
                 found = SPICETRUE;
             }
         }
@@ -89,26 +85,32 @@ bool GetNaifId(const std::string& name, int* id)
 /*! Load a SPICE kernel file of any type into the kernel pool. If the kernel
  *  is already resident, it will not be reloaded.
  */
-bool LoadSpiceKernel(const fs::path& filepath)
+bool
+LoadSpiceKernel(const fs::path& filepath)
 {
+    auto spice = GetSpiceInterface();
+    if (spice == nullptr)
+        return false;
+
     // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through
     // a metakernel.
-    if (!getResidentKernelsSet()->insert(filepath).second)
+    static ResidentKernelsSet* const residentKernels = std::make_unique<ResidentKernelsSet>().release();
+    if (residentKernels->insert(filepath).second)
         return true;
 
-    furnsh_c(filepath.string().c_str());
+    spice->furnsh_c(filepath.string().c_str());
 
     // If there was an error loading the kernel, dump the error message.
-    if (failed_c())
+    if (spice->failed_c())
     {
         char errMsg[1024];
-        getmsg_c("long", sizeof(errMsg), errMsg);
+        spice->getmsg_c("long", sizeof(errMsg), errMsg);
         GetLogger()->error("{}\n", errMsg);
 
         // Reset the SPICE error state so that future calls to
         // SPICE can still succeed.
-        reset_c();
+        spice->reset_c();
 
         return false;
     }

@@ -18,6 +18,9 @@
 #include <celengine/glsupport.h>
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
+#ifdef USE_SPICE
+#include <celestia/cspiceloader.h>
+#endif
 #include <celestia/url.h>
 #include <celutil/gettext.h>
 #include <celutil/tzutil.h>
@@ -116,6 +119,10 @@ class SDL_Application
     CelestiaCore *m_appCore     { nullptr };
     SDL_Window   *m_mainWindow  { nullptr };
     SDL_GLContext m_glContext   { nullptr };
+
+#ifdef USE_SPICE
+    std::unique_ptr<celestia::SpiceLibraryWrapper> m_spiceLibrary;
+#endif
 };
 
 std::shared_ptr<SDL_Application>
@@ -190,6 +197,9 @@ bool
 SDL_Application::initCelestiaCore()
 {
     m_appCore = new CelestiaCore();
+#ifdef USE_SPICE
+    m_spiceLibrary = celestia::LoadSpiceLibrary();
+#endif
     m_appCore->setAlerter(new SDL_Alerter());
     if (!m_appCore->initSimulation())
         return false;

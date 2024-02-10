@@ -74,6 +74,9 @@
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
 #include <celengine/universe.h>
+#ifdef USE_SPICE
+#include <celephem/spiceinterface.h>
+#endif
 #include <celestia/celestiastate.h>
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
@@ -104,6 +107,8 @@
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
 #endif
+
+namespace ephem = celestia::ephem;
 
 namespace
 {
@@ -279,6 +284,9 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     initAppDataDirectory();
 
     m_appCore = new CelestiaCore();
+#ifdef USE_SPICE
+    m_spiceLibrary = celestia::LoadSpiceLibrary();
+#endif
 
     auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
@@ -1202,7 +1210,7 @@ CelestiaAppWindow::slotShowAbout()
 #endif
                                 .arg(QT_VERSION_STR, qVersion())
 #if defined(USE_SPICE)
-                                .arg(_("supported"))
+                                .arg(ephem::GetSpiceInterface() ? _("supported") : _("not supported"))
 #else
                                 .arg(_("not supported"))
 #endif

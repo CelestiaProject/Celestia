@@ -36,6 +36,9 @@
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
+#ifdef USE_SPICE
+#include <celestia/cspiceloader.h>
+#endif
 #include <celutil/gettext.h>
 
 /* Includes for the GNOME front-end */
@@ -381,6 +384,9 @@ int main(int argc, char* argv[])
         cerr << "Cannot chdir to '" << installDir << "', probably due to improper installation.\n";
 
     app->core = new CelestiaCore();
+#ifdef USE_SPICE
+    auto spiceLibrary = celestia::LoadSpiceLibrary();
+#endif
 
     app->renderer = app->core->getRenderer();
     g_assert(app->renderer);

@@ -9,9 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <utility>
-
-#include <SpiceUsr.h>
 
 #include <celastro/date.h>
 #include <celutil/logger.h>
@@ -20,6 +19,25 @@
 
 using celestia::util::GetLogger;
 
+// definitions from SpiceCel.h
+
+constexpr inline std::size_t SPICE_CELL_CTRLSZ = 6;
+
+#define SPICEDOUBLE_CELL( name, size )                           \
+                                                                 \
+static SpiceDouble SPICE_CELL_##name [SPICE_CELL_CTRLSZ + size]; \
+                                                                 \
+static SpiceCell name = {                                        \
+    SPICE_DP,                                                    \
+    0,                                                           \
+    size,                                                        \
+    0,                                                           \
+    SPICETRUE,                                                   \
+    SPICEFALSE,                                                  \
+    SPICEFALSE,                                                  \
+    (void *) &(SPICE_CELL_##name),                               \
+    (void *) &(SPICE_CELL_##name[SPICE_CELL_CTRLSZ])             \
+}
 
 namespace celestia::ephem
 {
@@ -108,6 +126,10 @@ SpiceOrbit::loadRequiredKernel(const fs::path& path, const std::string& kernel)
 bool
 SpiceOrbit::init()
 {
+    auto spice = GetSpiceInterface();
+    if (!spice)
+        return false;
+
     // Get the ID codes for the target
     if (!GetNaifId(targetBodyName, &targetID))
     {
@@ -124,14 +146,14 @@ SpiceOrbit::init()
     }
 
     SpiceInt spkCount = 0;
-    ktotal_c("spk", &spkCount);
+    spice->ktotal_c("spk", &spkCount);
 
     // Get coverage window for target and origin object
     const int MaxIntervals = 10;
     SPICEDOUBLE_CELL ( targetCoverage, MaxIntervals * 2 );
 
     // Clear the coverage window.
-    scard_c(0, &targetCoverage);
+    spice->scard_c(0, &targetCoverage);
 
     for (SpiceInt i = 0; i < spkCount; i++)
     {
@@ -141,27 +163,27 @@ SpiceOrbit::init()
         SpiceInt handle;
         SpiceBoolean found;
 
-        kdata_c(i, "spk",
-                sizeof(filename), sizeof(filetype), sizeof(source),
-                filename, filetype, source, &handle, &found);
+        spice->kdata_c(i, "spk",
+                       sizeof(filename), sizeof(filetype), sizeof(source),
+                       filename, filetype, source, &handle, &found);
 
         // First check the coverage window of the target. No interval
         // is required for ID 0 (the solar system barycenter) which is
         // always at (0, 0, 0).
         if (targetID != 0)
         {
-            spkcov_c(filename, targetID, &targetCoverage);
+            spice->spkcov_c(filename, targetID, &targetCoverage);
         }
     }
 
-    SpiceInt nIntervals = card_c(&targetCoverage) / 2;
+    SpiceInt nIntervals = spice->card_c(&targetCoverage) / 2;
     if (nIntervals <= 0 && targetID != 0)
     {
         GetLogger()->error("Couldn't find object {} in SPICE kernel pool.\n", targetBodyName);
         spiceErr = true;
-        if (failed_c())
+        if (spice->failed_c())
         {
-            reset_c();
+            spice->reset_c();
         }
         return false;
     }
@@ -182,7 +204,7 @@ SpiceOrbit::init()
         }
         else
         {
-            wnfetd_c(&targetCoverage, 0, &targetBeginning, &targetEnding);
+            spice->wnfetd_c(&targetCoverage, 0, &targetBeginning, &targetEnding);
 
             // SPICE times are seconds since J2000.0
             validIntervalBegin = astro::secsToDays(targetBeginning) + astro::J2000;
@@ -206,7 +228,7 @@ SpiceOrbit::init()
 
         // A time interval was specified--make sure that it's covered in the SPICE kernel.
         if (targetID != 0 &&
-            !wnincd_c(beginningSecondsJ2000, endingSecondsJ2000, &targetCoverage))
+            !spice->wnincd_c(beginningSecondsJ2000, endingSecondsJ2000, &targetCoverage))
         {
             GetLogger()->error("Specified time interval for target {} not available.\n", targetBodyName);
             return false;
@@ -221,17 +243,17 @@ SpiceOrbit::init()
     double beginning = astro::daysToSecs(validIntervalBegin - astro::J2000);
     double position[3];
     double lt = 0.0;
-    spkgps_c(targetID, beginning, "eclipj2000", originID,
-             position, &lt);
-    if (failed_c())
+    spice->spkgps_c(targetID, beginning, "eclipj2000", originID,
+                    position, &lt);
+    if (spice->failed_c())
     {
         // Print the error message
         char errMsg[1024];
-        getmsg_c("long", sizeof(errMsg), errMsg);
+        spice->getmsg_c("long", sizeof(errMsg), errMsg);
         GetLogger()->error("{}\n", errMsg);
         spiceErr = true;
 
-        reset_c();
+        spice->reset_c();
     }
 
     return !spiceErr;
@@ -241,6 +263,9 @@ SpiceOrbit::init()
 Eigen::Vector3d
 SpiceOrbit::computePosition(double jd) const
 {
+    auto spice = GetSpiceInterface();
+    assert(spice != nullptr);
+
     if (jd < validIntervalBegin)
         jd = validIntervalBegin;
     else if (jd > validIntervalEnd)
@@ -257,24 +282,24 @@ SpiceOrbit::computePosition(double jd) const
         double position[3];
         double lt;          // One way light travel time
 
-        spkgps_c(targetID,
-                 t,
-                 "eclipj2000",
-                 originID,
-                 position,
-                 &lt);
+        spice->spkgps_c(targetID,
+                        t,
+                        "eclipj2000",
+                        originID,
+                        position,
+                        &lt);
 
         // This shouldn't happen, since we've already computed the valid
         // coverage interval.
-        if (failed_c())
+        if (spice->failed_c())
         {
             // Print the error message
             char errMsg[1024];
-            getmsg_c("long", sizeof(errMsg), errMsg);
+            spice->getmsg_c("long", sizeof(errMsg), errMsg);
             GetLogger()->warn("{}\n", errMsg);
 
             // Reset the error state
-            reset_c();
+            spice->reset_c();
         }
 
         // Transform into Celestia's coordinate system
@@ -286,6 +311,9 @@ SpiceOrbit::computePosition(double jd) const
 Eigen::Vector3d
 SpiceOrbit::computeVelocity(double jd) const
 {
+    auto spice = GetSpiceInterface();
+    assert(spice != nullptr);
+
     if (jd < validIntervalBegin)
         jd = validIntervalBegin;
     else if (jd > validIntervalEnd)
@@ -302,24 +330,24 @@ SpiceOrbit::computeVelocity(double jd) const
         double state[6];
         double lt;          // One way light travel time
 
-        spkgeo_c(targetID,
-                 t,
-                 "eclipj2000",
-                 originID,
-                 state,
-                 &lt);
+        spice->spkgeo_c(targetID,
+                        t,
+                        "eclipj2000",
+                        originID,
+                        state,
+                        &lt);
 
         // This shouldn't happen, since we've already computed the valid
         // coverage interval.
-        if (failed_c())
+        if (spice->failed_c())
         {
             // Print the error message
             char errMsg[1024];
-            getmsg_c("long", sizeof(errMsg), errMsg);
+            spice->getmsg_c("long", sizeof(errMsg), errMsg);
             GetLogger()->warn("{}\n", errMsg);
 
             // Reset the error state
-            reset_c();
+            spice->reset_c();
         }
 
         // Transform into Celestia's coordinate system, and from km/s to km/day

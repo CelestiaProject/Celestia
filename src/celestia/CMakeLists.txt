@@ -70,6 +70,13 @@ if(ENABLE_MINIAUDIO)
   )
 endif()
 
+if(ENABLE_SPICE AND USE_SPICE_LOADER)
+  list(APPEND CELESTIA_SOURCES
+    cspiceloader.cpp
+    cspiceloader.h
+  )
+endif()
+
 set(CELESTIA_CORE_LIBS $<TARGET_OBJECTS:cel3ds>
                        $<TARGET_OBJECTS:celastro>
                        $<TARGET_OBJECTS:celengine>
@@ -105,10 +112,6 @@ set_target_properties(celestia PROPERTIES
   SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
   WINDOWS_EXPORT_ALL_SYMBOLS TRUE
 )
-
-if(ENABLE_SPICE)
-  target_link_libraries(celestia CSPICE::CSPICE)
-endif()
 
 if(APPLE)
   target_link_libraries(celestia "-framework Foundation")
