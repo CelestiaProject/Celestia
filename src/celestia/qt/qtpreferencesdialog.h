@@ -18,6 +18,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class PreferencesDialog : public QDialog
 {
@@ -49,7 +51,7 @@ private slots:
     void on_planetRingsCheck_stateChanged(int state);
     void on_nightsideLightsCheck_stateChanged(int state);
     void on_cometTailsCheck_stateChanged(int state);
-    void on_limitOfKnowledgeCheck_stateChanged(int state);
+    void on_limitOfKnowledgeCheck_stateChanged(int state) const;
 
     void on_orbitsCheck_stateChanged(int state);
     void on_fadingOrbitsCheck_stateChanged(int state);
@@ -103,21 +105,21 @@ private slots:
     void on_featureSizeSlider_valueChanged(int value);
     void on_featureSizeSpinBox_valueChanged(int value);
 
-    void on_renderPathBox_currentIndexChanged(int index);
+    void on_renderPathBox_currentIndexChanged(int index) const;
     void on_antialiasLinesCheck_stateChanged(int state);
 
-    void on_lowResolutionButton_clicked();
-    void on_mediumResolutionButton_clicked();
-    void on_highResolutionButton_clicked();
+    void on_lowResolutionButton_clicked() const;
+    void on_mediumResolutionButton_clicked() const;
+    void on_highResolutionButton_clicked() const;
 
     void on_ambientLightSlider_valueChanged(int value);
     void on_ambientLightSpinBox_valueChanged(int value);
     void on_tintSaturationSlider_valueChanged(int value);
     void on_tintSaturationSpinBox_valueChanged(int value);
 
-    void on_pointStarsButton_clicked();
-    void on_scaledDiscsButton_clicked();
-    void on_fuzzyPointStarsButton_clicked();
+    void on_pointStarsButton_clicked() const;
+    void on_scaledDiscsButton_clicked() const;
+    void on_fuzzyPointStarsButton_clicked() const;
     void on_autoMagnitudeCheck_stateChanged(int state);
 
     void on_starColorBox_currentIndexChanged(int index);
@@ -128,3 +130,5 @@ protected:
     CelestiaCore* appCore;
     Ui_preferencesDialog ui;
 };
+
+} // end namespace celestia::qt

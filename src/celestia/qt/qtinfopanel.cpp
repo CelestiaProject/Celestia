@@ -41,8 +41,8 @@
 
 using celestia::util::GetLogger;
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -417,3 +417,5 @@ InfoPanel::updateHelper(ModelHelper* model, const QItemSelection& newSel, const 
                       appCore->getSimulation()->getTime());
     }
 }
+
+} // end namespace celestia::qt

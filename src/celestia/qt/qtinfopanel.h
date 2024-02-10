@@ -28,6 +28,8 @@ class Selection;
 class Star;
 class Universe;
 
+namespace celestia::qt
+{
 
 class ModelHelper
 {
@@ -59,3 +61,5 @@ class InfoPanel : public QDockWidget
  public:
     QTextBrowser* textBrowser{nullptr};
 };
+
+} // end namespace celestia::qt

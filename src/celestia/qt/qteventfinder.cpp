@@ -58,8 +58,8 @@
 #include <celmath/sphere.h>
 #include <celutil/gettext.h>
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -74,7 +74,6 @@ constexpr std::array planets =
     N_("Pluto"),
 };
 
-
 // Functions to convert between Qt dates and Celestia dates.
 // TODO: Qt's date class doesn't support leap seconds
 double
@@ -82,7 +81,6 @@ QDateToTDB(const QDate& date)
 {
     return astro::UTCtoTDB(astro::Date(date.year(), date.month(), date.day()));
 }
-
 
 QDateTime
 TDBToQDate(double tdb)
@@ -96,7 +94,6 @@ TDBToQDate(double tdb)
                      QTime(date.hour, date.minute, sec, msec),
                      Qt::UTC);
 }
-
 
 // Find the point of maximum eclipse, either the intersection of the eclipsed body with the
 // ray from sun to occluder, or the nearest point to that ray if there is no intersection.
@@ -132,7 +129,6 @@ findMaxEclipsePoint(const Eigen::Vector3d& toCasterDir,
 
 } // end unnamed namespace
 
-
 class EventFinder::EventTableModel : public QAbstractTableModel
 {
 public:
@@ -163,13 +159,11 @@ private:
     std::vector<Eclipse> eclipses;
 };
 
-
 Qt::ItemFlags
 EventFinder::EventTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
-
 
 QVariant
 EventFinder::EventTableModel::data(const QModelIndex& index, int role) const
@@ -205,7 +199,6 @@ EventFinder::EventTableModel::data(const QModelIndex& index, int role) const
     }
 }
 
-
 QVariant
 EventFinder::EventTableModel::headerData(int section, Qt::Orientation /*unused*/, int role) const
 {
@@ -227,20 +220,17 @@ EventFinder::EventTableModel::headerData(int section, Qt::Orientation /*unused*/
     }
 }
 
-
 int
 EventFinder::EventTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) eclipses.size();
 }
 
-
 int
 EventFinder::EventTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 4;
 }
-
 
 void
 EventFinder::EventTableModel::sort(int column, Qt::SortOrder order)
@@ -271,7 +261,6 @@ EventFinder::EventTableModel::sort(int column, Qt::SortOrder order)
     dataChanged(index(0, 0), index(eclipses.size() - 1, columnCount(QModelIndex())));
 }
 
-
 void
 EventFinder::EventTableModel::setEclipses(const std::vector<Eclipse>& _eclipses)
 {
@@ -279,7 +268,6 @@ EventFinder::EventTableModel::setEclipses(const std::vector<Eclipse>& _eclipses)
     eclipses = _eclipses;
     endResetModel();
 }
-
 
 const Eclipse*
 EventFinder::EventTableModel::eclipseAtIndex(const QModelIndex& index) const
@@ -290,7 +278,6 @@ EventFinder::EventTableModel::eclipseAtIndex(const QModelIndex& index) const
     else
         return nullptr;
 }
-
 
 EventFinder::EventFinder(CelestiaCore* _appCore,
                          const QString& title,
@@ -373,7 +360,6 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     this->setWidget(finderWidget);
 }
 
-
 EclipseFinderWatcher::Status
 EventFinder::eclipseFinderProgressUpdate(double t)
 {
@@ -394,7 +380,6 @@ EventFinder::eclipseFinderProgressUpdate(double t)
     }
     return EclipseFinderWatcher::ContinueOperation;
 }
-
 
 void
 EventFinder::slotFindEclipses()
@@ -456,7 +441,6 @@ EventFinder::slotFindEclipses()
     eventTable->resizeColumnToContents(EventTableModel::StartTimeColumn);
 }
 
-
 void
 EventFinder::slotContextMenu(const QPoint& pos)
 {
@@ -493,14 +477,12 @@ EventFinder::slotContextMenu(const QPoint& pos)
     }
 }
 
-
 void
 EventFinder::slotSetEclipseTime()
 {
     double midEclipseTime = (activeEclipse->startTime + activeEclipse->endTime) / 2.0;
     appCore->getSimulation()->setTime(midEclipseTime);
 }
-
 
 /*! Move the camera to a point 3 radii from the surface, aimed at the point of maximum eclipse.
  */
@@ -530,7 +512,6 @@ EventFinder::slotViewNearEclipsed()
     sim->setFrame(ObserverFrame::Ecliptical, receiver);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(viewerPos), viewOrientation, 5.0);
 }
-
 
 /*! Position the camera on the surface of the eclipsed body and pointing directly at the sun.
  */
@@ -563,7 +544,6 @@ EventFinder::slotViewEclipsedSurface()
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(v), viewOrientation, 5.0);
 }
 
-
 /*! Position the camera on the surface of the occluding body, aimed toward the eclipse. */
 void
 EventFinder::slotViewOccluderSurface()
@@ -590,7 +570,6 @@ EventFinder::slotViewOccluderSurface()
     sim->setFrame(ObserverFrame::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);
 }
-
 
 /*! Position the camera directly behind the occluding body in the direction
  *  of the sun.
@@ -620,3 +599,5 @@ EventFinder::slotViewBehindOccluder()
     sim->setFrame(ObserverFrame::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);
 }
+
+} // end namespace celestia::qt

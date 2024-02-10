@@ -22,6 +22,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class SetTimeDialog : public QDialog
 {
@@ -58,3 +60,5 @@ Q_OBJECT
 
     QDoubleSpinBox* julianDateSpin;
 };
+
+} // end namespace celestia::qt

@@ -31,6 +31,9 @@ class QWidget;
 
 class Selection;
 
+namespace celestia::qt
+{
+
 class BookmarkManager;
 class BookmarkToolBar;
 class CelestiaActions;
@@ -174,3 +177,5 @@ private:
 
     QTimer *timer;
 };
+
+} // end namespace celestia::qt

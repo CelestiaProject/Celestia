@@ -37,6 +37,9 @@ class QWidget;
 
 class CelestiaState;
 
+namespace celestia::qt
+{
+
 class BookmarkItem
 {
 public:
@@ -82,7 +85,6 @@ public:
 
 private:
     void setParent(BookmarkItem* parent);
-    void reindex(int startIndex);
 
     Type m_type{ None };
     BookmarkItem* m_parent{ nullptr };
@@ -92,9 +94,7 @@ private:
     QString m_description;
     QIcon m_icon;
     QList<BookmarkItem*> m_children;
-    int m_position{ 0 }; // position in parent's child list
 };
-
 
 class BookmarkTreeModel : public QAbstractItemModel
 {
@@ -137,7 +137,6 @@ public:
     BookmarkItem* m_root{ nullptr };
 };
 
-
 class BookmarkManager : public QObject
 {
     Q_OBJECT
@@ -169,7 +168,6 @@ private:
     BookmarkTreeModel* m_model;
 };
 
-
 class BookmarkToolBar : public QToolBar
 {
     Q_OBJECT
@@ -182,7 +180,6 @@ public:
 private:
     BookmarkManager* m_manager;
 };
-
 
 class AddBookmarkDialog : public QDialog, Ui_addBookmarkDialog
 {
@@ -206,7 +203,6 @@ private:
     static int m_lastTimeSourceIndex;
 };
 
-
 class NewBookmarkFolderDialog : public QDialog, Ui_newBookmarkFolderDialog
 {
     Q_OBJECT
@@ -221,7 +217,6 @@ private:
     BookmarkManager* m_manager;
     QSortFilterProxyModel* m_filterModel;
 };
-
 
 class OrganizeBookmarksDialog : public QDialog, Ui_organizeBookmarksDialog
 {
@@ -239,3 +234,5 @@ public slots:
 private:
     BookmarkManager* m_manager;
 };
+
+} // end namespace celestia::qt

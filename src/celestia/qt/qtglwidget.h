@@ -28,6 +28,9 @@ class QWidget;
 
 class Renderer;
 
+namespace celestia::qt
+{
+
 class DragHandler;
 
 /**
@@ -69,3 +72,5 @@ private:
     std::unique_ptr<DragHandler> dragHandler;
     CelestiaCore::CursorShape currentCursor;
 };
+
+} // end namespace celestia::qt

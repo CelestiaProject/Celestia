@@ -29,6 +29,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class EventFinder : public QDockWidget, EclipseFinderWatcher
 {
@@ -76,3 +78,5 @@ private:
 
     const Eclipse* activeEclipse{ nullptr };
 };
+
+} // end namespace celestia::qt

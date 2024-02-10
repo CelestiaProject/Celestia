@@ -23,6 +23,9 @@ class QWidget;
 class CelestiaCore;
 class PlanetarySystem;
 
+namespace celestia::qt
+{
+
 class SelectionPopup : public QMenu
 {
 Q_OBJECT
@@ -76,3 +79,5 @@ Q_OBJECT
     QAction* centerAction;
     QAction* gotoAction;
 };
+
+} // end namespace celestia::qt

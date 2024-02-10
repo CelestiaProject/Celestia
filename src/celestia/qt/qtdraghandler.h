@@ -25,6 +25,9 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
+
 // The base version of DragHandler is the fallback implementation for
 // platforms which do not support pointer warping
 class DragHandler
@@ -77,3 +80,5 @@ private:
 };
 
 std::unique_ptr<DragHandler> createDragHandler(QWidget *, CelestiaCore *);
+
+} // end namespace celestia::qt

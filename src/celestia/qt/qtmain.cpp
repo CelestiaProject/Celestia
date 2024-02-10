@@ -39,6 +39,8 @@
 
 int main(int argc, char *argv[])
 {
+    using namespace celestia::qt;
+
 #ifndef GL_ES
     QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #else

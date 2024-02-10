@@ -62,7 +62,8 @@
 #include "qtcolorswatchwidget.h"
 #include "qtinfopanel.h"
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -719,3 +720,5 @@ DeepSkyBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSe
     if (infoPanel)
         infoPanel->updateHelper(dsoModel, newSel, oldSel);
 }
+
+} // end namespace celestia::qt

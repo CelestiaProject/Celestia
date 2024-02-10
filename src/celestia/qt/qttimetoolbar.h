@@ -19,6 +19,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class TimeToolBar : public QToolBar
 {
@@ -43,3 +45,5 @@ public slots:
 private:
     CelestiaCore* appCore;
 };
+
+} // end namespace celestia::qt
