@@ -18,6 +18,8 @@
 class QMouseEvent;
 class QWidget;
 
+namespace celestia::qt
+{
 
 class ColorSwatchWidget : public QLabel
 {
@@ -36,3 +38,5 @@ Q_OBJECT
  private:
     QColor m_color;
 };
+
+} // end namespace celestia::qt

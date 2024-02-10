@@ -27,6 +27,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
+namespace celestia::qt
+{
 
 CelestiaActions::CelestiaActions(QObject* parent,
                                  CelestiaCore* _appCore) :
@@ -229,12 +231,10 @@ CelestiaActions::CelestiaActions(QObject* parent,
     appCore->getRenderer()->addWatcher(this);
 }
 
-
 CelestiaActions::~CelestiaActions()
 {
     appCore->getRenderer()->removeWatcher(this);
 }
-
 
 void
 CelestiaActions::syncWithRenderer(const Renderer* renderer)
@@ -310,20 +310,17 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     autoMagAction->setChecked(renderFlags & Renderer::ShowAutoMag);
 }
 
-
 void
 CelestiaActions::syncWithAppCore()
 {
     lightTimeDelayAction->setChecked(appCore->getLightDelayActive());
 }
 
-
 void
 CelestiaActions::notifyRenderSettingsChanged(const Renderer* renderer)
 {
     syncWithRenderer(renderer);
 }
-
 
 void
 CelestiaActions::slotToggleRenderFlag()
@@ -336,7 +333,6 @@ CelestiaActions::slotToggleRenderFlag()
     }
 }
 
-
 void
 CelestiaActions::slotToggleLabel()
 {
@@ -347,7 +343,6 @@ CelestiaActions::slotToggleLabel()
         appCore->getRenderer()->setLabelMode(appCore->getRenderer()->getLabelMode() ^ label);
     }
 }
-
 
 void
 CelestiaActions::slotToggleOrbit()
@@ -360,7 +355,6 @@ CelestiaActions::slotToggleOrbit()
     }
 }
 
-
 void
 CelestiaActions::slotSetStarStyle()
 {
@@ -372,7 +366,6 @@ CelestiaActions::slotSetStarStyle()
     }
 }
 
-
 void
 CelestiaActions::slotSetTextureResolution()
 {
@@ -383,7 +376,6 @@ CelestiaActions::slotSetTextureResolution()
         appCore->getRenderer()->setResolution(textureResolution);
     }
 }
-
 
 void
 CelestiaActions::slotAdjustLimitingMagnitude()
@@ -424,7 +416,6 @@ CelestiaActions::slotAdjustLimitingMagnitude()
     }
 }
 
-
 void
 CelestiaActions::slotSetLightTimeDelay()
 {
@@ -432,7 +423,6 @@ CelestiaActions::slotSetLightTimeDelay()
     // time delay.
     appCore->charEntered('-');
 }
-
 
 // Convenience method to create a checkable action for a menu and set the data
 // to the specified integer value.
@@ -447,7 +437,6 @@ CelestiaActions::createCheckableAction(const QString& text, QMenu* menu, int dat
     return act;
 }
 
-
 // Convenience method to create a checkable action and set the data
 // to the specified integer value.
 QAction*
@@ -459,3 +448,5 @@ CelestiaActions::createCheckableAction(const QString& text, int data)
 
     return act;
 }
+
+} // end namespace celestia::qt

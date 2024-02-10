@@ -24,7 +24,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -44,7 +45,6 @@ void setValueNoSignal(TControl* target, TValue value)
 }
 
 } // end unnamed namespace
-
 
 SetTimeDialog::SetTimeDialog(double currentTimeTDB,
                              QWidget* parent,
@@ -169,7 +169,6 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     setLayout(layout);
 }
 
-
 void
 SetTimeDialog::slotSetSimulationTime()
 {
@@ -177,7 +176,6 @@ SetTimeDialog::slotSetSimulationTime()
 
     appCore->getSimulation()->setTime(tdb);
 }
-
 
 void
 SetTimeDialog::slotSetDateTime()
@@ -197,7 +195,6 @@ SetTimeDialog::slotSetDateTime()
     setValueNoSignal(minSpin, date.minute);
     setValueNoSignal(secSpin, static_cast<int>(date.seconds));
 }
-
 
 void
 SetTimeDialog::slotDateTimeChanged()
@@ -235,7 +232,6 @@ SetTimeDialog::slotDateTimeChanged()
             timeZoneBox->setEnabled(true);
 }
 
-
 void
 SetTimeDialog::slotTimeZoneChanged()
 {
@@ -265,7 +261,6 @@ SetTimeDialog::slotTimeZoneChanged()
     slotSetDateTime();
 }
 
-
 void
 SetTimeDialog::accept()
 {
@@ -273,3 +268,5 @@ SetTimeDialog::accept()
 
     QDialog::accept();
 }
+
+} // end namespace celestia::qt

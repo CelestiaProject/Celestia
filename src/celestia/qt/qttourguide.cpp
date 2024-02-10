@@ -29,7 +29,8 @@
 #include <QLabel>
 #include <QWidget>
 
-
+namespace celestia::qt
+{
 
 TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore *appCore) :
     QDialog(parent),
@@ -53,7 +54,7 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore *appCore) :
         {
             auto dest = (*destinations)[0];
             ui.selectionDescription->setText(QString::fromStdString(dest->description));
-        }        
+        }
     }
 
     if ((destinations == nullptr) || !hasDestinations)
@@ -68,22 +69,20 @@ TourGuideDialog::TourGuideDialog(QWidget *parent, CelestiaCore *appCore) :
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
-
 void
 TourGuideDialog::slotSelectionChanged()
 {
-    int index = ui.selectionComboBox->currentIndex();    
+    int index = ui.selectionComboBox->currentIndex();
     auto dest = (*destinations)[index];
-    ui.selectionDescription->setText(QString::fromStdString(dest->description));  
+    ui.selectionDescription->setText(QString::fromStdString(dest->description));
 }
-
 
 void
 TourGuideDialog::slotGotoSelection()
 {
     Simulation *simulation = appCore->getSimulation();
 
-    int index = ui.selectionComboBox->currentIndex();    
+    int index = ui.selectionComboBox->currentIndex();
     auto dest = (*destinations)[index];
 
     Selection sel = simulation->findObjectFromPath(dest->target);
@@ -93,6 +92,8 @@ TourGuideDialog::slotGotoSelection()
         distance = sel.radius() * 5.0;
 
     simulation->setSelection(sel);
-    simulation->follow();    
+    simulation->follow();
     simulation->gotoSelection(5.0, distance, Eigen::Vector3f::UnitY(), ObserverFrame::ObserverLocal);
 }
+
+} // end namespace celestia::qt

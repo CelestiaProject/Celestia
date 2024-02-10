@@ -105,6 +105,9 @@
 #define CONFIG_DATA_DIR "./"
 #endif
 
+namespace celestia::qt
+{
+
 namespace
 {
 
@@ -1751,7 +1754,7 @@ CelestiaAppWindow::pasteText()
 void
 CelestiaAppWindow::copyTextOrURL()
 {
-    if (m_appCore->getTextEnterMode() == celestia::Hud::TextEnterMode::Normal)
+    if (m_appCore->getTextEnterMode() == Hud::TextEnterMode::Normal)
         slotCopyURL();
     else
         copyText();
@@ -1760,8 +1763,10 @@ CelestiaAppWindow::copyTextOrURL()
 void
 CelestiaAppWindow::pasteTextOrURL()
 {
-    if (m_appCore->getTextEnterMode() == celestia::Hud::TextEnterMode::Normal)
+    if (m_appCore->getTextEnterMode() == Hud::TextEnterMode::Normal)
         slotPasteURL();
     else
         pasteText();
 }
+
+} // end namespace celestia::qt

@@ -16,6 +16,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class WaylandDragHandler : public DragHandler
 {
@@ -59,3 +61,5 @@ private:
         wl_fixed_t,
         wl_fixed_t);
 };
+
+} // end namespace celestia::qt

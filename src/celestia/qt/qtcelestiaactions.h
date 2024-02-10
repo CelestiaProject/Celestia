@@ -16,13 +16,14 @@
 
 #include <celengine/render.h>
 
-
 class QAction;
 class QMenu;
 class QString;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class CelestiaActions : public QObject, public RendererWatcher
 {
@@ -123,3 +124,5 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 };
+
+} // end namespace celestia::qt

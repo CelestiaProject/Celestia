@@ -5,6 +5,8 @@
 
 #include <celutil/gettext.h>
 
+namespace celestia::qt
+{
 
 CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication& app)
 {
@@ -56,3 +58,5 @@ CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication& app)
 
     return options;
 }
+
+} // end namespace celestia::qt

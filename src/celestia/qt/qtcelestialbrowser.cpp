@@ -65,9 +65,8 @@
 #include "qtcolorswatchwidget.h"
 #include "qtinfopanel.h"
 
-namespace astro = celestia::astro;
-namespace engine = celestia::engine;
-namespace util = celestia::util;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -675,3 +674,5 @@ CelestialBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItem
     if (infoPanel)
         infoPanel->updateHelper(starModel, newSel, oldSel);
 }
+
+} // end namespace celestia::qt

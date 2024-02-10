@@ -16,6 +16,8 @@
 
 class QCoreApplication;
 
+namespace celestia::qt
+{
 
 struct CelestiaCommandLineOptions
 {
@@ -29,3 +31,5 @@ struct CelestiaCommandLineOptions
 };
 
 CelestiaCommandLineOptions ParseCommandLine(const QCoreApplication&);
+
+} // end namespace celestia::qt

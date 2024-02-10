@@ -10,7 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #pragma once
- 
+
 #include <QDialog>
 #include <QObject>
 #include <celestia/destination.h>
@@ -20,6 +20,9 @@
 class QWidget;
 
 class CelestiaCore;
+
+namespace celestia::qt
+{
 
 class TourGuideDialog : public QDialog
 {
@@ -38,3 +41,5 @@ private:
     CelestiaCore *appCore;
     const DestinationList *destinations{ nullptr };
 };
+
+} // end namespace celestia::qt

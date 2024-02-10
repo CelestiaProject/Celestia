@@ -46,6 +46,8 @@
 #include "qtcolorswatchwidget.h"
 #include "qtinfopanel.h"
 
+namespace celestia::qt
+{
 
 namespace
 {
@@ -91,7 +93,6 @@ objectTypeName(const Selection& sel)
     return _("Unknown");
 }
 
-
 QString
 classificationName(int classification)
 {
@@ -119,7 +120,6 @@ classificationName(int classification)
 }
 
 } // end unnamed namespace
-
 
 class SolarSystemBrowser::SolarSystemTreeModel : public QAbstractItemModel, public ModelHelper
 {
@@ -192,7 +192,6 @@ private:
     int bodyFilter{0};
 };
 
-
 SolarSystemBrowser::SolarSystemTreeModel::TreeItem::~TreeItem()
 {
     if (children != nullptr)
@@ -203,14 +202,12 @@ SolarSystemBrowser::SolarSystemTreeModel::TreeItem::~TreeItem()
     }
 }
 
-
 SolarSystemBrowser::SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
     universe(_universe)
 {
     // Initialize an empty model
     buildModel(nullptr, false, 0);
 }
-
 
 // Call createTreeItem() to build the parallel tree structure
 void
@@ -235,7 +232,6 @@ SolarSystemBrowser::SolarSystemTreeModel::buildModel(Star* star, bool _groupByCl
 
     endResetModel();
 }
-
 
 // Rather than directly use Celestia's solar system data structure for
 // the tree model, we'll build a parallel structure out of TreeItems.
@@ -285,7 +281,6 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
     return item;
 }
 
-
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
                                                               const PlanetarySystem* sys,
@@ -327,7 +322,6 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
         }
     }
 }
-
 
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
@@ -372,7 +366,6 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
         ++childIndex;
     }
 }
-
 
 // Add children to item, but group objects of certain classes
 // into subtrees to avoid clutter. Stars, planets, and moons
@@ -546,7 +539,6 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
     }
 }
 
-
 SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
 SolarSystemBrowser::SolarSystemTreeModel::createGroupTreeItem(int classification,
                                                               const std::vector<Body*>& objects,
@@ -571,7 +563,6 @@ SolarSystemBrowser::SolarSystemTreeModel::createGroupTreeItem(int classification
     return item;
 }
 
-
 SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
 SolarSystemBrowser::SolarSystemTreeModel::itemAtIndex(const QModelIndex& index) const
 {
@@ -581,13 +572,11 @@ SolarSystemBrowser::SolarSystemTreeModel::itemAtIndex(const QModelIndex& index) 
     return static_cast<TreeItem*>(index.internalPointer());
 }
 
-
 Selection
 SolarSystemBrowser::SolarSystemTreeModel::objectAtIndex(const QModelIndex& index) const
 {
     return itemAtIndex(index)->obj;
 }
-
 
 /****** Virtual methods from QAbstractTableModel *******/
 
@@ -611,7 +600,6 @@ SolarSystemBrowser::SolarSystemTreeModel::index(int row, int column, const QMode
         return QModelIndex();
 }
 
-
 // Override QAbstractTableModel::parent()
 QModelIndex
 SolarSystemBrowser::SolarSystemTreeModel::parent(const QModelIndex& index) const
@@ -627,7 +615,6 @@ SolarSystemBrowser::SolarSystemTreeModel::parent(const QModelIndex& index) const
         return createIndex(child->parent->childIndex, 0, child->parent);
 }
 
-
 // Override QAbstractTableModel::flags()
 Qt::ItemFlags
 SolarSystemBrowser::SolarSystemTreeModel::flags(const QModelIndex& index) const
@@ -637,7 +624,6 @@ SolarSystemBrowser::SolarSystemTreeModel::flags(const QModelIndex& index) const
 
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
-
 
 // Override QAbstractTableModel::data()
 QVariant
@@ -682,7 +668,6 @@ SolarSystemBrowser::SolarSystemTreeModel::data(const QModelIndex& index, int rol
     }
 }
 
-
 // Override QAbstractDataModel::headerData()
 QVariant
 SolarSystemBrowser::SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
@@ -701,7 +686,6 @@ SolarSystemBrowser::SolarSystemTreeModel::headerData(int section, Qt::Orientatio
     }
 }
 
-
 // Override QAbstractDataModel::rowCount()
 int
 SolarSystemBrowser::SolarSystemTreeModel::rowCount(const QModelIndex& parent) const
@@ -714,7 +698,6 @@ SolarSystemBrowser::SolarSystemTreeModel::rowCount(const QModelIndex& parent) co
 
     return static_cast<TreeItem*>(parent.internalPointer())->nChildren;
 }
-
 
 // Override QAbstractDataModel::columnCount()
 int
@@ -736,19 +719,16 @@ SolarSystemBrowser::SolarSystemTreeModel::sibling(int row, int column, const QMo
     return QAbstractItemModel::sibling(row, column, index);
 }
 
-
 void
 SolarSystemBrowser::SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
 {
 }
-
 
 Selection
 SolarSystemBrowser::SolarSystemTreeModel::itemForInfoPanel(const QModelIndex& _index)
 {
     return objectAtIndex(_index);
 }
-
 
 SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* _infoPanel) :
     QWidget(parent),
@@ -885,7 +865,6 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     setLayout(layout);
 }
 
-
 /******* Slots ********/
 
 void
@@ -938,9 +917,7 @@ SolarSystemBrowser::slotRefreshTree()
             treeView->setExpanded(secondary, true);
         }
     }
-
 }
-
 
 void
 SolarSystemBrowser::slotContextMenu(const QPoint& pos)
@@ -953,7 +930,6 @@ SolarSystemBrowser::slotContextMenu(const QPoint& pos)
         emit selectionContextMenuRequested(treeView->mapToGlobal(pos), sel);
     }
 }
-
 
 void
 SolarSystemBrowser::slotMarkSelected()
@@ -1007,7 +983,8 @@ SolarSystemBrowser::slotMarkSelected()
     }
 }
 
-void SolarSystemBrowser::slotUnmarkSelected()
+void
+SolarSystemBrowser::slotUnmarkSelected() const
 {
     QModelIndexList rows = treeView->selectionModel()->selectedRows();
     Universe* universe = appCore->getSimulation()->getUniverse();
@@ -1020,14 +997,17 @@ void SolarSystemBrowser::slotUnmarkSelected()
     } // for
 }
 
-void SolarSystemBrowser::slotClearMarkers()
+void
+SolarSystemBrowser::slotClearMarkers() const
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
 
-
-void SolarSystemBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+void
+SolarSystemBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
 {
     if (infoPanel)
         infoPanel->updateHelper(solarSystemModel, newSel, oldSel);
 }
+
+} // end namespace celestia::qt

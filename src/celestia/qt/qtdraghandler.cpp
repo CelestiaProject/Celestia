@@ -11,6 +11,9 @@
 #include "qtwaylanddraghandler.h"
 #endif
 
+namespace celestia::qt
+{
+
 namespace
 {
 inline auto
@@ -117,3 +120,5 @@ createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
 
     return std::make_unique<DragHandler>(appCore);
 }
+
+} // end namespace celestia::qt

@@ -33,7 +33,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -47,7 +48,6 @@ constexpr std::uint64_t FilterOtherLocations = ~(Location::City |
                                                  Location::Vallis |
                                                  Location::Terra |
                                                  Location::EruptiveCenter);
-
 
 void
 SetComboBoxValue(QComboBox* combo, const QVariant& value)
@@ -64,10 +64,10 @@ SetComboBoxValue(QComboBox* combo, const QVariant& value)
     }
 }
 
-
-static void setRenderFlag(CelestiaCore* appCore,
-                          std::uint64_t flag,
-                          int state)
+void
+setRenderFlag(CelestiaCore* appCore,
+              std::uint64_t flag,
+              int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
@@ -75,17 +75,16 @@ static void setRenderFlag(CelestiaCore* appCore,
     renderer->setRenderFlags(renderFlags | (isActive ? flag : 0));
 }
 
-
-static void setOrbitFlag(CelestiaCore* appCore,
-                         int flag,
-                         int state)
+void
+setOrbitFlag(CelestiaCore* appCore,
+             int flag,
+             int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
     int orbitMask = renderer->getOrbitMask() & ~flag;
     renderer->setOrbitMask(orbitMask | (isActive ? flag : 0));
 }
-
 
 void
 setLocationFlag(CelestiaCore* appCore,
@@ -97,7 +96,6 @@ setLocationFlag(CelestiaCore* appCore,
     std::uint64_t locationFilter = observer->getLocationFilter() & ~flag;
     observer->setLocationFilter(locationFilter | (isActive ? flag : 0));
 }
-
 
 void
 setLabelFlag(CelestiaCore* appCore,
@@ -111,7 +109,6 @@ setLabelFlag(CelestiaCore* appCore,
 }
 
 } // end unnamed namespace
-
 
 PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     QDialog(parent),
@@ -269,132 +266,132 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     SetComboBoxValue(ui.dateFormatBox, dateFormat);
 }
 
-
 // Objects
 
-void PreferencesDialog::on_starsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_starsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowStars, state);
 }
 
-
-void PreferencesDialog::on_planetsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_planetsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowPlanets, state);
 }
 
-
-void PreferencesDialog::on_dwarfPlanetsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_dwarfPlanetsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowDwarfPlanets, state);
 }
 
-
-void PreferencesDialog::on_moonsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_moonsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowMoons, state);
 }
 
-
-void PreferencesDialog::on_minorMoonsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_minorMoonsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowMinorMoons, state);
 }
 
-
-void PreferencesDialog::on_asteroidsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_asteroidsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowAsteroids, state);
 }
 
-
-void PreferencesDialog::on_cometsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cometsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowComets, state);
 }
 
-
-void PreferencesDialog::on_spacecraftsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_spacecraftsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowSpacecrafts, state);
 }
 
-
-void PreferencesDialog::on_galaxiesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_galaxiesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowGalaxies, state);
 }
 
-
-void PreferencesDialog::on_nebulaeCheck_stateChanged(int state)
+void
+PreferencesDialog::on_nebulaeCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowNebulae, state);
 }
 
-
-void PreferencesDialog::on_openClustersCheck_stateChanged(int state)
+void
+PreferencesDialog::on_openClustersCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowOpenClusters, state);
 }
 
-
-void PreferencesDialog::on_globularClustersCheck_stateChanged(int state)
+void
+PreferencesDialog::on_globularClustersCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowGlobulars, state);
 }
 
-
 // Features
 
-void PreferencesDialog::on_atmospheresCheck_stateChanged(int state)
+void
+PreferencesDialog::on_atmospheresCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowAtmospheres, state);
 }
 
-
-void PreferencesDialog::on_cloudsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cloudsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowCloudMaps, state);
 }
 
-
-void PreferencesDialog::on_cloudShadowsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cloudShadowsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowCloudShadows, state);
 }
 
-
-void PreferencesDialog::on_eclipseShadowsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_eclipseShadowsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowEclipseShadows, state);
 }
 
-
-void PreferencesDialog::on_ringShadowsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_ringShadowsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowRingShadows, state);
 }
 
-
-void PreferencesDialog::on_planetRingsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_planetRingsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowPlanetRings, state);
 }
 
-
-void PreferencesDialog::on_nightsideLightsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_nightsideLightsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowNightMaps, state);
 }
 
-
-void PreferencesDialog::on_cometTailsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cometTailsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowCometTails, state);
 }
 
-
-void PreferencesDialog::on_limitOfKnowledgeCheck_stateChanged(int state)
+void
+PreferencesDialog::on_limitOfKnowledgeCheck_stateChanged(int state) const
 {
     Observer* observer = appCore->getSimulation()->getActiveObserver();
     if (state == Qt::Checked)
@@ -407,287 +404,286 @@ void PreferencesDialog::on_limitOfKnowledgeCheck_stateChanged(int state)
     }
 }
 
-
 // Orbits
 
-void PreferencesDialog::on_orbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_orbitsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowOrbits, state);
 }
 
-
-void PreferencesDialog::on_fadingOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_fadingOrbitsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowFadingOrbits, state);
 }
 
-
-void PreferencesDialog::on_starOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_starOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Stellar, state);
 }
 
-
-void PreferencesDialog::on_planetOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_planetOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Planet, state);
 }
 
-
-void PreferencesDialog::on_dwarfPlanetOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_dwarfPlanetOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::DwarfPlanet, state);
 }
 
-
-void PreferencesDialog::on_moonOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_moonOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Moon, state);
 }
 
-
-void PreferencesDialog::on_minorMoonOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_minorMoonOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::MinorMoon, state);
 }
 
-
-void PreferencesDialog::on_asteroidOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_asteroidOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Asteroid, state);
 }
 
-
-void PreferencesDialog::on_cometOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cometOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Comet, state);
 }
 
-
-void PreferencesDialog::on_spacecraftOrbitsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_spacecraftOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Spacecraft, state);
 }
 
-
-void PreferencesDialog::on_partialTrajectoriesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_partialTrajectoriesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowPartialTrajectories, state);
 }
 
-
 // Grids
 
-void PreferencesDialog::on_equatorialGridCheck_stateChanged(int state)
+void
+PreferencesDialog::on_equatorialGridCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowCelestialSphere, state);
 }
 
-
-void PreferencesDialog::on_eclipticGridCheck_stateChanged(int state)
+void
+PreferencesDialog::on_eclipticGridCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowEclipticGrid, state);
 }
 
-
-void PreferencesDialog::on_galacticGridCheck_stateChanged(int state)
+void
+PreferencesDialog::on_galacticGridCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowGalacticGrid, state);
 }
 
-
-void PreferencesDialog::on_horizontalGridCheck_stateChanged(int state)
+void
+PreferencesDialog::on_horizontalGridCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowHorizonGrid, state);
 }
 
-
 // Constellations
 
-void PreferencesDialog::on_diagramsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_diagramsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowDiagrams, state);
 }
 
-
-void PreferencesDialog::on_boundariesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_boundariesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowBoundaries, state);
 }
 
-
-void PreferencesDialog::on_latinNamesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_latinNamesCheck_stateChanged(int state)
 {
     // "Latin Names" Checkbox has inverted meaning
     state = state == Qt::Checked ? Qt::Unchecked : Qt::Checked;
     setLabelFlag(appCore, Renderer::I18nConstellationLabels, state);
 }
 
-
 // Other guides
 
-void PreferencesDialog::on_markersCheck_stateChanged(int state)
+void
+PreferencesDialog::on_markersCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowMarkers, state);
 }
 
-
-void PreferencesDialog::on_eclipticLineCheck_stateChanged(int state)
+void
+PreferencesDialog::on_eclipticLineCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowEcliptic, state);
 }
 
-
-
 // Labels
 
-void PreferencesDialog::on_starLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_starLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::StarLabels, state);
 }
 
-
-void PreferencesDialog::on_planetLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_planetLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::PlanetLabels, state);
 }
 
-
-void PreferencesDialog::on_dwarfPlanetLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_dwarfPlanetLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::DwarfPlanetLabels, state);
 }
 
-
-void PreferencesDialog::on_moonLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_moonLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::MoonLabels, state);
 }
 
-
-void PreferencesDialog::on_minorMoonLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_minorMoonLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::MinorMoonLabels, state);
 }
 
-
-void PreferencesDialog::on_asteroidLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_asteroidLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::AsteroidLabels, state);
 }
 
-
-void PreferencesDialog::on_cometLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cometLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::CometLabels, state);
 }
 
-
-void PreferencesDialog::on_spacecraftLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_spacecraftLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::SpacecraftLabels, state);
 }
 
-
-void PreferencesDialog::on_galaxyLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_galaxyLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::GalaxyLabels, state);
 }
 
-
-void PreferencesDialog::on_nebulaLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_nebulaLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::NebulaLabels, state);
 }
 
-
-void PreferencesDialog::on_openClusterLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_openClusterLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::OpenClusterLabels, state);
 }
 
-
-void PreferencesDialog::on_globularClusterLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_globularClusterLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::GlobularLabels, state);
 }
 
-
-void PreferencesDialog::on_constellationLabelsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_constellationLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::ConstellationLabels, state);
 }
 
-
 // Locations
 
-void PreferencesDialog::on_locationsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_locationsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::LocationLabels, state);
 }
 
-
-void PreferencesDialog::on_citiesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_citiesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::City, state);
 }
 
-
-void PreferencesDialog::on_observatoriesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_observatoriesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Observatory, state);
 }
 
-
-void PreferencesDialog::on_landingSitesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_landingSitesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::LandingSite, state);
 }
 
-
-void PreferencesDialog::on_montesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_montesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Mons, state);
 }
 
-
-void PreferencesDialog::on_mariaCheck_stateChanged(int state)
+void
+PreferencesDialog::on_mariaCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Mare, state);
 }
 
-
-void PreferencesDialog::on_cratersCheck_stateChanged(int state)
+void
+PreferencesDialog::on_cratersCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Crater, state);
 }
 
-
-void PreferencesDialog::on_vallesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_vallesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Vallis, state);
 }
 
-
-void PreferencesDialog::on_terraeCheck_stateChanged(int state)
+void
+PreferencesDialog::on_terraeCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::Terra, state);
 }
 
-
-void PreferencesDialog::on_volcanoesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_volcanoesCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, Location::EruptiveCenter, state);
 }
 
-
-void PreferencesDialog::on_otherLocationsCheck_stateChanged(int state)
+void
+PreferencesDialog::on_otherLocationsCheck_stateChanged(int state)
 {
     setLocationFlag(appCore, FilterOtherLocations, state);
 }
 
-
-void PreferencesDialog::on_featureSizeSlider_valueChanged(int value)
+void
+PreferencesDialog::on_featureSizeSlider_valueChanged(int value)
 {
     Renderer* renderer = appCore->getRenderer();
     renderer->setMinimumFeatureSize(static_cast<float>(value));
@@ -696,8 +692,8 @@ void PreferencesDialog::on_featureSizeSlider_valueChanged(int value)
     ui.featureSizeSpinBox->blockSignals(false);
 }
 
-
-void PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
+void
+PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
 {
     Renderer* renderer = appCore->getRenderer();
     renderer->setMinimumFeatureSize(static_cast<float>(value));
@@ -706,21 +702,21 @@ void PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
     ui.featureSizeSlider->blockSignals(false);
 }
 
-
-void PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/)
+void
+PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/) const
 {
 }
 
-
-void PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
+void
+PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowSmoothLines, state);
 }
 
-
 // Texture resolution
 
-void PreferencesDialog::on_lowResolutionButton_clicked()
+void
+PreferencesDialog::on_lowResolutionButton_clicked() const
 {
     if (ui.lowResolutionButton->isChecked())
     {
@@ -729,8 +725,8 @@ void PreferencesDialog::on_lowResolutionButton_clicked()
     }
 }
 
-
-void PreferencesDialog::on_mediumResolutionButton_clicked()
+void
+PreferencesDialog::on_mediumResolutionButton_clicked() const
 {
     if (ui.mediumResolutionButton->isChecked())
     {
@@ -739,8 +735,8 @@ void PreferencesDialog::on_mediumResolutionButton_clicked()
     }
 }
 
-
-void PreferencesDialog::on_highResolutionButton_clicked()
+void
+PreferencesDialog::on_highResolutionButton_clicked() const
 {
     if (ui.highResolutionButton->isChecked())
     {
@@ -749,10 +745,10 @@ void PreferencesDialog::on_highResolutionButton_clicked()
     }
 }
 
-
 // Ambient light
 
-void PreferencesDialog::on_ambientLightSlider_valueChanged(int value)
+void
+PreferencesDialog::on_ambientLightSlider_valueChanged(int value)
 {
     float ambient = static_cast<float>(value) / 100.0f;
     appCore->getRenderer()->setAmbientLightLevel(ambient);
@@ -761,8 +757,8 @@ void PreferencesDialog::on_ambientLightSlider_valueChanged(int value)
     ui.ambientLightSpinBox->blockSignals(savedBlockState);
 }
 
-
-void PreferencesDialog::on_ambientLightSpinBox_valueChanged(int value)
+void
+PreferencesDialog::on_ambientLightSpinBox_valueChanged(int value)
 {
     float ambient = static_cast<float>(value) / 100.0f;
     appCore->getRenderer()->setAmbientLightLevel(ambient);
@@ -771,10 +767,10 @@ void PreferencesDialog::on_ambientLightSpinBox_valueChanged(int value)
     ui.ambientLightSlider->blockSignals(savedBlockState);
 }
 
-
 // Tint saturation
 
-void PreferencesDialog::on_tintSaturationSlider_valueChanged(int value)
+void
+PreferencesDialog::on_tintSaturationSlider_valueChanged(int value)
 {
     float tintSaturation = static_cast<float>(value) / 100.0f;
     appCore->getRenderer()->setTintSaturation(tintSaturation);
@@ -783,8 +779,8 @@ void PreferencesDialog::on_tintSaturationSlider_valueChanged(int value)
     ui.tintSaturationSpinBox->blockSignals(savedBlockState);
 }
 
-
-void PreferencesDialog::on_tintSaturationSpinBox_valueChanged(int value)
+void
+PreferencesDialog::on_tintSaturationSpinBox_valueChanged(int value)
 {
     float tintSaturation = static_cast<float>(value) / 100.0f;
     appCore->getRenderer()->setTintSaturation(tintSaturation);
@@ -793,10 +789,10 @@ void PreferencesDialog::on_tintSaturationSpinBox_valueChanged(int value)
     ui.tintSaturationSlider->blockSignals(savedBlockState);
 }
 
-
 // Star style
 
-void PreferencesDialog::on_pointStarsButton_clicked()
+void
+PreferencesDialog::on_pointStarsButton_clicked() const
 {
     if (ui.pointStarsButton->isChecked())
     {
@@ -805,8 +801,8 @@ void PreferencesDialog::on_pointStarsButton_clicked()
     }
 }
 
-
-void PreferencesDialog::on_scaledDiscsButton_clicked()
+void
+PreferencesDialog::on_scaledDiscsButton_clicked() const
 {
     if (ui.scaledDiscsButton->isChecked())
     {
@@ -815,8 +811,8 @@ void PreferencesDialog::on_scaledDiscsButton_clicked()
     }
 }
 
-
-void PreferencesDialog::on_fuzzyPointStarsButton_clicked()
+void
+PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
 {
     if (ui.fuzzyPointStarsButton->isChecked())
     {
@@ -825,16 +821,16 @@ void PreferencesDialog::on_fuzzyPointStarsButton_clicked()
     }
 }
 
-
-void PreferencesDialog::on_autoMagnitudeCheck_stateChanged(int state)
+void
+PreferencesDialog::on_autoMagnitudeCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowAutoMag, state);
 }
 
-
 // Star colors
 
-void PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
+void
+PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
 {
     Renderer* renderer = appCore->getRenderer();
     QVariant itemData = ui.starColorBox->itemData(index, Qt::UserRole);
@@ -845,12 +841,14 @@ void PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
     ui.tintSaturationSpinBox->setEnabled(enableTintSaturation);
 }
 
-
 // Time
 
-void PreferencesDialog::on_dateFormatBox_currentIndexChanged(int index)
+void
+PreferencesDialog::on_dateFormatBox_currentIndexChanged(int index)
 {
     QVariant itemData = ui.dateFormatBox->itemData(index, Qt::UserRole);
     astro::Date::Format dateFormat = (astro::Date::Format) itemData.toInt();
     appCore->setDateFormat(dateFormat);
 }
+
+} // end namespace celestia::qt

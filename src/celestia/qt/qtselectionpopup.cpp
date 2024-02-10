@@ -37,7 +37,8 @@
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -53,7 +54,6 @@ boldTextItem(const QString& s)
     return act;
 }
 
-
 QAction*
 italicTextItem(const QString& s)
 {
@@ -66,7 +66,6 @@ italicTextItem(const QString& s)
 }
 
 } // end unnamed namespace
-
 
 SelectionPopup::SelectionPopup(const Selection& sel,
                                CelestiaCore* _appCore,
@@ -235,7 +234,6 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
 }
 
-
 QMenu*
 SelectionPopup::createMarkMenu()
 {
@@ -282,7 +280,6 @@ SelectionPopup::createMarkMenu()
 
     return markMenu;
 }
-
 
 QMenu*
 SelectionPopup::createReferenceVectorMenu()
@@ -350,7 +347,6 @@ SelectionPopup::createReferenceVectorMenu()
     return refVecMenu;
 }
 
-
 QMenu*
 SelectionPopup::createAlternateSurfacesMenu()
 {
@@ -377,7 +373,6 @@ SelectionPopup::createAlternateSurfacesMenu()
 
     return surfacesMenu;
 }
-
 
 QMenu*
 SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
@@ -437,7 +432,6 @@ SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
     return menu;
 }
 
-
 void
 SelectionPopup::addObjectMenus(const PlanetarySystem* sys)
 {
@@ -471,20 +465,17 @@ SelectionPopup::addObjectMenus(const PlanetarySystem* sys)
         addMenu(spacecraftMenu);
 }
 
-
 void
 SelectionPopup::popupAtGoto(const QPoint& pt)
 {
     exec(pt, gotoAction);
 }
 
-
 void
 SelectionPopup::popupAtCenter(const QPoint& pt)
 {
     exec(pt, centerAction);
 }
-
 
 /******** Slots *********/
 
@@ -494,14 +485,12 @@ SelectionPopup::slotSelect()
     appCore->getSimulation()->setSelection(selection);
 }
 
-
 void
 SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("c");
 }
-
 
 void
 SelectionPopup::slotGotoSelection()
@@ -510,7 +499,6 @@ SelectionPopup::slotGotoSelection()
     appCore->charEntered("g");
 }
 
-
 void
 SelectionPopup::slotFollowSelection()
 {
@@ -518,14 +506,12 @@ SelectionPopup::slotFollowSelection()
     appCore->charEntered("f");
 }
 
-
 void
 SelectionPopup::slotSyncOrbitSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("y");
 }
-
 
 void
 SelectionPopup::slotSelectAlternateSurface()
@@ -539,7 +525,6 @@ SelectionPopup::slotSelectAlternateSurface()
     }
 }
 
-
 void
 SelectionPopup::slotSelectPrimary()
 {
@@ -550,7 +535,6 @@ SelectionPopup::slotSelectPrimary()
         sim->setSelection(Helper::getPrimary(selectedBody));
     }
 }
-
 
 void
 SelectionPopup::slotSelectChildObject()
@@ -581,7 +565,6 @@ SelectionPopup::slotSelectChildObject()
         sim->setSelection(Selection(sys->getBody(childIndex)));
 }
 
-
 void
 SelectionPopup::slotMark()
 {
@@ -605,7 +588,6 @@ SelectionPopup::slotMark()
     }
 }
 
-
 void
 SelectionPopup::slotUnmark()
 {
@@ -617,13 +599,11 @@ SelectionPopup::slotUnmark()
     }
 }
 
-
 void
 SelectionPopup::slotToggleBodyAxes()
 {
     appCore->toggleReferenceMark("body axes", selection);
 }
-
 
 void
 SelectionPopup::slotToggleFrameAxes()
@@ -631,13 +611,11 @@ SelectionPopup::slotToggleFrameAxes()
     appCore->toggleReferenceMark("frame axes", selection);
 }
 
-
 void
 SelectionPopup::slotToggleSunDirection()
 {
     appCore->toggleReferenceMark("sun direction", selection);
 }
-
 
 void
 SelectionPopup::slotToggleVelocityVector()
@@ -645,13 +623,11 @@ SelectionPopup::slotToggleVelocityVector()
     appCore->toggleReferenceMark("velocity vector", selection);
 }
 
-
 void
 SelectionPopup::slotToggleSpinVector()
 {
     appCore->toggleReferenceMark("spin vector", selection);
 }
-
 
 void
 SelectionPopup::slotToggleFrameCenterDirection()
@@ -659,20 +635,17 @@ SelectionPopup::slotToggleFrameCenterDirection()
     appCore->toggleReferenceMark("frame center direction", selection);
 }
 
-
 void
 SelectionPopup::slotTogglePlanetographicGrid()
 {
     appCore->toggleReferenceMark("planetographic grid", selection);
 }
 
-
 void
 SelectionPopup::slotToggleTerminator()
 {
     appCore->toggleReferenceMark("terminator", selection);
 }
-
 
 void
 SelectionPopup::slotGotoStartDate()
@@ -684,7 +657,6 @@ SelectionPopup::slotGotoStartDate()
     appCore->getSimulation()->setTime(startDate);
 }
 
-
 void
 SelectionPopup::slotGotoEndDate()
 {
@@ -695,13 +667,11 @@ SelectionPopup::slotGotoEndDate()
     appCore->getSimulation()->setTime(endDate);
 }
 
-
 void
 SelectionPopup::slotInfo()
 {
     emit selectionInfoRequested(selection);
 }
-
 
 void
 SelectionPopup::slotToggleVisibility(bool visible)
@@ -709,3 +679,5 @@ SelectionPopup::slotToggleVisibility(bool visible)
     assert(selection.body() != nullptr);
     selection.body()->setVisible(visible);
 }
+
+} // end namespace celestia::qt

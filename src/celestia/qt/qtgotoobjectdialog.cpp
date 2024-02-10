@@ -17,8 +17,8 @@
 #include <celestia/celestiacore.h>
 #include <celmath/mathlib.h>
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
+namespace celestia::qt
+{
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),
@@ -49,7 +49,6 @@ GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
 
     ui.kmButton->setChecked(true);
 }
-
 
 void
 GoToObjectDialog::on_buttonBox_accepted()
@@ -103,7 +102,6 @@ GoToObjectDialog::on_buttonBox_accepted()
     }
 }
 
-
 void
 GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
 {
@@ -119,3 +117,5 @@ GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
     Selection sel = appCore->getSimulation()->findObjectFromPath(objectName.toStdString());
     okButton->setEnabled(!sel.empty());
 }
+
+} // end namespace celestia::qt

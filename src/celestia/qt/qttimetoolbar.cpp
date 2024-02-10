@@ -23,7 +23,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
                          const QString& title,
@@ -74,13 +75,11 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     addAction(currentTimeAction);
 }
 
-
 void
 TimeToolBar::slotPauseTime()
 {
     appCore->getSimulation()->setPauseState(!appCore->getSimulation()->getPauseState());
 }
-
 
 void
 TimeToolBar::slotReverseTime()
@@ -88,13 +87,11 @@ TimeToolBar::slotReverseTime()
     appCore->getSimulation()->setTimeScale(-appCore->getSimulation()->getTimeScale());
 }
 
-
 void
 TimeToolBar::slotRealTime()
 {
     appCore->getSimulation()->setTimeScale(1.0);
 }
-
 
 void
 TimeToolBar::slotDoubleTime()
@@ -102,13 +99,11 @@ TimeToolBar::slotDoubleTime()
     appCore->getSimulation()->setTimeScale(2.0 * appCore->getSimulation()->getTimeScale());
 }
 
-
 void
 TimeToolBar::slotHalfTime()
 {
     appCore->getSimulation()->setTimeScale(0.5 * appCore->getSimulation()->getTimeScale());
 }
-
 
 void
 TimeToolBar::slotFaster()
@@ -116,13 +111,11 @@ TimeToolBar::slotFaster()
     appCore->getSimulation()->setTimeScale(10.0 * appCore->getSimulation()->getTimeScale());
 }
 
-
 void
 TimeToolBar::slotSlower()
 {
     appCore->getSimulation()->setTimeScale(0.1 * appCore->getSimulation()->getTimeScale());
 }
-
 
 void
 TimeToolBar::slotCurrentTime()
@@ -137,3 +130,5 @@ TimeToolBar::slotCurrentTime()
 
     appCore->getSimulation()->setTime(astro::UTCtoTDB(celDate));
 }
+
+} // end namespace celestia::qt

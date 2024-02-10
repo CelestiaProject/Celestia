@@ -41,6 +41,9 @@
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
 
+namespace celestia::qt
+{
+
 namespace
 {
 
@@ -558,3 +561,5 @@ CelestiaGlWidget::sizeHint() const
 {
     return QSize(640, 480);
 }
+
+} // end namespace celestia::qt
