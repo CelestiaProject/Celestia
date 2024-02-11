@@ -258,7 +258,7 @@ private:
     void setup_vbo_lines();
     void create_vbo_triangles();
     void setup_vbo_triangles();
-    void triangulate();
+    void triangulate_and_segment();
     void triangulate_segments();
     void triangulate_vertices_as_segments();
     void triangulate_vertices();
@@ -287,7 +287,8 @@ private:
     VertexFormat                        m_format;
     int                                 m_hints{ 0 };
     bool                                m_useTriangles{ false };
-    bool                                m_triangulated{ false };
+    bool                                m_verticesTriangulated{ false };
+    bool                                m_segmented{ false };
     bool                                m_loopDone{ false };
     bool                                m_inUse{ false };
     CelestiaGLProgram                  *m_prog{ nullptr };
