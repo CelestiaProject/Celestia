@@ -288,6 +288,8 @@ LineRenderer::triangulate_segments()
     m_segments.reserve(count*3);
     for (int i = 0; i < count; i+=2)
         add_segment_points(m_vertices[i], m_vertices[i+1]);
+
+    m_segmented = true;
 }
 
 //! Convert line strip or loop into triangles.
@@ -299,6 +301,8 @@ LineRenderer::triangulate_vertices_as_segments()
     m_segments.reserve(stop*6);
     for (int i = 0; i < stop; i++)
         add_segment_points(m_vertices[i], m_vertices[(i + 1) % count]);
+
+    m_segmented = true;
 }
 
 //! Add additional triangle strips to simulate LineLoop.
@@ -346,36 +350,35 @@ LineRenderer::triangulate_vertices()
         m_verticesTr.emplace_back(vertex,  0.5f);
     }
 
-    if (m_primType == PrimType::LineLoop)
-        close_loop();
-    else if (m_primType == PrimType::LineStrip)
-        close_strip();
+    m_verticesTriangulated = true;
 }
 
-//! Convert lines into triangles.
+//! Convert lines into triangles and create segments if needed.
 void
-LineRenderer::triangulate()
+LineRenderer::triangulate_and_segment()
 {
-    if (m_triangulated)
+    if (m_primType == PrimType::Lines)
     {
-        if(m_primType != PrimType::Lines && !m_loopDone)
+        if (!m_segmented)
+            triangulate_segments();
+    }
+    else if ((m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
+    {
+        if (!m_segmented)
+            triangulate_vertices_as_segments();
+    }
+    else
+    {
+        if (!m_verticesTriangulated)
+            triangulate_vertices();
+
+        if (!m_loopDone)
         {
             if (m_primType == PrimType::LineLoop)
                 close_loop();
             else if (m_primType == PrimType::LineStrip)
                 close_strip();
         }
-    }
-    else
-    {
-        if (m_primType == PrimType::Lines)
-            triangulate_segments();
-        else if ((m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
-            triangulate_vertices_as_segments();
-        else
-            triangulate_vertices();
-
-        m_triangulated = true;
     }
 }
 
@@ -410,7 +413,10 @@ void
 LineRenderer::startUpdate()
 {
     if (m_storageType != StorageType::Static)
+    {
         m_useTriangles = should_triangulate();
+        m_verticesTriangulated = m_useTriangles && m_primType != PrimType::Lines && (m_hints & PREFER_SIMPLE_TRIANGLES) == 0;
+    }
 }
 
 void
@@ -419,7 +425,8 @@ LineRenderer::clear()
     m_verticesTr.clear();
     m_segments.clear();
     m_vertices.clear();
-    m_triangulated = false;
+    m_segmented = false;
+    m_verticesTriangulated = false;
     m_loopDone = false;
     m_inUse = false;
     m_prog = nullptr;
@@ -451,7 +458,7 @@ LineRenderer::prerender()
     m_useTriangles = m_useTriangles || should_triangulate();
 
     if (m_useTriangles)
-        triangulate();
+        triangulate_and_segment();
 
     setup_vbo();
     setup_shader();
@@ -505,7 +512,7 @@ LineRenderer::render(const Matrices &mvp, const Color &color, int count, int off
 
 void LineRenderer::addVertex(const Vertex &vertex)
 {
-    if (!m_useTriangles)
+    if (!m_verticesTriangulated)
     {
         m_vertices.push_back(vertex);
     }
@@ -519,7 +526,7 @@ void LineRenderer::addVertex(const Vertex &vertex)
 void
 LineRenderer::addVertex(const Eigen::Vector3f &pos)
 {
-    if (!m_useTriangles)
+    if (!m_verticesTriangulated)
     {
         m_vertices.emplace_back(pos);
     }
@@ -534,7 +541,7 @@ LineRenderer::addVertex(const Eigen::Vector3f &pos)
 void
 LineRenderer::addVertex(const Eigen::Vector3f &pos, const Color &color)
 {
-    if (!m_useTriangles)
+    if (!m_verticesTriangulated)
     {
         m_vertices.emplace_back(pos, color);
     }
@@ -549,7 +556,7 @@ LineRenderer::addVertex(const Eigen::Vector3f &pos, const Color &color)
 void
 LineRenderer::addVertex(float x, float y, float z)
 {
-    if (!m_useTriangles)
+    if (!m_verticesTriangulated)
     {
         m_vertices.emplace_back(Eigen::Vector3f(x, y, z));
     }
