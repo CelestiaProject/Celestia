@@ -12,8 +12,8 @@
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celengine/framebuffer.h>
 
-class FramebufferObject;
 class Renderer;
 class CelestiaGLProgram;
 class WarpMesh;
@@ -27,6 +27,9 @@ public:
     virtual bool prerender(Renderer*, FramebufferObject*);
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
+
+    virtual FramebufferObject::AttachmentType depthAttachmentType() const;
+    virtual FramebufferObject::AttachmentType colorAttachmentType() const;
 
 private:
     GLint oldFboId;

@@ -837,7 +837,7 @@ ModelViewWidget::paintGL()
 
             glActiveTexture(GL_TEXTURE0);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
+            glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthAttachment());
 
             // Disable texture compare temporarily--we just want to see the
             // stored depth values.
@@ -913,8 +913,8 @@ ModelViewWidget::setShadows(bool enable)
         if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
         {
             makeCurrent();
-            auto* fb0 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
-            auto* fb1 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
+            auto* fb0 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::AttachmentType::None, FramebufferObject::AttachmentType::Texture);
+            auto* fb1 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::AttachmentType::None, FramebufferObject::AttachmentType::Texture);
             m_shadowBuffers << fb0 << fb1;
             if (!fb0->isValid() || !fb1->isValid())
             {
@@ -1057,7 +1057,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
 
                 glActiveTexture(GL_TEXTURE4 + i);
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, m_shadowBuffers[i]->depthTexture());
+                glBindTexture(GL_TEXTURE_2D, m_shadowBuffers[i]->depthAttachment());
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
                 setSampler(*shader, samplerName, 4 + i);
                 glActiveTexture(GL_TEXTURE0);

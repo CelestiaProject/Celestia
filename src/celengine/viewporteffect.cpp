@@ -10,7 +10,6 @@
 
 #include <array>
 #include "viewporteffect.h"
-#include "framebuffer.h"
 #include "render.h"
 #include "shadermanager.h"
 #include "mapmanager.h"
@@ -41,6 +40,16 @@ bool ViewportEffect::distortXY(float &x, float &y)
     return true;
 }
 
+FramebufferObject::AttachmentType ViewportEffect::colorAttachmentType() const
+{
+    return FramebufferObject::AttachmentType::Texture;
+}
+
+FramebufferObject::AttachmentType ViewportEffect::depthAttachmentType() const
+{
+    return FramebufferObject::AttachmentType::Renderbuffer;
+}
+
 PassthroughViewportEffect::PassthroughViewportEffect() :
     ViewportEffect()
 {
@@ -56,7 +65,7 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
 
     prog->use();
     prog->samplerParam("tex") = 0;
-    glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
+    glBindTexture(GL_TEXTURE_2D, fbo->colorAttachment());
     renderer->setPipelineState(ps);
     vo.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -127,8 +136,8 @@ bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, 
 
     prog->use();
     prog->samplerParam("tex") = 0;
-    prog->floatParam("screenRatio") = (float)height / width;
-    glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
+    prog->floatParam("screenRatio") = static_cast<float>(height) / static_cast<float>(width);
+    glBindTexture(GL_TEXTURE_2D, fbo->colorAttachment());
     renderer->setPipelineState(ps);
     vo.draw();
     glBindTexture(GL_TEXTURE_2D, 0);

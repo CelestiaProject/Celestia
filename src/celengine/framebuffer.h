@@ -15,20 +15,22 @@
 class FramebufferObject
 {
  public:
-    enum
+    enum class AttachmentType
     {
-        ColorAttachment = 0x1,
-        DepthAttachment = 0x2
+        None,
+        Texture,
+        Renderbuffer,
     };
+
     FramebufferObject() = delete;
-    FramebufferObject(GLuint width, GLuint height, unsigned int attachments);
+    FramebufferObject(GLuint width, GLuint height, AttachmentType colorAttachment, AttachmentType depthAttachment);
     FramebufferObject(const FramebufferObject&) = delete;
     FramebufferObject(FramebufferObject&&) noexcept;
     FramebufferObject& operator=(const FramebufferObject&) = delete;
     FramebufferObject& operator=(FramebufferObject&&) noexcept;
     ~FramebufferObject();
 
-    static inline bool isSupported();
+    static bool isSupported();
     bool isValid() const;
     GLuint width() const
     {
@@ -40,8 +42,11 @@ class FramebufferObject
         return m_height;
     }
 
-    GLuint colorTexture() const;
-    GLuint depthTexture() const;
+    GLuint colorAttachment() const;
+    GLuint depthAttachment() const;
+
+    AttachmentType colorAttachmentType() const;
+    AttachmentType depthAttachmentType() const;
 
     bool bind();
     bool unbind(GLint oldfboId);
@@ -49,19 +54,24 @@ class FramebufferObject
  private:
     void generateColorTexture();
     void generateDepthTexture();
-    void generateFbo(unsigned int attachments);
+    void generateColorRenderbuffer();
+    void generateDepthRenderbuffer();
+
+    void generateFbo();
     void cleanup();
 
  private:
     GLuint m_width;
     GLuint m_height;
-    GLuint m_colorTexId;
-    GLuint m_depthTexId;
-    GLuint m_fboId;
-    GLenum m_status;
+    AttachmentType m_colorAttachmentType;
+    AttachmentType m_depthAttachmentType;
+    GLuint m_colorAttachmentId  { 0 };
+    GLuint m_depthAttachmentId  { 0 };
+    GLuint m_fboId              { 0 };
+    GLenum m_status             { GL_FRAMEBUFFER_UNSUPPORTED };
 };
 
-bool FramebufferObject::isSupported()
+inline bool FramebufferObject::isSupported()
 {
 #ifdef GL_ES
     return true;

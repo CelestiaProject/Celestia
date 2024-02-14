@@ -11,9 +11,9 @@
 
 #include <cstdint>
 #include <memory>
+#include <celengine/framebuffer.h>
 
 class Color;
-class FramebufferObject;
 class Observer;
 class Overlay;
 
@@ -49,7 +49,7 @@ public:
     void reset();
     static View* remove(View*);
     void drawBorder(Overlay*, int gWidth, int gHeight, const Color &color, float linewidth = 1.0f) const;
-    void updateFBO(int gWidth, int gHeight);
+    void updateFBO(int gWidth, int gHeight, FramebufferObject::AttachmentType colorAttachment, FramebufferObject::AttachmentType depthAttachment);
     FramebufferObject *getFBO() const;
 
     Type           type;

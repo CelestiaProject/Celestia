@@ -4800,7 +4800,8 @@ Renderer::createShadowFBO()
 {
     m_shadowFBO = std::make_unique<FramebufferObject>(m_shadowMapSize,
                                                       m_shadowMapSize,
-                                                      FramebufferObject::DepthAttachment);
+                                                      FramebufferObject::AttachmentType::None,
+                                                      FramebufferObject::AttachmentType::Texture);
     if (!m_shadowFBO->isValid())
     {
         GetLogger()->warn("Error creating shadow FBO.\n");

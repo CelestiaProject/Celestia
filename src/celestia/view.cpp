@@ -9,7 +9,6 @@
 
 #include "view.h"
 
-#include <celengine/framebuffer.h>
 #include <celengine/glsupport.h>
 #include <celengine/overlay.h>
 #include <celengine/rectangle.h>
@@ -261,16 +260,15 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 
 
 void
-View::updateFBO(int gWidth, int gHeight)
+View::updateFBO(int gWidth, int gHeight, FramebufferObject::AttachmentType colorAttachment, FramebufferObject::AttachmentType depthAttachment)
 {
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
-    if (fbo && fbo.get()->width() == newWidth && fbo.get()->height() == newHeight)
+    if (fbo && fbo->width() == newWidth && fbo->height() == newHeight && fbo->colorAttachmentType() == colorAttachment && fbo->depthAttachmentType() == depthAttachment)
         return;
 
     // recreate FBO when FBO not exisits or on size change
-    fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
-                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment);
+    fbo = std::make_unique<FramebufferObject>(newWidth, newHeight, colorAttachment, depthAttachment);
     if (!fbo->isValid())
     {
         GetLogger()->error("Error creating view FBO.\n");

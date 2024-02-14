@@ -496,7 +496,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
+        glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthAttachment());
 #if GL_ONLY_SHADOWS
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 #endif
@@ -533,7 +533,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     if (shadowBuffer != nullptr && shadowBuffer->isValid())
     {
-        rc.setShadowMap(shadowBuffer->depthTexture(), shadowBuffer->width(), &lightMatrix);
+        rc.setShadowMap(shadowBuffer->depthAttachment(), shadowBuffer->width(), &lightMatrix);
     }
 
     rc.setCameraOrientation(ri.orientation);

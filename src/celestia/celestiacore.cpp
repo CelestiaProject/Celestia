@@ -2011,7 +2011,7 @@ void CelestiaCore::draw(View* view)
     if (viewportEffect != nullptr)
     {
         // create/update FBO for viewport effect
-        view->updateFBO(metrics.width, metrics.height);
+        view->updateFBO(metrics.width, metrics.height, viewportEffect->colorAttachmentType(), viewportEffect->depthAttachmentType());
         fbo = view->getFBO();
     }
     bool process = fbo != nullptr && viewportEffect->preprocess(renderer, fbo);
@@ -2463,8 +2463,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
     {
-        if (config->viewportEffect == "passthrough")
+        if (!FramebufferObject::isSupported())
+        {
+            GetLogger()->warn("Framebuffer object not supported, ignoring viewport effect\n");
+        }
+        else if (config->viewportEffect == "passthrough")
+        {
             viewportEffect = unique_ptr<ViewportEffect>(new PassthroughViewportEffect);
+        }
         else if (config->viewportEffect == "warpmesh")
         {
             if (config->paths.warpMeshFile.empty())
