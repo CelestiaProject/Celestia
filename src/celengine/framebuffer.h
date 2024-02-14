@@ -31,6 +31,7 @@ class FramebufferObject
     ~FramebufferObject();
 
     static bool isSupported();
+    static bool isMultisampleResolveSupported();
     bool isValid() const;
     GLuint width() const
     {
@@ -56,8 +57,11 @@ class FramebufferObject
     void generateDepthTexture();
     void generateColorRenderbuffer();
     void generateDepthRenderbuffer();
+    void generateSampleColorRenderbuffer();
+    void generateSampleDepthRenderbuffer();
 
     void generateFbo();
+    bool checkStatus(GLint oldFboId);
     void cleanup();
 
  private:
@@ -69,6 +73,11 @@ class FramebufferObject
     GLuint m_depthAttachmentId  { 0 };
     GLuint m_fboId              { 0 };
     GLenum m_status             { GL_FRAMEBUFFER_UNSUPPORTED };
+
+    GLint m_sampleCount         { 0 };
+    GLuint m_sampleBuffer       { 0 };
+    GLuint m_sampleColorBuffer  { 0 };
+    GLuint m_sampleDepthBuffer  { 0 };
 };
 
 inline bool FramebufferObject::isSupported()
@@ -77,5 +86,14 @@ inline bool FramebufferObject::isSupported()
     return true;
 #else
     return celestia::gl::ARB_framebuffer_object;
+#endif
+}
+
+inline bool FramebufferObject::isMultisampleResolveSupported()
+{
+#ifdef GL_ES
+    return celestia::gl::checkVersion(celestia::gl::Version::GLES_3) || celestia::gl::APPLE_framebuffer_multisample;
+#else
+    return celestia::gl::EXT_framebuffer_multisample && celestia::gl::EXT_framebuffer_blit && glIsEnabled(GL_MULTISAMPLE);
 #endif
 }

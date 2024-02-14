@@ -47,9 +47,14 @@ extern CELAPI bool MESA_pack_invert; //NOSONAR
 extern CELAPI bool OES_vertex_array_object; //NOSONAR
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
+extern CELAPI bool APPLE_framebuffer_multisample; //NOSONAR
+extern CELAPI bool EXT_discard_framebuffer; //NOSONAR
 #else
 extern CELAPI bool ARB_vertex_array_object; //NOSONAR
 extern CELAPI bool ARB_framebuffer_object; //NOSONAR
+extern CELAPI bool ARB_invalidate_subdata; //NOSONAR
+extern CELAPI bool EXT_framebuffer_multisample; //NOSONAR
+extern CELAPI bool EXT_framebuffer_blit; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR

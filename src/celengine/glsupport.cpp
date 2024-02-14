@@ -9,9 +9,14 @@ namespace celestia::gl
 CELAPI bool OES_vertex_array_object        = false;
 CELAPI bool OES_texture_border_clamp       = false;
 CELAPI bool OES_geometry_shader            = false;
+CELAPI bool APPLE_framebuffer_multisample  = false;
+CELAPI bool EXT_discard_framebuffer        = false;
 #else
 CELAPI bool ARB_vertex_array_object        = false;
 CELAPI bool ARB_framebuffer_object         = false;
+CELAPI bool EXT_framebuffer_multisample    = false;
+CELAPI bool EXT_framebuffer_blit           = false;
+CELAPI bool ARB_invalidate_subdata         = false;
 #endif
 CELAPI bool ARB_shader_texture_lod         = false;
 CELAPI bool EXT_texture_compression_s3tc   = false;
@@ -79,9 +84,14 @@ bool init(util::array_view<std::string> ignore) noexcept
     OES_vertex_array_object        = check_extension(ignore, "GL_OES_vertex_array_object");
     OES_texture_border_clamp       = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     OES_geometry_shader            = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
+    APPLE_framebuffer_multisample  = check_extension(ignore, "GL_APPLE_framebuffer_multisample");
+    EXT_discard_framebuffer        = check_extension(ignore, "GL_EXT_discard_framebuffer");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     ARB_framebuffer_object         = check_extension(ignore, "GL_ARB_framebuffer_object") || check_extension(ignore, "GL_EXT_framebuffer_object");
+    EXT_framebuffer_multisample    = check_extension(ignore, "GL_EXT_framebuffer_multisample");
+    EXT_framebuffer_blit           = check_extension(ignore, "GL_EXT_framebuffer_blit");
+    ARB_invalidate_subdata         = check_extension(ignore, "GL_ARB_invalidate_subdata");
 #endif
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
