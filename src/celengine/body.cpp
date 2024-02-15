@@ -115,10 +115,19 @@ bool Body::hasLocalizedName() const
  *  Note: setName() is private, and only called from the Body constructor.
  *  It shouldn't be called elsewhere.
  */
-void Body::setName(const string& name)
+void Body::setName(const std::string& name)
 {
     names[0] = name;
-    string localizedName = D_(name.c_str());
+
+    // Gettext uses the empty string to store various metadata, so don't try
+    // to translate it.
+    if (name.empty())
+    {
+        primaryNameLocalized = false;
+        return;
+    }
+
+    const char* localizedName = D_(name.c_str());
     if (name == localizedName)
     {
         // No localized name; set the localized name index to zero to
