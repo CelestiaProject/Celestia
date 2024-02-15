@@ -92,7 +92,7 @@ GetRegistryFloat(HKEY key, LPCTSTR value, T& floatVal)
                                   &size);
     if (err != ERROR_SUCCESS || type != REG_BINARY || size != expectedSize)
     {
-        floatVal = static_cast<T>(0);
+        floatVal = T(0);
         return false;
     }
 
@@ -124,11 +124,16 @@ GetRegistryString(HKEY key, LPCTSTR value, std::string& strVal)
     fmt::memory_buffer buffer;
     buffer.resize(size);
 #endif
-    DWORD oldSize = size;
     err = RegQueryValueEx(key, value, 0, &type,
                           reinterpret_cast<LPBYTE>(buffer.data()), &size);
-    return size == oldSize && type == REG_SZ &&
-           AppendTCharToUTF8(tstring_view(buffer.data(), buffer.size()), strVal) > 0;
+#ifdef _UNICODE
+    if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
+#else
+    if (err != ERROR_SUCCESS || type != REG_SZ)
+#endif
+        return false;
+
+    return AppendTCharToUTF8(tstring_view(buffer.data(), size), strVal) > 0;
 }
 
 template<typename T,

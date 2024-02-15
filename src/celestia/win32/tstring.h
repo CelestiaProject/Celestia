@@ -41,9 +41,16 @@ AppendUTF8ToWide(std::string_view source, T& destination)
 
     const auto existingSize = destination.size();
     destination.resize(existingSize + static_cast<std::size_t>(wideLength));
-    MultiByteToWideChar(CP_UTF8, 0,
-                        source.data(), sourceSize,
-                        destination.data() + existingSize, wideLength);
+    wideLength = MultiByteToWideChar(CP_UTF8, 0,
+                                     source.data(), sourceSize,
+                                     destination.data() + existingSize, wideLength);
+    if (wideLength <= 0)
+    {
+        destination.resize(existingSize);
+        return 0;
+    }
+
+    destination.resize(existingSize + static_cast<std::size_t>(wideLength));
     return wideLength;
 }
 
@@ -61,9 +68,16 @@ AppendCurrentCPToWide(std::string_view source, T& destination)
 
     const auto existingSize = destination.size();
     destination.resize(existingSize + static_cast<std::size_t>(wideLength));
-    MultiByteToWideChar(CP_ACP, 0,
-                        source.data(), sourceSize,
-                        destination.data() + existingSize, wideLength);
+    wideLength = MultiByteToWideChar(CP_ACP, 0,
+                                     source.data(), sourceSize,
+                                     destination.data() + existingSize, wideLength);
+    if (wideLength <= 0)
+    {
+        destination.resize(existingSize);
+        return 0;
+    }
+
+    destination.resize(existingSize + static_cast<std::size_t>(wideLength));
     return wideLength;
 }
 
@@ -81,10 +95,18 @@ AppendWideToCurrentCP(std::wstring_view source, T& destination)
 
     const auto existingSize = destination.size();
     destination.resize(existingSize + static_cast<std::size_t>(destLength));
-    return WideCharToMultiByte(CP_ACP, 0,
-                               source.data(), sourceSize,
-                               destination.data() + existingSize, destLength,
-                               nullptr, nullptr);
+    destLength = WideCharToMultiByte(CP_ACP, 0,
+                                     source.data(), sourceSize,
+                                     destination.data() + existingSize, destLength,
+                                     nullptr, nullptr);
+    if (destLength <= 0)
+    {
+        destination.resize(existingSize);
+        return 0;
+    }
+
+    destination.resize(existingSize + static_cast<std::size_t>(destLength));
+    return destLength;
 }
 
 inline std::string
@@ -136,11 +158,18 @@ AppendTCharToUTF8(tstring_view source, T& destination)
     if (length <= 0)
         return 0;
 
-    destination.resize(destination.size() + static_cast<std::size_t>(length));
-    return WideCharToMultiByte(CP_UTF8, 0,
-                               source.data(), sourceSize,
-                               destination.data() + existingSize, length,
-                               nullptr, nullptr);
+    destination.resize(existingSize + static_cast<std::size_t>(length));
+    length = WideCharToMultiByte(CP_UTF8, 0,
+                                 source.data(), sourceSize,
+                                 destination.data() + existingSize, length,
+                                 nullptr, nullptr);
+    if (length <= 0)
+    {
+        destination.resize(existingSize);
+        return 0;
+    }
+
+    destination.resize(existingSize + static_cast<std::size_t>(length));
 #else
     int wlength = MultiByteToWideChar(CP_ACP, 0, source.data(), sourceSize, nullptr, 0);
     if (wlength <= 0)
@@ -148,18 +177,29 @@ AppendTCharToUTF8(tstring_view source, T& destination)
 
     fmt::basic_memory_buffer<wchar_t> wbuffer;
     wbuffer.resize(static_cast<std::size_t>(wlength));
-    MultiByteToWideChar(CP_ACP, 0, source.data(), sourceSize, wbuffer.data(), wlength);
+    wlength = MultiByteToWideChar(CP_ACP, 0, source.data(), sourceSize, wbuffer.data(), wlength);
+    if (wlength <= 0)
+        return 0;
+    wbuffer.resize(static_cast<std::size_t>(wlength));
 
     int length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength, nullptr, 0, nullptr, nullptr);
     if (length <= 0)
         return 0;
 
-    destination.resize(destination.size() + static_cast<std::size_t>(length));
-    return WideCharToMultiByte(CP_UTF8, 0,
-                               wbuffer.data(), wlength,
-                               destination.data() + existingSize, length,
-                               nullptr, nullptr);
+    destination.resize(existingSize + static_cast<std::size_t>(length));
+    length = WideCharToMultiByte(CP_UTF8, 0,
+                                 wbuffer.data(), wlength,
+                                 destination.data() + existingSize, length,
+                                 nullptr, nullptr);
+    if (length <= 0)
+    {
+        destination.resize(existingSize);
+        return 0;
+    }
+
+    destination.resize(existingSize + static_cast<std::size_t>(length));
 #endif
+    return length;
 }
 
 inline std::string
@@ -169,8 +209,6 @@ TCharToUTF8String(tstring_view tstr)
     AppendTCharToUTF8(tstr, result);
     return result;
 }
-
-
 
 int CompareUTF8Localized(std::string_view, std::string_view);
 

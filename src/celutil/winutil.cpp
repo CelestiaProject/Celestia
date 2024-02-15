@@ -25,12 +25,16 @@ WideToUTF8(std::wstring_view ws)
 
     // get a converted string length
     const auto srcLen = static_cast<int>(ws.size());
-    const auto len = WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, nullptr, 0, nullptr, nullptr);
+    int len = WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, nullptr, 0, nullptr, nullptr);
     if (len <= 0)
         return {};
 
     std::string out(static_cast<std::string::size_type>(len), '\0');
-    WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, out.data(), len, nullptr, nullptr);
+    len = WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, out.data(), len, nullptr, nullptr);
+    if (len <= 0)
+        return {};
+
+    out.resize(static_cast<std::size_t>(len));
     return out;
 }
 
