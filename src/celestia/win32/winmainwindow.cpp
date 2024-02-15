@@ -97,7 +97,7 @@ setMenuItemCheck(HMENU menuBar, int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-// Version of the function from tstring. h with smaller intermediate buffer
+// Version of the function from tstring.h with smaller intermediate buffer
 // suitable for char event processing
 template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
 void
@@ -115,17 +115,20 @@ AppendTCharCodeToUTF8(TCHAR* tch, int nch, T& destination)
         return;
 
     wbuffer.resize(static_cast<std::size_t>(wlength));
-    MultiByteToWideChar(CP_ACP, 0, tch, nch, wbuffer.data(), wlength);
+    wlength = MultiByteToWideChar(CP_ACP, 0, tch, nch, wbuffer.data(), wlength);
+    if (wlength <= 0)
+        return;
 
     int length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength, nullptr, 0, nullptr, nullptr);
     if (length <= 0)
         return;
 
     const auto existingSize = destination.size();
-    destination.resize(existingSize + static_cast<std::size_t>(existingSize));
-    WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength,
-                        destination.data() + existingSize, length,
-                        nullptr, nullptr);
+    destination.resize(existingSize + static_cast<std::size_t>(length));
+    length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength,
+                                 destination.data() + existingSize, length,
+                                 nullptr, nullptr);
+    destination.resize(length >= 0 ? (existingSize + static_cast<std::size_t>(length)) : existingSize);
 #endif
 }
 

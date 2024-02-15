@@ -11,6 +11,8 @@
 
 #include "tstring.h"
 
+#include <algorithm>
+
 namespace celestia::win32
 {
 
@@ -36,18 +38,14 @@ UTF8ToTChar(std::string_view str, tstring::value_type* dest, int destSize)
         return 0;
     const auto srcLength = static_cast<int>(str.size());
 #ifdef _UNICODE
-    return MultiByteToWideChar(CP_UTF8, 0, str.data(), srcLength, dest, destSize);
+    return std::max(MultiByteToWideChar(CP_UTF8, 0, str.data(), srcLength, dest, destSize), 0);
 #else
     fmt::basic_memory_buffer<wchar_t> wbuffer;
     int wideLength = AppendUTF8ToWide(str, wbuffer);
     if (wideLength <= 0)
-        return wideLength;
+        return 0;
 
-    wbuffer.resize(static_cast<std::size_t>(wideLength));
-
-    MultiByteToWideChar(CP_UTF8, 0, str.data(), srcLength, wbuffer.data(), wideLength);
-
-    return WideCharToMultiByte(CP_ACP, 0, wbuffer.data(), wideLength, dest, destSize, nullptr, nullptr);
+    return std::max(WideCharToMultiByte(CP_ACP, 0, wbuffer.data(), wideLength, dest, destSize, nullptr, nullptr), 0);
 #endif
 }
 

@@ -74,7 +74,11 @@ CreateLocalizedMonthNames()
 
 #ifdef _UNICODE
         std::wstring& name = months.emplace_back(static_cast<std::size_t>(length), L'\0');
-        GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, name.data(), length, nullptr);
+        length = GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, name.data(), length, nullptr);
+        if (length > 1)
+            name.resize(static_cast<std::size_t>(length - 1));
+        else
+            name = defaultMonthNames[i];
 #else
         buffer.resize(static_cast<std::size_t>(length));
         GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, buffer.data(), length, nullptr);
