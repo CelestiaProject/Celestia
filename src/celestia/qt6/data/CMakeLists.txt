@@ -1,10 +1,15 @@
+set(METAINFO_ID "space.celestiaproject.Celestia-qt6")
+set(METAINFO_NAME "Celestia (Qt6)")
+set(METAINFO_DESKTOP "celestia-qt6.desktop")
+configure_file("../../data/space.celestiaproject.Celestia.metainfo.xml.in" "${METAINFO_ID}.metainfo.xml")
+
 install(
-  FILES celestia-qt6.desktop
+  FILES "${METAINFO_DESKTOP}"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
   COMPONENT qt6gui
 )
 install(
-  FILES space.celestia.celestia_qt6.metainfo.xml
+  FILES "${METAINFO_ID}.metainfo.xml"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo"
   COMPONENT qt6gui
 )
