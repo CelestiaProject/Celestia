@@ -31,8 +31,12 @@
 #include <emscripten.h>
 #endif
 
-namespace celestia
+namespace celestia::sdl
 {
+
+namespace
+{
+
 class SDL_Alerter : public CelestiaCore::Alerter
 {
     SDL_Window* window { nullptr };
@@ -307,7 +311,7 @@ SDL_Application::update()
     return RunLoopState::Normal;
 }
 
-static int
+int
 toCelestiaKey(SDL_Keycode key)
 {
     switch (key)
@@ -442,7 +446,7 @@ SDL_Application::handleTextInputEvent(const SDL_TextInputEvent &event)
     m_appCore->charEntered(event.text, 0);
 }
 
-static int
+int
 toCelestiaButton(int button)
 {
     switch (button)
@@ -611,7 +615,7 @@ SDL_Application::pasteURL()
     SDL_free(str);
 }
 
-static void
+void
 FatalErrorImpl(fmt::string_view format, fmt::format_args args)
 {
     auto message = fmt::vformat(format, args);
@@ -623,13 +627,14 @@ FatalErrorImpl(fmt::string_view format, fmt::format_args args)
         fmt::print(stderr, "{}\n", message);
 }
 
-template <typename... Args> void
+template <typename... Args>
+void
 FatalError(const char *format, const Args&... args)
 {
     FatalErrorImpl(fmt::string_view(format), fmt::make_format_args(args...));
 }
 
-static void
+void
 DumpGLInfo()
 {
     const char* s;
@@ -709,10 +714,13 @@ sdlmain(int /* argc */, char ** /* argv */)
 
     return 0;
 }
-} // namespace
+
+} // end unnamed namespace
+
+} // end namespace celestia::sdl
 
 int
 main(int argc, char **argv)
 {
-    return celestia::sdlmain(argc, argv);
+    return celestia::sdl::sdlmain(argc, argv);
 }
