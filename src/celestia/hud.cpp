@@ -21,6 +21,9 @@
 #include <Eigen/Geometry>
 
 #include <fmt/format.h>
+#if FMT_VERSION < 90000
+#include <fmt/locale.h>
+#endif
 
 #include <celcompat/numbers.h>
 #include <celengine/body.h>
@@ -249,7 +252,7 @@ displaySpeed(const util::NumberFormatter& formatter, Overlay& overlay, float spe
 // degree, only minutes and seconds are shown; if the angle is less than one minute, only
 // seconds are displayed.
 std::string
-angleToStr(double angle)
+angleToStr(double angle, const std::locale& loc)
 {
     int degrees;
     int minutes;
@@ -258,20 +261,20 @@ angleToStr(double angle)
 
     if (degrees > 0)
     {
-        return fmt::format("{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
+        return fmt::format(loc, "{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
                            degrees, abs(minutes), abs(seconds));
     }
 
     if (minutes > 0)
     {
-        return fmt::format("{:02d}' {:.1f}\"", abs(minutes), abs(seconds));
+        return fmt::format(loc, "{:02d}' {:.1f}\"", abs(minutes), abs(seconds));
     }
 
-    return fmt::format("{:.2f}\"", abs(seconds));
+    return fmt::format(loc, "{:.2f}\"", abs(seconds));
 }
 
 void
-displayApparentDiameter(Overlay& overlay, double radius, double distance)
+displayApparentDiameter(Overlay& overlay, double radius, double distance, const std::locale& loc)
 {
     if (distance < radius)
         return;
@@ -281,52 +284,53 @@ displayApparentDiameter(Overlay& overlay, double radius, double distance)
     // Only display the arc size if it's less than 160 degrees and greater
     // than one second--otherwise, it's probably not interesting data.
     if (arcSize < 160.0 && arcSize > 1.0 / 3600.0)
-        overlay.printf(_("Apparent diameter: %s\n"), angleToStr(arcSize));
+        overlay.printf(_("Apparent diameter: %s\n"), angleToStr(arcSize, loc));
 }
 
 void
-displayDeclination(Overlay& overlay, double angle)
+displayDeclination(Overlay& overlay, double angle, const std::locale& loc)
 {
     int degrees;
     int minutes;
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay.printf(_("Dec: %+d%s %02d' %.1f\"\n"),
-                   std::abs(degrees), UTF8_DEGREE_SIGN,
-                   std::abs(minutes), std::abs(seconds));
+    overlay.print(loc, _("Dec: {:+d}{} {:02d}' {:.1f}\"\n"),
+                  std::abs(degrees), UTF8_DEGREE_SIGN,
+                  std::abs(minutes), std::abs(seconds));
 }
 
 void
-displayRightAscension(Overlay& overlay, double angle)
+displayRightAscension(Overlay& overlay, double angle, const std::locale& loc)
 {
     int hours;
     int minutes;
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    overlay.printf(_("RA: %dh %02dm %.1fs\n"),
-                          hours, abs(minutes), abs(seconds));
+    overlay.print(loc, _("RA: {}h {:02}m {:.1f}s\n"),
+                  hours, abs(minutes), abs(seconds));
 }
 
 void
 displayApparentMagnitude(Overlay& overlay,
                          float absMag,
-                         double distance)
+                         double distance,
+                         const std::locale& loc)
 {
     if (distance > 32.6167)
     {
-        float appMag = astro::absToAppMag(absMag, (float) distance);
-        overlay.printf(_("Apparent magnitude: %.1f\n"), appMag);
+        float appMag = astro::absToAppMag(absMag, static_cast<float>(distance));
+        overlay.print(loc, _("Apparent magnitude: {:.1f}\n"), appMag);
     }
     else
     {
-        overlay.printf(_("Absolute magnitude: %.1f\n"), absMag);
+        overlay.print(loc, _("Absolute magnitude: {:.1f}\n"), absMag);
     }
 }
 
 void
-displayRADec(Overlay& overlay, const Eigen::Vector3d& v)
+displayRADec(Overlay& overlay, const Eigen::Vector3d& v, const std::locale& loc)
 {
     double phi = std::atan2(v.x(), v.z()) - celestia::numbers::pi / 2;
     if (phi < 0.0)
@@ -339,8 +343,8 @@ displayRADec(Overlay& overlay, const Eigen::Vector3d& v)
         theta = -celestia::numbers::pi * 0.5 - theta;
 
 
-    displayRightAscension(overlay, math::radToDeg(phi));
-    displayDeclination(overlay, math::radToDeg(theta));
+    displayRightAscension(overlay, math::radToDeg(phi), loc);
+    displayDeclination(overlay, math::radToDeg(theta), loc);
 }
 
 // Display nicely formatted planetocentric/planetographic coordinates.
@@ -353,7 +357,8 @@ displayPlanetocentricCoords(const util::NumberFormatter& formatter,
                             double longitude,
                             double latitude,
                             double altitude,
-                            MeasurementSystem measurement)
+                            MeasurementSystem measurement,
+                            const std::locale& loc)
 {
     char ewHemi = ' ';
     char nsHemi = ' ';
@@ -399,9 +404,9 @@ displayPlanetocentricCoords(const util::NumberFormatter& formatter,
         lat = std::abs(math::radToDeg(latitude));
     }
 
-    overlay.printf(_("%.6f%c %.6f%c %s"),
-                   lat, nsHemi, lon, ewHemi,
-                   DistanceKmToStr(formatter, altitude, 5, measurement));
+    overlay.print(loc, _("{:.6f}{} {:.6f}{} {}"),
+                  lat, nsHemi, lon, ewHemi,
+                  DistanceKmToStr(formatter, altitude, 5, measurement));
 }
 
 void
@@ -411,7 +416,8 @@ displayStarInfo(const util::NumberFormatter& formatter,
                 const Star& star,
                 const Universe& universe,
                 double distance,
-                const HudSettings& hudSettings)
+                const HudSettings& hudSettings,
+                const std::locale& loc)
 {
     overlay.printf(_("Distance: %s\n"),
                    DistanceLyToStr(formatter, distance, 5, hudSettings.measurementSystem));
@@ -422,12 +428,12 @@ displayStarInfo(const util::NumberFormatter& formatter,
     }
     else
     {
-        overlay.printf(_("Abs (app) mag: %.2f (%.2f)\n"),
-                                star.getAbsoluteMagnitude(),
-                                star.getApparentMagnitude(float(distance)));
+        overlay.print(loc, _("Abs (app) mag: {:.2f} ({:.2f})\n"),
+                      star.getAbsoluteMagnitude(),
+                      star.getApparentMagnitude(float(distance)));
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay.print(_("Luminosity: {}x Sun\n"), formatter.format(star.getLuminosity(), 3, SigDigitNum));
+            overlay.print(loc, _("Luminosity: {}x Sun\n"), formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -444,7 +450,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
         overlay.printf(_("Class: %s\n"), star_class);
 
         displayApparentDiameter(overlay, star.getRadius(),
-                                astro::lightYearsToKilometers(distance));
+                                astro::lightYearsToKilometers(distance), loc);
 
         if (detail > 1)
         {
@@ -483,7 +489,8 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
                     Overlay& overlay,
                     const DeepSkyObject& dso,
                     double distance,
-                    MeasurementSystem measurement)
+                    MeasurementSystem measurement,
+                    const std::locale& loc)
 {
     overlay.print(dso.getDescription());
     overlay.print("\n");
@@ -501,12 +508,13 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
 
-    displayApparentDiameter(overlay, dso.getRadius(), distance);
+    displayApparentDiameter(overlay, dso.getRadius(), distance, loc);
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
     {
         displayApparentMagnitude(overlay,
                                  dso.getAbsoluteMagnitude(),
-                                 distance);
+                                 distance,
+                                 loc);
     }
 }
 
@@ -517,7 +525,8 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
                   Body& body,
                   double t,
                   const Eigen::Vector3d& viewVec,
-                  const HudSettings& hudSettings)
+                  const HudSettings& hudSettings,
+                  const std::locale& loc)
 {
     double distanceKm = viewVec.norm();
     double distance = distanceKm - body.getRadius();
@@ -532,7 +541,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     overlay.printf(_("Radius: %s\n"),
                    DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
 
-    displayApparentDiameter(overlay, body.getRadius(), distanceKm);
+    displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
 
     // Display the phase angle
 
@@ -568,7 +577,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
             sunVec.normalize();
             double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.printf(_("Phase angle: %.1f%s\n"), math::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            overlay.print(loc, _("Phase angle: {:.1f}{}\n"), math::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
         }
     }
 
@@ -604,7 +613,8 @@ displayLocationInfo(const util::NumberFormatter& formatter,
                     Overlay& overlay,
                     const Location& location,
                     double distanceKm,
-                    MeasurementSystem measurement)
+                    MeasurementSystem measurement,
+                    const std::locale& loc)
 {
     overlay.printf(_("Distance: %s\n"), DistanceKmToStr(formatter, distanceKm, 5, measurement));
 
@@ -615,7 +625,7 @@ displayLocationInfo(const util::NumberFormatter& formatter,
     Eigen::Vector3f locPos = location.getPosition();
     Eigen::Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
     displayPlanetocentricCoords(formatter, overlay, *body,
-                                lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), measurement);
+                                lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), measurement, loc);
 }
 
 std::string
@@ -690,6 +700,16 @@ HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
     m_titleFont = f;
     m_titleFontHeight = f->getHeight();
     m_titleEmWidth = engine::TextLayout::getTextWidth("M", f.get());
+}
+
+Hud::Hud(const std::locale& loc) :
+    loc(loc),
+#ifdef USE_ICU
+    m_numberFormatter(std::make_unique<util::NumberFormatter>())
+#else
+    m_numberFormatter(std::make_unique<util::NumberFormatter>(loc))
+#endif
+{
 }
 
 Hud::~Hud() = default;
@@ -849,8 +869,6 @@ Hud::renderOverlay(const WindowMetrics& metrics,
 
     views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
 
-    setlocale(LC_NUMERIC, "");
-
     if (m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowTime))
         renderTimeInfo(metrics, sim, timeInfo);
 
@@ -865,7 +883,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->beginText();
         m_overlay->print("\n");
         if (m_hudSettings.showFPSCounter)
-            m_overlay->printf(_("FPS: %.1f\n"), timeInfo.fps);
+            m_overlay->print(loc, _("FPS: {:.1f}\n"), timeInfo.fps);
         else
             m_overlay->print("\n");
 
@@ -907,7 +925,6 @@ Hud::renderOverlay(const WindowMetrics& metrics,
     }
 
     m_overlay->end();
-    setlocale(LC_NUMERIC, "C");
 }
 
 void
@@ -959,11 +976,11 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
     }
     else if (std::abs(sim->getTimeScale()) > 1.0)
     {
-        m_overlay->printf(_("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
+        m_overlay->print(loc, _("{:.6g} x faster"), sim->getTimeScale()); // XXX: %'.12g
     }
     else
     {
-        m_overlay->printf(_("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
+        m_overlay->print(loc, _("{:.6g} x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
     }
 
     if (sim->getPauseState() == true)
@@ -1039,7 +1056,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
     float fov = math::radToDeg(activeObserver->getFOV());
-    m_overlay->printf(_("FOV: %s (%.2fx)\n"), angleToStr(fov), activeObserver->getZoom());
+    m_overlay->print(loc, _("FOV: {} ({:.2f}x)\n"), angleToStr(fov, loc), activeObserver->getZoom());
     m_overlay->endText();
     m_overlay->restorePos();
 }
@@ -1076,7 +1093,8 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                             *(sel.star()),
                             *(sim->getUniverse()),
                              astro::kilometersToLightYears(v.norm()),
-                             m_hudSettings);
+                             m_hudSettings,
+                             loc);
         }
         break;
 
@@ -1096,7 +1114,8 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                            *m_overlay,
                            *sel.deepsky(),
                             astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius(),
-                            m_hudSettings.measurementSystem);
+                            m_hudSettings.measurementSystem,
+                            loc);
         }
         break;
 
@@ -1119,7 +1138,8 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                               *(sel.body()),
                                sim->getTime(),
                                v,
-                               m_hudSettings);
+                               m_hudSettings,
+                               loc);
         }
         break;
 
@@ -1132,7 +1152,8 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                             *m_overlay,
                             *(sel.location()),
                              v.norm(),
-                             m_hudSettings.measurementSystem);
+                             m_hudSettings.measurementSystem,
+                             loc);
         break;
 
     default:
@@ -1158,7 +1179,7 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
             // near the Earth.
             Eigen::Vector3d vEarth = sel.getPosition(sim->getTime()).offsetFromKm(Selection(earth).getPosition(sim->getTime()));
             vEarth = math::XRotation(astro::J2000Obliquity) * vEarth;
-            displayRADec(*m_overlay, vEarth);
+            displayRADec(*m_overlay, vEarth, loc);
         }
     }
 
@@ -1210,10 +1231,10 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     m_overlay->moveBy(static_cast<float>((metrics.width - movieWidth) / 2),
                       static_cast<float>((metrics.height + movieHeight) / 2 + 2));
     m_overlay->beginText();
-    m_overlay->printf(_("%dx%d at %.2f fps  %s"),
-                      movieWidth, movieHeight,
-                      movieCapture.getFrameRate(),
-                      movieCapture.recordingStatus() ? _("Recording") : _("Paused"));
+    m_overlay->print(loc, _("{}x{} at {:.2f} fps  {}"),
+                     movieWidth, movieHeight,
+                     movieCapture.getFrameRate(),
+                     movieCapture.recordingStatus() ? _("Recording") : _("Paused"));
 
     m_overlay->endText();
     m_overlay->restorePos();
@@ -1225,7 +1246,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     auto min = static_cast<int>(sec / 60.0f);
     sec -= static_cast<float>(min) * 60.0f;
     m_overlay->beginText();
-    m_overlay->print("{:3d}:{:05.2f}", min, sec);
+    m_overlay->print(loc, "{:3d}:{:05.2f}", min, sec);
     m_overlay->endText();
     m_overlay->restorePos();
 

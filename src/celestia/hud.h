@@ -13,9 +13,7 @@
 #pragma once
 
 #include <limits>
-#ifndef USE_ICU
 #include <locale>
-#endif
 #include <memory>
 #include <string>
 #include <string_view>
@@ -125,7 +123,7 @@ public:
         PassToScript = 0x02,
     };
 
-    Hud() = default;
+    explicit Hud(const std::locale&);
     ~Hud();
 
     int detail() const;
@@ -175,12 +173,10 @@ private:
 
     std::unique_ptr<OverlayImage> m_image;
 
+    std::locale loc;
+
     std::unique_ptr<engine::DateFormatter> m_dateFormatter{ std::make_unique<engine::DateFormatter>() };
-#ifdef USE_ICU
-    std::unique_ptr<const util::NumberFormatter> m_numberFormatter{ std::make_unique<util::NumberFormatter>() };
-#else
-    std::unique_ptr<const util::NumberFormatter> m_numberFormatter{ std::make_unique<util::NumberFormatter>(std::locale("")) };
-#endif
+    std::unique_ptr<const util::NumberFormatter> m_numberFormatter;
     celestia::astro::Date::Format m_dateFormat{ celestia::astro::Date::Locale };
     int m_dateStrWidth{ 0 };
 

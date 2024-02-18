@@ -11,6 +11,7 @@
 
 #include <array>
 #include <fstream>
+#include <locale>
 #include <string>
 #include <functional>
 #include <string_view>
@@ -424,6 +425,8 @@ private:
 
     Simulation* sim{ nullptr };
     Renderer* renderer{ nullptr };
+
+    std::locale loc{ "" };
 
     celestia::WindowMetrics metrics;
     std::unique_ptr<celestia::Hud> hud;
