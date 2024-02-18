@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <locale>
 #include <string>
 #include <vector>
 #include <fmt/printf.h>
@@ -59,6 +60,13 @@ class Overlay
     void endText();
 
     void print(std::string_view);
+
+    template <typename... T>
+    void print(const std::locale& loc, std::string_view format, const T&... args)
+    {
+        static_assert(sizeof...(args) > 0);
+        print(fmt::format(loc, format, args...));
+    }
 
     template <typename... T>
     void print(std::string_view format, const T&... args)
