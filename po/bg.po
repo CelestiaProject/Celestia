@@ -4137,7 +4137,7 @@ msgstr "Неуспершно регистриране на целта като O
 
 #: ../src/celestia/win32/winmainwindow.cpp:260
 msgid "Error getting joystick caps.\n"
-msgstr "Грешка при получаване на обратна връзка с джойстика.\n"
+msgstr "Грешка при получаване на обратна връзка от джойстика.\n"
 
 #: ../src/celestia/win32/winmainwindow.cpp:264
 msgid "Using joystick: {}\n"
