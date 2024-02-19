@@ -3718,7 +3718,7 @@ msgstr "Име на обект"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:121
 msgid "OpenGL Driver Info"
-msgstr "Информация за драйвъра на „OpenGL“"
+msgstr "Информация за драйвъра на OpenGL"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "Go to Object"
