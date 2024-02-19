@@ -3538,7 +3538,7 @@ msgstr "Контроли"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:69
 msgid "&OpenGL Info"
-msgstr "Информация за „OpenGL“"
+msgstr "Информация за OpenGL"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "&License"
