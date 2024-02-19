@@ -2298,11 +2298,11 @@ msgstr "Зад %1"
 
 #: ../src/celestia/qt/qtglwidget.cpp:105
 msgid "Celestia was unable to initialize OpenGLES 2.0."
-msgstr "„Celestia“ не успя да стартира „OpenGLES“ 2.0."
+msgstr "„Celestia“ не успя да стартира OpenGLES 2.0."
 
 #: ../src/celestia/qt/qtglwidget.cpp:112
 msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr "„Celestia“ не успя да стартира „OpenGL“ 2.1."
+msgstr "„Celestia“ не успя да стартира OpenGL 2.1."
 
 #: ../src/celestia/qt/qtinfopanel.cpp:155
 msgid "Error: no object selected!\n"
