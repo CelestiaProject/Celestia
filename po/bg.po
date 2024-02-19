@@ -2139,7 +2139,7 @@ msgstr "%1 намерени обекта"
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "Set the data directory."
-msgstr "Задай папката с данните"
+msgstr "Задай папката с данните."
 
 #: ../src/celestia/qt/qtcommandline.cpp:16
 msgid "datadir"
