@@ -646,7 +646,7 @@ msgstr "Максимален размер на текстурите: %s\n"
 #: ../src/celestia/helper.cpp:130
 #, c-format
 msgid "Point size range: %s - %s\n"
-msgstr "Диапазон на размера на точките: %s - %s\n"
+msgstr "Диапазон на размера на точките: %s – %s\n"
 
 #: ../src/celestia/helper.cpp:133
 #, c-format
