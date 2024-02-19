@@ -904,9 +904,6 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::setShadows(bool enable)
 {
-    if (!FramebufferObject::isSupported())
-        return;
-
     if (enable != m_shadowsEnabled)
     {
         m_shadowsEnabled = enable;

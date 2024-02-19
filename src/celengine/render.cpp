@@ -4811,8 +4811,6 @@ Renderer::createShadowFBO()
 void
 Renderer::setShadowMapSize(unsigned size)
 {
-    if (!FramebufferObject::isSupported())
-        return;
     m_shadowMapSize = std::min(size, static_cast<unsigned>(gl::maxTextureSize));
     if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
         return;
