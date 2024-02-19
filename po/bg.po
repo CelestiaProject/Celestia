@@ -651,7 +651,7 @@ msgstr "Диапазон на размера на точките: %s - %s\n"
 #: ../src/celestia/helper.cpp:133
 #, c-format
 msgid "Line width range: %s - %s\n"
-msgstr "Диапазон на размера на линиите: %s - %s\n"
+msgstr "Диапазон на размера на линиите: %s – %s\n"
 
 #: ../src/celestia/helper.cpp:136
 #, c-format
