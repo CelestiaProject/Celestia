@@ -1466,7 +1466,7 @@ msgstr "Уикипедия на „Celestia“"
 
 #: ../src/celestia/qt/qtappwin.cpp:1672
 msgid "OpenGL Info"
-msgstr "Информация за „OpenGL“"
+msgstr "Информация за OpenGL"
 
 #: ../src/celestia/qt/qtappwin.cpp:1693
 msgid "Add Bookmark..."
