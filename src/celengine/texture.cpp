@@ -485,10 +485,6 @@ ImageTexture::ImageTexture(const Image& img,
     }
 
     bool genMipmaps = mipmap && !precomputedMipMaps;
-#ifndef GL_ES
-    if (genMipmaps && !FramebufferObject::isSupported())
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-#endif
 
     if (mipmap)
     {
@@ -511,7 +507,7 @@ ImageTexture::ImageTexture(const Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 #endif
     }
-    if (genMipmaps && FramebufferObject::isSupported())
+    if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
 
     alpha = img.hasAlpha();
@@ -689,25 +685,9 @@ TiledTexture::TiledTexture(const Image& img,
                     }
                 }
 
+                LoadMiplessTexture(*tile, GL_TEXTURE_2D);
                 if (mipmap)
-                {
-                    if (FramebufferObject::isSupported())
-                    {
-                        LoadMiplessTexture(*tile, GL_TEXTURE_2D);
-                        glGenerateMipmap(GL_TEXTURE_2D);
-                    }
-#ifndef GL_ES
-                    else
-                    {
-                        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-                        LoadMiplessTexture(*tile, GL_TEXTURE_2D);
-                    }
-#endif
-                }
-                else
-                {
-                    LoadMiplessTexture(*tile, GL_TEXTURE_2D);
-                }
+                    glGenerateMipmap(GL_TEXTURE_2D);
             }
         }
     }
@@ -810,29 +790,17 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
 
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
-#if !defined(GL_ES)
-    if (genMipmaps && !FramebufferObject::isSupported())
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
-#endif
-
     for (int i = 0; i < 6; i++)
     {
         auto targetFace = static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
         const Image* face = faces[i];
 
-        if (mipmap)
-        {
-            if (precomputedMipMaps)
-                LoadMipmapSet(*face, targetFace);
-            else
-                LoadMiplessTexture(*face, targetFace);
-        }
+        if (mipmap && precomputedMipMaps)
+            LoadMipmapSet(*face, targetFace);
         else
-        {
             LoadMiplessTexture(*face, targetFace);
-        }
     }
-    if (genMipmaps && FramebufferObject::isSupported())
+    if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 }
 

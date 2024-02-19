@@ -49,7 +49,6 @@ extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
 #else
 extern CELAPI bool ARB_vertex_array_object; //NOSONAR
-extern CELAPI bool ARB_framebuffer_object; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR

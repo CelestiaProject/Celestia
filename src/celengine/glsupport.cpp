@@ -1,6 +1,8 @@
 #include "glsupport.h"
 #include <algorithm>
 #include <cstring>
+#include <fmt/format.h>
+#include <celutil/gettext.h>
 
 namespace celestia::gl
 {
@@ -81,7 +83,11 @@ bool init(util::array_view<std::string> ignore) noexcept
     OES_geometry_shader            = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
-    ARB_framebuffer_object         = check_extension(ignore, "GL_ARB_framebuffer_object") || check_extension(ignore, "GL_EXT_framebuffer_object");
+    if (!has_extension("GL_ARB_framebuffer_object"))
+    {
+        fmt::print(_("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
+        return false;
+    }
 #endif
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
