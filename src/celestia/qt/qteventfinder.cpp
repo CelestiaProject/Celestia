@@ -162,7 +162,7 @@ private:
 Qt::ItemFlags
 EventFinder::EventTableModel::flags(const QModelIndex& /*unused*/) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return static_cast<Qt::ItemFlags>(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
 QVariant

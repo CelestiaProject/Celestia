@@ -281,7 +281,7 @@ DeepSkyBrowser::DSOTableModel::objectAtIndex(const QModelIndex& _index) const
 Qt::ItemFlags
 DeepSkyBrowser::DSOTableModel::flags(const QModelIndex& /*unused*/) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return static_cast<Qt::ItemFlags>(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
 // Override QAbstractTableModel::data()
