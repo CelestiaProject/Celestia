@@ -4133,7 +4133,7 @@ msgstr "Грешка при заключване на целта\n"
 
 #: ../src/celestia/win32/winmain.cpp:794
 msgid "Failed to register drop target as OLE object.\n"
-msgstr "Неуспершно регистриране на целта като OLE обект.\n"
+msgstr "Неуспешно регистриране на целта като OLE обект.\n"
 
 #: ../src/celestia/win32/winmainwindow.cpp:260
 msgid "Error getting joystick caps.\n"
