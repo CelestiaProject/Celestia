@@ -343,14 +343,12 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     toolsDock = new QDockWidget(_("Celestial Browser"), this);
     toolsDock->setObjectName("celestia-tools-dock");
-    toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
+    toolsDock->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
 
     // Info browser for a selected object
     infoPanel = new InfoPanel(m_appCore, _("Info Browser"), this);
     infoPanel->setObjectName("info-panel");
-    infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
+    infoPanel->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     infoPanel->setVisible(false);
 
     // Create the various browser widgets
@@ -387,8 +385,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     eventFinder = new EventFinder(m_appCore, _("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
-    eventFinder->setAllowedAreas(Qt::LeftDockWidgetArea |
-                                 Qt::RightDockWidgetArea);
+    eventFinder->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     addDockWidget(Qt::LeftDockWidgetArea, eventFinder);
     eventFinder->setVisible(false);
     //addDockWidget(Qt::DockWidgetArea, eventFinder);
