@@ -4011,7 +4011,7 @@ msgstr "Старт"
 
 #: ../src/celestia/win32/winfiledlgs.cpp:47
 msgid "JPEG - JFIF Compliant (*.jpg)"
-msgstr "Съвместимо с JPEG ‑ JFIF (*.jpg)"
+msgstr "Съвместимо с JPEG – JFIF (*.jpg)"
 
 #: ../src/celestia/win32/winfiledlgs.cpp:49
 msgid "Portable Network Graphics (*.png)"
