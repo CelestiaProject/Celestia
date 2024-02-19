@@ -2471,7 +2471,7 @@ msgstr "<b>B:</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:210
 msgid "OpenGL 2.1"
-msgstr "„OpenGL“ 2.1"
+msgstr "OpenGL 2.1"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:254
 #: ../src/celestia/win32/res/resource_strings.cpp:43
