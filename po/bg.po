@@ -4150,12 +4150,12 @@ msgstr "Зареждане на връзката"
 #: ../src/celestia/win32/winmainwindow.cpp:1135
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr ""
-"Подходящият формат на пикселите за възпроизвеждане с „OpenGL“ не може да "
-"бъде избран."
+"Подходящият формат на пикселите за възпроизвеждане с OpenGL не може да бъде "
+"избран."
 
 #: ../src/celestia/win32/winmainwindow.cpp:1153
 msgid "Your system doesn't support OpenGL 2.1!"
-msgstr "Вашата система не поддържа „OpenGL“ 2.1!"
+msgstr "Вашата система не поддържа OpenGL 2.1!"
 
 #: ../src/celestia/win32/winmainwindow.cpp:1170
 msgid "Releasing device context failed."
