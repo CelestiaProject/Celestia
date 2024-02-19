@@ -1,7 +1,10 @@
 set(METAINFO_ID "space.celestiaproject.Celestia-qt5")
 set(METAINFO_NAME "Celestia (Qt5)")
 set(METAINFO_DESKTOP "celestia-qt5.desktop")
-configure_file("../../data/space.celestiaproject.Celestia.metainfo.xml.in" "${METAINFO_ID}.metainfo.xml")
+configure_file(
+  "../../data/space.celestiaproject.Celestia.metainfo.xml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"
+)
 
 install(
   FILES "${METAINFO_DESKTOP}"
@@ -9,7 +12,7 @@ install(
   COMPONENT qt5gui
 )
 install(
-  FILES "${METAINFO_ID}.metainfo.xml"
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo"
   COMPONENT qt5gui
 )

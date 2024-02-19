@@ -1,7 +1,10 @@
 set(METAINFO_ID "space.celestiaproject.Celestia-gtk")
 set(METAINFO_NAME "Celestia (GTK)")
 set(METAINFO_DESKTOP "celestia-gtk.desktop")
-configure_file("../../data/space.celestiaproject.Celestia.metainfo.xml.in" "${METAINFO_ID}.metainfo.xml")
+configure_file(
+  "../../data/space.celestiaproject.Celestia.metainfo.xml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"
+)
 
 install(
   FILES celestiaui.xml celestia-logo.png
@@ -14,7 +17,7 @@ install(
   COMPONENT gtkgui
 )
 install(
-  FILES "${METAINFO_ID}.metainfo.xml"
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo"
   COMPONENT gtkgui
 )
