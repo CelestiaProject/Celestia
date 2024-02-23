@@ -697,11 +697,11 @@ msgstr "а.е."
 
 #: ../src/celestia/hud.cpp:117
 msgid "mi"
-msgstr "миль"
+msgstr "(в милях)"
 
 #: ../src/celestia/hud.cpp:122
 msgid "ft"
-msgstr "фут(ов)"
+msgstr "(в футах)"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
@@ -764,11 +764,11 @@ msgstr "а.е./с"
 
 #: ../src/celestia/hud.cpp:222
 msgid "mi/s"
-msgstr "миль/с"
+msgstr "(в милях/с)"
 
 #: ../src/celestia/hud.cpp:227
 msgid "ft/s"
-msgstr "фут(ов)/с"
+msgstr "(в футах/с)"
 
 #: ../src/celestia/hud.cpp:235
 msgid "km/s"
@@ -878,7 +878,7 @@ msgstr "Фазовый угол: %.1f%s\n"
 
 #: ../src/celestia/hud.cpp:585
 msgid "Density: {} lb/ft³\n"
-msgstr "Плотность в фунтах/фут³: {}\n"
+msgstr "Плотность: {} (в фунтах/фут³)\n"
 
 #: ../src/celestia/hud.cpp:590
 msgid "Density: {} kg/m³\n"
