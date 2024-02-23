@@ -697,7 +697,7 @@ msgstr "а.е."
 
 #: ../src/celestia/hud.cpp:117
 msgid "mi"
-msgstr "миль"
+msgstr "(в милях)"
 
 #: ../src/celestia/hud.cpp:122
 msgid "ft"
