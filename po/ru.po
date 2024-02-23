@@ -701,7 +701,7 @@ msgstr "(в милях)"
 
 #: ../src/celestia/hud.cpp:122
 msgid "ft"
-msgstr "фут(ов)"
+msgstr "(в футах)"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
