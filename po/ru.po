@@ -878,7 +878,7 @@ msgstr "Фазовый угол: %.1f%s\n"
 
 #: ../src/celestia/hud.cpp:585
 msgid "Density: {} lb/ft³\n"
-msgstr "Плотность в фунтах/фут³: {}\n"
+msgstr "Плотность: {} (в фунтах/фут³)\n"
 
 #: ../src/celestia/hud.cpp:590
 msgid "Density: {} kg/m³\n"
