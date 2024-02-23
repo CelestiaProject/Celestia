@@ -768,7 +768,7 @@ msgstr "(в милях/с)"
 
 #: ../src/celestia/hud.cpp:227
 msgid "ft/s"
-msgstr "фут(ов)/с"
+msgstr "(в футах/с)"
 
 #: ../src/celestia/hud.cpp:235
 msgid "km/s"
