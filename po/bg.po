@@ -4121,7 +4121,7 @@ msgstr ""
 
 #: ../src/celestia/win32/winmain.cpp:735
 msgid "Copy favorites?"
-msgstr "Копиране на фаворитите?"
+msgstr "Копиране на предпочитаните?"
 
 #: ../src/celestia/win32/winmain.cpp:776
 msgid "Failed to create the application window."
