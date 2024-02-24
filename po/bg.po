@@ -267,7 +267,7 @@ msgstr "{} не съществува или не е папка\n"
 
 #: ../src/celestia/celestiacore.cpp:247
 msgid "Error reading favorites file {}.\n"
-msgstr "Грешка при четене на файла с фаворити {}.\n"
+msgstr "Грешка при четене на файла с предпочитани {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:268
 msgid "Failed to check directory existance for favorites file {}\n"
