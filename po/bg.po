@@ -267,15 +267,15 @@ msgstr "{} не съществува или не е папка\n"
 
 #: ../src/celestia/celestiacore.cpp:247
 msgid "Error reading favorites file {}.\n"
-msgstr "Грешка при четене на файла с фаворити {}.\n"
+msgstr "Грешка при четене на файла с предпочитани {}.\n"
 
 #: ../src/celestia/celestiacore.cpp:268
 msgid "Failed to check directory existance for favorites file {}\n"
-msgstr "Неуспешна проверка на папката за файла с фаворити {}\n"
+msgstr "Неуспешна проверка на папката за файла с предпочитани {}\n"
 
 #: ../src/celestia/celestiacore.cpp:276
 msgid "Failed to create a directory for favorites file {}\n"
-msgstr "Неуспешно създаване на папката за файла с фаворити {}\n"
+msgstr "Неуспешно създаване на папката за файла с предпочитани {}\n"
 
 #: ../src/celestia/celestiacore.cpp:396
 msgid "Invalid filetype"
@@ -2743,11 +2743,11 @@ msgstr "Задай секундите"
 #: ../src/celestia/qt/qtsettimedialog.cpp:143
 #: ../src/celestia/win32/res/resource_strings.cpp:169
 msgid "Julian Date: "
-msgstr "Юлианова дата: "
+msgstr "Юлианска дата: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:155
 msgid "Set Julian Date"
-msgstr "Задай Юлианова дата"
+msgstr "Задай Юлианска дата"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:59
 msgid "Barycenter"
@@ -4116,12 +4116,12 @@ msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
-"Открит е стар файл с фаворити.\n"
+"Открит е стар файл с предпочитани.\n"
 "Копиране към новото местоположение?"
 
 #: ../src/celestia/win32/winmain.cpp:735
 msgid "Copy favorites?"
-msgstr "Копиране на фаворитите?"
+msgstr "Копиране на предпочитаните?"
 
 #: ../src/celestia/win32/winmain.cpp:776
 msgid "Failed to create the application window."
