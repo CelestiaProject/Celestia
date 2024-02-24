@@ -4116,7 +4116,7 @@ msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
-"Открит е стар файл с фаворити.\n"
+"Открит е стар файл с предпочитани.\n"
 "Копиране към новото местоположение?"
 
 #: ../src/celestia/win32/winmain.cpp:735
