@@ -2747,7 +2747,7 @@ msgstr "Юлианска дата: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:155
 msgid "Set Julian Date"
-msgstr "Задай Юлианова дата"
+msgstr "Задай Юлианска дата"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:59
 msgid "Barycenter"
