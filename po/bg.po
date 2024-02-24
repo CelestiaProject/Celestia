@@ -275,7 +275,7 @@ msgstr "Неуспешна проверка на папката за файла 
 
 #: ../src/celestia/celestiacore.cpp:276
 msgid "Failed to create a directory for favorites file {}\n"
-msgstr "Неуспешно създаване на папката за файла с фаворити {}\n"
+msgstr "Неуспешно създаване на папката за файла с предпочитани {}\n"
 
 #: ../src/celestia/celestiacore.cpp:396
 msgid "Invalid filetype"
