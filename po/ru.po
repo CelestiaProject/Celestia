@@ -2,12 +2,12 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # AlexL <loginov.alex.valer@gmail.com>, 2019
 # Hleb Valoshka <375gnu@gmail.com>, 2023
 # Askaniy Anpilogov, 2024
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -17,13 +17,11 @@ msgstr ""
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Askaniy Anpilogov, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/celestia/teams/93131/ru/)\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../src/celastro/date.cpp:486
 msgid "DST"
@@ -33,14 +31,12 @@ msgstr "DST"
 msgid "STD"
 msgstr "STD"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:326
 #, c++-format
 msgid "Loaded {} deep space objects\n"
@@ -332,8 +328,7 @@ msgstr "Ошибка чтения файла избранного {}.\n"
 #: ../src/celestia/celestiacore.cpp:268
 #, c++-format
 msgid "Failed to check directory existance for favorites file {}\n"
-msgstr ""
-"Не удалось проверить существование директории для файла избранного {}\n"
+msgstr "Не удалось проверить существование директории для файла избранного {}\n"
 
 #: ../src/celestia/celestiacore.cpp:276
 #, c++-format
@@ -530,7 +525,8 @@ msgstr "Предел звёздной величины: {:.2f}"
 #, c++-format
 msgid "Auto magnitude limit at 45 degrees:  {:.2f}"
 msgstr ""
-"Предел автонастройки звёздной величины для 45-градусного поля зрения:  {:.2f}"
+"Предел автонастройки звёздной величины для 45-градусного поля зрения:  "
+"{:.2f}"
 
 #: ../src/celestia/celestiacore.cpp:1562 ../src/celestia/celestiacore.cpp:1574
 #, c++-format
@@ -1016,13 +1012,15 @@ msgstr "Запись"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Пуск/Пауза    F12 Стоп"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "объектов глубокого космоса"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
 msgctxt "catalog"
 msgid "solar system"
@@ -1052,7 +1050,8 @@ msgstr "Ошибка открытия {}\n"
 msgid "Error reading star names file {}\n"
 msgstr "Ошибка чтения файла названий звёзд {}\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:96
 msgctxt "catalog"
 msgid "star"
@@ -1660,8 +1659,8 @@ msgstr "Ошибка получения пути для лог-файла!"
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia не может быть запущена, поскольку директория данных не была "
 "найдена, возможно, из-за неправильной установки."
@@ -1684,7 +1683,8 @@ msgstr "Солнечная система"
 msgid "Deep Sky Objects"
 msgstr "Объекты глубокого космоса"
 
-#: ../src/celestia/qt/qtappwin.cpp:386 ../src/celestia/qt/qteventfinder.cpp:399
+#: ../src/celestia/qt/qtappwin.cpp:386
+#: ../src/celestia/qt/qteventfinder.cpp:399
 #: ../src/celestia/qt/qteventfinder.cpp:409
 msgid "Event Finder"
 msgstr "Поиск затмений"
@@ -1780,31 +1780,33 @@ msgstr "Новая закладка"
 #: ../src/celestia/qt/qtappwin.cpp:1165
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"является свободным программным обеспечением. Вы можете распространять и/или "
-"изменять его в соответствии с условиями GNU General Public License от Free "
-"Software Foundation; либо версии 2, либо (на ваше усмотрение) любой более "
-"поздней версии.</p><p>Домашняя страница: <a href=\"https://celestiaproject."
-"space/\">https://celestiaproject.space/</a><br>Форум: <a href=\"https://"
-"celestiaproject.space/forum/\">https://celestiaproject.space/forum/</"
-"a><br>Проект на GitHub: <a href=\"https://github.com/CelestiaProject/"
-"Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia является свободным программным обеспечением. Вы можете "
+"распространять и/или изменять его в соответствии с условиями GNU General "
+"Public License от Free Software Foundation; либо версии 2, либо (на ваше "
+"усмотрение) любой более поздней версии.</p><p>Домашняя страница: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>Проект"
+" на GitHub: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1201
 msgid "Unknown compiler"
@@ -3242,12 +3244,14 @@ msgid "No guide destinations were found."
 msgstr "Не найдено целей путеводителя."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "Выберите объект:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "Перейти"
@@ -3968,7 +3972,8 @@ msgstr "Не удалось сохранить файл изображения."
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Сценарий Celestia (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -3981,7 +3986,8 @@ msgstr ""
 #: ../src/celestia/win32/winmain.cpp:144
 msgid "Unable to switch to full screen mode; running in window mode"
 msgstr ""
-"Не удаётся перейти в полноэкранный режим; продолжение работы в оконном режиме"
+"Не удаётся перейти в полноэкранный режим; продолжение работы в оконном "
+"режиме"
 
 #: ../src/celestia/win32/winmain.cpp:299 ../src/celestia/win32/winmain.cpp:702
 #: ../src/celestia/win32/winmain.cpp:780
@@ -4277,6 +4283,3 @@ msgstr "Неподдерживаемый порядок байтов {}, ожи�
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдерживаемое количество цифр {}, ожидается {}.\n"
-
-#~ msgid "plural"
-#~ msgstr "plural"
