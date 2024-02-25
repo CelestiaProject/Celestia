@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2024-02-25 09:47+0800\n"
+"POT-Creation-Date: 2024-02-25 16:55+0100\n"
 "PO-Revision-Date: 2019-02-14 21:31+0300\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
 "Language-Team: Polish (https://www.transifex.com/celestia/teams/93131/pl/)\n"
@@ -1262,6 +1262,7 @@ msgstr "Komety"
 #: ../src/celestia/qt/qtselectionpopup.cpp:415
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:106
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
+#: ../src/celestia/win32/res/celestia.rc:658
 #: ../src/celestia/win32/wincontextmenu.cpp:165
 #, fuzzy
 msgctxt "plural"
@@ -3883,10 +3884,6 @@ msgstr "Ekliptyka"
 #, fuzzy
 msgid "Body / Orbit / Label display"
 msgstr "Orbity / Nazwy"
-
-#: ../src/celestia/win32/res/celestia.rc:658
-msgid "plural"
-msgstr ""
 
 #: ../src/celestia/win32/res/celestia.rc:675
 msgid "Latin Names"
