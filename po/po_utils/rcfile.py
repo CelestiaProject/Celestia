@@ -226,16 +226,14 @@ class _RCExtractor:
                 if result:
                     return result
                 retry = True
-            elif token.value == "NC_":
-                result = self._try_get_nc()
-                if result:
-                    return result
 
     def _try_get_simple(self) -> Optional[tuple[Message, Location]]:
         while True:
             token = next(self.tokenizer)
             if token.type not in EXTRACT_SKIP_TYPES:
                 break
+        if token.type == TokenType.KEYWORD and token.value == "NC_":
+            return self._try_get_nc()
         if token.type != TokenType.QUOTED:
             return None
         message = unquote(token.value)
@@ -255,6 +253,7 @@ class _RCExtractor:
                 expected_value is not None and token.value != expected_value
             ):
                 return None
+            buffer.append(token)
         message = unquote(buffer[3].value)
         context = unquote(buffer[1].value)
         return Message(message, context), location

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia lt\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2024-02-25 09:47+0800\n"
+"POT-Creation-Date: 2024-02-25 16:55+0100\n"
 "PO-Revision-Date: 2020-07-14 06:47+0300\n"
 "Last-Translator: Mantas Kriaučiūnas <baltix@gmail.com>\n"
 "Language-Team: \n"
@@ -1277,6 +1277,7 @@ msgstr "Kometos"
 #: ../src/celestia/qt/qtselectionpopup.cpp:415
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:106
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
+#: ../src/celestia/win32/res/celestia.rc:658
 #: ../src/celestia/win32/wincontextmenu.cpp:165
 #, fuzzy
 msgctxt "plural"
@@ -4028,10 +4029,6 @@ msgstr "Ekliptikos linija"
 #, fuzzy
 msgid "Body / Orbit / Label display"
 msgstr "Orbitos / Pavadinimai"
-
-#: ../src/celestia/win32/res/celestia.rc:658
-msgid "plural"
-msgstr ""
 
 #: ../src/celestia/win32/res/celestia.rc:675
 #, fuzzy
