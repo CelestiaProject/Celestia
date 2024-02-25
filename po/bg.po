@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2023
 # Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2024
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2024-02-25 09:47+0800\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, "
-"2024\n"
-"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
-"bg/)\n"
-"Language: bg\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2024\n"
+"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/celastro/date.cpp:486
@@ -32,14 +30,12 @@ msgstr "ЛЧВ"
 msgid "STD"
 msgstr "СЧВ"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:326
 #, c++-format
 msgid "Loaded {} deep space objects\n"
@@ -57,7 +53,7 @@ msgstr "Кълбовиден (радиус на ядрото: %4.2f', плътн
 
 #: ../src/celengine/glsupport.cpp:88
 msgid "Mandatory extension GL_ARB_framebuffer_object is missing!\n"
-msgstr ""
+msgstr "Задължителното разширение „GL_ARB_framebuffer_object“ липсва!\n"
 
 #: ../src/celengine/meshmanager.cpp:444
 #, c++-format
@@ -79,8 +75,7 @@ msgstr "Грешка при зареждане на модела „{}“\n"
 #, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
-msgstr ""
-"Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
+msgstr "Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
 
 #: ../src/celengine/modelgeometry.cpp:186
 #, c++-format
@@ -163,12 +158,12 @@ msgstr "Грешка в .stc файла (линия {}): {}\n"
 #: ../src/celengine/stardb.cpp:776
 #, c++-format
 msgid "Bad spectral type in star database, star #{}\n"
-msgstr "Неточен спектрален клас в звездната база от данни, звезда №{}\n"
+msgstr "Неточен спектрален клас в базата данни с звездите, звезда №{}\n"
 
 #: ../src/celengine/stardb.cpp:797
 #, c++-format
 msgid "{} stars in binary database\n"
-msgstr "{} звезди в двоичната база от данни\n"
+msgstr "{} звезди в двоичната база данни\n"
 
 #: ../src/celengine/stardb.cpp:1087
 msgid "Bad header for cross index\n"
@@ -302,25 +297,27 @@ msgstr "Двоичният файл XYZV не може да бъде проче�
 
 #: ../src/celestia/catalogloader.h:61
 msgid "Skipping {} catalog: {}\n"
-msgstr "Пропускане на каталога {}: {}\n"
+msgstr "Пропускане на каталога с {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:64
 msgid "Loading {} catalog: {}\n"
-msgstr "Зареждане на каталога {}: {}\n"
+msgstr "Зареждане на каталога с {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:71
 msgid "Error reading {} catalog file: {}\n"
 msgstr "Грешка при четене на каталога {}: {}\n"
 
 #: ../src/celestia/celestiacore.cpp:122
-#, fuzzy, c++-format
+#, c++-format
 msgid "Failed to open leapseconds file {}\n"
-msgstr "Неуспешно създаване на папката за файла с предпочитани {}\n"
+msgstr "Неуспешно отваряне на файла с високосните секунди {}\n"
 
 #: ../src/celestia/celestiacore.cpp:140
 #, c++-format
 msgid "Failed to parse leapseconds file {}, line {}, column {}\n"
 msgstr ""
+"Неуспешен синтактичен анализ на файла с високосните секунди {}, линия {}, "
+"колона {}\n"
 
 #: ../src/celestia/celestiacore.cpp:247
 #, c++-format
@@ -442,19 +439,19 @@ msgstr "Звезден цвят: Класически"
 
 #. Light travel time in years, if >= 1day
 #: ../src/celestia/celestiacore.cpp:1216
-#, fuzzy, c++-format
+#, c++-format
 msgid "Light travel time:  {:.4f} yr"
-msgstr "Време за пътуване на светлината:  %.4f г"
+msgstr "Време за пътуване на светлината:  {:.4f} г."
 
 #: ../src/celestia/celestiacore.cpp:1225
-#, fuzzy, c++-format
+#, c++-format
 msgid "Light travel time:  {} min  {:.1f} s"
-msgstr "Време за пътуване на светлината:  %d м  %.1f с"
+msgstr "Време за пътуване на светлината:  {} м.  {:.1f} с."
 
 #: ../src/celestia/celestiacore.cpp:1230
-#, fuzzy, c++-format
+#, c++-format
 msgid "Light travel time:  {} h  {} min  {:.1f} s"
-msgstr "Време за пътуване на светлината:  %d ч  %d м  %.1f с"
+msgstr "Време за пътуване на светлината:  {} ч.  {} м.  {:.1f} с."
 
 #: ../src/celestia/celestiacore.cpp:1248
 msgid "Light travel delay included"
@@ -489,9 +486,9 @@ msgid "Time: Backward"
 msgstr "Време: Назад"
 
 #: ../src/celestia/celestiacore.cpp:1384 ../src/celestia/celestiacore.cpp:1397
-#, fuzzy, c++-format
+#, c++-format
 msgid "Time rate: {:.6g}"
-msgstr "Времева ставка: %.6g"
+msgstr "Времева ставка: {:.6g}"
 
 #: ../src/celestia/celestiacore.cpp:1436
 msgid "Low res textures"
@@ -519,24 +516,24 @@ msgstr "Преследвай"
 
 #: ../src/celestia/celestiacore.cpp:1513 ../src/celestia/celestiacore.cpp:1538
 #: ../src/celestia/celestiacore.cpp:2280
-#, fuzzy, c++-format
+#, c++-format
 msgid "Magnitude limit: {:.2f}"
-msgstr "Лимит на звездната величина: %.2f"
+msgstr "Лимит на звездната величина: {:.2f}"
 
 #: ../src/celestia/celestiacore.cpp:1521 ../src/celestia/celestiacore.cpp:1546
-#, fuzzy, c++-format
+#, c++-format
 msgid "Auto magnitude limit at 45 degrees:  {:.2f}"
-msgstr "Автоматичен лимит на звездната величина при 45°:  %.2f"
+msgstr "Автоматичен лимит на звездната величина при 45°:  {:.2f}"
 
 #: ../src/celestia/celestiacore.cpp:1562 ../src/celestia/celestiacore.cpp:1574
-#, fuzzy, c++-format
+#, c++-format
 msgid "Ambient light level:  {:.2f}"
-msgstr "Яркост на фоновата светлина:  %.2f"
+msgstr "Яркост на фоновата светлина:  {:.2f}"
 
 #: ../src/celestia/celestiacore.cpp:1582 ../src/celestia/celestiacore.cpp:1591
-#, fuzzy, c++-format
+#, c++-format
 msgid "Light gain: {:3.0f} %"
-msgstr "Увеличение на светлината"
+msgstr "Усилване на светлината: {:3.0f} %"
 
 #: ../src/celestia/celestiacore.cpp:2107
 msgid "View too small to be split"
@@ -556,12 +553,11 @@ msgstr "Създаването на библиотеката SPICE се пров
 
 #: ../src/celestia/celestiacore.cpp:2372
 msgid "Cannot read star database."
-msgstr "Звездната база данни не може да бъде прочетена."
+msgstr "Базата данни с звездите не може да бъде прочетена."
 
 #: ../src/celestia/celestiacore.cpp:2382
-#, fuzzy
 msgid "Cannot read DSO database."
-msgstr "Звездната база данни не може да бъде прочетена."
+msgstr "Базата данни с ОДК не може да бъде прочетена."
 
 #: ../src/celestia/celestiacore.cpp:2400
 #, c++-format
@@ -599,9 +595,8 @@ msgid "Please use a name ending in '.jpg' or '.png'."
 msgstr "Моля, използвайте име, завършващо с .jpg или .png."
 
 #: ../src/celestia/gtk/actions.cpp:89
-#, fuzzy
 msgid "Error writing captured image."
-msgstr "Грешка при отваряне на скрипта."
+msgstr "Грешка при записване на прихванатото изображение."
 
 #: ../src/celestia/gtk/actions.cpp:212 ../src/celestia/qt/qtappwin.cpp:735
 #: ../src/celestia/win32/winmoviecapture.cpp:69
@@ -801,29 +796,29 @@ msgid "Apparent diameter: %s\n"
 msgstr "Видим диаметър: %s\n"
 
 #: ../src/celestia/hud.cpp:298
-#, fuzzy, c++-format
+#, c++-format
 msgid "Dec: {:+d}{} {:02d}' {:.1f}\"\n"
-msgstr "δ: %+d%s %02d' %.1f\"\n"
+msgstr "δ: {:+d}{} {:02d} ' {:.1f} \"\n"
 
 #: ../src/celestia/hud.cpp:311
-#, fuzzy, c++-format
+#, c++-format
 msgid "RA: {}h {:02}m {:.1f}s\n"
-msgstr "α: %dч %02dм %.1fс\n"
+msgstr "α: {} ч. {:02} м. {:.1f} с.\n"
 
 #: ../src/celestia/hud.cpp:324
-#, fuzzy, c++-format
+#, c++-format
 msgid "Apparent magnitude: {:.1f}\n"
-msgstr "Видима звездна величина: %.1f\n"
+msgstr "Видима звездна величина: {:.1f}\n"
 
 #: ../src/celestia/hud.cpp:328
-#, fuzzy, c++-format
+#, c++-format
 msgid "Absolute magnitude: {:.1f}\n"
-msgstr "Абсолютна звездна величина: %.1f\n"
+msgstr "Абсолютна звездна величина: {:.1f}\n"
 
 #: ../src/celestia/hud.cpp:407
 #, c++-format
 msgid "{:.6f}{} {:.6f}{} {}"
-msgstr ""
+msgstr "{:.6f}{} {:.6f}{} {}"
 
 #: ../src/celestia/hud.cpp:422 ../src/celestia/hud.cpp:500
 #: ../src/celestia/hud.cpp:533 ../src/celestia/hud.cpp:619
@@ -836,9 +831,9 @@ msgid "Star system barycenter\n"
 msgstr "Център на масата на звездната система\n"
 
 #: ../src/celestia/hud.cpp:431
-#, fuzzy, c++-format
+#, c++-format
 msgid "Abs (app) mag: {:.2f} ({:.2f})\n"
-msgstr "Абс. (видима) величина: %.2f (%.2f)\n"
+msgstr "Абс. (видима) величина: {:.2f} ({:.2f})\n"
 
 #: ../src/celestia/hud.cpp:436
 #, c++-format
@@ -888,9 +883,9 @@ msgid "Radius: %s\n"
 msgstr "Радиус: %s\n"
 
 #: ../src/celestia/hud.cpp:580
-#, fuzzy, c++-format
+#, c++-format
 msgid "Phase angle: {:.1f}{}\n"
-msgstr "Фазов ъгъл: %.1f%s\n"
+msgstr "Фазов ъгъл: {:.1f}{}\n"
 
 #: ../src/celestia/hud.cpp:596
 #, c++-format
@@ -910,17 +905,19 @@ msgstr "Температура: %s\n"
 #: ../src/celestia/hud.cpp:837
 #, c++-format
 msgid "Unknown measurement system {}, fallback to Metric system"
-msgstr ""
+msgstr "{} мерни единици са неизвестни, връщане към метрична система"
 
 #: ../src/celestia/hud.cpp:843
 #, c++-format
 msgid "Failed to get default measurement system {}, fallback to Metric system"
 msgstr ""
+"Неуспешно получаване на {} мерни единици по подразбиране, връщане към "
+"метричната система"
 
 #: ../src/celestia/hud.cpp:886
-#, fuzzy, c++-format
+#, c++-format
 msgid "FPS: {:.1f}\n"
-msgstr "ЧКС: %.1f\n"
+msgstr "ЧКС: {:.1f}\n"
 
 #: ../src/celestia/hud.cpp:919 ../src/celestia/hud.cpp:922
 msgid "Edit Mode"
@@ -943,14 +940,14 @@ msgid "Time stopped"
 msgstr "Времето е спряно"
 
 #: ../src/celestia/hud.cpp:979
-#, fuzzy, c++-format
+#, c++-format
 msgid "{:.6g} x faster"
-msgstr "%.6g пъти по-бързо"
+msgstr "{:.6g} пъти по-бързо"
 
 #: ../src/celestia/hud.cpp:983
-#, fuzzy, c++-format
+#, c++-format
 msgid "{:.6g} x slower"
-msgstr "%.6g пъти по-бавно"
+msgstr "{:.6g} пъти по-бавно"
 
 #: ../src/celestia/hud.cpp:989
 msgid " (Paused)"
@@ -991,14 +988,14 @@ msgid "Chase %s\n"
 msgstr "Преследвай %s\n"
 
 #: ../src/celestia/hud.cpp:1059
-#, fuzzy, c++-format
+#, c++-format
 msgid "FOV: {} ({:.2f}x)\n"
-msgstr "ЗП: %s (%.2f пъти)\n"
+msgstr "ЧКС: {} ({:.2f}x)\n"
 
 #: ../src/celestia/hud.cpp:1234
-#, fuzzy, c++-format
+#, c++-format
 msgid "{}x{} at {:.2f} fps  {}"
-msgstr "%dx%d при %.2f ЧКС  %s"
+msgstr "{}x{} при {:.2f} ЧКС  {}"
 
 #: ../src/celestia/hud.cpp:1237
 msgid "Paused"
@@ -1012,18 +1009,19 @@ msgstr "Записване"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
-msgstr ""
+msgstr "обектите от дълбокото небе"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
-#, fuzzy
 msgctxt "catalog"
 msgid "solar system"
-msgstr "Слънчева система"
+msgstr "Слънчевата система"
 
 #: ../src/celestia/loadstars.cpp:39
 #, c++-format
@@ -1045,15 +1043,16 @@ msgid "Error opening {}\n"
 msgstr "Грешка при отваряне на {}\n"
 
 #: ../src/celestia/loadstars.cpp:79
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error reading star names file {}\n"
-msgstr "Грешка при четене на файла с имената на звездите\n"
+msgstr "Грешка при четене на файла с имената на звездите {}\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:96
 msgctxt "catalog"
 msgid "star"
-msgstr ""
+msgstr "звездите"
 
 #. ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
 #: ../src/celestia/qt/addbookmark.ui:16
@@ -1656,8 +1655,8 @@ msgstr "Грешка при получаване на пътя за името �
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "„Celestia“ не успя да стартира, защото папката с данни липсва, вероятната "
 "причина е неправилна инсталация."
@@ -1680,7 +1679,8 @@ msgstr "Слънчева система"
 msgid "Deep Sky Objects"
 msgstr "Обекти от дълбокото небе"
 
-#: ../src/celestia/qt/qtappwin.cpp:386 ../src/celestia/qt/qteventfinder.cpp:399
+#: ../src/celestia/qt/qtappwin.cpp:386
+#: ../src/celestia/qt/qteventfinder.cpp:399
 #: ../src/celestia/qt/qteventfinder.cpp:409
 msgid "Event Finder"
 msgstr "Търсач на събития"
@@ -1776,31 +1776,33 @@ msgstr "Нова отметка"
 #: ../src/celestia/qt/qtappwin.cpp:1165
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация <b>%1</"
-"b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt: "
-"%5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: %6</"
-"p><p>Авторско право (C) 2001-2023, Екипът на „Celestia“.<br>„Celestia“ е "
-"безплатен софтуер. Може да се разпространява и/или променя под условията на "
-"„GNU General Public License“, който е публикуван от „Фондацията за свободен "
-"софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша преценка).</"
-"p><p>Сайт: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Форум: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация "
+"<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt:"
+" %5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: "
+"%6</p><p>Авторско право (C) 2001-2023, Екипът на „Celestia“.<br>„Celestia“ е"
+" безплатен софтуер. Може да се разпространява и/или променя под условията на"
+" „GNU General Public License“, който е публикуван от „Фондацията за свободен"
+" софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша "
+"преценка).</p><p>Сайт: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“:"
+" <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1201
 msgid "Unknown compiler"
@@ -3237,12 +3239,14 @@ msgid "No guide destinations were found."
 msgstr "Няма намерени дестинации на екскурзовода."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "Избери дестинация:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "Отиди до"
@@ -3855,7 +3859,7 @@ msgstr "Покажи телата, орбитите или надписите"
 
 #: ../src/celestia/win32/res/celestia.rc:658
 msgid "plural"
-msgstr ""
+msgstr "няколко"
 
 #: ../src/celestia/win32/res/celestia.rc:675
 msgid "Latin Names"
@@ -3966,7 +3970,8 @@ msgstr "Изображението не може да бъде запазено.
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Скрипт на „Celestia“ (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4276,68 +4281,3 @@ msgstr "Неподдържан байтов ред {}, очакван {}.\n"
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдържан брой числа {}, очакван {}.\n"
-
-#, c-format
-#~ msgid "Magnitude limit:  %.2f"
-#~ msgstr "Лимит на звездната величина:  %.2f"
-
-#~ msgid "Skipping solar system catalog: {}\n"
-#~ msgstr "Пропускане на системния каталог: {}\n"
-
-#~ msgid "Loading solar system catalog: {}\n"
-#~ msgstr "Зареждане на системния каталог: {}\n"
-
-#~ msgid "Error opening deepsky catalog file {}.\n"
-#~ msgstr "Грешка при отваряне на каталога за ОДН {}.\n"
-
-#~ msgid "Cannot read Deep Sky Objects database {}.\n"
-#~ msgstr "Базата от данни с ОДН не може да бъде прочетена {}.\n"
-
-#~ msgid "Error opening solar system catalog {}.\n"
-#~ msgstr "Грешка при отваряне на системния каталог {}.\n"
-
-#~ msgid "Error opening star catalog {}\n"
-#~ msgstr "Грешка при отваряне на звездния каталог {}\n"
-
-#, c-format
-#~ msgid "%.6f%c %.6f%c %s"
-#~ msgstr "%.6f%c %.6f%c %s"
-
-#~ msgid "WinLangID"
-#~ msgstr "0402"
-
-#~ msgid "Apr"
-#~ msgstr "Апр"
-
-#~ msgid "Feb"
-#~ msgstr "Феб"
-
-#~ msgid "Jan"
-#~ msgstr "Яну"
-
-#~ msgid "Jun"
-#~ msgstr "Юни"
-
-#~ msgid "Mar"
-#~ msgstr "Мар"
-
-#~ msgid "May"
-#~ msgstr "Май"
-
-#~ msgid "Aug"
-#~ msgstr "Авг"
-
-#~ msgid "Dec"
-#~ msgstr "Дек"
-
-#~ msgid "Jul"
-#~ msgstr "Юли"
-
-#~ msgid "Nov"
-#~ msgstr "Ное"
-
-#~ msgid "Oct"
-#~ msgstr "Окт"
-
-#~ msgid "Sep"
-#~ msgstr "Сеп"
