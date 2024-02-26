@@ -305,7 +305,7 @@ msgstr "Зареждане на каталога с {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:71
 msgid "Error reading {} catalog file: {}\n"
-msgstr "Грешка при четене на каталога {}: {}\n"
+msgstr "Грешка при четене на каталога с {}: {}\n"
 
 #: ../src/celestia/celestiacore.cpp:122
 #, c++-format
