@@ -670,7 +670,7 @@ CelestiaAppWindow::slotGrabImage()
     if (settings.contains("GrabImageDir"))
         dir = settings.value("GrabImageDir").toString();
     else
-        dir = QDir::current().path();
+        dir = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
 
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       _("Save Image"),
@@ -697,7 +697,7 @@ CelestiaAppWindow::slotCaptureVideo()
     if (settings.contains("CaptureVideoDir"))
         dir = settings.value("CaptureVideoDir").toString();
     else
-        dir = QDir::current().path();
+        dir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
     settings.endGroup();
 
     QString saveAsName = QFileDialog::getSaveFileName(this,
