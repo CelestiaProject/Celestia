@@ -89,6 +89,7 @@ class ShaderProperties
      EmissiveModel         = 0x0100,
      ParticleModel         = 0x0200,
      UnlitModel            = 0x0400,
+     StarModel             = 0x0800,
  };
 
  enum

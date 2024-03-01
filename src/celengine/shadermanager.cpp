@@ -2533,6 +2533,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterColor;\n";
     }
 
+    if (props.lightModel == ShaderProperties::StarModel)
+    {
+        source += "gl_FragColor.rgb = gl_FragColor.rgb - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72);\n";
+    }
+
     source += "}\n";
 
     DumpFSSource(source);
@@ -2905,14 +2910,13 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     // Sum the contributions from each light source
     source += "vec3 color = vec3(0.0);\n";
-    source += "vec3 V = normalize(eyeDir);\n";
 
     // Only do scattering calculations for the primary light source
     // TODO: Eventually handle multiple light sources, and removed the 'min'
     // from the line below.
     for (unsigned i = 0; i < std::min(static_cast<unsigned int>(props.nLights), 1u); i++)
     {
-        source += "    float cosTheta = dot(V, " + LightProperty(i, "direction") + ");\n";
+        source += "    float cosTheta = dot(eyeDir, " + LightProperty(i, "direction") + ");\n";
         source += ScatteringPhaseFunctions(props);
 
         // TODO: Consider premultiplying by invScatterCoeffSum

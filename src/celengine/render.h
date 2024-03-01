@@ -460,12 +460,15 @@ class Renderer
         Surface* surface{ nullptr };
         const Atmosphere* atmosphere{ nullptr };
         RingSystem* rings{ nullptr };
+        LightingState::EclipseShadowVector* eclipseShadows{ nullptr };
+
+        Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
+        Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
-        Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
+
         ResourceHandle geometry{ InvalidResource };
-        Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
-        LightingState::EclipseShadowVector* eclipseShadows;
+        bool isStar{ false };
     };
 
     struct DepthBufferPartition
