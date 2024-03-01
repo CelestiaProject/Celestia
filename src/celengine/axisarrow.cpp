@@ -387,7 +387,7 @@ Eigen::Vector3d
 SunDirectionArrow::getDirection(double tdb) const
 {
     const Body* b = &body;
-    Star* sun = nullptr;
+    const Star* sun = nullptr;
     while (b != nullptr)
     {
         Selection center = b->getOrbitFrame(tdb)->getCenter();
@@ -397,7 +397,7 @@ SunDirectionArrow::getDirection(double tdb) const
     }
 
     if (sun != nullptr)
-        return Selection(sun).getPosition(tdb).offsetFromKm(body.getPosition(tdb));
+        return sun->getPosition(tdb).offsetFromKm(body.getPosition(tdb));
 
     return Eigen::Vector3d::Zero();
 }

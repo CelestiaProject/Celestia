@@ -29,7 +29,6 @@ enum class SelectionType
     Location,
 };
 
-
 class Selection
 {
  public:

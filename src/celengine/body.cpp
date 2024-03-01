@@ -599,7 +599,7 @@ Vector3d Body::getVelocity(double tdb) const
 
     if (!orbitFrame->isInertial())
     {
-        Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
+        Vector3d r = getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
         v += orbitFrame->getAngularVelocity(tdb).cross(r);
     }
 
