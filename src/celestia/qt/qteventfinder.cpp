@@ -497,13 +497,13 @@ EventFinder::slotViewNearEclipsed()
         slotSetEclipseTime();
     now = sim->getTime();
 
-    Selection receiver(activeEclipse->receiver);
-    Selection caster(activeEclipse->occulter);
-    Selection sun(activeEclipse->receiver->getSystem()->getStar());
+    Body* const receiver = activeEclipse->receiver;
+    const Body* const caster = activeEclipse->occulter;
+    const Star* const sun = activeEclipse->receiver->getSystem()->getStar();
 
-    Eigen::Vector3d toCasterDir = caster.getPosition(now).offsetFromKm(sun.getPosition(now));
-    Eigen::Vector3d toReceiver = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
-    Eigen::Vector3d maxEclipsePoint = findMaxEclipsePoint(toCasterDir, toReceiver, receiver.radius());
+    Eigen::Vector3d toCasterDir = caster->getPosition(now).offsetFromKm(sun->getPosition(now));
+    Eigen::Vector3d toReceiver = receiver->getPosition(now).offsetFromKm(sun->getPosition(now));
+    Eigen::Vector3d maxEclipsePoint = findMaxEclipsePoint(toCasterDir, toReceiver, receiver->getRadius());
 
     Eigen::Vector3d up = activeEclipse->receiver->getEclipticToBodyFixed(now).conjugate() * Eigen::Vector3d::UnitY();
     Eigen::Vector3d viewerPos = maxEclipsePoint * 4.0; // 4 radii from center
@@ -526,13 +526,13 @@ EventFinder::slotViewEclipsedSurface()
         slotSetEclipseTime();
     now = sim->getTime();
 
-    Selection receiver(activeEclipse->receiver);
-    Selection caster(activeEclipse->occulter);
-    Selection sun(activeEclipse->receiver->getSystem()->getStar());
+    Body* const receiver = activeEclipse->receiver;
+    const Body* const caster = activeEclipse->occulter;
+    const Star* const sun = activeEclipse->receiver->getSystem()->getStar();
 
-    Eigen::Vector3d toCasterDir = caster.getPosition(now).offsetFromKm(sun.getPosition(now));
-    Eigen::Vector3d toReceiver = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
-    Eigen::Vector3d maxEclipsePoint = findMaxEclipsePoint(toCasterDir, toReceiver, receiver.radius());
+    Eigen::Vector3d toCasterDir = caster->getPosition(now).offsetFromKm(sun->getPosition(now));
+    Eigen::Vector3d toReceiver = receiver->getPosition(now).offsetFromKm(sun->getPosition(now));
+    Eigen::Vector3d maxEclipsePoint = findMaxEclipsePoint(toCasterDir, toReceiver, receiver->getRadius());
 
     Eigen::Vector3d up = maxEclipsePoint.normalized();
     // TODO: Select alternate up direction when eclipse is directly overhead
@@ -556,15 +556,15 @@ EventFinder::slotViewOccluderSurface()
         slotSetEclipseTime();
     now = sim->getTime();
 
-    Selection receiver(activeEclipse->receiver);
-    Selection caster(activeEclipse->occulter);
-    Selection sun(activeEclipse->receiver->getSystem()->getStar());
+    const Body* const receiver = activeEclipse->receiver;
+    Body* const caster = activeEclipse->occulter;
+    const Star* const sun = activeEclipse->receiver->getSystem()->getStar();
 
-    Eigen::Vector3d toCasterDir = caster.getPosition(now).offsetFromKm(sun.getPosition(now));
+    Eigen::Vector3d toCasterDir = caster->getPosition(now).offsetFromKm(sun->getPosition(now));
     Eigen::Vector3d up = activeEclipse->receiver->getEclipticToBodyFixed(now).conjugate() * Eigen::Vector3d::UnitY();
-    Eigen::Vector3d toReceiverDir = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
+    Eigen::Vector3d toReceiverDir = receiver->getPosition(now).offsetFromKm(sun->getPosition(now));
 
-    Eigen::Vector3d surfacePoint = toCasterDir * caster.radius() / toCasterDir.norm() * 1.0001;
+    Eigen::Vector3d surfacePoint = toCasterDir * caster->getRadius() / toCasterDir.norm() * 1.0001;
     Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
     sim->setFrame(ObserverFrame::Ecliptical, caster);
@@ -585,15 +585,15 @@ EventFinder::slotViewBehindOccluder()
         slotSetEclipseTime();
     now = sim->getTime();
 
-    Selection receiver(activeEclipse->receiver);
-    Selection caster(activeEclipse->occulter);
-    Selection sun(activeEclipse->receiver->getSystem()->getStar());
+    const Body* const receiver = activeEclipse->receiver;
+    Body* const caster = activeEclipse->occulter;
+    const Star* const sun = activeEclipse->receiver->getSystem()->getStar();
 
-    Eigen::Vector3d toCasterDir = caster.getPosition(now).offsetFromKm(sun.getPosition(now));
+    Eigen::Vector3d toCasterDir = caster->getPosition(now).offsetFromKm(sun->getPosition(now));
     Eigen::Vector3d up = activeEclipse->receiver->getEclipticToBodyFixed(now).conjugate() * Eigen::Vector3d::UnitY();
-    Eigen::Vector3d toReceiverDir = receiver.getPosition(now).offsetFromKm(sun.getPosition(now));
+    Eigen::Vector3d toReceiverDir = receiver->getPosition(now).offsetFromKm(sun->getPosition(now));
 
-    Eigen::Vector3d surfacePoint = toCasterDir * caster.radius() / toCasterDir.norm() * 20.0;
+    Eigen::Vector3d surfacePoint = toCasterDir * caster->getRadius() / toCasterDir.norm() * 20.0;
     Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
     sim->setFrame(ObserverFrame::Ecliptical, caster);
