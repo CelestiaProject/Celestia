@@ -1,4 +1,4 @@
-if(NOT ENABLE_NLS)
+if((NOT ENABLE_NLS) OR (NOT GETTEXT_FOUND))
   return()
 endif()
 
@@ -16,6 +16,9 @@ set(UPDATERC_SCRIPT "${CMAKE_SOURCE_DIR}/po/updaterc.py")
 
 foreach(PO_FILE IN LISTS PO_FILES)
   get_filename_component(PO_LANGUAGE "${PO_FILE}" NAME_WLE)
+  if(NOT TARGET translation_${PO_LANGUAGE})
+    message(FATAL_ERROR "No translation target defined for ${PO_LANGUAGE}")
+  endif()
   set(GMO_FILE "${CMAKE_BINARY_DIR}/po/${PO_LANGUAGE}.gmo")
   set(RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/celestia_${PO_LANGUAGE}.rc")
   add_custom_command(
