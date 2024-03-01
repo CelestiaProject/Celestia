@@ -67,7 +67,7 @@ jobs:
           'ffmpeg[x264]',
           'fmt',
           'freetype',
-          'gettext',
+          'gettext[tools]',
           'gperf',
           'libepoxy',
           'libjpeg-turbo',
