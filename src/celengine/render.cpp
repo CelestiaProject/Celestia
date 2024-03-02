@@ -3658,10 +3658,10 @@ void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
             continue;
 
         const TimelinePhase* phase = body->getTimeline()->findPhase(now).get();
-        Body* primary = phase->orbitFrame()->getCenter().body();
+        const Body* primary = phase->orbitFrame()->getCenter().body();
         if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
         {
-            Body* parent = phase->orbitFrame()->getCenter().body();
+            const Body* parent = phase->orbitFrame()->getCenter().body();
             if (parent != nullptr)
                 primary = parent;
         }

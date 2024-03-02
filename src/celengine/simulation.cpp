@@ -36,9 +36,9 @@ Simulation::~Simulation()
 }
 
 
-static const Star* getSun(Body* body)
+static const Star* getSun(const Body* body)
 {
-    PlanetarySystem* system = body->getSystem();
+    const PlanetarySystem* system = body->getSystem();
     return system ? system->getStar() : nullptr;
 }
 
