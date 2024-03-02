@@ -325,8 +325,8 @@ AtmosphereRenderer::renderLegacy(
     computeLegacy(atmosphere, ls, center, orientation, semiAxes, sunDirection, pixSize, lit);
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
+    shadprop.texUsage = TexUsage::VertexColors;
+    shadprop.lightModel = LightingModel::UnlitModel;
     auto *prog = m_renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
@@ -367,8 +367,8 @@ AtmosphereRenderer::render(
     ShaderProperties shadprop;
     shadprop.nLights = static_cast<ushort>(ls.nLights);
 
-    shadprop.texUsage |= ShaderProperties::Scattering;
-    shadprop.lightModel = ShaderProperties::AtmosphereModel;
+    shadprop.texUsage |= TexUsage::Scattering;
+    shadprop.lightModel = LightingModel::AtmosphereModel;
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = m_renderer.getShaderManager().getShader(shadprop);

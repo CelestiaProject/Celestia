@@ -54,7 +54,7 @@ class Overlay
         return renderer;
     };
 
-    void drawRectangle(const celestia::Rect&);
+    void drawRectangle(const celestia::Rect&) const;
 
     void beginText();
     void endText();
