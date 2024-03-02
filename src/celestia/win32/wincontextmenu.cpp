@@ -272,12 +272,13 @@ WinContextMenuHandler::requestContextMenu(float x, float y, Selection sel)
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_PLANETOGRAPHIC_GRID, UTF8ToTString(_("Show Planetographic Grid")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_TERMINATOR, UTF8ToTString(_("Show Terminator")).c_str());
 
-            CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES,   sel.body()->findReferenceMark("body axes") ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES,  sel.body()->findReferenceMark("frame axes") ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->findReferenceMark("sun direction") ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->findReferenceMark("velocity vector") ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_PLANETOGRAPHIC_GRID, sel.body()->findReferenceMark("planetographic grid") ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_TERMINATOR, sel.body()->findReferenceMark("terminator") ? MF_CHECKED : MF_UNCHECKED);
+            const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+            CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES, bodyFeaturesManager->findReferenceMark(sel.body(), "body axes") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES, bodyFeaturesManager->findReferenceMark(sel.body(), "frame axes") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION, bodyFeaturesManager->findReferenceMark(sel.body(), "sun direction") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR, bodyFeaturesManager->findReferenceMark(sel.body(), "velocity vector") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_PLANETOGRAPHIC_GRID, bodyFeaturesManager->findReferenceMark(sel.body(), "planetographic grid") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_TERMINATOR, bodyFeaturesManager->findReferenceMark(sel.body(), "terminator") ? MF_CHECKED : MF_UNCHECKED);
 
             AppendMenu(hMenu, MF_STRING, ID_SELECT_PRIMARY_BODY, UTF8ToTString(_("Select &Primary Body")).c_str());
 
@@ -289,7 +290,7 @@ WinContextMenuHandler::requestContextMenu(float x, float y, Selection sel)
                            UTF8ToTString(_("&Satellites")).c_str());
             }
 
-            if (auto altSurfaces = sel.body()->getAlternateSurfaceNames();
+            if (auto altSurfaces = bodyFeaturesManager->getAlternateSurfaceNames(sel.body());
                 altSurfaces.has_value() && !altSurfaces->empty())
             {
                 HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);

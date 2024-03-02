@@ -253,7 +253,7 @@ CometRenderer::render(const Body &body,
 
     m_prog->use();
     m_prog->setMVPMatrices(*m.projection, (*m.modelview) * math::translate(pos));
-    m_prog->vec3Param("color") = body.getCometTailColor().toVector3();
+    m_prog->vec3Param("color") = GetBodyFeaturesManager()->getCometTailColor(&body).toVector3();
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 

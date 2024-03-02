@@ -1305,7 +1305,7 @@ MainWindow::commandDynamicMenus(WPARAM wParam, LPARAM lParam)
             return;
 
         int index = (int) LOWORD(wParam) - MENU_CHOOSE_SURFACE - 1;
-        auto surfNames = body->getAlternateSurfaceNames();
+        auto surfNames = GetBodyFeaturesManager()->getAlternateSurfaceNames(body);
         if (!surfNames.has_value())
             return;
 

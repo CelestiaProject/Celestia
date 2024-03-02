@@ -125,7 +125,7 @@ handleContextSurface(gpointer data)
         return;
 
     guint index = value - 1;
-    auto surfNames = body->getAlternateSurfaceNames();
+    auto surfNames = GetBodyFeaturesManager()->getAlternateSurfaceNames(body);
     if (!surfNames.has_value())
         return;
 
@@ -387,7 +387,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
                 gtk_menu_item_set_submenu(AppendMenu(popup, nullptr, "_Satellites", 0), GTK_WIDGET(satMenu));
             }
 
-            if (auto altSurfaces = sel.body()->getAlternateSurfaceNames();
+            if (auto altSurfaces = GetBodyFeaturesManager()->getAlternateSurfaceNames(sel.body());
                 altSurfaces.has_value() && !altSurfaces->empty())
             {
                 GtkMenu* surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);

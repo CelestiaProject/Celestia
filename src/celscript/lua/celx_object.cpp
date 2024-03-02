@@ -200,10 +200,8 @@ static int object_setorbitcolor(lua_State* l)
     float b = (float) celx.safeGetNumber(4, WrongType, "Argument 3 to object:setorbitcolor() must be a number", 0.0);
     Color orbitColor(r, g, b);
 
-    if (sel->body() != nullptr)
-    {
-        sel->body()->setOrbitColor(orbitColor);
-    }
+    if (const Body* body = sel->body(); body != nullptr)
+        GetBodyFeaturesManager()->setOrbitColor(body, orbitColor);
 
     return 0;
 }
@@ -215,11 +213,8 @@ static int object_orbitcoloroverridden(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to object:orbitcoloroverridden");
 
     bool isOverridden = false;
-    Selection* sel = this_object(l);
-    if (sel->body() != nullptr)
-    {
-        isOverridden = sel->body()->isOrbitColorOverridden();
-    }
+    if (const Body* body = this_object(l)->body(); body != nullptr)
+        isOverridden = GetBodyFeaturesManager()->getOrbitColorOverridden(body);
 
     lua_pushboolean(l, isOverridden);
 
@@ -233,12 +228,10 @@ static int object_setorbitcoloroverridden(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected to object:setorbitcoloroverridden");
 
     Selection* sel = this_object(l);
-    bool _override = celx.safeGetBoolean(2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
+    bool overridden = celx.safeGetBoolean(2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
 
-    if (sel->body() != nullptr)
-    {
-        sel->body()->setOrbitColorOverridden(_override);
-    }
+    if (Body* body = sel->body(); body != nullptr)
+        GetBodyFeaturesManager()->setOrbitColorOverridden(body, overridden);
 
     return 0;
 }
@@ -353,78 +346,79 @@ static int object_addreferencemark(lua_State* l)
     Selection* rmtarget = to_object(l, 3);
     lua_settop(l, 2);
 
-    if (rmtype != nullptr)
-    {
-        body->removeReferenceMark(rmtype);
+    if (rmtype == nullptr)
+        return 0;
 
-        if (compareIgnoringCase(rmtype, "body axes") == 0)
-        {
-            auto arrow = std::make_unique<BodyAxisArrows>(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmopacity >= 0.0f)
-                arrow->setOpacity(rmopacity);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "frame axes") == 0)
-        {
-            auto arrow = std::make_unique<FrameAxisArrows>(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmopacity >= 0.0f)
-                arrow->setOpacity(rmopacity);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "sun direction") == 0)
-        {
-            auto arrow = std::make_unique<SunDirectionArrow>(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != nullptr)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "velocity vector") == 0)
-        {
-            auto arrow = std::make_unique<VelocityVectorArrow>(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != nullptr)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "spin vector") == 0)
-        {
-            auto arrow = std::make_unique<SpinVectorArrow>(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != nullptr)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != nullptr)
-        {
-            auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, *rmtarget);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != nullptr)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != nullptr)
-        {
-            auto region = std::make_unique<VisibleRegion>(*body, *rmtarget);
-            region->setTag(rmtag);
-            if (rmopacity >= 0.0f)
-                region->setOpacity(rmopacity);
-            if (rmcolorstring != nullptr)
-                region->setColor(rmcolor);
-            body->addReferenceMark(std::move(region));
-        }
-        else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
-        {
-            body->addReferenceMark(std::make_unique<PlanetographicGrid>(*body));
-        }
+    auto bodyFeaturesManager = GetBodyFeaturesManager();
+    bodyFeaturesManager->removeReferenceMark(body, rmtype);
+
+    if (compareIgnoringCase(rmtype, "body axes") == 0)
+    {
+        auto arrow = std::make_unique<BodyAxisArrows>(*body);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmopacity >= 0.0f)
+            arrow->setOpacity(rmopacity);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "frame axes") == 0)
+    {
+        auto arrow = std::make_unique<FrameAxisArrows>(*body);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmopacity >= 0.0f)
+            arrow->setOpacity(rmopacity);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "sun direction") == 0)
+    {
+        auto arrow = std::make_unique<SunDirectionArrow>(*body);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmcolorstring != nullptr)
+            arrow->setColor(rmcolor);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "velocity vector") == 0)
+    {
+        auto arrow = std::make_unique<VelocityVectorArrow>(*body);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmcolorstring != nullptr)
+            arrow->setColor(rmcolor);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "spin vector") == 0)
+    {
+        auto arrow = std::make_unique<SpinVectorArrow>(*body);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmcolorstring != nullptr)
+            arrow->setColor(rmcolor);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != nullptr)
+    {
+        auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, *rmtarget);
+        arrow->setTag(rmtag);
+        arrow->setSize(rmsize);
+        if (rmcolorstring != nullptr)
+            arrow->setColor(rmcolor);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != nullptr)
+    {
+        auto region = std::make_unique<VisibleRegion>(*body, *rmtarget);
+        region->setTag(rmtag);
+        if (rmopacity >= 0.0f)
+            region->setOpacity(rmopacity);
+        if (rmcolorstring != nullptr)
+            region->setColor(rmcolor);
+        bodyFeaturesManager->addReferenceMark(body, std::move(region));
+    }
+    else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
+    {
+        bodyFeaturesManager->addReferenceMark(body,std::make_unique<PlanetographicGrid>(*body));
     }
 
     return 0;
@@ -435,18 +429,18 @@ static int object_removereferencemark(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(1, 1000, "Invalid number of arguments in object:removereferencemark");
-    CelestiaCore* appCore = celx.appCore(AllErrors);
 
     Selection* sel = this_object(l);
     Body* body = sel->body();
+    if (body == nullptr)
+        return 0;
 
     int argc = lua_gettop(l);
+    auto bodyFeaturesManager = GetBodyFeaturesManager();
     for (int i = 2; i <= argc; i++)
     {
-        string refMark = celx.safeGetString(i, AllErrors, "Arguments to object:removereferencemark() must be strings");
-
-        if (body->findReferenceMark(refMark))
-            appCore->toggleReferenceMark(refMark, *sel);
+        const char* refMark = celx.safeGetString(i, AllErrors, "Arguments to object:removereferencemark() must be strings");
+        bodyFeaturesManager->removeReferenceMark(body, refMark);
     }
 
     return 0;
@@ -481,7 +475,7 @@ static int object_setradius(lua_State* l)
 
     float scaleFactor = static_cast<float>(radius) / iradius;
     body->setSemiAxes(body->getSemiAxes() * scaleFactor);
-    body->scaleRings(scaleFactor);
+    GetBodyFeaturesManager()->scaleRings(body, scaleFactor);
 
     return 0;
 }
@@ -682,8 +676,10 @@ static int object_getinfo(lua_State* l)
             lua_settable(l, -3);
         }
 
+        const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+
         lua_pushstring(l, "hasRings");
-        lua_pushboolean(l, body->getRings() != nullptr);
+        lua_pushboolean(l, bodyFeaturesManager->getRings(body) != nullptr);
         lua_settable(l, -3);
 
         // TIMELINE-TODO: The code to retrieve orbital and rotation periods only works
@@ -695,7 +691,7 @@ static int object_getinfo(lua_State* l)
 
         const celestia::ephem::Orbit* orbit = body->getOrbit(0.0);
         celx.setTable("orbitPeriod", orbit->getPeriod());
-        const Atmosphere* atmosphere = body->getAtmosphere();
+        const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(body);
         if (atmosphere != nullptr)
         {
             celx.setTable("atmosphereHeight", (double)atmosphere->height);
@@ -1002,11 +998,11 @@ static int object_locations_iter(lua_State* l)
     // Get the current counter value
     uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
 
-    Body* body = sel->body();
+    const Body* body = sel->body();
     if (body == nullptr)
         return 0;
 
-    auto locations = body->getLocations();
+    auto locations = GetBodyFeaturesManager()->getLocations(body);
     if (!locations.has_value() || i >= locations->size())
     {
         // Return nil when we've enumerated all the locations (or if
@@ -1310,9 +1306,12 @@ static int object_setringstexture(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 2, "One or two arguments are expected for object:setringstexture()");
 
-    Selection* sel = this_object(l);
+    const Body* body = this_object(l)->body();
+    if (body == nullptr)
+        return 0;
 
-    if (sel->body() == nullptr || sel->body()->getRings() == nullptr)
+    RingSystem* rings = GetBodyFeaturesManager()->getRings(body);
+    if (rings == nullptr)
         return 0;
 
     const char* textureName = celx.safeGetString(2);
@@ -1325,7 +1324,7 @@ static int object_setringstexture(lua_State* l)
     if (path == nullptr)
         path = "";
 
-    sel->body()->getRings()->texture = MultiResTexture(textureName, path);
+    rings->texture = MultiResTexture(textureName, path);
 
     return 0;
 }
@@ -1491,14 +1490,11 @@ static int object_setatmosphere(lua_State* l)
         return 0;
     }
 
-    Selection* sel = this_object(l);
-    //CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Body* body = sel->body();
+    Body* body = this_object(l)->body();
     if (body == nullptr)
         return 0;
 
-    Atmosphere* atmosphere = body->getAtmosphere();
+    Atmosphere* atmosphere = GetBodyFeaturesManager()->getAtmosphere(body);
     if (atmosphere == nullptr)
         return 0;
 

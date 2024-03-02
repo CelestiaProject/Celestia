@@ -21,6 +21,7 @@
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <cassert>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -29,6 +30,8 @@
 #include <memory>
 #include <list>
 #include <functional>
+#include <unordered_map>
+#include <utility>
 
 class Selection;
 class ReferenceFrame;
@@ -39,7 +42,7 @@ class Atmosphere;
 
 class PlanetarySystem
 {
- public:
+public:
     explicit PlanetarySystem(Body* _primary);
     explicit PlanetarySystem(Star* _star);
     ~PlanetarySystem() = default;
@@ -62,7 +65,7 @@ class PlanetarySystem
     Body* find(std::string_view, bool deepSearch = false, bool i18n = false) const;
     void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool rec = true) const;
 
- private:
+private:
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
 
@@ -74,10 +77,9 @@ class PlanetarySystem
     ObjectIndex objectIndex;  // index of bodies by name
 };
 
-
 class RingSystem
 {
- public:
+public:
     float innerRadius;
     float outerRadius;
     Color color;
@@ -95,7 +97,6 @@ class RingSystem
         innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
         { };
 };
-
 
 // Object class enumeration:
 // All of these values must be powers of two so that they can
@@ -164,7 +165,23 @@ enum class BodyClassification : std::uint32_t
 
 ENUM_CLASS_BITWISE_OPS(BodyClassification);
 
-class Body
+enum class BodyFeatures : std::uint8_t
+{
+    None              = 0x00,
+    Atmosphere        = 0x01,
+    Rings             = 0x02,
+    AlternateSurfaces = 0x04,
+    Locations         = 0x08,
+    ReferenceMarks    = 0x10,
+    OrbitColor        = 0x20,
+    CometTailColor    = 0x40,
+};
+
+ENUM_CLASS_BITWISE_OPS(BodyFeatures);
+
+class BodyFeaturesManager;
+
+class Body //NOSONAR
 {
 public:
      Body(PlanetarySystem*, const std::string& name);
@@ -233,14 +250,6 @@ public:
     float getBoundingRadius() const;
     float getCullingRadius() const;
 
-    RingSystem* getRings() const;
-    void setRings(std::unique_ptr<RingSystem>&&);
-    void scaleRings(float);
-
-    const Atmosphere* getAtmosphere() const;
-    Atmosphere* getAtmosphere();
-    void setAtmosphere(std::unique_ptr<Atmosphere>&&);
-
     ResourceHandle getGeometry() const { return geometry; }
     void setGeometry(ResourceHandle);
     Eigen::Quaternionf getGeometryOrientation() const;
@@ -295,59 +304,17 @@ public:
     bool extant(double) const;
     void getLifespan(double&, double&) const;
 
-    Surface* getAlternateSurface(const std::string&) const;
-    void addAlternateSurface(const std::string&, std::unique_ptr<Surface>&&);
-    auto getAlternateSurfaceNames() const
-    {
-        using range_type = decltype(celestia::util::keysView(*altSurfaces));
-        return altSurfaces
-            ? std::make_optional(celestia::util::keysView(*altSurfaces))
-            : std::optional<range_type>();
-    }
-
-    bool hasLocations() const { return locations != nullptr && !locations->empty(); }
-
-    auto getLocations()
-    {
-        using range_type = decltype(celestia::util::pointerView(*locations));
-        return locations
-            ? std::make_optional(celestia::util::pointerView(*locations))
-            : std::optional<range_type>();
-    }
-
-    auto getLocations() const
-    {
-        using range_type = decltype(celestia::util::constPointerView(*locations));
-        return locations
-            ? std::make_optional(celestia::util::constPointerView(*locations))
-            : std::optional<range_type>();
-    }
-
-    void addLocation(std::unique_ptr<Location>&&);
-    Location* findLocation(std::string_view, bool i18n = false) const;
-    void computeLocations();
-
     bool isVisible() const { return visible; }
     void setVisible(bool _visible);
     bool isClickable() const { return clickable; }
     void setClickable(bool _clickable);
-    bool isVisibleAsPoint() const { return visibleAsPoint; }
-    void setVisibleAsPoint(bool _visibleAsPoint);
-    bool isOrbitColorOverridden() const { return overrideOrbitColor; }
-    void setOrbitColorOverridden(bool _override);
-    bool isSecondaryIlluminator() const { return secondaryIlluminator; }
-    void setSecondaryIlluminator(bool enable);
+    bool isVisibleAsPoint() const;
+    bool isSecondaryIlluminator() const;
 
     bool hasVisibleGeometry() const { return classification != BodyClassification::Invisible && visible; }
 
     VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
     void setOrbitVisibility(VisibilityPolicy _orbitVisibility);
-
-    Color getOrbitColor() const { return orbitColor; }
-    void setOrbitColor(const Color&);
-
-    Color getCometTailColor() const { return cometTailColor; }
-    void setCometTailColor(const Color& c);
 
     BodyClassification getOrbitClassification() const;
 
@@ -360,22 +327,11 @@ public:
         VelocityVector =   0x10,
     };
 
-    void addReferenceMark(std::unique_ptr<ReferenceMark>&& refMark);
-    void removeReferenceMark(const std::string& tag);
-    const ReferenceMark* findReferenceMark(const std::string& tag) const;
-    auto getReferenceMarks() const
-    {
-        using range_type = decltype(celestia::util::constPointerView(*referenceMarks));
-        return referenceMarks
-            ? std::make_optional(celestia::util::constPointerView(*referenceMarks))
-            : std::optional<range_type>();
-    }
-
     void markChanged();
     void markUpdated();
     void recomputeCullingRadius();
 
- private:
+private:
     void setName(const std::string& name);
 
     std::vector<std::string> names{ 1 };
@@ -408,29 +364,113 @@ public:
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
-    std::unique_ptr<Atmosphere> atmosphere;
-    std::unique_ptr<RingSystem> rings;
-
     BodyClassification classification{ BodyClassification::Unknown };
 
     std::string infoURL;
 
-    using AltSurfaceTable = std::map<std::string, std::unique_ptr<Surface>, std::less<>>;
-    std::unique_ptr<AltSurfaceTable> altSurfaces;
-
-    std::unique_ptr<std::vector<std::unique_ptr<Location>>> locations;
-    mutable bool locationsComputed{ false };
-
-    std::unique_ptr<std::list<std::unique_ptr<ReferenceMark>>> referenceMarks;
-
-    Color orbitColor;
-    Color cometTailColor{ 0.5f, 0.5f, 0.75f };
+    // Track enabled features to allow fast rejection during lookup
+    BodyFeatures features{ BodyFeatures::None };
 
     bool visible{ true };
     bool clickable{ true };
-    bool visibleAsPoint{ true };
-    bool overrideOrbitColor{ false };
     VisibilityPolicy orbitVisibility : 3;
-    bool secondaryIlluminator{ true };
-    bool primaryNameLocalized { false };
+
+    friend class BodyFeaturesManager;
 };
+
+struct BodyLocations
+{
+    std::vector<std::unique_ptr<Location>> locations;
+    bool locationsComputed;
+};
+
+class BodyFeaturesManager
+{
+public:
+    BodyFeaturesManager() = default;
+    ~BodyFeaturesManager() = default;
+
+    BodyFeaturesManager(const BodyFeaturesManager&) = delete;
+    BodyFeaturesManager(BodyFeaturesManager&&) = delete;
+    BodyFeaturesManager& operator=(const BodyFeaturesManager&) = delete;
+    BodyFeaturesManager& operator=(BodyFeaturesManager&&) = delete;
+
+    Atmosphere* getAtmosphere(const Body*) const;
+    void setAtmosphere(Body*, std::unique_ptr<Atmosphere>&&);
+
+    RingSystem* getRings(const Body*) const;
+    void setRings(Body*, std::unique_ptr<RingSystem>&&);
+    void scaleRings(Body*, float);
+
+    Surface* getAlternateSurface(const Body*, std::string_view) const;
+    void addAlternateSurface(Body*, std::string_view, std::unique_ptr<Surface>&&);
+
+    auto getAlternateSurfaceNames(const Body* body) const
+    {
+        using range_type = decltype(celestia::util::keysView(std::declval<AltSurfaceTable>()));
+        if (!celestia::util::is_set(body->features, BodyFeatures::AlternateSurfaces))
+            return std::optional<range_type>();
+
+        auto it = alternateSurfaces.find(body);
+        assert(it != alternateSurfaces.end());
+        return std::make_optional(celestia::util::keysView(*it->second));
+    }
+
+    void addReferenceMark(Body*, std::unique_ptr<ReferenceMark>&&);
+    bool removeReferenceMark(Body*, std::string_view tag);
+    const ReferenceMark* findReferenceMark(const Body*, std::string_view tag) const;
+
+    template<typename F>
+    void processReferenceMarks(const Body* body, F&& processor) const
+    {
+        if (!celestia::util::is_set(body->features, BodyFeatures::ReferenceMarks))
+            return;
+
+        auto [start, end] = referenceMarks.equal_range(body);
+        for (auto it = start; it != end; ++it)
+        {
+            processor(it->second.get());
+        }
+    }
+
+    void addLocation(Body*, std::unique_ptr<Location>&&);
+    Location* findLocation(const Body*, std::string_view, bool i18n = false) const;
+    bool hasLocations(const Body*) const;
+    void computeLocations(const Body*);
+
+    auto getLocations(const Body* body) const
+    {
+        using range_type = decltype(celestia::util::pointerView(std::declval<BodyLocations>().locations));
+        if (!celestia::util::is_set(body->features, BodyFeatures::Locations))
+            return std::optional<range_type>();
+
+        auto it = locations.find(body);
+        assert(it != locations.end());
+        return std::make_optional(celestia::util::pointerView(it->second.locations));
+    }
+
+    bool getOrbitColor(const Body*, Color&) const;
+    void setOrbitColor(const Body*, const Color&);
+    bool getOrbitColorOverridden(const Body*) const;
+    void setOrbitColorOverridden(Body*, bool);
+    void unsetOrbitColor(Body*);
+
+    Color getCometTailColor(const Body*) const;
+    void setCometTailColor(Body*, const Color&);
+    void unsetCometTailColor(Body*);
+
+    void removeFeatures(Body*);
+
+private:
+    using AltSurfaceTable = std::map<std::string, std::unique_ptr<Surface>, std::less<>>;
+
+    std::unordered_map<const Body*, std::unique_ptr<Atmosphere>> atmospheres;
+    std::unordered_map<const Body*, std::unique_ptr<RingSystem>> rings;
+    std::unordered_map<const Body*, std::unique_ptr<AltSurfaceTable>> alternateSurfaces;
+    std::unordered_map<const Body*, BodyLocations> locations;
+    std::unordered_map<const Body*, Color> orbitColors;
+    std::unordered_map<const Body*, Color> cometTailColors;
+    std::unordered_multimap<const Body*, std::unique_ptr<ReferenceMark>> referenceMarks;
+};
+
+BodyFeaturesManager* GetBodyFeaturesManager();

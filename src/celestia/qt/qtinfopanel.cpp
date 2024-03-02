@@ -264,9 +264,10 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 
     // Orbit information
     auto elements = CalculateOsculatingElements(*orbit, t, orbitalPeriod > 0.0 ? orbitalPeriod * 1e-6 : 3.6525e-4);
-    if (body->getRings() != nullptr)
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+    if (bodyFeaturesManager->getRings(body) != nullptr)
         stream << QString(_("<b>Has rings</b>")) << "<br>\n";
-    if (body->getAtmosphere() != nullptr)
+    if (bodyFeaturesManager->getAtmosphere(body) != nullptr)
         stream << QString(_("<b>Has atmosphere</b>")) << "<br>\n";
 
     // Start and end dates
