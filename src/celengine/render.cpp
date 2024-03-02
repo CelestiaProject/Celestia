@@ -1025,11 +1025,7 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
         // Highlight the orbit of the selected object in red
         orbitColor = Renderer::SelectionOrbitColor;
     }
-    else if (body != nullptr && body->isOrbitColorOverridden())
-    {
-        orbitColor = body->getOrbitColor();
-    }
-    else
+    else if (body == nullptr || !GetBodyFeaturesManager()->getOrbitColor(body, orbitColor))
     {
         BodyClassification classification = body != nullptr
             ? body->getOrbitClassification()
@@ -1886,7 +1882,7 @@ Renderer::locationsToAnnotations(const Body& body,
                                  const Quaterniond& bodyOrientation)
 {
     assert(body.hasLocations());
-    auto locations = body.getLocations();
+    auto locations = GetBodyFeaturesManager()->getLocations(&body);
 
     Vector3f semiAxes = body.getSemiAxes();
 
@@ -2663,12 +2659,13 @@ bool Renderer::testEclipse(const Body& receiver,
 
         // If the caster has a ring system, see if it casts a shadow on the receiver.
         // Ring shadows are only supported in the OpenGL 2.0 path.
-        if (caster.getRings())
+        const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+        if (auto rings = bodyFeaturesManager->getRings(&caster); rings != nullptr)
         {
             bool shadowed = false;
 
             // The shadow volume of the rings is an oblique circular cylinder
-            if (dist < caster.getRings()->outerRadius + receiver.getRadius())
+            if (dist < rings->outerRadius + receiver.getRadius())
             {
                 // Possible intersection, but it depends on the orientation of the
                 // rings.
@@ -2690,7 +2687,7 @@ bool Renderer::testEclipse(const Body& receiver,
                     Vector3d shadowPlaneNormal = v.normalized().cross(shadowDirection);
                     Hyperplane<double, 3> shadowPlane(shadowPlaneNormal, posCaster - posReceiver);
                     double minDistance = receiver.getRadius() +
-                        caster.getRings()->outerRadius * ringPlaneNormal.dot(shadowDirection);
+                        rings->outerRadius * ringPlaneNormal.dot(shadowDirection);
                     if (abs(shadowPlane.signedDistance(Vector3d::Zero())) < minDistance)
                     {
                         // TODO: Implement this test and only set shadowed to true if it passes
@@ -2703,7 +2700,7 @@ bool Renderer::testEclipse(const Body& receiver,
                     RingShadow& shadow = lightingState.ringShadows[lightIndex];
                     shadow.origin = dir.cast<float>();
                     shadow.direction = shadowDirection.cast<float>();
-                    shadow.ringSystem = caster.getRings();
+                    shadow.ringSystem = rings;
                     shadow.casterOrientation = casterOrientation.cast<float>();
                 }
             }
@@ -2731,20 +2728,21 @@ void Renderer::renderPlanet(Body& body,
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
     if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
     {
-        RenderProperties rp;
+        auto bodyFeaturesManager = GetBodyFeaturesManager();
 
+        RenderProperties rp;
         if (displayedSurface.empty())
         {
             rp.surface = &body.getSurface();
         }
         else
         {
-            rp.surface = body.getAlternateSurface(displayedSurface);
+            rp.surface = bodyFeaturesManager->getAlternateSurface(&body, displayedSurface);
             if (rp.surface == nullptr)
                 rp.surface = &body.getSurface();
         }
-        rp.atmosphere = body.getAtmosphere();
-        rp.rings = body.getRings();
+        rp.atmosphere = bodyFeaturesManager->getAtmosphere(&body);
+        rp.rings = bodyFeaturesManager->getRings(&body);
         rp.radius = body.getRadius();
         rp.geometry = body.getGeometry();
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
@@ -2756,7 +2754,7 @@ void Renderer::renderPlanet(Body& body,
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
 
         if ((labelMode & LocationLabels) != 0)
-            body.computeLocations();
+            bodyFeaturesManager->computeLocations(&body);
 
         Vector3f scaleFactors;
         bool isNormalized = false;
@@ -2794,13 +2792,13 @@ void Renderer::renderPlanet(Body& body,
 
 
         // Add ring shadow records for each light
-        if (body.getRings() != nullptr &&
+        if (rp.rings != nullptr &&
             (renderFlags & ShowPlanetRings) != 0 &&
             (renderFlags & ShowRingShadows) != 0)
         {
             for (unsigned int li = 0; li < lights.nLights; li++)
             {
-                lights.ringShadows[li].ringSystem = body.getRings();
+                lights.ringShadows[li].ringSystem = rp.rings;
                 lights.ringShadows[li].casterOrientation = q.cast<float>();
                 lights.ringShadows[li].origin = Vector3f::Zero();
                 lights.ringShadows[li].direction = -lights.lights[li].position.normalized().cast<float>();
@@ -2948,7 +2946,7 @@ void Renderer::renderPlanet(Body& body,
                      nearPlaneDistance, farPlaneDistance,
                      rp, lights, m);
 
-        if (body.hasLocations() && (labelMode & LocationLabels) != 0)
+        if (bodyFeaturesManager->hasLocations(&body) && (labelMode & LocationLabels) != 0)
         {
             // Set up location markers for this body
             using namespace celestia;
@@ -3224,6 +3222,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
                                     bool isLabeled)
 {
     bool visibleAsPoint = rle.appMag < faintestPlanetMag && body.isVisibleAsPoint();
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
     if (rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled)
     {
@@ -3243,8 +3242,8 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
             rle.isOpaque = true;
         }
         rle.radius = body.getRadius();
-        if (body.getRings() != nullptr)
-            rle.radius += body.getRings()->outerRadius;
+        if (const RingSystem* rings = bodyFeaturesManager->getRings(&body); rings != nullptr)
+            rle.radius += rings->outerRadius;
         renderList.push_back(rle);
     }
 
@@ -3263,18 +3262,15 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         }
     }
 
-    auto refMarks = body.getReferenceMarks();
-    if (!refMarks.has_value())
-        return;
-
-    for (const auto rm : *refMarks)
-    {
-        rle.renderableType = RenderListEntry::RenderableReferenceMark;
-        rle.refMark = rm;
-        rle.isOpaque = rm->isOpaque();
-        rle.radius = rm->boundingSphereRadius();
-        renderList.push_back(rle);
-    }
+    bodyFeaturesManager->processReferenceMarks(&body,
+                                               [this, &rle](const ReferenceMark* rm)
+                                               {
+                                                   rle.renderableType = RenderListEntry::RenderableReferenceMark;
+                                                   rle.refMark = rm;
+                                                   rle.isOpaque = rm->isOpaque();
+                                                   rle.radius = rm->boundingSphereRadius();
+                                                   renderList.push_back(rle);
+                                               });
 }
 
 
@@ -4353,17 +4349,18 @@ void Renderer::loadTextures(Body* body)
         surface.specularTexture.tex[textureResolution] != InvalidResource)
         surface.specularTexture.find(textureResolution);
 
-    if ((renderFlags & ShowCloudMaps) != 0 &&
-        body->getAtmosphere() != nullptr &&
-        body->getAtmosphere()->cloudTexture.tex[textureResolution] != InvalidResource)
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+    if ((renderFlags & ShowCloudMaps) != 0)
     {
-        body->getAtmosphere()->cloudTexture.find(textureResolution);
+        Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(body);
+        if (atmosphere != nullptr && atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
+            atmosphere->cloudTexture.find(textureResolution);
     }
 
-    if (body->getRings() != nullptr &&
-        body->getRings()->texture.tex[textureResolution] != InvalidResource)
+    if (auto rings = bodyFeaturesManager->getRings(body);
+        rings != nullptr && rings->texture.tex[textureResolution] != InvalidResource)
     {
-        body->getRings()->texture.find(textureResolution);
+        rings->texture.find(textureResolution);
     }
 
     if (body->getGeometry() != InvalidResource)
@@ -4831,6 +4828,7 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
     // Remove objects from the render list that lie completely outside the
     // view frustum.
     auto notCulled = renderList.begin();
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
     for (auto &ri : renderList)
     {
         bool convex = true;
@@ -4854,9 +4852,9 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
 
         case RenderListEntry::RenderableBody:
             radius = ri.body->getBoundingRadius();
-            if (ri.body->getRings() != nullptr)
+            if (const RingSystem* rings = bodyFeaturesManager->getRings(ri.body); rings != nullptr)
             {
-                radius = ri.body->getRings()->outerRadius;
+                radius = rings->outerRadius;
                 convex = false;
             }
 
@@ -4864,12 +4862,11 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
                 convex = false;
 
             cullRadius = radius;
-            if (ri.body->getAtmosphere() != nullptr)
+            if (const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(ri.body); atmosphere != nullptr)
             {
-                const auto *a = ri.body->getAtmosphere();
-                cullRadius += a->height;
-                cloudHeight = max(a->cloudHeight,
-                                  a->mieScaleHeight * -log(AtmosphereExtinctionThreshold));
+                cullRadius += atmosphere->height;
+                cloudHeight = max(atmosphere->cloudHeight,
+                                  atmosphere->mieScaleHeight * -log(AtmosphereExtinctionThreshold));
             }
             break;
 
@@ -4997,6 +4994,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
                                           float &saturationMag,
                                           double now)
 {
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
     for (const auto& ri : renderList)
     {
         if (ri.renderableType != RenderListEntry::RenderableBody)
@@ -5006,7 +5004,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         // the amount light scattering.  It's complicated by the
         // possibility that the planet is oblate and a simple distance
         // to sphere calculation will not suffice.
-        const Atmosphere* atmosphere = ri.body->getAtmosphere();
+        const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(ri.body);
         if (atmosphere == nullptr || atmosphere->height <= 0.0f)
             continue;
 

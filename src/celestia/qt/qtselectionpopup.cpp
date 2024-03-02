@@ -350,7 +350,7 @@ SelectionPopup::createReferenceVectorMenu()
 QMenu*
 SelectionPopup::createAlternateSurfacesMenu()
 {
-    auto altSurfaces = selection.body()->getAlternateSurfaceNames();
+    auto altSurfaces = GetBodyFeaturesManager()->getAlternateSurfaceNames(selection.body());
     if (!altSurfaces.has_value() || altSurfaces->empty())
         return nullptr;
 

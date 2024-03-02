@@ -808,7 +808,7 @@ void CommandSetRadius::processInstantaneous(ExecutionEnvironment& env)
         return;
 
     body->setSemiAxes(body->getSemiAxes() * scaleFactor);
-    body->scaleRings(scaleFactor);
+    GetBodyFeaturesManager()->scaleRings(body, scaleFactor);
 }
 
 
@@ -1088,13 +1088,16 @@ CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
 
 void CommandSetRingsTexture::processInstantaneous(ExecutionEnvironment& env)
 {
-    Selection sel = env.getSimulation()->findObjectFromPath(object);
-    if (sel.body() != nullptr &&
-        sel.body()->getRings() != nullptr &&
-        !textureName.empty())
-    {
-        sel.body()->getRings()->texture = MultiResTexture(textureName, path);
-    }
+    if (textureName.empty())
+        return;
+
+    auto body = env.getSimulation()->findObjectFromPath(object).body();
+    if (body == nullptr)
+        return;
+
+    auto rings = GetBodyFeaturesManager()->getRings(body);
+    if (rings != nullptr)
+        rings->texture = MultiResTexture(textureName, path);
 }
 
 } // end namespace celestia::scripts

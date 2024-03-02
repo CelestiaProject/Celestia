@@ -107,7 +107,7 @@ constexpr double fMaxKeyAccel = 20.0;
 constexpr float RotationBraking = 10.0f;
 constexpr float RotationDecay = 2.0f;
 constexpr double MaximumTimeRate = 1.0e15;
-constexpr float stdFOV = 45.0_deg;
+constexpr auto stdFOV = static_cast<float>(45.0_deg);
 static float KeyRotationAccel = 120.0_deg;
 static float MouseRotationSensitivity = 1.0_deg;
 
@@ -3015,62 +3015,59 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
     if (body == nullptr)
         return;
 
-    if (body->findReferenceMark(refMark))
-    {
-        body->removeReferenceMark(refMark);
-    }
-    else
-    {
-        if (refMark == "body axes")
-        {
-            body->addReferenceMark(std::make_unique<BodyAxisArrows>(*body));
-        }
-        else if (refMark == "frame axes")
-        {
-            body->addReferenceMark(std::make_unique<FrameAxisArrows>(*body));
-        }
-        else if (refMark == "sun direction")
-        {
-            body->addReferenceMark(std::make_unique<SunDirectionArrow>(*body));
-        }
-        else if (refMark == "velocity vector")
-        {
-            body->addReferenceMark(std::make_unique<VelocityVectorArrow>(*body));
-        }
-        else if (refMark == "spin vector")
-        {
-            body->addReferenceMark(std::make_unique<SpinVectorArrow>(*body));
-        }
-        else if (refMark == "frame center direction")
-        {
-            double now = getSimulation()->getTime();
-            auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, body->getOrbitFrame(now)->getCenter());
-            arrow->setTag(refMark);
-            body->addReferenceMark(std::move(arrow));
-        }
-        else if (refMark == "planetographic grid")
-        {
-            body->addReferenceMark(std::make_unique<PlanetographicGrid>(*body));
-        }
-        else if (refMark == "terminator")
-        {
-            double now = getSimulation()->getTime();
-            Star* sun = nullptr;
-            Body* b = body;
-            while (b != nullptr)
-            {
-                Selection center = b->getOrbitFrame(now)->getCenter();
-                if (center.star() != nullptr)
-                    sun = center.star();
-                b = center.body();
-            }
+    auto bodyFeaturesManager = GetBodyFeaturesManager();
+    if (bodyFeaturesManager->removeReferenceMark(body, refMark))
+        return;
 
-            if (sun != nullptr)
-            {
-                auto visibleRegion = std::make_unique<VisibleRegion>(*body, Selection(sun));
-                visibleRegion->setTag("terminator");
-                body->addReferenceMark(std::move(visibleRegion));
-            }
+    if (refMark == "body axes")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<BodyAxisArrows>(*body));
+    }
+    else if (refMark == "frame axes")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<FrameAxisArrows>(*body));
+    }
+    else if (refMark == "sun direction")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<SunDirectionArrow>(*body));
+    }
+    else if (refMark == "velocity vector")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<VelocityVectorArrow>(*body));
+    }
+    else if (refMark == "spin vector")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<SpinVectorArrow>(*body));
+    }
+    else if (refMark == "frame center direction")
+    {
+        double now = getSimulation()->getTime();
+        auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, body->getOrbitFrame(now)->getCenter());
+        arrow->setTag(refMark);
+        bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
+    }
+    else if (refMark == "planetographic grid")
+    {
+        bodyFeaturesManager->addReferenceMark(body, std::make_unique<PlanetographicGrid>(*body));
+    }
+    else if (refMark == "terminator")
+    {
+        double now = getSimulation()->getTime();
+        Star* sun = nullptr;
+        Body* b = body;
+        while (b != nullptr)
+        {
+            Selection center = b->getOrbitFrame(now)->getCenter();
+            if (center.star() != nullptr)
+                sun = center.star();
+            b = center.body();
+        }
+
+        if (sun != nullptr)
+        {
+            auto visibleRegion = std::make_unique<VisibleRegion>(*body, Selection(sun));
+            visibleRegion->setTag("terminator");
+            bodyFeaturesManager->addReferenceMark(body, std::move(visibleRegion));
         }
     }
 }
@@ -3093,7 +3090,8 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
     if (body == nullptr)
         return false;
 
-    return body->findReferenceMark(refMark) != nullptr;
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+    return bodyFeaturesManager->findReferenceMark(body, refMark) != nullptr;
 }
 
 

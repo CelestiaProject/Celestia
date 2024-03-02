@@ -538,14 +538,13 @@ CloseDSOPicker::process(DeepSkyObject* const & dso,
     }
 }
 
-
 void
 getLocationsCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        const Body& body)
 {
-    auto locations = body.getLocations();
-    if (!locations.has_value() || locations->empty())
+    auto locations = GetBodyFeaturesManager()->getLocations(&body);
+    if (!locations.has_value())
         return;
 
     for (const auto location : *locations)
@@ -559,32 +558,6 @@ getLocationsCompletion(std::vector<std::string>& completion,
         {
             const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
-                completion.push_back(lname);
-        }
-    }
-}
-
-
-void
-getLocationsCompletionPath(std::vector<std::string>& completion,
-                           std::string_view search,
-                           const Body& body)
-{
-    auto locations = body.getLocations();
-    if (!locations.has_value() || locations->empty())
-        return;
-
-    for (const auto location : *locations)
-    {
-        const std::string& name = location->getName(false);
-        if (UTF8StartsWith(name, search))
-        {
-            completion.push_back(name);
-        }
-        else
-        {
-            const std::string& lname = location->getName(true);
-            if (lname != name && UTF8StartsWith(lname, search))
                 completion.push_back(lname);
         }
     }
@@ -983,44 +956,33 @@ Universe::findChildObject(const Selection& sel,
     switch (sel.getType())
     {
     case SelectionType::Star:
+        if (const SolarSystem* sys = getSolarSystem(sel.star()); sys != nullptr)
         {
-            SolarSystem* sys = getSolarSystem(sel.star());
-            if (sys != nullptr)
-            {
-                PlanetarySystem* planets = sys->getPlanets();
-                if (planets != nullptr)
-                    return Selection(planets->find(name, false, i18n));
-            }
+            PlanetarySystem* planets = sys->getPlanets();
+            if (planets != nullptr)
+                return Selection(planets->find(name, false, i18n));
         }
         break;
 
     case SelectionType::Body:
+        // First, search for a satellite
+        if (const PlanetarySystem* sats = sel.body()->getSatellites();sats != nullptr)
         {
-            // First, search for a satellite
-            PlanetarySystem* sats = sel.body()->getSatellites();
-            if (sats != nullptr)
-            {
-                Body* body = sats->find(name, false, i18n);
-                if (body != nullptr)
-                    return Selection(body);
-            }
+            Body* body = sats->find(name, false, i18n);
+            if (body != nullptr)
+                return Selection(body);
+        }
 
-            // If a satellite wasn't found, check this object's locations
-            Location* loc = sel.body()->findLocation(name, i18n);
-            if (loc != nullptr)
-                return Selection(loc);
+        // If a satellite wasn't found, check this object's locations
+        if (Location* loc = GetBodyFeaturesManager()->findLocation(sel.body(), name, i18n);
+            loc != nullptr)
+        {
+            return Selection(loc);
         }
         break;
 
-    case SelectionType::Location:
-        // Locations have no children
-        break;
-
-    case SelectionType::DeepSky:
-        // Deep sky objects have no children
-        break;
-
     default:
+        // Locations and deep sky objects have no children
         break;
     }
 
@@ -1066,7 +1028,7 @@ Universe::findObjectInContext(const Selection& sel,
     // ...and then locations.
     if (contextBody != nullptr)
     {
-        Location* loc = contextBody->findLocation(name, i18n);
+        Location* loc = GetBodyFeaturesManager()->findLocation(contextBody, name, i18n);
         if (loc != nullptr)
             return Selection(loc);
     }
@@ -1234,9 +1196,9 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
 
     if (sel.getType() == SelectionType::Body && withLocations)
     {
-        getLocationsCompletionPath(completion,
-                                   s.substr(pos + 1),
-                                   *sel.body());
+        getLocationsCompletion(completion,
+                               s.substr(pos + 1),
+                               *sel.body());
     }
 }
 
