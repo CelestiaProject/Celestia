@@ -1037,7 +1037,7 @@ Universe::findObjectInContext(const Selection& sel,
                               std::string_view name,
                               bool i18n) const
 {
-    Body* contextBody = nullptr;
+    const Body* contextBody = nullptr;
 
     switch (sel.getType())
     {
@@ -1054,14 +1054,11 @@ Universe::findObjectInContext(const Selection& sel,
     }
 
     // First, search for bodies...
-    SolarSystem* sys = getSolarSystem(sel);
-    if (sys != nullptr)
+    if (const SolarSystem* sys = getSolarSystem(sel); sys != nullptr)
     {
-        PlanetarySystem* planets = sys->getPlanets();
-        if (planets != nullptr)
+        if (const PlanetarySystem* planets = sys->getPlanets(); planets != nullptr)
         {
-            Body* body = planets->find(name, true, i18n);
-            if (body != nullptr)
+            if (Body* body = planets->find(name, true, i18n); body != nullptr)
                 return Selection(body);
         }
     }

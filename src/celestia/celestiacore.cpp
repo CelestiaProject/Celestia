@@ -2385,7 +2385,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     universe->setDSOCatalog(std::move(dsoCatalog));
 
     /***** Load the solar system catalogs *****/
-    
+
     loadSSO(*config, progressNotifier, universe);
 
     // Load asterisms:

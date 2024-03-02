@@ -177,7 +177,7 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
     if (depth > maxDepth)
         return depth;
 
-    Body* body = sel.body();
+    const Body* body = sel.body();
     if (sel.location() != nullptr)
         body = sel.location()->getParentBody();
 

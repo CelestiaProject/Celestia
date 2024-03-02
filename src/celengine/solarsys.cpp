@@ -152,7 +152,7 @@ bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType fram
 
 std::unique_ptr<Location>
 CreateLocation(const Hash* locationData,
-               Body* body)
+               const Body* body)
 {
     auto location = std::make_unique<Location>();
 

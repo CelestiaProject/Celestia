@@ -1538,8 +1538,7 @@ CreateOrbit(const Selection& centralObject,
     // much better way to accomplish this.
     if (auto longlat = planetData->getSphericalTuple("LongLat"); longlat.has_value())
     {
-        Body* centralBody = centralObject.body();
-        if (centralBody != nullptr)
+        if (const Body* centralBody = centralObject.body(); centralBody != nullptr)
         {
 #if 0 // TODO: This should be enabled after #542 is fixed
             Eigen::Vector3d pos = centralBody->geodeticToCartesian(*longlat);

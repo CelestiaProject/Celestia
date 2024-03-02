@@ -522,7 +522,7 @@ void
 displayPlanetInfo(const util::NumberFormatter& formatter,
                   Overlay& overlay,
                   int detail,
-                  Body& body,
+                  const Body& body,
                   double t,
                   const Eigen::Vector3d& viewVec,
                   const HudSettings& hudSettings,
@@ -547,11 +547,20 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
 
     // Find the parent star of the body. This can be slightly complicated if
     // the body orbits a barycenter instead of a star.
-    Selection parent = Selection(&body).parent();
-    while (parent.body() != nullptr)
-        parent = parent.parent();
+    const Star* sun = nullptr;
+    for (const PlanetarySystem* system = body.getSystem(); system != nullptr;)
+    {
+        const Body* primaryBody = system->getPrimaryBody();
+        if (primaryBody == nullptr)
+        {
+            sun = system->getStar();
+            break;
+        }
 
-    if (const Star* sun = parent.star(); sun != nullptr)
+        system = primaryBody->getSystem();
+    }
+
+    if (sun != nullptr)
     {
         bool showPhaseAngle = false;
         if (sun->getVisibility())
