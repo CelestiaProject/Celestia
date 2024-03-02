@@ -86,12 +86,12 @@ LineRenderer::setup_shader()
     if (m_prog == nullptr)
     {
         ShaderProperties props;
-        props.texUsage = ShaderProperties::VertexColors;
-        props.lightModel = ShaderProperties::UnlitModel;
+        props.texUsage = TexUsage::VertexColors;
+        props.lightModel = LightingModel::UnlitModel;
         if (m_useTriangles)
-            props.texUsage |= ShaderProperties::LineAsTriangles;
+            props.texUsage |= TexUsage::LineAsTriangles;
         if ((m_hints & DISABLE_FISHEYE_TRANFORMATION) != 0)
-            props.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
+            props.fishEyeOverride = FisheyeOverrideMode::Disabled;
         m_prog = m_renderer.getShaderManager().getShader(props);
         if (m_prog == nullptr)
             return;

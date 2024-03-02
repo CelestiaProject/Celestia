@@ -18,11 +18,68 @@
 #include <Eigen/Geometry>
 
 #include <celutil/color.h>
+#include <celutil/flag.h>
 #include <celengine/glshader.h>
-
 
 class Atmosphere;
 class LightingState;
+
+enum class TexUsage : std::uint32_t
+{
+    None                    =       0,
+    DiffuseTexture          =    0x01,
+    SpecularTexture         =    0x02,
+    NormalTexture           =    0x04,
+    NightTexture            =    0x08,
+    SpecularInDiffuseAlpha  =    0x10,
+    RingShadowTexture       =    0x20,
+    OverlayTexture          =    0x40,
+    CloudShadowTexture      =    0x80,
+    CompressedNormalTexture =   0x100,
+    EmissiveTexture         =   0x200,
+    ShadowMapTexture        =   0x400,
+    VertexOpacities         =   0x800,
+    VertexColors            =  0x1000,
+    Scattering              =  0x2000,
+    PointSprite             =  0x4000,
+    SharedTextureCoords     =  0x8000,
+    StaticPointSize         = 0x10000,
+    LineAsTriangles         = 0x20000,
+    TextureCoordTransform   = 0x40000,
+};
+
+ENUM_CLASS_BITWISE_OPS(TexUsage);
+
+enum class LightingModel : std::uint16_t
+{
+    DiffuseModel          = 0x0001,
+    RingIllumModel        = 0x0004,
+    PerPixelSpecularModel = 0x0008,
+    OrenNayarModel        = 0x0010,
+    AtmosphereModel       = 0x0020,
+    LunarLambertModel     = 0x0040,
+    ParticleDiffuseModel  = 0x0080,
+    EmissiveModel         = 0x0100,
+    ParticleModel         = 0x0200,
+    UnlitModel            = 0x0400,
+};
+
+ENUM_CLASS_BITWISE_OPS(LightingModel);
+
+enum class LightingEffects : std::uint16_t
+{
+    None                      = 0,
+    VolumetricScattering      = 0x0001,
+    VolumetricAbsorption      = 0x0002,
+    VolumetricEmission        = 0x0004,
+};
+
+enum class FisheyeOverrideMode : int
+{
+    None     = 0,
+    Enabled  = 1,
+    Disabled = 2,
+};
 
 class ShaderProperties
 {
@@ -54,64 +111,13 @@ class ShaderProperties
     bool hasScattering() const;
     bool isViewDependent() const;
 
- enum
- {
-     DiffuseTexture          =    0x01,
-     SpecularTexture         =    0x02,
-     NormalTexture           =    0x04,
-     NightTexture            =    0x08,
-     SpecularInDiffuseAlpha  =    0x10,
-     RingShadowTexture       =    0x20,
-     OverlayTexture          =    0x40,
-     CloudShadowTexture      =    0x80,
-     CompressedNormalTexture =   0x100,
-     EmissiveTexture         =   0x200,
-     ShadowMapTexture        =   0x400,
-     VertexOpacities         =   0x800,
-     VertexColors            =  0x1000,
-     Scattering              =  0x2000,
-     PointSprite             =  0x4000,
-     SharedTextureCoords     =  0x8000,
-     StaticPointSize         = 0x10000,
-     LineAsTriangles         = 0x20000,
-     TextureCoordTransform   = 0x40000,
- };
-
- enum
- {
-     DiffuseModel          = 0x0001,
-     RingIllumModel        = 0x0004,
-     PerPixelSpecularModel = 0x0008,
-     OrenNayarModel        = 0x0010,
-     AtmosphereModel       = 0x0020,
-     LunarLambertModel     = 0x0040,
-     ParticleDiffuseModel  = 0x0080,
-     EmissiveModel         = 0x0100,
-     ParticleModel         = 0x0200,
-     UnlitModel            = 0x0400,
- };
-
- enum
- {
-     VolumetricScatteringEffect      = 0x0001,
-     VolumetricAbsorptionEffect      = 0x0002,
-     VolumetricEmissionEffect        = 0x0004,
- };
-
- enum
- {
-     FisheyeOverrideModeNone     = 0,
-     FisheyeOverrideModeEnabled  = 1,
-     FisheyeOverrideModeDisabled = 2,
- };
-
- public:
-    unsigned short nLights{ 0 };
-    unsigned short lightModel{ DiffuseModel };
-    unsigned long texUsage{ 0 };
+public:
+    std::uint16_t nLights{ 0 };
+    LightingModel lightModel{ LightingModel::DiffuseModel };
+    TexUsage texUsage{ TexUsage::None };
 
     // Effects that may be applied with any light model
-    unsigned short effects{ 0 };
+    LightingEffects effects{ LightingEffects::None };
 
     // Eight bits per light, up to four lights
     // For each light:
@@ -121,13 +127,10 @@ class ShaderProperties
     //   Bit  4,   on for cloud shadows
     std::uint32_t shadowCounts{ 0 };
 
-    int fishEyeOverride { FisheyeOverrideModeNone };
+    FisheyeOverrideMode fishEyeOverride { FisheyeOverrideMode::None };
 
  private:
-    enum
-    {
-        ShadowBitsPerLight = 8,
-    };
+    static constexpr unsigned int ShadowBitsPerLight = 8;
 
     enum
     {
@@ -143,7 +146,6 @@ class ShaderProperties
 
     friend class ShaderManager;
 };
-
 
 constexpr inline unsigned int MaxShaderLights = 4;
 constexpr inline unsigned int MaxShaderEclipseShadows = 3;
@@ -174,7 +176,7 @@ struct CelestiaGLProgramTextureTransform
 
 class CelestiaGLProgram
 {
- public:
+public:
     CelestiaGLProgram(GLProgram& _program);
     CelestiaGLProgram(GLProgram& _program, const ShaderProperties&);
     ~CelestiaGLProgram();
@@ -209,7 +211,6 @@ class CelestiaGLProgram
         ScaleFactorAttributeIndex   = 11,
     };
 
- public:
     CelestiaGLProgramLight lights[MaxShaderLights];
     FloatShaderParameter ringShadowLOD[MaxShaderLights];
     Vec3ShaderParameter eyePosition;
@@ -296,7 +297,7 @@ class CelestiaGLProgram
 
     int attribIndex(const char*) const;
 
- private:
+private:
     void initCommonParameters();
     void initParameters();
     void initSamplers();
@@ -305,10 +306,9 @@ class CelestiaGLProgram
     const ShaderProperties props;
 };
 
-
 class ShaderManager
 {
- public:
+public:
     struct GeomShaderParams
     {
         int inputType;
@@ -327,7 +327,7 @@ class ShaderManager
 
     void setFisheyeEnabled(bool enabled);
 
- private:
+private:
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
     CelestiaGLProgram* buildProgram(std::string_view, std::string_view);
     CelestiaGLProgram* buildProgramGL3(std::string_view, std::string_view);

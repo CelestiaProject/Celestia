@@ -25,6 +25,7 @@
 #include <celrender/gl/vertexobject.h>
 #include <celutil/arrayvector.h>
 #include <celutil/color.h>
+#include <celutil/flag.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "framebuffer.h"
@@ -40,7 +41,6 @@
 #include "texture.h"
 
 using namespace celestia;
-
 
 namespace
 {
@@ -219,54 +219,54 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
+    shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
+        shadprop.texUsage |= TexUsage::DiffuseTexture;
         textures.try_push_back(ri.baseTex);
     }
 
     if (ri.bumpTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NormalTexture;
+        shadprop.texUsage |= TexUsage::NormalTexture;
         textures.try_push_back(ri.bumpTex);
         if (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
-            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
+            shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
     if (ri.specularColor != Color::Black)
     {
-        shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
+        shadprop.lightModel = LightingModel::PerPixelSpecularModel;
         if (ri.glossTex == nullptr)
         {
-            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+            shadprop.texUsage |= TexUsage::SpecularInDiffuseAlpha;
         }
         else
         {
-            shadprop.texUsage |= ShaderProperties::SpecularTexture;
+            shadprop.texUsage |= TexUsage::SpecularTexture;
             textures.try_push_back(ri.glossTex);
         }
     }
     if (ri.lunarLambert != 0.0f)
     {
-        shadprop.lightModel |= ShaderProperties::LunarLambertModel;
+        shadprop.lightModel |= LightingModel::LunarLambertModel;
     }
 
     if (ri.nightTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NightTexture;
+        shadprop.texUsage |= TexUsage::NightTexture;
         textures.try_push_back(ri.nightTex);
     }
 
     if (ri.overlayTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::OverlayTexture;
+        shadprop.texUsage |= TexUsage::OverlayTexture;
         textures.try_push_back(ri.overlayTex);
     }
 
@@ -277,7 +277,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
             if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= ShaderProperties::Scattering;
+                shadprop.texUsage |= TexUsage::Scattering;
         }
 
         if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
@@ -308,7 +308,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
             if (cloudTex != nullptr && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
-                shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
+                shadprop.texUsage |= TexUsage::CloudShadowTexture;
                 textures.try_push_back(cloudTex);
                 glActiveTexture(GL_TEXTURE0 + textures.size());
                 cloudTex->bind();
@@ -361,7 +361,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             }
             glActiveTexture(GL_TEXTURE0);
 
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+            shadprop.texUsage |= TexUsage::RingShadowTexture;
 
             for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
             {
@@ -387,10 +387,10 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
-    if ((shadprop.lightModel & ShaderProperties::LunarLambertModel) != 0)
+    if (util::is_set(shadprop.lightModel, LightingModel::LunarLambertModel))
         prog->lunarLambert = ri.lunarLambert;
 
-    if ((shadprop.texUsage & ShaderProperties::RingShadowTexture) != 0)
+    if (util::is_set(shadprop.texUsage, TexUsage::RingShadowTexture))
     {
         float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
         prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
@@ -408,7 +408,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     if (atmosphere != nullptr)
     {
-        if ((shadprop.texUsage & ShaderProperties::CloudShadowTexture) != 0)
+        if (util::is_set(shadprop.texUsage, TexUsage::CloudShadowTexture))
         {
             prog->shadowTextureOffset = cloudTexOffset;
             prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
@@ -631,22 +631,22 @@ void renderClouds_GLSL(const RenderInfo& ri,
     celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
+    shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = ls.nLights;
 
     // Set up the textures used by this object
     if (cloudTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
+        shadprop.texUsage |= TexUsage::DiffuseTexture;
         textures.try_push_back(cloudTex);
     }
 
     if (cloudNormalMap != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NormalTexture;
+        shadprop.texUsage |= TexUsage::NormalTexture;
         textures.try_push_back(cloudNormalMap);
         if (cloudNormalMap->getFormatOptions() & Texture::DXT5NormalMap)
-            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
+            shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
     if (atmosphere != nullptr)
@@ -656,7 +656,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
             if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= ShaderProperties::Scattering;
+                shadprop.texUsage |= TexUsage::Scattering;
         }
     }
 
@@ -745,7 +745,7 @@ void renderRings_GLSL(RingSystem& rings,
     ShaderProperties shadprop;
     // Set up the shader properties for ring rendering
     {
-        shadprop.lightModel = ShaderProperties::RingIllumModel;
+        shadprop.lightModel = LightingModel::RingIllumModel;
         shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
         if (renderShadow)
@@ -756,7 +756,7 @@ void renderRings_GLSL(RingSystem& rings,
         }
 
         if (ringsTex != nullptr)
-            shadprop.texUsage = ShaderProperties::DiffuseTexture;
+            shadprop.texUsage = TexUsage::DiffuseTexture;
     }
 
 

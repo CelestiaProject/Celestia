@@ -13,6 +13,7 @@
 
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
+#include <celutil/flag.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "lightenv.h"
@@ -22,8 +23,8 @@
 #include "texmanager.h"
 #include "texture.h"
 
-
 namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 namespace
 {
@@ -275,14 +276,14 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     Texture* specTex = nullptr;
     Texture* emissiveTex = nullptr;
 
-    shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
+    shaderProps.texUsage = TexUsage::SharedTextureCoords;
 
     if (useNormals)
     {
         if (lunarLambert == 0.0f)
-            shaderProps.lightModel = ShaderProperties::DiffuseModel;
+            shaderProps.lightModel = LightingModel::DiffuseModel;
         else
-            shaderProps.lightModel = ShaderProperties::LunarLambertModel;
+            shaderProps.lightModel = LightingModel::LunarLambertModel;
     }
     else
     {
@@ -292,9 +293,9 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         // eventually, a render context method will enable the particle
         // model.
         if (useColors)
-            shaderProps.lightModel = ShaderProperties::ParticleModel;
+            shaderProps.lightModel = LightingModel::ParticleModel;
         else
-            shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
+            shaderProps.lightModel = LightingModel::ParticleDiffuseModel;
     }
 
     ResourceHandle diffuseMap  = m.getMap(cmod::TextureSemantic::DiffuseMap);
@@ -307,7 +308,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         baseTex = GetTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
-            shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
+            shaderProps.texUsage |= TexUsage::DiffuseTexture;
             textures[nTextures++] = baseTex;
         }
     }
@@ -317,10 +318,10 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         bumpTex = GetTextureManager()->find(normalMap);
         if (bumpTex != nullptr)
         {
-            shaderProps.texUsage |= ShaderProperties::NormalTexture;
+            shaderProps.texUsage |= TexUsage::NormalTexture;
             if (bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
             {
-                shaderProps.texUsage |= ShaderProperties::CompressedNormalTexture;
+                shaderProps.texUsage |= TexUsage::CompressedNormalTexture;
             }
             textures[nTextures++] = bumpTex;
         }
@@ -328,16 +329,16 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     if (m.specular != cmod::Color(0.0f, 0.0f, 0.0f) && useNormals)
     {
-        shaderProps.lightModel = ShaderProperties::PerPixelSpecularModel;
+        shaderProps.lightModel = LightingModel::PerPixelSpecularModel;
         specTex = GetTextureManager()->find(specularMap);
         if (specTex == nullptr)
         {
             if (baseTex != nullptr)
-                shaderProps.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+                shaderProps.texUsage |= TexUsage::SpecularInDiffuseAlpha;
         }
         else
         {
-            shaderProps.texUsage |= ShaderProperties::SpecularTexture;
+            shaderProps.texUsage |= TexUsage::SpecularTexture;
             textures[nTextures++] = specTex;
         }
     }
@@ -347,7 +348,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         emissiveTex = GetTextureManager()->find(emissiveMap);
         if (emissiveTex != nullptr)
         {
-            shaderProps.texUsage |= ShaderProperties::EmissiveTexture;
+            shaderProps.texUsage |= TexUsage::EmissiveTexture;
             textures[nTextures++] = emissiveTex;
         }
     }
@@ -381,7 +382,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 #endif
             glActiveTexture(GL_TEXTURE0);
 
-            shaderProps.texUsage |= ShaderProperties::RingShadowTexture;
+            shaderProps.texUsage |= TexUsage::RingShadowTexture;
             for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; lightIndex++)
             {
                 if (lightingState.lights[lightIndex].castsShadows &&
@@ -398,23 +399,23 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     }
 
     if (usePointSize)
-        shaderProps.texUsage |= ShaderProperties::PointSprite;
+        shaderProps.texUsage |= TexUsage::PointSprite;
     else if (useStaticPointSize)
-        shaderProps.texUsage |= ShaderProperties::StaticPointSize;
+        shaderProps.texUsage |= TexUsage::StaticPointSize;
 
     if (useColors)
-        shaderProps.texUsage |= ShaderProperties::VertexColors;
+        shaderProps.texUsage |= TexUsage::VertexColors;
 
     if (atmosphere != nullptr)
     {
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         if (atmosphere->mieScaleHeight > 0.0f)
-            shaderProps.texUsage |= ShaderProperties::Scattering;
+            shaderProps.texUsage |= TexUsage::Scattering;
     }
 
     bool hasShadowMap = shadowMap != 0 && shadowMapWidth != 0 && lightMatrix != nullptr;
     if (hasShadowMap)
-        shaderProps.texUsage |= ShaderProperties::ShadowMapTexture;
+        shaderProps.texUsage |= TexUsage::ShadowMapTexture;
 
     // Get a shader for the current rendering configuration
     assert(renderer != nullptr);
@@ -457,7 +458,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;
-    if (shaderProps.lightModel == ShaderProperties::LunarLambertModel)
+    if (shaderProps.lightModel == LightingModel::LunarLambertModel)
     {
         prog->lunarLambert = lunarLambert;
     }
@@ -486,7 +487,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     }
 
     // Ring shadow parameters
-    if ((shaderProps.texUsage & ShaderProperties::RingShadowTexture) != 0)
+    if (util::is_set(shaderProps.texUsage, TexUsage::RingShadowTexture))
     {
         const RingSystem* rings = lightingState.shadowingRingSystem;
         float ringWidth = rings->outerRadius - rings->innerRadius;
@@ -601,8 +602,8 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     // Set up the textures used by this object
     Texture* baseTex = nullptr;
 
-    shaderProps.lightModel = ShaderProperties::EmissiveModel;
-    shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
+    shaderProps.lightModel = LightingModel::EmissiveModel;
+    shaderProps.texUsage = TexUsage::SharedTextureCoords;
 
     ResourceHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
@@ -610,18 +611,18 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
         baseTex = GetTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
-            shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
+            shaderProps.texUsage |= TexUsage::DiffuseTexture;
             textures[nTextures++] = baseTex;
         }
     }
 
     if (usePointSize)
-        shaderProps.texUsage |= ShaderProperties::PointSprite;
+        shaderProps.texUsage |= TexUsage::PointSprite;
     else if (useStaticPointSize)
-        shaderProps.texUsage |= ShaderProperties::StaticPointSize;
+        shaderProps.texUsage |= TexUsage::StaticPointSize;
 
     if (useColors)
-        shaderProps.texUsage |= ShaderProperties::VertexColors;
+        shaderProps.texUsage |= TexUsage::VertexColors;
 
     // Get a shader for the current rendering configuration
     assert(renderer != nullptr);

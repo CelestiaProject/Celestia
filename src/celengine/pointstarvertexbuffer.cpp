@@ -40,8 +40,8 @@ void PointStarVertexBuffer::startSprites()
 void PointStarVertexBuffer::startBasicPoints()
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::StaticPointSize;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
+    shadprop.texUsage = TexUsage::VertexColors | TexUsage::StaticPointSize;
+    shadprop.lightModel = LightingModel::UnlitModel;
     m_prog = m_renderer.getShaderManager().getShader(shadprop);
     m_pointSizeFromVertex = false;
 }

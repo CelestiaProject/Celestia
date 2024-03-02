@@ -26,6 +26,7 @@
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
+#include <celutil/flag.h>
 #include <celutil/logger.h>
 #include <celutil/intrusiveptr.h>
 #include "atmosphere.h"
@@ -37,6 +38,7 @@ using celestia::util::GetLogger;
 using celestia::util::IntrusivePtr;
 using namespace std::string_view_literals;
 namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 #define POINT_FADE 1
 
@@ -155,7 +157,7 @@ constexpr std::string_view LineVertexPosition = R"glsl(
 std::string_view
 VertexPosition(const ShaderProperties& props)
 {
-    return (props.texUsage & ShaderProperties::LineAsTriangles) ? LineVertexPosition : NormalVertexPosition;
+    return util::is_set(props.texUsage, TexUsage::LineAsTriangles) ? LineVertexPosition : NormalVertexPosition;
 }
 
 constexpr std::string_view FragmentHeader = ""sv;
@@ -194,7 +196,7 @@ LightProperty(unsigned int i, std::string_view property)
 std::string
 ApplyShadow(bool hasSpecular)
 {
-    std::string_view code = R"glsl(
+    constexpr std::string_view code = R"glsl(
 if (cosNormalLightDir > 0.0)
 {{
     shadowMapCoeff = calculateShadow();
@@ -203,7 +205,7 @@ if (cosNormalLightDir > 0.0)
 }}
 )glsl"sv;
 
-    return fmt::format(code, hasSpecular ? "spec.rgb *= shadowMapCoeff;" : "");
+    return fmt::format(code, hasSpecular ? "spec.rgb *= shadowMapCoeff;"sv : ""sv);
 }
 
 constexpr std::string_view
@@ -771,7 +773,7 @@ inline void DumpVSSource(const std::string& source)
     }
 }
 
-inline void DumpVSSource(std::ostringstream& source)
+inline void DumpVSSource(const std::ostringstream& source)
 {
     DumpVSSource(source.str());
 }
@@ -796,7 +798,7 @@ inline void DumpFSSource(const std::string& source)
     }
 }
 
-inline void DumpFSSource(std::ostringstream& source)
+inline void DumpFSSource(const std::ostringstream& source)
 {
     DumpFSSource(source.str());
 }
@@ -814,9 +816,9 @@ DeclareLights(const ShaderProperties& props)
     stream << "   vec3 diffuse;\n";
     stream << "   vec3 specular;\n";
     stream << "   vec3 halfVector;\n";
-    if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+    if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
         stream << "   vec3 color;\n";
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if (util::is_set(props.texUsage, TexUsage::NightTexture))
         stream << "   float brightness;\n";
     stream << "} lights[" << props.nLights << "];\n";
 #else
@@ -829,9 +831,9 @@ DeclareLights(const ShaderProperties& props)
             stream << DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
             stream << DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
         }
-        if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+        if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
             stream << DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
-        if (props.texUsage & ShaderProperties::NightTexture)
+        if (util::is_set(props.texUsage, TexUsage::NightTexture))
             stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
     }
 #endif
@@ -934,7 +936,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 {
     std::string source;
 
-    if (props.lightModel == ShaderProperties::ParticleDiffuseModel)
+    if (props.lightModel == LightingModel::ParticleDiffuseModel)
     {
         // The ParticleDiffuse model doesn't use a surface normal; vertices
         // are lit as if they were infinitesimal spherical particles,
@@ -952,13 +954,13 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     }
     else if (props.hasSpecular())
     {
-        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
             source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
         else
             source += SeparateDiffuse(i) + " = NL;\n";
     }
 #if 0
-    else if (props.lightModel == ShaderProperties::OrenNayarModel)
+    else if (props.lightModel == LightingModel::OrenNayarModel)
     {
         source += "float cosAlpha = min(NV, NL);\n";
         source += "float cosBeta = max(NV, NL);\n";
@@ -983,7 +985,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         }
     }
 #endif
-    else if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+    else if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
         source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
     }
@@ -1002,7 +1004,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
             source += "spec.rgb += " + LightProperty(i, "specular") + " * (pow(NH, shininess) * NL);\n";
     }
 
-    if ((props.texUsage & ShaderProperties::NightTexture) != 0 && !props.usesTangentSpaceLighting())
+    if (util::is_set(props.texUsage, TexUsage::NightTexture) && !props.usesTangentSpaceLighting())
         source += "totalLight += NL * " + LightProperty(i, "brightness") + ";\n";
 
     return source;
@@ -1203,7 +1205,7 @@ AtmosphericEffects(const ShaderProperties& props)
 
     // If we're rendering the sky dome, compute the phase functions in the fragment shader
     // rather than the vertex shader in order to avoid artifacts from coarse tessellation.
-    if (props.lightModel == ShaderProperties::AtmosphereModel)
+    if (props.lightModel == LightingModel::AtmosphereModel)
     {
         source += "    scatterEx = ex;\n";
         source += "    " + ScatteredColor(0) + " = sunColor * " + scatter + ";\n";
@@ -1267,7 +1269,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
 
     // If we're rendering the sky dome, compute the phase functions in the fragment shader
     // rather than the vertex shader in order to avoid artifacts from coarse tessellation.
-    if (props.lightModel == ShaderProperties::AtmosphereModel)
+    if (props.lightModel == LightingModel::AtmosphereModel)
     {
         source += "    scatterEx = ex;\n";
         source += "    " + ScatteredColor(i) + " = scatter;\n";
@@ -1316,37 +1318,37 @@ TextureSamplerDeclarations(const ShaderProperties& props)
     std::string source;
 
     // Declare texture samplers
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         source += DeclareUniform("diffTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
+    if (util::is_set(props.texUsage, TexUsage::NormalTexture))
     {
         source += DeclareUniform("normTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::SpecularTexture)
+    if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
     {
         source += DeclareUniform("specTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if (util::is_set(props.texUsage, TexUsage::NightTexture))
     {
         source += DeclareUniform("nightTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
     {
         source += DeclareUniform("emissiveTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::OverlayTexture)
+    if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
         source += DeclareUniform("overlayTex", Shader_Sampler2D);
     }
 
-    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
 #if GL_ONLY_SHADOWS
         source += DeclareUniform("shadowMapTex0", Shader_Sampler2DShadow);
@@ -1370,33 +1372,33 @@ TextureCoordDeclarations(const ShaderProperties& props, ShaderInOut inOut)
     {
         // If the shared texture coords flag is set, use the diffuse texture
         // coordinate for sampling all the texture maps.
-        if (props.texUsage & (ShaderProperties::DiffuseTexture  |
-                              ShaderProperties::NormalTexture   |
-                              ShaderProperties::SpecularTexture |
-                              ShaderProperties::NightTexture    |
-                              ShaderProperties::EmissiveTexture |
-                              ShaderProperties::OverlayTexture))
+        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture  |
+                                         TexUsage::NormalTexture   |
+                                         TexUsage::SpecularTexture |
+                                         TexUsage::NightTexture    |
+                                         TexUsage::EmissiveTexture |
+                                         TexUsage::OverlayTexture))
         {
             source += declare("diffTexCoord", Shader_Vector2);
         }
     }
     else
     {
-        if (props.texUsage & ShaderProperties::DiffuseTexture)
+        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
             source += declare("diffTexCoord", Shader_Vector2);
-        if (props.texUsage & ShaderProperties::NormalTexture)
+        if (util::is_set(props.texUsage, TexUsage::NormalTexture))
             source += declare("normTexCoord", Shader_Vector2);
-        if (props.texUsage & ShaderProperties::SpecularTexture)
+        if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
             source += declare("specTexCoord", Shader_Vector2);
-        if (props.texUsage & ShaderProperties::NightTexture)
+        if (util::is_set(props.texUsage, TexUsage::NightTexture))
             source += declare("nightTexCoord", Shader_Vector2);
-        if (props.texUsage & ShaderProperties::EmissiveTexture)
+        if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
             source += declare("emissiveTexCoord", Shader_Vector2);
-        if (props.texUsage & ShaderProperties::OverlayTexture)
+        if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
             source += declare("overlayTexCoord", Shader_Vector2);
     }
 
-    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
         source += declare("shadowTexCoord0", Shader_Vector4);
         source += declare("cosNormalLightDir", Shader_Float);
@@ -1698,7 +1700,7 @@ ShaderProperties::hasCloudShadows() const
 bool
 ShaderProperties::hasShadowMap() const
 {
-    return (texUsage & ShadowMapTexture) != 0;
+    return util::is_set(texUsage, TexUsage::ShadowMapTexture);
 }
 
 void
@@ -1729,26 +1731,26 @@ ShaderProperties::hasShadowsForLight(unsigned int light) const
 bool
 ShaderProperties::hasSharedTextureCoords() const
 {
-    return (texUsage & SharedTextureCoords) != 0;
+    return util::is_set(texUsage, TexUsage::SharedTextureCoords);
 }
 
 bool
 ShaderProperties::hasTextureCoordTransform() const
 {
-    return (texUsage & TextureCoordTransform) != 0;
+    return util::is_set(texUsage, TexUsage::TextureCoordTransform);
 }
 
 bool
 ShaderProperties::hasSpecular() const
 {
-    return (lightModel & PerPixelSpecularModel) != 0;
+    return util::is_set(lightModel, LightingModel::PerPixelSpecularModel);
 }
 
 
 bool
 ShaderProperties::hasScattering() const
 {
-    return (texUsage & Scattering) != 0;
+    return util::is_set(texUsage, TexUsage::Scattering);
 }
 
 
@@ -1757,10 +1759,10 @@ ShaderProperties::isViewDependent() const
 {
     switch (lightModel)
     {
-    case DiffuseModel:
-    case ParticleDiffuseModel:
-    case EmissiveModel:
-    case UnlitModel:
+    case LightingModel::DiffuseModel:
+    case LightingModel::ParticleDiffuseModel:
+    case LightingModel::EmissiveModel:
+    case LightingModel::UnlitModel:
         return false;
     default:
         return true;
@@ -1771,13 +1773,13 @@ ShaderProperties::isViewDependent() const
 bool
 ShaderProperties::usesTangentSpaceLighting() const
 {
-    return (texUsage & NormalTexture) != 0;
+    return util::is_set(texUsage, TexUsage::NormalTexture);
 }
 
 
 bool ShaderProperties::usePointSize() const
 {
-    return (texUsage & (PointSprite | StaticPointSize)) != 0;
+    return util::is_set(texUsage, TexUsage::PointSprite | TexUsage::StaticPointSize);
 }
 
 
@@ -1966,7 +1968,7 @@ R"glsl(
     props.hasSpecular(),
     props.hasScattering(),
     props.isViewDependent(),
-    props.lightModel);
+    static_cast<std::uint16_t>(props.lightModel));
     source += "***************************************************/\n";
     source += CommonHeader;
     source += VertexHeader;
@@ -1981,7 +1983,7 @@ R"glsl(
     if (props.usePointSize())
         source += PointSizeDeclaration();
 
-    if (props.lightModel != ShaderProperties::ParticleDiffuseModel)
+    if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += DeclareOutput("normal", Shader_Vector3);
 
     if (props.usesTangentSpaceLighting())
@@ -1990,7 +1992,7 @@ R"glsl(
         source += DeclareOutput("tangent", Shader_Vector3);
     }
 
-    if (props.lightModel == ShaderProperties::UnlitModel && (props.texUsage & ShaderProperties::VertexColors) != 0)
+    if (props.lightModel == LightingModel::UnlitModel && util::is_set(props.texUsage, TexUsage::VertexColors))
         source += DeclareOutput("diff", Shader_Vector4);
 
     if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
@@ -2020,14 +2022,14 @@ R"glsl(
     if (props.hasShadowMap())
         source += DeclareUniform("ShadowMatrix0", Shader_Matrix4);
 
-    if (props.texUsage & ShaderProperties::LineAsTriangles)
+    if (util::is_set(props.texUsage, TexUsage::LineAsTriangles))
         source += LineDeclaration();
 
-    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
+    source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
-    if (props.lightModel != ShaderProperties::ParticleDiffuseModel)
+    if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += "normal = in_Normal;\n";
 
     if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
@@ -2036,7 +2038,7 @@ R"glsl(
     if (props.usesTangentSpaceLighting())
         source += "tangent = in_Tangent;\n";
 
-    if (props.lightModel == ShaderProperties::UnlitModel && (props.texUsage & ShaderProperties::VertexColors) != 0)
+    if (props.lightModel == LightingModel::UnlitModel && util::is_set(props.texUsage, TexUsage::VertexColors))
         source += "diff = in_Color;\n";
 
     if (props.hasShadowMap())
@@ -2053,12 +2055,12 @@ R"glsl(
     bool hasTexCoordTransform = props.hasTextureCoordTransform();
     if (props.hasSharedTextureCoords())
     {
-        if ((props.texUsage & (ShaderProperties::DiffuseTexture  |
-                               ShaderProperties::NormalTexture   |
-                               ShaderProperties::SpecularTexture |
-                               ShaderProperties::NightTexture    |
-                               ShaderProperties::EmissiveTexture |
-                               ShaderProperties::OverlayTexture)) != 0)
+        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture  |
+                                         TexUsage::NormalTexture   |
+                                         TexUsage::SpecularTexture |
+                                         TexUsage::NightTexture    |
+                                         TexUsage::EmissiveTexture |
+                                         TexUsage::OverlayTexture))
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             source += "diffTexCoord.x += textureOffset;\n";
@@ -2066,31 +2068,31 @@ R"glsl(
     }
     else
     {
-        if ((props.texUsage & ShaderProperties::DiffuseTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
             nTexCoords++;
         }
 
-        if ((props.texUsage & ShaderProperties::NormalTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::NormalTexture))
         {
             source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
             nTexCoords++;
         }
 
-        if ((props.texUsage & ShaderProperties::SpecularTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
         {
             source += "specTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             nTexCoords++;
         }
 
-        if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::NightTexture))
         {
             source += "nightTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             nTexCoords++;
         }
 
-        if ((props.texUsage & ShaderProperties::EmissiveTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
         {
             source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
             nTexCoords++;
@@ -2161,15 +2163,15 @@ R"glsl(
         }
     }
 
-    if ((props.texUsage & ShaderProperties::OverlayTexture) && !props.hasSharedTextureCoords())
+    if (util::is_set(props.texUsage, TexUsage::OverlayTexture) && !props.hasSharedTextureCoords())
     {
         source += "overlayTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
         nTexCoords++;
     }
 
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (util::is_set(props.texUsage, TexUsage::PointSprite))
         source += PointSizeCalculation();
-    else if (props.texUsage & ShaderProperties::StaticPointSize)
+    else if (util::is_set(props.texUsage, TexUsage::StaticPointSize))
         source += StaticPointSize();
 
     source += VertexPosition(props);
@@ -2214,23 +2216,23 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     source += DeclareUniform("eyePosition", Shader_Vector3);
 
-    if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+    if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
         source += DeclareUniform("lunarLambert", Shader_Float);
 
-    if (props.lightModel != ShaderProperties::ParticleDiffuseModel)
+    if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += DeclareInput("normal", Shader_Vector3);
 
     if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
         source += DeclareInput("position", Shader_Vector3);
 
-    if (props.lightModel != ShaderProperties::UnlitModel)
+    if (props.lightModel != LightingModel::UnlitModel)
     {
         source += DeclareUniform("ambientColor", Shader_Vector3);
         source += DeclareUniform("opacity", Shader_Float);
     }
     else
     {
-        if ((props.texUsage & ShaderProperties::VertexColors) != 0)
+        if (util::is_set(props.texUsage, TexUsage::VertexColors))
             source += DeclareInput("diff", Shader_Vector4);
     }
 
@@ -2288,15 +2290,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
-    if (props.lightModel != ShaderProperties::ParticleDiffuseModel)
+    if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += "vec3 N = normalize(normal);\n";
 
     if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
         source += "vec3 nposition = normalize(position);\n";
 
-    if (props.lightModel != ShaderProperties::UnlitModel)
+    if (props.lightModel != LightingModel::UnlitModel)
         source += "vec4 diff = vec4(ambientColor, opacity);\n";
-    else if ((props.texUsage & ShaderProperties::VertexColors) == 0)
+    else if (!util::is_set(props.texUsage, TexUsage::VertexColors))
         source += "vec4 diff = vec4(1.0);\n";
 
     if (props.usesTangentSpaceLighting())
@@ -2320,7 +2322,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (useSeparateDiffuse)
         source += DeclareLocal("diffFactors", Shader_Vector4);
 
-    if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+    if (util::is_set(props.texUsage, TexUsage::NightTexture))
         source += "float totalLight = 0.0;\n";
 
     if (props.isViewDependent() || props.hasScattering())
@@ -2337,7 +2339,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "float NV = dot(N, eyeDir);\n";
     }
 
-    if (props.lightModel != ShaderProperties::UnlitModel)
+    if (props.lightModel != LightingModel::UnlitModel)
     {
         source += DeclareLocal("NL", Shader_Float);
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -2362,9 +2364,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         // Get the normal in tangent space. Ordinarily it comes from the normal texture, but if one
         // isn't provided, we'll simulate a smooth surface by using a constant (in tangent space)
         // normal of [ 0 0 1 ]
-        if ((props.texUsage & ShaderProperties::NormalTexture) != 0)
+        if (util::is_set(props.texUsage, TexUsage::NormalTexture))
         {
-            if ((props.texUsage & ShaderProperties::CompressedNormalTexture) != 0)
+            if (util::is_set(props.texUsage, TexUsage::CompressedNormalTexture))
             {
                 source += "vec3 n;\n";
                 source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ag * 2.0 - vec2(1.0);\n";
@@ -2394,7 +2396,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "vec3 H;\n";
                 source += "float NH;\n";
             }
-            if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+            if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
                 source += "float NV = dot(n, V);\n";
         }
 
@@ -2402,7 +2404,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         {
             // Bump mapping with self shadowing
             source += "NL = dot(" + LightDir_tan(i) + ", n);\n";
-            if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+            if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
             {
                 source += "NL = max(0.0, NL);\n";
                 source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
@@ -2412,7 +2414,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "l = max(0.0, dot(" + LightDir_tan(i) + ", n)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
 
-            if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+            if (util::is_set(props.texUsage, TexUsage::NightTexture))
                 source += "totalLight += l * " + LightProperty(i, "brightness") + ";\n";
 
             if (props.hasShadowsForLight(i))
@@ -2463,7 +2465,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         if (props.usePointSize())
             source += "color = texture2D(diffTex, gl_PointCoord);\n";
@@ -2483,7 +2485,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 #endif
 
     // Mix in the overlay color with the base color
-    if (props.texUsage & ShaderProperties::OverlayTexture)
+    if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
         source += "vec4 overlayColor = texture2D(overlayTex, overlayTexCoord.st);\n";
         source += "color.rgb = mix(color.rgb, overlayColor.rgb, overlayColor.a);\n";
@@ -2492,9 +2494,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.hasSpecular())
     {
         // Add in the specular color
-        if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
+        if (util::is_set(props.texUsage, TexUsage::SpecularInDiffuseAlpha))
             source += "gl_FragColor = vec4(color.rgb, 1.0) * diff + float(color.a) * spec;\n";
-        else if (props.texUsage & ShaderProperties::SpecularTexture)
+        else if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
             source += "gl_FragColor = color * diff + texture2D(specTex, " + specTexCoord + ".st) * spec;\n";
         else
             source += "gl_FragColor = color * diff + spec;\n";
@@ -2504,7 +2506,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor = color * diff;\n";
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if (util::is_set(props.texUsage, TexUsage::NightTexture))
     {
         if (useSeparateDiffuse)
         {
@@ -2519,7 +2521,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     // Add in the emissive color
     // TODO: support a constant emissive color, not just an emissive texture
-    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
     {
         source += "gl_FragColor += texture2D(emissiveTex, " + emissiveTexCoord + ".st);\n";
     }
@@ -2559,7 +2561,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     source += DeclareOutput("diffFactors", Shader_Vector4);
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += DeclareOutput("diffTexCoord", Shader_Vector2);
 
     if (props.usesShadows())
@@ -2579,7 +2581,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
             LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
     }
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
 
     if (props.hasEclipseShadows() != 0)
@@ -2616,7 +2618,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += DeclareInput("diffFactors", Shader_Vector4);
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
@@ -2668,7 +2670,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
         }
     }
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
@@ -2704,17 +2706,17 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         source += DeclareOutput("shadowDepths", Shader_Vector4);
     }
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += DeclareOutput("diffTexCoord", Shader_Vector2);
 
-    if (props.texUsage & ShaderProperties::LineAsTriangles)
+    if (util::is_set(props.texUsage, TexUsage::LineAsTriangles))
         source += LineDeclaration();
 
-    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
+    source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     source += "\nvoid main(void)\n{\n";
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += "diffTexCoord = " + TexCoord2D(0, props.hasTextureCoordTransform()) + ";\n";
 
     source += "position = in_Position.xyz;\n";
@@ -2751,7 +2753,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     source += DeclareUniform("eyePosition", Shader_Vector3);
     source += DeclareInput("position", Shader_Vector3);
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
@@ -2781,7 +2783,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     source += "vec3 eyeDir = normalize(eyePosition - position);\n";
 
     source += DeclareLocal("color", Shader_Vector4);
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
@@ -2859,7 +2861,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += DeclareOutput("position", Shader_Vector3);
     source += DeclareOutput("normal", Shader_Vector3);
 
-    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
+    source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
@@ -2961,27 +2963,27 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += DeclareOutput("v_Color", Shader_Vector4);
     source += DeclareOutput("v_TexCoord0", Shader_Vector2);
 
-    source += VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
+    source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
 
     // Optional texture coordinates (generated automatically for point
     // sprites.)
-    if ((props.texUsage & ShaderProperties::DiffuseTexture) && !props.usePointSize())
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture) && !props.usePointSize())
         source += "    v_TexCoord0.st = " + TexCoord2D(0, props.hasTextureCoordTransform()) + ";\n";
 
     // Set the color.
 
     source += fmt::format("    v_Color = vec4({}, opacity);\n",
-                          (props.texUsage & ShaderProperties::VertexColors) != 0 ?
-                          "in_Color.rgb" :
-                          LightProperty(0, "diffuse"));
+                          util::is_set(props.texUsage, TexUsage::VertexColors)
+                              ? "in_Color.rgb"
+                              : LightProperty(0, "diffuse"));
 
     // Optional point size
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (util::is_set(props.texUsage, TexUsage::PointSprite))
         source += PointSizeCalculation();
-    else if (props.texUsage & ShaderProperties::StaticPointSize)
+    else if (util::is_set(props.texUsage, TexUsage::StaticPointSize))
         source += StaticPointSize();
 
     source += VertexPosition(props);
@@ -3002,7 +3004,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
     std::string source(VersionHeader);
     source += CommonHeader;
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += DeclareUniform("diffTex", Shader_Sampler2D);
 
     if (props.usePointSize())
@@ -3024,7 +3026,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
         colorSource = "color";
     }
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         if (props.usePointSize())
             source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_PointCoord);\n";
@@ -3077,7 +3079,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     if (props.usesShadows())
         source << DeclareOutput("position", Shader_Vector3);
 
-    source << VPFunction(props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled);
+    source << VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
     source << "\nvoid main(void)\n{\n";
@@ -3106,9 +3108,9 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << "    v_Color = in_Color * brightness;\n";
 
     // Optional point size
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (util::is_set(props.texUsage, TexUsage::PointSprite))
         source << PointSizeCalculation();
-    else if (props.texUsage & ShaderProperties::StaticPointSize)
+    else if (util::is_set(props.texUsage, TexUsage::StaticPointSize))
         source << StaticPointSize();
 
     source << VertexPosition(props);
@@ -3130,7 +3132,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     source << VersionHeader << CommonHeader;
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source << DeclareUniform("diffTex", Shader_Sampler2D);
 
     if (props.usePointSize())
@@ -3162,7 +3164,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     // Begin main()
     source << "\nvoid main(void)\n{\n";
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source << "    gl_FragColor = v_Color * texture2D(diffTex, gl_PointCoord);\n";
     else
         source << "    gl_FragColor = v_Color;\n";
@@ -3186,22 +3188,22 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     GLVertexShader* vs = nullptr;
     GLFragmentShader* fs = nullptr;
 
-    if (props.lightModel == ShaderProperties::RingIllumModel)
+    if (props.lightModel == LightingModel::RingIllumModel)
     {
         vs = buildRingsVertexShader(props);
         fs = buildRingsFragmentShader(props);
     }
-    else if (props.lightModel == ShaderProperties::AtmosphereModel)
+    else if (props.lightModel == LightingModel::AtmosphereModel)
     {
         vs = buildAtmosphereVertexShader(props);
         fs = buildAtmosphereFragmentShader(props);
     }
-    else if (props.lightModel == ShaderProperties::EmissiveModel)
+    else if (props.lightModel == LightingModel::EmissiveModel)
     {
         vs = buildEmissiveVertexShader(props);
         fs = buildEmissiveFragmentShader(props);
     }
-    else if (props.lightModel == ShaderProperties::ParticleModel)
+    else if (props.lightModel == LightingModel::ParticleModel)
     {
         vs = buildParticleVertexShader(props);
         fs = buildParticleFragmentShader(props);
@@ -3307,8 +3309,7 @@ ShaderManager::buildProgramGL3(std::string_view vs, std::string_view gs, std::st
         layout = fmt::format("layout({}) in;\nlayout({}, max_vertices = {}) out;\n"sv,
                              InPrimitive(params->inputType),
                              OutPrimitive(params->outType),
-                             params->nOutVertices
-        );
+                             params->nOutVertices);
     }
 
     GLProgram* prog = nullptr;
@@ -3447,9 +3448,9 @@ CelestiaGLProgram::initParameters()
         lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse").c_str());
         lights[i].specular   = vec3Param(LightProperty(i, "specular").c_str());
         lights[i].halfVector = vec3Param(LightProperty(i, "halfVector").c_str());
-        if (props.texUsage & ShaderProperties::NightTexture)
+        if (util::is_set(props.texUsage, TexUsage::NightTexture))
             lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
-        if ((props.texUsage & ShaderProperties::AtmosphereModel) || props.hasScattering())
+        if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
             lights[i].color = vec3Param(LightProperty(i, "color").c_str());
 
         if (props.hasRingShadowForLight(i))
@@ -3489,7 +3490,7 @@ CelestiaGLProgram::initParameters()
     opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
     {
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
@@ -3499,13 +3500,13 @@ CelestiaGLProgram::initParameters()
 
     textureOffset = floatParam("textureOffset");
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
         cloudHeight         = floatParam("cloudHeight");
         shadowTextureOffset = floatParam("cloudShadowTexOffset");
     }
 
-    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
         ShadowMatrix0       = mat4Param("ShadowMatrix0");
     }
@@ -3523,7 +3524,7 @@ CelestiaGLProgram::initParameters()
         extinctionCoeff      = vec3Param("extinctionCoeff");
     }
 
-    if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+    if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
         lunarLambert         = floatParam("lunarLambert");
     }
@@ -3533,7 +3534,7 @@ CelestiaGLProgram::initParameters()
         pointScale           = floatParam("pointScale");
     }
 
-    if (props.texUsage & ShaderProperties::LineAsTriangles)
+    if (util::is_set(props.texUsage, TexUsage::LineAsTriangles))
     {
         lineWidthX           = floatParam("lineWidthX");
         lineWidthY           = floatParam("lineWidthY");
@@ -3548,63 +3549,63 @@ CelestiaGLProgram::initSamplers()
 
     unsigned int nSamplers = 0;
 
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "diffTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
+    if (util::is_set(props.texUsage, TexUsage::NormalTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "normTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::SpecularTexture)
+    if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "specTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if (util::is_set(props.texUsage, TexUsage::NightTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "nightTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "emissiveTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::OverlayTexture)
+    if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "overlayTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "ringTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "cloudShadowTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
         int slot = glGetUniformLocation(program->getID(), "shadowMapTex0");
         if (slot != -1)
@@ -3635,7 +3636,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         // Include a phase-based normalization factor to prevent planets from appearing
         // too dim when rendered with non-Lambertian photometric functions.
         float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
-        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
         {
             float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
             lightColor *= photometricNormFactor;
