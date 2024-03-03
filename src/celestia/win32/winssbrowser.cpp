@@ -62,7 +62,9 @@ AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, H
     for (int i = 0; i < sys->getSystemSize(); ++i)
     {
         const Body* world = sys->getBody(i);
-        if (world != nullptr && world->getClassification() != Body::Invisible && !world->getName().empty())
+        if (world != nullptr &&
+            world->getClassification() != BodyClassification::Invisible &&
+            !world->getName().empty())
         {
             HTREEITEM item;
             item = AddItemToTree(treeView,

@@ -375,8 +375,7 @@ SelectionPopup::createAlternateSurfacesMenu()
 }
 
 QMenu*
-SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
-                                 unsigned int classification)
+SelectionPopup::createObjectMenu(const PlanetarySystem* sys, BodyClassification classification)
 {
     QMenu* menu = nullptr;
 
@@ -386,32 +385,32 @@ SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
         for (int i = 0; i < nObjects; i++)
         {
             Body* body = sys->getBody(i);
-            if ((body->getClassification() & classification) != 0)
+            if (util::is_set(body->getClassification(), classification))
             {
                 if (menu == nullptr)
                 {
                     QString title;
                     switch (classification)
                     {
-                    case Body::Planet:
+                    case BodyClassification::Planet:
                         title = _("Planets");
                         break;
-                    case Body::DwarfPlanet:
+                    case BodyClassification::DwarfPlanet:
                         title = _("Dwarf planets");
                         break;
-                    case Body::Moon:
+                    case BodyClassification::Moon:
                         title = _("Moons");
                         break;
-                    case Body::MinorMoon:
+                    case BodyClassification::MinorMoon:
                         title = _("Minor moons");
                         break;
-                    case Body::Asteroid:
+                    case BodyClassification::Asteroid:
                         title = _("Asteroids");
                         break;
-                    case Body::Comet:
+                    case BodyClassification::Comet:
                         title = _("Comets");
                         break;
-                    case Body::Spacecraft:
+                    case BodyClassification::Spacecraft:
                         title = C_("plural", "Spacecraft");
                         break;
                     default:
@@ -436,31 +435,31 @@ void
 SelectionPopup::addObjectMenus(const PlanetarySystem* sys)
 {
     setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
-    QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
+    QMenu* planetsMenu = createObjectMenu(sys, BodyClassification::Planet);
     if (planetsMenu != nullptr)
         addMenu(planetsMenu);
 
-    QMenu* dwarfPlanetsMenu = createObjectMenu(sys, Body::DwarfPlanet);
+    QMenu* dwarfPlanetsMenu = createObjectMenu(sys, BodyClassification::DwarfPlanet);
     if (dwarfPlanetsMenu != nullptr)
         addMenu(dwarfPlanetsMenu);
 
-    QMenu* moonsMenu = createObjectMenu(sys, Body::Moon);
+    QMenu* moonsMenu = createObjectMenu(sys, BodyClassification::Moon);
     if (moonsMenu != nullptr)
         addMenu(moonsMenu);
 
-    QMenu* minorMoonsMenu = createObjectMenu(sys, Body::MinorMoon);
+    QMenu* minorMoonsMenu = createObjectMenu(sys, BodyClassification::MinorMoon);
     if (minorMoonsMenu != nullptr)
         addMenu(minorMoonsMenu);
 
-    QMenu* asteroidsMenu = createObjectMenu(sys, Body::Asteroid);
+    QMenu* asteroidsMenu = createObjectMenu(sys, BodyClassification::Asteroid);
     if (asteroidsMenu != nullptr)
         addMenu(asteroidsMenu);
 
-    QMenu* cometsMenu = createObjectMenu(sys, Body::Comet);
+    QMenu* cometsMenu = createObjectMenu(sys, BodyClassification::Comet);
     if (cometsMenu != nullptr)
         addMenu(cometsMenu);
 
-    QMenu* spacecraftMenu = createObjectMenu(sys, Body::Spacecraft);
+    QMenu* spacecraftMenu = createObjectMenu(sys, BodyClassification::Spacecraft);
     if (spacecraftMenu != nullptr)
         addMenu(spacecraftMenu);
 }

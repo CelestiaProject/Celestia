@@ -17,7 +17,6 @@
 #include <fmt/format.h>
 
 #include "atmosphere.h"
-#include "body.h"
 #include "location.h"
 #include "render.h"
 #include "boundaries.h"
@@ -236,7 +235,6 @@ Renderer::Renderer() :
 #endif
     labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
-    orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     brightnessBias(0.0f),
     saturationMagNight(1.0f),
     saturationMag(1.0f),
@@ -472,24 +470,25 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 }
 
 
-static int translateLabelModeToClassMask(int labelMode)
+static BodyClassification
+translateLabelModeToClassMask(int labelMode)
 {
-    int classMask = 0;
+    BodyClassification classMask = BodyClassification::EmptyMask;
 
     if (labelMode & Renderer::PlanetLabels)
-        classMask |= Body::Planet;
+        classMask |= BodyClassification::Planet;
     if (labelMode & Renderer::DwarfPlanetLabels)
-        classMask |= Body::DwarfPlanet;
+        classMask |= BodyClassification::DwarfPlanet;
     if (labelMode & Renderer::MoonLabels)
-        classMask |= Body::Moon;
+        classMask |= BodyClassification::Moon;
     if (labelMode & Renderer::MinorMoonLabels)
-        classMask |= Body::MinorMoon;
+        classMask |= BodyClassification::MinorMoon;
     if (labelMode & Renderer::AsteroidLabels)
-        classMask |= Body::Asteroid;
+        classMask |= BodyClassification::Asteroid;
     if (labelMode & Renderer::CometLabels)
-        classMask |= Body::Comet;
+        classMask |= BodyClassification::Comet;
     if (labelMode & Renderer::SpacecraftLabels)
-        classMask |= Body::Spacecraft;
+        classMask |= BodyClassification::Spacecraft;
 
     return classMask;
 }
@@ -722,17 +721,18 @@ void Renderer::setProjectionMode(shared_ptr<celestia::engine::ProjectionMode> _p
     markSettingsChanged();
 }
 
-int Renderer::getOrbitMask() const
+BodyClassification
+Renderer::getOrbitMask() const
 {
     return orbitMask;
 }
 
-void Renderer::setOrbitMask(int mask)
+void
+Renderer::setOrbitMask(BodyClassification mask)
 {
     orbitMask = mask;
     markSettingsChanged();
 }
-
 
 ColorTableType
 Renderer::getStarColorTable() const
@@ -1031,32 +1031,34 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
     }
     else
     {
-        int classification = body != nullptr ? body->getOrbitClassification() : Body::Stellar;
+        BodyClassification classification = body != nullptr
+            ? body->getOrbitClassification()
+            : BodyClassification::Stellar;
 
         switch (classification)
         {
-        case Body::Moon:
+        case BodyClassification::Moon:
             orbitColor = Renderer::MoonOrbitColor;
             break;
-        case Body::MinorMoon:
+        case BodyClassification::MinorMoon:
             orbitColor = Renderer::MinorMoonOrbitColor;
             break;
-        case Body::Asteroid:
+        case BodyClassification::Asteroid:
             orbitColor = Renderer::AsteroidOrbitColor;
             break;
-        case Body::Comet:
+        case BodyClassification::Comet:
             orbitColor = Renderer::CometOrbitColor;
             break;
-        case Body::Spacecraft:
+        case BodyClassification::Spacecraft:
             orbitColor = Renderer::SpacecraftOrbitColor;
             break;
-        case Body::Stellar:
+        case BodyClassification::Stellar:
             orbitColor = Renderer::StarOrbitColor;
             break;
-        case Body::DwarfPlanet:
+        case BodyClassification::DwarfPlanet:
             orbitColor = Renderer::DwarfPlanetOrbitColor;
             break;
-        case Body::Planet:
+        case BodyClassification::Planet:
             [[fallthrough]];
         default:
             orbitColor = Renderer::PlanetOrbitColor;
@@ -2577,7 +2579,7 @@ bool Renderer::testEclipse(const Body& receiver,
     // generate correct shadows in this case.
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
         caster.hasVisibleGeometry() &&
-        (caster.getClassification() & bodyVisibilityMask) != 0 &&
+        util::is_set(caster.getClassification(), bodyVisibilityMask) &&
         caster.extant(now) &&
         caster.isEllipsoid())
     {
@@ -3182,36 +3184,38 @@ static float luminosityAtOpposition(float sunLuminosity,
 }
 
 
-static bool isBodyVisible(const Body* body, int bodyVisibilityMask)
+static bool isBodyVisible(const Body* body, BodyClassification bodyVisibilityMask)
 {
-    int klass = body->getClassification();
-    switch (klass)
+    BodyClassification bodyClassification = body->getClassification();
+    switch (bodyClassification)
     {
     // Diffuse objects don't have controls to show/hide visibility
-    case Body::Diffuse:
+    case BodyClassification::Diffuse:
         return body->isVisible();
 
     // SurfaceFeature and Component inherit visibility of its parent body
-    case Body::Component:
-    case Body::SurfaceFeature:
-        for (;;)
+    case BodyClassification::Component:
+    case BodyClassification::SurfaceFeature:
+        for (const PlanetarySystem* system = body->getSystem(); system != nullptr;)
         {
-            assert(body->getSystem() != nullptr);
-            body = body->getSystem()->getPrimaryBody();
-            if (body == nullptr)
+            auto primaryBody = system->getPrimaryBody();
+            if (primaryBody == nullptr)
             {
                 // TODO figure out what to do about components/features of stars/barycenters
                 return false;
             }
-            if (body->getClassification() != Body::SurfaceFeature
-                && body->getClassification() != Body::Component)
+
+            if (auto primaryClassification = primaryBody->getClassification();
+                !util::is_set(primaryClassification, BodyClassification::SurfaceFeature | BodyClassification::Component))
             {
-                return body->isVisible() && (bodyVisibilityMask & body->getClassification()) != 0;
+                return primaryBody->isVisible() && util::is_set(primaryClassification, bodyVisibilityMask);
             }
+
+            system = primaryBody->getSystem();
         }
 
     default:
-        return body->isVisible() && (bodyVisibilityMask & klass) != 0;
+        return body->isVisible() && util::is_set(bodyClassification, bodyVisibilityMask);
     }
 }
 
@@ -3244,7 +3248,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         renderList.push_back(rle);
     }
 
-    if (body.getClassification() == Body::Comet && (renderFlags & ShowCometTails) != 0)
+    if (body.getClassification() == BodyClassification::Comet && (renderFlags & ShowCometTails) != 0)
     {
         float radius = cometDustTailLength(rle.sun.norm(), body.getRadius());
         float discSize = (radius / rle.distance) / pixelSize;
@@ -3282,7 +3286,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                                 const Observer& observer,
                                 double now)
 {
-    int labelClassMask = translateLabelModeToClassMask(labelMode);
+    BodyClassification labelClassMask = translateLabelModeToClassMask(labelMode);
 
     Matrix3f viewMat = getCameraOrientationf().toRotationMatrix();
     Vector3f viewMatZ = viewMat.row(2);
@@ -3390,7 +3394,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             }
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
-            bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
+            bool isLabeled = util::is_set(body->getOrbitClassification(), labelClassMask);
 
             if ((discSize > 1 || visibleAsPoint || isLabeled) && isBodyVisible(body, bodyVisibilityMask))
             {
@@ -3536,7 +3540,7 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
         if (body->isVisible() &&
             (body == highlightObject.body() ||
              orbitVis == Body::AlwaysVisible ||
-             (orbitVis == Body::UseClassVisibility && (body->getOrbitClassification() & orbitMask) != 0)))
+             (orbitVis == Body::UseClassVisibility && util::is_set(body->getOrbitClassification(), orbitMask))))
         {
             Vector3d orbitOrigin = Vector3d::Zero();
             Selection centerObject = phase->orbitFrame()->getCenter();
@@ -3606,23 +3610,23 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
 }
 
 
-static Color getBodyLabelColor(int classification)
+static Color getBodyLabelColor(BodyClassification classification)
 {
     switch (classification)
     {
-    case Body::Planet:
+    case BodyClassification::Planet:
         return Renderer::PlanetLabelColor;
-    case Body::DwarfPlanet:
+    case BodyClassification::DwarfPlanet:
         return Renderer::DwarfPlanetLabelColor;
-    case Body::Moon:
+    case BodyClassification::Moon:
         return Renderer::MoonLabelColor;
-    case Body::MinorMoon:
+    case BodyClassification::MinorMoon:
         return Renderer::MinorMoonLabelColor;
-    case Body::Asteroid:
+    case BodyClassification::Asteroid:
         return Renderer::AsteroidLabelColor;
-    case Body::Comet:
+    case BodyClassification::Comet:
         return Renderer::CometLabelColor;
-    case Body::Spacecraft:
+    case BodyClassification::Spacecraft:
         return Renderer::SpacecraftLabelColor;
     default:
         return Color::Black;
@@ -3632,7 +3636,7 @@ static Color getBodyLabelColor(int classification)
 void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
                                double now)
 {
-    int labelClassMask = translateLabelModeToClassMask(labelMode);
+    BodyClassification labelClassMask = translateLabelModeToClassMask(labelMode);
     const Body* lastPrimary = nullptr;
     math::Sphered primarySphere;
 
@@ -3641,7 +3645,7 @@ void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
         if (ri.renderableType != RenderListEntry::RenderableBody)
             continue;
 
-        if ((ri.body->getOrbitClassification() & labelClassMask) == 0)
+        if (!util::is_set(ri.body->getOrbitClassification(), labelClassMask))
             continue;
 
         if (viewFrustum.testSphere(ri.position, ri.radius) == math::Frustum::Outside)
@@ -3657,7 +3661,7 @@ void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
 
         const TimelinePhase* phase = body->getTimeline()->findPhase(now).get();
         const Body* primary = phase->orbitFrame()->getCenter().body();
-        if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
+        if (primary != nullptr && util::is_set(primary->getClassification(), BodyClassification::Invisible))
         {
             const Body* parent = phase->orbitFrame()->getCenter().body();
             if (parent != nullptr)
@@ -3751,7 +3755,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
     // If the star isn't fixed, add its orbit to the render list
     if ((renderFlags & ShowOrbits) == 0)
         return;
-    if ((orbitMask & Body::Stellar) == 0 && highlightObject.star() != &star)
+    if (!util::is_set(orbitMask, BodyClassification::Stellar) && highlightObject.star() != &star)
         return;
     if (star.getOrbit() == nullptr)
         return;
@@ -4420,22 +4424,22 @@ void Renderer::updateBodyVisibilityMask()
     // Bodies with type `Invisible' (e.g. ReferencePoints) are not drawn,
     // but if their property `Visible' is set they have visible labels,
     // so we make `Body::Invisible' class visible.
-    int flags = Body::Invisible;
+    BodyClassification flags = BodyClassification::Invisible;
 
     if ((renderFlags & Renderer::ShowPlanets) != 0)
-        flags |= Body::Planet;
+        flags |= BodyClassification::Planet;
     if ((renderFlags & Renderer::ShowDwarfPlanets) != 0)
-        flags |= Body::DwarfPlanet;
+        flags |= BodyClassification::DwarfPlanet;
     if ((renderFlags & Renderer::ShowMoons) != 0)
-        flags |= Body::Moon;
+        flags |= BodyClassification::Moon;
     if ((renderFlags & Renderer::ShowMinorMoons) != 0)
-        flags |= Body::MinorMoon;
+        flags |= BodyClassification::MinorMoon;
     if ((renderFlags & Renderer::ShowAsteroids) != 0)
-        flags |= Body::Asteroid;
+        flags |= BodyClassification::Asteroid;
     if ((renderFlags & Renderer::ShowComets) != 0)
-        flags |= Body::Comet;
+        flags |= BodyClassification::Comet;
     if ((renderFlags & Renderer::ShowSpacecrafts) != 0)
-        flags |= Body::Spacecraft;
+        flags |= BodyClassification::Spacecraft;
 
     bodyVisibilityMask = flags;
 }

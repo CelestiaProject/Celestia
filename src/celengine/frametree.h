@@ -15,11 +15,11 @@
 #include <memory>
 #include <vector>
 #include <cstddef>
+#include "body.h"
 #include "frame.h"
 #include "timelinephase.h"
 
 class Star;
-class Body;
 
 class FrameTree
 {
@@ -83,7 +83,7 @@ public:
     /*! Return a bitmask with the classifications of all children
      *  in this tree.
      */
-    int childClassMask() const
+    BodyClassification childClassMask() const
     {
         return m_childClassMask;
     }
@@ -97,7 +97,7 @@ private:
     double m_maxChildRadius{ 0.0 };
     bool m_containsSecondaryIlluminators{ false };
     bool m_changed{ false };
-    int m_childClassMask{ 0 };
+    BodyClassification m_childClassMask{ BodyClassification::EmptyMask };
 
     ReferenceFrame::SharedConstPtr defaultFrame;
 };

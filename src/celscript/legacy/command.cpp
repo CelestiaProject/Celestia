@@ -480,7 +480,7 @@ void CommandLabels::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set orbit flags command
 
-CommandOrbitFlags::CommandOrbitFlags(int _setFlags, int _clearFlags) :
+CommandOrbitFlags::CommandOrbitFlags(BodyClassification _setFlags, BodyClassification _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }

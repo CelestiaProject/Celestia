@@ -116,28 +116,28 @@ CreatePlanetarySystemMenu(std::string_view parentName, const PlanetarySystem* ps
         {
             switch(body->getClassification())
             {
-            case Body::Asteroid:
+            case BodyClassification::Asteroid:
                 asteroids.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
-            case Body::Comet:
+            case BodyClassification::Comet:
                 comets.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
-            case Body::Invisible:
+            case BodyClassification::Invisible:
                 invisibles.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
-            case Body::Moon:
+            case BodyClassification::Moon:
                 moons.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
-            case Body::MinorMoon:
+            case BodyClassification::MinorMoon:
                 minorMoons.push_back(std::make_pair(i, UTF8ToTString(body->getName())));
                 break;
-            case Body::Planet:
+            case BodyClassification::Planet:
                 planets.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
-            case Body::DwarfPlanet:
+            case BodyClassification::DwarfPlanet:
                 dwarfPlanets.push_back(std::make_pair(i, UTF8ToTString(body->getName())));
                 break;
-            case Body::Spacecraft:
+            case BodyClassification::Spacecraft:
                 spacecraft.push_back(std::make_pair(i, UTF8ToTString(body->getName(true))));
                 break;
             }

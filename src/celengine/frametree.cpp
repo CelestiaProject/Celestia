@@ -16,7 +16,6 @@
 #include "celengine/timeline.h"
 #include "celengine/timelinephase.h"
 #include "celengine/frame.h"
-#include <celengine/body.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
 #include <celengine/deepskyobj.h>
@@ -123,7 +122,7 @@ FrameTree::recomputeBoundingSphere()
         m_boundingSphereRadius = 0.0;
         m_maxChildRadius = 0.0;
         m_containsSecondaryIlluminators = false;
-        m_childClassMask = 0;
+        m_childClassMask = BodyClassification::EmptyMask;
 
         for (const auto &phase : children)
         {

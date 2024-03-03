@@ -28,6 +28,8 @@
 #include <celengine/observer.h>
 #include <celutil/color.h>
 
+enum class BodyClassification : std::uint32_t;
+
 namespace celestia::scripts
 {
 
@@ -475,14 +477,14 @@ class CommandLabels : public InstantaneousCommand
 class CommandOrbitFlags : public InstantaneousCommand
 {
  public:
-    CommandOrbitFlags(int _setFlags, int _clearFlags);
+    CommandOrbitFlags(BodyClassification _setFlags, BodyClassification _clearFlags);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    int setFlags;
-    int clearFlags;
+    BodyClassification setFlags;
+    BodyClassification clearFlags;
 };
 
 

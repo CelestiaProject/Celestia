@@ -32,6 +32,7 @@ using namespace std;
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 Body::Body(PlanetarySystem* _system, const std::string& _name) :
     system(_system),
@@ -65,7 +66,7 @@ void Body::setDefaultProperties()
     surface = Surface(Color::White);
     atmosphere.reset();
     rings.reset();
-    classification = Unknown;
+    classification = BodyClassification::Unknown;
     visible = true;
     clickable = true;
     visibleAsPoint = true;
@@ -872,12 +873,14 @@ float Body::getApparentMagnitude(float sunLuminosity,
 }
 
 
-int Body::getClassification() const
+BodyClassification
+Body::getClassification() const
 {
     return classification;
 }
 
-void Body::setClassification(int _classification)
+void
+Body::setClassification(BodyClassification _classification)
 {
     classification = _classification;
     recomputeCullingRadius();
@@ -894,25 +897,26 @@ void Body::setClassification(int _classification)
  *  though its orbit is defined relative to the Pluto-Charon barycenter
  *  and is this just a few hundred kilometers in size.
  */
-int Body::getOrbitClassification() const
+BodyClassification
+Body::getOrbitClassification() const
 {
-    if (classification != Invisible || !frameTree)
+    if (classification != BodyClassification::Invisible || !frameTree)
         return classification;
 
-    int orbitClass = frameTree->childClassMask();
-    if ((orbitClass & Planet) != 0)
-        return Planet;
-    if ((orbitClass & DwarfPlanet) != 0)
-        return DwarfPlanet;
-    if ((orbitClass & Asteroid) != 0)
-        return Asteroid;
-    if ((orbitClass & Moon) != 0)
-        return Moon;
-    if ((orbitClass & MinorMoon) != 0)
-        return MinorMoon;
-    if ((orbitClass & Spacecraft) != 0)
-        return Spacecraft;
-    return Invisible;
+    BodyClassification orbitClass = frameTree->childClassMask();
+    if (util::is_set(orbitClass, BodyClassification::Planet))
+        return BodyClassification::Planet;
+    if (util::is_set(orbitClass, BodyClassification::DwarfPlanet))
+        return BodyClassification::DwarfPlanet;
+    if (util::is_set(orbitClass, BodyClassification::Asteroid))
+        return BodyClassification::Asteroid;
+    if (util::is_set(orbitClass, BodyClassification::Moon))
+        return BodyClassification::Moon;
+    if (util::is_set(orbitClass, BodyClassification::MinorMoon))
+        return BodyClassification::MinorMoon;
+    if (util::is_set(orbitClass, BodyClassification::Spacecraft))
+        return BodyClassification::Spacecraft;
+    return BodyClassification::Invisible;
 }
 
 
@@ -1177,7 +1181,7 @@ void Body::recomputeCullingRadius()
         }
     }
 
-    if (classification == Body::Comet)
+    if (classification == BodyClassification::Comet)
         r = max(r, astro::AUtoKilometers(1.0f));
 
     if (r != cullingRadius)

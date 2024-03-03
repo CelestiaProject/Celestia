@@ -14,6 +14,7 @@
 #include <array>
 #include <cstring>
 #include <fstream>
+#include <tuple>
 #include <gtk/gtk.h>
 #include <fmt/format.h>
 
@@ -170,9 +171,9 @@ setRenderFlag(AppData* a, std::uint64_t flag, gboolean state)
 
 /* Calculates and sets the orbit-mask int */
 void
-setOrbitMask(AppData* a, int mask, gboolean state)
+setOrbitMask(AppData* a, BodyClassification mask, gboolean state)
 {
-    int om = (a->renderer->getOrbitMask() & ~mask) | (state ? mask : 0);
+    BodyClassification om = (a->renderer->getOrbitMask() & ~mask) | (state ? mask : BodyClassification::EmptyMask);
     a->renderer->setOrbitMask(om);
 }
 
@@ -1068,31 +1069,31 @@ actionRenderStars(GtkToggleAction* action, AppData* app)
 void
 actionOrbitAsteroids(GtkToggleAction* action, AppData* app)
 {
-    setOrbitMask(app, Body::Asteroid, gtk_toggle_action_get_active(action));
+    setOrbitMask(app, BodyClassification::Asteroid, gtk_toggle_action_get_active(action));
 }
 
 void
 actionOrbitComets(GtkToggleAction* action, AppData* app)
 {
-    setOrbitMask(app, Body::Comet, gtk_toggle_action_get_active(action));
+    setOrbitMask(app, BodyClassification::Comet, gtk_toggle_action_get_active(action));
 }
 
 void
 actionOrbitMoons(GtkToggleAction* action, AppData* app)
 {
-    setOrbitMask(app, Body::Moon, gtk_toggle_action_get_active(action));
+    setOrbitMask(app, BodyClassification::Moon, gtk_toggle_action_get_active(action));
 }
 
 void
 actionOrbitPlanets(GtkToggleAction* action, AppData* app)
 {
-    setOrbitMask(app, Body::Planet, gtk_toggle_action_get_active(action));
+    setOrbitMask(app, BodyClassification::Planet, gtk_toggle_action_get_active(action));
 }
 
 void
 actionOrbitSpacecraft(GtkToggleAction* action, AppData* app)
 {
-    setOrbitMask(app, Body::Spacecraft, gtk_toggle_action_get_active(action));
+    setOrbitMask(app, BodyClassification::Spacecraft, gtk_toggle_action_get_active(action));
 }
 
 void
@@ -1288,29 +1289,20 @@ void
 resyncOrbitActions(AppData* app)
 {
     /* Simply for readability */
-    int om = app->renderer->getOrbitMask();
-
-    for (int i = Body::Planet; i <= Body::Spacecraft; i *= 2)
+    BodyClassification om = app->renderer->getOrbitMask();
+    constexpr std::array orbitActions
     {
-        const char* actionName;
-        switch (i)
-        {
-            case Body::Planet: actionName = "OrbitPlanets"; break;
-            case Body::Moon: actionName = "OrbitMoons"; break;
-            case Body::Asteroid: actionName = "OrbitAsteroids"; break;
-            case Body::Comet: actionName = "OrbitComets"; break;
-            case Body::Spacecraft: actionName = "OrbitSpacecraft"; break;
-            default: actionName = nullptr; break;
-        }
+        std::make_tuple(BodyClassification::Planet, "OrbitPlanets"),
+        std::make_tuple(BodyClassification::Moon, "OrbitMoons"),
+        std::make_tuple(BodyClassification::Asteroid, "OrbitAsteroids"),
+        std::make_tuple(BodyClassification::Comet, "OrbitComets"),
+        std::make_tuple(BodyClassification::Spacecraft, "OrbitSpacecraft"),
+    };
 
-        if (actionName != nullptr)
-        {
-            /* Get the action */
-            GtkAction* action = gtk_action_group_get_action(app->agOrbit, actionName);
-
-            /* The current i anded with the orbitMask gives state of flag */
-            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & om));
-        }
+    for (auto [classification, actionName] : orbitActions)
+    {
+        GtkAction* action = gtk_action_group_get_action(app->agOrbit, actionName);
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), util::is_set(om, classification));
     }
 }
 

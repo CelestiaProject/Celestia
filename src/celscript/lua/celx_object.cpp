@@ -33,31 +33,31 @@ using namespace std;
 using celestia::util::GetLogger;
 
 
-static const char* bodyTypeName(int cl)
+static const char* bodyTypeName(BodyClassification cl)
 {
     switch (cl)
     {
-    case Body::Planet:
+    case BodyClassification::Planet:
         return "planet";
-    case Body::DwarfPlanet:
+    case BodyClassification::DwarfPlanet:
         return "dwarfplanet";
-    case Body::Moon:
+    case BodyClassification::Moon:
         return "moon";
-    case Body::MinorMoon:
+    case BodyClassification::MinorMoon:
         return  "minormoon";
-    case Body::Asteroid:
+    case BodyClassification::Asteroid:
         return "asteroid";
-    case Body::Comet:
+    case BodyClassification::Comet:
         return "comet";
-    case Body::Spacecraft:
+    case BodyClassification::Spacecraft:
         return "spacecraft";
-    case Body::Invisible:
+    case BodyClassification::Invisible:
         return "invisible";
-    case Body::SurfaceFeature:
+    case BodyClassification::SurfaceFeature:
         return "surfacefeature";
-    case Body::Component:
+    case BodyClassification::Component:
         return "component";
-    case Body::Diffuse:
+    case BodyClassification::Diffuse:
         return "diffuse";
     }
     return "unknown";
