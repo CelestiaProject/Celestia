@@ -66,6 +66,7 @@
 #include <celrender/globularrenderer.h>
 #include <celrender/nebularenderer.h>
 #include <celrender/openclusterrenderer.h>
+#include <celrender/ringrenderer.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/arrayvector.h>
@@ -259,8 +260,8 @@ Renderer::Renderer() :
     m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
-    m_openClusterRenderer(std::make_unique<OpenClusterRenderer>(*this))
-
+    m_openClusterRenderer(std::make_unique<OpenClusterRenderer>(*this)),
+    m_ringRenderer(std::make_unique<RingRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
@@ -2432,12 +2433,11 @@ void Renderer::renderObject(const Vector3f& pos,
         segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
         if (distance <= obj.rings->innerRadius)
         {
-            renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y(),
-                             textureResolution,
-                             (renderFlags & ShowRingShadows) != 0 && lit,
-                             segmentSizeInPixels,
-                             ringsMVP, true, this);
+            m_ringRenderer->renderRings(*obj.rings, ri, ls,
+                                        radius, 1.0f - obj.semiAxes.y(),
+                                        (renderFlags & ShowRingShadows) != 0 && lit,
+                                        segmentSizeInPixels,
+                                        ringsMVP, true);
         }
     }
 
@@ -2553,12 +2553,11 @@ void Renderer::renderObject(const Vector3f& pos,
 
         if (distance > obj.rings->innerRadius)
         {
-            renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y(),
-                             textureResolution,
-                             (renderFlags & ShowRingShadows) != 0 && lit,
-                             segmentSizeInPixels,
-                             ringsMVP, false, this);
+            m_ringRenderer->renderRings(*obj.rings, ri, ls,
+                                        radius, 1.0f - obj.semiAxes.y(),
+                                        (renderFlags & ShowRingShadows) != 0 && lit,
+                                        segmentSizeInPixels,
+                                        ringsMVP, false);
         }
     }
 }

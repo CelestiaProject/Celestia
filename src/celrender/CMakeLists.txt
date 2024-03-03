@@ -21,6 +21,8 @@ set(CELRENDER_SOURCES
   nebularenderer.h
   openclusterrenderer.cpp
   openclusterrenderer.h
+  ringrenderer.cpp
+  ringrenderer.h
   gl/binder.cpp
   gl/binder.h
   gl/buffer.cpp

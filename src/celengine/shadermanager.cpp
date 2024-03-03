@@ -2544,8 +2544,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     return status == GLShaderStatus::OK ? fs : nullptr;
 }
 
-
-#if 0
 GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
@@ -2553,150 +2551,9 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
 
-    source += DeclareLights(props);
-    source += DeclareUniform("eyePosition", Shader_Vector3);
-
-    source += DeclareOutput("diffFactors", Shader_Vector4);
-
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += DeclareOutput("diffTexCoord", Shader_Vector2);
-
-    if (props.usesShadows())
-    {
-        source += DeclareOutput("position", Shader_Vector3);
-        source += DeclareOutput("shadowDepths", Shader_Vector4);
-    }
-
-    source += "\nvoid main(void)\n{\n";
-
-    // Get the normalized direction from the eye to the vertex
-    source += "vec3 eyeDir = normalize(eyePosition - in_Position.xyz);\n";
-
-    for (unsigned int i = 0; i < props.nLights; i++)
-    {
-        source += SeparateDiffuse(i) + " = (dot(" +
-            LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
-    }
-
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
-
-    if (props.hasEclipseShadows() != 0)
-    {
-        source += "position = in_Position.xyz;\n";
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += ShadowDepth(i) + " = dot(in_Position.xyz, " +
-                       LightProperty(i, "direction") + ");\n";
-        }
-    }
-
-    source += VertexPosition;
-    source += "}\n";
-
-    DumpVSSource(source);
-
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
-}
-
-
-GLFragmentShader*
-ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
-{
-    std::string source(VersionHeader);
-    source += CommonHeader;
-
-    source += DeclareUniform("ambientColor", Shader_Vector3);
-    source += "vec4 diff = vec4(ambientColor, 1.0);\n";
-    for (unsigned int i = 0; i < props.nLights; i++)
-        source += DeclareUniform(FragLightProperty(i, "color"), Shader_Vector3);
-
-    source += DeclareInput("diffFactors", Shader_Vector4);
-
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-    {
-        source += DeclareInput("diffTexCoord", Shader_Vector2);
-        source += DeclareUniform("diffTex", Shader_Sampler2D);
-    }
-
-    if (props.hasEclipseShadows())
-    {
-        source += DeclareInput("position", Shader_Vector3);
-        source += DeclareInput("shadowDepths", Shader_Vector4);
-
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
-            {
-                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
-            }
-        }
-    }
-
-    source += "\nvoid main(void)\n{\n";
-    source += "vec4 color;\n";
-
-    if (props.hasEclipseShadows())
-    {
-        // Temporaries required for shadows
-        source += "float shadow;\n";
-        source += "vec2 shadowCenter;\n";
-        source += "float shadowR;\n";
-    }
-
-    // Sum the contributions from each light source
-    for (unsigned i = 0; i < props.nLights; i++)
-    {
-        if (props.getEclipseShadowCountForLight(i) > 0)
-        {
-            source += "shadow = 1.0;\n";
-            source += Shadow(i, 0);
-            source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(i) + "));\n";
-            source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
-                FragLightProperty(i, "color") + ";\n";
-        }
-        else
-        {
-            source += "diff.rgb += " + SeparateDiffuse(i) + " * " +
-                FragLightProperty(i, "color") + ";\n";
-        }
-    }
-
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "color = texture2D(diffTex, diffTexCoord.st);\n";
-    else
-        source += "color = vec4(1.0);\n";
-
-    source += "gl_FragColor = color * diff;\n";
-
-    source += "}\n";
-
-    DumpFSSource(source);
-
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
-}
-#endif
-
-
-GLVertexShader*
-ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
-{
-    std::string source(VersionHeader);
-    source += CommonHeader;
-    source += VertexHeader;
-    source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
+    source += DeclareUniform("ringWidth", Shader_Float);
+    source += DeclareUniform("ringRadius", Shader_Float);
 
     source += DeclareLights(props);
 
@@ -2709,27 +2566,24 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         source += DeclareOutput("diffTexCoord", Shader_Vector2);
 
-    if (util::is_set(props.texUsage, TexUsage::LineAsTriangles))
-        source += LineDeclaration();
-
     source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     source += "\nvoid main(void)\n{\n";
 
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "diffTexCoord = " + TexCoord2D(0, props.hasTextureCoordTransform()) + ";\n";
+        source += "diffTexCoord = " + TexCoord2D(0, false) + ";\n";
 
-    source += "position = in_Position.xyz;\n";
+    source += "position = in_Position.xyz * (ringRadius + ringWidth * in_TexCoord0.s);\n";
     if (props.hasEclipseShadows())
     {
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += ShadowDepth(i) + " = dot(in_Position.xyz, " +
+            source += ShadowDepth(i) + " = dot(position, " +
                        LightProperty(i, "direction") + ");\n";
         }
     }
 
-    source += VertexPosition(props);
+    source += "set_vp(vec4(position.xyz, 1.0));\n";
     source += "}\n";
 
     DumpVSSource(source);
@@ -3496,6 +3350,11 @@ CelestiaGLProgram::initParameters()
         ringRadius           = floatParam("ringRadius");
         ringPlane            = vec4Param("ringPlane");
         ringCenter           = vec3Param("ringCenter");
+    }
+    else if (props.lightModel == LightingModel::RingIllumModel)
+    {
+        ringWidth            = floatParam("ringWidth");
+        ringRadius           = floatParam("ringRadius");
     }
 
     textureOffset = floatParam("textureOffset");
