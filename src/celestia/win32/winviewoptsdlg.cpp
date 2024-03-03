@@ -17,6 +17,7 @@
 #include <commctrl.h>
 
 #include <celengine/body.h>
+#include <celutil/flag.h>
 #include "res/resource.h"
 
 namespace celestia::win32
@@ -59,7 +60,7 @@ ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         Renderer* renderer = Dlg->appCore->getRenderer();
         std::uint64_t renderFlags = renderer->getRenderFlags();
         std::uint32_t labelMode = renderer->getLabelMode();
-        std::uint32_t orbitMask = renderer->getOrbitMask();
+        BodyClassification orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
@@ -118,28 +119,28 @@ ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowFadingOrbits);
             break;
         case IDC_PLANETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Planet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Planet);
             break;
         case IDC_DWARFPLANETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::DwarfPlanet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::DwarfPlanet);
             break;
         case IDC_STARORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Stellar);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Stellar);
             break;
         case IDC_MOONORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Moon);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Moon);
             break;
         case IDC_MINORMOONORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::MinorMoon);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::MinorMoon);
             break;
         case IDC_ASTEROIDORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Asteroid);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Asteroid);
             break;
         case IDC_COMETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Comet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Comet);
             break;
         case IDC_SPACECRAFTORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Spacecraft);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Spacecraft);
             break;
         case IDC_SHOWPLANETS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
@@ -304,6 +305,14 @@ dlgCheck64(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
                        ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
 }
 
+template<typename T>
+void
+dlgCheckEnum(HWND hDlg, WORD item, T flags, T f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       util::is_set(flags, f) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
 } // end unnamed namespace
 
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
@@ -325,7 +334,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
-    int orbitMask = appCore->getRenderer()->getOrbitMask();
+    BodyClassification orbitMask = appCore->getRenderer()->getOrbitMask();
 
     //Set checkboxes and radiobuttons
     dlgCheck64(hDlg, IDC_SHOWATMOSPHERES, renderFlags, Renderer::ShowAtmospheres);
@@ -346,14 +355,14 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     dlgCheck64(hDlg, IDC_SHOWORBITS, renderFlags, Renderer::ShowOrbits);
     dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
     dlgCheck64(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, Renderer::ShowPartialTrajectories);
-    dlgCheck(hDlg, IDC_PLANETORBITS, orbitMask, Body::Planet);
-    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask, Body::DwarfPlanet);
-    dlgCheck(hDlg, IDC_MOONORBITS, orbitMask, Body::Moon);
-    dlgCheck(hDlg, IDC_MINORMOONORBITS, orbitMask, Body::MinorMoon);
-    dlgCheck(hDlg, IDC_ASTEROIDORBITS, orbitMask, Body::Asteroid);
-    dlgCheck(hDlg, IDC_COMETORBITS, orbitMask, Body::Comet);
-    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask, Body::Spacecraft);
-    dlgCheck(hDlg, IDC_STARORBITS, orbitMask, Body::Stellar);
+    dlgCheckEnum(hDlg, IDC_PLANETORBITS, orbitMask, BodyClassification::Planet);
+    dlgCheckEnum(hDlg, IDC_DWARFPLANETORBITS,orbitMask, BodyClassification::DwarfPlanet);
+    dlgCheckEnum(hDlg, IDC_MOONORBITS, orbitMask, BodyClassification::Moon);
+    dlgCheckEnum(hDlg, IDC_MINORMOONORBITS, orbitMask, BodyClassification::MinorMoon);
+    dlgCheckEnum(hDlg, IDC_ASTEROIDORBITS, orbitMask, BodyClassification::Asteroid);
+    dlgCheckEnum(hDlg, IDC_COMETORBITS, orbitMask, BodyClassification::Comet);
+    dlgCheckEnum(hDlg, IDC_SPACECRAFTORBITS, orbitMask, BodyClassification::Spacecraft);
+    dlgCheckEnum(hDlg, IDC_STARORBITS, orbitMask, BodyClassification::Stellar);
     dlgCheck64(hDlg, IDC_SHOWPLANETS, renderFlags, Renderer::ShowPlanets);
     dlgCheck64(hDlg, IDC_SHOWDWARFPLANETS, renderFlags, Renderer::ShowDwarfPlanets);
     dlgCheck64(hDlg, IDC_SHOWMOONS, renderFlags, Renderer::ShowMoons);

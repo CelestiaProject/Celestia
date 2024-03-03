@@ -560,7 +560,7 @@ static int celestia_setorbitflags(lua_State* l)
         return 0;
     }
 
-    int orbitFlags = appCore->getRenderer()->getOrbitMask();
+    BodyClassification orbitFlags = appCore->getRenderer()->getOrbitMask();
     lua_pushnil(l);
     const auto &BodyTypeMap = appCore->scriptMaps().BodyTypeMap;
     while (lua_next(l, -2) != 0)
@@ -593,7 +593,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         else
         {
-            int flag = it->second;
+            BodyClassification flag = it->second;
             if (value)
                 orbitFlags |= flag;
             else
@@ -610,11 +610,11 @@ static int celestia_getorbitflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getorbitflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const int orbitFlags = appCore->getRenderer()->getOrbitMask();
+    const BodyClassification orbitFlags = appCore->getRenderer()->getOrbitMask();
     for (const auto& btm : appCore->scriptMaps().BodyTypeMap)
     {
         lua_pushlstring(l, btm.first.data(), btm.first.size());
-        lua_pushboolean(l, (btm.second & orbitFlags) != 0);
+        lua_pushboolean(l, util::is_set(orbitFlags, btm.second));
         lua_settable(l,-3);
     }
     return 1;

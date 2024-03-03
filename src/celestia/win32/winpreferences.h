@@ -40,7 +40,7 @@ struct AppPreferences
     std::uint64_t renderFlags{ Renderer::DefaultRenderFlags };
     int labelMode{ 0 };
     std::uint64_t locationFilter{ 0 };
-    int orbitMask{ Body::Planet | Body::Moon };
+    BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon };
     float visualMagnitude{ 8.0f };
     float ambientLight{ 0.1f }; // Low
     float galaxyLightGain{ 0.0f };

@@ -533,7 +533,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     overlay.printf(_("Distance: %s\n"),
                    DistanceKmToStr(formatter, distance, 5, hudSettings.measurementSystem));
 
-    if (body.getClassification() == Body::Invisible)
+    if (body.getClassification() == BodyClassification::Invisible)
     {
         return;
     }
