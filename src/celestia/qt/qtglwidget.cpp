@@ -47,7 +47,7 @@ namespace celestia::qt
 namespace
 {
 
-constexpr int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
+constexpr auto DEFAULT_ORBIT_MASK = static_cast<int>(BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar);
 constexpr int DEFAULT_LABEL_MODE = Renderer::LocationLabels | Renderer::I18nConstellationLabels;
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
@@ -138,7 +138,7 @@ CelestiaGlWidget::initializeGL()
     // Read saved settings
     QSettings settings;
     appRenderer->setRenderFlags(settings.value("RenderFlags", static_cast<quint64>(Renderer::DefaultRenderFlags)).toULongLong());
-    appRenderer->setOrbitMask(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt());
+    appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt()));
     appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));

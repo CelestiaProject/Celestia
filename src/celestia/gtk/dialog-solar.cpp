@@ -75,50 +75,44 @@ treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 void
 addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeStore* solarTreeStore, GtkTreeIter* parent)
 {
-    const char *name;
-    const char *type;
-
-    Body* world;
-    const PlanetarySystem* satellites;
-    GtkTreeIter child;
-
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
-        world = sys->getBody(i);
-        name = g_strdup(world->getName().c_str());
+        const Body* world = sys->getBody(i);
+        const char* name = g_strdup(world->getName().c_str());
 
+        const char* type = "-";
         switch(world->getClassification())
         {
-            case Body::Planet:
+            case BodyClassification::Planet:
                 type = "Planet";
                 break;
-            case Body::DwarfPlanet:
+            case BodyClassification::DwarfPlanet:
                 type = "Dwarf Planet";
                 break;
-            case Body::Moon:
+            case BodyClassification::Moon:
                 type = "Moon";
                 break;
-            case Body::MinorMoon:
+            case BodyClassification::MinorMoon:
                 type = "Minor Moon";
                 break;
-            case Body::Asteroid:
+            case BodyClassification::Asteroid:
                 type = "Asteroid";
                 break;
-            case Body::Comet:
+            case BodyClassification::Comet:
                 type = "Comet";
                 break;
-            case Body::Spacecraft:
+            case BodyClassification::Spacecraft:
                 type = "Spacecraft";
                 break;
-            case Body::Unknown:
+            case BodyClassification::Unknown:
             default:
-                type = "-";
                 break;
         }
 
-        satellites = world->getSatellites();
+        const PlanetarySystem* satellites = world->getSatellites();
 
         /* Add child */
+        GtkTreeIter child;
         gtk_tree_store_append(solarTreeStore, &child, parent);
         gtk_tree_store_set(solarTreeStore, &child,
                            0, name,

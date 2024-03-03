@@ -29,26 +29,16 @@ namespace
 {
 
 /* HELPER: gets an or-group flag and handles error checking */
+template<typename T>
 void
-getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors)
+getFlag(GKeyFile* file, T* flags, T setting, const gchar* section, const gchar* key, int* errors)
 {
     GError* e = nullptr;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
-
-    if (e != nullptr)
-        *errors += 1;
-}
-
-void
-getFlag64(GKeyFile* file, std::uint64_t *flags, std::uint64_t setting, const gchar* section, const gchar* key, int* errors)
-{
-    GError* e = nullptr;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
+    if (g_key_file_get_boolean(file, section, key, &e))
+        *flags = static_cast<T>(*flags | setting);
 
     if (e != nullptr)
-        *errors += 1;
+        ++(*errors);
 }
 
 } // end unnamed namespace
@@ -116,38 +106,33 @@ applySettingsFilePre(AppData* app, GKeyFile* file)
 void
 applySettingsFileMain(AppData* app, GKeyFile* file)
 {
-    GError* e;
-    float ambientLight, visualMagnitude, galaxyLightGain;
-    int errors, verbosity, starStyle, textureResolution, distanceLimit, om, lm;
-    std::uint64_t rf;
-
     /* See comment in applySettingsFilePrefs() */
-    e = nullptr;
-    ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
+    GError* e = nullptr;
+    float ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
     if (e != nullptr) ambientLight = -1.0;
 
     e = nullptr;
-    visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
+    float visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
     if (e != nullptr) visualMagnitude = -1.0;
 
     e = nullptr;
-    galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
+    float galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
     if (e != nullptr) galaxyLightGain = -1.0;
 
     e = nullptr;
-    distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
+    int distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
     if (e != nullptr) distanceLimit = -1;
 
     e = nullptr;
-    verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
+    int verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
     if (e != nullptr) verbosity = -1;
 
     e = nullptr;
-    starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
+    int starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
     if (e != nullptr) starStyle = -1;
 
     e = nullptr;
-    textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
+    int textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
     if (e != nullptr) textureResolution = -1;
 
     e = nullptr;
@@ -165,39 +150,39 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
     setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", nullptr));
 
     /* Render Flags */
-    errors = 0;
-    rf = Renderer::ShowNothing;
-    getFlag64(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
-    getFlag64(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
-    getFlag64(file, &rf, Renderer::ShowDwarfPlanets, "RenderFlags", "dwarfPlanets", &errors);
-    getFlag64(file, &rf, Renderer::ShowMoons, "RenderFlags", "moons", &errors);
-    getFlag64(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
-    getFlag64(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
-    getFlag64(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
-    getFlag64(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
-    getFlag64(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
-    getFlag64(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
-    getFlag64(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
-    getFlag64(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
-    getFlag64(file, &rf, Renderer::ShowFadingOrbits, "RenderFlags", "fadingorbits", &errors);
-    getFlag64(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
-    getFlag64(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
-    getFlag64(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
-    getFlag64(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
-    getFlag64(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
-    getFlag64(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
-    getFlag64(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
-    getFlag64(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
-    getFlag64(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
-    getFlag64(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
-    getFlag64(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
-    getFlag64(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
-    getFlag64(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
-    getFlag64(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
-    getFlag64(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
-    getFlag64(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
-    getFlag64(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
-    getFlag64(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
+    int errors = 0;
+    Renderer::RenderFlags rf = Renderer::ShowNothing;
+    getFlag(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
+    getFlag(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
+    getFlag(file, &rf, Renderer::ShowDwarfPlanets, "RenderFlags", "dwarfPlanets", &errors);
+    getFlag(file, &rf, Renderer::ShowMoons, "RenderFlags", "moons", &errors);
+    getFlag(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
+    getFlag(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
+    getFlag(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
+    getFlag(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
+    getFlag(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
+    getFlag(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
+    getFlag(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
+    getFlag(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
+    getFlag(file, &rf, Renderer::ShowFadingOrbits, "RenderFlags", "fadingorbits", &errors);
+    getFlag(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
+    getFlag(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
+    getFlag(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
+    getFlag(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
+    getFlag(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
+    getFlag(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
+    getFlag(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
+    getFlag(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
+    getFlag(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
+    getFlag(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
+    getFlag(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
+    getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
+    getFlag(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
+    getFlag(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
+    getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
+    getFlag(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
+    getFlag(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
+    getFlag(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
 
     /* If any flag is missing, use defaults for all. */
     if (errors > 0)
@@ -207,14 +192,14 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
 
     /* Orbit Mask */
     errors = 0;
-    om = 0;
-    getFlag(file, &om, Body::Planet, "OrbitMask", "planet", &errors);
-    getFlag(file, &om, Body::Moon, "OrbitMask", "moon", &errors);
-    getFlag(file, &om, Body::Asteroid, "OrbitMask", "asteroid", &errors);
-    getFlag(file, &om, Body::Comet, "OrbitMask", "comet", &errors);
-    getFlag(file, &om, Body::Spacecraft, "OrbitMask", "spacecraft", &errors);
-    getFlag(file, &om, Body::Invisible, "OrbitMask", "invisible", &errors);
-    getFlag(file, &om, Body::Unknown, "OrbitMask", "unknown", &errors);
+    BodyClassification om = BodyClassification::EmptyMask;
+    getFlag(file, &om, BodyClassification::Planet, "OrbitMask", "planet", &errors);
+    getFlag(file, &om, BodyClassification::Moon, "OrbitMask", "moon", &errors);
+    getFlag(file, &om, BodyClassification::Asteroid, "OrbitMask", "asteroid", &errors);
+    getFlag(file, &om, BodyClassification::Comet, "OrbitMask", "comet", &errors);
+    getFlag(file, &om, BodyClassification::Spacecraft, "OrbitMask", "spacecraft", &errors);
+    getFlag(file, &om, BodyClassification::Invisible, "OrbitMask", "invisible", &errors);
+    getFlag(file, &om, BodyClassification::Unknown, "OrbitMask", "unknown", &errors);
 
     /* If any orbit is missing, use core defaults for all (do nothing). */
     if (errors == 0)
@@ -222,8 +207,7 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
 
     /* Label Mode */
     errors = 0;
-    lm = Renderer::NoLabels;
-
+    auto lm = Renderer::NoLabels;
     getFlag(file, &lm, Renderer::StarLabels, "LabelMode", "star", &errors);
     getFlag(file, &lm, Renderer::PlanetLabels, "LabelMode", "planet", &errors);
     getFlag(file, &lm, Renderer::DwarfPlanetLabels, "LabelMode", "dwarfplanet", &errors);
@@ -249,11 +233,7 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
 void
 saveSettingsFile(AppData* app)
 {
-    int om, lm;
-    std::uint64_t rf;
     GKeyFile* file = app->settingsFile;
-    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
-    std::FILE* outfile;
 
     g_key_file_set_integer(file, "Main", "ambientLight", (int)(1000 * app->renderer->getAmbientLightLevel()));
     g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", nullptr);
@@ -279,7 +259,7 @@ saveSettingsFile(AppData* app)
     g_key_file_set_integer(file, "Window", "y", getWinY(app));
     g_key_file_set_boolean(file, "Window", "fullScreen", app->fullScreen);
 
-    rf = app->renderer->getRenderFlags();
+    std::uint64_t rf = app->renderer->getRenderFlags();
     g_key_file_set_boolean(file, "RenderFlags", "stars", (rf & Renderer::ShowStars) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "planets", (rf & Renderer::ShowPlanets) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "dwarfPlanets", (rf & Renderer::ShowDwarfPlanets) != 0);
@@ -312,16 +292,16 @@ saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "gridEcliptic", (rf & Renderer::ShowEclipticGrid) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "gridHorizontal", (rf & Renderer::ShowHorizonGrid) != 0);
 
-    om = app->renderer->getOrbitMask();
-    g_key_file_set_boolean(file, "OrbitMask", "planet", om & Body::Planet);
-    g_key_file_set_boolean(file, "OrbitMask", "moon", om & Body::Moon);
-    g_key_file_set_boolean(file, "OrbitMask", "asteroid", om & Body::Asteroid);
-    g_key_file_set_boolean(file, "OrbitMask", "comet", om & Body::Comet);
-    g_key_file_set_boolean(file, "OrbitMask", "spacecraft", om & Body::Spacecraft);
-    g_key_file_set_boolean(file, "OrbitMask", "invisible", om & Body::Invisible);
-    g_key_file_set_boolean(file, "OrbitMask", "unknown", om & Body::Unknown);
+    BodyClassification om = app->renderer->getOrbitMask();
+    g_key_file_set_boolean(file, "OrbitMask", "planet", util::is_set(om, BodyClassification::Planet));
+    g_key_file_set_boolean(file, "OrbitMask", "moon", util::is_set(om, BodyClassification::Moon));
+    g_key_file_set_boolean(file, "OrbitMask", "asteroid", util::is_set(om, BodyClassification::Asteroid));
+    g_key_file_set_boolean(file, "OrbitMask", "comet", util::is_set(om, BodyClassification::Comet));
+    g_key_file_set_boolean(file, "OrbitMask", "spacecraft", util::is_set(om, BodyClassification::Spacecraft));
+    g_key_file_set_boolean(file, "OrbitMask", "invisible", util::is_set(om, BodyClassification::Invisible));
+    g_key_file_set_boolean(file, "OrbitMask", "unknown", util::is_set(om, BodyClassification::Unknown));
 
-    lm = app->renderer->getLabelMode();
+    int lm = app->renderer->getLabelMode();
     g_key_file_set_boolean(file, "LabelMode", "star", lm & Renderer::StarLabels);
     g_key_file_set_boolean(file, "LabelMode", "planet", lm & Renderer::PlanetLabels);
     g_key_file_set_boolean(file, "LabelMode", "dwarfplanet", lm & Renderer::DwarfPlanetLabels);
@@ -343,7 +323,8 @@ saveSettingsFile(AppData* app)
     g_key_file_set_comment(file, "LabelMode", nullptr, "All Label Mode values must be true or false", nullptr);
 
     /* Write the settings to a file */
-    outfile = std::fopen(fn, "w");
+    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
+    std::FILE* outfile = std::fopen(fn, "w");
 
     if (outfile == nullptr)
         g_print("Error writing '%s'.\n", fn);

@@ -1,60 +1,74 @@
 #include <fmt/printf.h>
-#include <celengine/body.h>
 #include <celengine/render.h>
 #include <celengine/selection.h>
+#include <celutil/flag.h>
 #include <celutil/gettext.h>
 #include "helper.h"
 
-using namespace std;
+namespace util = celestia::util;
 
-constexpr const int SpacecraftPrimaryBody = Body::Planet | Body::DwarfPlanet | Body::Moon |
-                                            Body::MinorMoon | Body::Asteroid | Body::Comet;
+constexpr auto SpacecraftPrimaryBody = BodyClassification::Planet |
+                                       BodyClassification::DwarfPlanet |
+                                       BodyClassification::Moon |
+                                       BodyClassification::MinorMoon |
+                                       BodyClassification::Asteroid |
+                                       BodyClassification::Comet;
 
-
-bool Helper::hasPrimaryStar(const Body* body)
+bool
+Helper::hasPrimaryStar(const Body* body)
 {
     return body->getSystem() != nullptr && body->getSystem()->getStar() != nullptr;
 }
 
-
-bool Helper::hasPrimaryBody(const Body* body, int classification)
+bool
+Helper::hasPrimaryBody(const Body* body, BodyClassification classification)
 {
-    return body->getSystem() != nullptr && body->getSystem()->getPrimaryBody() != nullptr &&
-           (body->getSystem()->getPrimaryBody()->getClassification() & classification);
-}
-
-
-bool Helper::hasBarycenter(const Body* body)
-{
-    PlanetarySystem *system = body->getSystem();
-    if (system == nullptr || system->getPrimaryBody() == nullptr ||
-        !(system->getPrimaryBody()->getClassification() & Body::Invisible))
+    if (const PlanetarySystem* system = body->getSystem(); system != nullptr)
     {
-        return false;
+        if (auto primaryBody = system->getPrimaryBody(); primaryBody != nullptr)
+            return util::is_set(primaryBody->getClassification(), classification);
     }
-    for (int bodyIdx = 0; bodyIdx < system->getSystemSize(); bodyIdx++)
-    {
-        if (system->getBody(bodyIdx)->getClassification() & (Body::Planet | Body::DwarfPlanet))
-            return true;
-    }
+
     return false;
 }
 
+bool
+Helper::hasBarycenter(const Body* body)
+{
+    const PlanetarySystem *system = body->getSystem();
+    if (system == nullptr)
+        return false;
 
-bool Helper::hasPrimary(const Body* body)
+    if (const Body* primaryBody = system->getPrimaryBody();
+        primaryBody == nullptr || !util::is_set(primaryBody->getClassification(), BodyClassification::Invisible))
+    {
+        return false;
+    }
+
+    for (int bodyIdx = 0; bodyIdx < system->getSystemSize(); bodyIdx++)
+    {
+        if (util::is_set(system->getBody(bodyIdx)->getClassification(), BodyClassification::Planet | BodyClassification::DwarfPlanet))
+            return true;
+    }
+
+    return false;
+}
+
+bool
+Helper::hasPrimary(const Body* body)
 {
     switch (body->getClassification())
     {
-    case Body::Planet:
-    case Body::DwarfPlanet:
-    case Body::Asteroid:
-    case Body::Comet:
+    case BodyClassification::Planet:
+    case BodyClassification::DwarfPlanet:
+    case BodyClassification::Asteroid:
+    case BodyClassification::Comet:
         return hasPrimaryStar(body);
-    case Body::Moon:
-    case Body::MinorMoon:
-        return hasPrimaryBody(body, Body::Planet | Body::DwarfPlanet) ||
+    case BodyClassification::Moon:
+    case BodyClassification::MinorMoon:
+        return hasPrimaryBody(body, BodyClassification::Planet | BodyClassification::DwarfPlanet) ||
             hasBarycenter(body);
-    case Body::Spacecraft:
+    case BodyClassification::Spacecraft:
         return hasPrimaryBody(body, SpacecraftPrimaryBody) || hasPrimaryStar(body);
     default:
         break;
@@ -62,8 +76,8 @@ bool Helper::hasPrimary(const Body* body)
     return false;
 }
 
-
-Selection Helper::getPrimary(const Body* body)
+Selection
+Helper::getPrimary(const Body* body)
 {
     PlanetarySystem* system = body->getSystem();
     if (system == nullptr)
@@ -72,17 +86,17 @@ Selection Helper::getPrimary(const Body* body)
     Body* primaryBody = system->getPrimaryBody();
     if (primaryBody != nullptr)
     {
-        int primaryClass = primaryBody->getClassification();
-        if (primaryClass & SpacecraftPrimaryBody)
+        BodyClassification primaryClass = primaryBody->getClassification();
+        if (util::is_set(primaryClass, SpacecraftPrimaryBody))
             return Selection(primaryBody);
 
-        if ((primaryClass & Body::Invisible) &&
-            (body->getClassification() & (Body::Moon | Body::MinorMoon)))
+        if (util::is_set(primaryClass, BodyClassification::Invisible) &&
+            util::is_set(body->getClassification(), BodyClassification::Moon | BodyClassification::MinorMoon))
         {
             for (int bodyIdx = 0; bodyIdx < system->getSystemSize(); bodyIdx++)
             {
                 Body *barycenterBody = system->getBody(bodyIdx);
-                if (barycenterBody->getClassification() & (Body::Planet | Body::DwarfPlanet))
+                if (util::is_set(barycenterBody->getClassification(), BodyClassification::Planet | BodyClassification::DwarfPlanet))
                     return Selection(barycenterBody);
             }
         }
@@ -95,12 +109,13 @@ Selection Helper::getPrimary(const Body* body)
     return Selection();
 }
 
-std::string Helper::getRenderInfo(const Renderer *r)
+std::string
+Helper::getRenderInfo(const Renderer *r)
 {
-    map<string, string> info;
+    std::map<std::string, std::string> info;
     r->getInfo(info);
 
-    string s;
+    std::string s;
     s.reserve(4096);
     if (info.count("API") > 0 && info.count("APIVersion") > 0)
     s += fmt::sprintf(_("%s Version: %s\n"), info["API"], info["APIVersion"]);
@@ -150,8 +165,8 @@ std::string Helper::getRenderInfo(const Renderer *r)
     {
         s += "Supported Extensions:\n";
         auto ext = info["Extensions"];
-        string::size_type old = 0, pos = ext.find(' ');
-        while (pos != string::npos)
+        std::string::size_type old = 0, pos = ext.find(' ');
+        while (pos != std::string::npos)
         {
             s += fmt::format("    {}\n", ext.substr(old, pos - old));
             old = pos + 1;

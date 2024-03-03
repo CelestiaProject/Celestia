@@ -59,92 +59,32 @@ namespace celestia::scripts
 namespace
 {
 
-std::uint64_t
-parseRenderFlags(const std::string &s, const celestia::scripts::FlagMap64& RenderFlagMap)
+template<typename T>
+T
+parseFlags(const std::string& s, const celestia::scripts::ScriptMap<T>& flagMap, std::string_view flagTypeName)
 {
     std::istringstream in(s);
-
     Tokenizer tokenizer(&in);
-    std::uint64_t flags = 0;
+    auto flags = static_cast<T>(0);
 
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
+    for (Tokenizer::TokenType ttype = tokenizer.nextToken(); ttype != Tokenizer::TokenEnd;)
     {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            if (RenderFlagMap.count(*tokenValue) == 0)
-                GetLogger()->warn("Unknown render flag: {}\n", *tokenValue);
-            else
-                flags |= RenderFlagMap.at(*tokenValue);
+        auto tokenValue = tokenizer.getNameValue();
+        if (!tokenValue.has_value())
+            break;
 
+        if (auto it = flagMap.find(*tokenValue); it == flagMap.end())
+            GetLogger()->warn("Unknown {} flag: {}\n", flagTypeName, *tokenValue);
+        else
+            flags = static_cast<T>(flags | it->second);
+
+        ttype = tokenizer.nextToken();
+        if (ttype == Tokenizer::TokenBar)
             ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
     }
 
     return flags;
 }
-
-
-int
-parseLabelFlags(const std::string &s, const celestia::scripts::FlagMap &LabelFlagMap)
-{
-    std::istringstream in(s);
-
-    Tokenizer tokenizer(&in);
-    int flags = 0;
-
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
-    {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            if (LabelFlagMap.count(*tokenValue) == 0)
-                GetLogger()->warn("Unknown label flag: {}\n", *tokenValue);
-            else
-                flags |= LabelFlagMap.at(*tokenValue);
-
-            ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
-    }
-
-    return flags;
-}
-
-
-int
-parseOrbitFlags(const std::string &s, const celestia::scripts::FlagMap &BodyTypeMap)
-{
-    std::istringstream in(s);
-
-    Tokenizer tokenizer(&in);
-    int flags = 0;
-
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
-    {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            std::string name(*tokenValue);
-            name[0] = std::toupper(static_cast<unsigned char>(name[0]));
-
-            if (BodyTypeMap.count(name) == 0)
-                GetLogger()->warn("Unknown orbit flag: {}\n", name);
-            else
-                flags |= BodyTypeMap.at(name);
-
-            ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
-    }
-
-    return flags;
-}
-
 
 int
 parseConstellations(CommandConstellations& cmd, const std::string &s, bool act)
@@ -614,9 +554,9 @@ ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scr
     std::uint64_t clearFlags = 0;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseRenderFlags(*s, scriptMaps.RenderFlagMap);
+        setFlags = parseFlags(*s, scriptMaps.RenderFlagMap, "render"sv);
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseRenderFlags(*s, scriptMaps.RenderFlagMap);
+        clearFlags = parseFlags(*s, scriptMaps.RenderFlagMap, "render"sv);
 
     return std::make_unique<CommandRenderFlags>(setFlags, clearFlags);
 }
@@ -628,9 +568,9 @@ ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMa
     int clearFlags = 0;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseLabelFlags(*s, scriptMaps.LabelFlagMap);
+        setFlags = parseFlags(*s, scriptMaps.LabelFlagMap, "label"sv);
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseLabelFlags(*s, scriptMaps.LabelFlagMap);
+        clearFlags = parseFlags(*s, scriptMaps.LabelFlagMap, "label"sv);
 
     return std::make_unique<CommandLabels>(setFlags, clearFlags);
 }
@@ -638,13 +578,13 @@ ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMa
 
 ParseResult parseOrbitFlagsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
 {
-    int setFlags = 0;
-    int clearFlags = 0;
+    BodyClassification setFlags = BodyClassification::EmptyMask;
+    BodyClassification clearFlags = BodyClassification::EmptyMask;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseOrbitFlags(*s, scriptMaps.OrbitVisibilityMap);
+        setFlags = parseFlags(*s, scriptMaps.BodyTypeMap, "orbit");
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseOrbitFlags(*s, scriptMaps.OrbitVisibilityMap);
+        clearFlags = parseFlags(*s, scriptMaps.BodyTypeMap, "orbit");
 
     return std::make_unique<CommandOrbitFlags>(setFlags, clearFlags);
 }

@@ -1095,7 +1095,7 @@ static double getPreferredDistance(const Selection& selection)
         // bounding sphere of all child objects. This is useful for system
         // barycenters--the normal goto command will place the observer at
         // a viewpoint in which the entire system can be seen.
-        if (selection.body()->getClassification() == Body::Invisible)
+        if (selection.body()->getClassification() == BodyClassification::Invisible)
         {
             double r = selection.body()->getRadius();
             if (selection.body()->getFrameTree() != nullptr)

@@ -64,28 +64,28 @@ objectTypeName(const Selection& sel)
     }
     if (sel.body() != nullptr)
     {
-        int classification = sel.body()->getClassification();
+        BodyClassification classification = sel.body()->getClassification();
         switch (classification)
         {
-        case Body::Planet:
+        case BodyClassification::Planet:
             return _("Planet");
-        case Body::DwarfPlanet:
+        case BodyClassification::DwarfPlanet:
             return _("Dwarf planet");
-        case Body::Moon:
+        case BodyClassification::Moon:
             return _("Moon");
-        case Body::MinorMoon:
+        case BodyClassification::MinorMoon:
             return _("Minor moon");
-        case Body::Asteroid:
+        case BodyClassification::Asteroid:
             return _("Asteroid");
-        case Body::Comet:
+        case BodyClassification::Comet:
             return _("Comet");
-        case Body::Spacecraft:
+        case BodyClassification::Spacecraft:
             return _("Spacecraft");
-        case Body::Invisible:
+        case BodyClassification::Invisible:
             return _("Reference point");
-        case Body::Component:
+        case BodyClassification::Component:
             return _("Component");
-        case Body::SurfaceFeature:
+        case BodyClassification::SurfaceFeature:
             return _("Surface feature");
         }
     }
@@ -94,25 +94,25 @@ objectTypeName(const Selection& sel)
 }
 
 QString
-classificationName(int classification)
+classificationName(BodyClassification classification)
 {
     switch (classification)
     {
-    case Body::Planet:
+    case BodyClassification::Planet:
         return _("Planets");
-    case Body::Moon:
+    case BodyClassification::Moon:
         return _("Moons");
-    case Body::Spacecraft:
+    case BodyClassification::Spacecraft:
         return C_("plural", "Spacecraft");
-    case Body::Asteroid:
+    case BodyClassification::Asteroid:
         return _("Asteroids & comets");
-    case Body::Invisible:
+    case BodyClassification::Invisible:
         return _("Reference points");
-    case Body::MinorMoon:
+    case BodyClassification::MinorMoon:
         return _("Minor moons");
-    case Body::Component:
+    case BodyClassification::Component:
         return _("Components");
-    case Body::SurfaceFeature:
+    case BodyClassification::SurfaceFeature:
         return _("Surface features");
     default:
         return _("Other objects");
@@ -150,7 +150,7 @@ public:
         TypeColumn = 1,
     };
 
-    void buildModel(Star* star, bool _groupByClass, int _bodyFilter);
+    void buildModel(Star* star, bool _groupByClass, BodyClassification _bodyFilter);
 
 private:
     class TreeItem
@@ -164,7 +164,7 @@ private:
         TreeItem** children{nullptr};
         int nChildren{0};
         int childIndex{0};
-        int classification{0};
+        BodyClassification classification{BodyClassification::EmptyMask};
     };
 
     TreeItem* createTreeItem(Selection sel, TreeItem* parent, int childIndex);
@@ -178,7 +178,7 @@ private:
                                     const PlanetarySystem* sys,
                                     const std::vector<Star*>* orbitingStars,
                                     Selection parent);
-    TreeItem* createGroupTreeItem(int classification,
+    TreeItem* createGroupTreeItem(BodyClassification classification,
                                   const std::vector<Body*>& objects,
                                   TreeItem* parent,
                                   int childIndex);
@@ -189,7 +189,7 @@ private:
     const Universe* universe{nullptr};
     TreeItem* rootItem{nullptr};
     bool groupByClass{false};
-    int bodyFilter{0};
+    BodyClassification bodyFilter{BodyClassification::EmptyMask};
 };
 
 SolarSystemBrowser::SolarSystemTreeModel::TreeItem::~TreeItem()
@@ -206,12 +206,12 @@ SolarSystemBrowser::SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _
     universe(_universe)
 {
     // Initialize an empty model
-    buildModel(nullptr, false, 0);
+    buildModel(nullptr, false, BodyClassification::EmptyMask);
 }
 
 // Call createTreeItem() to build the parallel tree structure
 void
-SolarSystemBrowser::SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, int _bodyFilter)
+SolarSystemBrowser::SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, BodyClassification _bodyFilter)
 {
     beginResetModel();
     groupByClass = _groupByClass;
@@ -273,7 +273,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
 
     if (groupByClass && sys != nullptr)
         addTreeItemChildrenGrouped(item, sys, orbitingStars, sel);
-    else if (bodyFilter != 0 && sys != nullptr)
+    else if (bodyFilter != BodyClassification::EmptyMask && sys != nullptr)
         addTreeItemChildrenFiltered(item, sys, orbitingStars);
     else
         addTreeItemChildren(item, sys, orbitingStars);
@@ -333,7 +333,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* body = sys->getBody(i);
-        if ((bodyFilter & body->getClassification()) != 0)
+        if (util::is_set(body->getClassification(), bodyFilter))
             bodies.push_back(body);
     }
 
@@ -394,10 +394,10 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
     {
         // Don't put asteroid moons in the asteroid group; make them
         // immediate children of the parent.
-        if (parent.body()->getClassification() == Body::Asteroid)
+        if (parent.body()->getClassification() == BodyClassification::Asteroid)
             groupAsteroids = false;
 
-        if (parent.body()->getClassification() == Body::Spacecraft)
+        if (parent.body()->getClassification() == BodyClassification::Spacecraft)
             groupSpacecraft = false;
     }
 
@@ -406,35 +406,35 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
         Body* body = sys->getBody(i);
         switch (body->getClassification())
         {
-        case Body::Planet:
-        case Body::DwarfPlanet:
-        case Body::Invisible:
-        case Body::Moon:
+        case BodyClassification::Planet:
+        case BodyClassification::DwarfPlanet:
+        case BodyClassification::Invisible:
+        case BodyClassification::Moon:
             normal.push_back(body);
             break;
-        case Body::MinorMoon:
+        case BodyClassification::MinorMoon:
             minorMoons.push_back(body);
             break;
-        case Body::Asteroid:
-        case Body::Comet:
+        case BodyClassification::Asteroid:
+        case BodyClassification::Comet:
             if (groupAsteroids)
                 asteroids.push_back(body);
             else
                 normal.push_back(body);
             break;
-        case Body::Spacecraft:
+        case BodyClassification::Spacecraft:
             if (groupSpacecraft)
                 spacecraft.push_back(body);
             else
                 normal.push_back(body);
             break;
-        case Body::Component:
+        case BodyClassification::Component:
             if (groupComponents)
                 components.push_back(body);
             else
                 normal.push_back(body);
             break;
-        case Body::SurfaceFeature:
+        case BodyClassification::SurfaceFeature:
             if (groupSurfaceFeatures)
                 surfaceFeatures.push_back(body);
             else
@@ -490,7 +490,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
             // Add the groups
             if (!minorMoons.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::MinorMoon,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::MinorMoon,
                                                                  minorMoons,
                                                                  item, childIndex);
                 ++childIndex;
@@ -498,7 +498,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 
             if (!asteroids.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::Asteroid,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::Asteroid,
                                                                  asteroids,
                                                                  item, childIndex);
                 ++childIndex;
@@ -506,7 +506,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 
             if (!spacecraft.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::Spacecraft,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::Spacecraft,
                                                                  spacecraft,
                                                                  item, childIndex);
                 ++childIndex;
@@ -514,7 +514,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 
             if (!surfaceFeatures.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::SurfaceFeature,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::SurfaceFeature,
                                                                  surfaceFeatures,
                                                                  item, childIndex);
                 ++childIndex;
@@ -522,7 +522,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 
             if (!components.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::Component,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::Component,
                                                                  components,
                                                                  item, childIndex);
                 ++childIndex;
@@ -530,7 +530,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 
             if (!other.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::Unknown,
+                item->children[childIndex] = createGroupTreeItem(BodyClassification::Unknown,
                                                                  other,
                                                                  item, childIndex);
                 ++childIndex;
@@ -540,7 +540,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
 }
 
 SolarSystemBrowser::SolarSystemTreeModel::TreeItem*
-SolarSystemBrowser::SolarSystemTreeModel::createGroupTreeItem(int classification,
+SolarSystemBrowser::SolarSystemTreeModel::createGroupTreeItem(BodyClassification classification,
                                                               const std::vector<Body*>& objects,
                                                               TreeItem* parent,
                                                               int childIndex)
@@ -635,7 +635,7 @@ SolarSystemBrowser::SolarSystemTreeModel::data(const QModelIndex& index, int rol
     TreeItem* item = itemAtIndex(index);
 
     // See if the tree item is a group
-    if (item->classification != 0)
+    if (item->classification != BodyClassification::EmptyMask)
     {
         if (index.column() == NameColumn)
             return classificationName(item->classification);
@@ -890,15 +890,15 @@ SolarSystemBrowser::slotRefreshTree()
 
     bool groupByClass = groupCheckBox->checkState() == Qt::Checked;
 
-    int bodyFilter = 0;
+    BodyClassification bodyFilter = BodyClassification::EmptyMask;
     if (planetsButton->isChecked())
-        bodyFilter |= Body::Planet | Body::DwarfPlanet | Body::Moon | Body::MinorMoon;
+        bodyFilter |= BodyClassification::Planet | BodyClassification::DwarfPlanet | BodyClassification::Moon | BodyClassification::MinorMoon;
     if (asteroidsButton->isChecked())
-        bodyFilter |= Body::Asteroid;
+        bodyFilter |= BodyClassification::Asteroid;
     if (spacecraftsButton->isChecked())
-        bodyFilter |= Body::Spacecraft | Body::Component;
+        bodyFilter |= BodyClassification::Spacecraft | BodyClassification::Component;
     if (cometsButton->isChecked())
-        bodyFilter |= Body::Comet;
+        bodyFilter |= BodyClassification::Comet;
 
     solarSystemModel->buildModel(rootStar, groupByClass, bodyFilter);
 

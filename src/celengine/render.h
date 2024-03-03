@@ -17,6 +17,7 @@
 
 #include <Eigen/Core>
 
+#include <celengine/body.h>
 #include <celengine/lightenv.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
@@ -253,8 +254,8 @@ class Renderer
     void setMinimumFeatureSize(float);
     float getDistanceLimit() const;
     void setDistanceLimit(float);
-    int getOrbitMask() const;
-    void setOrbitMask(int);
+    BodyClassification getOrbitMask() const;
+    void setOrbitMask(BodyClassification);
     int getScreenDpi() const;
     void setScreenDpi(int);
     int getWindowWidth() const;
@@ -686,8 +687,8 @@ class Renderer
     bool rtl{ false };
     bool showSelectionPointer{ true };
     uint64_t renderFlags;
-    int bodyVisibilityMask{ ~0 };
-    int orbitMask;
+    BodyClassification bodyVisibilityMask{ ~BodyClassification::EmptyMask };
+    BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
     float ambientLightLevel{ 0.1f };
     float tintSaturation{ 0.5f };
     float brightnessBias;

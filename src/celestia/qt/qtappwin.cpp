@@ -573,7 +573,7 @@ CelestiaAppWindow::writeSettings()
     // Renderer settings
     const Renderer* renderer = m_appCore->getRenderer();
     settings.setValue("RenderFlags", static_cast<quint64>(renderer->getRenderFlags()));
-    settings.setValue("OrbitMask", renderer->getOrbitMask());
+    settings.setValue("OrbitMask", static_cast<int>(renderer->getOrbitMask()));
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());

@@ -214,7 +214,8 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("RenderFlags"), prefs.renderFlags);
     GetRegistryInt(key, TEXT("LabelMode"), prefs.labelMode);
     GetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
-    GetRegistryInt(key, TEXT("OrbitMask"), prefs.orbitMask);
+    if (int orbitMask = 0; GetRegistryInt(key, TEXT("OrbitMask"), orbitMask))
+        prefs.orbitMask = static_cast<BodyClassification>(orbitMask);
     GetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
     GetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     GetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
@@ -223,7 +224,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("HudDetail"), prefs.hudDetail);
     GetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
     GetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
-    if (std::int32_t starStyle = 0; GetRegistryInt(key, TEXT("StarStyle"), starStyle))
+    if (std::uint32_t starStyle = 0; GetRegistryInt(key, TEXT("StarStyle"), starStyle))
         prefs.starStyle = static_cast<Renderer::StarStyle>(starStyle);
     else
         prefs.starStyle = Renderer::FuzzyPointStars;
@@ -277,7 +278,7 @@ SavePreferencesToRegistry(AppPreferences& prefs)
     SetRegistryInt(key, TEXT("RenderFlags"), prefs.renderFlags);
     SetRegistryInt(key, TEXT("LabelMode"), prefs.labelMode);
     SetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
-    SetRegistryInt(key, TEXT("OrbitMask"), prefs.orbitMask);
+    SetRegistryInt(key, TEXT("OrbitMask"), static_cast<std::uint32_t>(prefs.orbitMask));
     SetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
     SetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     SetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);

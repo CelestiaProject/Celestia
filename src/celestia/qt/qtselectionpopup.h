@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <QMenu>
 
 #include <celengine/selection.h>
@@ -20,6 +22,7 @@ class QAction;
 class QPoint;
 class QWidget;
 
+enum class BodyClassification : std::uint32_t;
 class CelestiaCore;
 class PlanetarySystem;
 
@@ -30,13 +33,13 @@ class SelectionPopup : public QMenu
 {
 Q_OBJECT
 
- public:
+public:
     SelectionPopup(const Selection& sel,
                    CelestiaCore* _appCore,
                    QWidget* parent);
     ~SelectionPopup() = default;
 
- public slots:
+public slots:
     void slotSelect();
     void slotCenterSelection();
     void slotGotoSelection();
@@ -63,17 +66,16 @@ Q_OBJECT
     void popupAtGoto(const QPoint& p);
     void popupAtCenter(const QPoint& p);
 
- signals:
+signals:
     void selectionInfoRequested(Selection& sel);
 
- private:
+private:
     QMenu* createMarkMenu();
     QMenu* createReferenceVectorMenu();
     QMenu* createAlternateSurfacesMenu();
-    QMenu* createObjectMenu(const PlanetarySystem* sys, unsigned int classification);
+    QMenu* createObjectMenu(const PlanetarySystem* sys, BodyClassification classification);
     void addObjectMenus(const PlanetarySystem* sys);
 
- private:
     Selection selection;
     CelestiaCore* appCore;
     QAction* centerAction;

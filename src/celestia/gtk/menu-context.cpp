@@ -221,31 +221,31 @@ CreatePlanetarySystemMenu(const std::string& parentName, const PlanetarySystem* 
     GtkWidget* menu = gtk_menu_new();
     for (int i = 0; i < psys->getSystemSize(); i++)
     {
-        Body* body = psys->getBody(i);
+        const Body* body = psys->getBody(i);
         switch(body->getClassification())
         {
-            case Body::Asteroid:
+            case BodyClassification::Asteroid:
                 asteroids.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::Comet:
+            case BodyClassification::Comet:
                 comets.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::Invisible:
+            case BodyClassification::Invisible:
                 invisibles.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::Moon:
+            case BodyClassification::Moon:
                 moons.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::MinorMoon:
+            case BodyClassification::MinorMoon:
                 minorMoons.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::Planet:
+            case BodyClassification::Planet:
                 planets.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::DwarfPlanet:
+            case BodyClassification::DwarfPlanet:
                 dwarfPlanets.push_back(make_pair(i, body->getName()));
                 break;
-            case Body::Spacecraft:
+            case BodyClassification::Spacecraft:
                 spacecraft.push_back(make_pair(i, body->getName()));
                 break;
         }

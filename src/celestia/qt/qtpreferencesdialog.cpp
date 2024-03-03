@@ -77,13 +77,14 @@ setRenderFlag(CelestiaCore* appCore,
 
 void
 setOrbitFlag(CelestiaCore* appCore,
-             int flag,
+             BodyClassification flag,
              int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
-    int orbitMask = renderer->getOrbitMask() & ~flag;
-    renderer->setOrbitMask(orbitMask | (isActive ? flag : 0));
+    BodyClassification orbitMask = renderer->getOrbitMask();
+    util::set_or_unset(orbitMask, flag, isActive);
+    renderer->setOrbitMask(orbitMask);
 }
 
 void
@@ -121,7 +122,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     Observer* observer = appCore->getSimulation()->getActiveObserver();
 
     std::uint64_t renderFlags = renderer->getRenderFlags();
-    int orbitMask = renderer->getOrbitMask();
+    BodyClassification orbitMask = renderer->getOrbitMask();
     std::uint64_t locationFlags = observer->getLocationFilter();
     int labelMode = renderer->getLabelMode();
 
@@ -152,14 +153,14 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ui.orbitsCheck->setChecked((renderFlags & Renderer::ShowOrbits) != 0);
     ui.fadingOrbitsCheck->setChecked((renderFlags & Renderer::ShowFadingOrbits) != 0);
-    ui.starOrbitsCheck->setChecked(orbitMask & Body::Stellar);
-    ui.planetOrbitsCheck->setChecked(orbitMask & Body::Planet);
-    ui.dwarfPlanetOrbitsCheck->setChecked(orbitMask & Body::DwarfPlanet);
-    ui.moonOrbitsCheck->setChecked(orbitMask & Body::Moon);
-    ui.minorMoonOrbitsCheck->setChecked(orbitMask & Body::MinorMoon);
-    ui.asteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
-    ui.cometOrbitsCheck->setChecked(orbitMask & Body::Comet);
-    ui.spacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
+    ui.starOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Stellar));
+    ui.planetOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Planet));
+    ui.dwarfPlanetOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::DwarfPlanet));
+    ui.moonOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Moon));
+    ui.minorMoonOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::MinorMoon));
+    ui.asteroidOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Asteroid));
+    ui.cometOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Comet));
+    ui.spacecraftOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Spacecraft));
     ui.partialTrajectoriesCheck->setChecked((renderFlags & Renderer::ShowPartialTrajectories) != 0);
 
     ui.equatorialGridCheck->setChecked((renderFlags & Renderer::ShowCelestialSphere) != 0);
@@ -421,49 +422,49 @@ PreferencesDialog::on_fadingOrbitsCheck_stateChanged(int state)
 void
 PreferencesDialog::on_starOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Stellar, state);
+    setOrbitFlag(appCore, BodyClassification::Stellar, state);
 }
 
 void
 PreferencesDialog::on_planetOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Planet, state);
+    setOrbitFlag(appCore, BodyClassification::Planet, state);
 }
 
 void
 PreferencesDialog::on_dwarfPlanetOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::DwarfPlanet, state);
+    setOrbitFlag(appCore, BodyClassification::DwarfPlanet, state);
 }
 
 void
 PreferencesDialog::on_moonOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Moon, state);
+    setOrbitFlag(appCore, BodyClassification::Moon, state);
 }
 
 void
 PreferencesDialog::on_minorMoonOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::MinorMoon, state);
+    setOrbitFlag(appCore, BodyClassification::MinorMoon, state);
 }
 
 void
 PreferencesDialog::on_asteroidOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Asteroid, state);
+    setOrbitFlag(appCore, BodyClassification::Asteroid, state);
 }
 
 void
 PreferencesDialog::on_cometOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Comet, state);
+    setOrbitFlag(appCore, BodyClassification::Comet, state);
 }
 
 void
 PreferencesDialog::on_spacecraftOrbitsCheck_stateChanged(int state)
 {
-    setOrbitFlag(appCore, Body::Spacecraft, state);
+    setOrbitFlag(appCore, BodyClassification::Spacecraft, state);
 }
 
 void

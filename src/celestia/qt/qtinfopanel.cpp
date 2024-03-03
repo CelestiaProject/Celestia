@@ -189,7 +189,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 
     stream << "<br>";
 
-    bool isArtificial = body->getClassification() == Body::Spacecraft;
+    bool isArtificial = body->getClassification() == BodyClassification::Spacecraft;
 
     QString units(_("km"));
     double radius = body->getRadius();

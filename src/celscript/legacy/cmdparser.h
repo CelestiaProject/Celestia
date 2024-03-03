@@ -25,7 +25,7 @@ class Tokenizer;
 namespace celestia::scripts
 {
 
-class ScriptMaps;
+struct ScriptMaps;
 
 class CommandParser
 {
