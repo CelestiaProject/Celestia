@@ -74,18 +74,6 @@ class PlanetarySystem
 };
 
 
-class RingRenderData
-{
- public:
-    RingRenderData() = default;
-    virtual ~RingRenderData() = default;
-    RingRenderData(const RingRenderData&) = delete;
-    RingRenderData(RingRenderData&&) = delete;
-    RingRenderData& operator=(const RingRenderData&) = delete;
-    RingRenderData& operator=(RingRenderData&&) = delete;
-};
-
-
 class RingSystem
 {
  public:
@@ -93,7 +81,6 @@ class RingSystem
     float outerRadius;
     Color color;
     MultiResTexture texture;
-    std::unique_ptr<RingRenderData> renderData;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),
