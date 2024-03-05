@@ -94,7 +94,7 @@ private:
 
 MonthAbbreviations::MonthAbbreviations()
 {
-    auto loc = std::locale("");
+    auto loc = std::locale();
     for (int i = 0; i < 12; ++i)
     {
         std::tm tm;
@@ -213,11 +213,11 @@ Date::toString(Format format) const
     switch(format)
     {
     case Locale:
-        return fmt::format(std::locale(""), "{:%c}"sv, cal_time);
+        return fmt::format(std::locale(), "{:%c}"sv, cal_time);
     case TZName:
-        return fmt::format(std::locale(""), "{:%Y %b %d %H:%M:%S %Z}"sv, cal_time);
+        return fmt::format(std::locale(), "{:%Y %b %d %H:%M:%S %Z}"sv, cal_time);
     default:
-        return fmt::format(std::locale(""), "{:%Y %b %d %H:%M:%S %z}"sv, cal_time);
+        return fmt::format(std::locale(), "{:%Y %b %d %H:%M:%S %z}"sv, cal_time);
     }
 #else
     switch(format)
