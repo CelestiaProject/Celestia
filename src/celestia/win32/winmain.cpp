@@ -36,6 +36,7 @@
 #include <celutil/array_view.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
+#include <celutil/localeutil.h>
 #include <celutil/logger.h>
 #include <celutil/winutil.h>
 
@@ -622,8 +623,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     auto appCore = std::make_unique<CelestiaCore>();
 
     // Gettext integration
-    setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C");
+    util::InitLocale();
 
 #ifdef ENABLE_NLS
     std::error_code ec;

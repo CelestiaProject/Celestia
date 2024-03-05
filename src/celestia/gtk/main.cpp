@@ -38,6 +38,7 @@
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
 #include <celutil/gettext.h>
+#include <celutil/localeutil.h>
 
 /* Includes for the GTK front-end */
 #include "common.h"
@@ -303,10 +304,9 @@ initRealize(GtkWidget* widget, AppData* app)
 int main(int argc, char* argv[])
 {
     using namespace celestia::gtk;
+    namespace util = celestia::util;
 
-    setlocale(LC_ALL, "");
-    /* Force number displays into C locale. */
-    setlocale(LC_NUMERIC, "C");
+    util::InitLocale();
 
     #ifndef WIN32
     bindtextdomain("celestia", LOCALEDIR);

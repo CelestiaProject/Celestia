@@ -33,6 +33,7 @@
 #include <QTranslator>
 
 #include <celutil/gettext.h>
+#include <celutil/localeutil.h>
 #include "qtappwin.h"
 #include "qtcommandline.h"
 #include "qtgettext.h"
@@ -49,8 +50,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // Gettext integration
-    setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C");
+    celestia::util::InitLocale();
 #ifdef ENABLE_NLS
     QString localeDir = LOCALEDIR;
     bindtextdomain("celestia", localeDir.toUtf8().data());

@@ -20,6 +20,7 @@
 #include <celestia/configfile.h>
 #include <celestia/url.h>
 #include <celutil/gettext.h>
+#include <celutil/localeutil.h>
 #include <celutil/tzutil.h>
 #include <SDL.h>
 #ifdef GL_ES
@@ -658,8 +659,7 @@ DumpGLInfo()
 int
 sdlmain(int /* argc */, char ** /* argv */)
 {
-    setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C");
+    celestia::util::InitLocale();
 
 #ifdef ENABLE_NLS
     bindtextdomain("celestia", LOCALEDIR);

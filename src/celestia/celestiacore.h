@@ -426,7 +426,7 @@ private:
     Simulation* sim{ nullptr };
     Renderer* renderer{ nullptr };
 
-    std::locale loc{ "" };
+    std::locale loc;
 
     celestia::WindowMetrics metrics;
     std::unique_ptr<celestia::Hud> hud;

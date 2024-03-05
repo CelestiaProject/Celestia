@@ -14,6 +14,14 @@
 # include <xlocale.h>  // for LC_NUMERIC_MASK on OS X
 #endif
 
+
+namespace celestia::util
+{
+
+void InitLocale();
+
+}
+
 #ifdef _MSC_VER
 typedef _locale_t locale_t;
 

@@ -18,6 +18,7 @@ set(CELUTIL_SOURCES
   greek.h
   includeicu.h
   intrusiveptr.h
+  localeutil.cpp
   localeutil.h
   logger.cpp
   logger.h
