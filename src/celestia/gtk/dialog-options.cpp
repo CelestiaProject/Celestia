@@ -214,8 +214,9 @@ dialogViewOptions(AppData* app)
     gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
     float logDistanceLimit = log(app->renderer->getDistanceLimit()) / log((float)MaxDistanceLimit);
-    GtkAdjustment *adj = gtk_adjustment_new(static_cast<gfloat>(logDistanceLimit * DistanceSliderRange),
-                                            0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
+    // In GTK2, gtk_adjustment_new returns GtkObject* instead of GtkAdjustment*
+    auto adj = (GtkAdjustment*)gtk_adjustment_new(static_cast<gfloat>(logDistanceLimit * DistanceSliderRange),
+                                                  0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
 
     /* Distance limit slider */
     GtkWidget* magLabel = gtk_label_new(nullptr);
