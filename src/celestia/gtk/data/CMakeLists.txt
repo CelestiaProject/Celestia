@@ -1,6 +1,6 @@
-set(METAINFO_ID "space.celestiaproject.Celestia-gtk")
+set(METAINFO_ID "space.celestiaproject.celestia_gtk")
 set(METAINFO_NAME "Celestia (GTK)")
-set(METAINFO_DESKTOP "celestia-gtk.desktop")
+set(METAINFO_DESKTOP "space.celestiaproject.celestia_gtk.desktop")
 configure_file(
   "../../data/space.celestiaproject.Celestia.metainfo.xml.in"
   "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"

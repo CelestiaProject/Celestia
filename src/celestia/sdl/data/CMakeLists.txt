@@ -1,6 +1,6 @@
-set(METAINFO_ID "space.celestiaproject.Celestia-sdl")
+set(METAINFO_ID "space.celestiaproject.celestia_sdl")
 set(METAINFO_NAME "Celestia (SDL)")
-set(METAINFO_DESKTOP "celestia-sdl.desktop")
+set(METAINFO_DESKTOP "space.celestiaproject.celestia_sdl.desktop")
 configure_file(
   "../../data/space.celestiaproject.Celestia.metainfo.xml.in"
   "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"
