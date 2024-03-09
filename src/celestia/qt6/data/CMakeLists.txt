@@ -1,6 +1,6 @@
-set(METAINFO_ID "space.celestiaproject.Celestia-qt6")
+set(METAINFO_ID "space.celestiaproject.celestia_qt6")
 set(METAINFO_NAME "Celestia (Qt6)")
-set(METAINFO_DESKTOP "celestia-qt6.desktop")
+set(METAINFO_DESKTOP "space.celestiaproject.celestia_qt6.desktop")
 configure_file(
   "../../data/space.celestiaproject.Celestia.metainfo.xml.in"
   "${CMAKE_CURRENT_BINARY_DIR}/${METAINFO_ID}.metainfo.xml"

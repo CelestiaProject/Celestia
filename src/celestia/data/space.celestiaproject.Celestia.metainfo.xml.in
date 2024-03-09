@@ -6,10 +6,18 @@
     <project_license>GPL-2.0+</project_license>
     <name>@METAINFO_NAME@</name>
     <developer_name>Celestia Project</developer_name>
-    <developer id="celestia.space">
+    <developer id="space.celestiaproject">
       <name>Celestia Project</name>
+      <url>https://github.com/CelestiaProject</url>
     </developer>
     <summary>Explore the universe</summary>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+
     <description>
     <p>
       Celestia provides photo-realistic, real-time, three-dimensional viewing of
