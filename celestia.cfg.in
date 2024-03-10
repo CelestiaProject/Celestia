@@ -198,7 +198,7 @@ StarTextures
 # or
 #   ExtrasDirectories  [ "D:\\celestia-extras" ]
 #------------------------------------------------------------------------
-  ExtrasDirectories  [ "extras-standard" "extras" ]
+  ExtrasDirectories  [ "extras-standard" "extras" @CELCFG_EXTRAS_DIRS@]
 
 
 #------------------------------------------------------------------------
