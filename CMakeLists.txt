@@ -469,6 +469,7 @@ include(TestBigEndian)
 test_big_endian(WORDS_BIGENDIAN)
 
 configure_file("config.h.in" "config.h")
+configure_file("celestia.cfg.in" "celestia.cfg")
 
 set(BASE_DATA_SOURCES
   demo.cel
