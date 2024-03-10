@@ -21,8 +21,6 @@ set(CELENGINE_SOURCES
   deepskyobj.h
   dsodb.cpp
   dsodb.h
-  dsoname.cpp
-  dsoname.h
   dsooctree.cpp
   dsooctree.h
   dsorenderer.cpp

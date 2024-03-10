@@ -46,7 +46,6 @@
 #include <celengine/body.h>
 #include <celengine/boundaries.h>
 #include <celengine/console.h>
-#include <celengine/dsoname.h>
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/location.h>

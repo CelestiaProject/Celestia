@@ -24,7 +24,7 @@
 
 #include <celcompat/filesystem.h>
 #include <celengine/dsooctree.h>
-#include <celengine/dsoname.h>
+#include <celengine/name.h>
 
 constexpr inline unsigned int MAX_DSO_NAMES = 10;
 
@@ -60,8 +60,8 @@ class DSODatabase
     std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;
     std::string getDSONameList(const DeepSkyObject* const &, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
-    DSONameDatabase* getNameDatabase() const;
-    void setNameDatabase(std::unique_ptr<DSONameDatabase>&&);
+    NameDatabase* getNameDatabase() const;
+    void setNameDatabase(std::unique_ptr<NameDatabase>&&);
 
     bool load(std::istream&, const fs::path& resourcePath = fs::path());
     void finish();
@@ -76,7 +76,7 @@ private:
     int              nDSOs{ 0 };
     int              capacity{ 0 };
     DeepSkyObject**  DSOs{ nullptr };
-    std::unique_ptr<DSONameDatabase> namesDB{ nullptr };
+    std::unique_ptr<NameDatabase> namesDB;
     DeepSkyObject**  catalogNumberIndex{ nullptr };
     DSOOctree*       octreeRoot{ nullptr };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
@@ -84,14 +84,14 @@ private:
     float            avgAbsMag{ 0.0f };
 };
 
-
-inline DeepSkyObject* DSODatabase::getDSO(const std::uint32_t n) const
+inline DeepSkyObject*
+DSODatabase::getDSO(const std::uint32_t n) const
 {
     return *(DSOs + n);
 }
 
-
-inline std::uint32_t DSODatabase::size() const
+inline std::uint32_t
+DSODatabase::size() const
 {
     return nDSOs;
 }
