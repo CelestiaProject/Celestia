@@ -26,7 +26,7 @@ std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 {
     auto dsoDB = std::make_unique<DSODatabase>();
-    dsoDB->setNameDatabase(std::make_unique<DSONameDatabase>());
+    dsoDB->setNameDatabase(std::make_unique<NameDatabase>());
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "deep sky");
