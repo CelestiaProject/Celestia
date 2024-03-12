@@ -1881,7 +1881,7 @@ Renderer::locationsToAnnotations(const Body& body,
                                  const Vector3d& bodyPosition,
                                  const Quaterniond& bodyOrientation)
 {
-    assert(body.hasLocations());
+    assert(GetBodyFeaturesManager()->hasLocations(&body));
     auto locations = GetBodyFeaturesManager()->getLocations(&body);
 
     Vector3f semiAxes = body.getSemiAxes();
