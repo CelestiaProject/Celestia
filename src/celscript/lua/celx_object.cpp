@@ -59,8 +59,9 @@ static const char* bodyTypeName(BodyClassification cl)
         return "component";
     case BodyClassification::Diffuse:
         return "diffuse";
+    default:
+        return "unknown";
     }
-    return "unknown";
 }
 
 static const char* dsoTypeName(DeepSkyObjectType dsoType)
