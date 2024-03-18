@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // Gettext integration
-    celestia::util::InitLocale();
+    CelestiaCore::initLocale();
 #ifdef ENABLE_NLS
     QString localeDir = LOCALEDIR;
     bindtextdomain("celestia", localeDir.toUtf8().data());

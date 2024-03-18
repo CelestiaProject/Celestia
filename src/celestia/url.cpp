@@ -189,7 +189,7 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
     }
 
     m_date = astro::Date(m_state.m_tdb);
-    u << '/' << m_date.toString(astro::Date::ISO8601);
+    u << '/' << m_date.toString(std::locale::classic(), astro::Date::ISO8601);
 
     // observer position
     fmt::print(u, "?x={}&y={}&z={}",

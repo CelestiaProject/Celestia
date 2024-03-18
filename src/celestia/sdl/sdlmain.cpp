@@ -659,7 +659,7 @@ DumpGLInfo()
 int
 sdlmain(int /* argc */, char ** /* argv */)
 {
-    celestia::util::InitLocale();
+    CelestiaCore::initLocale();
 
 #ifdef ENABLE_NLS
     bindtextdomain("celestia", LOCALEDIR);

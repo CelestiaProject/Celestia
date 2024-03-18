@@ -623,7 +623,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     auto appCore = std::make_unique<CelestiaCore>();
 
     // Gettext integration
-    util::InitLocale();
+    CelestiaCore::initLocale();
 
 #ifdef ENABLE_NLS
     std::error_code ec;

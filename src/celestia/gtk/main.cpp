@@ -306,7 +306,7 @@ int main(int argc, char* argv[])
     using namespace celestia::gtk;
     namespace util = celestia::util;
 
-    util::InitLocale();
+    CelestiaCore::initLocale();
 
     #ifndef WIN32
     bindtextdomain("celestia", LOCALEDIR);
