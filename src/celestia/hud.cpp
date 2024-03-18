@@ -712,8 +712,10 @@ HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
 Hud::Hud(const std::locale& loc) :
     loc(loc),
 #ifdef USE_ICU
+    m_dateFormatter(std::make_unique<celestia::engine::DateFormatter>()),
     m_numberFormatter(std::make_unique<util::NumberFormatter>())
 #else
+    m_dateFormatter(std::make_unique<celestia::engine::DateFormatter>(loc)),
     m_numberFormatter(std::make_unique<util::NumberFormatter>(loc))
 #endif
 {

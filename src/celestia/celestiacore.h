@@ -192,6 +192,7 @@ public:
     CelestiaCore();
     ~CelestiaCore();
 
+    static void initLocale();
     bool initSimulation(const fs::path& configFileName = fs::path(),
                         const std::vector<fs::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
@@ -426,7 +427,7 @@ private:
     Simulation* sim{ nullptr };
     Renderer* renderer{ nullptr };
 
-    std::locale loc;
+    static std::locale loc;
 
     celestia::WindowMetrics metrics;
     std::unique_ptr<celestia::Hud> hud;

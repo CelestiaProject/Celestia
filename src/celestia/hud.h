@@ -175,7 +175,7 @@ private:
 
     std::locale loc;
 
-    std::unique_ptr<engine::DateFormatter> m_dateFormatter{ std::make_unique<engine::DateFormatter>() };
+    std::unique_ptr<engine::DateFormatter> m_dateFormatter;
     std::unique_ptr<const util::NumberFormatter> m_numberFormatter;
     celestia::astro::Date::Format m_dateFormat{ celestia::astro::Date::Locale };
     int m_dateStrWidth{ 0 };

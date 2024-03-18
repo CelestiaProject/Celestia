@@ -55,7 +55,7 @@ std::string DateFormatter::formatDate(double tdb, bool local, astro::Date::Forma
     return utf8FormattedDate;
 #else
     astro::Date d = local ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
-    return d.toString(format);
+    return d.toString(loc, format);
 #endif
 }
 
