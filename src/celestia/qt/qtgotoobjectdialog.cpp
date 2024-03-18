@@ -56,7 +56,7 @@ GoToObjectDialog::on_buttonBox_accepted()
     QString objectName = ui.objectName->text();
 
     Simulation *simulation = appCore->getSimulation();
-    Selection sel = simulation->findObjectFromPath(objectName.toStdString());
+    Selection sel = simulation->findObjectFromPath(objectName.toStdString(), true);
 
     simulation->setSelection(sel);
     simulation->follow();
@@ -114,7 +114,7 @@ GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
     }
 
     // Enable OK button only if we have found the object
-    Selection sel = appCore->getSimulation()->findObjectFromPath(objectName.toStdString());
+    Selection sel = appCore->getSimulation()->findObjectFromPath(objectName.toStdString(), true);
     okButton->setEnabled(!sel.empty());
 }
 
