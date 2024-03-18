@@ -281,7 +281,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     initAppDataDirectory();
 
-    m_appCore = new CelestiaCore();
+    m_appCore = std::make_unique<CelestiaCore>();
 
     auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
@@ -325,7 +325,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     }
     QSurfaceFormat::setDefaultFormat(glformat);
 
-    glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
+    glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore.get());
 
     m_appCore->setCursorHandler(glWidget);
     m_appCore->setContextMenuHandler(this);
@@ -334,7 +334,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     setWindowTitle("Celestia");
 
-    actions = new CelestiaActions(this, m_appCore);
+    actions = new CelestiaActions(this, m_appCore.get());
 
     createMenus();
 
@@ -346,27 +346,27 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     toolsDock->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
 
     // Info browser for a selected object
-    infoPanel = new InfoPanel(m_appCore, _("Info Browser"), this);
+    infoPanel = new InfoPanel(m_appCore.get(), _("Info Browser"), this);
     infoPanel->setObjectName("info-panel");
     infoPanel->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     infoPanel->setVisible(false);
 
     // Create the various browser widgets
-    celestialBrowser = new CelestialBrowser(m_appCore, nullptr, infoPanel);
+    celestialBrowser = new CelestialBrowser(m_appCore.get(), nullptr, infoPanel);
     celestialBrowser->setObjectName("celestia-browser");
     connect(celestialBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    DeepSkyBrowser* deepSkyBrowser = new DeepSkyBrowser(m_appCore, nullptr, infoPanel);
+    DeepSkyBrowser* deepSkyBrowser = new DeepSkyBrowser(m_appCore.get(), nullptr, infoPanel);
     deepSkyBrowser->setObjectName("deepsky-browser");
     connect(deepSkyBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, nullptr, infoPanel);
+    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore.get(), nullptr, infoPanel);
     solarSystemBrowser->setObjectName("ssys-browser");
     connect(solarSystemBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
@@ -383,7 +383,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
 
-    eventFinder = new EventFinder(m_appCore, _("Event Finder"), this);
+    eventFinder = new EventFinder(m_appCore.get(), _("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
     eventFinder->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     addDockWidget(Qt::LeftDockWidgetArea, eventFinder);
@@ -391,7 +391,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     //addDockWidget(Qt::DockWidgetArea, eventFinder);
 
     // Create the time toolbar
-    timeToolBar = new TimeToolBar(m_appCore, _("Time"));
+    timeToolBar = new TimeToolBar(m_appCore.get(), _("Time"));
     timeToolBar->setObjectName("time-toolbar");
     timeToolBar->setFloatable(true);
     timeToolBar->setMovable(true);
@@ -655,7 +655,7 @@ void
 CelestiaAppWindow::slotShowSelectionContextMenu(const QPoint& pos,
                                                 Selection& sel)
 {
-    SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
+    SelectionPopup* menu = new SelectionPopup(sel, m_appCore.get(), this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(pos);
@@ -789,7 +789,7 @@ CelestiaAppWindow::slotCopyImage()
 void
 CelestiaAppWindow::slotCopyURL()
 {
-    CelestiaState appState(m_appCore);
+    CelestiaState appState(m_appCore.get());
     appState.captureState();
 
     Url url(appState);
@@ -841,7 +841,7 @@ CelestiaAppWindow::gotoSelection()
 void
 CelestiaAppWindow::gotoObject()
 {
-    GoToObjectDialog dlg(this, m_appCore);
+    GoToObjectDialog dlg(this, m_appCore.get());
     dlg.exec();
 }
 
@@ -849,14 +849,14 @@ void
 CelestiaAppWindow::tourGuide()
 {
     // use show() to display dialog in non-modal format since exec() is automatically modal
-    TourGuideDialog *tourDialog = new TourGuideDialog(this, m_appCore);
+    TourGuideDialog *tourDialog = new TourGuideDialog(this, m_appCore.get());
     tourDialog->show();
 }
 
 void
 CelestiaAppWindow::slotPreferences()
 {
-    PreferencesDialog dlg(this, m_appCore);
+    PreferencesDialog dlg(this, m_appCore.get());
     dlg.exec();
 }
 
@@ -982,7 +982,7 @@ void
 CelestiaAppWindow::slotShowTimeDialog()
 {
     SetTimeDialog* timeDialog = new SetTimeDialog(m_appCore->getSimulation()->getTime(),
-                                                  this, m_appCore);
+                                                  this, m_appCore.get());
 
     timeDialog->show();
 }
@@ -1108,7 +1108,7 @@ CelestiaAppWindow::slotAddBookmark()
     if (defaultTitle.isEmpty())
         defaultTitle = _("New bookmark");
 
-    CelestiaState appState(m_appCore);
+    CelestiaState appState(m_appCore.get());
     appState.captureState();
 
     // Capture the current frame buffer to use as a bookmark icon.
@@ -1698,7 +1698,7 @@ void
 CelestiaAppWindow::requestContextMenu(float x, float y, Selection sel)
 {
     qreal scale = devicePixelRatioF();
-    SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
+    SelectionPopup* menu = new SelectionPopup(sel, m_appCore.get(), this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int)(x / scale), (int)(y / scale))));
