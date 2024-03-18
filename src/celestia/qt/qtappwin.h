@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QImage>
 #include <QMainWindow>
 #include <QString>
@@ -147,7 +149,7 @@ private:
     QDockWidget* toolsDock{ nullptr };
     CelestialBrowser* celestialBrowser{ nullptr };
 
-    CelestiaCore* m_appCore{ nullptr };
+    std::unique_ptr<CelestiaCore> m_appCore;
 
     CelestiaActions* actions{ nullptr };
 
