@@ -535,7 +535,7 @@ actionSearchObject(GtkAction*, AppData* app)
         const gchar* name = gtk_entry_get_text(GTK_ENTRY(entry));
         if (name != NULL)
         {
-            Selection sel = app->simulation->findObject(name);
+            Selection sel = app->simulation->findObjectFromPath(name, true);
             if (!sel.empty())
                 app->simulation->setSelection(sel);
         }

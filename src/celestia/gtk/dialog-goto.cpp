@@ -79,7 +79,7 @@ GotoObject(gotoObjectData* gotoObjectDlg)
     if (objectName != nullptr)
     {
         Simulation* simulation = gotoObjectDlg->app->simulation;
-        Selection sel = simulation->findObjectFromPath(objectName);
+        Selection sel = simulation->findObjectFromPath(objectName, true);
 
         if (!sel.empty())
         {

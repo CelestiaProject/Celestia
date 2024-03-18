@@ -391,7 +391,7 @@ EventFinder::slotFindEclipses()
         eclipseTypeMask = Eclipse::Solar | Eclipse::Lunar;
 
     std::string bodyName = fmt::format("Sol/{}", planets[planetSelect->currentIndex()]);
-    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName, true);
+    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName);
 
     if (obj.body() == nullptr)
     {
