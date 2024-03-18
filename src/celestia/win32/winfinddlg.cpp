@@ -74,7 +74,7 @@ FindObjectDialog::command(WPARAM wParam, LPARAM lParam)
             fmt::memory_buffer pathBuf;
             AppendTCharToUTF8(buf.data(), pathBuf);
             std::string_view path(pathBuf.data(), pathBuf.size());
-            if (Selection sel = appCore->getSimulation()->findObject(path, true);
+            if (Selection sel = appCore->getSimulation()->findObjectFromPath(path, true);
                 !sel.empty())
             {
                 appCore->getSimulation()->setSelection(sel);
