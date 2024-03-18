@@ -9,6 +9,7 @@ function(GetQtSources UseWayland)
     qtcelestiaactions.cpp
     qtcolorswatchwidget.cpp
     qtcommandline.cpp
+    qtdateutil.cpp
     qtdeepskybrowser.cpp
     qtdraghandler.cpp
     qteventfinder.cpp
@@ -32,6 +33,7 @@ function(GetQtSources UseWayland)
     qtcelestiaactions.h
     qtcolorswatchwidget.h
     qtcommandline.h
+    qtdateutil.h
     qtdeepskybrowser.h
     qtdraghandler.h
     qteventfinder.h
