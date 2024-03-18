@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include "qteventfinder.h"
+#include "qtdateutil.h"
 
 #include <algorithm>
 #include <array>
@@ -73,27 +74,6 @@ constexpr std::array planets =
     N_("Neptune"),
     N_("Pluto"),
 };
-
-// Functions to convert between Qt dates and Celestia dates.
-// TODO: Qt's date class doesn't support leap seconds
-double
-QDateToTDB(const QDate& date)
-{
-    return astro::UTCtoTDB(astro::Date(date.year(), date.month(), date.day()));
-}
-
-QDateTime
-TDBToQDate(double tdb)
-{
-    astro::Date date = astro::TDBtoUTC(tdb);
-
-    int sec = (int) date.seconds;
-    int msec = (int) ((date.seconds - sec) * 1000);
-
-    return QDateTime(QDate(date.year, date.month, date.day),
-                     QTime(date.hour, date.minute, sec, msec),
-                     Qt::UTC);
-}
 
 // Find the point of maximum eclipse, either the intersection of the eclipsed body with the
 // ray from sun to occluder, or the nearest point to that ray if there is no intersection.
@@ -188,7 +168,7 @@ EventFinder::EventTableModel::data(const QModelIndex& index, int role) const
     case OcculterColumn:
         return QString(eclipse.occulter->getName(true).c_str());
     case StartTimeColumn:
-        return TDBToQDate(eclipse.startTime).toLocalTime().toString("dd MMM yyyy hh:mm");
+        return TDBToQString(eclipse.startTime);
     case DurationColumn:
     {
         int minutes = (int) ((eclipse.endTime - eclipse.startTime) * 24 * 60);

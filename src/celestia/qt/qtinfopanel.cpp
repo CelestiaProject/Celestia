@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include "qtinfopanel.h"
+#include "qtdateutil.h"
 
 #include <cmath>
 #include <string>
@@ -276,13 +277,13 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     body->getLifespan(startTime, endTime);
 
     if (startTime > -1.0e9)
-        stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(QString::fromStdString(astro::TDBtoUTC(startTime).toString())) << "<br>\n";
+        stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(TDBToQString(startTime)) << "<br>\n";
 
     if (endTime < 1.0e9)
-        stream << "<br>" << QString(_("<b>End:</b> %1")).arg(QString::fromStdString(astro::TDBtoUTC(endTime).toString())) << "<br>\n";
+        stream << "<br>" << QString(_("<b>End:</b> %1")).arg(TDBToQString(endTime)) << "<br>\n";
 
     stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-    stream << QString(_("Osculating elements for %1")).arg(QString::fromStdString(astro::TDBtoUTC(t).toString())) << "<br>\n";
+    stream << QString(_("Osculating elements for %1")).arg(TDBToQString(t)) << "<br>\n";
     stream << "<br>\n";
 
     if (orbitalPeriod > 0.0)

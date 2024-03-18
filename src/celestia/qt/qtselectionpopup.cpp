@@ -12,6 +12,7 @@
 
 
 #include "qtselectionpopup.h"
+#include "qtdateutil.h"
 
 #include <array>
 #include <cassert>
@@ -94,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (startTime > -1.0e9)
             {
-                QString startDateStr = QString(_("Start: %1")).arg(QString::fromStdString(astro::TDBtoUTC(startTime).toString()));
+                QString startDateStr = QString(_("Start: %1")).arg(TDBToQString(startTime));
                 QAction* startDateAct = new QAction(startDateStr, this);
                 connect(startDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoStartDate()));
@@ -103,7 +104,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (endTime < 1.0e9)
             {
-                QString endDateStr = QString(_("End: %1")).arg(QString::fromStdString(astro::TDBtoUTC(endTime).toString()));
+                QString endDateStr = QString(_("End: %1")).arg(TDBToQString(endTime));
                 QAction* endDateAct = new QAction(endDateStr, this);
                 connect(endDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoEndDate()));
