@@ -475,7 +475,7 @@ set(BASE_DATA_SOURCES
   demo.cel
   guide.cel
   start.cel
-  celestia.cfg
+  ${CMAKE_BINARY_DIR}/celestia.cfg
   controls.txt
   COPYING
 )
