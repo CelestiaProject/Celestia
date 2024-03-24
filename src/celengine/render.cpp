@@ -14,6 +14,7 @@
 
 #include <Eigen/Geometry>
 
+#include <boost/container/static_vector.hpp>
 #include <fmt/format.h>
 
 #include "atmosphere.h"
@@ -68,7 +69,6 @@
 #include <celrender/ringrenderer.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/arrayvector.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celutil/timer.h>
@@ -1805,7 +1805,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
                               const Matrices &m,
                               Renderer *r)
 {
-    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
@@ -1814,17 +1814,17 @@ static void renderSphereUnlit(const RenderInfo& ri,
     if (ri.baseTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::DiffuseTexture;
-        textures.try_push_back(ri.baseTex);
+        textures.push_back(ri.baseTex);
     }
     if (ri.nightTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::NightTexture;
-        textures.try_push_back(ri.nightTex);
+        textures.push_back(ri.nightTex);
     }
     if (ri.overlayTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::OverlayTexture;
-        textures.try_push_back(ri.overlayTex);
+        textures.push_back(ri.overlayTex);
     }
 
     // Get a shader for the current rendering configuration

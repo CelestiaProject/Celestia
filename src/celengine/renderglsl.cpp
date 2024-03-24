@@ -17,14 +17,14 @@
 #include <memory>
 #include <optional>
 
-#include <celcompat/numbers.h>
+#include <boost/container/static_vector.hpp>
 
+#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/arrayvector.h>
 #include <celutil/color.h>
 #include <celutil/flag.h>
 #include "atmosphere.h"
@@ -133,7 +133,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
@@ -143,13 +143,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ri.baseTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::DiffuseTexture;
-        textures.try_push_back(ri.baseTex);
+        textures.push_back(ri.baseTex);
     }
 
     if (ri.bumpTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::NormalTexture;
-        textures.try_push_back(ri.bumpTex);
+        textures.push_back(ri.bumpTex);
         if (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
@@ -164,7 +164,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         else
         {
             shadprop.texUsage |= TexUsage::SpecularTexture;
-            textures.try_push_back(ri.glossTex);
+            textures.push_back(ri.glossTex);
         }
     }
     if (ri.lunarLambert != 0.0f)
@@ -175,13 +175,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ri.nightTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::NightTexture;
-        textures.try_push_back(ri.nightTex);
+        textures.push_back(ri.nightTex);
     }
 
     if (ri.overlayTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::OverlayTexture;
-        textures.try_push_back(ri.overlayTex);
+        textures.push_back(ri.overlayTex);
     }
 
     if (atmosphere != nullptr)
@@ -223,7 +223,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             if (cloudTex != nullptr && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
                 shadprop.texUsage |= TexUsage::CloudShadowTexture;
-                textures.try_push_back(cloudTex);
+                textures.push_back(cloudTex);
                 glActiveTexture(GL_TEXTURE0 + textures.size());
                 cloudTex->bind();
                 glActiveTexture(GL_TEXTURE0);
@@ -542,7 +542,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
@@ -552,13 +552,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
     if (cloudTex != nullptr)
     {
         shadprop.texUsage |= TexUsage::DiffuseTexture;
-        textures.try_push_back(cloudTex);
+        textures.push_back(cloudTex);
     }
 
     if (cloudNormalMap != nullptr)
     {
         shadprop.texUsage |= TexUsage::NormalTexture;
-        textures.try_push_back(cloudNormalMap);
+        textures.push_back(cloudNormalMap);
         if (cloudNormalMap->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }

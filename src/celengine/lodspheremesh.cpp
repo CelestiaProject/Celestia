@@ -16,12 +16,13 @@
 #include <cmath>
 #include <limits>
 
+#include <boost/container/static_vector.hpp>
+
 #include <celcompat/numbers.h>
 #include <celengine/shadermanager.h>
 #include <celengine/texture.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
-#include <celutil/arrayvector.h>
 
 #define PTR(p) (reinterpret_cast<const void*>(static_cast<std::uintptr_t>(p)))
 
@@ -311,15 +312,15 @@ LODSphereMesh::render(unsigned int attributes,
                       Texture* tex2,
                       Texture* tex3)
 {
-    celestia::util::ArrayVector<Texture*, 4> tex;
+    boost::container::static_vector<Texture*, 4> tex;
     if (tex0 != nullptr)
-        tex.try_push_back(tex0);
+        tex.push_back(tex0);
     if (tex1 != nullptr)
-        tex.try_push_back(tex1);
+        tex.push_back(tex1);
     if (tex2 != nullptr)
-        tex.try_push_back(tex2);
+        tex.push_back(tex2);
     if (tex3 != nullptr)
-        tex.try_push_back(tex3);
+        tex.push_back(tex3);
     render(attributes, frustum, pixWidth,
            tex.data(), static_cast<int>(tex.size()), program);
 }
