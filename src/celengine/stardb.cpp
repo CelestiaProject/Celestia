@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <utility>
 
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <fmt/format.h>
 
 #include <celcompat/bit.h>
@@ -29,7 +30,6 @@
 #include <celcompat/numbers.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
-#include <celutil/intrusiveptr.h>
 #include <celutil/logger.h>
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
@@ -40,7 +40,6 @@
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
-using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
@@ -352,7 +351,7 @@ stcError(const Tokenizer& tok, std::string_view msg)
 
 void
 modifyStarDetails(Star* star,
-                  IntrusivePtr<StarDetails>&& referenceDetails,
+                  boost::intrusive_ptr<StarDetails>&& referenceDetails,
                   bool hasCustomDetails)
 {
     StarDetails* existingDetails = star->getDetails();
@@ -766,7 +765,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
             star.setPosition(x, y, z);
             star.setAbsoluteMagnitude(static_cast<float>(absMag) / 256.0f);
 
-            IntrusivePtr<StarDetails> details = nullptr;
+            boost::intrusive_ptr<StarDetails> details = nullptr;
             StellarClass sc;
             if (sc.unpackV1(spectralType))
                 details = StarDetails::GetStarDetails(sc);
@@ -1353,7 +1352,7 @@ StarDatabaseBuilder::createOrUpdateStarDetails(Star* star,
                                                std::optional<Eigen::Vector3f>& barycenterPosition)
 {
     barycenterPosition = std::nullopt;
-    IntrusivePtr<StarDetails> referenceDetails;
+    boost::intrusive_ptr<StarDetails> referenceDetails;
 
     // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.

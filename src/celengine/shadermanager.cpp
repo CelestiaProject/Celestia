@@ -23,19 +23,18 @@
 #include <tuple>
 #include <utility>
 
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
 #include <celutil/flag.h>
 #include <celutil/logger.h>
-#include <celutil/intrusiveptr.h>
 #include "atmosphere.h"
 #include "glsupport.h"
 #include "lightenv.h"
 
 
 using celestia::util::GetLogger;
-using celestia::util::IntrusivePtr;
 using namespace std::string_view_literals;
 namespace gl = celestia::gl;
 namespace util = celestia::util;
@@ -276,16 +275,20 @@ protected:
     virtual ~Sh_ExpressionContents() = default;
 
 private:
-    void intrusiveAddRef() const { ++m_refCount; }
-    int intrusiveRemoveRef() const
+    friend void
+    intrusive_ptr_add_ref(Sh_ExpressionContents* p)
     {
-        --m_refCount;
-        return m_refCount;
+        ++p->m_refCount;
     }
-    mutable int m_refCount{0};
 
-    template<typename T>
-    friend class celestia::util::IntrusivePtr;
+    friend void
+    intrusive_ptr_release(Sh_ExpressionContents* p)
+    {
+        if (--p->m_refCount == 0)
+            delete p;
+    }
+
+    std::uint32_t m_refCount{0};
 };
 
 
@@ -311,11 +314,11 @@ private:
 class Sh_Expression
 {
 public:
-    explicit Sh_Expression(const IntrusivePtr<const Sh_ExpressionContents>& ptr) :
+    explicit Sh_Expression(const boost::intrusive_ptr<Sh_ExpressionContents>& ptr) :
         m_contents(ptr)
     {}
 
-    explicit Sh_Expression(IntrusivePtr<const Sh_ExpressionContents>&& ptr) :
+    explicit Sh_Expression(boost::intrusive_ptr<Sh_ExpressionContents>&& ptr) :
         m_contents(std::move(ptr))
     {}
 
@@ -344,14 +347,14 @@ public:
     Sh_Expression operator[](const std::string& components) const;
 
 private:
-    IntrusivePtr<const Sh_ExpressionContents> m_contents;
+    boost::intrusive_ptr<Sh_ExpressionContents> m_contents;
 };
 
 
 template<typename T, typename... Args>
 Sh_Expression makeExpression(Args&&... args)
 {
-    return Sh_Expression(IntrusivePtr<T>(new T(std::forward<Args>(args)...)));
+    return Sh_Expression(boost::intrusive_ptr<T>(new T(std::forward<Args>(args)...)));
 }
 
 
@@ -399,6 +402,7 @@ private:
     template<typename T, typename... Args>
     friend Sh_Expression makeExpression(Args&&...);
 };
+
 
 
 class Sh_BinaryExpression : public Sh_ExpressionContents
