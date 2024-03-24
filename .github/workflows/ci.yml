@@ -62,6 +62,7 @@ jobs:
       shell: pwsh
       run: |
         $packages = @(
+          'boost-container',
           'boost-smart-ptr',
           'cspice',
           'eigen3',
