@@ -62,6 +62,7 @@ jobs:
       shell: pwsh
       run: |
         $packages = @(
+          'boost-smart-ptr',
           'cspice',
           'eigen3',
           'ffmpeg[x264]',
@@ -176,7 +177,8 @@ jobs:
     - name: 'Install dependencies'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libeigen3-dev \
+        sudo apt-get install -y libboost-dev \
+                                libeigen3-dev \
                                 libepoxy-dev \
                                 libavcodec-dev \
                                 libavformat-dev \
@@ -277,6 +279,7 @@ jobs:
                      ninja \
                      eigen \
                      ffmpeg \
+                     boost \
                      cspice \
                      fmt \
                      jpeg \
@@ -332,6 +335,7 @@ jobs:
                             libepoxy-devel \
                             libpng-devel \
                             libjpeg-turbo-devel \
+                            boost-devel \
                             freetype-devel \
                             SDL2-devel \
                             lua-devel \

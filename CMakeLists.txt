@@ -325,6 +325,9 @@ endif()
 
 find_package(gperf REQUIRED)
 
+find_package(Boost REQUIRED)
+link_libraries(Boost::boost)
+
 #[[
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)

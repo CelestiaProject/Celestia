@@ -25,7 +25,6 @@
 #include "univcoord.h"
 
 using namespace std::string_view_literals;
-using celestia::util::IntrusivePtr;
 
 namespace astro = celestia::astro;
 namespace ephem = celestia::ephem;
@@ -37,7 +36,6 @@ namespace
 // https://arxiv.org/abs/1510.07674
 constexpr float SOLAR_TEMPERATURE = 5772.0f;
 constexpr float SOLAR_BOLOMETRIC_MAG = 4.75f;
-
 
 using SubclassValues = std::array<float, 10>;
 
@@ -139,7 +137,6 @@ constexpr SubclassValues tempWD
     100000.0f, 50400.0f, 25200.0f, 16800.0f, 12600.0f,
     10080.0f, 8400.0f, 7200.0f, 6300.0f, 5600.0f,
 };
-
 
 // Tables with adjustments for estimating absolute bolometric magnitude from
 // visual magnitude. Data for main-sequence stars from Eric Mamajek,
@@ -378,6 +375,7 @@ constexpr std::array<SubclassValues, 3> rotperiod_M
                     1265.0f, 1265.0f, 1265.0f, 1265.0f, 1265.0f },
 };
 
+// Luminosity classes
 
 constexpr std::array<std::string_view, StellarClass::Lum_Count> LumClassNames
 {
@@ -400,8 +398,8 @@ constexpr std::array<std::string_view, StellarClass::WDClassCount> WDSpectralCla
     "DA"sv, "DB"sv, "DC"sv, "DO"sv, "DQ"sv, "DZ"sv, "D"sv, "DX"sv,
 };
 
-
-constexpr unsigned int defaultSubclass(StellarClass::SpectralClass specClass)
+constexpr unsigned int
+defaultSubclass(StellarClass::SpectralClass specClass)
 {
     // Since early O and Wolf-Rayet stars are exceedingly rare,
     // use temperature of the more common late types when the subclass
@@ -421,8 +419,8 @@ constexpr unsigned int defaultSubclass(StellarClass::SpectralClass specClass)
     }
 }
 
-
-constexpr std::size_t luminosityIndex(StellarClass::LuminosityClass lumClass)
+constexpr std::size_t
+luminosityIndex(StellarClass::LuminosityClass lumClass)
 {
     switch (lumClass)
     {
@@ -439,10 +437,10 @@ constexpr std::size_t luminosityIndex(StellarClass::LuminosityClass lumClass)
     }
 }
 
-
-constexpr float normalStarTemperature(StellarClass::SpectralClass specClass,
-                                      unsigned int subclass,
-                                      std::size_t lumIndex)
+constexpr float
+normalStarTemperature(StellarClass::SpectralClass specClass,
+                      unsigned int subclass,
+                      std::size_t lumIndex)
 {
     switch (specClass)
     {
@@ -486,12 +484,12 @@ constexpr float normalStarTemperature(StellarClass::SpectralClass specClass,
     }
 }
 
-
-void getPeriodAndBmagCorrection(StellarClass::SpectralClass specClass,
-                                unsigned int subclass,
-                                std::size_t lumIndex,
-                                float& period,
-                                float& bmagCorrection)
+void
+getPeriodAndBmagCorrection(StellarClass::SpectralClass specClass,
+                           unsigned int subclass,
+                           std::size_t lumIndex,
+                           float& period,
+                           float& bmagCorrection)
 {
     switch (specClass)
     {
@@ -565,8 +563,7 @@ void getPeriodAndBmagCorrection(StellarClass::SpectralClass specClass,
     }
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 CreateStandardStarType(std::string_view specTypeName,
                        float _temperature,
                        float _rotationPeriod)
@@ -586,7 +583,6 @@ CreateStandardStarType(std::string_view specTypeName,
     return details;
 }
 
-
 class StarDetailsManager
 {
 public:
@@ -597,14 +593,14 @@ public:
     const StarDetails::StarTextureSet& getStarTextures() const { return starTextures; }
     void setStarTextures(const StarDetails::StarTextureSet&);
 
-    const IntrusivePtr<StarDetails>& getNormalStarDetails(StellarClass::SpectralClass,
-                                                    unsigned int,
-                                                    StellarClass::LuminosityClass);
-    const IntrusivePtr<StarDetails>& getWhiteDwarfDetails(StellarClass::SpectralClass,
-                                                    unsigned int);
-    const IntrusivePtr<StarDetails>& getNeutronStarDetails();
-    const IntrusivePtr<StarDetails>& getBlackHoleDetails();
-    const IntrusivePtr<StarDetails>& getBarycenterDetails();
+    const boost::intrusive_ptr<StarDetails>& getNormalStarDetails(StellarClass::SpectralClass,
+                                                                  unsigned int,
+                                                                  StellarClass::LuminosityClass);
+    const boost::intrusive_ptr<StarDetails>& getWhiteDwarfDetails(StellarClass::SpectralClass,
+                                                                  unsigned int);
+    const boost::intrusive_ptr<StarDetails>& getNeutronStarDetails();
+    const boost::intrusive_ptr<StarDetails>& getBlackHoleDetails();
+    const boost::intrusive_ptr<StarDetails>& getBarycenterDetails();
 
     static StarDetailsManager& getManager();
 
@@ -630,14 +626,14 @@ private:
                (scIndex * static_cast<std::size_t>(StellarClass::SubclassCount));
     }
 
-    IntrusivePtr<StarDetails> createNormalStarDetails(StellarClass::SpectralClass,
-                                                      unsigned int,
-                                                      StellarClass::LuminosityClass);
-    IntrusivePtr<StarDetails> createWhiteDwarfDetails(std::size_t,
-                                                      unsigned int);
-    IntrusivePtr<StarDetails> createNeutronStarDetails();
-    static IntrusivePtr<StarDetails> createBlackHoleDetails();
-    static IntrusivePtr<StarDetails> createBarycenterDetails();
+    boost::intrusive_ptr<StarDetails> createNormalStarDetails(StellarClass::SpectralClass,
+                                                              unsigned int,
+                                                              StellarClass::LuminosityClass);
+    boost::intrusive_ptr<StarDetails> createWhiteDwarfDetails(std::size_t,
+                                                              unsigned int);
+    boost::intrusive_ptr<StarDetails> createNeutronStarDetails();
+    static boost::intrusive_ptr<StarDetails> createBlackHoleDetails();
+    static boost::intrusive_ptr<StarDetails> createBarycenterDetails();
 
     static constexpr auto nNormal = static_cast<std::size_t>(StellarClass::Spectral_Count) *
                                     static_cast<std::size_t>(StellarClass::SubclassCount) *
@@ -647,11 +643,11 @@ private:
 
     StarDetails::StarTextureSet starTextures{ };
 
-    std::array<IntrusivePtr<StarDetails>, nNormal>     normalStarDetails{ };
-    std::array<IntrusivePtr<StarDetails>, nWhiteDwarf> whiteDwarfDetails{ };
-    IntrusivePtr<StarDetails> neutronStarDetails{ };
-    IntrusivePtr<StarDetails> blackHoleDetails{ };
-    IntrusivePtr<StarDetails> barycenterDetails{ };
+    std::array<boost::intrusive_ptr<StarDetails>, nNormal>     normalStarDetails{ };
+    std::array<boost::intrusive_ptr<StarDetails>, nWhiteDwarf> whiteDwarfDetails{ };
+    boost::intrusive_ptr<StarDetails> neutronStarDetails{ };
+    boost::intrusive_ptr<StarDetails> blackHoleDetails{ };
+    boost::intrusive_ptr<StarDetails> barycenterDetails{ };
 };
 
 
@@ -669,15 +665,13 @@ StarDetailsManager::getManager()
     return *manager;
 }
 
-
 void
 StarDetailsManager::setStarTextures(const StarDetails::StarTextureSet& textures)
 {
     starTextures = textures;
 }
 
-
-const IntrusivePtr<StarDetails>&
+const boost::intrusive_ptr<StarDetails>&
 StarDetailsManager::getNormalStarDetails(StellarClass::SpectralClass specClass,
                                          unsigned int subclass,
                                          StellarClass::LuminosityClass lumClass)
@@ -692,8 +686,7 @@ StarDetailsManager::getNormalStarDetails(StellarClass::SpectralClass specClass,
     return normalStarDetails[index];
 }
 
-
-const IntrusivePtr<StarDetails>&
+const boost::intrusive_ptr<StarDetails>&
 StarDetailsManager::getWhiteDwarfDetails(StellarClass::SpectralClass specClass,
                                          unsigned int subclass)
 {
@@ -710,8 +703,7 @@ StarDetailsManager::getWhiteDwarfDetails(StellarClass::SpectralClass specClass,
     return whiteDwarfDetails[index];
 }
 
-
-const IntrusivePtr<StarDetails>&
+const boost::intrusive_ptr<StarDetails>&
 StarDetailsManager::getNeutronStarDetails()
 {
     if (neutronStarDetails == nullptr)
@@ -720,8 +712,7 @@ StarDetailsManager::getNeutronStarDetails()
     return neutronStarDetails;
 }
 
-
-const IntrusivePtr<StarDetails>&
+const boost::intrusive_ptr<StarDetails>&
 StarDetailsManager::getBlackHoleDetails()
 {
     if (blackHoleDetails == nullptr)
@@ -730,8 +721,7 @@ StarDetailsManager::getBlackHoleDetails()
     return blackHoleDetails;
 }
 
-
-const IntrusivePtr<StarDetails>&
+const boost::intrusive_ptr<StarDetails>&
 StarDetailsManager::getBarycenterDetails()
 {
     if (barycenterDetails == nullptr)
@@ -740,8 +730,7 @@ StarDetailsManager::getBarycenterDetails()
     return barycenterDetails;
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClass,
                                             unsigned int subclass,
                                             StellarClass::LuminosityClass lumClass)
@@ -784,8 +773,7 @@ StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClas
     return details;
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
                                             unsigned int subclass)
 {
@@ -819,8 +807,7 @@ StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
     return details;
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createNeutronStarDetails()
 {
     // The default neutron star has a rotation period of one second,
@@ -834,8 +821,7 @@ StarDetailsManager::createNeutronStarDetails()
     return details;
 }
 
-
-inline IntrusivePtr<StarDetails>
+inline boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createBlackHoleDetails()
 {
     // Default black hole parameters are based on a one solar mass
@@ -849,7 +835,7 @@ StarDetailsManager::createBlackHoleDetails()
 }
 
 
-inline IntrusivePtr<StarDetails>
+inline boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createBarycenterDetails()
 {
     auto details = CreateStandardStarType("Bary"sv, 1.0f, 1.0f);
@@ -861,8 +847,7 @@ StarDetailsManager::createBarycenterDetails()
 
 } // end unnamed namespace
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetails::GetStarDetails(const StellarClass& sc)
 {
     StarDetailsManager& manager = StarDetailsManager::getManager();
@@ -885,14 +870,12 @@ StarDetails::GetStarDetails(const StellarClass& sc)
     }
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetails::GetBarycenterDetails()
 {
     StarDetailsManager& manager = StarDetailsManager::getManager();
     return manager.getBarycenterDetails();
 }
-
 
 void
 StarDetails::SetStarTextures(const StarTextureSet& _starTextures)
@@ -901,21 +884,18 @@ StarDetails::SetStarTextures(const StarTextureSet& _starTextures)
     manager.setStarTextures(_starTextures);
 }
 
-
 StarDetails::StarDetails()
 {
     spectralType[0] = '\0';
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetails::create()
 {
-    return IntrusivePtr<StarDetails>(new StarDetails);
+    return boost::intrusive_ptr<StarDetails>(new StarDetails);
 }
 
-
-IntrusivePtr<StarDetails>
+boost::intrusive_ptr<StarDetails>
 StarDetails::clone() const
 {
     assert(isShared);
@@ -947,20 +927,17 @@ StarDetails::getInfoURL() const
     return infoURL;
 }
 
-
 void
 StarDetails::setRadius(float _radius)
 {
     radius = _radius;
 }
 
-
 void
 StarDetails::setTemperature(float _temperature)
 {
     temperature = _temperature;
 }
-
 
 void
 StarDetails::setSpectralType(std::string_view s)
@@ -970,13 +947,11 @@ StarDetails::setSpectralType(std::string_view s)
     spectralType[length] = '\0';
 }
 
-
 void
 StarDetails::setKnowledge(std::uint32_t _knowledge)
 {
     knowledge = _knowledge;
 }
-
 
 void
 StarDetails::addKnowledge(std::uint32_t _knowledge)
@@ -984,13 +959,11 @@ StarDetails::addKnowledge(std::uint32_t _knowledge)
     knowledge |= _knowledge;
 }
 
-
 void
 StarDetails::setBolometricCorrection(float correction)
 {
     bolometricCorrection = correction;
 }
-
 
 void
 StarDetails::setTexture(const MultiResTexture& tex)
@@ -998,13 +971,11 @@ StarDetails::setTexture(const MultiResTexture& tex)
     texture = tex;
 }
 
-
 void
 StarDetails::setGeometry(ResourceHandle rh)
 {
     geometry = rh;
 }
-
 
 void
 StarDetails::setOrbit(const std::shared_ptr<const ephem::Orbit>& o)
@@ -1013,7 +984,6 @@ StarDetails::setOrbit(const std::shared_ptr<const ephem::Orbit>& o)
     computeOrbitalRadius();
 }
 
-
 void
 StarDetails::setOrbitBarycenter(Star* bc)
 {
@@ -1021,14 +991,12 @@ StarDetails::setOrbitBarycenter(Star* bc)
     computeOrbitalRadius();
 }
 
-
 void
 StarDetails::setOrbitalRadius(float r)
 {
     if (orbit != nullptr)
         orbitalRadius = r;
 }
-
 
 void
 StarDetails::computeOrbitalRadius()
@@ -1045,20 +1013,17 @@ StarDetails::computeOrbitalRadius()
     }
 }
 
-
 void
 StarDetails::setVisibility(bool b)
 {
     visible = b;
 }
 
-
 void
 StarDetails::setRotationModel(const std::shared_ptr<const ephem::RotationModel>& rm)
 {
     rotationModel = rm;
 }
-
 
 /*! Set the InfoURL for this star.
 */
@@ -1068,9 +1033,9 @@ StarDetails::setInfoURL(std::string_view _infoURL)
     infoURL = _infoURL;
 }
 
-
 // Return the radius of the star in kilometers
-float Star::getRadius() const
+float
+Star::getRadius() const
 {
     if (details->getKnowledge(StarDetails::KnowRadius))
         return details->getRadius();
@@ -1089,20 +1054,17 @@ float Star::getRadius() const
         math::square(SOLAR_TEMPERATURE / getTemperature());
 }
 
-
 void
 StarDetails::setEllipsoidSemiAxes(const Eigen::Vector3f& v)
 {
     semiAxes = v;
 }
 
-
 bool
 StarDetails::shared() const
 {
     return isShared;
 }
-
 
 void
 StarDetails::addOrbitingStar(Star* star)
@@ -1112,7 +1074,6 @@ StarDetails::addOrbitingStar(Star* star)
         orbitingStars = std::make_unique<std::vector<Star*>>();
     orbitingStars->push_back(star);
 }
-
 
 /*! Get the position of the star in the universal coordinate system.
  */
@@ -1140,7 +1101,6 @@ Star::getPosition(double t) const
     }
 }
 
-
 UniversalCoord
 Star::getOrbitBarycenterPosition(double t) const
 {
@@ -1155,7 +1115,6 @@ Star::getOrbitBarycenterPosition(double t) const
         return barycenter->getPosition(t);
     }
 }
-
 
 /*! Get the velocity of the star in the universal coordinate system.
  */
@@ -1187,20 +1146,17 @@ Star::getVelocity(double t) const
     }
 }
 
-
 MultiResTexture
 Star::getTexture() const
 {
     return details->getTexture();
 }
 
-
 ResourceHandle
 Star::getGeometry() const
 {
     return details->getGeometry();
 }
-
 
 /*! Return the InfoURL. If the InfoURL has not been set, this method
 *  returns an empty string.
@@ -1211,39 +1167,44 @@ Star::getInfoURL() const
     return details->getInfoURL();
 }
 
-void Star::setPosition(float x, float y, float z)
+void
+Star::setPosition(float x, float y, float z)
 {
     position = Eigen::Vector3f(x, y, z);
 }
 
-void Star::setPosition(const Eigen::Vector3f& positionLy)
+void
+Star::setPosition(const Eigen::Vector3f& positionLy)
 {
     position = positionLy;
 }
 
-void Star::setAbsoluteMagnitude(float mag)
+void
+Star::setAbsoluteMagnitude(float mag)
 {
     absMag = mag;
 }
 
-
-float Star::getApparentMagnitude(float ly) const
+float
+Star::getApparentMagnitude(float ly) const
 {
     return astro::absToAppMag(absMag, ly) + extinction * ly;
 }
 
-
-float Star::getLuminosity() const
+float
+Star::getLuminosity() const
 {
     return astro::absMagToLum(absMag);
 }
 
-void Star::setLuminosity(float lum)
+void
+Star::setLuminosity(float lum)
 {
     absMag = astro::lumToAbsMag(lum);
 }
 
-float Star::getBolometricLuminosity() const
+float
+Star::getBolometricLuminosity() const
 {
 #ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
     return getLuminosity();
@@ -1256,25 +1217,29 @@ float Star::getBolometricLuminosity() const
 #endif
 }
 
-StarDetails* Star::getDetails() const
+StarDetails*
+Star::getDetails() const
 {
     return details.get();
 }
 
-void Star::setDetails(IntrusivePtr<StarDetails>&& sd)
+void
+Star::setDetails(boost::intrusive_ptr<StarDetails>&& sd)
 {
     // TODO: delete existing details if they aren't shared
     details = std::move(sd);
 }
 
-void Star::setOrbitBarycenter(Star* s)
+void
+Star::setOrbitBarycenter(Star* s)
 {
     if (details->shared())
         details = details->clone();
     details->setOrbitBarycenter(s);
 }
 
-void Star::computeOrbitalRadius()
+void
+Star::computeOrbitalRadius()
 {
     details->computeOrbitalRadius();
 }
@@ -1287,7 +1252,8 @@ Star::addOrbitingStar(Star* star)
     details->addOrbitingStar(star);
 }
 
-void Star::setExtinction(float _extinction)
+void
+Star::setExtinction(float _extinction)
 {
     extinction = _extinction;
 }

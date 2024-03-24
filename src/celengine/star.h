@@ -11,6 +11,7 @@
 #pragma once
 
 #include <array>
+#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -18,12 +19,13 @@
 #include <string_view>
 #include <vector>
 
+#include <boost/smart_ptr/intrusive_ptr.hpp>
+
 #include <Eigen/Core>
 
 #include <celengine/astroobj.h>
 #include <celengine/multitexture.h>
 #include <celengine/stellarclass.h>
-#include <celutil/intrusiveptr.h>
 #include <celutil/reshandle.h>
 
 class Selection;
@@ -52,8 +54,8 @@ class StarDetails
     StarDetails(StarDetails&&) = delete;
     StarDetails& operator=(StarDetails&&) = delete;
 
-    static celestia::util::IntrusivePtr<StarDetails> create();
-    celestia::util::IntrusivePtr<StarDetails> clone() const;
+    static boost::intrusive_ptr<StarDetails> create();
+    boost::intrusive_ptr<StarDetails> clone() const;
 
     float getRadius() const;
     float getTemperature() const;
@@ -98,8 +100,8 @@ class StarDetails
     void setKnowledge(std::uint32_t);
     void addKnowledge(std::uint32_t);
 
-    static celestia::util::IntrusivePtr<StarDetails> GetStarDetails(const StellarClass&);
-    static celestia::util::IntrusivePtr<StarDetails> GetBarycenterDetails();
+    static boost::intrusive_ptr<StarDetails> GetStarDetails(const StellarClass&);
+    static boost::intrusive_ptr<StarDetails> GetBarycenterDetails();
 
     static void SetStarTextures(const StarTextureSet&);
 
@@ -107,18 +109,23 @@ class StarDetails
     StarDetails();
 
     friend class Star;
-    friend class celestia::util::IntrusivePtr<StarDetails>;
 
     void addOrbitingStar(Star*);
 
-    inline void intrusiveAddRef() const { ++refCount; }
-    inline std::size_t intrusiveRemoveRef() const
+    friend void
+    intrusive_ptr_add_ref(StarDetails* p)
     {
-        --refCount;
-        return refCount;
+        p->refCount.fetch_add(1);
     }
 
-    mutable std::size_t refCount{ 0 };
+    friend void
+    intrusive_ptr_release(StarDetails* p)
+    {
+        if (p->refCount.fetch_sub(1) == 1)
+            delete p;
+    }
+
+    std::atomic_uint32_t refCount{ 0 };
 
     float radius{ 0.0f };
     float temperature{ 0.0f };
@@ -280,7 +287,7 @@ public:
     void setLuminosity(float);
 
     StarDetails* getDetails() const;
-    void setDetails(celestia::util::IntrusivePtr<StarDetails>&&);
+    void setDetails(boost::intrusive_ptr<StarDetails>&&);
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
@@ -313,7 +320,7 @@ private:
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float absMag{ 4.83f };
     float extinction{ 0.0f };
-    celestia::util::IntrusivePtr<StarDetails> details{ nullptr };
+    boost::intrusive_ptr<StarDetails> details{ nullptr };
 };
 
 
