@@ -112,11 +112,12 @@ First you need a C++ compiler able to compile C++17 code (GCC 7 or later,
 Clang 5 or later), CMake, GNU Make or Ninja, and gperf.
 
 Then you need to have the following devel components installed before Celestia
-will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
-Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, libavif, glu.
+will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
+libpng. Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg,
+libavif, glu.
 
 For example on modern Debian-derived system you need to install the following
-packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
+packages: libboost-dev, libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
 libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
@@ -182,7 +183,7 @@ and vcpkg (*).
 Install required packages:
 
 ```
-vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
+vcpkg --triplet=TRIPLET install --recurse boost-container boost-smart-ptr libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
 ```
 
 Install optional packages:
@@ -311,7 +312,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype
+brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype boost
 ```
 
 Install optional packages:
