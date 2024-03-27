@@ -278,17 +278,17 @@ private:
     friend void
     intrusive_ptr_add_ref(Sh_ExpressionContents* p)
     {
-        ++p->m_refCount;
+        ++(p->m_refCount);
     }
 
     friend void
     intrusive_ptr_release(Sh_ExpressionContents* p)
     {
-        if (--p->m_refCount == 0)
+        if (--(p->m_refCount) == 0)
             delete p;
     }
 
-    std::uint32_t m_refCount{0};
+    std::uint32_t m_refCount{ 1 };
 };
 
 
@@ -323,7 +323,7 @@ public:
     {}
 
     Sh_Expression(float f) :
-        m_contents(new Sh_ConstantExpression(f))
+        m_contents(new Sh_ConstantExpression(f), false)
     {}
 
     ~Sh_Expression() = default;
@@ -354,7 +354,7 @@ private:
 template<typename T, typename... Args>
 Sh_Expression makeExpression(Args&&... args)
 {
-    return Sh_Expression(boost::intrusive_ptr<T>(new T(std::forward<Args>(args)...)));
+    return Sh_Expression(boost::intrusive_ptr(new T(std::forward<Args>(args)...), false));
 }
 
 

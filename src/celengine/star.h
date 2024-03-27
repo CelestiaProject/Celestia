@@ -115,17 +115,17 @@ class StarDetails
     friend void
     intrusive_ptr_add_ref(StarDetails* p)
     {
-        p->refCount.fetch_add(1);
+        p->refCount.fetch_add(1, std::memory_order_relaxed);
     }
 
     friend void
     intrusive_ptr_release(StarDetails* p)
     {
-        if (p->refCount.fetch_sub(1) == 1)
+        if (p->refCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
             delete p;
     }
 
-    std::atomic_uint32_t refCount{ 0 };
+    std::atomic_uint32_t refCount{ 1 };
 
     float radius{ 0.0f };
     float temperature{ 0.0f };
