@@ -892,7 +892,7 @@ StarDetails::StarDetails()
 boost::intrusive_ptr<StarDetails>
 StarDetails::create()
 {
-    return boost::intrusive_ptr<StarDetails>(new StarDetails);
+    return boost::intrusive_ptr(new StarDetails, false);
 }
 
 boost::intrusive_ptr<StarDetails>
