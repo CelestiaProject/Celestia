@@ -87,6 +87,8 @@ objectTypeName(const Selection& sel)
             return _("Component");
         case BodyClassification::SurfaceFeature:
             return _("Surface feature");
+        default:
+            break; // Fix Clang warning
         }
     }
 
