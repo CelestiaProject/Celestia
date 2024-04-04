@@ -736,7 +736,7 @@ static int observer_setframe(lua_State* l)
     frame = celx.toFrame(2);
     if (frame != nullptr)
     {
-        obs->setFrame(std::shared_ptr<const ObserverFrame>(new ObserverFrame(*frame)));
+        obs->setFrame(std::make_shared<ObserverFrame>(*frame));
     }
     else
     {

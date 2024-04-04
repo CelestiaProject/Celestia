@@ -2456,7 +2456,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
     {
         if (config->viewportEffect == "passthrough")
-            viewportEffect = unique_ptr<ViewportEffect>(new PassthroughViewportEffect);
+            viewportEffect = std::make_unique<PassthroughViewportEffect>();
         else if (config->viewportEffect == "warpmesh")
         {
             if (config->paths.warpMeshFile.empty())
@@ -2468,7 +2468,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 WarpMeshManager *manager = GetWarpMeshManager();
                 WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->paths.warpMeshFile)));
                 if (mesh != nullptr)
-                    viewportEffect = unique_ptr<ViewportEffect>(new WarpMeshViewportEffect(mesh));
+                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(mesh);
                 else
                     GetLogger()->error("Failed to read warp mesh file {}\n", config->paths.warpMeshFile);
             }
