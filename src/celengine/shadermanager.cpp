@@ -19,11 +19,11 @@
 #include <optional>
 #include <ostream>
 #include <sstream>
+#include <string_view>
 #include <system_error>
 #include <tuple>
 #include <utility>
 
-#include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
@@ -251,432 +251,6 @@ IndexedParameter(std::string_view name, unsigned int index0, unsigned int index1
     return fmt::format("{}{}_{}", name, index0, index1);
 }
 
-
-class Sh_ExpressionContents
-{
-public:
-    Sh_ExpressionContents(const Sh_ExpressionContents&) = delete;
-    Sh_ExpressionContents& operator=(const Sh_ExpressionContents&) = delete;
-    Sh_ExpressionContents(Sh_ExpressionContents&&) = delete;
-    Sh_ExpressionContents& operator=(Sh_ExpressionContents&&) = delete;
-
-    virtual std::string toString() const = 0;
-    virtual int precedence() const = 0;
-    std::string toStringPrecedence(int parentPrecedence) const
-    {
-        if (parentPrecedence >= precedence())
-            return fmt::format("({})", toString());
-        else
-            return toString();
-    }
-
-protected:
-    Sh_ExpressionContents() = default;
-    virtual ~Sh_ExpressionContents() = default;
-
-private:
-    friend void
-    intrusive_ptr_add_ref(Sh_ExpressionContents* p)
-    {
-        ++(p->m_refCount);
-    }
-
-    friend void
-    intrusive_ptr_release(Sh_ExpressionContents* p)
-    {
-        if (--(p->m_refCount) == 0)
-            delete p;
-    }
-
-    std::uint32_t m_refCount{ 1 };
-};
-
-
-class Sh_ConstantExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return std::to_string(m_value);
-    }
-
-    int precedence() const override { return 100; }
-
-private:
-    Sh_ConstantExpression(float value) : m_value(value) {}
-
-    float m_value;
-
-    friend class Sh_Expression;
-};
-
-
-class Sh_Expression
-{
-public:
-    explicit Sh_Expression(const boost::intrusive_ptr<Sh_ExpressionContents>& ptr) :
-        m_contents(ptr)
-    {}
-
-    explicit Sh_Expression(boost::intrusive_ptr<Sh_ExpressionContents>&& ptr) :
-        m_contents(std::move(ptr))
-    {}
-
-    Sh_Expression(float f) :
-        m_contents(new Sh_ConstantExpression(f), false)
-    {}
-
-    ~Sh_Expression() = default;
-
-    std::string toString() const
-    {
-        return m_contents->toString();
-    }
-
-    std::string toStringPrecedence(int parentPrecedence) const
-    {
-        return m_contents->toStringPrecedence(parentPrecedence);
-    }
-
-    int precedence() const
-    {
-        return m_contents->precedence();
-    }
-
-    // [] operator acts like swizzle
-    Sh_Expression operator[](const std::string& components) const;
-
-private:
-    boost::intrusive_ptr<Sh_ExpressionContents> m_contents;
-};
-
-
-template<typename T, typename... Args>
-Sh_Expression makeExpression(Args&&... args)
-{
-    return Sh_Expression(boost::intrusive_ptr(new T(std::forward<Args>(args)...), false));
-}
-
-
-class Sh_VariableExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return m_name;
-    }
-
-    int precedence() const override { return 100; }
-
-private:
-    explicit Sh_VariableExpression(std::string_view sv) : m_name(sv) {}
-    explicit Sh_VariableExpression(const std::string& name) : m_name(name) {}
-    explicit Sh_VariableExpression(std::string&& name) : m_name(std::move(name)) {}
-
-    const std::string m_name;
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-
-class Sh_SwizzleExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return m_expr.toStringPrecedence(precedence()) + "." + m_components;
-    }
-
-    int precedence() const override { return 99; }
-
-private:
-    Sh_SwizzleExpression(const Sh_Expression& expr, const std::string& components) :
-        m_expr(expr),
-        m_components(components)
-    {}
-
-    const Sh_Expression m_expr;
-    const std::string m_components;
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-
-
-class Sh_BinaryExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return left().toStringPrecedence(precedence()) + op() + right().toStringPrecedence(precedence());
-    }
-
-    const Sh_Expression& left() const { return m_left; }
-    const Sh_Expression& right() const { return m_right; }
-    std::string op() const { return m_op; }
-    int precedence() const override { return m_precedence; }
-
-protected:
-    Sh_BinaryExpression(std::string_view op, int precedence, const Sh_Expression& left, const Sh_Expression& right) :
-        m_op(op),
-        m_precedence(precedence),
-        m_left(left),
-        m_right(right) {};
-
-private:
-    std::string m_op;
-    int m_precedence;
-    const Sh_Expression m_left;
-    const Sh_Expression m_right;
-};
-
-class Sh_AdditionExpression : public Sh_BinaryExpression
-{
-private:
-    Sh_AdditionExpression(const Sh_Expression& left, const Sh_Expression& right) :
-        Sh_BinaryExpression("+", 1, left, right) {}
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-class Sh_SubtractionExpression : public Sh_BinaryExpression
-{
-private:
-    Sh_SubtractionExpression(const Sh_Expression& left, const Sh_Expression& right) :
-        Sh_BinaryExpression("-", 1, left, right) {}
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-class Sh_MultiplicationExpression : public Sh_BinaryExpression
-{
-private:
-    Sh_MultiplicationExpression(const Sh_Expression& left, const Sh_Expression& right) :
-        Sh_BinaryExpression("*", 2, left, right) {}
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-class Sh_DivisionExpression : public Sh_BinaryExpression
-{
-private:
-    Sh_DivisionExpression(const Sh_Expression& left, const Sh_Expression& right) :
-        Sh_BinaryExpression("/", 2, left, right) {}
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-Sh_Expression operator+(const Sh_Expression& left, const Sh_Expression& right)
-{
-    return makeExpression<Sh_AdditionExpression>(left, right);
-}
-
-Sh_Expression operator-(const Sh_Expression& left, const Sh_Expression& right)
-{
-    return makeExpression<Sh_SubtractionExpression>(left, right);
-}
-
-Sh_Expression operator*(const Sh_Expression& left, const Sh_Expression& right)
-{
-    return makeExpression<Sh_MultiplicationExpression>(left, right);
-}
-
-[[maybe_unused]]
-Sh_Expression operator/(const Sh_Expression& left, const Sh_Expression& right)
-{
-    return makeExpression<Sh_DivisionExpression>(left, right);
-}
-
-Sh_Expression Sh_Expression::operator[](const std::string& components) const
-{
-    return makeExpression<Sh_SwizzleExpression>(*this, components);
-}
-
-class Sh_UnaryFunctionExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return fmt::format("{}({})", m_name, m_arg0.toString());
-    }
-
-    int precedence() const override { return 100; }
-
-private:
-    Sh_UnaryFunctionExpression(std::string_view name, const Sh_Expression& arg0) :
-        m_name(name), m_arg0(arg0) {}
-
-    std::string m_name;
-    const Sh_Expression m_arg0;
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-class Sh_BinaryFunctionExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return fmt::format("{}({}, {})", m_name, m_arg0.toString(), m_arg1.toString());
-    }
-
-    int precedence() const override { return 100; }
-
-private:
-    Sh_BinaryFunctionExpression(std::string_view name, const Sh_Expression& arg0, const Sh_Expression& arg1) :
-        m_name(name), m_arg0(arg0), m_arg1(arg1) {}
-
-    std::string m_name;
-    const Sh_Expression m_arg0;
-    const Sh_Expression m_arg1;
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-class Sh_TernaryFunctionExpression : public Sh_ExpressionContents
-{
-public:
-    std::string toString() const override
-    {
-        return fmt::format("{}({}, {}, {})", m_name, m_arg0.toString(), m_arg1.toString(), m_arg2.toString());
-    }
-
-    int precedence() const override { return 100; }
-
-private:
-    Sh_TernaryFunctionExpression(std::string_view name, const Sh_Expression& arg0, const Sh_Expression& arg1, const Sh_Expression& arg2) :
-        m_name(name), m_arg0(arg0), m_arg1(arg1), m_arg2(arg2) {}
-
-    std::string m_name;
-    const Sh_Expression m_arg0;
-    const Sh_Expression m_arg1;
-    const Sh_Expression m_arg2;
-
-    template<typename T, typename... Args>
-    friend Sh_Expression makeExpression(Args&&...);
-};
-
-Sh_Expression vec2(const Sh_Expression& x, const Sh_Expression& y)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("vec2", x, y);
-}
-
-[[maybe_unused]]
-Sh_Expression vec3(const Sh_Expression& x, const Sh_Expression& y, const Sh_Expression& z)
-{
-    return makeExpression<Sh_TernaryFunctionExpression>("vec3", x, y, z);
-}
-
-Sh_Expression dot(const Sh_Expression& v0, const Sh_Expression& v1)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("dot", v0, v1);
-}
-
-[[maybe_unused]]
-Sh_Expression cross(const Sh_Expression& v0, const Sh_Expression& v1)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("cross", v0, v1);
-}
-
-[[maybe_unused]]
-Sh_Expression sqrt(const Sh_Expression& v0)
-{
-    return makeExpression<Sh_UnaryFunctionExpression>("sqrt", v0);
-}
-
-[[maybe_unused]]
-Sh_Expression length(const Sh_Expression& v0)
-{
-    return makeExpression<Sh_UnaryFunctionExpression>("length", v0);
-}
-
-[[maybe_unused]]
-Sh_Expression normalize(const Sh_Expression& v0)
-{
-    return makeExpression<Sh_UnaryFunctionExpression>("normalize", v0);
-}
-
-Sh_Expression step(const Sh_Expression& f, const Sh_Expression& v)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("step", f, v);
-}
-
-Sh_Expression mix(const Sh_Expression& v0, const Sh_Expression& v1, const Sh_Expression& alpha)
-{
-    return makeExpression<Sh_TernaryFunctionExpression>("mix", v0, v1, alpha);
-}
-
-[[maybe_unused]]
-Sh_Expression min(const Sh_Expression& v0, const Sh_Expression& v1)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("min", v0, v1);
-}
-
-Sh_Expression max(const Sh_Expression& v0, const Sh_Expression& v1)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("max", v0, v1);
-}
-
-Sh_Expression texture2D(const Sh_Expression& sampler, const Sh_Expression& texCoord)
-{
-    return makeExpression<Sh_BinaryFunctionExpression>("texture2D", sampler, texCoord);
-}
-
-Sh_Expression texture2DLod(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lod)
-{
-    return makeExpression<Sh_TernaryFunctionExpression>("texture2DLod", sampler, texCoord, lod);
-}
-
-Sh_Expression texture2DLodBias(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lodBias)
-{
-    // Use the optional third argument to texture2D to specify the LOD bias. Implemented with
-    // a different function name here for clarity when it's used in a shader.
-    return makeExpression<Sh_TernaryFunctionExpression>("texture2D", sampler, texCoord, lodBias);
-}
-
-Sh_Expression sampler2D(std::string_view name)
-{
-    return makeExpression<Sh_VariableExpression>(name);
-}
-
-Sh_Expression sh_vec3(std::string_view name)
-{
-    return makeExpression<Sh_VariableExpression>(name);
-}
-
-Sh_Expression sh_vec4(std::string_view name)
-{
-    return makeExpression<Sh_VariableExpression>(name);
-}
-
-Sh_Expression sh_float(std::string_view name)
-{
-    return makeExpression<Sh_VariableExpression>(name);
-}
-
-Sh_Expression indexedUniform(std::string_view name, unsigned int index0)
-{
-    return makeExpression<Sh_VariableExpression>(fmt::format("{}{}", name, index0));
-}
-
-Sh_Expression ringShadowTexCoord(unsigned int index)
-{
-    return makeExpression<Sh_VariableExpression>(fmt::format("ringShadowTexCoord.{}", "xyzw"[index]));
-}
-
-Sh_Expression cloudShadowTexCoord(unsigned int index)
-{
-    return makeExpression<Sh_VariableExpression>(fmt::format("cloudShadowTexCoord{}", index));
-}
-
 std::string
 DeclareUniform(std::string_view name, ShaderVariableType type)
 {
@@ -708,27 +282,9 @@ DeclareLocal(std::string_view name, ShaderVariableType type)
 }
 
 std::string
-DeclareLocal(std::string_view name, ShaderVariableType type, const Sh_Expression& expr)
+DeclareLocal(std::string_view name, ShaderVariableType type, std::string_view value)
 {
-    return fmt::format("{} {} = {};\n", ShaderTypeString(type), name, expr.toString());
-}
-
-std::string
-assign(std::string_view variableName, const Sh_Expression& expr)
-{
-    return fmt::format("{} = {};\n", variableName, expr.toString());
-}
-
-[[maybe_unused]] std::string
-addAssign(std::string_view variableName, const Sh_Expression& expr)
-{
-    return fmt::format("{} += {};\n", variableName, expr.toString());
-}
-
-std::string
-mulAssign(std::string_view variableName, const Sh_Expression& expr)
-{
-    return fmt::format("{} *= {};\n", variableName, expr.toString());
+    return fmt::format("{} {} = {};\n", ShaderTypeString(type), name, value);
 }
 
 std::string
@@ -945,11 +501,11 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         // The ParticleDiffuse model doesn't use a surface normal; vertices
         // are lit as if they were infinitesimal spherical particles,
         // unaffected by light direction except when considering shadows.
-        source += assign("NL", 1.0f);
+        source += "NL = 1.0;\n";
     }
     else
     {
-        source += assign("NL", max(0.0f, dot(sh_vec3("N"), sh_vec3(LightProperty(i, "direction")))));
+        source += "NL = max(0.0, dot(N, " + LightProperty(i, "direction") + "));\n";
     }
 
     if (props.usesTangentSpaceLighting())
@@ -1023,18 +579,18 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
     if (props.usesTangentSpaceLighting())
     {
         if (props.hasShadowsForLight(light))
-            source += assign("shadow", 1.0f);
+            source += "shadow = 1.0;\n";
     }
     else
     {
-        source += assign("shadow", sh_float(SeparateDiffuse(light)));
+        source += "shadow = " + SeparateDiffuse(light) + ";\n";
     }
 
     if (props.hasRingShadowForLight(light))
     {
         if (light == 0)
             source += DeclareLocal("ringShadowTexCoordX", Shader_Float);
-        source += assign("ringShadowTexCoordX", ringShadowTexCoord(light));
+        source += "ringShadowTexCoordX = " +  RingShadowTexCoord(light) + ";\n";
 
 #ifdef GL_ES
         if (!gl::OES_texture_border_clamp)
@@ -1042,8 +598,7 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 #endif
         if (gl::ARB_shader_texture_lod)
         {
-            source += mulAssign("shadow",
-                      (1.0f - texture2DLod(sampler2D("ringTex"), vec2(sh_float("ringShadowTexCoordX"), 0.0f), indexedUniform("ringShadowLOD", light))["a"]));
+            source += "shadow *= 1.0 - texture2DLod(ringTex, vec2(ringShadowTexCoordX, 0.0), " + IndexedParameter("ringShadowLOD", light) + ").a;\n";
         }
         else
         {
@@ -1054,8 +609,7 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
             // the derivative instructions and adding the bias to this result. Unfortunately, the
             // derivative is computed from the plane equation of the triangle, which means that there
             // are discontinuities between triangles.
-            source += mulAssign("shadow",
-                      (1.0f - texture2DLodBias(sampler2D("ringTex"), vec2(sh_float("ringShadowTexCoordX"), 0.0f), indexedUniform("ringShadowLOD", light))["a"]));
+            source += "shadow *= 1.0 - texture2D(ringTex, vec2(ringShadowTexCoordX, 0.0), " + IndexedParameter("ringShadowLOD", light) + ").a;\n";
         }
 #ifdef GL_ES
         if (!gl::OES_texture_border_clamp)
@@ -1065,7 +619,7 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 
     if (props.hasCloudShadowForLight(light))
     {
-        source += mulAssign("shadow", 1.0f - texture2D(sampler2D("cloudShadowTex"), cloudShadowTexCoord(light))["a"] * 0.75f);
+        source += "shadow *= 1.0 - texture2D(cloudShadowTex, " + CloudShadowTexCoord(light) + ").a * 0.75;\n";
     }
 
     return source;
@@ -2645,7 +2199,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
-    source += DeclareLocal("opticalDepth", Shader_Float, sh_vec4("color")["a"]);
+    source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
     if (props.hasEclipseShadows())
     {
         // Temporaries required for shadows
@@ -2661,11 +2215,11 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     for (unsigned i = 0; i < props.nLights; i++)
     {
         // litSide is 1 when viewer and light are on the same side of the rings, 0 otherwise
-        source += assign("litSide", 1.0f - step(0.0f, sh_vec3(LightProperty(i, "direction"))["y"] * sh_vec3("eyeDir")["y"]));
+        source += "litSide = 1.0 - step(0.0, " + LightProperty(i, "direction") + ".y * eyeDir.y);\n";
         //source += assign("litSide", 1.0f - step(0.0f, sh_vec3("eyePosition")["y"]));
 
-        source += assign("intensity", (dot(sh_vec3(LightProperty(i, "direction")), sh_vec3("eyeDir")) + 1.0f) * 0.5f);
-        source += assign("intensity", mix(sh_float("intensity"), sh_float("intensity") * (1.0f - sh_float("opticalDepth")), sh_float("litSide")));
+        source += "intensity = (dot(" + LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
+        source += "intensity = mix(intensity, intensity * (1.0 - opticalDepth), litSide);\n";
         if (props.getEclipseShadowCountForLight(i) > 0)
         {
             source += "shadow = 1.0;\n";
