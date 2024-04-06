@@ -110,7 +110,6 @@ set(CELENGINE_SOURCES
   shared.h
   simulation.cpp
   simulation.h
-  skygrid.cpp
   skygrid.h
   solarsys.cpp
   solarsys.h
