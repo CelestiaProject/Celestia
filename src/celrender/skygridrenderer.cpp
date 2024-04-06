@@ -45,7 +45,7 @@ constexpr double MAX_VISIBLE_ARCS = 10.0;
 constexpr int ARC_SUBDIVISIONS = 100;
 
 // Size of the cross indicating the north and south poles
-const double POLAR_CROSS_SIZE = 0.01;
+constexpr double POLAR_CROSS_SIZE = 0.01;
 
 // Grid line spacing tables
 constexpr int MSEC = 1;
