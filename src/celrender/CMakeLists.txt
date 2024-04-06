@@ -23,6 +23,8 @@ set(CELRENDER_SOURCES
   openclusterrenderer.h
   ringrenderer.cpp
   ringrenderer.h
+  skygridrenderer.cpp
+  skygridrenderer.h
   gl/binder.cpp
   gl/binder.h
   gl/buffer.cpp

@@ -788,6 +788,7 @@ class Renderer
     std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;
     std::unique_ptr<celestia::render::OpenClusterRenderer> m_openClusterRenderer;
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
+    std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
     // Location markers
  public:
