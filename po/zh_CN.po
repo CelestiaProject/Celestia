@@ -3549,7 +3549,7 @@ msgstr "Copyright (C) 2001-2021, Celestia Development Team"
 
 #: ../src/celestia/win32/res/celestia.rc:287
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia 是免费软件，不提供任何担保。"
+msgstr "Celestia 是自由软件，不提供任何担保。"
 
 #: ../src/celestia/win32/res/celestia.rc:288
 msgid "Authors"
