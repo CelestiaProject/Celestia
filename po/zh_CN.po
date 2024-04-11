@@ -936,7 +936,7 @@ msgstr "时间已停止"
 #: ../src/celestia/hud.cpp:979
 #, c++-format
 msgid "{:.6g} x faster"
-msgstr "{:.6g} x 加速"
+msgstr "加快 {:.6g} 倍"
 
 #: ../src/celestia/hud.cpp:983
 #, c++-format
