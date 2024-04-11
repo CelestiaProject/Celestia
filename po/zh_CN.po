@@ -941,7 +941,7 @@ msgstr "加快 {:.6g} 倍"
 #: ../src/celestia/hud.cpp:983
 #, c++-format
 msgid "{:.6g} x slower"
-msgstr "{:.6g} x 减速"
+msgstr "减慢至 1/{:.6g}"
 
 #: ../src/celestia/hud.cpp:989
 msgid " (Paused)"
