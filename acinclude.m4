@@ -2630,8 +2630,8 @@ AC_TRY_LINK(
 LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
 AC_LANG_RESTORE
-fi
 ])
+fi
 
 if eval "test ! \"`echo $kde_cv_qt_jpeg`\" = no"; then
   AC_MSG_RESULT(yes)
