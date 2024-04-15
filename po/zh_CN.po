@@ -1652,7 +1652,7 @@ msgstr "获取 log 文件的路径时出错。"
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably"
 " due to improper installation."
-msgstr "Celestia 无法运行，因为找不到数据目录，可能是安装不当。"
+msgstr "找不到数据目录，Celestia 无法运行，可能是安装时出现了错误。"
 
 #: ../src/celestia/qt/qtappwin.cpp:344
 msgid "Celestial Browser"
