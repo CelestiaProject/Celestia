@@ -519,7 +519,7 @@ msgstr "极限星等：{:.2f}"
 #: ../src/celestia/celestiacore.cpp:1521 ../src/celestia/celestiacore.cpp:1546
 #, c++-format
 msgid "Auto magnitude limit at 45 degrees:  {:.2f}"
-msgstr "45 度内自动星等自动调节：{:.2f}"
+msgstr "45 度视野内极限星等自动调节：{:.2f}"
 
 #: ../src/celestia/celestiacore.cpp:1562 ../src/celestia/celestiacore.cpp:1574
 #, c++-format
