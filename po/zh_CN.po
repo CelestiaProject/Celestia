@@ -2692,7 +2692,7 @@ msgstr "Celestia 无法初始化 OpenGL 2.1。"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:155
 msgid "Error: no object selected!\n"
-msgstr "错误：未选择天体\n"
+msgstr "错误：未选择天体。\n"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:167
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
