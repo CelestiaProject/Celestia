@@ -2305,7 +2305,7 @@ msgstr "光传播时间延迟"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:405
 #, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
-msgstr "45° 视野区内星等自动调节：%L1"
+msgstr "45 度视野内极限星等自动调节：%L1"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:412
 #, qt-format
