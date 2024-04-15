@@ -2824,7 +2824,7 @@ msgstr "<b>平近点角：</b> %L1%2"
 #: ../src/celestia/qt/qtinfopanel.cpp:334
 #, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
-msgstr "<b>周期（计算结果）：</b> %L1 %2"
+msgstr "<b>周期（已计算）：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:338
 #, qt-format
