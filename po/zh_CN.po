@@ -236,7 +236,7 @@ msgstr "正在创建一般纹理：{}×{}\n"
 #: ../src/celephem/sampfile.cpp:46
 #, c++-format
 msgid "Skipping out-of-order samples in {}.\n"
-msgstr "跳过 {} 中的失序样本。\n"
+msgstr "跳过 {} 中的失序采样。\n"
 
 #: ../src/celephem/sampfile.cpp:58
 #, c++-format
