@@ -4083,7 +4083,7 @@ msgstr "释放设备上下文失败。"
 
 #: ../src/celestia/win32/winmainwindow.cpp:1572
 msgid "Failed to register the window class."
-msgstr "无法注册 window class"
+msgstr "注册 window class 失败。"
 
 #: ../src/celestia/win32/winmoviecapture.cpp:229
 msgid "Stop current movie capture before starting another one."
