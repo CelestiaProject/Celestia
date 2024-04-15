@@ -431,7 +431,7 @@ msgstr "恒星着色：黑体（以织女一为标准百点）"
 
 #: ../src/celestia/celestiacore.cpp:1183
 msgid "Star color: Classic"
-msgstr "恒星颜色：经典"
+msgstr "恒星着色：经典"
 
 #. Light travel time in years, if >= 1day
 #: ../src/celestia/celestiacore.cpp:1216
