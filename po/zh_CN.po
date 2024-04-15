@@ -4012,7 +4012,7 @@ msgstr "正在加载：{}"
 
 #: ../src/celestia/win32/winmain.cpp:560
 msgid "Loading data files..."
-msgstr "加载数据文件..."
+msgstr "正在加载数据文件..."
 
 #: ../src/celestia/win32/winmain.cpp:638 ../src/celutil/fsutils.cpp:99
 msgid "LANGUAGE"
