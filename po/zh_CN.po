@@ -423,7 +423,7 @@ msgstr "恒星着色：黑体 D65"
 
 #: ../src/celestia/celestiacore.cpp:1171
 msgid "Star color: Blackbody (Solar Whitepoint)"
-msgstr "恒星颜色：黑体（以太阳为标准百点）"
+msgstr "恒星着色：黑体（以太阳为标准百点）"
 
 #: ../src/celestia/celestiacore.cpp:1177
 msgid "Star color: Blackbody (Vega Whitepoint)"
