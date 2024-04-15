@@ -1721,7 +1721,7 @@ msgstr "分辨率："
 #: ../src/celestia/qt/qtappwin.cpp:724
 #, qt-format
 msgid "%1 x %2"
-msgstr "%1 × %2"
+msgstr "%1 x %2"
 
 #: ../src/celestia/qt/qtappwin.cpp:727
 #: ../src/celestia/win32/res/celestia.rc:492
