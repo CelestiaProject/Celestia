@@ -205,29 +205,33 @@ template <class OBJ, class PREC>
 inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC scale)
 {
     // If the object can't be placed into this node's children, then put it here:
-    if (limitingFactorPredicate(obj, exclusionFactor) || straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
-        add(obj);
-    else
+    if (limitingFactorPredicate(obj, exclusionFactor) || straddlingPredicate(cellCenterPos, obj, exclusionFactor))
     {
-        // If we haven't allocated child nodes yet, try to fit
-        // the object in this node, even though it could be put
-        // in a child. Only if there are more than SPLIT_THRESHOLD
-        // objects in the node will we attempt to place the
-        // object into a child node.  This is done in order
-        // to avoid having the octree degenerate into one object
-        // per node.
-        if (_children == nullptr)
-        {
-            // Make sure that there's enough room left in this node
-            if (_objects != nullptr && _objects->size() >= DynamicOctree<OBJ, PREC>::SPLIT_THRESHOLD)
-                split(scale * 0.5f);
-            add(obj);
-        }
-        else
-            // We've already allocated child nodes; place the object
-            // into the appropriate one.
-            this->getChild(obj, cellCenterPos)->insertObject(obj, scale * (PREC) 0.5);
+        add(obj);
+        return;
     }
+
+    // If we haven't allocated child nodes yet, try to fit
+    // the object in this node, even though it could be put
+    // in a child. Only if there are more than SPLIT_THRESHOLD
+    // objects in the node will we attempt to place the
+    // object into a child node.  This is done in order
+    // to avoid having the octree degenerate into one object
+    // per node.
+    if (_children == nullptr)
+    {
+        if (_objects == nullptr || _objects->size() < DynamicOctree<OBJ, PREC>::SPLIT_THRESHOLD)
+        {
+            add(obj);
+            return;
+        }
+
+        split(scale * 0.5f);
+    }
+
+    // We've already allocated child nodes; place the object
+    // into the appropriate one.
+    this->getChild(obj, cellCenterPos)->insertObject(obj, scale * (PREC) 0.5);
 }
 
 
