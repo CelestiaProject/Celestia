@@ -70,6 +70,7 @@ set(CELENGINE_SOURCES
   observer.cpp
   observer.h
   octree.h
+  octreebuilder.h
   opencluster.cpp
   opencluster.h
   orbitsampler.h
