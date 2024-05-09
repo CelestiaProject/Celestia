@@ -12,10 +12,21 @@
 
 #pragma once
 
+#include <Eigen/Core>
+
 #include <celengine/deepskyobj.h>
 #include <celengine/octree.h>
 
+struct DSOOctreeTraits
+{
+    static constexpr std::uint32_t SplitThreshold = 10;
 
-using DynamicDSOOctree = DynamicOctree<DeepSkyObject*, double>;
-using DSOOctree = StaticOctree<DeepSkyObject*, double>;
+    static constexpr float decayMagnitude(float mag) { return mag + 0.5f; }
+    static inline Eigen::Vector3d getPosition(const DeepSkyObject* obj) { return obj->getPosition(); }
+    static inline float getAbsMag(const DeepSkyObject* obj) { return obj->getAbsoluteMagnitude(); }
+    static inline float getRadius(const DeepSkyObject* obj) { return obj->getBoundingSphereRadius(); }
+};
+
+using DynamicDSOOctree = DynamicOctree<DeepSkyObject*, DSOOctreeTraits>;
+using DSOOctree = DynamicDSOOctree::static_octree_type;
 using DSOHandler = OctreeProcessor<DeepSkyObject*, double>;

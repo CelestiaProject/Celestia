@@ -339,10 +339,10 @@ DSODatabase::buildOctree()
     // TODO: investigate using a different center--it's possible that more
     // objects end up straddling the base level nodes when the center of the
     // octree is at the origin.
-    DynamicDSOOctree* root   = new DynamicDSOOctree(Eigen::Vector3d::Zero(), absMag);
+    DynamicDSOOctree root(Eigen::Vector3d::Zero(), DSO_OCTREE_ROOT_SIZE, absMag);
     for (int i = 0; i < nDSOs; ++i)
     {
-        root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
+        root.insertObject(DSOs[i]);
     }
 
     GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
@@ -351,7 +351,7 @@ DSODatabase::buildOctree()
 
     // The spatial sorting part is useless for DSOs since we
     // are storing pointers to objects and not the objects themselves:
-    root->rebuildAndSort(octreeRoot, firstDSO);
+    octreeRoot = root.rebuildAndSort(firstDSO);
 
     GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
                        static_cast<int>(firstDSO - sortedDSOs),
@@ -360,7 +360,6 @@ DSODatabase::buildOctree()
 
     // Clean up . . .
     delete[] DSOs;
-    delete   root;
 
     DSOs = sortedDSOs;
 }

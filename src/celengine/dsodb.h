@@ -78,7 +78,7 @@ private:
     DeepSkyObject**  DSOs{ nullptr };
     std::unique_ptr<NameDatabase> namesDB;
     DeepSkyObject**  catalogNumberIndex{ nullptr };
-    DSOOctree*       octreeRoot{ nullptr };
+    std::unique_ptr<DSOOctree> octreeRoot;
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
     float            avgAbsMag{ 0.0f };
