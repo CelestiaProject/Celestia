@@ -52,7 +52,7 @@ OctreeNode<PREC>::OctreeNode(const point_type& _center, PREC _scale, std::uint32
 
 } // end namespace celestia::engine::detail
 
-template<typename OBJ, typename PREC>
+template<typename OBJ, typename TRAITS>
 class OctreeBuilder;
 
 template<typename OBJ, typename PREC>
@@ -65,6 +65,11 @@ public:
     Octree& operator=(const Octree&) = delete;
     Octree(Octree&&) noexcept = default;
     Octree& operator=(Octree&&) noexcept = default;
+
+    celestia::util::array_view<OBJ> objects() const;
+    std::uint32_t size() const;
+
+    const OBJ& operator[](std::uint32_t) const;
 
     template<typename VISITOR>
     void processDepthFirst(VISITOR&) const;
@@ -85,7 +90,8 @@ private:
     std::uint32_t m_topmostPopulated;
     std::uint32_t m_maxDepth;
 
-    friend class OctreeBuilder<OBJ, PREC>;
+    template<typename, typename>
+    friend class OctreeBuilder;
 };
 
 template<typename OBJ, typename PREC>
@@ -98,6 +104,27 @@ Octree<OBJ, PREC>::Octree(std::vector<node_type>&& nodes,
     m_topmostPopulated(topmostPopulated),
     m_maxDepth(maxDepth)
 {
+}
+
+template<typename OBJ, typename PREC>
+celestia::util::array_view<OBJ>
+Octree<OBJ, PREC>::objects() const
+{
+    return m_objects;
+}
+
+template<typename OBJ, typename PREC>
+std::uint32_t
+Octree<OBJ, PREC>::size() const
+{
+    return static_cast<std::uint32_t>(m_objects.size());
+}
+
+template<typename OBJ, typename PREC>
+const OBJ&
+Octree<OBJ, PREC>::operator[](std::uint32_t n) const
+{
+    return m_objects[n];
 }
 
 template<typename OBJ, typename PREC>
@@ -131,7 +158,7 @@ void
 Octree<OBJ, PREC>::processBreadthFirst(VISITOR& visitor) const
 {
     // Use iterative depth-first search to simulate breadth-first search.
-    // We start at the topmost populated node.
+    // We start at the depth of the topmost populated node.
     std::uint32_t depth = m_topmostPopulated;
     while (depth <= m_maxDepth && processDepth(visitor, depth))
         ++depth;

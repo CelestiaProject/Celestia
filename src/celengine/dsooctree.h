@@ -17,16 +17,20 @@
 #include <celengine/deepskyobj.h>
 #include <celengine/octree.h>
 
+namespace celestia::engine
+{
+
 struct DSOOctreeTraits
 {
     static constexpr std::uint32_t SplitThreshold = 10;
 
     static constexpr float decayMagnitude(float mag) { return mag + 0.5f; }
-    static inline Eigen::Vector3d getPosition(const DeepSkyObject* obj) { return obj->getPosition(); }
-    static inline float getAbsMag(const DeepSkyObject* obj) { return obj->getAbsoluteMagnitude(); }
-    static inline float getRadius(const DeepSkyObject* obj) { return obj->getBoundingSphereRadius(); }
+    static inline Eigen::Vector3d getPosition(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getPosition(); }
+    static inline float getAbsMag(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getAbsoluteMagnitude(); }
+    static inline float getRadius(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getBoundingSphereRadius(); }
 };
 
-using DynamicDSOOctree = DynamicOctree<DeepSkyObject*, DSOOctreeTraits>;
-using DSOOctree = DynamicDSOOctree::static_octree_type;
-using DSOHandler = OctreeProcessor<DeepSkyObject*, double>;
+using DSOOctreeBuilder = OctreeBuilder<std::unique_ptr<DeepSkyObject>, DSOOctreeTraits>;
+using DSOOctree = Octree<std::unique_ptr<DeepSkyObject>, double>;
+
+} // end namespace celestia::engine

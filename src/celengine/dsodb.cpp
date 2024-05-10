@@ -10,6 +10,8 @@
 //
 //
 
+#include "dsodb.h"
+
 #include <algorithm>
 #include <cmath>
 #include <utility>
@@ -21,8 +23,8 @@
 #include "category.h"
 #include "galaxy.h"
 #include "globular.h"
+#include "octreebuilder.h"
 #include "parser.h"
-#include "dsodb.h"
 #include "nebula.h"
 #include "opencluster.h"
 #include "value.h"
@@ -30,6 +32,7 @@
 using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 
 namespace
 {
@@ -42,60 +45,49 @@ constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
 
 } // end unnamed namespace
 
-DSODatabase::~DSODatabase()
+DSODatabase::DSODatabase(engine::DSOOctree&& octree,
+                         std::unique_ptr<NameDatabase>&& namesDB,
+                         float avgAbsMag) :
+    m_octree(std::move(octree)),
+    m_namesDB(std::move(namesDB)),
+    m_avgAbsMag(avgAbsMag)
 {
-    delete [] DSOs;
-    delete [] catalogNumberIndex;
 }
 
 DeepSkyObject*
 DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
 {
-    DeepSkyObject** dso = std::lower_bound(catalogNumberIndex,
-                                           catalogNumberIndex + nDSOs,
-                                           catalogNumber,
-                                           [](const DeepSkyObject* const& dso, AstroCatalog::IndexNumber catNum) { return dso->getIndex() < catNum; });
-
-    if (dso != catalogNumberIndex + nDSOs && (*dso)->getIndex() == catalogNumber)
-        return *dso;
-    else
-        return nullptr;
+    return catalogNumber < m_octree.size() ? m_octree[catalogNumber].get() : nullptr;
 }
 
 DeepSkyObject*
 DSODatabase::find(std::string_view name, bool i18n) const
 {
-    if (name.empty())
+    if (name.empty() || m_namesDB == nullptr)
         return nullptr;
 
-    if (namesDB != nullptr)
-    {
-        AstroCatalog::IndexNumber catalogNumber = namesDB->getCatalogNumberByName(name, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return find(catalogNumber);
-    }
-
-    return nullptr;
+    AstroCatalog::IndexNumber catalogNumber = m_namesDB->getCatalogNumberByName(name, i18n);
+    return find(catalogNumber);
 }
 
 void
 DSODatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
 {
     // only named DSOs are supported by completion.
-    if (!name.empty() && namesDB != nullptr)
-        namesDB->getCompletion(completion, name);
+    if (!name.empty() && m_namesDB != nullptr)
+        m_namesDB->getCompletion(completion, name);
 }
 
 std::string
 DSODatabase::getDSOName(const DeepSkyObject* dso, [[maybe_unused]] bool i18n) const
 {
-    if (namesDB == nullptr)
+    if (m_namesDB == nullptr)
         return {};
 
     AstroCatalog::IndexNumber catalogNumber = dso->getIndex();
 
-    auto iter = namesDB->getFirstNameIter(catalogNumber);
-    if (iter == namesDB->getFinalNameIter())
+    auto iter = m_namesDB->getFirstNameIter(catalogNumber);
+    if (iter == m_namesDB->getFinalNameIter())
         return {};
 
 #ifdef ENABLE_NLS
@@ -116,10 +108,11 @@ DSODatabase::getDSONameList(const DeepSkyObject* dso, const unsigned int maxName
     std::string dsoNames;
 
     auto catalogNumber = dso->getIndex();
-    auto iter = namesDB->getFirstNameIter(catalogNumber);
+    auto iter = m_namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
-    while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
+    const auto endIter = m_namesDB->getFinalNameIter();
+    while (iter != endIter && iter->first == catalogNumber && count < maxNames)
     {
         if (count != 0)
             dsoNames.append(" / ");
@@ -132,6 +125,7 @@ DSODatabase::getDSONameList(const DeepSkyObject* dso, const unsigned int maxName
     return dsoNames;
 }
 
+#if 0
 void
 DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
                              const Eigen::Vector3d& obsPos,
@@ -178,21 +172,78 @@ DSODatabase::findCloseDSOs(DSOHandler& dsoHandler,
                                     radius,
                                     DSO_OCTREE_ROOT_SIZE);
 }
+#endif
 
-NameDatabase*
-DSODatabase::getNameDatabase() const
+#if 0
+
+void
+DSODatabase::finish()
 {
-    return namesDB.get();
+    buildOctree();
+    buildIndexes();
+    calcAvgAbsMag();
+    /*
+    // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
+    for (int i = 0; i < nDSOs; ++i)
+    {
+        if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
+            DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
+    }
+    */
+    GetLogger()->info(_("Loaded {} deep space objects\n"), nDSOs);
 }
 
 void
-DSODatabase::setNameDatabase(std::unique_ptr<NameDatabase>&& _namesDB)
+DSODatabase::buildOctree()
 {
-    namesDB = std::move(_namesDB);
+    GetLogger()->debug("Sorting DSOs into octree . . .\n");
+
+    // TODO: investigate using a different center--it's possible that more
+    // objects end up straddling the base level nodes when the center of the
+    // octree is at the origin.
+    engine::DSOOctreeBuilder builder(std::move(DSOs), DSO_OCTREE_ROOT_SIZE, absMag);
+
+    GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
+    octreeR
+
+    GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
+                       static_cast<int>(firstDSO - sortedDSOs),
+                       1 + octreeRoot->countChildren(),
+                       octreeRoot->countObjects());
+
+    // Clean up . . .
+    delete[] DSOs;
+
+    DSOs = sortedDSOs;
+}
+
+void
+DSODatabase::buildIndexes()
+{
+    // This should only be called once for the database
+    // assert(catalogNumberIndexes[0] == nullptr);
+
+    GetLogger()->debug("Building catalog number indexes . . .\n");
+
+    catalogNumberIndex = new DeepSkyObject*[nDSOs];
+    for (int i = 0; i < nDSOs; ++i)
+        catalogNumberIndex[i] = DSOs[i];
+
+    std::sort(catalogNumberIndex,
+              catalogNumberIndex + nDSOs,
+              [](const DeepSkyObject* dso0, const DeepSkyObject* dso1) { return dso0->getIndex() < dso1->getIndex(); });
+}
+
+#endif
+
+float
+DSODatabase::getAverageAbsoluteMagnitude() const
+{
+    return m_avgAbsMag;
 }
 
 bool
-DSODatabase::load(std::istream& in, const fs::path& resourcePath)
+DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser    parser(&tokenizer);
@@ -216,7 +267,7 @@ DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        AstroCatalog::IndexNumber objCatalogNumber = nextAutoCatalogNumber--;
+        auto objCatalogNumber = static_cast<AstroCatalog::IndexNumber>(m_dsos.size());
 
         tokenizer.nextToken();
         std::string objName;
@@ -238,169 +289,100 @@ DSODatabase::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        DeepSkyObject* obj = nullptr;
+        std::unique_ptr<DeepSkyObject> obj;
         if (compareIgnoringCase(objType, "Galaxy") == 0)
-            obj = new Galaxy();
+            obj = std::make_unique<Galaxy>();
         else if (compareIgnoringCase(objType, "Globular") == 0)
-            obj = new Globular();
+            obj = std::make_unique<Globular>();
         else if (compareIgnoringCase(objType, "Nebula") == 0)
-            obj = new Nebula();
+            obj = std::make_unique<Nebula>();
         else if (compareIgnoringCase(objType, "OpenCluster") == 0)
-            obj = new OpenCluster();
+            obj = std::make_unique<OpenCluster>();
 
-        if (obj != nullptr && obj->load(objParams, resourcePath))
-        {
-            UserCategory::loadCategories(obj, *objParams, DataDisposition::Add, resourcePath.string());
-
-            // Ensure that the DSO array is large enough
-            if (nDSOs == capacity)
-            {
-                // Grow the array by 5%--this may be too little, but the
-                // assumption here is that there will be small numbers of
-                // DSOs in text files added to a big collection loaded from
-                // a binary file.
-                capacity = static_cast<int>(capacity * 1.05);
-
-                // 100 DSOs seems like a reasonable minimum
-                if (capacity < 100)
-                    capacity = 100;
-
-                DeepSkyObject** newDSOs = new DeepSkyObject*[capacity];
-
-                if (DSOs != nullptr)
-                {
-                    std::copy(DSOs, DSOs + nDSOs, newDSOs);
-                    delete[] DSOs;
-                }
-                DSOs = newDSOs;
-            }
-
-            DSOs[nDSOs++] = obj;
-
-            obj->setIndex(objCatalogNumber);
-
-            if (namesDB != nullptr && !objName.empty())
-            {
-                // List of names will replace any that already exist for
-                // this DSO.
-                namesDB->erase(objCatalogNumber);
-
-                // Iterate through the string for names delimited
-                // by ':', and insert them into the DSO database.
-                // Note that db->add() will skip empty names.
-                std::string::size_type startPos = 0;
-                while (startPos != std::string::npos)
-                {
-                    std::string::size_type next    = objName.find(':', startPos);
-                    std::string::size_type length  = std::string::npos;
-                    if (next != std::string::npos)
-                    {
-                        length = next - startPos;
-                        ++next;
-                    }
-                    std::string DSOName = objName.substr(startPos, length);
-                    namesDB->add(objCatalogNumber, DSOName);
-                    startPos   = next;
-                }
-            }
-        }
-        else
+        if (!obj || !obj->load(objParams, resourcePath))
         {
             GetLogger()->warn("Bad Deep Sky Object definition--will continue parsing file.\n");
-            return false;
+            continue;
+        }
+
+        UserCategory::loadCategories(obj.get(), *objParams, DataDisposition::Add, resourcePath.string());
+
+        obj->setIndex(objCatalogNumber);
+        m_dsos.push_back(std::move(obj));
+
+        obj->setIndex(objCatalogNumber);
+
+        if (objName.empty())
+            continue;
+
+        // Iterate through the string for names delimited
+        // by ':', and insert them into the DSO database.
+        // Note that db->add() will skip empty names.
+        std::string::size_type startPos = 0;
+        while (startPos != std::string::npos)
+        {
+            std::string::size_type next    = objName.find(':', startPos);
+            std::string::size_type length  = std::string::npos;
+            if (next != std::string::npos)
+            {
+                length = next - startPos;
+                ++next;
+            }
+
+            m_names.emplace_back(objCatalogNumber, objName.substr(startPos, length));
+            startPos   = next;
         }
     }
+
     return true;
 }
 
-void
-DSODatabase::finish()
+std::unique_ptr<DSODatabase>
+DSODatabaseBuilder::build()
 {
-    buildOctree();
-    buildIndexes();
-    calcAvgAbsMag();
-    /*
-    // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
-    for (int i = 0; i < nDSOs; ++i)
-    {
-        if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
-            DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
-    }
-    */
-    GetLogger()->info(_("Loaded {} deep space objects\n"), nDSOs);
-}
-
-void
-DSODatabase::buildOctree()
-{
-    GetLogger()->debug("Sorting DSOs into octree . . .\n");
     float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
 
-    // TODO: investigate using a different center--it's possible that more
-    // objects end up straddling the base level nodes when the center of the
-    // octree is at the origin.
-    DynamicDSOOctree root(Eigen::Vector3d::Zero(), DSO_OCTREE_ROOT_SIZE, absMag);
-    for (int i = 0; i < nDSOs; ++i)
-    {
-        root.insertObject(DSOs[i]);
-    }
+    float avgAbsMag = calcAvgAbsMag();
 
-    GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
-    DeepSkyObject** sortedDSOs    = new DeepSkyObject*[nDSOs];
-    DeepSkyObject** firstDSO      = sortedDSOs;
+    engine::DSOOctreeBuilder octreeBuilder(std::move(m_dsos), DSO_OCTREE_ROOT_SIZE, absMag);
+    const auto indices = octreeBuilder.indices();
+    auto namesDB = std::make_unique<NameDatabase>();
+    for (auto& entry : m_names)
+        namesDB->add(indices[entry.first], entry.second);
 
-    // The spatial sorting part is useless for DSOs since we
-    // are storing pointers to objects and not the objects themselves:
-    octreeRoot = root.rebuildAndSort(firstDSO);
+    for (auto& obj : octreeBuilder.objects())
+        obj->setIndex(indices[obj->getIndex()]);
 
-    GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
-                       static_cast<int>(firstDSO - sortedDSOs),
-                       1 + octreeRoot->countChildren(),
-                       octreeRoot->countObjects());
-
-    // Clean up . . .
-    delete[] DSOs;
-
-    DSOs = sortedDSOs;
-}
-
-void
-DSODatabase::calcAvgAbsMag()
-{
-    uint32_t nDSOeff = size();
-    for (int i = 0; i < nDSOs; ++i)
-    {
-        float DSOmag = DSOs[i]->getAbsoluteMagnitude();
-
-        // take only DSO's with realistic AbsMag entry
-        // (> DSO_DEFAULT_ABS_MAGNITUDE) into account
-        if (DSOmag > DSO_DEFAULT_ABS_MAGNITUDE)
-            avgAbsMag += DSOmag;
-        else if (nDSOeff > 1)
-            nDSOeff--;
-    }
-    avgAbsMag /= static_cast<float>(nDSOeff);
-}
-
-void
-DSODatabase::buildIndexes()
-{
-    // This should only be called once for the database
-    // assert(catalogNumberIndexes[0] == nullptr);
-
-    GetLogger()->debug("Building catalog number indexes . . .\n");
-
-    catalogNumberIndex = new DeepSkyObject*[nDSOs];
-    for (int i = 0; i < nDSOs; ++i)
-        catalogNumberIndex[i] = DSOs[i];
-
-    std::sort(catalogNumberIndex,
-              catalogNumberIndex + nDSOs,
-              [](const DeepSkyObject* dso0, const DeepSkyObject* dso1) { return dso0->getIndex() < dso1->getIndex(); });
+    return std::make_unique<DSODatabase>(octreeBuilder.build(),
+                                         std::move(namesDB),
+                                         avgAbsMag);
 }
 
 float
-DSODatabase::getAverageAbsoluteMagnitude() const
+DSODatabaseBuilder::calcAvgAbsMag()
 {
-    return avgAbsMag;
+    // Kahan-Babuška summation (Neumaier 1974)
+    double absMag = 0.0;
+    double comp = 0.0;
+
+    std::uint32_t n = 0;
+    for (const auto& dso : m_dsos)
+    {
+        float dsoMag = dso->getAbsoluteMagnitude();
+
+        // take only DSO's with realistic AbsMag entry
+        // (> DSO_DEFAULT_ABS_MAGNITUDE) into account
+        if (dsoMag < DSO_DEFAULT_ABS_MAGNITUDE)
+            continue;
+
+        ++n;
+        double temp = absMag + static_cast<double>(dsoMag);
+        if (std::abs(absMag) >= std::abs(dsoMag))
+            comp += (absMag - temp) + dsoMag;
+        else
+            comp += (dsoMag - temp) + absMag;
+        absMag = temp;
+    }
+
+    return static_cast<float>((absMag + comp) / n);
 }

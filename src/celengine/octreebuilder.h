@@ -11,6 +11,7 @@
 
 #include <Eigen/Core>
 
+#include <celutil/array_view.h>
 #include "octree.h"
 
 namespace celestia::engine
@@ -61,6 +62,9 @@ public:
 
     OctreeBuilder(std::vector<OBJ>&& objects, precision_type rootSize, float rootMag);
 
+    std::vector<OBJ>& objects();
+
+    celestia::util::array_view<std::uint32_t> indices() const;
     static_octree build();
 
 private:
@@ -101,6 +105,20 @@ OctreeBuilder<OBJ, TRAITS>::OctreeBuilder(std::vector<OBJ>&& objects,
         addObject(i);
 
     buildIndexMap();
+}
+
+template<typename OBJ, typename TRAITS>
+std::vector<OBJ>&
+OctreeBuilder<OBJ, TRAITS>::objects()
+{
+    return m_objects;
+}
+
+template<typename OBJ, typename TRAITS>
+celestia::util::array_view<std::uint32_t>
+OctreeBuilder<OBJ, TRAITS>::indices() const
+{
+    return m_indices;
 }
 
 template<typename OBJ, typename TRAITS>
@@ -161,6 +179,7 @@ OctreeBuilder<OBJ, TRAITS>::getChildNode(node_type* node,
         if (depth >= m_scales.size())
             m_scales.push_back(m_scales.back() * precision_type(0.5));
 
+        auto newSize = m_scales[depth];
         point_type newCenter = node->center
                              + newSize * point_type(((index & 1) << 1) - 1,
                                                     (index & 2) - 1,
@@ -218,7 +237,7 @@ OctreeBuilder<OBJ, TRAITS>::processNodes(VISITOR& visitor)
         for (const auto& child : *node->children)
         {
             if (child)
-                nodeStack.push_back(child.get(), depth + 1);
+                nodeStack.emplace_back(child.get(), depth + 1);
         }
     }
 }
@@ -335,7 +354,7 @@ OctreeBuilder<OBJ, TRAITS>::build()
     BuildVisitor visitor(this);
     processNodes(visitor);
     detail::reorderOctreeElements(m_objects, m_indices);
-    return static_octree(std::move(visitor.nodes),
+    return static_octree(std::move(visitor.staticNodes),
                          std::move(m_objects),
                          visitor.topmostPopulated,
                          visitor.maxDepth);
