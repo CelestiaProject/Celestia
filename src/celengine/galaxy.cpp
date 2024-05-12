@@ -16,6 +16,7 @@
 #include <celutil/gettext.h>
 #include "galaxy.h"
 #include "galaxyform.h"
+#include "hash.h"
 #include "render.h"
 
 using namespace std::literals::string_view_literals;

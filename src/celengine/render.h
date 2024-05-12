@@ -482,7 +482,7 @@ class Renderer
 
  private:
     void setFieldOfView(float);
-    void renderPointStars(const StarDatabase& starDB,
+    void renderPointStars(const celestia::engine::StarDatabase& starDB,
                           float faintestVisible,
                           const Observer& observer);
     void renderDeepSkyObjects(const Universe&,

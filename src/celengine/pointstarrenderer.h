@@ -18,7 +18,11 @@
 class ColorTemperatureTable;
 class PointStarVertexBuffer;
 class Star;
+
+namespace celestia::engine
+{
 class StarDatabase;
+}
 
 // TODO: move these variables to PointStarRenderer class
 // without adding a variable. Requires C++17
@@ -44,11 +48,11 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 
     Eigen::Vector3d obsPos;
     Eigen::Vector3f viewNormal;
-    std::vector<RenderListEntry>* renderList    { nullptr };
-    PointStarVertexBuffer* starVertexBuffer     { nullptr };
-    PointStarVertexBuffer* glareVertexBuffer    { nullptr };
-    const StarDatabase* starDB                  { nullptr };
-    const ColorTemperatureTable* colorTemp      { nullptr };
-    float SolarSystemMaxDistance                { 1.0f };
-    float cosFOV                                { 1.0f };
+    std::vector<RenderListEntry>* renderList     { nullptr };
+    PointStarVertexBuffer* starVertexBuffer      { nullptr };
+    PointStarVertexBuffer* glareVertexBuffer     { nullptr };
+    const celestia::engine::StarDatabase* starDB { nullptr };
+    const ColorTemperatureTable* colorTemp       { nullptr };
+    float SolarSystemMaxDistance                 { 1.0f };
+    float cosFOV                                 { 1.0f };
 };

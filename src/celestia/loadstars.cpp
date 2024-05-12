@@ -13,6 +13,8 @@
 
 #include <celcompat/filesystem.h>
 #include <celengine/stardb.h>
+#include <celengine/stardbbuilder.h>
+#include <celengine/starname.h>
 #include <celestia/catalogloader.h>
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
@@ -22,13 +24,13 @@
 namespace celestia
 {
 
-using StarLoader = CatalogLoader<StarDatabaseBuilder>;
+using StarLoader = CatalogLoader<engine::StarDatabaseBuilder>;
 
 namespace
 {
 
 void
-loadCrossIndex(StarDatabaseBuilder &starDBBuilder, StarCatalog catalog, const fs::path &filename)
+loadCrossIndex(engine::StarDatabaseBuilder &starDBBuilder, engine::StarCatalog catalog, const fs::path &filename)
 {
     if (filename.empty())
         return;
@@ -44,12 +46,12 @@ loadCrossIndex(StarDatabaseBuilder &starDBBuilder, StarCatalog catalog, const fs
 
 } // namespace
 
-std::unique_ptr<StarDatabase>
+std::unique_ptr<engine::StarDatabase>
 loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 {
     // First load the binary star database file. The majority of stars
     // will be defined here.
-    StarDatabaseBuilder starDBBuilder;
+    engine::StarDatabaseBuilder starDBBuilder;
     if (auto &path = config.paths.starDatabaseFile; !path.empty())
     {
         if (progressNotifier)
@@ -88,9 +90,9 @@ loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
         starNameDB = std::make_unique<StarNameDatabase>();
     starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, config.paths.HDCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::SAO, config.paths.SAOCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::Gliese, config.paths.GlieseCrossIndexFile);
+    loadCrossIndex(starDBBuilder, engine::StarCatalog::HenryDraper, config.paths.HDCrossIndexFile);
+    loadCrossIndex(starDBBuilder, engine::StarCatalog::SAO, config.paths.SAOCrossIndexFile);
+    loadCrossIndex(starDBBuilder, engine::StarCatalog::Gliese, config.paths.GlieseCrossIndexFile);
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "star");

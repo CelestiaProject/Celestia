@@ -20,7 +20,10 @@
 
 #include <celutil/color.h>
 
+namespace celestia::engine
+{
 class StarDatabase;
+}
 
 class Asterism
 {
@@ -61,4 +64,4 @@ class Asterism
 
 using AsterismList = std::vector<Asterism>;
 
-std::unique_ptr<AsterismList> ReadAsterismList(std::istream&, const StarDatabase&);
+std::unique_ptr<AsterismList> ReadAsterismList(std::istream&, const celestia::engine::StarDatabase&);

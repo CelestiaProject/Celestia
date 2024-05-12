@@ -21,6 +21,8 @@
 
 using celestia::util::GetLogger;
 
+namespace engine = celestia::engine;
+
 Asterism::Asterism(std::string_view _name) :
     name(_name)
 {
@@ -108,7 +110,7 @@ bool Asterism::isColorOverridden() const
 }
 
 
-std::unique_ptr<AsterismList> ReadAsterismList(std::istream& in, const StarDatabase& stardb)
+std::unique_ptr<AsterismList> ReadAsterismList(std::istream& in, const engine::StarDatabase& stardb)
 {
     auto asterisms = std::make_unique<AsterismList>();
     Tokenizer tokenizer(&in);

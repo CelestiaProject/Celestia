@@ -570,7 +570,7 @@ getLocationsCompletion(std::vector<std::string>& completion,
 Universe::~Universe() = default;
 
 
-StarDatabase*
+engine::StarDatabase*
 Universe::getStarCatalog() const
 {
     return starCatalog.get();
@@ -578,7 +578,7 @@ Universe::getStarCatalog() const
 
 
 void
-Universe::setStarCatalog(std::unique_ptr<StarDatabase>&& catalog)
+Universe::setStarCatalog(std::unique_ptr<engine::StarDatabase>&& catalog)
 {
     starCatalog = std::move(catalog);
 }

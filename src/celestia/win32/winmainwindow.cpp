@@ -1399,7 +1399,7 @@ MainWindow::showWWWInfo() const
             constexpr std::string_view simbadUrl = "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident="sv;
 
             AstroCatalog::IndexNumber number = sel.star()->getIndex();
-            if (number <= StarDatabase::MAX_HIPPARCOS_NUMBER)
+            if (number <= engine::StarDatabase::MAX_HIPPARCOS_NUMBER)
             {
                 url = fmt::format("{}HIP+{}", simbadUrl, number);
             }

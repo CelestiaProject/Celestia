@@ -30,12 +30,12 @@
 
 class Universe
 {
- public:
+public:
     Universe() = default;
     ~Universe();
 
-    StarDatabase* getStarCatalog() const;
-    void setStarCatalog(std::unique_ptr<StarDatabase>&&);
+    celestia::engine::StarDatabase* getStarCatalog() const;
+    void setStarCatalog(std::unique_ptr<celestia::engine::StarDatabase>&&);
 
     SolarSystemCatalog* getSolarSystemCatalog() const;
     void setSolarSystemCatalog(std::unique_ptr<SolarSystemCatalog>&&);
@@ -89,7 +89,7 @@ class Universe
     bool isMarked(const Selection&, int priority) const;
     const celestia::MarkerList& getMarkers() const;
 
- private:
+private:
     void getCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        celestia::util::array_view<const Selection> contexts,
@@ -122,11 +122,11 @@ class Universe
                                 float tolerance = 0.0f) const;
 
  private:
-    std::unique_ptr<StarDatabase> starCatalog{nullptr};
-    std::unique_ptr<DSODatabase> dsoCatalog{nullptr};
-    std::unique_ptr<SolarSystemCatalog> solarSystemCatalog{nullptr};
-    std::unique_ptr<AsterismList> asterisms{nullptr};
-    std::unique_ptr<ConstellationBoundaries> boundaries{nullptr};
+    std::unique_ptr<celestia::engine::StarDatabase> starCatalog;
+    std::unique_ptr<DSODatabase> dsoCatalog;
+    std::unique_ptr<SolarSystemCatalog> solarSystemCatalog;
+    std::unique_ptr<AsterismList> asterisms;
+    std::unique_ptr<ConstellationBoundaries> boundaries;
 
     celestia::MarkerList markers{ };
     std::vector<const Star*> closeStars{ };

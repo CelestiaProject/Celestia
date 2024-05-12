@@ -88,7 +88,7 @@ addStars(sbData* sb)
     UniversalCoord ucPos;
 
     /* Load the catalogs and set data */
-    const StarDatabase* stardb = sb->app->simulation->getUniverse()->getStarCatalog();
+    const engine::StarDatabase* stardb = sb->app->simulation->getUniverse()->getStarCatalog();
     sb->browser.setPosition(sb->app->simulation->getObserver().getPosition());
     sb->browser.populate(sb->records);
     currentLength = sb->records.size();

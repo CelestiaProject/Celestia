@@ -204,7 +204,7 @@ CelestialBrowser::StarTableModel::data(const QModelIndex& index, int role) const
         case NameColumn:
             {
                 auto hipCatNo = record.star->getIndex();
-                auto hdCatNo  = universe->getStarCatalog()->crossIndex(StarCatalog::HenryDraper, hipCatNo);
+                auto hdCatNo  = universe->getStarCatalog()->crossIndex(engine::StarCatalog::HenryDraper, hipCatNo);
                 if (hdCatNo != AstroCatalog::InvalidIndex)
                     return QString("HD %1").arg(hdCatNo);
                 else

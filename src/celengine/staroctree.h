@@ -15,7 +15,8 @@
 #include <celengine/star.h>
 #include <celengine/octree.h>
 
+using DynamicStarOctree = DynamicOctree<Star, float>;
+using StarOctree = StaticOctree<Star, float>;
+using StarHandler = OctreeProcessor<Star, float>;
 
-typedef DynamicOctree  <Star, float> DynamicStarOctree;
-typedef StaticOctree   <Star, float> StarOctree;
-typedef OctreeProcessor<Star, float> StarHandler;
+constexpr inline float STAR_OCTREE_ROOT_SIZE = 1000000000.0f;

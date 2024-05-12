@@ -123,6 +123,8 @@ set(CELENGINE_SOURCES
   star.h
   stardb.cpp
   stardb.h
+  stardbbuilder.cpp
+  stardbbuilder.h
   starname.cpp
   starname.h
   staroctree.cpp

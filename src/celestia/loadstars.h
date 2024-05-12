@@ -11,14 +11,18 @@
 
 #include <memory>
 
-class StarDatabase;
 class ProgressNotifier;
 struct CelestiaConfig;
 
 namespace celestia
 {
 
-std::unique_ptr<StarDatabase> loadStars(const CelestiaConfig &config,
-                                        ProgressNotifier     *progressNotifier);
+namespace engine
+{
+class StarDatabase;
+}
+
+std::unique_ptr<engine::StarDatabase>
+loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier);
 
 } // namespace celestia

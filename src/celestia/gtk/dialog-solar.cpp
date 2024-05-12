@@ -138,7 +138,7 @@ loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeStore* solarTre
     const Star* nearestStar;
 
     const SolarSystem* solarSys = app->simulation->getNearestSolarSystem();
-    StarDatabase *stardb = app->simulation->getUniverse()->getStarCatalog();
+    const engine::StarDatabase *stardb = app->simulation->getUniverse()->getStarCatalog();
     g_assert(stardb);
 
     GtkTreeIter top;

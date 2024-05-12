@@ -32,6 +32,7 @@ using namespace Eigen;
 using namespace std;
 using celestia::util::GetLogger;
 
+namespace engine = celestia::engine;
 
 static const char* bodyTypeName(BodyClassification cl)
 {
@@ -937,17 +938,17 @@ static int object_catalognumber(lua_State* l)
     // The argument is a string indicating the catalog.
     bool validCatalog = false;
     bool useHIPPARCOS = false;
-    StarCatalog catalog = StarCatalog::HenryDraper;
+    engine::StarCatalog catalog = engine::StarCatalog::HenryDraper;
     if (catalogName != nullptr)
     {
         if (compareIgnoringCase(catalogName, "HD") == 0)
         {
-            catalog = StarCatalog::HenryDraper;
+            catalog = engine::StarCatalog::HenryDraper;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "SAO") == 0)
         {
-            catalog = StarCatalog::SAO;
+            catalog = engine::StarCatalog::SAO;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "HIP") == 0)
@@ -965,12 +966,12 @@ static int object_catalognumber(lua_State* l)
         if (useHIPPARCOS)
         {
             // Celestia's internal catalog numbers /are/ HIPPARCOS numbers
-            if (internalNumber < StarDatabase::MAX_HIPPARCOS_NUMBER)
+            if (internalNumber < engine::StarDatabase::MAX_HIPPARCOS_NUMBER)
                 catalogNumber = internalNumber;
         }
         else
         {
-            const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
+            const engine::StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
             catalogNumber = stardb->crossIndex(catalog, internalNumber);
         }
     }

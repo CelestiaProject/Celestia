@@ -121,7 +121,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 
 struct StarBrowserSortInfo
 {
-    const StarDatabase* stardb;
+    const engine::StarDatabase* stardb;
     bool reverse;
 };
 
