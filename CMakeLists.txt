@@ -327,6 +327,7 @@ find_package(gperf REQUIRED)
 
 find_package(Boost REQUIRED)
 link_libraries(Boost::boost)
+add_definitions(-DBOOST_NO_EXCEPTIONS)
 
 #[[
 get_cmake_property(_variableNames VARIABLES)
