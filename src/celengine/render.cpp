@@ -864,7 +864,7 @@ void Renderer::getLabelAlignmentInfo(const Annotation &annotation, const Texture
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const celestia::MarkerRepresentation* markerRep,
-                             const string& labelText,
+                             std::string_view labelText,
                              Color color,
                              const Vector3f& pos,
                              LabelHorizontalAlignment halign,
@@ -903,7 +903,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 
 
 void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                       const string& labelText,
+                                       std::string_view labelText,
                                        Color color,
                                        const Vector3f& pos,
                                        LabelHorizontalAlignment halign,
@@ -915,7 +915,7 @@ void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* mar
 
 
 void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                       const string& labelText,
+                                       std::string_view labelText,
                                        Color color,
                                        const Vector3f& pos,
                                        LabelHorizontalAlignment halign,
@@ -927,7 +927,7 @@ void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* mar
 
 
 void Renderer::addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                   const string& labelText,
+                                   std::string_view labelText,
                                    Color color,
                                    const Vector3f& pos,
                                    LabelHorizontalAlignment halign,
@@ -1004,7 +1004,7 @@ void Renderer::endObjectAnnotations()
 
 
 void Renderer::addObjectAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                   const string& labelText,
+                                   std::string_view labelText,
                                    Color color,
                                    const Vector3f& pos,
                                    LabelHorizontalAlignment halign,
@@ -4023,54 +4023,41 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
     for (const auto& ast : asterisms)
     {
-        if (ast.getChainCount() > 0 && ast.getActive())
+        if (!ast.getActive())
+            continue;
+
+        // The constellation label is positioned at the average
+        // position of all stars in the first chain.  This usually
+        // gives reasonable results.
+
+        // Draw all constellation labels at the same distance.
+        // Asterism.averagePosition() is normalized
+        Eigen::Vector3f rpos = ast.averagePosition() * 1.0e4f - observerPos;
+
+        if ((getCameraOrientationf() * rpos).z() < 0)
         {
-            const Asterism::Chain& chain = ast.getChain(0);
-
-            if (!chain.empty())
+            // We'll linearly fade the labels as a function of the
+            // observer's distance to the origin of coordinates:
+            float opacity = 1.0f;
+            if (float dist = observerPos.norm(); dist > MaxAsterismLabelsConstDist)
             {
-                // The constellation label is positioned at the average
-                // position of all stars in the first chain.  This usually
-                // gives reasonable results.
-                Vector3f avg = Vector3f::Zero();
-                // XXX: std::reduce
-                for (const auto& c : chain)
-                    avg += c;
-
-                avg = avg / (float) chain.size();
-
-                // Draw all constellation labels at the same distance
-                avg.normalize();
-                avg = avg * 1.0e4f;
-
-                Vector3f rpos = avg - observerPos;
-
-                if ((getCameraOrientationf() * rpos).z() < 0)
-                {
-                    // We'll linearly fade the labels as a function of the
-                    // observer's distance to the origin of coordinates:
-                    float opacity = 1.0f;
-                    if (float dist = observerPos.norm(); dist > MaxAsterismLabelsConstDist)
-                    {
-                        opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
-                                             / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
-                                             0.0f,
-                                             1.0f);
-                    }
-
-                    // Use the default label color unless the constellation has an
-                    // override color set.
-                    Color labelColor = ConstellationLabelColor;
-                    if (ast.isColorOverridden())
-                        labelColor = ast.getOverrideColor();
-
-                    addBackgroundAnnotation(nullptr,
-                                            ast.getName((labelMode & I18nConstellationLabels) != 0),
-                                            Color(labelColor, opacity),
-                                            rpos,
-                                            LabelHorizontalAlignment::Center, LabelVerticalAlignment::Center);
-                }
+                opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
+                                     / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
+                                     0.0f,
+                                     1.0f);
             }
+
+            // Use the default label color unless the constellation has an
+            // override color set.
+            Color labelColor = ConstellationLabelColor;
+            if (ast.isColorOverridden())
+                labelColor = ast.getOverrideColor();
+
+            addBackgroundAnnotation(nullptr,
+                                    ast.getName((labelMode & I18nConstellationLabels) != 0),
+                                    Color(labelColor, opacity),
+                                    rpos,
+                                    LabelHorizontalAlignment::Center, LabelVerticalAlignment::Center);
         }
     }
 }

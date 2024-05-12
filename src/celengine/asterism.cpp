@@ -7,166 +7,219 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "asterism.h"
+
 #include <memory>
+#include <string_view>
 #include <utility>
 
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
-#include "asterism.h"
-#include "parser.h"
 #include "star.h"
 #include "stardb.h"
 
 using celestia::util::GetLogger;
 
-Asterism::Asterism(std::string_view _name) :
-    name(_name)
+namespace
 {
-#ifdef ENABLE_NLS
-    i18nName = D_(name.c_str());
-#endif
+
+bool
+readChain(Tokenizer& tokenizer,
+          Asterism::Chain& chain,
+          const StarDatabase& starDB,
+          std::string_view astName)
+{
+    for (;;)
+    {
+        if (auto tokenType = tokenizer.nextToken(); tokenType == Tokenizer::TokenEndArray)
+            break;
+
+        auto starName = tokenizer.getStringValue();
+        if (!starName.has_value())
+        {
+            GetLogger()->error("Error parsing asterism {} chain: expected string\n", astName);
+            return false;
+        }
+
+        const Star* star = starDB.find(*starName, false);
+        if (!star)
+            star = starDB.find(ReplaceGreekLetterAbbr(*starName), false);
+
+        if (star)
+            chain.push_back(star->getPosition());
+        else
+            GetLogger()->warn("Error loading star \"{}\" for asterism \"{}\"\n", *starName, astName);
+    }
+
+    return true;
 }
 
-std::string Asterism::getName(bool i18n) const
+bool
+readChains(Tokenizer& tokenizer,
+           std::vector<Asterism::Chain>& chains,
+           const StarDatabase& starDB,
+           std::string_view astName)
+{
+    if (tokenizer.nextToken() != Tokenizer::TokenBeginArray)
+    {
+        GetLogger()->error("Error parsing asterism \"{}\": expected array\n", astName);
+        return false;
+    }
+
+    for (;;)
+    {
+        auto tokenType = tokenizer.nextToken();
+        if (tokenType == Tokenizer::TokenEndArray)
+            break;
+
+        if (tokenType != Tokenizer::TokenBeginArray)
+        {
+            GetLogger()->error("Error parsing asterism {} chain: expected array\n", astName);
+            return false;
+        }
+
+        Asterism::Chain chain;
+        if (!readChain(tokenizer, chain, starDB, astName))
+            return false;
+
+        // skip empty (without or only with a single star) chains - no lines can be drawn for these
+        if (chain.size() > 1)
+            chains.push_back(std::move(chain));
+        else
+            GetLogger()->warn("Empty or single-element chain found in asterism \"{}\"\n", astName);
+    }
+
+    return true;
+}
+
+} // end unnamed namespace
+
+Asterism::Asterism(std::string&& name, std::vector<Chain>&& chains) :
+    m_name(std::move(name)),
+    m_chains(std::move(chains))
 {
 #ifdef ENABLE_NLS
-    return i18n ? i18nName : name;
+    if (std::string_view localizedName(D_(m_name.c_str())); localizedName != m_name)
+        m_i18nName = localizedName;
+#endif
+
+    // Compute average position of first chain for label positioning
+    for (const auto& pos : m_chains.front())
+    {
+        m_averagePosition += pos;
+    }
+
+    m_averagePosition.normalize();
+}
+
+std::string_view
+Asterism::getName(bool i18n) const
+{
+#ifdef ENABLE_NLS
+    return i18n && !m_i18nName.empty() ? m_i18nName : m_name;
 #else
-    return name;
+    return m_name;
 #endif
 }
 
-int Asterism::getChainCount() const
+int
+Asterism::getChainCount() const
 {
-    return static_cast<int>(chains.size());
+    return static_cast<int>(m_chains.size());
 }
 
-const Asterism::Chain& Asterism::getChain(int index) const
+const Asterism::Chain&
+Asterism::getChain(int index) const
 {
-    return chains[index];
+    return m_chains[index];
 }
-
-void Asterism::addChain(Asterism::Chain&& chain)
-{
-    chains.emplace_back(std::move(chain));
-}
-
 
 /*! Return whether the constellation is visible.
  */
-bool Asterism::getActive() const
+bool
+Asterism::getActive() const
 {
-    return active;
+    return m_active;
 }
-
 
 /*! Set whether or not the constellation is visible.
  */
-void Asterism::setActive(bool _active)
+void
+Asterism::setActive(bool _active)
 {
-    active = _active;
+    m_active = _active;
 }
-
 
 /*! Get the override color for this constellation.
  */
-Color Asterism::getOverrideColor() const
+Color
+Asterism::getOverrideColor() const
 {
-    return color;
+    return m_color;
 }
-
 
 /*! Set an override color for the constellation. If this method isn't
  *  called, the constellation is drawn in the render's default color
  *  for contellations. Calling unsetOverrideColor will remove the
  *  override color.
  */
-void Asterism::setOverrideColor(const Color &c)
+void
+Asterism::setOverrideColor(const Color &c)
 {
-    color = c;
-    useOverrideColor = true;
+    m_color = c;
+    m_useOverrideColor = true;
 }
-
 
 /*! Make this constellation appear in the default color (undoing any
  *  calls to setOverrideColor.
  */
-void Asterism::unsetOverrideColor()
+void
+Asterism::unsetOverrideColor()
 {
-    useOverrideColor = false;
+    m_useOverrideColor = false;
 }
-
 
 /*! Return true if this constellation has a custom color, or false
  *  if it should be drawn in the default color.
  */
-bool Asterism::isColorOverridden() const
+bool
+Asterism::isColorOverridden() const
 {
-    return useOverrideColor;
+    return m_useOverrideColor;
 }
 
+const Eigen::Vector3f&
+Asterism::averagePosition() const
+{
+    return m_averagePosition;
+}
 
-std::unique_ptr<AsterismList> ReadAsterismList(std::istream& in, const StarDatabase& stardb)
+std::unique_ptr<AsterismList>
+ReadAsterismList(std::istream& in, const StarDatabase& starDB)
 {
     auto asterisms = std::make_unique<AsterismList>();
     Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         auto tokenValue = tokenizer.getStringValue();
         if (!tokenValue.has_value())
         {
-            GetLogger()->error("Error parsing asterism file.\n");
-            return nullptr;
+            GetLogger()->error("Error parsing asterism file: expected string\n");
+            return asterisms;
         }
 
-        Asterism& ast = asterisms->emplace_back(*tokenValue);
+        std::string astName(*tokenValue);
+        std::vector<Asterism::Chain> chains;
+        if (!readChains(tokenizer, chains, starDB, astName))
+            return asterisms;
 
-        const Value chainsValue = parser.readValue();
-        const ValueArray* chains = chainsValue.getArray();
-        if (chains == nullptr)
-        {
-            GetLogger()->error("Error parsing asterism {}\n", ast.getName());
-            return nullptr;
-        }
-
-        for (const auto& chain : *chains)
-        {
-            const ValueArray* a = chain.getArray();
-            if (a == nullptr)
-                continue;
-
-            // skip empty (without or only with a single star) chains
-            if (a->size() <= 1)
-                continue;
-
-            Asterism::Chain new_chain;
-            for (const auto& i : *a)
-            {
-                const std::string* iStr = i.getString();
-                if (iStr == nullptr)
-                    continue;
-
-                const Star* star = stardb.find(*iStr, false);
-                if (star == nullptr)
-                    star = stardb.find(ReplaceGreekLetterAbbr(*iStr), false);
-                if (star != nullptr)
-                {
-                    new_chain.push_back(star->getPosition());
-                }
-                else
-                {
-                    GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n",
-                                        *iStr,
-                                        ast.getName());
-                }
-            }
-
-            ast.addChain(std::move(new_chain));
-        }
+        if (chains.empty())
+            GetLogger()->warn("No valid chains found for asterism \"{}\"\n", astName);
+        else
+            asterisms->emplace_back(std::move(astName), std::move(chains));
     }
 
     return asterisms;
