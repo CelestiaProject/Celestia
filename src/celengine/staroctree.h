@@ -15,8 +15,13 @@
 #include <celengine/star.h>
 #include <celengine/octree.h>
 
+namespace celestia::engine
+{
+
 struct StarOctreeTraits
 {
+    using object_type = Star;
+
     // In testing, changing SPLIT_THRESHOLD from 100 to 50 nearly
     // doubled the number of nodes in the tree, but provided only between a
     // 0 to 5 percent frame rate improvement.
@@ -29,6 +34,7 @@ struct StarOctreeTraits
     static inline float getRadius(const Star& obj) { return obj.getOrbitalRadius(); }
 };
 
-using DynamicStarOctree = DynamicOctree<Star, StarOctreeTraits>;
-using StarOctree = DynamicStarOctree::static_octree_type;
-using StarHandler = OctreeProcessor<Star, float>;
+using StarOctreeBuilder = OctreeBuilder<StarOctreeTraits>;
+using StarOctree = Octree<Star, float>;
+
+} // end namespace celestia::engine

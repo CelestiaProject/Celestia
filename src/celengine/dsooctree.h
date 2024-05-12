@@ -22,6 +22,8 @@ namespace celestia::engine
 
 struct DSOOctreeTraits
 {
+    using object_type = std::unique_ptr<DeepSkyObject>;
+
     static constexpr std::uint32_t SplitThreshold = 10;
 
     static constexpr float decayMagnitude(float mag) { return mag + 0.5f; }
@@ -30,7 +32,7 @@ struct DSOOctreeTraits
     static inline float getRadius(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getBoundingSphereRadius(); }
 };
 
-using DSOOctreeBuilder = OctreeBuilder<std::unique_ptr<DeepSkyObject>, DSOOctreeTraits>;
+using DSOOctreeBuilder = OctreeBuilder<DSOOctreeTraits>;
 using DSOOctree = Octree<std::unique_ptr<DeepSkyObject>, double>;
 
 } // end namespace celestia::engine

@@ -52,7 +52,7 @@ OctreeNode<PREC>::OctreeNode(const point_type& _center, PREC _scale, std::uint32
 
 } // end namespace celestia::engine::detail
 
-template<typename OBJ, typename TRAITS>
+template<typename TRAITS>
 class OctreeBuilder;
 
 template<typename OBJ, typename PREC>
@@ -90,7 +90,7 @@ private:
     std::uint32_t m_topmostPopulated;
     std::uint32_t m_maxDepth;
 
-    template<typename, typename>
+    template<typename>
     friend class OctreeBuilder;
 };
 
