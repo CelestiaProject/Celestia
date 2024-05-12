@@ -13,6 +13,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <Eigen/Core>
@@ -391,21 +392,21 @@ class Renderer
     };
 
     void addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                 const std::string& labelText,
+                                 std::string_view labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
                                  LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
                                  LabelVerticalAlignment valign = LabelVerticalAlignment::Bottom,
                                  float size = 0.0f);
     void addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
-                                 const std::string& labelText,
+                                 std::string_view labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
                                  LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
                                  LabelVerticalAlignment valign = LabelVerticalAlignment::Bottom,
                                  float size = 0.0f);
     void addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
-                             const std::string& labelText,
+                             std::string_view labelText,
                              Color color,
                              const Eigen::Vector3f& position,
                              LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
@@ -417,7 +418,12 @@ class Renderer
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&, LabelHorizontalAlignment halign, LabelVerticalAlignment valign);
+    void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep,
+                             std::string_view labelText,
+                             Color,
+                             const Eigen::Vector3f&,
+                             LabelHorizontalAlignment halign,
+                             LabelVerticalAlignment valign);
     void endObjectAnnotations();
     Eigen::Quaternionf getCameraOrientationf() const;
     Eigen::Quaterniond getCameraOrientation() const;
@@ -609,7 +615,7 @@ class Renderer
 
     void addAnnotation(std::vector<Annotation>&,
                        const celestia::MarkerRepresentation*,
-                       const std::string& labelText,
+                       std::string_view labelText,
                        Color color,
                        const Eigen::Vector3f& position,
                        LabelHorizontalAlignment halign = LabelHorizontalAlignment::Start,
