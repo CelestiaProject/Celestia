@@ -97,6 +97,7 @@ OctreeBuilder<TRAITS>::OctreeBuilder(std::vector<object_type>&& objects,
     m_objects(std::move(objects)),
     m_root(std::make_unique<node_type>(point_type::Zero()))
 {
+    m_objects.shrink_to_fit();
     m_thresholdMags.push_back(rootMag);
     m_scales.push_back(rootSize);
 

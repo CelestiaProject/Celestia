@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#if 0
+
 #include "dsooctree.h"
 
 #include <celcompat/numbers.h>
@@ -124,3 +126,5 @@ void DSOOctree::processCloseObjects(DSOHandler& processor,
                                        scale * 0.5f);
     }
 }
+
+#endif
