@@ -98,10 +98,10 @@ class StarDatabase
 private:
     std::uint32_t nStars{ 0 };
 
-    Star*                             stars{ nullptr };
-    std::unique_ptr<StarNameDatabase> namesDB{ nullptr };
-    std::vector<Star*>                catalogNumberIndex{ };
-    StarOctree*                       octreeRoot{ nullptr };
+    std::unique_ptr<Star[]>           stars; //NOSONAR
+    std::unique_ptr<StarNameDatabase> namesDB;
+    std::vector<Star*>                catalogNumberIndex;
+    StarOctree*                       octreeRoot;
 
     std::vector<CrossIndex> crossIndexes;
 
@@ -111,7 +111,7 @@ private:
 
 inline Star* StarDatabase::getStar(const std::uint32_t n) const
 {
-    return stars + n;
+    return stars.get() + n;
 }
 
 inline std::uint32_t StarDatabase::size() const
@@ -196,7 +196,7 @@ class StarDatabaseBuilder
 
     BlockArray<Star> unsortedStars{ };
     // List of stars loaded from binary file, sorted by catalog number
-    std::vector<Star*> binFileCatalogNumberIndex{ nullptr };
+    std::vector<Star*> binFileCatalogNumberIndex;
     // Catalog number -> star mapping for stars loaded from stc files
     std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex{};
     std::vector<BarycenterUsage> barycenters{};
