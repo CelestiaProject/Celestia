@@ -247,7 +247,7 @@ def create_edge_str(root: Node) -> str:
     return edge_data[0]
 
 
-def compile_tree(root: Node) -> tuple(str, list[int]):
+def compile_tree(root: Node) -> tuple[str, list[int]]:
     """Compiles the tree into data"""
     edge_str = create_edge_str(root)
     out_nodes: list[int] = []
