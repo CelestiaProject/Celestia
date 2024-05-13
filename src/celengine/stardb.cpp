@@ -436,10 +436,7 @@ StarDatabase::StarDatabase()
 }
 
 
-StarDatabase::~StarDatabase()
-{
-    delete [] stars;
-}
+StarDatabase::~StarDatabase() = default;
 
 
 Star*
@@ -778,7 +775,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
 
             star.setDetails(std::move(details));
             star.setIndex(catNo);
-            unsortedStars.add(star);
+            unsortedStars.push_back(std::move(star));
 
             ptr += sizeof(StarsDatRecord);
             ++starDB->nStars;
@@ -801,11 +798,9 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
     // replaced.
     if (auto binFileStarCount = unsortedStars.size(); binFileStarCount > 0)
     {
-        binFileCatalogNumberIndex.resize(binFileStarCount);
-        for (unsigned int i = 0; i < binFileStarCount; i++)
-        {
-            binFileCatalogNumberIndex[i] = &unsortedStars[i];
-        }
+        binFileCatalogNumberIndex.reserve(binFileStarCount);
+        for (Star& star : unsortedStars)
+            binFileCatalogNumberIndex.push_back(&star);
 
         std::sort(binFileCatalogNumberIndex.begin(), binFileCatalogNumberIndex.end(),
                   [](const Star* star0, const Star* star1) { return star0->getIndex() < star1->getIndex(); });
@@ -1013,7 +1008,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         {
             if (isNewStar)
             {
-                unsortedStars.add(*star);
+                unsortedStars.push_back(*star);
                 ++starDB->nStars;
                 delete star;
 
@@ -1639,44 +1634,23 @@ void StarDatabaseBuilder::buildOctree()
     GetLogger()->debug("Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
-    DynamicStarOctree* root = new DynamicStarOctree(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
+    auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
-    for (unsigned int i = 0; i < unsortedStars.size(); ++i)
-    {
-        root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
-    }
+    for (const Star& star : unsortedStars)
+        root->insertObject(star, STAR_OCTREE_ROOT_SIZE);
 
     GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    Star* sortedStars    = new Star[starDB->nStars];
-    Star* firstStar      = sortedStars;
+    auto sortedStars = std::make_unique<Star[]>(starDB->nStars);
+    Star* firstStar = sortedStars.get();
     root->rebuildAndSort(starDB->octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
-                       firstStar - sortedStars,
+                       firstStar - sortedStars.get(),
                        1 + starDB->octreeRoot->countChildren(), starDB->octreeRoot->countObjects());
-#ifdef PROFILE_OCTREE
-    vector<OctreeLevelStatistics> stats;
-    octreeRoot->computeStatistics(stats);
-    int level = 0;
-    for (const auto& stat : stats)
-    {
-        level++;
-        clog << fmt::format(
-                     "Level {}, {:.5f} ly, {} nodes, {} stars\n",
-                     level,
-                     STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level),
-                     stat.nodeCount,
-                     stat.objectCount;
-    }
-#endif
 
-    // Clean up . . .
-    //delete[] stars;
     unsortedStars.clear();
-    delete root;
-
-    starDB->stars = sortedStars;
+    starDB->stars = std::move(sortedStars);
 }
 
 
