@@ -376,7 +376,7 @@ OctreeBuilder<TRAITS>::BuildVisitor::visit(const node_type& node, std::uint32_t 
     staticNode.brightestMag = TRAITS::getAbsMag(builder->m_objects[*brightestIt]);
 
     staticNode.startOffset = static_cast<OctreeIndexType>(builder->m_indices.size());
-    staticNode.size = static_cast<OctreeIndexType>(node.indices.size());
+    staticNode.endOffset = staticNode.startOffset + static_cast<OctreeIndexType>(node.indices.size());
 
     std::copy(node.indices.begin(), node.indices.end(), std::back_inserter(builder->m_indices));
 

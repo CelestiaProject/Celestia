@@ -23,12 +23,13 @@
 class DeepSkyObject;
 class DSODatabase;
 
-class DSORenderer : public ObjectRenderer<DeepSkyObject *, double>
+class DSORenderer : public ObjectRenderer<double>
 {
 public:
-    DSORenderer();
+    DSORenderer(const Observer*, Renderer*);
 
-    void process(DeepSkyObject *const &, double, float) override;
+    bool checkNode(const Eigen::Vector3d& center, double size, float brightestMag);
+    void process(const std::unique_ptr<DeepSkyObject>&);
 
     celestia::math::InfiniteFrustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
                                              1.0f,

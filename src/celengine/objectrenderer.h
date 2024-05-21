@@ -10,30 +10,50 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
 #include "octree.h"
 
 class Observer;
 class Renderer;
 
-template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
+template<typename PREC>
+class ObjectRenderer
 {
- public:
-    ObjectRenderer(PREC _distanceLimit) :
-        distanceLimit((float) _distanceLimit)
-    {
-    };
+public:
+    bool checkNode(const Eigen::Matrix<PREC, 3, 1>&, PREC, float) const;
 
     const Observer* observer    { nullptr };
-    Renderer*  renderer         { nullptr };
+    Renderer* renderer          { nullptr };
+
+    PREC distanceLimit;
 
     float pixelSize             { 0.0f };
     float faintestMag           { 0.0f };
-    float distanceLimit         { 0.0f };
 
     // Objects brighter than labelThresholdMag will be labeled
     float labelThresholdMag     { 0.0f };
 
-    uint64_t renderFlags        { 0 };
+    std::uint64_t renderFlags   { 0 };
     int labelMode               { 0 };
+
+protected:
+    ObjectRenderer(const Observer* _observer, Renderer* _renderer, PREC _distanceLimit) :
+        observer(_observer),
+        renderer(_renderer),
+        distanceLimit(_distanceLimit)
+    {
+    };
+
+    ~ObjectRenderer() = default;
 };
+
+template<typename PREC>
+bool
+ObjectRenderer<PREC>::checkNode(const Eigen::Matrix<PREC, 3, 1>& center,
+                                PREC size,
+                                float brightestMag) const
+{
+    return true;
+}

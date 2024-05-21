@@ -3870,7 +3870,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                                     const Observer& observer,
                                     const float     faintestMagNight)
 {
-    DSORenderer dsoRenderer;
+    DSORenderer dsoRenderer(&observer, this);
 
     auto cameraOrientation = getCameraOrientationf();
 
@@ -3890,10 +3890,8 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     DSODatabase* dsoDB  = universe.getDSOCatalog();
 
-    dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
     dsoRenderer.orientationMatrixT = cameraOrientation.toRotationMatrix();
-    dsoRenderer.observer         = &observer;
     dsoRenderer.obsPos           = obsPos;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.pixelSize        = pixelSize;

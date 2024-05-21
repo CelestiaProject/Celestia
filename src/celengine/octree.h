@@ -45,7 +45,7 @@ struct OctreeNode
     std::uint32_t depth;
     OctreeNodeIndexType afterSubtree{ OctreeNodeInvalidIndex };
     OctreeIndexType startOffset{ 0 };
-    OctreeIndexType size{ 0 };
+    OctreeIndexType endOffset{ 0 };
 };
 
 template<typename PREC>
@@ -156,10 +156,9 @@ Octree<OBJ, PREC>::processDepthFirst(VISITOR& visitor) const
             continue;
         }
 
-        if (node.size > 0)
+        for (OctreeIndexType index = node.startOffset; index < node.endOffset; ++index)
         {
-            visitor.process(celestia::util::array_view<OBJ>(m_objects.data() + node.startOffset,
-                                                            node.size));
+            visitor.process(m_objects[index]);
         }
 
         ++idx;
@@ -202,10 +201,9 @@ Octree<OBJ, PREC>::processDepth(VISITOR& visitor, std::uint32_t depth) const
         {
             // We have reached the requested depth, so report completion
             result = true;
-            if (node.size > 0)
+            for (OctreeIndexType index = node.startOffset; index < node.endOffset; ++index)
             {
-                visitor.process(celestia::util::array_view<OBJ>(m_objects.data() + node.startOffset,
-                                                                node.size));
+                visitor.process(m_objects[index]);
             }
 
             // We've reached the maximum processing depth, so skip any

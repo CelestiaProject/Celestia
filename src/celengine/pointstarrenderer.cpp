@@ -29,8 +29,9 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
     return pos.offsetFromKm(star.getPosition(t));
 }
 
-PointStarRenderer::PointStarRenderer() :
-    ObjectRenderer<Star, float>(StarDistanceLimit)
+PointStarRenderer::PointStarRenderer(const Observer* _observer,
+                                     Renderer* _renderer) :
+    ObjectRenderer<float>(_observer, _renderer, StarDistanceLimit)
 {
 }
 

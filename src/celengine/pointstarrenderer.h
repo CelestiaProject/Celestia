@@ -28,7 +28,7 @@ constexpr inline float BaseStarDiscSize      = 5.0f;
 constexpr inline float MaxScaledDiscStarSize = 8.0f;
 constexpr inline float GlareOpacity          = 0.65f;
 
-class PointStarRenderer : public ObjectRenderer<Star, float>
+class PointStarRenderer : public ObjectRenderer<float>
 {
  public:
 #if 0
@@ -39,7 +39,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     static constexpr const float GlareOpacity          = 0.65f;
 #endif
 
-    PointStarRenderer();
+    PointStarRenderer(const Observer*, Renderer*);
     void process(const Star &star, float distance, float appMag) override;
 
     Eigen::Vector3d obsPos;

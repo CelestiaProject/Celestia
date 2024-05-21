@@ -24,6 +24,7 @@
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -55,9 +56,15 @@ brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, fl
 
 } // anonymous namespace
 
-DSORenderer::DSORenderer() :
-    ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE)
+DSORenderer::DSORenderer(const Observer* _observer, Renderer* _renderer) :
+    ObjectRenderer<double>(_observer, _renderer, DSO_OCTREE_ROOT_SIZE)
 {
+}
+
+void
+DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso)
+{
+
 }
 
 void DSORenderer::process(DeepSkyObject* const &dso,
