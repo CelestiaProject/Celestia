@@ -23,10 +23,14 @@
 namespace celestia::engine
 {
 
+using OctreeIndexType = std::uint32_t;
+
 namespace detail
 {
 
-constexpr inline std::uint32_t OctreeInvalidIndex = std::numeric_limits<std::uint32_t>::max();
+using OctreeNodeIndexType = std::uint32_t;
+
+constexpr inline auto OctreeNodeInvalidIndex = std::numeric_limits<OctreeNodeIndexType>::max();
 
 template<typename PREC>
 struct OctreeNode
@@ -39,9 +43,9 @@ struct OctreeNode
     PREC scale;
     float brightestMag{ std::numeric_limits<float>::max() };
     std::uint32_t depth;
-    std::uint32_t afterSubtree{ OctreeInvalidIndex };
-    std::uint32_t startOffset{ 0 };
-    std::uint32_t size{ 0 };
+    OctreeNodeIndexType afterSubtree{ OctreeNodeInvalidIndex };
+    OctreeIndexType startOffset{ 0 };
+    OctreeIndexType size{ 0 };
 };
 
 template<typename PREC>
@@ -71,7 +75,8 @@ public:
     celestia::util::array_view<OBJ> objects() const;
     std::uint32_t size() const;
 
-    const OBJ& operator[](std::uint32_t) const;
+    OBJ& operator[](OctreeIndexType);
+    const OBJ& operator[](OctreeIndexType) const;
 
     template<typename VISITOR>
     void processDepthFirst(VISITOR&) const;
@@ -123,8 +128,15 @@ Octree<OBJ, PREC>::size() const
 }
 
 template<typename OBJ, typename PREC>
+OBJ&
+Octree<OBJ, PREC>::operator[](OctreeIndexType n)
+{
+    return m_objects[n];
+}
+
+template<typename OBJ, typename PREC>
 const OBJ&
-Octree<OBJ, PREC>::operator[](std::uint32_t n) const
+Octree<OBJ, PREC>::operator[](OctreeIndexType n) const
 {
     return m_objects[n];
 }
@@ -134,7 +146,7 @@ template<typename VISITOR>
 void
 Octree<OBJ, PREC>::processDepthFirst(VISITOR& visitor) const
 {
-    std::uint32_t idx = 0;
+    detail::OctreeNodeIndexType idx = 0;
     while (idx < m_nodes.size())
     {
         const auto& node = m_nodes[idx];
@@ -171,7 +183,7 @@ template<typename VISITOR>
 bool
 Octree<OBJ, PREC>::processDepth(VISITOR& visitor, std::uint32_t depth) const
 {
-    std::uint32_t idx = 0;
+    detail::OctreeNodeIndexType idx = 0;
     bool result = false;
     while (idx < m_nodes.size())
     {

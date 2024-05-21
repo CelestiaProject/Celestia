@@ -36,8 +36,8 @@ struct OctreeBuilderNode
     OctreeBuilderNode& operator=(OctreeBuilderNode&&) noexcept = default;
 
     point_type center;
-    std::uint32_t childrenIndex{ OctreeInvalidIndex };
-    std::vector<std::uint32_t> indices;
+    OctreeNodeIndexType childrenIndex{ OctreeNodeInvalidIndex };
+    std::vector<OctreeIndexType> indices;
 };
 
 template<typename PREC>
@@ -51,9 +51,10 @@ OctreeBuilderNode<PREC>::~OctreeBuilderNode() = default;
 
 template<typename OBJ>
 void
-reorderOctreeElements(std::vector<OBJ>& objects, std::vector<std::uint32_t>& indices)
+reorderOctreeElements(std::vector<OBJ>& objects, std::vector<OctreeIndexType>& indices)
 {
     // In-place reordering
+
 }
 
 } // end namespace celestia::engine::detail
@@ -77,14 +78,14 @@ public:
 private:
     using node_type = detail::OctreeBuilderNode<precision_type>;
     using static_node_type = detail::OctreeNode<precision_type>;
-    using children_type = std::array<std::uint32_t, 8>;
+    using children_type = std::array<detail::OctreeNodeIndexType, 8>;
 
     struct BuildVisitor;
     struct IndexMapVisitor;
 
-    void addObject(std::uint32_t);
-    bool checkStraddling(const point_type&, std::uint32_t);
-    std::uint32_t getChildIndex(node_type&, std::uint32_t, std::uint32_t);
+    void addObject(OctreeIndexType);
+    bool checkStraddling(const point_type&, OctreeIndexType);
+    detail::OctreeNodeIndexType getChildIndex(node_type&, OctreeIndexType, std::uint32_t);
     void splitNode(node_type&, std::uint32_t);
     void buildIndexMap();
 
@@ -137,7 +138,7 @@ OctreeBuilder<TRAITS>::indices() const
 
 template<typename TRAITS>
 void
-OctreeBuilder<TRAITS>::addObject(std::uint32_t idx)
+OctreeBuilder<TRAITS>::addObject(OctreeIndexType idx)
 {
     if ((TRAITS::getPosition(m_objects[idx]) - m_nodes.front().center).cwiseAbs().maxCoeff() > m_scales.front())
     {
@@ -147,7 +148,7 @@ OctreeBuilder<TRAITS>::addObject(std::uint32_t idx)
     }
 
     std::uint32_t depth = 0;
-    std::uint32_t nodeIndex = 0;
+    detail::OctreeNodeIndexType nodeIndex = 0;
     for (;;)
     {
         node_type& node = m_nodes[nodeIndex];
@@ -162,7 +163,7 @@ OctreeBuilder<TRAITS>::addObject(std::uint32_t idx)
             return;
         }
 
-        if (node.childrenIndex == detail::OctreeInvalidIndex)
+        if (node.childrenIndex == detail::OctreeNodeInvalidIndex)
         {
             if (node.indices.size() < TRAITS::SplitThreshold)
             {
@@ -180,25 +181,27 @@ OctreeBuilder<TRAITS>::addObject(std::uint32_t idx)
 
 template<typename TRAITS>
 bool
-OctreeBuilder<TRAITS>::checkStraddling(const point_type& center, std::uint32_t idx)
+OctreeBuilder<TRAITS>::checkStraddling(const point_type& center, OctreeIndexType idx)
 {
     auto radius = TRAITS::getRadius(m_objects[idx]);
     return radius > 0 && (TRAITS::getPosition(m_objects[idx]) - center).cwiseAbs().minCoeff() < radius;
 }
 
 template<typename TRAITS>
-std::uint32_t
+detail::OctreeNodeIndexType
 OctreeBuilder<TRAITS>::getChildIndex(node_type& node,
-                                     std::uint32_t idx,
+                                     OctreeIndexType idx,
                                      std::uint32_t depth)
 {
+    assert(node.childrenIndex != detail::OctreeNodeInvalidIndex);
+
     point_type position = TRAITS::getPosition(m_objects[idx]);
     int index = static_cast<int>(position.x() >= node.center.x()) |
                 (static_cast<int>(position.y() >= node.center.y()) << 1) |
                 (static_cast<int>(position.z() >= node.center.z()) << 2);
-    assert(node.childrenIndex != detail::OctreeInvalidIndex);
-    std::uint32_t& childIndex = m_children[node.childrenIndex][index];
-    if (childIndex == detail::OctreeInvalidIndex)
+
+    detail::OctreeNodeIndexType& childIndex = m_children[node.childrenIndex][index];
+    if (childIndex == detail::OctreeNodeInvalidIndex)
     {
         if (depth >= m_scales.size())
             m_scales.push_back(m_scales.back() * precision_type(0.5));
@@ -209,7 +212,7 @@ OctreeBuilder<TRAITS>::getChildIndex(node_type& node,
                                                     (index & 2) - 1,
                                                     ((index & 4) >> 1) - 1);
 
-        childIndex = static_cast<std::uint32_t>(m_nodes.size());
+        childIndex = static_cast<detail::OctreeNodeIndexType>(m_nodes.size());
         m_nodes.emplace_back(newCenter);
     }
 
@@ -220,11 +223,12 @@ template<typename TRAITS>
 void
 OctreeBuilder<TRAITS>::splitNode(node_type& node, std::uint32_t depth)
 {
+    assert(node.childrenIndex == detail::OctreeNodeInvalidIndex);
+
     const float thresholdMag = m_thresholdMags[depth];
 
-    assert(node.childrenIndex == detail::OctreeInvalidIndex);
-    node.childrenIndex = static_cast<std::uint32_t>(m_children.size());
-    m_children.emplace_back().fill(detail::OctreeInvalidIndex);
+    node.childrenIndex = static_cast<detail::OctreeNodeIndexType>(m_children.size());
+    m_children.emplace_back().fill(detail::OctreeNodeInvalidIndex);
 
     const auto end = node.indices.end();
     auto writeIt = node.indices.begin();
@@ -237,7 +241,7 @@ OctreeBuilder<TRAITS>::splitNode(node_type& node, std::uint32_t depth)
             continue;
         }
 
-        std::uint32_t childIndex = getChildIndex(node, *readIt, depth + 1);
+        detail::OctreeNodeIndexType childIndex = getChildIndex(node, *readIt, depth + 1);
         m_nodes[childIndex].indices.push_back(*readIt);
     }
 
@@ -250,22 +254,22 @@ void
 OctreeBuilder<TRAITS>::processNodes(VISITOR& visitor) const
 {
     // Node stack: (nodeIndex, depth)
-    std::vector<std::pair<std::uint32_t, std::uint32_t>> nodeStack;
+    std::vector<std::pair<detail::OctreeNodeIndexType, std::uint32_t>> nodeStack;
     nodeStack.emplace_back(0, 0);
 
     while (!nodeStack.empty())
     {
-        std::uint32_t nodeIndex = nodeStack.back().first;
+        detail::OctreeNodeIndexType nodeIndex = nodeStack.back().first;
         std::uint32_t depth = nodeStack.back().second;
         nodeStack.pop_back();
 
         const node_type& node = m_nodes[nodeIndex];
         visitor.visit(node, depth);
 
-        if (node.childrenIndex == detail::OctreeInvalidIndex)
+        if (node.childrenIndex == detail::OctreeNodeInvalidIndex)
             continue;
 
-        for (std::uint32_t childIndex : m_children[node.childrenIndex])
+        for (detail::OctreeNodeIndexType childIndex : m_children[node.childrenIndex])
             nodeStack.emplace_back(childIndex, depth + 1);
     }
 }
@@ -278,7 +282,7 @@ struct OctreeBuilder<TRAITS>::IndexMapVisitor
     void visit(const node_type&, std::uint32_t);
 
     OctreeBuilder* builder;
-    std::uint32_t nextIdx{ 0 };
+    OctreeIndexType nextIdx{ 0 };
 };
 
 template<typename TRAITS>
@@ -292,7 +296,7 @@ template<typename TRAITS>
 void
 OctreeBuilder<TRAITS>::IndexMapVisitor::visit(const node_type& node, std::uint32_t /* depth */)
 {
-    for (std::uint32_t idx : node.indices)
+    for (OctreeIndexType idx : node.indices)
     {
         builder->m_indices[idx] = nextIdx;
         ++nextIdx;
@@ -306,7 +310,7 @@ OctreeBuilder<TRAITS>::buildIndexMap()
     IndexMapVisitor visitor(this);
     processNodes(visitor);
 
-    for (std::uint32_t idx : m_excludedIndices)
+    for (OctreeIndexType idx : m_excludedIndices)
     {
         m_indices[idx] = visitor.nextIdx;
         ++visitor.nextIdx;
@@ -322,7 +326,7 @@ struct OctreeBuilder<TRAITS>::BuildVisitor
 
     OctreeBuilder* builder;
     std::vector<static_node_type> staticNodes;
-    std::vector<std::uint32_t> prevByLevel;
+    std::vector<detail::OctreeNodeIndexType> prevByLevel;
     std::uint32_t topmostPopulated{ std::numeric_limits<std::uint32_t>::max() };
     std::uint32_t maxDepth{ 0 };
 };
@@ -340,7 +344,7 @@ template<typename TRAITS>
 void
 OctreeBuilder<TRAITS>::BuildVisitor::visit(const node_type& node, std::uint32_t depth)
 {
-    const auto idx = static_cast<std::uint32_t>(staticNodes.size());
+    const auto idx = static_cast<detail::OctreeNodeIndexType>(staticNodes.size());
 
     maxDepth = std::max(depth, maxDepth);
 
@@ -359,7 +363,7 @@ OctreeBuilder<TRAITS>::BuildVisitor::visit(const node_type& node, std::uint32_t 
 
     // Find the brightest object contained in the current node.
     auto brightestIt = std::min_element(node.indices.begin(), node.indices.end(),
-                                       [this](std::uint32_t a, std::uint32_t b)
+                                       [this](OctreeIndexType a, OctreeIndexType b)
                                        {
                                            return TRAITS::getAbsMag(builder->m_objects[a]) < TRAITS::getAbsMag(builder->m_objects[b]);
                                        });
@@ -371,8 +375,8 @@ OctreeBuilder<TRAITS>::BuildVisitor::visit(const node_type& node, std::uint32_t 
 
     staticNode.brightestMag = TRAITS::getAbsMag(builder->m_objects[*brightestIt]);
 
-    staticNode.startOffset = static_cast<std::uint32_t>(builder->m_indices.size());
-    staticNode.size = static_cast<std::uint32_t>(node.indices.size());
+    staticNode.startOffset = static_cast<OctreeIndexType>(builder->m_indices.size());
+    staticNode.size = static_cast<OctreeIndexType>(node.indices.size());
 
     std::copy(node.indices.begin(), node.indices.end(), std::back_inserter(builder->m_indices));
 
