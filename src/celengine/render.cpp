@@ -3817,7 +3817,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
     starRenderer.glareVertexBuffer = glareVertexBuffer;
-    starRenderer.fov               = fov;
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3896,7 +3895,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.orientationMatrixT = cameraOrientation.toRotationMatrix();
     dsoRenderer.observer         = &observer;
     dsoRenderer.obsPos           = obsPos;
-    dsoRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.pixelSize        = pixelSize;
     dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
