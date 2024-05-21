@@ -26,6 +26,8 @@ namespace celestia::engine
 namespace detail
 {
 
+constexpr inline std::uint32_t OctreeInvalidIndex = std::numeric_limits<std::uint32_t>::max();
+
 template<typename PREC>
 struct OctreeNode
 {
@@ -37,7 +39,7 @@ struct OctreeNode
     PREC scale;
     float brightestMag{ std::numeric_limits<float>::max() };
     std::uint32_t depth;
-    std::uint32_t afterSubtree{ std::numeric_limits<std::uint32_t>::max() };
+    std::uint32_t afterSubtree{ OctreeInvalidIndex };
     std::uint32_t startOffset{ 0 };
     std::uint32_t size{ 0 };
 };
