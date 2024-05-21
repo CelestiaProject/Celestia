@@ -27,7 +27,6 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     const Observer* observer    { nullptr };
     Renderer*  renderer         { nullptr };
 
-    float fov                   { 0.0f };
     float pixelSize             { 0.0f };
     float faintestMag           { 0.0f };
     float distanceLimit         { 0.0f };
