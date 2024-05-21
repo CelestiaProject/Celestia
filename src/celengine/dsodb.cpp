@@ -353,9 +353,9 @@ DSODatabaseBuilder::build()
     for (auto& obj : octreeBuilder.objects())
         obj->setIndex(indices[obj->getIndex()]);
 
-    return std::make_unique<DSODatabase>(octreeBuilder.build(),
-                                         std::move(namesDB),
-                                         avgAbsMag);
+    return std::unique_ptr<DSODatabase>(new DSODatabase(octreeBuilder.build(),
+                                                        std::move(namesDB),
+                                                        avgAbsMag));
 }
 
 float

@@ -74,12 +74,16 @@ private:
     using static_node_type = detail::OctreeNode<precision_type>;
 
     struct BuildVisitor;
+    struct IndexMapVisitor;
 
     void addObject(std::uint32_t);
     bool checkStraddling(const point_type&, std::uint32_t);
     node_type* getChildNode(node_type*, std::uint32_t, std::uint32_t);
     void splitNode(node_type*, std::uint32_t);
     void buildIndexMap();
+
+    template<typename VISITOR>
+    void processNodes(VISITOR&) const;
 
     std::vector<object_type> m_objects;
     std::vector<std::uint32_t> m_indices;
@@ -193,7 +197,7 @@ OctreeBuilder<TRAITS>::getChildNode(node_type* node,
                              + newSize * point_type(((index & 1) << 1) - 1,
                                                     (index & 2) - 1,
                                                     ((index & 4) >> 1) - 1);
-        child = std::make_unique<node_type>(newCenter, newSize);
+        child = std::make_unique<node_type>(newCenter);
         ++m_nodeCount;
     }
 
@@ -226,42 +230,72 @@ OctreeBuilder<TRAITS>::splitNode(node_type* node, std::uint32_t depth)
 }
 
 template<typename TRAITS>
+template<typename VISITOR>
 void
-OctreeBuilder<TRAITS>::buildIndexMap()
+OctreeBuilder<TRAITS>::processNodes(VISITOR& visitor) const
 {
-    m_indices.resize(m_objects.size());
+    std::vector<std::pair<const node_type*, std::uint32_t>> nodeStack;
+    nodeStack.emplace_back(m_root.get(), 0);
 
-    std::uint32_t nextIdx = 0;
-    std::vector<const node_type*> nodeStack;
-    nodeStack.push_back(m_root.get());
     while (!nodeStack.empty())
     {
-        const node_type* node = nodeStack.back();
+        const node_type* node = nodeStack.back().first;
+        std::uint32_t depth = nodeStack.back().second;
         nodeStack.pop_back();
 
-        for (std::uint32_t idx : node->indices)
-        {
-            m_indices[idx] = nextIdx;
-            ++nextIdx;
-        }
+        visitor.visit(node, depth);
 
         if (!node->children)
             continue;
 
         for (const auto& child : *node->children)
-        {
-            if (child)
-                nodeStack.push_back(child.get());
-        }
+            nodeStack.emplace_back(child.get(), depth + 1);
     }
+}
+
+template<typename TRAITS>
+struct OctreeBuilder<TRAITS>::IndexMapVisitor
+{
+    explicit IndexMapVisitor(OctreeBuilder*);
+
+    void visit(const node_type*, std::uint32_t);
+
+    OctreeBuilder* builder;
+    std::uint32_t nextIdx{ 0 };
+};
+
+template<typename TRAITS>
+OctreeBuilder<TRAITS>::IndexMapVisitor::IndexMapVisitor(OctreeBuilder* _builder) :
+    builder(_builder)
+{
+    builder->m_indices.resize(builder->m_objects.size());
+}
+
+template<typename TRAITS>
+void
+OctreeBuilder<TRAITS>::IndexMapVisitor::visit(const node_type* node, std::uint32_t depth)
+{
+    for (std::uint32_t idx : node->indices)
+    {
+        builder->m_indices[idx] = nextIdx;
+        ++nextIdx;
+    }
+}
+
+template<typename TRAITS>
+void
+OctreeBuilder<TRAITS>::buildIndexMap()
+{
+    IndexMapVisitor visitor(this);
+    processNodes(visitor);
 
     if (!m_excludedIndices)
         return;
 
     for (std::uint32_t idx : *m_excludedIndices)
     {
-        m_indices[idx] = nextIdx;
-        ++nextIdx;
+        m_indices[idx] = visitor.nextIdx;
+        ++visitor.nextIdx;
     }
 }
 
@@ -276,6 +310,7 @@ struct OctreeBuilder<TRAITS>::BuildVisitor
     std::vector<static_node_type> staticNodes;
     std::vector<std::uint32_t> prevByLevel;
     std::uint32_t topmostPopulated{ std::numeric_limits<std::uint32_t>::max() };
+    std::uint32_t maxDepth{ 0 };
 };
 
 template<typename TRAITS>
@@ -292,6 +327,8 @@ void
 OctreeBuilder<TRAITS>::BuildVisitor::visit(const node_type* node, std::uint32_t depth)
 {
     const auto idx = static_cast<std::uint32_t>(staticNodes.size());
+
+    maxDepth = std::max(depth, maxDepth);
 
     while (prevByLevel.size() > depth)
     {
@@ -335,31 +372,7 @@ typename OctreeBuilder<TRAITS>::static_octree
 OctreeBuilder<TRAITS>::build()
 {
     BuildVisitor visitor(this);
-    std::uint32_t maxDepth;
-
-    // Moving the nodes into the nodeStack causes them to be deleted as they
-    // are processed. This avoids recursive destructor calls when destroying
-    // the OctreeBuilder.
-    std::vector<std::pair<std::unique_ptr<node_type>, std::uint32_t>> nodeStack;
-    nodeStack.emplace_back(std::move(m_root), 0);
-    while (!nodeStack.empty())
-    {
-        std::unique_ptr<node_type> node = std::move(nodeStack.back().first);
-        std::uint32_t depth = nodeStack.back().second;
-        nodeStack.pop_back();
-
-        maxDepth = std::max(depth, maxDepth);
-        visitor.visit(node.get(), depth);
-
-        if (!node->children)
-            continue;
-
-        for (auto& child : *node->children)
-        {
-            if (child)
-                nodeStack.emplace_back(std::move(child), depth + 1);
-        }
-    }
+    processNodes(visitor);
 
     if (m_excludedIndices)
         std::copy(m_excludedIndices->cbegin(), m_excludedIndices->cend(), std::back_inserter(m_indices));
@@ -370,7 +383,7 @@ OctreeBuilder<TRAITS>::build()
     return static_octree(std::move(visitor.staticNodes),
                          std::move(m_objects),
                          visitor.topmostPopulated,
-                         maxDepth);
+                         visitor.maxDepth);
 }
 
 } // end namespace celestia::engine
