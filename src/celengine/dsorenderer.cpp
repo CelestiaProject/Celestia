@@ -64,6 +64,10 @@ DSORenderer::DSORenderer(const Observer* _observer, Renderer* _renderer) :
 void
 DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso)
 {
+    Eigen::Vector3d relPos;
+    if (!checkDistance(dso->getPosition(), relPos))
+        return;
+
 
 }
 

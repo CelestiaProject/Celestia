@@ -28,19 +28,23 @@ template<typename PREC>
 class ObjectRenderer
 {
 public:
-    bool checkNode(const Eigen::Matrix<PREC, 3, 1>&, PREC, float) const;
+    using position_type = Eigen::Matrix<PREC, 3, 1>;
+
+    bool checkNode(const position_type&, PREC, float) const;
 
 protected:
     ObjectRenderer(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
     ~ObjectRenderer() = default;
 
     bool checkMagnitude(float magnitude) const;
-    bool checkDistance(PREC distance) const;
+    position_type getRelativePosition(const position_type& position) const;
+    bool checkDistance(const position_type& position, position_type& relativePosition) const;
 
 private:
-    Eigen::Matrix<PREC, 3, 1> observerPos;
+    position_type observerPos;
     std::array<Eigen::Hyperplane<PREC, 3>, 5> frustumPlanes;
     PREC distanceLimit;
+    PREC distanceLimitSquared;
     float faintestMag;
     float absMagLimit{ std::numeric_limits<float>::max() };
 };
@@ -54,19 +58,20 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
                                      float _faintestMag) :
     observerPos(_origin.toLy().template cast<PREC>()),
     distanceLimit(_distanceLimit),
+    distanceLimitSquared(_distanceLimit * _distanceLimit),
     faintestMag(_faintestMag)
 {
     using std::tan;
 
     PREC h = tan(celestia::math::degToRad(_fov) * PREC(0.5));
     PREC w = h * static_cast<PREC>(_aspectRatio);
-    std::array<Eigen::Matrix<PREC, 3, 1>, 5> planeNormals
+    std::array<position_type, 5> planeNormals
     {
-        Eigen::Matrix<PREC, 3, 1>( 0,  1, -h),
-        Eigen::Matrix<PREC, 3, 1>( 0, -1, -h),
-        Eigen::Matrix<PREC, 3, 1>( 1,  0, -w),
-        Eigen::Matrix<PREC, 3, 1>(-1,  0, -w),
-        Eigen::Matrix<PREC, 3, 1>( 0,  0, -1),
+        position_type( 0,  1, -h),
+        position_type( 0, -1, -h),
+        position_type( 1,  0, -w),
+        position_type(-1,  0, -w),
+        position_type( 0,  0, -1),
     };
 
     Eigen::Quaternionf rot = _orientation.conjugate();
@@ -78,10 +83,11 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
 
 template<typename PREC>
 bool
-ObjectRenderer<PREC>::checkNode(const Eigen::Matrix<PREC, 3, 1>& center,
+ObjectRenderer<PREC>::checkNode(const position_type& center,
                                 PREC size,
                                 float brightestMag) const
 {
+    // Check if node intersects the view frustum
     for (const auto& plane : frustumPlanes)
     {
         PREC r = size * plane.normal().cwiseAbs().sum();
@@ -116,7 +122,9 @@ ObjectRenderer<PREC>::checkMagnitude(float magnitude) const
 
 template<typename PREC>
 bool
-ObjectRenderer<PREC>::checkDistance(PREC distance) const
+ObjectRenderer<PREC>::checkDistance(const position_type& position,
+                                    position_type& relativePosition) const
 {
-    return distance <= distanceLimit;
+    relativePosition = position - observerPos;
+    return relativePosition.squaredNorm <= distanceLimitSquared;
 }
