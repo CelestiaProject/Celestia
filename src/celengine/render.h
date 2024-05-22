@@ -53,6 +53,7 @@ class VertexObject;
 namespace math
 {
 class Frustum;
+class InfiniteFrustum;
 }
 }
 
@@ -497,7 +498,7 @@ class Renderer
     void renderSkyGrids(const Observer& observer);
     void renderSelectionPointer(const Observer& observer,
                                 double now,
-                                const celestia::math::Frustum& viewFrustum,
+                                const celestia::math::InfiniteFrustum& viewFrustum,
                                 const Selection& sel);
 
     void renderAsterisms(const Universe&, float, const Matrices&);
@@ -506,11 +507,11 @@ class Renderer
 
     void buildNearSystemsLists(const Universe &universe,
                                const Observer &observer,
-                               const celestia::math::Frustum &xfrustum,
+                               const celestia::math::InfiniteFrustum &xfrustum,
                                double jd);
 
     void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
-                          const celestia::math::Frustum& viewFrustum,
+                          const celestia::math::InfiniteFrustum& viewFrustum,
                           const Eigen::Vector3d& viewPlaneNormal,
                           const Eigen::Vector3d& frameCenter,
                           const FrameTree* tree,
@@ -518,10 +519,10 @@ class Renderer
                           double now);
     void buildOrbitLists(const Eigen::Vector3d& astrocentricObserverPos,
                          const Eigen::Quaterniond& observerOrientation,
-                         const celestia::math::Frustum& viewFrustum,
+                         const celestia::math::InfiniteFrustum& viewFrustum,
                          const FrameTree* tree,
                          double now);
-    void buildLabelLists(const celestia::math::Frustum& viewFrustum,
+    void buildLabelLists(const celestia::math::InfiniteFrustum& viewFrustum,
                          double now);
     int buildDepthPartitions();
 
@@ -534,7 +535,7 @@ class Renderer
                                   const Observer& observer,
                                   double now);
 
-    void removeInvisibleItems(const celestia::math::Frustum &frustum);
+    void removeInvisibleItems(const celestia::math::InfiniteFrustum &frustum);
 
     void renderObject(const Eigen::Vector3f& pos,
                       float distance,
@@ -652,7 +653,7 @@ class Renderer
 
     bool selectionToAnnotation(const Selection &sel,
                                const Observer &observer,
-                               const celestia::math::Frustum &xfrustum,
+                               const celestia::math::InfiniteFrustum &xfrustum,
                                double now);
 
     void adjustMagnitudeInsideAtmosphere(float &faintestMag,

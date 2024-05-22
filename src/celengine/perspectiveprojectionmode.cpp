@@ -61,6 +61,12 @@ PerspectiveProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
     return math::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
+math::InfiniteFrustum
+PerspectiveProjectionMode::getInfiniteFrustum(float nearZ, float zoom) const
+{
+    return math::InfiniteFrustum(getFOV(zoom), width / height, nearZ);
+}
+
 double PerspectiveProjectionMode::getViewConeAngleMax(float zoom) const
 {
     // When computing the view cone, we want the field of
@@ -92,7 +98,12 @@ void PerspectiveProjectionMode::configureShaderManager(ShaderManager *shaderMana
     shaderManager->setFisheyeEnabled(false);
 }
 
-bool PerspectiveProjectionMode::project(const Eigen::Vector3f& pos, const Eigen::Matrix4f /*existingModelViewMatrix*/, const Eigen::Matrix4f /*existingProjectionMatrix*/, const Eigen::Matrix4f existingMVPMatrix, const int viewport[4], Eigen::Vector3f& result) const
+bool PerspectiveProjectionMode::project(const Eigen::Vector3f& pos,
+                                        const Eigen::Matrix4f& /*existingModelViewMatrix*/,
+                                        const Eigen::Matrix4f& /*existingProjectionMatrix*/,
+                                        const Eigen::Matrix4f& existingMVPMatrix,
+                                        const std::array<int, 4>& viewport,
+                                        Eigen::Vector3f& result) const
 {
     return math::ProjectPerspective(pos, existingMVPMatrix, viewport, result);
 }

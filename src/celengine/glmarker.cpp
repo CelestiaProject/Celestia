@@ -99,7 +99,7 @@ Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 void
 Renderer::renderSelectionPointer(const Observer& observer,
                                  double now,
-                                 const math::Frustum& viewFrustum,
+                                 const math::InfiniteFrustum& viewFrustum,
                                  const Selection& sel)
 {
     constexpr float cursorDistance = 20.0f;
@@ -108,7 +108,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
 
     // Get the position of the cursor relative to the eye
     Eigen::Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
-    if (viewFrustum.testSphere(position, sel.radius()) != math::Frustum::Outside)
+    if (viewFrustum.testSphere(position, sel.radius()) != math::FrustumAspect::Outside)
         return;
 
     assert(shaderManager != nullptr);

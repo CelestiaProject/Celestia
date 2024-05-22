@@ -64,6 +64,12 @@ FisheyeProjectionMode::getFrustum(float nearZ, float farZ, float zoom) const
     return math::Frustum(getFOV(zoom), width / height, nearZ, farZ);
 }
 
+math::InfiniteFrustum
+FisheyeProjectionMode::getInfiniteFrustum(float nearZ, float zoom) const
+{
+    return math::InfiniteFrustum(getFOV(zoom), width / height, nearZ);
+}
+
 double FisheyeProjectionMode::getViewConeAngleMax(float /*zoom*/) const
 {
     return std::cos(static_cast<double>(fisheyeFOV) / 2.0);
@@ -97,7 +103,12 @@ void FisheyeProjectionMode::configureShaderManager(ShaderManager *shaderManager)
     shaderManager->setFisheyeEnabled(true);
 }
 
-bool FisheyeProjectionMode::project(const Eigen::Vector3f& pos, const Eigen::Matrix4f existingModelViewMatrix, const Eigen::Matrix4f existingProjectionMatrix, const Eigen::Matrix4f /*existingMVPMatrix*/, const int viewport[4], Eigen::Vector3f& result) const
+bool FisheyeProjectionMode::project(const Eigen::Vector3f& pos,
+                                    const Eigen::Matrix4f& existingModelViewMatrix,
+                                    const Eigen::Matrix4f& existingProjectionMatrix,
+                                    const Eigen::Matrix4f& /*existingMVPMatrix*/,
+                                    const std::array<int, 4>& viewport,
+                                    Eigen::Vector3f& result) const
 {
     return math::ProjectFisheye(pos, existingModelViewMatrix, existingProjectionMatrix, viewport, result);
 }

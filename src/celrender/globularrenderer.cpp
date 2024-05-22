@@ -470,7 +470,7 @@ CalculateSpriteSize(int w, int h, const Eigen::Matrix4f &pr, const Eigen::Matrix
      * Taking into account multiplication rules v2 becomes just 2 * viewMat.col(0) and v3 is just vec3(0, 0, 0).
      */
     auto mvp = pr * mv;
-    int viewport[] = { 0, 0, w, h };
+    std::array<int, 4> viewport{ 0, 0, w, h };
     Eigen::Vector3f ndc2;
     projectionMode->project(2.0f * viewMat.col(0), mv, pr, mvp, viewport, ndc2);
     Eigen::Vector3f ndc3;

@@ -70,7 +70,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     double dsoRadius = dso->getBoundingSphereRadius();
-    if (frustum.testSphere(center, (float) dsoRadius) == math::Frustum::Outside)
+    if (frustum.testSphere(center, (float) dsoRadius) == math::FrustumAspect::Outside)
         return;
 
     float appMag;
