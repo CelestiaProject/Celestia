@@ -10,13 +10,19 @@
 
 #pragma once
 
+#include <array>
+#include <cmath>
 #include <cstdint>
+#include <limits>
 
 #include <Eigen/Core>
-#include "octree.h"
+#include <Eigen/Geometry>
 
-class Observer;
-class Renderer;
+#include <celastro/astro.h>
+#include <celcompat/numbers.h>
+#include <celmath/mathlib.h>
+#include "octree.h"
+#include "univcoord.h"
 
 template<typename PREC>
 class ObjectRenderer
@@ -24,30 +30,51 @@ class ObjectRenderer
 public:
     bool checkNode(const Eigen::Matrix<PREC, 3, 1>&, PREC, float) const;
 
-    const Observer* observer    { nullptr };
-    Renderer* renderer          { nullptr };
-
-    PREC distanceLimit;
-
-    float pixelSize             { 0.0f };
-    float faintestMag           { 0.0f };
-
-    // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag     { 0.0f };
-
-    std::uint64_t renderFlags   { 0 };
-    int labelMode               { 0 };
-
 protected:
-    ObjectRenderer(const Observer* _observer, Renderer* _renderer, PREC _distanceLimit) :
-        observer(_observer),
-        renderer(_renderer),
-        distanceLimit(_distanceLimit)
+    ObjectRenderer(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
+    ~ObjectRenderer() = default;
+
+    bool checkMagnitude(float magnitude) const;
+    bool checkDistance(PREC distance) const;
+
+private:
+    Eigen::Matrix<PREC, 3, 1> observerPos;
+    std::array<Eigen::Hyperplane<PREC, 3>, 5> frustumPlanes;
+    PREC distanceLimit;
+    float faintestMag;
+    float absMagLimit{ std::numeric_limits<float>::max() };
+};
+
+template<typename PREC>
+ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
+                                     const Eigen::Quaternionf& _orientation,
+                                     float _fov,
+                                     float _aspectRatio,
+                                     PREC _distanceLimit,
+                                     float _faintestMag) :
+    observerPos(_origin.toLy().template cast<PREC>()),
+    distanceLimit(_distanceLimit),
+    faintestMag(_faintestMag)
+{
+    using std::tan;
+
+    PREC h = tan(celestia::math::degToRad(_fov) * PREC(0.5));
+    PREC w = h * static_cast<PREC>(_aspectRatio);
+    std::array<Eigen::Matrix<PREC, 3, 1>, 5> planeNormals
     {
+        Eigen::Matrix<PREC, 3, 1>( 0,  1, -h),
+        Eigen::Matrix<PREC, 3, 1>( 0, -1, -h),
+        Eigen::Matrix<PREC, 3, 1>( 1,  0, -w),
+        Eigen::Matrix<PREC, 3, 1>(-1,  0, -w),
+        Eigen::Matrix<PREC, 3, 1>( 0,  0, -1),
     };
 
-    ~ObjectRenderer() = default;
-};
+    Eigen::Quaternionf rot = _orientation.conjugate();
+    for (unsigned int i = 0; i < 5; ++i)
+    {
+        frustumPlanes[i] = Eigen::Hyperplane<PREC, 3>(rot * planeNormals[i].normalized(), observerPos);
+    }
+}
 
 template<typename PREC>
 bool
@@ -55,5 +82,41 @@ ObjectRenderer<PREC>::checkNode(const Eigen::Matrix<PREC, 3, 1>& center,
                                 PREC size,
                                 float brightestMag) const
 {
+    for (const auto& plane : frustumPlanes)
+    {
+        PREC r = size * plane.normal().cwiseAbs().sum();
+        if (plane.signedDistance(center) < -r)
+            return false;
+    }
+
+    // Compute the distance to the node; this is equal to the distance to
+    // the cellCenterPos of the node minus the boundingRadius of the node, scale * sqrt(3)
+    PREC minDistance = (observerPos - center).norm() - size * celestia::numbers::sqrt3_v<PREC>;
+    if (minDistance > distanceLimit)
+        return false;
+
+    if (minDistance > 0 && celestia::astro::absToAppMag(static_cast<PREC>(brightestMag), minDistance) > faintestMag)
+        return false;
+
+    // To avoid unnecessary magnitude calculations, store the dimmest absolute magnitude
+    // that we need to process
+    absMagLimit = minDistance > 0
+        ? static_cast<float>(celestia::astro::appToAbsMag(static_cast<PREC>(faintestMag), minDistance))
+        : std::numeric_limits<float>::max();
+
     return true;
+}
+
+template<typename PREC>
+bool
+ObjectRenderer<PREC>::checkMagnitude(float magnitude) const
+{
+    return magnitude <= absMagLimit;
+}
+
+template<typename PREC>
+bool
+ObjectRenderer<PREC>::checkDistance(PREC distance) const
+{
+    return distance <= distanceLimit;
 }
