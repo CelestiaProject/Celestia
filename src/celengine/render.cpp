@@ -872,7 +872,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              float size,
                              bool special)
 {
-    GLint view[4] = { 0, 0, windowWidth, windowHeight };
+    std::array<int, 4> view{ 0, 0, windowWidth, windowHeight };
     Vector3f win;
     bool success = projectionMode->project(pos, m_modelMatrix, m_projMatrix, m_MVPMatrix, view, win);
     if (success)
@@ -1236,9 +1236,9 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     double subdivisionThreshold = pixelSize * 40.0;
 
     Eigen::Vector3d viewFrustumPlaneNormals[4];
-    for (int i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
-        viewFrustumPlaneNormals[i] = frustum.plane(i).normal().cast<double>();
+        viewFrustumPlaneNormals[i] = frustum.plane(static_cast<math::FrustumPlane>(i)).normal().cast<double>();
     }
 
     Renderer::PipelineState ps;
@@ -1505,11 +1505,11 @@ void Renderer::render(const Observer& observer,
     m_cameraOrientation = Quaterniond(m_cameraTransform) * observer.getOrientation();
 
     // Get the view frustum used for culling in camera space.
-    auto frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), zoom);
+    math::InfiniteFrustum frustum = projectionMode->getInfiniteFrustum(MinNearPlaneDistance, zoom);
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
-    math::Frustum xfrustum(frustum);
+    math::InfiniteFrustum xfrustum(frustum);
     xfrustum.transform(getCameraOrientationf().conjugate().toRotationMatrix());
 
     // Set up the projection and modelview matrices.
@@ -3276,7 +3276,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 
 
 void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
-                                const math::Frustum& viewFrustum,
+                                const math::InfiniteFrustum& viewFrustum,
                                 const Vector3d& viewPlaneNormal,
                                 const Vector3d& frameCenter,
                                 const FrameTree* tree,
@@ -3460,7 +3460,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::FrustumAspect::Outside)
                 {
                     traverseSubtree = true;
                 }
@@ -3502,7 +3502,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
 void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
                                const Quaterniond& observerOrientation,
-                               const math::Frustum& viewFrustum,
+                               const math::InfiniteFrustum& viewFrustum,
                                const FrameTree* tree,
                                double now)
 {
@@ -3593,7 +3593,7 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
             if (traverseSubtree)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::FrustumAspect::Outside)
                 {
                     buildOrbitLists(astrocentricObserverPos,
                                     observerOrientation,
@@ -3630,7 +3630,7 @@ static Color getBodyLabelColor(BodyClassification classification)
     }
 }
 
-void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
+void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
                                double now)
 {
     BodyClassification labelClassMask = translateLabelModeToClassMask(labelMode);
@@ -3645,7 +3645,7 @@ void Renderer::buildLabelLists(const math::Frustum& viewFrustum,
         if (!util::is_set(ri.body->getOrbitClassification(), labelClassMask))
             continue;
 
-        if (viewFrustum.testSphere(ri.position, ri.radius) == math::Frustum::Outside)
+        if (viewFrustum.testSphere(ri.position, ri.radius) == math::FrustumAspect::Outside)
             continue;
 
         const Body* body = ri.body;
@@ -3902,7 +3902,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
 
-    dsoRenderer.frustum = projectionMode->getFrustum(MinNearPlaneDistance, std::numeric_limits<float>::infinity(), observer.getZoom());
+    dsoRenderer.frustum = projectionMode->getInfiniteFrustum(MinNearPlaneDistance, observer.getZoom());
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -4810,7 +4810,7 @@ Renderer::setShadowMapSize(unsigned size)
 }
 
 void
-Renderer::removeInvisibleItems(const math::Frustum &frustum)
+Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
 {
     // Remove objects from the render list that lie completely outside the
     // view frustum.
@@ -4863,7 +4863,7 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
 
         Vector3f center = getCameraOrientationf().toRotationMatrix() * ri.position;
         // Test the object's bounding sphere against the view frustum
-        if (frustum.testSphere(center, cullRadius) != math::Frustum::Outside)
+        if (frustum.testSphere(center, cullRadius) != math::FrustumAspect::Outside)
         {
             float nearZ = center.norm() - radius;
             float maxSpan = hypot((float) windowWidth, (float) windowHeight);
@@ -4933,13 +4933,13 @@ Renderer::removeInvisibleItems(const math::Frustum &frustum)
 bool
 Renderer::selectionToAnnotation(const Selection &sel,
                                 const Observer &observer,
-                                const math::Frustum &xfrustum,
+                                const math::InfiniteFrustum &xfrustum,
                                 double jd)
 {
     Vector3d offset = sel.getPosition(jd).offsetFromKm(observer.getPosition());
 
     static celestia::MarkerRepresentation cursorRep(celestia::MarkerRepresentation::Crosshair);
-    if (xfrustum.testSphere(offset, sel.radius()) == math::Frustum::Outside)
+    if (xfrustum.testSphere(offset, sel.radius()) == math::FrustumAspect::Outside)
         return false;
 
     double distance = offset.norm();
@@ -5028,7 +5028,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
 void
 Renderer::buildNearSystemsLists(const Universe &universe,
                                 const Observer &observer,
-                                const math::Frustum &xfrustum,
+                                const math::InfiniteFrustum &xfrustum,
                                 double now)
 {
     UniversalCoord observerPos = observer.getPosition();

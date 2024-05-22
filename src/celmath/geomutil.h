@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <array>
 #include <cmath>
 
 #include <Eigen/Core>
@@ -122,7 +123,7 @@ LookAt(const Eigen::Matrix<T, 3, 1>& from, const Eigen::Matrix<T, 3, 1>& to, con
 template<class T> bool
 ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
                    const Eigen::Matrix<T, 4, 4>& modelViewProjectionMatrix,
-                   const int viewport[4],
+                   const std::array<int, 4>& viewport,
                    Eigen::Matrix<T, 3, 1>& to)
 {
     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
@@ -142,21 +143,10 @@ ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
 }
 
 template<class T> bool
-ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
-                   const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
-                   const Eigen::Matrix<T, 4, 4>& projMatrix,
-                   const int viewport[4],
-                   Eigen::Matrix<T, 3, 1>& to)
-{
-    Eigen::Matrix<T, 4, 4> m = projMatrix * modelViewMatrix;
-    return Project(from, m, viewport, to);
-}
-
-template<class T> bool
 ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
                const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
                const Eigen::Matrix<T, 4, 4>& projMatrix,
-               const int viewport[4],
+               const std::array<int, 4>& viewport,
                Eigen::Matrix<T, 3, 1>& to)
 {
     using std::atan2, std::hypot;

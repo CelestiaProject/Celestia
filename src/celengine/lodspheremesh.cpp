@@ -492,30 +492,30 @@ void LODSphereMesh::render(unsigned int attributes,
         //
         // Compute the vertices of the view frustum.  These will be used for
         // culling patches.
-        ri.fp[0] = intersect3(frustum.plane(math::Frustum::Near),
-                              frustum.plane(math::Frustum::Top),
-                              frustum.plane(math::Frustum::Left));
-        ri.fp[1] = intersect3(frustum.plane(math::Frustum::Near),
-                              frustum.plane(math::Frustum::Top),
-                              frustum.plane(math::Frustum::Right));
-        ri.fp[2] = intersect3(frustum.plane(math::Frustum::Near),
-                              frustum.plane(math::Frustum::Bottom),
-                              frustum.plane(math::Frustum::Left));
-        ri.fp[3] = intersect3(frustum.plane(math::Frustum::Near),
-                              frustum.plane(math::Frustum::Bottom),
-                              frustum.plane(math::Frustum::Right));
-        ri.fp[4] = intersect3(frustum.plane(math::Frustum::Far),
-                              frustum.plane(math::Frustum::Top),
-                              frustum.plane(math::Frustum::Left));
-        ri.fp[5] = intersect3(frustum.plane(math::Frustum::Far),
-                              frustum.plane(math::Frustum::Top),
-                              frustum.plane(math::Frustum::Right));
-        ri.fp[6] = intersect3(frustum.plane(math::Frustum::Far),
-                              frustum.plane(math::Frustum::Bottom),
-                              frustum.plane(math::Frustum::Left));
-        ri.fp[7] = intersect3(frustum.plane(math::Frustum::Far),
-                              frustum.plane(math::Frustum::Bottom),
-                              frustum.plane(math::Frustum::Right));
+        ri.fp[0] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[1] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[2] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[3] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[4] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[5] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[6] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[7] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Right));
 
         const int extent = maxDivisions / 2;
         for (int i = 0; i < 2; i++)
@@ -608,7 +608,7 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
                                      (patchCenter - p1).norm(),
                                      (patchCenter - p2).norm(),
                                      (patchCenter - p3).norm()});
-        ri.frustum.testSphere(patchCenter, boundingRadius) == math::Frustum::Outside)
+        ri.frustum.testSphere(patchCenter, boundingRadius) == math::FrustumAspect::Outside)
         return;
 
     if (level == 1)

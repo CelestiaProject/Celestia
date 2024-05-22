@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
+
 #include <celengine/projectionmode.h>
 
 namespace celestia::engine
@@ -33,6 +35,7 @@ public:
     float getPixelSize(float zoom) const override;
     float getFieldCorrection(float zoom) const override;
     math::Frustum getFrustum(float nearZ, float farZ, float zoom) const override;
+    math::InfiniteFrustum getInfiniteFrustum(float nearZ, float zoom) const override;
     double getViewConeAngleMax(float zoom) const override;
 
     float getNormalizedDeviceZ(float nearZ, float farZ, float z) const override;
@@ -40,7 +43,12 @@ public:
     Eigen::Vector3f getPickRay(float x, float y, float zoom) const override;
 
     void configureShaderManager(ShaderManager *) const override;
-    bool project(const Eigen::Vector3f& pos, const Eigen::Matrix4f existingModelViewMatrix, const Eigen::Matrix4f existingProjectionMatrix, const Eigen::Matrix4f existingMVPMatrix, const int viewport[4], Eigen::Vector3f& result) const override;
+    bool project(const Eigen::Vector3f& pos,
+                 const Eigen::Matrix4f& existingModelViewMatrix,
+                 const Eigen::Matrix4f& existingProjectionMatrix,
+                 const Eigen::Matrix4f& existingMVPMatrix,
+                 const std::array<int, 4>& viewport,
+                 Eigen::Vector3f& result) const override;
 };
 
-}
+} // end namespace celestia::engine

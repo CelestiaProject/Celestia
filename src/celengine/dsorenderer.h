@@ -26,9 +26,9 @@ public:
 
     void process(DeepSkyObject *const &, double, float) override;
 
-    celestia::math::Frustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
-                                     1.0f,
-                                     1.0f };
+    celestia::math::InfiniteFrustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
+                                             1.0f,
+                                             1.0f };
 
     Eigen::Vector3d obsPos;
     Eigen::Matrix3f orientationMatrixT;
