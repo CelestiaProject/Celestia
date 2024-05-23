@@ -453,7 +453,11 @@ try_compile(HAVE_CONSTEXPR_EMPTY_ARRAY ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
 if(CXX_FILESYSTEM_IS_EXPERIMENTAL)
-  message(WARNING "C++ lacks header <filesystem>, using <experimental/filesystem> instead.")
+  if(ENABLE_QT6)
+    message(FATAL_ERROR "Qt6 requires <filesystem> but only <experimental/filesystem> present. Please update your compiler.")
+  else()
+    message(WARNING "C++ lacks header <filesystem>, using <experimental/filesystem> instead.")
+  endif()
 else()
   set(HAVE_STD_FILESYSTEM ON)
 endif()
