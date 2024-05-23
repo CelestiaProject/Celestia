@@ -111,6 +111,9 @@ git submodule update --init
 First you need a C++ compiler able to compile C++17 code (GCC 7 or later,
 Clang 5 or later), CMake, GNU Make or Ninja, and gperf.
 
+When building with Qt6 interface (see below), you need a compiler with full
+support for C++ filesystem library, e.g. GCC 8 or Clang 7.
+
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
 libpng. Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg,
