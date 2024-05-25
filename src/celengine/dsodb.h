@@ -47,6 +47,7 @@ public:
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
+    const celestia::engine::DSOOctree& getOctree() const;
 /*
     void findVisibleDSOs(DSOHandler& dsoHandler,
                          const Eigen::Vector3d& obsPosition,
@@ -90,6 +91,12 @@ inline std::uint32_t
 DSODatabase::size() const
 {
     return m_octree.size();
+}
+
+inline const celestia::engine::DSOOctree&
+DSODatabase::getOctree() const
+{
+    return m_octree;
 }
 
 class DSODatabaseBuilder

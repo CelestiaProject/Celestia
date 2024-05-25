@@ -19,6 +19,7 @@
 #include <celrender/gl/vertexobject.h>
 #include <celrender/linerenderer.h>
 #include "marker.h"
+#include "observer.h"
 #include "render.h"
 
 

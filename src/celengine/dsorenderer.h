@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -22,27 +23,35 @@
 
 class DeepSkyObject;
 class DSODatabase;
+class Observer;
+class Renderer;
 
 class DSORenderer : public ObjectRenderer<double>
 {
 public:
-    DSORenderer(const Observer*, Renderer*);
+    DSORenderer(const Observer*,
+                Renderer*,
+                const DSODatabase*,
+                float _minNearPlaneDistance,
+                float _labelThresholdMag);
 
-    void process(const std::unique_ptr<DeepSkyObject>&);
+    void process(const std::unique_ptr<DeepSkyObject>&) const;
 
-    celestia::math::InfiniteFrustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
-                                             1.0f,
-                                             1.0f };
+private:
+    void renderDSO(const DeepSkyObject*, const Eigen::Vector3f&, double, double, float) const;
+    void labelDSO(const DeepSkyObject*, const Eigen::Vector3f&, unsigned int, double, float) const;
 
-    Eigen::Vector3d obsPos;
+    Renderer* renderer;
+    celestia::render::GalaxyRenderer* galaxyRenderer;
+    celestia::render::GlobularRenderer* globularRenderer;
+    celestia::render::NebulaRenderer* nebulaRenderer;
+    celestia::render::OpenClusterRenderer* openClusterRenderer;
+    const DSODatabase *dsoDB;
+    std::uint64_t renderFlags;
+    unsigned int labelMode;
+    float labelThresholdMag;
+    float avgAbsMag;
+    float pixelSize;
+    celestia::math::InfiniteFrustum frustum;
     Eigen::Matrix3f orientationMatrixT;
-    DSODatabase    *dsoDB{ nullptr };
-
-    float         avgAbsMag{ 0.0f };
-    std::uint32_t dsosProcessed{ 0 };
-
-    celestia::render::GalaxyRenderer      *galaxyRenderer{ nullptr };
-    celestia::render::GlobularRenderer    *globularRenderer{ nullptr };
-    celestia::render::NebulaRenderer      *nebulaRenderer{ nullptr };
-    celestia::render::OpenClusterRenderer *openClusterRenderer{ nullptr };
 };

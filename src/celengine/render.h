@@ -30,15 +30,15 @@
 #include <celengine/textlayout.h>
 #include <celrender/rendererfwd.h>
 
-class RendererWatcher;
-class FrameTree;
-class ReferenceMark;
 class CurvePlot;
-class PointStarVertexBuffer;
+class FramebufferObject;
+class FrameTree;
 class Observer;
+class PointStarVertexBuffer;
+class ReferenceMark;
+class RendererWatcher;
 class Surface;
 class TextureFont;
-class FramebufferObject;
 
 namespace celestia
 {
@@ -854,6 +854,7 @@ class Renderer
 
     static Color SelectionCursorColor;
 
+    friend class DSORenderer;
     friend class PointStarRenderer;
 };
 

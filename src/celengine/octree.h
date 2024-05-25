@@ -150,7 +150,7 @@ Octree<OBJ, PREC>::processDepthFirst(VISITOR& visitor) const
     while (idx < m_nodes.size())
     {
         const auto& node = m_nodes[idx];
-        if (!visitor.checkNode(node.center, node.size, node.brightestMag))
+        if (!visitor.checkNode(node.center, node.scale, node.brightestMag))
         {
             idx = node.afterSubtree;
             continue;
@@ -187,7 +187,7 @@ Octree<OBJ, PREC>::processDepth(VISITOR& visitor, std::uint32_t depth) const
     while (idx < m_nodes.size())
     {
         const auto& node = m_nodes[idx];
-        if (!visitor.checkNode(node.center, node.size, node.brightestMag))
+        if (!visitor.checkNode(node.center, node.scale, node.brightestMag))
         {
             idx = node.afterSubtree;
         }

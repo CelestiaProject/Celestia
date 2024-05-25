@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -36,11 +37,9 @@ protected:
     ObjectRenderer(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
     ~ObjectRenderer() = default;
 
-    bool checkMagnitude(float magnitude) const;
     position_type getRelativePosition(const position_type& position) const;
     bool checkDistance(const position_type& position, position_type& relativePosition) const;
 
-private:
     position_type observerPos;
     std::array<Eigen::Hyperplane<PREC, 3>, 5> frustumPlanes;
     PREC distanceLimit;
@@ -74,7 +73,11 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
         position_type( 0,  0, -1),
     };
 
-    Eigen::Quaternionf rot = _orientation.conjugate();
+    Eigen::Quaternion<PREC> rot;
+    if constexpr (std::is_same_v<PREC, float>)
+        rot = _orientation.conjugate();
+    else
+        rot = _orientation.conjugate().cast<PREC>();
     for (unsigned int i = 0; i < 5; ++i)
     {
         frustumPlanes[i] = Eigen::Hyperplane<PREC, 3>(rot * planeNormals[i].normalized(), observerPos);
@@ -115,16 +118,9 @@ ObjectRenderer<PREC>::checkNode(const position_type& center,
 
 template<typename PREC>
 bool
-ObjectRenderer<PREC>::checkMagnitude(float magnitude) const
-{
-    return magnitude <= absMagLimit;
-}
-
-template<typename PREC>
-bool
 ObjectRenderer<PREC>::checkDistance(const position_type& position,
                                     position_type& relativePosition) const
 {
     relativePosition = position - observerPos;
-    return relativePosition.squaredNorm <= distanceLimitSquared;
+    return relativePosition.squaredNorm() <= distanceLimitSquared;
 }

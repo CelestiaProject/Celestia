@@ -3870,62 +3870,19 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                                     const Observer& observer,
                                     const float     faintestMagNight)
 {
-    DSORenderer dsoRenderer(&observer, this);
-
-    auto cameraOrientation = getCameraOrientationf();
-
-    m_galaxyRenderer->update(cameraOrientation, pixelSize, fov, observer.getZoom());
-    dsoRenderer.galaxyRenderer = m_galaxyRenderer.get();
-
-    m_globularRenderer->update(cameraOrientation, pixelSize, fov, observer.getZoom());
-    dsoRenderer.globularRenderer = m_globularRenderer.get();
-
-    m_nebulaRenderer->update(cameraOrientation, pixelSize, fov, observer.getZoom());
-    dsoRenderer.nebulaRenderer = m_nebulaRenderer.get();
-
-    m_openClusterRenderer->update(cameraOrientation, pixelSize, fov, observer.getZoom());
-    dsoRenderer.openClusterRenderer = m_openClusterRenderer.get();
-
-    Vector3d obsPos     = observer.getPosition().toLy();
-
-    DSODatabase* dsoDB  = universe.getDSOCatalog();
-
-    dsoRenderer.dsoDB            = dsoDB;
-    dsoRenderer.orientationMatrixT = cameraOrientation.toRotationMatrix();
-    dsoRenderer.obsPos           = obsPos;
-    // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
-    dsoRenderer.pixelSize        = pixelSize;
-    dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
-    dsoRenderer.faintestMag      = faintestMag;
-    dsoRenderer.renderFlags      = renderFlags;
-    dsoRenderer.labelMode        = labelMode;
-
-    dsoRenderer.frustum = projectionMode->getInfiniteFrustum(MinNearPlaneDistance, observer.getZoom());
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
+    float labelThresholdMag = 2.0f * std::max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
+    const DSODatabase* dsoDB = universe.getDSOCatalog();
+    DSORenderer dsoRenderer(&observer, this, dsoDB, MinNearPlaneDistance, labelThresholdMag);
 
-    dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
-
-    using namespace celestia;
-    galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
-    nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
-    openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
-    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, GlobularLabelColor);
-
-    dsoDB->findVisibleDSOs(dsoRenderer,
-                           obsPos,
-                           cameraOrientation,
-                           math::degToRad(fov),
-                           getAspectRatio(),
-                           2 * faintestMagNight);
+    dsoDB->getOctree().processDepthFirst(dsoRenderer);
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();
     m_nebulaRenderer->render();
     m_openClusterRenderer->render();
-
-    // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 }
 
 
