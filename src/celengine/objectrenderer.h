@@ -106,7 +106,7 @@ ObjectRenderer<PREC>::checkNode(const position_type& center,
 
     // Compute the distance to the node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * sqrt(3)
-    PREC minDistance = (observerPos - center).norm() - size * celestia::numbers::sqrt3_v<PREC>;
+    PREC minDistance = position_type(observerPos - center).norm() - size * celestia::numbers::sqrt3_v<PREC>;
     if (minDistance > distanceLimit)
         return false;
 
