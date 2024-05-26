@@ -37,36 +37,36 @@ using enable_if_fp = std::enable_if_t<std::is_floating_point_v<T>, T>;
 // calculated in Sollya with a precision of 128 bits
 // =648000*149597870700/(9460730472580800*pi)
 template<typename T>
-constexpr inline auto LY_PER_PARSEC = detail::enable_if_fp<T>(3.26156377716743356213863970704550837409L);
+constexpr inline T LY_PER_PARSEC = detail::enable_if_fp<T>(3.26156377716743356213863970704550837409L);
 
 template<typename T>
-constexpr inline auto KM_PER_LY = detail::enable_if_fp<T>(9460730472580.8L);
+constexpr inline T KM_PER_LY = detail::enable_if_fp<T>(9460730472580.8L);
 
 template<typename T>
-constexpr inline auto KM_PER_AU = detail::enable_if_fp<T>(149597870.7L);
+constexpr inline T KM_PER_AU = detail::enable_if_fp<T>(149597870.7L);
 
 // calculated in Sollya with a precision of 128 bits
 // =9460730472580800/149597870700
 template<typename T>
-constexpr inline auto AU_PER_LY = detail::enable_if_fp<T>(63241.077084266280268653583182317313558L);
+constexpr inline T AU_PER_LY = detail::enable_if_fp<T>(63241.077084266280268653583182317313558L);
 
 // calculated in Sollya with a precision of 128 bits
 // =648000*149597870.700/pi
 template<typename T>
-constexpr inline auto KM_PER_PARSEC = detail::enable_if_fp<T>(3.08567758149136727891393795779647161073e13L);
+constexpr inline T KM_PER_PARSEC = detail::enable_if_fp<T>(3.08567758149136727891393795779647161073e13L);
 
 constexpr inline double MINUTES_PER_DEG = 60.0;
 constexpr inline double SECONDS_PER_DEG = 3600.0;
 constexpr inline double DEG_PER_HRA     = 15.0;
 
 template<typename T>
-constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.14L);
+constexpr inline T EARTH_RADIUS = detail::enable_if_fp<T>(6378.14L);
 
 template<typename T>
-constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L);
+constexpr inline T JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L);
 
 template<typename T>
-constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(696000.0L);
+constexpr inline T SOLAR_RADIUS = detail::enable_if_fp<T>(696000.0L);
 
 // Magnitude conversions
 float lumToAbsMag(float lum);

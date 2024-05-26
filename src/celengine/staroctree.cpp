@@ -19,16 +19,6 @@ using namespace Eigen;
 namespace astro = celestia::astro;
 namespace numbers = celestia::numbers;
 
-// Maximum permitted orbital radius for stars, in light years. Orbital
-// radii larger than this value are not guaranteed to give correct
-// results. The problem case is extremely faint stars (such as brown
-// dwarfs.) The distance from the viewer to star's barycenter is used
-// rough estimate of the brightness for the purpose of culling. When the
-// star is very faint, this estimate may not work when the star is
-// far from the barycenter. Thus, the star octree traversal will always
-// render stars with orbits that are closer than MAX_STAR_ORBIT_RADIUS.
-static const float MAX_STAR_ORBIT_RADIUS = 1.0f;
-
 // total specialization of the StaticOctree template process*() methods for stars:
 template<>
 void StarOctree::processVisibleObjects(StarHandler& processor,

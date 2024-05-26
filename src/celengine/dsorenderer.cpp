@@ -13,6 +13,9 @@
 #include <algorithm>
 #include <cmath>
 
+#include <Eigen/Geometry>
+
+#include <celmath/mathlib.h>
 #include <celrender/galaxyrenderer.h>
 #include <celrender/globularrenderer.h>
 #include <celrender/nebularenderer.h>
@@ -98,19 +101,17 @@ DSORenderer::DSORenderer(const Observer* _observer,
 void
 DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso) const
 {
-    double distanceToDSO;
-    Eigen::Vector3f relPos;
     float absMag = dso->getAbsoluteMagnitude();
-    if (Eigen::Vector3d relativePos;
-        dso->isVisible() && absMag <= absMagLimit && checkDistance(dso->getPosition(), relativePos))
-    {
-        distanceToDSO = relativePos.norm();
-        relPos = relativePos.cast<float>();
-    }
-    else
-    {
+    if (!dso->isVisible() || absMag > absMagLimit)
         return;
-    }
+
+    Eigen::Vector3d relativePos = dso->getPosition() - observerPos;
+    double distanceToDSOSquared = relativePos.squaredNorm();
+    if (distanceToDSOSquared > distanceLimitSquared)
+        return;
+
+    Eigen::Vector3f relPos = relativePos.cast<float>();
+    double distanceToDSO = std::sqrt(distanceToDSOSquared);
 
     Eigen::Vector3f center = orientationMatrixT * relPos;
 

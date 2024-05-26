@@ -95,46 +95,46 @@ using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
 
-static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
+static constexpr int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 // Contribution from planetshine beyond this distance (in units of object radius)
 // is considered insignificant.
-static const float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
+static constexpr float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
 
 // Planetshine from objects less than this pixel size is treated as insignificant
 // and will be ignored.
-static const float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
+static constexpr float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
 
 // Fractional pixel offset used when rendering text as texture mapped
 // quads to ensure consistent mapping of texels to pixels.
-static const float PixelOffset = 0.125f;
+static constexpr float PixelOffset = 0.125f;
 
 // These two values constrain the near and far planes of the view frustum
 // when rendering planet and object meshes.  The near plane will never be
 // closer than MinNearPlaneDistance, and the far plane is set so that far/near
 // will not exceed MaxFarNearRatio.
-static const float MinNearPlaneDistance = 0.0001f; // km
-static const float MaxFarNearRatio      = 2000000.0f;
+static constexpr float MinNearPlaneDistance = 0.0001f; // km
+static constexpr float MaxFarNearRatio      = 2000000.0f;
 
-static const float MinRelativeOccluderRadius = 0.005f;
+static constexpr float MinRelativeOccluderRadius = 0.005f;
 
 // The minimum apparent size of an objects orbit in pixels before we display
 // a label for it.  This minimizes label clutter.
-static const float MinOrbitSizeForLabel = 20.0f;
+static constexpr float MinOrbitSizeForLabel = 20.0f;
 
 // The minimum apparent size of a surface feature in pixels before we display
 // a label for it.
-static const float MinFeatureSizeForLabel = 20.0f;
+static constexpr float MinFeatureSizeForLabel = 20.0f;
 
 /* The maximum distance of the observer to the origin of coordinates before
    asterism lines and labels start to linearly fade out (in light years) */
-static const float MaxAsterismLabelsConstDist  = 6.0f;
-static const float MaxAsterismLinesConstDist   = 600.0f;
+static constexpr float MaxAsterismLabelsConstDist  = 6.0f;
+static constexpr float MaxAsterismLinesConstDist   = 600.0f;
 
 /* The maximum distance of the observer to the origin of coordinates before
    asterisms labels and lines fade out completely (in light years) */
-static const float MaxAsterismLabelsDist = 20.0f;
-static const float MaxAsterismLinesDist  = 6.52e4f;
+static constexpr float MaxAsterismLabelsDist = 20.0f;
+static constexpr float MaxAsterismLinesDist  = 6.52e4f;
 
 // Static meshes and textures used by all instances of Simulation
 
@@ -3783,17 +3783,6 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
 }
 
 
-// Calculate the maximum field of view (from top left corner to bottom right) of
-// a frustum with the specified aspect ratio (width/height) and vertical field of
-// view. We follow the convention used elsewhere and use units of degrees for
-// the field of view angle.
-static float calcMaxFOV(float fovY_degrees, float aspectRatio)
-{
-    float l = 1.0f / std::tan(math::degToRad(fovY_degrees * 0.5f));
-    return math::radToDeg(std::atan(std::sqrt(aspectRatio * aspectRatio + 1.0f) / l)) * 2.0f;
-}
-
-
 void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
                                 const Observer& observer)
@@ -3807,57 +3796,22 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     Vector3d obsPos = observer.getPosition().toLy();
 
-    PointStarRenderer starRenderer;
+    float effDistanceToScreen = mmToInches(static_cast<float>(REF_DISTANCE_TO_SCREEN)) * pixelSize * getScreenDpi();
+    float labelThresholdMag = 1.2f * std::max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
 
-    starRenderer.renderer          = this;
-    starRenderer.starDB            = &starDB;
-    starRenderer.observer          = &observer;
-    starRenderer.obsPos            = obsPos;
-    starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
-    starRenderer.renderList        = &renderList;
-    starRenderer.starVertexBuffer  = pointStarVertexBuffer;
-    starRenderer.glareVertexBuffer = glareVertexBuffer;
-    starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
-    starRenderer.pixelSize         = pixelSize;
-    starRenderer.faintestMag       = faintestMag;
-    starRenderer.distanceLimit     = distanceLimit;
-    starRenderer.labelMode         = labelMode;
-    starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
+    PointStarRenderer starRenderer(&observer, this, &starDB, faintestMag, labelThresholdMag);
 
-    // = 1.0 at startup
-    float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
-    starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
-
-    starRenderer.colorTemp = &starColors;
-
-    gaussianDiscTex->bind();
-    starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
-    starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
-    starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
-
-    PointStarVertexBuffer::enable();
-    starRenderer.glareVertexBuffer->startSprites();
-    if (starStyle == PointStars)
-        starRenderer.starVertexBuffer->startBasicPoints();
-    else
-        starRenderer.starVertexBuffer->startSprites();
+    starRenderer.setupVertexBuffers(gaussianDiscTex, gaussianGlareTex, screenDpi / 96.0f, starStyle == PointStars);
 
     Renderer::PipelineState ps;
     ps.blending = true;
     ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
     setPipelineState(ps);
 
-    starDB.findVisibleStars(starRenderer,
-                            obsPos.cast<float>(),
-                            getCameraOrientationf(),
-                            math::degToRad(fov),
-                            getAspectRatio(),
-                            faintestMagNight);
+    starDB.getOctree().processDepthFirst(starRenderer);
 
-    starRenderer.starVertexBuffer->finish();
-    starRenderer.glareVertexBuffer->finish();
+    starRenderer.finish();
     PointStarVertexBuffer::disable();
 
 #ifndef GL_ES

@@ -10,15 +10,21 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <vector>
+
+#include <Eigen/Core>
+
 #include "objectrenderer.h"
-#include "renderlistentry.h"
+#include "univcoord.h"
 
 class ColorTemperatureTable;
+class Observer;
 class PointStarVertexBuffer;
+struct RenderListEntry;
+class Renderer;
 class Star;
 class StarDatabase;
+class Texture;
 
 // TODO: move these variables to PointStarRenderer class
 // without adding a variable. Requires C++17
@@ -30,25 +36,33 @@ constexpr inline float GlareOpacity          = 0.65f;
 
 class PointStarRenderer : public ObjectRenderer<float>
 {
- public:
-#if 0
-    static constexpr const float StarDistanceLimit     = 1.0e6f;
-    // Star disc size in pixels
-    static constexpr const float BaseStarDiscSize      = 5.0f;
-    static constexpr const float MaxScaledDiscStarSize = 8.0f;
-    static constexpr const float GlareOpacity          = 0.65f;
-#endif
+public:
+    PointStarRenderer(const Observer*,
+                      Renderer*,
+                      const StarDatabase*,
+                      float _faintestMag,
+                      float _labelThresholdMag);
 
-    PointStarRenderer(const Observer*, Renderer*);
-    void process(const Star &star, float distance, float appMag) override;
+    void setupVertexBuffers(Texture* starTexture, Texture* glareTexture, float pointScale, bool usePoints) const;
+    void finish() const;
 
-    Eigen::Vector3d obsPos;
+    void process(const Star &star) const;
+
+private:
+    UniversalCoord observerCoord;
+    double observerTime;
     Eigen::Vector3f viewNormal;
-    std::vector<RenderListEntry>* renderList    { nullptr };
-    PointStarVertexBuffer* starVertexBuffer     { nullptr };
-    PointStarVertexBuffer* glareVertexBuffer    { nullptr };
-    const StarDatabase* starDB                  { nullptr };
-    const ColorTemperatureTable* colorTemp      { nullptr };
-    float SolarSystemMaxDistance                { 1.0f };
-    float cosFOV                                { 1.0f };
+    Eigen::Vector3f viewMatZ;
+    Renderer* renderer;
+    std::vector<RenderListEntry>* renderList;
+    PointStarVertexBuffer* starVertexBuffer;
+    PointStarVertexBuffer* glareVertexBuffer;
+    const StarDatabase* starDB;
+    const ColorTemperatureTable* colorTemp;
+    unsigned int labelMode;
+    float solarSystemMaxDistance;
+    float cosFOV;
+    float pixelSize;
+    float size;
+    float labelThresholdMag;
 };

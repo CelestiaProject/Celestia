@@ -31,16 +31,15 @@ class ObjectRenderer
 public:
     using position_type = Eigen::Matrix<PREC, 3, 1>;
 
-    bool checkNode(const position_type&, PREC, float) const;
+    bool checkNode(const position_type&, PREC, float);
 
 protected:
     ObjectRenderer(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
     ~ObjectRenderer() = default;
 
     position_type getRelativePosition(const position_type& position) const;
-    bool checkDistance(const position_type& position, position_type& relativePosition) const;
 
-    position_type observerPos;
+    Eigen::Vector3d observerPos;
     std::array<Eigen::Hyperplane<PREC, 3>, 5> frustumPlanes;
     PREC distanceLimit;
     PREC distanceLimitSquared;
@@ -55,7 +54,7 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
                                      float _aspectRatio,
                                      PREC _distanceLimit,
                                      float _faintestMag) :
-    observerPos(_origin.toLy().template cast<PREC>()),
+    observerPos(_origin.toLy()),
     distanceLimit(_distanceLimit),
     distanceLimitSquared(_distanceLimit * _distanceLimit),
     faintestMag(_faintestMag)
@@ -78,9 +77,16 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& _origin,
         rot = _orientation.conjugate();
     else
         rot = _orientation.conjugate().cast<PREC>();
+
+    Eigen::Matrix<PREC, 3, 1> observerPosPrec;
+    if constexpr (std::is_same_v<PREC, double>)
+        observerPosPrec = observerPos;
+    else
+        observerPosPrec = observerPos.cast<PREC>();
+
     for (unsigned int i = 0; i < 5; ++i)
     {
-        frustumPlanes[i] = Eigen::Hyperplane<PREC, 3>(rot * planeNormals[i].normalized(), observerPos);
+        frustumPlanes[i] = Eigen::Hyperplane<PREC, 3>(rot * planeNormals[i].normalized(), observerPosPrec);
     }
 }
 
@@ -88,7 +94,7 @@ template<typename PREC>
 bool
 ObjectRenderer<PREC>::checkNode(const position_type& center,
                                 PREC size,
-                                float brightestMag) const
+                                float brightestMag)
 {
     // Check if node intersects the view frustum
     for (const auto& plane : frustumPlanes)
@@ -114,13 +120,4 @@ ObjectRenderer<PREC>::checkNode(const position_type& center,
         : std::numeric_limits<float>::max();
 
     return true;
-}
-
-template<typename PREC>
-bool
-ObjectRenderer<PREC>::checkDistance(const position_type& position,
-                                    position_type& relativePosition) const
-{
-    relativePosition = position - observerPos;
-    return relativePosition.squaredNorm() <= distanceLimitSquared;
 }

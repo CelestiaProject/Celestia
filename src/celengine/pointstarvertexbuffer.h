@@ -11,9 +11,11 @@
 #pragma once
 
 #include <memory>
+
 #include <Eigen/Core>
 
-class Color;
+#include <celutil/color.h>
+
 class Renderer;
 class Texture;
 class CelestiaGLProgram;
@@ -28,9 +30,9 @@ class VertexObject;
 class PointStarVertexBuffer
 {
 public:
-    using capacity_t = unsigned int;
+    using capacity_type = unsigned int;
 
-    PointStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
+    PointStarVertexBuffer(const Renderer &renderer, capacity_type capacity);
     ~PointStarVertexBuffer() = default;
     PointStarVertexBuffer() = delete;
     PointStarVertexBuffer(const PointStarVertexBuffer&) = delete;
@@ -58,8 +60,8 @@ private:
     };
 
     const Renderer                 &m_renderer;
-    capacity_t                      m_capacity;
-    capacity_t                      m_nStars                { 0 };
+    capacity_type                   m_capacity;
+    capacity_type                   m_nStars                { 0 };
     std::unique_ptr<StarVertex[]>   m_vertices;
     Texture                        *m_texture               { nullptr };
     bool                            m_pointSizeFromVertex   { false };

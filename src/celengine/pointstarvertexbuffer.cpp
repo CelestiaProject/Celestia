@@ -10,7 +10,6 @@
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/color.h>
 #include "glsupport.h"
 #include "objectrenderer.h"
 #include "shadermanager.h"
@@ -24,7 +23,7 @@ namespace util = celestia::util;
 PointStarVertexBuffer* PointStarVertexBuffer::current = nullptr;
 
 PointStarVertexBuffer::PointStarVertexBuffer(const Renderer &renderer,
-                                             capacity_t capacity) :
+                                             capacity_type capacity) :
     m_renderer(renderer),
     m_capacity(capacity),
     m_vertices(std::make_unique<StarVertex[]>(capacity))
