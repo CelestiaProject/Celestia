@@ -90,7 +90,6 @@ loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 
     loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, config.paths.HDCrossIndexFile);
     loadCrossIndex(starDBBuilder, StarCatalog::SAO, config.paths.SAOCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::Gliese, config.paths.GlieseCrossIndexFile);
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "star");
