@@ -39,7 +39,6 @@ Configuration
 
   HDCrossIndex                 "data/hdxindex.dat"
   SAOCrossIndex                "data/saoxindex.dat"
-  GlieseCrossIndex             "data/gliesexindex.dat"
 
   SolarSystemCatalogs        [ "data/solarsys.ssc"
                                "data/dwarfplanets.ssc"

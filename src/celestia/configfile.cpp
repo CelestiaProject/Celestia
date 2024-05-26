@@ -147,7 +147,6 @@ applyPaths(CelestiaConfig::Paths& paths, const Hash& hash)
     applyPath(paths.destinationsFile, hash, "DestinationFile"sv);
     applyPath(paths.HDCrossIndexFile, hash, "HDCrossIndex"sv);
     applyPath(paths.SAOCrossIndexFile, hash, "SAOCrossIndex"sv);
-    applyPath(paths.GlieseCrossIndexFile, hash, "GlieseCrossIndex"sv);
     applyPath(paths.warpMeshFile, hash, "WarpMeshFile"sv);
     applyPath(paths.leapSecondsFile, hash, "LeapSecondsFile"sv);
 #ifdef CELX

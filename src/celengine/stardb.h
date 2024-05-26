@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <map>
@@ -37,12 +39,11 @@ class UserCategory;
 
 constexpr inline unsigned int MAX_STAR_NAMES = 10;
 
-enum class StarCatalog
+enum class StarCatalog : unsigned int
 {
-    HenryDraper = 0,
-    Gliese      = 1,
-    SAO         = 2,
-    MaxCatalog  = 3,
+    HenryDraper,
+    SAO,
+    _CatalogCount,
 };
 
 
@@ -51,7 +52,7 @@ class StarDatabaseBuilder;
 class StarDatabase
 {
  public:
-    StarDatabase();
+    StarDatabase() = default;
     ~StarDatabase();
 
     inline Star* getStar(const std::uint32_t) const;
@@ -96,6 +97,8 @@ class StarDatabase
     AstroCatalog::IndexNumber crossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
 private:
+    static constexpr auto NumCatalogs = static_cast<std::size_t>(StarCatalog::_CatalogCount);
+
     std::uint32_t nStars{ 0 };
 
     std::unique_ptr<Star[]>           stars; //NOSONAR
@@ -103,7 +106,7 @@ private:
     std::vector<Star*>                catalogNumberIndex;
     StarOctree*                       octreeRoot;
 
-    std::vector<CrossIndex> crossIndexes;
+    std::array<CrossIndex, NumCatalogs> crossIndices;
 
     friend class StarDatabaseBuilder;
 };

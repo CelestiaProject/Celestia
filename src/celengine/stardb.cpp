@@ -77,11 +77,6 @@ constexpr inline std::string_view HDCatalogPrefix        = "HD "sv;
 constexpr inline std::string_view HIPPARCOSCatalogPrefix = "HIP "sv;
 constexpr inline std::string_view TychoCatalogPrefix     = "TYC "sv;
 constexpr inline std::string_view SAOCatalogPrefix       = "SAO "sv;
-#if 0
-constexpr inline std::string_view GlieseCatalogPrefix    = "Gliese "sv;
-constexpr inline std::string_view RossCatalogPrefix      = "Ross "sv;
-constexpr inline std::string_view LacailleCatalogPrefix  = "Lacaille "sv;
-#endif
 
 // The size of the root star octree node is also the maximum distance
 // distance from the Sun at which any star may be located. The current
@@ -429,13 +424,6 @@ parseCustomStarDetails(const Hash* starData,
 } // end unnamed namespace
 
 
-
-StarDatabase::StarDatabase()
-{
-    crossIndexes.resize(static_cast<std::size_t>(StarCatalog::MaxCatalog));
-}
-
-
 StarDatabase::~StarDatabase() = default;
 
 
@@ -498,10 +486,10 @@ AstroCatalog::IndexNumber
 StarDatabase::crossIndex(StarCatalog catalog, AstroCatalog::IndexNumber celCatalogNumber) const
 {
     auto catalogIndex = static_cast<std::size_t>(catalog);
-    if (catalogIndex >= crossIndexes.size())
+    if (catalogIndex >= crossIndices.size())
         return AstroCatalog::InvalidIndex;
 
-    const CrossIndex& xindex = crossIndexes[catalogIndex];
+    const CrossIndex& xindex = crossIndices[catalogIndex];
 
     // A simple linear search.  We could store cross indices sorted by
     // both catalog numbers and trade memory for speed
@@ -519,10 +507,10 @@ AstroCatalog::IndexNumber
 StarDatabase::searchCrossIndexForCatalogNumber(StarCatalog catalog, AstroCatalog::IndexNumber number) const
 {
     auto catalogIndex = static_cast<std::size_t>(catalog);
-    if (catalogIndex >= crossIndexes.size())
+    if (catalogIndex >= crossIndices.size())
         return AstroCatalog::InvalidIndex;
 
-    const CrossIndex& xindex = crossIndexes[catalogIndex];
+    const CrossIndex& xindex = crossIndices[catalogIndex];
     auto iter = std::lower_bound(xindex.begin(), xindex.end(), number,
                                  [](const CrossIndexEntry& ent, AstroCatalog::IndexNumber n) { return ent.catalogNumber < n; });
     return iter == xindex.end() || iter->catalogNumber != number
@@ -1066,7 +1054,7 @@ StarDatabaseBuilder::loadCrossIndex(StarCatalog catalog, std::istream& in)
     Timer timer{};
 
     auto catalogIndex = static_cast<std::size_t>(catalog);
-    if (catalogIndex >= starDB->crossIndexes.size())
+    if (catalogIndex >= starDB->crossIndices.size())
         return false;
 
     // Verify that the cross index file has a correct header
@@ -1091,7 +1079,7 @@ StarDatabaseBuilder::loadCrossIndex(StarCatalog catalog, std::istream& in)
         }
     }
 
-    StarDatabase::CrossIndex& xindex = starDB->crossIndexes[catalogIndex];
+    StarDatabase::CrossIndex& xindex = starDB->crossIndices[catalogIndex];
     xindex = {};
 
     constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(CrossIndexRecord);

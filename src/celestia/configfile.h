@@ -38,7 +38,6 @@ struct CelestiaConfig
         fs::path destinationsFile{ };
         fs::path HDCrossIndexFile{ };
         fs::path SAOCrossIndexFile{ };
-        fs::path GlieseCrossIndexFile{ };
         fs::path warpMeshFile{ };
         fs::path leapSecondsFile{ };
 #ifdef CELX
