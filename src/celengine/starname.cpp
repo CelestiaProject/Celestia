@@ -12,11 +12,11 @@
 
 #include "starname.h"
 
-#include <array>
 #include <cassert>
 #include <cctype>
 #include <cstddef>
 #include <istream>
+#include <iterator>
 #include <optional>
 #include <string>
 #include <system_error>
@@ -28,17 +28,26 @@
 #include "astroobj.h"
 #include "constellation.h"
 
-
 namespace
 {
 
-constexpr std::string_view::size_type MAX_CANONICAL_LENGTH = 256;
 constexpr unsigned int FIRST_NUMBERED_VARIABLE = 335;
+
+using CanonicalBuffer = fmt::basic_memory_buffer<char, 256>;
+
+// workaround for missing append method in earlier fmt versions
+inline void
+appendComponentA(CanonicalBuffer& buffer)
+{
+    buffer.push_back(' ');
+    buffer.push_back('A');
+}
 
 // Try parsing the first word of a name as a Flamsteed number or variable star
 // designation. Single-letter variable star designations are handled by the
 // Bayer parser due to indistinguishability with case-insensitive lookup.
-bool isFlamsteedOrVariable(std::string_view prefix)
+bool
+isFlamsteedOrVariable(std::string_view prefix)
 {
     using celestia::compat::from_chars;
     switch (prefix.size())
@@ -74,17 +83,16 @@ bool isFlamsteedOrVariable(std::string_view prefix)
     }
 }
 
-
 struct BayerLetter
 {
     std::string_view letter{ };
     unsigned int number{ 0 };
 };
 
-
 // Attempts to parse the first word of a star name as a Greek or Latin-letter
 // Bayer designation, with optional numeric suffix
-BayerLetter parseBayerLetter(std::string_view prefix)
+BayerLetter
+parseBayerLetter(std::string_view prefix)
 {
     using celestia::compat::from_chars;
 
@@ -110,7 +118,6 @@ BayerLetter parseBayerLetter(std::string_view prefix)
 
 } // end unnamed namespace
 
-
 std::uint32_t
 StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) const
 {
@@ -135,7 +142,6 @@ StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) cons
     return findWithComponentSuffix(name, i18n);
 }
 
-
 std::uint32_t
 StarNameDatabase::findFlamsteedOrVariable(std::string_view prefix,
                                           std::string_view remainder,
@@ -148,28 +154,21 @@ StarNameDatabase::findFlamsteedOrVariable(std::string_view prefix,
     if (constellationAbbrev.empty() || (!suffix.empty() && suffix.front() != ' '))
         return AstroCatalog::InvalidIndex;
 
-    std::array<char, MAX_CANONICAL_LENGTH> canonical;
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {}{}",
-                                           prefix, constellationAbbrev, suffix);
-        size <= canonical.size())
+    CanonicalBuffer canonical;
+    fmt::format_to(std::back_inserter(canonical), "{} {}{}", prefix, constellationAbbrev, suffix);
+    if (auto catalogNumber = getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
     {
-        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
+        return catalogNumber;
     }
 
     if (!suffix.empty())
         return AstroCatalog::InvalidIndex;
 
     // try appending " A"
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {} A",
-                                           prefix, constellationAbbrev);
-        size <= canonical.size())
-        return getCatalogNumberByName({canonical.data(), size}, i18n);
-
-    return AstroCatalog::InvalidIndex;
+    appendComponentA(canonical);
+    return getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
 }
-
 
 std::uint32_t
 StarNameDatabase::findBayer(std::string_view prefix,
@@ -193,46 +192,42 @@ StarNameDatabase::findBayer(std::string_view prefix,
                               i18n);
 }
 
-
 std::uint32_t
 StarNameDatabase::findBayerNoNumber(std::string_view letter,
                                     std::string_view constellationAbbrev,
                                     std::string_view suffix,
                                     bool i18n) const
 {
-    std::array<char, MAX_CANONICAL_LENGTH> canonical;
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {}{}",
-                                           letter, constellationAbbrev, suffix);
-        size <= canonical.size())
+    CanonicalBuffer canonical;
+    fmt::format_to(std::back_inserter(canonical), "{} {}{}", letter, constellationAbbrev, suffix);
+    if (auto catalogNumber = getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
     {
-        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
+        return catalogNumber;
     }
 
     // Try appending "1" to the letter, e.g. ALF CVn --> ALF1 CVn
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}1 {}{}",
-                                           letter, constellationAbbrev, suffix);
-        size <= canonical.size())
+    canonical.clear();
+    fmt::format_to(std::back_inserter(canonical), "{}1 {}{}", letter, constellationAbbrev, suffix);
+    if (auto catalogNumber = getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
     {
-        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
+        return catalogNumber;
     }
 
     if (!suffix.empty())
         return AstroCatalog::InvalidIndex;
 
     // No component suffix, so try appending " A"
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} {} A",
-                                           letter, constellationAbbrev);
-        size <= canonical.size())
+    canonical.clear();
+    fmt::format_to(std::back_inserter(canonical), "{} {} A", letter, constellationAbbrev);
+    if (auto catalogNumber = getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
     {
-        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
+        return catalogNumber;
     }
 
+    // Try appending "1" to the letter and a, e.g. ALF CVn --> ALF1 CVn A
     if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}1 {} A",
                                            letter, constellationAbbrev);
         size <= canonical.size())
@@ -241,7 +236,6 @@ StarNameDatabase::findBayerNoNumber(std::string_view letter,
     return AstroCatalog::InvalidIndex;
 }
 
-
 std::uint32_t
 StarNameDatabase::findBayerWithNumber(std::string_view letter,
                                       unsigned int number,
@@ -249,40 +243,29 @@ StarNameDatabase::findBayerWithNumber(std::string_view letter,
                                       std::string_view suffix,
                                       bool i18n) const
 {
-    std::array<char, MAX_CANONICAL_LENGTH> canonical;
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}{} {}{}",
-                                           letter, number, constellationAbbrev, suffix);
-        size <= canonical.size())
+    CanonicalBuffer canonical;
+    fmt::format_to(std::back_inserter(canonical), "{}{} {}{}", letter, number, constellationAbbrev, suffix);
+    if (auto catalogNumber = getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
+        catalogNumber != AstroCatalog::InvalidIndex)
     {
-        auto catalogNumber = getCatalogNumberByName({canonical.data(), size}, i18n);
-        if (catalogNumber != AstroCatalog::InvalidIndex)
-            return catalogNumber;
+        return catalogNumber;
     }
 
     if (!suffix.empty())
         return AstroCatalog::InvalidIndex;
 
-    // No component suffix, so try appending "A"
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{}{} {} A",
-                                           letter, number, constellationAbbrev);
-        size <= canonical.size())
-        return getCatalogNumberByName({canonical.data(), size}, i18n);
-
-    return AstroCatalog::InvalidIndex;
+    // No component suffix, so try appending " A"
+    appendComponentA(canonical);
+    return getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
 }
-
 
 std::uint32_t
 StarNameDatabase::findWithComponentSuffix(std::string_view name, bool i18n) const
 {
-    std::array<char, MAX_CANONICAL_LENGTH> canonical;
-    if (auto [it, size] = fmt::format_to_n(canonical.data(), canonical.size(), "{} A", name);
-        size <= canonical.size())
-        return getCatalogNumberByName({canonical.data(), size}, i18n);
-
-    return AstroCatalog::InvalidIndex;
+    CanonicalBuffer canonical;
+    fmt::format_to(std::back_inserter(canonical), "{} A", name);
+    return getCatalogNumberByName({canonical.data(), canonical.size()}, i18n);
 }
-
 
 std::unique_ptr<StarNameDatabase>
 StarNameDatabase::readNames(std::istream& in)
@@ -327,20 +310,12 @@ StarNameDatabase::readNames(std::istream& in)
         line = line.substr(pos + 1);
         while (!line.empty())
         {
-            std::string_view name;
             pos = line.find(':');
-            if (pos == std::string_view::npos)
-            {
-                name = line;
-                line = {};
-            }
-            else
-            {
-                name = line.substr(0, pos);
-                line = line.substr(pos + 1);
-            }
-
+            std::string_view name = line.substr(0, pos);
             db->add(catalogNumber, name);
+            if (pos == std::string_view::npos)
+                break;
+            line = line.substr(pos + 1);
         }
     }
 

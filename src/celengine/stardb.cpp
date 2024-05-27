@@ -553,23 +553,23 @@ StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_vi
 // of a memory allocation (though no explcit deallocation is
 // required as it's all wrapped in the string class.)
 std::string
-StarDatabase::getStarName(const Star& star, bool i18n) const
+StarDatabase::getStarName(const Star& star, [[maybe_unused]] bool i18n) const
 {
     AstroCatalog::IndexNumber catalogNumber = star.getIndex();
+    if (namesDB == nullptr)
+        return catalogNumberToString(catalogNumber);
 
-    if (namesDB != nullptr)
+    if (auto iter = namesDB->getFirstNameIter(catalogNumber); iter != namesDB->getFinalNameIter())
     {
-        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
-        if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
+#ifdef ENABLE_NLS
+        if (i18n)
         {
-            if (i18n)
-            {
-                const char * local = D_(iter->second.c_str());
-                if (iter->second != local)
-                    return local;
-            }
-            return iter->second;
+            const char * local = D_(iter->second.c_str());
+            if (iter->second != local)
+                return local;
         }
+#endif
+        return iter->second;
     }
 
     /*
@@ -605,8 +605,7 @@ StarDatabase::getStarNameList(const Star& star, const unsigned int maxNames) con
 
     if (namesDB != nullptr)
     {
-        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
-
+        auto iter = namesDB->getFirstNameIter(catalogNumber);
         while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && nameSet.size() < maxNames)
         {
             append(D_(iter->second.c_str()));

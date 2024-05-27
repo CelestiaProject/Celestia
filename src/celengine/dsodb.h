@@ -57,8 +57,8 @@ class DSODatabase
                        const Eigen::Vector3d& obsPosition,
                        float radius) const;
 
-    std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;
-    std::string getDSONameList(const DeepSkyObject* const &, const unsigned int maxNames = MAX_DSO_NAMES) const;
+    std::string getDSOName    (const DeepSkyObject*, bool i18n = false) const;
+    std::string getDSONameList(const DeepSkyObject*, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
     NameDatabase* getNameDatabase() const;
     void setNameDatabase(std::unique_ptr<NameDatabase>&&);

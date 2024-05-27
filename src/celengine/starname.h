@@ -19,17 +19,27 @@
 
 #include <celengine/name.h>
 
-
-class StarNameDatabase: public NameDatabase
+class StarNameDatabase: private NameDatabase
 {
- public:
+public:
     StarNameDatabase() {};
 
+    using NameDatabase::add;
+    using NameDatabase::erase;
+
+    using NameDatabase::getFirstNameIter;
+    using NameDatabase::getFinalNameIter;
+
+    using NameDatabase::getCompletion;
+
+    // We don't want users to access the getCatalogMethodByName method on the
+    // NameDatabase base class, so use private inheritance to enforce usage of
+    // the below method:
     std::uint32_t findCatalogNumberByName(std::string_view, bool i18n) const;
 
     static std::unique_ptr<StarNameDatabase> readNames(std::istream&);
 
- private:
+private:
     std::uint32_t findFlamsteedOrVariable(std::string_view, std::string_view, bool) const;
     std::uint32_t findBayer(std::string_view, std::string_view, bool) const;
     std::uint32_t findBayerNoNumber(std::string_view,
