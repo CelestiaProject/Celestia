@@ -25,28 +25,26 @@
 // lies the one and only need for type genericity.
 class NameDatabase
 {
- public:
+public:
     using NameIndex = std::map<std::string, AstroCatalog::IndexNumber, CompareIgnoringCasePredicate>;
     using NumberIndex = std::multimap<AstroCatalog::IndexNumber, std::string>;
 
- public:
-    std::uint32_t getNameCount() const;
-
-    void add(const AstroCatalog::IndexNumber, std::string_view);
+    void add(AstroCatalog::IndexNumber, std::string_view);
 
     // delete all names associated with the specified catalog number
-    void erase(const AstroCatalog::IndexNumber);
+    void erase(AstroCatalog::IndexNumber);
 
     AstroCatalog::IndexNumber getCatalogNumberByName(std::string_view, bool i18n) const;
-    std::string getNameByCatalogNumber(const AstroCatalog::IndexNumber) const;
 
-    NumberIndex::const_iterator getFirstNameIter(const AstroCatalog::IndexNumber catalogNumber) const;
+    NumberIndex::const_iterator getFirstNameIter(AstroCatalog::IndexNumber catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
     void getCompletion(std::vector<std::string>& completion, std::string_view name) const;
 
- protected:
+private:
     NameIndex   nameIndex;
+#ifdef ENABLE_NLS
     NameIndex   localizedNameIndex;
+#endif
     NumberIndex numberIndex;
 };
