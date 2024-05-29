@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <config.h>
+
 #include <cmath>
 #include <cstdint>
 #include <optional>
@@ -72,13 +74,17 @@ float lumToAppMag(float lum, float lyrs);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
 
-template<class T> constexpr T absToAppMag(T absMag, T lyrs)
+template<class T>
+CELESTIA_CMATH_CONSTEXPR T
+absToAppMag(T absMag, T lyrs)
 {
     using std::log10;
     return absMag - T(5) + T(5) * log10(lyrs / LY_PER_PARSEC<T>);
 }
 
-template<class T> constexpr T appToAbsMag(T appMag, T lyrs)
+template<class T>
+CELESTIA_CMATH_CONSTEXPR T
+appToAbsMag(T appMag, T lyrs)
 {
     using std::log10;
     return appMag + T(5) - T(5) * log10(lyrs / LY_PER_PARSEC<T>);
