@@ -593,7 +593,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         if (body.getRotationModel(t)->isPeriodic())
             displayRotationPeriod(formatter, overlay, body.getRotationModel(t)->getPeriod());
 
-        if (body.getName() != "Earth" && body.getMass() > 0)
+        if (body.getMass() > 0)
             displayMass(formatter, overlay, body.getMass(), hudSettings.measurementSystem);
 
         if (float density = body.getDensity(); density > 0)
