@@ -554,8 +554,6 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
                       DistanceKmToStr(formatter, axis1, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis2, 5, hudSettings.measurementSystem));
     }
-//    overlay.printf(_("Radius: %s\n"),
-//                   DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
 
