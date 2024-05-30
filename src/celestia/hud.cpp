@@ -545,9 +545,9 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     else // show mean radius along with triaxial semi-axes
     {
         double radiusMean = cbrt(semiAxes.prod());
-        double axis0 = semiAxes[0];
-        double axis1 = semiAxes[1];
-        double axis2 = semiAxes[2];
+        double axis0 = semiAxes.x();
+        double axis1 = semiAxes.z();
+        double axis2 = semiAxes.y(); // polar semi-axis
         overlay.print(_("Radius: {} ({} × {} × {})\n"),
                       DistanceKmToStr(formatter, radiusMean, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis0, 5, hudSettings.measurementSystem),
