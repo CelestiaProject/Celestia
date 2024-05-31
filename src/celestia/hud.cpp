@@ -538,22 +538,22 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     {
         return;
     }
-    else if (body.isSphere() || !body.isEllipsoid())
-    {
-        overlay.print(_("Radius: {}\n"),
-                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
-    }
-    else // show mean radius along with triaxial semi-axes
+    else if (body.isEllipsoid() && !body.isSphere()) // show mean radius along with triaxial semi-axes
     {
         double radiusMean = cbrt(semiAxes.prod());
         double axis0 = semiAxes.x();
         double axis1 = semiAxes.z();
         double axis2 = semiAxes.y(); // polar semi-axis
-        overlay.print(_("Radius: {} ({} " UTF8_MULTIPLICATION_SIGN " {} " UTF8_MULTIPLICATION_SIGN "{})\n"),
+        overlay.print(_("Radius: {} ({} " UTF8_MULTIPLICATION_SIGN " {} " UTF8_MULTIPLICATION_SIGN " {})\n"),
                       DistanceKmToStr(formatter, radiusMean, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis0, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis1, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis2, 5, hudSettings.measurementSystem));
+    }
+    else
+    {
+        overlay.print(_("Radius: {}\n"),
+                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
     }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
