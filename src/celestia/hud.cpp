@@ -533,6 +533,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     overlay.printf(_("Distance: %s\n"),
                    DistanceKmToStr(formatter, distance, 5, hudSettings.measurementSystem));
 
+    Eigen::Vector3f semiAxes = body.getSemiAxes();
     if (body.getClassification() == BodyClassification::Invisible)
     {
         return;
@@ -548,7 +549,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         double axis0 = semiAxes.x();
         double axis1 = semiAxes.z();
         double axis2 = semiAxes.y(); // polar semi-axis
-        overlay.print(_("Radius: {} ({} × {} × {})\n"),
+        overlay.print(_("Radius: {} ({} " UTF8_MULTIPLICATION_SIGN " {} " UTF8_MULTIPLICATION_SIGN "{})\n"),
                       DistanceKmToStr(formatter, radiusMean, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis0, 5, hudSettings.measurementSystem),
                       DistanceKmToStr(formatter, axis1, 5, hudSettings.measurementSystem),
