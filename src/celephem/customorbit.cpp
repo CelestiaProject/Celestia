@@ -2568,12 +2568,12 @@ public:
         double t = jd - 2444239.5;
 
         double L = L0 + L1 * t;
-        for (std::size_t i = 0; i < std::tuple_size<LTerms>::value; ++i)
+        for (std::size_t i = 0; i < std::tuple_size_v<LTerms>; ++i)
             L += L_k[i] * std::sin(L_theta[i] * t + L_phi[i]);
 
         double a0 = 0.0;
         double a1 = 0.0;
-        for (std::size_t i = 0; i < std::tuple_size<ZTerms>::value; ++i)
+        for (std::size_t i = 0; i < std::tuple_size_v<ZTerms>; ++i)
         {
             double w = z_theta[i] * t + z_phi[i];
             double sw;
@@ -2585,7 +2585,7 @@ public:
 
         double b0 = 0.0;
         double b1 = 0.0;
-        for (std::size_t i = 0; i < std::tuple_size<ZetaTerms>::value; ++i)
+        for (std::size_t i = 0; i < std::tuple_size_v<ZetaTerms>; ++i)
         {
             double w = zeta_theta[i] * t + zeta_phi[i];
             double sw;
