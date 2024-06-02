@@ -92,12 +92,14 @@ class StarDatabase
 
     using CrossIndex = std::vector<CrossIndexEntry>;
 
-    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(StarCatalog, AstroCatalog::IndexNumber number) const;
-    Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
     AstroCatalog::IndexNumber crossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
 private:
     static constexpr auto NumCatalogs = static_cast<std::size_t>(StarCatalog::_CatalogCount);
+
+    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(StarCatalog, AstroCatalog::IndexNumber number) const;
+    Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
+
 
     std::uint32_t nStars{ 0 };
 

@@ -18,13 +18,15 @@
 #include <celutil/color.h>
 
 class Body;
-
+class StarDatabase;
 
 class Location
 {
 public:
     const std::string& getName(bool i18n = false) const;
     void setName(const std::string&);
+
+    std::string getPath(const StarDatabase*, char delimiter = '/') const;
 
     Eigen::Vector3f getPosition() const;
     void setPosition(const Eigen::Vector3f&);

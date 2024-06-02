@@ -48,32 +48,31 @@ class Selection
     double radius() const;
     UniversalCoord getPosition(double t) const;
     Eigen::Vector3d getVelocity(double t) const;
-    std::string getName(bool i18n = false) const;
     Selection parent() const;
 
     bool isVisible() const;
 
-    Star* star() const
+    inline Star* star() const
     {
         return type == SelectionType::Star ? static_cast<Star*>(obj) : nullptr;
     }
 
-    Body* body() const
+    inline Body* body() const
     {
         return type == SelectionType::Body ? static_cast<Body*>(obj) : nullptr;
     }
 
-    DeepSkyObject* deepsky() const
+    inline DeepSkyObject* deepsky() const
     {
         return type == SelectionType::DeepSky ? static_cast<DeepSkyObject*>(obj) : nullptr;
     }
 
-    Location* location() const
+    inline Location* location() const
     {
         return type == SelectionType::Location ? static_cast<Location*>(obj) : nullptr;
     }
 
-    SelectionType getType() const { return type; }
+    inline SelectionType getType() const { return type; }
 
  private:
     SelectionType type { SelectionType::None };

@@ -27,7 +27,6 @@ namespace
 // are Julian days.
 constexpr double VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
-
 UniversalCoord locationPosition(const Location* location, double t)
 {
     if (const Body* body = location->getParentBody(); body != nullptr)
@@ -38,31 +37,7 @@ UniversalCoord locationPosition(const Location* location, double t)
     return UniversalCoord::Zero();
 }
 
-
-std::string bodyName(const Body* body, bool i18n)
-{
-    std::string name = body->getName(i18n);
-    const PlanetarySystem* system = body->getSystem();
-    while (system != nullptr)
-    {
-        if (const Body* parent = system->getPrimaryBody(); parent != nullptr)
-        {
-            name = parent->getName(i18n) + '/' + name;
-            system = parent->getSystem();
-        }
-        else
-        {
-            if (const Star* parentStar = system->getStar(); parentStar != nullptr)
-                name = fmt::format("#{}/{}", parentStar->getIndex(), name);
-            system = nullptr;
-        }
-    }
-
-    return name;
-}
-
 } // end unnamed namespace
-
 
 double
 Selection::radius() const
@@ -82,7 +57,6 @@ Selection::radius() const
         return 0.0;
     }
 }
-
 
 UniversalCoord
 Selection::getPosition(double t) const
@@ -111,7 +85,6 @@ Selection::getPosition(double t) const
     }
 }
 
-
 Eigen::Vector3d
 Selection::getVelocity(double t) const
 {
@@ -139,37 +112,8 @@ Selection::getVelocity(double t) const
     }
 }
 
-
-std::string
-Selection::getName(bool i18n) const
-{
-    switch (type)
-    {
-    case SelectionType::Star:
-        return fmt::format("#{}", static_cast<const Star*>(obj)->getIndex());
-
-    case SelectionType::Body:
-        return bodyName(static_cast<const Body*>(obj), i18n);
-
-    case SelectionType::DeepSky:
-        return fmt::format("#{}", static_cast<const DeepSkyObject*>(obj)->getIndex());
-
-    case SelectionType::Location:
-        {
-            auto location = static_cast<const Location*>(obj);
-            if (auto parentBody = location->getParentBody(); parentBody == nullptr)
-                return location->getName(i18n);
-            else
-                return fmt::format("{}/{}", bodyName(parentBody, i18n), location->getName(i18n));
-        }
-
-    default:
-        return {};
-    }
-}
-
-
-Selection Selection::parent() const
+Selection
+Selection::parent() const
 {
     switch (type)
     {
@@ -199,9 +143,9 @@ Selection Selection::parent() const
     }
 }
 
-
 /*! Return true if the selection's visibility flag is set. */
-bool Selection::isVisible() const
+bool
+Selection::isVisible() const
 {
     switch (type)
     {

@@ -310,10 +310,16 @@ void CelestiaCore::addFavorite(const string &name, const string &parentFolder, F
     fav->parentFolder = parentFolder;
 
     Selection sel = sim->getSelection();
-    if (sel.deepsky() != nullptr)
-        fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+    if (const DeepSkyObject* dso = sel.deepsky(); dso != nullptr)
+        fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(dso);
+    else if (const Star* star = sel.star(); star != nullptr)
+        fav->selectionName = sim->getUniverse()->getStarCatalog()->getStarName(*star);
+    else if (const Body* body = sel.body(); body != nullptr)
+        fav->selectionName = body->getPath(sim->getUniverse()->getStarCatalog());
+    else if (const Location* location = sel.location(); location != nullptr)
+        fav->selectionName = location->getPath(sim->getUniverse()->getStarCatalog());
     else
-        fav->selectionName = sel.getName();
+        return;
 
     fav->coordSys = sim->getFrame()->getCoordinateSystem();
 
@@ -350,14 +356,16 @@ const DestinationList* CelestiaCore::getDestinations()
 void showSelectionInfo(const Selection& sel)
 {
     Quaternionf orientation;
-    if (sel.deepsky() != nullptr)
+    if (const DeepSkyObject* dso = sel.deepsky(); dso != nullptr)
         orientation = sel.deepsky()->getOrientation();
     else if (sel.body() != nullptr)
         orientation = sel.body()->getGeometryOrientation();
+    else
+        return;
 
     AngleAxisf aa(orientation);
 
-    GetLogger()->info("{}\nOrientation: [{}, {}, {}], {:.1f}\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), math::radToDeg(aa.angle()));
+    GetLogger()->info("Orientation: [{}, {}, {}], {:.1f}\n", aa.axis().x(), aa.axis().y(), aa.axis().z(), math::radToDeg(aa.angle()));
 }
 
 

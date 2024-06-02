@@ -39,6 +39,7 @@ class Body;
 class FrameTree;
 class ReferenceMark;
 class Atmosphere;
+class StarDatabase;
 
 class PlanetarySystem
 {
@@ -199,6 +200,7 @@ public:
     PlanetarySystem* getSystem() const;
     const std::vector<std::string>& getNames() const;
     std::string getName(bool i18n = false) const;
+    std::string getPath(const StarDatabase*, char delimiter = '/') const;
     std::string getLocalizedName() const;
     bool hasLocalizedName() const;
     void addAlias(const std::string& alias);
