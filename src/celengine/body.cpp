@@ -19,6 +19,7 @@
 #include "body.h"
 #include "atmosphere.h"
 #include "frame.h"
+#include "stardb.h"
 #include "timeline.h"
 #include "timelinephase.h"
 #include "frametree.h"
@@ -111,11 +112,35 @@ const vector<string>& Body::getNames() const
 /*! Return the primary name for the body; if i18n, return the
  *  localized name of the body.
  */
-string Body::getName(bool i18n) const
+std::string
+Body::getName(bool i18n) const
 {
     if (i18n && hasLocalizedName())
         return localizedName;
     return names[0];
+}
+
+std::string
+Body::getPath(const StarDatabase* starDB, char delimiter) const
+{
+    std::string name = names[0];
+    const PlanetarySystem* planetarySystem = system;
+    while (planetarySystem != nullptr)
+    {
+        if (const Body* parent = planetarySystem->getPrimaryBody(); parent != nullptr)
+        {
+            name = parent->getName() + delimiter + name;
+            planetarySystem = parent->getSystem();
+        }
+        else
+        {
+            if (const Star* parentStar = system->getStar(); parentStar != nullptr)
+                name = starDB->getStarName(*parentStar) + delimiter + name;
+            break;
+        }
+    }
+
+    return name;
 }
 
 /*! Get the localized name for the body. If no localized name

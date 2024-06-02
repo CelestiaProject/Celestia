@@ -54,36 +54,6 @@ constexpr unsigned int NEW_FLAG_BIT_1_7 = 27;
 constexpr std::uint64_t NEW_SHOW_PLANETS_BIT_MASK = (UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1));
 constexpr std::uint64_t RF_MASK = NEW_SHOW_PLANETS_BIT_MASK - 1;
 
-
-std::string
-getBodyName(const Universe *universe, const Body *body)
-{
-    std::string name = body->getName();
-    const PlanetarySystem* parentSystem = body->getSystem();
-    const Body* parentBody = nullptr;
-
-    if (parentSystem != nullptr)
-        parentBody = parentSystem->getPrimaryBody();
-    else
-        assert(0);
-        // TODO: Figure out why the line below was added.
-        //parentBody = body->getOrbitBarycenter();
-
-    while (parentBody != nullptr)
-    {
-        name = parentBody->getName() + ":" + name;
-        parentSystem = parentBody->getSystem();
-        if (parentSystem == nullptr)
-            break;
-        parentBody = parentSystem->getPrimaryBody();
-    }
-
-    if (auto *star = body->getSystem()->getStar(); star != nullptr)
-        name = universe->getStarCatalog()->getStarName(*star) + ":" + name;
-
-    return name;
-}
-
 std::string_view
 getCoordSysName(ObserverFrame::CoordinateSystem mode)
 {
@@ -323,12 +293,11 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
 {
     auto *universe = appCore->getSimulation()->getUniverse();
     std::string name;
-    Body* parentBody = nullptr;
 
     switch (selection.getType())
     {
     case SelectionType::Body:
-        name = getBodyName(universe, selection.body());
+        name = selection.body()->getPath(universe->getStarCatalog(), ':');
         break;
 
     case SelectionType::Star:
@@ -340,10 +309,7 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
         break;
 
     case SelectionType::Location:
-        name = selection.location()->getName();
-        parentBody = selection.location()->getParentBody();
-        if (parentBody != nullptr)
-            name = getBodyName(universe, parentBody) + ":" + name;
+        name = selection.location()->getPath(universe->getStarCatalog(), ':');
         break;
 
     default:

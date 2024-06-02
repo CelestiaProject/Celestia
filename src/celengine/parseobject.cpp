@@ -871,8 +871,6 @@ CreateMeanEquatorFrame(const Universe& universe,
         }
     }
 
-    GetLogger()->debug("CreateMeanEquatorFrame {}, {}\n", center.getName(), obj.getName());
-
     if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
         return std::make_shared<BodyMeanEquatorFrame>(center, obj, freezeEpoch);
 
@@ -1002,7 +1000,7 @@ getVectorObserver(const Universe& universe, const Hash* vectorData)
     if (obsObject.empty())
     {
         GetLogger()->warn("Bad two-vector frame: observer object '{}' of vector not found.\n",
-                          obsObject.getName());
+                          *obsName);
         return Selection();
     }
 
