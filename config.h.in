@@ -8,7 +8,6 @@
 #cmakedefine HAVE_SINCOS
 #cmakedefine HAVE_APPLE_SINCOS
 #cmakedefine HAVE_CONSTEXPR_EMPTY_ARRAY
-#cmakedefine WORDS_BIGENDIAN
 
 #ifdef HAVE_CONSTEXPR_CMATH
 #define CELESTIA_CMATH_CONSTEXPR constexpr

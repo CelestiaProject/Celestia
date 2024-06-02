@@ -494,9 +494,6 @@ else()
   message(WARNING "C++ charconv is unusable!\nWill use own implementation.")
 endif()
 
-include(TestBigEndian)
-test_big_endian(WORDS_BIGENDIAN)
-
 configure_file("config.h.in" "config.h")
 configure_file("celestia.cfg.in" "celestia.cfg")
 
