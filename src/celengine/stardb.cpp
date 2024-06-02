@@ -25,9 +25,9 @@
 #include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <fmt/format.h>
 
-#include <celcompat/bit.h>
 #include <celcompat/charconv.h>
 #include <celcompat/numbers.h>
+#include <celutil/binaryread.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -105,46 +105,6 @@ constexpr inline AstroCatalog::IndexNumber TYC3_MAX   = 3u;     // from TYC2
 // TYC1 number is <= 2907
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX            = 4u;
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX_RANGE_TYC1 = 2907u;
-
-
-template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
-T
-readIntLE(const char* src)
-{
-    using celestia::compat::byteswap;
-    using celestia::compat::endian;
-
-    T result;
-    std::memcpy(&result, src, sizeof(T));
-    if constexpr (endian::native == endian::little)
-        return result;
-    else
-        return celestia::compat::byteswap(result);
-}
-
-
-float
-readFloatLE(const char* src)
-{
-    using celestia::compat::byteswap;
-    using celestia::compat::endian;
-    float result;
-    if constexpr (endian::native == endian::little)
-    {
-        std::memcpy(&result, src, sizeof(float));
-    }
-    else
-    {
-        static_assert(sizeof(std::uint32_t) == sizeof(float));
-        std::uint32_t temp;
-        std::memcpy(&temp, src, sizeof(float));
-        temp = byteswap(temp);
-        std::memcpy(&result, &temp, sizeof(float));
-    }
-
-    return result;
-}
-
 
 #pragma pack(push, 1)
 // stars.dat header structure
@@ -716,14 +676,14 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
 
         // Verify the version
 
-        if (auto version = readIntLE<std::uint16_t>(header.data() + offsetof(StarsDatHeader, version));
+        if (auto version = util::fromMemoryLE<std::uint16_t>(header.data() + offsetof(StarsDatHeader, version));
             version != StarDBVersion)
         {
             return false;
         }
 
         // Read the star count
-        nStarsInFile = readIntLE<std::uint32_t>(header.data() + offsetof(StarsDatHeader, counter));
+        nStarsInFile = util::fromMemoryLE<std::uint32_t>(header.data() + offsetof(StarsDatHeader, counter));
     }
 
     constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(StarsDatRecord);
@@ -738,12 +698,12 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
         const char* ptr = buffer.data();
         for (std::uint32_t i = 0; i < recordsToRead; ++i)
         {
-            auto catNo = readIntLE<AstroCatalog::IndexNumber>(ptr + offsetof(StarsDatRecord, catNo));
-            float x = readFloatLE(ptr + offsetof(StarsDatRecord, x));
-            float y = readFloatLE(ptr + offsetof(StarsDatRecord, y));
-            float z = readFloatLE(ptr + offsetof(StarsDatRecord, z));
-            auto absMag = readIntLE<std::int16_t>(ptr + offsetof(StarsDatRecord, absMag));
-            auto spectralType = readIntLE<std::uint16_t>(ptr + offsetof(StarsDatRecord, spectralType));
+            auto catNo = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(StarsDatRecord, catNo));
+            auto x = util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, x));
+            auto y = util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, y));
+            auto z = util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, z));
+            auto absMag = util::fromMemoryLE<std::int16_t>(ptr + offsetof(StarsDatRecord, absMag));
+            auto spectralType = util::fromMemoryLE<std::uint16_t>(ptr + offsetof(StarsDatRecord, spectralType));
 
             Star star;
             star.setPosition(x, y, z);
@@ -1070,7 +1030,7 @@ StarDatabaseBuilder::loadCrossIndex(StarCatalog catalog, std::istream& in)
         }
 
         // Verify the version
-        auto version = readIntLE<std::uint16_t>(header.data() + offsetof(CrossIndexHeader, version));
+        auto version = util::fromMemoryLE<std::uint16_t>(header.data() + offsetof(CrossIndexHeader, version));
         if (version != CrossIndexVersion)
         {
             GetLogger()->error(_("Bad version for cross index\n"));
@@ -1115,8 +1075,8 @@ StarDatabaseBuilder::loadCrossIndex(StarCatalog catalog, std::istream& in)
         while (remainingRecords-- > 0)
         {
             StarDatabase::CrossIndexEntry& ent = xindex.emplace_back();
-            ent.catalogNumber = readIntLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, catalogNumber));
-            ent.celCatalogNumber = readIntLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, celCatalogNumber));
+            ent.catalogNumber = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, catalogNumber));
+            ent.celCatalogNumber = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, celCatalogNumber));
             ptr += sizeof(CrossIndexRecord);
         }
     }
