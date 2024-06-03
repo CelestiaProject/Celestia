@@ -16,9 +16,10 @@
 #include <celutil/gettext.h>
 #include "galaxy.h"
 #include "galaxyform.h"
+#include "hash.h"
 #include "render.h"
 
-using namespace std::literals::string_view_literals;
+using namespace std::string_view_literals;
 
 using celestia::engine::GalacticFormManager;
 namespace math = celestia::math;

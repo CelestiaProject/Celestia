@@ -1,6 +1,6 @@
 // stardb.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2024, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -10,12 +10,8 @@
 
 #pragma once
 
-#include <array>
-#include <cstddef>
 #include <cstdint>
-#include <iosfwd>
-#include <map>
-#include <optional>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -23,35 +19,30 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
-#include <celengine/category.h>
-#include <celengine/parseobject.h>
-#include <celutil/blockarray.h>
 #include "astroobj.h"
-#include "hash.h"
-#include "staroctree.h"
 #include "starname.h"
+#include "staroctree.h"
 
-
-class StarNameDatabase;
-class UserCategory;
-
-
-constexpr inline unsigned int MAX_STAR_NAMES = 10;
-
-enum class StarCatalog : unsigned int
-{
-    HenryDraper,
-    SAO,
-    _CatalogCount,
-};
-
-
+class Star;
 class StarDatabaseBuilder;
 
 class StarDatabase
 {
- public:
+public:
+    // The size of the root star octree node is also the maximum distance
+    // distance from the Sun at which any star may be located. The current
+    // setting of 1.0e7 light years is large enough to contain the entire
+    // local group of galaxies. A larger value should be OK, but the
+    // performance implications for octree traversal still need to be
+    // investigated.
+    static constexpr float STAR_OCTREE_ROOT_SIZE = 1000000000.0f;
+
+    // Not exact, but any star with a catalog number greater than this is assumed to not be
+    // a HIPPARCOS stars.
+    static constexpr AstroCatalog::IndexNumber MAX_HIPPARCOS_NUMBER = 999999;
+
+    static constexpr unsigned int MAX_STAR_NAMES = 10;
+
     StarDatabase() = default;
     ~StarDatabase();
 
@@ -60,13 +51,12 @@ class StarDatabase
 
     Star* find(AstroCatalog::IndexNumber catalogNumber) const;
     Star* find(std::string_view, bool i18n) const;
-    AstroCatalog::IndexNumber findCatalogNumberByName(std::string_view, bool i18n) const;
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
     void findVisibleStars(StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,
-                          const Eigen::Quaternionf&   obsOrientation,
+                          const Eigen::Quaternionf& obsOrientation,
                           float fovY,
                           float aspectRatio,
                           float limitingMag) const;
@@ -76,134 +66,30 @@ class StarDatabase
                         float radius) const;
 
     std::string getStarName(const Star&, bool i18n = false) const;
-    std::string getStarNameList(const Star&, const unsigned int maxNames = MAX_STAR_NAMES) const;
+    std::string getStarNameList(const Star&, unsigned int maxNames = MAX_STAR_NAMES) const;
 
-    StarNameDatabase* getNameDatabase() const;
-
-    // Not exact, but any star with a catalog number greater than this is assumed to not be
-    // a HIPPARCOS stars.
-    static constexpr AstroCatalog::IndexNumber MAX_HIPPARCOS_NUMBER = 999999;
-
-    struct CrossIndexEntry
-    {
-        AstroCatalog::IndexNumber catalogNumber;
-        AstroCatalog::IndexNumber celCatalogNumber;
-    };
-
-    using CrossIndex = std::vector<CrossIndexEntry>;
-
-    AstroCatalog::IndexNumber crossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
+    const StarNameDatabase* getNameDatabase() const;
 
 private:
-    static constexpr auto NumCatalogs = static_cast<std::size_t>(StarCatalog::_CatalogCount);
-
-    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(StarCatalog, AstroCatalog::IndexNumber number) const;
     Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
-
     std::uint32_t nStars{ 0 };
-
     std::unique_ptr<Star[]>           stars; //NOSONAR
     std::unique_ptr<StarNameDatabase> namesDB;
-    std::vector<Star*>                catalogNumberIndex;
+    std::vector<std::uint32_t>        catalogNumberIndex;
     StarOctree*                       octreeRoot;
-
-    std::array<CrossIndex, NumCatalogs> crossIndices;
 
     friend class StarDatabaseBuilder;
 };
 
-
-inline Star* StarDatabase::getStar(const std::uint32_t n) const
+inline Star*
+StarDatabase::getStar(const std::uint32_t n) const
 {
     return stars.get() + n;
 }
 
-inline std::uint32_t StarDatabase::size() const
+inline std::uint32_t
+StarDatabase::size() const
 {
     return nStars;
 }
-
-
-inline bool operator<(const StarDatabase::CrossIndexEntry& lhs, const StarDatabase::CrossIndexEntry& rhs)
-{
-    return lhs.catalogNumber < rhs.catalogNumber;
-}
-
-
-class StarDatabaseBuilder
-{
- public:
-    StarDatabaseBuilder() = default;
-    ~StarDatabaseBuilder() = default;
-
-    StarDatabaseBuilder(const StarDatabaseBuilder&) = delete;
-    StarDatabaseBuilder& operator=(const StarDatabaseBuilder&) = delete;
-    StarDatabaseBuilder(StarDatabaseBuilder&&) noexcept = delete;
-    StarDatabaseBuilder& operator=(StarDatabaseBuilder&&) noexcept = delete;
-
-    bool load(std::istream&, const fs::path& resourcePath = fs::path());
-    bool loadBinary(std::istream&);
-
-    void setNameDatabase(std::unique_ptr<StarNameDatabase>&&);
-    bool loadCrossIndex(StarCatalog, std::istream&);
-
-    std::unique_ptr<StarDatabase> finish();
-
-    struct CustomStarDetails;
-
- private:
-    struct BarycenterUsage
-    {
-        AstroCatalog::IndexNumber catNo;
-        AstroCatalog::IndexNumber barycenterCatNo;
-    };
-
-    bool createStar(Star* star,
-                    DataDisposition disposition,
-                    AstroCatalog::IndexNumber catalogNumber,
-                    const Hash* starData,
-                    const fs::path& path,
-                    const bool isBarycenter);
-    bool createOrUpdateStarDetails(Star* star,
-                                   DataDisposition disposition,
-                                   AstroCatalog::IndexNumber catalogNumber,
-                                   const Hash* starData,
-                                   const fs::path& path,
-                                   const bool isBarycenter,
-                                   std::optional<Eigen::Vector3f>& barycenterPosition);
-    bool applyCustomStarDetails(const Star*,
-                                AstroCatalog::IndexNumber,
-                                const Hash*,
-                                const fs::path&,
-                                const CustomStarDetails&,
-                                std::optional<Eigen::Vector3f>&);
-    bool applyOrbit(AstroCatalog::IndexNumber catalogNumber,
-                    const Hash* starData,
-                    StarDetails* details,
-                    const CustomStarDetails& customDetails,
-                    std::optional<Eigen::Vector3f>& barycenterPosition);
-    void loadCategories(AstroCatalog::IndexNumber catalogNumber,
-                        const Hash *starData,
-                        DataDisposition disposition,
-                        const std::string &domain);
-    void addCategory(AstroCatalog::IndexNumber catalogNumber,
-                     const std::string& name,
-                     const std::string& domain);
-
-    void buildOctree();
-    void buildIndexes();
-    Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
-
-    std::unique_ptr<StarDatabase> starDB{ std::make_unique<StarDatabase>() };
-
-    AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
-
-    BlockArray<Star> unsortedStars{ };
-    // List of stars loaded from binary file, sorted by catalog number
-    std::vector<Star*> binFileCatalogNumberIndex;
-    // Catalog number -> star mapping for stars loaded from stc files
-    std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex{};
-    std::vector<BarycenterUsage> barycenters{};
-    std::multimap<AstroCatalog::IndexNumber, UserCategoryId> categories{};
-};

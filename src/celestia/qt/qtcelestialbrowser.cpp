@@ -199,20 +199,16 @@ CelestialBrowser::StarTableModel::data(const QModelIndex& index, int role) const
         }
 
     case Qt::ToolTipRole:
-        switch (index.column())
+        if (index.column() == NameColumn)
         {
-        case NameColumn:
+            auto hipCatNo = record.star->getIndex();
+            if (auto hdCatNo = universe->getStarCatalog()->getNameDatabase()->crossIndex(StarCatalog::HenryDraper, hipCatNo);
+                hdCatNo != AstroCatalog::InvalidIndex)
             {
-                auto hipCatNo = record.star->getIndex();
-                auto hdCatNo  = universe->getStarCatalog()->crossIndex(StarCatalog::HenryDraper, hipCatNo);
-                if (hdCatNo != AstroCatalog::InvalidIndex)
-                    return QString("HD %1").arg(hdCatNo);
-                else
-                    return QVariant();
+                return QString("HD %1").arg(hdCatNo);
             }
-        default:
-            return QVariant();
         }
+        [[fallthrough]];
 
     default:
         return QVariant();

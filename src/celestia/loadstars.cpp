@@ -13,6 +13,7 @@
 
 #include <celcompat/filesystem.h>
 #include <celengine/stardb.h>
+#include <celengine/stardbbuilder.h>
 #include <celestia/catalogloader.h>
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
@@ -28,14 +29,14 @@ namespace
 {
 
 void
-loadCrossIndex(StarDatabaseBuilder &starDBBuilder, StarCatalog catalog, const fs::path &filename)
+loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const fs::path &filename)
 {
     if (filename.empty())
         return;
 
     if (std::ifstream xrefFile(filename, std::ios::binary); xrefFile.good())
     {
-        if (!starDBBuilder.loadCrossIndex(catalog, xrefFile))
+        if (!starNamesDB.loadCrossIndex(catalog, xrefFile))
             util::GetLogger()->error(_("Error reading cross index {}\n"), filename);
         else
             util::GetLogger()->info(_("Loaded cross index {}\n"), filename);
@@ -86,10 +87,11 @@ loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 
     if (starNameDB == nullptr)
         starNameDB = std::make_unique<StarNameDatabase>();
-    starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    loadCrossIndex(starDBBuilder, StarCatalog::HenryDraper, config.paths.HDCrossIndexFile);
-    loadCrossIndex(starDBBuilder, StarCatalog::SAO, config.paths.SAOCrossIndexFile);
+    loadCrossIndex(*starNameDB, StarCatalog::HenryDraper, config.paths.HDCrossIndexFile);
+    loadCrossIndex(*starNameDB, StarCatalog::SAO, config.paths.SAOCrossIndexFile);
+
+    starDBBuilder.setNameDatabase(std::move(starNameDB));
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "star");

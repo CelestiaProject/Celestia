@@ -13,6 +13,7 @@
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include "hash.h"
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"

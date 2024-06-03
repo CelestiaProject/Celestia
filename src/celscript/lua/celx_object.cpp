@@ -971,7 +971,7 @@ static int object_catalognumber(lua_State* l)
         else
         {
             const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
-            catalogNumber = stardb->crossIndex(catalog, internalNumber);
+            catalogNumber = stardb->getNameDatabase()->crossIndex(catalog, internalNumber);
         }
     }
 
