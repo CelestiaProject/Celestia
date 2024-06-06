@@ -4,7 +4,7 @@ set(INTEGRATION_TEST_SOURCES
 
 test_case(integration "${INTEGRATION_TEST_SOURCES}")
 
-file(COPY "${CMAKE_SOURCE_DIR}/test/data/huygens.3ds"
+file(COPY "${CMAKE_SOURCE_DIR}/test/data/icosphere.3ds"
      DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-file(COPY "${CMAKE_SOURCE_DIR}/test/data/iss/models/iss.cmod"
+file(COPY "${CMAKE_SOURCE_DIR}/test/data/testmodel.cmod"
      DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

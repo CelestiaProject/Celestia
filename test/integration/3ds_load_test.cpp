@@ -10,11 +10,11 @@ TEST_SUITE_BEGIN("3ds integration");
 
 TEST_CASE("Load a 3DS file")
 {
-    std::unique_ptr<M3DScene> scene = Read3DSFile("huygens.3ds");
+    std::unique_ptr<M3DScene> scene = Read3DSFile("icosphere.3ds");
     REQUIRE(scene != nullptr);
-    REQUIRE(scene->getMaterialCount() == 4);
+    REQUIRE(scene->getMaterialCount() == 1);
 
-    REQUIRE(scene->getModelCount() == UINT32_C(8));
+    REQUIRE(scene->getModelCount() == UINT32_C(1));
 
     std::uint32_t meshCount = 0;
     std::uint32_t faceCount = 0;
@@ -33,9 +33,9 @@ TEST_CASE("Load a 3DS file")
         }
     }
 
-    REQUIRE(meshCount == 8);
-    REQUIRE(faceCount == 6098);
-    REQUIRE(vertexCount == 3263);
+    REQUIRE(meshCount == 1);
+    REQUIRE(faceCount == 80);
+    REQUIRE(vertexCount == 63);
 }
 
 TEST_SUITE_END();

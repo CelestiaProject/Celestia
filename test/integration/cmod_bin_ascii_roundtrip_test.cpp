@@ -33,7 +33,7 @@ TEST_CASE("CMOD binary to ASCII roundtrip")
     };
     cmod::SourceGetter sourceGetter = [&](ResourceHandle handle) { return paths[handle]; };
 
-    std::ifstream f("iss.cmod", std::ios::in | std::ios::binary);
+    std::ifstream f("testmodel.cmod", std::ios::in | std::ios::binary);
     REQUIRE(f.good());
     std::stringstream sourceData;
     sourceData << f.rdbuf();
