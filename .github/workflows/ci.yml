@@ -66,7 +66,7 @@ jobs:
           'boost-smart-ptr',
           'cspice',
           'eigen3',
-          'ffmpeg[x264]',
+          'ffmpeg[core,avcodec,avformat,gpl,swscale,x264]',
           'fmt',
           'freetype',
           'gettext[tools]',
@@ -75,7 +75,7 @@ jobs:
           'libjpeg-turbo',
           'libpng',
           'luajit',
-          'qtbase[core,opengl,widgets,freetype,harfbuzz,icu,jpeg,png]'
+          'qtbase[core,opengl,widgets,freetype,harfbuzz,jpeg,png]'
         )
 
         # We treat x86 builds as native, other builds keep host as x64-windows.
@@ -120,7 +120,7 @@ jobs:
             -DENABLE_MINIAUDIO=ON `
             -DENABLE_LTO=ON       `
             -DUSE_ICU=ON          `
-            -DUSE_WIN_ICU=OFF
+            -DUSE_WIN_ICU=ON
 
     - name: Build
       shell: pwsh
