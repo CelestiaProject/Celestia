@@ -1012,6 +1012,7 @@ AsciiModelWriter::writeVertex(const cmod::VWord* vertexData,
         }
 
         const VWord* data = vertexData + attr.offsetWords;
+        auto databytes = reinterpret_cast<const unsigned char*>(data); //NOSONAR
         std::array<float, 4> fdata;
 
         switch (attr.format)
@@ -1033,7 +1034,7 @@ AsciiModelWriter::writeVertex(const cmod::VWord* vertexData,
             fmt::print(*out, "{} {} {} {}", fdata[0], fdata[1], fdata[2], fdata[3]);
             break;
         case VertexAttributeFormat::UByte4:
-            fmt::print(*out, "{} {} {} {}", +data[0], +data[1], +data[2], +data[3]);
+            fmt::print(*out, "{} {} {} {}", +databytes[0], +databytes[1], +databytes[2], +databytes[3]);
             break;
         default:
             assert(0);
