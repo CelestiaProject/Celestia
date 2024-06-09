@@ -31,6 +31,11 @@
 class AssociativeArray;
 class StarDatabase;
 
+namespace celestia::ephem
+{
+class Orbit;
+}
+
 class StarDatabaseBuilder
 {
 public:
@@ -49,43 +54,24 @@ public:
 
     std::unique_ptr<StarDatabase> finish();
 
-    struct CustomStarDetails;
+    struct StcHeader;
 
 private:
-    struct BarycenterUsage
-    {
-        AstroCatalog::IndexNumber catNo;
-        AstroCatalog::IndexNumber barycenterCatNo;
-    };
+    bool createOrUpdateStar(const StcHeader&, const AssociativeArray*, Star*);
+    bool checkStcPosition(const StcHeader&,
+                          const AssociativeArray*,
+                          const Star*,
+                          std::optional<Eigen::Vector3f>&,
+                          std::optional<AstroCatalog::IndexNumber>&,
+                          std::shared_ptr<const celestia::ephem::Orbit>&) const;
+    bool checkBarycenter(const StarDatabaseBuilder::StcHeader&,
+                         const AssociativeArray*,
+                         std::optional<Eigen::Vector3f>&,
+                         std::optional<AstroCatalog::IndexNumber>&) const;
 
-    bool createStar(Star* star,
-                    DataDisposition disposition,
-                    AstroCatalog::IndexNumber catalogNumber,
-                    const AssociativeArray* starData,
-                    const fs::path& path,
-                    const bool isBarycenter);
-    bool createOrUpdateStarDetails(Star* star,
-                                   DataDisposition disposition,
-                                   AstroCatalog::IndexNumber catalogNumber,
-                                   const AssociativeArray* starData,
-                                   const fs::path& path,
-                                   const bool isBarycenter,
-                                   std::optional<Eigen::Vector3f>& barycenterPosition);
-    bool applyCustomStarDetails(const Star*,
-                                AstroCatalog::IndexNumber,
-                                const AssociativeArray*,
-                                const fs::path&,
-                                const CustomStarDetails&,
-                                std::optional<Eigen::Vector3f>&);
-    bool applyOrbit(AstroCatalog::IndexNumber catalogNumber,
-                    const AssociativeArray* starData,
-                    StarDetails* details,
-                    const CustomStarDetails& customDetails,
-                    std::optional<Eigen::Vector3f>& barycenterPosition);
-    void loadCategories(AstroCatalog::IndexNumber catalogNumber,
-                        const AssociativeArray *starData,
-                        DataDisposition disposition,
-                        const std::string &domain);
+    void loadCategories(const StarDatabaseBuilder::StcHeader&,
+                        const AssociativeArray* starData,
+                        const std::string&);
     void addCategory(AstroCatalog::IndexNumber catalogNumber,
                      const std::string& name,
                      const std::string& domain);
@@ -103,6 +89,6 @@ private:
     std::vector<Star*> binFileCatalogNumberIndex;
     // Catalog number -> star mapping for stars loaded from stc files
     std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex;
-    std::vector<BarycenterUsage> barycenters;
+    std::map<AstroCatalog::IndexNumber, AstroCatalog::IndexNumber> barycenters;
     std::multimap<AstroCatalog::IndexNumber, UserCategoryId> categories;
 };

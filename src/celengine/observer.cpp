@@ -1117,17 +1117,15 @@ static double getPreferredDistance(const Selection& selection)
         {
             // Handle star system barycenters specially, using the same approach as
             // for reference points in solar systems.
-            const std::vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
-            double maxOrbitRadius = orbitingStars == nullptr
-                ? 0.0
-                : std::accumulate(orbitingStars->begin(), orbitingStars->end(), 0.0,
-                                  [](double r, const Star* s)
-                                  {
-                                      const celestia::ephem::Orbit* orbit = s->getOrbit();
-                                      return orbit == nullptr
-                                          ? r
-                                          : std::max(r, orbit->getBoundingRadius());
-                                  });
+            auto orbitingStars = selection.star()->getOrbitingStars();
+            double maxOrbitRadius = std::accumulate(orbitingStars.begin(), orbitingStars.end(), 0.0,
+                                    [](double r, const Star* s)
+                                    {
+                                        const celestia::ephem::Orbit* orbit = s->getOrbit();
+                                        return orbit == nullptr
+                                            ? r
+                                            : std::max(r, orbit->getBoundingRadius());
+                                    });
 
             return maxOrbitRadius == 0.0 ? astro::AUtoKilometers(1.0) : maxOrbitRadius * 5.0;
         }
