@@ -223,7 +223,7 @@ StarFilter::operator()(const Star* star) const
 
         // Check the number of stars orbiting the barycenter to handle cases
         // like the Sun orbiting the Solar System Barycenter
-        if (barycenter == nullptr || barycenter->getOrbitingStars()->size() < 2)
+        if (barycenter == nullptr || barycenter->getOrbitingStars().size() < 2)
             return false;
     }
 

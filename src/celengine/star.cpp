@@ -29,6 +29,7 @@ using namespace std::string_view_literals;
 namespace astro = celestia::astro;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -563,25 +564,14 @@ getPeriodAndBmagCorrection(StellarClass::SpectralClass specClass,
     }
 }
 
-boost::intrusive_ptr<StarDetails>
-CreateStandardStarType(std::string_view specTypeName,
-                       float _temperature,
-                       float _rotationPeriod)
-
+inline void
+unshare(boost::intrusive_ptr<StarDetails>& details)
 {
-    auto details = StarDetails::create();
-
-    details->setTemperature(_temperature);
-    details->setSpectralType(specTypeName);
-
-    details->setRotationModel(std::make_shared<ephem::UniformRotationModel>(_rotationPeriod,
-                                                                            0.0f,
-                                                                            astro::J2000,
-                                                                            0.0f,
-                                                                            0.0f));
-
-    return details;
+    if (details->shared())
+        details = details->clone();
 }
+
+} // end unnamed namespace
 
 class StarDetailsManager
 {
@@ -626,6 +616,9 @@ private:
                (scIndex * static_cast<std::size_t>(StellarClass::SubclassCount));
     }
 
+    static boost::intrusive_ptr<StarDetails> createStandardStarType(std::string_view specTypeName,
+                                                                    float _temperature,
+                                                                    float _rotationPeriod);
     boost::intrusive_ptr<StarDetails> createNormalStarDetails(StellarClass::SpectralClass,
                                                               unsigned int,
                                                               StellarClass::LuminosityClass);
@@ -650,13 +643,11 @@ private:
     boost::intrusive_ptr<StarDetails> barycenterDetails{ };
 };
 
-
 StarDetailsManager::StarDetailsManager()
 {
     std::fill(normalStarDetails.begin(), normalStarDetails.end(), nullptr);
     std::fill(whiteDwarfDetails.begin(), whiteDwarfDetails.end(), nullptr);
 }
-
 
 StarDetailsManager&
 StarDetailsManager::getManager()
@@ -731,6 +722,26 @@ StarDetailsManager::getBarycenterDetails()
 }
 
 boost::intrusive_ptr<StarDetails>
+StarDetailsManager::createStandardStarType(std::string_view specTypeName,
+                                           float _temperature,
+                                           float _rotationPeriod)
+{
+    boost::intrusive_ptr<StarDetails> details(new StarDetails, false);
+    details->temperature = _temperature;
+
+    auto length = std::min(details->spectralType.size() - 1, specTypeName.size());
+    std::memcpy(details->spectralType.data(), specTypeName.data(), length);
+    details->spectralType[length] = '\0';
+
+    details->rotationModel = std::make_shared<ephem::UniformRotationModel>(_rotationPeriod,
+                                                                           0.0f,
+                                                                           astro::J2000,
+                                                                           0.0f,
+                                                                           0.0f);
+    return details;
+}
+
+boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClass,
                                             unsigned int subclass,
                                             StellarClass::LuminosityClass lumClass)
@@ -765,11 +776,11 @@ StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClas
     float period;
     getPeriodAndBmagCorrection(specClass, subclass, lumIndex, period, bmagCorrection);
 
-    auto details = CreateStandardStarType(name, temp, period);
-    details->setBolometricCorrection(bmagCorrection);
+    auto details = createStandardStarType(name, temp, period);
+    details->bolometricCorrection = bmagCorrection;
 
     const MultiResTexture& starTex = starTextures.starTex[specClass];
-    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
+    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
     return details;
 }
 
@@ -800,10 +811,10 @@ StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
     // rough, as white rotation rates vary a lot.
     float period = 1.0f / 48.0f;
 
-    auto details = CreateStandardStarType(name, temp, period);
+    auto details = createStandardStarType(name, temp, period);
     const MultiResTexture& starTex = starTextures.starTex[StellarClass::Spectral_D];
-    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
-    details->setBolometricCorrection(bmagCorrection);
+    details->bolometricCorrection = bmagCorrection;
+    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
     return details;
 }
 
@@ -812,12 +823,12 @@ StarDetailsManager::createNeutronStarDetails()
 {
     // The default neutron star has a rotation period of one second,
     // surface temperature of five million K.
-    auto details = CreateStandardStarType("Q"sv, 5000000.0f,
+    auto details = createStandardStarType("Q"sv, 5000000.0f,
                                           1.0f / 86400.0f);
-    details->setRadius(10.0f);
-    details->addKnowledge(StarDetails::KnowRadius);
+    details->radius = 10.0f;
+    details->knowledge = StarDetails::Knowledge::KnowRadius;
     const MultiResTexture& starTex = starTextures.neutronStarTex;
-    details->setTexture(starTex.isValid() ? starTex : starTextures.defaultTex);
+    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
     return details;
 }
 
@@ -828,24 +839,21 @@ StarDetailsManager::createBlackHoleDetails()
     // black hole.
     // The temperature is computed from the equation:
     //      T=h_bar c^3/(8 pi G k m)
-    auto details = CreateStandardStarType("X"sv, 6.15e-8f, 1.0f / 86400.0f);
-    details->setRadius(2.9f);
-    details->addKnowledge(StarDetails::KnowRadius);
+    auto details = createStandardStarType("X"sv, 6.15e-8f, 1.0f / 86400.0f);
+    details->radius = 2.9f;
+    details->knowledge = StarDetails::Knowledge::KnowRadius;
     return details;
 }
-
 
 inline boost::intrusive_ptr<StarDetails>
 StarDetailsManager::createBarycenterDetails()
 {
-    auto details = CreateStandardStarType("Bary"sv, 1.0f, 1.0f);
-    details->setRadius(0.001f);
-    details->addKnowledge(StarDetails::KnowRadius);
-    details->setVisibility(false);
+    auto details = createStandardStarType("Bary"sv, 1.0f, 1.0f);
+    details->radius = 0.001f;
+    details->knowledge = StarDetails::Knowledge::KnowRadius;
+    details->visible = false;
     return details;
 }
-
-} // end unnamed namespace
 
 boost::intrusive_ptr<StarDetails>
 StarDetails::GetStarDetails(const StellarClass& sc)
@@ -890,16 +898,10 @@ StarDetails::StarDetails()
 }
 
 boost::intrusive_ptr<StarDetails>
-StarDetails::create()
-{
-    return boost::intrusive_ptr(new StarDetails, false);
-}
-
-boost::intrusive_ptr<StarDetails>
 StarDetails::clone() const
 {
     assert(isShared);
-    auto newDetails = create();
+    boost::intrusive_ptr newDetails(new StarDetails, false);
     newDetails->radius = radius;
     newDetails->temperature = temperature;
     newDetails->bolometricCorrection = bolometricCorrection;
@@ -918,6 +920,33 @@ StarDetails::clone() const
     return newDetails;
 }
 
+void
+StarDetails::mergeFromStandard(const StarDetails* other)
+{
+    assert(!isShared);
+    spectralType = other->spectralType;
+    temperature = other->temperature;
+    bolometricCorrection = other->bolometricCorrection;
+    if (other->isBarycenter())
+    {
+        // Use default values when replacement object is a barycenter
+        texture = other->texture;
+        rotationModel = other->rotationModel;
+        geometry = other->geometry;
+        radius = other->radius;
+        semiAxes = other->semiAxes;
+        knowledge = other->knowledge;
+    }
+    else
+    {
+        if (!util::is_set(knowledge, Knowledge::KnowTexture))
+            texture = other->texture;
+        if (!util::is_set(knowledge, Knowledge::KnowRotation))
+            rotationModel = other->rotationModel;
+    }
+    visible = other->visible;
+}
+
 /*! Return the InfoURL. If the InfoURL has not been set, this method
  *  returns an empty string.
  */
@@ -928,74 +957,56 @@ StarDetails::getInfoURL() const
 }
 
 void
-StarDetails::setRadius(float _radius)
+StarDetails::setRadius(boost::intrusive_ptr<StarDetails>& details, float _radius)
 {
-    radius = _radius;
+    unshare(details);
+    details->radius = _radius;
+    details->knowledge |= Knowledge::KnowRadius;
 }
 
 void
-StarDetails::setTemperature(float _temperature)
+StarDetails::setTemperature(boost::intrusive_ptr<StarDetails>& details, float _temperature)
 {
-    temperature = _temperature;
+    unshare(details);
+    details->temperature = _temperature;
 }
 
 void
-StarDetails::setSpectralType(std::string_view s)
+StarDetails::setBolometricCorrection(boost::intrusive_ptr<StarDetails>& details, float correction)
 {
-    auto length = std::min(spectralType.size() - 1, s.size());
-    std::memcpy(spectralType.data(), s.data(), length);
-    spectralType[length] = '\0';
+    unshare(details);
+    details->bolometricCorrection = correction;
 }
 
 void
-StarDetails::setKnowledge(std::uint32_t _knowledge)
+StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, const MultiResTexture& tex)
 {
-    knowledge = _knowledge;
+    unshare(details);
+    details->texture = tex;
+    details->knowledge |= Knowledge::KnowTexture;
 }
 
 void
-StarDetails::addKnowledge(std::uint32_t _knowledge)
+StarDetails::setGeometry(boost::intrusive_ptr<StarDetails>& details, ResourceHandle rh)
 {
-    knowledge |= _knowledge;
+    unshare(details);
+    details->geometry = rh;
 }
 
 void
-StarDetails::setBolometricCorrection(float correction)
+StarDetails::setOrbit(boost::intrusive_ptr<StarDetails>& details, const std::shared_ptr<const ephem::Orbit>& o)
 {
-    bolometricCorrection = correction;
+    unshare(details);
+    details->orbit = o;
+    details->computeOrbitalRadius();
 }
 
 void
-StarDetails::setTexture(const MultiResTexture& tex)
+StarDetails::setOrbitBarycenter(boost::intrusive_ptr<StarDetails>& details, Star* bc)
 {
-    texture = tex;
-}
-
-void
-StarDetails::setGeometry(ResourceHandle rh)
-{
-    geometry = rh;
-}
-
-void
-StarDetails::setOrbit(const std::shared_ptr<const ephem::Orbit>& o)
-{
-    orbit = o;
-    computeOrbitalRadius();
-}
-
-void
-StarDetails::setOrbitBarycenter(Star* bc)
-{
-    barycenter = bc;
-    computeOrbitalRadius();
-}
-
-void
-StarDetails::setOrbitalRadius(float r)
-{
-    if (orbit != nullptr)
-        orbitalRadius = r;
+    unshare(details);
+    details->barycenter = bc;
+    details->computeOrbitalRadius();
 }
 
 void
@@ -1014,50 +1025,44 @@ StarDetails::computeOrbitalRadius()
 }
 
 void
-StarDetails::setVisibility(bool b)
+StarDetails::setVisibility(boost::intrusive_ptr<StarDetails>& details, bool b)
 {
-    visible = b;
+    unshare(details);
+    details->visible = b;
 }
 
 void
-StarDetails::setRotationModel(const std::shared_ptr<const ephem::RotationModel>& rm)
+StarDetails::setRotationModel(boost::intrusive_ptr<StarDetails>& details,
+                              const std::shared_ptr<const ephem::RotationModel>& rm)
 {
-    rotationModel = rm;
+    unshare(details);
+    details->rotationModel = rm;
+    details->knowledge |= Knowledge::KnowRotation;
 }
 
 /*! Set the InfoURL for this star.
 */
 void
-StarDetails::setInfoURL(std::string_view _infoURL)
+StarDetails::setInfoURL(boost::intrusive_ptr<StarDetails>& details, std::string_view _infoURL)
 {
-    infoURL = _infoURL;
-}
-
-// Return the radius of the star in kilometers
-float
-Star::getRadius() const
-{
-    if (details->getKnowledge(StarDetails::KnowRadius))
-        return details->getRadius();
-
-#ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
-    auto lum = getLuminosity();
-#else
-    // Calculate the luminosity of the star from the bolometric, not the
-    // visual magnitude of the star.
-    auto lum = getBolometricLuminosity();
-#endif
-
-    // Use the Stefan-Boltzmann law to estimate the radius of a
-    // star from surface temperature and luminosity
-    return astro::SOLAR_RADIUS<float> * std::sqrt(lum) *
-        math::square(SOLAR_TEMPERATURE / getTemperature());
+    unshare(details);
+    details->infoURL = _infoURL;
 }
 
 void
-StarDetails::setEllipsoidSemiAxes(const Eigen::Vector3f& v)
+StarDetails::setEllipsoidSemiAxes(boost::intrusive_ptr<StarDetails>& details, const Eigen::Vector3f& v)
 {
-    semiAxes = v;
+    unshare(details);
+    details->semiAxes = v;
+}
+
+void
+StarDetails::addOrbitingStar(boost::intrusive_ptr<StarDetails>& details, Star* star)
+{
+    unshare(details);
+    if (details->orbitingStars == nullptr)
+        details->orbitingStars = std::make_unique<std::vector<Star*>>();
+    details->orbitingStars->push_back(star);
 }
 
 bool
@@ -1066,13 +1071,11 @@ StarDetails::shared() const
     return isShared;
 }
 
-void
-StarDetails::addOrbitingStar(Star* star)
+Star::Star(AstroCatalog::IndexNumber _indexNumber, const boost::intrusive_ptr<StarDetails>& _details) :
+    indexNumber(_indexNumber),
+    details(_details)
 {
-    assert(!shared());
-    if (orbitingStars == nullptr)
-        orbitingStars = std::make_unique<std::vector<Star*>>();
-    orbitingStars->push_back(star);
+    assert(details != nullptr);
 }
 
 /*! Get the position of the star in the universal coordinate system.
@@ -1146,6 +1149,27 @@ Star::getVelocity(double t) const
     }
 }
 
+// Return the radius of the star in kilometers
+float
+Star::getRadius() const
+{
+    if (util::is_set(details->knowledge, StarDetails::Knowledge::KnowRadius))
+        return details->getRadius();
+
+#ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
+    auto lum = getLuminosity();
+#else
+    // Calculate the luminosity of the star from the bolometric, not the
+    // visual magnitude of the star.
+    auto lum = getBolometricLuminosity();
+#endif
+
+    // Use the Stefan-Boltzmann law to estimate the radius of a
+    // star from surface temperature and luminosity
+    return astro::SOLAR_RADIUS<float> * std::sqrt(lum) *
+        math::square(SOLAR_TEMPERATURE / getTemperature());
+}
+
 MultiResTexture
 Star::getTexture() const
 {
@@ -1168,9 +1192,9 @@ Star::getInfoURL() const
 }
 
 void
-Star::setPosition(float x, float y, float z)
+Star::setIndex(AstroCatalog::IndexNumber idx)
 {
-    position = Eigen::Vector3f(x, y, z);
+    indexNumber = idx;
 }
 
 void
@@ -1197,12 +1221,6 @@ Star::getLuminosity() const
     return astro::absMagToLum(absMag);
 }
 
-void
-Star::setLuminosity(float lum)
-{
-    absMag = astro::lumToAbsMag(lum);
-}
-
 float
 Star::getBolometricLuminosity() const
 {
@@ -1215,41 +1233,6 @@ Star::getBolometricLuminosity() const
     float bmag = getBolometricMagnitude();
     return std::exp((solarBMag - bmag) / astro::LN_MAG);
 #endif
-}
-
-StarDetails*
-Star::getDetails() const
-{
-    return details.get();
-}
-
-void
-Star::setDetails(boost::intrusive_ptr<StarDetails>&& sd)
-{
-    // TODO: delete existing details if they aren't shared
-    details = std::move(sd);
-}
-
-void
-Star::setOrbitBarycenter(Star* s)
-{
-    if (details->shared())
-        details = details->clone();
-    details->setOrbitBarycenter(s);
-}
-
-void
-Star::computeOrbitalRadius()
-{
-    details->computeOrbitalRadius();
-}
-
-void
-Star::addOrbitingStar(Star* star)
-{
-    if (details->shared())
-        details = details->clone();
-    details->addOrbitingStar(star);
 }
 
 void

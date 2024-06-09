@@ -41,6 +41,7 @@
 #include <celengine/stardb.h>
 #include <celengine/universe.h>
 #include <celestia/celestiacore.h>
+#include <celutil/array_view.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include "qtcolorswatchwidget.h"
@@ -172,13 +173,13 @@ private:
     TreeItem* createTreeItem(Selection sel, TreeItem* parent, int childIndex);
     void addTreeItemChildren(TreeItem* item,
                              const PlanetarySystem* sys,
-                             const std::vector<Star*>* orbitingStars);
+                             util::array_view<Star*> orbitingStars);
     void addTreeItemChildrenFiltered(TreeItem* item,
                                      const PlanetarySystem* sys,
-                                     const std::vector<Star*>* orbitingStars);
+                                     util::array_view<Star*> orbitingStars);
     void addTreeItemChildrenGrouped(TreeItem* item,
                                     const PlanetarySystem* sys,
-                                    const std::vector<Star*>* orbitingStars,
+                                    util::array_view<Star*> orbitingStars,
                                     Selection parent);
     TreeItem* createGroupTreeItem(BodyClassification classification,
                                   const std::vector<Body*>& objects,
@@ -253,7 +254,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
     item->obj = sel;
     item->childIndex = childIndex;
 
-    const std::vector<Star*>* orbitingStars = nullptr;
+    util::array_view<Star*> orbitingStars;
 
     const PlanetarySystem* sys = nullptr;
     if (sel.body() != nullptr)
@@ -286,13 +287,11 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
                                                               const PlanetarySystem* sys,
-                                                              const std::vector<Star*>* orbitingStars)
+                                                              util::array_view<Star*> orbitingStars)
 {
     // Calculate the number of children: the number of orbiting stars plus
     // the number of orbiting solar system bodies.
-    item->nChildren = 0;
-    if (orbitingStars != nullptr)
-        item->nChildren += orbitingStars->size();
+    item->nChildren = static_cast<int>(orbitingStars.size());
     if (sys != nullptr)
         item->nChildren += sys->getSystemSize();
 
@@ -302,14 +301,10 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
         item->children = new TreeItem*[item->nChildren];
 
         // Add the stars
-        if (orbitingStars != nullptr)
+        for (Star* star : orbitingStars)
         {
-            for (unsigned int i = 0; i < orbitingStars->size(); i++)
-            {
-                Selection child(orbitingStars->at(i));
-                item->children[childIndex] = createTreeItem(child, item, childIndex);
-                childIndex++;
-            }
+            item->children[childIndex] = createTreeItem(star, item, childIndex);
+            ++childIndex;
         }
 
         // Add the solar system bodies
@@ -328,7 +323,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
                                                                       const PlanetarySystem* sys,
-                                                                      const std::vector<Star*>* orbitingStars)
+                                                                      util::array_view<Star*> orbitingStars)
 {
     std::vector<Body*> bodies;
 
@@ -341,9 +336,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 
     // Calculate the total number of children
     // WARN: max(size_t) > max(int) so in theory it's possible to have a negative value
-    item->nChildren = static_cast<int>(bodies.size());
-    if (orbitingStars != nullptr)
-        item->nChildren += static_cast<int>(orbitingStars->size());
+    item->nChildren = static_cast<int>(bodies.size()) + static_cast<int>(orbitingStars.size());
 
     if (item->nChildren == 0)
         return;
@@ -352,13 +345,10 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 
     // Add the orbiting stars
     int childIndex = 0;
-    if (orbitingStars != nullptr)
+    for (Star* star : orbitingStars)
     {
-        for (Star* star : *orbitingStars)
-        {
-            item->children[childIndex] = createTreeItem(star, item, childIndex);
-            ++childIndex;
-        }
+        item->children[childIndex] = createTreeItem(star, item, childIndex);
+        ++childIndex;
     }
 
     // Add the direct children
@@ -377,7 +367,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
                                                                      const PlanetarySystem* sys,
-                                                                     const std::vector<Star*>* orbitingStars,
+                                                                     util::array_view<Star*> orbitingStars,
                                                                      Selection parent)
 {
     std::vector<Body*> asteroids;
@@ -449,9 +439,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
     }
 
     // Calculate the total number of children
-    item->nChildren = 0;
-    if (orbitingStars != nullptr)
-        item->nChildren += orbitingStars->size();
+    item->nChildren = static_cast<int>(orbitingStars.size());
 
     item->nChildren += normal.size();
     if (!asteroids.empty())
@@ -473,13 +461,10 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* i
         item->children = new TreeItem*[item->nChildren];
         {
             // Add the stars
-            if (orbitingStars != nullptr)
+            for (Star* star : orbitingStars)
             {
-                for (Star* star : *orbitingStars)
-                {
-                    item->children[childIndex] = createTreeItem(star, item, childIndex);
-                    ++childIndex;
-                }
+                item->children[childIndex] = createTreeItem(star, item, childIndex);
+                ++childIndex;
             }
 
             // Add the direct children

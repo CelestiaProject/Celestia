@@ -268,6 +268,7 @@ TokenizerImpl::skipWhitespace()
             position = it - buffer.cbegin();
             if (it != bufferEnd)
             {
+                ++lineNumber;
                 ++position;
                 break;
             }
