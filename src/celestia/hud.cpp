@@ -184,10 +184,10 @@ displayMass(const util::NumberFormatter& formatter, Overlay& overlay, float mass
     if (mass < 0.001f)
     {
         if (measurement == MeasurementSystem::Imperial)
-            overlay.print(_("Mass: {%.4g} lb\n"),
+            overlay.print(_("Mass: {} lb\n"),
                           formatter.format(mass * astro::EarthMass / static_cast<float>(OneLbInKg), 4, SigDigitNum));
         else
-            overlay.print(_("Mass: {%.4g} kg\n"),
+            overlay.print(_("Mass: {} kg\n"),
                           formatter.format(mass * astro::EarthMass, 4, SigDigitNum));
     }
     else if (mass > 50.0f)
