@@ -112,15 +112,10 @@ ReadBoundaries(std::istream& in)
             break;
 
         trimLeadingWhitespace(line);
-        // field should be exactly 3 characters - future proof in case we
-        // remove the unnecessary additional field from the file
-        if (auto pos = line.find_first_of(Whitespace);
-            (pos == std::string_view::npos && line.size() != 3) || pos != 3)
-        {
+        auto pos = line.find_first_of(Whitespace);
+        auto constellation = line.substr(0, pos);
+        if (constellation.empty() || constellation == "XXX"sv)
             break;
-        }
-
-        auto constellation = line.substr(0, 3);
         if (constellation != std::string_view(lastConstellation.data(), lastConstellation.size()))
         {
             if (currentChain.size() > 1)
