@@ -143,6 +143,7 @@ jobs:
       with:
         name: celestia-windows-${{matrix.platform}}
         path: |
+          ${{github.workspace}}/build/celestia.cfg
           ${{github.workspace}}/build/src/**/*.exe
           ${{github.workspace}}/build/src/**/*.dll
           ${{github.workspace}}/build/po/**/*.gmo
