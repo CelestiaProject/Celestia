@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.9)
+if(WIN32)
+  # Require more recent CMake on Windows because DLLs are a pain
+  cmake_minimum_required(VERSION 3.19)
+else()
+  cmake_minimum_required(VERSION 3.9)
+endif()
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
