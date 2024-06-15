@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <utility>
 
 #include <celcompat/numbers.h>
@@ -33,6 +34,7 @@
 #include "timelinephase.h"
 
 namespace engine = celestia::engine;
+namespace numbers = celestia::numbers;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -41,73 +43,110 @@ namespace
 
 constexpr double ANGULAR_RES = 3.5e-6;
 
+inline bool
+checkNodeDistance(const Eigen::Vector3f& center,
+                  const Eigen::Vector3f& position,
+                  float size,
+                  float maxDistance)
+{
+    float distance = (position - center).norm() - size * numbers::sqrt3_v<float>;
+    return distance <= maxDistance;
+}
 
-class ClosestStarFinder : public StarHandler
+class ClosestSystemFinder
 {
 public:
-    ClosestStarFinder(float _maxDistance, const Universe* _universe);
-    ~ClosestStarFinder() = default;
-    void process(const Star& star, float distance, float appMag) override;
+    ClosestSystemFinder(const Eigen::Vector3f&, float, const Universe* universe);
 
-public:
-    float maxDistance;
-    float closestDistance;
-    const Star* closestStar;
-    const Universe* universe;
-    bool withPlanets;
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star&);
+
+    const Star* best() const { return m_best; }
+
+private:
+    Eigen::Vector3f m_position;
+    float m_maxDistance;
+    const Universe* m_universe;
+    const Star* m_best{ nullptr };
+    float m_bestDistance2{ std::numeric_limits<float>::max() };
 };
 
-ClosestStarFinder::ClosestStarFinder(float _maxDistance,
-                                     const Universe* _universe) :
-    maxDistance(_maxDistance),
-    closestDistance(_maxDistance),
-    closestStar(nullptr),
-    universe(_universe),
-    withPlanets(false)
+ClosestSystemFinder::ClosestSystemFinder(const Eigen::Vector3f& position,
+                                         float maxDistance,
+                                         const Universe* universe) :
+    m_position(position),
+    m_maxDistance(maxDistance),
+    m_universe(universe)
 {
 }
 
-void
-ClosestStarFinder::process(const Star& star, float distance, float /*unused*/)
+bool
+ClosestSystemFinder::checkNode(const Eigen::Vector3f& center,
+                               float size,
+                               float /* magnitude */) const
 {
-    if (distance < closestDistance)
+    return checkNodeDistance(center, m_position, size, m_maxDistance);
+}
+
+void
+ClosestSystemFinder::process(const Star& star)
+{
+    float distance2 = (star.getPosition() - m_position).squaredNorm();
+    if (distance2 < m_bestDistance2 && m_universe->getSolarSystem(&star))
     {
-        if (!withPlanets || universe->getSolarSystem(&star))
-        {
-            closestStar = &star;
-            closestDistance = distance;
-        }
+        m_best = &star;
+        m_bestDistance2 = distance2;
     }
 }
 
-
-class NearStarFinder : public StarHandler
+template<typename T>
+class NearStarFinder
 {
 public:
-    NearStarFinder(float _maxDistance, std::vector<const Star*>& nearStars);
-    ~NearStarFinder() = default;
-    void process(const Star& star, float distance, float appMag);
+    NearStarFinder(const Eigen::Vector3f&, float, T*);
+
+    bool checkNode(const Eigen::Vector3f&, float, float);
+    void process(const Star& star);
 
 private:
-    float maxDistance;
-    std::vector<const Star*>& nearStars;
+    Eigen::Vector3f m_position;
+    float m_maxDistance;
+    float m_maxDistance2;
+    T* m_stars;
 };
 
-NearStarFinder::NearStarFinder(float _maxDistance,
-                               std::vector<const Star*>& _nearStars) :
-    maxDistance(_maxDistance),
-    nearStars(_nearStars)
+template<typename T>
+NearStarFinder<T>::NearStarFinder(const Eigen::Vector3f& position,
+                                  float maxDistance,
+                                  T* stars) :
+    m_position(position),
+    m_maxDistance(maxDistance),
+    m_maxDistance2(math::square(maxDistance)),
+    m_stars(stars)
 {
+    m_stars->clear();
 }
 
+template<typename T>
+bool
+NearStarFinder<T>::checkNode(const Eigen::Vector3f& center,
+                             float size,
+                             float /* magnitude */)
+{
+    return checkNodeDistance(center, m_position, size, m_maxDistance);
+}
+
+template<typename T>
 void
-NearStarFinder::process(const Star& star, float distance, float /*unused*/)
+NearStarFinder<T>::process(const Star& star)
 {
-    if (distance < maxDistance)
-        nearStars.push_back(&star);
+    float distance2 = (star.getPosition() - m_position).squaredNorm();
+    if (distance2 <= m_maxDistance2)
+        m_stars->push_back(&star);
 }
 
-
+template<typename T>
+NearStarFinder(const Eigen::Vector3f&, float, T*) -> NearStarFinder<T>;
 
 struct PlanetPickInfo
 {
@@ -1209,10 +1248,9 @@ SolarSystem*
 Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
     Eigen::Vector3f pos = position.toLy().cast<float>();
-    ClosestStarFinder closestFinder(1.0f, this);
-    closestFinder.withPlanets = true;
-    starCatalog->findCloseStars(closestFinder, pos, 1.0f);
-    return getSolarSystem(closestFinder.closestStar);
+    ClosestSystemFinder finder(pos, 1.0f, this);
+    starCatalog->getOctree().processDepthFirst(finder);
+    return getSolarSystem(finder.best());
 }
 
 
@@ -1222,6 +1260,6 @@ Universe::getNearStars(const UniversalCoord& position,
                        std::vector<const Star*>& nearStars) const
 {
     Eigen::Vector3f pos = position.toLy().cast<float>();
-    NearStarFinder finder(maxDistance, nearStars);
-    starCatalog->findCloseStars(finder, pos, maxDistance);
+    NearStarFinder finder(pos, maxDistance, &nearStars);
+    starCatalog->getOctree().processDepthFirst(finder);
 }

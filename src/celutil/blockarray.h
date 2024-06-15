@@ -33,6 +33,8 @@ template<typename T, std::size_t BLOCKSIZE = 1024>
 class BlockArray
 {
 public:
+    static_assert(BLOCKSIZE > 0);
+
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
