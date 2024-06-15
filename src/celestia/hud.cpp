@@ -533,13 +533,13 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     overlay.printf(_("Distance: %s\n"),
                    DistanceKmToStr(formatter, distance, 5, hudSettings.measurementSystem));
 
-    Eigen::Vector3f semiAxes = body.getSemiAxes();
     if (body.getClassification() == BodyClassification::Invisible)
     {
         return;
     }
     else if (body.isEllipsoid() && !body.isSphere()) // show mean radius along with triaxial semi-axes
     {
+        Eigen::Vector3f semiAxes = body.getSemiAxes();
         double radiusMean = cbrt(semiAxes.prod());
         double axis0 = semiAxes.x();
         double axis1 = semiAxes.z();
