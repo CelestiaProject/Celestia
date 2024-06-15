@@ -12,6 +12,7 @@
 #include <fstream>
 
 #include <celengine/dsodb.h>
+#include <celengine/dsodbbuilder.h>
 #include <celestia/catalogloader.h>
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
@@ -20,18 +21,17 @@
 
 namespace celestia
 {
-using DeepSkyLoader = CatalogLoader<DSODatabase>;
+using DeepSkyLoader = CatalogLoader<DSODatabaseBuilder>;
 
 std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 {
-    auto dsoDB = std::make_unique<DSODatabase>();
-    dsoDB->setNameDatabase(std::make_unique<NameDatabase>());
+    DSODatabaseBuilder dsoDB;
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "deep sky");
 
-    DeepSkyLoader loader(dsoDB.get(),
+    DeepSkyLoader loader(&dsoDB,
                          typeDesc,
                          ContentType::CelestiaDeepSkyCatalog,
                          progressNotifier,
@@ -46,8 +46,7 @@ loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
     // Next, read all the deep sky files in the extras directories
     loader.loadExtras(config.paths.extrasDirs);
 
-    dsoDB->finish();
-    return dsoDB;
+    return dsoDB.build();
 }
 
 } // namespace celestia
