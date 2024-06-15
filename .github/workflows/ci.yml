@@ -110,6 +110,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
+            -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
             -DENABLE_SPICE=ON     `
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
@@ -131,23 +132,52 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
-    - name: Run winqtdeploy
+    - name: Install Windows
       shell: pwsh
-      working-directory: ${{github.workspace}}/build/src/celestia
       run: |
-        & "$env:VCPKG_INSTALLATION_ROOT/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe" qt6\${{env.BUILD_TYPE}}\celestia-qt6.exe
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component core
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component wingui
+        Rename-Item -Path "install" -NewName "install-wingui"
 
-    - name: Upload artifacts
+    - name: Upload Windows GUI
       uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: celestia-windows-${{matrix.platform}}
+        name: celestia-windows-${{matrix.platform}}-wingui
+        if-no-files-found: error
         path: |
-          ${{github.workspace}}/build/src/**/*.exe
-          ${{github.workspace}}/build/src/**/*.dll
-          ${{github.workspace}}/build/po/**/*.gmo
-          ${{github.workspace}}/build/tools/**/*.exe
-          ${{github.workspace}}/shaders/*.glsl
+          ${{github.workspace}}/install-wingui/
+
+    - name: Install Qt6
+      shell: pwsh
+      run: |
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component core
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component qt6gui
+        Rename-Item -Path "install" -NewName "install-qt6gui"
+
+    - name: Upload Qt6 GUI
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: celestia-windows-${{matrix.platform}}-qt6gui
+        if-no-files-found: error
+        path: |
+          ${{github.workspace}}/install-qt6gui/
+
+    - name: Install tools
+      shell: pwsh
+      run: |
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component tools
+        Rename-Item -Path "install" -NewName "install-tools"
+
+    - name: Upload tools
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: celestia-windows-${{matrix.platform}}-tools
+        if-no-files-found: error
+        path: |
+          ${{github.workspace}}/install-tools/
 
   build-posix:
     name: "${{matrix.config.os}}"
