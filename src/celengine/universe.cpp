@@ -68,7 +68,7 @@ private:
     float m_maxDistance;
     const Universe* m_universe;
     const Star* m_best{ nullptr };
-    float m_bestDistance2{ std::numeric_limits<float>::max() };
+    float m_bestDistance2;
 };
 
 ClosestSystemFinder::ClosestSystemFinder(const Eigen::Vector3f& position,
@@ -76,7 +76,8 @@ ClosestSystemFinder::ClosestSystemFinder(const Eigen::Vector3f& position,
                                          const Universe* universe) :
     m_position(position),
     m_maxDistance(maxDistance),
-    m_universe(universe)
+    m_universe(universe),
+    m_bestDistance2(math::square(maxDistance))
 {
 }
 
@@ -95,6 +96,7 @@ ClosestSystemFinder::process(const Star& star)
     if (distance2 < m_bestDistance2 && m_universe->getSolarSystem(&star))
     {
         m_best = &star;
+        m_maxDistance = std::sqrt(distance2);
         m_bestDistance2 = distance2;
     }
 }
@@ -884,7 +886,7 @@ Universe::pickStar(const UniversalCoord& origin,
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
-    starCatalog->findCloseStars(closePicker, o, 1.0f);
+    starCatalog->getOctree().processDepthFirst(closePicker);
     if (closePicker.closestStar != nullptr)
         return Selection(const_cast<Star*>(closePicker.closestStar));
 
@@ -895,11 +897,12 @@ Universe::pickStar(const UniversalCoord& origin,
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
     StarPicker picker(o, direction, when, tolerance);
-    starCatalog->findVisibleStars(picker,
+    starCatalog->getOctree().processDepthFirst(picker);
+    /*starCatalog->findVisibleStars(picker,
                                   o,
                                   rotation.conjugate(),
                                   tolerance, 1.0f,
-                                  faintestMag);
+                                  faintestMag);*/
     if (picker.pickedStar != nullptr)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
