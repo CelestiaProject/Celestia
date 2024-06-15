@@ -38,6 +38,7 @@
 #include <celutil/tokenizer.h>
 #include "hash.h"
 #include "meshmanager.h"
+#include "octreebuilder.h"
 #include "parser.h"
 #include "stardb.h"
 #include "stellarclass.h"
@@ -712,7 +713,6 @@ StarDatabaseBuilder::finish()
     GetLogger()->info(_("Total star count: {}\n"), unsortedStars.size());
 
     buildOctree();
-    buildIndexes();
 
     // Resolve all barycenters; this can't be done before star sorting. There's
     // still a bug here: final orbital radii aren't available until after
@@ -1016,42 +1016,13 @@ StarDatabaseBuilder::buildOctree()
     GetLogger()->debug("Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
-    auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
-                                                    absMag);
-    for (const Star& star : unsortedStars)
-        root->insertObject(star, StarDatabase::STAR_OCTREE_ROOT_SIZE);
 
-    GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size());
-    Star* firstStar = sortedStars.get();
-    root->rebuildAndSort(starDB->octreeRoot, firstStar);
-
-    GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
-                       firstStar - sortedStars.get(),
-                       1 + starDB->octreeRoot->countChildren(), starDB->octreeRoot->countObjects());
-
-    starDB->nStars = static_cast<std::uint32_t>(unsortedStars.size());
-    starDB->stars = std::move(sortedStars);
+    engine::StarOctreeBuilder octreeBuilder({std::move_iterator(unsortedStars.begin()), std::move_iterator(unsortedStars.end())},
+                                            StarDatabase::STAR_OCTREE_ROOT_SIZE,
+                                            absMag);
     unsortedStars.clear();
-}
+    auto indices = octreeBuilder.indices();
+    starDB->catalogNumberIndex = { indices.begin(), indices.end() };
 
-void
-StarDatabaseBuilder::buildIndexes()
-{
-    // This should only be called once for the database
-    // assert(catalogNumberIndexes[0] == nullptr);
-
-    GetLogger()->info("Building catalog number indexes . . .\n");
-
-    starDB->catalogNumberIndex.clear();
-    starDB->catalogNumberIndex.reserve(starDB->nStars);
-    for (std::uint32_t i = 0; i < starDB->nStars; ++i)
-        starDB->catalogNumberIndex.push_back(i);
-
-    const Star* stars = starDB->stars.get();
-    std::sort(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),
-              [stars](std::uint32_t idx0, std::uint32_t idx1)
-              {
-                  return stars[idx0].getIndex() < stars[idx1].getIndex();
-              });
+    starDB->octree = octreeBuilder.build();
 }

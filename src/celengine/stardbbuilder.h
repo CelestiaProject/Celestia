@@ -77,7 +77,6 @@ private:
                      const std::string& domain);
 
     void buildOctree();
-    void buildIndexes();
     Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
 
     std::unique_ptr<StarDatabase> starDB{ std::make_unique<StarDatabase>() };

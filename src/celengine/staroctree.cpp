@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#if 0
+
 #include "staroctree.h"
 
 #include <celcompat/numbers.h>
@@ -127,3 +129,5 @@ StarOctree::processCloseObjects(StarHandler& processor,
         }
     }
 }
+
+#endif

@@ -43,17 +43,23 @@ public:
 
     static constexpr unsigned int MAX_STAR_NAMES = 10;
 
-    StarDatabase() = default;
+    StarDatabase();
     ~StarDatabase();
 
-    inline Star* getStar(const std::uint32_t) const;
-    inline std::uint32_t size() const;
+    Star* getStar(std::uint32_t);
+    const Star* getStar(std::uint32_t) const;
+    std::uint32_t size() const;
 
-    Star* find(AstroCatalog::IndexNumber catalogNumber) const;
-    Star* find(std::string_view, bool i18n) const;
+    const celestia::engine::StarOctree& getOctree() const;
+
+    Star* find(AstroCatalog::IndexNumber catalogNumber);
+    const Star* find(AstroCatalog::IndexNumber catalogNumber) const;
+    Star* find(std::string_view, bool i18n);
+    const Star* find(std::string_view, bool i18n) const;
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
+/*
     void findVisibleStars(StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,
                           const Eigen::Quaternionf& obsOrientation,
@@ -64,6 +70,7 @@ public:
     void findCloseStars(StarHandler& starHandler,
                         const Eigen::Vector3f& obsPosition,
                         float radius) const;
+*/
 
     std::string getStarName(const Star&, bool i18n = false) const;
     std::string getStarNameList(const Star&, unsigned int maxNames = MAX_STAR_NAMES) const;
@@ -71,25 +78,33 @@ public:
     const StarNameDatabase* getNameDatabase() const;
 
 private:
-    Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
-
-    std::uint32_t nStars{ 0 };
-    std::unique_ptr<Star[]>           stars; //NOSONAR
+    celestia::engine::StarOctree      octree;
     std::unique_ptr<StarNameDatabase> namesDB;
     std::vector<std::uint32_t>        catalogNumberIndex;
-    StarOctree*                       octreeRoot;
 
     friend class StarDatabaseBuilder;
 };
 
 inline Star*
-StarDatabase::getStar(const std::uint32_t n) const
+StarDatabase::getStar(std::uint32_t n)
 {
-    return stars.get() + n;
+    return &octree[n];
+}
+
+inline const Star*
+StarDatabase::getStar(std::uint32_t n) const
+{
+    return &octree[n];
 }
 
 inline std::uint32_t
 StarDatabase::size() const
 {
-    return nStars;
+    return octree.size();
+}
+
+inline const celestia::engine::StarOctree&
+StarDatabase::getOctree() const
+{
+    return octree;
 }

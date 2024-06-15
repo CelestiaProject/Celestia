@@ -48,27 +48,43 @@ catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 StarDatabase::~StarDatabase() = default;
 
 Star*
+StarDatabase::find(AstroCatalog::IndexNumber catalogNumber)
+{
+    auto it = std::lower_bound(catalogNumberIndex.begin(), catalogNumberIndex.end(),
+                               catalogNumber,
+                               [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
+                               {
+                                   return octree[idx].getIndex() < catNum;
+                               });
+
+    if (it == catalogNumberIndex.end())
+        return nullptr;
+
+    Star& star = octree[*it];
+    // False positive in cppcheck: stars.get() does NOT return a void pointer
+    return star.getIndex() == catalogNumber ? &star : nullptr;
+}
+
+const Star*
 StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 {
     auto it = std::lower_bound(catalogNumberIndex.begin(), catalogNumberIndex.end(),
                                catalogNumber,
                                [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
                                {
-                                   return stars.get()[idx].getIndex() < catNum;
+                                   return octree[idx].getIndex() < catNum;
                                });
 
     if (it == catalogNumberIndex.end())
         return nullptr;
 
+    const Star& star = octree[*it];
     // False positive in cppcheck: stars.get() does NOT return a void pointer
-    Star* star = stars.get() + *it; // cppcheck-suppress arithOperationsOnVoidPointer
-    return star->getIndex() == catalogNumber
-        ? star
-        : nullptr;
+    return star.getIndex() == catalogNumber ? &star : nullptr;
 }
 
 Star*
-StarDatabase::find(std::string_view name, bool i18n) const
+StarDatabase::find(std::string_view name, bool i18n)
 {
     AstroCatalog::IndexNumber catalogNumber = namesDB->findCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
@@ -77,12 +93,12 @@ StarDatabase::find(std::string_view name, bool i18n) const
         return nullptr;
 }
 
-Star*
-StarDatabase::searchCrossIndex(StarCatalog catalog, AstroCatalog::IndexNumber number) const
+const Star*
+StarDatabase::find(std::string_view name, bool i18n) const
 {
-    AstroCatalog::IndexNumber celCatalogNumber = namesDB->searchCrossIndexForCatalogNumber(catalog, number);
-    if (celCatalogNumber != AstroCatalog::InvalidIndex)
-        return find(celCatalogNumber);
+    AstroCatalog::IndexNumber catalogNumber = namesDB->findCatalogNumberByName(name, i18n);
+    if (catalogNumber != AstroCatalog::InvalidIndex)
+        return find(catalogNumber);
     else
         return nullptr;
 }
@@ -196,6 +212,7 @@ StarDatabase::getStarNameList(const Star& star, unsigned int maxNames) const
     return starNames;
 }
 
+/*
 void
 StarDatabase::findVisibleStars(StarHandler& starHandler,
                                const Eigen::Vector3f& position,
@@ -241,6 +258,7 @@ StarDatabase::findCloseStars(StarHandler& starHandler,
                                     radius,
                                     STAR_OCTREE_ROOT_SIZE);
 }
+*/
 
 const StarNameDatabase*
 StarDatabase::getNameDatabase() const
