@@ -28,7 +28,6 @@ class FramebufferObject
     FramebufferObject& operator=(FramebufferObject&&) noexcept;
     ~FramebufferObject();
 
-    static inline bool isSupported();
     bool isValid() const;
     GLuint width() const
     {
@@ -60,12 +59,3 @@ class FramebufferObject
     GLuint m_fboId;
     GLenum m_status;
 };
-
-bool FramebufferObject::isSupported()
-{
-#ifdef GL_ES
-    return true;
-#else
-    return celestia::gl::ARB_framebuffer_object;
-#endif
-}

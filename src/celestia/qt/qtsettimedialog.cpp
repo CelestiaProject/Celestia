@@ -20,11 +20,12 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-#include <celengine/astro.h>
+#include <celastro/date.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -44,7 +45,6 @@ void setValueNoSignal(TControl* target, TValue value)
 }
 
 } // end unnamed namespace
-
 
 SetTimeDialog::SetTimeDialog(double currentTimeTDB,
                              QWidget* parent,
@@ -144,7 +144,7 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     timeLayout->addWidget(julianDateLabel, 3, 0);
 
     julianDateSpin = new QDoubleSpinBox(this);
-    julianDateSpin->setDecimals(10);
+    julianDateSpin->setDecimals(6);
     julianDateSpin->setMinimum(-1931442.5); // -10000 Jan 01 00:00:00
     julianDateSpin->setMaximum(5373850.5); // 10000 Dec 31 23:59:59
     julianDateSpin->setAccelerated(true);
@@ -169,7 +169,6 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     setLayout(layout);
 }
 
-
 void
 SetTimeDialog::slotSetSimulationTime()
 {
@@ -177,7 +176,6 @@ SetTimeDialog::slotSetSimulationTime()
 
     appCore->getSimulation()->setTime(tdb);
 }
-
 
 void
 SetTimeDialog::slotSetDateTime()
@@ -197,7 +195,6 @@ SetTimeDialog::slotSetDateTime()
     setValueNoSignal(minSpin, date.minute);
     setValueNoSignal(secSpin, static_cast<int>(date.seconds));
 }
-
 
 void
 SetTimeDialog::slotDateTimeChanged()
@@ -235,7 +232,6 @@ SetTimeDialog::slotDateTimeChanged()
             timeZoneBox->setEnabled(true);
 }
 
-
 void
 SetTimeDialog::slotTimeZoneChanged()
 {
@@ -265,7 +261,6 @@ SetTimeDialog::slotTimeZoneChanged()
     slotSetDateTime();
 }
 
-
 void
 SetTimeDialog::accept()
 {
@@ -273,3 +268,5 @@ SetTimeDialog::accept()
 
     QDialog::accept();
 }
+
+} // end namespace celestia::qt

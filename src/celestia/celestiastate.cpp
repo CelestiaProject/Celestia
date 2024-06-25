@@ -12,7 +12,7 @@
 #include "celestiastate.h"
 #include "url.h"
 
-using namespace celmath;
+namespace math = celestia::math;
 
 
 CelestiaState::CelestiaState(CelestiaCore* appCore) :
@@ -50,7 +50,7 @@ void CelestiaState::captureState()
     m_trackedBodyName = Url::getEncodedObjectName(tracked, m_appCore);
     auto selected = sim->getSelection();
     m_selectedBodyName = Url::getEncodedObjectName(selected, m_appCore);
-    m_fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
+    m_fieldOfView = math::radToDeg(sim->getActiveObserver()->getFOV());
     m_timeScale = static_cast<float>(sim->getTimeScale());
     m_pauseState = sim->getPauseState();
     m_lightTimeDelay = m_appCore->getLightDelayActive();

@@ -1,0 +1,9 @@
+# Linux-specific files
+Makefile text eol=lf
+*.desktop text eol=lf
+*.mak text eol=lf
+*.sh text eol=lf
+
+# Windows-specific files
+*.rc text working-tree-encoding=UTF-16LE-BOM eol=crlf
+*.iss text eol=crlf

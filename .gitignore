@@ -24,3 +24,4 @@ Release/
 /mingw/
 /content
 CMakeSettings.json
+__pycache__

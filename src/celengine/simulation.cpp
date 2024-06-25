@@ -36,9 +36,9 @@ Simulation::~Simulation()
 }
 
 
-static const Star* getSun(Body* body)
+static const Star* getSun(const Body* body)
 {
-    PlanetarySystem* system = body->getSystem();
+    const PlanetarySystem* system = body->getSystem();
     return system ? system->getStar() : nullptr;
 }
 
@@ -49,14 +49,6 @@ void Simulation::render(Renderer& renderer)
                     *universe,
                     faintestVisible,
                     selection);
-}
-
-void Simulation::draw(Renderer& renderer)
-{
-    renderer.draw(*activeObserver,
-                  *universe,
-                  faintestVisible,
-                  selection);
 }
 
 
@@ -174,11 +166,15 @@ Observer& Simulation::getObserver()
 }
 
 
-Observer* Simulation::addObserver()
+const Observer& Simulation::getObserver() const
 {
-    Observer* o = new Observer();
-    observers.push_back(o);
-    return o;
+    return *activeObserver;
+}
+
+
+Observer* Simulation::duplicateActiveObserver()
+{
+    return observers.emplace_back(new Observer(*getActiveObserver()));
 }
 
 
@@ -191,6 +187,12 @@ void Simulation::removeObserver(Observer* o)
 
 
 Observer* Simulation::getActiveObserver()
+{
+    return activeObserver;
+}
+
+
+const Observer* Simulation::getActiveObserver() const
 {
     return activeObserver;
 }
@@ -256,6 +258,12 @@ void Simulation::orbit(const Eigen::Quaternionf& q)
     activeObserver->orbit(selection, q);
 }
 
+// Orbit around the selection (if there is one.)  This involves changing
+// both the observer's position and orientation.
+bool Simulation::orbit(const Eigen::Vector3f& from, const Eigen::Vector3f& to)
+{
+    return activeObserver->orbit(selection, from, to);
+}
 
 // Exponential camera dolly--move toward or away from the selected object
 // at a rate dependent on the observer's distance from the object.
@@ -264,13 +272,17 @@ void Simulation::changeOrbitDistance(float d)
     activeObserver->changeOrbitDistance(selection, d);
 }
 
+void Simulation::scaleOrbitDistance(float scale, const std::optional<Eigen::Vector3f>& focus)
+{
+    activeObserver->scaleOrbitDistance(selection, scale, focus);
+}
 
 void Simulation::setTargetSpeed(float s)
 {
     activeObserver->setTargetSpeed(s);
 }
 
-float Simulation::getTargetSpeed()
+float Simulation::getTargetSpeed() const
 {
     return activeObserver->getTargetSpeed();
 }

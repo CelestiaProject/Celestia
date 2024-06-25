@@ -9,6 +9,8 @@ class QWidget;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class GoToObjectDialog : public QDialog
 {
@@ -27,3 +29,5 @@ private:
 
     CelestiaCore *appCore;
 };
+
+} // end namespace celestia::qt

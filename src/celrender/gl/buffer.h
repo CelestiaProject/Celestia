@@ -86,10 +86,9 @@ public:
      *
      * @see @ref TargetHint @ref BufferUsage
      */
-    Buffer(
-        TargetHint                   targetHint,
-        util::array_view<const void> data,
-        BufferUsage                  usage = BufferUsage::StaticDraw);
+    Buffer(TargetHint                   targetHint,
+           util::array_view<const void> data,
+           BufferUsage                  usage = BufferUsage::StaticDraw);
 
     //! Copying is prohibited.
     Buffer(const Buffer &) = delete;
@@ -145,13 +144,31 @@ public:
     //! Bind the default buffer (0) to target. @see @ref TargetHint @ref bind()
     static void unbind(TargetHint target);
 
-private:
-    void clear() noexcept;
+    //! Wrap an existing OpenGL buffer. @see @ref TargetHint @ref Buffer(TargetHint)
+    static Buffer wrap(GLuint id, TargetHint targetHint = TargetHint::Array);
 
-    GLsizeiptr  m_bufferSize{ 0 };
-    GLuint      m_id{ 0 };
-    TargetHint  m_targetHint{ TargetHint::Array };
+private:
+    //! Reset object to initial state
+    void clear();
+    //! Destroy underlying OpenGL resources
+    void destroy() noexcept;
+
+    //! Buffer size
+    GLsizeiptr m_bufferSize{ 0 };
+
+    //! Buffer Id (OpenGL name)
+    GLuint m_id{ 0 };
+    
+    //! Buffer target hint, @see @ref TargetHint
+    TargetHint m_targetHint{ TargetHint::Array };
+    //! Buffer usage hint, @see @ref BufferUsage
+    
     BufferUsage m_usage{ BufferUsage::StaticDraw };
+    
+    //! Wrapped objects are managed externally
+    bool m_wrapped{ false };
+
+    friend class VertexObject;
 };
 
 inline GLuint

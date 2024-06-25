@@ -23,9 +23,11 @@ class QTreeView;
 class CelestiaCore;
 class Selection;
 
+namespace celestia::qt
+{
+
 class ColorSwatchWidget;
 class InfoPanel;
-
 
 class SolarSystemBrowser : public QWidget
 {
@@ -39,8 +41,8 @@ public slots:
     void slotRefreshTree();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
-    void slotUnmarkSelected();
-    void slotClearMarkers();
+    void slotUnmarkSelected() const;
+    void slotClearMarkers() const;
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
 signals:
@@ -69,3 +71,5 @@ private:
 
     InfoPanel* infoPanel{nullptr};
 };
+
+} // end namespace celestia::qt

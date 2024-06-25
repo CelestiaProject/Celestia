@@ -66,7 +66,6 @@ class SpiceRotation : public CachingRotationModel
     bool m_spiceErr;
     double m_validIntervalBegin;
     double m_validIntervalEnd;
-    bool m_useDefaultTimeInterval;
 
     bool loadRequiredKernel(const fs::path&, const std::string&);
     bool init();

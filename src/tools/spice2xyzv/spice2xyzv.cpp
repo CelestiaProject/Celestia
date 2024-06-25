@@ -381,9 +381,6 @@ bool convertSpkToXyzv(const Configuration& config,
 
     printRecord(out, et, lastState);
 
-    int sampCount = 0;
-    int nTests = 0;
-
     while (t < endET)
     {
         // Make sure that we don't go past the end of the sample interval
@@ -399,7 +396,6 @@ bool convertSpkToXyzv(const Configuration& config,
                                          s1.position,
                                          s1.velocity * dt,
                                          0.5);
-        nTests++;
 
         double positionError = (pInterp - pTest).length();
 
@@ -420,7 +416,6 @@ bool convertSpkToXyzv(const Configuration& config,
                                            s1.position,
                                            s1.velocity * dt,
                                            0.5);
-                nTests++;
 
                 positionError = (pInterp - pTest).length();
             }
@@ -444,8 +439,6 @@ bool convertSpkToXyzv(const Configuration& config,
                                            s1.velocity * dt,
                                            0.5);
 
-                nTests++;
-
                 positionError = (pInterp - pTest).length();
             }
         }
@@ -454,7 +447,6 @@ bool convertSpkToXyzv(const Configuration& config,
         lastState = s1;
 
         printRecord(out, t, lastState);
-        sampCount++;
     }
 
     return true;

@@ -20,7 +20,7 @@
 #include "sphere.h"
 #include "ellipsoid.h"
 
-namespace celmath
+namespace celestia::math
 {
 
 template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
@@ -132,4 +132,4 @@ template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray
     }
     return false;
 }
-} // namespace celmath
+} // namespace celestia::math

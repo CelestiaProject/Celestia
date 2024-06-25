@@ -117,7 +117,7 @@ EclipticPrecession_P03LP(double T)
         double theta = 2.0 * celestia::numbers::pi * T / p.period;
         double s;
         double c;
-        celmath::sincos(theta, s, c);
+        math::sincos(theta, s, c);
         pole.PA += p.Pc * c + p.Ps * s;
         pole.QA += p.Qc * c + p.Qs * s;
     }
@@ -154,7 +154,7 @@ PrecObliquity_P03LP(double T)
         double theta = 2.0 * celestia::numbers::pi * T / p.period;
         double s;
         double c;
-        celmath::sincos(theta, s, c);
+        math::sincos(theta, s, c);
         angles.pA   += p.pc * c   + p.ps * s;
         angles.epsA += p.epsc * c + p.epss * s;
     }

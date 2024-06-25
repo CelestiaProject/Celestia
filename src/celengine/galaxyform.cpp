@@ -34,7 +34,7 @@ buildGalacticForm(const fs::path& filename)
     // Load templates in standard .png format
     int kmin = 9;
     float h = 0.75f;
-    std::unique_ptr<Image> img = LoadImageFromFile(filename);
+    std::unique_ptr<Image> img = Image::load(filename);
     if (img == nullptr)
     {
         celestia::util::GetLogger()->error("The galaxy template *** {} *** could not be loaded!\n", filename);
@@ -44,7 +44,7 @@ buildGalacticForm(const fs::path& filename)
     int height = img->getHeight();
     int rgb    = img->getComponents();
 
-    auto& rng = celmath::getRNG();
+    auto& rng = math::getRNG();
     rng.seed(1312);
     for (int i = 0; i < width * height; i++)
     {
@@ -57,8 +57,8 @@ buildGalacticForm(const fs::path& filename)
             float z = std::floor(idxf / wf);
             float x = (idxf - wf * z - 0.5f * (wf - 1.0f)) / wf;
             z  = (0.5f * (hf - 1.0f) - z) / hf;
-            x  += celmath::RealDists<float>::SignedUnit(rng) * 0.008f;
-            z  += celmath::RealDists<float>::SignedUnit(rng) * 0.008f;
+            x  += math::RealDists<float>::SignedUnit(rng) * 0.008f;
+            z  += math::RealDists<float>::SignedUnit(rng) * 0.008f;
             float r2 = x * x + z * z;
 
             float y;
@@ -72,9 +72,9 @@ buildGalacticForm(const fs::path& filename)
                 {
                     // generate "thickness" y of spirals with emulation of a dust lane
                     // in galctic plane (y=0)
-                    yr = celmath::RealDists<float>::SignedUnit(rng) * h;
+                    yr = math::RealDists<float>::SignedUnit(rng) * h;
                     prob = (1.0f - B * std::exp(-yr * yr))/p0;
-                } while (celmath::RealDists<float>::Unit(rng) > prob);
+                } while (math::RealDists<float>::Unit(rng) > prob);
                 b.brightness = static_cast<std::uint8_t>(value * prob);
                 y = y0 * yr / h;
             }
@@ -84,10 +84,10 @@ buildGalacticForm(const fs::path& filename)
                 float yy, prob;
                 do
                 {
-                    yy = celmath::RealDists<float>::SignedUnit(rng);
+                    yy = math::RealDists<float>::SignedUnit(rng);
                     float ry2 = 1.0f - yy * yy;
                     prob = ry2 > 0 ? std::sqrt(ry2): 0.0f;
-                } while (celmath::RealDists<float>::Unit(rng) > prob);
+                } while (math::RealDists<float>::Unit(rng) > prob);
                 y = yy * std::sqrt(0.25f - r2) ;
                 b.brightness = value;
                 kmin = 12;
@@ -106,7 +106,7 @@ buildGalacticForm(const fs::path& filename)
 
     // reshuffle the galaxy points randomly...except the first kmin+1 in the center!
     // the higher that number the stronger the central "glow"
-    std::shuffle(galacticPoints.begin() + kmin, galacticPoints.end(), celmath::getRNG());
+    std::shuffle(galacticPoints.begin() + kmin, galacticPoints.end(), math::getRNG());
 
     std::optional<celestia::engine::GalacticForm> galacticForm(std::in_place);
     galacticForm->blobs = std::move(galacticPoints);
@@ -162,18 +162,18 @@ GalacticFormManager::initializeStandardForms()
     GalacticForm::BlobVector irregularPoints;
     irregularPoints.reserve(galaxySize);
 
-    auto& rng = celmath::getRNG();
+    auto& rng = math::getRNG();
     while (ip < galaxySize)
     {
-        p = Eigen::Vector3f(celmath::RealDists<float>::SignedUnit(rng),
-                            celmath::RealDists<float>::SignedUnit(rng),
-                            celmath::RealDists<float>::SignedUnit(rng));
+        p = Eigen::Vector3f(math::RealDists<float>::SignedUnit(rng),
+                            math::RealDists<float>::SignedUnit(rng),
+                            math::RealDists<float>::SignedUnit(rng));
         float r  = p.norm();
         if (r < 1)
         {
             Eigen::Vector3f p1(p.array() + 5.0f);
-            float prob = (1.0f - r) * (celmath::fractalsum(p1, 8.0f) + 1.0f) * 0.5f;
-            if (celmath::RealDists<float>::Unit(rng) < prob)
+            float prob = (1.0f - r) * (math::fractalsum(p1, 8.0f) + 1.0f) * 0.5f;
+            if (math::RealDists<float>::Unit(rng) < prob)
             {
                 b.position   = p;
                 b.brightness = std::uint8_t(64);

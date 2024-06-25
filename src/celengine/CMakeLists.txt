@@ -1,8 +1,6 @@
 set(CELENGINE_SOURCES
   asterism.cpp
   asterism.h
-  astro.cpp
-  astro.h
   astroobj.h
   atmosphere.h
   axisarrow.cpp
@@ -19,14 +17,10 @@ set(CELENGINE_SOURCES
   constellation.h
   curveplot.cpp
   curveplot.h
-  dateformatter.cpp
-  dateformatter.h
   deepskyobj.cpp
   deepskyobj.h
   dsodb.cpp
   dsodb.h
-  dsoname.cpp
-  dsoname.h
   dsooctree.cpp
   dsooctree.h
   dsorenderer.cpp
@@ -116,7 +110,6 @@ set(CELENGINE_SOURCES
   shared.h
   simulation.cpp
   simulation.h
-  skygrid.cpp
   skygrid.h
   solarsys.cpp
   solarsys.h
@@ -130,6 +123,8 @@ set(CELENGINE_SOURCES
   star.h
   stardb.cpp
   stardb.h
+  stardbbuilder.cpp
+  stardbbuilder.h
   starname.cpp
   starname.h
   staroctree.cpp

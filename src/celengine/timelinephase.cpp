@@ -27,9 +27,9 @@ TimelinePhase::TimelinePhase(CreateToken,
                              double _startTime,
                              double _endTime,
                              const ReferenceFrame::SharedConstPtr& _orbitFrame,
-                             celestia::ephem::Orbit* _orbit,
+                             const std::shared_ptr<const celestia::ephem::Orbit>& _orbit,
                              const ReferenceFrame::SharedConstPtr& _bodyFrame,
-                             celestia::ephem::RotationModel* _rotationModel,
+                             const std::shared_ptr<const celestia::ephem::RotationModel>& _rotationModel,
                              FrameTree* _owner) :
     m_body(_body),
     m_startTime(_startTime),
@@ -51,9 +51,9 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    double startTime,
                                    double endTime,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,
-                                   celestia::ephem::Orbit& orbit,
+                                   const std::shared_ptr<const celestia::ephem::Orbit>& orbit,
                                    const ReferenceFrame::SharedConstPtr& bodyFrame,
-                                   celestia::ephem::RotationModel& rotationModel)
+                                   const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel)
 {
     // Validate the time range.
     if (endTime <= startTime)
@@ -83,9 +83,9 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                                  startTime,
                                                  endTime,
                                                  orbitFrame,
-                                                 &orbit,
+                                                 orbit,
                                                  bodyFrame,
-                                                 &rotationModel,
+                                                 rotationModel,
                                                  frameTree);
 
     frameTree->addChild(phase);

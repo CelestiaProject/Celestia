@@ -11,13 +11,16 @@
 #include "deepskyobj.h"
 
 #include <cmath>
+#include <fmt/format.h>
 
+#include <celastro/astro.h>
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
-#include "astro.h"
+#include <celutil/infourl.h>
 #include "hash.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 Eigen::Vector3d DeepSkyObject::getPosition() const
 {
@@ -64,9 +67,9 @@ const std::string& DeepSkyObject::getInfoURL() const
     return infoURL;
 }
 
-void DeepSkyObject::setInfoURL(const std::string& s)
+void DeepSkyObject::setInfoURL(std::string&& s)
 {
-    infoURL = s;
+    infoURL = std::move(s);
 }
 
 
@@ -74,14 +77,10 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                          double& distanceToPicker,
                          double& cosAngleToBoundCenter) const
 {
-    if (isVisible())
-        return celmath::testIntersection(ray,
-                                         celmath::Sphered(position, static_cast<double>(radius)),
-                                         distanceToPicker,
-                                         cosAngleToBoundCenter);
-    else
-        return false;
-
+    return isVisible() && math::testIntersection(ray,
+                                                 math::Sphered(position, static_cast<double>(radius)),
+                                                 distanceToPicker,
+                                                 cosAngleToBoundCenter);
 }
 
 
@@ -106,7 +105,7 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     auto axis = params->getVector3<double>("Axis").value_or(Eigen::Vector3d::UnitX());
     auto angle = params->getAngle<double>("Angle").value_or(0.0);
 
-    setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(angle)),
+    setOrientation(Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(math::degToRad(angle)),
                                                         axis.cast<float>().normalized())));
 
     setRadius(params->getLength<float>("Radius", astro::KM_PER_LY<double>).value_or(1.0f));
@@ -114,32 +113,15 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
     if (auto absMagValue = params->getNumber<float>("AbsMag"); absMagValue.has_value())
         setAbsoluteMagnitude(*absMagValue);
 
-    // FIXME: infourl class
-    if (const std::string* infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
-    {
-        std::string modifiedURL;
-        if (infoURLValue->find(':') == std::string::npos)
-        {
-            // Relative URL, the base directory is the current one,
-            // not the main installation directory
-            if (resPath.c_str()[1] == ':')
-                // Absolute Windows path, file:/// is required
-                modifiedURL = "file:///" + resPath.string() + "/" + *infoURLValue;
-            else if (!resPath.empty())
-                modifiedURL = resPath.string() + "/" + *infoURLValue;
-        }
-        setInfoURL(modifiedURL.empty() ? *infoURLValue : modifiedURL);
-    }
+    // TODO: infourl class
+    if (const auto *infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
+        setInfoURL(BuildInfoURL(*infoURLValue, resPath));
 
     if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
-    {
         setVisible(*visibleValue);
-    }
 
     if (auto clickableValue = params->getBoolean("Clickable"); clickableValue.has_value())
-    {
         setClickable(*clickableValue);
-    }
 
     return true;
 }

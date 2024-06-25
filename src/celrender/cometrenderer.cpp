@@ -15,8 +15,8 @@
 
 #include <Eigen/Geometry>
 
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
 #include <celengine/observer.h>
@@ -56,18 +56,19 @@ CometRenderer::CometRenderer(Renderer &renderer) :
 
 CometRenderer::~CometRenderer() = default;
 
-void
+bool
 CometRenderer::initGL()
 {
     if (m_initialized)
-        return;
-
-    m_initialized = true;
+        return true;
 
     m_prog = m_renderer.getShaderManager().getShader("comet");
+    if (m_prog == nullptr)
+        return false;
+
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
-    m_vo = std::make_unique<gl::VertexObject>();
+    m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::TriangleStrip);
     m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
     m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
 
@@ -96,6 +97,9 @@ CometRenderer::initGL()
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, brightness))
         .setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
+
+    m_initialized = true;
+    return true;
 }
 
 void
@@ -144,7 +148,7 @@ CometRenderer::render(const Body &body,
         {
             Eigen::Vector3d p = star->getPosition(now).offsetFromKm(observer.getPosition());
             float distanceFromSun = static_cast<float>((pos.cast<double>() - p).norm());
-            float irradiance = star->getBolometricLuminosity() / celmath::square(distanceFromSun);
+            float irradiance = star->getBolometricLuminosity() / math::square(distanceFromSun);
 
             if (irradiance > irradiance_max)
             {
@@ -223,7 +227,7 @@ CometRenderer::render(const Body &body,
         {
             float theta = 2.0f * numbers::pi_v<float> * static_cast<float>(j) / static_cast<float>(nTailSlices);
             float s, c;
-            celmath::sincos(theta, s, c);
+            math::sincos(theta, s, c);
             CometTailVertex& vtx = m_vertices[i * nTailSlices + j];
             vtx.normal = u * (s * w1) + w * (c * w1) + v * w0;
             vtx.normal.normalize();
@@ -248,22 +252,22 @@ CometRenderer::render(const Body &body,
     m_renderer.setPipelineState(ps);
 
     m_prog->use();
-    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::translate(pos));
-    m_prog->vec3Param("color") = body.getCometTailColor().toVector3();
+    m_prog->setMVPMatrices(*m.projection, (*m.modelview) * math::translate(pos));
+    m_prog->vec3Param("color") = GetBodyFeaturesManager()->getCometTailColor(&body).toVector3();
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
-    m_bo->bind().invalidateData().setData(
-        util::array_view<CometTailVertex>(m_vertices.get(), MaxVertices),
+    m_bo->invalidateData().setData(
+        util::array_view(m_vertices.get(), MaxVertices),
         gl::Buffer::BufferUsage::StreamDraw);
 
-    m_io->bind().invalidateData().setData(
-        util::array_view<ushort>(m_indices.get(), MaxIndices),
+    m_io->invalidateData().setData(
+        util::array_view(m_indices.get(), MaxIndices),
         gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);
     int count = IndexListCapacity(nTailSlices, nTailPoints);
-    m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, count);
+    m_vo->draw(count);
     glEnable(GL_CULL_FACE);
 }
 

@@ -15,6 +15,7 @@
 #include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
+#include <celestia/progressnotifier.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "celx_internal.h"

@@ -17,6 +17,7 @@
 
 #include <optional>
 
+#include <QtGlobal>
 #include <QApplication>
 #include <QBitmap>
 #include <QColor>
@@ -32,12 +33,15 @@
 #include <QTranslator>
 
 #include <celutil/gettext.h>
+#include <celutil/localeutil.h>
 #include "qtappwin.h"
 #include "qtcommandline.h"
 #include "qtgettext.h"
 
 int main(int argc, char *argv[])
 {
+    using namespace celestia::qt;
+
 #ifndef GL_ES
     QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #else
@@ -46,8 +50,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // Gettext integration
-    setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C");
+    CelestiaCore::initLocale();
 #ifdef ENABLE_NLS
     QString localeDir = LOCALEDIR;
     bindtextdomain("celestia", localeDir.toUtf8().data());
@@ -59,7 +62,11 @@ int main(int argc, char *argv[])
 
     if (QTranslator qtTranslator;
         qtTranslator.load("qt_" + QLocale::system().name(),
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                           QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+#else
+                          QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+#endif
     {
         app.installTranslator(&qtTranslator);
     }
@@ -110,6 +117,7 @@ int main(int argc, char *argv[])
 
     window.init(options);
     window.show();
+    window.startAppCore();
 
     if (splash.has_value())
     {

@@ -18,6 +18,8 @@
 
 #include <config.h>
 
+#include <celutil/localeutil.h>
+
 #include "charconv_impl.h"
 
 namespace celestia::compat
@@ -30,6 +32,7 @@ constexpr std::size_t inf_length = 3;
 constexpr std::size_t infinity_length = 8;
 constexpr std::size_t nan_length = 3;
 constexpr std::size_t hex_prefix_length = 2;
+locale_t numberParsingLocale = nullptr;
 
 enum class State
 {
@@ -167,19 +170,19 @@ write_buffer(const char* first, const char* last, chars_format fmt, char* buffer
 inline void
 parse_value(const char* start, char** end, float& value)
 {
-    value = std::strtof(start, end);
+    value = strtof_l(start, end, numberParsingLocale);
 }
 
 inline void
 parse_value(const char* start, char** end, double& value)
 {
-    value = std::strtod(start, end);
+    value = strtod_l(start, end, numberParsingLocale);
 }
 
 inline void
 parse_value(const char* start, char** end, long double& value)
 {
-    value = std::strtold(start, end);
+    value = strtold_l(start, end, numberParsingLocale);
 }
 
 template<typename T>
@@ -191,8 +194,9 @@ from_chars_impl(const char* first, const char* last, T& value, chars_format fmt)
     from_chars_result result = write_buffer(first, last, fmt, buffer, hex_prefix);
     if (result.ec != std::errc{}) { return result; }
 
-    const char* savedLocale = std::setlocale(LC_NUMERIC, nullptr);
-    std::setlocale(LC_NUMERIC, "C");
+    if (numberParsingLocale == nullptr)
+        numberParsingLocale = newlocale(LC_NUMERIC_MASK, "C", nullptr);
+
     errno = 0;
     char* end;
     T parsed;
@@ -213,7 +217,6 @@ from_chars_impl(const char* first, const char* last, T& value, chars_format fmt)
         result = { first + (end - buffer), std::errc{} };
     }
 
-    std::setlocale(LC_NUMERIC, savedLocale);
     return result;
 }
 

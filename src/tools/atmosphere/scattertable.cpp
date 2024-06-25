@@ -47,8 +47,7 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
-
+namespace math = celestia::math;
 
 constexpr const unsigned int HeightSamples = 32;
 constexpr const unsigned int ViewAngleSamples = 256;
@@ -111,8 +110,8 @@ float opticalDepth(float r, float mu, float l, float H, float R)
     float a = sqrt(r * 0.5 / H);
     float bx = a * mu;
     float by = a * (mu + l / r);
-    float sbx = sign(bx);
-    float sby = sign(by);
+    float sbx = math::sign(bx);
+    float sby = math::sign(by);
     float x = sby > sbx ? exp(bx * bx) : 0.0f;
     float yx = sbx / (2.3193f * abs(bx) + sqrt(1.52f * bx * bx + 4.0f));
     float yy = sby / (2.3193f * abs(by) + sqrt(1.52f * by * by + 4.0f)) *

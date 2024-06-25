@@ -17,6 +17,6 @@ namespace celestia::ephem
 
 class Orbit;
 
-std::unique_ptr<Orbit> GetCustomOrbit(std::string_view name);
+std::shared_ptr<const Orbit> GetCustomOrbit(std::string_view name);
 
 }

@@ -135,9 +135,9 @@ void
 RenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerRepresentation::Symbol symbol, float size, const Color &color, const Matrices &m)
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
-    shadprop.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
+    shadprop.texUsage = TexUsage::VertexColors;
+    shadprop.lightModel = LightingModel::UnlitModel;
+    shadprop.fishEyeOverride = FisheyeOverrideMode::Disabled;
     auto* prog = r.getShaderManager().getShader(shadprop);
     if (prog == nullptr) return;
     glVertexAttrib4fv(CelestiaGLProgram::ColorAttributeIndex, color.toVector4().data());

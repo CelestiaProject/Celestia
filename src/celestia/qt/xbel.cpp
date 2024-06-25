@@ -22,6 +22,9 @@
 #include <celutil/gettext.h>
 #include "qtbookmark.h"
 
+namespace celestia::qt
+{
+
 namespace
 {
 
@@ -34,7 +37,6 @@ QIcon CreateBookmarkIcon(const QString& iconBase64Data)
     return QIcon(iconPixmap);
 }
 
-
 // Return a string with icon data as a base64 encoded PNG file.
 QString BookmarkIconData(const QIcon& icon)
 {
@@ -46,15 +48,10 @@ QString BookmarkIconData(const QIcon& icon)
 
 } // end unnamed namespace
 
-
 XbelReader::XbelReader(QIODevice* device) :
     QXmlStreamReader(device)
 {
 }
-
-
-
-
 
 // This code is based on QXmlStreamReader example from Qt 4.3.3
 
@@ -88,7 +85,6 @@ XbelReader::read()
     return rootItem;
 }
 
-
 void
 XbelReader::readXbel(BookmarkItem* root)
 {
@@ -111,7 +107,6 @@ XbelReader::readXbel(BookmarkItem* root)
         }
     }
 }
-
 
 void
 XbelReader::readFolder(BookmarkItem* parent)
@@ -144,7 +139,6 @@ XbelReader::readFolder(BookmarkItem* parent)
 
     parent->append(folder);
 }
-
 
 void
 XbelReader::readBookmark(BookmarkItem* parent)
@@ -181,7 +175,6 @@ XbelReader::readBookmark(BookmarkItem* parent)
     parent->append(item);
 }
 
-
 void
 XbelReader::readSeparator(BookmarkItem* parent)
 {
@@ -190,20 +183,17 @@ XbelReader::readSeparator(BookmarkItem* parent)
     readNext();
 }
 
-
 void
 XbelReader::readTitle(BookmarkItem* item)
 {
     item->setTitle(readElementText());
 }
 
-
 void
 XbelReader::readDescription(BookmarkItem* item)
 {
     item->setDescription(readElementText());
 }
-
 
 void
 XbelReader::skipUnknownElement()
@@ -219,7 +209,6 @@ XbelReader::skipUnknownElement()
     }
 }
 
-
 /***** XbelWriter *****/
 
 XbelWriter::XbelWriter(QIODevice* device) :
@@ -227,7 +216,6 @@ XbelWriter::XbelWriter(QIODevice* device) :
 {
     setAutoFormatting(true);
 }
-
 
 bool
 XbelWriter::write(const BookmarkItem* root)
@@ -244,7 +232,6 @@ XbelWriter::write(const BookmarkItem* root)
 
     return true;
 }
-
 
 void
 XbelWriter::writeItem(const BookmarkItem* item)
@@ -282,3 +269,5 @@ XbelWriter::writeItem(const BookmarkItem* item)
         break;
     }
 }
+
+} // end namespace celestia::qt

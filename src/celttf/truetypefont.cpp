@@ -12,9 +12,9 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <map>
 #include <memory>
 #include <system_error>
+#include <unordered_map>
 #include <vector>
 
 #include <celcompat/charconv.h>
@@ -36,6 +36,8 @@
 #endif
 
 using celestia::compat::from_chars;
+using celestia::engine::Image;
+using celestia::engine::PixelFormat;
 using celestia::util::GetLogger;
 namespace gl = celestia::gl;
 
@@ -131,7 +133,7 @@ struct TextureFontPrivate
 
     std::vector<FontVertex> m_fontVertices;
 
-    gl::VertexObject m_vao;
+    gl::VertexObject m_vao{ gl::VertexObject::Primitive::Triangles };
     gl::Buffer       m_vbo{ gl::Buffer::TargetHint::Array };
     gl::Buffer       m_vio{ gl::Buffer::TargetHint::ElementArray };
 
@@ -250,7 +252,7 @@ TextureFontPrivate::buildAtlas()
     computeTextureSize();
 
     // Create an image that will be used to hold all glyphs
-    auto img = std::make_unique<Image>(celestia::PixelFormat::LUMINANCE, m_texWidth, m_texHeight);
+    auto img = std::make_unique<Image>(PixelFormat::Luminance, m_texWidth, m_texHeight);
 
     // Paste all glyph bitmaps into the texture, remembering the offset
     int ox = 0;
@@ -474,9 +476,9 @@ TextureFontPrivate::flush()
         indexes.push_back(index + 2);
     }
 
-    m_vbo.bind().invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vio.bind().invalidateData().setData(indexes, gl::Buffer::BufferUsage::StreamDraw);
-    m_vao.draw(gl::VertexObject::Primitive::Triangles, static_cast<int>(indexes.size()));
+    m_vbo.invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_vio.invalidateData().setData(indexes, gl::Buffer::BufferUsage::StreamDraw);
+    m_vao.draw(static_cast<int>(indexes.size()));
     m_vbo.unbind();
     m_vio.unbind();
 
@@ -691,7 +693,28 @@ ParseFontName(const fs::path &filename, int &index, int &size)
     return filename;
 }
 
-using FontCache = std::map<std::pair<fs::path, int>, std::weak_ptr<TextureFont>>;
+struct FontCacheKey
+{
+    fs::path filename;
+    int index;
+    int size;
+    int screenDpi;
+
+    bool operator==(const FontCacheKey &other) const
+    {
+        return filename == other.filename && index == other.index && size == other.size && screenDpi == other.screenDpi;
+    }
+};
+
+template<> struct std::hash<FontCacheKey>
+{
+    std::size_t operator()(const FontCacheKey &k) const
+    {
+        return std::hash<std::string>()(k.filename.string()) ^ std::hash<int>()(k.index) ^ std::hash<int>()(k.size) ^ std::hash<int>()(k.screenDpi);
+    }
+};
+
+using FontCache = std::unordered_map<FontCacheKey, std::weak_ptr<TextureFont>>;
 
 std::shared_ptr<TextureFont>
 LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
@@ -709,8 +732,10 @@ LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size
     if (fontCache == nullptr)
         fontCache = new FontCache;
 
+    int screenDpi = r->getScreenDpi();
+
     // Lookup for an existing cached font
-    std::weak_ptr<TextureFont> &font = (*fontCache)[std::make_pair(filename, index)];
+    std::weak_ptr<TextureFont> &font = (*fontCache)[{ filename, index, size, screenDpi }];
     std::shared_ptr<TextureFont> ret = font.lock();
     if (ret == nullptr)
     {
@@ -720,7 +745,7 @@ LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size
         auto face     = LoadFontFace(ftlib, nameonly,
                                      index > 0 ? index : pindex,
                                      size > 0 ? size : psize,
-                                     r->getScreenDpi());
+                                     screenDpi);
         if (face == nullptr)
             return nullptr;
 

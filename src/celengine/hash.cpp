@@ -8,14 +8,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celastro/units.h>
 #include <celmath/mathlib.h>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
-#include "astro.h"
 #include "hash.h"
 #include "value.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 namespace util = celestia::util;
 
 // Define these here: at declaration the vector member contains an incomplete type
@@ -63,7 +64,7 @@ std::optional<fs::path> AssociativeArray::getPath(std::string_view key) const
     const std::string* v = getString(key);
     if (v == nullptr) { return std::nullopt; }
 
-    return std::make_optional(util::PathExp(*v));
+    return std::make_optional(util::PathExp(fs::u8path(*v)));
 }
 
 
@@ -150,7 +151,7 @@ std::optional<Eigen::Quaternionf> AssociativeArray::getRotation(std::string_view
                          static_cast<float>(*z));
 
     double angScale = astro::getAngleScale(v->getAngleUnit()).value_or(1.0);
-    auto angle = static_cast<float>(celmath::degToRad(*w * angScale));
+    auto angle = static_cast<float>(math::degToRad(*w * angScale));
 
     return std::make_optional<Eigen::Quaternionf>(Eigen::AngleAxisf(angle, axis.normalized()));
 }

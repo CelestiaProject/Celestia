@@ -52,7 +52,7 @@ W: Some index files failed to download. They have been ignored, or old ones used
 The `Release.key` should already have been updated.
 Just download the GPG public key again, check the fingerprint and expiration date and re-deploy it.
 
-### On Ubuntu 20.04/22.04 and derived systems:
+### On Ubuntu 22.04/24.04 and derived systems:
 
 ```
 curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/Release.key | sudo apt-key add -
@@ -60,7 +60,7 @@ echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubun
 sudo apt update && sudo apt install celestia
 ```
 
-Where VERSION is 20.04 or 22.04.
+Where VERSION is 22.04 or 24.04.
 
 
 ### On openSUSE Leap/Tumbleweed:
@@ -71,7 +71,7 @@ sudo zypper refresh
 sudo zypper install celestia
 ```
 
-Where VERSION is '15.4', '15.5' or 'openSUSE_Tumbleweed'.
+Where VERSION is '15.5', '15.6' or 'openSUSE_Tumbleweed'.
 
 See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
 
@@ -111,12 +111,16 @@ git submodule update --init
 First you need a C++ compiler able to compile C++17 code (GCC 7 or later,
 Clang 5 or later), CMake, GNU Make or Ninja, and gperf.
 
+When building with Qt6 interface (see below), you need a compiler with full
+support for C++ filesystem library, e.g. GCC 8 or Clang 7.
+
 Then you need to have the following devel components installed before Celestia
-will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
-Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, libavif, glu.
+will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
+libpng. Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg,
+libavif, glu.
 
 For example on modern Debian-derived system you need to install the following
-packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
+packages: libboost-dev, libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
 libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
@@ -182,7 +186,7 @@ and vcpkg (*).
 Install required packages:
 
 ```
-vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
+vcpkg --triplet=TRIPLET install --recurse boost-container boost-smart-ptr libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
 ```
 
 Install optional packages:
@@ -311,7 +315,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype
+brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype boost
 ```
 
 Install optional packages:
@@ -407,6 +411,7 @@ installed:
 git clone https://github.com/CelestiaProject/CelestiaContent.git
 cd CelestiaContent
 mkdir build
+cd build
 cmake ..
 make
 sudo make install

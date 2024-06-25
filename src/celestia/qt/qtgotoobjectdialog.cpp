@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QString>
 
-#include <celengine/astro.h>
+#include <celastro/astro.h>
 #include <celengine/body.h>
 #include <celengine/observer.h>
 #include <celengine/selection.h>
@@ -17,7 +17,8 @@
 #include <celestia/celestiacore.h>
 #include <celmath/mathlib.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),
@@ -49,14 +50,13 @@ GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     ui.kmButton->setChecked(true);
 }
 
-
 void
 GoToObjectDialog::on_buttonBox_accepted()
 {
     QString objectName = ui.objectName->text();
 
     Simulation *simulation = appCore->getSimulation();
-    Selection sel = simulation->findObjectFromPath(objectName.toStdString());
+    Selection sel = simulation->findObjectFromPath(objectName.toStdString(), true);
 
     simulation->setSelection(sel);
     simulation->follow();
@@ -89,8 +89,8 @@ GoToObjectDialog::on_buttonBox_accepted()
     {
         simulation->gotoSelectionLongLat(5.0,
                                          distance,
-                                         celmath::degToRad(longitude),
-                                         celmath::degToRad(latitude),
+                                         math::degToRad(longitude),
+                                         math::degToRad(latitude),
                                          Eigen::Vector3f::UnitY());
     }
     else
@@ -101,7 +101,6 @@ GoToObjectDialog::on_buttonBox_accepted()
                                   ObserverFrame::ObserverLocal);
     }
 }
-
 
 void
 GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
@@ -115,6 +114,8 @@ GoToObjectDialog::on_objectName_textChanged(const QString &objectName)
     }
 
     // Enable OK button only if we have found the object
-    Selection sel = appCore->getSimulation()->findObjectFromPath(objectName.toStdString());
+    Selection sel = appCore->getSimulation()->findObjectFromPath(objectName.toStdString(), true);
     okButton->setEnabled(!sel.empty());
 }
+
+} // end namespace celestia::qt

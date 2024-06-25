@@ -19,6 +19,7 @@
 #include <celengine/textlayout.h>
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
+#include <celutil/gettext.h>
 #include "glcompat.h"
 
 using namespace std;
@@ -99,32 +100,47 @@ class CelScriptWrapper : public ExecutionEnvironment
 
 // ==================== Celscript-object ====================
 
-
 int celxClassId(CelScriptWrapper*)
 {
     return Celx_CelScript;
 }
 
 // create a CelScriptWrapper from a string:
-int celscript_from_string(lua_State* l, string& script_text)
+int celscript_from_string(lua_State* l, const char* script_text)
 {
     CelxLua celx(l);
-    istringstream scriptfile(script_text);
 
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
-    if (celscript->getErrorMessage() != "")
+
     {
-        string error = celscript->getErrorMessage();
-        delete celscript;
-        celx.doError(error.c_str());
-    }
-    else
-    {
-        celx.pushClass(celscript);
+        // we can't have anything with a non-trivial destructor around when
+        // we do the lua_error call (which does a longjmp), so do this stuff within
+        // its own block
+        istringstream scriptfile(script_text);
+        auto celscript = std::make_unique<CelScriptWrapper>(*appCore, scriptfile);
+        const auto& error = celscript->getErrorMessage();
+        if (error.empty())
+        {
+            celx.pushClass(celscript.release());
+            return 1;
+        }
+
+        // we can't use Celx_DoError here since we need to destroy the error string
+        // before doing the longjmp
+        lua_Debug debug;
+        if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
+        {
+            std::string buf = fmt::format(_("In line {}: {}"), debug.currentline, error);
+            lua_pushlstring(l, buf.data(), buf.size());
+        }
+        else
+        {
+            lua_pushlstring(l, error.data(), error.size());
+        }
     }
 
-    return 1;
+    lua_error(l);
+    return 1; // not reachable but here to fix warnings
 }
 
 static int celscript_tostring(lua_State* l)
@@ -173,8 +189,8 @@ static int font_bind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:bind()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    font->bind();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    (*font)->bind();
     return 0;
 }
 
@@ -184,8 +200,8 @@ static int font_unbind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:unbind()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    font->unbind();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    (*font)->unbind();
     return 0;
 }
 
@@ -196,12 +212,12 @@ static int font_render(lua_State* l)
     celx.checkArgs(2, 2, "One argument required for font:render");
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
     TextLayout layout;
-    layout.setFont(font);
+    layout.setFont(*font);
     layout.begin(p, m);
     layout.render(s);
     layout.end();
@@ -214,8 +230,8 @@ static int font_getwidth(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument expected for font:getwidth");
     const char* s = celx.safeGetString(2, AllErrors, "Argument to font:getwidth must be a string");
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    return celx.push(TextLayout::getTextWidth(s, font.get()));
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    return celx.push(TextLayout::getTextWidth(s, font->get()));
 }
 
 static int font_getheight(lua_State* l)
@@ -224,8 +240,8 @@ static int font_getheight(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getheight()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getHeight());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getHeight());
     return 1;
 }
 
@@ -235,8 +251,8 @@ static int font_getmaxascent(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getmaxascent()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getMaxAscent());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getMaxAscent());
     return 1;
 }
 
@@ -246,8 +262,8 @@ static int font_getmaxdescent(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getmaxdescent()");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
-    lua_pushnumber(l, font->getMaxDescent());
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
+    lua_pushnumber(l, (*font)->getMaxDescent());
     return 1;
 }
 
@@ -257,10 +273,12 @@ static int font_gettextwidth(lua_State* l)
 
     Celx_CheckArgs(l, 2, 2, "One argument expected to function font:gettextwidth");
 
-    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
+    // Do not put the shared_ptr on the stack, otherwise the destructor may be skipped
+    // if Celx_SafeGetString calls lua_error (longjmp)
+    const auto* font = celx.getThis<std::shared_ptr<TextureFont>>();
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:gettextwidth must be a string");
 
-    lua_pushnumber(l, TextLayout::getTextWidth(s, font.get()));
+    lua_pushnumber(l, TextLayout::getTextWidth(s, font->get()));
 
     return 1;
 }
@@ -271,6 +289,14 @@ static int font_tostring(lua_State* l)
     return celx.push("[Font]");
 }
 
+static int font_gc(lua_State* l)
+{
+    CelxLua celx(l);
+    auto *font = celx.getThis<std::shared_ptr<TextureFont>>();
+    font->~shared_ptr();
+    return 0;
+}
+
 void CreateFontMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -278,6 +304,7 @@ void CreateFontMetaTable(lua_State* l)
     celx.createClassMetatable(Celx_Font);
 
     celx.registerMethod("__tostring", font_tostring);
+    celx.registerMethod("__gc", font_gc);
     celx.registerMethod("bind", font_bind);
     celx.registerMethod("render", font_render);
     celx.registerMethod("unbind", font_unbind);

@@ -10,6 +10,9 @@
  *  $Id: settings-file.cpp,v 1.5 2008-01-18 04:36:11 suwalski Exp $
  */
 
+#include <cstdint>
+#include <cstdio>
+
 #include <gtk/gtk.h>
 
 #include <celengine/body.h>
@@ -19,24 +22,41 @@
 #include "settings-file.h"
 #include "common.h"
 
+namespace celestia::gtk
+{
 
-/* Definitions: Helpers */
-static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors);
-static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors);
+namespace
+{
+
+/* HELPER: gets an or-group flag and handles error checking */
+template<typename T>
+void
+getFlag(GKeyFile* file, T* flags, T setting, const gchar* section, const gchar* key, int* errors)
+{
+    GError* e = nullptr;
+    if (g_key_file_get_boolean(file, section, key, &e))
+        *flags = static_cast<T>(*flags | setting);
+
+    if (e != nullptr)
+        ++(*errors);
+}
+
+} // end unnamed namespace
 
 /* ENTRY: Initializes and reads into memory the preferences */
-void initSettingsFile(AppData* app)
+void
+initSettingsFile(AppData* app)
 {
-    GError *error = NULL;
+    GError *error = nullptr;
     app->settingsFile = g_key_file_new();
 
-    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, NULL);
+    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
 
     g_key_file_load_from_file(app->settingsFile, fn, G_KEY_FILE_NONE, &error);
 
     /* Should check G_KEY_FILE_ERROR_NOT_FOUND, but bug in glib returns wrong
      * error code. */
-    if (error != NULL && g_file_test(fn, G_FILE_TEST_EXISTS))
+    if (error != nullptr && g_file_test(fn, G_FILE_TEST_EXISTS))
     {
         g_print("Error reading '%s': %s.\n", fn, error->message);
         exit(1);
@@ -45,9 +65,9 @@ void initSettingsFile(AppData* app)
     g_free(fn);
 }
 
-
 /* ENTRY: Applies preferences needed before initializing the core */
-void applySettingsFilePre(AppData* app, GKeyFile* file)
+void
+applySettingsFilePre(AppData* app, GKeyFile* file)
 {
     int sizeX, sizeY, positionX, positionY;
     GError* e;
@@ -55,26 +75,26 @@ void applySettingsFilePre(AppData* app, GKeyFile* file)
     /* Numbers require special treatment because if they are not found they
      * are not set to NULL like strings. So, if that is the case, we set them
      * to values that will cause setSane*() to set defaults. */
-    e= NULL;
+    e= nullptr;
     sizeX = g_key_file_get_integer(file, "Window", "width", &e);
-    if (e != NULL) sizeX = -1;
+    if (e != nullptr) sizeX = -1;
 
-    e= NULL;
+    e= nullptr;
     sizeY = g_key_file_get_integer(file, "Window", "height", &e);
-    if (e != NULL) sizeY = -1;
+    if (e != nullptr) sizeY = -1;
 
-    e= NULL;
+    e= nullptr;
     positionX = g_key_file_get_integer(file, "Window", "x", &e);
-    if (e != NULL) positionX = -1;
+    if (e != nullptr) positionX = -1;
 
-    e= NULL;
+    e= nullptr;
     positionY = g_key_file_get_integer(file, "Window", "y", &e);
-    if (e != NULL) positionY = -1;
+    if (e != nullptr) positionY = -1;
 
     /* These next two cannot be checked for sanity, default set here */
-    e= NULL;
+    e= nullptr;
     app->fullScreen = g_key_file_get_boolean(file, "Window", "fullScreen", &e);
-    if (e != NULL) app->fullScreen = FALSE;
+    if (e != nullptr) app->fullScreen = FALSE;
 
     /* Nothing is set here. The prefs structure is used to set things at the
      * corrent times. */
@@ -82,47 +102,42 @@ void applySettingsFilePre(AppData* app, GKeyFile* file)
     setSaneWinPosition(app, positionX, positionY);
 }
 
-
 /* ENTRY: Applies preferences after the core is initialized */
-void applySettingsFileMain(AppData* app, GKeyFile* file)
+void
+applySettingsFileMain(AppData* app, GKeyFile* file)
 {
-    GError* e;
-    float ambientLight, visualMagnitude, galaxyLightGain;
-    int errors, verbosity, starStyle, textureResolution, distanceLimit, om, lm;
-    uint64_t rf;
-
     /* See comment in applySettingsFilePrefs() */
-    e = NULL;
-    ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
-    if (e != NULL) ambientLight = -1.0;
+    GError* e = nullptr;
+    float ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
+    if (e != nullptr) ambientLight = -1.0;
 
-    e = NULL;
-    visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
-    if (e != NULL) visualMagnitude = -1.0;
+    e = nullptr;
+    float visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
+    if (e != nullptr) visualMagnitude = -1.0;
 
-    e = NULL;
-    galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
-    if (e != NULL) galaxyLightGain = -1.0;
+    e = nullptr;
+    float galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
+    if (e != nullptr) galaxyLightGain = -1.0;
 
-    e = NULL;
-    distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
-    if (e != NULL) distanceLimit = -1;
+    e = nullptr;
+    int distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
+    if (e != nullptr) distanceLimit = -1;
 
-    e = NULL;
-    verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
-    if (e != NULL) verbosity = -1;
+    e = nullptr;
+    int verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
+    if (e != nullptr) verbosity = -1;
 
-    e = NULL;
-    starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
-    if (e != NULL) starStyle = -1;
+    e = nullptr;
+    int starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
+    if (e != nullptr) starStyle = -1;
 
-    e = NULL;
-    textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
-    if (e != NULL) textureResolution = -1;
+    e = nullptr;
+    int textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
+    if (e != nullptr) textureResolution = -1;
 
-    e = NULL;
+    e = nullptr;
     app->showLocalTime = g_key_file_get_boolean(file, "Main", "localTime", &e);
-    if (e != NULL) app->showLocalTime = FALSE;
+    if (e != nullptr) app->showLocalTime = FALSE;
 
     /* All settings that need sanity checks get them */
     setSaneAmbientLight(app, ambientLight);
@@ -132,42 +147,42 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     setSaneVerbosity(app, verbosity);
     setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
     setSaneTextureResolution(app, textureResolution);
-    setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", NULL));
+    setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", nullptr));
 
     /* Render Flags */
-    errors = 0;
-    rf = Renderer::ShowNothing;
-    getFlag64(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
-    getFlag64(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
-    getFlag64(file, &rf, Renderer::ShowDwarfPlanets, "RenderFlags", "dwarfPlanets", &errors);
-    getFlag64(file, &rf, Renderer::ShowMoons, "RenderFlags", "moons", &errors);
-    getFlag64(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
-    getFlag64(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
-    getFlag64(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
-    getFlag64(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
-    getFlag64(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
-    getFlag64(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
-    getFlag64(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
-    getFlag64(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
-    getFlag64(file, &rf, Renderer::ShowFadingOrbits, "RenderFlags", "fadingorbits", &errors);
-    getFlag64(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
-    getFlag64(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
-    getFlag64(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
-    getFlag64(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
-    getFlag64(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
-    getFlag64(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
-    getFlag64(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
-    getFlag64(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
-    getFlag64(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
-    getFlag64(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
-    getFlag64(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
-    getFlag64(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
-    getFlag64(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
-    getFlag64(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
-    getFlag64(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
-    getFlag64(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
-    getFlag64(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
-    getFlag64(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
+    int errors = 0;
+    Renderer::RenderFlags rf = Renderer::ShowNothing;
+    getFlag(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
+    getFlag(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
+    getFlag(file, &rf, Renderer::ShowDwarfPlanets, "RenderFlags", "dwarfPlanets", &errors);
+    getFlag(file, &rf, Renderer::ShowMoons, "RenderFlags", "moons", &errors);
+    getFlag(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
+    getFlag(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
+    getFlag(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
+    getFlag(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
+    getFlag(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
+    getFlag(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
+    getFlag(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
+    getFlag(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
+    getFlag(file, &rf, Renderer::ShowFadingOrbits, "RenderFlags", "fadingorbits", &errors);
+    getFlag(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
+    getFlag(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
+    getFlag(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
+    getFlag(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
+    getFlag(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
+    getFlag(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
+    getFlag(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
+    getFlag(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
+    getFlag(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
+    getFlag(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
+    getFlag(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
+    getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
+    getFlag(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
+    getFlag(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
+    getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
+    getFlag(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
+    getFlag(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
+    getFlag(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
 
     /* If any flag is missing, use defaults for all. */
     if (errors > 0)
@@ -177,14 +192,14 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 
     /* Orbit Mask */
     errors = 0;
-    om = 0;
-    getFlag(file, &om, Body::Planet, "OrbitMask", "planet", &errors);
-    getFlag(file, &om, Body::Moon, "OrbitMask", "moon", &errors);
-    getFlag(file, &om, Body::Asteroid, "OrbitMask", "asteroid", &errors);
-    getFlag(file, &om, Body::Comet, "OrbitMask", "comet", &errors);
-    getFlag(file, &om, Body::Spacecraft, "OrbitMask", "spacecraft", &errors);
-    getFlag(file, &om, Body::Invisible, "OrbitMask", "invisible", &errors);
-    getFlag(file, &om, Body::Unknown, "OrbitMask", "unknown", &errors);
+    BodyClassification om = BodyClassification::EmptyMask;
+    getFlag(file, &om, BodyClassification::Planet, "OrbitMask", "planet", &errors);
+    getFlag(file, &om, BodyClassification::Moon, "OrbitMask", "moon", &errors);
+    getFlag(file, &om, BodyClassification::Asteroid, "OrbitMask", "asteroid", &errors);
+    getFlag(file, &om, BodyClassification::Comet, "OrbitMask", "comet", &errors);
+    getFlag(file, &om, BodyClassification::Spacecraft, "OrbitMask", "spacecraft", &errors);
+    getFlag(file, &om, BodyClassification::Invisible, "OrbitMask", "invisible", &errors);
+    getFlag(file, &om, BodyClassification::Unknown, "OrbitMask", "unknown", &errors);
 
     /* If any orbit is missing, use core defaults for all (do nothing). */
     if (errors == 0)
@@ -192,8 +207,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 
     /* Label Mode */
     errors = 0;
-    lm = Renderer::NoLabels;
-
+    auto lm = Renderer::NoLabels;
     getFlag(file, &lm, Renderer::StarLabels, "LabelMode", "star", &errors);
     getFlag(file, &lm, Renderer::PlanetLabels, "LabelMode", "planet", &errors);
     getFlag(file, &lm, Renderer::DwarfPlanetLabels, "LabelMode", "dwarfplanet", &errors);
@@ -215,32 +229,28 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
         app->renderer->setLabelMode(lm);
 }
 
-
 /* ENTRY: Saves settings to file */
-void saveSettingsFile(AppData* app)
+void
+saveSettingsFile(AppData* app)
 {
-    int om, lm;
-    uint64_t rf;
     GKeyFile* file = app->settingsFile;
-    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, NULL);
-    FILE* outfile;
 
     g_key_file_set_integer(file, "Main", "ambientLight", (int)(1000 * app->renderer->getAmbientLightLevel()));
-    g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", NULL);
+    g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", nullptr);
     g_key_file_set_integer(file, "Main", "visualMagnitude", (int)(1000 * app->simulation->getFaintestVisible()));
-    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", NULL);
+    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", nullptr);
     g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
-    g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", NULL);
+    g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", nullptr);
     g_key_file_set_integer(file, "Main", "distanceLimit", (int)app->renderer->getDistanceLimit());
-    g_key_file_set_comment(file, "Main", "distanceLimit", "Rendering limit in light-years", NULL);
+    g_key_file_set_comment(file, "Main", "distanceLimit", "Rendering limit in light-years", nullptr);
     g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
-    g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", NULL);
+    g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", nullptr);
     g_key_file_set_integer(file, "Main", "verbosity", app->core->getHudDetail());
-    g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", NULL);
+    g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", nullptr);
     g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
-    g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", NULL);
+    g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", nullptr);
     g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
-    g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", NULL);
+    g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", nullptr);
     g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
 
     g_key_file_set_integer(file, "Window", "width", getWinWidth(app));
@@ -249,7 +259,7 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_integer(file, "Window", "y", getWinY(app));
     g_key_file_set_boolean(file, "Window", "fullScreen", app->fullScreen);
 
-    rf = app->renderer->getRenderFlags();
+    std::uint64_t rf = app->renderer->getRenderFlags();
     g_key_file_set_boolean(file, "RenderFlags", "stars", (rf & Renderer::ShowStars) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "planets", (rf & Renderer::ShowPlanets) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "dwarfPlanets", (rf & Renderer::ShowDwarfPlanets) != 0);
@@ -282,16 +292,16 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "gridEcliptic", (rf & Renderer::ShowEclipticGrid) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "gridHorizontal", (rf & Renderer::ShowHorizonGrid) != 0);
 
-    om = app->renderer->getOrbitMask();
-    g_key_file_set_boolean(file, "OrbitMask", "planet", om & Body::Planet);
-    g_key_file_set_boolean(file, "OrbitMask", "moon", om & Body::Moon);
-    g_key_file_set_boolean(file, "OrbitMask", "asteroid", om & Body::Asteroid);
-    g_key_file_set_boolean(file, "OrbitMask", "comet", om & Body::Comet);
-    g_key_file_set_boolean(file, "OrbitMask", "spacecraft", om & Body::Spacecraft);
-    g_key_file_set_boolean(file, "OrbitMask", "invisible", om & Body::Invisible);
-    g_key_file_set_boolean(file, "OrbitMask", "unknown", om & Body::Unknown);
+    BodyClassification om = app->renderer->getOrbitMask();
+    g_key_file_set_boolean(file, "OrbitMask", "planet", util::is_set(om, BodyClassification::Planet));
+    g_key_file_set_boolean(file, "OrbitMask", "moon", util::is_set(om, BodyClassification::Moon));
+    g_key_file_set_boolean(file, "OrbitMask", "asteroid", util::is_set(om, BodyClassification::Asteroid));
+    g_key_file_set_boolean(file, "OrbitMask", "comet", util::is_set(om, BodyClassification::Comet));
+    g_key_file_set_boolean(file, "OrbitMask", "spacecraft", util::is_set(om, BodyClassification::Spacecraft));
+    g_key_file_set_boolean(file, "OrbitMask", "invisible", util::is_set(om, BodyClassification::Invisible));
+    g_key_file_set_boolean(file, "OrbitMask", "unknown", util::is_set(om, BodyClassification::Unknown));
 
-    lm = app->renderer->getLabelMode();
+    int lm = app->renderer->getLabelMode();
     g_key_file_set_boolean(file, "LabelMode", "star", lm & Renderer::StarLabels);
     g_key_file_set_boolean(file, "LabelMode", "planet", lm & Renderer::PlanetLabels);
     g_key_file_set_boolean(file, "LabelMode", "dwarfplanet", lm & Renderer::DwarfPlanetLabels);
@@ -308,40 +318,20 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "LabelMode", "i18n", lm & Renderer::I18nConstellationLabels);
     g_key_file_set_boolean(file, "LabelMode", "globular", lm & Renderer::GlobularLabels);
 
-    g_key_file_set_comment(file, "RenderFlags", NULL, "All Render Flag values must be true or false", NULL);
-    g_key_file_set_comment(file, "OrbitMask", NULL, "All Orbit Mask values must be true or false", NULL);
-    g_key_file_set_comment(file, "LabelMode", NULL, "All Label Mode values must be true or false", NULL);
+    g_key_file_set_comment(file, "RenderFlags", nullptr, "All Render Flag values must be true or false", nullptr);
+    g_key_file_set_comment(file, "OrbitMask", nullptr, "All Orbit Mask values must be true or false", nullptr);
+    g_key_file_set_comment(file, "LabelMode", nullptr, "All Label Mode values must be true or false", nullptr);
 
     /* Write the settings to a file */
-    outfile = fopen(fn, "w");
+    char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, nullptr);
+    std::FILE* outfile = std::fopen(fn, "w");
 
-    if (outfile == NULL)
+    if (outfile == nullptr)
         g_print("Error writing '%s'.\n", fn);
 
-    fputs(g_key_file_to_data(file, NULL, NULL), outfile);
+    std::fputs(g_key_file_to_data(file, nullptr, nullptr), outfile);
 
     g_free(fn);
 }
 
-
-/* HELPER: gets an or-group flag and handles error checking */
-static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors)
-{
-    GError* e = NULL;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
-
-    if (e != NULL)
-        *errors += 1;
-}
-
-
-static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors)
-{
-    GError* e = NULL;
-
-    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
-
-    if (e != NULL)
-        *errors += 1;
-}
+} // end namespace celestia::gtk

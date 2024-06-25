@@ -13,6 +13,8 @@ set(CELEPHEM_SOURCES
   precession.h
   rotation.cpp
   rotation.h
+  sampfile.cpp
+  sampfile.h
   samporbit.cpp
   samporbit.h
   samporient.cpp

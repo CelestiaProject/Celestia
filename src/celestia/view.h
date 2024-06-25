@@ -9,16 +9,20 @@
 
 #pragma once
 
-class Renderer;
-class Observer;
-class Color;
+#include <cstdint>
+#include <memory>
 
-//namespace celestia
-//{
+class Color;
+class FramebufferObject;
+class Observer;
+class Overlay;
+
+namespace celestia
+{
 
 class View
 {
- public:
+public:
     enum Type
     {
         ViewWindow      = 1,
@@ -26,9 +30,9 @@ class View
         VerticalSplit   = 3
     };
 
-    View(Type, Renderer*, Observer*, float, float, float, float);
+    View(Type, Observer*, float, float, float, float);
     View() = delete;
-    ~View() = default;
+    ~View();
     View(const View&) = delete;
     View(View&&) = delete;
     const View& operator=(const View&) = delete;
@@ -40,31 +44,27 @@ class View
 
     Observer* getObserver() const;
     bool isRootView() const;
-    bool isSplittable(Type type) const;
-    void split(Type type, Observer *o, float splitPos, View **split, View **view);
+    bool isSplittable(Type _type) const;
+    void split(Type _type, Observer *o, float splitPos, View **split, View **view);
     void reset();
     static View* remove(View*);
-    void drawBorder(int gWidth, int gHeight, const Color &color, float linewidth = 1.0f);
+    void drawBorder(Overlay*, int gWidth, int gHeight, const Color &color, float linewidth = 1.0f) const;
     void updateFBO(int gWidth, int gHeight);
     FramebufferObject *getFBO() const;
 
- public:
-    Type      type;
+    Type           type;
 
-    Renderer *renderer;
-    Observer *observer;
-    View     *parent          { nullptr };
-    View     *child1          { nullptr };
-    View     *child2          { nullptr };
-    float     x;
-    float     y;
-    float     width;
-    float     height;
-    uint64_t  renderFlags     { 0 };
-    int       labelMode       { 0 };
+    Observer      *observer;
+    View          *parent          { nullptr };
+    View          *child1          { nullptr };
+    View          *child2          { nullptr };
+    float          x;
+    float          y;
+    float          width;
+    float          height;
 
 private:
     std::unique_ptr<FramebufferObject> fbo;
 };
 
-//}
+}

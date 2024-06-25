@@ -480,7 +480,7 @@ void CommandLabels::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set orbit flags command
 
-CommandOrbitFlags::CommandOrbitFlags(int _setFlags, int _clearFlags) :
+CommandOrbitFlags::CommandOrbitFlags(BodyClassification _setFlags, BodyClassification _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
@@ -576,7 +576,7 @@ void CommandSet::processInstantaneous(ExecutionEnvironment& env)
     else if (compareIgnoringCase(name, "FOV") == 0)
     {
         if (env.getRenderer() != nullptr)
-            env.getSimulation()->getActiveObserver()->setFOV(celmath::degToRad(static_cast<float>(value)));
+            env.getSimulation()->getActiveObserver()->setFOV(math::degToRad(static_cast<float>(value)));
     }
     else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
     {
@@ -673,7 +673,7 @@ void CommandPreloadTextures::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Capture command
 
-CommandCapture::CommandCapture(std::string _type, std::string _filename)
+CommandCapture::CommandCapture(std::string _type, fs::path _filename)
     : type(std::move(_type)), filename(std::move(_filename))
 {
 }
@@ -726,7 +726,7 @@ void CommandSplitView::processInstantaneous(ExecutionEnvironment& env)
     std::vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
+        const Observer* obs = observer_list[view - 1];
         View* view = env.getCelestiaCore()->getViewByObserver(obs);
         View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
         env.getCelestiaCore()->splitView(type, view, static_cast<float>(splitPos));
@@ -748,7 +748,7 @@ void CommandDeleteView::processInstantaneous(ExecutionEnvironment& env)
 
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
+        const Observer* obs = observer_list[view - 1];
         View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->deleteView(view);
     }
@@ -760,7 +760,7 @@ void CommandDeleteView::processInstantaneous(ExecutionEnvironment& env)
 
 void CommandSingleView::processInstantaneous(ExecutionEnvironment& env)
 {
-    View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
+    const View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
     env.getCelestiaCore()->singleView(view);
 }
 
@@ -779,8 +779,8 @@ void CommandSetActiveView::processInstantaneous(ExecutionEnvironment& env)
 
     if (view >= 1 && view <= observer_list.size())
     {
-        Observer* obs = observer_list[view - 1];
-        View* view = env.getCelestiaCore()->getViewByObserver(obs);
+        const Observer* obs = observer_list[view - 1];
+        const View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->setActiveView(view);
     }
 }
@@ -808,7 +808,7 @@ void CommandSetRadius::processInstantaneous(ExecutionEnvironment& env)
         return;
 
     body->setSemiAxes(body->getSemiAxes() * scaleFactor);
-    body->scaleRings(scaleFactor);
+    GetBodyFeaturesManager()->scaleRings(body, scaleFactor);
 }
 
 
@@ -823,14 +823,14 @@ CommandSetLineColor::CommandSetLineColor(std::string _item, const Color& _color)
 
 void CommandSetLineColor::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto &LineColorMap = env.getCelestiaCore()->scriptMaps()->LineColorMap;
+    auto &LineColorMap = env.getCelestiaCore()->scriptMaps().LineColorMap;
     if (LineColorMap.count(item) == 0)
     {
         GetLogger()->warn("Unknown line style: {}\n", item);
     }
     else
     {
-        *LineColorMap[item] = color;
+        *(LineColorMap[item]) = color;
     }
 }
 
@@ -846,14 +846,14 @@ CommandSetLabelColor::CommandSetLabelColor(std::string _item, const Color& _colo
 
 void CommandSetLabelColor::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto &LabelColorMap = env.getCelestiaCore()->scriptMaps()->LabelColorMap;
+    auto &LabelColorMap = env.getCelestiaCore()->scriptMaps().LabelColorMap;
     if (LabelColorMap.count(item) == 0)
     {
         GetLogger()->error("Unknown label style: {}\n", item);
     }
     else
     {
-        *LabelColorMap[item] = color;
+        *(LabelColorMap[item]) = color;
     }
 }
 
@@ -1078,8 +1078,8 @@ void CommandSetWindowBordersVisible::processInstantaneous(ExecutionEnvironment& 
 ///////////////
 // SetRingsTexture command
 CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
-                                               std::string _textureName,
-                                               std::string _path) :
+                                               fs::path _textureName,
+                                               fs::path _path) :
     object(std::move(_object)),
     textureName(std::move(_textureName)),
     path(std::move(_path))
@@ -1088,13 +1088,16 @@ CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
 
 void CommandSetRingsTexture::processInstantaneous(ExecutionEnvironment& env)
 {
-    Selection sel = env.getSimulation()->findObjectFromPath(object);
-    if (sel.body() != nullptr &&
-        sel.body()->getRings() != nullptr &&
-        !textureName.empty())
-    {
-        sel.body()->getRings()->texture = MultiResTexture(textureName, path);
-    }
+    if (textureName.empty())
+        return;
+
+    auto body = env.getSimulation()->findObjectFromPath(object).body();
+    if (body == nullptr)
+        return;
+
+    auto rings = GetBodyFeaturesManager()->getRings(body);
+    if (rings != nullptr)
+        rings->texture = MultiResTexture(textureName, path);
 }
 
 } // end namespace celestia::scripts

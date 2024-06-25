@@ -12,6 +12,7 @@
 
 
 #include "qtselectionpopup.h"
+#include "qtdateutil.h"
 
 #include <array>
 #include <cassert>
@@ -37,7 +38,8 @@
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 
-namespace astro = celestia::astro;
+namespace celestia::qt
+{
 
 namespace
 {
@@ -53,7 +55,6 @@ boldTextItem(const QString& s)
     return act;
 }
 
-
 QAction*
 italicTextItem(const QString& s)
 {
@@ -66,7 +67,6 @@ italicTextItem(const QString& s)
 }
 
 } // end unnamed namespace
-
 
 SelectionPopup::SelectionPopup(const Selection& sel,
                                CelestiaCore* _appCore,
@@ -95,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (startTime > -1.0e9)
             {
-                QString startDateStr = QString(_("Start: %1")).arg(QString::fromStdString(astro::TDBtoUTC(startTime).toString()));
+                QString startDateStr = QString(_("Start: %1")).arg(TDBToQString(startTime));
                 QAction* startDateAct = new QAction(startDateStr, this);
                 connect(startDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoStartDate()));
@@ -104,7 +104,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (endTime < 1.0e9)
             {
-                QString endDateStr = QString(_("End: %1")).arg(QString::fromStdString(astro::TDBtoUTC(endTime).toString()));
+                QString endDateStr = QString(_("End: %1")).arg(TDBToQString(endTime));
                 QAction* endDateAct = new QAction(endDateStr, this);
                 connect(endDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoEndDate()));
@@ -235,7 +235,6 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
 }
 
-
 QMenu*
 SelectionPopup::createMarkMenu()
 {
@@ -282,7 +281,6 @@ SelectionPopup::createMarkMenu()
 
     return markMenu;
 }
-
 
 QMenu*
 SelectionPopup::createReferenceVectorMenu()
@@ -350,11 +348,10 @@ SelectionPopup::createReferenceVectorMenu()
     return refVecMenu;
 }
 
-
 QMenu*
 SelectionPopup::createAlternateSurfacesMenu()
 {
-    auto altSurfaces = selection.body()->getAlternateSurfaceNames();
+    auto altSurfaces = GetBodyFeaturesManager()->getAlternateSurfaceNames(selection.body());
     if (!altSurfaces.has_value() || altSurfaces->empty())
         return nullptr;
 
@@ -378,10 +375,8 @@ SelectionPopup::createAlternateSurfacesMenu()
     return surfacesMenu;
 }
 
-
 QMenu*
-SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
-                                 unsigned int classification)
+SelectionPopup::createObjectMenu(const PlanetarySystem* sys, BodyClassification classification)
 {
     QMenu* menu = nullptr;
 
@@ -391,32 +386,32 @@ SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
         for (int i = 0; i < nObjects; i++)
         {
             Body* body = sys->getBody(i);
-            if ((body->getClassification() & classification) != 0)
+            if (util::is_set(body->getClassification(), classification))
             {
                 if (menu == nullptr)
                 {
                     QString title;
                     switch (classification)
                     {
-                    case Body::Planet:
+                    case BodyClassification::Planet:
                         title = _("Planets");
                         break;
-                    case Body::DwarfPlanet:
+                    case BodyClassification::DwarfPlanet:
                         title = _("Dwarf planets");
                         break;
-                    case Body::Moon:
+                    case BodyClassification::Moon:
                         title = _("Moons");
                         break;
-                    case Body::MinorMoon:
+                    case BodyClassification::MinorMoon:
                         title = _("Minor moons");
                         break;
-                    case Body::Asteroid:
+                    case BodyClassification::Asteroid:
                         title = _("Asteroids");
                         break;
-                    case Body::Comet:
+                    case BodyClassification::Comet:
                         title = _("Comets");
                         break;
-                    case Body::Spacecraft:
+                    case BodyClassification::Spacecraft:
                         title = C_("plural", "Spacecraft");
                         break;
                     default:
@@ -437,40 +432,38 @@ SelectionPopup::createObjectMenu(const PlanetarySystem* sys,
     return menu;
 }
 
-
 void
 SelectionPopup::addObjectMenus(const PlanetarySystem* sys)
 {
     setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
-    QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
+    QMenu* planetsMenu = createObjectMenu(sys, BodyClassification::Planet);
     if (planetsMenu != nullptr)
         addMenu(planetsMenu);
 
-    QMenu* dwarfPlanetsMenu = createObjectMenu(sys, Body::DwarfPlanet);
+    QMenu* dwarfPlanetsMenu = createObjectMenu(sys, BodyClassification::DwarfPlanet);
     if (dwarfPlanetsMenu != nullptr)
         addMenu(dwarfPlanetsMenu);
 
-    QMenu* moonsMenu = createObjectMenu(sys, Body::Moon);
+    QMenu* moonsMenu = createObjectMenu(sys, BodyClassification::Moon);
     if (moonsMenu != nullptr)
         addMenu(moonsMenu);
 
-    QMenu* minorMoonsMenu = createObjectMenu(sys, Body::MinorMoon);
+    QMenu* minorMoonsMenu = createObjectMenu(sys, BodyClassification::MinorMoon);
     if (minorMoonsMenu != nullptr)
         addMenu(minorMoonsMenu);
 
-    QMenu* asteroidsMenu = createObjectMenu(sys, Body::Asteroid);
+    QMenu* asteroidsMenu = createObjectMenu(sys, BodyClassification::Asteroid);
     if (asteroidsMenu != nullptr)
         addMenu(asteroidsMenu);
 
-    QMenu* cometsMenu = createObjectMenu(sys, Body::Comet);
+    QMenu* cometsMenu = createObjectMenu(sys, BodyClassification::Comet);
     if (cometsMenu != nullptr)
         addMenu(cometsMenu);
 
-    QMenu* spacecraftMenu = createObjectMenu(sys, Body::Spacecraft);
+    QMenu* spacecraftMenu = createObjectMenu(sys, BodyClassification::Spacecraft);
     if (spacecraftMenu != nullptr)
         addMenu(spacecraftMenu);
 }
-
 
 void
 SelectionPopup::popupAtGoto(const QPoint& pt)
@@ -478,13 +471,11 @@ SelectionPopup::popupAtGoto(const QPoint& pt)
     exec(pt, gotoAction);
 }
 
-
 void
 SelectionPopup::popupAtCenter(const QPoint& pt)
 {
     exec(pt, centerAction);
 }
-
 
 /******** Slots *********/
 
@@ -494,14 +485,12 @@ SelectionPopup::slotSelect()
     appCore->getSimulation()->setSelection(selection);
 }
 
-
 void
 SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("c");
 }
-
 
 void
 SelectionPopup::slotGotoSelection()
@@ -510,7 +499,6 @@ SelectionPopup::slotGotoSelection()
     appCore->charEntered("g");
 }
 
-
 void
 SelectionPopup::slotFollowSelection()
 {
@@ -518,14 +506,12 @@ SelectionPopup::slotFollowSelection()
     appCore->charEntered("f");
 }
 
-
 void
 SelectionPopup::slotSyncOrbitSelection()
 {
     appCore->getSimulation()->setSelection(selection);
     appCore->charEntered("y");
 }
-
 
 void
 SelectionPopup::slotSelectAlternateSurface()
@@ -539,7 +525,6 @@ SelectionPopup::slotSelectAlternateSurface()
     }
 }
 
-
 void
 SelectionPopup::slotSelectPrimary()
 {
@@ -550,7 +535,6 @@ SelectionPopup::slotSelectPrimary()
         sim->setSelection(Helper::getPrimary(selectedBody));
     }
 }
-
 
 void
 SelectionPopup::slotSelectChildObject()
@@ -581,7 +565,6 @@ SelectionPopup::slotSelectChildObject()
         sim->setSelection(Selection(sys->getBody(childIndex)));
 }
 
-
 void
 SelectionPopup::slotMark()
 {
@@ -605,7 +588,6 @@ SelectionPopup::slotMark()
     }
 }
 
-
 void
 SelectionPopup::slotUnmark()
 {
@@ -617,13 +599,11 @@ SelectionPopup::slotUnmark()
     }
 }
 
-
 void
 SelectionPopup::slotToggleBodyAxes()
 {
     appCore->toggleReferenceMark("body axes", selection);
 }
-
 
 void
 SelectionPopup::slotToggleFrameAxes()
@@ -631,13 +611,11 @@ SelectionPopup::slotToggleFrameAxes()
     appCore->toggleReferenceMark("frame axes", selection);
 }
 
-
 void
 SelectionPopup::slotToggleSunDirection()
 {
     appCore->toggleReferenceMark("sun direction", selection);
 }
-
 
 void
 SelectionPopup::slotToggleVelocityVector()
@@ -645,13 +623,11 @@ SelectionPopup::slotToggleVelocityVector()
     appCore->toggleReferenceMark("velocity vector", selection);
 }
 
-
 void
 SelectionPopup::slotToggleSpinVector()
 {
     appCore->toggleReferenceMark("spin vector", selection);
 }
-
 
 void
 SelectionPopup::slotToggleFrameCenterDirection()
@@ -659,20 +635,17 @@ SelectionPopup::slotToggleFrameCenterDirection()
     appCore->toggleReferenceMark("frame center direction", selection);
 }
 
-
 void
 SelectionPopup::slotTogglePlanetographicGrid()
 {
     appCore->toggleReferenceMark("planetographic grid", selection);
 }
 
-
 void
 SelectionPopup::slotToggleTerminator()
 {
     appCore->toggleReferenceMark("terminator", selection);
 }
-
 
 void
 SelectionPopup::slotGotoStartDate()
@@ -684,7 +657,6 @@ SelectionPopup::slotGotoStartDate()
     appCore->getSimulation()->setTime(startDate);
 }
 
-
 void
 SelectionPopup::slotGotoEndDate()
 {
@@ -695,13 +667,11 @@ SelectionPopup::slotGotoEndDate()
     appCore->getSimulation()->setTime(endDate);
 }
 
-
 void
 SelectionPopup::slotInfo()
 {
     emit selectionInfoRequested(selection);
 }
-
 
 void
 SelectionPopup::slotToggleVisibility(bool visible)
@@ -709,3 +679,5 @@ SelectionPopup::slotToggleVisibility(bool visible)
     assert(selection.body() != nullptr);
     selection.body()->setVisible(visible);
 }
+
+} // end namespace celestia::qt

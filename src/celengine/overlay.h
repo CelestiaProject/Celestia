@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <locale>
 #include <string>
 #include <vector>
 #include <fmt/printf.h>
@@ -41,6 +42,7 @@ class Overlay
 
     void setColor(float r, float g, float b, float a);
     void setColor(const Color& c);
+    void setColor(const Color& c, float a);
 
     void moveBy(float dx, float dy);
     void moveBy(int dx, int dy);
@@ -52,12 +54,19 @@ class Overlay
         return renderer;
     };
 
-    void drawRectangle(const celestia::Rect&);
+    void drawRectangle(const celestia::Rect&) const;
 
     void beginText();
     void endText();
 
     void print(std::string_view);
+
+    template <typename... T>
+    void print(const std::locale& loc, std::string_view format, const T&... args)
+    {
+        static_assert(sizeof...(args) > 0);
+        print(fmt::format(loc, format, args...));
+    }
 
     template <typename... T>
     void print(std::string_view format, const T&... args)

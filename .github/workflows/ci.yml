@@ -30,10 +30,16 @@ jobs:
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = '830f86fb309ad7167468a433a890b7415fbb90a5'
+        $vcpkgCommit = 'f7423ee180c4b7f40d43402c2feb3859161ef625'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
-        git fetch --depth=1 origin $vcpkgCommit
-        git reset --hard $vcpkgCommit
+        git cat-file -e "${vcpkgCommit}^{commit}" 2> $null
+        if (!$?) {
+          git pull
+        }
+        git -c advice.detachedHead=false checkout $vcpkgCommit
+        if (!$?) {
+          throw "Could not check out commit $vcpkgCommit"
+        }
         ./bootstrap-vcpkg.bat
         Get-ChildItem -Path 'triplets\*-windows*.cmake' | ForEach-Object {
           Add-Content -Path $_ -Value 'set(VCPKG_BUILD_TYPE "release")'
@@ -55,12 +61,39 @@ jobs:
     - name: Install dependencies
       shell: pwsh
       run: |
-        vcpkg --triplet=${{matrix.platform}}-windows install --recurse `
-          cspice eigen3 ffmpeg[x264] fmt freetype gettext gperf libepoxy libjpeg-turbo libpng luajit `
-          qtbase qt5compat[core]
+        $packages = @(
+          'boost-container',
+          'boost-smart-ptr',
+          'cspice',
+          'eigen3',
+          'ffmpeg[core,avcodec,avformat,gpl,swscale,x264]',
+          'fmt',
+          'freetype',
+          'gettext[tools]',
+          'gperf',
+          'libepoxy',
+          'libjpeg-turbo',
+          'libpng',
+          'luajit',
+          'qtbase[core,opengl,widgets,freetype,harfbuzz,jpeg,png]'
+        )
+
+        # We treat x86 builds as native, other builds keep host as x64-windows.
+        # Currently this is equivalent to the platform triplet, but this would
+        # differ if we enable arm64-windows builds in future
+
+        if ( '${{matrix.platform}}' -eq 'x86' ) {
+          $hostTriplet = 'x86-windows'
+        } else {
+          $hostTriplet = 'x64-windows'
+        }
+
+        vcpkg --triplet=${{matrix.platform}}-windows `
+              --host-triplet=$hostTriplet `
+              install --recurse @packages
 
     - name: Checkout source code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -77,6 +110,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
+            -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
             -DENABLE_SPICE=ON     `
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
@@ -85,8 +119,9 @@ jobs:
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
+            -DENABLE_LTO=ON       `
             -DUSE_ICU=ON          `
-            -DUSE_WIN_ICU=OFF
+            -DUSE_WIN_ICU=ON
 
     - name: Build
       shell: pwsh
@@ -97,23 +132,52 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
-    - name: Run winqtdeploy
+    - name: Install Windows
       shell: pwsh
-      working-directory: ${{github.workspace}}/build/src/celestia
       run: |
-        & "$env:VCPKG_INSTALLATION_ROOT/installed/${{matrix.platform}}-windows/tools/Qt6/bin/windeployqt.exe" qt6\${{env.BUILD_TYPE}}\celestia-qt6.exe
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component core
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component wingui
+        Rename-Item -Path "install" -NewName "install-wingui"
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+    - name: Upload Windows GUI
+      uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: celestia-windows-${{matrix.platform}}
+        name: celestia-windows-${{matrix.platform}}-wingui
+        if-no-files-found: error
         path: |
-          ${{github.workspace}}/build/src/**/*.exe
-          ${{github.workspace}}/build/src/**/*.dll
-          ${{github.workspace}}/build/po/**/*.gmo
-          ${{github.workspace}}/build/tools/**/*.exe
-          ${{github.workspace}}/shaders/*.glsl
+          ${{github.workspace}}/install-wingui/
+
+    - name: Install Qt6
+      shell: pwsh
+      run: |
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component core
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component qt6gui
+        Rename-Item -Path "install" -NewName "install-qt6gui"
+
+    - name: Upload Qt6 GUI
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: celestia-windows-${{matrix.platform}}-qt6gui
+        if-no-files-found: error
+        path: |
+          ${{github.workspace}}/install-qt6gui/
+
+    - name: Install tools
+      shell: pwsh
+      run: |
+        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component tools
+        Rename-Item -Path "install" -NewName "install-tools"
+
+    - name: Upload tools
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: celestia-windows-${{matrix.platform}}-tools
+        if-no-files-found: error
+        path: |
+          ${{github.workspace}}/install-tools/
 
   build-posix:
     name: "${{matrix.config.os}}"
@@ -144,7 +208,8 @@ jobs:
     - name: 'Install dependencies'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libeigen3-dev \
+        sudo apt-get install -y libboost-dev \
+                                libeigen3-dev \
                                 libepoxy-dev \
                                 libavcodec-dev \
                                 libavformat-dev \
@@ -166,14 +231,14 @@ jobs:
                                 ninja-build \
                                 qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
-            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools libqt6core5compat6-dev qt6-base-private-dev
+            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-base-private-dev
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
             sudo apt-get install -y libavif-dev
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -220,14 +285,14 @@ jobs:
         echo "PR_BASE=${{ github.event.pull_request.base.ref }}" >> pr-details.txt
 
     - name: 'Upload autogenerated headers'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ success() && matrix.config.analysis_artifacts }}
       with:
         name: celestia-autogenerated-headers
         path: celestia-autogenerated-headers.zip
 
     - name: 'Upload PR details'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ success() && github.event_name == 'pull_request' && matrix.config.analysis_artifacts }}
       with:
         name: pr-details
@@ -236,17 +301,7 @@ jobs:
   build-macos:
     # Because of include path conflicts when both Qt5 and Qt6 are installed,
     # we run these as separate builds
-    name: "macos-latest with ${{matrix.config.qt}}"
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - qt: Qt5
-          gtk: ON
-          sdl: ON
-        - qt: Qt6
-          gtk: OFF
-          sdl: OFF
+    name: "macos-latest"
     runs-on: macos-latest
     steps:
     - name: 'Install dependencies'
@@ -255,6 +310,7 @@ jobs:
                      ninja \
                      eigen \
                      ffmpeg \
+                     boost \
                      cspice \
                      fmt \
                      jpeg \
@@ -264,46 +320,32 @@ jobs:
                      lua \
                      freetype \
                      libepoxy \
-                     libavif
-        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
-          brew install qt@5
-        else
-          brew install qt@6
-        fi
-        if [ "${{matrix.config.gtk}}" = "ON" ]; then
-          brew install gtk+ gtkglext
-        fi
-        if [ "${{matrix.config.sdl}}" = "ON" ]; then
-          brew install sdl2
-        fi
+                     libavif \
+                     qt@6 \
+                     sdl2
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: 'Configure CMake'
       run: |
-        if [ "${{matrix.config.qt}}" = "Qt5" ]; then
-          UseQt5=ON
-        else
-          UseQt6=ON
-        fi
-        cmake -B ${{github.workspace}}/build      \
-              -G Ninja                            \
-              -DENABLE_GLES=OFF                   \
-              -DENABLE_SPICE=ON                   \
-              -DENABLE_TOOLS=OFF                  \
-              -DENABLE_TESTS=ON                   \
-              -DENABLE_SDL=${{matrix.config.sdl}} \
-              -DENABLE_GTK=${{matrix.config.gtk}} \
-              -DUSE_GTK3=OFF                      \
-              -DENABLE_QT5=${UseQt5:OFF}          \
-              -DENABLE_QT6=${UseQt6:OFF}          \
-              -DUSE_WAYLAND=OFF                   \
-              -DENABLE_FFMPEG=ON                  \
-              -DENABLE_LIBAVIF=ON                 \
-              -DENABLE_MINIAUDIO=ON               \
+        cmake -B ${{github.workspace}}/build \
+              -G Ninja                       \
+              -DENABLE_GLES=OFF              \
+              -DENABLE_SPICE=ON              \
+              -DENABLE_TOOLS=OFF             \
+              -DENABLE_TESTS=ON              \
+              -DENABLE_SDL=ON                \
+              -DENABLE_GTK=OFF               \
+              -DUSE_GTK3=OFF                 \
+              -DENABLE_QT5=OFF               \
+              -DENABLE_QT6=ON                \
+              -DUSE_WAYLAND=OFF              \
+              -DENABLE_FFMPEG=ON             \
+              -DENABLE_LIBAVIF=ON            \
+              -DENABLE_MINIAUDIO=ON          \
               -DUSE_ICU=OFF
 
     - name: Build
@@ -324,6 +366,7 @@ jobs:
                             libepoxy-devel \
                             libpng-devel \
                             libjpeg-turbo-devel \
+                            boost-devel \
                             freetype-devel \
                             SDL2-devel \
                             lua-devel \
@@ -338,7 +381,7 @@ jobs:
                             gcc-toolset-11-gcc-c++
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 

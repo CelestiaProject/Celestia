@@ -1,0 +1,56 @@
+#celmodel__ascii
+
+material
+diffuse 0.0 0.25 0.75
+emissive 1.0 0.50 0.0
+opacity 0.5
+specpower 0.3
+opacity 0.25
+texture0 "abc.jpeg"
+normalmap "def.png"
+specularmap "ghi.jpg"
+emissivemap "zyx.png"
+end_material
+
+material
+diffuse 0.5 0.25 0.625
+end_material
+
+mesh
+
+vertexdesc
+position f3
+normal f3
+color0 ub4
+color1 ub4
+tangent f3
+texcoord0 f2
+texcoord1 f2
+texcoord2 f2
+texcoord3 f2
+end_vertexdesc
+
+vertices 3
+7.296079 11.248578 9.22705 5.2277236 -10.1726 -8.392048 45 109 146 226 71 44 179 211 -0 5.5343466 -9.530685 -0.3390279 4.252959 -7.28864 8.539534 -6.3209734 0 6.382264 -10.71377
+1.6738018 1.8557296 -11.874223 11.38663 0.19100569 0.58637905 59 93 244 125 213 24 135 182 15.036114 -1.141086 12.600051 2.1498501 2.9668765 -15.088427 -12.589463 12.911113 -6.021534 11.512148 -15.626732
+-9.80907 11.435033 9.9803095 -11.550884 -2.126639 -9.997762 55 126 178 225 249 69 173 11 -5.527182 -15.229529 -5.2998743 6.1232743 5.819463 -0.08893819 -1.8737017 13.035601 -0.87161326 10.813936 -10.861176
+
+trilist 0 3
+0 1 2
+
+tristrip 1 3
+1 2 0
+
+trifan 0 3
+2 1 0
+
+linelist 0 3
+0 2 1
+
+linestrip 1 3
+1 0 2
+
+points 1 3
+2 0 1
+
+end_mesh

@@ -16,14 +16,17 @@
 #include <cmath>
 #include <limits>
 
+#include <boost/container/static_vector.hpp>
+
 #include <celcompat/numbers.h>
 #include <celengine/shadermanager.h>
 #include <celengine/texture.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
-#include <celutil/arrayvector.h>
 
 #define PTR(p) (reinterpret_cast<const void*>(static_cast<std::uintptr_t>(p)))
+
+namespace math = celestia::math;
 
 namespace
 {
@@ -76,7 +79,7 @@ createThetaArrays(ThetaArray& sinTheta, ThetaArray& cosTheta)
         else
         {
             double theta = static_cast<double>(i) / thetaDivisionsDbl * 2.0 * celestia::numbers::pi;
-            celmath::sincos(theta, stheta, ctheta);
+            math::sincos(theta, stheta, ctheta);
         }
 
         sinTheta[i] = static_cast<float>(stheta);
@@ -129,7 +132,7 @@ createPhiArrays(PhiArray& sinPhi, PhiArray& cosPhi)
         else
         {
             double phi = (static_cast<double>(i) / phiDivisionsDbl - 0.5) * celestia::numbers::pi;
-            celmath::sincos(phi, sphi, cphi);
+            math::sincos(phi, sphi, cphi);
         }
 
         sinPhi[i] = static_cast<float>(sphi);
@@ -173,9 +176,9 @@ const TrigArrays trigArrays;
 
 // TODO: figure out how to use std eigen's methods instead
 Eigen::Vector3f
-intersect3(const celmath::Frustum::PlaneType& p0,
-           const celmath::Frustum::PlaneType& p1,
-           const celmath::Frustum::PlaneType& p2)
+intersect3(const math::Frustum::PlaneType& p0,
+           const math::Frustum::PlaneType& p1,
+           const math::Frustum::PlaneType& p2)
 {
     Eigen::Matrix3f m;
     m.row(0) = p0.normal();
@@ -289,7 +292,7 @@ LODSphereMesh::~LODSphereMesh()
 
 
 void
-LODSphereMesh::render(const celmath::Frustum& frustum,
+LODSphereMesh::render(const math::Frustum& frustum,
                       float pixWidth,
                       Texture** tex,
                       int nTextures,
@@ -301,7 +304,7 @@ LODSphereMesh::render(const celmath::Frustum& frustum,
 
 void
 LODSphereMesh::render(unsigned int attributes,
-                      const celmath::Frustum& frustum,
+                      const math::Frustum& frustum,
                       float pixWidth,
                       CelestiaGLProgram *program,
                       Texture* tex0,
@@ -309,22 +312,22 @@ LODSphereMesh::render(unsigned int attributes,
                       Texture* tex2,
                       Texture* tex3)
 {
-    celestia::util::ArrayVector<Texture*, 4> tex;
+    boost::container::static_vector<Texture*, 4> tex;
     if (tex0 != nullptr)
-        tex.try_push_back(tex0);
+        tex.push_back(tex0);
     if (tex1 != nullptr)
-        tex.try_push_back(tex1);
+        tex.push_back(tex1);
     if (tex2 != nullptr)
-        tex.try_push_back(tex2);
+        tex.push_back(tex2);
     if (tex3 != nullptr)
-        tex.try_push_back(tex3);
+        tex.push_back(tex3);
     render(attributes, frustum, pixWidth,
            tex.data(), static_cast<int>(tex.size()), program);
 }
 
 
 void LODSphereMesh::render(unsigned int attributes,
-                           const celmath::Frustum& frustum,
+                           const math::Frustum& frustum,
                            float pixWidth,
                            Texture** tex,
                            int nTextures,
@@ -489,30 +492,30 @@ void LODSphereMesh::render(unsigned int attributes,
         //
         // Compute the vertices of the view frustum.  These will be used for
         // culling patches.
-        ri.fp[0] = intersect3(frustum.plane(celmath::Frustum::Near),
-                              frustum.plane(celmath::Frustum::Top),
-                              frustum.plane(celmath::Frustum::Left));
-        ri.fp[1] = intersect3(frustum.plane(celmath::Frustum::Near),
-                              frustum.plane(celmath::Frustum::Top),
-                              frustum.plane(celmath::Frustum::Right));
-        ri.fp[2] = intersect3(frustum.plane(celmath::Frustum::Near),
-                              frustum.plane(celmath::Frustum::Bottom),
-                              frustum.plane(celmath::Frustum::Left));
-        ri.fp[3] = intersect3(frustum.plane(celmath::Frustum::Near),
-                              frustum.plane(celmath::Frustum::Bottom),
-                              frustum.plane(celmath::Frustum::Right));
-        ri.fp[4] = intersect3(frustum.plane(celmath::Frustum::Far),
-                              frustum.plane(celmath::Frustum::Top),
-                              frustum.plane(celmath::Frustum::Left));
-        ri.fp[5] = intersect3(frustum.plane(celmath::Frustum::Far),
-                              frustum.plane(celmath::Frustum::Top),
-                              frustum.plane(celmath::Frustum::Right));
-        ri.fp[6] = intersect3(frustum.plane(celmath::Frustum::Far),
-                              frustum.plane(celmath::Frustum::Bottom),
-                              frustum.plane(celmath::Frustum::Left));
-        ri.fp[7] = intersect3(frustum.plane(celmath::Frustum::Far),
-                              frustum.plane(celmath::Frustum::Bottom),
-                              frustum.plane(celmath::Frustum::Right));
+        ri.fp[0] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[1] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[2] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[3] = intersect3(frustum.plane(math::FrustumPlane::Near),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[4] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[5] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Top),
+                              frustum.plane(math::FrustumPlane::Right));
+        ri.fp[6] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Left));
+        ri.fp[7] = intersect3(frustum.plane(math::FrustumPlane::Far),
+                              frustum.plane(math::FrustumPlane::Bottom),
+                              frustum.plane(math::FrustumPlane::Right));
 
         const int extent = maxDivisions / 2;
         for (int i = 0; i < 2; i++)
@@ -579,7 +582,7 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
     // If the normal is near zero length, something's going wrong
     assert(normal.norm() != 0.0f);
     normal.normalize();
-    celmath::Frustum::PlaneType separatingPlane(normal, p0);
+    math::Frustum::PlaneType separatingPlane(normal, p0);
 
     for (int k = 0; k < 8; k++)
     {
@@ -605,7 +608,7 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
                                      (patchCenter - p1).norm(),
                                      (patchCenter - p2).norm(),
                                      (patchCenter - p3).norm()});
-        ri.frustum.testSphere(patchCenter, boundingRadius) == celmath::Frustum::Outside)
+        ri.frustum.testSphere(patchCenter, boundingRadius) == math::FrustumAspect::Outside)
         return;
 
     if (level == 1)

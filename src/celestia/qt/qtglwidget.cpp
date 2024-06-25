@@ -18,6 +18,7 @@
 #include "qtglwidget.h"
 
 #include <cstdlib>
+#include <utility>
 
 #include <config.h>
 
@@ -36,14 +37,17 @@
 #include <celengine/body.h>
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
+#include <celestia/configfile.h>
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
 
+namespace celestia::qt
+{
 
 namespace
 {
 
-constexpr int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
+constexpr auto DEFAULT_ORBIT_MASK = static_cast<int>(BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar);
 constexpr int DEFAULT_LABEL_MODE = Renderer::LocationLabels | Renderer::I18nConstellationLabels;
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
@@ -52,8 +56,18 @@ constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
 constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
-} // end unnamed namespace
+std::pair<float, float>
+mousePosition(const QMouseEvent& m, qreal scale)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    return { static_cast<float>(m.x() * scale), static_cast<float>(m.y() * scale) };
+#else
+    auto position = m.position();
+    return { static_cast<float>(position.x() * scale), static_cast<float>(position.y() * scale) };
+#endif
+}
 
+} // end unnamed namespace
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
     QOpenGLWidget(parent)
@@ -74,9 +88,7 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 }
 
-
 CelestiaGlWidget::~CelestiaGlWidget() = default;
-
 
 /*!
   Paint the box. The actual openGL commands for drawing the box are
@@ -88,7 +100,6 @@ CelestiaGlWidget::paintGL()
 {
     appCore->draw();
 }
-
 
 /*!
   Set up the OpenGL rendering state, and define display list
@@ -127,7 +138,7 @@ CelestiaGlWidget::initializeGL()
     // Read saved settings
     QSettings settings;
     appRenderer->setRenderFlags(settings.value("RenderFlags", static_cast<quint64>(Renderer::DefaultRenderFlags)).toULongLong());
-    appRenderer->setOrbitMask(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt());
+    appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt()));
     appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
@@ -144,7 +155,6 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
 }
 
-
 void
 CelestiaGlWidget::resizeGL(int w, int h)
 {
@@ -154,13 +164,11 @@ CelestiaGlWidget::resizeGL(int w, int h)
     appCore->resize(width, height);
 }
 
-
 void
 CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     int buttons = 0;
     if (m->buttons() & Qt::LeftButton)
@@ -201,13 +209,11 @@ CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
     }
 }
 
-
 void
 CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     if (m->button() == Qt::LeftButton)
     {
@@ -226,13 +232,11 @@ CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
     }
 }
 
-
 void
 CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
-    auto x = static_cast<int>(m->x() * scale);
-    auto y = static_cast<int>(m->y() * scale);
+    auto [x, y] = mousePosition(*m, scale);
 
     if (m->button() == Qt::LeftButton)
     {
@@ -265,7 +269,6 @@ CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
     }
 }
 
-
 void
 CelestiaGlWidget::wheelEvent(QWheelEvent* w)
 {
@@ -282,7 +285,6 @@ CelestiaGlWidget::wheelEvent(QWheelEvent* w)
         appCore->mouseWheel(1.0f, 0);
     }
 }
-
 
 bool
 CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
@@ -411,7 +413,6 @@ CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
     return false;
 }
 
-
 void
 CelestiaGlWidget::keyPressEvent(QKeyEvent* e)
 {
@@ -465,7 +466,6 @@ CelestiaGlWidget::keyPressEvent(QKeyEvent* e)
     }
 }
 
-
 void
 CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
 {
@@ -481,7 +481,6 @@ CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
     dragHandler->clearButton(modifiers);
     handleSpecialKey(e, false);
 }
-
 
 void
 CelestiaGlWidget::setCursorShape(CelestiaCore::CursorShape shape)
@@ -551,16 +550,16 @@ CelestiaGlWidget::setCursorShape(CelestiaCore::CursorShape shape)
     }
 }
 
-
 CelestiaCore::CursorShape
 CelestiaGlWidget::getCursorShape() const
 {
     return currentCursor;
 }
 
-
 QSize
 CelestiaGlWidget::sizeHint() const
 {
     return QSize(640, 480);
 }
+
+} // end namespace celestia::qt

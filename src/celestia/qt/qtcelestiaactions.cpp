@@ -23,9 +23,36 @@
 
 #include <celengine/body.h>
 #include <celengine/simulation.h>
+#include <celestia/hud.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
+namespace celestia::qt
+{
+
+namespace
+{
+
+QAction*
+createCheckableAction(const QString& text, QObject* parent, int data)
+{
+    QAction* act = new QAction(text, parent);
+    act->setCheckable(true);
+    act->setData(data);
+    return act;
+}
+
+// Convenience method to create a checkable action for a menu and set the data
+// to the specified integer value.
+QAction*
+createCheckableAction(const QString& text, QMenu* menu, int data)
+{
+    QAction* act = createCheckableAction(text, static_cast<QObject*>(menu), data);
+    menu->addAction(act);
+    return act;
+}
+
+} // end unnamed namespace
 
 CelestiaActions::CelestiaActions(QObject* parent,
                                  CelestiaCore* _appCore) :
@@ -90,14 +117,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
-    starOrbitsAction        = createCheckableAction(_("Stars"),         orbitsMenu, Body::Stellar);
-    planetOrbitsAction      = createCheckableAction(_("Planets"),       orbitsMenu, Body::Planet);
-    dwarfPlanetOrbitsAction = createCheckableAction(_("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
-    moonOrbitsAction        = createCheckableAction(_("Moons"),         orbitsMenu, Body::Moon);
-    minorMoonOrbitsAction   = createCheckableAction(_("Minor Moons"),   orbitsMenu, Body::MinorMoon);
-    asteroidOrbitsAction    = createCheckableAction(_("Asteroids"),     orbitsMenu, Body::Asteroid);
-    cometOrbitsAction       = createCheckableAction(_("Comets"),        orbitsMenu, Body::Comet);
-    spacecraftOrbitsAction  = createCheckableAction(C_("plural", "Spacecraft"),   orbitsMenu, Body::Spacecraft);
+    starOrbitsAction        = createCheckableAction(_("Stars"),                 orbitsMenu, static_cast<int>(BodyClassification::Stellar));
+    planetOrbitsAction      = createCheckableAction(_("Planets"),               orbitsMenu, static_cast<int>(BodyClassification::Planet));
+    dwarfPlanetOrbitsAction = createCheckableAction(_("Dwarf Planets"),         orbitsMenu, static_cast<int>(BodyClassification::DwarfPlanet));
+    moonOrbitsAction        = createCheckableAction(_("Moons"),                 orbitsMenu, static_cast<int>(BodyClassification::Moon));
+    minorMoonOrbitsAction   = createCheckableAction(_("Minor Moons"),           orbitsMenu, static_cast<int>(BodyClassification::MinorMoon));
+    asteroidOrbitsAction    = createCheckableAction(_("Asteroids"),             orbitsMenu, static_cast<int>(BodyClassification::Asteroid));
+    cometOrbitsAction       = createCheckableAction(_("Comets"),                orbitsMenu, static_cast<int>(BodyClassification::Comet));
+    spacecraftOrbitsAction  = createCheckableAction(C_("plural", "Spacecraft"), orbitsMenu, static_cast<int>(BodyClassification::Spacecraft));
 
     connect(starOrbitsAction,           SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(planetOrbitsAction,         SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
@@ -149,40 +176,40 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     labelsAction->setMenu(labelsMenu);
 
-    galaxiesAction     = createCheckableAction(_("Galaxies"),          Renderer::ShowGalaxies);
+    galaxiesAction     = createCheckableAction(_("Galaxies"),      this, Renderer::ShowGalaxies);
     //galaxiesAction->setShortcut(QString("U"));
-    globularsAction    = createCheckableAction(_("Globulars"),         Renderer::ShowGlobulars);
-    openClustersAction = createCheckableAction(_("Open Clusters"),     Renderer::ShowOpenClusters);
-    nebulaeAction      = createCheckableAction(_("Nebulae"),           Renderer::ShowNebulae);
+    globularsAction    = createCheckableAction(_("Globulars"),     this, Renderer::ShowGlobulars);
+    openClustersAction = createCheckableAction(_("Open Clusters"), this, Renderer::ShowOpenClusters);
+    nebulaeAction      = createCheckableAction(_("Nebulae"),       this, Renderer::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
     connect(galaxiesAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(globularsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(openClustersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nebulaeAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    cloudsAction          = createCheckableAction(_("Clouds"),            Renderer::ShowCloudMaps);
+    cloudsAction          = createCheckableAction(_("Clouds"),            this, Renderer::ShowCloudMaps);
     //cloudsAction->setShortcut(QString("I"));
-    nightSideLightsAction = createCheckableAction(_("Night Side Lights"), Renderer::ShowNightMaps);
+    nightSideLightsAction = createCheckableAction(_("Night Side Lights"), this, Renderer::ShowNightMaps);
     nightSideLightsAction->setShortcut(QString("Ctrl+L"));
-    cometTailsAction      = createCheckableAction(_("Comet Tails"),       Renderer::ShowCometTails);
-    atmospheresAction     = createCheckableAction(_("Atmospheres"),       Renderer::ShowAtmospheres);
+    cometTailsAction      = createCheckableAction(_("Comet Tails"),       this, Renderer::ShowCometTails);
+    atmospheresAction     = createCheckableAction(_("Atmospheres"),       this, Renderer::ShowAtmospheres);
     atmospheresAction->setShortcut(QString("Ctrl+A"));
     connect(cloudsAction,          SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nightSideLightsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cometTailsAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(atmospheresAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    ringShadowsAction     = createCheckableAction(_("Ring Shadows"),      Renderer::ShowRingShadows);
-    eclipseShadowsAction  = createCheckableAction(_("Eclipse Shadows"),   Renderer::ShowEclipseShadows);
+    ringShadowsAction     = createCheckableAction(_("Ring Shadows"),    this, Renderer::ShowRingShadows);
+    eclipseShadowsAction  = createCheckableAction(_("Eclipse Shadows"), this, Renderer::ShowEclipseShadows);
     eclipseShadowsAction->setShortcut(QKeySequence("Ctrl+E"));
-    cloudShadowsAction    = createCheckableAction(_("Cloud Shadows"),     Renderer::ShowCloudShadows);
+    cloudShadowsAction    = createCheckableAction(_("Cloud Shadows"),   this, Renderer::ShowCloudShadows);
     connect(ringShadowsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(eclipseShadowsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cloudShadowsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    lowResAction          = createCheckableAction(_("Low"),    lores);
-    mediumResAction       = createCheckableAction(_("Medium"), medres);
-    highResAction         = createCheckableAction(_("High"),   hires);
+    lowResAction          = createCheckableAction(_("Low"),    this, lores);
+    mediumResAction       = createCheckableAction(_("Medium"), this, medres);
+    highResAction         = createCheckableAction(_("High"),   this, hires);
     QActionGroup *texResGroup = new QActionGroup(this);
     texResGroup->addAction(lowResAction);
     texResGroup->addAction(mediumResAction);
@@ -192,7 +219,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    autoMagAction        = createCheckableAction(_("Auto Magnitude"), Renderer::ShowAutoMag);
+    autoMagAction        = createCheckableAction(_("Auto Magnitude"), this, Renderer::ShowAutoMag);
     autoMagAction->setShortcut(QKeySequence("Ctrl+Y"));
     autoMagAction->setToolTip(_("Faintest visible magnitude based on field of view"));
     connect(autoMagAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -206,9 +233,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(increaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
     connect(decreaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
 
-    pointStarAction      = createCheckableAction(_("Points"),         Renderer::PointStars);
-    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"),   Renderer::FuzzyPointStars);
-    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"),   Renderer::ScaledDiscStars);
+    pointStarAction      = createCheckableAction(_("Points"),       this, Renderer::PointStars);
+    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, Renderer::FuzzyPointStars);
+    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, Renderer::ScaledDiscStars);
     QActionGroup *starStyleGroup = new QActionGroup(this);
     starStyleGroup->addAction(pointStarAction);
     starStyleGroup->addAction(fuzzyPointStarAction);
@@ -228,20 +255,18 @@ CelestiaActions::CelestiaActions(QObject* parent,
     appCore->getRenderer()->addWatcher(this);
 }
 
-
 CelestiaActions::~CelestiaActions()
 {
     appCore->getRenderer()->removeWatcher(this);
 }
 
-
 void
 CelestiaActions::syncWithRenderer(const Renderer* renderer)
 {
     auto renderFlags = renderer->getRenderFlags();
-    int labelMode   = renderer->getLabelMode();
-    int orbitMask   = renderer->getOrbitMask();
-    int textureRes  = renderer->getResolution();
+    int labelMode = renderer->getLabelMode();
+    BodyClassification orbitMask = renderer->getOrbitMask();
+    int textureRes = renderer->getResolution();
     Renderer::StarStyle starStyle = renderer->getStarStyle();
 
     equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
@@ -269,14 +294,14 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     labelLocationsAction->setChecked(labelMode & Renderer::LocationLabels);
     labelConstellationsAction->setChecked(labelMode & Renderer::ConstellationLabels);
 
-    starOrbitsAction->setChecked(orbitMask & Body::Stellar);
-    planetOrbitsAction->setChecked(orbitMask & Body::Planet);
-    dwarfPlanetOrbitsAction->setChecked(orbitMask & Body::DwarfPlanet);
-    moonOrbitsAction->setChecked(orbitMask & Body::Moon);
-    minorMoonOrbitsAction->setChecked(orbitMask & Body::MinorMoon);
-    asteroidOrbitsAction->setChecked(orbitMask & Body::Asteroid);
-    cometOrbitsAction->setChecked(orbitMask & Body::Comet);
-    spacecraftOrbitsAction->setChecked(orbitMask & Body::Spacecraft);
+    starOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Stellar));
+    planetOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Planet));
+    dwarfPlanetOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::DwarfPlanet));
+    moonOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Moon));
+    minorMoonOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::MinorMoon));
+    asteroidOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Asteroid));
+    cometOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Comet));
+    spacecraftOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Spacecraft));
 
     // Texture resolution
     lowResAction->setChecked(textureRes == lores);
@@ -309,20 +334,17 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     autoMagAction->setChecked(renderFlags & Renderer::ShowAutoMag);
 }
 
-
 void
 CelestiaActions::syncWithAppCore()
 {
     lightTimeDelayAction->setChecked(appCore->getLightDelayActive());
 }
 
-
 void
 CelestiaActions::notifyRenderSettingsChanged(const Renderer* renderer)
 {
     syncWithRenderer(renderer);
 }
-
 
 void
 CelestiaActions::slotToggleRenderFlag()
@@ -335,7 +357,6 @@ CelestiaActions::slotToggleRenderFlag()
     }
 }
 
-
 void
 CelestiaActions::slotToggleLabel()
 {
@@ -347,18 +368,16 @@ CelestiaActions::slotToggleLabel()
     }
 }
 
-
 void
 CelestiaActions::slotToggleOrbit()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        int orbit = act->data().toInt();
+        auto orbit = static_cast<BodyClassification>(act->data().toInt());
         appCore->getRenderer()->setOrbitMask(appCore->getRenderer()->getOrbitMask() ^ orbit);
     }
 }
-
 
 void
 CelestiaActions::slotSetStarStyle()
@@ -371,7 +390,6 @@ CelestiaActions::slotSetStarStyle()
     }
 }
 
-
 void
 CelestiaActions::slotSetTextureResolution()
 {
@@ -383,7 +401,6 @@ CelestiaActions::slotSetTextureResolution()
     }
 }
 
-
 void
 CelestiaActions::slotAdjustLimitingMagnitude()
 {
@@ -393,7 +410,7 @@ CelestiaActions::slotAdjustLimitingMagnitude()
         // HACK!HACK!HACK!
         // Consider removal relevant entries from menus.
         // If search console is open then pass keys to it.
-        if (appCore->getTextEnterMode() != CelestiaCore::KbNormal)
+        if (appCore->getTextEnterMode() != celestia::Hud::TextEnterMode::Normal)
         {
             appCore->charEntered(act->shortcut().toString().toUtf8().data());
             return;
@@ -423,7 +440,6 @@ CelestiaActions::slotAdjustLimitingMagnitude()
     }
 }
 
-
 void
 CelestiaActions::slotSetLightTimeDelay()
 {
@@ -432,29 +448,4 @@ CelestiaActions::slotSetLightTimeDelay()
     appCore->charEntered('-');
 }
 
-
-// Convenience method to create a checkable action for a menu and set the data
-// to the specified integer value.
-QAction*
-CelestiaActions::createCheckableAction(const QString& text, QMenu* menu, int data)
-{
-    QAction* act = new QAction(text, menu);
-    act->setCheckable(true);
-    act->setData(data);
-    menu->addAction(act);
-
-    return act;
-}
-
-
-// Convenience method to create a checkable action and set the data
-// to the specified integer value.
-QAction*
-CelestiaActions::createCheckableAction(const QString& text, int data)
-{
-    QAction* act = new QAction(text, this);
-    act->setCheckable(true);
-    act->setData(data);
-
-    return act;
-}
+} // end namespace celestia::qt

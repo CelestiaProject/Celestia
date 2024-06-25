@@ -26,6 +26,7 @@
 
 
 using celestia::util::GetLogger;
+using celestia::engine::Image;
 
 namespace
 {
@@ -145,11 +146,10 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
     tilePath(_tilePath),
     tilePrefix(_tilePrefix),
     baseSplit(_baseSplit),
-    tileSize(_tileSize),
     ticks(0),
     nResolutionLevels(0)
 {
-    assert(tileSize != 0 && isPow2(tileSize));
+    assert(_tileSize != 0 && isPow2(_tileSize));
     tileExt = fmt::format(".{:s}", _tileType);
     populateTileTree();
 
@@ -273,11 +273,14 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
     lod >>= baseSplit;
     assert(lod < (unsigned)MaxResolutionLevels);
 
+    auto filename = fs::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
+    filename += tileExt;
+
     auto path = tilePath /
                 fmt::format("level{:d}", lod) /
-                fmt::format("{:s}{:d}_{:d}{:s}", tilePrefix, u, v, tileExt.string());
+                filename;
 
-    std::unique_ptr<Image> img = LoadImageFromFile(path);
+    auto img = Image::load(path);
     if (img == nullptr)
         return nullptr;
 

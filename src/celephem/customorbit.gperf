@@ -5,95 +5,95 @@
 %compare-strncmp
 %readonly-tables
 %enum
-struct CustomOrbitEntry { const char* name; CustomOrbitFactory factory; };
+struct CustomOrbitEntry { const char* name; CustomOrbitType orbitType; };
 %%
-"mercury",         &CreateMercuryOrbit
-"venus",           &CreateVenusOrbit
-"earth",           &CreateEarthOrbit
-"moon",            &CreateMoonOrbit
-"mars",            &CreateMarsOrbit
-"jupiter",         &CreateJupiterOrbit
-"saturn",          &CreateSaturnOrbit
-"uranus",          &CreateUranusOrbit
-"neptune",         &CreateNeptuneOrbit
-"pluto",           &CreatePlutoOrbit
+"mercury",         CustomOrbitType::Mercury
+"venus",           CustomOrbitType::Venus
+"earth",           CustomOrbitType::Earth
+"moon",            CustomOrbitType::Moon
+"mars",            CustomOrbitType::Mars
+"jupiter",         CustomOrbitType::Jupiter
+"saturn",          CustomOrbitType::Saturn
+"uranus",          CustomOrbitType::Uranus
+"neptune",         CustomOrbitType::Neptune
+"pluto",           CustomOrbitType::Pluto
 #
 # Two styles of custom orbit name are permitted for JPL ephemeris
 # orbits. The preferred is <ephemeris>-<object>, e.g.
 # jpl-mercury-sun. But the reverse form is still supported for
 # backward compatibility.
 #
-"jpl-mercury-sun", &CreateJplMercurySunOrbit
-"jpl-venus-sun",   &CreateJplVenusSunOrbit
-"jpl-earth-sun",   &CreateJplEarthSunOrbit
-"jpl-mars-sun",    &CreateJplMarsSunOrbit
-"jpl-jupiter-sun", &CreateJplJupiterSunOrbit
-"jpl-saturn-sun",  &CreateJplSaturnSunOrbit
-"jpl-uranus-sun",  &CreateJplUranusSunOrbit
-"jpl-neptune-sun", &CreateJplNeptuneSunOrbit
-"jpl-pluto-sun",   &CreateJplPlutoSunOrbit
-"mercury-jpl",     &CreateJplMercurySunOrbit
-"venus-jpl",       &CreateJplVenusSunOrbit
-"earth-sun",       &CreateJplEarthSunOrbit
-"mars-sun",        &CreateJplMarsSunOrbit
-"jupiter-sun",     &CreateJplJupiterSunOrbit
-"saturn-sun",      &CreateJplSaturnSunOrbit
-"uranus-sun",      &CreateJplUranusSunOrbit
-"neptune-sun",     &CreateJplNeptuneSunOrbit
-"pluto-sun",       &CreateJplPlutoSunOrbit
+"jpl-mercury-sun", CustomOrbitType::JplMercurySun
+"jpl-venus-sun",   CustomOrbitType::JplVenusSun
+"jpl-earth-sun",   CustomOrbitType::JplEarthSun
+"jpl-mars-sun",    CustomOrbitType::JplMarsSun
+"jpl-jupiter-sun", CustomOrbitType::JplJupiterSun
+"jpl-saturn-sun",  CustomOrbitType::JplSaturnSun
+"jpl-uranus-sun",  CustomOrbitType::JplUranusSun
+"jpl-neptune-sun", CustomOrbitType::JplNeptuneSun
+"jpl-pluto-sun",   CustomOrbitType::JplPlutoSun
+"mercury-jpl",     CustomOrbitType::JplMercurySun
+"venus-jpl",       CustomOrbitType::JplVenusSun
+"earth-sun",       CustomOrbitType::JplEarthSun
+"mars-sun",        CustomOrbitType::JplMarsSun
+"jupiter-sun",     CustomOrbitType::JplJupiterSun
+"saturn-sun",      CustomOrbitType::JplSaturnSun
+"uranus-sun",      CustomOrbitType::JplUranusSun
+"neptune-sun",     CustomOrbitType::JplNeptuneSun
+"pluto-sun",       CustomOrbitType::JplPlutoSun
 #
-"jpl-mercury-ssb", &CreateJplMercurySsbOrbit
-"jpl-venus-ssb",   &CreateJplVenusSsbOrbit
-"jpl-earth-ssb",   &CreateJplEarthSsbOrbit
-"jpl-mars-ssb",    &CreateJplMarsSsbOrbit
-"jpl-jupiter-ssb", &CreateJplJupiterSsbOrbit
-"jpl-saturn-ssb",  &CreateJplSaturnSsbOrbit
-"jpl-uranus-ssb",  &CreateJplUranusSsbOrbit
-"jpl-neptune-ssb", &CreateJplNeptuneSsbOrbit
-"jpl-pluto-ssb",   &CreateJplPlutoSsbOrbit
+"jpl-mercury-ssb", CustomOrbitType::JplMercurySsb
+"jpl-venus-ssb",   CustomOrbitType::JplVenusSsb
+"jpl-earth-ssb",   CustomOrbitType::JplEarthSsb
+"jpl-mars-ssb",    CustomOrbitType::JplMarsSsb
+"jpl-jupiter-ssb", CustomOrbitType::JplJupiterSsb
+"jpl-saturn-ssb",  CustomOrbitType::JplSaturnSsb
+"jpl-uranus-ssb",  CustomOrbitType::JplUranusSsb
+"jpl-neptune-ssb", CustomOrbitType::JplNeptuneSsb
+"jpl-pluto-ssb",   CustomOrbitType::JplPlutoSsb
 #
-"jpl-emb-sun",     &CreateJplEmbSunOrbit
-"jpl-emb-ssb",     &CreateJplEmbSsbOrbit
-"jpl-moon-emb",    &CreateJplMoonEmbOrbit
-"jpl-moon-earth",  &CreateJplMoonEarthOrbit
-"jpl-earth-emb",   &CreateJplEarthEmbOrbit
+"jpl-emb-sun",     CustomOrbitType::JplEmbSun
+"jpl-emb-ssb",     CustomOrbitType::JplEmbSsb
+"jpl-moon-emb",    CustomOrbitType::JplMoonEmb
+"jpl-moon-earth",  CustomOrbitType::JplMoonEarth
+"jpl-earth-emb",   CustomOrbitType::JplEarthEmb
 #
-"jpl-sun-ssb",     &CreateJplSunSsbOrbit
+"jpl-sun-ssb",     CustomOrbitType::JplSunSsb
 #
-"htc20-helene",    &CreateHeleneOrbit
-"htc20-telesto",   &CreateTelestoOrbit
-"htc20-calypso",   &CreateCalypsoOrbit
+"htc20-helene",    CustomOrbitType::Helene
+"htc20-telesto",   CustomOrbitType::Telesto
+"htc20-calypso",   CustomOrbitType::Calypso
 #
-"phobos",          &CreatePhobosOrbit
-"deimos",          &CreateDeimosOrbit
-"io",              &CreateIoOrbit
-"europa",          &CreateEuropaOrbit
-"ganymede",        &CreateGanymedeOrbit
-"callisto",        &CreateCallistoOrbit
-"mimas",           &CreateMimasOrbit
-"enceladus",       &CreateEnceladusOrbit
-"tethys",          &CreateTethysOrbit
-"dione",           &CreateDioneOrbit
-"rhea",            &CreateRheaOrbit
-"titan",           &CreateTitanOrbit
-"hyperion",        &CreateHyperionOrbit
-"iapetus",         &CreateIapetusOrbit
-"phoebe",          &CreatePhoebeOrbit
-"miranda",         &CreateMirandaOrbit
-"ariel",           &CreateArielOrbit
-"umbriel",         &CreateUmbrielOrbit
-"titania",         &CreateTitaniaOrbit
-"oberon",          &CreateOberonOrbit
-"triton",          &CreateTritonOrbit
+"phobos",          CustomOrbitType::Phobos
+"deimos",          CustomOrbitType::Deimos
+"io",              CustomOrbitType::Io
+"europa",          CustomOrbitType::Europa
+"ganymede",        CustomOrbitType::Ganymede
+"callisto",        CustomOrbitType::Callisto
+"mimas",           CustomOrbitType::Mimas
+"enceladus",       CustomOrbitType::Enceladus
+"tethys",          CustomOrbitType::Tethys
+"dione",           CustomOrbitType::Dione
+"rhea",            CustomOrbitType::Rhea
+"titan",           CustomOrbitType::Titan
+"hyperion",        CustomOrbitType::Hyperion
+"iapetus",         CustomOrbitType::Iapetus
+"phoebe",          CustomOrbitType::Phoebe
+"miranda",         CustomOrbitType::Miranda
+"ariel",           CustomOrbitType::Ariel
+"umbriel",         CustomOrbitType::Umbriel
+"titania",         CustomOrbitType::Titania
+"oberon",          CustomOrbitType::Oberon
+"triton",          CustomOrbitType::Triton
 #
 # VSOP orbits
 #
-"vsop87-mercury",  &CreateVSOP87MercuryOrbit
-"vsop87-venus",    &CreateVSOP87VenusOrbit
-"vsop87-earth",    &CreateVSOP87EarthOrbit
-"vsop87-mars",     &CreateVSOP87MarsOrbit
-"vsop87-jupiter",  &CreateVSOP87JupiterOrbit
-"vsop87-saturn",   &CreateVSOP87SaturnOrbit
-"vsop87-uranus",   &CreateVSOP87UranusOrbit
-"vsop87-neptune",  &CreateVSOP87NeptuneOrbit
-"vsop87-sun",      &CreateVSOP87SunOrbit
+"vsop87-mercury",  CustomOrbitType::VSOP87Mercury
+"vsop87-venus",    CustomOrbitType::VSOP87Venus
+"vsop87-earth",    CustomOrbitType::VSOP87Earth
+"vsop87-mars",     CustomOrbitType::VSOP87Mars
+"vsop87-jupiter",  CustomOrbitType::VSOP87Jupiter
+"vsop87-saturn",   CustomOrbitType::VSOP87Saturn
+"vsop87-uranus",   CustomOrbitType::VSOP87Uranus
+"vsop87-neptune",  CustomOrbitType::VSOP87Neptune
+"vsop87-sun",      CustomOrbitType::VSOP87Sun

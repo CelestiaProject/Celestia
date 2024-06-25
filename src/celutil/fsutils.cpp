@@ -11,9 +11,13 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h> // HAVE_WORDEXP
+#include <array>
+#include <cctype>
 #include <fstream>
+#include <utility>
 #include <fmt/format.h>
 #include "gettext.h"
+#include "logger.h"
 #ifdef _WIN32
 #include <shlobj.h>
 #include "winutil.h"
@@ -36,6 +40,60 @@
 namespace celestia::util
 {
 
+std::optional<fs::path>
+U8FileName(std::string_view source, bool allowWildcardExtension)
+{
+    using namespace std::string_view_literals;
+
+    // Windows: filenames cannot end with . or space
+    if (source.empty() || source.back() == '.' || source.back() == ' ')
+        return std::nullopt;
+
+    // Various characters disallowed in Windows filenames
+    constexpr std::string_view badChars = R"("/:<>?\|)"sv;
+    const auto lastPos = source.size() - 1;
+    for (std::string_view::size_type i = 0; i < source.size(); ++i)
+    {
+        char ch = source[i];
+        // Windows (and basic politeness) disallows all control characters
+        // Only allow * as extension .* at the end of the name
+        if (ch < ' ' || badChars.find(ch) != std::string_view::npos ||
+            (ch == '*' && !(allowWildcardExtension && i == lastPos && i > 0 && source[i - 1] == '.')))
+        {
+            return std::nullopt;
+        }
+    }
+
+    // Disallow reserved Windows device names
+    if (std::string_view stem = source.substr(0, source.rfind('.'));
+        stem.size() >= 3 && stem.size() <= 5)
+    {
+        std::array<char, 5> buffer{ '\0', '\0', '\0', '\0', '\0' };
+        stem.copy(buffer.data(), 5);
+        for (std::size_t i = 0; i < stem.size(); ++i)
+        {
+            buffer[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(buffer[i])));
+        }
+
+        stem = std::string_view(buffer.data(), stem.size());
+        if (stem == "CON"sv || stem == "PRN"sv || stem == "AUX"sv || stem == "NUL"sv)
+            return std::nullopt;
+
+        constexpr std::string_view superscriptTrailBytes = "\xb2\xb3\xb9"sv;
+
+        // COM or LPT followed by digits 0-9 or superscript digits 1-3
+        if ((stem.substr(0, 3) == "COM"sv || stem.substr(0, 3) == "LPT"sv) &&
+            ((stem.size() == 4 && stem[3] >= '0' && stem[3] <= '9') ||
+             (stem.size() == 5 && stem[3] == '\xc2' &&
+              superscriptTrailBytes.find(stem[4]) != std::string_view::npos)))
+        {
+            return std::nullopt;
+        }
+    }
+
+    return fs::u8path(source);
+}
+
 fs::path LocaleFilename(const fs::path &p)
 {
     const char *orig = N_("LANGUAGE");
@@ -57,21 +115,21 @@ fs::path LocaleFilename(const fs::path &p)
 }
 
 
-fs::path PathExp(const fs::path& filename)
+fs::path PathExp(fs::path&& filename)
 {
 #ifdef PORTABLE_BUILD
-    return filename;
+    return std::move(filename);
 #elif defined(_WIN32)
-    auto str = filename.native();
-    if (str[0] == '~')
+    const auto& str = filename.native();
+    if (str[0] == L'~')
     {
         if (str.size() == 1)
             return HomeDir();
-        if (str[1] == '\\' || str[1] == '/')
+        if (str[1] == L'\\' || str[1] == L'/')
             return HomeDir() / str.substr(2);
     }
 
-    return filename;
+    return std::move(filename);
 #elif defined(HAVE_WORDEXP)
     wordexp_t result;
 
@@ -84,20 +142,20 @@ fs::path PathExp(const fs::path& filename)
         // then perhaps part of the result was allocated.
         wordfree(&result);
     default: // some other error
-        return filename;
+        return std::move(filename);
     }
 
     if (result.we_wordc != 1)
     {
         wordfree(&result);
-        return filename;
+        return std::move(filename);
     }
 
     fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
 #else
-    return filename;
+    return std::move(filename);
 #endif
 }
 
@@ -114,6 +172,20 @@ fs::path ResolveWildcard(const fs::path& wildcard,
     }
 
     return fs::path();
+}
+
+bool IsValidDirectory(const fs::path& dir)
+{
+    if (dir.empty())
+        return false;
+
+    if (std::error_code ec; !fs::is_directory(dir, ec))
+    {
+        GetLogger()->error(_("Path {} doesn't exist or isn't a directory\n"), dir);
+        return false;
+    }
+
+    return true;
 }
 
 #ifndef PORTABLE_BUILD

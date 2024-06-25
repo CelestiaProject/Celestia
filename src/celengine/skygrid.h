@@ -12,19 +12,15 @@
 
 #pragma once
 
-#include <string>
-#include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <celrender/linerenderer.h>
+
 #include <celutil/color.h>
 
-class Renderer;
-class Observer;
-
-
-class SkyGrid
+namespace celestia::engine
 {
-public:
+
+struct SkyGrid
+{
     enum LongitudeUnits
     {
         LongitudeDegrees,
@@ -37,79 +33,11 @@ public:
         IncreasingClockwise,
     };
 
-    void render(Renderer& renderer,
-                const Observer& observer,
-                int windowWidth,
-                int windowHeight);
-
-    Eigen::Quaterniond orientation() const
-    {
-        return m_orientation;
-    }
-
-    void setOrientation(const Eigen::Quaterniond& orientation)
-    {
-        m_orientation = orientation;
-    }
-
-    Color lineColor() const
-    {
-        return m_lineColor;
-    }
-
-    void setLineColor(Color lineColor)
-    {
-        m_lineColor = lineColor;
-    }
-
-    Color labelColor() const
-    {
-        return m_labelColor;
-    }
-
-    void setLabelColor(Color labelColor)
-    {
-        m_labelColor = labelColor;
-    }
-
-    //! Get the units of longitude (hours or degrees)
-    LongitudeUnits longitudeUnits() const
-    {
-        return m_longitudeUnits;
-    }
-
-    //! Set whether longitude is measured in hours or degrees
-    void setLongitudeUnits(LongitudeUnits longitudeUnits)
-    {
-        m_longitudeUnits = longitudeUnits;
-    }
-
-    //! Get the direction of increasing longitude
-    LongitudeDirection longitudeDirection() const
-    {
-        return m_longitudeDirection;
-    }
-
-    //! Set the direction of increasing longitude (clockwise or counterclockwise)
-    void setLongitudeDirection(LongitudeDirection longitudeDirection)
-    {
-        m_longitudeDirection = longitudeDirection;
-    }
-
-    static void deinit();
-
-private:
-    std::string latitudeLabel(int latitude, int latitudeStep) const;
-    std::string longitudeLabel(int longitude, int longitudeStep) const;
-    int parallelSpacing(double idealSpacing) const;
-    int meridianSpacing(double idealSpacing) const;
-
-    Eigen::Quaterniond m_orientation{ Eigen::Quaterniond::Identity() };
-    Color m_lineColor{ Color::White };
-    Color m_labelColor{ Color::White };
-    LongitudeUnits m_longitudeUnits{ LongitudeHours };
-    LongitudeDirection m_longitudeDirection{ IncreasingCounterclockwise };
-
-    static celestia::render::LineRenderer *g_gridRenderer;
-    static celestia::render::LineRenderer *g_crossRenderer;
+    Eigen::Quaterniond orientation{ Eigen::Quaterniond::Identity() };
+    Color lineColor{ Color::White };
+    Color labelColor{ Color::White };
+    LongitudeUnits longitudeUnits{ LongitudeHours };
+    LongitudeDirection longitudeDirection{ IncreasingCounterclockwise };
 };
+
+} // end namespace celestia::engine

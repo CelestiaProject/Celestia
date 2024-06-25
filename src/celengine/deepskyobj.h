@@ -73,7 +73,7 @@ public:
     void setAbsoluteMagnitude(float);
 
     const std::string& getInfoURL() const;
-    void setInfoURL(const std::string&);
+    void setInfoURL(std::string&&);
 
     bool isVisible() const { return visible; }
     void setVisible(bool _visible) { visible = _visible; }
@@ -84,7 +84,7 @@ public:
 
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const = 0;
+                      double& cosAngleToBoundCenter) const;
     virtual bool load(const AssociativeArray*, const fs::path& resPath);
 
     virtual uint64_t getRenderMask() const { return 0; }

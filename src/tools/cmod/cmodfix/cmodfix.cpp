@@ -22,10 +22,13 @@
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
+#include <celutil/logger.h>
 
 #include "cmodops.h"
 #include "pathmanager.h"
 
+using celestia::util::CreateLogger;
+namespace math = celestia::math;
 
 std::string inputFilename;
 std::string outputFilename;
@@ -152,6 +155,9 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+
+    CreateLogger();
+
     std::unique_ptr<cmod::Model> model = nullptr;
     if (!inputFilename.empty())
     {
@@ -190,7 +196,7 @@ int main(int argc, char* argv[])
             if (genNormals)
             {
                 cmod::Mesh newMesh = cmodtools::GenerateNormals(mesh,
-                                                                celmath::degToRad(smoothAngle),
+                                                                math::degToRad(smoothAngle),
                                                                 weldVertices);
                 if (newMesh.getVertexCount() == 0)
                 {

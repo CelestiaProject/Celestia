@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.8)
+if(WIN32)
+  # Require more recent CMake on Windows because DLLs are a pain
+  cmake_minimum_required(VERSION 3.19)
+else()
+  cmake_minimum_required(VERSION 3.9)
+endif()
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
@@ -47,27 +52,28 @@ set(DISPLAY_NAME "Celestia")
 #
 #
 #
-option(ENABLE_CELX          "Enable celx scripting, requires Lua library? (Default: on)" ON)
-option(ENABLE_SPICE         "Use spice library? (Default: off)" OFF)
-option(ENABLE_NLS           "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GTK           "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
-option(ENABLE_QT5           "Build Qt frontend? (Default: on)" ON)
-option(ENABLE_QT6           "Build Qt6 frontend (Default: off)" OFF)
-option(ENABLE_SDL           "Build SDL frontend? (Default: off)" OFF)
-option(ENABLE_WIN           "Build Windows native frontend? (Default: on)" ON)
-option(ENABLE_FFMPEG        "Support video capture using FFMPEG (Default: off)" OFF)
-option(ENABLE_MINIAUDIO     "Support audio playback using miniaudio (Default: off)" OFF)
-option(ENABLE_TOOLS         "Build different tools? (Default: off)" OFF)
-option(FAST_MATH            "Build with unsafe fast-math compiller option (Default: off)" OFF)
-option(ENABLE_TESTS         "Enable unit tests? (Default: off)" OFF)
-option(ENABLE_GLES          "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
-option(USE_GTKGLEXT         "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
-option(USE_GTK3             "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
-option(USE_WAYLAND          "Use Wayland in Qt frontend (Default: off)" OFF)
-option(USE_GLSL_STRUCTS     "Use structs in GLSL (Default: off)" OFF)
-option(USE_ICU              "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
-option(USE_WIN_ICU          "Use Windows SDK's ICU implementation (Default: off)" OFF)
-option(USE_WEFFCPP          "Use the -Weffc++ option when compiling with GCC (Default: off)" OFF)
+option(ENABLE_CELX                  "Enable celx scripting, requires Lua library? (Default: on)" ON)
+option(ENABLE_SPICE                 "Use spice library? (Default: off)" OFF)
+option(ENABLE_NLS                   "Enable interface translation? (Default: on)" ON)
+option(ENABLE_GTK                   "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
+option(ENABLE_QT5                   "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_QT6                   "Build Qt6 frontend (Default: off)" OFF)
+option(ENABLE_SDL                   "Build SDL frontend? (Default: off)" OFF)
+option(ENABLE_WIN                   "Build Windows native frontend? (Default: on)" ON)
+option(ENABLE_FFMPEG                "Support video capture using FFMPEG (Default: off)" OFF)
+option(ENABLE_MINIAUDIO             "Support audio playback using miniaudio (Default: off)" OFF)
+option(ENABLE_TOOLS                 "Build different tools? (Default: off)" OFF)
+option(ENABLE_FAST_MATH             "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_TESTS                 "Enable unit tests? (Default: off)" OFF)
+option(ENABLE_GLES                  "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
+option(ENABLE_LTO                   "Enable link time optimizations (Default: off)" OFF)
+option(USE_GTKGLEXT                 "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
+option(USE_GTK3                     "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
+option(USE_WAYLAND                  "Use Wayland in Qt frontend (Default: off)" OFF)
+option(USE_GLSL_STRUCTS             "Use structs in GLSL (Default: off)" OFF)
+option(USE_ICU                      "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
+option(USE_WIN_ICU                  "Use Windows SDK's ICU implementation (Default: off)" OFF)
+option(USE_WEFFCPP                  "Use the -Weffc++ option when compiling with GCC (Default: off)" OFF)
 
 # Qt requires -fPIC, so build all code with it
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -91,6 +97,12 @@ endif()
 
 # Use our cmake files
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Require Windows 7
+if(WIN32)
+  set(WINVER 0x0601)
+  set(NTDDI_VER 0x06010000)
+endif()
 
 if(USE_ICU)
   add_definitions(-DUSE_ICU)
@@ -172,7 +184,7 @@ if(USE_WEFFCPP AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
-EnableFastMath(${FAST_MATH})
+EnableFastMath(${ENABLE_FAST_MATH})
 
 #
 # NLS (Gettext) support
@@ -180,9 +192,8 @@ EnableFastMath(${FAST_MATH})
 if(ENABLE_NLS)
   find_package(Gettext)
   if(NOT GETTEXT_FOUND)
-    message(WARNING "Gettext is not found, traslations won't be created.")
+    message(WARNING "Gettext is not found, translations won't be created.")
   endif()
-  include(FixGettext)
 
   find_package(Intl REQUIRED)
   include(FixIntl)
@@ -319,6 +330,10 @@ endif()
 
 find_package(gperf REQUIRED)
 
+find_package(Boost REQUIRED)
+link_libraries(Boost::boost)
+add_definitions(-DBOOST_NO_EXCEPTIONS)
+
 #[[
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
@@ -376,8 +391,11 @@ if(WIN32)
     -D_SCL_SECURE_NO_WARNINGS
     -DNOMINMAX
     -DWIN32_LEAN_AND_MEAN
-    -DWINVER=0x0601
-    -D_WIN32_WINNT=0x0601
+    -DUNICODE
+    -D_UNICODE
+    -DWINVER=${WINVER}
+    -D_WIN32_WINNT=${WINVER}
+    -DNTDDI_VERSION=${NTDDI_VER}
   )
   # Fix the issue: https://github.com/CelestiaProject/Celestia/issues/364
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
@@ -408,9 +426,20 @@ else()
   endif()
 endif()
 
-# Turning all debug on dramatically decreases performance
-if(OCTREE_DEBUG)
-  add_definitions(-DOCTREE_DEBUG)
+if(ENABLE_LTO)
+  if(WIN32)
+    message(WARNING "LTO is not supported yet when building for Windows")
+    set(ENABLE_LTO OFF)
+  else()
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT lto_supported)
+    if(lto_supported)
+      message(STATUS "LTO is supported")
+    else()
+      message(WARNING "LTO is not supported")
+      set(ENABLE_LTO OFF)
+    endif()
+  endif()
 endif()
 
 include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
@@ -421,15 +450,40 @@ include(CheckSymbolExists)
 check_symbol_exists(wordexp wordexp.h HAVE_WORDEXP)
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
 
+try_compile(HAVE_CONSTEXPR_CMATH ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/constexprcmath.cpp")
+if(HAVE_CONSTEXPR_CMATH)
+  message(STATUS "Found constexpr functions in <cmath>")
+else()
+  message(STATUS "No constexpr functions in <cmath>")
+endif()
+
 try_compile(HAVE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/sincos.cpp")
-try_compile(HAVE_APPLE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/applesincos.cpp")
+if(HAVE_SINCOS)
+  message(STATUS "Found sincos in <cmath>")
+else()
+  try_compile(HAVE_APPLE_SINCOS ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/applesincos.cpp")
+  if(HAVE_APPLE_SINCOS)
+    message(STATUS "Found __sincos in <cmath>")
+  else()
+    message(STATUS "No sincos function found")
+  endif()
+endif()
 # The libc++ headers in the latest stable NDK (r25) does not expose empty array methods as constexpr
 # https://github.com/android/ndk/issues/1530
 try_compile(HAVE_CONSTEXPR_EMPTY_ARRAY ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/constexpremptyarray.cpp")
+if(HAVE_CONSTEXPR_EMPTY_ARRAY)
+  message(STATUS "Found constexpr empty array")
+else()
+  message(STATUS "Empty array is not constexpr")
+endif()
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
 if(CXX_FILESYSTEM_IS_EXPERIMENTAL)
-  message(WARNING "C++ lacks header <filesystem>, using <experimental/filesystem> instead.")
+  if(ENABLE_QT6)
+    message(FATAL_ERROR "Qt6 requires <filesystem> but only <experimental/filesystem> present. Please update your compiler.")
+  else()
+    message(WARNING "C++ lacks header <filesystem>, using <experimental/filesystem> instead.")
+  endif()
 else()
   set(HAVE_STD_FILESYSTEM ON)
 endif()
@@ -445,16 +499,14 @@ else()
   message(WARNING "C++ charconv is unusable!\nWill use own implementation.")
 endif()
 
-include(TestBigEndian)
-test_big_endian(WORDS_BIGENDIAN)
-
 configure_file("config.h.in" "config.h")
+configure_file("celestia.cfg.in" "celestia.cfg")
 
 set(BASE_DATA_SOURCES
   demo.cel
   guide.cel
   start.cel
-  celestia.cfg
+  ${CMAKE_BINARY_DIR}/celestia.cfg
   controls.txt
   COPYING
 )
@@ -478,8 +530,8 @@ if(NOT WIN32)
   )
 endif()
 
-add_subdirectory(src)
 add_subdirectory(po)
+add_subdirectory(src)
 add_subdirectory(fonts)
 add_subdirectory(images)
 add_subdirectory(locale)

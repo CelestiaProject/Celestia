@@ -1,4 +1,4 @@
-// cmoddview - An application for previewing cmod and other 3D file formats
+// cmodview - An application for previewing cmod and other 3D file formats
 // supported by Celestia.
 //
 // Copyright (C) 2010, Chris Laurel <claurel@gmail.com>
@@ -28,14 +28,17 @@
 #include <celengine/glshader.h>
 #include <celengine/texture.h>
 #include <celimage/image.h>
-#include <celimage/imageformats.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
 
 #include "pathmanager.h"
+#include "utils.h"
 
 #define DEBUG_SHADOWS 0
+
+namespace math = celestia::math;
+using celestia::engine::Image;
 
 namespace cmodview
 {
@@ -53,18 +56,6 @@ enum {
     TangentAttributeIndex = 6,
     PointSizeAttributeIndex = 7,
 };
-
-
-inline QString toQString(const wchar_t *s)
-{
-    return QString::fromWCharArray(s);
-}
-
-
-inline QString toQString(const char *s)
-{
-    return QString::fromLocal8Bit(s);
-}
 
 
 // Calculate the matrix used to render the model from the
@@ -387,9 +378,9 @@ MaterialLibrary::loadTexture(const QString& fileName)
 
     std::unique_ptr<Image> image;
     if constexpr (std::is_same_v<fs::path::value_type, wchar_t>)
-        image = LoadImageFromFile(fileName.toStdWString());
+        image = Image::load(fileName.toStdWString());
     else
-        image = LoadImageFromFile(fileName.toStdString());
+        image = Image::load(fileName.toStdString());
 
     if (image == nullptr)
         return nullptr;
@@ -552,19 +543,35 @@ ModelViewWidget::setRenderStyle(RenderStyle style)
 void
 ModelViewWidget::mousePressEvent(QMouseEvent *event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_lastMousePosition = event->pos();
     m_mouseDownPosition = event->pos();
+#else
+    m_lastMousePosition = event->position();
+    m_mouseDownPosition = event->position();
+#endif
 }
 
 
 void
 ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     int moveDistance = (event->pos() - m_mouseDownPosition).manhattanLength();
-    if (moveDistance < 3)
+    constexpr int threshold = 3;
+#else
+    qreal moveDistance = (event->position() - m_mouseDownPosition).manhattanLength();
+    constexpr auto threshold = qreal(3);
+#endif
+    if (moveDistance < threshold)
     {
-        float x = static_cast<float>(event->pos().x()) / static_cast<float>(size().width()) * 2.0f - 1.0f;
-        float y = static_cast<float>(event->pos().y()) / static_cast<float>(size().height()) * -2.0f + 1.0f;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto position = event->pos();
+#else
+        auto position = event->position();
+#endif
+        float x = static_cast<float>(position.x()) / static_cast<float>(size().width()) * 2.0f - 1.0f;
+        float y = static_cast<float>(position.y()) / static_cast<float>(size().height()) * -2.0f + 1.0f;
         select(Eigen::Vector2f(x, y));
     }
 }
@@ -594,11 +601,14 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
         rotateLights = true;
     }
 
-    int dx = event->x() - m_lastMousePosition.x();
-    int dy = event->y() - m_lastMousePosition.y();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    auto delta = event->pos() - m_lastMousePosition;
+#else
+    auto delta = event->position() - m_lastMousePosition;
+#endif
 
-    double xrotation = static_cast<double>(dy) / 100.0;
-    double yrotation = static_cast<double>(dx) / 100.0;
+    double xrotation = static_cast<double>(delta.y()) / 100.0;
+    double yrotation = static_cast<double>(delta.x()) / 100.0;
     Eigen::Quaterniond q = Eigen::AngleAxis<double>(-xrotation, Eigen::Vector3d::UnitX()) *
                            Eigen::AngleAxis<double>(-yrotation, Eigen::Vector3d::UnitY());
 
@@ -617,7 +627,11 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
         m_cameraOrientation = r * m_cameraOrientation;
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     m_lastMousePosition = event->pos();
+#else
+    m_lastMousePosition = event->position();
+#endif
 
     update();
 }
@@ -654,7 +668,7 @@ ModelViewWidget::select(const Eigen::Vector2f& viewportPoint)
     }
 
     float aspectRatio = static_cast<float>(size().width()) / static_cast<float>(size().height());
-    auto fovRad = celmath::degToRad(VIEWPORT_FOV);
+    auto fovRad = math::degToRad(VIEWPORT_FOV);
     float h = std::tan(fovRad / 2.0f);
     Eigen::Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
     direction.normalize();
@@ -750,7 +764,7 @@ ModelViewWidget::paintGL()
 
     glMatrixMode(GL_PROJECTION);
     double aspectRatio = (double) size().width() / (double) size().height();
-    glLoadMatrixd(celmath::Perspective(static_cast<double>(VIEWPORT_FOV), aspectRatio, nearDistance, farDistance).data());
+    glLoadMatrixd(math::Perspective(static_cast<double>(VIEWPORT_FOV), aspectRatio, nearDistance, farDistance).data());
 
     glEnable(GL_LIGHTING);
 
@@ -814,7 +828,7 @@ ModelViewWidget::paintGL()
         {
             glDisable(GL_DEPTH_TEST);
             glMatrixMode(GL_PROJECTION);
-            glLoadMatrixd(celmath::Ortho2D(0.0, static_cast<double>(width()), 0.0, static_cast<double>(height()).data());
+            glLoadMatrixd(math::Ortho2D(0.0, static_cast<double>(width()), 0.0, static_cast<double>(height()).data());
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glDisable(GL_LIGHTING);
@@ -890,9 +904,6 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::setShadows(bool enable)
 {
-    if (!FramebufferObject::isSupported())
-        return;
-
     if (enable != m_shadowsEnabled)
     {
         m_shadowsEnabled = enable;

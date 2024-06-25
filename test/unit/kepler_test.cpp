@@ -1,8 +1,8 @@
 #include <array>
 #include <cmath>
 
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celephem/orbit.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
@@ -10,11 +10,12 @@
 #include <doctest.h>
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
 constexpr double GMsun = 0.000296014912;
-constexpr double fourpi2 = 4.0 * celmath::square(celestia::numbers::pi);
+constexpr double fourpi2 = 4.0 * math::square(celestia::numbers::pi);
 constexpr double tau = 2.0 * celestia::numbers::pi;
 
 constexpr std::array testPeriods{
@@ -62,7 +63,7 @@ TEST_CASE("Elliptical orbits")
 
     for (double period : testPeriods)
     {
-        double semimajor = std::cbrt(GMsun * celmath::square(period) / fourpi2);
+        double semimajor = std::cbrt(GMsun * math::square(period) / fourpi2);
         for (double meanAnomalyDeg : testAngles)
         for (double inclinationDeg : testInclinations)
         {
@@ -81,10 +82,10 @@ TEST_CASE("Elliptical orbits")
                     expected.period = period;
                     expected.semimajorAxis = semimajor;
                     expected.eccentricity = eccentricity;
-                    expected.inclination = celmath::degToRad(inclinationDeg);
-                    expected.longAscendingNode = celmath::degToRad(nodeDeg);
-                    expected.argPericenter = celmath::degToRad(pericenterDeg);
-                    expected.meanAnomaly = celmath::degToRad(meanAnomalyDeg);
+                    expected.inclination = math::degToRad(inclinationDeg);
+                    expected.longAscendingNode = math::degToRad(nodeDeg);
+                    expected.argPericenter = math::degToRad(pericenterDeg);
+                    expected.meanAnomaly = math::degToRad(meanAnomalyDeg);
                     auto orbit = celestia::ephem::EllipticalOrbit(expected, 0.0);
                     auto position = orbit.positionAtTime(0.0);
                     auto velocity = orbit.velocityAtTime(0.0);
@@ -104,7 +105,7 @@ TEST_CASE("Hyperbolic orbits")
 
     for (double period : testPeriods)
     {
-        double semimajor = -std::cbrt(GMsun * celmath::square(period) / fourpi2);
+        double semimajor = -std::cbrt(GMsun * math::square(period) / fourpi2);
         for (double meanAnomalyDeg : testAngles)
         for (double inclinationDeg : testInclinations)
         {
@@ -119,10 +120,10 @@ TEST_CASE("Hyperbolic orbits")
                 expected.period = period;
                 expected.semimajorAxis = semimajor;
                 expected.eccentricity = eccentricity;
-                expected.inclination = celmath::degToRad(inclinationDeg);
-                expected.longAscendingNode = celmath::degToRad(nodeDeg);
-                expected.argPericenter = celmath::degToRad(pericenterDeg);
-                expected.meanAnomaly = celmath::degToRad(meanAnomalyDeg);
+                expected.inclination = math::degToRad(inclinationDeg);
+                expected.longAscendingNode = math::degToRad(nodeDeg);
+                expected.argPericenter = math::degToRad(pericenterDeg);
+                expected.meanAnomaly = math::degToRad(meanAnomalyDeg);
                 auto orbit = celestia::ephem::HyperbolicOrbit(expected, 0.0);
                 auto position = orbit.positionAtTime(0.0);
                 auto velocity = orbit.velocityAtTime(0.0);

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2022 Mattia Verga <mattia.verga@proton.me> -->
+<component type="desktop-application">
+    <id>@METAINFO_ID@</id>
+    <metadata_license>MIT</metadata_license>
+    <project_license>GPL-2.0+</project_license>
+    <name>@METAINFO_NAME@</name>
+    <developer_name>Celestia Project</developer_name>
+    <developer id="space.celestiaproject">
+      <name>Celestia Project</name>
+      <url>https://github.com/CelestiaProject</url>
+    </developer>
+    <summary>Explore the universe</summary>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+
+    <description>
+    <p>
+      Celestia provides photo-realistic, real-time, three-dimensional viewing of
+      the Solar System, the Galaxy and the Universe.
+    </p>
+    <p>
+      It is an easy to use, freely-distributed, multi-platform, open source,
+      software package which has become a valuable tool for astronomy education.
+      Used in homes, schools, museums and planetariums around the world, it also
+      is used as a visualization tool by space mission designers.
+    </p>
+  </description>
+  <launchable type="desktop-id">@METAINFO_DESKTOP@</launchable>
+  <url type="homepage">https://celestiaproject.space</url>
+
+  <content_rating type="oars-1.1" />
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Cassini–Huygens in orbit around Saturn</caption>
+      <image>https://celestiaproject.space/images/gallery/cassini.jpg</image>
+    </screenshot>
+    <screenshot>
+      <caption>Earth</caption>
+      <image>https://celestiaproject.space/images/gallery/earth.jpg</image>
+    </screenshot>
+    <screenshot>
+      <caption>Europa in orbit around Jupiter with Io inbetween</caption>
+      <image>https://celestiaproject.space/images/gallery/europa.jpg</image>
+    </screenshot>
+    <screenshot>
+      <caption>Proxima Centuri with solar filaments</caption>
+      <image>https://celestiaproject.space/images/gallery/proxima.png</image>
+    </screenshot>
+  </screenshots>
+</component>

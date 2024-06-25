@@ -49,9 +49,7 @@ constexpr std::array extensions =
 TextureManager*
 GetTextureManager()
 {
-    static TextureManager* textureManager = nullptr;
-    if (textureManager == nullptr)
-        textureManager = std::make_unique<TextureManager>("textures").release();
+    static TextureManager* const textureManager = std::make_unique<TextureManager>("textures").release(); //NOSONAR
     return textureManager;
 }
 

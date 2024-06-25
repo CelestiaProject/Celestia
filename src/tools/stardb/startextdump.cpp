@@ -13,9 +13,9 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celutil/bytes.h>
-#include <celengine/astro.h>
 #include <celengine/stellarclass.h>
 
 using namespace std;

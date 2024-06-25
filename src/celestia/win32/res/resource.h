@@ -3,6 +3,7 @@
 // Used by celestia.rc
 //
 #define VERSION_STRING                  "1.7.0"
+#define CELESTIA_URL                    TEXT("https://celestiaproject.space/")
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
 #define IDI_CELESTIA_ICON               103
@@ -180,7 +181,6 @@
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
 #define IDC_COMBOBOX_TIMEZONE           1153
-#define IDC_CELESTIALINK2               1153
 #define IDC_COMBOBOX_DATE_FORMAT        1154
 #define IDC_SOLARECLIPSE                1155
 #define IDC_LUNARECLIPSE                1156

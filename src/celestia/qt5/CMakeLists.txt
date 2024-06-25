@@ -36,6 +36,8 @@ if(USE_WAYLAND)
   target_include_directories(celestia-qt5 PRIVATE ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 endif()
 
+set_target_properties(celestia-qt5 PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
 if(APPLE)
   # Qt5 and Qt6 installed via homebrew conflict, so re-add the core include directories
   target_include_directories(celestia-qt5 PRIVATE ${Qt5Core_INCLUDE_DIRS})
@@ -44,6 +46,10 @@ endif()
 if(APPLE)
   set_property(TARGET celestia-qt5 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
   set_property(TARGET celestia-qt5 APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
+endif()
+
+if(ENABLE_LTO)
+  set_target_properties(celestia-qt5 PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
 install(

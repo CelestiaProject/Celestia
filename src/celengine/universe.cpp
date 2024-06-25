@@ -24,7 +24,6 @@
 #include <celutil/greek.h>
 #include <celutil/utf8.h>
 #include "asterism.h"
-#include "astro.h"
 #include "body.h"
 #include "boundaries.h"
 #include "frametree.h"
@@ -33,6 +32,8 @@
 #include "render.h"
 #include "timelinephase.h"
 
+namespace engine = celestia::engine;
+namespace math = celestia::math;
 namespace util = celestia::util;
 
 namespace
@@ -163,7 +164,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
 
     // Test for intersection with the bounding sphere
     if (!body->isVisible() || !body->extant(pickInfo.jd) || !body->isClickable() ||
-        !celmath::testIntersection(pickInfo.pickRay, celmath::Sphered(bpos, radius), distance))
+        !math::testIntersection(pickInfo.pickRay, math::Sphered(bpos, radius), distance))
         return true;
 
     if (body->getGeometry() == InvalidResource)
@@ -178,8 +179,8 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
             // Transform rotate the pick ray into object coordinates
             Eigen::Matrix3d m = body->getEclipticToEquatorial(pickInfo.jd).toRotationMatrix();
             Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
-            r = celmath::transformRay(r, m);
-            if (!celmath::testIntersection(r, celmath::Ellipsoidd(ellipsoidAxes), distance))
+            r = math::transformRay(r, m);
+            if (!math::testIntersection(r, math::Ellipsoidd(ellipsoidAxes), distance))
                 distance = -1.0;
         }
     }
@@ -189,9 +190,9 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         Eigen::Quaterniond qd = body->getGeometryOrientation().cast<double>();
         Eigen::Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo.jd)).toRotationMatrix();
         Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
-        r = celmath::transformRay(r, m);
+        r = math::transformRay(r, m);
 
-        Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+        const Geometry* geometry = engine::GetGeometryManager()->find(body->getGeometry());
         float scaleFactor = body->getGeometryScale();
         if (geometry != nullptr && geometry->isNormalized())
             scaleFactor = radius;
@@ -306,9 +307,9 @@ StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
         // no intersection, then just use normal calculation.  We actually test
         // intersection with a larger sphere to make sure we don't miss a star
         // right on the edge of the sphere.
-        if (celmath::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickRay),
-                                      celmath::Spheref(relativeStarPos, orbitalRadius * 2.0f),
-                                      distance))
+        if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickRay),
+                                   math::Spheref(relativeStarPos, orbitalRadius * 2.0f),
+                                   distance))
         {
             Eigen::Vector3d starPos = star.getPosition(when).toLy();
             starDir = (starPos - pickOrigin.cast<double>()).cast<float>().normalized();
@@ -379,8 +380,8 @@ CloseStarPicker::process(const Star& star,
 
     float distance = 0.0f;
 
-     if (celmath::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickDir),
-                                   celmath::Spheref(starDir, star.getRadius()), distance))
+     if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickDir),
+                                math::Spheref(starDir, star.getRadius()), distance))
     {
         if (distance > 0.0f)
         {
@@ -458,8 +459,8 @@ DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused
     Eigen::Vector3d dsoDir = relativeDSOPos;
 
     if (double distance2 = 0.0;
-        celmath::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), pickDir),
-                                  celmath::Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
+        math::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), pickDir),
+                               math::Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
     {
         Eigen::Vector3d dsoPos = dso->getPosition();
         dsoDir = dsoPos * 1.0e-6 - pickOrigin;
@@ -537,14 +538,13 @@ CloseDSOPicker::process(DeepSkyObject* const & dso,
     }
 }
 
-
 void
 getLocationsCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        const Body& body)
 {
-    auto locations = body.getLocations();
-    if (!locations.has_value() || locations->empty())
+    auto locations = GetBodyFeaturesManager()->getLocations(&body);
+    if (!locations.has_value())
         return;
 
     for (const auto location : *locations)
@@ -558,32 +558,6 @@ getLocationsCompletion(std::vector<std::string>& completion,
         {
             const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
-                completion.push_back(lname);
-        }
-    }
-}
-
-
-void
-getLocationsCompletionPath(std::vector<std::string>& completion,
-                           std::string_view search,
-                           const Body& body)
-{
-    auto locations = body.getLocations();
-    if (!locations.has_value() || locations->empty())
-        return;
-
-    for (const auto location : *locations)
-    {
-        const std::string& name = location->getName(false);
-        if (UTF8StartsWith(name, search))
-        {
-            completion.push_back(name);
-        }
-        else
-        {
-            const std::string& lname = location->getName(true);
-            if (lname != name && UTF8StartsWith(lname, search))
                 completion.push_back(lname);
         }
     }
@@ -982,44 +956,33 @@ Universe::findChildObject(const Selection& sel,
     switch (sel.getType())
     {
     case SelectionType::Star:
+        if (const SolarSystem* sys = getSolarSystem(sel.star()); sys != nullptr)
         {
-            SolarSystem* sys = getSolarSystem(sel.star());
-            if (sys != nullptr)
-            {
-                PlanetarySystem* planets = sys->getPlanets();
-                if (planets != nullptr)
-                    return Selection(planets->find(name, false, i18n));
-            }
+            PlanetarySystem* planets = sys->getPlanets();
+            if (planets != nullptr)
+                return Selection(planets->find(name, false, i18n));
         }
         break;
 
     case SelectionType::Body:
+        // First, search for a satellite
+        if (const PlanetarySystem* sats = sel.body()->getSatellites();sats != nullptr)
         {
-            // First, search for a satellite
-            PlanetarySystem* sats = sel.body()->getSatellites();
-            if (sats != nullptr)
-            {
-                Body* body = sats->find(name, false, i18n);
-                if (body != nullptr)
-                    return Selection(body);
-            }
+            Body* body = sats->find(name, false, i18n);
+            if (body != nullptr)
+                return Selection(body);
+        }
 
-            // If a satellite wasn't found, check this object's locations
-            Location* loc = sel.body()->findLocation(name, i18n);
-            if (loc != nullptr)
-                return Selection(loc);
+        // If a satellite wasn't found, check this object's locations
+        if (Location* loc = GetBodyFeaturesManager()->findLocation(sel.body(), name, i18n);
+            loc != nullptr)
+        {
+            return Selection(loc);
         }
         break;
 
-    case SelectionType::Location:
-        // Locations have no children
-        break;
-
-    case SelectionType::DeepSky:
-        // Deep sky objects have no children
-        break;
-
     default:
+        // Locations and deep sky objects have no children
         break;
     }
 
@@ -1036,7 +999,7 @@ Universe::findObjectInContext(const Selection& sel,
                               std::string_view name,
                               bool i18n) const
 {
-    Body* contextBody = nullptr;
+    const Body* contextBody = nullptr;
 
     switch (sel.getType())
     {
@@ -1053,14 +1016,11 @@ Universe::findObjectInContext(const Selection& sel,
     }
 
     // First, search for bodies...
-    SolarSystem* sys = getSolarSystem(sel);
-    if (sys != nullptr)
+    if (const SolarSystem* sys = getSolarSystem(sel); sys != nullptr)
     {
-        PlanetarySystem* planets = sys->getPlanets();
-        if (planets != nullptr)
+        if (const PlanetarySystem* planets = sys->getPlanets(); planets != nullptr)
         {
-            Body* body = planets->find(name, true, i18n);
-            if (body != nullptr)
+            if (Body* body = planets->find(name, true, i18n); body != nullptr)
                 return Selection(body);
         }
     }
@@ -1068,7 +1028,7 @@ Universe::findObjectInContext(const Selection& sel,
     // ...and then locations.
     if (contextBody != nullptr)
     {
-        Location* loc = contextBody->findLocation(name, i18n);
+        Location* loc = GetBodyFeaturesManager()->findLocation(contextBody, name, i18n);
         if (loc != nullptr)
             return Selection(loc);
     }
@@ -1236,9 +1196,9 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
 
     if (sel.getType() == SelectionType::Body && withLocations)
     {
-        getLocationsCompletionPath(completion,
-                                   s.substr(pos + 1),
-                                   *sel.body());
+        getLocationsCompletion(completion,
+                               s.substr(pos + 1),
+                               *sel.body());
     }
 }
 

@@ -11,29 +11,42 @@
 #include "qtwaylanddraghandler.h"
 #endif
 
+namespace celestia::qt
+{
+
+namespace
+{
+inline auto
+mouseEventPos(const QMouseEvent &m)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    return m.globalPos();
+#else
+    return m.globalPosition();
+#endif
+}
+}
 
 void
 DragHandler::begin(const QMouseEvent &m, qreal s, int b)
 {
-    saveCursorPos = m.globalPos();
+    saveCursorPos = mouseEventPos(m);
     scale         = s;
     buttons       = b;
 }
-
 
 void
 DragHandler::move(const QMouseEvent &m, qreal s)
 {
     if (scale != s)
         begin(m, s, buttons);
-    auto relativeMovement = m.globalPos() - saveCursorPos;
+    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
     appCore->mouseMove(
         static_cast<float>(relativeMovement.x() * scale),
         static_cast<float>(relativeMovement.y() * scale),
         effectiveButtons());
-    saveCursorPos = m.globalPos();
+    saveCursorPos = mouseEventPos(m);
 }
-
 
 void
 DragHandler::setButton(int button)
@@ -41,13 +54,11 @@ DragHandler::setButton(int button)
     buttons |= button;
 }
 
-
 void
 DragHandler::clearButton(int button)
 {
     buttons &= ~button;
 }
-
 
 int
 DragHandler::effectiveButtons() const
@@ -65,25 +76,34 @@ DragHandler::effectiveButtons() const
 // Warping drag handler
 
 void
+WarpingDragHandler::restoreCursorPosition() const
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QCursor::setPos(saveCursorPos);
+#else
+    QCursor::setPos(saveCursorPos.toPoint());
+#endif
+}
+
+void
 WarpingDragHandler::move(const QMouseEvent &m, qreal s)
 {
     if (scale != s)
         begin(m, s, buttons);
-    auto relativeMovement = m.globalPos() - saveCursorPos;
+    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
     appCore->mouseMove(
         static_cast<float>(relativeMovement.x() * scale),
         static_cast<float>(relativeMovement.y() * scale),
         effectiveButtons());
-    QCursor::setPos(saveCursorPos);
-}
 
+    restoreCursorPosition();
+}
 
 void
 WarpingDragHandler::finish()
 {
-    QCursor::setPos(saveCursorPos);
+    restoreCursorPosition();
 }
-
 
 std::unique_ptr<DragHandler>
 createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
@@ -100,3 +120,5 @@ createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
 
     return std::make_unique<DragHandler>(appCore);
 }
+
+} // end namespace celestia::qt

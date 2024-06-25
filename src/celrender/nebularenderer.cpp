@@ -78,7 +78,7 @@ NebulaRenderer::renderNebula(const Object &obj) const
 {
     Geometry *g = nullptr;
     if (auto geometry = obj.nebula->getGeometry(); geometry != InvalidResource)
-        g = GetGeometryManager()->find(geometry);
+        g = engine::GetGeometryManager()->find(geometry);
     if (g == nullptr)
         return;
 
@@ -94,8 +94,8 @@ NebulaRenderer::renderNebula(const Object &obj) const
 
     float radius = obj.nebula->getRadius();
 
-    Eigen::Matrix4f mv = celmath::rotate(
-        celmath::scale(celmath::translate(m_renderer.getModelViewMatrix(), obj.offset), radius),
+    Eigen::Matrix4f mv = math::rotate(
+        math::scale(math::translate(m_renderer.getModelViewMatrix(), obj.offset), radius),
         obj.nebula->getOrientation());
 
     GLSLUnlit_RenderContext rc(&m_renderer, radius, &mv, &pr);

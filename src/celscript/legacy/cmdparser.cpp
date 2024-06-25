@@ -24,11 +24,14 @@
 #include <map>
 #include <optional>
 #include <sstream>
+#include <utility>
 #include <variant>
 
 #include <Eigen/Core>
 #include <fmt/format.h>
 
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celengine/hash.h>
 #include <celengine/parser.h>
 #include <celengine/render.h>
@@ -38,6 +41,7 @@
 #endif
 #include <celmath/mathlib.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/r128util.h>
 #include <celutil/stringutils.h>
@@ -50,98 +54,37 @@ using std::strncmp;
 using celestia::util::GetLogger;
 using celestia::util::DecodeFromBase64;
 
-
 namespace celestia::scripts
 {
 namespace
 {
 
-std::uint64_t
-parseRenderFlags(const std::string &s, const celestia::scripts::FlagMap64& RenderFlagMap)
+template<typename T>
+T
+parseFlags(const std::string& s, const celestia::scripts::ScriptMap<T>& flagMap, std::string_view flagTypeName)
 {
     std::istringstream in(s);
-
     Tokenizer tokenizer(&in);
-    std::uint64_t flags = 0;
+    auto flags = static_cast<T>(0);
 
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
+    for (Tokenizer::TokenType ttype = tokenizer.nextToken(); ttype != Tokenizer::TokenEnd;)
     {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            if (RenderFlagMap.count(*tokenValue) == 0)
-                GetLogger()->warn("Unknown render flag: {}\n", *tokenValue);
-            else
-                flags |= RenderFlagMap.at(*tokenValue);
+        auto tokenValue = tokenizer.getNameValue();
+        if (!tokenValue.has_value())
+            break;
 
+        if (auto it = flagMap.find(*tokenValue); it == flagMap.end())
+            GetLogger()->warn("Unknown {} flag: {}\n", flagTypeName, *tokenValue);
+        else
+            flags = static_cast<T>(flags | it->second);
+
+        ttype = tokenizer.nextToken();
+        if (ttype == Tokenizer::TokenBar)
             ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
     }
 
     return flags;
 }
-
-
-int
-parseLabelFlags(const std::string &s, const celestia::scripts::FlagMap &LabelFlagMap)
-{
-    std::istringstream in(s);
-
-    Tokenizer tokenizer(&in);
-    int flags = 0;
-
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
-    {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            if (LabelFlagMap.count(*tokenValue) == 0)
-                GetLogger()->warn("Unknown label flag: {}\n", *tokenValue);
-            else
-                flags |= LabelFlagMap.at(*tokenValue);
-
-            ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
-    }
-
-    return flags;
-}
-
-
-int
-parseOrbitFlags(const std::string &s, const celestia::scripts::FlagMap &BodyTypeMap)
-{
-    std::istringstream in(s);
-
-    Tokenizer tokenizer(&in);
-    int flags = 0;
-
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
-    {
-        if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
-        {
-            std::string name(*tokenValue);
-            name[0] = std::toupper(static_cast<unsigned char>(name[0]));
-
-            if (BodyTypeMap.count(name) == 0)
-                GetLogger()->warn("Unknown orbit flag: {}\n", name);
-            else
-                flags |= BodyTypeMap.at(name);
-
-            ttype = tokenizer.nextToken();
-            if (ttype == Tokenizer::TokenBar)
-                ttype = tokenizer.nextToken();
-        }
-    }
-
-    return flags;
-}
-
 
 int
 parseConstellations(CommandConstellations& cmd, const std::string &s, bool act)
@@ -381,8 +324,8 @@ ParseResult parseGotoLongLatCommand(const Hash& paramList, const ScriptMaps&)
 
     return std::make_unique<CommandGotoLongLat>(t,
                                                 distance,
-                                                static_cast<float>(celmath::degToRad(longitude)),
-                                                static_cast<float>(celmath::degToRad(latitude)),
+                                                static_cast<float>(math::degToRad(longitude)),
+                                                static_cast<float>(math::degToRad(latitude)),
                                                 up.cast<float>());
 }
 
@@ -397,9 +340,9 @@ ParseResult parseGotoLocCommand(const Hash& paramList, const ScriptMaps&)
         auto xrot = paramList.getNumber<double>("xrot").value_or(0.0);
         auto yrot = paramList.getNumber<double>("yrot").value_or(0.0);
         auto zrot = paramList.getNumber<double>("zrot").value_or(0.0);
-        auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(celmath::degToRad(xrot), Eigen::Vector3d::UnitX()) *
-                                           Eigen::AngleAxisd(celmath::degToRad(yrot), Eigen::Vector3d::UnitY()) *
-                                           Eigen::AngleAxisd(celmath::degToRad(zrot), Eigen::Vector3d::UnitZ()));
+        auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(math::degToRad(xrot), Eigen::Vector3d::UnitX()) *
+                                           Eigen::AngleAxisd(math::degToRad(yrot), Eigen::Vector3d::UnitY()) *
+                                           Eigen::AngleAxisd(math::degToRad(zrot), Eigen::Vector3d::UnitZ()));
         return std::make_unique<CommandGotoLocation>(t, *pos, rotation);
     }
 
@@ -542,7 +485,7 @@ ParseResult parseOrbitCommand(const Hash& paramList, const ScriptMaps&)
     auto axis     = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
     return std::make_unique<CommandOrbit>(duration,
                                           axis.cast<float>(),
-                                          static_cast<float>(celmath::degToRad(rate)));
+                                          static_cast<float>(math::degToRad(rate)));
 }
 
 
@@ -553,7 +496,7 @@ ParseResult parseRotateCommand(const Hash& paramList, const ScriptMaps&)
     auto axis     = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
     return std::make_unique<CommandRotate>(duration,
                                            axis.cast<float>(),
-                                           static_cast<float>(celmath::degToRad(rate)));
+                                           static_cast<float>(math::degToRad(rate)));
 }
 
 
@@ -591,7 +534,7 @@ ParseResult parseSetOrientationCommand(const Hash& paramList, const ScriptMaps&)
     if (auto angle = paramList.getNumber<double>("angle"); angle.has_value())
     {
         auto axis = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
-        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(celmath::degToRad(*angle)),
+        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(math::degToRad(*angle)),
                                                                 axis.cast<float>().normalized()));
         return std::make_unique<CommandSetOrientation>(orientation);
     }
@@ -611,9 +554,9 @@ ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scr
     std::uint64_t clearFlags = 0;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseRenderFlags(*s, scriptMaps.RenderFlagMap);
+        setFlags = parseFlags(*s, scriptMaps.RenderFlagMap, "render"sv);
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseRenderFlags(*s, scriptMaps.RenderFlagMap);
+        clearFlags = parseFlags(*s, scriptMaps.RenderFlagMap, "render"sv);
 
     return std::make_unique<CommandRenderFlags>(setFlags, clearFlags);
 }
@@ -625,9 +568,9 @@ ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMa
     int clearFlags = 0;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseLabelFlags(*s, scriptMaps.LabelFlagMap);
+        setFlags = parseFlags(*s, scriptMaps.LabelFlagMap, "label"sv);
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseLabelFlags(*s, scriptMaps.LabelFlagMap);
+        clearFlags = parseFlags(*s, scriptMaps.LabelFlagMap, "label"sv);
 
     return std::make_unique<CommandLabels>(setFlags, clearFlags);
 }
@@ -635,13 +578,13 @@ ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMa
 
 ParseResult parseOrbitFlagsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
 {
-    int setFlags = 0;
-    int clearFlags = 0;
+    BodyClassification setFlags = BodyClassification::EmptyMask;
+    BodyClassification clearFlags = BodyClassification::EmptyMask;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
-        setFlags = parseOrbitFlags(*s, scriptMaps.OrbitVisibilityMap);
+        setFlags = parseFlags(*s, scriptMaps.BodyTypeMap, "orbit");
     if (const std::string* s = paramList.getString("clear"); s != nullptr)
-        clearFlags = parseOrbitFlags(*s, scriptMaps.OrbitVisibilityMap);
+        clearFlags = parseFlags(*s, scriptMaps.BodyTypeMap, "orbit");
 
     return std::make_unique<CommandOrbitFlags>(setFlags, clearFlags);
 }
@@ -791,8 +734,8 @@ ParseResult parseUnmarkCommand(const Hash& paramList, const ScriptMaps&)
 
 ParseResult parseCaptureCommand(const Hash& paramList, const ScriptMaps&)
 {
-    const std::string* filename = paramList.getString("filename");
-    if (filename == nullptr)
+    auto filename = paramList.getPath("filename");
+    if (!filename.has_value())
         return makeError("Missing filename parameter to capture");
 
     std::string type;
@@ -891,9 +834,13 @@ ParseResult parsePlayCommand(const Hash& paramList, const ScriptMaps&)
     std::optional<bool> optionalLoop = std::nullopt;
     if (auto loop = paramList.getNumber<int>("loop"); loop.has_value())
         optionalLoop = *loop == 1;
-    std::optional<std::string> optionalFilename = std::nullopt;
+    std::optional<fs::path> optionalFilename = std::nullopt;
     if (auto filename = paramList.getString("filename"); filename != nullptr)
-        optionalFilename = *filename;
+    {
+        optionalFilename = util::U8FileName(*filename);
+        if (!optionalFilename.has_value())
+            return makeError("Invalid filename in play command");
+    }
 
     return std::make_unique<CommandPlay>(channel, optionalVolume, pan, optionalLoop, optionalFilename, nopause == 1);
 #else
@@ -909,9 +856,18 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
     auto yoffset  = paramList.getNumber<float>("yoffset").value_or(0.0f);
     std::optional<float> alpha = paramList.getNumber<float>("alpha");
 
-    const std::string* filename = paramList.getString("filename");
-    if (filename == nullptr)
+    fs::path filename;
+    if (const std::string* fname = paramList.getString("filename"); fname != nullptr)
+    {
+        if (auto path = util::U8FileName(*fname); path.has_value())
+            filename = std::move(*path);
+        else
+            return makeError("Invalid filename parameter to overlay");
+    }
+    else
+    {
         return makeError("Missing filename parameter to overlay");
+    }
 
     bool fitscreen = false;
     // The below triggers a Sonar rule to use value_or in the outer condition,
@@ -945,7 +901,7 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
                                                 fadeafter,
                                                 xoffset,
                                                 yoffset,
-                                                *filename,
+                                                filename,
                                                 fitscreen,
                                                 colors);
 }
@@ -971,17 +927,26 @@ ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&
     if (object == nullptr)
         return makeError("Missing object parameter to setringstexture");
 
-    const std::string* texture = paramList.getString("texture");
-    if (texture == nullptr)
-        return makeError("Missing texture parameter to setringstexture");
-
-    std::string path;
-    if (const std::string* pathStr = paramList.getString("path"); pathStr != nullptr)
+    fs::path texture;
+    if (const std::string* textureValue = paramList.getString("texture"); textureValue != nullptr)
     {
-        path = *pathStr;
+        if (auto textureFilename = util::U8FileName(*textureValue); textureFilename.has_value())
+            texture = std::move(*textureFilename);
+        else
+            return makeError("Invalid filename in setringstexture");
+    }
+    else
+    {
+        return makeError("Missing texture parameter to setringstexture");
     }
 
-    return std::make_unique<CommandSetRingsTexture>(*object, *texture, path);
+    fs::path path;
+    if (auto pathStr = paramList.getPath("path"); pathStr.has_value())
+    {
+        path = std::move(*pathStr);
+    }
+
+    return std::make_unique<CommandSetRingsTexture>(*object, texture, path);
 }
 
 
@@ -993,7 +958,7 @@ using ParseCommandPtr = ParseResult (*)(const Hash&, const ScriptMaps&);
 } // end unnamed namespace
 
 
-CommandParser::CommandParser(std::istream& in, const std::shared_ptr<ScriptMaps> &sm) :
+CommandParser::CommandParser(std::istream& in, const ScriptMaps &sm) :
     tokenizer(std::make_unique<Tokenizer>(&in)),
     scriptMaps(sm)
 {
@@ -1083,7 +1048,7 @@ std::unique_ptr<Command> CommandParser::parseCommand()
     }
 
     return std::visit(ParseResultVisitor([this](std::string&& s) { error(std::move(s)); }),
-                      ptr->parser(*paramList, *scriptMaps));
+                      ptr->parser(*paramList, scriptMaps));
 }
 
 } // end namespace celestia::scripts

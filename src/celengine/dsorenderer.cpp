@@ -8,16 +8,22 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/dsodb.h>
-#include <celengine/deepskyobj.h>
+#include "dsorenderer.h"
+
 #include <celrender/galaxyrenderer.h>
 #include <celrender/globularrenderer.h>
 #include <celrender/nebularenderer.h>
 #include <celrender/openclusterrenderer.h>
+#include "dsodb.h"
+#include "deepskyobj.h"
+#include "galaxy.h"
+#include "globular.h"
+#include "nebula.h"
+#include "opencluster.h"
 #include "render.h"
-#include "dsorenderer.h"
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
@@ -69,7 +75,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     double dsoRadius = dso->getBoundingSphereRadius();
-    if (frustum.testSphere(center, (float) dsoRadius) == celmath::Frustum::Outside)
+    if (frustum.testSphere(center, (float) dsoRadius) == math::FrustumAspect::Outside)
         return;
 
     float appMag;
@@ -105,20 +111,20 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         case DeepSkyObjectType::Galaxy:
             // -19.04f == average over 10937 galaxies in galaxies.dsc.
             b = brightness(-19.04f, absMag, appMag, b, faintestMag);
-            galaxyRenderer->add(reinterpret_cast<Galaxy*>(dso), relPos, b, nearZ, farZ);
+            galaxyRenderer->add(static_cast<const Galaxy*>(dso), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::Globular:
             // -6.86f == average over 150 globulars in globulars.dsc.
             b = brightness(-6.86f, absMag, appMag, b, faintestMag);
-            globularRenderer->add(reinterpret_cast<Globular*>(dso), relPos, b, nearZ, farZ);
+            globularRenderer->add(static_cast<const Globular*>(dso), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::Nebula:
             b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            nebulaRenderer->add(reinterpret_cast<Nebula*>(dso), relPos, b, nearZ, farZ);
+            nebulaRenderer->add(static_cast<const Nebula*>(dso), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::OpenCluster:
             b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            openClusterRenderer->add(reinterpret_cast<OpenCluster*>(dso), relPos, b, nearZ, farZ);
+            openClusterRenderer->add(static_cast<const OpenCluster*>(dso), relPos, b, nearZ, farZ);
             break;
         default:
             // Unsupported DSO
@@ -137,7 +143,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         float appMagEff = 6.0f;
         float step = 6.0f;
         float symbolSize = 0.0f;
-        celestia::MarkerRepresentation* rep = nullptr;
+        const celestia::MarkerRepresentation* rep = nullptr;
 
         // Use magnitude based fading for galaxies, and distance based
         // fading for nebulae and open clusters.

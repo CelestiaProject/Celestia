@@ -16,11 +16,13 @@
 #include <celutil/gettext.h>
 #include "galaxy.h"
 #include "galaxyform.h"
+#include "hash.h"
 #include "render.h"
 
-using namespace std::literals::string_view_literals;
+using namespace std::string_view_literals;
 
 using celestia::engine::GalacticFormManager;
+namespace math = celestia::math;
 
 struct GalaxyTypeName
 {
@@ -123,10 +125,10 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   getRadius()*(galacticForm->scale.z() + kRadiusCorrection));
     Eigen::Matrix3d rotation = getOrientation().cast<double>().toRotationMatrix();
 
-    return celmath::testIntersection(
-        celmath::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
-                              rotation),
-        celmath::Ellipsoidd(ellipsoidAxes),
+    return math::testIntersection(
+        math::transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
+                           rotation),
+        math::Ellipsoidd(ellipsoidAxes),
         distanceToPicker,
         cosAngleToBoundCenter);
 }
@@ -160,15 +162,15 @@ float Galaxy::getBrightnessCorrection(const Eigen::Vector3f &offset) const
 
     // corrections to avoid excessive brightening if viewed e.g. edge-on
     float brightness_corr = 1.0f;
-    if (type < GalaxyType::E0 || type > GalaxyType::E3) // all galaxies, except ~round elliptics
+    if (type != GalaxyType::Irr && (type < GalaxyType::E0 || type > GalaxyType::E3)) // all galaxies, except ~round elliptics and irregular
     {
-        float cosi = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
+        float cosi      = (orientation * Eigen::Vector3f::UnitY()).dot(offset) / offset.norm();
         brightness_corr = std::max(0.2f, std::sqrt(std::abs(cosi)));
-    }
-    if (type > GalaxyType::E3) // only elliptics with higher ellipticities
-    {
-        float cosi = (orientation * Eigen::Vector3f::UnitX()).dot(offset) / offset.norm();
-        brightness_corr = std::max(0.45f, brightness_corr * std::abs(cosi));
+        if (type > GalaxyType::E3) // only elliptics with higher ellipticities
+        {
+            float cosi      = (orientation * Eigen::Vector3f::UnitX()).dot(offset) / offset.norm();
+            brightness_corr = std::max(0.45f, brightness_corr * std::abs(cosi));
+        }
     }
 
     float btot = (type == GalaxyType::Irr || type >= GalaxyType::E0) ? 2.5f : 5.0f;

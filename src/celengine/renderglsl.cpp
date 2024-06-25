@@ -15,16 +15,18 @@
 #include <cmath>
 #include <cstddef>
 #include <memory>
+#include <optional>
+
+#include <boost/container/static_vector.hpp>
 
 #include <celcompat/numbers.h>
-
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/arrayvector.h>
 #include <celutil/color.h>
+#include <celutil/flag.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "framebuffer.h"
@@ -40,7 +42,6 @@
 #include "texture.h"
 
 using namespace celestia;
-
 
 namespace
 {
@@ -102,7 +103,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(.001f, .001f);
 
-    Eigen::Matrix4f projMat = celmath::Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
+    Eigen::Matrix4f projMat = math::Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
     Eigen::Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
     *lightMatrix = projMat * modelViewMat;
     prog->setMVPMatrices(projMat, modelViewMat);
@@ -115,94 +116,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     shadowFbo->unbind(oldFboId);
 }
 
-class GLRingRenderData : public RingRenderData
-{
-    static constexpr int nLODs = 4;
-public:
-    ~GLRingRenderData() override = default;
-
-    int count() const { return nLODs; }
-    bool isInitializedLOD(int i) const { return init[i]; };
-    void initializeLOD(int i, float innerRadius, float outerRadius, unsigned nSections);
-    void renderLOD(int i);
-
-private:
-    std::array<gl::Buffer, nLODs> bo;
-    std::array<gl::VertexObject, nLODs> vo;
-    std::array<bool, nLODs> init;
-};
-
-struct RingVertex
-{
-    std::array<float, 3>  pos;
-    std::array<unsigned short, 2> tex;
-};
-
-void
-GLRingRenderData::initializeLOD(int i, float innerRadius, float outerRadius, unsigned nSections)
-{
-    std::vector<RingVertex> ringCoord;
-    ringCoord.reserve(2 * nSections);
-
-    constexpr float angle = 2.0f * celestia::numbers::pi_v<float>;
-    for (unsigned i = 0; i <= nSections; i++)
-    {
-        float theta = angle * i / nSections; // NOSONAR
-        float s, c;
-        celmath::sincos(theta, s, c);
-
-        RingVertex vertex;
-        // inner point
-        vertex.pos[0] = c * innerRadius;
-        vertex.pos[1] = 0.0f;
-        vertex.pos[2] = s * innerRadius;
-        vertex.tex[0] = 0;
-        vertex.tex[1] = 0;
-        ringCoord.push_back(vertex);
-
-        // outer point
-        vertex.pos[0] = c * outerRadius;
-        // vertex.pos[1] = 0.0f;
-        vertex.pos[2] = s * outerRadius;
-        vertex.tex[0] = 1;
-        // vertex.tex[1] = 0;
-        ringCoord.push_back(vertex);
-    }
-
-    bo[i] = gl::Buffer(gl::Buffer::TargetHint::Array, ringCoord);
-    vo[i] = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
-    vo[i]
-        .setCount((nSections + 1) * 2)
-        .addVertexBuffer(
-            bo[i],
-            CelestiaGLProgram::TextureCoord0AttributeIndex,
-            2,
-            gl::VertexObject::DataType::UnsignedShort,
-            false,
-            sizeof(RingVertex),
-            offsetof(RingVertex, tex))
-        .addVertexBuffer(
-            bo[i],
-            CelestiaGLProgram::VertexCoordAttributeIndex,
-            3,
-            gl::VertexObject::DataType::Float,
-            false,
-            sizeof(RingVertex),
-            offsetof(RingVertex, pos));
-    init[i] = true;
-    bo[i].unbind();
-}
-
-void
-GLRingRenderData::renderLOD(int i)
-{
-    glDisable(GL_CULL_FACE);
-    vo[i].draw();
-    glEnable(GL_CULL_FACE);
-}
-
 } // end unnamed namespace
-
 
 // Render a planet sphere with GLSL shaders
 void renderEllipsoid_GLSL(const RenderInfo& ri,
@@ -213,61 +127,61 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           unsigned int textureRes,
                           std::uint64_t renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
-                          const celmath::Frustum& frustum,
+                          const math::Frustum& frustum,
                           const Matrices &m,
                           Renderer* renderer)
 {
     float radius = semiAxes.maxCoeff();
 
-    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
+    shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
-        textures.try_push_back(ri.baseTex);
+        shadprop.texUsage |= TexUsage::DiffuseTexture;
+        textures.push_back(ri.baseTex);
     }
 
     if (ri.bumpTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NormalTexture;
-        textures.try_push_back(ri.bumpTex);
+        shadprop.texUsage |= TexUsage::NormalTexture;
+        textures.push_back(ri.bumpTex);
         if (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
-            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
+            shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
     if (ri.specularColor != Color::Black)
     {
-        shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
+        shadprop.lightModel = LightingModel::PerPixelSpecularModel;
         if (ri.glossTex == nullptr)
         {
-            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+            shadprop.texUsage |= TexUsage::SpecularInDiffuseAlpha;
         }
         else
         {
-            shadprop.texUsage |= ShaderProperties::SpecularTexture;
-            textures.try_push_back(ri.glossTex);
+            shadprop.texUsage |= TexUsage::SpecularTexture;
+            textures.push_back(ri.glossTex);
         }
     }
     if (ri.lunarLambert != 0.0f)
     {
-        shadprop.lightModel |= ShaderProperties::LunarLambertModel;
+        shadprop.lightModel |= LightingModel::LunarLambertModel;
     }
 
     if (ri.nightTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NightTexture;
-        textures.try_push_back(ri.nightTex);
+        shadprop.texUsage |= TexUsage::NightTexture;
+        textures.push_back(ri.nightTex);
     }
 
     if (ri.overlayTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::OverlayTexture;
-        textures.try_push_back(ri.overlayTex);
+        shadprop.texUsage |= TexUsage::OverlayTexture;
+        textures.push_back(ri.overlayTex);
     }
 
     if (atmosphere != nullptr)
@@ -277,7 +191,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
             if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= ShaderProperties::Scattering;
+                shadprop.texUsage |= TexUsage::Scattering;
         }
 
         if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
@@ -308,8 +222,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
             if (cloudTex != nullptr && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
-                shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
-                textures.try_push_back(cloudTex);
+                shadprop.texUsage |= TexUsage::CloudShadowTexture;
+                textures.push_back(cloudTex);
                 glActiveTexture(GL_TEXTURE0 + textures.size());
                 cloudTex->bind();
                 glActiveTexture(GL_TEXTURE0);
@@ -361,7 +275,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             }
             glActiveTexture(GL_TEXTURE0);
 
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+            shadprop.texUsage |= TexUsage::RingShadowTexture;
 
             for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
             {
@@ -387,10 +301,10 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
-    if ((shadprop.lightModel & ShaderProperties::LunarLambertModel) != 0)
+    if (util::is_set(shadprop.lightModel, LightingModel::LunarLambertModel))
         prog->lunarLambert = ri.lunarLambert;
 
-    if ((shadprop.texUsage & ShaderProperties::RingShadowTexture) != 0)
+    if (util::is_set(shadprop.texUsage, TexUsage::RingShadowTexture))
     {
         float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
         prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
@@ -408,7 +322,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     if (atmosphere != nullptr)
     {
-        if ((shadprop.texUsage & ShaderProperties::CloudShadowTexture) != 0)
+        if (util::is_set(shadprop.texUsage, TexUsage::CloudShadowTexture))
         {
             prog->shadowTextureOffset = cloudTexOffset;
             prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
@@ -622,31 +536,31 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        unsigned int /*textureRes*/,
                        std::uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
-                       const celmath::Frustum& frustum,
+                       const math::Frustum& frustum,
                        const Matrices &m,
                        Renderer* renderer)
 {
     float radius = semiAxes.maxCoeff();
 
-    celestia::util::ArrayVector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
+    boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::TextureCoordTransform;
+    shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = ls.nLights;
 
     // Set up the textures used by this object
     if (cloudTex != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
-        textures.try_push_back(cloudTex);
+        shadprop.texUsage |= TexUsage::DiffuseTexture;
+        textures.push_back(cloudTex);
     }
 
     if (cloudNormalMap != nullptr)
     {
-        shadprop.texUsage |= ShaderProperties::NormalTexture;
-        textures.try_push_back(cloudNormalMap);
+        shadprop.texUsage |= TexUsage::NormalTexture;
+        textures.push_back(cloudNormalMap);
         if (cloudNormalMap->getFormatOptions() & Texture::DXT5NormalMap)
-            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
+            shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
     if (atmosphere != nullptr)
@@ -656,7 +570,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
             if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= ShaderProperties::Scattering;
+                shadprop.texUsage |= TexUsage::Scattering;
         }
     }
 
@@ -723,141 +637,4 @@ void renderClouds_GLSL(const RenderInfo& ri,
                         textures.data(), static_cast<int>(textures.size()), prog);
 
     prog->textureOffset = 0.0f;
-}
-
-// Render a planetary ring system
-void renderRings_GLSL(RingSystem& rings,
-                      RenderInfo& ri,
-                      const LightingState& ls,
-                      float planetRadius,
-                      float planetOblateness,
-                      unsigned int textureResolution,
-                      bool renderShadow,
-                      float segmentSizeInPixels,
-                      const Matrices &m,
-                      bool inside,
-                      Renderer* renderer)
-{
-    float inner = rings.innerRadius / planetRadius;
-    float outer = rings.outerRadius / planetRadius;
-    Texture* ringsTex = rings.texture.find(textureResolution);
-
-    ShaderProperties shadprop;
-    // Set up the shader properties for ring rendering
-    {
-        shadprop.lightModel = ShaderProperties::RingIllumModel;
-        shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
-
-        if (renderShadow)
-        {
-            // Set one shadow (the planet's) per light
-            for (unsigned int li = 0; li < ls.nLights; li++)
-                shadprop.setEclipseShadowCountForLight(li, 1);
-        }
-
-        if (ringsTex != nullptr)
-            shadprop.texUsage = ShaderProperties::DiffuseTexture;
-    }
-
-
-    // Get a shader for the current rendering configuration
-    auto* prog = renderer->getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
-    prog->use();
-    prog->setMVPMatrices(*m.projection, *m.modelview);
-
-    prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = ri.ambientColor.toVector3();
-    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-
-    for (unsigned int li = 0; li < ls.nLights; li++)
-    {
-        const DirectionalLight& light = ls.lights[li];
-
-        // Compute the projection vectors based on the sun direction.
-        // I'm being a little careless here--if the sun direction lies
-        // along the y-axis, this will fail.  It's unlikely that a
-        // planet would ever orbit underneath its sun (an orbital
-        // inclination of 90 degrees), but this should be made
-        // more robust anyway.
-        Eigen::Vector3f axis = Eigen::Vector3f::UnitY().cross(light.direction_obj);
-        float cosAngle = Eigen::Vector3f::UnitY().dot(light.direction_obj);
-        axis.normalize();
-
-        float tScale = 1.0f;
-        if (planetOblateness != 0.0f)
-        {
-            // For oblate planets, the size of the shadow volume will vary
-            // based on the light direction.
-
-            // A vertical slice of the planet is an ellipse
-            float a = 1.0f;                          // semimajor axis
-            float b = a * (1.0f - planetOblateness); // semiminor axis
-            float ecc2 = 1.0f - (b * b) / (a * a);   // square of eccentricity
-
-            // Calculate the radius of the ellipse at the incident angle of the
-            // light on the ring plane + 90 degrees.
-            float r = a * std::sqrt((1.0f - ecc2) /
-                                    (1.0f - ecc2 * celmath::square(cosAngle)));
-
-            tScale *= a / r;
-        }
-
-        // The s axis is perpendicular to the shadow axis in the plane of the
-        // of the rings, and the t axis completes the orthonormal basis.
-        Eigen::Vector3f sAxis = axis * 0.5f;
-        Eigen::Vector3f tAxis = (axis.cross(light.direction_obj)) * 0.5f * tScale;
-        Eigen::Vector4f texGenS;
-        texGenS.head(3) = sAxis;
-        texGenS[3] = 0.5f;
-        Eigen::Vector4f texGenT;
-        texGenT.head(3) = tAxis;
-        texGenT[3] = 0.5f;
-
-        // r0 and r1 determine the size of the planet's shadow and penumbra
-        // on the rings.
-        // TODO: A more accurate ring shadow calculation would set r1 / r0
-        // to the ratio of the apparent sizes of the planet and sun as seen
-        // from the rings. Even more realism could be attained by letting
-        // this ratio vary across the rings, though it may not make enough
-        // of a visual difference to be worth the extra effort.
-        float r0 = 0.24f;
-        float r1 = 0.25f;
-        float bias = 1.0f / (1.0f - r1 / r0);
-
-        prog->shadows[li][0].texGenS = texGenS;
-        prog->shadows[li][0].texGenT = texGenT;
-        prog->shadows[li][0].maxDepth = 1.0f;
-        prog->shadows[li][0].falloff = bias / r0;
-    }
-
-    if (ringsTex != nullptr)
-        ringsTex->bind();
-
-    if (rings.renderData == nullptr)
-        rings.renderData = std::make_unique<GLRingRenderData>();
-    auto data = static_cast<GLRingRenderData*>(rings.renderData.get());
-
-    unsigned nSections = 180;
-    int i = 0;
-    for (i = 0; i < data->count() - 1; i++)
-    {
-        float s = segmentSizeInPixels * tan(celestia::numbers::pi / nSections);
-        if (s < 30.0f) // TODO: make configurable
-            break;
-        nSections <<= 1;
-    }
-
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-    ps.depthTest = true;
-    ps.depthMask = inside;
-    renderer->setPipelineState(ps);
-
-    if (!data->isInitializedLOD(i))
-        data->initializeLOD(i, inner, outer, nSections);
-    data->renderLOD(i);
 }

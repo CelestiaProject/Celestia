@@ -325,7 +325,6 @@ bool FFMPEGCapturePrivate::start()
 bool FFMPEGCapturePrivate::openVideo()
 {
     AVDictionary *opts = nullptr;
-    const char *str = "";
 
     if (av_dict_parse_string(&opts, vc_options.c_str(), "=", ",", 0) != 0)
         cout << "Failed to parse error codec parameters\n";
@@ -516,7 +515,7 @@ FFMPEGCapture::FFMPEGCapture(const Renderer *r) :
     d(new FFMPEGCapturePrivate)
 {
     d->renderer = r;
-    d->hasAlpha = r->getPreferredCaptureFormat() == PixelFormat::RGBA;
+    d->hasAlpha = r->getPreferredCaptureFormat() == engine::PixelFormat::RGBA;
     d->format   = d->hasAlpha ? AV_PIX_FMT_RGBA : AV_PIX_FMT_RGB24;
 }
 

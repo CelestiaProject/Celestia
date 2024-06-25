@@ -9,7 +9,6 @@
 
 #include <config.h>
 #include "render.h"
-#include "astro.h"
 #include "opencluster.h"
 #include "meshmanager.h"
 #include <celmath/mathlib.h>
@@ -18,7 +17,6 @@
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 
 
 const char* OpenCluster::getType() const

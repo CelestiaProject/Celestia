@@ -40,8 +40,8 @@ void PointStarVertexBuffer::startSprites()
 void PointStarVertexBuffer::startBasicPoints()
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::StaticPointSize;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
+    shadprop.texUsage = TexUsage::VertexColors | TexUsage::StaticPointSize;
+    shadprop.lightModel = LightingModel::UnlitModel;
     m_prog = m_renderer.getShaderManager().getShader(shadprop);
     m_pointSizeFromVertex = false;
 }
@@ -55,14 +55,14 @@ void PointStarVertexBuffer::render()
         if (m_texture != nullptr)
             m_texture->bind();
 
-        m_bo->bind().invalidateData().setData(
+        m_bo->invalidateData().setData(
             util::array_view(m_vertices.get(), m_nStars),
             gl::Buffer::BufferUsage::StreamDraw);
 
         if (m_pointSizeFromVertex)
-            m_vo1->draw(gl::VertexObject::Primitive::Points, m_nStars);
+            m_vo1->draw(m_nStars);
         else
-            m_vo2->draw(gl::VertexObject::Primitive::Points, m_nStars);
+            m_vo2->draw(m_nStars);
         m_nStars = 0;
     }
 }
@@ -101,10 +101,8 @@ void PointStarVertexBuffer::setupVertexArrayObject()
         m_initialized = true;
 
         m_bo = std::make_unique<gl::Buffer>();
-        m_vo1 = std::make_unique<gl::VertexObject>();
-        m_vo2 = std::make_unique<gl::VertexObject>();
-
-        m_bo->bind();
+        m_vo1 = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
+        m_vo2 = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
 
         m_vo1->addVertexBuffer(
             *m_bo,

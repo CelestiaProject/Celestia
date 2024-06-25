@@ -91,17 +91,8 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
                                        const Vector3f& obsPosition,
                                        const Hyperplane<float, 3>*   frustumPlanes,
                                        float           limitingFactor,
-                                       float           scale,
-                                       OctreeProcStats *stats) const
+                                       float           scale) const
 {
-#ifdef OCTREE_DEBUG
-    size_t h;
-    if (stats != nullptr)
-    {
-        h = stats->height + 1;
-        stats->nodes++;
-    }
-#endif
     // See if this node lies within the view frustum
 
     // Test the cubic octree node against each one of the five
@@ -123,10 +114,6 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
-#ifdef OCTREE_DEBUG
-        if (stats != nullptr)
-            stats->objects++;
-#endif
         const Star& obj = _firstObject[i];
 
         if (obj.getAbsoluteMagnitude() < dimmest)
@@ -152,18 +139,8 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
                                                     obsPosition,
                                                     frustumPlanes,
                                                     limitingFactor,
-                                                    scale * 0.5f,
-                                                    stats
-                                                   );
-#ifdef OCTREE_DEBUG
-                if (stats != nullptr && stats->height > h)
-                    h = stats->height;
-#endif
+                                                    scale * 0.5f);
             }
-#ifdef OCTREE_DEBUG
-            if (stats != nullptr)
-                stats->height = h;
-#endif
         }
     }
 }

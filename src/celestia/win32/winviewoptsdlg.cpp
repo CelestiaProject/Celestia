@@ -11,54 +11,56 @@
 
 #include "winviewoptsdlg.h"
 
-#include <iostream>
-
-#include <celengine/body.h>
-#include <celengine/render.h>
-#include "res/resource.h"
+#include <array>
+#include <cmath>
 
 #include <commctrl.h>
 
-using namespace std;
+#include <celengine/body.h>
+#include <celutil/flag.h>
+#include "res/resource.h"
 
-static const int DistanceSliderRange = 10000;
-static const float MinDistanceLimit = 1.0f;
-static const float MaxDistanceLimit = 1.0e6f;
-
-static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
-                                     UINT message,
-                                     WPARAM wParam,
-                                     LPARAM lParam)
+namespace celestia::win32
 {
+
+namespace
+{
+
+constexpr int DistanceSliderRange = 10000;
+constexpr float MinDistanceLimit = 1.0f;
+constexpr float MaxDistanceLimit = 1.0e6f;
+
+BOOL APIENTRY
+ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (message == WM_INITDIALOG)
+    {
+        ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(lParam);
+        if (Dlg == NULL)
+            return EndDialog(hDlg, 0);
+        SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+
+        //Read labelMode, renderFlags and hud detail
+        Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
+        Dlg->initialLabelMode = Dlg->appCore->getRenderer()->getLabelMode();
+        Dlg->initialHudDetail = Dlg->appCore->getHudDetail();
+
+        //Set dialog controls to reflect current label and render modes
+        Dlg->SetControls(hDlg);
+
+        return TRUE;
+    }
+
     ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
-    case WM_INITDIALOG:
-        {
-            ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(lParam);
-            if (Dlg == NULL)
-                return EndDialog(hDlg, 0);
-            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
-
-            //Read labelMode, renderFlags and hud detail
-            Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
-            Dlg->initialLabelMode = Dlg->appCore->getRenderer()->getLabelMode();
-            Dlg->initialHudDetail = Dlg->appCore->getHudDetail();
-
-            //Set dialog controls to reflect current label and render modes
-            Dlg->SetControls(hDlg);
-
-            return(TRUE);
-        }
-        break;
-
     case WM_COMMAND:
     {
         Renderer* renderer = Dlg->appCore->getRenderer();
-        uint64_t renderFlags = renderer->getRenderFlags();
-        uint32_t labelMode = renderer->getLabelMode();
-        uint32_t orbitMask = renderer->getOrbitMask();
+        std::uint64_t renderFlags = renderer->getRenderFlags();
+        std::uint32_t labelMode = renderer->getLabelMode();
+        BodyClassification orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
@@ -117,28 +119,28 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowFadingOrbits);
             break;
         case IDC_PLANETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Planet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Planet);
             break;
         case IDC_DWARFPLANETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::DwarfPlanet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::DwarfPlanet);
             break;
         case IDC_STARORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Stellar);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Stellar);
             break;
         case IDC_MOONORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Moon);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Moon);
             break;
         case IDC_MINORMOONORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::MinorMoon);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::MinorMoon);
             break;
         case IDC_ASTEROIDORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Asteroid);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Asteroid);
             break;
         case IDC_COMETORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Comet);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Comet);
             break;
         case IDC_SPACECRAFTORBITS:
-            renderer->setOrbitMask(orbitMask ^ Body::Spacecraft);
+            renderer->setOrbitMask(orbitMask ^ BodyClassification::Spacecraft);
             break;
         case IDC_SHOWPLANETS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
@@ -269,29 +271,19 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             case SB_THUMBTRACK:
                 // case SB_ENDSCROLL:
                 {
-                    char val[16];
                     HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
-                    float logDistanceLimit = (float) HIWORD(wParam) /
-                        (float) DistanceSliderRange;
-                    float distanceLimit = (float) pow(MaxDistanceLimit,
-                                                 logDistanceLimit);
-                    sprintf(val, "%d", (int) distanceLimit);
-                    SetWindowText(hwnd, val);
+                    float logDistanceLimit = static_cast<float>(HIWORD(wParam)) /
+                        static_cast<float>(DistanceSliderRange);
+                    auto distanceLimit = static_cast<int>(std::pow(MaxDistanceLimit, logDistanceLimit));
+
+                    SetDlgItemInt(hDlg, IDC_EDIT_FILTER_DISTANCE, distanceLimit, FALSE);
+
                     Dlg->appCore->getRenderer()->setDistanceLimit(distanceLimit);
                     break;
                 }
 
             default:
-                std::cout << "Slider msg: " << sbValue << '\n';
                 break;
-#if 0
-            case SB_THUMBPOSITION:
-                {
-                    browser->nStars = (int)HIWORD(wParam);
-                    RefreshItems(hDlg, browser);
-                    break;
-                }
-#endif
             }
         }
     }
@@ -299,6 +291,29 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
     return FALSE;
 }
 
+void
+dlgCheck(HWND hDlg, WORD item, std::uint32_t flags, std::uint32_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+void
+dlgCheck64(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+template<typename T>
+void
+dlgCheckEnum(HWND hDlg, WORD item, T flags, T f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       util::is_set(flags, f) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+} // end unnamed namespace
 
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                                      HWND _parent,
@@ -314,25 +329,12 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                              reinterpret_cast<LONG_PTR>(this));
 }
 
-
-static void dlgCheck(HWND hDlg, WORD item, uint32_t flags, uint32_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
-static void dlgCheck64(HWND hDlg, WORD item, uint64_t flags, uint64_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
-    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
-    int orbitMask = appCore->getRenderer()->getOrbitMask();
+    BodyClassification orbitMask = appCore->getRenderer()->getOrbitMask();
 
     //Set checkboxes and radiobuttons
     dlgCheck64(hDlg, IDC_SHOWATMOSPHERES, renderFlags, Renderer::ShowAtmospheres);
@@ -353,14 +355,14 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     dlgCheck64(hDlg, IDC_SHOWORBITS, renderFlags, Renderer::ShowOrbits);
     dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
     dlgCheck64(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, Renderer::ShowPartialTrajectories);
-    dlgCheck(hDlg, IDC_PLANETORBITS, orbitMask, Body::Planet);
-    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask, Body::DwarfPlanet);
-    dlgCheck(hDlg, IDC_MOONORBITS, orbitMask, Body::Moon);
-    dlgCheck(hDlg, IDC_MINORMOONORBITS, orbitMask, Body::MinorMoon);
-    dlgCheck(hDlg, IDC_ASTEROIDORBITS, orbitMask, Body::Asteroid);
-    dlgCheck(hDlg, IDC_COMETORBITS, orbitMask, Body::Comet);
-    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask, Body::Spacecraft);
-    dlgCheck(hDlg, IDC_STARORBITS, orbitMask, Body::Stellar);
+    dlgCheckEnum(hDlg, IDC_PLANETORBITS, orbitMask, BodyClassification::Planet);
+    dlgCheckEnum(hDlg, IDC_DWARFPLANETORBITS,orbitMask, BodyClassification::DwarfPlanet);
+    dlgCheckEnum(hDlg, IDC_MOONORBITS, orbitMask, BodyClassification::Moon);
+    dlgCheckEnum(hDlg, IDC_MINORMOONORBITS, orbitMask, BodyClassification::MinorMoon);
+    dlgCheckEnum(hDlg, IDC_ASTEROIDORBITS, orbitMask, BodyClassification::Asteroid);
+    dlgCheckEnum(hDlg, IDC_COMETORBITS, orbitMask, BodyClassification::Comet);
+    dlgCheckEnum(hDlg, IDC_SPACECRAFTORBITS, orbitMask, BodyClassification::Spacecraft);
+    dlgCheckEnum(hDlg, IDC_STARORBITS, orbitMask, BodyClassification::Stellar);
     dlgCheck64(hDlg, IDC_SHOWPLANETS, renderFlags, Renderer::ShowPlanets);
     dlgCheck64(hDlg, IDC_SHOWDWARFPLANETS, renderFlags, Renderer::ShowDwarfPlanets);
     dlgCheck64(hDlg, IDC_SHOWMOONS, renderFlags, Renderer::ShowMoons);
@@ -399,18 +401,14 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
                        (WPARAM)TRUE,
                        (LPARAM) MAKELONG(0, DistanceSliderRange));
     float distanceLimit = appCore->getRenderer()->getDistanceLimit();
-    float logDistanceLimit = (float) (log(distanceLimit) /
-                                      log(MaxDistanceLimit));
+    float logDistanceLimit = std::log(distanceLimit) / std::log(MaxDistanceLimit);
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FILTER_DISTANCE,
                        TBM_SETPOS,
                        (WPARAM) TRUE,
                        (LPARAM) (logDistanceLimit * DistanceSliderRange));
 
-    char val[16];
-    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
-    sprintf(val, "%d", (int) distanceLimit);
-    SetWindowText(hwnd, val);
+    SetDlgItemInt(hDlg, IDC_EDIT_FILTER_DISTANCE, static_cast<UINT>(distanceLimit), FALSE);
 }
 
 
@@ -426,3 +424,5 @@ void ViewOptionsDialog::notifyChange(CelestiaCore*, int)
     if (parent != NULL)
         SetControls(hwnd);
 }
+
+} // end namespace celestia::win32

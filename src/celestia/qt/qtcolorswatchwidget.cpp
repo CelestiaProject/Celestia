@@ -15,6 +15,8 @@
 #include <QColorDialog>
 #include <QPalette>
 
+namespace celestia::qt
+{
 
 ColorSwatchWidget::ColorSwatchWidget(const QColor& c, QWidget* /*parent*/) :
     QLabel(nullptr),
@@ -24,13 +26,11 @@ ColorSwatchWidget::ColorSwatchWidget(const QColor& c, QWidget* /*parent*/) :
     setColor(m_color);
 }
 
-
 QColor
 ColorSwatchWidget::color() const
 {
     return m_color;
 }
-
 
 void
 ColorSwatchWidget::setColor(QColor c)
@@ -40,7 +40,6 @@ ColorSwatchWidget::setColor(QColor c)
     setAutoFillBackground(true);
 }
 
-
 void
 ColorSwatchWidget::mouseReleaseEvent(QMouseEvent* /*unused*/)
 {
@@ -48,3 +47,5 @@ ColorSwatchWidget::mouseReleaseEvent(QMouseEvent* /*unused*/)
     if (c.isValid())
         setColor(c);
 }
+
+} // end namespace celestia::qt

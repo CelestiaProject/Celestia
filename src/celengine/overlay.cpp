@@ -19,8 +19,8 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace celmath;
 using namespace celestia::engine;
+namespace math = celestia::math;
 
 Overlay::Overlay(Renderer& r) :
     layout(make_unique<TextLayout>(r.getScreenDpi())),
@@ -33,7 +33,7 @@ void Overlay::begin()
     layout->setLayoutDirectionFollowTextAlignment(true);
     layout->setScreenDpi(renderer.getScreenDpi());
 
-    projection = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    projection = math::Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     // ModelView is Identity
 
     Renderer::PipelineState ps;
@@ -81,9 +81,9 @@ void Overlay::print(std::string_view s)
     layout->render(s);
 }
 
-void Overlay::drawRectangle(const celestia::Rect& r)
+void Overlay::drawRectangle(const celestia::Rect& r) const
 {
-    renderer.drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, projection);
+    renderer.drawRectangle(r, FisheyeOverrideMode::Disabled, projection);
 }
 
 void Overlay::setColor(float r, float g, float b, float a)
@@ -97,6 +97,13 @@ void Overlay::setColor(const Color& c)
     layout->flush();
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
                      c.red(), c.green(), c.blue(), c.alpha());
+}
+
+void Overlay::setColor(const Color& c, float a)
+{
+    layout->flush();
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
+                     c.red(), c.green(), c.blue(), a);
 }
 
 void Overlay::moveBy(float dx, float dy)

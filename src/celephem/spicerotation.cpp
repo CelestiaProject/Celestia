@@ -16,8 +16,8 @@
 
 #include <SpiceUsr.h>
 
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
-#include <celengine/astro.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
 #include "spiceinterface.h"
@@ -53,8 +53,7 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
     m_period(period),
     m_spiceErr(false),
     m_validIntervalBegin(beginning),
-    m_validIntervalEnd(ending),
-    m_useDefaultTimeInterval(false)
+    m_validIntervalEnd(ending)
 {
 }
 
@@ -75,8 +74,7 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
     m_period(period),
     m_spiceErr(false),
     m_validIntervalBegin(-std::numeric_limits<double>::infinity()),
-    m_validIntervalEnd(std::numeric_limits<double>::infinity()),
-    m_useDefaultTimeInterval(true)
+    m_validIntervalEnd(std::numeric_limits<double>::infinity())
 {
 }
 
@@ -182,10 +180,10 @@ SpiceRotation::computeSpin(double jd) const
         Eigen::Quaterniond q = Eigen::Quaterniond(Eigen::Map<Eigen::Matrix3d>(matrixData)).conjugate();
 
         // Transform into Celestia's coordinate system
-        return celmath::YRot180<double> *
-               celmath::XRot90Conjugate<double> *
+        return math::YRot180<double> *
+               math::XRot90Conjugate<double> *
                q.conjugate() *
-               celmath::XRot90<double>;
+               math::XRot90<double>;
     }
 }
 

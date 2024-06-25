@@ -39,7 +39,7 @@ EclipticLineRenderer::init()
     {
         float s, c;
         float angle = static_cast<float>(2 * i) / static_cast<float>(kEclipticCount) * PI;
-        celmath::sincos(angle, s, c);
+        math::sincos(angle, s, c);
         m_lineRenderer.addVertex(c * kEclipticScale, 0.0f, s * kEclipticScale);
     }
 }

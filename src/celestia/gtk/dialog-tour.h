@@ -16,16 +16,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Entry Function */
 void dialogTourGuide(AppData* app);
 
-
-/* Local Data Struct */
-typedef struct _TourData TourData;
-struct _TourData {
-    AppData* app;
-
-    Destination* selected;
-    GtkWidget* descLabel;
-};
+} // end namespace celestia::gtk

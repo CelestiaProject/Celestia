@@ -16,6 +16,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -44,6 +45,11 @@ enum
     Celx_Category = 13
 };
 
+template<typename T> int celxClassId(T)
+{
+    assert(false);
+    return -1;
+}
 
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead
@@ -335,7 +341,7 @@ public:
     }
 
     LuaState* getLuaStateObject();
-    static const char* ClassNames[];
+    static std::string_view classNameForId(int id);
 
 private:
     lua_State* m_lua;

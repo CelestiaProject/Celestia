@@ -21,7 +21,6 @@
 using std::size_t;
 using std::strncmp;
 
-
 namespace
 {
 
@@ -30,13 +29,11 @@ namespace
 
 } // end unnamed namespace
 
-
 const std::string&
 Location::getName(bool i18n) const
 {
     return i18n && !i18nName.empty() ? i18nName : name;
 }
-
 
 void
 Location::setName(const std::string& _name)
@@ -47,6 +44,14 @@ Location::setName(const std::string& _name)
         i18nName = {};
 }
 
+std::string
+Location::getPath(const StarDatabase* starDB, char delimiter) const
+{
+    if (parent)
+        return parent->getPath(starDB, delimiter) + delimiter + name;
+    else
+        return name;
+}
 
 Eigen::Vector3f
 Location::getPosition() const
@@ -54,13 +59,11 @@ Location::getPosition() const
     return position;
 }
 
-
 void
 Location::setPosition(const Eigen::Vector3f& _position)
 {
     position = _position;
 }
-
 
 float
 Location::getSize() const
@@ -68,13 +71,11 @@ Location::getSize() const
     return size;
 }
 
-
 void
 Location::setSize(float _size)
 {
     size = _size;
 }
-
 
 float
 Location::getImportance() const
@@ -82,13 +83,11 @@ Location::getImportance() const
     return importance;
 }
 
-
 void
 Location::setImportance(float _importance)
 {
     importance = _importance;
 }
-
 
 const std::string&
 Location::getInfoURL() const
@@ -96,20 +95,17 @@ Location::getInfoURL() const
     return infoURL;
 }
 
-
 Location::FeatureType
 Location::getFeatureType() const
 {
     return featureType;
 }
 
-
 void
 Location::setFeatureType(Location::FeatureType _featureType) // cppcheck-suppress passedByValue
 {
     featureType = _featureType;
 }
-
 
 Location::FeatureType
 Location::parseFeatureType(std::string_view s)
@@ -120,20 +116,17 @@ Location::parseFeatureType(std::string_view s)
         : ptr->featureType;
 }
 
-
 Body*
 Location::getParentBody() const
 {
     return parent;
 }
 
-
 void
 Location::setParentBody(Body* _parent)
 {
     parent = _parent;
 }
-
 
 /*! Get the position of the location relative to its body in
  *  the J2000 ecliptic coordinate system.
@@ -147,7 +140,6 @@ Location::getPlanetocentricPosition(double t) const
     Eigen::Quaterniond q = parent->getEclipticToBodyFixed(t);
     return q.conjugate() * position.cast<double>();
 }
-
 
 Eigen::Vector3d
 Location::getHeliocentricPosition(double t) const

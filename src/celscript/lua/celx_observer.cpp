@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace celmath;
 using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
@@ -46,8 +45,8 @@ Observer* to_observer(lua_State* l, int index)
 {
     CelxLua celx(l);
 
-    Observer** o = static_cast<Observer**>(lua_touserdata(l, index));
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    auto o = static_cast<Observer* const*>(lua_touserdata(l, index));
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
 
     // Check if pointer is still valid, i.e. is used by a view:
     if (o != nullptr && getViewByObserver(appCore, *o) != nullptr)
@@ -737,7 +736,7 @@ static int observer_setframe(lua_State* l)
     frame = celx.toFrame(2);
     if (frame != nullptr)
     {
-        obs->setFrame(std::shared_ptr<const ObserverFrame>(new ObserverFrame(*frame)));
+        obs->setFrame(std::make_shared<ObserverFrame>(*frame));
     }
     else
     {
@@ -764,7 +763,7 @@ static int observer_getspeed(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "No argument expected for observer:getspeed()");
 
-    Observer* obs = this_observer(l);
+    const Observer* obs = this_observer(l);
 
     lua_pushnumber(l, (lua_Number) astro::kilometersToMicroLightYears(obs->getTargetSpeed()));
 
@@ -778,7 +777,7 @@ static int observer_setfov(lua_State* l)
 
     Observer* obs = this_observer(l);
     double fov = celx.safeGetNumber(2, AllErrors, "Argument to observer:setfov() must be a number");
-    if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
+    if ((fov >= 0.001_deg) && (fov <= 120.0_deg))
     {
         obs->setFOV((float) fov);
         celx.appCore(AllErrors)->setZoomFromFOV();
@@ -801,16 +800,18 @@ static int observer_splitview(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(2, 3, "One or two arguments expected for observer:splitview()");
 
-    Observer* obs = this_observer(l);
+    const Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
     const char* splitType = celx.safeGetString(2, AllErrors, "First argument to observer:splitview() must be a string");
-    View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
+    celestia::View::Type type = (compareIgnoringCase(splitType, "h") == 0)
+        ? celestia::View::HorizontalSplit
+        : celestia::View::VerticalSplit;
     double splitPos = celx.safeGetNumber(3, WrongType, "Number expected as argument to observer:splitview()", 0.5);
     if (splitPos < 0.1)
         splitPos = 0.1;
     if (splitPos > 0.9)
         splitPos = 0.9;
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->splitView(type, view, (float)splitPos);
     return 0;
 }
@@ -820,9 +821,9 @@ static int observer_deleteview(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "No argument expected for observer:deleteview()");
 
-    Observer* obs = this_observer(l);
+    const Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    celestia::View* view = getViewByObserver(appCore, obs);
     appCore->deleteView(view);
     return 0;
 }
@@ -832,9 +833,9 @@ static int observer_singleview(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "No argument expected for observer:singleview()");
 
-    Observer* obs = this_observer(l);
+    const Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    const celestia::View* view = getViewByObserver(appCore, obs);
     appCore->singleView(view);
     return 0;
 }
@@ -844,9 +845,9 @@ static int observer_makeactiveview(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "No argument expected for observer:makeactiveview()");
 
-    Observer* obs = this_observer(l);
+    const Observer* obs = this_observer(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    View* view = getViewByObserver(appCore, obs);
+    const celestia::View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
     return 0;
 }
@@ -898,7 +899,7 @@ static int observer_setlocationflags(lua_State* l)
             celx.doError("Values in table-argument to observer:setlocationflags() must be boolean");
             return 0;
         }
-        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
         if (LocationFlagMap.count(key) == 0)
         {
             GetLogger()->warn("Unknown key: {}\n", key);
@@ -928,7 +929,7 @@ static int observer_getlocationflags(lua_State* l)
     Observer* obs = this_observer(l);
     lua_newtable(l);
     const auto locationFlags = obs->getLocationFilter();
-    auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+    auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
     std::string itString;
     itString.reserve(celestia::scripts::FlagMapNameLength);
     for (const auto& it : LocationFlagMap)

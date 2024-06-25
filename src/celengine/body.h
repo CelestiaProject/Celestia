@@ -16,10 +16,12 @@
 #include <celengine/timeline.h>
 #include <celephem/rotation.h>
 #include <celephem/orbit.h>
+#include <celutil/flag.h>
 #include <celutil/ranges.h>
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <cassert>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -28,6 +30,8 @@
 #include <memory>
 #include <list>
 #include <functional>
+#include <unordered_map>
+#include <utility>
 
 class Selection;
 class ReferenceFrame;
@@ -35,12 +39,13 @@ class Body;
 class FrameTree;
 class ReferenceMark;
 class Atmosphere;
+class StarDatabase;
 
 class PlanetarySystem
 {
- public:
-    PlanetarySystem(Body* _primary);
-    PlanetarySystem(Star* _star);
+public:
+    explicit PlanetarySystem(Body* _primary);
+    explicit PlanetarySystem(Star* _star);
     ~PlanetarySystem() = default;
 
     Star* getStar() const { return star; };
@@ -61,41 +66,25 @@ class PlanetarySystem
     Body* find(std::string_view, bool deepSearch = false, bool i18n = false) const;
     void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool rec = true) const;
 
- private:
+private:
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
 
- private:
     using ObjectIndex = std::map<std::string, Body*, UTF8StringOrderingPredicate>;
 
- private:
     Star* star;
     Body* primary{nullptr};
     std::vector<std::unique_ptr<Body>> satellites;
     ObjectIndex objectIndex;  // index of bodies by name
 };
 
-
-class RingRenderData
-{
- public:
-    RingRenderData() = default;
-    virtual ~RingRenderData() = default;
-    RingRenderData(const RingRenderData&) = delete;
-    RingRenderData(RingRenderData&&) = delete;
-    RingRenderData& operator=(const RingRenderData&) = delete;
-    RingRenderData& operator=(RingRenderData&&) = delete;
-};
-
-
 class RingSystem
 {
- public:
+public:
     float innerRadius;
     float outerRadius;
     Color color;
     MultiResTexture texture;
-    std::unique_ptr<RingRenderData> renderData;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),
@@ -110,76 +99,94 @@ class RingSystem
         { };
 };
 
-
-class Body
+// Object class enumeration:
+// All of these values must be powers of two so that they can
+// be used in an object type bit mask.
+//
+// The values of object class enumerants cannot be modified
+// without consequence. The object orbit mask is a stored user
+// setting, so there will be unexpected results when the user
+// upgrades if the orbit mask values mean something different
+// in the new version.
+//
+// * Planet, Moon, Asteroid, DwarfPlanet, and MinorMoon all behave
+// essentially the same. They're distinguished from each other for
+// user convenience, so that it's possible to assign them different
+// orbit and label colors, and to categorize them in the solar
+// system browser.
+//
+// * Comet is identical to the asteroid class except that comets may
+// be rendered with dust and ion tails.
+//
+// Other classes have different default settings for the properties
+// Clickable, VisibleAsPoint, Visible, and SecondaryIlluminator. These
+// defaults are assigned in the ssc file parser and may be overridden
+// for a particular body.
+//
+// * Invisible is used for barycenters and other reference points.
+// An invisible object is not clickable, visibleAsPoint, visible, or
+// a secondary illuminator.
+//
+// * SurfaceFeature is meant to be used for buildings and landscape.
+// SurfaceFeatures is clickable and visible, but not visibleAsPoint or
+// a secondary illuminator.
+//
+// * Component should be used for parts of spacecraft or buildings that
+// are separate ssc objects. A component is clickable and visible, but
+// not visibleAsPoint or a secondary illuminator.
+//
+// * Diffuse is used for gas clouds, dust plumes, and the like. They are
+// visible, but other properties are false by default. It is expected
+// that an observer will move through a diffuse object, so there's no
+// need for any sort of collision detection to be applied.
+//
+// * Stellar is a pseudo-class used only for orbit rendering.
+//
+// * Barycenter and SmallBody are not used currently. Invisible is used
+// instead of barycenter.
+enum class BodyClassification : std::uint32_t
 {
- public:
+    EmptyMask      =        0,
+    Planet         =     0x01,
+    Moon           =     0x02,
+    Asteroid       =     0x04,
+    Comet          =     0x08,
+    Spacecraft     =     0x10,
+    Invisible      =     0x20,
+    Barycenter     =     0x40, // Not used (invisible is used instead)
+    SmallBody      =     0x80, // Not used
+    DwarfPlanet    =    0x100,
+    Stellar        =    0x200, // only used for orbit mask
+    SurfaceFeature =    0x400,
+    Component      =    0x800,
+    MinorMoon      =   0x1000,
+    Diffuse        =   0x2000,
+    Unknown        =  0x10000,
+};
+
+ENUM_CLASS_BITWISE_OPS(BodyClassification);
+
+enum class BodyFeatures : std::uint8_t
+{
+    None              = 0x00,
+    Atmosphere        = 0x01,
+    Rings             = 0x02,
+    AlternateSurfaces = 0x04,
+    Locations         = 0x08,
+    ReferenceMarks    = 0x10,
+    OrbitColor        = 0x20,
+    CometTailColor    = 0x40,
+};
+
+ENUM_CLASS_BITWISE_OPS(BodyFeatures);
+
+class BodyFeaturesManager;
+
+class Body //NOSONAR
+{
+public:
      Body(PlanetarySystem*, const std::string& name);
      ~Body();
-
-    // Object class enumeration:
-    // All of these values must be powers of two so that they can
-    // be used in an object type bit mask.
-    //
-    // The values of object class enumerants cannot be modified
-    // without consequence. The object orbit mask is a stored user
-    // setting, so there will be unexpected results when the user
-    // upgrades if the orbit mask values mean something different
-    // in the new version.
-    //
-    // * Planet, Moon, Asteroid, DwarfPlanet, and MinorMoon all behave
-    // essentially the same. They're distinguished from each other for
-    // user convenience, so that it's possible to assign them different
-    // orbit and label colors, and to categorize them in the solar
-    // system browser.
-    //
-    // * Comet is identical to the asteroid class except that comets may
-    // be rendered with dust and ion tails.
-    //
-    // Other classes have different default settings for the properties
-    // Clickable, VisibleAsPoint, Visible, and SecondaryIlluminator. These
-    // defaults are assigned in the ssc file parser and may be overridden
-    // for a particular body.
-    //
-    // * Invisible is used for barycenters and other reference points.
-    // An invisible object is not clickable, visibleAsPoint, visible, or
-    // a secondary illuminator.
-    //
-    // * SurfaceFeature is meant to be used for buildings and landscape.
-    // SurfaceFeatures is clickable and visible, but not visibleAsPoint or
-    // a secondary illuminator.
-    //
-    // * Component should be used for parts of spacecraft or buildings that
-    // are separate ssc objects. A component is clickable and visible, but
-    // not visibleAsPoint or a secondary illuminator.
-    //
-    // * Diffuse is used for gas clouds, dust plumes, and the like. They are
-    // visible, but other properties are false by default. It is expected
-    // that an observer will move through a diffuse object, so there's no
-    // need for any sort of collision detection to be applied.
-    //
-    // * Stellar is a pseudo-class used only for orbit rendering.
-    //
-    // * Barycenter and SmallBody are not used currently. Invisible is used
-    // instead of barycenter.
-    enum
-    {
-        Planet         =    0x01,
-        Moon           =    0x02,
-        Asteroid       =    0x04,
-        Comet          =    0x08,
-        Spacecraft     =    0x10,
-        Invisible      =    0x20,
-        Barycenter     =    0x40, // Not used (invisible is used instead)
-        SmallBody      =    0x80, // Not used
-        DwarfPlanet    =   0x100,
-        Stellar        =   0x200, // only used for orbit mask
-        SurfaceFeature =   0x400,
-        Component      =   0x800,
-        MinorMoon      =  0x1000,
-        Diffuse        =  0x2000,
-        Unknown        = 0x10000,
-    };
 
     enum VisibilityPolicy
     {
@@ -193,6 +200,7 @@ class Body
     PlanetarySystem* getSystem() const;
     const std::vector<std::string>& getNames() const;
     std::string getName(bool i18n = false) const;
+    std::string getPath(const StarDatabase*, char delimiter = '/') const;
     std::string getLocalizedName() const;
     bool hasLocalizedName() const;
     void addAlias(const std::string& alias);
@@ -233,24 +241,16 @@ class Body
     float getTempDiscrepancy() const;
     void setTempDiscrepancy(float);
 
-    int getClassification() const;
-    void setClassification(int);
+    BodyClassification getClassification() const;
+    void setClassification(BodyClassification);
     const std::string& getInfoURL() const;
-    void setInfoURL(const std::string&);
+    void setInfoURL(std::string&&);
 
     PlanetarySystem* getSatellites() const;
     PlanetarySystem* getOrCreateSatellites();
 
     float getBoundingRadius() const;
     float getCullingRadius() const;
-
-    RingSystem* getRings() const;
-    void setRings(std::unique_ptr<RingSystem>&&);
-    void scaleRings(float);
-
-    const Atmosphere* getAtmosphere() const;
-    Atmosphere* getAtmosphere();
-    void setAtmosphere(std::unique_ptr<Atmosphere>&&);
 
     ResourceHandle getGeometry() const { return geometry; }
     void setGeometry(ResourceHandle);
@@ -306,61 +306,19 @@ class Body
     bool extant(double) const;
     void getLifespan(double&, double&) const;
 
-    Surface* getAlternateSurface(const std::string&) const;
-    void addAlternateSurface(const std::string&, std::unique_ptr<Surface>&&);
-    auto getAlternateSurfaceNames() const
-    {
-        using range_type = decltype(celestia::util::keysView(*altSurfaces));
-        return altSurfaces
-            ? std::make_optional(celestia::util::keysView(*altSurfaces))
-            : std::optional<range_type>();
-    }
-
-    bool hasLocations() const { return locations != nullptr && !locations->empty(); }
-
-    auto getLocations()
-    {
-        using range_type = decltype(celestia::util::pointerView(*locations));
-        return locations
-            ? std::make_optional(celestia::util::pointerView(*locations))
-            : std::optional<range_type>();
-    }
-
-    auto getLocations() const
-    {
-        using range_type = decltype(celestia::util::constPointerView(*locations));
-        return locations
-            ? std::make_optional(celestia::util::constPointerView(*locations))
-            : std::optional<range_type>();
-    }
-
-    void addLocation(std::unique_ptr<Location>&&);
-    Location* findLocation(std::string_view, bool i18n = false) const;
-    void computeLocations();
-
     bool isVisible() const { return visible; }
     void setVisible(bool _visible);
     bool isClickable() const { return clickable; }
     void setClickable(bool _clickable);
-    bool isVisibleAsPoint() const { return visibleAsPoint; }
-    void setVisibleAsPoint(bool _visibleAsPoint);
-    bool isOrbitColorOverridden() const { return overrideOrbitColor; }
-    void setOrbitColorOverridden(bool _override);
-    bool isSecondaryIlluminator() const { return secondaryIlluminator; }
-    void setSecondaryIlluminator(bool enable);
+    bool isVisibleAsPoint() const;
+    bool isSecondaryIlluminator() const;
 
-    bool hasVisibleGeometry() const { return classification != Invisible && visible; }
+    bool hasVisibleGeometry() const { return classification != BodyClassification::Invisible && visible; }
 
     VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
     void setOrbitVisibility(VisibilityPolicy _orbitVisibility);
 
-    Color getOrbitColor() const { return orbitColor; }
-    void setOrbitColor(const Color&);
-
-    Color getCometTailColor() const { return cometTailColor; }
-    void setCometTailColor(const Color& c);
-
-    int getOrbitClassification() const;
+    BodyClassification getOrbitClassification() const;
 
     enum
     {
@@ -371,25 +329,13 @@ class Body
         VelocityVector =   0x10,
     };
 
-    void addReferenceMark(std::unique_ptr<ReferenceMark>&& refMark);
-    void removeReferenceMark(const std::string& tag);
-    const ReferenceMark* findReferenceMark(const std::string& tag) const;
-    auto getReferenceMarks() const
-    {
-        using range_type = decltype(celestia::util::constPointerView(*referenceMarks));
-        return referenceMarks
-            ? std::make_optional(celestia::util::constPointerView(*referenceMarks))
-            : std::optional<range_type>();
-    }
-
     void markChanged();
     void markUpdated();
     void recomputeCullingRadius();
 
- private:
+private:
     void setName(const std::string& name);
 
- private:
     std::vector<std::string> names{ 1 };
     std::string localizedName;
 
@@ -420,29 +366,113 @@ class Body
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
-    std::unique_ptr<Atmosphere> atmosphere;
-    std::unique_ptr<RingSystem> rings;
-
-    int classification{ Unknown };
+    BodyClassification classification{ BodyClassification::Unknown };
 
     std::string infoURL;
 
-    using AltSurfaceTable = std::map<std::string, std::unique_ptr<Surface>, std::less<>>;
-    std::unique_ptr<AltSurfaceTable> altSurfaces;
-
-    std::unique_ptr<std::vector<std::unique_ptr<Location>>> locations;
-    mutable bool locationsComputed{ false };
-
-    std::unique_ptr<std::list<std::unique_ptr<ReferenceMark>>> referenceMarks;
-
-    Color orbitColor;
-    Color cometTailColor{ 0.5f, 0.5f, 0.75f };
+    // Track enabled features to allow fast rejection during lookup
+    BodyFeatures features{ BodyFeatures::None };
 
     bool visible{ true };
     bool clickable{ true };
-    bool visibleAsPoint{ true };
-    bool overrideOrbitColor{ false };
     VisibilityPolicy orbitVisibility : 3;
-    bool secondaryIlluminator{ true };
-    bool primaryNameLocalized { false };
+
+    friend class BodyFeaturesManager;
 };
+
+struct BodyLocations
+{
+    std::vector<std::unique_ptr<Location>> locations;
+    bool locationsComputed;
+};
+
+class BodyFeaturesManager
+{
+public:
+    BodyFeaturesManager() = default;
+    ~BodyFeaturesManager() = default;
+
+    BodyFeaturesManager(const BodyFeaturesManager&) = delete;
+    BodyFeaturesManager(BodyFeaturesManager&&) = delete;
+    BodyFeaturesManager& operator=(const BodyFeaturesManager&) = delete;
+    BodyFeaturesManager& operator=(BodyFeaturesManager&&) = delete;
+
+    Atmosphere* getAtmosphere(const Body*) const;
+    void setAtmosphere(Body*, std::unique_ptr<Atmosphere>&&);
+
+    RingSystem* getRings(const Body*) const;
+    void setRings(Body*, std::unique_ptr<RingSystem>&&);
+    void scaleRings(Body*, float);
+
+    Surface* getAlternateSurface(const Body*, std::string_view) const;
+    void addAlternateSurface(Body*, std::string_view, std::unique_ptr<Surface>&&);
+
+    auto getAlternateSurfaceNames(const Body* body) const
+    {
+        using range_type = decltype(celestia::util::keysView(std::declval<AltSurfaceTable>()));
+        if (!celestia::util::is_set(body->features, BodyFeatures::AlternateSurfaces))
+            return std::optional<range_type>();
+
+        auto it = alternateSurfaces.find(body);
+        assert(it != alternateSurfaces.end());
+        return std::make_optional(celestia::util::keysView(*it->second));
+    }
+
+    void addReferenceMark(Body*, std::unique_ptr<ReferenceMark>&&);
+    bool removeReferenceMark(Body*, std::string_view tag);
+    const ReferenceMark* findReferenceMark(const Body*, std::string_view tag) const;
+
+    template<typename F>
+    void processReferenceMarks(const Body* body, F&& processor) const
+    {
+        if (!celestia::util::is_set(body->features, BodyFeatures::ReferenceMarks))
+            return;
+
+        auto [start, end] = referenceMarks.equal_range(body);
+        for (auto it = start; it != end; ++it)
+        {
+            processor(it->second.get());
+        }
+    }
+
+    void addLocation(Body*, std::unique_ptr<Location>&&);
+    Location* findLocation(const Body*, std::string_view, bool i18n = false) const;
+    bool hasLocations(const Body*) const;
+    void computeLocations(const Body*);
+
+    auto getLocations(const Body* body) const
+    {
+        using range_type = decltype(celestia::util::pointerView(std::declval<BodyLocations>().locations));
+        if (!celestia::util::is_set(body->features, BodyFeatures::Locations))
+            return std::optional<range_type>();
+
+        auto it = locations.find(body);
+        assert(it != locations.end());
+        return std::make_optional(celestia::util::pointerView(it->second.locations));
+    }
+
+    bool getOrbitColor(const Body*, Color&) const;
+    void setOrbitColor(const Body*, const Color&);
+    bool getOrbitColorOverridden(const Body*) const;
+    void setOrbitColorOverridden(Body*, bool);
+    void unsetOrbitColor(Body*);
+
+    Color getCometTailColor(const Body*) const;
+    void setCometTailColor(Body*, const Color&);
+    void unsetCometTailColor(Body*);
+
+    void removeFeatures(Body*);
+
+private:
+    using AltSurfaceTable = std::map<std::string, std::unique_ptr<Surface>, std::less<>>;
+
+    std::unordered_map<const Body*, std::unique_ptr<Atmosphere>> atmospheres;
+    std::unordered_map<const Body*, std::unique_ptr<RingSystem>> rings;
+    std::unordered_map<const Body*, std::unique_ptr<AltSurfaceTable>> alternateSurfaces;
+    std::unordered_map<const Body*, BodyLocations> locations;
+    std::unordered_map<const Body*, Color> orbitColors;
+    std::unordered_map<const Body*, Color> cometTailColors;
+    std::unordered_multimap<const Body*, std::unique_ptr<ReferenceMark>> referenceMarks;
+};
+
+BodyFeaturesManager* GetBodyFeaturesManager();

@@ -38,7 +38,6 @@ struct CelestiaConfig
         fs::path destinationsFile{ };
         fs::path HDCrossIndexFile{ };
         fs::path SAOCrossIndexFile{ };
-        fs::path GlieseCrossIndexFile{ };
         fs::path warpMeshFile{ };
         fs::path leapSecondsFile{ };
 #ifdef CELX
@@ -59,7 +58,9 @@ struct CelestiaConfig
         std::string cursor{ };
         float rotateAcceleration{ 120.0f };
         float rotationSensitivity{ 1.0f };
-        bool  reverseWheel{ false };
+        bool reverseWheel{ false };
+        bool rayBasedDragging{ false };
+        bool focusZooming{ false };
     };
 
     struct RenderDetails

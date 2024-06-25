@@ -21,7 +21,6 @@
 
 #include <celengine/texture.h>
 #include <celengine/universe.h>
-#include <celengine/astro.h>
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
 #include <celengine/texmanager.h>
@@ -45,18 +44,19 @@ class Simulation
 
     void update(double dt);
     void render(Renderer&);
-    void draw(Renderer&);
     void render(Renderer&, Observer&);
 
     Selection pickObject(const Eigen::Vector3f& pickRay, std::uint64_t renderFlags, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 
+    bool orbit(const Eigen::Vector3f& from, const Eigen::Vector3f& to);
     void orbit(const Eigen::Quaternionf& q);
     void rotate(const Eigen::Quaternionf& q);
     void changeOrbitDistance(float d);
+    void scaleOrbitDistance(float scale, const std::optional<Eigen::Vector3f>& focus);
     void setTargetSpeed(float s);
-    float getTargetSpeed();
+    float getTargetSpeed() const;
 
     Selection getSelection() const;
     void setSelection(const Selection&);
@@ -95,13 +95,15 @@ class Simulation
     void cancelMotion();
 
     Observer& getObserver();
+    const Observer& getObserver() const;
     void setObserverPosition(const UniversalCoord&);
     void setObserverOrientation(const Eigen::Quaternionf&);
     void reverseObserverOrientation();
 
-    Observer* addObserver();
+    Observer* duplicateActiveObserver();
     void removeObserver(Observer*);
     Observer* getActiveObserver();
+    const Observer* getActiveObserver() const;
     void setActiveObserver(Observer*);
 
     SolarSystem* getNearestSolarSystem() const;

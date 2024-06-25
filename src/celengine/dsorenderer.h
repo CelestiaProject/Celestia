@@ -10,32 +10,39 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
-#include <celengine/projectionmode.h>
+
 #include <celmath/frustum.h>
+#include <celmath/mathlib.h>
 #include <celrender/rendererfwd.h>
 #include "objectrenderer.h"
+#include "projectionmode.h"
 
 class DeepSkyObject;
+class DSODatabase;
 
-class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
+class DSORenderer : public ObjectRenderer<DeepSkyObject *, double>
 {
 public:
     DSORenderer();
 
-    void process(DeepSkyObject* const &, double, float) override;
+    void process(DeepSkyObject *const &, double, float) override;
 
-    Eigen::Vector3d     obsPos;
-    Eigen::Matrix3f     orientationMatrixT;
-    celmath::Frustum    frustum         { celmath::degToRad(celestia::engine::standardFOV), 1.0f, 1.0f };
-    DSODatabase*        dsoDB           { nullptr };
+    celestia::math::InfiniteFrustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
+                                             1.0f,
+                                             1.0f };
 
-    float               avgAbsMag       { 0.0f };
-    uint32_t            dsosProcessed   { 0 };
+    Eigen::Vector3d obsPos;
+    Eigen::Matrix3f orientationMatrixT;
+    DSODatabase    *dsoDB{ nullptr };
+
+    float         avgAbsMag{ 0.0f };
+    std::uint32_t dsosProcessed{ 0 };
 
     celestia::render::GalaxyRenderer      *galaxyRenderer{ nullptr };
     celestia::render::GlobularRenderer    *globularRenderer{ nullptr };
     celestia::render::NebulaRenderer      *nebulaRenderer{ nullptr };
     celestia::render::OpenClusterRenderer *openClusterRenderer{ nullptr };
-
 };

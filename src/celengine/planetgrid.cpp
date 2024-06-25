@@ -13,6 +13,7 @@
 #include <cmath>
 #include <Eigen/Geometry>
 #include <fmt/format.h>
+#include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/intersect.h>
@@ -22,7 +23,6 @@
 #include "planetgrid.h"
 #include "render.h"
 
-using namespace celmath;
 using namespace celestia;
 using celestia::render::LineRenderer;
 
@@ -46,8 +46,8 @@ void longLatLabel(const std::string& labelText,
                   float labelOffset,
                   Renderer* renderer)
 {
-    double theta = degToRad(longitude);
-    double phi = degToRad(latitude);
+    double theta = math::degToRad(longitude);
+    double phi = math::degToRad(latitude);
     Eigen::Vector3d pos( cos(phi) * cos(theta) * semiAxes.x(),
                          sin(phi) * semiAxes.y(),
                         -cos(phi) * sin(theta) * semiAxes.z());
@@ -60,7 +60,7 @@ void longLatLabel(const std::string& labelText,
 
     // Draw the label only if it isn't obscured by the body ellipsoid
     if (double t = 0.0; testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
-                                         Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
+                                         math::Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
         Eigen::Vector3d labelPos = bodyCenter +
@@ -98,7 +98,7 @@ PlanetographicGrid::render(Renderer* renderer,
     InitializeGeometry(*renderer);
 
     // Compatibility
-    Eigen::Quaterniond q = celmath::YRot180<double> * body.getEclipticToBodyFixed(tdb);
+    Eigen::Quaterniond q = math::YRot180<double> * body.getEclipticToBodyFixed(tdb);
     Eigen::Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
@@ -142,10 +142,10 @@ PlanetographicGrid::render(Renderer* renderer,
 
     for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
     {
-        float phi = degToRad(latitude);
+        float phi = math::degToRad(latitude);
         float r = std::cos(phi);
 
-        Eigen::Matrix4f mvcur = modelView * celmath::translate(0.0f, std::sin(phi), 0.0f) * celmath::scale(r);
+        Eigen::Matrix4f mvcur = modelView * math::translate(0.0f, std::sin(phi), 0.0f) * math::scale(r);
         if (latitude == 0.0f)
         {
             latitudeRenderer->finish();
@@ -182,7 +182,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        Eigen::Matrix4f mvcur = modelView * celmath::rotate(Eigen::AngleAxisf(degToRad(longitude), Eigen::Vector3f::UnitY()));
+        Eigen::Matrix4f mvcur = modelView * math::rotate(Eigen::AngleAxisf(math::degToRad(longitude), Eigen::Vector3f::UnitY()));
 
         longitudeRenderer->render({&projection, &mvcur},
                                   Renderer::PlanetographicGridColor,
@@ -289,7 +289,7 @@ PlanetographicGrid::InitializeGeometry(const Renderer &renderer)
     {
         float theta = (2.0f * celestia::numbers::pi_v<float>) * (float) i / (float) circleSubdivisions;
         float s, c;
-        sincos(theta, s, c);
+        math::sincos(theta, s, c);
         Eigen::Vector3f latitudePoint(c, 0.0f, s);
         Eigen::Vector3f longitudePoint(c, s, 0.0f);
         latitudeRenderer->addVertex(latitudePoint);

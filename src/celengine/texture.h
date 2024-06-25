@@ -128,7 +128,7 @@ class Texture
 class ImageTexture : public Texture
 {
  public:
-    ImageTexture(const Image& img, AddressMode, MipMapMode);
+    ImageTexture(const celestia::engine::Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
 
     TextureTile getTile(int lod, int u, int v) override;
@@ -145,7 +145,7 @@ class ImageTexture : public Texture
 class TiledTexture : public Texture
 {
  public:
-    TiledTexture(const Image& img, int _uSplit, int _vSplit, MipMapMode);
+    TiledTexture(const celestia::engine::Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
     TextureTile getTile(int lod, int u, int v) override;
@@ -165,7 +165,7 @@ class TiledTexture : public Texture
 class CubeMap : public Texture
 {
  public:
-    explicit CubeMap(celestia::util::array_view<const Image*>);
+    explicit CubeMap(celestia::util::array_view<const celestia::engine::Image*>);
     ~CubeMap();
 
     TextureTile getTile(int lod, int u, int v) override;
@@ -179,20 +179,20 @@ class CubeMap : public Texture
 
 std::unique_ptr<Texture>
 CreateProceduralTexture(int width, int height,
-                        celestia::PixelFormat format,
+                        celestia::engine::PixelFormat format,
                         ProceduralTexEval func,
                         Texture::AddressMode addressMode = Texture::EdgeClamp,
                         Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
 std::unique_ptr<Texture>
 CreateProceduralTexture(int width, int height,
-                        celestia::PixelFormat format,
+                        celestia::engine::PixelFormat format,
                         TexelFunctionObject& func,
                         Texture::AddressMode addressMode = Texture::EdgeClamp,
                         Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
 std::unique_ptr<Texture>
-CreateProceduralCubeMap(int size, celestia::PixelFormat format,
+CreateProceduralCubeMap(int size, celestia::engine::PixelFormat format,
                         ProceduralTexEval func);
 
 std::unique_ptr<Texture>

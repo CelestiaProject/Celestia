@@ -13,11 +13,11 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
-const char* CurrentCP();
-std::string UTF8ToCurrentCP(const std::string& str);
-std::string CurrentCPToUTF8(const std::string& str);
-std::string WideToCurrentCP(const std::wstring& ws);
-std::wstring CurrentCPToWide(const std::string& str);
-std::string WideToUTF8(const std::wstring& ws);
-std::wstring UTF8ToWide(const std::string& str);
+namespace celestia::util
+{
+
+std::string WideToUTF8(std::wstring_view ws);
+
+}

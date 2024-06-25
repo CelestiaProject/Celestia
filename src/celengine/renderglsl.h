@@ -19,17 +19,15 @@
 
 #include <celutil/reshandle.h>
 
-
 class Atmosphere;
 class Geometry;
 class LightingState;
 struct Matrices;
 class Renderer;
 struct RenderInfo;
-class RingSystem;
 class Texture;
 
-namespace celmath
+namespace celestia::math
 {
 class Frustum;
 }
@@ -42,7 +40,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           unsigned int textureRes,
                           std::uint64_t renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
-                          const celmath::Frustum& frustum,
+                          const celestia::math::Frustum& frustum,
                           const Matrices &m,
                           Renderer* renderer);
 
@@ -68,21 +66,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        unsigned int textureRes,
                        std::uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
-                       const celmath::Frustum& frustum,
+                       const celestia::math::Frustum& frustum,
                        const Matrices &m,
                        Renderer* renderer);
-
-void renderRings_GLSL(RingSystem& rings,
-                      RenderInfo& ri,
-                      const LightingState& ls,
-                      float planetRadius,
-                      float planetOblateness,
-                      unsigned int textureResolution,
-                      bool renderShadow,
-                      float segmentSizeInPixels,
-                      const Matrices &m,
-                      bool inside,
-                      Renderer* renderer);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,

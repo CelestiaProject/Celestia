@@ -10,7 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-
 #include "qtappwin.h"
 
 #include <map>
@@ -76,6 +75,8 @@
 #include <celengine/simulation.h>
 #include <celengine/universe.h>
 #include <celestia/celestiastate.h>
+#include <celestia/configfile.h>
+#include <celestia/progressnotifier.h>
 #ifdef USE_FFMPEG
 #include <celestia/ffmpegcapture.h>
 #endif
@@ -104,6 +105,8 @@
 #define CONFIG_DATA_DIR "./"
 #endif
 
+namespace celestia::qt
+{
 
 namespace
 {
@@ -136,7 +139,6 @@ constexpr int videoSizes[][2] =
 constexpr float videoFrameRates[] = { 15.0f, 23.976f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f };
 #endif
 
-
 // Progress notifier class receives update messages from CelestiaCore
 // at startup. This simple implementation just forwards messages on
 // to the main Celestia window.
@@ -156,7 +158,6 @@ public:
 private:
     CelestiaAppWindow* appWin;
 };
-
 
 // Alerter callback class for CelestiaCore
 class AppAlerter : public CelestiaCore::Alerter
@@ -180,7 +181,6 @@ private:
 
 } // end unnamed namespace
 
-
 class CelestiaAppWindow::FPSActionGroup
 {
     QActionGroup *m_actionGroup;
@@ -196,7 +196,6 @@ public:
     void updateFPS(int);
 };
 
-
 CelestiaAppWindow::FPSActionGroup::FPSActionGroup(QObject *p)
 {
     QAction *fps;
@@ -205,19 +204,20 @@ CelestiaAppWindow::FPSActionGroup::FPSActionGroup(QObject *p)
     m_actionGroup = new QActionGroup(p);
     for (auto ifps : fps_array)
     {
-        fps = new QAction(ifps == 0 ? _("Auto") : QString::number(ifps), p);
+        // TRANSLATORS: fps == frames per second
+        fps = new QAction(ifps == 0 ? C_("fps", "Auto") : QString::number(ifps), p);
         fps->setCheckable(true);
         fps->setData(ifps);
         m_actions[ifps] = fps;
         m_actionGroup->addAction(fps);
     }
-    m_customAction = new QAction(_("Custom"), p);
+    // TRANSLATORS: fps == frames per second
+    m_customAction = new QAction(C_("fps", "Custom"), p);
     m_customAction->setCheckable(true);
     m_customAction->setShortcut(QString("Ctrl+`"));
     m_actionGroup->addAction(m_customAction);
     m_actionGroup->setExclusive(true);
 }
-
 
 void
 CelestiaAppWindow::FPSActionGroup::updateFPS(int fps)
@@ -231,7 +231,6 @@ CelestiaAppWindow::FPSActionGroup::updateFPS(int fps)
     m_lastFPS = fps;
 }
 
-
 CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
     QMainWindow(parent),
     CelestiaCore::ContextMenuHandler()
@@ -240,12 +239,10 @@ CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
     timer = new QTimer(this);
 }
 
-
 CelestiaAppWindow::~CelestiaAppWindow()
 {
     delete(alerter);
 }
-
 
 void
 CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
@@ -303,12 +300,6 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
         m_appCore->setLogFile(fn);
     }
 
-    if (!options.startURL.isEmpty())
-    {
-        std::string startURL = options.startURL.toStdString();
-        m_appCore->setStartURL(startURL);
-    }
-
     if (!m_appCore->initSimulation(configFileName,
                                    extrasDirectories,
                                    progress))
@@ -317,6 +308,12 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
          exit(1);
     }
     delete progress;
+
+    if (!options.startURL.isEmpty())
+    {
+        std::string startURL = options.startURL.toStdString();
+        m_appCore->setStartURL(startURL);
+    }
 
     // Enable antialiasing if requested in the config file.
     // TODO: Make this settable via the GUI
@@ -346,14 +343,12 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     toolsDock = new QDockWidget(_("Celestial Browser"), this);
     toolsDock->setObjectName("celestia-tools-dock");
-    toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
+    toolsDock->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
 
     // Info browser for a selected object
     infoPanel = new InfoPanel(m_appCore, _("Info Browser"), this);
     infoPanel->setObjectName("info-panel");
-    infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
+    infoPanel->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     infoPanel->setVisible(false);
 
     // Create the various browser widgets
@@ -390,8 +385,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     eventFinder = new EventFinder(m_appCore, _("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
-    eventFinder->setAllowedAreas(Qt::LeftDockWidgetArea |
-                                 Qt::RightDockWidgetArea);
+    eventFinder->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea));
     addDockWidget(Qt::LeftDockWidgetArea, eventFinder);
     eventFinder->setVisible(false);
     //addDockWidget(Qt::DockWidgetArea, eventFinder);
@@ -475,6 +469,11 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     timer->start();
 }
 
+void
+CelestiaAppWindow::startAppCore()
+{
+    m_appCore->start();
+}
 
 /*! Set up the application data directory, creating it if necessary. The
  *  directory contains user-specific, persistent information for Celestia
@@ -505,12 +504,10 @@ CelestiaAppWindow::initAppDataDirectory()
     }
 }
 
-
 void
 CelestiaAppWindow::readSettings()
 {
     QSettings settings;
-
     settings.beginGroup("MainWindow");
 
     QSize windowSize = settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize();
@@ -548,7 +545,6 @@ CelestiaAppWindow::readSettings()
     // Render settings read in qtglwidget
 }
 
-
 void
 CelestiaAppWindow::writeSettings()
 {
@@ -577,7 +573,7 @@ CelestiaAppWindow::writeSettings()
     // Renderer settings
     const Renderer* renderer = m_appCore->getRenderer();
     settings.setValue("RenderFlags", static_cast<quint64>(renderer->getRenderFlags()));
-    settings.setValue("OrbitMask", renderer->getOrbitMask());
+    settings.setValue("OrbitMask", static_cast<int>(renderer->getOrbitMask()));
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
@@ -610,7 +606,6 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("fps", ms_to_fps(timer->interval()));
 }
 
-
 bool
 CelestiaAppWindow::loadBookmarks()
 {
@@ -633,7 +628,6 @@ CelestiaAppWindow::loadBookmarks()
     return loadedBookmarks;
 }
 
-
 void
 CelestiaAppWindow::saveBookmarks()
 {
@@ -650,14 +644,12 @@ CelestiaAppWindow::saveBookmarks()
     }
 }
 
-
 void
 CelestiaAppWindow::celestia_tick()
 {
     m_appCore->tick();
     glWidget->update();
 }
-
 
 void
 CelestiaAppWindow::slotShowSelectionContextMenu(const QPoint& pos,
@@ -669,7 +661,6 @@ CelestiaAppWindow::slotShowSelectionContextMenu(const QPoint& pos,
     menu->popupAtCenter(pos);
 }
 
-
 void
 CelestiaAppWindow::slotGrabImage()
 {
@@ -679,7 +670,7 @@ CelestiaAppWindow::slotGrabImage()
     if (settings.contains("GrabImageDir"))
         dir = settings.value("GrabImageDir").toString();
     else
-        dir = QDir::current().path();
+        dir = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
 
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       _("Save Image"),
@@ -696,7 +687,6 @@ CelestiaAppWindow::slotGrabImage()
     settings.endGroup();
 }
 
-
 void
 CelestiaAppWindow::slotCaptureVideo()
 {
@@ -707,7 +697,7 @@ CelestiaAppWindow::slotCaptureVideo()
     if (settings.contains("CaptureVideoDir"))
         dir = settings.value("CaptureVideoDir").toString();
     else
-        dir = QDir::current().path();
+        dir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
     settings.endGroup();
 
     QString saveAsName = QFileDialog::getSaveFileName(this,
@@ -788,7 +778,6 @@ CelestiaAppWindow::slotCaptureVideo()
 #endif
 }
 
-
 void
 CelestiaAppWindow::slotCopyImage()
 {
@@ -796,7 +785,6 @@ CelestiaAppWindow::slotCopyImage()
     QApplication::clipboard()->setImage(grabbedImage);
     m_appCore->flash(_("Captured screen shot to clipboard"));
 }
-
 
 void
 CelestiaAppWindow::slotCopyURL()
@@ -809,7 +797,6 @@ CelestiaAppWindow::slotCopyURL()
     m_appCore->flash(_("Copied URL"));
 }
 
-
 void
 CelestiaAppWindow::slotPasteURL()
 {
@@ -820,7 +807,6 @@ CelestiaAppWindow::slotPasteURL()
             m_appCore->flash(_("Pasting URL"));
     }
 }
-
 
 /*! Cel: URL handler (called from QDesktopServices openURL)
  */
@@ -834,13 +820,11 @@ CelestiaAppWindow::handleCelUrl(const QUrl& url)
     }
 }
 
-
 void
 CelestiaAppWindow::selectSun()
 {
     m_appCore->charEntered("h");
 }
-
 
 void
 CelestiaAppWindow::centerSelection()
@@ -848,13 +832,11 @@ CelestiaAppWindow::centerSelection()
     m_appCore->charEntered("c");
 }
 
-
 void
 CelestiaAppWindow::gotoSelection()
 {
     m_appCore->charEntered("g");
 }
-
 
 void
 CelestiaAppWindow::gotoObject()
@@ -862,7 +844,6 @@ CelestiaAppWindow::gotoObject()
     GoToObjectDialog dlg(this, m_appCore);
     dlg.exec();
 }
-
 
 void
 CelestiaAppWindow::tourGuide()
@@ -872,7 +853,6 @@ CelestiaAppWindow::tourGuide()
     tourDialog->show();
 }
 
-
 void
 CelestiaAppWindow::slotPreferences()
 {
@@ -880,13 +860,11 @@ CelestiaAppWindow::slotPreferences()
     dlg.exec();
 }
 
-
 void
 CelestiaAppWindow::slotSplitViewVertically()
 {
     m_appCore->charEntered('\025');
 }
-
 
 void
 CelestiaAppWindow::slotSplitViewHorizontally()
@@ -894,13 +872,11 @@ CelestiaAppWindow::slotSplitViewHorizontally()
     m_appCore->charEntered('\022');
 }
 
-
 void
 CelestiaAppWindow::slotCycleView()
 {
     m_appCore->charEntered('\011');
 }
-
 
 void
 CelestiaAppWindow::slotSingleView()
@@ -908,13 +884,11 @@ CelestiaAppWindow::slotSingleView()
     m_appCore->charEntered('\004');
 }
 
-
 void
 CelestiaAppWindow::slotDeleteView()
 {
     m_appCore->charEntered(127);
 }
-
 
 void
 CelestiaAppWindow::slotToggleFramesVisible()
@@ -922,20 +896,17 @@ CelestiaAppWindow::slotToggleFramesVisible()
     m_appCore->setFramesVisible(!m_appCore->getFramesVisible());
 }
 
-
 void
 CelestiaAppWindow::slotToggleActiveFrameVisible()
 {
     m_appCore->setActiveFrameVisible(!m_appCore->getActiveFrameVisible());
 }
 
-
 void
 CelestiaAppWindow::slotToggleSyncTime()
 {
     m_appCore->getSimulation()->setSyncTime(!m_appCore->getSimulation()->getSyncTime());
 }
-
 
 void
 CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
@@ -946,7 +917,6 @@ CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
     if (!infoPanel->isVisible())
         infoPanel->setVisible(true);
 }
-
 
 void
 CelestiaAppWindow::slotOpenScriptDialog()
@@ -986,7 +956,6 @@ CelestiaAppWindow::slotOpenScriptDialog()
     settings.endGroup();
 }
 
-
 void
 CelestiaAppWindow::slotOpenScript()
 {
@@ -997,7 +966,6 @@ CelestiaAppWindow::slotOpenScript()
         m_appCore->runScript(action->data().toString().toStdString());
     }
 }
-
 
 void
 CelestiaAppWindow::slotRunDemo()
@@ -1010,7 +978,6 @@ CelestiaAppWindow::slotRunDemo()
     }
 }
 
-
 void
 CelestiaAppWindow::slotShowTimeDialog()
 {
@@ -1019,7 +986,6 @@ CelestiaAppWindow::slotShowTimeDialog()
 
     timeDialog->show();
 }
-
 
 void
 CelestiaAppWindow::slotToggleFullScreen()
@@ -1047,7 +1013,6 @@ CelestiaAppWindow::slotToggleFullScreen()
     }
 }
 
-
 void
 CelestiaAppWindow::switchToNormal()
 {
@@ -1069,7 +1034,6 @@ CelestiaAppWindow::switchToNormal()
     // restore last windowed settings
     readSettings();
 }
-
 
 void
 CelestiaAppWindow::switchToFullscreen()
@@ -1114,7 +1078,6 @@ CelestiaAppWindow::switchToFullscreen()
     showFullScreen();
 #endif
 }
-
 
 void
 CelestiaAppWindow::slotAddBookmark()
@@ -1167,7 +1130,6 @@ CelestiaAppWindow::slotAddBookmark()
     m_bookmarkToolBar->rebuild();
 }
 
-
 void
 CelestiaAppWindow::slotOrganizeBookmarks()
 {
@@ -1178,13 +1140,11 @@ CelestiaAppWindow::slotOrganizeBookmarks()
     m_bookmarkToolBar->rebuild();
 }
 
-
 void
 CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
 {
     QDesktopServices::openUrl(QUrl(url));
 }
-
 
 void
 CelestiaAppWindow::slotManual()
@@ -1192,30 +1152,28 @@ CelestiaAppWindow::slotManual()
     QDesktopServices::openUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(m_dataHome) + QDir::toNativeSeparators("/help/CelestiaGuide.html")));
 }
 
-
 void
 CelestiaAppWindow::slotWiki()
 {
     QDesktopServices::openUrl(QUrl("https://en.wikibooks.org/wiki/Celestia"));
 }
 
-
 void
 CelestiaAppWindow::slotShowAbout()
 {
-    const char* aboutText = gettext_noop(
+    const char* aboutText = _(
         "<html>"
-        "<h1>Celestia " VERSION "</h1>"
+        "<h1>Celestia 1.7.0 </h1>"
         "<p>Development snapshot, commit <b>%1</b>.</p>"
 
         "<p>Built for %2 bit CPU<br>"
         "Using %3 %4<br>"
         "Built against Qt library: %5<br>"
         "NAIF kernels are %7<br>"
-        "AVIF images are %8</p>"
+        "AVIF images are %8<br>"
         "Runtime Qt version: %6</p>"
 
-        "<p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>"
+        "<p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>"
         "Celestia is free software. You can redistribute it and/or modify "
         "it under the terms of the GNU General Public License as published "
         "by the Free Software Foundation; either version 2 of the License, "
@@ -1230,7 +1188,7 @@ CelestiaAppWindow::slotShowAbout()
         "</html>"
     );
 
-    auto qAboutText = QString(_(aboutText))
+    auto qAboutText = QString(aboutText)
                                 .arg(GIT_COMMIT)
                                 .arg(QSysInfo::WordSize)
 #if defined(_MSC_VER)
@@ -1256,7 +1214,6 @@ CelestiaAppWindow::slotShowAbout()
     ;
         QMessageBox::about(this, _("About Celestia"), qAboutText);
 }
-
 
 /*! Show a dialog box with information about the OpenGL driver and hardware.
  */
@@ -1376,12 +1333,10 @@ CelestiaAppWindow::slotShowGLInfo()
     glInfo.exec();
 }
 
-
 void
 CelestiaAppWindow::createActions()
 {
 }
-
 
 void
 CelestiaAppWindow::createMenus()
@@ -1484,7 +1439,6 @@ CelestiaAppWindow::createMenus()
     timeMenu->addAction(setTimeAct);
 
     timeMenu->addAction(actions->lightTimeDelayAction);
-
 
     /****** Display menu ******/
     displayMenu = menuBar()->addMenu(_("&Display"));
@@ -1633,8 +1587,6 @@ CelestiaAppWindow::createMenus()
     m_appCore->getSimulation()->setSyncTime(check);
 
     // Set up the default time zone name and offset from UTC
-    m_appCore->start();
-
     std::string tzName;
     int dstBias;
     if (GetTZInfo(tzName, dstBias))
@@ -1678,7 +1630,6 @@ CelestiaAppWindow::createMenus()
     settings.endGroup();
 }
 
-
 /*! Rebuild the Bookmarks menu. This method needs to be called after the
  *  bookmarks file is loaded and whenever the bookmarks lists is changed
  *  (add bookmarks or organize bookmarks.)
@@ -1701,7 +1652,6 @@ CelestiaAppWindow::populateBookmarkMenu()
     m_bookmarkManager->populateBookmarkMenu(bookmarkMenu);
 }
 
-
 void
 CelestiaAppWindow::closeEvent(QCloseEvent* event)
 {
@@ -1710,7 +1660,6 @@ CelestiaAppWindow::closeEvent(QCloseEvent* event)
 
     event->accept();
 }
-
 
 void
 CelestiaAppWindow::setCheckedFPS()
@@ -1723,14 +1672,12 @@ CelestiaAppWindow::setCheckedFPS()
     }
 }
 
-
 void
 CelestiaAppWindow::setFPS(int fps)
 {
     timer->setInterval(fps_to_ms(fps));
     fpsActions->updateFPS(fps);
 }
-
 
 void
 CelestiaAppWindow::setCustomFPS()
@@ -1747,7 +1694,6 @@ CelestiaAppWindow::setCustomFPS()
         fpsActions->updateFPS(fpsActions->lastFPS());
 }
 
-
 void
 CelestiaAppWindow::requestContextMenu(float x, float y, Selection sel)
 {
@@ -1758,7 +1704,6 @@ CelestiaAppWindow::requestContextMenu(float x, float y, Selection sel)
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int)(x / scale), (int)(y / scale))));
 }
 
-
 void
 CelestiaAppWindow::loadingProgressUpdate(const QString& s)
 {
@@ -1766,17 +1711,16 @@ CelestiaAppWindow::loadingProgressUpdate(const QString& s)
                         Qt::AlignHCenter | Qt::AlignBottom, Qt::white);
 }
 
-
 QMenu*
 CelestiaAppWindow::buildScriptsMenu()
 {
-    std::vector<ScriptMenuItem>* scripts = ScanScriptsDirectory("scripts", false);
-    if (scripts->empty())
+    std::vector<ScriptMenuItem> scripts = ScanScriptsDirectory("scripts", false);
+    if (scripts.empty())
         return nullptr;
 
     QMenu* menu = new QMenu(_("Scripts"));
 
-    for (const auto& script : *scripts)
+    for (const auto& script : scripts)
     {
         QAction* act = new QAction(script.title.c_str(), this);
         act->setData(script.filename.string().c_str());
@@ -1787,15 +1731,14 @@ CelestiaAppWindow::buildScriptsMenu()
     return menu;
 }
 
-
 void
 CelestiaAppWindow::copyText()
 {
-    QString text(m_appCore->getTypedText().c_str());
+    auto typedText = m_appCore->getTypedText();
+    QString text = QString::fromUtf8(typedText.data(), static_cast<int>(typedText.size()));
     if (!text.isEmpty())
         QGuiApplication::clipboard()->setText(text);
 }
-
 
 void
 CelestiaAppWindow::pasteText()
@@ -1805,22 +1748,22 @@ CelestiaAppWindow::pasteText()
         m_appCore->setTypedText(text.toUtf8().data());
 }
 
-
 void
 CelestiaAppWindow::copyTextOrURL()
 {
-    if (m_appCore->getTextEnterMode()) // True when the search console is opened
-        copyText();
-    else
+    if (m_appCore->getTextEnterMode() == Hud::TextEnterMode::Normal)
         slotCopyURL();
+    else
+        copyText();
 }
-
 
 void
 CelestiaAppWindow::pasteTextOrURL()
 {
-    if (m_appCore->getTextEnterMode()) // True when the search console is opened
-        pasteText();
-    else
+    if (m_appCore->getTextEnterMode() == Hud::TextEnterMode::Normal)
         slotPasteURL();
+    else
+        pasteText();
 }
+
+} // end namespace celestia::qt

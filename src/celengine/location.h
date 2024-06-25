@@ -18,13 +18,15 @@
 #include <celutil/color.h>
 
 class Body;
-
+class StarDatabase;
 
 class Location
 {
 public:
     const std::string& getName(bool i18n = false) const;
     void setName(const std::string&);
+
+    std::string getPath(const StarDatabase*, char delimiter = '/') const;
 
     Eigen::Vector3f getPosition() const;
     void setPosition(const Eigen::Vector3f&);
@@ -97,8 +99,8 @@ public:
         Lacuna         = 0x0000020000000000,
         Lacus          = 0x0000040000000000,
         LargeRinged    = 0x0000080000000000,
-        Lenticula      = 0x0000100000000000,
         Lingula        = 0x0000200000000000,
+	Lobus          = 0x0000100000000000, // Lobus uses value of removed Lenticula
         Macula         = 0x0000400000000000,
         Oceanus        = 0x0000800000000000,
         Palus          = 0x0001000000000000,

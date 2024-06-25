@@ -176,7 +176,7 @@ AtmosphereRenderer::computeLegacy(
         else
         {
             Eigen::Vector3f v = (rot * -sunDirection) * static_cast<float>(centerDist);
-            Eigen::Vector3f tangentPoint = center + irot * celmath::ellipsoidTangent(recipSemiAxes, v, e, e_, ee);
+            Eigen::Vector3f tangentPoint = center + irot * math::ellipsoidTangent(recipSemiAxes, v, e, e_, ee);
             Eigen::Vector3f tangentDir = (tangentPoint - eyePos).normalized();
             cosSunAltitude = sunDirection.dot(tangentDir);
         }
@@ -210,7 +210,7 @@ AtmosphereRenderer::computeLegacy(
         Eigen::Vector3f w = std::cos(theta) * uAxis + std::sin(theta) * vAxis;
         w *= static_cast<float>(centerDist);
 
-        Eigen::Vector3f toCenter = celmath::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        Eigen::Vector3f toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         p.v = irot * toCenter;
         p.centerDist = p.v.norm();
         p.eyeDir = p.v + (center - eyePos);
@@ -255,7 +255,7 @@ AtmosphereRenderer::computeLegacy(
         float hh = std::sqrt(h);
         float u = i <= nHorizonRings ? 0.0f :
             static_cast<float>(i - nHorizonRings) / static_cast<float>(nRings - nHorizonRings);
-        float r = celmath::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
+        float r = math::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
 
         for (int j = 0; j < nSlices; j++)
         {
@@ -263,7 +263,7 @@ AtmosphereRenderer::computeLegacy(
             if (i <= nHorizonRings)
                 v = m_skyContour[j].v * r;
             else
-                v = celmath::mix(m_skyContour[j].v, zenith, u) * r;
+                v = math::mix(m_skyContour[j].v, zenith, u) * r;
             Eigen::Vector3f p = center + v;
 
             Eigen::Vector3f viewDir = p.normalized();
@@ -292,10 +292,10 @@ AtmosphereRenderer::computeLegacy(
             std::memcpy(&vtx.position[0], p.data(), vtx.position.size() * sizeof(vtx.position[0]));
 
             float atten = 1.0f - hh;
-            Eigen::Vector3f color = celmath::mix(botColor, topColor, hh);
+            Eigen::Vector3f color = math::mix(botColor, topColor, hh);
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             if (coloration != 0.0f)
-                color = celmath::mix(color, sunsetColor, coloration);
+                color = math::mix(color, sunsetColor, coloration);
 
             Color(brightness * color.x(),
                   brightness * color.y(),
@@ -325,8 +325,8 @@ AtmosphereRenderer::renderLegacy(
     computeLegacy(atmosphere, ls, center, orientation, semiAxes, sunDirection, pixSize, lit);
 
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
-    shadprop.lightModel = ShaderProperties::UnlitModel;
+    shadprop.texUsage = TexUsage::VertexColors;
+    shadprop.lightModel = LightingModel::UnlitModel;
     auto *prog = m_renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
@@ -337,8 +337,8 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    m_bo->bind().invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_io->bind().invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
+    m_bo->invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_io->invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);
@@ -355,7 +355,7 @@ AtmosphereRenderer::render(
     const LightingState      &ls,
     const Eigen::Quaternionf &/*planetOrientation*/,
     float                     radius,
-    const celmath::Frustum   &frustum,
+    const math::Frustum      &frustum,
     const Matrices           &m)
 {
     // Currently, we just skip rendering an atmosphere when there are no
@@ -367,8 +367,8 @@ AtmosphereRenderer::render(
     ShaderProperties shadprop;
     shadprop.nLights = static_cast<ushort>(ls.nLights);
 
-    shadprop.texUsage |= ShaderProperties::Scattering;
-    shadprop.lightModel = ShaderProperties::AtmosphereModel;
+    shadprop.texUsage |= TexUsage::Scattering;
+    shadprop.lightModel = LightingModel::AtmosphereModel;
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = m_renderer.getShaderManager().getShader(shadprop);
@@ -392,7 +392,7 @@ AtmosphereRenderer::render(
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * celmath::scale(atmScale));
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
 
     glFrontFace(GL_CW);
 

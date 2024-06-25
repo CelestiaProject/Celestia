@@ -13,6 +13,9 @@
 
 #include <celutil/gettext.h>
 
+namespace celestia::qt
+{
+
 class CelestiaQTranslator : public QTranslator
 {
     inline QString translate(const char* /* context */,
@@ -29,3 +32,5 @@ CelestiaQTranslator::translate(const char*,
 {
     return disambiguation != nullptr ? CX_(disambiguation, msgid) : _(msgid);
 }
+
+} // end namespace celestia::qt

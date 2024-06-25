@@ -30,7 +30,11 @@ int lua_isinteger(lua_State *L, int index);
 #endif
 
 class CelestiaCore;
+
+namespace celestia
+{
 class View;
+}
 
 class LuaState
 {
@@ -93,5 +97,5 @@ private:
     bool eventHandlerEnabled{ false };
 };
 
-View* getViewByObserver(CelestiaCore*, Observer*);
-void getObservers(CelestiaCore*, std::vector<Observer*>&);
+celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);
+void getObservers(const CelestiaCore*, std::vector<Observer*>&);

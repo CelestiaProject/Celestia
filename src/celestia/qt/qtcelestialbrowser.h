@@ -26,6 +26,9 @@ class QTreeView;
 class CelestiaCore;
 class Selection;
 
+namespace celestia::qt
+{
+
 class ColorSwatchWidget;
 class InfoPanel;
 
@@ -75,3 +78,5 @@ private:
     ColorSwatchWidget* colorSwatch{nullptr};
     InfoPanel* infoPanel{nullptr};
 };
+
+} // end namespace celestia::qt

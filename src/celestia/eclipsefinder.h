@@ -50,13 +50,13 @@ class EclipseFinderWatcher
 class EclipseFinder
 {
  public:
-    EclipseFinder(Body*, EclipseFinderWatcher* = nullptr);
+    EclipseFinder(const Body*, EclipseFinderWatcher* = nullptr);
 
     void findEclipses(double startDate,
                       double endDate,
                       int eclipseTypeMask,
                       std::vector<Eclipse>& eclipses);
  private:
-    Body* body;
+    const Body* body;
     EclipseFinderWatcher* watcher;
 };

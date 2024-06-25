@@ -421,6 +421,11 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
             Index32 i1 = group.indices[1];
             Index32 i2 = group.indices[2];
 
+            // 2nd triangle has indices [0,2,3], then [0,3,4], [0,4,5], so for 2nd we
+            // should update index by 3 (+2 here and +1 inside the loop) but for others by 1
+            if (primType == PrimitiveGroupType::TriFan)
+                index = 2;
+
             // Iterate over the triangles in the primitive group
             do
             {
@@ -504,7 +509,6 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                     index += 1;
                     if (index < nIndices)
                     {
-                        index += 1;
                         i1 = i2;
                         i2 = group.indices[index];
                     }

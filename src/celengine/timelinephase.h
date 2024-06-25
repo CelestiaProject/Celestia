@@ -54,7 +54,7 @@ public:
         return m_orbitFrame;
     }
 
-    celestia::ephem::Orbit* orbit() const
+    const std::shared_ptr<const celestia::ephem::Orbit>& orbit() const
     {
         return m_orbit;
     }
@@ -64,7 +64,7 @@ public:
         return m_bodyFrame;
     }
 
-    celestia::ephem::RotationModel* rotationModel() const
+    const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel() const
     {
         return m_rotationModel;
     }
@@ -90,18 +90,18 @@ public:
                                                              double startTime,
                                                              double endTime,
                                                              const ReferenceFrame::SharedConstPtr& orbitFrame,
-                                                             celestia::ephem::Orbit& orbit,
+                                                             const std::shared_ptr<const celestia::ephem::Orbit>& orbit,
                                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
-                                                             celestia::ephem::RotationModel& rotationModel);
+                                                             const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel);
 
     TimelinePhase(CreateToken,
                   Body* _body,
                   double _startTime,
                   double _endTime,
                   const ReferenceFrame::SharedConstPtr& _orbitFrame,
-                  celestia::ephem::Orbit* _orbit,
+                  const std::shared_ptr<const celestia::ephem::Orbit>& _orbit,
                   const ReferenceFrame::SharedConstPtr& _bodyFrame,
-                  celestia::ephem::RotationModel* _rotationModel,
+                  const std::shared_ptr<const celestia::ephem::RotationModel>& _rotationModel,
                   FrameTree* _owner);
     ~TimelinePhase() = default;
 
@@ -115,9 +115,9 @@ private:
     double m_endTime;
 
     ReferenceFrame::SharedConstPtr m_orbitFrame;
-    celestia::ephem::Orbit* m_orbit;
+    std::shared_ptr<const celestia::ephem::Orbit> m_orbit;
     ReferenceFrame::SharedConstPtr m_bodyFrame;
-    celestia::ephem::RotationModel* m_rotationModel;
+    std::shared_ptr<const celestia::ephem::RotationModel> m_rotationModel;
 
     FrameTree* m_owner;
 };

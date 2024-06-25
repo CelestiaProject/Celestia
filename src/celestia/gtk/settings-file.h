@@ -16,8 +16,10 @@
 
 #include "common.h"
 
-
 #define CELESTIARC ".celestiarc"
+
+namespace celestia::gtk
+{
 
 /* Initialize Settings File */
 void initSettingsFile(AppData* app);
@@ -28,3 +30,5 @@ void applySettingsFileMain(AppData* app, GKeyFile* file);
 
 /* Save Settings to File */
 void saveSettingsFile(AppData* app);
+
+} // end namespace celestia::gtk

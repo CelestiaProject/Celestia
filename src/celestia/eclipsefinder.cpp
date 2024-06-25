@@ -21,20 +21,21 @@
 #include <celengine/star.h>
 #include <celmath/distance.h>
 
+namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
 
 constexpr double dT = 1.0 / (24.0 * 60.0);
-constexpr int EclipseObjectMask = Body::Planet      |
-                                  Body::Moon        |
-                                  Body::MinorMoon   |
-                                  Body::DwarfPlanet |
-                                  Body::Asteroid;
+constexpr auto EclipseObjectMask = BodyClassification::Planet      |
+                                   BodyClassification::Moon        |
+                                   BodyClassification::MinorMoon   |
+                                   BodyClassification::DwarfPlanet |
+                                   BodyClassification::Asteroid;
 
 // TODO: share this constant and function with render.cpp
 constexpr float MinRelativeOccluderRadius = 0.005f;
-
 
 bool
 testEclipse(const Body& receiver, const Body& caster, double now)
@@ -83,7 +84,7 @@ testEclipse(const Body& receiver, const Body& caster, double now)
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
-        double dist = celmath::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
+        double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
         if (dist < R)
         {
             // Ignore "eclipses" where the caster and receiver have
@@ -96,7 +97,6 @@ testEclipse(const Body& receiver, const Body& caster, double now)
     return false;
 }
 
-
 double
 findEclipseSpan(const Body& receiver, const Body& caster,
                 double now, double dt)
@@ -107,7 +107,6 @@ findEclipseSpan(const Body& receiver, const Body& caster,
 
     return t;
 }
-
 
 void
 addEclipse(const Body& receiver, const Body& occulter,
@@ -136,14 +135,12 @@ addEclipse(const Body& receiver, const Body& occulter,
 
 } // end unnamed namespace
 
-
-EclipseFinder::EclipseFinder(Body* _body,
+EclipseFinder::EclipseFinder(const Body* _body,
                              EclipseFinderWatcher* _watcher) :
     body(_body),
     watcher(_watcher)
 {
 }
-
 
 void EclipseFinder::findEclipses(double startDate,
                                  double endDate,
@@ -165,7 +162,7 @@ void EclipseFinder::findEclipses(double startDate,
     for (int i = 0; i < satellites->getSystemSize(); i++)
     {
         Body* obj = satellites->getBody(i);
-        if ((obj->getClassification() & EclipseObjectMask) != 0 &&
+        if (util::is_set(obj->getClassification(), EclipseObjectMask) &&
             obj->getRadius() >= body->getRadius() * MinRelativeOccluderRadius)
         {
             testBodies.push_back(obj);

@@ -41,6 +41,7 @@ using celestia::util::DecodeFromBase64;
 using celestia::util::EncodeAsBase64;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 namespace
 {
@@ -51,37 +52,7 @@ constexpr std::string_view PROTOCOL = "cel://"sv;
 // ShowDwarfPlanets = bit 27 (0x0000000008000000)
 constexpr unsigned int NEW_FLAG_BIT_1_7 = 27;
 constexpr std::uint64_t NEW_SHOW_PLANETS_BIT_MASK = (UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1));
-constexpr std::uint64_t RF_MASK = (UINT64_C(1) << NEW_FLAG_BIT_1_7) - 1;
-
-
-std::string getBodyName(Universe* universe, Body* body)
-{
-    std::string name = body->getName();
-    PlanetarySystem* parentSystem = body->getSystem();
-    const Body* parentBody = nullptr;
-
-    if (parentSystem != nullptr)
-        parentBody = parentSystem->getPrimaryBody();
-    else
-        assert(0);
-        // TODO: Figure out why the line below was added.
-        //parentBody = body->getOrbitBarycenter();
-
-    while (parentBody != nullptr)
-    {
-        name = parentBody->getName() + ":" + name;
-        parentSystem = parentBody->getSystem();
-        if (parentSystem == nullptr)
-            break;
-        parentBody = parentSystem->getPrimaryBody();
-    }
-
-    auto *star = body->getSystem()->getStar();
-    if (star != nullptr)
-        name = universe->getStarCatalog()->getStarName(*star) + ":" + name;
-
-    return name;
-}
+constexpr std::uint64_t RF_MASK = NEW_SHOW_PLANETS_BIT_MASK - 1;
 
 std::string_view
 getCoordSysName(ObserverFrame::CoordinateSystem mode)
@@ -107,6 +78,32 @@ getCoordSysName(ObserverFrame::CoordinateSystem mode)
     }
 }
 
+std::map<std::string_view, std::string>
+parseURLParams(std::string_view paramsStr)
+{
+    std::map<std::string_view, std::string> params;
+    if (paramsStr.empty())
+        return params;
+
+    constexpr auto npos = std::string_view::npos;
+    for (auto iter = paramsStr;;)
+    {
+        auto pos = iter.find('&');
+        auto kv = iter.substr(0, pos);
+        auto vpos = kv.find('=');
+        if (vpos == npos)
+        {
+            GetLogger()->error(_("URL parameter must look like key=value\n"));
+            break;
+        }
+        params[kv.substr(0, vpos)] = Url::decodeString(kv.substr(vpos + 1));
+        if (pos == npos)
+            break;
+        iter.remove_prefix(pos + 1);
+    }
+
+    return params;
+}
 
 struct Mode
 {
@@ -162,7 +159,7 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
     }
 
     m_date = astro::Date(m_state.m_tdb);
-    u << '/' << m_date.toString(astro::Date::ISO8601);
+    u << '/' << m_date.toString(std::locale::classic(), astro::Date::ISO8601);
 
     // observer position
     fmt::print(u, "?x={}&y={}&z={}",
@@ -225,7 +222,7 @@ Url::goTo()
 
     sim->update(0.0);
     sim->setFrame(m_ref.getCoordinateSystem(), m_ref.getRefObject(), m_ref.getTargetObject());
-    sim->getActiveObserver()->setFOV(celmath::degToRad(m_state.m_fieldOfView));
+    sim->getActiveObserver()->setFOV(math::degToRad(m_state.m_fieldOfView));
     m_appCore->setZoomFromFOV();
     sim->setTimeScale(m_state.m_timeScale);
     sim->setPauseState(m_state.m_pauseState);
@@ -296,12 +293,11 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
 {
     auto *universe = appCore->getSimulation()->getUniverse();
     std::string name;
-    Body* parentBody = nullptr;
 
     switch (selection.getType())
     {
     case SelectionType::Body:
-        name = getBodyName(universe, selection.body());
+        name = selection.body()->getPath(universe->getStarCatalog(), ':');
         break;
 
     case SelectionType::Star:
@@ -313,10 +309,7 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
         break;
 
     case SelectionType::Location:
-        name = selection.location()->getName();
-        parentBody = selection.location()->getParentBody();
-        if (parentBody != nullptr)
-            name = getBodyName(universe, parentBody) + ":" + name;
+        name = selection.location()->getPath(universe->getStarCatalog(), ':');
         break;
 
     default:
@@ -335,10 +328,9 @@ Url::decodeString(std::string_view str)
     b = str.find('%');
     while (b != std::string_view::npos && a < str.length())
     {
-        auto s = str.substr(a, b - a);
-        out.append(s);
+        out.append(str.substr(a, b - a));
         std::string_view c_code = str.substr(b + 1, 2);
-        uint8_t c;
+        std::uint8_t c;
         if (to_number(c_code, c, 16))
         {
             out += static_cast<std::string::value_type>(c);
@@ -347,16 +339,14 @@ Url::decodeString(std::string_view str)
         {
             GetLogger()->warn(_("Incorrect hex value \"{}\"\n"), c_code);
             out += '%';
-            out.append(c_code.data(), c_code.length());
+            out.append(c_code);
         }
         a = b + 1 + c_code.length();
         b = str.find('%', a);
     }
+
     if (a < str.length())
-    {
-        auto s = str.substr(a);
-        out.append(s.data(), s.length());
-    }
+        out.append(str.substr(a));
 
     return out;
 }
@@ -402,10 +392,8 @@ Url::encodeString(std::string_view str)
     return enc.str();
 }
 
-auto ParseURLParams(std::string_view paramsStr)
-    -> std::map<std::string_view, std::string>;
-
-bool Url::parse(std::string_view urlStr)
+bool
+Url::parse(std::string_view urlStr)
 {
     constexpr auto npos = std::string_view::npos;
 
@@ -500,19 +488,15 @@ bool Url::parse(std::string_view urlStr)
         break;
     }
 
-    auto params = ParseURLParams(paramsStr);
+    auto params = parseURLParams(paramsStr);
 
     // Version labelling of cel URLs was only added in Celestia 1.5, cel URL
     // version 2. Assume any URL without a version is version 1.
     int version = 1;
-    if (params.count("ver") != 0)
+    if (auto it = params.find("ver"sv); it != params.end() && !to_number(it->second, version))
     {
-        auto &p = params["ver"];
-        if (!to_number(p, version))
-        {
-            GetLogger()->error(_("Invalid URL version \"{}\"!\n"), p);
-            return false;
-        }
+        GetLogger()->error(_("Invalid URL version \"{}\"!\n"), it->second);
+        return false;
     }
 
     if (version != 3 && version != 4)
@@ -533,34 +517,8 @@ bool Url::parse(std::string_view urlStr)
     return true;
 }
 
-auto ParseURLParams(std::string_view paramsStr)
-   -> std::map<std::string_view, std::string>
-{
-    std::map<std::string_view, std::string> params;
-    if (paramsStr.empty())
-        return params;
-
-    constexpr auto npos = std::string_view::npos;
-    for (auto iter = paramsStr;;)
-    {
-        auto pos = iter.find('&');
-        auto kv = iter.substr(0, pos);
-        auto vpos = kv.find('=');
-        if (vpos == npos)
-        {
-            GetLogger()->error(_("URL parameter must look like key=value\n"));
-            break;
-        }
-        params[kv.substr(0, vpos)] = Url::decodeString(kv.substr(vpos + 1));
-        if (pos == npos)
-            break;
-        iter.remove_prefix(pos + 1);
-    }
-
-    return params;
-}
-
-bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool
+Url::initVersion3(const std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
     m_version = 3;
 
@@ -568,52 +526,63 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
         return false;
     m_state.m_tdb = (double) m_date;
 
-    if (params.count("x") == 0 || params.count("y") == 0 || params.count("z") == 0)
+    if (auto itx = params.find("x"sv), ity = params.find("y"sv), itz = params.find("z"sv);
+        itx == params.end() || ity == params.end() || itz == params.end())
+    {
         return false;
-    m_state.m_observerPosition = UniversalCoord(DecodeFromBase64(params["x"]),
-                                                DecodeFromBase64(params["y"]),
-                                                DecodeFromBase64(params["z"]));
+    }
+    else
+    {
+        m_state.m_observerPosition = UniversalCoord(DecodeFromBase64(itx->second),
+                                                    DecodeFromBase64(ity->second),
+                                                    DecodeFromBase64(itz->second));
+    }
 
     float ow, ox, oy, oz;
-    if (to_number(params["ow"], ow) &&
-        to_number(params["ox"], ox) &&
-        to_number(params["oy"], oy) &&
-        to_number(params["oz"], oz))
+    if (auto itw = params.find("ow"sv), itx = params.find("ox"sv), ity = params.find("oy"sv), itz = params.find("oz"sv);
+        itw != params.end() && to_number(itw->second, ow) &&
+        itx != params.end() && to_number(itx->second, ox) &&
+        ity != params.end() && to_number(ity->second, oy) &&
+        itz != params.end() && to_number(itz->second, oz))
+    {
         m_state.m_observerOrientation = Eigen::Quaternionf(ow, ox, oy, oz);
+    }
     else
+    {
+        return false;
+    }
+
+    if (auto it = params.find("select"sv); it != params.end())
+        m_state.m_selectedBodyName = it->second;
+    if (auto it = params.find("track"sv); it != params.end())
+        m_state.m_trackedBodyName = it->second;
+    if (auto it = params.find("ltd"sv); it != params.end())
+        m_state.m_lightTimeDelay = it->second != "0"sv;
+
+    if (auto it = params.find("fov"sv); it != params.end() && !to_number(it->second, m_state.m_fieldOfView))
+        return false;
+    if (auto it = params.find("ts"sv); it != params.end() && !to_number(it->second, m_state.m_timeScale))
         return false;
 
-    if (params.count("select") != 0)
-        m_state.m_selectedBodyName = params["select"];
-    if (params.count("track") != 0)
-        m_state.m_trackedBodyName = params["track"];
-    if (params.count("ltd") != 0)
-        m_state.m_lightTimeDelay = params["ltd"] != "0";
-
-    if (params.count("fov") != 0 && !to_number(params["fov"], m_state.m_fieldOfView))
-        return false;
-    if (params.count("ts") != 0 && !to_number(params["ts"], m_state.m_timeScale))
-        return false;
-
-    if (params.count("p") != 0)
-        m_state.m_pauseState = params["p"] != "0";
+    if (auto it = params.find("p"sv); it != params.end())
+        m_state.m_pauseState = it->second != "0"sv;
 
     // Render settings
     bool hasNewRenderFlags = false;
     std::uint64_t newFlags = 0;
-    if (params.count("nrf") != 0)
+    if (auto it = params.find("nrf"sv); it != params.end())
     {
         hasNewRenderFlags = true;
         int nrf;
-        if (!to_number(params["nrf"], nrf))
+        if (!to_number(it->second, nrf))
             return false;
         newFlags = static_cast<std::uint64_t>(nrf) << NEW_FLAG_BIT_1_7;
     }
-    if (params.count("rf") != 0)
+    if (auto it = params.find("rf"sv); it != params.end())
     {
         // old renderer flags are int
         int rf;
-        if (!to_number(params["rf"], rf))
+        if (!to_number(it->second, rf))
             return false;
         // older celestia versions don't know about the new renderer flags
         std::uint64_t oldFlags;
@@ -636,11 +605,11 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
         }
         m_state.m_renderFlags = newFlags | oldFlags;
     }
-    if (params.count("lm") != 0 && !to_number(params["lm"], m_state.m_labelMode))
+    if (auto it = params.find("lm"sv); it != params.end() && !to_number(it->second, m_state.m_labelMode))
         return false;
 
     int tsrc = 0;
-    if (params.count("tsrc") != 0 && !to_number(params["tsrc"], tsrc))
+    if (auto it = params.find("tsrc"sv); it != params.end() && !to_number(it->second, tsrc))
         return false;
     if (tsrc >= 0 && tsrc < TimeSourceCount)
         m_timeSource = static_cast<TimeSource>(tsrc);
@@ -648,19 +617,20 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
     return true;
 }
 
-bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool
+Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
 {
-    if (params.count("rf") != 0)
+    if (auto it = params.find("rf"sv); it != params.end())
     {
         std::uint64_t rf;
-        if (!to_number(params["rf"], rf))
+        if (!to_number(it->second, rf))
             return false;
         auto nrf = static_cast<int>(rf >> NEW_FLAG_BIT_1_7);
         int _rf = rf & RF_MASK;
         if ((rf & Renderer::ShowPlanets) != 0)
             _rf |= NEW_SHOW_PLANETS_BIT_MASK; // Set the 26th bit to ShowPlanets
+        it->second = fmt::format("{}", _rf);
         params["nrf"] = fmt::format("{}", nrf);
-        params["rf"] = fmt::format("{}", _rf);
     }
     return initVersion3(params, timeStr);
 }

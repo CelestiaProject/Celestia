@@ -7,32 +7,39 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/rectangle.h>
-#include <celengine/render.h>
-#include <celengine/framebuffer.h>
-#include <celutil/color.h>
-#include <celutil/logger.h>
 #include "view.h"
 
-using namespace std;
+#include <celengine/framebuffer.h>
+#include <celengine/glsupport.h>
+#include <celengine/overlay.h>
+#include <celengine/rectangle.h>
+#include <celengine/shadermanager.h>
+#include <celutil/logger.h>
+
 using celestia::util::GetLogger;
 
-View::View(View::Type _type,
-           Renderer *_renderer,
-           Observer *_observer,
-           float _x, float _y,
-           float _width, float _height) :
-    type(_type),
-    renderer(_renderer),
-    observer(_observer),
-    x(_x),
-    y(_y),
-    width(_width),
-    height(_height)
+namespace celestia
+{
+
+View::View(View::Type type,
+           Observer *observer,
+           float x, float y,
+           float width, float height) :
+    type(type),
+    observer(observer),
+    x(x),
+    y(y),
+    width(width),
+    height(height)
 {
 }
 
-void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
+
+View::~View() = default;
+
+
+void
+View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
 {
     vx = (wx - x) / width;
     vy = (wy + (y + height - 1)) / height;
@@ -40,37 +47,28 @@ void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
     vy = 0.5f - vy;
 }
 
-void View::walkTreeResize(View* sibling, int sign)
+
+void
+View::walkTreeResize(View *sibling, int sign)
 {
     float ratio;
+    float diff;
     switch (parent->type)
     {
     case View::HorizontalSplit:
         ratio = parent->height / (parent->height -  height);
         sibling->height *= ratio;
-        if (sign == 1)
-        {
-            sibling->y = parent->y + (sibling->y - parent->y) * ratio;
-        }
-        else
-        {
-            sibling->y = parent->y + (sibling->y - (y + height)) * ratio;
-        }
+        diff = sign == 1 ? parent->y : y + height;
+        sibling->y = parent->y + (sibling->y - diff) * ratio;
         break;
 
     case View::VerticalSplit:
         ratio = parent->width / (parent->width - width);
         sibling->width *= ratio;
-        if (sign == 1)
-        {
-            sibling->x = parent->x + (sibling->x - parent->x) * ratio;
-        }
-        else
-        {
-            sibling->x = parent->x + (sibling->x - (x + width) ) * ratio;
-        }
+        diff = sign == 1 ? parent->x : x + width;
+        sibling->x = parent->x + (sibling->x - diff) * ratio;
         break;
-    case View::ViewWindow:
+    default:
         break;
     }
     if (sibling->child1 != nullptr)
@@ -79,12 +77,13 @@ void View::walkTreeResize(View* sibling, int sign)
         walkTreeResize(sibling->child2, sign);
 }
 
-bool View::walkTreeResizeDelta(View* v, float delta, bool check)
+
+bool
+View::walkTreeResizeDelta(View *v, float delta, bool check)
 {
     View *p = v;
     int sign = -1;
-    float ratio;
-    double newSize;
+    float ratio, newSize;
 
     if (v->child1 != nullptr)
     {
@@ -98,7 +97,8 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
     }
 
-    while ( p != child1 && p != child2 && (p = p->parent) != nullptr ) ;
+    while (p != child1 && p != child2 && p->parent != nullptr)
+        p = p->parent;
 
     if (p == child1)
         sign = 1;
@@ -113,15 +113,10 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
         if (check)
             return true;
-        v->height = (float) newSize;
-        if (sign == 1)
-        {
-            v->y = p->y + (v->y - p->y) * ratio;
-        }
-        else
-        {
-            v->y = p->y + delta + (v->y - p->y) * ratio;
-        }
+        v->height = newSize;
+        v->y = p->y + (v->y - p->y) * ratio;
+        if (sign != 1)
+            v->y += delta;
         break;
 
     case View::VerticalSplit:
@@ -131,15 +126,10 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
             return false;
         if (check)
             return true;
-        v->width = (float) newSize;
-        if (sign == 1)
-        {
-            v->x = p->x + (v->x - p->x) * ratio;
-        }
-        else
-        {
-            v->x = p->x + delta + (v->x - p->x) * ratio;
-        }
+        v->width = newSize;
+        v->x = p->x + (v->x - p->x) * ratio;
+        if (sign != 1)
+            v->x += delta;
         break;
     case View::ViewWindow:
         break;
@@ -148,31 +138,40 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
     return true;
 }
 
-Observer* View::getObserver() const
+
+Observer*
+View::getObserver() const
 {
     return observer;
 }
 
-bool View::isSplittable(Type type) const
+
+bool
+View::isSplittable(Type _type) const
 {
     // If active view is too small, don't split it.
-    return (type == View::HorizontalSplit && height >= 0.2f) ||
-           (type == View::VerticalSplit && width >= 0.2f);
+    return (_type == View::HorizontalSplit && height >= 0.2f) ||
+           (_type == View::VerticalSplit && width >= 0.2f);
 }
 
-bool View::isRootView() const
+
+bool
+View::isRootView() const
 {
     return parent == nullptr;
 }
 
-void View::split(Type type, Observer *o, float splitPos, View **split, View **view)
+
+void
+View::split(Type _type, Observer *o, float splitPos, View **split, View **view)
 {
-    float w1, h1, w2, h2, x1, y1;
-    w1 = w2 = width;
-    h1 = h2 = height;
-    x1 = x;
-    y1 = y;
-    if (type == View::VerticalSplit)
+    float w1 = width;
+    float h1 = height;
+    float w2 = width;
+    float h2 = height;
+    float x1 = x;
+    float y1 = y;
+    if (_type == View::VerticalSplit)
     {
         w1 *= splitPos;
         w2 -= w1;
@@ -185,10 +184,7 @@ void View::split(Type type, Observer *o, float splitPos, View **split, View **vi
         y1 += h1;
     }
 
-    *split = new View(type,
-                      renderer,
-                      nullptr,
-                      x, y, width, height);
+    *split = new View(_type, nullptr, x, y, width, height);
     (*split)->parent = parent;
     if (parent != nullptr)
     {
@@ -203,15 +199,14 @@ void View::split(Type type, Observer *o, float splitPos, View **split, View **vi
     height = h1;
     parent = *split;
 
-    *view = new View(View::ViewWindow,
-                     renderer,
-                     o,
-                     x1, y1, w2, h2);
+    *view = new View(View::ViewWindow, o, x1, y1, w2, h2);
     (*split)->child2 = *view;
     (*view)->parent = *split;
 }
 
-View* View::remove(View* v)
+
+View*
+View::remove(View* v)
 {
     int sign;
     View *sibling;
@@ -239,7 +234,9 @@ View* View::remove(View* v)
     return sibling;
 }
 
-void View::reset()
+
+void
+View::reset()
 {
     x = 0.0f;
     y = 0.0f;
@@ -251,16 +248,20 @@ void View::reset()
     fbo = nullptr;
 }
 
-void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewidth)
+
+void
+View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, float linewidth) const
 {
     celestia::Rect r(x * gWidth, y * gHeight, width * gWidth - 1, height * gHeight - 1);
     r.setColor(color);
     r.setType(celestia::Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
-    renderer->drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, renderer->getOrthoProjectionMatrix());
+    overlay->drawRectangle(r);
 }
 
-void View::updateFBO(int gWidth, int gHeight)
+
+void
+View::updateFBO(int gWidth, int gHeight)
 {
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
@@ -268,8 +269,8 @@ void View::updateFBO(int gWidth, int gHeight)
         return;
 
     // recreate FBO when FBO not exisits or on size change
-    fbo = unique_ptr<FramebufferObject>(new FramebufferObject(newWidth, newHeight,
-                                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment));
+    fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
+                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment);
     if (!fbo->isValid())
     {
         GetLogger()->error("Error creating view FBO.\n");
@@ -277,7 +278,11 @@ void View::updateFBO(int gWidth, int gHeight)
     }
 }
 
-FramebufferObject *View::getFBO() const
+
+FramebufferObject*
+View::getFBO() const
 {
     return fbo.get();
 }
+
+} // end namespace celestia

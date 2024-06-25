@@ -260,7 +260,7 @@ initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, const GlobularForm::BlobV
         globularVtx.push_back(vtx);
     }
 
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, util::array_view<GlobularVtx>(globularVtx));
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, globularVtx);
     vo = gl::VertexObject(gl::VertexObject::Primitive::Points);
     vo.addVertexBuffer(
         bo,
@@ -300,7 +300,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
      *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
      */
 
-    auto& rng = celmath::getRNG();
+    auto& rng = math::getRNG();
     rng.seed(1312);
     while (i < kGlobularPoints)
     {
@@ -313,7 +313,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * parameters and variables!
          */
 
-        float uu = celmath::RealDists<float>::Unit(rng);
+        float uu = math::RealDists<float>::Unit(rng);
 
         /* First step: eta distributed as inverse power distribution (~1/Z^2)
          * that majorizes the exact King profile. Compute eta in terms of uniformly
@@ -336,15 +336,15 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * desired King form 'prob'!
          */
 
-        if (celmath::RealDists<float>::Unit(rng) < prob / cH)
+        if (math::RealDists<float>::Unit(rng) < prob / cH)
         {
             /* Generate 3d points of globular cluster stars in polar coordinates:
              * Distribution in eta (<=> r) according to King's profile.
              * Uniform distribution on any spherical surface for given eta.
              * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
              */
-            float u = celmath::RealDists<float>::SignedUnit(rng);
-            float theta = celmath::RealDists<float>::SignedFullAngle(rng);
+            float u = math::RealDists<float>::SignedUnit(rng);
+            float theta = math::RealDists<float>::SignedFullAngle(rng);
             float sthetu2 = std::sin(theta) * std::sqrt(1.0f - u * u);
 
             // x,y,z points within -0.5..+0.5, as required for consistency:
@@ -403,7 +403,7 @@ GlobularFormManager::getCenterTex(int form)
     if(centerTex[form] == nullptr)
     {
         centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                  celestia::PixelFormat::LUMINANCE,
+                                                  engine::PixelFormat::Luminance,
                                                   centerCloudTexEval).release();
     }
 
@@ -417,7 +417,7 @@ GlobularFormManager::getGlobularTex()
     if (globularTex == nullptr)
     {
         globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              celestia::PixelFormat::LUMINANCE,
+                                              engine::PixelFormat::Luminance,
                                               globularTextureEval);
     }
     assert(globularTex != nullptr);
@@ -429,7 +429,7 @@ GlobularFormManager::getColorTex()
 {
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, celestia::PixelFormat::RGBA,
+        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
                                            colorTextureEval,
                                            Texture::EdgeClamp,
                                            Texture::NoMipMaps);
@@ -470,7 +470,7 @@ CalculateSpriteSize(int w, int h, const Eigen::Matrix4f &pr, const Eigen::Matrix
      * Taking into account multiplication rules v2 becomes just 2 * viewMat.col(0) and v3 is just vec3(0, 0, 0).
      */
     auto mvp = pr * mv;
-    int viewport[] = { 0, 0, w, h };
+    std::array<int, 4> viewport{ 0, 0, w, h };
     Eigen::Vector3f ndc2;
     projectionMode->project(2.0f * viewMat.col(0), mv, pr, mvp, viewport, ndc2);
     Eigen::Vector3f ndc3;
@@ -641,7 +641,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
     glActiveTexture(GL_TEXTURE1);
     globularFormManager->getCenterTex(obj.globular->getFormId())->bind();
 
-    Eigen::Matrix4f mv = celmath::translate(m_renderer.getModelViewMatrix(), obj.offset);
+    Eigen::Matrix4f mv = math::translate(m_renderer.getModelViewMatrix(), obj.offset);
     Eigen::Matrix4f pr;
     if (obj.nearZ != 0.0f && obj.farZ != 0.0f)
         m_renderer.buildProjectionMatrix(pr, obj.nearZ, obj.farZ, m_zoom);

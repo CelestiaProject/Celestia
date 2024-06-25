@@ -16,40 +16,25 @@
 
 #include <celengine/render.h>
 
-
 class QAction;
 class QMenu;
 class QString;
 
 class CelestiaCore;
 
+namespace celestia::qt
+{
 
 class CelestiaActions : public QObject, public RendererWatcher
 {
 Q_OBJECT
 
- public:
+public:
     CelestiaActions(QObject *parent, CelestiaCore* appCore);
     ~CelestiaActions();
 
     virtual void notifyRenderSettingsChanged(const Renderer* renderer);
 
- private slots:
-    void slotToggleRenderFlag();
-    void slotToggleLabel();
-    void slotToggleOrbit();
-    void slotSetStarStyle();
-    void slotSetTextureResolution();
-    void slotAdjustLimitingMagnitude();
-    void slotSetLightTimeDelay();
-
- private:
-    void syncWithRenderer(const Renderer* renderer);
-    void syncWithAppCore();
-    QAction* createCheckableAction(const QString& text, QMenu* menu, int data);
-    QAction* createCheckableAction(const QString& text, int data);
-
- public:
     QAction* equatorialGridAction{ nullptr };
     QAction* galacticGridAction{ nullptr };
     QAction* eclipticGridAction{ nullptr };
@@ -120,6 +105,20 @@ Q_OBJECT
 
     QAction* toggleVSyncAction{ nullptr };
 
- private:
+private slots:
+    void slotToggleRenderFlag();
+    void slotToggleLabel();
+    void slotToggleOrbit();
+    void slotSetStarStyle();
+    void slotSetTextureResolution();
+    void slotAdjustLimitingMagnitude();
+    void slotSetLightTimeDelay();
+
+private:
+    void syncWithRenderer(const Renderer* renderer);
+    void syncWithAppCore();
+
     CelestiaCore* appCore;
 };
+
+} // end namespace celestia::qt

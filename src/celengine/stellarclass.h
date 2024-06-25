@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <string_view>
 
-
 class StellarClass
 {
 public:
@@ -79,16 +78,16 @@ public:
 
     static constexpr unsigned int Subclass_Unknown = 10;
 
-    inline StellarClass();
-    inline StellarClass(StarType,
-                        SpectralClass,
-                        unsigned int,
-                        LuminosityClass);
+    constexpr StellarClass() = default;
+    StellarClass(StarType,
+                 SpectralClass,
+                 unsigned int,
+                 LuminosityClass);
 
-    inline StarType getStarType() const;
-    inline SpectralClass getSpectralClass() const;
-    inline unsigned int getSubclass() const;
-    inline LuminosityClass getLuminosityClass() const;
+    StarType getStarType() const;
+    SpectralClass getSpectralClass() const;
+    unsigned int getSubclass() const;
+    LuminosityClass getLuminosityClass() const;
 
     static StellarClass parse(std::string_view);
 
@@ -103,21 +102,20 @@ public:
     bool unpackV2(std::uint16_t);
 
 private:
-    StarType starType;
-    SpectralClass specClass;
-    LuminosityClass lumClass;
-    unsigned int subclass;
+    StarType starType{ NormalStar };
+    SpectralClass specClass{ Spectral_Unknown };
+    LuminosityClass lumClass{ Lum_Unknown };
+    unsigned int subclass{ Subclass_Unknown };
 };
-
 
 // A rough ordering of stellar classes, from 'early' to 'late' . . .
 // Useful for organizing a list of stars by spectral class.
 bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
-StellarClass::StellarClass(StarType t,
-                           SpectralClass sc,
-                           unsigned int ssub,
-                           LuminosityClass lum) :
+inline StellarClass::StellarClass(StarType t,
+                                  SpectralClass sc,
+                                  unsigned int ssub,
+                                  LuminosityClass lum) :
     starType(t),
     specClass(sc),
     lumClass(lum),
@@ -125,31 +123,26 @@ StellarClass::StellarClass(StarType t,
 {
 }
 
-StellarClass::StellarClass() :
-    starType(NormalStar),
-    specClass(Spectral_Unknown),
-    lumClass(Lum_Unknown),
-    subclass(Subclass_Unknown)
-{
-
-}
-
-StellarClass::StarType StellarClass::getStarType() const
+inline StellarClass::StarType
+StellarClass::getStarType() const
 {
     return starType;
 }
 
-StellarClass::SpectralClass StellarClass::getSpectralClass() const
+inline StellarClass::SpectralClass
+StellarClass::getSpectralClass() const
 {
     return specClass;
 }
 
-unsigned int StellarClass::getSubclass() const
+inline unsigned int
+StellarClass::getSubclass() const
 {
     return subclass;
 }
 
-StellarClass::LuminosityClass StellarClass::getLuminosityClass() const
+inline StellarClass::LuminosityClass
+StellarClass::getLuminosityClass() const
 {
     return lumClass;
 }

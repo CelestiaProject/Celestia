@@ -17,6 +17,10 @@
 
 #include "common.h"
 
+namespace celestia::gtk
+{
 
 /* Initialization Functions */
 void initGLCallbacks(AppData* app);
+
+} // end namespace celestia::gtk

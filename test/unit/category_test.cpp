@@ -167,7 +167,7 @@ TEST_CASE("Objects in categories")
     auto categoryId = manager.create("foo", UserCategoryId::Invalid, {});
     REQUIRE(categoryId != UserCategoryId::Invalid);
 
-    Star star;
+    Star star(12345, StarDetails::GetBarycenterDetails());
     Selection sel{&star};
 
     REQUIRE(manager.addObject(sel, categoryId));

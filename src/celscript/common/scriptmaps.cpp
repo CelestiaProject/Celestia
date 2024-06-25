@@ -4,13 +4,14 @@
 #include <celengine/location.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
+#include <celestia/hud.h>
 
 using namespace std::string_view_literals;
 
 namespace celestia::scripts
 {
 
-void initRenderFlagMap(FlagMap64 &RenderFlagMap)
+void initRenderFlagMap(ScriptMap<std::uint64_t>& RenderFlagMap)
 {
     RenderFlagMap["orbits"sv]              = Renderer::ShowOrbits;
     RenderFlagMap["fadingorbits"sv]        = Renderer::ShowFadingOrbits;
@@ -48,7 +49,7 @@ void initRenderFlagMap(FlagMap64 &RenderFlagMap)
     RenderFlagMap["ecliptic"sv]            = Renderer::ShowEcliptic;
 }
 
-void initLabelFlagMap(FlagMap &LabelFlagMap)
+void initLabelFlagMap(ScriptMap<std::uint32_t>& LabelFlagMap)
 {
     LabelFlagMap["planets"sv]              = Renderer::PlanetLabels;
     LabelFlagMap["dwarfplanets"sv]         = Renderer::DwarfPlanetLabels;
@@ -67,21 +68,21 @@ void initLabelFlagMap(FlagMap &LabelFlagMap)
     LabelFlagMap["i18nconstellations"sv]   = Renderer::I18nConstellationLabels;
 }
 
-void initBodyTypeMap(FlagMap &BodyTypeMap)
+void initBodyTypeMap(ScriptMap<BodyClassification>& BodyTypeMap)
 {
-    BodyTypeMap["Planet"sv]                = Body::Planet;
-    BodyTypeMap["DwarfPlanet"sv]           = Body::DwarfPlanet;
-    BodyTypeMap["Moon"sv]                  = Body::Moon;
-    BodyTypeMap["MinorMoon"sv]             = Body::MinorMoon;
-    BodyTypeMap["Asteroid"sv]              = Body::Asteroid;
-    BodyTypeMap["Comet"sv]                 = Body::Comet;
-    BodyTypeMap["Spacecraft"sv]            = Body::Spacecraft;
-    BodyTypeMap["Invisible"sv]             = Body::Invisible;
-    BodyTypeMap["Star"sv]                  = Body::Stellar;
-    BodyTypeMap["Unknown"sv]               = Body::Unknown;
+    BodyTypeMap["Planet"sv]                = BodyClassification::Planet;
+    BodyTypeMap["DwarfPlanet"sv]           = BodyClassification::DwarfPlanet;
+    BodyTypeMap["Moon"sv]                  = BodyClassification::Moon;
+    BodyTypeMap["MinorMoon"sv]             = BodyClassification::MinorMoon;
+    BodyTypeMap["Asteroid"sv]              = BodyClassification::Asteroid;
+    BodyTypeMap["Comet"sv]                 = BodyClassification::Comet;
+    BodyTypeMap["Spacecraft"sv]            = BodyClassification::Spacecraft;
+    BodyTypeMap["Invisible"sv]             = BodyClassification::Invisible;
+    BodyTypeMap["Star"sv]                  = BodyClassification::Stellar;
+    BodyTypeMap["Unknown"sv]               = BodyClassification::Unknown;
 }
 
-void initLocationFlagMap(FlagMap64 &LocationFlagMap)
+void initLocationFlagMap(ScriptMap<std::uint64_t>& LocationFlagMap)
 {
     LocationFlagMap["city"sv]              = Location::City;
     LocationFlagMap["observatory"sv]       = Location::Observatory;
@@ -127,8 +128,8 @@ void initLocationFlagMap(FlagMap64 &LocationFlagMap)
     LocationFlagMap["lacuna"sv]            = Location::Lacuna;
     LocationFlagMap["lacus"sv]             = Location::Lacus;
     LocationFlagMap["largeringed"sv]       = Location::LargeRinged;
-    LocationFlagMap["lenticula"sv]         = Location::Lenticula;
     LocationFlagMap["lingula"sv]           = Location::Lingula;
+    LocationFlagMap["lobus"sv]             = Location::Lobus;
     LocationFlagMap["macula"sv]            = Location::Macula;
     LocationFlagMap["oceanus"sv]           = Location::Oceanus;
     LocationFlagMap["palus"sv]             = Location::Palus;
@@ -149,22 +150,22 @@ void initLocationFlagMap(FlagMap64 &LocationFlagMap)
     LocationFlagMap["historical"sv]        = Location::Historical;
 }
 
-void initOverlayElementMap(FlagMap &OverlayElementMap)
+void initOverlayElementMap(ScriptMap<std::uint32_t>& OverlayElementMap)
 {
-    OverlayElementMap["Time"sv]            = CelestiaCore::ShowTime;
-    OverlayElementMap["Velocity"sv]        = CelestiaCore::ShowVelocity;
-    OverlayElementMap["Selection"sv]       = CelestiaCore::ShowSelection;
-    OverlayElementMap["Frame"sv]           = CelestiaCore::ShowFrame;
+    OverlayElementMap["Time"sv]            = static_cast<std::uint32_t>(HudElements::ShowTime);
+    OverlayElementMap["Velocity"sv]        = static_cast<std::uint32_t>(HudElements::ShowVelocity);
+    OverlayElementMap["Selection"sv]       = static_cast<std::uint32_t>(HudElements::ShowSelection);
+    OverlayElementMap["Frame"sv]           = static_cast<std::uint32_t>(HudElements::ShowFrame);
 }
 
-void initOrbitVisibilityMap(FlagMap &OrbitVisibilityMap)
+void initOrbitVisibilityMap(ScriptMap<std::uint32_t>& OrbitVisibilityMap)
 {
     OrbitVisibilityMap["never"sv]          = Body::NeverVisible;
     OrbitVisibilityMap["normal"sv]         = Body::UseClassVisibility;
     OrbitVisibilityMap["always"sv]         = Body::AlwaysVisible;
 }
 
-void initLabelColorMap(ColorMap &LabelColorMap)
+void initLabelColorMap(ScriptMap<Color*>& LabelColorMap)
 {
     LabelColorMap["stars"sv]               = &Renderer::StarLabelColor;
     LabelColorMap["planets"sv]             = &Renderer::PlanetLabelColor;
@@ -188,7 +189,7 @@ void initLabelColorMap(ColorMap &LabelColorMap)
 
 }
 
-void initLineColorMap(ColorMap &LineColorMap)
+void initLineColorMap(ScriptMap<Color*>& LineColorMap)
 {
     LineColorMap["starorbits"sv]           = &Renderer::StarOrbitColor;
     LineColorMap["planetorbits"sv]         = &Renderer::PlanetOrbitColor;

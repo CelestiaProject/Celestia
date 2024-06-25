@@ -16,10 +16,9 @@
 
 #include <Eigen/Core>
 
+#include <celastro/astro.h>
 #include <celutil/r128.h>
 #include <celutil/r128util.h>
-
-#include "astro.h"
 
 
 class UniversalCoord
@@ -115,12 +114,12 @@ class UniversalCoord
                                static_cast<double>(z)) * 1.0e-6;
     }
 
-    double distanceFromKm(const UniversalCoord& uc)
+    double distanceFromKm(const UniversalCoord& uc) const
     {
         return offsetFromKm(uc).norm();
     }
 
-    double distanceFromLy(const UniversalCoord& uc)
+    double distanceFromLy(const UniversalCoord& uc) const
     {
         return celestia::astro::kilometersToLightYears(offsetFromKm(uc).norm());
     }

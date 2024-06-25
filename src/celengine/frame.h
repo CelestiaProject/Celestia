@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <celengine/astro.h>
 #include <celengine/selection.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -27,7 +26,7 @@ class ReferenceFrame
  public:
     SHARED_TYPES(ReferenceFrame)
 
-    ReferenceFrame(Selection center);
+    explicit ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() = default;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
@@ -70,11 +69,11 @@ class CachingFrame : public ReferenceFrame
  public:
     SHARED_TYPES(CachingFrame)
 
-    CachingFrame(Selection _center);
-    virtual ~CachingFrame() = default;
+    explicit CachingFrame(Selection _center);
+    ~CachingFrame() override = default;
 
-    Eigen::Quaterniond getOrientation(double tjd) const;
-    Eigen::Vector3d getAngularVelocity(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    Eigen::Vector3d getAngularVelocity(double tjd) const override;
     virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
@@ -93,19 +92,19 @@ class J2000EclipticFrame : public ReferenceFrame
  public:
     SHARED_TYPES(J2000EclipticFrame)
 
-    J2000EclipticFrame(Selection center);
-    virtual ~J2000EclipticFrame() = default;
+    explicit J2000EclipticFrame(Selection center);
+    ~J2000EclipticFrame() override = default;
 
-    Eigen::Quaterniond getOrientation(double /* tjd */) const
+    Eigen::Quaterniond getOrientation(double /* tjd */) const override
     {
         return Eigen::Quaterniond::Identity();
     }
 
-    virtual bool isInertial() const;
+    bool isInertial() const override;
 
-    virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const;
+    unsigned int nestingDepth(unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType) const override;
 };
 
 
@@ -115,8 +114,8 @@ class J2000EquatorFrame : public ReferenceFrame
  public:
     SHARED_TYPES(J2000EquatorFrame)
 
-    J2000EquatorFrame(Selection center);
-    virtual ~J2000EquatorFrame() = default;
+    explicit J2000EquatorFrame(Selection center);
+    ~J2000EquatorFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
@@ -137,7 +136,7 @@ class BodyFixedFrame : public ReferenceFrame
     SHARED_TYPES(BodyFixedFrame)
 
     BodyFixedFrame(Selection center, Selection obj);
-    virtual ~BodyFixedFrame() = default;
+    ~BodyFixedFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
@@ -157,7 +156,7 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
-    virtual ~BodyMeanEquatorFrame() = default;
+    ~BodyMeanEquatorFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
@@ -177,10 +176,6 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 class FrameVector
 {
  public:
-    FrameVector(const FrameVector& fv);
-    ~FrameVector() = default;
-    FrameVector& operator=(const FrameVector&);
-
     Eigen::Vector3d direction(double tjd) const;
 
     /*! Frames can be defined in reference to other frames; this method
@@ -237,13 +232,13 @@ class TwoVectorFrame : public CachingFrame
                    int primAxis,
                    const FrameVector& sec,
                    int secAxis);
-    virtual ~TwoVectorFrame() = default;
+    ~TwoVectorFrame() override = default;
 
-    Eigen::Quaterniond computeOrientation(double tjd) const;
-    virtual bool isInertial() const;
-    virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const;
+    Eigen::Quaterniond computeOrientation(double tjd) const override;
+    bool isInertial() const override;
+    unsigned int nestingDepth(unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType) const override;
 
     //! The sine of minimum angle between the primary and secondary vectors
     static const double Tolerance;

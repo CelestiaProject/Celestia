@@ -1,5 +1,8 @@
 #include "glsupport.h"
 #include <algorithm>
+#include <cstring>
+#include <fmt/format.h>
+#include <celutil/gettext.h>
 
 namespace celestia::gl
 {
@@ -24,6 +27,8 @@ CELAPI GLint maxTextureAnisotropy          = 0;
 namespace
 {
 
+bool EnableGeomShaders = true;
+
 inline bool has_extension(const char *name) noexcept
 {
     return epoxy_has_gl_extension(name);
@@ -35,7 +40,38 @@ bool check_extension(util::array_view<std::string> list, const char *name) noexc
            && has_extension(name);
 }
 
-bool EnableGeomShaders = true;
+void enable_workarounds()
+{
+    bool isMesa = false;
+    bool isAMD = false;
+    bool isNavi = false;
+
+    const char* s;
+    s = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    // "4.6 (Compatibility Profile) Mesa 22.3.6"
+    // "OpenGL ES 3.2 Mesa 22.3.6"
+    if (s != nullptr)
+        isMesa = std::strstr(s, "Mesa") != nullptr;
+
+    s = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    // "AMD" for radeonsi
+    // "Mesa/X.org" for llvmpipe
+    // "Collabora Ltd" for zink
+    if (s != nullptr)
+        isAMD = std::strcmp(s, "AMD") == 0;
+
+    s = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    // "AMD Radeon RX 6600 (navi23, LLVM 15.0.6, DRM 3.52, 6.4.0-0.deb12.2-amd64)"" for radeonsi
+    // "llvmpipe (LLVM 15.0.6, 256 bits)""
+    // "zink (llvmpipe (LLVM 15.0.6, 256 bits))""
+    // "zink (AMD Radeon RX 6600 (RADV NAVI23))""
+    if (s != nullptr)
+        isNavi = std::strstr(s, "navi") != nullptr;
+
+    // https://gitlab.freedesktop.org/mesa/mesa/-/issues/9971
+    if (isMesa && isAMD && isNavi)
+        EnableGeomShaders = false;
+}
 
 } // namespace
 
@@ -47,7 +83,11 @@ bool init(util::array_view<std::string> ignore) noexcept
     OES_geometry_shader            = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
-    ARB_framebuffer_object         = check_extension(ignore, "GL_ARB_framebuffer_object") || check_extension(ignore, "GL_EXT_framebuffer_object");
+    if (!has_extension("GL_ARB_framebuffer_object"))
+    {
+        fmt::print(_("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
+        return false;
+    }
 #endif
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
@@ -70,6 +110,8 @@ bool init(util::array_view<std::string> ignore) noexcept
 
     if (gl::EXT_texture_filter_anisotropic)
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxTextureAnisotropy);
+
+    enable_workarounds();
 
     return true;
 }

@@ -159,13 +159,11 @@ ConstantOrientation::ConstantOrientation(const Eigen::Quaterniond& q) :
 {
 }
 
-
 Eigen::Quaterniond
 ConstantOrientation::spin(double /*unused*/) const
 {
     return orientation;
 }
-
 
 Eigen::Vector3d
 ConstantOrientation::angularVelocityAtTime(double /* tdb */) const
@@ -173,6 +171,12 @@ ConstantOrientation::angularVelocityAtTime(double /* tdb */) const
     return Eigen::Vector3d::Zero();
 }
 
+std::shared_ptr<const RotationModel>
+ConstantOrientation::identity()
+{
+    static auto identity = std::make_shared<ConstantOrientation>();
+    return identity;
+}
 
 /***** UniformRotationModel implementation *****/
 
@@ -217,15 +221,15 @@ UniformRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return celmath::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
+    return math::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
 }
 
 
 Eigen::Quaterniond
 UniformRotationModel::equatorOrientationAtTime(double /*unused*/) const
 {
-    return celmath::XRotation((double) -inclination) *
-           celmath::YRotation((double) -ascendingNode);
+    return math::XRotation((double) -inclination) *
+           math::YRotation((double) -ascendingNode);
 }
 
 
@@ -282,7 +286,7 @@ PrecessingRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return celmath::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
+    return math::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
 }
 
 
@@ -302,7 +306,7 @@ PrecessingRotationModel::equatorOrientationAtTime(double tjd) const
             (2.0 * celestia::numbers::pi / precessionPeriod) * (tjd - epoch);
     }
 
-    return celmath::XRotation((double) -inclination) * celmath::YRotation(-nodeOfDate);
+    return math::XRotation((double) -inclination) * math::YRotation(-nodeOfDate);
 }
 
 } // end namespace celestia::ephem

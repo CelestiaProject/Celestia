@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -113,6 +115,7 @@ private:
 class ConstantOrientation : public RotationModel
 {
  public:
+    ConstantOrientation() = default;
     ConstantOrientation(const Eigen::Quaterniond& q);
     ~ConstantOrientation() override = default;
 
@@ -122,8 +125,10 @@ class ConstantOrientation : public RotationModel
     double getPeriod() const override { return 0.0; }
     bool isPeriodic() const override { return false; }
 
+    static std::shared_ptr<const RotationModel> identity();
+
  private:
-    Eigen::Quaterniond orientation;
+    Eigen::Quaterniond orientation{ Eigen::Quaterniond::Identity() };
 };
 
 

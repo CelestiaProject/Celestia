@@ -13,7 +13,7 @@ class FFMPEGCapturePrivate;
 
 class FFMPEGCapture : public MovieCapture
 {
- public:
+public:
     FFMPEGCapture(const Renderer *r);
     ~FFMPEGCapture() override;
 
@@ -28,12 +28,14 @@ class FFMPEGCapture : public MovieCapture
 
     void setAspectRatio(int, int) override {};
     void setQuality(float) override {};
-    void recordingStatus(bool) override {};
 
     void setVideoCodec(AVCodecID);
     void setBitRate(int64_t);
     void setEncoderOptions(const std::string&);
 
- private:
+protected:
+    void recordingStatusUpdated(bool) override { /* no action necessary */ };
+
+private:
     FFMPEGCapturePrivate *d{ nullptr };
 };

@@ -33,9 +33,9 @@ struct FeatureNameEntry { const char* name; Location::FeatureType featureType; }
 "LC",           Location::Lacus
 "LF",           Location::LandingSite
 "LG",           Location::LargeRinged
-"LE",           Location::Lenticula
 "LI",           Location::Linea
 "LN",           Location::Lingula
+"LO",           Location::Lobus
 "MA",           Location::Macula
 "ME",           Location::Mare
 "MN",           Location::Mensa

@@ -8,6 +8,9 @@
 
 #include <celestia/celestiacore.h>
 
+namespace celestia::qt
+{
+
 namespace
 {
 
@@ -22,7 +25,6 @@ getPlatformNativeInterface()
 
     return pni;
 }
-
 
 void
 addRegistryItem(
@@ -48,13 +50,11 @@ addRegistryItem(
     }
 }
 
-
 void
 removeRegistryItem(void *data, wl_registry *registry, std::uint32_t name)
 {
     // not handled
 }
-
 
 std::shared_ptr<WaylandDragHandler::PointerInterfaces>
 getPointerInterfaces()
@@ -88,15 +88,12 @@ getPointerInterfaces()
 
 } // end unnamed namespace
 
-
 const zwp_relative_pointer_v1_listener WaylandDragHandler::listener{ processRelativePointer };
-
 
 WaylandDragHandler::WaylandDragHandler(QWidget *_widget, CelestiaCore *_appCore) :
     DragHandler(_appCore), widget(_widget)
 {
 }
-
 
 WaylandDragHandler::~WaylandDragHandler()
 {
@@ -105,7 +102,6 @@ WaylandDragHandler::~WaylandDragHandler()
     if (relativePointer)
         zwp_relative_pointer_v1_destroy(relativePointer);
 }
-
 
 void
 WaylandDragHandler::begin(const QMouseEvent &m, qreal s, int b)
@@ -159,7 +155,6 @@ WaylandDragHandler::begin(const QMouseEvent &m, qreal s, int b)
     }
 }
 
-
 void
 WaylandDragHandler::move(const QMouseEvent &m, qreal s)
 {
@@ -168,7 +163,6 @@ WaylandDragHandler::move(const QMouseEvent &m, qreal s)
         DragHandler::move(m, s);
     }
 }
-
 
 void
 WaylandDragHandler::finish()
@@ -184,7 +178,6 @@ WaylandDragHandler::finish()
     zwp_relative_pointer_v1_destroy(relativePointer);
     relativePointer = nullptr;
 }
-
 
 void
 WaylandDragHandler::processRelativePointer(
@@ -204,12 +197,10 @@ WaylandDragHandler::processRelativePointer(
         dragHandler->effectiveButtons());
 }
 
-
 WaylandDragHandler::PointerInterfaces::PointerInterfaces(wl_registry *_registry) :
     registry{ _registry }
 {
 }
-
 
 WaylandDragHandler::PointerInterfaces::~PointerInterfaces()
 {
@@ -220,3 +211,5 @@ WaylandDragHandler::PointerInterfaces::~PointerInterfaces()
     if (registry)
         wl_registry_destroy(registry);
 }
+
+} // end namespace celestia::qt

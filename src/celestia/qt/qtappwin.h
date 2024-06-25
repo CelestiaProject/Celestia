@@ -24,11 +24,15 @@ class QColor;
 class QDockWidget;
 class QMenu;
 class QPoint;
+class QSettings;
 class QToolBar;
 class QUrl;
 class QWidget;
 
 class Selection;
+
+namespace celestia::qt
+{
 
 class BookmarkManager;
 class BookmarkToolBar;
@@ -51,14 +55,9 @@ public:
     ~CelestiaAppWindow();
 
     void init(const CelestiaCommandLineOptions&);
-
-    void readSettings();
-    void writeSettings();
-    bool loadBookmarks();
-    void saveBookmarks();
+    void startAppCore();
 
     void requestContextMenu(float x, float y, Selection sel) override;
-
     void loadingProgressUpdate(const QString& s);
 
 public slots:
@@ -132,6 +131,11 @@ private:
     QMenu* buildScriptsMenu();
     void populateBookmarkMenu();
 
+    void readSettings();
+    void writeSettings();
+    bool loadBookmarks();
+    void saveBookmarks();
+
     void closeEvent(QCloseEvent* event) override;
 
     void switchToNormal();
@@ -173,3 +177,5 @@ private:
 
     QTimer *timer;
 };
+
+} // end namespace celestia::qt

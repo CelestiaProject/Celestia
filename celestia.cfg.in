@@ -1,0 +1,442 @@
+
+#************************************************************************
+#                     Celestia Configuration File
+#
+# This file contains configuration data read by Celestia each time it
+# is run. Many of the items may be changed to suit your specific needs
+# or requirements. PLEASE make a backup copy of this file before you
+# make any changes to it.
+#
+# To learn more about Celestia, visit the Celestia forums at:
+#   https://celestiaproject.space/forum/
+# or the Celestia web site at: https://celestiaproject.space/
+#************************************************************************
+
+
+Configuration
+{
+
+#------------------------------------------------------------------------
+# This section contains a list of data files that Celestia uses to load
+# information about stars, constellations and locations. DO NOT change
+# these file names or the order in which they are listed, unless you
+# know exactly what you are doing. Most of these files can be viewed
+# with a plain text editor. Discussion about their content and formats
+# can be found on the Celestia forums: https://celestiaproject.space/forum/
+
+# If you want to load all your stars from .stc files, you can now comment
+# out the StarDatabase entry.
+#------------------------------------------------------------------------
+  StarDatabase                 "data/stars.dat"
+  StarNameDatabase             "data/starnames.dat"
+  StarCatalogs               [ "data/revised.stc"
+                               "data/extrasolar.stc"
+                               "data/nearstars.stc"
+                               "data/visualbins.stc"
+                               "data/spectbins.stc"
+                               "data/charm2.stc"
+                               "data/pulsars.stc" ]
+
+  HDCrossIndex                 "data/hdxindex.dat"
+  SAOCrossIndex                "data/saoxindex.dat"
+
+  SolarSystemCatalogs        [ "data/solarsys.ssc"
+                               "data/dwarfplanets.ssc"
+                               "data/asteroids.ssc"
+                               "data/comets.ssc"
+                               "data/outersys.ssc"
+                               "data/minormoons.ssc"
+                               "data/extrasolar.ssc"
+                               "data/merc_locs.ssc"
+                               "data/venus_locs.ssc"
+                               "data/earth_locs.ssc"
+                               "data/moon_locs.ssc"
+                               "data/mars_locs.ssc"
+                               "data/marsmoons_locs.ssc"
+                               "data/jupitermoons_locs.ssc"
+                               "data/saturnmoons_locs.ssc"
+                               "data/uranusmoons_locs.ssc"
+                               "data/neptunemoons_locs.ssc"
+                               "data/dwarfplanets_locs.ssc"
+                               "data/asteroids_locs.ssc"
+                               "data/ring_locs.ssc"
+                               "data/world-capitals.ssc" ]
+
+  DeepSkyCatalogs            [ "data/galaxies.dsc"
+                               "data/globulars.dsc"
+                               "data/openclusters.dsc" ]
+
+  AsterismsFile                "data/asterisms.dat"
+  BoundariesFile               "data/boundaries.dat"
+
+
+#------------------------------------------------------------------------
+# Default star textures for each spectral type
+#
+# The default textures may be overridden in individual star definitions.
+#------------------------------------------------------------------------
+StarTextures
+{
+	# This texture will be used for any spectral type not listed
+	# in this block.
+	Default "astar.*"
+
+	O "ostar.*"
+	B "bstar.*"
+	A "astar.*"
+	F "fstar.*"
+	G "gstar.*"
+	K "kstar.*"
+	M "mstar.*"
+
+	# carbon stars
+	C "mstar.*"
+	R "mstar.*"  # former subclass of carbon star
+	N "mstar.*"  # former subclass of carbon star
+	S "mstar.*"  # roughly between M and C
+
+	# Wolf-Rayet stars
+	WC "ostar.*"
+	WN "ostar.*"
+	WO "ostar.*"
+
+	# brown dwarfs
+	L "lstar.*"
+	T "browndwarf.*"
+	Y "exo-class4night.*"
+
+	# stellar remnants
+	WD "whitedwarf.*"
+	NeutronStar "ostar.*"
+}
+
+
+#------------------------------------------------------------------------
+# User Interface files ...
+#
+# Despite their ".cel" file extension, these are not CEL scripts, but
+# rather data files that populate controls such as menus and dialog
+# boxes.
+#
+# FavoritesFile
+# -------------
+# This is where Bookmarks data are stored. The file does not exist until
+# you save a Bookmark from within Celestia. You can view this file with
+# a plain text editor and if you write CEL scripts, it contains some
+# useful information.
+#
+# DestinationFile
+# ---------------
+# This is the list of Destinations used in the Tour Guide dialog box,
+# accessed via the Navigation Menu. You can edit this file with a plain
+# text editor to add your own destinations to the dialog box. The order
+# in which the items are listed in the file is the order in which they
+# will be listed in the Tour Guide dialog.
+#
+# Cursor
+# ------
+# This parameter allows you to select from three cursors, but currently
+# only in the Windows version of Celestia ...
+#  * White crosshair ("crosshair") --> default cursor
+#  * Inverting crosshair ("inverting crosshair")
+#  * Standard Windows arrow ("arrow")
+#
+# The inverting crosshair can be a better choice because it's more
+# visible on bright backgrounds. However, should you decide to try this
+# cursor, TEST IT CLOSELY. Not all graphics chipsets support an inverting
+# cursor, which will cause Windows to fall back to software emulation.
+# The emulated cursor interacts with OpenGL applications in unfortunate
+# ways, forcing a lot of extra redrawing and cutting by half the frame
+# rate on a GeForce2-equipped laptop. So, if you change this, check your
+# FPS rates to make sure you haven't kicked Windows into software
+# emulation mode.
+#------------------------------------------------------------------------
+  FavoritesFile    "favorites.cel"
+  DestinationFile  "guide.cel"
+  Cursor           "crosshair"
+
+
+#------------------------------------------------------------------------
+# Included CEL script files.
+#
+# The following CEL script files are included in the basic Celestia
+# distribution. These script files may be viewed and edited with a
+# plain text editor. They may both be modified or replaced to suit your
+# specific needs.
+#
+# InitScript is the CEL script that is automatically run each time
+# Celestia is started. The default script (start.cel) travels to Io, one
+# of Jupiter's moons.
+#
+# DemoScript is the CEL script that is run when you select the "Run Demo"
+# option in the File menu in Celestia. The default script (demo.cel)
+# takes you on a short tour of some interesting places in our solar
+# system.
+#
+# To learn more about how to use and write CEL scripts and Lua scripts
+# in Celestia, please visit the Celestia Scripting forum at:
+#   https://celestiaproject.space/forum/viewforum.php?f=9
+#------------------------------------------------------------------------
+  InitScript  "start.cel"
+  DemoScript  "demo.cel"
+
+
+#------------------------------------------------------------------------
+# The 'extras' directory is located under the celestia root directory
+# and is used for storing third-party add-ons to Celestia. To learn
+# more about Add-Ons for Celestia, visit the Celestia Add-Ons forum at:
+#   https://celestiaproject.space/forum/viewforum.php?f=6
+#
+# You may specify additional add-on directories by adding additional
+# entries, such as the following example shows:
+# ExtrasDirectories  [ "extras" "myextras1" "myextras2" ]
+#
+# To specify absolute paths on windows, you either have to use "/" or
+# double backslashes to seperate path components. Example:
+#   ExtrasDirectories  [ "D:/celestia-extras" ]
+# or
+#   ExtrasDirectories  [ "D:\\celestia-extras" ]
+#------------------------------------------------------------------------
+  ExtrasDirectories  [ "extras-standard" "extras" @CELCFG_EXTRAS_DIRS@]
+
+
+#------------------------------------------------------------------------
+# Addons in 'extras' directories can be skipped. For example, if you have
+# an addon which provides a better version of ISS spacecraft you might
+# want to use it instead of the default one shipped with Celestia. But if
+# you load it you will have two spacecraft rendered in the same place. So
+# you can either remove the default one but it will be reinstalled on
+# Celestia upgrade or you can it to the skip list. Example:
+#   SkipExtras "extras-standard/iss/iss.ssc"
+# or
+#   SkipExtras ["extras/wostars.stc" "extras-standard/iss/iss.ssc"]
+#
+# Please note that 1) only relative paths work, 2) directories are not
+# accepted in the list only catalog file names.
+#------------------------------------------------------------------------
+#  SkipExtras [ ]
+
+#------------------------------------------------------------------------
+# Font definitions.
+#
+# The following entries define the fonts Celestia will use to display
+# text on the display screen. To view the list of fonts available with
+# your distribution of Celestia, look in the fonts directory located
+# under the Celestia root directory. The default fonts are UTF-8
+# compatible in order to display non-English characters. Font size is
+# measured in points to ensure the same sizes on all DPI configurations.
+#
+# Font:      Used to display all informational text.
+#            Default: "DejaVuSans.ttf,9"
+#
+# LabelFont: Used to display all label text (objects, locations, etc.).
+#            Default "DejaVuSans.ttf,9"
+#
+# TitleFont: Used to display object names, messages, and script text.
+#            Default "DejaVuSans-Bold.ttf,15"
+#------------------------------------------------------------------------
+  Font       "DejaVuSans.ttf,9"
+  LabelFont  "DejaVuSans.ttf,9"
+  TitleFont  "DejaVuSans-Bold.ttf,15"
+
+
+#------------------------------------------------------------------------
+# LogoTexture defines the graphic file to be displayed when Celestia is
+# started. The default filename is "logo.png"
+#------------------------------------------------------------------------
+  LogoTexture  "logo.png"
+
+
+#------------------------------------------------------------------------
+# FaintestVisibleMagnitude defines the lowest magnitude at which a star
+# will be displayed in Celestia. This setting may be adjusted real-time
+# via the '[' and ']' keys in Celestia. The default value is 6.0.
+#------------------------------------------------------------------------
+  FaintestVisibleMagnitude 6.0
+
+
+#------------------------------------------------------------------------
+# RotateAcceleration defines the speed at which an object will be
+# rotated in Celestia, when using a keypress, such as the left and right
+# arrow keys. A higher value will rotate the object quicker, while a
+# lower value will cause a slower rotation. The default value is 120.0.
+#------------------------------------------------------------------------
+  RotateAcceleration 120.0
+
+
+#------------------------------------------------------------------------
+# MouseRotationSensitivity defines the speed at which an object will be
+# rotated in Celestia, when using the mouse -- press both mouse-buttons
+# or Ctrl+LeftMouseButton, and move the mouse left or right. A higher
+# value will rotate the object quicker, while a lower value will cause
+# a slower rotation. A value of 0.0 (zero) will disable this particluar
+# feature. The default value is 1.0.
+#------------------------------------------------------------------------
+  MouseRotationSensitivity 1.0
+
+
+#------------------------------------------------------------------------
+# ReverseMouseWheel performs a change of command rotates
+# the mouse wheel on the opposite. The default value is false.
+# RayBasedDragging enables dragging behavior that based on change of
+# pick rays instead of screen coordinates. The default value is false.
+# FocusZooming enables the zooming behavior where the focus location on
+# screen is kept. The default value is false.
+#------------------------------------------------------------------------
+#  ReverseMouseWheel true
+#  RayBasedDragging  true
+#  FocusZooming      true
+
+
+#------------------------------------------------------------------------
+# The following parameter is used in Lua (.celx) scripting.
+#
+#   ScriptScreenshotDirectory defines the directory where screenshots
+#   are to be stored. The default value is "", i.e. Celestia's
+#   installation directory.
+#------------------------------------------------------------------------
+  ScriptScreenshotDirectory ""
+
+
+#------------------------------------------------------------------------
+# CELX-scripts can request permission to perform dangerous operations,
+# such as reading, writing and deleting files or executing external
+# programs. If granted, a malicious script could use this to destroy
+# data or compromise system security.
+# The following parameter determines what Celestia does upon such
+# requests:
+#  "ask": ask the user if he want's to allow access (default)
+#  "allow": always allow such requests
+#  "deny": always deny such requests
+#------------------------------------------------------------------------
+  ScriptSystemAccessPolicy "ask"
+
+
+#------------------------------------------------------------------------
+# The following lines are render detail settings.  Assigning higher
+# values will produce better quality images, but may cause some older
+# systems to run slower.
+#
+#   OrbitPathSamplePoints defines how many sample points to use when
+#   rendering orbit paths. The default value is 100.
+#
+#   RingSystemSections defines the number of segments in which ring
+#   systems are rendered. The default value is 100.
+#
+#   ShadowTextureSize defines the size* of shadow texture to be used.
+#   The default value is 256. Maximum useful value is 2048.
+#
+#   EclipseTextureSize defines the size* of eclipse texture to be used.
+#   The default value is 128. Maximum useful value is 1024.
+#
+#   * The ShadowTextureSize and EclipseTextureSize values should both be
+#     powers of two (128, 256, 512, etc.). Using larger values will
+#     reduce the jagged edges of eclipse shadows and shadows on planet
+#     rings, but it will decrease the amount of memory available for
+#     planet textures.
+#------------------------------------------------------------------------
+  OrbitPathSamplePoints  100
+  RingSystemSections     100
+
+  ShadowTextureSize      256
+  EclipseTextureSize     128
+
+
+#------------------------------------------------------------------------
+# Orbit rendering parameters
+#------------------------------------------------------------------------
+# OrbitWindowEnd ->
+# End of the orbit window relative to the current simulation time.
+# Units are orbital periods. The default value is 0.5.
+# The range of values 0.0 - 1.0.
+#
+# OrbitPeriodsShown ->
+# Number of orbit periods shown.
+# The default value is 1.0.
+#
+# LinearFadeFraction ->
+# Fraction of the window over which the orbit fades from opaque
+# to transparent. Fading is disabled when this value is zero.
+# The default value is 0.0. The range of values 0.0 - 1.0.
+#------------------------------------------------------------------------
+  OrbitWindowEnd         0.0
+# OrbitPeriodsShown      1.0
+  LinearFadeFraction     0.8
+
+
+#-----------------------------------------------------------------------
+# Set the level of multisample antialiasing.  Not all 3D graphics
+# hardware supports antialiasing, though most newer graphics chipsets
+# do.  Larger values will result in smoother edges with a cost in
+# rendering speed.  4 is a sensible setting for recent, higher-end
+# graphics hardware; 2 is probably better mid-range graphics.  The
+# default value is 1, which disables antialiasing.
+# AntialiasingSamples        4
+
+
+#------------------------------------------------------------------------
+# The following line is commented out by default.
+#
+# Celestia enables and disables certain rendering features based on
+# the set of extensions supported by the installed OpenGL driver and 3D
+# graphics hardware.  With IgnoreGLExtensions, you may specify a list of
+# extensions that Celestia will treat as unsupported.  This is useful
+# primarily for the developers of Celestia.
+#------------------------------------------------------------------------
+# IgnoreGLExtensions [ "GL_ARB_vertex_program" ]
+
+
+#------------------------------------------------------------------------
+# The number of rows in the debug log (displayable onscreen by pressing
+# the ~ (tilde). The default log size is 200.
+#------------------------------------------------------------------------
+# LogSize 1000
+
+#------------------------------------------------------------------------
+# The following define options for x264 and ffvhuff video codecs when
+# Celestia is compiled with ffmpeg library support for video capture.
+#------------------------------------------------------------------------
+# X264EncoderOptions ""
+# FFVHEncoderOptions ""
+
+#------------------------------------------------------------------------
+# The following define the measurement system Celestia uses to display
+# in HUD, available options for MeasurementSystem  are `metric` and
+# `imperial`. By default, metric measurement system is used. Available
+# options for TemperatureScale are `kelvin`, `celsius`, and `fahrenheit`.
+# By default kelvin is used.
+#------------------------------------------------------------------------
+# MeasurementSystem "imperial"
+# TemperatureScale "celsius"
+
+#------------------------------------------------------------------------
+# The following options are used to configure how scenes in Celestia
+# are projected and what distortion method is used.
+# Available options for ProjectionMode are `perspective` (default) and
+# `fisheye`. Available `ViewportEffect`s (distortion methods) are `none`
+# (default), `passthrough`, and `warpmesh`.
+# For `warpmesh` viewport effect, you need to specify a warp mesh file
+# under the parameter name `WarpMeshFile`, The file should be placed
+# inside the `warp` folder.
+# File format for warp mesh: http://paulbourke.net/dataformats/meshwarp/
+#------------------------------------------------------------------------
+# ProjectionMode "fisheye"
+# ViewportEffect "warpmesh"
+# WarpMeshFile "warp.map"
+
+#------------------------------------------------------------------------
+# The following option provides location of NIST format leap-seconds.list
+# file which override default leap seconds database. Debian-based systems
+# provide it as /usr/share/zoneinfo/leap-seconds.list. For other systems it
+# can be dounload from ftp://ftp.nist.gov/pub/time/leap-seconds.list or
+# ftp://ftp.boulder.nist.gov/pub/time/leap-seconds.list.
+#------------------------------------------------------------------------
+# LeapSecondsFile "/usr/share/zoneinfo/leap-seconds.list"
+
+#------------------------------------------------------------------------
+# The following option provides control over layout direction of the text
+# in Celestia. Available options are `ltr` (default) and `rtl`.
+#------------------------------------------------------------------------
+# LayoutDirection "rtl"
+
+}

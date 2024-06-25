@@ -10,50 +10,61 @@
 // of the License, or (at your option) any later version.
 
 #include "winhyperlinks.h"
+
+#include <array>
+
 #include "res/resource.h"
 
-static LPCTSTR hyperLinkFromStatic = "_Hyperlink_From_Static_";
-static LPCTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
-static LPCTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
-static LPCTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
-
-bool GetTextRect(HWND hWnd, RECT* rectText)
+namespace celestia::win32
 {
-    bool result = false;
-    SIZE sizeText;
-    RECT rectControl;
-    char staticText[1024];
-    HDC hDC;
-    HFONT hFont, hOldFont;
-    HWND hWndScreen;
+
+namespace
+{
+
+constexpr TCHAR hyperLinkFromStatic[] = TEXT("_Hyperlink_From_Static_");
+constexpr TCHAR hyperLinkOriginalProc[] = TEXT("_Hyperlink_Original_Proc_");
+constexpr TCHAR hyperLinkOriginalFont[] = TEXT("_Hyperlink_Original_Font_");
+constexpr TCHAR hyperLinkUnderlineFont[] = TEXT("_Hyperlink_Underline_Font_");
+
+bool
+GetTextRect(HWND hWnd, RECT* rectText)
+{
 
     // Get DC of static control and select font so that text extent is computed accurately
-    if (hDC = GetDC(hWnd))
+    HDC hDC = GetDC(hWnd);
+    if (!hDC)
+        return false;
+
+    auto hFont = static_cast<HFONT>(GetProp(hWnd, hyperLinkOriginalFont));
+    auto hOldFont = static_cast<HFONT>(SelectObject(hDC, hFont));
+
+    bool result = false;
+    std::array<TCHAR, 1024> staticText;
+    int length = GetWindowText(hWnd, staticText.data(), staticText.size());
+
+    if (SIZE sizeText; GetTextExtentPoint32(hDC, staticText.data(), length, &sizeText))
     {
-        hFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
-        hOldFont = (HFONT)SelectObject(hDC, hFont);
-        GetWindowText(hWnd, staticText, sizeof(staticText) - 1);
-        if (GetTextExtentPoint32(hDC, staticText, strlen(staticText), &sizeText))
+        // Construct bounding rectangle of text, assuming text is centered in client area
+        RECT rectControl;
+        if (GetClientRect(hWnd, &rectControl))
         {
-            // Construct bounding rectangle of text, assuming text is centered in client area
-            if (GetClientRect(hWnd, &rectControl))
-            {
-                hWndScreen = GetDesktopWindow();
-                rectText->left = (rectControl.right - sizeText.cx) / 2;
-                rectText->top = (rectControl.bottom - sizeText.cy) / 2;
-                rectText->right = rectText->left + sizeText.cx;
-                rectText->bottom = rectText->top + sizeText.cy;
-                result = true;
-            }
+            HWND hWndScreen = GetDesktopWindow();
+            rectText->left = (rectControl.right - sizeText.cx) / 2;
+            rectText->top = (rectControl.bottom - sizeText.cy) / 2;
+            rectText->right = rectText->left + sizeText.cx;
+            rectText->bottom = rectText->top + sizeText.cy;
+            result = true;
         }
-        SelectObject(hDC, hOldFont);
-        ReleaseDC(hWnd, hDC);
     }
+
+    SelectObject(hDC, hOldFont);
+    ReleaseDC(hWnd, hDC);
 
     return result;
 }
 
-LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK
+HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WNDPROC origProc = (WNDPROC)GetProp(hWnd, hyperLinkOriginalProc);
 
@@ -61,8 +72,8 @@ LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LP
     {
     case WM_CTLCOLORSTATIC:
         {
-            HDC hDC = (HDC)wParam;
-            HWND hCtrl = (HWND)lParam;
+            auto hDC = reinterpret_cast<HDC>(wParam);
+            auto hCtrl = reinterpret_cast<HWND>(lParam);
 
             // Change the color of the static text to hyperlink color (blue).
             if (GetProp(hCtrl, hyperLinkFromStatic) != NULL)
@@ -85,9 +96,10 @@ LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LP
     return CallWindowProc(origProc, hWnd, message, wParam, lParam);
 }
 
-LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK
+HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WNDPROC origProc = (WNDPROC)GetProp(hWnd, hyperLinkOriginalProc);
+    auto origProc = static_cast<WNDPROC>(GetProp(hWnd, hyperLinkOriginalProc));
 
     switch (message)
     {
@@ -102,8 +114,8 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 POINT pt = { LOWORD(lParam), HIWORD(lParam) };
                 if (PtInRect(&rect, pt))
                 {
-                    HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkUnderlineFont);
-                    SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, FALSE);
+                    auto hFont = static_cast<HFONT>(GetProp(hWnd, hyperLinkUnderlineFont));
+                    SendMessage(hWnd, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), FALSE);
                     InvalidateRect(hWnd, NULL, FALSE);
                     SetCapture(hWnd);
                     HCURSOR hCursor = LoadCursor(NULL, IDC_HAND);
@@ -121,8 +133,8 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 POINT pt = { LOWORD(lParam), HIWORD(lParam) };
                 if (!PtInRect(&rect, pt))
                 {
-                    HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
-                    SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, FALSE);
+                    auto hFont = static_cast<HFONT>(GetProp(hWnd, hyperLinkOriginalFont));
+                    SendMessage(hWnd, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), FALSE);
                     InvalidateRect(hWnd, NULL, FALSE);
                     ReleaseCapture();
                 }
@@ -131,14 +143,14 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         }
     case WM_DESTROY:
         {
-            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)origProc);
+            SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(origProc));
             RemoveProp(hWnd, hyperLinkOriginalProc);
 
-            HFONT hOrigFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
-            SendMessage(hWnd, WM_SETFONT, (WPARAM) hOrigFont, 0);
+            auto hOrigFont = static_cast<HFONT>(GetProp(hWnd, hyperLinkOriginalFont));
+            SendMessage(hWnd, WM_SETFONT, reinterpret_cast<WPARAM>(hOrigFont), 0);
             RemoveProp(hWnd, hyperLinkOriginalFont);
 
-            HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkUnderlineFont);
+            auto hFont = static_cast<HFONT>(GetProp(hWnd, hyperLinkUnderlineFont));
             DeleteObject(hFont);
             RemoveProp(hWnd, hyperLinkUnderlineFont);
 
@@ -151,6 +163,8 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     return CallWindowProc(origProc, hWnd, message, wParam, lParam);
 }
 
+} // end unnamed namespace
+
 BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
 {
     BOOL result = FALSE;
@@ -162,39 +176,43 @@ BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
         HWND hParent = GetParent(hCtrl);
         if (hParent)
         {
-            WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hParent, GWLP_WNDPROC);
-            if (origProc != _HyperlinkParentProc)
+            auto origProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hParent, GWLP_WNDPROC));
+            if (origProc != HyperlinkParentProc)
             {
                 SetProp(hParent, hyperLinkOriginalProc, (HANDLE)origProc);
-                SetWindowLong(hParent, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkParentProc);
+                SetWindowLongPtr(hParent, GWLP_WNDPROC,
+                                 reinterpret_cast<LONG_PTR>(static_cast<WNDPROC>(HyperlinkParentProc)));
             }
         }
 
         // Make sure the control will send notifications.
-        DWORD dwStyle = GetWindowLong(hCtrl, GWL_STYLE);
-        SetWindowLong(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
+        LONG_PTR dwStyle = GetWindowLongPtr(hCtrl, GWL_STYLE);
+        SetWindowLongPtr(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
 
         // Subclass the existing control.
-        WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hCtrl, GWLP_WNDPROC);
-        SetProp(hCtrl, hyperLinkOriginalProc, (HANDLE)origProc);
-        SetWindowLong(hCtrl, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkProc);
+        auto origProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hCtrl, GWLP_WNDPROC));
+        SetProp(hCtrl, hyperLinkOriginalProc, static_cast<HANDLE>(origProc));
+        SetWindowLongPtr(hCtrl, GWLP_WNDPROC,
+                         reinterpret_cast<LONG_PTR>(static_cast<WNDPROC>(HyperlinkProc)));
 
         // Create an updated font by adding an underline.
-        HFONT hOrigFont = (HFONT) SendMessage(hCtrl, WM_GETFONT, 0, 0);
-        SetProp(hCtrl, hyperLinkOriginalFont, (HANDLE)hOrigFont);
+        auto hOrigFont = reinterpret_cast<HFONT>(SendMessage(hCtrl, WM_GETFONT, 0, 0));
+        SetProp(hCtrl, hyperLinkOriginalFont, static_cast<HANDLE>(hOrigFont));
 
         LOGFONT lf;
         GetObject(hOrigFont, sizeof(lf), &lf);
         lf.lfUnderline = TRUE;
 
         HFONT hFont = CreateFontIndirect(&lf);
-        SetProp(hCtrl, hyperLinkUnderlineFont, (HANDLE)hFont);
+        SetProp(hCtrl, hyperLinkUnderlineFont, static_cast<HANDLE>(hFont));
 
         // Set a flag on the control so we know what color it should be.
-        SetProp(hCtrl, hyperLinkFromStatic, (HANDLE)1);
+        SetProp(hCtrl, hyperLinkFromStatic, reinterpret_cast<HANDLE>(LONG_PTR(1)));
 
         result = TRUE;
     }
 
     return result;
 }
+
+} // end namespace celestia::win32

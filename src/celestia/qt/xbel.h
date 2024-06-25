@@ -17,8 +17,10 @@
 
 class QIODevice;
 
-class BookmarkItem;
+namespace celestia::qt
+{
 
+class BookmarkItem;
 
 class XbelReader : public QXmlStreamReader
 {
@@ -39,7 +41,6 @@ private:
      void skipUnknownElement();
 };
 
-
 class XbelWriter : public QXmlStreamWriter
 {
 public:
@@ -50,3 +51,5 @@ public:
 private:
     void writeItem(const BookmarkItem* item);
 };
+
+} // end namespace celestia::qt

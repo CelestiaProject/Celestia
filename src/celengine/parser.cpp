@@ -12,8 +12,8 @@
 #include <utility>
 #include <variant>
 
+#include <celastro/units.h>
 #include <celutil/tokenizer.h>
-#include "astro.h"
 #include "parser.h"
 
 using namespace std::string_view_literals;

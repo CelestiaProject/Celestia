@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2023-09-15 14:52+0300\n"
+"POT-Creation-Date: 2024-02-25 16:55+0100\n"
 "PO-Revision-Date: 2018-05-28 20:48+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -18,18 +18,13 @@ msgstr ""
 "X-Generator: Poedit 2.0.7\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../src/celengine/astro.cpp:645
+#: ../src/celastro/date.cpp:486
 msgid "DST"
 msgstr "일광절약시간"
 
-#: ../src/celengine/astro.cpp:645
+#: ../src/celastro/date.cpp:486
 msgid "STD"
 msgstr "표준시간"
-
-#: ../src/celengine/dateformatter.cpp:87 ../src/celestia/win32/winmain.cpp:3356
-#: ../src/celutil/fsutils.cpp:41
-msgid "LANGUAGE"
-msgstr "ko"
 
 #.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
@@ -39,147 +34,171 @@ msgstr "ko"
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
 #.
-#: ../src/celengine/dsodb.cpp:332
-#, fuzzy
+#: ../src/celengine/dsodb.cpp:326
+#, fuzzy, c++-format
 msgid "Loaded {} deep space objects\n"
 msgstr " 먼 우주 천체(DSO)"
 
-#: ../src/celengine/galaxy.cpp:94
+#: ../src/celengine/galaxy.cpp:95
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "은하(형태: %s)"
 
-#: ../src/celengine/globular.cpp:67
+#: ../src/celengine/globular.cpp:70
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "구상 성단 (핵 반경: %4.2f', King 집중도: %4.2f)"
 
-#: ../src/celengine/meshmanager.cpp:451
-#, fuzzy
+#: ../src/celengine/glsupport.cpp:88
+msgid "Mandatory extension GL_ARB_framebuffer_object is missing!\n"
+msgstr ""
+
+#: ../src/celengine/meshmanager.cpp:444
+#, fuzzy, c++-format
 msgid "Loading model: {}\n"
 msgstr "모델 읽는 중: "
 
-#: ../src/celengine/meshmanager.cpp:466
+#: ../src/celengine/meshmanager.cpp:459
+#, c++-format
 msgid "Unknown model format '{}'\n"
 msgstr ""
 
-#: ../src/celengine/meshmanager.cpp:472
-#, fuzzy
+#: ../src/celengine/meshmanager.cpp:465
+#, fuzzy, c++-format
 msgid "Error loading model '{}'\n"
 msgstr "모델 읽기 오류: "
 
 #. Display some statics for the model
-#: ../src/celengine/meshmanager.cpp:493
+#: ../src/celengine/meshmanager.cpp:486
+#, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
 msgstr ""
 
 #: ../src/celengine/modelgeometry.cpp:186
+#, c++-format
 msgid "Mesh index {} is higher than VBO count {}!"
 msgstr ""
 
-#: ../src/celengine/nebula.cpp:34
+#: ../src/celengine/nebula.cpp:39
 msgid "Nebula"
 msgstr "성운"
 
-#: ../src/celengine/opencluster.cpp:37
+#: ../src/celengine/opencluster.cpp:35
 msgid "Open cluster"
 msgstr "산개성단"
 
-#: ../src/celengine/solarsys.cpp:96
-#, fuzzy
+#: ../src/celengine/solarsys.cpp:109
+#, fuzzy, c++-format
 msgid "Error in .ssc file (line {}): {}\n"
 msgstr ". ssc 파일에 에러가 있습니다. (행 "
 
-#: ../src/celengine/solarsys.cpp:836
+#: ../src/celengine/solarsys.cpp:799
+msgid "Ring system needs inner and outer radii.\n"
+msgstr ""
+
+#: ../src/celengine/solarsys.cpp:894
+#, c++-format
+msgid "Invalid SemiAxes value for object {}: [{}, {}, {}]\n"
+msgstr ""
+
+#: ../src/celengine/solarsys.cpp:929
+#, c++-format
+msgid "Invalid Oblateness value for object {}: {}\n"
+msgstr ""
+
+#: ../src/celengine/solarsys.cpp:983
+#, c++-format
 msgid "Incorrect GeomAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:845
+#: ../src/celengine/solarsys.cpp:992
+#, c++-format
 msgid "Incorrect Reflectivity value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:853
+#: ../src/celengine/solarsys.cpp:1000
+#, c++-format
 msgid "Incorrect BondAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:899
+#: ../src/celengine/solarsys.cpp:1030
 msgid "Atmosphere must be an associative array.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:981
+#: ../src/celengine/solarsys.cpp:1039
 msgid "Rings must be an associative array.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1231 ../src/celengine/solarsys.cpp:1295
+#: ../src/celengine/solarsys.cpp:1250 ../src/celengine/solarsys.cpp:1307
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1241
+#: ../src/celengine/solarsys.cpp:1259
 #, fuzzy, c-format
 msgid "warning duplicate definition of %s %s\n"
 msgstr "중복 정의: "
 
-#: ../src/celengine/solarsys.cpp:1273
+#: ../src/celengine/solarsys.cpp:1287
 msgid "bad alternate surface"
 msgstr "AltSurface 오류"
 
-#: ../src/celengine/solarsys.cpp:1290
+#: ../src/celengine/solarsys.cpp:1302
 msgid "bad location"
 msgstr "지명 오류"
 
-#: ../src/celengine/stardb.cpp:344
-#, fuzzy
+#: ../src/celengine/stardb.cpp:349
+#, fuzzy, c++-format
 msgid "Error in .stc file (line {}): {}\n"
 msgstr ".stc 파일 오류 (행 "
 
-#: ../src/celengine/stardb.cpp:760
-#, fuzzy
+#: ../src/celengine/stardb.cpp:776
+#, fuzzy, c++-format
 msgid "Bad spectral type in star database, star #{}\n"
 msgstr "잘못된 항성 분광형, 항성 #"
 
-#: ../src/celengine/stardb.cpp:781
-#, fuzzy
+#: ../src/celengine/stardb.cpp:797
+#, fuzzy, c++-format
 msgid "{} stars in binary database\n"
 msgstr " 개 항성을 읽었습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1071
+#: ../src/celengine/stardb.cpp:1087
 msgid "Bad header for cross index\n"
 msgstr "크로스 인덱스 헤더 오류\n"
 
-#: ../src/celengine/stardb.cpp:1079
+#: ../src/celengine/stardb.cpp:1095
 msgid "Bad version for cross index\n"
 msgstr "크로스 인덱스 버젼 오류\n"
 
-#: ../src/celengine/stardb.cpp:1096
+#: ../src/celengine/stardb.cpp:1112
 #, fuzzy
 msgid "Loading cross index failed\n"
 msgstr "크로스 인덱스 읽기 실패:레코드 "
 
-#: ../src/celengine/stardb.cpp:1107
+#: ../src/celengine/stardb.cpp:1123
 #, fuzzy
 msgid "Loading cross index failed - unexpected EOF\n"
 msgstr "크로스 인덱스 읽기 실패:레코드 "
 
-#: ../src/celengine/stardb.cpp:1137
-#, fuzzy
+#: ../src/celengine/stardb.cpp:1153
+#, fuzzy, c++-format
 msgid "Total star count: {}\n"
 msgstr "항성 총수: "
 
-#: ../src/celengine/stardb.cpp:1235
+#: ../src/celengine/stardb.cpp:1251
 msgid "Invalid star: missing right ascension\n"
 msgstr "잘못된 항성: 적경이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1246
+#: ../src/celengine/stardb.cpp:1262
 msgid "Invalid star: missing declination.\n"
 msgstr "잘못된 항성: 적위가 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1257
+#: ../src/celengine/stardb.cpp:1273
 msgid "Invalid star: missing distance.\n"
 msgstr "잘못된 항성: 거리가 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1299
+#: ../src/celengine/stardb.cpp:1315
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -187,779 +206,424 @@ msgstr ""
 "잘못된 항성: 원점부근의 항성은 겉보기 등급이 아니라 절대등급이 설정되어 있어"
 "야 합니다.\n"
 
-#: ../src/celengine/stardb.cpp:1306
+#: ../src/celengine/stardb.cpp:1322
 msgid "Invalid star: missing magnitude.\n"
 msgstr "잘못된 항성: 등급이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1357
+#: ../src/celengine/stardb.cpp:1373
 msgid "Invalid star: bad spectral type.\n"
 msgstr "잘못된 항성: 분광형 오류\n"
 
 #. Spectral type is required for new stars
-#: ../src/celengine/stardb.cpp:1364
+#: ../src/celengine/stardb.cpp:1380
 msgid "Invalid star: missing spectral type.\n"
 msgstr "잘못된 항성: 분광형이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1515 ../src/celengine/stardb.cpp:1517
-#, fuzzy
+#: ../src/celengine/stardb.cpp:1533 ../src/celengine/stardb.cpp:1535
+#, fuzzy, c++-format
 msgid "Barycenter {} does not exist.\n"
 msgstr " 파일을 찾을 수 없습니다.\n"
 
-#: ../src/celengine/texture.cpp:361
-#, fuzzy
+#: ../src/celengine/texture.cpp:365
+#, fuzzy, c++-format
 msgid "Creating tiled texture. Width={}, max={}\n"
 msgstr "타일 텍스처 생성중. 폭="
 
-#: ../src/celengine/texture.cpp:367
-#, fuzzy
+#: ../src/celengine/texture.cpp:371
+#, fuzzy, c++-format
 msgid "Creating ordinary texture: {}x{}\n"
 msgstr "일반 텍스처 생성중: "
 
-#: ../src/celephem/samporbit.cpp:815 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
-#, fuzzy
+#: ../src/celephem/sampfile.cpp:46
+#, c++-format
+msgid "Skipping out-of-order samples in {}.\n"
+msgstr ""
+
+#: ../src/celephem/sampfile.cpp:58
+#, fuzzy, c++-format
+msgid "No samples found in sample file {}.\n"
+msgstr "이미지 파일 에러: "
+
+#: ../src/celephem/sampfile.cpp:67
+#, fuzzy, c++-format
+msgid "Error reading sample file {}.\n"
+msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
+
+#: ../src/celephem/sampfile.cpp:74
+#, fuzzy, c++-format
+msgid "Error opening ASCII sample file {}.\n"
+msgstr "이미지 파일 에러: "
+
+#: ../src/celephem/sampfile.cpp:81
+#, fuzzy, c++-format
+msgid "Error finding data in ASCII sample file {}.\n"
+msgstr "별자리 파일 여는 중 오류가 발생했습니다."
+
+#: ../src/celephem/samporbit.cpp:571 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
+#, fuzzy, c++-format
 msgid "Error reading header of {}.\n"
 msgstr "PNG파일 읽기 오류: "
 
-#: ../src/celephem/samporbit.cpp:821 ../src/tools/xyzv2bin/bin2xyzv.cpp:41
+#: ../src/celephem/samporbit.cpp:577 ../src/tools/xyzv2bin/bin2xyzv.cpp:41
+#, c++-format
 msgid "Bad binary xyzv file {}.\n"
 msgstr ""
 
-#: ../src/celephem/samporbit.cpp:829 ../src/tools/xyzv2bin/bin2xyzv.cpp:49
-msgid "Unsupported byte order {}, expected {}.\n"
-msgstr ""
-
-#: ../src/celephem/samporbit.cpp:838 ../src/tools/xyzv2bin/bin2xyzv.cpp:58
-#, fuzzy
-msgid "Unsupported digits number {}, expected {}.\n"
+#: ../src/celephem/samporbit.cpp:585
+#, fuzzy, c++-format
+msgid "Unsupported byte order {}, expected {} in {}.\n"
 msgstr "지원되는 확장"
 
-#: ../src/celephem/samporbit.cpp:861
-#, fuzzy
-msgid "Error opening {}.\n"
-msgstr "파일 열기 오류: "
+#: ../src/celephem/samporbit.cpp:594
+#, fuzzy, c++-format
+msgid "Unsupported digits number {}, expected {} in {}.\n"
+msgstr "지원되는 확장"
 
-#: ../src/celestia/celestiacore.cpp:154 ../src/celestia/scriptmenu.cpp:86
-#: ../src/celscript/lua/luascript.cpp:173
-msgid "Path {} doesn't exist or isn't a directory\n"
+#: ../src/celephem/samporbit.cpp:603
+#, c++-format
+msgid "Invalid record count {} in {}.\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:290
+#: ../src/celephem/samporbit.cpp:657
+#, fuzzy, c++-format
+msgid "Error opening binary sample file {}.\n"
+msgstr "이미지 파일 에러: "
+
+#: ../src/celephem/samporbit.cpp:663
+#, c++-format
+msgid "Could not read XYZV binary file {}.\n"
+msgstr ""
+
+#: ../src/celestia/catalogloader.h:61
 #, fuzzy
+msgid "Skipping {} catalog: {}\n"
+msgstr "항성계 카탈로그 로딩중: "
+
+#: ../src/celestia/catalogloader.h:64
+#, fuzzy
+msgid "Loading {} catalog: {}\n"
+msgstr "항성계 카탈로그 로딩중: "
+
+#: ../src/celestia/catalogloader.h:71
+#, fuzzy
+msgid "Error reading {} catalog file: {}\n"
+msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
+
+#: ../src/celestia/celestiacore.cpp:122
+#, c++-format
+msgid "Failed to open leapseconds file {}\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:140
+#, c++-format
+msgid "Failed to parse leapseconds file {}, line {}, column {}\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:247
+#, fuzzy, c++-format
 msgid "Error reading favorites file {}.\n"
 msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
 
-#: ../src/celestia/celestiacore.cpp:311
+#: ../src/celestia/celestiacore.cpp:268
+#, c++-format
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:319
+#: ../src/celestia/celestiacore.cpp:276
+#, c++-format
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:439
+#: ../src/celestia/celestiacore.cpp:396
 msgid "Invalid filetype"
 msgstr "잘못된 파일형식"
 
-#: ../src/celestia/celestiacore.cpp:779 ../src/celestia/celestiacore.cpp:1484
-#: ../src/celestia/celestiacore.cpp:1501
-#, c-format
-msgid "Magnitude limit: %.2f"
-msgstr "한계등급: %.2f"
-
-#: ../src/celestia/celestiacore.cpp:1152
+#: ../src/celestia/celestiacore.cpp:949
 msgid "Markers enabled"
 msgstr "마커: ON"
 
-#: ../src/celestia/celestiacore.cpp:1155
+#: ../src/celestia/celestiacore.cpp:952
 msgid "Markers disabled"
 msgstr "마커: OFF"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1165
+#: ../src/celestia/celestiacore.cpp:962
 msgid "Goto surface"
 msgstr "천체 표면으로 이동"
 
-#: ../src/celestia/celestiacore.cpp:1176
+#: ../src/celestia/celestiacore.cpp:973
 msgid "Alt-azimuth mode enabled"
 msgstr "고도각·방위각 모드 켜기"
 
-#: ../src/celestia/celestiacore.cpp:1179
+#: ../src/celestia/celestiacore.cpp:976
 msgid "Alt-azimuth mode disabled"
 msgstr "고도각·방위각 모드 끄기"
 
-#: ../src/celestia/celestiacore.cpp:1235
+#: ../src/celestia/celestiacore.cpp:1024
 msgid "Star style: fuzzy points"
 msgstr "항성표시: 희미한 점"
 
-#: ../src/celestia/celestiacore.cpp:1238
+#: ../src/celestia/celestiacore.cpp:1027
 msgid "Star style: points"
 msgstr "항성표시: 점"
 
-#: ../src/celestia/celestiacore.cpp:1241
+#: ../src/celestia/celestiacore.cpp:1030
 msgid "Star style: scaled discs"
 msgstr "항성표시: 등급에 따른 원"
 
-#: ../src/celestia/celestiacore.cpp:1254
+#: ../src/celestia/celestiacore.cpp:1043
 msgid "Comet tails enabled"
 msgstr "혜성꼬리: ON"
 
-#: ../src/celestia/celestiacore.cpp:1257
+#: ../src/celestia/celestiacore.cpp:1046
 msgid "Comet tails disabled"
 msgstr "혜성꼬리: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1270
+#: ../src/celestia/celestiacore.cpp:1059
 #, fuzzy
 msgid "Anti-aliasing enabled"
 msgstr "고도각·방위각 모드 켜기"
 
-#: ../src/celestia/celestiacore.cpp:1274
+#: ../src/celestia/celestiacore.cpp:1063
 #, fuzzy
 msgid "Anti-aliasing disabled"
 msgstr "고도각·방위각 모드 끄기"
 
-#: ../src/celestia/celestiacore.cpp:1283
+#: ../src/celestia/celestiacore.cpp:1072
 msgid "Auto-magnitude enabled"
 msgstr "자동 한계등급 조정: ON"
 
-#: ../src/celestia/celestiacore.cpp:1288
+#: ../src/celestia/celestiacore.cpp:1077
 msgid "Auto-magnitude disabled"
 msgstr "자동 한계등급 조정: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1310
-#: ../src/celestia/win32/res/resource_strings.cpp:96
-#: ../src/celestia/win32/res/resource_strings.cpp:101
-#: ../src/celestia/win32/res/resource_strings.cpp:108
-#: ../src/celestia/win32/res/resource_strings.cpp:121
-#: ../src/celestia/win32/res/resource_strings.cpp:130
-#: ../src/celestia/win32/res/resource_strings.cpp:150
-#: ../src/celestia/win32/res/resource_strings.cpp:160
-#: ../src/celestia/win32/res/resource_strings.cpp:166
-#: ../src/celestia/win32/res/resource_strings.cpp:174
-#: ../src/celestia/win32/res/resource_strings.cpp:240
+#: ../src/celestia/celestiacore.cpp:1099
+#: ../src/celestia/win32/res/celestia.rc:315
+#: ../src/celestia/win32/res/celestia.rc:332
+#: ../src/celestia/win32/res/celestia.rc:361
+#: ../src/celestia/win32/res/celestia.rc:399
+#: ../src/celestia/win32/res/celestia.rc:433
+#: ../src/celestia/win32/res/celestia.rc:476
+#: ../src/celestia/win32/res/celestia.rc:511
+#: ../src/celestia/win32/res/celestia.rc:528
+#: ../src/celestia/win32/res/celestia.rc:551
+#: ../src/celestia/win32/res/celestia.rc:684
 msgid "Cancel"
 msgstr "취소"
 
-#: ../src/celestia/celestiacore.cpp:1350
+#: ../src/celestia/celestiacore.cpp:1139
 msgid "Time and script are paused"
 msgstr "시간·스크립트: 정지"
 
-#: ../src/celestia/celestiacore.cpp:1352
+#: ../src/celestia/celestiacore.cpp:1141
 msgid "Time is paused"
 msgstr "시간: 정지"
 
-#: ../src/celestia/celestiacore.cpp:1356
+#: ../src/celestia/celestiacore.cpp:1145
 msgid "Resume"
 msgstr "계속"
 
-#: ../src/celestia/celestiacore.cpp:1376
+#: ../src/celestia/celestiacore.cpp:1165
 #, fuzzy
 msgid "Star color: Blackbody D65"
 msgstr "항성 총수: "
 
-#: ../src/celestia/celestiacore.cpp:1382
+#: ../src/celestia/celestiacore.cpp:1171
 #, fuzzy
 msgid "Star color: Blackbody (Solar Whitepoint)"
 msgstr "항성 총수: "
 
-#: ../src/celestia/celestiacore.cpp:1388
+#: ../src/celestia/celestiacore.cpp:1177
 #, fuzzy
 msgid "Star color: Blackbody (Vega Whitepoint)"
 msgstr "항성 총수: "
 
-#: ../src/celestia/celestiacore.cpp:1394
+#: ../src/celestia/celestiacore.cpp:1183
 #, fuzzy
 msgid "Star color: Classic"
 msgstr "항성 모양(&Y)"
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1427
-#, fuzzy, c-format
-msgid "Light travel time:  %.4f yr"
+#: ../src/celestia/celestiacore.cpp:1216
+#, fuzzy, c++-format
+msgid "Light travel time:  {:.4f} yr"
 msgstr "광속도달시간: %.4f 년"
 
-#: ../src/celestia/celestiacore.cpp:1436
-#, c-format
-msgid "Light travel time:  %d min  %.1f s"
+#: ../src/celestia/celestiacore.cpp:1225
+#, fuzzy, c++-format
+msgid "Light travel time:  {} min  {:.1f} s"
 msgstr "광속도달시간: %d 분  %.1f 초"
 
-#: ../src/celestia/celestiacore.cpp:1441
-#, c-format
-msgid "Light travel time:  %d h  %d min  %.1f s"
+#: ../src/celestia/celestiacore.cpp:1230
+#, fuzzy, c++-format
+msgid "Light travel time:  {} h  {} min  {:.1f} s"
 msgstr "광속도달시간: %d 시간  %d 분  %.1f 초"
 
-#: ../src/celestia/celestiacore.cpp:1459
+#: ../src/celestia/celestiacore.cpp:1248
 msgid "Light travel delay included"
 msgstr "광속고려: ON"
 
-#: ../src/celestia/celestiacore.cpp:1464
+#: ../src/celestia/celestiacore.cpp:1253
 msgid "Light travel delay switched off"
 msgstr "광속고려: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1470
+#: ../src/celestia/celestiacore.cpp:1259
 msgid "Light travel delay ignored"
 msgstr "광속고려는 무시됩니다."
 
-#: ../src/celestia/celestiacore.cpp:1513
+#: ../src/celestia/celestiacore.cpp:1280
 msgid "Using normal surface textures."
 msgstr "일반 텍스처를 사용"
 
-#: ../src/celestia/celestiacore.cpp:1518
+#: ../src/celestia/celestiacore.cpp:1285
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledge 텍스처를 사용"
 
-#: ../src/celestia/celestiacore.cpp:1579
+#: ../src/celestia/celestiacore.cpp:1346
 msgid "Follow"
 msgstr "천체 추적"
 
-#: ../src/celestia/celestiacore.cpp:1604
+#: ../src/celestia/celestiacore.cpp:1371
 msgid "Time: Forward"
 msgstr "시간흐름: 순방향"
 
-#: ../src/celestia/celestiacore.cpp:1606
+#: ../src/celestia/celestiacore.cpp:1373
 msgid "Time: Backward"
 msgstr "시간흐름: 역방향"
 
-#: ../src/celestia/celestiacore.cpp:1618 ../src/celestia/celestiacore.cpp:1633
-#, fuzzy, c-format
-msgid "Time rate: %.6g"
+#: ../src/celestia/celestiacore.cpp:1384 ../src/celestia/celestiacore.cpp:1397
+#, fuzzy, c++-format
+msgid "Time rate: {:.6g}"
 msgstr "초당 프레임수:"
 
-#: ../src/celestia/celestiacore.cpp:1673
+#: ../src/celestia/celestiacore.cpp:1436
 #, fuzzy
 msgid "Low res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1676
+#: ../src/celestia/celestiacore.cpp:1439
 #, fuzzy
 msgid "Medium res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1679
+#: ../src/celestia/celestiacore.cpp:1442
 #, fuzzy
 msgid "High res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1726
+#: ../src/celestia/celestiacore.cpp:1489
 msgid "Sync Orbit"
 msgstr "자전 동기"
 
-#: ../src/celestia/celestiacore.cpp:1732
+#: ../src/celestia/celestiacore.cpp:1495
 msgid "Lock"
 msgstr "2천체 참조 동기"
 
-#: ../src/celestia/celestiacore.cpp:1738
+#: ../src/celestia/celestiacore.cpp:1501
 msgid "Chase"
 msgstr "공전 동기"
 
-#: ../src/celestia/celestiacore.cpp:1751 ../src/celestia/celestiacore.cpp:1782
-#, fuzzy, c-format
-msgid "Magnitude limit:  %.2f"
+#: ../src/celestia/celestiacore.cpp:1513 ../src/celestia/celestiacore.cpp:1538
+#: ../src/celestia/celestiacore.cpp:2280
+#, fuzzy, c++-format
+msgid "Magnitude limit: {:.2f}"
 msgstr "한계등급: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1762 ../src/celestia/celestiacore.cpp:1793
-#, c-format
-msgid "Auto magnitude limit at 45 degrees:  %.2f"
+#: ../src/celestia/celestiacore.cpp:1521 ../src/celestia/celestiacore.cpp:1546
+#, fuzzy, c++-format
+msgid "Auto magnitude limit at 45 degrees:  {:.2f}"
 msgstr "시야 45°에서의 한계 등급: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1812 ../src/celestia/celestiacore.cpp:1827
-#, c-format
-msgid "Ambient light level:  %.2f"
+#: ../src/celestia/celestiacore.cpp:1562 ../src/celestia/celestiacore.cpp:1574
+#, fuzzy, c++-format
+msgid "Ambient light level:  {:.2f}"
 msgstr "주변빛의 세기:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1838 ../src/celestia/celestiacore.cpp:1849
-#, c-format
-msgid "Light gain"
+#: ../src/celestia/celestiacore.cpp:1582 ../src/celestia/celestiacore.cpp:1591
+#, fuzzy, c++-format
+msgid "Light gain: {:3.0f} %"
 msgstr "광도 이득"
 
-#: ../src/celestia/celestiacore.cpp:2183
-msgid "GL error: "
-msgstr "GL에러: "
-
-#: ../src/celestia/celestiacore.cpp:2376
+#: ../src/celestia/celestiacore.cpp:2107
 msgid "View too small to be split"
 msgstr "화면이 너무 작습니다."
 
-#: ../src/celestia/celestiacore.cpp:2396
+#: ../src/celestia/celestiacore.cpp:2111
 msgid "Added view"
 msgstr "화면 분할"
 
-#: ../src/celestia/celestiacore.cpp:2563
-msgid "Mpc"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2568
-msgid "kpc"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2573
-msgid "ly"
-msgstr "광년"
-
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
-#. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2577 ../src/celestia/qt/rc.cpp:36
-#: ../src/celestia/win32/res/resource_strings.cpp:128
-msgid "au"
-msgstr "AU"
-
-#: ../src/celestia/celestiacore.cpp:2584
-#, fuzzy
-msgid "mi"
-msgstr " m/s"
-
-#: ../src/celestia/celestiacore.cpp:2589
-msgid "ft"
-msgstr ""
-
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
-#. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2597 ../src/celestia/qt/qtinfopanel.cpp:264
-#: ../src/celestia/qt/qtinfopanel.cpp:391 ../src/celestia/qt/rc.cpp:30
-#: ../src/celestia/win32/res/resource_strings.cpp:126
-msgid "km"
-msgstr "km"
-
-#: ../src/celestia/celestiacore.cpp:2602 ../src/celestia/qt/qtinfopanel.cpp:268
-#, fuzzy
-msgid "m"
-msgstr " m/s"
-
-#: ../src/celestia/celestiacore.cpp:2625 ../src/celestia/qt/qtinfopanel.cpp:320
-#: ../src/celestia/qt/qtinfopanel.cpp:353
-#: ../src/celestia/qt/qtinfopanel.cpp:407
-#, fuzzy
-msgid "days"
-msgstr " 일"
-
-#: ../src/celestia/celestiacore.cpp:2630 ../src/celestia/qt/qtinfopanel.cpp:316
-#: ../src/celestia/qt/qtinfopanel.cpp:349
-#, fuzzy
-msgid "hours"
-msgstr " 시간"
-
-#: ../src/celestia/celestiacore.cpp:2635
-#, fuzzy
-msgid "minutes"
-msgstr " 분"
-
-#: ../src/celestia/celestiacore.cpp:2640
-#, fuzzy
-msgid "seconds"
-msgstr " 초"
-
-#: ../src/celestia/celestiacore.cpp:2643
-#, fuzzy
-msgid "Rotation period: {} {}\n"
-msgstr "자전주기: "
-
-#: ../src/celestia/celestiacore.cpp:2651
-#, c-format
-msgid "Mass: %.6g lb\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2653
-#, c-format
-msgid "Mass: %.6g kg\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2656
-#, c-format
-msgid "Mass: %.2f Mj\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2658
-#, c-format
-msgid "Mass: %.2f Me\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2669
-#, fuzzy
-msgid "ly/s"
-msgstr " ly/s"
-
-#: ../src/celestia/celestiacore.cpp:2674
-#, fuzzy
-msgid "AU/s"
-msgstr " AU/s"
-
-#: ../src/celestia/celestiacore.cpp:2686
-msgid "mi/s"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2691
-msgid "ft/s"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2699
-#, fuzzy
-msgid "km/s"
-msgstr " km/s"
-
-#: ../src/celestia/celestiacore.cpp:2704
-#, fuzzy
-msgid "m/s"
-msgstr " m/s"
-
-#: ../src/celestia/celestiacore.cpp:2707
-#, fuzzy
-msgid "Speed: {} {}\n"
-msgstr ""
-"\n"
-"속도: "
-
-#: ../src/celestia/celestiacore.cpp:2739
-#, c-format, qt-format
-msgid "Dec: %+d%s %02d' %.1f\"\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2751
-#, c-format, qt-format
-msgid "RA: %dh %02dm %.1fs\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2767
-#, fuzzy, c-format
-msgid "Apparent diameter: %s\n"
-msgstr "시직경: "
-
-#: ../src/celestia/celestiacore.cpp:2780
-#, fuzzy, c-format
-msgid "Apparent magnitude: %.1f\n"
-msgstr "겉보기 등급: "
-
-#: ../src/celestia/celestiacore.cpp:2784
-#, fuzzy, c-format
-msgid "Absolute magnitude: %.1f\n"
-msgstr "절대등급: "
-
-#: ../src/celestia/celestiacore.cpp:2865
-#, c-format
-msgid "%.6f%c %.6f%c %s"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2893 ../src/celestia/celestiacore.cpp:2966
-#: ../src/celestia/celestiacore.cpp:2997 ../src/celestia/celestiacore.cpp:3075
-#, fuzzy, c-format
-msgid "Distance: %s\n"
-msgstr "거리: "
-
-#: ../src/celestia/celestiacore.cpp:2897
-msgid "Star system barycenter\n"
-msgstr "중심\n"
-
-#: ../src/celestia/celestiacore.cpp:2901
-#, c-format
-msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "절대등급: %.2f 겉보기 등급: %.2f\n"
-
-#: ../src/celestia/celestiacore.cpp:2906
-#, fuzzy
-msgid "Luminosity: {}x Sun\n"
-msgstr "밝기: "
-
-#: ../src/celestia/celestiacore.cpp:2912
-msgid "Neutron star"
-msgstr "중성자 별"
-
-#: ../src/celestia/celestiacore.cpp:2915
-msgid "Black hole"
-msgstr "블랙홀"
-
-#: ../src/celestia/celestiacore.cpp:2920
-#, fuzzy, c-format
-msgid "Class: %s\n"
-msgstr "분광형: "
-
-#: ../src/celestia/celestiacore.cpp:2927
-#, fuzzy, c-format
-msgid "Surface temp: %s\n"
-msgstr "표면온도: "
-
-#: ../src/celestia/celestiacore.cpp:2932
-#, fuzzy
-msgid "Radius: {} Rsun  ({})\n"
-msgstr "반지름: "
-
-#: ../src/celestia/celestiacore.cpp:2938
-#, fuzzy
-msgid "Radius: {}\n"
-msgstr "반지름: "
-
-#: ../src/celestia/celestiacore.cpp:2954
-msgid "Planetary companions present\n"
-msgstr "행성 존재\n"
-
-#: ../src/celestia/celestiacore.cpp:2971
-#, fuzzy, c-format
-msgid "Distance from center: %s\n"
-msgstr "중심에서의 거리: "
-
-#: ../src/celestia/celestiacore.cpp:2974 ../src/celestia/celestiacore.cpp:3004
-#, fuzzy, c-format
-msgid "Radius: %s\n"
-msgstr "반지름: "
-
-#: ../src/celestia/celestiacore.cpp:3042
-#, c-format
-msgid "Phase angle: %.1f%s\n"
-msgstr "위상각: : %.1f%s\n"
-
-#: ../src/celestia/celestiacore.cpp:3058
-#, c-format
-msgid "Density: %.2f x 1000 lb/ft^3\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3060
-#, c-format
-msgid "Density: %.2f x 1000 kg/m^3\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3065
-#, fuzzy, c-format
-msgid "Temperature: %s\n"
-msgstr "온도: "
-
-#: ../src/celestia/celestiacore.cpp:3217
-msgid "  LT"
-msgstr "  광속"
-
-#: ../src/celestia/celestiacore.cpp:3226
-#: ../src/celestia/qt/qttimetoolbar.cpp:46
-msgid "Real time"
-msgstr "실시간"
-
-#: ../src/celestia/celestiacore.cpp:3228
-msgid "-Real time"
-msgstr "-실시간"
-
-#: ../src/celestia/celestiacore.cpp:3232
-msgid "Time stopped"
-msgstr "시간멈춤"
-
-#: ../src/celestia/celestiacore.cpp:3236
-#, fuzzy, c-format
-msgid "%.6g x faster"
-msgstr " 배속"
-
-#: ../src/celestia/celestiacore.cpp:3240
-#, fuzzy, c-format
-msgid "%.6g x slower"
-msgstr " 분의 1배속"
-
-#: ../src/celestia/celestiacore.cpp:3246
-msgid " (Paused)"
-msgstr "(멈춤)"
-
-#: ../src/celestia/celestiacore.cpp:3265
-#, c-format
-msgid ""
-"FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
-"%zu : %zu ]\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3274
-#, fuzzy, c-format
-msgid "FPS: %.1f\n"
-msgstr "FPS: "
-
-#: ../src/celestia/celestiacore.cpp:3299
-#, fuzzy
-msgid "Travelling ({})\n"
-msgstr "이동중 "
-
-#: ../src/celestia/celestiacore.cpp:3302
-#, fuzzy
-msgid "Travelling\n"
-msgstr "이동중 "
-
-#: ../src/celestia/celestiacore.cpp:3311
-#, fuzzy, c-format
-msgid "Track %s\n"
-msgstr "화면중앙에 유지: "
-
-#: ../src/celestia/celestiacore.cpp:3327
-#, fuzzy, c-format
-msgid "Follow %s\n"
-msgstr "추적: "
-
-#: ../src/celestia/celestiacore.cpp:3331
-#, fuzzy, c-format
-msgid "Sync Orbit %s\n"
-msgstr "자전 동기: "
-
-#: ../src/celestia/celestiacore.cpp:3335
-#, c-format
-msgid "Lock %s -> %s\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3341
-#, fuzzy, c-format
-msgid "Chase %s\n"
-msgstr "공전 동기: "
-
-#: ../src/celestia/celestiacore.cpp:3356
-#, c-format
-msgid "FOV: %s (%.2fx)\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3540
-#, fuzzy, c-format
-msgid "Target name: %s"
-msgstr "천체명을 입력하세요: "
-
-#: ../src/celestia/celestiacore.cpp:3621
-#, c-format
-msgid "%dx%d at %.2f fps  %s"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:3624
-#, fuzzy
-msgid "Paused"
-msgstr " 멈춤"
-
-#: ../src/celestia/celestiacore.cpp:3624
-#, fuzzy
-msgid "Recording"
-msgstr " 동영상 저장중"
-
-#: ../src/celestia/celestiacore.cpp:3645
-msgid "F11 Start/Pause    F12 Stop"
-msgstr "F11 녹화시작/일시정지    F12 정지"
-
-#: ../src/celestia/celestiacore.cpp:3656 ../src/celestia/celestiacore.cpp:3659
-msgid "Edit Mode"
-msgstr "편집 모드"
-
-#: ../src/celestia/celestiacore.cpp:3692
-#, fuzzy
-msgid "Skipping solar system catalog: {}\n"
-msgstr "항성계 카탈로그 로딩중: "
-
-#: ../src/celestia/celestiacore.cpp:3695
-#, fuzzy
-msgid "Loading solar system catalog: {}\n"
-msgstr "항성계 카탈로그 로딩중: "
-
-#: ../src/celestia/celestiacore.cpp:3738
-#, fuzzy
-msgid "Skipping {} catalog: {}\n"
-msgstr "항성계 카탈로그 로딩중: "
-
-#: ../src/celestia/celestiacore.cpp:3741
-#, fuzzy
-msgid "Loading {} catalog: {}\n"
-msgstr "항성계 카탈로그 로딩중: "
-
-#: ../src/celestia/celestiacore.cpp:3749
-#, fuzzy
-msgid "Error reading {} catalog file: {}\n"
-msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
-
-#: ../src/celestia/celestiacore.cpp:3783
+#: ../src/celestia/celestiacore.cpp:2311
 msgid "Error reading configuration file."
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: ../src/celestia/celestiacore.cpp:3797
+#: ../src/celestia/celestiacore.cpp:2325
 msgid "Initialization of SPICE library failed."
 msgstr "SPICE 라이브러리 초기화에 실패했습니다."
 
-#: ../src/celestia/celestiacore.cpp:3840
+#: ../src/celestia/celestiacore.cpp:2372
 msgid "Cannot read star database."
 msgstr "항성 데이타베이스를 읽을 수 없습니다."
 
-#: ../src/celestia/celestiacore.cpp:3860
+#: ../src/celestia/celestiacore.cpp:2382
 #, fuzzy
-msgid "Error opening deepsky catalog file {}.\n"
-msgstr "항성 카탈로그 파일 읽는 중 에러: "
-
-#: ../src/celestia/celestiacore.cpp:3864
-#, fuzzy
-msgid "Cannot read Deep Sky Objects database {}.\n"
+msgid "Cannot read DSO database."
 msgstr "항성 데이타베이스를 읽을 수 없습니다."
 
-#: ../src/celestia/celestiacore.cpp:3911
-#, fuzzy
-msgid "Error opening solar system catalog {}.\n"
-msgstr "항성계 카탈로그의 여는 중 오류 발생.\n"
-
-#: ../src/celestia/celestiacore.cpp:3953
-#, fuzzy
+#: ../src/celestia/celestiacore.cpp:2400
+#, fuzzy, c++-format
 msgid "Error opening constellation boundaries file {}.\n"
 msgstr "별자리 경계선 파일을 여는 중 오류가 발생"
 
-#: ../src/celestia/celestiacore.cpp:4120
+#: ../src/celestia/celestiacore.cpp:2578
 msgid "Failed to initialize renderer"
 msgstr "렌더링 엔진 초기화 실패"
 
-#: ../src/celestia/celestiacore.cpp:4136
+#: ../src/celestia/celestiacore.cpp:2594
 msgid "Error loading font; text will not be visible.\n"
 msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
 
-#: ../src/celestia/celestiacore.cpp:4174
-#, fuzzy
-msgid "Error reading cross index {}\n"
-msgstr "크로스 인덱스 파일 읽기 에러: "
-
-#: ../src/celestia/celestiacore.cpp:4176
-#, fuzzy
-msgid "Loaded cross index {}\n"
-msgstr "크로스 인덱스 파일 읽음: "
-
-#: ../src/celestia/celestiacore.cpp:4193
-msgid "Error reading star names file\n"
-msgstr "항성이름 파일 읽는 중 에러\n"
-
-#: ../src/celestia/celestiacore.cpp:4197 ../src/celestia/celestiacore.cpp:4211
-#, fuzzy
-msgid "Error opening {}\n"
-msgstr "파일 열기 오류: "
-
-#: ../src/celestia/celestiacore.cpp:4217
-msgid "Error reading stars file\n"
-msgstr "항성 파일 읽는 중 에러\n"
-
-#: ../src/celestia/celestiacore.cpp:4241
-#, fuzzy
-msgid "Error opening star catalog {}\n"
-msgstr "항성 카탈로그 파일 읽는 중 에러: "
-
-#: ../src/celestia/celestiacore.cpp:4599
+#: ../src/celestia/celestiacore.cpp:2929
 msgid "Invalid URL"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:4829
+#: ../src/celestia/celestiacore.cpp:3151
 msgid "Unable to capture a frame!\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:4840
-#, fuzzy
+#: ../src/celestia/celestiacore.cpp:3162
+#, fuzzy, c++-format
 msgid "Unsupported image type: {}!\n"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/celestiacore.cpp:5052
-#, fuzzy
+#: ../src/celestia/celestiacore.cpp:3338
+#, fuzzy, c++-format
 msgid "Error opening asterisms file {}.\n"
 msgstr "별자리 파일 여는 중 오류가 발생했습니다."
 
-#: ../src/celestia/gtk/actions.cpp:90 ../src/celestia/qt/qtappwin.cpp:742
-#: ../src/celestia/win32/winmain.cpp:163
+#: ../src/celestia/gtk/actions.cpp:77 ../src/celestia/win32/winfiledlgs.cpp:97
+msgid "Please use a name ending in '.jpg' or '.png'."
+msgstr ""
+
+#: ../src/celestia/gtk/actions.cpp:89
+#, fuzzy
+msgid "Error writing captured image."
+msgstr "동영상 캡춰 초기화중 오류가 발생하였습니다."
+
+#: ../src/celestia/gtk/actions.cpp:212 ../src/celestia/qt/qtappwin.cpp:735
+#: ../src/celestia/win32/winmoviecapture.cpp:69
 msgid "Lossless"
 msgstr ""
 
-#: ../src/celestia/gtk/actions.cpp:91 ../src/celestia/qt/qtappwin.cpp:743
-#: ../src/celestia/win32/winmain.cpp:164
+#: ../src/celestia/gtk/actions.cpp:213 ../src/celestia/qt/qtappwin.cpp:736
+#: ../src/celestia/win32/winmoviecapture.cpp:70
 msgid "Lossy (H.264)"
 msgstr ""
 
-#: ../src/celestia/gtk/actions.cpp:745 ../src/celestia/qt/qtappwin.cpp:1245
-#: ../src/celestia/qt/qtappwin.cpp:1654
-#: ../src/celestia/win32/res/resource_strings.cpp:73
+#: ../src/celestia/gtk/actions.cpp:853 ../src/celestia/qt/qtappwin.cpp:1215
+#: ../src/celestia/qt/qtappwin.cpp:1626
+#: ../src/celestia/win32/res/celestia.rc:278
 msgid "About Celestia"
 msgstr "셀레스티아에 대하여"
-
-#: ../src/celestia/gtk/actions.cpp:1107 ../src/celestia/win32/winmain.cpp:2729
-msgid "Please use a name ending in '.jpg' or '.png'."
-msgstr ""
 
 #: ../src/celestia/helper.cpp:106 ../src/celestia/helper.cpp:115
 #, fuzzy, c-format
@@ -1026,1592 +690,2387 @@ msgstr ""
 msgid "Max anisotropy filtering: %s\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:207
+#: ../src/celestia/hud.cpp:101
+msgid "Mpc"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:106
+msgid "kpc"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:111
+msgid "ly"
+msgstr "광년"
+
+#. ectx: property (text), widget (QRadioButton, auButton)
+#: ../src/celestia/hud.cpp:115 ../src/celestia/qt/gotoobjectdialog.ui:194
+#: ../src/celestia/win32/res/celestia.rc:431
+msgid "au"
+msgstr "AU"
+
+#: ../src/celestia/hud.cpp:122
+#, fuzzy
+msgid "mi"
+msgstr " m/s"
+
+#: ../src/celestia/hud.cpp:127
+msgid "ft"
+msgstr ""
+
+#. ectx: property (text), widget (QRadioButton, kmButton)
+#: ../src/celestia/hud.cpp:133 ../src/celestia/qt/gotoobjectdialog.ui:180
+#: ../src/celestia/qt/qtinfopanel.cpp:194
+#: ../src/celestia/qt/qtinfopanel.cpp:315
+#: ../src/celestia/win32/res/celestia.rc:429
+msgid "km"
+msgstr "km"
+
+#: ../src/celestia/hud.cpp:138 ../src/celestia/qt/qtinfopanel.cpp:198
+#, fuzzy
+msgid "m"
+msgstr " m/s"
+
+#: ../src/celestia/hud.cpp:160 ../src/celestia/qt/qtinfopanel.cpp:250
+#: ../src/celestia/qt/qtinfopanel.cpp:296
+#: ../src/celestia/qt/qtinfopanel.cpp:334
+#, fuzzy
+msgid "days"
+msgstr " 일"
+
+#: ../src/celestia/hud.cpp:165 ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:292
+#, fuzzy
+msgid "hours"
+msgstr " 시간"
+
+#: ../src/celestia/hud.cpp:170
+#, fuzzy
+msgid "minutes"
+msgstr " 분"
+
+#: ../src/celestia/hud.cpp:175
+#, fuzzy
+msgid "seconds"
+msgstr " 초"
+
+#: ../src/celestia/hud.cpp:178
+#, fuzzy, c++-format
+msgid "Rotation period: {} {}\n"
+msgstr "자전주기: "
+
+#: ../src/celestia/hud.cpp:187
+#, c++-format
+msgid "Mass: {} lb\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:190
+#, c++-format
+msgid "Mass: {} kg\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:194
+#, c++-format
+msgid "Mass: {} Mj\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:197
+#, c++-format
+msgid "Mass: {} Me\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:210
+#, fuzzy
+msgid "ly/s"
+msgstr " ly/s"
+
+#: ../src/celestia/hud.cpp:215
+#, fuzzy
+msgid "AU/s"
+msgstr " AU/s"
+
+#: ../src/celestia/hud.cpp:227
+msgid "mi/s"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:232
+msgid "ft/s"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:240
+#, fuzzy
+msgid "km/s"
+msgstr " km/s"
+
+#: ../src/celestia/hud.cpp:245
+#, fuzzy
+msgid "m/s"
+msgstr " m/s"
+
+#: ../src/celestia/hud.cpp:248
+#, fuzzy, c++-format
+msgid "Speed: {} {}\n"
+msgstr ""
+"\n"
+"속도: "
+
+#: ../src/celestia/hud.cpp:287
+#, fuzzy, c-format
+msgid "Apparent diameter: %s\n"
+msgstr "시직경: "
+
+#: ../src/celestia/hud.cpp:298
+#, c++-format
+msgid "Dec: {:+d}{} {:02d}' {:.1f}\"\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:311
+#, c++-format
+msgid "RA: {}h {:02}m {:.1f}s\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:324
+#, fuzzy, c++-format
+msgid "Apparent magnitude: {:.1f}\n"
+msgstr "겉보기 등급: "
+
+#: ../src/celestia/hud.cpp:328
+#, fuzzy, c++-format
+msgid "Absolute magnitude: {:.1f}\n"
+msgstr "절대등급: "
+
+#: ../src/celestia/hud.cpp:407
+#, c++-format
+msgid "{:.6f}{} {:.6f}{} {}"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:422 ../src/celestia/hud.cpp:500
+#: ../src/celestia/hud.cpp:533 ../src/celestia/hud.cpp:619
+#, fuzzy, c-format
+msgid "Distance: %s\n"
+msgstr "거리: "
+
+#: ../src/celestia/hud.cpp:427
+msgid "Star system barycenter\n"
+msgstr "중심\n"
+
+#: ../src/celestia/hud.cpp:431
+#, fuzzy, c++-format
+msgid "Abs (app) mag: {:.2f} ({:.2f})\n"
+msgstr "절대등급: %.2f 겉보기 등급: %.2f\n"
+
+#: ../src/celestia/hud.cpp:436
+#, fuzzy, c++-format
+msgid "Luminosity: {}x Sun\n"
+msgstr "밝기: "
+
+#: ../src/celestia/hud.cpp:442
+msgid "Neutron star"
+msgstr "중성자 별"
+
+#: ../src/celestia/hud.cpp:445
+msgid "Black hole"
+msgstr "블랙홀"
+
+#: ../src/celestia/hud.cpp:450
+#, fuzzy, c-format
+msgid "Class: %s\n"
+msgstr "분광형: "
+
+#: ../src/celestia/hud.cpp:457
+#, fuzzy, c-format
+msgid "Surface temp: %s\n"
+msgstr "표면온도: "
+
+#: ../src/celestia/hud.cpp:462
+#, fuzzy, c++-format
+msgid "Radius: {} Rsun  ({})\n"
+msgstr "반지름: "
+
+#: ../src/celestia/hud.cpp:468
+#, fuzzy, c++-format
+msgid "Radius: {}\n"
+msgstr "반지름: "
+
+#: ../src/celestia/hud.cpp:484
+msgid "Planetary companions present\n"
+msgstr "행성 존재\n"
+
+#: ../src/celestia/hud.cpp:505
+#, fuzzy, c-format
+msgid "Distance from center: %s\n"
+msgstr "중심에서의 거리: "
+
+#: ../src/celestia/hud.cpp:508 ../src/celestia/hud.cpp:541
+#, fuzzy, c-format
+msgid "Radius: %s\n"
+msgstr "반지름: "
+
+#: ../src/celestia/hud.cpp:580
+#, fuzzy, c++-format
+msgid "Phase angle: {:.1f}{}\n"
+msgstr "위상각: : %.1f%s\n"
+
+#: ../src/celestia/hud.cpp:596
+#, c++-format
+msgid "Density: {} lb/ft³\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:601
+#, c++-format
+msgid "Density: {} kg/m³\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:607
+#, fuzzy, c-format
+msgid "Temperature: %s\n"
+msgstr "온도: "
+
+#: ../src/celestia/hud.cpp:837
+#, c++-format
+msgid "Unknown measurement system {}, fallback to Metric system"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:843
+#, c++-format
+msgid "Failed to get default measurement system {}, fallback to Metric system"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:886
+#, fuzzy, c++-format
+msgid "FPS: {:.1f}\n"
+msgstr "FPS: "
+
+#: ../src/celestia/hud.cpp:919 ../src/celestia/hud.cpp:922
+msgid "Edit Mode"
+msgstr "편집 모드"
+
+#: ../src/celestia/hud.cpp:946 ../src/celestia/hud.cpp:961
+msgid "  LT"
+msgstr "  광속"
+
+#: ../src/celestia/hud.cpp:969 ../src/celestia/qt/qttimetoolbar.cpp:48
+msgid "Real time"
+msgstr "실시간"
+
+#: ../src/celestia/hud.cpp:971
+msgid "-Real time"
+msgstr "-실시간"
+
+#: ../src/celestia/hud.cpp:975
+msgid "Time stopped"
+msgstr "시간멈춤"
+
+#: ../src/celestia/hud.cpp:979
+#, fuzzy, c++-format
+msgid "{:.6g} x faster"
+msgstr " 배속"
+
+#: ../src/celestia/hud.cpp:983
+#, fuzzy, c++-format
+msgid "{:.6g} x slower"
+msgstr " 분의 1배속"
+
+#: ../src/celestia/hud.cpp:989
+msgid " (Paused)"
+msgstr "(멈춤)"
+
+#: ../src/celestia/hud.cpp:1011
+#, fuzzy, c++-format
+msgid "Travelling ({})\n"
+msgstr "이동중 "
+
+#: ../src/celestia/hud.cpp:1013
+#, fuzzy
+msgid "Travelling\n"
+msgstr "이동중 "
+
+#: ../src/celestia/hud.cpp:1023
+#, fuzzy, c-format
+msgid "Track %s\n"
+msgstr "화면중앙에 유지: "
+
+#: ../src/celestia/hud.cpp:1031
+#, fuzzy, c-format
+msgid "Follow %s\n"
+msgstr "추적: "
+
+#: ../src/celestia/hud.cpp:1035
+#, fuzzy, c-format
+msgid "Sync Orbit %s\n"
+msgstr "자전 동기: "
+
+#: ../src/celestia/hud.cpp:1039
+#, c-format
+msgid "Lock %s -> %s\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:1045
+#, fuzzy, c-format
+msgid "Chase %s\n"
+msgstr "공전 동기: "
+
+#: ../src/celestia/hud.cpp:1059
+#, c++-format
+msgid "FOV: {} ({:.2f}x)\n"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:1234
+#, c++-format
+msgid "{}x{} at {:.2f} fps  {}"
+msgstr ""
+
+#: ../src/celestia/hud.cpp:1237
+#, fuzzy
+msgid "Paused"
+msgstr " 멈춤"
+
+#: ../src/celestia/hud.cpp:1237
+#, fuzzy
+msgid "Recording"
+msgstr " 동영상 저장중"
+
+#: ../src/celestia/hud.cpp:1257
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 녹화시작/일시정지    F12 정지"
+
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#: ../src/celestia/loaddso.cpp:32
+msgctxt "catalog"
+msgid "deep sky"
+msgstr ""
+
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#: ../src/celestia/loadsso.cpp:39
+#, fuzzy
+msgctxt "catalog"
+msgid "solar system"
+msgstr "태양계"
+
+#: ../src/celestia/loadstars.cpp:39
+#, fuzzy, c++-format
+msgid "Error reading cross index {}\n"
+msgstr "크로스 인덱스 파일 읽기 에러: "
+
+#: ../src/celestia/loadstars.cpp:41
+#, fuzzy, c++-format
+msgid "Loaded cross index {}\n"
+msgstr "크로스 인덱스 파일 읽음: "
+
+#: ../src/celestia/loadstars.cpp:62
+msgid "Error reading stars file\n"
+msgstr "항성 파일 읽는 중 에러\n"
+
+#: ../src/celestia/loadstars.cpp:68 ../src/celestia/loadstars.cpp:84
+#, fuzzy, c++-format
+msgid "Error opening {}\n"
+msgstr "파일 열기 오류: "
+
+#: ../src/celestia/loadstars.cpp:79
+#, fuzzy, c++-format
+msgid "Error reading star names file {}\n"
+msgstr "항성이름 파일 읽는 중 에러\n"
+
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#: ../src/celestia/loadstars.cpp:96
+msgctxt "catalog"
+msgid "star"
+msgstr ""
+
+#. ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
+#: ../src/celestia/qt/addbookmark.ui:16
+#, fuzzy
+msgid "Bookmark Location"
+msgstr "지명 이름 보기"
+
+#. ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/addbookmark.ui:24
+#, fuzzy
+msgid "Bookmark name:"
+msgstr "천체명을 입력하세요: "
+
+#. ectx: property (text), widget (QLabel, label_2)
+#. ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/addbookmark.ui:37
+#: ../src/celestia/qt/newbookmarkfolder.ui:44
+#, fuzzy
+msgid "Create in:"
+msgstr "위치지정 >>"
+
+#. ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/addbookmark.ui:44
+#, fuzzy
+msgid "Time source:"
+msgstr "시간: 정지"
+
+#. ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
+#: ../src/celestia/qt/gotoobjectdialog.ui:14
+msgid "Dialog"
+msgstr ""
+
+#. ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/gotoobjectdialog.ui:56
+#, fuzzy
+msgid "Object name:"
+msgstr "천체 이름"
+
+#. ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/gotoobjectdialog.ui:75
+#, fuzzy
+msgid "Longitude:"
+msgstr "위도: "
+
+#. ectx: property (text), widget (QLabel, label_4)
+#: ../src/celestia/qt/gotoobjectdialog.ui:88
+#, fuzzy
+msgid "Distance:"
+msgstr "거리: "
+
+#. ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/gotoobjectdialog.ui:166
+#, fuzzy
+msgid "Latitude:"
+msgstr "위도: "
+
+#. ectx: property (text), widget (QRadioButton, radiiButton)
+#: ../src/celestia/qt/gotoobjectdialog.ui:187
+#: ../src/celestia/win32/res/celestia.rc:430
+msgid "radii"
+msgstr "반경"
+
+#. ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. ectx: property (text), widget (QPushButton, newFolderButton)
+#: ../src/celestia/qt/newbookmarkfolder.ui:13
+#: ../src/celestia/qt/organizebookmarks.ui:24
+#: ../src/celestia/qt/qtbookmark.cpp:839
+#, fuzzy
+msgid "New Folder"
+msgstr "새폴더..."
+
+#. ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/newbookmarkfolder.ui:21
+#, fuzzy
+msgid "Name:"
+msgstr "이름"
+
+#. ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/newbookmarkfolder.ui:63
+#, fuzzy
+msgid "Description:"
+msgstr "해상도"
+
+#. ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#: ../src/celestia/qt/organizebookmarks.ui:13
+#: ../src/celestia/win32/res/celestia.rc:505
+msgid "Organize Bookmarks"
+msgstr "북마크 구성"
+
+#. ectx: property (text), widget (QPushButton, newSeparatorButton)
+#: ../src/celestia/qt/organizebookmarks.ui:31
+#, fuzzy
+msgid "New Separator"
+msgstr "새폴더..."
+
+#. ectx: property (text), widget (QPushButton, removeItemButton)
+#: ../src/celestia/qt/organizebookmarks.ui:38
+msgid "Remove Item"
+msgstr ""
+
+#. ectx: property (windowTitle), widget (QDialog, preferencesDialog)
+#: ../src/celestia/qt/preferences.ui:14
+#, fuzzy
+msgid "Preferences"
+msgstr "셀레스티아 설정"
+
+#. ectx: attribute (title), widget (QWidget, objectsTab)
+#. ectx: property (title), widget (QGroupBox, objectsGroupBox)
+#: ../src/celestia/qt/preferences.ui:27 ../src/celestia/qt/preferences.ui:33
+msgid "Objects"
+msgstr "천체"
+
+#. ectx: property (text), widget (QCheckBox, starsCheck)
+#. ectx: property (text), widget (QCheckBox, starOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, starLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:42 ../src/celestia/qt/preferences.ui:279
+#: ../src/celestia/qt/preferences.ui:499 ../src/celestia/qt/qtappwin.cpp:378
+#: ../src/celestia/qt/qtcelestiaactions.cpp:96
+#: ../src/celestia/qt/qtcelestiaactions.cpp:123
+#: ../src/celestia/win32/res/celestia.rc:651
+msgid "Stars"
+msgstr "항성"
+
+#. ectx: property (text), widget (QCheckBox, planetsCheck)
+#. ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, planetLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:49 ../src/celestia/qt/preferences.ui:286
+#: ../src/celestia/qt/preferences.ui:506
+#: ../src/celestia/qt/qtcelestiaactions.cpp:97
+#: ../src/celestia/qt/qtcelestiaactions.cpp:124
+#: ../src/celestia/qt/qtselectionpopup.cpp:397
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:102
+#: ../src/celestia/win32/res/celestia.rc:652
+#: ../src/celestia/win32/wincontextmenu.cpp:159
+#: ../src/celestia/win32/wincontextmenu.cpp:318
+msgid "Planets"
+msgstr "행성"
+
+#. ectx: property (text), widget (QCheckBox, dwarfPlanetsCheck)
+#. ectx: property (text), widget (QCheckBox, dwarfPlanetOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:56 ../src/celestia/qt/preferences.ui:293
+#: ../src/celestia/qt/preferences.ui:513
+#: ../src/celestia/qt/qtselectionpopup.cpp:400
+#: ../src/celestia/win32/wincontextmenu.cpp:161
+#, fuzzy
+msgid "Dwarf planets"
+msgstr "왜소행성"
+
+#. ectx: property (text), widget (QCheckBox, moonsCheck)
+#. ectx: property (text), widget (QCheckBox, moonOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, moonLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:63 ../src/celestia/qt/preferences.ui:300
+#: ../src/celestia/qt/preferences.ui:520
+#: ../src/celestia/qt/qtcelestiaactions.cpp:99
+#: ../src/celestia/qt/qtcelestiaactions.cpp:126
+#: ../src/celestia/qt/qtselectionpopup.cpp:403
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:104
+#: ../src/celestia/win32/res/celestia.rc:654
+#: ../src/celestia/win32/wincontextmenu.cpp:155
+msgid "Moons"
+msgstr "위성"
+
+#. ectx: property (text), widget (QCheckBox, minorMoonsCheck)
+#. ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:70 ../src/celestia/qt/preferences.ui:307
+#: ../src/celestia/qt/preferences.ui:527
+#: ../src/celestia/qt/qtselectionpopup.cpp:406
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:112
+#: ../src/celestia/win32/wincontextmenu.cpp:157
+#, fuzzy
+msgid "Minor moons"
+msgstr "소 위성"
+
+#. ectx: property (text), widget (QCheckBox, asteroidsCheck)
+#. ectx: property (text), widget (QCheckBox, asteroidOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, asteroidLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:77 ../src/celestia/qt/preferences.ui:314
+#: ../src/celestia/qt/preferences.ui:534
+#: ../src/celestia/qt/qtcelestiaactions.cpp:101
+#: ../src/celestia/qt/qtcelestiaactions.cpp:128
+#: ../src/celestia/qt/qtselectionpopup.cpp:409
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:770
+#: ../src/celestia/win32/res/celestia.rc:656
+#: ../src/celestia/win32/wincontextmenu.cpp:149
+msgid "Asteroids"
+msgstr "소행성"
+
+#. ectx: property (text), widget (QCheckBox, cometsCheck)
+#. ectx: property (text), widget (QCheckBox, cometOrbitsCheck)
+#. ectx: property (text), widget (QCheckBox, cometLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:84 ../src/celestia/qt/preferences.ui:321
+#: ../src/celestia/qt/preferences.ui:541
+#: ../src/celestia/qt/qtcelestiaactions.cpp:102
+#: ../src/celestia/qt/qtcelestiaactions.cpp:129
+#: ../src/celestia/qt/qtselectionpopup.cpp:412
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:778
+#: ../src/celestia/win32/res/celestia.rc:657
+#: ../src/celestia/win32/wincontextmenu.cpp:151
+msgid "Comets"
+msgstr "혜성"
+
+#. TRANSLATORS: translate this as plural
+#. TRANSLATORS: translate this as plural
+#. ectx: property (text), widget (QCheckBox, spacecraftsCheck)
+#. TRANSLATORS: translate this as plural
+#. ectx: property (text), widget (QCheckBox, spacecraftOrbitsCheck)
+#. TRANSLATORS: translate this as plural
+#. ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:91 ../src/celestia/qt/preferences.ui:328
+#: ../src/celestia/qt/preferences.ui:548
+#: ../src/celestia/qt/qtcelestiaactions.cpp:103
+#: ../src/celestia/qt/qtcelestiaactions.cpp:130
+#: ../src/celestia/qt/qtselectionpopup.cpp:415
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:106
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
+#: ../src/celestia/win32/res/celestia.rc:658
+#: ../src/celestia/win32/wincontextmenu.cpp:165
+#, fuzzy
+msgctxt "plural"
+msgid "Spacecraft"
+msgstr "우주선"
+
+#. Buttons to select filtering criterion for dsos
+#. ectx: property (text), widget (QCheckBox, galaxiesCheck)
+#. ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:98 ../src/celestia/qt/preferences.ui:555
+#: ../src/celestia/qt/qtcelestiaactions.cpp:131
+#: ../src/celestia/qt/qtcelestiaactions.cpp:155
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:466
+#: ../src/celestia/win32/res/celestia.rc:667
+msgid "Galaxies"
+msgstr "은하"
+
+#. ectx: property (text), widget (QCheckBox, nebulaeCheck)
+#. ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:105 ../src/celestia/qt/preferences.ui:562
+#: ../src/celestia/qt/qtcelestiaactions.cpp:134
+#: ../src/celestia/qt/qtcelestiaactions.cpp:159
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:474
+#: ../src/celestia/win32/res/celestia.rc:670
+msgid "Nebulae"
+msgstr "성운"
+
+#. ectx: property (text), widget (QCheckBox, openClustersCheck)
+#. ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:112 ../src/celestia/qt/preferences.ui:569
+#: ../src/celestia/qt/qtcelestiaactions.cpp:133
+#, fuzzy
+msgid "Open clusters"
+msgstr "산개성단"
+
+#. ectx: property (text), widget (QCheckBox, globularClustersCheck)
+#. ectx: property (text), widget (QCheckBox, globularClusterLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:119 ../src/celestia/qt/preferences.ui:576
+#, fuzzy
+msgid "Globular clusters"
+msgstr "구상성단 이름 보기"
+
+#. ectx: property (title), widget (QGroupBox, featuresGroupBox)
+#: ../src/celestia/qt/preferences.ui:142
+#, fuzzy
+msgid "Features"
+msgstr "기타"
+
+#. ectx: property (text), widget (QCheckBox, atmospheresCheck)
+#: ../src/celestia/qt/preferences.ui:148
+#: ../src/celestia/qt/qtcelestiaactions.cpp:171
+#: ../src/celestia/win32/res/celestia.rc:631
+msgid "Atmospheres"
+msgstr "대기"
+
+#. ectx: property (text), widget (QCheckBox, cloudsCheck)
+#: ../src/celestia/qt/preferences.ui:155
+#: ../src/celestia/qt/qtcelestiaactions.cpp:166
+#: ../src/celestia/win32/res/celestia.rc:632
+msgid "Clouds"
+msgstr "구름"
+
+#. ectx: property (text), widget (QCheckBox, cloudShadowsCheck)
+#: ../src/celestia/qt/preferences.ui:162
+#, fuzzy
+msgid "Cloud shadows"
+msgstr "구름 그림자"
+
+#. ectx: property (text), widget (QCheckBox, eclipseShadowsCheck)
+#: ../src/celestia/qt/preferences.ui:169
+#, fuzzy
+msgid "Eclipse shadows"
+msgstr "식 그림자"
+
+#. ectx: property (text), widget (QCheckBox, ringShadowsCheck)
+#: ../src/celestia/qt/preferences.ui:176
+#, fuzzy
+msgid "Ring shadows"
+msgstr "고리 그림자"
+
+#. ectx: property (text), widget (QCheckBox, planetRingsCheck)
+#: ../src/celestia/qt/preferences.ui:183
+#, fuzzy
+msgid "Planet's rings"
+msgstr "행성"
+
+#. ectx: property (text), widget (QCheckBox, nightsideLightsCheck)
+#: ../src/celestia/qt/preferences.ui:190
+#, fuzzy
+msgid "Nightside lights"
+msgstr "야간맵"
+
+#. ectx: property (text), widget (QCheckBox, cometTailsCheck)
+#: ../src/celestia/qt/preferences.ui:197
+#, fuzzy
+msgid "Comet tails"
+msgstr "혜성꼬리"
+
+#. ectx: property (text), widget (QCheckBox, limitOfKnowledgeCheck)
+#: ../src/celestia/qt/preferences.ui:204
+#, fuzzy
+msgid "Limit of knowledge textures"
+msgstr "limit of knowledge 텍스처를 사용"
+
+#. Create the guides toolbar
+#. ectx: attribute (title), widget (QWidget, guidesTab)
+#: ../src/celestia/qt/preferences.ui:228 ../src/celestia/qt/qtappwin.cpp:401
+#, fuzzy
+msgid "Guides"
+msgstr "길잡이"
+
+#. ectx: property (title), widget (QGroupBox, orbitsGroupBox)
+#: ../src/celestia/qt/preferences.ui:236
+#: ../src/celestia/qt/qtcelestiaactions.cpp:80
+#: ../src/celestia/win32/res/celestia.rc:640
+msgid "Orbits"
+msgstr "궤도"
+
+#. ectx: property (text), widget (QCheckBox, orbitsCheck)
+#: ../src/celestia/qt/preferences.ui:242
+#, fuzzy
+msgid "Show orbits"
+msgstr "궤도 보기"
+
+#. ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
+#: ../src/celestia/qt/preferences.ui:249
+#: ../src/celestia/win32/res/celestia.rc:641
+#, fuzzy
+msgid "Fading orbits"
+msgstr "착륙지점"
+
+#. ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
+#: ../src/celestia/qt/preferences.ui:256
+#: ../src/celestia/win32/res/celestia.rc:642
+#, fuzzy
+msgid "Partial trajectories"
+msgstr "부분 궤적"
+
+#. ectx: property (title), widget (QGroupBox, gridsGroupBox)
+#: ../src/celestia/qt/preferences.ui:355
+#: ../src/celestia/win32/res/celestia.rc:645
+msgid "Grids"
+msgstr "그리드"
+
+#. ectx: property (text), widget (QCheckBox, equatorialGridCheck)
+#: ../src/celestia/qt/preferences.ui:361
+#: ../src/celestia/win32/res/celestia.rc:646
+msgid "Equatorial"
+msgstr "적도"
+
+#. ectx: property (text), widget (QCheckBox, eclipticGridCheck)
+#: ../src/celestia/qt/preferences.ui:368
+#: ../src/celestia/win32/res/celestia.rc:649
+msgid "Ecliptic"
+msgstr "황도"
+
+#. ectx: property (text), widget (QCheckBox, galacticGridCheck)
+#: ../src/celestia/qt/preferences.ui:375
+#: ../src/celestia/win32/res/celestia.rc:648
+msgid "Galactic"
+msgstr "은하"
+
+#. ectx: property (text), widget (QCheckBox, horizontalGridCheck)
+#: ../src/celestia/qt/preferences.ui:382
+#: ../src/celestia/win32/res/celestia.rc:647
+msgid "Horizontal"
+msgstr "수평분할"
+
+#. ectx: property (title), widget (QGroupBox, constellationsGroupBox)
+#. ectx: property (text), widget (QCheckBox, constellationLabelsCheck)
+#: ../src/celestia/qt/preferences.ui:405 ../src/celestia/qt/preferences.ui:583
+#: ../src/celestia/qt/qtcelestiaactions.cpp:70
+#: ../src/celestia/qt/qtcelestiaactions.cpp:136
+#: ../src/celestia/win32/res/celestia.rc:671
+msgid "Constellations"
+msgstr "별자리"
+
+#. ectx: property (text), widget (QCheckBox, diagramsCheck)
+#: ../src/celestia/qt/preferences.ui:411
+#: ../src/celestia/win32/res/celestia.rc:672
+msgid "Diagrams"
+msgstr "도형"
+
+#. ectx: property (text), widget (QCheckBox, boundariesCheck)
+#: ../src/celestia/qt/preferences.ui:418
+#: ../src/celestia/win32/res/celestia.rc:673
+msgid "Boundaries"
+msgstr "별자리 경계선 보기"
+
+#. ectx: property (text), widget (QCheckBox, latinNamesCheck)
+#: ../src/celestia/qt/preferences.ui:425
+#, fuzzy
+msgid "Latin names"
+msgstr "라틴 별자리명"
+
+#. ectx: property (title), widget (QGroupBox, miscellaneousGroupBox)
+#: ../src/celestia/qt/preferences.ui:448
+msgid "Miscellaneous"
+msgstr ""
+
+#. Controls for marking selected objects
+#. ectx: property (text), widget (QCheckBox, markersCheck)
+#: ../src/celestia/qt/preferences.ui:454
+#: ../src/celestia/qt/qtcelestiaactions.cpp:65
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:469
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:505
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
+#: ../src/celestia/win32/res/celestia.rc:643
+msgid "Markers"
+msgstr "마커"
+
+#. ectx: property (text), widget (QCheckBox, eclipticLineCheck)
+#: ../src/celestia/qt/preferences.ui:461
+#: ../src/celestia/qt/qtcelestiaactions.cpp:60
+#, fuzzy
+msgid "Ecliptic line"
+msgstr "황도"
+
+#. ectx: attribute (title), widget (QWidget, labelsTab)
+#. ectx: property (title), widget (QGroupBox, labelsGroupBox)
+#: ../src/celestia/qt/preferences.ui:487 ../src/celestia/qt/preferences.ui:493
+#: ../src/celestia/qt/qtcelestiaactions.cpp:120
+#: ../src/celestia/win32/res/celestia.rc:674
+msgid "Labels"
+msgstr "이름"
+
+#. ectx: property (title), widget (QGroupBox, locationsGroupBox)
+#: ../src/celestia/qt/preferences.ui:606
+#: ../src/celestia/qt/qtcelestiaactions.cpp:135
+#: ../src/celestia/win32/res/celestia.rc:458
+msgid "Locations"
+msgstr "지명"
+
+#. ectx: property (text), widget (QCheckBox, locationsCheck)
+#: ../src/celestia/qt/preferences.ui:615
+#, fuzzy
+msgid "Show locations"
+msgstr "도시 보기"
+
+#. ectx: property (text), widget (QLabel, label_2)
+#: ../src/celestia/qt/preferences.ui:638
+#, fuzzy
+msgid "Location types:"
+msgstr "지명 이름 보기"
+
+#. ectx: property (text), widget (QCheckBox, citiesCheck)
+#: ../src/celestia/qt/preferences.ui:647
+#: ../src/celestia/win32/res/celestia.rc:462
+msgid "Cities"
+msgstr "도시"
+
+#. ectx: property (text), widget (QCheckBox, landingSitesCheck)
+#: ../src/celestia/qt/preferences.ui:654
+#, fuzzy
+msgid "Landing sites"
+msgstr "착륙지점"
+
+#. ectx: property (text), widget (QCheckBox, volcanoesCheck)
+#: ../src/celestia/qt/preferences.ui:661
+#: ../src/celestia/win32/res/celestia.rc:470
+msgid "Volcanoes"
+msgstr "행성"
+
+#. ectx: property (text), widget (QCheckBox, observatoriesCheck)
+#: ../src/celestia/qt/preferences.ui:668
+#: ../src/celestia/win32/res/celestia.rc:463
+msgid "Observatories"
+msgstr "관측소·천문대"
+
+#. ectx: property (text), widget (QCheckBox, cratersCheck)
+#: ../src/celestia/qt/preferences.ui:675
+#: ../src/celestia/win32/res/celestia.rc:467
+msgid "Craters"
+msgstr "크레이터"
+
+#. ectx: property (text), widget (QCheckBox, montesCheck)
+#: ../src/celestia/qt/preferences.ui:682
+#, fuzzy
+msgid "Montes (mountains)"
+msgstr "산"
+
+#. ectx: property (text), widget (QCheckBox, terraeCheck)
+#: ../src/celestia/qt/preferences.ui:689
+#, fuzzy
+msgid "Terrae (land masses)"
+msgstr "육지"
+
+#. ectx: property (text), widget (QCheckBox, vallesCheck)
+#: ../src/celestia/qt/preferences.ui:696
+#, fuzzy
+msgid "Valles (valleys)"
+msgstr "계곡"
+
+#. ectx: property (text), widget (QCheckBox, mariaCheck)
+#: ../src/celestia/qt/preferences.ui:703
+#, fuzzy
+msgid "Maria (seas)"
+msgstr "바다"
+
+#. ectx: property (text), widget (QCheckBox, otherLocationsCheck)
+#: ../src/celestia/qt/preferences.ui:710
+#: ../src/celestia/win32/res/celestia.rc:471
+msgid "Other features"
+msgstr "기타"
+
+#. ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/preferences.ui:735
+#, fuzzy
+msgid "Minimum labelled feature size:"
+msgstr "최소표시"
+
+#. ectx: attribute (title), widget (QWidget, renderTab)
+#: ../src/celestia/qt/preferences.ui:801
+#, fuzzy
+msgid "Render"
+msgstr "표시(&R)"
+
+#. ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
+#: ../src/celestia/qt/preferences.ui:822
+#, fuzzy
+msgid "Texture resolution"
+msgstr "해상도"
+
+#. ectx: property (text), widget (QRadioButton, lowResolutionButton)
+#: ../src/celestia/qt/preferences.ui:828
+#: ../src/celestia/qt/qtcelestiaactions.cpp:186
+msgid "Low"
+msgstr "낮음"
+
+#. ectx: property (text), widget (QRadioButton, mediumResolutionButton)
+#: ../src/celestia/qt/preferences.ui:835
+#: ../src/celestia/qt/qtcelestiaactions.cpp:187
+msgid "Medium"
+msgstr "중간"
+
+#. ectx: property (text), widget (QRadioButton, highResolutionButton)
+#: ../src/celestia/qt/preferences.ui:842
+#: ../src/celestia/qt/qtcelestiaactions.cpp:188
+msgid "High"
+msgstr "높음"
+
+#. ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
+#: ../src/celestia/qt/preferences.ui:865
+#, fuzzy
+msgid "Lighting"
+msgstr "광도 이득"
+
+#. ectx: property (text), widget (QLabel, label_4)
+#: ../src/celestia/qt/preferences.ui:871
+#, fuzzy
+msgid "Ambient light:"
+msgstr "주변빛"
+
+#. ectx: property (text), widget (QLabel, label_5)
+#: ../src/celestia/qt/preferences.ui:932
+#, fuzzy
+msgid "Tinted illumination saturation:"
+msgstr "별자리"
+
+#. ectx: property (title), widget (QGroupBox, renderPathGroupBox)
+#: ../src/celestia/qt/preferences.ui:991
+#, fuzzy
+msgid "Render path"
+msgstr "렌더링 패스: "
+
+#. ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
+#: ../src/celestia/qt/preferences.ui:1004
+#, fuzzy
+msgid "Antialiased lines"
+msgstr "부드러운 궤도선"
+
+#. ectx: property (title), widget (QGroupBox, starStyleGroupBox)
+#: ../src/celestia/qt/preferences.ui:1044
+#, fuzzy
+msgid "Star style"
+msgstr "항성표시: 점"
+
+#. ectx: property (text), widget (QRadioButton, pointStarsButton)
+#: ../src/celestia/qt/preferences.ui:1050
+#: ../src/celestia/qt/qtcelestiaactions.cpp:212
+#, fuzzy
+msgid "Points"
+msgstr "점(&P)"
+
+#. ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
+#: ../src/celestia/qt/preferences.ui:1057
+#, fuzzy
+msgid "Fuzzy points"
+msgstr "희미한 점(&F)"
+
+#. ectx: property (text), widget (QRadioButton, scaledDiscsButton)
+#: ../src/celestia/qt/preferences.ui:1064
+#, fuzzy
+msgid "Scaled discs"
+msgstr "등급에 따른 원(&D)"
+
+#. ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
+#: ../src/celestia/qt/preferences.ui:1087
+#, fuzzy
+msgid "Auto-magnitude"
+msgstr "자동 등급 조정\tCtrl+Y"
+
+#. ectx: property (title), widget (QGroupBox, starColorGroupBox)
+#: ../src/celestia/qt/preferences.ui:1110
+#, fuzzy
+msgid "Star colors"
+msgstr "항성 모양(&Y)"
+
+#. addDockWidget(Qt::DockWidgetArea, eventFinder);
+#. Create the time toolbar
+#. ectx: attribute (title), widget (QWidget, timeTab)
+#: ../src/celestia/qt/preferences.ui:1138 ../src/celestia/qt/qtappwin.cpp:394
+msgid "Time"
+msgstr "현재 시각"
+
+#. ectx: property (text), widget (QLabel, label_3)
+#: ../src/celestia/qt/preferences.ui:1147
+#, fuzzy
+msgid "Date display format:"
+msgstr "표시"
+
+#. TRANSLATORS: fps == frames per second
+#: ../src/celestia/qt/qtappwin.cpp:208
+msgctxt "fps"
 msgid "Auto"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:213
+#. TRANSLATORS: fps == frames per second
+#: ../src/celestia/qt/qtappwin.cpp:215
+msgctxt "fps"
 msgid "Custom"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:254
+#: ../src/celestia/qt/qtappwin.cpp:252
 msgid "Error getting path for log filename!"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:269
+#: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably "
 "due to improper installation."
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:346
+#: ../src/celestia/qt/qtappwin.cpp:344
 msgid "Celestial Browser"
 msgstr "천체브라우저"
 
 #. Info browser for a selected object
-#: ../src/celestia/qt/qtappwin.cpp:352
+#: ../src/celestia/qt/qtappwin.cpp:349
 #, fuzzy
 msgid "Info Browser"
 msgstr "천체브라우저"
 
 #. Set up the browser tabs
-#: ../src/celestia/qt/qtappwin.cpp:381
-#: ../src/celestia/win32/res/resource_strings.cpp:177
+#: ../src/celestia/qt/qtappwin.cpp:377
 msgid "Solar System"
 msgstr "태양계"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:42
-#. i18n: ectx: property (text), widget (QCheckBox, starsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:279
-#. i18n: ectx: property (text), widget (QCheckBox, starOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:499
-#. i18n: ectx: property (text), widget (QCheckBox, starLabelsCheck)
-#: ../src/celestia/qt/qtappwin.cpp:382
-#: ../src/celestia/qt/qtcelestiaactions.cpp:93
-#: ../src/celestia/qt/qtcelestiaactions.cpp:120 ../src/celestia/qt/rc.cpp:72
-#: ../src/celestia/qt/rc.cpp:154 ../src/celestia/qt/rc.cpp:221
-#: ../src/celestia/win32/res/resource_strings.cpp:217
-msgid "Stars"
-msgstr "항성"
-
-#: ../src/celestia/qt/qtappwin.cpp:383
+#: ../src/celestia/qt/qtappwin.cpp:379
 #, fuzzy
 msgid "Deep Sky Objects"
 msgstr " 먼 우주 천체(DSO)"
 
-#: ../src/celestia/qt/qtappwin.cpp:390 ../src/celestia/qt/qteventfinder.cpp:412
-#: ../src/celestia/qt/qteventfinder.cpp:422
+#: ../src/celestia/qt/qtappwin.cpp:386 ../src/celestia/qt/qteventfinder.cpp:399
+#: ../src/celestia/qt/qteventfinder.cpp:409
 #, fuzzy
 msgid "Event Finder"
 msgstr "식 찾기"
 
-#. addDockWidget(Qt::DockWidgetArea, eventFinder);
-#. Create the time toolbar
-#. i18n: file: ../src/celestia/qt/preferences.ui:1034
-#. i18n: ectx: attribute (title), widget (QWidget, timeTab)
-#: ../src/celestia/qt/qtappwin.cpp:399 ../src/celestia/qt/rc.cpp:351
-msgid "Time"
-msgstr "현재 시각"
-
-#. Create the guides toolbar
-#. i18n: file: ../src/celestia/qt/preferences.ui:228
-#. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#: ../src/celestia/qt/qtappwin.cpp:406 ../src/celestia/qt/rc.cpp:139
-#, fuzzy
-msgid "Guides"
-msgstr "길잡이"
-
-#: ../src/celestia/qt/qtappwin.cpp:458
+#: ../src/celestia/qt/qtappwin.cpp:453
 #, fuzzy
 msgid "Full screen"
 msgstr "전체화면"
 
-#: ../src/celestia/qt/qtappwin.cpp:463
+#: ../src/celestia/qt/qtappwin.cpp:458
 msgid "ALT+Enter"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:463
+#: ../src/celestia/qt/qtappwin.cpp:458
 msgid "ALT+Return"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:621
+#: ../src/celestia/qt/qtappwin.cpp:619
 #, fuzzy
 msgid "Error opening bookmarks file"
 msgstr "별자리 파일 여는 중 오류가 발생했습니다."
 
-#: ../src/celestia/qt/qtappwin.cpp:641
+#: ../src/celestia/qt/qtappwin.cpp:638
 #, fuzzy
 msgid "Error Saving Bookmarks"
 msgstr "북마크 추가(&A)"
 
-#: ../src/celestia/qt/qtappwin.cpp:682
+#: ../src/celestia/qt/qtappwin.cpp:676
 #, fuzzy
 msgid "Save Image"
 msgstr "다른 이름으로 저장:"
 
-#: ../src/celestia/qt/qtappwin.cpp:684
+#: ../src/celestia/qt/qtappwin.cpp:678
 #, fuzzy
 msgid "Images (*.png *.jpg)"
 msgstr " 는 PNG파일이 아닙니다.\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:711 ../src/celestia/qt/qtappwin.cpp:723
+#: ../src/celestia/qt/qtappwin.cpp:704 ../src/celestia/qt/qtappwin.cpp:716
 msgid "Capture Video"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:713
+#: ../src/celestia/qt/qtappwin.cpp:706
 #, fuzzy
 msgid "Matroska Video (*.mkv)"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:728
+#: ../src/celestia/qt/qtappwin.cpp:721
 #, fuzzy
 msgid "Resolution:"
 msgstr "해상도"
 
-#: ../src/celestia/qt/qtappwin.cpp:731
+#: ../src/celestia/qt/qtappwin.cpp:724
 #, qt-format
 msgid "%1 x %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:734
-#: ../src/celestia/win32/res/resource_strings.cpp:155
+#: ../src/celestia/qt/qtappwin.cpp:727
+#: ../src/celestia/win32/res/celestia.rc:492
 #, fuzzy
 msgid "Frame rate:"
 msgstr "초당 프레임수:"
 
-#: ../src/celestia/qt/qtappwin.cpp:740
+#: ../src/celestia/qt/qtappwin.cpp:733
 msgid "Video codec:"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:747
-#: ../src/celestia/win32/res/resource_strings.cpp:157
+#: ../src/celestia/qt/qtappwin.cpp:740
+#: ../src/celestia/win32/res/celestia.rc:496
 msgid "Bitrate:"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:794
+#: ../src/celestia/qt/qtappwin.cpp:786
 msgid "Captured screen shot to clipboard"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:806 ../src/celestia/sdl/sdlmain.cpp:596
-#: ../src/celestia/win32/winmain.cpp:3919
+#: ../src/celestia/qt/qtappwin.cpp:797 ../src/celestia/sdl/sdlmain.cpp:601
+#: ../src/celestia/win32/winmainwindow.cpp:502
 msgid "Copied URL"
 msgstr "URL 복사"
 
-#: ../src/celestia/qt/qtappwin.cpp:817 ../src/celestia/sdl/sdlmain.cpp:608
+#: ../src/celestia/qt/qtappwin.cpp:807 ../src/celestia/sdl/sdlmain.cpp:613
 #, fuzzy
 msgid "Pasting URL"
 msgstr "URL 로딩중"
 
-#: ../src/celestia/qt/qtappwin.cpp:955
+#: ../src/celestia/qt/qtappwin.cpp:937
 #, fuzzy
 msgid "Open Script"
 msgstr "스크립트 열기(&O)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:958
+#: ../src/celestia/qt/qtappwin.cpp:940
 msgid "Celestia Scripts (*.celx *.cel)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:960
+#: ../src/celestia/qt/qtappwin.cpp:942
 msgid "Celestia Scripts (*.cel)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1134
+#: ../src/celestia/qt/qtappwin.cpp:1109
 #, fuzzy
 msgid "New bookmark"
 msgstr "메뉴에 새 폴더 추가"
 
-#: ../src/celestia/qt/qtappwin.cpp:1195
-msgid "<html><h1>Celestia "
+#: ../src/celestia/qt/qtappwin.cpp:1165
+#, qt-format
+msgid ""
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
+"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
+"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
+"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
+"is free software. You can redistribute it and/or modify it under the terms "
+"of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
+"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
+"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
+"CelestiaProject/Celestia</a></p></html>"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1231
+#: ../src/celestia/qt/qtappwin.cpp:1201
 #, fuzzy
 msgid "Unknown compiler"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: ../src/celestia/qt/qtappwin.cpp:1235 ../src/celestia/qt/qtappwin.cpp:1240
+#: ../src/celestia/qt/qtappwin.cpp:1205 ../src/celestia/qt/qtappwin.cpp:1210
 #, fuzzy
 msgid "supported"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/qt/qtappwin.cpp:1237 ../src/celestia/qt/qtappwin.cpp:1242
+#: ../src/celestia/qt/qtappwin.cpp:1207 ../src/celestia/qt/qtappwin.cpp:1212
 #, fuzzy
 msgid "not supported"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/qt/qtappwin.cpp:1265
+#: ../src/celestia/qt/qtappwin.cpp:1234
 #, fuzzy, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1271
+#: ../src/celestia/qt/qtappwin.cpp:1240
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1277
+#: ../src/celestia/qt/qtappwin.cpp:1246
 #, fuzzy, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1284
+#: ../src/celestia/qt/qtappwin.cpp:1253
 #, fuzzy, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "GLSL 버전: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1291
+#: ../src/celestia/qt/qtappwin.cpp:1260
 #, fuzzy, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "최대 동시 텍스처수"
 
-#: ../src/celestia/qt/qtappwin.cpp:1297
+#: ../src/celestia/qt/qtappwin.cpp:1266
 #, fuzzy, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "최대 텍스처 크기: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1303
+#: ../src/celestia/qt/qtappwin.cpp:1272
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "포인트 크기 범위"
 
-#: ../src/celestia/qt/qtappwin.cpp:1309
+#: ../src/celestia/qt/qtappwin.cpp:1278
 #, fuzzy, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "포인트 크기 범위"
 
-#: ../src/celestia/qt/qtappwin.cpp:1315
+#: ../src/celestia/qt/qtappwin.cpp:1284
 #, fuzzy, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "최대 큐브 맵 크기: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1321
+#: ../src/celestia/qt/qtappwin.cpp:1290
 #, fuzzy, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtappwin.cpp:1327
+#: ../src/celestia/qt/qtappwin.cpp:1296
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1337
+#: ../src/celestia/qt/qtappwin.cpp:1306
 #, fuzzy
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1351
+#: ../src/celestia/qt/qtappwin.cpp:1320
 #, fuzzy
 msgid "Renderer Info"
 msgstr "렌더링 엔진:"
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1378
-#: ../src/celestia/win32/res/resource_strings.cpp:1
+#: ../src/celestia/qt/qtappwin.cpp:1345
+#: ../src/celestia/win32/res/celestia.rc:163
 msgid "&File"
 msgstr "파일(&F)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1381
+#: ../src/celestia/qt/qtappwin.cpp:1348
 #, fuzzy
 msgid "&Grab image"
 msgstr "이미지 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1382
+#: ../src/celestia/qt/qtappwin.cpp:1349
 #, fuzzy
 msgid "F10"
 msgstr "이미지 캡춰(&I)...\tF10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1387
+#: ../src/celestia/qt/qtappwin.cpp:1354
 #, fuzzy
 msgid "Capture &video"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1391
+#: ../src/celestia/qt/qtappwin.cpp:1358
 #, fuzzy
 msgid "Shift+F10"
 msgstr "동영상 캡춰(&M)...\tShift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1395
+#: ../src/celestia/qt/qtappwin.cpp:1362
 #, fuzzy
 msgid "&Copy image"
 msgstr "URL 복사"
 
-#: ../src/celestia/qt/qtappwin.cpp:1396
+#: ../src/celestia/qt/qtappwin.cpp:1363
 #, fuzzy
 msgid "Ctrl+Shift+C"
 msgstr "Alt+C"
 
-#: ../src/celestia/qt/qtappwin.cpp:1402
-#: ../src/celestia/win32/res/resource_strings.cpp:2
+#: ../src/celestia/qt/qtappwin.cpp:1369
+#: ../src/celestia/win32/res/celestia.rc:165
 msgid "&Open Script..."
 msgstr "스크립트 열기(&O)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1413
-#: ../src/celestia/win32/res/resource_strings.cpp:5
-#: ../src/celestia/win32/res/resource_strings.cpp:67
+#: ../src/celestia/qt/qtappwin.cpp:1380
+#: ../src/celestia/win32/res/celestia.rc:170
 msgid "Run &Demo"
 msgstr "데모 실행(&D)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1421
+#: ../src/celestia/qt/qtappwin.cpp:1388
 #, fuzzy
 msgid "&Preferences..."
 msgstr "셀레스티아 설정"
 
-#: ../src/celestia/qt/qtappwin.cpp:1425
-#: ../src/celestia/win32/res/resource_strings.cpp:8
+#: ../src/celestia/qt/qtappwin.cpp:1392
+#: ../src/celestia/win32/res/celestia.rc:175
 msgid "E&xit"
 msgstr "종료(&X)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1426
+#: ../src/celestia/qt/qtappwin.cpp:1393
 #, fuzzy
 msgid "Ctrl+Q"
 msgstr "앤티앨리어싱\tCtrl+X"
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1431
-#: ../src/celestia/win32/res/resource_strings.cpp:9
+#: ../src/celestia/qt/qtappwin.cpp:1398
+#: ../src/celestia/win32/res/celestia.rc:177
 msgid "&Navigation"
 msgstr "네비게이션(&N)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1433
+#: ../src/celestia/qt/qtappwin.cpp:1400
 #, fuzzy
 msgid "Select Sun"
 msgstr "천체 선택(&S)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1437
+#: ../src/celestia/qt/qtappwin.cpp:1404
 #, fuzzy
 msgid "Center Selection"
 msgstr "선택한 천체를 가운데로(&C)\tC"
 
-#: ../src/celestia/qt/qtappwin.cpp:1441
+#: ../src/celestia/qt/qtappwin.cpp:1408
 #, fuzzy
 msgid "Goto Selection"
 msgstr ""
 "\n"
 "선택: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1445
-#: ../src/celestia/win32/res/resource_strings.cpp:13
+#: ../src/celestia/qt/qtappwin.cpp:1412
+#: ../src/celestia/win32/res/celestia.rc:182
 msgid "Goto Object..."
 msgstr "천체로 이동"
 
-#: ../src/celestia/qt/qtappwin.cpp:1449
+#. ectx: property (windowTitle), widget (QDialog, tourGuideDialog)
+#: ../src/celestia/qt/qtappwin.cpp:1418 ../src/celestia/qt/tourguide.ui:19
+#: ../src/celestia/win32/res/celestia.rc:598
+msgid "Tour Guide"
+msgstr "길잡이"
+
+#: ../src/celestia/qt/qtappwin.cpp:1424
 msgid "Copy URL / console text"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1454
+#: ../src/celestia/qt/qtappwin.cpp:1429
 msgid "Paste URL / console text"
 msgstr ""
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1460
-#: ../src/celestia/win32/res/resource_strings.cpp:22
+#: ../src/celestia/qt/qtappwin.cpp:1435
+#: ../src/celestia/win32/res/celestia.rc:194
 msgid "&Time"
 msgstr "시간(&T)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1462
+#: ../src/celestia/qt/qtappwin.cpp:1437
 #, fuzzy
 msgid "Set &time"
 msgstr "시간 설정..."
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1470
+#: ../src/celestia/qt/qtappwin.cpp:1444
 #, fuzzy
 msgid "&Display"
 msgstr "표시"
 
-#: ../src/celestia/qt/qtappwin.cpp:1476
+#: ../src/celestia/qt/qtappwin.cpp:1450
 #, fuzzy
 msgid "Dee&p Sky Objects"
 msgstr "선택한 천체"
 
-#: ../src/celestia/qt/qtappwin.cpp:1482
+#: ../src/celestia/qt/qtappwin.cpp:1456
 #, fuzzy
 msgid "&Shadows"
 msgstr "구름 그림자 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1493
-#: ../src/celestia/win32/res/resource_strings.cpp:38
+#: ../src/celestia/qt/qtappwin.cpp:1467
+#: ../src/celestia/win32/res/celestia.rc:216
 msgid "Star St&yle"
 msgstr "항성 모양(&Y)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1500
+#: ../src/celestia/qt/qtappwin.cpp:1474
 #, fuzzy
 msgid "Texture &Resolution"
 msgstr "해상도"
 
-#: ../src/celestia/qt/qtappwin.cpp:1505
+#: ../src/celestia/qt/qtappwin.cpp:1479
 #, fuzzy
 msgid "&FPS control"
 msgstr "사용법(&C)"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1522
-#: ../src/celestia/win32/res/resource_strings.cpp:63
+#: ../src/celestia/qt/qtappwin.cpp:1496
+#: ../src/celestia/win32/res/celestia.rc:254
 msgid "&Bookmarks"
 msgstr "북마크(&B)"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1525
-#: ../src/celestia/win32/res/resource_strings.cpp:56
+#: ../src/celestia/qt/qtappwin.cpp:1499
+#: ../src/celestia/win32/res/celestia.rc:244
 msgid "&View"
 msgstr "창(&V)"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1528
+#: ../src/celestia/qt/qtappwin.cpp:1502
 #, fuzzy
 msgid "&MultiView"
 msgstr "멀티뷰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1531
+#: ../src/celestia/qt/qtappwin.cpp:1505
 #, fuzzy
 msgid "Split view vertically"
 msgstr "수직분할"
 
-#: ../src/celestia/qt/qtappwin.cpp:1532
+#: ../src/celestia/qt/qtappwin.cpp:1506
 #, fuzzy
 msgid "Ctrl+U"
 msgstr "수직분할(&V)\tCtrl+U"
 
-#: ../src/celestia/qt/qtappwin.cpp:1537
+#: ../src/celestia/qt/qtappwin.cpp:1511
 #, fuzzy
 msgid "Split view horizontally"
 msgstr "수평분할"
 
-#: ../src/celestia/qt/qtappwin.cpp:1538
+#: ../src/celestia/qt/qtappwin.cpp:1512
 #, fuzzy
 msgid "Ctrl+R"
 msgstr "수평분할(&H)\tCtrl+R"
 
-#: ../src/celestia/qt/qtappwin.cpp:1543
+#: ../src/celestia/qt/qtappwin.cpp:1517
 #, fuzzy
 msgid "Cycle views"
 msgstr "화면 전환"
 
-#: ../src/celestia/qt/qtappwin.cpp:1544
+#: ../src/celestia/qt/qtappwin.cpp:1518
 msgid "Tab"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1549
+#: ../src/celestia/qt/qtappwin.cpp:1523
 #, fuzzy
 msgid "Single view"
 msgstr "단일창"
 
-#: ../src/celestia/qt/qtappwin.cpp:1550
+#: ../src/celestia/qt/qtappwin.cpp:1524
 #, fuzzy
 msgid "Ctrl+D"
 msgstr "단일 창(&S)\tCtrl+D"
 
-#: ../src/celestia/qt/qtappwin.cpp:1555
+#: ../src/celestia/qt/qtappwin.cpp:1529
 #, fuzzy
 msgid "Delete view"
 msgstr "활성창 닫기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1556
-#: ../src/celestia/win32/res/resource_strings.cpp:163
+#: ../src/celestia/qt/qtappwin.cpp:1530
+#: ../src/celestia/win32/res/celestia.rc:514
 msgid "Delete"
 msgstr "삭제"
 
-#: ../src/celestia/qt/qtappwin.cpp:1562
+#: ../src/celestia/qt/qtappwin.cpp:1536
 #, fuzzy
 msgid "Frames visible"
 msgstr "분할선 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1583
+#: ../src/celestia/qt/qtappwin.cpp:1557
 #, fuzzy
 msgid "Active frame visible"
 msgstr "활성창 분할선 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1599
+#: ../src/celestia/qt/qtappwin.cpp:1573
 #, fuzzy
 msgid "Synchronize time"
 msgstr "시간 동기화"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1640
-#: ../src/celestia/win32/res/resource_strings.cpp:66
+#: ../src/celestia/qt/qtappwin.cpp:1612
+#: ../src/celestia/win32/res/celestia.rc:259
 msgid "&Help"
 msgstr "도움말(&H)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1642
+#: ../src/celestia/qt/qtappwin.cpp:1614
 #, fuzzy
 msgid "Celestia Guide"
 msgstr "셀레스티아"
 
-#: ../src/celestia/qt/qtappwin.cpp:1645
+#: ../src/celestia/qt/qtappwin.cpp:1617
 #, fuzzy
 msgid "Celestia Wiki"
 msgstr "셀레스티아"
 
-#: ../src/celestia/qt/qtappwin.cpp:1650
+#: ../src/celestia/qt/qtappwin.cpp:1622
 #, fuzzy
 msgid "OpenGL Info"
 msgstr "OpenGL정보"
 
-#: ../src/celestia/qt/qtappwin.cpp:1671
+#: ../src/celestia/qt/qtappwin.cpp:1642
 #, fuzzy
 msgid "Add Bookmark..."
 msgstr "북마크 추가(&A)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1675
+#: ../src/celestia/qt/qtappwin.cpp:1646
 #, fuzzy
 msgid "Organize Bookmarks..."
 msgstr "북마크 구성(&O)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1720
+#: ../src/celestia/qt/qtappwin.cpp:1687
 msgid "Set custom FPS"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1721
+#: ../src/celestia/qt/qtappwin.cpp:1688
 msgid "FPS value"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1745
+#: ../src/celestia/qt/qtappwin.cpp:1710
 #, fuzzy, qt-format
 msgid ""
 "Loading data files: %1\n"
 "\n"
 msgstr "로딩중: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1757
-#: ../src/celestia/win32/res/resource_strings.cpp:3
+#: ../src/celestia/qt/qtappwin.cpp:1721
+#: ../src/celestia/win32/res/celestia.rc:166
 msgid "Scripts"
 msgstr "스크립트"
 
-#: ../src/celestia/qt/qtbookmark.cpp:436
+#: ../src/celestia/qt/qtbookmark.cpp:403
 msgid "Title"
 msgstr ""
 
-#: ../src/celestia/qt/qtbookmark.cpp:438
+#: ../src/celestia/qt/qtbookmark.cpp:405
 #, fuzzy
 msgid "Description"
 msgstr "기간"
 
-#: ../src/celestia/qt/qtbookmark.cpp:623
+#: ../src/celestia/qt/qtbookmark.cpp:579
 #, fuzzy
 msgid "Bookmarks Menu"
 msgstr "북마크(&B)"
 
-#: ../src/celestia/qt/qtbookmark.cpp:624
+#: ../src/celestia/qt/qtbookmark.cpp:580
 msgid "Add bookmarks to this folder to see them in the bookmarks menu."
 msgstr ""
 
-#: ../src/celestia/qt/qtbookmark.cpp:629
+#: ../src/celestia/qt/qtbookmark.cpp:585
 #, fuzzy
 msgid "Bookmarks Toolbar"
 msgstr "메인툴바"
 
-#: ../src/celestia/qt/qtbookmark.cpp:630
+#: ../src/celestia/qt/qtbookmark.cpp:586
 msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
 msgstr ""
 
-#: ../src/celestia/qt/qtbookmark.cpp:644
+#: ../src/celestia/qt/qtbookmark.cpp:599
 #, fuzzy
 msgid "Error reading bookmarks file"
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: ../src/celestia/qt/qtbookmark.cpp:761
+#. Create a subtree item called "Bookmarks"
+#: ../src/celestia/qt/qtbookmark.cpp:707
+#: ../src/celestia/win32/winbookmarks.cpp:432
+#: ../src/celestia/win32/winbookmarks.cpp:1047
 msgid "Bookmarks"
 msgstr "북마크"
 
-#: ../src/celestia/qt/qtbookmark.cpp:850
+#: ../src/celestia/qt/qtbookmark.cpp:794
 #, fuzzy
 msgid "Current simulation time"
 msgstr "시간 설정"
 
-#: ../src/celestia/qt/qtbookmark.cpp:851
+#: ../src/celestia/qt/qtbookmark.cpp:795
 #, fuzzy
 msgid "Simulation time at activation"
 msgstr "시간 설정"
 
-#: ../src/celestia/qt/qtbookmark.cpp:852
+#: ../src/celestia/qt/qtbookmark.cpp:796
 #, fuzzy
 msgid "System time at activation"
 msgstr "현재 시각"
 
-#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
-#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
-#. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
-#: ../src/celestia/qt/qtbookmark.cpp:897 ../src/celestia/qt/rc.cpp:39
-#: ../src/celestia/qt/rc.cpp:54
-#, fuzzy
-msgid "New Folder"
-msgstr "새폴더..."
-
 #. Create the render flags actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:36
+#: ../src/celestia/qt/qtcelestiaactions.cpp:39
 msgid "Eq"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:37
+#: ../src/celestia/qt/qtcelestiaactions.cpp:40
 #, fuzzy
 msgid "Equatorial coordinate grid"
 msgstr "천구좌표 보기"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:41
+#: ../src/celestia/qt/qtcelestiaactions.cpp:44
 msgid "Ga"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:42
+#: ../src/celestia/qt/qtcelestiaactions.cpp:45
 #, fuzzy
 msgid "Galactic coordinate grid"
 msgstr "은하"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:46
+#: ../src/celestia/qt/qtcelestiaactions.cpp:49
 msgid "Ec"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:47
+#: ../src/celestia/qt/qtcelestiaactions.cpp:50
 #, fuzzy
 msgid "Ecliptic coordinate grid"
 msgstr "천구좌표"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:51
+#: ../src/celestia/qt/qtcelestiaactions.cpp:54
 msgid "Hz"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:52
+#: ../src/celestia/qt/qtcelestiaactions.cpp:55
 #, fuzzy
 msgid "Horizontal coordinate grid"
 msgstr "수평분할"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:56
+#: ../src/celestia/qt/qtcelestiaactions.cpp:59
 msgid "Ecl"
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:461
-#. i18n: ectx: property (text), widget (QCheckBox, eclipticLineCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:57 ../src/celestia/qt/rc.cpp:212
-#, fuzzy
-msgid "Ecliptic line"
-msgstr "황도"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:61
+#: ../src/celestia/qt/qtcelestiaactions.cpp:64
 #, fuzzy
 msgid "M"
 msgstr " m/s"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:454
-#. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
-#. Controls for marking selected objects
-#: ../src/celestia/qt/qtcelestiaactions.cpp:62
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:590
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:517
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:807
-#: ../src/celestia/qt/rc.cpp:209
-#: ../src/celestia/win32/res/resource_strings.cpp:209
-msgid "Markers"
-msgstr "마커"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:66
+#: ../src/celestia/qt/qtcelestiaactions.cpp:69
 #, fuzzy
 msgid "C"
 msgstr "선택한 천체를 가운데로(&C)\tC"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:405
-#. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
-#. i18n: file: ../src/celestia/qt/preferences.ui:583
-#. i18n: ectx: property (text), widget (QCheckBox, constellationLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:67
-#: ../src/celestia/qt/qtcelestiaactions.cpp:133 ../src/celestia/qt/rc.cpp:194
-#: ../src/celestia/qt/rc.cpp:258
-#: ../src/celestia/win32/res/resource_strings.cpp:229
-msgid "Constellations"
-msgstr "별자리"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:71
+#: ../src/celestia/qt/qtcelestiaactions.cpp:74
 #, fuzzy
 msgid "B"
 msgstr "<b>NVIDIA combiners, no vertex programs</b>"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:72
+#: ../src/celestia/qt/qtcelestiaactions.cpp:75
 #, fuzzy
 msgid "Constellation boundaries"
 msgstr "별자리 경계선"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:76
+#: ../src/celestia/qt/qtcelestiaactions.cpp:79
 #, fuzzy
 msgid "O"
 msgstr "확인"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:236
-#. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:77 ../src/celestia/qt/rc.cpp:142
-#: ../src/celestia/win32/res/resource_strings.cpp:206
-msgid "Orbits"
-msgstr "궤도"
-
-#. Skip sorting if we are dealing with the planets in our own Solar System.
-#. i18n: file: ../src/celestia/qt/preferences.ui:49
-#. i18n: ectx: property (text), widget (QCheckBox, planetsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:286
-#. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:506
-#. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:94
-#: ../src/celestia/qt/qtcelestiaactions.cpp:121
-#: ../src/celestia/qt/qtselectionpopup.cpp:412
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:101 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
-#: ../src/celestia/win32/res/resource_strings.cpp:218
-#: ../src/celestia/win32/winmain.cpp:1539
-#: ../src/celestia/win32/winmain.cpp:1577
-#: ../src/celestia/win32/winmain.cpp:1697
-msgid "Planets"
-msgstr "행성"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:95
-#: ../src/celestia/qt/qtcelestiaactions.cpp:122
-#: ../src/celestia/win32/res/resource_strings.cpp:219
+#: ../src/celestia/qt/qtcelestiaactions.cpp:98
+#: ../src/celestia/qt/qtcelestiaactions.cpp:125
+#: ../src/celestia/win32/res/celestia.rc:653
 msgid "Dwarf Planets"
 msgstr "왜소행성"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:63
-#. i18n: ectx: property (text), widget (QCheckBox, moonsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:300
-#. i18n: ectx: property (text), widget (QCheckBox, moonOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:520
-#. i18n: ectx: property (text), widget (QCheckBox, moonLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:96
-#: ../src/celestia/qt/qtcelestiaactions.cpp:123
-#: ../src/celestia/qt/qtselectionpopup.cpp:418
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:103 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
-#: ../src/celestia/win32/res/resource_strings.cpp:220
-#: ../src/celestia/win32/winmain.cpp:1535
-msgid "Moons"
-msgstr "위성"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:97
-#: ../src/celestia/qt/qtcelestiaactions.cpp:124
-#: ../src/celestia/win32/res/resource_strings.cpp:221
+#: ../src/celestia/qt/qtcelestiaactions.cpp:100
+#: ../src/celestia/qt/qtcelestiaactions.cpp:127
+#: ../src/celestia/win32/res/celestia.rc:655
 msgid "Minor Moons"
 msgstr "소 위성"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:77
-#. i18n: ectx: property (text), widget (QCheckBox, asteroidsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:314
-#. i18n: ectx: property (text), widget (QCheckBox, asteroidOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:534
-#. i18n: ectx: property (text), widget (QCheckBox, asteroidLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:98
-#: ../src/celestia/qt/qtcelestiaactions.cpp:125
-#: ../src/celestia/qt/qtselectionpopup.cpp:424
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:775 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
-#: ../src/celestia/win32/res/resource_strings.cpp:222
-#: ../src/celestia/win32/winmain.cpp:1529
-msgid "Asteroids"
-msgstr "소행성"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:84
-#. i18n: ectx: property (text), widget (QCheckBox, cometsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:321
-#. i18n: ectx: property (text), widget (QCheckBox, cometOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:541
-#. i18n: ectx: property (text), widget (QCheckBox, cometLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:99
-#: ../src/celestia/qt/qtcelestiaactions.cpp:126
-#: ../src/celestia/qt/qtselectionpopup.cpp:427
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:783 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
-#: ../src/celestia/win32/res/resource_strings.cpp:223
-#: ../src/celestia/win32/winmain.cpp:1531
-msgid "Comets"
-msgstr "혜성"
-
-#. TRANSLATORS: translate this as plural
-#. i18n: TRANSLATORS: translate this as plural
-#. i18n: file: ../src/celestia/qt/preferences.ui:91
-#. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
-#. i18n: TRANSLATORS: translate this as plural
-#. i18n: file: ../src/celestia/qt/preferences.ui:328
-#. i18n: ectx: property (text), widget (QCheckBox, spacecraftOrbitsCheck)
-#. i18n: TRANSLATORS: translate this as plural
-#. i18n: file: ../src/celestia/qt/preferences.ui:548
-#. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:100
-#: ../src/celestia/qt/qtcelestiaactions.cpp:127
-#: ../src/celestia/qt/qtselectionpopup.cpp:430
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:105
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:779 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
-#: ../src/celestia/win32/res/resource_strings.cpp:224
-#: ../src/celestia/win32/winmain.cpp:1544
-#, fuzzy
-msgctxt "plural"
-msgid "Spacecraft"
-msgstr "우주선"
-
 #. Label actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:116
+#: ../src/celestia/qt/qtcelestiaactions.cpp:119
 #, fuzzy
 msgid "L"
 msgstr "10x 빠르게(&F)\tL"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:487
-#. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
-#. i18n: file: ../src/celestia/qt/preferences.ui:493
-#. i18n: ectx: property (title), widget (QGroupBox, labelsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:117 ../src/celestia/qt/rc.cpp:215
-#: ../src/celestia/qt/rc.cpp:218
-#: ../src/celestia/win32/res/resource_strings.cpp:232
-msgid "Labels"
-msgstr "이름"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:98
-#. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:555
-#. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
-#. Buttons to select filtering criterion for dsos
-#: ../src/celestia/qt/qtcelestiaactions.cpp:128
-#: ../src/celestia/qt/qtcelestiaactions.cpp:152
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:478 ../src/celestia/qt/rc.cpp:97
-#: ../src/celestia/qt/rc.cpp:246
-#: ../src/celestia/win32/res/resource_strings.cpp:225
-msgid "Galaxies"
-msgstr "은하"
-
 #. galaxiesAction->setShortcut(QString("U"));
-#: ../src/celestia/qt/qtcelestiaactions.cpp:129
-#: ../src/celestia/qt/qtcelestiaactions.cpp:154
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:482
-#: ../src/celestia/win32/res/resource_strings.cpp:226
+#: ../src/celestia/qt/qtcelestiaactions.cpp:132
+#: ../src/celestia/qt/qtcelestiaactions.cpp:157
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:470
+#: ../src/celestia/win32/res/celestia.rc:668
 msgid "Globulars"
 msgstr "구상성단"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:112
-#. i18n: ectx: property (text), widget (QCheckBox, openClustersCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:569
-#. i18n: ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:130 ../src/celestia/qt/rc.cpp:103
-#: ../src/celestia/qt/rc.cpp:252
-#, fuzzy
-msgid "Open clusters"
-msgstr "산개성단"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:105
-#. i18n: ectx: property (text), widget (QCheckBox, nebulaeCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:562
-#. i18n: ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:131
-#: ../src/celestia/qt/qtcelestiaactions.cpp:156
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:486 ../src/celestia/qt/rc.cpp:100
-#: ../src/celestia/qt/rc.cpp:249
-#: ../src/celestia/win32/res/resource_strings.cpp:228
-msgid "Nebulae"
-msgstr "성운"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:606
-#. i18n: ectx: property (title), widget (QGroupBox, locationsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:132 ../src/celestia/qt/rc.cpp:261
-#: ../src/celestia/win32/res/resource_strings.cpp:137
-msgid "Locations"
-msgstr "지명"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:155
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:490
-#: ../src/celestia/win32/res/resource_strings.cpp:227
+#: ../src/celestia/qt/qtcelestiaactions.cpp:158
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:478
+#: ../src/celestia/win32/res/celestia.rc:669
 msgid "Open Clusters"
 msgstr "산개성단"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:155
-#. i18n: ectx: property (text), widget (QCheckBox, cloudsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:163 ../src/celestia/qt/rc.cpp:115
-#: ../src/celestia/win32/res/resource_strings.cpp:198
-msgid "Clouds"
-msgstr "구름"
-
 #. cloudsAction->setShortcut(QString("I"));
-#: ../src/celestia/qt/qtcelestiaactions.cpp:165
-#: ../src/celestia/win32/res/resource_strings.cpp:202
+#: ../src/celestia/qt/qtcelestiaactions.cpp:168
+#: ../src/celestia/win32/res/celestia.rc:636
 msgid "Night Side Lights"
 msgstr "야간맵"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:167
-#: ../src/celestia/win32/res/resource_strings.cpp:203
+#: ../src/celestia/qt/qtcelestiaactions.cpp:170
+#: ../src/celestia/win32/res/celestia.rc:637
 msgid "Comet Tails"
 msgstr "혜성꼬리"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:148
-#. i18n: ectx: property (text), widget (QCheckBox, atmospheresCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:168 ../src/celestia/qt/rc.cpp:112
-#: ../src/celestia/win32/res/resource_strings.cpp:197
-msgid "Atmospheres"
-msgstr "대기"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:175
-#: ../src/celestia/win32/res/resource_strings.cpp:200
+#: ../src/celestia/qt/qtcelestiaactions.cpp:178
+#: ../src/celestia/win32/res/celestia.rc:634
 msgid "Ring Shadows"
 msgstr "고리 그림자"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:176
-#: ../src/celestia/win32/res/resource_strings.cpp:201
+#: ../src/celestia/qt/qtcelestiaactions.cpp:179
+#: ../src/celestia/win32/res/celestia.rc:635
 msgid "Eclipse Shadows"
 msgstr "식 그림자"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:178
-#: ../src/celestia/win32/res/resource_strings.cpp:199
+#: ../src/celestia/qt/qtcelestiaactions.cpp:181
+#: ../src/celestia/win32/res/celestia.rc:633
 msgid "Cloud Shadows"
 msgstr "구름 그림자"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:815
-#. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:183 ../src/celestia/qt/rc.cpp:312
-msgid "Low"
-msgstr "낮음"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:822
-#. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:184 ../src/celestia/qt/rc.cpp:315
-msgid "Medium"
-msgstr "중간"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:829
-#. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185 ../src/celestia/qt/rc.cpp:318
-msgid "High"
-msgstr "높음"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:195
+#: ../src/celestia/qt/qtcelestiaactions.cpp:198
 #, fuzzy
 msgid "Auto Magnitude"
 msgstr "자동 등급 조정\tCtrl+Y"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:197
+#: ../src/celestia/qt/qtcelestiaactions.cpp:200
 msgid "Faintest visible magnitude based on field of view"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:200
+#: ../src/celestia/qt/qtcelestiaactions.cpp:203
 #, fuzzy
 msgid "More Stars Visible"
 msgstr "항성을 많이 보이게\t]"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:203
+#: ../src/celestia/qt/qtcelestiaactions.cpp:206
 #, fuzzy
 msgid "Fewer Stars Visible"
 msgstr "항성을 적게 보이게\t["
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:946
-#. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:209 ../src/celestia/qt/rc.cpp:336
-#, fuzzy
-msgid "Points"
-msgstr "점(&P)"
-
-#: ../src/celestia/qt/qtcelestiaactions.cpp:210
+#: ../src/celestia/qt/qtcelestiaactions.cpp:213
 #, fuzzy
 msgid "Fuzzy Points"
 msgstr "희미한 점(&F)"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:211
+#: ../src/celestia/qt/qtcelestiaactions.cpp:214
 #, fuzzy
 msgid "Scaled Discs"
 msgstr "등급에 따른 원(&D)"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:221
+#: ../src/celestia/qt/qtcelestiaactions.cpp:224
 #, fuzzy
 msgid "Light Time Delay"
 msgstr "광속고려: OFF"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:412
+#: ../src/celestia/qt/qtcelestiaactions.cpp:405
 #, fuzzy, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
 msgstr "시야 45°에서의 한계 등급: %.2f"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:419
+#: ../src/celestia/qt/qtcelestiaactions.cpp:412
 #, fuzzy, qt-format
 msgid "Magnitude limit: %L1"
 msgstr "한계등급: %.2f"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:353
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:291
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:232
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:334
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:681
-#: ../src/celestia/win32/res/resource_strings.cpp:94
-#: ../src/celestia/win32/winstarbrowser.cpp:62
+#: ../src/celestia/win32/res/celestia.rc:313
+#: ../src/celestia/win32/winstarbrowser.cpp:55
 msgid "Name"
 msgstr "이름"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:355
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:293
-#: ../src/celestia/win32/winstarbrowser.cpp:63
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:234
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:336
+#: ../src/celestia/win32/winstarbrowser.cpp:56
 msgid "Distance (ly)"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:357
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:295
-#: ../src/celestia/win32/winstarbrowser.cpp:64
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:236
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:338
+#: ../src/celestia/win32/winstarbrowser.cpp:57
 msgid "App. mag"
 msgstr "겉보기 등급"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:359
-#: ../src/celestia/win32/winstarbrowser.cpp:65
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:238
+#: ../src/celestia/win32/winstarbrowser.cpp:58
 msgid "Abs. mag"
 msgstr "절대 등급"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:361
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:297
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:240
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:340
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:491
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:683
-#: ../src/celestia/win32/winstarbrowser.cpp:66
+#: ../src/celestia/win32/winstarbrowser.cpp:59
 msgid "Type"
 msgstr "분광형"
 
 #. Buttons to select filtering criterion for stars
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:546
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:425
 #, fuzzy
 msgid "Closest Stars"
 msgstr "항성 보기"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:550
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:429
 #, fuzzy
 msgid "Brightest Stars"
 msgstr "항성"
 
 #. Additional filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:560
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:500
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:791
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:439
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:488
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:786
 #, fuzzy
 msgid "Filter"
 msgstr "항성 표시 조정"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:563
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:442
 msgid "With Planets"
 msgstr "행성 존재"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:567
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:446
 #, fuzzy
 msgid "Multiple Stars"
 msgstr "항성 보기"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:570
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:449
 #, fuzzy
 msgid "Barycenters"
 msgstr "무게중심"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:576
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:455
 #, fuzzy
 msgid "Spectral Type"
 msgstr "잘못된 항성 분광형, 항성 #"
 
 #. End filtering controls
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:585
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:464
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:500
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:793
 msgid "Refresh"
 msgstr "새로고침"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:593
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:520
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:810
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:472
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:508
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
 #, fuzzy
 msgid "Mark Selected"
 msgstr "마커(&M)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:474
 #, fuzzy
 msgid "Mark stars selected in list view"
 msgstr "표시 항성수"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:598
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:525
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:815
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:477
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:513
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:810
 #, fuzzy
 msgid "Unmark Selected"
 msgstr "마커(&M)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:599
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:816
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:478
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:811
 msgid "Unmark stars selected in list view"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:603
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:530
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:820
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:482
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:518
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:815
 #, fuzzy
 msgid "Clear Markers"
 msgstr "마커"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:605
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:822
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:484
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:520
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:817
 msgid "Remove all existing markers"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:612
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:539
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
-#: ../src/celestia/win32/res/resource_strings.cpp:235
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:491
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:527
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:824
+#: ../src/celestia/win32/res/celestia.rc:677
 msgid "None"
 msgstr "없음"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:613
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:540
-#: ../src/celestia/qt/qtselectionpopup.cpp:264
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:830
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:492
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:528
+#: ../src/celestia/qt/qtselectionpopup.cpp:258
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:825
 msgid "Diamond"
 msgstr "마름모(◇)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:614
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:541
-#: ../src/celestia/qt/qtselectionpopup.cpp:265
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:831
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:493
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:529
+#: ../src/celestia/qt/qtselectionpopup.cpp:259
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
 msgid "Triangle"
 msgstr "삼각형(△)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:542
-#: ../src/celestia/qt/qtselectionpopup.cpp:266
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:832
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:494
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:530
+#: ../src/celestia/qt/qtselectionpopup.cpp:260
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:827
 msgid "Square"
 msgstr "사각형(□)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:616
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:543
-#: ../src/celestia/qt/qtselectionpopup.cpp:268
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:833
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:495
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:531
+#: ../src/celestia/qt/qtselectionpopup.cpp:262
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:828
 msgid "Plus"
 msgstr "십자"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:617
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:544
-#: ../src/celestia/qt/qtselectionpopup.cpp:269
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:834
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:496
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
+#: ../src/celestia/qt/qtselectionpopup.cpp:263
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:829
 msgid "X"
 msgstr "X자"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:618
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:545
-#: ../src/celestia/qt/qtselectionpopup.cpp:274
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:835
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:497
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:533
+#: ../src/celestia/qt/qtselectionpopup.cpp:268
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:830
 msgid "Circle"
 msgstr "원(○)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:619
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:546
-#: ../src/celestia/qt/qtselectionpopup.cpp:270
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:836
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:498
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:534
+#: ../src/celestia/qt/qtselectionpopup.cpp:264
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:831
 msgid "Left Arrow"
 msgstr "왼쪽화살표(←)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:620
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:547
-#: ../src/celestia/qt/qtselectionpopup.cpp:271
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:837
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:499
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:535
+#: ../src/celestia/qt/qtselectionpopup.cpp:265
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:832
 msgid "Right Arrow"
 msgstr "오른쪽화살표(→)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:621
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:548
-#: ../src/celestia/qt/qtselectionpopup.cpp:272
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:838
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:500
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:536
+#: ../src/celestia/qt/qtselectionpopup.cpp:266
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:833
 msgid "Up Arrow"
 msgstr "위쪽화살표(↑)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:622
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:549
-#: ../src/celestia/qt/qtselectionpopup.cpp:273
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:839
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:501
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:537
+#: ../src/celestia/qt/qtselectionpopup.cpp:267
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:834
 msgid "Down Arrow"
 msgstr "아랫쪽화살표(↓)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:624
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:551
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:841
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:503
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:539
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:836
 #, fuzzy
 msgid "Select marker symbol"
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:637
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:564
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:854
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:516
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:552
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:849
 #, fuzzy
 msgid "Select marker size"
 msgstr "동영상 크기:"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:641
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:568
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:858
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:520
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:556
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:853
 #, fuzzy
 msgid "Click to select marker color"
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:644
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:571
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:861
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:523
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:559
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:856
 #, fuzzy
 msgid "Label"
 msgstr "지명 보기"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:711
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:624
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:585
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:629
 #, fuzzy, qt-format
 msgid "%1 objects found"
 msgstr "천체"
 
-#: ../src/celestia/qt/qtcommandline.cpp:16
+#: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "Set the data directory."
 msgstr ""
 
-#: ../src/celestia/qt/qtcommandline.cpp:16
+#: ../src/celestia/qt/qtcommandline.cpp:18
 msgid "datadir"
-msgstr ""
-
-#: ../src/celestia/qt/qtcommandline.cpp:17
-#, fuzzy
-msgid "Set the configuraton file."
-msgstr "대체 설정 파일을 사용합니다."
-
-#: ../src/celestia/qt/qtcommandline.cpp:17
-msgid "conf"
-msgstr ""
-
-#: ../src/celestia/qt/qtcommandline.cpp:18
-msgid "Add an extras directory. This option may be specified multiple times."
-msgstr ""
-
-#: ../src/celestia/qt/qtcommandline.cpp:18
-msgid "extrasdir"
 msgstr ""
 
 #: ../src/celestia/qt/qtcommandline.cpp:19
 #, fuzzy
+msgid "Set the configuraton file."
+msgstr "대체 설정 파일을 사용합니다."
+
+#: ../src/celestia/qt/qtcommandline.cpp:19
+msgid "conf"
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:20
+msgid "Add an extras directory. This option may be specified multiple times."
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:20
+msgid "extrasdir"
+msgstr ""
+
+#: ../src/celestia/qt/qtcommandline.cpp:21
+#, fuzzy
 msgid "Start in fullscreen mode."
 msgstr "전체화면 표시"
 
-#: ../src/celestia/qt/qtcommandline.cpp:20
+#: ../src/celestia/qt/qtcommandline.cpp:22
 #, fuzzy
 msgid "Skip the splash screen."
 msgstr "스플래쉬 스크린 사용안함"
 
-#: ../src/celestia/qt/qtcommandline.cpp:21
+#: ../src/celestia/qt/qtcommandline.cpp:23
 msgid "Set the start cel:// URL or startup script path."
 msgstr ""
 
-#: ../src/celestia/qt/qtcommandline.cpp:21
+#: ../src/celestia/qt/qtcommandline.cpp:23
 #, fuzzy
 msgid "url"
 msgstr "7"
 
-#: ../src/celestia/qt/qtcommandline.cpp:22
+#: ../src/celestia/qt/qtcommandline.cpp:24
 msgid "Set the path to the log file."
 msgstr ""
 
-#: ../src/celestia/qt/qtcommandline.cpp:22
+#: ../src/celestia/qt/qtcommandline.cpp:24
 msgid "logpath"
 msgstr ""
 
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:521
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:509
 msgid "Mark DSOs selected in list view"
 msgstr ""
 
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:526
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:514
 #, fuzzy
 msgid "Unmark DSOs selected in list view"
 msgstr "마커(&M)"
 
-#: ../src/celestia/qt/qteventfinder.cpp:67
-#: ../src/celestia/win32/wineclipses.cpp:295
+#: ../src/celestia/qt/qteventfinder.cpp:69
+#: ../src/celestia/win32/wineclipses.cpp:314
 msgid "Earth"
 msgstr "지구"
 
-#: ../src/celestia/qt/qteventfinder.cpp:68
-#: ../src/celestia/win32/wineclipses.cpp:296
+#: ../src/celestia/qt/qteventfinder.cpp:70
+#: ../src/celestia/win32/wineclipses.cpp:315
 msgid "Jupiter"
 msgstr "목성"
 
-#: ../src/celestia/qt/qteventfinder.cpp:69
-#: ../src/celestia/win32/wineclipses.cpp:297
+#: ../src/celestia/qt/qteventfinder.cpp:71
+#: ../src/celestia/win32/wineclipses.cpp:316
 msgid "Saturn"
 msgstr "토성"
 
-#: ../src/celestia/qt/qteventfinder.cpp:70
-#: ../src/celestia/win32/wineclipses.cpp:298
+#: ../src/celestia/qt/qteventfinder.cpp:72
+#: ../src/celestia/win32/wineclipses.cpp:317
 msgid "Uranus"
 msgstr "천왕성"
 
-#: ../src/celestia/qt/qteventfinder.cpp:71
-#: ../src/celestia/win32/wineclipses.cpp:299
+#: ../src/celestia/qt/qteventfinder.cpp:73
+#: ../src/celestia/win32/wineclipses.cpp:318
 msgid "Neptune"
 msgstr "해왕성"
 
-#: ../src/celestia/qt/qteventfinder.cpp:72
-#: ../src/celestia/win32/wineclipses.cpp:300
+#: ../src/celestia/qt/qteventfinder.cpp:74
+#: ../src/celestia/win32/wineclipses.cpp:319
 msgid "Pluto"
 msgstr "명왕성"
 
-#: ../src/celestia/qt/qteventfinder.cpp:216
+#: ../src/celestia/qt/qteventfinder.cpp:211
 #, fuzzy
 msgid "Eclipsed body"
 msgstr "모천체 '"
 
-#: ../src/celestia/qt/qteventfinder.cpp:218
+#: ../src/celestia/qt/qteventfinder.cpp:213
+#: ../src/celestia/win32/wineclipses.cpp:73
 msgid "Occulter"
 msgstr ""
 
-#: ../src/celestia/qt/qteventfinder.cpp:220
+#: ../src/celestia/qt/qteventfinder.cpp:215
 #, fuzzy
 msgid "Start time"
 msgstr "전체화면 표시"
 
-#: ../src/celestia/qt/qteventfinder.cpp:222
-#: ../src/celestia/win32/wineclipses.cpp:67
+#: ../src/celestia/qt/qteventfinder.cpp:217
+#: ../src/celestia/win32/wineclipses.cpp:76
 msgid "Duration"
 msgstr "기간"
 
-#: ../src/celestia/qt/qteventfinder.cpp:318
+#: ../src/celestia/qt/qteventfinder.cpp:307
 #, fuzzy
 msgid "Solar eclipses"
 msgstr "일식"
 
-#: ../src/celestia/qt/qteventfinder.cpp:319
+#: ../src/celestia/qt/qteventfinder.cpp:308
 #, fuzzy
 msgid "Lunar eclipses"
 msgstr "월식"
 
-#: ../src/celestia/qt/qteventfinder.cpp:320
+#: ../src/celestia/qt/qteventfinder.cpp:309
 #, fuzzy
 msgid "All eclipses"
 msgstr "전체 해제(&A)"
 
 #. Search the search range box
-#: ../src/celestia/qt/qteventfinder.cpp:328
+#: ../src/celestia/qt/qteventfinder.cpp:317
 #, fuzzy
 msgid "Search range"
 msgstr "포인트 크기 범위"
 
-#: ../src/celestia/qt/qteventfinder.cpp:354
+#: ../src/celestia/qt/qteventfinder.cpp:343
 #, fuzzy
 msgid "Find eclipses"
 msgstr "월식"
 
-#: ../src/celestia/qt/qteventfinder.cpp:411
+#: ../src/celestia/qt/qteventfinder.cpp:398
 #, fuzzy, qt-format
 msgid "%1 is not a valid object"
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/qt/qteventfinder.cpp:423
+#: ../src/celestia/qt/qteventfinder.cpp:410
 msgid "End date is earlier than start date."
 msgstr ""
 
-#: ../src/celestia/qt/qteventfinder.cpp:437
+#: ../src/celestia/qt/qteventfinder.cpp:424
 #, fuzzy
 msgid "Finding eclipses..."
 msgstr "일식"
 
-#: ../src/celestia/qt/qteventfinder.cpp:470
+#: ../src/celestia/qt/qteventfinder.cpp:456
 #, fuzzy
 msgid "Set time to mid-eclipse"
 msgstr "현재시간으로 설정"
 
-#: ../src/celestia/qt/qteventfinder.cpp:474
+#: ../src/celestia/qt/qteventfinder.cpp:460
 #, fuzzy, qt-format
 msgid "Near %1"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qteventfinder.cpp:478
-#: ../src/celestia/qt/qteventfinder.cpp:482
+#: ../src/celestia/qt/qteventfinder.cpp:464
+#: ../src/celestia/qt/qteventfinder.cpp:468
 #, fuzzy, qt-format
 msgid "From surface of %1"
 msgstr "이미지 파일 읽는 중: "
 
-#: ../src/celestia/qt/qteventfinder.cpp:486
+#: ../src/celestia/qt/qteventfinder.cpp:472
 #, fuzzy, qt-format
 msgid "Behind %1"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtglwidget.cpp:105
+#: ../src/celestia/qt/qtglwidget.cpp:116
 msgid "Celestia was unable to initialize OpenGLES 2.0."
 msgstr ""
 
-#: ../src/celestia/qt/qtglwidget.cpp:112
+#: ../src/celestia/qt/qtglwidget.cpp:123
 msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:225
+#: ../src/celestia/qt/qtinfopanel.cpp:155
 msgid "Error: no object selected!\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:237
+#: ../src/celestia/qt/qtinfopanel.cpp:167
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
 #, fuzzy
 msgid "Info"
 msgstr "천체정보(&I)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:257
+#: ../src/celestia/qt/qtinfopanel.cpp:187
 #, fuzzy, qt-format
 msgid "Web info: %1"
 msgstr "OpenGL정보"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:273
+#: ../src/celestia/qt/qtinfopanel.cpp:203
 #, fuzzy, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:275
+#: ../src/celestia/qt/qtinfopanel.cpp:205
 #, fuzzy, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:280
+#: ../src/celestia/qt/qtinfopanel.cpp:210
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:323
+#: ../src/celestia/qt/qtinfopanel.cpp:253
 #, fuzzy, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "자전주기: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:326
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy
 msgid "Prograde"
 msgstr "베오그라드"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:326
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy
 msgid "Retrograde"
 msgstr "베오그라드"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:327
+#: ../src/celestia/qt/qtinfopanel.cpp:257
 #, fuzzy, qt-format
 msgid "<b>Rotation direction:</b> %1"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:331
+#: ../src/celestia/qt/qtinfopanel.cpp:261
 #, fuzzy, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:357
-msgid "years"
-msgstr ""
-
-#: ../src/celestia/qt/qtinfopanel.cpp:362
+#: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:364
+#: ../src/celestia/qt/qtinfopanel.cpp:270
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:372
+#: ../src/celestia/qt/qtinfopanel.cpp:278
 #, fuzzy, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:375
+#: ../src/celestia/qt/qtinfopanel.cpp:281
 #, fuzzy, qt-format
 msgid "<b>End:</b> %1"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:377
+#: ../src/celestia/qt/qtinfopanel.cpp:283
 #, fuzzy
 msgid "Orbit information"
 msgstr "천체 정보 표시"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:378
+#: ../src/celestia/qt/qtinfopanel.cpp:284
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
-#. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-#: ../src/celestia/qt/qtinfopanel.cpp:381
+#: ../src/celestia/qt/qtinfopanel.cpp:300
+msgid "years"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:304
 #, fuzzy, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:386
+#: ../src/celestia/qt/qtinfopanel.cpp:310
 #, fuzzy
 msgid "AU"
 msgstr "AU"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:394
+#: ../src/celestia/qt/qtinfopanel.cpp:318
 #, fuzzy, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:395
+#: ../src/celestia/qt/qtinfopanel.cpp:319
 #, fuzzy, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:396
+#: ../src/celestia/qt/qtinfopanel.cpp:320
 #, fuzzy, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:398
+#: ../src/celestia/qt/qtinfopanel.cpp:322
 #, fuzzy, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:399
+#: ../src/celestia/qt/qtinfopanel.cpp:324
 #, fuzzy, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:401
+#: ../src/celestia/qt/qtinfopanel.cpp:326
 #, fuzzy, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:403
+#: ../src/celestia/qt/qtinfopanel.cpp:328
 #, fuzzy, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:405
+#: ../src/celestia/qt/qtinfopanel.cpp:330
 #, fuzzy, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:407
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 #, fuzzy, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "자전주기: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:430
-#: ../src/celestia/qt/qtinfopanel.cpp:453
+#: ../src/celestia/qt/qtinfopanel.cpp:338
+#, fuzzy, qt-format
+msgid "<b>Mean motion (calculated):</b> %L1%2/day"
+msgstr "자전주기: "
+
+#: ../src/celestia/qt/qtinfopanel.cpp:362
+#: ../src/celestia/qt/qtinfopanel.cpp:385
 #, fuzzy, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:434
-#: ../src/celestia/qt/qtinfopanel.cpp:457
+#: ../src/celestia/qt/qtinfopanel.cpp:366
+#: ../src/celestia/qt/qtinfopanel.cpp:389
 #, fuzzy, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:465
+#: ../src/celestia/qt/qtinfopanel.cpp:397
 #, fuzzy, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:469
+#: ../src/celestia/qt/qtinfopanel.cpp:401
 #, fuzzy, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:209
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:207
 #, fuzzy
 msgid "OpenGL 2.1"
 msgstr "OpenGL 2.0"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:253
-#: ../src/celestia/win32/res/resource_strings.cpp:43
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:251
+#: ../src/celestia/win32/res/celestia.rc:224
 msgid "Blackbody D65"
 msgstr ""
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:254
-#: ../src/celestia/win32/res/resource_strings.cpp:44
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:252
+#: ../src/celestia/win32/res/celestia.rc:225
 msgid "Blackbody (Solar Whitepoint)"
 msgstr ""
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:255
-#: ../src/celestia/win32/res/resource_strings.cpp:45
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:253
+#: ../src/celestia/win32/res/celestia.rc:226
 msgid "Blackbody (Vega Whitepoint)"
 msgstr ""
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:256
-#: ../src/celestia/win32/res/resource_strings.cpp:46
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:254
+#: ../src/celestia/win32/res/celestia.rc:227
 #, fuzzy
 msgid "Classic colors"
 msgstr "항성 모양(&Y)"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:262
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:260
 #, fuzzy
 msgid "Local format"
 msgstr "현지 시간"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:264
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:262
 #, fuzzy
 msgid "Time zone name"
 msgstr "표준시간대"
 
-#: ../src/celestia/qt/qtpreferencesdialog.cpp:265
+#: ../src/celestia/qt/qtpreferencesdialog.cpp:263
 #, fuzzy
 msgid "UTC offset"
 msgstr "UTC 오프셋"
@@ -2627,18 +3086,22 @@ msgid "End: %1"
 msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:128
+#, c++-format
 msgid "{:.3f} ly"
 msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:130
+#, c++-format
 msgid "{:.3f} au"
 msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:132
+#, c++-format
 msgid "{:.3f} km"
 msgstr ""
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:134
+#, c++-format
 msgid "{:.3f} m"
 msgstr ""
 
@@ -2659,26 +3122,26 @@ msgid "&Select"
 msgstr "천체 선택(&S)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:158
-#: ../src/celestia/win32/res/resource_strings.cpp:178
-#: ../src/celestia/win32/res/resource_strings.cpp:185
+#: ../src/celestia/win32/res/celestia.rc:565
+#: ../src/celestia/win32/res/celestia.rc:585
 msgid "&Center"
 msgstr "가운데로(&C)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:162
-#: ../src/celestia/win32/winmain.cpp:1635
-#: ../src/celestia/win32/winmain.cpp:1685
-#: ../src/celestia/win32/winmain.cpp:1708
+#: ../src/celestia/win32/wincontextmenu.cpp:262
+#: ../src/celestia/win32/wincontextmenu.cpp:308
+#: ../src/celestia/win32/wincontextmenu.cpp:329
 msgid "&Goto"
 msgstr "이동(&G)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:166
-#: ../src/celestia/win32/winmain.cpp:1636
-#: ../src/celestia/win32/winmain.cpp:1709
+#: ../src/celestia/win32/wincontextmenu.cpp:263
+#: ../src/celestia/win32/wincontextmenu.cpp:330
 msgid "&Follow"
 msgstr "추적(&F)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:172
-#: ../src/celestia/win32/winmain.cpp:1637
+#: ../src/celestia/win32/wincontextmenu.cpp:264
 msgid "S&ync Orbit"
 msgstr "자전 동기(&Y)"
 
@@ -2688,55 +3151,55 @@ msgid "Visible"
 msgstr "활성창 분할선 보기"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:196
-#: ../src/celestia/win32/winmain.cpp:1722
+#: ../src/celestia/win32/wincontextmenu.cpp:343
 msgid "&Unmark"
 msgstr "마커 해제(&U)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:214
-#: ../src/celestia/win32/winmain.cpp:1655
+#: ../src/celestia/win32/wincontextmenu.cpp:282
 #, fuzzy
 msgid "Select &Primary Body"
 msgstr "화면모드 선택"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:267
+#: ../src/celestia/qt/qtselectionpopup.cpp:261
 msgid "Filled Square"
 msgstr "사각형(■)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:275
+#: ../src/celestia/qt/qtselectionpopup.cpp:269
 msgid "Disk"
 msgstr "원(●)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:278
-#: ../src/celestia/win32/winmain.cpp:1724
+#: ../src/celestia/qt/qtselectionpopup.cpp:272
+#: ../src/celestia/win32/wincontextmenu.cpp:345
 msgid "&Mark"
 msgstr "마커(&M)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:297
-#: ../src/celestia/win32/winmain.cpp:1640
+#: ../src/celestia/qt/qtselectionpopup.cpp:290
+#: ../src/celestia/win32/wincontextmenu.cpp:267
 msgid "&Reference Marks"
 msgstr "벡터 참조(&R)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:299
+#: ../src/celestia/qt/qtselectionpopup.cpp:292
 #, fuzzy
 msgid "Show &Body Axes"
 msgstr "천체 축 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:305
+#: ../src/celestia/qt/qtselectionpopup.cpp:298
 #, fuzzy
 msgid "Show &Frame Axes"
 msgstr "프레임 축 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:311
+#: ../src/celestia/qt/qtselectionpopup.cpp:304
 #, fuzzy
 msgid "Show &Sun Direction"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:317
+#: ../src/celestia/qt/qtselectionpopup.cpp:310
 #, fuzzy
 msgid "Show &Velocity Vector"
 msgstr "속도 벡터 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:323
+#: ../src/celestia/qt/qtselectionpopup.cpp:316
 #, fuzzy
 msgid "Show S&pin Vector"
 msgstr "속도 벡터 보기"
@@ -2744,1663 +3207,1210 @@ msgstr "속도 벡터 보기"
 #. Only show the frame center menu item if the selection orbits another
 #. a non-stellar object. If it orbits a star, this is generally identical
 #. to the sun direction entry.
-#: ../src/celestia/qt/qtselectionpopup.cpp:335
+#: ../src/celestia/qt/qtselectionpopup.cpp:328
 #, fuzzy, qt-format
 msgid "Show &Direction to %1"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:342
+#: ../src/celestia/qt/qtselectionpopup.cpp:335
 #, fuzzy
 msgid "Show Planetographic &Grid"
 msgstr "행성그리드 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:348
+#: ../src/celestia/qt/qtselectionpopup.cpp:341
 #, fuzzy
 msgid "Show &Terminator"
 msgstr "밤낮 경계선 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:367
-#: ../src/celestia/win32/winmain.cpp:1672
+#: ../src/celestia/qt/qtselectionpopup.cpp:357
+#: ../src/celestia/win32/wincontextmenu.cpp:297
 msgid "&Alternate Surfaces"
 msgstr "표면 교체(&A)"
 
 #. TRANSLATORS: normal texture in an alternative surface menu
-#: ../src/celestia/qt/qtselectionpopup.cpp:368
-#: ../src/celestia/win32/winmain.cpp:1609
+#: ../src/celestia/qt/qtselectionpopup.cpp:358
+#: ../src/celestia/win32/wincontextmenu.cpp:226
 msgid "Normal"
 msgstr "일반"
 
-#. i18n: file: ../src/celestia/qt/preferences.ui:56
-#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:293
-#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:513
-#. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:415 ../src/celestia/qt/rc.cpp:78
-#: ../src/celestia/qt/rc.cpp:160 ../src/celestia/qt/rc.cpp:227
-#: ../src/celestia/win32/winmain.cpp:1541
-#, fuzzy
-msgid "Dwarf planets"
-msgstr "왜소행성"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:70
-#. i18n: ectx: property (text), widget (QCheckBox, minorMoonsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:307
-#. i18n: ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:527
-#. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:421
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:111 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
-#: ../src/celestia/win32/winmain.cpp:1537
-#, fuzzy
-msgid "Minor moons"
-msgstr "소 위성"
-
-#: ../src/celestia/qt/qtselectionpopup.cpp:433
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:117
+#: ../src/celestia/qt/qtselectionpopup.cpp:418
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:118
 #, fuzzy
 msgid "Other objects"
 msgstr "천체"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:62
+#: ../src/celestia/qt/qtsettimedialog.cpp:63
 #, fuzzy
 msgid "Set Time"
 msgstr "시간 설정..."
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:68
-#: ../src/celestia/win32/res/resource_strings.cpp:169
+#: ../src/celestia/qt/qtsettimedialog.cpp:69
+#: ../src/celestia/win32/res/celestia.rc:541
 msgid "Time Zone: "
 msgstr "시간대: "
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:73
-#: ../src/celestia/win32/wintime.cpp:94
+#: ../src/celestia/qt/qtsettimedialog.cpp:74
+#: ../src/celestia/win32/wintime.cpp:97
 msgid "Universal Time"
 msgstr "세계표준시"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:74
-#: ../src/celestia/win32/wintime.cpp:95
+#: ../src/celestia/qt/qtsettimedialog.cpp:75
+#: ../src/celestia/win32/wintime.cpp:98
 msgid "Local Time"
 msgstr "현지 시간"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:79
+#: ../src/celestia/qt/qtsettimedialog.cpp:80
 #, fuzzy
 msgid "Select Time Zone"
 msgstr "표준시간대"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:83
+#: ../src/celestia/qt/qtsettimedialog.cpp:84
 #, fuzzy
 msgid "Date: "
 msgstr "날짜"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:101
+#: ../src/celestia/qt/qtsettimedialog.cpp:102
 #, fuzzy
 msgid "Set Year"
 msgstr "시간 설정..."
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:104
+#: ../src/celestia/qt/qtsettimedialog.cpp:105
 #, fuzzy
 msgid "Set Month"
 msgstr "시간 설정..."
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:107
+#: ../src/celestia/qt/qtsettimedialog.cpp:108
 #, fuzzy
 msgid "Set Day"
 msgstr "시간 설정..."
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:111
+#: ../src/celestia/qt/qtsettimedialog.cpp:112
 #, fuzzy
 msgid "Time: "
 msgstr "시간(&T)"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:130
+#: ../src/celestia/qt/qtsettimedialog.cpp:131
 #, fuzzy
 msgid "Set Hours"
 msgstr " 시간"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:133
-#: ../src/celestia/qt/qtsettimedialog.cpp:137
+#: ../src/celestia/qt/qtsettimedialog.cpp:134
+#: ../src/celestia/qt/qtsettimedialog.cpp:138
 msgid ":"
 msgstr ""
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:134
+#: ../src/celestia/qt/qtsettimedialog.cpp:135
 #, fuzzy
 msgid "Set Minutes"
 msgstr " 분"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:138
+#: ../src/celestia/qt/qtsettimedialog.cpp:139
 #, fuzzy
 msgid "Set Seconds"
 msgstr " 초"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:142
-#: ../src/celestia/win32/res/resource_strings.cpp:171
+#: ../src/celestia/qt/qtsettimedialog.cpp:143
+#: ../src/celestia/win32/res/celestia.rc:547
 msgid "Julian Date: "
 msgstr "쥴리안 일자"
 
-#: ../src/celestia/qt/qtsettimedialog.cpp:154
+#: ../src/celestia/qt/qtsettimedialog.cpp:155
 #, fuzzy
 msgid "Set Julian Date"
 msgstr "쥴리안 일자"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:59
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:61
 #, fuzzy
 msgid "Barycenter"
 msgstr "무게중심"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:61
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:63
 #, fuzzy
 msgid "Star"
 msgstr "잘못된 항성 분광형, 항성 #"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:69
-#: ../src/celestia/win32/wineclipses.cpp:63
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:71
 msgid "Planet"
 msgstr "행성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:71
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:73
 #, fuzzy
 msgid "Dwarf planet"
 msgstr "왜소행성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:73
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:75
 msgid "Moon"
 msgstr "달"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:75
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:77
 #, fuzzy
 msgid "Minor moon"
 msgstr "소 위성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:77
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:79
 msgid "Asteroid"
 msgstr "소행성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:79
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:81
 msgid "Comet"
 msgstr "혜성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:81
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:83
 msgid "Spacecraft"
 msgstr "우주선"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:83
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:85
 #, fuzzy
 msgid "Reference point"
 msgstr "벡터 참조(&R)"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:85
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:87
 #, fuzzy
 msgid "Component"
 msgstr "계산"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:87
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:89
 #, fuzzy
 msgid "Surface feature"
 msgstr "천체 표면으로 이동"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:91
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:93
 #, fuzzy
 msgid "Unknown"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:107
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:108
 #, fuzzy
 msgid "Asteroids & comets"
 msgstr "소행성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:109
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:110
 #, fuzzy
 msgid "Reference points"
 msgstr "벡터 참조(&R)"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:113
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:114
 msgid "Components"
 msgstr ""
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:115
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:116
 #, fuzzy
 msgid "Surface features"
 msgstr "기타"
 
 #. Buttons to select filtering criterion for objects
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:771
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:766
 #, fuzzy
 msgid "Planets and moons"
 msgstr "행성"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:797
 #, fuzzy
 msgid "Group objects by class"
 msgstr "천체"
 
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:812
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:807
 msgid "Mark bodies selected in list view"
 msgstr ""
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:34
+#: ../src/celestia/qt/qttimetoolbar.cpp:36
 #, fuzzy
 msgid "Reverse time"
 msgstr "시간흐름을 반대로"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:36
+#: ../src/celestia/qt/qttimetoolbar.cpp:38
 #, fuzzy
 msgid "10x slower"
 msgstr "10x 느리게(&S)\tK"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:38
+#: ../src/celestia/qt/qttimetoolbar.cpp:40
 #, fuzzy
 msgid "2x slower"
 msgstr " 분의 1배속"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:40
+#: ../src/celestia/qt/qttimetoolbar.cpp:42
 #, fuzzy
 msgid "Pause time"
 msgstr "시간 멈춤"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:42
+#: ../src/celestia/qt/qttimetoolbar.cpp:44
 #, fuzzy
 msgid "2x faster"
 msgstr " 배속"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:44
+#: ../src/celestia/qt/qttimetoolbar.cpp:46
 #, fuzzy
 msgid "10x faster"
 msgstr "10x 빠르게(&F)\tL"
 
-#: ../src/celestia/qt/qttimetoolbar.cpp:48
+#: ../src/celestia/qt/qttimetoolbar.cpp:50
 #, fuzzy
 msgid "Set to current time"
 msgstr "현재시간으로 설정"
 
-#. i18n: file: ../src/celestia/qt/addbookmark.ui:16
-#. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
-#: ../src/celestia/qt/rc.cpp:3
-#, fuzzy
-msgid "Bookmark Location"
-msgstr "지명 이름 보기"
-
-#. i18n: file: ../src/celestia/qt/addbookmark.ui:24
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/rc.cpp:6
-#, fuzzy
-msgid "Bookmark name:"
-msgstr "천체명을 입력하세요: "
-
-#. i18n: file: ../src/celestia/qt/addbookmark.ui:37
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:44
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: ../src/celestia/qt/rc.cpp:9 ../src/celestia/qt/rc.cpp:45
-#, fuzzy
-msgid "Create in:"
-msgstr "위치지정 >>"
-
-#. i18n: file: ../src/celestia/qt/addbookmark.ui:44
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: ../src/celestia/qt/rc.cpp:12
-#, fuzzy
-msgid "Time source:"
-msgstr "시간: 정지"
-
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:14
-#. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
-#: ../src/celestia/qt/rc.cpp:15
-msgid "Dialog"
+#: ../src/celestia/qt/qttourguide.cpp:62
+msgid "No guide destinations were found."
 msgstr ""
 
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:56
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/rc.cpp:18
-#, fuzzy
-msgid "Object name:"
-msgstr "천체 이름"
+#. ectx: property (text), widget (QLabel, label)
+#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+msgid "Select your destination:"
+msgstr "목적지를 선택하세요:"
 
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:75
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: ../src/celestia/qt/rc.cpp:21
-#, fuzzy
-msgid "Longitude:"
-msgstr "위도: "
+#. ectx: property (text), widget (QPushButton, gotoButton)
+#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/win32/res/celestia.rc:603
+msgid "Go To"
+msgstr "이동"
 
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:88
-#. i18n: ectx: property (text), widget (QLabel, label_4)
-#: ../src/celestia/qt/rc.cpp:24
-#, fuzzy
-msgid "Distance:"
-msgstr "거리: "
-
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:166
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: ../src/celestia/qt/rc.cpp:27
-#, fuzzy
-msgid "Latitude:"
-msgstr "위도: "
-
-#. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:187
-#. i18n: ectx: property (text), widget (QRadioButton, radiiButton)
-#: ../src/celestia/qt/rc.cpp:33
-#: ../src/celestia/win32/res/resource_strings.cpp:127
-msgid "radii"
-msgstr "반경"
-
-#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:21
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/rc.cpp:42
-#, fuzzy
-msgid "Name:"
-msgstr "이름"
-
-#. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:63
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: ../src/celestia/qt/rc.cpp:48
-#, fuzzy
-msgid "Description:"
-msgstr "해상도"
-
-#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
-#: ../src/celestia/qt/rc.cpp:51
-#: ../src/celestia/win32/res/resource_strings.cpp:158
-msgid "Organize Bookmarks"
-msgstr "북마크 구성"
-
-#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:31
-#. i18n: ectx: property (text), widget (QPushButton, newSeparatorButton)
-#: ../src/celestia/qt/rc.cpp:57
-#, fuzzy
-msgid "New Separator"
-msgstr "새폴더..."
-
-#. i18n: file: ../src/celestia/qt/organizebookmarks.ui:38
-#. i18n: ectx: property (text), widget (QPushButton, removeItemButton)
-#: ../src/celestia/qt/rc.cpp:60
-msgid "Remove Item"
-msgstr ""
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:14
-#. i18n: ectx: property (windowTitle), widget (QDialog, preferencesDialog)
-#: ../src/celestia/qt/rc.cpp:63
-#, fuzzy
-msgid "Preferences"
-msgstr "셀레스티아 설정"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:27
-#. i18n: ectx: attribute (title), widget (QWidget, objectsTab)
-#. i18n: file: ../src/celestia/qt/preferences.ui:33
-#. i18n: ectx: property (title), widget (QGroupBox, objectsGroupBox)
-#: ../src/celestia/qt/rc.cpp:66 ../src/celestia/qt/rc.cpp:69
-msgid "Objects"
-msgstr "천체"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:119
-#. i18n: ectx: property (text), widget (QCheckBox, globularClustersCheck)
-#. i18n: file: ../src/celestia/qt/preferences.ui:576
-#. i18n: ectx: property (text), widget (QCheckBox, globularClusterLabelsCheck)
-#: ../src/celestia/qt/rc.cpp:106 ../src/celestia/qt/rc.cpp:255
-#, fuzzy
-msgid "Globular clusters"
-msgstr "구상성단 이름 보기"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:142
-#. i18n: ectx: property (title), widget (QGroupBox, featuresGroupBox)
-#: ../src/celestia/qt/rc.cpp:109
-#, fuzzy
-msgid "Features"
-msgstr "기타"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:162
-#. i18n: ectx: property (text), widget (QCheckBox, cloudShadowsCheck)
-#: ../src/celestia/qt/rc.cpp:118
-#, fuzzy
-msgid "Cloud shadows"
-msgstr "구름 그림자"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:169
-#. i18n: ectx: property (text), widget (QCheckBox, eclipseShadowsCheck)
-#: ../src/celestia/qt/rc.cpp:121
-#, fuzzy
-msgid "Eclipse shadows"
-msgstr "식 그림자"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:176
-#. i18n: ectx: property (text), widget (QCheckBox, ringShadowsCheck)
-#: ../src/celestia/qt/rc.cpp:124
-#, fuzzy
-msgid "Ring shadows"
-msgstr "고리 그림자"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:183
-#. i18n: ectx: property (text), widget (QCheckBox, planetRingsCheck)
-#: ../src/celestia/qt/rc.cpp:127
-#, fuzzy
-msgid "Planet's rings"
-msgstr "행성"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:190
-#. i18n: ectx: property (text), widget (QCheckBox, nightsideLightsCheck)
-#: ../src/celestia/qt/rc.cpp:130
-#, fuzzy
-msgid "Nightside lights"
-msgstr "야간맵"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:197
-#. i18n: ectx: property (text), widget (QCheckBox, cometTailsCheck)
-#: ../src/celestia/qt/rc.cpp:133
-#, fuzzy
-msgid "Comet tails"
-msgstr "혜성꼬리"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:204
-#. i18n: ectx: property (text), widget (QCheckBox, limitOfKnowledgeCheck)
-#: ../src/celestia/qt/rc.cpp:136
-#, fuzzy
-msgid "Limit of knowledge textures"
-msgstr "limit of knowledge 텍스처를 사용"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:242
-#. i18n: ectx: property (text), widget (QCheckBox, orbitsCheck)
-#: ../src/celestia/qt/rc.cpp:145
-#, fuzzy
-msgid "Show orbits"
-msgstr "궤도 보기"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:249
-#. i18n: ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
-#: ../src/celestia/qt/rc.cpp:148
-#: ../src/celestia/win32/res/resource_strings.cpp:207
-#, fuzzy
-msgid "Fading orbits"
-msgstr "착륙지점"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:256
-#. i18n: ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
-#: ../src/celestia/qt/rc.cpp:151
-#: ../src/celestia/win32/res/resource_strings.cpp:208
-#, fuzzy
-msgid "Partial trajectories"
-msgstr "부분 궤적"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:355
-#. i18n: ectx: property (title), widget (QGroupBox, gridsGroupBox)
-#: ../src/celestia/qt/rc.cpp:179
-#: ../src/celestia/win32/res/resource_strings.cpp:211
-msgid "Grids"
-msgstr "그리드"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:361
-#. i18n: ectx: property (text), widget (QCheckBox, equatorialGridCheck)
-#: ../src/celestia/qt/rc.cpp:182
-#: ../src/celestia/win32/res/resource_strings.cpp:212
-msgid "Equatorial"
-msgstr "적도"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:368
-#. i18n: ectx: property (text), widget (QCheckBox, eclipticGridCheck)
-#: ../src/celestia/qt/rc.cpp:185
-#: ../src/celestia/win32/res/resource_strings.cpp:215
-msgid "Ecliptic"
-msgstr "황도"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:375
-#. i18n: ectx: property (text), widget (QCheckBox, galacticGridCheck)
-#: ../src/celestia/qt/rc.cpp:188
-#: ../src/celestia/win32/res/resource_strings.cpp:214
-msgid "Galactic"
-msgstr "은하"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:382
-#. i18n: ectx: property (text), widget (QCheckBox, horizontalGridCheck)
-#: ../src/celestia/qt/rc.cpp:191
-#: ../src/celestia/win32/res/resource_strings.cpp:213
-msgid "Horizontal"
-msgstr "수평분할"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:411
-#. i18n: ectx: property (text), widget (QCheckBox, diagramsCheck)
-#: ../src/celestia/qt/rc.cpp:197
-#: ../src/celestia/win32/res/resource_strings.cpp:230
-msgid "Diagrams"
-msgstr "도형"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:418
-#. i18n: ectx: property (text), widget (QCheckBox, boundariesCheck)
-#: ../src/celestia/qt/rc.cpp:200
-#: ../src/celestia/win32/res/resource_strings.cpp:231
-msgid "Boundaries"
-msgstr "별자리 경계선 보기"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:425
-#. i18n: ectx: property (text), widget (QCheckBox, latinNamesCheck)
-#: ../src/celestia/qt/rc.cpp:203
-#, fuzzy
-msgid "Latin names"
-msgstr "라틴 별자리명"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:448
-#. i18n: ectx: property (title), widget (QGroupBox, miscellaneousGroupBox)
-#: ../src/celestia/qt/rc.cpp:206
-msgid "Miscellaneous"
-msgstr ""
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:615
-#. i18n: ectx: property (text), widget (QCheckBox, locationsCheck)
-#: ../src/celestia/qt/rc.cpp:264
-#, fuzzy
-msgid "Show locations"
-msgstr "도시 보기"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:638
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: ../src/celestia/qt/rc.cpp:267
-#, fuzzy
-msgid "Location types:"
-msgstr "지명 이름 보기"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:647
-#. i18n: ectx: property (text), widget (QCheckBox, citiesCheck)
-#: ../src/celestia/qt/rc.cpp:270
-#: ../src/celestia/win32/res/resource_strings.cpp:138
-msgid "Cities"
-msgstr "도시"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:654
-#. i18n: ectx: property (text), widget (QCheckBox, landingSitesCheck)
-#: ../src/celestia/qt/rc.cpp:273
-#, fuzzy
-msgid "Landing sites"
-msgstr "착륙지점"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:661
-#. i18n: ectx: property (text), widget (QCheckBox, volcanoesCheck)
-#: ../src/celestia/qt/rc.cpp:276
-#: ../src/celestia/win32/res/resource_strings.cpp:146
-msgid "Volcanoes"
-msgstr "행성"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:668
-#. i18n: ectx: property (text), widget (QCheckBox, observatoriesCheck)
-#: ../src/celestia/qt/rc.cpp:279
-#: ../src/celestia/win32/res/resource_strings.cpp:139
-msgid "Observatories"
-msgstr "관측소·천문대"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:675
-#. i18n: ectx: property (text), widget (QCheckBox, cratersCheck)
-#: ../src/celestia/qt/rc.cpp:282
-#: ../src/celestia/win32/res/resource_strings.cpp:143
-msgid "Craters"
-msgstr "크레이터"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:682
-#. i18n: ectx: property (text), widget (QCheckBox, montesCheck)
-#: ../src/celestia/qt/rc.cpp:285
-#, fuzzy
-msgid "Montes (mountains)"
-msgstr "산"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:689
-#. i18n: ectx: property (text), widget (QCheckBox, terraeCheck)
-#: ../src/celestia/qt/rc.cpp:288
-#, fuzzy
-msgid "Terrae (land masses)"
-msgstr "육지"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:696
-#. i18n: ectx: property (text), widget (QCheckBox, vallesCheck)
-#: ../src/celestia/qt/rc.cpp:291
-#, fuzzy
-msgid "Valles (valleys)"
-msgstr "계곡"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:703
-#. i18n: ectx: property (text), widget (QCheckBox, mariaCheck)
-#: ../src/celestia/qt/rc.cpp:294
-#, fuzzy
-msgid "Maria (seas)"
-msgstr "바다"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:710
-#. i18n: ectx: property (text), widget (QCheckBox, otherLocationsCheck)
-#: ../src/celestia/qt/rc.cpp:297
-#: ../src/celestia/win32/res/resource_strings.cpp:147
-msgid "Other features"
-msgstr "기타"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:735
-#. i18n: ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/rc.cpp:300
-#, fuzzy
-msgid "Minimum labelled feature size:"
-msgstr "최소표시"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:772
-#. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
-#: ../src/celestia/qt/rc.cpp:303
-msgid "000; "
-msgstr ""
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:801
-#. i18n: ectx: attribute (title), widget (QWidget, renderTab)
-#: ../src/celestia/qt/rc.cpp:306
-#, fuzzy
-msgid "Render"
-msgstr "표시(&R)"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:809
-#. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
-#: ../src/celestia/qt/rc.cpp:309
-#, fuzzy
-msgid "Texture resolution"
-msgstr "해상도"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:852
-#. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
-#: ../src/celestia/qt/rc.cpp:321
-#, fuzzy
-msgid "Ambient light"
-msgstr "주변빛"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:874
-#. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
-#: ../src/celestia/qt/rc.cpp:324
-#, fuzzy
-msgid "Tinted illumination"
-msgstr "별자리"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:900
-#. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
-#: ../src/celestia/qt/rc.cpp:327
-#, fuzzy
-msgid "Render path"
-msgstr "렌더링 패스: "
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:913
-#. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
-#: ../src/celestia/qt/rc.cpp:330
-#, fuzzy
-msgid "Antialiased lines"
-msgstr "부드러운 궤도선"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:940
-#. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
-#: ../src/celestia/qt/rc.cpp:333
-#, fuzzy
-msgid "Star style"
-msgstr "항성표시: 점"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:953
-#. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
-#: ../src/celestia/qt/rc.cpp:339
-#, fuzzy
-msgid "Fuzzy points"
-msgstr "희미한 점(&F)"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:960
-#. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
-#: ../src/celestia/qt/rc.cpp:342
-#, fuzzy
-msgid "Scaled discs"
-msgstr "등급에 따른 원(&D)"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:983
-#. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
-#: ../src/celestia/qt/rc.cpp:345
-#, fuzzy
-msgid "Auto-magnitude"
-msgstr "자동 등급 조정\tCtrl+Y"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:1006
-#. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
-#: ../src/celestia/qt/rc.cpp:348
-#, fuzzy
-msgid "Star colors"
-msgstr "항성 모양(&Y)"
-
-#. i18n: file: ../src/celestia/qt/preferences.ui:1043
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: ../src/celestia/qt/rc.cpp:354
-#, fuzzy
-msgid "Date display format:"
-msgstr "표시"
-
-#: ../src/celestia/qt/xbel.cpp:78
+#: ../src/celestia/qt/xbel.cpp:75
 msgid "Not an XBEL version 1.0 file."
 msgstr ""
 
-#: ../src/celestia/url.cpp:346
-msgid "Incorrect hex value \"{}\"\n"
+#: ../src/celestia/scriptmenu.cpp:107 ../src/celscript/lua/luascript.cpp:174
+#: ../src/celutil/fsutils.cpp:184
+#, c++-format
+msgid "Path {} doesn't exist or isn't a directory\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:413
-msgid "URL must start with \"{}\"!\n"
-msgstr ""
+#: ../src/celestia/textinput.cpp:191
+#, fuzzy, c++-format
+msgid "Target name: {}"
+msgstr "천체명을 입력하세요: "
 
-#: ../src/celestia/url.cpp:429
-msgid "URL must have at least mode and time!\n"
-msgstr ""
-
-#: ../src/celestia/url.cpp:440
-#, fuzzy
-msgid "Unsupported URL mode \"{}\"!\n"
-msgstr "지원되는 확장"
-
-#: ../src/celestia/url.cpp:458
-msgid "URL must contain only one body\n"
-msgstr ""
-
-#: ../src/celestia/url.cpp:470
-msgid "URL must contain 2 bodies\n"
-msgstr ""
-
-#: ../src/celestia/url.cpp:511
-msgid "Invalid URL version \"{}\"!\n"
-msgstr ""
-
-#: ../src/celestia/url.cpp:518
-#, fuzzy
-msgid "Unsupported URL version: {}\n"
-msgstr "지원되는 확장"
-
-#: ../src/celestia/url.cpp:549
+#: ../src/celestia/url.cpp:126
 msgid "URL parameter must look like key=value\n"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:4
+#: ../src/celestia/url.cpp:374
+#, c++-format
+msgid "Incorrect hex value \"{}\"\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:437
+#, c++-format
+msgid "URL must start with \"{}\"!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:453
+msgid "URL must have at least mode and time!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:464
+#, fuzzy, c++-format
+msgid "Unsupported URL mode \"{}\"!\n"
+msgstr "지원되는 확장"
+
+#: ../src/celestia/url.cpp:482
+msgid "URL must contain only one body\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:494
+msgid "URL must contain 2 bodies\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:532
+#, c++-format
+msgid "Invalid URL version \"{}\"!\n"
+msgstr ""
+
+#: ../src/celestia/url.cpp:538
+#, fuzzy, c++-format
+msgid "Unsupported URL version: {}\n"
+msgstr "지원되는 확장"
+
+#: ../src/celestia/win32/res/celestia.rc:168
 msgid "Placeholder"
 msgstr "묶음자"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:6
+#: ../src/celestia/win32/res/celestia.rc:172
 msgid "Capture &Image...\tF10"
 msgstr "이미지 캡춰(&I)...\tF10"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:7
+#: ../src/celestia/win32/res/celestia.rc:173
 msgid "Capture &Movie...\tShift+F10"
 msgstr "동영상 캡춰(&M)...\tShift+F10"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:10
+#: ../src/celestia/win32/res/celestia.rc:179
 msgid "Select &Sol\tH"
 msgstr "태양 선택(&S)\tH"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:11
+#: ../src/celestia/win32/res/celestia.rc:180
 msgid "Tour G&uide..."
 msgstr "길잡이(&G)..."
 
-#: ../src/celestia/win32/res/resource_strings.cpp:12
+#: ../src/celestia/win32/res/celestia.rc:181
 msgid "Select &Object..."
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:14
+#: ../src/celestia/win32/res/celestia.rc:184
 msgid "&Center Selection\tC"
 msgstr "선택한 천체를 가운데로(&C)\tC"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:15
+#: ../src/celestia/win32/res/celestia.rc:185
 msgid "&Go to Selection\tG"
 msgstr "선택한 천체로 이동(&G)\tG"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:16
+#: ../src/celestia/win32/res/celestia.rc:186
 msgid "&Follow Selection\tF"
 msgstr "선택한 천체를 추적(&F)\tF"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:17
+#: ../src/celestia/win32/res/celestia.rc:187
 msgid "S&ync Orbit Selection\tY"
 msgstr "선택한 천체의 자전에 맞춰 추적(&Y)\tY"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:18
+#: ../src/celestia/win32/res/celestia.rc:188
 msgid "&Track Selection\tT"
 msgstr "선택한 천체를 화면 가운데 유지(&T)\tT"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:19
+#: ../src/celestia/win32/res/celestia.rc:190
 msgid "Solar System &Browser..."
 msgstr "태양계 브라우저(&B)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:20
+#: ../src/celestia/win32/res/celestia.rc:191
 msgid "Star B&rowser..."
 msgstr "항성 브라우저(&R)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:21
+#: ../src/celestia/win32/res/celestia.rc:192
 msgid "&Eclipse Finder"
 msgstr "식(일식,월식) 찾기(&E)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:23
+#: ../src/celestia/win32/res/celestia.rc:196
 msgid "10x &Faster\tL"
 msgstr "10x 빠르게(&F)\tL"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:24
+#: ../src/celestia/win32/res/celestia.rc:197
 msgid "10x &Slower\tK"
 msgstr "10x 느리게(&S)\tK"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:25
+#: ../src/celestia/win32/res/celestia.rc:198
 msgid "Free&ze\tSpace"
 msgstr "멈춤(&Z)\tSpace"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:26
+#: ../src/celestia/win32/res/celestia.rc:199
 msgid "&Real Time\t\\"
 msgstr "실시간에 맞춤(&R)\t\\"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:27
+#: ../src/celestia/win32/res/celestia.rc:200
 msgid "Re&verse Time\tJ"
 msgstr "시간 반전(&V)\tJ"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:28
+#: ../src/celestia/win32/res/celestia.rc:201
 msgid "Set &Time..."
 msgstr "시간 설정(&T)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:29
+#: ../src/celestia/win32/res/celestia.rc:203
 msgid "Show Local Time"
 msgstr "지역시간 보기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:30
+#: ../src/celestia/win32/res/celestia.rc:205
 msgid "&Render"
 msgstr "표시(&R)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:31
+#: ../src/celestia/win32/res/celestia.rc:207
 msgid "Select Display Mode..."
 msgstr "화면모드 선택"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:32
+#: ../src/celestia/win32/res/celestia.rc:208
 msgid "Toggle Full Screen\tAlt+Enter"
 msgstr "전체화면\tAlt+Enter"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:33
+#: ../src/celestia/win32/res/celestia.rc:210
 msgid "View Options..."
 msgstr "보기설정"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:34
+#: ../src/celestia/win32/res/celestia.rc:211
 #, fuzzy
 msgid "Locations..."
 msgstr "지명"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:35
+#: ../src/celestia/win32/res/celestia.rc:213
 msgid "More Stars Visible\t]"
 msgstr "항성을 많이 보이게\t]"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:36
+#: ../src/celestia/win32/res/celestia.rc:214
 msgid "Fewer Stars Visible\t["
 msgstr "항성을 적게 보이게\t["
 
-#: ../src/celestia/win32/res/resource_strings.cpp:37
+#: ../src/celestia/win32/res/celestia.rc:215
 msgid "Auto Magnitude\tCtrl+Y"
 msgstr "자동 등급 조정\tCtrl+Y"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:39
+#: ../src/celestia/win32/res/celestia.rc:218
 msgid "&Points"
 msgstr "점(&P)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:40
+#: ../src/celestia/win32/res/celestia.rc:219
 msgid "&Fuzzy Points"
 msgstr "희미한 점(&F)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:41
+#: ../src/celestia/win32/res/celestia.rc:220
 msgid "Scaled &Discs"
 msgstr "등급에 따른 원(&D)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:42
+#: ../src/celestia/win32/res/celestia.rc:222
 #, fuzzy
 msgid "Star &Color"
 msgstr "항성 모양(&Y)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:47
+#: ../src/celestia/win32/res/celestia.rc:230
 msgid "&Ambient Light"
 msgstr "주변빛(&A)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:48
+#: ../src/celestia/win32/res/celestia.rc:232
 #, fuzzy
 msgid "&No"
 msgstr "현재"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:49
+#: ../src/celestia/win32/res/celestia.rc:233
 msgid "&Weakly"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:50
+#: ../src/celestia/win32/res/celestia.rc:234
 msgid "&Moderately"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:51
+#: ../src/celestia/win32/res/celestia.rc:236
 msgid "&Texture Resolution"
 msgstr "해상도"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:52
+#: ../src/celestia/win32/res/celestia.rc:238
 msgid "&Low"
 msgstr "낮음(&L)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:53
+#: ../src/celestia/win32/res/celestia.rc:239
 msgid "&Medium"
 msgstr "중간(&M)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:54
+#: ../src/celestia/win32/res/celestia.rc:240
 msgid "&High"
 msgstr "높음(&H)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:55
+#: ../src/celestia/win32/res/celestia.rc:242
 msgid "Antialiasing\tCtrl+X"
 msgstr "앤티앨리어싱\tCtrl+X"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:57
+#: ../src/celestia/win32/res/celestia.rc:246
 msgid "Split &Horizontally\tCtrl+R"
 msgstr "수평분할(&H)\tCtrl+R"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:58
+#: ../src/celestia/win32/res/celestia.rc:247
 msgid "Split &Vertically\tCtrl+U"
 msgstr "수직분할(&V)\tCtrl+U"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:59
+#: ../src/celestia/win32/res/celestia.rc:248
 msgid "&Delete Active View\tDEL"
 msgstr "활성창 닫기(&D)\tDEL"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:60
+#: ../src/celestia/win32/res/celestia.rc:249
 msgid "&Single View\tCtrl+D"
 msgstr "단일 창(&S)\tCtrl+D"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:61
+#: ../src/celestia/win32/res/celestia.rc:251
 msgid "Show &Frames"
 msgstr "분할선 보기(&F)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:62
+#: ../src/celestia/win32/res/celestia.rc:252
 msgid "Synchronize &Time"
 msgstr "시간 동기화(&T)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:64
+#: ../src/celestia/win32/res/celestia.rc:256
 msgid "&Add Bookmarks..."
 msgstr "북마크 추가(&A)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:65
+#: ../src/celestia/win32/res/celestia.rc:257
 msgid "&Organize Bookmarks..."
 msgstr "북마크 구성(&O)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:68
+#: ../src/celestia/win32/res/celestia.rc:261
 msgid "User &Guide"
 msgstr "길잡이"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:69
+#: ../src/celestia/win32/res/celestia.rc:262
 msgid "&Controls"
 msgstr "사용법(&C)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:70
+#: ../src/celestia/win32/res/celestia.rc:263
 msgid "&OpenGL Info"
 msgstr "OpenGL정보(&O)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:71
+#: ../src/celestia/win32/res/celestia.rc:264
 msgid "&License"
 msgstr "라이센스(&L)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:72
+#: ../src/celestia/win32/res/celestia.rc:266
 msgid "&About Celestia"
 msgstr "셀레스티아에 대하여(&A)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:74
-#: ../src/celestia/win32/res/resource_strings.cpp:95
-#: ../src/celestia/win32/res/resource_strings.cpp:100
-#: ../src/celestia/win32/res/resource_strings.cpp:104
-#: ../src/celestia/win32/res/resource_strings.cpp:107
-#: ../src/celestia/win32/res/resource_strings.cpp:120
-#: ../src/celestia/win32/res/resource_strings.cpp:124
-#: ../src/celestia/win32/res/resource_strings.cpp:136
-#: ../src/celestia/win32/res/resource_strings.cpp:149
-#: ../src/celestia/win32/res/resource_strings.cpp:159
-#: ../src/celestia/win32/res/resource_strings.cpp:165
-#: ../src/celestia/win32/res/resource_strings.cpp:173
-#: ../src/celestia/win32/res/resource_strings.cpp:176
-#: ../src/celestia/win32/res/resource_strings.cpp:188
-#: ../src/celestia/win32/res/resource_strings.cpp:192
-#: ../src/celestia/win32/res/resource_strings.cpp:239
+#: ../src/celestia/win32/res/celestia.rc:282
+#: ../src/celestia/win32/res/celestia.rc:314
+#: ../src/celestia/win32/res/celestia.rc:331
+#: ../src/celestia/win32/res/celestia.rc:345
+#: ../src/celestia/win32/res/celestia.rc:360
+#: ../src/celestia/win32/res/celestia.rc:398
+#: ../src/celestia/win32/res/celestia.rc:412
+#: ../src/celestia/win32/res/celestia.rc:449
+#: ../src/celestia/win32/res/celestia.rc:475
+#: ../src/celestia/win32/res/celestia.rc:510
+#: ../src/celestia/win32/res/celestia.rc:527
+#: ../src/celestia/win32/res/celestia.rc:550
+#: ../src/celestia/win32/res/celestia.rc:563
+#: ../src/celestia/win32/res/celestia.rc:588
+#: ../src/celestia/win32/res/celestia.rc:602
+#: ../src/celestia/win32/res/celestia.rc:683
 #, fuzzy
 msgid "OK"
 msgstr "확인"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:75
+#: ../src/celestia/win32/res/celestia.rc:283
 msgid "Celestia"
 msgstr "셀레스티아"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:76
+#: ../src/celestia/win32/res/celestia.rc:284
 msgid "1.7.0"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:77
+#: ../src/celestia/win32/res/celestia.rc:285
 #, fuzzy
 msgid "Copyright (C) 2001-2021, Celestia Development Team"
 msgstr "Copyright (C) 2001-2008, 셀레스티아 개발팀"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:78
-msgid "https://celestiaproject.space/"
-msgstr ""
-
-#: ../src/celestia/win32/res/resource_strings.cpp:79
+#: ../src/celestia/win32/res/celestia.rc:287
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr "셀레스티아는 공개소프트이며, 보증을 제공하지 않습니다."
 
-#: ../src/celestia/win32/res/resource_strings.cpp:80
+#: ../src/celestia/win32/res/celestia.rc:288
 msgid "Authors"
 msgstr "저자"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:81
+#: ../src/celestia/win32/res/celestia.rc:289
 msgid "Chris Laurel"
 msgstr "Chris Laurel"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:82
+#: ../src/celestia/win32/res/celestia.rc:290
 msgid "Clint Weisbrod"
 msgstr "Clint Weisbrod"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:83
+#: ../src/celestia/win32/res/celestia.rc:291
 msgid "Fridger Schrempp"
 msgstr "Fridger Schrempp"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:84
+#: ../src/celestia/win32/res/celestia.rc:292
 msgid "Christophe Teyssier"
 msgstr "Christophe Teyssier"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:85
+#: ../src/celestia/win32/res/celestia.rc:293
 msgid "Grant Hutchison"
 msgstr "Grant Hutchison"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:86
+#: ../src/celestia/win32/res/celestia.rc:294
 msgid "Pat Suwalski"
 msgstr "Pat Suwalski"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:87
+#: ../src/celestia/win32/res/celestia.rc:295
 msgid "Toti"
 msgstr "Toti"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:88
+#: ../src/celestia/win32/res/celestia.rc:296
 msgid "Da Woon Jung"
 msgstr "Da Woon Jung"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:89
+#: ../src/celestia/win32/res/celestia.rc:297
 msgid "Hank Ramsey"
 msgstr "Hank Ramsey"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:90
+#: ../src/celestia/win32/res/celestia.rc:298
 msgid "Bob Ippolito"
 msgstr "Bob Ippolito"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:91
+#: ../src/celestia/win32/res/celestia.rc:299
 msgid "Vincent Giangiulio"
 msgstr "Vincent Giangiulio"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:92
+#: ../src/celestia/win32/res/celestia.rc:300
 msgid "Andrew Tribick"
 msgstr "Andrew Tribick"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:93
+#: ../src/celestia/win32/res/celestia.rc:308
 msgid "Add Bookmark"
 msgstr "북마크 추가"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:97
+#: ../src/celestia/win32/res/celestia.rc:316
 msgid "Create in >>"
 msgstr "위치지정 >>"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:98
-#: ../src/celestia/win32/res/resource_strings.cpp:161
+#: ../src/celestia/win32/res/celestia.rc:318
+#: ../src/celestia/win32/res/celestia.rc:512
 msgid "New Folder..."
 msgstr "새폴더..."
 
-#: ../src/celestia/win32/res/resource_strings.cpp:99
+#: ../src/celestia/win32/res/celestia.rc:326
 msgid "Add New Bookmark Folder"
 msgstr "새 폴더 만들기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:102
+#: ../src/celestia/win32/res/celestia.rc:333
 msgid "Folder Name"
 msgstr "폴더 이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:103
+#: ../src/celestia/win32/res/celestia.rc:341
 msgid "Celestia Controls"
 msgstr "셀레스티아 사용법"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:105
+#: ../src/celestia/win32/res/celestia.rc:354
 #, fuzzy
 msgid "Select Display Mode"
 msgstr "화면모드 선택"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:106
+#: ../src/celestia/win32/res/celestia.rc:359
 #, fuzzy
 msgid "Resolution"
 msgstr "해상도"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:109
+#: ../src/celestia/win32/res/celestia.rc:369
 msgid "Eclipse Finder"
 msgstr "식 찾기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:110
+#: ../src/celestia/win32/res/celestia.rc:377
 msgid "Compute"
 msgstr "계산"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:111
+#: ../src/celestia/win32/res/celestia.rc:378
 msgid "Set Date and Go to Planet"
 msgstr "시간 설정 및 이동"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:112
+#: ../src/celestia/win32/res/celestia.rc:379
 msgid "Close"
 msgstr "닫기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:113
+#: ../src/celestia/win32/res/celestia.rc:380
 msgid "From:"
 msgstr "기간:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:114
+#: ../src/celestia/win32/res/celestia.rc:381
 msgid "To:"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:115
+#: ../src/celestia/win32/res/celestia.rc:382
 msgid "On:"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:116
+#: ../src/celestia/win32/res/celestia.rc:383
 msgid "Search parameters"
 msgstr "파라미터 검색"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:117
+#: ../src/celestia/win32/res/celestia.rc:384
 msgid "Solar Eclipses"
 msgstr "일식"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:118
+#: ../src/celestia/win32/res/celestia.rc:385
 msgid "Lunar Eclipses"
 msgstr "월식"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:119
+#: ../src/celestia/win32/res/celestia.rc:393
 msgid "Select Object"
 msgstr "천체 선택"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:122
+#: ../src/celestia/win32/res/celestia.rc:400
 msgid "Object Name"
 msgstr "천체 이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:123
+#: ../src/celestia/win32/res/celestia.rc:408
 msgid "OpenGL Driver Info"
 msgstr "OpenGL 드라이버 정보"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:125
+#: ../src/celestia/win32/res/celestia.rc:421
 msgid "Go to Object"
 msgstr "천체로 이동"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:129
-#: ../src/celestia/win32/res/resource_strings.cpp:193
-msgid "Go To"
-msgstr "이동"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:131
+#: ../src/celestia/win32/res/celestia.rc:434
 msgid "Object"
 msgstr "천체이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:132
+#: ../src/celestia/win32/res/celestia.rc:435
 msgid "Long."
 msgstr "경도"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:133
+#: ../src/celestia/win32/res/celestia.rc:436
 msgid "Lat."
 msgstr "위도"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:134
-#: ../src/celestia/win32/res/resource_strings.cpp:238
+#: ../src/celestia/win32/res/celestia.rc:437
+#: ../src/celestia/win32/res/celestia.rc:680
 msgid "Distance"
 msgstr "거리"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:135
+#: ../src/celestia/win32/res/celestia.rc:445
 msgid "License"
 msgstr "라이센스"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:140
+#: ../src/celestia/win32/res/celestia.rc:464
 msgid "Landing Sites"
 msgstr "착륙지점"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:141
+#: ../src/celestia/win32/res/celestia.rc:465
 msgid "Montes (Mountains)"
 msgstr "산"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:142
+#: ../src/celestia/win32/res/celestia.rc:466
 msgid "Maria (Seas)"
 msgstr "바다"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:144
+#: ../src/celestia/win32/res/celestia.rc:468
 msgid "Valles (Valleys)"
 msgstr "계곡"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:145
+#: ../src/celestia/win32/res/celestia.rc:469
 msgid "Terrae (Land masses)"
 msgstr "육지"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:148
+#: ../src/celestia/win32/res/celestia.rc:473
 msgid "Label Features"
 msgstr "지명 보기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:151
+#: ../src/celestia/win32/res/celestia.rc:477
 msgid "Show Features"
 msgstr "지명 보기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:152
+#: ../src/celestia/win32/res/celestia.rc:478
 #, fuzzy
 msgid "Show Label"
 msgstr "지명 보기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:153
+#: ../src/celestia/win32/res/celestia.rc:479
 msgid "Minimum Labeled Feature Size"
 msgstr "최소표시"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:154
+#: ../src/celestia/win32/res/celestia.rc:490
 msgid "Size:"
 msgstr "동영상 크기:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:156
+#: ../src/celestia/win32/res/celestia.rc:494
 msgid "Codec:"
 msgstr ""
 
-#: ../src/celestia/win32/res/resource_strings.cpp:162
+#: ../src/celestia/win32/res/celestia.rc:513
 msgid "Rename..."
 msgstr "이름 바꾸기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:164
+#: ../src/celestia/win32/res/celestia.rc:522
 msgid "Rename Bookmark or Folder"
 msgstr "북마크, 폴더 이름 바꾸기"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:167
+#: ../src/celestia/win32/res/celestia.rc:529
 msgid "New Name"
 msgstr "새 이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:168
+#: ../src/celestia/win32/res/celestia.rc:537
 msgid "Set Simulation Time"
 msgstr "시간 설정"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:170
+#: ../src/celestia/win32/res/celestia.rc:543
 msgid "Format: "
 msgstr "초당 프레임수:"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:172
+#: ../src/celestia/win32/res/celestia.rc:549
 msgid "Set To Current Time"
 msgstr "현재시간으로 설정"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:175
+#: ../src/celestia/win32/res/celestia.rc:559
 msgid "Solar System Browser"
 msgstr "태양계 브라우저"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:179
-#: ../src/celestia/win32/res/resource_strings.cpp:186
+#: ../src/celestia/win32/res/celestia.rc:566
+#: ../src/celestia/win32/res/celestia.rc:586
 msgid "&Go To"
 msgstr "이동(&G)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:180
+#: ../src/celestia/win32/res/celestia.rc:567
 msgid "Solar System Objects"
 msgstr "천체 이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:181
+#: ../src/celestia/win32/res/celestia.rc:575
 msgid "Star Browser"
 msgstr "항성 브라우저"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:182
+#: ../src/celestia/win32/res/celestia.rc:582
 msgid "Nearest"
 msgstr "거리순"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:183
+#: ../src/celestia/win32/res/celestia.rc:583
 msgid "Brightest"
 msgstr "등급순"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:184
+#: ../src/celestia/win32/res/celestia.rc:584
 msgid "With planets"
 msgstr "행성존재"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:187
+#: ../src/celestia/win32/res/celestia.rc:587
 msgid "&Refresh"
 msgstr "새로고침(&R)"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:189
+#: ../src/celestia/win32/res/celestia.rc:589
 msgid "Star Search Criteria"
 msgstr "항성 검색 기준"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:190
+#: ../src/celestia/win32/res/celestia.rc:590
 msgid "Maximum Stars Displayed in List"
 msgstr "표시 항성수"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:191
-msgid "Tour Guide"
-msgstr "길잡이"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:194
-msgid "Select your destination:"
-msgstr "목적지를 선택하세요:"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:195
+#: ../src/celestia/win32/res/celestia.rc:614
 #, fuzzy
 msgid "View Options"
 msgstr "보기설정"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:196
+#: ../src/celestia/win32/res/celestia.rc:618
 #, fuzzy
 msgid "Show:"
 msgstr "표시"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:204
+#: ../src/celestia/win32/res/celestia.rc:638
 #, fuzzy
 msgid "Rings"
 msgstr "킹스턴"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:205
+#: ../src/celestia/win32/res/celestia.rc:639
 #, fuzzy
 msgid "Display:"
 msgstr "표시"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:210
+#: ../src/celestia/win32/res/celestia.rc:644
 msgid "Ecliptic Line"
 msgstr "황도"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:216
+#: ../src/celestia/win32/res/celestia.rc:650
 #, fuzzy
 msgid "Body / Orbit / Label display"
 msgstr "궤도 / 이름"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:233
+#: ../src/celestia/win32/res/celestia.rc:675
 msgid "Latin Names"
 msgstr "라틴 별자리명"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:234
+#: ../src/celestia/win32/res/celestia.rc:676
 msgid "Information Text"
 msgstr "천체 정보 표시"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:236
+#: ../src/celestia/win32/res/celestia.rc:678
 msgid "Terse"
 msgstr "보통"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:237
+#: ../src/celestia/win32/res/celestia.rc:679
 msgid "Verbose"
 msgstr "많이"
 
-#: ../src/celestia/win32/res/resource_strings.cpp:241
-#: ../src/celestia/win32/winmain.cpp:3365
-msgid "WinLangID"
-msgstr "412"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Apr"
-msgstr "4"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Feb"
-msgstr "2"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Jan"
-msgstr "1"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Jun"
-msgstr "6"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "Mar"
-msgstr "3"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:242
-msgid "May"
-msgstr "5"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Aug"
-msgstr "8"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Dec"
-msgstr "12"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Jul"
-msgstr "7"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Nov"
-msgstr "11"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Oct"
-msgstr "10"
-
-#: ../src/celestia/win32/res/resource_strings.cpp:243
-msgid "Sep"
-msgstr "9"
-
-#: ../src/celestia/win32/wineclipses.cpp:64
-msgid "Satellite"
-msgstr "위성"
-
-#: ../src/celestia/win32/wineclipses.cpp:65
-msgid "Date"
-msgstr "날짜"
-
-#: ../src/celestia/win32/wineclipses.cpp:66
-msgid "Start"
-msgstr "시작"
-
-#: ../src/celestia/win32/winmain.cpp:539
-msgid ""
-"License file missing!\n"
-"See http://www.gnu.org/copyleft/gpl.html"
+#: ../src/celestia/win32/winbookmarks.cpp:1484
+msgid "(empty)"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:705
-#, c-format
-msgid "%d x %d"
-msgstr ""
-
-#. Add windowed mode as the first item on the menu
-#: ../src/celestia/win32/winmain.cpp:1398
-msgid "Windowed Mode"
-msgstr "윈도우 모드"
-
-#: ../src/celestia/win32/winmain.cpp:1533
+#: ../src/celestia/win32/wincontextmenu.cpp:153
 msgid "Invisibles"
 msgstr "안보임"
 
-#: ../src/celestia/win32/winmain.cpp:1638
-#: ../src/celestia/win32/winmain.cpp:1686
-#: ../src/celestia/win32/winmain.cpp:1710
+#: ../src/celestia/win32/wincontextmenu.cpp:265
+#: ../src/celestia/win32/wincontextmenu.cpp:309
+#: ../src/celestia/win32/wincontextmenu.cpp:331
 msgid "&Info"
 msgstr "천체정보(&I)"
 
-#: ../src/celestia/win32/winmain.cpp:1641
+#: ../src/celestia/win32/wincontextmenu.cpp:268
 msgid "Show Body Axes"
 msgstr "천체 축 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1642
+#: ../src/celestia/win32/wincontextmenu.cpp:269
 msgid "Show Frame Axes"
 msgstr "프레임 축 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1643
+#: ../src/celestia/win32/wincontextmenu.cpp:270
 msgid "Show Sun Direction"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1644
+#: ../src/celestia/win32/wincontextmenu.cpp:271
 msgid "Show Velocity Vector"
 msgstr "속도 벡터 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1645
+#: ../src/celestia/win32/wincontextmenu.cpp:272
 msgid "Show Planetographic Grid"
 msgstr "행성그리드 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1646
+#: ../src/celestia/win32/wincontextmenu.cpp:273
 msgid "Show Terminator"
 msgstr "밤낮 경계선 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1662
+#: ../src/celestia/win32/wincontextmenu.cpp:289
 msgid "&Satellites"
 msgstr "위성"
 
-#: ../src/celestia/win32/winmain.cpp:1695
+#: ../src/celestia/win32/wincontextmenu.cpp:316
 msgid "Orbiting Bodies"
 msgstr "순환 천체"
 
-#: ../src/celestia/win32/winmain.cpp:1814
-#, fuzzy
-msgid "Unable to switch to full screen mode; running in window mode"
-msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
+#. Add windowed mode as the first item on the menu
+#: ../src/celestia/win32/windisplaymodedlg.cpp:46
+msgid "Windowed Mode"
+msgstr "윈도우 모드"
 
-#: ../src/celestia/win32/winmain.cpp:1815
-#: ../src/celestia/win32/winmain.cpp:2087
-#: ../src/celestia/win32/winmain.cpp:2730
-#: ../src/celestia/win32/winmain.cpp:2741
-#: ../src/celestia/win32/winmain.cpp:2758
-#: ../src/celestia/win32/winmain.cpp:2839
-#: ../src/celestia/win32/winmain.cpp:2862
+#: ../src/celestia/win32/wineclipses.cpp:72
+msgid "Body"
+msgstr ""
+
+#: ../src/celestia/win32/wineclipses.cpp:74
+msgid "Date"
+msgstr "날짜"
+
+#: ../src/celestia/win32/wineclipses.cpp:75
+msgid "Start"
+msgstr "시작"
+
+#: ../src/celestia/win32/winfiledlgs.cpp:47
+msgid "JPEG - JFIF Compliant (*.jpg)"
+msgstr ""
+
+#: ../src/celestia/win32/winfiledlgs.cpp:49
+msgid "Portable Network Graphics (*.png)"
+msgstr ""
+
+#: ../src/celestia/win32/winfiledlgs.cpp:64
+msgid "Save As - Specify File to Capture Image"
+msgstr ""
+
+#: ../src/celestia/win32/winfiledlgs.cpp:98
+#: ../src/celestia/win32/winfiledlgs.cpp:108
+#: ../src/celestia/win32/winmain.cpp:145
+#: ../src/celestia/win32/winmainwindow.cpp:1175
+#: ../src/celestia/win32/winmoviecapture.cpp:230
+#: ../src/celestia/win32/winmoviecapture.cpp:310
+#: ../src/celestia/win32/winmoviecapture.cpp:318
 #, fuzzy
 msgid "Error"
 msgstr "에러: "
 
-#: ../src/celestia/win32/winmain.cpp:1979
-msgid "Failed to register the window class."
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:1980
-#: ../src/celestia/win32/winmain.cpp:2031
-#: ../src/celestia/win32/winmain.cpp:2055
-#: ../src/celestia/win32/winmain.cpp:2374
-#: ../src/celestia/win32/winmain.cpp:3412
-#: ../src/celestia/win32/winmain.cpp:3483
-msgid "Fatal Error"
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2030
-msgid "Could not get appropriate pixel format for OpenGL rendering."
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2054
-msgid "Your system doesn't support OpenGL 2.1!"
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2086
-msgid "Releasing device context failed."
-msgstr ""
-
-#. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2696
-msgid "Save As - Specify File to Capture Image"
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2740
+#: ../src/celestia/win32/winfiledlgs.cpp:107
 msgid "Could not save image file."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2757
-msgid "Stop current movie capture before starting another one."
+#: ../src/celestia/win32/winfiledlgs.cpp:122
+msgid "Celestia Script (*.celx, *.cel)"
 msgstr ""
 
-#. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2783
-msgid "Save As - Specify Output File for Capture Movie"
-msgstr ""
+#. Gettext complains about using \r in translated messages, so add it in afterwards
+#: ../src/celestia/win32/winhelpdlgs.cpp:158
+#, fuzzy, c++-format
+msgid ""
+"License file missing!\n"
+"See {}"
+msgstr "라이센스 파일'License.txt'이 없습니다!"
 
-#: ../src/celestia/win32/winmain.cpp:2838
-msgid "Unknown file extension specified for movie capture."
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2858
-msgid "Specified file extension is not recognized."
-msgstr ""
-
-#: ../src/celestia/win32/winmain.cpp:2860
+#: ../src/celestia/win32/winmain.cpp:144
 #, fuzzy
-msgid "Could not capture movie."
-msgstr "비디오 캡춰"
+msgid "Unable to switch to full screen mode; running in window mode"
+msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
 
-#: ../src/celestia/win32/winmain.cpp:3106
+#: ../src/celestia/win32/winmain.cpp:299 ../src/celestia/win32/winmain.cpp:702
+#: ../src/celestia/win32/winmain.cpp:780
+#: ../src/celestia/win32/winmainwindow.cpp:1140
+#: ../src/celestia/win32/winmainwindow.cpp:1158
+#: ../src/celestia/win32/winmainwindow.cpp:1573
+msgid "Fatal Error"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:408
 msgid "Directory expected after --dir"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3107
-#: ../src/celestia/win32/winmain.cpp:3120
-#: ../src/celestia/win32/winmain.cpp:3134
-#: ../src/celestia/win32/winmain.cpp:3147
-#: ../src/celestia/win32/winmain.cpp:3163
+#: ../src/celestia/win32/winmain.cpp:409 ../src/celestia/win32/winmain.cpp:421
+#: ../src/celestia/win32/winmain.cpp:434 ../src/celestia/win32/winmain.cpp:446
+#: ../src/celestia/win32/winmain.cpp:466
 #, fuzzy
 msgid "Celestia Command Line Error"
 msgstr "셀레스티아 사용법"
 
-#: ../src/celestia/win32/winmain.cpp:3119
+#: ../src/celestia/win32/winmain.cpp:420
 msgid "Configuration file name expected after --conf"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3133
+#: ../src/celestia/win32/winmain.cpp:433
 msgid "Directory expected after --extrasdir"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3146
+#: ../src/celestia/win32/winmain.cpp:445
 msgid "URL expected after --url"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3161
-#, c-format
-msgid "Invalid command line option '%s'"
+#: ../src/celestia/win32/winmain.cpp:459
+#, c++-format
+msgid "Invalid command line option '{}'"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3184
-#, fuzzy
-msgid "Loading: "
+#: ../src/celestia/win32/winmain.cpp:486
+#, fuzzy, c++-format
+msgid "Loading: {}"
 msgstr "로딩중: "
 
-#: ../src/celestia/win32/winmain.cpp:3249
+#: ../src/celestia/win32/winmain.cpp:560
 #, fuzzy
 msgid "Loading data files..."
 msgstr "로딩중: "
 
-#: ../src/celestia/win32/winmain.cpp:3411
+#: ../src/celestia/win32/winmain.cpp:638 ../src/celutil/fsutils.cpp:99
+msgid "LANGUAGE"
+msgstr "ko"
+
+#: ../src/celestia/win32/winmain.cpp:658
+#, c++-format
+msgid "Could not load localized resources: {}\n"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:663
+#, c++-format
+msgid "Loaded localized resource: {}\n"
+msgstr ""
+
+#: ../src/celestia/win32/winmain.cpp:701
 #, fuzzy
-msgid "Configuration file missing!"
+msgid "Confugration file missing!"
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: ../src/celestia/win32/winmain.cpp:3447
+#: ../src/celestia/win32/winmain.cpp:737
 msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3448
+#: ../src/celestia/win32/winmain.cpp:738
 msgid "Copy favorites?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3482
+#: ../src/celestia/win32/winmain.cpp:779
 msgid "Failed to create the application window."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:4017
+#: ../src/celestia/win32/winmain.cpp:788
+#, fuzzy
+msgid "Error locking drop target\n"
+msgstr "스크립트 파일 로딩 오류"
+
+#: ../src/celestia/win32/winmain.cpp:797
+msgid "Failed to register drop target as OLE object.\n"
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:264
+msgid "Error getting joystick caps.\n"
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:268
+#, c++-format
+msgid "Using joystick: {}\n"
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:729
 msgid "Loading URL"
 msgstr "URL 로딩중"
 
-#. string s;
-#. s += UTF8ToCurrentCP(_("Version: "));
-#: ../src/celestia/win32/winsplash.cpp:141
-msgid "Version: "
+#: ../src/celestia/win32/winmainwindow.cpp:1139
+msgid "Could not get appropriate pixel format for OpenGL rendering."
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:1157
+msgid "Your system doesn't support OpenGL 2.1!"
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:1174
+msgid "Releasing device context failed."
+msgstr ""
+
+#: ../src/celestia/win32/winmainwindow.cpp:1572
+msgid "Failed to register the window class."
+msgstr ""
+
+#: ../src/celestia/win32/winmoviecapture.cpp:229
+msgid "Stop current movie capture before starting another one."
+msgstr ""
+
+#: ../src/celestia/win32/winmoviecapture.cpp:241
+#, fuzzy
+msgid "Matroska (*.mkv)"
+msgstr "비디오 캡춰"
+
+#: ../src/celestia/win32/winmoviecapture.cpp:259
+msgid "Save As - Specify Output File for Capture Movie"
+msgstr ""
+
+#. Invalid file extension specified.
+#: ../src/celestia/win32/winmoviecapture.cpp:309
+msgid "Unknown file extension specified for movie capture."
+msgstr ""
+
+#: ../src/celestia/win32/winmoviecapture.cpp:317
+#, fuzzy
+msgid "Could not capture movie."
+msgstr "비디오 캡춰"
+
+#: ../src/celestia/win32/winpreferences.cpp:206
+#: ../src/celestia/win32/winpreferences.cpp:267
+#, fuzzy, c++-format
+msgid "Error opening registry key: {}\n"
+msgstr "스크립트 파일 열기 오류"
+
+#: ../src/celestia/win32/winpreferences.cpp:259
+#, fuzzy
+msgid "Saving preferences...\n"
+msgstr "셀레스티아 설정"
+
+#: ../src/celestia/win32/winpreferences.cpp:271
+msgid "Opened registry key\n"
+msgstr ""
+
+#: ../src/celestia/win32/winsplash.cpp:122
+#, fuzzy, c++-format
+msgid "Version: {}"
 msgstr "버전: "
 
-#: ../src/celestia/win32/wintime.cpp:96
+#: ../src/celestia/win32/wintime.cpp:99
 msgid "Time Zone Name"
 msgstr "표준시간대"
 
-#: ../src/celestia/win32/wintime.cpp:97
+#: ../src/celestia/win32/wintime.cpp:100
 msgid "UTC Offset"
 msgstr "UTC 오프셋"
 
-#: ../src/celimage/image.cpp:363
-#, fuzzy
+#: ../src/celimage/image.cpp:385
+#, fuzzy, c++-format
 msgid "Loading image from file {}\n"
 msgstr "이미지 파일 읽는 중: "
 
-#: ../src/celimage/png.cpp:53
-#, fuzzy
-msgid "Error opening image file {}.\n"
-msgstr "이미지 파일 에러: "
+#: ../src/celimage/image.cpp:409
+#, fuzzy, c++-format
+msgid "{}: unrecognized or unsupported image file type.\n"
+msgstr ": 지원하지 않거나 알수없는 파일입니다.\n"
 
-#: ../src/celimage/png.cpp:61
+#: ../src/celimage/png.cpp:27
 #, fuzzy
-msgid "Error: {} is not a PNG file.\n"
-msgstr " 는 PNG파일이 아닙니다.\n"
-
-#: ../src/celimage/png.cpp:87
-#, fuzzy
-msgid "Error reading PNG image file {}\n"
+msgid "Error reading PNG data"
 msgstr "PNG파일 읽기 오류: "
 
-#: ../src/celimage/png.cpp:177
+#: ../src/celimage/png.cpp:49
+#, c++-format
 msgid "Can't open screen capture file '{}'\n"
 msgstr ""
 
-#: ../src/celimage/png.cpp:226
-#, fuzzy
+#: ../src/celimage/png.cpp:105
+#, fuzzy, c++-format
 msgid "Error writing PNG file '{}'\n"
+msgstr "PNG파일 읽기 오류: "
+
+#: ../src/celimage/png.cpp:153
+#, fuzzy, c++-format
+msgid "Error opening image file {}.\n"
+msgstr "이미지 파일 에러: "
+
+#: ../src/celimage/png.cpp:161
+#, fuzzy, c++-format
+msgid "Error: {} is not a PNG file.\n"
+msgstr " 는 PNG파일이 아닙니다.\n"
+
+#: ../src/celimage/png.cpp:187
+#, fuzzy, c++-format
+msgid "Error reading PNG image file {}\n"
 msgstr "PNG파일 읽기 오류: "
 
 #: ../src/celscript/legacy/legacyscript.cpp:101
@@ -4408,21 +4418,22 @@ msgid "Error opening script file."
 msgstr "스크립트 파일 여는 중 오류가 발생하였습니다."
 
 #: ../src/celscript/legacy/legacyscript.cpp:110
-#: ../src/celscript/lua/luascript.cpp:99
+#: ../src/celscript/lua/luascript.cpp:100
 #, fuzzy
 msgid "Unknown error loading script"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
 #. TRANSLATORS: Y is first letter of Yes
-#: ../src/celscript/lua/celx.cpp:430
+#: ../src/celscript/lua/celx.cpp:434
 msgid "Y"
 msgstr ""
 
-#: ../src/celscript/lua/celx.cpp:731
+#: ../src/celscript/lua/celx.cpp:735 ../src/celscript/lua/celx_misc.cpp:133
+#, c++-format
 msgid "In line {}: {}"
 msgstr ""
 
-#: ../src/celscript/lua/celx.cpp:776
+#: ../src/celscript/lua/celx.cpp:780
 msgid ""
 "WARNING:\n"
 "\n"
@@ -4434,7 +4445,7 @@ msgid ""
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
 
-#: ../src/celscript/lua/celx.cpp:787
+#: ../src/celscript/lua/celx.cpp:791
 msgid ""
 "WARNING:\n"
 "\n"
@@ -4444,38 +4455,121 @@ msgid ""
 "Do you trust the script and want to allow this?"
 msgstr ""
 
-#: ../src/celscript/lua/luascript.cpp:90
-#, fuzzy
+#: ../src/celscript/lua/luascript.cpp:91
+#, fuzzy, c++-format
 msgid "Error opening script {}"
 msgstr "스크립트 파일 열기 오류"
 
-#: ../src/celscript/lua/luascript.cpp:107
-#: ../src/celscript/lua/luascript.cpp:242
+#: ../src/celscript/lua/luascript.cpp:108
+#: ../src/celscript/lua/luascript.cpp:243
 msgid "Script coroutine initialization failed"
 msgstr "스크립트 coroutine의 초기화에 실패하였습니다."
 
-#: ../src/celscript/lua/luascript.cpp:214
-#, fuzzy
+#: ../src/celscript/lua/luascript.cpp:215
+#, fuzzy, c++-format
 msgid "Error opening LuaHook {}"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
-#: ../src/celscript/lua/luascript.cpp:231
+#: ../src/celscript/lua/luascript.cpp:232
 #, fuzzy
 msgid "Unknown error loading hook script"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: ../src/celutil/tzutil.cpp:48
+#: ../src/celutil/tzutil.cpp:51
 msgid "Unknown value returned by GetTimeZoneInformation()\n"
 msgstr ""
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:27
-#, fuzzy
+#, fuzzy, c++-format
 msgid "Error opening {} or {}.\n"
 msgstr "파일 열기 오류: "
 
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:49
+#, c++-format
+msgid "Unsupported byte order {}, expected {}.\n"
+msgstr ""
+
+#: ../src/tools/xyzv2bin/bin2xyzv.cpp:58
+#, fuzzy, c++-format
+msgid "Unsupported digits number {}, expected {}.\n"
+msgstr "지원되는 확장"
+
+#, fuzzy, c-format
+#~ msgid "Magnitude limit:  %.2f"
+#~ msgstr "한계등급: %.2f"
+
 #, fuzzy
-#~ msgid "Lighting"
-#~ msgstr "광도 이득"
+#~ msgid "Skipping solar system catalog: {}\n"
+#~ msgstr "항성계 카탈로그 로딩중: "
+
+#, fuzzy
+#~ msgid "Loading solar system catalog: {}\n"
+#~ msgstr "항성계 카탈로그 로딩중: "
+
+#, fuzzy
+#~ msgid "Error opening deepsky catalog file {}.\n"
+#~ msgstr "항성 카탈로그 파일 읽는 중 에러: "
+
+#, fuzzy
+#~ msgid "Cannot read Deep Sky Objects database {}.\n"
+#~ msgstr "항성 데이타베이스를 읽을 수 없습니다."
+
+#, fuzzy
+#~ msgid "Error opening solar system catalog {}.\n"
+#~ msgstr "항성계 카탈로그의 여는 중 오류 발생.\n"
+
+#, fuzzy
+#~ msgid "Error opening star catalog {}\n"
+#~ msgstr "항성 카탈로그 파일 읽는 중 에러: "
+
+#~ msgid "WinLangID"
+#~ msgstr "412"
+
+#~ msgid "Apr"
+#~ msgstr "4"
+
+#~ msgid "Feb"
+#~ msgstr "2"
+
+#~ msgid "Jan"
+#~ msgstr "1"
+
+#~ msgid "Jun"
+#~ msgstr "6"
+
+#~ msgid "Mar"
+#~ msgstr "3"
+
+#~ msgid "May"
+#~ msgstr "5"
+
+#~ msgid "Aug"
+#~ msgstr "8"
+
+#~ msgid "Dec"
+#~ msgstr "12"
+
+#~ msgid "Jul"
+#~ msgstr "7"
+
+#~ msgid "Nov"
+#~ msgstr "11"
+
+#~ msgid "Oct"
+#~ msgstr "10"
+
+#~ msgid "Sep"
+#~ msgstr "9"
+
+#~ msgid "Satellite"
+#~ msgstr "위성"
+
+#, fuzzy
+#~ msgid "Error opening {}.\n"
+#~ msgstr "파일 열기 오류: "
+
+#~ msgid "GL error: "
+#~ msgstr "GL에러: "
 
 #, fuzzy
 #~ msgid "Error opening config file '{}'.\n"
@@ -6761,8 +6855,8 @@ msgstr "파일 열기 오류: "
 #~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
 #~ "%dx%d offset (%dx%d)\n"
 #~ msgstr ""
-#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) FPS 품질 %d %dx"
-#~ "%d 오프셋 (%dx%d)\n"
+#~ "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) FPS 품질 %d "
+#~ "%dx%d 오프셋 (%dx%d)\n"
 
 #~ msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 #~ msgstr "OggTheoraCapture::cleanup() - %d 프레임 저장되었습니다.\n"
@@ -6804,10 +6898,6 @@ msgstr "파일 열기 오류: "
 
 #~ msgid "Initializing ARB fragment programs . . .\n"
 #~ msgstr "ARB 프레그먼트 프로그램을 초기화 합니다\n"
-
-#, fuzzy
-#~ msgid "%s: unrecognized or unsupported image file type.\n"
-#~ msgstr ": 지원하지 않거나 알수없는 파일입니다.\n"
 
 #~ msgid "Loading NV vertex program: "
 #~ msgstr "NV 버텍스 프로그램 읽는 중: "
@@ -6910,9 +7000,6 @@ msgstr "파일 열기 오류: "
 
 #~ msgid "GLSL version: "
 #~ msgstr "GLSL 버전: "
-
-#~ msgid "Error loading script"
-#~ msgstr "스크립트 파일 로딩 오류"
 
 #~ msgid "Running script"
 #~ msgstr "스크립트 실행"
@@ -7482,14 +7569,8 @@ msgstr "파일 열기 오류: "
 #~ msgid "You must specify a file name."
 #~ msgstr "파일명을 입력하세요."
 
-#~ msgid "Error initializing movie capture."
-#~ msgstr "동영상 캡춰 초기화중 오류가 발생하였습니다."
-
 #~ msgid "  Recording"
 #~ msgstr " 동영상 저장중"
-
-#~ msgid "License file 'License.txt' is missing!"
-#~ msgstr "라이센스 파일'License.txt'이 없습니다!"
 
 #, fuzzy
 #~ msgid "render path: %i\n"

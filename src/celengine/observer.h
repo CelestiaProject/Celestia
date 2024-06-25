@@ -148,10 +148,12 @@ public:
     void           update(double dt, double timeScale);
 
     void orbit(const Selection&, const Eigen::Quaternionf &q);
+    bool orbit(const Selection&, const Eigen::Vector3f &from, const Eigen::Vector3f &to);
     void rotate(const Eigen::Quaternionf &q);
     void changeOrbitDistance(const Selection&, float d);
+    void scaleOrbitDistance(const Selection&, float scale, const std::optional<Eigen::Vector3f> &focus);
     void setTargetSpeed(float s);
-    float getTargetSpeed();
+    float getTargetSpeed() const;
 
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);

@@ -11,8 +11,8 @@
 
 #include <string>
 #include <vector>
-#include <celcompat/filesystem.h>
 
+#include <celcompat/filesystem.h>
 
 struct ScriptMenuItem
 {
@@ -20,6 +20,5 @@ struct ScriptMenuItem
     std::string title;
 };
 
-
-std::vector<ScriptMenuItem>*
+std::vector<ScriptMenuItem>
 ScanScriptsDirectory(const fs::path &dirname, bool deep);

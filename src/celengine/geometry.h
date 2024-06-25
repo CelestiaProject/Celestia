@@ -52,3 +52,10 @@ public:
     {
     }
 };
+
+class EmptyGeometry : public Geometry
+{
+    void render(RenderContext&, double _t = 0.0) override { /* no-op */ }
+    bool pick(const Eigen::ParametrizedLine<double, 3>&, double&) const override { return false; }
+    bool isOpaque() const override { return true; }
+};

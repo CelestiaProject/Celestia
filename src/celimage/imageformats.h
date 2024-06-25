@@ -13,6 +13,9 @@
 #include <celcompat/filesystem.h>
 #include <celimage/image.h>
 
+namespace celestia::engine
+{
+
 Image* LoadJPEGImage(const fs::path& filename);
 Image* LoadBMPImage(const fs::path& filename);
 Image* LoadPNGImage(const fs::path& filename);
@@ -21,16 +24,7 @@ Image* LoadDDSImage(const fs::path& filename);
 Image* LoadAVIFImage(const fs::path& filename);
 #endif
 
-bool SaveJPEGImage(const fs::path& filename, Image& image);
-bool SavePNGImage(const fs::path& filename, Image& image);
+bool SaveJPEGImage(const fs::path& filename, const Image& image);
+bool SavePNGImage(const fs::path& filename, const Image& image);
 
-bool SaveJPEGImage(const fs::path& filename,
-                   int width, int height,
-                   int rowStride,
-                   unsigned char* pixels,
-                   bool stripAlpha = false);
-bool SavePNGImage(const fs::path& filename,
-                  int width, int height,
-                  int rowStride,
-                  unsigned char* pixels,
-                  bool stripAlpha = false);
+} // namespace celestia::engine

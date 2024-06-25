@@ -9,7 +9,9 @@
 // of the License, or (at your option) any later version.
 
 #include <numeric>
+#include <optional>
 #include <celmath/geomutil.h>
+#include <celmath/intersect.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include "body.h"
@@ -23,13 +25,16 @@ static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 
 
 using namespace Eigen;
 using namespace std;
-using namespace celmath;
 
 namespace astro = celestia::astro;
+namespace math = celestia::math;
 
 #define VELOCITY_CHANGE_TIME      0.25f
 
-static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
+namespace
+{
+
+Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
 {
     double r0 = v0.norm();
     double r1 = v1.norm();
@@ -43,7 +48,20 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
     double cosTheta = u.dot(v1 / r1);
     double theta = acos(cosTheta);
 
-    return (cos(theta * t) * u + sin(theta * t) * v) * lerp(t, r0, r1);
+    return (cos(theta * t) * u + sin(theta * t) * v) * math::lerp(t, r0, r1);
+}
+
+std::optional<Eigen::Vector3d> getNearIntersectionPoint(const Eigen::ParametrizedLine<double, 3>& ray,
+                                         const math::Sphered& sphere)
+{
+    double distance;
+    bool intersects = math::testIntersection(ray, sphere, distance);
+    if (intersects)
+        return ray.origin() + distance * ray.direction();
+    else
+        return std::nullopt;
+}
+
 }
 
 
@@ -345,7 +363,7 @@ void Observer::update(double dt, double timeScale)
                 Selection centerObj = frame->getRefObject();
                 if (centerObj.body() != nullptr)
                 {
-                    Body* body = centerObj.body();
+                    const Body* body = centerObj.body();
                     if (body->getSystem())
                     {
                         if (body->getSystem()->getPrimaryBody() != nullptr)
@@ -485,7 +503,7 @@ void Observer::update(double dt, double timeScale)
         Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
         Vector3d viewDir = trackObject.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
 
-        setOrientation(LookAt<double>(Vector3d::Zero(), viewDir, up));
+        setOrientation(math::LookAt<double>(Vector3d::Zero(), viewDir, up));
     }
 }
 
@@ -538,7 +556,7 @@ void Observer::setLocationFilter(uint64_t _locationFilter)
 
 void Observer::reverseOrientation()
 {
-    setOrientation(getOrientation() * celmath::YRot180<double>);
+    setOrientation(getOrientation() * math::YRot180<double>);
     reverseFlag = !reverseFlag;
 }
 
@@ -607,15 +625,15 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
     jparams.accelTime = accelTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, jparams.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     jparams.expFactor = sol.first;
 
     // Convert to frame coordinates
@@ -667,15 +685,15 @@ void Observer::computeGotoParametersGC(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(StartInterpolation, EndInterpolation);
     jparams.endInterpolation   = max(StartInterpolation, EndInterpolation);
 
     jparams.accelTime = AccelerationTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, jparams.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     jparams.expFactor = sol.first;
 
     // Convert to frame coordinates
@@ -704,7 +722,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, up);
+    jparams.finalOrientation = math::LookAt<double>(Vector3d::Zero(), focus, up);
     jparams.startInterpolation = 0;
     jparams.endInterpolation   = 1;
 
@@ -809,7 +827,7 @@ void Observer::convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newF
 */
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
-    auto newFrame = shared_ptr<ObserverFrame>(new ObserverFrame(cs, refObj, targetObj));
+    auto newFrame = std::make_shared<ObserverFrame>(cs, refObj, targetObj);
     convertFrameCoordinates(newFrame);
     frame = newFrame;
 }
@@ -909,46 +927,106 @@ void Observer::orbit(const Selection& selection, const Quaternionf& q)
     }
 }
 
+/*! Orbit around the reference object (if there is one.)  rotating the object with intersection point from
+ *  a direction to another. If there is no intersection point, return false.
+ */
+bool Observer::orbit(const Selection& selection, const Eigen::Vector3f &from, const Eigen::Vector3f &to)
+{
+    Selection center = frame->getRefObject();
+    if (center.empty())
+    {
+        if (selection.empty())
+            return false;
+        center = selection;
+    }
+
+    double radius = center.radius();
+    if (radius <= 0.0)
+        return false;
+
+    // Get the focus position (center of rotation) in frame
+    // coordinates; in order to make this function work in all
+    // frames of reference, it's important to work in frame
+    // coordinates.
+    UniversalCoord focusPosition = center.getPosition(getTime());
+    focusPosition = frame->convertFromUniversal(focusPosition, getTime());
+
+    Eigen::Vector3d objectCenter = focusPosition.offsetFromKm(position);
+
+    // Get the rays adjusted to orientation
+    Eigen::Vector3d transformedFrom = getOrientation().conjugate() * from.cast<double>();
+    Eigen::Vector3d transformedTo = getOrientation().conjugate() * to.cast<double>();
+
+    // Find intersections for the rays, if no intersection, return false
+    math::Sphered sphere { objectCenter, radius };
+    auto orbitStartPosition = getNearIntersectionPoint(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), transformedFrom), sphere);
+    if (!orbitStartPosition.has_value())
+        return false;
+
+    auto orbitEndPosition = getNearIntersectionPoint(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), transformedTo), sphere);
+    if (!orbitEndPosition.has_value())
+        return false;
+
+    orbit(selection, Eigen::Quaterniond::FromTwoVectors(transformedOrientation * (orbitStartPosition.value() - objectCenter), transformedOrientation * (orbitEndPosition.value() - objectCenter)).cast<float>());
+    return true;
+}
+
 
 /*! Exponential camera dolly--move toward or away from the selected object
  * at a rate dependent on the observer's distance from the object.
  */
 void Observer::changeOrbitDistance(const Selection& selection, float d)
 {
+    scaleOrbitDistance(selection, std::exp(-d), std::nullopt);
+}
+
+
+void Observer::scaleOrbitDistance(const Selection& selection, float scale, const std::optional<Eigen::Vector3f> &focus)
+{
     Selection center = frame->getRefObject();
-    if (center.empty() && !selection.empty())
+    if (center.empty())
     {
+        if (selection.empty())
+            return;
+
         center = selection;
         setFrame(frame->getCoordinateSystem(), center);
     }
 
-    if (!center.empty())
+    UniversalCoord centerPosition = center.getPosition(getTime());
+
+    // Determine distance and direction to the selected object
+    auto currentPosition = getPosition();
+    Eigen::Vector3d positionFromCenter = currentPosition.offsetFromKm(centerPosition);
+    double currentDistance = positionFromCenter.norm();
+
+    double minOrbitDistance = center.radius();
+    if (currentDistance < minOrbitDistance)
+        minOrbitDistance = currentDistance * 0.5;
+
+    double span = currentDistance - minOrbitDistance;
+    double newDistance = minOrbitDistance + span / static_cast<double>(scale);
+    positionFromCenter *= (newDistance / currentDistance);
+
+    std::optional<UniversalCoord> controlPoint1 = std::nullopt;
+    std::optional<Eigen::Vector3d> focusRay = std::nullopt;
+    if (focus.has_value())
     {
-        UniversalCoord focusPosition = center.getPosition(getTime());
+        focusRay = getOrientation().conjugate() * focus.value().cast<double>();
+        // The control points are the intersection points of the original focus ray and
+        // the sphere with radius = span (distance to center - min distance) before and
+        // after the distance change
+        controlPoint1 = currentPosition.offsetKm(focusRay.value() * span);
+    }
 
-        double size = center.radius();
+    auto newPosition = centerPosition.offsetKm(positionFromCenter);
+    position = frame->convertFromUniversal(newPosition, getTime());
+    updateUniversal();
 
-        // Somewhat arbitrary parameters to chosen to give the camera movement
-        // a nice feel.  They should probably be function parameters.
-        double minOrbitDistance = size;
-        double naturalOrbitDistance = 4.0 * size;
-
-        // Determine distance and direction to the selected object
-        Vector3d v = getPosition().offsetFromKm(focusPosition);
-        double currentDistance = v.norm();
-
-        if (currentDistance < minOrbitDistance)
-            minOrbitDistance = currentDistance * 0.5;
-
-        if (currentDistance >= minOrbitDistance && naturalOrbitDistance != 0)
-        {
-            double r = (currentDistance - minOrbitDistance) / naturalOrbitDistance;
-            double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
-            v = v * (newDistance / currentDistance);
-
-            position = frame->convertFromUniversal(focusPosition.offsetKm(v), getTime());
-            updateUniversal();
-        }
+    if (controlPoint1.has_value())
+    {
+        auto controlPoint2 = newPosition.offsetKm(focusRay.value() * (newDistance - minOrbitDistance));
+        orbit(selection, Eigen::Quaterniond::FromTwoVectors(transformedOrientation * controlPoint1.value().offsetFromKm(centerPosition), transformedOrientation * controlPoint2.offsetFromKm(centerPosition)).cast<float>());
     }
 }
 
@@ -979,9 +1057,9 @@ void Observer::setTargetSpeed(float s)
 }
 
 
-float Observer::getTargetSpeed()
+float Observer::getTargetSpeed() const
 {
-    return (float) targetSpeed;
+    return static_cast<float>(targetSpeed);
 }
 
 
@@ -989,9 +1067,9 @@ void Observer::gotoJourney(const JourneyParams& params)
 {
     journey = params;
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     journey.expFactor = sol.first;
     journey.startTime = realTime;
     observerMode = Travelling;
@@ -1017,7 +1095,7 @@ static double getPreferredDistance(const Selection& selection)
         // bounding sphere of all child objects. This is useful for system
         // barycenters--the normal goto command will place the observer at
         // a viewpoint in which the entire system can be seen.
-        if (selection.body()->getClassification() == Body::Invisible)
+        if (selection.body()->getClassification() == BodyClassification::Invisible)
         {
             double r = selection.body()->getRadius();
             if (selection.body()->getFrameTree() != nullptr)
@@ -1039,17 +1117,15 @@ static double getPreferredDistance(const Selection& selection)
         {
             // Handle star system barycenters specially, using the same approach as
             // for reference points in solar systems.
-            const std::vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
-            double maxOrbitRadius = orbitingStars == nullptr
-                ? 0.0
-                : std::accumulate(orbitingStars->begin(), orbitingStars->end(), 0.0,
-                                  [](double r, const Star* s)
-                                  {
-                                      const celestia::ephem::Orbit* orbit = s->getOrbit();
-                                      return orbit == nullptr
-                                          ? r
-                                          : std::max(r, orbit->getBoundingRadius());
-                                  });
+            auto orbitingStars = selection.star()->getOrbitingStars();
+            double maxOrbitRadius = std::accumulate(orbitingStars.begin(), orbitingStars.end(), 0.0,
+                                    [](double r, const Star* s)
+                                    {
+                                        const celestia::ephem::Orbit* orbit = s->getOrbit();
+                                        return orbit == nullptr
+                                            ? r
+                                            : std::max(r, orbit->getBoundingRadius());
+                                    });
 
             return maxOrbitRadius == 0.0 ? astro::AUtoKilometers(1.0) : maxOrbitRadius * 5.0;
         }
@@ -1251,9 +1327,9 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
 
     journey.accelTime = AccelerationTime;
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
-                                               0.0001, 100.0,
-                                               1e-10);
+    pair<double, double> sol = math::solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                                     0.0001, 100.0,
+                                                     1e-10);
     journey.expFactor = sol.first;
 
     observerMode = Travelling;
@@ -1278,8 +1354,8 @@ void Observer::getSelectionLongLat(const Selection& selection,
         double z = bfPos.y();
 
         distance = bfPos.norm();
-        longitude = radToDeg(atan2(y, x));
-        latitude = radToDeg(celestia::numbers::pi/2.0 - acos(z / distance));
+        longitude = math::radToDeg(atan2(y, x));
+        latitude = math::radToDeg(celestia::numbers::pi/2.0 - acos(z / distance));
     }
 }
 
@@ -1294,7 +1370,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     Quaterniond q = transformedOrientationUniv;
     if (v.dot(viewDir) < 0.0)
     {
-        q = LookAt<double>(Vector3d::Zero(), up, v);
+        q = math::LookAt<double>(Vector3d::Zero(), up, v);
     }
 
     ObserverFrame frame(ObserverFrame::BodyFixed, sel);
@@ -1578,56 +1654,56 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     switch (_coordSys)
     {
     case Universal:
-        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(Selection()));
+        return std::make_shared<J2000EclipticFrame>(Selection());
 
     case Ecliptical:
-        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(_refObject));
+        return std::make_shared<J2000EclipticFrame>(_refObject);
 
     case Equatorial:
-        return shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject));
+        return std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject);
 
     case BodyFixed:
-        return shared_ptr<BodyFixedFrame>(new BodyFixedFrame(_refObject, _refObject));
+        return std::make_shared<BodyFixedFrame>(_refObject, _refObject);
 
     case PhaseLock:
     {
-        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
-                                                             FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
-                                                             FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2));
+        return std::make_shared<TwoVectorFrame>(_refObject,
+                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
+                                                FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
     }
 
     case Chase:
     {
-        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
-                                                             FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
-                                                             FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2));
+        return std::make_shared<TwoVectorFrame>(_refObject,
+                                                FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
+                                                FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
     }
 
     case PhaseLock_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject))));
-        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
-                                                             FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
-                                                             rotAxis, 2));
+                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+        return std::make_shared<TwoVectorFrame>(_refObject,
+                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
+                                                rotAxis, 2);
     }
 
     case Chase_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject))));
+                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
 
-        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
-                                                             FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
-                                                             rotAxis, 2));
+        return std::make_shared<TwoVectorFrame>(_refObject,
+                                                FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
+                                                rotAxis, 2);
     }
 
     case ObserverLocal:
         // TODO: This is only used for computing up vectors for orientation; it does
         // define a proper frame for the observer position orientation.
-        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(Selection()));
+        return std::make_shared<J2000EclipticFrame>(Selection());
 
     default:
-        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(_refObject));
+        return std::make_shared<J2000EclipticFrame>(_refObject);
     }
 }

@@ -86,4 +86,4 @@ inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)
 
 using TextureManager = ResourceManager<TextureInfo>;
 
-extern TextureManager* GetTextureManager();
+TextureManager* GetTextureManager();

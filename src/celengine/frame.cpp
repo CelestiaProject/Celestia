@@ -11,6 +11,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <celastro/astro.h>
+#include <celastro/date.h>
 #include <celengine/star.h>
 #include <celengine/body.h>
 #include <celengine/deepskyobj.h>
@@ -175,7 +177,7 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
     if (depth > maxDepth)
         return depth;
 
-    Body* body = sel.body();
+    const Body* body = sel.body();
     if (sel.location() != nullptr)
         body = sel.location()->getParentBody();
 
@@ -663,34 +665,6 @@ TwoVectorFrame::nestingDepth(unsigned int depth,
 }
 
 
-
-// Copy constructor
-FrameVector::FrameVector(const FrameVector& fv) :
-    vecType(fv.vecType),
-    observer(fv.observer),
-    target(fv.target),
-    vec(fv.vec),
-    frame(fv.frame)
-{
-}
-
-
-// Assignment operator (since we have a copy constructor)
-FrameVector&
-FrameVector::operator=(const FrameVector& fv)
-{
-    vecType = fv.vecType;
-    observer = fv.observer;
-    target = fv.target;
-    vec = fv.vec;
-
-    frame = fv.frame;
-
-    return *this;
-}
-
-
-
 FrameVector::FrameVector(FrameVectorType t) :
     vecType(t),
     observer(),
@@ -699,6 +673,7 @@ FrameVector::FrameVector(FrameVectorType t) :
     frame(nullptr)
 {
 }
+
 
 FrameVector
 FrameVector::createRelativePositionVector(const Selection& _observer,

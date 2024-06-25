@@ -19,6 +19,8 @@
 #include "render.h"
 #include "shadermanager.h"
 
+namespace math = celestia::math;
+
 namespace
 {
 
@@ -61,7 +63,7 @@ bool Console::setRowCount(int _nRows)
 
 void Console::begin()
 {
-    projection = celmath::Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
+    projection = math::Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -140,17 +142,16 @@ void Console::newline()
 
 void Console::print(char16_t c)
 {
-    switch (c)
+    if (c == '\n')
     {
-    case '\n':
         newline();
-        break;
-    default:
+    }
+    else
+    {
         if (column == nColumns)
             newline();
         text[row * (nColumns + 1) + column] = c;
         column++;
-        break;
     }
 }
 
