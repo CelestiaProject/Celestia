@@ -43,13 +43,14 @@ namespace
 
 constexpr double ANGULAR_RES = 3.5e-6;
 
-inline bool
-checkNodeDistance(const Eigen::Vector3f& center,
-                  const Eigen::Vector3f& position,
-                  float size,
-                  float maxDistance)
+template<typename T>
+bool
+checkNodeDistance(const Eigen::Matrix<T, 3, 1>& center,
+                  const Eigen::Matrix<T, 3, 1>& position,
+                  T size,
+                  T maxDistance)
 {
-    float distance = (position - center).norm() - size * numbers::sqrt3_v<float>;
+    T distance = (position - center).norm() - size * numbers::sqrt3_v<T>;
     return distance <= maxDistance;
 }
 
@@ -300,7 +301,135 @@ traverseFrameTree(const FrameTree* frameTree,
     return true;
 }
 
+class CloseStarPicker
+{
+public:
+    CloseStarPicker(const UniversalCoord&,
+                    const Eigen::Vector3f&,
+                    double t,
+                    float,
+                    float);
 
+
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star&);
+
+    const Star* closestStar() const;
+
+private:
+    UniversalCoord m_origin;
+    Eigen::Vector3f m_position;
+    Eigen::Vector3f m_direction;
+    float m_maxDistance;
+    float m_maxDistance2;
+    float m_sinAngle2Closest;
+    float m_closestDistance{ std::numeric_limits<float>::max() };
+    double m_now;
+    const Star* m_closestStar{ nullptr };
+};
+
+CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
+                                 const Eigen::Vector3f& dir,
+                                 double t,
+                                 float maxDistance,
+                                 float angle) :
+    m_origin(pos),
+    m_position(pos.toLy().cast<float>()),
+    m_direction(dir),
+    m_maxDistance(maxDistance),
+    m_maxDistance2(math::square(maxDistance)),
+    m_sinAngle2Closest(std::max(std::sin(angle * 0.5), ANGULAR_RES)),
+    m_now(t)
+{
+}
+
+bool
+CloseStarPicker::checkNode(const Eigen::Vector3f& center,
+                           float size,
+                           float /* magnitude */) const
+{
+    return checkNodeDistance(center, m_position, size, m_maxDistance);
+}
+
+void
+CloseStarPicker::process(const Star& star)
+{
+    if (auto lowPrecDistance2 = (star.getPosition() - m_position).squaredNorm();
+        lowPrecDistance2 > m_maxDistance2)
+    {
+        return;
+    }
+
+    Eigen::Vector3d hPos = star.getPosition(m_now).offsetFromKm(m_origin);
+    Eigen::Vector3f starDir = hPos.cast<float>();
+
+    float distance = 0.0f;
+    if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), m_direction),
+                               math::Spheref(starDir, star.getRadius()),
+                               distance))
+    {
+        if (distance > 0.0f && distance < m_closestDistance)
+        {
+            m_closestStar = &star;
+            m_closestDistance = starDir.norm();
+            // An exact hit -- se the angle to "zero"
+            m_sinAngle2Closest = ANGULAR_RES;
+        }
+    }
+    else
+    {
+        // We don't have an exact hit, check to see if we're close enough
+        distance = starDir.norm();
+        starDir /= distance;
+        double sinAngle2 = (starDir - m_direction).cast<double>().norm() * 0.5;
+        if (sinAngle2 <= m_sinAngle2Closest && distance < m_closestDistance)
+        {
+            m_closestStar = &star;
+            m_closestDistance = distance;
+            m_sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
+        }
+    }
+}
+
+inline const Star*
+CloseStarPicker::closestStar() const
+{
+    return m_closestStar;
+}
+
+class CloseDSOPicker
+{
+public:
+    bool checkNode(const Eigen::Vector3d&, double, float) const;
+    void process(const std::unique_ptr<DeepSkyObject>&);
+    const DeepSkyObject* closestDSO() const;
+
+private:
+    Eigen::Vector3d m_position;
+    double m_maxDistance;
+
+    const DeepSkyObject* m_closestDSO{ nullptr };
+};
+
+bool
+CloseDSOPicker::checkNode(const Eigen::Vector3d& center, double size, float /* magnitude */) const
+{
+    return checkNodeDistance(center, m_position, size, m_maxDistance);
+}
+
+void
+CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso)
+{
+
+}
+
+inline const DeepSkyObject*
+CloseDSOPicker::closestDSO() const
+{
+    return m_closestDSO;
+}
+
+#if 0
 // StarPicker is a callback class for StarDatabase::findVisibleStars
 class StarPicker : public StarHandler
 {
@@ -369,92 +498,6 @@ StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
             pickedStar = pickedStar->getOrbitBarycenter();
     }
 }
-
-
-class CloseStarPicker : public StarHandler
-{
-public:
-    CloseStarPicker(const UniversalCoord& pos,
-                    const Eigen::Vector3f& dir,
-                    double t,
-                    float _maxDistance,
-                    float angle);
-    ~CloseStarPicker() = default;
-    void process(const Star& star, float lowPrecDistance, float appMag) override;
-
-public:
-    UniversalCoord pickOrigin;
-    Eigen::Vector3f pickDir;
-    double now;
-    float maxDistance;
-    const Star* closestStar;
-    float closestDistance;
-    double sinAngle2Closest;
-};
-
-
-CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
-                                 const Eigen::Vector3f& dir,
-                                 double t,
-                                 float _maxDistance,
-                                 float angle) :
-    pickOrigin(pos),
-    pickDir(dir),
-    now(t),
-    maxDistance(_maxDistance),
-    closestStar(nullptr),
-    closestDistance(0.0f),
-    sinAngle2Closest(std::max(std::sin(angle/2.0), ANGULAR_RES))
-{
-}
-
-void
-CloseStarPicker::process(const Star& star,
-                         float lowPrecDistance,
-                         float /*unused*/)
-{
-    if (lowPrecDistance > maxDistance)
-        return;
-
-    Eigen::Vector3d hPos = star.getPosition(now).offsetFromKm(pickOrigin);
-    Eigen::Vector3f starDir = hPos.cast<float>();
-
-    float distance = 0.0f;
-
-     if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickDir),
-                                math::Spheref(starDir, star.getRadius()), distance))
-    {
-        if (distance > 0.0f)
-        {
-            if (closestStar == nullptr || distance < closestDistance)
-            {
-                closestStar = &star;
-                closestDistance = starDir.norm();
-                sinAngle2Closest = ANGULAR_RES;
-                // An exact hit--set the angle to "zero"
-            }
-        }
-    }
-    else
-    {
-        // We don't have an exact hit; check to see if we're close enough
-        float distance = starDir.norm();
-        starDir.normalize();
-        Eigen::Vector3f starMiss = starDir - pickDir;
-        Eigen::Vector3d sMd = starMiss.cast<double>();
-
-        double sinAngle2 = sMd.norm() / 2.0;
-
-        if (sinAngle2 <= sinAngle2Closest &&
-            (closestStar == nullptr || distance < closestDistance))
-        {
-            closestStar = &star;
-            closestDistance = distance;
-            sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
-        }
-    }
-}
-
 
 class DSOPicker : public DSOHandler
 {
@@ -578,6 +621,7 @@ CloseDSOPicker::process(DeepSkyObject* const & dso,
         }
     }
 }
+#endif
 
 void
 getLocationsCompletion(std::vector<std::string>& completion,
@@ -606,10 +650,8 @@ getLocationsCompletion(std::vector<std::string>& completion,
 
 } // end unnamed namespace
 
-
 // Needs definition of ConstellationBoundaries
 Universe::~Universe() = default;
-
 
 StarDatabase*
 Universe::getStarCatalog() const
@@ -617,13 +659,11 @@ Universe::getStarCatalog() const
     return starCatalog.get();
 }
 
-
 void
 Universe::setStarCatalog(std::unique_ptr<StarDatabase>&& catalog)
 {
     starCatalog = std::move(catalog);
 }
-
 
 SolarSystemCatalog*
 Universe::getSolarSystemCatalog() const
@@ -637,13 +677,11 @@ Universe::setSolarSystemCatalog(std::unique_ptr<SolarSystemCatalog>&& catalog)
     solarSystemCatalog = std::move(catalog);
 }
 
-
 DSODatabase*
 Universe::getDSOCatalog() const
 {
     return dsoCatalog.get();
 }
-
 
 void
 Universe::setDSOCatalog(std::unique_ptr<DSODatabase>&& catalog)
@@ -651,13 +689,11 @@ Universe::setDSOCatalog(std::unique_ptr<DSODatabase>&& catalog)
     dsoCatalog = std::move(catalog);
 }
 
-
 AsterismList*
 Universe::getAsterisms() const
 {
     return asterisms.get();
 }
-
 
 void
 Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
@@ -665,20 +701,17 @@ Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
     asterisms = std::move(_asterisms);
 }
 
-
 ConstellationBoundaries*
 Universe::getBoundaries() const
 {
     return boundaries.get();
 }
 
-
 void
 Universe::setBoundaries(std::unique_ptr<ConstellationBoundaries>&& _boundaries)
 {
     boundaries = std::move(_boundaries);
 }
-
 
 // Return the planetary system of a star, or nullptr if it has no planets.
 SolarSystem*
@@ -693,7 +726,6 @@ Universe::getSolarSystem(const Star* star) const
         ? nullptr
         : iter->second.get();
 }
-
 
 // A more general version of the method above--return the solar system
 // that contains an object, or nullptr if there is no solar sytstem.
@@ -727,7 +759,6 @@ Universe::getSolarSystem(const Selection& sel) const
     }
 }
 
-
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
 SolarSystem*
@@ -742,13 +773,11 @@ Universe::getOrCreateSolarSystem(Star* star) const
     return iter->second.get();
 }
 
-
 const celestia::MarkerList&
 Universe::getMarkers() const
 {
     return markers;
 }
-
 
 void
 Universe::markObject(const Selection& sel,
@@ -776,7 +805,6 @@ Universe::markObject(const Selection& sel,
     marker.setSizing(sizing);
 }
 
-
 void
 Universe::unmarkObject(const Selection& sel, int priority)
 {
@@ -786,13 +814,11 @@ Universe::unmarkObject(const Selection& sel, int priority)
         markers.erase(iter);
 }
 
-
 void
 Universe::unmarkAll()
 {
     markers.clear();
 }
-
 
 bool
 Universe::isMarked(const Selection& sel, int priority) const
@@ -801,7 +827,6 @@ Universe::isMarked(const Selection& sel, int priority) const
                              [&sel](const auto& m) { return m.object() == sel; });
     return iter != markers.end() && iter->priority() >= priority;
 }
-
 
 Selection
 Universe::pickPlanet(const SolarSystem& solarSystem,
@@ -869,7 +894,6 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
         return Selection();
 }
 
-
 Selection
 Universe::pickStar(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
@@ -887,8 +911,8 @@ Universe::pickStar(const UniversalCoord& origin,
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
     starCatalog->getOctree().processDepthFirst(closePicker);
-    if (closePicker.closestStar != nullptr)
-        return Selection(const_cast<Star*>(closePicker.closestStar));
+    if (auto star = closePicker.closestStar(); star != nullptr)
+        return Selection(const_cast<Star*>(star));
 
     // Find visible stars expects an orientation, but we just have a direction
     // vector.  Convert the direction vector into an orientation by computing
@@ -921,12 +945,10 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     Eigen::Vector3d dir = direction.cast<double>();
 
     CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
-
-    dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
-    if (closePicker.closestDSO != nullptr)
-    {
-        return Selection(const_cast<DeepSkyObject*>(closePicker.closestDSO));
-    }
+    dsoCatalog->getOctree().processDepthFirst(closePicker);
+    //dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
+    if (const DeepSkyObject* dso = closePicker.closestDSO(); dso != nullptr)
+        return Selection(const_cast<DeepSkyObject*>(dso));
 
     Eigen::Quaternionf rotation;
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
