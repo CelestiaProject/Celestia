@@ -11,7 +11,6 @@
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include "glsupport.h"
-#include "objectrenderer.h"
 #include "shadermanager.h"
 #include "render.h"
 #include "texture.h"

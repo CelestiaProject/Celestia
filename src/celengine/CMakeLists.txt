@@ -67,7 +67,6 @@ set(CELENGINE_SOURCES
   name.h
   nebula.cpp
   nebula.h
-  objectrenderer.h
   observer.cpp
   observer.h
   octree.h
@@ -155,6 +154,7 @@ set(CELENGINE_SOURCES
   viewporteffect.cpp
   virtualtex.cpp
   virtualtex.h
+  visibleobjectvisitor.h
   visibleregion.cpp
   visibleregion.h
 )

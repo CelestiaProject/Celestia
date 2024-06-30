@@ -30,9 +30,9 @@
 #include "frametree.h"
 #include "location.h"
 #include "meshmanager.h"
-#include "objectrenderer.h"
 #include "render.h"
 #include "timelinephase.h"
+#include "visibleobjectvisitor.h"
 
 namespace engine = celestia::engine;
 namespace numbers = celestia::numbers;
@@ -148,9 +148,6 @@ NearStarFinder<T>::process(const Star& star)
     if (distance2 <= m_maxDistance2)
         m_stars->push_back(&star);
 }
-
-template<typename T>
-NearStarFinder(const Eigen::Vector3f&, float, T*) -> NearStarFinder<T>;
 
 struct PlanetPickInfo
 {
@@ -302,7 +299,7 @@ traverseFrameTree(const FrameTree* frameTree,
     return true;
 }
 
-class StarPicker : private ObjectRenderer<float>
+class StarPicker : private VisibleObjectVisitor<float>
 {
 public:
     StarPicker(const UniversalCoord&,
@@ -311,7 +308,7 @@ public:
                float faintestMag,
                double now);
 
-    using ObjectRenderer::checkNode;
+    using VisibleObjectVisitor::checkNode;
     void process(const Star&);
 
     const Star* pickedStar() const;
@@ -329,12 +326,12 @@ StarPicker::StarPicker(const UniversalCoord& pos,
                        float fov,
                        float faintestMag,
                        double now) :
-    ObjectRenderer(pos,
-                   Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction).conjugate(),
-                   fov,
-                   1.0f,
-                   1.0e6f, // TODO: make this dependent on the renderer setting
-                   faintestMag),
+    VisibleObjectVisitor(pos,
+                         Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction).conjugate(),
+                         fov,
+                         1.0f,
+                         1.0e6f, // TODO: make this dependent on the renderer setting
+                         faintestMag),
     m_pickOrigin(pos.toLy().cast<float>()),
     m_pickRay(direction),
     m_now(now),
@@ -477,6 +474,78 @@ inline const Star*
 CloseStarPicker::closestStar() const
 {
     return m_closestStar;
+}
+
+class CloseDSOPicker
+{
+public:
+    CloseDSOPicker(const Eigen::Vector3d&,
+                   const Eigen::Vector3d&,
+                   double,
+                   std::uint64_t);
+
+    bool checkNode(const Eigen::Vector3d&, double, float) const;
+    void process(const std::unique_ptr<DeepSkyObject>&);
+
+    DeepSkyObject* closestDSO() const;
+
+private:
+    Eigen::Vector3d m_position;
+    Eigen::Vector3d m_pickDir;
+    double m_maxDistance;
+    double m_maxDistance2;
+    std::uint64_t m_renderFlags;
+    DeepSkyObject* m_closestDSO{ nullptr };
+    double m_largestCosAngle{ -2.0 };
+};
+
+CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& position,
+                               const Eigen::Vector3d& direction,
+                               double maxDistance,
+                               std::uint64_t renderFlags) :
+    m_position(position),
+    m_pickDir(direction),
+    m_maxDistance(maxDistance),
+    m_maxDistance2(math::square(maxDistance)),
+    m_renderFlags(renderFlags)
+{
+}
+
+bool
+CloseDSOPicker::checkNode(const Eigen::Vector3d& center,
+                          double size,
+                          float /* magnitude */) const
+{
+    return checkNodeDistance(center, m_position, size, m_maxDistance);
+}
+
+void
+CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso)
+{
+    if (!(dso->getRenderMask() & m_renderFlags) || !dso->isVisible() || !dso->isClickable())
+        return;
+
+    auto distance2 = (dso->getPosition() - m_position).squaredNorm();
+    if (distance2 > m_maxDistance2)
+        return;
+
+    double distanceToPicker       = 0.0;
+    double cosAngleToBoundCenter  = 0.0;
+    if (!dso->pick(Eigen::ParametrizedLine<double, 3>(m_position, m_pickDir), distanceToPicker, cosAngleToBoundCenter))
+        return;
+
+    // Don't select the object the observer is currently in:
+    if (distance2 > math::square(dso->getRadius()) && cosAngleToBoundCenter > m_largestCosAngle)
+    {
+        m_closestDSO      = dso.get();
+        m_largestCosAngle = cosAngleToBoundCenter;
+    }
+}
+
+inline DeepSkyObject*
+CloseDSOPicker::closestDSO() const
+{
+    return m_closestDSO;
 }
 
 #if 0
@@ -854,7 +923,6 @@ Universe::pickStar(const UniversalCoord& origin,
     return Selection();
 }
 
-
 Selection
 Universe::pickDeepSkyObject(const UniversalCoord& origin,
                             const Eigen::Vector3f& direction,
@@ -865,8 +933,12 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     Eigen::Vector3d orig = origin.toLy();
     Eigen::Vector3d dir = direction.cast<double>();
 
-    Eigen::Quaternionf rotation;
-    rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
+    CloseDSOPicker closePicker(orig, dir, 1e9, renderFlags);
+    dsoCatalog->getOctree().processDepthFirst(closePicker);
+    if (auto dso = closePicker.closestDSO(); dso != nullptr)
+        return Selection(dso);
+
+    auto rotation = Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
     DSOPicker picker(orig, dir, renderFlags, tolerance);
     dsoCatalog->findVisibleDSOs(picker,
@@ -880,7 +952,6 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     else
         return Selection();
 }
-
 
 Selection
 Universe::pick(const UniversalCoord& origin,
@@ -920,7 +991,6 @@ Universe::pick(const UniversalCoord& origin,
 
     return sel;
 }
-
 
 // Search by name for an immediate child of the specified object.
 Selection
@@ -963,7 +1033,6 @@ Universe::findChildObject(const Selection& sel,
 
     return Selection();
 }
-
 
 // Search for a name within an object's context.  For stars, planets (bodies),
 // and locations, the context includes all bodies in the associated solar
@@ -1011,7 +1080,6 @@ Universe::findObjectInContext(const Selection& sel,
     return Selection();
 }
 
-
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star catalog
 //   2. Search the deep sky catalog for a matching name.
@@ -1053,7 +1121,6 @@ Universe::find(std::string_view s,
     return Selection();
 }
 
-
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.  The caller may pass in a list of solar systems
@@ -1092,7 +1159,6 @@ Universe::findPath(std::string_view s,
     return sel;
 }
 
-
 void
 Universe::getCompletion(std::vector<std::string>& completion,
                         std::string_view s,
@@ -1124,7 +1190,6 @@ Universe::getCompletion(std::vector<std::string>& completion,
     if (starCatalog != nullptr)
         starCatalog->getCompletion(completion, s);
 }
-
 
 void
 Universe::getCompletionPath(std::vector<std::string>& completion,
@@ -1177,7 +1242,6 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
     }
 }
 
-
 // Return the closest solar system to position, or nullptr if there are no planets
 // with in one light year.
 SolarSystem*
@@ -1188,7 +1252,6 @@ Universe::getNearestSolarSystem(const UniversalCoord& position) const
     starCatalog->getOctree().processDepthFirst(finder);
     return getSolarSystem(finder.best());
 }
-
 
 void
 Universe::getNearStars(const UniversalCoord& position,

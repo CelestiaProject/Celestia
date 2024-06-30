@@ -14,8 +14,8 @@
 
 #include <Eigen/Core>
 
-#include "objectrenderer.h"
 #include "univcoord.h"
+#include "visibleobjectvisitor.h"
 
 class ColorTemperatureTable;
 class Observer;
@@ -33,7 +33,7 @@ constexpr inline float BaseStarDiscSize      = 5.0f;
 constexpr inline float MaxScaledDiscStarSize = 8.0f;
 constexpr inline float GlareOpacity          = 0.65f;
 
-class PointStarRenderer : public ObjectRenderer<float>
+class PointStarRenderer : public VisibleObjectVisitor<float>
 {
 public:
     PointStarRenderer(const Observer*,

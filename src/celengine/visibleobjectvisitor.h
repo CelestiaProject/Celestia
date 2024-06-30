@@ -1,4 +1,4 @@
-// objectrenderer.h
+// visibleobjectvisitor.h
 //
 // Copyright (C) 2001-2019, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
@@ -26,7 +26,7 @@
 #include "univcoord.h"
 
 template<typename PREC>
-class ObjectRenderer
+class VisibleObjectVisitor
 {
 public:
     using position_type = Eigen::Matrix<PREC, 3, 1>;
@@ -34,8 +34,8 @@ public:
     bool checkNode(const position_type&, PREC, float);
 
 protected:
-    ObjectRenderer(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
-    ~ObjectRenderer() = default;
+    VisibleObjectVisitor(const UniversalCoord&, const Eigen::Quaternionf&, float, float, PREC, float);
+    ~VisibleObjectVisitor() = default;
 
     Eigen::Vector3d m_observerPos;
     std::array<Eigen::Hyperplane<PREC, 3>, 5> m_frustumPlanes;
@@ -46,12 +46,12 @@ protected:
 };
 
 template<typename PREC>
-ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& origin,
-                                     const Eigen::Quaternionf& orientation,
-                                     float fov,
-                                     float aspectRatio,
-                                     PREC distanceLimit,
-                                     float faintestMag) :
+VisibleObjectVisitor<PREC>::VisibleObjectVisitor(const UniversalCoord& origin,
+                                                 const Eigen::Quaternionf& orientation,
+                                                 float fov,
+                                                 float aspectRatio,
+                                                 PREC distanceLimit,
+                                                 float faintestMag) :
     m_observerPos(origin.toLy()),
     m_distanceLimit(distanceLimit),
     m_distanceLimitSquared(celestia::math::square(distanceLimit)),
@@ -90,9 +90,9 @@ ObjectRenderer<PREC>::ObjectRenderer(const UniversalCoord& origin,
 
 template<typename PREC>
 bool
-ObjectRenderer<PREC>::checkNode(const position_type& center,
-                                PREC size,
-                                float brightestMag)
+VisibleObjectVisitor<PREC>::checkNode(const position_type& center,
+                                      PREC size,
+                                      float brightestMag)
 {
     // Check if node intersects the view frustum
     for (const auto& plane : m_frustumPlanes)

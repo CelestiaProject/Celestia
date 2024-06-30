@@ -18,15 +18,15 @@
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celrender/rendererfwd.h>
-#include "objectrenderer.h"
 #include "projectionmode.h"
+#include "visibleobjectvisitor.h"
 
 class DeepSkyObject;
 class DSODatabase;
 class Observer;
 class Renderer;
 
-class DSORenderer : public ObjectRenderer<double>
+class DSORenderer : public VisibleObjectVisitor<double>
 {
 public:
     DSORenderer(const Observer*,
