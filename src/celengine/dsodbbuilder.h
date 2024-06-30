@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <celcompat/filesystem.h>
+#include <celutil/blockarray.h>
 #include "astroobj.h"
 
 class DeepSkyObject;
@@ -29,6 +30,6 @@ public:
 private:
     float calcAvgAbsMag();
 
-    std::vector<std::unique_ptr<DeepSkyObject>> m_dsos;
+    BlockArray<std::unique_ptr<DeepSkyObject>> m_dsos;
     std::vector<std::pair<AstroCatalog::IndexNumber, std::string>> m_names;
 };

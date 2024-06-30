@@ -1017,10 +1017,9 @@ StarDatabaseBuilder::buildOctree()
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
 
-    engine::StarOctreeBuilder octreeBuilder({std::move_iterator(unsortedStars.begin()), std::move_iterator(unsortedStars.end())},
+    engine::StarOctreeBuilder octreeBuilder(std::move(unsortedStars),
                                             StarDatabase::STAR_OCTREE_ROOT_SIZE,
                                             absMag);
-    unsortedStars.clear();
     auto indices = octreeBuilder.indices();
     std::vector<std::uint32_t> catalogNumberIndex(indices.begin(), indices.end());
 

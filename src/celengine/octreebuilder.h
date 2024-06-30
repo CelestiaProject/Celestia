@@ -49,14 +49,6 @@ OctreeBuilderNode<PREC>::OctreeBuilderNode(const point_type& _center) :
 template<typename PREC>
 OctreeBuilderNode<PREC>::~OctreeBuilderNode() = default;
 
-template<typename OBJ>
-void
-reorderOctreeElements(std::vector<OBJ>& objects, std::vector<OctreeIndexType>& indices)
-{
-    // In-place reordering
-
-}
-
 } // end namespace celestia::engine::detail
 
 template<typename TRAITS>
@@ -68,9 +60,9 @@ public:
     using point_type = Eigen::Matrix<precision_type, 3, 1>;
     using static_octree = Octree<object_type, precision_type>;
 
-    OctreeBuilder(std::vector<object_type>&& objects, precision_type rootSize, float rootMag);
+    OctreeBuilder(BlockArray<object_type>&& objects, precision_type rootSize, float rootMag);
 
-    std::vector<object_type>& objects();
+    BlockArray<object_type>& objects();
 
     celestia::util::array_view<std::uint32_t> indices() const;
     static_octree build();
@@ -92,7 +84,7 @@ private:
     template<typename VISITOR>
     void processNodes(VISITOR&) const;
 
-    std::vector<object_type> m_objects;
+    BlockArray<object_type> m_objects;
     std::vector<std::uint32_t> m_indices;
     std::vector<float> m_thresholdMags;
     std::vector<precision_type> m_scales;
@@ -106,13 +98,12 @@ private:
 };
 
 template<typename TRAITS>
-OctreeBuilder<TRAITS>::OctreeBuilder(std::vector<object_type>&& objects,
+OctreeBuilder<TRAITS>::OctreeBuilder(BlockArray<object_type>&& objects,
                                      precision_type rootSize,
                                      float rootMag) :
     m_objects(std::move(objects))
 {
     m_nodes.emplace_back(point_type::Zero());
-    m_objects.shrink_to_fit();
     m_thresholdMags.push_back(rootMag);
     m_scales.push_back(rootSize);
 
@@ -123,7 +114,7 @@ OctreeBuilder<TRAITS>::OctreeBuilder(std::vector<object_type>&& objects,
 }
 
 template<typename TRAITS>
-std::vector<typename OctreeBuilder<TRAITS>::object_type>&
+BlockArray<typename OctreeBuilder<TRAITS>::object_type>&
 OctreeBuilder<TRAITS>::objects()
 {
     return m_objects;
@@ -405,9 +396,15 @@ OctreeBuilder<TRAITS>::build()
 
     assert(m_indices.size() == m_objects.size());
 
-    detail::reorderOctreeElements(m_objects, m_indices);
+    std::vector<object_type> sortedObjects;
+    sortedObjects.reserve(m_objects.size());
+    for (auto index : m_indices)
+    {
+        sortedObjects.emplace_back(std::move(m_objects[index]));
+    }
+
     return static_octree(std::move(visitor.staticNodes),
-                         std::move(m_objects),
+                         std::move(sortedObjects),
                          visitor.topmostPopulated,
                          visitor.maxDepth);
 }
