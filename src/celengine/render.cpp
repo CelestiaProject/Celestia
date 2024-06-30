@@ -3799,8 +3799,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     float effDistanceToScreen = mmToInches(static_cast<float>(REF_DISTANCE_TO_SCREEN)) * pixelSize * getScreenDpi();
     float labelThresholdMag = 1.2f * std::max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
 
-
-    PointStarRenderer starRenderer(&observer, this, &starDB, faintestMag, labelThresholdMag);
+    PointStarRenderer starRenderer(&observer, this, &starDB, faintestMag, labelThresholdMag, distanceLimit);
 
     starRenderer.setupVertexBuffers(gaussianDiscTex, gaussianGlareTex, screenDpi / 96.0f, starStyle == PointStars);
 

@@ -27,10 +27,9 @@
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
 
-
 class Universe
 {
- public:
+public:
     Universe() = default;
     ~Universe();
 
@@ -89,7 +88,7 @@ class Universe
     bool isMarked(const Selection&, int priority) const;
     const celestia::MarkerList& getMarkers() const;
 
- private:
+private:
     void getCompletion(std::vector<std::string>& completion,
                        std::string_view s,
                        celestia::util::array_view<const Selection> contexts,
@@ -121,7 +120,6 @@ class Universe
                                 float faintest,
                                 float tolerance = 0.0f) const;
 
- private:
     std::unique_ptr<StarDatabase> starCatalog{nullptr};
     std::unique_ptr<DSODatabase> dsoCatalog{nullptr};
     std::unique_ptr<SolarSystemCatalog> solarSystemCatalog{nullptr};

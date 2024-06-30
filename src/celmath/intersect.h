@@ -23,9 +23,11 @@
 namespace celestia::math
 {
 
-template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
-                                        const Sphere<T>& sphere,
-                                        T& distance)
+template<class T>
+bool
+testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
+                 const Sphere<T>& sphere,
+                 T& distance)
 {
     using std::sqrt;
 
@@ -61,11 +63,12 @@ template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray
     }
 }
 
-
-template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
-                                        const Sphere<T>& sphere,
-                                        T& distanceToTester,
-                                        T& cosAngleToCenter)
+template<class T>
+bool
+testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
+                 const Sphere<T>& sphere,
+                 T& distanceToTester,
+                 T& cosAngleToCenter)
 {
     if (testIntersection(ray, sphere, distanceToTester))
     {
@@ -76,10 +79,11 @@ template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray
     return false;
 }
 
-
-template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
-                                        const Ellipsoid<T>& e,
-                                        T& distance)
+template<class T>
+bool
+testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
+                 const Ellipsoid<T>& e,
+                 T& distance)
 {
     using std::sqrt;
 
@@ -118,11 +122,12 @@ template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray
     }
 }
 
-
-template<class T> bool testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
-                                        const Ellipsoid<T>& ellipsoid,
-                                        T& distanceToTester,
-                                        T& cosAngleToCenter)
+template<class T>
+bool
+testIntersection(const Eigen::ParametrizedLine<T, 3>& ray,
+                 const Ellipsoid<T>& ellipsoid,
+                 T& distanceToTester,
+                 T& cosAngleToCenter)
 {
     if (testIntersection(ray, ellipsoid, distanceToTester))
     {

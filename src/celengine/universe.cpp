@@ -30,6 +30,7 @@
 #include "frametree.h"
 #include "location.h"
 #include "meshmanager.h"
+#include "objectrenderer.h"
 #include "render.h"
 #include "timelinephase.h"
 
@@ -301,6 +302,87 @@ traverseFrameTree(const FrameTree* frameTree,
     return true;
 }
 
+class StarPicker : private ObjectRenderer<float>
+{
+public:
+    StarPicker(const UniversalCoord&,
+               const Eigen::Vector3f&,
+               float fov,
+               float faintestMag,
+               double now);
+
+    using ObjectRenderer::checkNode;
+    void process(const Star&);
+
+    const Star* pickedStar() const;
+
+private:
+    Eigen::Vector3f m_pickOrigin;
+    Eigen::Vector3f m_pickRay;
+    double m_now;
+    double m_sinAngle2Closest;
+    const Star* m_pickedStar{ nullptr };
+};
+
+StarPicker::StarPicker(const UniversalCoord& pos,
+                       const Eigen::Vector3f& direction,
+                       float fov,
+                       float faintestMag,
+                       double now) :
+    ObjectRenderer(pos,
+                   Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction).conjugate(),
+                   fov,
+                   1.0f,
+                   1.0e6f, // TODO: make this dependent on the renderer setting
+                   faintestMag),
+    m_pickOrigin(pos.toLy().cast<float>()),
+    m_pickRay(direction),
+    m_now(now),
+    m_sinAngle2Closest(std::max(std::sin(fov * 0.5), ANGULAR_RES))
+{
+}
+
+void
+StarPicker::process(const Star& star)
+{
+    Eigen::Vector3f relativeStarPos = star.getPosition() - m_pickOrigin;
+    Eigen::Vector3f starDir = relativeStarPos.normalized();
+
+    // Stars with orbits need special handling
+    float orbitalRadius = star.getOrbitalRadius();
+    if (orbitalRadius != 0.0f)
+    {
+        float distance = 0.0f;
+
+        // Check for an intersection with orbital bounding sphere; if there's
+        // no intersection, then just use normal calculation.  We actually test
+        // intersection with a larger sphere to make sure we don't miss a star
+        // right on the edge of the sphere.
+        if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), m_pickRay),
+                                   math::Spheref(relativeStarPos, orbitalRadius * 2.0f),
+                                   distance))
+        {
+            Eigen::Vector3d starPos = star.getPosition(m_now).toLy();
+            starDir = (starPos - m_observerPos).normalized().cast<float>();
+        }
+    }
+
+    double sinAngle2 = (starDir - m_pickRay).cast<double>().norm() * 0.5;
+    if (sinAngle2 <= m_sinAngle2Closest)
+    {
+        m_sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
+        m_pickedStar = &star;
+        if (auto barycenter = m_pickedStar->getOrbitBarycenter(); barycenter != nullptr)
+            m_pickedStar = barycenter;
+    }
+}
+
+inline const Star*
+StarPicker::pickedStar() const
+{
+    return m_pickedStar;
+}
+
 class CloseStarPicker
 {
 public:
@@ -397,108 +479,7 @@ CloseStarPicker::closestStar() const
     return m_closestStar;
 }
 
-class CloseDSOPicker
-{
-public:
-    bool checkNode(const Eigen::Vector3d&, double, float) const;
-    void process(const std::unique_ptr<DeepSkyObject>&);
-    const DeepSkyObject* closestDSO() const;
-
-private:
-    Eigen::Vector3d m_position;
-    double m_maxDistance;
-
-    const DeepSkyObject* m_closestDSO{ nullptr };
-};
-
-bool
-CloseDSOPicker::checkNode(const Eigen::Vector3d& center, double size, float /* magnitude */) const
-{
-    return checkNodeDistance(center, m_position, size, m_maxDistance);
-}
-
-void
-CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso)
-{
-
-}
-
-inline const DeepSkyObject*
-CloseDSOPicker::closestDSO() const
-{
-    return m_closestDSO;
-}
-
 #if 0
-// StarPicker is a callback class for StarDatabase::findVisibleStars
-class StarPicker : public StarHandler
-{
-public:
-    StarPicker(const Eigen::Vector3f&, const Eigen::Vector3f&, double, float);
-    ~StarPicker() = default;
-
-    void process(const Star& /*star*/, float /*unused*/, float /*unused*/) override;
-
-public:
-    const Star* pickedStar;
-    Eigen::Vector3f pickOrigin;
-    Eigen::Vector3f pickRay;
-    double sinAngle2Closest;
-    double when;
-};
-
-StarPicker::StarPicker(const Eigen::Vector3f& _pickOrigin,
-                       const Eigen::Vector3f& _pickRay,
-                       double _when,
-                       float angle) :
-    pickedStar(nullptr),
-    pickOrigin(_pickOrigin),
-    pickRay(_pickRay),
-    sinAngle2Closest(std::max(std::sin(angle / 2.0), ANGULAR_RES)),
-    when(_when)
-{
-}
-
-void
-StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
-{
-    Eigen::Vector3f relativeStarPos = star.getPosition() - pickOrigin;
-    Eigen::Vector3f starDir = relativeStarPos.normalized();
-
-    double sinAngle2 = 0.0;
-
-    // Stars with orbits need special handling
-    float orbitalRadius = star.getOrbitalRadius();
-    if (orbitalRadius != 0.0f)
-    {
-        float distance = 0.0f;
-
-        // Check for an intersection with orbital bounding sphere; if there's
-        // no intersection, then just use normal calculation.  We actually test
-        // intersection with a larger sphere to make sure we don't miss a star
-        // right on the edge of the sphere.
-        if (math::testIntersection(Eigen::ParametrizedLine<float, 3>(Eigen::Vector3f::Zero(), pickRay),
-                                   math::Spheref(relativeStarPos, orbitalRadius * 2.0f),
-                                   distance))
-        {
-            Eigen::Vector3d starPos = star.getPosition(when).toLy();
-            starDir = (starPos - pickOrigin.cast<double>()).cast<float>().normalized();
-        }
-    }
-
-    Eigen::Vector3f starMiss = starDir - pickRay;
-    Eigen::Vector3d sMd = starMiss.cast<double>();
-    sinAngle2 = sMd.norm() / 2.0;
-
-    if (sinAngle2 <= sinAngle2Closest)
-    {
-        sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
-        pickedStar = &star;
-        if (pickedStar->getOrbitBarycenter() != nullptr)
-            pickedStar = pickedStar->getOrbitBarycenter();
-    }
-}
-
 class DSOPicker : public DSOHandler
 {
 public:
@@ -561,66 +542,6 @@ DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused
     }
 }
 
-
-class CloseDSOPicker : public DSOHandler
-{
-public:
-    CloseDSOPicker(const Eigen::Vector3d& pos,
-                   const Eigen::Vector3d& dir,
-                   std::uint64_t renderFlags,
-                   double maxDistance,
-                   float);
-    ~CloseDSOPicker() = default;
-
-    void process(DeepSkyObject* const & dso, double distance, float appMag);
-
-public:
-    Eigen::Vector3d  pickOrigin;
-    Eigen::Vector3d  pickDir;
-    std::uint64_t renderFlags;
-    double    maxDistance;
-
-    const DeepSkyObject* closestDSO;
-    double largestCosAngle;
-};
-
-
-CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& pos,
-                               const Eigen::Vector3d& dir,
-                               std::uint64_t renderFlags,
-                               double maxDistance,
-                               float /*unused*/) :
-    pickOrigin     (pos),
-    pickDir        (dir),
-    renderFlags    (renderFlags),
-    maxDistance    (maxDistance),
-    closestDSO     (nullptr),
-    largestCosAngle(-2.0)
-{
-}
-
-
-void
-CloseDSOPicker::process(DeepSkyObject* const & dso,
-                        double distance,
-                        float /*unused*/)
-{
-    if (distance > maxDistance || !(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
-        return;
-
-    double  distanceToPicker       = 0.0;
-    double  cosAngleToBoundCenter  = 0.0;
-    if (dso->pick(Eigen::ParametrizedLine<double, 3>(pickOrigin, pickDir), distanceToPicker, cosAngleToBoundCenter))
-    {
-        // Don't select the object the observer is currently in:
-        if ((pickOrigin - dso->getPosition()).norm() > dso->getRadius() &&
-            cosAngleToBoundCenter > largestCosAngle)
-        {
-            closestDSO      = dso;
-            largestCosAngle = cosAngleToBoundCenter;
-        }
-    }
-}
 #endif
 
 void
@@ -920,17 +841,17 @@ Universe::pickStar(const UniversalCoord& origin,
     Eigen::Quaternionf rotation;
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
-    StarPicker picker(o, direction, when, tolerance);
+    StarPicker picker(origin, direction, tolerance, faintestMag, when);
     starCatalog->getOctree().processDepthFirst(picker);
     /*starCatalog->findVisibleStars(picker,
                                   o,
                                   rotation.conjugate(),
                                   tolerance, 1.0f,
                                   faintestMag);*/
-    if (picker.pickedStar != nullptr)
-        return Selection(const_cast<Star*>(picker.pickedStar));
-    else
-        return Selection();
+    if (auto star = picker.pickedStar(); star != nullptr)
+        return Selection(const_cast<Star*>(star));
+
+    return Selection();
 }
 
 
@@ -943,12 +864,6 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
 {
     Eigen::Vector3d orig = origin.toLy();
     Eigen::Vector3d dir = direction.cast<double>();
-
-    CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
-    dsoCatalog->getOctree().processDepthFirst(closePicker);
-    //dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
-    if (const DeepSkyObject* dso = closePicker.closestDSO(); dso != nullptr)
-        return Selection(const_cast<DeepSkyObject*>(dso));
 
     Eigen::Quaternionf rotation;
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
@@ -972,8 +887,8 @@ Universe::pick(const UniversalCoord& origin,
                const Eigen::Vector3f& direction,
                double when,
                std::uint64_t renderFlags,
-               float  faintestMag,
-               float  tolerance)
+               float faintestMag,
+               float tolerance)
 {
     Selection sel;
 
@@ -987,10 +902,10 @@ Universe::pick(const UniversalCoord& origin,
             if (solarSystem != nullptr)
             {
                 sel = pickPlanet(*solarSystem,
-                                origin, direction,
-                                when,
-                                faintestMag,
-                                tolerance);
+                                 origin, direction,
+                                 when,
+                                 faintestMag,
+                                 tolerance);
                 if (!sel.empty())
                     break;
             }
@@ -998,14 +913,10 @@ Universe::pick(const UniversalCoord& origin,
     }
 
     if (sel.empty() && (renderFlags & Renderer::ShowStars))
-    {
         sel = pickStar(origin, direction, when, faintestMag, tolerance);
-    }
 
     if (sel.empty())
-    {
         sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
-    }
 
     return sel;
 }

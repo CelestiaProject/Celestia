@@ -63,64 +63,64 @@ brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, fl
 
 } // anonymous namespace
 
-DSORenderer::DSORenderer(const Observer* _observer,
-                         Renderer* _renderer,
-                         const DSODatabase* _dsoDB,
-                         float _minNearPlaneDistance,
-                         float _labelThresholdMag) :
-    ObjectRenderer<double>(_observer->getPosition(),
-                           _observer->getOrientationf(),
-                           math::degToRad(_renderer->fov),
-                           _renderer->getAspectRatio(),
+DSORenderer::DSORenderer(const Observer* observer,
+                         Renderer* renderer,
+                         const DSODatabase* dsoDB,
+                         float minNearPlaneDistance,
+                         float labelThresholdMag) :
+    ObjectRenderer<double>(observer->getPosition(),
+                           observer->getOrientationf(),
+                           math::degToRad(renderer->fov),
+                           renderer->getAspectRatio(),
                            DSO_OCTREE_ROOT_SIZE,
-                           _renderer->faintestMag),
-    renderer(_renderer),
-    galaxyRenderer(_renderer->m_galaxyRenderer.get()),
-    globularRenderer(_renderer->m_globularRenderer.get()),
-    nebulaRenderer(_renderer->m_nebulaRenderer.get()),
-    openClusterRenderer(_renderer->m_openClusterRenderer.get()),
-    dsoDB(_dsoDB),
-    renderFlags(_renderer->getRenderFlags()),
-    labelMode(_renderer->getLabelMode()),
-    labelThresholdMag(_labelThresholdMag),
-    avgAbsMag(_dsoDB->getAverageAbsoluteMagnitude()),
-    pixelSize(_renderer->pixelSize),
-    frustum(_renderer->projectionMode->getInfiniteFrustum(_minNearPlaneDistance, _observer->getZoom())),
-    orientationMatrixT(_renderer->getCameraOrientationf().toRotationMatrix())
+                           renderer->faintestMag),
+    m_renderer(renderer),
+    m_galaxyRenderer(renderer->m_galaxyRenderer.get()),
+    m_globularRenderer(renderer->m_globularRenderer.get()),
+    m_nebulaRenderer(renderer->m_nebulaRenderer.get()),
+    m_openClusterRenderer(renderer->m_openClusterRenderer.get()),
+    m_dsoDB(dsoDB),
+    m_renderFlags(renderer->getRenderFlags()),
+    m_labelMode(renderer->getLabelMode()),
+    m_labelThresholdMag(labelThresholdMag),
+    m_avgAbsMag(dsoDB->getAverageAbsoluteMagnitude()),
+    m_pixelSize(renderer->pixelSize),
+    m_frustum(renderer->projectionMode->getInfiniteFrustum(minNearPlaneDistance, observer->getZoom())),
+    m_orientationMatrixT(renderer->getCameraOrientationf().toRotationMatrix())
 {
     auto cameraOrientation = renderer->getCameraOrientationf();
-    float fov = _renderer->fov;
-    float zoom = _observer->getZoom();
+    float fov = renderer->fov;
+    float zoom = observer->getZoom();
 
-    galaxyRenderer->update(cameraOrientation, pixelSize, fov, zoom);
-    globularRenderer->update(cameraOrientation, pixelSize, fov, zoom);
-    nebulaRenderer->update(cameraOrientation, pixelSize, fov, zoom);
-    openClusterRenderer->update(cameraOrientation, pixelSize, fov, zoom);
+    m_galaxyRenderer->update(cameraOrientation, m_pixelSize, fov, zoom);
+    m_globularRenderer->update(cameraOrientation, m_pixelSize, fov, zoom);
+    m_nebulaRenderer->update(cameraOrientation, m_pixelSize, fov, zoom);
+    m_openClusterRenderer->update(cameraOrientation, m_pixelSize, fov, zoom);
 }
 
 void
 DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso) const
 {
     float absMag = dso->getAbsoluteMagnitude();
-    if (!dso->isVisible() || absMag > absMagLimit)
+    if (!dso->isVisible() || absMag > m_absMagLimit)
         return;
 
-    Eigen::Vector3d relativePos = dso->getPosition() - observerPos;
+    Eigen::Vector3d relativePos = dso->getPosition() - m_observerPos;
     double distanceToDSOSquared = relativePos.squaredNorm();
-    if (distanceToDSOSquared > distanceLimitSquared)
+    if (distanceToDSOSquared > m_distanceLimitSquared)
         return;
 
     Eigen::Vector3f relPos = relativePos.cast<float>();
     double distanceToDSO = std::sqrt(distanceToDSOSquared);
 
-    Eigen::Vector3f center = orientationMatrixT * relPos;
+    Eigen::Vector3f center = m_orientationMatrixT * relPos;
 
     // Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     double dsoRadius = dso->getBoundingSphereRadius();
-    if (frustum.testSphere(center, static_cast<float>(dsoRadius)) == math::FrustumAspect::Outside)
+    if (m_frustum.testSphere(center, static_cast<float>(dsoRadius)) == math::FrustumAspect::Outside)
         return;
 
     float appMag;
@@ -129,10 +129,10 @@ DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso) const
     else
         appMag = absMag + static_cast<float>(enhance * std::tanh(distanceToDSO/pc10 - 1.0));
 
-    if ((renderFlags & dso->getRenderMask()) != 0)
+    if ((m_renderFlags & dso->getRenderMask()) != 0)
         renderDSO(dso.get(), relPos, distanceToDSO, dsoRadius, appMag);
 
-    if (unsigned int labelMask = dso->getLabelMask(); (labelMask & labelMode) != 0)
+    if (unsigned int labelMask = dso->getLabelMask(); (labelMask & m_labelMode) != 0)
         labelDSO(dso.get(), relPos, labelMask, distanceToDSO, appMag);
 }
 
@@ -160,26 +160,26 @@ DSORenderer::renderDSO(const DeepSkyObject* dso,
         }
     }
 
-    float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
+    float b = 2.3f * (m_faintestMag - 4.75f) / m_renderer->getFaintestAM45deg(); // brightnesCorr
     switch (dso->getObjType())
     {
     case DeepSkyObjectType::Galaxy:
         // -19.04f == average over 10937 galaxies in galaxies.dsc.
-        b = brightness(-19.04f, dso->getAbsoluteMagnitude(), appMag, b, faintestMag);
-        galaxyRenderer->add(static_cast<const Galaxy*>(dso), relPos, b, nearZ, farZ);
+        b = brightness(-19.04f, dso->getAbsoluteMagnitude(), appMag, b, m_faintestMag);
+        m_galaxyRenderer->add(static_cast<const Galaxy*>(dso), relPos, b, nearZ, farZ);
         break;
     case DeepSkyObjectType::Globular:
         // -6.86f == average over 150 globulars in globulars.dsc.
-        b = brightness(-6.86f, dso->getAbsoluteMagnitude(), appMag, b, faintestMag);
-        globularRenderer->add(static_cast<const Globular*>(dso), relPos, b, nearZ, farZ);
+        b = brightness(-6.86f, dso->getAbsoluteMagnitude(), appMag, b, m_faintestMag);
+        m_globularRenderer->add(static_cast<const Globular*>(dso), relPos, b, nearZ, farZ);
         break;
     case DeepSkyObjectType::Nebula:
-        b = brightness(avgAbsMag, dso->getAbsoluteMagnitude(), appMag, b, faintestMag);
-        nebulaRenderer->add(static_cast<const Nebula*>(dso), relPos, b, nearZ, farZ);
+        b = brightness(m_avgAbsMag, dso->getAbsoluteMagnitude(), appMag, b, m_faintestMag);
+        m_nebulaRenderer->add(static_cast<const Nebula*>(dso), relPos, b, nearZ, farZ);
         break;
     case DeepSkyObjectType::OpenCluster:
-        b = brightness(avgAbsMag, dso->getAbsoluteMagnitude(), appMag, b, faintestMag);
-        openClusterRenderer->add(static_cast<const OpenCluster*>(dso), relPos, b, nearZ, farZ);
+        b = brightness(m_avgAbsMag, dso->getAbsoluteMagnitude(), appMag, b, m_faintestMag);
+        m_openClusterRenderer->add(static_cast<const OpenCluster*>(dso), relPos, b, nearZ, farZ);
         break;
     default:
         // Unsupported DSO
@@ -205,17 +205,17 @@ DSORenderer::labelDSO(const DeepSkyObject* dso,
     switch (labelMask)
     {
     case Renderer::NebulaLabels:
-        rep = &renderer->nebulaRep;
+        rep = &m_renderer->nebulaRep;
         labelColor = Renderer::NebulaLabelColor;
         appMagEff = astro::absToAppMag(-7.5f, static_cast<float>(distanceToDSO));
-        symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
+        symbolSize = (float)(dso->getRadius() / distanceToDSO) / m_pixelSize;
         step = 6.0f;
         break;
     case Renderer::OpenClusterLabels:
-        rep = &renderer->openClusterRep;
+        rep = &m_renderer->openClusterRep;
         labelColor = Renderer::OpenClusterLabelColor;
         appMagEff = astro::absToAppMag(-6.0f, static_cast<float>(distanceToDSO));
-        symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
+        symbolSize = (float)(dso->getRadius() / distanceToDSO) / m_pixelSize;
         step = 4.0f;
         break;
     case Renderer::GalaxyLabels:
@@ -236,18 +236,18 @@ DSORenderer::labelDSO(const DeepSkyObject* dso,
         break;
     }
 
-    if (appMagEff < labelThresholdMag)
+    if (appMagEff < m_labelThresholdMag)
     {
         // introduce distance dependent label transparency.
-        float distr = std::min(1.0f, step * (labelThresholdMag - appMagEff) / labelThresholdMag);
+        float distr = std::min(1.0f, step * (m_labelThresholdMag - appMagEff) / m_labelThresholdMag);
         labelColor.alpha(distr * labelColor.alpha());
 
-        renderer->addBackgroundAnnotation(rep,
-                                          dsoDB->getDSOName(dso, true),
-                                          labelColor,
-                                          relPos,
-                                          Renderer::LabelHorizontalAlignment::Start,
-                                          Renderer::LabelVerticalAlignment::Center,
-                                          symbolSize);
+        m_renderer->addBackgroundAnnotation(rep,
+                                            m_dsoDB->getDSOName(dso, true),
+                                            labelColor,
+                                            relPos,
+                                            Renderer::LabelHorizontalAlignment::Start,
+                                            Renderer::LabelVerticalAlignment::Center,
+                                            symbolSize);
     }
 }

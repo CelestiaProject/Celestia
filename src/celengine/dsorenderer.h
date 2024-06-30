@@ -32,8 +32,8 @@ public:
     DSORenderer(const Observer*,
                 Renderer*,
                 const DSODatabase*,
-                float _minNearPlaneDistance,
-                float _labelThresholdMag);
+                float minNearPlaneDistance,
+                float labelThresholdMag);
 
     void process(const std::unique_ptr<DeepSkyObject>&) const;
 
@@ -41,17 +41,17 @@ private:
     void renderDSO(const DeepSkyObject*, const Eigen::Vector3f&, double, double, float) const;
     void labelDSO(const DeepSkyObject*, const Eigen::Vector3f&, unsigned int, double, float) const;
 
-    Renderer* renderer;
-    celestia::render::GalaxyRenderer* galaxyRenderer;
-    celestia::render::GlobularRenderer* globularRenderer;
-    celestia::render::NebulaRenderer* nebulaRenderer;
-    celestia::render::OpenClusterRenderer* openClusterRenderer;
-    const DSODatabase *dsoDB;
-    std::uint64_t renderFlags;
-    unsigned int labelMode;
-    float labelThresholdMag;
-    float avgAbsMag;
-    float pixelSize;
-    celestia::math::InfiniteFrustum frustum;
-    Eigen::Matrix3f orientationMatrixT;
+    Renderer* m_renderer;
+    celestia::render::GalaxyRenderer* m_galaxyRenderer;
+    celestia::render::GlobularRenderer* m_globularRenderer;
+    celestia::render::NebulaRenderer* m_nebulaRenderer;
+    celestia::render::OpenClusterRenderer* m_openClusterRenderer;
+    const DSODatabase* m_dsoDB;
+    std::uint64_t m_renderFlags;
+    unsigned int m_labelMode;
+    float m_labelThresholdMag;
+    float m_avgAbsMag;
+    float m_pixelSize;
+    celestia::math::InfiniteFrustum m_frustum;
+    Eigen::Matrix3f m_orientationMatrixT;
 };
