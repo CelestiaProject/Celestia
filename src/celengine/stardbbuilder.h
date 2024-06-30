@@ -76,13 +76,12 @@ private:
                      const std::string& name,
                      const std::string& domain);
 
-    void buildOctree();
+    std::unique_ptr<StarDatabase> buildOctree();
     Star* findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const;
-
-    std::unique_ptr<StarDatabase> starDB{ std::make_unique<StarDatabase>() };
 
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
+    std::unique_ptr<StarNameDatabase> namesDB;
     BlockArray<Star> unsortedStars;
     // List of stars loaded from binary file, sorted by catalog number
     std::vector<Star*> binFileCatalogNumberIndex;

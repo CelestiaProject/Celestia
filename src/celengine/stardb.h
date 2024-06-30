@@ -43,7 +43,6 @@ public:
 
     static constexpr unsigned int MAX_STAR_NAMES = 10;
 
-    StarDatabase();
     ~StarDatabase();
 
     Star* getStar(std::uint32_t);
@@ -78,6 +77,10 @@ public:
     const StarNameDatabase* getNameDatabase() const;
 
 private:
+    StarDatabase(celestia::engine::StarOctree&&,
+                 std::unique_ptr<StarNameDatabase>&&,
+                 std::vector<std::uint32_t>&&);
+
     celestia::engine::StarOctree      octree;
     std::unique_ptr<StarNameDatabase> namesDB;
     std::vector<std::uint32_t>        catalogNumberIndex;

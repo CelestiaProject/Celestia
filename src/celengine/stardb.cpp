@@ -21,6 +21,7 @@
 using namespace std::string_view_literals;
 
 namespace compat = celestia::compat;
+namespace engine = celestia::engine;
 
 namespace
 {
@@ -45,6 +46,15 @@ catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 
 } // end unnamed namespace
 
+StarDatabase::StarDatabase(engine::StarOctree&& _octree,
+                           std::unique_ptr<StarNameDatabase>&& _namesDB,
+                           std::vector<std::uint32_t>&& _catalogNumberIndex) :
+    octree(std::move(_octree)),
+    namesDB(std::move(_namesDB)),
+    catalogNumberIndex(std::move(_catalogNumberIndex))
+{
+}
+
 StarDatabase::~StarDatabase() = default;
 
 Star*
@@ -61,7 +71,6 @@ StarDatabase::find(AstroCatalog::IndexNumber catalogNumber)
         return nullptr;
 
     Star& star = octree[*it];
-    // False positive in cppcheck: stars.get() does NOT return a void pointer
     return star.getIndex() == catalogNumber ? &star : nullptr;
 }
 
@@ -211,54 +220,6 @@ StarDatabase::getStarNameList(const Star& star, unsigned int maxNames) const
 
     return starNames;
 }
-
-/*
-void
-StarDatabase::findVisibleStars(StarHandler& starHandler,
-                               const Eigen::Vector3f& position,
-                               const Eigen::Quaternionf& orientation,
-                               float fovY,
-                               float aspectRatio,
-                               float limitingMag) const
-{
-    // Compute the bounding planes of an infinite view frustum
-    Eigen::Matrix3f rot = orientation.toRotationMatrix();
-    float h = std::tan(fovY * 0.5f);
-    float w = h * aspectRatio;
-    std::array<Eigen::Vector3f, 5> planeNormals
-    {
-        Eigen::Vector3f(0.0f, 1.0f, -h),
-        Eigen::Vector3f(0.0f, -1.0f, -h),
-        Eigen::Vector3f(1.0f, 0.0f, -w),
-        Eigen::Vector3f(-1.0f, 0.0f, -w),
-        Eigen::Vector3f(0.0f, 0.0f, -1.0f),
-    };
-
-    std::array<Eigen::Hyperplane<float, 3>, 5> frustumPlanes;
-    for (unsigned int i = 0U; i < 5U; ++i)
-    {
-        planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
-        frustumPlanes[i] = Eigen::Hyperplane<float, 3>(planeNormals[i], position);
-    }
-
-    octreeRoot->processVisibleObjects(starHandler,
-                                      position,
-                                      frustumPlanes.data(),
-                                      limitingMag,
-                                      STAR_OCTREE_ROOT_SIZE);
-}
-
-void
-StarDatabase::findCloseStars(StarHandler& starHandler,
-                             const Eigen::Vector3f& position,
-                             float radius) const
-{
-    octreeRoot->processCloseObjects(starHandler,
-                                    position,
-                                    radius,
-                                    STAR_OCTREE_ROOT_SIZE);
-}
-*/
 
 const StarNameDatabase*
 StarDatabase::getNameDatabase() const

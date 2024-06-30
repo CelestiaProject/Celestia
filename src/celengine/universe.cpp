@@ -330,7 +330,7 @@ StarPicker::StarPicker(const UniversalCoord& pos,
                          Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction).conjugate(),
                          fov,
                          1.0f,
-                         1.0e6f, // TODO: make this dependent on the renderer setting
+                         std::numeric_limits<float>::max(),
                          faintestMag),
     m_pickOrigin(pos.toLy().cast<float>()),
     m_pickRay(direction),
@@ -474,6 +474,76 @@ inline const Star*
 CloseStarPicker::closestStar() const
 {
     return m_closestStar;
+}
+
+class DSOPicker : private VisibleObjectVisitor<double>
+{
+public:
+    DSOPicker(const UniversalCoord&,
+              const Eigen::Vector3d&,
+              float fov,
+              float faintestMag,
+              std::uint64_t renderFlags);
+
+    using VisibleObjectVisitor::checkNode;
+    void process(const std::unique_ptr<DeepSkyObject>&);
+
+    DeepSkyObject* pickedDSO() const;
+
+private:
+    Eigen::Vector3d m_pickDir;
+    std::uint64_t m_renderFlags;
+    double m_sinAngle2Closest;
+    DeepSkyObject* m_pickedDSO{ nullptr };
+};
+
+DSOPicker::DSOPicker(const UniversalCoord& pos,
+                     const Eigen::Vector3d& direction,
+                     float fov,
+                     float faintestMag,
+                     std::uint64_t renderFlags) :
+    VisibleObjectVisitor(pos,
+                         Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction.cast<float>()).conjugate(),
+                         fov,
+                         1.0f,
+                         std::numeric_limits<double>::max(),
+                         faintestMag),
+    m_pickDir(direction),
+    m_renderFlags(renderFlags),
+    m_sinAngle2Closest(std::max(std::sin(fov * 0.5), ANGULAR_RES))
+{
+}
+
+void
+DSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso)
+{
+    if ((dso->getRenderMask() & m_renderFlags) == 0 || !dso->isVisible() || !dso->isClickable())
+        return;
+
+    Eigen::Vector3d relativeDSOPos = dso->getPosition() - m_observerPos;
+    Eigen::Vector3d dsoDir = relativeDSOPos;
+
+    if (double distance2 = 0.0;
+        math::testIntersection(Eigen::ParametrizedLine<double, 3>(Eigen::Vector3d::Zero(), m_pickDir),
+                               math::Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
+    {
+        Eigen::Vector3d dsoPos = dso->getPosition();
+        dsoDir = dsoPos * 1.0e-6 - m_observerPos; // wtf???
+    }
+    dsoDir.normalize();
+
+    double sinAngle2 = (dsoDir - m_pickDir).norm() * 0.5;
+    if (sinAngle2 <= m_sinAngle2Closest)
+    {
+        m_sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
+        m_pickedDSO        = dso.get();
+    }
+}
+
+inline DeepSkyObject*
+DSOPicker::pickedDSO() const
+{
+    return m_pickedDSO;
 }
 
 class CloseDSOPicker
@@ -938,19 +1008,12 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     if (auto dso = closePicker.closestDSO(); dso != nullptr)
         return Selection(dso);
 
-    auto rotation = Eigen::Quaternionf::FromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
+    DSOPicker picker(origin, dir, tolerance, faintestMag, renderFlags);
+    dsoCatalog->getOctree().processDepthFirst(picker);
+    if (auto dso = picker.pickedDSO(); dso != nullptr)
+        return Selection(dso);
 
-    DSOPicker picker(orig, dir, renderFlags, tolerance);
-    dsoCatalog->findVisibleDSOs(picker,
-                                orig,
-                                rotation.conjugate(),
-                                tolerance,
-                                1.0f,
-                                faintestMag);
-    if (picker.pickedDSO != nullptr)
-        return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
-    else
-        return Selection();
+    return Selection();
 }
 
 Selection

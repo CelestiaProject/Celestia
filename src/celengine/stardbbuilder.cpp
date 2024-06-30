@@ -667,7 +667,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         }
 
         if (header.disposition != DataDisposition::Add && header.catalogNumber == AstroCatalog::InvalidIndex)
-            header.catalogNumber = starDB->namesDB->findCatalogNumberByName(header.names.front(), false);
+            header.catalogNumber = namesDB->findCatalogNumberByName(header.names.front(), false);
 
         Star* star = findWhileLoading(header.catalogNumber);
         if (star == nullptr)
@@ -691,9 +691,9 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 
             if (!header.names.empty())
             {
-                starDB->namesDB->erase(header.catalogNumber);
+                namesDB->erase(header.catalogNumber);
                 for (const auto& name : header.names)
-                    starDB->namesDB->add(header.catalogNumber, name);
+                    namesDB->add(header.catalogNumber, name);
             }
         }
     }
@@ -704,7 +704,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 void
 StarDatabaseBuilder::setNameDatabase(std::unique_ptr<StarNameDatabase>&& nameDB)
 {
-    starDB->namesDB = std::move(nameDB);
+    namesDB = std::move(nameDB);
 }
 
 std::unique_ptr<StarDatabase>
@@ -712,7 +712,7 @@ StarDatabaseBuilder::finish()
 {
     GetLogger()->info(_("Total star count: {}\n"), unsortedStars.size());
 
-    buildOctree();
+    auto starDB = buildOctree();
 
     // Resolve all barycenters; this can't be done before star sorting. There's
     // still a bug here: final orbital radii aren't available until after
@@ -738,7 +738,7 @@ StarDatabaseBuilder::finish()
         UserCategory::addObject(star, category);
     }
 
-    return std::move(starDB);
+    return starDB;
 }
 
 /*! Load star data from a property list into a star instance.
@@ -880,7 +880,7 @@ StarDatabaseBuilder::checkBarycenter(const StarDatabaseBuilder::StcHeader& heade
     }
     else if (auto bcName = orbitBarycenterValue->getString(); bcName != nullptr)
     {
-        barycenterNumber = starDB->namesDB->findCatalogNumberByName(*bcName, false);
+        barycenterNumber = namesDB->findCatalogNumberByName(*bcName, false);
     }
     else
     {
@@ -1009,7 +1009,7 @@ StarDatabaseBuilder::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) c
     return nullptr;
 }
 
-void
+std::unique_ptr<StarDatabase>
 StarDatabaseBuilder::buildOctree()
 {
     // This should only be called once for the database
@@ -1022,7 +1022,9 @@ StarDatabaseBuilder::buildOctree()
                                             absMag);
     unsortedStars.clear();
     auto indices = octreeBuilder.indices();
-    starDB->catalogNumberIndex = { indices.begin(), indices.end() };
+    std::vector<std::uint32_t> catalogNumberIndex(indices.begin(), indices.end());
 
-    starDB->octree = octreeBuilder.build();
+    return std::unique_ptr<StarDatabase>(new StarDatabase(octreeBuilder.build(),
+                                                          std::move(namesDB),
+                                                          std::move(catalogNumberIndex)));
 }
