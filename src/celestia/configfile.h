@@ -68,7 +68,7 @@ struct CelestiaConfig
         double orbitWindowEnd{ 0.5 };
         double orbitPeriodsShown{ 1.0 };
         double linearFadeFraction{ 0.0 };
-        float faintestVisible{ 6.0f };
+        float exposure{ 1.0f };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };

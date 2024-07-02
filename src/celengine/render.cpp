@@ -230,7 +230,6 @@ Renderer::Renderer() :
     fov(standardFOV),
     screenDpi(96),
     corrFac(1.12f),
-    faintestAutoMag45deg(8.0f), //def. 7.0f
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
@@ -612,17 +611,6 @@ float Renderer::getPointWidth() const
 float Renderer::getPointHeight() const
 {
     return 2.0f / windowHeight * getScaleFactor();
-}
-
-void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
-{
-    faintestAutoMag45deg = _faintestAutoMag45deg;
-    markSettingsChanged();
-}
-
-float Renderer::getFaintestAM45deg() const
-{
-    return faintestAutoMag45deg;
 }
 
 unsigned int Renderer::getResolution() const
@@ -1312,14 +1300,6 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
 }
 
 
-void Renderer::autoMag(float& faintestMag, float zoom)
-{
-    float fieldCorr = getProjectionMode()->getFieldCorrection(zoom);
-    faintestMag = faintestAutoMag45deg * std::sqrt(fieldCorr);
-    saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
-}
-
-
 static Color legacyTintColor(float temp)
 {
     // If the star is sufficiently cool, change the light color
@@ -1513,7 +1493,7 @@ void Renderer::render(const Observer& observer,
     xfrustum.transform(getCameraOrientationf().conjugate().toRotationMatrix());
 
     // Set up the projection and modelview matrices.
-    // We'll usethem for positioning star and planet labels.
+    // We'll use them for positioning star and planet labels.
     auto [nearZ, farZ] = projectionMode->getDefaultDepthRange();
     buildProjectionMatrix(m_projMatrix, nearZ, farZ, observer.getZoom());
     m_modelMatrix = Affine3f(getCameraOrientationf()).matrix();
@@ -1524,27 +1504,19 @@ void Renderer::render(const Observer& observer,
     backgroundAnnotations.clear();
     objectAnnotations.clear();
 
-    // Put all solar system bodies into the render list.  Stars close and
-    // large enough to have discernible surface detail are also placed in
-    // renderList.
+    // Put all Solar System bodies into the render list.
+    // Stars close and large enough to have discernible surface detail
+    // are also placed in renderList.
     renderList.clear();
     orbitPathList.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
     nearStars.clear();
 
-    // See if we want to use AutoMag.
-    if ((renderFlags & ShowAutoMag) != 0)
-    {
-        autoMag(faintestMag, zoom);
-    }
-    else
-    {
-        faintestMag = faintestMagNight;
-        saturationMag = saturationMagNight;
-    }
-
+    faintestMag = faintestMagNight;
+    saturationMag = saturationMagNight;
     faintestPlanetMag = faintestMag;
+
     if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
         buildNearSystemsLists(universe, observer, xfrustum, now);

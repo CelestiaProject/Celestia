@@ -850,17 +850,12 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
             locationsDlg = std::make_unique<LocationsDialog>(hRes, hWnd, appCore);
         break;
 
-    case ID_RENDER_MORESTARS:
+    case ID_RENDER_INCREASEEXPOSURE:
         appCore->charEntered(']');
         break;
 
-    case ID_RENDER_FEWERSTARS:
+    case ID_RENDER_DECREASEEXPOSURE:
         appCore->charEntered('[');
-        break;
-
-    case ID_RENDER_AUTOMAG:
-        appCore->charEntered('\031');
-        SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_AMBIENTLIGHT_NONE:
@@ -1642,8 +1637,6 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
         ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
-        ((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 void

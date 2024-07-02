@@ -255,8 +255,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
     SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
 
-    ui.autoMagnitudeCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
-
 #ifndef _WIN32
     ui.dateFormatBox->addItem(_("Local format"), astro::Date::Locale);
 #endif
@@ -820,12 +818,6 @@ PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(Renderer::FuzzyPointStars);
     }
-}
-
-void
-PreferencesDialog::on_autoMagnitudeCheck_stateChanged(int state)
-{
-    setRenderFlag(appCore, Renderer::ShowAutoMag, state);
 }
 
 // Star colors

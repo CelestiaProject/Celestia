@@ -616,17 +616,10 @@ ParseResult parseConstellationColorCommand(const Hash& paramList, const ScriptMa
 }
 
 
-ParseResult parseSetVisibilityLimitCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetExposureCommand(const Hash& paramList, const ScriptMaps&)
 {
-    auto mag = paramList.getNumber<double>("magnitude").value_or(6.0);
-    return std::make_unique<CommandSetVisibilityLimit>(mag);
-}
-
-
-ParseResult parseSetFaintestAutoMag45DegCommand(const Hash& paramList, const ScriptMaps&)
-{
-    auto mag = paramList.getNumber<double>("magnitude").value_or(8.5);
-    return std::make_unique<CommandSetFaintestAutoMag45deg>(mag);
+    auto mag = paramList.getNumber<double>("exposure").value_or(1.0);
+    return std::make_unique<CommandSetExposure>(exposure);
 }
 
 

@@ -135,10 +135,9 @@ class Renderer
     bool isRTL() const;
 
     void setRenderMode(RenderMode);
-    void autoMag(float& faintestMag, float zoom);
     void render(const Observer&,
                 const Universe&,
-                float faintestVisible,
+                float exposure,
                 const Selection& sel);
 
     bool getInfo(std::map<std::string, std::string>& info) const;
@@ -179,10 +178,10 @@ class Renderer
         ShowSmoothLines         = 0x0000000000000200,
         ShowEclipseShadows      = 0x0000000000000400,
         // the next one is unused in 1.7, kept for compatibility with 1.6
-        ShowStarsAsPoints       = 0x0000000000000800,
+        ShowStarsAsPoints       = 0x0000000000000800, // to remove
         ShowRingShadows         = 0x0000000000001000,
         ShowBoundaries          = 0x0000000000002000,
-        ShowAutoMag             = 0x0000000000004000,
+        // removed flag         = 0x0000000000004000,
         ShowCometTails          = 0x0000000000008000,
         ShowMarkers             = 0x0000000000010000,
         ShowPartialTrajectories = 0x0000000000020000,
@@ -226,7 +225,6 @@ class Renderer
                                   ShowRingShadows       |
                                   ShowCloudShadows      |
                                   ShowCometTails        |
-                                  ShowAutoMag           |
                                   ShowPlanetRings       |
                                   ShowFadingOrbits      |
                                   ShowSmoothLines
@@ -490,7 +488,7 @@ class Renderer
  private:
     void setFieldOfView(float);
     void renderPointStars(const StarDatabase& starDB,
-                          float faintestVisible,
+                          float exposure,
                           const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
@@ -685,7 +683,6 @@ class Renderer
     int screenDpi;
     float corrFac;
     float pixelSize{ 1.0f };
-    float faintestAutoMag45deg;
     std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
     std::shared_ptr<celestia::engine::ProjectionMode> projectionMode{ nullptr };

@@ -34,7 +34,6 @@ void initRenderFlagMap(ScriptMap<std::uint64_t>& RenderFlagMap)
     RenderFlagMap["comettails"sv]          = Renderer::ShowCometTails;
     RenderFlagMap["boundaries"sv]          = Renderer::ShowBoundaries;
     RenderFlagMap["markers"sv]             = Renderer::ShowMarkers;
-    RenderFlagMap["automag"sv]             = Renderer::ShowAutoMag;
     RenderFlagMap["atmospheres"sv]         = Renderer::ShowAtmospheres;
     RenderFlagMap["grid"sv]                = Renderer::ShowCelestialSphere;
     RenderFlagMap["equatorialgrid"sv]      = Renderer::ShowCelestialSphere;

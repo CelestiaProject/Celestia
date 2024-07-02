@@ -990,39 +990,24 @@ static int celestia_getlinecolor(lua_State* l)
     return 3;
 }
 
-
-static int celestia_setfaintestvisible(lua_State* l)
+static int celestia_setexposure(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setexposure()");
+
     CelestiaCore* appCore = this_celestia(l);
-    float faintest = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
-    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
-    {
-        faintest = min(15.0f, max(1.0f, faintest));
-        appCore->setFaintest(faintest);
-        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
-    }
-    else
-    {
-        faintest = min(12.0f, max(6.0f, faintest));
-        appCore->getRenderer()->setFaintestAM45deg(faintest);
-        appCore->setFaintestAutoMag();
-    }
+    float exposure = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number");
+    appCore->setExposure(exposure);
+    
     return 0;
 }
 
-static int celestia_getfaintestvisible(lua_State* l)
+static int celestia_getexposure(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getexposure()");
+
     CelestiaCore* appCore = this_celestia(l);
-    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
-    {
-        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
-    }
-    else
-    {
-        lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
-    }
+    lua_pushnumber(l, appCore->getSimulation()->getExposure());
+    
     return 1;
 }
 
@@ -2555,8 +2540,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "gettextcolor",  celestia_gettextcolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
-    Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
-    Celx_RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    Celx_RegisterMethod(l, "getexposure", celestia_getexposure);
+    Celx_RegisterMethod(l, "setexposure", celestia_setexposure);
     Celx_RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
     Celx_RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
     Celx_RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);

@@ -290,16 +290,6 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/celestia/render/autoMag</key>
-      <applyto>/apps/celestia/render/autoMag</applyto>
-      <owner>celestia</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-        <short>Render body brightness with auto-magnitude.</short>
-      </locale>
-    </schema>
-    <schema>
       <key>/schemas/apps/celestia/render/cometTails</key>
       <applyto>/apps/celestia/render/cometTails</applyto>
       <owner>celestia</owner>

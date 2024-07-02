@@ -116,8 +116,8 @@ class Simulation
     bool getPauseState() const;
     void setPauseState(bool);
 
-    float getFaintestVisible() const;
-    void setFaintestVisible(float);
+    float getExposure() const;
+    void setExposure(float);
 
     void setObserverMode(Observer::ObserverMode);
     Observer::ObserverMode getObserverMode() const;
@@ -140,6 +140,6 @@ class Simulation
     Observer* activeObserver;
     std::vector<Observer*> observers;
 
-    float faintestVisible{ 5.0f };
+    float exposure{ 1.0f };
     bool pauseState{ false };
 };

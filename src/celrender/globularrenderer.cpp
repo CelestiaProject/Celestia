@@ -665,6 +665,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
      * This RGBA texture fades away when resolution decreases (e.g. via automag!),
      * or when distance from globular center decreases.
      */
+    // 2024 update: no more automag
     glActiveTexture(GL_TEXTURE2);
     GlobularFormManager::get()->getGlobularTex()->bind();
 

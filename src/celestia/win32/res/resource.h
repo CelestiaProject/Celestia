@@ -229,9 +229,9 @@
 #define ID_BOOKMARKS_ADDBOOKMARK        40034
 #define ID_RENDER_LOCATIONS             40035
 #define ID_INFO                         40040
-#define ID_RENDER_MORESTARS             40042
-#define ID_RENDER_FEWERSTARS            40043
-#define ID_RENDER_AUTOMAG               40044
+#define ID_RENDER_INCREASEEXPOSURE      40042
+#define ID_RENDER_DECREASEEXPOSURE      40043
+// removed ID                           40044
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047

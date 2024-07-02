@@ -172,7 +172,6 @@ GtkWatcher::notifyChange(CelestiaCore*, int property)
         resyncAmbientActions(app);
 
     /*
-    else if (property & CelestiaCore::FaintestChanged) DEPRECATED?
     else if (property & CelestiaCore::HistoryChanged)
     */
 

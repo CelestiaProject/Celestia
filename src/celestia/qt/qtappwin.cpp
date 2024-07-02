@@ -589,7 +589,7 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("LocationFilter", static_cast<quint64>(observer->getLocationFilter()));
 
     settings.beginGroup("Preferences");
-    settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
+    settings.setValue("Exposure", simulation->getExposure());
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", m_appCore->getFramesVisible());
     settings.setValue("ActiveFrameVisible", m_appCore->getActiveFrameVisible());
@@ -1460,9 +1460,8 @@ CelestiaAppWindow::createMenus()
 
     displayMenu->addSeparator();
 
-    displayMenu->addAction(actions->increaseLimitingMagAction);
-    displayMenu->addAction(actions->decreaseLimitingMagAction);
-    displayMenu->addAction(actions->autoMagAction);
+    displayMenu->addAction(actions->increaseExposureAction);
+    displayMenu->addAction(actions->decreaseExposureAction);
 
     QMenu* starStyleMenu = displayMenu->addMenu(_("Star St&yle"));
     starStyleMenu->addAction(actions->pointStarAction);

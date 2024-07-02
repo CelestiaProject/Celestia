@@ -178,14 +178,14 @@ setSaneAmbientLight(AppData* app, float value)
     app->renderer->setAmbientLightLevel(value);
 }
 
-/* Sanitizes and sets Visual Magnitude */
+/* Sanitizes and sets Exposure */
 void
 setSaneVisualMagnitude(AppData* app, float value)
 {
-    if (value < 0.0 || value > 100.0)
-        value = 8.5f; /* Default from Simulation::Simulation() */
+    if (value < 0.0 || value > 1000.0)
+        value = 1.0f; /* Default */
 
-    app->simulation->setFaintestVisible(value);
+    app->simulation->setExposure(value);
 }
 
 /* Sanitizes and sets Galaxy Light Gain */

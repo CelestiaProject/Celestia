@@ -173,7 +173,6 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
     getFlag(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
     getFlag(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
     getFlag(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
-    getFlag(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
     getFlag(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
     getFlag(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
     getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
@@ -237,8 +236,8 @@ saveSettingsFile(AppData* app)
 
     g_key_file_set_integer(file, "Main", "ambientLight", (int)(1000 * app->renderer->getAmbientLightLevel()));
     g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", nullptr);
-    g_key_file_set_integer(file, "Main", "visualMagnitude", (int)(1000 * app->simulation->getFaintestVisible()));
-    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", nullptr);
+    g_key_file_set_integer(file, "Main", "exposure", (int)(1000 * app->simulation->getExposure()));
+    g_key_file_set_comment(file, "Main", "exposure", "visualMagnitude = (int)(1000 * Exposure)", nullptr);
     g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
     g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", nullptr);
     g_key_file_set_integer(file, "Main", "distanceLimit", (int)app->renderer->getDistanceLimit());
@@ -281,7 +280,6 @@ saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "planetRings", (rf & Renderer::ShowPlanetRings) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "ringShadows", (rf & Renderer::ShowRingShadows) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "boundaries", (rf & Renderer::ShowBoundaries) != 0);
-    g_key_file_set_boolean(file, "RenderFlags", "autoMag", (rf & Renderer::ShowAutoMag) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "cometTails", (rf & Renderer::ShowCometTails) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "markers", (rf & Renderer::ShowMarkers) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "partialTrajectories", (rf & Renderer::ShowPartialTrajectories) != 0);
