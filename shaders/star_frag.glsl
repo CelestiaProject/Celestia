@@ -8,21 +8,18 @@ varying vec3 v_color;
 varying float max_theta;
 varying float pointSize;
 
-float psf_central(float offset)
+float psf_core(float offset)
 {
-    // Human eye's point source function from the research by Greg Spencer et al.
-    // Optimized for the central part of the PSF. The flow from the four neighboring pixels is constant.
+    // Human eye's point source function from the research by Greg Spencer et al. (1995)
+    // Optimized for the central part of the PSF. The flow from the nine neighboring pixels is constant.
     // Designed for degree_per_px == 0.01.
-    if (offset < 1.6667)
-    {
-        return 1.0 + 1.136 * offset * (0.3 * offset - 1.0);
-    }
-    return 0.0; // function starts to grow again
+    return 1.0 + offset * (0.2789 * offset - 1.0);
+    // the second summand is allowed to be scaled to achieve a seamless transition between modes
 }
 
-float psf_outer(float offset)
+float psf_glow(float offset)
 {
-    // Human eye's point source function from the research by Greg Spencer et al.
+    // Human eye's point source function from the research by Greg Spencer et al. (1995)
     // Optimized for the outer part of the PSF. Designed with bounds by arctangent in mind.
     // Causes star blinking with degree_per_px > 0.01, large grid misses the center peak of brightness.
     float theta = offset * degree_per_px;
@@ -40,7 +37,6 @@ void main(void)
 {
     // in fragment shader all points have virtual dimension 1x1, so gl_PointCoord has a value from [0; 1]
     float offset = length((gl_PointCoord.xy - vec2(0.5)) * pointSize);
-    float glow_bw = (max_theta == -1.0) ? psf_central(offset) : psf_outer(offset);
-    vec3 glow_colored = v_color * glow_bw; // color and brightness scaling
-    gl_FragColor = vec4(glow_colored, 1.0)+ vec4(0.1, 0.0, 0.0, 0.0);
+    float black_and_white = (max_theta == -1.0) ? psf_core(offset) : psf_glow(offset);
+    gl_FragColor = vec4(v_color * black_and_white, 1.0); // + vec4(0.1, 0.0, 0.0, 0.0); // square for debugging
 }

@@ -47,15 +47,14 @@ void main(void)
     //if (max(scaled_color.r, max(scaled_color.g, scaled_color.b)) < 1.0)
     //if (true)
     {
-        // Option 1: Weak light source, no glow
-        // use max_theta == -1 as an indicator
-        max_theta = -1.0;
+        // Dim light source (9 pixels mode)
+        max_theta = -1.0; // mode indicator
         pointSize = 3.0;
         v_color = scaled_color;
     }
     else
     {
-        // Option 2: Strong light source, glow
+        // Bright light source (glow mode)
         br = atan(br0 / max_br) * max_br; // dimmed brightness
         max_theta = a * sqrt(br); // glow radius
         float half_sq = max_theta / degree_per_px;
