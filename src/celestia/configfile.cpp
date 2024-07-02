@@ -183,7 +183,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Hash& has
     applyNumber(renderDetails.orbitWindowEnd, hash, "OrbitWindowEnd"sv);
     applyNumber(renderDetails.orbitPeriodsShown, hash, "OrbitPeriodsShown"sv);
     applyNumber(renderDetails.linearFadeFraction, hash, "LinearFadeFraction"sv);
-    applyNumber(renderDetails.faintestVisible, hash, "FaintestVisibleMagnitude"sv);
+    applyNumber(renderDetails.exposure, hash, "Exposure"sv);
     applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
     applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);

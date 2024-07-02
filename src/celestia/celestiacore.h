@@ -165,7 +165,7 @@ public:
         VerbosityLevelChanged       = 0x0004,
         TimeZoneChanged             = 0x0008,
         AmbientLightChanged         = 0x0010,
-        FaintestChanged             = 0x0020,
+        // removed notification     = 0x0020,
         HistoryChanged              = 0x0040,
         TextEnterModeChanged        = 0x0080,
         GalaxyLightGainChanged      = 0x0100,
@@ -284,8 +284,7 @@ public:
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
 
-    void setFaintest(float);
-    void setFaintestAutoMag();
+    void setExposure(float);
 
     std::vector<Observer*> getObservers() const;
     celestia::View* getViewByObserver(const Observer*) const;

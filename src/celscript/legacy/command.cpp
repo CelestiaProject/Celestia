@@ -498,30 +498,15 @@ void CommandOrbitFlags::processInstantaneous(ExecutionEnvironment& env)
 
 
 ////////////////
-// Set limiting magnitude command
+// Set exposure command
 
-CommandSetVisibilityLimit::CommandSetVisibilityLimit(double mag) :
-    magnitude(mag)
-{
+CommandSetExposure::CommandSetExposure(double _exposure) :
+    exposure(_exposure)
 }
 
-void CommandSetVisibilityLimit::processInstantaneous(ExecutionEnvironment& env)
+void CommandSetExposure::processInstantaneous(ExecutionEnvironment& env)
 {
-    env.getSimulation()->setFaintestVisible((float) magnitude);
-}
-////////////////
-// Set FaintestAutoMag45deg command
-
-CommandSetFaintestAutoMag45deg::CommandSetFaintestAutoMag45deg(double mag) :
-    magnitude(mag)
-{
-}
-
-void CommandSetFaintestAutoMag45deg::processInstantaneous(ExecutionEnvironment& env)
-{
-    Renderer* r = env.getRenderer();
-    if (r != nullptr)
-        r->setFaintestAM45deg((float) magnitude);
+    env.getSimulation()->setExposure((float) exposure);
 }
 
 ////////////////

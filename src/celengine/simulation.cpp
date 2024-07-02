@@ -47,7 +47,7 @@ void Simulation::render(Renderer& renderer)
 {
     renderer.render(*activeObserver,
                     *universe,
-                    faintestVisible,
+                    exposure,
                     selection);
 }
 
@@ -56,7 +56,7 @@ void Simulation::render(Renderer& renderer, Observer& observer)
 {
     renderer.render(observer,
                     *universe,
-                    faintestVisible,
+                    exposure,
                     selection);
 }
 
@@ -150,7 +150,7 @@ Selection Simulation::pickObject(const Eigen::Vector3f& pickRay,
                           activeObserver->getOrientationf().conjugate() * pickRay,
                           activeObserver->getTime(),
                           renderFlags,
-                          faintestVisible,
+                          exposure,
                           tolerance);
 }
 
@@ -547,15 +547,15 @@ void Simulation::synchronizeTime()
 }
 
 
-float Simulation::getFaintestVisible() const
+float Simulation::getExposure() const
 {
-    return faintestVisible;
+    return exposure;
 }
 
 
-void Simulation::setFaintestVisible(float magnitude)
+void Simulation::setExposure(float _exposure)
 {
-    faintestVisible = magnitude;
+    exposure = _exposure;
 }
 
 

@@ -745,13 +745,13 @@ actionViewOptions(GtkAction*, AppData* app)
 }
 
 void
-actionStarsMore(GtkAction*, AppData* app)
+actionIncreaseExposure(GtkAction*, AppData* app)
 {
     app->core->charEntered(']');
 }
 
 void
-actionStarsFewer(GtkAction*, AppData* app)
+actionDecreaseExposure(GtkAction*, AppData* app)
 {
     app->core->charEntered('[');
 }
@@ -896,12 +896,6 @@ void
 actionRenderAtmospheres(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowAtmospheres, gtk_toggle_action_get_active(action));
-}
-
-void
-actionRenderAutoMagnitude(GtkToggleAction* action, AppData* app)
-{
-    setRenderFlag(app, Renderer::ShowAutoMag, gtk_toggle_action_get_active(action));
 }
 
 void
@@ -1258,7 +1252,6 @@ resyncRenderActions(AppData* app)
             case Renderer::ShowPlanetRings: actionName = "RenderPlanetRings"; break;
             case Renderer::ShowRingShadows: actionName = "RenderRingShadows"; break;
             case Renderer::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
-            case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
             case Renderer::ShowCometTails: actionName = "RenderCometTails"; break;
             case Renderer::ShowMarkers: actionName = "RenderMarkers"; break;
             case Renderer::ShowPartialTrajectories: actionName = nullptr; break; /* Not useful yet */

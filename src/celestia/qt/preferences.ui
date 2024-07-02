@@ -1081,26 +1081,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QCheckBox" name="autoMagnitudeCheck">
-              <property name="text">
-               <string>Auto-magnitude</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_16">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
            </layout>
           </widget>
          </item>

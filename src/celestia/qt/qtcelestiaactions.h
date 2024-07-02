@@ -99,9 +99,8 @@ public:
     QAction* fuzzyPointStarAction{ nullptr };
     QAction* scaledDiscStarAction{ nullptr };
 
-    QAction* autoMagAction{ nullptr };
-    QAction* increaseLimitingMagAction{ nullptr };
-    QAction* decreaseLimitingMagAction{ nullptr };
+    QAction* increaseExposureAction{ nullptr };
+    QAction* decreaseExposureAction{ nullptr };
 
     QAction* toggleVSyncAction{ nullptr };
 
@@ -111,7 +110,7 @@ private slots:
     void slotToggleOrbit();
     void slotSetStarStyle();
     void slotSetTextureResolution();
-    void slotAdjustLimitingMagnitude();
+    void slotAdjustExposure();
     void slotSetLightTimeDelay();
 
 private:

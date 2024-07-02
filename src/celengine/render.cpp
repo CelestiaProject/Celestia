@@ -230,7 +230,6 @@ Renderer::Renderer() :
     fov(standardFOV),
     screenDpi(96),
     corrFac(1.12f),
-    faintestAutoMag45deg(8.0f), //def. 7.0f
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
@@ -264,7 +263,7 @@ Renderer::Renderer() :
     m_skyGridRenderer(std::make_unique<SkyGridRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
+    //glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -277,7 +276,7 @@ Renderer::Renderer() :
 Renderer::~Renderer()
 {
     delete pointStarVertexBuffer;
-    delete glareVertexBuffer;
+    //delete glareVertexBuffer;
     delete shaderManager;
 
     m_atmosphereRenderer->deinitGL();
@@ -612,17 +611,6 @@ float Renderer::getPointWidth() const
 float Renderer::getPointHeight() const
 {
     return 2.0f / windowHeight * getScaleFactor();
-}
-
-void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
-{
-    faintestAutoMag45deg = _faintestAutoMag45deg;
-    markSettingsChanged();
-}
-
-float Renderer::getFaintestAM45deg() const
-{
-    return faintestAutoMag45deg;
 }
 
 unsigned int Renderer::getResolution() const
@@ -1312,14 +1300,6 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
 }
 
 
-void Renderer::autoMag(float& faintestMag, float zoom)
-{
-    float fieldCorr = getProjectionMode()->getFieldCorrection(zoom);
-    faintestMag = faintestAutoMag45deg * std::sqrt(fieldCorr);
-    saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
-}
-
-
 static Color legacyTintColor(float temp)
 {
     // If the star is sufficiently cool, change the light color
@@ -1513,7 +1493,7 @@ void Renderer::render(const Observer& observer,
     xfrustum.transform(getCameraOrientationf().conjugate().toRotationMatrix());
 
     // Set up the projection and modelview matrices.
-    // We'll usethem for positioning star and planet labels.
+    // We'll use them for positioning star and planet labels.
     auto [nearZ, farZ] = projectionMode->getDefaultDepthRange();
     buildProjectionMatrix(m_projMatrix, nearZ, farZ, observer.getZoom());
     m_modelMatrix = Affine3f(getCameraOrientationf()).matrix();
@@ -1524,27 +1504,19 @@ void Renderer::render(const Observer& observer,
     backgroundAnnotations.clear();
     objectAnnotations.clear();
 
-    // Put all solar system bodies into the render list.  Stars close and
-    // large enough to have discernible surface detail are also placed in
-    // renderList.
+    // Put all Solar System bodies into the render list.
+    // Stars close and large enough to have discernible surface detail
+    // are also placed in renderList.
     renderList.clear();
     orbitPathList.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
     nearStars.clear();
 
-    // See if we want to use AutoMag.
-    if ((renderFlags & ShowAutoMag) != 0)
-    {
-        autoMag(faintestMag, zoom);
-    }
-    else
-    {
-        faintestMag = faintestMagNight;
-        saturationMag = saturationMagNight;
-    }
-
+    faintestMag = faintestMagNight;
+    saturationMag = saturationMagNight;
     faintestPlanetMag = faintestMag;
+
     if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
         buildNearSystemsLists(universe, observer, xfrustum, now);
@@ -1794,8 +1766,10 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
                 m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
+            /*
             else
                 glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
+            */
         }
     }
 }
@@ -3816,7 +3790,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
-    starRenderer.glareVertexBuffer = glareVertexBuffer;
+    //starRenderer.glareVertexBuffer = glareVertexBuffer;
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3834,11 +3808,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
     starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
-    starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
+    //starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
+    //starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();
-    starRenderer.glareVertexBuffer->startSprites();
+    //starRenderer.glareVertexBuffer->startSprites();
     if (starStyle == PointStars)
         starRenderer.starVertexBuffer->startBasicPoints();
     else
@@ -3857,7 +3831,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             faintestMagNight);
 
     starRenderer.starVertexBuffer->finish();
-    starRenderer.glareVertexBuffer->finish();
+    //starRenderer.glareVertexBuffer->finish();
     PointStarVertexBuffer::disable();
 
 #ifndef GL_ES
@@ -5320,9 +5294,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         setPipelineState(ps);
 
         PointStarVertexBuffer::enable();
-        glareVertexBuffer->startSprites();
-        glareVertexBuffer->render();
-        glareVertexBuffer->finish();
+        //glareVertexBuffer->startSprites();
+        //glareVertexBuffer->render();
+        //glareVertexBuffer->finish();
         if (starStyle == PointStars)
             pointStarVertexBuffer->startBasicPoints();
         else

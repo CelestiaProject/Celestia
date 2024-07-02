@@ -98,13 +98,8 @@ N ...................................... Spacecraft
  } ....................................... Increase Ambient Light
  ( ....................................... Decrease Galaxy Light Gain
  ) ....................................... Increase Galaxy Light Gain
- [ ....................................... Decrease Magnitude Limit :
-                                           - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
-                                           - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
- ] ....................................... Increase Magnitude :
-                                           - If AutoMag OFF: Increase limiting magnitude (more stars)
-                                           - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
- Ctrl+Y ............................... Toggle Auto Magnitude (auto adaptation of star visibility to FOV
+ [ ....................................... Decrease Exposure
+ ] ....................................... Increase Exposure
  , ....................................... Narrow Field Of View [Shift+Left Drag]
  . ....................................... Widen Field Of View [Shift+Left Drag]
  Ctrl+X ............................... Toggle Antialias lines
