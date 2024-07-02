@@ -492,7 +492,7 @@ class Renderer
                           const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
-                              float faintestMagNight);
+                              float exposure);
     void renderSkyGrids(const Observer& observer);
     void renderSelectionPointer(const Observer& observer,
                                 double now,
@@ -654,9 +654,8 @@ class Renderer
                                const celestia::math::InfiniteFrustum &xfrustum,
                                double now);
 
-    void adjustMagnitudeInsideAtmosphere(float &faintestMag,
-                                         float &saturationMag,
-                                         double now);
+    void adjustExposureInsideAtmosphere(float &faintestMag,
+                                        double now);
 
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
@@ -681,7 +680,6 @@ class Renderer
     float fov;
     double cosViewConeAngle{ 0.0 };
     int screenDpi;
-    float corrFac;
     float pixelSize{ 1.0f };
     std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
@@ -695,13 +693,9 @@ class Renderer
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
     float ambientLightLevel{ 0.1f };
     float tintSaturation{ 0.5f };
-    float brightnessBias;
 
-    float brightnessScale{ 1.0f };
-    float faintestMag{ 0.0f };
+    float exposure{ 1.0f };
     float faintestPlanetMag{ 0.0f };
-    float saturationMagNight;
-    float saturationMag;
     StarStyle starStyle;
 
     Color ambientColor;
@@ -710,7 +704,6 @@ class Renderer
     Eigen::Quaterniond m_cameraOrientation;
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
     PointStarVertexBuffer* pointStarVertexBuffer;
-    PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;

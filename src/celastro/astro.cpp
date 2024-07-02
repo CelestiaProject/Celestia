@@ -80,6 +80,18 @@ appMagToLum(float mag, float lyrs)
     return absMagToLum(appToAbsMag(mag, lyrs));
 }
 
+// Conversions between the faintest star magnitude system and exposure
+float
+faintestMag2exposure(float faintestMag)
+{
+    return std::exp(faintestMag / LN_MAG) * BR_LIMIT;
+}
+float
+exposure2faintestMag(float exposure)
+{
+    return std::log(exposure / BR_LIMIT) * LN_MAG;
+}
+
 void
 decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
 {

@@ -229,18 +229,13 @@ Renderer::Renderer() :
     windowHeight(0),
     fov(standardFOV),
     screenDpi(96),
-    corrFac(1.12f),
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
     labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
-    brightnessBias(0.0f),
-    saturationMagNight(1.0f),
-    saturationMag(1.0f),
     starStyle(FuzzyPointStars),
     pointStarVertexBuffer(nullptr),
-    glareVertexBuffer(nullptr),
     textureResolution(medres),
     frameCount(0),
     lastOrbitCacheFlush(0),
@@ -263,7 +258,6 @@ Renderer::Renderer() :
     m_skyGridRenderer(std::make_unique<SkyGridRenderer>(*this))
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    //glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -276,7 +270,6 @@ Renderer::Renderer() :
 Renderer::~Renderer()
 {
     delete pointStarVertexBuffer;
-    //delete glareVertexBuffer;
     delete shaderManager;
 
     m_atmosphereRenderer->deinitGL();
@@ -312,7 +305,7 @@ Renderer::DetailOptions::DetailOptions() :
 static void RectToSphericalMapEval(float x, float y, float z,
                                    unsigned char* pixel)
 {
-    // Compute spherical coodinates (r is always 1)
+    // Compute spherical coordinates (r is always 1)
     double phi = asin(y);
     double theta = atan2(z, -x);
 
@@ -574,7 +567,6 @@ void Renderer::resize(int width, int height)
 void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
-    corrFac = (0.12f * fov / standardFOV * fov / standardFOV + 1.0f);
 }
 
 int Renderer::getScreenDpi() const
@@ -1458,7 +1450,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
 
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
-                      float faintestMagNight,
+                      float exposure,
                       const Selection& sel)
 {
     // Get the observer's time
@@ -1513,10 +1505,6 @@ void Renderer::render(const Observer& observer,
     secondaryIlluminators.clear();
     nearStars.clear();
 
-    faintestMag = faintestMagNight;
-    saturationMag = saturationMagNight;
-    faintestPlanetMag = faintestMag;
-
     if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
         buildNearSystemsLists(universe, observer, xfrustum, now);
@@ -1524,33 +1512,13 @@ void Renderer::render(const Observer& observer,
 
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
-    // Scan through the render list to see if we're inside a planetary
-    // atmosphere.  If so, we need to adjust the sky color as well as the
-    // limiting magnitude of stars (so stars aren't visible in the daytime
-    // on planets with thick atmospheres.)
+    // Scan through the render list to see if we're inside a planetary atmosphere.
+    // If so, we need to adjust the sky color as well as the limiting magnitude of stars
+    // (so stars aren't visible in the daytime on planets with thick atmospheres).
     if ((renderFlags & ShowAtmospheres) != 0)
     {
-        adjustMagnitudeInsideAtmosphere(faintestMag, saturationMag, now);
+        adjustExposureInsideAtmosphere(exposure, now);
     }
-
-    // Now we need to determine how to scale the brightness of stars.  The
-    // brightness will be proportional to the apparent magnitude, i.e.
-    // a logarithmic function of the stars apparent brightness.  This mimics
-    // the response of the human eye.  We sort of fudge things here and
-    // maintain a minimum range of six magnitudes between faintest visible
-    // and saturation; this keeps stars from popping in or out as the sun
-    // sets or rises.
-    if (faintestMag - saturationMag >= 6.0f)
-        brightnessScale = 1.0f / (faintestMag -  saturationMag);
-    else
-        brightnessScale = 0.1667f;
-
-    brightnessScale *= corrFac;
-    if (starStyle == ScaledDiscStars)
-        brightnessScale *= 2.0f;
-
-    // Calculate saturation magnitude
-    satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale;
 
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
 
@@ -1563,13 +1531,13 @@ void Renderer::render(const Observer& observer,
     // Render deep sky objects
     if ((renderFlags & ShowDeepSpaceObjects) != 0 && universe.getDSOCatalog() != nullptr)
     {
-        renderDeepSkyObjects(universe, observer, faintestMag);
+        renderDeepSkyObjects(universe, observer, exposure);
     }
 
     // Render stars
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
-        renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
+        renderPointStars(*universe.getStarCatalog(), exposure, observer);
     }
 
     // Translate the camera before rendering the asterisms and boundaries
@@ -1609,7 +1577,7 @@ void Renderer::render(const Observer& observer,
     }
 
     // Render background markers; rendering of other markers is deferred until
-    // solar system objects are rendered.
+    // Solar System objects are rendered.
     renderBackgroundAnnotations(FontNormal);
 
     removeInvisibleItems(frustum);
@@ -1766,10 +1734,6 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
                 m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
-            /*
-            else
-                glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
-            */
         }
     }
 }
@@ -3769,7 +3733,7 @@ static float calcMaxFOV(float fovY_degrees, float aspectRatio)
 
 
 void Renderer::renderPointStars(const StarDatabase& starDB,
-                                float faintestMagNight,
+                                float exposure,
                                 const Observer& observer)
 {
 #ifndef GL_ES
@@ -3790,7 +3754,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
-    //starRenderer.glareVertexBuffer = glareVertexBuffer;
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3808,11 +3771,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
     starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    //starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
-    //starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();
-    //starRenderer.glareVertexBuffer->startSprites();
     if (starStyle == PointStars)
         starRenderer.starVertexBuffer->startBasicPoints();
     else
@@ -3828,10 +3788,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             getCameraOrientationf(),
                             math::degToRad(fov),
                             getAspectRatio(),
-                            faintestMagNight);
+                            exposure);
 
     starRenderer.starVertexBuffer->finish();
-    //starRenderer.glareVertexBuffer->finish();
     PointStarVertexBuffer::disable();
 
 #ifndef GL_ES
@@ -3842,8 +3801,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
 void Renderer::renderDeepSkyObjects(const Universe& universe,
                                     const Observer& observer,
-                                    const float     faintestMagNight)
+                                    const float     exposure)
 {
+    // TODO: optimize calculations with direct use of exposure
+    float faintestMag = astro::exposure2faintestMag(exposure);
+
     DSORenderer dsoRenderer;
 
     auto cameraOrientation = getCameraOrientationf();
@@ -3894,7 +3856,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                            cameraOrientation,
                            math::degToRad(fov),
                            getAspectRatio(),
-                           2 * faintestMagNight);
+                           2 * faintestMag);
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();
@@ -4951,9 +4913,8 @@ Renderer::selectionToAnnotation(const Selection &sel,
 }
 
 void
-Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
-                                          float &saturationMag,
-                                          double now)
+Renderer::adjustExposureInsideAtmosphere(float &exposure,
+                                         double now)
 {
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
     for (const auto& ri : renderList)
@@ -4961,9 +4922,8 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         if (ri.renderableType != RenderListEntry::RenderableBody)
             continue;
 
-        // Compute the density of the atmosphere, and from that
-        // the amount light scattering.  It's complicated by the
-        // possibility that the planet is oblate and a simple distance
+        // Compute the density of the atmosphere, and from that the amount light scattering.
+        // It's complicated by the possibility that the planet is oblate and a simple distance
         // to sphere calculation will not suffice.
         const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(ri.body);
         if (atmosphere == nullptr || atmosphere->height <= 0.0f)
@@ -4979,10 +4939,9 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         Quaternionf q = ri.body->getEclipticToEquatorial(now).cast<float>();
         eyeVec = q * eyeVec;
 
-        // ellipDist is not the true distance from the surface unless
-        // the planet is spherical.  The quantity that we do compute
-        // is the distance to the surface along a line from the eye
-        // position to the center of the ellipsoid.
+        // ellipDist is not the true distance from the surface unless the planet is spherical.
+        // The quantity that we do compute is the distance to the surface along a line from
+        // the eye position to the center of the ellipsoid.
         float ellipDist = eyeVec.cwiseProduct(recipSemiAxes).norm() - 1.0f;
         if (ellipDist >= atmosphere->height / radius)
             continue;
@@ -4994,8 +4953,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         float illumination = std::clamp(sunDir.dot(normal) + 0.2f, 0.0f, 1.0f);
 
         float lightness = illumination * density;
-        faintestMag = faintestMag - 15.0f * lightness;
-        saturationMag = saturationMag - 15.0f * lightness;
+        exposure = exposure * pow(10.0, -6.0 * lightness);
     }
 }
 
@@ -5294,9 +5252,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         setPipelineState(ps);
 
         PointStarVertexBuffer::enable();
-        //glareVertexBuffer->startSprites();
-        //glareVertexBuffer->render();
-        //glareVertexBuffer->finish();
         if (starStyle == PointStars)
             pointStarVertexBuffer->startBasicPoints();
         else

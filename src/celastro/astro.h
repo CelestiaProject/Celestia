@@ -28,6 +28,9 @@ namespace celestia::astro
 constexpr inline float SOLAR_ABSMAG = 4.83f;
 constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
 
+// Lowest brightness of a point to render
+constexpr inline float BR_LIMIT = 1.0 / 255.0; // 1.0 / (255.0 * 12.92); after implementing gamma correction
+
 namespace detail
 {
 template<typename T>
@@ -73,6 +76,8 @@ float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
+float faintestMag2exposure(float faintestMag);
+float exposure2faintestMag(float exposure);
 
 template<class T>
 CELESTIA_CMATH_CONSTEXPR T
