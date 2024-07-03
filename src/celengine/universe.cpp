@@ -767,7 +767,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
                      const UniversalCoord& origin,
                      const Eigen::Vector3f& direction,
                      double when,
-                     float /*faintestMag*/,
+                     float /*exposure*/,
                      float tolerance) const
 {
     double sinTol2 = std::max(std::sin(tolerance / 2.0), ANGULAR_RES);
@@ -816,7 +816,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
 
     // If no planet was intersected by the pick ray, choose the planet|moon
     // with the smallest angular separation from the pick ray.  Very distant
-    // planets are likley to fail the intersection test even if the user
+    // planets are likely to fail the intersection test even if the user
     // clicks on a pixel where the planet's disc has been rendered--in order
     // to make distant planets visible on the screen at all, their apparent
     // size has to be greater than their actual disc size.
@@ -833,7 +833,7 @@ Selection
 Universe::pickStar(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   float faintestMag,
+                   float exposure,
                    float tolerance) const
 {
     Eigen::Vector3f o = origin.toLy().cast<float>();
@@ -860,7 +860,7 @@ Universe::pickStar(const UniversalCoord& origin,
                                   o,
                                   rotation.conjugate(),
                                   tolerance, 1.0f,
-                                  faintestMag);
+                                  exposure);
     if (picker.pickedStar != nullptr)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
@@ -872,7 +872,7 @@ Selection
 Universe::pickDeepSkyObject(const UniversalCoord& origin,
                             const Eigen::Vector3f& direction,
                             std::uint64_t renderFlags,
-                            float faintestMag,
+                            float exposure,
                             float tolerance) const
 {
     Eigen::Vector3d orig = origin.toLy();
@@ -895,7 +895,7 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                 rotation.conjugate(),
                                 tolerance,
                                 1.0f,
-                                faintestMag);
+                                exposure);
     if (picker.pickedDSO != nullptr)
         return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
     else
@@ -908,7 +908,7 @@ Universe::pick(const UniversalCoord& origin,
                const Eigen::Vector3f& direction,
                double when,
                std::uint64_t renderFlags,
-               float  faintestMag,
+               float  exposure,
                float  tolerance)
 {
     Selection sel;
@@ -925,7 +925,7 @@ Universe::pick(const UniversalCoord& origin,
                 sel = pickPlanet(*solarSystem,
                                 origin, direction,
                                 when,
-                                faintestMag,
+                                exposure,
                                 tolerance);
                 if (!sel.empty())
                     break;
@@ -935,12 +935,12 @@ Universe::pick(const UniversalCoord& origin,
 
     if (sel.empty() && (renderFlags & Renderer::ShowStars))
     {
-        sel = pickStar(origin, direction, when, faintestMag, tolerance);
+        sel = pickStar(origin, direction, when, exposure, tolerance);
     }
 
     if (sel.empty())
     {
-        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
+        sel = pickDeepSkyObject(origin, direction, renderFlags, exposure, tolerance);
     }
 
     return sel;

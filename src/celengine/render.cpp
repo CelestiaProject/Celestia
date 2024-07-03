@@ -2117,7 +2117,7 @@ setupObjectLighting(const vector<LightSource>& suns,
     // occurs with atmospheres, where the scale height of the atmosphere
     // is very small relative to the planet radius. To address the problem,
     // we'll clamp the eye distance to some maximum value. The effect of the
-    // adjustment should be impercetible, since at large distances rays from
+    // adjustment should be imperceptible, since at large distances rays from
     // the camera to object vertices are all nearly parallel to each other.
     float eyeFromCenterDistance = ls.eyePos_obj.norm();
     if (eyeFromCenterDistance > 100.0f && isNormalized)
@@ -2181,7 +2181,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // deviation from spherical isn't too large, the nonuniform scale factor
     // shouldn't mess up the lighting calculations enough to be noticeable
     // (and we turn on renormalization anyhow, which most graphics cards
-    // support.)
+    // support).
     float radius = obj.radius;
     Vector3f scaleFactors;
     float ringsScaleFactor;
@@ -2818,7 +2818,7 @@ void Renderer::renderPlanet(Body& body,
 
                 // Light sources have a finite size, which causes some blurring of the texture. Simulate
                 // this effect by using a lower LOD (i.e. a smaller mipmap level, indicated somewhat
-                // confusingly by a _higher_ LOD value.
+                // confusingly by a _higher_ LOD value).
                 float ringWidth = rings->outerRadius - rings->innerRadius;
                 float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
                 float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
@@ -3757,14 +3757,17 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
-    starRenderer.faintestMag       = faintestMag;
+    starRenderer.exposure          = exposure;
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
-    starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
+
+    // TODO: rewrite the equation in the terms of exposure and flux?
+    // 10^(-0.4*...) converts to the Vega flux system
+    starRenderer.labelThresholdFlux = std::pow(10.0f, -0.48f * max(1.0f, (astro::exposure2faintestMag(exposure) - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen))));
 
     starRenderer.colorTemp = &starColors;
 
@@ -3803,9 +3806,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                                     const Observer& observer,
                                     const float     exposure)
 {
-    // TODO: optimize calculations with direct use of exposure
-    float faintestMag = astro::exposure2faintestMag(exposure);
-
     DSORenderer dsoRenderer;
 
     auto cameraOrientation = getCameraOrientationf();
@@ -3834,7 +3834,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.pixelSize        = pixelSize;
     dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
-    dsoRenderer.faintestMag      = faintestMag;
+    dsoRenderer.exposure         = exposure;
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
 
@@ -3843,7 +3843,9 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
+    // TODO: rewrite the equation in the terms of exposure and flux?
+    // 10^(-0.4*...) converts to the Vega flux system
+    dsoRenderer.labelThresholdFlux = std::pow(10.0f, -0.8f * max(1.0f, (astro::exposure2faintestMag(exposure) - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen))));
 
     using namespace celestia;
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
@@ -3856,7 +3858,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                            cameraOrientation,
                            math::degToRad(fov),
                            getAspectRatio(),
-                           2 * faintestMag);
+                           exposure); // it was 2 * faintestMag, the unit makes no sense
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();

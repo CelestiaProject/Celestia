@@ -37,11 +37,7 @@ PointStarRenderer::PointStarRenderer() :
 {
 }
 
-//const float br_limit = 1.0f / (255.0f * 12.92f);
-const float br_limit = 1.0f / 255.0f;
-const float exposure = 1.0f;
-
-void PointStarRenderer::process(const Star& star, float distance, float appMag)
+void PointStarRenderer::process(const Star& star, float distance, float flux)
 {
     if (distance > distanceLimit)
         return;
@@ -88,32 +84,31 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             Vector3d hPos = astrocentricPosition(observer->getPosition(),
                                                  star,
                                                  observer->getTime());
-            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f);
-            distance = relPos.norm();
+            relPos = - hPos.cast<float>();
+            distance = relPos.norm(); // in km
 
-            // Recompute apparent magnitude using new distance computation
-            appMag = star.getApparentMagnitude(distance);
+            // Recompute the flux using new distance computation
+            flux = star.getFluxInVegas(distance);
 
-            discSizeInPixels = star.getRadius() / astro::lightYearsToKilometers(distance) / pixelSize;
+            discSizeInPixels = star.getRadius() / (distance * pixelSize);
         }
 
-        // Stars closer than the maximum solar system size are actually
-        // added to the render list and depth sorted, since they may occlude
-        // planets.
+        // Stars closer than the maximum solar system size are actually added
+        // to the render list and depth sorted, since they may occlude planets.
         if (distance > SolarSystemMaxDistance)
         {
-            if (appMag < faintestMag)
+            if (flux * exposure > astro::FLUX_LIMIT)
             {
-                starVertexBuffer->addStar(relPos, starColor, faintestMag - appMag);
+                starVertexBuffer->addStar(relPos, starColor, flux * exposure);
             }
 
             // Place labels for stars brighter than the specified label threshold brightness
-            if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
+            if (((labelMode & Renderer::StarLabels) != 0) && flux > labelThresholdFlux)
             {
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
-                    float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
+                    float distr = min(1.0f, 3.5f * (flux - labelThresholdFlux)/labelThresholdFlux);
                     Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
                     renderer->addBackgroundAnnotation(nullptr,
                                                       starDB->getStarName(star, true),
@@ -131,9 +126,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
 
-            // Objects in the render list are always rendered relative to
-            // a viewer at the origin--this is different than for distant
-            // stars.
+            // Objects in the render list are always rendered relative to a viewer at the origin;
+            // this is different than for distant stars.
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = relPos * scale;
             rle.centerZ = rle.position.dot(viewMatZ);

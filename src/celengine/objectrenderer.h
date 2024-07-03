@@ -28,11 +28,11 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     Renderer*  renderer         { nullptr };
 
     float pixelSize             { 0.0f };
-    float faintestMag           { 0.0f };
+    float exposure              { 0.0f };
     float distanceLimit         { 0.0f };
 
-    // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag     { 0.0f };
+    // Objects brighter than labelThresholdFlux will be labeled
+    float labelThresholdFlux    { 0.0f };
 
     uint64_t renderFlags        { 0 };
     int labelMode               { 0 };

@@ -29,7 +29,8 @@ constexpr inline float SOLAR_ABSMAG = 4.83f;
 constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
 
 // Lowest brightness of a point to render
-constexpr inline float BR_LIMIT = 1.0 / 255.0; // 1.0 / (255.0 * 12.92); after implementing gamma correction
+constexpr inline float FLUX_LIMIT = 1.0 / 255.0;
+//                                = 1.0 / (255.0 * 12.92); after implementing gamma correction
 
 namespace detail
 {
@@ -76,6 +77,7 @@ float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
+float absMagToFluxInVegas(float mag, float lyrs);
 float faintestMag2exposure(float faintestMag);
 float exposure2faintestMag(float exposure);
 
@@ -179,19 +181,18 @@ constexpr inline double EarthMass        = 5.972e24;
 constexpr inline double LunarMass        = 7.346e22;
 constexpr inline double JupiterMass      = 1.898e27;
 
-// Angle between J2000 mean equator and the ecliptic plane.
-// 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
-// Astronomical Almanac_ (1992), eqn 3.222-1).
+// Angle between J2000 mean equator and the ecliptic plane: 23 deg 26' 21".448
+// (Seidelmann, Explanatory Supplement to the Astronomical Almanac (1992), eqn 3.222-1).
 constexpr inline double J2000Obliquity   = 23.4392911_deg;
 
 constexpr inline double SOLAR_IRRADIANCE = 1367.6; // watts / m^2
-constexpr inline double SOLAR_POWER      = 3.8462e26;  // in watts
+constexpr inline double SOLAR_POWER      = 3.8462e26; // in watts
 
-// Irradiance of Vega is calculated for the green sensitivity curve of the eye
-// (the curve is taken from http://www.cvrl.org/stilesburch2_ind.htm).
+// Irradiance of Vega is calculated for the generic V filter
+// (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=Generic/Bessell.V&&mode=browse&gname=Generic&gname2=Bessell#filter.
 // The green channel is used to calibrate the point light sources (e.g. stars),
 // since it is the closest analog to the V filter of the Johnson system.
-constexpr inline double VEGAN_IRRADIANCE = 3.62619e-11; // watts / m^2
+constexpr inline double VEGAN_IRRADIANCE = 3.6262e-11; // watts / m^2
 
 namespace literals
 {

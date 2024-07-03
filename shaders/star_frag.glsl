@@ -1,5 +1,4 @@
 const float degree_per_px = 0.01;
-const float br_limit = 1.0 / (255.0 * 12.92);
 // empirical constants
 const float a = 0.123;
 const float k = 0.0016;
@@ -37,6 +36,6 @@ void main(void)
 {
     // in fragment shader all points have virtual dimension 1x1, so gl_PointCoord has a value from [0; 1]
     float offset = length((gl_PointCoord.xy - vec2(0.5)) * pointSize);
-    float black_and_white = (max_theta == -1.0) ? psf_core(offset) : psf_glow(offset);
-    gl_FragColor = vec4(v_color * black_and_white, 1.0); // + vec4(0.1, 0.0, 0.0, 0.0); // square for debugging
+    float point = (max_theta == -1.0) ? psf_core(offset) : psf_glow(offset);
+    gl_FragColor = vec4(v_color * point, 1.0); // + vec4(0.1, 0.0, 0.0, 0.0); // square for debugging
 }

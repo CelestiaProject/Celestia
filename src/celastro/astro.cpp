@@ -60,8 +60,7 @@ lumToAbsMag(float lum)
     return SOLAR_ABSMAG - std::log(lum) * LN_MAG;
 }
 
-// Return the apparent magnitude of a star with lum times solar
-// luminosity viewed at lyrs light years
+// Return the apparent magnitude of a star with lum times solar luminosity viewed at lyrs light years
 float
 lumToAppMag(float lum, float lyrs)
 {
@@ -80,16 +79,22 @@ appMagToLum(float mag, float lyrs)
     return absMagToLum(appToAbsMag(mag, lyrs));
 }
 
+float
+absMagToFluxInVegas(float mag, float lyrs)
+{
+    return absMagToLum(mag) * SOLAR_POWER / (math::sphereArea(lightYearsToKilometers(lyrs) * 1000) * VEGAN_IRRADIANCE);
+}
+
 // Conversions between the faintest star magnitude system and exposure
 float
 faintestMag2exposure(float faintestMag)
 {
-    return std::exp(faintestMag / LN_MAG) * BR_LIMIT;
+    return std::exp(faintestMag / LN_MAG) * FLUX_LIMIT;
 }
 float
 exposure2faintestMag(float exposure)
 {
-    return std::log(exposure / BR_LIMIT) * LN_MAG;
+    return std::log(exposure / FLUX_LIMIT) * LN_MAG;
 }
 
 void
@@ -120,8 +125,7 @@ decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
     seconds = (B - (double) minutes) * 60.0;
 }
 
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical) coordinates.
 Eigen::Vector3f
 equatorialToCelestialCart(float ra, float dec, float distance)
 {
@@ -141,8 +145,7 @@ equatorialToCelestialCart(float ra, float dec, float distance)
     return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f(x, y, z);
 }
 
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical) coordinates.
 Eigen::Vector3d
 equatorialToCelestialCart(double ra, double dec, double distance)
 {
