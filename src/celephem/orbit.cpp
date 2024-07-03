@@ -567,10 +567,10 @@ MixedOrbit::MixedOrbit(const std::shared_ptr<const Orbit>& orbit, double t0, dou
     double dt = 1.0 / 1440.0; // 1 minute
     Eigen::Vector3d p0 = primary->positionAtTime(t0);
     Eigen::Vector3d p1 = primary->positionAtTime(t1);
-    Eigen::Vector3d v0 = (primary->positionAtTime(t0 + dt) - p0) / (86400.0 * dt);
-    Eigen::Vector3d v1 = (primary->positionAtTime(t1 + dt) - p1) / (86400.0 * dt);
+    Eigen::Vector3d v0 = (primary->positionAtTime(t0 + dt) - p0) / dt;
+    Eigen::Vector3d v1 = (primary->positionAtTime(t1 + dt) - p1) / dt;
 
-    constexpr double G = astro::G * 1e-9; // convert from meters to kilometers
+    constexpr double G = astro::G * math::square(86400.0) * 1e-9; // convert to km/day
     double Gmass = G * mass;
 
     auto keplerElements = astro::StateVectorToElements(p0, v0, Gmass);
