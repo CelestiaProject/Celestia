@@ -281,6 +281,19 @@ public:
                                const Eigen::Vector3d& sunPosition,
                                const Eigen::Vector3d& viewerPosition) const;
 
+    float getFluxInVegas(const Star& sun,
+                         float distanceFromSun,
+                         float distanceFromViewer) const;
+    float getFluxInVegas(float sunLuminosity,
+                         float distanceFromSun,
+                         float distanceFromViewer) const;
+    float getFluxInVegas(const Star& sun,
+                         const Eigen::Vector3d& sunPosition,
+                         const Eigen::Vector3d& viewerPosition) const;
+    float getFluxInVegas(float sunLuminosity,
+                         const Eigen::Vector3d& sunPosition,
+                         const Eigen::Vector3d& viewerPosition) const;
+
     UniversalCoord getPosition(double tdb) const;
     Eigen::Quaterniond getOrientation(double tdb) const;
     Eigen::Vector3d getVelocity(double tdb) const;

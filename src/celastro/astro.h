@@ -181,11 +181,17 @@ constexpr inline double JupiterMass      = 1.898e27;
 
 // Angle between J2000 mean equator and the ecliptic plane.
 // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
-// Astronomical Almanac_ (1992), eqn 3.222-1.
+// Astronomical Almanac_ (1992), eqn 3.222-1).
 constexpr inline double J2000Obliquity   = 23.4392911_deg;
 
-constexpr inline double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
-constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
+constexpr inline double SOLAR_IRRADIANCE = 1367.6; // watts / m^2
+constexpr inline double SOLAR_POWER      = 3.8462e26;  // in watts
+
+// Irradiance of Vega is calculated for the green sensitivity curve of the eye
+// (the curve is taken from http://www.cvrl.org/stilesburch2_ind.htm).
+// The green channel is used to calibrate the point light sources (e.g. stars),
+// since it is the closest analog to the V filter of the Johnson system.
+constexpr inline double VEGAN_IRRADIANCE = 3.62619e-11; // watts / m^2
 
 namespace literals
 {

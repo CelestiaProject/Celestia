@@ -821,17 +821,14 @@ float Body::getLuminosity(const Star& sun,
 float Body::getLuminosity(float sunLuminosity,
                           float distanceFromSun) const
 {
-    // Compute the total power of the star in Watts
+    // Compute the total power of the star in watts
     double power = astro::SOLAR_POWER * sunLuminosity;
 
-    // Compute the irradiance at a distance of 1au from the star in W/m^2
-    // double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
-
     // Compute the irradiance at the body's distance from the star
-    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000);
+    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000); // km to m
 
     // Compute the total energy hitting the planet
-    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000);
+    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000); // km to m
 
     double reflectedEnergy = incidentEnergy * getReflectivity();
 
@@ -840,9 +837,8 @@ float Body::getLuminosity(float sunLuminosity,
 }
 
 
-/*! Get the apparent magnitude of the body, neglecting the phase (as if
- *  the body was at opposition.
- */
+// Get the apparent magnitude of the body, neglecting the phase
+// (as if the body was at opposition).
 float Body::getApparentMagnitude(const Star& sun,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -852,9 +848,8 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
-/*! Get the apparent magnitude of the body, neglecting the phase (as if
- *  the body was at opposition.
- */
+// Get the apparent magnitude of the body, neglecting the phase
+// (as if the body was at opposition).
 float Body::getApparentMagnitude(float sunLuminosity,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -863,8 +858,8 @@ float Body::getApparentMagnitude(float sunLuminosity,
                               astro::kilometersToLightYears(distanceFromViewer));
 }
 
-/*! Get the apparent magnitude of the body, corrected for its phase.
- */
+
+// Get the apparent magnitude of the body, corrected for its phase.
 float Body::getApparentMagnitude(const Star& sun,
                                  const Vector3d& sunPosition,
                                  const Vector3d& viewerPosition) const
@@ -875,17 +870,72 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
-/*! Get the apparent magnitude of the body, corrected for its phase.
- */
+// Get the apparent magnitude of the body, corrected for its phase.
 float Body::getApparentMagnitude(float sunLuminosity,
                                  const Vector3d& sunPosition,
                                  const Vector3d& viewerPosition) const
 {
-    double distanceToViewer = viewerPosition.norm();
     double distanceToSun = sunPosition.norm();
+    double distanceToViewer = viewerPosition.norm();
     float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
 
-    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
+    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction,
+                              (float) astro::kilometersToLightYears(distanceToViewer));
+}
+
+
+// Get the flux of the body, neglecting the phase
+// (as if the body was at opposition).
+float Body::getFluxInVegas(const Star& sun,
+                           float distanceFromSun,
+                           float distanceFromViewer) const
+{
+    return getFluxInVegas(sun.getLuminosity(), distanceFromSun, distanceFromViewer);
+}
+
+// Get the flux of the body, neglecting the phase
+// (as if the body was at opposition).
+float Body::getFluxInVegas(float sunLuminosity,
+                           float distanceFromSun,
+                           float distanceFromViewer) const
+{
+    // Compute the total power of the star in watts
+    double power = astro::SOLAR_POWER * sunLuminosity;
+
+    // Compute the irradiance at the body's distance from the star
+    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000); // km to m
+
+    // Compute the total energy hitting the planet
+    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000); // km to m
+
+    double reflectedEnergy = incidentEnergy * getReflectivity();
+
+    // Compute the irradiance at the observer's distance from the planet
+    double resIrradiance = reflectedEnergy / math::sphereArea(distanceFromViewer * 1000); // km to m
+
+    // Compute the flux in Vega units
+    return (float) (resIrradiance / astro::VEGAN_IRRADIANCE);
+}
+
+
+// Get the flux of the body, corrected for its phase.
+float Body::getFluxInVegas(const Star& sun,
+                           const Vector3d& sunPosition,
+                           const Vector3d& viewerPosition) const
+{
+    return getFluxInVegas(sun.getLuminosity(), sunPosition, viewerPosition);
+}
+
+// Get the flux of the body, corrected for its phase.
+float Body::getFluxInVegas(float sunLuminosity,
+                           const Vector3d& sunPosition,
+                           const Vector3d& viewerPosition) const
+{
+    double distanceToSun = sunPosition.norm();
+    double distanceToViewer = viewerPosition.norm();
+    float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
+
+    return getFluxInVegas(sunLuminosity, (float) distanceFromSun, (float) distanceToViewer) * illuminatedFraction;
 }
 
 

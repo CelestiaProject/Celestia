@@ -435,8 +435,8 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
     {
         /*
         // Optional gaussian glare
-        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
-        float power = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
+        float fwhm = (float) std::pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
+        float power = (float) std::pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
         BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
@@ -444,12 +444,12 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
         */
         BuildGlareMipLevel(img->getMipLevel(mipLevel),
                            log2size - mipLevel,
-                           25.0f / (float) pow(2.0f, (float) (log2size - mipLevel)),
+                           25.0f / (float) std::pow(2.0f, (float) (log2size - mipLevel)),
                            0.66f);
         /*
         BuildGlareMipLevel2(img->getMipLevel(mipLevel),
                             log2size - mipLevel,
-                            1.0f / (float) pow(2.0f, (float) (log2size - mipLevel)));
+                            1.0f / (float) std::pow(2.0f, (float) (log2size - mipLevel)));
         */
     }
 
@@ -1637,7 +1637,7 @@ Renderer::calculatePointSize(float appMag,
     {
         if (alpha > 1.0f)
         {
-            float discScale = std::min(MaxScaledDiscStarSize, pow(2.0f, 0.3f * (satPoint - appMag)));
+            float discScale = std::min(MaxScaledDiscStarSize, std::pow(2.0f, 0.3f * (satPoint - appMag)));
             discSize *= std::max(1.0f, discScale);
 
             glareAlpha = std::min(0.5f, discScale / 4.0f);
@@ -2100,7 +2100,7 @@ setupObjectLighting(const vector<LightSource>& suns,
     ls.nLights = 0;
     for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
     {
-        ls.lights[i].irradiance = pow(ls.lights[i].irradiance / totalIrradiance, gamma);
+        ls.lights[i].irradiance = std::pow(ls.lights[i].irradiance / totalIrradiance, gamma);
 
         // Compute the direction of the light in object space
         ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
@@ -4953,7 +4953,7 @@ Renderer::adjustExposureInsideAtmosphere(float &exposure,
         float illumination = std::clamp(sunDir.dot(normal) + 0.2f, 0.0f, 1.0f);
 
         float lightness = illumination * density;
-        exposure = exposure * pow(10.0, -6.0 * lightness);
+        exposure = exposure * std::pow(10.0, -6.0 * lightness);
     }
 }
 
