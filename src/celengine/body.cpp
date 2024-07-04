@@ -935,7 +935,7 @@ float Body::getFluxInVegas(float sunLuminosity,
     double distanceToViewer = viewerPosition.norm();
     float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
 
-    return getFluxInVegas(sunLuminosity, (float) distanceFromSun, (float) distanceToViewer) * illuminatedFraction;
+    return getFluxInVegas(sunLuminosity, (float) distanceToSun, (float) distanceToViewer) * illuminatedFraction;
 }
 
 

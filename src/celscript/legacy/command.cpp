@@ -502,6 +502,7 @@ void CommandOrbitFlags::processInstantaneous(ExecutionEnvironment& env)
 
 CommandSetExposure::CommandSetExposure(double _exposure) :
     exposure(_exposure)
+{
 }
 
 void CommandSetExposure::processInstantaneous(ExecutionEnvironment& env)

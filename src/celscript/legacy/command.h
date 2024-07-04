@@ -497,7 +497,7 @@ class CommandSetExposure : public InstantaneousCommand
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    double _exposure;
+    double exposure;
 };
 
 class CommandSetAmbientLight : public InstantaneousCommand
