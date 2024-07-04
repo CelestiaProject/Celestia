@@ -78,6 +78,8 @@ float lumToAppMag(float lum, float lyrs);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
 float absMagToIrradiance(float mag, float lyrs);
+float magToIrradiance(float mag);
+float irradianceToMag(float irradiance);
 float faintestMag2exposure(float faintestMag);
 float exposure2faintestMag(float exposure);
 
