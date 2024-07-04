@@ -3765,9 +3765,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    // TODO: rewrite the equation in the terms of exposure and flux?
-    // 10^(-0.4*...) converts to the Vega flux system
-    starRenderer.labelThresholdFlux = std::pow(10.0f, -0.48f * max(1.0f, (astro::exposure2faintestMag(exposure) - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen))));
+    // Possible dimensional error!
+    starRenderer.labelThresholdIrradiation = astro::magToIrradiance(1.2f * max(1.0f, (astro::exposureToFaintestMag(exposure) - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen))));
 
     starRenderer.colorTemp = &starColors;
 
@@ -3843,9 +3842,8 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    // TODO: rewrite the equation in the terms of exposure and flux?
-    // 10^(-0.4*...) converts to the Vega flux system
-    dsoRenderer.labelThresholdFlux = std::pow(10.0f, -0.8f * max(1.0f, (astro::exposure2faintestMag(exposure) - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen))));
+    // Possible dimensional error!
+    dsoRenderer.labelThresholdIrradiation = astro::magToIrradiance(2.0f * max(1.0f, (astro::exposureToFaintestMag(exposure) - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen))));
 
     using namespace celestia;
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);

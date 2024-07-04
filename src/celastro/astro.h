@@ -28,9 +28,9 @@ namespace celestia::astro
 constexpr inline float SOLAR_ABSMAG = 4.83f;
 constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
 
-// Lowest brightness of a point to render
-constexpr inline float FLUX_LIMIT = 1.0 / 255.0;
-//                                = 1.0 / (255.0 * 12.92); after implementing gamma correction
+// Lowest screen brightness of a point to render
+constexpr inline float IRRADIATION_LIMIT = 1.0f / 255.0f;
+//                                       = 1.0f / (255.0f * 12.92f); after implementing gamma correction
 
 namespace detail
 {
@@ -77,7 +77,7 @@ float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
-float absMagToFluxInVegas(float mag, float lyrs);
+float absMagToIrradiance(float mag, float lyrs);
 float faintestMag2exposure(float faintestMag);
 float exposure2faintestMag(float exposure);
 

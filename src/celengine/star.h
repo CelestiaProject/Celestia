@@ -275,7 +275,7 @@ public:
     void setExtinction(float);
 
     float getApparentMagnitude(float) const;
-    float getFluxInVegas(float) const;
+    float getIrradiance(float) const;
     float getLuminosity() const;
     float getBolometricLuminosity() const;
 

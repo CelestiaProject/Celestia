@@ -80,21 +80,41 @@ appMagToLum(float mag, float lyrs)
 }
 
 float
-absMagToFluxInVegas(float mag, float lyrs)
+absMagToIrradiance(float mag, float lyrs)
 {
     return absMagToLum(mag) * SOLAR_POWER / (math::sphereArea(lightYearsToKilometers(lyrs) * 1000) * VEGAN_IRRADIANCE);
 }
 
-// Conversions between the faintest star magnitude system and exposure
+// Conversions between the magnitude system and irradiance in Vega units
 float
-faintestMag2exposure(float faintestMag)
+magToIrradiance(float mag)
 {
-    return std::exp(faintestMag / LN_MAG) * FLUX_LIMIT;
+    return std::exp(- mag / LN_MAG);
+    // slower solution:
+    // return std::pow(10.0f, -0.4f * mag);
 }
 float
-exposure2faintestMag(float exposure)
+irradianceToMag(float irradiance)
 {
-    return std::log(exposure / FLUX_LIMIT) * LN_MAG;
+    return - std::log(irradiance) * LN_MAG;
+    // equivalent solution:
+    // return -2.5f * std::log10(irradiance);
+}
+
+// Conversions between the faintest star magnitude system and exposure
+float
+faintestMagToExposure(float faintestMag)
+{
+    return std::exp(faintestMag / LN_MAG) * IRRADIATION_LIMIT;
+    // slower solution:
+    // return std::pow(10.0f, 0.4f * faintestMag) * IRRADIATION_LIMIT;
+}
+float
+exposureToFaintestMag(float exposure)
+{
+    return std::log(exposure / IRRADIATION_LIMIT) * LN_MAG;
+    // equivalent solution:
+    // return 2.5f * std::log10(exposure / IRRADIATION_LIMIT);
 }
 
 void

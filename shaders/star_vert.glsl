@@ -7,7 +7,7 @@ const float k = 0.0016;
 const float degree_per_px = 0.01;
 
 const float max_square_size = 256.0; // px
-const float max_flux = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
+const float max_irradiance = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
 
 varying vec3 v_color;
 varying float max_theta;
@@ -48,8 +48,8 @@ void main(void)
     else
     {
         // Bright light source (glow mode)
-        float flux = atan(in_PointSize / max_flux) * max_flux; // dimmed brightness
-        max_theta = a * sqrt(flux); // glow radius
+        float  = atan(in_PointSize / max_irradiance) * max_irradiance; // dimmed brightness
+        max_theta = a * sqrt(); // glow radius
         float half_sq = max_theta / degree_per_px;
         pointSize = 2.0 * half_sq - 1.0;
         v_color = color;

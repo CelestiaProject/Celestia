@@ -37,7 +37,7 @@ PointStarRenderer::PointStarRenderer() :
 {
 }
 
-void PointStarRenderer::process(const Star& star, float distance, float flux)
+void PointStarRenderer::process(const Star& star, float distance, float irradiance)
 {
     if (distance > distanceLimit)
         return;
@@ -87,8 +87,8 @@ void PointStarRenderer::process(const Star& star, float distance, float flux)
             relPos = - hPos.cast<float>();
             distance = relPos.norm(); // in km
 
-            // Recompute the flux using new distance computation
-            flux = star.getFluxInVegas(distance);
+            // Recompute the irradiance using new distance computation
+            irradiance = star.getIrradiance(distance);
 
             discSizeInPixels = star.getRadius() / (distance * pixelSize);
         }
@@ -97,18 +97,19 @@ void PointStarRenderer::process(const Star& star, float distance, float flux)
         // to the render list and depth sorted, since they may occlude planets.
         if (distance > SolarSystemMaxDistance)
         {
-            if (flux * exposure > astro::FLUX_LIMIT)
+            float irradiation = irradiance * exposure;
+            if (irradiation > astro::IRRADIATION_LIMIT)
             {
-                starVertexBuffer->addStar(relPos, starColor, flux * exposure);
+                starVertexBuffer->addStar(relPos, starColor, irradiation);
             }
 
             // Place labels for stars brighter than the specified label threshold brightness
-            if (((labelMode & Renderer::StarLabels) != 0) && flux > labelThresholdFlux)
+            if (((labelMode & Renderer::StarLabels) != 0) && irradiation > labelThresholdIrradiation)
             {
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
-                    float distr = min(1.0f, 3.5f * (flux - labelThresholdFlux)/labelThresholdFlux);
+                    float distr = min(1.0f, 3.5f * (irradiation - labelThresholdIrradiation)/labelThresholdIrradiation);
                     Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
                     renderer->addBackgroundAnnotation(nullptr,
                                                       starDB->getStarName(star, true),

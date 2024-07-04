@@ -140,7 +140,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
     if ((labelMask & labelMode) != 0)
     {
         Color labelColor;
-        float fluxEff = 6.0f;
+        float appMagEff = 6.0f;
         float step = 6.0f;
         float symbolSize = 0.0f;
         const celestia::MarkerRepresentation* rep = nullptr;
@@ -152,39 +152,40 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         case Renderer::NebulaLabels:
             rep = &renderer->nebulaRep;
             labelColor = Renderer::NebulaLabelColor;
-            fluxEff = astro::absToAppMag(-7.5f, (float)distanceToDSO);
+            appMagEff = astro::absToAppMag(-7.5f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 6.0f;
             break;
         case Renderer::OpenClusterLabels:
             rep = &renderer->openClusterRep;
             labelColor = Renderer::OpenClusterLabelColor;
-            fluxEff = astro::absToAppMag(-6.0f, (float)distanceToDSO);
+            appMagEff = astro::absToAppMag(-6.0f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 4.0f;
             break;
         case Renderer::GalaxyLabels:
             labelColor = Renderer::GalaxyLabelColor;
-            fluxEff = appMag;
+            appMagEff = appMag;
             step = 6.0f;
             break;
         case Renderer::GlobularLabels:
             labelColor = Renderer::GlobularLabelColor;
-            fluxEff = appMag;
+            appMagEff = appMag;
             step = 3.0f;
             break;
         default:
             // Unrecognized object class
             labelColor = Color::White;
-            fluxEff = appMag;
+            appMagEff = appMag;
             step = 6.0f;
             break;
         }
 
-        if (fluxEff > labelThresholdFlux)
+        float irradiationEff = astro::magToIrradiance(appMagEff) * exposure;
+        if (irradiationEff > labelThresholdIrradiation)
         {
             // introduce distance dependent label transparency.
-            float distr = std::min(1.0f, step * (fluxEff - labelThresholdFlux) / labelThresholdFlux);
+            float distr = std::min(1.0f, step * (irradiationEff - labelThresholdIrradiation) / labelThresholdIrradiation);
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

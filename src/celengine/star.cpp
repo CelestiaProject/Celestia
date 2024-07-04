@@ -1216,16 +1216,16 @@ Star::getApparentMagnitude(float ly) const
 }
 
 float
-Star::getFluxInVegas(float km) const
+Star::getIrradiance(float km) const
 {
     // The input is in kilometers! Use lightYearsToKilometers(ly) for other cases.
     // The reason is to get rid of unnecessary conversions (e.g., astrocentricPosition returns kilometers).
 
     // extinction seems to be in a strange units, mag/ly is not used in astronomy
-    // it can be optimized later, with astro::absMagToFluxInVegas() that duplicates it, but with no extinction
+    // it can be optimized later, with astro::absMagToIrradiance() that duplicates it, but with no extinction
     
-    float fluxInSuns = std::exp((astro::SOLAR_ABSMAG - absMag - extinction * astro::kilometersToLightYears(km)) / astro::LN_MAG)
-    return fluxInSuns * astro::SOLAR_POWER / (math::sphereArea(km * 1000) * astro::VEGAN_IRRADIANCE);
+    float irradianceInSuns = std::exp((astro::SOLAR_ABSMAG - absMag - extinction * astro::kilometersToLightYears(km)) / astro::LN_MAG)
+    return irradianceInSuns * astro::SOLAR_POWER / (math::sphereArea(km * 1000) * astro::VEGAN_IRRADIANCE);
 }
 
 float
