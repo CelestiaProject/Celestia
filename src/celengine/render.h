@@ -129,8 +129,6 @@ class Renderer
     void resize(int, int);
     float getAspectRatio() const;
 
-    void setFaintestAM45deg(float);
-    float getFaintestAM45deg() const;
     void setRTL(bool);
     bool isRTL() const;
 
@@ -144,23 +142,23 @@ class Renderer
 
     enum
     {
-        NoLabels            = 0x000,
-        StarLabels          = 0x001,
-        PlanetLabels        = 0x002,
-        MoonLabels          = 0x004,
-        ConstellationLabels = 0x008,
-        GalaxyLabels        = 0x010,
-        AsteroidLabels      = 0x020,
-        SpacecraftLabels    = 0x040,
-        LocationLabels      = 0x080,
-        CometLabels         = 0x100,
-        NebulaLabels        = 0x200,
-        OpenClusterLabels   = 0x400,
+        NoLabels                = 0x000,
+        StarLabels              = 0x001,
+        PlanetLabels            = 0x002,
+        MoonLabels              = 0x004,
+        ConstellationLabels     = 0x008,
+        GalaxyLabels            = 0x010,
+        AsteroidLabels          = 0x020,
+        SpacecraftLabels        = 0x040,
+        LocationLabels          = 0x080,
+        CometLabels             = 0x100,
+        NebulaLabels            = 0x200,
+        OpenClusterLabels       = 0x400,
         I18nConstellationLabels = 0x800,
-        DwarfPlanetLabels   = 0x1000,
-        MinorMoonLabels     = 0x2000,
-        GlobularLabels      = 0x4000,
-        BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
+        DwarfPlanetLabels       = 0x1000,
+        MinorMoonLabels         = 0x2000,
+        GlobularLabels          = 0x4000,
+        BodyLabelMask           = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
     enum RenderFlags : uint64_t

@@ -1496,7 +1496,7 @@ void Renderer::render(const Observer& observer,
     backgroundAnnotations.clear();
     objectAnnotations.clear();
 
-    // Put all Solar System bodies into the render list.
+    // Put all solar system bodies into the render list.
     // Stars close and large enough to have discernible surface detail
     // are also placed in renderList.
     renderList.clear();
@@ -1577,7 +1577,7 @@ void Renderer::render(const Observer& observer,
     }
 
     // Render background markers; rendering of other markers is deferred until
-    // Solar System objects are rendered.
+    // solar system objects are rendered.
     renderBackgroundAnnotations(FontNormal);
 
     removeInvisibleItems(frustum);

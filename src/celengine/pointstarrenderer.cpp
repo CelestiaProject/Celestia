@@ -109,6 +109,7 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
+                    // TODO: the label transparency is not tested, most likely need fixes
                     float distr = min(1.0f, 3.5f * (irradiation - labelThresholdIrradiation)/labelThresholdIrradiation);
                     Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
                     renderer->addBackgroundAnnotation(nullptr,

@@ -80,8 +80,8 @@ float appMagToLum(float mag, float lyrs);
 float absMagToIrradiance(float mag, float lyrs);
 float magToIrradiance(float mag);
 float irradianceToMag(float irradiance);
-float faintestMag2exposure(float faintestMag);
-float exposure2faintestMag(float exposure);
+float faintestMagToExposure(float faintestMag);
+float exposureToFaintestMag(float exposure);
 
 template<class T>
 CELESTIA_CMATH_CONSTEXPR T

@@ -64,6 +64,10 @@ void DSORenderer::process(DeepSkyObject* const &dso,
                           double distanceToDSO,
                           float absMag)
 {
+    // TODO: to transfer DSO renderer from the magnitude system to the irradiation system.
+    // This workaround should be a temporary measure.
+    float faintestMag = astro::exposureToFaintestMag(exposure)
+
     if (distanceToDSO > distanceLimit || !dso->isVisible())
         return;
 
@@ -105,7 +109,10 @@ void DSORenderer::process(DeepSkyObject* const &dso,
             }
         }
 
-        float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
+        // Original function of brightnessCorr:
+        // float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
+        float b = 2.3f - 10.925f / faintestMag;
+
         switch (dso->getObjType())
         {
         case DeepSkyObjectType::Galaxy:
@@ -134,7 +141,6 @@ void DSORenderer::process(DeepSkyObject* const &dso,
 
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
-    //
     unsigned int labelMask = dso->getLabelMask();
 
     if ((labelMask & labelMode) != 0)
@@ -184,7 +190,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         float irradiationEff = astro::magToIrradiance(appMagEff) * exposure;
         if (irradiationEff > labelThresholdIrradiation)
         {
-            // introduce distance dependent label transparency.
+            // TODO: the label transparency is not tested, most likely need fixes
             float distr = std::min(1.0f, step * (irradiationEff - labelThresholdIrradiation) / labelThresholdIrradiation);
             labelColor.alpha(distr * labelColor.alpha());
 
