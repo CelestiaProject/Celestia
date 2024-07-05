@@ -1167,7 +1167,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             // Remove samples at the end of the time window
             cachedOrbit->removeSamplesAfter(newWindowEnd);
 
-            // Trim the first sample (because it will be duplicated when we sample the orbit.)
+            // Trim the first sample (because it will be duplicated when we sample the orbit).
             cachedOrbit->removeSamplesBefore(cachedOrbit->startTime() * (1.0 + 1.0e-15));
 
             // Add the new samples
@@ -1183,7 +1183,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             // Remove samples at the beginning of the time window
             cachedOrbit->removeSamplesBefore(newWindowStart);
 
-            // Trim the last sample (because it will be duplicated when we sample the orbit.)
+            // Trim the last sample (because it will be duplicated when we sample the orbit).
             cachedOrbit->removeSamplesAfter(cachedOrbit->endTime() * (1.0 - 1.0e-15));
 
             // Add the new samples
@@ -2286,7 +2286,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // inverse model/view matrix. The frustum is scaled to a
     // normalized coordinate system where the 1 unit = 1 planet
     // radius (for an ellipsoidal planet, radius is taken to be
-    // largest semiaxis.)
+    // largest semiaxis).
     auto viewFrustum = projectionMode->getFrustum(nearPlaneDistance / radius, frustumFarPlane / radius, observer.getZoom());
     viewFrustum.transform(invMV);
 
@@ -2400,7 +2400,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (fade > 0 && (renderFlags & ShowAtmospheres) != 0 && atmosphere->height > 0.0f)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            // TODO: convert old style atmopshere parameters
+            // TODO: convert old style atmosphere parameters
             if (atmosphere->mieScaleHeight > 0.0f)
             {
                 float atmScale = 1.0f + atmosphere->height / radius;
@@ -3344,7 +3344,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 // TODO: Remove this. It's only used in two places: for calculating comet tail
                 // length, and for calculating sky brightness to adjust the limiting magnitude.
                 // In both cases, it's the wrong quantity to use (e.g. for objects with orbits
-                // defined relative to the SSB.)
+                // defined relative to the SSB).
                 rle.sun = -pos_s.cast<float>();
 
                 addRenderListEntries(rle, *body, isLabeled);
@@ -3389,7 +3389,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             else
             {
                 // Viewer is within the bounding sphere, so the object could be very close.
-                // Assume that an object in the subree could be very bright or large,
+                // Assume that an object in the subtree could be very bright or large,
                 // so no culling will occur.
                 brightestPossible = -100.0f;
                 largestPossible = 100.0f;
@@ -4952,7 +4952,7 @@ Renderer::adjustExposureInsideAtmosphere(float &exposure,
         float illumination = std::clamp(sunDir.dot(normal) + 0.2f, 0.0f, 1.0f);
 
         float lightness = illumination * density;
-        exposure = exposure * std::pow(10.0, -6.0 * lightness);
+        exposure = exposure * astro::magToIrradiance(15.0f * lightness);
     }
 }
 
@@ -5105,7 +5105,7 @@ Renderer::buildDepthPartitions()
     {
         // Factor of 0.999 makes sure ensures that the near plane does not fall
         // exactly at the marker's z coordinate (in which case the marker
-        // would be susceptible to getting clipped.)
+        // would be susceptible to getting clipped).
         if (-depthSortedAnnotations[0].position.z() > zNearest)
             zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
     }
@@ -5116,9 +5116,9 @@ Renderer::buildDepthPartitions()
 #endif
 
     // If the nearest distance wasn't set, nothing should appear
-    // in the frontmost depth buffer interval (so we can set the near plane
+    // in the front most depth buffer interval (so we can set the near plane
     // of the front interval to whatever we want as long as it's less than
-    // the far plane distance.
+    // the far plane distance).
     if (zNearest == prevNear)
         zNearest = 0.0f;
 

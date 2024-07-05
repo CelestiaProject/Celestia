@@ -1,13 +1,6 @@
-// empirical constants
-const float a = 0.123;
-const float k = 0.0016;
-
-// degree/px can be lower, but higher value causes blinking
-// due to optimizations in the psf_glow()
-const float degree_per_px = 0.01;
-
+const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
 const float max_square_size = 256.0; // px
-const float max_irradiance = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
+const float max_irradiation = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
 
 varying vec3 v_color;
 varying float max_theta;
@@ -48,8 +41,8 @@ void main(void)
     else
     {
         // Bright light source (glow mode)
-        float  = atan(in_PointSize / max_irradiance) * max_irradiance; // dimmed brightness
-        max_theta = a * sqrt(); // glow radius
+        float irradiation = atan(in_PointSize / max_irradiation) * max_irradiation; // dimmed brightness
+        max_theta = 0.123 * sqrt(irradiation); // emperical glow radius
         float half_sq = max_theta / degree_per_px;
         pointSize = 2.0 * half_sq - 1.0;
         v_color = color;

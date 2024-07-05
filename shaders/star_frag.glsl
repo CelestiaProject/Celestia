@@ -1,7 +1,4 @@
-const float degree_per_px = 0.01;
-// empirical constants
-const float a = 0.123;
-const float k = 0.0016;
+const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
 
 varying vec3 v_color;
 varying float max_theta;
@@ -23,11 +20,11 @@ float psf_glow(float offset)
     // Causes star blinking with degree_per_px > 0.01, large grid misses the center peak of brightness.
     float theta = offset * degree_per_px;
     if (theta == 0)
-        return 100.; // the center is always overexposed (zero division error)
+        return 100.0; // the center is always overexposed (zero division error)
     if (theta < max_theta)
     {
         float brackets = max_theta / theta - 1.0;
-        return k * brackets * brackets;
+        return 0.0016 * brackets * brackets; // empirical
     }
     return 0.0; // after max_theta function starts to grow again
 }
