@@ -228,14 +228,6 @@ class Renderer
                                   ShowSmoothLines
     };
 
-    enum StarStyle
-    {
-        FuzzyPointStars  = 0,
-        PointStars       = 1,
-        ScaledDiscStars  = 2,
-        StarStyleCount   = 3,
-    };
-
     uint64_t getRenderFlags() const;
     void setRenderFlags(uint64_t);
     int getLabelMode() const;
@@ -351,8 +343,6 @@ class Renderer
 
     void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
 
-    void setStarStyle(StarStyle);
-    StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
     unsigned int getResolution() const;
     void enableSelectionPointer();
@@ -687,7 +677,6 @@ class Renderer
 
     float exposure{ 1.0f };
     float faintestPlanetIrradiance{ 1.0f }; // default faintestPlanetIrradiance was 0; maybe remove it at all?
-    StarStyle starStyle;
 
     Color ambientColor;
     std::string displayedSurface;
@@ -736,7 +725,7 @@ class Renderer
     float minFeatureSize;
     uint64_t locationFilter;
 
-    ColorTemperatureTable starColors{ ColorTableType::Blackbody_D65 };
+    ColorTemperatureTable starColors{ ColorTableType::SunWhite };
     ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;

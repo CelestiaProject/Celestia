@@ -67,8 +67,6 @@ const inline std::array<GtkActionEntry, 50> actionsPlain
     GtkActionEntry{ "ShowOrbitsMenu", nullptr, "Show Orbits", nullptr, nullptr, nullptr },
     GtkActionEntry{ "InfoTextMenu", nullptr, "Info Text", nullptr, nullptr, nullptr },
     /* "Info Text" in radio actions */
-    GtkActionEntry{ "StarStyleMenu", nullptr, "Star St_yle", nullptr, nullptr, nullptr },
-    /* "Star Style" in radio actions */
     GtkActionEntry{ "AmbientLightMenu", nullptr, "_Ambient Light", nullptr, nullptr, nullptr },
     /* "Ambient Light" in radio actions */
     GtkActionEntry{ "IncreaseExposure", nullptr, "_Increase Exposure", "bracketright", nullptr, G_CALLBACK(actionIncreaseExposure) },
@@ -116,13 +114,6 @@ constexpr inline std::array<GtkRadioActionEntry, 3> actionsVerbosity
     GtkRadioActionEntry{ "HudNone", nullptr, "_None", nullptr, nullptr, 0 },
     GtkRadioActionEntry{ "HudTerse", nullptr, "_Terse", nullptr, nullptr, 1},
     GtkRadioActionEntry{ "HudVerbose", nullptr, "_Verbose", nullptr, nullptr, 2},
-};
-
-constexpr inline std::array<GtkRadioActionEntry, 3> actionsStarStyle
-{
-    GtkRadioActionEntry{ "StarsFuzzy", nullptr, "_Fuzzy Points", nullptr, nullptr, Renderer::FuzzyPointStars },
-    GtkRadioActionEntry{ "StarsPoints", nullptr, "_Points", nullptr, nullptr, Renderer::PointStars },
-    GtkRadioActionEntry{ "StarsDiscs", nullptr, "Scaled _Discs", nullptr, nullptr, Renderer::ScaledDiscStars },
 };
 
 constexpr inline std::array<GtkRadioActionEntry, 3> actionsAmbientLight

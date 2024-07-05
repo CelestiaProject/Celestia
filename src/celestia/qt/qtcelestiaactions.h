@@ -95,10 +95,6 @@ public:
     QAction* mediumResAction{ nullptr };
     QAction* highResAction{ nullptr };
 
-    QAction* pointStarAction{ nullptr };
-    QAction* fuzzyPointStarAction{ nullptr };
-    QAction* scaledDiscStarAction{ nullptr };
-
     QAction* increaseExposureAction{ nullptr };
     QAction* decreaseExposureAction{ nullptr };
 
@@ -108,7 +104,6 @@ private slots:
     void slotToggleRenderFlag();
     void slotToggleLabel();
     void slotToggleOrbit();
-    void slotSetStarStyle();
     void slotSetTextureResolution();
     void slotAdjustExposure();
     void slotSetLightTimeDelay();

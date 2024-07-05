@@ -41,18 +41,17 @@ struct AppPreferences
     int labelMode{ 0 };
     std::uint64_t locationFilter{ 0 };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon };
-    float visualMagnitude{ 8.0f };
+    float exposure{ 1.0f };
     float ambientLight{ 0.1f }; // Low
     float galaxyLightGain{ 0.0f };
     int showLocalTime{ 0 };
     int dateFormat{ 0 };
     int hudDetail{ 2 };
     int fullScreenMode{ -1 };
-    int starsColor{ static_cast<int>(ColorTableType::Blackbody_D65) };
+    int starsColor{ static_cast<int>(ColorTableType::SunWhite) };
     std::uint32_t lastVersion{ 0 };
     std::string altSurfaceName;
     std::uint32_t textureResolution{ 1 };
-    Renderer::StarStyle starStyle{ Renderer::PointStars };
 #ifndef PORTABLE_BUILD
     bool ignoreOldFavorites{ false };
 #endif

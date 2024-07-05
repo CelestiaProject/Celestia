@@ -813,17 +813,16 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     if (!appCore->initRenderer())
         return 1;
 
-    // Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
+    // Set values saved in registry: renderFlags, exposure, labelMode and timezone bias.
     if (prefs.lastVersion != 0)
     {
-        appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
+        appCore->getSimulation()->setExposure(prefs.exposure);
         appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
         appCore->getRenderer()->setLabelMode(prefs.labelMode);
         appCore->getSimulation()->getActiveObserver()->setLocationFilter(prefs.locationFilter);
         appCore->getRenderer()->setOrbitMask(prefs.orbitMask);
         appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
         Galaxy::setLightGain(prefs.galaxyLightGain);
-        appCore->getRenderer()->setStarStyle(prefs.starStyle);
         appCore->setHudDetail(prefs.hudDetail);
 
         appCore->getRenderer()->setStarColorTable(static_cast<ColorTableType>(prefs.starsColor));

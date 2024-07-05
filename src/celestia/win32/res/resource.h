@@ -258,17 +258,17 @@
 #define ID_VIEW_SHOW_FRAMES             40071
 #define ID_VIEW_SYNC_TIME               40072
 #define ID_FILE_SCRIPTS                 40073
-#define ID_RENDER_STARSTYLE             40079
-#define ID_RENDER_STARSTYLE_FUZZY       40080
-#define ID_RENDER_STARSTYLE_POINTS      40081
-#define ID_RENDER_STARSTYLE_DISCS       40082
+// removed ID                           40079
+// removed ID                           40080
+// removed ID                           40081
+// removed ID                           40082
 #define ID_RENDER_BODY_AXES             40083
 #define ID_RENDER_FRAME_AXES            40084
 #define ID_RENDER_SUN_DIRECTION         40085
 #define ID_RENDER_VELOCITY_VECTOR       40086
 #define ID_RENDER_PLANETOGRAPHIC_GRID   40087
 #define ID_RENDER_TERMINATOR            40088
-#define ID_STARCOLOR_CLASSIC            40089
+// removed ID                           40089
 #define ID_STARCOLOR_D65                40090
 #define ID_STARCOLOR_SOLAR              40091
 #define ID_STARCOLOR_VEGA               40092

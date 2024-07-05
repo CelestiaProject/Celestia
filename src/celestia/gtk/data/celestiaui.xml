@@ -102,11 +102,6 @@
         <menuitem action='HudTerse'/>
         <menuitem action='HudVerbose'/>
       </menu>
-      <menu action='StarStyleMenu'>
-        <menuitem action='StarsFuzzy'/>
-        <menuitem action='StarsPoints'/>
-        <menuitem action='StarsDiscs'/>
-      </menu>
       <menu action='AmbientLightMenu'>
         <menuitem action='AmbientNone'/>
         <menuitem action='AmbientLow'/>

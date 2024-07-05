@@ -1659,9 +1659,6 @@ static int celestia_getstarcolor(lua_State* l)
 
     switch (renderer->getStarColorTable())
     {
-    case ColorTableType::Enhanced:
-        lua_pushstring(l, "enhanced");
-        break;
     case ColorTableType::Blackbody_D65:
         lua_pushstring(l, "blackbody_d65");
         break;
@@ -1694,8 +1691,6 @@ static int celestia_setstarcolor(lua_State* l)
 
     if (starColor == "blackbody_d65"sv)
         renderer->setStarColorTable(ColorTableType::Blackbody_D65);
-    else if (starColor == "enhanced"sv)
-        renderer->setStarColorTable(ColorTableType::Enhanced);
     else if (starColor == "sunwhite"sv)
         renderer->setStarColorTable(ColorTableType::SunWhite);
     else if (starColor == "vegawhite"sv)

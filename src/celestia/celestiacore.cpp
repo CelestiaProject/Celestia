@@ -1020,27 +1020,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         singleView();
         break;
 
-    case '\023':  // Ctrl+S
-        renderer->setStarStyle((Renderer::StarStyle) (((int) renderer->getStarStyle() + 1) %
-                                                      (int) Renderer::StarStyleCount));
-        switch (renderer->getStarStyle())
-        {
-        case Renderer::FuzzyPointStars:
-            flash(_("Star style: fuzzy points"));
-            break;
-        case Renderer::PointStars:
-            flash(_("Star style: points"));
-            break;
-        case Renderer::ScaledDiscStars:
-            flash(_("Star style: scaled discs"));
-            break;
-        default:
-            break;
-        }
-
-        notifyWatchers(RenderFlagsChanged);
-        break;
-
     case '\024':  // Ctrl+T
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCometTails);
         if (renderer->getRenderFlags() & Renderer::ShowCometTails)
@@ -1150,27 +1129,21 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '%':
         switch (renderer->getStarColorTable())
         {
-        case ColorTableType::Enhanced:
+        case ColorTableType::Blackbody_D65:
             renderer->setStarColorTable(ColorTableType::Blackbody_D65);
             flash(_("Star color: Blackbody D65"));
             notifyWatchers(RenderFlagsChanged);
             break;
 
-        case ColorTableType::Blackbody_D65:
+        case ColorTableType::SunWhite:
             renderer->setStarColorTable(ColorTableType::SunWhite);
             flash(_("Star color: Blackbody (Solar Whitepoint)"));
             notifyWatchers(RenderFlagsChanged);
             break;
 
-        case ColorTableType::SunWhite:
+        case ColorTableType::VegaWhite:
             renderer->setStarColorTable(ColorTableType::VegaWhite);
             flash(_("Star color: Blackbody (Vega Whitepoint)"));
-            notifyWatchers(RenderFlagsChanged);
-            break;
-
-        case ColorTableType::VegaWhite:
-            renderer->setStarColorTable(ColorTableType::Enhanced);
-            flash(_("Star color: Classic"));
             notifyWatchers(RenderFlagsChanged);
             break;
         }

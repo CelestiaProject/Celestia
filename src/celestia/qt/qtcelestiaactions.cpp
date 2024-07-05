@@ -219,26 +219,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    increaseExposureAction = new QAction(_("Increase exposure time"), this);
-    increaseExposureAction->setData(0.1);
+    increaseExposureAction = new QAction(_("Increase Exposure Time"), this);
+    increaseExposureAction->setData(10.0);
     increaseExposureAction->setShortcut(QString("]"));
-    decreaseExposureAction = new QAction(_("Decrease exposure time"), this);
-    decreaseExposureAction->setData(-0.1);
+    decreaseExposureAction = new QAction(_("Decrease Exposure Time"), this);
+    decreaseExposureAction->setData(0.1);
     decreaseExposureAction->setShortcut(QString("["));
-    connect(increaseExposureAction, SIGNAL(triggered()), this, SLOT(slotExposure()));
-    connect(decreaseExposureAction, SIGNAL(triggered()), this, SLOT(slotExposure()));
-
-    pointStarAction      = createCheckableAction(_("Points"),       this, Renderer::PointStars);
-    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, Renderer::FuzzyPointStars);
-    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, Renderer::ScaledDiscStars);
-    QActionGroup *starStyleGroup = new QActionGroup(this);
-    starStyleGroup->addAction(pointStarAction);
-    starStyleGroup->addAction(fuzzyPointStarAction);
-    starStyleGroup->addAction(scaledDiscStarAction);
-    starStyleGroup->setExclusive(true);
-    connect(pointStarAction,      SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
-    connect(fuzzyPointStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
-    connect(scaledDiscStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
+    connect(increaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
+    connect(decreaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
 
     lightTimeDelayAction = new QAction(_("Light Time Delay"), this);
     lightTimeDelayAction->setCheckable(true);
@@ -262,7 +250,6 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     int labelMode = renderer->getLabelMode();
     BodyClassification orbitMask = renderer->getOrbitMask();
     int textureRes = renderer->getResolution();
-    Renderer::StarStyle starStyle = renderer->getStarStyle();
 
     equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
     galacticGridAction->setChecked(renderFlags & Renderer::ShowGalacticGrid);
@@ -302,11 +289,6 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     lowResAction->setChecked(textureRes == lores);
     mediumResAction->setChecked(textureRes == medres);
     highResAction->setChecked(textureRes == hires);
-
-    // Star style
-    pointStarAction->setChecked(starStyle == Renderer::PointStars);
-    fuzzyPointStarAction->setChecked(starStyle == Renderer::FuzzyPointStars);
-    scaledDiscStarAction->setChecked(starStyle == Renderer::ScaledDiscStars);
 
     // Features
     cloudsAction->setChecked(renderFlags & Renderer::ShowCloudMaps);
@@ -372,17 +354,6 @@ CelestiaActions::slotToggleOrbit()
 }
 
 void
-CelestiaActions::slotSetStarStyle()
-{
-    QAction* act = qobject_cast<QAction*>(sender());
-    if (act != nullptr)
-    {
-        Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
-        appCore->getRenderer()->setStarStyle(starStyle);
-    }
-}
-
-void
 CelestiaActions::slotSetTextureResolution()
 {
     QAction* act = qobject_cast<QAction*>(sender());
@@ -425,8 +396,7 @@ CelestiaActions::slotAdjustExposure()
 void
 CelestiaActions::slotSetLightTimeDelay()
 {
-    // TODO: CelestiaCore class should offer an API for enabling/disabling light
-    // time delay.
+    // TODO: CelestiaCore class should offer an API for enabling/disabling light time delay.
     appCore->charEntered('-');
 }
 

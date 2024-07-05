@@ -577,7 +577,6 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
-    settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("TextureResolution", renderer->getResolution());
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 
@@ -1462,11 +1461,6 @@ CelestiaAppWindow::createMenus()
 
     displayMenu->addAction(actions->increaseExposureAction);
     displayMenu->addAction(actions->decreaseExposureAction);
-
-    QMenu* starStyleMenu = displayMenu->addMenu(_("Star St&yle"));
-    starStyleMenu->addAction(actions->pointStarAction);
-    starStyleMenu->addAction(actions->fuzzyPointStarAction);
-    starStyleMenu->addAction(actions->scaledDiscStarAction);
 
     displayMenu->addSeparator();
 

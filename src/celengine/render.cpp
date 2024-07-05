@@ -235,7 +235,6 @@ Renderer::Renderer() :
 #endif
     labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
-    starStyle(FuzzyPointStars),
     pointStarVertexBuffer(nullptr),
     textureResolution(medres),
     frameCount(0),
@@ -4953,7 +4952,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
                           now,
                           lightSourceList,
                           tintSaturation,
-                          starColors.type() == ColorTableType::Enhanced ? nullptr : &tintColors);
+                          &tintColors);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.

@@ -66,7 +66,6 @@ void actionHelpAbout(GtkAction*, AppData*);
 
 /* Radio Button Actions */
 void actionVerbosity(GtkRadioAction*, GtkRadioAction*, AppData*);
-void actionStarStyle(GtkRadioAction*, GtkRadioAction*, AppData*);
 void actionAmbientLight(GtkRadioAction*, GtkRadioAction*, AppData*);
 
 /* Render-Flag Actions */
@@ -130,7 +129,6 @@ void resyncOrbitActions(AppData* app);
 void resyncVerbosityActions(AppData* app);
 void resyncTimeZoneAction(AppData* app);
 void resyncAmbientActions(AppData* app);
-void resyncStarStyleActions(AppData* app);
 void resyncGalaxyGainActions(AppData* app);
 void resyncTextureResolutionActions(AppData* app);
 

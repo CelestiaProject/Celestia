@@ -872,13 +872,6 @@ actionVerbosity(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 }
 
 void
-actionStarStyle(GtkRadioAction* action, GtkRadioAction*, AppData* app)
-{
-    int value = gtk_radio_action_get_current_value(action);
-    app->renderer->setStarStyle((Renderer::StarStyle)value);
-}
-
-void
 actionAmbientLight(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     float value = amLevels[gtk_radio_action_get_current_value(action)];
@@ -1344,26 +1337,6 @@ resyncAmbientActions(AppData* app)
     else
         action = gtk_action_group_get_action(app->agAmbient, "AmbientMedium");
 
-    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
-}
-
-/* Synchronizes the Verbosity Actions with the state of the core */
-void
-resyncStarStyleActions(AppData* app)
-{
-    GtkAction* action;
-    const char* actionName;
-
-    switch (app->renderer->getStarStyle())
-    {
-        case Renderer::FuzzyPointStars: actionName = "StarsFuzzy"; break;
-        case Renderer::PointStars: actionName = "StarsPoints"; break;
-        case Renderer::ScaledDiscStars: actionName = "StarsDiscs"; break;
-        default: return;
-    }
-
-    /* Get the action, set the widget */
-    action = gtk_action_group_get_action(app->agStarStyle, actionName);
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
 }
 
