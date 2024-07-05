@@ -188,10 +188,10 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         }
 
         float irradiationEff = astro::magToIrradiance(appMagEff) * exposure;
-        if (irradiationEff > labelThresholdIrradiation)
+        if (irradiationEff > labelLowestIrradiation)
         {
             // TODO: the label transparency is not tested, most likely need fixes
-            float distr = std::min(1.0f, step * (irradiationEff - labelThresholdIrradiation) / labelThresholdIrradiation);
+            float distr = std::min(1.0f, step * (irradiationEff - labelLowestIrradiation) / labelLowestIrradiation);
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

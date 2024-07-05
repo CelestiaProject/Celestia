@@ -41,7 +41,7 @@ struct RenderListEntry
     float nearZ;
     float farZ;
     float discSizeInPixels;
-    float appMag;
+    float irradiation;
     RenderableType renderableType;
     bool isOpaque;
 };

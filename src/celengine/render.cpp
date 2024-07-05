@@ -3743,7 +3743,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     // Original function
     // float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi(); // = 1.0 at startup
     // starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
-    starRenderer.labelThresholdIrradiation = 1.0f; // refinement is needed
+    starRenderer.labelLowestIrradiation = 1.0f; // refinement is needed
 
     starRenderer.colorTemp = &starColors;
 
@@ -3820,7 +3820,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // Original function
     // float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi(); // = 1.0 at startup
     // dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
-    dsoRenderer.labelThresholdIrradiation = 1.0f; // refinement is needed
+    dsoRenderer.labelLowestIrradiation = 1.0f; // refinement is needed
 
     using namespace celestia;
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);

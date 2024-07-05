@@ -142,17 +142,17 @@ irradianceToMag(float irradiance)
 float
 faintestMagToExposure(float faintestMag)
 {
-    return std::exp(faintestMag / LN_MAG) * IRRADIATION_LIMIT;
+    return std::exp(faintestMag / LN_MAG) * LOWEST_IRRADIATION;
     // slower solution:
-    // return std::pow(10.0f, 0.4f * faintestMag) * IRRADIATION_LIMIT;
+    // return std::pow(10.0f, 0.4f * faintestMag) * LOWEST_IRRADIATION;
 }
 
 float
 exposureToFaintestMag(float exposure)
 {
-    return std::log(exposure / IRRADIATION_LIMIT) * LN_MAG;
+    return std::log(exposure / LOWEST_IRRADIATION) * LN_MAG;
     // equivalent solution:
-    // return 2.5f * std::log10(exposure / IRRADIATION_LIMIT);
+    // return 2.5f * std::log10(exposure / LOWEST_IRRADIATION);
 }
 
 

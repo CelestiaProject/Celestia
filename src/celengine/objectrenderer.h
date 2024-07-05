@@ -24,16 +24,16 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     {
     };
 
-    const Observer* observer        { nullptr };
-    Renderer*  renderer             { nullptr };
+    const Observer* observer     { nullptr };
+    Renderer*  renderer          { nullptr };
 
-    float pixelSize                 { 0.0f };
-    float exposure                  { 0.0f };
-    float distanceLimit             { 0.0f };
+    float pixelSize              { 0.0f };
+    float exposure               { 0.0f };
+    float distanceLimit          { 0.0f };
 
-    // Objects with screen brightness higher than labelThresholdIrradiation will be labeled
-    float labelThresholdIrradiation { 0.0f };
+    // Objects with screen brightness higher than labelLowestIrradiation will be labeled
+    float labelLowestIrradiation { 0.0f };
 
-    uint64_t renderFlags            { 0 };
-    int labelMode                   { 0 };
+    uint64_t renderFlags         { 0 };
+    int labelMode                { 0 };
 };

@@ -572,13 +572,6 @@ class Renderer
                          float discSizeInPixels,
                          const Matrices&);
 
-    void calculatePointSize(float appMag,
-                            float size,
-                            float &discSize,
-                            float &alpha,
-                            float &glareSize,
-                            float &glareAlpha) const;
-
     void renderObjectAsPoint(const Eigen::Vector3f& center,
                              float radius,
                              float appMag,

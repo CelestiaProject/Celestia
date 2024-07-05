@@ -1224,7 +1224,7 @@ Star::getIrradiance(float km) const
     // extinction seems to be in a strange units, mag/ly is not used in astronomy
     // it can be optimized later, with astro::absMagToIrradiance() that duplicates it, but with no extinction
     
-    float irradianceInSuns = std::exp((astro::SOLAR_ABSMAG - absMag - extinction * astro::kilometersToLightYears(km)) / astro::LN_MAG)
+    float irradianceInSuns = std::exp((astro::SOLAR_ABSMAG - absMag - extinction * astro::kilometersToLightYears(km)) / astro::LN_MAG);
     return irradianceInSuns * astro::SOLAR_POWER / (math::sphereArea(km * 1000) * astro::VEGAN_IRRADIANCE);
 }
 
