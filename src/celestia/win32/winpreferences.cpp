@@ -216,7 +216,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
     if (int orbitMask = 0; GetRegistryInt(key, TEXT("OrbitMask"), orbitMask))
         prefs.orbitMask = static_cast<BodyClassification>(orbitMask);
-    GetRegistryFloat(key, TEXT("Exposure"), prefs.Exposure);
+    GetRegistryFloat(key, TEXT("Exposure"), prefs.exposure);
     GetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     GetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
     GetRegistryInt(key, TEXT("ShowLocalTime"), prefs.showLocalTime);

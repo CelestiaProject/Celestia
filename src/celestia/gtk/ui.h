@@ -69,8 +69,8 @@ const inline std::array<GtkActionEntry, 50> actionsPlain
     /* "Info Text" in radio actions */
     GtkActionEntry{ "AmbientLightMenu", nullptr, "_Ambient Light", nullptr, nullptr, nullptr },
     /* "Ambient Light" in radio actions */
-    GtkActionEntry{ "IncreaseExposure", nullptr, "_Increase Exposure", "bracketright", nullptr, G_CALLBACK(actionIncreaseExposure) },
-    GtkActionEntry{ "DecreaseExposure", nullptr, "_Decrease Exposure", "bracketleft", nullptr, G_CALLBACK(actionDecreaseExposure) },
+    GtkActionEntry{ "IncreaseExposure", nullptr, "_Increase Exposure Time", "bracketright", nullptr, G_CALLBACK(actionIncreaseExposure) },
+    GtkActionEntry{ "DecreaseExposure", nullptr, "_Decrease Exposure Time", "bracketleft", nullptr, G_CALLBACK(actionDecreaseExposure) },
 
     GtkActionEntry{ "WindowMenu", nullptr, "_Window", nullptr, nullptr, nullptr },
     GtkActionEntry{ "ViewerSize", GTK_STOCK_ZOOM_FIT, "Set Window Size...", nullptr, nullptr, G_CALLBACK(actionViewerSize) },
