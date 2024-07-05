@@ -72,9 +72,12 @@ constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L);
 template<typename T>
 constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(696000.0L);
 
+static float reflectedLuminosity(float sunLuminosity, float distanceFromSun, float objRadius);
+
 // Magnitude conversions
 float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
+float lumToIrradiance(float lum, float km);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
 float absMagToIrradiance(float mag, float lyrs);

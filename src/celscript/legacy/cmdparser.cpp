@@ -618,7 +618,7 @@ ParseResult parseConstellationColorCommand(const Hash& paramList, const ScriptMa
 
 ParseResult parseSetExposureCommand(const Hash& paramList, const ScriptMaps&)
 {
-    auto mag = paramList.getNumber<double>("exposure").value_or(1.0);
+    auto exposure = paramList.getNumber<double>("exposure").value_or(1.0);
     return std::make_unique<CommandSetExposure>(exposure);
 }
 

@@ -66,7 +66,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
 {
     // TODO: to transfer DSO renderer from the magnitude system to the irradiation system.
     // This workaround should be a temporary measure.
-    float faintestMag = astro::exposureToFaintestMag(exposure)
+    float faintestMag = astro::exposureToFaintestMag(exposure);
 
     if (distanceToDSO > distanceLimit || !dso->isVisible())
         return;

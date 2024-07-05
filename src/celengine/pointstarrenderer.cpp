@@ -95,9 +95,9 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
 
         // Stars closer than the maximum solar system size are actually added
         // to the render list and depth sorted, since they may occlude planets.
+        float irradiation = irradiance * exposure;
         if (distance > SolarSystemMaxDistance)
         {
-            float irradiation = irradiance * exposure;
             if (irradiation > astro::IRRADIATION_LIMIT)
             {
                 starVertexBuffer->addStar(relPos, starColor, irradiation);
@@ -136,7 +136,7 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
             rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
-            rle.appMag = appMag;
+            rle.irradiation = irradiation;
             rle.isOpaque = true;
             renderList->push_back(rle);
 

@@ -81,6 +81,7 @@
 #include <sstream>
 #include <iomanip>
 #include <numeric>
+#include <limits>
 #ifdef _MSC_VER
 #include <malloc.h>
 #ifndef alloca
@@ -1408,7 +1409,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderStar(*rle.star,
                    rle.position,
                    rle.distance,
-                   rle.appMag,
+                   rle.irradiation,
                    observer,
                    nearPlaneDistance, farPlaneDistance,
                    m);
@@ -1418,7 +1419,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderPlanet(*rle.body,
                      rle.position,
                      rle.distance,
-                     rle.appMag,
+                     rle.irradiation,
                      observer,
                      nearPlaneDistance, farPlaneDistance,
                      m);
@@ -3098,29 +3099,6 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
 }
 
 
-// Helper function to compute the luminosity of a perfectly
-// reflective disc with the specified radius. This is used as an upper
-// bound for the apparent brightness of an object when culling
-// invisible objects.
-static float luminosityAtOpposition(float sunLuminosity,
-                                    float distanceFromSun,
-                                    float objRadius)
-{
-    // Compute the total power of the star in Watts
-    double power = astro::SOLAR_POWER * sunLuminosity;
-
-    // Compute the irradiance at the body's distance from the star
-    double irradiance = power / math::sphereArea(distanceFromSun * 1000);
-
-    // Compute the total energy hitting the planet; assume an albedo of 1.0, so
-    // reflected energy = incident energy.
-    double incidentEnergy = irradiance * math::circleArea(objRadius * 1000);
-
-    // Compute the luminosity (i.e. power relative to solar power)
-    return (float) (incidentEnergy / astro::SOLAR_POWER);
-}
-
-
 static bool isBodyVisible(const Body* body, BodyClassification bodyVisibilityMask)
 {
     BodyClassification bodyClassification = body->getClassification();
@@ -3160,7 +3138,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
                                     Body& body,
                                     bool isLabeled)
 {
-    bool visibleAsPoint = rle.appMag < faintestPlanetMag && body.isVisibleAsPoint();
+    bool visibleAsPoint = rle.irradiation < faintestPlanetIrradiance && body.isVisibleAsPoint();
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
     if (rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled)
@@ -3318,17 +3296,17 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             // Calculate the size of the planet/moon disc in pixels
             float discSize = (body->getCullingRadius() / (float) dist_v) / pixelSize;
 
-            // Compute the apparent magnitude; instead of summing the reflected
-            // light from all nearby stars, we just consider the one with the
-            // highest apparent brightness.
-            float appMag = 100.0f;
+            // Compute the irradiance
+            // Instead of summing the reflected light from all nearby stars,
+            // we just consider the one with the highest irradiance.
+            float irradiance = 1.175494e-38f; // minimum positive float value
             for (const auto &lightSource : lightSourceList)
             {
                 Eigen::Vector3d sunPos = pos_v - lightSource.position;
-                appMag = std::min(appMag, body->getApparentMagnitude(lightSource.luminosity, sunPos, pos_v));
+                irradiance = std::max(irradiance, body->getIrradiance(lightSource.luminosity, sunPos, pos_v));
             }
 
-            bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
+            bool visibleAsPoint = irradiance > faintestPlanetIrradiance && body->isVisibleAsPoint();
             bool isLabeled = util::is_set(body->getOrbitClassification(), labelClassMask);
 
             if ((discSize > 1 || visibleAsPoint || isLabeled) && isBodyVisible(body, bodyVisibilityMask))
@@ -3338,7 +3316,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 rle.position = pos_v.cast<float>();
                 rle.distance = (float) dist_v;
                 rle.centerZ = pos_v.cast<float>().dot(viewMatZ);
-                rle.appMag   = appMag;
+                rle.irradiation = irradiation;
                 rle.discSizeInPixels = body->getRadius() / ((float) dist_v * pixelSize);
 
                 // TODO: Remove this. It's only used in two places: for calculating comet tail
@@ -3381,21 +3359,21 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 for (const auto &lightSource : lightSourceList)
                 {
                     Eigen::Vector3d sunPos = pos_v - lightSource.position;
-                    lum += luminosityAtOpposition(lightSource.luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
+                    lum += astro::reflectedLuminosity(lightSource.luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
                 }
-                brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
-                largestPossible = (float) subtree->maxChildRadius() / minPossibleDistance / pixelSize;
+                brightestPossible = astro::lumToIrradiance(lum, minPossibleDistance);
+                largestPossible = (float) subtree->maxChildRadius() / (minPossibleDistance * pixelSize);
             }
             else
             {
                 // Viewer is within the bounding sphere, so the object could be very close.
                 // Assume that an object in the subtree could be very bright or large,
                 // so no culling will occur.
-                brightestPossible = -100.0f;
+                brightestPossible = std::numeric_limits<float>::max();
                 largestPossible = 100.0f;
             }
 
-            if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
+            if (brightestPossible > faintestPlanetIrradiance || largestPossible < 1.0f)
             {
                 // See if the object or any of its children are within the view frustum
                 if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::FrustumAspect::Outside)

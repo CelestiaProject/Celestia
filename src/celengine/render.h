@@ -693,7 +693,7 @@ class Renderer
     float tintSaturation{ 0.5f };
 
     float exposure{ 1.0f };
-    float faintestPlanetMag{ 0.0f };
+    float faintestPlanetIrradiance{ 1.0f }; // default faintestPlanetIrradiance was 0; maybe remove it at all?
     StarStyle starStyle;
 
     Color ambientColor;

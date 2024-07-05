@@ -54,6 +54,21 @@ negateIf(double& d, bool condition)
 
 } // end unnamed namespace
 
+
+// Computes the luminosity of a perfectly reflective disc.
+// It can be used as an upper bound for the irradiance of an object when culling invisible objects.
+// The function translates luminosity into luminosity of the same units
+// (distanceFromSun and objRadius must also be in the same units).
+static float reflectedLuminosity(float sunLuminosity,
+                                 float distanceFromSun,
+                                 float objRadius)
+{
+    float lengthRatio = objRadius / distanceFromSun;
+    return sunLuminosity * 0.25 * lengthRatio * lengthRatio;
+}
+
+
+// Return the absolute magnitude of a star with lum times solar absolute luminosity
 float
 lumToAbsMag(float lum)
 {
@@ -66,6 +81,14 @@ lumToAppMag(float lum, float lyrs)
 {
     return absToAppMag(lumToAbsMag(lum), lyrs);
 }
+
+// Return the irradiance of a star in Vega units with lum times solar luminosity viewed at the distance in km
+float
+lumToIrradiance(float lum, float km)
+{
+    return lum * SOLAR_POWER / (math::sphereArea(km * 1000) * VEGAN_IRRADIANCE);
+}
+
 
 float
 absMagToLum(float mag)
@@ -80,9 +103,9 @@ appMagToLum(float mag, float lyrs)
 }
 
 float
-absMagToIrradiance(float mag, float lyrs)
+absMagToIrradiance(float mag, float km)
 {
-    return absMagToLum(mag) * SOLAR_POWER / (math::sphereArea(lightYearsToKilometers(lyrs) * 1000) * VEGAN_IRRADIANCE);
+    return lumToIrradiance(absMagToLum(mag), km);
 }
 
 // Conversions between the magnitude system and irradiance in Vega units

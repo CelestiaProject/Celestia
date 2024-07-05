@@ -818,22 +818,15 @@ float Body::getLuminosity(const Star& sun,
 }
 
 
+// Computes the luminosity of a perfectly reflective disc.
+// The function translates luminosity into luminosity of the same units
+// (distanceFromSun and objRadius must also be in the same units).
 float Body::getLuminosity(float sunLuminosity,
                           float distanceFromSun) const
 {
-    // Compute the total power of the star in watts
-    double power = astro::SOLAR_POWER * sunLuminosity;
-
-    // Compute the irradiance at the body's distance from the star
-    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000); // km to m
-
-    // Compute the total energy hitting the planet
-    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000); // km to m
-
-    double reflectedEnergy = incidentEnergy * getReflectivity();
-
-    // Compute the luminosity (i.e. power relative to solar power)
-    return (float) (reflectedEnergy / astro::SOLAR_POWER);
+    return getReflectivity() * astro::reflectedLuminosity(float sunLuminosity,
+                                                          float distanceFromSun,
+                                                          float radius);
 }
 
 
@@ -899,22 +892,15 @@ float Body::getIrradiance(float sunLuminosity,
                           float distanceFromSun,
                           float distanceFromViewer) const
 {
-    // Compute the total power of the star in watts
-    double power = astro::SOLAR_POWER * sunLuminosity;
-
-    // Compute the irradiance at the body's distance from the star
-    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000); // km to m
-
-    // Compute the total energy hitting the planet
-    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000); // km to m
-
-    double reflectedEnergy = incidentEnergy * getReflectivity();
+    // Compute the reflected flux (luminosity) in SI units
+    float reflectedFlux = astro::SOLAR_POWER * getLuminosity(float sunLuminosity,
+                                                             float distanceFromSun);
 
     // Compute the irradiance at the observer's distance from the planet
-    double resIrradiance = reflectedEnergy / math::sphereArea(distanceFromViewer * 1000); // km to m
+    float obsIrradiance = reflectedFlux / math::sphereArea(distanceFromViewer * 1000); // km to m
 
     // Compute the irradiance in Vega units
-    return (float) (resIrradiance / astro::VEGAN_IRRADIANCE);
+    return obsIrradiance / astro::VEGAN_IRRADIANCE;
 }
 
 
