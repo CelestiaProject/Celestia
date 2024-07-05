@@ -1642,59 +1642,6 @@ static int celestia_getstardistancelimit(lua_State* l)
     return 1;
 }
 
-static int celestia_getstarstyle(lua_State* l)
-{
-    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
-    CelestiaCore* appCore = this_celestia(l);
-
-    Renderer* renderer = appCore->getRenderer();
-    if (renderer == nullptr)
-    {
-        Celx_DoError(l, "Internal Error: renderer is nullptr!");
-        return 0;
-    }
-
-    Renderer::StarStyle starStyle = renderer->getStarStyle();
-    switch (starStyle)
-    {
-    case Renderer::FuzzyPointStars:
-        lua_pushstring(l, "fuzzy"); break;
-    case Renderer::PointStars:
-        lua_pushstring(l, "point"); break;
-    case Renderer::ScaledDiscStars:
-        lua_pushstring(l, "disc"); break;
-    default:
-        lua_pushstring(l, "invalid starstyle");
-    };
-    return 1;
-}
-
-static int celestia_setstarstyle(lua_State* l)
-{
-    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
-    CelestiaCore* appCore = this_celestia(l);
-
-    std::string_view starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
-    Renderer* renderer = appCore->getRenderer();
-    if (renderer == nullptr)
-    {
-        Celx_DoError(l, "Internal Error: renderer is nullptr!");
-        return 0;
-    }
-
-    if (starStyle == "fuzzy"sv)
-        renderer->setStarStyle(Renderer::FuzzyPointStars);
-    else if (starStyle == "point"sv)
-        renderer->setStarStyle(Renderer::PointStars);
-    else if (starStyle == "disc"sv)
-        renderer->setStarStyle(Renderer::ScaledDiscStars);
-    else
-       Celx_DoError(l, "Invalid starstyle");
-
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
-    return 0;
-}
-
 // -----------------------------------------------------------------------------
 // Star Color
 
@@ -2570,8 +2517,6 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
     Celx_RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
-    Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
-    Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
 
     // New CELX command for Star Color
     Celx_RegisterMethod(l, "getstarcolor", celestia_getstarcolor);

@@ -210,7 +210,6 @@
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"} # delete later
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
@@ -230,7 +229,6 @@
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"} # delete later
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}

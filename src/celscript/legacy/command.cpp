@@ -569,14 +569,6 @@ void CommandSet::processInstantaneous(ExecutionEnvironment& env)
         if (env.getRenderer() != nullptr)
             env.getRenderer()->setDistanceLimit(static_cast<float>(value));
     }
-    else if (compareIgnoringCase(name, "StarStyle") == 0)
-    {
-        // The cast from double to an enum requires an intermediate cast to int
-        // Probably shouldn't be doing this at all, but other alternatives
-        // are more trouble than they're worth.
-        if (env.getRenderer() != nullptr)
-            env.getRenderer()->setStarStyle(static_cast<Renderer::StarStyle>(static_cast<int>(value)));
-    }
 }
 
 

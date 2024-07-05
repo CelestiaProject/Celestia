@@ -219,10 +219,10 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    increaseExposureAction = new QAction(_("Increase exposure"), this);
+    increaseExposureAction = new QAction(_("Increase exposure time"), this);
     increaseExposureAction->setData(0.1);
     increaseExposureAction->setShortcut(QString("]"));
-    decreaseExposureAction = new QAction(_("Decrease exposure"), this);
+    decreaseExposureAction = new QAction(_("Decrease exposure time"), this);
     decreaseExposureAction->setData(-0.1);
     decreaseExposureAction->setShortcut(QString("["));
     connect(increaseExposureAction, SIGNAL(triggered()), this, SLOT(slotExposure()));

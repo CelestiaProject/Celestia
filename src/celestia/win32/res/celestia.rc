@@ -210,8 +210,8 @@ IDR_MAIN_MENU MENU
         MENUITEM "View Options...", ID_RENDER_VIEWOPTIONS
         MENUITEM "Locations...", ID_RENDER_LOCATIONS
         MENUITEM SEPARATOR
-        MENUITEM "Increase exposure\t]", ID_RENDER_INCREASEEXPOSURE
-        MENUITEM "Decrease exposure\t[", ID_RENDER_DECREASEEXPOSURE
+        MENUITEM "Increase exposure time\t]", ID_RENDER_INCREASEEXPOSURE
+        MENUITEM "Decrease exposure time\t[", ID_RENDER_DECREASEEXPOSURE
         POPUP "Star St&yle"
         {
             MENUITEM "&Points", ID_RENDER_STARSTYLE_POINTS
