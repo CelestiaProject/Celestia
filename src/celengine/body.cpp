@@ -824,9 +824,9 @@ float Body::getLuminosity(const Star& sun,
 float Body::getLuminosity(float sunLuminosity,
                           float distanceFromSun) const
 {
-    return getReflectivity() * astro::reflectedLuminosity(float sunLuminosity,
-                                                          float distanceFromSun,
-                                                          float radius);
+    return getReflectivity() * astro::reflectedLuminosity(sunLuminosity,
+                                                          distanceFromSun,
+                                                          radius);
 }
 
 
@@ -893,8 +893,8 @@ float Body::getIrradiance(float sunLuminosity,
                           float distanceFromViewer) const
 {
     // Compute the reflected flux (luminosity) in SI units
-    float reflectedFlux = astro::SOLAR_POWER * getLuminosity(float sunLuminosity,
-                                                             float distanceFromSun);
+    float reflectedFlux = astro::SOLAR_POWER * getLuminosity(sunLuminosity,
+                                                             distanceFromSun);
 
     // Compute the irradiance at the observer's distance from the planet
     float obsIrradiance = reflectedFlux / math::sphereArea(distanceFromViewer * 1000); // km to m

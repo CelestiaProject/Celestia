@@ -56,39 +56,48 @@ negateIf(double& d, bool condition)
 
 
 // Computes the luminosity of a perfectly reflective disc.
-// It can be used as an upper bound for the irradiance of an object when culling invisible objects.
+// It is also used as an upper bound for the irradiance of an object when culling invisible objects.
 // The function translates luminosity into luminosity of the same units
 // (distanceFromSun and objRadius must also be in the same units).
-static float reflectedLuminosity(float sunLuminosity,
-                                 float distanceFromSun,
-                                 float objRadius)
+float reflectedLuminosity(float sunLuminosity,
+                          float distanceFromSun,
+                          float objRadius)
 {
     float lengthRatio = objRadius / distanceFromSun;
     return sunLuminosity * 0.25 * lengthRatio * lengthRatio;
 }
 
 
-// Return the absolute magnitude of a star with lum times solar absolute luminosity
+// The following notation rules apply in the functions below and in the code in general:
+// - Luminosity is implied in solar units (in SI, flux is measured in W)
+// - Irradiance is implied in vegan units (in SI, it is measured in W/m^2)
+
+// Absolute magnitude is the logarithmic inverse of luminosity.
+// Apparent magnitude is the logarithmic inverse of irradiance.
+
+
+// Luminosity conversions:
+
 float
 lumToAbsMag(float lum)
 {
     return SOLAR_ABSMAG - std::log(lum) * LN_MAG;
 }
 
-// Return the apparent magnitude of a star with lum times solar luminosity viewed at lyrs light years
 float
 lumToAppMag(float lum, float lyrs)
 {
     return absToAppMag(lumToAbsMag(lum), lyrs);
 }
 
-// Return the irradiance of a star in Vega units with lum times solar luminosity viewed at the distance in km
 float
 lumToIrradiance(float lum, float km)
 {
     return lum * SOLAR_POWER / (math::sphereArea(km * 1000) * VEGAN_IRRADIANCE);
 }
 
+
+// Magnitude conversions:
 
 float
 absMagToLum(float mag)
@@ -108,7 +117,9 @@ absMagToIrradiance(float mag, float km)
     return lumToIrradiance(absMagToLum(mag), km);
 }
 
-// Conversions between the magnitude system and irradiance in Vega units
+
+// Logarithmic magnitude system <-> linear irradiance system in Vega units:
+
 float
 magToIrradiance(float mag)
 {
@@ -116,6 +127,7 @@ magToIrradiance(float mag)
     // slower solution:
     // return std::pow(10.0f, -0.4f * mag);
 }
+
 float
 irradianceToMag(float irradiance)
 {
@@ -124,7 +136,9 @@ irradianceToMag(float irradiance)
     // return -2.5f * std::log10(irradiance);
 }
 
-// Conversions between the faintest star magnitude system and exposure
+
+// Faintest star magnitude system <-> exposure time:
+
 float
 faintestMagToExposure(float faintestMag)
 {
@@ -132,6 +146,7 @@ faintestMagToExposure(float faintestMag)
     // slower solution:
     // return std::pow(10.0f, 0.4f * faintestMag) * IRRADIATION_LIMIT;
 }
+
 float
 exposureToFaintestMag(float exposure)
 {
@@ -139,6 +154,7 @@ exposureToFaintestMag(float exposure)
     // equivalent solution:
     // return 2.5f * std::log10(exposure / IRRADIATION_LIMIT);
 }
+
 
 void
 decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
