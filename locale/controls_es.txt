@@ -69,10 +69,8 @@ O  : Mostrar órbitas
 ^  : Mostrar nebulosas
 %  : Saturación de colores de las estrellas
 ;  : Mostrar una esfera de coordenadas ecuatoriales terrestres
-[  : Si autoMag OFF: Reducir la magnitud límite (menos estrellas visibles)
-     Si autoMag ON : Reducir la magnitud límite a 45 grados de campo visual
-]  : Si autoMag OFF: Aumentar la magnitud límite (más estrellas visibles)
-     Si autoMag ON : Aumentar la magnitud límite a 45 grados de campo visual
+[  : Disminuir el tiempo de exposición
+]  : Aumentar el tiempo de exposición
 {  : Reducir la luz ambiente
 }  : Increase ambient illumination
 (  : Reducir el brillo de las galaxias independientemente del de las estrellas
@@ -86,12 +84,10 @@ Ctrl+E : Mostrar sombras de eclipses
 Ctrl+K : Mostrar marcadores
 Ctrl+L : Mostrar el lado nocturno de los planetas (contaminación lumínica)
 Ctrl+P : Marcar el objeto seleccionado
-Ctrl+S : Cambiar el estilo de las estrellas entre discos difusos, puntos y discos a escala
 Ctrl+T : Mostrar colas de cometas
 Ctrl+V : Cambiar entre los procesos OpenGL soportados
 Ctrl+W : Cambiar a modo alambres
 Ctrl+X : Cambiar a suavizado de líneas
-Ctrl+Y : Cambiar autoMag = adaptación automática de la visibilidad estelar al
 campo visual
 +  : Cambiar entre representación artística y límite del conocimiento en las
      texturas planetarias

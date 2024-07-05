@@ -98,14 +98,8 @@ N ...................................... Romfartøy
  } ....................................... Øk omgivende lys
  ( ....................................... Reduser galakse-lyshet
  ) ....................................... Øk galakse-lyshet
- [ ....................................... Reduser Magnitude-grense:
-                                           - Hvis AutoMag AV: Reduser magnitude (færre stjerner)
-                                           - Hvis AutoMag PÅ: Reduser magnitude ved 45 gr. synsfelt
- ] ....................................... Øk Magnitude :
-                                           - Hvis AutoMag AV: Øk magnitude (flere stjerner)
-                                           - Hvis AutoMag PÅ: Øk magnitude ved 45 gr. synsfelt
- Ctrl+Y ............................... Auto-Magnitude av/på (automatisk tilpassing av
-                                           stjerne-synlighet til synsfeltet
+ [ ....................................... Reduser eksponeringstiden
+ ] ....................................... Øk eksponeringstiden
  , ....................................... Smalne synsfelt [Shift+Venstre-klikk (dra)]
  . ....................................... Utvid synsfelt [Shift+Venstre-klikk (dra)]
  Ctrl+X ............................... Kantutjevning av linjer (f.eks. for omløpsbanen)
@@ -114,7 +108,6 @@ N ...................................... Romfartøy
  Ctrl+V ............................... Skift mellom støttede OpenGL-metoder
  + ...................................... Veksle mellom planet-teksturtyper (Artistisk / Limit of Knowledge)
  % ...................................... Veksle mellom farger for stjerne-fremstilling
- Ctrl+S ............................... Endre stjernestil (punkter / uklare skiver / skalerte skiver)
  V ...................................... Endre omfang til info-tekst (ingen / knapp / utførlig)
  Ctrl+W .............................. Trådramme-modus av/på
 
