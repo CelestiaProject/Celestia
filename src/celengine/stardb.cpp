@@ -227,7 +227,7 @@ StarDatabase::findVisibleStars(StarHandler& starHandler,
     octreeRoot->processVisibleObjects(starHandler,
                                       position,
                                       frustumPlanes.data(),
-                                      exposure,
+                                      limitingMag,
                                       STAR_OCTREE_ROOT_SIZE);
 }
 

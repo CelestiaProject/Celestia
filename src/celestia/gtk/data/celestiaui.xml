@@ -113,8 +113,8 @@
         <menuitem action='AmbientMedium'/>
       </menu>
       <separator/>
-      <menuitem action='StarsMore'/>
-      <menuitem action='StarsFewer'/>
+      <menuitem action='IncreaseExposure'/>
+      <menuitem action='DecreaseExposure'/>
     </menu>
     <menu action='WindowMenu'>
       <menuitem action='ViewerSize'/>

@@ -3789,7 +3789,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             getCameraOrientationf(),
                             math::degToRad(fov),
                             getAspectRatio(),
-                            exposure);
+                            astro::exposureToFaintestMag(exposure));
 
     starRenderer.starVertexBuffer->finish();
     PointStarVertexBuffer::disable();
@@ -3855,7 +3855,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                            cameraOrientation,
                            math::degToRad(fov),
                            getAspectRatio(),
-                           exposure); // it was 2 * faintestMag, the unit makes no sense
+                           2 * astro::exposureToFaintestMag(exposure)); // dimensionality doesn't make sense... (TODO)
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();

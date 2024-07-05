@@ -767,7 +767,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
                      const UniversalCoord& origin,
                      const Eigen::Vector3f& direction,
                      double when,
-                     float /*exposure*/,
+                     float /*faintestMag*/,
                      float tolerance) const
 {
     double sinTol2 = std::max(std::sin(tolerance / 2.0), ANGULAR_RES);
@@ -833,7 +833,7 @@ Selection
 Universe::pickStar(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   float exposure,
+                   float faintestMag,
                    float tolerance) const
 {
     Eigen::Vector3f o = origin.toLy().cast<float>();
@@ -860,7 +860,7 @@ Universe::pickStar(const UniversalCoord& origin,
                                   o,
                                   rotation.conjugate(),
                                   tolerance, 1.0f,
-                                  exposure);
+                                  faintestMag);
     if (picker.pickedStar != nullptr)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
@@ -872,7 +872,7 @@ Selection
 Universe::pickDeepSkyObject(const UniversalCoord& origin,
                             const Eigen::Vector3f& direction,
                             std::uint64_t renderFlags,
-                            float exposure,
+                            float faintestMag,
                             float tolerance) const
 {
     Eigen::Vector3d orig = origin.toLy();
@@ -895,7 +895,7 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                 rotation.conjugate(),
                                 tolerance,
                                 1.0f,
-                                exposure);
+                                faintestMag);
     if (picker.pickedDSO != nullptr)
         return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
     else
@@ -908,7 +908,7 @@ Universe::pick(const UniversalCoord& origin,
                const Eigen::Vector3f& direction,
                double when,
                std::uint64_t renderFlags,
-               float  exposure,
+               float  faintestMag,
                float  tolerance)
 {
     Selection sel;
@@ -925,7 +925,7 @@ Universe::pick(const UniversalCoord& origin,
                 sel = pickPlanet(*solarSystem,
                                 origin, direction,
                                 when,
-                                exposure,
+                                faintestMag,
                                 tolerance);
                 if (!sel.empty())
                     break;
@@ -935,12 +935,12 @@ Universe::pick(const UniversalCoord& origin,
 
     if (sel.empty() && (renderFlags & Renderer::ShowStars))
     {
-        sel = pickStar(origin, direction, when, exposure, tolerance);
+        sel = pickStar(origin, direction, when, faintestMag, tolerance);
     }
 
     if (sel.empty())
     {
-        sel = pickDeepSkyObject(origin, direction, renderFlags, exposure, tolerance);
+        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
     }
 
     return sel;
@@ -1082,7 +1082,7 @@ Universe::find(std::string_view s,
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.  The caller may pass in a list of solar systems
-// to search for objects--this is roughly analgous to the PATH environment
+// to search for objects--this is roughly analogous to the PATH environment
 // variable in Unix and Windows.  Typically, the solar system will be one
 // in which the user is currently located.
 Selection

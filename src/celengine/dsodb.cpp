@@ -138,7 +138,7 @@ DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
                              const Eigen::Quaternionf& obsOrient,
                              float fovY,
                              float aspectRatio,
-                             float exposure) const
+                             float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
     Eigen::Hyperplane<double, 3> frustumPlanes[5];
@@ -164,7 +164,7 @@ DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
     octreeRoot->processVisibleObjects(dsoHandler,
                                       obsPos,
                                       frustumPlanes,
-                                      exposure,
+                                      limitingMag,
                                       DSO_OCTREE_ROOT_SIZE);
 }
 

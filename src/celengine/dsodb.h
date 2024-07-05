@@ -51,7 +51,7 @@ class DSODatabase
                          const Eigen::Quaternionf& obsOrientation,
                          float fovY,
                          float aspectRatio,
-                         float exposure) const;
+                         float limitingMag) const;
 
     void findCloseDSOs(DSOHandler& dsoHandler,
                        const Eigen::Vector3d& obsPosition,
