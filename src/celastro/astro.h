@@ -27,30 +27,30 @@ namespace celestia::astro
 
 // Angle between J2000 mean equator and the ecliptic plane: 23 deg 26' 21".448
 // Seidelmann, Explanatory Supplement to the Astronomical Almanac (1992), eqn 3.222-1
-constexpr inline double J2000Obliquity   = 23.4392911_deg;
+constexpr inline double J2000Obliquity    = 23.4392911_deg;
 
 // CODATA 2022
-constexpr inline double speedOfLight     = 299792.458; // km/s
-constexpr inline double G                = 6.67430e-11; // N m^2 / kg^2
+constexpr inline double speedOfLight      = 299792.458; // km/s
+constexpr inline double G                 = 6.67430e-11; // N m^2 / kg^2
 
-// CODATA 2022 + IAU 2015 Resolution B3
-constexpr inline double SolarMass        = 1.3271244e20 / G; // kg
-constexpr inline double EarthMass        = 3.986004e14 / G; // kg
-constexpr inline double LunarMass        = 7.346e22; // kg
-constexpr inline double JupiterMass      = 1.2668653e17 / G; // kg
+// IAU 2015 Resolution B3 + CODATA 2022
+constexpr inline double SolarMass         = 1.3271244e20 / G; // kg
+constexpr inline double EarthMass         = 3.986004e14 / G; // kg
+constexpr inline double LunarMass         = 7.346e22; // kg
+constexpr inline double JupiterMass       = 1.2668653e17 / G; // kg
 
-// IAU 2015 Resolution B2
-constexpr inline float SOLAR_ABSMAG = 4.74f;
+// https://mips.as.arizona.edu/~cnaw/sun.html for Johnson V filter
+constexpr inline float SOLAR_ABSMAG       = 4.81f;
 
 // IAU 2015 Resolution B3
-constexpr inline double SOLAR_IRRADIANCE = 1361.0; // W / m^2
-constexpr inline double SOLAR_POWER      = 3.828e26; // W
+constexpr inline float SOLAR_IRRADIANCE   = 1361.0; // W / m^2
+constexpr inline float SOLAR_POWER        = 3.828e26; // W
 
-// Bessel (1979)
-constexpr inline double VEGAN_IRRADIANCE = 3.640e-11; // W / m^2
+// Bessel (1979) for Johnson V filter
+constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11; // W / m^2
 
 // Auxiliary magnitude conversion factor
-constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
+constexpr inline float LN_MAG             = 5.0f / std::log(100.0f);
 
 // Lowest screen brightness of a point to render
 constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
