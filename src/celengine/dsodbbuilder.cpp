@@ -104,8 +104,6 @@ DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         obj->setIndex(objCatalogNumber);
         m_dsos.push_back(std::move(obj));
 
-        obj->setIndex(objCatalogNumber);
-
         if (objName.empty())
             continue;
 
