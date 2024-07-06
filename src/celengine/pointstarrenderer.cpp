@@ -101,21 +101,20 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
             if (irradiation > astro::LOWEST_IRRADIATION)
             {
                 starVertexBuffer->addStar(relPos, starColor, irradiation);
-            }
 
-            // Place labels for stars brighter than the specified label threshold brightness
-            if (((labelMode & Renderer::StarLabels) != 0) && irradiation > labelLowestIrradiation)
-            {
-                Vector3f starDir = relPos.normalized();
-                if (starDir.dot(viewNormal) > cosFOV)
+                // Place labels for stars brighter than the specified label threshold brightness
+                if (((labelMode & Renderer::StarLabels) != 0) && irradiation > labelLowestIrradiation)
                 {
-                    // TODO: the label transparency is not tested, most likely need fixes
-                    float distr = min(1.0f, 3.5f * (irradiation - labelLowestIrradiation)/labelLowestIrradiation);
-                    Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
-                    renderer->addBackgroundAnnotation(nullptr,
-                                                      starDB->getStarName(star, true),
-                                                      color,
-                                                      relPos);
+                    Vector3f starDir = relPos.normalized();
+                    if (starDir.dot(viewNormal) > cosFOV)
+                    {
+                        float distr = labelLowestIrradiation / irradiation;
+                        Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
+                        renderer->addBackgroundAnnotation(nullptr,
+                                                        starDB->getStarName(star, true),
+                                                        color,
+                                                        relPos);
+                    }
                 }
             }
         }

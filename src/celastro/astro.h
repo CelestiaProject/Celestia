@@ -30,7 +30,7 @@ constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
 
 // Lowest screen brightness of a point to render
 constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
-//                                       = 1.0f / (255.0f * 12.92f); after implementing gamma correction
+//                                        = 1.0f / (255.0f * 12.92f); after implementing gamma correction
 
 namespace detail
 {

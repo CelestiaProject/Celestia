@@ -96,8 +96,6 @@ using namespace celestia::engine;
 using namespace celestia::render;
 using celestia::util::GetLogger;
 
-static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
-
 // Contribution from planetshine beyond this distance (in units of object radius)
 // is considered insignificant.
 static const float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
@@ -3739,10 +3737,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
 
-    // Original function
-    // float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi(); // = 1.0 at startup
-    // starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
-    starRenderer.labelLowestIrradiation = 1.0f; // refinement is needed
+    starRenderer.labelLowestIrradiation = 1.0f;
 
     starRenderer.colorTemp = &starColors;
 
@@ -3815,11 +3810,8 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     dsoRenderer.frustum = projectionMode->getInfiniteFrustum(MinNearPlaneDistance, observer.getZoom());
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
-    
-    // Original function
-    // float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi(); // = 1.0 at startup
-    // dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
-    dsoRenderer.labelLowestIrradiation = 1.0f; // refinement is needed
+
+    dsoRenderer.labelLowestIrradiation = 1.0f;
 
     using namespace celestia;
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
