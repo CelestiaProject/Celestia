@@ -175,8 +175,7 @@ class Renderer
         ShowAtmospheres         = 0x0000000000000100,
         ShowSmoothLines         = 0x0000000000000200,
         ShowEclipseShadows      = 0x0000000000000400,
-        // the next one is unused in 1.7, kept for compatibility with 1.6
-        ShowStarsAsPoints       = 0x0000000000000800, // to remove
+        // removed flag         = 0x0000000000000800,
         ShowRingShadows         = 0x0000000000001000,
         ShowBoundaries          = 0x0000000000002000,
         // removed flag         = 0x0000000000004000,
@@ -478,9 +477,9 @@ class Renderer
 
  private:
     void setFieldOfView(float);
-    void renderPointStars(const StarDatabase& starDB,
-                          float exposure,
-                          const Observer& observer);
+    void renderStars(const StarDatabase& starDB,
+                     float exposure,
+                     const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
                               float exposure);

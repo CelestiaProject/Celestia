@@ -1,6 +1,6 @@
 // renderinfo.h
 //
-// Copyright (C) 2001-present, the Celestia Development Team
+// Copyright (C) 2006-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or

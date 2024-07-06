@@ -1532,7 +1532,7 @@ void Renderer::render(const Observer& observer,
     // Render stars
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
-        renderPointStars(*universe.getStarCatalog(), exposure, observer);
+        renderStars(*universe.getStarCatalog(), exposure, observer);
     }
 
     // Translate the camera before rendering the asterisms and boundaries
@@ -3577,9 +3577,9 @@ static float calcMaxFOV(float fovY_degrees, float aspectRatio)
 }
 
 
-void Renderer::renderPointStars(const StarDatabase& starDB,
-                                float exposure,
-                                const Observer& observer)
+void Renderer::renderStars(const StarDatabase& starDB,
+                           float exposure,
+                           const Observer& observer)
 {
     Vector3d obsPos = observer.getPosition().toLy();
 
@@ -5067,10 +5067,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         setPipelineState(ps);
 
         StarVertexBuffer::enable();
-        if (starStyle == PointStars)
-            starVertexBuffer->startBasicPoints();
-        else
-            starVertexBuffer->startSprites();
+        starVertexBuffer->startSprites();
         starVertexBuffer->render();
         starVertexBuffer->finish();
         StarVertexBuffer::disable();
