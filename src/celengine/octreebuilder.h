@@ -22,6 +22,8 @@ namespace celestia::engine
 namespace detail
 {
 
+using OctreeChildren = std::array<detail::OctreeNodeIndexType, 8>;
+
 template<typename PREC>
 struct OctreeBuilderNode
 {
@@ -36,7 +38,7 @@ struct OctreeBuilderNode
     OctreeBuilderNode& operator=(OctreeBuilderNode&&) noexcept = default;
 
     point_type center;
-    OctreeNodeIndexType childrenIndex{ OctreeNodeInvalidIndex };
+    std::unique_ptr<OctreeChildren> children;
     std::vector<OctreeIndexType> indices;
 };
 
@@ -70,7 +72,6 @@ public:
 private:
     using node_type = detail::OctreeBuilderNode<precision_type>;
     using static_node_type = detail::OctreeNode<precision_type>;
-    using children_type = std::array<detail::OctreeNodeIndexType, 8>;
 
     struct BuildVisitor;
     struct IndexMapVisitor;
@@ -94,7 +95,6 @@ private:
     // We store the nodes in a BlockArray rather than holding them in smart
     // pointers to avoid recursive destructor calls.
     BlockArray<node_type, 256> m_nodes;
-    BlockArray<children_type, 256> m_children;
 };
 
 template<typename TRAITS>
@@ -155,7 +155,7 @@ OctreeBuilder<TRAITS>::addObject(OctreeIndexType idx)
             return;
         }
 
-        if (node.childrenIndex == detail::OctreeNodeInvalidIndex)
+        if (node.children == nullptr)
         {
             if (node.indices.size() < TRAITS::SplitThreshold)
             {
@@ -185,14 +185,14 @@ OctreeBuilder<TRAITS>::getChildIndex(node_type& node,
                                      const object_type& obj,
                                      std::uint32_t depth)
 {
-    assert(node.childrenIndex != detail::OctreeNodeInvalidIndex);
+    assert(node.children != nullptr);
 
     point_type position = TRAITS::getPosition(obj);
     int index = static_cast<int>(position.x() >= node.center.x()) |
                 (static_cast<int>(position.y() >= node.center.y()) << 1) |
                 (static_cast<int>(position.z() >= node.center.z()) << 2);
 
-    detail::OctreeNodeIndexType& childIndex = m_children[node.childrenIndex][index];
+    detail::OctreeNodeIndexType& childIndex = (*node.children)[index];
     if (childIndex == detail::OctreeNodeInvalidIndex)
     {
         if (depth >= m_scales.size())
@@ -215,12 +215,12 @@ template<typename TRAITS>
 void
 OctreeBuilder<TRAITS>::splitNode(node_type& node, std::uint32_t depth)
 {
-    assert(node.childrenIndex == detail::OctreeNodeInvalidIndex);
+    assert(node.children == nullptr);
 
     const float thresholdMag = m_thresholdMags[depth];
 
-    node.childrenIndex = static_cast<detail::OctreeNodeIndexType>(m_children.size());
-    m_children.emplace_back().fill(detail::OctreeNodeInvalidIndex);
+    node.children = std::make_unique<detail::OctreeChildren>();
+    node.children->fill(detail::OctreeNodeInvalidIndex);
 
     const auto end = node.indices.end();
     auto writeIt = node.indices.begin();
@@ -259,10 +259,10 @@ OctreeBuilder<TRAITS>::processNodes(VISITOR& visitor) const
         const node_type& node = m_nodes[nodeIndex];
         visitor.visit(node, depth);
 
-        if (node.childrenIndex == detail::OctreeNodeInvalidIndex)
+        if (node.children == nullptr)
             continue;
 
-        for (detail::OctreeNodeIndexType childIndex : m_children[node.childrenIndex])
+        for (detail::OctreeNodeIndexType childIndex : *node.children)
         {
             if (childIndex != detail::OctreeNodeInvalidIndex)
                 nodeStack.emplace_back(childIndex, depth + 1);
