@@ -1467,14 +1467,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '[':
-        setExposure(sim->getExposure() * 0.1);
-        auto buf = fmt::format(loc, _("Exposure: {:.2f}"), sim->getExposure());
+        setExposure(sim->getExposure() * 0.5);
+        auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
         flash(buf);
         break;
 
     case ']':
-        setExposure(sim->getExposure() * 10.0);
-        auto buf = fmt::format(loc, _("Exposure: {:.2f}"), sim->getExposure());
+        setExposure(sim->getExposure() * 2.0);
+        auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
         flash(buf);
         break;
 

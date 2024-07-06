@@ -219,12 +219,12 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    increaseExposureAction = new QAction(_("Increase Exposure Time"), this);
-    increaseExposureAction->setData(10.0);
-    increaseExposureAction->setShortcut(QString("]"));
     decreaseExposureAction = new QAction(_("Decrease Exposure Time"), this);
-    decreaseExposureAction->setData(0.1);
+    decreaseExposureAction->setData(0.5);
     decreaseExposureAction->setShortcut(QString("["));
+    increaseExposureAction = new QAction(_("Increase Exposure Time"), this);
+    increaseExposureAction->setData(2.0);
+    increaseExposureAction->setShortcut(QString("]"));
     connect(increaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
     connect(decreaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
 
@@ -384,10 +384,10 @@ CelestiaActions::slotAdjustExposure()
 
         QString notification;
 
-        float newExposure = qBound(0.0f, appCore->getSimulation()->getExposure() + change * 2, 1000.0f);
+        float newExposure = qBound(0.0f, appCore->getSimulation()->getExposure() * change, 1000.0f);
         appCore->setExposure(newExposure);
 
-        notification = QString(_("Exposure: %L1")).arg(newExposure, 0, 'f', 2);
+        notification = QString(_("Exposure time: %L1")).arg(newExposure, 0, 'f', 2);
 
         appCore->flash(notification.toUtf8().data());
     }
