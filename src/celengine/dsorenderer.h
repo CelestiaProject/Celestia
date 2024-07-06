@@ -26,7 +26,7 @@ class DSODatabase;
 class Observer;
 class Renderer;
 
-class DSORenderer : public VisibleObjectVisitor<double>
+class DSORenderer : private VisibleObjectVisitor<double>
 {
 public:
     DSORenderer(const Observer*,
@@ -35,6 +35,7 @@ public:
                 float minNearPlaneDistance,
                 float labelThresholdMag);
 
+    using VisibleObjectVisitor::checkNode;
     void process(const std::unique_ptr<DeepSkyObject>&) const;
 
 private:

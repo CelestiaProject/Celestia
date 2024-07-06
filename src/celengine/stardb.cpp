@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 #include <set>
 
 #include <fmt/format.h>
@@ -47,12 +48,17 @@ catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 } // end unnamed namespace
 
 StarDatabase::StarDatabase(engine::StarOctree&& _octree,
-                           std::unique_ptr<StarNameDatabase>&& _namesDB,
-                           std::vector<std::uint32_t>&& _catalogNumberIndex) :
+                           std::unique_ptr<StarNameDatabase>&& _namesDB) :
     octree(std::move(_octree)),
-    namesDB(std::move(_namesDB)),
-    catalogNumberIndex(std::move(_catalogNumberIndex))
+    namesDB(std::move(_namesDB))
 {
+    catalogNumberIndex.resize(octree.size());
+    std::iota(catalogNumberIndex.begin(), catalogNumberIndex.end(), 0);
+    std::sort(catalogNumberIndex.begin(), catalogNumberIndex.end(),
+              [this](AstroCatalog::IndexNumber a, AstroCatalog::IndexNumber b)
+              {
+                  return octree[a].getIndex() < octree[b].getIndex();
+              });
 }
 
 StarDatabase::~StarDatabase() = default;

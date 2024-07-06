@@ -714,6 +714,15 @@ StarDatabaseBuilder::finish()
 
     auto starDB = buildOctree();
 
+#ifdef DEBUG
+    bool ok = std::is_sorted(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),
+                             [db = starDB.get()](AstroCatalog::IndexNumber a, AstroCatalog::IndexNumber b)
+                             {
+                                return db->octree[a].getIndex() < db->octree[b].getIndex();
+                             });
+    assert(ok);
+#endif
+
     // Resolve all barycenters; this can't be done before star sorting. There's
     // still a bug here: final orbital radii aren't available until after
     // the barycenters have been resolved, and these are required when building
@@ -722,8 +731,8 @@ StarDatabaseBuilder::finish()
     for (const auto [starIdx, barycenterIdx] : barycenters)
     {
         Star* star = starDB->find(starIdx);
-        Star* barycenter = starDB->find(barycenterIdx);
         assert(star != nullptr);
+        Star* barycenter = starDB->find(barycenterIdx);
         assert(barycenter != nullptr);
         if (star != nullptr && barycenter != nullptr)
         {
@@ -1020,10 +1029,7 @@ StarDatabaseBuilder::buildOctree()
     engine::StarOctreeBuilder octreeBuilder(std::move(unsortedStars),
                                             StarDatabase::STAR_OCTREE_ROOT_SIZE,
                                             absMag);
-    auto indices = octreeBuilder.indices();
-    std::vector<std::uint32_t> catalogNumberIndex(indices.begin(), indices.end());
 
     return std::unique_ptr<StarDatabase>(new StarDatabase(octreeBuilder.build(),
-                                                          std::move(namesDB),
-                                                          std::move(catalogNumberIndex)));
+                                                          std::move(namesDB)));
 }

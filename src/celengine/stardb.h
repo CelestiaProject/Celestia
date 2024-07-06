@@ -78,8 +78,7 @@ public:
 
 private:
     StarDatabase(celestia::engine::StarOctree&&,
-                 std::unique_ptr<StarNameDatabase>&&,
-                 std::vector<std::uint32_t>&&);
+                 std::unique_ptr<StarNameDatabase>&&);
 
     celestia::engine::StarOctree      octree;
     std::unique_ptr<StarNameDatabase> namesDB;

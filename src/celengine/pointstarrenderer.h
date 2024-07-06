@@ -33,7 +33,7 @@ constexpr inline float BaseStarDiscSize      = 5.0f;
 constexpr inline float MaxScaledDiscStarSize = 8.0f;
 constexpr inline float GlareOpacity          = 0.65f;
 
-class PointStarRenderer : public VisibleObjectVisitor<float>
+class PointStarRenderer : private VisibleObjectVisitor<float>
 {
 public:
     PointStarRenderer(const Observer*,
@@ -46,6 +46,7 @@ public:
     void setupVertexBuffers(Texture* starTexture, Texture* glareTexture, float pointScale, bool usePoints) const;
     void finish() const;
 
+    using VisibleObjectVisitor::checkNode;
     void process(const Star &star) const;
 
 private:
