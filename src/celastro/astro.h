@@ -43,11 +43,11 @@ constexpr inline double JupiterMass       = 1.2668653e17 / G; // kg
 constexpr inline float SOLAR_ABSMAG       = 4.81f;
 
 // IAU 2015 Resolution B3
-constexpr inline float SOLAR_IRRADIANCE   = 1361.0; // W / m^2
-constexpr inline float SOLAR_POWER        = 3.828e26; // W
+constexpr inline float SOLAR_IRRADIANCE   = 1361.0f; // W / m^2
+constexpr inline float SOLAR_POWER        = 3.828e26f; // W
 
 // Bessel (1979) for Johnson V filter
-constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11; // W / m^2
+constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11f; // W / m^2
 
 // Auxiliary magnitude conversion factor
 constexpr inline float LN_MAG             = 5.0f / std::log(100.0f);
@@ -88,13 +88,13 @@ constexpr inline double SECONDS_PER_DEG = 3600.0;
 constexpr inline double DEG_PER_HRA     = 15.0;
 
 template<typename T>
-constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.14L);
+constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.1L); // IAU 2015 Resolution B3
 
 template<typename T>
-constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L);
+constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L); // IAU 2015 Resolution B3
 
 template<typename T>
-constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(696000.0L);
+constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(695700.0L); // IAU 2015 Resolution B3
 
 float reflectedLuminosity(float sunLuminosity, float distanceFromSun, float objRadius);
 
