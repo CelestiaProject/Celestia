@@ -1,7 +1,6 @@
 // qtcelestiaactions.cpp
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Collection of actions used in the Qt4 UI.
 //

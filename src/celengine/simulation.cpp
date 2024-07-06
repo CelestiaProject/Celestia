@@ -1,6 +1,7 @@
 // simulation.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // The core of Celestia--tracks an observer moving through a
 // stars and their solar systems.

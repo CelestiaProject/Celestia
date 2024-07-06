@@ -1,7 +1,6 @@
 // qtpreferencesdialog.h
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Preferences dialog for Celestia's Qt front-end. Based on
 // kdeglwidget.h by Christophe Teyssier.

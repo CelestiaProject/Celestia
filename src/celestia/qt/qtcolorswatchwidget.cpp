@@ -1,7 +1,6 @@
 // qtcolorswatchwidget.h
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Color swatch widget for Qt4 front-end.
 //

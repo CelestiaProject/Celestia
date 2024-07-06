@@ -1,7 +1,6 @@
 // qtcelestialbrowser.cpp
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Star browser widget for Qt4 front-end.
 //

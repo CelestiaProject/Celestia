@@ -1,6 +1,6 @@
 // render.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -1358,8 +1358,8 @@ setupLightSources(const vector<const Star*>& nearStars,
                 ls.luminosity *= fadeFactor;
 
                 // Use a variant of the blackbody colors with the whitepoint
-                // set to Sol being white, to ensure consistency of the Solar
-                // System textures.
+                // set to Sol being white, to ensure consistency of the solar
+                // system textures.
                 ls.color = tintColors->lookupTintColor(temp, tintSaturation, fadeFactor);
             }
 
@@ -1369,8 +1369,7 @@ setupLightSources(const vector<const Star*>& nearStars,
 }
 
 
-// Set up the potential secondary light sources for rendering solar system
-// bodies.
+// Set up the potential secondary light sources for rendering solar system bodies.
 static void
 setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
                            const vector<LightSource>& primaryIlluminators)
@@ -1572,8 +1571,8 @@ void Renderer::render(const Observer& observer,
         selectionVisible = selectionToAnnotation(sel, observer, xfrustum, now);
     }
 
-    // Render background markers; rendering of other markers is deferred until
-    // solar system objects are rendered.
+    // Render background markers
+    // Rendering of other markers is deferred until solar system objects are rendered.
     renderBackgroundAnnotations(FontNormal);
 
     removeInvisibleItems(frustum);
@@ -1945,8 +1944,9 @@ setupObjectLighting(const vector<LightSource>& suns,
         }
     }
 
-    // Sort light sources by brightness.  Light zero should always be the
-    // brightest.  Optimize common cases of one and two lights.
+    // Sort light sources by brightness.
+    // Light zero should always be the brightest.
+    // Optimize common cases of one and two lights.
     if (nLights == 2)
     {
         if (ls.lights[0].irradiance < ls.lights[1].irradiance)
@@ -1963,8 +1963,8 @@ setupObjectLighting(const vector<LightSource>& suns,
     for (i = 0; i < nLights; i++)
         totalIrradiance += ls.lights[i].irradiance;
 
-    // Compute a gamma factor to make dim light sources visible.  This is
-    // intended to approximate what we see with our eyes--for example,
+    // Compute a gamma factor to make dim light sources visible
+    // This is intended to approximate what we see with our eyes: for example,
     // Earth-shine is visible on the night side of the Moon, even though
     // the amount of reflected light from the Earth is 1/10000 of what
     // the Moon receives directly from the Sun.
@@ -1978,9 +1978,9 @@ setupObjectLighting(const vector<LightSource>& suns,
 
     Matrix3f m = objOrientation.toRotationMatrix();
 
-    // Gamma scale and normalize the light sources; cull light sources that
-    // aren't bright enough to contribute the final pixels rendered into the
-    // frame buffer.
+    // Gamma scale and normalize the light sources
+    // Cull light sources that aren't bright enough to contribute
+    // the final pixels rendered into the frame buffer.
     ls.nLights = 0;
     for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
     {
@@ -2774,11 +2774,11 @@ void Renderer::renderPlanet(Body& body,
         {
             // Set up location markers for this body
             using namespace celestia;
-            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
-            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
-            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
-            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
-            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
+            mountainRep        = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
+            craterRep          = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
+            observatoryRep     = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
+            cityRep            = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
+            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, LocationLabelColor);
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
@@ -2818,7 +2818,7 @@ void Renderer::renderStar(const Star& star,
     float radius = star.getRadius();
     float discSizeInPixels = radius / (distance * pixelSize);
 
-    if (discSizeInPixels > 1)
+    if (discSizeInPixels > 1.0f)
     {
         Surface surface;
         RenderProperties rp;
@@ -3008,7 +3008,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
     bool visibleAsPoint = rle.irradiation < faintestPlanetIrradiance && body.isVisibleAsPoint();
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
-    if (rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled)
+    if (rle.discSizeInPixels > 1.0f || visibleAsPoint || isLabeled)
     {
         rle.renderableType = RenderListEntry::RenderableBody;
         rle.body = &body;

@@ -1,8 +1,6 @@
 // dsooctree.cpp
 //
-// Description:
-//
-// Copyright (C) 2005-2009, Celestia Development Team
+// Copyright (C) 2005-present, the Celestia Development Team
 // Original version by Toti <root@totibox>
 //
 // This program is free software; you can redistribute it and/or

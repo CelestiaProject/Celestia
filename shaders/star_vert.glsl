@@ -1,3 +1,14 @@
+// star_frag.glsl
+//
+// Copyright (C) 2023-present, the Celestia Development Team
+// Original rendering algorithm by Askaniy Anpilogov <aaskaniy@gmail.com>
+// Original shader implementation by Hleb Valoshka <375gnu@gmail.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
 const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
 const float max_square_size = 256.0; // px
 const float max_irradiation = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
