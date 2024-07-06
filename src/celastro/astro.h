@@ -25,7 +25,31 @@
 namespace celestia::astro
 {
 
-constexpr inline float SOLAR_ABSMAG = 4.83f;
+// Angle between J2000 mean equator and the ecliptic plane: 23 deg 26' 21".448
+// Seidelmann, Explanatory Supplement to the Astronomical Almanac (1992), eqn 3.222-1
+constexpr inline double J2000Obliquity   = 23.4392911_deg;
+
+// CODATA 2022
+constexpr inline double speedOfLight     = 299792.458; // km/s
+constexpr inline double G                = 6.67430e-11; // N m^2 / kg^2
+
+// CODATA 2022 + IAU 2015 Resolution B3
+constexpr inline double SolarMass        = 1.3271244e20 / G; // kg
+constexpr inline double EarthMass        = 3.986004e14 / G; // kg
+constexpr inline double LunarMass        = 7.346e22; // kg
+constexpr inline double JupiterMass      = 1.2668653e17 / G; // kg
+
+// IAU 2015 Resolution B2
+constexpr inline float SOLAR_ABSMAG = 4.74f;
+
+// IAU 2015 Resolution B3
+constexpr inline double SOLAR_IRRADIANCE = 1361.0; // W / m^2
+constexpr inline double SOLAR_POWER      = 3.828e26; // W
+
+// Bessel (1979)
+constexpr inline double VEGAN_IRRADIANCE = 3.640e-11; // W / m^2
+
+// Auxiliary magnitude conversion factor
 constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
 
 // Lowest screen brightness of a point to render
@@ -179,25 +203,6 @@ void anomaly(double meanAnomaly, double eccentricity,
              double& trueAnomaly, double& eccentricAnomaly);
 double meanEclipticObliquity(double jd);
 
-constexpr inline double speedOfLight     = 299792.458; // km/s
-constexpr inline double G                = 6.672e-11; // N m^2 / kg^2; gravitational constant
-constexpr inline double SolarMass        = 1.989e30;
-constexpr inline double EarthMass        = 5.972e24;
-constexpr inline double LunarMass        = 7.346e22;
-constexpr inline double JupiterMass      = 1.898e27;
-
-// Angle between J2000 mean equator and the ecliptic plane: 23 deg 26' 21".448
-// (Seidelmann, Explanatory Supplement to the Astronomical Almanac (1992), eqn 3.222-1).
-constexpr inline double J2000Obliquity   = 23.4392911_deg;
-
-constexpr inline double SOLAR_IRRADIANCE = 1367.6; // watts / m^2
-constexpr inline double SOLAR_POWER      = 3.8462e26; // in watts
-
-// Irradiance of Vega is calculated for the generic V filter
-// (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=Generic/Bessell.V&&mode=browse&gname=Generic&gname2=Bessell#filter.
-// The green channel is used to calibrate the point light sources (e.g. stars),
-// since it is the closest analog to the V filter of the Johnson system.
-constexpr inline double VEGAN_IRRADIANCE = 3.6262e-11; // watts / m^2
 
 namespace literals
 {
