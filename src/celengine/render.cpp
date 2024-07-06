@@ -41,8 +41,8 @@
 #include "rectangle.h"
 #include "framebuffer.h"
 #include "planetgrid.h"
-#include "pointstarvertexbuffer.h"
-#include "pointstarrenderer.h"
+#include "starvertexbuffer.h"
+#include "starrenderer.h"
 #include "orbitsampler.h"
 #include "rendcontext.h"
 #include "textlayout.h"
@@ -60,7 +60,6 @@
 #include <celrender/boundariesrenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
-#include <celrender/largestarrenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/galaxyrenderer.h>
 #include <celrender/globularrenderer.h>
@@ -233,7 +232,7 @@ Renderer::Renderer() :
 #endif
     labelMode(NoLabels),
     renderFlags(DefaultRenderFlags),
-    pointStarVertexBuffer(nullptr),
+    starVertexBuffer(nullptr),
     textureResolution(medres),
     frameCount(0),
     lastOrbitCacheFlush(0),
@@ -248,14 +247,13 @@ Renderer::Renderer() :
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
     m_galaxyRenderer(std::make_unique<GalaxyRenderer>(*this)),
     m_globularRenderer(std::make_unique<GlobularRenderer>(*this)),
-    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
     m_openClusterRenderer(std::make_unique<OpenClusterRenderer>(*this)),
     m_ringRenderer(std::make_unique<RingRenderer>(*this)),
     m_skyGridRenderer(std::make_unique<SkyGridRenderer>(*this))
 {
-    pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
+    starVertexBuffer = new StarVertexBuffer(*this, 2048);
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -267,7 +265,7 @@ Renderer::Renderer() :
 
 Renderer::~Renderer()
 {
-    delete pointStarVertexBuffer;
+    delete starVertexBuffer;
     delete shaderManager;
 
     m_atmosphereRenderer->deinitGL();
@@ -1620,122 +1618,6 @@ calculateQuadCenter(const Eigen::Quaternionf &cameraOrientation,
     return position + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 }
 
-void
-Renderer::calculatePointSize(float appMag,
-                             float size,
-                             float &discSize,
-                             float &alpha,
-                             float &glareSize,
-                             float &glareAlpha) const
-{
-    alpha = std::max(0.0f, (faintestMag - appMag) * brightnessScale + brightnessBias);
-
-    discSize = size;
-    if (starStyle == ScaledDiscStars)
-    {
-        if (alpha > 1.0f)
-        {
-            float discScale = std::min(MaxScaledDiscStarSize, std::pow(2.0f, 0.3f * (satPoint - appMag)));
-            discSize *= std::max(1.0f, discScale);
-
-            glareAlpha = std::min(0.5f, discScale / 4.0f);
-            glareSize = discSize * 3.0f;
-
-            alpha = 1.0f;
-        }
-        else
-        {
-            glareSize = glareAlpha = 0.0f;
-        }
-    }
-    else
-    {
-        if (alpha > 1.0f)
-        {
-            float discScale = std::min(100.0f, satPoint - appMag + 2.0f);
-            glareAlpha = std::min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-            glareSize = 2.0f * discScale * size;
-            alpha = 1.0f;
-        }
-        else
-        {
-            glareSize = glareAlpha = 0.0f;
-        }
-    }
-}
-
-// If the an object occupies a pixel or less of screen space, we don't
-// render its mesh at all and just display a starlike point instead.
-// Switching between the particle and mesh renderings of an object is
-// jarring, however . . . so we'll blend in the particle view of the
-// object to smooth things out, making it dimmer as the disc size exceeds the
-// max disc size.
-void Renderer::renderObjectAsPoint(const Vector3f& position,
-                                   float radius,
-                                   float appMag,
-                                   float discSizeInPixels,
-                                   const Color &color,
-                                   bool useHalos,
-                                   bool emissive,
-                                   const Matrices &mvp)
-{
-    const bool useScaledDiscs = starStyle == ScaledDiscStars;
-    float maxDiscSize = useScaledDiscs ? MaxScaledDiscStarSize : 1.0f;
-    float maxBlendDiscSize = maxDiscSize + 3.0f;
-
-    if (discSizeInPixels < maxBlendDiscSize || useHalos)
-    {
-        float fade = 1.0f;
-        if (discSizeInPixels > maxDiscSize)
-        {
-            fade = std::min(1.0f, (maxBlendDiscSize - discSizeInPixels) /
-                                  (maxBlendDiscSize - maxDiscSize));
-        }
-
-        float scale = static_cast<float>(screenDpi) / 96.0f;
-        float pointSize, alpha, glareSize, glareAlpha;
-        calculatePointSize(appMag, BaseStarDiscSize * scale, pointSize, alpha, glareSize, glareAlpha);
-
-        if (useScaledDiscs && discSizeInPixels > MaxScaledDiscStarSize)
-            glareAlpha = std::min(glareAlpha, (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
-
-        alpha *= fade;
-        if (!emissive)
-            glareAlpha *= fade;
-
-        if (glareSize != 0.0f)
-            glareSize = std::max(glareSize, pointSize * discSizeInPixels / scale * 3.0f);
-
-        Renderer::PipelineState ps;
-        ps.blending = true;
-        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-        ps.depthTest = true;
-        setPipelineState(ps);
-
-        if (starStyle != PointStars)
-            gaussianDiscTex->bind();
-
-        if (pointSize > gl::maxPointSize)
-            m_largeStarRenderer->render(position, {color, alpha}, pointSize, mvp);
-        else
-            pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
-
-        // If the object is brighter than magnitude 1, add a halo around it to
-        // make it appear more brilliant.  This is a hack to compensate for the
-        // limited dynamic range of monitors.
-        //
-        // TODO: Stars look fine but planets look unrealistically bright
-        // with halos.
-        if (useHalos && glareAlpha > 0.0f)
-        {
-            Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
-            gaussianGlareTex->bind();
-            if (glareSize > gl::maxPointSize)
-                m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
-        }
-    }
-}
-
 
 static void renderSphereUnlit(const RenderInfo& ri,
                               const math::Frustum& frustum,
@@ -2662,7 +2544,7 @@ void Renderer::renderPlanet(Body& body,
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
 
-    float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    float maxDiscSize = 1.0f;
     if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
     {
         auto bodyFeaturesManager = GetBodyFeaturesManager();
@@ -3711,16 +3593,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float exposure,
                                 const Observer& observer)
 {
-#ifndef GL_ES
-    // Disable multisample rendering when drawing point stars
-    bool toggleAA = (starStyle == Renderer::PointStars && isMSAAEnabled());
-    if (toggleAA)
-        disableMSAA();
-#endif
-
     Vector3d obsPos = observer.getPosition().toLy();
 
-    PointStarRenderer starRenderer;
+    StarRenderer starRenderer;
 
     starRenderer.renderer          = this;
     starRenderer.starDB            = &starDB;
@@ -3728,7 +3603,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.obsPos            = obsPos;
     starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
-    starRenderer.starVertexBuffer  = pointStarVertexBuffer;
+    starRenderer.starVertexBuffer  = starVertexBuffer;
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3745,11 +3620,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
     starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
 
-    PointStarVertexBuffer::enable();
-    if (starStyle == PointStars)
-        starRenderer.starVertexBuffer->startBasicPoints();
-    else
-        starRenderer.starVertexBuffer->startSprites();
+    StarVertexBuffer::enable();
+    starRenderer.starVertexBuffer->startSprites();
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -3764,7 +3636,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             astro::exposureToFaintestMag(exposure));
 
     starRenderer.starVertexBuffer->finish();
-    PointStarVertexBuffer::disable();
+    StarVertexBuffer::disable();
 
 #ifndef GL_ES
     if (toggleAA)
@@ -4208,19 +4080,6 @@ void Renderer::markersToAnnotations(const celestia::MarkerList& markers,
                           LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
         }
     }
-}
-
-
-void Renderer::setStarStyle(StarStyle style)
-{
-    starStyle = style;
-    markSettingsChanged();
-}
-
-
-Renderer::StarStyle Renderer::getStarStyle() const
-{
-    return starStyle;
 }
 
 
@@ -5219,14 +5078,14 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         ps.depthTest = true;
         setPipelineState(ps);
 
-        PointStarVertexBuffer::enable();
+        StarVertexBuffer::enable();
         if (starStyle == PointStars)
-            pointStarVertexBuffer->startBasicPoints();
+            starVertexBuffer->startBasicPoints();
         else
-            pointStarVertexBuffer->startSprites();
-        pointStarVertexBuffer->render();
-        pointStarVertexBuffer->finish();
-        PointStarVertexBuffer::disable();
+            starVertexBuffer->startSprites();
+        starVertexBuffer->render();
+        starVertexBuffer->finish();
+        StarVertexBuffer::disable();
 
         // Render annotations in this interval
         annotation = renderSortedAnnotations(annotation,

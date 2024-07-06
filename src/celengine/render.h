@@ -34,7 +34,7 @@ class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
 class CurvePlot;
-class PointStarVertexBuffer;
+class StarVertexBuffer;
 class Observer;
 class Surface;
 class TextureFont;
@@ -76,9 +76,9 @@ struct LightSource
 struct SecondaryIlluminator
 {
     const Body*     body;
-    Eigen::Vector3d position_v;       // viewer relative position
-    float           radius;           // radius in km
-    float           reflectedIrradiance;  // albedo times total irradiance from direct sources
+    Eigen::Vector3d position_v;          // viewer relative position
+    float           radius;              // radius in km
+    float           reflectedIrradiance; // albedo times total irradiance from direct sources
 };
 
 
@@ -562,15 +562,6 @@ class Renderer
                          float discSizeInPixels,
                          const Matrices&);
 
-    void renderObjectAsPoint(const Eigen::Vector3f& center,
-                             float radius,
-                             float appMag,
-                             float discSizeInPixels,
-                             const Color& color,
-                             bool useHalos,
-                             bool emissive,
-                             const Matrices&);
-
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
                                 const Eigen::Quaterniond& bodyOrientation);
@@ -683,7 +674,7 @@ class Renderer
 
     Eigen::Quaterniond m_cameraOrientation;
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
-    PointStarVertexBuffer* pointStarVertexBuffer;
+    StarVertexBuffer* starVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
@@ -760,7 +751,6 @@ class Renderer
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
     std::unique_ptr<celestia::render::GalaxyRenderer> m_galaxyRenderer;
     std::unique_ptr<celestia::render::GlobularRenderer> m_globularRenderer;
-    std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
     std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
     std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;
     std::unique_ptr<celestia::render::OpenClusterRenderer> m_openClusterRenderer;
@@ -824,7 +814,7 @@ class Renderer
 
     static Color SelectionCursorColor;
 
-    friend class PointStarRenderer;
+    friend class StarRenderer;
 };
 
 

@@ -1,4 +1,4 @@
-// starfield.cpp
+// starvertexbuffer.cpp
 //
 // Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
@@ -16,28 +16,28 @@
 #include "shadermanager.h"
 #include "render.h"
 #include "texture.h"
-#include "pointstarvertexbuffer.h"
+#include "starvertexbuffer.h"
 
 namespace gl = celestia::gl;
 namespace util = celestia::util;
 
-PointStarVertexBuffer* PointStarVertexBuffer::current = nullptr;
+StarVertexBuffer* StarVertexBuffer::current = nullptr;
 
-PointStarVertexBuffer::PointStarVertexBuffer(const Renderer &renderer,
-                                             capacity_t capacity) :
+StarVertexBuffer::StarVertexBuffer(const Renderer &renderer,
+                                   capacity_t capacity) :
     m_renderer(renderer),
     m_capacity(capacity),
     m_vertices(std::make_unique<StarVertex[]>(capacity))
 {
 }
 
-void PointStarVertexBuffer::startSprites()
+void StarVertexBuffer::startSprites()
 {
     m_prog = m_renderer.getShaderManager().getShader("star");
     m_pointSizeFromVertex = true;
 }
 
-void PointStarVertexBuffer::startBasicPoints()
+void StarVertexBuffer::startBasicPoints()
 {
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::VertexColors | TexUsage::StaticPointSize;
@@ -46,7 +46,7 @@ void PointStarVertexBuffer::startBasicPoints()
     m_pointSizeFromVertex = false;
 }
 
-void PointStarVertexBuffer::render()
+void StarVertexBuffer::render()
 {
     if (m_nStars != 0 && m_prog != nullptr)
     {
@@ -67,7 +67,7 @@ void PointStarVertexBuffer::render()
     }
 }
 
-void PointStarVertexBuffer::makeCurrent()
+void StarVertexBuffer::makeCurrent()
 {
     if (current == this)
         return;
@@ -94,7 +94,7 @@ void PointStarVertexBuffer::makeCurrent()
     current = this;
 }
 
-void PointStarVertexBuffer::setupVertexArrayObject()
+void StarVertexBuffer::setupVertexArrayObject()
 {
     if (!m_initialized)
     {
@@ -151,13 +151,13 @@ void PointStarVertexBuffer::setupVertexArrayObject()
     }
 }
 
-void PointStarVertexBuffer::finish()
+void StarVertexBuffer::finish()
 {
     render();
     current = nullptr;
 }
 
-void PointStarVertexBuffer::enable()
+void StarVertexBuffer::enable()
 {
 #ifndef GL_ES
     glEnable(GL_POINT_SPRITE);
@@ -165,7 +165,7 @@ void PointStarVertexBuffer::enable()
 #endif
 }
 
-void PointStarVertexBuffer::disable()
+void StarVertexBuffer::disable()
 {
 #ifndef GL_ES
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -173,12 +173,12 @@ void PointStarVertexBuffer::disable()
 #endif
 }
 
-void PointStarVertexBuffer::setTexture(Texture *texture)
+void StarVertexBuffer::setTexture(Texture *texture)
 {
     m_texture = texture;
 }
 
-void PointStarVertexBuffer::setPointScale(float pointSize)
+void StarVertexBuffer::setPointScale(float pointSize)
 {
     m_pointScale = pointSize;
 }

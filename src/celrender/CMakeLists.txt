@@ -13,8 +13,6 @@ set(CELRENDER_SOURCES
   galaxyrenderer.h
   globularrenderer.cpp
   globularrenderer.h
-  largestarrenderer.cpp
-  largestarrenderer.h
   linerenderer.cpp
   linerenderer.h
   nebularenderer.cpp

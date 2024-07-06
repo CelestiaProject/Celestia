@@ -1,4 +1,4 @@
-// pointstarrenderer.cpp
+// starrenderer.cpp
 //
 // Copyright (C) 2001-2019, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
@@ -12,9 +12,9 @@
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
 #include <cmath>
-#include "pointstarvertexbuffer.h"
+#include "starvertexbuffer.h"
 #include "render.h"
-#include "pointstarrenderer.h"
+#include "starrenderer.h"
 
 #include <fmt/format.h>
 
@@ -32,12 +32,12 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
     return pos.offsetFromKm(star.getPosition(t));
 }
 
-PointStarRenderer::PointStarRenderer() :
+StarRenderer::StarRenderer() :
     ObjectRenderer<Star, float>(StarDistanceLimit)
 {
 }
 
-void PointStarRenderer::process(const Star& star, float distance, float irradiance)
+void StarRenderer::process(const Star& star, float distance, float irradiance)
 {
     if (distance > distanceLimit)
         return;
