@@ -1,4 +1,5 @@
 const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
+const float inv_max_offset = 2.0 / (3.0 * sqrt(2.0) * degree_per_px); // 1/px
 
 varying vec3 v_color;
 varying float max_theta;
@@ -7,10 +8,8 @@ varying float pointSize;
 float psf_core(float offset)
 {
     // Human eye's point source function from the research by Greg Spencer et al. (1995)
-    // Optimized for the central part of the PSF. The flow from the nine neighboring pixels is constant.
-    // Designed for degree_per_px == 0.01.
-    return 1.0 + offset * (0.2789 * offset - 1.0);
-    // the second summand is allowed to be scaled to achieve a seamless transition between modes
+    // Optimized for the central part of the PSF (3x3 pixels square).
+    return 1.0 - offset * inv_max_offset;
 }
 
 float psf_glow(float offset)
