@@ -27,9 +27,9 @@ struct DSOOctreeTraits
     static constexpr std::uint32_t SplitThreshold = 10;
 
     static constexpr float decayMagnitude(float mag) { return mag + 0.5f; }
-    static inline Eigen::Vector3d getPosition(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getPosition(); }
-    static inline float getAbsMag(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getAbsoluteMagnitude(); }
-    static inline float getRadius(const std::unique_ptr<DeepSkyObject>& obj) { return obj->getBoundingSphereRadius(); }
+    static inline Eigen::Vector3d getPosition(const object_type& obj) { return obj->getPosition(); } //NOSONAR
+    static inline float getAbsMag(const object_type& obj) { return obj->getAbsoluteMagnitude(); } //NOSONAR
+    static inline float getRadius(const object_type& obj) { return obj->getBoundingSphereRadius(); } //NOSONAR
 };
 
 using DSOOctreeBuilder = OctreeBuilder<DSOOctreeTraits>;

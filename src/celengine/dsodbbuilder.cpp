@@ -140,10 +140,10 @@ DSODatabaseBuilder::build()
     engine::DSOOctreeBuilder octreeBuilder(std::move(m_dsos), DSO_OCTREE_ROOT_SIZE, absMag);
     const auto indices = octreeBuilder.indices();
     auto namesDB = std::make_unique<NameDatabase>();
-    for (auto& entry : m_names)
-        namesDB->add(indices[entry.first], entry.second);
+    for (const auto& [index, name] : m_names)
+        namesDB->add(indices[index], name);
 
-    for (auto& obj : octreeBuilder.objects())
+    for (const auto& obj : octreeBuilder.objects())
         obj->setIndex(indices[obj->getIndex()]);
 
     return std::unique_ptr<DSODatabase>(new DSODatabase(octreeBuilder.build(),
@@ -152,7 +152,7 @@ DSODatabaseBuilder::build()
 }
 
 float
-DSODatabaseBuilder::calcAvgAbsMag()
+DSODatabaseBuilder::calcAvgAbsMag() const
 {
     // Kahan-Babuška summation (Neumaier 1974)
     double absMag = 0.0;

@@ -109,8 +109,8 @@ class NearStarFinder
 public:
     NearStarFinder(const Eigen::Vector3f&, float, T*);
 
-    bool checkNode(const Eigen::Vector3f&, float, float);
-    void process(const Star& star);
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star& star) const;
 
 private:
     Eigen::Vector3f m_position;
@@ -135,14 +135,14 @@ template<typename T>
 bool
 NearStarFinder<T>::checkNode(const Eigen::Vector3f& center,
                              float size,
-                             float /* magnitude */)
+                             float /* magnitude */) const
 {
     return checkNodeDistance(center, m_position, size, m_maxDistance);
 }
 
 template<typename T>
 void
-NearStarFinder<T>::process(const Star& star)
+NearStarFinder<T>::process(const Star& star) const
 {
     float distance2 = (star.getPosition() - m_position).squaredNorm();
     if (distance2 <= m_maxDistance2)
@@ -417,7 +417,7 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
     m_direction(dir),
     m_maxDistance(maxDistance),
     m_maxDistance2(math::square(maxDistance)),
-    m_sinAngle2Closest(std::max(std::sin(angle * 0.5), ANGULAR_RES)),
+    m_sinAngle2Closest(std::max(std::sin(angle * 0.5f), static_cast<float>(ANGULAR_RES))),
     m_now(t)
 {
 }
@@ -452,7 +452,7 @@ CloseStarPicker::process(const Star& star)
             m_closestStar = &star;
             m_closestDistance = starDir.norm();
             // An exact hit -- se the angle to "zero"
-            m_sinAngle2Closest = ANGULAR_RES;
+            m_sinAngle2Closest = static_cast<float>(ANGULAR_RES);
         }
     }
     else
@@ -460,12 +460,12 @@ CloseStarPicker::process(const Star& star)
         // We don't have an exact hit, check to see if we're close enough
         distance = starDir.norm();
         starDir /= distance;
-        double sinAngle2 = (starDir - m_direction).cast<double>().norm() * 0.5;
+        auto sinAngle2 = static_cast<float>((starDir - m_direction).cast<double>().norm() * 0.5);
         if (sinAngle2 <= m_sinAngle2Closest && distance < m_closestDistance)
         {
             m_closestStar = &star;
             m_closestDistance = distance;
-            m_sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
+            m_sinAngle2Closest = std::max(sinAngle2, static_cast<float>(ANGULAR_RES));
         }
     }
 }
@@ -961,8 +961,6 @@ Universe::pickStar(const UniversalCoord& origin,
                    float faintestMag,
                    float tolerance) const
 {
-    Eigen::Vector3f o = origin.toLy().cast<float>();
-
     // Use a high precision pick test for any stars that are close to the
     // observer.  If this test fails, use a low precision pick test for stars
     // which are further away.  All this work is necessary because the low
@@ -982,11 +980,6 @@ Universe::pickStar(const UniversalCoord& origin,
 
     StarPicker picker(origin, direction, tolerance, faintestMag, when);
     starCatalog->getOctree().processDepthFirst(picker);
-    /*starCatalog->findVisibleStars(picker,
-                                  o,
-                                  rotation.conjugate(),
-                                  tolerance, 1.0f,
-                                  faintestMag);*/
     if (auto star = picker.pickedStar(); star != nullptr)
         return Selection(const_cast<Star*>(star));
 

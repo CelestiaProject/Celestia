@@ -99,7 +99,7 @@ DSORenderer::DSORenderer(const Observer* observer,
 }
 
 void
-DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso) const
+DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso) const //NOSONAR
 {
     float absMag = dso->getAbsoluteMagnitude();
     if (!dso->isVisible() || absMag > m_absMagLimit)

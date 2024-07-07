@@ -58,19 +58,6 @@ public:
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
-/*
-    void findVisibleStars(StarHandler& starHandler,
-                          const Eigen::Vector3f& obsPosition,
-                          const Eigen::Quaternionf& obsOrientation,
-                          float fovY,
-                          float aspectRatio,
-                          float limitingMag) const;
-
-    void findCloseStars(StarHandler& starHandler,
-                        const Eigen::Vector3f& obsPosition,
-                        float radius) const;
-*/
-
     std::string getStarName(const Star&, bool i18n = false) const;
     std::string getStarNameList(const Star&, unsigned int maxNames = MAX_STAR_NAMES) const;
 

@@ -28,7 +28,7 @@ public:
     std::unique_ptr<DSODatabase> build();
 
 private:
-    float calcAvgAbsMag();
+    float calcAvgAbsMag() const;
 
     BlockArray<std::unique_ptr<DeepSkyObject>> m_dsos;
     std::vector<std::pair<AstroCatalog::IndexNumber, std::string>> m_names;

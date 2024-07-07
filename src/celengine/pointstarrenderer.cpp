@@ -154,7 +154,6 @@ PointStarRenderer::process(const Star& star) const
 
     Color starColor = m_colorTemp->lookupColor(star.getTemperature());
     float discSizeInPixels = 0.0f;
-    float orbitSizeInPixels = hasOrbit ? (orbitalRadius / (distance * m_pixelSize)) : 0.0f;
 
     // Special handling for stars less than one light year away . . .
     // We can't just go ahead and render a nearby star in the usual way
@@ -166,7 +165,8 @@ PointStarRenderer::process(const Star& star) const
     // further than a solar system size if the star is huge, the fov is
     // very small and the resolution is high.  We'll ignore this for now
     // and use the most inexpensive test possible . . .
-    if (distance < m_solarSystemMaxDistance || orbitSizeInPixels > 1.0f)
+    if (float orbitSizeInPixels = hasOrbit ? (orbitalRadius / (distance * m_pixelSize)) : 0.0f;
+        distance < m_solarSystemMaxDistance || orbitSizeInPixels > 1.0f)
     {
         // Compute the position of the observer relative to the star.
         // This is a much more accurate (and expensive) distance

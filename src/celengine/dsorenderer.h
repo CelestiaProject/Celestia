@@ -36,7 +36,8 @@ public:
                 float labelThresholdMag);
 
     using VisibleObjectVisitor::checkNode;
-    void process(const std::unique_ptr<DeepSkyObject>&) const;
+    // unique_ptr passed by const reference: required by template
+    void process(const std::unique_ptr<DeepSkyObject>&) const; //NOSONAR
 
 private:
     void renderDSO(const DeepSkyObject*, const Eigen::Vector3f&, double, double, float) const;

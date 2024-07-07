@@ -108,7 +108,7 @@ VisibleObjectVisitor<PREC>::checkNode(const position_type& center,
     if constexpr (std::is_same_v<std::remove_cv_t<PREC>, double>)
         minDistance = (m_observerPos - center).norm();
     else
-        minDistance = (m_observerPos - center.template cast<double>()).norm();
+        minDistance = static_cast<PREC>((m_observerPos - center.template cast<double>()).norm());
     minDistance -= size * celestia::numbers::sqrt3_v<PREC>;
     if (minDistance > m_distanceLimit)
         return false;

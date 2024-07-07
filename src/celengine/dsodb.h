@@ -32,7 +32,7 @@ constexpr inline float DSO_OCTREE_ROOT_SIZE = 1.0e11f;
 class DSODatabase
 {
 public:
-    static constexpr inline unsigned int MAX_DSO_NAMES = 10;
+    static constexpr unsigned int MAX_DSO_NAMES = 10;
 
     ~DSODatabase();
 
@@ -59,8 +59,8 @@ private:
     void buildIndexes();
     void buildOctree();
 
-    std::unique_ptr<NameDatabase> m_namesDB;
     celestia::engine::DSOOctree m_octree;
+    std::unique_ptr<NameDatabase> m_namesDB;
     float m_avgAbsMag;
 
     friend class DSODatabaseBuilder;

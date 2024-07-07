@@ -30,7 +30,6 @@ struct OctreeBuilderNode
     using point_type = Eigen::Matrix<PREC, 3, 1>;
 
     explicit OctreeBuilderNode(const point_type&);
-    ~OctreeBuilderNode();
 
     OctreeBuilderNode(const OctreeBuilderNode&) = delete;
     OctreeBuilderNode& operator=(const OctreeBuilderNode&) = delete;
@@ -47,9 +46,6 @@ OctreeBuilderNode<PREC>::OctreeBuilderNode(const point_type& _center) :
     center(_center)
 {
 }
-
-template<typename PREC>
-OctreeBuilderNode<PREC>::~OctreeBuilderNode() = default;
 
 } // end namespace celestia::engine::detail
 
@@ -77,7 +73,7 @@ private:
     struct IndexMapVisitor;
 
     void addObject(OctreeIndexType);
-    bool checkStraddling(const point_type&, const object_type&);
+    bool checkStraddling(const point_type&, const object_type&) const;
     detail::OctreeNodeIndexType getChildIndex(node_type&, const object_type&, std::uint32_t);
     void splitNode(node_type&, std::uint32_t);
     void buildIndexMap();
@@ -107,8 +103,11 @@ OctreeBuilder<TRAITS>::OctreeBuilder(BlockArray<object_type>&& objects,
     m_thresholdMags.push_back(rootMag);
     m_scales.push_back(rootSize);
 
-    for (std::uint32_t i = 0, numObjects = m_objects.size(); i < numObjects; ++i)
+    for (std::uint32_t i = 0, numObjects = static_cast<std::uint32_t>(m_objects.size());
+         i < numObjects; ++i)
+    {
         addObject(i);
+    }
 
     buildIndexMap();
 }
@@ -148,8 +147,8 @@ OctreeBuilder<TRAITS>::addObject(OctreeIndexType idx)
         if (depth >= m_thresholdMags.size())
             m_thresholdMags.push_back(TRAITS::decayMagnitude(m_thresholdMags.back()));
 
-        float thresholdMag = m_thresholdMags[depth];
-        if (TRAITS::getAbsMag(obj) <= thresholdMag || checkStraddling(node.center, obj))
+        if (float thresholdMag = m_thresholdMags[depth];
+            TRAITS::getAbsMag(obj) <= thresholdMag || checkStraddling(node.center, obj))
         {
             node.indices.push_back(idx);
             return;
@@ -173,7 +172,7 @@ OctreeBuilder<TRAITS>::addObject(OctreeIndexType idx)
 
 template<typename TRAITS>
 bool
-OctreeBuilder<TRAITS>::checkStraddling(const point_type& center, const object_type& obj)
+OctreeBuilder<TRAITS>::checkStraddling(const point_type& center, const object_type& obj) const
 {
     auto radius = TRAITS::getRadius(obj);
     return radius > 0 && (TRAITS::getPosition(obj) - center).cwiseAbs().minCoeff() < radius;
@@ -200,9 +199,9 @@ OctreeBuilder<TRAITS>::getChildIndex(node_type& node,
 
         auto newSize = m_scales[depth];
         point_type newCenter = node.center
-                             + newSize * point_type(((index & 1) << 1) - 1,
-                                                    (index & 2) - 1,
-                                                    ((index & 4) >> 1) - 1);
+                             + newSize * point_type(static_cast<precision_type>(((index & 1) << 1) - 1),
+                                                    static_cast<precision_type>((index & 2) - 1),
+                                                    static_cast<precision_type>(((index & 4) >> 1) - 1));
 
         childIndex = static_cast<detail::OctreeNodeIndexType>(m_nodes.size());
         m_nodes.emplace_back(newCenter);

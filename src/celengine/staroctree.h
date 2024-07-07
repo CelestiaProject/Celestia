@@ -29,9 +29,9 @@ struct StarOctreeTraits
 
     // magnitude increase corresponds to decrease in luminosity by factor of 4
     static constexpr float decayMagnitude(float mag) { return mag + 1.50515f; }
-    static inline Eigen::Vector3f getPosition(const Star& obj) { return obj.getPosition(); }
-    static inline float getAbsMag(const Star& obj) { return obj.getAbsoluteMagnitude(); }
-    static inline float getRadius(const Star& obj) { return obj.getOrbitalRadius(); }
+    static inline Eigen::Vector3f getPosition(const object_type& obj) { return obj.getPosition(); }
+    static inline float getAbsMag(const object_type& obj) { return obj.getAbsoluteMagnitude(); }
+    static inline float getRadius(const object_type& obj) { return obj.getOrbitalRadius(); }
 };
 
 using StarOctreeBuilder = OctreeBuilder<StarOctreeTraits>;
