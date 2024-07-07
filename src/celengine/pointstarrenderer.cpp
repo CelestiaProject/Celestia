@@ -149,7 +149,7 @@ PointStarRenderer::process(const Star& star) const
     // TODO: consider normalizing relPos and comparing relPos*viewNormal against
     // cosFOV--this will cull many more stars than relPos*viewNormal, at the
     // cost of a normalize per star.
-    if (!hasOrbit && relPos.dot(m_viewNormal) <= 0.0f || relPos.x() * relPos.x() > 0.1f)
+    if (!(hasOrbit || relPos.dot(m_viewNormal) > 0.0f || relPos.x() * relPos.x() < 0.1f))
         return;
 
     Color starColor = m_colorTemp->lookupColor(star.getTemperature());
