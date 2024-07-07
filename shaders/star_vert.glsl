@@ -1,4 +1,4 @@
-// star_frag.glsl
+// star_vert.glsl
 //
 // Copyright (C) 2023-present, the Celestia Development Team
 // Original rendering algorithm by Askaniy Anpilogov <aaskaniy@gmail.com>
@@ -8,6 +8,8 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
+
+const float a = 0.123; // empirical constant
 
 const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
 const float max_square_size = 256.0; // px

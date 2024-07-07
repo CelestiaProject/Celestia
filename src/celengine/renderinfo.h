@@ -23,7 +23,6 @@ class Texture;
 struct RenderInfo
 {
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
-    Color color{ 1.0f, 1.0f, 1.0f };
     Texture* baseTex{ nullptr };
     Texture* bumpTex{ nullptr };
     Texture* nightTex{ nullptr };

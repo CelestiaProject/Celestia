@@ -1645,7 +1645,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
         textures.push_back(ri.overlayTex);
     }
     if (ri.isStar)
-        shadprop.lightModel = ShaderProperties::StarModel;
+        shadprop.lightModel = LightingModel::StarModel;
 
     // Get a shader for the current rendering configuration
     auto* prog = r->getShaderManager().getShader(shadprop);
@@ -2791,12 +2791,14 @@ void Renderer::renderPlanet(Body& body,
     {
         if (float maxCoeff = body.getSurface().color.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
+#if 0
             renderObjectAsPoint(pos,
                                 body.getRadius(),
                                 appMag,
                                 discSizeInPixels,
                                 body.getSurface().color * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
                                 false, false, m);
+#endif
         }
     }
 }
@@ -2851,6 +2853,7 @@ void Renderer::renderStar(const Star& star,
                      rp, LightingState(), m);
     }
 
+#if 0
     renderObjectAsPoint(pos,
                         star.getRadius(),
                         appMag,
@@ -2858,6 +2861,7 @@ void Renderer::renderStar(const Star& star,
                         color,
                         star.hasCorona(), true,
                         m);
+#endif
 }
 
 
@@ -3166,7 +3170,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             // Compute the irradiance
             // Instead of summing the reflected light from all nearby stars,
             // we just consider the one with the highest irradiance.
-            float irradiance = 1.175494e-38f; // minimum positive float value
+            float irradiance = std::numeric_limits<float>::min();
             for (const auto &lightSource : lightSourceList)
             {
                 Eigen::Vector3d sunPos = pos_v - lightSource.position;
@@ -3183,7 +3187,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 rle.position = pos_v.cast<float>();
                 rle.distance = (float) dist_v;
                 rle.centerZ = pos_v.cast<float>().dot(viewMatZ);
-                rle.irradiation = irradiation;
+                rle.irradiation = irradiance;
                 rle.discSizeInPixels = body->getRadius() / ((float) dist_v * pixelSize);
 
                 // TODO: Remove this. It's only used in two places: for calculating comet tail
@@ -3625,11 +3629,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     starRenderer.starVertexBuffer->finish();
     StarVertexBuffer::disable();
-
-#ifndef GL_ES
-    if (toggleAA)
-        enableMSAA();
-#endif
 }
 
 void Renderer::renderDeepSkyObjects(const Universe& universe,

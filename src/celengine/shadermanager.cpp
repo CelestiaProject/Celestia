@@ -2094,7 +2094,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
     // Include the effect of limb darkening.
-    if (props.lightModel == ShaderProperties::StarModel)
+    if (props.lightModel == LightingModel::StarModel)
     {
         source += "gl_FragColor.rgb = gl_FragColor.rgb - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72);\n";
     }

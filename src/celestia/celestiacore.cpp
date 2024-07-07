@@ -1467,15 +1467,19 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '[':
-        setExposure(sim->getExposure() * 0.5);
-        auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
-        flash(buf);
+        {
+            setExposure(sim->getExposure() * 0.5);
+            auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
+            flash(buf);
+        }
         break;
 
     case ']':
-        setExposure(sim->getExposure() * 2.0);
-        auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
-        flash(buf);
+        {
+            setExposure(sim->getExposure() * 2.0);
+            auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
+            flash(buf);
+        }
         break;
 
     case '\\':
@@ -2459,7 +2463,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     set_or_unset(interactionFlags, InteractionFlags::FocusZooming, config->mouse.focusZooming);
 
     sim = new Simulation(universe);
-    sim->setExposure(config->renderDetails.Exposure);
+    sim->setExposure(config->renderDetails.exposure);
 
     viewManager = std::make_unique<ViewManager>(new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f));
 
