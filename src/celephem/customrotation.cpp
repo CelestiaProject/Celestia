@@ -363,8 +363,8 @@ public:
 
 
 /*! IAU rotation model for the Moon.
- *  From the IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements:
- *  http://astrogeology.usgs.gov/Projects/WGCCRE/constants/iau2000_table2.html
+ *  From the 2009 report of the IAU Working Group on Cartographic Coordinates and Rotational Elements:
+ *  https://astropedia.astrogeology.usgs.gov/alfresco/d/d/workspace/SpacesStore/28fd9e81-1964-44d6-a58b-fbbf61e64e15/WGCCRE2009reprint.pdf
  */
 class IAULunarRotationModel : public IAURotationModel
 {
@@ -375,9 +375,9 @@ public:
     {
         E[1]  = math::degToRad(125.045 -  0.0529921 * d);
         E[2]  = math::degToRad(250.089 -  0.1059842 * d);
-        E[3]  = math::degToRad(260.008 + 13.012009 * d);
+        E[3]  = math::degToRad(260.008 + 13.0120009 * d);
         E[4]  = math::degToRad(176.625 + 13.3407154 * d);
-        E[5]  = math::degToRad(357.529 +  0.9856993 * d);
+        E[5]  = math::degToRad(357.529 +  0.9856003 * d);
         E[6]  = math::degToRad(311.589 + 26.4057084 * d);
         E[7]  = math::degToRad(134.963 + 13.0649930 * d);
         E[8]  = math::degToRad(276.617 +  0.3287146 * d);
@@ -397,7 +397,7 @@ public:
         calcArgs(d, E);
 
         ra = 269.9949
-            + 0.0013*T
+            + 0.0031 * T
             - 3.8787 * std::sin(E[1])
             - 0.1204 * std::sin(E[2])
             + 0.0700 * std::sin(E[3])
