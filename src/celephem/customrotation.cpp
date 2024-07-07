@@ -591,7 +591,7 @@ public:
         double J4 = math::degToRad(355.80 + 1191.3 * T);
         clamp_centuries(T);
         ra = 268.05 - 0.009 * T + 0.094 * std::sin(J3) + 0.024 * std::sin(J4);
-        dec = 64.49 + 0.003 * T + 0.040 * std::cos(J3) + 0.011 * std::cos(J4);
+        dec = 64.50 + 0.003 * T + 0.040 * std::cos(J3) + 0.011 * std::cos(J4);
     }
 
     double meridian(double t) const override
@@ -615,10 +615,10 @@ public:
         double J4 = math::degToRad(355.80 + 1191.3 * T);
         double J5 = math::degToRad(119.90 + 262.1 * T);
         double J6 = math::degToRad(229.80 + 64.3 * T);
-        double J7 = math::degToRad(352.35 + 2382.6 * T);
+        double J7 = math::degToRad(352.25 + 2382.6 * T);
         clamp_centuries(T);
-        ra = 268.05 - 0.009 * T + 1.086 * std::sin(J4) + 0.060 * std::sin(J5) + 0.015 * std::sin(J6) + 0.009 * std::sin(J7);
-        dec = 64.49 + 0.003 * T + 0.486 * std::cos(J4) + 0.026 * std::cos(J5) + 0.007 * std::cos(J6) + 0.002 * std::cos(J7);
+        ra = 268.08 - 0.009 * T + 1.086 * std::sin(J4) + 0.060 * std::sin(J5) + 0.015 * std::sin(J6) + 0.009 * std::sin(J7);
+        dec = 64.51 + 0.003 * T + 0.468 * std::cos(J4) + 0.026 * std::cos(J5) + 0.007 * std::cos(J6) + 0.002 * std::cos(J7);
     }
 
     double meridian(double t) const override
@@ -627,7 +627,7 @@ public:
         double J4 = math::degToRad(355.80 + 1191.3 * T);
         double J5 = math::degToRad(119.90 + 262.1 * T);
         double J6 = math::degToRad(229.80 + 64.3 * T);
-        double J7 = math::degToRad(352.35 + 2382.6 * T);
+        double J7 = math::degToRad(352.25 + 2382.6 * T);
         return 36.022 + 101.3747235 * t - 0.980 * std::sin(J4) - 0.054 * std::sin(J5) - 0.014 * std::sin(J6) - 0.008 * std::sin(J7);
     }
 };
@@ -645,8 +645,8 @@ public:
         double J5 = math::degToRad(119.90 + 262.1 * T);
         double J6 = math::degToRad(229.80 + 64.3 * T);
         clamp_centuries(T);
-        ra = 268.05 - 0.009 * T - 0.037 * std::sin(J4) + 0.431 * std::sin(J5) + 0.091 * std::sin(J6);
-        dec = 64.49 + 0.003 * T - 0.016 * std::cos(J4) + 0.186 * std::cos(J5) + 0.039 * std::cos(J6);
+        ra = 268.20 - 0.009 * T - 0.037 * std::sin(J4) + 0.431 * std::sin(J5) + 0.091 * std::sin(J6);
+        dec = 64.57 + 0.003 * T - 0.016 * std::cos(J4) + 0.186 * std::cos(J5) + 0.039 * std::cos(J6);
     }
 
     double meridian(double t) const override
@@ -672,8 +672,8 @@ public:
         double J6 = math::degToRad(229.80 + 64.3 * T);
         double J8 = math::degToRad(113.35 + 6070.0 * T);
         clamp_centuries(T);
-        ra = 268.05 - 0.009 * T - 0.068 * std::sin(J5) + 0.590 * std::sin(J6) + 0.010 * std::sin(J8);
-        dec = 64.49 + 0.003 * T - 0.029 * std::cos(J5) + 0.254 * std::cos(J6) - 0.004 * std::cos(J8);
+        ra = 268.72 - 0.009 * T - 0.068 * std::sin(J5) + 0.590 * std::sin(J6) + 0.010 * std::sin(J8);
+        dec = 64.83 + 0.003 * T - 0.029 * std::cos(J5) + 0.254 * std::cos(J6) - 0.004 * std::cos(J8);
     }
 
     double meridian(double t) const override
@@ -848,7 +848,7 @@ public:
     {
         double T = t / 36525.0;
         double U15 = math::degToRad(340.82 - 75.32 * T);
-        return 77.74 - 41.351431 * t + 0.08 * std::sin(U15);
+        return 77.74 - 41.3514316 * t + 0.08 * std::sin(U15);
     }
 };
 
