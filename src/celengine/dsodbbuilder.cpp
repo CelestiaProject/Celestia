@@ -5,6 +5,7 @@
 
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
+#include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
