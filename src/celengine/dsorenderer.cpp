@@ -190,7 +190,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         float irradiationEff = astro::magToIrradiance(appMagEff) * exposure;
         if (irradiationEff > labelLowestIrradiation)
         {
-            float distr = irradiationEff / labelLowestIrradiation;
+            float distr = 1.0f - irradiationEff / labelLowestIrradiation;
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

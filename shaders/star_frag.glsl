@@ -44,5 +44,5 @@ void main(void)
     // in fragment shader all points have virtual dimension 1x1, so gl_PointCoord has a value from [0; 1]
     float offset = length((gl_PointCoord.xy - vec2(0.5)) * pointSize);
     float point = (max_theta == -1.0) ? psf_core(offset) : psf_glow(offset);
-    gl_FragColor = vec4(v_color * point, 1.0); // + vec4(0.1, 0.0, 0.0, 0.0); // square for debugging
+    gl_FragColor = vec4(v_color * point, 1.0); // + vec4(0.1, 0.0, 0.0, 0.0); // red square for debugging
 }

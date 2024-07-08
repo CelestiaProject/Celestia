@@ -108,7 +108,7 @@ void StarRenderer::process(const Star& star, float distance, float irradiance)
                     Vector3f starDir = relPos.normalized();
                     if (starDir.dot(viewNormal) > cosFOV)
                     {
-                        float distr = labelLowestIrradiation / irradiation;
+                        float distr = 1.0f - labelLowestIrradiation / irradiation;
                         Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
                         renderer->addBackgroundAnnotation(nullptr,
                                                         starDB->getStarName(star, true),

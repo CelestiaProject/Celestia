@@ -9,11 +9,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-const float a = 0.123; // empirical constant
-
 const float degree_per_px = 0.01; // higher value causes blinking due to optimizations in the psf_glow()
-const float max_square_size = 256.0; // px
-const float max_irradiation = pow((degree_per_px * max_square_size / a), 2.0) / (2.0 * 3.141592653);
+const float max_square_size = 512.0; // px
+const float glow_scale = 0.123; // empirical constant, deg (not to change)
+const float max_irradiation = pow((degree_per_px * max_square_size / glow_scale), 2.0) / (2.0 * 3.141592653);
 
 varying vec3 v_color;
 varying float max_theta;
@@ -25,7 +24,7 @@ attribute float in_PointSize;
 
 const float color_saturation_limit = 0.1; // the ratio of the minimum color component to the maximum
 
-//! Normalizes the color by its green value and corrects extreme saturation
+// Normalizes the color by its green value and corrects extreme saturation
 vec3 green_normalization(vec3 color)
 {
     // color /= max(color.r, max(color.g, color.b)); // we do this in XYZRGBConverter::convertUnnormalized()
@@ -54,8 +53,8 @@ void main(void)
     else
     {
         // Bright light source (glow mode)
-        float irradiation = atan(in_PointSize / max_irradiation) * max_irradiation; // dimmed brightness
-        max_theta = 0.123 * sqrt(irradiation); // emperical glow radius
+        float irradiation = atan(in_PointSize / max_irradiation) * max_irradiation; // dimming
+        max_theta = glow_scale * sqrt(irradiation);
         float half_sq = max_theta / degree_per_px;
         pointSize = 2.0 * half_sq - 1.0;
         v_color = color;
