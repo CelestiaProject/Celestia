@@ -424,7 +424,7 @@ public:
               float angle);
     ~DSOPicker() = default;
 
-    void process(DeepSkyObject* const &, double, float) override;
+    void process(const std::unique_ptr<DeepSkyObject>&, double, float) override; //NOSONAR
 
 public:
     Eigen::Vector3d pickOrigin;
@@ -450,7 +450,7 @@ DSOPicker::DSOPicker(const Eigen::Vector3d& pickOrigin,
 
 
 void
-DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused*/)
+DSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, double, float) //NOSONAR
 {
     if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
@@ -473,7 +473,7 @@ DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused
     if (sinAngle2 <= sinAngle2Closest)
     {
         sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
-        pickedDSO        = dso;
+        pickedDSO        = dso.get();
     }
 }
 
@@ -488,7 +488,7 @@ public:
                    float);
     ~CloseDSOPicker() = default;
 
-    void process(DeepSkyObject* const & dso, double distance, float appMag);
+    void process(const std::unique_ptr<DeepSkyObject>& dso, double distance, float appMag); //NOSONAR
 
 public:
     Eigen::Vector3d  pickOrigin;
@@ -517,7 +517,7 @@ CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& pos,
 
 
 void
-CloseDSOPicker::process(DeepSkyObject* const & dso,
+CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
                         double distance,
                         float /*unused*/)
 {
@@ -532,7 +532,7 @@ CloseDSOPicker::process(DeepSkyObject* const & dso,
         if ((pickOrigin - dso->getPosition()).norm() > dso->getRadius() &&
             cosAngleToBoundCenter > largestCosAngle)
         {
-            closestDSO      = dso;
+            closestDSO      = dso.get();
             largestCosAngle = cosAngleToBoundCenter;
         }
     }

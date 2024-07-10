@@ -8,12 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "pointstarrenderer.h"
+
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
+#include "observer.h"
 #include "pointstarvertexbuffer.h"
 #include "render.h"
-#include "pointstarrenderer.h"
 
 using namespace std;
 using namespace Eigen;
@@ -30,7 +32,7 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
 }
 
 PointStarRenderer::PointStarRenderer() :
-    ObjectRenderer<Star, float>(StarDistanceLimit)
+    ObjectRenderer(StarDistanceLimit)
 {
 }
 

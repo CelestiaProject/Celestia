@@ -55,12 +55,11 @@ brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, fl
 
 } // anonymous namespace
 
-DSORenderer::DSORenderer() :
-    ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE)
+DSORenderer::DSORenderer() : ObjectRenderer(DSO_OCTREE_ROOT_SIZE)
 {
 }
 
-void DSORenderer::process(DeepSkyObject* const &dso,
+void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
                           double distanceToDSO,
                           float absMag)
 {
@@ -111,20 +110,20 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         case DeepSkyObjectType::Galaxy:
             // -19.04f == average over 10937 galaxies in galaxies.dsc.
             b = brightness(-19.04f, absMag, appMag, b, faintestMag);
-            galaxyRenderer->add(static_cast<const Galaxy*>(dso), relPos, b, nearZ, farZ);
+            galaxyRenderer->add(static_cast<const Galaxy*>(dso.get()), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::Globular:
             // -6.86f == average over 150 globulars in globulars.dsc.
             b = brightness(-6.86f, absMag, appMag, b, faintestMag);
-            globularRenderer->add(static_cast<const Globular*>(dso), relPos, b, nearZ, farZ);
+            globularRenderer->add(static_cast<const Globular*>(dso.get()), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::Nebula:
             b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            nebulaRenderer->add(static_cast<const Nebula*>(dso), relPos, b, nearZ, farZ);
+            nebulaRenderer->add(static_cast<const Nebula*>(dso.get()), relPos, b, nearZ, farZ);
             break;
         case DeepSkyObjectType::OpenCluster:
             b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            openClusterRenderer->add(static_cast<const OpenCluster*>(dso), relPos, b, nearZ, farZ);
+            openClusterRenderer->add(static_cast<const OpenCluster*>(dso.get()), relPos, b, nearZ, farZ);
             break;
         default:
             // Unsupported DSO
@@ -188,7 +187,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,
-                                              dsoDB->getDSOName(dso, true),
+                                              dsoDB->getDSOName(dso.get(), true),
                                               labelColor,
                                               relPos,
                                               Renderer::LabelHorizontalAlignment::Start,

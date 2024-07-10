@@ -10,8 +10,10 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <vector>
+
+#include <Eigen/Core>
+
 #include "objectrenderer.h"
 #include "renderlistentry.h"
 
@@ -30,15 +32,7 @@ constexpr inline float GlareOpacity          = 0.65f;
 
 class PointStarRenderer : public ObjectRenderer<Star, float>
 {
- public:
-#if 0
-    static constexpr const float StarDistanceLimit     = 1.0e6f;
-    // Star disc size in pixels
-    static constexpr const float BaseStarDiscSize      = 5.0f;
-    static constexpr const float MaxScaledDiscStarSize = 8.0f;
-    static constexpr const float GlareOpacity          = 0.65f;
-#endif
-
+public:
     PointStarRenderer();
     void process(const Star &star, float distance, float appMag) override;
 

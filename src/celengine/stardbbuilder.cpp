@@ -1018,13 +1018,13 @@ StarDatabaseBuilder::buildOctree()
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
     auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
-    for (const Star& star : unsortedStars)
+    for (Star& star : unsortedStars)
         root->insertObject(star, StarDatabase::STAR_OCTREE_ROOT_SIZE);
 
     GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size());
+    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size()); //NOSONAR
     Star* firstStar = sortedStars.get();
-    root->rebuildAndSort(starDB->octreeRoot, firstStar);
+    starDB->octreeRoot = root->rebuildAndSort(firstStar);
 
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
                        firstStar - sortedStars.get(),
