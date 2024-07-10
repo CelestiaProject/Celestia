@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -23,12 +24,12 @@
 class DeepSkyObject;
 class DSODatabase;
 
-class DSORenderer : public ObjectRenderer<DeepSkyObject *, double>
+class DSORenderer : public ObjectRenderer<std::unique_ptr<DeepSkyObject>, double>
 {
 public:
     DSORenderer();
 
-    void process(DeepSkyObject *const &, double, float) override;
+    void process(const std::unique_ptr<DeepSkyObject>&, double, float) override; //NOSONAR
 
     celestia::math::InfiniteFrustum frustum{ celestia::math::degToRad(celestia::engine::standardFOV),
                                              1.0f,

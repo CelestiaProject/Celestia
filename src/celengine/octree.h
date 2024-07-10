@@ -12,10 +12,13 @@
 
 #pragma once
 
+#include <array>
+#include <cstdint>
+#include <memory>
+#include <utility>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <celengine/observer.h>
-#include <vector>
 
 // The DynamicOctree and StaticOctree template arguments are:
 // OBJ:  object hanging from the node,
@@ -24,92 +27,31 @@
 // OBJ's limiting property defined by the octree particular specialization: ie. we use [absolute magnitude] for star octrees, etc.
 // For details, see notes below.
 
-template <class OBJ, class PREC> class OctreeProcessor
-{
- public:
-    OctreeProcessor()          {};
-    virtual ~OctreeProcessor() {};
-
-    virtual void process(const OBJ& obj, PREC distance, float appMag) = 0;
-};
-
-
-
-struct OctreeLevelStatistics
-{
-    unsigned int nodeCount;
-    unsigned int objectCount;
-    double size;
-};
-
-
-template <class OBJ, class PREC> class StaticOctree;
-template <class OBJ, class PREC> class DynamicOctree
+template <class OBJ, class PREC>
+class OctreeProcessor
 {
 public:
-    typedef Eigen::Matrix<PREC, 3, 1> PointType;
+    virtual ~OctreeProcessor() = default;
+    virtual void process(const OBJ& obj, PREC distance, float appMag) = 0;
 
-private:
-    typedef std::vector<const OBJ*> ObjectList;
-
-
-    typedef bool (LimitingFactorPredicate)     (const OBJ&, const float);
-    typedef bool (StraddlingPredicate)         (const Eigen::Matrix<PREC, 3, 1>&, const OBJ&, const float);
-    typedef PREC (ExclusionFactorDecayFunction)(const PREC);
-
- public:
-    DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
-                  const float         exclusionFactor);
-    ~DynamicOctree();
-
-    void insertObject  (const OBJ&, const PREC);
-    void rebuildAndSort(StaticOctree<OBJ, PREC>*&, OBJ*&);
-
- private:
-   static unsigned int SPLIT_THRESHOLD;
-
-   static LimitingFactorPredicate*      limitingFactorPredicate;
-   static StraddlingPredicate*          straddlingPredicate;
-   static ExclusionFactorDecayFunction* decayFunction;
-
- private:
-    void           add  (const OBJ&);
-    void           split(const PREC);
-    void           sortIntoChildNodes();
-    DynamicOctree* getChild(const OBJ&, const Eigen::Matrix<PREC, 3, 1>&);
-
-    DynamicOctree**            _children;
-    Eigen::Matrix<PREC, 3, 1>  cellCenterPos;
-    PREC                       exclusionFactor;
-    ObjectList*                _objects;
+protected:
+    OctreeProcessor() = default;
 };
 
-// make clang happy
-#ifndef _MSC_VER
-template<> DynamicOctree<Star, float>::ExclusionFactorDecayFunction* DynamicOctree<Star, float>::decayFunction;
-template<> DynamicOctree<Star, float>::LimitingFactorPredicate* DynamicOctree<Star, float>::limitingFactorPredicate;
-template<> DynamicOctree<Star, float>::StraddlingPredicate* DynamicOctree<Star, float>::straddlingPredicate;
-template<> unsigned int DynamicOctree<Star, float>::SPLIT_THRESHOLD;
+template<class OBJ, class PREC>
+class DynamicOctree;
 
-template<> DynamicOctree<DeepSkyObject*, double>::ExclusionFactorDecayFunction* DynamicOctree<DeepSkyObject*, double>::decayFunction;
-template<> DynamicOctree<DeepSkyObject*, double>::LimitingFactorPredicate* DynamicOctree<DeepSkyObject *, double>::limitingFactorPredicate;
-template<> DynamicOctree<DeepSkyObject*, double>::StraddlingPredicate* DynamicOctree<DeepSkyObject *, double>::straddlingPredicate;
-template<> unsigned int DynamicOctree<DeepSkyObject*, double>::SPLIT_THRESHOLD;
-#endif
-
-template <class OBJ, class PREC> class StaticOctree
+template<class OBJ, class PREC>
+class StaticOctree
 {
- friend class DynamicOctree<OBJ, PREC>;
+public:
+    using PointType = Eigen::Matrix<PREC, 3, 1>;
+    using PlaneType = Eigen::Hyperplane<PREC, 3>;
 
- public:
-    typedef Eigen::Matrix<PREC, 3, 1> PointType;
-
- public:
-    StaticOctree(const PointType&    cellCenterPos,
-                 const float         exclusionFactor,
-                 OBJ*                _firstObject,
-                 unsigned int        nObjects);
-    ~StaticOctree();
+    StaticOctree(const PointType& cellCenterPos,
+                 const float      exclusionFactor,
+                 OBJ*             _firstObject,
+                 std::uint32_t    nObjects);
 
     // These methods are only declared at the template level; we'll implement them as
     // full specializations, allowing for different traversal strategies depending on the
@@ -122,39 +64,71 @@ template <class OBJ, class PREC> class StaticOctree
     // objects that are outside the view frustum may be.  Frustum tests are performed
     // only at the node level to optimize the octree traversal, so an exact test
     // (if one is required) is the responsibility of the callback method.
-    void processVisibleObjects(OctreeProcessor<OBJ, PREC>&       processor,
-                               const PointType&                  obsPosition,
-                               const Eigen::Hyperplane<PREC, 3>* frustumPlanes,
-                               float                             limitingFactor,
-                               PREC                              scale) const;
+    void processVisibleObjects(OctreeProcessor<OBJ, PREC>& processor,
+                               const PointType&            obsPosition,
+                               const PlaneType*            frustumPlanes,
+                               float                       limitingFactor,
+                               PREC                        scale) const;
 
-    void processCloseObjects(OctreeProcessor<OBJ, PREC>&        processor,
-                             const PointType&                   obsPosition,
-                             PREC                               boundingRadius,
-                             PREC                               scale) const;
+    void processCloseObjects(OctreeProcessor<OBJ, PREC>& processor,
+                             const PointType&            obsPosition,
+                             PREC                        boundingRadius,
+                             PREC                        scale) const;
 
-    int countChildren() const;
-    int countObjects()  const;
+    std::uint32_t countChildren() const;
+    std::uint32_t countObjects()  const;
 
-    void computeStatistics(std::vector<OctreeLevelStatistics>& stats, unsigned int level = 0);
+private:
+    using ChildrenType = std::array<std::unique_ptr<StaticOctree>, 8>;
 
- private:
-    static const PREC SQRT3;
+    std::unique_ptr<ChildrenType> m_children;
+    PointType m_cellCenterPos;
+    float m_exclusionFactor;
+    std::uint32_t m_nObjects;
+    OBJ* m_firstObject;
 
- private:
-    StaticOctree** _children;
-    Eigen::Matrix<PREC, 3, 1>   cellCenterPos;
-    float          exclusionFactor;
-    OBJ*           _firstObject;
-    unsigned int   nObjects;
+    friend class DynamicOctree<OBJ, PREC>;
 };
 
+template<class OBJ, class PREC>
+StaticOctree<OBJ, PREC>::StaticOctree(const PointType& cellCenterPos,
+                                      float exclusionFactor,
+                                      OBJ* firstObject,
+                                      std::uint32_t nObjects):
+    m_cellCenterPos(cellCenterPos),
+    m_exclusionFactor(exclusionFactor),
+    m_firstObject(firstObject),
+    m_nObjects(nObjects)
+{
+}
 
+template<class OBJ, class PREC>
+std::uint32_t
+StaticOctree<OBJ, PREC>::countChildren() const
+{
+    if (m_children == nullptr)
+        return 0;
 
+    std::uint32_t count    = 0;
 
+    for (int i = 0; i < 8; ++i)
+        count += UINT32_C(1) + (*m_children)[i]->countChildren();
 
+    return count;
+}
 
+template<class OBJ, class PREC>
+std::uint32_t
+StaticOctree<OBJ, PREC>::countObjects() const
+{
+    std::uint32_t count = m_nObjects;
 
+    if (m_children != nullptr)
+        for (int i = 0; i < 8; ++i)
+            count += (*m_children)[i]->countObjects();
+
+    return count;
+}
 
 // There are two classes implemented in this module: StaticOctree and
 // DynamicOctree.  The DynamicOctree is built first by inserting
@@ -170,42 +144,59 @@ enum
     ZPos = 4,
 };
 
+template<class OBJ, class PREC>
+class DynamicOctree
+{
+public:
+    using PointType = Eigen::Matrix<PREC, 3, 1>;
+
+    DynamicOctree(const PointType& cellCenterPos,
+                  float exclusionFactor);
+
+    void insertObject(OBJ&, const PREC);
+    std::unique_ptr<StaticOctree<OBJ, PREC>> rebuildAndSort(OBJ*&);
+
+private:
+    using ObjectList = std::vector<OBJ*>;
+
+    static const unsigned int SPLIT_THRESHOLD;
+
+    static bool exceedsBrightnessThreshold(const OBJ&, float);
+    static bool isStraddling(const PointType&, const OBJ&);
+    static float applyDecay(float);
+
+private:
+    using ChildrenType = std::array<std::unique_ptr<DynamicOctree>, 8>;
+
+    void           add(OBJ&);
+    void           split(const PREC);
+    void           sortIntoChildNodes();
+    DynamicOctree* getChild(const OBJ&, const PointType&) const;
+
+    std::unique_ptr<ChildrenType> m_children;
+    PointType m_cellCenterPos;
+    float m_exclusionFactor;
+    std::unique_ptr<ObjectList> m_objects;
+};
+
 // The SPLIT_THRESHOLD is the number of objects a node must contain before its
 // children are generated. Increasing this number will decrease the number of
 // octree nodes in the tree, which will use less memory but make culling less
 // efficient.
-template <class OBJ, class PREC>
-inline DynamicOctree<OBJ, PREC>::DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
-                                               const float                      exclusionFactor):
-    _children      (nullptr),
-    cellCenterPos  (cellCenterPos),
-    exclusionFactor(exclusionFactor),
-    _objects       (nullptr)
+template<class OBJ, class PREC>
+DynamicOctree<OBJ, PREC>::DynamicOctree(const PointType& cellCenterPos,
+                                        float exclusionFactor):
+    m_cellCenterPos(cellCenterPos),
+    m_exclusionFactor(exclusionFactor)
 {
 }
 
-
-template <class OBJ, class PREC>
-inline DynamicOctree<OBJ, PREC>::~DynamicOctree()
-{
-    if (_children != nullptr)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            delete _children[i];
-        }
-
-        delete[] _children;
-    }
-    delete _objects;
-}
-
-
-template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC scale)
+template<class OBJ, class PREC>
+void
+DynamicOctree<OBJ, PREC>::insertObject(OBJ& obj, const PREC scale)
 {
     // If the object can't be placed into this node's children, then put it here:
-    if (limitingFactorPredicate(obj, exclusionFactor) || straddlingPredicate(cellCenterPos, obj, exclusionFactor))
+    if (exceedsBrightnessThreshold(obj, m_exclusionFactor) || isStraddling(m_cellCenterPos, obj))
     {
         add(obj);
         return;
@@ -218,9 +209,9 @@ inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC sc
     // object into a child node.  This is done in order
     // to avoid having the octree degenerate into one object
     // per node.
-    if (_children == nullptr)
+    if (m_children == nullptr)
     {
-        if (_objects == nullptr || _objects->size() < DynamicOctree<OBJ, PREC>::SPLIT_THRESHOLD)
+        if (m_objects == nullptr || m_objects->size() < SPLIT_THRESHOLD)
         {
             add(obj);
             return;
@@ -231,176 +222,89 @@ inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC sc
 
     // We've already allocated child nodes; place the object
     // into the appropriate one.
-    this->getChild(obj, cellCenterPos)->insertObject(obj, scale * (PREC) 0.5);
+    getChild(obj, m_cellCenterPos)->insertObject(obj, scale * (PREC) 0.5);
 }
 
-
-template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::add(const OBJ& obj)
+template<class OBJ, class PREC>
+void
+DynamicOctree<OBJ, PREC>::add(OBJ& obj)
 {
-    if (_objects == nullptr)
-        _objects = new ObjectList;
+    if (m_objects == nullptr)
+        m_objects = std::make_unique<ObjectList>();
 
-    _objects->push_back(&obj);
+    m_objects->push_back(&obj);
 }
 
-
-template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::split(const PREC scale)
+template<class OBJ, class PREC>
+void
+DynamicOctree<OBJ, PREC>::split(const PREC scale)
 {
-    _children = new DynamicOctree*[8];
-
+    m_children = std::make_unique<ChildrenType>();
     for (int i = 0; i < 8; ++i)
     {
-        Eigen::Matrix<PREC, 3, 1> centerPos    = cellCenterPos;
+        PointType centerPos = m_cellCenterPos
+                            + PointType(((i & XPos) != 0) ? scale : -scale,
+                                        ((i & YPos) != 0) ? scale : -scale,
+                                        ((i & ZPos) != 0) ? scale : -scale);
 
-        centerPos += Eigen::Matrix<PREC, 3, 1>(((i & XPos) != 0) ? scale : -scale,
-                                               ((i & YPos) != 0) ? scale : -scale,
-                                               ((i & ZPos) != 0) ? scale : -scale);
-
-#if 0
-        centerPos.x     += ((i & XPos) != 0) ? scale : -scale;
-        centerPos.y     += ((i & YPos) != 0) ? scale : -scale;
-        centerPos.z     += ((i & ZPos) != 0) ? scale : -scale;
-#endif
-
-        _children[i] = new DynamicOctree(centerPos,
-                                         decayFunction(exclusionFactor));
+        (*m_children)[i] = std::make_unique<DynamicOctree>(centerPos, applyDecay(m_exclusionFactor));
     }
+
     sortIntoChildNodes();
 }
-
 
 // Sort this node's objects into objects that can remain here,
 // and objects that should be placed into one of the eight
 // child nodes.
-template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::sortIntoChildNodes()
+template<class OBJ, class PREC>
+void
+DynamicOctree<OBJ, PREC>::sortIntoChildNodes()
 {
-    unsigned int nKeptInParent = 0;
+    auto writeIt = m_objects->begin();
+    auto endIt = m_objects->end();
 
-    for (unsigned int i=0; i<_objects->size(); ++i)
+    for (auto readIt = writeIt; readIt != endIt; ++readIt)
     {
-        const OBJ& obj    = *(*_objects)[i];
-
-        if (limitingFactorPredicate(obj, exclusionFactor) ||
-            straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
+        OBJ& obj = **readIt;
+        if (exceedsBrightnessThreshold(obj, m_exclusionFactor) || isStraddling(m_cellCenterPos, obj))
         {
-            (*_objects)[nKeptInParent++] = (*_objects)[i];
+            *writeIt = *readIt;
+            ++writeIt;
         }
         else
         {
-            this->getChild(obj, cellCenterPos)->add(obj);
+            getChild(obj, m_cellCenterPos)->add(obj);
         }
     }
 
-    _objects->resize(nKeptInParent);
+    m_objects->erase(writeIt, endIt);
 }
 
-
-template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::rebuildAndSort(StaticOctree<OBJ, PREC>*& _staticNode, OBJ*& _sortedObjects)
+template<class OBJ, class PREC>
+std::unique_ptr<StaticOctree<OBJ, PREC>>
+DynamicOctree<OBJ, PREC>::rebuildAndSort(OBJ*& sortedObjects)
 {
-    OBJ* _firstObject = _sortedObjects;
+    OBJ* firstObject = sortedObjects;
 
-    if (_objects != nullptr)
-        for (typename ObjectList::const_iterator iter = _objects->begin(); iter != _objects->end(); ++iter)
+    if (m_objects != nullptr)
+    {
+        for (OBJ* obj : *m_objects)
         {
-            *_sortedObjects++ = **iter;
-        }
-
-    unsigned int nObjects  = (unsigned int) (_sortedObjects - _firstObject);
-    _staticNode            = new StaticOctree<OBJ, PREC>(cellCenterPos, exclusionFactor, _firstObject, nObjects);
-
-    if (_children != nullptr)
-    {
-        _staticNode->_children    = new StaticOctree<OBJ, PREC>*[8];
-
-        for (int i=0; i<8; ++i)
-            _children[i]->rebuildAndSort(_staticNode->_children[i], _sortedObjects);
-    }
-}
-
-
-//MS VC++ wants this to be placed here:
-template <class OBJ, class PREC>
-const PREC StaticOctree<OBJ, PREC>::SQRT3 = (PREC) 1.732050807568877;
-
-
-template <class OBJ, class PREC>
-inline StaticOctree<OBJ, PREC>::StaticOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
-                                             const float         exclusionFactor,
-                                             OBJ*                _firstObject,
-                                             unsigned int        nObjects):
-    _children      (nullptr),
-    cellCenterPos  (cellCenterPos),
-    exclusionFactor(exclusionFactor),
-    _firstObject   (_firstObject),
-    nObjects       (nObjects)
-{
-}
-
-
-template <class OBJ, class PREC>
-inline StaticOctree<OBJ, PREC>::~StaticOctree()
-{
-    if (_children != nullptr)
-    {
-        for (int i = 0; i < 8; ++i)
-            delete _children[i];
-
-        delete[] _children;
-    }
-}
-
-
-template <class OBJ, class PREC>
-inline int StaticOctree<OBJ, PREC>::countChildren() const
-{
-    int count    = 0;
-
-    for (int i = 0; i < 8; ++i)
-        count    += _children != nullptr ? 1 + _children[i]->countChildren() : 0;
-
-    return count;
-}
-
-
-template <class OBJ, class PREC>
-inline int StaticOctree<OBJ, PREC>::countObjects() const
-{
-    int count    = nObjects;
-
-    if (_children != nullptr)
-        for (int i = 0; i < 8; ++i)
-            count    += _children[i]->countObjects();
-
-    return count;
-}
-
-
-template <class OBJ, class PREC>
-void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistics>& stats, unsigned int level)
-{
-    if (level >= stats.size())
-    {
-        while (level >= stats.size())
-        {
-            OctreeLevelStatistics levelStats;
-            levelStats.nodeCount = 0;
-            levelStats.objectCount = 0;
-            levelStats.size = 0.0;
-            stats.push_back(levelStats);
+            *sortedObjects = std::move(*obj);
+            ++sortedObjects;
         }
     }
 
-    stats[level].nodeCount++;
-    stats[level].objectCount += nObjects;
-    stats[level].size = 0.0;
+    auto nObjects = static_cast<std::uint32_t>(sortedObjects - firstObject);
+    auto staticNode = std::make_unique<StaticOctree<OBJ, PREC>>(m_cellCenterPos, m_exclusionFactor, firstObject, nObjects);
 
-    if (_children != nullptr)
+    if (m_children != nullptr)
     {
-        for (int i = 0; i < 8; i++)
-            _children[i]->computeStatistics(stats, level + 1);
+        staticNode->m_children = std::make_unique<typename StaticOctree<OBJ, PREC>::ChildrenType>();
+
+        for (int i = 0; i < 8; ++i)
+            (*staticNode->m_children)[i] = (*m_children)[i]->rebuildAndSort(sortedObjects);
     }
+
+    return staticNode;
 }

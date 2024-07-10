@@ -36,7 +36,7 @@ class DSODatabase
 {
  public:
     DSODatabase() = default;
-    ~DSODatabase();
+    ~DSODatabase() = default;
 
     DeepSkyObject* getDSO(const std::uint32_t) const;
     std::uint32_t size() const;
@@ -73,25 +73,23 @@ private:
     void buildOctree();
     void calcAvgAbsMag();
 
-    int              nDSOs{ 0 };
-    int              capacity{ 0 };
-    DeepSkyObject**  DSOs{ nullptr };
+    std::vector<std::unique_ptr<DeepSkyObject>> DSOs;
     std::unique_ptr<NameDatabase> namesDB;
-    DeepSkyObject**  catalogNumberIndex{ nullptr };
-    DSOOctree*       octreeRoot{ nullptr };
+    std::vector<std::uint32_t> catalogNumberIndex;
+    std::unique_ptr<DSOOctree> octreeRoot;
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
-    float            avgAbsMag{ 0.0f };
+    float avgAbsMag{ 0.0f };
 };
 
 inline DeepSkyObject*
 DSODatabase::getDSO(const std::uint32_t n) const
 {
-    return *(DSOs + n);
+    return DSOs[n].get();
 }
 
 inline std::uint32_t
 DSODatabase::size() const
 {
-    return nDSOs;
+    return static_cast<std::uint32_t>(DSOs.size());
 }
