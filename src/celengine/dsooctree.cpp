@@ -18,52 +18,6 @@
 namespace astro = celestia::astro;
 namespace numbers = celestia::numbers;
 
-// The octree node into which a dso is placed is dependent on two properties:
-// its obsPosition and its luminosity--the fainter the dso, the deeper the node
-// in which it will reside.  Each node stores an absolute magnitude; no child
-// of the node is allowed contain a dso brighter than this value, making it
-// possible to determine quickly whether or not to cull subtrees.
-
-template<>
-bool
-DynamicDSOOctree::exceedsBrightnessThreshold(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
-                                             float absMag)
-{
-    return dso->getAbsoluteMagnitude() <= absMag;
-}
-
-template<>
-bool
-DynamicDSOOctree::isStraddling(const Eigen::Vector3d& cellCenterPos,
-                               const std::unique_ptr<DeepSkyObject>& dso) //NOSONAR
-{
-    //checks if this dso's radius straddles child nodes
-    float dsoRadius    = dso->getBoundingSphereRadius();
-    return (dso->getPosition() - cellCenterPos).cwiseAbs().minCoeff() < dsoRadius;
-}
-
-template<>
-float
-DynamicDSOOctree::applyDecay(float excludingFactor)
-{
-    return excludingFactor + 0.5f;
-}
-
-template<>
-DynamicDSOOctree*
-DynamicDSOOctree::getChild(const std::unique_ptr<DeepSkyObject>& obj, //NOSONAR
-                           const PointType& cellCenterPos) const
-{
-    PointType objPos = obj->getPosition();
-
-    int child = 0;
-    child |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
-    child |= objPos.y() < cellCenterPos.y() ? 0 : YPos;
-    child |= objPos.z() < cellCenterPos.z() ? 0 : ZPos;
-
-    return (*m_children)[child].get();
-}
-
 // total specialization of the StaticOctree template process*() methods for DSOs:
 template<>
 void
