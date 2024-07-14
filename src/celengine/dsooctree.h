@@ -18,24 +18,8 @@
 #include "deepskyobj.h"
 #include "octree.h"
 
-using DynamicDSOOctree = DynamicOctree<std::unique_ptr<DeepSkyObject>, double>;
 using DSOOctree = StaticOctree<std::unique_ptr<DeepSkyObject>, double>;
 using DSOHandler = OctreeProcessor<std::unique_ptr<DeepSkyObject>, double>;
-
-template<>
-const inline std::uint32_t DynamicDSOOctree::SPLIT_THRESHOLD = 10;
-
-template<>
-bool DynamicDSOOctree::exceedsBrightnessThreshold(const std::unique_ptr<DeepSkyObject>&, float); //NOSONAR
-
-template<>
-bool DynamicDSOOctree::isStraddling(const Eigen::Vector3d&, const std::unique_ptr<DeepSkyObject>&); //NOSONAR
-
-template<>
-float DynamicDSOOctree::applyDecay(float);
-
-template<>
-DynamicDSOOctree* DynamicDSOOctree::getChild(const std::unique_ptr<DeepSkyObject>&, const PointType&) const; //NOSONAR
 
 template<>
 void DSOOctree::processVisibleObjects(DSOHandler&,

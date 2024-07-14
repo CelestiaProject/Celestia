@@ -33,52 +33,6 @@ constexpr float MAX_STAR_ORBIT_RADIUS = 1.0f;
 
 } // end unnamed namespace
 
-// The octree node into which a star is placed is dependent on two properties:
-// its obsPosition and its luminosity--the fainter the star, the deeper the node
-// in which it will reside.  Each node stores an absolute magnitude; no child
-// of the node is allowed contain a star brighter than this value, making it
-// possible to determine quickly whether or not to cull subtrees.
-template<>
-bool
-DynamicStarOctree::exceedsBrightnessThreshold(const Star& star, float absMag)
-{
-    return star.getAbsoluteMagnitude() <= absMag;
-}
-
-template<>
-bool
-DynamicStarOctree::isStraddling(const Eigen::Vector3f& cellCenterPos, const Star& star)
-{
-    //checks if this star's orbit straddles child nodes
-    float orbitalRadius    = star.getOrbitalRadius();
-    if (orbitalRadius == 0.0f)
-        return false;
-
-    Eigen::Vector3f starPos    = star.getPosition();
-    return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
-}
-
-template<>
-float
-DynamicStarOctree::applyDecay(float excludingFactor)
-{
-    return astro::lumToAbsMag(astro::absMagToLum(excludingFactor) / 4.0f);
-}
-
-template<>
-DynamicStarOctree*
-DynamicStarOctree::getChild(const Star& obj, const Eigen::Vector3f& cellCenterPos) const
-{
-    Eigen::Vector3f objPos = obj.getPosition();
-
-    int child = 0;
-    child |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
-    child |= objPos.y() < cellCenterPos.y() ? 0 : YPos;
-    child |= objPos.z() < cellCenterPos.z() ? 0 : ZPos;
-
-    return (*m_children)[child].get();
-}
-
 // total specialization of the StaticOctree template process*() methods for stars:
 template<>
 void
