@@ -1,0 +1,50 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "builtin-baseline": "f7423ee180c4b7f40d43402c2feb3859161ef625",
+    "dependencies": [
+        "boost-container",
+        "boost-smart-ptr",
+        "eigen3",
+        "fmt",
+        "freetype",
+        {
+            "name": "gettext",
+            "features": ["tools"]
+        },
+        "gperf",
+        "libepoxy",
+        "libjpeg-turbo",
+        "libpng",
+        "luajit"
+    ],
+    "features": {
+        "ffmpeg": {
+            "description": "FFMPEG support",
+            "dependencies": [
+                {
+                    "name": "ffmpeg",
+                    "default-features": false,
+                    "features": ["avcodec", "avformat", "gpl", "swscale", "x264"]
+                }
+            ]
+        },
+        "icu": {
+            "description": "Use separate ICU library",
+            "dependencies": ["icu"]
+        },
+        "qt": {
+            "description": "Qt front end",
+            "dependencies": [
+                {
+                    "name": "qtbase",
+                    "default-features": false,
+                    "features": ["opengl", "widgets", "freetype", "harfbuzz", "jpeg", "png"]
+                }
+            ]
+        },
+        "spice": {
+            "description": "SPICE orbits/rotations support",
+            "dependencies": ["cspice"]
+        }
+    }
+}

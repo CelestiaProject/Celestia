@@ -178,65 +178,102 @@ in /usr/local/share/celestia, but you may specify a new location with the
 following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 
-## Celestia Install instructions for Windows (MSVC)
+## Celestia install instructions for Windows (MSVC)
 
-Currently to build on Windows you need Visual Studio 2015 or later, CMake
-and vcpkg (*).
+You will need the following to build on Windows:
 
-Install required packages:
+* Visual Studio 2022 or Visual Studio Build Tools 2022
+* CMake (minimum version 3.19)
+* vcpkg (install instructions at https://github.com/Microsoft/vcpkg)
 
-```
-vcpkg --triplet=TRIPLET install --recurse boost-container boost-smart-ptr libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
-```
+In the following instructions, we assume that vcpkg has been installed to
+`C:\vcpkg` - this is not necessary but to avoid build issues, avoid installing
+it in locations where the full path contains spaces.
 
-Install optional packages:
+### Visual Studio Code
 
-```
-vcpkg --triplet=TRIPLET install --recurse qt5-base ffmpeg[x264] cspice libavif
-```
+Extensions:
 
-Replace TRIPLET with `x86-windows` to build 32-bit versions or `x64-windows`
-for 64-bit versions.
+* C/C++ (https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+* CMake Tools (https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
 
-Instead of `luajit` `lua` can be used.
+To build with Visual Studio Code, add the following `cmake.configureSettings`
+to the workspace `settings.json` file:
 
-Use `vcpkg list` to ensure that all packages have actually been installed.
-If not, try installing them one at a time.
-
-Configure and build 32-bit version:
-
-```
-md build32
-cd build32
-cmake -DCMAKE_GENERATOR_PLATFORM=Win32 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows ..
-cmake --build . --  /maxcpucount:N /nologo
+```json
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
+        "ENABLE_QT6": true
+    }
+}
 ```
 
-Configure and build 64-bit version:
+In order to run multiple build jobs in parallel for a faster build, it is also
+possible to set the `cmake.parallelJobs` setting.
 
+The above setup will build the Qt6 interface. Additional variables can be
+added to this section, see the section "Supported CMake parameters" below.
+
+Once the settings are in place, ensure that the CMake extension is set to
+build the "INSTALL" target, then run using "CMake: Build" from
+the command palette. On first run, this will automatically download and build
+the required dependencies: this may take a long time.
+
+Visual Studio Code defaults the `CMAKE_INSTALL_PREFIX` to the subdirectory
+`out\install` - this will contain the result in a layout enabling it to be
+run. Note that this does not include the content files, these have to be
+copied separately.
+
+### Command line
+
+In the below commands, replace `<INSTALL_DESTINATION>` with the full path to a
+directory where the output should be installed. Replace `<CPUCOUNT>` with the
+number of CPU cores to use during the build.
+
+For a 64-bit build:
+
+```bat
+mkdir build
+cd build
+cmake -DCMAKE_GENERATOR_PLATFORM=x64 ^
+      -DCMAKE_TOOLCHAIN_FILE=c:\vpckg\scripts\buildsystems\vcpkg.cmake ^
+      -DVCPKG_TARGET_TRIPLET=x64-windows ^
+      -DENABLE_QT6=ON ^
+      -DCMAKE_INSTALL_PREFIX=<INSTALL_DESTINATION> ^
+      ..
+
+cmake --build .
+
+cmake --install . --  /maxcpucount:<CPUCOUNT> /nologo
 ```
-md build64
-cd build64
-cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows ..
-cmake --build . --  /maxcpucount:N /nologo
+
+For a 32-bit build:
+
+```bat
+mkdir build
+cd build
+cmake -DCMAKE_GENERATOR_PLATFORM=Win32 ^
+      -DCMAKE_TOOLCHAIN_FILE=c:\vpckg\scripts\buildsystems\vcpkg.cmake ^
+      -DVCPKG_TARGET_TRIPLET=x86-windows ^
+      -DVCPKG_HOST_TRIPLET=x86-windows ^
+      -DENABLE_QT6=ON ^
+      -DCMAKE_INSTALL_PREFIX=<INSTALL_DESTINATION> ^
+      ..
+
+cmake --build . --  /maxcpucount:<CPUCOUNT> /nologo
+
+cmake --install .
 ```
 
-Instead of N in /maxcpucount pass the number of CPU cores you want to use during
-the build.
+On first run, this will automatically download and build the required
+dependencies: this may take a long time. If you have the Qt libraries
+installed from Qt's installer, you can pass `-DUSE_LOCAL_QT=ON` to avoid
+building Qt with vcpkg.
 
-This example assumes that `vcpkg` is installed into `c:/tools/vcpkg`. Update
-the path to `vcpkg.cmake` according to your installation.
-
-If you have Qt5 installed using official Qt installer, then pass parameter
-CMAKE_PREFIX_PATH to cmake call used to configure Celestia, e.g.
-
-```
-cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.10.1\msvc2015 ..
-```
-
-Not supported yet:
-- automatic installation using cmake
-- using Ninja instead of MSBuild
+Once this is done, the project files will end up in the
+`<INSTALL_DESTINATION>` directory. This does not process the content files:
+these will need to be manually copied to the destination.
 
 Notes:
  * vcpkg installation instructions are located on
@@ -351,29 +388,31 @@ the following option to cmake: `-DCMAKE_INSTALL_PREFIX=/another/path`.
 
 List of supported parameters (passed as `-DPARAMETER=VALUE`):
 
- Parameter            | TYPE | Default | Description
-----------------------| ------|---------|--------------------------------------
-| CMAKE_INSTALL_PREFIX | path | \*       | Prefix where to install Celestia
-| CMAKE_PREFIX_PATH    | path |         | Additional path to look for libraries
+ Parameter             | TYPE | Default   | Description
+-----------------------|------|-----------|--------------------------------------
+| CMAKE_INSTALL_PREFIX | path | \*        | Prefix where to install Celestia
+| CMAKE_PREFIX_PATH    | path |           | Additional path to look for libraries
 | LEGACY_OPENGL_LIBS   | bool | \*\*OFF   | Use OpenGL libraries not GLvnd
-| ENABLE_CELX          | bool | ON      | Enable Lua scripting support
-| ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
-| ENABLE_NLS           | bool | ON      | Enable interface translation
+| ENABLE_CELX          | bool | ON        | Enable Lua scripting support
+| ENABLE_SPICE         | bool | OFF       | Enable NAIF kernels support
+| ENABLE_NLS           | bool | ON        | Enable interface translation
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
-| ENABLE_QT5           | bool | ON      | Build Qt5 frontend
-| ENABLE_QT6           | bool | ON      | Build Qt6 frontend
-| ENABLE_SDL           | bool | OFF     | Build SDL frontend
-| ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
-| ENABLE_FFMPEG        | bool | OFF     | Support video capture using ffmpeg
-| ENABLE_LIBAVIF       | bool | OFF     | Support AVIF texture using libavif
-| ENABLE_MINIAUDIO     | bool | OFF     | Support audio playback using miniaudio
-| ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
-| ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
-| USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
-| USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
-| USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
-| USE_GLSL_STRUCTS     | bool | OFF     | Use structs in GLSL
-| USE_ICU              | bool | OFF     | Use ICU for UTF8 decoding for text rendering
+| ENABLE_QT5           | bool | \*\*OFF   | Build Qt5 frontend
+| ENABLE_QT6           | bool | OFF       | Build Qt6 frontend
+| ENABLE_SDL           | bool | OFF       | Build SDL frontend
+| ENABLE_WIN           | bool | \*\*\*OFF | Build Windows native frontend
+| ENABLE_FFMPEG        | bool | OFF       | Support video capture using ffmpeg
+| ENABLE_LIBAVIF       | bool | OFF       | Support AVIF texture using libavif
+| ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
+| ENABLE_TOOLS         | bool | OFF       | Build tools for Celestia data files
+| ENABLE_GLES          | bool | OFF       | Use OpenGL ES 2.0 in rendering code
+| USE_GTKGLEXT         | bool | ON        | Use libgtkglext1 in GTK2 frontend
+| USE_QT6              | bool | OFF       | Use Qt6 in Qt frontend
+| USE_GTK3             | bool | OFF       | Use Gtk3 instead of Gtk2 in GTK2 frontend
+| USE_GLSL_STRUCTS     | bool | OFF       | Use structs in GLSL
+| USE_ICU              | bool | OFF       | Use ICU for UTF8 decoding for text rendering
+| USE_WIN_ICU          | bool | \*\*\*OFF | Use built-in Windows ICU
+| USE_LOCAL_QT         | bool | \*\*\*OFF | Don't install Qt from vcpkg
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)

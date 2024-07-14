@@ -27,25 +27,6 @@ jobs:
         platform: [ x64, x86 ]
 
     steps:
-    - name: Update vcpkg
-      shell: pwsh
-      run: |
-        $vcpkgCommit = 'f7423ee180c4b7f40d43402c2feb3859161ef625'
-        pushd "$env:VCPKG_INSTALLATION_ROOT"
-        git cat-file -e "${vcpkgCommit}^{commit}" 2> $null
-        if (!$?) {
-          git pull
-        }
-        git -c advice.detachedHead=false checkout $vcpkgCommit
-        if (!$?) {
-          throw "Could not check out commit $vcpkgCommit"
-        }
-        ./bootstrap-vcpkg.bat
-        Get-ChildItem -Path 'triplets\*-windows*.cmake' | ForEach-Object {
-          Add-Content -Path $_ -Value 'set(VCPKG_BUILD_TYPE "release")'
-        }
-        popd
-
     - name: Setup NuGet Credentials
       shell: pwsh
       run: |
@@ -58,40 +39,6 @@ jobs:
           -Username 'CelestiaProject' `
           -Password '${{secrets.GITHUB_TOKEN}}'
 
-    - name: Install dependencies
-      shell: pwsh
-      run: |
-        $packages = @(
-          'boost-container',
-          'boost-smart-ptr',
-          'cspice',
-          'eigen3',
-          'ffmpeg[core,avcodec,avformat,gpl,swscale,x264]',
-          'fmt',
-          'freetype',
-          'gettext[tools]',
-          'gperf',
-          'libepoxy',
-          'libjpeg-turbo',
-          'libpng',
-          'luajit',
-          'qtbase[core,opengl,widgets,freetype,harfbuzz,jpeg,png]'
-        )
-
-        # We treat x86 builds as native, other builds keep host as x64-windows.
-        # Currently this is equivalent to the platform triplet, but this would
-        # differ if we enable arm64-windows builds in future
-
-        if ( '${{matrix.platform}}' -eq 'x86' ) {
-          $hostTriplet = 'x86-windows'
-        } else {
-          $hostTriplet = 'x64-windows'
-        }
-
-        vcpkg --triplet=${{matrix.platform}}-windows `
-              --host-triplet=$hostTriplet `
-              install --recurse @packages
-
     - name: Checkout source code
       uses: actions/checkout@v4
       with:
@@ -102,13 +49,17 @@ jobs:
       run: |
         if ( '${{matrix.platform}}' -eq 'x86' ) {
             $GeneratorPlatform = 'Win32'
+            $hostTriplet = 'x86-windows-release'
         } else {
             $GeneratorPlatform = '${{matrix.platform}}'
+            $hostTriplet = 'x64-windows-release'
         }
 
         cmake -B '${{github.workspace}}/build' `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
-            -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
+            -DVCPKG_OVERLAY_TRIPLETS="${{github.workspace}}/vcpkg-triplets" `
+            -DVCPKG_HOST_TRIPLET="$hostTriplet" `
+            -DVCPKG_TARGET_TRIPLET="$hostTriplet" `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
             -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
             -DENABLE_SPICE=ON     `
