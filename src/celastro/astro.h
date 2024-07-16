@@ -50,7 +50,7 @@ constexpr inline float SOLAR_POWER        = 3.828e26f; // W
 constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11f; // W / m^2
 
 // Auxiliary magnitude conversion factor
-constexpr inline float LN_MAG             = 5.0f / std::log(100.0f);
+constexpr inline float LN_MAG             = 1.0857362f; // 5/ln(100)
 
 // Lowest screen brightness of a point to render
 constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
