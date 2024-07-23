@@ -77,7 +77,7 @@ private:
     std::unique_ptr<Star[]>           stars; //NOSONAR
     std::unique_ptr<StarNameDatabase> namesDB;
     std::vector<std::uint32_t>        catalogNumberIndex;
-    StarOctree*                       octreeRoot;
+    std::unique_ptr<StarOctree>       octreeRoot;
 
     friend class StarDatabaseBuilder;
 };

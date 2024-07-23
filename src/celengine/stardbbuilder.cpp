@@ -38,6 +38,7 @@
 #include <celutil/tokenizer.h>
 #include "hash.h"
 #include "meshmanager.h"
+#include "octreebuilder.h"
 #include "parser.h"
 #include "stardb.h"
 #include "stellarclass.h"
@@ -51,7 +52,61 @@ namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
+using DynamicStarOctree = DynamicOctree<Star, float>;
+
 using util::GetLogger;
+
+// In testing, changing SPLIT_THRESHOLD from 100 to 50 nearly
+// doubled the number of nodes in the tree, but provided only between a
+// 0 to 5 percent frame rate improvement.
+template<>
+const inline std::uint32_t DynamicStarOctree::SPLIT_THRESHOLD = 75;
+
+// The octree node into which a star is placed is dependent on two properties:
+// its obsPosition and its luminosity--the fainter the star, the deeper the node
+// in which it will reside.  Each node stores an absolute magnitude; no child
+// of the node is allowed contain a star brighter than this value, making it
+// possible to determine quickly whether or not to cull subtrees.
+template<>
+bool
+DynamicStarOctree::exceedsBrightnessThreshold(const Star& star, float absMag)
+{
+    return star.getAbsoluteMagnitude() <= absMag;
+}
+
+template<>
+bool
+DynamicStarOctree::isStraddling(const Eigen::Vector3f& cellCenterPos, const Star& star)
+{
+    //checks if this star's orbit straddles child nodes
+    float orbitalRadius    = star.getOrbitalRadius();
+    if (orbitalRadius == 0.0f)
+        return false;
+
+    Eigen::Vector3f starPos    = star.getPosition();
+    return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
+}
+
+template<>
+float
+DynamicStarOctree::applyDecay(float excludingFactor)
+{
+    return astro::lumToAbsMag(astro::absMagToLum(excludingFactor) / 4.0f);
+}
+
+template<>
+DynamicStarOctree*
+DynamicStarOctree::getChild(const Star& obj, const Eigen::Vector3f& cellCenterPos) const
+{
+    Eigen::Vector3f objPos = obj.getPosition();
+
+    unsigned int child = 0U;
+    child |= objPos.x() < cellCenterPos.x() ? 0U : OctreeXPos;
+    child |= objPos.y() < cellCenterPos.y() ? 0U : OctreeYPos;
+    child |= objPos.z() < cellCenterPos.z() ? 0U : OctreeZPos;
+
+    return (*m_children)[child].get();
+}
 
 struct StarDatabaseBuilder::StcHeader
 {
@@ -1018,13 +1073,13 @@ StarDatabaseBuilder::buildOctree()
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
     auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
-    for (const Star& star : unsortedStars)
+    for (Star& star : unsortedStars)
         root->insertObject(star, StarDatabase::STAR_OCTREE_ROOT_SIZE);
 
     GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size());
+    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size()); //NOSONAR
     Star* firstStar = sortedStars.get();
-    root->rebuildAndSort(starDB->octreeRoot, firstStar);
+    starDB->octreeRoot = root->rebuildAndSort(firstStar);
 
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
                        firstStar - sortedStars.get(),

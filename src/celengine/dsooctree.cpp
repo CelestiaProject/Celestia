@@ -8,69 +8,22 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/dsooctree.h>
+#include "dsooctree.h"
 
-using namespace Eigen;
+#include <celastro/astro.h>
+#include <celcompat/numbers.h>
 
 namespace astro = celestia::astro;
-
-// The octree node into which a dso is placed is dependent on two properties:
-// its obsPosition and its luminosity--the fainter the dso, the deeper the node
-// in which it will reside.  Each node stores an absolute magnitude; no child
-// of the node is allowed contain a dso brighter than this value, making it
-// possible to determine quickly whether or not to cull subtrees.
-
-bool dsoAbsoluteMagnitudePredicate(DeepSkyObject* const & _dso, const float absMag)
-{
-    return _dso->getAbsoluteMagnitude() <= absMag;
-}
-
-
-bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* const & _dso, const float /*unused*/)
-{
-    //checks if this dso's radius straddles child nodes
-    float dsoRadius    = _dso->getBoundingSphereRadius();
-
-    return (_dso->getPosition() - cellCenterPos).cwiseAbs().minCoeff() < dsoRadius;
-}
-
-
-double dsoAbsoluteMagnitudeDecayFunction(const double excludingFactor)
-{
-    return excludingFactor + 0.5f;
-}
-
-
-template <>
-DynamicDSOOctree* DynamicDSOOctree::getChild(DeepSkyObject* const & _obj, const PointType& cellCenterPos)
-{
-    PointType objPos = _obj->getPosition();
-
-    int child = 0;
-    child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
-    child     |= objPos.y() < cellCenterPos.y() ? 0 : YPos;
-    child     |= objPos.z() < cellCenterPos.z() ? 0 : ZPos;
-
-    return _children[child];
-}
-
-
-template<> unsigned int DynamicDSOOctree::SPLIT_THRESHOLD = 10;
-template<> DynamicDSOOctree::LimitingFactorPredicate*
-           DynamicDSOOctree::limitingFactorPredicate = dsoAbsoluteMagnitudePredicate;
-template<> DynamicDSOOctree::StraddlingPredicate*
-           DynamicDSOOctree::straddlingPredicate = dsoStraddlesNodesPredicate;
-template<> DynamicDSOOctree::ExclusionFactorDecayFunction*
-           DynamicDSOOctree::decayFunction = dsoAbsoluteMagnitudeDecayFunction;
-
+namespace numbers = celestia::numbers;
 
 // total specialization of the StaticOctree template process*() methods for DSOs:
 template<>
-void DSOOctree::processVisibleObjects(DSOHandler&    processor,
-                                      const PointType& obsPosition,
-                                      const Hyperplane<double, 3>*  frustumPlanes,
-                                      float          limitingFactor,
-                                      double         scale) const
+void
+DSOOctree::processVisibleObjects(DSOHandler& processor,
+                                 const PointType& obsPosition,
+                                 const PlaneType* frustumPlanes,
+                                 float limitingFactor,
+                                 double scale) const
 {
     // See if this node lies within the view frustum
 
@@ -78,63 +31,61 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     // planes that define the infinite view frustum.
     for (unsigned int i = 0; i < 5; ++i)
     {
-        const Hyperplane<double, 3>& plane = frustumPlanes[i];
+        const PlaneType& plane = frustumPlanes[i];
 
         double r = scale * plane.normal().cwiseAbs().sum();
-        if (plane.signedDistance(cellCenterPos) < -r)
+        if (plane.signedDistance(m_cellCenterPos) < -r)
             return;
     }
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    double minDistance = (obsPosition - cellCenterPos).norm() - scale * DSOOctree::SQRT3;
+    double minDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3;
 
     // Process the objects in this node
     double dimmest = minDistance > 0.0 ? astro::appToAbsMag((double) limitingFactor, minDistance) : 1000.0;
 
-    for (unsigned int i=0; i<nObjects; ++i)
+    for (std::uint32_t i = 0; i < m_nObjects; ++i)
     {
-        DeepSkyObject* _obj = _firstObject[i];
-        float  absMag      = _obj->getAbsoluteMagnitude();
+        const auto& obj = m_firstObject[i];
+        float absMag = obj->getAbsoluteMagnitude();
         if (absMag < dimmest)
         {
-            double distance    = (obsPosition - _obj->getPosition()).norm() - _obj->getBoundingSphereRadius();
-            float appMag = (float) ((distance >= 32.6167) ? astro::absToAppMag((double) absMag, distance) : absMag);
+            double distance = (obsPosition - obj->getPosition()).norm() - obj->getBoundingSphereRadius();
+            auto appMag = static_cast<float>((distance >= 32.6167) ? astro::absToAppMag(static_cast<double>(absMag), distance) : absMag);
 
             if (appMag < limitingFactor)
-                processor.process(_obj, distance, absMag);
+                processor.process(obj, distance, absMag);
         }
     }
 
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
-    if (minDistance <= 0.0 || astro::absToAppMag((double) exclusionFactor, minDistance) <= limitingFactor)
+    if (m_children != nullptr &&
+        (minDistance <= 0.0 || astro::absToAppMag(static_cast<double>(m_exclusionFactor), minDistance) <= limitingFactor))
     {
         // Recurse into the child nodes
-        if (_children != nullptr)
+        for (int i = 0; i < 8; ++i)
         {
-            for (int i = 0; i < 8; ++i)
-            {
-                _children[i]->processVisibleObjects(processor,
+            (*m_children)[i]->processVisibleObjects(processor,
                                                     obsPosition,
                                                     frustumPlanes,
                                                     limitingFactor,
                                                     scale * 0.5f);
-            }
         }
     }
 }
 
-
 template<>
-void DSOOctree::processCloseObjects(DSOHandler&    processor,
-                                    const PointType& obsPosition,
-                                    double         boundingRadius,
-                                    double         scale) const
+void
+DSOOctree::processCloseObjects(DSOHandler& processor,
+                               const PointType& obsPosition,
+                               double boundingRadius,
+                               double scale) const
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    double nodeDistance    = (obsPosition - cellCenterPos).norm() - scale * DSOOctree::SQRT3;    //
+    double nodeDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3;
 
     if (nodeDistance > boundingRadius)
         return;
@@ -144,31 +95,30 @@ void DSOOctree::processCloseObjects(DSOHandler&    processor,
 
     // Compute distance squared to avoid having to sqrt for distance
     // comparison.
-    double radiusSquared    = boundingRadius * boundingRadius;    //
+    double radiusSquared = boundingRadius * boundingRadius;
 
     // Check all the objects in the node.
-    for (unsigned int i=0; i<nObjects; ++i)
+    for (std::uint32_t i = 0; i < m_nObjects; ++i)
     {
-        DeepSkyObject* _obj = _firstObject[i];        //
-
-        if ((obsPosition - _obj->getPosition()).squaredNorm() < radiusSquared)    //
+        const auto& obj = m_firstObject[i];
+        PointType offset = obsPosition - obj->getPosition();
+        if (offset.squaredNorm() < radiusSquared)
         {
-            float  absMag      = _obj->getAbsoluteMagnitude();
-            double distance    = (obsPosition - _obj->getPosition()).norm() - _obj->getBoundingSphereRadius();
-
-            processor.process(_obj, distance, absMag);
+            float  absMag   = obj->getAbsoluteMagnitude();
+            double distance = offset.norm() - obj->getBoundingSphereRadius();
+            processor.process(obj, distance, absMag);
         }
     }
 
     // Recurse into the child nodes
-    if (_children != nullptr)
+    if (m_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
         {
-            _children[i]->processCloseObjects(processor,
-                                              obsPosition,
-                                              boundingRadius,
-                                              scale * 0.5f);
+            (*m_children)[i]->processCloseObjects(processor,
+                                                  obsPosition,
+                                                  boundingRadius,
+                                                  scale * 0.5f);
         }
     }
 }

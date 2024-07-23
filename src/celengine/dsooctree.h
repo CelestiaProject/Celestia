@@ -10,10 +10,24 @@
 
 #pragma once
 
-#include <celengine/deepskyobj.h>
-#include <celengine/octree.h>
+#include <cstdint>
+#include <memory>
 
+#include "deepskyobj.h"
+#include "octree.h"
 
-using DynamicDSOOctree = DynamicOctree<DeepSkyObject*, double>;
-using DSOOctree = StaticOctree<DeepSkyObject*, double>;
-using DSOHandler = OctreeProcessor<DeepSkyObject*, double>;
+using DSOOctree = StaticOctree<std::unique_ptr<DeepSkyObject>, double>;
+using DSOHandler = OctreeProcessor<std::unique_ptr<DeepSkyObject>, double>;
+
+template<>
+void DSOOctree::processVisibleObjects(DSOHandler&,
+                                      const PointType&,
+                                      const PlaneType*,
+                                      float,
+                                      double) const;
+
+template<>
+void DSOOctree::processCloseObjects(DSOHandler&,
+                                    const PointType&,
+                                    double,
+                                    double) const;

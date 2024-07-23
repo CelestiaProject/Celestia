@@ -145,11 +145,7 @@ public:
     {
         if (m_blocks.empty())
             return 0;
-        // For power-of-two sizes we can use bitwise OR instead of addition
-        if constexpr ((BLOCKSIZE & (BLOCKSIZE - 1)) == 0)
-            return ((m_blocks.size() - 1) * BLOCKSIZE) | m_blocks.back()->size();
-        else
-            return ((m_blocks.size() - 1) * BLOCKSIZE) + m_blocks.back()->size();
+        return ((m_blocks.size() - 1) * BLOCKSIZE) + m_blocks.back()->size();
     }
 
     size_type max_size() const noexcept { return static_cast<size_type>(std::numeric_limits<difference_type>::max()); }

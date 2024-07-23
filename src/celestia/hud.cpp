@@ -262,15 +262,15 @@ angleToStr(double angle, const std::locale& loc)
     if (degrees > 0)
     {
         return fmt::format(loc, "{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
-                           degrees, abs(minutes), abs(seconds));
+                           degrees, std::abs(minutes), std::abs(seconds));
     }
 
     if (minutes > 0)
     {
-        return fmt::format(loc, "{:02d}' {:.1f}\"", abs(minutes), abs(seconds));
+        return fmt::format(loc, "{:02d}' {:.1f}\"", std::abs(minutes), std::abs(seconds));
     }
 
-    return fmt::format(loc, "{:.2f}\"", abs(seconds));
+    return fmt::format(loc, "{:.2f}\"", std::abs(seconds));
 }
 
 void
@@ -309,7 +309,7 @@ displayRightAscension(Overlay& overlay, double angle, const std::locale& loc)
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
     overlay.print(loc, _("RA: {}h {:02}m {:.1f}s\n"),
-                  hours, abs(minutes), abs(seconds));
+                  hours, std::abs(minutes), std::abs(seconds));
 }
 
 void

@@ -10,7 +10,6 @@ struct CustomRotationEntry { const char* name; CustomRotationModelType modelType
 "earth-p03lp",    CustomRotationModelType::EarthP03lp
 "iau-mercury",    CustomRotationModelType::IAUMercury
 "iau-venus",      CustomRotationModelType::IAUVenus
-"iau-earth",      CustomRotationModelType::IAUEarth
 "iau-mars",       CustomRotationModelType::IAUMars
 "iau-jupiter",    CustomRotationModelType::IAUJupiter
 "iau-saturn",     CustomRotationModelType::IAUSaturn

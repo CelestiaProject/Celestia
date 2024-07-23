@@ -10,20 +10,17 @@
 
 #pragma once
 
-#include <Eigen/Core>
+#include <cstdint>
+
 #include "octree.h"
 
 class Observer;
 class Renderer;
 
-template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
+template<class OBJ, class PREC>
+class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
 {
- public:
-    ObjectRenderer(PREC _distanceLimit) :
-        distanceLimit((float) _distanceLimit)
-    {
-    };
-
+public:
     const Observer* observer     { nullptr };
     Renderer*  renderer          { nullptr };
 
@@ -34,6 +31,12 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     // Objects with screen brightness higher than labelLowestIrradiation will be labeled
     float labelLowestIrradiation { 0.0f };
 
-    uint64_t renderFlags         { 0 };
+    std::uint64_t renderFlags    { 0 };
     int labelMode                { 0 };
+
+protected:
+    explicit ObjectRenderer(PREC _distanceLimit) :
+        distanceLimit(static_cast<float>(_distanceLimit))
+    {
+    }
 };

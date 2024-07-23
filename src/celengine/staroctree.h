@@ -12,10 +12,23 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <celengine/star.h>
 #include <celengine/octree.h>
 
+using StarOctree = StaticOctree<Star, float>;
+using StarHandler = OctreeProcessor<Star, float>;
 
-typedef DynamicOctree  <Star, float> DynamicStarOctree;
-typedef StaticOctree   <Star, float> StarOctree;
-typedef OctreeProcessor<Star, float> StarHandler;
+template<>
+void StarOctree::processVisibleObjects(StarHandler&,
+                                       const PointType&,
+                                       const PlaneType*,
+                                       float,
+                                       float) const;
+
+template<>
+void StarOctree::processCloseObjects(StarHandler&,
+                                     const PointType&,
+                                     float,
+                                     float) const;

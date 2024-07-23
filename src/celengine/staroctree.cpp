@@ -10,11 +10,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celengine/staroctree.h>
+#include "staroctree.h"
 
-using namespace Eigen;
+#include <celastro/astro.h>
+#include <celcompat/numbers.h>
 
 namespace astro = celestia::astro;
+namespace numbers = celestia::numbers;
+
+namespace
+{
 
 // Maximum permitted orbital radius for stars, in light years. Orbital
 // radii larger than this value are not guaranteed to give correct
@@ -24,74 +29,18 @@ namespace astro = celestia::astro;
 // star is very faint, this estimate may not work when the star is
 // far from the barycenter. Thus, the star octree traversal will always
 // render stars with orbits that are closer than MAX_STAR_ORBIT_RADIUS.
-static const float MAX_STAR_ORBIT_RADIUS = 1.0f;
+constexpr float MAX_STAR_ORBIT_RADIUS = 1.0f;
 
-
-// The octree node into which a star is placed is dependent on two properties:
-// its obsPosition and its luminosity--the fainter the star, the deeper the node
-// in which it will reside.  Each node stores an absolute magnitude; no child
-// of the node is allowed contain a star brighter than this value, making it
-// possible to determine quickly whether or not to cull subtrees.
-
-bool starAbsoluteMagnitudePredicate(const Star& star, const float absMag)
-{
-    return star.getAbsoluteMagnitude() <= absMag;
-}
-
-
-bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star& star, const float /*unused*/)
-{
-    //checks if this star's orbit straddles child nodes
-    float orbitalRadius    = star.getOrbitalRadius();
-    if (orbitalRadius == 0.0f)
-        return false;
-
-    Vector3f starPos    = star.getPosition();
-
-    return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
-}
-
-
-float starAbsoluteMagnitudeDecayFunction(const float excludingFactor)
-{
-    return astro::lumToAbsMag(astro::absMagToLum(excludingFactor) / 4.0f);
-}
-
-
-template<>
-DynamicStarOctree* DynamicStarOctree::getChild(const Star&          obj,
-                                               const Vector3f& cellCenterPos)
-{
-    Vector3f objPos    = obj.getPosition();
-
-    int child = 0;
-    child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
-    child     |= objPos.y() < cellCenterPos.y() ? 0 : YPos;
-    child     |= objPos.z() < cellCenterPos.z() ? 0 : ZPos;
-
-    return _children[child];
-}
-
-
-// In testing, changing SPLIT_THRESHOLD from 100 to 50 nearly
-// doubled the number of nodes in the tree, but provided only between a
-// 0 to 5 percent frame rate improvement.
-template<> unsigned int DynamicStarOctree::SPLIT_THRESHOLD = 75;
-template<> DynamicStarOctree::LimitingFactorPredicate*
-           DynamicStarOctree::limitingFactorPredicate = starAbsoluteMagnitudePredicate;
-template<> DynamicStarOctree::StraddlingPredicate*
-           DynamicStarOctree::straddlingPredicate = starOrbitStraddlesNodesPredicate;
-template<> DynamicStarOctree::ExclusionFactorDecayFunction*
-           DynamicStarOctree::decayFunction = starAbsoluteMagnitudeDecayFunction;
-
+} // end unnamed namespace
 
 // total specialization of the StaticOctree template process*() methods for stars:
 template<>
-void StarOctree::processVisibleObjects(StarHandler&    processor,
-                                       const Vector3f& obsPosition,
-                                       const Hyperplane<float, 3>*   frustumPlanes,
-                                       float           limitingFactor,
-                                       float           scale) const
+void
+StarOctree::processVisibleObjects(StarHandler&    processor,
+                                  const PointType& obsPosition,
+                                  const PlaneType* frustumPlanes,
+                                  float limitingFactor,
+                                  float scale) const
 {
     // See if this node lies within the view frustum
 
@@ -99,27 +48,26 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
     // planes that define the infinite view frustum.
     for (unsigned int i = 0; i < 5; ++i)
     {
-        const Hyperplane<float, 3>& plane = frustumPlanes[i];
+        const PlaneType& plane = frustumPlanes[i];
         float r = scale * plane.normal().cwiseAbs().sum();
-        if (plane.signedDistance(cellCenterPos) < -r)
+        if (plane.signedDistance(m_cellCenterPos) < -r)
             return;
     }
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (obsPosition - cellCenterPos).norm() - scale * StarOctree::SQRT3;
+    float minDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3_v<float>;
 
     // Process the objects in this node
     float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
 
-    for (unsigned int i=0; i<nObjects; ++i)
+    for (std::uint32_t i = 0; i < m_nObjects; ++i)
     {
-        const Star& obj = _firstObject[i];
-
+        const Star& obj = m_firstObject[i];
         if (obj.getAbsoluteMagnitude() < dimmest)
         {
-            float distance    = (obsPosition - obj.getPosition()).norm();
-            float appMag      = obj.getApparentMagnitude(distance);
+            float distance = (obsPosition - obj.getPosition()).norm();
+            float appMag   = obj.getApparentMagnitude(distance);
 
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
                 processor.process(obj, distance, appMag);
@@ -128,33 +76,31 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
 
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
-    if (minDistance <= 0 || astro::absToAppMag(exclusionFactor, minDistance) <= limitingFactor)
+    if (m_children != nullptr &&
+        (minDistance <= 0 || astro::absToAppMag(m_exclusionFactor, minDistance) <= limitingFactor))
     {
         // Recurse into the child nodes
-        if (_children != nullptr)
+        for (int i = 0; i < 8; ++i)
         {
-            for (int i=0; i<8; ++i)
-            {
-                _children[i]->processVisibleObjects(processor,
+            (*m_children)[i]->processVisibleObjects(processor,
                                                     obsPosition,
                                                     frustumPlanes,
                                                     limitingFactor,
                                                     scale * 0.5f);
-            }
         }
     }
 }
 
-
 template<>
-void StarOctree::processCloseObjects(StarHandler&    processor,
-                                     const Vector3f& obsPosition,
-                                     float           boundingRadius,
-                                     float           scale) const
+void
+StarOctree::processCloseObjects(StarHandler& processor,
+                                const PointType& obsPosition,
+                                float boundingRadius,
+                                float scale) const
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance    = (obsPosition - cellCenterPos).norm() - scale * StarOctree::SQRT3;
+    float nodeDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3_v<float>;
 
     if (nodeDistance > boundingRadius)
         return;
@@ -167,28 +113,28 @@ void StarOctree::processCloseObjects(StarHandler&    processor,
     float radiusSquared    = boundingRadius * boundingRadius;
 
     // Check all the objects in the node.
-    for (unsigned int i = 0; i < nObjects; ++i)
+    for (std::uint32_t i = 0; i < m_nObjects; ++i)
     {
-        Star& obj = _firstObject[i];
-
-        if ((obsPosition - obj.getPosition()).squaredNorm() < radiusSquared)
+        const Star& obj = m_firstObject[i];
+        PointType offset = obsPosition - obj.getPosition();
+        if (offset.squaredNorm() < radiusSquared)
         {
-            float distance    = (obsPosition - obj.getPosition()).norm();
-            float appMag      = obj.getApparentMagnitude(distance);
+            float distance = offset.norm();
+            float appMag   = obj.getApparentMagnitude(distance);
 
             processor.process(obj, distance, appMag);
         }
     }
 
     // Recurse into the child nodes
-    if (_children != nullptr)
+    if (m_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
         {
-            _children[i]->processCloseObjects(processor,
-                                              obsPosition,
-                                              boundingRadius,
-                                              scale * 0.5f);
+            (*m_children)[i]->processCloseObjects(processor,
+                                                  obsPosition,
+                                                  boundingRadius,
+                                                  scale * 0.5f);
         }
     }
 }
