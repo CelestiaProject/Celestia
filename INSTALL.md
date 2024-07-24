@@ -177,18 +177,17 @@ Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/celestia, but you may specify a new location with the
 following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
-
 ## Celestia install instructions for Windows (MSVC)
 
 You will need the following to build on Windows:
 
 * Visual Studio 2022 or Visual Studio Build Tools 2022
 * CMake (minimum version 3.19)
-* vcpkg (install instructions at https://github.com/Microsoft/vcpkg)
 
-In the following instructions, we assume that vcpkg has been installed to
-`C:\vcpkg` - this is not necessary but to avoid build issues, avoid installing
-it in locations where the full path contains spaces.
+These instructions make use of vcpkg, this is provided in the
+`thirdparty\vcpkg` in the workspace folder. To avoid build issues, it is
+recommended to avoid putting the workspace folder at a location containing
+spaces in the path.
 
 ### Visual Studio Code
 
@@ -203,7 +202,7 @@ to the workspace `settings.json` file:
 ```json
 {
     "cmake.configureSettings": {
-        "CMAKE_TOOLCHAIN_FILE": "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}\\thirdparty\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
         "ENABLE_QT6": true
     }
 }
@@ -237,7 +236,7 @@ For a 64-bit build:
 mkdir build
 cd build
 cmake -DCMAKE_GENERATOR_PLATFORM=x64 ^
-      -DCMAKE_TOOLCHAIN_FILE=c:\vpckg\scripts\buildsystems\vcpkg.cmake ^
+      -DCMAKE_TOOLCHAIN_FILE=..\thirdparty\vpckg\scripts\buildsystems\vcpkg.cmake ^
       -DVCPKG_TARGET_TRIPLET=x64-windows ^
       -DENABLE_QT6=ON ^
       -DCMAKE_INSTALL_PREFIX=<INSTALL_DESTINATION> ^
@@ -254,7 +253,7 @@ For a 32-bit build:
 mkdir build
 cd build
 cmake -DCMAKE_GENERATOR_PLATFORM=Win32 ^
-      -DCMAKE_TOOLCHAIN_FILE=c:\vpckg\scripts\buildsystems\vcpkg.cmake ^
+      -DCMAKE_TOOLCHAIN_FILE=..\thirdparty\vpckg\scripts\buildsystems\vcpkg.cmake ^
       -DVCPKG_TARGET_TRIPLET=x86-windows ^
       -DVCPKG_HOST_TRIPLET=x86-windows ^
       -DENABLE_QT6=ON ^
@@ -274,11 +273,6 @@ building Qt with vcpkg.
 Once this is done, the project files will end up in the
 `<INSTALL_DESTINATION>` directory. This does not process the content files:
 these will need to be manually copied to the destination.
-
-Notes:
- * vcpkg installation instructions are located on
-   https://github.com/Microsoft/vcpkg
-
 
 ## Celestia Install instructions for Windows (MINGW64), qt-only
 

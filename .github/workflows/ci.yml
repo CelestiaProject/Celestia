@@ -56,7 +56,7 @@ jobs:
         }
 
         cmake -B '${{github.workspace}}/build' `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DCMAKE_TOOLCHAIN_FILE="${{github.workspace}}/thirdparty/vcpkg/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_OVERLAY_TRIPLETS="${{github.workspace}}/vcpkg-triplets" `
             -DVCPKG_HOST_TRIPLET="$hostTriplet" `
             -DVCPKG_TARGET_TRIPLET="$hostTriplet" `
