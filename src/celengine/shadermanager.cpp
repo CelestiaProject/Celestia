@@ -2324,7 +2324,6 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     // Sum the contributions from each light source
     source += "vec3 color = vec3(0.0);\n";
-    source += "vec3 V = normalize(eyeDir);\n";
 
     // Only do scattering calculations for the primary light source
     // TODO: Eventually handle multiple light sources, and removed the 'min'

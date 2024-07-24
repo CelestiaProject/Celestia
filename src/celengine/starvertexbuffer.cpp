@@ -69,7 +69,7 @@ void StarVertexBuffer::render()
 
 void StarVertexBuffer::makeCurrent()
 {
-    if (current == this)
+    if (current == this || m_prog == nullptr)
         return;
 
     if (current != nullptr)
@@ -81,7 +81,7 @@ void StarVertexBuffer::makeCurrent()
     m_prog->setMVPMatrices(m_renderer.getCurrentProjectionMatrix(), m_renderer.getCurrentModelViewMatrix());
     int x, y, w, h;
     m_renderer.getViewport(&x, &y, &w, &h);
-    m_prog->vec2Param("viewportSize") = Eigen::Vector2f(w-x, h-y);
+    m_prog->vec2Param("viewportSize") = Eigen::Vector2f(w, h);
     if (m_pointSizeFromVertex)
     {
         m_prog->samplerParam("starTex") = 0;

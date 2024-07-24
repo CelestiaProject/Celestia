@@ -819,9 +819,10 @@ float Body::getLuminosity(const Star& sun,
 }
 
 
-// Computes the luminosity of a perfectly reflective disc.
-// The function translates luminosity into luminosity of the same units
-// (distanceFromSun and objRadius must also be in the same units).
+/*! Computes the luminosity of a perfectly reflective disc.
+ *  The function translates luminosity into luminosity of the same units
+ *  (distanceFromSun and objRadius must also be in the same units).
+ */
 float Body::getLuminosity(float sunLuminosity,
                           float distanceFromSun) const
 {
@@ -831,8 +832,9 @@ float Body::getLuminosity(float sunLuminosity,
 }
 
 
-// Get the apparent magnitude of the body, neglecting the phase
-// (as if the body was at opposition).
+/*! Get the apparent magnitude of the body, neglecting the phase (as if
+ *  the body was at opposition).
+ */
 float Body::getApparentMagnitude(const Star& sun,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -842,8 +844,9 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
-// Get the apparent magnitude of the body, neglecting the phase
-// (as if the body was at opposition).
+/*! Get the apparent magnitude of the body, neglecting the phase (as if
+ *  the body was at opposition).
+ */
 float Body::getApparentMagnitude(float sunLuminosity,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -853,7 +856,8 @@ float Body::getApparentMagnitude(float sunLuminosity,
 }
 
 
-// Get the apparent magnitude of the body, corrected for its phase
+/*! Get the apparent magnitude of the body, corrected for its phase
+ */
 float Body::getApparentMagnitude(const Star& sun,
                                  const Vector3d& sunPosition,
                                  const Vector3d& viewerPosition) const
@@ -864,7 +868,8 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
-// Get the apparent magnitude of the body, corrected for its phase
+/*! Get the apparent magnitude of the body, corrected for its phase
+ */
 float Body::getApparentMagnitude(float sunLuminosity,
                                  const Vector3d& sunPosition,
                                  const Vector3d& viewerPosition) const
@@ -878,8 +883,9 @@ float Body::getApparentMagnitude(float sunLuminosity,
 }
 
 
-// Get the irradiance of the body in Vega units, neglecting the phase
-// (as if the body was at opposition).
+/*! Get the irradiance of the body in Vega units, neglecting the phase
+ *  (as if the body was at opposition).
+ */
 float Body::getIrradiance(const Star& sun,
                           float distanceFromSun,
                           float distanceFromViewer) const
@@ -887,8 +893,9 @@ float Body::getIrradiance(const Star& sun,
     return getIrradiance(sun.getLuminosity(), distanceFromSun, distanceFromViewer);
 }
 
-// Get the irradiance of the body in Vega units, neglecting the phase
-// (as if the body was at opposition).
+/*! Get the irradiance of the body in Vega units, neglecting the phase
+ *  (as if the body was at opposition).
+ */
 float Body::getIrradiance(float sunLuminosity,
                           float distanceFromSun,
                           float distanceFromViewer) const
@@ -905,7 +912,8 @@ float Body::getIrradiance(float sunLuminosity,
 }
 
 
-// Get the irradiance of the body in Vega units, corrected for its phase
+/*! Get the irradiance of the body in Vega units, corrected for its phase
+ */
 float Body::getIrradiance(const Star& sun,
                           const Vector3d& sunPosition,
                           const Vector3d& viewerPosition) const
@@ -913,7 +921,8 @@ float Body::getIrradiance(const Star& sun,
     return getIrradiance(sun.getLuminosity(), sunPosition, viewerPosition);
 }
 
-// Get the irradiance of the body in Vega units, corrected for its phase
+/*! Get the irradiance of the body in Vega units, corrected for its phase
+ */
 float Body::getIrradiance(float sunLuminosity,
                           const Vector3d& sunPosition,
                           const Vector3d& viewerPosition) const

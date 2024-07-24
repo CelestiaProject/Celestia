@@ -1129,19 +1129,19 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '%':
         switch (renderer->getStarColorTable())
         {
-        case ColorTableType::Blackbody_D65:
+        case ColorTableType::VegaWhite:
             renderer->setStarColorTable(ColorTableType::Blackbody_D65);
             flash(_("Star color: Blackbody D65"));
             notifyWatchers(RenderFlagsChanged);
             break;
 
-        case ColorTableType::SunWhite:
+        case ColorTableType::Blackbody_D65:
             renderer->setStarColorTable(ColorTableType::SunWhite);
             flash(_("Star color: Blackbody (Solar Whitepoint)"));
             notifyWatchers(RenderFlagsChanged);
             break;
 
-        case ColorTableType::VegaWhite:
+        case ColorTableType::SunWhite:
             renderer->setStarColorTable(ColorTableType::VegaWhite);
             flash(_("Star color: Blackbody (Vega Whitepoint)"));
             notifyWatchers(RenderFlagsChanged);
