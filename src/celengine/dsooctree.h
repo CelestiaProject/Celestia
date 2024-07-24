@@ -18,6 +18,9 @@
 #include "deepskyobj.h"
 #include "octree.h"
 
+namespace celestia::engine
+{
+
 using DSOOctree = StaticOctree<std::unique_ptr<DeepSkyObject>, double>;
 using DSOHandler = OctreeProcessor<std::unique_ptr<DeepSkyObject>, double>;
 
@@ -33,3 +36,5 @@ void DSOOctree::processCloseObjects(DSOHandler&,
                                     const PointType&,
                                     double,
                                     double) const;
+
+} // end namespace celestia::engine

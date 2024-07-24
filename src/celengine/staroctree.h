@@ -17,6 +17,9 @@
 #include <celengine/star.h>
 #include <celengine/octree.h>
 
+namespace celestia::engine
+{
+
 using StarOctree = StaticOctree<Star, float>;
 using StarHandler = OctreeProcessor<Star, float>;
 
@@ -32,3 +35,5 @@ void StarOctree::processCloseObjects(StarHandler&,
                                      const PointType&,
                                      float,
                                      float) const;
+
+} // end namespace celestia::engine

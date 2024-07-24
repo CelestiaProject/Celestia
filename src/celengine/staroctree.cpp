@@ -15,8 +15,8 @@
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
 
-namespace astro = celestia::astro;
-namespace numbers = celestia::numbers;
+namespace celestia::engine
+{
 
 namespace
 {
@@ -138,3 +138,5 @@ StarOctree::processCloseObjects(StarHandler& processor,
         }
     }
 }
+
+} // end namespace celestia::engine

@@ -52,7 +52,7 @@ namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
-using DynamicStarOctree = DynamicOctree<Star, float>;
+using DynamicStarOctree = engine::DynamicOctree<Star, float>;
 
 using util::GetLogger;
 
