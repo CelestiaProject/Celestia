@@ -19,12 +19,14 @@
 #include <celutil/logger.h>
 #include "name.h"
 
+namespace engine = celestia::engine;
+
 using celestia::util::GetLogger;
 
 DSODatabase::~DSODatabase() = default;
 
 DSODatabase::DSODatabase(std::vector<std::unique_ptr<DeepSkyObject>>&& DSOs,
-                         std::unique_ptr<DSOOctree>&& octreeRoot,
+                         std::unique_ptr<engine::DSOOctree>&& octreeRoot,
                          std::unique_ptr<NameDatabase>&& namesDB,
                          std::vector<std::uint32_t>&& catalogNumberIndex,
                          float avgAbsMag) :
@@ -116,7 +118,7 @@ DSODatabase::getDSONameList(const DeepSkyObject* dso, const unsigned int maxName
 }
 
 void
-DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
+DSODatabase::findVisibleDSOs(engine::DSOHandler& dsoHandler,
                              const Eigen::Vector3d& obsPos,
                              const Eigen::Quaternionf& obsOrient,
                              float fovY,
@@ -152,7 +154,7 @@ DSODatabase::findVisibleDSOs(DSOHandler& dsoHandler,
 }
 
 void
-DSODatabase::findCloseDSOs(DSOHandler& dsoHandler,
+DSODatabase::findCloseDSOs(engine::DSOHandler& dsoHandler,
                            const Eigen::Vector3d& obsPos,
                            float radius) const
 {

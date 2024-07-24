@@ -37,7 +37,7 @@ class DSODatabase
 {
 public:
     DSODatabase(std::vector<std::unique_ptr<DeepSkyObject>>&&,
-                std::unique_ptr<DSOOctree>&&,
+                std::unique_ptr<celestia::engine::DSOOctree>&&,
                 std::unique_ptr<NameDatabase>&&,
                 std::vector<std::uint32_t>&&,
                 float);
@@ -52,14 +52,14 @@ public:
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
-    void findVisibleDSOs(DSOHandler& dsoHandler,
+    void findVisibleDSOs(celestia::engine::DSOHandler& dsoHandler,
                          const Eigen::Vector3d& obsPosition,
                          const Eigen::Quaternionf& obsOrientation,
                          float fovY,
                          float aspectRatio,
                          float limitingMag) const;
 
-    void findCloseDSOs(DSOHandler& dsoHandler,
+    void findCloseDSOs(celestia::engine::DSOHandler& dsoHandler,
                        const Eigen::Vector3d& obsPosition,
                        float radius) const;
 
@@ -70,7 +70,7 @@ public:
 
 private:
     std::vector<std::unique_ptr<DeepSkyObject>> m_DSOs;
-    std::unique_ptr<DSOOctree> m_octreeRoot;
+    std::unique_ptr<celestia::engine::DSOOctree> m_octreeRoot;
     std::unique_ptr<NameDatabase> m_namesDB;
     std::vector<std::uint32_t> m_catalogNumberIndex;
 

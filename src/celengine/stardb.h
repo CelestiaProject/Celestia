@@ -54,14 +54,14 @@ public:
 
     void getCompletion(std::vector<std::string>&, std::string_view) const;
 
-    void findVisibleStars(StarHandler& starHandler,
+    void findVisibleStars(celestia::engine::StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,
                           const Eigen::Quaternionf& obsOrientation,
                           float fovY,
                           float aspectRatio,
                           float limitingMag) const;
 
-    void findCloseStars(StarHandler& starHandler,
+    void findCloseStars(celestia::engine::StarHandler& starHandler,
                         const Eigen::Vector3f& obsPosition,
                         float radius) const;
 
@@ -74,10 +74,10 @@ private:
     Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
     std::uint32_t nStars{ 0 };
-    std::unique_ptr<Star[]>           stars; //NOSONAR
-    std::unique_ptr<StarNameDatabase> namesDB;
-    std::vector<std::uint32_t>        catalogNumberIndex;
-    std::unique_ptr<StarOctree>       octreeRoot;
+    std::unique_ptr<Star[]>                       stars; //NOSONAR
+    std::unique_ptr<StarNameDatabase>             namesDB;
+    std::vector<std::uint32_t>                    catalogNumberIndex;
+    std::unique_ptr<celestia::engine::StarOctree> octreeRoot;
 
     friend class StarDatabaseBuilder;
 };

@@ -39,8 +39,9 @@
 #include "value.h"
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 
-using DynamicDSOOctree = DynamicOctree<std::unique_ptr<DeepSkyObject>, double>;
+using DynamicDSOOctree = engine::DynamicOctree<std::unique_ptr<DeepSkyObject>, double>;
 
 using celestia::util::GetLogger;
 
@@ -156,7 +157,7 @@ addName(NameDatabase* namesDB, AstroCatalog::IndexNumber objCatalogNumber, std::
     }
 }
 
-std::unique_ptr<DSOOctree>
+std::unique_ptr<engine::DSOOctree>
 buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>& DSOs)
 {
     GetLogger()->debug("Sorting DSOs into octree . . .\n");

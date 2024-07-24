@@ -19,6 +19,9 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+namespace celestia::engine
+{
+
 // The StaticOctree template arguments are:
 // OBJ:  object hanging from the node,
 // PREC: floating point precision of the culling operations at node level.
@@ -128,3 +131,5 @@ StaticOctree<OBJ, PREC>::countObjects() const
 
     return count;
 }
+
+} // end namespace celestia::engine

@@ -24,6 +24,9 @@
 
 #include "octree.h"
 
+namespace celestia::engine
+{
+
 constexpr inline unsigned int OctreeXPos = 1;
 constexpr inline unsigned int OctreeYPos = 2;
 constexpr inline unsigned int OctreeZPos = 4;
@@ -196,3 +199,5 @@ DynamicOctree<OBJ, PREC>::rebuildAndSort(OBJ*& sortedObjects)
 
     return staticNode;
 }
+
+} // end namespace celestia::engine

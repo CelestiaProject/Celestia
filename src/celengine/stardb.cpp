@@ -21,6 +21,7 @@
 using namespace std::string_view_literals;
 
 namespace compat = celestia::compat;
+namespace engine = celestia::engine;
 
 namespace
 {
@@ -197,7 +198,7 @@ StarDatabase::getStarNameList(const Star& star, unsigned int maxNames) const
 }
 
 void
-StarDatabase::findVisibleStars(StarHandler& starHandler,
+StarDatabase::findVisibleStars(engine::StarHandler& starHandler,
                                const Eigen::Vector3f& position,
                                const Eigen::Quaternionf& orientation,
                                float fovY,
@@ -232,7 +233,7 @@ StarDatabase::findVisibleStars(StarHandler& starHandler,
 }
 
 void
-StarDatabase::findCloseStars(StarHandler& starHandler,
+StarDatabase::findCloseStars(engine::StarHandler& starHandler,
                              const Eigen::Vector3f& position,
                              float radius) const
 {

@@ -15,8 +15,8 @@
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
 
-namespace astro = celestia::astro;
-namespace numbers = celestia::numbers;
+namespace celestia::engine
+{
 
 // total specialization of the StaticOctree template process*() methods for DSOs:
 template<>
@@ -124,3 +124,5 @@ DSOOctree::processCloseObjects(DSOHandler& processor,
         }
     }
 }
+
+} // end namespace celestia::engine

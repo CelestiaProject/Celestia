@@ -18,7 +18,7 @@ class Observer;
 class Renderer;
 
 template<class OBJ, class PREC>
-class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
+class ObjectRenderer : public celestia::engine::OctreeProcessor<OBJ, PREC>
 {
 public:
     const Observer* observer    { nullptr };
