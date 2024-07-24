@@ -31,12 +31,12 @@ enum class SelectionType
 
 class Selection
 {
- public:
+public:
     Selection() = default;
-    Selection(Star* star) : type(SelectionType::Star), obj(star) { checkNull(); };
-    Selection(Body* body) : type(SelectionType::Body), obj(body) { checkNull(); };
-    Selection(DeepSkyObject* deepsky) : type(SelectionType::DeepSky), obj(deepsky) {checkNull(); };
-    Selection(Location* location) : type(SelectionType::Location), obj(location) { checkNull(); };
+    Selection(Star* star) : type(SelectionType::Star), obj(star) { checkNull(); }
+    Selection(Body* body) : type(SelectionType::Body), obj(body) { checkNull(); }
+    Selection(DeepSkyObject* deepsky) : type(SelectionType::DeepSky), obj(deepsky) {checkNull(); }
+    Selection(Location* location) : type(SelectionType::Location), obj(location) { checkNull(); }
     ~Selection() = default;
 
     Selection(const Selection&) = default;
@@ -74,7 +74,7 @@ class Selection
 
     inline SelectionType getType() const { return type; }
 
- private:
+private:
     SelectionType type { SelectionType::None };
     void* obj { nullptr };
 
@@ -84,7 +84,6 @@ class Selection
     friend bool operator!=(const Selection& s0, const Selection& s1);
     friend struct std::hash<Selection>;
 };
-
 
 inline bool operator==(const Selection& s0, const Selection& s1)
 {
