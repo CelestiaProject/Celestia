@@ -73,8 +73,6 @@ public:
 private:
     Star* searchCrossIndex(StarCatalog, AstroCatalog::IndexNumber number) const;
 
-    std::uint32_t nStars{ 0 };
-    std::unique_ptr<Star[]>                       stars; //NOSONAR
     std::unique_ptr<StarNameDatabase>             namesDB;
     std::vector<std::uint32_t>                    catalogNumberIndex;
     std::unique_ptr<celestia::engine::StarOctree> octreeRoot;
@@ -85,11 +83,11 @@ private:
 inline Star*
 StarDatabase::getStar(const std::uint32_t n) const
 {
-    return stars.get() + n;
+    return &(*octreeRoot)[n];
 }
 
 inline std::uint32_t
 StarDatabase::size() const
 {
-    return nStars;
+    return octreeRoot->size();
 }

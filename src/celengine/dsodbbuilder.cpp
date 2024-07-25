@@ -55,11 +55,10 @@ const inline std::uint32_t DynamicDSOOctree::SPLIT_THRESHOLD = 10;
 // possible to determine quickly whether or not to cull subtrees.
 
 template<>
-bool
-DynamicDSOOctree::exceedsBrightnessThreshold(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
-                                             float absMag)
+float
+DynamicDSOOctree::getMagnitude(const std::unique_ptr<DeepSkyObject>& dso) //NOSONAR
 {
-    return dso->getAbsoluteMagnitude() <= absMag;
+    return dso->getAbsoluteMagnitude();
 }
 
 template<>
@@ -80,9 +79,9 @@ DynamicDSOOctree::applyDecay(float excludingFactor)
 }
 
 template<>
-DynamicDSOOctree*
-DynamicDSOOctree::getChild(const std::unique_ptr<DeepSkyObject>& obj, //NOSONAR
-                           const PointType& cellCenterPos) const
+unsigned int
+DynamicDSOOctree::getChildIndex(const std::unique_ptr<DeepSkyObject>& obj, //NOSONAR
+                                const PointType& cellCenterPos)
 {
     PointType objPos = obj->getPosition();
 
@@ -91,7 +90,7 @@ DynamicDSOOctree::getChild(const std::unique_ptr<DeepSkyObject>& obj, //NOSONAR
     child |= objPos.y() < cellCenterPos.y() ? 0U : OctreeYPos;
     child |= objPos.z() < cellCenterPos.z() ? 0U : OctreeZPos;
 
-    return (*m_children)[child].get();
+    return child;
 }
 
 namespace
@@ -114,13 +113,13 @@ createDSO(std::string_view objType)
 }
 
 float
-calcAvgAbsMag(const std::vector<std::unique_ptr<DeepSkyObject>>& DSOs)
+calcAvgAbsMag(const engine::DSOOctree& DSOs)
 {
     auto nDSOeff = DSOs.size();
     float avgAbsMag = 0.0f;
-    for (const auto& dso : DSOs)
+    for (engine::OctreeObjectIndex i = 0, end = nDSOeff; i < end; ++i)
     {
-        float DSOmag = dso->getAbsoluteMagnitude();
+        float DSOmag = DSOs[i]->getAbsoluteMagnitude();
 
         // take only DSO's with realistic AbsMag entry
         // (> DSO_DEFAULT_ABS_MAGNITUDE) into account
@@ -163,31 +162,28 @@ buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>& DSOs)
     GetLogger()->debug("Sorting DSOs into octree . . .\n");
     float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
 
+    auto dsoCount = static_cast<engine::OctreeObjectIndex>(DSOs.size());
+
     auto root = std::make_unique<DynamicDSOOctree>(Eigen::Vector3d::Zero(), absMag);
     for (auto& dso : DSOs)
         root->insertObject(dso, DSO_OCTREE_ROOT_SIZE);
 
     GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
-    std::vector<std::unique_ptr<DeepSkyObject>> sortedDSOs;
-    sortedDSOs.resize(DSOs.size());
-    std::unique_ptr<DeepSkyObject>* firstDSO = sortedDSOs.data();
 
     // The spatial sorting part is useless for DSOs since we
     // are storing pointers to objects and not the objects themselves:
-    auto octreeRoot = root->rebuildAndSort(firstDSO);
+    auto octreeRoot = root->rebuildAndSort(DSO_OCTREE_ROOT_SIZE, dsoCount);
 
     GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
-                       firstDSO - sortedDSOs.data(),
-                       UINT32_C(1) + octreeRoot->countChildren(),
-                       octreeRoot->countObjects());
-
-    DSOs = std::move(sortedDSOs);
+                       dsoCount,
+                       octreeRoot->nodeCount(),
+                       octreeRoot->size());
 
     return octreeRoot;
 }
 
 std::vector<std::uint32_t>
-buildCatalogNumberIndex(const std::vector<std::unique_ptr<DeepSkyObject>>& DSOs)
+buildCatalogNumberIndex(const engine::DSOOctree& DSOs)
 {
     GetLogger()->debug("Building catalog number indexes . . .\n");
 
@@ -285,13 +281,12 @@ std::unique_ptr<DSODatabase>
 DSODatabaseBuilder::finish()
 {
     auto octreeRoot = buildOctree(DSOs);
-    auto catalogNumberIndex = buildCatalogNumberIndex(DSOs);
-    float avgAbsMag = calcAvgAbsMag(DSOs);
+    auto catalogNumberIndex = buildCatalogNumberIndex(*octreeRoot);
+    float avgAbsMag = calcAvgAbsMag(*octreeRoot);
 
     GetLogger()->info(_("Loaded {} deep space objects\n"), DSOs.size());
 
-    return std::make_unique<DSODatabase>(std::move(DSOs),
-                                         std::move(octreeRoot),
+    return std::make_unique<DSODatabase>(std::move(octreeRoot),
                                          std::move(namesDB),
                                          std::move(catalogNumberIndex),
                                          avgAbsMag);
