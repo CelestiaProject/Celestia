@@ -68,10 +68,10 @@ const inline std::uint32_t DynamicStarOctree::SPLIT_THRESHOLD = 75;
 // of the node is allowed contain a star brighter than this value, making it
 // possible to determine quickly whether or not to cull subtrees.
 template<>
-bool
-DynamicStarOctree::exceedsBrightnessThreshold(const Star& star, float absMag)
+float
+DynamicStarOctree::getMagnitude(const Star& star)
 {
-    return star.getAbsoluteMagnitude() <= absMag;
+    return star.getAbsoluteMagnitude();
 }
 
 template<>
@@ -95,8 +95,8 @@ DynamicStarOctree::applyDecay(float excludingFactor)
 }
 
 template<>
-DynamicStarOctree*
-DynamicStarOctree::getChild(const Star& obj, const Eigen::Vector3f& cellCenterPos) const
+unsigned int
+DynamicStarOctree::getChildIndex(const Star& obj, const Eigen::Vector3f& cellCenterPos)
 {
     Eigen::Vector3f objPos = obj.getPosition();
 
@@ -105,7 +105,7 @@ DynamicStarOctree::getChild(const Star& obj, const Eigen::Vector3f& cellCenterPo
     child |= objPos.y() < cellCenterPos.y() ? 0U : OctreeYPos;
     child |= objPos.z() < cellCenterPos.z() ? 0U : OctreeZPos;
 
-    return (*m_children)[child].get();
+    return child;
 }
 
 struct StarDatabaseBuilder::StcHeader
@@ -1073,20 +1073,19 @@ StarDatabaseBuilder::buildOctree()
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
     auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
+
+    auto starCount = static_cast<engine::OctreeObjectIndex>(unsortedStars.size());
     for (Star& star : unsortedStars)
         root->insertObject(star, StarDatabase::STAR_OCTREE_ROOT_SIZE);
 
     GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size()); //NOSONAR
-    Star* firstStar = sortedStars.get();
-    starDB->octreeRoot = root->rebuildAndSort(firstStar);
+    starDB->octreeRoot = root->rebuildAndSort(StarDatabase::STAR_OCTREE_ROOT_SIZE, starCount);
 
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
-                       firstStar - sortedStars.get(),
-                       1 + starDB->octreeRoot->countChildren(), starDB->octreeRoot->countObjects());
+                       starCount,
+                       starDB->octreeRoot->nodeCount(),
+                       starDB->octreeRoot->size());
 
-    starDB->nStars = static_cast<std::uint32_t>(unsortedStars.size());
-    starDB->stars = std::move(sortedStars);
     unsortedStars.clear();
 }
 
@@ -1098,15 +1097,17 @@ StarDatabaseBuilder::buildIndexes()
 
     GetLogger()->info("Building catalog number indexes . . .\n");
 
+    auto nStars = starDB->octreeRoot->size();
+
     starDB->catalogNumberIndex.clear();
-    starDB->catalogNumberIndex.reserve(starDB->nStars);
-    for (std::uint32_t i = 0; i < starDB->nStars; ++i)
+    starDB->catalogNumberIndex.reserve(nStars);
+    for (std::uint32_t i = 0; i < nStars; ++i)
         starDB->catalogNumberIndex.push_back(i);
 
-    const Star* stars = starDB->stars.get();
+    const auto& octreeRoot = *starDB->octreeRoot;
     std::sort(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),
-              [stars](std::uint32_t idx0, std::uint32_t idx1)
+              [&octreeRoot](std::uint32_t idx0, std::uint32_t idx1)
               {
-                  return stars[idx0].getIndex() < stars[idx1].getIndex();
+                  return octreeRoot[idx0].getIndex() < octreeRoot[idx1].getIndex();
               });
 }

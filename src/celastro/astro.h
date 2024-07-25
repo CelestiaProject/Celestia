@@ -76,10 +76,18 @@ float appMagToLum(float mag, float lyrs);
 
 template<class T>
 CELESTIA_CMATH_CONSTEXPR T
+distanceModulus(T lyrs)
+{
+    using std::log10;
+    return T(5) * log10(lyrs / LY_PER_PARSEC<T>) - T(5);
+}
+
+template<class T>
+CELESTIA_CMATH_CONSTEXPR T
 absToAppMag(T absMag, T lyrs)
 {
     using std::log10;
-    return absMag - T(5) + T(5) * log10(lyrs / LY_PER_PARSEC<T>);
+    return absMag + distanceModulus(lyrs);
 }
 
 template<class T>
@@ -87,7 +95,7 @@ CELESTIA_CMATH_CONSTEXPR T
 appToAbsMag(T appMag, T lyrs)
 {
     using std::log10;
-    return appMag + T(5) - T(5) * log10(lyrs / LY_PER_PARSEC<T>);
+    return appMag - distanceModulus(lyrs);
 }
 
 // Distance conversions

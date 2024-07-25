@@ -15,19 +15,46 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include <Eigen/Core>
-#include <Eigen/Geometry>
 
 namespace celestia::engine
 {
 
-// The StaticOctree template arguments are:
-// OBJ:  object hanging from the node,
-// PREC: floating point precision of the culling operations at node level.
-// The hierarchy of octree nodes is built using a single precision value (excludingFactor), which relates to an
-// OBJ's limiting property defined by the octree particular specialization: ie. we use [absolute magnitude] for star octrees, etc.
-// For details, see notes below.
+using OctreeNodeIndex = std::uint32_t;
+using OctreeObjectIndex = std::uint32_t;
+
+constexpr inline OctreeNodeIndex InvalidOctreeNode = UINT32_MAX;
+
+namespace detail
+{
+
+template<class PREC>
+struct StaticOctreeNode
+{
+    using PointType = Eigen::Matrix<PREC, 3, 1>;
+
+    StaticOctreeNode(const PointType&, PREC);
+
+    PointType center;
+    PREC scale;
+    OctreeNodeIndex right{ InvalidOctreeNode };
+    OctreeObjectIndex first{ 0 };
+    OctreeObjectIndex last{ 0 };
+    float brightFactor{ 1000.0 };
+};
+
+template<class PREC>
+StaticOctreeNode<PREC>::StaticOctreeNode(const PointType& _center,
+                                         PREC _scale) :
+    center(_center),
+    scale(_scale)
+{
+}
+
+} // end namespace celestia::engine::detail
 
 template <class OBJ, class PREC>
 class OctreeProcessor
@@ -43,93 +70,96 @@ protected:
 template<class OBJ, class PREC>
 class DynamicOctree;
 
+// The StaticOctree template arguments are:
+// OBJ:  object hanging from the node,
+// PREC: floating point precision of the culling operations at node level.
+// The hierarchy of octree nodes is built using a single precision value (excludingFactor), which relates to an
+// OBJ's limiting property defined by the octree particular specialization: ie. we use [absolute magnitude] for star octrees, etc.
+// For details, see notes below.
+
 template<class OBJ, class PREC>
 class StaticOctree
 {
 public:
     using PointType = Eigen::Matrix<PREC, 3, 1>;
-    using PlaneType = Eigen::Hyperplane<PREC, 3>;
 
-    StaticOctree(const PointType& cellCenterPos,
-                 const float      exclusionFactor,
-                 OBJ*             _firstObject,
-                 std::uint32_t    nObjects);
+    StaticOctree() = default;
+    ~StaticOctree() = default;
 
-    // These methods are only declared at the template level; we'll implement them as
-    // full specializations, allowing for different traversal strategies depending on the
-    // object type and nature.
+    StaticOctree(const StaticOctree&) = delete;
+    StaticOctree& operator=(const StaticOctree&) = delete;
+    StaticOctree(StaticOctree&&) noexcept = default;
+    StaticOctree& operator=(StaticOctree&&) noexcept = default;
 
-    // This method searches the octree for objects that are likely to be visible
-    // to a viewer with the specified obsPosition and limitingFactor.  The
-    // octreeProcessor is invoked for each potentially visible object --no object with
-    // a property greater than limitingFactor will be processed, but
-    // objects that are outside the view frustum may be.  Frustum tests are performed
-    // only at the node level to optimize the octree traversal, so an exact test
-    // (if one is required) is the responsibility of the callback method.
-    void processVisibleObjects(OctreeProcessor<OBJ, PREC>& processor,
-                               const PointType&            obsPosition,
-                               const PlaneType*            frustumPlanes,
-                               float                       limitingFactor,
-                               PREC                        scale) const;
+    template<typename PROCESSOR>
+    void processDepthFirst(PROCESSOR&) const;
 
-    void processCloseObjects(OctreeProcessor<OBJ, PREC>& processor,
-                             const PointType&            obsPosition,
-                             PREC                        boundingRadius,
-                             PREC                        scale) const;
+    OctreeObjectIndex size() const;
+    OctreeNodeIndex nodeCount() const;
 
-    std::uint32_t countChildren() const;
-    std::uint32_t countObjects()  const;
+    OBJ& operator[](OctreeObjectIndex);
+    const OBJ& operator[](OctreeObjectIndex) const;
 
 private:
-    using ChildrenType = std::array<std::unique_ptr<StaticOctree>, 8>;
+    using NodeType = detail::StaticOctreeNode<PREC>;
 
-    std::unique_ptr<ChildrenType> m_children;
-    PointType m_cellCenterPos;
-    float m_exclusionFactor;
-    std::uint32_t m_nObjects;
-    OBJ* m_firstObject;
+    std::vector<NodeType> m_nodes;
+    std::vector<OBJ> m_objects;
 
     friend class DynamicOctree<OBJ, PREC>;
 };
 
 template<class OBJ, class PREC>
-StaticOctree<OBJ, PREC>::StaticOctree(const PointType& cellCenterPos,
-                                      float exclusionFactor,
-                                      OBJ* firstObject,
-                                      std::uint32_t nObjects):
-    m_cellCenterPos(cellCenterPos),
-    m_exclusionFactor(exclusionFactor),
-    m_firstObject(firstObject),
-    m_nObjects(nObjects)
+template<typename PROCESSOR>
+void
+StaticOctree<OBJ, PREC>::processDepthFirst(PROCESSOR& processor) const
 {
+    OctreeNodeIndex nodeIdx = 0;
+    OctreeNodeIndex endIdx = nodeCount();
+    while (nodeIdx < endIdx)
+    {
+        const NodeType& node = m_nodes[nodeIdx];
+        if (!processor.checkNode(node.center, node.scale, node.brightFactor))
+        {
+            nodeIdx = node.right;
+            continue;
+        }
+
+        for (OctreeObjectIndex idx = node.first; idx < node.last; ++idx)
+        {
+            processor.process(m_objects[idx]);
+        }
+
+        ++nodeIdx;
+    }
 }
 
 template<class OBJ, class PREC>
-std::uint32_t
-StaticOctree<OBJ, PREC>::countChildren() const
+OctreeObjectIndex
+StaticOctree<OBJ, PREC>::size() const
 {
-    if (m_children == nullptr)
-        return 0;
-
-    std::uint32_t count    = 0;
-
-    for (int i = 0; i < 8; ++i)
-        count += UINT32_C(1) + (*m_children)[i]->countChildren();
-
-    return count;
+    return static_cast<OctreeObjectIndex>(m_objects.size());
 }
 
 template<class OBJ, class PREC>
-std::uint32_t
-StaticOctree<OBJ, PREC>::countObjects() const
+OctreeNodeIndex
+StaticOctree<OBJ, PREC>::nodeCount() const
 {
-    std::uint32_t count = m_nObjects;
+    return static_cast<OctreeNodeIndex>(m_nodes.size());
+}
 
-    if (m_children != nullptr)
-        for (int i = 0; i < 8; ++i)
-            count += (*m_children)[i]->countObjects();
+template<class OBJ, class PREC>
+OBJ&
+StaticOctree<OBJ, PREC>::operator[](OctreeObjectIndex idx)
+{
+    return m_objects[idx];
+}
 
-    return count;
+template<class OBJ, class PREC>
+const OBJ&
+StaticOctree<OBJ, PREC>::operator[](OctreeObjectIndex idx) const
+{
+    return m_objects[idx];
 }
 
 } // end namespace celestia::engine

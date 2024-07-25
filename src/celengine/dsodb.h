@@ -36,8 +36,7 @@ constexpr inline float DSO_OCTREE_ROOT_SIZE = 1.0e11f;
 class DSODatabase
 {
 public:
-    DSODatabase(std::vector<std::unique_ptr<DeepSkyObject>>&&,
-                std::unique_ptr<celestia::engine::DSOOctree>&&,
+    DSODatabase(std::unique_ptr<celestia::engine::DSOOctree>&&,
                 std::unique_ptr<NameDatabase>&&,
                 std::vector<std::uint32_t>&&,
                 float);
@@ -69,7 +68,6 @@ public:
     float getAverageAbsoluteMagnitude() const;
 
 private:
-    std::vector<std::unique_ptr<DeepSkyObject>> m_DSOs;
     std::unique_ptr<celestia::engine::DSOOctree> m_octreeRoot;
     std::unique_ptr<NameDatabase> m_namesDB;
     std::vector<std::uint32_t> m_catalogNumberIndex;
@@ -82,13 +80,13 @@ private:
 inline DeepSkyObject*
 DSODatabase::getDSO(const std::uint32_t n) const
 {
-    return m_DSOs[n].get();
+    return (*m_octreeRoot)[n].get();
 }
 
 inline std::uint32_t
 DSODatabase::size() const
 {
-    return static_cast<std::uint32_t>(m_DSOs.size());
+    return m_octreeRoot->size();
 }
 
 inline float

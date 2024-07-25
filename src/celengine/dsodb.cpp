@@ -13,6 +13,7 @@
 #include "dsodb.h"
 
 #include <algorithm>
+#include <array>
 #include <utility>
 
 #include <celutil/gettext.h>
@@ -25,12 +26,10 @@ using celestia::util::GetLogger;
 
 DSODatabase::~DSODatabase() = default;
 
-DSODatabase::DSODatabase(std::vector<std::unique_ptr<DeepSkyObject>>&& DSOs,
-                         std::unique_ptr<engine::DSOOctree>&& octreeRoot,
+DSODatabase::DSODatabase(std::unique_ptr<engine::DSOOctree>&& octreeRoot,
                          std::unique_ptr<NameDatabase>&& namesDB,
                          std::vector<std::uint32_t>&& catalogNumberIndex,
                          float avgAbsMag) :
-    m_DSOs(std::move(DSOs)),
     m_octreeRoot(std::move(octreeRoot)),
     m_namesDB(std::move(namesDB)),
     m_catalogNumberIndex(std::move(catalogNumberIndex)),
@@ -46,12 +45,14 @@ DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
                                catalogNumber,
                                [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
                                {
-                                   return m_DSOs[idx]->getIndex() < catNum;
+                                   return (*m_octreeRoot)[idx]->getIndex() < catNum;
                                });
 
-    return (it != m_catalogNumberIndex.end() && m_DSOs[*it]->getIndex() == catalogNumber)
-        ? m_DSOs[*it].get()
-        : nullptr;
+    if (it == m_catalogNumberIndex.end())
+        return nullptr;
+
+    DeepSkyObject* dso = (*m_octreeRoot)[*it].get();
+    return dso->getIndex() == catalogNumber ? dso : nullptr;
 }
 
 DeepSkyObject*
@@ -126,31 +127,34 @@ DSODatabase::findVisibleDSOs(engine::DSOHandler& dsoHandler,
                              float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Eigen::Hyperplane<double, 3> frustumPlanes[5];
-    Eigen::Vector3d planeNormals[5];
+    std::array<Eigen::Hyperplane<double, 3>, 5> frustumPlanes;
 
     Eigen::Quaterniond obsOrientd = obsOrient.cast<double>();
     Eigen::Matrix3d rot = obsOrientd.toRotationMatrix().transpose();
     double h = std::tan(fovY / 2);
     double w = h * aspectRatio;
 
-    planeNormals[0] = Eigen::Vector3d( 0,  1, -h);
-    planeNormals[1] = Eigen::Vector3d( 0, -1, -h);
-    planeNormals[2] = Eigen::Vector3d( 1,  0, -w);
-    planeNormals[3] = Eigen::Vector3d(-1,  0, -w);
-    planeNormals[4] = Eigen::Vector3d( 0,  0, -1);
+    std::array<Eigen::Vector3d, 5> planeNormals
+    {
+        Eigen::Vector3d( 0,  1, -h),
+        Eigen::Vector3d( 0, -1, -h),
+        Eigen::Vector3d( 1,  0, -w),
+        Eigen::Vector3d(-1,  0, -w),
+        Eigen::Vector3d( 0,  0, -1),
+    };
 
     for (int i = 0; i < 5; ++i)
     {
-        planeNormals[i]    = rot * planeNormals[i].normalized();
-        frustumPlanes[i]   = Eigen::Hyperplane<double, 3>(planeNormals[i], obsPos);
+        planeNormals[i]  = rot * planeNormals[i].normalized();
+        frustumPlanes[i] = Eigen::Hyperplane<double, 3>(planeNormals[i], obsPos);
     }
 
-    m_octreeRoot->processVisibleObjects(dsoHandler,
-                                        obsPos,
-                                        frustumPlanes,
-                                        limitingMag,
-                                        DSO_OCTREE_ROOT_SIZE);
+    engine::DSOOctreeVisibleObjectsProcessor processor(&dsoHandler,
+                                                       obsPos,
+                                                       frustumPlanes,
+                                                       limitingMag);
+
+    m_octreeRoot->processDepthFirst(processor);
 }
 
 void
@@ -158,8 +162,9 @@ DSODatabase::findCloseDSOs(engine::DSOHandler& dsoHandler,
                            const Eigen::Vector3d& obsPos,
                            float radius) const
 {
-    m_octreeRoot->processCloseObjects(dsoHandler,
-                                      obsPos,
-                                      radius,
-                                      DSO_OCTREE_ROOT_SIZE);
+    engine::DSOOctreeCloseObjectsProcessor processor(&dsoHandler,
+                                                     obsPos,
+                                                     radius);
+
+    m_octreeRoot->processDepthFirst(processor);
 }
