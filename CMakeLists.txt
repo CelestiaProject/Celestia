@@ -47,14 +47,19 @@ if(POLICY CMP0004)
   cmake_policy(SET CMP0004 NEW)
 endif()
 
+project(celestia VERSION 1.7.0 LANGUAGES C CXX)
+set(DISPLAY_NAME "Celestia")
+#
+#
+#
 option(ENABLE_CELX                  "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE                 "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS                   "Enable interface translation? (Default: on)" ON)
 option(ENABLE_GTK                   "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
-option(ENABLE_QT5                   "Build Qt frontend? (Default: off)" OFF)
+option(ENABLE_QT5                   "Build Qt frontend? (Default: on)" ON)
 option(ENABLE_QT6                   "Build Qt6 frontend (Default: off)" OFF)
 option(ENABLE_SDL                   "Build SDL frontend? (Default: off)" OFF)
-option(ENABLE_WIN                   "Build Windows native frontend? (Default: off)" OFF)
+option(ENABLE_WIN                   "Build Windows native frontend? (Default: on)" ON)
 option(ENABLE_FFMPEG                "Support video capture using FFMPEG (Default: off)" OFF)
 option(ENABLE_MINIAUDIO             "Support audio playback using miniaudio (Default: off)" OFF)
 option(ENABLE_TOOLS                 "Build different tools? (Default: off)" OFF)
@@ -69,26 +74,6 @@ option(USE_GLSL_STRUCTS             "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU                      "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU                  "Use Windows SDK's ICU implementation (Default: off)" OFF)
 option(USE_WEFFCPP                  "Use the -Weffc++ option when compiling with GCC (Default: off)" OFF)
-option(USE_LOCAL_QT                 "Use local Qt installation instead of vcpkg (Default: off)" OFF)
-
-if(ENABLE_SPICE)
-  list(APPEND VCPKG_MANIFEST_FEATURES spice)
-endif()
-
-if(ENABLE_FFMPEG)
-  list(APPEND VCPKG_MANIFEST_FEATURES ffmpeg)
-endif()
-
-if(ENABLE_QT6 AND (NOT USE_LOCAL_QT))
-  list(APPEND VCPKG_MANIFEST_FEATURES qt)
-endif()
-
-if(USE_ICU AND (NOT USE_WIN_ICU))
-  list(APPEND VCPKG_MANIFEST_FEATURES icu)
-endif()
-
-project(celestia VERSION 1.7.0 LANGUAGES C CXX)
-set(DISPLAY_NAME "Celestia")
 
 # Qt requires -fPIC, so build all code with it
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
