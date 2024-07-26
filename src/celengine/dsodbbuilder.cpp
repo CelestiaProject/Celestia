@@ -33,6 +33,7 @@
 #include "globular.h"
 #include "hash.h"
 #include "nebula.h"
+#include "octree.h"
 #include "octreebuilder.h"
 #include "opencluster.h"
 #include "parser.h"
@@ -41,12 +42,12 @@
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
 
-using DynamicDSOOctree = engine::DynamicOctree<std::unique_ptr<DeepSkyObject>, double>;
-
 using celestia::util::GetLogger;
 
-template<>
-const inline std::uint32_t DynamicDSOOctree::SPLIT_THRESHOLD = 10;
+namespace
+{
+
+constexpr engine::OctreeObjectIndex DSOOctreeSplitThreshold = 10;
 
 // The octree node into which a dso is placed is dependent on two properties:
 // its obsPosition and its luminosity--the fainter the dso, the deeper the node
@@ -54,47 +55,40 @@ const inline std::uint32_t DynamicDSOOctree::SPLIT_THRESHOLD = 10;
 // of the node is allowed contain a dso brighter than this value, making it
 // possible to determine quickly whether or not to cull subtrees.
 
-template<>
-float
-DynamicDSOOctree::getMagnitude(const std::unique_ptr<DeepSkyObject>& dso) //NOSONAR
+struct DSOOctreeTraits
 {
-    return dso->getAbsoluteMagnitude();
+    using ObjectType = std::unique_ptr<DeepSkyObject>;
+    using PrecisionType = double;
+
+    static Eigen::Vector3d getPosition(const ObjectType&); //NOSONAR
+    static double getRadius(const ObjectType&); //NOSONAR
+    static float getMagnitude(const ObjectType&); //NOSONAR
+    static float applyDecay(float);
+};
+
+inline Eigen::Vector3d
+DSOOctreeTraits::getPosition(const ObjectType& obj) //NOSONAR
+{
+    return obj->getPosition();
 }
 
-template<>
-bool
-DynamicDSOOctree::isStraddling(const Eigen::Vector3d& cellCenterPos,
-                               const std::unique_ptr<DeepSkyObject>& dso) //NOSONAR
+inline double
+DSOOctreeTraits::getRadius(const ObjectType& obj) //NOSONAR
 {
-    //checks if this dso's radius straddles child nodes
-    float dsoRadius = dso->getBoundingSphereRadius();
-    return (dso->getPosition() - cellCenterPos).cwiseAbs().minCoeff() < dsoRadius;
+    return obj->getBoundingSphereRadius();
 }
 
-template<>
-float
-DynamicDSOOctree::applyDecay(float excludingFactor)
+inline float
+DSOOctreeTraits::getMagnitude(const ObjectType& obj) //NOSONAR
 {
-    return excludingFactor + 0.5f;
+    return obj->getAbsoluteMagnitude();
 }
 
-template<>
-unsigned int
-DynamicDSOOctree::getChildIndex(const std::unique_ptr<DeepSkyObject>& obj, //NOSONAR
-                                const PointType& cellCenterPos)
+inline float
+DSOOctreeTraits::applyDecay(float factor)
 {
-    PointType objPos = obj->getPosition();
-
-    unsigned int child = 0U;
-    child |= objPos.x() < cellCenterPos.x() ? 0U : OctreeXPos;
-    child |= objPos.y() < cellCenterPos.y() ? 0U : OctreeYPos;
-    child |= objPos.z() < cellCenterPos.z() ? 0U : OctreeZPos;
-
-    return child;
+    return factor + 0.5f;
 }
-
-namespace
-{
 
 constexpr float DSO_OCTREE_MAGNITUDE = 8.0f;
 
@@ -157,22 +151,24 @@ addName(NameDatabase* namesDB, AstroCatalog::IndexNumber objCatalogNumber, std::
 }
 
 std::unique_ptr<engine::DSOOctree>
-buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>& DSOs)
+buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>&& DSOs)
 {
     GetLogger()->debug("Sorting DSOs into octree . . .\n");
     float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
 
     auto dsoCount = static_cast<engine::OctreeObjectIndex>(DSOs.size());
 
-    auto root = std::make_unique<DynamicDSOOctree>(Eigen::Vector3d::Zero(), absMag);
-    for (auto& dso : DSOs)
-        root->insertObject(dso, DSO_OCTREE_ROOT_SIZE);
+    auto root = engine::makeDynamicOctree<DSOOctreeTraits>(std::move(DSOs),
+                                                           Eigen::Vector3d::Zero(),
+                                                           DSO_OCTREE_ROOT_SIZE,
+                                                           absMag,
+                                                           DSOOctreeSplitThreshold);
 
     GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
 
     // The spatial sorting part is useless for DSOs since we
     // are storing pointers to objects and not the objects themselves:
-    auto octreeRoot = root->rebuildAndSort(DSO_OCTREE_ROOT_SIZE, dsoCount);
+    auto octreeRoot = root->build();
 
     GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
                        dsoCount,
@@ -280,11 +276,11 @@ DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 std::unique_ptr<DSODatabase>
 DSODatabaseBuilder::finish()
 {
-    auto octreeRoot = buildOctree(DSOs);
+    auto octreeRoot = buildOctree(std::move(DSOs));
     auto catalogNumberIndex = buildCatalogNumberIndex(*octreeRoot);
     float avgAbsMag = calcAvgAbsMag(*octreeRoot);
 
-    GetLogger()->info(_("Loaded {} deep space objects\n"), DSOs.size());
+    GetLogger()->info(_("Loaded {} deep space objects\n"), octreeRoot->size());
 
     return std::make_unique<DSODatabase>(std::move(octreeRoot),
                                          std::move(namesDB),

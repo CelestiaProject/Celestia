@@ -39,6 +39,8 @@ public:
     using difference_type = std::ptrdiff_t;
     using size_type = std::size_t;
 
+    static_assert(BLOCKSIZE > 0, "BLOCKSIZE must be greater than zero");
+
     class const_iterator;
 
     class iterator

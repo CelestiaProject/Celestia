@@ -25,6 +25,7 @@ namespace celestia::engine
 
 using OctreeNodeIndex = std::uint32_t;
 using OctreeObjectIndex = std::uint32_t;
+using OctreeDepthType = std::uint32_t;
 
 constexpr inline OctreeNodeIndex InvalidOctreeNode = UINT32_MAX;
 
@@ -67,7 +68,7 @@ protected:
     OctreeProcessor() = default;
 };
 
-template<class OBJ, class PREC>
+template<class TRAITS, class STORAGE>
 class DynamicOctree;
 
 // The StaticOctree template arguments are:
@@ -106,7 +107,8 @@ private:
     std::vector<NodeType> m_nodes;
     std::vector<OBJ> m_objects;
 
-    friend class DynamicOctree<OBJ, PREC>;
+    template<class TRAITS, class STORAGE>
+    friend class DynamicOctree;
 };
 
 template<class OBJ, class PREC>
