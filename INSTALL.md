@@ -351,29 +351,30 @@ the following option to cmake: `-DCMAKE_INSTALL_PREFIX=/another/path`.
 
 List of supported parameters (passed as `-DPARAMETER=VALUE`):
 
- Parameter            | TYPE | Default | Description
-----------------------| ------|---------|--------------------------------------
-| CMAKE_INSTALL_PREFIX | path | \*       | Prefix where to install Celestia
-| CMAKE_PREFIX_PATH    | path |         | Additional path to look for libraries
+ Parameter             | TYPE | Default   | Description
+-----------------------|------|-----------|--------------------------------------
+| CMAKE_INSTALL_PREFIX | path | \*        | Prefix where to install Celestia
+| CMAKE_PREFIX_PATH    | path |           | Additional path to look for libraries
 | LEGACY_OPENGL_LIBS   | bool | \*\*OFF   | Use OpenGL libraries not GLvnd
-| ENABLE_CELX          | bool | ON      | Enable Lua scripting support
-| ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
-| ENABLE_NLS           | bool | ON      | Enable interface translation
+| ENABLE_CELX          | bool | ON        | Enable Lua scripting support
+| ENABLE_SPICE         | bool | OFF       | Enable NAIF kernels support
+| ENABLE_NLS           | bool | ON        | Enable interface translation
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
-| ENABLE_QT5           | bool | ON      | Build Qt5 frontend
-| ENABLE_QT6           | bool | ON      | Build Qt6 frontend
-| ENABLE_SDL           | bool | OFF     | Build SDL frontend
-| ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
-| ENABLE_FFMPEG        | bool | OFF     | Support video capture using ffmpeg
-| ENABLE_LIBAVIF       | bool | OFF     | Support AVIF texture using libavif
-| ENABLE_MINIAUDIO     | bool | OFF     | Support audio playback using miniaudio
-| ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
-| ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
-| USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
-| USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
-| USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
-| USE_GLSL_STRUCTS     | bool | OFF     | Use structs in GLSL
-| USE_ICU              | bool | OFF     | Use ICU for UTF8 decoding for text rendering
+| ENABLE_QT5           | bool | OFF       | Build Qt5 frontend
+| ENABLE_QT6           | bool | OFF       | Build Qt6 frontend
+| ENABLE_SDL           | bool | OFF       | Build SDL frontend
+| ENABLE_WIN           | bool | \*\*\*ON  | Build Windows native frontend
+| ENABLE_FFMPEG        | bool | OFF       | Support video capture using ffmpeg
+| ENABLE_LIBAVIF       | bool | OFF       | Support AVIF texture using libavif
+| ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
+| ENABLE_TOOLS         | bool | OFF       | Build tools for Celestia data files
+| ENABLE_GLES          | bool | OFF       | Use OpenGL ES 2.0 in rendering code
+| USE_GTKGLEXT         | bool | ON        | Use libgtkglext1 in GTK2 frontend
+| USE_QT6              | bool | OFF       | Use Qt6 in Qt frontend
+| USE_GTK3             | bool | OFF       | Use Gtk3 instead of Gtk2 in GTK2 frontend
+| USE_GLSL_STRUCTS     | bool | OFF       | Use structs in GLSL
+| USE_ICU              | bool | OFF       | Use ICU for UTF8 decoding for text rendering
+| USE_MESHOPTIMIZER    | bool | OFF       | Use meshoptimizer when loading models
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
