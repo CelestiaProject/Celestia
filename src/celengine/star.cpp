@@ -1,6 +1,6 @@
 // star.cpp
 //
-// Copyright (C) 2001-2021, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -1213,6 +1213,19 @@ float
 Star::getApparentMagnitude(float ly) const
 {
     return astro::absToAppMag(absMag, ly) + extinction * ly;
+}
+
+float
+Star::getIrradiance(float km) const
+{
+    // The input is in kilometers! Use lightYearsToKilometers(ly) for other cases.
+    // The reason is to get rid of unnecessary conversions (e.g., astrocentricPosition returns kilometers).
+
+    // extinction seems to be in a strange units, mag/ly is not used in astronomy
+    // it can be optimized later, with astro::absMagToIrradiance() that duplicates it, but with no extinction
+    
+    float irradianceInSuns = std::exp((astro::SOLAR_ABSMAG - absMag - extinction * astro::kilometersToLightYears(km)) / astro::LN_MAG);
+    return irradianceInSuns * astro::SOLAR_POWER / (math::sphereArea(km * 1000) * astro::VEGAN_IRRADIANCE);
 }
 
 float

@@ -167,35 +167,27 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# 限界等級 (明るさ)
+# Exposure time (brightness)...
+# デフォルトは1.0です。
 # (必要に応じてコメントを外して修正してください)
-# 0.8から15.2の間で変化します。デフォルトは6.0です。
 #
-#  setvisibilitylimit {magnitude 6.0}
-
-
-# 自動限界等級調整で45°での限界等級です。デフォルトは8.5です。
-# (必要に応じてコメントを外して修正してください)
-#  setfaintestautomag45deg {magnitude 8.5}
+#  setexposure {exposure 1.0}
 
 
 # 表示の調整:
 # 表示しない場合 (必要に応じてコメントを外してください)
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
 #  renderflags {clear "constellations"}
 #  renderflags {clear "eclipseshadows"}
 #  renderflags {clear "galaxies"}
-#  renderflags {clear "nebulae"}
 #  renderflags {clear "grid"}
 #  renderflags {clear "markers"}
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
@@ -204,20 +196,17 @@
 # 表示の調整:
 # 表示する場合 (必要に応じてコメントを外してください)
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
 #  renderflags {set "constellations"}
 #  renderflags {set "eclipseshadows"}
 #  renderflags {set "galaxies"}
-#  renderflags {set "nebulae"}
 #  renderflags {set "grid"}
 #  renderflags {set "markers"}
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}
