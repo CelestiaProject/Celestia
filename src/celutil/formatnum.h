@@ -116,7 +116,7 @@ FormattedFloat<T>::format(fmt::format_context& ctx) const
 template<typename T>
 struct fmt::formatter<celestia::util::FormattedFloat<T>>
 {
-    constexpr format_parse_context::iterator parse(const format_parse_context& ctx) const
+    constexpr auto parse(const format_parse_context& ctx) const
     {
         auto it = ctx.begin();
         if (it != ctx.end() && *it != '}')
@@ -132,8 +132,7 @@ struct fmt::formatter<celestia::util::FormattedFloat<T>>
         return it;
     }
 
-    format_context::iterator format(const celestia::util::FormattedFloat<T>& f,
-                                    format_context& ctx) const
+    auto format(const celestia::util::FormattedFloat<T>& f, format_context& ctx) const
     {
         return f.format(ctx);
     }
