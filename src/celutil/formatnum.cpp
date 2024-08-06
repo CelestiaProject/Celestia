@@ -52,7 +52,7 @@ ExtendedSubstring::ExtendedSubstring(std::string_view _source,
 template<>
 struct fmt::formatter<ExtendedSubstring>
 {
-    constexpr format_parse_context::iterator parse(const format_parse_context& ctx) const
+    constexpr auto parse(const format_parse_context& ctx) const
     {
         auto it = ctx.begin();
         if (it != ctx.end() && *it != '}')
@@ -68,7 +68,7 @@ struct fmt::formatter<ExtendedSubstring>
         return it;
     }
 
-    format_context::iterator format(const ExtendedSubstring& value, format_context& ctx) const
+    auto format(const ExtendedSubstring& value, format_context& ctx) const
     {
         if (value.start >= value.source.size())
             return format_to(ctx.out(), "{:0<{}}", ""sv, value.length);

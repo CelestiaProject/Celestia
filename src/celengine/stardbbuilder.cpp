@@ -75,7 +75,7 @@ StarDatabaseBuilder::StcHeader::StcHeader(const fs::path& _path) :
 template<>
 struct fmt::formatter<StarDatabaseBuilder::StcHeader> : formatter<std::string_view>
 {
-    format_context::iterator format(const StarDatabaseBuilder::StcHeader& header, format_context& ctx)
+    auto format(const StarDatabaseBuilder::StcHeader& header, format_context& ctx) const
     {
         fmt::basic_memory_buffer<char> data;
         fmt::format_to(std::back_inserter(data), "line {}", header.lineNumber);
