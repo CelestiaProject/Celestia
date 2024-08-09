@@ -375,7 +375,7 @@ checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
     // Disable Sonar on the below: suggests using value-or which would eagerly-evaluate the replacement value
     double distance = distanceValue.has_value() ? *distanceValue : v.norm(); //NOSONAR
     double ra = raValue.has_value() ? *raValue : (math::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA); //NOSONAR
-    double dec = decValue.has_value() ? *decValue : math::radToDeg(std::asin(std::clamp(v.z(), -1.0, 1.0))); //NOSONAR
+    double dec = decValue.has_value() ? *decValue : math::radToDeg(std::asin(std::clamp(v.z() / v.norm(), -1.0, 1.0))); //NOSONAR
 
     position = astro::equatorialToCelestialCart(ra, dec, distance).cast<float>();
     return true;
