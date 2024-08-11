@@ -371,7 +371,7 @@ checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
 
     // Convert from Celestia's coordinate system
     const Eigen::Vector3f& p = star->getPosition();
-    Eigen::Vector3d v = math::XRotation(math::degToRad(astro::J2000Obliquity)) * Eigen::Vector3f(p.x(), -p.z(), p.y()).cast<double>();
+    Eigen::Vector3d v = math::XRotation(astro::J2000Obliquity) * Eigen::Vector3f(p.x(), -p.z(), p.y()).cast<double>();
     // Disable Sonar on the below: suggests using value-or which would eagerly-evaluate the replacement value
     double distance = distanceValue.has_value() ? *distanceValue : v.norm(); //NOSONAR
     double ra = raValue.has_value() ? *raValue : (math::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA); //NOSONAR
