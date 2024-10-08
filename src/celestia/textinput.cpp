@@ -39,16 +39,18 @@ TextInput::getTypedText() const
     return m_text;
 }
 
-util::array_view<std::string>
+util::array_view<engine::Completion>
 TextInput::getCompletion() const
 {
     return m_completion;
 }
 
-int
-TextInput::getCompletionIndex() const
+std::optional<Selection>
+TextInput::getSelectedCompletion()
 {
-    return m_completionIdx;
+    if (m_completionIdx >= 0 && m_completionIdx < m_completion.size())
+        return m_completion[m_completionIdx].getSelection();
+    return std::nullopt;
 }
 
 CharEnteredResult
@@ -127,7 +129,7 @@ TextInput::doTab()
     {
         auto pos = m_text.rfind('/');
         m_text.resize(pos == std::string::npos ? 0 : (pos + 1));
-        m_text.append(m_completion[m_completionIdx]);
+        m_text.append(m_completion[m_completionIdx].getName());
     }
 }
 
@@ -143,7 +145,7 @@ TextInput::doBackTab()
     {
         auto pos = m_text.rfind('/');
         m_text.resize(pos == std::string::npos ? 0 : (pos + 1));
-        m_text.append(m_completion[m_completionIdx]);
+        m_text.append(m_completion[m_completionIdx].getName());
     }
 }
 
@@ -225,7 +227,7 @@ TextInput::renderCompletion(Overlay* overlay, const WindowMetrics& metrics, int 
                 overlay->setColor(1.0f, 0.6f, 0.6f, 1);
             else
                 overlay->setColor(0.6f, 0.6f, 1.0f, 1);
-            overlay->print(*iter);
+            overlay->print(iter->getName());
             overlay->print("\n");
         }
         overlay->endText();

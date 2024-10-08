@@ -39,7 +39,7 @@ public:
     NumberIndex::const_iterator getFirstNameIter(AstroCatalog::IndexNumber catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
-    void getCompletion(std::vector<std::string>& completion, std::string_view name) const;
+    void getCompletion(std::vector<std::pair<std::string, AstroCatalog::IndexNumber>>& completion, std::string_view name) const;
 
 private:
     NameIndex   nameIndex;

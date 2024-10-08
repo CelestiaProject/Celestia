@@ -19,9 +19,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "astroobj.h"
-#include "starname.h"
-#include "staroctree.h"
+#include <celengine/astroobj.h>
+#include <celengine/completion.h>
+#include <celengine/starname.h>
+#include <celengine/staroctree.h>
 
 class Star;
 class StarDatabaseBuilder;
@@ -52,7 +53,7 @@ public:
     Star* find(AstroCatalog::IndexNumber catalogNumber) const;
     Star* find(std::string_view, bool i18n) const;
 
-    void getCompletion(std::vector<std::string>&, std::string_view) const;
+    void getCompletion(std::vector<celestia::engine::Completion>&, std::string_view) const;
 
     void findVisibleStars(celestia::engine::StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,

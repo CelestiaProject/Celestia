@@ -1127,7 +1127,7 @@ PlanetarySystem::find(std::string_view _name, bool deepSearch, bool i18n) const
 }
 
 void
-PlanetarySystem::getCompletion(std::vector<std::string>& completion,
+PlanetarySystem::getCompletion(std::vector<celestia::engine::Completion>& completion,
                                std::string_view _name,
                                bool deepSearch) const
 {
@@ -1138,13 +1138,13 @@ PlanetarySystem::getCompletion(std::vector<std::string>& completion,
 
         if (UTF8StartsWith(alias, _name))
         {
-            completion.push_back(alias);
+            completion.emplace_back(alias, Selection(index.second));
         }
         else
         {
             std::string lname = D_(alias.c_str());
             if (lname != alias && UTF8StartsWith(lname, _name))
-                completion.push_back(lname);
+                completion.emplace_back(lname, Selection(index.second));
         }
     }
 

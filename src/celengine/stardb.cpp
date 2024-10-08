@@ -88,11 +88,23 @@ StarDatabase::searchCrossIndex(StarCatalog catalog, AstroCatalog::IndexNumber nu
 }
 
 void
-StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
+StarDatabase::getCompletion(std::vector<celestia::engine::Completion>& completion, std::string_view name) const
 {
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        namesDB->getCompletion(completion, name);
+    {
+        std::vector<std::pair<std::string, AstroCatalog::IndexNumber>> namesWithIndices;
+        namesDB->getCompletion(namesWithIndices, name);
+
+        for (const auto& [starName, index] : namesWithIndices)
+        {
+            auto capturedIndex = index;
+            completion.emplace_back(starName, [this, capturedIndex]
+            {
+                return Selection(find(capturedIndex));
+            });
+        }
+    }
 }
 
 // Return the name for the star with specified catalog number.  The returned

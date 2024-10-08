@@ -524,7 +524,7 @@ CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
 }
 
 void
-getLocationsCompletion(std::vector<std::string>& completion,
+getLocationsCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
                        const Body& body)
 {
@@ -537,13 +537,13 @@ getLocationsCompletion(std::vector<std::string>& completion,
         const std::string& name = location->getName(false);
         if (UTF8StartsWith(name, s))
         {
-            completion.push_back(name);
+            completion.emplace_back(name, Selection(location));
         }
         else
         {
             const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
-                completion.push_back(lname);
+                completion.emplace_back(lname, Selection(location));
         }
     }
 }
@@ -1077,7 +1077,7 @@ Universe::findPath(std::string_view s,
 }
 
 void
-Universe::getCompletion(std::vector<std::string>& completion,
+Universe::getCompletion(std::vector<celestia::engine::Completion>& completion,
                         std::string_view s,
                         util::array_view<const Selection> contexts,
                         bool withLocations) const
@@ -1109,7 +1109,7 @@ Universe::getCompletion(std::vector<std::string>& completion,
 }
 
 void
-Universe::getCompletionPath(std::vector<std::string>& completion,
+Universe::getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                             std::string_view s,
                             util::array_view<const Selection> contexts,
                             bool withLocations) const
@@ -1132,7 +1132,7 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
 
     if (sel.getType() == SelectionType::DeepSky)
     {
-        completion.push_back(dsoCatalog->getDSOName(sel.deepsky()));
+        completion.emplace_back(dsoCatalog->getDSOName(sel.deepsky()), sel);
         return;
     }
 
