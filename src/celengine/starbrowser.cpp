@@ -32,146 +32,28 @@ namespace
 {
 
 inline float
-distanceSquared(const Star* star,
+distanceSquared(const Star& star,
                 double jd,
                 const Eigen::Vector3f& pos,
                 const UniversalCoord& ucPos)
 {
     // For the purposes of building the list, we can use the squared distance
     // to avoid evaluating unnecessary square roots.
-    float distance = (pos - star->getPosition()).squaredNorm();
+    float distance = (pos - star.getPosition()).squaredNorm();
 
     // If the stars are closer than one light year, use
     // a more precise distance estimate.
     if (distance < 1.0f)
-        distance = static_cast<float>((ucPos - star->getPosition(jd)).toLy().squaredNorm());
+        distance = static_cast<float>((ucPos - star.getPosition(jd)).toLy().squaredNorm());
 
     return distance;
-}
-
-class DistanceComparison
-{
-public:
-    DistanceComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
-
-    StarBrowserRecord createRecord(const Star*) const;
-    void finalizeRecord(StarBrowserRecord&) const;
-
-    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
-
-private:
-    double m_jd;
-    Eigen::Vector3f m_pos;
-    UniversalCoord m_ucPos;
-};
-
-DistanceComparison::DistanceComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
-    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
-{
-}
-
-StarBrowserRecord
-DistanceComparison::createRecord(const Star* star) const
-{
-    StarBrowserRecord result(star);
-    result.distance = distanceSquared(star, m_jd, m_pos, m_ucPos);
-    return result;
-}
-
-void
-DistanceComparison::finalizeRecord(StarBrowserRecord& record) const
-{
-    record.distance = std::sqrt(record.distance);
-    record.appMag = record.star->getApparentMagnitude(record.distance);
-}
-
-bool
-DistanceComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
-{
-    return lhs.distance < rhs.distance;
-}
-
-class AppMagComparison
-{
-public:
-    AppMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
-
-    StarBrowserRecord createRecord(const Star*) const;
-    void finalizeRecord(const StarBrowserRecord&) const { /* no-op */ }
-
-    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
-
-private:
-    double m_jd;
-    Eigen::Vector3f m_pos;
-    UniversalCoord m_ucPos;
-};
-
-AppMagComparison::AppMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
-    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
-{
-}
-
-StarBrowserRecord
-AppMagComparison::createRecord(const Star* star) const
-{
-    StarBrowserRecord result(star);
-    result.distance = std::sqrt(distanceSquared(star, m_jd, m_pos, m_ucPos));
-    result.appMag = result.star->getApparentMagnitude(result.distance);
-    return result;
-}
-
-bool
-AppMagComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
-{
-    return lhs.appMag < rhs.appMag;
-}
-
-class AbsMagComparison
-{
-public:
-    AbsMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos);
-
-    StarBrowserRecord createRecord(const Star*) const;
-    void finalizeRecord(StarBrowserRecord&) const;
-
-    bool operator()(const StarBrowserRecord&, const StarBrowserRecord&) const;
-
-private:
-    double m_jd;
-    Eigen::Vector3f m_pos;
-    UniversalCoord m_ucPos;
-};
-
-AbsMagComparison::AbsMagComparison(double jd, const Eigen::Vector3f& pos, const UniversalCoord& ucPos) :
-    m_jd(jd), m_pos(pos), m_ucPos(ucPos)
-{
-}
-
-StarBrowserRecord
-AbsMagComparison::createRecord(const Star* star) const
-{
-    return StarBrowserRecord(star);
-}
-
-void
-AbsMagComparison::finalizeRecord(StarBrowserRecord& record) const
-{
-    record.distance = std::sqrt(distanceSquared(record.star, m_jd, m_pos, m_ucPos));
-    record.appMag = record.star->getApparentMagnitude(record.distance);
-}
-
-bool
-AbsMagComparison::operator()(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs) const
-{
-    return lhs.star->getAbsoluteMagnitude() < rhs.star->getAbsoluteMagnitude();
 }
 
 class StarFilter
 {
 public:
     StarFilter(StarBrowser::Filter, const SolarSystemCatalog*);
-    bool operator()(const Star*) const;
+    bool operator()(const Star&) const;
 
     void setSpectralTypeFilter(const std::function<bool(const char*)>&);
 
@@ -210,16 +92,16 @@ parentHasPlanets(const SolarSystemCatalog* solarSystems, const Star* star)
 }
 
 bool
-StarFilter::operator()(const Star* star) const
+StarFilter::operator()(const Star& star) const
 {
     // If ordering is done by brightness, filter out barycenters by default
     bool visibleOnly = util::is_set(m_filter, StarBrowser::Filter::Visible);
-    if (visibleOnly && !star->getVisibility())
+    if (visibleOnly && !star.getVisibility())
         return false;
 
     if (util::is_set(m_filter, StarBrowser::Filter::Multiple))
     {
-        auto barycenter = star->getOrbitBarycenter();
+        auto barycenter = star.getOrbitBarycenter();
 
         // Check the number of stars orbiting the barycenter to handle cases
         // like the Sun orbiting the Solar System Barycenter
@@ -228,85 +110,335 @@ StarFilter::operator()(const Star* star) const
     }
 
     if (util::is_set(m_filter, StarBrowser::Filter::WithPlanets) &&
-        m_solarSystems->find(star->getIndex()) == m_solarSystems->end() &&
-        !(visibleOnly && parentHasPlanets(m_solarSystems, star)))
+        m_solarSystems->find(star.getIndex()) == m_solarSystems->end() &&
+        !(visibleOnly && parentHasPlanets(m_solarSystems, &star)))
     {
         return false;
     }
 
     return (util::is_set(m_filter, StarBrowser::Filter::SpectralType) && m_spectralTypeFilter)
-        ? m_spectralTypeFilter(star->getSpectralType())
+        ? m_spectralTypeFilter(star.getSpectralType())
         : true;
 }
 
-template<typename C>
-void populateRecords(std::vector<StarBrowserRecord>& records,
-                     const C& comparison,
-                     const StarFilter& filter,
-                     std::uint32_t size,
-                     const StarDatabase& stardb)
+class DistanceProcessor
+{
+public:
+    DistanceProcessor(std::vector<StarBrowserRecord>&,
+                      std::uint32_t,
+                      const StarFilter&,
+                      const UniversalCoord&,
+                      double);
+
+    ~DistanceProcessor() = default;
+
+    DistanceProcessor(const DistanceProcessor&) = delete;
+    DistanceProcessor& operator=(const DistanceProcessor&) = delete;
+    DistanceProcessor(DistanceProcessor&&) noexcept = default;
+    DistanceProcessor& operator=(DistanceProcessor&&) noexcept = default;
+
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star&);
+    void finalize();
+
+private:
+    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
+
+    const StarFilter* m_filter;
+    std::vector<StarBrowserRecord>* m_records;
+    double m_jd;
+    UniversalCoord m_ucPos;
+    Eigen::Vector3f m_pos;
+    std::uint32_t m_size;
+    float m_maxDistance{ std::numeric_limits<float>::max() };
+};
+
+DistanceProcessor::DistanceProcessor(std::vector<StarBrowserRecord>& records,
+                                     std::uint32_t size,
+                                     const StarFilter& filter,
+                                     const UniversalCoord& ucPos,
+                                     double jd) :
+    m_filter(&filter),
+    m_records(&records),
+    m_jd(jd),
+    m_ucPos(ucPos),
+    m_pos(ucPos.toLy().cast<float>()),
+    m_size(size)
+{
+    assert(m_size > 0);
+}
+
+bool
+DistanceProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
+{
+    return lhs.distance < rhs.distance;
+}
+
+bool
+DistanceProcessor::checkNode(const Eigen::Vector3f& center,
+                             float size,
+                             float /* brightestMag */) const
+{
+    if (m_records->size() < m_size)
+        return true;
+
+    // Compute the distance to node; this is equal to the distance to
+    // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
+    float nodeDistance = (m_pos - center).norm() - size * numbers::sqrt3_v<float>;
+    return nodeDistance <= m_maxDistance;
+}
+
+void
+DistanceProcessor::process(const Star& star)
+{
+    if (!(*m_filter)(star))
+        return;
+
+    const Star* oldWorst = m_records->empty() ? nullptr : m_records->front().star;
+    auto distance2 = distanceSquared(star, m_jd, m_pos, m_ucPos);
+    if (m_records->size() < m_size)
+    {
+        auto& record = m_records->emplace_back(&star);
+        record.distance = distance2;
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+    else if (distance2 < m_records->front().distance)
+    {
+        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        auto& record = m_records->back();
+        record.star = &star;
+        record.distance = distance2;
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+    else
+    {
+        return;
+    }
+
+    if (m_records->front().star != oldWorst)
+        m_maxDistance = std::sqrt(distance2);
+}
+
+void
+DistanceProcessor::finalize()
+{
+    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    for (StarBrowserRecord& record : *m_records)
+    {
+        record.distance = std::sqrt(record.distance);
+        record.appMag = record.star->getApparentMagnitude(record.distance);
+    }
+}
+
+class AppMagProcessor
+{
+public:
+    AppMagProcessor(std::vector<StarBrowserRecord>&,
+                      std::uint32_t,
+                      const StarFilter&,
+                      const UniversalCoord&,
+                      double);
+
+    ~AppMagProcessor() = default;
+
+    AppMagProcessor(const AppMagProcessor&) = delete;
+    AppMagProcessor& operator=(const AppMagProcessor&) = delete;
+    AppMagProcessor(AppMagProcessor&&) noexcept = default;
+    AppMagProcessor& operator=(AppMagProcessor&&) noexcept = default;
+
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star&);
+    void finalize();
+
+private:
+    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
+
+    const StarFilter* m_filter;
+    std::vector<StarBrowserRecord>* m_records;
+    double m_jd;
+    UniversalCoord m_ucPos;
+    Eigen::Vector3f m_pos;
+    std::uint32_t m_size;
+};
+
+AppMagProcessor::AppMagProcessor(std::vector<StarBrowserRecord>& records,
+                                 std::uint32_t size,
+                                 const StarFilter& filter,
+                                 const UniversalCoord& ucPos,
+                                 double jd) :
+    m_filter(&filter),
+    m_records(&records),
+    m_jd(jd),
+    m_ucPos(ucPos),
+    m_pos(ucPos.toLy().cast<float>()),
+    m_size(size)
+{
+    assert(m_size > 0);
+}
+
+bool
+AppMagProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
+{
+    return lhs.appMag < rhs.appMag;
+}
+
+bool
+AppMagProcessor::checkNode(const Eigen::Vector3f& center,
+                           float size,
+                           float brightestMag) const
+{
+    if (m_records->size() < m_size)
+        return true;
+
+    // Compute the distance to node; this is equal to the distance to
+    // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
+    float nodeDistance = (m_pos - center).norm() - size * numbers::sqrt3_v<float>;
+    if (nodeDistance < 1e-3)
+        return true;
+
+    float nodeAppMag = astro::absToAppMag(brightestMag, nodeDistance);
+    return nodeAppMag < m_records->front().appMag;
+}
+
+void
+AppMagProcessor::process(const Star& star)
+{
+    if (!(*m_filter)(star))
+        return;
+
+    auto distance = std::sqrt(distanceSquared(star, m_jd, m_pos, m_ucPos));
+    auto appMag = star.getApparentMagnitude(distance);
+    if (m_records->size() < m_size)
+    {
+        auto& record = m_records->emplace_back(&star);
+        record.distance = distance;
+        record.appMag = appMag;
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+    else if (appMag < m_records->front().appMag)
+    {
+        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        auto& record = m_records->back();
+        record.star = &star;
+        record.distance = distance;
+        record.appMag = appMag;
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+}
+
+void
+AppMagProcessor::finalize()
+{
+    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+}
+
+class AbsMagProcessor
+{
+public:
+    AbsMagProcessor(std::vector<StarBrowserRecord>&,
+                    std::uint32_t,
+                    const StarFilter&,
+                    const UniversalCoord&,
+                    double);
+
+    ~AbsMagProcessor() = default;
+
+    AbsMagProcessor(const AbsMagProcessor&) = delete;
+    AbsMagProcessor& operator=(const AbsMagProcessor&) = delete;
+    AbsMagProcessor(AbsMagProcessor&&) noexcept = default;
+    AbsMagProcessor& operator=(AbsMagProcessor&&) noexcept = default;
+
+    bool checkNode(const Eigen::Vector3f&, float, float) const;
+    void process(const Star&);
+    void finalize();
+
+private:
+    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
+
+    const StarFilter* m_filter;
+    std::vector<StarBrowserRecord>* m_records;
+    double m_jd;
+    UniversalCoord m_ucPos;
+    Eigen::Vector3f m_pos;
+    std::uint32_t m_size;
+};
+
+AbsMagProcessor::AbsMagProcessor(std::vector<StarBrowserRecord>& records,
+                                 std::uint32_t size,
+                                 const StarFilter& filter,
+                                 const UniversalCoord& ucPos,
+                                 double jd) :
+    m_filter(&filter),
+    m_records(&records),
+    m_jd(jd),
+    m_ucPos(ucPos),
+    m_pos(ucPos.toLy().cast<float>()),
+    m_size(size)
+{
+    assert(m_size > 0);
+}
+
+bool
+AbsMagProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
+{
+    return lhs.star->getAbsoluteMagnitude() < rhs.star->getAbsoluteMagnitude();
+}
+
+bool
+AbsMagProcessor::checkNode(const Eigen::Vector3f& /* center */,
+                           float /* size */,
+                           float brightestMag) const
+{
+    if (m_records->size() < m_size)
+        return true;
+
+    return brightestMag < m_records->front().star->getAbsoluteMagnitude();
+}
+
+void
+AbsMagProcessor::process(const Star& star)
+{
+    if (!(*m_filter)(star))
+        return;
+
+    if (m_records->size() < m_size)
+    {
+        m_records->emplace_back(&star);
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+    else if (star.getAbsoluteMagnitude() < m_records->front().star->getAbsoluteMagnitude())
+    {
+        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        m_records->back().star = &star;
+        std::push_heap(m_records->begin(), m_records->end(), &compare);
+    }
+}
+
+void
+AbsMagProcessor::finalize()
+{
+    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    for (StarBrowserRecord& record : *m_records)
+    {
+        record.distance = std::sqrt(distanceSquared(*record.star, m_jd, m_pos, m_ucPos));
+        record.appMag = record.star->getApparentMagnitude(record.distance);
+    }
+}
+
+template<typename PROCESSOR>
+void processOctree(const StarOctree& octree,
+                   std::vector<StarBrowserRecord>& records,
+                   std::uint32_t size,
+                   const StarFilter& filter,
+                   const UniversalCoord& ucPos,
+                   double jd)
 {
     records.clear();
-    if (size == 0)
-        return;
-
     records.reserve(size);
 
-    std::uint32_t totalStars = stardb.size();
-    if (totalStars == 0)
-        return;
-
-    records.reserve(size);
-    std::uint32_t index = 0;
-
-    // Add all stars that match the filter until we fill up the list
-    for (;;)
-    {
-        if (index == totalStars)
-        {
-            std::sort(records.begin(), records.end(), comparison);
-            for (StarBrowserRecord& record : records)
-            {
-                comparison.finalizeRecord(record);
-            }
-            return;
-        }
-
-        if (const Star* star = stardb.getStar(index); filter(star))
-        {
-            if (records.size() == size)
-                break;
-
-            records.push_back(comparison.createRecord(star));
-        }
-
-        ++index;
-    }
-
-    // We have filled up the number of requested stars, so only add stars that
-    // are better than the worst star in the list according to the predicate.
-    std::make_heap(records.begin(), records.end(), comparison);
-
-    for (; index < totalStars; ++index)
-    {
-        const Star* star = stardb.getStar(index);
-        if (!filter(star))
-            continue;
-
-        StarBrowserRecord record = comparison.createRecord(star);
-        if (comparison(record, records.front()))
-        {
-            std::pop_heap(records.begin(), records.end(), comparison);
-            records.back() = record;
-            std::push_heap(records.begin(), records.end(), comparison);
-        }
-    }
-
-    std::sort_heap(records.begin(), records.end(), comparison);
-    for (StarBrowserRecord& record : records)
-    {
-        comparison.finalizeRecord(record);
-    }
+    PROCESSOR processor(records, size, filter, ucPos, jd);
+    octree.processBreadthFirst(processor);
+    processor.finalize();
 }
 
 } // end unnamed namespace
@@ -347,7 +479,6 @@ void
 StarBrowser::setPosition(const UniversalCoord& ucPos)
 {
     m_ucPos = ucPos;
-    m_pos = m_ucPos.toLy().cast<float>();
 }
 
 void
@@ -356,21 +487,28 @@ StarBrowser::populate(std::vector<StarBrowserRecord>& records) const
     StarFilter filter(m_filter, m_universe->getSolarSystemCatalog());
     if (m_spectralTypeFilter)
         filter.setSpectralTypeFilter(m_spectralTypeFilter);
-    const auto stardb = m_universe->getStarCatalog();
+    const StarDatabase* stardb = m_universe->getStarCatalog();
     if (stardb == nullptr)
+        return;
+
+    const StarOctree* octree = stardb->getOctree();
+    if (octree == nullptr)
         return;
 
     switch (m_comparison)
     {
     case Comparison::Nearest:
-        populateRecords(records, DistanceComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        processOctree<DistanceProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
         return;
+
     case Comparison::ApparentMagnitude:
-        populateRecords(records, AppMagComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        processOctree<AppMagProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
         return;
+
     case Comparison::AbsoluteMagnitude:
-        populateRecords(records, AbsMagComparison(m_jd, m_pos, m_ucPos), filter, m_size, *stardb);
+        processOctree<AbsMagProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
         return;
+
     default:
         assert(0);
         return;

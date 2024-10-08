@@ -105,7 +105,6 @@ private:
     // The star browser data is valid for a particular point
     // in space/time, and for performance issues is not continuously
     // updated.
-    Eigen::Vector3f m_pos;
     UniversalCoord m_ucPos;
     double m_jd{ celestia::astro::J2000 };
 

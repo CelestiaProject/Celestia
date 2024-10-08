@@ -264,9 +264,14 @@ DynamicOctree<TRAITS, STORAGE>::build()
     while (!nodeStack.empty())
     {
         auto [nodeIdx, depth] = nodeStack.back();
+        nodeStack.pop_back();
+
         const NodeType& node = m_nodes[nodeIdx];
         buildNode(*staticOctree, node, depth, prevByDepth);
-        nodeStack.pop_back();
+        if (depth < staticOctree->m_minPopulated && !node.objIndices.empty())
+            staticOctree->m_minPopulated = depth;
+        if (depth > staticOctree->m_maxDepth)
+            staticOctree->m_maxDepth = depth;
 
         if (node.children == nullptr)
             continue;
@@ -280,6 +285,8 @@ DynamicOctree<TRAITS, STORAGE>::build()
 
     for (OctreeObjectIndex objIndex : m_excluded)
         staticOctree->m_objects.emplace_back(std::move(m_objects[objIndex]));
+
+    staticOctree->m_sizes = std::move(m_sizes);
 
     return staticOctree;
 }
@@ -302,7 +309,7 @@ DynamicOctree<TRAITS, STORAGE>::buildNode(StaticOctreeType& staticOctree,
 
     prevByDepth.push_back(staticNodeIdx);
 
-    auto& staticNode = staticOctree.m_nodes.emplace_back(node.center, m_sizes[depth]);
+    auto& staticNode = staticOctree.m_nodes.emplace_back(node.center, depth);
 
     if (node.objIndices.empty())
         return;

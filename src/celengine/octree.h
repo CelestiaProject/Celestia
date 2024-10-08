@@ -37,10 +37,10 @@ struct StaticOctreeNode
 {
     using PointType = Eigen::Matrix<PREC, 3, 1>;
 
-    StaticOctreeNode(const PointType&, PREC);
+    StaticOctreeNode(const PointType&, OctreeDepthType);
 
     PointType center;
-    PREC scale;
+    OctreeDepthType depth;
     OctreeNodeIndex right{ InvalidOctreeNode };
     OctreeObjectIndex first{ 0 };
     OctreeObjectIndex last{ 0 };
@@ -49,9 +49,9 @@ struct StaticOctreeNode
 
 template<class PREC>
 StaticOctreeNode<PREC>::StaticOctreeNode(const PointType& _center,
-                                         PREC _scale) :
+                                         OctreeDepthType _depth) :
     center(_center),
-    scale(_scale)
+    depth(_depth)
 {
 }
 
@@ -95,6 +95,9 @@ public:
     template<typename PROCESSOR>
     void processDepthFirst(PROCESSOR&) const;
 
+    template<typename PROCESSOR>
+    void processBreadthFirst(PROCESSOR&) const;
+
     OctreeObjectIndex size() const;
     OctreeNodeIndex nodeCount() const;
 
@@ -104,8 +107,14 @@ public:
 private:
     using NodeType = detail::StaticOctreeNode<PREC>;
 
+    template<typename PROCESSOR>
+    bool processToDepth(PROCESSOR&, OctreeDepthType) const;
+
     std::vector<NodeType> m_nodes;
     std::vector<OBJ> m_objects;
+    std::vector<PREC> m_sizes;
+    OctreeDepthType m_minPopulated{ UINT32_MAX };
+    OctreeDepthType m_maxDepth{ 0 };
 
     template<class TRAITS, class STORAGE>
     friend class DynamicOctree;
@@ -117,23 +126,67 @@ void
 StaticOctree<OBJ, PREC>::processDepthFirst(PROCESSOR& processor) const
 {
     OctreeNodeIndex nodeIdx = 0;
-    OctreeNodeIndex endIdx = nodeCount();
+    const OctreeNodeIndex endIdx = nodeCount();
     while (nodeIdx < endIdx)
     {
         const NodeType& node = m_nodes[nodeIdx];
-        if (!processor.checkNode(node.center, node.scale, node.brightFactor))
+        if (!processor.checkNode(node.center, m_sizes[node.depth], node.brightFactor))
         {
             nodeIdx = node.right;
             continue;
         }
 
         for (OctreeObjectIndex idx = node.first; idx < node.last; ++idx)
-        {
             processor.process(m_objects[idx]);
-        }
 
         ++nodeIdx;
     }
+}
+
+// Simulate a breadth-first search by doing an interative depth-first search,
+// starting at the minimum populated depth. The search terminates when no nodes
+// at the requested depth are reached.
+template<class OBJ, class PREC>
+template<typename PROCESSOR>
+void
+StaticOctree<OBJ, PREC>::processBreadthFirst(PROCESSOR& processor) const
+{
+    for (OctreeDepthType depth = m_minPopulated; depth <= m_maxDepth; ++depth)
+    {
+        if (!processToDepth(processor, depth))
+            break;
+    }
+}
+
+template<class OBJ, class PREC>
+template<typename PROCESSOR>
+bool
+StaticOctree<OBJ, PREC>::processToDepth(PROCESSOR& processor, OctreeDepthType depth) const
+{
+    OctreeNodeIndex nodeIdx = 0;
+    const OctreeNodeIndex endIdx = nodeCount();
+    bool result = false;
+    while (nodeIdx < endIdx)
+    {
+        const NodeType& node = m_nodes[nodeIdx];
+        if (!processor.checkNode(node.center, m_sizes[node.depth], node.brightFactor))
+        {
+            nodeIdx = node.right;
+        }
+        else if (node.depth == depth)
+        {
+            result = true;
+            for (OctreeObjectIndex idx = node.first; idx < node.last; ++idx)
+                processor.process(m_objects[idx]);
+            nodeIdx = node.right;
+        }
+        else
+        {
+            ++nodeIdx;
+        }
+    }
+
+    return result;
 }
 
 template<class OBJ, class PREC>
