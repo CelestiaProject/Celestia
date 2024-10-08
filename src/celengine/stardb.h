@@ -46,6 +46,8 @@ public:
     StarDatabase() = default;
     ~StarDatabase();
 
+    const celestia::engine::StarOctree* getOctree() const;
+
     inline Star* getStar(const std::uint32_t) const;
     inline std::uint32_t size() const;
 
@@ -79,6 +81,12 @@ private:
 
     friend class StarDatabaseBuilder;
 };
+
+inline const celestia::engine::StarOctree*
+StarDatabase::getOctree() const
+{
+    return octreeRoot.get();
+}
 
 inline Star*
 StarDatabase::getStar(const std::uint32_t n) const
