@@ -82,20 +82,20 @@ NameDatabase::getFinalNameIter() const
 }
 
 void
-NameDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
+NameDatabase::getCompletion(std::vector<std::pair<std::string, AstroCatalog::IndexNumber>>& completion, std::string_view name) const
 {
     std::string name2 = ReplaceGreekLetter(name);
-    for (const auto &[n, _] : nameIndex)
+    for (const auto &[n, index] : nameIndex)
     {
         if (UTF8StartsWith(n, name2, true))
-            completion.push_back(n);
+            completion.emplace_back(n, index);
     }
 
 #ifdef ENABLE_NLS
-    for (const auto &[n, _] : localizedNameIndex)
+    for (const auto &[n, index] : localizedNameIndex)
     {
         if (UTF8StartsWith(n, name2, true))
-            completion.push_back(n);
+            completion.emplace_back(n, index);
     }
 #endif
 }

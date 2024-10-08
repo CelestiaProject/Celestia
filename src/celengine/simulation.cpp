@@ -457,7 +457,7 @@ Selection Simulation::findObjectFromPath(std::string_view s, bool i18n) const
 }
 
 
-void Simulation::getObjectCompletion(std::vector<std::string>& completion,
+void Simulation::getObjectCompletion(std::vector<celestia::engine::Completion>& completion,
                                      std::string_view s,
                                      bool withLocations) const
 {
@@ -485,7 +485,7 @@ void Simulation::getObjectCompletion(std::vector<std::string>& completion,
     universe->getCompletionPath(completion, s, {path, nPathEntries}, withLocations);
 
     std::sort(completion.begin(), completion.end(),
-              [](const std::string &s1, const std::string &s2) { return strnatcmp(s1, s2) < 0; });
+              [](const celestia::engine::Completion &s1, const celestia::engine::Completion &s2) { return strnatcmp(s1.getName(), s2.getName()) < 0; });
 }
 
 

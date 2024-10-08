@@ -1636,17 +1636,14 @@ void CelestiaCore::charEnteredAutoComplete(const char* c_p)
 
 void CelestiaCore::updateSelectionFromInput()
 {
-    auto typedText = hud->textInput().getTypedText();
-    if (typedText.empty())
-        return;
+    auto textInput = hud->textInput();
 
-    Selection sel = sim->findObjectFromPath(typedText, true);
-    if (sel.empty())
-    {
-        auto completion = hud->textInput().getCompletion();
-        if (!completion.empty())
-            sel = sim->findObjectFromPath(completion.front(), true);
-    }
+    Selection sel;
+    // Prefer selected completion, then search with typed text
+    if (auto selectedCompletion = textInput.getSelectedCompletion(); selectedCompletion.has_value())
+        sel = selectedCompletion.value();
+    else if (auto typedText = textInput.getTypedText(); !typedText.empty())
+        sel = sim->findObjectFromPath(typedText, true);
 
     if (!sel.empty())
     {

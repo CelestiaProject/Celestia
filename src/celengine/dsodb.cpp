@@ -68,11 +68,23 @@ DSODatabase::find(std::string_view name, bool i18n) const
 }
 
 void
-DSODatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
+DSODatabase::getCompletion(std::vector<celestia::engine::Completion>& completion, std::string_view name) const
 {
     // only named DSOs are supported by completion.
     if (!name.empty())
-        m_namesDB->getCompletion(completion, name);
+    {
+        std::vector<std::pair<std::string, AstroCatalog::IndexNumber>> namesWithIndices;
+        m_namesDB->getCompletion(namesWithIndices, name);
+
+        for (const auto& [dsoName, index] : namesWithIndices)
+        {
+            auto capturedIndex = index;
+            completion.emplace_back(dsoName, [this, capturedIndex]
+            {
+                return Selection(find(capturedIndex));
+            });
+        }
+    }
 }
 
 std::string

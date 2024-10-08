@@ -10,6 +10,7 @@
 #pragma once
 
 #include <celengine/astroobj.h>
+#include <celengine/completion.h>
 #include <celengine/surface.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -64,7 +65,7 @@ public:
     };
 
     Body* find(std::string_view, bool deepSearch = false, bool i18n = false) const;
-    void getCompletion(std::vector<std::string>& completion, std::string_view _name, bool rec = true) const;
+    void getCompletion(std::vector<celestia::engine::Completion>& completion, std::string_view _name, bool rec = true) const;
 
 private:
     void addBodyToNameIndex(Body* body);

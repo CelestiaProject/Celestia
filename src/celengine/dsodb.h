@@ -21,7 +21,8 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "dsooctree.h"
+#include <celengine/completion.h>
+#include <celengine/dsooctree.h>
 
 class DeepSkyObject;
 class DSODatabaseBuilder;
@@ -49,7 +50,7 @@ public:
     DeepSkyObject* find(const AstroCatalog::IndexNumber catalogNumber) const;
     DeepSkyObject* find(std::string_view, bool i18n) const;
 
-    void getCompletion(std::vector<std::string>&, std::string_view) const;
+    void getCompletion(std::vector<celestia::engine::Completion>&, std::string_view) const;
 
     void findVisibleDSOs(celestia::engine::DSOHandler& dsoHandler,
                          const Eigen::Vector3d& obsPosition,
