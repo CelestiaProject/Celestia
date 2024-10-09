@@ -17,12 +17,9 @@
 #include <utility>
 
 #include <celutil/gettext.h>
-#include <celutil/logger.h>
 #include "name.h"
 
 namespace engine = celestia::engine;
-
-using celestia::util::GetLogger;
 
 DSODatabase::~DSODatabase() = default;
 

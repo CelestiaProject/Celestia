@@ -2673,7 +2673,7 @@ void CelestiaCore::fatalError(const string& msg, bool visual)
         if (visual)
             flash(msg);
         else
-            GetLogger()->error(msg.c_str());
+            GetLogger()->error(msg);
     }
     else
     {
