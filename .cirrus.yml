@@ -1,8 +1,8 @@
 task:
   name: freebsd amd64
-  skip: "!changesInclude('.cirrus.yml', 'src/*')"
+  skip: "changesIncludeOnly('doc/*')"
   freebsd_instance:
-    image_family: freebsd-13-1
+    image_family: freebsd-14-1
 
   install_script: |
     pkg install -y cmake            \
