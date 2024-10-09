@@ -52,61 +52,7 @@ namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
-using DynamicStarOctree = DynamicOctree<Star, float>;
-
 using util::GetLogger;
-
-// In testing, changing SPLIT_THRESHOLD from 100 to 50 nearly
-// doubled the number of nodes in the tree, but provided only between a
-// 0 to 5 percent frame rate improvement.
-template<>
-const inline std::uint32_t DynamicStarOctree::SPLIT_THRESHOLD = 75;
-
-// The octree node into which a star is placed is dependent on two properties:
-// its obsPosition and its luminosity--the fainter the star, the deeper the node
-// in which it will reside.  Each node stores an absolute magnitude; no child
-// of the node is allowed contain a star brighter than this value, making it
-// possible to determine quickly whether or not to cull subtrees.
-template<>
-bool
-DynamicStarOctree::exceedsBrightnessThreshold(const Star& star, float absMag)
-{
-    return star.getAbsoluteMagnitude() <= absMag;
-}
-
-template<>
-bool
-DynamicStarOctree::isStraddling(const Eigen::Vector3f& cellCenterPos, const Star& star)
-{
-    //checks if this star's orbit straddles child nodes
-    float orbitalRadius    = star.getOrbitalRadius();
-    if (orbitalRadius == 0.0f)
-        return false;
-
-    Eigen::Vector3f starPos    = star.getPosition();
-    return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
-}
-
-template<>
-float
-DynamicStarOctree::applyDecay(float excludingFactor)
-{
-    return astro::lumToAbsMag(astro::absMagToLum(excludingFactor) / 4.0f);
-}
-
-template<>
-DynamicStarOctree*
-DynamicStarOctree::getChild(const Star& obj, const Eigen::Vector3f& cellCenterPos) const
-{
-    Eigen::Vector3f objPos = obj.getPosition();
-
-    unsigned int child = 0U;
-    child |= objPos.x() < cellCenterPos.x() ? 0U : OctreeXPos;
-    child |= objPos.y() < cellCenterPos.y() ? 0U : OctreeYPos;
-    child |= objPos.z() < cellCenterPos.z() ? 0U : OctreeZPos;
-
-    return (*m_children)[child].get();
-}
 
 struct StarDatabaseBuilder::StcHeader
 {
@@ -129,7 +75,7 @@ StarDatabaseBuilder::StcHeader::StcHeader(const fs::path& _path) :
 template<>
 struct fmt::formatter<StarDatabaseBuilder::StcHeader> : formatter<std::string_view>
 {
-    format_context::iterator format(const StarDatabaseBuilder::StcHeader& header, format_context& ctx)
+    auto format(const StarDatabaseBuilder::StcHeader& header, format_context& ctx) const
     {
         fmt::basic_memory_buffer<char> data;
         fmt::format_to(std::back_inserter(data), "line {}", header.lineNumber);
@@ -143,6 +89,54 @@ struct fmt::formatter<StarDatabaseBuilder::StcHeader> : formatter<std::string_vi
 
 namespace
 {
+
+// In testing, changing SPLIT_THRESHOLD from 100 to 50 nearly
+// doubled the number of nodes in the tree, but provided only between a
+// 0 to 5 percent frame rate improvement.
+constexpr engine::OctreeObjectIndex StarOctreeSplitThreshold = 75;
+
+// The octree node into which a star is placed is dependent on two properties:
+// its obsPosition and its luminosity--the fainter the star, the deeper the node
+// in which it will reside.  Each node stores an absolute magnitude; no child
+// of the node is allowed contain a star brighter than this value, making it
+// possible to determine quickly whether or not to cull subtrees.
+
+struct StarOctreeTraits
+{
+    using ObjectType = Star;
+    using PrecisionType = float;
+
+    static Eigen::Vector3f getPosition(const ObjectType&);
+    static float getRadius(const ObjectType&);
+    static float getMagnitude(const ObjectType&);
+    static float applyDecay(float);
+};
+
+inline Eigen::Vector3f
+StarOctreeTraits::getPosition(const ObjectType& obj)
+{
+    return obj.getPosition();
+}
+
+inline float
+StarOctreeTraits::getRadius(const ObjectType& obj)
+{
+    return obj.getOrbitalRadius();
+}
+
+inline float
+StarOctreeTraits::getMagnitude(const ObjectType& obj)
+{
+    return obj.getAbsoluteMagnitude();
+}
+
+inline float
+StarOctreeTraits::applyDecay(float factor)
+{
+    // Decrease in luminosity by factor of 4
+    // -2.5 * log10(1.0 / 4.0) = 1.50515 (nearest float)
+    return factor + 1.50515f;
+}
 
 constexpr float STAR_OCTREE_MAGNITUDE = 6.0f;
 
@@ -377,11 +371,11 @@ checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
 
     // Convert from Celestia's coordinate system
     const Eigen::Vector3f& p = star->getPosition();
-    Eigen::Vector3d v = math::XRotation(math::degToRad(astro::J2000Obliquity)) * Eigen::Vector3f(p.x(), -p.z(), p.y()).cast<double>();
+    Eigen::Vector3d v = math::XRotation(astro::J2000Obliquity) * Eigen::Vector3f(p.x(), -p.z(), p.y()).cast<double>();
     // Disable Sonar on the below: suggests using value-or which would eagerly-evaluate the replacement value
     double distance = distanceValue.has_value() ? *distanceValue : v.norm(); //NOSONAR
     double ra = raValue.has_value() ? *raValue : (math::radToDeg(std::atan2(v.y(), v.x())) / astro::DEG_PER_HRA); //NOSONAR
-    double dec = decValue.has_value() ? *decValue : math::radToDeg(std::asin(std::clamp(v.z(), -1.0, 1.0))); //NOSONAR
+    double dec = decValue.has_value() ? *decValue : math::radToDeg(std::asin(std::clamp(v.z() / v.norm(), -1.0, 1.0))); //NOSONAR
 
     position = astro::equatorialToCelestialCart(ra, dec, distance).cast<float>();
     return true;
@@ -1069,24 +1063,25 @@ StarDatabaseBuilder::buildOctree()
 {
     // This should only be called once for the database
     GetLogger()->debug("Sorting stars into octree . . .\n");
+    auto starCount = static_cast<engine::OctreeObjectIndex>(unsortedStars.size());
+
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
-    auto root = std::make_unique<DynamicStarOctree>(Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
-                                                    absMag);
-    for (Star& star : unsortedStars)
-        root->insertObject(star, StarDatabase::STAR_OCTREE_ROOT_SIZE);
+
+    auto root = engine::makeDynamicOctree<StarOctreeTraits>(std::move(unsortedStars),
+                                                            Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),
+                                                            StarDatabase::STAR_OCTREE_ROOT_SIZE,
+                                                            absMag,
+                                                            StarOctreeSplitThreshold);
 
     GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
-    auto sortedStars = std::make_unique<Star[]>(unsortedStars.size()); //NOSONAR
-    Star* firstStar = sortedStars.get();
-    starDB->octreeRoot = root->rebuildAndSort(firstStar);
+    starDB->octreeRoot = root->build();
 
     GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
-                       firstStar - sortedStars.get(),
-                       1 + starDB->octreeRoot->countChildren(), starDB->octreeRoot->countObjects());
+                       starCount,
+                       starDB->octreeRoot->nodeCount(),
+                       starDB->octreeRoot->size());
 
-    starDB->nStars = static_cast<std::uint32_t>(unsortedStars.size());
-    starDB->stars = std::move(sortedStars);
     unsortedStars.clear();
 }
 
@@ -1098,15 +1093,17 @@ StarDatabaseBuilder::buildIndexes()
 
     GetLogger()->info("Building catalog number indexes . . .\n");
 
+    auto nStars = starDB->octreeRoot->size();
+
     starDB->catalogNumberIndex.clear();
-    starDB->catalogNumberIndex.reserve(starDB->nStars);
-    for (std::uint32_t i = 0; i < starDB->nStars; ++i)
+    starDB->catalogNumberIndex.reserve(nStars);
+    for (std::uint32_t i = 0; i < nStars; ++i)
         starDB->catalogNumberIndex.push_back(i);
 
-    const Star* stars = starDB->stars.get();
+    const auto& octreeRoot = *starDB->octreeRoot;
     std::sort(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),
-              [stars](std::uint32_t idx0, std::uint32_t idx1)
+              [&octreeRoot](std::uint32_t idx0, std::uint32_t idx1)
               {
-                  return stars[idx0].getIndex() < stars[idx1].getIndex();
+                  return octreeRoot[idx0].getIndex() < octreeRoot[idx1].getIndex();
               });
 }

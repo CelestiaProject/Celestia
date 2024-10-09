@@ -87,13 +87,14 @@ constexpr auto chunkHeaderSize = static_cast<std::int32_t>(sizeof(M3DChunkType) 
 template<>
 struct fmt::formatter<M3DChunkType>
 {
-    constexpr auto parse(const format_parse_context& ctx) const -> decltype(ctx.begin()) {
+    constexpr auto parse(const format_parse_context& ctx) const
+    {
         // we should validate the format here but exceptions are disabled
         return ctx.begin();
     }
 
-    template<typename FormatContext>
-    auto format(const M3DChunkType& chunkType, FormatContext& ctx) -> decltype(ctx.out()) {
+    auto format(const M3DChunkType& chunkType, format_context& ctx) const
+    {
         return format_to(ctx.out(), "{:04x}", static_cast<std::uint16_t>(chunkType));
     }
 };

@@ -12,19 +12,33 @@
 #pragma once
 
 #include <iosfwd>
+#include <string_view>
+
+#ifdef _WIN32
 #include <string>
+#endif
 
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
 
 template <>
-struct fmt::formatter<fs::path> : formatter<std::string>
+struct fmt::formatter<fs::path> : formatter<std::string_view>
 {
-    template <typename FormatContext>
-    auto format(const fs::path &path, FormatContext &ctx)
+    auto format(const fs::path &path, format_context &ctx) const
     {
-        return formatter<std::string>::format(path.string(), ctx);
+#ifdef _WIN32
+        auto u8path = path.u8string();
+#if __cpp_char8_t >= 201811L
+        // Future-proof against C++20 defining the result of the above as std::u8string
+        std::string_view sv(reinterpret_cast<const char*>(u8path.data()), u8path.size());
+        return formatter<std::string_view>::format(sv, ctx);
+#else
+        return formatter<std::string_view>::format(u8path, ctx);
+#endif
+#else
+        return formatter<std::string_view>::format(path.native(), ctx);
+#endif
     }
 };
 

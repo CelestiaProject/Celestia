@@ -14,9 +14,10 @@
 
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
+#include <celmath/mathlib.h>
 
-namespace astro = celestia::astro;
-namespace numbers = celestia::numbers;
+namespace celestia::engine
+{
 
 namespace
 {
@@ -33,14 +34,23 @@ constexpr float MAX_STAR_ORBIT_RADIUS = 1.0f;
 
 } // end unnamed namespace
 
-// total specialization of the StaticOctree template process*() methods for stars:
-template<>
-void
-StarOctree::processVisibleObjects(StarHandler&    processor,
-                                  const PointType& obsPosition,
-                                  const PlaneType* frustumPlanes,
-                                  float limitingFactor,
-                                  float scale) const
+// The version of cppcheck used by Codacy doesn't seem to detect the field initializer
+
+StarOctreeVisibleObjectsProcessor::StarOctreeVisibleObjectsProcessor(StarHandler* starHandler, // cppcheck-suppress uninitMemberVar
+                                                                     const StarOctree::PointType& obsPosition,
+                                                                     util::array_view<PlaneType> frustumPlanes,
+                                                                     float limitingFactor) :
+    m_starHandler(starHandler),
+    m_obsPosition(obsPosition),
+    m_frustumPlanes(frustumPlanes),
+    m_limitingFactor(limitingFactor)
+{
+}
+
+bool
+StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center,
+                                             float size,
+                                             float factor)
 {
     // See if this node lies within the view frustum
 
@@ -48,93 +58,71 @@ StarOctree::processVisibleObjects(StarHandler&    processor,
     // planes that define the infinite view frustum.
     for (unsigned int i = 0; i < 5; ++i)
     {
-        const PlaneType& plane = frustumPlanes[i];
-        float r = scale * plane.normal().cwiseAbs().sum();
-        if (plane.signedDistance(m_cellCenterPos) < -r)
-            return;
+        const PlaneType& plane = m_frustumPlanes[i];
+        float r = size * plane.normal().cwiseAbs().sum();
+        if (plane.signedDistance(center) < -r)
+            return false;
     }
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3_v<float>;
+    float minDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3_v<float>;
 
-    // Process the objects in this node
-    float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
+    float distanceModulus = astro::distanceModulus(minDistance);
+    if (minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
+        return false;
 
-    for (std::uint32_t i = 0; i < m_nObjects; ++i)
-    {
-        const Star& obj = m_firstObject[i];
-        if (obj.getAbsoluteMagnitude() < dimmest)
-        {
-            float distance = (obsPosition - obj.getPosition()).norm();
-            float appMag   = obj.getApparentMagnitude(distance);
+    // Dimmest absolute magnitude to process
+    m_dimmest = minDistance > 0 ? (m_limitingFactor - distanceModulus) : 1000;
 
-            if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
-                processor.process(obj, distance, appMag);
-        }
-    }
-
-    // See if any of the objects in child nodes are potentially included
-    // that we need to recurse deeper.
-    if (m_children != nullptr &&
-        (minDistance <= 0 || astro::absToAppMag(m_exclusionFactor, minDistance) <= limitingFactor))
-    {
-        // Recurse into the child nodes
-        for (int i = 0; i < 8; ++i)
-        {
-            (*m_children)[i]->processVisibleObjects(processor,
-                                                    obsPosition,
-                                                    frustumPlanes,
-                                                    limitingFactor,
-                                                    scale * 0.5f);
-        }
-    }
+    return true;
 }
 
-template<>
 void
-StarOctree::processCloseObjects(StarHandler& processor,
-                                const PointType& obsPosition,
-                                float boundingRadius,
-                                float scale) const
+StarOctreeVisibleObjectsProcessor::process(const Star& obj) const
+{
+    if (obj.getAbsoluteMagnitude() > m_dimmest)
+        return;
+
+    float distance = (m_obsPosition - obj.getPosition()).norm();
+    float appMag   = obj.getApparentMagnitude(distance);
+
+    if (appMag <= m_limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
+        m_starHandler->process(obj, distance, appMag);
+}
+
+StarOctreeCloseObjectsProcessor::StarOctreeCloseObjectsProcessor(StarHandler* starHandler,
+                                                                 const StarOctree::PointType& obsPosition,
+                                                                 float boundingRadius) :
+    m_starHandler(starHandler),
+    m_obsPosition(obsPosition),
+    m_boundingRadius(boundingRadius),
+    m_radiusSquared(math::square(boundingRadius))
+{
+}
+
+bool
+StarOctreeCloseObjectsProcessor::checkNode(const StarOctree::PointType& center,
+                                           float size,
+                                           float /* factor */) const
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance = (obsPosition - m_cellCenterPos).norm() - scale * numbers::sqrt3_v<float>;
+    float nodeDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3_v<float>;
+    return nodeDistance <= m_boundingRadius;
+}
 
-    if (nodeDistance > boundingRadius)
-        return;
-
-    // At this point, we've determined that the cellCenterPos of the node is
-    // close enough that we must check individual objects for proximity.
-
-    // Compute distance squared to avoid having to sqrt for distance
-    // comparison.
-    float radiusSquared    = boundingRadius * boundingRadius;
-
-    // Check all the objects in the node.
-    for (std::uint32_t i = 0; i < m_nObjects; ++i)
+void
+StarOctreeCloseObjectsProcessor::process(const Star& obj) const
+{
+    StarOctree::PointType offset = m_obsPosition - obj.getPosition();
+    if (offset.squaredNorm() < m_radiusSquared)
     {
-        const Star& obj = m_firstObject[i];
-        PointType offset = obsPosition - obj.getPosition();
-        if (offset.squaredNorm() < radiusSquared)
-        {
-            float distance = offset.norm();
-            float appMag   = obj.getApparentMagnitude(distance);
+        float distance = offset.norm();
+        float appMag   = obj.getApparentMagnitude(distance);
 
-            processor.process(obj, distance, appMag);
-        }
-    }
-
-    // Recurse into the child nodes
-    if (m_children != nullptr)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            (*m_children)[i]->processCloseObjects(processor,
-                                                  obsPosition,
-                                                  boundingRadius,
-                                                  scale * 0.5f);
-        }
+        m_starHandler->process(obj, distance, appMag);
     }
 }
+
+} // end namespace celestia::engine

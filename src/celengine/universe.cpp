@@ -41,8 +41,7 @@ namespace
 
 constexpr double ANGULAR_RES = 3.5e-6;
 
-
-class ClosestStarFinder : public StarHandler
+class ClosestStarFinder : public engine::StarHandler
 {
 public:
     ClosestStarFinder(float _maxDistance, const Universe* _universe);
@@ -80,8 +79,7 @@ ClosestStarFinder::process(const Star& star, float distance, float /*unused*/)
     }
 }
 
-
-class NearStarFinder : public StarHandler
+class NearStarFinder : public engine::StarHandler
 {
 public:
     NearStarFinder(float _maxDistance, std::vector<const Star*>& nearStars);
@@ -107,8 +105,6 @@ NearStarFinder::process(const Star& star, float distance, float /*unused*/)
         nearStars.push_back(&star);
 }
 
-
-
 struct PlanetPickInfo
 {
     double sinAngle2Closest;
@@ -119,7 +115,6 @@ struct PlanetPickInfo
     double jd;
     float atanTolerance;
 };
-
 
 bool
 ApproxPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
@@ -152,7 +147,6 @@ ApproxPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
 
     return true;
 }
-
 
 // Perform an intersection test between the pick ray and a body
 bool
@@ -259,9 +253,8 @@ traverseFrameTree(const FrameTree* frameTree,
     return true;
 }
 
-
 // StarPicker is a callback class for StarDatabase::findVisibleStars
-class StarPicker : public StarHandler
+class StarPicker : public engine::StarHandler
 {
 public:
     StarPicker(const Eigen::Vector3f&, const Eigen::Vector3f&, double, float);
@@ -329,8 +322,7 @@ StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
     }
 }
 
-
-class CloseStarPicker : public StarHandler
+class CloseStarPicker : public engine::StarHandler
 {
 public:
     CloseStarPicker(const UniversalCoord& pos,
@@ -350,7 +342,6 @@ public:
     float closestDistance;
     double sinAngle2Closest;
 };
-
 
 CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
                                  const Eigen::Vector3f& dir,
@@ -414,8 +405,7 @@ CloseStarPicker::process(const Star& star,
     }
 }
 
-
-class DSOPicker : public DSOHandler
+class DSOPicker : public engine::DSOHandler
 {
 public:
     DSOPicker(const Eigen::Vector3d& pickOrigin,
@@ -435,7 +425,6 @@ public:
     double  sinAngle2Closest;
 };
 
-
 DSOPicker::DSOPicker(const Eigen::Vector3d& pickOrigin,
                      const Eigen::Vector3d& pickDir,
                      std::uint64_t renderFlags,
@@ -447,7 +436,6 @@ DSOPicker::DSOPicker(const Eigen::Vector3d& pickOrigin,
     sinAngle2Closest(std::max(std::sin(angle / 2.0), ANGULAR_RES))
 {
 }
-
 
 void
 DSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, double, float) //NOSONAR
@@ -477,8 +465,7 @@ DSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, double, float) //N
     }
 }
 
-
-class CloseDSOPicker : public DSOHandler
+class CloseDSOPicker : public engine::DSOHandler
 {
 public:
     CloseDSOPicker(const Eigen::Vector3d& pos,
@@ -500,7 +487,6 @@ public:
     double largestCosAngle;
 };
 
-
 CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& pos,
                                const Eigen::Vector3d& dir,
                                std::uint64_t renderFlags,
@@ -514,7 +500,6 @@ CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& pos,
     largestCosAngle(-2.0)
 {
 }
-
 
 void
 CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
@@ -539,7 +524,7 @@ CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
 }
 
 void
-getLocationsCompletion(std::vector<std::string>& completion,
+getLocationsCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
                        const Body& body)
 {
@@ -552,23 +537,21 @@ getLocationsCompletion(std::vector<std::string>& completion,
         const std::string& name = location->getName(false);
         if (UTF8StartsWith(name, s))
         {
-            completion.push_back(name);
+            completion.emplace_back(name, Selection(location));
         }
         else
         {
             const std::string& lname = location->getName(true);
             if (lname != name && UTF8StartsWith(lname, s))
-                completion.push_back(lname);
+                completion.emplace_back(lname, Selection(location));
         }
     }
 }
 
 } // end unnamed namespace
 
-
 // Needs definition of ConstellationBoundaries
 Universe::~Universe() = default;
-
 
 StarDatabase*
 Universe::getStarCatalog() const
@@ -576,13 +559,11 @@ Universe::getStarCatalog() const
     return starCatalog.get();
 }
 
-
 void
 Universe::setStarCatalog(std::unique_ptr<StarDatabase>&& catalog)
 {
     starCatalog = std::move(catalog);
 }
-
 
 SolarSystemCatalog*
 Universe::getSolarSystemCatalog() const
@@ -596,13 +577,11 @@ Universe::setSolarSystemCatalog(std::unique_ptr<SolarSystemCatalog>&& catalog)
     solarSystemCatalog = std::move(catalog);
 }
 
-
 DSODatabase*
 Universe::getDSOCatalog() const
 {
     return dsoCatalog.get();
 }
-
 
 void
 Universe::setDSOCatalog(std::unique_ptr<DSODatabase>&& catalog)
@@ -610,13 +589,11 @@ Universe::setDSOCatalog(std::unique_ptr<DSODatabase>&& catalog)
     dsoCatalog = std::move(catalog);
 }
 
-
 AsterismList*
 Universe::getAsterisms() const
 {
     return asterisms.get();
 }
-
 
 void
 Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
@@ -624,20 +601,17 @@ Universe::setAsterisms(std::unique_ptr<AsterismList>&& _asterisms)
     asterisms = std::move(_asterisms);
 }
 
-
 ConstellationBoundaries*
 Universe::getBoundaries() const
 {
     return boundaries.get();
 }
 
-
 void
 Universe::setBoundaries(std::unique_ptr<ConstellationBoundaries>&& _boundaries)
 {
     boundaries = std::move(_boundaries);
 }
-
 
 // Return the planetary system of a star, or nullptr if it has no planets.
 SolarSystem*
@@ -652,7 +626,6 @@ Universe::getSolarSystem(const Star* star) const
         ? nullptr
         : iter->second.get();
 }
-
 
 // A more general version of the method above--return the solar system
 // that contains an object, or nullptr if there is no solar sytstem.
@@ -686,7 +659,6 @@ Universe::getSolarSystem(const Selection& sel) const
     }
 }
 
-
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
 SolarSystem*
@@ -701,13 +673,11 @@ Universe::getOrCreateSolarSystem(Star* star) const
     return iter->second.get();
 }
 
-
 const celestia::MarkerList&
 Universe::getMarkers() const
 {
     return markers;
 }
-
 
 void
 Universe::markObject(const Selection& sel,
@@ -735,7 +705,6 @@ Universe::markObject(const Selection& sel,
     marker.setSizing(sizing);
 }
 
-
 void
 Universe::unmarkObject(const Selection& sel, int priority)
 {
@@ -745,13 +714,11 @@ Universe::unmarkObject(const Selection& sel, int priority)
         markers.erase(iter);
 }
 
-
 void
 Universe::unmarkAll()
 {
     markers.clear();
 }
-
 
 bool
 Universe::isMarked(const Selection& sel, int priority) const
@@ -760,7 +727,6 @@ Universe::isMarked(const Selection& sel, int priority) const
                              [&sel](const auto& m) { return m.object() == sel; });
     return iter != markers.end() && iter->priority() >= priority;
 }
-
 
 Selection
 Universe::pickPlanet(const SolarSystem& solarSystem,
@@ -828,7 +794,6 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
         return Selection();
 }
 
-
 Selection
 Universe::pickStar(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
@@ -867,7 +832,6 @@ Universe::pickStar(const UniversalCoord& origin,
         return Selection();
 }
 
-
 Selection
 Universe::pickDeepSkyObject(const UniversalCoord& origin,
                             const Eigen::Vector3f& direction,
@@ -901,7 +865,6 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     else
         return Selection();
 }
-
 
 Selection
 Universe::pick(const UniversalCoord& origin,
@@ -946,7 +909,6 @@ Universe::pick(const UniversalCoord& origin,
     return sel;
 }
 
-
 // Search by name for an immediate child of the specified object.
 Selection
 Universe::findChildObject(const Selection& sel,
@@ -988,7 +950,6 @@ Universe::findChildObject(const Selection& sel,
 
     return Selection();
 }
-
 
 // Search for a name within an object's context.  For stars, planets (bodies),
 // and locations, the context includes all bodies in the associated solar
@@ -1036,7 +997,6 @@ Universe::findObjectInContext(const Selection& sel,
     return Selection();
 }
 
-
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star catalog
 //   2. Search the deep sky catalog for a matching name.
@@ -1078,7 +1038,6 @@ Universe::find(std::string_view s,
     return Selection();
 }
 
-
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.  The caller may pass in a list of solar systems
@@ -1117,9 +1076,8 @@ Universe::findPath(std::string_view s,
     return sel;
 }
 
-
 void
-Universe::getCompletion(std::vector<std::string>& completion,
+Universe::getCompletion(std::vector<celestia::engine::Completion>& completion,
                         std::string_view s,
                         util::array_view<const Selection> contexts,
                         bool withLocations) const
@@ -1150,9 +1108,8 @@ Universe::getCompletion(std::vector<std::string>& completion,
         starCatalog->getCompletion(completion, s);
 }
 
-
 void
-Universe::getCompletionPath(std::vector<std::string>& completion,
+Universe::getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                             std::string_view s,
                             util::array_view<const Selection> contexts,
                             bool withLocations) const
@@ -1175,7 +1132,7 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
 
     if (sel.getType() == SelectionType::DeepSky)
     {
-        completion.push_back(dsoCatalog->getDSOName(sel.deepsky()));
+        completion.emplace_back(dsoCatalog->getDSOName(sel.deepsky()), sel);
         return;
     }
 
@@ -1202,7 +1159,6 @@ Universe::getCompletionPath(std::vector<std::string>& completion,
     }
 }
 
-
 // Return the closest solar system to position, or nullptr if there are no planets
 // with in one light year.
 SolarSystem*
@@ -1214,7 +1170,6 @@ Universe::getNearestSolarSystem(const UniversalCoord& position) const
     starCatalog->findCloseStars(closestFinder, pos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }
-
 
 void
 Universe::getNearStars(const UniversalCoord& position,

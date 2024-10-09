@@ -21,6 +21,7 @@
 using namespace std::string_view_literals;
 
 namespace compat = celestia::compat;
+namespace engine = celestia::engine;
 
 namespace
 {
@@ -54,14 +55,13 @@ StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
                                catalogNumber,
                                [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
                                {
-                                   return stars.get()[idx].getIndex() < catNum;
+                                   return (*octreeRoot)[idx].getIndex() < catNum;
                                });
 
     if (it == catalogNumberIndex.end())
         return nullptr;
 
-    // False positive in cppcheck: stars.get() does NOT return a void pointer
-    Star* star = stars.get() + *it; // cppcheck-suppress arithOperationsOnVoidPointer
+    Star* star = &(*octreeRoot)[*it];
     return star->getIndex() == catalogNumber
         ? star
         : nullptr;
@@ -88,11 +88,23 @@ StarDatabase::searchCrossIndex(StarCatalog catalog, AstroCatalog::IndexNumber nu
 }
 
 void
-StarDatabase::getCompletion(std::vector<std::string>& completion, std::string_view name) const
+StarDatabase::getCompletion(std::vector<celestia::engine::Completion>& completion, std::string_view name) const
 {
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        namesDB->getCompletion(completion, name);
+    {
+        std::vector<std::pair<std::string, AstroCatalog::IndexNumber>> namesWithIndices;
+        namesDB->getCompletion(namesWithIndices, name);
+
+        for (const auto& [starName, index] : namesWithIndices)
+        {
+            auto capturedIndex = index;
+            completion.emplace_back(starName, [this, capturedIndex]
+            {
+                return Selection(find(capturedIndex));
+            });
+        }
+    }
 }
 
 // Return the name for the star with specified catalog number.  The returned
@@ -197,7 +209,7 @@ StarDatabase::getStarNameList(const Star& star, unsigned int maxNames) const
 }
 
 void
-StarDatabase::findVisibleStars(StarHandler& starHandler,
+StarDatabase::findVisibleStars(engine::StarHandler& starHandler,
                                const Eigen::Vector3f& position,
                                const Eigen::Quaternionf& orientation,
                                float fovY,
@@ -224,22 +236,24 @@ StarDatabase::findVisibleStars(StarHandler& starHandler,
         frustumPlanes[i] = Eigen::Hyperplane<float, 3>(planeNormals[i], position);
     }
 
-    octreeRoot->processVisibleObjects(starHandler,
-                                      position,
-                                      frustumPlanes.data(),
-                                      limitingMag,
-                                      STAR_OCTREE_ROOT_SIZE);
+    engine::StarOctreeVisibleObjectsProcessor processor(&starHandler,
+                                                        position,
+                                                        frustumPlanes,
+                                                        limitingMag);
+
+    octreeRoot->processDepthFirst(processor);
 }
 
 void
-StarDatabase::findCloseStars(StarHandler& starHandler,
+StarDatabase::findCloseStars(engine::StarHandler& starHandler,
                              const Eigen::Vector3f& position,
                              float radius) const
 {
-    octreeRoot->processCloseObjects(starHandler,
-                                    position,
-                                    radius,
-                                    STAR_OCTREE_ROOT_SIZE);
+    engine::StarOctreeCloseObjectsProcessor processor(&starHandler,
+                                                      position,
+                                                      radius);
+
+    octreeRoot->processDepthFirst(processor);
 }
 
 const StarNameDatabase*

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <celengine/boundaries.h>
+#include <celengine/completion.h>
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/dsodb.h>
@@ -64,7 +65,7 @@ class Universe
                        celestia::util::array_view<const Selection> contexts,
                        bool i18n = false) const;
 
-    void getCompletionPath(std::vector<std::string>& completion,
+    void getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                            std::string_view s,
                            celestia::util::array_view<const Selection> contexts,
                            bool withLocations = false) const;
@@ -90,7 +91,7 @@ class Universe
     const celestia::MarkerList& getMarkers() const;
 
  private:
-    void getCompletion(std::vector<std::string>& completion,
+    void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
                        celestia::util::array_view<const Selection> contexts,
                        bool withLocations = false) const;

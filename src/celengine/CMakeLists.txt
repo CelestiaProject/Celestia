@@ -11,6 +11,8 @@ set(CELENGINE_SOURCES
   boundaries.h
   category.cpp
   category.h
+  completion.cpp
+  completion.h
   console.cpp
   console.h
   constellation.cpp

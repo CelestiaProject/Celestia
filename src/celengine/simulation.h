@@ -20,6 +20,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celengine/completion.h>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/galaxy.h>
@@ -67,7 +68,7 @@ class Simulation
     void selectPlanet(int);
     Selection findObject(std::string_view s, bool i18n = false) const;
     Selection findObjectFromPath(std::string_view s, bool i18n = false) const;
-    void getObjectCompletion(std::vector<std::string>& completion,
+    void getObjectCompletion(std::vector<celestia::engine::Completion>& completion,
                              std::string_view s,
                              bool withLocations = false) const;
     void gotoSelection(double gotoTime,

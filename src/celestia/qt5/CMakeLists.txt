@@ -3,10 +3,6 @@ if(NOT ENABLE_QT5)
   return()
 endif()
 
-if(WIN32)
-  message(FATAL_ERROR "Qt5 frontend is not supported on Windows")
-endif()
-
 include(../qt/CelestiaQtCommon.cmake)
 
 if(APPLE AND EXISTS /usr/local/opt/qt5)
