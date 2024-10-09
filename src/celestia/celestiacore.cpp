@@ -34,7 +34,7 @@
 #include <Eigen/Geometry>
 #include <fmt/ostream.h>
 #if FMT_VERSION < 90000
-#include <fmt/locale.h>
+#include <fmt/format.h>
 #endif
 
 #include <celastro/astro.h>

@@ -22,7 +22,7 @@
 
 #include <fmt/format.h>
 #if FMT_VERSION < 90000
-#include <fmt/locale.h>
+#include <fmt/format.h>
 #endif
 
 #include <celcompat/numbers.h>
