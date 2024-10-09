@@ -193,7 +193,7 @@ jobs:
           wayland: ON
           icu: ON
           qt6: OFF
-        - os: ubuntu-22.04
+        - os: ubuntu-24.04
           avif: ON
           gles: ON
           gtk3: ON
