@@ -128,7 +128,11 @@ public:
 
         if (lr == nullptr)
         {
-            lr = new LineRenderer(*renderer, OrbitThickness, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream, LineRenderer::VertexFormat::P3F_C4UB);
+            lr = std::make_unique<LineRenderer>(*renderer,
+                                                OrbitThickness,
+                                                LineRenderer::PrimType::LineStrip,
+                                                LineRenderer::StorageType::Stream,
+                                                LineRenderer::VertexFormat::P3F_C4UB);
             lr->setVertexCount(VertexBufferCapacity);
         }
         lr->startUpdate();
@@ -175,14 +179,13 @@ public:
 
     void deinit()
     {
-        delete lr;
-        lr = nullptr;
+        lr.reset();
     }
 
 private:
     unsigned int currentStripLength { 0 };
     std::vector<unsigned int> stripLengths;
-    LineRenderer *lr { nullptr };
+    std::unique_ptr<LineRenderer> lr;
     const Renderer *renderer { nullptr };
     Color color;
 };
