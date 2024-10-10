@@ -102,19 +102,14 @@
         <menuitem action='HudTerse'/>
         <menuitem action='HudVerbose'/>
       </menu>
-      <menu action='StarStyleMenu'>
-        <menuitem action='StarsFuzzy'/>
-        <menuitem action='StarsPoints'/>
-        <menuitem action='StarsDiscs'/>
-      </menu>
       <menu action='AmbientLightMenu'>
         <menuitem action='AmbientNone'/>
         <menuitem action='AmbientLow'/>
         <menuitem action='AmbientMedium'/>
       </menu>
       <separator/>
-      <menuitem action='StarsMore'/>
-      <menuitem action='StarsFewer'/>
+      <menuitem action='IncreaseExposure'/>
+      <menuitem action='DecreaseExposure'/>
     </menu>
     <menu action='WindowMenu'>
       <menuitem action='ViewerSize'/>

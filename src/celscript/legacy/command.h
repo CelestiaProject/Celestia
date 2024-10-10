@@ -488,28 +488,16 @@ class CommandOrbitFlags : public InstantaneousCommand
 };
 
 
-class CommandSetVisibilityLimit : public InstantaneousCommand
+class CommandSetExposure : public InstantaneousCommand
 {
  public:
-    CommandSetVisibilityLimit(double);
+    CommandSetExposure(double);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    double magnitude;
-};
-
-class CommandSetFaintestAutoMag45deg : public InstantaneousCommand
-{
- public:
-    CommandSetFaintestAutoMag45deg(double);
-
- protected:
-    void processInstantaneous(ExecutionEnvironment&) override;
-
- private:
-    double magnitude;
+    double exposure;
 };
 
 class CommandSetAmbientLight : public InstantaneousCommand

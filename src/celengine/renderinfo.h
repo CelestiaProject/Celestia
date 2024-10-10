@@ -1,6 +1,7 @@
 // renderinfo.h
 //
-// Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,12 +22,13 @@ class Texture;
 
 struct RenderInfo
 {
-    Color color{ 1.0f, 1.0f, 1.0f };
+    Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     Texture* baseTex{ nullptr };
     Texture* bumpTex{ nullptr };
     Texture* nightTex{ nullptr };
     Texture* glossTex{ nullptr };
     Texture* overlayTex{ nullptr };
+    Color color{ 1.0f, 1.0f, 1.0f };
     Color specularColor{ 0.0f, 0.0f, 0.0f };
     float specularPower{ 0.0f };
     Eigen::Vector3f sunDir_eye{ Eigen::Vector3f::UnitZ() };
@@ -36,10 +38,9 @@ struct RenderInfo
     Color sunColor{ 1.0f, 1.0f, 1.0f };
     Color ambientColor{ 0.0f, 0.0f, 0.0f };
     float lunarLambert{ 0.0f };
-    Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float pixWidth{ 1.0f };
     float pointScale{ 1.0f };
+    bool isStar{ false };
 };
 
 extern LODSphereMesh* g_lodSphere;
-

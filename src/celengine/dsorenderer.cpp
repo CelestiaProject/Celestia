@@ -1,6 +1,6 @@
 // dsorenderer.cpp
 //
-// Copyright (C) 2001-2020, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -63,6 +63,10 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
                           double distanceToDSO,
                           float absMag)
 {
+    // TODO: to transfer DSO renderer from the magnitude system to the irradiation system.
+    // This workaround should be a temporary measure.
+    float faintestMag = astro::exposureToFaintestMag(exposure);
+
     if (distanceToDSO > distanceLimit || !dso->isVisible())
         return;
 
@@ -104,7 +108,10 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
             }
         }
 
-        float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
+        // Original function of brightnessCorr:
+        // float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
+        float b = 2.3f - 10.925f / faintestMag;
+
         switch (dso->getObjType())
         {
         case DeepSkyObjectType::Galaxy:
@@ -133,7 +140,6 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
 
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
-    //
     unsigned int labelMask = dso->getLabelMask();
 
     if ((labelMask & labelMode) != 0)
@@ -180,10 +186,10 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
             break;
         }
 
-        if (appMagEff < labelThresholdMag)
+        float irradiationEff = astro::magToIrradiance(appMagEff) * exposure;
+        if (irradiationEff > labelLowestIrradiation)
         {
-            // introduce distance dependent label transparency.
-            float distr = std::min(1.0f, step * (labelThresholdMag - appMagEff) / labelThresholdMag);
+            float distr = 1.0f - irradiationEff / labelLowestIrradiation;
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

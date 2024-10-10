@@ -146,14 +146,8 @@ O ................. Orbity planet (wyświetl WSZYSTKIE wybrane orbity)
 } .................. Zwiększ oświetlenie otoczenia
 ( .................. Zmniejsz jasność galaktyki (niezależnie od jasności gwiazd)
 ) .................. Zwiększ jasność galaktyki (niezależnie od jasności gwiazd)
-[ .................. Zmniejsz wielkość:
-	AutoMag OFF: Zmniejsz ograniczenie wielkości (mniej widocznych gwiazd)
-	AutoMag ON:  Zmniejsz ograniczenie wielkości o 45 stopni pola widzenia
-] .................. Zwiększ wielkość:
-	AutoMag OFF: Zwiększ ograniczenie wielkości (więcej widocznych gwiazd)
-	AutoMag ON:  Zwiększ ograniczenie wielkości o 45 stopni pola widzenia
-Ctrl+Y .......... Włącz/wyłącz autoMag
-	     (autoMag = automatyczne dostosowanie widoczności gwiazd do pola widzenia)
+[ .................. Skrócenie czasu ekspozycji
+] .................. Wydłużenie czasu ekspozycji
 , .................. Zmniejsz pole widzenia (Shift+Lewy przycisk myszy (przeciągnięcie))
 . .................. Zwiększ pole widzenia (Shift+Lewy przycisk myszy (przeciągnięcie))
 Ctrl+X .......... Włącz/wyłącz Antialiasing (np. dla orbit)
@@ -162,7 +156,6 @@ Ctrl+P .......... Zaznacz wybrany obiekt (markery muszą być widoczne -- Ctrl+K
 Ctrl+V .......... Przełącz między wspieranymi metodami OpenGL
 + .................. Przełącz tryb tekstury planety (artystyczny/ograniczony wiedzą)
 % ................. Przełącz kolory dla wyświetlania gwiazd
-Ctrl+S .......... Przełącz wygląd gwiazd (niewyraźne dyski/punkty/skalowane tarcze)
 V ................. Zmień szczegółowość tekstu informacji (krótkie/szczegółowe/brak tekstu)
 Ctrl+W ........ Włącz/wyłącz tryb obrazu szkieletowego
 

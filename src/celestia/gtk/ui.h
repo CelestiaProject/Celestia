@@ -67,12 +67,10 @@ const inline std::array<GtkActionEntry, 50> actionsPlain
     GtkActionEntry{ "ShowOrbitsMenu", nullptr, "Show Orbits", nullptr, nullptr, nullptr },
     GtkActionEntry{ "InfoTextMenu", nullptr, "Info Text", nullptr, nullptr, nullptr },
     /* "Info Text" in radio actions */
-    GtkActionEntry{ "StarStyleMenu", nullptr, "Star St_yle", nullptr, nullptr, nullptr },
-    /* "Star Style" in radio actions */
     GtkActionEntry{ "AmbientLightMenu", nullptr, "_Ambient Light", nullptr, nullptr, nullptr },
     /* "Ambient Light" in radio actions */
-    GtkActionEntry{ "StarsMore", nullptr, "_More Stars Visible", "bracketright", nullptr, G_CALLBACK(actionStarsMore) },
-    GtkActionEntry{ "StarsFewer", nullptr, "_Fewer Stars Visible", "bracketleft", nullptr, G_CALLBACK(actionStarsFewer) },
+    GtkActionEntry{ "IncreaseExposure", nullptr, "_Increase Exposure Time", "bracketright", nullptr, G_CALLBACK(actionIncreaseExposure) },
+    GtkActionEntry{ "DecreaseExposure", nullptr, "_Decrease Exposure Time", "bracketleft", nullptr, G_CALLBACK(actionDecreaseExposure) },
 
     GtkActionEntry{ "WindowMenu", nullptr, "_Window", nullptr, nullptr, nullptr },
     GtkActionEntry{ "ViewerSize", GTK_STOCK_ZOOM_FIT, "Set Window Size...", nullptr, nullptr, G_CALLBACK(actionViewerSize) },
@@ -118,13 +116,6 @@ constexpr inline std::array<GtkRadioActionEntry, 3> actionsVerbosity
     GtkRadioActionEntry{ "HudVerbose", nullptr, "_Verbose", nullptr, nullptr, 2},
 };
 
-constexpr inline std::array<GtkRadioActionEntry, 3> actionsStarStyle
-{
-    GtkRadioActionEntry{ "StarsFuzzy", nullptr, "_Fuzzy Points", nullptr, nullptr, Renderer::FuzzyPointStars },
-    GtkRadioActionEntry{ "StarsPoints", nullptr, "_Points", nullptr, nullptr, Renderer::PointStars },
-    GtkRadioActionEntry{ "StarsDiscs", nullptr, "Scaled _Discs", nullptr, nullptr, Renderer::ScaledDiscStars },
-};
-
 constexpr inline std::array<GtkRadioActionEntry, 3> actionsAmbientLight
 {
     GtkRadioActionEntry{ "AmbientNone", nullptr, "_None", nullptr, nullptr, 0 },
@@ -137,7 +128,6 @@ const inline std::array<GtkToggleActionEntry, 30> actionsRenderFlags
 {
     GtkToggleActionEntry{ "RenderAA", nullptr, "Antialiasing", "<control>X", nullptr, G_CALLBACK(actionRenderAA), FALSE },
     GtkToggleActionEntry{ "RenderAtmospheres", nullptr, "Atmospheres", "<control>A", nullptr, G_CALLBACK(actionRenderAtmospheres), FALSE },
-    GtkToggleActionEntry{ "RenderAutoMagnitude", nullptr, "Auto Magnitude", "<control>Y", nullptr, G_CALLBACK(actionRenderAutoMagnitude), FALSE },
     GtkToggleActionEntry{ "RenderClouds", nullptr, "Clouds", "I", nullptr, G_CALLBACK(actionRenderClouds), FALSE },
     GtkToggleActionEntry{ "RenderCometTails", nullptr, "Comet Tails", "<control>T", nullptr, G_CALLBACK(actionRenderCometTails), FALSE },
     GtkToggleActionEntry{ "RenderConstellationBoundaries", nullptr, "Constellation Boundaries", nullptr, nullptr, G_CALLBACK(actionRenderConstellationBoundaries), FALSE },
