@@ -18,18 +18,14 @@ namespace
 std::string
 GetInfoLog(GLuint obj)
 {
-    GLint logLength = 0;
-    GLsizei charsWritten = 0;
-
-    enum { Unknown, Shader, Program } kind;
-
+    bool isShader;
     if (glIsShader(obj))
     {
-        kind = Shader;
+        isShader = true;
     }
     else if (glIsProgram(obj))
     {
-        kind = Program;
+        isShader = false;
     }
     else
     {
@@ -37,7 +33,8 @@ GetInfoLog(GLuint obj)
         return std::string();
     }
 
-    if (kind == Shader)
+    GLint logLength;
+    if (isShader)
         glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &logLength);
     else
         glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &logLength);
@@ -45,17 +42,19 @@ GetInfoLog(GLuint obj)
     if (logLength <= 0)
         return std::string();
 
-    auto* log = new char[logLength];
+    std::string infoLog(static_cast<std::string::size_type>(logLength), '\0');
 
-    if (kind == Shader)
-        glGetShaderInfoLog(obj, logLength, &charsWritten, log);
+    GLsizei charsWritten;
+    if (isShader)
+        glGetShaderInfoLog(obj, logLength, &charsWritten, infoLog.data());
     else
-        glGetProgramInfoLog(obj, logLength, &charsWritten, log);
+        glGetProgramInfoLog(obj, logLength, &charsWritten, infoLog.data());
 
-    std::string s(log, charsWritten);
-    delete[] log;
+    if (charsWritten <= 0)
+        return std::string();
 
-    return s;
+    infoLog.resize(static_cast<std::string::size_type>(charsWritten));
+    return infoLog;
 }
 } // end unnamed namespace
 
