@@ -1,10 +1,10 @@
 function(wayland_add_protocol_client _sources _protocol)
     if (NOT TARGET Wayland::Scanner)
-        message(FATAL "The wayland-scanner executable has not been found on your system.")
+        message(FATAL_ERROR "The wayland-scanner executable has not been found on your system.")
     endif()
 
     if (NOT Wayland_PROTOCOLS_DATADIR)
-        message(FATAL "The wayland-protocols data directory has not been found on your system.")
+        message(FATAL_ERROR "The wayland-protocols data directory has not been found on your system.")
     endif()
 
     get_filename_component(_basename "${_protocol}" NAME_WLE)
