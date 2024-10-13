@@ -1,6 +1,7 @@
 // shadermanager.h
 //
-// Copyright (C) 2001-2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -62,6 +63,7 @@ enum class LightingModel : std::uint16_t
     EmissiveModel         = 0x0100,
     ParticleModel         = 0x0200,
     UnlitModel            = 0x0400,
+    StarModel             = 0x0800,
 };
 
 ENUM_CLASS_BITWISE_OPS(LightingModel);

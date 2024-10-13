@@ -112,8 +112,8 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
     if (e != nullptr) ambientLight = -1.0;
 
     e = nullptr;
-    float visualMagnitude = (float)g_key_file_get_integer(file, "Main", "visualMagnitude", &e) / 1000.0;
-    if (e != nullptr) visualMagnitude = -1.0;
+    float exposure = (float)g_key_file_get_integer(file, "Main", "exposure", &e) / 1000.0;
+    if (e != nullptr) exposure = -1.0;
 
     e = nullptr;
     float galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
@@ -128,10 +128,6 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
     if (e != nullptr) verbosity = -1;
 
     e = nullptr;
-    int starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
-    if (e != nullptr) starStyle = -1;
-
-    e = nullptr;
     int textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
     if (e != nullptr) textureResolution = -1;
 
@@ -141,11 +137,10 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
 
     /* All settings that need sanity checks get them */
     setSaneAmbientLight(app, ambientLight);
-    setSaneVisualMagnitude(app, visualMagnitude);
+    setSaneExposure(app, exposure);
     setSaneGalaxyLightGain(galaxyLightGain);
     setSaneDistanceLimit(app, distanceLimit);
     setSaneVerbosity(app, verbosity);
-    setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
     setSaneTextureResolution(app, textureResolution);
     setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", nullptr));
 
@@ -173,7 +168,6 @@ applySettingsFileMain(AppData* app, GKeyFile* file)
     getFlag(file, &rf, Renderer::ShowPlanetRings, "RenderFlags", "planetRings", &errors);
     getFlag(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
     getFlag(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
-    getFlag(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
     getFlag(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
     getFlag(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
     getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
@@ -237,8 +231,8 @@ saveSettingsFile(AppData* app)
 
     g_key_file_set_integer(file, "Main", "ambientLight", (int)(1000 * app->renderer->getAmbientLightLevel()));
     g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", nullptr);
-    g_key_file_set_integer(file, "Main", "visualMagnitude", (int)(1000 * app->simulation->getFaintestVisible()));
-    g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", nullptr);
+    g_key_file_set_integer(file, "Main", "exposure", (int)(1000 * app->simulation->getExposure()));
+    g_key_file_set_comment(file, "Main", "exposure", "exposure = (int)(1000 * Exposure)", nullptr);
     g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
     g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", nullptr);
     g_key_file_set_integer(file, "Main", "distanceLimit", (int)app->renderer->getDistanceLimit());
@@ -247,8 +241,6 @@ saveSettingsFile(AppData* app)
     g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", nullptr);
     g_key_file_set_integer(file, "Main", "verbosity", app->core->getHudDetail());
     g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", nullptr);
-    g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
-    g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", nullptr);
     g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
     g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", nullptr);
     g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
@@ -281,7 +273,6 @@ saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "planetRings", (rf & Renderer::ShowPlanetRings) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "ringShadows", (rf & Renderer::ShowRingShadows) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "boundaries", (rf & Renderer::ShowBoundaries) != 0);
-    g_key_file_set_boolean(file, "RenderFlags", "autoMag", (rf & Renderer::ShowAutoMag) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "cometTails", (rf & Renderer::ShowCometTails) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "markers", (rf & Renderer::ShowMarkers) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "partialTrajectories", (rf & Renderer::ShowPartialTrajectories) != 0);

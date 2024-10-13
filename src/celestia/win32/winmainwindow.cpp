@@ -663,7 +663,6 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
     Renderer* r = appCore->getRenderer();
     std::uint64_t oldRenderFlags = r->getRenderFlags();
     int oldLabelMode = r->getLabelMode();
-    Renderer::StarStyle oldStarStyle = r->getStarStyle();
     auto oldResolution = r->getResolution();
     auto oldColorTable = r->getStarColorTable();
 
@@ -683,7 +682,6 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
 
     if (r->getRenderFlags() != oldRenderFlags ||
         r->getLabelMode() != oldLabelMode ||
-        r->getStarStyle() != oldStarStyle ||
         r->getResolution() != oldResolution ||
         r->getStarColorTable() != oldColorTable)
     {
@@ -850,17 +848,12 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
             locationsDlg = std::make_unique<LocationsDialog>(hRes, hWnd, appCore);
         break;
 
-    case ID_RENDER_MORESTARS:
+    case ID_RENDER_INCREASEEXPOSURE:
         appCore->charEntered(']');
         break;
 
-    case ID_RENDER_FEWERSTARS:
+    case ID_RENDER_DECREASEEXPOSURE:
         appCore->charEntered('[');
-        break;
-
-    case ID_RENDER_AUTOMAG:
-        appCore->charEntered('\031');
-        SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_AMBIENTLIGHT_NONE:
@@ -882,26 +875,6 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
         appCore->getRenderer()->setAmbientLightLevel(0.25f);
-        break;
-
-    case ID_RENDER_STARSTYLE_FUZZY:
-        appCore->getRenderer()->setStarStyle(Renderer::FuzzyPointStars);
-        SyncMenusWithRendererState(appCore, menuBar);
-        break;
-
-    case ID_RENDER_STARSTYLE_POINTS:
-        appCore->getRenderer()->setStarStyle(Renderer::PointStars);
-        SyncMenusWithRendererState(appCore, menuBar);
-        break;
-
-    case ID_RENDER_STARSTYLE_DISCS:
-        appCore->getRenderer()->setStarStyle(Renderer::ScaledDiscStars);
-        SyncMenusWithRendererState(appCore, menuBar);
-        break;
-
-    case ID_STARCOLOR_CLASSIC:
-        appCore->getRenderer()->setStarColorTable(ColorTableType::Enhanced);
-        SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_STARCOLOR_D65:
@@ -1241,7 +1214,7 @@ MainWindow::applyCurrentPreferences(AppPreferences& prefs) const
     prefs.labelMode = appCore->getRenderer()->getLabelMode();
     prefs.locationFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
     prefs.orbitMask = appCore->getRenderer()->getOrbitMask();
-    prefs.visualMagnitude = appCore->getSimulation()->getFaintestVisible();
+    prefs.exposure = appCore->getSimulation()->getExposure();
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
     prefs.galaxyLightGain = Galaxy::getLightGain();
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
@@ -1250,7 +1223,6 @@ MainWindow::applyCurrentPreferences(AppPreferences& prefs) const
     prefs.fullScreenMode = lastFullScreenMode;
     prefs.lastVersion = 0x01040100;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-    prefs.starStyle = appCore->getRenderer()->getStarStyle();
     prefs.starsColor = static_cast<int>(appCore->getRenderer()->getStarColorTable());
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
@@ -1608,19 +1580,10 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
     }
 
-    Renderer::StarStyle style = appCore->getRenderer()->getStarStyle();
-    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_FUZZY,
-                  style == Renderer::FuzzyPointStars ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_POINTS,
-                  style == Renderer::PointStars ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
-                  style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
-
     auto colorType = appCore->getRenderer()->getStarColorTable();
-    CheckMenuItem(menuBar, ID_STARCOLOR_CLASSIC, colorType == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_D65,  colorType == ColorTableType::Blackbody_D65 ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_SOLAR,  colorType == ColorTableType::SunWhite ? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_D65,   colorType == ColorTableType::Blackbody_D65 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_SOLAR, colorType == ColorTableType::SunWhite ?      MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ?     MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -1642,8 +1605,6 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
         ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
-    CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
-        ((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 void
