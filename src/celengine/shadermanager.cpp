@@ -2093,6 +2093,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterColor;\n";
     }
 
+    if (props.lightModel == LightingModel::StarModel)
+    {
+        source += "gl_FragColor.rgb = gl_FragColor.rgb - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72);\n";
+    }
+
     source += "}\n";
 
     DumpFSSource(source);
