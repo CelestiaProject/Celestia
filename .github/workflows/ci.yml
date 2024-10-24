@@ -22,11 +22,12 @@ jobs:
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = '830f86fb309ad7167468a433a890b7415fbb90a5'
+        $vcpkgCommit = '41626fd77bf42f29e8f7e43dc1f2f05780588cde'
         pushd $env:VCPKG_INSTALLATION_ROOT
         git fetch --depth=1 origin $vcpkgCommit
         git reset --hard $vcpkgCommit
         ./bootstrap-vcpkg.bat
+        ./vcpkg integrate install
         popd
 
     - name: Setup Nuget Credentials
@@ -43,11 +44,6 @@ jobs:
         & "$nugetCmd" setapikey '${{secrets.GITHUB_TOKEN}}' `
           -Source "$nugetSource"
 
-    - name: Setup vcpkg integration
-      shell: pwsh
-      run: |
-        vcpkg integrate install
-      
     - name: Install dependencies (x64)
       shell: pwsh
       run: |
@@ -74,6 +70,9 @@ jobs:
         }
         $VcpkgIncludeDir32 = "$env:VCPKG_INSTALLATION_ROOT/installed/x86-windows/include"
         msbuild celestia.sln /p:Configuration=Release /p:Platform=Win32 "/p:IncludePath=`"$VcpkgIncludeDir32/cspice;$VcpkgIncludeDir32/luajit`""
+        if ($LastExitCode -ne 0) {
+          throw "Failed to build Win32"
+        }
         perl po/translate_resources.pl Win32
 
     - name: Build x64
@@ -88,6 +87,9 @@ jobs:
         }
         $VcpkgIncludeDir64 = "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/include"
         msbuild celestia.sln /p:Configuration=Release /p:Platform=x64 "/p:IncludePath=`"$VcpkgIncludeDir64/cspice;$VcpkgIncludeDir64/luajit`""
+        if ($LastExitCode -ne 0) {
+          throw "Failed to build x64"
+        }
         perl po/translate_resources.pl x64
 
     - name: Create installer
