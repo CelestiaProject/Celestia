@@ -175,7 +175,7 @@ Image* LoadPNGImage(const fs::path& filename)
     if (info_ptr == nullptr)
     {
         fclose(fp);
-        png_destroy_read_struct(&png_ptr, (png_infopp) nullptr, (png_infopp) nullptr);
+        png_destroy_read_struct(&png_ptr, nullptr, nullptr);
         return nullptr;
     }
 
@@ -183,7 +183,7 @@ Image* LoadPNGImage(const fs::path& filename)
     {
         fclose(fp);
         delete img;
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
         util::GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
         return nullptr;
     }
@@ -217,7 +217,10 @@ Image* LoadPNGImage(const fs::path& filename)
         break;
     default:
         // badness
-        break;
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        util::GetLogger()->error(_("Invalid format in PNG file {}\n"), filename);
+        return nullptr;
     }
 
     img = new Image(format, width, height);
