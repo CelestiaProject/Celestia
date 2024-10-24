@@ -19,19 +19,22 @@ jobs:
       fail-fast: false
 
     steps:
-    - name: Update vcpkg
+    - name: Checkout source code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install dependencies
       shell: pwsh
       run: |
-        $vcpkgCommit = '830f86fb309ad7167468a433a890b7415fbb90a5'
+        $vcpkgCommit = 'cff6ed45719c0162fa7065fdac90506a0add812c'
         pushd $env:VCPKG_INSTALLATION_ROOT
-        git fetch --depth=1 origin $vcpkgCommit
+
+        git fetch origin $vcpkgCommit
         git reset --hard $vcpkgCommit
         ./bootstrap-vcpkg.bat
-        popd
-
-    - name: Setup Nuget Credentials
-      shell: pwsh
-      run: |
+        ./vcpkg.exe integrate install
+        
         $nugetCmd = vcpkg fetch nuget | Select-Object -Last 1
         $nugetSource = 'https://nuget.pkg.github.com/CelestiaProject/index.json'
         & "$nugetCmd" sources add `
@@ -42,25 +45,22 @@ jobs:
           -Password '${{secrets.GITHUB_TOKEN}}'
         & "$nugetCmd" setapikey '${{secrets.GITHUB_TOKEN}}' `
           -Source "$nugetSource"
+        
+        ./vcpkg.exe --triplet=x64-windows --host-triplet=x64-windows `
+          install --recurse libpng libjpeg-turbo gettext[tools] luajit cspice
+        
+        if ($LastExitCode -ne 0) {
+          throw "Failed to install x64-windows dependencies"
+        }
 
-    - name: Setup vcpkg integration
-      shell: pwsh
-      run: |
-        vcpkg integrate install
-      
-    - name: Install dependencies (x64)
-      shell: pwsh
-      run: |
-        vcpkg --triplet=x64-windows install --recurse libpng libjpeg-turbo gettext[tools] luajit cspice
-        echo "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/tools/gettext/bin" >> $env:GITHUB_PATH
+        ./vcpkg.exe --triplet=x86-windows --host-triplet=x86-windows `
+          install --recurse libpng libjpeg-turbo gettext luajit cspice
 
-    - name: Install dependencies (x86)
-      shell: pwsh
-      run: |
-        vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit cspice
+        if ($LastExitCode -ne 0) {
+          throw "Failed to install x86-windows dependencies"
+        }
 
-    - name: Checkout source code
-      uses: actions/checkout@v3
+        popd
 
     - name: Build Win32
       shell: pwsh
@@ -72,8 +72,11 @@ jobs:
             Set-Content env:\"$name" $value
           }
         }
-        $VcpkgIncludeDir32 = "$env:VCPKG_INSTALLATION_ROOT/installed/x86-windows/include"
-        msbuild celestia.sln /p:Configuration=Release /p:Platform=Win32 "/p:IncludePath=`"$VcpkgIncludeDir32/cspice;$VcpkgIncludeDir32/luajit`""
+        msbuild celestia.sln /p:Configuration=Release /p:Platform=Win32
+        if ($LastExitCode -ne 0) {
+          throw "Failed to build Win32"
+        }
+        $env:PATH += ";${env:VCPKG_INSTALLATION_ROOT}/installed/x64-windows/tools/gettext/bin"
         perl po/translate_resources.pl Win32
 
     - name: Build x64
@@ -87,7 +90,11 @@ jobs:
           }
         }
         $VcpkgIncludeDir64 = "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/include"
-        msbuild celestia.sln /p:Configuration=Release /p:Platform=x64 "/p:IncludePath=`"$VcpkgIncludeDir64/cspice;$VcpkgIncludeDir64/luajit`""
+        msbuild celestia.sln /p:Configuration=Release /p:Platform=x64
+        if ($LastExitCode -ne 0) {
+          throw "Failed to build x64"
+        }
+        $env:PATH += ";;${env:VCPKG_INSTALLATION_ROOT}/installed/x64-windows/tools/gettext/bin"
         perl po/translate_resources.pl x64
 
     - name: Create installer
