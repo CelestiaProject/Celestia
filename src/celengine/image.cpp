@@ -648,7 +648,10 @@ Image* LoadPNGImage(const string& filename)
         break;
     default:
         // badness
-        break;
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        clog << _("Invalid format in PNG file ") << filename << '\n';
+        return NULL;
     }
 
     img = new Image(glformat, width, height);
