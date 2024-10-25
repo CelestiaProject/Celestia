@@ -27,23 +27,20 @@ jobs:
         platform: [ x64, x86 ]
 
     steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = '1fc46db8b9b963ed3a26c619b68de76edb52061a'
+        $vcpkgCommit = 'cff6ed45719c0162fa7065fdac90506a0add812c'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
-        git cat-file -e "${vcpkgCommit}^{commit}" 2> $null
-        if (!$?) {
-          git pull
-        }
-        git -c advice.detachedHead=false checkout $vcpkgCommit
-        if (!$?) {
-          throw "Could not check out commit $vcpkgCommit"
-        }
+        git fetch origin $vcpkgCommit
+        git reset --hard $vcpkgCommit
         ./bootstrap-vcpkg.bat
-        Get-ChildItem -Path 'triplets\*-windows*.cmake' | ForEach-Object {
-          Add-Content -Path $_ -Value 'set(VCPKG_BUILD_TYPE "release")'
-        }
+        ./vcpkg.exe integrate install
         popd
 
     - name: Setup NuGet Credentials
@@ -83,19 +80,17 @@ jobs:
         # differ if we enable arm64-windows builds in future
 
         if ( '${{matrix.platform}}' -eq 'x86' ) {
-          $hostTriplet = 'x86-windows'
+          $hostTriplet = 'x86-windows-release'
         } else {
-          $hostTriplet = 'x64-windows'
+          $hostTriplet = 'x64-windows-release'
         }
 
-        vcpkg --triplet=${{matrix.platform}}-windows `
-              --host-triplet=$hostTriplet `
-              install --recurse @packages
-
-    - name: Checkout source code
-      uses: actions/checkout@v4
-      with:
-        submodules: true
+        pushd "$env:VCPKG_INSTALLATION_ROOT"
+        ./vcpkg.exe --overlay-triplets=${{github.workspace}}/windows/vcpkg-triplets `
+                    --triplet=${{matrix.platform}}-windows-release `
+                    --host-triplet=$hostTriplet `
+                    install --recurse @packages
+        popd
 
     - name: Configure CMake
       shell: pwsh
@@ -108,7 +103,8 @@ jobs:
 
         cmake -B '${{github.workspace}}/build' `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
-            -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows `
+            -DVCPKG_OVERLAY_TRIPLETS="${{github.workspace}}/windows/vcpkg-triplets" `
+            -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows-release `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
             -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
             -DENABLE_SPICE=ON     `
