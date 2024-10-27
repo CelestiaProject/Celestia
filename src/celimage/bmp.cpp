@@ -106,6 +106,7 @@ struct BMPInfo
     std::uint32_t bpp{ 0 };
     std::uint32_t rowStride{ 0 };
     std::uint32_t imageSize{ 0 };
+    std::uint32_t paletteMax{ 0 };
     std::uint32_t paletteCount{ 0 };
     std::vector<PaletteEntry> palette;
 };
@@ -224,13 +225,13 @@ parseBMPInfoHeader(const char* infoHeader,
 
     if (info.bpp <= 8)
     {
+        info.paletteMax = UINT32_C(1) << info.bpp;
         info.paletteCount = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, colorsUsed));
-        std::uint32_t maxCount = UINT32_C(1) << info.bpp;
         if (info.paletteCount == 0)
         {
-            info.paletteCount = maxCount;
+            info.paletteCount = info.paletteMax;
         }
-        else if (info.paletteCount > maxCount)
+        else if (info.paletteCount > info.paletteMax)
         {
             GetLogger()->error(_("BMP read failure '{}' - palette too large\n"), filename);
             return false;
@@ -264,7 +265,11 @@ loadBMPHeaders(std::istream& in, BMPInfo& info, const fs::path& filename)
             return false;
         }
 
-        info.palette.resize(info.paletteCount);
+        // Fill palette with magenta to highlight out-of-range indices in the
+        // pixel data. We set the palette to the maximum size that can be
+        // addressed with the available bits to avoid needing to do range
+        // checks during processing.
+        info.palette.resize(info.paletteMax, PaletteEntry{ 255, 0, 255, 0 });
         if (!in.read(reinterpret_cast<char*>(info.palette.data()), info.paletteCount * sizeof(PaletteEntry))) /* Flawfinder: ignore */
         {
             GetLogger()->error(_("BMP read failure '{}' - could not read palette\n"), filename);
@@ -291,27 +296,6 @@ processRow(const std::uint8_t* src,
     }
 }
 
-inline void
-writePaletteColor(std::uint8_t* dst,
-                  std::uint32_t index,
-                  util::array_view<PaletteEntry> palette)
-{
-    if (index < palette.size())
-    {
-        const PaletteEntry& color = palette[index];
-        dst[0] = color.red;
-        dst[1] = color.green;
-        dst[2] = color.blue;
-    }
-    else
-    {
-        // Out of range of palette - use horrible magenta color
-        dst[0] = UINT8_C(255);
-        dst[1] = UINT8_C(0);
-        dst[2] = UINT8_C(255);
-    }
-}
-
 void
 process8BppRow(const std::uint8_t* src,
                std::uint8_t* dst,
@@ -320,7 +304,10 @@ process8BppRow(const std::uint8_t* src,
 {
     for (std::int32_t x = 0; x < width; ++x)
     {
-        writePaletteColor(dst, *src, palette);
+        const PaletteEntry& color = palette[*src];
+        dst[0] = color.red;
+        dst[1] = color.green;
+        dst[2] = color.blue;
         ++src;
         dst += 3;
     }
@@ -340,7 +327,10 @@ processLowBppRow(const std::uint8_t* src,
     for (std::int32_t x = 0; x < width; ++x)
     {
         unsigned int idx = (*src >> shift) & mask;
-        writePaletteColor(dst, idx, palette);
+        const PaletteEntry& color = palette[idx];
+        dst[0] = color.red;
+        dst[1] = color.green;
+        dst[2] = color.blue;
         if (shift > 0)
         {
             shift -= bpp;
