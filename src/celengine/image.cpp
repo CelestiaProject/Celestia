@@ -51,6 +51,7 @@ extern "C" {
 #ifdef PNG_SUPPORT // PNG_SUPPORT
 #include "png.h"
 
+#include <celutil/basictypes.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
@@ -707,42 +708,58 @@ Image* LoadPNGImage(const string& filename)
 // built on Windows!
 typedef struct
 {
-    unsigned char b;
-    unsigned char m;
-    unsigned int size;
-    unsigned int reserved;
-    unsigned int offset;
+    char magic[2];
+    uint32 size;
+    uint32 reserved;
+    uint32 offset;
 } BMPFileHeader;
 
 typedef struct
 {
-    unsigned int size;
-    int width;
-    int height;
-    unsigned short planes;
-    unsigned short bpp;
-    unsigned int compression;
-    unsigned int imageSize;
-    int widthPPM;
-    int heightPPM;
-    unsigned int colorsUsed;
-    unsigned int colorsImportant;
+    uint32 size;
+    int32 width;
+    int32 height;
+    uint16 planes;
+    uint16 bpp;
+    uint32 compression;
+    uint32 imageSize;
+    int32 widthPPM;
+    int32 heightPPM;
+    uint32 colorsUsed;
+    uint32 colorsImportant;
 } BMPImageHeader;
 
 
-static int readInt(ifstream& in)
+static bool readInteger(ifstream& in, int32& ret)
 {
     unsigned char b[4];
-    in.read(reinterpret_cast<char*>(b), 4);
-    return ((int) b[3] << 24) + ((int) b[2] << 16)
-        + ((int) b[1] << 8) + (int) b[0];
+    if (!in.read(reinterpret_cast<char*>(b), 4))
+        return false;
+
+    ret = (int32)(((uint32)b[3] << 24U) + ((uint32)b[2] << 16U)
+        + ((uint32)b[1] << 8U) + (uint32)b[0]);
+    return true;
 }
 
-static short readShort(ifstream& in)
+static bool readInteger(ifstream& in, uint32& ret)
+{
+    unsigned char b[4];
+    if (!in.read(reinterpret_cast<char*>(b), 4))
+        return false;
+
+    ret = ((uint32)b[3] << 24U) + ((uint32)b[2] << 16U)
+        + ((uint32)b[1] << 8U) + (uint32)b[0];
+    return true;
+}
+
+static bool readInteger(ifstream& in, uint16& ret)
 {
     unsigned char b[2];
-    in.read(reinterpret_cast<char*>(b), 2);
-    return ((short) b[1] << 8) + (short) b[0];
+    if (!in.read(reinterpret_cast<char*>(b), 2))
+        return false;
+
+    ret = (uint16)(((int)b[1] << 8) + (int)b[0]);
+    return true;
 }
 
 
@@ -752,54 +769,96 @@ static Image* LoadBMPImage(ifstream& in)
     BMPImageHeader imageHeader;
     unsigned char* pixels;
 
-    in >> fileHeader.b;
-    in >> fileHeader.m;
-    fileHeader.size = readInt(in);
-    fileHeader.reserved = readInt(in);
-    fileHeader.offset = readInt(in);
-
-    if (fileHeader.b != 'B' || fileHeader.m != 'M')
+    if (!in.read(fileHeader.magic, 2) || fileHeader.magic[0] != 'B' || fileHeader.magic[1] != 'M')
         return NULL;
-
-    imageHeader.size = readInt(in);
-    imageHeader.width = readInt(in);
-    imageHeader.height = readInt(in);
-    imageHeader.planes = readShort(in);
-    imageHeader.bpp = readShort(in);
-    imageHeader.compression = readInt(in);
-    imageHeader.imageSize = readInt(in);
-    imageHeader.widthPPM = readInt(in);
-    imageHeader.heightPPM = readInt(in);
-    imageHeader.colorsUsed = readInt(in);
-    imageHeader.colorsImportant = readInt(in);
-
-    if (imageHeader.width <= 0 || imageHeader.height <= 0)
+    if (!readInteger(in, fileHeader.size) ||
+        !in.seekg(4, ios_base::cur) || // skip reserved
+        !readInteger(in, fileHeader.offset))
+    {
         return NULL;
+    }
 
-    // We currently don't support compressed BMPs
-    if (imageHeader.compression != 0)
+    if (!readInteger(in, imageHeader.size) ||
+        // We currently don't support legacy BMP formats
+        (imageHeader.size != 40 && imageHeader.size != 52 && imageHeader.size != 56 &&
+         imageHeader.size != 108 && imageHeader.size != 124))
+    {
         return NULL;
-    // We don't handle 1-, 2-, or 4-bpp images
-    if (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
-        return NULL;
+    }
 
+    if (!readInteger(in, imageHeader.width) || imageHeader.width <= 0)
+        return NULL;
+    if (!readInteger(in, imageHeader.height) || imageHeader.height <= 0)
+        return NULL;
+    if (!readInteger(in, imageHeader.planes) || imageHeader.planes != 1)
+        return NULL;
+    if (!readInteger(in, imageHeader.bpp) ||
+        // We currently don't support 1, 2, 4, or 16-bit images
+        (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32))
+    {
+        return NULL;
+    }
+    if (!readInteger(in, imageHeader.compression) ||
+        // We currently don't support compressed BMPs
+        imageHeader.compression != 0)
+    {
+        return NULL;
+    }
+    if (!readInteger(in, imageHeader.imageSize))
+        return NULL;
+    
     unsigned char* palette = NULL;
     if (imageHeader.bpp == 8)
     {
-        printf("Reading %d color palette\n", imageHeader.colorsUsed);
-        palette = new unsigned char[imageHeader.colorsUsed * 4];
-        in.read(reinterpret_cast<char*>(palette), imageHeader.colorsUsed * 4);
+        if (!in.seekg(8, ios_base::cur) || // skip widthPPM, heightPPM
+            !readInteger(in, imageHeader.colorsUsed) ||
+            imageHeader.colorsUsed > 256)
+        {
+            return NULL;
+        }
+
+        if (imageHeader.colorsUsed == 0)
+            imageHeader.colorsUsed = 256;
+
+        if (!in.seekg(14U + imageHeader.size, ios_base::beg))
+            return NULL;
+
+        palette = new unsigned char[256 * 4];
+        if (palette == NULL)
+            return NULL;
+
+        if (!in.read(reinterpret_cast<char*>(palette), 4U * imageHeader.colorsUsed))
+            return NULL;
+
+        // Fill unused palette entries with magenta
+        unsigned char* palettePtr = palette + 4U * imageHeader.colorsUsed;
+        for (uint32 i = imageHeader.colorsUsed; i < 256U; ++i)
+        {
+            palettePtr[0] = 255;
+            palettePtr[1] = 0;
+            palettePtr[2] = 255;
+            palettePtr[3] = 0;
+            palettePtr += 4;
+        }
     }
 
-    in.seekg(fileHeader.offset, ios::beg);
+    if (!in.seekg(fileHeader.offset, ios::beg))
+    {
+        delete[] palette;
+        return NULL;
+    }
 
-    unsigned int bytesPerRow =
-        (imageHeader.width * imageHeader.bpp / 8 + 1) & ~1;
+    unsigned int bytesPerRow = ((imageHeader.width * imageHeader.bpp / 8U) + 3U) & (~3U);
     unsigned int imageBytes = bytesPerRow * imageHeader.height;
 
     // slurp the image data
     pixels = new unsigned char[imageBytes];
-    in.read(reinterpret_cast<char*>(pixels), imageBytes);
+    if (!in.read(reinterpret_cast<char*>(pixels), imageBytes))
+    {
+        delete[] pixels;
+        delete[] palette;
+        return NULL;
+    }
 
     // check for truncated file
 
@@ -807,22 +866,24 @@ static Image* LoadBMPImage(ifstream& in)
     if (img == NULL)
     {
         delete[] pixels;
+        delete[] palette;
         return NULL;
     }
 
     // Copy the image and perform any necessary conversions
-    for (int y = 0; y < imageHeader.height; y++)
+    const unsigned char* srcRow = pixels;
+    for (int32 y = imageHeader.height; y-- > 0;)
     {
-        unsigned char* src = &pixels[y * bytesPerRow];
+        const unsigned char* src = srcRow;
         unsigned char* dst = img->getPixelRow(y);
 
         switch (imageHeader.bpp)
         {
         case 8:
             {
-                for (int x = 0; x < imageHeader.width; x++)
+                for (int32 x = 0; x < imageHeader.width; x++)
                 {
-                    unsigned char* color = palette + (*src << 2);
+                    const unsigned char* color = palette + (*src * 4);
                     dst[0] = color[2];
                     dst[1] = color[1];
                     dst[2] = color[0];
@@ -834,7 +895,7 @@ static Image* LoadBMPImage(ifstream& in)
 
         case 24:
             {
-                for (int x = 0; x < imageHeader.width; x++)
+                for (int32 x = 0; x < imageHeader.width; x++)
                 {
                     dst[0] = src[2];
                     dst[1] = src[1];
@@ -847,7 +908,7 @@ static Image* LoadBMPImage(ifstream& in)
 
         case 32:
             {
-                for (int x = 0; x < imageHeader.width; x++)
+                for (int32 x = 0; x < imageHeader.width; x++)
                 {
                     dst[0] = src[2];
                     dst[1] = src[1];
@@ -858,10 +919,12 @@ static Image* LoadBMPImage(ifstream& in)
             }
             break;
         }
+
+        srcRow += bytesPerRow;
     }
 
     delete[] pixels;
-    delete palette;
+    delete[] palette;
 
     return img;
 }
