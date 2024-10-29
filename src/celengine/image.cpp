@@ -641,9 +641,9 @@ Image* LoadPNGImage(const string& filename)
         glformat = GL_LUMINANCE_ALPHA;
         break;
     case PNG_COLOR_TYPE_RGB:
+    case PNG_COLOR_TYPE_PALETTE:
         glformat = GL_RGB;
         break;
-    case PNG_COLOR_TYPE_PALETTE:
     case PNG_COLOR_TYPE_RGB_ALPHA:
         glformat = GL_RGBA;
         break;
