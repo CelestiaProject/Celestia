@@ -209,9 +209,9 @@ Image* LoadPNGImage(const fs::path& filename)
         format = PixelFormat::LumAlpha;
         break;
     case PNG_COLOR_TYPE_RGB:
+    case PNG_COLOR_TYPE_PALETTE:
         format = PixelFormat::RGB;
         break;
-    case PNG_COLOR_TYPE_PALETTE:
     case PNG_COLOR_TYPE_RGB_ALPHA:
         format = PixelFormat::RGBA;
         break;
