@@ -182,7 +182,8 @@ Image* LoadPNGImage(const fs::path& filename)
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
-        delete img;
+        delete[] row_pointers; //NOSONAR
+        delete img; //NOSONAR
         png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
         util::GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
         return nullptr;
@@ -223,7 +224,7 @@ Image* LoadPNGImage(const fs::path& filename)
         return nullptr;
     }
 
-    img = new Image(format, width, height);
+    img = new Image(format, width, height); //NOSONAR
 
     // TODO: consider using paletted textures if they're available
     if (color_type == PNG_COLOR_TYPE_PALETTE)
@@ -248,13 +249,14 @@ Image* LoadPNGImage(const fs::path& filename)
     else if (bit_depth < 8)
         png_set_packing(png_ptr);
 
-    row_pointers = new png_bytep[height];
+    row_pointers = new png_bytep[height]; //NOSONAR
     for (unsigned int i = 0; i < height; i++)
         row_pointers[i] = (png_bytep) img->getPixelRow(i);
 
     png_read_image(png_ptr, row_pointers);
 
-    delete[] row_pointers;
+    delete[] row_pointers; //NOSONAR
+    row_pointers = nullptr;
 
     png_read_end(png_ptr, nullptr);
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
