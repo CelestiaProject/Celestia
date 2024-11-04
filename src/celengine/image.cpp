@@ -613,8 +613,8 @@ Image* LoadPNGImage(const string& filename)
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
-        if (img != NULL)
-            delete img;
+        delete row_pointers;
+        delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
         clog << _("Error reading PNG image file ") << filename << '\n';
         return NULL;
@@ -693,6 +693,7 @@ Image* LoadPNGImage(const string& filename)
     png_read_image(png_ptr, row_pointers);
 
     delete[] row_pointers;
+    row_pointers = NULL;
 
     png_read_end(png_ptr, NULL);
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
@@ -806,7 +807,7 @@ static Image* LoadBMPImage(ifstream& in)
     }
     if (!readInteger(in, imageHeader.imageSize))
         return NULL;
-    
+
     unsigned char* palette = NULL;
     if (imageHeader.bpp == 8)
     {
