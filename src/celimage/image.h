@@ -30,7 +30,9 @@ namespace celestia::engine
 class Image
 {
 public:
-    Image(PixelFormat format, int w, int h, int mip = 1);
+    static constexpr std::int32_t MAX_DIMENSION = INT32_C(16384);
+
+    Image(PixelFormat format, std::int32_t w, std::int32_t h, std::int32_t mip = 1);
     ~Image() = default;
     Image(Image&&) = default;
     Image(const Image&) = delete;
@@ -38,20 +40,20 @@ public:
     Image& operator=(const Image&) = delete;
 
     bool isValid() const noexcept;
-    int getWidth() const;
-    int getHeight() const;
-    int getPitch() const;
-    int getMipLevelCount() const;
+    std::int32_t getWidth() const;
+    std::int32_t getHeight() const;
+    std::int32_t getPitch() const;
+    std::int32_t getMipLevelCount() const;
     PixelFormat getFormat() const;
-    int getComponents() const;
+    std::int32_t getComponents() const;
     std::uint8_t* getPixels();
     const std::uint8_t* getPixels() const;
-    std::uint8_t* getPixelRow(int row);
-    std::uint8_t* getPixelRow(int mip, int row);
-    std::uint8_t* getMipLevel(int mip);
-    const std::uint8_t* getMipLevel(int mip) const;
-    int getSize() const;
-    int getMipLevelSize(int mip) const;
+    std::uint8_t* getPixelRow(std::int32_t row);
+    std::uint8_t* getPixelRow(std::int32_t mip, std::int32_t row);
+    std::uint8_t* getMipLevel(std::int32_t mip);
+    const std::uint8_t* getMipLevel(std::int32_t mip) const;
+    std::int32_t getSize() const;
+    std::int32_t getMipLevelSize(std::int32_t mip) const;
 
     bool isCompressed() const;
     bool hasAlpha() const;
@@ -66,13 +68,13 @@ public:
     static std::unique_ptr<Image> load(const fs::path& filename);
 
 private:
-    int width;
-    int height;
-    int pitch;
-    int mipLevels;
-    int components;
+    std::int32_t width;
+    std::int32_t height;
+    std::int32_t pitch;
+    std::int32_t mipLevels;
+    std::int32_t components;
     PixelFormat format;
-    int size;
+    std::int32_t size;
     std::unique_ptr<std::uint8_t[]> pixels;
 };
 

@@ -25,13 +25,13 @@ namespace
 {
 
 // All rows are padded to a size that's a multiple of 4 bytes
-int
-pad(int n)
+std::int32_t
+pad(std::int32_t n)
 {
-    return (n + 3) & ~0x3;
+    return (n + INT32_C(3)) & ~INT32_C(0x3);
 }
 
-int
+std::int32_t
 formatComponents(PixelFormat fmt)
 {
     switch (fmt)
@@ -69,10 +69,10 @@ formatComponents(PixelFormat fmt)
 }
 
 int
-calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
+calcMipLevelSize(PixelFormat fmt, std::int32_t w, std::int32_t h, std::int32_t mip)
 {
-    w = std::max(w >> mip, 1);
-    h = std::max(h >> mip, 1);
+    w = std::max(w >> mip, INT32_C(1));
+    h = std::max(h >> mip, INT32_C(1));
 
     switch (fmt)
     {
@@ -93,10 +93,10 @@ calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
 }
 
 int
-calcTotalMipSize(PixelFormat fmt, int w, int h, int mipLevels)
+calcTotalMipSize(PixelFormat fmt, std::int32_t w, std::int32_t h, std::int32_t mipLevels)
 {
-    int size = 1;
-    for (int i = 0; i < mipLevels; i++)
+    std::int32_t size = 1;
+    for (std::int32_t i = 0; i < mipLevels; i++)
         size += calcMipLevelSize(fmt, w, h, i);
     return size;
 }
@@ -129,8 +129,8 @@ getLinearFormat(PixelFormat format)
     }
 }
 
-inline std::tuple<int, int>
-handleEdge(int i, int size, bool wrap)
+inline std::tuple<std::int32_t, std::int32_t>
+handleEdge(std::int32_t i, std::int32_t size, bool wrap)
 {
     assert(i >= 0 && size > 0);
     if (i > 0)
@@ -142,7 +142,7 @@ handleEdge(int i, int size, bool wrap)
 
 } // anonymous namespace
 
-Image::Image(PixelFormat fmt, int w, int h, int mip) :
+Image::Image(PixelFormat fmt, std::int32_t w, std::int32_t h, std::int32_t mip) :
     width(w),
     height(h),
     mipLevels(mip),
@@ -151,6 +151,8 @@ Image::Image(PixelFormat fmt, int w, int h, int mip) :
     size(calcTotalMipSize(fmt, w, h, mip))
 {
     assert(components != 0);
+    assert(width > 0 && width <= MAX_DIMENSION);
+    assert(height > 0 && height <= MAX_DIMENSION);
 
     pitch = pad(w * components);
     pixels = std::make_unique<std::uint8_t[]>(size);
@@ -162,31 +164,31 @@ Image::isValid() const noexcept
     return pixels != nullptr;
 }
 
-int
+std::int32_t
 Image::getWidth() const
 {
     return width;
 }
 
-int
+std::int32_t
 Image::getHeight() const
 {
     return height;
 }
 
-int
+std::int32_t
 Image::getPitch() const
 {
     return pitch;
 }
 
-int
+std::int32_t
 Image::getMipLevelCount() const
 {
     return mipLevels;
 }
 
-int
+std::int32_t
 Image::getSize() const
 {
     return size;
@@ -198,7 +200,7 @@ Image::getFormat() const
     return format;
 }
 
-int
+std::int32_t
 Image::getComponents() const
 {
     return components;
@@ -217,7 +219,7 @@ Image::getPixels() const
 }
 
 std::uint8_t*
-Image::getPixelRow(int mip, int row)
+Image::getPixelRow(std::int32_t mip, std::int32_t row)
 {
     if (mip >= mipLevels || row >= std::max(height >> mip, 1))
         return nullptr;
@@ -230,19 +232,19 @@ Image::getPixelRow(int mip, int row)
 }
 
 std::uint8_t*
-Image::getPixelRow(int row)
+Image::getPixelRow(std::int32_t row)
 {
     return getPixelRow(0, row);
 }
 
 std::uint8_t*
-Image::getMipLevel(int mip)
+Image::getMipLevel(std::int32_t mip)
 {
     if (mip >= mipLevels)
         return nullptr;
 
-    int offset = 0;
-    for (int i = 0; i < mip; i++)
+    std::int32_t offset = 0;
+    for (std::int32_t i = 0; i < mip; i++)
         offset += calcMipLevelSize(format, width, height, i);
 
     return pixels.get() + offset;
@@ -254,15 +256,15 @@ Image::getMipLevel(int mip) const
     if (mip >= mipLevels)
         return nullptr;
 
-    int offset = 0;
-    for (int i = 0; i < mip; ++i)
+    std::int32_t offset = 0;
+    for (std::int32_t i = 0; i < mip; ++i)
         offset += calcMipLevelSize(format, width, height, i);
 
     return pixels.get() + offset;
 }
 
-int
-Image::getMipLevelSize(int mip) const
+std::int32_t
+Image::getMipLevelSize(std::int32_t mip) const
 {
     if (mip >= mipLevels)
         return 0;
@@ -324,14 +326,14 @@ Image::computeNormalMap(float scale, bool wrap) const
     auto normalMap = std::make_unique<Image>(PixelFormat::RGBA, width, height);
 
     std::uint8_t* nmPixels = normalMap->getPixels();
-    int nmPitch = normalMap->getPitch();
+    std::int32_t nmPitch = normalMap->getPitch();
 
     // Compute normals using differences between adjacent texels.
-    for (int i = 0; i < height; i++)
+    for (std::int32_t i = 0; i < height; i++)
     {
         const auto rowBase = i * nmPitch;
         const auto [i0, i1] = handleEdge(i, height, wrap);
-        for (int j = 0; j < width; j++)
+        for (std::int32_t j = 0; j < width; j++)
         {
             const auto [j0, j1] = handleEdge(j, width, wrap);
 
@@ -344,7 +346,7 @@ Image::computeNormalMap(float scale, bool wrap) const
 
             float rmag = 1.0f / std::sqrt(dx * dx + dy * dy + 1.0f);
 
-            int n = rowBase + j * 4;
+            std::int32_t n = rowBase + j * 4;
             nmPixels[n]     = static_cast<std::uint8_t>(128 + 127 * dx * rmag);
             nmPixels[n + 1] = static_cast<std::uint8_t>(128 + 127 * dy * rmag);
             nmPixels[n + 2] = static_cast<std::uint8_t>(128 + 127 * rmag);

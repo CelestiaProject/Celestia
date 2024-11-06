@@ -181,10 +181,10 @@ Image* LoadPNGImage(const fs::path& filename)
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        fclose(fp);
         delete[] row_pointers; //NOSONAR
         delete img; //NOSONAR
         png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
         util::GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
         return nullptr;
     }
@@ -199,6 +199,15 @@ Image* LoadPNGImage(const fs::path& filename)
                  &width, &height, &bit_depth,
                  &color_type, &interlace_type,
                  nullptr, nullptr);
+
+    if (width == 0 || width > Image::MAX_DIMENSION ||
+        height == 0 || height > Image::MAX_DIMENSION)
+    {
+        util::GetLogger()->error(_("PNG dimensions out of range {}\n"), filename);
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
+        return nullptr;
+    }
 
     PixelFormat format = PixelFormat::RGB;
     switch (color_type)
@@ -218,8 +227,8 @@ Image* LoadPNGImage(const fs::path& filename)
         break;
     default:
         // badness
-        fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
         util::GetLogger()->error(_("Invalid format in PNG file {}\n"), filename);
         return nullptr;
     }

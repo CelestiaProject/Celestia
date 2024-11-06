@@ -138,16 +138,16 @@ parseBMPInfoHeader(const char* infoHeader,
     }
 
     info.width = util::fromMemoryLE<std::int32_t>(infoHeader + offsetof(BMPInfoHeader, width));
-    if (info.width <= 0)
+    if (info.width <= 0 || info.width > Image::MAX_DIMENSION)
     {
-        GetLogger()->error(_("BMP read failure '{}' - width must be greater than 0\n"), filename);
+        GetLogger()->error(_("BMP read failure '{}' - width out of range\n"), filename);
         return false;
     }
 
     info.height = util::fromMemoryLE<std::int32_t>(infoHeader + offsetof(BMPInfoHeader, height));
-    if (info.height <= 0)
+    if (info.height <= 0 || info.height > Image::MAX_DIMENSION)
     {
-        GetLogger()->error(_("BMP read failure '{}' - height must be greater than 0\n"), filename);
+        GetLogger()->error(_("BMP read failure '{}' - height out of range\n"), filename);
         return false;
     }
 
@@ -177,12 +177,6 @@ parseBMPInfoHeader(const char* infoHeader,
     if (info.bpp > 8)
     {
         std::uint32_t factor = info.bpp >> 3;
-        if (UINT32_MAX / factor < static_cast<std::uint32_t>(info.width))
-        {
-            GetLogger()->error(_("BMP read failure '{}' - image too wide\n"), filename);
-            return false;
-        }
-
         info.rowStride = static_cast<std::uint32_t>(info.width) * factor;
     }
     else if (info.bpp == 8)
@@ -192,10 +186,6 @@ parseBMPInfoHeader(const char* infoHeader,
     else
     {
         std::uint32_t factor = UINT32_C(8) / info.bpp;
-        if (info.width > UINT32_MAX - factor)
-        {
-            GetLogger()->error(_("BMP read failure '{}' - image too wide\n"), filename);
-        }
         info.rowStride = (static_cast<std::uint32_t>(info.width) + factor - UINT32_C(1)) / factor;
     }
 
@@ -207,12 +197,6 @@ parseBMPInfoHeader(const char* infoHeader,
 
     // round up to nearest DWORD (4 bytes)
     info.rowStride = (info.rowStride + UINT32_C(3)) & ~UINT32_C(3);
-
-    if ((UINT32_MAX / info.rowStride) < static_cast<std::uint32_t>(info.height))
-    {
-        GetLogger()->error(_("BMP read failure '{}' - image too tall\n"), filename);
-        return false;
-    }
 
     info.imageSize = info.rowStride * static_cast<std::uint32_t>(info.height);
     // Uncompressed bitmaps can have a size of 0

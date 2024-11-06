@@ -84,9 +84,91 @@ constexpr std::uint32_t FourCC(const char *s)
            static_cast<std::uint32_t>(s[0]);
 }
 
+constexpr bool
+IsCompressedFormat(PixelFormat format)
+{
+    return format == PixelFormat::DXT1 ||
+           format == PixelFormat::DXT3 ||
+           format == PixelFormat::DXT5;
+}
+
+PixelFormat
+GetUncompressedFormat(const DDSurfaceDesc& ddsd)
+{
+    util::GetLogger()->debug("DDS Format: {:08x}\n", ddsd.format.fourCC);
+    switch (ddsd.format.bpp)
+    {
+    case 24:
+        if (ddsd.format.redMask   == 0x000000ff &&
+            ddsd.format.greenMask == 0x0000ff00 &&
+            ddsd.format.blueMask  == 0x00ff0000)
+        {
+            return PixelFormat::RGB8;
+        }
+
+#ifndef GL_ES
+        if (ddsd.format.redMask           == 0x00ff0000 &&
+                    ddsd.format.greenMask == 0x0000ff00 &&
+                    ddsd.format.blueMask  == 0x000000ff)
+        {
+            return PixelFormat::BGR8;
+        }
+#endif
+
+        break;
+
+    case 32:
+        if (ddsd.format.redMask   == 0x00ff0000 &&
+            ddsd.format.greenMask == 0x0000ff00 &&
+            ddsd.format.blueMask  == 0x000000ff &&
+            ddsd.format.alphaMask == 0xff000000)
+        {
+            return PixelFormat::BGRA8;
+        }
+
+        if (ddsd.format.redMask           == 0x000000ff &&
+                    ddsd.format.greenMask == 0x0000ff00 &&
+                    ddsd.format.blueMask  == 0x00ff0000 &&
+                    ddsd.format.alphaMask == 0xff000000)
+        {
+            return PixelFormat::RGBA8;
+        }
+
+        break;
+
+    default:
+        break;
+    }
+
+    return PixelFormat::Invalid;
+}
+
+PixelFormat
+GetFormat(const DDSurfaceDesc& ddsd)
+{
+    switch (ddsd.format.fourCC)
+    {
+    case 0:
+        return GetUncompressedFormat(ddsd);
+
+    case FourCC("DXT1"):
+        return PixelFormat::DXT1;
+
+    case FourCC("DXT3"):
+        return PixelFormat::DXT3;
+
+    case FourCC("DXT5"):
+        return PixelFormat::DXT5;
+
+    default:
+        util::GetLogger()->error("Unknown FourCC in DDS file: {:08x}\n", ddsd.format.fourCC);
+        return PixelFormat::Invalid;
+    }
+}
+
 // decompress a DXTc texture to a RGBA texture, taken from https://github.com/ptitSeb/gl4es
 std::unique_ptr<std::uint32_t[]>
-DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bool transparent0, std::ifstream &in)
+DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bool transparent0, std::istream& in)
 {
     // TODO: check with the size of the input data stream if the stream is in fact decompressed
     // alloc memory
@@ -134,6 +216,56 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
     return pixels;
 }
 
+std::unique_ptr<Image>
+CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const fs::path& filename)
+{
+    // DXTc texture not supported, decompress DXTc to RGB/RGBA
+    std::unique_ptr<std::uint32_t[]>pixels = nullptr;
+    bool transparent0 = format == PixelFormat::DXT1;
+    if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
+    {
+        std::uint32_t nw = std::max(ddsd.width, 4u);
+        std::uint32_t nh = std::max(ddsd.height, 4u);
+        auto tmp = DecompressDXTc(nw, nh, format, transparent0, in);
+        if (tmp != nullptr)
+        {
+            pixels = std::make_unique<std::uint32_t[]>(ddsd.width * ddsd.height);
+            // crop
+            for (std::uint32_t y = 0; y < ddsd.height; y++)
+            {
+                std::memcpy(pixels.get() + y * ddsd.width, tmp.get() + y * nw, ddsd.width * 4);
+            }
+        }
+    }
+    else
+    {
+        pixels = DecompressDXTc(ddsd.width, ddsd.height, format, transparent0, in);
+    }
+
+    if (pixels == nullptr)
+    {
+        util::GetLogger()->error("Failed to decompress DDS texture file {}.\n", filename);
+        return nullptr;
+    }
+
+    if (transparent0)
+    {
+        // Remove the alpha channel for DXT1 since DXT1 textures
+        // are deemed not to contain alpha values in Celestia
+        // https://github.com/CelestiaProject/Celestia/pull/1086
+        char *ptr = reinterpret_cast<char*>(pixels.get());
+        std::uint32_t numberOfPixels = ddsd.width * ddsd.height;
+        for (std::uint32_t index = 0; index < numberOfPixels; ++index)
+        {
+            std::memcpy(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
+        }
+    }
+
+    auto img = std::make_unique<Image>(transparent0 ? PixelFormat::RGB : PixelFormat::RGBA, ddsd.width, ddsd.height);
+    std::memcpy(img->getPixels(), pixels.get(), (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
+    return img;
+}
+
 } // anonymous namespace
 
 Image* LoadDDSImage(const fs::path& filename)
@@ -173,65 +305,14 @@ Image* LoadDDSImage(const fs::path& filename)
     LE_TO_CPU_INT32(ddsd.format.bpp, ddsd.format.bpp);
     LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
-    PixelFormat format = PixelFormat::Invalid;
+    if (ddsd.width == 0 || ddsd.width > Image::MAX_DIMENSION ||
+        ddsd.height == 0 || ddsd.height > Image::MAX_DIMENSION)
+    {
+        util::GetLogger()->error("DDS file {} size out of range.\n", filename);
+        return nullptr;
+    }
 
-    if (ddsd.format.fourCC != 0)
-    {
-        if (ddsd.format.fourCC == FourCC("DXT1"))
-        {
-            format = PixelFormat::DXT1;
-        }
-        else if (ddsd.format.fourCC == FourCC("DXT3"))
-        {
-            format = PixelFormat::DXT3;
-        }
-        else if (ddsd.format.fourCC == FourCC("DXT5"))
-        {
-            format = PixelFormat::DXT5;
-        }
-        else
-        {
-            util::GetLogger()->error("Unknown FourCC in DDS file: {}\n", ddsd.format.fourCC);
-        }
-    }
-    else
-    {
-        util::GetLogger()->debug("DDS Format: {}\n", ddsd.format.fourCC);
-        if (ddsd.format.bpp == 32)
-        {
-            if (ddsd.format.redMask   == 0x00ff0000 &&
-                ddsd.format.greenMask == 0x0000ff00 &&
-                ddsd.format.blueMask  == 0x000000ff &&
-                ddsd.format.alphaMask == 0xff000000)
-            {
-                format = PixelFormat::BGRA8;
-            }
-            else if (ddsd.format.redMask   == 0x000000ff &&
-                     ddsd.format.greenMask == 0x0000ff00 &&
-                     ddsd.format.blueMask  == 0x00ff0000 &&
-                     ddsd.format.alphaMask == 0xff000000)
-            {
-                format = PixelFormat::RGBA8;
-            }
-        }
-        else if (ddsd.format.bpp == 24)
-        {
-            if (ddsd.format.redMask   == 0x000000ff &&
-                ddsd.format.greenMask == 0x0000ff00 &&
-                ddsd.format.blueMask  == 0x00ff0000)
-            {
-                format = PixelFormat::RGB8;
-            }
-#ifndef GL_ES
-            else if (ddsd.format.redMask   == 0x00ff0000 &&
-                     ddsd.format.greenMask == 0x0000ff00 &&
-                     ddsd.format.blueMask  == 0x000000ff)
-            {
-                format = PixelFormat::BGR8;
-            }
-#endif
-        }
-    }
+    PixelFormat format = GetFormat(ddsd);
 
     if (format == PixelFormat::Invalid)
     {
@@ -240,76 +321,22 @@ Image* LoadDDSImage(const fs::path& filename)
     }
 
     // Check if the platform supports compressed DTXc textures
-    if (format == PixelFormat::DXT1 ||
-        format == PixelFormat::DXT3 ||
-        format == PixelFormat::DXT5)
-    {
-        if (!gl::EXT_texture_compression_s3tc)
-        {
-            // DXTc texture not supported, decompress DXTc to RGB/RGBA
-            std::unique_ptr<std::uint32_t[]>pixels = nullptr;
-            bool transparent0 = format == PixelFormat::DXT1;
-            if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
-            {
-                std::uint32_t nw = std::max(ddsd.width, 4u);
-                std::uint32_t nh = std::max(ddsd.height, 4u);
-                auto tmp = DecompressDXTc(nw, nh, format, transparent0, in);
-                if (tmp != nullptr)
-                {
-                    pixels = std::make_unique<std::uint32_t[]>(ddsd.width * ddsd.height);
-                    // crop
-                    for (std::uint32_t y = 0; y < ddsd.height; y++)
-                    {
-                        std::memcpy(pixels.get() + y * ddsd.width, tmp.get() + y * nw, ddsd.width * 4);
-                    }
-                }
-            }
-            else
-            {
-                pixels = DecompressDXTc(ddsd.width, ddsd.height, format, transparent0, in);
-            }
-
-            if (pixels == nullptr)
-            {
-                util::GetLogger()->error("Failed to decompress DDS texture file {}.\n", filename);
-                return nullptr;
-            }
-
-            if (transparent0)
-            {
-                // Remove the alpha channel for DXT1 since DXT1 textures
-                // are deemed not to contain alpha values in Celestia
-                // https://github.com/CelestiaProject/Celestia/pull/1086
-                char *ptr = reinterpret_cast<char*>(pixels.get());
-                std::uint32_t numberOfPixels = ddsd.width * ddsd.height;
-                for (std::uint32_t index = 0; index < numberOfPixels; ++index)
-                {
-                    std::memcpy(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
-                }
-            }
-
-            Image *img = new Image(transparent0 ? PixelFormat::RGB : PixelFormat::RGBA, ddsd.width, ddsd.height);
-            std::memcpy(img->getPixels(), pixels.get(), (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
-            return img;
-        }
-    }
+    if (IsCompressedFormat(format) && !gl::EXT_texture_compression_s3tc)
+        return CreateDecompressedImage(ddsd, format, in, filename).release();
 
     // TODO: Verify that the reported texture size matches the amount of
     // data expected.
-
-    Image* img = new Image(format,
-                           static_cast<int>(ddsd.width),
-                           static_cast<int>(ddsd.height),
-                           std::max(ddsd.mipMapLevels, 1u));
-    in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize()); /* Flawfinder: ignore */
-    if (!in.eof() && !in.good())
+    auto img = std::make_unique<Image>(format,
+                                       static_cast<std::int32_t>(ddsd.width),
+                                       static_cast<std::int32_t>(ddsd.height),
+                                       std::max(static_cast<std::int32_t>(ddsd.mipMapLevels), INT32_C(1)));
+    if (!in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize())) /* Flawfinder: ignore */
     {
         util::GetLogger()->error("Failed reading data from DDS texture file {}.\n", filename);
-        delete img;
         return nullptr;
     }
 
-    return img;
+    return img.release();
 }
 
 } // namespace celestia::engine

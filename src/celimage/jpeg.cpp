@@ -16,6 +16,7 @@ extern "C"
 {
 #include <jpeglib.h>
 }
+#include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "image.h"
 
@@ -146,7 +147,10 @@ Image* LoadJPEGImage(const fs::path& filename)
     FILE *in = fopen(filename.c_str(), "rb");
 #endif
     if (in == nullptr)
+    {
+        util::GetLogger()->error(_("Could not open JPEG file {}\n"), filename);
         return nullptr;
+    }
 
     // Step 1: allocate and initialize JPEG decompression object
     // We set up the normal JPEG error routines, then override error_exit.
@@ -161,6 +165,7 @@ Image* LoadJPEGImage(const fs::path& filename)
         fclose(in);
         delete img;
 
+        util::GetLogger()->error(_("Error reading JPEG image: {}\n"), filename);
         return nullptr;
     }
 
@@ -172,6 +177,15 @@ Image* LoadJPEGImage(const fs::path& filename)
 
     // Step 3: read file parameters with jpeg_read_header()
     (void) jpeg_read_header(&cinfo, TRUE);
+
+    if (cinfo.image_width == 0 || cinfo.image_width > Image::MAX_DIMENSION ||
+        cinfo.image_height == 0 || cinfo.image_height > Image::MAX_DIMENSION)
+    {
+        jpeg_destroy_decompress(&cinfo);
+        fclose(in);
+        util::GetLogger()->error(_("JPEG dimensions out of range: {}\n"), filename);
+        return nullptr;
+    }
 
     // We can ignore the return value from jpeg_read_header since
     //  (a) suspension is not possible with the stdio data source, and

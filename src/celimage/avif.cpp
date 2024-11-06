@@ -126,6 +126,11 @@ LoadAVIFImage(const fs::path& filename)
     avifRGBImage rgb;
     rgb.format = AVIF_RGB_FORMAT_RGBA;
     avifRGBImageSetDefaults(&rgb, decoder->image);
+    if (rgb.width > Image::MAX_DIMENSION || rgb.height > Image::MAX_DIMENSION)
+    {
+        util::GetLogger()->error("Image exceeds maximum dimensions: {}\n", filename);
+        return nullptr;
+    }
 
     auto image = std::make_unique<Image>(PixelFormat::RGBA, rgb.width, rgb.height);
     rgb.pixels = image->getPixels();
