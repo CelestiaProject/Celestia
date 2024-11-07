@@ -48,6 +48,10 @@ class Image
         AlphaChannel = 2
     };
 
+    enum {
+        MAX_IMAGE_DIMENSION = 16384
+    };
+
  private:
     int width;
     int height;

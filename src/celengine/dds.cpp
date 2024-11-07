@@ -66,7 +66,7 @@ struct DDSurfaceDesc
 
     DDPixelFormat format;
     DDSCaps caps;
-    
+
     uint32 textureStage;
 };
 
@@ -117,6 +117,18 @@ Image* LoadDDSImage(const string& filename)
     LE_TO_CPU_INT32(ddsd.format.bpp, ddsd.format.bpp);
     LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
+    if (ddsd.width == 0 || ddsd.width > Image::MAX_IMAGE_DIMENSION)
+    {
+        cerr << "Width out of range in DDS file\n";
+        return NULL;
+    }
+
+    if (ddsd.height == 0 || ddsd.height > Image::MAX_IMAGE_DIMENSION)
+    {
+        cerr << "Height out of range in DDS file\n";
+        return NULL;
+    }
+
     int format = -1;
 
     if (ddsd.format.fourCC != 0)
@@ -135,7 +147,7 @@ Image* LoadDDSImage(const string& filename)
         }
         else
         {
-            cerr << "Unknown FourCC in DDS file: " << ddsd.format.fourCC;
+            cerr << "Unknown FourCC in DDS file: " << ddsd.format.fourCC << '\n';
         }
     }
     else
