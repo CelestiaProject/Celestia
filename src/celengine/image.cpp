@@ -81,7 +81,6 @@ using namespace std;
 
 #endif // PNG_SUPPORT
 
-
 // All rows are padded to a size that's a multiple of 4 bytes
 static int pad(int n)
 {
@@ -474,6 +473,13 @@ Image* LoadJPEGImage(const string& filename, int)
 
     // Step 3: read file parameters with jpeg_read_header()
     (void) jpeg_read_header(&cinfo, TRUE);
+    if (cinfo.image_width == 0 || cinfo.image_width > Image::MAX_IMAGE_DIMENSION ||
+        cinfo.image_height == 0 || cinfo.image_height > Image::MAX_IMAGE_DIMENSION)
+    {
+        jpeg_destroy_decompress(&cinfo);
+        fclose(in);
+        return NULL;
+    }
 
     // We can ignore the return value from jpeg_read_header since
     //  (a) suspension is not possible with the stdio data source, and
@@ -612,10 +618,10 @@ Image* LoadPNGImage(const string& filename)
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        fclose(fp);
         delete row_pointers;
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        fclose(fp);
         clog << _("Error reading PNG image file ") << filename << '\n';
         return NULL;
     }
@@ -630,6 +636,15 @@ Image* LoadPNGImage(const string& filename)
                  &width, &height, &bit_depth,
                  &color_type, &interlace_type,
                  NULL, NULL);
+
+    if (width == 0 || width > Image::MAX_IMAGE_DIMENSION ||
+        height == 0 || height > Image::MAX_IMAGE_DIMENSION)
+    {
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        fclose(fp);
+        clog << _("PNG dimensions out of range " ) << filename << '\n';
+        return NULL;
+    }
 
     GLenum glformat = GL_RGB;
     switch (color_type)
@@ -787,10 +802,16 @@ static Image* LoadBMPImage(ifstream& in)
         return NULL;
     }
 
-    if (!readInteger(in, imageHeader.width) || imageHeader.width <= 0)
+    if (!readInteger(in, imageHeader.width) ||
+        imageHeader.width <= 0 || imageHeader.width > Image::MAX_IMAGE_DIMENSION)
+    {
         return NULL;
-    if (!readInteger(in, imageHeader.height) || imageHeader.height <= 0)
+    }
+    if (!readInteger(in, imageHeader.height) ||
+        imageHeader.height <= 0 || imageHeader.height > Image::MAX_IMAGE_DIMENSION)
+    {
         return NULL;
+    }
     if (!readInteger(in, imageHeader.planes) || imageHeader.planes != 1)
         return NULL;
     if (!readInteger(in, imageHeader.bpp) ||
