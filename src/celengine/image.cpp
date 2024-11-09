@@ -9,14 +9,6 @@
 
 #include <fstream>
 
-#ifndef JPEG_SUPPORT
-#define JPEG_SUPPORT
-#endif
-
-#ifndef PNG_SUPPORT
-#define PNG_SUPPORT
-#endif
-
 #ifdef TARGET_OS_MAC
 #include <unistd.h>
 #endif
@@ -29,13 +21,7 @@
 
 #include "image.h"
 
-#ifdef JPEG_SUPPORT
-
 #include <cstring> /* for memcpy */
-
-#ifndef PNG_SUPPORT
-#include "setjmp.h"
-#endif // PNG_SUPPORT
 
 extern "C" {
 #ifdef _WIN32
@@ -46,9 +32,6 @@ extern "C" {
 #endif
 }
 
-#endif // JPEG_SUPPORT
-
-#ifdef PNG_SUPPORT // PNG_SUPPORT
 #include "png.h"
 
 #include <celutil/basictypes.h>
@@ -66,20 +49,6 @@ extern "C" {
 
 using namespace std;
 
-
-// Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
-#ifndef png_jmpbuf
-#define png_jmpbuf(png_ptr) png_ptr->jmpbuf
-#endif // PNG_SUPPORT
-
-// Define various expansion transformations for old versions of libpng
-#if PNG_LIBPNG_VER < 10004
-#define png_set_palette_to_rgb(p)  png_set_expand(p)
-#define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
-#define png_set_tRNS_to_alpha(p)   png_set_expand(p)
-#endif // PNG_LIBPNG_VER < 10004
-
-#endif // PNG_SUPPORT
 
 // All rows are padded to a size that's a multiple of 4 bytes
 static int pad(int n)
@@ -392,11 +361,6 @@ Image* LoadImageFromFile(const string& filename)
 }
 
 
-
-
-
-#ifdef JPEG_SUPPORT
-
 struct my_error_mgr
 {
     struct jpeg_error_mgr pub;	// "public" fields
@@ -417,12 +381,10 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
     // Return control to the setjmp point
     longjmp(myerr->setjmp_buffer, 1);
 }
-#endif // JPEG_SUPPORT
 
 
 Image* LoadJPEGImage(const string& filename, int)
 {
-#ifdef JPEG_SUPPORT
     Image* img = NULL;
 
     // This struct contains the JPEG decompression parameters and pointers to
@@ -556,26 +518,18 @@ Image* LoadJPEGImage(const string& filename, int)
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
     return img;
-#else
-    return NULL;
-#endif // JPEG_SUPPORT
 }
 
 
-#ifdef PNG_SUPPORT
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
     fread((void*) data, 1, length, fp);
 }
-#endif
 
 
 Image* LoadPNGImage(const string& filename)
 {
-#ifndef PNG_SUPPORT
-    return NULL;
-#else
     char header[8];
     png_structp png_ptr;
     png_infop info_ptr;
@@ -716,7 +670,6 @@ Image* LoadPNGImage(const string& filename)
     fclose(fp);
 
     return img;
-#endif
 }
 
 

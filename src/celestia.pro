@@ -113,7 +113,7 @@ ENGINE_SOURCES = \
 	celengine/frame.cpp \
 	celengine/frametree.cpp \
 	celengine/galaxy.cpp \
-	celengine/globular.cpp \	
+	celengine/globular.cpp \
 	celengine/glcontext.cpp \
 	celengine/glext.cpp \
 	celengine/glshader.cpp \
@@ -200,7 +200,7 @@ ENGINE_HEADERS = \
 	celengine/frame.h \
 	celengine/frametree.h \
 	celengine/galaxy.h \
-	celengine/globular.h \	
+	celengine/globular.h \
 	celengine/gl.h \
 	celengine/glcontext.h \
 	celengine/glext.h \
@@ -357,7 +357,7 @@ QTAPP_HEADERS = \
 	celestia/qt/qtsolarsystembrowser.h \
 	celestia/qt/qtselectionpopup.h \
 	celestia/qt/qtcolorswatchwidget.h \
-	celestia/qt/qttimetoolbar.h \	
+	celestia/qt/qttimetoolbar.h \
 	celestia/qt/qtcelestiaactions.h \
 	celestia/qt/qtinfopanel.h \
 	celestia/qt/qteventfinder.h \
@@ -443,7 +443,7 @@ macx {
 	LIBS -= -ljpeg
 	LIBS += -llua
 	LIBS += -L$$FRAMEWORKPATH
-	DEFINES += PNG_SUPPORT REFMARKS=1
+	DEFINES += REFMARKS=1
 	FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
 	FRAMEWORKS.path = Contents/Frameworks
 	QMAKE_BUNDLE_DATA += FRAMEWORKS

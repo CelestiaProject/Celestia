@@ -32,18 +32,6 @@ extern "C" {
 #endif
 #include <zlib.h>
 
-// Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
-#ifndef png_jmpbuf
-#define png_jmpbuf(png_ptr) png_ptr->jmpbuf
-#endif
-
-// Define various expansion transformations for old versions of libpng
-#if PNG_LIBPNG_VER < 10004
-#define png_set_palette_to_rgb(p)  png_set_expand(p)
-#define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
-#define png_set_tRNS_to_alpha(p)   png_set_expand(p)
-#endif
-
 using namespace std;
 
 
