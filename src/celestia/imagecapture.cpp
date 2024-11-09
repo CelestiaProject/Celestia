@@ -1,5 +1,5 @@
 // imagecapture.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -7,9 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <csetjmp>
 #include <cstdio>
+
 #include <celutil/debug.h>
-#include "../celengine/gl.h"
+#include <celengine/gl.h>
 #include <celengine/celestia.h>
 #include "imagecapture.h"
 
@@ -95,17 +97,93 @@ bool CaptureGLBufferToJPEG(const string& filename,
     return true;
 }
 
-
-void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+static void
+PNGError(png_structp pngPtr, png_const_charp error)
 {
-    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
-    fwrite((void*) data, 1, length, fp);
+    auto filename = static_cast<const std::string*>(png_get_error_ptr(pngPtr));
+    DPRINTF(0, "Screen capture error '%s': %s\n", filename->c_str(), error);
+    png_longjmp(pngPtr, static_cast<int>(true));
 }
 
-                           
+static void
+PNGWarn(png_structp pngPtr, png_const_charp warning)
+{
+    auto filename = static_cast<const std::string*>(png_get_error_ptr(pngPtr));
+    DPRINTF(0, "Screen capture warning '%s': %s\n", filename->c_str(), warning);
+}
+
+static bool
+WritePNGToFile(const std::string& filename,
+               unsigned char* pixels,
+               int width, int height, int rowStride)
+{
+    png_structp pngPtr = NULL;
+    png_infop infoPtr = NULL;
+
+    std::FILE* out = std::fopen(filename.c_str(), "wb");
+    if (!out)
+    {
+        DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
+        return false;
+    }
+
+    pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                     const_cast<std::string*>(&filename),
+                                     &PNGError,
+                                     &PNGWarn);
+    if (!pngPtr)
+    {
+        DPRINTF(0, "Screen capture: error allocating png_ptr\n");
+        std::fclose(out);
+        return false;
+    }
+
+    infoPtr = png_create_info_struct(pngPtr);
+    if (!infoPtr)
+    {
+        DPRINTF(0, "Screen capture: error allocating info_ptr\n");
+        png_destroy_write_struct(&pngPtr, NULL);
+        std::fclose(out);
+        return false;
+    }
+
+    if (setjmp(png_jmpbuf(pngPtr)))
+    {
+        png_destroy_write_struct(&pngPtr, &infoPtr);
+        std::fclose(out);
+        return false;
+    }
+
+    png_init_io(pngPtr, out);
+    png_set_compression_level(pngPtr, Z_BEST_COMPRESSION);
+    png_set_IHDR(pngPtr, infoPtr,
+                 static_cast<png_uint_32>(width),
+                 static_cast<png_uint_32>(height),
+                 8,
+                 PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+
+    png_write_info(pngPtr, infoPtr);
+
+    for (int row = 0; row < height; ++row)
+    {
+        png_write_row(pngPtr, pixels);
+        pixels += rowStride;
+    }
+
+    png_write_end(pngPtr, infoPtr);
+
+    png_destroy_write_struct(&pngPtr, &infoPtr);
+    std::fclose(out);
+
+    return true;
+}
+
 bool CaptureGLBufferToPNG(const string& filename,
-                           int x, int y,
-                           int width, int height)
+                          int x, int y,
+                          int width, int height)
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
@@ -117,79 +195,8 @@ bool CaptureGLBufferToPNG(const string& filename,
                  pixels);
 
     // TODO: Check for GL errors
-
-    FILE* out;
-    out = fopen(filename.c_str(), "wb");
-    if (out == NULL)
-    {
-        DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
-        delete[] pixels;
-        return false;
-    }
-
-    png_bytep* row_pointers = new png_bytep[height];
-    for (int i = 0; i < height; i++)
-        row_pointers[i] = (png_bytep) &pixels[rowStride * (height - i - 1)];
-
-    png_structp png_ptr;
-    png_infop info_ptr;
-
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                      NULL, NULL, NULL);
-
-    if (png_ptr == NULL)
-    {
-        DPRINTF(0, "Screen capture: error allocating png_ptr\n");
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        return false;
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
-    {
-        DPRINTF(0, "Screen capture: error allocating info_ptr\n");
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
-        return false;
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr)))
-    {
-        DPRINTF(0, "Error writing PNG file '%s'\n", filename.c_str());
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        return false;
-    }
-
-    // png_init_io(png_ptr, out);
-    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, NULL);
-
-    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-    png_set_IHDR(png_ptr, info_ptr,
-                 width, height,
-                 8,
-                 PNG_COLOR_TYPE_RGB,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
-
-    png_write_info(png_ptr, info_ptr);
-    png_write_image(png_ptr, row_pointers);
-    png_write_end(png_ptr, info_ptr);
-
-    // Clean up everything . . .
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    delete[] row_pointers;
+    auto result = WritePNGToFile(filename, pixels, width, height, rowStride);
     delete[] pixels;
-    fclose(out);
 
-    return true;
+    return result;
 }
-
-
