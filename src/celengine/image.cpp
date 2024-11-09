@@ -7,7 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "image.h"
+
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <csetjmp>
+#include <cstdio>
+#include <cstring> /* for memcpy */
 #include <fstream>
+#include <iostream>
 
 #ifdef TARGET_OS_MAC
 #include <unistd.h>
@@ -18,10 +27,6 @@
 #include <config.h>
 #endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
-
-#include "image.h"
-
-#include <cstring> /* for memcpy */
 
 extern "C" {
 #ifdef _WIN32
@@ -36,16 +41,13 @@ extern "C" {
 
 #include <celutil/basictypes.h>
 #include <celutil/debug.h>
-#include <celutil/util.h>
 #include <celutil/filetype.h>
+#include <celutil/util.h>
+
 #include "gl.h"
 #include "glext.h"
 #include "celestia.h"
 
-#include <cassert>
-#include <iostream>
-#include <algorithm>
-#include <cmath>
 
 using namespace std;
 
@@ -521,153 +523,162 @@ Image* LoadJPEGImage(const string& filename, int)
 }
 
 
-void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
+static void
+PNGError(png_structp pngPtr, png_const_charp error)
 {
-    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
-    fread((void*) data, 1, length, fp);
+    auto filename = static_cast<const std::string*>(png_get_error_ptr(pngPtr));
+    std::clog << _("PNG error: ") << *filename << ' - ' << error << '\n';
+    png_longjmp(pngPtr, static_cast<int>(true));
+}
+
+static void
+PNGWarn(png_structp pngPtr, png_const_charp warning)
+{
+    auto filename = static_cast<const std::string*>(png_get_error_ptr(pngPtr));
+    std::clog << _("PNG warning: ") << *filename << ' - ' << warning << '\n';
+}
+
+static GLenum
+PNGGetGLFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int colorType)
+{
+    if (colorType == PNG_COLOR_TYPE_PALETTE)
+    {
+        png_set_palette_to_rgb(pngPtr);
+        if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
+        {
+            png_set_tRNS_to_alpha(pngPtr);
+            return GL_RGBA;
+        }
+
+        return GL_RGB;
+    }
+
+    if (bitDepth < 8)
+    {
+        png_set_packing(pngPtr);
+        if (colorType == PNG_COLOR_TYPE_GRAY)
+            png_set_expand_gray_1_2_4_to_8(pngPtr);
+    }
+    else if (bitDepth == 16)
+    {
+#if PNG_LIBPNG_VER >= 10504
+        png_set_scale_16(pngPtr);
+#else
+        png_set_strip_16(pngPtr);
+#endif
+    }
+
+    if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
+    {
+        png_set_tRNS_to_alpha(pngPtr);
+        colorType |= PNG_COLOR_MASK_ALPHA;
+    }
+
+    switch (colorType)
+    {
+    case PNG_COLOR_TYPE_GRAY:
+        return GL_LUMINANCE;
+    case PNG_COLOR_TYPE_GRAY_ALPHA:
+        return GL_LUMINANCE_ALPHA;
+    case PNG_COLOR_TYPE_RGB:
+        return GL_RGB;
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+        return GL_RGBA;
+    default:
+        png_error(pngPtr, _("Unsupported color type"));
+    }
 }
 
 
-Image* LoadPNGImage(const string& filename)
+
+Image* LoadPNGImage(const std::string& filename)
 {
-    char header[8];
-    png_structp png_ptr;
-    png_infop info_ptr;
+    png_byte header[8];
+    png_structp pngPtr = NULL;
+    png_infop infoPtr = NULL;
     png_uint_32 width, height;
-    int bit_depth, color_type, interlace_type;
+    int bitDepth, colorType;
+    GLenum glFormat;
+    int passes;
+    int pitch;
     FILE* fp = NULL;
     Image* img = NULL;
-    png_bytep* row_pointers = NULL;
 
-    fp = fopen(filename.c_str(), "rb");
-    if (fp == NULL)
+    fp = std::fopen(filename.c_str(), "rb");
+    if (!fp)
     {
-        clog << _("Error opening image file ") << filename << '\n';
+        std::clog << _("Error opening image file ") << filename << '\n';
         return NULL;
     }
 
-    fread(header, 1, sizeof(header), fp);
-    if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
+    std::fread(header, 1, sizeof(header), fp);
+    if (png_sig_cmp(header, 0, sizeof(header)))
     {
-        clog << _("Error: ") << filename << _(" is not a PNG file.\n");
-        fclose(fp);
+        std::clog << _("Error: ") << filename << _(" is not a PNG file.\n");
+        std::fclose(fp);
         return NULL;
     }
 
-    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                     NULL, NULL, NULL);
-    if (png_ptr == NULL)
+    pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+                                    const_cast<std::string*>(&filename),
+                                    &PNGError,
+                                    &PNGWarn);
+    if (!pngPtr)
     {
-        fclose(fp);
+        std::fclose(fp);
         return NULL;
     }
 
-    info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
+    infoPtr = png_create_info_struct(pngPtr);
+    if (!infoPtr)
     {
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
+        std::fclose(fp);
+        png_destroy_read_struct(&pngPtr, NULL, NULL);
         return NULL;
     }
 
-    if (setjmp(png_jmpbuf(png_ptr)))
+    if (setjmp(png_jmpbuf(pngPtr)))
     {
-        delete row_pointers;
         delete img;
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        fclose(fp);
-        clog << _("Error reading PNG image file ") << filename << '\n';
+        png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
+        std::fclose(fp);
         return NULL;
     }
 
-    // png_init_io(png_ptr, fp);
-    png_set_read_fn(png_ptr, (void*) fp, PNGReadData);
-    png_set_sig_bytes(png_ptr, sizeof(header));
+    png_init_io(pngPtr, fp);
+    png_set_sig_bytes(pngPtr, sizeof(header));
 
-    png_read_info(png_ptr, info_ptr);
+    png_read_info(pngPtr, infoPtr);
+    if (png_get_IHDR(pngPtr, infoPtr, &width, &height, &bitDepth, &colorType, NULL, NULL, NULL) == 0)
+        png_error(pngPtr, _("Failed to read IHDR chunk"));
 
-    png_get_IHDR(png_ptr, info_ptr,
-                 &width, &height, &bit_depth,
-                 &color_type, &interlace_type,
-                 NULL, NULL);
+    if (width == 0 || width > Image::MAX_IMAGE_DIMENSION)
+        png_error(pngPtr, _("Image width out of range"));
+    if (height == 0 || height > Image::MAX_IMAGE_DIMENSION)
+        png_error(pngPtr, _("Image height out of range"));
 
-    if (width == 0 || width > Image::MAX_IMAGE_DIMENSION ||
-        height == 0 || height > Image::MAX_IMAGE_DIMENSION)
+    glFormat = PNGGetGLFormat(pngPtr, infoPtr, bitDepth, colorType);
+
+    img = new Image(glFormat, width, height);
+    if (!img)
+        png_error(pngPtr, _("Failed to create image object"));
+    pitch = img->getPitch();
+
+    passes = png_set_interlace_handling(pngPtr);
+    for (int pass = 0; pass < passes; ++pass)
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        fclose(fp);
-        clog << _("PNG dimensions out of range " ) << filename << '\n';
-        return NULL;
+        png_bytep rowPtr = img->getPixels();
+        for (png_uint_32 row = 0; row < height; ++row)
+        {
+            png_read_row(pngPtr, rowPtr, NULL);
+            rowPtr += pitch;
+        }
     }
 
-    GLenum glformat = GL_RGB;
-    switch (color_type)
-    {
-    case PNG_COLOR_TYPE_GRAY:
-        glformat = GL_LUMINANCE;
-        break;
-    case PNG_COLOR_TYPE_GRAY_ALPHA:
-        glformat = GL_LUMINANCE_ALPHA;
-        break;
-    case PNG_COLOR_TYPE_RGB:
-    case PNG_COLOR_TYPE_PALETTE:
-        glformat = GL_RGB;
-        break;
-    case PNG_COLOR_TYPE_RGB_ALPHA:
-        glformat = GL_RGBA;
-        break;
-    default:
-        // badness
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        clog << _("Invalid format in PNG file ") << filename << '\n';
-        return NULL;
-    }
+    png_read_end(pngPtr, NULL);
+    png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 
-    img = new Image(glformat, width, height);
-    if (img == NULL)
-    {
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        return NULL;
-    }
-
-    // TODO: consider using paletted textures if they're available
-    if (color_type == PNG_COLOR_TYPE_PALETTE)
-    {
-        png_set_palette_to_rgb(png_ptr);
-    }
-
-    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    {
-        png_set_expand_gray_1_2_4_to_8(png_ptr);
-    }
-
-    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-    {
-        png_set_tRNS_to_alpha(png_ptr);
-    }
-
-    // TODO: consider passing images with < 8 bits/component to
-    // GL without expanding
-    if (bit_depth == 16)
-        png_set_strip_16(png_ptr);
-    else if (bit_depth < 8)
-        png_set_packing(png_ptr);
-
-    row_pointers = new png_bytep[height];
-    for (unsigned int i = 0; i < height; i++)
-        row_pointers[i] = (png_bytep) img->getPixelRow(i);
-
-    png_read_image(png_ptr, row_pointers);
-
-    delete[] row_pointers;
-    row_pointers = NULL;
-
-    png_read_end(png_ptr, NULL);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-
-    fclose(fp);
+    std::fclose(fp);
 
     return img;
 }
