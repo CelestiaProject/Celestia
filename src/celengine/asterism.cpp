@@ -101,7 +101,7 @@ Asterism::Asterism(std::string&& name, std::vector<Chain>&& chains) :
     m_chains(std::move(chains))
 {
 #ifdef ENABLE_NLS
-    if (std::string_view localizedName(D_(m_name.c_str())); localizedName != m_name)
+    if (std::string_view localizedName(DCX_("asterism", m_name.c_str())); localizedName != m_name)
         m_i18nName = localizedName;
 #endif
 
