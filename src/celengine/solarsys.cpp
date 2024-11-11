@@ -129,9 +129,9 @@ BodyClassification GetClassificationId(std::string_view className)
 //! Maximum depth permitted for nested frames.
 unsigned int MaxFrameDepth = 50;
 
-bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType frameType)
+bool isFrameCircular(const ReferenceFrame& frame)
 {
-    return frame.nestingDepth(MaxFrameDepth, frameType) > MaxFrameDepth;
+    return frame.nestingDepth(MaxFrameDepth) > MaxFrameDepth;
 }
 
 
@@ -641,13 +641,13 @@ bool CreateTimeline(Body* body,
         // has actually been set.
         // TIMELINE-TODO: This check is not comprehensive; it won't find recursion in
         // multiphase timelines.
-        if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0), ReferenceFrame::PositionFrame))
+        if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0)))
         {
             GetLogger()->error("Orbit frame for '{}' is nested too deep (probably circular)\n", body->getName());
             return false;
         }
 
-        if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0), ReferenceFrame::OrientationFrame))
+        if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0)))
         {
             GetLogger()->error("Body frame for '{}' is nested too deep (probably circular)\n", body->getName());
             return false;
