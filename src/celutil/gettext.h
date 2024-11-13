@@ -14,10 +14,30 @@
 
 #ifdef ENABLE_NLS
 
+#include <iterator>
+#include <string>
+
 #include <libintl.h>
 #include <fmt/format.h>
 
-inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback);
+namespace celestia::util::detail
+{
+
+inline const char*
+pgettextAux(const char* ctx_string, const char* fallback)
+{
+    const char* translation = gettext(ctx_string);
+    return translation == ctx_string ? fallback : translation;
+}
+
+inline const char*
+dpgettextAux(const char* ctx_string, const char* fallback)
+{
+    const char* translation = dgettext("celestia-data", ctx_string);
+    return translation == ctx_string ? fallback : translation;
+}
+
+}
 
 // gettext / libintl setup
 #ifndef _ /* unless somebody already took care of this */
@@ -32,23 +52,25 @@ inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback
 #define N_(string) gettext_noop(string)
 #endif
 
-#ifndef pgettext
-#define pgettext(ctx_string, string) cel_pgettext_aux(ctx_string "\004" string, string)
-#endif
-
 #ifndef C_
-#define C_(ctx_string, string) pgettext(ctx_string, string)
+#define C_(ctx_string, string) ::celestia::util::detail::pgettextAux(ctx_string "\004" string, string)
 #endif
 
 #ifdef CX_
 #undef CX_
 #endif
-inline const char* CX_(const char *ctx_string, const char *string)
+
+inline const char*
+CX_(const char *ctx_string, const char *string)
 {
-    return cel_pgettext_aux(fmt::format("{}\004{}", ctx_string, string).c_str(), string);
+    fmt::basic_memory_buffer<char> buffer;
+    fmt::format_to(std::back_inserter(buffer), "{}\004{}", ctx_string, string);
+    buffer.push_back('\0');
+    return celestia::util::detail::pgettextAux(buffer.data(), string);
 }
 
-inline const char* CX_(const char *ctx_string, const std::string &string)
+inline const char*
+CX_(const char *ctx_string, const std::string &string)
 {
     return CX_(ctx_string, string.c_str());
 }
@@ -61,10 +83,27 @@ inline const char* CX_(const char *ctx_string, const std::string &string)
 #define D_(string) dgettext("celestia-data", string)
 #endif
 
-inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback)
+#ifndef DC_
+#define DC_(ctx_string, string) ::celestia::util::detail::dpgettextAux(ctx_string "\004" string, string)
+#endif
+
+#ifdef DCX_
+#undef DCX_
+#endif
+
+inline const char*
+DCX_(const char *ctx_string, const char *string)
 {
-    const char *translation = gettext(ctx_string);
-    return translation == ctx_string ? fallback : translation;
+    fmt::basic_memory_buffer<char> buffer;
+    fmt::format_to(std::back_inserter(buffer), "{}\004{}", ctx_string, string);
+    buffer.push_back('\0');
+    return celestia::util::detail::dpgettextAux(buffer.data(), string);
+}
+
+inline const char*
+DCX_(const char *ctx_string, const std::string &string)
+{
+    return DCX_(ctx_string, string.c_str());
 }
 
 #ifdef _WIN32
@@ -109,6 +148,14 @@ inline const char* cel_pgettext_aux(const char *ctx_string, const char *fallback
 
 #ifndef D_
 #define D_(string) string
+#endif
+
+#ifndef DC_
+#define DC_(ctx_string, string) string
+#endif
+
+#ifndef DCX_
+#define DCX_(ctx_string, string) string
 #endif
 
 #endif // ENABLE_NLS

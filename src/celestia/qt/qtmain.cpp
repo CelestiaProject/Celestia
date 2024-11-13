@@ -38,6 +38,24 @@
 #include "qtcommandline.h"
 #include "qtgettext.h"
 
+#ifdef ENABLE_NLS
+namespace
+{
+
+inline void
+bindTextDomainUTF8(const char* domainName, const QString& directory)
+{
+#ifdef _WIN32
+    wbindtextdomain(domainName, directory.toStdWString().c_str());
+#else
+    bindtextdomain(domainName, directory.toUtf8().data());
+#endif
+    bind_textdomain_codeset(domainName, "UTF-8");
+}
+
+} // end unnamed namespace
+#endif
+
 int main(int argc, char *argv[])
 {
     using namespace celestia::qt;
@@ -53,10 +71,8 @@ int main(int argc, char *argv[])
     CelestiaCore::initLocale();
 #ifdef ENABLE_NLS
     QString localeDir = LOCALEDIR;
-    bindtextdomain("celestia", localeDir.toUtf8().data());
-    bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia-data", localeDir.toUtf8().data());
-    bind_textdomain_codeset("celestia-data", "UTF-8");
+    bindTextDomainUTF8("celestia", localeDir);
+    bindTextDomainUTF8("celestia-data", localeDir);
     textdomain("celestia");
 #endif
 

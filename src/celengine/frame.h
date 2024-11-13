@@ -10,9 +10,10 @@
 
 #pragma once
 
-#include <celengine/selection.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+
+#include "selection.h"
 #include "shared.h"
 
 /*! A ReferenceFrame object has a center and set of orthogonal axes.
@@ -23,7 +24,7 @@
  */
 class ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(ReferenceFrame)
 
     explicit ReferenceFrame(Selection center);
@@ -44,29 +45,21 @@ class ReferenceFrame
 
     virtual bool isInertial() const = 0;
 
-    enum FrameType
-    {
-        PositionFrame = 1,
-        OrientationFrame = 2,
-    };
-
-    unsigned int nestingDepth(unsigned int maxDepth, FrameType) const;
+    unsigned int nestingDepth(unsigned int maxDepth) const;
 
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const = 0;
+                                      unsigned int maxDepth) const = 0;
 
- private:
+private:
     Selection centerObject;
 };
-
 
 /*! Base class for complex frames where there may be some benefit
  *  to caching the last calculated orientation.
  */
 class CachingFrame : public ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(CachingFrame)
 
     explicit CachingFrame(Selection _center);
@@ -77,19 +70,18 @@ class CachingFrame : public ReferenceFrame
     virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
- private:
-    mutable double lastTime;
-    mutable Eigen::Quaterniond lastOrientation;
-    mutable Eigen::Vector3d lastAngularVelocity;
-    mutable bool orientationCacheValid;
-    mutable bool angularVelocityCacheValid;
+private:
+    mutable double lastTime{ 1.0e-50 };
+    mutable Eigen::Quaterniond lastOrientation{ Eigen::Quaterniond::Identity() };
+    mutable Eigen::Vector3d lastAngularVelocity{ Eigen::Vector3d::Zero() };
+    mutable bool orientationCacheValid{ false };
+    mutable bool angularVelocityCacheValid{ false };
 };
-
 
 //! J2000.0 Earth ecliptic frame
 class J2000EclipticFrame : public ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(J2000EclipticFrame)
 
     explicit J2000EclipticFrame(Selection center);
@@ -103,15 +95,13 @@ class J2000EclipticFrame : public ReferenceFrame
     bool isInertial() const override;
 
     unsigned int nestingDepth(unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType) const override;
+                              unsigned int maxDepth) const override;
 };
-
 
 //! J2000.0 Earth Mean Equator
 class J2000EquatorFrame : public ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(J2000EquatorFrame)
 
     explicit J2000EquatorFrame(Selection center);
@@ -119,10 +109,8 @@ class J2000EquatorFrame : public ReferenceFrame
     Eigen::Quaterniond getOrientation(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType) const override;
+                              unsigned int maxDepth) const override;
 };
-
 
 /*! A BodyFixed frame is a coordinate system with the x-axis pointing
  *  from the body center through the intersection of the prime meridian
@@ -132,7 +120,7 @@ class J2000EquatorFrame : public ReferenceFrame
  */
 class BodyFixedFrame : public ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(BodyFixedFrame)
 
     BodyFixedFrame(Selection center, Selection obj);
@@ -141,17 +129,15 @@ class BodyFixedFrame : public ReferenceFrame
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType) const override;
+                              unsigned int maxDepth) const override;
 
- private:
+private:
     Selection fixObject;
 };
 
-
 class BodyMeanEquatorFrame : public ReferenceFrame
 {
- public:
+public:
     SHARED_TYPES(BodyMeanEquatorFrame)
 
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
@@ -161,21 +147,19 @@ class BodyMeanEquatorFrame : public ReferenceFrame
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType) const override;
+                              unsigned int maxDepth) const override;
 
- private:
+private:
     Selection equatorObject;
     double freezeEpoch;
     bool isFrozen;
 };
 
-
 /*! FrameVectors are used to define the axes for TwoVector frames
  */
 class FrameVector
 {
- public:
+public:
     Eigen::Vector3d direction(double tjd) const;
 
     /*! Frames can be defined in reference to other frames; this method
@@ -185,13 +169,6 @@ class FrameVector
      */
     unsigned int nestingDepth(unsigned int depth, unsigned int maxDepth) const;
 
-    enum FrameVectorType
-    {
-        RelativePosition,
-        RelativeVelocity,
-        ConstantVector,
-    };
-
     static FrameVector createRelativePositionVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
@@ -199,7 +176,14 @@ class FrameVector
     static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
                                             const ReferenceFrame::SharedConstPtr& _frame);
 
- private:
+private:
+    enum class FrameVectorType
+    {
+        RelativePosition,
+        RelativeVelocity,
+        ConstantVector,
+    };
+
     /*! Type-only constructor is private. Code outside the class should
      *  use create*Vector methods to create new FrameVectors.
      */
@@ -212,7 +196,6 @@ class FrameVector
     ReferenceFrame::SharedConstPtr frame; // frame for constant vector
 };
 
-
 /*! A two vector frame is a coordinate system defined by a primary and
  *  secondary vector. The primary axis points in the direction of the
  *  primary vector. The secondary axis points in the direction of the
@@ -222,7 +205,7 @@ class FrameVector
  */
 class TwoVectorFrame : public CachingFrame
 {
- public:
+public:
     /*! primAxis and secAxis are the labels of the axes defined by
      *  the primary and secondary vectors:
      *  1 = x, 2 = y, 3 = z, -1 = -x, -2 = -y, -3 = -z
@@ -237,13 +220,9 @@ class TwoVectorFrame : public CachingFrame
     Eigen::Quaterniond computeOrientation(double tjd) const override;
     bool isInertial() const override;
     unsigned int nestingDepth(unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType) const override;
+                              unsigned int maxDepth) const override;
 
-    //! The sine of minimum angle between the primary and secondary vectors
-    static const double Tolerance;
-
- private:
+private:
     FrameVector primaryVector;
     int primaryAxis;
     FrameVector secondaryVector;

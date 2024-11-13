@@ -387,8 +387,9 @@ SDL_Application::handleKeyPressEvent(const SDL_KeyboardEvent &event)
     int mod = 0;
     if ((event.keysym.mod & KMOD_CTRL) != 0)
     {
-        int k = std::tolower(key);
-        if (k >= 'a' && k <= 'z')
+        mod |= CelestiaCore::ControlKey;
+
+        if (int k = std::tolower(key); k >= 'a' && k <= 'z')
         {
             switch (k)
             {
@@ -404,7 +405,6 @@ SDL_Application::handleKeyPressEvent(const SDL_KeyboardEvent &event)
             }
             return;
         }
-        mod |= CelestiaCore::ControlKey;
     }
     if ((event.keysym.mod & KMOD_SHIFT) != 0)
         mod |= CelestiaCore::ShiftKey;

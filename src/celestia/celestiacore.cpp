@@ -34,7 +34,7 @@
 #include <Eigen/Geometry>
 #include <fmt/ostream.h>
 #if FMT_VERSION < 90000
-#include <fmt/locale.h>
+#include <fmt/format.h>
 #endif
 
 #include <celastro/astro.h>
@@ -2575,7 +2575,7 @@ void CelestiaCore::fatalError(const string& msg, bool visual)
         if (visual)
             flash(msg);
         else
-            GetLogger()->error(msg.c_str());
+            GetLogger()->error(msg);
     }
     else
     {
