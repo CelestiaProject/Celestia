@@ -95,14 +95,12 @@ createMainMenu(GtkWidget* window, AppData* app)
     app->agLabel = gtk_action_group_new("LabelActions");
     app->agOrbit = gtk_action_group_new("OrbitActions");
     app->agVerbosity = gtk_action_group_new("VerbosityActions");
-    app->agStarStyle = gtk_action_group_new("StarStyleActions");
     app->agAmbient = gtk_action_group_new("AmbientActions");
 
     /* All actions have the AppData structure passed */
     gtk_action_group_add_actions(app->agMain, actionsPlain.data(), static_cast<guint>(actionsPlain.size()), app);
     gtk_action_group_add_toggle_actions(app->agMain, actionsToggle.data(), static_cast<guint>(actionsToggle.size()), app);
     gtk_action_group_add_radio_actions(app->agVerbosity, actionsVerbosity.data(), static_cast<guint>(actionsVerbosity.size()), 0, G_CALLBACK(actionVerbosity), app);
-    gtk_action_group_add_radio_actions(app->agStarStyle, actionsStarStyle.data(), static_cast<guint>(actionsStarStyle.size()), 0, G_CALLBACK(actionStarStyle), app);
     gtk_action_group_add_radio_actions(app->agAmbient, actionsAmbientLight.data(), static_cast<guint>(actionsAmbientLight.size()), 0, G_CALLBACK(actionAmbientLight), app);
     gtk_action_group_add_toggle_actions(app->agRender, actionsRenderFlags.data(), static_cast<guint>(actionsRenderFlags.size()), app);
     gtk_action_group_add_toggle_actions(app->agLabel, actionsLabelFlags.data(), static_cast<guint>(actionsLabelFlags.size()), app);
@@ -113,7 +111,6 @@ createMainMenu(GtkWidget* window, AppData* app)
     gtk_ui_manager_insert_action_group(ui_manager, app->agRender, 0);
     gtk_ui_manager_insert_action_group(ui_manager, app->agLabel, 0);
     gtk_ui_manager_insert_action_group(ui_manager, app->agOrbit, 0);
-    gtk_ui_manager_insert_action_group(ui_manager, app->agStarStyle, 0);
     gtk_ui_manager_insert_action_group(ui_manager, app->agAmbient, 0);
     gtk_ui_manager_insert_action_group(ui_manager, app->agVerbosity, 0);
 
@@ -158,7 +155,6 @@ GtkWatcher::notifyChange(CelestiaCore*, int property)
     {
         resyncRenderActions(app);
         resyncOrbitActions(app);
-        resyncStarStyleActions(app);
         resyncTextureResolutionActions(app);
     }
 
@@ -172,7 +168,6 @@ GtkWatcher::notifyChange(CelestiaCore*, int property)
         resyncAmbientActions(app);
 
     /*
-    else if (property & CelestiaCore::FaintestChanged) DEPRECATED?
     else if (property & CelestiaCore::HistoryChanged)
     */
 
@@ -274,7 +269,6 @@ initRealize(GtkWidget* widget, AppData* app)
     resyncOrbitActions(app);
     resyncVerbosityActions(app);
     resyncAmbientActions(app);
-    resyncStarStyleActions(app);
 
     /* If full-screen at startup, make it so. */
     if (app->fullScreen)

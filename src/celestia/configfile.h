@@ -1,6 +1,7 @@
 // configfile.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -68,7 +69,7 @@ struct CelestiaConfig
         double orbitWindowEnd{ 0.5 };
         double orbitPeriodsShown{ 1.0 };
         double linearFadeFraction{ 0.0 };
-        float faintestVisible{ 6.0f };
+        float exposure{ 1.0f };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };

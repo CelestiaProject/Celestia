@@ -1,7 +1,6 @@
 // qtdeepskybrowser.cpp
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Deep sky browser widget for Qt4 front-end
 //

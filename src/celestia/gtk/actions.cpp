@@ -745,13 +745,13 @@ actionViewOptions(GtkAction*, AppData* app)
 }
 
 void
-actionStarsMore(GtkAction*, AppData* app)
+actionIncreaseExposure(GtkAction*, AppData* app)
 {
     app->core->charEntered(']');
 }
 
 void
-actionStarsFewer(GtkAction*, AppData* app)
+actionDecreaseExposure(GtkAction*, AppData* app)
 {
     app->core->charEntered('[');
 }
@@ -872,13 +872,6 @@ actionVerbosity(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 }
 
 void
-actionStarStyle(GtkRadioAction* action, GtkRadioAction*, AppData* app)
-{
-    int value = gtk_radio_action_get_current_value(action);
-    app->renderer->setStarStyle((Renderer::StarStyle)value);
-}
-
-void
 actionAmbientLight(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     float value = amLevels[gtk_radio_action_get_current_value(action)];
@@ -896,12 +889,6 @@ void
 actionRenderAtmospheres(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowAtmospheres, gtk_toggle_action_get_active(action));
-}
-
-void
-actionRenderAutoMagnitude(GtkToggleAction* action, AppData* app)
-{
-    setRenderFlag(app, Renderer::ShowAutoMag, gtk_toggle_action_get_active(action));
 }
 
 void
@@ -1258,7 +1245,6 @@ resyncRenderActions(AppData* app)
             case Renderer::ShowPlanetRings: actionName = "RenderPlanetRings"; break;
             case Renderer::ShowRingShadows: actionName = "RenderRingShadows"; break;
             case Renderer::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
-            case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
             case Renderer::ShowCometTails: actionName = "RenderCometTails"; break;
             case Renderer::ShowMarkers: actionName = "RenderMarkers"; break;
             case Renderer::ShowPartialTrajectories: actionName = nullptr; break; /* Not useful yet */
@@ -1351,26 +1337,6 @@ resyncAmbientActions(AppData* app)
     else
         action = gtk_action_group_get_action(app->agAmbient, "AmbientMedium");
 
-    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
-}
-
-/* Synchronizes the Verbosity Actions with the state of the core */
-void
-resyncStarStyleActions(AppData* app)
-{
-    GtkAction* action;
-    const char* actionName;
-
-    switch (app->renderer->getStarStyle())
-    {
-        case Renderer::FuzzyPointStars: actionName = "StarsFuzzy"; break;
-        case Renderer::PointStars: actionName = "StarsPoints"; break;
-        case Renderer::ScaledDiscStars: actionName = "StarsDiscs"; break;
-        default: return;
-    }
-
-    /* Get the action, set the widget */
-    action = gtk_action_group_get_action(app->agStarStyle, actionName);
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
 }
 
