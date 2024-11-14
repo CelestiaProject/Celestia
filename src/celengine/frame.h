@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -177,23 +179,29 @@ public:
                                             const ReferenceFrame::SharedConstPtr& _frame);
 
 private:
-    enum class FrameVectorType
+    struct RelativePosition
     {
-        RelativePosition,
-        RelativeVelocity,
-        ConstantVector,
+        Selection observer;
+        Selection target;
     };
 
-    /*! Type-only constructor is private. Code outside the class should
-     *  use create*Vector methods to create new FrameVectors.
-     */
-    FrameVector(FrameVectorType t);
+    struct RelativeVelocity
+    {
+        Selection observer;
+        Selection target;
+    };
 
-    FrameVectorType vecType;
-    Selection observer;
-    Selection target;
-    Eigen::Vector3d vec;                   // constant vector
-    ReferenceFrame::SharedConstPtr frame; // frame for constant vector
+    struct ConstVector
+    {
+        Eigen::Vector3d vec;
+        ReferenceFrame::SharedConstPtr frame;
+    };
+
+    explicit FrameVector(const RelativePosition&);
+    explicit FrameVector(const RelativeVelocity&);
+    explicit FrameVector(ConstVector&&);
+
+    std::variant<RelativePosition, RelativeVelocity, ConstVector> m_data;
 };
 
 /*! A two vector frame is a coordinate system defined by a primary and

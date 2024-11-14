@@ -74,9 +74,7 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
         body = sel.location()->getParentBody();
 
     if (body == nullptr)
-    {
         return depth;
-    }
 
     unsigned int frameDepth;
     // TODO: need to check /all/ orbit frames of body
@@ -597,12 +595,15 @@ TwoVectorFrame::nestingDepth(unsigned int depth,
     return std::max(m, n);
 }
 
-FrameVector::FrameVector(FrameVectorType t) :
-    vecType(t),
-    observer(),
-    target(),
-    vec(0.0, 0.0, 0.0),
-    frame(nullptr)
+FrameVector::FrameVector(const RelativePosition& pos) : m_data(pos)
+{
+}
+
+FrameVector::FrameVector(const RelativeVelocity& vel) : m_data(vel)
+{
+}
+
+FrameVector::FrameVector(ConstVector&& vec) : m_data(std::move(vec))
 {
 }
 
@@ -610,79 +611,98 @@ FrameVector
 FrameVector::createRelativePositionVector(const Selection& _observer,
                                           const Selection& _target)
 {
-    FrameVector fv(FrameVectorType::RelativePosition);
-    fv.observer = _observer;
-    fv.target = _target;
-
-    return fv;
+    return FrameVector(RelativePosition { _observer, _target });
 }
 
 FrameVector
 FrameVector::createRelativeVelocityVector(const Selection& _observer,
                                           const Selection& _target)
 {
-    FrameVector fv(FrameVectorType::RelativeVelocity);
-    fv.observer = _observer;
-    fv.target = _target;
-
-    return fv;
+    return FrameVector(RelativeVelocity { _observer, _target });
 }
 
 FrameVector
 FrameVector::createConstantVector(const Eigen::Vector3d& _vec,
                                   const ReferenceFrame::SharedConstPtr& _frame)
 {
-    FrameVector fv(FrameVectorType::ConstantVector);
-    fv.vec = _vec;
-    fv.frame = _frame;
-    return fv;
+    return FrameVector(ConstVector { _vec, _frame });
 }
 
 Eigen::Vector3d
 FrameVector::direction(double tjd) const
 {
-    switch (vecType)
+    class DirectionVisitor
     {
-    case FrameVectorType::RelativePosition:
-        return target.getPosition(tjd).offsetFromKm(observer.getPosition(tjd));
+    public:
+        explicit DirectionVisitor(double t) : _tjd(t) {}
 
-    case FrameVectorType::RelativeVelocity:
-        return target.getVelocity(tjd) - observer.getVelocity(tjd);
+        Eigen::Vector3d operator()(const RelativePosition& pos) const
+        {
+            return pos.target.getPosition(_tjd).offsetFromKm(pos.observer.getPosition(_tjd));
+        }
 
-    case FrameVectorType::ConstantVector:
-        return frame != nullptr
-            ? frame->getOrientation(tjd).conjugate() * vec
-            : vec;
+        Eigen::Vector3d operator()(const RelativeVelocity& vel) const
+        {
+            return vel.target.getVelocity(_tjd) - vel.observer.getVelocity(_tjd);
+        }
 
-    default:
-        // unhandled vector type
-        assert(0);
-        return Eigen::Vector3d::Zero();
-    }
+        Eigen::Vector3d operator()(const ConstVector& vec) const
+        {
+            return vec.frame != nullptr
+                ? vec.frame->getOrientation(_tjd).conjugate() * vec.vec
+                : vec.vec;
+        }
+
+    private:
+        double _tjd;
+    };
+
+    return std::visit(DirectionVisitor{ tjd }, m_data);
 }
 
 unsigned int
 FrameVector::nestingDepth(unsigned int depth,
                           unsigned int maxDepth) const
 {
-    switch (vecType)
+    class NestingVisitor
     {
-    case FrameVectorType::RelativePosition:
-    case FrameVectorType::RelativeVelocity:
+    public:
+        NestingVisitor(unsigned int d, unsigned int md)
+            : _depth(d), _maxDepth(md)
         {
-            unsigned int n = getFrameDepth(observer, depth, maxDepth, FrameType::PositionFrame);
-            if (n > maxDepth)
+        }
+
+        unsigned int operator()(const RelativePosition& pos) const
+        {
+            return relativeDepth(pos.observer, pos.target);
+        }
+
+        unsigned int operator()(const RelativeVelocity& vel) const
+        {
+            return relativeDepth(vel.observer, vel.target);
+        }
+
+        unsigned int operator()(const ConstVector& vec) const
+        {
+            return _depth > _maxDepth
+                ? _depth
+                : vec.frame->nestingDepth(_depth + 1, _maxDepth);
+        }
+
+    private:
+        unsigned int relativeDepth(const Selection& _observer, const Selection& _target) const
+        {
+            unsigned int n = getFrameDepth(_observer, _depth, _maxDepth, FrameType::PositionFrame);
+            if (n > _maxDepth)
                 return n;
 
-            unsigned int m = getFrameDepth(target, depth, maxDepth, FrameType::PositionFrame);
+            unsigned int m = getFrameDepth(_target, _depth, _maxDepth, FrameType::PositionFrame);
             return std::max(m, n);
         }
 
-    case FrameVectorType::ConstantVector:
-        return depth > maxDepth ? depth : frame->nestingDepth(depth + 1, maxDepth);
+        unsigned int _depth;
+        unsigned int _maxDepth;
+    };
 
-    default:
-        assert(0);
-        return depth;
-    }
+    return std::visit(NestingVisitor{ depth, maxDepth }, m_data);
 }
