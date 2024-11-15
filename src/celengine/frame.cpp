@@ -35,12 +35,6 @@ namespace
 // Julian days.
 constexpr double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
-enum class FrameType
-{
-    PositionFrame,
-    OrientationFrame,
-};
-
 // The sine of minimum angle between the primary and secondary vectors in a
 // TwoVector frame
 constexpr double Tolerance = 1.0e-6;
@@ -60,50 +54,6 @@ rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
     uc1.z = uc.x * R128(r(0, 2)) + uc.y * R128(r(1, 2)) + uc.z * R128(r(2, 2));
 
     return uc1;
-}
-
-unsigned int
-getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
-              FrameType frameType)
-{
-    if (depth > maxDepth)
-        return depth;
-
-    const Body* body = sel.body();
-    if (sel.location() != nullptr)
-        body = sel.location()->getParentBody();
-
-    if (body == nullptr)
-        return depth;
-
-    unsigned int frameDepth;
-    // TODO: need to check /all/ orbit frames of body
-    switch (frameType)
-    {
-    case FrameType::PositionFrame:
-        if (const ReferenceFrame* orbitFrame = body->getOrbitFrame(0.0).get();
-            orbitFrame != nullptr)
-        {
-            frameDepth = orbitFrame->nestingDepth(depth + 1, maxDepth);
-            if (frameDepth > maxDepth)
-                return frameDepth;
-        }
-        break;
-
-    case FrameType::OrientationFrame:
-        if (const ReferenceFrame* bodyFrame = body->getBodyFrame(0.0).get();
-            bodyFrame != nullptr)
-        {
-            frameDepth = bodyFrame->nestingDepth(depth + 1, maxDepth);
-        }
-        break;
-
-    default:
-        assert(0);
-        return depth;
-    }
-
-    return std::max(frameDepth, depth);
 }
 
 } // end unnamed namespace
@@ -158,26 +108,6 @@ ReferenceFrame::convertToUniversal(const Eigen::Quaterniond& q, double tjd) cons
 }
 
 Eigen::Vector3d
-ReferenceFrame::convertFromAstrocentric(const Eigen::Vector3d& p, double tjd) const
-{
-    switch (centerObject.getType())
-    {
-    case SelectionType::Body:
-        {
-            Eigen::Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
-            return getOrientation(tjd) * (p - center);
-        }
-
-    case SelectionType::Star:
-        return getOrientation(tjd) * p;
-
-    default:
-        // DSO/Locations not currently supported
-        return Eigen::Vector3d::Zero();
-    }
-}
-
-Eigen::Vector3d
 ReferenceFrame::convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const
 {
     switch (centerObject.getType())
@@ -221,6 +151,52 @@ unsigned int
 ReferenceFrame::nestingDepth(unsigned int maxDepth) const
 {
     return nestingDepth(0, maxDepth);
+}
+
+unsigned int
+ReferenceFrame::getFrameDepth(const Selection& sel,
+                              unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType)
+{
+    if (depth > maxDepth)
+        return depth;
+
+    const Body* body = sel.body();
+    if (sel.location() != nullptr)
+        body = sel.location()->getParentBody();
+
+    if (body == nullptr)
+        return depth;
+
+    unsigned int frameDepth;
+    // TODO: need to check /all/ orbit frames of body
+    switch (frameType)
+    {
+    case FrameType::PositionFrame:
+        if (const ReferenceFrame* orbitFrame = body->getOrbitFrame(0.0).get();
+            orbitFrame != nullptr)
+        {
+            frameDepth = orbitFrame->nestingDepth(depth + 1, maxDepth);
+            if (frameDepth > maxDepth)
+                return frameDepth;
+        }
+        break;
+
+    case FrameType::OrientationFrame:
+        if (const ReferenceFrame* bodyFrame = body->getBodyFrame(0.0).get();
+            bodyFrame != nullptr)
+        {
+            frameDepth = bodyFrame->nestingDepth(depth + 1, maxDepth);
+        }
+        break;
+
+    default:
+        assert(0);
+        return depth;
+    }
+
+    return std::max(frameDepth, depth);
 }
 
 /*** J2000EclipticFrame ***/
@@ -692,11 +668,17 @@ FrameVector::nestingDepth(unsigned int depth,
     private:
         unsigned int relativeDepth(const Selection& _observer, const Selection& _target) const
         {
-            unsigned int n = getFrameDepth(_observer, _depth, _maxDepth, FrameType::PositionFrame);
+            unsigned int n = ReferenceFrame::getFrameDepth(_observer,
+                                                           _depth,
+                                                           _maxDepth,
+                                                           ReferenceFrame::FrameType::PositionFrame);
             if (n > _maxDepth)
                 return n;
 
-            unsigned int m = getFrameDepth(_target, _depth, _maxDepth, FrameType::PositionFrame);
+            unsigned int m = ReferenceFrame::getFrameDepth(_target,
+                                                           _depth,
+                                                           _maxDepth,
+                                                           ReferenceFrame::FrameType::PositionFrame);
             return std::max(m, n);
         }
 
