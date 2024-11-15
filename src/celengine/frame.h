@@ -18,6 +18,8 @@
 #include "selection.h"
 #include "shared.h"
 
+class FrameVector;
+
 /*! A ReferenceFrame object has a center and set of orthogonal axes.
  *
  * Subclasses of ReferenceFrame must override the getOrientation method
@@ -37,7 +39,6 @@ public:
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
     Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
 
-    Eigen::Vector3d convertFromAstrocentric(const Eigen::Vector3d& p, double tjd) const;
     Eigen::Vector3d convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const;
 
     Selection getCenter() const;
@@ -49,11 +50,25 @@ public:
 
     unsigned int nestingDepth(unsigned int maxDepth) const;
 
+protected:
+    enum class FrameType
+    {
+        PositionFrame,
+        OrientationFrame,
+    };
+
+    static unsigned int getFrameDepth(const Selection& sel,
+                                      unsigned int depth,
+                                      unsigned int maxDepth,
+                                      FrameType frameType);
+
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth) const = 0;
 
 private:
     Selection centerObject;
+
+    friend class FrameVector;
 };
 
 /*! Base class for complex frames where there may be some benefit
@@ -67,8 +82,10 @@ public:
     explicit CachingFrame(Selection _center);
     ~CachingFrame() override = default;
 
-    Eigen::Quaterniond getOrientation(double tjd) const override;
-    Eigen::Vector3d getAngularVelocity(double tjd) const override;
+    Eigen::Quaterniond getOrientation(double tjd) const final;
+    Eigen::Vector3d getAngularVelocity(double tjd) const final;
+
+protected:
     virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
@@ -96,6 +113,7 @@ public:
 
     bool isInertial() const override;
 
+protected:
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth) const override;
 };
@@ -110,6 +128,8 @@ public:
     ~J2000EquatorFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;
     bool isInertial() const override;
+
+protected:
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth) const override;
 };
@@ -130,6 +150,8 @@ public:
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
+
+protected:
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth) const override;
 
@@ -148,6 +170,8 @@ public:
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
+
+protected:
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth) const override;
 
@@ -225,8 +249,10 @@ public:
                    int secAxis);
     ~TwoVectorFrame() override = default;
 
-    Eigen::Quaterniond computeOrientation(double tjd) const override;
     bool isInertial() const override;
+
+protected:
+    Eigen::Quaterniond computeOrientation(double tjd) const override;
     unsigned int nestingDepth(unsigned int depth,
                               unsigned int maxDepth) const override;
 
