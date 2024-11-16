@@ -173,23 +173,23 @@ parseConstellationColor(CommandConstellationColor& cmd,
 ObserverFrame::CoordinateSystem parseCoordinateSystem(std::string_view name)
 {
     if (compareIgnoringCase("observer"sv, name) == 0)
-        return ObserverFrame::ObserverLocal;
+        return ObserverFrame::CoordinateSystem::ObserverLocal;
     if (compareIgnoringCase("bodyfixed"sv, name) == 0 ||
         // 'geographic' is a deprecated name for the bodyfixed coordinate
         // system, maintained here for compatibility with older scripts.
         compareIgnoringCase("geographic"sv, name) == 0)
-        return ObserverFrame::BodyFixed;
+        return ObserverFrame::CoordinateSystem::BodyFixed;
     if (compareIgnoringCase("equatorial"sv, name) == 0)
-        return ObserverFrame::Equatorial;
+        return ObserverFrame::CoordinateSystem::Equatorial;
     if (compareIgnoringCase("ecliptical"sv, name) == 0)
-        return ObserverFrame::Ecliptical;
+        return ObserverFrame::CoordinateSystem::Ecliptical;
     if (compareIgnoringCase("universal"sv, name) == 0)
-        return ObserverFrame::Universal;
+        return ObserverFrame::CoordinateSystem::Universal;
     if (compareIgnoringCase("lock"sv, name) == 0)
-        return ObserverFrame::PhaseLock;
+        return ObserverFrame::CoordinateSystem::PhaseLock;
     if (compareIgnoringCase("chase"sv, name) == 0)
-        return ObserverFrame::Chase;
-    return ObserverFrame::ObserverLocal;
+        return ObserverFrame::CoordinateSystem::Chase;
+    return ObserverFrame::CoordinateSystem::ObserverLocal;
 }
 
 
@@ -279,7 +279,7 @@ ParseResult parseSetFrameCommand(const Hash& paramList, const ScriptMaps&)
 
     ObserverFrame::CoordinateSystem coordSys;
     if (const std::string* coordSysName = paramList.getString("coordsys"); coordSysName == nullptr)
-        coordSys = ObserverFrame::Universal;
+        coordSys = ObserverFrame::CoordinateSystem::Universal;
     else
         coordSys = parseCoordinateSystem(*coordSysName);
 
@@ -301,7 +301,7 @@ ParseResult parseGotoCommand(const Hash& paramList, const ScriptMaps&)
     auto t = paramList.getNumber<double>("time").value_or(1.0);
     auto distance = paramList.getNumber<double>("distance").value_or(5.0);
 
-    ObserverFrame::CoordinateSystem upFrame = ObserverFrame::ObserverLocal;
+    ObserverFrame::CoordinateSystem upFrame = ObserverFrame::CoordinateSystem::ObserverLocal;
     if (const std::string* frameString = paramList.getString("upframe"); frameString != nullptr)
         upFrame = parseCoordinateSystem(*frameString);
 

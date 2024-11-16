@@ -1028,7 +1028,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     m_overlay->beginText();
     m_overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
-    if (sim->getObserverMode() == Observer::Travelling)
+    if (sim->getObserverMode() == Observer::ObserverMode::Travelling)
     {
         double timeLeft = sim->getArrivalTime() - sim->getRealTime();
         if (timeLeft >= 1)
@@ -1051,21 +1051,21 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     Selection refObject = sim->getFrame()->getRefObject();
     switch (sim->getFrame()->getCoordinateSystem())
     {
-    case ObserverFrame::Ecliptical:
+    case ObserverFrame::CoordinateSystem::Ecliptical:
         m_overlay->printf(_("Follow %s\n"),
                           CX_("Follow", getSelectionName(refObject, u)));
         break;
-    case ObserverFrame::BodyFixed:
+    case ObserverFrame::CoordinateSystem::BodyFixed:
         m_overlay->printf(_("Sync Orbit %s\n"),
                           CX_("Sync", getSelectionName(refObject, u)));
         break;
-    case ObserverFrame::PhaseLock:
+    case ObserverFrame::CoordinateSystem::PhaseLock:
         m_overlay->printf(_("Lock %s -> %s\n"),
                           CX_("Lock", getSelectionName(refObject, u)),
                           CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), u)));
         break;
 
-    case ObserverFrame::Chase:
+    case ObserverFrame::CoordinateSystem::Chase:
         m_overlay->printf(_("Chase %s\n"),
                           CX_("Chase", getSelectionName(refObject, u)));
         break;

@@ -28,10 +28,10 @@ void CelestiaState::captureState()
     auto frame = sim->getFrame();
 
     m_coordSys = frame->getCoordinateSystem();
-    if (m_coordSys != ObserverFrame::Universal)
+    if (m_coordSys != ObserverFrame::CoordinateSystem::Universal)
     {
         m_refBodyName = Url::getEncodedObjectName(frame->getRefObject(), m_appCore);
-        if (m_coordSys == ObserverFrame::PhaseLock)
+        if (m_coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
             m_targetBodyName = Url::getEncodedObjectName(frame->getTargetObject(), m_appCore);
     }
 

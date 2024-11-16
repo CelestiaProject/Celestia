@@ -93,7 +93,8 @@ TourGuideDialog::slotGotoSelection()
 
     simulation->setSelection(sel);
     simulation->follow();
-    simulation->gotoSelection(5.0, distance, Eigen::Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+    simulation->gotoSelection(5.0, distance, Eigen::Vector3f::UnitY(),
+                              ObserverFrame::CoordinateSystem::ObserverLocal);
 }
 
 } // end namespace celestia::qt

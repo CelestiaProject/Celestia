@@ -875,23 +875,23 @@ ObserverFrame::CoordinateSystem parseCoordSys(std::string_view name)
     // for compatibility with older scripts.
 
     if (compareIgnoringCase(name, "universal"sv) == 0)
-        return ObserverFrame::Universal;
+        return ObserverFrame::CoordinateSystem::Universal;
     if (compareIgnoringCase(name, "ecliptic"sv) == 0)
-        return ObserverFrame::Ecliptical;
+        return ObserverFrame::CoordinateSystem::Ecliptical;
     if (compareIgnoringCase(name, "equatorial"sv) == 0)
-        return ObserverFrame::Equatorial;
+        return ObserverFrame::CoordinateSystem::Equatorial;
     if (compareIgnoringCase(name, "bodyfixed"sv) == 0)
-        return ObserverFrame::BodyFixed;
+        return ObserverFrame::CoordinateSystem::BodyFixed;
     if (compareIgnoringCase(name, "planetographic"sv) == 0)
-        return ObserverFrame::BodyFixed;
+        return ObserverFrame::CoordinateSystem::BodyFixed;
     if (compareIgnoringCase(name, "observer"sv) == 0)
-        return ObserverFrame::ObserverLocal;
+        return ObserverFrame::CoordinateSystem::ObserverLocal;
     if (compareIgnoringCase(name, "lock"sv) == 0)
-        return ObserverFrame::PhaseLock;
+        return ObserverFrame::CoordinateSystem::PhaseLock;
     if (compareIgnoringCase(name, "chase"sv) == 0)
-        return ObserverFrame::Chase;
+        return ObserverFrame::CoordinateSystem::Chase;
 
-    return ObserverFrame::Universal;
+    return ObserverFrame::CoordinateSystem::Universal;
 }
 
 

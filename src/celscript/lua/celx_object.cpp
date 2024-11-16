@@ -1070,7 +1070,7 @@ static int object_bodyfixedframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for object:bodyfixedframe");
 
     Selection* sel = this_object(l);
-    celx.newFrame(ObserverFrame(ObserverFrame::BodyFixed, *sel));
+    celx.newFrame(ObserverFrame(ObserverFrame::CoordinateSystem::BodyFixed, *sel));
 
     return 1;
 }
@@ -1095,7 +1095,7 @@ static int object_equatorialframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to object:equatorialframe");
 
     Selection* sel = this_object(l);
-    celx.newFrame(ObserverFrame(ObserverFrame::Equatorial, *sel));
+    celx.newFrame(ObserverFrame(ObserverFrame::CoordinateSystem::Equatorial, *sel));
 
     return 1;
 }

@@ -74,14 +74,14 @@ TourGuideGoto(GtkWidget*, TourData* td)
                 /* Use the default distance */
                 simulation->gotoSelection(5.0,
                                           Eigen::Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
+                                          ObserverFrame::CoordinateSystem::ObserverLocal);
             }
             else
             {
                 simulation->gotoSelection(5.0,
                                           td->selected->distance,
                                           Eigen::Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
+                                          ObserverFrame::CoordinateSystem::ObserverLocal);
             }
         }
     }
