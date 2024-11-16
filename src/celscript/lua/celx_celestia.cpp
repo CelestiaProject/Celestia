@@ -1944,11 +1944,11 @@ static int celestia_newframe(lua_State* l)
     Selection* ref = nullptr;
     Selection* target = nullptr;
 
-    if (coordSys == ObserverFrame::Universal)
+    if (coordSys == ObserverFrame::CoordinateSystem::Universal)
     {
         frame_new(l, ObserverFrame());
     }
-    else if (coordSys == ObserverFrame::PhaseLock)
+    else if (coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
     {
         if (argc >= 4)
         {

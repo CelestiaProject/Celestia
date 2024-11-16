@@ -226,7 +226,7 @@ eclipseGoto(GtkButton*, EclipseData* ed)
     /* Use the phase lock coordinate system to set a position
      * on the line between the sun and the body where the eclipse
      * is occurring. */
-    sim->setFrame(ObserverFrame::PhaseLock, target, ref);
+    sim->setFrame(ObserverFrame::CoordinateSystem::PhaseLock, target, ref);
     sim->update(0.0);
 
     double distance = target.radius() * 4.0;

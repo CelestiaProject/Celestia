@@ -247,7 +247,7 @@ void CommandSetFrame::processInstantaneous(ExecutionEnvironment& env)
 {
     Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
     Selection target;
-    if (coordSys == ObserverFrame::PhaseLock)
+    if (coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
         target = env.getSimulation()->findObjectFromPath(targetObjectName);
     env.getSimulation()->setFrame(coordSys, ref, target);
 }
@@ -274,7 +274,7 @@ void CommandSetSurface::processInstantaneous(ExecutionEnvironment& env)
 void CommandCancel::processInstantaneous(ExecutionEnvironment& env)
 {
     env.getSimulation()->cancelMotion();
-    env.getSimulation()->setFrame(ObserverFrame::Universal, Selection());
+    env.getSimulation()->setFrame(ObserverFrame::CoordinateSystem::Universal, Selection());
     env.getSimulation()->setTrackedObject(Selection());
 }
 

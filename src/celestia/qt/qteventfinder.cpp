@@ -489,7 +489,7 @@ EventFinder::slotViewNearEclipsed()
     Eigen::Vector3d viewerPos = maxEclipsePoint * 4.0; // 4 radii from center
     Eigen::Quaterniond viewOrientation = math::LookAt(viewerPos, maxEclipsePoint, up);
 
-    sim->setFrame(ObserverFrame::Ecliptical, receiver);
+    sim->setFrame(ObserverFrame::CoordinateSystem::Ecliptical, receiver);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(viewerPos), viewOrientation, 5.0);
 }
 
@@ -520,7 +520,7 @@ EventFinder::slotViewEclipsedSurface()
     Eigen::Quaterniond viewOrientation = math::LookAt<double>(maxEclipsePoint, -toReceiver, up);
     Eigen::Vector3d v = maxEclipsePoint * 1.0001;
 
-    sim->setFrame(ObserverFrame::Ecliptical, receiver);
+    sim->setFrame(ObserverFrame::CoordinateSystem::Ecliptical, receiver);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(v), viewOrientation, 5.0);
 }
 
@@ -547,7 +547,7 @@ EventFinder::slotViewOccluderSurface()
     Eigen::Vector3d surfacePoint = toCasterDir * caster->getRadius() / toCasterDir.norm() * 1.0001;
     Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
-    sim->setFrame(ObserverFrame::Ecliptical, caster);
+    sim->setFrame(ObserverFrame::CoordinateSystem::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);
 }
 
@@ -576,7 +576,7 @@ EventFinder::slotViewBehindOccluder()
     Eigen::Vector3d surfacePoint = toCasterDir * caster->getRadius() / toCasterDir.norm() * 20.0;
     Eigen::Quaterniond viewOrientation = math::LookAt<double>(surfacePoint, toReceiverDir, up);
 
-    sim->setFrame(ObserverFrame::Ecliptical, caster);
+    sim->setFrame(ObserverFrame::CoordinateSystem::Ecliptical, caster);
     sim->gotoLocation(UniversalCoord::Zero().offsetKm(surfacePoint), viewOrientation, 5.0);
 }
 

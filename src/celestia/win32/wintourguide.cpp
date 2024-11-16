@@ -108,14 +108,14 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                         // Use the default distance
                         sim->gotoSelection(5.0,
                                            Eigen::Vector3f::UnitY(),
-                                           ObserverFrame::ObserverLocal);
+                                           ObserverFrame::CoordinateSystem::ObserverLocal);
                     }
                     else
                     {
                         sim->gotoSelection(5.0,
                                            tourGuide->selectedDest->distance,
                                            Eigen::Vector3f::UnitY(),
-                                           ObserverFrame::ObserverLocal);
+                                           ObserverFrame::CoordinateSystem::ObserverLocal);
                     }
                 }
             }

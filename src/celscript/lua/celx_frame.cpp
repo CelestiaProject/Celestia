@@ -192,19 +192,19 @@ static int frame_getcoordinatesystem(lua_State* l)
     string coordsys;
     switch (frame->getCoordinateSystem())
     {
-        case ObserverFrame::Universal:
+        case ObserverFrame::CoordinateSystem::Universal:
             coordsys = "universal"; break;
-        case ObserverFrame::Ecliptical:
+        case ObserverFrame::CoordinateSystem::Ecliptical:
             coordsys = "ecliptic"; break;
-        case ObserverFrame::Equatorial:
+        case ObserverFrame::CoordinateSystem::Equatorial:
             coordsys = "equatorial"; break;
-        case ObserverFrame::BodyFixed:
+        case ObserverFrame::CoordinateSystem::BodyFixed:
             coordsys = "bodyfixed"; break;
-        case ObserverFrame::ObserverLocal:
+        case ObserverFrame::CoordinateSystem::ObserverLocal:
             coordsys = "observer"; break;
-        case ObserverFrame::PhaseLock:
+        case ObserverFrame::CoordinateSystem::PhaseLock:
             coordsys = "lock"; break;
-        case ObserverFrame::Chase:
+        case ObserverFrame::CoordinateSystem::Chase:
             coordsys = "chase"; break;
         default:
             coordsys = "invalid";

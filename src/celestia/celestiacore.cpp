@@ -1098,10 +1098,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         else
         {
-            if (sim->getObserverMode() == Observer::Travelling)
-                sim->setObserverMode(Observer::Free);
+            if (sim->getObserverMode() == Observer::ObserverMode::Travelling)
+                sim->setObserverMode(Observer::ObserverMode::Free);
             else
-                sim->setFrame(ObserverFrame::Universal, Selection());
+                sim->setFrame(ObserverFrame::CoordinateSystem::Universal, Selection());
             if (!sim->getTrackedObject().empty())
                 sim->setTrackedObject(Selection());
         }
@@ -1358,9 +1358,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'G':
         addToHistory();
-        if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
+        if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::CoordinateSystem::Universal)
             sim->follow();
-        sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+        sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::CoordinateSystem::ObserverLocal);
         break;
 
     case 'H':
