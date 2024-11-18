@@ -459,7 +459,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
 
             if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
-                overlay.print(_("Radius: {} Rsun  ({})\n"),
+                overlay.print(_("Radius: {} Rsun ({})\n"),
                               formatter.format(star.getRadius() / 696000.0f, 2, SigDigitNum),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
@@ -537,23 +537,32 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     {
         return;
     }
-    else if (body.isEllipsoid() && !body.isSphere()) // show mean radius along with triaxial semi-axes
+    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
     {
         Eigen::Vector3f semiAxes = body.getSemiAxes();
-        double radiusMean = cbrt(semiAxes.prod());
-        double axis0 = semiAxes.x();
-        double axis1 = semiAxes.z();
-        double axis2 = semiAxes.y(); // polar semi-axis
-        overlay.print(_("Radius: {} ({} " UTF8_MULTIPLICATION_SIGN " {} " UTF8_MULTIPLICATION_SIGN " {})\n"),
-                      DistanceKmToStr(formatter, radiusMean, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis0, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis1, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis2, 5, hudSettings.measurementSystem));
+        if (semiAxes.x() == semiAxes.z())
+        {
+            if (semiAxes.x() == semiAxes.y())
+            {
+                overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+            }
+            else
+            {
+                overlay.print(_("Equatorial radius: {}\n"), DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
+                overlay.print(_("Polar radius: {}\n"), DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+            }
+        }
+        else
+        {
+            overlay.print(_("Radii: {} × {} × {}\n"),
+                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+        }
     }
     else
     {
-        overlay.print(_("Radius: {}\n"),
-                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+        overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
     }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
