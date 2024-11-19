@@ -2,12 +2,12 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
-# Levin Li <lilinfeng.app@outlook.com>, 2021
 # Hleb Valoshka <375gnu@gmail.com>, 2023
 # LBV 2012-26 <lbv2012-26@outlook.com>, 2024
-#
+# Levin Li <lilinfeng.app@outlook.com>, 2024
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -15,13 +15,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2024-11-18 19:45+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: LBV 2012-26 <lbv2012-26@outlook.com>, 2024\n"
-"Language-Team: Chinese (China) (https://app.transifex.com/celestia/"
-"teams/93131/zh_CN/)\n"
-"Language: zh_CN\n"
+"Last-Translator: Levin Li <lilinfeng.app@outlook.com>, 2024\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/celestia/teams/93131/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../src/celastro/date.cpp:487
@@ -147,113 +146,110 @@ msgid "bad location"
 msgstr "地理位置错误"
 
 #: ../src/celengine/stardbbuilder.cpp:208
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error in .stc file ({}): {}\n"
-msgstr ".stc 文件内出错（在第 {} 行）：{}\n"
+msgstr ".stc 文件错误 ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:214
-#, fuzzy, c++-format
+#, c++-format
 msgid "Warning in .stc file ({}): {}\n"
-msgstr ".stc 文件内出错（在第 {} 行）：{}\n"
+msgstr ".stc 文件警告 ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:260
 msgid "unrecognized object type"
-msgstr ""
+msgstr "无法识别的对象类型"
 
 #: ../src/celengine/stardbbuilder.cpp:296
 msgid "entry missing name and catalog number"
-msgstr ""
+msgstr "项目缺少名称和目录序号"
 
 #: ../src/celengine/stardbbuilder.cpp:313
 msgid "ignoring SpectralType on Barycenter"
-msgstr ""
+msgstr "忽略质心对象的 SpectralType（光谱类型）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:321
-#, fuzzy
 msgid "invalid SpectralType"
-msgstr "光谱型"
+msgstr "无效的 SpectralType（光谱类型）"
 
 #: ../src/celengine/stardbbuilder.cpp:327
 msgid "missing SpectralType on Star"
-msgstr ""
+msgstr "恒星缺失 SpectralType（光谱类型）"
 
 #: ../src/celengine/stardbbuilder.cpp:365
 msgid "incomplete set of coordinates RA/Dec/Distance specified"
-msgstr ""
+msgstr "指定的 RA/Dec/Distance（赤经/赤纬/距离）坐标组合不完整"
 
 #: ../src/celengine/stardbbuilder.cpp:399
 msgid "AbsMag ignored on Barycenter"
-msgstr ""
+msgstr "忽略质心对象的 AbsMag（绝对星等）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:401
 msgid "AppMag ignored on Barycenter"
-msgstr ""
+msgstr "忽略质心对象的 AppMag （视星等）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:409
 msgid "Extinction ignored for stars close to the origin"
-msgstr ""
+msgstr "忽略近距离的恒星的 Extinction（消光）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:416
 msgid "AppMag ignored when AbsMag is supplied"
-msgstr ""
+msgstr "存在 AbsMag（绝对星等），忽略 AppMag（视星等）"
 
 #: ../src/celengine/stardbbuilder.cpp:422
 msgid "AppMag cannot be used close to the origin"
-msgstr ""
+msgstr "近距离的天体无法使用 AppMag（视星等）"
 
 #: ../src/celengine/stardbbuilder.cpp:436
 msgid "no magnitude defined for star"
-msgstr ""
+msgstr "没有设置恒星星等"
 
 #: ../src/celengine/stardbbuilder.cpp:473
 msgid "BoloCorrection is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 BoloCorrection（热改正）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:482
 msgid "Temperature is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 Temperature（温度）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:504
 msgid "Temperature value must be greater than zero"
-msgstr ""
+msgstr "Temperature（温度）属性必须大于 0"
 
 #: ../src/celengine/stardbbuilder.cpp:518
 msgid "Mesh is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 Mesh（网格）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:533
-#, fuzzy
 msgid "invalid filename in Mesh"
-msgstr "无效文件格式"
+msgstr "Mesh（网格）属性文件名无效"
 
 #: ../src/celengine/stardbbuilder.cpp:540
 msgid "Texture is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 Texture（纹理）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:544
-#, fuzzy
 msgid "invalid filename in Texture"
-msgstr "无效文件格式"
+msgstr "Texture（纹理）属性文件名无效"
 
 #: ../src/celengine/stardbbuilder.cpp:550
 msgid "Rotation is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 Rotation（自转）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:558
 msgid "SemiAxes is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 SemiAxes（半轴）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:562
 msgid "SemiAxes must be greater than zero"
-msgstr ""
+msgstr "SemiAxes（半轴）属性必须大于 0"
 
 #: ../src/celengine/stardbbuilder.cpp:568
 msgid "Radius is ignored on Barycenters"
-msgstr ""
+msgstr "忽略质心对象的 Radius（半径）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:572
 msgid "Radius must be greater than zero"
-msgstr ""
+msgstr "Radius（半径）属性必须大于 0"
 
 #: ../src/celengine/stardbbuilder.cpp:618
 #, c++-format
@@ -268,11 +264,11 @@ msgstr "{} 恒星在双星数据库中\n"
 #: ../src/celengine/stardbbuilder.cpp:713
 #, c++-format
 msgid "Bad star definition at line {}.\n"
-msgstr ""
+msgstr "错误的恒星描述，行号 {}。\n"
 
 #: ../src/celengine/stardbbuilder.cpp:725
 msgid "Modify requested for nonexistent star.\n"
-msgstr ""
+msgstr "Modify 指向的恒星不存在。\n"
 
 #: ../src/celengine/stardbbuilder.cpp:761
 #, c++-format
@@ -281,28 +277,28 @@ msgstr "总计恒星数量：{}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:881
 msgid "ignoring RA/Dec/Distance in favor of Position"
-msgstr ""
+msgstr "存在 Position（位置属性），忽略 RA/Dec/Distance（赤经/赤纬/距离）属性"
 
 #: ../src/celengine/stardbbuilder.cpp:901
 msgid "ignoring orbit for object without OrbitBarycenter"
-msgstr ""
+msgstr "缺少 OrbitBarycenter（轨道质心）属性，忽略天体轨道"
 
 #: ../src/celengine/stardbbuilder.cpp:905
 msgid "no orbit specified for star with OrbitBarycenter"
-msgstr ""
+msgstr "存在 OrbitBarycenter（轨道质心）属性，缺少轨道"
 
 #: ../src/celengine/stardbbuilder.cpp:936
 msgid "OrbitBarycenter should be either a string or an integer"
-msgstr ""
+msgstr "OrbitBarycenter（轨道质心）属性应为字符串或者整数"
 
 #: ../src/celengine/stardbbuilder.cpp:942
 #: ../src/celengine/stardbbuilder.cpp:962
 msgid "OrbitBarycenter cycle detected"
-msgstr ""
+msgstr "监测到 OrbitBarycenter（轨道质心）循环"
 
 #: ../src/celengine/stardbbuilder.cpp:954
 msgid "OrbitBarycenter refers to nonexistent star"
-msgstr ""
+msgstr "OrbitBarycenter（轨道质心）指向不存在的恒星"
 
 #: ../src/celengine/starname.cpp:283
 msgid "Bad header for cross index\n"
@@ -952,9 +948,9 @@ msgid "Surface temp: %s\n"
 msgstr "表面温度：%s\n"
 
 #: ../src/celestia/hud.cpp:462
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radius: {} Rsun ({})\n"
-msgstr "半径：{} Rsun（{}）\n"
+msgstr "半径：{} 倍太阳半径（{}）\n"
 
 #: ../src/celestia/hud.cpp:468 ../src/celestia/hud.cpp:547
 #: ../src/celestia/hud.cpp:565
@@ -977,19 +973,19 @@ msgid "Radius: %s\n"
 msgstr "半径：%s\n"
 
 #: ../src/celestia/hud.cpp:551
-#, fuzzy, c++-format
+#, c++-format
 msgid "Equatorial radius: {}\n"
-msgstr "<b>赤道半径：</b> %L1 %2"
+msgstr "赤道半径：{}\n"
 
 #: ../src/celestia/hud.cpp:552
-#, fuzzy, c++-format
+#, c++-format
 msgid "Polar radius: {}\n"
-msgstr "半径：{}\n"
+msgstr "极半径：{}\n"
 
 #: ../src/celestia/hud.cpp:557
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radii: {} × {} × {}\n"
-msgstr "半径：{} Rsun（{}）\n"
+msgstr "半径：{} × {} × {}\n"
 
 #: ../src/celestia/hud.cpp:611
 #, c++-format
@@ -1116,13 +1112,15 @@ msgstr "正在录像"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 开始/暂停    F12 停止"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "深空"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
 msgctxt "catalog"
 msgid "solar system"
@@ -1152,7 +1150,8 @@ msgstr "打开 {} 时出错\n"
 msgid "Error reading star names file {}\n"
 msgstr "读取恒星名字文件 {} 出错\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:97
 msgctxt "catalog"
 msgid "star"
@@ -1760,8 +1759,8 @@ msgstr "获取 log 文件的路径时出错。"
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr "找不到数据目录，Celestia 无法运行，可能是安装时出现了错误。"
 
 #: ../src/celestia/qt/qtappwin.cpp:349
@@ -1782,7 +1781,8 @@ msgstr "太阳系"
 msgid "Deep Sky Objects"
 msgstr "深空天体"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:379
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
 msgstr "事件查找器"
@@ -1878,29 +1878,30 @@ msgstr "新建书签"
 #: ../src/celestia/qt/qtappwin.cpp:1170
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7.0 开发快照与提交<b>%1</b>。</p><p>为 %2 bit CPU 构建"
-"<br>使用 %3 %4<br>使用 Qt 库 %5<br>NAIF kernels %7<br>AVIF images %8<br>Qt 运"
-"行时版本：%6</p><p>Copyright (C) 2001-2023 by the Celestia Development Team."
-"<br>Celestia 是一款自由软件。您可以根据自由软件基金会发布的 GNU 通用公共许可"
-"证的条款对其进行再发布和/或修改；无论是许可证的第 2 版，还是（由您选择的）任"
-"何后续版本。</p><p>官网主页：<a href=\"https://celestiaproject.space/"
-"\">https://celestiaproject.space/</a><br>官方论坛：<a href=\"https://"
-"celestiaproject.space/forum/\">https://celestiaproject.space/forum/</"
-"a><br>GitHub 代码仓库：<a href=\"https://github.com/CelestiaProject/"
-"Celestia\">https://github.com/CelestiaProject/Celestia</a></html>"
+"<html><h1>Celestia 1.7.0 开发快照与提交<b>%1</b>。</p><p>为 %2 bit CPU 构建<br>使用 %3 "
+"%4<br>使用 Qt 库 %5<br>NAIF kernels %7<br>AVIF images %8<br>Qt "
+"运行时版本：%6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia 是一款自由软件。您可以根据自由软件基金会发布的 GNU "
+"通用公共许可证的条款对其进行再发布和/或修改；无论是许可证的第 2 版，还是（由您选择的）任何后续版本。</p><p>官网主页：<a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>官方论坛：<a"
+" "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" 代码仓库：<a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1206
 msgid "Unknown compiler"
@@ -3336,12 +3337,14 @@ msgid "No guide destinations were found."
 msgstr "未找到向导目的地。"
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "选择目标："
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "转到"
@@ -4061,7 +4064,8 @@ msgstr "无法保存图片文件。"
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Celestia Script (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4241,82 +4245,82 @@ msgstr "与 UTC 的差异"
 #: ../src/celimage/bmp.cpp:119
 #, c++-format
 msgid "BMP read failure '{}' - incorrect header bytes\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无效的头部数据\n"
 
 #: ../src/celimage/bmp.cpp:136
 #, c++-format
 msgid "BMP read failure '{}' - unsupported header format\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无效的头部格式\n"
 
 #: ../src/celimage/bmp.cpp:143
 #, c++-format
 msgid "BMP read failure '{}' - width out of range\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 宽度超出范围\n"
 
 #: ../src/celimage/bmp.cpp:150
 #, c++-format
 msgid "BMP read failure '{}' - height out of range\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 高度超出范围\n"
 
 #: ../src/celimage/bmp.cpp:157
 #, c++-format
 msgid "BMP read failure '{}' - number of planes must be 1\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' -  位面数应为 1\n"
 
 #: ../src/celimage/bmp.cpp:165
 #, c++-format
 msgid "BMP read failure '{}' - invalid bits per pixel {}\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无效的每像素比特数 {}\n"
 
 #: ../src/celimage/bmp.cpp:173
 #, c++-format
 msgid "BMP read failure '{}' - compressed images are not supported\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 不支持压缩图片\n"
 
 #: ../src/celimage/bmp.cpp:194
 #, c++-format
 msgid "BMP read failure '{}' - image too wide\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 图片太宽\n"
 
 #: ../src/celimage/bmp.cpp:206
 #, c++-format
 msgid "BMP read failure '{}' - size mismatch\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 大小不匹配\n"
 
 #: ../src/celimage/bmp.cpp:220
 #, c++-format
 msgid "BMP read failure '{}' - palette too large\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' -  颜色表过大\n"
 
 #: ../src/celimage/bmp.cpp:234
 #, c++-format
 msgid "BMP read failure '{}' - could not read file headers\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法读取文件头\n"
 
 #: ../src/celimage/bmp.cpp:248
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to palette\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法跳转到颜色表\n"
 
 #: ../src/celimage/bmp.cpp:259
 #, c++-format
 msgid "BMP read failure '{}' - could not read palette\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法读取颜色表\n"
 
 #: ../src/celimage/bmp.cpp:341
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to image data\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法跳转到图片数据\n"
 
 #: ../src/celimage/bmp.cpp:349
 #, c++-format
 msgid "BMP read failure '{}' - could not read image data\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法读取图片数据\n"
 
 #: ../src/celimage/bmp.cpp:400
 #, c++-format
 msgid "BMP read failure '{}' - could not open file\n"
-msgstr ""
+msgstr "读取 BMP 错误 '{}' - 无法打开文件\n"
 
 #: ../src/celimage/image.cpp:387
 #, c++-format
@@ -4329,34 +4333,33 @@ msgid "{}: unrecognized or unsupported image file type.\n"
 msgstr "{}：不支持的图像格式。\n"
 
 #: ../src/celimage/jpeg.cpp:151
-#, fuzzy, c++-format
+#, c++-format
 msgid "Could not open JPEG file {}\n"
-msgstr "无法读取 XYZV 二进制文件 {}。\n"
+msgstr "无法打开 JPEG 文件 {}\n"
 
 #: ../src/celimage/jpeg.cpp:168
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error reading JPEG image: {}\n"
-msgstr "读取 PNG 图像文件 {} 时出错\n"
+msgstr "读取 JPEG 文件错误：{}\n"
 
 #: ../src/celimage/jpeg.cpp:186
 #, c++-format
 msgid "JPEG dimensions out of range: {}\n"
-msgstr ""
+msgstr "JPEG 大小超过范围：{}\n"
 
 #: ../src/celimage/png.cpp:37
-#, fuzzy, c++-format
+#, c++-format
 msgid "PNG error in '{}': {}\n"
-msgstr "打开 {} 或 {} 时错误。\n"
+msgstr "PNG 错误 '{}'：{}\n"
 
 #: ../src/celimage/png.cpp:45
 #, c++-format
 msgid "PNG warning in '{}': {}\n"
-msgstr ""
+msgstr "PNG 警告 '{}'：{}\n"
 
 #: ../src/celimage/png.cpp:95
-#, fuzzy
 msgid "Unsupported color type"
-msgstr "不支持的图像格式：{}\n"
+msgstr "不支持的颜色类型"
 
 #: ../src/celimage/png.cpp:118
 #, c++-format
@@ -4364,31 +4367,28 @@ msgid "Error: {} is not a PNG file.\n"
 msgstr "错误：{} 不是一个 PNG 文件。\n"
 
 #: ../src/celimage/png.cpp:128
-#, fuzzy
 msgid "Error allocating PNG read struct.\n"
-msgstr "锁定下降目标时出错\n"
+msgstr "分配 PNG 读取结构体错误\n"
 
 #: ../src/celimage/png.cpp:135 ../src/celimage/png.cpp:204
-#, fuzzy
 msgid "Error allocating PNG info struct.\n"
-msgstr "锁定下降目标时出错\n"
+msgstr "分配 PNG 信息结构体错误\n"
 
 #: ../src/celimage/png.cpp:152
 msgid "Failed to read IHDR chunk"
-msgstr ""
+msgstr "无法读取 IHDR 块"
 
 #: ../src/celimage/png.cpp:155
 msgid "Image width out of range"
-msgstr ""
+msgstr "图片宽度超过范围"
 
 #: ../src/celimage/png.cpp:157
 msgid "Image height out of range"
-msgstr ""
+msgstr "图片高度超过范围"
 
 #: ../src/celimage/png.cpp:197
-#, fuzzy
 msgid "Error allocating PNG write struct.\n"
-msgstr "锁定下降目标时出错\n"
+msgstr "分配 PNG 写入结构体错误\n"
 
 #: ../src/celimage/png.cpp:256
 #, c++-format
@@ -4397,7 +4397,7 @@ msgstr "打开图像文件 {} 时出错。\n"
 
 #: ../src/celimage/png.cpp:271
 msgid "Can only save RGB or RGBA images\n"
-msgstr ""
+msgstr "只能保存 RGB 或者 RGBA 图片\n"
 
 #: ../src/celimage/png.cpp:282
 #, c++-format
@@ -4494,37 +4494,3 @@ msgstr "不支持的字节顺序 {}，缺少 {}。\n"
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "不支持的数字 {}，缺少 {}。\n"
-
-#~ msgid "Invalid star: missing right ascension\n"
-#~ msgstr "无效恒星数据：缺少赤经\n"
-
-#~ msgid "Invalid star: missing declination.\n"
-#~ msgstr "无效恒星数据：缺少赤纬。\n"
-
-#~ msgid "Invalid star: missing distance.\n"
-#~ msgstr "无效恒星数据：缺少距离。\n"
-
-#~ msgid ""
-#~ "Invalid star: absolute (not apparent) magnitude must be specified for "
-#~ "star near origin\n"
-#~ msgstr "无效恒星数据：必须输入接近原始的恒星的绝对星等（非视星等）\n"
-
-#~ msgid "Invalid star: missing magnitude.\n"
-#~ msgstr "无效恒星数据：缺少星等。\n"
-
-#~ msgid "Invalid star: bad spectral type.\n"
-#~ msgstr "无效恒星数据：恒星光谱型错误。\n"
-
-#~ msgid "Invalid star: missing spectral type.\n"
-#~ msgstr "无效恒星数据：缺少恒星光谱类型。\n"
-
-#, c++-format
-#~ msgid "Barycenter {} does not exist.\n"
-#~ msgstr "质心 {} 不存在。\n"
-
-#~ msgid "Error reading PNG data"
-#~ msgstr "读取 PNG 数据时出错"
-
-#, c++-format
-#~ msgid "Error writing PNG file '{}'\n"
-#~ msgstr "写入 PNG 文件“{}”时出错\n"
