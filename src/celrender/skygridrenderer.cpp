@@ -18,6 +18,7 @@
 #include <cmath>
 #include <iterator>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <Eigen/Geometry>
@@ -31,6 +32,8 @@
 #include <celmath/vecgl.h>
 #include <celutil/color.h>
 #include "linerenderer.h"
+
+using namespace std::string_view_literals;
 
 namespace celestia::render
 {
@@ -233,7 +236,7 @@ latitudeLabel(int latitude, int latitudeStep)
     if (latitudeStep % DEG == 0)
         return result;
 
-    fmt::format_to(std::back_inserter(result), " {:02}'", (latitude / MIN) % 60);
+    fmt::format_to(std::back_inserter(result), " {:02}′", (latitude / MIN) % 60);
     if (latitudeStep % MIN == 0)
         return result;
 
@@ -241,7 +244,7 @@ latitudeLabel(int latitude, int latitudeStep)
     if (latitudeStep % SEC != 0)
         fmt::format_to(std::back_inserter(result), ".{:03}", latitude % SEC);
 
-    result.push_back('"');
+    result.append("″"sv);
     return result;
 }
 
@@ -254,17 +257,17 @@ longitudeLabel(int longitude, int longitudeStep,
 {
     int totalUnits = HOUR_MIN_SEC_TOTAL;
     int baseUnit = HR;
-    const char* baseUnitSymbol = "h";
-    char minuteSymbol = 'm';
-    char secondSymbol = 's';
+    std::string_view baseUnitSymbol = "°"sv;
+    std::string_view minuteSymbol = "m"sv;
+    std::string_view secondSymbol = "s"sv;
 
     if (longitudeUnits == engine::SkyGrid::LongitudeDegrees)
     {
         totalUnits = DEG_MIN_SEC_TOTAL * 2;
         baseUnit = DEG;
-        baseUnitSymbol = "°";
-        minuteSymbol = '\'';
-        secondSymbol = '"';
+        baseUnitSymbol = "°"sv;
+        minuteSymbol = "′"sv;
+        secondSymbol = "″"sv;
     }
 
     // Produce a sexigesimal string
@@ -289,7 +292,7 @@ longitudeLabel(int longitude, int longitudeStep,
     if (longitudeStep % SEC != 0)
         fmt::format_to(std::back_inserter(result), ".{:03}", longitude % SEC);
 
-    result.push_back(secondSymbol);
+    result.append(secondSymbol);
     return result;
 }
 

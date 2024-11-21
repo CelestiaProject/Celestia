@@ -261,16 +261,16 @@ angleToStr(double angle, const std::locale& loc)
 
     if (degrees > 0)
     {
-        return fmt::format(loc, "{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
+        return fmt::format(loc, "{}° {:02d}′ {:.1f}″",
                            degrees, std::abs(minutes), std::abs(seconds));
     }
 
     if (minutes > 0)
     {
-        return fmt::format(loc, "{:02d}' {:.1f}\"", std::abs(minutes), std::abs(seconds));
+        return fmt::format(loc, "{:02d}′ {:.1f}″", std::abs(minutes), std::abs(seconds));
     }
 
-    return fmt::format(loc, "{:.2f}\"", std::abs(seconds));
+    return fmt::format(loc, "{:.2f}″", std::abs(seconds));
 }
 
 void
@@ -295,9 +295,8 @@ displayDeclination(Overlay& overlay, double angle, const std::locale& loc)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay.print(loc, _("Dec: {:+d}{} {:02d}' {:.1f}\"\n"),
-                  std::abs(degrees), UTF8_DEGREE_SIGN,
-                  std::abs(minutes), std::abs(seconds));
+    overlay.print(loc, _("Dec: {:+d}° {:02d}′ {:.1f}″\n"),
+                  std::abs(degrees), std::abs(minutes), std::abs(seconds));
 }
 
 void
@@ -608,7 +607,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
             sunVec.normalize();
             double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.print(loc, _("Phase angle: {:.1f}{}\n"), math::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            overlay.print(loc, _("Phase angle: {:.1f}°\n"), math::radToDeg(phaseAngle));
         }
     }
 

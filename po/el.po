@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
-"POT-Creation-Date: 2024-11-18 19:45+0100\n"
+"POT-Creation-Date: 2024-11-21 21:29+0100\n"
 "PO-Revision-Date: 2018-05-28 20:45+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -812,26 +812,26 @@ msgstr ""
 
 #. ectx: property (text), widget (QRadioButton, kmButton)
 #: ../src/celestia/hud.cpp:133 ../src/celestia/qt/gotoobjectdialog.ui:180
-#: ../src/celestia/qt/qtinfopanel.cpp:195
-#: ../src/celestia/qt/qtinfopanel.cpp:317
+#: ../src/celestia/qt/qtinfopanel.cpp:193
+#: ../src/celestia/qt/qtinfopanel.cpp:315
 #: ../src/celestia/win32/res/celestia.rc:429
 msgid "km"
 msgstr "χμ"
 
-#: ../src/celestia/hud.cpp:138 ../src/celestia/qt/qtinfopanel.cpp:199
+#: ../src/celestia/hud.cpp:138 ../src/celestia/qt/qtinfopanel.cpp:197
 #, fuzzy
 msgid "m"
 msgstr " μ/δ"
 
-#: ../src/celestia/hud.cpp:160 ../src/celestia/qt/qtinfopanel.cpp:251
-#: ../src/celestia/qt/qtinfopanel.cpp:298
-#: ../src/celestia/qt/qtinfopanel.cpp:336
+#: ../src/celestia/hud.cpp:160 ../src/celestia/qt/qtinfopanel.cpp:249
+#: ../src/celestia/qt/qtinfopanel.cpp:296
+#: ../src/celestia/qt/qtinfopanel.cpp:330
 #, fuzzy
 msgid "days"
 msgstr " μέρες"
 
-#: ../src/celestia/hud.cpp:165 ../src/celestia/qt/qtinfopanel.cpp:247
-#: ../src/celestia/qt/qtinfopanel.cpp:294
+#: ../src/celestia/hud.cpp:165 ../src/celestia/qt/qtinfopanel.cpp:245
+#: ../src/celestia/qt/qtinfopanel.cpp:292
 #, fuzzy
 msgid "hours"
 msgstr " ώρες"
@@ -913,232 +913,232 @@ msgstr "Φαινόμενη διάμετρος: "
 
 #: ../src/celestia/hud.cpp:298
 #, c++-format
-msgid "Dec: {:+d}{} {:02d}' {:.1f}\"\n"
+msgid "Dec: {:+d}° {:02d}′ {:.1f}″\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:311
+#: ../src/celestia/hud.cpp:310
 #, c++-format
 msgid "RA: {}h {:02}m {:.1f}s\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:324
+#: ../src/celestia/hud.cpp:323
 #, fuzzy, c++-format
 msgid "Apparent magnitude: {:.1f}\n"
 msgstr "Φαινόμενο μέγεθος: "
 
-#: ../src/celestia/hud.cpp:328
+#: ../src/celestia/hud.cpp:327
 #, fuzzy, c++-format
 msgid "Absolute magnitude: {:.1f}\n"
 msgstr "Απόλυτο μέγεθος:"
 
-#: ../src/celestia/hud.cpp:407
+#: ../src/celestia/hud.cpp:406
 #, c++-format
 msgid "{:.6f}{} {:.6f}{} {}"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:422 ../src/celestia/hud.cpp:500
-#: ../src/celestia/hud.cpp:533 ../src/celestia/hud.cpp:650
+#: ../src/celestia/hud.cpp:421 ../src/celestia/hud.cpp:499
+#: ../src/celestia/hud.cpp:532 ../src/celestia/hud.cpp:649
 #, fuzzy, c-format
 msgid "Distance: %s\n"
 msgstr "Απόσταση: "
 
-#: ../src/celestia/hud.cpp:427
+#: ../src/celestia/hud.cpp:426
 msgid "Star system barycenter\n"
 msgstr "Βαρύκεντρο συστήματος αστέρων\n"
 
-#: ../src/celestia/hud.cpp:431
+#: ../src/celestia/hud.cpp:430
 #, fuzzy, c++-format
 msgid "Abs (app) mag: {:.2f} ({:.2f})\n"
 msgstr "Απόλυτο(φαινόμενο)μέγεθος: %.2f (%.2f)\n"
 
-#: ../src/celestia/hud.cpp:436
+#: ../src/celestia/hud.cpp:435
 #, fuzzy, c++-format
 msgid "Luminosity: {}x Sun\n"
 msgstr "Φωτεινότητα: "
 
-#: ../src/celestia/hud.cpp:442
+#: ../src/celestia/hud.cpp:441
 msgid "Neutron star"
 msgstr "Αστέρας νετρονίων"
 
-#: ../src/celestia/hud.cpp:445
+#: ../src/celestia/hud.cpp:444
 msgid "Black hole"
 msgstr "Μαύρη τρύπα"
 
-#: ../src/celestia/hud.cpp:450
+#: ../src/celestia/hud.cpp:449
 #, fuzzy, c-format
 msgid "Class: %s\n"
 msgstr "Τάξη: "
 
-#: ../src/celestia/hud.cpp:457
+#: ../src/celestia/hud.cpp:456
 #, fuzzy, c-format
 msgid "Surface temp: %s\n"
 msgstr "Θερμοκρασία επιφάνειας:"
 
-#: ../src/celestia/hud.cpp:462
+#: ../src/celestia/hud.cpp:461
 #, fuzzy, c++-format
 msgid "Radius: {} Rsun ({})\n"
 msgstr "Ακτίνα: "
 
-#: ../src/celestia/hud.cpp:468 ../src/celestia/hud.cpp:547
-#: ../src/celestia/hud.cpp:565
+#: ../src/celestia/hud.cpp:467 ../src/celestia/hud.cpp:546
+#: ../src/celestia/hud.cpp:564
 #, fuzzy, c++-format
 msgid "Radius: {}\n"
 msgstr "Ακτίνα: "
 
-#: ../src/celestia/hud.cpp:484
+#: ../src/celestia/hud.cpp:483
 msgid "Planetary companions present\n"
 msgstr "Planetary companions present\n"
 
-#: ../src/celestia/hud.cpp:505
+#: ../src/celestia/hud.cpp:504
 #, fuzzy, c-format
 msgid "Distance from center: %s\n"
 msgstr "Απόσταση από το κέντρο: "
 
-#: ../src/celestia/hud.cpp:508
+#: ../src/celestia/hud.cpp:507
 #, fuzzy, c-format
 msgid "Radius: %s\n"
 msgstr "Ακτίνα: "
 
-#: ../src/celestia/hud.cpp:551
+#: ../src/celestia/hud.cpp:550
 #, fuzzy, c++-format
 msgid "Equatorial radius: {}\n"
 msgstr "Ισημερινή"
 
-#: ../src/celestia/hud.cpp:552
+#: ../src/celestia/hud.cpp:551
 #, fuzzy, c++-format
 msgid "Polar radius: {}\n"
 msgstr "Ακτίνα: "
 
-#: ../src/celestia/hud.cpp:557
+#: ../src/celestia/hud.cpp:556
 #, fuzzy, c++-format
 msgid "Radii: {} × {} × {}\n"
 msgstr "Ακτίνα: "
 
-#: ../src/celestia/hud.cpp:611
-#, c++-format
-msgid "Phase angle: {:.1f}{}\n"
-msgstr ""
+#: ../src/celestia/hud.cpp:610
+#, fuzzy, c++-format
+msgid "Phase angle: {:.1f}°\n"
+msgstr "Φαινόμενο μέγεθος: "
 
-#: ../src/celestia/hud.cpp:627
+#: ../src/celestia/hud.cpp:626
 #, c++-format
 msgid "Density: {} lb/ft³\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:632
+#: ../src/celestia/hud.cpp:631
 #, c++-format
 msgid "Density: {} kg/m³\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:638
+#: ../src/celestia/hud.cpp:637
 #, fuzzy, c-format
 msgid "Temperature: %s\n"
 msgstr "Θερμοκρασία: "
 
-#: ../src/celestia/hud.cpp:870
+#: ../src/celestia/hud.cpp:869
 #, c++-format
 msgid "Unknown measurement system {}, fallback to Metric system"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:876
+#: ../src/celestia/hud.cpp:875
 #, c++-format
 msgid "Failed to get default measurement system {}, fallback to Metric system"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:919
+#: ../src/celestia/hud.cpp:918
 #, fuzzy, c++-format
 msgid "FPS: {:.1f}\n"
 msgstr "FPS: "
 
-#: ../src/celestia/hud.cpp:952 ../src/celestia/hud.cpp:955
+#: ../src/celestia/hud.cpp:951 ../src/celestia/hud.cpp:954
 msgid "Edit Mode"
 msgstr "Κατάσταση Επεξεργασίας"
 
-#: ../src/celestia/hud.cpp:979 ../src/celestia/hud.cpp:994
+#: ../src/celestia/hud.cpp:978 ../src/celestia/hud.cpp:993
 msgid "  LT"
 msgstr "  LT"
 
-#: ../src/celestia/hud.cpp:1002 ../src/celestia/qt/qttimetoolbar.cpp:48
+#: ../src/celestia/hud.cpp:1001 ../src/celestia/qt/qttimetoolbar.cpp:48
 msgid "Real time"
 msgstr "Πραγματικός χρόνος"
 
-#: ../src/celestia/hud.cpp:1004
+#: ../src/celestia/hud.cpp:1003
 msgid "-Real time"
 msgstr "-Πραγματικός χρόνος "
 
-#: ../src/celestia/hud.cpp:1008
+#: ../src/celestia/hud.cpp:1007
 msgid "Time stopped"
 msgstr "Ο χρόνος έχει σταματήσει"
 
-#: ../src/celestia/hud.cpp:1012
+#: ../src/celestia/hud.cpp:1011
 #, fuzzy, c++-format
 msgid "{:.6g} x faster"
 msgstr " πιο γρήγορα"
 
-#: ../src/celestia/hud.cpp:1016
+#: ../src/celestia/hud.cpp:1015
 #, fuzzy, c++-format
 msgid "{:.6g} x slower"
 msgstr " πιο αργά"
 
-#: ../src/celestia/hud.cpp:1022
+#: ../src/celestia/hud.cpp:1021
 msgid " (Paused)"
 msgstr "(Σταματημένο)"
 
-#: ../src/celestia/hud.cpp:1044
+#: ../src/celestia/hud.cpp:1043
 #, fuzzy, c++-format
 msgid "Travelling ({})\n"
 msgstr "Ταξιδεύοντας"
 
-#: ../src/celestia/hud.cpp:1046
+#: ../src/celestia/hud.cpp:1045
 #, fuzzy
 msgid "Travelling\n"
 msgstr "Ταξιδεύοντας"
 
-#: ../src/celestia/hud.cpp:1056
+#: ../src/celestia/hud.cpp:1055
 #, fuzzy, c-format
 msgid "Track %s\n"
 msgstr "Τροχιά"
 
-#: ../src/celestia/hud.cpp:1064
+#: ../src/celestia/hud.cpp:1063
 #, fuzzy, c-format
 msgid "Follow %s\n"
 msgstr "&Παρακολούθηση"
 
-#: ../src/celestia/hud.cpp:1068
+#: ../src/celestia/hud.cpp:1067
 #, fuzzy, c-format
 msgid "Sync Orbit %s\n"
 msgstr "Συγχρονισμός Τροχιάς"
 
-#: ../src/celestia/hud.cpp:1072
+#: ../src/celestia/hud.cpp:1071
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:1078
+#: ../src/celestia/hud.cpp:1077
 #, fuzzy, c-format
 msgid "Chase %s\n"
 msgstr "Καταδίωξη"
 
-#: ../src/celestia/hud.cpp:1092
+#: ../src/celestia/hud.cpp:1091
 #, c++-format
 msgid "FOV: {} ({:.2f}x)\n"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:1265
+#: ../src/celestia/hud.cpp:1264
 #, c++-format
 msgid "{}x{} at {:.2f} fps  {}"
 msgstr ""
 
-#: ../src/celestia/hud.cpp:1268
+#: ../src/celestia/hud.cpp:1267
 #, fuzzy
 msgid "Paused"
 msgstr "  Σταματημένο"
 
-#: ../src/celestia/hud.cpp:1268
+#: ../src/celestia/hud.cpp:1267
 #, fuzzy
 msgid "Recording"
 msgstr "  Εγγραφή"
 
-#: ../src/celestia/hud.cpp:1288
+#: ../src/celestia/hud.cpp:1287
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Εκκίνηση/Παύση    F12 Σταμάτημα "
 
@@ -2972,174 +2972,174 @@ msgstr ""
 msgid "Celestia was unable to initialize OpenGL 2.1."
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:156
+#: ../src/celestia/qt/qtinfopanel.cpp:154
 msgid "Error: no object selected!\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:168
+#: ../src/celestia/qt/qtinfopanel.cpp:166
 #: ../src/celestia/qt/qtselectionpopup.cpp:178
 #, fuzzy
 msgid "Info"
 msgstr "&Πληροφορίες"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:188
+#: ../src/celestia/qt/qtinfopanel.cpp:186
 #, fuzzy, qt-format
 msgid "Web info: %1"
 msgstr "Πληροφορίες OpenGL"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:204
+#: ../src/celestia/qt/qtinfopanel.cpp:202
 #, fuzzy, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr "Ισημερινή"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:206
+#: ../src/celestia/qt/qtinfopanel.cpp:204
 #, fuzzy, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:211
+#: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:254
+#: ../src/celestia/qt/qtinfopanel.cpp:252
 #, fuzzy, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "Περίοδος περιστροφής: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:257
+#: ../src/celestia/qt/qtinfopanel.cpp:255
 #, fuzzy
 msgid "Prograde"
 msgstr "Βελιγράδι"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:257
+#: ../src/celestia/qt/qtinfopanel.cpp:255
 #, fuzzy
 msgid "Retrograde"
 msgstr "Βελιγράδι"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:258
+#: ../src/celestia/qt/qtinfopanel.cpp:256
 #, fuzzy, qt-format
 msgid "<b>Rotation direction:</b> %1"
 msgstr "<b>Unextended OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:262
+#: ../src/celestia/qt/qtinfopanel.cpp:260
 #, fuzzy, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:270
+#: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:272
+#: ../src/celestia/qt/qtinfopanel.cpp:270
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:280
+#: ../src/celestia/qt/qtinfopanel.cpp:278
 #, fuzzy, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:283
+#: ../src/celestia/qt/qtinfopanel.cpp:281
 #, fuzzy, qt-format
 msgid "<b>End:</b> %1"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:285
+#: ../src/celestia/qt/qtinfopanel.cpp:283
 #, fuzzy
 msgid "Orbit information"
 msgstr "Πληροφοριακό Κείμενο"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:286
+#: ../src/celestia/qt/qtinfopanel.cpp:284
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:302
+#: ../src/celestia/qt/qtinfopanel.cpp:300
 msgid "years"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:306
+#: ../src/celestia/qt/qtinfopanel.cpp:304
 #, fuzzy, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:312
+#: ../src/celestia/qt/qtinfopanel.cpp:310
 #, fuzzy
 msgid "AU"
 msgstr "αμ"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:320
+#: ../src/celestia/qt/qtinfopanel.cpp:318
 #, fuzzy, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "Ισημερινή"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:321
+#: ../src/celestia/qt/qtinfopanel.cpp:319
 #, fuzzy, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:322
+#: ../src/celestia/qt/qtinfopanel.cpp:320
 #, fuzzy, qt-format
-msgid "<b>Inclination:</b> %L1%2"
+msgid "<b>Inclination:</b> %L1°"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:324
+#: ../src/celestia/qt/qtinfopanel.cpp:321
 #, fuzzy, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:326
+#: ../src/celestia/qt/qtinfopanel.cpp:323
 #, fuzzy, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:328
+#: ../src/celestia/qt/qtinfopanel.cpp:325
 #, fuzzy, qt-format
-msgid "<b>Ascending node:</b> %L1%2"
+msgid "<b>Ascending node:</b> %L1°"
 msgstr "Απόσταση (εφ)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:330
+#: ../src/celestia/qt/qtinfopanel.cpp:326
 #, fuzzy, qt-format
-msgid "<b>Argument of periapsis:</b> %L1%2"
+msgid "<b>Argument of periapsis:</b> %L1°"
 msgstr "Ισημερινή"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:332
+#: ../src/celestia/qt/qtinfopanel.cpp:327
 #, fuzzy, qt-format
-msgid "<b>Mean anomaly:</b> %L1%2"
+msgid "<b>Mean anomaly:</b> %L1°"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:336
+#: ../src/celestia/qt/qtinfopanel.cpp:330
 #, fuzzy, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "Περίοδος περιστροφής: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:340
+#: ../src/celestia/qt/qtinfopanel.cpp:334
 #, fuzzy, qt-format
-msgid "<b>Mean motion (calculated):</b> %L1%2/day"
+msgid "<b>Mean motion (calculated):</b> %L1°/day"
 msgstr "Περίοδος περιστροφής: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:364
-#: ../src/celestia/qt/qtinfopanel.cpp:387
+#: ../src/celestia/qt/qtinfopanel.cpp:357
+#: ../src/celestia/qt/qtinfopanel.cpp:379
 #, fuzzy, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "Μέγεθος: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:368
-#: ../src/celestia/qt/qtinfopanel.cpp:391
+#: ../src/celestia/qt/qtinfopanel.cpp:361
+#: ../src/celestia/qt/qtinfopanel.cpp:383
 #, fuzzy, qt-format
-msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
+msgid "<b>Dec:</b> %L1° %L2′ %L3″"
 msgstr "Μέγεθος: %1 MB"
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:399
+#: ../src/celestia/qt/qtinfopanel.cpp:390
 #, fuzzy, qt-format
-msgid "<b>L:</b> %L1%2 %L3' %L4\""
+msgid "<b>L:</b> %L1° %L2′ %L3″"
 msgstr "Μέγεθος: %1 MB"
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:403
+#: ../src/celestia/qt/qtinfopanel.cpp:393
 #, fuzzy, qt-format
-msgid "<b>B:</b> %L1%2 %L3' %L4\""
+msgid "<b>B:</b> %L1° %L2′ %L3″"
 msgstr "Μέγεθος: %1 MB"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:208
