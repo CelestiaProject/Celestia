@@ -48,8 +48,6 @@ namespace celestia::qt
 namespace
 {
 
-const QString DegreeSign = QString::fromUtf8(UTF8_DEGREE_SIGN);
-
 astro::KeplerElements
 CalculateOsculatingElements(const celestia::ephem::Orbit& orbit,
                             double t,
@@ -319,26 +317,21 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 
     stream << QString(_("<b>Semi-major axis:</b> %L1 %2")).arg(sma).arg(units) << "<br>\n";
     stream << QString(_("<b>Eccentricity:</b> %L1")).arg(elements.eccentricity) << "<br>\n";
-    stream << QString(_("<b>Inclination:</b> %L1%2")).arg(math::radToDeg(elements.inclination))
-                                                     .arg(DegreeSign) << "<br>\n";
+    stream << QString(_("<b>Inclination:</b> %L1°")).arg(math::radToDeg(elements.inclination)) << "<br>\n";
     stream << QString(_("<b>Pericenter distance:</b> %L1 %2")).arg(sma * (1 - elements.eccentricity)).arg(units) << "<br>\n";
     if (elements.eccentricity < 1.0)
         stream << QString(_("<b>Apocenter distance:</b> %L1 %2")).arg(sma * (1 + elements.eccentricity)).arg(units) << "<br>\n";
 
-    stream << QString(_("<b>Ascending node:</b> %L1%2")).arg(math::radToDeg(elements.longAscendingNode))
-                                                        .arg(DegreeSign) << "<br>\n";
-    stream << QString(_("<b>Argument of periapsis:</b> %L1%2")).arg(math::radToDeg(elements.argPericenter))
-                                                               .arg(DegreeSign) << "<br>\n";
-    stream << QString(_("<b>Mean anomaly:</b> %L1%2")).arg(math::radToDeg(elements.meanAnomaly))
-                                                      .arg(DegreeSign) << "<br>\n";
+    stream << QString(_("<b>Ascending node:</b> %L1°")).arg(math::radToDeg(elements.longAscendingNode)) << "<br>\n";
+    stream << QString(_("<b>Argument of periapsis:</b> %L1°")).arg(math::radToDeg(elements.argPericenter)) << "<br>\n";
+    stream << QString(_("<b>Mean anomaly:</b> %L1°")).arg(math::radToDeg(elements.meanAnomaly)) << "<br>\n";
     if (elements.eccentricity < 1.0)
     {
         stream << QString(_("<b>Period (calculated):</b> %L1 %2")).arg(elements.period).arg(_("days")) << "<br>\n";
     }
     else
     {
-        stream << QString(_("<b>Mean motion (calculated):</b> %L1%2/day")).arg(360.0 / elements.period)
-                                                                          .arg(DegreeSign) << "<br>\n";
+        stream << QString(_("<b>Mean motion (calculated):</b> %L1°/day")).arg(360.0 / elements.period) << "<br>\n";
     }
 }
 
@@ -365,8 +358,7 @@ InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb,
 
     int degrees = 0;
     astro::decimalToDegMinSec(math::radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
-                                                        .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
+    stream << QString(_("<b>Dec:</b> %L1° %L2′ %L3″")).arg(degrees).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 
 
@@ -388,20 +380,17 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 
     int degrees = 0;
     astro::decimalToDegMinSec(math::radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
-                                                        .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
+    stream << QString(_("<b>Dec:</b> %L1° %L2′ %L3″")).arg(degrees).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 
     Eigen::Vector3d galPos = astro::equatorialToGalactic(eqPos);
     sph = rectToSpherical(galPos);
 
     astro::decimalToDegMinSec(math::radToDeg(sph.x()), degrees, minutes, seconds);
     // TRANSLATORS: Galactic longitude
-    stream << QString(_("<b>L:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
-                                                      .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
+    stream << QString(_("<b>L:</b> %L1° %L2′ %L3″")).arg(degrees).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
     astro::decimalToDegMinSec(math::radToDeg(sph.y()), degrees, minutes, seconds);
     // TRANSLATORS: Galactic latitude
-    stream << QString(_("<b>B:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(DegreeSign)
-                                                      .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
+    stream << QString(_("<b>B:</b> %L1° %L2′ %L3″")).arg(degrees).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 
 

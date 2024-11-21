@@ -15,9 +15,7 @@
 #include <string>
 #include <string_view>
 
-#define UTF8_DEGREE_SIGN         "\302\260"
-#define UTF8_MULTIPLICATION_SIGN "\303\227"
-#define UTF8_REPLACEMENT_CHAR    "\357\277\275"
+#define UTF8_REPLACEMENT_CHAR "\357\277\275"
 
 bool UTF8Decode(std::string_view str, std::int32_t &ch);
 bool UTF8Decode(std::string_view str, std::int32_t &pos, std::int32_t &ch);
