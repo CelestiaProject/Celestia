@@ -2903,12 +2903,12 @@ msgstr "<b>离心率：</b>%L1"
 #: ../src/celestia/qt/qtinfopanel.cpp:320
 #, qt-format
 msgid "<b>Inclination:</b> %L1°"
-msgstr "<b>倾角：</b> %L1°"
+msgstr "<b>倾角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:321
 #, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
-msgstr "<b>近心点距离：</b> %L1 %2"
+msgstr "<b>近心点距离：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:323
 #, qt-format
