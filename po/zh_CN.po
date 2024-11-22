@@ -2848,7 +2848,7 @@ msgstr "<b>旋转方向：</b>%1"
 #: ../src/celestia/qt/qtinfopanel.cpp:260
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
-msgstr "<b>太阳日：</b> %L1 %2"
+msgstr "<b>太阳日：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
@@ -2884,7 +2884,7 @@ msgstr "yr"
 #: ../src/celestia/qt/qtinfopanel.cpp:304
 #, qt-format
 msgid "<b>Period:</b> %L1 %2"
-msgstr "<b>周期：</b> %L1 %2"
+msgstr "<b>周期：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:310
 msgid "AU"
