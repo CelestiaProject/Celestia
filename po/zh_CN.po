@@ -2,12 +2,12 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2023
 # LBV 2012-26 <lbv2012-26@outlook.com>, 2024
 # Levin Li <lilinfeng.app@outlook.com>, 2024
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -16,12 +16,11 @@ msgstr ""
 "POT-Creation-Date: 2024-11-21 21:29+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Levin Li <lilinfeng.app@outlook.com>, 2024\n"
-"Language-Team: Chinese (China) (https://app.transifex.com/celestia/"
-"teams/93131/zh_CN/)\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/celestia/teams/93131/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../src/celastro/date.cpp:487
@@ -886,9 +885,9 @@ msgid "Apparent diameter: %s\n"
 msgstr "视直径：%s\n"
 
 #: ../src/celestia/hud.cpp:298
-#, fuzzy, c++-format
+#, c++-format
 msgid "Dec: {:+d}° {:02d}′ {:.1f}″\n"
-msgstr "赤纬：{:+d}{} {:02d}' {:.1f}\"\n"
+msgstr "赤纬：{:+d}° {:02d}′ {:.1f}″\n"
 
 #: ../src/celestia/hud.cpp:310
 #, c++-format
@@ -989,9 +988,9 @@ msgid "Radii: {} × {} × {}\n"
 msgstr "半径：{} × {} × {}\n"
 
 #: ../src/celestia/hud.cpp:610
-#, fuzzy, c++-format
+#, c++-format
 msgid "Phase angle: {:.1f}°\n"
-msgstr "相位角：{:.1f}{}\n"
+msgstr "相位角：{:.1f}°\n"
 
 #: ../src/celestia/hud.cpp:626
 #, c++-format
@@ -1113,13 +1112,15 @@ msgstr "正在录像"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 开始/暂停    F12 停止"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "深空"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
 msgctxt "catalog"
 msgid "solar system"
@@ -1149,7 +1150,8 @@ msgstr "打开 {} 时出错\n"
 msgid "Error reading star names file {}\n"
 msgstr "读取恒星名字文件 {} 出错\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:97
 msgctxt "catalog"
 msgid "star"
@@ -1757,8 +1759,8 @@ msgstr "获取 log 文件的路径时出错。"
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr "找不到数据目录，Celestia 无法运行，可能是安装时出现了错误。"
 
 #: ../src/celestia/qt/qtappwin.cpp:349
@@ -1779,7 +1781,8 @@ msgstr "太阳系"
 msgid "Deep Sky Objects"
 msgstr "深空天体"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:379
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
 msgstr "事件查找器"
@@ -1875,29 +1878,30 @@ msgstr "新建书签"
 #: ../src/celestia/qt/qtappwin.cpp:1170
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7.0 开发快照与提交<b>%1</b>。</p><p>为 %2 bit CPU 构建"
-"<br>使用 %3 %4<br>使用 Qt 库 %5<br>NAIF kernels %7<br>AVIF images %8<br>Qt 运"
-"行时版本：%6</p><p>Copyright (C) 2001-2023 by the Celestia Development Team."
-"<br>Celestia 是一款自由软件。您可以根据自由软件基金会发布的 GNU 通用公共许可"
-"证的条款对其进行再发布和/或修改；无论是许可证的第 2 版，还是（由您选择的）任"
-"何后续版本。</p><p>官网主页：<a href=\"https://celestiaproject.space/"
-"\">https://celestiaproject.space/</a><br>官方论坛：<a href=\"https://"
-"celestiaproject.space/forum/\">https://celestiaproject.space/forum/</"
-"a><br>GitHub 代码仓库：<a href=\"https://github.com/CelestiaProject/"
-"Celestia\">https://github.com/CelestiaProject/Celestia</a></html>"
+"<html><h1>Celestia 1.7.0 开发快照与提交<b>%1</b>。</p><p>为 %2 bit CPU 构建<br>使用 %3 "
+"%4<br>使用 Qt 库 %5<br>NAIF kernels %7<br>AVIF images %8<br>Qt "
+"运行时版本：%6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia 是一款自由软件。您可以根据自由软件基金会发布的 GNU "
+"通用公共许可证的条款对其进行再发布和/或修改；无论是许可证的第 2 版，还是（由您选择的）任何后续版本。</p><p>官网主页：<a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>官方论坛：<a"
+" "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" 代码仓库：<a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1206
 msgid "Unknown compiler"
@@ -2812,12 +2816,12 @@ msgstr "Web 信息：%1"
 #: ../src/celestia/qt/qtinfopanel.cpp:202
 #, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
-msgstr "<b>赤道半径：</b> %L1 %2"
+msgstr "<b>赤道半径：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:204
 #, qt-format
 msgid "<b>Size:</b> %L1 %2"
-msgstr "<b>大小：</b> %L1 %2"
+msgstr "<b>大小：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Oblateness: "
@@ -2826,7 +2830,7 @@ msgstr "<b>扁率："
 #: ../src/celestia/qt/qtinfopanel.cpp:252
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
-msgstr "<b>自转周期：</b> %L1 %2"
+msgstr "<b>自转周期：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:255
 msgid "Prograde"
@@ -2844,7 +2848,7 @@ msgstr "<b>旋转方向：</b>%1"
 #: ../src/celestia/qt/qtinfopanel.cpp:260
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
-msgstr "<b>太阳日：</b> %L1 %2"
+msgstr "<b>太阳日：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:268
 msgid "<b>Has rings</b>"
@@ -2880,7 +2884,7 @@ msgstr "yr"
 #: ../src/celestia/qt/qtinfopanel.cpp:304
 #, qt-format
 msgid "<b>Period:</b> %L1 %2"
-msgstr "<b>周期：</b> %L1 %2"
+msgstr "<b>周期：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:310
 msgid "AU"
@@ -2889,76 +2893,76 @@ msgstr "AU"
 #: ../src/celestia/qt/qtinfopanel.cpp:318
 #, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
-msgstr "<b>半长轴：</b> %L1 %2"
+msgstr "<b>半长轴：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:319
 #, qt-format
 msgid "<b>Eccentricity:</b> %L1"
-msgstr "<b>离心率：</b> %L1"
+msgstr "<b>离心率：</b>%L1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:320
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Inclination:</b> %L1°"
-msgstr "<b>倾角：</b> %L1%2"
+msgstr "<b>倾角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:321
 #, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
-msgstr "<b>近心点距离：</b> %L1 %2"
+msgstr "<b>近心点距离：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:323
 #, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
-msgstr "<b>远心点距离：</b> %L1 %2"
+msgstr "<b>远心点距离：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:325
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Ascending node:</b> %L1°"
-msgstr "<b>升交点经度：</b> %L1%2"
+msgstr "<b>升交点经度：</b>%L1 °"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:326
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Argument of periapsis:</b> %L1°"
-msgstr "<b>近心点幅角：</b> %L1%2"
+msgstr "<b>近心点幅角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:327
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean anomaly:</b> %L1°"
-msgstr "<b>平近点角：</b> %L1%2"
+msgstr "<b>平近点角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:330
 #, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
-msgstr "<b>周期（已计算）：</b> %L1 %2"
+msgstr "<b>周期（计算值）：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:334
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1°/day"
-msgstr "<b>网格动作（已计算）：</b>%L1%2/天"
+msgstr "<b>网格动作（计算值）：</b>%L1°/天"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:357
 #: ../src/celestia/qt/qtinfopanel.cpp:379
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
-msgstr "<b>赤经：</b> %L1h %L2m %L3s"
+msgstr "<b>赤经：</b>%L1h %L2m %L3s"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:361
 #: ../src/celestia/qt/qtinfopanel.cpp:383
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Dec:</b> %L1° %L2′ %L3″"
-msgstr "<b>赤纬：</b> %L1%2 %L3' %L4\""
+msgstr "<b>赤纬：</b>%L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic longitude
 #: ../src/celestia/qt/qtinfopanel.cpp:390
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>L:</b> %L1° %L2′ %L3″"
-msgstr "<b>L：</b> %L1%2 %L3' %L4\""
+msgstr "<b>L：</b>%L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:393
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>B:</b> %L1° %L2′ %L3″"
-msgstr "<b>B：</b> %L1%2 %L3' %L4\""
+msgstr "<b>B：</b>%L1° %L2′ %L3″"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:208
 msgid "OpenGL 2.1"
@@ -3333,12 +3337,14 @@ msgid "No guide destinations were found."
 msgstr "未找到向导目的地。"
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "选择目标："
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "转到"
@@ -4058,7 +4064,8 @@ msgstr "无法保存图片文件。"
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Celestia Script (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
