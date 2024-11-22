@@ -2956,7 +2956,7 @@ msgstr "<b>赤纬：</b> %L1° %L2′ %L3″"
 #: ../src/celestia/qt/qtinfopanel.cpp:390
 #, qt-format
 msgid "<b>L:</b> %L1° %L2′ %L3″"
-msgstr "<b>L：</b> %L1° %L2′ %L3″"
+msgstr "<b>L：</b>%L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:393
