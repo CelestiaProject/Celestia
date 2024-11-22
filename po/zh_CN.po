@@ -2923,7 +2923,7 @@ msgstr "<b>升交点经度：</b>%L1 °"
 #: ../src/celestia/qt/qtinfopanel.cpp:326
 #, qt-format
 msgid "<b>Argument of periapsis:</b> %L1°"
-msgstr "<b>近心点幅角：</b> %L1°"
+msgstr "<b>近心点幅角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:327
 #, qt-format
