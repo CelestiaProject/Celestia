@@ -2944,7 +2944,7 @@ msgstr "<b>网格动作（计算值）：</b>%L1°/天"
 #: ../src/celestia/qt/qtinfopanel.cpp:379
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
-msgstr "<b>赤经：</b> %L1h %L2m %L3s"
+msgstr "<b>赤经：</b>%L1h %L2m %L3s"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:361
 #: ../src/celestia/qt/qtinfopanel.cpp:383
