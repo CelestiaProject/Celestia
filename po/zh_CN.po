@@ -2821,7 +2821,7 @@ msgstr "<b>赤道半径：</b> %L1 %2"
 #: ../src/celestia/qt/qtinfopanel.cpp:204
 #, qt-format
 msgid "<b>Size:</b> %L1 %2"
-msgstr "<b>大小：</b> %L1 %2"
+msgstr "<b>大小：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Oblateness: "
@@ -2830,7 +2830,7 @@ msgstr "<b>扁率："
 #: ../src/celestia/qt/qtinfopanel.cpp:252
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
-msgstr "<b>自转周期：</b> %L1 %2"
+msgstr "<b>自转周期：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:255
 msgid "Prograde"
