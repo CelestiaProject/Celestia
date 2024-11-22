@@ -2950,7 +2950,7 @@ msgstr "<b>赤经：</b>%L1h %L2m %L3s"
 #: ../src/celestia/qt/qtinfopanel.cpp:383
 #, qt-format
 msgid "<b>Dec:</b> %L1° %L2′ %L3″"
-msgstr "<b>赤纬：</b> %L1° %L2′ %L3″"
+msgstr "<b>赤纬：</b>%L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic longitude
 #: ../src/celestia/qt/qtinfopanel.cpp:390
