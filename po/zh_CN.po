@@ -2928,12 +2928,12 @@ msgstr "<b>近心点幅角：</b>%L1°"
 #: ../src/celestia/qt/qtinfopanel.cpp:327
 #, qt-format
 msgid "<b>Mean anomaly:</b> %L1°"
-msgstr "<b>平近点角：</b> %L1°"
+msgstr "<b>平近点角：</b>%L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:330
 #, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
-msgstr "<b>周期（已计算）：</b> %L1 %2"
+msgstr "<b>周期（已计算）：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:334
 #, qt-format
