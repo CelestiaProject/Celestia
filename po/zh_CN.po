@@ -2893,12 +2893,12 @@ msgstr "AU"
 #: ../src/celestia/qt/qtinfopanel.cpp:318
 #, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
-msgstr "<b>半长轴：</b> %L1 %2"
+msgstr "<b>半长轴：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:319
 #, qt-format
 msgid "<b>Eccentricity:</b> %L1"
-msgstr "<b>离心率：</b> %L1"
+msgstr "<b>离心率：</b>%L1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:320
 #, qt-format
