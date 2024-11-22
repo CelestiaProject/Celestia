@@ -2913,7 +2913,7 @@ msgstr "<b>近心点距离：</b>%L1 %2"
 #: ../src/celestia/qt/qtinfopanel.cpp:323
 #, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
-msgstr "<b>远心点距离：</b> %L1 %2"
+msgstr "<b>远心点距离：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:325
 #, qt-format
