@@ -2816,7 +2816,7 @@ msgstr "Web 信息：%1"
 #: ../src/celestia/qt/qtinfopanel.cpp:202
 #, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
-msgstr "<b>赤道半径：</b> %L1 %2"
+msgstr "<b>赤道半径：</b>%L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:204
 #, qt-format
