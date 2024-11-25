@@ -21,7 +21,7 @@ class LightingState;
 struct Matrices;
 class Renderer;
 struct RenderInfo;
-class RingSystem;
+struct RingSystem;
 
 namespace celestia::render
 {

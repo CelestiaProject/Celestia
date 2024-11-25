@@ -7,30 +7,35 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdlib>
+#include "body.h"
+
 #include <algorithm>
-#include <iterator>
+#include <cmath>
+#include <utility>
+
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include <celmath/mathlib.h>
 #include <celutil/gettext.h>
-#include <celutil/utf8.h>
-#include "geometry.h"
-#include "meshmanager.h"
-#include "body.h"
 #include "atmosphere.h"
 #include "frame.h"
+#include "frametree.h"
+#include "geometry.h"
+#include "location.h"
+#include "meshmanager.h"
+#include "referencemark.h"
+#include "selection.h"
+#include "star.h"
 #include "stardb.h"
 #include "timeline.h"
 #include "timelinephase.h"
-#include "frametree.h"
-#include "referencemark.h"
-#include "selection.h"
-
-using namespace Eigen;
-using namespace std;
+#include "univcoord.h"
 
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
+namespace numbers = celestia::numbers;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -61,22 +66,21 @@ Body::Body(PlanetarySystem* _system, const std::string& _name) :
     recomputeCullingRadius();
 }
 
-
 Body::~Body()
 {
     auto bodyFeaturesManager = GetBodyFeaturesManager();
     bodyFeaturesManager->removeFeatures(this);
 }
 
-
 /*! Reset body attributes to their default values. The object hierarchy is left untouched,
  *  i.e. child objects are not removed. Alternate surfaces and locations are not removed
  *  either.
  */
-void Body::setDefaultProperties()
+void
+Body::setDefaultProperties()
 {
     radius = 1.0f;
-    semiAxes = Vector3f::Ones();
+    semiAxes = Eigen::Vector3f::Ones();
     mass = 0.0f;
     density = 0.0f;
     bondAlbedo = 0.5f;
@@ -84,7 +88,7 @@ void Body::setDefaultProperties()
     reflectivity = 0.5f;
     temperature = 0.0f;
     tempDiscrepancy = 0.0f;
-    geometryOrientation = Quaternionf::Identity();
+    geometryOrientation = Eigen::Quaternionf::Identity();
     geometry = InvalidResource;
     surface = Surface(Color::White);
     auto manager = GetBodyFeaturesManager();
@@ -99,20 +103,19 @@ void Body::setDefaultProperties()
     recomputeCullingRadius();
 }
 
-
 /*! Return the list of all names (non-localized) by which this
  *  body is known.
  */
-const vector<string>& Body::getNames() const
+const std::vector<std::string>&
+Body::getNames() const
 {
     return names;
 }
 
-
 /*! Return the primary name for the body; if i18n, return the
  *  localized name of the body.
  */
-std::string
+const std::string&
 Body::getName(bool i18n) const
 {
     if (i18n && hasLocalizedName())
@@ -146,7 +149,7 @@ Body::getPath(const StarDatabase* starDB, char delimiter) const
 /*! Get the localized name for the body. If no localized name
  *  has been set, the primary name is returned.
  */
-std::string
+const std::string&
 Body::getLocalizedName() const
 {
     return hasLocalizedName() ? localizedName : names[0];
@@ -187,10 +190,10 @@ Body::setName(const std::string& name)
     }
 }
 
-
 /*! Add a new name for this body. Aliases are non localized.
  */
-void Body::addAlias(const string& alias)
+void
+Body::addAlias(const std::string& alias)
 {
     // Don't add an alias if it matches the primary name
     if (alias != names[0])
@@ -200,78 +203,76 @@ void Body::addAlias(const string& alias)
     }
 }
 
-
-PlanetarySystem* Body::getSystem() const
+PlanetarySystem*
+Body::getSystem() const
 {
     return system;
 }
 
-
-FrameTree* Body::getFrameTree() const
+FrameTree*
+Body::getFrameTree() const
 {
     return frameTree.get();
 }
 
-
-FrameTree* Body::getOrCreateFrameTree()
+FrameTree*
+Body::getOrCreateFrameTree()
 {
     if (!frameTree)
         frameTree = std::make_unique<FrameTree>(this);
     return frameTree.get();
 }
 
-
-const Timeline* Body::getTimeline() const
+const Timeline*
+Body::getTimeline() const
 {
     return timeline.get();
 }
 
-
-void Body::setTimeline(std::unique_ptr<Timeline>&& newTimeline)
+void
+Body::setTimeline(std::unique_ptr<Timeline>&& newTimeline)
 {
     timeline = std::move(newTimeline);
     markChanged();
 }
 
-
-void Body::markChanged()
+void
+Body::markChanged()
 {
     if (timeline)
         timeline->markChanged();
 }
 
-
-void Body::markUpdated()
+void
+Body::markUpdated()
 {
     if (frameTree)
         frameTree->markUpdated();
 }
 
-
-const ReferenceFrame::SharedConstPtr& Body::getOrbitFrame(double tdb) const
+const std::shared_ptr<const ReferenceFrame>&
+Body::getOrbitFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->orbitFrame();
 }
 
-
-const celestia::ephem::Orbit* Body::getOrbit(double tdb) const
+const celestia::ephem::Orbit*
+Body::getOrbit(double tdb) const
 {
     return timeline->findPhase(tdb)->orbit().get();
 }
 
-
-const ReferenceFrame::SharedConstPtr& Body::getBodyFrame(double tdb) const
+const std::shared_ptr<const ReferenceFrame>&
+Body::getBodyFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->bodyFrame();
 }
-
 
 const celestia::ephem::RotationModel*
 Body::getRotationModel(double tdb) const
 {
     return timeline->findPhase(tdb)->rotationModel().get();
 }
-
 
 /*! Get the radius of a sphere large enough to contain the primary
  *  geometry of the object: either a mesh or an ellipsoid.
@@ -284,38 +285,39 @@ Body::getRotationModel(double tdb) const
  *  such as rings, atmospheres, or reference marks; use
  *  getCullingRadius() for that.
  */
-float Body::getBoundingRadius() const
+float
+Body::getBoundingRadius() const
 {
     if (geometry == InvalidResource)
         return radius;
 
-    return radius * celestia::numbers::sqrt3_v<float>;
+    return radius * numbers::sqrt3_v<float>;
 }
-
 
 /*! Return the radius of sphere large enough to contain any geometry
  *  associated with this object: the primary geometry, comet tail,
  *  rings, atmosphere shell, cloud layers, or reference marks.
  */
-float Body::getCullingRadius() const
+float
+Body::getCullingRadius() const
 {
     return cullingRadius;
 }
 
-
-float Body::getMass() const
+float
+Body::getMass() const
 {
     return mass;
 }
 
-
-void Body::setMass(float _mass)
+void
+Body::setMass(float _mass)
 {
     mass = _mass;
 }
 
-
-float Body::getDensity() const
+float
+Body::getDensity() const
 {
     if (density > 0.0f)
         return density;
@@ -327,54 +329,54 @@ float Body::getDensity() const
     // @astro::EarthMass unit is kg
     // @radius unit km
     // so we divide density by 1e9 to have kg/m^3
-    float volume = 4.0f / 3.0f * celestia::numbers::pi_v<float> * semiAxes.prod();
+    float volume = 4.0f / 3.0f * numbers::pi_v<float> * semiAxes.prod();
     return volume == 0.0f ? 0.0f : mass * static_cast<float>(astro::EarthMass / 1e9) / volume;
 }
 
-
-void Body::setDensity(float _density)
+void
+Body::setDensity(float _density)
 {
     density = _density;
 }
 
-
-float Body::getGeomAlbedo() const
+float
+Body::getGeomAlbedo() const
 {
     return geomAlbedo;
 }
 
-
-void Body::setGeomAlbedo(float _geomAlbedo)
+void
+Body::setGeomAlbedo(float _geomAlbedo)
 {
     geomAlbedo = _geomAlbedo;
 }
 
-
-float Body::getBondAlbedo() const
+float
+Body::getBondAlbedo() const
 {
     return bondAlbedo;
 }
 
-
-void Body::setBondAlbedo(float _bondAlbedo)
+void
+Body::setBondAlbedo(float _bondAlbedo)
 {
     bondAlbedo = _bondAlbedo;
 }
 
-
-float Body::getReflectivity() const
+float
+Body::getReflectivity() const
 {
     return reflectivity;
 }
 
-
-void Body::setReflectivity(float _reflectivity)
+void
+Body::setReflectivity(float _reflectivity)
 {
     reflectivity = _reflectivity;
 }
 
-
-float Body::getTemperature(double time) const
+float
+Body::getTemperature(double time) const
 {
     if (temperature > 0)
         return temperature;
@@ -390,10 +392,10 @@ float Body::getTemperature(double time) const
     float temp = 0.0f;
     if (sun->getVisibility()) // the sun is a star
     {
-        float distFromSun = (float)getAstrocentricPosition(time).norm();
+        auto distFromSun = static_cast<float>(getAstrocentricPosition(time).norm());
         temp = sun->getTemperature() *
-               pow(1.0f - getBondAlbedo(), 0.25f) *
-               sqrt(sun->getRadius() / (2.0f * distFromSun));
+               std::pow(1.0f - getBondAlbedo(), 0.25f) *
+               std::sqrt(sun->getRadius() / (2.0f * distFromSun));
     }
     else // the sun is a barycenter
     {
@@ -405,49 +407,49 @@ float Body::getTemperature(double time) const
         float flux = 0.0f;
         for (const auto *s : orbitingStars)
         {
-            float distFromSun = (float)s->getPosition(time).distanceFromKm(bodyPos);
-            float lum = math::square(s->getRadius()) * pow(s->getTemperature(), 4.0f);
+            auto distFromSun = static_cast<float>(s->getPosition(time).distanceFromKm(bodyPos));
+            float lum = math::square(s->getRadius() * math::square(s->getTemperature()));
             flux += lum / math::square(distFromSun);
         }
-        temp = std::pow((1.0f - getBondAlbedo()) * flux, 0.25f) * (celestia::numbers::sqrt2_v<float> * 0.5f);
+        temp = std::pow((1.0f - getBondAlbedo()) * flux, 0.25f) * (numbers::sqrt2_v<float> * 0.5f);
     }
     return getTempDiscrepancy() + temp;
 }
 
-
-void Body::setTemperature(float _temperature)
+void
+Body::setTemperature(float _temperature)
 {
     temperature = _temperature;
 }
 
-
-float Body::getTempDiscrepancy() const
+float
+Body::getTempDiscrepancy() const
 {
     return tempDiscrepancy;
 }
 
-
-void Body::setTempDiscrepancy(float _tempDiscrepancy)
+void
+Body::setTempDiscrepancy(float _tempDiscrepancy)
 {
     tempDiscrepancy = _tempDiscrepancy;
 }
 
-
-Quaternionf Body::getGeometryOrientation() const
+Eigen::Quaternionf
+Body::getGeometryOrientation() const
 {
     return geometryOrientation;
 }
 
-
-void Body::setGeometryOrientation(const Quaternionf& orientation)
+void
+Body::setGeometryOrientation(const Eigen::Quaternionf& orientation)
 {
     geometryOrientation = orientation;
 }
 
-
 /*! Set the semiaxes of a body.
  */
-void Body::setSemiAxes(const Vector3f& _semiAxes)
+void
+Body::setSemiAxes(const Eigen::Vector3f& _semiAxes)
 {
     semiAxes = _semiAxes;
 
@@ -456,14 +458,13 @@ void Body::setSemiAxes(const Vector3f& _semiAxes)
     recomputeCullingRadius();
 }
 
-
 /*! Retrieve the body's semiaxes
  */
-Vector3f Body::getSemiAxes() const
+const Eigen::Vector3f&
+Body::getSemiAxes() const
 {
     return semiAxes;
 }
-
 
 /*! Get the radius of the body. For a spherical body, this is simply
  *  the sphere's radius. For an ellipsoidal body, the radius is the
@@ -474,70 +475,72 @@ Vector3f Body::getSemiAxes() const
  *  To obtain the radius of a sphere that will definitely enclose the
  *  body, call getBoundingRadius() instead.
  */
-float Body::getRadius() const
+float
+Body::getRadius() const
 {
     return radius;
 }
 
-
 /*! Return true if the body is a perfect sphere.
 */
-bool Body::isSphere() const
+bool
+Body::isSphere() const
 {
     return (geometry == InvalidResource) &&
            (semiAxes.x() == semiAxes.y()) &&
            (semiAxes.x() == semiAxes.z());
 }
 
-
 /*! Return true if the body is ellipsoidal, with geometry determined
  *  completely by its semiaxes rather than a triangle based model.
  */
-bool Body::isEllipsoid() const
+bool
+Body::isEllipsoid() const
 {
     return geometry == InvalidResource;
 }
 
-
-const Surface& Body::getSurface() const
+const
+Surface& Body::getSurface() const
 {
     return surface;
 }
 
-
-Surface& Body::getSurface()
+Surface&
+Body::getSurface()
 {
     return surface;
 }
 
-
-void Body::setSurface(const Surface& surf)
+void
+Body::setSurface(const Surface& surf)
 {
     surface = surf;
 }
 
-
-void Body::setGeometry(ResourceHandle _geometry)
+void
+Body::setGeometry(ResourceHandle _geometry)
 {
     geometry = _geometry;
 }
 
-
 /*! Set the scale factor for geometry; this is only used with unnormalized meshes.
  *  When a mesh is normalized, the effective scale factor is the radius.
  */
-void Body::setGeometryScale(float scale)
+void
+Body::setGeometryScale(float scale)
 {
     geometryScale = scale;
 }
 
-
-PlanetarySystem* Body::getSatellites() const
+PlanetarySystem*
+Body::getSatellites() const
 {
     return satellites.get();
 }
 
-PlanetarySystem* Body::getOrCreateSatellites()
+PlanetarySystem*
+Body::getOrCreateSatellites()
 {
     if (satellites == nullptr)
         satellites = std::make_unique<PlanetarySystem>(this);
@@ -558,12 +561,13 @@ PlanetarySystem* Body::getOrCreateSatellites()
  *  getAstrocentricPosition() should be used instead of the more
  *  general getPosition().
  */
-UniversalCoord Body::getPosition(double tdb) const
+UniversalCoord
+Body::getPosition(double tdb) const
 {
-    Vector3d position = Vector3d::Zero();
+    Eigen::Vector3d position = Eigen::Vector3d::Zero();
 
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    Vector3d p = phase->orbit()->positionAtTime(tdb);
+    Eigen::Vector3d p = phase->orbit()->positionAtTime(tdb);
     const ReferenceFrame* frame = phase->orbitFrame().get();
 
     while (frame->getCenter().getType() == SelectionType::Body)
@@ -582,44 +586,44 @@ UniversalCoord Body::getPosition(double tdb) const
         return frame->getCenter().getPosition(tdb).offsetKm(position);
 }
 
-
 /*! Get the orientation of the body in the universal coordinate system.
  */
-Quaterniond Body::getOrientation(double tdb) const
+Eigen::Quaterniond
+Body::getOrientation(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
     return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
-
 /*! Get the velocity of the body in the universal frame.
  */
-Vector3d Body::getVelocity(double tdb) const
+Eigen::Vector3d
+Body::getVelocity(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
 
     const ReferenceFrame* orbitFrame = phase->orbitFrame().get();
 
-    Vector3d v = phase->orbit()->velocityAtTime(tdb);
+    Eigen::Vector3d v = phase->orbit()->velocityAtTime(tdb);
     v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
     if (!orbitFrame->isInertial())
     {
-        Vector3d r = getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
+        Eigen::Vector3d r = getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
         v += orbitFrame->getAngularVelocity(tdb).cross(r);
     }
 
     return v;
 }
 
-
 /*! Get the angular velocity of the body in the universal frame.
  */
-Vector3d Body::getAngularVelocity(double tdb) const
+Eigen::Vector3d
+Body::getAngularVelocity(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
 
-    Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
+    Eigen::Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
 
     const ReferenceFrame* bodyFrame = phase->bodyFrame().get();
     v = bodyFrame->getOrientation(tdb).conjugate() * v;
@@ -631,99 +635,92 @@ Vector3d Body::getAngularVelocity(double tdb) const
     return v;
 }
 
-
 /*! Get the transformation which converts body coordinates into
  *  astrocentric coordinates. Some clarification on the meaning
  *  of 'astrocentric': the position of every solar system body
  *  is ultimately defined with respect to some star or star
  *  system barycenter.
  */
-Matrix4d Body::getLocalToAstrocentric(double tdb) const
+Eigen::Matrix4d
+Body::getLocalToAstrocentric(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
-    return Eigen::Transform<double, 3, Affine>(Translation3d(p)).matrix();
+    Eigen::Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+    return Eigen::Transform<double, 3, Eigen::Affine>(Eigen::Translation3d(p)).matrix();
 }
-
 
 /*! Get the position of the center of the body in astrocentric ecliptic coordinates.
  */
-Vector3d Body::getAstrocentricPosition(double tdb) const
+Eigen::Vector3d
+Body::getAstrocentricPosition(double tdb) const
 {
     // TODO: Switch the iterative method used in getPosition
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
     return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
 }
 
-
 /*! Get a rotation that converts from the ecliptic frame to the body frame.
  */
-Quaterniond Body::getEclipticToFrame(double tdb) const
+Eigen::Quaterniond
+Body::getEclipticToFrame(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
     return phase->bodyFrame()->getOrientation(tdb);
 }
 
-
 /*! Get a rotation that converts from the ecliptic frame to the body's
  *  mean equatorial frame.
  */
-Quaterniond Body::getEclipticToEquatorial(double tdb) const
+Eigen::Quaterniond
+Body::getEclipticToEquatorial(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
     return phase->rotationModel()->equatorOrientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
-
-/*! Get a rotation that converts from the ecliptic frame to this
- *  objects's body fixed frame.
- */
-Quaterniond Body::getEclipticToBodyFixed(double tdb) const
-{
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
-}
-
-
 // The body-fixed coordinate system has an origin at the center of the
 // body, y-axis parallel to the rotation axis, x-axis through the prime
 // meridian, and z-axis at a right angle the xy plane.
-Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
+Eigen::Quaterniond
+Body::getEquatorialToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb).get();
     return phase->rotationModel()->spin(tdb);
 }
 
-
 /*! Get a transformation to convert from the object's body fixed frame
  *  to the astrocentric ecliptic frame.
  */
-Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
+Eigen::Matrix4d
+Body::getBodyFixedToAstrocentric(double tdb) const
 {
-    Matrix4d m = Eigen::Affine3d(getEquatorialToBodyFixed(tdb)).matrix();
+    Eigen::Matrix4d m = Eigen::Affine3d(getEquatorialToBodyFixed(tdb)).matrix();
     return m * getLocalToAstrocentric(tdb);
 }
 
-Vector3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
+Eigen::Vector3d
+Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
-
     using celestia::numbers::pi;
-    double phi = -math::degToRad(lat) + pi * 0.5;
-    double theta = math::degToRad(lon) - pi;
+    double sphi;
+    double cphi;
+    math::sincos(-math::degToRad(lat) + pi * 0.5, sphi, cphi);
+    double stheta;
+    double ctheta;
+    math::sincos(math::degToRad(lon) - pi, stheta, ctheta);
 
-    Vector3d pos(cos(theta) * sin(phi),
-                 cos(phi),
-                 -sin(theta) * sin(phi));
+    Eigen::Vector3d pos(ctheta * sphi,
+                        cphi,
+                        -stheta * sphi);
 
     return pos * (getRadius() + alt);
 }
 
-
-Vector3d Body::planetocentricToCartesian(const Vector3d& lonLatAlt) const
+Eigen::Vector3d
+Body::planetocentricToCartesian(const Eigen::Vector3d& lonLatAlt) const
 {
     return planetocentricToCartesian(lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z());
 }
-
 
 /*! Convert planetocentric coordinates to geodetic ones.
  *
@@ -735,7 +732,8 @@ Vector3d Body::planetocentricToCartesian(const Vector3d& lonLatAlt) const
  *
  * @return geodetic coordinates
  */
-Vector3d Body::geodeticToCartesian(double lon, double lat, double alt) const
+Eigen::Vector3d
+Body::geodeticToCartesian(double lon, double lat, double alt) const
 {
     using celestia::numbers::pi;
     double phi = math::degToRad(lat);
@@ -756,44 +754,44 @@ Vector3d Body::geodeticToCartesian(double lon, double lat, double alt) const
     return { xg, zg, -yg }; // convert to Celestia coordinates
 }
 
-
-Vector3d Body::geodeticToCartesian(const Vector3d& lonLatAlt) const
+Eigen::Vector3d
+Body::geodeticToCartesian(const Eigen::Vector3d& lonLatAlt) const
 {
     return geodeticToCartesian(lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z());
 }
 
-
 /*! Convert cartesian body-fixed coordinates to spherical planetocentric
  *  coordinates.
  */
-Vector3d Body::cartesianToPlanetocentric(const Vector3d& v) const
+Eigen::Vector3d
+Body::cartesianToPlanetocentric(const Eigen::Vector3d& v) const
 {
-    Vector3d w = v.normalized();
+    Eigen::Vector3d w = v.normalized();
 
-    double lat = celestia::numbers::pi / 2.0 - acos(w.y());
-    double lon = atan2(w.z(), -w.x());
+    double lat = numbers::pi / 2.0 - std::acos(w.y());
+    double lon = std::atan2(w.z(), -w.x());
 
-    return Vector3d(lon, lat, v.norm() - getRadius());
+    return Eigen::Vector3d(lon, lat, v.norm() - getRadius());
 }
-
 
 /*! Convert body-centered ecliptic coordinates to spherical planetocentric
  *  coordinates.
  */
-Vector3d Body::eclipticToPlanetocentric(const Vector3d& ecl, double tdb) const
+Eigen::Vector3d
+Body::eclipticToPlanetocentric(const Eigen::Vector3d& ecl, double tdb) const
 {
-    Vector3d bf = getEclipticToBodyFixed(tdb) * ecl;
+    Eigen::Vector3d bf = getEclipticToBodyFixed(tdb) * ecl;
     return cartesianToPlanetocentric(bf);
 }
 
-
-bool Body::extant(double t) const
+bool
+Body::extant(double t) const
 {
     return timeline->includes(t);
 }
 
-
-void Body::getLifespan(double& begin, double& end) const
+void
+Body::getLifespan(double& begin, double& end) const
 {
     begin = timeline->startTime();
     end = timeline->endTime();
@@ -811,15 +809,16 @@ Body::isSecondaryIlluminator() const
     return util::is_set(classification, CLASSES_SECONDARY_ILLUMINATOR);
 }
 
-float Body::getLuminosity(const Star& sun,
-                          float distanceFromSun) const
+float
+Body::getLuminosity(const Star& sun,
+                    float distanceFromSun) const
 {
     return getLuminosity(sun.getLuminosity(), distanceFromSun);
 }
 
-
-float Body::getLuminosity(float sunLuminosity,
-                          float distanceFromSun) const
+float
+Body::getLuminosity(float sunLuminosity,
+                    float distanceFromSun) const
 {
     // Compute the total power of the star in Watts
     double power = astro::SOLAR_POWER * sunLuminosity;
@@ -836,28 +835,28 @@ float Body::getLuminosity(float sunLuminosity,
     double reflectedEnergy = incidentEnergy * getReflectivity();
 
     // Compute the luminosity (i.e. power relative to solar power)
-    return (float) (reflectedEnergy / astro::SOLAR_POWER);
+    return static_cast<float>(reflectedEnergy / astro::SOLAR_POWER);
 }
-
 
 /*! Get the apparent magnitude of the body, neglecting the phase (as if
  *  the body was at opposition.
  */
-float Body::getApparentMagnitude(const Star& sun,
-                                 float distanceFromSun,
-                                 float distanceFromViewer) const
+float
+Body::getApparentMagnitude(const Star& sun,
+                           float distanceFromSun,
+                           float distanceFromViewer) const
 {
     return astro::lumToAppMag(getLuminosity(sun, distanceFromSun),
                               astro::kilometersToLightYears(distanceFromViewer));
 }
 
-
 /*! Get the apparent magnitude of the body, neglecting the phase (as if
  *  the body was at opposition.
  */
-float Body::getApparentMagnitude(float sunLuminosity,
-                                 float distanceFromSun,
-                                 float distanceFromViewer) const
+float
+Body::getApparentMagnitude(float sunLuminosity,
+                           float distanceFromSun,
+                           float distanceFromViewer) const
 {
     return astro::lumToAppMag(getLuminosity(sunLuminosity, distanceFromSun),
                               astro::kilometersToLightYears(distanceFromViewer));
@@ -865,29 +864,31 @@ float Body::getApparentMagnitude(float sunLuminosity,
 
 /*! Get the apparent magnitude of the body, corrected for its phase.
  */
-float Body::getApparentMagnitude(const Star& sun,
-                                 const Vector3d& sunPosition,
-                                 const Vector3d& viewerPosition) const
+float
+Body::getApparentMagnitude(const Star& sun,
+                           const Eigen::Vector3d& sunPosition,
+                           const Eigen::Vector3d& viewerPosition) const
 {
     return getApparentMagnitude(sun.getLuminosity(),
                                 sunPosition,
                                 viewerPosition);
 }
 
-
 /*! Get the apparent magnitude of the body, corrected for its phase.
  */
-float Body::getApparentMagnitude(float sunLuminosity,
-                                 const Vector3d& sunPosition,
-                                 const Vector3d& viewerPosition) const
+float
+Body::getApparentMagnitude(float sunLuminosity,
+                           const Eigen::Vector3d& sunPosition,
+                           const Eigen::Vector3d& viewerPosition) const
 {
     double distanceToViewer = viewerPosition.norm();
     double distanceToSun = sunPosition.norm();
-    float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
+    auto illuminatedFraction = static_cast<float>(1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun))
+                             * 0.5f;
 
-    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
+    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction,
+                              static_cast<float>(astro::kilometersToLightYears(distanceToViewer)));
 }
-
 
 BodyClassification
 Body::getClassification() const
@@ -902,7 +903,6 @@ Body::setClassification(BodyClassification _classification)
     recomputeCullingRadius();
     markChanged();
 }
-
 
 /*! Return the effective classification of this body used when rendering
  *  orbits. Normally, this is just the classification of the object, but
@@ -935,20 +935,22 @@ Body::getOrbitClassification() const
     return BodyClassification::Invisible;
 }
 
-
-const string& Body::getInfoURL() const
+const std::string&
+Body::getInfoURL() const
 {
     return infoURL;
 }
 
-void Body::setInfoURL(string&& _infoURL)
+void
+Body::setInfoURL(std::string&& _infoURL)
 {
     infoURL = std::move(_infoURL);
 }
 
 /*! Sets whether or not the object is visible.
  */
-void Body::setVisible(bool _visible)
+void
+Body::setVisible(bool _visible)
 {
     visible = _visible;
 }
@@ -983,10 +985,10 @@ Body::recomputeCullingRadius()
 
     const BodyFeaturesManager* manager = GetBodyFeaturesManager();
     if (auto atmosphere = manager->getAtmosphere(this); atmosphere != nullptr)
-        r += max(atmosphere->height, atmosphere->cloudHeight);
+        r += std::max(atmosphere->height, atmosphere->cloudHeight);
 
     if (auto rings = manager->getRings(this); rings != nullptr)
-        r = max(r, rings->outerRadius);
+        r = std::max(r, rings->outerRadius);
 
     manager->processReferenceMarks(this,
                                    [&r](const ReferenceMark* rm)
@@ -995,7 +997,7 @@ Body::recomputeCullingRadius()
                                    });
 
     if (classification == BodyClassification::Comet)
-        r = max(r, astro::AUtoKilometers(1.0f));
+        r = std::max(r, astro::AUtoKilometers(1.0f));
 
     if (r != cullingRadius)
     {
@@ -1025,12 +1027,14 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
 {
 }
 
+PlanetarySystem::~PlanetarySystem() = default;
+
 /*! Add a new alias for an object. If an object with the specified
  *  alias already exists in the planetary system, the old entry will
  *  be replaced.
  */
 void
-PlanetarySystem::addAlias(Body* body, const string& alias)
+PlanetarySystem::addAlias(Body* body, const std::string& alias)
 {
     assert(body->getSystem() == this);
 
@@ -1134,7 +1138,7 @@ PlanetarySystem::getCompletion(std::vector<celestia::engine::Completion>& comple
     // Search through all names in this planetary system.
     for (const auto& index : objectIndex)
     {
-        const string& alias = index.first;
+        const std::string& alias = index.first;
 
         if (UTF8StartsWith(alias, _name))
         {
@@ -1159,6 +1163,8 @@ PlanetarySystem::getCompletion(std::vector<celestia::engine::Completion>& comple
             satelliteSystem->getCompletion(completion, _name);
     }
 }
+
+BodyLocations::~BodyLocations() = default;
 
 RingSystem*
 BodyFeaturesManager::getRings(const Body* body) const
@@ -1404,7 +1410,7 @@ BodyFeaturesManager::computeLocations(const Body* body)
     for (const auto& location : bodyLocations.locations)
     {
         Location* loc = location.get();
-        Vector3f v = loc->getPosition();
+        Eigen::Vector3f v = loc->getPosition();
         float alt = v.norm() - radius;
         if (alt > 0.1f * radius) // assume we don't have locations with height > 0.1*radius
             continue;

@@ -10,7 +10,8 @@
 #pragma once
 
 #include <string>
-#include "texture.h"
+
+#include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 
 enum
@@ -20,6 +21,7 @@ enum
     hires  = 2
 };
 
+class Texture;
 
 class MultiResTexture
 {

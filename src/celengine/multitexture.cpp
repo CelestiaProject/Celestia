@@ -8,10 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include "multitexture.h"
+
 #include "texmanager.h"
-
-using namespace std;
-
 
 MultiResTexture::MultiResTexture()
 {

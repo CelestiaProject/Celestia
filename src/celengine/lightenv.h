@@ -20,7 +20,7 @@
 constexpr unsigned int MaxLights = 8;
 
 class Body;
-class RingSystem;
+struct RingSystem;
 
 class DirectionalLight
 {

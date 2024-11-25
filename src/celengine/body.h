@@ -9,45 +9,57 @@
 
 #pragma once
 
-#include <celengine/astroobj.h>
-#include <celengine/completion.h>
-#include <celengine/surface.h>
-#include <celengine/star.h>
-#include <celengine/location.h>
-#include <celengine/timeline.h>
-#include <celephem/rotation.h>
-#include <celephem/orbit.h>
-#include <celutil/flag.h>
-#include <celutil/ranges.h>
-#include <celutil/utf8.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <cassert>
+#include <cstdint>
+#include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
-#include <vector>
-#include <map>
-#include <memory>
-#include <list>
-#include <functional>
 #include <unordered_map>
-#include <utility>
+#include <vector>
 
-class Selection;
-class ReferenceFrame;
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+#include <celutil/color.h>
+#include <celutil/flag.h>
+#include <celutil/ranges.h>
+#include <celutil/reshandle.h>
+#include <celutil/utf8.h>
+#include "multitexture.h"
+#include "surface.h"
+
+class Atmosphere;
 class Body;
 class FrameTree;
+class Location;
+class ReferenceFrame;
 class ReferenceMark;
-class Atmosphere;
+class Star;
 class StarDatabase;
+class Timeline;
+class UniversalCoord;
 
-class PlanetarySystem
+namespace celestia
+{
+namespace engine
+{
+class Completion;
+} // end namespace celestia::engine
+
+namespace ephem
+{
+class Orbit;
+class RotationModel;
+} // end namespace celestia::ephem
+} // end namespace celestia
+
+class PlanetarySystem //NOSONAR
 {
 public:
     explicit PlanetarySystem(Body* _primary);
     explicit PlanetarySystem(Star* _star);
-    ~PlanetarySystem() = default;
+    ~PlanetarySystem();
 
     Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
@@ -79,9 +91,8 @@ private:
     ObjectIndex objectIndex;  // index of bodies by name
 };
 
-class RingSystem
+struct RingSystem
 {
-public:
     float innerRadius;
     float outerRadius;
     Color color;
@@ -200,9 +211,9 @@ public:
 
     PlanetarySystem* getSystem() const;
     const std::vector<std::string>& getNames() const;
-    std::string getName(bool i18n = false) const;
+    const std::string& getName(bool i18n = false) const;
     std::string getPath(const StarDatabase*, char delimiter = '/') const;
-    std::string getLocalizedName() const;
+    const std::string& getLocalizedName() const;
     bool hasLocalizedName() const;
     void addAlias(const std::string& alias);
 
@@ -212,14 +223,14 @@ public:
     FrameTree* getFrameTree() const;
     FrameTree* getOrCreateFrameTree();
 
-    const ReferenceFrame::SharedConstPtr& getOrbitFrame(double tdb) const;
+    const std::shared_ptr<const ReferenceFrame>& getOrbitFrame(double tdb) const;
     const celestia::ephem::Orbit* getOrbit(double tdb) const;
-    const ReferenceFrame::SharedConstPtr& getBodyFrame(double tdb) const;
+    const std::shared_ptr<const ReferenceFrame>& getBodyFrame(double tdb) const;
     const celestia::ephem::RotationModel* getRotationModel(double tdb) const;
 
     // Size methods
     void setSemiAxes(const Eigen::Vector3f&);
-    Eigen::Vector3f getSemiAxes() const;
+    const Eigen::Vector3f& getSemiAxes() const;
     float getRadius() const;
 
     bool isSphere() const;
@@ -292,7 +303,10 @@ public:
     Eigen::Quaterniond getEquatorialToBodyFixed(double) const;
     Eigen::Quaterniond getEclipticToFrame(double) const;
     Eigen::Quaterniond getEclipticToEquatorial(double) const;
-    Eigen::Quaterniond getEclipticToBodyFixed(double) const;
+    /*! Get a rotation that converts from the ecliptic frame to this
+    *  objects's body fixed frame.
+    */
+    inline Eigen::Quaterniond getEclipticToBodyFixed(double tdb) const { return getOrientation(tdb); }
     Eigen::Matrix4d getBodyFixedToAstrocentric(double) const;
 
     Eigen::Vector3d planetocentricToCartesian(double lon, double lat, double alt) const;
@@ -381,8 +395,11 @@ private:
     friend class BodyFeaturesManager;
 };
 
-struct BodyLocations
+struct BodyLocations //NOSONAR
 {
+    BodyLocations() = default;
+    ~BodyLocations();
+
     std::vector<std::unique_ptr<Location>> locations;
     bool locationsComputed;
 };
