@@ -302,14 +302,13 @@ jobs:
     steps:
     - name: 'Install dependencies'
       run: |
-        brew install pkg-config \
-                     ninja \
+        brew install ninja \
                      eigen \
                      ffmpeg \
                      boost \
                      cspice \
                      fmt \
-                     jpeg \
+                     jpeg-turbo \
                      gettext \
                      gperf \
                      libpng \
