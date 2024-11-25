@@ -17,6 +17,7 @@
 #include <cmath>
 
 #include <celastro/date.h>
+#include <celephem/rotation.h>
 #include <celmath/geomutil.h>
 #include <celutil/r128.h>
 #include "body.h"

@@ -14,19 +14,19 @@
 
 #include <memory>
 #include <vector>
-#include <cstddef>
+
 #include "body.h"
-#include "frame.h"
-#include "timelinephase.h"
 
+class ReferenceFrame;
 class Star;
+class TimelinePhase;
 
-class FrameTree
+class FrameTree //NOSONAR
 {
 public:
     explicit FrameTree(Star*);
     explicit FrameTree(Body*);
-    ~FrameTree() = default;
+    ~FrameTree();
 
     /*! Return the star that this tree is associated with; it will be
      *  nullptr for frame trees associated with solar system bodies.
@@ -36,10 +36,10 @@ public:
         return starParent;
     }
 
-    const ReferenceFrame::SharedConstPtr &getDefaultReferenceFrame() const;
+    const std::shared_ptr<const ReferenceFrame>& getDefaultReferenceFrame() const;
 
-    void addChild(const TimelinePhase::SharedConstPtr &phase);
-    void removeChild(const TimelinePhase::SharedConstPtr &phase);
+    void addChild(const std::shared_ptr<const TimelinePhase>& phase);
+    void removeChild(const std::shared_ptr<const TimelinePhase>& phase);
     const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;
 
@@ -89,15 +89,15 @@ public:
     }
 
 private:
-    Star* starParent;
-    Body* bodyParent;
-    std::vector<TimelinePhase::SharedConstPtr> children;
+    Star* starParent{ nullptr };
+    Body* bodyParent{ nullptr };
+    std::vector<std::shared_ptr<const TimelinePhase>> children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };
     bool m_containsSecondaryIlluminators{ false };
-    bool m_changed{ false };
+    bool m_changed{ true };
     BodyClassification m_childClassMask{ BodyClassification::EmptyMask };
 
-    ReferenceFrame::SharedConstPtr defaultFrame;
+    std::shared_ptr<const ReferenceFrame> defaultFrame;
 };

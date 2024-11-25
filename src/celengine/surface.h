@@ -9,10 +9,11 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
 #include "multitexture.h"
-
 
 class Surface
 {
@@ -42,7 +43,7 @@ class Surface
         ApplyOverlay         = 0x200,
     };
 
-    uint32_t appearanceFlags;
+    std::uint32_t appearanceFlags;
     Color color;
     Color specularColor;
     float specularPower;

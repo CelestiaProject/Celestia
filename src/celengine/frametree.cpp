@@ -10,15 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "frametree.h"
+
 #include <algorithm>
-#include <cassert>
-#include "celengine/frametree.h"
-#include "celengine/timeline.h"
-#include "celengine/timelinephase.h"
-#include "celengine/frame.h"
-#include <celengine/star.h>
-#include <celengine/location.h>
-#include <celengine/deepskyobj.h>
+
+#include <celephem/orbit.h>
+#include "frame.h"
+#include "timelinephase.h"
 
 /* A FrameTree is hierarchy of solar system bodies organized according to
  * the relationship of their reference frames. An object will appear in as
@@ -40,42 +38,35 @@
  * object will all cause the tree to be marked as changed.
  */
 
-using namespace std;
-
 /*! Create a frame tree associated with a star.
  */
 FrameTree::FrameTree(Star* star) :
     starParent(star),
-    bodyParent(nullptr),
-    m_changed(true),
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
-    defaultFrame(new J2000EclipticFrame(Selection(star)))
+    defaultFrame(std::make_shared<J2000EclipticFrame>(star))
 {
 }
-
 
 /*! Create a frame tree associated with a planet or other solar system body.
  */
 FrameTree::FrameTree(Body* body) :
-    starParent(nullptr),
     bodyParent(body),
-    m_changed(true),
     // Default frame for a solar system body is the mean equatorial frame of the body.
-    defaultFrame(new BodyMeanEquatorFrame(Selection(body), Selection(body)))
+    defaultFrame(std::make_shared<BodyMeanEquatorFrame>(body, body))
 {
 }
 
+FrameTree::~FrameTree() = default;
 
 /*! Return the default reference frame for the object a frame tree is associated
  *  with.
  */
-const ReferenceFrame::SharedConstPtr&
+const std::shared_ptr<const ReferenceFrame>&
 FrameTree::getDefaultReferenceFrame() const
 {
     return defaultFrame;
 }
-
 
 /*! Mark this node of the frame hierarchy as changed. The changed flag
  *  is propagated up toward the root of the tree.
@@ -90,7 +81,6 @@ FrameTree::markChanged()
             bodyParent->markChanged();
     }
 }
-
 
 /*! Mark this node of the frame hierarchy as updated. The changed flag
  *  is marked false in this node and in all child nodes that
@@ -107,7 +97,6 @@ FrameTree::markUpdated()
     }
 }
 
-
 /*! Recompute the bounding sphere for this tree and all subtrees marked
  *  as having changed. The bounding sphere is large enough to accommodate
  *  the orbits (and radii) of all child bodies. This method also recomputes
@@ -117,61 +106,57 @@ FrameTree::markUpdated()
 void
 FrameTree::recomputeBoundingSphere()
 {
-    if (m_changed)
+    if (!m_changed)
+        return;
+
+    m_boundingSphereRadius = 0.0;
+    m_maxChildRadius = 0.0;
+    m_containsSecondaryIlluminators = false;
+    m_childClassMask = BodyClassification::EmptyMask;
+
+    for (const auto &phase : children)
     {
-        m_boundingSphereRadius = 0.0;
-        m_maxChildRadius = 0.0;
-        m_containsSecondaryIlluminators = false;
-        m_childClassMask = BodyClassification::EmptyMask;
+        double bodyRadius = phase->body()->getRadius();
+        double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();
+        m_maxChildRadius = std::max(m_maxChildRadius, bodyRadius);
+        m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || phase->body()->isSecondaryIlluminator();
+        m_childClassMask |= phase->body()->getClassification();
 
-        for (const auto &phase : children)
+        if (FrameTree* tree = phase->body()->getFrameTree(); tree != nullptr)
         {
-            double bodyRadius = phase->body()->getRadius();
-            double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();
-            m_maxChildRadius = max(m_maxChildRadius, bodyRadius);
-            m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || phase->body()->isSecondaryIlluminator();
-            m_childClassMask |= phase->body()->getClassification();
-
-            FrameTree* tree = phase->body()->getFrameTree();
-            if (tree != nullptr)
-            {
-                tree->recomputeBoundingSphere();
-                r += tree->m_boundingSphereRadius;
-                m_maxChildRadius = max(m_maxChildRadius, tree->m_maxChildRadius);
-                m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || tree->containsSecondaryIlluminators();
-                m_childClassMask |= tree->childClassMask();
-            }
-
-            m_boundingSphereRadius = max(m_boundingSphereRadius, r);
+            tree->recomputeBoundingSphere();
+            r += tree->m_boundingSphereRadius;
+            m_maxChildRadius = std::max(m_maxChildRadius, tree->m_maxChildRadius);
+            m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || tree->containsSecondaryIlluminators();
+            m_childClassMask |= tree->childClassMask();
         }
+
+        m_boundingSphereRadius = std::max(m_boundingSphereRadius, r);
     }
 }
-
 
 /*! Add a new phase to this tree.
  */
 void
-FrameTree::addChild(const TimelinePhase::SharedConstPtr &phase)
+FrameTree::addChild(const std::shared_ptr<const TimelinePhase>& phase)
 {
     children.push_back(phase);
     markChanged();
 }
 
-
 /*! Remove a phase from the tree. This method does nothing if the specified
  *  phase doesn't exist in the tree.
  */
 void
-FrameTree::removeChild(const TimelinePhase::SharedConstPtr &phase)
+FrameTree::removeChild(const std::shared_ptr<const TimelinePhase>& phase)
 {
-    auto iter = find(children.begin(), children.end(), phase);
+    auto iter = std::find(children.begin(), children.end(), phase);
     if (iter != children.end())
     {
         children.erase(iter);
         markChanged();
     }
 }
-
 
 /*! Return the child at the specified index. */
 const TimelinePhase*
@@ -180,10 +165,9 @@ FrameTree::getChild(unsigned int n) const
     return children[n].get();
 }
 
-
 /*! Get the number of immediate children of this tree. */
 unsigned int
 FrameTree::childCount() const
 {
-    return children.size();
+    return static_cast<unsigned int>(children.size());
 }

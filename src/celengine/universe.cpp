@@ -18,6 +18,7 @@
 #include <utility>
 
 #include <celcompat/numbers.h>
+#include <celephem/orbit.h>
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
 #include <celmath/ray.h>

@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <vector>
 #include <celcompat/numbers.h>
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
@@ -23,6 +25,7 @@
 #include "render.h"
 #include "selection.h"
 #include "shadermanager.h"
+#include "timeline.h"
 #include "timelinephase.h"
 
 using celestia::render::LineRenderer;

@@ -36,6 +36,7 @@
 #include <celengine/star.h>
 #include <celengine/textlayout.h>
 #include <celengine/universe.h>
+#include <celephem/rotation.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celutil/flag.h>

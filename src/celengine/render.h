@@ -28,6 +28,7 @@
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
 #include <celengine/textlayout.h>
+#include <celimage/pixelformat.h>
 #include <celrender/rendererfwd.h>
 
 class RendererWatcher;

@@ -22,6 +22,7 @@
 #include <celmath/solve.h>
 #include <celmath/sphere.h>
 #include "body.h"
+#include "frame.h"
 #include "frametree.h"
 #include "location.h"
 #include "star.h"

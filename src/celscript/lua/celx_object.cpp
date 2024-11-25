@@ -13,12 +13,16 @@
 #include <iostream>
 
 #include <celengine/atmosphere.h>
-#include <celengine/body.h>
-#include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
-#include <celengine/visibleregion.h>
+#include <celengine/body.h>
+#include <celengine/location.h>
 #include <celengine/planetgrid.h>
 #include <celengine/multitexture.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
+#include <celengine/visibleregion.h>
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include <celestia/celestiacore.h>
 #include <celscript/common/scriptmaps.h>
 #include <celutil/logger.h>
