@@ -237,7 +237,7 @@ msgstr "іґнаруем Rotation у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:558
 msgid "SemiAxes is ignored on Barycenters"
-msgstr "ігнаруем SemiAxes у Barycenter"
+msgstr "іґнаруем SemiAxes у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:562
 msgid "SemiAxes must be greater than zero"
