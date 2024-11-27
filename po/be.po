@@ -233,7 +233,7 @@ msgstr "няправільная назва файла ў Texture"
 
 #: ../src/celengine/stardbbuilder.cpp:550
 msgid "Rotation is ignored on Barycenters"
-msgstr "ігнаруем Rotation у Barycenter"
+msgstr "іґнаруем Rotation у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:558
 msgid "SemiAxes is ignored on Barycenters"
