@@ -245,7 +245,7 @@ msgstr "SemiAxes мусіць быць большым за нуль"
 
 #: ../src/celengine/stardbbuilder.cpp:568
 msgid "Radius is ignored on Barycenters"
-msgstr "ігнаруем Radius у Barycenter"
+msgstr "іґнаруем Radius у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:572
 msgid "Radius must be greater than zero"
