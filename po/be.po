@@ -2,10 +2,10 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2024
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,15 +14,12 @@ msgstr ""
 "POT-Creation-Date: 2024-11-21 21:29+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2024\n"
-"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/"
-"be/)\n"
-"Language: be\n"
+"Language-Team: Belarusian (https://app.transifex.com/celestia/teams/93131/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Language: be\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../src/celastro/date.cpp:487
 msgid "DST"
@@ -149,113 +146,110 @@ msgid "bad location"
 msgstr "кепскае месца"
 
 #: ../src/celengine/stardbbuilder.cpp:208
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error in .stc file ({}): {}\n"
-msgstr "Памылка ў фале .stc (радок {}): {}\n"
+msgstr "Памылка ў файле .stc ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:214
-#, fuzzy, c++-format
+#, c++-format
 msgid "Warning in .stc file ({}): {}\n"
-msgstr "Памылка ў фале .stc (радок {}): {}\n"
+msgstr "Папярэджаньне ў файле .stc ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:260
 msgid "unrecognized object type"
-msgstr ""
+msgstr "невядомы тып аб’екта"
 
 #: ../src/celengine/stardbbuilder.cpp:296
 msgid "entry missing name and catalog number"
-msgstr ""
+msgstr "запіс ня мае назвы й нумару ў каталёґу"
 
 #: ../src/celengine/stardbbuilder.cpp:313
 msgid "ignoring SpectralType on Barycenter"
-msgstr ""
+msgstr "ігнаруем SpectralType у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:321
-#, fuzzy
 msgid "invalid SpectralType"
-msgstr "Спэктральны тып"
+msgstr "няправільны SpectralType"
 
 #: ../src/celengine/stardbbuilder.cpp:327
 msgid "missing SpectralType on Star"
-msgstr ""
+msgstr "адсутнічае SpectralType у Star"
 
 #: ../src/celengine/stardbbuilder.cpp:365
 msgid "incomplete set of coordinates RA/Dec/Distance specified"
-msgstr ""
+msgstr "пазначаны няпоўны набор каардынат ПУ/Сх/Адл "
 
 #: ../src/celengine/stardbbuilder.cpp:399
 msgid "AbsMag ignored on Barycenter"
-msgstr ""
+msgstr "іґнаруем AbsMag у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:401
 msgid "AppMag ignored on Barycenter"
-msgstr ""
+msgstr "іґнаруем AppMag у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:409
 msgid "Extinction ignored for stars close to the origin"
-msgstr ""
+msgstr "Extinction іґнаруецца ў зорак блізкіх да пачатку адліку"
 
 #: ../src/celengine/stardbbuilder.cpp:416
 msgid "AppMag ignored when AbsMag is supplied"
-msgstr ""
+msgstr "AppMag іґнаруецца калі зададзены AbsMag"
 
 #: ../src/celengine/stardbbuilder.cpp:422
 msgid "AppMag cannot be used close to the origin"
-msgstr ""
+msgstr "AppMag нельга выкарыстоўваць блізка да пачатку адліку"
 
 #: ../src/celengine/stardbbuilder.cpp:436
 msgid "no magnitude defined for star"
-msgstr ""
+msgstr "велічыня не пазначаная для зоркі"
 
 #: ../src/celengine/stardbbuilder.cpp:473
 msgid "BoloCorrection is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем BoloCorrection у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:482
 msgid "Temperature is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем Temperature у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:504
 msgid "Temperature value must be greater than zero"
-msgstr ""
+msgstr "Значэньне Temperature мусіць быць большым за нуль"
 
 #: ../src/celengine/stardbbuilder.cpp:518
 msgid "Mesh is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем Mesh у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:533
-#, fuzzy
 msgid "invalid filename in Mesh"
-msgstr "Недапушчальны тып файла"
+msgstr "няправільная назва файла ў Mesh"
 
 #: ../src/celengine/stardbbuilder.cpp:540
 msgid "Texture is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем Texture у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:544
-#, fuzzy
 msgid "invalid filename in Texture"
-msgstr "Недапушчальны тып файла"
+msgstr "няправільная назва файла ў Texture"
 
 #: ../src/celengine/stardbbuilder.cpp:550
 msgid "Rotation is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем Rotation у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:558
 msgid "SemiAxes is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем SemiAxes у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:562
 msgid "SemiAxes must be greater than zero"
-msgstr ""
+msgstr "SemiAxes мусіць быць большым за нуль"
 
 #: ../src/celengine/stardbbuilder.cpp:568
 msgid "Radius is ignored on Barycenters"
-msgstr ""
+msgstr "іґнаруем Radius у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:572
 msgid "Radius must be greater than zero"
-msgstr ""
+msgstr "Radius мусіць быць большым за нуль"
 
 #: ../src/celengine/stardbbuilder.cpp:618
 #, c++-format
@@ -270,11 +264,11 @@ msgstr "{} зорак у двайковай базе\n"
 #: ../src/celengine/stardbbuilder.cpp:713
 #, c++-format
 msgid "Bad star definition at line {}.\n"
-msgstr ""
+msgstr "Дрэннае азначэньне зоркі ў радку {}.\n"
 
 #: ../src/celengine/stardbbuilder.cpp:725
 msgid "Modify requested for nonexistent star.\n"
-msgstr ""
+msgstr "Запатрабавана зьмяненьне няіснай зоркі.\n"
 
 #: ../src/celengine/stardbbuilder.cpp:761
 #, c++-format
@@ -283,28 +277,28 @@ msgstr "Агульная колькасьць зорак: {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:881
 msgid "ignoring RA/Dec/Distance in favor of Position"
-msgstr ""
+msgstr "ПУ/Сх/Адл праіґнараваныя на карысьць Position"
 
 #: ../src/celengine/stardbbuilder.cpp:901
 msgid "ignoring orbit for object without OrbitBarycenter"
-msgstr ""
+msgstr "іґнаруем арбіту аб’екта без OrbitBarycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:905
 msgid "no orbit specified for star with OrbitBarycenter"
-msgstr ""
+msgstr "арбіта не зададзеная зорцы з OrbitBarycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:936
 msgid "OrbitBarycenter should be either a string or an integer"
-msgstr ""
+msgstr "OrbitBarycenter мусіць быць радком або цэлым лікам"
 
 #: ../src/celengine/stardbbuilder.cpp:942
 #: ../src/celengine/stardbbuilder.cpp:962
 msgid "OrbitBarycenter cycle detected"
-msgstr ""
+msgstr "зацыклены OrbitBarycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:954
 msgid "OrbitBarycenter refers to nonexistent star"
-msgstr ""
+msgstr "OrbitBarycenter спасылаецца на няісную зорку"
 
 #: ../src/celengine/starname.cpp:283
 msgid "Bad header for cross index\n"
@@ -894,9 +888,11 @@ msgid "Apparent diameter: %s\n"
 msgstr "Бачны дыямэтар: %s\n"
 
 #: ../src/celestia/hud.cpp:298
-#, fuzzy, c++-format
+#, c++-format
 msgid "Dec: {:+d}° {:02d}′ {:.1f}″\n"
-msgstr "Сх: {:+d}{} {:02d}' {:.1f}\"\n"
+msgstr ""
+"Сх: {:+d}° {:02d}′ {:.1f}″\n"
+"\n"
 
 #: ../src/celestia/hud.cpp:310
 #, c++-format
@@ -957,7 +953,7 @@ msgid "Surface temp: %s\n"
 msgstr "Тэмпэратура паверхні: %s\n"
 
 #: ../src/celestia/hud.cpp:461
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radius: {} Rsun ({})\n"
 msgstr "Радыюс: {} сонечных  ({})\n"
 
@@ -982,24 +978,24 @@ msgid "Radius: %s\n"
 msgstr "Радыюс %s\n"
 
 #: ../src/celestia/hud.cpp:550
-#, fuzzy, c++-format
+#, c++-format
 msgid "Equatorial radius: {}\n"
-msgstr "<b>Экватарыяльны радыюс:</b> %L1 %2"
+msgstr "Экватарыяльны радыюс: {}\n"
 
 #: ../src/celestia/hud.cpp:551
-#, fuzzy, c++-format
+#, c++-format
 msgid "Polar radius: {}\n"
-msgstr "Радыюс {}\n"
+msgstr "Палярны радыюс: {}\n"
 
 #: ../src/celestia/hud.cpp:556
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radii: {} × {} × {}\n"
-msgstr "Радыюс: {} сонечных  ({})\n"
+msgstr "Радыюсы: {} × {} × {}\n"
 
 #: ../src/celestia/hud.cpp:610
-#, fuzzy, c++-format
+#, c++-format
 msgid "Phase angle: {:.1f}°\n"
-msgstr "Фазавы вугал: {:.1f}{}\n"
+msgstr "Фазавы вугал: {:.1f}°\n"
 
 #: ../src/celestia/hud.cpp:626
 #, c++-format
@@ -1123,13 +1119,15 @@ msgstr "Запіс"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Пачаць/Паўза   F12 Спыніць"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "глыбокага космасу"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
 msgctxt "catalog"
 msgid "solar system"
@@ -1159,7 +1157,8 @@ msgstr "Памылка адкрыцьця {}\n"
 msgid "Error reading star names file {}\n"
 msgstr "Памылка чытаньня файла з назвамі зорак {}\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:97
 msgctxt "catalog"
 msgid "star"
@@ -1767,8 +1766,8 @@ msgstr "Памылка атрыманьня шляху для файла час�
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia ня можа працаваць, бо каталёг са зьвесткамі адсутнічае, магчыма "
 "праз няправільнае ўсталяваньне."
@@ -1791,7 +1790,8 @@ msgstr "Сонечная сыстэма"
 msgid "Deep Sky Objects"
 msgstr "Аб'екты глыбокага космасу"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:379
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
 msgstr "Пошук падзей"
@@ -1887,32 +1887,34 @@ msgstr "Новая закладка"
 #: ../src/celestia/qt/qtappwin.cpp:1170
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7.0 </h1><p>Вэрсія ў распрацоўцы, каміт <b>%1</b>.</"
-"p><p>Пабудаваная для %2-бітавага працэсара.<br>Выкарыстоўваючы %3 "
-"%4<br>Пабудаваная зь бібліятэкай Qt: %5<br>Ядры NAIF %7<br>Відарысы AVIF "
+"<html><h1>Celestia 1.7.0 </h1><p>Вэрсія ў распрацоўцы, каміт "
+"<b>%1</b>.</p><p>Пабудаваная для %2-бітавага працэсара.<br>Выкарыстоўваючы "
+"%3 %4<br>Пабудаваная зь бібліятэкай Qt: %5<br>Ядры NAIF %7<br>Відарысы AVIF "
 "%8<br>Выкарыстоўвае вэрсію Qt: %6</p><p>Аўтарскія правы © 2001-2023 каманда "
 "распрацоўкі Celestia.<br>Celestia - вольнае праграмнае забесьпячэньне. Яго "
 "можна распаўсюджваць і/або зьмяняць на ўмовах Агульнай грамадзкай ліцэнзіі "
 "GNU, апублікаванай Фондам свабоднага праграмнага забесьпячэньня; вэрсіі "
 "ліцэнзіі 2 або (на тваё гледзішча) любой пазьнейшай вэрсіі.</p><p>Асноўная "
-"пляцоўка: <a href=\"https://celestiaproject.space/\">https://celestiaproject."
-"space/</a><br>Форум: <a href=\"https://celestiaproject.space/forum/"
-"\">https://celestiaproject.space/forum/</a><br>Праект GitHub: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"пляцоўка: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>Праект"
+" GitHub: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1206
 msgid "Unknown compiler"
@@ -2662,7 +2664,8 @@ msgstr "файл"
 
 #: ../src/celestia/qt/qtcommandline.cpp:20
 msgid "Add an extras directory. This option may be specified multiple times."
-msgstr "Дадаць каталёг extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
+msgstr ""
+"Дадаць каталёг extras. Гэты выбор можна выкарыстоўваць некалькі разоў."
 
 #: ../src/celestia/qt/qtcommandline.cpp:20
 msgid "extrasdir"
@@ -2912,9 +2915,9 @@ msgid "<b>Eccentricity:</b> %L1"
 msgstr "<b>Эксцэнтрысытэт:</b> %L1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:320
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Inclination:</b> %L1°"
-msgstr "<b>Схіленьне:</b> %L1%2"
+msgstr "<b>Схіленьне:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:321
 #, qt-format
@@ -2927,19 +2930,19 @@ msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "<b>Адлегласьць да апацэнтру:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:325
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Ascending node:</b> %L1°"
-msgstr "<b>Узыходны вузел:</b> %L1%2"
+msgstr "<b>Узыходны вузел:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:326
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Argument of periapsis:</b> %L1°"
-msgstr "<b>Парамэтар пэрыяпсыды:</b> %L1%2"
+msgstr "<b>Парамэтар пэрыяпсыды:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:327
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean anomaly:</b> %L1°"
-msgstr "<b>Сярэдняя анамалія:</b> %L1%2"
+msgstr "<b>Сярэдняя анамалія:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:330
 #, qt-format
@@ -2947,9 +2950,9 @@ msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "<b>Пэрыяд (разьлічаны):</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:334
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1°/day"
-msgstr "<b>Сярэдні рух (разьлічаны):</b> %L1%2/дзень"
+msgstr "<b>Сярэдні рух (разьлічаны):</b> %L1°/дзень"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:357
 #: ../src/celestia/qt/qtinfopanel.cpp:379
@@ -2959,21 +2962,21 @@ msgstr "<b>ПУ:</b> %L1г %L2м %L3с"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:361
 #: ../src/celestia/qt/qtinfopanel.cpp:383
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Dec:</b> %L1° %L2′ %L3″"
-msgstr "<b>Сх:</b> %L1%2 %L3' %L4\""
+msgstr "<b>Сх:</b> %L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic longitude
 #: ../src/celestia/qt/qtinfopanel.cpp:390
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>L:</b> %L1° %L2′ %L3″"
-msgstr "<b>Д:</b> %L1%2 %L3' %L4\""
+msgstr "<b>Д:</b> %L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:393
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>B:</b> %L1° %L2′ %L3″"
-msgstr "<b>Ш:</b> %L1%2 %L3' %L4\""
+msgstr "<b>Ш:</b> %L1° %L2′ %L3″"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:208
 msgid "OpenGL 2.1"
@@ -3348,12 +3351,14 @@ msgid "No guide destinations were found."
 msgstr "Напрамкі падарожжаў не адшуканыя."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "Выберы мэту прызначэньня:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "Перайсьці да"
@@ -3668,8 +3673,8 @@ msgstr "Аўтарскія правы (C) 2001-2021, Каманда распра
 #: ../src/celestia/win32/res/celestia.rc:287
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr ""
-"Celestia зьяўляецца свабоднай праграмай і пастаўляецца абсалютна без аніякае "
-"гарантыі."
+"Celestia зьяўляецца свабоднай праграмай і пастаўляецца абсалютна без аніякае"
+" гарантыі."
 
 #: ../src/celestia/win32/res/celestia.rc:288
 msgid "Authors"
@@ -4075,7 +4080,8 @@ msgstr "Не атрымалася захаваць відарыс."
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Сцэнар Celestia (*.celx *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4255,82 +4261,83 @@ msgstr "Зрух ад UTC"
 #: ../src/celimage/bmp.cpp:119
 #, c++-format
 msgid "BMP read failure '{}' - incorrect header bytes\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - недапушчальныя байты загалоўка\n"
 
 #: ../src/celimage/bmp.cpp:136
 #, c++-format
 msgid "BMP read failure '{}' - unsupported header format\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - фармат загалоўку не падтрымліваецца\n"
 
 #: ../src/celimage/bmp.cpp:143
 #, c++-format
 msgid "BMP read failure '{}' - width out of range\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - шырыня па-за дыяпазонам\n"
 
 #: ../src/celimage/bmp.cpp:150
 #, c++-format
 msgid "BMP read failure '{}' - height out of range\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - вышыня па-за дыяпазонам\n"
 
 #: ../src/celimage/bmp.cpp:157
 #, c++-format
 msgid "BMP read failure '{}' - number of planes must be 1\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - колькасьць плашчыняў мусіць быць 1\n"
 
 #: ../src/celimage/bmp.cpp:165
 #, c++-format
 msgid "BMP read failure '{}' - invalid bits per pixel {}\n"
 msgstr ""
+"Памылка чытаньня BMP '{}' - недапушчальная колькасьць бітаў на піксэль {}\n"
 
 #: ../src/celimage/bmp.cpp:173
 #, c++-format
 msgid "BMP read failure '{}' - compressed images are not supported\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - сьціснутыя відарысы не падтрымліваюцца\n"
 
 #: ../src/celimage/bmp.cpp:194
 #, c++-format
 msgid "BMP read failure '{}' - image too wide\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - відарыс зашырокі\n"
 
 #: ../src/celimage/bmp.cpp:206
 #, c++-format
 msgid "BMP read failure '{}' - size mismatch\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - несупадзеньне памеру\n"
 
 #: ../src/celimage/bmp.cpp:220
 #, c++-format
 msgid "BMP read failure '{}' - palette too large\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - завялікая палітра\n"
 
 #: ../src/celimage/bmp.cpp:234
 #, c++-format
 msgid "BMP read failure '{}' - could not read file headers\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу прачытаць загалоўкі файла\n"
 
 #: ../src/celimage/bmp.cpp:248
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to palette\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу перайсьці да палітры\n"
 
 #: ../src/celimage/bmp.cpp:259
 #, c++-format
 msgid "BMP read failure '{}' - could not read palette\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу прачытаць палітру\n"
 
 #: ../src/celimage/bmp.cpp:341
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to image data\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу перайсьці да даньняў відарыса\n"
 
 #: ../src/celimage/bmp.cpp:349
 #, c++-format
 msgid "BMP read failure '{}' - could not read image data\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу прачытаць даньні відарыса\n"
 
 #: ../src/celimage/bmp.cpp:400
 #, c++-format
 msgid "BMP read failure '{}' - could not open file\n"
-msgstr ""
+msgstr "Памылка чытаньня BMP '{}' - не магу адкрыць файла\n"
 
 #: ../src/celimage/image.cpp:387
 #, c++-format
@@ -4343,34 +4350,33 @@ msgid "{}: unrecognized or unsupported image file type.\n"
 msgstr "{}: тып файла не апазнаны або не падтрымліваецца.\n"
 
 #: ../src/celimage/jpeg.cpp:151
-#, fuzzy, c++-format
+#, c++-format
 msgid "Could not open JPEG file {}\n"
-msgstr "Не атрымалася прачытаць двайковы XYZV-файл {}.\n"
+msgstr "Не атрымалася адкрыць файл JPEG {}\n"
 
 #: ../src/celimage/jpeg.cpp:168
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error reading JPEG image: {}\n"
-msgstr "Памылка чытаньня файла відарыса PNG {}\n"
+msgstr "Памылка чытаньня відарыса JPEG: {}\n"
 
 #: ../src/celimage/jpeg.cpp:186
 #, c++-format
 msgid "JPEG dimensions out of range: {}\n"
-msgstr ""
+msgstr "Вымеры JPEG па-за дыяпазонам: {}\n"
 
 #: ../src/celimage/png.cpp:37
-#, fuzzy, c++-format
+#, c++-format
 msgid "PNG error in '{}': {}\n"
-msgstr "Памылка адкрыцьця {} ці {}.\n"
+msgstr "Памылка PNG у '{}': {}\n"
 
 #: ../src/celimage/png.cpp:45
 #, c++-format
 msgid "PNG warning in '{}': {}\n"
-msgstr ""
+msgstr "Папярэджаньне PNG у '{}': {}\n"
 
 #: ../src/celimage/png.cpp:95
-#, fuzzy
 msgid "Unsupported color type"
-msgstr "Тып відарыса не падтрымліваецца: {}!\n"
+msgstr "Тып колера не падтрымліваецца"
 
 #: ../src/celimage/png.cpp:118
 #, c++-format
@@ -4378,31 +4384,28 @@ msgid "Error: {} is not a PNG file.\n"
 msgstr "Памылка: {} не зьяўляецца файлам PNG.\n"
 
 #: ../src/celimage/png.cpp:128
-#, fuzzy
 msgid "Error allocating PNG read struct.\n"
-msgstr "Памылка блякаваньня мэты перацягваньня\n"
+msgstr "Памылка вылучэньня памяці пад структуру чытаньня PNG.\n"
 
 #: ../src/celimage/png.cpp:135 ../src/celimage/png.cpp:204
-#, fuzzy
 msgid "Error allocating PNG info struct.\n"
-msgstr "Памылка блякаваньня мэты перацягваньня\n"
+msgstr "Памылка вылучэньня памяці пад інфармацыйную структуру PNG.\n"
 
 #: ../src/celimage/png.cpp:152
 msgid "Failed to read IHDR chunk"
-msgstr ""
+msgstr "Не атрымалася прачытаць кавалак IHDR"
 
 #: ../src/celimage/png.cpp:155
 msgid "Image width out of range"
-msgstr ""
+msgstr "Шырыня відарыса па-за дыяпазонам"
 
 #: ../src/celimage/png.cpp:157
 msgid "Image height out of range"
-msgstr ""
+msgstr "Вышыня відарыса па-за дыяпазонам"
 
 #: ../src/celimage/png.cpp:197
-#, fuzzy
 msgid "Error allocating PNG write struct.\n"
-msgstr "Памылка блякаваньня мэты перацягваньня\n"
+msgstr "Памылка вылучэньня памяці пад структуру запісу PNG.\n"
 
 #: ../src/celimage/png.cpp:256
 #, c++-format
@@ -4411,7 +4414,7 @@ msgstr "Памылка адкрыцьця файла відарыса {}.\n"
 
 #: ../src/celimage/png.cpp:271
 msgid "Can only save RGB or RGBA images\n"
-msgstr ""
+msgstr "Магу захоўваць толькі відарысы RGB або RGBA\n"
 
 #: ../src/celimage/png.cpp:282
 #, c++-format
@@ -4509,39 +4512,3 @@ msgstr "Парадак байтаў {} не падтрымліваецца, ча
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Колькасьць лічбаў {} не падтрымліваецца, чакалася {}.\n"
-
-#~ msgid "Invalid star: missing right ascension\n"
-#~ msgstr "Недапушчальная зорка: адсутнічае правільнае ўзыходжаньне\n"
-
-#~ msgid "Invalid star: missing declination.\n"
-#~ msgstr "Недапушчальная зорка: адсутнічае схіленьне.\n"
-
-#~ msgid "Invalid star: missing distance.\n"
-#~ msgstr "Недапушчальная зорка: адсутнічае адлегласьць.\n"
-
-#~ msgid ""
-#~ "Invalid star: absolute (not apparent) magnitude must be specified for "
-#~ "star near origin\n"
-#~ msgstr ""
-#~ "Недапушчальная зорка: абсалтная (ня бачная) велічыня мусіць быць "
-#~ "вызначаная для зорак, блізкіх да пачатку\n"
-
-#~ msgid "Invalid star: missing magnitude.\n"
-#~ msgstr "Недапушчальная зорка: адсутнічае яркасьць.\n"
-
-#~ msgid "Invalid star: bad spectral type.\n"
-#~ msgstr "Недапушчальная зорка: кепскі спэктральны тып.\n"
-
-#~ msgid "Invalid star: missing spectral type.\n"
-#~ msgstr "Недапушчальная зорка: спэктральны тып адсутнічае.\n"
-
-#, c++-format
-#~ msgid "Barycenter {} does not exist.\n"
-#~ msgstr "Барыцэнтар {} не існуе.\n"
-
-#~ msgid "Error reading PNG data"
-#~ msgstr "Памылка чытаньня даньняў PNG"
-
-#, c++-format
-#~ msgid "Error writing PNG file '{}'\n"
-#~ msgstr "Памылка запісу файла PNG {}\n"
