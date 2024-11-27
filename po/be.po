@@ -277,7 +277,7 @@ msgstr "Агульная колькасьць зорак: {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:881
 msgid "ignoring RA/Dec/Distance in favor of Position"
-msgstr "ПУ/Сх/Адл праігнараваныя на карысьць Position"
+msgstr "ПУ/Сх/Адл праіґнараваныя на карысьць Position"
 
 #: ../src/celengine/stardbbuilder.cpp:901
 msgid "ignoring orbit for object without OrbitBarycenter"
