@@ -225,7 +225,7 @@ msgstr "няправільная назва файла ў Mesh"
 
 #: ../src/celengine/stardbbuilder.cpp:540
 msgid "Texture is ignored on Barycenters"
-msgstr "ігнаруем Texture у Barycenter"
+msgstr "іґнаруем Texture у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:544
 msgid "invalid filename in Texture"
