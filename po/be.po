@@ -281,7 +281,7 @@ msgstr "ПУ/Сх/Адл праіґнараваныя на карысьць Posi
 
 #: ../src/celengine/stardbbuilder.cpp:901
 msgid "ignoring orbit for object without OrbitBarycenter"
-msgstr "ігнаруем арбіту аб’екта без OrbitBarycenter"
+msgstr "іґнаруем арбіту аб’екта без OrbitBarycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:905
 msgid "no orbit specified for star with OrbitBarycenter"
