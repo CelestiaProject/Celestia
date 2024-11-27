@@ -217,7 +217,7 @@ msgstr "Значэньне Temperature мусіць быць большым за
 
 #: ../src/celengine/stardbbuilder.cpp:518
 msgid "Mesh is ignored on Barycenters"
-msgstr "ігнаруем Mesh у Barycenter"
+msgstr "іґнаруем Mesh у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:533
 msgid "invalid filename in Mesh"
