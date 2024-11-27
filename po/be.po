@@ -205,11 +205,11 @@ msgstr "велічыня не пазначаная для зоркі"
 
 #: ../src/celengine/stardbbuilder.cpp:473
 msgid "BoloCorrection is ignored on Barycenters"
-msgstr "ігнаруем BoloCorrection у Barycenter"
+msgstr "іґнаруем BoloCorrection у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:482
 msgid "Temperature is ignored on Barycenters"
-msgstr "ігнаруем Temperature у Barycenter"
+msgstr "іґнаруем Temperature у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:504
 msgid "Temperature value must be greater than zero"
