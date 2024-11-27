@@ -181,11 +181,11 @@ msgstr "пазначаны няпоўны набор каардынат ПУ/С�
 
 #: ../src/celengine/stardbbuilder.cpp:399
 msgid "AbsMag ignored on Barycenter"
-msgstr "ігнаруем AbsMag у Barycenter"
+msgstr "іґнаруем AbsMag у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:401
 msgid "AppMag ignored on Barycenter"
-msgstr "ігнаруем AppMag у Barycenter"
+msgstr "іґнаруем AppMag у Barycenter"
 
 #: ../src/celengine/stardbbuilder.cpp:409
 msgid "Extinction ignored for stars close to the origin"
