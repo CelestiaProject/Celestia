@@ -677,7 +677,7 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
         // Convert charCode to UTF-8
         fmt::basic_memory_buffer<char, 8> buffer;
         AppendTCharCodeToUTF8(&charCode, 1, buffer);
-        buffer.push_back(TEXT('\0'));
+        buffer.push_back('\0');
         appCore->charEntered(buffer.data(), modifiers);
     }
 
@@ -709,7 +709,7 @@ MainWindow::imeChar(WPARAM wParam) const
     else
         AppendTCharCodeToUTF8(charSeq.data() + 1, 1, buffer);
 #endif
-    buffer.push_back(TEXT('\0'));
+    buffer.push_back('\0');
     appCore->charEntered(buffer.data());
 }
 
