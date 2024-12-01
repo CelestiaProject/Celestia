@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <iterator>
 #include <memory>
 #include <map>

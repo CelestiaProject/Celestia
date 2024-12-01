@@ -1,6 +1,7 @@
 #include "category.h"
 
 #include <algorithm>
+#include <cassert>
 #include <initializer_list>
 #include <utility>
 

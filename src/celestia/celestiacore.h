@@ -10,6 +10,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 #include <fstream>
 #include <locale>
 #include <string>

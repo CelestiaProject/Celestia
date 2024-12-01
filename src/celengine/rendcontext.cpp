@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <cassert>
 #include <cstddef>
 
 #include <celrender/gl/vertexobject.h>
