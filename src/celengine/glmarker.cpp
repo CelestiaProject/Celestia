@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <array>
+#include <cassert>
 #include <cstddef>
 
 #include <celcompat/numbers.h>

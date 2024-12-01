@@ -10,6 +10,7 @@
 #include "body.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <utility>
 
