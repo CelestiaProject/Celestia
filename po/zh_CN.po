@@ -815,11 +815,11 @@ msgstr "天"
 #: ../src/celestia/hud.cpp:165 ../src/celestia/qt/qtinfopanel.cpp:245
 #: ../src/celestia/qt/qtinfopanel.cpp:292
 msgid "hours"
-msgstr "小时"
+msgstr "时"
 
 #: ../src/celestia/hud.cpp:170
 msgid "minutes"
-msgstr "分钟"
+msgstr "分"
 
 #: ../src/celestia/hud.cpp:175
 msgid "seconds"
