@@ -458,7 +458,7 @@ msgstr "星点渲染：点"
 
 #: ../src/celestia/celestiacore.cpp:1039
 msgid "Star style: scaled discs"
-msgstr "星点渲染：缩放点"
+msgstr "星点渲染：缩放盘面"
 
 #: ../src/celestia/celestiacore.cpp:1052
 msgid "Comet tails enabled"
