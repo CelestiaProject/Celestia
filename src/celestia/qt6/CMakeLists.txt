@@ -40,7 +40,7 @@ if(WIN32)
   install(
     TARGETS celestia-qt6
     RUNTIME_DEPENDENCIES
-      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
+      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-" "^qt6"
       POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
       DIRECTORIES $<TARGET_FILE_DIR:celestia>
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
