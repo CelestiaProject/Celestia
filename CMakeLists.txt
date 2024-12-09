@@ -41,6 +41,11 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
+# Normalize install(DESTINATION) paths
+if(POLICY CMP0177)
+  cmake_policy(SET CMP0177 NEW)
+endif()
+
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
 set(DISPLAY_NAME "Celestia")
 #
