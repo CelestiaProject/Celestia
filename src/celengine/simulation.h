@@ -28,13 +28,12 @@
 #include <celengine/frame.h>
 #include <celengine/observer.h>
 
-
 class Renderer;
 
 class Simulation
 {
- public:
-    Simulation(Universe*);
+public:
+    explicit Simulation(Universe*);
     ~Simulation();
 
     double getTime() const; // Julian date
@@ -65,7 +64,6 @@ class Simulation
     void setTrackedObject(const Selection&);
 
     void selectPlanet(int);
-    Selection findObject(std::string_view s, bool i18n = false) const;
     Selection findObjectFromPath(std::string_view s, bool i18n = false) const;
     void getObjectCompletion(std::vector<celestia::engine::Completion>& completion,
                              std::string_view s,
@@ -127,7 +125,7 @@ class Simulation
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject);
     const ObserverFrame::SharedConstPtr& getFrame() const;
 
- private:
+private:
     double realTime{ 0.0 };
     double timeScale{ 1.0 };
     double storedTimeScale{ 1.0 };

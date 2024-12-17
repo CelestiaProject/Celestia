@@ -417,28 +417,6 @@ void Simulation::selectPlanet(int index)
     }
 }
 
-
-// Select an object by name, with the following priority:
-//   1. Try to look up the name in the star database
-//   2. Search the deep sky catalog for a matching name.
-//   3. Search the planets and moons in the planetary system of the currently selected
-//      star
-//   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
-Selection Simulation::findObject(std::string_view s, bool i18n) const
-{
-    Selection path[2];
-    std::size_t nPathEntries = 0;
-
-    if (!selection.empty())
-        path[nPathEntries++] = selection;
-
-    if (auto nearestSolarSystem = getNearestSolarSystem(); nearestSolarSystem != nullptr)
-        path[nPathEntries++] = Selection(nearestSolarSystem->getStar());
-
-    return universe->find(s, {path, nPathEntries}, i18n);
-}
-
-
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.
