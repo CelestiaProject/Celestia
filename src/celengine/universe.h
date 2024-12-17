@@ -28,10 +28,9 @@
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
 
-
 class Universe
 {
- public:
+public:
     Universe() = default;
     ~Universe();
 
@@ -58,9 +57,6 @@ class Universe
                    float tolerance = 0.0f);
 
 
-    Selection find(std::string_view s,
-                   celestia::util::array_view<const Selection> contexts,
-                   bool i18n = false) const;
     Selection findPath(std::string_view s,
                        celestia::util::array_view<const Selection> contexts,
                        bool i18n = false) const;
@@ -90,12 +86,15 @@ class Universe
     bool isMarked(const Selection&, int priority) const;
     const celestia::MarkerList& getMarkers() const;
 
- private:
+private:
     void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
                        celestia::util::array_view<const Selection> contexts,
                        bool withLocations = false) const;
 
+    Selection find(std::string_view s,
+                   celestia::util::array_view<const Selection> contexts,
+                   bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
                               std::string_view name,
                               bool i18n = false) const;
@@ -122,7 +121,6 @@ class Universe
                                 float faintest,
                                 float tolerance = 0.0f) const;
 
- private:
     std::unique_ptr<StarDatabase> starCatalog{nullptr};
     std::unique_ptr<DSODatabase> dsoCatalog{nullptr};
     std::unique_ptr<SolarSystemCatalog> solarSystemCatalog{nullptr};
