@@ -121,7 +121,9 @@ struct fmt::formatter<celestia::util::FormattedFloat<T>>
         auto it = ctx.begin();
         if (it != ctx.end() && *it != '}')
         {
-#if FMT_VERSION >= 100100
+#if FMT_VERSION >= 110000
+            report_error("invalid format");
+#elif FMT_VERSION >= 100100
             throw_format_error("invalid format");
 #else
             assert(0);
