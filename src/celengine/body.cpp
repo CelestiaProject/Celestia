@@ -1,6 +1,7 @@
 // body.cpp
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -817,30 +818,21 @@ Body::getLuminosity(const Star& sun,
     return getLuminosity(sun.getLuminosity(), distanceFromSun);
 }
 
+/*! Computes the luminosity of a perfectly reflective disc.
+ *  The function translates luminosity into luminosity of the same units
+ *  (distanceFromSun and objRadius must also be in the same units).
+ */
 float
 Body::getLuminosity(float sunLuminosity,
                     float distanceFromSun) const
 {
-    // Compute the total power of the star in Watts
-    double power = astro::SOLAR_POWER * sunLuminosity;
-
-    // Compute the irradiance at a distance of 1au from the star in W/m^2
-    // double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
-
-    // Compute the irradiance at the body's distance from the star
-    double satIrradiance = power / math::sphereArea(distanceFromSun * 1000);
-
-    // Compute the total energy hitting the planet
-    double incidentEnergy = satIrradiance * math::circleArea(radius * 1000);
-
-    double reflectedEnergy = incidentEnergy * getReflectivity();
-
-    // Compute the luminosity (i.e. power relative to solar power)
-    return static_cast<float>(reflectedEnergy / astro::SOLAR_POWER);
+    return getReflectivity() * astro::reflectedLuminosity(sunLuminosity,
+                                                          distanceFromSun,
+                                                          radius);
 }
 
 /*! Get the apparent magnitude of the body, neglecting the phase (as if
- *  the body was at opposition.
+ *  the body was at opposition).
  */
 float
 Body::getApparentMagnitude(const Star& sun,
@@ -889,6 +881,60 @@ Body::getApparentMagnitude(float sunLuminosity,
 
     return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction,
                               static_cast<float>(astro::kilometersToLightYears(distanceToViewer)));
+}
+/*! Get the irradiance of the body in Vega units, neglecting the phase
+ *  (as if the body was at opposition).
+ */
+float
+Body::getIrradiance(const Star& sun,
+                    float distanceFromSun,
+                    float distanceFromViewer) const
+{
+    return getIrradiance(sun.getLuminosity(), distanceFromSun, distanceFromViewer);
+}
+
+/*! Get the irradiance of the body in Vega units, neglecting the phase
+ *  (as if the body was at opposition).
+ */
+float
+Body::getIrradiance(float sunLuminosity,
+                    float distanceFromSun,
+                    float distanceFromViewer) const
+{
+    // Compute the reflected flux (luminosity) in SI units
+    float reflectedFlux = astro::SOLAR_POWER * getLuminosity(sunLuminosity,
+                                                             distanceFromSun);
+
+    // Compute the irradiance at the observer's distance from the planet
+    float obsIrradiance = reflectedFlux / math::sphereArea(distanceFromViewer * 1000); // km to m
+
+    // Compute the irradiance in Vega units
+    return obsIrradiance / astro::VEGAN_IRRADIANCE;
+}
+
+
+/*! Get the irradiance of the body in Vega units, corrected for its phase
+ */
+float
+Body::getIrradiance(const Star& sun,
+                    const Eigen::Vector3d& sunPosition,
+                    const Eigen::Vector3d& viewerPosition) const
+{
+    return getIrradiance(sun.getLuminosity(), sunPosition, viewerPosition);
+}
+
+/*! Get the irradiance of the body in Vega units, corrected for its phase
+ */
+float
+Body::getIrradiance(float sunLuminosity,
+                    const Eigen::Vector3d& sunPosition,
+                    const Eigen::Vector3d& viewerPosition) const
+{
+    double distanceToSun = sunPosition.norm();
+    double distanceToViewer = viewerPosition.norm();
+    float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
+
+    return getIrradiance(sunLuminosity, (float) distanceToSun, (float) distanceToViewer) * illuminatedFraction;
 }
 
 BodyClassification

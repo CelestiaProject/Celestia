@@ -43,7 +43,6 @@ struct _AppData {
     GtkActionGroup* agOrbit;
     GtkActionGroup* agLabel;
     GtkActionGroup* agVerbosity;
-    GtkActionGroup* agStarStyle;
     GtkActionGroup* agAmbient;
 
     /* Settings */
@@ -80,11 +79,10 @@ int getWinY(AppData* app);
 
 /* Functions to apply preferences with sanity checks */
 void setSaneAmbientLight(AppData* app, float value);
-void setSaneVisualMagnitude(AppData* app, float value);
+void setSaneExposure(AppData* app, float value);
 void setSaneGalaxyLightGain(float value);
 void setSaneDistanceLimit(AppData* app, int value);
 void setSaneVerbosity(AppData* app, int value);
-void setSaneStarStyle(AppData* app, Renderer::StarStyle value);
 void setSaneTextureResolution(AppData* app, int value);
 void setSaneAltSurface(AppData* app, char* value);
 void setSaneWinSize(AppData* app, int x, int y);

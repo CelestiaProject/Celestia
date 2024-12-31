@@ -216,7 +216,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
     if (int orbitMask = 0; GetRegistryInt(key, TEXT("OrbitMask"), orbitMask))
         prefs.orbitMask = static_cast<BodyClassification>(orbitMask);
-    GetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
+    GetRegistryFloat(key, TEXT("Exposure"), prefs.exposure);
     GetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     GetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
     GetRegistryInt(key, TEXT("ShowLocalTime"), prefs.showLocalTime);
@@ -224,11 +224,6 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("HudDetail"), prefs.hudDetail);
     GetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
     GetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
-    if (std::uint32_t starStyle = 0; GetRegistryInt(key, TEXT("StarStyle"), starStyle))
-        prefs.starStyle = static_cast<Renderer::StarStyle>(starStyle);
-    else
-        prefs.starStyle = Renderer::FuzzyPointStars;
-
     GetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
     GetRegistryInt(key, TEXT("TextureResolution"), prefs.textureResolution);
 
@@ -279,7 +274,7 @@ SavePreferencesToRegistry(AppPreferences& prefs)
     SetRegistryInt(key, TEXT("LabelMode"), prefs.labelMode);
     SetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
     SetRegistryInt(key, TEXT("OrbitMask"), static_cast<std::uint32_t>(prefs.orbitMask));
-    SetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
+    SetRegistryFloat(key, TEXT("Exposure"), prefs.exposure);
     SetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     SetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
     SetRegistryInt(key, TEXT("ShowLocalTime"), prefs.showLocalTime);
@@ -287,7 +282,6 @@ SavePreferencesToRegistry(AppPreferences& prefs)
     SetRegistryInt(key, TEXT("HudDetail"), prefs.hudDetail);
     SetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
     SetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
-    SetRegistryInt(key, TEXT("StarStyle"), static_cast<std::int32_t>(prefs.starStyle));
     SetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
     SetRegistryString(key, TEXT("AltSurface"), prefs.altSurfaceName);
     SetRegistryInt(key, TEXT("TextureResolution"), prefs.textureResolution);

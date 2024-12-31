@@ -1,6 +1,6 @@
-// pointstarrenderer.cpp
+// starrenderer.cpp
 //
-// Copyright (C) 2001-2019, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -8,14 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "pointstarrenderer.h"
+#include "starrenderer.h"
 
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
 #include "observer.h"
-#include "pointstarvertexbuffer.h"
 #include "render.h"
+#include "starvertexbuffer.h"
 
 using namespace std;
 using namespace Eigen;
@@ -31,12 +31,12 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
     return pos.offsetFromKm(star.getPosition(t));
 }
 
-PointStarRenderer::PointStarRenderer() :
+StarRenderer::StarRenderer() :
     ObjectRenderer(StarDistanceLimit)
 {
 }
 
-void PointStarRenderer::process(const Star& star, float distance, float appMag)
+void StarRenderer::process(const Star& star, float distance, float irradiance)
 {
     if (distance > distanceLimit)
         return;
@@ -83,46 +83,37 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             Vector3d hPos = astrocentricPosition(observer->getPosition(),
                                                  star,
                                                  observer->getTime());
-            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f);
-            distance = relPos.norm();
+            relPos = - hPos.cast<float>();
+            distance = relPos.norm(); // in km
 
-            // Recompute apparent magnitude using new distance computation
-            appMag = star.getApparentMagnitude(distance);
+            // Recompute the irradiance using new distance computation
+            irradiance = star.getIrradiance(distance);
 
-            discSizeInPixels = star.getRadius() / astro::lightYearsToKilometers(distance) / pixelSize;
+            discSizeInPixels = star.getRadius() / (distance * pixelSize);
         }
 
-        // Stars closer than the maximum solar system size are actually
-        // added to the render list and depth sorted, since they may occlude
-        // planets.
+        // Stars closer than the maximum solar system size are actually added
+        // to the render list and depth sorted, since they may occlude planets.
+        float irradiation = irradiance * exposure;
         if (distance > SolarSystemMaxDistance)
         {
-            float pointSize, alpha, glareSize, glareAlpha;
-            float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-            renderer->calculatePointSize(appMag,
-                                         size,
-                                         pointSize,
-                                         alpha,
-                                         glareSize,
-                                         glareAlpha);
-
-            if (glareSize != 0.0f)
-                glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
-            if (pointSize != 0.0f)
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
-
-            // Place labels for stars brighter than the specified label threshold brightness
-            if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
+            if (irradiation > astro::LOWEST_IRRADIATION)
             {
-                Vector3f starDir = relPos.normalized();
-                if (starDir.dot(viewNormal) > cosFOV)
+                starVertexBuffer->addStar(relPos, starColor, irradiation);
+
+                // Place labels for stars brighter than the specified label threshold brightness
+                if (((labelMode & Renderer::StarLabels) != 0) && irradiation > labelLowestIrradiation)
                 {
-                    float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
-                    Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
-                    renderer->addBackgroundAnnotation(nullptr,
-                                                      starDB->getStarName(star, true),
-                                                      color,
-                                                      relPos);
+                    Vector3f starDir = relPos.normalized();
+                    if (starDir.dot(viewNormal) > cosFOV)
+                    {
+                        float distr = 1.0f - labelLowestIrradiation / irradiation;
+                        Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
+                        renderer->addBackgroundAnnotation(nullptr,
+                                                        starDB->getStarName(star, true),
+                                                        color,
+                                                        relPos);
+                    }
                 }
             }
         }
@@ -135,16 +126,15 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
 
-            // Objects in the render list are always rendered relative to
-            // a viewer at the origin--this is different than for distant
-            // stars.
+            // Objects in the render list are always rendered relative to a viewer at the origin;
+            // this is different than for distant stars.
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = relPos * scale;
             rle.centerZ = rle.position.dot(viewMatZ);
             rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
-            rle.appMag = appMag;
+            rle.irradiation = irradiation;
             rle.isOpaque = true;
             renderList->push_back(rle);
 

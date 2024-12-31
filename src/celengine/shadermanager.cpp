@@ -2093,6 +2093,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterColor;\n";
     }
 
+    // Include the effect of limb darkening.
+    if (props.lightModel == LightingModel::StarModel)
+    {
+        source += "gl_FragColor.rgb = gl_FragColor.rgb - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72);\n";
+    }
+
     source += "}\n";
 
     DumpFSSource(source);
@@ -2311,7 +2317,6 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "vec3 nposition = normalize(position);\n";
     source += "vec3 N = normalize(normal);\n";
     source += "vec3 eyeDir = normalize(eyePosition - nposition);\n";
-    source += "float NV = dot(N, eyeDir);\n";
 
     source += DeclareLocal("NL", Shader_Float);
     source += DeclareLocal("scatterEx", Shader_Vector3);

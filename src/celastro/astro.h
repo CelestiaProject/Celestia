@@ -1,6 +1,6 @@
 // astro.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -25,8 +25,36 @@
 namespace celestia::astro
 {
 
-constexpr inline float SOLAR_ABSMAG = 4.83f;
-constexpr inline float LN_MAG = 1.0857362f; // 5/ln(100)
+// Angle between J2000 mean equator and the ecliptic plane: 23 deg 26' 21".448
+// Seidelmann, Explanatory Supplement to the Astronomical Almanac (1992), eqn 3.222-1
+constexpr inline double J2000Obliquity    = 23.4392911_deg;
+
+// CODATA 2022
+constexpr inline double speedOfLight      = 299792.458; // km/s
+constexpr inline double G                 = 6.67430e-11; // N m^2 / kg^2
+
+// IAU 2015 Resolution B3 + CODATA 2022
+constexpr inline double SolarMass         = 1.3271244e20 / G; // kg
+constexpr inline double EarthMass         = 3.986004e14 / G; // kg
+constexpr inline double LunarMass         = 7.346e22; // kg
+constexpr inline double JupiterMass       = 1.2668653e17 / G; // kg
+
+// https://mips.as.arizona.edu/~cnaw/sun.html for Johnson V filter
+constexpr inline float SOLAR_ABSMAG       = 4.81f;
+
+// IAU 2015 Resolution B3
+constexpr inline float SOLAR_IRRADIANCE   = 1361.0f; // W / m^2
+constexpr inline float SOLAR_POWER        = 3.828e26f; // W
+
+// Bessel (1979) for Johnson V filter
+constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11f; // W / m^2
+
+// Auxiliary magnitude conversion factor
+constexpr inline float LN_MAG             = 1.0857362f; // 5/ln(100)
+
+// Lowest screen brightness of a point to render
+constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
+//                                        = 1.0f / (255.0f * 12.92f); after implementing gamma correction
 
 namespace detail
 {
@@ -60,19 +88,27 @@ constexpr inline double SECONDS_PER_DEG = 3600.0;
 constexpr inline double DEG_PER_HRA     = 15.0;
 
 template<typename T>
-constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.14L);
+constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.1L); // IAU 2015 Resolution B3
 
 template<typename T>
-constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L);
+constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L); // IAU 2015 Resolution B3
 
 template<typename T>
-constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(696000.0L);
+constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(695700.0L); // IAU 2015 Resolution B3
+
+float reflectedLuminosity(float sunLuminosity, float distanceFromSun, float objRadius);
 
 // Magnitude conversions
 float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
+float lumToIrradiance(float lum, float km);
 float absMagToLum(float mag);
 float appMagToLum(float mag, float lyrs);
+float absMagToIrradiance(float mag, float lyrs);
+float magToIrradiance(float mag);
+float irradianceToMag(float irradiance);
+float faintestMagToExposure(float faintestMag);
+float exposureToFaintestMag(float exposure);
 
 template<class T>
 CELESTIA_CMATH_CONSTEXPR T
@@ -175,20 +211,6 @@ void anomaly(double meanAnomaly, double eccentricity,
              double& trueAnomaly, double& eccentricAnomaly);
 double meanEclipticObliquity(double jd);
 
-constexpr inline double speedOfLight     = 299792.458; // km/s
-constexpr inline double G                = 6.672e-11; // N m^2 / kg^2; gravitational constant
-constexpr inline double SolarMass        = 1.989e30;
-constexpr inline double EarthMass        = 5.972e24;
-constexpr inline double LunarMass        = 7.346e22;
-constexpr inline double JupiterMass      = 1.898e27;
-
-// Angle between J2000 mean equator and the ecliptic plane.
-// 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
-// Astronomical Almanac_ (1992), eqn 3.222-1.
-constexpr inline double J2000Obliquity   = 23.4392911_deg;
-
-constexpr inline double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
-constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
 
 namespace literals
 {

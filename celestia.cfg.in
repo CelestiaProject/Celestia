@@ -248,11 +248,12 @@ StarTextures
 
 
 #------------------------------------------------------------------------
-# FaintestVisibleMagnitude defines the lowest magnitude at which a star
-# will be displayed in Celestia. This setting may be adjusted real-time
-# via the '[' and ']' keys in Celestia. The default value is 6.0.
+# Exposure defines the time of light accumulation. It affects the
+# brightness and the number of visible point sources (e.g. stars).
+# This setting may be adjusted real-time via the '[' and ']' keys.
+# The default value is 1.0.
 #------------------------------------------------------------------------
-  FaintestVisibleMagnitude 6.0
+  Exposure 1.0
 
 
 #------------------------------------------------------------------------
