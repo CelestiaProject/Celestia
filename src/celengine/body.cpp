@@ -896,9 +896,10 @@ Body::getIrradiance(const Star& sun,
 /*! Get the irradiance of the body in Vega units, neglecting the phase
  *  (as if the body was at opposition).
  */
-float Body::getIrradiance(float sunLuminosity,
-                          float distanceFromSun,
-                          float distanceFromViewer) const
+float
+Body::getIrradiance(float sunLuminosity,
+                    float distanceFromSun,
+                    float distanceFromViewer) const
 {
     // Compute the reflected flux (luminosity) in SI units
     float reflectedFlux = astro::SOLAR_POWER * getLuminosity(sunLuminosity,
@@ -914,18 +915,20 @@ float Body::getIrradiance(float sunLuminosity,
 
 /*! Get the irradiance of the body in Vega units, corrected for its phase
  */
-float Body::getIrradiance(const Star& sun,
-                          const Vector3d& sunPosition,
-                          const Vector3d& viewerPosition) const
+float
+Body::getIrradiance(const Star& sun,
+                    const Eigen::Vector3d& sunPosition,
+                    const Eigen::Vector3d& viewerPosition) const
 {
     return getIrradiance(sun.getLuminosity(), sunPosition, viewerPosition);
 }
 
 /*! Get the irradiance of the body in Vega units, corrected for its phase
  */
-float Body::getIrradiance(float sunLuminosity,
-                          const Vector3d& sunPosition,
-                          const Vector3d& viewerPosition) const
+float
+Body::getIrradiance(float sunLuminosity,
+                    const Eigen::Vector3d& sunPosition,
+                    const Eigen::Vector3d& viewerPosition) const
 {
     double distanceToSun = sunPosition.norm();
     double distanceToViewer = viewerPosition.norm();
