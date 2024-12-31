@@ -23,6 +23,8 @@
 #include <Eigen/Geometry>
 #include <fmt/printf.h>
 
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include <celmath/mathlib.h>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
@@ -44,6 +46,8 @@
 #include "solarsys.h"
 #include "surface.h"
 #include "texmanager.h"
+#include "timeline.h"
+#include "timelinephase.h"
 #include "universe.h"
 #include "value.h"
 

@@ -33,6 +33,7 @@
 #include "renderglsl.h"
 #include "axisarrow.h"
 #include "frametree.h"
+#include "timeline.h"
 #include "timelinephase.h"
 #include "skygrid.h"
 #include "modelgeometry.h"
@@ -50,6 +51,7 @@
 #include <celastro/date.h>
 #include <celcompat/numbers.h>
 #include <celengine/observer.h>
+#include <celephem/rotation.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>

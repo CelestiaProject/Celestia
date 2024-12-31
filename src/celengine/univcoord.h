@@ -47,7 +47,7 @@ class UniversalCoord
     /** Compute a universal coordinate that is the sum of this coordinate and
       * an offset in kilometers.
       */
-    UniversalCoord offsetKm(const Eigen::Vector3d& v)
+    UniversalCoord offsetKm(const Eigen::Vector3d& v) const
     {
         Eigen::Vector3d vUly = v * celestia::astro::kilometersToMicroLightYears(1.0);
         return *this + UniversalCoord(vUly);
@@ -60,7 +60,7 @@ class UniversalCoord
       * necessary to use it in new code, where the use of the rather the rather
       * obscure unit micro-light year isn't necessary.
       */
-    UniversalCoord offsetUly(const Eigen::Vector3d& vUly)
+    UniversalCoord offsetUly(const Eigen::Vector3d& vUly) const
     {
         return *this + UniversalCoord(vUly);
     }

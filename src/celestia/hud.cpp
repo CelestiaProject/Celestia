@@ -36,6 +36,7 @@
 #include <celengine/star.h>
 #include <celengine/textlayout.h>
 #include <celengine/universe.h>
+#include <celephem/rotation.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celutil/flag.h>
@@ -261,16 +262,16 @@ angleToStr(double angle, const std::locale& loc)
 
     if (degrees > 0)
     {
-        return fmt::format(loc, "{}" UTF8_DEGREE_SIGN "{:02d}' {:.1f}\"",
+        return fmt::format(loc, "{}° {:02d}′ {:.1f}″",
                            degrees, std::abs(minutes), std::abs(seconds));
     }
 
     if (minutes > 0)
     {
-        return fmt::format(loc, "{:02d}' {:.1f}\"", std::abs(minutes), std::abs(seconds));
+        return fmt::format(loc, "{:02d}′ {:.1f}″", std::abs(minutes), std::abs(seconds));
     }
 
-    return fmt::format(loc, "{:.2f}\"", std::abs(seconds));
+    return fmt::format(loc, "{:.2f}″", std::abs(seconds));
 }
 
 void
@@ -295,9 +296,8 @@ displayDeclination(Overlay& overlay, double angle, const std::locale& loc)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay.print(loc, _("Dec: {:+d}{} {:02d}' {:.1f}\"\n"),
-                  std::abs(degrees), UTF8_DEGREE_SIGN,
-                  std::abs(minutes), std::abs(seconds));
+    overlay.print(loc, _("Dec: {:+d}° {:02d}′ {:.1f}″\n"),
+                  std::abs(degrees), std::abs(minutes), std::abs(seconds));
 }
 
 void
@@ -459,7 +459,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
 
             if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
-                overlay.print(_("Radius: {} Rsun  ({})\n"),
+                overlay.print(_("Radius: {} Rsun ({})\n"),
                               formatter.format(star.getRadius() / 696000.0f, 2, SigDigitNum),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
@@ -537,23 +537,32 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     {
         return;
     }
-    else if (body.isEllipsoid() && !body.isSphere()) // show mean radius along with triaxial semi-axes
+    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
     {
         Eigen::Vector3f semiAxes = body.getSemiAxes();
-        double radiusMean = cbrt(semiAxes.prod());
-        double axis0 = semiAxes.x();
-        double axis1 = semiAxes.z();
-        double axis2 = semiAxes.y(); // polar semi-axis
-        overlay.print(_("Radius: {} ({} " UTF8_MULTIPLICATION_SIGN " {} " UTF8_MULTIPLICATION_SIGN " {})\n"),
-                      DistanceKmToStr(formatter, radiusMean, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis0, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis1, 5, hudSettings.measurementSystem),
-                      DistanceKmToStr(formatter, axis2, 5, hudSettings.measurementSystem));
+        if (semiAxes.x() == semiAxes.z())
+        {
+            if (semiAxes.x() == semiAxes.y())
+            {
+                overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+            }
+            else
+            {
+                overlay.print(_("Equatorial radius: {}\n"), DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
+                overlay.print(_("Polar radius: {}\n"), DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+            }
+        }
+        else
+        {
+            overlay.print(_("Radii: {} × {} × {}\n"),
+                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+        }
     }
     else
     {
-        overlay.print(_("Radius: {}\n"),
-                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+        overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
     }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
@@ -599,7 +608,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
             sunVec.normalize();
             double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.print(loc, _("Phase angle: {:.1f}{}\n"), math::radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            overlay.print(loc, _("Phase angle: {:.1f}°\n"), math::radToDeg(phaseAngle));
         }
     }
 
@@ -1028,7 +1037,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     m_overlay->beginText();
     m_overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
-    if (sim->getObserverMode() == Observer::Travelling)
+    if (sim->getObserverMode() == Observer::ObserverMode::Travelling)
     {
         double timeLeft = sim->getArrivalTime() - sim->getRealTime();
         if (timeLeft >= 1)
@@ -1051,21 +1060,21 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     Selection refObject = sim->getFrame()->getRefObject();
     switch (sim->getFrame()->getCoordinateSystem())
     {
-    case ObserverFrame::Ecliptical:
+    case ObserverFrame::CoordinateSystem::Ecliptical:
         m_overlay->printf(_("Follow %s\n"),
                           CX_("Follow", getSelectionName(refObject, u)));
         break;
-    case ObserverFrame::BodyFixed:
+    case ObserverFrame::CoordinateSystem::BodyFixed:
         m_overlay->printf(_("Sync Orbit %s\n"),
                           CX_("Sync", getSelectionName(refObject, u)));
         break;
-    case ObserverFrame::PhaseLock:
+    case ObserverFrame::CoordinateSystem::PhaseLock:
         m_overlay->printf(_("Lock %s -> %s\n"),
                           CX_("Lock", getSelectionName(refObject, u)),
                           CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), u)));
         break;
 
-    case ObserverFrame::Chase:
+    case ObserverFrame::CoordinateSystem::Chase:
         m_overlay->printf(_("Chase %s\n"),
                           CX_("Chase", getSelectionName(refObject, u)));
         break;

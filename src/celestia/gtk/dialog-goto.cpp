@@ -113,7 +113,7 @@ GotoObject(gotoObjectData* gotoObjectDlg)
                 simulation->gotoSelection(5.0,
                                           distance,
                                           Eigen::Vector3f::UnitY(),
-                                          ObserverFrame::ObserverLocal);
+                                          ObserverFrame::CoordinateSystem::ObserverLocal);
             }
         }
     }

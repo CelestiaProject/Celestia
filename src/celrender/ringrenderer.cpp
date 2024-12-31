@@ -23,6 +23,7 @@
 #include <celengine/render.h>
 #include <celengine/renderinfo.h>
 #include <celengine/shadermanager.h>
+#include <celengine/texture.h>
 #include <celmath/mathlib.h>
 
 namespace celestia::render

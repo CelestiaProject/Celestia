@@ -9,16 +9,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <cstring>
 #include <iostream>
 
 #include <celengine/atmosphere.h>
-#include <celengine/body.h>
-#include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
-#include <celengine/visibleregion.h>
+#include <celengine/body.h>
+#include <celengine/location.h>
 #include <celengine/planetgrid.h>
 #include <celengine/multitexture.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
+#include <celengine/visibleregion.h>
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include <celestia/celestiacore.h>
 #include <celscript/common/scriptmaps.h>
 #include <celutil/logger.h>
@@ -1070,7 +1075,7 @@ static int object_bodyfixedframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for object:bodyfixedframe");
 
     Selection* sel = this_object(l);
-    celx.newFrame(ObserverFrame(ObserverFrame::BodyFixed, *sel));
+    celx.newFrame(ObserverFrame(ObserverFrame::CoordinateSystem::BodyFixed, *sel));
 
     return 1;
 }
@@ -1095,7 +1100,7 @@ static int object_equatorialframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to object:equatorialframe");
 
     Selection* sel = this_object(l);
-    celx.newFrame(ObserverFrame(ObserverFrame::Equatorial, *sel));
+    celx.newFrame(ObserverFrame(ObserverFrame::CoordinateSystem::Equatorial, *sel));
 
     return 1;
 }

@@ -161,7 +161,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     sim->gotoSelection(5.0,
                                        distance,
                                        Eigen::Vector3f::UnitY(),
-                                       ObserverFrame::ObserverLocal);
+                                       ObserverFrame::CoordinateSystem::ObserverLocal);
                 }
             }
             return TRUE;

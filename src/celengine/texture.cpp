@@ -342,7 +342,7 @@ cubeVector(int face, float s, float t)
         v = Eigen::Vector3f(-s, -t, -1.0f);
         break;
     default:
-        // assert(false);
+        assert(false);
         break;
     }
 

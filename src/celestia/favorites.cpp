@@ -82,13 +82,13 @@ ReadFavoritesList(std::istream& in)
         if (const std::string* coordSysName = favParams->getString("coordsys"); coordSysName != nullptr)
         {
             if (*coordSysName == "ecliptical")
-                fav->coordSys = ObserverFrame::Ecliptical;
+                fav->coordSys = ObserverFrame::CoordinateSystem::Ecliptical;
             else if (*coordSysName == "equatorial")
-                fav->coordSys = ObserverFrame::Equatorial;
+                fav->coordSys = ObserverFrame::CoordinateSystem::Equatorial;
             else if (*coordSysName == "geographic")
-                fav->coordSys = ObserverFrame::BodyFixed;
+                fav->coordSys = ObserverFrame::CoordinateSystem::BodyFixed;
             else
-                fav->coordSys = ObserverFrame::Universal;
+                fav->coordSys = ObserverFrame::CoordinateSystem::Universal;
         }
 
         favorites->push_back(std::move(fav));
@@ -135,19 +135,19 @@ void WriteFavoritesList(FavoritesList& favorites, std::ostream& out)
             out << "\tcoordsys \"";
             switch (fav->coordSys)
             {
-            case ObserverFrame::Universal:
+            case ObserverFrame::CoordinateSystem::Universal:
                 out << "universal"; break;
-            case ObserverFrame::Ecliptical:
+            case ObserverFrame::CoordinateSystem::Ecliptical:
                 out << "ecliptical"; break;
-            case ObserverFrame::Equatorial:
+            case ObserverFrame::CoordinateSystem::Equatorial:
                 out << "equatorial"; break;
-            case ObserverFrame::BodyFixed:
+            case ObserverFrame::CoordinateSystem::BodyFixed:
                 out << "geographic"; break;
-            case ObserverFrame::ObserverLocal:
+            case ObserverFrame::CoordinateSystem::ObserverLocal:
                 out << "local"; break;
-            case ObserverFrame::PhaseLock:
+            case ObserverFrame::CoordinateSystem::PhaseLock:
                 out << "phaselock"; break;
-            case ObserverFrame::Chase:
+            case ObserverFrame::CoordinateSystem::Chase:
                 out << "chase"; break;
             default:
                 out << "universal"; break;

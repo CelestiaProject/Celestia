@@ -21,6 +21,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include <celmath/geomutil.h>
+#include "rotation.h"
 
 namespace celestia::ephem
 {

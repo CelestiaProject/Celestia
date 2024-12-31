@@ -251,7 +251,7 @@ static int observer_gototable(lua_State* l)
     jparams.startInterpolation = Observer::StartInterpolation;
     jparams.endInterpolation = Observer::EndInterpolation;
     jparams.accelTime = Observer::AccelerationTime;
-    jparams.traj = Observer::Linear;
+    jparams.traj = Observer::TrajectoryType::Linear;
 
     lua_pushstring(l, "duration");
     lua_gettable(l, 2);
@@ -308,7 +308,7 @@ static int observer_gototable(lua_State* l)
 
     // args are in universal coords, let setFrame handle conversion:
     auto tmp = o->getFrame();
-    o->setFrame(ObserverFrame::Universal, Selection());
+    o->setFrame(ObserverFrame::CoordinateSystem::Universal, Selection());
     o->gotoJourney(jparams);
     o->setFrame(tmp);
 
@@ -364,7 +364,7 @@ static int observer_goto(lua_State* l)
                          endInter,
                          accelTime,
                          Vector3f::UnitY(),
-                         ObserverFrame::ObserverLocal);
+                         ObserverFrame::CoordinateSystem::ObserverLocal);
     }
     else
     {
@@ -464,7 +464,7 @@ static int observer_gotodistance(lua_State* l)
         up = up_arg->cast<float>();
     }
 
-    o->gotoSelection(*sel, travelTime, distance, up, ObserverFrame::Universal);
+    o->gotoSelection(*sel, travelTime, distance, up, ObserverFrame::CoordinateSystem::Universal);
 
     return 0;
 }
@@ -654,7 +654,7 @@ static int observer_travelling(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to observer:travelling");
 
     Observer* o = this_observer(l);
-    if (o->getMode() == Observer::Travelling)
+    if (o->getMode() == Observer::ObserverMode::Travelling)
         lua_pushboolean(l, 1);
     else
         lua_pushboolean(l, 0);

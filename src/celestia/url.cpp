@@ -59,19 +59,19 @@ getCoordSysName(ObserverFrame::CoordinateSystem mode)
 {
     switch (mode)
     {
-    case ObserverFrame::Universal:
+    case ObserverFrame::CoordinateSystem::Universal:
         return "Freeflight"sv;
-    case ObserverFrame::Ecliptical:
+    case ObserverFrame::CoordinateSystem::Ecliptical:
         return "Follow"sv;
-    case ObserverFrame::BodyFixed:
+    case ObserverFrame::CoordinateSystem::BodyFixed:
         return "SyncOrbit"sv;
-    case ObserverFrame::Chase:
+    case ObserverFrame::CoordinateSystem::Chase:
         return "Chase"sv;
-    case ObserverFrame::PhaseLock:
+    case ObserverFrame::CoordinateSystem::PhaseLock:
         return "PhaseLock"sv;
-    case ObserverFrame::Equatorial:
+    case ObserverFrame::CoordinateSystem::Equatorial:
         return "Unknown"sv;
-    case ObserverFrame::ObserverLocal:
+    case ObserverFrame::CoordinateSystem::ObserverLocal:
         return "Unknown"sv;
     default:
         return "Unknown"sv;
@@ -114,11 +114,11 @@ struct Mode
 
 constexpr std::array modes
 {
-    Mode{ "Freeflight"sv, ObserverFrame::Universal,   0 },
-    Mode{ "Follow"sv,     ObserverFrame::Ecliptical,  1 },
-    Mode{ "SyncOrbit"sv,  ObserverFrame::BodyFixed,   1 },
-    Mode{ "Chase"sv,      ObserverFrame::Chase,       1 },
-    Mode{ "PhaseLock"sv,  ObserverFrame::PhaseLock,   2 },
+    Mode{ "Freeflight"sv, ObserverFrame::CoordinateSystem::Universal,   0 },
+    Mode{ "Follow"sv,     ObserverFrame::CoordinateSystem::Ecliptical,  1 },
+    Mode{ "SyncOrbit"sv,  ObserverFrame::CoordinateSystem::BodyFixed,   1 },
+    Mode{ "Chase"sv,      ObserverFrame::CoordinateSystem::Chase,       1 },
+    Mode{ "PhaseLock"sv,  ObserverFrame::CoordinateSystem::PhaseLock,   2 },
 };
 
 } // end unnamed namespace
@@ -139,10 +139,10 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     switch (m_state.m_coordSys)
     {
-    case ObserverFrame::Universal:
+    case ObserverFrame::CoordinateSystem::Universal:
         m_nBodies = 0;
         break;
-    case ObserverFrame::PhaseLock:
+    case ObserverFrame::CoordinateSystem::PhaseLock:
         m_nBodies = 2;
         break;
     default:
@@ -151,10 +151,10 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     u << PROTOCOL << getCoordSysName(m_state.m_coordSys);
 
-    if (appState.m_coordSys != ObserverFrame::Universal)
+    if (appState.m_coordSys != ObserverFrame::CoordinateSystem::Universal)
     {
         u << '/' << m_state.m_refBodyName;
-        if (appState.m_coordSys == ObserverFrame::PhaseLock)
+        if (appState.m_coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
             u << '/' << m_state.m_targetBodyName;
     }
 
