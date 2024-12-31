@@ -168,7 +168,7 @@ msgstr "спектралният клас не се използва за цен
 
 #: ../src/celengine/stardbbuilder.cpp:321
 msgid "invalid SpectralType"
-msgstr "невалиден спектрален клас"
+msgstr "спектралният клас е невалиден"
 
 #: ../src/celengine/stardbbuilder.cpp:327
 msgid "missing SpectralType on Star"
