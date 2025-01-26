@@ -366,30 +366,8 @@ CelestiaActions::slotSetTextureResolution()
 void
 CelestiaActions::slotAdjustExposure()
 {
-    QAction* act = qobject_cast<QAction*>(sender());
-    if (act != nullptr)
-    {
-        // HACK!HACK!HACK!
-        // Consider removal relevant entries from menus.
-        // If search console is open then pass keys to it.
-        if (appCore->getTextEnterMode() != celestia::Hud::TextEnterMode::Normal)
-        {
-            appCore->charEntered(act->shortcut().toString().toUtf8().data());
-            return;
-        }
-
-        Renderer* renderer = appCore->getRenderer();
-        float change = (float) act->data().toDouble();
-
-        QString notification;
-
-        float newExposure = qBound(0.0f, appCore->getSimulation()->getExposure() * change, 1000.0f);
-        appCore->setExposure(newExposure);
-
-        notification = QString(_("Exposure time: %L1")).arg(newExposure, 0, 'f', 2);
-
-        appCore->flash(notification.toUtf8().data());
-    }
+    if (auto* act = qobject_cast<QAction*>(sender()); act != nullptr)
+        appCore->charEntered(act->shortcut().toString().toUtf8().data());
 }
 
 void

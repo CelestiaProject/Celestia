@@ -184,6 +184,23 @@ float ComputeRotationCoarseness(const Simulation& sim)
     return coarseness;
 }
 
+void
+AdjustExposure(Simulation *sim, CelestiaCore *core, const std::locale &loc, float sign)
+{
+    float exposure = sim->getExposure();
+    float delta = sign < 0.0f
+        ? exposure < 1.0001f ? 0.1f : 1.0f
+        : exposure > 0.9999f ? 1.0f : 0.1f;
+    exposure += sign * delta;
+
+    if (std::abs(exposure - 1.0f) < 0.0001f)
+        exposure = 1.0f;
+    exposure = std::clamp(exposure, 0.1f, 15.0f);
+    sim->setExposure(exposure);
+    auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), exposure);
+    core->flash(buf);
+}
+
 } // anonymous namespace
 
 CelestiaCore::CelestiaCore() :
@@ -1467,19 +1484,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '[':
-        {
-            setExposure(sim->getExposure() * 0.5);
-            auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
-            flash(buf);
-        }
+        AdjustExposure(sim, this, loc, -1.0f);
         break;
 
     case ']':
-        {
-            setExposure(sim->getExposure() * 2.0);
-            auto buf = fmt::format(loc, _("Exposure time: {:.2f}"), sim->getExposure());
-            flash(buf);
-        }
+        AdjustExposure(sim, this, loc, +1.0f);
         break;
 
     case '\\':
@@ -2560,12 +2569,6 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     renderer->setFont(Renderer::FontLarge, hud->titleFont());
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
     return true;
-}
-
-/// Set the exposure; adjust the renderer's brightness parameters appropriately.
-void CelestiaCore::setExposure(float _exposure)
-{
-    sim->setExposure(_exposure);
 }
 
 void CelestiaCore::fatalError(const string& msg, bool visual)

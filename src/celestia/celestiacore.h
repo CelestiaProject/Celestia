@@ -285,8 +285,6 @@ public:
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
 
-    void setExposure(float);
-
     std::vector<Observer*> getObservers() const;
     celestia::View* getViewByObserver(const Observer*) const;
     void splitView(celestia::View::Type type, celestia::View* av = nullptr, float splitPos = 0.5f);

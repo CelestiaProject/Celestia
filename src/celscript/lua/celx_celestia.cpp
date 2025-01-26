@@ -996,7 +996,7 @@ static int celestia_setexposure(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     float exposure = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number");
-    appCore->setExposure(exposure);
+    appCore->getSimulation()->setExposure(exposure);
     
     return 0;
 }
