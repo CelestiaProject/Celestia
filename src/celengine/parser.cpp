@@ -58,6 +58,7 @@ MeasurementUnit parseUnit(std::string_view name)
             { "rE"sv, astro::LengthUnit::EarthRadius },
             { "rJ"sv, astro::LengthUnit::JupiterRadius },
             { "rS"sv, astro::LengthUnit::SolarRadius },
+            { "au"sv, astro::LengthUnit::AstronomicalUnit },
             { "AU"sv, astro::LengthUnit::AstronomicalUnit },
             { "ly"sv, astro::LengthUnit::LightYear },
             { "pc"sv, astro::LengthUnit::Parsec },

@@ -57,6 +57,7 @@ struct FeatureNameEntry { const char* name; Location::FeatureType featureType; }
 "SC",           Location::Scopulus
 "SE",           Location::Serpens
 "SI",           Location::Sinus
+"ST",           Location::LandingSite
 "SU",           Location::Sulcus
 "TA",           Location::Terra
 "TE",           Location::Tessera

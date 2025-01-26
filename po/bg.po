@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2023
 # Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2024
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2024-11-21 21:29+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, "
-"2024\n"
-"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
-"bg/)\n"
-"Language: bg\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2024\n"
+"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/celastro/date.cpp:487
@@ -71,8 +69,7 @@ msgstr "Грешка при зареждане на модела „{}“\n"
 #, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
-msgstr ""
-"Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
+msgstr "Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
 
 #: ../src/celengine/modelgeometry.cpp:186
 #, c++-format
@@ -148,113 +145,114 @@ msgid "bad location"
 msgstr "неточно местоположение"
 
 #: ../src/celengine/stardbbuilder.cpp:208
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error in .stc file ({}): {}\n"
-msgstr "Грешка в .stc файла (линия {}): {}\n"
+msgstr "Грешка в .stc файла ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:214
-#, fuzzy, c++-format
+#, c++-format
 msgid "Warning in .stc file ({}): {}\n"
-msgstr "Грешка в .stc файла (линия {}): {}\n"
+msgstr "Предупреждение в .stc файла ({}): {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:260
 msgid "unrecognized object type"
-msgstr ""
+msgstr "неразпознат формат на обекта"
 
 #: ../src/celengine/stardbbuilder.cpp:296
 msgid "entry missing name and catalog number"
-msgstr ""
+msgstr "името и каталожния номер на записа липсват"
 
 #: ../src/celengine/stardbbuilder.cpp:313
 msgid "ignoring SpectralType on Barycenter"
-msgstr ""
+msgstr "спектралният клас не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:321
-#, fuzzy
 msgid "invalid SpectralType"
-msgstr "Спектрален клас"
+msgstr "спектралният клас е невалиден"
 
 #: ../src/celengine/stardbbuilder.cpp:327
 msgid "missing SpectralType on Star"
-msgstr ""
+msgstr "спектралният клас на звездата липсва"
 
 #: ../src/celengine/stardbbuilder.cpp:365
 msgid "incomplete set of coordinates RA/Dec/Distance specified"
-msgstr ""
+msgstr "зададена е непълна серия от координати α, δ и разстояние"
 
 #: ../src/celengine/stardbbuilder.cpp:399
 msgid "AbsMag ignored on Barycenter"
-msgstr ""
+msgstr "Абсолютната звездна величина не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:401
 msgid "AppMag ignored on Barycenter"
-msgstr ""
+msgstr "Видимата звездна величина не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:409
 msgid "Extinction ignored for stars close to the origin"
-msgstr ""
+msgstr "Изчезването не се използва за звезди в близост до отправната точка"
 
 #: ../src/celengine/stardbbuilder.cpp:416
 msgid "AppMag ignored when AbsMag is supplied"
 msgstr ""
+"Видимата звездна величина не се използва, когато абсолютната звездна "
+"величина е налична"
 
 #: ../src/celengine/stardbbuilder.cpp:422
 msgid "AppMag cannot be used close to the origin"
 msgstr ""
+"Видимата звездна величина не може да се използва в близост до отправната "
+"точка"
 
 #: ../src/celengine/stardbbuilder.cpp:436
 msgid "no magnitude defined for star"
-msgstr ""
+msgstr "звездата няма определена звездна величина"
 
 #: ../src/celengine/stardbbuilder.cpp:473
 msgid "BoloCorrection is ignored on Barycenters"
-msgstr ""
+msgstr "Болометричната корекция не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:482
 msgid "Temperature is ignored on Barycenters"
-msgstr ""
+msgstr "Температурата не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:504
 msgid "Temperature value must be greater than zero"
-msgstr ""
+msgstr "Стойността на температурата трябва да е по-голяма от нула"
 
 #: ../src/celengine/stardbbuilder.cpp:518
 msgid "Mesh is ignored on Barycenters"
-msgstr ""
+msgstr "Мрежата не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:533
-#, fuzzy
 msgid "invalid filename in Mesh"
-msgstr "Невалиден файлов формат"
+msgstr "невалидно име в мрежата"
 
 #: ../src/celengine/stardbbuilder.cpp:540
 msgid "Texture is ignored on Barycenters"
-msgstr ""
+msgstr "Текстурата не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:544
-#, fuzzy
 msgid "invalid filename in Texture"
-msgstr "Невалиден файлов формат"
+msgstr "невалидно име в текстурата"
 
 #: ../src/celengine/stardbbuilder.cpp:550
 msgid "Rotation is ignored on Barycenters"
-msgstr ""
+msgstr "Въртенето не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:558
 msgid "SemiAxes is ignored on Barycenters"
-msgstr ""
+msgstr "Полуосите не се използват за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:562
 msgid "SemiAxes must be greater than zero"
-msgstr ""
+msgstr "Полуосите трябва да са по-големи от нула"
 
 #: ../src/celengine/stardbbuilder.cpp:568
 msgid "Radius is ignored on Barycenters"
-msgstr ""
+msgstr "Радиусът не се използва за центъра на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:572
 msgid "Radius must be greater than zero"
-msgstr ""
+msgstr "Радиусът трябва да е по-голям от нула"
 
 #: ../src/celengine/stardbbuilder.cpp:618
 #, c++-format
@@ -269,11 +267,11 @@ msgstr "{} звезди в двоичната база данни\n"
 #: ../src/celengine/stardbbuilder.cpp:713
 #, c++-format
 msgid "Bad star definition at line {}.\n"
-msgstr ""
+msgstr "Неточна дефиниция на звездата в ред {}.\n"
 
 #: ../src/celengine/stardbbuilder.cpp:725
 msgid "Modify requested for nonexistent star.\n"
-msgstr ""
+msgstr "Заявена е промяна за несъществуваща звезда.\n"
 
 #: ../src/celengine/stardbbuilder.cpp:761
 #, c++-format
@@ -282,28 +280,28 @@ msgstr "Общ брой на звездите: {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:881
 msgid "ignoring RA/Dec/Distance in favor of Position"
-msgstr ""
+msgstr "α, δ и разстоянието не се използват в полза на позицията"
 
 #: ../src/celengine/stardbbuilder.cpp:901
 msgid "ignoring orbit for object without OrbitBarycenter"
-msgstr ""
+msgstr "орбитата на обекта не се използва без орбитален център на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:905
 msgid "no orbit specified for star with OrbitBarycenter"
-msgstr ""
+msgstr "орбитата на звездата с орбитален център на масата не е зададена"
 
 #: ../src/celengine/stardbbuilder.cpp:936
 msgid "OrbitBarycenter should be either a string or an integer"
-msgstr ""
+msgstr "Орбиталният център на масата трябва да бъде низ или цяло число"
 
 #: ../src/celengine/stardbbuilder.cpp:942
 #: ../src/celengine/stardbbuilder.cpp:962
 msgid "OrbitBarycenter cycle detected"
-msgstr ""
+msgstr "Открита е цикличност на орбиталния център на масата"
 
 #: ../src/celengine/stardbbuilder.cpp:954
 msgid "OrbitBarycenter refers to nonexistent star"
-msgstr ""
+msgstr "Орбиталният център на масата се отнася за несъществуваща звезда"
 
 #: ../src/celengine/starname.cpp:283
 msgid "Bad header for cross index\n"
@@ -325,7 +323,7 @@ msgstr ""
 #: ../src/celengine/texture.cpp:365
 #, c++-format
 msgid "Creating tiled texture. Width={}, max={}\n"
-msgstr "Създаване на плочкова текстура. Ширина={}, макс.={}\n"
+msgstr "Създаване на плочкова текстура. Широчина={}, макс.={}\n"
 
 #: ../src/celengine/texture.cpp:371
 #, c++-format
@@ -560,7 +558,7 @@ msgstr "Забавянето на светлината е изключено"
 
 #: ../src/celestia/celestiacore.cpp:1268
 msgid "Light travel delay ignored"
-msgstr "Забавянето на светлината е игнорирано"
+msgstr "Забавянето на светлината не се използва"
 
 #: ../src/celestia/celestiacore.cpp:1289
 msgid "Using normal surface textures."
@@ -754,7 +752,7 @@ msgstr "Диапазон на размера на точките: %s – %s\n"
 #: ../src/celestia/helper.cpp:148
 #, c-format
 msgid "Line width range: %s - %s\n"
-msgstr "Диапазон на размера на линиите: %s – %s\n"
+msgstr "Диапазон на широчината на линиите: %s – %s\n"
 
 #: ../src/celestia/helper.cpp:151
 #, c-format
@@ -893,9 +891,9 @@ msgid "Apparent diameter: %s\n"
 msgstr "Видим диаметър: %s\n"
 
 #: ../src/celestia/hud.cpp:298
-#, fuzzy, c++-format
+#, c++-format
 msgid "Dec: {:+d}° {:02d}′ {:.1f}″\n"
-msgstr "δ: {:+d}{} {:02d} ' {:.1f} \"\n"
+msgstr "δ: {:+d}° {:02d}′ {:.1f}″\n"
 
 #: ../src/celestia/hud.cpp:310
 #, c++-format
@@ -956,9 +954,9 @@ msgid "Surface temp: %s\n"
 msgstr "Температура на повърхността: %s\n"
 
 #: ../src/celestia/hud.cpp:461
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radius: {} Rsun ({})\n"
-msgstr "Радиус: {} сл. рад.  ({})\n"
+msgstr "Радиус: {} сл. рад. ({})\n"
 
 #: ../src/celestia/hud.cpp:467 ../src/celestia/hud.cpp:546
 #: ../src/celestia/hud.cpp:564
@@ -981,24 +979,24 @@ msgid "Radius: %s\n"
 msgstr "Радиус: %s\n"
 
 #: ../src/celestia/hud.cpp:550
-#, fuzzy, c++-format
+#, c++-format
 msgid "Equatorial radius: {}\n"
-msgstr "<b>Екваториален радиус</b> %L1 %2"
+msgstr "Екваториален радиус: {}\n"
 
 #: ../src/celestia/hud.cpp:551
-#, fuzzy, c++-format
+#, c++-format
 msgid "Polar radius: {}\n"
-msgstr "Радиус: {}\n"
+msgstr "Полярен радиус: {}\n"
 
 #: ../src/celestia/hud.cpp:556
-#, fuzzy, c++-format
+#, c++-format
 msgid "Radii: {} × {} × {}\n"
-msgstr "Радиус: {} сл. рад.  ({})\n"
+msgstr "Радиуси: {} × {} × {}\n"
 
 #: ../src/celestia/hud.cpp:610
-#, fuzzy, c++-format
+#, c++-format
 msgid "Phase angle: {:.1f}°\n"
-msgstr "Фазов ъгъл: {:.1f}{}\n"
+msgstr "Фазов ъгъл: {:.1f}°\n"
 
 #: ../src/celestia/hud.cpp:626
 #, c++-format
@@ -1122,13 +1120,15 @@ msgstr "Записване"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:32
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "обектите от дълбокото небе"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:39
 msgctxt "catalog"
 msgid "solar system"
@@ -1158,7 +1158,8 @@ msgstr "Грешка при отваряне на {}\n"
 msgid "Error reading star names file {}\n"
 msgstr "Грешка при четене на файла с имената на звездите {}\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:97
 msgctxt "catalog"
 msgid "star"
@@ -1172,7 +1173,7 @@ msgstr "Местоположение на отметките"
 #. ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/addbookmark.ui:24
 msgid "Bookmark name:"
-msgstr "Име на отметката:"
+msgstr "Име на отметка:"
 
 #. ectx: property (text), widget (QLabel, label_2)
 #. ectx: property (text), widget (QLabel, label_2)
@@ -1766,8 +1767,8 @@ msgstr "Грешка при получаване на пътя за името �
 
 #: ../src/celestia/qt/qtappwin.cpp:267
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "„Celestia“ не успя да стартира, защото папката с данни липсва, вероятната "
 "причина е неправилна инсталация."
@@ -1790,7 +1791,8 @@ msgstr "Слънчева система"
 msgid "Deep Sky Objects"
 msgstr "Обекти от дълбокото небе"
 
-#: ../src/celestia/qt/qtappwin.cpp:391 ../src/celestia/qt/qteventfinder.cpp:379
+#: ../src/celestia/qt/qtappwin.cpp:391
+#: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
 msgstr "Търсач на събития"
@@ -1886,31 +1888,33 @@ msgstr "Нова отметка"
 #: ../src/celestia/qt/qtappwin.cpp:1170
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2023 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2023 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация <b>%1</"
-"b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt: "
-"%5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: %6</"
-"p><p>Авторско право (C) 2001-2023, Екипът на „Celestia“.<br>„Celestia“ е "
-"безплатен софтуер. Може да се разпространява и/или променя под условията на "
-"„GNU General Public License“, който е публикуван от „Фондацията за свободен "
-"софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша преценка).</"
-"p><p>Сайт: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Форум: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация "
+"<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt:"
+" %5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: "
+"%6</p><p>Авторско право (C) 2001-2023, Екипът на „Celestia“.<br>„Celestia“ е"
+" безплатен софтуер. Може да се разпространява и/или променя под условията на"
+" „GNU General Public License“, който е публикуван от „Фондацията за свободен"
+" софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша "
+"преценка).</p><p>Сайт: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“:"
+" <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1206
 msgid "Unknown compiler"
@@ -2215,7 +2219,7 @@ msgstr "Задай персонализирана ЧКС"
 
 #: ../src/celestia/qt/qtappwin.cpp:1693
 msgid "FPS value"
-msgstr "Величина на ЧКС"
+msgstr "Стойност на ЧКС"
 
 #: ../src/celestia/qt/qtappwin.cpp:1715
 #, qt-format
@@ -2911,9 +2915,9 @@ msgid "<b>Eccentricity:</b> %L1"
 msgstr "<b>Ексцентрицитет:</b> %L1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:320
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Inclination:</b> %L1°"
-msgstr "<b>Наклон:</b> %L1%2"
+msgstr "<b>Наклон:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:321
 #, qt-format
@@ -2926,19 +2930,19 @@ msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "<b>Разстояние до апоцентъра:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:325
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Ascending node:</b> %L1°"
-msgstr "<b>Възходящ възел:</b> %L1%2"
+msgstr "<b>Възходящ възел:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:326
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Argument of periapsis:</b> %L1°"
-msgstr "<b>Параметър на перихелия:</b> %L1%2"
+msgstr "<b>Параметър на перихелия:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:327
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean anomaly:</b> %L1°"
-msgstr "<b>Средна аномалия:</b> %L1%2"
+msgstr "<b>Средна аномалия:</b> %L1°"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:330
 #, qt-format
@@ -2946,9 +2950,9 @@ msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "<b>Период (изчислен):</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:334
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean motion (calculated):</b> %L1°/day"
-msgstr "<b>Средно движение (изчислено):</b> %L1%2/на ден"
+msgstr "<b>Средно движение (изчислено):</b> %L1°/на ден"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:357
 #: ../src/celestia/qt/qtinfopanel.cpp:379
@@ -2958,21 +2962,21 @@ msgstr "<b>α:</b> %L1h %L2m %L3s"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:361
 #: ../src/celestia/qt/qtinfopanel.cpp:383
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Dec:</b> %L1° %L2′ %L3″"
-msgstr "<b>δ:</b> %L1%2 %L3' %L4\""
+msgstr "<b>δ:</b> %L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic longitude
 #: ../src/celestia/qt/qtinfopanel.cpp:390
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>L:</b> %L1° %L2′ %L3″"
-msgstr "<b>L:</b> %L1%2 %L3' %L4\""
+msgstr "<b>L:</b> %L1° %L2′ %L3″"
 
 #. TRANSLATORS: Galactic latitude
 #: ../src/celestia/qt/qtinfopanel.cpp:393
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>B:</b> %L1° %L2′ %L3″"
-msgstr "<b>B:</b> %L1%2 %L3' %L4\""
+msgstr "<b>B:</b> %L1° %L2′ %L3″"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:208
 msgid "OpenGL 2.1"
@@ -3347,12 +3351,14 @@ msgid "No guide destinations were found."
 msgstr "Няма намерени дестинации на екскурзовода."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "Избери дестинация:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "Отиди до"
@@ -4072,7 +4078,8 @@ msgstr "Изображението не може да бъде запазено.
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Скрипт на „Celestia“ (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4255,81 +4262,95 @@ msgstr "Отклонение по UTC"
 #, c++-format
 msgid "BMP read failure '{}' - incorrect header bytes\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – байтовете на заглавката са неправилни\n"
 
 #: ../src/celimage/bmp.cpp:136
 #, c++-format
 msgid "BMP read failure '{}' - unsupported header format\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – форматът на заглавката не се поддържа\n"
 
 #: ../src/celimage/bmp.cpp:143
 #, c++-format
 msgid "BMP read failure '{}' - width out of range\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – широчината е извън диапазона\n"
 
 #: ../src/celimage/bmp.cpp:150
 #, c++-format
 msgid "BMP read failure '{}' - height out of range\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – височината е извън диапазона\n"
 
 #: ../src/celimage/bmp.cpp:157
 #, c++-format
 msgid "BMP read failure '{}' - number of planes must be 1\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – броят на плоскостите трябва да е 1\n"
 
 #: ../src/celimage/bmp.cpp:165
 #, c++-format
 msgid "BMP read failure '{}' - invalid bits per pixel {}\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – битовете на пиксел са невалидни {}\n"
 
 #: ../src/celimage/bmp.cpp:173
 #, c++-format
 msgid "BMP read failure '{}' - compressed images are not supported\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – компресираните изображения не се "
+"поддържат\n"
 
 #: ../src/celimage/bmp.cpp:194
 #, c++-format
 msgid "BMP read failure '{}' - image too wide\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – изображението е твърде широко\n"
 
 #: ../src/celimage/bmp.cpp:206
 #, c++-format
 msgid "BMP read failure '{}' - size mismatch\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – размерът не съвпада\n"
 
 #: ../src/celimage/bmp.cpp:220
 #, c++-format
 msgid "BMP read failure '{}' - palette too large\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – палитрата е твърде голяма\n"
 
 #: ../src/celimage/bmp.cpp:234
 #, c++-format
 msgid "BMP read failure '{}' - could not read file headers\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – заглавката на файла не може да бъде "
+"прочетена\n"
 
 #: ../src/celimage/bmp.cpp:248
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to palette\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – палитрата не може да бъде намерена\n"
 
 #: ../src/celimage/bmp.cpp:259
 #, c++-format
 msgid "BMP read failure '{}' - could not read palette\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – палитрата не може да бъде прочетена\n"
 
 #: ../src/celimage/bmp.cpp:341
 #, c++-format
 msgid "BMP read failure '{}' - could not seek to image data\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – данните за изображението не могат да "
+"бъдат намерени\n"
 
 #: ../src/celimage/bmp.cpp:349
 #, c++-format
 msgid "BMP read failure '{}' - could not read image data\n"
 msgstr ""
+"Неуспешно четене на BMP файла „{}“ – данните за изображението не могат да "
+"бъдат прочетени\n"
 
 #: ../src/celimage/bmp.cpp:400
 #, c++-format
 msgid "BMP read failure '{}' - could not open file\n"
-msgstr ""
+msgstr "Неуспешно четене на BMP файла „{}“ – файлът не може да бъде отворен\n"
 
 #: ../src/celimage/image.cpp:387
 #, c++-format
@@ -4342,34 +4363,33 @@ msgid "{}: unrecognized or unsupported image file type.\n"
 msgstr "{}: неразпознат или неподдържан формат на изображението.\n"
 
 #: ../src/celimage/jpeg.cpp:151
-#, fuzzy, c++-format
+#, c++-format
 msgid "Could not open JPEG file {}\n"
-msgstr "Двоичният файл XYZV не може да бъде прочетен {}.\n"
+msgstr "JPEG файлът не може да бъде отворен {}\n"
 
 #: ../src/celimage/jpeg.cpp:168
-#, fuzzy, c++-format
+#, c++-format
 msgid "Error reading JPEG image: {}\n"
-msgstr "Грешка при четене на PNG изображението {}\n"
+msgstr "Грешка при четене на JPEG изображението: {}\n"
 
 #: ../src/celimage/jpeg.cpp:186
 #, c++-format
 msgid "JPEG dimensions out of range: {}\n"
-msgstr ""
+msgstr "Размерът на JPEG файла е извън диапазона: {}\n"
 
 #: ../src/celimage/png.cpp:37
-#, fuzzy, c++-format
+#, c++-format
 msgid "PNG error in '{}': {}\n"
-msgstr "Грешка при отваряне на {} или {}.\n"
+msgstr "Грешка на PNG файла в „{}“: {}\n"
 
 #: ../src/celimage/png.cpp:45
 #, c++-format
 msgid "PNG warning in '{}': {}\n"
-msgstr ""
+msgstr "Предупреждение на PNG файла в „{}“: {}\n"
 
 #: ../src/celimage/png.cpp:95
-#, fuzzy
 msgid "Unsupported color type"
-msgstr "Неподдържан формат на изображението: {}!\n"
+msgstr "Неподдържан формат на цвета"
 
 #: ../src/celimage/png.cpp:118
 #, c++-format
@@ -4377,31 +4397,28 @@ msgid "Error: {} is not a PNG file.\n"
 msgstr "Грешка: {} не е PNG файл.\n"
 
 #: ../src/celimage/png.cpp:128
-#, fuzzy
 msgid "Error allocating PNG read struct.\n"
-msgstr "Грешка при заключване на целта\n"
+msgstr "Грешка при разпределяне на структурата за четене на PNG.\n"
 
 #: ../src/celimage/png.cpp:135 ../src/celimage/png.cpp:204
-#, fuzzy
 msgid "Error allocating PNG info struct.\n"
-msgstr "Грешка при заключване на целта\n"
+msgstr "Грешка при разпределяне на структурата за информация на PNG.\n"
 
 #: ../src/celimage/png.cpp:152
 msgid "Failed to read IHDR chunk"
-msgstr ""
+msgstr "Неуспешно четене на IHDR"
 
 #: ../src/celimage/png.cpp:155
 msgid "Image width out of range"
-msgstr ""
+msgstr "Широчината на изображението е извън диапазона"
 
 #: ../src/celimage/png.cpp:157
 msgid "Image height out of range"
-msgstr ""
+msgstr "Височината на изображението е извън диапазона"
 
 #: ../src/celimage/png.cpp:197
-#, fuzzy
 msgid "Error allocating PNG write struct.\n"
-msgstr "Грешка при заключване на целта\n"
+msgstr "Грешка при разпределяне на структурата за записване на PNG.\n"
 
 #: ../src/celimage/png.cpp:256
 #, c++-format
@@ -4410,7 +4427,7 @@ msgstr "Грешка при отваряне на изображение {}.\n"
 
 #: ../src/celimage/png.cpp:271
 msgid "Can only save RGB or RGBA images\n"
-msgstr ""
+msgstr "Може да се запазват само RGB или RGBA изображения\n"
 
 #: ../src/celimage/png.cpp:282
 #, c++-format
@@ -4503,45 +4520,9 @@ msgstr "Грешка при отваряне на {} или {}.\n"
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:49
 #, c++-format
 msgid "Unsupported byte order {}, expected {}.\n"
-msgstr "Неподдържан байтов ред {}, очакван {}.\n"
+msgstr "Неподдържан ред на байтовете {}, очакван {}.\n"
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:58
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдържан брой числа {}, очакван {}.\n"
-
-#~ msgid "Invalid star: missing right ascension\n"
-#~ msgstr "Невалидна звезда: липсва ректасцензията\n"
-
-#~ msgid "Invalid star: missing declination.\n"
-#~ msgstr "Невалидна звезда: липсва деклинацията.\n"
-
-#~ msgid "Invalid star: missing distance.\n"
-#~ msgstr "Невалидна звезда: липсва разстоянието.\n"
-
-#~ msgid ""
-#~ "Invalid star: absolute (not apparent) magnitude must be specified for "
-#~ "star near origin\n"
-#~ msgstr ""
-#~ "Невалидна звезда: трябва да бъде зададена абсолютната (не видимата) "
-#~ "звездна величина за звездата, близо до източника\n"
-
-#~ msgid "Invalid star: missing magnitude.\n"
-#~ msgstr "Невалидна звезда: липсва звездната величина.\n"
-
-#~ msgid "Invalid star: bad spectral type.\n"
-#~ msgstr "Невалидна звезда: неточен спектрален клас.\n"
-
-#~ msgid "Invalid star: missing spectral type.\n"
-#~ msgstr "Невалидна звезда: липсва спектралния клас.\n"
-
-#, c++-format
-#~ msgid "Barycenter {} does not exist.\n"
-#~ msgstr "Центърът на масата {} не съществува.\n"
-
-#~ msgid "Error reading PNG data"
-#~ msgstr "Грешка при четене на PNG данните"
-
-#, c++-format
-#~ msgid "Error writing PNG file '{}'\n"
-#~ msgstr "Грешка при записване на PNG изображението „{}“\n"

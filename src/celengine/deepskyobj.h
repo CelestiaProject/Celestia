@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -87,7 +88,7 @@ public:
                       double& cosAngleToBoundCenter) const;
     virtual bool load(const AssociativeArray*, const fs::path& resPath);
 
-    virtual uint64_t getRenderMask() const { return 0; }
+    virtual std::uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
     AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
@@ -104,7 +105,3 @@ private:
     bool visible { true };
     bool clickable { true };
 };
-
-using DeepSkyCatalog = std::vector<DeepSkyObject*>;
-int LoadDeepSkyObjects(DeepSkyCatalog&, std::istream& in,
-                       const std::string& path);
