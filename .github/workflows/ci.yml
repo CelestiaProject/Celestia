@@ -189,7 +189,7 @@ jobs:
           wayland: ON
           icu: ON
           qt6: OFF
-        - os: ubuntu-24.04
+        - os: ubuntu-24.04-arm
           avif: ON
           gles: ON
           gtk3: ON
@@ -342,63 +342,6 @@ jobs:
               -DENABLE_LIBAVIF=ON            \
               -DENABLE_MINIAUDIO=ON          \
               -DUSE_ICU=OFF
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: ninja
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest
-
-  gnulinux-arm64:
-    runs-on: self-hosted
-    steps:
-    - name: 'Install dependencies'
-      run: |
-        #sudo dnf config-manager --set-enabled ol8_codeready_builder
-        sudo yum install -y eigen3-devel \
-                            libepoxy-devel \
-                            libpng-devel \
-                            libjpeg-turbo-devel \
-                            boost-devel \
-                            freetype-devel \
-                            SDL2-devel \
-                            lua-devel \
-                            gtk3-devel \
-                            qt5-qtbase-devel \
-                            qt5-qttools \
-                            gettext-devel \
-                            libicu-devel \
-                            cmake \
-                            gperf \
-                            ninja-build \
-                            gcc-toolset-11-gcc-c++
-
-    - name: 'Checkout source code'
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-
-    - name: 'Configure CMake'
-      run: |
-        cmake -B ${{github.workspace}}/build  \
-              -G Ninja                        \
-              -DENABLE_GLES=ON                \
-              -DENABLE_SPICE=ON               \
-              -DENABLE_TOOLS=ON               \
-              -DENABLE_TESTS=ON               \
-              -DENABLE_SDL=ON                 \
-              -DENABLE_GTK=ON                 \
-              -DUSE_GTK3=ON                   \
-              -DENABLE_QT5=ON                 \
-              -DENABLE_QT6=OFF                \
-              -DENABLE_FFMPEG=OFF             \
-              -DENABLE_MINIAUDIO=ON           \
-              -DUSE_ICU=ON
-      env:
-        CC: /opt/rh/gcc-toolset-11/root/usr/bin/gcc
-        CXX: /opt/rh/gcc-toolset-11/root/usr/bin/g++
 
     - name: Build
       working-directory: ${{github.workspace}}/build
