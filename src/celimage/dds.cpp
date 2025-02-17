@@ -330,7 +330,8 @@ Image* LoadDDSImage(const fs::path& filename)
                                        static_cast<std::int32_t>(ddsd.width),
                                        static_cast<std::int32_t>(ddsd.height),
                                        std::max(static_cast<std::int32_t>(ddsd.mipMapLevels), INT32_C(1)));
-    if (!in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize())) /* Flawfinder: ignore */
+    in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize()); /* Flawfinder: ignore */
+    if (!in.eof() && !in.good())
     {
         util::GetLogger()->error("Failed reading data from DDS texture file {}.\n", filename);
         return nullptr;
