@@ -2,7 +2,7 @@ task:
   name: freebsd amd64
   skip: "changesIncludeOnly('doc/*')"
   freebsd_instance:
-    image_family: freebsd-14-1
+    image_family: freebsd-14-2
 
   install_script: |
     pkg install -y cmake            \
