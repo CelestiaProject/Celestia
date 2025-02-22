@@ -181,8 +181,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - os: ubuntu-20.04
-          avif: OFF     # Not supported on Ubuntu20.04
+        - os: ubuntu-22.04
+          avif: ON
           gles: ON
           gtk3: ON
           minaudio: ON
