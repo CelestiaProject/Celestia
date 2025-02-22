@@ -201,7 +201,7 @@ parseBMPInfoHeader(const char* infoHeader,
     info.imageSize = info.rowStride * static_cast<std::uint32_t>(info.height);
     // Uncompressed bitmaps can have a size of 0
     if (auto size = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, imageSize));
-        size != 0 && size != info.imageSize || (info.offset + info.imageSize) < info.fileSize)
+        (size != 0 && size != info.imageSize) || (info.offset + info.imageSize) < info.fileSize)
     {
         GetLogger()->error(_("BMP read failure '{}' - size mismatch\n"), filename);
         return false;

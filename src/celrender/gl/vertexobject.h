@@ -227,7 +227,7 @@ public:
      *
      * @see @ref IndexType
      */
-    VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t /*offset*/, IndexType type);
+    VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t offset, IndexType type);
 
     /**
      * @brief Add index buffer and become its owner.
@@ -238,7 +238,7 @@ public:
      *
      * @see @ref IndexType
      */
-    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t /*offset*/, IndexType type);
+    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t offset, IndexType type);
 
 private:
     //! Reset object to initial state
