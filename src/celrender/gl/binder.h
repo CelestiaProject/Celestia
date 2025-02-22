@@ -35,7 +35,6 @@ public:
      * Bind a Buffer to a target specified by targetHint.
      *
      * @param bo Buffer to bind.
-     * @param targetHint a target to bind the Buffer to.
      * @return self
      */
     Binder &bind(const Buffer &bo);
