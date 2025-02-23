@@ -48,8 +48,8 @@ void actionTimeLocal(GtkAction*, AppData*);
 void actionViewerSize(GtkAction*, AppData*);
 void actionFullScreen(GtkAction*, AppData*);
 void actionViewOptions(GtkAction*, AppData*);
-void actionStarsMore(GtkAction*, AppData*);
-void actionStarsFewer(GtkAction*, AppData*);
+void actionIncreaseExposure(GtkAction*, AppData*);
+void actionDecreaseExposure(GtkAction*, AppData*);
 void actionMenuBarVisible(GtkToggleAction*, AppData*);
 void actionMultiSplitH(GtkAction*, AppData*);
 void actionMultiSplitV(GtkAction*, AppData*);
@@ -66,13 +66,11 @@ void actionHelpAbout(GtkAction*, AppData*);
 
 /* Radio Button Actions */
 void actionVerbosity(GtkRadioAction*, GtkRadioAction*, AppData*);
-void actionStarStyle(GtkRadioAction*, GtkRadioAction*, AppData*);
 void actionAmbientLight(GtkRadioAction*, GtkRadioAction*, AppData*);
 
 /* Render-Flag Actions */
 void actionRenderAA(GtkToggleAction*, AppData*);
 void actionRenderAtmospheres(GtkToggleAction*, AppData*);
-void actionRenderAutoMagnitude(GtkToggleAction*, AppData*);
 void actionRenderCelestialGrid(GtkToggleAction*, AppData*);
 void actionRenderClouds(GtkToggleAction*, AppData*);
 void actionRenderCometTails(GtkToggleAction*, AppData*);
@@ -131,7 +129,6 @@ void resyncOrbitActions(AppData* app);
 void resyncVerbosityActions(AppData* app);
 void resyncTimeZoneAction(AppData* app);
 void resyncAmbientActions(AppData* app);
-void resyncStarStyleActions(AppData* app);
 void resyncGalaxyGainActions(AppData* app);
 void resyncTextureResolutionActions(AppData* app);
 

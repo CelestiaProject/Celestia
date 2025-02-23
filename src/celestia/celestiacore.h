@@ -1,6 +1,6 @@
 // celestiacore.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -166,7 +166,7 @@ public:
         VerbosityLevelChanged       = 0x0004,
         TimeZoneChanged             = 0x0008,
         AmbientLightChanged         = 0x0010,
-        FaintestChanged             = 0x0020,
+        // removed notification     = 0x0020,
         HistoryChanged              = 0x0040,
         TextEnterModeChanged        = 0x0080,
         GalaxyLightGainChanged      = 0x0100,
@@ -284,9 +284,6 @@ public:
 
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
-
-    void setFaintest(float);
-    void setFaintestAutoMag();
 
     std::vector<Observer*> getObservers() const;
     celestia::View* getViewByObserver(const Observer*) const;

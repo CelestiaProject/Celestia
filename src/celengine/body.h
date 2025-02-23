@@ -1,6 +1,7 @@
 // body.h
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -292,6 +293,19 @@ public:
     float getApparentMagnitude(float sunLuminosity,
                                const Eigen::Vector3d& sunPosition,
                                const Eigen::Vector3d& viewerPosition) const;
+
+    float getIrradiance(const Star& sun,
+                        float distanceFromSun,
+                        float distanceFromViewer) const;
+    float getIrradiance(float sunLuminosity,
+                        float distanceFromSun,
+                        float distanceFromViewer) const;
+    float getIrradiance(const Star& sun,
+                        const Eigen::Vector3d& sunPosition,
+                        const Eigen::Vector3d& viewerPosition) const;
+    float getIrradiance(float sunLuminosity,
+                        const Eigen::Vector3d& sunPosition,
+                        const Eigen::Vector3d& viewerPosition) const;
 
     UniversalCoord getPosition(double tdb) const;
     Eigen::Quaterniond getOrientation(double tdb) const;

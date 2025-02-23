@@ -1,7 +1,6 @@
 // qtcelestiaactions.cpp
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Collection of actions used in the Qt4 UI.
 //
@@ -219,31 +218,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    autoMagAction        = createCheckableAction(_("Auto Magnitude"), this, Renderer::ShowAutoMag);
-    autoMagAction->setShortcut(QKeySequence("Ctrl+Y"));
-    autoMagAction->setToolTip(_("Faintest visible magnitude based on field of view"));
-    connect(autoMagAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-
-    increaseLimitingMagAction = new QAction(_("More Stars Visible"), this);
-    increaseLimitingMagAction->setData(0.1);
-    increaseLimitingMagAction->setShortcut(QString("]"));
-    decreaseLimitingMagAction = new QAction(_("Fewer Stars Visible"), this);
-    decreaseLimitingMagAction->setData(-0.1);
-    decreaseLimitingMagAction->setShortcut(QString("["));
-    connect(increaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
-    connect(decreaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
-
-    pointStarAction      = createCheckableAction(_("Points"),       this, Renderer::PointStars);
-    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, Renderer::FuzzyPointStars);
-    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, Renderer::ScaledDiscStars);
-    QActionGroup *starStyleGroup = new QActionGroup(this);
-    starStyleGroup->addAction(pointStarAction);
-    starStyleGroup->addAction(fuzzyPointStarAction);
-    starStyleGroup->addAction(scaledDiscStarAction);
-    starStyleGroup->setExclusive(true);
-    connect(pointStarAction,      SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
-    connect(fuzzyPointStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
-    connect(scaledDiscStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
+    decreaseExposureAction = new QAction(_("Decrease Exposure Time"), this);
+    decreaseExposureAction->setData(0.5);
+    decreaseExposureAction->setShortcut(QString("["));
+    increaseExposureAction = new QAction(_("Increase Exposure Time"), this);
+    increaseExposureAction->setData(2.0);
+    increaseExposureAction->setShortcut(QString("]"));
+    connect(increaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
+    connect(decreaseExposureAction, SIGNAL(triggered()), this, SLOT(slotAdjustExposure()));
 
     lightTimeDelayAction = new QAction(_("Light Time Delay"), this);
     lightTimeDelayAction->setCheckable(true);
@@ -267,7 +249,6 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     int labelMode = renderer->getLabelMode();
     BodyClassification orbitMask = renderer->getOrbitMask();
     int textureRes = renderer->getResolution();
-    Renderer::StarStyle starStyle = renderer->getStarStyle();
 
     equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
     galacticGridAction->setChecked(renderFlags & Renderer::ShowGalacticGrid);
@@ -308,11 +289,6 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     mediumResAction->setChecked(textureRes == medres);
     highResAction->setChecked(textureRes == hires);
 
-    // Star style
-    pointStarAction->setChecked(starStyle == Renderer::PointStars);
-    fuzzyPointStarAction->setChecked(starStyle == Renderer::FuzzyPointStars);
-    scaledDiscStarAction->setChecked(starStyle == Renderer::ScaledDiscStars);
-
     // Features
     cloudsAction->setChecked(renderFlags & Renderer::ShowCloudMaps);
     cometTailsAction->setChecked(renderFlags & Renderer::ShowCometTails);
@@ -329,9 +305,6 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     ringShadowsAction->setChecked(renderFlags & Renderer::ShowRingShadows);
     eclipseShadowsAction->setChecked(renderFlags & Renderer::ShowEclipseShadows);
     cloudShadowsAction->setChecked(renderFlags & Renderer::ShowCloudShadows);
-
-    // Star visibility
-    autoMagAction->setChecked(renderFlags & Renderer::ShowAutoMag);
 }
 
 void
@@ -380,17 +353,6 @@ CelestiaActions::slotToggleOrbit()
 }
 
 void
-CelestiaActions::slotSetStarStyle()
-{
-    QAction* act = qobject_cast<QAction*>(sender());
-    if (act != nullptr)
-    {
-        Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
-        appCore->getRenderer()->setStarStyle(starStyle);
-    }
-}
-
-void
 CelestiaActions::slotSetTextureResolution()
 {
     QAction* act = qobject_cast<QAction*>(sender());
@@ -402,49 +364,16 @@ CelestiaActions::slotSetTextureResolution()
 }
 
 void
-CelestiaActions::slotAdjustLimitingMagnitude()
+CelestiaActions::slotAdjustExposure()
 {
-    QAction* act = qobject_cast<QAction*>(sender());
-    if (act != nullptr)
-    {
-        // HACK!HACK!HACK!
-        // Consider removal relevant entries from menus.
-        // If search console is open then pass keys to it.
-        if (appCore->getTextEnterMode() != celestia::Hud::TextEnterMode::Normal)
-        {
-            appCore->charEntered(act->shortcut().toString().toUtf8().data());
-            return;
-        }
-
-        Renderer* renderer = appCore->getRenderer();
-        float change = (float) act->data().toDouble();
-
-        QString notification;
-        if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
-        {
-            float newLimitingMag = qBound(6.0f, renderer->getFaintestAM45deg() + change, 12.0f);
-            renderer->setFaintestAM45deg(newLimitingMag);
-            appCore->setFaintestAutoMag();
-
-            notification = QString(_("Auto magnitude limit at 45 degrees: %L1")).arg(newLimitingMag, 0, 'f', 2);
-        }
-        else
-        {
-            float newLimitingMag = qBound(1.0f, appCore->getSimulation()->getFaintestVisible() + change * 2, 15.0f);
-            appCore->setFaintest(newLimitingMag);
-
-            notification = QString(_("Magnitude limit: %L1")).arg(newLimitingMag, 0, 'f', 2);
-        }
-
-        appCore->flash(notification.toUtf8().data());
-    }
+    if (auto* act = qobject_cast<QAction*>(sender()); act != nullptr)
+        appCore->charEntered(act->shortcut().toString().toUtf8().data());
 }
 
 void
 CelestiaActions::slotSetLightTimeDelay()
 {
-    // TODO: CelestiaCore class should offer an API for enabling/disabling light
-    // time delay.
+    // TODO: CelestiaCore class should offer an API for enabling/disabling light time delay.
     appCore->charEntered('-');
 }
 

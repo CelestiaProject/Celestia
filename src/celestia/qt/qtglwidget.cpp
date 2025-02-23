@@ -51,9 +51,8 @@ constexpr auto DEFAULT_ORBIT_MASK = static_cast<int>(BodyClassification::Planet 
 constexpr int DEFAULT_LABEL_MODE = Renderer::LocationLabels | Renderer::I18nConstellationLabels;
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
-constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::Blackbody_D65);
-constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
-constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
+constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::SunWhite);
+constexpr float DEFAULT_EXPOSURE = 1.0f;
 constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 std::pair<float, float>
@@ -142,14 +141,13 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
-    appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
     appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
 
     appRenderer->setStarColorTable(static_cast<ColorTableType>(settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt()));
 
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(settings.value("LocationFilter", static_cast<quint64>(Observer::DefaultLocationFilter)).toULongLong());
 
-    appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
+    appCore->getSimulation()->setExposure((float) settings.value("Exposure", DEFAULT_EXPOSURE).toDouble());
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
