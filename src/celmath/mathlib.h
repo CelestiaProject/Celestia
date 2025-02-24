@@ -60,7 +60,7 @@ template<typename T> constexpr T lerp(T t, T a, T b)
     return a + t * (b - a);
 }
 #else
-using lerp = std::lerp;
+using ::std::lerp;
 #endif
 
 template<typename T> inline constexpr T degToRad(T d)
