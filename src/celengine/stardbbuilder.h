@@ -57,7 +57,10 @@ public:
     struct StcHeader;
 
 private:
-    bool createOrUpdateStar(const StcHeader&, const AssociativeArray*, Star*);
+    bool createOrUpdateStar(const StcHeader&,
+                            const AssociativeArray*,
+                            Star*,
+                            const fs::path&);
     bool checkStcPosition(const StcHeader&,
                           const AssociativeArray*,
                           const Star*,

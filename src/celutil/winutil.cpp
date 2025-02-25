@@ -14,28 +14,15 @@
 
 #include <windows.h>
 
-namespace celestia::util
+namespace celestia::util::detail
 {
 
-std::string
-WideToUTF8(std::wstring_view ws)
+int WideToUTF8(std::wstring_view ws, char* out, int outSize)
 {
-    if (ws.empty())
-        return {};
-
-    // get a converted string length
-    const auto srcLen = static_cast<int>(ws.size());
-    int len = WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, nullptr, 0, nullptr, nullptr);
-    if (len <= 0)
-        return {};
-
-    std::string out(static_cast<std::string::size_type>(len), '\0');
-    len = WideCharToMultiByte(CP_UTF8, 0, ws.data(), srcLen, out.data(), len, nullptr, nullptr);
-    if (len <= 0)
-        return {};
-
-    out.resize(static_cast<std::size_t>(len));
-    return out;
+    return WideCharToMultiByte(CP_UTF8, 0,
+                               ws.data(), static_cast<int>(ws.size()),
+                               out, outSize,
+                               nullptr, nullptr);
 }
 
-} // end namespace celestia::util
+} // end namespace celestia::util::detail

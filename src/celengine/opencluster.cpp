@@ -52,14 +52,6 @@ bool OpenCluster::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool OpenCluster::load(const AssociativeArray* params, const fs::path& resPath)
-{
-    // No parameters specific to open cluster, though a list of member stars
-    // could be useful.
-    return DeepSkyObject::load(params, resPath);
-}
-
-
 uint64_t OpenCluster::getRenderMask() const
 {
     return Renderer::ShowOpenClusters;

@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Geometry>
@@ -945,8 +946,13 @@ Body* CreateBody(const std::string& name,
         body->setClickable(false);
 
     // TODO: should be own class
-    if (const auto *infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
-        body->setInfoURL(BuildInfoURL(*infoURL, path));
+    if (const auto *infoURLValue = planetData->getString("InfoURL"); infoURLValue != nullptr)
+    {
+        if (std::string infoURL = util::BuildInfoURL(*infoURLValue, path); !infoURL.empty())
+            body->setInfoURL(std::move(infoURL));
+        else
+            GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
+    }
 
     if (auto albedo = planetData->getNumber<float>("Albedo"); albedo.has_value())
     {

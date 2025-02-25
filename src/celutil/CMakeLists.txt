@@ -17,6 +17,8 @@ set(CELUTIL_SOURCES
   greek.cpp
   greek.h
   includeicu.h
+  infourl.cpp
+  infourl.h
   localeutil.h
   logger.cpp
   logger.h
