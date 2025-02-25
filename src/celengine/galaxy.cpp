@@ -133,7 +133,7 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
+bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 
@@ -148,7 +148,7 @@ bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
     else
         setForm({});
 
-    return DeepSkyObject::load(params, resPath);
+    return DeepSkyObject::load(params, resPath, name);
 }
 
 GalaxyType Galaxy::getGalaxyType() const

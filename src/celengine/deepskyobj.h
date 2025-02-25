@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <Eigen/Core>
@@ -86,7 +87,7 @@ public:
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
-    virtual bool load(const AssociativeArray*, const fs::path& resPath);
+    virtual bool load(const AssociativeArray*, const fs::path& resPath, std::string_view name);
 
     virtual std::uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }

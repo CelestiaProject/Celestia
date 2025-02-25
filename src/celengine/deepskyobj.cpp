@@ -11,16 +11,23 @@
 #include "deepskyobj.h"
 
 #include <cmath>
+#include <utility>
+
 #include <fmt/format.h>
 
 #include <celastro/astro.h>
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
+#include <celutil/gettext.h>
 #include <celutil/infourl.h>
+#include <celutil/logger.h>
 #include "hash.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
+
+using celestia::util::GetLogger;
 
 Eigen::Vector3d DeepSkyObject::getPosition() const
 {
@@ -84,7 +91,7 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath)
+bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     // Get position
     if (auto pos = params->getLengthVector<double>("Position", astro::KM_PER_LY<double>); pos.has_value())
@@ -114,8 +121,13 @@ bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath
         setAbsoluteMagnitude(*absMagValue);
 
     // TODO: infourl class
-    if (const auto *infoURLValue = params->getString("InfoURL"); infoURLValue != nullptr)
-        setInfoURL(BuildInfoURL(*infoURLValue, resPath));
+    if (const auto *infoUrlValue = params->getString("InfoURL"); infoUrlValue != nullptr)
+    {
+        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resPath); !infoUrl.empty())
+            setInfoURL(std::move(infoUrl));
+        else
+            GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
+    }
 
     if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
         setVisible(*visibleValue);

@@ -33,6 +33,7 @@
 #include <celutil/binaryread.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
+#include <celutil/infourl.h>
 #include <celutil/logger.h>
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
@@ -462,6 +463,35 @@ mergeStarDetails(boost::intrusive_ptr<StarDetails>& existingDetails,
 }
 
 void
+applyMesh(const StarDatabaseBuilder::StcHeader& header,
+          const AssociativeArray* starData,
+          boost::intrusive_ptr<StarDetails>& details)
+{
+    const auto* mesh = starData->getString("Mesh");
+    if (mesh == nullptr)
+        return;
+
+    if (!header.isStar)
+    {
+        stcWarn(header, _("Mesh is ignored on Barycenters"));
+        return;
+    }
+
+    auto meshPath = util::U8FileName(*mesh);
+    if (!meshPath.has_value())
+    {
+        stcError(header, _("invalid filename in Mesh"));
+        return;
+    }
+
+    using engine::GeometryInfo;
+    using engine::GetGeometryManager;
+    GeometryInfo geometryInfo(*meshPath, *header.path, Eigen::Vector3f::Zero(), 1.0f, true);
+    ResourceHandle geometryHandle = GetGeometryManager()->getHandle(geometryInfo);
+    StarDetails::setGeometry(details, geometryHandle);
+}
+
+void
 applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                                const AssociativeArray* starData,
                                boost::intrusive_ptr<StarDetails>& details)
@@ -509,30 +539,10 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
 void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
-                   boost::intrusive_ptr<StarDetails>& details)
+                   boost::intrusive_ptr<StarDetails>& details,
+                   const fs::path& resourcePath)
 {
-    if (const auto* mesh = starData->getString("Mesh"); mesh != nullptr)
-    {
-        if (!header.isStar)
-        {
-            stcWarn(header, _("Mesh is ignored on Barycenters"));
-        }
-        else if (auto meshPath = util::U8FileName(*mesh); meshPath.has_value())
-        {
-            using engine::GeometryInfo;
-            using engine::GetGeometryManager;
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*meshPath,
-                                                                                         *header.path,
-                                                                                         Eigen::Vector3f::Zero(),
-                                                                                         1.0f,
-                                                                                         true));
-            StarDetails::setGeometry(details, geometryHandle);
-        }
-        else
-        {
-            stcError(header, _("invalid filename in Mesh"));
-        }
-    }
+    applyMesh(header, starData, details);
 
     if (const auto* texture = starData->getString("Texture"); texture != nullptr)
     {
@@ -574,8 +584,13 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
 
     applyTemperatureBoloCorrection(header, starData, details);
 
-    if (const auto* infoUrl = starData->getString("InfoURL"); infoUrl != nullptr)
-        StarDetails::setInfoURL(details, *infoUrl);
+    if (const auto* infoUrlValue = starData->getString("InfoURL"); infoUrlValue != nullptr)
+    {
+        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resourcePath); !infoUrl.empty())
+            StarDetails::setInfoURL(details, std::move(infoUrl));
+        else
+            stcWarn(header, _("Invalid InfoURL"));
+    }
 }
 
 } // end unnamed namespace
@@ -733,7 +748,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
             }
         }
 
-        if (createOrUpdateStar(header, starData, star))
+        if (createOrUpdateStar(header, starData, star, resourcePath))
         {
             loadCategories(header, starData, domain);
 
@@ -795,7 +810,8 @@ StarDatabaseBuilder::finish()
 bool
 StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
                                         const AssociativeArray* starData,
-                                        Star* star)
+                                        Star* star,
+                                        const fs::path& resourcePath)
 {
     boost::intrusive_ptr<StarDetails> newDetails = nullptr;
     if (!checkSpectralType(header, starData, star, newDetails))
@@ -856,7 +872,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details);
+    applyCustomDetails(header, starData, star->details, resourcePath);
     return true;
 }
 

@@ -247,7 +247,7 @@ DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 
         std::unique_ptr<DeepSkyObject> obj = createDSO(objType);
 
-        if (obj == nullptr || !obj->load(objParams, resourcePath))
+        if (obj == nullptr || !obj->load(objParams, resourcePath, objName))
         {
             GetLogger()->warn("Bad Deep Sky Object definition--will continue parsing file.\n");
             continue;

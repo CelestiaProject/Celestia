@@ -14,29 +14,33 @@
 #include <iosfwd>
 #include <string_view>
 
-#ifdef _WIN32
-#include <string>
-#endif
-
 #include <fmt/format.h>
 
 #include <celcompat/filesystem.h>
 
+#if defined(HAVE_STD_FILESYSTEM) && FMT_VERSION >= 100100
+// From fmt 10.1.0 onwards, default path formatter is unquoted
+#include <fmt/std.h>
+#elif defined(_WIN32)
+#include <celutil/winutil.h>
+#endif
+
+#if !defined(HAVE_STD_FILESYSTEM) || FMT_VERSION < 100100
 template <>
 struct fmt::formatter<fs::path> : formatter<std::string_view>
 {
     auto format(const fs::path &path, format_context &ctx) const
     {
-#if __cpp_char8_t >= 201811L
-        // Future-proof against C++20 defining the result of the above as std::u8string
-	auto u8path = path.u8string();
-        std::string_view sv(reinterpret_cast<const char*>(u8path.data()), u8path.size());
-        return formatter<std::string_view>::format(sv, ctx);
+#ifdef _WIN32
+        fmt::basic_memory_buffer<char> buffer;
+        celestia::util::WideToUTF8(path.native(), buffer);
+        return formatter<std::string_view>::format(std::string_view{ buffer.data(), buffer.size() }, ctx);
 #else
-        return formatter<std::string_view>::format(path.u8string(), ctx);
+        return formatter<std::string_view>::format(path.native(), ctx);
 #endif
     }
 };
+#endif
 
 namespace celestia::util
 {
