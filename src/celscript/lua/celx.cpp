@@ -26,6 +26,7 @@
 #include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
@@ -47,10 +48,12 @@
 #include "celx_gl.h"
 #include "celx_category.h"
 
-
 using namespace Eigen;
 using namespace std;
 using namespace std::string_view_literals;
+
+namespace util = celestia::util;
+
 using celestia::util::GetLogger;
 
 static constexpr std::array CelxClassNames
@@ -1429,20 +1432,20 @@ bool CelxLua::isType(int index, int type) const
     return Celx_istype(m_lua, index, type);
 }
 
-Value CelxLua::getValue(int index)
+util::Value CelxLua::getValue(int index)
 {
     if (isInteger(index))
-        return Value((double)getInt(index));
+        return util::Value((double)getInt(index));
     if (isNumber(index))
-        return Value(getNumber(index));
+        return util::Value(getNumber(index));
     if (isBoolean(index))
-        return Value(getBoolean(index));
+        return util::Value(getBoolean(index));
     if (isString(index))
-        return Value(getString(index));
+        return util::Value(getString(index));
     if (isTable(index))
     {
-        auto array = std::make_unique<ValueArray>();
-        auto hash = std::make_unique<Hash>();
+        auto array = std::make_unique<util::ValueArray>();
+        auto hash = std::make_unique<util::AssociativeArray>();
         push();
         while(lua_next(m_lua, index) != 0)
         {
@@ -1474,12 +1477,12 @@ Value CelxLua::getValue(int index)
         }
         pop(1);
         if (hash != nullptr)
-            return Value(std::move(hash));
+            return util::Value(std::move(hash));
         else if (array != nullptr)
-            return Value(std::move(array));
+            return util::Value(std::move(array));
     }
 
-    return Value();
+    return util::Value();
 }
 
 void CelxLua::setClass(int id)

@@ -18,6 +18,11 @@
 #include <celutil/reshandle.h>
 #include <celengine/deepskyobj.h>
 
+namespace celestia::util
+{
+class AssociativeArray;
+}
+
 class Nebula : public DeepSkyObject
 {
 public:
@@ -28,7 +33,7 @@ public:
     std::string getDescription() const override;
 
     // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
 
     std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;

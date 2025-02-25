@@ -27,6 +27,10 @@
 struct Matrices;
 class Renderer;
 
+namespace celestia::util
+{
+class AssociativeArray;
+}
 
 class Globular : public DeepSkyObject
 {
@@ -52,7 +56,7 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
 
     std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;

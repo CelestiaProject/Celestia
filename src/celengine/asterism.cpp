@@ -20,20 +20,22 @@
 #include "star.h"
 #include "stardb.h"
 
+namespace util = celestia::util;
+
 using celestia::util::GetLogger;
 
 namespace
 {
 
 bool
-readChain(Tokenizer& tokenizer,
+readChain(util::Tokenizer& tokenizer,
           Asterism::Chain& chain,
           const StarDatabase& starDB,
           std::string_view astName)
 {
     for (;;)
     {
-        if (auto tokenType = tokenizer.nextToken(); tokenType == Tokenizer::TokenEndArray)
+        if (auto tokenType = tokenizer.nextToken(); tokenType == util::Tokenizer::TokenEndArray)
             break;
 
         auto starName = tokenizer.getStringValue();
@@ -57,12 +59,12 @@ readChain(Tokenizer& tokenizer,
 }
 
 bool
-readChains(Tokenizer& tokenizer,
+readChains(util::Tokenizer& tokenizer,
            std::vector<Asterism::Chain>& chains,
            const StarDatabase& starDB,
            std::string_view astName)
 {
-    if (tokenizer.nextToken() != Tokenizer::TokenBeginArray)
+    if (tokenizer.nextToken() != util::Tokenizer::TokenBeginArray)
     {
         GetLogger()->error("Error parsing asterism \"{}\": expected array\n", astName);
         return false;
@@ -71,10 +73,10 @@ readChains(Tokenizer& tokenizer,
     for (;;)
     {
         auto tokenType = tokenizer.nextToken();
-        if (tokenType == Tokenizer::TokenEndArray)
+        if (tokenType == util::Tokenizer::TokenEndArray)
             break;
 
-        if (tokenType != Tokenizer::TokenBeginArray)
+        if (tokenType != util::Tokenizer::TokenBeginArray)
         {
             GetLogger()->error("Error parsing asterism {} chain: expected array\n", astName);
             return false;
@@ -200,9 +202,9 @@ std::unique_ptr<AsterismList>
 ReadAsterismList(std::istream& in, const StarDatabase& starDB)
 {
     auto asterisms = std::make_unique<AsterismList>();
-    Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(&in);
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
         auto tokenValue = tokenizer.getStringValue();
         if (!tokenValue.has_value())

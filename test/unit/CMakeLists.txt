@@ -1,9 +1,9 @@
 set(UNIT_TEST_SOURCES
   array_view_test.cpp
+  associativearray_test.cpp
   category_test.cpp
   constellation_test.cpp
   greek_test.cpp
-  hash_test.cpp
   kepler_test.cpp
   logger_test.cpp
   ranges_test.cpp

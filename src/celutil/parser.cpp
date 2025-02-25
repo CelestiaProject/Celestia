@@ -7,18 +7,19 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-#include <map>
-#include <string_view>
-#include <utility>
+
+#include "parser.h"
+
 #include <variant>
 
 #include <celastro/units.h>
-#include <celutil/tokenizer.h>
-#include "parser.h"
+#include "associativearray.h"
+#include "tokenizer.h"
 
 using namespace std::string_view_literals;
 
-namespace astro = celestia::astro;
+namespace celestia::util
+{
 
 namespace
 {
@@ -117,7 +118,6 @@ Value::Units readUnits(Tokenizer& tokenizer)
 
 } // end unnamed namespace
 
-
 /****** Parser method implementation ******/
 
 Parser::Parser(Tokenizer* _tokenizer) :
@@ -125,8 +125,10 @@ Parser::Parser(Tokenizer* _tokenizer) :
 {
 }
 
+Parser::~Parser() = default;
 
-std::unique_ptr<ValueArray> Parser::readArray()
+std::unique_ptr<ValueArray>
+Parser::readArray()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginArray)
@@ -154,8 +156,8 @@ std::unique_ptr<ValueArray> Parser::readArray()
     return array;
 }
 
-
-std::unique_ptr<Hash> Parser::readHash()
+std::unique_ptr<AssociativeArray>
+Parser::readHash()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginGroup)
@@ -164,7 +166,7 @@ std::unique_ptr<Hash> Parser::readHash()
         return nullptr;
     }
 
-    auto hash = std::make_unique<Hash>();
+    auto hash = std::make_unique<AssociativeArray>();
 
     tok = tokenizer->nextToken();
     while (tok != Tokenizer::TokenEndGroup)
@@ -197,8 +199,8 @@ std::unique_ptr<Hash> Parser::readHash()
     return hash;
 }
 
-
-Value Parser::readValue()
+Value
+Parser::readValue()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     switch (tok)
@@ -233,7 +235,7 @@ Value Parser::readValue()
     case Tokenizer::TokenBeginGroup:
         tokenizer->pushBack();
         {
-            std::unique_ptr<Hash> hash = readHash();
+            std::unique_ptr<AssociativeArray> hash = readHash();
             if (hash == nullptr)
                 return Value();
             else
@@ -245,3 +247,5 @@ Value Parser::readValue()
         return Value();
     }
 }
+
+} // end namespace celestia::util
