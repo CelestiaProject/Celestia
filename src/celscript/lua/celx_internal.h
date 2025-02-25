@@ -22,9 +22,13 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <celutil/color.h>
-#include <celengine/parser.h>
 #include <celengine/timelinephase.h>
 #include "celx.h"
+
+namespace celestia::util
+{
+class Value;
+}
 
 class CelestiaCore;
 
@@ -241,7 +245,6 @@ public:
     double getNumber(int n = 0) const { return lua_tonumber(m_lua, n); }
     bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n) == 1; }
     const char *getString(int n = 0) const { return lua_tostring(m_lua, n); }
-    Value getValue(int n = 0);
     template<typename T> T *getUserData(int n = 0) const
     {
         return static_cast<T*>(lua_touserdata(m_lua, n));

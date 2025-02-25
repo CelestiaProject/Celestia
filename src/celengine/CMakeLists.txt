@@ -49,8 +49,6 @@ set(CELENGINE_SOURCES
   glshader.h
   glsupport.cpp
   glsupport.h
-  hash.cpp
-  hash.h
   lightenv.h
   location.cpp
   location.h
@@ -84,8 +82,6 @@ set(CELENGINE_SOURCES
   overlayimage.h
   parseobject.cpp
   parseobject.h
-  parser.cpp
-  parser.h
   perspectiveprojectionmode.cpp
   perspectiveprojectionmode.h
   planetgrid.cpp
@@ -153,8 +149,6 @@ set(CELENGINE_SOURCES
   univcoord.h
   universe.cpp
   universe.h
-  value.cpp
-  value.h
   viewporteffect.h
   viewporteffect.cpp
   virtualtex.cpp

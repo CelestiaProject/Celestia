@@ -10,10 +10,9 @@
 #include <algorithm>
 
 #include <celastro/astro.h>
-#include <celengine/hash.h>
-#include <celengine/parser.h>
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 #include "destination.h"
@@ -21,16 +20,17 @@
 using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
+namespace util = celestia::util;
 
 DestinationList* ReadDestinationList(std::istream& in)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
     auto* destinations = new DestinationList();
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
-        if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
+        if (tokenizer.getTokenType() != util::Tokenizer::TokenBeginGroup)
         {
             GetLogger()->error("Error parsing destinations file.\n");
             std::for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
@@ -39,8 +39,8 @@ DestinationList* ReadDestinationList(std::istream& in)
         }
         tokenizer.pushBack();
 
-        const Value destValue = parser.readValue();
-        const Hash* destParams = destValue.getHash();
+        const util::Value destValue = parser.readValue();
+        const util::AssociativeArray* destParams = destValue.getHash();
         if (destParams == nullptr)
         {
             GetLogger()->error("Error parsing destination.\n");

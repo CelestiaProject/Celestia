@@ -13,7 +13,6 @@
 #include <string>
 #include <vector>
 
-
 class Destination
 {
  public:
