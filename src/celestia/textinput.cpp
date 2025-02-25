@@ -190,7 +190,7 @@ TextInput::render(Overlay* overlay,
     overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaBottom(rectHeight - hudFonts.titleFontHeight()));
     overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
     overlay->beginText();
-    overlay->print(_("Target name: {}"), m_text);
+    overlay->print(fmt::runtime(_("Target name: {}")), m_text);
     overlay->endText();
     overlay->setFont(hudFonts.font());
     if (!m_completion.empty())

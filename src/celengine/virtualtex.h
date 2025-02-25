@@ -16,7 +16,6 @@
 #include <celcompat/filesystem.h>
 #include <celengine/texture.h>
 
-
 class VirtualTexture : public Texture
 {
 public:
@@ -74,7 +73,6 @@ private:
 
     std::array<TileQuadtreeNode, 2> tileTree{};
 };
-
 
 std::unique_ptr<VirtualTexture>
 LoadVirtualTexture(const fs::path& filename);

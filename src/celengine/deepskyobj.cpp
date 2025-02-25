@@ -18,10 +18,10 @@
 #include <celastro/astro.h>
 #include <celmath/intersect.h>
 #include <celmath/sphere.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
-#include "hash.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
@@ -91,7 +91,7 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool DeepSkyObject::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
+bool DeepSkyObject::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     // Get position
     if (auto pos = params->getLengthVector<double>("Position", astro::KM_PER_LY<double>); pos.has_value())

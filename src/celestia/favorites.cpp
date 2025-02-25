@@ -14,12 +14,13 @@
 #include <ostream>
 #include <utility>
 
-#include <celengine/hash.h>
-#include <celengine/parser.h>
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
 #include "favorites.h"
+
+namespace util = celestia::util;
 
 using celestia::util::GetLogger;
 
@@ -27,12 +28,12 @@ std::unique_ptr<FavoritesList>
 ReadFavoritesList(std::istream& in)
 {
     auto favorites = std::make_unique<FavoritesList>();
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
-        if (tokenizer.getTokenType() != Tokenizer::TokenString)
+        if (tokenizer.getTokenType() != util::Tokenizer::TokenString)
         {
             GetLogger()->error("Error parsing favorites file.\n");
             return nullptr;
@@ -41,8 +42,8 @@ ReadFavoritesList(std::istream& in)
         auto fav = std::make_unique<FavoritesEntry>(); // FIXME: check
         fav->name = *tokenizer.getStringValue();
 
-        const Value favParamsValue = parser.readValue();
-        const Hash* favParams = favParamsValue.getHash();
+        const util::Value favParamsValue = parser.readValue();
+        const util::AssociativeArray* favParams = favParamsValue.getHash();
         if (favParams == nullptr)
         {
             GetLogger()->error("Error parsing favorites entry {}\n", fav->name);

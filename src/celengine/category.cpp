@@ -5,9 +5,10 @@
 #include <initializer_list>
 #include <utility>
 
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
-#include "hash.h"
-#include "value.h"
+
+namespace util = celestia::util;
 
 UserCategoryManager::UserCategoryManager() = default;
 UserCategoryManager::~UserCategoryManager() = default;
@@ -256,7 +257,7 @@ UserCategory::get(UserCategoryId category)
 
 void
 UserCategory::loadCategories(Selection selection,
-                             const AssociativeArray& hash,
+                             const util::AssociativeArray& hash,
                              DataDisposition disposition,
                              const std::string& domain)
 {
@@ -275,7 +276,7 @@ UserCategory::loadCategories(Selection selection,
         manager.addObject(selection, categoryId);
     }
 
-    const ValueArray *categoryArray = categoryValue->getArray();
+    const util::ValueArray *categoryArray = categoryValue->getArray();
     if (categoryArray == nullptr)
         return;
 

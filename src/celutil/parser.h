@@ -12,22 +12,26 @@
 
 #include <memory>
 
-#include "hash.h"
-#include "value.h"
+#include "associativearray.h"
+
+namespace celestia::util
+{
 
 class Tokenizer;
-class Value;
 
 class Parser
 {
- public:
-    Parser(Tokenizer*);
+public:
+    explicit Parser(Tokenizer*);
+    ~Parser() = default;
 
     Value readValue();
 
- private:
+private:
     Tokenizer* tokenizer;
 
     std::unique_ptr<ValueArray> readArray();
-    std::unique_ptr<Hash> readHash();
+    std::unique_ptr<AssociativeArray> readHash();
 };
+
+} // end namespace celestia::util

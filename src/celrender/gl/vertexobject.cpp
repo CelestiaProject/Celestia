@@ -33,6 +33,34 @@ isVAOSupported()
 namespace celestia::gl
 {
 
+struct VertexObject::BufferDesc
+{
+    BufferDesc(GLsizeiptr    offset,
+               GLuint        bufferId,
+               std::uint16_t type,
+               std::int16_t  location,
+               std::uint8_t  elemSize,
+               std::uint8_t  stride,
+               bool          normalized) :
+        offset(offset),
+        bufferId(bufferId),
+        type(type),
+        location(location),
+        elemSize(elemSize),
+        stride(stride),
+        normalized(normalized)
+    {
+    }
+
+    GLsizeiptr    offset;
+    GLuint        bufferId;
+    std::uint16_t type;       // all constants < 0xFFFF
+    std::int16_t  location;
+    std::uint8_t  elemSize;   // 1, 2, 3, 4
+    std::uint8_t  stride;     // WebGL allows only 255 bytes max
+    bool          normalized;
+};
+
 VertexObject::VertexObject(util::NoCreateT)
 {
 }
@@ -110,33 +138,6 @@ VertexObject::clear()
     m_indexType = IndexType::UnsignedShort;
     m_initialized = false;
 }
-
-struct VertexObject::BufferDesc
-{
-    BufferDesc(GLsizeiptr    offset,
-               GLuint        bufferId,
-               std::uint16_t type,
-               std::int16_t  location,
-               std::uint8_t  elemSize,
-               std::uint8_t  stride,
-               bool          normalized) :
-        offset(offset),
-        bufferId(bufferId),
-        type(type),
-        location(location),
-        elemSize(elemSize),
-        stride(stride),
-        normalized(normalized)
-    {
-    }
-    GLsizeiptr    offset;
-    GLuint        bufferId;
-    std::uint16_t type;       // all constants < 0xFFFF
-    std::int16_t  location;
-    std::uint8_t  elemSize;   // 1, 2, 3, 4
-    std::uint8_t  stride;     // WebGL allows only 255 bytes max
-    bool          normalized;
-};
 
 VertexObject&
 VertexObject::addVertexBuffer(const Buffer &buffer, int location, int elemSize, VertexObject::DataType type, bool normalized, int stride, std::ptrdiff_t offset)

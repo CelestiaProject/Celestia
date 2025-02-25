@@ -1,4 +1,8 @@
 set(CELUTIL_SOURCES
+  align.h
+  array_view.h
+  associativearray.cpp
+  associativearray.h
   binaryread.h
   binarywrite.h
   blockarray.h
@@ -22,6 +26,8 @@ set(CELUTIL_SOURCES
   localeutil.h
   logger.cpp
   logger.h
+  parser.cpp
+  parser.h
   ranges.h
   r128.h
   r128util.cpp
@@ -66,3 +72,5 @@ if (APPLE)
 endif()
 
 add_library(celutil OBJECT ${CELUTIL_SOURCES})
+
+gperf_add_table(celutil parser.gperf parser.cpp 4)

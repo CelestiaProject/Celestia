@@ -174,7 +174,7 @@ ScriptedRotation::getValidRange(double& begin, double& end) const
 std::shared_ptr<const RotationModel>
 CreateScriptedRotation(const std::string* moduleName,
                             const std::string& funcName,
-                            const AssociativeArray& parameters,
+                            const util::AssociativeArray& parameters,
                             const fs::path& path)
 {
     lua_State* luaState = GetScriptedObjectContext();

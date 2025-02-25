@@ -10,6 +10,8 @@
 
 #include <doctest.h>
 
+using Tokenizer = celestia::util::Tokenizer;
+
 TEST_SUITE_BEGIN("Tokenizer");
 
 TEST_CASE("Tokenizer parses names")

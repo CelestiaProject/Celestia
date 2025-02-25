@@ -19,6 +19,11 @@
 #include "deepskyobj.h"
 #include "renderflags.h"
 
+namespace celestia::util
+{
+class AssociativeArray;
+}
+
 class Nebula : public DeepSkyObject
 {
 public:
@@ -29,7 +34,7 @@ public:
     std::string getDescription() const override;
 
     // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;

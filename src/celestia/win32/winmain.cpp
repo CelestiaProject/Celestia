@@ -484,7 +484,7 @@ public:
     void update(const std::string& filename) override
     {
         if (auto splashLock = splash.lock(); splashLock != nullptr)
-            splashLock->setMessage(fmt::format(_("Loading: {}"), filename));
+            splashLock->setMessage(fmt::format(fmt::runtime(_("Loading: {}")), filename));
     }
 
 private:

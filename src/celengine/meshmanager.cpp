@@ -21,16 +21,15 @@
 #include <cel3ds/3dsread.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
+#include <celutil/associativearray.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
-#include "hash.h"
 #include "modelgeometry.h"
-#include "parser.h"
 #include "spheremesh.h"
 #include "texmanager.h"
-#include "value.h"
 
 using celestia::util::GetLogger;
 
@@ -50,8 +49,8 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    Tokenizer tokenizer(&meshFile);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&meshFile);
+    util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
     if (auto tokenValue = tokenizer.getNameValue(); !tokenValue.has_value())
@@ -66,8 +65,8 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    const Value meshDefValue = parser.readValue();
-    const Hash* meshDef = meshDefValue.getHash();
+    const util::Value meshDefValue = parser.readValue();
+    const util::AssociativeArray* meshDef = meshDefValue.getHash();
     if (meshDef == nullptr)
     {
         GetLogger()->error("{}: Bad mesh file.\n", filename);

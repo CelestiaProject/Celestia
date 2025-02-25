@@ -21,8 +21,10 @@
 
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
+#include <celutil/associativearray.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <celutil/parser.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 #include "category.h"
@@ -31,16 +33,14 @@
 #include "dsooctree.h"
 #include "galaxy.h"
 #include "globular.h"
-#include "hash.h"
 #include "nebula.h"
 #include "octree.h"
 #include "octreebuilder.h"
 #include "opencluster.h"
-#include "parser.h"
-#include "value.h"
 
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
+namespace util = celestia::util;
 
 using celestia::util::GetLogger;
 
@@ -203,8 +203,8 @@ DSODatabaseBuilder::~DSODatabaseBuilder() = default;
 bool
 DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 {
-    Tokenizer tokenizer(&in);
-    Parser    parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser    parser(&tokenizer);
 
 #ifdef ENABLE_NLS
     std::string s = resourcePath.string();
@@ -212,7 +212,7 @@ DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
         std::string objType;
         if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
@@ -237,8 +237,8 @@ DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        const Value objParamsValue = parser.readValue();
-        const Hash* objParams = objParamsValue.getHash();
+        const util::Value objParamsValue = parser.readValue();
+        const util::AssociativeArray* objParams = objParamsValue.getHash();
         if (objParams == nullptr)
         {
             GetLogger()->error("Error parsing deep sky catalog entry {}\n", objName);

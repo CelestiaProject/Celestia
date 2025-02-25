@@ -22,9 +22,13 @@
 #include "deepskyobj.h"
 #include "renderflags.h"
 
-class AssociativeArray;
 struct Matrices;
 class Renderer;
+
+namespace celestia::util
+{
+class AssociativeArray;
+}
 
 enum class GalaxyType
 {
@@ -62,7 +66,7 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
 
     static void  increaseLightGain();
     static void  decreaseLightGain();

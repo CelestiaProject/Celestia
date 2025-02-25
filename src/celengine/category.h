@@ -15,14 +15,15 @@
 #include <celengine/selection.h>
 #include <celutil/array_view.h>
 
+namespace celestia::util
+{
 class AssociativeArray;
-
+}
 
 enum class UserCategoryId : std::uint32_t
 {
     Invalid = UINT32_MAX,
 };
-
 
 class UserCategory;
 
@@ -105,7 +106,7 @@ public:
     static const std::vector<UserCategoryId>* getCategories(Selection selection);
 
     static void loadCategories(Selection selection,
-                               const AssociativeArray& hash,
+                               const celestia::util::AssociativeArray& hash,
                                DataDisposition disposition,
                                const std::string& domain);
 

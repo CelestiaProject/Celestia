@@ -2134,7 +2134,7 @@ static int celestia_takescreenshot(lua_State* l)
     luastate->screenshotCount++;
     bool success = false;
     string filenamestem;
-    filenamestem = fmt::format("screenshot-{}{:06i}", fileid, luastate->screenshotCount);
+    filenamestem = fmt::format("screenshot-{}{:06}", fileid, luastate->screenshotCount);
 
     fs::path path = appCore->getConfig()->paths.scriptScreenshotDirectory;
     fs::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);

@@ -83,6 +83,17 @@ BindTextures()
 
 } // anonymous namespace
 
+struct GalaxyRenderer::RenderData
+{
+    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
+        bo(std::move(bo)),
+        vo(std::move(vo))
+    {
+    }
+    gl::Buffer       bo{ util::NoCreateT{} };
+    gl::VertexObject vo{ util::NoCreateT{} };
+};
+
 struct GalaxyRenderer::Object
 {
     Object(const Eigen::Vector3f &offset, float brightness, float nearZ, float farZ, const Galaxy *galaxy) :
@@ -181,17 +192,6 @@ GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightne
     nPoints = pointCount;
     return true;
 }
-
-struct GalaxyRenderer::RenderData
-{
-    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
-        bo(std::move(bo)),
-        vo(std::move(vo))
-    {
-    }
-    gl::Buffer       bo{ util::NoCreateT{} };
-    gl::VertexObject vo{ util::NoCreateT{} };
-};
 
 void
 GalaxyRenderer::renderGL2()
