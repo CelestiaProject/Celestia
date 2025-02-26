@@ -360,58 +360,117 @@ AssociativeArray::getSphericalTuple(std::string_view key) const
     return std::make_optional<Eigen::Vector3d>(*x, *y, *z);
 }
 
-Value::Value(Value&& other) noexcept
-    : type(other.type),
-      units(other.units),
-      data(other.data)
-{
-    other.type = ValueType::NullType;
-}
-
-Value&
-Value::operator=(Value&& other) noexcept
-{
-    if (this != &other)
-    {
-        switch (type)
-        {
-        case ValueType::StringType:
-            delete data.s; //NOSONAR
-            break;
-        case ValueType::ArrayType:
-            delete data.a; //NOSONAR
-            break;
-        case ValueType::HashType:
-            delete data.h; //NOSONAR
-            break;
-        default:
-            break;
-        }
-        type = other.type;
-        units = other.units;
-        data = other.data;
-        other.type = ValueType::NullType;
-    }
-
-    return *this;
-}
-
 Value::~Value()
 {
     switch (type)
     {
     case ValueType::StringType:
-        delete data.s;
+        stringData.~unique_ptr();
         break;
     case ValueType::ArrayType:
-        delete data.a;
+        arrayData.~unique_ptr();
         break;
     case ValueType::HashType:
-        delete data.h;
+        hashData.~unique_ptr();
         break;
     default:
         break;
     }
+}
+
+Value::Value(Value&& other) noexcept :
+    type(other.type),
+    units(other.units)
+{
+    switch (other.type)
+    {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        doubleData = other.doubleData;
+        break;
+    case ValueType::StringType:
+        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
+        break;
+    case ValueType::ArrayType:
+        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
+        break;
+    case ValueType::HashType:
+        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
+        break;
+    default:
+        break;
+    }
+}
+
+Value&
+Value::operator=(Value&& other) noexcept
+{
+    if (this == &other)
+        return *this;
+
+    if (type == other.type)
+    {
+        switch (type)
+        {
+        case ValueType::NumberType:
+        case ValueType::BooleanType:
+            doubleData = other.doubleData;
+            break;
+        case ValueType::StringType:
+            stringData = std::move(other.stringData);
+            break;
+        case ValueType::ArrayType:
+            arrayData = std::move(other.arrayData);
+            break;
+        case ValueType::HashType:
+            hashData = std::move(other.hashData);
+            break;
+        default:
+            break;
+        }
+
+        units = other.units;
+        return *this;
+    }
+
+    switch (type)
+    {
+    case ValueType::StringType:
+        stringData.~unique_ptr();
+        break;
+    case ValueType::ArrayType:
+        arrayData.~unique_ptr();
+        break;
+    case ValueType::HashType:
+        hashData.~unique_ptr();
+        break;
+    default:
+        break;
+    }
+
+    switch (other.type)
+    {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        doubleData = other.doubleData;
+        break;
+    case ValueType::StringType:
+        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
+        break;
+    case ValueType::ArrayType:
+        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
+        break;
+    case ValueType::HashType:
+        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
+        break;
+    default:
+        break;
+    }
+
+    type = other.type;
+    units = other.units;
+
+    return *this;
 }
 
 } // end namespace celestia::util

@@ -168,35 +168,25 @@ Parser::readValue()
         return Value(*tokenizer->getStringValue());
 
     case Tokenizer::TokenName:
-        if (tokenizer->getNameValue() == "false")
+        if (auto name = *tokenizer->getNameValue(); name == "false"sv)
             return Value(false);
-        else if (tokenizer->getNameValue() == "true")
+        else if (name == "true"sv)
             return Value(true);
-        else
-        {
-            tokenizer->pushBack();
-            return Value();
-        }
+
+        tokenizer->pushBack();
+        return Value();
 
     case Tokenizer::TokenBeginArray:
         tokenizer->pushBack();
-        {
-            std::unique_ptr<ValueArray> array = readArray();
-            if (array == nullptr)
-                return Value();
-            else
-                return Value(std::move(array));
-        }
+        if (std::unique_ptr<ValueArray> array = readArray(); array != nullptr)
+            return Value(std::move(array));
+        return Value();
 
     case Tokenizer::TokenBeginGroup:
         tokenizer->pushBack();
-        {
-            std::unique_ptr<AssociativeArray> hash = readHash();
-            if (hash == nullptr)
-                return Value();
-            else
-                return Value(std::move(hash));
-        }
+        if (std::unique_ptr<AssociativeArray> hash = readHash(); hash != nullptr)
+            return Value(std::move(hash));
+        return Value();
 
     default:
         tokenizer->pushBack();

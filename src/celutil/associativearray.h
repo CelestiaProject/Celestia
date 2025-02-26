@@ -180,7 +180,7 @@ private:
     }
 };
 
-enum class ValueType : std::uint8_t
+enum class ValueType : std::int32_t
 {
     NullType       = 0,
     NumberType     = 1,
@@ -203,7 +203,7 @@ using ValueArray = std::vector<Value>;
 
 class Value //NOSONAR
 {
- public:
+public:
     struct Units
     {
         astro::LengthUnit length{ astro::LengthUnit::Default };
@@ -212,48 +212,62 @@ class Value //NOSONAR
         astro::MassUnit mass{ astro::MassUnit::Default };
     };
 
-    Value() = default;
+    Value() {}
     ~Value();
     Value(const Value&) = delete;
-    Value(Value&&) noexcept;
     Value& operator=(const Value&) = delete;
+    Value(Value&&) noexcept;
     Value& operator=(Value&&) noexcept;
 
-    explicit Value(double d) : type(ValueType::NumberType)
+    explicit Value(double d) :
+        type(ValueType::NumberType),
+        doubleData(d)
     {
-        data.d = d;
     }
-    explicit Value(const char *s) : type(ValueType::StringType)
+
+    explicit Value(const char *s) :
+        type(ValueType::StringType),
+        stringData(std::make_unique<std::string>(s))
     {
-        data.s = new std::string(s); //NOSONAR
     }
-    explicit Value(const std::string_view sv) : type(ValueType::StringType)
+
+    explicit Value(const std::string_view sv) :
+        type(ValueType::StringType),
+        stringData(std::make_unique<std::string>(sv))
     {
-        data.s = new std::string(sv); //NOSONAR
     }
-    explicit Value(const std::string &s) : type(ValueType::StringType)
+
+    explicit Value(const std::string &s) :
+        type(ValueType::StringType),
+        stringData(std::make_unique<std::string>(s))
     {
-        data.s = new std::string(s); // NOSONAR
     }
-    explicit Value(std::string&& s) : type(ValueType::StringType)
+
+    explicit Value(std::string&& s) :
+        type(ValueType::StringType),
+        stringData(std::make_unique<std::string>(std::move(s)))
     {
-        data.s = new std::string(std::move(s)); //NOSONAR
     }
-    explicit Value(std::unique_ptr<ValueArray>&& a) : type(ValueType::ArrayType)
+
+    explicit Value(std::unique_ptr<ValueArray>&& a) :
+        type(ValueType::ArrayType),
+        arrayData(std::move(a))
     {
-        data.a = a.release();
     }
-    explicit Value(std::unique_ptr<AssociativeArray>&& h) : type(ValueType::HashType)
+
+    explicit Value(std::unique_ptr<AssociativeArray>&& h) :
+        type(ValueType::HashType),
+        hashData(std::move(h))
     {
-        data.h = h.release();
     }
 
     // C++ likes implicit conversions to bool, so use template magic
     // to restrict this constructor to exactly bool
     template<typename T, std::enable_if_t<std::is_same_v<T, bool>, int> = 0>
-    explicit Value(T b) : type(ValueType::BooleanType)
+    explicit Value(T b) :
+        type(ValueType::BooleanType),
+        doubleData(b ? 1.0 : 0.0)
     {
-        data.d = b ? 1.0 : 0.0;
     }
 
     void setUnits(Units _units) { units = _units; }
@@ -262,38 +276,44 @@ class Value //NOSONAR
     {
         return type;
     }
+
     bool isNull() const
     {
         return type == ValueType::NullType;
     }
+
     std::optional<double> getNumber() const
     {
         return type == ValueType::NumberType
-            ? std::make_optional(data.d)
+            ? std::make_optional(doubleData)
             : std::nullopt;
     }
+
     const std::string* getString() const
     {
         return type == ValueType::StringType
-            ? data.s
+            ? stringData.get()
             : nullptr;
     }
+
     const ValueArray* getArray() const
     {
         return type == ValueType::ArrayType
-            ? data.a
+            ? arrayData.get()
             : nullptr;
     }
+
     const AssociativeArray* getHash() const
     {
         return type == ValueType::HashType
-            ? data.h
+            ? hashData.get()
             : nullptr;
     }
+
     std::optional<bool> getBoolean() const
     {
         return type == ValueType::BooleanType
-            ? std::make_optional(data.d != 0.0)
+            ? std::make_optional(doubleData != 0.0)
             : std::nullopt;
     }
 
@@ -302,18 +322,17 @@ class Value //NOSONAR
     astro::AngleUnit getAngleUnit() const { return units.angle; }
     astro::MassUnit getMassUnit() const { return units.mass; }
 
- private:
-    union Data
-    {
-        const std::string      *s;
-        double                  d;
-        const ValueArray       *a;
-        const AssociativeArray *h;
-    };
-
+private:
     ValueType type { ValueType::NullType };
     Units units{ };
-    Data data;
+
+    union
+    {
+        double                            doubleData;
+        std::unique_ptr<std::string>      stringData;
+        std::unique_ptr<ValueArray>       arrayData;
+        std::unique_ptr<AssociativeArray> hashData;
+    };
 };
 
 template<typename T>
