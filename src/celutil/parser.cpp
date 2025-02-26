@@ -24,8 +24,7 @@ namespace celestia::util
 namespace
 {
 
-using MeasurementUnit = std::variant<std::monostate,
-                                     astro::LengthUnit,
+using MeasurementUnit = std::variant<astro::LengthUnit,
                                      astro::TimeUnit,
                                      astro::AngleUnit,
                                      astro::MassUnit>;
@@ -35,7 +34,6 @@ class UnitsVisitor
 public:
     explicit UnitsVisitor(Value::Units* _units) : units(_units) {}
 
-    void operator()(std::monostate) const { /* nothing to update */ }
     void operator()(astro::LengthUnit unit) const { units->length = unit; }
     void operator()(astro::TimeUnit unit) const { units->time = unit; }
     void operator()(astro::AngleUnit unit) const { units->angle = unit; }
@@ -45,52 +43,7 @@ private:
     Value::Units* units;
 };
 
-
-MeasurementUnit parseUnit(std::string_view name)
-{
-    static const std::map<std::string_view, MeasurementUnit>* unitMap = nullptr;
-
-    if (!unitMap)
-    {
-        unitMap = new std::map<std::string_view, MeasurementUnit>
-        {
-            { "km"sv, astro::LengthUnit::Kilometer },
-            { "m"sv, astro::LengthUnit::Meter },
-            { "rE"sv, astro::LengthUnit::EarthRadius },
-            { "rJ"sv, astro::LengthUnit::JupiterRadius },
-            { "rS"sv, astro::LengthUnit::SolarRadius },
-            { "au"sv, astro::LengthUnit::AstronomicalUnit },
-            { "AU"sv, astro::LengthUnit::AstronomicalUnit },
-            { "ly"sv, astro::LengthUnit::LightYear },
-            { "pc"sv, astro::LengthUnit::Parsec },
-            { "kpc"sv, astro::LengthUnit::Kiloparsec },
-            { "Mpc"sv, astro::LengthUnit::Megaparsec },
-
-            { "s"sv, astro::TimeUnit::Second },
-            { "min"sv, astro::TimeUnit::Minute },
-            { "h"sv, astro::TimeUnit::Hour },
-            { "d"sv, astro::TimeUnit::Day },
-            { "y"sv, astro::TimeUnit::JulianYear },
-
-            { "mas"sv, astro::AngleUnit::Milliarcsecond },
-            { "arcsec"sv, astro::AngleUnit::Arcsecond },
-            { "arcmin"sv, astro::AngleUnit::Arcminute },
-            { "deg"sv, astro::AngleUnit::Degree },
-            { "hRA"sv, astro::AngleUnit::Hour },
-            { "rad"sv, astro::AngleUnit::Radian },
-
-            { "kg"sv, astro::MassUnit::Kilogram },
-            { "mE"sv, astro::MassUnit::EarthMass },
-            { "mJ"sv, astro::MassUnit::JupiterMass },
-        };
-    }
-
-    auto it = unitMap->find(name);
-    return it == unitMap->end()
-        ? MeasurementUnit(std::in_place_type<std::monostate>)
-        : it->second;
-}
-
+#include "parser.inc"
 
 Value::Units readUnits(Tokenizer& tokenizer)
 {
@@ -109,8 +62,11 @@ Value::Units readUnits(Tokenizer& tokenizer)
         auto tokenValue = tokenizer.getNameValue();
         if (!tokenValue.has_value()) { continue; }
 
-        MeasurementUnit unit = parseUnit(*tokenValue);
-        std::visit(visitor, unit);
+        if (const auto* unitEntry = UnitsMap::parseUnit(tokenValue->data(), tokenValue->size());
+            unitEntry != nullptr)
+        {
+            std::visit(visitor, unitEntry->unit);
+        }
     }
 
     return units;

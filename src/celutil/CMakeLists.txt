@@ -72,3 +72,5 @@ if (APPLE)
 endif()
 
 add_library(celutil OBJECT ${CELUTIL_SOURCES})
+
+gperf_add_table(celutil parser.gperf parser.cpp 4)

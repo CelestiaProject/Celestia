@@ -187,10 +187,9 @@ enum class ValueType : std::uint8_t
     StringType     = 2,
     ArrayType      = 3,
     HashType       = 4,
-    BooleanType    = 5
+    BooleanType    = 5,
 };
 
-class Value;
 using ValueArray = std::vector<Value>;
 
 // Value acts as a custom variant type which stores the units data in what
