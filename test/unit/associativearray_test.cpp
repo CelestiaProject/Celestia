@@ -1,11 +1,15 @@
 #include <memory>
 #include <utility>
 
-#include <celengine/hash.h>
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #include <celutil/color.h>
 
 #include <doctest.h>
+
+using celestia::util::AssociativeArray;
+using celestia::util::Value;
+using celestia::util::ValueArray;
+using celestia::util::ValueType;
 
 constexpr const double EPSILON = 1.0 / 255.0;
 

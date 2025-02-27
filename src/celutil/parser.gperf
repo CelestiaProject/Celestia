@@ -1,0 +1,38 @@
+%struct-type
+%language=C++
+%define lookup-function-name parseUnit
+%define class-name UnitsMap
+%compare-strncmp
+%readonly-tables
+%enum
+struct UnitsMapEntry { const char* name; MeasurementUnit unit; };
+%%
+# Length units
+"km",     astro::LengthUnit::Kilometer
+"m",      astro::LengthUnit::Meter
+"rE",     astro::LengthUnit::EarthRadius
+"rJ",     astro::LengthUnit::JupiterRadius
+"rS",     astro::LengthUnit::SolarRadius
+"au",     astro::LengthUnit::AstronomicalUnit
+"AU",     astro::LengthUnit::AstronomicalUnit
+"ly",     astro::LengthUnit::LightYear
+"pc",     astro::LengthUnit::Parsec
+"kpc",    astro::LengthUnit::Kiloparsec
+"Mpc",    astro::LengthUnit::Megaparsec
+# Time units
+"s",      astro::TimeUnit::Second
+"min",    astro::TimeUnit::Minute
+"h",      astro::TimeUnit::Hour
+"d",      astro::TimeUnit::Day
+"y",      astro::TimeUnit::JulianYear
+# Angle units
+"mas",    astro::AngleUnit::Milliarcsecond
+"arcsec", astro::AngleUnit::Arcsecond
+"arcmin", astro::AngleUnit::Arcminute
+"deg",    astro::AngleUnit::Degree
+"hRA",    astro::AngleUnit::Hour
+"rad",    astro::AngleUnit::Radian
+# Mass units
+"kg",     astro::MassUnit::Kilogram
+"mE",     astro::MassUnit::EarthMass
+"mJ",     astro::MassUnit::JupiterMass

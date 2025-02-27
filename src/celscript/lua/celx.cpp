@@ -26,6 +26,7 @@
 #include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
@@ -47,10 +48,12 @@
 #include "celx_gl.h"
 #include "celx_category.h"
 
-
 using namespace Eigen;
 using namespace std;
 using namespace std::string_view_literals;
+
+namespace util = celestia::util;
+
 using celestia::util::GetLogger;
 
 static constexpr std::array CelxClassNames
@@ -732,7 +735,7 @@ void Celx_DoError(lua_State* l, const char* errorMsg)
     lua_Debug debug;
     if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
     {
-        string buf = fmt::format(_("In line {}: {}"), debug.currentline, errorMsg);
+        string buf = fmt::format(fmt::runtime(_("In line {}: {}")), debug.currentline, errorMsg);
         lua_pushstring(l, buf.c_str());
     }
     else
@@ -1427,59 +1430,6 @@ m_lua(l)
 bool CelxLua::isType(int index, int type) const
 {
     return Celx_istype(m_lua, index, type);
-}
-
-Value CelxLua::getValue(int index)
-{
-    if (isInteger(index))
-        return Value((double)getInt(index));
-    if (isNumber(index))
-        return Value(getNumber(index));
-    if (isBoolean(index))
-        return Value(getBoolean(index));
-    if (isString(index))
-        return Value(getString(index));
-    if (isTable(index))
-    {
-        auto array = std::make_unique<ValueArray>();
-        auto hash = std::make_unique<Hash>();
-        push();
-        while(lua_next(m_lua, index) != 0)
-        {
-            if (isInteger(-2))
-            {
-                if (hash != nullptr)
-                {
-                    hash = nullptr;
-                }
-                if (array != nullptr)
-                {
-                    array->push_back(getValue(-1));
-                }
-            }
-            else if (isString(-2))
-            {
-                if (array != nullptr)
-                {
-                    array = nullptr;
-                }
-                if (hash != nullptr)
-                {
-                    hash->addValue(getString(-2), getValue(-1));
-                }
-            }
-            pop(1);
-            if (array == nullptr && hash == nullptr)
-                break;
-        }
-        pop(1);
-        if (hash != nullptr)
-            return Value(std::move(hash));
-        else if (array != nullptr)
-            return Value(std::move(array));
-    }
-
-    return Value();
 }
 
 void CelxLua::setClass(int id)

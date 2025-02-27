@@ -18,7 +18,6 @@
 
 #include <celcompat/filesystem.h>
 
-
 class FrameTree;
 class PlanetarySystem;
 class Star;

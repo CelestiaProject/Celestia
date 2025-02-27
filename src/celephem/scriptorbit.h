@@ -16,9 +16,15 @@
 
 #include <celcompat/filesystem.h>
 
-class AssociativeArray;
+namespace celestia
+{
 
-namespace celestia::ephem
+namespace util
+{
+class AssociativeArray;
+}
+
+namespace ephem
 {
 
 class Orbit;
@@ -26,7 +32,8 @@ class Orbit;
 std::shared_ptr<const Orbit>
 CreateScriptedOrbit(const std::string* moduleName,
                     const std::string& funcName,
-                    const AssociativeArray& parameters,
+                    const util::AssociativeArray& parameters,
                     const fs::path& path);
 
-}
+} // end namespace celestia::ephem
+} // end namespace celestia

@@ -27,30 +27,29 @@
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/mathlib.h>
+#include <celutil/associativearray.h>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "category.h"
-#include "hash.h"
 #include "frame.h"
 #include "frametree.h"
 #include "location.h"
 #include "meshmanager.h"
 #include "parseobject.h"
-#include "parser.h"
 #include "solarsys.h"
 #include "surface.h"
 #include "texmanager.h"
 #include "timeline.h"
 #include "timelinephase.h"
 #include "universe.h"
-#include "value.h"
 
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
@@ -73,7 +72,6 @@ enum BodyType
     SurfaceObject,
     UnknownBodyType,
 };
-
 
 /*!
   Solar system catalog (.ssc) files contain items of three different types:
@@ -108,7 +106,7 @@ enum BodyType
   The name and parent name are both mandatory.
 */
 
-void sscError(const Tokenizer& tok,
+void sscError(const util::Tokenizer& tok,
               const std::string& msg)
 {
     GetLogger()->error(_("Error in .ssc file (line {}): {}\n"),
@@ -142,7 +140,7 @@ bool isFrameCircular(const ReferenceFrame& frame)
 
 
 std::unique_ptr<Location>
-CreateLocation(const Hash* locationData,
+CreateLocation(const util::AssociativeArray* locationData,
                const Body* body)
 {
     auto location = std::make_unique<Location>();
@@ -179,7 +177,9 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
 }
 
 std::optional<fs::path>
-GetFilename(const Hash& hash, std::string_view key, const char* errorMessage)
+GetFilename(const util::AssociativeArray& hash,
+            std::string_view key,
+            const char* errorMessage)
 {
     const std::string* value = hash.getString(key);
     if (value == nullptr)
@@ -193,7 +193,7 @@ GetFilename(const Hash& hash, std::string_view key, const char* errorMessage)
 }
 
 
-void FillinSurface(const Hash* surfaceData,
+void FillinSurface(const util::AssociativeArray* surfaceData,
                    Surface* surface,
                    const fs::path& path)
 {
@@ -268,7 +268,7 @@ Selection GetParentObject(PlanetarySystem* system)
 
 TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                                   Universe& universe,
-                                                  const Hash* phaseData,
+                                                  const util::AssociativeArray* phaseData,
                                                   const fs::path& path,
                                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
@@ -299,7 +299,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 
     // Get the orbit reference frame.
     ReferenceFrame::SharedConstPtr orbitFrame;
-    const Value* frameValue = phaseData->getValue("OrbitFrame");
+    const util::Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
         orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
@@ -316,7 +316,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 
     // Get the body reference frame
     ReferenceFrame::SharedConstPtr bodyFrame;
-    const Value* bodyFrameValue = phaseData->getValue("BodyFrame");
+    const util::Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
         bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
@@ -371,7 +371,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
 std::unique_ptr<Timeline>
 CreateTimelineFromArray(Body* body,
                         Universe& universe,
-                        const ValueArray* timelineArray,
+                        const util::ValueArray* timelineArray,
                         const fs::path& path,
                         const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                         const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
@@ -388,7 +388,7 @@ CreateTimelineFromArray(Body* body,
     const auto finalIter = timelineArray->end() - 1;
     for (auto iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
-        const Hash* phaseData = iter->getHash();
+        const util::AssociativeArray* phaseData = iter->getHash();
         if (phaseData == nullptr)
         {
             GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
@@ -423,7 +423,7 @@ CreateTimelineFromArray(Body* body,
 bool CreateTimeline(Body* body,
                     PlanetarySystem* system,
                     Universe& universe,
-                    const Hash* planetData,
+                    const util::AssociativeArray* planetData,
                     const fs::path& path,
                     DataDisposition disposition,
                     BodyType bodyType)
@@ -462,10 +462,10 @@ bool CreateTimeline(Body* body,
 
     // If there's an explicit timeline definition, parse that. Otherwise, we'll do
     // things the old way.
-    const Value* value = planetData->getValue("Timeline");
+    const util::Value* value = planetData->getValue("Timeline");
     if (value != nullptr)
     {
-        const ValueArray* timelineArray = value->getArray();
+        const util::ValueArray* timelineArray = value->getArray();
         if (timelineArray == nullptr)
         {
             GetLogger()->error("Error: Timeline must be an array\n");
@@ -517,7 +517,7 @@ bool CreateTimeline(Body* body,
 
     // Get the object's orbit reference frame.
     bool newOrbitFrame = false;
-    const Value* frameValue = planetData->getValue("OrbitFrame");
+    const util::Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
         auto frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
@@ -531,7 +531,7 @@ bool CreateTimeline(Body* body,
 
     // Get the object's body frame.
     bool newBodyFrame = false;
-    const Value* bodyFrameValue = planetData->getValue("BodyFrame");
+    const util::Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
         auto frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
@@ -663,7 +663,7 @@ bool CreateTimeline(Body* body,
 }
 
 void
-ReadMesh(const Hash& planetData, Body& body, const fs::path& path)
+ReadMesh(const util::AssociativeArray& planetData, Body& body, const fs::path& path)
 {
     using engine::GeometryInfo;
     using engine::GetGeometryManager;
@@ -699,7 +699,7 @@ ReadMesh(const Hash& planetData, Body& body, const fs::path& path)
 }
 
 void ReadAtmosphere(Body* body,
-                    const Hash* atmosData,
+                    const util::AssociativeArray* atmosData,
                     const fs::path& path,
                     DataDisposition disposition)
 {
@@ -772,7 +772,7 @@ void ReadAtmosphere(Body* body,
 
 
 void ReadRings(Body* body,
-               const Hash* ringsData,
+               const util::AssociativeArray* ringsData,
                const fs::path& path,
                DataDisposition disposition)
 {
@@ -825,7 +825,7 @@ Body* CreateBody(const std::string& name,
                  PlanetarySystem* system,
                  Universe& universe,
                  Body* existingBody,
-                 const Hash* planetData,
+                 const util::AssociativeArray* planetData,
                  const fs::path& path,
                  DataDisposition disposition,
                  BodyType bodyType)
@@ -1018,18 +1018,18 @@ Body* CreateBody(const std::string& name,
     ReadMesh(*planetData, *body, path);
 
     // Read the atmosphere
-    if (const Value* atmosDataValue = planetData->getValue("Atmosphere"); atmosDataValue != nullptr)
+    if (const util::Value* atmosDataValue = planetData->getValue("Atmosphere"); atmosDataValue != nullptr)
     {
-        if (const Hash* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
+        if (const util::AssociativeArray* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
             GetLogger()->error(_("Atmosphere must be an associative array.\n"));
         else
             ReadAtmosphere(body, atmosData, path, disposition);
     }
 
     // Read the ring system
-    if (const Value* ringsDataValue = planetData->getValue("Rings"); ringsDataValue != nullptr)
+    if (const util::Value* ringsDataValue = planetData->getValue("Rings"); ringsDataValue != nullptr)
     {
-        if (const Hash* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
+        if (const util::AssociativeArray* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
             GetLogger()->error(_("Rings must be an associative array.\n"));
         else
             ReadRings(body, ringsData, path, disposition);
@@ -1062,7 +1062,7 @@ Body* CreateReferencePoint(const std::string& name,
                            PlanetarySystem* system,
                            Universe& universe,
                            Body* existingBody,
-                           const Hash* refPointData,
+                           const util::AssociativeArray* refPointData,
                            const fs::path& path,
                            DataDisposition disposition)
 {
@@ -1118,8 +1118,8 @@ bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const fs::path& directory)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
     std::string s = directory.string();
@@ -1127,7 +1127,7 @@ bool LoadSolarSystemObjects(std::istream& in,
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
         // Read the disposition; if none is specified, the default is Add.
         DataDisposition disposition = DataDisposition::Add;
@@ -1183,8 +1183,8 @@ bool LoadSolarSystemObjects(std::istream& in,
             return false;
         }
 
-        const Value objectDataValue = parser.readValue();
-        const Hash* objectData = objectDataValue.getHash();
+        const util::Value objectDataValue = parser.readValue();
+        const util::AssociativeArray* objectData = objectDataValue.getHash();
         if (objectData == nullptr)
         {
             sscError(tokenizer, "{ expected");

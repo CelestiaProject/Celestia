@@ -19,11 +19,12 @@
 
 #include <fmt/format.h>
 
-#include <celengine/parser.h>
 #include <celutil/filetype.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
 
+namespace util = celestia::util;
 
 using celestia::util::GetLogger;
 using celestia::engine::Image;
@@ -33,16 +34,14 @@ namespace
 
 constexpr int MaxResolutionLevels = 13;
 
-
 constexpr bool
 isPow2(int x)
 {
     return ((x & (x - 1)) == 0);
 }
 
-
 std::unique_ptr<VirtualTexture>
-CreateVirtualTexture(const Hash* texParams,
+CreateVirtualTexture(const util::AssociativeArray* texParams,
                      const fs::path& path)
 {
     const std::string* imageDirectory = texParams->getString("ImageDirectory");
@@ -103,8 +102,8 @@ CreateVirtualTexture(const Hash* texParams,
 std::unique_ptr<VirtualTexture>
 LoadVirtualTexture(std::istream& in, const fs::path& path)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
     if (auto tokenValue = tokenizer.getNameValue(); tokenValue != "VirtualTexture")
@@ -112,8 +111,8 @@ LoadVirtualTexture(std::istream& in, const fs::path& path)
         return nullptr;
     }
 
-    const Value texParamsValue = parser.readValue();
-    const Hash* texParams = texParamsValue.getHash();
+    const util::Value texParamsValue = parser.readValue();
+    const util::AssociativeArray* texParams = texParamsValue.getHash();
     if (texParams == nullptr)
     {
         GetLogger()->error("Error parsing virtual texture\n");

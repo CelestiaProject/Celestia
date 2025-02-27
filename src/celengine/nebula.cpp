@@ -10,10 +10,10 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
+#include <celutil/associativearray.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
-#include "hash.h"
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
@@ -21,6 +21,7 @@
 
 namespace engine = celestia::engine;
 namespace util = celestia::util;
+
 using util::GetLogger;
 
 const char*
@@ -59,7 +60,7 @@ Nebula::getObjType() const
 }
 
 bool
-Nebula::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
+Nebula::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     if (const std::string* t = params->getString("Mesh"); t != nullptr)
     {

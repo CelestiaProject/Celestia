@@ -316,7 +316,7 @@ private:
     bool loadFloatAttribute(const VertexAttribute& attr,
                             cmod::VWord* destination);
 
-    Tokenizer tok;
+    util::Tokenizer tok;
 };
 
 
@@ -452,7 +452,7 @@ AsciiModelLoader::loadMaterial(Material& material)
         }
     }
 
-    if (tok.getTokenType() != Tokenizer::TokenName)
+    if (tok.getTokenType() != util::Tokenizer::TokenName)
     {
         return false;
     }
@@ -527,7 +527,7 @@ AsciiModelLoader::loadVertexDescription()
         nAttributes++;
     }
 
-    if (tok.getTokenType() != Tokenizer::TokenName)
+    if (tok.getTokenType() != util::Tokenizer::TokenName)
     {
         reportError("Invalid vertex description");
         return {};
@@ -718,7 +718,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
             materialIndex = *tokenValue == -1 ? ~0u : static_cast<unsigned int>(*tokenValue);
         }
 
-        if (tok.nextToken() != Tokenizer::TokenNumber)
+        if (tok.nextToken() != util::Tokenizer::TokenNumber)
         {
             reportError("Index count expected in primitive group");
             return false;
@@ -740,7 +740,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            if (tok.nextToken() != Tokenizer::TokenNumber)
+            if (tok.nextToken() != util::Tokenizer::TokenNumber)
             {
                 reportError("Incomplete index list in primitive group");
                 return false;
@@ -777,7 +777,9 @@ AsciiModelLoader::load()
     bool hasNormalMap = false;
 
     // Parse material and mesh definitions
-    for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
+    for (util::Tokenizer::TokenType token = tok.nextToken();
+         token != util::Tokenizer::TokenEnd;
+         token = tok.nextToken())
     {
         if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
         {

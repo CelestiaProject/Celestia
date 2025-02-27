@@ -13,24 +13,24 @@
 #include <fstream>
 #include <type_traits>
 
-#include <celengine/hash.h>
-#include <celengine/parser.h>
 #include <celengine/texmanager.h>
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
 
-
 using namespace std::string_view_literals;
-using celestia::util::GetLogger;
 
+namespace util = celestia::util;
+
+using celestia::util::GetLogger;
 
 namespace
 {
 
 void
-applyBoolean(bool& target, const Hash& hash, std::string_view key)
+applyBoolean(bool& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto b = hash.getBoolean(key);
     if (b.has_value())
@@ -40,7 +40,7 @@ applyBoolean(bool& target, const Hash& hash, std::string_view key)
 
 template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
 void
-applyNumber(T& target, const Hash& hash, std::string_view key)
+applyNumber(T& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto number = hash.getNumber<T>(key);
     if (number.has_value())
@@ -49,7 +49,7 @@ applyNumber(T& target, const Hash& hash, std::string_view key)
 
 
 void
-applyString(std::string& target, const Hash& hash, std::string_view key)
+applyString(std::string& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto str = hash.getString(key);
     if (str != nullptr)
@@ -58,7 +58,7 @@ applyString(std::string& target, const Hash& hash, std::string_view key)
 
 
 void
-applyPath(fs::path& target, const Hash& hash, std::string_view key)
+applyPath(fs::path& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto path = hash.getPath(key);
     if (path.has_value())
@@ -67,7 +67,7 @@ applyPath(fs::path& target, const Hash& hash, std::string_view key)
 
 
 void
-applyTexture(MultiResTexture& target, const Hash& hash, std::string_view key)
+applyTexture(MultiResTexture& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto source = hash.getPath(key);
     if (source.has_value())
@@ -76,7 +76,7 @@ applyTexture(MultiResTexture& target, const Hash& hash, std::string_view key)
 
 
 void
-applyStringArray(std::vector<std::string>& target, const Hash& hash, std::string_view key)
+applyStringArray(std::vector<std::string>& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto value = hash.getValue(key);
     if (value == nullptr)
@@ -102,7 +102,7 @@ applyStringArray(std::vector<std::string>& target, const Hash& hash, std::string
 
 
 void
-applyPathArray(std::vector<fs::path>& target, const Hash& hash, std::string_view key)
+applyPathArray(std::vector<fs::path>& target, const util::AssociativeArray& hash, std::string_view key)
 {
     auto value = hash.getValue(key);
     if (value == nullptr)
@@ -130,7 +130,7 @@ applyPathArray(std::vector<fs::path>& target, const Hash& hash, std::string_view
 
 
 void
-applyPaths(CelestiaConfig::Paths& paths, const Hash& hash)
+applyPaths(CelestiaConfig::Paths& paths, const util::AssociativeArray& hash)
 {
     applyPath(paths.starDatabaseFile, hash, "StarDatabase"sv);
     applyPath(paths.starNamesFile, hash, "StarNameDatabase"sv);
@@ -157,7 +157,7 @@ applyPaths(CelestiaConfig::Paths& paths, const Hash& hash)
 
 
 void
-applyFonts(CelestiaConfig::Fonts& fonts, const Hash& hash)
+applyFonts(CelestiaConfig::Fonts& fonts, const util::AssociativeArray& hash)
 {
     applyPath(fonts.mainFont, hash, "Font"sv);
     applyPath(fonts.labelFont, hash, "LabelFont"sv);
@@ -166,7 +166,7 @@ applyFonts(CelestiaConfig::Fonts& fonts, const Hash& hash)
 
 
 void
-applyMouse(CelestiaConfig::Mouse& mouse, const Hash& hash)
+applyMouse(CelestiaConfig::Mouse& mouse, const util::AssociativeArray& hash)
 {
     applyString(mouse.cursor, hash, "Cursor"sv);
     applyNumber(mouse.rotateAcceleration, hash, "RotateAcceleration"sv);
@@ -178,7 +178,7 @@ applyMouse(CelestiaConfig::Mouse& mouse, const Hash& hash)
 
 
 void
-applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Hash& hash)
+applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const util::AssociativeArray& hash)
 {
     applyNumber(renderDetails.orbitWindowEnd, hash, "OrbitWindowEnd"sv);
     applyNumber(renderDetails.orbitPeriodsShown, hash, "OrbitPeriodsShown"sv);
@@ -196,13 +196,15 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Hash& has
 
 
 void
-applyStarTextures(StarDetails::StarTextureSet& starTextures, const Hash& hash, std::string_view key)
+applyStarTextures(StarDetails::StarTextureSet& starTextures,
+                  const util::AssociativeArray& hash,
+                  std::string_view key)
 {
-    const Value* starTexValue = hash.getValue(key);
+    const util::Value* starTexValue = hash.getValue(key);
     if (starTexValue == nullptr)
         return;
 
-    const Hash* starTexTable = starTexValue->getHash();
+    const util::AssociativeArray* starTexTable = starTexValue->getHash();
     if (starTexTable == nullptr)
     {
         GetLogger()->error("{} must be a property list.\n", key);
@@ -247,8 +249,8 @@ bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config)
         return false;
     }
 
-    Tokenizer tokenizer(&configFile);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&configFile);
+    util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
     if (auto tokenValue = tokenizer.getNameValue(); tokenValue != "Configuration")
@@ -258,8 +260,8 @@ bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config)
         return false;
     }
 
-    Value configParamsValue = parser.readValue();
-    const Hash* configParams = configParamsValue.getHash();
+    util::Value configParamsValue = parser.readValue();
+    const util::AssociativeArray* configParams = configParamsValue.getHash();
     if (configParams == nullptr)
     {
         GetLogger()->error("{}: Bad configuration file.\n", filename);

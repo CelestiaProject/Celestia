@@ -79,12 +79,12 @@ private:
 };
 
 #ifdef GL_ES
-const char glsl_version[] = "100";
+constexpr char glsl_version[] = "100";
 #else
-const char glsl_version[] = "120";
+constexpr char glsl_version[] = "120";
 #endif
 
-const char kVertexShader[] = R"glsl(
+constexpr char kVertexShader[] = R"glsl(
 #version {}
 #define SHADER_COLOR {}
 #define SHADER_TEXCOORD {}
@@ -121,7 +121,7 @@ void main(void)
 }}
 )glsl";
 
-const char kFragmentShader[] = R"glsl(
+constexpr char kFragmentShader[] = R"glsl(
 #version {}
 #define SHADER_COLOR {}
 #define SHADER_TEXCOORD {}
