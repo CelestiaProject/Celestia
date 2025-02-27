@@ -1830,6 +1830,9 @@ static void renderSphereUnlit(const RenderInfo& ri,
         textures.push_back(ri.overlayTex);
     }
 
+    if (ri.isStar)
+        shadprop.lightModel = LightingModel::StarModel;
+
     // Get a shader for the current rendering configuration
     auto* prog = r->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -1840,6 +1843,8 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->textureOffset = 0.0f;
     prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
+    if (ri.isStar)
+        prog->eyePosition = ri.eyePos_obj;
 
     Renderer::PipelineState ps;
     ps.depthMask = true;
@@ -2390,6 +2395,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
+            ri.isStar = obj.isStar;
             renderSphereUnlit(ri, viewFrustum, planetMVP, this);
         }
     }
@@ -3016,30 +3022,13 @@ void Renderer::renderStar(const Star& star,
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
+        rp.isStar = true;
         rp.surface = &surface;
         rp.rings = nullptr;
         rp.radius = star.getRadius();
         rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.geometry = star.getGeometry();
-
-        Atmosphere atmosphere;
-
-        // Use atmosphere effect to give stars a fuzzy fringe
-        if (star.hasCorona() && rp.geometry == InvalidResource)
-        {
-            Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
-            atmosphere.height = radius * CoronaHeight;
-            atmosphere.lowerColor = atmColor;
-            atmosphere.upperColor = atmColor;
-            atmosphere.skyColor = atmColor;
-
-            rp.atmosphere = &atmosphere;
-        }
-        else
-        {
-            rp.atmosphere = nullptr;
-        }
-
+        rp.atmosphere = nullptr;
         rp.orientation = star.getRotationModel()->orientationAtTime(observer.getTime()).cast<float>();
 
         renderObject(pos, distance, observer,
