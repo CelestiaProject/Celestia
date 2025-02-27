@@ -212,7 +212,9 @@ public:
         astro::MassUnit mass{ astro::MassUnit::Default };
     };
 
-    Value() {}
+    // Cannot default this constructor due to non-trivial default constructors
+    // of the union members.
+    Value() {} //NOSONAR
     ~Value();
     Value(const Value&) = delete;
     Value& operator=(const Value&) = delete;

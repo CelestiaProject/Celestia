@@ -849,6 +849,25 @@ CreateScriptedRotation(const util::Value& value,
 
 #endif
 
+std::shared_ptr<const ephem::RotationModel>
+CreateSampledRotation(std::string_view filename, const fs::path& path)
+{
+    auto filePath = util::U8FileName(filename);
+    if (!filePath.has_value())
+    {
+        GetLogger()->error("Invalid filename in SampledOrientation\n");
+        return nullptr;
+    }
+
+    GetLogger()->verbose("Attempting to load orientation file '{}'\n", filename);
+
+    auto rotationModel = engine::GetRotationModelManager()->find(*filePath, path);
+    if (rotationModel == nullptr)
+        GetLogger()->error("Could not load rotation model file '{}'\n", filename);
+
+    return rotationModel;
+}
+
 /**
  * Get the center object of a frame definition. Return an empty selection
  * if it's missing or refers to an object that doesn't exist.
@@ -1725,22 +1744,8 @@ CreateRotationModel(const util::AssociativeArray* planetData,
 
     if (const std::string* sampOrientationFile = planetData->getString("SampledOrientation"); sampOrientationFile != nullptr)
     {
-        if (auto sampOrientationFileName = util::U8FileName(*sampOrientationFile); sampOrientationFileName.has_value())
-        {
-            GetLogger()->verbose("Attempting to load orientation file '{}'\n", *sampOrientationFile);
-
-            if (auto rotationModel = engine::GetRotationModelManager()->find(*sampOrientationFile, path);
-                rotationModel != nullptr)
-            {
-                return rotationModel;
-            }
-
-            GetLogger()->error("Could not load rotation model file '{}'\n", *sampOrientationFile);
-        }
-        else
-        {
-            GetLogger()->error("Invalid filename in SampledOrientation\n");
-        }
+        if (auto rotationModel = CreateSampledRotation(*sampOrientationFile, path); rotationModel != nullptr)
+            return rotationModel;
     }
 
     if (const util::Value* value = planetData->getValue("PrecessingRotation"); value != nullptr)
