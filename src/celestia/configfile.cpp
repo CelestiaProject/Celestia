@@ -1,6 +1,6 @@
 // configfile.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -183,7 +183,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Hash& has
     applyNumber(renderDetails.orbitWindowEnd, hash, "OrbitWindowEnd"sv);
     applyNumber(renderDetails.orbitPeriodsShown, hash, "OrbitPeriodsShown"sv);
     applyNumber(renderDetails.linearFadeFraction, hash, "LinearFadeFraction"sv);
-    applyNumber(renderDetails.faintestVisible, hash, "FaintestVisibleMagnitude"sv);
+    applyNumber(renderDetails.exposure, hash, "Exposure"sv);
     applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
     applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);

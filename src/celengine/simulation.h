@@ -1,6 +1,7 @@
 // simulation.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -115,8 +116,8 @@ public:
     bool getPauseState() const;
     void setPauseState(bool);
 
-    float getFaintestVisible() const;
-    void setFaintestVisible(float);
+    float getExposure() const;
+    void setExposure(float);
 
     void setObserverMode(Observer::ObserverMode);
     Observer::ObserverMode getObserverMode() const;
@@ -139,6 +140,6 @@ private:
     Observer* activeObserver;
     std::vector<Observer*> observers;
 
-    float faintestVisible{ 5.0f };
+    float exposure{ 1.0f };
     bool pauseState{ false };
 };

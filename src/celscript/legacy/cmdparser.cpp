@@ -243,16 +243,6 @@ ParseResult parseSetCommand(const Hash& paramList, const ScriptMaps&)
 
     if (auto valueOpt = paramList.getNumber<double>("value"); valueOpt.has_value())
         value = *valueOpt;
-    else if (const std::string* valstr = paramList.getString("value"); valstr != nullptr)
-    {
-        // Some values may be specified via strings
-        if (compareIgnoringCase(*valstr, "fuzzypoints") == 0)
-            value = static_cast<double>(Renderer::FuzzyPointStars);
-        else if (compareIgnoringCase(*valstr, "points") == 0)
-            value = static_cast<double>(Renderer::PointStars);
-        else if (compareIgnoringCase(*valstr, "scaleddiscs") == 0)
-            value = static_cast<double>(Renderer::ScaledDiscStars);
-    }
 
     return std::make_unique<CommandSet>(*name, value);
 }
@@ -616,17 +606,10 @@ ParseResult parseConstellationColorCommand(const Hash& paramList, const ScriptMa
 }
 
 
-ParseResult parseSetVisibilityLimitCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetExposureCommand(const Hash& paramList, const ScriptMaps&)
 {
-    auto mag = paramList.getNumber<double>("magnitude").value_or(6.0);
-    return std::make_unique<CommandSetVisibilityLimit>(mag);
-}
-
-
-ParseResult parseSetFaintestAutoMag45DegCommand(const Hash& paramList, const ScriptMaps&)
-{
-    auto mag = paramList.getNumber<double>("magnitude").value_or(8.5);
-    return std::make_unique<CommandSetFaintestAutoMag45deg>(mag);
+    auto exposure = paramList.getNumber<double>("exposure").value_or(1.0);
+    return std::make_unique<CommandSetExposure>(exposure);
 }
 
 

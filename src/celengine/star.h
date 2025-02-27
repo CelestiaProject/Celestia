@@ -1,6 +1,6 @@
 // star.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -275,6 +275,7 @@ public:
     void setExtinction(float);
 
     float getApparentMagnitude(float) const;
+    float getIrradiance(float) const;
     float getLuminosity() const;
     float getBolometricLuminosity() const;
 

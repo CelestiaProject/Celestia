@@ -1,6 +1,6 @@
 // objectrenderer.h
 //
-// Copyright (C) 2001-2019, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -21,18 +21,18 @@ template<class OBJ, class PREC>
 class ObjectRenderer : public celestia::engine::OctreeProcessor<OBJ, PREC>
 {
 public:
-    const Observer* observer    { nullptr };
-    Renderer*  renderer         { nullptr };
+    const Observer* observer     { nullptr };
+    Renderer*  renderer          { nullptr };
 
-    float pixelSize             { 0.0f };
-    float faintestMag           { 0.0f };
-    float distanceLimit         { 0.0f };
+    float pixelSize              { 0.0f };
+    float exposure               { 0.0f };
+    float distanceLimit          { 0.0f };
 
-    // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag     { 0.0f };
+    // Objects with screen brightness higher than labelLowestIrradiation will be labeled
+    float labelLowestIrradiation { 0.0f };
 
-    std::uint64_t renderFlags   { 0 };
-    int labelMode               { 0 };
+    std::uint64_t renderFlags    { 0 };
+    int labelMode                { 0 };
 
 protected:
     explicit ObjectRenderer(PREC _distanceLimit) :

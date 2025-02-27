@@ -55,13 +55,13 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/celestia/visualMagnitude</key>
-      <applyto>/apps/celestia/visualMagnitude</applyto>
+      <key>/schemas/apps/celestia/exposure</key>
+      <applyto>/apps/celestia/exposure</applyto>
       <owner>celestia</owner>
       <type>float</type>
-      <default>8.5</default>
+      <default>1.0</default>
       <locale name="C">
-        <short>Visual magnitude.</short>
+        <short>Exposure Time.</short>
       </locale>
     </schema>
     <schema>
@@ -112,17 +112,6 @@
       <default>false</default>
       <locale name="C">
         <short>Fullscreen state.</short>
-      </locale>
-    </schema>
-    <schema>
-      <key>/schemas/apps/celestia/starStyle</key>
-      <applyto>/apps/celestia/starStyle</applyto>
-      <owner>celestia</owner>
-      <type>int</type>
-      <default>0</default>
-      <locale name="C">
-        <short>Style of star rendering.</short>
-        <long>0=Fuzzy Points, 1=Points, 2=Scaled Discs</long>
       </locale>
     </schema>
     <schema>
@@ -287,16 +276,6 @@
       <default>false</default>
       <locale name="C">
         <short>Render boundary lines between constellations.</short>
-      </locale>
-    </schema>
-    <schema>
-      <key>/schemas/apps/celestia/render/autoMag</key>
-      <applyto>/apps/celestia/render/autoMag</applyto>
-      <owner>celestia</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-        <short>Render body brightness with auto-magnitude.</short>
       </locale>
     </schema>
     <schema>
