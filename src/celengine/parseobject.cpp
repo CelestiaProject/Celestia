@@ -562,9 +562,16 @@ CreateSpiceOrbit(const util::AssociativeArray* orbitData,
  *  as sidereal day length.
  */
 std::shared_ptr<ephem::SpiceRotation>
-CreateSpiceRotation(const util::AssociativeArray* rotationData,
+CreateSpiceRotation(const util::Value& value,
                     const fs::path& path)
 {
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect spice rotation syntax.\n");
+        return nullptr;
+    }
+
     std::vector<std::string> kernelList;
 
     if (rotationData->getValue("Kernel") != nullptr)
@@ -587,13 +594,9 @@ CreateSpiceRotation(const util::AssociativeArray* rotationData,
 
     std::string baseFrameName;
     if (auto baseFrame = rotationData->getString("BaseFrame"); baseFrame == nullptr)
-    {
         baseFrameName = "eclipj2000";
-    }
     else
-    {
         baseFrameName = *baseFrame;
-    }
 
     // The period of the rotation may be specified if appropriate; a value
     // of zero for the period (the default), means that the rotation will
@@ -696,9 +699,16 @@ CreateFixedRotationModel(double offset,
 }
 
 std::shared_ptr<const ephem::RotationModel>
-CreateUniformRotationModel(const util::AssociativeArray* rotationData,
+CreateUniformRotationModel(const util::Value& value,
                            double syncRotationPeriod)
 {
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect UniformRotation syntax.\n");
+        return nullptr;
+    }
+
     // Default to synchronous rotation
     auto period = rotationData->getTime<double>("Period", 1.0, 1.0 / astro::HOURS_PER_DAY).value_or(syncRotationPeriod);
 
@@ -725,8 +735,15 @@ CreateUniformRotationModel(const util::AssociativeArray* rotationData,
 }
 
 std::shared_ptr<const ephem::RotationModel>
-CreateFixedRotationModel(const util::AssociativeArray* rotationData)
+CreateFixedRotationModel(const util::Value& value)
 {
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect FixedRotation syntax.\n");
+        return nullptr;
+    }
+
     auto offset = math::degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
     auto inclination = math::degToRad(rotationData->getAngle<double>("Inclination").value_or(0.0));
     auto ascendingNode = math::degToRad(rotationData->getAngle<double>("AscendingNode").value_or(0.0));
@@ -739,8 +756,15 @@ CreateFixedRotationModel(const util::AssociativeArray* rotationData)
 }
 
 std::shared_ptr<const ephem::RotationModel>
-CreateFixedAttitudeRotationModel(const util::AssociativeArray* rotationData)
+CreateFixedAttitudeRotationModel(const util::Value& value)
 {
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect FixedAttitude syntax.\n");
+        return nullptr;
+    }
+
     auto heading = math::degToRad(rotationData->getAngle<double>("Heading").value_or(0.0));
     auto tilt = math::degToRad(rotationData->getAngle<double>("Tilt").value_or(0.0));
     auto roll = math::degToRad(rotationData->getAngle<double>("Roll").value_or(0.0));
@@ -753,9 +777,16 @@ CreateFixedAttitudeRotationModel(const util::AssociativeArray* rotationData)
 }
 
 std::shared_ptr<const ephem::RotationModel>
-CreatePrecessingRotationModel(const util::AssociativeArray* rotationData,
+CreatePrecessingRotationModel(const util::Value& value,
                               double syncRotationPeriod)
 {
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect syntax for precessing rotation.\n");
+        return nullptr;
+    }
+
     // Default to synchronous rotation
     double period = rotationData->getTime<double>("Period", 1.0, 1.0 / astro::HOURS_PER_DAY).value_or(syncRotationPeriod);
 
@@ -776,9 +807,7 @@ CreatePrecessingRotationModel(const util::AssociativeArray* rotationData,
     // doesn't have a periodic orbit. Default to a constant
     // orientation instead.
     if (period == 0.0)
-    {
         return CreateFixedRotationModel(offset, inclination, ascendingNode);
-    }
 
     return std::make_shared<ephem::PrecessingRotationModel>(period,
                                                             static_cast<float>(offset),
@@ -788,11 +817,18 @@ CreatePrecessingRotationModel(const util::AssociativeArray* rotationData,
                                                             precessionPeriod);
 }
 
+#ifdef CELX
+
 std::shared_ptr<const ephem::RotationModel>
-CreateScriptedRotation(const util::AssociativeArray* rotationData,
+CreateScriptedRotation(const util::Value& value,
                        const fs::path& path)
 {
-#ifdef CELX
+    const util::AssociativeArray* rotationData = value.getHash();
+    if (rotationData == nullptr)
+    {
+        GetLogger()->error("Object has incorrect scripted rotation syntax.\n");
+        return nullptr;
+    }
 
     // Function name is required
     const std::string* funcName = rotationData->getString("Function");
@@ -809,11 +845,9 @@ CreateScriptedRotation(const util::AssociativeArray* rotationData,
     //rotationData->addValue("AddonPath", *pathValue);
 
     return ephem::CreateScriptedRotation(moduleName, *funcName, *rotationData, path);
-#else
-    GetLogger()->warn("ScriptedRotation not usable without scripting support.\n");
-    return nullptr;
-#endif
 }
+
+#endif
 
 /**
  * Get the center object of a frame definition. Return an empty selection
@@ -1661,50 +1695,32 @@ CreateRotationModel(const util::AssociativeArray* planetData,
     //   PrecessingRotation
     //   UniformRotation
     //   legacy rotation parameters
-    if (const std::string* customRotationModelName = planetData->getString("CustomRotation"); customRotationModelName != nullptr)
+    if (const std::string* name = planetData->getString("CustomRotation"); name != nullptr)
     {
-        if (auto rotationModel = ephem::GetCustomRotationModel(*customRotationModelName);
-            rotationModel != nullptr)
-        {
+        if (auto rotationModel = ephem::GetCustomRotationModel(*name); rotationModel != nullptr)
             return rotationModel;
-        }
-        GetLogger()->error("Could not find custom rotation model named '{}'\n",
-                           *customRotationModelName);
+
+        GetLogger()->error("Could not find custom rotation model named '{}'\n", *name);
     }
 
-    if (const util::Value* spiceRotationDataValue = planetData->getValue("SpiceRotation"); spiceRotationDataValue != nullptr)
+    if (const util::Value* value = planetData->getValue("SpiceRotation"); value != nullptr)
     {
 #ifdef USE_SPICE
-        const util::AssociativeArray* spiceRotationData = spiceRotationDataValue->getHash();
-        if (spiceRotationData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect spice rotation syntax.\n");
-            return nullptr;
-        }
-        else
-        {
-            if (auto rotationModel = CreateSpiceRotation(spiceRotationData, path); rotationModel != nullptr)
-                return rotationModel;
-
-            GetLogger()->error("Bad spice rotation model\nCould not load SPICE rotation model\n");
-        }
+        if (auto rotationModel = CreateSpiceRotation(*value, path); rotationModel != nullptr)
+            return rotationModel;
 #else
         GetLogger()->warn("Spice support is not enabled, ignoring SpiceRotation definition\n");
 #endif
     }
 
-    if (const util::Value* scriptedRotationValue = planetData->getValue("ScriptedRotation"); scriptedRotationValue != nullptr)
+    if (const util::Value* value = planetData->getValue("ScriptedRotation"); value != nullptr)
     {
-        const util::AssociativeArray* scriptedRotationData = scriptedRotationValue->getHash();
-        if (scriptedRotationData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect scripted rotation syntax.\n");
-            return nullptr;
-        }
-
-        if (auto rotationModel = CreateScriptedRotation(scriptedRotationData, path); rotationModel != nullptr)
+#ifdef CELX
+        if (auto rotationModel = CreateScriptedRotation(*value, path); rotationModel != nullptr)
             return rotationModel;
-
+#else
+        GetLogger()->warn("ScriptedRotation not usable without scripting support.\n");
+#endif
     }
 
     if (const std::string* sampOrientationFile = planetData->getString("SampledOrientation"); sampOrientationFile != nullptr)
@@ -1727,53 +1743,28 @@ CreateRotationModel(const util::AssociativeArray* planetData,
         }
     }
 
-    if (const util::Value* precessingRotationValue = planetData->getValue("PrecessingRotation"); precessingRotationValue != nullptr)
+    if (const util::Value* value = planetData->getValue("PrecessingRotation"); value != nullptr)
     {
-        const util::AssociativeArray* precessingRotationData = precessingRotationValue->getHash();
-        if (precessingRotationData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect syntax for precessing rotation.\n");
-            return nullptr;
-        }
-
-        return CreatePrecessingRotationModel(precessingRotationData,
-                                             syncRotationPeriod);
+        if (auto rotationModel = CreatePrecessingRotationModel(*value, syncRotationPeriod); rotationModel != nullptr)
+            return rotationModel;
     }
 
-    if (const util::Value* uniformRotationValue = planetData->getValue("UniformRotation"); uniformRotationValue != nullptr)
+    if (const util::Value* value = planetData->getValue("UniformRotation"); value != nullptr)
     {
-        const util::AssociativeArray* uniformRotationData = uniformRotationValue->getHash();
-        if (uniformRotationData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect UniformRotation syntax.\n");
-            return nullptr;
-        }
-        return CreateUniformRotationModel(uniformRotationData,
-                                          syncRotationPeriod);
+        if (auto rotationModel = CreateUniformRotationModel(*value, syncRotationPeriod); rotationModel != nullptr)
+            return rotationModel;
     }
 
-    if (const util::Value* fixedRotationValue = planetData->getValue("FixedRotation"); fixedRotationValue != nullptr)
+    if (const util::Value* value = planetData->getValue("FixedRotation"); value != nullptr)
     {
-        const util::AssociativeArray* fixedRotationData = fixedRotationValue->getHash();
-        if (fixedRotationData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect FixedRotation syntax.\n");
-            return nullptr;
-        }
-
-        return CreateFixedRotationModel(fixedRotationData);
+        if (auto rotationModel = CreateFixedRotationModel(*value); rotationModel != nullptr)
+            return rotationModel;
     }
 
-    if (const util::Value* fixedAttitudeValue = planetData->getValue("FixedAttitude"); fixedAttitudeValue != nullptr)
+    if (const util::Value* value = planetData->getValue("FixedAttitude"); value != nullptr)
     {
-        const util::AssociativeArray* fixedAttitudeData = fixedAttitudeValue->getHash();
-        if (fixedAttitudeData == nullptr)
-        {
-            GetLogger()->error("Object has incorrect FixedAttitude syntax.\n");
-            return nullptr;
-        }
-
-        return CreateFixedAttitudeRotationModel(fixedAttitudeData);
+        if (auto rotationModel = CreateFixedAttitudeRotationModel(*value); rotationModel != nullptr)
+            return rotationModel;
     }
 
     // For backward compatibility we need to support rotation parameters

@@ -17,9 +17,6 @@
 namespace celestia::util
 {
 
-// Define these here: at declaration the vector member contains an incomplete type
-AssociativeArray::~AssociativeArray() = default;
-
 const Value*
 AssociativeArray::getValue(std::string_view key) const
 {

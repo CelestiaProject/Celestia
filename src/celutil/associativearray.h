@@ -39,7 +39,7 @@ public:
     using AssocType = std::map<std::string, std::size_t, std::less<>>;
 
     AssociativeArray() = default;
-    ~AssociativeArray(); //NOSONAR
+    ~AssociativeArray();
     AssociativeArray(AssociativeArray&&) = delete;
     AssociativeArray(const AssociativeArray&) = delete;
     AssociativeArray& operator=(AssociativeArray&&) = delete;
@@ -337,6 +337,8 @@ private:
     };
 };
 
+inline AssociativeArray::~AssociativeArray() = default;
+
 template<typename T>
 void
 AssociativeArray::for_all(T& action) const
@@ -346,6 +348,5 @@ AssociativeArray::for_all(T& action) const
         action(key, values[value]);
     }
 }
-
 
 } // end namespace celestia::util
