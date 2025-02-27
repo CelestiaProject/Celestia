@@ -362,20 +362,7 @@ AssociativeArray::getSphericalTuple(std::string_view key) const
 
 Value::~Value()
 {
-    switch (type)
-    {
-    case ValueType::StringType:
-        stringData.~unique_ptr();
-        break;
-    case ValueType::ArrayType:
-        arrayData.~unique_ptr();
-        break;
-    case ValueType::HashType:
-        hashData.~unique_ptr();
-        break;
-    default:
-        break;
-    }
+    destroy();
 }
 
 Value::Value(Value&& other) noexcept :
@@ -433,21 +420,7 @@ Value::operator=(Value&& other) noexcept
         return *this;
     }
 
-    switch (type)
-    {
-    case ValueType::StringType:
-        stringData.~unique_ptr();
-        break;
-    case ValueType::ArrayType:
-        arrayData.~unique_ptr();
-        break;
-    case ValueType::HashType:
-        hashData.~unique_ptr();
-        break;
-    default:
-        break;
-    }
-
+    destroy();
     switch (other.type)
     {
     case ValueType::NumberType:
@@ -471,6 +444,25 @@ Value::operator=(Value&& other) noexcept
     units = other.units;
 
     return *this;
+}
+
+void
+Value::destroy()
+{
+    switch (type)
+    {
+    case ValueType::StringType:
+        stringData.~unique_ptr(); //NOSONAR
+        break;
+    case ValueType::ArrayType:
+        arrayData.~unique_ptr(); //NOSONAR
+        break;
+    case ValueType::HashType:
+        hashData.~unique_ptr(); //NOSONAR
+        break;
+    default:
+        break;
+    }
 }
 
 } // end namespace celestia::util

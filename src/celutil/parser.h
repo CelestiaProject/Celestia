@@ -22,8 +22,8 @@ class Tokenizer;
 class Parser
 {
 public:
-    Parser(Tokenizer*);
-    ~Parser();
+    explicit Parser(Tokenizer*);
+    ~Parser() = default;
 
     Value readValue();
 
@@ -34,4 +34,4 @@ private:
     std::unique_ptr<AssociativeArray> readHash();
 };
 
-}
+} // end namespace celestia::util

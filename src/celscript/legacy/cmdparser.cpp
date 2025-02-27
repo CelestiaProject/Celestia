@@ -878,21 +878,26 @@ ParseResult parseOverlayCommand(const util::AssociativeArray& paramList, const S
         fitscreen = paramList.getNumber<int>("fitscreen").value_or(0) != 0;
 
     std::array<Color, 4> colors;
-    Color color = paramList.getColor("color").value_or(Color::White);
-    colors.fill(alpha.has_value() ? Color(color, *alpha) : color);
+    colors.fill(paramList.getColor("color").value_or(Color::White));
 
     if (auto colorTop = paramList.getColor("colortop"); colorTop.has_value())
-        colors[0] = colors[1] = alpha.has_value() ? Color(*colorTop, *alpha) : *colorTop;
+        colors[0] = colors[1] = *colorTop;
     if (auto colorBottom = paramList.getColor("colorbottom"); colorBottom.has_value())
-        colors[2] = colors[3] = alpha.has_value() ? Color(*colorBottom, *alpha) : *colorBottom;
+        colors[2] = colors[3] = *colorBottom;
     if (auto colorTopLeft = paramList.getColor("colortopleft"); colorTopLeft.has_value())
-        colors[0] = alpha.has_value() ? Color(*colorTopLeft, *alpha) : *colorTopLeft;
+        colors[0] = *colorTopLeft;
     if (auto colorTopRight = paramList.getColor("colortopright"); colorTopRight.has_value())
-        colors[1] = alpha.has_value() ? Color(*colorTopRight, *alpha) : *colorTopRight;
+        colors[1] = *colorTopRight;
     if (auto colorBottomRight = paramList.getColor("colorbottomright"); colorBottomRight.has_value())
-        colors[2] = alpha.has_value() ? Color(*colorBottomRight, *alpha) : *colorBottomRight;
+        colors[2] = *colorBottomRight;
     if (auto colorBottomLeft = paramList.getColor("colorbottomleft"); colorBottomLeft.has_value())
-        colors[3] = alpha.has_value() ? Color(*colorBottomLeft, *alpha) : *colorBottomLeft;
+        colors[3] = *colorBottomLeft;
+
+    if (alpha.has_value())
+    {
+        for (Color& color : colors)
+            color.alpha(*alpha);
+    }
 
     auto fadeafter = paramList.getNumber<float>("fadeafter").value_or(duration);
 

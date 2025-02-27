@@ -1560,6 +1560,88 @@ CreateOrbit(const Selection& centralObject,
     return nullptr;
 }
 
+std::shared_ptr<const ephem::RotationModel>
+CreateLegacyRotationModel(const util::AssociativeArray* planetData,
+                          double syncRotationPeriod)
+{
+    // Default to synchronous rotation
+    bool specified = false;
+    double period = syncRotationPeriod;
+    if (auto periodVal = planetData->getNumber<double>("RotationPeriod"); periodVal.has_value())
+    {
+        specified = true;
+        period = *periodVal / 24.0;
+    }
+
+    float offset = 0.0f;
+    if (auto offsetVal = planetData->getNumber<float>("RotationOffset"); offsetVal.has_value())
+    {
+        specified = true;
+        offset = math::degToRad(*offsetVal);
+    }
+
+    double epoch = astro::J2000;
+    if (ParseDate(planetData, "RotationEpoch", epoch))
+    {
+        specified = true;
+    }
+
+    float inclination = 0.0f;
+    if (auto inclinationVal = planetData->getNumber<float>("Obliquity"); inclinationVal.has_value())
+    {
+        specified = true;
+        inclination = math::degToRad(*inclinationVal);
+    }
+
+    float ascendingNode = 0.0f;
+    if (auto ascendingNodeVal = planetData->getNumber<float>("EquatorAscendingNode"); ascendingNodeVal.has_value())
+    {
+        specified = true;
+        ascendingNode = math::degToRad(*ascendingNodeVal);
+    }
+
+    double precessionRate = 0.0f;
+    if (auto precessionVal = planetData->getNumber<double>("PrecessionRate"); precessionVal.has_value())
+    {
+        specified = true;
+        precessionRate = *precessionVal;
+    }
+
+    if (specified)
+    {
+        if (period == 0.0)
+        {
+            // No period was specified, and the default synchronous
+            // rotation period is zero, indicating that the object
+            // doesn't have a periodic orbit. Default to a constant
+            // orientation instead.
+            return CreateFixedRotationModel(offset, inclination, ascendingNode);
+        }
+
+        if (precessionRate == 0.0)
+        {
+            return std::make_shared<ephem::UniformRotationModel>(period,
+                                                                 offset,
+                                                                 epoch,
+                                                                 inclination,
+                                                                 ascendingNode);
+        }
+
+        return std::make_shared<ephem::PrecessingRotationModel>(period,
+                                                                offset,
+                                                                epoch,
+                                                                inclination,
+                                                                ascendingNode,
+                                                                -360.0 / precessionRate);
+    }
+    else
+    {
+        // No rotation fields specified
+        return nullptr;
+    }
+
+}
+
 /**
  * Parse rotation information. Unfortunately, Celestia didn't originally have
  * RotationModel objects, so information about the rotation of the object isn't
@@ -1696,81 +1778,7 @@ CreateRotationModel(const util::AssociativeArray* planetData,
 
     // For backward compatibility we need to support rotation parameters
     // that appear in the main block of the object definition.
-    // Default to synchronous rotation
-    bool specified = false;
-    double period = syncRotationPeriod;
-    if (auto periodVal = planetData->getNumber<double>("RotationPeriod"); periodVal.has_value())
-    {
-        specified = true;
-        period = *periodVal / 24.0;
-    }
-
-    float offset = 0.0f;
-    if (auto offsetVal = planetData->getNumber<float>("RotationOffset"); offsetVal.has_value())
-    {
-        specified = true;
-        offset = math::degToRad(*offsetVal);
-    }
-
-    double epoch = astro::J2000;
-    if (ParseDate(planetData, "RotationEpoch", epoch))
-    {
-        specified = true;
-    }
-
-    float inclination = 0.0f;
-    if (auto inclinationVal = planetData->getNumber<float>("Obliquity"); inclinationVal.has_value())
-    {
-        specified = true;
-        inclination = math::degToRad(*inclinationVal);
-    }
-
-    float ascendingNode = 0.0f;
-    if (auto ascendingNodeVal = planetData->getNumber<float>("EquatorAscendingNode"); ascendingNodeVal.has_value())
-    {
-        specified = true;
-        ascendingNode = math::degToRad(*ascendingNodeVal);
-    }
-
-    double precessionRate = 0.0f;
-    if (auto precessionVal = planetData->getNumber<double>("PrecessionRate"); precessionVal.has_value())
-    {
-        specified = true;
-        precessionRate = *precessionVal;
-    }
-
-    if (specified)
-    {
-        if (period == 0.0)
-        {
-            // No period was specified, and the default synchronous
-            // rotation period is zero, indicating that the object
-            // doesn't have a periodic orbit. Default to a constant
-            // orientation instead.
-            return CreateFixedRotationModel(offset, inclination, ascendingNode);
-        }
-
-        if (precessionRate == 0.0)
-        {
-            return std::make_shared<ephem::UniformRotationModel>(period,
-                                                                 offset,
-                                                                 epoch,
-                                                                 inclination,
-                                                                 ascendingNode);
-        }
-
-        return std::make_shared<ephem::PrecessingRotationModel>(period,
-                                                                offset,
-                                                                epoch,
-                                                                inclination,
-                                                                ascendingNode,
-                                                                -360.0 / precessionRate);
-    }
-    else
-    {
-        // No rotation fields specified
-        return nullptr;
-    }
+    return CreateLegacyRotationModel(planetData, syncRotationPeriod);
 }
 
 std::shared_ptr<const ephem::RotationModel>

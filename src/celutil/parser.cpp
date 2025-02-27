@@ -81,8 +81,6 @@ Parser::Parser(Tokenizer* _tokenizer) :
 {
 }
 
-Parser::~Parser() = default;
-
 std::unique_ptr<ValueArray>
 Parser::readArray()
 {

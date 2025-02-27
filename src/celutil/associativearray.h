@@ -39,7 +39,7 @@ public:
     using AssocType = std::map<std::string, std::size_t, std::less<>>;
 
     AssociativeArray() = default;
-    ~AssociativeArray();
+    ~AssociativeArray(); //NOSONAR
     AssociativeArray(AssociativeArray&&) = delete;
     AssociativeArray(const AssociativeArray&) = delete;
     AssociativeArray& operator=(AssociativeArray&&) = delete;
@@ -323,10 +323,12 @@ public:
     astro::MassUnit getMassUnit() const { return units.mass; }
 
 private:
+    void destroy();
+
     ValueType type { ValueType::NullType };
     Units units{ };
 
-    union
+    union //NOSONAR
     {
         double                            doubleData;
         std::unique_ptr<std::string>      stringData;
