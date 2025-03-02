@@ -174,6 +174,8 @@ enum class BodyClassification : std::uint32_t
     MinorMoon      =   0x1000,
     Diffuse        =   0x2000,
     Unknown        =  0x10000,
+
+    DefaultOrbitMask = Planet | Stellar | Moon,
 };
 
 ENUM_CLASS_BITWISE_OPS(BodyClassification);
