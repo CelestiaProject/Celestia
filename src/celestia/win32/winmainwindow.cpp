@@ -661,9 +661,9 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
         modifiers |= CelestiaCore::ShiftKey;
 
     Renderer* r = appCore->getRenderer();
-    std::uint64_t oldRenderFlags = r->getRenderFlags();
-    int oldLabelMode = r->getLabelMode();
-    Renderer::StarStyle oldStarStyle = r->getStarStyle();
+    RenderFlags oldRenderFlags = r->getRenderFlags();
+    RenderLabels oldLabelMode = r->getLabelMode();
+    StarStyle oldStarStyle = r->getStarStyle();
     auto oldResolution = r->getResolution();
     auto oldColorTable = r->getStarColorTable();
 
@@ -885,17 +885,17 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_RENDER_STARSTYLE_FUZZY:
-        appCore->getRenderer()->setStarStyle(Renderer::FuzzyPointStars);
+        appCore->getRenderer()->setStarStyle(StarStyle::FuzzyPointStars);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_STARSTYLE_POINTS:
-        appCore->getRenderer()->setStarStyle(Renderer::PointStars);
+        appCore->getRenderer()->setStarStyle(StarStyle::PointStars);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_STARSTYLE_DISCS:
-        appCore->getRenderer()->setStarStyle(Renderer::ScaledDiscStars);
+        appCore->getRenderer()->setStarStyle(StarStyle::ScaledDiscStars);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
@@ -920,17 +920,17 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_RENDER_TEXTURERES_LOW:
-        appCore->getRenderer()->setResolution(0);
+        appCore->getRenderer()->setResolution(TextureResolution::lores);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_MEDIUM:
-        appCore->getRenderer()->setResolution(1);
+        appCore->getRenderer()->setResolution(TextureResolution::medres);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_HIGH:
-        appCore->getRenderer()->setResolution(2);
+        appCore->getRenderer()->setResolution(TextureResolution::hires);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
@@ -1098,7 +1098,7 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
                                             markerRep,
                                             1);
 
-            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | RenderFlags::ShowMarkers);
         }
         break;
 
@@ -1580,9 +1580,9 @@ RegisterMainWindowClass(HINSTANCE appInstance, HCURSOR hDefaultCursor)
 void
 SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 {
-    std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
-    unsigned int textureRes = appCore->getRenderer()->getResolution();
+    TextureResolution textureRes = appCore->getRenderer()->getResolution();
 
     setMenuItemCheck(menuBar, ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
@@ -1608,13 +1608,13 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
     }
 
-    Renderer::StarStyle style = appCore->getRenderer()->getStarStyle();
+    StarStyle style = appCore->getRenderer()->getStarStyle();
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_FUZZY,
-                  style == Renderer::FuzzyPointStars ? MF_CHECKED : MF_UNCHECKED);
+                  style == StarStyle::FuzzyPointStars ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_POINTS,
-                  style == Renderer::PointStars ? MF_CHECKED : MF_UNCHECKED);
+                  style == StarStyle::PointStars ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
-                  style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
+                  style == StarStyle::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
     auto colorType = appCore->getRenderer()->getStarColorTable();
     CheckMenuItem(menuBar, ID_STARCOLOR_CLASSIC, colorType == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);
@@ -1623,11 +1623,11 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
-                  textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
-                  textureRes == 1 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_HIGH,
-                  textureRes == 2 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
 
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
@@ -1641,9 +1641,9 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     }
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
-        ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
+                  util::is_set(renderFlags, RenderFlags::ShowSmoothLines) ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
-        ((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
+                  util::is_set(renderFlags, RenderFlags::ShowAutoMag) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 void

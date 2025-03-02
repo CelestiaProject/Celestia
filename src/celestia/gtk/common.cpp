@@ -220,22 +220,22 @@ setSaneVerbosity(AppData* app, int value)
 
 /* Sanitizes and sets Star Style */
 void
-setSaneStarStyle(AppData* app, Renderer::StarStyle value)
+setSaneStarStyle(AppData* app, int value)
 {
-    if (value < Renderer::FuzzyPointStars || value > Renderer::ScaledDiscStars)
-        value = Renderer::FuzzyPointStars;
-
-    app->renderer->setStarStyle(value);
+    if (value >= static_cast<int>(StarStyle::FuzzyPointStars) && value <= static_cast<int>(StarStyle::ScaledDiscStars))
+        app->renderer->setStarStyle(static_cast<StarStyle>(value));
+    else
+        app->renderer->setStarStyle(StarStyle::FuzzyPointStars);
 }
 
 /* Sanitizes and sets Texture Resolution */
 void
 setSaneTextureResolution(AppData* app, int value)
 {
-    if (value < 0 || value > MultiResTexture::kTextureResolution)
-        value = medres; /* Default to "Medium" */
-
-    app->renderer->setResolution(value);
+    if (value >= 0 && value <= static_cast<int>(TextureResolution::hires))
+        app->renderer->setResolution(static_cast<TextureResolution>(value));
+    else
+        app->renderer->setResolution(TextureResolution::medres);
 }
 
 /* Sanitizes and sets Altername Surface Name */
@@ -278,11 +278,11 @@ setSaneWinPosition(AppData* app, int x, int y)
     }
 }
 
-/* Sets default render flags. Exists because the defaults are a little lame. */
+/* Sets default render flags. */
 void
 setDefaultRenderFlags(AppData* app)
 {
-    app->renderer->setRenderFlags(Renderer::DefaultRenderFlags);
+    app->renderer->setRenderFlags(RenderFlags::DefaultRenderFlags);
 }
 
 } // end namespace celestia::gtk

@@ -21,6 +21,7 @@ using namespace std;
 using namespace Eigen;
 
 namespace astro = celestia::astro;
+namespace util = celestia::util;
 
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
@@ -112,7 +113,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
 
             // Place labels for stars brighter than the specified label threshold brightness
-            if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
+            if (util::is_set(labelMode, RenderLabels::StarLabels) && appMag < labelThresholdMag)
             {
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
@@ -148,7 +149,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.isOpaque = true;
             renderList->push_back(rle);
 
-            if ((labelMode & Renderer::StarLabels) != 0)
+            if (util::is_set(labelMode, RenderLabels::StarLabels))
             {
                 // Position the label slightly in front of the object along a line from
                 // object center to viewer.

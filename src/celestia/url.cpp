@@ -42,6 +42,7 @@ using celestia::util::EncodeAsBase64;
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -51,8 +52,8 @@ constexpr std::string_view PROTOCOL = "cel://"sv;
 // First new render flag in version 1.7
 // ShowDwarfPlanets = bit 27 (0x0000000008000000)
 constexpr unsigned int NEW_FLAG_BIT_1_7 = 27;
-constexpr std::uint64_t NEW_SHOW_PLANETS_BIT_MASK = (UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1));
-constexpr std::uint64_t RF_MASK = NEW_SHOW_PLANETS_BIT_MASK - 1;
+constexpr auto NEW_SHOW_PLANETS_BIT_MASK = static_cast<RenderFlags>(UINT64_C(1) << (NEW_FLAG_BIT_1_7 - 1U));
+constexpr auto RF_MASK = static_cast<RenderFlags>(static_cast<std::uint64_t>(NEW_SHOW_PLANETS_BIT_MASK) - UINT64_C(1));
 
 std::string_view
 getCoordSysName(ObserverFrame::CoordinateSystem mode)
@@ -188,19 +189,19 @@ Url::Url(const CelestiaState &appState, int version, Url::TimeSource timeSource)
 
     // ShowEcliptic == 0x02000000, the last 1.6 parameter
     // we keep only old parameters and clear new ones
-    auto rf = static_cast<int>(m_state.m_renderFlags & RF_MASK);
+    RenderFlags rf = m_state.m_renderFlags & RF_MASK;
     // 1.6 uses ShowPlanets to control display of all types of solar
     // system objects. So set it if any one is displayed.
-    if ((m_state.m_renderFlags & Renderer::ShowSolarSystemObjects) != 0)
-        rf |= static_cast<int>(Renderer::ShowPlanets);
+    if (util::is_set(m_state.m_renderFlags, RenderFlags::ShowSolarSystemObjects))
+        rf |= RenderFlags::ShowPlanets;
     // But we need to store actual value of the bit which controls
     // planets display. 26th bit onwards are unused in 1.6.
-    if ((m_state.m_renderFlags & Renderer::ShowPlanets) != 0)
+    if (util::is_set(m_state.m_renderFlags, RenderFlags::ShowPlanets))
         rf |= NEW_SHOW_PLANETS_BIT_MASK;
-    auto nrf = static_cast<int>(m_state.m_renderFlags >> NEW_FLAG_BIT_1_7);
+    auto nrf = static_cast<std::uint64_t>(m_state.m_renderFlags) >> NEW_FLAG_BIT_1_7;
 
     fmt::print(u, "&rf={}&nrf={}&lm={}",
-               rf, nrf, m_state.m_labelMode);
+               static_cast<std::uint64_t>(rf), nrf, static_cast<std::uint32_t>(m_state.m_labelMode));
 
     // Append the url settings: time source and version
     u << "&tsrc=" << (int) m_timeSource;
@@ -569,44 +570,51 @@ Url::initVersion3(const std::map<std::string_view, std::string> &params, std::st
 
     // Render settings
     bool hasNewRenderFlags = false;
-    std::uint64_t newFlags = 0;
+    RenderFlags newFlags = RenderFlags::ShowNothing;
     if (auto it = params.find("nrf"sv); it != params.end())
     {
         hasNewRenderFlags = true;
-        int nrf;
-        if (!to_number(it->second, nrf))
+        if (std::uint64_t nrf; to_number(it->second, nrf))
+            newFlags = static_cast<RenderFlags>(nrf << NEW_FLAG_BIT_1_7);
+        else
             return false;
-        newFlags = static_cast<std::uint64_t>(nrf) << NEW_FLAG_BIT_1_7;
     }
     if (auto it = params.find("rf"sv); it != params.end())
     {
-        // old renderer flags are int
-        int rf;
-        if (!to_number(it->second, rf))
+        RenderFlags rf;
+        if (std::uint64_t rfValue; to_number(it->second, rfValue))
+            rf = static_cast<RenderFlags>(rfValue);
+        else
             return false;
         // older celestia versions don't know about the new renderer flags
-        std::uint64_t oldFlags;
+        RenderFlags oldFlags;
         if (hasNewRenderFlags)
         {
-            oldFlags = static_cast<std::uint64_t>(rf) & RF_MASK;
+            oldFlags = rf & RF_MASK;
             // get actual Renderer::ShowPlanets value in 26th bit
             // clear ShowPlanets if 26th bit is unset
-            if ((rf & NEW_SHOW_PLANETS_BIT_MASK) == 0)
-                oldFlags &= ~Renderer::ShowPlanets;
+            if (!util::is_set(rf, NEW_SHOW_PLANETS_BIT_MASK))
+                oldFlags &= ~RenderFlags::ShowPlanets;
         }
         else
         {
-            oldFlags = static_cast<std::uint64_t>(rf);
+            oldFlags = rf;
             // new options enabled by default in 1.7
-            oldFlags |= Renderer::ShowPlanetRings | Renderer::ShowFadingOrbits;
+            oldFlags |= RenderFlags::ShowPlanetRings | RenderFlags::ShowFadingOrbits;
             // old ShowPlanets == new ShowSolarSystemObjects
-            if ((oldFlags & Renderer::ShowPlanets) != 0)
-                oldFlags |= Renderer::ShowSolarSystemObjects;
+            if (util::is_set(oldFlags, RenderFlags::ShowPlanets))
+                oldFlags |= RenderFlags::ShowSolarSystemObjects;
         }
         m_state.m_renderFlags = newFlags | oldFlags;
     }
-    if (auto it = params.find("lm"sv); it != params.end() && !to_number(it->second, m_state.m_labelMode))
-        return false;
+
+    if (auto it = params.find("lm"sv); it != params.end())
+    {
+        if (std::uint32_t labelMode; to_number(it->second, labelMode))
+            m_state.m_labelMode = static_cast<RenderLabels>(labelMode);
+        else
+            return false;
+    }
 
     int tsrc = 0;
     if (auto it = params.find("tsrc"sv); it != params.end() && !to_number(it->second, tsrc))
@@ -622,15 +630,17 @@ Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_v
 {
     if (auto it = params.find("rf"sv); it != params.end())
     {
-        std::uint64_t rf;
-        if (!to_number(it->second, rf))
+        std::uint64_t rfValue;
+        if (!to_number(it->second, rfValue))
             return false;
-        auto nrf = static_cast<int>(rf >> NEW_FLAG_BIT_1_7);
-        int _rf = rf & RF_MASK;
-        if ((rf & Renderer::ShowPlanets) != 0)
-            _rf |= NEW_SHOW_PLANETS_BIT_MASK; // Set the 26th bit to ShowPlanets
-        it->second = fmt::format("{}", _rf);
-        params["nrf"] = fmt::format("{}", nrf);
+
+        auto nrf = rfValue >> NEW_FLAG_BIT_1_7;
+        auto rf = static_cast<RenderFlags>(rfValue) & RF_MASK;
+        if (util::is_set(rf, RenderFlags::ShowPlanets))
+            rf |= NEW_SHOW_PLANETS_BIT_MASK; // Set the 26th bit to ShowPlanets
+        it->second = fmt::format("{}", static_cast<std::uint64_t>(rf));
+        params.insert_or_assign("nrf", fmt::format("{}", nrf));
     }
+
     return initVersion3(params, timeStr);
 }

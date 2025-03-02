@@ -14,6 +14,7 @@
 #include <string>
 #include <Eigen/Geometry>
 #include <celengine/observer.h>
+#include <celengine/renderflags.h>
 
 class CelestiaCore;
 
@@ -56,8 +57,8 @@ class CelestiaState
     std::string                     m_trackedBodyName;
     std::string                     m_selectedBodyName;
 
-    int                             m_labelMode             { 0 };
-    uint64_t                        m_renderFlags           { 0 };
+    RenderLabels                    m_labelMode             { RenderLabels::NoLabels };
+    RenderFlags                     m_renderFlags           { RenderFlags::ShowNothing };
 
     CelestiaCore                   *m_appCore               { nullptr };
 

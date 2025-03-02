@@ -391,7 +391,7 @@ LineRenderer::should_triangulate() const
 float
 LineRenderer::width_multiplyer() const
 {
-    return (m_renderer.getRenderFlags() & Renderer::ShowSmoothLines) != 0 ? 1.5f : 1.0f;
+    return util::is_set(m_renderer.getRenderFlags(), RenderFlags::ShowSmoothLines) ? 1.5f : 1.0f;
 }
 
 float

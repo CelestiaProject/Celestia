@@ -20,6 +20,7 @@
 
 #include <celcompat/filesystem.h>
 #include "deepskyobj.h"
+#include "renderflags.h"
 
 class AssociativeArray;
 struct Matrices;
@@ -68,8 +69,8 @@ public:
     static float getLightGain();
     static void  setLightGain(float);
 
-    std::uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
 
     DeepSkyObjectType getObjType() const override;
 

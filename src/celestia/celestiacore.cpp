@@ -509,7 +509,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             setFOVFromZoom();
 
             // If AutoMag, adapt the faintestMag to the new fov
-            if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+            if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
                 setFaintestAutoMag();
         }
     }
@@ -928,12 +928,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     switch (C)
     {
     case '\001': // Ctrl+A
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowAtmospheres);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\002': // Ctrl+B
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowBoundaries);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowBoundaries);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -947,13 +947,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\014': // Ctrl+L
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNightMaps);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\013': // Ctrl+K
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowMarkers);
-        if (renderer->getRenderFlags() & Renderer::ShowMarkers)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowMarkers);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowMarkers))
         {
             flash(_("Markers enabled"));
         }
@@ -963,7 +963,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\005':  // Ctrl+E
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowEclipseShadows);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1025,17 +1025,17 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\023':  // Ctrl+S
-        renderer->setStarStyle((Renderer::StarStyle) (((int) renderer->getStarStyle() + 1) %
-                                                      (int) Renderer::StarStyleCount));
+        renderer->setStarStyle(static_cast<StarStyle>((static_cast<int>(renderer->getStarStyle()) + 1)
+                                                      % static_cast<int>(StarStyle::StarStyleCount)));
         switch (renderer->getStarStyle())
         {
-        case Renderer::FuzzyPointStars:
+        case StarStyle::FuzzyPointStars:
             flash(_("Star style: fuzzy points"));
             break;
-        case Renderer::PointStars:
+        case StarStyle::PointStars:
             flash(_("Star style: points"));
             break;
-        case Renderer::ScaledDiscStars:
+        case StarStyle::ScaledDiscStars:
             flash(_("Star style: scaled discs"));
             break;
         default:
@@ -1046,8 +1046,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\024':  // Ctrl+T
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCometTails);
-        if (renderer->getRenderFlags() & Renderer::ShowCometTails)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCometTails);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowCometTails))
         {
             flash(_("Comet tails enabled"));
         }
@@ -1062,8 +1062,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\030':  // Ctrl+X
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
-        if (renderer->getRenderFlags() & Renderer::ShowSmoothLines)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowSmoothLines);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowSmoothLines))
         {
             flash(_("Anti-aliasing enabled"));
         }
@@ -1075,8 +1075,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\031':  // Ctrl+Y
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAutoMag);
-        if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowAutoMag);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
         {
             flash(_("Auto-magnitude enabled"));
             setFaintestAutoMag();
@@ -1196,13 +1196,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '^':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNebulae);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNebulae);
         notifyWatchers(RenderFlagsChanged);
         break;
 
 
     case '&':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::LocationLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::LocationLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1296,7 +1296,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '/':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowDiagrams);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1320,17 +1320,17 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case ';':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCelestialSphere);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '=':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::ConstellationLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'B':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::StarLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1344,9 +1344,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'E':
         if (c == 'e')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GalaxyLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GlobularLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GlobularLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1369,7 +1369,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'I':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCloudMaps);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1410,44 +1410,50 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'M':
         if (c == 'm')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MoonLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorMoonLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MinorMoonLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'N':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::SpacecraftLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::SpacecraftLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'O':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowOrbits);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'P':
         if (c == 'p')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::PlanetLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::DwarfPlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::DwarfPlanetLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'R':
-        if (c == 'r') // Skip rangechecking as setResolution does it already
-            renderer->setResolution(renderer->getResolution() - 1);
+        if (c == 'r')
+        {
+            if (auto current = renderer->getResolution(); current != TextureResolution::lores)
+                renderer->setResolution(static_cast<TextureResolution>(static_cast<int>(current) - 1));
+        }
         else
-            renderer->setResolution(renderer->getResolution() + 1);
+        {
+            if (auto current = renderer->getResolution(); current != TextureResolution::hires)
+                renderer->setResolution(static_cast<TextureResolution>(static_cast<int>(current) + 1));
+        }
         switch (renderer->getResolution())
         {
-        case 0:
+        case TextureResolution::lores:
             flash(_("Low res textures"));
             break;
-        case 1:
+        case TextureResolution::medres:
             flash(_("Medium res textures"));
             break;
-        case 2:
+        case TextureResolution::hires:
             flash(_("High res textures"));
             break;
         }
@@ -1472,9 +1478,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'U':
         if (c == 'u')
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGalaxies);
         else
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGlobulars);
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGlobulars);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1484,9 +1490,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'W':
         if (c == 'w')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::AsteroidLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::CometLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::CometLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1513,7 +1519,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '[':
-        if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+        if (!util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
         {
             if (sim->getFaintestVisible() > 1.0f)
             {
@@ -1538,7 +1544,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case ']':
-        if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+        if (!util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
         {
             if (sim->getFaintestVisible() < 15.0f)
             {
@@ -1618,7 +1624,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 void CelestiaCore::charEnteredAutoComplete(const char* c_p)
 {
-    switch (hud->textInput().charEntered(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0))
+    switch (hud->textInput().charEntered(sim, c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels)))
     {
     case CharEnteredResult::Finished:
         updateSelectionFromInput();
@@ -1933,7 +1939,7 @@ void CelestiaCore::draw()
         renderer->setRenderRegion(0, 0, metrics.width, metrics.height, false);
 
     bool toggleAA = renderer->isMSAAEnabled();
-    if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
+    if (toggleAA && util::is_set(renderer->getRenderFlags(), RenderFlags::ShowCloudMaps))
         renderer->disableMSAA();
 
     renderOverlay();
@@ -2280,7 +2286,7 @@ void CelestiaCore::updateFOV(float newFOV, const std::optional<Eigen::Vector2f> 
         observer->rotate(Eigen::Quaternionf::FromTwoVectors(oldPickRay.value(), newPickRay));
     }
 
-    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+    if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         setFaintestAutoMag();
         auto buf = fmt::format(loc, _("Magnitude limit: {:.2f}"), sim->getFaintestVisible());
@@ -2537,7 +2543,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     set_or_unset(interactionFlags, InteractionFlags::FocusZooming, config->mouse.focusZooming);
 
     sim = new Simulation(universe);
-    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+    if (!util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         sim->setFaintestVisible(config->renderDetails.faintestVisible);
     }
@@ -2577,10 +2583,10 @@ LoadFontHelper(const Renderer *renderer, const fs::path &p)
 
 bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 {
-    renderer->setRenderFlags(Renderer::ShowStars |
-                             Renderer::ShowPlanets |
-                             Renderer::ShowAtmospheres |
-                             Renderer::ShowAutoMag);
+    renderer->setRenderFlags(RenderFlags::ShowStars |
+                             RenderFlags::ShowPlanets |
+                             RenderFlags::ShowAtmospheres |
+                             RenderFlags::ShowAutoMag);
 
     Renderer::DetailOptions detailOptions;
     detailOptions.orbitPathSamplePoints = config->renderDetails.orbitPathSamplePoints;
@@ -2600,7 +2606,7 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
         return false;
     }
 
-    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+    if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         renderer->setFaintestAM45deg(renderer->getFaintestAM45deg());
         setFaintestAutoMag();
@@ -3130,7 +3136,7 @@ std::string_view CelestiaCore::getTypedText() const
 
 void CelestiaCore::setTypedText(const char *c_p)
 {
-    hud->textInput().appendText(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    hud->textInput().appendText(sim, c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels));
 }
 
 vector<Observer*> CelestiaCore::getObservers() const

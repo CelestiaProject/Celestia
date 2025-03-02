@@ -16,8 +16,8 @@
 #include <Eigen/Geometry>
 
 #include <celutil/reshandle.h>
-#include <celengine/deepskyobj.h>
-
+#include "deepskyobj.h"
+#include "renderflags.h"
 
 class OpenCluster : public DeepSkyObject
 {
@@ -32,8 +32,8 @@ public:
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
 
-    std::uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
 
     DeepSkyObjectType getObjType() const override;
 

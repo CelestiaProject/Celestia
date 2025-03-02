@@ -20,15 +20,6 @@
 
 class TextureInfo
 {
-private:
-    fs::path source;
-    fs::path path;
-    unsigned int flags;
-    float bumpHeight;
-    unsigned int resolution;
-
-    friend bool operator<(const TextureInfo&, const TextureInfo&);
-
 public:
     using ResourceType = Texture;
     using ResourceKey = fs::path;
@@ -47,7 +38,7 @@ public:
     TextureInfo(const fs::path& _source,
                 const fs::path& _path,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
         flags(_flags),
@@ -58,7 +49,7 @@ public:
                 const fs::path& _path,
                 float _bumpHeight,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
         flags(_flags),
@@ -67,7 +58,7 @@ public:
 
     TextureInfo(const fs::path& _source,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(""),
         flags(_flags),
@@ -76,6 +67,15 @@ public:
 
     fs::path resolve(const fs::path&) const;
     std::unique_ptr<Texture> load(const fs::path&) const;
+
+private:
+    fs::path source;
+    fs::path path;
+    unsigned int flags;
+    float bumpHeight;
+    TextureResolution resolution;
+
+    friend bool operator<(const TextureInfo&, const TextureInfo&);
 };
 
 inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)

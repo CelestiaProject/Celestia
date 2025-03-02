@@ -839,7 +839,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     else
     {
         // Set default render flags for a new installation
-        appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
+        appCore->getRenderer()->setRenderFlags(RenderFlags::DefaultRenderFlags);
     }
 
     if (appCore->getConfig()->paths.demoScriptFile.empty())

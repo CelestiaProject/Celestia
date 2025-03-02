@@ -11,61 +11,61 @@ using namespace std::string_view_literals;
 namespace celestia::scripts
 {
 
-void initRenderFlagMap(ScriptMap<std::uint64_t>& RenderFlagMap)
+void initRenderFlagMap(ScriptMap<RenderFlags>& RenderFlagMap)
 {
-    RenderFlagMap["orbits"sv]              = Renderer::ShowOrbits;
-    RenderFlagMap["fadingorbits"sv]        = Renderer::ShowFadingOrbits;
-    RenderFlagMap["cloudmaps"sv]           = Renderer::ShowCloudMaps;
-    RenderFlagMap["constellations"sv]      = Renderer::ShowDiagrams;
-    RenderFlagMap["galaxies"sv]            = Renderer::ShowGalaxies;
-    RenderFlagMap["globulars"sv]           = Renderer::ShowGlobulars;
-    RenderFlagMap["planets"sv]             = Renderer::ShowPlanets;
-    RenderFlagMap["dwarfplanets"sv]        = Renderer::ShowDwarfPlanets;
-    RenderFlagMap["moons"sv]               = Renderer::ShowMoons;
-    RenderFlagMap["minormoons"sv]          = Renderer::ShowMinorMoons;
-    RenderFlagMap["asteroids"sv]           = Renderer::ShowAsteroids;
-    RenderFlagMap["comets"sv]              = Renderer::ShowComets;
-    RenderFlagMap["spacecraft"sv]          = Renderer::ShowSpacecrafts;
-    RenderFlagMap["stars"sv]               = Renderer::ShowStars;
-    RenderFlagMap["nightmaps"sv]           = Renderer::ShowNightMaps;
-    RenderFlagMap["eclipseshadows"sv]      = Renderer::ShowEclipseShadows;
-    RenderFlagMap["planetrings"sv]         = Renderer::ShowPlanetRings;
-    RenderFlagMap["ringshadows"sv]         = Renderer::ShowRingShadows;
-    RenderFlagMap["comettails"sv]          = Renderer::ShowCometTails;
-    RenderFlagMap["boundaries"sv]          = Renderer::ShowBoundaries;
-    RenderFlagMap["markers"sv]             = Renderer::ShowMarkers;
-    RenderFlagMap["automag"sv]             = Renderer::ShowAutoMag;
-    RenderFlagMap["atmospheres"sv]         = Renderer::ShowAtmospheres;
-    RenderFlagMap["grid"sv]                = Renderer::ShowCelestialSphere;
-    RenderFlagMap["equatorialgrid"sv]      = Renderer::ShowCelestialSphere;
-    RenderFlagMap["galacticgrid"sv]        = Renderer::ShowGalacticGrid;
-    RenderFlagMap["eclipticgrid"sv]        = Renderer::ShowEclipticGrid;
-    RenderFlagMap["horizontalgrid"sv]      = Renderer::ShowHorizonGrid;
-    RenderFlagMap["smoothlines"sv]         = Renderer::ShowSmoothLines;
-    RenderFlagMap["partialtrajectories"sv] = Renderer::ShowPartialTrajectories;
-    RenderFlagMap["nebulae"sv]             = Renderer::ShowNebulae;
-    RenderFlagMap["openclusters"sv]        = Renderer::ShowOpenClusters;
-    RenderFlagMap["cloudshadows"sv]        = Renderer::ShowCloudShadows;
-    RenderFlagMap["ecliptic"sv]            = Renderer::ShowEcliptic;
+    RenderFlagMap["orbits"sv]              = RenderFlags::ShowOrbits;
+    RenderFlagMap["fadingorbits"sv]        = RenderFlags::ShowFadingOrbits;
+    RenderFlagMap["cloudmaps"sv]           = RenderFlags::ShowCloudMaps;
+    RenderFlagMap["constellations"sv]      = RenderFlags::ShowDiagrams;
+    RenderFlagMap["galaxies"sv]            = RenderFlags::ShowGalaxies;
+    RenderFlagMap["globulars"sv]           = RenderFlags::ShowGlobulars;
+    RenderFlagMap["planets"sv]             = RenderFlags::ShowPlanets;
+    RenderFlagMap["dwarfplanets"sv]        = RenderFlags::ShowDwarfPlanets;
+    RenderFlagMap["moons"sv]               = RenderFlags::ShowMoons;
+    RenderFlagMap["minormoons"sv]          = RenderFlags::ShowMinorMoons;
+    RenderFlagMap["asteroids"sv]           = RenderFlags::ShowAsteroids;
+    RenderFlagMap["comets"sv]              = RenderFlags::ShowComets;
+    RenderFlagMap["spacecraft"sv]          = RenderFlags::ShowSpacecrafts;
+    RenderFlagMap["stars"sv]               = RenderFlags::ShowStars;
+    RenderFlagMap["nightmaps"sv]           = RenderFlags::ShowNightMaps;
+    RenderFlagMap["eclipseshadows"sv]      = RenderFlags::ShowEclipseShadows;
+    RenderFlagMap["planetrings"sv]         = RenderFlags::ShowPlanetRings;
+    RenderFlagMap["ringshadows"sv]         = RenderFlags::ShowRingShadows;
+    RenderFlagMap["comettails"sv]          = RenderFlags::ShowCometTails;
+    RenderFlagMap["boundaries"sv]          = RenderFlags::ShowBoundaries;
+    RenderFlagMap["markers"sv]             = RenderFlags::ShowMarkers;
+    RenderFlagMap["automag"sv]             = RenderFlags::ShowAutoMag;
+    RenderFlagMap["atmospheres"sv]         = RenderFlags::ShowAtmospheres;
+    RenderFlagMap["grid"sv]                = RenderFlags::ShowCelestialSphere;
+    RenderFlagMap["equatorialgrid"sv]      = RenderFlags::ShowCelestialSphere;
+    RenderFlagMap["galacticgrid"sv]        = RenderFlags::ShowGalacticGrid;
+    RenderFlagMap["eclipticgrid"sv]        = RenderFlags::ShowEclipticGrid;
+    RenderFlagMap["horizontalgrid"sv]      = RenderFlags::ShowHorizonGrid;
+    RenderFlagMap["smoothlines"sv]         = RenderFlags::ShowSmoothLines;
+    RenderFlagMap["partialtrajectories"sv] = RenderFlags::ShowPartialTrajectories;
+    RenderFlagMap["nebulae"sv]             = RenderFlags::ShowNebulae;
+    RenderFlagMap["openclusters"sv]        = RenderFlags::ShowOpenClusters;
+    RenderFlagMap["cloudshadows"sv]        = RenderFlags::ShowCloudShadows;
+    RenderFlagMap["ecliptic"sv]            = RenderFlags::ShowEcliptic;
 }
 
-void initLabelFlagMap(ScriptMap<std::uint32_t>& LabelFlagMap)
+void initLabelFlagMap(ScriptMap<RenderLabels>& LabelFlagMap)
 {
-    LabelFlagMap["planets"sv]              = Renderer::PlanetLabels;
-    LabelFlagMap["dwarfplanets"sv]         = Renderer::DwarfPlanetLabels;
-    LabelFlagMap["moons"sv]                = Renderer::MoonLabels;
-    LabelFlagMap["minormoons"sv]           = Renderer::MinorMoonLabels;
-    LabelFlagMap["spacecraft"sv]           = Renderer::SpacecraftLabels;
-    LabelFlagMap["asteroids"sv]            = Renderer::AsteroidLabels;
-    LabelFlagMap["comets"sv]               = Renderer::CometLabels;
-    LabelFlagMap["constellations"sv]       = Renderer::ConstellationLabels;
-    LabelFlagMap["stars"sv]                = Renderer::StarLabels;
-    LabelFlagMap["galaxies"sv]             = Renderer::GalaxyLabels;
-    LabelFlagMap["globulars"sv]            = Renderer::GlobularLabels;
-    LabelFlagMap["locations"sv]            = Renderer::LocationLabels;
-    LabelFlagMap["nebulae"sv]              = Renderer::NebulaLabels;
-    LabelFlagMap["openclusters"sv]         = Renderer::OpenClusterLabels;
-    LabelFlagMap["i18nconstellations"sv]   = Renderer::I18nConstellationLabels;
+    LabelFlagMap["planets"sv]              = RenderLabels::PlanetLabels;
+    LabelFlagMap["dwarfplanets"sv]         = RenderLabels::DwarfPlanetLabels;
+    LabelFlagMap["moons"sv]                = RenderLabels::MoonLabels;
+    LabelFlagMap["minormoons"sv]           = RenderLabels::MinorMoonLabels;
+    LabelFlagMap["spacecraft"sv]           = RenderLabels::SpacecraftLabels;
+    LabelFlagMap["asteroids"sv]            = RenderLabels::AsteroidLabels;
+    LabelFlagMap["comets"sv]               = RenderLabels::CometLabels;
+    LabelFlagMap["constellations"sv]       = RenderLabels::ConstellationLabels;
+    LabelFlagMap["stars"sv]                = RenderLabels::StarLabels;
+    LabelFlagMap["galaxies"sv]             = RenderLabels::GalaxyLabels;
+    LabelFlagMap["globulars"sv]            = RenderLabels::GlobularLabels;
+    LabelFlagMap["locations"sv]            = RenderLabels::LocationLabels;
+    LabelFlagMap["nebulae"sv]              = RenderLabels::NebulaLabels;
+    LabelFlagMap["openclusters"sv]         = RenderLabels::OpenClusterLabels;
+    LabelFlagMap["i18nconstellations"sv]   = RenderLabels::I18nConstellationLabels;
 }
 
 void initBodyTypeMap(ScriptMap<BodyClassification>& BodyTypeMap)

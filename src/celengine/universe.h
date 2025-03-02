@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -24,6 +23,7 @@
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/marker.h>
+#include <celengine/renderflags.h>
 #include <celengine/selection.h>
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
@@ -52,7 +52,7 @@ public:
     Selection pick(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   std::uint64_t renderFlags,
+                   RenderFlags renderFlags,
                    float faintestMag,
                    float tolerance = 0.0f);
 
@@ -117,7 +117,7 @@ private:
 
     Selection pickDeepSkyObject(const UniversalCoord& origin,
                                 const Eigen::Vector3f& direction,
-                                uint64_t renderFlags,
+                                RenderFlags renderFlags,
                                 float faintest,
                                 float tolerance = 0.0f) const;
 

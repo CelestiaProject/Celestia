@@ -442,7 +442,7 @@ void CommandLookBack::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set render flags command
 
-CommandRenderFlags::CommandRenderFlags(std::uint64_t _setFlags, std::uint64_t _clearFlags) :
+CommandRenderFlags::CommandRenderFlags(RenderFlags _setFlags, RenderFlags _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
@@ -461,7 +461,7 @@ void CommandRenderFlags::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set labels command
 
-CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
+CommandLabels::CommandLabels(RenderLabels _setFlags, RenderLabels _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
@@ -589,7 +589,7 @@ void CommandSet::processInstantaneous(ExecutionEnvironment& env)
         // Probably shouldn't be doing this at all, but other alternatives
         // are more trouble than they're worth.
         if (env.getRenderer() != nullptr)
-            env.getRenderer()->setStarStyle(static_cast<Renderer::StarStyle>(static_cast<int>(value)));
+            env.getRenderer()->setStarStyle(static_cast<StarStyle>(static_cast<int>(value)));
     }
 }
 
@@ -696,7 +696,7 @@ void CommandCapture::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Set texture resolution command
 
-CommandSetTextureResolution::CommandSetTextureResolution(unsigned int _res) :
+CommandSetTextureResolution::CommandSetTextureResolution(TextureResolution _res) :
     res(_res)
 {
 }

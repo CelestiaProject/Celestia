@@ -47,14 +47,15 @@ namespace celestia::qt
 namespace
 {
 
-constexpr auto DEFAULT_ORBIT_MASK = static_cast<int>(BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar);
-constexpr int DEFAULT_LABEL_MODE = Renderer::LocationLabels | Renderer::I18nConstellationLabels;
+constexpr auto DEFAULT_RENDER_FLAGS = static_cast<qulonglong>(RenderFlags::DefaultRenderFlags);
+constexpr auto DEFAULT_ORBIT_MASK = static_cast<uint>(BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar);
+constexpr auto DEFAULT_LABEL_MODE = static_cast<uint>(RenderLabels::LocationLabels | RenderLabels::I18nConstellationLabels);
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
 constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::Blackbody_D65);
 constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
-constexpr Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
-constexpr unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
+constexpr auto DEFAULT_STAR_STYLE = static_cast<int>(StarStyle::FuzzyPointStars);
+constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(TextureResolution::medres);
 
 std::pair<float, float>
 mousePosition(const QMouseEvent& m, qreal scale)
@@ -137,13 +138,13 @@ CelestiaGlWidget::initializeGL()
 
     // Read saved settings
     QSettings settings;
-    appRenderer->setRenderFlags(settings.value("RenderFlags", static_cast<quint64>(Renderer::DefaultRenderFlags)).toULongLong());
-    appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt()));
-    appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
-    appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
+    appRenderer->setRenderFlags(static_cast<::RenderFlags>(settings.value("RenderFlags", DEFAULT_RENDER_FLAGS).toULongLong()));
+    appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toUInt()));
+    appRenderer->setLabelMode(static_cast<RenderLabels>(settings.value("LabelMode", DEFAULT_LABEL_MODE).toUInt()));
+    appRenderer->setAmbientLightLevel(static_cast<float>(settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble()));
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
-    appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
-    appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
+    appRenderer->setStarStyle(static_cast<StarStyle>(settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt()));
+    appRenderer->setResolution(static_cast<TextureResolution>(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt()));
 
     appRenderer->setStarColorTable(static_cast<ColorTableType>(settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt()));
 

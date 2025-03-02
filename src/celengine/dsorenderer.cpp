@@ -24,6 +24,7 @@
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -83,7 +84,7 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
     else
         appMag = absMag + (float) (enhance * tanh(distanceToDSO/pc10 - 1.0));
 
-    if ((renderFlags & dso->getRenderMask()) != 0)
+    if (util::is_set(renderFlags, dso->getRenderMask()))
     {
         dsosProcessed++;
 
@@ -134,9 +135,9 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
     //
-    unsigned int labelMask = dso->getLabelMask();
+    RenderLabels labelMask = dso->getLabelMask();
 
-    if ((labelMask & labelMode) != 0)
+    if (util::is_set(labelMode, labelMask))
     {
         Color labelColor;
         float appMagEff = 6.0f;
@@ -148,26 +149,26 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
         // fading for nebulae and open clusters.
         switch (labelMask)
         {
-        case Renderer::NebulaLabels:
+        case RenderLabels::NebulaLabels:
             rep = &renderer->nebulaRep;
             labelColor = Renderer::NebulaLabelColor;
             appMagEff = astro::absToAppMag(-7.5f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 6.0f;
             break;
-        case Renderer::OpenClusterLabels:
+        case RenderLabels::OpenClusterLabels:
             rep = &renderer->openClusterRep;
             labelColor = Renderer::OpenClusterLabelColor;
             appMagEff = astro::absToAppMag(-6.0f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 4.0f;
             break;
-        case Renderer::GalaxyLabels:
+        case RenderLabels::GalaxyLabels:
             labelColor = Renderer::GalaxyLabelColor;
             appMagEff = appMag;
             step = 6.0f;
             break;
-        case Renderer::GlobularLabels:
+        case RenderLabels::GlobularLabels:
             labelColor = Renderer::GlobularLabelColor;
             appMagEff = appMag;
             step = 3.0f;

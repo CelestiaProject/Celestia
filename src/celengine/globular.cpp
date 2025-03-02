@@ -118,14 +118,14 @@ bool Globular::load(const AssociativeArray* params, const fs::path& resPath, std
     return true;
 }
 
-std::uint64_t Globular::getRenderMask() const
+RenderFlags Globular::getRenderMask() const
 {
-    return Renderer::ShowGlobulars;
+    return RenderFlags::ShowGlobulars;
 }
 
-unsigned int Globular::getLabelMask() const
+RenderLabels Globular::getLabelMask() const
 {
-    return Renderer::GlobularLabels;
+    return RenderLabels::GlobularLabels;
 }
 
 void Globular::recomputeTidalRadius()

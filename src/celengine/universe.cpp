@@ -411,7 +411,7 @@ class DSOPicker : public engine::DSOHandler
 public:
     DSOPicker(const Eigen::Vector3d& pickOrigin,
               const Eigen::Vector3d& pickDir,
-              std::uint64_t renderFlags,
+              RenderFlags renderFlags,
               float angle);
     ~DSOPicker() = default;
 
@@ -420,7 +420,7 @@ public:
 public:
     Eigen::Vector3d pickOrigin;
     Eigen::Vector3d pickDir;
-    std::uint64_t renderFlags;
+    RenderFlags renderFlags;
 
     const DeepSkyObject* pickedDSO;
     double  sinAngle2Closest;
@@ -428,7 +428,7 @@ public:
 
 DSOPicker::DSOPicker(const Eigen::Vector3d& pickOrigin,
                      const Eigen::Vector3d& pickDir,
-                     std::uint64_t renderFlags,
+                     RenderFlags renderFlags,
                      float angle) :
     pickOrigin      (pickOrigin),
     pickDir         (pickDir),
@@ -441,7 +441,7 @@ DSOPicker::DSOPicker(const Eigen::Vector3d& pickOrigin,
 void
 DSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, double, float) //NOSONAR
 {
-    if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
+    if (!util::is_set(renderFlags, dso->getRenderMask()) || !dso->isVisible() || !dso->isClickable())
         return;
 
     Eigen::Vector3d relativeDSOPos = dso->getPosition() - pickOrigin;
@@ -471,7 +471,7 @@ class CloseDSOPicker : public engine::DSOHandler
 public:
     CloseDSOPicker(const Eigen::Vector3d& pos,
                    const Eigen::Vector3d& dir,
-                   std::uint64_t renderFlags,
+                   RenderFlags renderFlags,
                    double maxDistance,
                    float);
     ~CloseDSOPicker() = default;
@@ -481,7 +481,7 @@ public:
 public:
     Eigen::Vector3d  pickOrigin;
     Eigen::Vector3d  pickDir;
-    std::uint64_t renderFlags;
+    RenderFlags renderFlags;
     double    maxDistance;
 
     const DeepSkyObject* closestDSO;
@@ -490,7 +490,7 @@ public:
 
 CloseDSOPicker::CloseDSOPicker(const Eigen::Vector3d& pos,
                                const Eigen::Vector3d& dir,
-                               std::uint64_t renderFlags,
+                               RenderFlags renderFlags,
                                double maxDistance,
                                float /*unused*/) :
     pickOrigin     (pos),
@@ -507,7 +507,7 @@ CloseDSOPicker::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
                         double distance,
                         float /*unused*/)
 {
-    if (distance > maxDistance || !(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
+    if (distance > maxDistance || !util::is_set(renderFlags, dso->getRenderMask()) || !dso->isVisible() || !dso->isClickable())
         return;
 
     double  distanceToPicker       = 0.0;
@@ -836,7 +836,7 @@ Universe::pickStar(const UniversalCoord& origin,
 Selection
 Universe::pickDeepSkyObject(const UniversalCoord& origin,
                             const Eigen::Vector3f& direction,
-                            std::uint64_t renderFlags,
+                            RenderFlags renderFlags,
                             float faintestMag,
                             float tolerance) const
 {
@@ -871,13 +871,13 @@ Selection
 Universe::pick(const UniversalCoord& origin,
                const Eigen::Vector3f& direction,
                double when,
-               std::uint64_t renderFlags,
+               RenderFlags renderFlags,
                float  faintestMag,
                float  tolerance)
 {
     Selection sel;
 
-    if (renderFlags & Renderer::ShowPlanets)
+    if (util::is_set(renderFlags, RenderFlags::ShowPlanets))
     {
         closeStars.clear();
         getNearStars(origin, 1.0f, closeStars);
@@ -897,7 +897,7 @@ Universe::pick(const UniversalCoord& origin,
         }
     }
 
-    if (sel.empty() && (renderFlags & Renderer::ShowStars))
+    if (sel.empty() && util::is_set(renderFlags, RenderFlags::ShowStars))
     {
         sel = pickStar(origin, direction, when, faintestMag, tolerance);
     }

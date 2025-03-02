@@ -226,7 +226,7 @@ static int celestia_show(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    uint64_t flags = 0;
+    RenderFlags flags = RenderFlags::ShowNothing;
     const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -250,7 +250,7 @@ static int celestia_hide(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    uint64_t flags = 0;
+    RenderFlags flags = RenderFlags::ShowNothing;
     const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -278,7 +278,7 @@ static int celestia_setrenderflags(lua_State* l)
         return 0;
     }
 
-    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     lua_pushnil(l);
     const auto& renderFlagMap = appCore->scriptMaps().RenderFlagMap;
     while (lua_next(l, -2) != 0)
@@ -333,11 +333,11 @@ static int celestia_getrenderflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    const RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     for (const auto& rfm : appCore->scriptMaps().RenderFlagMap)
     {
         lua_pushlstring(l, rfm.first.data(), rfm.first.size());
-        lua_pushboolean(l, (rfm.second & renderFlags) != 0);
+        lua_pushboolean(l, util::is_set(renderFlags, rfm.second));
         lua_settable(l,-3);
     }
     lua_pushstring(l, "lightdelay");
@@ -440,7 +440,7 @@ static int celestia_showlabel(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    RenderLabels flags = RenderLabels::NoLabels;
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -462,7 +462,7 @@ static int celestia_hidelabel(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    RenderLabels flags = RenderLabels::NoLabels;
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -488,7 +488,7 @@ static int celestia_setlabelflags(lua_State* l)
         return 0;
     }
 
-    int labelFlags = appCore->getRenderer()->getLabelMode();
+    RenderLabels labelFlags = appCore->getRenderer()->getLabelMode();
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     lua_pushnil(l);
     while (lua_next(l, -2) != 0)
@@ -521,7 +521,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            int flag = it->second;
+            RenderLabels flag = it->second;
             if (value)
                 labelFlags |= flag;
             else
@@ -540,11 +540,11 @@ static int celestia_getlabelflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const int labelFlags = appCore->getRenderer()->getLabelMode();
+    const RenderLabels labelFlags = appCore->getRenderer()->getLabelMode();
     for (const auto& lfm : appCore->scriptMaps().LabelFlagMap)
     {
         lua_pushlstring(l, lfm.first.data(), lfm.first.size());
-        lua_pushboolean(l, (lfm.second & labelFlags) != 0);
+        lua_pushboolean(l, util::is_set(labelFlags, lfm.second));
         lua_settable(l,-3);
     }
     return 1;
@@ -996,18 +996,19 @@ static int celestia_setfaintestvisible(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
     CelestiaCore* appCore = this_celestia(l);
     float faintest = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
-    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
-    {
-        faintest = min(15.0f, max(1.0f, faintest));
-        appCore->setFaintest(faintest);
-        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
-    }
-    else
+    if (util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         faintest = min(12.0f, max(6.0f, faintest));
         appCore->getRenderer()->setFaintestAM45deg(faintest);
         appCore->setFaintestAutoMag();
     }
+    else
+    {
+        faintest = min(15.0f, max(1.0f, faintest));
+        appCore->setFaintest(faintest);
+        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
+    }
+
     return 0;
 }
 
@@ -1015,14 +1016,10 @@ static int celestia_getfaintestvisible(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
     CelestiaCore* appCore = this_celestia(l);
-    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
-    {
-        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
-    }
-    else
-    {
+    if (util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
         lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
-    }
+    else
+        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
     return 1;
 }
 
@@ -1669,14 +1666,14 @@ static int celestia_getstarstyle(lua_State* l)
         return 0;
     }
 
-    Renderer::StarStyle starStyle = renderer->getStarStyle();
+    StarStyle starStyle = renderer->getStarStyle();
     switch (starStyle)
     {
-    case Renderer::FuzzyPointStars:
+    case StarStyle::FuzzyPointStars:
         lua_pushstring(l, "fuzzy"); break;
-    case Renderer::PointStars:
+    case StarStyle::PointStars:
         lua_pushstring(l, "point"); break;
-    case Renderer::ScaledDiscStars:
+    case StarStyle::ScaledDiscStars:
         lua_pushstring(l, "disc"); break;
     default:
         lua_pushstring(l, "invalid starstyle");
@@ -1698,11 +1695,11 @@ static int celestia_setstarstyle(lua_State* l)
     }
 
     if (starStyle == "fuzzy"sv)
-        renderer->setStarStyle(Renderer::FuzzyPointStars);
+        renderer->setStarStyle(StarStyle::FuzzyPointStars);
     else if (starStyle == "point"sv)
-        renderer->setStarStyle(Renderer::PointStars);
+        renderer->setStarStyle(StarStyle::PointStars);
     else if (starStyle == "disc"sv)
-        renderer->setStarStyle(Renderer::ScaledDiscStars);
+        renderer->setStarStyle(StarStyle::ScaledDiscStars);
     else
        Celx_DoError(l, "Invalid starstyle");
 
@@ -1789,7 +1786,7 @@ static int celestia_gettextureresolution(lua_State* l)
         return 0;
     }
 
-    lua_pushnumber(l, renderer->getResolution());
+    lua_pushnumber(l, static_cast<int>(renderer->getResolution()));
 
     return 1;
 }
@@ -1799,7 +1796,7 @@ static int celestia_settextureresolution(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settextureresolution");
     CelestiaCore* appCore = this_celestia(l);
 
-    unsigned int textureRes = (unsigned int) Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
+    auto textureResValue = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == nullptr)
     {
@@ -1807,7 +1804,28 @@ static int celestia_settextureresolution(lua_State* l)
         return 0;
     }
 
-    renderer->setResolution(textureRes);
+    if (textureResValue < 0.0 || textureResValue >= 3.0)
+    {
+        Celx_DoError(l, "Texture resolution out of range");
+        return 0;
+    }
+
+    switch (static_cast<int>(textureResValue))
+    {
+        case 0:
+            renderer->setResolution(TextureResolution::lores);
+            break;
+        case 1:
+            renderer->setResolution(TextureResolution::medres);
+            break;
+        case 2:
+            renderer->setResolution(TextureResolution::hires);
+            break;
+        default:
+            assert(0);
+            break;
+    }
+
     appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;

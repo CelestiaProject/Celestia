@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
@@ -24,6 +23,7 @@
 #include <celengine/universe.h>
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
+#include <celengine/renderflags.h>
 #include <celengine/texmanager.h>
 #include <celengine/frame.h>
 #include <celengine/observer.h>
@@ -46,7 +46,7 @@ public:
     void render(Renderer&);
     void render(Renderer&, Observer&);
 
-    Selection pickObject(const Eigen::Vector3f& pickRay, std::uint64_t renderFlags, float tolerance = 0.0f);
+    Selection pickObject(const Eigen::Vector3f& pickRay, RenderFlags renderFlags, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 

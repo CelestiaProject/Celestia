@@ -23,6 +23,7 @@
 
 #include <celcompat/filesystem.h>
 #include "deepskyobj.h"
+#include "renderflags.h"
 
 struct Matrices;
 class Renderer;
@@ -54,8 +55,8 @@ public:
               double& cosAngleToBoundCenter) const override;
     bool load(const AssociativeArray*, const fs::path&, std::string_view) override;
 
-    std::uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
     DeepSkyObjectType getObjType() const override;
 
     int getFormId() const;

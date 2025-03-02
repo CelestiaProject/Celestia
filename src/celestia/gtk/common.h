@@ -84,7 +84,7 @@ void setSaneVisualMagnitude(AppData* app, float value);
 void setSaneGalaxyLightGain(float value);
 void setSaneDistanceLimit(AppData* app, int value);
 void setSaneVerbosity(AppData* app, int value);
-void setSaneStarStyle(AppData* app, Renderer::StarStyle value);
+void setSaneStarStyle(AppData* app, int value);
 void setSaneTextureResolution(AppData* app, int value);
 void setSaneAltSurface(AppData* app, char* value);
 void setSaneWinSize(AppData* app, int x, int y);
