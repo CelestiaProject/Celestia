@@ -120,9 +120,9 @@ constexpr inline std::array<GtkRadioActionEntry, 3> actionsVerbosity
 
 constexpr inline std::array<GtkRadioActionEntry, 3> actionsStarStyle
 {
-    GtkRadioActionEntry{ "StarsFuzzy", nullptr, "_Fuzzy Points", nullptr, nullptr, Renderer::FuzzyPointStars },
-    GtkRadioActionEntry{ "StarsPoints", nullptr, "_Points", nullptr, nullptr, Renderer::PointStars },
-    GtkRadioActionEntry{ "StarsDiscs", nullptr, "Scaled _Discs", nullptr, nullptr, Renderer::ScaledDiscStars },
+    GtkRadioActionEntry{ "StarsFuzzy", nullptr, "_Fuzzy Points", nullptr, nullptr, static_cast<gint>(StarStyle::FuzzyPointStars) },
+    GtkRadioActionEntry{ "StarsPoints", nullptr, "_Points", nullptr, nullptr, static_cast<gint>(StarStyle::PointStars) },
+    GtkRadioActionEntry{ "StarsDiscs", nullptr, "Scaled _Discs", nullptr, nullptr, static_cast<gint>(StarStyle::ScaledDiscStars) },
 };
 
 constexpr inline std::array<GtkRadioActionEntry, 3> actionsAmbientLight

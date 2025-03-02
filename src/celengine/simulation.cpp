@@ -143,7 +143,7 @@ void Simulation::setTrackedObject(const Selection& sel)
 
 
 Selection Simulation::pickObject(const Eigen::Vector3f& pickRay,
-                                 std::uint64_t renderFlags,
+                                 RenderFlags renderFlags,
                                  float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),

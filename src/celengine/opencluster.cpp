@@ -52,13 +52,13 @@ bool OpenCluster::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-uint64_t OpenCluster::getRenderMask() const
+RenderFlags OpenCluster::getRenderMask() const
 {
-    return Renderer::ShowOpenClusters;
+    return RenderFlags::ShowOpenClusters;
 }
 
 
-unsigned int OpenCluster::getLabelMask() const
+RenderLabels OpenCluster::getLabelMask() const
 {
-    return Renderer::OpenClusterLabels;
+    return RenderLabels::OpenClusterLabels;
 }

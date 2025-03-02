@@ -18,6 +18,8 @@
 #include <Eigen/Geometry>
 
 #include <celutil/reshandle.h>
+#include "multitexture.h"
+#include "renderflags.h"
 
 class Atmosphere;
 class Geometry;
@@ -37,8 +39,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           Atmosphere* atmosphere,
                           float cloudTexOffset,
                           const Eigen::Vector3f& semiAxes,
-                          unsigned int textureRes,
-                          std::uint64_t renderFlags,
+                          TextureResolution textureRes,
+                          RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
                           const celestia::math::Frustum& frustum,
                           const Matrices &m,
@@ -50,7 +52,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
-                         std::uint64_t renderFlags,
+                         RenderFlags renderFlags,
                          const Eigen::Quaternionf& planetOrientation,
                          double tsec,
                          const Matrices &m,
@@ -63,8 +65,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudNormalMap,
                        float texOffset,
                        const Eigen::Vector3f& semiAxes,
-                       unsigned int textureRes,
-                       std::uint64_t renderFlags,
+                       TextureResolution textureRes,
+                       RenderFlags renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const celestia::math::Frustum& frustum,
                        const Matrices &m,
@@ -74,7 +76,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
                                float geometryScale,
-                               std::uint64_t renderFlags,
+                               RenderFlags renderFlags,
                                const Eigen::Quaternionf& planetOrientation,
                                double tsec,
                                const Matrices &m,

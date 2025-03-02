@@ -286,7 +286,7 @@ void LuaState::cleanup()
             lua_gettable(state, LUA_REGISTRYINDEX);
             if (lua_isuserdata(state, -1))
             {
-                uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(state, -1));
+                auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(state, -1));
                 appCore->getRenderer()->setRenderFlags(*savedrenderflags);
                 // now delete entry:
                 lua_pushstring(state, "celestia-savedrenderflags");
@@ -455,7 +455,7 @@ bool LuaState::charEntered(const char* c_p)
         lua_gettable(costate, LUA_REGISTRYINDEX);
         if (lua_isuserdata(costate, -1))
         {
-            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(costate, -1));
+            auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(costate, -1));
             appCore->getRenderer()->setRenderFlags(*savedrenderflags);
             // now delete entry:
             lua_pushstring(costate, "celestia-savedrenderflags");
@@ -767,10 +767,10 @@ bool LuaState::tick(double dt)
         if (lua_isnil(state, -1))
         {
             lua_pushstring(state, "celestia-savedrenderflags");
-            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_newuserdata(state, sizeof(int)));
-            *savedrenderflags = appCore->getRenderer()->getRenderFlags();
+            void* userData = lua_newuserdata(state, sizeof(RenderFlags));
+            new (userData) RenderFlags(appCore->getRenderer()->getRenderFlags());
             lua_settable(state, LUA_REGISTRYINDEX);
-            appCore->getRenderer()->setRenderFlags(0);
+            appCore->getRenderer()->setRenderFlags(RenderFlags::ShowNothing);
         }
         // now pop result of gettable
         lua_pop(state, 1);

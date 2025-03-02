@@ -9,16 +9,17 @@
 
 #pragma once
 
-#include <string>
+#include <array>
+#include <cstddef>
 
 #include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 
-enum
+enum class TextureResolution : int
 {
-    lores  = 0,
-    medres = 1,
-    hires  = 2
+    lores = 0,
+    medres,
+    hires,
 };
 
 class Texture;
@@ -26,8 +27,6 @@ class Texture;
 class MultiResTexture
 {
 public:
-    static constexpr int kTextureResolution = 3;
-
     MultiResTexture();
     MultiResTexture(ResourceHandle loTex,
                     ResourceHandle medTex = InvalidResource,
@@ -41,9 +40,12 @@ public:
                     const fs::path& path,
                     float bumpHeight,
                     unsigned int flags);
-    Texture* find(unsigned int resolution);
+    Texture* find(TextureResolution resolution);
+
+    ResourceHandle texture(TextureResolution resolution) const { return tex[static_cast<std::size_t>(resolution)]; }
 
     bool isValid() const;
 
-    ResourceHandle tex[kTextureResolution];
+private:
+    std::array<ResourceHandle, 3> tex;
 };

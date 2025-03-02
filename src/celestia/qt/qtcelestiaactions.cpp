@@ -13,6 +13,7 @@
 #include "qtcelestiaactions.h"
 
 #include <cstdint>
+#include <type_traits>
 
 #include <QtGlobal>
 #include <QAction>
@@ -33,23 +34,50 @@ namespace celestia::qt
 namespace
 {
 
+template<typename T, bool = std::is_enum_v<T>>
+struct IntegralOrUnderlying { using type = std::underlying_type_t<T>; };
+
+template<typename T>
+struct IntegralOrUnderlying<T, false> { using type = std::enable_if_t<std::is_integral_v<T>, T>; };
+
+template<typename T>
+using IntegralOrUnderlyingT = typename IntegralOrUnderlying<T>::type;
+
+template<typename T, std::enable_if_t<std::is_integral_v<T> && sizeof(T) <= sizeof(qlonglong), int> = 0>
+using IntVariantType = std::conditional_t<sizeof(T) <= sizeof(uint), int, qlonglong>;
+
+template<typename T, std::enable_if_t<std::is_integral_v<T> && sizeof(T) <= sizeof(qulonglong), int> = 0>
+using UIntVariantType = std::conditional_t<sizeof(T) <= sizeof(int), uint, qulonglong>;
+
+template<typename T, typename U = IntegralOrUnderlyingT<T>>
+using VarDataType = std::conditional_t<std::is_signed_v<U>, IntVariantType<U>, UIntVariantType<U>>;
+
+template<typename T>
 QAction*
-createCheckableAction(const QString& text, QObject* parent, int data)
+createCheckableAction(const QString& text, QObject* parent, T data)
 {
     QAction* act = new QAction(text, parent);
     act->setCheckable(true);
-    act->setData(data);
+    act->setData(static_cast<VarDataType<T>>(data));
     return act;
 }
 
 // Convenience method to create a checkable action for a menu and set the data
 // to the specified integer value.
+template<typename T>
 QAction*
-createCheckableAction(const QString& text, QMenu* menu, int data)
+createCheckableAction(const QString& text, QMenu* menu, T data)
 {
     QAction* act = createCheckableAction(text, static_cast<QObject*>(menu), data);
     menu->addAction(act);
     return act;
+}
+
+template<typename T>
+T
+getFromVariant(const QVariant& variant)
+{
+    return static_cast<T>(variant.template value<VarDataType<T>>());
 }
 
 } // end unnamed namespace
@@ -63,47 +91,47 @@ CelestiaActions::CelestiaActions(QObject* parent,
     equatorialGridAction = new QAction(_("Eq"), this);
     equatorialGridAction->setToolTip(_("Equatorial coordinate grid"));
     equatorialGridAction->setCheckable(true);
-    equatorialGridAction->setData(static_cast<quint64>(Renderer::ShowCelestialSphere));
+    equatorialGridAction->setData(static_cast<quint64>(RenderFlags::ShowCelestialSphere));
 
     galacticGridAction = new QAction(_("Ga"), this);
     galacticGridAction->setToolTip(_("Galactic coordinate grid"));
     galacticGridAction->setCheckable(true);
-    galacticGridAction->setData(static_cast<quint64>(Renderer::ShowGalacticGrid));
+    galacticGridAction->setData(static_cast<quint64>(RenderFlags::ShowGalacticGrid));
 
     eclipticGridAction = new QAction(_("Ec"), this);
     eclipticGridAction->setToolTip(_("Ecliptic coordinate grid"));
     eclipticGridAction->setCheckable(true);
-    eclipticGridAction->setData(static_cast<quint64>(Renderer::ShowEclipticGrid));
+    eclipticGridAction->setData(static_cast<quint64>(RenderFlags::ShowEclipticGrid));
 
     horizonGridAction = new QAction(_("Hz"), this);
     horizonGridAction->setToolTip(_("Horizontal coordinate grid"));
     horizonGridAction->setCheckable(true);
-    horizonGridAction->setData(static_cast<quint64>(Renderer::ShowHorizonGrid));
+    horizonGridAction->setData(static_cast<quint64>(RenderFlags::ShowHorizonGrid));
 
     eclipticAction = new QAction(_("Ecl"), this);
     eclipticAction->setToolTip(_("Ecliptic line"));
     eclipticAction->setCheckable(true);
-    eclipticAction->setData(static_cast<quint64>(Renderer::ShowEcliptic));
+    eclipticAction->setData(static_cast<quint64>(RenderFlags::ShowEcliptic));
 
     markersAction = new QAction(_("M"), this);
     markersAction->setToolTip(_("Markers"));
     markersAction->setCheckable(true);
-    markersAction->setData(static_cast<quint64>(Renderer::ShowMarkers));
+    markersAction->setData(static_cast<quint64>(RenderFlags::ShowMarkers));
 
     constellationsAction = new QAction(_("C"), this);
     constellationsAction->setToolTip(_("Constellations"));
     constellationsAction->setCheckable(true);
-    constellationsAction->setData(static_cast<quint64>(Renderer::ShowDiagrams));
+    constellationsAction->setData(static_cast<quint64>(RenderFlags::ShowDiagrams));
 
     boundariesAction = new QAction(_("B"), this);
     boundariesAction->setToolTip(_("Constellation boundaries"));
     boundariesAction->setCheckable(true);
-    boundariesAction->setData(static_cast<quint64>(Renderer::ShowBoundaries));
+    boundariesAction->setData(static_cast<quint64>(RenderFlags::ShowBoundaries));
 
     orbitsAction = new QAction(_("O"), this);
     orbitsAction->setToolTip(_("Orbits"));
     orbitsAction->setCheckable(true);
-    orbitsAction->setData(static_cast<quint64>(Renderer::ShowOrbits));
+    orbitsAction->setData(static_cast<quint64>(RenderFlags::ShowOrbits));
 
     connect(equatorialGridAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(galacticGridAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -117,14 +145,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
-    starOrbitsAction        = createCheckableAction(_("Stars"),                 orbitsMenu, static_cast<int>(BodyClassification::Stellar));
-    planetOrbitsAction      = createCheckableAction(_("Planets"),               orbitsMenu, static_cast<int>(BodyClassification::Planet));
-    dwarfPlanetOrbitsAction = createCheckableAction(_("Dwarf Planets"),         orbitsMenu, static_cast<int>(BodyClassification::DwarfPlanet));
-    moonOrbitsAction        = createCheckableAction(_("Moons"),                 orbitsMenu, static_cast<int>(BodyClassification::Moon));
-    minorMoonOrbitsAction   = createCheckableAction(_("Minor Moons"),           orbitsMenu, static_cast<int>(BodyClassification::MinorMoon));
-    asteroidOrbitsAction    = createCheckableAction(_("Asteroids"),             orbitsMenu, static_cast<int>(BodyClassification::Asteroid));
-    cometOrbitsAction       = createCheckableAction(_("Comets"),                orbitsMenu, static_cast<int>(BodyClassification::Comet));
-    spacecraftOrbitsAction  = createCheckableAction(C_("plural", "Spacecraft"), orbitsMenu, static_cast<int>(BodyClassification::Spacecraft));
+    starOrbitsAction        = createCheckableAction(_("Stars"),                 orbitsMenu, BodyClassification::Stellar);
+    planetOrbitsAction      = createCheckableAction(_("Planets"),               orbitsMenu, BodyClassification::Planet);
+    dwarfPlanetOrbitsAction = createCheckableAction(_("Dwarf Planets"),         orbitsMenu, BodyClassification::DwarfPlanet);
+    moonOrbitsAction        = createCheckableAction(_("Moons"),                 orbitsMenu, BodyClassification::Moon);
+    minorMoonOrbitsAction   = createCheckableAction(_("Minor Moons"),           orbitsMenu, BodyClassification::MinorMoon);
+    asteroidOrbitsAction    = createCheckableAction(_("Asteroids"),             orbitsMenu, BodyClassification::Asteroid);
+    cometOrbitsAction       = createCheckableAction(_("Comets"),                orbitsMenu, BodyClassification::Comet);
+    spacecraftOrbitsAction  = createCheckableAction(C_("plural", "Spacecraft"), orbitsMenu, BodyClassification::Spacecraft);
 
     connect(starOrbitsAction,           SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(planetOrbitsAction,         SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
@@ -144,20 +172,20 @@ CelestiaActions::CelestiaActions(QObject* parent,
     labelsAction->setToolTip(_("Labels"));
 
     QMenu* labelsMenu = new QMenu();
-    labelStarsAction          = createCheckableAction(_("Stars"),           labelsMenu, Renderer::StarLabels);
-    labelPlanetsAction        = createCheckableAction(_("Planets"),         labelsMenu, Renderer::PlanetLabels);
-    labelDwarfPlanetsAction   = createCheckableAction(_("Dwarf Planets"),   labelsMenu, Renderer::DwarfPlanetLabels);
-    labelMoonsAction          = createCheckableAction(_("Moons"),           labelsMenu, Renderer::MoonLabels);
-    labelMinorMoonsAction     = createCheckableAction(_("Minor Moons"),     labelsMenu, Renderer::MinorMoonLabels);
-    labelAsteroidsAction      = createCheckableAction(_("Asteroids"),       labelsMenu, Renderer::AsteroidLabels);
-    labelCometsAction         = createCheckableAction(_("Comets"),          labelsMenu, Renderer::CometLabels);
-    labelSpacecraftAction     = createCheckableAction(C_("plural", "Spacecraft"),     labelsMenu, Renderer::SpacecraftLabels);
-    labelGalaxiesAction       = createCheckableAction(_("Galaxies"),        labelsMenu, Renderer::GalaxyLabels);
-    labelGlobularsAction      = createCheckableAction(_("Globulars"),       labelsMenu, Renderer::GlobularLabels);
-    labelOpenClustersAction   = createCheckableAction(_("Open clusters"),   labelsMenu, Renderer::OpenClusterLabels);
-    labelNebulaeAction        = createCheckableAction(_("Nebulae"),         labelsMenu, Renderer::NebulaLabels);
-    labelLocationsAction      = createCheckableAction(_("Locations"),       labelsMenu, Renderer::LocationLabels);
-    labelConstellationsAction = createCheckableAction(_("Constellations"),  labelsMenu, Renderer::ConstellationLabels);
+    labelStarsAction          = createCheckableAction(_("Stars"),           labelsMenu, RenderLabels::StarLabels);
+    labelPlanetsAction        = createCheckableAction(_("Planets"),         labelsMenu, RenderLabels::PlanetLabels);
+    labelDwarfPlanetsAction   = createCheckableAction(_("Dwarf Planets"),   labelsMenu, RenderLabels::DwarfPlanetLabels);
+    labelMoonsAction          = createCheckableAction(_("Moons"),           labelsMenu, RenderLabels::MoonLabels);
+    labelMinorMoonsAction     = createCheckableAction(_("Minor Moons"),     labelsMenu, RenderLabels::MinorMoonLabels);
+    labelAsteroidsAction      = createCheckableAction(_("Asteroids"),       labelsMenu, RenderLabels::AsteroidLabels);
+    labelCometsAction         = createCheckableAction(_("Comets"),          labelsMenu, RenderLabels::CometLabels);
+    labelSpacecraftAction     = createCheckableAction(C_("plural", "Spacecraft"),     labelsMenu, RenderLabels::SpacecraftLabels);
+    labelGalaxiesAction       = createCheckableAction(_("Galaxies"),        labelsMenu, RenderLabels::GalaxyLabels);
+    labelGlobularsAction      = createCheckableAction(_("Globulars"),       labelsMenu, RenderLabels::GlobularLabels);
+    labelOpenClustersAction   = createCheckableAction(_("Open clusters"),   labelsMenu, RenderLabels::OpenClusterLabels);
+    labelNebulaeAction        = createCheckableAction(_("Nebulae"),         labelsMenu, RenderLabels::NebulaLabels);
+    labelLocationsAction      = createCheckableAction(_("Locations"),       labelsMenu, RenderLabels::LocationLabels);
+    labelConstellationsAction = createCheckableAction(_("Constellations"),  labelsMenu, RenderLabels::ConstellationLabels);
 
     connect(labelGalaxiesAction,        SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelGlobularsAction,       SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
@@ -176,40 +204,40 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     labelsAction->setMenu(labelsMenu);
 
-    galaxiesAction     = createCheckableAction(_("Galaxies"),      this, Renderer::ShowGalaxies);
+    galaxiesAction     = createCheckableAction(_("Galaxies"),      this, RenderFlags::ShowGalaxies);
     //galaxiesAction->setShortcut(QString("U"));
-    globularsAction    = createCheckableAction(_("Globulars"),     this, Renderer::ShowGlobulars);
-    openClustersAction = createCheckableAction(_("Open Clusters"), this, Renderer::ShowOpenClusters);
-    nebulaeAction      = createCheckableAction(_("Nebulae"),       this, Renderer::ShowNebulae);
+    globularsAction    = createCheckableAction(_("Globulars"),     this, RenderFlags::ShowGlobulars);
+    openClustersAction = createCheckableAction(_("Open Clusters"), this, RenderFlags::ShowOpenClusters);
+    nebulaeAction      = createCheckableAction(_("Nebulae"),       this, RenderFlags::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
     connect(galaxiesAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(globularsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(openClustersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nebulaeAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    cloudsAction          = createCheckableAction(_("Clouds"),            this, Renderer::ShowCloudMaps);
+    cloudsAction          = createCheckableAction(_("Clouds"),            this, RenderFlags::ShowCloudMaps);
     //cloudsAction->setShortcut(QString("I"));
-    nightSideLightsAction = createCheckableAction(_("Night Side Lights"), this, Renderer::ShowNightMaps);
+    nightSideLightsAction = createCheckableAction(_("Night Side Lights"), this, RenderFlags::ShowNightMaps);
     nightSideLightsAction->setShortcut(QString("Ctrl+L"));
-    cometTailsAction      = createCheckableAction(_("Comet Tails"),       this, Renderer::ShowCometTails);
-    atmospheresAction     = createCheckableAction(_("Atmospheres"),       this, Renderer::ShowAtmospheres);
+    cometTailsAction      = createCheckableAction(_("Comet Tails"),       this, RenderFlags::ShowCometTails);
+    atmospheresAction     = createCheckableAction(_("Atmospheres"),       this, RenderFlags::ShowAtmospheres);
     atmospheresAction->setShortcut(QString("Ctrl+A"));
     connect(cloudsAction,          SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nightSideLightsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cometTailsAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(atmospheresAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    ringShadowsAction     = createCheckableAction(_("Ring Shadows"),    this, Renderer::ShowRingShadows);
-    eclipseShadowsAction  = createCheckableAction(_("Eclipse Shadows"), this, Renderer::ShowEclipseShadows);
+    ringShadowsAction     = createCheckableAction(_("Ring Shadows"),    this, RenderFlags::ShowRingShadows);
+    eclipseShadowsAction  = createCheckableAction(_("Eclipse Shadows"), this, RenderFlags::ShowEclipseShadows);
     eclipseShadowsAction->setShortcut(QKeySequence("Ctrl+E"));
-    cloudShadowsAction    = createCheckableAction(_("Cloud Shadows"),   this, Renderer::ShowCloudShadows);
+    cloudShadowsAction    = createCheckableAction(_("Cloud Shadows"),   this, RenderFlags::ShowCloudShadows);
     connect(ringShadowsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(eclipseShadowsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cloudShadowsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    lowResAction          = createCheckableAction(_("Low"),    this, lores);
-    mediumResAction       = createCheckableAction(_("Medium"), this, medres);
-    highResAction         = createCheckableAction(_("High"),   this, hires);
+    lowResAction          = createCheckableAction(_("Low"),    this, TextureResolution::lores);
+    mediumResAction       = createCheckableAction(_("Medium"), this, TextureResolution::medres);
+    highResAction         = createCheckableAction(_("High"),   this, TextureResolution::hires);
     QActionGroup *texResGroup = new QActionGroup(this);
     texResGroup->addAction(lowResAction);
     texResGroup->addAction(mediumResAction);
@@ -219,7 +247,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    autoMagAction        = createCheckableAction(_("Auto Magnitude"), this, Renderer::ShowAutoMag);
+    autoMagAction        = createCheckableAction(_("Auto Magnitude"), this, RenderFlags::ShowAutoMag);
     autoMagAction->setShortcut(QKeySequence("Ctrl+Y"));
     autoMagAction->setToolTip(_("Faintest visible magnitude based on field of view"));
     connect(autoMagAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -233,9 +261,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(increaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
     connect(decreaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
 
-    pointStarAction      = createCheckableAction(_("Points"),       this, Renderer::PointStars);
-    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, Renderer::FuzzyPointStars);
-    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, Renderer::ScaledDiscStars);
+    pointStarAction      = createCheckableAction(_("Points"),       this, StarStyle::PointStars);
+    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, StarStyle::FuzzyPointStars);
+    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, StarStyle::ScaledDiscStars);
     QActionGroup *starStyleGroup = new QActionGroup(this);
     starStyleGroup->addAction(pointStarAction);
     starStyleGroup->addAction(fuzzyPointStarAction);
@@ -263,36 +291,36 @@ CelestiaActions::~CelestiaActions()
 void
 CelestiaActions::syncWithRenderer(const Renderer* renderer)
 {
-    auto renderFlags = renderer->getRenderFlags();
-    int labelMode = renderer->getLabelMode();
+    RenderFlags renderFlags = renderer->getRenderFlags();
+    RenderLabels labelMode = renderer->getLabelMode();
     BodyClassification orbitMask = renderer->getOrbitMask();
-    int textureRes = renderer->getResolution();
-    Renderer::StarStyle starStyle = renderer->getStarStyle();
+    TextureResolution textureRes = renderer->getResolution();
+    StarStyle starStyle = renderer->getStarStyle();
 
-    equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
-    galacticGridAction->setChecked(renderFlags & Renderer::ShowGalacticGrid);
-    eclipticGridAction->setChecked(renderFlags & Renderer::ShowEclipticGrid);
-    horizonGridAction->setChecked(renderFlags & Renderer::ShowHorizonGrid);
-    eclipticAction->setChecked(renderFlags & Renderer::ShowEcliptic);
-    markersAction->setChecked(renderFlags & Renderer::ShowMarkers);
-    constellationsAction->setChecked(renderFlags & Renderer::ShowDiagrams);
-    boundariesAction->setChecked(renderFlags & Renderer::ShowBoundaries);
-    orbitsAction->setChecked(renderFlags & Renderer::ShowOrbits);
+    equatorialGridAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCelestialSphere));
+    galacticGridAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowGalacticGrid));
+    eclipticGridAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowEclipticGrid));
+    horizonGridAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowHorizonGrid));
+    eclipticAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowEcliptic));
+    markersAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowMarkers));
+    constellationsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowDiagrams));
+    boundariesAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowBoundaries));
+    orbitsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowOrbits));
 
-    labelGalaxiesAction->setChecked(labelMode & Renderer::GalaxyLabels);
-    labelGlobularsAction->setChecked(labelMode & Renderer::GlobularLabels);
-    labelOpenClustersAction->setChecked(labelMode & Renderer::OpenClusterLabels);
-    labelNebulaeAction->setChecked(labelMode & Renderer::NebulaLabels);
-    labelStarsAction->setChecked(labelMode & Renderer::StarLabels);
-    labelPlanetsAction->setChecked(labelMode & Renderer::PlanetLabels);
-    labelDwarfPlanetsAction->setChecked(labelMode & Renderer::DwarfPlanetLabels);
-    labelMoonsAction->setChecked(labelMode & Renderer::MoonLabels);
-    labelMinorMoonsAction->setChecked(labelMode & Renderer::MinorMoonLabels);
-    labelAsteroidsAction->setChecked(labelMode & Renderer::AsteroidLabels);
-    labelCometsAction->setChecked(labelMode & Renderer::CometLabels);
-    labelSpacecraftAction->setChecked(labelMode & Renderer::SpacecraftLabels);
-    labelLocationsAction->setChecked(labelMode & Renderer::LocationLabels);
-    labelConstellationsAction->setChecked(labelMode & Renderer::ConstellationLabels);
+    labelGalaxiesAction->setChecked(util::is_set(labelMode, RenderLabels::GalaxyLabels));
+    labelGlobularsAction->setChecked(util::is_set(labelMode, RenderLabels::GlobularLabels));
+    labelOpenClustersAction->setChecked(util::is_set(labelMode, RenderLabels::OpenClusterLabels));
+    labelNebulaeAction->setChecked(util::is_set(labelMode, RenderLabels::NebulaLabels));
+    labelStarsAction->setChecked(util::is_set(labelMode, RenderLabels::StarLabels));
+    labelPlanetsAction->setChecked(util::is_set(labelMode, RenderLabels::PlanetLabels));
+    labelDwarfPlanetsAction->setChecked(util::is_set(labelMode, RenderLabels::DwarfPlanetLabels));
+    labelMoonsAction->setChecked(util::is_set(labelMode, RenderLabels::MoonLabels));
+    labelMinorMoonsAction->setChecked(util::is_set(labelMode, RenderLabels::MinorMoonLabels));
+    labelAsteroidsAction->setChecked(util::is_set(labelMode, RenderLabels::AsteroidLabels));
+    labelCometsAction->setChecked(util::is_set(labelMode, RenderLabels::CometLabels));
+    labelSpacecraftAction->setChecked(util::is_set(labelMode, RenderLabels::SpacecraftLabels));
+    labelLocationsAction->setChecked(util::is_set(labelMode, RenderLabels::LocationLabels));
+    labelConstellationsAction->setChecked(util::is_set(labelMode, RenderLabels::ConstellationLabels));
 
     starOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Stellar));
     planetOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Planet));
@@ -304,34 +332,34 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     spacecraftOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Spacecraft));
 
     // Texture resolution
-    lowResAction->setChecked(textureRes == lores);
-    mediumResAction->setChecked(textureRes == medres);
-    highResAction->setChecked(textureRes == hires);
+    lowResAction->setChecked(textureRes == TextureResolution::lores);
+    mediumResAction->setChecked(textureRes == TextureResolution::medres);
+    highResAction->setChecked(textureRes == TextureResolution::hires);
 
     // Star style
-    pointStarAction->setChecked(starStyle == Renderer::PointStars);
-    fuzzyPointStarAction->setChecked(starStyle == Renderer::FuzzyPointStars);
-    scaledDiscStarAction->setChecked(starStyle == Renderer::ScaledDiscStars);
+    pointStarAction->setChecked(starStyle == StarStyle::PointStars);
+    fuzzyPointStarAction->setChecked(starStyle == StarStyle::FuzzyPointStars);
+    scaledDiscStarAction->setChecked(starStyle == StarStyle::ScaledDiscStars);
 
     // Features
-    cloudsAction->setChecked(renderFlags & Renderer::ShowCloudMaps);
-    cometTailsAction->setChecked(renderFlags & Renderer::ShowCometTails);
-    atmospheresAction->setChecked(renderFlags & Renderer::ShowAtmospheres);
-    nightSideLightsAction->setChecked(renderFlags & Renderer::ShowNightMaps);
+    cloudsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCloudMaps));
+    cometTailsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCometTails));
+    atmospheresAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowAtmospheres));
+    nightSideLightsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowNightMaps));
 
     // Deep sky object visibility
-    galaxiesAction->setChecked(renderFlags & Renderer::ShowGalaxies);
-    globularsAction->setChecked(renderFlags & Renderer::ShowGlobulars);
-    openClustersAction->setChecked(renderFlags & Renderer::ShowOpenClusters);
-    nebulaeAction->setChecked(renderFlags & Renderer::ShowNebulae);
+    galaxiesAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowGalaxies));
+    globularsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowGlobulars));
+    openClustersAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowOpenClusters));
+    nebulaeAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowNebulae));
 
     // Shadows
-    ringShadowsAction->setChecked(renderFlags & Renderer::ShowRingShadows);
-    eclipseShadowsAction->setChecked(renderFlags & Renderer::ShowEclipseShadows);
-    cloudShadowsAction->setChecked(renderFlags & Renderer::ShowCloudShadows);
+    ringShadowsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowRingShadows));
+    eclipseShadowsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowEclipseShadows));
+    cloudShadowsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCloudShadows));
 
     // Star visibility
-    autoMagAction->setChecked(renderFlags & Renderer::ShowAutoMag);
+    autoMagAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowAutoMag));
 }
 
 void
@@ -352,7 +380,7 @@ CelestiaActions::slotToggleRenderFlag()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        std::uint64_t renderFlag = act->data().toULongLong();
+        auto renderFlag = getFromVariant<RenderFlags>(act->data());
         appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
     }
 }
@@ -363,7 +391,7 @@ CelestiaActions::slotToggleLabel()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        int label = act->data().toInt();
+        auto label = getFromVariant<RenderLabels>(act->data());
         appCore->getRenderer()->setLabelMode(appCore->getRenderer()->getLabelMode() ^ label);
     }
 }
@@ -374,7 +402,7 @@ CelestiaActions::slotToggleOrbit()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        auto orbit = static_cast<BodyClassification>(act->data().toInt());
+        auto orbit = getFromVariant<BodyClassification>(act->data());
         appCore->getRenderer()->setOrbitMask(appCore->getRenderer()->getOrbitMask() ^ orbit);
     }
 }
@@ -385,7 +413,7 @@ CelestiaActions::slotSetStarStyle()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
+        auto starStyle = getFromVariant<StarStyle>(act->data());
         appCore->getRenderer()->setStarStyle(starStyle);
     }
 }
@@ -396,7 +424,7 @@ CelestiaActions::slotSetTextureResolution()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        int textureResolution = act->data().toInt();
+        auto textureResolution = getFromVariant<TextureResolution>(act->data());
         appCore->getRenderer()->setResolution(textureResolution);
     }
 }
@@ -420,7 +448,7 @@ CelestiaActions::slotAdjustLimitingMagnitude()
         float change = (float) act->data().toDouble();
 
         QString notification;
-        if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
         {
             float newLimitingMag = qBound(6.0f, renderer->getFaintestAM45deg() + change, 12.0f);
             renderer->setFaintestAM45deg(newLimitingMag);

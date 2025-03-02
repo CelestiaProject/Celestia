@@ -60,7 +60,7 @@ TextureInfo::resolve(const fs::path& baseDir) const
 
     if (!path.empty())
     {
-        fs::path filename = path / "textures" / directories[resolution] / source;
+        fs::path filename = path / "textures" / directories[static_cast<std::size_t>(resolution)] / source;
         // cout << "Resolve: testing [" << filename << "]\n";
         if (wildcard)
         {
@@ -76,7 +76,7 @@ TextureInfo::resolve(const fs::path& baseDir) const
         }
     }
 
-    fs::path filename = baseDir / directories[resolution] / source;
+    fs::path filename = baseDir / directories[static_cast<std::size_t>(resolution)] / source;
     if (wildcard)
     {
         fs::path matched = celestia::util::ResolveWildcard(filename, extensions);

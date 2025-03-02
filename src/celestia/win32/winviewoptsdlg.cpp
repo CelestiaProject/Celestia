@@ -58,65 +58,65 @@ ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
     {
         Renderer* renderer = Dlg->appCore->getRenderer();
-        std::uint64_t renderFlags = renderer->getRenderFlags();
-        std::uint32_t labelMode = renderer->getLabelMode();
+        RenderFlags renderFlags = renderer->getRenderFlags();
+        RenderLabels labelMode = renderer->getLabelMode();
         BodyClassification orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
         case IDC_SHOWATMOSPHERES:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAtmospheres);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowAtmospheres);
             break;
         case IDC_SHOWCELESTIALGRID:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCelestialSphere);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowCelestialSphere);
             break;
         case IDC_SHOWHORIZONGRID:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowHorizonGrid);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowHorizonGrid);
             break;
         case IDC_SHOWGALACTICGRID:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalacticGrid);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowGalacticGrid);
             break;
         case IDC_SHOWECLIPTICGRID:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEclipticGrid);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowEclipticGrid);
             break;
         case IDC_SHOWECLIPTIC:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEcliptic);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowEcliptic);
             break;
         case IDC_SHOWCLOUDS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudMaps);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowCloudMaps);
             break;
         case IDC_SHOWCLOUDSHADOWS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudShadows);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowCloudShadows);
             break;
         case IDC_SHOWCONSTELLATIONS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowDiagrams);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowDiagrams);
             break;
         case IDC_SHOWECLIPSESHADOWS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEclipseShadows);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowEclipseShadows);
             break;
         case IDC_SHOWGALAXIES:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalaxies);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowGalaxies);
             break;
         case IDC_SHOWGLOBULARS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGlobulars);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowGlobulars);
             break;
         case IDC_SHOWNEBULAE:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowNebulae);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowNebulae);
             break;
         case IDC_SHOWOPENCLUSTERS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowOpenClusters);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowOpenClusters);
             break;
         case IDC_SHOWNIGHTSIDELIGHTS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowNightMaps);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowNightMaps);
             break;
         case IDC_SHOWORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowOrbits);
             break;
         case IDC_SHOWPARTIALTRAJECTORIES:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPartialTrajectories);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowPartialTrajectories);
             break;
         case IDC_SHOWFADINGORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowFadingOrbits);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowFadingOrbits);
             break;
         case IDC_PLANETORBITS:
             renderer->setOrbitMask(orbitMask ^ BodyClassification::Planet);
@@ -143,85 +143,85 @@ ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             renderer->setOrbitMask(orbitMask ^ BodyClassification::Spacecraft);
             break;
         case IDC_SHOWPLANETS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowPlanets);
             break;
         case IDC_SHOWDWARFPLANETS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowDwarfPlanets);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowDwarfPlanets);
             break;
         case IDC_SHOWMOONS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMoons);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowMoons);
             break;
         case IDC_SHOWMINORMOONS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMinorMoons);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowMinorMoons);
             break;
         case IDC_SHOWASTEROIDS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAsteroids);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowAsteroids);
             break;
         case IDC_SHOWCOMETS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowComets);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowComets);
             break;
         case IDC_SHOWSPACECRAFTS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecrafts);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowSpacecrafts);
             break;
         case IDC_SHOWSTARS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowStars);
             break;
         case IDC_SHOWCONSTELLATIONBORDERS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowBoundaries);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowBoundaries);
             break;
         case IDC_SHOWRINGSHADOWS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowRingShadows);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowRingShadows);
             break;
         case IDC_SHOWRINGS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanetRings);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowPlanetRings);
             break;
         case IDC_SHOWCOMETTAILS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCometTails);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowCometTails);
             break;
         case IDC_SHOWMARKERS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMarkers);
+            renderer->setRenderFlags(renderFlags ^ RenderFlags::ShowMarkers);
             break;
         case IDC_LABELCONSTELLATIONS:
-            renderer->setLabelMode(labelMode ^ Renderer::ConstellationLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::ConstellationLabels);
             break;
         case IDC_LABELCONSTELLATIONSLATIN:
-            renderer->setLabelMode(labelMode ^ Renderer::I18nConstellationLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::I18nConstellationLabels);
             break;
         case IDC_LABELGALAXIES:
-            renderer->setLabelMode(labelMode ^ Renderer::GalaxyLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::GalaxyLabels);
             break;
         case IDC_LABELGLOBULARS:
-            renderer->setLabelMode(labelMode ^ Renderer::GlobularLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::GlobularLabels);
             break;
         case IDC_LABELNEBULAE:
-            renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::NebulaLabels);
             break;
         case IDC_LABELOPENCLUSTERS:
-            renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::OpenClusterLabels);
             break;
         case IDC_LABELPLANETS:
-            renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::PlanetLabels);
             break;
         case IDC_LABELDWARFPLANETS:
-            renderer->setLabelMode(labelMode ^ Renderer::DwarfPlanetLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::DwarfPlanetLabels);
             break;
         case IDC_LABELMOONS:
-            renderer->setLabelMode(labelMode ^ Renderer::MoonLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::MoonLabels);
             break;
         case IDC_LABELMINORMOONS:
-            renderer->setLabelMode(labelMode ^ Renderer::MinorMoonLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::MinorMoonLabels);
             break;
         case IDC_LABELSTARS:
-            renderer->setLabelMode(labelMode ^ Renderer::StarLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::StarLabels);
             break;
         case IDC_LABELASTEROIDS:
-            renderer->setLabelMode(labelMode ^ Renderer::AsteroidLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::AsteroidLabels);
             break;
         case IDC_LABELCOMETS:
-            renderer->setLabelMode(labelMode ^ Renderer::CometLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::CometLabels);
             break;
         case IDC_LABELSPACECRAFT:
-            renderer->setLabelMode(labelMode ^ Renderer::SpacecraftLabels);
+            renderer->setLabelMode(labelMode ^ RenderLabels::SpacecraftLabels);
             break;
         case IDC_INFOTEXT0:
             Dlg->appCore->setHudDetail(0);
@@ -291,20 +291,6 @@ ViewOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void
-dlgCheck(HWND hDlg, WORD item, std::uint32_t flags, std::uint32_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
-void
-dlgCheck64(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
-{
-    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
-}
-
 template<typename T>
 void
 dlgCheckEnum(HWND hDlg, WORD item, T flags, T f)
@@ -331,30 +317,30 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
 
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
-    std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
-    int labelMode = appCore->getRenderer()->getLabelMode();
+    RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
+    RenderLabels labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
     BodyClassification orbitMask = appCore->getRenderer()->getOrbitMask();
 
     //Set checkboxes and radiobuttons
-    dlgCheck64(hDlg, IDC_SHOWATMOSPHERES, renderFlags, Renderer::ShowAtmospheres);
-    dlgCheck64(hDlg, IDC_SHOWCELESTIALGRID, renderFlags, Renderer::ShowCelestialSphere);
-    dlgCheck64(hDlg, IDC_SHOWHORIZONGRID, renderFlags, Renderer::ShowHorizonGrid);
-    dlgCheck64(hDlg, IDC_SHOWGALACTICGRID, renderFlags, Renderer::ShowGalacticGrid);
-    dlgCheck64(hDlg, IDC_SHOWECLIPTICGRID, renderFlags, Renderer::ShowEclipticGrid);
-    dlgCheck64(hDlg, IDC_SHOWECLIPTIC, renderFlags, Renderer::ShowEcliptic);
-    dlgCheck64(hDlg, IDC_SHOWCLOUDS, renderFlags, Renderer::ShowCloudMaps);
-    dlgCheck64(hDlg, IDC_SHOWCLOUDSHADOWS, renderFlags, Renderer::ShowCloudShadows);
-    dlgCheck64(hDlg, IDC_SHOWCONSTELLATIONS, renderFlags, Renderer::ShowDiagrams);
-    dlgCheck64(hDlg, IDC_SHOWECLIPSESHADOWS, renderFlags, Renderer::ShowEclipseShadows);
-    dlgCheck64(hDlg, IDC_SHOWGALAXIES, renderFlags, Renderer::ShowGalaxies);
-    dlgCheck64(hDlg, IDC_SHOWGLOBULARS, renderFlags, Renderer::ShowGlobulars);
-    dlgCheck64(hDlg, IDC_SHOWNEBULAE, renderFlags, Renderer::ShowNebulae);
-    dlgCheck64(hDlg, IDC_SHOWOPENCLUSTERS, renderFlags, Renderer::ShowOpenClusters);
-    dlgCheck64(hDlg, IDC_SHOWNIGHTSIDELIGHTS, renderFlags, Renderer::ShowNightMaps);
-    dlgCheck64(hDlg, IDC_SHOWORBITS, renderFlags, Renderer::ShowOrbits);
-    dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
-    dlgCheck64(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, Renderer::ShowPartialTrajectories);
+    dlgCheckEnum(hDlg, IDC_SHOWATMOSPHERES, renderFlags, RenderFlags::ShowAtmospheres);
+    dlgCheckEnum(hDlg, IDC_SHOWCELESTIALGRID, renderFlags, RenderFlags::ShowCelestialSphere);
+    dlgCheckEnum(hDlg, IDC_SHOWHORIZONGRID, renderFlags, RenderFlags::ShowHorizonGrid);
+    dlgCheckEnum(hDlg, IDC_SHOWGALACTICGRID, renderFlags, RenderFlags::ShowGalacticGrid);
+    dlgCheckEnum(hDlg, IDC_SHOWECLIPTICGRID, renderFlags, RenderFlags::ShowEclipticGrid);
+    dlgCheckEnum(hDlg, IDC_SHOWECLIPTIC, renderFlags, RenderFlags::ShowEcliptic);
+    dlgCheckEnum(hDlg, IDC_SHOWCLOUDS, renderFlags, RenderFlags::ShowCloudMaps);
+    dlgCheckEnum(hDlg, IDC_SHOWCLOUDSHADOWS, renderFlags, RenderFlags::ShowCloudShadows);
+    dlgCheckEnum(hDlg, IDC_SHOWCONSTELLATIONS, renderFlags, RenderFlags::ShowDiagrams);
+    dlgCheckEnum(hDlg, IDC_SHOWECLIPSESHADOWS, renderFlags, RenderFlags::ShowEclipseShadows);
+    dlgCheckEnum(hDlg, IDC_SHOWGALAXIES, renderFlags, RenderFlags::ShowGalaxies);
+    dlgCheckEnum(hDlg, IDC_SHOWGLOBULARS, renderFlags, RenderFlags::ShowGlobulars);
+    dlgCheckEnum(hDlg, IDC_SHOWNEBULAE, renderFlags, RenderFlags::ShowNebulae);
+    dlgCheckEnum(hDlg, IDC_SHOWOPENCLUSTERS, renderFlags, RenderFlags::ShowOpenClusters);
+    dlgCheckEnum(hDlg, IDC_SHOWNIGHTSIDELIGHTS, renderFlags, RenderFlags::ShowNightMaps);
+    dlgCheckEnum(hDlg, IDC_SHOWORBITS, renderFlags, RenderFlags::ShowOrbits);
+    dlgCheckEnum(hDlg, IDC_SHOWFADINGORBITS, renderFlags, RenderFlags::ShowFadingOrbits);
+    dlgCheckEnum(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, RenderFlags::ShowPartialTrajectories);
     dlgCheckEnum(hDlg, IDC_PLANETORBITS, orbitMask, BodyClassification::Planet);
     dlgCheckEnum(hDlg, IDC_DWARFPLANETORBITS,orbitMask, BodyClassification::DwarfPlanet);
     dlgCheckEnum(hDlg, IDC_MOONORBITS, orbitMask, BodyClassification::Moon);
@@ -363,34 +349,34 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     dlgCheckEnum(hDlg, IDC_COMETORBITS, orbitMask, BodyClassification::Comet);
     dlgCheckEnum(hDlg, IDC_SPACECRAFTORBITS, orbitMask, BodyClassification::Spacecraft);
     dlgCheckEnum(hDlg, IDC_STARORBITS, orbitMask, BodyClassification::Stellar);
-    dlgCheck64(hDlg, IDC_SHOWPLANETS, renderFlags, Renderer::ShowPlanets);
-    dlgCheck64(hDlg, IDC_SHOWDWARFPLANETS, renderFlags, Renderer::ShowDwarfPlanets);
-    dlgCheck64(hDlg, IDC_SHOWMOONS, renderFlags, Renderer::ShowMoons);
-    dlgCheck64(hDlg, IDC_SHOWMINORMOONS, renderFlags, Renderer::ShowMinorMoons);
-    dlgCheck64(hDlg, IDC_SHOWASTEROIDS, renderFlags, Renderer::ShowAsteroids);
-    dlgCheck64(hDlg, IDC_SHOWCOMETS, renderFlags, Renderer::ShowComets);
-    dlgCheck64(hDlg, IDC_SHOWSPACECRAFTS, renderFlags, Renderer::ShowSpacecrafts);
-    dlgCheck64(hDlg, IDC_SHOWSTARS, renderFlags, Renderer::ShowStars);
-    dlgCheck64(hDlg, IDC_SHOWCONSTELLATIONBORDERS, renderFlags, Renderer::ShowBoundaries);
-    dlgCheck64(hDlg, IDC_SHOWRINGSHADOWS, renderFlags, Renderer::ShowRingShadows);
-    dlgCheck64(hDlg, IDC_SHOWRINGS, renderFlags, Renderer::ShowPlanetRings);
-    dlgCheck64(hDlg, IDC_SHOWCOMETTAILS, renderFlags, Renderer::ShowCometTails);
-    dlgCheck64(hDlg, IDC_SHOWMARKERS, renderFlags, Renderer::ShowMarkers);
+    dlgCheckEnum(hDlg, IDC_SHOWPLANETS, renderFlags, RenderFlags::ShowPlanets);
+    dlgCheckEnum(hDlg, IDC_SHOWDWARFPLANETS, renderFlags, RenderFlags::ShowDwarfPlanets);
+    dlgCheckEnum(hDlg, IDC_SHOWMOONS, renderFlags, RenderFlags::ShowMoons);
+    dlgCheckEnum(hDlg, IDC_SHOWMINORMOONS, renderFlags, RenderFlags::ShowMinorMoons);
+    dlgCheckEnum(hDlg, IDC_SHOWASTEROIDS, renderFlags, RenderFlags::ShowAsteroids);
+    dlgCheckEnum(hDlg, IDC_SHOWCOMETS, renderFlags, RenderFlags::ShowComets);
+    dlgCheckEnum(hDlg, IDC_SHOWSPACECRAFTS, renderFlags, RenderFlags::ShowSpacecrafts);
+    dlgCheckEnum(hDlg, IDC_SHOWSTARS, renderFlags, RenderFlags::ShowStars);
+    dlgCheckEnum(hDlg, IDC_SHOWCONSTELLATIONBORDERS, renderFlags, RenderFlags::ShowBoundaries);
+    dlgCheckEnum(hDlg, IDC_SHOWRINGSHADOWS, renderFlags, RenderFlags::ShowRingShadows);
+    dlgCheckEnum(hDlg, IDC_SHOWRINGS, renderFlags, RenderFlags::ShowPlanetRings);
+    dlgCheckEnum(hDlg, IDC_SHOWCOMETTAILS, renderFlags, RenderFlags::ShowCometTails);
+    dlgCheckEnum(hDlg, IDC_SHOWMARKERS, renderFlags, RenderFlags::ShowMarkers);
 
-    dlgCheck(hDlg, IDC_LABELCONSTELLATIONS, labelMode, Renderer::ConstellationLabels);
-    dlgCheck(hDlg, IDC_LABELCONSTELLATIONSLATIN, ~labelMode, Renderer::I18nConstellationLabels); // check box if flag unset
-    dlgCheck(hDlg, IDC_LABELGALAXIES, labelMode, Renderer::GalaxyLabels);
-    dlgCheck(hDlg, IDC_LABELGLOBULARS, labelMode, Renderer::GlobularLabels);
-    dlgCheck(hDlg, IDC_LABELNEBULAE, labelMode, Renderer::NebulaLabels);
-    dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
-    dlgCheck(hDlg, IDC_LABELSTARS, labelMode, Renderer::StarLabels);
-    dlgCheck(hDlg, IDC_LABELPLANETS, labelMode, Renderer::PlanetLabels);
-    dlgCheck(hDlg, IDC_LABELDWARFPLANETS, labelMode, Renderer::DwarfPlanetLabels);
-    dlgCheck(hDlg, IDC_LABELMOONS, labelMode, Renderer::MoonLabels);
-    dlgCheck(hDlg, IDC_LABELMINORMOONS, labelMode, Renderer::MinorMoonLabels);
-    dlgCheck(hDlg, IDC_LABELASTEROIDS, labelMode, Renderer::AsteroidLabels);
-    dlgCheck(hDlg, IDC_LABELCOMETS, labelMode, Renderer::CometLabels);
-    dlgCheck(hDlg, IDC_LABELSPACECRAFT, labelMode, Renderer::SpacecraftLabels);
+    dlgCheckEnum(hDlg, IDC_LABELCONSTELLATIONS, labelMode, RenderLabels::ConstellationLabels);
+    dlgCheckEnum(hDlg, IDC_LABELCONSTELLATIONSLATIN, ~labelMode, RenderLabels::I18nConstellationLabels); // check box if flag unset
+    dlgCheckEnum(hDlg, IDC_LABELGALAXIES, labelMode, RenderLabels::GalaxyLabels);
+    dlgCheckEnum(hDlg, IDC_LABELGLOBULARS, labelMode, RenderLabels::GlobularLabels);
+    dlgCheckEnum(hDlg, IDC_LABELNEBULAE, labelMode, RenderLabels::NebulaLabels);
+    dlgCheckEnum(hDlg, IDC_LABELOPENCLUSTERS, labelMode, RenderLabels::OpenClusterLabels);
+    dlgCheckEnum(hDlg, IDC_LABELSTARS, labelMode, RenderLabels::StarLabels);
+    dlgCheckEnum(hDlg, IDC_LABELPLANETS, labelMode, RenderLabels::PlanetLabels);
+    dlgCheckEnum(hDlg, IDC_LABELDWARFPLANETS, labelMode, RenderLabels::DwarfPlanetLabels);
+    dlgCheckEnum(hDlg, IDC_LABELMOONS, labelMode, RenderLabels::MoonLabels);
+    dlgCheckEnum(hDlg, IDC_LABELMINORMOONS, labelMode, RenderLabels::MinorMoonLabels);
+    dlgCheckEnum(hDlg, IDC_LABELASTEROIDS, labelMode, RenderLabels::AsteroidLabels);
+    dlgCheckEnum(hDlg, IDC_LABELCOMETS, labelMode, RenderLabels::CometLabels);
+    dlgCheckEnum(hDlg, IDC_LABELSPACECRAFT, labelMode, RenderLabels::SpacecraftLabels);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
 

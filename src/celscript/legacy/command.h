@@ -26,6 +26,8 @@
 #include <celcompat/filesystem.h>
 #include <celengine/marker.h>
 #include <celengine/observer.h>
+#include <celengine/multitexture.h>
+#include <celengine/renderflags.h>
 #include <celutil/color.h>
 
 enum class BodyClassification : std::uint32_t;
@@ -394,14 +396,14 @@ class CommandLookBack : public InstantaneousCommand
 class CommandRenderFlags : public InstantaneousCommand
 {
  public:
-    CommandRenderFlags(std::uint64_t _setFlags, std::uint64_t _clearFlags);
+    CommandRenderFlags(RenderFlags _setFlags, RenderFlags _clearFlags);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    std::uint64_t setFlags;
-    std::uint64_t clearFlags;
+    RenderFlags setFlags;
+    RenderFlags clearFlags;
 };
 
 
@@ -463,14 +465,14 @@ class CommandConstellationColor : public InstantaneousCommand
 class CommandLabels : public InstantaneousCommand
 {
  public:
-    CommandLabels(int _setFlags, int _clearFlags);
+    CommandLabels(RenderLabels _setFlags, RenderLabels _clearFlags);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    int setFlags;
-    int clearFlags;
+    RenderLabels setFlags;
+    RenderLabels clearFlags;
 };
 
 
@@ -617,13 +619,13 @@ class CommandCapture : public InstantaneousCommand
 class CommandSetTextureResolution : public InstantaneousCommand
 {
  public:
-    CommandSetTextureResolution(unsigned int);
+    CommandSetTextureResolution(TextureResolution);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    unsigned int res;
+    TextureResolution res;
 };
 
 

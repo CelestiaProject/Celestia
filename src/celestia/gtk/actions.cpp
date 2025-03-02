@@ -15,6 +15,7 @@
 #include <cstring>
 #include <fstream>
 #include <tuple>
+#include <type_traits>
 #include <gtk/gtk.h>
 #include <fmt/format.h>
 
@@ -163,9 +164,13 @@ textInfoDialog(const char *txt, const char *title, AppData* app)
 
 /* Calculates and sets the render-flag int */
 void
-setRenderFlag(AppData* a, std::uint64_t flag, gboolean state)
+setRenderFlag(AppData* a, RenderFlags flag, gboolean state)
 {
-    std::uint64_t rf = (a->renderer->getRenderFlags() & ~flag) | (state ? flag : 0);
+    RenderFlags rf = a->renderer->getRenderFlags();
+    if (state)
+        rf |= flag;
+    else
+        rf &= ~flag;
     a->renderer->setRenderFlags(rf);
 }
 
@@ -179,9 +184,14 @@ setOrbitMask(AppData* a, BodyClassification mask, gboolean state)
 
 /* Calculates and sets the label-mode int */
 void
-setLabelMode(AppData* a, int mode, gboolean state)
+setLabelMode(AppData* a, RenderLabels mode, gboolean state)
 {
-    int lm = (a->renderer->getLabelMode() & ~mode) | (state ? mode : 0);
+    RenderLabels lm = a->renderer->getLabelMode();
+    if (state)
+        lm |= mode;
+    else
+        lm |= ~mode;
+
     a->renderer->setLabelMode(lm);
 }
 
@@ -875,7 +885,7 @@ void
 actionStarStyle(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 {
     int value = gtk_radio_action_get_current_value(action);
-    app->renderer->setStarStyle((Renderer::StarStyle)value);
+    app->renderer->setStarStyle(static_cast<StarStyle>(value));
 }
 
 void
@@ -889,181 +899,181 @@ actionAmbientLight(GtkRadioAction* action, GtkRadioAction*, AppData* app)
 void
 actionRenderAA(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowSmoothLines, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowSmoothLines, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderAtmospheres(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowAtmospheres, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowAtmospheres, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderAutoMagnitude(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowAutoMag, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowAutoMag, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderCelestialGrid(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowCelestialSphere, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowCelestialSphere, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderClouds(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowCloudMaps, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowCloudMaps, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderCometTails(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowCometTails, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowCometTails, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderConstellationBoundaries(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowBoundaries, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowBoundaries, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderConstellations(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowDiagrams, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowDiagrams, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderEclipticGrid(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowEclipticGrid, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowEclipticGrid, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderEclipseShadows(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowEclipseShadows, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowEclipseShadows, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderGalacticGrid(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowGalacticGrid, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowGalacticGrid, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderGalaxies(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowGalaxies, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowGalaxies, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderGlobulars(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowGlobulars, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowGlobulars, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderHorizontalGrid(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowHorizonGrid, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowHorizonGrid, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderMarkers(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowMarkers, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowMarkers, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderNebulae(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowNebulae, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowNebulae, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderNightLights(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowNightMaps, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowNightMaps, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderOpenClusters(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowOpenClusters, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowOpenClusters, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderOrbits(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowOrbits, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowOrbits, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderFadingOrbits(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowFadingOrbits, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowFadingOrbits, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderPlanets(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowPlanets, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowPlanets, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderDwarfPlanets(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowDwarfPlanets, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowDwarfPlanets, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderMoons(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowMoons, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowMoons, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderMinorMoons(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowMinorMoons, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowMinorMoons, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderAsteroids(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowAsteroids, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowAsteroids, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderComets(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowComets, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowComets, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowSpacecrafts, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowSpacecrafts, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderPlanetRings(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowPlanetRings, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowPlanetRings, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderRingShadows(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowRingShadows, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowRingShadows, gtk_toggle_action_get_active(action));
 }
 
 void
 actionRenderStars(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowStars, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, RenderFlags::ShowStars, gtk_toggle_action_get_active(action));
 }
 
 void
@@ -1099,85 +1109,85 @@ actionOrbitSpacecraft(GtkToggleAction* action, AppData* app)
 void
 actionLabelAsteroids(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::AsteroidLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::AsteroidLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelComets(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::CometLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::CometLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelConstellations(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::ConstellationLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::ConstellationLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelGalaxies(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::GalaxyLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::GalaxyLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelGlobulars(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::GlobularLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::GlobularLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelLocations(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::LocationLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::LocationLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelMoons(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::MoonLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::MoonLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelMinorMoons(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::MinorMoonLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::MinorMoonLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelNebulae(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::NebulaLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::NebulaLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelOpenClusters(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::OpenClusterLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::OpenClusterLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelPlanets(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::PlanetLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::PlanetLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelDwarfPlanets(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::DwarfPlanetLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::DwarfPlanetLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelSpacecraft(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::SpacecraftLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::SpacecraftLabels, gtk_toggle_action_get_active(action));
 }
 
 void
 actionLabelStars(GtkToggleAction* action, AppData* app)
 {
-    setLabelMode(app, Renderer::StarLabels, gtk_toggle_action_get_active(action));
+    setLabelMode(app, RenderLabels::StarLabels, gtk_toggle_action_get_active(action));
 }
 
 /* Synchronizes the Label Actions with the state of the core */
@@ -1185,39 +1195,41 @@ void
 resyncLabelActions(AppData* app)
 {
     /* Simply for readability */
-    int f = app->renderer->getLabelMode();
-
-    for (int i = Renderer::StarLabels; i <= Renderer::GlobularLabels; i *= 2)
+    RenderLabels lf = app->renderer->getLabelMode();
+    using RLInt = std::underlying_type_t<RenderLabels>;
+    for (auto i = static_cast<RLInt>(RenderLabels::StarLabels);
+         i <= static_cast<RLInt>(RenderLabels::GlobularLabels);
+         i <<= 1)
     {
         const char* actionName;
-        switch (i)
+        auto rli = static_cast<RenderLabels>(i);
+        switch (rli)
         {
-            case Renderer::StarLabels: actionName = "LabelStars"; break;
-            case Renderer::PlanetLabels: actionName = "LabelPlanets"; break;
-            case Renderer::DwarfPlanetLabels: actionName = "LabelDwarfPlanets"; break;
-            case Renderer::MoonLabels: actionName = "LabelMoons"; break;
-            case Renderer::MinorMoonLabels: actionName = "LabelMinorMoons"; break;
-            case Renderer::ConstellationLabels: actionName = "LabelConstellations"; break;
-            case Renderer::GalaxyLabels: actionName = "LabelGalaxies"; break;
-            case Renderer::AsteroidLabels: actionName = "LabelAsteroids"; break;
-            case Renderer::SpacecraftLabels: actionName = "LabelSpacecraft"; break;
-            case Renderer::LocationLabels: actionName = "LabelLocations"; break;
-            case Renderer::CometLabels: actionName = "LabelComets"; break;
-            case Renderer::NebulaLabels: actionName = "LabelNebulae"; break;
-            case Renderer::OpenClusterLabels: actionName = "LabelOpenClusters"; break;
-            case Renderer::GlobularLabels: actionName = "LabelGlobulars"; break;
-            case Renderer::I18nConstellationLabels: /* Not used yet */
+            case RenderLabels::StarLabels: actionName = "LabelStars"; break;
+            case RenderLabels::PlanetLabels: actionName = "LabelPlanets"; break;
+            case RenderLabels::DwarfPlanetLabels: actionName = "LabelDwarfPlanets"; break;
+            case RenderLabels::MoonLabels: actionName = "LabelMoons"; break;
+            case RenderLabels::MinorMoonLabels: actionName = "LabelMinorMoons"; break;
+            case RenderLabels::ConstellationLabels: actionName = "LabelConstellations"; break;
+            case RenderLabels::GalaxyLabels: actionName = "LabelGalaxies"; break;
+            case RenderLabels::AsteroidLabels: actionName = "LabelAsteroids"; break;
+            case RenderLabels::SpacecraftLabels: actionName = "LabelSpacecraft"; break;
+            case RenderLabels::LocationLabels: actionName = "LabelLocations"; break;
+            case RenderLabels::CometLabels: actionName = "LabelComets"; break;
+            case RenderLabels::NebulaLabels: actionName = "LabelNebulae"; break;
+            case RenderLabels::OpenClusterLabels: actionName = "LabelOpenClusters"; break;
+            case RenderLabels::GlobularLabels: actionName = "LabelGlobulars"; break;
             default: actionName = nullptr; break;
         }
 
-        if (actionName != nullptr)
-        {
-            /* Get the action */
-            GtkAction* action = gtk_action_group_get_action(app->agLabel, actionName);
+        if (actionName == nullptr)
+            continue;
 
-            /* The current i anded with the labelMode gives state of flag */
-            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & f));
-        }
+        /* Get the action */
+        GtkAction* action = gtk_action_group_get_action(app->agLabel, actionName);
+
+        /* The current i anded with the labelMode gives state of flag */
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), util::is_set(lf, rli));
     }
 }
 
@@ -1226,61 +1238,62 @@ void
 resyncRenderActions(AppData* app)
 {
     /* Simply for readability */
-    const std::uint64_t rf = app->renderer->getRenderFlags();
+    const RenderFlags rf = app->renderer->getRenderFlags();
 
     /* Unlike the other interfaces, which go through each menu item and set
      * the corresponding renderFlag, we go the other way and set the menu
      * based on the renderFlag. Last one is ShowPlanetRings. */
 
-    for (std::uint64_t i = Renderer::ShowStars; i <= Renderer::ShowPlanetRings; i *= 2)
+    using RFInt = std::underlying_type_t<RenderFlags>;
+    for (auto i = static_cast<RFInt>(RenderFlags::ShowStars);
+         i <= static_cast<RFInt>(RenderFlags::ShowPlanetRings);
+         i <<= 1)
     {
         const char* actionName;
-        switch (i)
+        auto rfi = static_cast<RenderFlags>(i);
+        switch (rfi)
         {
-            case Renderer::ShowStars: actionName = "RenderStars"; break;
-            case Renderer::ShowPlanets: actionName = "RenderPlanets"; break;
-            case Renderer::ShowDwarfPlanets: actionName = "RenderDwarfPlanets"; break;
-            case Renderer::ShowMoons: actionName = "RenderMoons"; break;
-            case Renderer::ShowMinorMoons: actionName = "RenderMinorMoons"; break;
-            case Renderer::ShowAsteroids: actionName = "RenderAsteroids"; break;
-            case Renderer::ShowComets: actionName = "RenderComets"; break;
-            case Renderer::ShowSpacecrafts: actionName = "RenderSpacecrafts"; break;
-            case Renderer::ShowGalaxies: actionName = "RenderGalaxies"; break;
-            case Renderer::ShowDiagrams: actionName = "RenderConstellations"; break;
-            case Renderer::ShowCloudMaps: actionName = "RenderClouds"; break;
-            case Renderer::ShowOrbits: actionName = "RenderOrbits"; break;
-            case Renderer::ShowFadingOrbits: actionName = "RenderFadingOrbits"; break;
-            case Renderer::ShowCelestialSphere: actionName = "RenderCelestialGrid"; break;
-            case Renderer::ShowNightMaps: actionName = "RenderNightLights"; break;
-            case Renderer::ShowAtmospheres: actionName = "RenderAtmospheres"; break;
-            case Renderer::ShowSmoothLines: actionName = "RenderAA"; break;
-            case Renderer::ShowEclipseShadows: actionName = "RenderEclipseShadows"; break;
-            case Renderer::ShowPlanetRings: actionName = "RenderPlanetRings"; break;
-            case Renderer::ShowRingShadows: actionName = "RenderRingShadows"; break;
-            case Renderer::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
-            case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
-            case Renderer::ShowCometTails: actionName = "RenderCometTails"; break;
-            case Renderer::ShowMarkers: actionName = "RenderMarkers"; break;
-            case Renderer::ShowPartialTrajectories: actionName = nullptr; break; /* Not useful yet */
-            case Renderer::ShowNebulae: actionName = "RenderNebulae"; break;
-            case Renderer::ShowOpenClusters: actionName = "RenderOpenClusters"; break;
-            case Renderer::ShowGlobulars: actionName = "RenderGlobulars"; break;
-            case Renderer::ShowCloudShadows: actionName = nullptr; break; /* Not implemented yet */
-            case Renderer::ShowGalacticGrid: actionName = "RenderGalacticGrid"; break;
-            case Renderer::ShowEclipticGrid: actionName = "RenderEclipticGrid"; break;
-            case Renderer::ShowHorizonGrid: actionName = "RenderHorizontalGrid"; break;
-            case Renderer::ShowEcliptic: actionName = nullptr; break; /* Not implemented yet */
+            case RenderFlags::ShowStars: actionName = "RenderStars"; break;
+            case RenderFlags::ShowPlanets: actionName = "RenderPlanets"; break;
+            case RenderFlags::ShowDwarfPlanets: actionName = "RenderDwarfPlanets"; break;
+            case RenderFlags::ShowMoons: actionName = "RenderMoons"; break;
+            case RenderFlags::ShowMinorMoons: actionName = "RenderMinorMoons"; break;
+            case RenderFlags::ShowAsteroids: actionName = "RenderAsteroids"; break;
+            case RenderFlags::ShowComets: actionName = "RenderComets"; break;
+            case RenderFlags::ShowSpacecrafts: actionName = "RenderSpacecrafts"; break;
+            case RenderFlags::ShowGalaxies: actionName = "RenderGalaxies"; break;
+            case RenderFlags::ShowDiagrams: actionName = "RenderConstellations"; break;
+            case RenderFlags::ShowCloudMaps: actionName = "RenderClouds"; break;
+            case RenderFlags::ShowOrbits: actionName = "RenderOrbits"; break;
+            case RenderFlags::ShowFadingOrbits: actionName = "RenderFadingOrbits"; break;
+            case RenderFlags::ShowCelestialSphere: actionName = "RenderCelestialGrid"; break;
+            case RenderFlags::ShowNightMaps: actionName = "RenderNightLights"; break;
+            case RenderFlags::ShowAtmospheres: actionName = "RenderAtmospheres"; break;
+            case RenderFlags::ShowSmoothLines: actionName = "RenderAA"; break;
+            case RenderFlags::ShowEclipseShadows: actionName = "RenderEclipseShadows"; break;
+            case RenderFlags::ShowPlanetRings: actionName = "RenderPlanetRings"; break;
+            case RenderFlags::ShowRingShadows: actionName = "RenderRingShadows"; break;
+            case RenderFlags::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
+            case RenderFlags::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;
+            case RenderFlags::ShowCometTails: actionName = "RenderCometTails"; break;
+            case RenderFlags::ShowMarkers: actionName = "RenderMarkers"; break;
+            case RenderFlags::ShowNebulae: actionName = "RenderNebulae"; break;
+            case RenderFlags::ShowOpenClusters: actionName = "RenderOpenClusters"; break;
+            case RenderFlags::ShowGlobulars: actionName = "RenderGlobulars"; break;
+            case RenderFlags::ShowGalacticGrid: actionName = "RenderGalacticGrid"; break;
+            case RenderFlags::ShowEclipticGrid: actionName = "RenderEclipticGrid"; break;
+            case RenderFlags::ShowHorizonGrid: actionName = "RenderHorizontalGrid"; break;
             default: actionName = nullptr; break;
         }
 
-        if (actionName != nullptr)
-        {
-            /* Get the action */
-            GtkAction* action = gtk_action_group_get_action(app->agRender, actionName);
+        if (actionName == nullptr)
+            continue;
 
-            /* The current i anded with the renderFlags gives state of flag */
-            gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), (i & rf) != 0);
-        }
+        /* Get the action */
+        GtkAction* action = gtk_action_group_get_action(app->agRender, actionName);
+
+        /* The current i anded with the renderFlags gives state of flag */
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), util::is_set(rf, rfi));
     }
 }
 
@@ -1363,9 +1376,9 @@ resyncStarStyleActions(AppData* app)
 
     switch (app->renderer->getStarStyle())
     {
-        case Renderer::FuzzyPointStars: actionName = "StarsFuzzy"; break;
-        case Renderer::PointStars: actionName = "StarsPoints"; break;
-        case Renderer::ScaledDiscStars: actionName = "StarsDiscs"; break;
+        case StarStyle::FuzzyPointStars: actionName = "StarsFuzzy"; break;
+        case StarStyle::PointStars: actionName = "StarsPoints"; break;
+        case StarStyle::ScaledDiscStars: actionName = "StarsDiscs"; break;
         default: return;
     }
 

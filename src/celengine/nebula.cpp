@@ -78,14 +78,14 @@ Nebula::load(const AssociativeArray* params, const fs::path& resPath, std::strin
     return DeepSkyObject::load(params, resPath, name);
 }
 
-std::uint64_t
+RenderFlags
 Nebula::getRenderMask() const
 {
-    return Renderer::ShowNebulae;
+    return RenderFlags::ShowNebulae;
 }
 
-unsigned int
+RenderLabels
 Nebula::getLabelMask() const
 {
-    return Renderer::NebulaLabels;
+    return RenderLabels::NebulaLabels;
 }

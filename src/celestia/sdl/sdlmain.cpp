@@ -209,7 +209,7 @@ SDL_Application::configure() const
     auto *renderer     = m_appCore->getRenderer();
     const auto *config = m_appCore->getConfig();
 
-    renderer->setRenderFlags(Renderer::DefaultRenderFlags);
+    renderer->setRenderFlags(RenderFlags::DefaultRenderFlags);
     renderer->setShadowMapSize(config->renderDetails.ShadowMapSize);
     renderer->setSolarSystemMaxDistance(config->renderDetails.SolarSystemMaxDistance);
 }

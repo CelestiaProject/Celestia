@@ -102,6 +102,7 @@ set(CELENGINE_SOURCES
   rendcontext.h
   render.cpp
   render.h
+  renderflags.h
   renderglsl.cpp
   renderglsl.h
   renderinfo.h

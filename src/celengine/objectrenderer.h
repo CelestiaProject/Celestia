@@ -13,6 +13,7 @@
 #include <cstdint>
 
 #include "octree.h"
+#include "renderflags.h"
 
 class Observer;
 class Renderer;
@@ -31,8 +32,8 @@ public:
     // Objects brighter than labelThresholdMag will be labeled
     float labelThresholdMag     { 0.0f };
 
-    std::uint64_t renderFlags   { 0 };
-    int labelMode               { 0 };
+    RenderFlags renderFlags     { RenderFlags::ShowNothing };
+    RenderLabels labelMode      { RenderLabels::NoLabels };
 
 protected:
     explicit ObjectRenderer(PREC _distanceLimit) :

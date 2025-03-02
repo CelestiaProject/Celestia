@@ -19,7 +19,8 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/filesystem.h>
-#include <celengine/astroobj.h>
+#include "astroobj.h"
+#include "renderflags.h"
 
 class AssociativeArray;
 class Selection;
@@ -89,8 +90,8 @@ public:
                       double& cosAngleToBoundCenter) const;
     virtual bool load(const AssociativeArray*, const fs::path& resPath, std::string_view name);
 
-    virtual std::uint64_t getRenderMask() const { return 0; }
-    virtual unsigned int getLabelMask() const { return 0; }
+    virtual RenderFlags getRenderMask() const { return RenderFlags::ShowNothing; }
+    virtual RenderLabels getLabelMask() const { return RenderLabels::NoLabels; }
 
     AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
     void setIndex(AstroCatalog::IndexNumber idx) { indexNumber = idx; }

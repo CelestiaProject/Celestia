@@ -18,7 +18,8 @@
 #include <string>
 
 #include <celengine/body.h>
-#include <celengine/render.h>
+#include <celengine/multitexture.h>
+#include <celengine/renderflags.h>
 #include <celengine/starcolors.h>
 
 #include <windows.h>
@@ -37,8 +38,8 @@ struct AppPreferences
     int winHeight{ 600 };
     int winX{ CW_USEDEFAULT };
     int winY{ CW_USEDEFAULT };
-    std::uint64_t renderFlags{ Renderer::DefaultRenderFlags };
-    int labelMode{ 0 };
+    RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
+    RenderLabels labelMode{ RenderLabels::NoLabels };
     std::uint64_t locationFilter{ 0 };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon };
     float visualMagnitude{ 8.0f };
@@ -51,8 +52,8 @@ struct AppPreferences
     int starsColor{ static_cast<int>(ColorTableType::Blackbody_D65) };
     std::uint32_t lastVersion{ 0 };
     std::string altSurfaceName;
-    std::uint32_t textureResolution{ 1 };
-    Renderer::StarStyle starStyle{ Renderer::PointStars };
+    TextureResolution textureResolution{ TextureResolution::medres };
+    StarStyle starStyle{ StarStyle::PointStars };
 #ifndef PORTABLE_BUILD
     bool ignoreOldFavorites{ false };
 #endif

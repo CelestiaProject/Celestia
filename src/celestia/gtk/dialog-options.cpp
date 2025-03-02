@@ -107,7 +107,11 @@ changeDistanceLimit(GtkRange *slider, AppData* app)
 gint
 changeTextureResolution(GtkRange *slider, AppData* app)
 {
-    app->renderer->setResolution((int)gtk_range_get_value(slider));
+    if (auto textureResolution = gtk_range_get_value(slider);
+        textureResolution >= 0 && textureResolution < 3)
+    {
+        app->renderer->setResolution(static_cast<TextureResolution>(textureResolution));
+    }
 
     /* Seeing as this is not a GtkAction, kick off the update function */
     resyncTextureResolutionActions(app);
@@ -232,7 +236,7 @@ dialogViewOptions(AppData* app)
     GtkWidget* textureSlider = gtk_hscale_new_with_range(0, 2, 1);
     gtk_scale_set_value_pos(GTK_SCALE(textureSlider), GTK_POS_BOTTOM);
     gtk_range_set_increments(GTK_RANGE(textureSlider), 1, 1);
-    gtk_range_set_value(GTK_RANGE(textureSlider), app->renderer->getResolution());
+    gtk_range_set_value(GTK_RANGE(textureSlider), static_cast<int>(app->renderer->getResolution()));
     gtk_box_pack_start(GTK_BOX(textureBox), textureSlider, TRUE, TRUE, 0);
     g_signal_connect(G_OBJECT(textureSlider), "value-changed", G_CALLBACK(changeTextureResolution), app);
     g_signal_connect(G_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), nullptr);

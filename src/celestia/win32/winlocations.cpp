@@ -105,8 +105,7 @@ LocationsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         case IDC_LABELFEATURES:
             {
                 Renderer* renderer = dlg->appCore->getRenderer();
-                std::uint32_t labelMode = renderer->getLabelMode();
-                renderer->setLabelMode(labelMode ^ Renderer::LocationLabels);
+                renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::LocationLabels);
                 break;
             }
         case IDOK:
@@ -162,11 +161,12 @@ LocationsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
+template<typename T>
 void
-dlgCheck(HWND hDlg, WORD item, std::uint64_t flags, std::uint64_t f)
+dlgCheck(HWND hDlg, WORD item, T flags, T testFlag)
 {
     SendDlgItemMessage(hDlg, item, BM_SETCHECK,
-                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+                       util::is_set(flags, testFlag) ? BST_CHECKED : BST_UNCHECKED, 0);
 }
 
 } // end unnamed namespace
@@ -189,7 +189,7 @@ void
 LocationsDialog::SetControls(HWND hDlg)
 {
     const Observer* obs = appCore->getSimulation()->getActiveObserver();
-    std::uint64_t locFilter = obs->getLocationFilter();
+    auto locFilter = static_cast<Location::FeatureType>(obs->getLocationFilter());
 
     dlgCheck(hDlg, IDC_SHOW_CITIES,        locFilter, Location::City);
     dlgCheck(hDlg, IDC_SHOW_OBSERVATORIES, locFilter, Location::Observatory);
@@ -202,8 +202,8 @@ LocationsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_SHOW_VOLCANOES,     locFilter, Location::EruptiveCenter);
     dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
 
-    std::uint32_t labelMode = appCore->getRenderer()->getLabelMode();
-    dlgCheck(hDlg, IDC_LABELFEATURES,     labelMode, Renderer::LocationLabels);
+    RenderLabels labelMode = appCore->getRenderer()->getLabelMode();
+    dlgCheck(hDlg, IDC_LABELFEATURES,     labelMode, RenderLabels::LocationLabels);
 
     // Set up feature size slider
     SendDlgItemMessage(hDlg,

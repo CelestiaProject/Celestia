@@ -247,11 +247,11 @@ ParseResult parseSetCommand(const Hash& paramList, const ScriptMaps&)
     {
         // Some values may be specified via strings
         if (compareIgnoringCase(*valstr, "fuzzypoints") == 0)
-            value = static_cast<double>(Renderer::FuzzyPointStars);
+            value = static_cast<double>(StarStyle::FuzzyPointStars);
         else if (compareIgnoringCase(*valstr, "points") == 0)
-            value = static_cast<double>(Renderer::PointStars);
+            value = static_cast<double>(StarStyle::PointStars);
         else if (compareIgnoringCase(*valstr, "scaleddiscs") == 0)
-            value = static_cast<double>(Renderer::ScaledDiscStars);
+            value = static_cast<double>(StarStyle::ScaledDiscStars);
     }
 
     return std::make_unique<CommandSet>(*name, value);
@@ -550,8 +550,8 @@ ParseResult parseSetOrientationCommand(const Hash& paramList, const ScriptMaps&)
 
 ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
 {
-    std::uint64_t setFlags = 0;
-    std::uint64_t clearFlags = 0;
+    RenderFlags setFlags = RenderFlags::ShowNothing;
+    RenderFlags clearFlags = RenderFlags::ShowNothing;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
         setFlags = parseFlags(*s, scriptMaps.RenderFlagMap, "render"sv);
@@ -564,8 +564,8 @@ ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scr
 
 ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
 {
-    int setFlags = 0;
-    int clearFlags = 0;
+    RenderLabels setFlags = RenderLabels::NoLabels;
+    RenderLabels clearFlags = RenderLabels::NoLabels;
 
     if (const std::string* s = paramList.getString("set"); s != nullptr)
         setFlags = parseFlags(*s, scriptMaps.LabelFlagMap, "label"sv);
@@ -646,15 +646,15 @@ ParseResult parseSetGalaxyLightGainCommand(const Hash& paramList, const ScriptMa
 
 ParseResult parseSetTextureResolutionCommand(const Hash& paramList, const ScriptMaps&)
 {
-    unsigned int res = 1;
+    TextureResolution res = TextureResolution::medres;
     if (const std::string* textureRes = paramList.getString("resolution"); textureRes != nullptr)
     {
         if (compareIgnoringCase(*textureRes, "low") == 0)
-            res = 0;
+            res = TextureResolution::lores;
         else if (compareIgnoringCase(*textureRes, "medium") == 0)
-            res = 1;
+            res = TextureResolution::medres;
         else if (compareIgnoringCase(*textureRes, "high") == 0)
-            res = 2;
+            res = TextureResolution::hires;
     }
 
     return std::make_unique<CommandSetTextureResolution>(res);

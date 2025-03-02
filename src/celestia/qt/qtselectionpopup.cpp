@@ -583,7 +583,7 @@ SelectionPopup::slotMark()
                                            1);
 
             // Automatically enable markers
-            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | ::RenderFlags::ShowMarkers);
         }
     }
 }

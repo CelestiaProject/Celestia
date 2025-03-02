@@ -579,11 +579,11 @@ CelestiaAppWindow::writeSettings()
     const Renderer* renderer = m_appCore->getRenderer();
     settings.setValue("RenderFlags", static_cast<quint64>(renderer->getRenderFlags()));
     settings.setValue("OrbitMask", static_cast<int>(renderer->getOrbitMask()));
-    settings.setValue("LabelMode", renderer->getLabelMode());
+    settings.setValue("LabelMode", static_cast<quint32>(renderer->getLabelMode()));
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
-    settings.setValue("StarStyle", renderer->getStarStyle());
-    settings.setValue("TextureResolution", renderer->getResolution());
+    settings.setValue("StarStyle", static_cast<int>(renderer->getStarStyle()));
+    settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 
     Simulation* simulation = m_appCore->getSimulation();
