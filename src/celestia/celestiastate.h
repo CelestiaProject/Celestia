@@ -28,9 +28,9 @@ class CelestiaCore;
  */
 class CelestiaState
 {
- public:
+public:
     CelestiaState() = default;
-    CelestiaState(CelestiaCore* appCore);
+    explicit CelestiaState(CelestiaCore* appCore);
     ~CelestiaState() = default;
     // FIXME
 
@@ -38,7 +38,7 @@ class CelestiaState
     void saveState(std::map<std::string, std::string> &params);
     void captureState();
 
- private:
+private:
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
     ObserverFrame::CoordinateSystem m_coordSys              { ObserverFrame::CoordinateSystem::Universal };

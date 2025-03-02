@@ -22,8 +22,8 @@ CelestiaState::CelestiaState(CelestiaCore* appCore) :
 
 void CelestiaState::captureState()
 {
-    auto *sim = m_appCore->getSimulation();
-    auto *renderer = m_appCore->getRenderer();
+    const Simulation* sim = m_appCore->getSimulation();
+    const Renderer* renderer = m_appCore->getRenderer();
 
     auto frame = sim->getFrame();
 

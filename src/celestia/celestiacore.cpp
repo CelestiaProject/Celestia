@@ -854,8 +854,8 @@ void CelestiaCore::keyDown(int key, int modifiers)
 void CelestiaCore::keyUp(int key, int)
 {
     KeyAccel = 1.0;
-    if (std::islower(key))
-        key = std::toupper(key);
+    if (std::islower(static_cast<unsigned char>(key)))
+        key = std::toupper(static_cast<unsigned char>(key));
     keysPressed[key] = false;
     shiftKeysPressed[key] = false;
 }

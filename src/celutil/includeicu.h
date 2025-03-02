@@ -21,5 +21,6 @@
 #include <unicode/umachine.h>
 #include <unicode/ushape.h>
 #include <unicode/ustring.h>
+#include <unicode/uversion.h>
 #endif
 #endif
