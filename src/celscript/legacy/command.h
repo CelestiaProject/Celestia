@@ -619,7 +619,7 @@ class CommandCapture : public InstantaneousCommand
 class CommandSetTextureResolution : public InstantaneousCommand
 {
  public:
-    CommandSetTextureResolution(TextureResolution);
+    explicit CommandSetTextureResolution(TextureResolution);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;

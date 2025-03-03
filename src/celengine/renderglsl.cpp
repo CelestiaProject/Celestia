@@ -565,15 +565,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
-    if (atmosphere != nullptr)
+    if (atmosphere != nullptr && util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
     {
-        if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
-        {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            // ... but don't show atmospheres when there are no light sources.
-            if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= TexUsage::Scattering;
-        }
+        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+        // ... but don't show atmospheres when there are no light sources.
+        if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
+            shadprop.texUsage |= TexUsage::Scattering;
     }
 
     // Set the shadow information.

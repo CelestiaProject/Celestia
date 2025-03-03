@@ -13,6 +13,7 @@
 
 #include "qtpreferencesdialog.h"
 
+#include <cassert>
 #include <cstdint>
 
 #include <Qt>
@@ -255,6 +256,10 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
         case StarStyle::ScaledDiscStars:
             ui.scaledDiscsButton->setChecked(true);
+
+        default:
+            assert(0);
+            break;
     }
 
     ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
