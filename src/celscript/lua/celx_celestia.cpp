@@ -1015,11 +1015,15 @@ static int celestia_setfaintestvisible(lua_State* l)
 static int celestia_getfaintestvisible(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
-    CelestiaCore* appCore = this_celestia(l);
-    if (util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
+    if (const CelestiaCore* appCore = this_celestia(l);
+        util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
+    {
         lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
+    }
     else
+    {
         lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
+    }
     return 1;
 }
 
