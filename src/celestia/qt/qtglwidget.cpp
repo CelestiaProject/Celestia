@@ -143,10 +143,19 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setLabelMode(static_cast<RenderLabels>(settings.value("LabelMode", DEFAULT_LABEL_MODE).toUInt()));
     appRenderer->setAmbientLightLevel(static_cast<float>(settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble()));
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
-    appRenderer->setStarStyle(static_cast<StarStyle>(settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt()));
-    appRenderer->setResolution(static_cast<TextureResolution>(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt()));
+    auto starStyle = settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt();
+    if (starStyle < 0 || starStyle >= static_cast<int>(StarStyle::StarStyleCount))
+        starStyle = DEFAULT_STAR_STYLE;
+    appRenderer->setStarStyle(static_cast<StarStyle>(starStyle));
+    auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
+    if (textureResolution < 0 || textureResolution > static_cast<int>(TextureResolution::hires))
+        textureResolution = DEFAULT_TEXTURE_RESOLUTION;
+    appRenderer->setResolution(static_cast<TextureResolution>(textureResolution));
 
-    appRenderer->setStarColorTable(static_cast<ColorTableType>(settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt()));
+    auto colorTableType = settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt();
+    if (colorTableType < 0 || colorTableType > static_cast<int>(ColorTableType::VegaWhite))
+        colorTableType = DEFAULT_STARS_COLOR;
+    appRenderer->setStarColorTable(static_cast<ColorTableType>(colorTableType));
 
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(settings.value("LocationFilter", static_cast<quint64>(Observer::DefaultLocationFilter)).toULongLong());
 
