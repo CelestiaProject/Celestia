@@ -85,7 +85,7 @@ bool init(util::array_view<std::string> ignore) noexcept
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     if (!has_extension("GL_ARB_framebuffer_object"))
     {
-        fmt::print(_("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
+        fmt::print("{}", _("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
         return false;
     }
 #endif

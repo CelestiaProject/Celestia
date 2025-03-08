@@ -1222,7 +1222,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (v.norm() >= 86400.0_c)
             {
                 // Light travel time in years, if >= 1day
-                buf = fmt::format(loc, _("Light travel time:  {:.4f} yr"),
+                buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {:.4f} yr")),
                                   astro::kilometersToLightYears(v.norm()));
             }
             else
@@ -1231,12 +1231,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 getLightTravelDelay(v.norm(), hours, mins, secs);
                 if (hours == 0)
                 {
-                    buf = fmt::format(loc, _("Light travel time:  {} min  {:.1f} s"),
+                    buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {} min  {:.1f} s")),
                                       mins, secs);
                 }
                 else
                 {
-                    buf = fmt::format(loc, _("Light travel time:  {} h  {} min  {:.1f} s"),
+                    buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {} h  {} min  {:.1f} s")),
                                       hours, mins, secs);
                 }
             }
@@ -1390,7 +1390,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() / CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
-            auto buf = fmt::format(loc, _("Time rate: {:.6g}"), sim->getTimeScale()); // XXX %'.12g
+            auto buf = fmt::format(loc, fmt::runtime(_("Time rate: {:.6g}")), sim->getTimeScale()); // XXX %'.12g
             flash(buf);
         }
         break;
@@ -1403,7 +1403,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() * CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
-            auto buf = fmt::format(loc, _("Time rate: {:.6g}"), sim->getTimeScale());
+            auto buf = fmt::format(loc, fmt::runtime(_("Time rate: {:.6g}")), sim->getTimeScale());
             flash(buf);
         }
         break;
@@ -1525,7 +1525,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 setFaintest(sim->getFaintestVisible() - 0.2f);
                 notifyWatchers(FaintestChanged);
-                auto buf = fmt::format(loc, _("Magnitude limit: {:.2f}"), sim->getFaintestVisible());
+                auto buf = fmt::format(loc, fmt::runtime(_("Magnitude limit: {:.2f}")), sim->getFaintestVisible());
                 flash(buf);
             }
         }
@@ -1533,7 +1533,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
             setFaintestAutoMag();
-            auto buf = fmt::format(loc, _("Auto magnitude limit at 45 degrees:  {:.2f}"), renderer->getFaintestAM45deg());
+            auto buf = fmt::format(loc, fmt::runtime(_("Auto magnitude limit at 45 degrees:  {:.2f}")), renderer->getFaintestAM45deg());
             flash(buf);
         }
         break;
@@ -1550,7 +1550,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 setFaintest(sim->getFaintestVisible() + 0.2f);
                 notifyWatchers(FaintestChanged);
-                auto buf = fmt::format(loc, _("Magnitude limit: {:.2f}"), sim->getFaintestVisible());
+                auto buf = fmt::format(loc, fmt::runtime(_("Magnitude limit: {:.2f}")), sim->getFaintestVisible());
                 flash(buf);
             }
         }
@@ -1558,7 +1558,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
             setFaintestAutoMag();
-            auto buf = fmt::format(loc, _("Auto magnitude limit at 45 degrees:  {:.2f}"), renderer->getFaintestAM45deg());
+            auto buf = fmt::format(loc, fmt::runtime(_("Auto magnitude limit at 45 degrees:  {:.2f}")), renderer->getFaintestAM45deg());
             flash(buf);
         }
         break;
@@ -1574,7 +1574,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(0.0f);
             notifyWatchers(AmbientLightChanged);
-            auto buf = fmt::format(loc, _("Ambient light level:  {:.2f}"), renderer->getAmbientLightLevel());
+            auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
         break;
@@ -1586,7 +1586,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(1.0f);
             notifyWatchers(AmbientLightChanged);
-            auto buf = fmt::format(loc, _("Ambient light level:  {:.2f}"), renderer->getAmbientLightLevel());
+            auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
         break;
@@ -1594,7 +1594,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '(':
         {
             Galaxy::decreaseLightGain();
-            auto buf = fmt::format(loc, _("Light gain: {:3.0f} %"), Galaxy::getLightGain() * 100.0f);
+            auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -1603,7 +1603,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case ')':
         {
             Galaxy::increaseLightGain();
-            auto buf = fmt::format(loc, _("Light gain: {:3.0f} %"), Galaxy::getLightGain() * 100.0f);
+            auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -2289,7 +2289,7 @@ void CelestiaCore::updateFOV(float newFOV, const std::optional<Eigen::Vector2f> 
     if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         setFaintestAutoMag();
-        auto buf = fmt::format(loc, _("Magnitude limit: {:.2f}"), sim->getFaintestVisible());
+        auto buf = fmt::format(loc, fmt::runtime(_("Magnitude limit: {:.2f}")), sim->getFaintestVisible());
         flash(buf);
     }
 }

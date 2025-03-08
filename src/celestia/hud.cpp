@@ -176,7 +176,7 @@ displayRotationPeriod(const util::NumberFormatter& formatter, Overlay& overlay, 
         unitStr = _("seconds");
     }
 
-    overlay.print(_("Rotation period: {} {}\n"), formatter.format(unitValue, 3), unitStr);
+    overlay.print(fmt::runtime(_("Rotation period: {} {}\n")), formatter.format(unitValue, 3), unitStr);
 }
 
 void
@@ -185,17 +185,17 @@ displayMass(const util::NumberFormatter& formatter, Overlay& overlay, float mass
     if (mass < 0.001f)
     {
         if (measurement == MeasurementSystem::Imperial)
-            overlay.print(_("Mass: {} lb\n"),
+            overlay.print(fmt::runtime(_("Mass: {} lb\n")),
                           formatter.format(mass * astro::EarthMass / static_cast<float>(OneLbInKg), 4, SigDigitNum));
         else
-            overlay.print(_("Mass: {} kg\n"),
+            overlay.print(fmt::runtime(_("Mass: {} kg\n")),
                           formatter.format(mass * astro::EarthMass, 4, SigDigitNum));
     }
     else if (mass > 50.0f)
-        overlay.print(_("Mass: {} Mj\n"),
+        overlay.print(fmt::runtime(_("Mass: {} Mj\n")),
                       formatter.format(mass * astro::EarthMass / astro::JupiterMass, 4, SigDigitNum));
     else
-        overlay.print(_("Mass: {} Me\n"),
+        overlay.print(fmt::runtime(_("Mass: {} Me\n")),
                       formatter.format(mass, 4, SigDigitNum));
 }
 
@@ -246,7 +246,7 @@ displaySpeed(const util::NumberFormatter& formatter, Overlay& overlay, float spe
             unitStr = _("m/s");
         }
     }
-    overlay.print(_("Speed: {} {}\n"), formatter.format(unitValue, 3, SigDigitNum), unitStr);
+    overlay.print(fmt::runtime(_("Speed: {} {}\n")), formatter.format(unitValue, 3, SigDigitNum), unitStr);
 }
 
 // Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
@@ -296,7 +296,7 @@ displayDeclination(Overlay& overlay, double angle, const std::locale& loc)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay.print(loc, _("Dec: {:+d}° {:02d}′ {:.1f}″\n"),
+    overlay.print(loc, fmt::runtime(_("Dec: {:+d}° {:02d}′ {:.1f}″\n")),
                   std::abs(degrees), std::abs(minutes), std::abs(seconds));
 }
 
@@ -308,7 +308,7 @@ displayRightAscension(Overlay& overlay, double angle, const std::locale& loc)
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    overlay.print(loc, _("RA: {}h {:02}m {:.1f}s\n"),
+    overlay.print(loc, fmt::runtime(_("RA: {}h {:02}m {:.1f}s\n")),
                   hours, std::abs(minutes), std::abs(seconds));
 }
 
@@ -321,11 +321,11 @@ displayApparentMagnitude(Overlay& overlay,
     if (distance > 32.6167)
     {
         float appMag = astro::absToAppMag(absMag, static_cast<float>(distance));
-        overlay.print(loc, _("Apparent magnitude: {:.1f}\n"), appMag);
+        overlay.print(loc, fmt::runtime(_("Apparent magnitude: {:.1f}\n")), appMag);
     }
     else
     {
-        overlay.print(loc, _("Absolute magnitude: {:.1f}\n"), absMag);
+        overlay.print(loc, fmt::runtime(_("Absolute magnitude: {:.1f}\n")), absMag);
     }
 }
 
@@ -404,7 +404,7 @@ displayPlanetocentricCoords(const util::NumberFormatter& formatter,
         lat = std::abs(math::radToDeg(latitude));
     }
 
-    overlay.print(loc, _("{:.6f}{} {:.6f}{} {}"),
+    overlay.print(loc, fmt::runtime(_("{:.6f}{} {:.6f}{} {}")),
                   lat, nsHemi, lon, ewHemi,
                   DistanceKmToStr(formatter, altitude, 5, measurement));
 }
@@ -428,12 +428,13 @@ displayStarInfo(const util::NumberFormatter& formatter,
     }
     else
     {
-        overlay.print(loc, _("Abs (app) mag: {:.2f} ({:.2f})\n"),
+        overlay.print(loc, fmt::runtime(_("Abs (app) mag: {:.2f} ({:.2f})\n")),
                       star.getAbsoluteMagnitude(),
                       star.getApparentMagnitude(float(distance)));
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay.print(loc, _("Luminosity: {}x Sun\n"), formatter.format(star.getLuminosity(), 3, SigDigitNum));
+            overlay.print(loc, fmt::runtime(_("Luminosity: {}x Sun\n")),
+                          formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -459,13 +460,13 @@ displayStarInfo(const util::NumberFormatter& formatter,
 
             if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
-                overlay.print(_("Radius: {} Rsun ({})\n"),
+                overlay.print(fmt::runtime(_("Radius: {} Rsun ({})\n")),
                               formatter.format(star.getRadius() / 696000.0f, 2, SigDigitNum),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
             else
             {
-                overlay.print(_("Radius: {}\n"),
+                overlay.print(fmt::runtime(_("Radius: {}\n")),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
 
@@ -544,17 +545,20 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         {
             if (semiAxes.x() == semiAxes.y())
             {
-                overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+                overlay.print(fmt::runtime(_("Radius: {}\n")),
+                              DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
             }
             else
             {
-                overlay.print(_("Equatorial radius: {}\n"), DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
-                overlay.print(_("Polar radius: {}\n"), DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+                overlay.print(fmt::runtime(_("Equatorial radius: {}\n")),
+                              DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
+                overlay.print(fmt::runtime(_("Polar radius: {}\n")),
+                              DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
             }
         }
         else
         {
-            overlay.print(_("Radii: {} × {} × {}\n"),
+            overlay.print(fmt::runtime(_("Radii: {} × {} × {}\n")),
                           DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
                           DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
                           DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
@@ -562,7 +566,8 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     }
     else
     {
-        overlay.print(_("Radius: {}\n"), DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+        overlay.print(fmt::runtime(_("Radius: {}\n")),
+                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
     }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
@@ -608,7 +613,7 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
             sunVec.normalize();
             double cosPhaseAngle = std::clamp(sunVec.dot(viewVec.normalized()), -1.0, 1.0);
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.print(loc, _("Phase angle: {:.1f}°\n"), math::radToDeg(phaseAngle));
+            overlay.print(loc, fmt::runtime(_("Phase angle: {:.1f}°\n")), math::radToDeg(phaseAngle));
         }
     }
 
@@ -624,12 +629,13 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         {
             if (hudSettings.measurementSystem == MeasurementSystem::Imperial)
             {
-                overlay.print(_("Density: {} lb/ft³\n"),
+                overlay.print(fmt::runtime(_("Density: {} lb/ft³\n")),
                               formatter.format(density / static_cast<float>(OneLbPerFt3InKgPerM3), 4, SigDigitNum));
             }
             else
             {
-                overlay.print(_("Density: {} kg/m³\n"), formatter.format(density, 4, SigDigitNum));
+                overlay.print(fmt::runtime(_("Density: {} kg/m³\n")),
+                              formatter.format(density, 4, SigDigitNum));
             }
         }
 
@@ -916,7 +922,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->beginText();
         m_overlay->print("\n");
         if (m_hudSettings.showFPSCounter)
-            m_overlay->print(loc, _("FPS: {:.1f}\n"), timeInfo.fps);
+            m_overlay->print(loc, fmt::runtime(_("FPS: {:.1f}\n")), timeInfo.fps);
         else
             m_overlay->print("\n");
 
@@ -1009,11 +1015,11 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
     }
     else if (std::abs(sim->getTimeScale()) > 1.0)
     {
-        m_overlay->print(loc, _("{:.6g} x faster"), sim->getTimeScale()); // XXX: %'.12g
+        m_overlay->print(loc, fmt::runtime(_("{:.6g} x faster")), sim->getTimeScale()); // XXX: %'.12g
     }
     else
     {
-        m_overlay->print(loc, _("{:.6g} x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
+        m_overlay->print(loc, fmt::runtime(_("{:.6g} x slower")), 1.0 / sim->getTimeScale()); // XXX: %'.12g
     }
 
     if (sim->getPauseState() == true)
@@ -1041,7 +1047,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     {
         double timeLeft = sim->getArrivalTime() - sim->getRealTime();
         if (timeLeft >= 1)
-            m_overlay->print(_("Travelling ({})\n"), m_numberFormatter->format(timeLeft, 0));
+            m_overlay->print(fmt::runtime(_("Travelling ({})\n")), m_numberFormatter->format(timeLeft, 0));
         else
             m_overlay->print(_("Travelling\n"));
     }
@@ -1089,7 +1095,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
     float fov = math::radToDeg(activeObserver->getFOV());
-    m_overlay->print(loc, _("FOV: {} ({:.2f}x)\n"), angleToStr(fov, loc), activeObserver->getZoom());
+    m_overlay->print(loc, fmt::runtime(_("FOV: {} ({:.2f}x)\n")), angleToStr(fov, loc), activeObserver->getZoom());
     m_overlay->endText();
     m_overlay->restorePos();
 }
@@ -1262,7 +1268,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     m_overlay->moveBy(static_cast<float>((metrics.width - movieWidth) / 2),
                       static_cast<float>((metrics.height + movieHeight) / 2 + 2));
     m_overlay->beginText();
-    m_overlay->print(loc, _("{}x{} at {:.2f} fps  {}"),
+    m_overlay->print(loc, fmt::runtime(_("{}x{} at {:.2f} fps  {}")),
                      movieWidth, movieHeight,
                      movieCapture.getFrameRate(),
                      movieCapture.recordingStatus() ? _("Recording") : _("Paused"));

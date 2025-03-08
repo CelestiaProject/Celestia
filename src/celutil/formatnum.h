@@ -105,7 +105,7 @@ FormattedFloat<T>::format(fmt::format_context& ctx) const
         return m_formatter->format_sigfigs(ctx.out(), buffer, m_format);
     }
 
-    format_to(std::back_inserter(buffer), "{:.{}f}", m_value, m_precision);
+    fmt::format_to(std::back_inserter(buffer), "{:.{}f}", m_value, m_precision);
     return m_formatter->format_fixed(ctx.out(),
                                      std::string_view{ buffer.data(), buffer.size() },
                                      m_format);

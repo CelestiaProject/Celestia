@@ -13,16 +13,18 @@
 
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include "galaxy.h"
 #include "galaxyform.h"
-#include "hash.h"
 #include "render.h"
 
 using namespace std::string_view_literals;
 
-using celestia::engine::GalacticFormManager;
 namespace math = celestia::math;
+namespace util = celestia::util;
+
+using celestia::engine::GalacticFormManager;
 
 struct GalaxyTypeName
 {
@@ -133,7 +135,7 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
+bool Galaxy::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 

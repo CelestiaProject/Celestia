@@ -17,6 +17,8 @@
 #include <optional>
 #include <string_view>
 
+namespace celestia::util
+{
 
 class TokenizerImpl;
 
@@ -62,3 +64,5 @@ private:
     TokenType tokenType{ TokenType::TokenBegin };
     bool isPushedBack{ false };
 };
+
+} // end namespace celestia::util

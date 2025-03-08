@@ -26,6 +26,9 @@
 
 using namespace std::string_view_literals;
 
+namespace celestia::util
+{
+
 namespace
 {
 constexpr inline std::string_view UTF8_BOM = "\357\273\277"sv;
@@ -62,7 +65,6 @@ isSign(char ch)
     return ch == '+' || ch == '-';
 }
 
-
 enum class NumberPart
 {
     Initial,
@@ -72,14 +74,12 @@ enum class NumberPart
     Error,
 };
 
-
 struct NumberState
 {
     std::size_t endPosition{ 0 };
     NumberPart part{ NumberPart::Initial };
     bool isInteger{ true };
 };
-
 
 struct StringState
 {
@@ -90,7 +90,6 @@ struct StringState
 
     bool checkUTF8(char, std::string_view);
 };
-
 
 bool
 StringState::checkUTF8(char c, std::string_view run)
@@ -106,7 +105,8 @@ StringState::checkUTF8(char c, std::string_view run)
         {
             --pos;
             auto uch = static_cast<unsigned char>(run[pos]);
-            if (uch >= 0xc0) { break; }
+            if (uch >= 0xc0)
+                break;
         }
 
         run = run.substr(0, pos);
@@ -119,7 +119,6 @@ StringState::checkUTF8(char c, std::string_view run)
     return false;
 }
 
-
 struct VisitorStringView
 {
     std::optional<std::string_view> operator()(std::monostate) const { return std::nullopt; }
@@ -129,7 +128,6 @@ struct VisitorStringView
     std::optional<std::string_view> operator()(const std::string& s) const { return s; }
 };
 
-
 struct VisitorDouble
 {
     std::optional<double> operator()(std::monostate) const { return std::nullopt; }
@@ -138,7 +136,6 @@ struct VisitorDouble
     std::optional<double> operator()(std::string_view) const { return std::nullopt; }
     std::optional<double> operator()(const std::string&) const { return std::nullopt; }
 };
-
 
 struct VisitorInteger
 {
@@ -150,7 +147,6 @@ struct VisitorInteger
 };
 
 } // end unnamed namespace
-
 
 class TokenizerImpl
 {
@@ -201,12 +197,10 @@ private:
     std::optional<char> peekAt(std::size_t&);
 };
 
-
 TokenizerImpl::TokenizerImpl(std::istream* _in, std::size_t _bufferSize)
     : in(_in),
       buffer(_bufferSize)
 {}
-
 
 Tokenizer::TokenType
 TokenizerImpl::nextToken()
@@ -214,7 +208,8 @@ TokenizerImpl::nextToken()
     tokenValue.emplace<std::monostate>();
 
     // skip UTF8 BOM
-    if (isAtStart && !skipUTF8Bom()) { return Tokenizer::TokenError; }
+    if (isAtStart && !skipUTF8Bom())
+        return Tokenizer::TokenError;
 
     auto wsResult = skipWhitespace();
     return std::visit([this](auto& arg)
@@ -232,7 +227,6 @@ TokenizerImpl::nextToken()
     }, wsResult);
 }
 
-
 std::variant<char, Tokenizer::TokenType>
 TokenizerImpl::skipWhitespace()
 {
@@ -244,8 +238,10 @@ TokenizerImpl::skipWhitespace()
         position = it - buffer.cbegin();
         if (it == bufferEnd)
         {
-            if (isEnded) { return Tokenizer::TokenEnd; }
-            if (!fillBuffer()) { return Tokenizer::TokenError; }
+            if (isEnded)
+                return Tokenizer::TokenEnd;
+            if (!fillBuffer())
+                return Tokenizer::TokenError;
             continue;
         }
 
@@ -257,9 +253,8 @@ TokenizerImpl::skipWhitespace()
             continue;
         }
 
-        if (*it != '#') {
+        if (*it != '#')
             return *it;
-        }
 
         // skip comments
         for (;;)
@@ -273,13 +268,14 @@ TokenizerImpl::skipWhitespace()
                 break;
             }
 
-            if (isEnded) { return Tokenizer::TokenEnd; }
-            if (!fillBuffer()) { return Tokenizer::TokenError; }
+            if (isEnded)
+                return Tokenizer::TokenEnd;
+            if (!fillBuffer())
+                return Tokenizer::TokenError;
             bufferEnd = buffer.cbegin() + length;
         }
     }
 }
-
 
 Tokenizer::TokenType
 TokenizerImpl::readToken(char ch)
@@ -323,33 +319,27 @@ TokenizerImpl::readToken(char ch)
 
     default:
         if (ch == '-' || ch == '+' || ch == '.' || isAsciiDigit(ch))
-        {
             return readNumber() ? Tokenizer::TokenNumber : Tokenizer::TokenError;
-        }
         if (isStartName(ch))
-        {
             return readName() ? Tokenizer::TokenName : Tokenizer::TokenError;
-        }
 
         ++position;
         return Tokenizer::TokenError;
     }
 }
 
-
 bool
 TokenizerImpl::skipUTF8Bom()
 {
-    if (!fillBuffer()) { return false; }
+    if (!fillBuffer())
+        return false;
+
     isAtStart = false;
     if (length >= UTF8_BOM.size() && std::string_view(buffer.data(), UTF8_BOM.size()) == UTF8_BOM)
-    {
         position += UTF8_BOM.size();
-    }
 
     return true;
 }
-
 
 bool
 TokenizerImpl::readName()
@@ -375,15 +365,12 @@ TokenizerImpl::readName()
     return true;
 }
 
-
 bool
 TokenizerImpl::readNumber()
 {
     NumberState state = createNumberState();
     if (state.part == NumberPart::Error)
-    {
         return false;
-    }
 
     while (state.part != NumberPart::End)
     {
@@ -428,7 +415,6 @@ TokenizerImpl::readNumber()
     return setNumber(state);
 }
 
-
 NumberState
 TokenizerImpl::createNumberState()
 {
@@ -470,7 +456,6 @@ TokenizerImpl::createNumberState()
     return state;
 }
 
-
 void
 TokenizerImpl::parseDecimal(NumberState& numberState)
 {
@@ -485,7 +470,6 @@ TokenizerImpl::parseDecimal(NumberState& numberState)
         numberState.part = NumberPart::End;
     }
 }
-
 
 void
 TokenizerImpl::parseExponent(NumberState& numberState)
@@ -522,14 +506,14 @@ TokenizerImpl::parseExponent(NumberState& numberState)
     }
 }
 
-
 bool
 TokenizerImpl::setNumber(const NumberState& numberState)
 {
     using celestia::compat::from_chars;
 
     const char* startPtr = buffer.data() + position;
-    if (*startPtr == '+') { ++startPtr; }
+    if (*startPtr == '+')
+        ++startPtr;
 
     const char* endPtr = buffer.data() + numberState.endPosition;
     position = numberState.endPosition;
@@ -559,7 +543,6 @@ TokenizerImpl::setNumber(const NumberState& numberState)
     return false;
 }
 
-
 bool
 TokenizerImpl::readString()
 {
@@ -581,9 +564,12 @@ TokenizerImpl::readString()
         std::string_view run(buffer.data() + position + state.runStart,
                              state.runEnd - state.runStart);
 
-        if (!state.checkUTF8(ch, run) && ch != '"') { continue; }
-        if (ch == '"') { break; }
-        if (!parseChar(state, ch, run)) { return false;}
+        if (!state.checkUTF8(ch, run) && ch != '"')
+            continue;
+        if (ch == '"')
+            break;
+        if (!parseChar(state, ch, run))
+            return false;
     }
 
     const char* startPtr = buffer.data() + position;
@@ -601,7 +587,6 @@ TokenizerImpl::readString()
     return true;
 }
 
-
 bool
 TokenizerImpl::parseChar(StringState& state, char ch, std::string_view run)
 {
@@ -618,9 +603,7 @@ TokenizerImpl::parseChar(StringState& state, char ch, std::string_view run)
             state.processed.append(run);
             std::size_t peekPos = position + state.runEnd + 1;
             if (auto check = peekAt(peekPos); check.has_value())
-            {
                 return parseEscape(state, *check);
-            }
 
             position = peekPos;
             return false;
@@ -637,7 +620,6 @@ TokenizerImpl::parseChar(StringState& state, char ch, std::string_view run)
 
     return true;
 }
-
 
 bool
 TokenizerImpl::parseEscape(StringState& state, char ch)
@@ -699,60 +681,50 @@ TokenizerImpl::parseEscape(StringState& state, char ch)
     return true;
 }
 
-
 bool
 TokenizerImpl::fillBuffer(std::size_t* alterOffset)
 {
     // If we've hit EOF or we've got an overlong token then exit
-    if (position == 0 && length > 0) { return false; }
+    if (position == 0 && length > 0)
+        return false;
 
     assert(position <= length);
 
     std::size_t unprocessed = length - position;
     // Move any unprocessed elements to the front of the buffer
     if (unprocessed > 0)
-    {
         std::memmove(buffer.data(), buffer.data() + position, unprocessed);
-    }
 
     if (alterOffset)
-    {
         *alterOffset -= position;
-    }
 
     in->read(buffer.data() + unprocessed, buffer.size() - unprocessed);
     if (in->bad())
-    {
         return false;
-    }
 
     if (in->eof())
-    {
         isEnded = true;
-    }
 
     position = 0;
     length = unprocessed + static_cast<std::size_t>(in->gcount());
     return true;
 }
 
-
 std::optional<char>
 TokenizerImpl::peekAt(std::size_t& offset)
 {
-    if (offset < length) { return buffer[offset]; }
-    if (isEnded || !fillBuffer(&offset) || offset >= length) { return std::nullopt; }
+    if (offset < length)
+        return buffer[offset];
+    if (isEnded || !fillBuffer(&offset) || offset >= length)
+        return std::nullopt;
     return buffer[offset];
 }
-
 
 Tokenizer::Tokenizer(std::istream* _in, std::size_t buffer_size)
     : impl(std::make_unique<TokenizerImpl>(_in, buffer_size))
 {}
 
-
 Tokenizer::~Tokenizer() = default;
-
 
 void
 Tokenizer::pushBack()
@@ -760,22 +732,16 @@ Tokenizer::pushBack()
     isPushedBack = true;
 }
 
-
 Tokenizer::TokenType
 Tokenizer::nextToken()
 {
     if (isPushedBack)
-    {
         isPushedBack = false;
-    }
     else
-    {
         tokenType = impl->nextToken();
-    }
 
     return tokenType;
 }
-
 
 Tokenizer::TokenType
 Tokenizer::getTokenType() const
@@ -783,21 +749,21 @@ Tokenizer::getTokenType() const
     return tokenType;
 }
 
-
 std::optional<std::string_view>
 Tokenizer::getNameValue() const
 {
-    if (tokenType != TokenType::TokenName) { return std::nullopt; }
+    if (tokenType != TokenType::TokenName)
+        return std::nullopt;
     return std::visit(VisitorStringView(), impl->getTokenValue());
 }
 
 std::optional<std::string_view>
 Tokenizer::getStringValue() const
 {
-    if (tokenType != TokenType::TokenString) { return std::nullopt; }
+    if (tokenType != TokenType::TokenString)
+        return std::nullopt;
     return std::visit(VisitorStringView(), impl->getTokenValue());
 }
-
 
 std::optional<double>
 Tokenizer::getNumberValue() const
@@ -805,13 +771,11 @@ Tokenizer::getNumberValue() const
     return std::visit(VisitorDouble(), impl->getTokenValue());
 }
 
-
 std::optional<std::int32_t>
 Tokenizer::getIntegerValue() const
 {
     return std::visit(VisitorInteger(), impl->getTokenValue());
 }
-
 
 int
 Tokenizer::getLineNumber() const
@@ -819,4 +783,4 @@ Tokenizer::getLineNumber() const
     return impl->getLineNumber();
 }
 
-
+} // end namespace celestia::util
