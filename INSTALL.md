@@ -178,70 +178,94 @@ in /usr/local/share/celestia, but you may specify a new location with the
 following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 
-## Celestia Install instructions for Windows (MSVC)
+## Celestia Install instructions for Windows (Visual Studio Code)
 
-Currently to build on Windows you need Visual Studio 2015 or later, CMake
-and vcpkg (*).
+You will need the following
 
-Install required packages:
+* Visual Studio Code
+* Visual Studio Build Tools 2022 (or Visual Studio 2022 with C++ build tools)
+* CMake (3.19 or later)s
+* vcpkg with the following extensions:
+  - C/C++
+  - CMake Tools
 
-```
-vcpkg --triplet=TRIPLET install --recurse boost-container boost-smart-ptr libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
-```
+Use vcpkg to install the following packages:
 
-Install optional packages:
+* boost-container
+* boost-smart-ptr
+* eigen3
+* fmt
+* freetype
+* gettext\[tools\]
+* gperf
+* libepoxy
+* libjpeg-turbo
+* libpng
+* luajit
 
-```
-vcpkg --triplet=TRIPLET install --recurse qt5-base ffmpeg[x264] cspice libavif
-```
+Optional packages:
 
-Replace TRIPLET with `x86-windows` to build 32-bit versions or `x64-windows`
-for 64-bit versions.
+* cspice
+* ffmpeg\[x264\]
+* icu
+* libavif
+* meshoptimizer
+* qtbase
 
-Instead of `luajit` `lua` can be used.
+In Visual Studio Code, create the workspace settings file at
+.vscode\settings.json and add the following sections:
 
-Use `vcpkg list` to ensure that all packages have actually been installed.
-If not, try installing them one at a time.
-
-Configure and build 32-bit version:
-
-```
-md build32
-cd build32
-cmake -DCMAKE_GENERATOR_PLATFORM=Win32 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows ..
-cmake --build . --  /maxcpucount:N /nologo
-```
-
-Configure and build 64-bit version:
-
-```
-md build64
-cd build64
-cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows ..
-cmake --build . --  /maxcpucount:N /nologo
-```
-
-Instead of N in /maxcpucount pass the number of CPU cores you want to use during
-the build.
-
-This example assumes that `vcpkg` is installed into `c:/tools/vcpkg`. Update
-the path to `vcpkg.cmake` according to your installation.
-
-If you have Qt5 installed using official Qt installer, then pass parameter
-CMAKE_PREFIX_PATH to cmake call used to configure Celestia, e.g.
-
-```
-cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.10.1\msvc2015 ..
+```json
+{
+  "cmake.configureSettings": {
+    "CMAKE_TOOLCHAIN_FILE": "<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake",
+    "ENABLE_QT6": false,
+    "ENABLE_WIN": true,
+    "USE_ICU": true,
+    "USE_WIN_ICU": true
+  }
+}
 ```
 
-Not supported yet:
-- automatic installation using cmake
-- using Ninja instead of MSBuild
+Replace the `<path_to_vcpkg>` in the `CMAKE_TOOLCHAIN_FILE` variable with the
+path to your installation of vcpkg.
 
-Notes:
- * vcpkg installation instructions are located on
-   https://github.com/Microsoft/vcpkg
+If you want to build the Qt6 front-end instead of the Windows front-end, you
+have the choice of installing the pre-compiled libraries from the Qt installer
+or building them yourself by installing from vcpkg. To build the front-end,
+set `ENABLE_QT6` to `true` and `ENABLE_WIN` to `false`. If you have installed
+the pre-compiled Qt libraries from the Qt installer, you need to add the
+`Qt6_DIR` key to the `cmake.configureSettings` section to
+`<path_to_qt>/msvc2022_64/lib/cmake/Qt6`.
 
+On versions of Windows older than Windows 10 1903, you will need to set
+`USE_WIN_ICU` to `false`. You will then need to either switch off ICU support
+by setting `USE_ICU` to `false`, or install it via vcpkg.
+
+Optional features (see below) can be enabled by adding additional keys to
+the `cmake.configureSettings` section. These will also require installing the
+corresponding packages from vcpkg.
+
+For faster build times, it is also possible to specify the Ninja generator and
+a number of parallel builds:
+
+```jsonc
+{
+  "cmake.configureSettings": {
+    // ...
+  },
+  "cmake.generator": "Ninja",
+  "cmake.parallelJobs": 10
+}
+```
+
+Select a number of parallel jobs less than or equal to the number of CPU cores
+you have available.
+
+The build can then be triggered by using the CMake (build) command from the
+command palette (CTRL+P). The first time you do this, it will ask you to
+select which compiler to use, choose the entry that corresponds to the
+processor architecture of your computer.
 
 ## Celestia Install instructions for Windows (MINGW64), qt-only
 
@@ -363,7 +387,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_QT5           | bool | OFF       | Build Qt5 frontend
 | ENABLE_QT6           | bool | OFF       | Build Qt6 frontend
 | ENABLE_SDL           | bool | OFF       | Build SDL frontend
-| ENABLE_WIN           | bool | \*\*\*ON  | Build Windows native frontend
+| ENABLE_WIN           | bool | \*\*\*OFF | Build Windows native frontend
 | ENABLE_FFMPEG        | bool | OFF       | Support video capture using ffmpeg
 | ENABLE_LIBAVIF       | bool | OFF       | Support AVIF texture using libavif
 | ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
