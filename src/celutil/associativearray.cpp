@@ -8,22 +8,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celastro/units.h>
+#include "associativearray.h"
+
 #include <celmath/mathlib.h>
-#include <celutil/color.h>
-#include <celutil/fsutils.h>
-#include "hash.h"
-#include "value.h"
+#include "color.h"
+#include "fsutils.h"
 
-namespace astro = celestia::astro;
-namespace math = celestia::math;
-namespace util = celestia::util;
+namespace celestia::util
+{
 
-// Define these here: at declaration the vector member contains an incomplete type
-AssociativeArray::~AssociativeArray() = default;
-
-
-const Value* AssociativeArray::getValue(std::string_view key) const
+const Value*
+AssociativeArray::getValue(std::string_view key) const
 {
     auto iter = assoc.find(key);
     if (iter == assoc.end())
@@ -32,50 +27,53 @@ const Value* AssociativeArray::getValue(std::string_view key) const
     return &values[iter->second];
 }
 
-
-void AssociativeArray::addValue(std::string&& key, Value&& val)
+void
+AssociativeArray::addValue(std::string&& key, Value&& val)
 {
     std::size_t index = values.size();
     if (assoc.try_emplace(std::move(key), index).second)
         values.emplace_back(std::move(val));
 }
 
-
-std::optional<double> AssociativeArray::getNumberImpl(std::string_view key) const
+std::optional<double>
+AssociativeArray::getNumberImpl(std::string_view key) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     return v->getNumber();
 }
 
-
-const std::string* AssociativeArray::getString(std::string_view key) const
+const std::string*
+AssociativeArray::getString(std::string_view key) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return nullptr; }
+    if (v == nullptr)
+        return nullptr;
 
     return v->getString();
 }
 
-
-std::optional<fs::path> AssociativeArray::getPath(std::string_view key) const
+std::optional<fs::path>
+AssociativeArray::getPath(std::string_view key) const
 {
     const std::string* v = getString(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
-    return std::make_optional(util::PathExp(fs::u8path(*v)));
+    return std::make_optional(PathExp(fs::u8path(*v)));
 }
 
-
-std::optional<bool> AssociativeArray::getBoolean(std::string_view key) const
+std::optional<bool>
+AssociativeArray::getBoolean(std::string_view key) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     return v->getBoolean();
 }
-
 
 std::optional<Eigen::Vector3d>
 AssociativeArray::getVector3Impl(std::string_view key) const
@@ -94,7 +92,6 @@ AssociativeArray::getVector3Impl(std::string_view key) const
 
     return std::make_optional<Eigen::Vector3d>(*x, *y, *z);
 }
-
 
 std::optional<Eigen::Vector4d>
 AssociativeArray::getVector4Impl(std::string_view key) const
@@ -118,7 +115,6 @@ AssociativeArray::getVector4Impl(std::string_view key) const
     return std::make_optional<Eigen::Vector4d>(*x, *y, *z, *w);
 }
 
-
 /**
  * Retrieves a quaternion, scaled to an associated angle unit.
  *
@@ -128,13 +124,16 @@ AssociativeArray::getVector4Impl(std::string_view key) const
  * @param[in] key Hash key for the rotation.
  * @return The quaternion if the key exists, nullopt otherwise.
  */
-std::optional<Eigen::Quaternionf> AssociativeArray::getRotation(std::string_view key) const
+std::optional<Eigen::Quaternionf>
+AssociativeArray::getRotation(std::string_view key) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr ) { return std::nullopt; }
+    if (v == nullptr )
+        return std::nullopt;
 
     const ValueArray* arr = v->getArray();
-    if (arr == nullptr || arr->size() != 4) { return std::nullopt; }
+    if (arr == nullptr || arr->size() != 4)
+        return std::nullopt;
 
     std::optional<double> w = (*arr)[0].getNumber();
     std::optional<double> x = (*arr)[1].getNumber();
@@ -142,9 +141,7 @@ std::optional<Eigen::Quaternionf> AssociativeArray::getRotation(std::string_view
     std::optional<double> z = (*arr)[3].getNumber();
 
     if (!w.has_value() || !x.has_value() || !y.has_value() || !z.has_value())
-    {
         return std::nullopt;
-    }
 
     Eigen::Vector3f axis(static_cast<float>(*x),
                          static_cast<float>(*y),
@@ -156,31 +153,24 @@ std::optional<Eigen::Quaternionf> AssociativeArray::getRotation(std::string_view
     return std::make_optional<Eigen::Quaternionf>(Eigen::AngleAxisf(angle, axis.normalized()));
 }
 
-
-std::optional<Color> AssociativeArray::getColor(std::string_view key) const
+std::optional<Color>
+AssociativeArray::getColor(std::string_view key) const
 {
     if (auto vec4 = getVector4<float>(key); vec4.has_value())
-    {
         return std::make_optional<Color>(*vec4);
-    }
 
     if (auto vec3 = getVector3<float>(key); vec3.has_value())
-    {
         return std::make_optional<Color>(*vec3);
-    }
 
     if (const std::string* rgba = getString(key); rgba != nullptr)
     {
         Color color;
         if (Color::parse(*rgba, color))
-        {
             return color;
-        }
     }
 
     return std::nullopt;
 }
-
 
 /**
  * Retrieves a numeric quantity scaled to an associated angle unit.
@@ -193,30 +183,22 @@ std::optional<double>
 AssociativeArray::getAngleImpl(std::string_view key, double outputScale, double defaultScale) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     double val;
     if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
-    {
         val = *dbl;
-    }
     else
-    {
         return std::nullopt;
-    }
 
-    if(auto angleScale = astro::getAngleScale(v->getAngleUnit()); angleScale.has_value())
-    {
+    if (auto angleScale = astro::getAngleScale(v->getAngleUnit()); angleScale.has_value())
         val *= *angleScale / outputScale;
-    }
     else if (defaultScale != 0.0)
-    {
         val *= defaultScale / outputScale;
-    }
 
     return val;
 }
-
 
 /**
  * Retrieves a numeric quantity scaled to an associated length unit.
@@ -229,30 +211,22 @@ std::optional<double>
 AssociativeArray::getLengthImpl(std::string_view key, double outputScale, double defaultScale) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     double val;
     if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
-    {
         val = *dbl;
-    }
     else
-    {
         return std::nullopt;
-    }
 
     if (auto lengthScale = astro::getLengthScale(v->getLengthUnit()); lengthScale.has_value())
-    {
         val *= *lengthScale / outputScale;
-    }
     else if (defaultScale != 0.0)
-    {
         val *= defaultScale / outputScale;
-    }
 
     return val;
 }
-
 
 /**
  * Retrieves a numeric quantity scaled to an associated time unit.
@@ -265,30 +239,22 @@ std::optional<double>
 AssociativeArray::getTimeImpl(std::string_view key, double outputScale, double defaultScale) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     double val;
     if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
-    {
         val = *dbl;
-    }
     else
-    {
         return std::nullopt;
-    }
 
     if (auto timeScale = astro::getTimeScale(v->getTimeUnit()))
-    {
         val *= *timeScale / outputScale;
-    }
     else if (defaultScale != 0.0)
-    {
         val *= defaultScale / outputScale;
-    }
 
     return val;
 }
-
 
 /**
  * Retrieves a numeric quantity scaled to an associated mass unit.
@@ -301,30 +267,22 @@ std::optional<double>
 AssociativeArray::getMassImpl(std::string_view key, double outputScale, double defaultScale) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     double val;
     if (std::optional<double> dbl = v->getNumber(); dbl.has_value())
-    {
         val = *dbl;
-    }
     else
-    {
         return std::nullopt;
-    }
 
     if (auto massScale = astro::getMassScale(v->getMassUnit()); massScale.has_value())
-    {
         val *= *massScale / outputScale;
-    }
     else if (defaultScale != 0.0)
-    {
         val *= defaultScale / outputScale;
-    }
 
     return val;
 }
-
 
 /**
  * Retrieves a vector quantity scaled to an associated length unit.
@@ -337,16 +295,19 @@ std::optional<Eigen::Vector3d>
 AssociativeArray::getLengthVectorImpl(std::string_view key, double outputScale, double defaultScale) const
 {
     const Value* v = getValue(key);
-    if (v == nullptr) { return std::nullopt; }
+    if (v == nullptr)
+        return std::nullopt;
 
     const ValueArray* arr = v->getArray();
-    if (arr == nullptr || arr->size() != 3) { return std::nullopt; }
+    if (arr == nullptr || arr->size() != 3)
+        return std::nullopt;
 
     std::optional<double> x = (*arr)[0].getNumber();
     std::optional<double> y = (*arr)[1].getNumber();
     std::optional<double> z = (*arr)[2].getNumber();
 
-    if (!x.has_value() || !y.has_value() || !z.has_value()) { return std::nullopt; }
+    if (!x.has_value() || !y.has_value() || !z.has_value())
+        return std::nullopt;
 
     if (auto lengthScale = astro::getLengthScale(v->getLengthUnit()); lengthScale.has_value())
     {
@@ -362,7 +323,6 @@ AssociativeArray::getLengthVectorImpl(std::string_view key, double outputScale, 
 
     return std::make_optional<Eigen::Vector3d>(*x, *y, *z);
 }
-
 
 /**
  * Retrieves a spherical tuple \verbatim [longitude, latitude, altitude] \endverbatim scaled to associated angle and length units.
@@ -396,3 +356,110 @@ AssociativeArray::getSphericalTuple(std::string_view key) const
 
     return std::make_optional<Eigen::Vector3d>(*x, *y, *z);
 }
+
+Value::~Value()
+{
+    destroy();
+}
+
+Value::Value(Value&& other) noexcept :
+    type(other.type),
+    units(other.units)
+{
+    switch (other.type)
+    {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        doubleData = other.doubleData;
+        break;
+    case ValueType::StringType:
+        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
+        break;
+    case ValueType::ArrayType:
+        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
+        break;
+    case ValueType::HashType:
+        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
+        break;
+    default:
+        break;
+    }
+}
+
+Value&
+Value::operator=(Value&& other) noexcept
+{
+    if (this == &other)
+        return *this;
+
+    if (type == other.type)
+    {
+        switch (type)
+        {
+        case ValueType::NumberType:
+        case ValueType::BooleanType:
+            doubleData = other.doubleData;
+            break;
+        case ValueType::StringType:
+            stringData = std::move(other.stringData);
+            break;
+        case ValueType::ArrayType:
+            arrayData = std::move(other.arrayData);
+            break;
+        case ValueType::HashType:
+            hashData = std::move(other.hashData);
+            break;
+        default:
+            break;
+        }
+
+        units = other.units;
+        return *this;
+    }
+
+    destroy();
+    switch (other.type)
+    {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        doubleData = other.doubleData;
+        break;
+    case ValueType::StringType:
+        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
+        break;
+    case ValueType::ArrayType:
+        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
+        break;
+    case ValueType::HashType:
+        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
+        break;
+    default:
+        break;
+    }
+
+    type = other.type;
+    units = other.units;
+
+    return *this;
+}
+
+void
+Value::destroy()
+{
+    switch (type)
+    {
+    case ValueType::StringType:
+        stringData.~unique_ptr(); //NOSONAR
+        break;
+    case ValueType::ArrayType:
+        arrayData.~unique_ptr(); //NOSONAR
+        break;
+    case ValueType::HashType:
+        hashData.~unique_ptr(); //NOSONAR
+        break;
+    default:
+        break;
+    }
+}
+
+} // end namespace celestia::util

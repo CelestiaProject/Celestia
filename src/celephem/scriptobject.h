@@ -19,9 +19,14 @@
 
 #include <lua.hpp>
 
+namespace celestia
+{
+namespace util
+{
 class AssociativeArray;
+}
 
-namespace celestia::ephem
+namespace ephem
 {
 
 void SetScriptedObjectContext(lua_State* l);
@@ -39,6 +44,7 @@ double SafeGetLuaNumber(lua_State* state,
                         const std::string& key,
                         double defaultValue);
 
-void SetLuaVariables(lua_State* state, const AssociativeArray& parameters);
+void SetLuaVariables(lua_State* state, const util::AssociativeArray& parameters);
 
-}
+} // end namespace celestia::ephem
+} // end namespace celestia

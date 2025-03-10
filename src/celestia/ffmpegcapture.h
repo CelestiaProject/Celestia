@@ -1,15 +1,18 @@
 #pragma once
 
-#include "moviecapture.h"
-#define __STDC_CONSTANT_MACROS
+#include <cstdint>
+#include <string>
+
 extern "C"
 {
 #include <libavformat/avformat.h>
 }
 
-#include <celengine/hash.h>
+#include <celcompat/filesystem.h>
+#include "moviecapture.h"
 
 class FFMPEGCapturePrivate;
+class Renderer;
 
 class FFMPEGCapture : public MovieCapture
 {
@@ -30,7 +33,7 @@ public:
     void setQuality(float) override {};
 
     void setVideoCodec(AVCodecID);
-    void setBitRate(int64_t);
+    void setBitRate(std::int64_t);
     void setEncoderOptions(const std::string&);
 
 protected:

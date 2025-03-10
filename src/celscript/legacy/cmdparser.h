@@ -19,10 +19,15 @@
 #include <celutil/array_view.h>
 #include "command.h"
 
+namespace celestia
+{
+namespace util
+{
 class Parser;
 class Tokenizer;
+}
 
-namespace celestia::scripts
+namespace scripts
 {
 
 struct ScriptMaps;
@@ -40,10 +45,11 @@ private:
     std::unique_ptr<Command> parseCommand();
     void error(std::string&&);
 
-    std::unique_ptr<Parser> parser;
-    std::unique_ptr<Tokenizer> tokenizer;
+    std::unique_ptr<util::Parser> parser;
+    std::unique_ptr<util::Tokenizer> tokenizer;
     std::vector<std::string> errorList;
     const celestia::scripts::ScriptMaps &scriptMaps;
 };
 
 } // end namespace celestia::scripts
+} // end namespace celestia

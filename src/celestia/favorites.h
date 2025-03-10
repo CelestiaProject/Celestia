@@ -20,7 +20,6 @@
 #include <celengine/observer.h>
 #include <celengine/univcoord.h>
 
-
 struct FavoritesEntry
 {
     std::string name;

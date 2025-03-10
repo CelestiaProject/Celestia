@@ -30,20 +30,19 @@
 #include <celastro/astro.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celutil/associativearray.h>
 #include <celutil/binaryread.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
-#include "hash.h"
 #include "meshmanager.h"
 #include "octreebuilder.h"
-#include "parser.h"
 #include "stardb.h"
 #include "stellarclass.h"
-#include "value.h"
 
 using namespace std::string_view_literals;
 
@@ -53,7 +52,10 @@ namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
+using util::AssociativeArray;
 using util::GetLogger;
+using util::Value;
+using util::ValueArray;
 
 struct StarDatabaseBuilder::StcHeader
 {
@@ -216,7 +218,7 @@ stcWarn(const StarDatabaseBuilder::StcHeader& header, std::string_view msg)
 }
 
 bool
-parseStcHeader(Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& header)
+parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& header)
 {
     header.lineNumber = tokenizer.getLineNumber();
 
@@ -702,8 +704,8 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
 bool
 StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
     std::string domain = resourcePath.string();
@@ -714,7 +716,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 #endif
 
     StcHeader header(resourcePath);
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
         if (!parseStcHeader(tokenizer, header))
             return false;
@@ -722,7 +724,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         // now goes the star definition
         tokenizer.pushBack();
         const Value starDataValue = parser.readValue();
-        const Hash* starData = starDataValue.getHash();
+        const AssociativeArray* starData = starDataValue.getHash();
         if (starData == nullptr)
         {
             GetLogger()->error(_("Bad star definition at line {}.\n"), tokenizer.getLineNumber());

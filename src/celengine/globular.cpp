@@ -16,17 +16,18 @@
 
 #include <fmt/printf.h>
 
-#include <celengine/hash.h>
 #include <celengine/render.h>
 #include <celmath/ellipsoid.h>
 #include <celmath/intersect.h>
 #include <celmath/randutils.h>
 #include <celmath/ray.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include "globular.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -94,7 +95,7 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   cosAngleToBoundCenter);
 }
 
-bool Globular::load(const AssociativeArray* params, const fs::path& resPath, std::string_view name)
+bool Globular::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     // Load the basic DSO parameters first
     if (!DeepSkyObject::load(params, resPath, name))

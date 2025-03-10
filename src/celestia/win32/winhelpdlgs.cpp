@@ -155,7 +155,7 @@ LicenseProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 message.clear();
                 // Gettext complains about using \r in translated messages, so add it in afterwards
-                AppendConvertEOL(fmt::format(_("License file missing!\nSee {}"), licenseUrl), message);
+                AppendConvertEOL(fmt::format(fmt::runtime(_("License file missing!\nSee {}")), licenseUrl), message);
             }
             SetDlgItemText(hDlg, IDC_LICENSE_TEXT, message.c_str());
         }

@@ -130,7 +130,7 @@ int celscript_from_string(lua_State* l, const char* script_text)
         lua_Debug debug;
         if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
         {
-            std::string buf = fmt::format(_("In line {}: {}"), debug.currentline, error);
+            std::string buf = fmt::format(fmt::runtime(_("In line {}: {}")), debug.currentline, error);
             lua_pushlstring(l, buf.data(), buf.size());
         }
         else
