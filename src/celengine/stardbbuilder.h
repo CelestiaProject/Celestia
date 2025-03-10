@@ -28,12 +28,19 @@
 #include "stardb.h"
 #include "starname.h"
 
-class AssociativeArray;
 class StarDatabase;
 
-namespace celestia::ephem
+namespace celestia
+{
+namespace ephem
 {
 class Orbit;
+}
+
+namespace util
+{
+class AssociativeArray;
+}
 }
 
 class StarDatabaseBuilder
@@ -58,22 +65,22 @@ public:
 
 private:
     bool createOrUpdateStar(const StcHeader&,
-                            const AssociativeArray*,
+                            const celestia::util::AssociativeArray*,
                             Star*,
                             const fs::path&);
     bool checkStcPosition(const StcHeader&,
-                          const AssociativeArray*,
+                          const celestia::util::AssociativeArray*,
                           const Star*,
                           std::optional<Eigen::Vector3f>&,
                           std::optional<AstroCatalog::IndexNumber>&,
                           std::shared_ptr<const celestia::ephem::Orbit>&) const;
     bool checkBarycenter(const StarDatabaseBuilder::StcHeader&,
-                         const AssociativeArray*,
+                         const celestia::util::AssociativeArray*,
                          std::optional<Eigen::Vector3f>&,
                          std::optional<AstroCatalog::IndexNumber>&) const;
 
     void loadCategories(const StarDatabaseBuilder::StcHeader&,
-                        const AssociativeArray* starData,
+                        const celestia::util::AssociativeArray* starData,
                         const std::string&);
     void addCategory(AstroCatalog::IndexNumber catalogNumber,
                      const std::string& name,

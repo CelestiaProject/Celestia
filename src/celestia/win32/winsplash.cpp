@@ -119,7 +119,7 @@ SplashWindow::init()
 {
     hwnd = NULL;
 
-    versionString = UTF8ToTString(fmt::format(_("Version: {}"), VERSION_STRING));
+    versionString = UTF8ToTString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
     message = versionString + TEXT('\n');
     image = engine::Image::load(imageFileName);
 }

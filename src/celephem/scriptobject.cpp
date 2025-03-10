@@ -14,7 +14,7 @@
 
 #include <fmt/format.h>
 
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #include "scriptobject.h"
 
 using namespace std::string_view_literals;
@@ -55,24 +55,24 @@ private:
 public:
     explicit HashVisitor(lua_State* pState) : state{pState} {}
 
-    void operator()(const std::string& key, const Value& value)
+    void operator()(const std::string& key, const util::Value& value)
     {
         std::size_t percentPos = key.find('%');
         if (percentPos == std::string::npos)
         {
             switch (value.getType())
             {
-            case ValueType::NumberType:
+            case util::ValueType::NumberType:
                 lua_pushstring(state, key.c_str());
                 lua_pushnumber(state, *value.getNumber());
                 lua_settable(state, -3);
                 break;
-            case ValueType::StringType:
+            case util::ValueType::StringType:
                 lua_pushstring(state, key.c_str());
                 lua_pushstring(state, value.getString()->c_str());
                 lua_settable(state, -3);
                 break;
-            case ValueType::BooleanType:
+            case util::ValueType::BooleanType:
                 lua_pushstring(state, key.c_str());
                 lua_pushboolean(state, *value.getBoolean());
                 lua_settable(state, -3);
@@ -157,7 +157,7 @@ SafeGetLuaNumber(lua_State* state,
  *  only number, string, and boolean values are converted.
  */
 void
-SetLuaVariables(lua_State* state, const AssociativeArray& parameters)
+SetLuaVariables(lua_State* state, const util::AssociativeArray& parameters)
 {
     HashVisitor visitor(state);
     parameters.for_all(visitor);

@@ -12,6 +12,7 @@
 
 #include <locale>
 #include <string>
+#include <utility>
 #include <vector>
 #include <fmt/printf.h>
 #include <Eigen/Core>
@@ -62,17 +63,17 @@ class Overlay
     void print(std::string_view);
 
     template <typename... T>
-    void print(const std::locale& loc, std::string_view format, const T&... args)
+    void print(const std::locale& loc, fmt::format_string<T...> format, T&&... args)
     {
         static_assert(sizeof...(args) > 0);
-        print(fmt::format(loc, format, args...));
+        print(fmt::format(loc, format, std::forward<T>(args)...));
     }
 
     template <typename... T>
-    void print(std::string_view format, const T&... args)
+    void print(fmt::format_string<T...> format, T&&... args)
     {
         static_assert(sizeof...(args) > 0);
-        print(fmt::format(format, args...));
+        print(fmt::format(format, std::forward<T>(args)...));
     }
 
     template <typename... T>

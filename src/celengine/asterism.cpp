@@ -20,7 +20,10 @@
 #include "star.h"
 #include "stardb.h"
 
+namespace util = celestia::util;
+
 using celestia::util::GetLogger;
+using celestia::util::Tokenizer;
 
 namespace
 {

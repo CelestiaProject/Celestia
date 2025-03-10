@@ -15,7 +15,7 @@
 #include <celcompat/filesystem.h>
 #include <celengine/star.h>
 #ifdef CELX
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #endif
 
 
@@ -106,7 +106,7 @@ struct CelestiaConfig
     std::string layoutDirection{ };
 
 #ifdef CELX
-    Value configParams{ };
+    celestia::util::Value configParams{ };
 #endif
 };
 

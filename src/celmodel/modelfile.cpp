@@ -33,7 +33,7 @@
 using namespace std::string_view_literals;
 
 namespace util = celestia::util;
-
+using celestia::util::Tokenizer;
 
 namespace cmod
 {
@@ -777,7 +777,9 @@ AsciiModelLoader::load()
     bool hasNormalMap = false;
 
     // Parse material and mesh definitions
-    for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
+    for (Tokenizer::TokenType token = tok.nextToken();
+         token != Tokenizer::TokenEnd;
+         token = tok.nextToken())
     {
         if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
         {

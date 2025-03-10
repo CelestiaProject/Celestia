@@ -32,17 +32,16 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celengine/hash.h>
-#include <celengine/parser.h>
 #include <celengine/render.h>
-#include <celengine/value.h>
 #ifdef USE_MINIAUDIO
 #include <celestia/audiosession.h>
 #endif
 #include <celmath/mathlib.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/associativearray.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/r128util.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
@@ -51,8 +50,10 @@ using namespace std::string_view_literals;
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
 using std::strncmp;
+using celestia::util::AssociativeArray;
 using celestia::util::GetLogger;
 using celestia::util::DecodeFromBase64;
+using celestia::util::Tokenizer;
 
 namespace celestia::scripts
 {
@@ -221,20 +222,20 @@ inline ParseResult makeError(const char* message)
 
 
 template<typename T>
-ParseResult parseParameterlessCommand(const Hash&, const ScriptMaps&)
+ParseResult parseParameterlessCommand(const AssociativeArray&, const ScriptMaps&)
 {
     return std::make_unique<T>();
 }
 
 
-ParseResult parseWaitCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseWaitCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto duration = paramList.getNumber<double>("duration").value_or(1.0);
     return std::make_unique<CommandWait>(duration);
 }
 
 
-ParseResult parseSetCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     double value = 0.0;
     const std::string* name = paramList.getString("name");
@@ -258,7 +259,7 @@ ParseResult parseSetCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSelectCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSelectCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* objStr = paramList.getString("object");
     return objStr == nullptr
@@ -267,7 +268,7 @@ ParseResult parseSelectCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetFrameCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetFrameCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* refName = paramList.getString("ref");
     if (refName == nullptr)
@@ -287,7 +288,7 @@ ParseResult parseSetFrameCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetSurfaceCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetSurfaceCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* name = paramList.getString("name");
     return name == nullptr
@@ -296,7 +297,7 @@ ParseResult parseSetSurfaceCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseGotoCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseGotoCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto t = paramList.getNumber<double>("time").value_or(1.0);
     auto distance = paramList.getNumber<double>("distance").value_or(5.0);
@@ -314,7 +315,7 @@ ParseResult parseGotoCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseGotoLongLatCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseGotoLongLatCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto t         = paramList.getNumber<double>("time").value_or(1.0);
     auto distance  = paramList.getNumber<double>("distance").value_or(5.0);
@@ -330,7 +331,7 @@ ParseResult parseGotoLongLatCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseGotoLocCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseGotoLocCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto t = paramList.getNumber<double>("time").value_or(1.0);
 
@@ -361,7 +362,7 @@ ParseResult parseGotoLocCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetUrlCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetUrlCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* url = paramList.getString("url");
     return url == nullptr
@@ -370,14 +371,14 @@ ParseResult parseSetUrlCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseCenterCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseCenterCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto t = paramList.getNumber<double>("time").value_or(1.0);
     return std::make_unique<CommandCenter>(t);
 }
 
 
-ParseResult parsePrintCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parsePrintCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* text = paramList.getString("text");
     if (text == nullptr)
@@ -439,7 +440,7 @@ ParseResult parsePrintCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseTimeCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseTimeCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     double jd = 2451545.0;
     if (auto jdVal = paramList.getNumber<double>("jd"); jdVal.has_value())
@@ -463,14 +464,14 @@ ParseResult parseTimeCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseTimeRateCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseTimeRateCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto rate = paramList.getNumber<double>("rate").value_or(1.0);
     return std::make_unique<CommandSetTimeRate>(rate);
 }
 
 
-ParseResult parseChangeDistanceCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseChangeDistanceCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto rate     = paramList.getNumber<double>("rate").value_or(0.0);
     auto duration = paramList.getNumber<double>("duration").value_or(1.0);
@@ -478,7 +479,7 @@ ParseResult parseChangeDistanceCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseOrbitCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseOrbitCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto duration = paramList.getNumber<double>("duration").value_or(1.0);
     auto rate     = paramList.getNumber<double>("rate").value_or(0.0);
@@ -489,7 +490,7 @@ ParseResult parseOrbitCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseRotateCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseRotateCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto duration = paramList.getNumber<double>("duration").value_or(1.0);
     auto rate     = paramList.getNumber<double>("rate").value_or(0.0);
@@ -500,7 +501,7 @@ ParseResult parseRotateCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseMoveCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseMoveCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto duration = paramList.getNumber<double>("duration").value_or(1.0);
     auto velocity = paramList.getVector3<double>("velocity").value_or(Eigen::Vector3d::Zero());
@@ -508,7 +509,7 @@ ParseResult parseMoveCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetPositionCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetPositionCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     // Base position in light years, offset in kilometers
     if (auto base = paramList.getVector3<float>("base"); base.has_value())
@@ -529,7 +530,7 @@ ParseResult parseSetPositionCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetOrientationCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetOrientationCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     if (auto angle = paramList.getNumber<double>("angle"); angle.has_value())
     {
@@ -548,7 +549,7 @@ ParseResult parseSetOrientationCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
+ParseResult parseRenderFlagsCommand(const AssociativeArray& paramList, const ScriptMaps& scriptMaps)
 {
     RenderFlags setFlags = RenderFlags::ShowNothing;
     RenderFlags clearFlags = RenderFlags::ShowNothing;
@@ -562,7 +563,7 @@ ParseResult parseRenderFlagsCommand(const Hash& paramList, const ScriptMaps& scr
 }
 
 
-ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
+ParseResult parseLabelsCommand(const AssociativeArray& paramList, const ScriptMaps& scriptMaps)
 {
     RenderLabels setFlags = RenderLabels::NoLabels;
     RenderLabels clearFlags = RenderLabels::NoLabels;
@@ -576,7 +577,7 @@ ParseResult parseLabelsCommand(const Hash& paramList, const ScriptMaps& scriptMa
 }
 
 
-ParseResult parseOrbitFlagsCommand(const Hash& paramList, const ScriptMaps& scriptMaps)
+ParseResult parseOrbitFlagsCommand(const AssociativeArray& paramList, const ScriptMaps& scriptMaps)
 {
     BodyClassification setFlags = BodyClassification::EmptyMask;
     BodyClassification clearFlags = BodyClassification::EmptyMask;
@@ -590,7 +591,7 @@ ParseResult parseOrbitFlagsCommand(const Hash& paramList, const ScriptMaps& scri
 }
 
 
-ParseResult parseConstellationsCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseConstellationsCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto cmdcons = std::make_unique<CommandConstellations>();
 
@@ -602,7 +603,7 @@ ParseResult parseConstellationsCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseConstellationColorCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseConstellationColorCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto cmdconcol = std::make_unique<CommandConstellationColor>();
 
@@ -616,35 +617,35 @@ ParseResult parseConstellationColorCommand(const Hash& paramList, const ScriptMa
 }
 
 
-ParseResult parseSetVisibilityLimitCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetVisibilityLimitCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto mag = paramList.getNumber<double>("magnitude").value_or(6.0);
     return std::make_unique<CommandSetVisibilityLimit>(mag);
 }
 
 
-ParseResult parseSetFaintestAutoMag45DegCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetFaintestAutoMag45DegCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto mag = paramList.getNumber<double>("magnitude").value_or(8.5);
     return std::make_unique<CommandSetFaintestAutoMag45deg>(mag);
 }
 
 
-ParseResult parseSetAmbientLightCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetAmbientLightCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto brightness = paramList.getNumber<float>("brightness").value_or(0.0f);
     return std::make_unique<CommandSetAmbientLight>(brightness);
 }
 
 
-ParseResult parseSetGalaxyLightGainCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetGalaxyLightGainCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto gain = paramList.getNumber<float>("gain").value_or(0.0f);
     return std::make_unique<CommandSetGalaxyLightGain>(gain);
 }
 
 
-ParseResult parseSetTextureResolutionCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetTextureResolutionCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     TextureResolution res = TextureResolution::medres;
     if (const std::string* textureRes = paramList.getString("resolution"); textureRes != nullptr)
@@ -661,7 +662,7 @@ ParseResult parseSetTextureResolutionCommand(const Hash& paramList, const Script
 }
 
 
-ParseResult parsePreloadTexCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parsePreloadTexCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
     return object == nullptr
@@ -670,7 +671,7 @@ ParseResult parsePreloadTexCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseMarkCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseMarkCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
     if (object == nullptr)
@@ -723,7 +724,7 @@ ParseResult parseMarkCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseUnmarkCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseUnmarkCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
     return object == nullptr
@@ -732,7 +733,7 @@ ParseResult parseUnmarkCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseCaptureCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseCaptureCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto filename = paramList.getPath("filename");
     if (!filename.has_value())
@@ -748,7 +749,7 @@ ParseResult parseCaptureCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSplitViewCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSplitViewCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto view = paramList.getNumber<unsigned int>("view").value_or(1u);
     std::string splitType;
@@ -762,21 +763,21 @@ ParseResult parseSplitViewCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseDeleteViewCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseDeleteViewCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto view = paramList.getNumber<unsigned int>("view").value_or(1u);
     return std::make_unique<CommandDeleteView>(view);
 }
 
 
-ParseResult parseSetActiveViewCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetActiveViewCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto view = paramList.getNumber<unsigned int>("view").value_or(1u);
     return std::make_unique<CommandSetActiveView>(view);
 }
 
 
-ParseResult parseSetRadiusCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetRadiusCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
     if (object == nullptr)
@@ -787,7 +788,7 @@ ParseResult parseSetRadiusCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetLineColorCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetLineColorCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* item = paramList.getString("item");
     if (item == nullptr)
@@ -799,7 +800,7 @@ ParseResult parseSetLineColorCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetLabelColorCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetLabelColorCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* item = paramList.getString("item");
     if (item == nullptr)
@@ -811,7 +812,7 @@ ParseResult parseSetLabelColorCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseSetTextColorCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetTextColorCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto colorv = paramList.getVector3<float>("color").value_or(Eigen::Vector3f::Ones());
     Color color(colorv.x(), colorv.y(), colorv.z());
@@ -819,7 +820,7 @@ ParseResult parseSetTextColorCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parsePlayCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parsePlayCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
 #ifdef USE_MINIAUDIO
     int channel = std::max(paramList.getNumber<int>("channel").value_or(celestia::defaultAudioChannel),
@@ -849,7 +850,7 @@ ParseResult parsePlayCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseOverlayCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     auto duration = paramList.getNumber<float>("duration").value_or(3.0f);
     auto xoffset  = paramList.getNumber<float>("xoffset").value_or(0.0f);
@@ -879,21 +880,26 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
         fitscreen = paramList.getNumber<int>("fitscreen").value_or(0) != 0;
 
     std::array<Color, 4> colors;
-    Color color = paramList.getColor("color").value_or(Color::White);
-    colors.fill(alpha.has_value() ? Color(color, *alpha) : color);
+    colors.fill(paramList.getColor("color").value_or(Color::White));
 
     if (auto colorTop = paramList.getColor("colortop"); colorTop.has_value())
-        colors[0] = colors[1] = alpha.has_value() ? Color(*colorTop, *alpha) : *colorTop;
+        colors[0] = colors[1] = *colorTop;
     if (auto colorBottom = paramList.getColor("colorbottom"); colorBottom.has_value())
-        colors[2] = colors[3] = alpha.has_value() ? Color(*colorBottom, *alpha) : *colorBottom;
+        colors[2] = colors[3] = *colorBottom;
     if (auto colorTopLeft = paramList.getColor("colortopleft"); colorTopLeft.has_value())
-        colors[0] = alpha.has_value() ? Color(*colorTopLeft, *alpha) : *colorTopLeft;
+        colors[0] = *colorTopLeft;
     if (auto colorTopRight = paramList.getColor("colortopright"); colorTopRight.has_value())
-        colors[1] = alpha.has_value() ? Color(*colorTopRight, *alpha) : *colorTopRight;
+        colors[1] = *colorTopRight;
     if (auto colorBottomRight = paramList.getColor("colorbottomright"); colorBottomRight.has_value())
-        colors[2] = alpha.has_value() ? Color(*colorBottomRight, *alpha) : *colorBottomRight;
+        colors[2] = *colorBottomRight;
     if (auto colorBottomLeft = paramList.getColor("colorbottomleft"); colorBottomLeft.has_value())
-        colors[3] = alpha.has_value() ? Color(*colorBottomLeft, *alpha) : *colorBottomLeft;
+        colors[3] = *colorBottomLeft;
+
+    if (alpha.has_value())
+    {
+        for (Color& color : colors)
+            color.alpha(*alpha);
+    }
 
     auto fadeafter = paramList.getNumber<float>("fadeafter").value_or(duration);
 
@@ -907,21 +913,21 @@ ParseResult parseOverlayCommand(const Hash& paramList, const ScriptMaps&)
 }
 
 
-ParseResult parseVerbosityCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseVerbosityCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     int level = paramList.getNumber<int>("level").value_or(2);
     return std::make_unique<CommandVerbosity>(level);
 }
 
 
-ParseResult parseSetWindowBordersVisibleCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetWindowBordersVisibleCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     bool visible = paramList.getBoolean("visible").value_or(true);
     return std::make_unique<CommandSetWindowBordersVisible>(visible);
 }
 
 
-ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&)
+ParseResult parseSetRingsTextureCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
     if (object == nullptr)
@@ -950,7 +956,7 @@ ParseResult parseSetRingsTextureCommand(const Hash& paramList, const ScriptMaps&
 }
 
 
-using ParseCommandPtr = ParseResult (*)(const Hash&, const ScriptMaps&);
+using ParseCommandPtr = ParseResult (*)(const AssociativeArray&, const ScriptMaps&);
 
 // lookup table generated by gperf (commands.gperf)
 #include "commands.inc"
@@ -962,7 +968,7 @@ CommandParser::CommandParser(std::istream& in, const ScriptMaps &sm) :
     tokenizer(std::make_unique<Tokenizer>(&in)),
     scriptMaps(sm)
 {
-    parser = std::make_unique<Parser>(tokenizer.get());
+    parser = std::make_unique<util::Parser>(tokenizer.get());
 }
 
 
@@ -1032,8 +1038,8 @@ std::unique_ptr<Command> CommandParser::parseCommand()
         return nullptr;
     }
 
-    const Value paramListValue = parser->readValue();
-    const Hash* paramList = paramListValue.getHash();
+    const util::Value paramListValue = parser->readValue();
+    const AssociativeArray* paramList = paramListValue.getHash();
     if (paramList == nullptr)
     {
         error("Bad parameter list");

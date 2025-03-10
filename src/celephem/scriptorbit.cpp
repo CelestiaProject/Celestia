@@ -175,7 +175,7 @@ ScriptedOrbit::getBoundingRadius() const
 std::shared_ptr<const Orbit>
 CreateScriptedOrbit(const std::string* moduleName,
                     const std::string& funcName,
-                    const AssociativeArray& parameters,
+                    const util::AssociativeArray& parameters,
                     const fs::path& path)
 {
     lua_State* luaState = GetScriptedObjectContext();
