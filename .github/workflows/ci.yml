@@ -185,7 +185,6 @@ jobs:
         - os: ubuntu-22.04
           avif: ON
           gles: ON
-          gtk3: ON
           minaudio: ON
           wayland: ON
           icu: ON
@@ -193,7 +192,6 @@ jobs:
         - os: ubuntu-24.04-arm
           avif: ON
           gles: ON
-          gtk3: ON
           minaudio: ON
           wayland: ON
           icu: ON
@@ -215,7 +213,6 @@ jobs:
                                 libjpeg-dev \
                                 libpng-dev \
                                 libglu1-mesa-dev \
-                                libgtk-3-dev \
                                 libfreetype6-dev \
                                 libsdl2-dev \
                                 libluajit-5.1-dev \
@@ -248,8 +245,6 @@ jobs:
               -DENABLE_TOOLS=OFF                        \
               -DENABLE_TESTS=ON                         \
               -DENABLE_SDL=ON                           \
-              -DENABLE_GTK=ON                           \
-              -DUSE_GTK3=${{matrix.config.gtk3}}        \
               -DENABLE_QT5=ON                           \
               -DENABLE_QT6=${{matrix.config.qt6}}       \
               -DUSE_WAYLAND=${{matrix.config.wayland}}  \
@@ -334,8 +329,6 @@ jobs:
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=ON              \
               -DENABLE_SDL=ON                \
-              -DENABLE_GTK=OFF               \
-              -DUSE_GTK3=OFF                 \
               -DENABLE_QT5=OFF               \
               -DENABLE_QT6=ON                \
               -DUSE_WAYLAND=OFF              \

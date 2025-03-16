@@ -93,7 +93,6 @@ jobs:
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=OFF             \
               -DENABLE_SDL=ON                \
-              -DENABLE_GTK=OFF               \
               -DENABLE_QT5=ON                \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_MINIAUDIO=ON          \
