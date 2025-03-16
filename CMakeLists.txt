@@ -54,7 +54,6 @@ set(DISPLAY_NAME "Celestia")
 option(ENABLE_CELX        "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE       "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS         "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GTK         "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT5         "Build Qt frontend? (Default: off)" OFF)
 option(ENABLE_QT6         "Build Qt6 frontend (Default: off)" OFF)
 option(ENABLE_SDL         "Build SDL frontend? (Default: off)" OFF)
@@ -67,8 +66,6 @@ option(ENABLE_FAST_MATH   "Build with unsafe fast-math compiller option (Default
 option(ENABLE_TESTS       "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES        "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(ENABLE_LTO         "Enable link time optimizations (Default: off)" OFF)
-option(USE_GTKGLEXT       "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
-option(USE_GTK3           "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 option(USE_WAYLAND        "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_GLSL_STRUCTS   "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU            "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
@@ -94,8 +91,6 @@ endif()
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
-  # Disable USE_GTKGLEXT if using OpenGL ES
-  set(USE_GTKGLEXT OFF)
 endif()
 
 if(USE_GLSL_STRUCTS)
@@ -122,11 +117,6 @@ if(USE_ICU)
     find_package(ICU REQUIRED COMPONENTS uc i18n)
     link_libraries(ICU::uc ICU::i18n)
   endif()
-endif()
-
-if(USE_GTK3)
-  # Disable USE_GTKGLEXT if using Gtk+3
-  set(USE_GTKGLEXT OFF)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
