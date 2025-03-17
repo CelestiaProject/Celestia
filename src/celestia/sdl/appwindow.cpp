@@ -129,7 +129,7 @@ mainRunLoopHandler(void* arg)
 {
     auto app = static_cast<AppWindow*>(arg);
     if (!app->update())
-        emscripten_cancel_main_loop()
+        emscripten_cancel_main_loop();
 }
 #endif
 
