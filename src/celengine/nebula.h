@@ -24,6 +24,18 @@ namespace celestia::util
 class AssociativeArray;
 }
 
+enum class NebulaType
+{
+    Emission           = 0,  // includes Herbig–Haro objects and misc. emission nebula not listed below
+    Reflection         = 1,  // includes misc. reflection nebula not listed below
+    Dark               = 2,
+    Planetary          = 3,
+    SupernovaRemnant   = 4,
+    HII_Region         = 5,
+    Protoplanetary     = 6,
+    NotDefined         = 7
+};
+
 class Nebula : public DeepSkyObject
 {
 public:
@@ -44,18 +56,9 @@ public:
 
     DeepSkyObjectType getObjType() const override;
 
-    enum NebulaType
-    {
-        Emissive           = 0,
-        Reflective         = 1,
-        Dark               = 2,
-        Planetary          = 3,
-        Galactic           = 4,
-        SupernovaRemnant   = 5,
-        Bright_HII_Region  = 6,
-        NotDefined         = 7
-    };
+    NebulaType getNebulaType() const;
 
 private:
     ResourceHandle geometry{ InvalidResource };
+    NebulaType  type{ NebulaType::NotDefined };
 };

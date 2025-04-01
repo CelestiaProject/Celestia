@@ -14,6 +14,7 @@
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <fmt/printf.h>
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
@@ -22,23 +23,47 @@
 namespace engine = celestia::engine;
 namespace util = celestia::util;
 
+using namespace std::string_view_literals;
 using util::GetLogger;
+
+struct NebulaTypeName
+{
+    const char* name;
+    NebulaType type;
+};
+
+constexpr std::array NebulaTypeNames =
+{
+    NebulaTypeName{ "Emission", NebulaType::Emission },
+    NebulaTypeName{ "Reflection",  NebulaType::Reflection },
+    NebulaTypeName{ "Dark",  NebulaType::Dark },
+    NebulaTypeName{ "Planetary",  NebulaType::Planetary },
+    NebulaTypeName{ "SupernovaRemnant",  NebulaType::SupernovaRemnant },
+    NebulaTypeName{ "HII_Region", NebulaType::HII_Region },
+    NebulaTypeName{ "Protoplanetary", NebulaType::Protoplanetary },
+    NebulaTypeName{ " ", NebulaType::NotDefined },
+};
 
 const char*
 Nebula::getType() const
 {
-    return "Nebula";
+    return NebulaTypeNames[static_cast<std::size_t>(type)].name;
 }
 
 void
-Nebula::setType(const std::string& /*typeStr*/)
+Nebula::setType(const std::string& typeStr)
 {
+    type = NebulaType::NotDefined;
+    auto iter = std::find_if(std::begin(NebulaTypeNames), std::end(NebulaTypeNames),
+                             [&](const NebulaTypeName& n) { return n.name == typeStr; });
+    if (iter != std::end(NebulaTypeNames))
+        type = iter->type;
 }
 
 std::string
 Nebula::getDescription() const
 {
-    return _("Nebula");
+    return fmt::sprintf(_("Nebula: %s"), getType());
 }
 
 ResourceHandle
@@ -62,6 +87,12 @@ Nebula::getObjType() const
 bool
 Nebula::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
+    
+    if (const auto* typeName = params->getString("Type"); typeName == nullptr)
+        setType({});
+    else
+        setType(*typeName);
+    
     if (const std::string* t = params->getString("Mesh"); t != nullptr)
     {
         auto geometryFileName = util::U8FileName(*t);
@@ -89,4 +120,10 @@ RenderLabels
 Nebula::getLabelMask() const
 {
     return RenderLabels::NebulaLabels;
+}
+
+NebulaType
+Nebula::getNebulaType() const
+{
+    return type;
 }
