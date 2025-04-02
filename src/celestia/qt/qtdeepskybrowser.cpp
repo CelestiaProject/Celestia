@@ -3,7 +3,7 @@
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
 //
-// Deep sky browser widget for Qt5-Qt6 front-end
+// Deep sky browser widget for Qt front-end
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
