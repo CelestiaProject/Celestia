@@ -14,7 +14,7 @@
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 #include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
