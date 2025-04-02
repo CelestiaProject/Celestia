@@ -63,7 +63,7 @@ Nebula::setType(const std::string& typeStr)
 std::string
 Nebula::getDescription() const
 {
-    return fmt::sprintf(_("Nebula: %s"), getType());
+    return fmt::format(_("Nebula: {}"), getType());
 }
 
 ResourceHandle
