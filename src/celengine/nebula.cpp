@@ -12,8 +12,9 @@
 #include <celmath/vecgl.h>
 #include <celutil/associativearray.h>
 #include <celutil/fsutils.h>
-#include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
+#include <celutil/stringutils.h>
 #include <fmt/format.h>
 #include "meshmanager.h"
 #include "nebula.h"
@@ -34,6 +35,7 @@ struct NebulaTypeName
 
 constexpr std::array NebulaTypeNames =
 {
+    NebulaTypeName{ " ", NebulaType::NotDefined },
     NebulaTypeName{ "Emission", NebulaType::Emission },
     NebulaTypeName{ "Reflection",  NebulaType::Reflection },
     NebulaTypeName{ "Dark",  NebulaType::Dark },
@@ -41,7 +43,6 @@ constexpr std::array NebulaTypeNames =
     NebulaTypeName{ "SupernovaRemnant",  NebulaType::SupernovaRemnant },
     NebulaTypeName{ "HII_Region", NebulaType::HII_Region },
     NebulaTypeName{ "Protoplanetary", NebulaType::Protoplanetary },
-    NebulaTypeName{ " ", NebulaType::NotDefined },
 };
 
 const char*

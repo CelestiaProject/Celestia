@@ -26,14 +26,14 @@ class AssociativeArray;
 
 enum class NebulaType
 {
-    Emission           = 0,  // includes Herbig–Haro objects and misc. emission nebula not listed below
-    Reflection         = 1,  // includes misc. reflection nebula not listed below
-    Dark               = 2,
-    Planetary          = 3,
-    SupernovaRemnant   = 4,
-    HII_Region         = 5,
-    Protoplanetary     = 6,
-    NotDefined         = 7
+    NotDefined         = 0,
+    Emission           = 1,  // includes Herbig–Haro objects and misc. emission nebula not listed below
+    Reflection         = 2,  // includes misc. reflection nebula not listed below
+    Dark               = 3,
+    Planetary          = 4,
+    SupernovaRemnant   = 5,
+    HII_Region         = 6,
+    Protoplanetary     = 7
 };
 
 class Nebula : public DeepSkyObject

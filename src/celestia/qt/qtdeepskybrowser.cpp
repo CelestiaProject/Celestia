@@ -320,7 +320,8 @@ DeepSkyBrowser::DSOTableModel::data(const QModelIndex& index, int role) const
         return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 6);
     case AppMagColumn:
         {
-            if (dso->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE) return QString();
+            if (dso->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
+                return QString();
 
             double distance = (observerPos - dso->getPosition()).norm();
             return QString("%L1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
@@ -602,7 +603,7 @@ DeepSkyBrowser::slotRefreshTable()
     else
         filterPred.objectType = DeepSkyObjectType::OpenCluster;
 
-    if ((filterPred.objectType == DeepSkyObjectType::Galaxy) || (filterPred.objectType == DeepSkyObjectType::Nebula))
+    if (filterPred.objectType == DeepSkyObjectType::Galaxy || filterPred.objectType == DeepSkyObjectType::Nebula)
     {
         objectTypeFilterBox->setEnabled(true);
     }
