@@ -88,9 +88,7 @@ bool
 Nebula::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
     
-    if (const auto* typeName = params->getString("Type"); typeName == nullptr)
-        setType({});
-    else
+    if (const auto* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
     
     if (const std::string* t = params->getString("Mesh"); t != nullptr)
