@@ -208,7 +208,7 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
         if (!filter(dso))
             continue;
 
-        std::string dson = dsodb.getDSOName(dso, true).c_str();
+        std::string dson = dsodb.getDSOName(dso, true);
         if (dson.empty())
             continue;   
 
