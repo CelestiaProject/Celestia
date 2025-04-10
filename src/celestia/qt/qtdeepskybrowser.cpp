@@ -189,8 +189,11 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
         {
             std::string dson = dsodb.getDSOName(dso, true);
             if (dson.empty())
-                continue;      
-            
+                continue;
+
+            if (std::all_of(dson.begin(), dson.end(), [](char c) {return std::isspace(c);}))
+                continue;
+
             if (dsos.size() == nDSOs)
                 break;
 
@@ -210,7 +213,10 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
 
         std::string dson = dsodb.getDSOName(dso, true);
         if (dson.empty())
-            continue;   
+            continue;
+
+        if (std::all_of(dson.begin(), dson.end(), [](char c) {return std::isspace(c);}))
+            continue;
 
         if (comparison(dso, dsos.front()))
         {
