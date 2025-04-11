@@ -9,12 +9,13 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
 #include <celutil/associativearray.h>
 #include <celutil/gettext.h>
+#include <celutil/stringutils.h>
 #include "galaxy.h"
 #include "galaxyform.h"
 #include "render.h"
@@ -73,7 +74,7 @@ void Galaxy::setType(const std::string& typeStr)
 {
     type = GalaxyType::Irr;
     auto iter = std::find_if(std::begin(GalaxyTypeNames), std::end(GalaxyTypeNames),
-                             [&](const GalaxyTypeName& g) { return g.name == typeStr; });
+                             [&](const GalaxyTypeName& g) { return compareIgnoringCase(g.name, typeStr) == 0; });
     if (iter != std::end(GalaxyTypeNames))
         type = iter->type;
 }
@@ -95,7 +96,7 @@ void Galaxy::setForm(const fs::path& customTmpName, const fs::path& resDir)
 
 std::string Galaxy::getDescription() const
 {
-    return fmt::sprintf(_("Galaxy (Hubble type: %s)"), getType());
+    return fmt::format(_("Galaxy (Hubble type: {})"), getType());
 }
 
 DeepSkyObjectType Galaxy::getObjType() const
@@ -139,9 +140,7 @@ bool Galaxy::load(const util::AssociativeArray* params, const fs::path& resPath,
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 
-    if (const auto* typeName = params->getString("Type"); typeName == nullptr)
-        setType({});
-    else
+    if (const auto* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
 
 
