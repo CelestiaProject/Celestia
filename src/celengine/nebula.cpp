@@ -27,6 +27,8 @@ namespace util = celestia::util;
 using namespace std::string_view_literals;
 using util::GetLogger;
 
+namespace
+{
 struct NebulaTypeName
 {
     const char* name;
