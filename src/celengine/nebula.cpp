@@ -32,20 +32,21 @@ namespace
 struct NebulaTypeName
 {
     const char* name;
-    NebulaType type;
+    Nebula::Type type;
 };
 
 constexpr std::array NebulaTypeNames =
 {
-    NebulaTypeName{ " ", NebulaType::NotDefined },
-    NebulaTypeName{ "Emission", NebulaType::Emission },
-    NebulaTypeName{ "Reflection",  NebulaType::Reflection },
-    NebulaTypeName{ "Dark",  NebulaType::Dark },
-    NebulaTypeName{ "Planetary",  NebulaType::Planetary },
-    NebulaTypeName{ "SupernovaRemnant",  NebulaType::SupernovaRemnant },
-    NebulaTypeName{ "HII_Region", NebulaType::HII_Region },
-    NebulaTypeName{ "Protoplanetary", NebulaType::Protoplanetary },
+    NebulaTypeName{ " ", Nebula::Type::NotDefined },
+    NebulaTypeName{ "Emission", Nebula::Type::Emission },
+    NebulaTypeName{ "Reflection",  Nebula::Type::Reflection },
+    NebulaTypeName{ "Dark",  Nebula::Type::Dark },
+    NebulaTypeName{ "Planetary",  Nebula::Type::Planetary },
+    NebulaTypeName{ "SupernovaRemnant",  Nebula::Type::SupernovaRemnant },
+    NebulaTypeName{ "HII_Region", Nebula::Type::HII_Region },
+    NebulaTypeName{ "Protoplanetary", Nebula::Type::Protoplanetary },
 };
+
 }
 
 const char*
@@ -57,7 +58,7 @@ Nebula::getType() const
 void
 Nebula::setType(const std::string& typeStr)
 {
-    type = NebulaType::NotDefined;
+    type = Nebula::Type::NotDefined;
     auto iter = std::find_if(std::begin(NebulaTypeNames), std::end(NebulaTypeNames),
                              [&](const NebulaTypeName& n) { return compareIgnoringCase(n.name, typeStr) == 0; });
     if (iter != std::end(NebulaTypeNames))
@@ -124,7 +125,7 @@ Nebula::getLabelMask() const
     return RenderLabels::NebulaLabels;
 }
 
-NebulaType
+Nebula::Type
 Nebula::getNebulaType() const
 {
     return type;
