@@ -46,6 +46,7 @@ constexpr std::array NebulaTypeNames =
     NebulaTypeName{ "HII_Region", NebulaType::HII_Region },
     NebulaTypeName{ "Protoplanetary", NebulaType::Protoplanetary },
 };
+}
 
 const char*
 Nebula::getType() const
