@@ -193,15 +193,15 @@ constexpr inline double SOLAR_POWER      = 3.8462e26;  // in Watts
 namespace literals
 {
 
-constexpr long double operator "" _au (long double au)
+constexpr long double operator ""_au(long double au)
 {
     return AUtoKilometers(au);
 }
-constexpr long double operator "" _ly (long double ly)
+constexpr long double operator ""_ly(long double ly)
 {
     return lightYearsToKilometers(ly);
 }
-constexpr long double operator "" _c (long double n)
+constexpr long double operator ""_c(long double n)
 {
     return speedOfLight * n;
 }
