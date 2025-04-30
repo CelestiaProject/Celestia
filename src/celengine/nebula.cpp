@@ -92,7 +92,6 @@ Nebula::getObjType() const
 bool
 Nebula::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
 {
-    
     if (const std::string* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
     
