@@ -60,5 +60,5 @@ public:
 
 private:
     ResourceHandle geometry{ InvalidResource };
-    Type  type{ Type::NotDefined };
+    Type type{ Type::NotDefined };
 };
