@@ -166,11 +166,25 @@ DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) c
     }
 }
 
-void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
-                       const DSODatabase& dsodb,
-                       const DSOFilterPredicate& filter,
-                       const DSOPredicate& comparison,
-                       unsigned int nDSOs)
+// look for empty or all spaces DSO object name
+bool
+isEmptyDSOName(const DSODatabase& dsodb,
+               DeepSkyObject* dso)
+{
+    std::string name = dsodb.getDSOName(dso, true);
+    if (name.empty())
+        return true;
+    if (std::all_of(name.begin(), name.end(), [](char c) {return std::isspace(c);}))
+        return true;
+    return false;
+}
+
+void
+populateDsoVector(std::vector<DeepSkyObject*>& dsos,
+                  const DSODatabase& dsodb,
+                  const DSOFilterPredicate& filter,
+                  const DSOPredicate& comparison,
+                  unsigned int nDSOs)
 {
     const std::uint32_t size = dsodb.size();
     std::uint32_t index = 0;
@@ -187,11 +201,7 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
         DeepSkyObject* dso = dsodb.getDSO(index);
         if (filter(dso))
         {
-            std::string dson = dsodb.getDSOName(dso, true);
-            if (dson.empty())
-                continue;
-
-            if (std::all_of(dson.begin(), dson.end(), [](char c) {return std::isspace(c);}))
+            if (isEmptyDSOName(dsodb, dso))
                 continue;
 
             if (dsos.size() == nDSOs)
@@ -211,11 +221,7 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
         if (!filter(dso))
             continue;
 
-        std::string dson = dsodb.getDSOName(dso, true);
-        if (dson.empty())
-            continue;
-
-        if (std::all_of(dson.begin(), dson.end(), [](char c) {return std::isspace(c);}))
+        if (isEmptyDSOName(dsodb, dso))
             continue;
 
         if (comparison(dso, dsos.front()))
