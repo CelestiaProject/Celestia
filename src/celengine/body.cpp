@@ -88,7 +88,8 @@ Body::setDefaultProperties()
     geomAlbedo = 0.5f;
     reflectivity = 0.5f;
     temperature = 0.0f;
-    tempDiscrepancy = 0.0f;
+    emissivity = 0.0f;
+    internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
     geometry = InvalidResource;
     surface = Surface(Color::White);
@@ -394,9 +395,9 @@ Body::getTemperature(double time) const
     if (sun->getVisibility()) // the sun is a star
     {
         auto distFromSun = static_cast<float>(getAstrocentricPosition(time).norm());
-        temp = sun->getTemperature() *
-               std::pow(1.0f - getBondAlbedo(), 0.25f) *
-               std::sqrt(sun->getRadius() / (2.0f * distFromSun));
+        float flux = math::square(s->getRadius() * math::square(s->getTemperature())) / math::square(distFromSun);
+        temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
+                        internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
     else // the sun is a barycenter
     {
@@ -412,7 +413,8 @@ Body::getTemperature(double time) const
             float lum = math::square(s->getRadius() * math::square(s->getTemperature()));
             flux += lum / math::square(distFromSun);
         }
-        temp = std::pow((1.0f - getBondAlbedo()) * flux, 0.25f) * (numbers::sqrt2_v<float> * 0.5f);
+        temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
+                        internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
     return getTempDiscrepancy() + temp;
 }
@@ -424,15 +426,27 @@ Body::setTemperature(float _temperature)
 }
 
 float
-Body::getTempDiscrepancy() const
+Body::getEmissivity() const
 {
-    return tempDiscrepancy;
+    return emissivity;
 }
 
 void
-Body::setTempDiscrepancy(float _tempDiscrepancy)
+Body::setEmissivity(float _emissivity)
 {
-    tempDiscrepancy = _tempDiscrepancy;
+    emissivity = _emissivity;
+}
+
+float
+Body::getInternalHeatFlux() const
+{
+    return internalHeatFlux;
+}
+
+void
+Body::setInternalHeatFlux(float _internalHeatFlux)
+{
+    internalHeatFlux = _internalHeatFlux;
 }
 
 Eigen::Quaternionf
