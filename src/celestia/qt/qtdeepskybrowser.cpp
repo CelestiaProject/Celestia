@@ -3,7 +3,7 @@
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
 //
-// Deep sky browser widget for Qt4 front-end
+// Deep sky browser widget for Qt front-end
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -166,11 +166,25 @@ DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) c
     }
 }
 
-void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
-                       const DSODatabase& dsodb,
-                       const DSOFilterPredicate& filter,
-                       const DSOPredicate& comparison,
-                       unsigned int nDSOs)
+// look for empty or all spaces DSO object name
+bool
+isEmptyDSOName(const DSODatabase& dsodb,
+               DeepSkyObject* dso)
+{
+    std::string name = dsodb.getDSOName(dso, true);
+    if (name.empty())
+        return true;
+    if (std::all_of(name.begin(), name.end(), [](char c) {return std::isspace(c);}))
+        return true;
+    return false;
+}
+
+void
+populateDsoVector(std::vector<DeepSkyObject*>& dsos,
+                  const DSODatabase& dsodb,
+                  const DSOFilterPredicate& filter,
+                  const DSOPredicate& comparison,
+                  unsigned int nDSOs)
 {
     const std::uint32_t size = dsodb.size();
     std::uint32_t index = 0;
@@ -184,8 +198,12 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
             return;
         }
 
-        if (DeepSkyObject* dso = dsodb.getDSO(index); filter(dso))
+        DeepSkyObject* dso = dsodb.getDSO(index);
+        if (filter(dso))
         {
+            if (isEmptyDSOName(dsodb, dso))
+                continue;
+
             if (dsos.size() == nDSOs)
                 break;
 
@@ -201,6 +219,9 @@ void populateDsoVector(std::vector<DeepSkyObject*>& dsos,
     {
         DeepSkyObject* dso = dsodb.getDSO(index);
         if (!filter(dso))
+            continue;
+
+        if (isEmptyDSOName(dsodb, dso))
             continue;
 
         if (comparison(dso, dsos.front()))
@@ -311,6 +332,9 @@ DeepSkyBrowser::DSOTableModel::data(const QModelIndex& index, int role) const
         return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 6);
     case AppMagColumn:
         {
+            if (dso->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
+                return QString();
+
             double distance = (observerPos - dso->getPosition()).norm();
             return QString("%L1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
         }
@@ -402,7 +426,7 @@ DeepSkyBrowser::DSOTableModel::populate(const UniversalCoord& _observerPos,
                                         DSOPredicate::Criterion criterion,
                                         unsigned int nDSOs)
 {
-    showType = filterPred.objectType == DeepSkyObjectType::Galaxy;
+    showType = filterPred.objectType == DeepSkyObjectType::Galaxy || filterPred.objectType == DeepSkyObjectType::Nebula;
     const DSODatabase& dsodb = *universe->getDSOCatalog();
 
     observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
@@ -591,7 +615,7 @@ DeepSkyBrowser::slotRefreshTable()
     else
         filterPred.objectType = DeepSkyObjectType::OpenCluster;
 
-    if (filterPred.objectType == DeepSkyObjectType::Galaxy)
+    if (filterPred.objectType == DeepSkyObjectType::Galaxy || filterPred.objectType == DeepSkyObjectType::Nebula)
     {
         objectTypeFilterBox->setEnabled(true);
     }
