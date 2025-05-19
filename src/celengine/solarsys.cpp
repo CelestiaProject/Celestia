@@ -1000,8 +1000,10 @@ Body* CreateBody(const std::string& name,
 
     if (auto temperature = planetData->getNumber<float>("Temperature"); temperature.has_value() && *temperature > 0.0f)
         body->setTemperature(*temperature);
-    if (auto tempDiscrepancy = planetData->getNumber<float>("TempDiscrepancy"); tempDiscrepancy.has_value())
-        body->setTempDiscrepancy(*tempDiscrepancy);
+    if (auto emissivity = planetData->getNumber<float>("Emissivity"); emissivity.has_value())
+        body->setEmissivity(*emissivity);
+    if (auto internalHeatFlux = planetData->getNumber<float>("InternalHeatFlux"); internalHeatFlux.has_value())
+        body->setInternalHeatFlux(*internalHeatFlux);
     if (auto mass = planetData->getMass<float>("Mass", 1.0, 1.0); mass.has_value())
         body->setMass(*mass);
     if (auto density = planetData->getNumber<float>("Density"); density.has_value())

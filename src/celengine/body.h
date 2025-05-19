@@ -252,8 +252,10 @@ public:
     void setReflectivity(float);
     float getTemperature(double t = 0) const;
     void setTemperature(float);
-    float getTempDiscrepancy() const;
-    void setTempDiscrepancy(float);
+    float getEmissivity() const;
+    void setEmissivity(float);
+    float getInternalHeatFlux() const;
+    void setInternalHeatFlux(float);
 
     BodyClassification getClassification() const;
     void setClassification(BodyClassification);
@@ -373,7 +375,8 @@ private:
     float bondAlbedo{ 0.5f };
     float reflectivity{ 0.5f };
     float temperature{ 0.0f };
-    float tempDiscrepancy{ 0.0f };
+    float emissivity{ 0.0f };
+    float internalHeatFlux{ 0.0f };
 
     Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };
 
