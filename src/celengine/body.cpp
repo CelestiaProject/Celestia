@@ -416,7 +416,7 @@ Body::getTemperature(double time) const
         temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
                         internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
-    return getTempDiscrepancy() + temp;
+    return temp;
 }
 
 void
