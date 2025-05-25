@@ -395,7 +395,7 @@ Body::getTemperature(double time) const
     if (sun->getVisibility()) // the sun is a star
     {
         auto distFromSun = static_cast<float>(getAstrocentricPosition(time).norm());
-        float flux = math::square(s->getRadius() * math::square(s->getTemperature())) / math::square(distFromSun);
+        float flux = math::square(sun->getRadius() * math::square(sun->getTemperature())) / math::square(distFromSun);
         temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
                         internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
