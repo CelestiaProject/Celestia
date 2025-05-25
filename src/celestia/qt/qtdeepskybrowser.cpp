@@ -169,14 +169,12 @@ DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) c
 // look for empty or all spaces DSO object name
 bool
 isEmptyDSOName(const DSODatabase& dsodb,
-               DeepSkyObject* dso)
+               const DeepSkyObject* dso)
 {
     std::string name = dsodb.getDSOName(dso, true);
-    if (name.empty())
-        return true;
-    if (std::all_of(name.begin(), name.end(), [](char c) {return std::isspace(c);}))
-        return true;
-    return false;
+    return name.empty() ||
+           std::all_of(name.cbegin(), name.cend(),
+                       [](char c) { return std::isspace(static_cast<unsigned char>(c)); });
 }
 
 void
