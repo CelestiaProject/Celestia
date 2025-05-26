@@ -375,7 +375,7 @@ private:
     float bondAlbedo{ 0.5f };
     float reflectivity{ 0.5f };
     float temperature{ 0.0f };
-    float emissivity{ 0.0f };
+    float emissivity{ 1.0f };
     float internalHeatFlux{ 0.0f };
 
     Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };
