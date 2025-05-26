@@ -88,7 +88,7 @@ Body::setDefaultProperties()
     geomAlbedo = 0.5f;
     reflectivity = 0.5f;
     temperature = 0.0f;
-    emissivity = 0.0f;
+    emissivity = 1.0f;
     internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
     geometry = InvalidResource;
