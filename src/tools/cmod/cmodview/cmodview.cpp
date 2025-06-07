@@ -25,7 +25,12 @@ main(int argc, char *argv[])
     QCoreApplication::setApplicationName("cmodview");
 
     // Enable multisample antialiasing
-    QSurfaceFormat format;
+    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+#ifdef GL_ES
+    format.setRenderableType(QSurfaceFormat::RenderableType::OpenGLES);
+#else
+    format.setRenderableType(QSurfaceFormat::RenderableType::OpenGL);
+#endif
     format.setSamples(4);
     format.setVersion(2, 0);
     QSurfaceFormat::setDefaultFormat(format);
