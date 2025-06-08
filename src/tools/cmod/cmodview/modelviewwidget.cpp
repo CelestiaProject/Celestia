@@ -51,12 +51,8 @@ constexpr float VIEWPORT_FOV = 45.0f;
 constexpr int ShadowBufferSize = 1024;
 constexpr int ShadowSampleKernelWidth = 2;
 
-
-enum {
-    TangentAttributeIndex = 6,
-    PointSizeAttributeIndex = 7,
-};
-
+constexpr GLuint TangentAttributeIndex = 6;
+constexpr GLuint PointSizeAttributeIndex = 7;
 
 // Calculate the matrix used to render the model from the
 // perspective of the light.
@@ -73,7 +69,6 @@ directionalLightMatrix(const Eigen::Vector3f& lightDirection)
 
     return m;
 }
-
 
 Eigen::Matrix4f
 parallelProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar)
@@ -92,7 +87,6 @@ parallelProjectionMatrix(float left, float right, float bottom, float top, float
     return m;
 }
 
-
 Eigen::Matrix4f
 shadowProjectionMatrix(float objectRadius)
 {
@@ -101,9 +95,7 @@ shadowProjectionMatrix(float objectRadius)
                                     -objectRadius, objectRadius);
 }
 
-
 constexpr auto VertexAttributeCount = static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax);
-
 
 constexpr std::array<GLenum, VertexAttributeCount> GLComponentTypes
 {
@@ -114,7 +106,6 @@ constexpr std::array<GLenum, VertexAttributeCount> GLComponentTypes
      GL_UNSIGNED_BYTE,  // UByte4
 };
 
-
 constexpr std::array<int, VertexAttributeCount> GLComponentCounts
 {
      1,  // Float1
@@ -123,7 +114,6 @@ constexpr std::array<int, VertexAttributeCount> GLComponentCounts
      4,  // Float4,
      4,  // UByte4
 };
-
 
 void
 setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
@@ -205,7 +195,6 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
     }
 }
 
-
 // Set just the vertex pointer
 void
 setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
@@ -226,7 +215,6 @@ setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexD
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableVertexAttribArray(TangentAttributeIndex);
 }
-
 
 GLenum
 getGLMode(cmod::PrimitiveGroupType primitive)
@@ -250,9 +238,7 @@ getGLMode(cmod::PrimitiveGroupType primitive)
     }
 }
 
-
 bool gl2Fail = false;
-
 
 void
 setUniformValue(const GLProgram& program, const char* name, float value)
@@ -261,7 +247,6 @@ setUniformValue(const GLProgram& program, const char* name, float value)
     if (location >= 0)
         glUniform1f(location, value);
 }
-
 
 template<typename T, std::enable_if_t<std::is_same_v<typename T::Scalar, float>, int> = 0>
 void
@@ -282,22 +267,21 @@ setUniformValue(const GLProgram& program, const char* name, const T& values)
         static_assert(R <= 0 || C <= 0, "Unhandled matrix size");
 }
 
-
-void setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Vector3f* values, GLsizei count)
+void
+setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Vector3f* values, GLsizei count)
 {
     GLint location = glGetUniformLocation(program.getID(), name);
     if (location >= 0)
         glUniform3fv(location, count, values[0].data());
 }
 
-
-void setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Matrix4f* values, GLsizei count)
+void
+setUniformValueArray(const GLProgram& program, const char* name, const Eigen::Matrix4f* values, GLsizei count)
 {
     GLint location = glGetUniformLocation(program.getID(), name);
     if (location >= 0)
         glUniformMatrix4fv(location, count, GL_FALSE, values[0].data());
 }
-
 
 void
 setSampler(const GLProgram& program, const char* name, GLint value)
@@ -307,9 +291,7 @@ setSampler(const GLProgram& program, const char* name, GLint value)
         glUniform1i(location, value);
 }
 
-
 } // end unnamed namespace
-
 
 class MaterialLibrary
 {
@@ -339,7 +321,6 @@ MaterialLibrary::~MaterialLibrary()
     }
 }
 
-
 GLuint
 MaterialLibrary::getTexture(const QString& resourceName)
 {
@@ -368,7 +349,6 @@ MaterialLibrary::getTexture(const QString& resourceName)
     return texture == nullptr ? 0 : texture->getName();
 }
 
-
 ImageTexture*
 MaterialLibrary::loadTexture(const QString& fileName)
 {
@@ -387,7 +367,6 @@ MaterialLibrary::loadTexture(const QString& fileName)
 
     return new ImageTexture(*image, Texture::EdgeClamp, Texture::DefaultMipMaps);
 }
-
 
 ShaderKey
 ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lighting, const cmod::VertexDescription* vertexDesc)
@@ -442,7 +421,6 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
     return {info};
 }
 
-
 ModelViewWidget::ModelViewWidget(QWidget *parent) :
    QOpenGLWidget(parent),
    m_model(nullptr),
@@ -459,20 +437,14 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
     setupDefaultLightSources();
 }
 
-
-ModelViewWidget::~ModelViewWidget()
-{
-    delete m_materialLibrary;
-}
-
+ModelViewWidget::~ModelViewWidget() = default;
 
 void
 ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& modelDirPath)
 {
     m_model = std::move(model);
-    delete m_materialLibrary;
 
-    m_materialLibrary = new MaterialLibrary(modelDirPath);
+    m_materialLibrary = std::make_unique<MaterialLibrary>(modelDirPath);
 
     m_selection.clear();
 
@@ -510,7 +482,6 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
     emit selectionChanged();
 }
 
-
 void
 ModelViewWidget::resetCamera()
 {
@@ -528,7 +499,6 @@ ModelViewWidget::resetCamera()
     m_cameraOrientation = Eigen::Quaterniond::Identity();
 }
 
-
 void
 ModelViewWidget::setRenderStyle(RenderStyle style)
 {
@@ -538,7 +508,6 @@ ModelViewWidget::setRenderStyle(RenderStyle style)
         update();
     }
 }
-
 
 void
 ModelViewWidget::mousePressEvent(QMouseEvent *event)
@@ -551,7 +520,6 @@ ModelViewWidget::mousePressEvent(QMouseEvent *event)
     m_mouseDownPosition = event->position();
 #endif
 }
-
 
 void
 ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
@@ -575,7 +543,6 @@ ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
         select(Eigen::Vector2f(x, y));
     }
 }
-
 
 void
 ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
@@ -636,7 +603,6 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
     update();
 }
 
-
 void
 ModelViewWidget::wheelEvent(QWheelEvent* event)
 {
@@ -657,7 +623,6 @@ ModelViewWidget::wheelEvent(QWheelEvent* event)
 
     update();
 }
-
 
 void
 ModelViewWidget::select(const Eigen::Vector2f& viewportPoint)
@@ -692,7 +657,6 @@ ModelViewWidget::select(const Eigen::Vector2f& viewportPoint)
     emit selectionChanged();
 }
 
-
 Eigen::Affine3d
 ModelViewWidget::cameraTransform() const
 {
@@ -700,7 +664,6 @@ ModelViewWidget::cameraTransform() const
     t.translate(-m_cameraPosition);
     return t;
 }
-
 
 void
 ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
@@ -715,7 +678,6 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     update();
 }
 
-
 void
 ModelViewWidget::setBackgroundColor(const QColor& color)
 {
@@ -723,13 +685,11 @@ ModelViewWidget::setBackgroundColor(const QColor& color)
     update();
 }
 
-
 void
 ModelViewWidget::initializeGL()
 {
     celestia::gl::init();
 }
-
 
 void
 ModelViewWidget::paintGL()
@@ -754,7 +714,7 @@ ModelViewWidget::paintGL()
         glViewport(0, 0, width(), height());
     }
 
-    glClearColor(m_backgroundColor.redF(), m_backgroundColor.greenF(), m_backgroundColor.blueF(), 0.0f);
+    glClearColor(m_backgroundColor.redF(), m_backgroundColor.greenF(), m_backgroundColor.blueF(), 1.0f);
     glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -784,7 +744,7 @@ ModelViewWidget::paintGL()
     }
 
     unsigned int lightIndex = 0;
-    foreach (LightSource lightSource, m_lightSources)
+    for (const LightSource& lightSource : m_lightSources)
     {
         GLenum glLight = GL_LIGHT0 + lightIndex;
         lightIndex++;
@@ -1012,7 +972,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
         Eigen::Vector3f lightDirections[8];
         Eigen::Vector3f lightColors[8];
 
-        foreach (LightSource lightSource, m_lightSources)
+        for (const LightSource& lightSource : m_lightSources)
         {
             Eigen::Vector3d direction = lightMatrix * lightSource.direction;
             Eigen::Vector3f color = lightSource.color * lightSource.intensity;

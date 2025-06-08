@@ -66,7 +66,6 @@ constexpr int CMODVIEW_STATE_VERSION = 1;
 
 } // end unnamed namespace
 
-
 MainWindow::MainWindow() :
     m_modelView(nullptr),
     m_materialWidget(nullptr),
@@ -184,29 +183,28 @@ MainWindow::MainWindow() :
     toolsMenu->addAction(materialDock->toggleViewAction());
 }
 
-
-void MainWindow::readSettings()
+void
+MainWindow::readSettings()
 {
     QSettings settings;
     restoreGeometry(settings.value("cmodview/geometry").toByteArray());
     restoreState(settings.value("cmodview/windowState").toByteArray(), CMODVIEW_STATE_VERSION);
 }
 
-
-void MainWindow::saveSettings()
+void
+MainWindow::saveSettings()
 {
     QSettings settings;
     settings.setValue("cmodview/geometry", saveGeometry());
     settings.setValue("cmodview/windowState", saveState(CMODVIEW_STATE_VERSION));
 }
 
-
-void MainWindow::closeEvent(QCloseEvent* event)
+void
+MainWindow::closeEvent(QCloseEvent* event)
 {
     saveSettings();
     event->accept();
 }
-
 
 bool
 MainWindow::eventFilter(QObject* obj, QEvent* e)
@@ -225,7 +223,6 @@ MainWindow::eventFilter(QObject* obj, QEvent* e)
     return QObject::eventFilter(obj, e);
 }
 
-
 void
 MainWindow::setModel(const QString& fileName, std::unique_ptr<cmod::Model>&& model)
 {
@@ -243,7 +240,6 @@ MainWindow::setModel(const QString& fileName, std::unique_ptr<cmod::Model>&& mod
     setModelFileName(fileName);
     showModelStatistics();
 }
-
 
 void
 MainWindow::showModelStatistics()
@@ -288,7 +284,6 @@ MainWindow::showModelStatistics()
     }
 }
 
-
 void
 MainWindow::setModelFileName(const QString& fileName)
 {
@@ -309,14 +304,12 @@ MainWindow::setModelFileName(const QString& fileName)
     }
 }
 
-
 bool
 MainWindow::exportSupported(const QString& fileName) const
 {
     QString ext = QFileInfo(fileName).suffix().toLower();
     return ext == "cmod";
 }
-
 
 void
 MainWindow::openModel()
@@ -336,7 +329,6 @@ MainWindow::openModel()
         openModel(fileName);
     }
 }
-
 
 void
 MainWindow::openModel(const QString& fileName)
@@ -442,14 +434,12 @@ MainWindow::openModel(const QString& fileName)
     }
 }
 
-
 void
 MainWindow::saveModel()
 {
     if (exportSupported(modelFileName()))
         saveModel(modelFileName());
 }
-
 
 void
 MainWindow::saveModelAs()
@@ -461,7 +451,6 @@ MainWindow::saveModelAs()
         setModelFileName(saveFileName);
     }
 }
-
 
 void
 MainWindow::saveModel(const QString& saveFileName)
@@ -480,13 +469,11 @@ MainWindow::saveModel(const QString& saveFileName)
     }
 }
 
-
 void
 MainWindow::revertModel()
 {
     openModel(modelFileName());
 }
-
 
 void
 MainWindow::setRenderStyle(QAction* action)
@@ -502,7 +489,6 @@ MainWindow::setRenderStyle(QAction* action)
         break;
     }
 }
-
 
 void
 MainWindow::generateNormals()
@@ -567,7 +553,6 @@ MainWindow::generateNormals()
     }
 }
 
-
 void
 MainWindow::generateTangents()
 {
@@ -630,7 +615,6 @@ MainWindow::generateTangents()
     }
 }
 
-
 void
 MainWindow::uniquifyVertices()
 {
@@ -648,7 +632,6 @@ MainWindow::uniquifyVertices()
     m_modelView->update();
 }
 
-
 void
 MainWindow::mergeMeshes()
 {
@@ -658,7 +641,6 @@ MainWindow::mergeMeshes()
 
     setModel(modelFileName(), cmodtools::MergeModelMeshes(*model));
 }
-
 
 void
 MainWindow::updateSelectionInfo()
@@ -680,7 +662,6 @@ MainWindow::updateSelectionInfo()
     }
 }
 
-
 void
 MainWindow::changeCurrentMaterial(const cmod::Material& material)
 {
@@ -691,7 +672,6 @@ MainWindow::changeCurrentMaterial(const cmod::Material& material)
         m_modelView->setMaterial(selectedGroup->materialIndex, material);
     }
 }
-
 
 void
 MainWindow::editBackgroundColor()
