@@ -26,29 +26,30 @@ namespace cmodview
 namespace
 {
 
-QColor toQtColor(const cmod::Color& color)
+QColor
+toQtColor(const cmod::Color& color)
 {
     return QColor(static_cast<int>(color.red() * 255.99f),
                   static_cast<int>(color.green() * 255.99f),
                   static_cast<int>(color.blue() * 255.99f));
 }
 
-
-cmod::Color fromQtColor(const QColor& color)
+cmod::Color
+fromQtColor(const QColor& color)
 {
     return cmod::Color(color.redF(), color.greenF(), color.blueF());
 }
 
-
-static void setWidgetColor(QLabel* widget, const cmod::Color& color)
+void
+setWidgetColor(QLabel* widget, const cmod::Color& color)
 {
     widget->setPalette(QPalette(toQtColor(color)));
     widget->setAutoFillBackground(true);
     widget->setText(QString("%1, %2, %3").arg(color.red(), 0, 'g', 3).arg(color.green(), 0, 'g', 3).arg(color.blue(), 0, 'g', 3));
 }
 
-
-void selectComboBoxItem(QComboBox* combo, const QString &text)
+void
+selectComboBoxItem(QComboBox* combo, const QString &text)
 {
     int itemIndex = combo->findText(text);
     if (itemIndex < 0)
@@ -60,15 +61,15 @@ void selectComboBoxItem(QComboBox* combo, const QString &text)
     combo->setCurrentIndex(itemIndex);
 }
 
-
-void selectComboBoxItem(QComboBox* combo, const fs::path &path)
+void
+selectComboBoxItem(QComboBox* combo, const fs::path &path)
 {
     selectComboBoxItem(combo, toQString(path.c_str()));
 }
 
-
 // Return a list of all texture filenames in the specified folder
-QSet<QString> listTextures(QDir& dir)
+QSet<QString>
+listTextures(QDir& dir)
 {
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.dds" << "*.dxt5nm";
@@ -82,7 +83,6 @@ QSet<QString> listTextures(QDir& dir)
 }
 
 } // end unnamed namespace
-
 
 MaterialWidget::MaterialWidget(QWidget* parent) :
     QWidget(parent)
@@ -169,7 +169,6 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     this->setLayout(layout);
 }
 
-
 void
 MaterialWidget::setMaterial(const cmod::Material& material)
 {
@@ -205,7 +204,6 @@ MaterialWidget::setMaterial(const cmod::Material& material)
     emit materialChanged(m_material);
 }
 
-
 void
 MaterialWidget::editDiffuse()
 {
@@ -213,7 +211,6 @@ MaterialWidget::editDiffuse()
     connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setDiffuse(QColor)));
     dialog.exec();
 }
-
 
 void
 MaterialWidget::editSpecular()
@@ -223,7 +220,6 @@ MaterialWidget::editSpecular()
     dialog.exec();
 }
 
-
 void
 MaterialWidget::editEmissive()
 {
@@ -232,30 +228,25 @@ MaterialWidget::editEmissive()
     dialog.exec();
 }
 
-
 void
 MaterialWidget::editBaseTexture()
 {
 }
-
 
 void
 MaterialWidget::editSpecularMap()
 {
 }
 
-
 void
 MaterialWidget::editEmissiveMap()
 {
 }
 
-
 void
 MaterialWidget::editNormalMap()
 {
 }
-
 
 void
 MaterialWidget::setDiffuse(const QColor& color)
@@ -265,7 +256,6 @@ MaterialWidget::setDiffuse(const QColor& color)
     emit materialEdited(m_material);
 }
 
-
 void
 MaterialWidget::setSpecular(const QColor& color)
 {
@@ -274,7 +264,6 @@ MaterialWidget::setSpecular(const QColor& color)
     emit materialEdited(m_material);
 }
 
-
 void
 MaterialWidget::setEmissive(const QColor& color)
 {
@@ -282,7 +271,6 @@ MaterialWidget::setEmissive(const QColor& color)
     setWidgetColor(m_emissiveColor, m_material.emissive);
     emit materialEdited(m_material);
 }
-
 
 void
 MaterialWidget::changeMaterialParameters()
@@ -321,7 +309,6 @@ MaterialWidget::changeMaterialParameters()
     emit materialEdited(m_material);
 }
 
-
 void
 MaterialWidget::setTextureSearchPath(const QString& path)
 {
@@ -345,7 +332,7 @@ MaterialWidget::setTextureSearchPath(const QString& path)
         QStringList sortedNames = textureFileNames.values();
         sortedNames.sort();
 
-        foreach (QString fileName, sortedNames)
+        for (const QString& fileName : sortedNames)
         {
             m_baseTexture->addItem(fileName, fileName);
             m_specularMap->addItem(fileName, fileName);

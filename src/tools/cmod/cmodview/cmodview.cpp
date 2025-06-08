@@ -60,6 +60,5 @@ main(int argc, char *argv[])
     // open events.
     app.installEventFilter(&window);
 
-
     return app.exec();
 }
