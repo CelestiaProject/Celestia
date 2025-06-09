@@ -30,6 +30,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
@@ -577,6 +578,9 @@ CelestialBrowser::slotRefreshTable()
     treeView->resizeColumnToContents(StarTableModel::DistanceColumn);
     treeView->resizeColumnToContents(StarTableModel::AppMagColumn);
     treeView->resizeColumnToContents(StarTableModel::AbsMagColumn);
+
+    QHeaderView* header = treeView->header();
+    header->setSortIndicator(StarTableModel::DistanceColumn, Qt::AscendingOrder);
 
     searchResultLabel->setText(QString(_("%1 objects found")).arg(starModel->rowCount(QModelIndex())));
 }
