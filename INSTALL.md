@@ -140,9 +140,10 @@ sudo make install
 
 [*] `INTERFACE` must be replaced with one of "`QT5`", "`QT6`" or "`SDL`"
 
-Four interfaces are available for Celestia on Unix-like systems:
+Three interfaces are available for Celestia on Unix-like systems:
 - SDL: minimal interface, barebone Celestia core with no toolbar or menu...
        Disabled by default.
+       Optional minimal menu is available.
 - QT5: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities, bookmarks... A preferred option. Enabled by
        default, No need to pass -DENABLE_QT5=ON.
@@ -378,10 +379,11 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
 | ENABLE_TOOLS         | bool | OFF       | Build tools for Celestia data files
 | ENABLE_GLES          | bool | OFF       | Use OpenGL ES 2.0 in rendering code
-| USE_QT6              | bool | OFF       | Use Qt6 in Qt frontend
+| USE_WAYLAND          | bool | OFF       | Use Wayland in Qt frontend
 | USE_GLSL_STRUCTS     | bool | OFF       | Use structs in GLSL
 | USE_ICU              | bool | OFF       | Use ICU for UTF8 decoding for text rendering
 | USE_MESHOPTIMIZER    | bool | OFF       | Use meshoptimizer when loading models
+| USE_IMGUI            | bool | OFF       | Use ImGui for menu system on SDL frontend
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)

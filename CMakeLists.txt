@@ -72,6 +72,7 @@ option(USE_ICU            "Use ICU for UTF8 decoding for text rendering (Default
 option(USE_WIN_ICU        "Use Windows SDK's ICU implementation (Default: off)" OFF)
 option(USE_MESHOPTIMIZER  "Use meshoptimizer (Default: off)" OFF)
 option(USE_WEFFCPP        "Use the -Weffc++ option when compiling with GCC (Default: off)" OFF)
+option(USE_IMGUI          "Use ImGui for menu system on SDL frontend (Default: off)" OFF)
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
 # Prefer GLVND or "legacy" OpenGL library (libOpenGL.so vs libGL.so)
