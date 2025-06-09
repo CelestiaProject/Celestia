@@ -31,6 +31,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
@@ -598,6 +599,8 @@ DeepSkyBrowser::slotRefreshTable()
     UniversalCoord observerPos = appCore->getSimulation()->getActiveObserver()->getPosition();
 
     DSOPredicate::Criterion criterion = DSOPredicate::Distance;
+    QHeaderView* header = treeView->header();
+    header->setSortIndicator(DSOTableModel::DistanceColumn, Qt::AscendingOrder);
 
     treeView->clearSelection();
 
