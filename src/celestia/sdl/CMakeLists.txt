@@ -27,6 +27,10 @@ set(IMGUI_SOURCES
     "${IMGUI_DIR}/misc/cpp/imgui_stdlib.h")
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
+if(ENABLE_GLES)
+  target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_ES2)
+endif()
+
 target_include_directories(imgui PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/backends" "${IMGUI_DIR}/misc/cpp")
 
 set(SDL_SOURCES
