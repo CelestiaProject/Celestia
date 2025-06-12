@@ -19,6 +19,7 @@ set(IMGUI_SOURCES
     "${IMGUI_DIR}/imstb_rectpack.h"
     "${IMGUI_DIR}/imstb_textedit.h"
     "${IMGUI_DIR}/imstb_truetype.h"
+    "${IMGUI_DIR}/backends/imgui_impl_opengl3_loader.h"
     "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
     "${IMGUI_DIR}/backends/imgui_impl_opengl3.h"
     "${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp"
@@ -27,6 +28,13 @@ set(IMGUI_SOURCES
     "${IMGUI_DIR}/misc/cpp/imgui_stdlib.h")
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
+if(ENABLE_GLES)
+  target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_ES2)
+  target_link_libraries(imgui PRIVATE OpenGLES::OpenGLESv2)
+else()
+  target_link_libraries(imgui PRIVATE OpenGL::GL)
+endif()
+
 target_include_directories(imgui PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/backends" "${IMGUI_DIR}/misc/cpp")
 
 set(SDL_SOURCES
