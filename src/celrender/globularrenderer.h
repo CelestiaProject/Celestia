@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
@@ -36,13 +37,15 @@ public:
     void render();
 
 private:
+    struct FormManager;
     struct Object;
 
     void renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *globProg, const Object &obj) const;
 
     // global state
-    std::vector<Object> m_objects;
-    Renderer           &m_renderer;
+    std::unique_ptr<FormManager> m_formManager;
+    std::vector<Object>          m_objects;
+    Renderer                    &m_renderer;
 
     // per-frame state
     Eigen::Quaternionf m_viewerOrientation{ Eigen::Quaternionf::Identity() };

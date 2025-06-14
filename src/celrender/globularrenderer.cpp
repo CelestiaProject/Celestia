@@ -8,12 +8,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "globularrenderer.h"
+
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <cmath>
-#include <memory>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -29,7 +30,6 @@
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
-#include "globularrenderer.h"
 
 namespace gl = celestia::gl;
 namespace util = celestia::util;
@@ -39,6 +39,7 @@ namespace celestia::render
 
 namespace
 {
+
 constexpr int cntrTexWidth  = 512;
 constexpr int cntrTexHeight = 512;
 constexpr int starTexWidth  = 128;
@@ -57,48 +58,19 @@ constexpr float kSpriteScaleFactor = 1.0f/1.25f;
 float RRatio, XI; // TODO: get rid of these global variables
 
 /// Globular Form
+struct Blob
+{
+    Eigen::Vector3f position;
+    float           radius_2d;
+    std::uint8_t    colorIndex;
+};
 
 struct GlobularForm
 {
-    struct Blob
-    {
-        Eigen::Vector3f position;
-        float           radius_2d;
-        std::uint8_t    colorIndex;
-    };
-
-    using BlobVector = std::vector<Blob>;
-
     std::vector<Blob> gblobs{ };
     mutable gl::Buffer bo{ util::NoCreateT{} };
     mutable gl::VertexObject vo{ util::NoCreateT{} };
     mutable bool GLDataInitialized{ false };
-};
-
-/// GlobularForm Manager
-class GlobularFormManager
-{
-public:
-    GlobularFormManager()
-    {
-        initializeForms();
-        centerTex.fill(nullptr);
-    }
-
-    const GlobularForm* getForm(int) const;
-    Texture* getCenterTex(int);
-    Texture* getGlobularTex();
-    Texture* getColorTex();
-
-    static GlobularFormManager* get();
-
-private:
-    void initializeForms();
-
-    std::array<GlobularForm, Globular::GlobularBuckets> globularForms{ };
-    std::array<Texture*, Globular::GlobularBuckets> centerTex{ };
-    std::unique_ptr<Texture> globularTex{ nullptr };
-    std::unique_ptr<Texture> colorTex{ nullptr };
 };
 
 float
@@ -203,7 +175,7 @@ colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
 }
 
 void
-initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, const GlobularForm::BlobVector &points)
+initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, util::array_view<Blob> points)
 {
     struct GlobularVtx
     {
@@ -283,7 +255,7 @@ initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, const GlobularForm::BlobV
 void
 buildGlobularForm(GlobularForm& globularForm, float c)
 {
-    GlobularForm::BlobVector globularPoints;
+    std::vector<Blob> globularPoints;
 
     float rRatio = std::pow(10.0f, c); //  = r_t / r_c
     float cc = 1.0f + rRatio * rRatio;
@@ -336,42 +308,40 @@ buildGlobularForm(GlobularForm& globularForm, float c)
          * desired King form 'prob'!
          */
 
-        if (math::RealDists<float>::Unit(rng) < prob / cH)
-        {
-            /* Generate 3d points of globular cluster stars in polar coordinates:
-             * Distribution in eta (<=> r) according to King's profile.
-             * Uniform distribution on any spherical surface for given eta.
-             * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
-             */
-            float u = math::RealDists<float>::SignedUnit(rng);
-            float theta = math::RealDists<float>::SignedFullAngle(rng);
-            float sthetu2 = std::sin(theta) * std::sqrt(1.0f - u * u);
+        if (math::RealDists<float>::Unit(rng) >= prob / cH)
+            continue;
 
-            // x,y,z points within -0.5..+0.5, as required for consistency:
-            GlobularForm::Blob b;
+        /* Generate 3d points of globular cluster stars in polar coordinates:
+            * Distribution in eta (<=> r) according to King's profile.
+            * Uniform distribution on any spherical surface for given eta.
+            * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
+            */
+        float u = math::RealDists<float>::SignedUnit(rng);
+        float theta = math::RealDists<float>::SignedFullAngle(rng);
+        float sthetu2 = std::sin(theta) * std::sqrt(1.0f - u * u);
 
-            b.position = 0.5f * Eigen::Vector3f(eta * std::sqrt(1.0f - u * u) * std::cos(theta),
-                                                eta * sthetu2,
-                                                eta * u);
+        // x,y,z points within -0.5..+0.5, as required for consistency:
+        Blob& b = globularPoints.emplace_back();
+        b.position = 0.5f * Eigen::Vector3f(eta * std::sqrt(1.0f - u * u) * std::cos(theta),
+                                            eta * sthetu2,
+                                            eta * u);
 
-            /*
-             * Note: 2d projection in x-z plane, according to Celestia's
-             * conventions! Hence...
-             */
-            b.radius_2d = eta * std::sqrt(1.0f - sthetu2 * sthetu2);
+        /*
+            * Note: 2d projection in x-z plane, according to Celestia's
+            * conventions! Hence...
+            */
+        b.radius_2d = eta * std::sqrt(1.0f - sthetu2 * sthetu2);
 
-            /* For now, implement only a generic spectrum for normal cluster
-             * stars, modelled from Hubble photo of M80.
-             * Blue Stragglers are qualitatively accounted for...
-             * assume color index poportional to Z as function of which the King profile
-             * becomes universal!
-             */
+        /* For now, implement only a generic spectrum for normal cluster
+            * stars, modelled from Hubble photo of M80.
+            * Blue Stragglers are qualitatively accounted for...
+            * assume color index poportional to Z as function of which the King profile
+            * becomes universal!
+            */
 
-            b.colorIndex = static_cast<std::uint8_t>(Z * 254);
+        b.colorIndex = static_cast<std::uint8_t>(Z * 254);
 
-            globularPoints.push_back(b);
-            i++;
-        }
+        ++i;
     }
 
     globularForm.gblobs = std::move(globularPoints);
@@ -387,73 +357,6 @@ globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
     float lumi = std::max(0.0f, std::exp(-kLumiShape * std::hypot(u, v)) - Lumi0);
 
     *pixel = static_cast<std::uint8_t>(lumi * 255.99f);
-}
-
-const GlobularForm*
-GlobularFormManager::getForm(int form) const
-{
-    return form < static_cast<int>(globularForms.size())
-        ? &globularForms[form]
-        : nullptr;
-}
-
-Texture*
-GlobularFormManager::getCenterTex(int form)
-{
-    if(centerTex[form] == nullptr)
-    {
-        centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                  engine::PixelFormat::Luminance,
-                                                  centerCloudTexEval).release();
-    }
-
-    assert(centerTex[form] != nullptr);
-    return centerTex[form];
-}
-
-Texture*
-GlobularFormManager::getGlobularTex()
-{
-    if (globularTex == nullptr)
-    {
-        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              engine::PixelFormat::Luminance,
-                                              globularTextureEval);
-    }
-    assert(globularTex != nullptr);
-    return globularTex.get();
-}
-
-Texture*
-GlobularFormManager::getColorTex()
-{
-    if (colorTex == nullptr)
-    {
-        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
-                                           colorTextureEval,
-                                           Texture::EdgeClamp,
-                                           Texture::NoMipMaps);
-    }
-    assert(colorTex != nullptr);
-    return colorTex.get();
-}
-
-void
-GlobularFormManager::initializeForms()
-{
-    // Define globularForms corresponding to 8 different bins of King concentration c
-    for (unsigned int ic  = 0; ic < Globular::GlobularBuckets; ++ic)
-    {
-        float cbin = Globular::MinC + (0.5f + static_cast<float>(ic)) * Globular::BinWidth;
-        buildGlobularForm(globularForms[ic], cbin);
-    }
-}
-
-GlobularFormManager*
-GlobularFormManager::get()
-{
-    static GlobularFormManager* globularFormManager = new GlobularFormManager();
-    return globularFormManager;
 }
 
 float
@@ -488,15 +391,96 @@ CalculateSpriteCount(const GlobularForm* form, float detail, float starSize, flo
         starSize *= kSpriteScaleFactor;
 
         if (starSize < minimumFeatureSize)
-        {
-            nPoints = i;
-            break;
-        }
+            return i;
     }
+
     return nPoints;
 }
 
 } // anonymous namespace
+
+/// GlobularForm Manager
+class GlobularRenderer::FormManager
+{
+public:
+    FormManager()
+    {
+        initializeForms();
+    }
+
+    const GlobularForm* getForm(int) const;
+    Texture* getCenterTex(int);
+    Texture* getGlobularTex();
+    Texture* getColorTex();
+
+private:
+    void initializeForms();
+
+    std::array<GlobularForm, Globular::GlobularBuckets> globularForms{ };
+    std::array<std::unique_ptr<Texture>, Globular::GlobularBuckets> centerTex;
+    std::unique_ptr<Texture> globularTex;
+    std::unique_ptr<Texture> colorTex;
+};
+
+const GlobularForm*
+GlobularRenderer::FormManager::getForm(int form) const
+{
+    return form < static_cast<int>(globularForms.size())
+        ? &globularForms[form]
+        : nullptr;
+}
+
+Texture*
+GlobularRenderer::FormManager::getCenterTex(int form)
+{
+    if (centerTex[form] == nullptr)
+    {
+        centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
+                                                  engine::PixelFormat::Luminance,
+                                                  centerCloudTexEval);
+    }
+
+    assert(centerTex[form] != nullptr);
+    return centerTex[form].get();
+}
+
+Texture*
+GlobularRenderer::FormManager::getGlobularTex()
+{
+    if (globularTex == nullptr)
+    {
+        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
+                                              engine::PixelFormat::Luminance,
+                                              globularTextureEval);
+    }
+    assert(globularTex != nullptr);
+    return globularTex.get();
+}
+
+Texture*
+GlobularRenderer::FormManager::getColorTex()
+{
+    if (colorTex == nullptr)
+    {
+        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
+                                           colorTextureEval,
+                                           Texture::EdgeClamp,
+                                           Texture::NoMipMaps);
+    }
+    assert(colorTex != nullptr);
+    return colorTex.get();
+}
+
+void
+GlobularRenderer::FormManager::initializeForms()
+{
+    // Define globularForms corresponding to 8 different bins of King concentration c
+    for (unsigned int ic  = 0; ic < Globular::GlobularBuckets; ++ic)
+    {
+        float cbin = Globular::MinC + (0.5f + static_cast<float>(ic)) * Globular::BinWidth;
+        buildGlobularForm(globularForms[ic], cbin);
+    }
+}
 
 struct GlobularRenderer::Object
 {
@@ -551,10 +535,11 @@ GlobularRenderer::render()
     if (tidalProg == nullptr || globProg == nullptr)
         return;
 
-    GlobularFormManager* globularFormManager = GlobularFormManager::get();
+    if (m_formManager == nullptr)
+        m_formManager = std::make_unique<FormManager>();
 
     glActiveTexture(GL_TEXTURE0);
-    globularFormManager->getColorTex()->bind();
+    m_formManager->getColorTex()->bind();
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -582,9 +567,8 @@ void
 GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *globProg, const Object &obj) const
 {
     const Globular *globular = obj.globular;
-    auto* globularFormManager = GlobularFormManager::get();
 
-    const auto *form = globularFormManager->getForm(globular->getFormId());
+    const auto *form = m_formManager->getForm(globular->getFormId());
     if (form == nullptr)
         return;
 
@@ -639,7 +623,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
     }
 
     glActiveTexture(GL_TEXTURE1);
-    globularFormManager->getCenterTex(obj.globular->getFormId())->bind();
+    m_formManager->getCenterTex(obj.globular->getFormId())->bind();
 
     Eigen::Matrix4f mv = math::translate(m_renderer.getModelViewMatrix(), obj.offset);
     Eigen::Matrix4f pr;
@@ -666,7 +650,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
      * or when distance from globular center decreases.
      */
     glActiveTexture(GL_TEXTURE2);
-    GlobularFormManager::get()->getGlobularTex()->bind();
+    m_formManager->getGlobularTex()->bind();
 
     Eigen::Matrix3f mx = obj.globular->getOrientation().conjugate().toRotationMatrix() * Eigen::Scaling(tidalSize);
 
