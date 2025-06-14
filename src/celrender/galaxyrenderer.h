@@ -20,6 +20,7 @@
 class CelestiaGLProgram;
 class Galaxy;
 class Renderer;
+class Texture;
 
 namespace celestia::render
 {
@@ -38,13 +39,17 @@ public:
 
 private:
     struct Object;
-
-    using BlobVector = engine::GalacticForm::BlobVector;
-
-    bool getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const;
-
     struct RenderData;
-    std::vector<RenderData>  m_renderData;
+
+    bool getRenderInfo(const GalaxyRenderer::Object &obj,
+                       float &brightness,
+                       float &size,
+                       float minimumFeatureSize,
+                       Eigen::Matrix4f &m,
+                       Eigen::Matrix4f &pr,
+                       int &nPoints) const;
+
+    void bindTextures();
 
     void renderGL2();
     void initializeGL2(const CelestiaGLProgram *prog);
@@ -52,9 +57,13 @@ private:
     void renderGL3();
     void initializeGL3(const CelestiaGLProgram *prog);
 
+    std::vector<RenderData>  m_renderData;
+
     // global state
-    std::vector<Object>     m_objects;
-    Renderer               &m_renderer;
+    std::unique_ptr<Texture> m_galaxyTex;
+    std::unique_ptr<Texture> m_colorTex;
+    std::vector<Object>      m_objects;
+    Renderer                &m_renderer;
 
     // per-frame state
     Eigen::Quaternionf  m_viewerOrientation{ Eigen::Quaternionf::Identity() };
