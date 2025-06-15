@@ -18,6 +18,7 @@ namespace
 constexpr auto loresIndex = static_cast<std::size_t>(TextureResolution::lores);
 constexpr auto medresIndex = static_cast<std::size_t>(TextureResolution::medres);
 constexpr auto hiresIndex = static_cast<std::size_t>(TextureResolution::hires);
+
 }
 
 MultiResTexture::MultiResTexture()
@@ -25,16 +26,6 @@ MultiResTexture::MultiResTexture()
     tex[loresIndex] = InvalidResource;
     tex[medresIndex] = InvalidResource;
     tex[hiresIndex] = InvalidResource;
-}
-
-
-MultiResTexture::MultiResTexture(ResourceHandle loTex,
-                                 ResourceHandle medTex,
-                                 ResourceHandle hiTex)
-{
-    tex[loresIndex] = loTex;
-    tex[medresIndex] = medTex;
-    tex[hiresIndex] = hiTex;
 }
 
 
@@ -74,8 +65,7 @@ Texture* MultiResTexture::find(TextureResolution resolution)
     TextureManager* texMan = GetTextureManager();
 
     const auto resolutionIndex = static_cast<std::size_t>(resolution);
-    Texture* res = texMan->find(tex[resolutionIndex]);
-    if (res != nullptr)
+    if (Texture* res = texMan->find(tex[resolutionIndex]); res != nullptr)
         return res;
 
     // Preferred resolution isn't available; try the second choice
@@ -100,10 +90,10 @@ Texture* MultiResTexture::find(TextureResolution resolution)
     }
 
     tex[resolutionIndex] = tex[secondChoice];
-    res = texMan->find(tex[resolutionIndex]);
-    if (res != nullptr)
+    if (Texture* res = texMan->find(tex[resolutionIndex]); res != nullptr)
         return res;
 
+    tex[secondChoice] = tex[lastResort];
     tex[resolutionIndex] = tex[lastResort];
 
     return texMan->find(tex[resolutionIndex]);
