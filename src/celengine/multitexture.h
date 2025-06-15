@@ -28,9 +28,6 @@ class MultiResTexture
 {
 public:
     MultiResTexture();
-    MultiResTexture(ResourceHandle loTex,
-                    ResourceHandle medTex = InvalidResource,
-                    ResourceHandle hiTex = InvalidResource);
     MultiResTexture(const fs::path& source, const fs::path& path);
 
     void setTexture(const fs::path& source,

@@ -3004,7 +3004,7 @@ void Renderer::renderStar(const Star& star,
         if (MultiResTexture mtex = star.getTexture(); mtex.texture(textureResolution) != InvalidResource)
             surface.baseTexture = mtex;
         else
-            surface.baseTexture = InvalidResource;
+            surface.baseTexture = MultiResTexture();
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 

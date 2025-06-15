@@ -136,7 +136,7 @@ private:
     bool visible{ true };
     std::array<char, 8> spectralType{ };
 
-    MultiResTexture texture{ InvalidResource };
+    MultiResTexture texture;
     ResourceHandle geometry{ InvalidResource };
 
     std::shared_ptr<const celestia::ephem::Orbit> orbit;
