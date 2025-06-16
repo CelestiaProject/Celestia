@@ -53,10 +53,10 @@ int g_matrixMode = GL_MODELVIEW;
 class GLSLProgram
 {
 public:
-    explicit GLSLProgram(GLProgram *prog) : m_prog(prog)
+    explicit GLSLProgram(GLProgram&& prog) : m_prog(std::move(prog))
     {
-        m_MVPMatrix = Mat4ShaderParameter(m_prog->getID(), "MVPMatrix");
-        IntegerShaderParameter(m_prog->getID(), "u_tex") = 0;
+        m_MVPMatrix = Mat4ShaderParameter(m_prog.getID(), "MVPMatrix");
+        IntegerShaderParameter(m_prog.getID(), "u_tex") = 0;
     }
     ~GLSLProgram() = default;
     GLSLProgram(const GLSLProgram&) = delete;
@@ -66,7 +66,7 @@ public:
 
     void use()
     {
-        m_prog->use();
+        m_prog.use();
     }
     void setMVPMatrix(const Eigen::Matrix4f &m)
     {
@@ -74,7 +74,7 @@ public:
     }
 
 private:
-    std::unique_ptr<GLProgram> m_prog;
+    GLProgram m_prog;
     Mat4ShaderParameter m_MVPMatrix;
 };
 
@@ -168,25 +168,28 @@ struct Vertex
 
 std::array<Vertex, 16> vertices {};
 
-GLProgram* BuildProgram(const std::string &vertex, const std::string &fragment)
+GLProgram BuildProgram(const std::string &vertex, const std::string &fragment)
 {
-    GLProgram* prog = nullptr;
-    auto status = GLShaderLoader::CreateProgram(vertex, fragment, &prog);
+    GLShaderStatus status = GLShaderStatus::OK;
+    auto vs = GLVertexShader::create(vertex, status);
+    auto fs = GLVertexShader::create(fragment, status);
+    if (!vs.isValid() || !fs.isValid())
+        return GLProgram{};
+
+    auto builder = GLProgramBuilder::create(status);
     if (status != GLShaderStatus::OK)
-    {
-        delete prog;
-        return nullptr;
-    }
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::VertexCoordAttributeIndex, "in_Position");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::ColorAttributeIndex, "in_Color");
-    status = prog->link();
-    if (status != GLShaderStatus::OK)
-    {
-        delete prog;
-        return nullptr;
-    }
-    return prog;
+        return GLProgram{};
+
+    builder.attach(std::move(vs));
+    builder.attach(std::move(fs));
+    builder.bindAttribute(CelestiaGLProgram::VertexCoordAttributeIndex, "in_Position");
+    builder.bindAttribute(CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
+    builder.bindAttribute(CelestiaGLProgram::ColorAttributeIndex, "in_Color");
+
+    if (auto program = builder.link(status); status == GLShaderStatus::OK)
+        return program;
+
+    return GLProgram{};
 }
 
 GLSLProgram* FindGLProgram(ShaderAttributes attr)
@@ -199,9 +202,9 @@ GLSLProgram* FindGLProgram(ShaderAttributes attr)
         int texture = attr == SHADER_TEXCOORD ? 1 : 0;
         std::string vertex = fmt::format(kVertexShader, glsl_version, color, texture);
         std::string fragment = fmt::format(kFragmentShader, glsl_version, color, texture);
-        auto *glprog = BuildProgram(vertex, fragment);
-        if (glprog != nullptr)
-            programs[attr] = new GLSLProgram(glprog);
+        auto glprog = BuildProgram(vertex, fragment);
+        if (glprog.isValid())
+            programs[attr] = std::make_unique<GLSLProgram>(std::move(glprog)).release();
     }
     return prog;
 }

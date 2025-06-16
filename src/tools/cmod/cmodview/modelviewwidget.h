@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
+#include <unordered_map>
 
 #include <celengine/glsupport.h>
 
@@ -85,11 +87,6 @@ public:
         return m_info;
     }
 
-    bool operator==(const ShaderKey& other) const
-    {
-        return m_info == other.m_info;
-    }
-
     bool hasSpecular() const
     {
         return (m_info & SpecularMask) != 0;
@@ -140,7 +137,26 @@ private:
 
 private:
     unsigned int m_info;
+
+    friend bool operator==(const ShaderKey&, const ShaderKey&) noexcept;
+    friend bool operator!=(const ShaderKey&, const ShaderKey&) noexcept;
+
+    friend struct ::std::hash<ShaderKey>;
 };
+
+inline bool operator==(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info == rhs.m_info; }
+inline bool operator!=(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info != rhs.m_info; }
+
+}
+
+template<>
+struct std::hash<cmodview::ShaderKey>
+{
+    std::size_t operator()(const cmodview::ShaderKey& key) const noexcept { return std::hash<unsigned int>{}(key.m_info); }
+};
+
+namespace cmodview
+{
 
 inline unsigned int qHash(const ShaderKey& key)
 {
@@ -229,7 +245,7 @@ private:
                       const cmod::VertexDescription* vertexDesc);
 
     void setupDefaultLightSources();
-    GLProgram* createShader(const ShaderKey& shaderKey);
+    GLProgram createProgram(const ShaderKey& shaderKey);
 
     std::unique_ptr<cmod::Model> m_model;
     double m_modelBoundingRadius;
@@ -247,7 +263,7 @@ private:
     std::unique_ptr<MaterialLibrary> m_materialLibrary;
 
     QSet<const cmod::PrimitiveGroup*> m_selection;
-    QHash<ShaderKey, GLProgram*> m_shaderCache;
+    std::unordered_map<ShaderKey, GLProgram> m_shaderCache;
 
     QColor m_backgroundColor;
 
