@@ -33,7 +33,6 @@ public:
 private:
     void setTDB();
     void setDateTimeStrings();
-    bool checkStrings();
 
     CelestiaCore* m_appCore;
     double m_tdb{ 0.0 };

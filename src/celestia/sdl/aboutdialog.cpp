@@ -262,30 +262,31 @@ AboutDialog::show(bool* isOpen) const
     if (!*isOpen)
         return;
 
-    ImGui::Begin("About Celestia", isOpen);
-    ImGui::Text("Celestia 1.7.0");
-    ImGui::Text("Development snapshot, git commit %s", GIT_COMMIT);
-    ImGui::Separator();
-    ImGui::TextWrapped("Copyright (C) 2001-2025 by the Celestia Development Team.");
-    ImGui::TextWrapped("Celestia is free software. You can redistribute it and/or modify "
-                       "it under the terms of the GNU General Public License as published "
-                       "by the Free Software Foundation; either version 2 of the License, "
-                       "or (at your option) any later version.");
-    ImGui::Separator();
-    ImGui::Text("Third-party libraries");
-    ImGui::BeginTable("libraryTable", 3);
-    for (const auto& library : m_libraries)
+    if (ImGui::Begin("About Celestia", isOpen))
     {
-        ImGui::TableNextRow();
-        ImGui::TableNextColumn();
-        ImGui::Text("%s", library.name.c_str());
-        ImGui::TableNextColumn();
-        ImGui::Text("%s", library.version.c_str());
-        ImGui::TableNextColumn();
-        ImGui::Text("%s", library.license.c_str());
+        ImGui::Text("Celestia 1.7.0");
+        ImGui::Text("Development snapshot, git commit %s", GIT_COMMIT);
+        ImGui::Separator();
+        ImGui::TextWrapped("Copyright (C) 2001-2025 by the Celestia Development Team.");
+        ImGui::TextWrapped("Celestia is free software. You can redistribute it and/or modify "
+                        "it under the terms of the GNU General Public License as published "
+                        "by the Free Software Foundation; either version 2 of the License, "
+                        "or (at your option) any later version.");
+        ImGui::Separator();
+        ImGui::Text("Third-party libraries");
+        ImGui::BeginTable("libraryTable", 3);
+        for (const auto& library : m_libraries)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", library.name.c_str());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", library.version.c_str());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", library.license.c_str());
+        }
+        ImGui::EndTable();
     }
-    ImGui::EndTable();
-
     ImGui::End();
 }
 

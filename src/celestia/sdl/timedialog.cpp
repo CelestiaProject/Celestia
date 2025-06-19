@@ -151,27 +151,27 @@ TimeDialog::show(bool* isOpen)
     if (!*isOpen)
         return;
 
-    ImGui::Begin("Set time", isOpen);
-    if (ImGui::InputText("Date (TDB)", &m_dateString))
-        setTDB();
-    if (ImGui::InputText("Time (TDB)", &m_timeString))
-        setTDB();
-
-    ImGui::Separator();
-    if (ImGui::InputDouble("TDB", &m_tdb, 1e-8, 1, "%.8f"))
+    if (ImGui::Begin("Set time", isOpen))
     {
-        setDateTimeStrings();
+        if (ImGui::InputText("Date (TDB)", &m_dateString))
+            setTDB();
+        if (ImGui::InputText("Time (TDB)", &m_timeString))
+            setTDB();
+
+        ImGui::Separator();
+        if (ImGui::InputDouble("TDB", &m_tdb, 1e-8, 1, "%.8f"))
+            setDateTimeStrings();
+
+        ImGui::Separator();
+        if (!m_isValid)
+            ImGui::BeginDisabled();
+
+        if (ImGui::Button("Ok##setDate"))
+            m_appCore->getSimulation()->getActiveObserver()->setTime(m_tdb);
+
+        if (!m_isValid)
+            ImGui::EndDisabled();
     }
-    ImGui::Separator();
-    if (!m_isValid)
-        ImGui::BeginDisabled();
-
-    if (ImGui::Button("Ok##setDate"))
-        m_appCore->getSimulation()->getActiveObserver()->setTime(m_tdb);
-
-    if (!m_isValid)
-        ImGui::EndDisabled();
-
     ImGui::End();
 }
 

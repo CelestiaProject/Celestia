@@ -122,18 +122,20 @@ void renderDialog(const CelestiaCore* appCore, bool* isOpen)
 
     Renderer* renderer = appCore->getRenderer();
 
-    ImGui::Begin("Render", isOpen);
-    if (ImGui::CollapsingHeader("Textures"))
-        texturesPanel(renderer);
+    if (ImGui::Begin("Render", isOpen))
+    {
+        if (ImGui::CollapsingHeader("Textures"))
+            texturesPanel(renderer);
 
-    if (ImGui::CollapsingHeader("Lighting"))
-        lightingPanel(renderer);
+        if (ImGui::CollapsingHeader("Lighting"))
+            lightingPanel(renderer);
 
-    if (ImGui::CollapsingHeader("Star style"))
-        starStylePanel(renderer);
+        if (ImGui::CollapsingHeader("Star style"))
+            starStylePanel(renderer);
 
-    if (ImGui::CollapsingHeader("Miscellaneous"))
-        miscellaneousPanel(renderer);
+        if (ImGui::CollapsingHeader("Miscellaneous"))
+            miscellaneousPanel(renderer);
+    }
 
     ImGui::End();
 }

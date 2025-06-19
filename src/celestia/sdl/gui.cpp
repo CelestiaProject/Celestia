@@ -175,6 +175,8 @@ Gui::menuBar()
         if (ImGui::MenuItem("Set time...") && !m_isTimeDialogOpen)
         {
             const Observer* observer = m_appCore->getSimulation()->getActiveObserver();
+            if (m_timeDialog == nullptr)
+                m_timeDialog = std::make_unique<TimeDialog>(m_appCore);
             m_timeDialog->setTime(observer->getTime());
             m_isTimeDialogOpen = true;
         }
