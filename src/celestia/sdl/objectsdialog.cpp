@@ -267,26 +267,28 @@ objectsDialog(const CelestiaCore* appCore, bool* isOpen)
     Renderer* renderer = appCore->getRenderer();
     Observer* observer = appCore->getSimulation()->getActiveObserver();
 
-    ImGui::Begin("Objects", isOpen);
-    if (ImGui::CollapsingHeader("Objects"))
-        objectsPanel(renderer);
-    if (ImGui::CollapsingHeader("Features"))
-        featuresPanel(renderer, observer);
+    if (ImGui::Begin("Objects", isOpen))
+    {
+        if (ImGui::CollapsingHeader("Objects"))
+            objectsPanel(renderer);
+        if (ImGui::CollapsingHeader("Features"))
+            featuresPanel(renderer, observer);
 
-    if (ImGui::CollapsingHeader("Orbits"))
-        orbitsPanel(renderer);
+        if (ImGui::CollapsingHeader("Orbits"))
+            orbitsPanel(renderer);
 
-    if (ImGui::CollapsingHeader("Labels"))
-        labelsPanel(renderer);
+        if (ImGui::CollapsingHeader("Labels"))
+            labelsPanel(renderer);
 
-    if (ImGui::CollapsingHeader("Locations"))
-        locationsPanel(renderer, observer);
+        if (ImGui::CollapsingHeader("Locations"))
+            locationsPanel(renderer, observer);
 
-    if (ImGui::CollapsingHeader("Grids"))
-        gridsPanel(renderer);
+        if (ImGui::CollapsingHeader("Grids"))
+            gridsPanel(renderer);
 
-    if (ImGui::CollapsingHeader("Constellations"))
-        constellationsPanel(renderer);
+        if (ImGui::CollapsingHeader("Constellations"))
+            constellationsPanel(renderer);
+    }
 
     ImGui::End();
 }
