@@ -16,15 +16,16 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
 #include <optional>
 #include <ostream>
-#include <sstream>
 #include <string_view>
 #include <system_error>
 #include <tuple>
 #include <utility>
 
 #include <fmt/format.h>
+#include <fmt/ostream.h>
 
 #include <celcompat/filesystem.h>
 #include <celutil/flag.h>
@@ -300,45 +301,35 @@ CloudShadowTexCoord(unsigned int index)
 }
 
 void
-DumpShaderSource(std::ostream& out, const std::string& source)
+DumpShaderSource(std::ostream& out, std::string_view source)
 {
-    bool newline = true;
-    unsigned int lineNumber = 0;
-
-    for (unsigned int i = 0; i < source.length(); i++)
+    std::size_t lineNumber = 1;
+    while (!source.empty())
     {
-        if (newline)
-        {
-            lineNumber++;
-            out << std::setw(3) << lineNumber << ": ";
-            newline = false;
-        }
+        auto pos = source.find('\n');
+        auto line = source.substr(0, pos);
+        fmt::print(out, "{}: {}\n", lineNumber, line);
+        if (pos == std::string_view::npos)
+            break;
 
-        out << source[i];
-        if (source[i] == '\n')
-            newline = true;
+        source = source.substr(pos + 1);
+        ++lineNumber;
     }
 
     out.flush();
 }
 
-
-inline void DumpVSSource(const std::string& source)
+void DumpVSSource(std::string_view source)
 {
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    if (g_shaderLogFile == nullptr)
+        return;
+
+    *g_shaderLogFile << "Vertex shader source:\n";
+    DumpShaderSource(*g_shaderLogFile, source);
+    *g_shaderLogFile << '\n';
 }
 
-inline void DumpVSSource(const std::ostringstream& source)
-{
-    DumpVSSource(source.str());
-}
-
-inline void DumpGSSource(const std::string& source)
+void DumpGSSource(std::string_view source)
 {
     if (g_shaderLogFile != nullptr)
     {
@@ -348,7 +339,7 @@ inline void DumpGSSource(const std::string& source)
     }
 }
 
-inline void DumpFSSource(const std::string& source)
+inline void DumpFSSource(std::string_view source)
 {
     if (g_shaderLogFile != nullptr)
     {
@@ -358,47 +349,42 @@ inline void DumpFSSource(const std::string& source)
     }
 }
 
-inline void DumpFSSource(const std::ostringstream& source)
-{
-    DumpFSSource(source.str());
-}
-
 std::string
 DeclareLights(const ShaderProperties& props)
 {
     if (props.nLights == 0)
         return {};
 
-    std::ostringstream stream;
+    std::string source;
 #ifdef USE_GLSL_STRUCTS
-    stream << "uniform struct {\n";
-    stream << "   vec3 direction;\n";
-    stream << "   vec3 diffuse;\n";
-    stream << "   vec3 specular;\n";
-    stream << "   vec3 halfVector;\n";
+    source += "uniform struct {\n";
+    source += "   vec3 direction;\n";
+    source += "   vec3 diffuse;\n";
+    source += "   vec3 specular;\n";
+    source += "   vec3 halfVector;\n";
     if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
-        stream << "   vec3 color;\n";
+        source += "   vec3 color;\n";
     if (util::is_set(props.texUsage, TexUsage::NightTexture))
-        stream << "   float brightness;\n";
-    stream << "} lights[" << props.nLights << "];\n";
+        source += "   float brightness;\n";
+    fmt::format_to(std::back_inserter(source), "}} lights [{}];\n", props.nLights);
 #else
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        stream << DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
-        stream << DeclareUniform(fmt::format("light{}_diffuse", i), Shader_Vector3);
+        source += DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
+        source += DeclareUniform(fmt::format("light{}_diffuse", i), Shader_Vector3);
         if (props.hasSpecular())
         {
-            stream << DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
-            stream << DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
+            source += DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
+            source += DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
         }
         if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
-            stream << DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
+            source += DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
-            stream << DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
+            source += DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
     }
 #endif
 
-    return stream.str();
+    return source;
 }
 
 
@@ -1050,20 +1036,20 @@ float calculateShadow()
 }
 
 void
-BindAttribLocations(const GLProgram *prog)
+BindAttribLocations(const GLProgramBuilder& prog)
 {
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::VertexCoordAttributeIndex,   "in_Position");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::NormalAttributeIndex,        "in_Normal");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord1AttributeIndex, "in_TexCoord1");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord2AttributeIndex, "in_TexCoord2");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TextureCoord3AttributeIndex, "in_TexCoord3");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::ColorAttributeIndex,         "in_Color");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::IntensityAttributeIndex,     "in_Intensity");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::NextVCoordAttributeIndex,    "in_PositionNext");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::ScaleFactorAttributeIndex,   "in_ScaleFactor");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::TangentAttributeIndex,       "in_Tangent");
-    glBindAttribLocation(prog->getID(), CelestiaGLProgram::PointSizeAttributeIndex,     "in_PointSize");
+    prog.bindAttribute(CelestiaGLProgram::VertexCoordAttributeIndex,   "in_Position");
+    prog.bindAttribute(CelestiaGLProgram::NormalAttributeIndex,        "in_Normal");
+    prog.bindAttribute(CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
+    prog.bindAttribute(CelestiaGLProgram::TextureCoord1AttributeIndex, "in_TexCoord1");
+    prog.bindAttribute(CelestiaGLProgram::TextureCoord2AttributeIndex, "in_TexCoord2");
+    prog.bindAttribute(CelestiaGLProgram::TextureCoord3AttributeIndex, "in_TexCoord3");
+    prog.bindAttribute(CelestiaGLProgram::ColorAttributeIndex,         "in_Color");
+    prog.bindAttribute(CelestiaGLProgram::IntensityAttributeIndex,     "in_Intensity");
+    prog.bindAttribute(CelestiaGLProgram::NextVCoordAttributeIndex,    "in_PositionNext");
+    prog.bindAttribute(CelestiaGLProgram::ScaleFactorAttributeIndex,   "in_ScaleFactor");
+    prog.bindAttribute(CelestiaGLProgram::TangentAttributeIndex,       "in_Tangent");
+    prog.bindAttribute(CelestiaGLProgram::PointSizeAttributeIndex,     "in_PointSize");
 }
 
 std::optional<std::string>
@@ -1093,28 +1079,56 @@ ReadShaderFile(const fs::path &path)
     return s;
 }
 
-GLShaderStatus
-CreateErrorShader(GLProgram **prog, bool fisheyeEnabled)
+GLProgram
+CreateErrorProgram(bool fisheyeEnabled, GLShaderStatus& status)
 {
-    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), errorVertexShaderSource);
-    std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, errorFragmentShaderSource);
+    auto builder = GLProgramBuilder::create(status);
+    if (status != GLShaderStatus::OK)
+        return GLProgram{};
 
-    auto status = GLShaderLoader::CreateProgram(_vs, _fs, prog);
-    if (status == GLShaderStatus::OK)
+    if (auto vs = GLVertexShader::create(fmt::format("{}{}{}{}{}\n",
+                                                     VersionHeader,
+                                                     CommonHeader,
+                                                     VertexHeader,
+                                                     VPFunction(fisheyeEnabled),
+                                                     errorVertexShaderSource),
+                                         status);
+        status == GLShaderStatus::OK)
     {
-        BindAttribLocations(*prog);
-        status = (*prog)->link();
+        builder.attach(std::move(vs));
+    }
+    else
+    {
+        return GLProgram{};
     }
 
+    if (auto fs = GLFragmentShader::create(fmt::format("{}{}{}{}\n",
+                                                       VersionHeader,
+                                                       CommonHeader,
+                                                       FragmentHeader,
+                                                       errorFragmentShaderSource),
+                                           status);
+        status == GLShaderStatus::OK)
+    {
+        builder.attach(std::move(fs));
+    }
+    else
+    {
+        return GLProgram{};
+    }
+
+    BindAttribLocations(builder);
+
+    GLProgram program = builder.link(status);
     if (status != GLShaderStatus::OK)
     {
         if (g_shaderLogFile != nullptr)
             *g_shaderLogFile << "Failed to create error shader!\n";
 
-        return GLShaderStatus::LinkError;
+        return GLProgram{};
     }
 
-    return GLShaderStatus::OK;
+    return program;
 }
 
 constexpr std::string_view
@@ -1153,353 +1167,8 @@ OutPrimitive(GLint prim)
     }
 }
 
-} // end unnamed namespace
-
-bool
-ShaderProperties::usesShadows() const
-{
-    return shadowCounts != 0;
-}
-
-
-unsigned int
-ShaderProperties::getEclipseShadowCountForLight(unsigned int lightIndex) const
-{
-    return (shadowCounts >> lightIndex * ShadowBitsPerLight) & EclipseShadowMask;
-}
-
-
-bool
-ShaderProperties::hasEclipseShadows() const
-{
-    return (shadowCounts & AnyEclipseShadowMask) != 0;
-}
-
-
-void
-ShaderProperties::setEclipseShadowCountForLight(unsigned int lightIndex, unsigned int shadowCount)
-{
-    assert(shadowCount <= MaxShaderEclipseShadows);
-    assert(lightIndex < MaxShaderLights);
-    if (shadowCount <= MaxShaderEclipseShadows && lightIndex < MaxShaderLights)
-    {
-        shadowCounts &= ~(EclipseShadowMask << lightIndex * ShadowBitsPerLight);
-        shadowCounts |= shadowCount << lightIndex * ShadowBitsPerLight;
-    }
-}
-
-
-bool
-ShaderProperties::hasRingShadowForLight(unsigned int lightIndex) const
-{
-    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & RingShadowMask) != 0;
-}
-
-
-bool
-ShaderProperties::hasRingShadows() const
-{
-    return (shadowCounts & AnyRingShadowMask) != 0;
-}
-
-
-void
-ShaderProperties::setRingShadowForLight(unsigned int lightIndex, bool enabled)
-{
-    assert(lightIndex < MaxShaderLights);
-    if (lightIndex < MaxShaderLights)
-    {
-        shadowCounts &= ~(RingShadowMask << lightIndex * ShadowBitsPerLight);
-        shadowCounts |= (enabled ? RingShadowMask : 0) << lightIndex * ShadowBitsPerLight;
-    }
-}
-
-
-bool
-ShaderProperties::hasSelfShadowForLight(unsigned int lightIndex) const
-{
-    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & SelfShadowMask) != 0;
-}
-
-
-bool
-ShaderProperties::hasSelfShadows() const
-{
-    return (shadowCounts & AnySelfShadowMask) != 0;
-}
-
-
-void
-ShaderProperties::setSelfShadowForLight(unsigned int lightIndex, bool enabled)
-{
-    assert(lightIndex < MaxShaderLights);
-    if (lightIndex < MaxShaderLights)
-    {
-        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
-        shadowCounts |= (enabled ? SelfShadowMask : 0) << lightIndex * ShadowBitsPerLight;
-    }
-}
-
-
-bool
-ShaderProperties::hasCloudShadowForLight(unsigned int lightIndex) const
-{
-    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & CloudShadowMask) != 0;
-}
-
-
-bool
-ShaderProperties::hasCloudShadows() const
-{
-    return (shadowCounts & AnyCloudShadowMask) != 0;
-}
-
-
-bool
-ShaderProperties::hasShadowMap() const
-{
-    return util::is_set(texUsage, TexUsage::ShadowMapTexture);
-}
-
-void
-ShaderProperties::setCloudShadowForLight(unsigned int lightIndex, bool enabled)
-{
-    assert(lightIndex < MaxShaderLights);
-    if (lightIndex < MaxShaderLights)
-    {
-        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
-        shadowCounts |= (enabled ? CloudShadowMask : 0) << lightIndex * ShadowBitsPerLight;
-    }
-}
-
-
-bool
-ShaderProperties::hasShadowsForLight(unsigned int light) const
-{
-    assert(light < MaxShaderLights);
-    return getEclipseShadowCountForLight(light) != 0 ||
-           hasRingShadowForLight(light)    ||
-           hasSelfShadowForLight(light)    ||
-           hasCloudShadowForLight(light);
-}
-
-
-// Returns true if diffuse, specular, bump, and night textures all use the
-// same texture coordinate set.
-bool
-ShaderProperties::hasSharedTextureCoords() const
-{
-    return util::is_set(texUsage, TexUsage::SharedTextureCoords);
-}
-
-bool
-ShaderProperties::hasTextureCoordTransform() const
-{
-    return util::is_set(texUsage, TexUsage::TextureCoordTransform);
-}
-
-bool
-ShaderProperties::hasSpecular() const
-{
-    return util::is_set(lightModel, LightingModel::PerPixelSpecularModel);
-}
-
-
-bool
-ShaderProperties::hasScattering() const
-{
-    return util::is_set(texUsage, TexUsage::Scattering);
-}
-
-
-bool
-ShaderProperties::isViewDependent() const
-{
-    switch (lightModel)
-    {
-    case LightingModel::DiffuseModel:
-    case LightingModel::ParticleDiffuseModel:
-    case LightingModel::EmissiveModel:
-    case LightingModel::UnlitModel:
-        return false;
-    default:
-        return true;
-    }
-}
-
-
-bool
-ShaderProperties::usesTangentSpaceLighting() const
-{
-    return util::is_set(texUsage, TexUsage::NormalTexture);
-}
-
-
-bool ShaderProperties::usePointSize() const
-{
-    return util::is_set(texUsage, TexUsage::PointSprite | TexUsage::StaticPointSize);
-}
-
-
-bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
-{
-    return std::tie(p0.texUsage, p0.nLights, p0.shadowCounts, p0.effects, p0.fishEyeOverride, p0.lightModel)
-         < std::tie(p1.texUsage, p1.nLights, p1.shadowCounts, p1.effects, p1.fishEyeOverride, p1.lightModel);
-}
-
-
-ShaderManager::ShaderManager()
-{
-#if defined(_DEBUG) || defined(DEBUG) || 1
-    // Only write to shader log file if this is a debug build
-
-    if (g_shaderLogFile == nullptr)
-#ifdef _WIN32
-        g_shaderLogFile = new std::ofstream("shaders.log");
-#else
-        g_shaderLogFile = new std::ofstream("/tmp/celestia-shaders.log");
-#endif
-
-#endif
-}
-
-
-ShaderManager::~ShaderManager()
-{
-    for(const auto& shader : dynamicShaders)
-        delete shader.second;
-
-    dynamicShaders.clear();
-
-    for(const auto& shader : staticShaders)
-        delete shader.second;
-
-    staticShaders.clear();
-}
-
-CelestiaGLProgram*
-ShaderManager::getShader(const ShaderProperties& props)
-{
-    auto iter = dynamicShaders.find(props);
-    if (iter != dynamicShaders.end())
-    {
-        // Shader already exists
-        return iter->second;
-    }
-    else
-    {
-        // Create a new shader and add it to the table of created shaders
-        CelestiaGLProgram* prog = buildProgram(props);
-        dynamicShaders[props] = prog;
-
-        return prog;
-    }
-}
-
-CelestiaGLProgram*
-ShaderManager::getShader(std::string_view name, std::string_view vs, std::string_view fs)
-{
-    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
-    {
-        // Shader already exists
-        return iter->second;
-    }
-
-    // Create a new shader and add it to the table of created shaders
-    auto *prog = buildProgram(vs, fs);
-    staticShaders[name] = prog;
-
-    return prog;
-}
-
-CelestiaGLProgram*
-ShaderManager::getShader(std::string_view name)
-{
-    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
-    {
-        // Shader already exists
-        return iter->second;
-    }
-
-    fs::path dir("shaders");
-    auto vsName = dir / fmt::format("{}_vert.glsl", name);
-    auto fsName = dir / fmt::format("{}_frag.glsl", name);
-
-    auto vs = ReadShaderFile(vsName);
-    if (!vs.has_value())
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    auto fs = ReadShaderFile(fsName);
-    if (!fs.has_value())
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-
-    // Create a new shader and add it to the table of created shaders
-    auto *prog = buildProgram(*vs, *fs);
-    staticShaders[name] = prog;
-
-    return prog;
-}
-
-CelestiaGLProgram*
-ShaderManager::getShaderGL3(std::string_view name, const GeomShaderParams* params)
-{
-    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
-    {
-        // Shader already exists
-        return iter->second;
-    }
-
-    fs::path dir("shaders");
-    auto vsName = dir / fmt::format("{}_vert.glsl", name);
-    auto fsName = dir / fmt::format("{}_frag.glsl", name);
-
-    auto vs = ReadShaderFile(vsName);
-    if (!vs.has_value())
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    auto fs = ReadShaderFile(fsName);
-    if (!fs.has_value())
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-
-    CelestiaGLProgram *prog = nullptr;
-
-    // Geometric shader is optional
-    if (auto gsName = dir / fmt::format("{}_geom.glsl", name); fs::exists(gsName))
-    {
-        if (auto gs = ReadShaderFile(gsName); gs.has_value())
-            prog = buildProgramGL3(*vs, *gs, *fs, params);
-        else
-            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    }
-    else
-    {
-        prog = buildProgramGL3(*vs, *fs);
-    }
-
-    // Create a new shader and add it to the table of created shaders
-    staticShaders[name] = prog;
-
-    return prog;
-}
-
-
-CelestiaGLProgram*
-ShaderManager::getShaderGL3(std::string_view name, std::string_view vs, std::string_view gs, std::string_view fs)
-{
-    if (auto iter = staticShaders.find(name); iter != staticShaders.end())
-    {
-        // Shader already exists
-        return iter->second;
-    }
-
-    // Create a new shader and add it to the table of created shaders
-    auto *prog = buildProgramGL3(vs, gs, fs);
-    staticShaders[name] = prog;
-
-    return prog;
-}
-
-
-GLVertexShader*
-ShaderManager::buildVertexShader(const ShaderProperties& props)
+GLVertexShader
+buildVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 {
     std::string source(VersionHeader);
     source += "// buildVertexShader\n";
@@ -1737,14 +1406,16 @@ R"glsl(
 
     DumpVSSource(source);
 
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto vs = GLVertexShader::create(source, status); status == GLShaderStatus::OK)
+        return vs;
+
+    return GLVertexShader{};
 }
 
 
-GLFragmentShader*
-ShaderManager::buildFragmentShader(const ShaderProperties& props)
+GLFragmentShader
+buildFragmentShader(const ShaderProperties& props)
 {
     std::string source(VersionHeader);
     // Without GL_ARB_shader_texture_lod enabled one can use texture2DLod
@@ -2097,13 +1768,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     DumpFSSource(source);
 
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto fs = GLFragmentShader::create(source, status); status == GLShaderStatus::OK)
+        return fs;
+
+    return GLFragmentShader{};
 }
 
-GLVertexShader*
-ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
+GLVertexShader
+buildRingsVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 {
     std::string source(VersionHeader);
     source += CommonHeader;
@@ -2146,14 +1819,16 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     DumpVSSource(source);
 
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto vs = GLVertexShader::create(source, status); status == GLShaderStatus::OK)
+        return vs;
+
+    return GLVertexShader{};
 }
 
 
-GLFragmentShader*
-ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
+GLFragmentShader
+buildRingsFragmentShader(const ShaderProperties& props)
 {
     std::string source(VersionHeader);
     source += CommonHeader;
@@ -2251,14 +1926,16 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     DumpFSSource(source);
 
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto fs = GLFragmentShader::create(source, status); status == GLShaderStatus::OK)
+        return fs;
+
+    return GLFragmentShader{};
 }
 
 
-GLVertexShader*
-ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
+GLVertexShader
+buildAtmosphereVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 {
     std::string source(VersionHeader);
     source += "// buildAtmosphereVertexShader\n";
@@ -2284,14 +1961,16 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 
     DumpVSSource(source);
 
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto vs = GLVertexShader::create(source, status); status == GLShaderStatus::OK)
+        return vs;
+
+    return GLVertexShader{};
 }
 
 
-GLFragmentShader*
-ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
+GLFragmentShader
+buildAtmosphereFragmentShader(const ShaderProperties& props)
 {
     std::string source(VersionHeader);
     source += CommonHeader;
@@ -2337,16 +2016,18 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     DumpFSSource(source);
 
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto fs = GLFragmentShader::create(source, status); status == GLShaderStatus::OK)
+        return fs;
+
+    return GLFragmentShader{};
 }
 
 
 // The emissive shader ignores all lighting and uses the diffuse color
 // as the final fragment color.
-GLVertexShader*
-ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
+GLVertexShader
+buildEmissiveVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 {
     std::string source(VersionHeader);
     source += CommonHeader;
@@ -2403,14 +2084,16 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 
     DumpVSSource(source);
 
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto vs = GLVertexShader::create(source, status); status == GLShaderStatus::OK)
+        return vs;
+
+    return GLVertexShader{};
 }
 
 
-GLFragmentShader*
-ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
+GLFragmentShader
+buildEmissiveFragmentShader(const ShaderProperties& props)
 {
     std::string source(VersionHeader);
     source += CommonHeader;
@@ -2454,184 +2137,198 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     DumpFSSource(source);
 
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto fs = GLFragmentShader::create(source, status); status == GLShaderStatus::OK)
+        return fs;
+
+    return GLFragmentShader{};
 }
 
 
 // Build the vertex shader used for rendering particle systems.
-GLVertexShader*
-ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
+GLVertexShader
+buildParticleVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 {
-    std::ostringstream source;
-    source << VersionHeader;
-    source << CommonHeader;
-    source << VertexHeader;
-    source << CommonAttribs;
+    std::string source;
+    source += VersionHeader;
+    source += CommonHeader;
+    source += VertexHeader;
+    source += CommonAttribs;
     if (props.hasTextureCoordTransform())
-        source << TextureTransformUniforms;
+        source += TextureTransformUniforms;
 
-    source << "// PARTICLE SHADER\n";
-    source << "// shadow count: " << props.shadowCounts << std::endl;
+    source += "// PARTICLE SHADER\n";
+    fmt::format_to(std::back_inserter(source), "// shadow count: {}\n", props.shadowCounts);
 
-    source << DeclareLights(props);
+    source += DeclareLights(props);
 
-    source << DeclareUniform("eyePosition", Shader_Vector3);
+    source += DeclareUniform("eyePosition", Shader_Vector3);
 
     // TODO: scattering constants
 
     if (props.usePointSize())
-        source << PointSizeDeclaration();
+        source += PointSizeDeclaration();
 
-     source << DeclareOutput("v_Color", Shader_Vector4);
+     source += DeclareOutput("v_Color", Shader_Vector4);
 
     // Shadow parameters
     if (props.usesShadows())
-        source << DeclareOutput("position", Shader_Vector3);
+        source += DeclareOutput("position", Shader_Vector3);
 
-    source << VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
+    source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
-    source << "\nvoid main(void)\n{\n";
+    source += "\nvoid main(void)\n{\n";
 
 #define PARTICLE_PHASE_PARAMETER 0
 #if PARTICLE_PHASE_PARAMETER
     float g = -0.4f;
     float miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
-    source << "    float mieK = " << miePhaseAsymmetry << ";\n";
 
-    source << "    vec3 eyeDir = normalize(eyePosition - in_Position.xyz);\n";
-    source << "    float brightness = 0.0;\n";
+    fmt::format_to(std::back_inserter(source), "    float mieK = {};\n", miePhaseAsymmetry);
+
+    source += "    vec3 eyeDir = normalize(eyePosition - in_Position.xyz);\n";
+    source += "    float brightness = 0.0;\n";
     for (unsigned int i = 0; i < std::min(1u, props.nLights); i++)
     {
-        source << "    {\n";
-        source << "         float cosTheta = dot(" << LightProperty(i, "direction") << ", eyeDir);\n";
-        source << "         float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
-        source << "         brightness += phMie;\n";
-        source << "    }\n";
+        source += "    {\n";
+        fmt::format_to(std::back_inserter(source), "         float cosTheta = dot({}, eyeDir);\n", LightProperty(i, "direction"));
+        source += "         float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+        source += "         brightness += phMie;\n";
+        source += "    }\n";
     }
 #else
-    source << "    float brightness = 1.0;\n";
+    source += "    float brightness = 1.0;\n";
 #endif
 
     // Set the color. Should *always* use vertex colors for color and opacity.
-    source << "    v_Color = in_Color * brightness;\n";
+    source += "    v_Color = in_Color * brightness;\n";
 
     // Optional point size
     if (util::is_set(props.texUsage, TexUsage::PointSprite))
-        source << PointSizeCalculation();
+        source += PointSizeCalculation();
     else if (util::is_set(props.texUsage, TexUsage::StaticPointSize))
-        source << StaticPointSize();
+        source += StaticPointSize();
 
-    source << VertexPosition(props);
-    source << "}\n";
+    source += VertexPosition(props);
+    source += "}\n";
     // End of main()
 
     DumpVSSource(source);
 
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
-    return status == GLShaderStatus::OK ? vs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto vs = GLVertexShader::create(source, status); status == GLShaderStatus::OK)
+        return vs;
+
+    return GLVertexShader{};
 }
 
-
-GLFragmentShader*
-ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
+GLFragmentShader
+buildParticleFragmentShader(const ShaderProperties& props)
 {
-    std::ostringstream source;
+    std::string source;
 
-    source << VersionHeader << CommonHeader;
+    source += VersionHeader;
+    source += CommonHeader;
 
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source << DeclareUniform("diffTex", Shader_Sampler2D);
+        source += DeclareUniform("diffTex", Shader_Sampler2D);
 
     if (props.usePointSize())
-        source << DeclareInput("pointFade", Shader_Float);
+        source += DeclareInput("pointFade", Shader_Float);
 
     if (props.usesShadows())
     {
-        source << DeclareUniform("ambientColor", Shader_Vector3);
+        source += DeclareUniform("ambientColor", Shader_Vector3);
     }
 
     // Declare shadow parameters
     if (props.usesShadows())
     {
-        source << DeclareInput("position", Shader_Vector3);
+        source += DeclareInput("position", Shader_Vector3);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
-                source << DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source << DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source << DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source << DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
     }
 
-    source << DeclareInput("v_Color", Shader_Vector4);
+    source += DeclareInput("v_Color", Shader_Vector4);
 
     // Begin main()
-    source << "\nvoid main(void)\n{\n";
+    source += "\nvoid main(void)\n{\n";
 
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source << "    gl_FragColor = v_Color * texture2D(diffTex, gl_PointCoord);\n";
+        source += "    gl_FragColor = v_Color * texture2D(diffTex, gl_PointCoord);\n";
     else
-        source << "    gl_FragColor = v_Color;\n";
+        source += "    gl_FragColor = v_Color;\n";
 
-    source << "}\n";
+    source += "}\n";
     // End of main()
 
     DumpFSSource(source);
 
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
-    return status == GLShaderStatus::OK ? fs : nullptr;
+    GLShaderStatus status = GLShaderStatus::OK;
+    if (auto fs = GLFragmentShader::create(source, status); status == GLShaderStatus::OK)
+        return fs;
+
+    return GLFragmentShader{};
 }
 
-CelestiaGLProgram*
-ShaderManager::buildProgram(const ShaderProperties& props)
+enum class GLVersion
 {
-    GLProgram* prog = nullptr;
-    GLShaderStatus status;
+    GL2,
+    GL3,
+};
 
-    GLVertexShader* vs = nullptr;
-    GLFragmentShader* fs = nullptr;
+std::unique_ptr<CelestiaGLProgram>
+buildProgram(const ShaderProperties& props, bool fisheyeEnabled)
+{
+    GLVertexShader vs;
+    GLFragmentShader fs;
 
     if (props.lightModel == LightingModel::RingIllumModel)
     {
-        vs = buildRingsVertexShader(props);
+        vs = buildRingsVertexShader(props, fisheyeEnabled);
         fs = buildRingsFragmentShader(props);
     }
     else if (props.lightModel == LightingModel::AtmosphereModel)
     {
-        vs = buildAtmosphereVertexShader(props);
+        vs = buildAtmosphereVertexShader(props, fisheyeEnabled);
         fs = buildAtmosphereFragmentShader(props);
     }
     else if (props.lightModel == LightingModel::EmissiveModel)
     {
-        vs = buildEmissiveVertexShader(props);
+        vs = buildEmissiveVertexShader(props, fisheyeEnabled);
         fs = buildEmissiveFragmentShader(props);
     }
     else if (props.lightModel == LightingModel::ParticleModel)
     {
-        vs = buildParticleVertexShader(props);
+        vs = buildParticleVertexShader(props, fisheyeEnabled);
         fs = buildParticleFragmentShader(props);
     }
     else
     {
-        vs = buildVertexShader(props);
+        vs = buildVertexShader(props, fisheyeEnabled);
         fs = buildFragmentShader(props);
     }
 
-    if (vs != nullptr && fs != nullptr)
+    GLShaderStatus status = GLShaderStatus::OK;
+    GLProgram program;
+    if (vs.isValid() && fs.isValid())
     {
-        status = GLShaderLoader::CreateProgram(*vs, *fs, &prog);
+        auto builder = GLProgramBuilder::create(status);
         if (status == GLShaderStatus::OK)
         {
-            BindAttribLocations(prog);
-            status = prog->link();
+            builder.attach(std::move(vs));
+            builder.attach(std::move(fs));
+            BindAttribLocations(builder);
+            program = builder.link(status);
         }
     }
     else
@@ -2639,80 +2336,78 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         status = GLShaderStatus::CompileError;
     }
 
-    delete vs;
-    delete fs;
-
     if (status != GLShaderStatus::OK)
     {
-        // If the shader creation failed for some reason, substitute the
-        // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
+        // If the shader creation failed for some reason, substitute the error shader.
+        program = CreateErrorProgram(fisheyeEnabled, status);
+        if (status != GLShaderStatus::OK)
             return nullptr;
     }
 
-    return new CelestiaGLProgram(*prog, props);
+    return std::make_unique<CelestiaGLProgram>(std::move(program), props);
 }
 
-CelestiaGLProgram*
-ShaderManager::buildProgram(std::string_view vs, std::string_view fs)
+std::unique_ptr<CelestiaGLProgram>
+buildProgram(std::string_view vs, std::string_view fs, GLVersion glVersion, bool fisheyeEnabled)
 {
-    GLProgram* prog = nullptr;
-    GLShaderStatus status;
-    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
-    std::string _fs = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, fs);
+    auto versionHeader = glVersion == GLVersion::GL3 ? VersionHeaderGL3 : VersionHeader;
 
-    DumpVSSource(_vs);
-    DumpFSSource(_fs);
+    std::string vsSrc = fmt::format("{}{}{}{}{}\n", versionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
+    std::string fsSrc = fmt::format("{}{}{}{}\n", versionHeader, CommonHeader, FragmentHeader, fs);
 
-    status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
-    if (status == GLShaderStatus::OK)
+    DumpVSSource(vsSrc);
+    DumpFSSource(fsSrc);
+
+    GLShaderStatus status = GLShaderStatus::OK;
+    auto _vs = GLVertexShader::create(vsSrc, status);
+    auto _fs = GLFragmentShader::create(fsSrc, status);
+
+    GLProgram program;
+    if (_vs.isValid() && _fs.isValid())
     {
-        BindAttribLocations(prog);
-        status = prog->link();
+        auto builder = GLProgramBuilder::create(status);
+        if (status == GLShaderStatus::OK)
+        {
+            builder.attach(std::move(_vs));
+            builder.attach(std::move(_fs));
+            BindAttribLocations(builder);
+            program = builder.link(status);
+        }
+    }
+    else
+    {
+        status = GLShaderStatus::CompileError;
     }
 
     if (status != GLShaderStatus::OK)
     {
-        // If the shader creation failed for some reason, substitute the
-        // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
+        // If the shader creation failed for some reason, substitute the error shader.
+        program = CreateErrorProgram(fisheyeEnabled, status);
+        if (status != GLShaderStatus::OK)
             return nullptr;
     }
 
-    return new CelestiaGLProgram(*prog);
+    return std::make_unique<CelestiaGLProgram>(std::move(program));
 }
 
-CelestiaGLProgram*
-ShaderManager::buildProgramGL3(std::string_view vs, std::string_view fs)
+std::unique_ptr<CelestiaGLProgram>
+buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled)
 {
-    GLProgram* prog = nullptr;
-    GLShaderStatus status;
-    std::string _vs = fmt::format("{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
-    std::string _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
-
-    DumpVSSource(_vs);
-    DumpFSSource(_fs);
-
-    status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
-    if (status == GLShaderStatus::OK)
-    {
-        BindAttribLocations(prog);
-        status = prog->link();
-    }
-
-    if (status != GLShaderStatus::OK)
-    {
-        // If the shader creation failed for some reason, substitute the
-        // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
-            return nullptr;
-    }
-
-    return new CelestiaGLProgram(*prog);
+    return ::buildProgram(vs, fs, GLVersion::GL2, fisheyeEnabled);
 }
 
-CelestiaGLProgram*
-ShaderManager::buildProgramGL3(std::string_view vs, std::string_view gs, std::string_view fs, const GeomShaderParams* params)
+std::unique_ptr<CelestiaGLProgram>
+buildProgramGL3(std::string_view vs, std::string_view fs, bool fisheyeEnabled)
+{
+    return ::buildProgram(vs, fs, GLVersion::GL3, fisheyeEnabled);
+}
+
+std::unique_ptr<CelestiaGLProgram>
+buildProgramGL3(std::string_view vs,
+                std::string_view gs,
+                std::string_view fs,
+                const ShaderManager::GeomShaderParams* params,
+                bool fisheyeEnabled)
 {
     std::string layout;
     if (params != nullptr)
@@ -2723,42 +2418,379 @@ ShaderManager::buildProgramGL3(std::string_view vs, std::string_view gs, std::st
                              params->nOutVertices);
     }
 
-    GLProgram* prog = nullptr;
-    GLShaderStatus status;
-    auto _vs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, vs);
-    auto _gs = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, layout, GeomHeaderGL3, VPFunction(fisheyeEnabled), gs);
-    auto _fs = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
+    auto vsSrc = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, VertexHeader, vs);
+    auto gsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGL3, CommonHeader, layout, GeomHeaderGL3, VPFunction(fisheyeEnabled), gs);
+    auto fsSrc = fmt::format("{}{}{}{}\n", VersionHeaderGL3, CommonHeader, FragmentHeader, fs);
 
-    DumpVSSource(_vs);
-    DumpGSSource(_gs);
-    DumpFSSource(_fs);
+    DumpVSSource(vsSrc);
+    DumpGSSource(gsSrc);
+    DumpFSSource(fsSrc);
 
-    status = GLShaderLoader::CreateProgram(_vs, _gs, _fs, &prog);
-    if (status == GLShaderStatus::OK)
+    GLShaderStatus status = GLShaderStatus::OK;
+    auto _vs = GLVertexShader::create(vsSrc, status);
+    auto _gs = GLGeometryShader::create(gsSrc, status);
+    auto _fs = GLFragmentShader::create(fsSrc, status);
+
+    GLProgram program;
+    if (_vs.isValid() && _gs.isValid() && _fs.isValid())
     {
-        BindAttribLocations(prog);
-        status = prog->link();
+        auto builder = GLProgramBuilder::create(status);
+        if (status == GLShaderStatus::OK)
+        {
+            builder.attach(std::move(_vs));
+            builder.attach(std::move(_gs));
+            builder.attach(std::move(_fs));
+            BindAttribLocations(builder);
+            program = builder.link(status);
+        }
+    }
+    else
+    {
+        status = GLShaderStatus::CompileError;
     }
 
     if (status != GLShaderStatus::OK)
     {
-        // If the shader creation failed for some reason, substitute the
-        // error shader.
-        if (CreateErrorShader(&prog, fisheyeEnabled) != GLShaderStatus::OK)
+        // If the shader creation failed for some reason, substitute the error shader.
+        program = CreateErrorProgram(fisheyeEnabled, status);
+        if (status != GLShaderStatus::OK)
             return nullptr;
     }
 
-    return new CelestiaGLProgram(*prog);
+    return std::make_unique<CelestiaGLProgram>(std::move(program));
 }
+
+} // end unnamed namespace
+
+bool
+ShaderProperties::usesShadows() const
+{
+    return shadowCounts != 0;
+}
+
+
+unsigned int
+ShaderProperties::getEclipseShadowCountForLight(unsigned int lightIndex) const
+{
+    return (shadowCounts >> lightIndex * ShadowBitsPerLight) & EclipseShadowMask;
+}
+
+
+bool
+ShaderProperties::hasEclipseShadows() const
+{
+    return (shadowCounts & AnyEclipseShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setEclipseShadowCountForLight(unsigned int lightIndex, unsigned int shadowCount)
+{
+    assert(shadowCount <= MaxShaderEclipseShadows);
+    assert(lightIndex < MaxShaderLights);
+    if (shadowCount <= MaxShaderEclipseShadows && lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(EclipseShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= shadowCount << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasRingShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & RingShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasRingShadows() const
+{
+    return (shadowCounts & AnyRingShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setRingShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(RingShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? RingShadowMask : 0) << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasSelfShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & SelfShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasSelfShadows() const
+{
+    return (shadowCounts & AnySelfShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setSelfShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? SelfShadowMask : 0) << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasCloudShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & CloudShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasCloudShadows() const
+{
+    return (shadowCounts & AnyCloudShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasShadowMap() const
+{
+    return util::is_set(texUsage, TexUsage::ShadowMapTexture);
+}
+
+void
+ShaderProperties::setCloudShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? CloudShadowMask : 0) << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasShadowsForLight(unsigned int light) const
+{
+    assert(light < MaxShaderLights);
+    return getEclipseShadowCountForLight(light) != 0 ||
+           hasRingShadowForLight(light)    ||
+           hasSelfShadowForLight(light)    ||
+           hasCloudShadowForLight(light);
+}
+
+
+// Returns true if diffuse, specular, bump, and night textures all use the
+// same texture coordinate set.
+bool
+ShaderProperties::hasSharedTextureCoords() const
+{
+    return util::is_set(texUsage, TexUsage::SharedTextureCoords);
+}
+
+bool
+ShaderProperties::hasTextureCoordTransform() const
+{
+    return util::is_set(texUsage, TexUsage::TextureCoordTransform);
+}
+
+bool
+ShaderProperties::hasSpecular() const
+{
+    return util::is_set(lightModel, LightingModel::PerPixelSpecularModel);
+}
+
+
+bool
+ShaderProperties::hasScattering() const
+{
+    return util::is_set(texUsage, TexUsage::Scattering);
+}
+
+
+bool
+ShaderProperties::isViewDependent() const
+{
+    switch (lightModel)
+    {
+    case LightingModel::DiffuseModel:
+    case LightingModel::ParticleDiffuseModel:
+    case LightingModel::EmissiveModel:
+    case LightingModel::UnlitModel:
+        return false;
+    default:
+        return true;
+    }
+}
+
+
+bool
+ShaderProperties::usesTangentSpaceLighting() const
+{
+    return util::is_set(texUsage, TexUsage::NormalTexture);
+}
+
+
+bool ShaderProperties::usePointSize() const
+{
+    return util::is_set(texUsage, TexUsage::PointSprite | TexUsage::StaticPointSize);
+}
+
+bool operator==(const ShaderProperties& lhs, const ShaderProperties& rhs)
+{
+    return lhs.texUsage == rhs.texUsage &&
+           lhs.nLights == rhs.nLights &&
+           lhs.shadowCounts == rhs.shadowCounts &&
+           lhs.effects == rhs.effects &&
+           lhs.fishEyeOverride == rhs.fishEyeOverride &&
+           lhs.lightModel == rhs.lightModel;
+}
+
+bool operator<(const ShaderProperties& lhs, const ShaderProperties& rhs)
+{
+    return std::tie(lhs.texUsage, lhs.nLights, lhs.shadowCounts, lhs.effects, lhs.fishEyeOverride, lhs.lightModel)
+         < std::tie(rhs.texUsage, rhs.nLights, rhs.shadowCounts, rhs.effects, rhs.fishEyeOverride, rhs.lightModel);
+}
+
+
+ShaderManager::ShaderManager()
+{
+#if defined(_DEBUG) || defined(DEBUG) || 1
+    // Only write to shader log file if this is a debug build
+
+    if (g_shaderLogFile == nullptr)
+#ifdef _WIN32
+        g_shaderLogFile = new std::ofstream("shaders.log");
+#else
+        g_shaderLogFile = new std::ofstream("/tmp/celestia-shaders.log");
+#endif
+
+#endif
+}
+
+CelestiaGLProgram*
+ShaderManager::getShader(const ShaderProperties& props)
+{
+    auto iter = dynamicShaders.lower_bound(props);
+    if (iter == dynamicShaders.end() || iter->first != props)
+    {
+        // Create a new shader and add it to the table of created shaders
+        return dynamicShaders.try_emplace(iter, props, buildProgram(props, fisheyeEnabled))->second.get();
+    }
+
+    return iter->second.get();
+}
+
+CelestiaGLProgram*
+ShaderManager::getShader(std::string_view name, std::string_view vs, std::string_view fs)
+{
+    auto iter = staticShaders.lower_bound(name);
+    if (iter == staticShaders.end() || iter->first != name)
+    {
+        // Create a new shader and add it to the table of created shaders
+        return staticShaders.try_emplace(iter, std::string(name), buildProgram(vs, fs, fisheyeEnabled))->second.get();
+    }
+
+    return iter->second.get();
+}
+
+CelestiaGLProgram*
+ShaderManager::getShader(std::string_view name)
+{
+    auto iter = staticShaders.lower_bound(name);
+    if (iter == staticShaders.end() || iter->first != name)
+    {
+        fs::path dir("shaders");
+        auto vsName = dir / fs::u8path(fmt::format("{}_vert.glsl", name));
+        auto fsName = dir / fs::u8path(fmt::format("{}_frag.glsl", name));
+
+        auto vs = ReadShaderFile(vsName);
+        if (!vs.has_value())
+            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+        auto fs = ReadShaderFile(fsName);
+        if (!fs.has_value())
+            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+
+        // Create a new shader and add it to the table of created shaders
+        return staticShaders.try_emplace(iter, std::string(name), buildProgram(*vs, *fs, fisheyeEnabled))->second.get();
+    }
+
+    // Shader already exists
+    return iter->second.get();
+}
+
+CelestiaGLProgram*
+ShaderManager::getShaderGL3(std::string_view name, const GeomShaderParams* params)
+{
+    auto iter = staticShaders.lower_bound(name);
+    if (iter == staticShaders.end() || iter->first != name)
+    {
+        fs::path dir("shaders");
+        auto vsName = dir / fs::u8path(fmt::format("{}_vert.glsl", name));
+        auto fsName = dir / fs::u8path(fmt::format("{}_frag.glsl", name));
+
+        auto vs = ReadShaderFile(vsName);
+        if (!vs.has_value())
+            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+        auto fs = ReadShaderFile(fsName);
+        if (!fs.has_value())
+            return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+
+        std::unique_ptr<CelestiaGLProgram> prog;
+        // Geometric shader is optional
+        if (auto gsName = dir / fmt::format("{}_geom.glsl", name); fs::exists(gsName))
+        {
+            if (auto gs = ReadShaderFile(gsName); gs.has_value())
+                prog = buildProgramGL3(*vs, *gs, *fs, params, fisheyeEnabled);
+            else
+                return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+        }
+        else
+        {
+            prog = buildProgramGL3(*vs, *fs, fisheyeEnabled);
+        }
+
+        // Create a new shader and add it to the table of created shaders
+        return staticShaders.try_emplace(iter, std::string(name), std::move(prog))->second.get();
+    }
+
+    return iter->second.get();
+}
+
+
+CelestiaGLProgram*
+ShaderManager::getShaderGL3(std::string_view name, std::string_view vs, std::string_view gs, std::string_view fs)
+{
+    auto iter = staticShaders.lower_bound(name);
+    if (iter == staticShaders.end() || iter->first != name)
+    {
+        // Create a new shader and add it to the table of created shaders
+        return staticShaders.try_emplace(iter, std::string(name), buildProgramGL3(vs, gs, fs, nullptr, fisheyeEnabled))->second.get();
+    }
+
+    return iter->second.get();
+}
+
 
 void ShaderManager::setFisheyeEnabled(bool enabled)
 {
     fisheyeEnabled = enabled;
 }
 
-CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
+CelestiaGLProgram::CelestiaGLProgram(GLProgram&& _program,
                                      const ShaderProperties& _props) :
-    program(&_program),
+    program(std::move(_program)),
     props(_props)
 {
     initParameters();
@@ -2766,77 +2798,72 @@ CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
 }
 
 
-CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program) :
-    program(&_program)
+CelestiaGLProgram::CelestiaGLProgram(GLProgram&& _program) :
+    program(std::move(_program))
 {
     initCommonParameters();
-}
-
-CelestiaGLProgram::~CelestiaGLProgram()
-{
-    delete program;
 }
 
 
 FloatShaderParameter
 CelestiaGLProgram::floatParam(const char *paramName)
 {
-    return FloatShaderParameter(program->getID(), paramName);
+    return FloatShaderParameter(program.getID(), paramName);
 }
 
 
 IntegerShaderParameter
 CelestiaGLProgram::intParam(const char *paramName)
 {
-    return IntegerShaderParameter(program->getID(), paramName);
+    return IntegerShaderParameter(program.getID(), paramName);
 }
 
 IntegerShaderParameter
 CelestiaGLProgram::samplerParam(const char *paramName)
 {
-    return IntegerShaderParameter(program->getID(), paramName);
+    return IntegerShaderParameter(program.getID(), paramName);
 }
 
 
 Vec2ShaderParameter
 CelestiaGLProgram::vec2Param(const char *paramName)
 {
-    return Vec2ShaderParameter(program->getID(), paramName);
+    return Vec2ShaderParameter(program.getID(), paramName);
 }
 
 
 Vec3ShaderParameter
 CelestiaGLProgram::vec3Param(const char *paramName)
 {
-    return Vec3ShaderParameter(program->getID(), paramName);
+    return Vec3ShaderParameter(program.getID(), paramName);
 }
 
 
 Vec4ShaderParameter
 CelestiaGLProgram::vec4Param(const char *paramName)
 {
-    return Vec4ShaderParameter(program->getID(), paramName);
+    return Vec4ShaderParameter(program.getID(), paramName);
 }
 
 
 Mat3ShaderParameter
 CelestiaGLProgram::mat3Param(const char *paramName)
 {
-    return Mat3ShaderParameter(program->getID(), paramName);
+    return Mat3ShaderParameter(program.getID(), paramName);
 }
 
 
 Mat4ShaderParameter
 CelestiaGLProgram::mat4Param(const char *paramName)
 {
-    return Mat4ShaderParameter(program->getID(), paramName);
+    return Mat4ShaderParameter(program.getID(), paramName);
 }
 
 
 int
 CelestiaGLProgram::attribIndex(const char *paramName) const
 {
-    return glGetAttribLocation(program->getID(), paramName);
+    return glGetAttribLocation(program.getID(), paramName);
 }
 
 void
@@ -2961,69 +2988,69 @@ CelestiaGLProgram::initParameters()
 void
 CelestiaGLProgram::initSamplers()
 {
-    program->use();
+    program.use();
 
     unsigned int nSamplers = 0;
 
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "diffTex");
+        int slot = glGetUniformLocation(program.getID(), "diffTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::NormalTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "normTex");
+        int slot = glGetUniformLocation(program.getID(), "normTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "specTex");
+        int slot = glGetUniformLocation(program.getID(), "specTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::NightTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "nightTex");
+        int slot = glGetUniformLocation(program.getID(), "nightTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "emissiveTex");
+        int slot = glGetUniformLocation(program.getID(), "emissiveTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "overlayTex");
+        int slot = glGetUniformLocation(program.getID(), "overlayTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "ringTex");
+        int slot = glGetUniformLocation(program.getID(), "ringTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "cloudShadowTex");
+        int slot = glGetUniformLocation(program.getID(), "cloudShadowTex");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
-        int slot = glGetUniformLocation(program->getID(), "shadowMapTex0");
+        int slot = glGetUniformLocation(program.getID(), "shadowMapTex0");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }
