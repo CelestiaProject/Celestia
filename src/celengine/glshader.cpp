@@ -150,12 +150,6 @@ GLShader::GLShader(GLuint _id) :
 {
 }
 
-GLShader::~GLShader()
-{
-    if (id != 0)
-        glDeleteShader(id);
-}
-
 GLShader::GLShader(GLShader&& other) noexcept :
     id(other.id)
 {
@@ -167,14 +161,19 @@ GLShader::operator=(GLShader&& other) noexcept
 {
     if (this != &other)
     {
-        if (id != 0)
-            glDeleteShader(id);
-
+        destroy();
         id = other.id;
         other.id = 0;
     }
 
     return *this;
+}
+
+void
+GLShader::destroy() const
+{
+    if (id != 0)
+        glDeleteShader(id);
 }
 
 //************* GLxxxProperty **********
@@ -277,12 +276,6 @@ GLProgram::GLProgram(GLuint _id) :
 {
 }
 
-GLProgram::~GLProgram()
-{
-    if (id != 0)
-        glDeleteProgram(id);
-}
-
 GLProgram::GLProgram(GLProgram&& other) noexcept :
     id(other.id)
 {
@@ -294,14 +287,19 @@ GLProgram::operator=(GLProgram&& other) noexcept
 {
     if (this != &other)
     {
-        if (id != 0)
-            glDeleteProgram(id);
-
+        destroy();
         id = other.id;
         other.id = 0;
     }
 
     return *this;
+}
+
+void
+GLProgram::destroy() const
+{
+    if (id != 0)
+        glDeleteProgram(id);
 }
 
 void
@@ -328,12 +326,6 @@ GLFragmentShader::create(std::string_view source, GLShaderStatus& status)
     return createShader<GLFragmentShader>(CreateToken{}, source, status);
 }
 
-GLProgramBuilder::~GLProgramBuilder()
-{
-    if (id != 0)
-        glDeleteProgram(id);
-}
-
 GLProgramBuilder::GLProgramBuilder(GLProgramBuilder&& other) noexcept :
     id(other.id)
 {
@@ -345,14 +337,19 @@ GLProgramBuilder::operator=(GLProgramBuilder&& other) noexcept
 {
     if (this != &other)
     {
-        if (id != 0)
-            glDeleteProgram(id);
-
+        destroy();
         id = other.id;
         other.id = 0;
     }
 
     return *this;
+}
+
+void
+GLProgramBuilder::destroy() const
+{
+    if (id != 0)
+        glDeleteProgram(id);
 }
 
 GLProgramBuilder

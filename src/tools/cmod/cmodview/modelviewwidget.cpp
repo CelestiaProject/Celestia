@@ -729,11 +729,7 @@ ModelViewWidget::paintGL()
     glEnable(GL_LIGHTING);
 
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-    float ambientLightLevel = 0.0f;
-    if (m_ambientLightEnabled)
-    {
-        ambientLightLevel = 0.2f;
-    }
+    float ambientLightLevel = m_ambientLightEnabled ? 0.2f : 0.0f;
     Eigen::Vector4f ambientLight = Eigen::Vector4f::Constant(ambientLightLevel);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight.data());
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);

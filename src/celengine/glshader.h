@@ -42,9 +42,11 @@ protected:
 
     explicit GLShader() = default;
     explicit GLShader(GLuint _id);
-    ~GLShader();
+    ~GLShader() { destroy(); }
 
 private:
+    void destroy() const;
+
     GLuint id{ 0 };
 };
 
@@ -96,7 +98,7 @@ class GLProgram
 {
 public:
     GLProgram() = default;
-    ~GLProgram();
+    ~GLProgram() { destroy(); }
 
     GLProgram(const GLProgram&) = delete;
     GLProgram& operator=(const GLProgram&) = delete;
@@ -110,7 +112,8 @@ public:
     void use() const;
 
 private:
-    GLProgram(GLuint _id);
+    explicit GLProgram(GLuint _id);
+    void destroy() const;
 
     GLuint id{ 0 };
 
@@ -121,7 +124,7 @@ class GLProgramBuilder
 {
 public:
     GLProgramBuilder() = default;
-    ~GLProgramBuilder();
+    ~GLProgramBuilder() { destroy(); }
 
     GLProgramBuilder(const GLProgramBuilder&) = delete;
     GLProgramBuilder& operator=(const GLProgramBuilder&) = delete;
@@ -144,6 +147,7 @@ public:
 
 private:
     explicit GLProgramBuilder(GLuint _id) : id(_id) {}
+    void destroy() const;
 
     GLuint id{ 0 };
     GLFragmentShader fragmentShader;
