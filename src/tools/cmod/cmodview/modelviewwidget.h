@@ -36,6 +36,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celengine/glshader.h>
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
 
@@ -45,7 +46,6 @@ class Model;
 }
 
 class FramebufferObject;
-class GLProgram;
 
 namespace cmodview
 {

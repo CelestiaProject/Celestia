@@ -25,7 +25,6 @@
 #include <QTextStream>
 
 #include <celengine/framebuffer.h>
-#include <celengine/glshader.h>
 #include <celengine/texture.h>
 #include <celimage/image.h>
 #include <celmath/geomutil.h>
