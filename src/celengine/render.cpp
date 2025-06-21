@@ -1609,7 +1609,7 @@ void Renderer::render(const Observer& observer,
 
     Matrices asterismMVP = { &projection, &modelView };
 
-    float dist = observerPosLY.norm() * 1.6e4f;
+    float dist = observerPosLY.norm();
     renderAsterisms(universe, dist, asterismMVP);
     renderBoundaries(universe, dist, asterismMVP);
 
