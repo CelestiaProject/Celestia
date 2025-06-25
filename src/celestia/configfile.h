@@ -69,6 +69,14 @@ struct CelestiaConfig
         double orbitPeriodsShown{ 1.0 };
         double linearFadeFraction{ 0.0 };
         float faintestVisible{ 6.0f };
+
+        float renderAsterismsFadeStartDist{ 600.0f };
+        float renderAsterismsFadeEndDist{ 6.52e4f };
+        float renderBoundariesFadeStartDist{ 6.0f };
+        float renderBoundariesFadeEndDist{ 20.0f };
+        float labelConstellationsFadeStartDist{ 6.0f };
+        float labelConstellationsFadeEndDist{ 20.0f };
+
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };
