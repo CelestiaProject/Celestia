@@ -45,6 +45,8 @@ StarOctreeVisibleObjectsProcessor::StarOctreeVisibleObjectsProcessor(StarHandler
     m_frustumPlanes(frustumPlanes),
     m_limitingFactor(limitingFactor)
 {
+    for (int i = 0; i < 5; ++i)
+        m_projectedRadiusFactors[i] = m_frustumPlanes[i].normal().cwiseAbs().sum();
 }
 
 bool
@@ -58,9 +60,7 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
     // planes that define the infinite view frustum.
     for (unsigned int i = 0; i < 5; ++i)
     {
-        const PlaneType& plane = m_frustumPlanes[i];
-        float r = size * plane.normal().cwiseAbs().sum();
-        if (plane.signedDistance(center) < -r)
+        if (m_frustumPlanes[i].signedDistance(center) < -m_projectedRadiusFactors[i] * size)
             return false;
     }
 
