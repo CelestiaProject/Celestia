@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 #include <Eigen/Geometry>
@@ -49,6 +50,7 @@ private:
     StarHandler* m_starHandler;
     StarOctree::PointType m_obsPosition;
     util::array_view<PlaneType> m_frustumPlanes;
+    std::array<float, 5> m_projectedRadiusFactors;
     float m_limitingFactor;
 
     float m_dimmest{ 1000.0f };
