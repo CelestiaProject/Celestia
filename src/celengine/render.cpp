@@ -3057,7 +3057,9 @@ void Renderer::renderStar(const Star& star,
 static float cometDustTailLength(float distanceToSun,
                                  float radius)
 {
-    return (1.0e8f / distanceToSun) * (radius / 5.0f) * 1.0e7f;
+    // To avoid absurdly huge comet sizes for sungrazers, use an arbitrary
+    // minimum value of 1e7 km for the distance.
+    return (1.0e8f / std::max(distanceToSun, 1.0e7f)) * (radius / 5.0f) * 1.0e7f;
 }
 
 
