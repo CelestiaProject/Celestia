@@ -67,7 +67,6 @@ option(ENABLE_TESTS       "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES        "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(ENABLE_LTO         "Enable link time optimizations (Default: off)" OFF)
 option(USE_WAYLAND        "Use Wayland in Qt frontend (Default: off)" OFF)
-option(USE_GLSL_STRUCTS   "Use structs in GLSL (Default: off)" OFF)
 option(USE_ICU            "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU        "Use Windows SDK's ICU implementation (Default: off)" OFF)
 option(USE_MESHOPTIMIZER  "Use meshoptimizer (Default: off)" OFF)
@@ -91,12 +90,6 @@ endif()
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
-endif()
-
-if(USE_GLSL_STRUCTS)
-  # GLES SL on some old Android device or with ANGLE presents a link failure with empty error when using struct.
-  # GLSL on old version of Mac OS X appears to have a bug that precludes us from using structs.
-  add_definitions(-DUSE_GLSL_STRUCTS)
 endif()
 
 # Use our cmake files

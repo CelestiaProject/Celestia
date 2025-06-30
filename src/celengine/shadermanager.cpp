@@ -186,11 +186,7 @@ uniform vec2 texCoordDelta3;
 std::string
 LightProperty(unsigned int i, std::string_view property)
 {
-#ifdef USE_GLSL_STRUCTS
-    return fmt::format("lights[{}].{}", i, property);
-#else
     return fmt::format("light{}_{}", i, property);
-#endif
 }
 
 std::string
@@ -356,18 +352,6 @@ DeclareLights(const ShaderProperties& props)
         return {};
 
     std::string source;
-#ifdef USE_GLSL_STRUCTS
-    source += "uniform struct {\n";
-    source += "   vec3 direction;\n";
-    source += "   vec3 diffuse;\n";
-    source += "   vec3 specular;\n";
-    source += "   vec3 halfVector;\n";
-    if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
-        source += "   vec3 color;\n";
-    if (util::is_set(props.texUsage, TexUsage::NightTexture))
-        source += "   float brightness;\n";
-    fmt::format_to(std::back_inserter(source), "}} lights [{}];\n", props.nLights);
-#else
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         source += DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
@@ -382,7 +366,6 @@ DeclareLights(const ShaderProperties& props)
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
             source += DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
     }
-#endif
 
     return source;
 }
@@ -2043,11 +2026,7 @@ buildEmissiveVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     // models, the material color is premultiplied with the light color.
     // Emissive shaders interoperate better with other shaders if they also
     // take the color from light source 0.
-#ifdef USE_GLSL_STRUCTS
-    source += std::string("uniform struct {\n   vec3 diffuse;\n} lights[1];\n");
-#else
     source += DeclareUniform("light0_diffuse", Shader_Vector3);
-#endif
 
     if (props.usePointSize())
         source += PointSizeDeclaration();
