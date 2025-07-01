@@ -62,7 +62,7 @@ selectComboBoxItem(QComboBox* combo, const QString &text)
 }
 
 void
-selectComboBoxItem(QComboBox* combo, const fs::path &path)
+selectComboBoxItem(QComboBox* combo, const std::filesystem::path &path)
 {
     selectComboBoxItem(combo, toQString(path.c_str()));
 }

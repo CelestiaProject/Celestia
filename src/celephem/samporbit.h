@@ -9,9 +9,8 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia::ephem
 {
@@ -30,7 +29,7 @@ enum class TrajectoryPrecision
     Double,
 };
 
-std::shared_ptr<const Orbit> LoadSampledTrajectory(const fs::path&,
+std::shared_ptr<const Orbit> LoadSampledTrajectory(const std::filesystem::path&,
                                                    TrajectoryInterpolation,
                                                    TrajectoryPrecision);
 

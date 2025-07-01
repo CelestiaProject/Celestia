@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <tuple>
 #include <utility>
 
 #include <Eigen/Core>
 
-#include <celcompat/filesystem.h>
 #include <celutil/resmanager.h>
 #include "geometry.h"
 
@@ -31,13 +31,13 @@ public:
     // encoding the center, scale and normalization state in the key.
     struct ResourceKey
     {
-        fs::path resolvedPath;
+        std::filesystem::path resolvedPath;
         Eigen::Vector3f center;
         float scale;
         bool isNormalized;
         bool resolvedToPath;
 
-        ResourceKey(fs::path&& _resolvedPath,
+        ResourceKey(std::filesystem::path&& _resolvedPath,
                     const Eigen::Vector3f& _center,
                     float _scale,
                     bool _isNormalized,
@@ -50,15 +50,15 @@ public:
         {}
     };
 
-    GeometryInfo(const fs::path& _source,
-                 const fs::path& _path = "") :
+    GeometryInfo(const std::filesystem::path& _source,
+                 const std::filesystem::path& _path = "") :
         source(_source),
         path(_path)
     {
     }
 
-    GeometryInfo(const fs::path& _source,
-                 const fs::path& _path,
+    GeometryInfo(const std::filesystem::path& _source,
+                 const std::filesystem::path& _path,
                  const Eigen::Vector3f& _center,
                  float _scale,
                  bool _isNormalized) :
@@ -70,12 +70,12 @@ public:
     {
     }
 
-    ResourceKey resolve(const fs::path&) const;
+    ResourceKey resolve(const std::filesystem::path&) const;
     std::unique_ptr<Geometry> load(const ResourceKey&) const;
 
 private:
-    fs::path source;
-    fs::path path;
+    std::filesystem::path source;
+    std::filesystem::path path;
     Eigen::Vector3f center{ Eigen::Vector3f::Zero() };
     float scale{ 1.0f };
     bool isNormalized{ true };

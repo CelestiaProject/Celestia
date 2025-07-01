@@ -79,7 +79,7 @@ void Galaxy::setType(const std::string& typeStr)
         type = iter->type;
 }
 
-void Galaxy::setForm(const fs::path& customTmpName, const fs::path& resDir)
+void Galaxy::setForm(const std::filesystem::path& customTmpName, const std::filesystem::path& resDir)
 {
     if (customTmpName.empty())
     {
@@ -87,10 +87,10 @@ void Galaxy::setForm(const fs::path& customTmpName, const fs::path& resDir)
     }
     else
     {
-        if (fs::path fullName = resDir / customTmpName; fs::exists(fullName))
+        if (std::filesystem::path fullName = resDir / customTmpName; std::filesystem::exists(fullName))
             form = GalacticFormManager::get()->getCustomForm(fullName);
         else
-            form = GalacticFormManager::get()->getCustomForm(fs::path("models") / customTmpName);
+            form = GalacticFormManager::get()->getCustomForm(std::filesystem::path("models") / customTmpName);
     }
 }
 
@@ -136,7 +136,7 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(const util::AssociativeArray* params, const fs::path& resPath, std::string_view name)
+bool Galaxy::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 

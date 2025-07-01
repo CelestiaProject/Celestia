@@ -14,15 +14,15 @@
 #include <iosfwd>
 #include <memory>
 
-#include <celcompat/filesystem.h>
+#include <filesystem>
 #include <celutil/reshandle.h>
 #include "model.h"
 
 namespace cmod
 {
 
-using HandleGetter = std::function<ResourceHandle(const fs::path&)>;
-using SourceGetter = std::function<fs::path(ResourceHandle)>;
+using HandleGetter = std::function<ResourceHandle(const std::filesystem::path&)>;
+using SourceGetter = std::function<std::filesystem::path(ResourceHandle)>;
 
 std::unique_ptr<Model> LoadModel(std::istream& in, HandleGetter getHandle);
 

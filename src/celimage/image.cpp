@@ -367,7 +367,7 @@ bool Image::canSave(ContentType type)
     return type == ContentType::PNG || type == ContentType::JPEG;
 }
 
-bool Image::save(const fs::path &path, ContentType type) const
+bool Image::save(const std::filesystem::path &path, ContentType type) const
 {
     switch (type)
     {
@@ -380,7 +380,7 @@ bool Image::save(const fs::path &path, ContentType type) const
     }
 }
 
-std::unique_ptr<Image> Image::load(const fs::path& filename)
+std::unique_ptr<Image> Image::load(const std::filesystem::path& filename)
 {
     ContentType type = DetermineFileType(filename);
 

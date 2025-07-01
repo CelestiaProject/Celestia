@@ -13,6 +13,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -26,7 +27,6 @@
 #include <fmt/xchar.h>
 
 #include <celastro/date.h>
-#include <celcompat/filesystem.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
@@ -250,7 +250,7 @@ DisableDemoMenu(HMENU menuBar)
 }
 
 void
-BuildScriptsMenu(HMENU menuBar, const fs::path& scriptsDir)
+BuildScriptsMenu(HMENU menuBar, const std::filesystem::path& scriptsDir)
 {
     HMENU fileMenu = GetSubMenu(menuBar, 0);
 
@@ -370,10 +370,10 @@ struct StartupOptions
     bool startFullscreen{ false };
     bool runOnce{ false };
     std::string startURL; // UTF-8
-    fs::path startDirectory;
-    fs::path startScript;
-    std::vector<fs::path> extrasDirectories;
-    fs::path configFileName;
+    std::filesystem::path startDirectory;
+    std::filesystem::path startScript;
+    std::vector<std::filesystem::path> extrasDirectories;
+    std::filesystem::path configFileName;
     bool useAlternateConfigFile{ false };
     bool skipSplashScreen{ false };
 };
@@ -550,11 +550,11 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     if (!options.skipSplashScreen)
     {
         // by default look in the current (installation) directory
-        fs::path splashFile(L"splash\\splash.png");
+        std::filesystem::path splashFile(L"splash\\splash.png");
         if (!options.startDirectory.empty())
         {
-            fs::path newSplashFile = fs::path(options.startDirectory) / splashFile;
-            if (fs::exists(newSplashFile))
+            std::filesystem::path newSplashFile = std::filesystem::path(options.startDirectory) / splashFile;
+            if (std::filesystem::exists(newSplashFile))
                 splashFile = std::move(newSplashFile);
         }
         splash = std::make_shared<SplashWindow>(splashFile);
@@ -627,7 +627,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #ifdef ENABLE_NLS
     std::error_code ec;
-    fs::path localedir = (fs::current_path(ec) / LOCALEDIR);
+    std::filesystem::path localedir = (std::filesystem::current_path(ec) / LOCALEDIR);
 
     wbindtextdomain("celestia", localedir.c_str());
     bind_textdomain_codeset("celestia", "UTF-8");
@@ -645,7 +645,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         fmt::basic_memory_buffer<wchar_t, 16> langBuffer;
         AppendUTF8ToWide(lang, langBuffer);
 
-        fs::path resPath = fmt::format(L"locale\\res_{}.dll",
+        std::filesystem::path resPath = fmt::format(L"locale\\res_{}.dll",
                                        std::wstring_view(langBuffer.data(), langBuffer.size()));
         int langID = 0;
 
@@ -720,7 +720,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #ifndef PORTABLE_BUILD
     if (!prefs.ignoreOldFavorites)
     { // move favorites to the new location
-        fs::path path;
+        std::filesystem::path path;
         if (appCore->getConfig() != nullptr && !appCore->getConfig()->paths.favoritesFile.empty())
             path = appCore->getConfig()->paths.favoritesFile;
         else
@@ -730,9 +730,9 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
             path = util::WriteableDataPath() / path;
 
         std::error_code ec;
-        if (fs::exists(L"favorites.cel", ec)) // old exists
+        if (std::filesystem::exists(L"favorites.cel", ec)) // old exists
         {
-            if (!fs::exists(path)) // new does not
+            if (!std::filesystem::exists(path)) // new does not
             {
                 tstring message = UTF8ToTString(_("Old favorites file detected.\nCopy to the new location?"));
                 tstring caption = UTF8ToTString(_("Copy favorites?"));

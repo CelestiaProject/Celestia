@@ -125,15 +125,15 @@ WarpMeshManager* GetWarpMeshManager()
     return warpMeshManager;
 }
 
-fs::path WarpMeshInfo::resolve(const fs::path& baseDir) const
+std::filesystem::path WarpMeshInfo::resolve(const std::filesystem::path& baseDir) const
 {
     bool wildcard = source.extension() == ".*";
 
-    fs::path filename = baseDir / source;
+    std::filesystem::path filename = baseDir / source;
 
     if (wildcard)
     {
-        fs::path matched = celestia::util::ResolveWildcard(filename, extensions);
+        std::filesystem::path matched = celestia::util::ResolveWildcard(filename, extensions);
         if (!matched.empty())
             return matched;
     }
@@ -142,7 +142,7 @@ fs::path WarpMeshInfo::resolve(const fs::path& baseDir) const
 }
 
 
-std::unique_ptr<WarpMesh> WarpMeshInfo::load(const fs::path& name) const
+std::unique_ptr<WarpMesh> WarpMeshInfo::load(const std::filesystem::path& name) const
 {
 #define MESHTYPE_RECT 2
     std::ifstream f(name);

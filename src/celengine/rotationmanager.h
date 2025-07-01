@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <tuple>
 #include <unordered_map>
 
-#include <celcompat/filesystem.h>
 #include <celephem/rotation.h>
 #include <celutil/fsutils.h>
 
@@ -29,11 +29,11 @@ public:
     RotationModelManager(const RotationModelManager&) = delete;
     RotationModelManager& operator=(const RotationModelManager&) = delete;
 
-    std::shared_ptr<const ephem::RotationModel> find(const fs::path& source,
-                                                     const fs::path& path);
+    std::shared_ptr<const ephem::RotationModel> find(const std::filesystem::path& source,
+                                                     const std::filesystem::path& path);
 
 private:
-    std::unordered_map<fs::path, std::weak_ptr<const ephem::RotationModel>, util::PathHasher> rotationModels;
+    std::unordered_map<std::filesystem::path, std::weak_ptr<const ephem::RotationModel>, util::PathHasher> rotationModels;
 };
 
 RotationModelManager* GetRotationModelManager();

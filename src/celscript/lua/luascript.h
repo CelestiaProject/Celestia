@@ -26,7 +26,7 @@ class LuaScript : public IScript
     LuaScript(CelestiaCore*);
     ~LuaScript() override;
 
-    bool load(std::ifstream&, const fs::path&, std::string&);
+    bool load(std::ifstream&, const std::filesystem::path&, std::string&);
 
     bool handleMouseButtonEvent(float x, float y, int button, bool down) override;
     bool charEntered(const char*) override;
@@ -52,8 +52,8 @@ class LuaScriptPlugin : public IScriptPlugin
     LuaScriptPlugin& operator=(const LuaScriptPlugin&) = delete;
     LuaScriptPlugin& operator=(LuaScriptPlugin&&) = delete;
 
-    bool isOurFile(const fs::path&) const override;
-    std::unique_ptr<IScript> loadScript(const fs::path&) override;
+    bool isOurFile(const std::filesystem::path&) const override;
+    std::unique_ptr<IScript> loadScript(const std::filesystem::path&) override;
 };
 
 class LuaHook : public IScriptHook

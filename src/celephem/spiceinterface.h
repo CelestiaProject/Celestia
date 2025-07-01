@@ -11,9 +11,8 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia::ephem
 {
@@ -23,6 +22,6 @@ bool InitializeSpice();
 // SPICE utility functions
 
 bool GetNaifId(const std::string& name, int* id);
-bool LoadSpiceKernel(const fs::path& filepath);
+bool LoadSpiceKernel(const std::filesystem::path& filepath);
 
 }

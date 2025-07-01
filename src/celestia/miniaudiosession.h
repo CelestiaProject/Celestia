@@ -11,7 +11,7 @@ class MiniAudioSessionPrivate;
 class MiniAudioSession: public AudioSession
 {
  public:
-    MiniAudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause);
+    MiniAudioSession(const std::filesystem::path &path, float volume, float pan, bool loop, bool nopause);
     ~MiniAudioSession() override;
 
     MiniAudioSession() = delete;

@@ -6,7 +6,7 @@ namespace cmodtools
 
 PathManager::PathManager()
 {
-    getHandle = [&](const fs::path& path)
+    getHandle = [&](const std::filesystem::path& path)
     {
         auto it = handles.find(path);
         if (it == handles.end())

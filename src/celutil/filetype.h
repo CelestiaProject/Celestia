@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <celcompat/filesystem.h>
+#include <filesystem>
 
 enum class ContentType
 {
@@ -41,4 +41,4 @@ enum class ContentType
     Unknown                = -1,
 };
 
-ContentType DetermineFileType(const fs::path& filename, bool isExtension = false);
+ContentType DetermineFileType(const std::filesystem::path& filename, bool isExtension = false);

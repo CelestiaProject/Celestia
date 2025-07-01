@@ -11,11 +11,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include <Eigen/Core>
 
-#include <celcompat/filesystem.h>
 #include "orbit.h"
 
 namespace celestia::ephem
@@ -37,7 +37,7 @@ class SpiceOrbit : public CachingOrbit
     ~SpiceOrbit() override = default;
 
     template<typename It>
-    bool init(const fs::path& path, It begin, It end)
+    bool init(const std::filesystem::path& path, It begin, It end)
     {
         // Load required kernel files
         while (begin != end)
@@ -78,7 +78,7 @@ class SpiceOrbit : public CachingOrbit
     bool useDefaultTimeInterval;
 
     bool init();
-    bool loadRequiredKernel(const fs::path&, const std::string&);
+    bool loadRequiredKernel(const std::filesystem::path&, const std::string&);
 };
 
 }

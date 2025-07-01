@@ -9,11 +9,10 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 
 #include <SDL_video.h>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia::sdl
 {
@@ -39,8 +38,8 @@ public:
     bool setGLAttributes() const;
     std::unique_ptr<AppWindow> createAppWindow(const Settings&);
 
-    fs::path getSettingsPath() const;
-    fs::path getImguiSettingsPath() const;
+    std::filesystem::path getSettingsPath() const;
+    std::filesystem::path getImguiSettingsPath() const;
 };
 
 } // end namespace celestia::sdl

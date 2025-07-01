@@ -12,10 +12,10 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string_view>
 
-#include <celcompat/filesystem.h>
 #include "frame.h"
 
 class Body;
@@ -52,12 +52,12 @@ ParseDate(const celestia::util::AssociativeArray* hash,
 std::shared_ptr<const celestia::ephem::Orbit>
 CreateOrbit(const Selection& centralObject,
             const celestia::util::AssociativeArray* planetData,
-            const fs::path& path,
+            const std::filesystem::path& path,
             bool usePlanetUnits);
 
 std::shared_ptr<const celestia::ephem::RotationModel>
 CreateRotationModel(const celestia::util::AssociativeArray* rotationData,
-                    const fs::path& path,
+                    const std::filesystem::path& path,
                     double syncRotationPeriod);
 
 std::shared_ptr<const celestia::ephem::RotationModel>

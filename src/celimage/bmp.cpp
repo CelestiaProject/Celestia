@@ -112,7 +112,7 @@ struct BMPInfo
 };
 
 bool
-parseBMPFileHeader(const char* fileHeader, BMPInfo& info, const fs::path& filename)
+parseBMPFileHeader(const char* fileHeader, BMPInfo& info, const std::filesystem::path& filename)
 {
     if (fileHeader[0] != 'B' || fileHeader[1] != 'M')
     {
@@ -128,7 +128,7 @@ parseBMPFileHeader(const char* fileHeader, BMPInfo& info, const fs::path& filena
 bool
 parseBMPInfoHeader(const char* infoHeader,
                    BMPInfo& info,
-                   const fs::path& filename)
+                   const std::filesystem::path& filename)
 {
     info.infoSize = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, size));
     if (std::find(validHeaderSizes.begin(), validHeaderSizes.end(), info.infoSize) == validHeaderSizes.end())
@@ -226,7 +226,7 @@ parseBMPInfoHeader(const char* infoHeader,
 }
 
 bool
-loadBMPHeaders(std::istream& in, BMPInfo& info, const fs::path& filename)
+loadBMPHeaders(std::istream& in, BMPInfo& info, const std::filesystem::path& filename)
 {
     std::array<char, sizeof(BMPFileHeader) + sizeof(BMPInfoHeader)> buffer;
     if (!in.read(buffer.data(), buffer.size())) /* Flawfinder: ignore */
@@ -330,7 +330,7 @@ processLowBppRow(const std::uint8_t* src,
 }
 
 std::unique_ptr<Image>
-LoadBMPImage(std::istream& in, const fs::path& filename)
+LoadBMPImage(std::istream& in, const std::filesystem::path& filename)
 {
     BMPInfo info;
     if (!loadBMPHeaders(in, info, filename))
@@ -392,7 +392,7 @@ LoadBMPImage(std::istream& in, const fs::path& filename)
 } // anonymous namespace
 
 Image*
-LoadBMPImage(const fs::path& filename)
+LoadBMPImage(const std::filesystem::path& filename)
 {
     std::ifstream bmpFile(filename, std::ios_base::in | std::ios_base::binary);
     if (!bmpFile)

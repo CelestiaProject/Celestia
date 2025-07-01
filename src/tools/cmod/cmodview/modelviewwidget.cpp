@@ -356,7 +356,7 @@ MaterialLibrary::loadTexture(const QString& fileName)
         return nullptr;
 
     std::unique_ptr<Image> image;
-    if constexpr (std::is_same_v<fs::path::value_type, wchar_t>)
+    if constexpr (std::is_same_v<std::filesystem::path::value_type, wchar_t>)
         image = Image::load(fileName.toStdWString());
     else
         image = Image::load(fileName.toStdString());

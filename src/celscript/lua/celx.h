@@ -11,13 +11,13 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <string>
 #include <vector>
 
 #include <lua.hpp>
 
-#include <celcompat/filesystem.h>
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
@@ -44,7 +44,7 @@ public:
 
     lua_State* getState() const;
 
-    int loadScript(std::istream&, const fs::path&);
+    int loadScript(std::istream&, const std::filesystem::path&);
     int loadScript(const std::string&);
     bool init(CelestiaCore*);
 

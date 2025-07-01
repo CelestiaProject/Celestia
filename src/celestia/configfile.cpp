@@ -59,7 +59,7 @@ applyString(std::string& target, const AssociativeArray& hash, std::string_view 
 
 
 void
-applyPath(fs::path& target, const AssociativeArray& hash, std::string_view key)
+applyPath(std::filesystem::path& target, const AssociativeArray& hash, std::string_view key)
 {
     auto path = hash.getPath(key);
     if (path.has_value())
@@ -103,7 +103,7 @@ applyStringArray(std::vector<std::string>& target, const AssociativeArray& hash,
 
 
 void
-applyPathArray(std::vector<fs::path>& target, const AssociativeArray& hash, std::string_view key)
+applyPathArray(std::vector<std::filesystem::path>& target, const AssociativeArray& hash, std::string_view key)
 {
     auto value = hash.getValue(key);
     if (value == nullptr)
@@ -120,11 +120,11 @@ applyPathArray(std::vector<fs::path>& target, const AssociativeArray& hash, std:
                 break;
             }
 
-            target.emplace_back(celestia::util::PathExp(fs::u8path(*itemStr)));
+            target.emplace_back(celestia::util::PathExp(std::filesystem::u8path(*itemStr)));
         }
     }
     else if (auto str = value->getString(); str != nullptr)
-        target.emplace_back(celestia::util::PathExp(fs::u8path(*str)));
+        target.emplace_back(celestia::util::PathExp(std::filesystem::u8path(*str)));
     else
         GetLogger()->error("{} must be a string or an array of strings.\n", key);
 }
@@ -241,7 +241,7 @@ applyStarTextures(StarDetails::StarTextureSet& starTextures,
 } // end unnamed namespace
 
 
-bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config)
+bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& config)
 {
     std::ifstream configFile(filename);
     if (!configFile.good())

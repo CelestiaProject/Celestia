@@ -176,7 +176,7 @@ std::shared_ptr<const Orbit>
 CreateScriptedOrbit(const std::string* moduleName,
                     const std::string& funcName,
                     const util::AssociativeArray& parameters,
-                    const fs::path& path)
+                    const std::filesystem::path& path)
 {
     lua_State* luaState = GetScriptedObjectContext();
     if (luaState == nullptr)

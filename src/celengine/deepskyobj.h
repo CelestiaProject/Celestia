@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -18,7 +19,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include "astroobj.h"
 #include "renderflags.h"
 
@@ -91,7 +91,7 @@ public:
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
-    virtual bool load(const celestia::util::AssociativeArray*, const fs::path& resPath, std::string_view name);
+    virtual bool load(const celestia::util::AssociativeArray*, const std::filesystem::path& resPath, std::string_view name);
 
     virtual RenderFlags getRenderMask() const { return RenderFlags::ShowNothing; }
     virtual RenderLabels getLabelMask() const { return RenderLabels::NoLabels; }

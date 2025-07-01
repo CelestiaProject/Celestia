@@ -11,9 +11,9 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 
-#include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
 #include "pixelformat.h"
 
@@ -63,9 +63,9 @@ public:
     void forceLinear();
 
     static bool canSave(ContentType type);
-    bool save(const fs::path &path, ContentType type) const;
+    bool save(const std::filesystem::path &path, ContentType type) const;
 
-    static std::unique_ptr<Image> load(const fs::path& filename);
+    static std::unique_ptr<Image> load(const std::filesystem::path& filename);
 
 private:
     std::int32_t width;

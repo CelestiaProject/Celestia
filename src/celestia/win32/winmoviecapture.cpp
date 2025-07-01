@@ -16,13 +16,13 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <string_view>
 
 #include <fmt/format.h>
 #include <fmt/xchar.h>
 
-#include <celcompat/filesystem.h>
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
 #include <celestia/ffmpegcapture.h>
@@ -77,7 +77,7 @@ std::int64_t movieBitrate = 400000;
 
 bool
 BeginMovieCapture(CelestiaCore* appCore,
-                  const fs::path& filename,
+                  const std::filesystem::path& filename,
                   int width, int height,
                   float framerate,
                   AVCodecID codec,
@@ -275,7 +275,7 @@ void HandleCaptureMovie(HINSTANCE appInstance, HWND hWnd, CelestiaCore* appCore)
     // Ofn.lpstrFile contains full path to specified file
     // Ofn.lpstrFileTitle contains just the filename with extension
 
-    fs::path filename(szFile.data());
+    std::filesystem::path filename(szFile.data());
 
     constexpr std::array<std::wstring_view, 1> defaultExtensions
     {

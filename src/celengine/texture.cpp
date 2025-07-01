@@ -915,7 +915,7 @@ CreateProceduralCubeMap(int size,
 
 
 std::unique_ptr<Texture>
-LoadTextureFromFile(const fs::path& filename,
+LoadTextureFromFile(const std::filesystem::path& filename,
                     Texture::AddressMode addressMode,
                     Texture::MipMapMode mipMode,
                     Texture::Colorspace colorspace)
@@ -955,7 +955,7 @@ LoadTextureFromFile(const fs::path& filename,
 
 // Load a height map texture from a file and convert it to a normal map.
 std::unique_ptr<Texture>
-LoadHeightMapFromFile(const fs::path& filename,
+LoadHeightMapFromFile(const std::filesystem::path& filename,
                       float height,
                       Texture::AddressMode addressMode)
 {

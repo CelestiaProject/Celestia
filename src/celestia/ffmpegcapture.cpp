@@ -28,7 +28,7 @@ class FFMPEGCapturePrivate
     FFMPEGCapturePrivate() = default;
     ~FFMPEGCapturePrivate();
 
-    bool init(const fs::path& fn);
+    bool init(const std::filesystem::path& fn);
     bool addStream(int w, int h, float fps);
     bool openVideo();
     bool start();
@@ -62,7 +62,7 @@ class FFMPEGCapturePrivate
     bool            capturing { false   };
     bool            hasAlpha  { false   };
 
-    fs::path        filename;
+    std::filesystem::path        filename;
     std::string     vc_options;
 
  public:
@@ -76,7 +76,7 @@ class FFMPEGCapturePrivate
 bool FFMPEGCapturePrivate::registered = false;
 #endif
 
-bool FFMPEGCapturePrivate::init(const fs::path& filename)
+bool FFMPEGCapturePrivate::init(const std::filesystem::path& filename)
 {
     this->filename = filename;
 
@@ -543,7 +543,7 @@ float FFMPEGCapture::getFrameRate() const
     return d->fps;
 }
 
-bool FFMPEGCapture::start(const fs::path& filename, int width, int height, float fps)
+bool FFMPEGCapture::start(const std::filesystem::path& filename, int width, int height, float fps)
 {
     if (!d->init(filename) ||
         !d->addStream(width, height, fps) ||

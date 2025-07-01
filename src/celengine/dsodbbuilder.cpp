@@ -201,7 +201,7 @@ buildCatalogNumberIndex(const engine::DSOOctree& DSOs)
 DSODatabaseBuilder::~DSODatabaseBuilder() = default;
 
 bool
-DSODatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
+DSODatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
     util::Tokenizer tokenizer(&in);
     util::Parser    parser(&tokenizer);

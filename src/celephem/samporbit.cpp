@@ -548,7 +548,7 @@ ReadAsciiSampleXYZ(std::istream& in, double& tdb, SampleXYZ<T>& sample)
 // of a comment.
 template<typename T>
 std::shared_ptr<const Samples<SampleXYZ<T>>>
-LoadSamplesXYZAscii(const fs::path& filename)
+LoadSamplesXYZAscii(const std::filesystem::path& filename)
 {
     std::vector<double> sampleTimes;
     std::vector<SampleXYZ<T>> samples;
@@ -561,7 +561,7 @@ LoadSamplesXYZAscii(const fs::path& filename)
 }
 
 bool
-ParseXYZVBinaryHeader(std::istream& in, const fs::path& filename)
+ParseXYZVBinaryHeader(std::istream& in, const std::filesystem::path& filename)
 {
     std::array<char, sizeof(XYZVBinaryHeader)> header;
 
@@ -646,7 +646,7 @@ ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
  */
 template <typename T>
 std::shared_ptr<const Samples<SampleXYZV<T>>>
-LoadSamplesXYZVBinary(const fs::path& filename)
+LoadSamplesXYZVBinary(const std::filesystem::path& filename)
 {
     std::vector<double> sampleTimes;
     std::vector<SampleXYZV<T>> samples;
@@ -707,11 +707,11 @@ ReadAsciiSampleXYZV(std::istream& in, double& tdb, SampleXYZV<T>& sample)
 
 template<typename T>
 std::shared_ptr<const Samples<SampleXYZV<T>>>
-LoadSamplesXYZVAscii(const fs::path& filename)
+LoadSamplesXYZVAscii(const std::filesystem::path& filename)
 {
     auto binname = filename;
     binname += "bin";
-    if (fs::exists(binname))
+    if (std::filesystem::exists(binname))
     {
         if (auto binsamples = LoadSamplesXYZVBinary<T>(binname); binsamples != nullptr)
             return binsamples;
@@ -726,11 +726,11 @@ LoadSamplesXYZVAscii(const fs::path& filename)
 }
 
 template<typename T>
-using SamplesMap = std::unordered_map<fs::path, std::weak_ptr<const Samples<T>>, util::PathHasher>;
+using SamplesMap = std::unordered_map<std::filesystem::path, std::weak_ptr<const Samples<T>>, util::PathHasher>;
 
 template<typename T, typename F>
 std::shared_ptr<const Samples<T>>
-findSamples(SamplesMap<T>& cache, const fs::path& filename, F loader)
+findSamples(SamplesMap<T>& cache, const std::filesystem::path& filename, F loader)
 {
     auto it = cache.try_emplace(filename).first;
     if (auto cachedSamples = it->second.lock(); cachedSamples != nullptr)
@@ -756,10 +756,10 @@ public:
     SamplesManager(const SamplesManager&) = delete;
     SamplesManager& operator=(const SamplesManager&) = delete;
 
-    std::shared_ptr<const Samples<SampleXYZ<float>>> findXYZSingle(const fs::path&);
-    std::shared_ptr<const Samples<SampleXYZ<double>>> findXYZDouble(const fs::path&);
-    std::shared_ptr<const Samples<SampleXYZV<float>>> findXYZVSingle(const fs::path&);
-    std::shared_ptr<const Samples<SampleXYZV<double>>> findXYZVDouble(const fs::path&);
+    std::shared_ptr<const Samples<SampleXYZ<float>>> findXYZSingle(const std::filesystem::path&);
+    std::shared_ptr<const Samples<SampleXYZ<double>>> findXYZDouble(const std::filesystem::path&);
+    std::shared_ptr<const Samples<SampleXYZV<float>>> findXYZVSingle(const std::filesystem::path&);
+    std::shared_ptr<const Samples<SampleXYZV<double>>> findXYZVDouble(const std::filesystem::path&);
 
 private:
     SamplesMap<SampleXYZ<float>> samplesXYZSingle;
@@ -769,19 +769,19 @@ private:
 };
 
 std::shared_ptr<const Samples<SampleXYZ<float>>>
-SamplesManager::findXYZSingle(const fs::path& filename)
+SamplesManager::findXYZSingle(const std::filesystem::path& filename)
 {
     return findSamples(samplesXYZSingle, filename, &LoadSamplesXYZAscii<float>);
 }
 
 std::shared_ptr<const Samples<SampleXYZ<double>>>
-SamplesManager::findXYZDouble(const fs::path& filename)
+SamplesManager::findXYZDouble(const std::filesystem::path& filename)
 {
     return findSamples(samplesXYZDouble, filename, &LoadSamplesXYZAscii<double>);
 }
 
 std::shared_ptr<const Samples<SampleXYZV<float>>>
-SamplesManager::findXYZVSingle(const fs::path& filename)
+SamplesManager::findXYZVSingle(const std::filesystem::path& filename)
 {
     switch (DetermineFileType(filename))
     {
@@ -796,7 +796,7 @@ SamplesManager::findXYZVSingle(const fs::path& filename)
 }
 
 std::shared_ptr<const Samples<SampleXYZV<double>>>
-SamplesManager::findXYZVDouble(const fs::path& filename)
+SamplesManager::findXYZVDouble(const std::filesystem::path& filename)
 {
     switch (DetermineFileType(filename))
     {
@@ -815,7 +815,7 @@ SamplesManager::findXYZVDouble(const fs::path& filename)
 /*! Load a trajectory file containing positions without velocities.
  */
 std::shared_ptr<const Orbit>
-LoadSampledTrajectory(const fs::path& filename,
+LoadSampledTrajectory(const std::filesystem::path& filename,
                       TrajectoryInterpolation interpolation,
                       TrajectoryPrecision precision)
 {

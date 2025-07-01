@@ -10,21 +10,22 @@
 
 #pragma once
 
-#include <celcompat/filesystem.h>
+#include <filesystem>
+
 #include <celimage/image.h>
 
 namespace celestia::engine
 {
 
-Image* LoadJPEGImage(const fs::path& filename);
-Image* LoadBMPImage(const fs::path& filename);
-Image* LoadPNGImage(const fs::path& filename);
-Image* LoadDDSImage(const fs::path& filename);
+Image* LoadJPEGImage(const std::filesystem::path& filename);
+Image* LoadBMPImage(const std::filesystem::path& filename);
+Image* LoadPNGImage(const std::filesystem::path& filename);
+Image* LoadDDSImage(const std::filesystem::path& filename);
 #ifdef USE_LIBAVIF
-Image* LoadAVIFImage(const fs::path& filename);
+Image* LoadAVIFImage(const std::filesystem::path& filename);
 #endif
 
-bool SaveJPEGImage(const fs::path& filename, const Image& image);
-bool SavePNGImage(const fs::path& filename, const Image& image);
+bool SaveJPEGImage(const std::filesystem::path& filename, const Image& image);
+bool SavePNGImage(const std::filesystem::path& filename, const Image& image);
 
 } // namespace celestia::engine

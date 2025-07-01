@@ -11,10 +11,10 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <string_view>
 
-#include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 #include "deepskyobj.h"
 #include "renderflags.h"
@@ -34,7 +34,7 @@ public:
     std::string getDescription() const override;
 
     // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;

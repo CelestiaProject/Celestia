@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cstddef>
+#include <filesystem>
 #include <functional>
 #include <map>
 #include <memory>
@@ -24,7 +25,6 @@
 #include <Eigen/Geometry>
 
 #include <celastro/units.h>
-#include <celcompat/filesystem.h>
 
 class Color;
 
@@ -59,7 +59,7 @@ public:
     }
 
     const std::string* getString(std::string_view) const;
-    std::optional<fs::path> getPath(std::string_view) const;
+    std::optional<std::filesystem::path> getPath(std::string_view) const;
     std::optional<bool> getBoolean(std::string_view) const;
 
     template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>

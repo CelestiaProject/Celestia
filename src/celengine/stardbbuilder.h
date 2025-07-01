@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <map>
 #include <memory>
@@ -19,7 +20,6 @@
 
 #include <Eigen/Core>
 
-#include <celcompat/filesystem.h>
 #include <celutil/blockarray.h>
 #include "astroobj.h"
 #include "category.h"
@@ -54,7 +54,7 @@ public:
     StarDatabaseBuilder(StarDatabaseBuilder&&) noexcept = delete;
     StarDatabaseBuilder& operator=(StarDatabaseBuilder&&) noexcept = delete;
 
-    bool load(std::istream&, const fs::path& resourcePath = fs::path());
+    bool load(std::istream&, const std::filesystem::path& resourcePath = std::filesystem::path());
     bool loadBinary(std::istream&);
 
     void setNameDatabase(std::unique_ptr<StarNameDatabase>&&);
@@ -67,7 +67,7 @@ private:
     bool createOrUpdateStar(const StcHeader&,
                             const celestia::util::AssociativeArray*,
                             Star*,
-                            const fs::path&);
+                            const std::filesystem::path&);
     bool checkStcPosition(const StcHeader&,
                           const celestia::util::AssociativeArray*,
                           const Star*,

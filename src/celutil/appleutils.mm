@@ -12,14 +12,14 @@
 #include <Foundation/Foundation.h>
 #include "appleutils.h"
 
-fs::path AppleHomeDirectory()
+std::filesystem::path AppleHomeDirectory()
 {
     @autoreleasepool {
         return [NSHomeDirectory() UTF8String];
     }
 }
 
-fs::path AppleApplicationSupportDirectory()
+std::filesystem::path AppleApplicationSupportDirectory()
 {
     @autoreleasepool {
         NSArray *directories = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);

@@ -13,10 +13,10 @@
 #pragma once
 
 #include <cstddef>
+#include <filesystem>
 #include <optional>
 #include <string_view>
 
-#include <celcompat/filesystem.h>
 #include <celutil/array_view.h>
 
 namespace celestia::util
@@ -26,22 +26,22 @@ namespace celestia::util
 // we need to implement a custom hasher for older compilers.
 struct PathHasher
 {
-    std::size_t operator()(const fs::path& path) const noexcept
+    std::size_t operator()(const std::filesystem::path& path) const noexcept
     {
-        return fs::hash_value(path);
+        return std::filesystem::hash_value(path);
     }
 };
 
-std::optional<fs::path> U8FileName(std::string_view source,
+std::optional<std::filesystem::path> U8FileName(std::string_view source,
                                    bool allowWildcardExtension = true);
-fs::path LocaleFilename(const fs::path& filename);
-fs::path PathExp(fs::path&& filename);
-fs::path ResolveWildcard(const fs::path& wildcard,
+std::filesystem::path LocaleFilename(const std::filesystem::path& filename);
+std::filesystem::path PathExp(std::filesystem::path&& filename);
+std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,
                          array_view<std::string_view> extensions);
-bool IsValidDirectory(const fs::path &dir);
+bool IsValidDirectory(const std::filesystem::path &dir);
 #ifndef PORTABLE_BUILD
-fs::path HomeDir();
-fs::path WriteableDataPath();
+std::filesystem::path HomeDir();
+std::filesystem::path WriteableDataPath();
 #endif
 
 } // end namespace celestia::util

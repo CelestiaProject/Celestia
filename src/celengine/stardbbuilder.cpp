@@ -59,10 +59,10 @@ using util::ValueArray;
 
 struct StarDatabaseBuilder::StcHeader
 {
-    explicit StcHeader(const fs::path&);
-    explicit StcHeader(fs::path&&) = delete;
+    explicit StcHeader(const std::filesystem::path&);
+    explicit StcHeader(std::filesystem::path&&) = delete;
 
-    const fs::path* path;
+    const std::filesystem::path* path;
     int lineNumber{ 0 };
     DataDisposition disposition{ DataDisposition::Add };
     bool isStar{ true };
@@ -70,7 +70,7 @@ struct StarDatabaseBuilder::StcHeader
     std::vector<std::string> names;
 };
 
-StarDatabaseBuilder::StcHeader::StcHeader(const fs::path& _path) :
+StarDatabaseBuilder::StcHeader::StcHeader(const std::filesystem::path& _path) :
     path(&_path)
 {
 }
@@ -542,7 +542,7 @@ void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
                    boost::intrusive_ptr<StarDetails>& details,
-                   const fs::path& resourcePath)
+                   const std::filesystem::path& resourcePath)
 {
     applyMesh(header, starData, details);
 
@@ -702,7 +702,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
  *  Modify <number>   : error
  */
 bool
-StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
+StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
     util::Tokenizer tokenizer(&in);
     util::Parser parser(&tokenizer);
@@ -813,7 +813,7 @@ bool
 StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
                                         const AssociativeArray* starData,
                                         Star* star,
-                                        const fs::path& resourcePath)
+                                        const std::filesystem::path& resourcePath)
 {
     boost::intrusive_ptr<StarDetails> newDetails = nullptr;
     if (!checkSpectralType(header, starData, star, newDetails))

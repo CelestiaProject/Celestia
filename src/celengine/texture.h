@@ -11,10 +11,10 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #include <string>
 
-#include <celcompat/filesystem.h>
 #include <celimage/image.h>
 #include <celutil/array_view.h>
 #include <celutil/color.h>
@@ -196,12 +196,12 @@ CreateProceduralCubeMap(int size, celestia::engine::PixelFormat format,
                         ProceduralTexEval func);
 
 std::unique_ptr<Texture>
-LoadTextureFromFile(const fs::path& filename,
+LoadTextureFromFile(const std::filesystem::path& filename,
                     Texture::AddressMode addressMode = Texture::EdgeClamp,
                     Texture::MipMapMode mipMode = Texture::DefaultMipMaps,
                     Texture::Colorspace colorspace = Texture::DefaultColorspace);
 
 std::unique_ptr<Texture>
-LoadHeightMapFromFile(const fs::path& filename,
+LoadHeightMapFromFile(const std::filesystem::path& filename,
                       float height,
                       Texture::AddressMode addressMode = Texture::EdgeClamp);

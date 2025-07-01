@@ -73,7 +73,7 @@ Gui::create(SDL_Window* window, SDL_GLContext context, CelestiaCore* appCore, co
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.IniFilename = nullptr;
 
-    fs::path iniPath = environment.getImguiSettingsPath();
+    std::filesystem::path iniPath = environment.getImguiSettingsPath();
 #ifdef _WIN32
     std::string iniFilename = util::WideToUTF8(iniPath.native());
 #else

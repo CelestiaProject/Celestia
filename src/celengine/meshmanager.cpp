@@ -40,7 +40,7 @@ namespace
 {
 
 std::unique_ptr<cmod::Model>
-LoadCelestiaMesh(const fs::path& filename)
+LoadCelestiaMesh(const std::filesystem::path& filename)
 {
     std::ifstream meshFile(filename, std::ios::in);
     if (!meshFile.good())
@@ -293,7 +293,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 }
 
 std::unique_ptr<cmod::Model>
-Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
+Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 {
     auto model = std::make_unique<cmod::Model>();
 
@@ -355,13 +355,13 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
 }
 
 std::unique_ptr<cmod::Model>
-Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+Load3DSModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
 {
     std::unique_ptr<M3DScene> scene = Read3DSFile(key.resolvedPath);
     if (scene == nullptr)
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : fs::path());
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : std::filesystem::path());
 
     if (key.isNormalized)
         model->normalize(key.center);
@@ -372,7 +372,7 @@ Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 }
 
 std::unique_ptr<cmod::Model>
-LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+LoadCMODModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
 {
     std::ifstream in(key.resolvedPath, std::ios::binary);
     if (!in.good())
@@ -380,7 +380,7 @@ LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 
     std::unique_ptr<cmod::Model> model = cmod::LoadModel(
         in,
-        [&path](const fs::path& name)
+        [&path](const std::filesystem::path& name)
         {
             return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
         });
@@ -414,7 +414,7 @@ LoadCMSModel(const GeometryInfo::ResourceKey& key)
 } // end unnamed namespace
 
 GeometryInfo::ResourceKey
-GeometryInfo::resolve(const fs::path& baseDir) const
+GeometryInfo::resolve(const std::filesystem::path& baseDir) const
 {
     // All empty meshes resolve to the same resource regardless of center/scaling
     if (source.empty())
@@ -422,7 +422,7 @@ GeometryInfo::resolve(const fs::path& baseDir) const
 
     if (!path.empty())
     {
-        fs::path filename = path / "models" / source;
+        std::filesystem::path filename = path / "models" / source;
         std::ifstream in(filename);
         if (in.good())
         {

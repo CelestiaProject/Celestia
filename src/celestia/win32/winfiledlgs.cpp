@@ -13,12 +13,12 @@
 // of the License, or (at your option) any later version.
 
 
-#include <winfiledlgs.h>
+#include "winfiledlgs.h"
 
 #include <array>
+#include <filesystem>
 #include <string>
 
-#include <celcompat/filesystem.h>
 #include <celestia/celestiacore.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
@@ -74,7 +74,7 @@ HandleCaptureImage(HWND hWnd, CelestiaCore* appCore)
 
     // If you got here, a path and file has been specified.
     // Ofn.lpstrFile contains full path to specified file
-    fs::path filename(Ofn.lpstrFile);
+    std::filesystem::path filename(Ofn.lpstrFile);
     constexpr std::array<std::wstring_view, 2> defaultExtensions
     {
         L".jpg"sv,

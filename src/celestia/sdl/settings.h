@@ -9,9 +9,10 @@
 
 #pragma once
 
+#include <filesystem>
+
 #include <SDL_video.h>
 
-#include <celcompat/filesystem.h>
 #include <celengine/body.h>
 #include <celengine/multitexture.h>
 #include <celengine/renderflags.h>
@@ -26,10 +27,10 @@ class AppWindow;
 
 struct Settings
 {
-    static Settings load(const fs::path&);
+    static Settings load(const std::filesystem::path&);
     static Settings fromApplication(const AppWindow&, const CelestiaCore*);
 
-    bool save(const fs::path&) const;
+    bool save(const std::filesystem::path&) const;
     void apply(const CelestiaCore*) const;
 
     int positionX{ SDL_WINDOWPOS_CENTERED };

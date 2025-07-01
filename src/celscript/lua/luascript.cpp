@@ -9,9 +9,11 @@
 
 #include <set>
 #include <string>
+#include <filesystem>
 #include <fstream>
+
 #include <fmt/ostream.h>
-#include <celcompat/filesystem.h>
+
 #include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
@@ -42,7 +44,7 @@ LuaScript::~LuaScript()
     m_celxScript->cleanup();
 }
 
-bool LuaScript::load(ifstream &scriptfile, const fs::path &path, string &errorMsg)
+bool LuaScript::load(ifstream &scriptfile, const std::filesystem::path &path, string &errorMsg)
 {
     if (m_celxScript->loadScript(scriptfile, path) != 0)
     {
@@ -77,13 +79,13 @@ bool LuaScript::tick(double dt)
     return m_celxScript->tick(dt);
 }
 
-bool LuaScriptPlugin::isOurFile(const fs::path &p) const
+bool LuaScriptPlugin::isOurFile(const std::filesystem::path &p) const
 {
     auto ext = p.extension();
     return ext == ".celx" || ext == ".clx";
 }
 
-unique_ptr<IScript> LuaScriptPlugin::loadScript(const fs::path &path)
+unique_ptr<IScript> LuaScriptPlugin::loadScript(const std::filesystem::path &path)
 {
     ifstream scriptfile(path);
     if (!scriptfile.good())
@@ -139,7 +141,7 @@ bool LuaHook::call(const char *method, double dt) const
 
 class LuaPathFinder
 {
-    set<fs::path> dirs;
+    set<std::filesystem::path> dirs;
 
  public:
     const string getLuaPath() const
@@ -150,7 +152,7 @@ class LuaPathFinder
         return out;
     }
 
-    void process(const fs::path& p)
+    void process(const std::filesystem::path& p)
     {
         auto dir = p.parent_path();
         if (p.extension() == ".lua" && dirs.count(dir) == 0)
@@ -169,14 +171,14 @@ static string lua_path(const CelestiaConfig *config)
             continue;
 
         std::error_code ec;
-        if (!fs::is_directory(dir, ec))
+        if (!std::filesystem::is_directory(dir, ec))
         {
             GetLogger()->warn(_("Path {} doesn't exist or isn't a directory\n"), dir);
             continue;
         }
 
         LuaPathFinder loader;
-        auto iter = fs::recursive_directory_iterator(dir, ec);
+        auto iter = std::filesystem::recursive_directory_iterator(dir, ec);
         for (; iter != end(iter); iter.increment(ec))
         {
             if (ec)

@@ -53,14 +53,14 @@ GetTextureManager()
     return textureManager;
 }
 
-fs::path
-TextureInfo::resolve(const fs::path& baseDir) const
+std::filesystem::path
+TextureInfo::resolve(const std::filesystem::path& baseDir) const
 {
     bool wildcard = source.extension() == ".*";
 
     if (!path.empty())
     {
-        fs::path filename = path / "textures" / directories[static_cast<std::size_t>(resolution)] / source;
+        std::filesystem::path filename = path / "textures" / directories[static_cast<std::size_t>(resolution)] / source;
         // cout << "Resolve: testing [" << filename << "]\n";
         if (wildcard)
         {
@@ -76,10 +76,10 @@ TextureInfo::resolve(const fs::path& baseDir) const
         }
     }
 
-    fs::path filename = baseDir / directories[static_cast<std::size_t>(resolution)] / source;
+    std::filesystem::path filename = baseDir / directories[static_cast<std::size_t>(resolution)] / source;
     if (wildcard)
     {
-        fs::path matched = celestia::util::ResolveWildcard(filename, extensions);
+        std::filesystem::path matched = celestia::util::ResolveWildcard(filename, extensions);
         if (!matched.empty())
             return matched;
     }
@@ -89,7 +89,7 @@ TextureInfo::resolve(const fs::path& baseDir) const
 
 
 std::unique_ptr<Texture>
-TextureInfo::load(const fs::path& name) const
+TextureInfo::load(const std::filesystem::path& name) const
 {
     Texture::AddressMode addressMode = Texture::EdgeClamp;
     Texture::MipMapMode  mipMode     = Texture::DefaultMipMaps;

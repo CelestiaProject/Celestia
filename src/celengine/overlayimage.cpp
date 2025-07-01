@@ -4,11 +4,11 @@
 #include "rectangle.h"
 #include "render.h"
 
-OverlayImage::OverlayImage(fs::path f, Renderer *r) :
+OverlayImage::OverlayImage(std::filesystem::path f, Renderer *r) :
     filename(std::move(f)),
     renderer(r)
 {
-    texture = LoadTextureFromFile(fs::path("images") / filename,
+    texture = LoadTextureFromFile(std::filesystem::path("images") / filename,
                                   Texture::EdgeClamp,
                                   Texture::NoMipMaps);
 }
