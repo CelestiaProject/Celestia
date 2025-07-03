@@ -10,9 +10,9 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 
-#include <celcompat/filesystem.h>
 #include <celutil/resmanager.h>
 
 // File format for data used to warp an image, for
@@ -41,17 +41,17 @@ class WarpMeshInfo
 {
  public:
     using ResourceType = WarpMesh;
-    using ResourceKey = fs::path;
+    using ResourceKey = std::filesystem::path;
 
-    explicit WarpMeshInfo(const fs::path& source) :
+    explicit WarpMeshInfo(const std::filesystem::path& source) :
         source(source)
     {};
 
-    fs::path resolve(const fs::path&) const;
-    std::unique_ptr<WarpMesh> load(const fs::path&) const;
+    std::filesystem::path resolve(const std::filesystem::path&) const;
+    std::unique_ptr<WarpMesh> load(const std::filesystem::path&) const;
 
  private:
-    fs::path source;
+    std::filesystem::path source;
     friend bool operator<(const WarpMeshInfo&, const WarpMeshInfo&);
 };
 

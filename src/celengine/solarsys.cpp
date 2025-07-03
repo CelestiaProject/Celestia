@@ -180,7 +180,7 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
         dst &= ~flag;
 }
 
-std::optional<fs::path>
+std::optional<std::filesystem::path>
 GetFilename(const AssociativeArray& hash,
             std::string_view key,
             const char* errorMessage)
@@ -199,7 +199,7 @@ GetFilename(const AssociativeArray& hash,
 
 void FillinSurface(const AssociativeArray* surfaceData,
                    Surface* surface,
-                   const fs::path& path)
+                   const std::filesystem::path& path)
 {
     if (auto color = surfaceData->getColor("Color"); color.has_value())
         surface->color = *color;
@@ -273,7 +273,7 @@ Selection GetParentObject(PlanetarySystem* system)
 TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                                   Universe& universe,
                                                   const AssociativeArray* phaseData,
-                                                  const fs::path& path,
+                                                  const std::filesystem::path& path,
                                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
                                                   bool isFirstPhase,
@@ -376,7 +376,7 @@ std::unique_ptr<Timeline>
 CreateTimelineFromArray(Body* body,
                         Universe& universe,
                         const ValueArray* timelineArray,
-                        const fs::path& path,
+                        const std::filesystem::path& path,
                         const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                         const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
@@ -428,7 +428,7 @@ bool CreateTimeline(Body* body,
                     PlanetarySystem* system,
                     Universe& universe,
                     const AssociativeArray* planetData,
-                    const fs::path& path,
+                    const std::filesystem::path& path,
                     DataDisposition disposition,
                     BodyType bodyType)
 {
@@ -667,7 +667,7 @@ bool CreateTimeline(Body* body,
 }
 
 void
-ReadMesh(const AssociativeArray& planetData, Body& body, const fs::path& path)
+ReadMesh(const AssociativeArray& planetData, Body& body, const std::filesystem::path& path)
 {
     using engine::GeometryInfo;
     using engine::GetGeometryManager;
@@ -704,7 +704,7 @@ ReadMesh(const AssociativeArray& planetData, Body& body, const fs::path& path)
 
 void ReadAtmosphere(Body* body,
                     const AssociativeArray* atmosData,
-                    const fs::path& path,
+                    const std::filesystem::path& path,
                     DataDisposition disposition)
 {
     auto bodyFeaturesManager = GetBodyFeaturesManager();
@@ -777,7 +777,7 @@ void ReadAtmosphere(Body* body,
 
 void ReadRings(Body* body,
                const AssociativeArray* ringsData,
-               const fs::path& path,
+               const std::filesystem::path& path,
                DataDisposition disposition)
 {
     auto inner = ringsData->getLength<float>("Inner");
@@ -830,7 +830,7 @@ Body* CreateBody(const std::string& name,
                  Universe& universe,
                  Body* existingBody,
                  const AssociativeArray* planetData,
-                 const fs::path& path,
+                 const std::filesystem::path& path,
                  DataDisposition disposition,
                  BodyType bodyType)
 {
@@ -1069,7 +1069,7 @@ Body* CreateReferencePoint(const std::string& name,
                            Universe& universe,
                            Body* existingBody,
                            const AssociativeArray* refPointData,
-                           const fs::path& path,
+                           const std::filesystem::path& path,
                            DataDisposition disposition)
 {
     Body* body = nullptr;
@@ -1122,7 +1122,7 @@ Body* CreateReferencePoint(const std::string& name,
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
-                            const fs::path& directory)
+                            const std::filesystem::path& directory)
 {
     Tokenizer tokenizer(&in);
     util::Parser parser(&tokenizer);

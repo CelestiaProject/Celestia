@@ -68,7 +68,7 @@ LegacyScript::LegacyScript(CelestiaCore *core) :
 {
 }
 
-bool LegacyScript::load(std::istream &scriptfile, const fs::path &/*path*/, std::string &errorMsg)
+bool LegacyScript::load(std::istream &scriptfile, const std::filesystem::path &/*path*/, std::string &errorMsg)
 {
     CommandParser parser(scriptfile, m_appCore->scriptMaps());
     CommandSequence script = parser.parse();
@@ -88,12 +88,12 @@ bool LegacyScript::tick(double dt)
     return m_runningScript->tick(dt);
 }
 
-bool LegacyScriptPlugin::isOurFile(const fs::path &p) const
+bool LegacyScriptPlugin::isOurFile(const std::filesystem::path &p) const
 {
     return p.extension() == ".cel";
 }
 
-std::unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
+std::unique_ptr<IScript> LegacyScriptPlugin::loadScript(const std::filesystem::path &path)
 {
     std::ifstream scriptfile(path);
     if (!scriptfile.good())

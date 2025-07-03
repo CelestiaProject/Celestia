@@ -835,7 +835,7 @@ ParseResult parsePlayCommand(const AssociativeArray& paramList, const ScriptMaps
     std::optional<bool> optionalLoop = std::nullopt;
     if (auto loop = paramList.getNumber<int>("loop"); loop.has_value())
         optionalLoop = *loop == 1;
-    std::optional<fs::path> optionalFilename = std::nullopt;
+    std::optional<std::filesystem::path> optionalFilename = std::nullopt;
     if (auto filename = paramList.getString("filename"); filename != nullptr)
     {
         optionalFilename = util::U8FileName(*filename);
@@ -857,7 +857,7 @@ ParseResult parseOverlayCommand(const AssociativeArray& paramList, const ScriptM
     auto yoffset  = paramList.getNumber<float>("yoffset").value_or(0.0f);
     std::optional<float> alpha = paramList.getNumber<float>("alpha");
 
-    fs::path filename;
+    std::filesystem::path filename;
     if (const std::string* fname = paramList.getString("filename"); fname != nullptr)
     {
         if (auto path = util::U8FileName(*fname); path.has_value())
@@ -933,7 +933,7 @@ ParseResult parseSetRingsTextureCommand(const AssociativeArray& paramList, const
     if (object == nullptr)
         return makeError("Missing object parameter to setringstexture");
 
-    fs::path texture;
+    std::filesystem::path texture;
     if (const std::string* textureValue = paramList.getString("texture"); textureValue != nullptr)
     {
         if (auto textureFilename = util::U8FileName(*textureValue); textureFilename.has_value())
@@ -946,7 +946,7 @@ ParseResult parseSetRingsTextureCommand(const AssociativeArray& paramList, const
         return makeError("Missing texture parameter to setringstexture");
     }
 
-    fs::path path;
+    std::filesystem::path path;
     if (auto pathStr = paramList.getPath("path"); pathStr.has_value())
     {
         path = std::move(*pathStr);

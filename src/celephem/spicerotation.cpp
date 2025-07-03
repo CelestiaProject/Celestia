@@ -97,10 +97,10 @@ SpiceRotation::getPeriod() const
 
 
 bool
-SpiceRotation::loadRequiredKernel(const fs::path& path,
+SpiceRotation::loadRequiredKernel(const std::filesystem::path& path,
                                   const std::string& kernel)
 {
-    fs::path filepath = path / "data" / kernel;
+    std::filesystem::path filepath = path / "data" / kernel;
     if (LoadSpiceKernel(filepath))
         return true;
 

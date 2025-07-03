@@ -39,7 +39,7 @@ loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc,
     // globulars.dsc, ...):
-    fs::path empty;
+    std::filesystem::path empty;
     for (const auto &file : config.paths.dsoCatalogFiles)
         loader.process(file, empty);
 

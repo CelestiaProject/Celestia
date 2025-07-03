@@ -12,6 +12,7 @@
 
 #include "qtappwin.h"
 
+#include <filesystem>
 #include <map>
 #include <string>
 #include <vector>
@@ -66,7 +67,6 @@
 #include <QLineEdit>
 #endif
 
-#include <celcompat/filesystem.h>
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/observer.h>
@@ -275,7 +275,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
         configFileName = options.configFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
-    std::vector<fs::path> extrasDirectories;
+    std::vector<std::filesystem::path> extrasDirectories;
     for (const auto& dir : options.extrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 
@@ -296,7 +296,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     if (!options.logFilename.isEmpty())
     {
-        fs::path fn = logPath.absolutePath().toStdString();
+        std::filesystem::path fn = logPath.absolutePath().toStdString();
         m_appCore->setLogFile(fn);
     }
 

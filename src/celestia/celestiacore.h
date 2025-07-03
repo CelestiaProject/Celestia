@@ -194,8 +194,8 @@ public:
     ~CelestiaCore();
 
     static void initLocale();
-    bool initSimulation(const fs::path& configFileName = fs::path(),
-                        const std::vector<fs::path>& extrasDirs = {},
+    bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
+                        const std::vector<std::filesystem::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(bool useMesaPackInvert = true);
     void start(double t);
@@ -270,7 +270,7 @@ public:
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(const fs::path& filename, bool i18n = true);
+    void runScript(const std::filesystem::path& filename, bool i18n = true);
     void cancelScript();
 
     int getHudDetail();
@@ -325,7 +325,7 @@ public:
 
     void notifyWatchers(int);
 
-    void setLogFile(const fs::path&);
+    void setLogFile(const std::filesystem::path&);
 
     class Alerter
     {
@@ -358,9 +358,9 @@ public:
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-    bool setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    bool setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
+    bool setHudFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize);
+    bool setHudTitleFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize);
+    bool setRendererFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
@@ -377,13 +377,13 @@ public:
 
     void getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const;
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::engine::PixelFormat format) const;
-    bool saveScreenShot(const fs::path&, ContentType = ContentType::Unknown) const;
+    bool saveScreenShot(const std::filesystem::path&, ContentType = ContentType::Unknown) const;
 
-    void loadAsterismsFile(const fs::path &path);
+    void loadAsterismsFile(const std::filesystem::path &path);
 
 #ifdef USE_MINIAUDIO
     bool isPlayingAudio(int channel) const;
-    bool playAudio(int channel, const fs::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
+    bool playAudio(int channel, const std::filesystem::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
     bool resumeAudio(int channel);
     void pauseAudio(int channel);
     void stopAudio(int channel);

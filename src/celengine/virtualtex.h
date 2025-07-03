@@ -10,16 +10,16 @@
 #pragma once
 
 #include <array>
+#include <filesystem>
 #include <memory>
 #include <string>
 
-#include <celcompat/filesystem.h>
 #include <celengine/texture.h>
 
 class VirtualTexture : public Texture
 {
 public:
-    VirtualTexture(const fs::path& _tilePath,
+    VirtualTexture(const std::filesystem::path& _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
                    const std::string& _tilePrefix,
@@ -57,8 +57,8 @@ private:
     std::unique_ptr<ImageTexture> loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
 
 private:
-    fs::path tilePath;
-    fs::path tileExt;
+    std::filesystem::path tilePath;
+    std::filesystem::path tileExt;
     std::string tilePrefix;
     unsigned int baseSplit{ 0 };
     unsigned int ticks{ 0 };
@@ -75,4 +75,4 @@ private:
 };
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(const fs::path& filename);
+LoadVirtualTexture(const std::filesystem::path& filename);

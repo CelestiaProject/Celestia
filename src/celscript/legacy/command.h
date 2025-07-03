@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #ifdef USE_MINIAUDIO
 #include <optional>
@@ -23,7 +24,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include <celengine/marker.h>
 #include <celengine/observer.h>
 #include <celengine/multitexture.h>
@@ -605,14 +605,14 @@ class CommandUnmarkAll : public InstantaneousCommand
 class CommandCapture : public InstantaneousCommand
 {
  public:
-    CommandCapture(std::string, fs::path);
+    CommandCapture(std::string, std::filesystem::path);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
     std::string type;
-    fs::path filename;
+    std::filesystem::path filename;
 };
 
 
@@ -740,7 +740,7 @@ class CommandPlay : public InstantaneousCommand
                 std::optional<float> volume,
                 float pan,
                 std::optional<bool> loop,
-                const std::optional<fs::path> &filename,
+                const std::optional<std::filesystem::path> &filename,
                 bool nopause);
 
  protected:
@@ -751,7 +751,7 @@ class CommandPlay : public InstantaneousCommand
     std::optional<float> volume;
     float pan;
     std::optional<bool> loop;
-    std::optional<fs::path> filename;
+    std::optional<std::filesystem::path> filename;
     bool nopause;
 };
 #endif
@@ -759,7 +759,7 @@ class CommandPlay : public InstantaneousCommand
 class CommandScriptImage : public InstantaneousCommand
 {
  public:
-    CommandScriptImage(float, float, float, float, const fs::path&, bool, std::array<Color, 4>&);
+    CommandScriptImage(float, float, float, float, const std::filesystem::path&, bool, std::array<Color, 4>&);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
@@ -769,7 +769,7 @@ class CommandScriptImage : public InstantaneousCommand
     float fadeafter;
     float xoffset;
     float yoffset;
-    fs::path filename;
+    std::filesystem::path filename;
     int fitscreen;
     std::array<Color, 4> colors;
 };
@@ -803,15 +803,15 @@ class CommandSetWindowBordersVisible : public InstantaneousCommand
 class CommandSetRingsTexture : public InstantaneousCommand
 {
  public:
-    CommandSetRingsTexture(std::string, fs::path, fs::path);
+    CommandSetRingsTexture(std::string, std::filesystem::path, std::filesystem::path);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
     std::string object;
-    fs::path textureName;
-    fs::path path;
+    std::filesystem::path textureName;
+    std::filesystem::path path;
 };
 
 } // end namespace celestia::scripts

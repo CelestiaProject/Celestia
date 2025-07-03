@@ -287,7 +287,7 @@ using SettingsWriter = void(*)(std::ostream&, const Settings&);
 } // end unnamed namespace
 
 Settings
-Settings::load(const fs::path& path)
+Settings::load(const std::filesystem::path& path)
 {
     Settings settings;
     if (path.empty())
@@ -322,7 +322,7 @@ Settings::load(const fs::path& path)
 }
 
 bool
-Settings::save(const fs::path& path) const
+Settings::save(const std::filesystem::path& path) const
 {
     if (path.empty())
         return false;

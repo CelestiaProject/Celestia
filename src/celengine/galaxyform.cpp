@@ -26,7 +26,7 @@ namespace
 constexpr unsigned int kIrrGalaxyPoints = 3500u;
 
 std::optional<celestia::engine::GalacticForm>
-buildGalacticForm(const fs::path& filename)
+buildGalacticForm(const std::filesystem::path& filename)
 {
     GalacticForm::Blob b;
     GalacticForm::BlobVector galacticPoints;
@@ -132,7 +132,7 @@ GalacticFormManager::getForm(int form) const
 }
 
 int
-GalacticFormManager::getCustomForm(const fs::path& path)
+GalacticFormManager::getCustomForm(const std::filesystem::path& path)
 {
     if (auto iter = customForms.find(path); iter != customForms.end())
     {

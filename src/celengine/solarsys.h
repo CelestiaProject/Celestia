@@ -10,13 +10,12 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <iosfwd>
 #include <map>
 #include <memory>
 
 #include <Eigen/Core>
-
-#include <celcompat/filesystem.h>
 
 class FrameTree;
 class PlanetarySystem;
@@ -44,4 +43,4 @@ using SolarSystemCatalog = std::map<std::uint32_t, std::unique_ptr<SolarSystem>>
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
-                            const fs::path& dir = fs::path());
+                            const std::filesystem::path& dir = std::filesystem::path());

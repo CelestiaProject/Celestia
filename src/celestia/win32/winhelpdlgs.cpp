@@ -15,6 +15,7 @@
 #include "winhelpdlgs.h"
 
 #include <cstddef>
+#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <string>
@@ -23,7 +24,6 @@
 
 #include <fmt/format.h>
 
-#include <celcompat/filesystem.h>
 #include <celestia/celestiacore.h>
 #include <celestia/helper.h>
 #include <celutil/fsutils.h>
@@ -65,7 +65,7 @@ AppendConvertEOL(std::string_view src, tstring& dest)
 }
 
 bool
-LoadItemTextFromFile(const fs::path& filename, tstring& message)
+LoadItemTextFromFile(const std::filesystem::path& filename, tstring& message)
 {
     constexpr std::size_t bufferSize = 4096;
     std::ifstream f(filename, std::ios::in | std::ios::binary);

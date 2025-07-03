@@ -15,13 +15,13 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include "deepskyobj.h"
 #include "renderflags.h"
 
@@ -57,7 +57,7 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const celestia::util::AssociativeArray*, const fs::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;

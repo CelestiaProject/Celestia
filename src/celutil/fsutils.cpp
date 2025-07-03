@@ -40,7 +40,7 @@
 namespace celestia::util
 {
 
-std::optional<fs::path>
+std::optional<std::filesystem::path>
 U8FileName(std::string_view source, bool allowWildcardExtension)
 {
     using namespace std::string_view_literals;
@@ -91,31 +91,31 @@ U8FileName(std::string_view source, bool allowWildcardExtension)
         }
     }
 
-    return fs::u8path(source);
+    return std::filesystem::u8path(source);
 }
 
-fs::path LocaleFilename(const fs::path &p)
+std::filesystem::path LocaleFilename(const std::filesystem::path &p)
 {
     const char *orig = N_("LANGUAGE");
     const char *lang = _(orig);
     if (lang == orig)
         return p;
 
-    fs::path locPath = p.parent_path() / p.stem().concat("_").concat(lang).replace_extension(p.extension());
+    std::filesystem::path locPath = p.parent_path() / p.stem().concat("_").concat(lang).replace_extension(p.extension());
 
     std::error_code ec;
-    if (fs::exists(locPath, ec))
+    if (std::filesystem::exists(locPath, ec))
         return locPath;
 
-    locPath = fs::path("locale") / locPath;
-    if (fs::exists(locPath, ec))
+    locPath = std::filesystem::path("locale") / locPath;
+    if (std::filesystem::exists(locPath, ec))
         return locPath;
 
     return p;
 }
 
 
-fs::path PathExp(fs::path&& filename)
+std::filesystem::path PathExp(std::filesystem::path&& filename)
 {
 #ifdef PORTABLE_BUILD
     return std::move(filename);
@@ -151,7 +151,7 @@ fs::path PathExp(fs::path&& filename)
         return std::move(filename);
     }
 
-    fs::path::string_type expanded(result.we_wordv[0]);
+    std::filesystem::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
 #else
@@ -159,27 +159,27 @@ fs::path PathExp(fs::path&& filename)
 #endif
 }
 
-fs::path ResolveWildcard(const fs::path& wildcard,
+std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,
                          array_view<std::string_view> extensions)
 {
-    fs::path filename(wildcard);
+    std::filesystem::path filename(wildcard);
 
     for (std::string_view ext : extensions)
     {
         filename.replace_extension(ext);
-        if (fs::exists(filename))
+        if (std::filesystem::exists(filename))
             return filename;
     }
 
-    return fs::path();
+    return std::filesystem::path();
 }
 
-bool IsValidDirectory(const fs::path& dir)
+bool IsValidDirectory(const std::filesystem::path& dir)
 {
     if (dir.empty())
         return false;
 
-    if (std::error_code ec; !fs::is_directory(dir, ec))
+    if (std::error_code ec; !std::filesystem::is_directory(dir, ec))
     {
         GetLogger()->error(_("Path {} doesn't exist or isn't a directory\n"), dir);
         return false;
@@ -189,32 +189,32 @@ bool IsValidDirectory(const fs::path& dir)
 }
 
 #ifndef PORTABLE_BUILD
-fs::path HomeDir()
+std::filesystem::path HomeDir()
 {
 #ifdef _WIN32
     wchar_t p[MAX_PATH + 1];
     if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PROFILE, nullptr, 0, &p[0])))
-        return fs::path(p);
+        return std::filesystem::path(p);
 
     // fallback to environment variables
     std::size_t size;
     _wgetenv_s(&size, p, L"USERPROFILE");
     if (size != 0)
-        return fs::path(p);
+        return std::filesystem::path(p);
 
     _wgetenv_s(&size, p, L"HOMEDRIVE");
     if (size != 0)
     {
-        fs::path ret(p);
+        std::filesystem::path ret(p);
         _wgetenv_s(&size, p, L"HOMEPATH");
         if (size != 0)
-            return ret / fs::path(p);
+            return ret / std::filesystem::path(p);
     }
 
     // unlikely this is defined in woe but let's check
     _wgetenv_s(&size, p, L"HOME");
     if (size != 0)
-        return fs::path(p);
+        return std::filesystem::path(p);
 #elif defined(__APPLE__)
     return AppleHomeDirectory();
 #else
@@ -229,10 +229,10 @@ fs::path HomeDir()
         return pw_dir;
 #endif
 
-    return fs::path();
+    return std::filesystem::path();
 }
 
-fs::path WriteableDataPath()
+std::filesystem::path WriteableDataPath()
 {
 #if defined(_WIN32)
     wchar_t p[MAX_PATH + 1];

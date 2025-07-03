@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include "rotation.h"
 
 namespace celestia::ephem
@@ -36,7 +36,7 @@ class SpiceRotation : public CachingRotationModel
     virtual ~SpiceRotation() = default;
 
     template<typename It>
-    bool init(const fs::path& path, It begin, It end)
+    bool init(const std::filesystem::path& path, It begin, It end)
     {
         // Load required kernel files
         while (begin != end)
@@ -67,7 +67,7 @@ class SpiceRotation : public CachingRotationModel
     double m_validIntervalBegin;
     double m_validIntervalEnd;
 
-    bool loadRequiredKernel(const fs::path&, const std::string&);
+    bool loadRequiredKernel(const std::filesystem::path&, const std::string&);
     bool init();
 };
 

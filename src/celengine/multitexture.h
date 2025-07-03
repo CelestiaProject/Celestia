@@ -11,8 +11,8 @@
 
 #include <array>
 #include <cstddef>
+#include <filesystem>
 
-#include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 
 enum class TextureResolution : int
@@ -28,13 +28,13 @@ class MultiResTexture
 {
 public:
     MultiResTexture();
-    MultiResTexture(const fs::path& source, const fs::path& path);
+    MultiResTexture(const std::filesystem::path& source, const std::filesystem::path& path);
 
-    void setTexture(const fs::path& source,
-                    const fs::path& path,
+    void setTexture(const std::filesystem::path& source,
+                    const std::filesystem::path& path,
                     unsigned int flags = 0);
-    void setTexture(const fs::path& source,
-                    const fs::path& path,
+    void setTexture(const std::filesystem::path& source,
+                    const std::filesystem::path& path,
                     float bumpHeight,
                     unsigned int flags);
     Texture* find(TextureResolution resolution);

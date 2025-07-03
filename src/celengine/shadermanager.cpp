@@ -14,6 +14,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iterator>
@@ -27,7 +28,6 @@
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
-#include <celcompat/filesystem.h>
 #include <celutil/flag.h>
 #include <celutil/logger.h>
 #include "atmosphere.h"
@@ -1036,10 +1036,10 @@ BindAttribLocations(const GLProgramBuilder& prog)
 }
 
 std::optional<std::string>
-ReadShaderFile(const fs::path &path)
+ReadShaderFile(const std::filesystem::path &path)
 {
     std::error_code ec;
-    std::uintmax_t size = fs::file_size(path, ec);
+    std::uintmax_t size = std::filesystem::file_size(path, ec);
     if (ec)
     {
         GetLogger()->error("Failed to get file size of {}.\n", path);
@@ -2690,9 +2690,9 @@ ShaderManager::getShader(std::string_view name)
     auto iter = staticShaders.lower_bound(name);
     if (iter == staticShaders.end() || iter->first != name)
     {
-        fs::path dir("shaders");
-        auto vsName = dir / fs::u8path(fmt::format("{}_vert.glsl", name));
-        auto fsName = dir / fs::u8path(fmt::format("{}_frag.glsl", name));
+        std::filesystem::path dir("shaders");
+        auto vsName = dir / std::filesystem::u8path(fmt::format("{}_vert.glsl", name));
+        auto fsName = dir / std::filesystem::u8path(fmt::format("{}_frag.glsl", name));
 
         auto vs = ReadShaderFile(vsName);
         if (!vs.has_value())
@@ -2715,9 +2715,9 @@ ShaderManager::getShaderGL3(std::string_view name, const GeomShaderParams* param
     auto iter = staticShaders.lower_bound(name);
     if (iter == staticShaders.end() || iter->first != name)
     {
-        fs::path dir("shaders");
-        auto vsName = dir / fs::u8path(fmt::format("{}_vert.glsl", name));
-        auto fsName = dir / fs::u8path(fmt::format("{}_frag.glsl", name));
+        std::filesystem::path dir("shaders");
+        auto vsName = dir / std::filesystem::u8path(fmt::format("{}_vert.glsl", name));
+        auto fsName = dir / std::filesystem::u8path(fmt::format("{}_frag.glsl", name));
 
         auto vs = ReadShaderFile(vsName);
         if (!vs.has_value())
@@ -2728,7 +2728,7 @@ ShaderManager::getShaderGL3(std::string_view name, const GeomShaderParams* param
 
         std::unique_ptr<CelestiaGLProgram> prog;
         // Geometric shader is optional
-        if (auto gsName = dir / fmt::format("{}_geom.glsl", name); fs::exists(gsName))
+        if (auto gsName = dir / fmt::format("{}_geom.glsl", name); std::filesystem::exists(gsName))
         {
             if (auto gs = ReadShaderFile(gsName); gs.has_value())
                 prog = buildProgramGL3(*vs, *gs, *fs, params, fisheyeEnabled);

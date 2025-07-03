@@ -16,13 +16,13 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <istream>
 #include <limits>
 #include <utility>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include <celutil/array_view.h>
 
 namespace celestia::ephem
@@ -34,12 +34,12 @@ namespace detail
 bool checkSampleOrdering(double tdb,
                          double& lastSampleTime,
                          bool& hasOutOfOrderSamples,
-                         const fs::path& filename);
+                         const std::filesystem::path& filename);
 
-bool logIfNoSamples(bool, const fs::path&);
-void logReadError(const fs::path&);
-void logOpenAsciiFail(const fs::path&);
-void logSkipCommentsFail(const fs::path&);
+bool logIfNoSamples(bool, const std::filesystem::path&);
+void logReadError(const std::filesystem::path&);
+void logOpenAsciiFail(const std::filesystem::path&);
+void logSkipCommentsFail(const std::filesystem::path&);
 
 bool skipComments(std::istream& in);
 
@@ -54,7 +54,7 @@ std::uint32_t GetSampleIndex(double jd,
 template<typename T, typename F>
 bool
 LoadSamples(std::istream& in,
-            const fs::path& filename,
+            const std::filesystem::path& filename,
             std::vector<double>& sampleTimes,
             std::vector<T>& samples,
             F readSample)
@@ -87,7 +87,7 @@ LoadSamples(std::istream& in,
 
 template<typename T, typename F>
 bool
-LoadAsciiSamples(const fs::path& filename,
+LoadAsciiSamples(const std::filesystem::path& filename,
                  std::vector<double>& sampleTimes,
                  std::vector<T>& samples,
                  F readSample)

@@ -39,7 +39,7 @@ main(int argc, char **argv)
     if (!environment->setGLAttributes())
         return EXIT_FAILURE;
 
-    fs::path dataDir;
+    std::filesystem::path dataDir;
 #ifdef _WIN32
     if (const wchar_t* dataDirEnv = _wgetenv(L"CELESTIA_DATA_DIR"); dataDirEnv == nullptr)
 #else
@@ -50,7 +50,7 @@ main(int argc, char **argv)
         dataDir = dataDirEnv;
 
     std::error_code ec;
-    fs::current_path(dataDir, ec);
+    std::filesystem::current_path(dataDir, ec);
     if (ec)
         return EXIT_FAILURE;
 

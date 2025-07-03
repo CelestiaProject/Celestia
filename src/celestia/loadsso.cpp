@@ -24,7 +24,7 @@ namespace celestia
 using SolarSystemLoader = CatalogLoader<Universe>;
 
 template<> bool
-CatalogLoader<Universe>::load(std::istream &in, const fs::path &dir)
+CatalogLoader<Universe>::load(std::istream &in, const std::filesystem::path &dir)
 {
     return LoadSolarSystemObjects(in, *m_objDB, dir);
 }
@@ -45,7 +45,7 @@ loadSSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier, Univer
                              config.paths.skipExtras);
 
     // First read the solar system files listed individually in the config file.
-    fs::path empty;
+    std::filesystem::path empty;
     for (const auto &file : config.paths.solarSystemFiles)
         loader.process(file, empty);
 

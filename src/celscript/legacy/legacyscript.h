@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
 #include <string>
 
-#include <celcompat/filesystem.h>
 #include <celscript/common/script.h>
 
 
@@ -31,7 +31,7 @@ class LegacyScript : public IScript
     LegacyScript(CelestiaCore*);
     ~LegacyScript() override = default;
 
-    bool load(std::istream&, const fs::path&, std::string&);
+    bool load(std::istream&, const std::filesystem::path&, std::string&);
 
     bool tick(double) override;
 
@@ -54,8 +54,8 @@ class LegacyScriptPlugin : public IScriptPlugin
     LegacyScriptPlugin& operator=(const LegacyScriptPlugin&) = delete;
     LegacyScriptPlugin& operator=(LegacyScriptPlugin&&) = delete;
 
-    bool isOurFile(const fs::path&) const override;
-    std::unique_ptr<IScript> loadScript(const fs::path&) override;
+    bool isOurFile(const std::filesystem::path&) const override;
+    std::unique_ptr<IScript> loadScript(const std::filesystem::path&) override;
 };
 
 } // end namespace celestia::scripts

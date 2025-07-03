@@ -24,6 +24,7 @@
 #include <cassert>
 #include <ctime>
 #include <cinttypes>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -39,7 +40,6 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/filesystem.h>
 #include <celcompat/numbers.h>
 #include <celengine/asterism.h>
 #include <celengine/axisarrow.h>
@@ -115,7 +115,7 @@ std::locale CelestiaCore::loc = std::locale();
 namespace
 {
 
-bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
+bool ReadLeapSecondsFile(const std::filesystem::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
 {
     std::ifstream file(path);
     if (!file.good())
@@ -229,7 +229,7 @@ CelestiaCore::~CelestiaCore()
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
-    fs::path path;
+    std::filesystem::path path;
     if (!config->paths.favoritesFile.empty())
         path = config->paths.favoritesFile;
     else
@@ -251,7 +251,7 @@ void CelestiaCore::readFavoritesFile()
 
 void CelestiaCore::writeFavoritesFile()
 {
-    fs::path path;
+    std::filesystem::path path;
     if (!config->paths.favoritesFile.empty())
         path = config->paths.favoritesFile;
     else
@@ -263,7 +263,7 @@ void CelestiaCore::writeFavoritesFile()
 #endif
 
     error_code ec;
-    bool isDir = fs::is_directory(path.parent_path(), ec);
+    bool isDir = std::filesystem::is_directory(path.parent_path(), ec);
     if (ec)
     {
         GetLogger()->error(_("Failed to check directory existance for favorites file {}\n"), path);
@@ -271,7 +271,7 @@ void CelestiaCore::writeFavoritesFile()
     }
     if (!isDir)
     {
-        fs::create_directory(path.parent_path(), ec);
+        std::filesystem::create_directory(path.parent_path(), ec);
         if (ec)
         {
             GetLogger()->error(_("Failed to create a directory for favorites file {}\n"), path);
@@ -381,7 +381,7 @@ void CelestiaCore::cancelScript()
 }
 
 
-void CelestiaCore::runScript(const fs::path& filename, bool i18n)
+void CelestiaCore::runScript(const std::filesystem::path& filename, bool i18n)
 {
     cancelScript();
     auto maybeLocaleFilename = i18n ? LocaleFilename(filename) : filename;
@@ -1700,9 +1700,9 @@ void CelestiaCore::start(double t)
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
-        fs::path filename(config->paths.initScriptFile);
+        std::filesystem::path filename(config->paths.initScriptFile);
         // Don't use {} as it will throw error C2593 on MSVC
-        config->paths.initScriptFile = fs::path();
+        config->paths.initScriptFile = std::filesystem::path();
         runScript(filename);
     }
 
@@ -1722,7 +1722,7 @@ void CelestiaCore::setStartURL(const string &url)
     {
         startURL = url;
         // Don't use {} as it will throw error C2593 on MSVC
-        config->paths.initScriptFile = fs::path();
+        config->paths.initScriptFile = std::filesystem::path();
     }
     else
     {
@@ -2306,8 +2306,8 @@ void CelestiaCore::initLocale()
     setlocale(LC_NUMERIC, "C");
 }
 
-bool CelestiaCore::initSimulation(const fs::path& configFileName,
-                                  const vector<fs::path>& extrasDirs,
+bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
+                                  const vector<std::filesystem::path>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
     config = std::make_unique<CelestiaConfig>();
@@ -2320,7 +2320,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         hasConfig = ReadCelestiaConfig("celestia.cfg", *config);
 
-        fs::path localConfigFile = PathExp("~/.celestia.cfg");
+        std::filesystem::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
             hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
 
@@ -2436,7 +2436,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Load destinations list
     if (!config->paths.destinationsFile.empty())
     {
-        fs::path localeDestinationsFile = LocaleFilename(config->paths.destinationsFile);
+        std::filesystem::path localeDestinationsFile = LocaleFilename(config->paths.destinationsFile);
         ifstream destfile(localeDestinationsFile, ios::in);
         if (destfile.good())
         {
@@ -2569,14 +2569,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 }
 
 static std::shared_ptr<TextureFont>
-LoadFontHelper(const Renderer *renderer, const fs::path &p)
+LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
 {
     if (p.is_absolute())
         return LoadTextureFont(renderer, p);
 
     int index = 0;
     int size = TextureFont::kDefaultSize;
-    fs::path path = LocaleFilename(ParseFontName(fs::path("fonts") / p, index, size));
+    std::filesystem::path path = LocaleFilename(ParseFontName(std::filesystem::path("fonts") / p, index, size));
 
     return LoadTextureFont(renderer, path, index, size);
 }
@@ -2720,7 +2720,7 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
-bool CelestiaCore::setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setHudFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -2730,7 +2730,7 @@ bool CelestiaCore::setHudFont(const fs::path& fontPath, int collectionIndex, int
     return false;
 }
 
-bool CelestiaCore::setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setHudTitleFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -2740,7 +2740,7 @@ bool CelestiaCore::setHudTitleFont(const fs::path& fontPath, int collectionIndex
     return false;
 }
 
-bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
+bool CelestiaCore::setRendererFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -3177,7 +3177,7 @@ bool CelestiaCore::captureImage(std::uint8_t* buffer,
     return false;
 }
 
-bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) const
+bool CelestiaCore::saveScreenShot(const std::filesystem::path& filename, ContentType type) const
 {
     if (type == ContentType::Unknown)
         type = DetermineFileType(filename);
@@ -3211,7 +3211,7 @@ bool CelestiaCore::isPlayingAudio(int channel) const
     return audioSession && audioSession->isPlaying();
 }
 
-bool CelestiaCore::playAudio(int channel, const fs::path &path, double startTime, float volume, float pan, bool loop, bool nopause)
+bool CelestiaCore::playAudio(int channel, const std::filesystem::path &path, double startTime, float volume, float pan, bool loop, bool nopause)
 {
     stopAudio(channel);
     auto audioSession = make_shared<MiniAudioSession>(path, volume, pan, loop, nopause);
@@ -3341,7 +3341,7 @@ void CelestiaCore::setLayoutDirection(celestia::LayoutDirection value)
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
 }
 
-void CelestiaCore::setLogFile(const fs::path &fn)
+void CelestiaCore::setLogFile(const std::filesystem::path &fn)
 {
     m_logfile = std::ofstream(fn);
     if (m_logfile.good())
@@ -3356,7 +3356,7 @@ void CelestiaCore::setLogFile(const fs::path &fn)
     }
 }
 
-void CelestiaCore::loadAsterismsFile(const fs::path &path)
+void CelestiaCore::loadAsterismsFile(const std::filesystem::path &path)
 {
     if (ifstream asterismsFile(path, ios::in); !asterismsFile.good())
     {

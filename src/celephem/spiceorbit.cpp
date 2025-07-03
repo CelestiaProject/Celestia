@@ -93,10 +93,10 @@ SpiceOrbit::getPeriod() const
 
 
 bool
-SpiceOrbit::loadRequiredKernel(const fs::path& path, const std::string& kernel)
+SpiceOrbit::loadRequiredKernel(const std::filesystem::path& path, const std::string& kernel)
 {
     // Load required kernel file
-    fs::path filepath = path / "data" / kernel;
+    std::filesystem::path filepath = path / "data" / kernel;
     if (LoadSpiceKernel(filepath))
         return true;
 

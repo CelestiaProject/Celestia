@@ -732,7 +732,7 @@ MainWindow::copyData(LPARAM lParam) const
     else if ((url.size() >= 4 && url.substr(url.size() - 4) == ".cel"sv) ||
              (url.size() >= 5 && url.substr(url.size() - 5) == ".celx"sv))
     {
-        appCore->runScript(fs::u8path(url));
+        appCore->runScript(std::filesystem::u8path(url));
     }
 }
 

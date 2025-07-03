@@ -804,7 +804,7 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
 }
 
 
-std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename)
+std::unique_ptr<M3DScene> Read3DSFile(const std::filesystem::path& filename)
 {
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())

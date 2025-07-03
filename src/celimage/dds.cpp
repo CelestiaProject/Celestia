@@ -217,7 +217,7 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
 }
 
 std::unique_ptr<Image>
-CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const fs::path& filename)
+CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const std::filesystem::path& filename)
 {
     // DXTc texture not supported, decompress DXTc to RGB/RGBA
     std::unique_ptr<std::uint32_t[]>pixels = nullptr;
@@ -268,7 +268,7 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
 
 } // anonymous namespace
 
-Image* LoadDDSImage(const fs::path& filename)
+Image* LoadDDSImage(const std::filesystem::path& filename)
 {
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())

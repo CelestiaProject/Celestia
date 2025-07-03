@@ -11,10 +11,9 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia
 {
@@ -33,7 +32,7 @@ std::shared_ptr<const Orbit>
 CreateScriptedOrbit(const std::string* moduleName,
                     const std::string& funcName,
                     const util::AssociativeArray& parameters,
-                    const fs::path& path);
+                    const std::filesystem::path& path);
 
 } // end namespace celestia::ephem
 } // end namespace celestia

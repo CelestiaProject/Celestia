@@ -9,16 +9,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
-#include <celcompat/filesystem.h>
-
 struct ScriptMenuItem
 {
-    fs::path filename;
+    std::filesystem::path filename;
     std::string title;
 };
 
 std::vector<ScriptMenuItem>
-ScanScriptsDirectory(const fs::path &dirname, bool deep);
+ScanScriptsDirectory(const std::filesystem::path &dirname, bool deep);

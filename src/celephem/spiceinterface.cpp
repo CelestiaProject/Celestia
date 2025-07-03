@@ -25,14 +25,14 @@ namespace celestia::ephem
 namespace
 {
 
-using ResidentKernelsSet = std::set<fs::path>;
+using ResidentKernelsSet = std::set<std::filesystem::path>;
 
 ResidentKernelsSet* getResidentKernelsSet()
 {
     // Track loaded SPICE kernels in order to avoid loading the same kernel
     // multiple times. This is a static variable because SPICE uses a global
     // kernel pool.
-    static ResidentKernelsSet* residentKernelsSet = new std::set<fs::path>;
+    static ResidentKernelsSet* residentKernelsSet = new std::set<std::filesystem::path>;
     return residentKernelsSet;
 }
 
@@ -89,7 +89,7 @@ bool GetNaifId(const std::string& name, int* id)
 /*! Load a SPICE kernel file of any type into the kernel pool. If the kernel
  *  is already resident, it will not be reloaded.
  */
-bool LoadSpiceKernel(const fs::path& filepath)
+bool LoadSpiceKernel(const std::filesystem::path& filepath)
 {
     // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <celcompat/filesystem.h>
+#include <filesystem>
 
 namespace celestia
 {
@@ -17,7 +17,7 @@ constexpr inline int defaultAudioChannel = 0;
 class AudioSession
 {
  public:
-    AudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause);
+    AudioSession(const std::filesystem::path &path, float volume, float pan, bool loop, bool nopause);
 
     AudioSession() = delete;
     AudioSession(const AudioSession&) = delete;
@@ -39,7 +39,7 @@ class AudioSession
     bool nopause() const { return m_nopause; }
 
  protected:
-    fs::path path() const { return m_path; }
+    std::filesystem::path path() const { return m_path; }
     float volume() const { return m_volume; }
     float pan() const { return m_pan; }
     bool loop() const { return m_loop; }
@@ -49,7 +49,7 @@ class AudioSession
     virtual void updateLoop() = 0;
 
  private:
-    fs::path m_path;
+    std::filesystem::path m_path;
     float m_volume;
     float m_pan;
     bool m_loop;

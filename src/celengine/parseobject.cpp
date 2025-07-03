@@ -248,7 +248,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
  * DoublePrecision defaults to true.
  */
 std::shared_ptr<const ephem::Orbit>
-CreateSampledTrajectory(const AssociativeArray* trajData, const fs::path& path)
+CreateSampledTrajectory(const AssociativeArray* trajData, const std::filesystem::path& path)
 {
     const std::string* source = trajData->getString("Source");
     if (source == nullptr)
@@ -425,7 +425,7 @@ ParseStringList(const AssociativeArray* table,
  */
 std::shared_ptr<const ephem::Orbit>
 CreateSpiceOrbit(const AssociativeArray* orbitData,
-                 const fs::path& path,
+                 const std::filesystem::path& path,
                  bool usePlanetUnits)
 {
     std::vector<std::string> kernelList;
@@ -566,7 +566,7 @@ CreateSpiceOrbit(const AssociativeArray* orbitData,
  */
 std::shared_ptr<ephem::SpiceRotation>
 CreateSpiceRotation(const Value& value,
-                    const fs::path& path)
+                    const std::filesystem::path& path)
 {
     const AssociativeArray* rotationData = value.getHash();
     if (rotationData == nullptr)
@@ -665,7 +665,7 @@ CreateSpiceRotation(const Value& value,
 
 std::shared_ptr<const ephem::Orbit>
 CreateScriptedOrbit(const AssociativeArray* orbitData,
-                    const fs::path& path)
+                    const std::filesystem::path& path)
 {
 #ifdef CELX
     // Function name is required
@@ -824,7 +824,7 @@ CreatePrecessingRotationModel(const Value& value,
 
 std::shared_ptr<const ephem::RotationModel>
 CreateScriptedRotation(const Value& value,
-                       const fs::path& path)
+                       const std::filesystem::path& path)
 {
     const AssociativeArray* rotationData = value.getHash();
     if (rotationData == nullptr)
@@ -853,7 +853,7 @@ CreateScriptedRotation(const Value& value,
 #endif
 
 std::shared_ptr<const ephem::RotationModel>
-CreateSampledRotation(std::string_view filename, const fs::path& path)
+CreateSampledRotation(std::string_view filename, const std::filesystem::path& path)
 {
     auto filePath = util::U8FileName(filename);
     if (!filePath.has_value())
@@ -1463,7 +1463,7 @@ ParseDate(const AssociativeArray* hash, std::string_view name, double& jd)
 std::shared_ptr<const ephem::Orbit>
 CreateOrbit(const Selection& centralObject,
             const AssociativeArray* planetData,
-            const fs::path& path,
+            const std::filesystem::path& path,
             bool usePlanetUnits)
 {
     if (const std::string* customOrbitName = planetData->getString("CustomOrbit"); customOrbitName != nullptr)
@@ -1706,7 +1706,7 @@ CreateLegacyRotationModel(const AssociativeArray* planetData,
  */
 std::shared_ptr<const ephem::RotationModel>
 CreateRotationModel(const AssociativeArray* planetData,
-                    const fs::path& path,
+                    const std::filesystem::path& path,
                     double syncRotationPeriod)
 {
     // If more than one rotation model is specified, the following precedence

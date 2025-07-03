@@ -29,15 +29,15 @@ MultiResTexture::MultiResTexture()
 }
 
 
-MultiResTexture::MultiResTexture(const fs::path& source,
-                                 const fs::path& path)
+MultiResTexture::MultiResTexture(const std::filesystem::path& source,
+                                 const std::filesystem::path& path)
 {
     setTexture(source, path);
 }
 
 
-void MultiResTexture::setTexture(const fs::path& source,
-                                 const fs::path& path,
+void MultiResTexture::setTexture(const std::filesystem::path& source,
+                                 const std::filesystem::path& path,
                                  unsigned int flags)
 {
     TextureManager* texMan = GetTextureManager();
@@ -47,8 +47,8 @@ void MultiResTexture::setTexture(const fs::path& source,
 }
 
 
-void MultiResTexture::setTexture(const fs::path& source,
-                                 const fs::path& path,
+void MultiResTexture::setTexture(const std::filesystem::path& source,
+                                 const std::filesystem::path& path,
                                  float bumpHeight,
                                  unsigned int flags)
 {

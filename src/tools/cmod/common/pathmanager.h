@@ -1,9 +1,9 @@
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
 
@@ -22,8 +22,8 @@ public:
     cmod::HandleGetter getHandle;
     cmod::SourceGetter getSource;
 private:
-    std::vector<fs::path> paths{ };
-    std::map<fs::path, ResourceHandle> handles{ };
+    std::vector<std::filesystem::path> paths{ };
+    std::map<std::filesystem::path, ResourceHandle> handles{ };
 };
 
 

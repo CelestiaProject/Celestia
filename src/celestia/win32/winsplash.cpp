@@ -48,7 +48,7 @@ SplashWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 } // end unnamed namespace
 
-SplashWindow::SplashWindow(const fs::path& _imageFileName) :
+SplashWindow::SplashWindow(const std::filesystem::path& _imageFileName) :
     imageFileName(_imageFileName)
 {
     init();

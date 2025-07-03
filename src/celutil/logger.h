@@ -11,12 +11,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <string_view>
 
 #include <fmt/format.h>
-
-#include <celcompat/filesystem.h>
 
 #if defined(HAVE_STD_FILESYSTEM) && FMT_VERSION >= 100100
 // From fmt 10.1.0 onwards, default path formatter is unquoted
@@ -27,9 +26,9 @@
 
 #if !defined(HAVE_STD_FILESYSTEM) || FMT_VERSION < 100100
 template <>
-struct fmt::formatter<fs::path> : formatter<std::string_view>
+struct fmt::formatter<std::filesystem::path> : formatter<std::string_view>
 {
-    auto format(const fs::path &path, format_context &ctx) const
+    auto format(const std::filesystem::path &path, format_context &ctx) const
     {
 #ifdef _WIN32
         fmt::basic_memory_buffer<char> buffer;

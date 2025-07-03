@@ -10,21 +10,20 @@
 #pragma once
 
 #include <memory>
+#include <filesystem>
 #include <string_view>
 
 #include <Eigen/Core>
-
-#include <celcompat/filesystem.h>
 
 
 class Renderer;
 class TextureFont;
 
 std::shared_ptr<TextureFont>
-LoadTextureFont(const Renderer *, const fs::path &, int index = 0, int size = 0);
+LoadTextureFont(const Renderer *, const std::filesystem::path &, int index = 0, int size = 0);
 
-fs::path
-ParseFontName(const fs::path &, int &, int &);
+std::filesystem::path
+ParseFontName(const std::filesystem::path &, int &, int &);
 
 struct TextureFontPrivate;
 class TextureFont
@@ -62,5 +61,5 @@ private:
     std::unique_ptr<TextureFontPrivate> impl;
 
     friend std::shared_ptr<TextureFont>
-    LoadTextureFont(const Renderer*, const fs::path&, int, int);
+    LoadTextureFont(const Renderer*, const std::filesystem::path&, int, int);
 };

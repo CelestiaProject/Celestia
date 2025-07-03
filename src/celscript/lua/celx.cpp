@@ -648,7 +648,7 @@ bool LuaState::handleTickEvent(double dt)
 }
 
 
-int LuaState::loadScript(istream& in, const fs::path& streamname)
+int LuaState::loadScript(istream& in, const std::filesystem::path& streamname)
 {
     char buf[4096];
     ReadChunkInfo info;

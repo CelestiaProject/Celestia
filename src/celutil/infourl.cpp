@@ -25,7 +25,7 @@ constexpr std::wstring_view extPrefix = L"\\\\?\\"sv;
 } // end unnamed namespace
 
 std::string
-BuildInfoURL(std::string_view infoUrl, const fs::path &resPath)
+BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
 {
     if ((infoUrl.size() >= httpPrefix.size() && infoUrl.substr(0, httpPrefix.size()) == httpPrefix) ||
         (infoUrl.size() >= httpsPrefix.size() && infoUrl.substr(0, httpsPrefix.size()) == httpsPrefix))
@@ -34,7 +34,7 @@ BuildInfoURL(std::string_view infoUrl, const fs::path &resPath)
     }
 
     std::error_code ec;
-    fs::path canonical = fs::canonical(resPath / fs::u8path(infoUrl), ec);
+    std::filesystem::path canonical = std::filesystem::canonical(resPath / std::filesystem::u8path(infoUrl), ec);
     if (ec)
         return {};
 

@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include "astroobj.h"
 #include "name.h"
 
@@ -30,7 +30,7 @@ public:
     DSODatabaseBuilder() = default;
     ~DSODatabaseBuilder();
 
-    bool load(std::istream&, const fs::path& resourcePath = fs::path());
+    bool load(std::istream&, const std::filesystem::path& resourcePath = std::filesystem::path());
     std::unique_ptr<DSODatabase> finish();
 
 private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 
 extern "C"
@@ -8,7 +9,6 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
-#include <celcompat/filesystem.h>
 #include "moviecapture.h"
 
 class FFMPEGCapturePrivate;
@@ -20,7 +20,7 @@ public:
     FFMPEGCapture(const Renderer *r);
     ~FFMPEGCapture() override;
 
-    bool start(const fs::path&, int, int, float) override;
+    bool start(const std::filesystem::path&, int, int, float) override;
     bool end() override;
     bool captureFrame() override;
 

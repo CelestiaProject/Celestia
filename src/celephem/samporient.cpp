@@ -152,7 +152,7 @@ SampledOrientation::getOrientation(double tjd) const
 } // end unnamed namespace
 
 std::shared_ptr<const RotationModel>
-LoadSampledOrientation(const fs::path& filename)
+LoadSampledOrientation(const std::filesystem::path& filename)
 {
     std::vector<double> sampleTimes;
     std::vector<Eigen::Quaternionf> samples;

@@ -55,14 +55,14 @@ AssociativeArray::getString(std::string_view key) const
     return v->getString();
 }
 
-std::optional<fs::path>
+std::optional<std::filesystem::path>
 AssociativeArray::getPath(std::string_view key) const
 {
     const std::string* v = getString(key);
     if (v == nullptr)
         return std::nullopt;
 
-    return std::make_optional(PathExp(fs::u8path(*v)));
+    return std::make_optional(PathExp(std::filesystem::u8path(*v)));
 }
 
 std::optional<bool>

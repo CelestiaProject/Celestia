@@ -11,12 +11,12 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
 #include <iostream>
 #include <string_view>
 
 #include <fmt/format.h>
 
-#include <celcompat/filesystem.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celestia/audiosession.h>
@@ -65,7 +65,7 @@ void PushClass(lua_State*, int);
 void setTable(lua_State*, const char*, lua_Number);
 ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
 
-static fs::path GetScriptPath(lua_State* l)
+static std::filesystem::path GetScriptPath(lua_State* l)
 {
     lua_Debug ar;
     lua_getstack(l, 1, &ar);
@@ -73,7 +73,7 @@ static fs::path GetScriptPath(lua_State* l)
     auto* base_dir = ar.source; // Lua file from which we are called
     if (base_dir[0] == '@')
         base_dir++;
-    return fs::path(base_dir).parent_path();
+    return std::filesystem::path(base_dir).parent_path();
 }
 
 // ==================== Celestia-object ====================
@@ -2136,8 +2136,8 @@ static int celestia_takescreenshot(lua_State* l)
     string filenamestem;
     filenamestem = fmt::format("screenshot-{}{:06}", fileid, luastate->screenshotCount);
 
-    fs::path path = appCore->getConfig()->paths.scriptScreenshotDirectory;
-    fs::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);
+    std::filesystem::path path = appCore->getConfig()->paths.scriptScreenshotDirectory;
+    std::filesystem::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);
     success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 
@@ -2178,7 +2178,7 @@ static int celestia_runscript(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
     const char* scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
 
-    fs::path base_dir = GetScriptPath(l);
+    std::filesystem::path base_dir = GetScriptPath(l);
     CelestiaCore* appCore = this_celestia(l);
     appCore->runScript(base_dir / scriptfile);
     return 0;
@@ -2728,7 +2728,7 @@ static int celestia_loadtexture(lua_State* l)
         else
            Celx_DoError(l, "Invalid mipMapMode");
     }
-    fs::path base_dir = GetScriptPath(l);
+    std::filesystem::path base_dir = GetScriptPath(l);
     auto t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode);
     if (t == nullptr) return 0;
     return celx.pushClass(t.release());

@@ -139,22 +139,22 @@ Environment::createAppWindow(const Settings& settings)
                                        settings.isFullscreen);
 }
 
-fs::path
+std::filesystem::path
 Environment::getSettingsPath() const
 {
     UniqueSDL<char> prefsPath = getPrefsDirectory();
     if (prefsPath == nullptr)
         return {};
-    return fs::u8path(prefsPath.get()) / "sdlsettings.dat";
+    return std::filesystem::u8path(prefsPath.get()) / "sdlsettings.dat";
 }
 
-fs::path
+std::filesystem::path
 Environment::getImguiSettingsPath() const
 {
     UniqueSDL<char> prefsPath = getPrefsDirectory();
     if (prefsPath == nullptr)
         return {};
-    return fs::u8path(prefsPath.get()) / "imguisettings.ini";
+    return std::filesystem::u8path(prefsPath.get()) / "imguisettings.ini";
 }
 
 } // end namespace celestia::sdl
