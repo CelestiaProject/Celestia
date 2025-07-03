@@ -530,8 +530,8 @@ bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOpt
     if (!m_cometRenderer->initGL())
         return false;
 
-    m_markerVO = std::make_unique<celestia::gl::VertexObject>();
-    m_markerBO = std::make_unique<celestia::gl::Buffer>();
+    m_markerVO = std::make_unique<gl::VertexObject>();
+    m_markerBO = std::make_unique<gl::Buffer>();
 
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
@@ -4579,6 +4579,9 @@ static void draw_rectangle_border(const Renderer &renderer,
 
 static void draw_rectangle_solid(const Renderer &renderer,
                                  const celestia::Rect &r,
+                                 const std::optional<celestia::Rect>& prev,
+                                 gl::VertexObject& vo,
+                                 gl::Buffer& bo,
                                  FisheyeOverrideMode fishEyeOverrideMode,
                                  const Eigen::Matrix4f& p,
                                  const Eigen::Matrix4f& m)
@@ -4596,72 +4599,95 @@ static void draw_rectangle_solid(const Renderer &renderer,
     if (prog == nullptr)
         return;
 
-    struct RectVtx
+    if (prev != r)
     {
-        float x, y, u, v; // NOSONAR
-        uint8_t color[4]; // NOSONAR
-    };
+        struct RectVtx
+        {
+            float x, y, u, v; // NOSONAR
+            uint8_t color[4]; // NOSONAR
+        };
 
-    array<RectVtx, 4> vertices = {
-        RectVtx{ r.x,       r.y,       0.0f, 1.0f, {} },
-        RectVtx{ r.x + r.w, r.y,       1.0f, 1.0f, {} },
-        RectVtx{ r.x + r.w, r.y + r.h, 1.0f, 0.0f, {} },
-        RectVtx{ r.x,       r.y + r.h, 0.0f, 0.0f, {} },
-    };
+        array<RectVtx, 4> vertices = {
+            RectVtx{ r.x,       r.y,       0.0f, 1.0f, {} },
+            RectVtx{ r.x + r.w, r.y,       1.0f, 1.0f, {} },
+            RectVtx{ r.x + r.w, r.y + r.h, 1.0f, 0.0f, {} },
+            RectVtx{ r.x,       r.y + r.h, 0.0f, 0.0f, {} },
+        };
 
-    if (r.hasColors)
-    {
-        for (int i = 0; i < 4; i++)
-            r.colors[i].get(vertices[i].color);
+        if (r.hasColors)
+        {
+            for (int i = 0; i < 4; i++)
+                r.colors[i].get(vertices[i].color);
+        }
+
+        if (!prev.has_value())
+        {
+            vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleFan);
+            bo = gl::Buffer(gl::Buffer::TargetHint::Array);
+
+            vo.addVertexBuffer(
+                bo,
+                CelestiaGLProgram::VertexCoordAttributeIndex,
+                2,
+                gl::VertexObject::DataType::Float,
+                false,
+                sizeof(RectVtx),
+                offsetof(RectVtx, x));
+            vo.addVertexBuffer(
+                bo,
+                CelestiaGLProgram::TextureCoord0AttributeIndex,
+                2,
+                gl::VertexObject::DataType::Float,
+                false,
+                sizeof(RectVtx),
+                offsetof(RectVtx, u),
+                r.tex != nullptr);
+            vo.addVertexBuffer(
+                bo,
+                CelestiaGLProgram::ColorAttributeIndex,
+                4,
+                gl::VertexObject::DataType::UnsignedByte,
+                true,
+                sizeof(RectVtx),
+                offsetof(RectVtx, color),
+                r.hasColors);
+        }
+        else
+        {
+            vo.setVertexAttributeEnabled(CelestiaGLProgram::TextureCoord0AttributeIndex, r.tex != nullptr);
+            vo.setVertexAttributeEnabled(CelestiaGLProgram::ColorAttributeIndex, r.hasColors);
+            bo.invalidateData();
+        }
+
+        bo.setData(vertices, gl::Buffer::BufferUsage::StreamDraw);
     }
-
-    static GLuint vbo = 0u;
-    if (vbo == 0u)
-        glGenBuffers(1, &vbo);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(RectVtx), vertices.data(), GL_STREAM_DRAW);
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, x))); //NOSONAR
 
     if (r.tex != nullptr)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                              2, GL_FLOAT, GL_FALSE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, u))); //NOSONAR
         r.tex->bind();
-    }
-    if (r.hasColors)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                             4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RectVtx), reinterpret_cast<void*>(offsetof(RectVtx, color))); //NOSONAR
-    }
 
     prog->use();
     prog->setMVPMatrices(p, m);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    vo.draw(4);
+}
 
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (r.tex != nullptr)
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    if (r.hasColors)
-        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+void Renderer::drawBorder(const celestia::Rect &r,
+                          FisheyeOverrideMode fishEyeOverrideMode,
+                          const Eigen::Matrix4f& p,
+                          const Eigen::Matrix4f& m) const
+{
+    draw_rectangle_border(*this, r, fishEyeOverrideMode, p, m);
 }
 
 void Renderer::drawRectangle(const celestia::Rect &r,
+                             const std::optional<celestia::Rect>& prev,
+                             gl::VertexObject& vo,
+                             gl::Buffer& bo,
                              FisheyeOverrideMode fishEyeOverrideMode,
                              const Eigen::Matrix4f& p,
                              const Eigen::Matrix4f& m) const
 {
-    if(r.type == celestia::Rect::Type::BorderOnly)
-        draw_rectangle_border(*this, r, fishEyeOverrideMode, p, m);
-    else
-        draw_rectangle_solid(*this, r, fishEyeOverrideMode, p, m);
+    draw_rectangle_solid(*this, r, prev, vo, bo, fishEyeOverrideMode, p, m);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)

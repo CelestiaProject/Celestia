@@ -21,12 +21,6 @@ namespace celestia
 class Rect
 {
  public:
-    enum class Type
-    {
-        BorderOnly  = 0x0001,
-        Filled      = 0x0002,
-    };
-
     Rect() = delete;
     Rect(float _x, float _y, float _w, float _h) :
         x(_x), y(_y), w(_w), h(_h)
@@ -46,15 +40,22 @@ class Rect
     {
         lw = _lw;
     }
-    void setType(Type _type)
-    {
-        type = _type;
-    }
     float x, y, w, h;
     float lw        { 1.0f };
     std::array<Color,4> colors;
     Texture *tex    { nullptr };
-    Type type       { Type::Filled };
     bool hasColors  { false };
 };
+
+inline bool operator==(const Rect& a, const Rect& b)
+{
+    return (a.x == b.x && a.y == b.y && a.w == b.w && a.h == b.h &&
+            a.lw == b.lw && a.tex == b.tex &&
+            (a.hasColors ? (b.hasColors && a.colors == b.colors) : !b.hasColors));
+}
+
+inline bool operator!=(const Rect& a, const Rect& b)
+{
+    return !(a == b);
+}
 }

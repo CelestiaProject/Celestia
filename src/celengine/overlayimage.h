@@ -3,6 +3,10 @@
 #include <array>
 #include <filesystem>
 #include <memory>
+#include <optional>
+
+#include <celengine/rectangle.h>
+#include <celrender/gl/vertexobject.h>
 
 #include "texture.h"
 
@@ -58,4 +62,9 @@ class OverlayImage
     std::filesystem::path filename;
     std::unique_ptr<Texture> texture;
     Renderer *renderer { nullptr };
+
+    std::optional<celestia::Rect> renderedRect{ std::nullopt };
+
+    celestia::gl::VertexObject vo{ celestia::util::NoCreateT() };
+    celestia::gl::Buffer bo{ celestia::util::NoCreateT() };
 };

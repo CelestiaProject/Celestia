@@ -1263,8 +1263,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
                      static_cast<float>(movieWidth + 1),
                      static_cast<float>(movieHeight + 1));
     r.setColor(color);
-    r.setType(celestia::Rect::Type::BorderOnly);
-    m_overlay->drawRectangle(r);
+    m_overlay->drawBorder(r);
     m_overlay->moveBy(static_cast<float>((metrics.width - movieWidth) / 2),
                       static_cast<float>((metrics.height + movieHeight) / 2 + 2));
     m_overlay->beginText();

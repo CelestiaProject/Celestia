@@ -1642,7 +1642,7 @@ void CelestiaCore::charEnteredAutoComplete(const char* c_p)
 
 void CelestiaCore::updateSelectionFromInput()
 {
-    auto textInput = hud->textInput();
+    auto &textInput = hud->textInput();
 
     Selection sel;
     // Prefer selected completion, then search with typed text

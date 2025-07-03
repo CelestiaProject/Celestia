@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include "overlayimage.h"
-#include "rectangle.h"
 #include "render.h"
 
 OverlayImage::OverlayImage(std::filesystem::path f, Renderer *r) :
@@ -60,5 +59,6 @@ void OverlayImage::render(float curr_time, int width, int height)
         r.colors[i] = Color(colors[i], colors[i].alpha() * alpha);
     }
     r.hasColors = true;
-    renderer->drawRectangle(r, FisheyeOverrideMode::Disabled, renderer->getOrthoProjectionMatrix());
+    renderer->drawRectangle(r, renderedRect, vo, bo, FisheyeOverrideMode::Disabled, renderer->getOrthoProjectionMatrix());
+    renderedRect = r;
 }
