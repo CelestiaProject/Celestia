@@ -4645,11 +4645,11 @@ static void draw_rectangle_solid(const Renderer &renderer,
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if (r.tex != nullptr)
         glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     if (r.hasColors)
-        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
