@@ -3329,6 +3329,23 @@ CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::getScriptSystemAccessPolicy
     return scriptSystemAccessPolicy;
 }
 
+CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::requestScriptSystemAccessPolicy()
+{
+    if (scriptSystemAccessPolicy == ScriptSystemAccessPolicy::Ask && scriptSystemAccessHandler.has_value())
+        return scriptSystemAccessHandler.value()();
+    return scriptSystemAccessPolicy;
+}
+
+void CelestiaCore::setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>& newScriptSystemAccessHandler)
+{
+    scriptSystemAccessHandler = newScriptSystemAccessHandler;
+}
+
+std::optional<std::function<CelestiaCore::ScriptSystemAccessPolicy()>> CelestiaCore::getScriptSystemAccessHandler() const
+{
+    return scriptSystemAccessHandler;
+}
+
 celestia::LayoutDirection CelestiaCore::getLayoutDirection() const
 {
     return metrics.layoutDirection;

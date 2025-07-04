@@ -838,7 +838,7 @@ void LuaState::requestIO()
     if (ioMode == IOMode::NotDetermined)
     {
         CelestiaCore* appCore = getAppCore(state, AllErrors);
-        auto policy = appCore->getScriptSystemAccessPolicy();
+        auto policy = appCore->requestScriptSystemAccessPolicy();
         switch (policy)
         {
         case CelestiaCore::ScriptSystemAccessPolicy::Allow:
