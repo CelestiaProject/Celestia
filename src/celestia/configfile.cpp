@@ -185,6 +185,14 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.orbitPeriodsShown, hash, "OrbitPeriodsShown"sv);
     applyNumber(renderDetails.linearFadeFraction, hash, "LinearFadeFraction"sv);
     applyNumber(renderDetails.faintestVisible, hash, "FaintestVisibleMagnitude"sv);
+
+    applyNumber(renderDetails.renderAsterismsFadeStartDist, hash, "RenderAsterismsFadeStartDist"sv);
+    applyNumber(renderDetails.renderAsterismsFadeEndDist, hash, "RenderAsterismsFadeEndDist"sv);
+    applyNumber(renderDetails.renderBoundariesFadeStartDist, hash, "RenderBoundariesFadeStartDist"sv);
+    applyNumber(renderDetails.renderBoundariesFadeEndDist, hash, "RenderBoundariesFadeEndDist"sv);
+    applyNumber(renderDetails.labelConstellationsFadeStartDist, hash, "LabelConstellationsFadeStartDist"sv);
+    applyNumber(renderDetails.labelConstellationsFadeEndDist, hash, "LabelConstellationsFadeEndDist"sv);
+
     applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
     applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);

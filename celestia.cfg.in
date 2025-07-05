@@ -363,6 +363,33 @@ StarTextures
 # OrbitPeriodsShown      1.0
   LinearFadeFraction     0.8
 
+#------------------------------------------------------------------------
+# Constellation rendering parameters
+#------------------------------------------------------------------------
+# A constellation has three components:
+# 1. "Asterism": The lines connecting the stars in the constellation.
+# 2. "Boundary": The boundary of the constellation.
+# 3. "Label": The name of the constellation.
+# 
+# "FadeStartDist" ->
+# The maximum distance of the observer to the origin of coordinates
+# before the specified component starts to linearly fade out.
+# Unit is in light years. The default values are:
+# 6.0 for boundaries, 600.0 for asterisms and labels.
+#
+# "FadeEndDist" ->
+# The maximum distance of the observer to the origin of coordinates
+# before the specified component fades out completely.
+# Unit is in light years. The default values are:
+# 20.0 for boundaries, 65200.0 for asterisms and labels.
+#------------------------------------------------------------------------
+  RenderAsterismsFadeStartDist        600.0
+  RenderAsterismsFadeEndDist          65200.0
+  RenderBoundariesFadeStartDist       6.0
+  RenderBoundariesFadeEndDist         20.0
+  LabelConstellationsFadeStartDist    600.0
+  LabelConstellationsFadeEndDist      65200.0
+
 
 #-----------------------------------------------------------------------
 # Set the level of multisample antialiasing.  Not all 3D graphics
