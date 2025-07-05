@@ -286,6 +286,19 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
     m_appCore->setAlerter(alerter);
+    m_appCore->setScriptSystemAccessHandler([]
+    {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText(_("Script System Access"));
+        msgBox.setInformativeText(_("This script requests permission to read/write files "
+                                 "and execute external programs. Allowing this can be "
+                                 "dangerous.\n"
+                                 "Do you trust the script and want to allow this?"));
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        return msgBox.exec() == QMessageBox::Yes ? CelestiaCore::ScriptSystemAccessPolicy::Allow : CelestiaCore::ScriptSystemAccessPolicy::Deny;
+    });
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && QT_VERSION < QT_VERSION_CHECK(7, 0, 0)

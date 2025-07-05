@@ -405,6 +405,11 @@ public:
     ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
     void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
 
+    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy();
+
+    void setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>&);
+    std::optional<std::function<ScriptSystemAccessPolicy()>> getScriptSystemAccessHandler() const;
+
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
 
@@ -495,6 +500,7 @@ private:
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
+    std::optional<std::function<ScriptSystemAccessPolicy()>> scriptSystemAccessHandler{ std::nullopt };
 
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent{ 0 };
