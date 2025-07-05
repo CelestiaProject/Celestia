@@ -212,11 +212,12 @@ public:
      * @param stride Offset in bytes between consecutive generic vertex attributes. If stride is 0,
      * the generic vertex attributes are understood to be tightly packed in the array.
      * @param offset Offset of the first component of the first generic vertex attribute in the array.
+     * @param enabled Whether the attribute is enabled or not.
      * @return Reference to self.
      *
      * @see @ref DataType
      */
-    VertexObject& addVertexBuffer(const Buffer &buffer, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
+    VertexObject& addVertexBuffer(const Buffer &buffer, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0, bool enabled = true);
 
     /**
      * @brief Add index buffer. The buffer is not owned by VertexObject.
@@ -239,6 +240,17 @@ public:
      * @see @ref IndexType
      */
     VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t offset, IndexType type);
+
+    /**
+     * @brief Enable/disable a previously added vertex attribute at a location.
+     *
+     * @param location Index of the generic vertex attribute.
+     * @param enabled Whether the attribute is enabled or not.
+     * @return Reference to self.
+     *
+     * @see @ref addVertexBuffer
+     */
+    VertexObject& setVertexAttributeEnabled(int location, bool enabled);
 
 private:
     //! Reset object to initial state

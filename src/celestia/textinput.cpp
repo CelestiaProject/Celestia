@@ -17,7 +17,6 @@
 #include <cwctype>
 
 #include <celengine/overlay.h>
-#include <celengine/rectangle.h>
 #include <celengine/simulation.h>
 #include <celutil/color.h>
 #include <celutil/gettext.h>
@@ -177,7 +176,7 @@ TextInput::reset()
 void
 TextInput::render(Overlay* overlay,
                   const HudFonts& hudFonts,
-                  const WindowMetrics& metrics) const
+                  const WindowMetrics& metrics)
 {
     overlay->setFont(hudFonts.titleFont());
     overlay->savePos();
@@ -186,7 +185,8 @@ TextInput::render(Overlay* overlay,
                                        static_cast<float>(hudFonts.titleFontHeight()));
     celestia::Rect r(0, 0, static_cast<float>(metrics.width), static_cast<float>(metrics.insetBottom + rectHeight));
     r.setColor(consoleColor);
-    overlay->drawRectangle(r);
+    overlay->drawRectangle(r, m_renderedBackground, m_backgroundVo, m_backgroundBo);
+    m_renderedBackground = r;
     overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaBottom(rectHeight - hudFonts.titleFontHeight()));
     overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
     overlay->beginText();

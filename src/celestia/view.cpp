@@ -254,9 +254,8 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 {
     celestia::Rect r(x * gWidth, y * gHeight, width * gWidth - 1, height * gHeight - 1);
     r.setColor(color);
-    r.setType(celestia::Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
-    overlay->drawRectangle(r);
+    overlay->drawBorder(r);
 }
 
 

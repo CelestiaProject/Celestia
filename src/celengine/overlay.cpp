@@ -81,9 +81,14 @@ void Overlay::print(std::string_view s)
     layout->render(s);
 }
 
-void Overlay::drawRectangle(const celestia::Rect& r) const
+void Overlay::drawBorder(const celestia::Rect& r) const
 {
-    renderer.drawRectangle(r, FisheyeOverrideMode::Disabled, projection);
+    renderer.drawBorder(r, FisheyeOverrideMode::Disabled, projection);
+}
+
+void Overlay::drawRectangle(const celestia::Rect& r, const std::optional<celestia::Rect>& prev, celestia::gl::VertexObject& vo, celestia::gl::Buffer& bo) const
+{
+    renderer.drawRectangle(r, prev, vo, bo, FisheyeOverrideMode::Disabled, projection);
 }
 
 void Overlay::setColor(float r, float g, float b, float a)

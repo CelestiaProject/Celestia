@@ -11,12 +11,16 @@
 #pragma once
 
 #include <locale>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
+
 #include <fmt/printf.h>
 #include <Eigen/Core>
+
 #include <celengine/textlayout.h>
+#include <celrender/gl/vertexobject.h>
 
 class Color;
 class Overlay;
@@ -55,7 +59,8 @@ class Overlay
         return renderer;
     };
 
-    void drawRectangle(const celestia::Rect&) const;
+    void drawBorder(const celestia::Rect&) const;
+    void drawRectangle(const celestia::Rect& r, const std::optional<celestia::Rect>& prev, celestia::gl::VertexObject& vo, celestia::gl::Buffer& bo) const;
 
     void beginText();
     void endText();

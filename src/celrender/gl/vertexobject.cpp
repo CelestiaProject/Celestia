@@ -41,14 +41,16 @@ struct VertexObject::BufferDesc
                std::int16_t  location,
                std::uint8_t  elemSize,
                std::uint8_t  stride,
-               bool          normalized) :
+               bool          normalized,
+               bool          enabled) :
         offset(offset),
         bufferId(bufferId),
         type(type),
         location(location),
         elemSize(elemSize),
         stride(stride),
-        normalized(normalized)
+        normalized(normalized),
+        enabled(enabled)
     {
     }
 
@@ -59,6 +61,7 @@ struct VertexObject::BufferDesc
     std::uint8_t  elemSize;   // 1, 2, 3, 4
     std::uint8_t  stride;     // WebGL allows only 255 bytes max
     bool          normalized;
+    bool          enabled;
 };
 
 VertexObject::VertexObject(util::NoCreateT)
@@ -140,7 +143,7 @@ VertexObject::clear()
 }
 
 VertexObject&
-VertexObject::addVertexBuffer(const Buffer &buffer, int location, int elemSize, VertexObject::DataType type, bool normalized, int stride, std::ptrdiff_t offset)
+VertexObject::addVertexBuffer(const Buffer &buffer, int location, int elemSize, VertexObject::DataType type, bool normalized, int stride, std::ptrdiff_t offset, bool enabled)
 {
     if (buffer.targetHint() != Buffer::TargetHint::Array)
         return *this;
@@ -151,8 +154,20 @@ VertexObject::addVertexBuffer(const Buffer &buffer, int location, int elemSize, 
                               static_cast<std::uint16_t>(location),
                               static_cast<std::uint8_t>(elemSize),
                               static_cast<std::uint8_t>(stride),
-                              normalized);
+                              normalized,
+                              enabled);
 
+    return *this;
+}
+
+VertexObject&
+VertexObject::setVertexAttributeEnabled(int location, bool enabled)
+{
+    for (auto &p : m_bufferDesc)
+    {
+        if (p.location == location)
+            p.enabled = enabled;
+    }
     return *this;
 }
 
@@ -222,6 +237,9 @@ VertexObject::enableAttribArrays() const
 
     for (const auto &p : m_bufferDesc)
     {
+        if (!p.enabled)
+            continue;
+
         binder.bind(Buffer::wrap(p.bufferId, Buffer::TargetHint::Array));
 
         glEnableVertexAttribArray(p.location);
@@ -238,7 +256,12 @@ VertexObject::disableAttribArrays() const
     auto &binder = Binder::get();
 
     for (const auto &p : m_bufferDesc)
+    {
+        if (!p.enabled)
+            continue;
+
         glDisableVertexAttribArray(p.location);
+    }
 
     binder.unbind(Buffer::TargetHint::Array);
 

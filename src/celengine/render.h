@@ -189,7 +189,14 @@ class Renderer
 
     celestia::engine::PixelFormat getPreferredCaptureFormat() const noexcept;
 
+    void drawBorder(const celestia::Rect& r,
+                    FisheyeOverrideMode fishEyeOverrideMode,
+                    const Eigen::Matrix4f& p,
+                    const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity()) const;
     void drawRectangle(const celestia::Rect& r,
+                       const std::optional<celestia::Rect>& prev,
+                       celestia::gl::VertexObject& vo,
+                       celestia::gl::Buffer& bo,
                        FisheyeOverrideMode fishEyeOverrideMode,
                        const Eigen::Matrix4f& p,
                        const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity()) const;

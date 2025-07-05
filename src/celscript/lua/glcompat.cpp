@@ -172,7 +172,7 @@ GLProgram BuildProgram(const std::string &vertex, const std::string &fragment)
 {
     GLShaderStatus status = GLShaderStatus::OK;
     auto vs = GLVertexShader::create(vertex, status);
-    auto fs = GLVertexShader::create(fragment, status);
+    auto fs = GLFragmentShader::create(fragment, status);
     if (!vs.isValid() || !fs.isValid())
         return GLProgram{};
 
@@ -252,7 +252,7 @@ void Draw()
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if (hasTexCoords)
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord3AttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     if (hasColors)
         glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
 

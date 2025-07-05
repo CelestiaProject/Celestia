@@ -18,7 +18,9 @@
 #include <vector>
 
 #include <celengine/completion.h>
+#include <celengine/rectangle.h>
 #include <celutil/array_view.h>
+#include <celrender/gl/vertexobject.h>
 
 class Color;
 class Overlay;
@@ -48,7 +50,7 @@ public:
     void appendText(const Simulation*, std::string_view, bool withLocations);
     void reset();
 
-    void render(Overlay*, const HudFonts&, const WindowMetrics&) const;
+    void render(Overlay*, const HudFonts&, const WindowMetrics&);
 
 private:
     void doBackspace(const Simulation*, bool);
@@ -60,6 +62,11 @@ private:
     std::string m_text;
     std::vector<engine::Completion> m_completion;
     int m_completionIdx{ -1 };
+
+    std::optional<celestia::Rect> m_renderedBackground{ std::nullopt };
+
+    celestia::gl::VertexObject m_backgroundVo{ celestia::util::NoCreateT() };
+    celestia::gl::Buffer m_backgroundBo{ celestia::util::NoCreateT() };
 };
 
 }
