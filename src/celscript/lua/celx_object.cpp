@@ -1155,7 +1155,7 @@ static int object_orbitframe(lua_State* l)
 * in the universal frame.
 *
 * \verbatim
-* -- Example: get the curren body frame for the International Space Station.
+* -- Example: get the current body frame for the International Space Station.
 * --
 * iss = celestia:find("Sol/Earth/ISS")
 * f = iss:bodyframe()
@@ -1307,6 +1307,20 @@ static int object_phases(lua_State* l)
 }
 
 
+/*! object:setringstexture(string: texture_name, string: path)
+*
+* Sets the texture for the object's rings. The texture at path will
+* be used to render the rings of the object. If no path is provided,
+* the texture is loaded from the default location.
+*
+* \verbatim
+* -- Example: set rings texture for Saturn
+* --
+* earth = celestia:find("Sol/Saturn")
+* earth:setcloudtexture("saturn_rings.png", "my_dir")
+*
+* \endverbatim
+*/
 static int object_setringstexture(lua_State* l)
 {
     CelxLua celx(l);
@@ -1336,6 +1350,20 @@ static int object_setringstexture(lua_State* l)
 }
 
 
+/*! object:setcloudtexture(string: texture_name, string: path)
+*
+* Sets the cloud texture for the object's atmosphere. The texture at path
+* will be used to render the clouds on the object's surface. If no path is
+* provided, the texture is loaded from the default location.
+*
+* \verbatim
+* -- Example: set cloud texture on Earth
+* --
+* earth = celestia:find("Sol/Earth")
+* earth:setcloudtexture("earth_clouds.png", "my_dir")
+*
+* \endverbatim
+*/
 static int object_setcloudtexture(lua_State* l)
 {
     CelxLua celx(l);
