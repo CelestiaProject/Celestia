@@ -4026,8 +4026,8 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
     //*** Constellation label fading parameters
 
     //   The two values are for distances from centre where the labels begins fading and finish fading, respectively.
-    const float LabelConstellationsFadeStartDist     = detailOptions.labelConstellationsFadeStartDist;
-    const float LabelConstellationsFadeEndDist     = detailOptions.labelConstellationsFadeEndDist;
+    const float LabelConstellationsFadeStartDist = detailOptions.labelConstellationsFadeStartDist;
+    const float LabelConstellationsFadeEndDist   = detailOptions.labelConstellationsFadeEndDist;
 
     for (const auto& ast : asterisms)
     {
