@@ -3132,8 +3132,8 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     //*** Boundaries fading parameters
 
     //   The two values are for distances from centre where the boundaries begins fading and finish fading, respectively.
-    const float RenderBoundariesFadeStartDist     = detailOptions.renderBoundariesFadeStartDist;
-    const float RenderBoundariesFadeEndDist     = detailOptions.renderBoundariesFadeEndDist;
+    const float RenderBoundariesFadeStartDist = detailOptions.renderBoundariesFadeStartDist;
+    const float RenderBoundariesFadeEndDist   = detailOptions.renderBoundariesFadeEndDist;
     
     if (!util::is_set(renderFlags, RenderFlags::ShowBoundaries) || boundaries == nullptr)
         return;
