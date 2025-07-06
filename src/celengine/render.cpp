@@ -3095,8 +3095,8 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     //*** Asterism fading parameters
 
     //   The two values are for distances from centre where the asterism begins fading and finish fading, respectively.
-    const float RenderAsterismsFadeStartDist     = detailOptions.renderAsterismsFadeStartDist;
-    const float RenderAsterismsFadeEndDist     = detailOptions.renderAsterismsFadeEndDist;
+    const float RenderAsterismsFadeStartDist = detailOptions.renderAsterismsFadeStartDist;
+    const float RenderAsterismsFadeEndDist   = detailOptions.renderAsterismsFadeEndDist;
 
     if (!util::is_set(renderFlags, RenderFlags::ShowDiagrams) || asterisms == nullptr)
         return;
