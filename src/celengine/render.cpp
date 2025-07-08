@@ -284,7 +284,7 @@ Renderer::DetailOptions::DetailOptions() :
     orbitWindowEnd(0.5),
     orbitPeriodsShown(1.0),
     linearFadeFraction(0.0),
-    
+
     renderAsterismsFadeStartDist(600.0f),
     renderAsterismsFadeEndDist(6.52e4f),
     renderBoundariesFadeStartDist(6.0f),
@@ -1076,15 +1076,15 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     const auto* orbit = body != nullptr ? body->getOrbit(t) : orbitPath.star->getOrbit();
 
     CurvePlot* cachedOrbit = nullptr;
-    if (auto cached = orbitCache.find(orbit); cached != orbitCache.end())
+    if (auto cached = orbitCache.lower_bound(orbit);
+        cached != orbitCache.end() && cached->first == orbit)
     {
-        cachedOrbit = cached->second;
+        cachedOrbit = cached->second.get();
         cachedOrbit->setLastUsed(frameCount);
     }
-
-    // If it's not in the cache already
-    if (cachedOrbit == nullptr)
+    else
     {
+        // If it's not in the cache already
         double startTime = t;
 
         // Adjust the number of samples used for aperiodic orbits--these aren't
@@ -1101,12 +1101,10 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             orbit->getValidRange(begin, end);
 
             if (begin != end)
-            {
                 startTime = begin;
-            }
         }
 
-        cachedOrbit = new CurvePlot(*this);
+        cachedOrbit = orbitCache.emplace_hint(cached, orbit, std::make_unique<CurvePlot>(*this))->second.get();
         cachedOrbit->setLastUsed(frameCount);
 
         OrbitSampler sampler;
@@ -1116,25 +1114,19 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         sampler.insertForward(cachedOrbit);
 
         // If the orbit cache is full, first try and eliminate some old orbits
-        if (orbitCache.size() > OrbitCacheCullThreshold)
+        // Check for old orbits at most once per frame
+        if (orbitCache.size() > OrbitCacheCullThreshold && lastOrbitCacheFlush != frameCount)
         {
-            // Check for old orbits at most once per frame
-            if (lastOrbitCacheFlush != frameCount)
+            // In C++20 replace the below loop with std::erase_if
+            for (auto iter = orbitCache.begin(); iter != orbitCache.end();)
             {
-                for (auto iter = orbitCache.begin(); iter != orbitCache.end();)
-                {
-                    // Tricky code to eliminate a node in the orbit cache without screwing
-                    // up the iterator. Should work in all STL implementations.
-                    if (frameCount - iter->second->lastUsed() > OrbitCacheRetireAge)
-                        orbitCache.erase(iter++);
-                    else
-                        ++iter;
-                }
-                lastOrbitCacheFlush = frameCount;
+                if (frameCount - iter->second->lastUsed() > OrbitCacheRetireAge)
+                    iter = orbitCache.erase(iter);
+                else
+                    ++iter;
             }
+            lastOrbitCacheFlush = frameCount;
         }
-
-        orbitCache[orbit] = cachedOrbit;
     }
 
     if (cachedOrbit->empty())
@@ -3136,7 +3128,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     //   The two values are for distances from centre where the boundaries begins fading and finish fading, respectively.
     const float RenderBoundariesFadeStartDist = detailOptions.renderBoundariesFadeStartDist;
     const float RenderBoundariesFadeEndDist   = detailOptions.renderBoundariesFadeEndDist;
-    
+
     if (!util::is_set(renderFlags, RenderFlags::ShowBoundaries) || boundaries == nullptr)
         return;
 
