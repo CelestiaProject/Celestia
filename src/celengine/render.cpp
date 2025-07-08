@@ -130,16 +130,6 @@ static const float MinOrbitSizeForLabel = 20.0f;
 // a label for it.
 static const float MinFeatureSizeForLabel = 20.0f;
 
-/* The maximum distance of the observer to the origin of coordinates before
-   asterism lines and labels start to linearly fade out (in light years) */
-static const float MaxAsterismLabelsConstDist  = 6.0f;
-static const float MaxAsterismLinesConstDist   = 600.0f;
-
-/* The maximum distance of the observer to the origin of coordinates before
-   asterisms labels and lines fade out completely (in light years) */
-static const float MaxAsterismLabelsDist = 20.0f;
-static const float MaxAsterismLinesDist  = 6.52e4f;
-
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -293,7 +283,14 @@ Renderer::DetailOptions::DetailOptions() :
     eclipseTextureSize(128),
     orbitWindowEnd(0.5),
     orbitPeriodsShown(1.0),
-    linearFadeFraction(0.0)
+    linearFadeFraction(0.0),
+    
+    renderAsterismsFadeStartDist(600.0f),
+    renderAsterismsFadeEndDist(6.52e4f),
+    renderBoundariesFadeStartDist(6.0f),
+    renderBoundariesFadeEndDist(20.0f),
+    labelConstellationsFadeStartDist(6.0f),
+    labelConstellationsFadeEndDist(20.0f)
 {
 }
 
@@ -1609,7 +1606,7 @@ void Renderer::render(const Observer& observer,
 
     Matrices asterismMVP = { &projection, &modelView };
 
-    float dist = observerPosLY.norm() * 1.6e4f;
+    float dist = observerPosLY.norm();
     renderAsterisms(universe, dist, asterismMVP);
     renderBoundaries(universe, dist, asterismMVP);
 
@@ -3097,6 +3094,12 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
 {
     auto *asterisms = universe.getAsterisms();
 
+    //*** Asterism fading parameters
+
+    //   The two values are for distances from centre where the asterism begins fading and finish fading, respectively.
+    const float RenderAsterismsFadeStartDist = detailOptions.renderAsterismsFadeStartDist;
+    const float RenderAsterismsFadeEndDist   = detailOptions.renderAsterismsFadeEndDist;
+
     if (!util::is_set(renderFlags, RenderFlags::ShowDiagrams) || asterisms == nullptr)
         return;
 
@@ -3106,10 +3109,10 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     }
 
     float opacity = 1.0f;
-    if (dist > MaxAsterismLinesConstDist)
+    if (dist > RenderAsterismsFadeStartDist)
     {
-        opacity = std::clamp((MaxAsterismLinesConstDist - dist)
-                             / (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1.0f,
+        opacity = std::clamp((RenderAsterismsFadeStartDist - dist)
+                             / (RenderAsterismsFadeEndDist - RenderAsterismsFadeStartDist) + 1.0f,
                              0.0f,
                              1.0f);
     }
@@ -3127,6 +3130,13 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
 void Renderer::renderBoundaries(const Universe& universe, float dist, const Matrices& mvp)
 {
     auto boundaries = universe.getBoundaries();
+
+    //*** Boundaries fading parameters
+
+    //   The two values are for distances from centre where the boundaries begins fading and finish fading, respectively.
+    const float RenderBoundariesFadeStartDist = detailOptions.renderBoundariesFadeStartDist;
+    const float RenderBoundariesFadeEndDist   = detailOptions.renderBoundariesFadeEndDist;
+    
     if (!util::is_set(renderFlags, RenderFlags::ShowBoundaries) || boundaries == nullptr)
         return;
 
@@ -3138,10 +3148,10 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     /* We'll linearly fade the boundaries as a function of the
        observer's distance to the origin of coordinates: */
     float opacity = 1.0f;
-    if (dist > MaxAsterismLabelsConstDist)
+    if (dist > RenderBoundariesFadeStartDist)
     {
-        opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
-                             / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
+        opacity = std::clamp((RenderBoundariesFadeStartDist - dist)
+                             / (RenderBoundariesFadeEndDist - RenderBoundariesFadeStartDist) + 1.0f,
                              0.0f,
                              1.0f);
     }
@@ -4015,6 +4025,12 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 {
     Vector3f observerPos = observer.getPosition().toLy().cast<float>();
 
+    //*** Constellation label fading parameters
+
+    //   The two values are for distances from centre where the labels begins fading and finish fading, respectively.
+    const float LabelConstellationsFadeStartDist = detailOptions.labelConstellationsFadeStartDist;
+    const float LabelConstellationsFadeEndDist   = detailOptions.labelConstellationsFadeEndDist;
+
     for (const auto& ast : asterisms)
     {
         if (!ast.getActive())
@@ -4033,10 +4049,10 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
             // We'll linearly fade the labels as a function of the
             // observer's distance to the origin of coordinates:
             float opacity = 1.0f;
-            if (float dist = observerPos.norm(); dist > MaxAsterismLabelsConstDist)
+            if (float dist = observerPos.norm(); dist > LabelConstellationsFadeStartDist)
             {
-                opacity = std::clamp((MaxAsterismLabelsConstDist - dist)
-                                     / (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1.0f,
+                opacity = std::clamp((LabelConstellationsFadeStartDist - dist)
+                                     / (LabelConstellationsFadeEndDist - LabelConstellationsFadeStartDist) + 1.0f,
                                      0.0f,
                                      1.0f);
             }

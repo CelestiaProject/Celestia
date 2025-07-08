@@ -2595,6 +2595,13 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     detailOptions.orbitWindowEnd = config->renderDetails.orbitWindowEnd;
     detailOptions.orbitPeriodsShown = config->renderDetails.orbitPeriodsShown;
     detailOptions.linearFadeFraction = config->renderDetails.linearFadeFraction;
+
+    detailOptions.renderAsterismsFadeStartDist = config->renderDetails.renderAsterismsFadeStartDist;
+    detailOptions.renderAsterismsFadeEndDist = config->renderDetails.renderAsterismsFadeEndDist;
+    detailOptions.renderBoundariesFadeStartDist = config->renderDetails.renderBoundariesFadeStartDist;
+    detailOptions.renderBoundariesFadeEndDist = config->renderDetails.renderBoundariesFadeEndDist;
+    detailOptions.labelConstellationsFadeStartDist = config->renderDetails.labelConstellationsFadeStartDist;
+    detailOptions.labelConstellationsFadeEndDist = config->renderDetails.labelConstellationsFadeEndDist;
 #ifndef GL_ES
     detailOptions.useMesaPackInvert = useMesaPackInvert;
 #endif
