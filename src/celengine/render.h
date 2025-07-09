@@ -204,8 +204,6 @@ class Renderer
 
     ColorTableType getStarColorTable() const;
     void setStarColorTable(ColorTableType);
-    [[deprecated]] bool getVideoSync() const;
-    [[deprecated]] void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
 
