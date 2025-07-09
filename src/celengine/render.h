@@ -35,6 +35,7 @@
 
 class RendererWatcher;
 class FrameTree;
+class LODSphereMesh;
 class ReferenceMark;
 class CurvePlot;
 class PointStarVertexBuffer;
@@ -698,6 +699,10 @@ class Renderer
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
+    std::unique_ptr<LODSphereMesh> m_lodSphere;
+    std::unique_ptr<Texture> m_gaussianDiscTex;
+    std::unique_ptr<Texture> m_gaussianGlareTex;
+
     std::unique_ptr<celestia::render::AsterismRenderer> m_asterismRenderer;
     std::unique_ptr<celestia::render::BoundariesRenderer> m_boundariesRenderer;
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
@@ -769,6 +774,7 @@ class Renderer
 
     static Color SelectionCursorColor;
 
+    friend class celestia::render::AtmosphereRenderer;
     friend class PointStarRenderer;
 };
 

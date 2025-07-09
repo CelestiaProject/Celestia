@@ -131,7 +131,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           const Eigen::Quaternionf& planetOrientation,
                           const math::Frustum& frustum,
                           const Matrices &m,
-                          Renderer* renderer)
+                          Renderer* renderer,
+                          LODSphereMesh* lodSphere)
 {
     float radius = semiAxes.maxCoeff();
 
@@ -350,9 +351,9 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    g_lodSphere->render(attributes,
-                        frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(attributes,
+                      frustum, ri.pixWidth,
+                      textures.data(), static_cast<int>(textures.size()), prog);
 }
 
 
@@ -540,7 +541,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Eigen::Quaternionf& planetOrientation,
                        const math::Frustum& frustum,
                        const Matrices &m,
-                       Renderer* renderer)
+                       Renderer* renderer,
+                       LODSphereMesh* lodSphere)
 {
     float radius = semiAxes.maxCoeff();
 
@@ -631,9 +633,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    g_lodSphere->render(attributes,
-                        frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(attributes,
+                      frustum, ri.pixWidth,
+                      textures.data(), static_cast<int>(textures.size()), prog);
 
     prog->textureOffset = 0.0f;
 }

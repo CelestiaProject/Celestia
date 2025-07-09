@@ -24,6 +24,7 @@
 class Atmosphere;
 class Geometry;
 class LightingState;
+class LODSphereMesh;
 struct Matrices;
 class Renderer;
 struct RenderInfo;
@@ -44,7 +45,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           const Eigen::Quaternionf& planetOrientation,
                           const celestia::math::Frustum& frustum,
                           const Matrices &m,
-                          Renderer* renderer);
+                          Renderer* renderer,
+                          LODSphereMesh* lodSphere);
 
 void renderGeometry_GLSL(Geometry* geometry,
                          const RenderInfo& ri,
@@ -70,7 +72,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Eigen::Quaternionf& planetOrientation,
                        const celestia::math::Frustum& frustum,
                        const Matrices &m,
-                       Renderer* renderer);
+                       Renderer* renderer,
+                       LODSphereMesh* lodSphere);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
