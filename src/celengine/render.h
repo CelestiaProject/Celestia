@@ -587,7 +587,7 @@ class Renderer
     void createShadowFBO();
 
  private:
-    ShaderManager* shaderManager{ nullptr };
+    std::unique_ptr<ShaderManager> shaderManager{ std::make_unique<ShaderManager>() };
 
     int windowWidth{ 0 };
     int windowHeight{ 0 };
@@ -623,8 +623,8 @@ class Renderer
 
     Eigen::Quaterniond m_cameraOrientation;
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
-    PointStarVertexBuffer* pointStarVertexBuffer;
-    PointStarVertexBuffer* glareVertexBuffer;
+    std::unique_ptr<PointStarVertexBuffer> pointStarVertexBuffer;
+    std::unique_ptr<PointStarVertexBuffer> glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
