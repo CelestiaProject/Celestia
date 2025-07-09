@@ -14,10 +14,7 @@
 
 #include <celutil/color.h>
 
-
-class LODSphereMesh;
 class Texture;
-
 
 struct RenderInfo
 {
@@ -40,6 +37,3 @@ struct RenderInfo
     float pixWidth{ 1.0f };
     float pointScale{ 1.0f };
 };
-
-extern LODSphereMesh* g_lodSphere;
-

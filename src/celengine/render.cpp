@@ -122,16 +122,6 @@ static constexpr float MaxFarNearRatio      = 2000000.0f;
 
 static constexpr float MinRelativeOccluderRadius = 0.005f;
 
-// Static meshes and textures used by all instances of Simulation
-
-static bool commonDataInitialized = false;
-
-
-LODSphereMesh* g_lodSphere = nullptr;
-
-static Texture* gaussianDiscTex = nullptr;
-static Texture* gaussianGlareTex = nullptr;
-
 static constexpr float CoronaHeight = 0.2f;
 
 // Size at which the orbit cache will be flushed of old orbit paths
@@ -303,7 +293,7 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
                                       float fwhm,
                                       float power)
 {
-    unsigned int size = 1 << log2size;
+    unsigned int size = 1U << log2size;
     float sigma = fwhm / 2.3548f;
     float isig2 = 1.0f / (2.0f * sigma * sigma);
     // Store 1/sqrt(2*pi) in constexpr sfactor
@@ -330,7 +320,7 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
                                float scale,
                                float base)
 {
-    unsigned int size = 1 << log2size;
+    unsigned int size = 1U << log2size;
 
     for (unsigned int i = 0; i < size; i++)
     {
@@ -374,10 +364,11 @@ static void BuildGlareMipLevel2(unsigned char* mipPixels,
 #endif
 
 
-static Texture* BuildGaussianDiscTexture(unsigned int log2size)
+static std::unique_ptr<Texture>
+BuildGaussianDiscTexture(unsigned int log2size)
 {
-    unsigned int size = 1 << log2size;
-    Image* img = new Image(PixelFormat::Luminance, size, size, log2size + 1);
+    unsigned int size = 1U << log2size;
+    auto img = std::make_unique<Image>(PixelFormat::Luminance, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -388,20 +379,16 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
                                   std::pow(2.0f, (float) (log2size - mipLevel)));
     }
 
-    ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::EdgeClamp,
-                                             Texture::DefaultMipMaps);
-
-    delete img;
-
-    return texture;
+    return std::make_unique<ImageTexture>(*img,
+                                          Texture::EdgeClamp,
+                                          Texture::DefaultMipMaps);
 }
 
-
-static Texture* BuildGaussianGlareTexture(unsigned int log2size)
+static std::unique_ptr<Texture>
+BuildGaussianGlareTexture(unsigned int log2size)
 {
-    unsigned int size = 1 << log2size;
-    Image* img = new Image(PixelFormat::Luminance, size, size, log2size + 1);
+    unsigned int size = 1U << log2size;
+    auto img = std::make_unique<Image>(PixelFormat::Luminance, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -425,13 +412,9 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
         */
     }
 
-    ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::EdgeClamp,
-                                             Texture::DefaultMipMaps);
-
-    delete img;
-
-    return texture;
+    return std::make_unique<ImageTexture>(*img,
+                                          Texture::EdgeClamp,
+                                          Texture::DefaultMipMaps);
 }
 
 
@@ -497,16 +480,10 @@ bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOpt
     m_markerVO = std::make_unique<celestia::gl::VertexObject>();
     m_markerBO = std::make_unique<celestia::gl::Buffer>();
 
-    // Initialize static meshes and textures common to all instances of Renderer
-    if (!commonDataInitialized)
-    {
-        g_lodSphere = new LODSphereMesh();
+    m_lodSphere = std::make_unique<LODSphereMesh>();
 
-        gaussianDiscTex = BuildGaussianDiscTexture(8);
-        gaussianGlareTex = BuildGaussianGlareTexture(9);
-
-        commonDataInitialized = true;
-    }
+    m_gaussianDiscTex = BuildGaussianDiscTexture(8);
+    m_gaussianGlareTex = BuildGaussianGlareTexture(9);
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -1720,7 +1697,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         setPipelineState(ps);
 
         if (starStyle != StarStyle::PointStars)
-            gaussianDiscTex->bind();
+            m_gaussianDiscTex->bind();
 
         if (pointSize > gl::maxPointSize)
             m_largeStarRenderer->render(position, {color, alpha}, pointSize, mvp);
@@ -1736,7 +1713,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (useHalos && glareAlpha > 0.0f)
         {
             Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
-            gaussianGlareTex->bind();
+            m_gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
                 m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
             else
@@ -1749,7 +1726,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 static void renderSphereUnlit(const RenderInfo& ri,
                               const math::Frustum& frustum,
                               const Matrices &m,
-                              Renderer *r)
+                              Renderer *r,
+                              LODSphereMesh *lodSphere)
 {
     boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
@@ -1789,8 +1767,8 @@ static void renderSphereUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
-    g_lodSphere->render(frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(frustum, ri.pixWidth,
+                      textures.data(), static_cast<int>(textures.size()), prog);
 }
 
 
@@ -1799,7 +1777,8 @@ static void renderCloudsUnlit(const RenderInfo& ri,
                               Texture *cloudTex,
                               float cloudTexOffset,
                               const Matrices &m,
-                              Renderer *r)
+                              Renderer *r,
+                              LODSphereMesh *lodSphere)
 {
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::DiffuseTexture | TexUsage::TextureCoordTransform;
@@ -1819,7 +1798,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
-    g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1, prog);
+    lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1, prog);
 }
 
 void
@@ -2329,11 +2308,13 @@ void Renderer::renderObject(const Vector3f& pos,
                                  renderFlags,
                                  obj.orientation,
                                  viewFrustum,
-                                 planetMVP, this);
+                                 planetMVP,
+                                 this,
+                                 m_lodSphere.get());
         }
         else
         {
-            renderSphereUnlit(ri, viewFrustum, planetMVP, this);
+            renderSphereUnlit(ri, viewFrustum, planetMVP, this, m_lodSphere.get());
         }
     }
     else
@@ -2474,11 +2455,13 @@ void Renderer::renderObject(const Vector3f& pos,
                                   renderFlags,
                                   obj.orientation,
                                   viewFrustum,
-                                  mvp, this);
+                                  mvp,
+                                  this,
+                                  m_lodSphere.get());
             }
             else
             {
-                renderCloudsUnlit(ri,viewFrustum, cloudTex, cloudTexOffset, mvp, this);
+                renderCloudsUnlit(ri,viewFrustum, cloudTex, cloudTexOffset, mvp, this, m_lodSphere.get());
             }
 
             glDisable(GL_POLYGON_OFFSET_FILL);
@@ -3786,10 +3769,10 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starRenderer.colorTemp = &starColors;
 
-    gaussianDiscTex->bind();
-    starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
+    m_gaussianDiscTex->bind();
+    starRenderer.starVertexBuffer->setTexture(m_gaussianDiscTex.get());
     starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
+    starRenderer.glareVertexBuffer->setTexture(m_gaussianGlareTex.get());
     starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();

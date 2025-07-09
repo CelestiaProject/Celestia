@@ -402,10 +402,10 @@ AtmosphereRenderer::render(
     ps.depthTest = true;
     m_renderer.setPipelineState(ps);
 
-    g_lodSphere->render(LODSphereMesh::Normals,
-                        frustum,
-                        ri.pixWidth,
-                        nullptr);
+    m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+                                   frustum,
+                                   ri.pixWidth,
+                                   nullptr);
 
     glFrontFace(GL_CCW);
 }
