@@ -214,8 +214,8 @@ Renderer::Renderer() :
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
-    pointStarVertexBuffer(nullptr),
-    glareVertexBuffer(nullptr),
+    pointStarVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
+    glareVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
@@ -228,17 +228,14 @@ Renderer::Renderer() :
     m_ringRenderer(std::make_unique<RingRenderer>(*this)),
     m_skyGridRenderer(std::make_unique<SkyGridRenderer>(*this))
 {
-    pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-    shaderManager = new ShaderManager();
 }
 
 
 Renderer::~Renderer()
 {
-    delete pointStarVertexBuffer;
-    delete glareVertexBuffer;
-    delete shaderManager;
+    pointStarVertexBuffer.reset();
+    glareVertexBuffer.reset();
+    shaderManager.reset();
 
     m_atmosphereRenderer->deinitGL();
     m_cometRenderer->deinitGL();
@@ -684,7 +681,7 @@ shared_ptr<celestia::engine::ProjectionMode> Renderer::getProjectionMode() const
 void Renderer::setProjectionMode(shared_ptr<celestia::engine::ProjectionMode> _projectionMode)
 {
     projectionMode = _projectionMode;
-    projectionMode->configureShaderManager(shaderManager);
+    projectionMode->configureShaderManager(shaderManager.get());
     markSettingsChanged();
 }
 
@@ -3773,8 +3770,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.obsPos            = obsPos;
     starRenderer.viewNormal        = getCameraOrientationf().conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
-    starRenderer.starVertexBuffer  = pointStarVertexBuffer;
-    starRenderer.glareVertexBuffer = glareVertexBuffer;
+    starRenderer.starVertexBuffer  = pointStarVertexBuffer.get();
+    starRenderer.glareVertexBuffer = glareVertexBuffer.get();
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
