@@ -746,16 +746,6 @@ Renderer::setStarColorTable(ColorTableType ct)
 }
 
 
-bool Renderer::getVideoSync() const
-{
-    return true;
-}
-
-void Renderer::setVideoSync(bool /*sync*/)
-{
-}
-
-
 float Renderer::getAmbientLightLevel() const
 {
     return ambientLightLevel;
