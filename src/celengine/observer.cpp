@@ -591,6 +591,17 @@ Observer::setOrientationTransform(const Eigen::Matrix3d& transform)
     updateOrientation();
 }
 
+/*! Apply the transform to the original orientation and reset transform.
+ */
+void
+Observer::applyCurrentTransform()
+{
+    originalOrientationUniv = transformedOrientationUniv;
+    originalOrientation = transformedOrientation;
+    orientationTransform = Eigen::Matrix3d::Identity();
+    updateOrientation();
+}
+
 /*! Get the velocity of the observer within the observer's reference frame.
  */
 Eigen::Vector3d

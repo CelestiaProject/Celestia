@@ -136,6 +136,8 @@ public:
     Eigen::Matrix3d getOrientationTransform() const;
     void            setOrientationTransform(const Eigen::Matrix3d&);
 
+    void            applyCurrentTransform();
+
     Eigen::Vector3d getVelocity() const;
     void            setVelocity(const Eigen::Vector3d&);
     Eigen::Vector3d getAngularVelocity() const;
