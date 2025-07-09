@@ -99,36 +99,28 @@ using celestia::util::GetLogger;
 
 namespace util = celestia::util;
 
-static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
+static constexpr int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 // Contribution from planetshine beyond this distance (in units of object radius)
 // is considered insignificant.
-static const float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
+static constexpr float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
 
 // Planetshine from objects less than this pixel size is treated as insignificant
 // and will be ignored.
-static const float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
+static constexpr float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
 
 // Fractional pixel offset used when rendering text as texture mapped
 // quads to ensure consistent mapping of texels to pixels.
-static const float PixelOffset = 0.125f;
+static constexpr float PixelOffset = 0.125f;
 
 // These two values constrain the near and far planes of the view frustum
 // when rendering planet and object meshes.  The near plane will never be
 // closer than MinNearPlaneDistance, and the far plane is set so that far/near
 // will not exceed MaxFarNearRatio.
-static const float MinNearPlaneDistance = 0.0001f; // km
-static const float MaxFarNearRatio      = 2000000.0f;
+static constexpr float MinNearPlaneDistance = 0.0001f; // km
+static constexpr float MaxFarNearRatio      = 2000000.0f;
 
-static const float MinRelativeOccluderRadius = 0.005f;
-
-// The minimum apparent size of an objects orbit in pixels before we display
-// a label for it.  This minimizes label clutter.
-static const float MinOrbitSizeForLabel = 20.0f;
-
-// The minimum apparent size of a surface feature in pixels before we display
-// a label for it.
-static const float MinFeatureSizeForLabel = 20.0f;
+static constexpr float MinRelativeOccluderRadius = 0.005f;
 
 // Static meshes and textures used by all instances of Simulation
 
@@ -140,12 +132,12 @@ LODSphereMesh* g_lodSphere = nullptr;
 static Texture* gaussianDiscTex = nullptr;
 static Texture* gaussianGlareTex = nullptr;
 
-static const float CoronaHeight = 0.2f;
+static constexpr float CoronaHeight = 0.2f;
 
 // Size at which the orbit cache will be flushed of old orbit paths
-static const unsigned int OrbitCacheCullThreshold = 200;
+static constexpr unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
-static const uint32_t OrbitCacheRetireAge = 16;
+static constexpr std::uint32_t OrbitCacheRetireAge = 16;
 
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
@@ -219,28 +211,11 @@ inline void glVertexAttrib(GLuint index, const Color &color)
 }
 
 Renderer::Renderer() :
-    windowWidth(0),
-    windowHeight(0),
-    fov(standardFOV),
-    screenDpi(96),
-    corrFac(1.12f),
-    faintestAutoMag45deg(8.0f), //def. 7.0f
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
-    brightnessBias(0.0f),
-    saturationMagNight(1.0f),
-    saturationMag(1.0f),
     pointStarVertexBuffer(nullptr),
     glareVertexBuffer(nullptr),
-    frameCount(0),
-    lastOrbitCacheFlush(0),
-    minOrbitSize(MinOrbitSizeForLabel),
-    distanceLimit(1.0e6f),
-    minFeatureSize(MinFeatureSizeForLabel),
-    locationFilter(~0ull),
-    settingsChanged(true),
-    objectAnnotationSetOpen(false),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
@@ -255,11 +230,6 @@ Renderer::Renderer() :
 {
     pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
-
-    for (int i = 0; i < (int) FontCount; i++)
-    {
-        fonts[i] = nullptr;
-    }
     shaderManager = new ShaderManager();
 }
 
