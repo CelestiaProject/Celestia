@@ -442,14 +442,6 @@ translateLabelModeToClassMask(RenderLabels labelMode)
 }
 
 
-// Depth comparison function for render list entries
-bool operator<(const RenderListEntry& a, const RenderListEntry& b)
-{
-    // Operation is reversed because -z axis points into the screen
-    return a.centerZ - a.radius > b.centerZ - b.radius;
-}
-
-
 // Depth comparison for labels
 // Note that it's essential to declare this operator as a member
 // function of Renderer::Label; if it's not a class member, C++'s
@@ -462,7 +454,7 @@ bool Renderer::Annotation::operator<(const Annotation& a) const
 }
 
 // Depth comparison for orbit paths
-bool Renderer::OrbitPathListEntry::operator<(const Renderer::OrbitPathListEntry& o) const
+bool Renderer::OrbitPathListEntry::operator<(const OrbitPathListEntry& o) const
 {
     // Operation is reversed because -z axis points into the screen
     return centerZ - radius > o.centerZ - o.radius;
@@ -4871,7 +4863,12 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
     // ideal for performance; should render opaque objects front to
     // back, then translucent objects back to front. However, the
     // amount of overdraw in Celestia is typically low.)
-    sort(renderList.begin(), renderList.end());
+    std::sort(renderList.begin(), renderList.end(),
+              [](const RenderListEntry& a, const RenderListEntry& b)
+              {
+                  // Operation is reversed because -z axis points into the screen
+                  return a.centerZ - a.radius > b.centerZ - b.radius;
+              });
 }
 
 bool
