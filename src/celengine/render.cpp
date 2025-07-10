@@ -223,10 +223,6 @@ Renderer::Renderer() :
 
 Renderer::~Renderer()
 {
-    pointStarVertexBuffer.reset();
-    glareVertexBuffer.reset();
-    shaderManager.reset();
-
     m_atmosphereRenderer->deinitGL();
     m_cometRenderer->deinitGL();
     CurvePlot::deinit();
