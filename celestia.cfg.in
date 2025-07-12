@@ -44,7 +44,7 @@ Configuration
                                "data/dwarfplanets.ssc"
                                "data/asteroids.ssc"
                                "data/comets.ssc"
-			       "data/interstellar.ssc"
+                               "data/interstellar.ssc"
                                "data/outersys.ssc"
                                "data/minormoons.ssc"
                                "data/extrasolar.ssc"
