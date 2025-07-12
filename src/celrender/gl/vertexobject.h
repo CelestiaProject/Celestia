@@ -35,7 +35,7 @@ public:
      *
      * @see @ref addVertexBuffer()
      */
-    enum class DataType
+    enum class DataType : GLenum
     {
         Byte            = GL_BYTE,
         UnsignedByte    = GL_UNSIGNED_BYTE,
@@ -52,7 +52,7 @@ public:
      *
      * @see @ref setIndexBuffer() @ref isIndexed()
      */
-    enum class IndexType
+    enum class IndexType : GLenum
     {
         UnsignedShort   = GL_UNSIGNED_SHORT,
         UnsignedInt     = GL_UNSIGNED_INT,
@@ -63,7 +63,7 @@ public:
      *
      * @see @ref draw() @ref draw(Primitive, int, int)
      */
-    enum class Primitive
+    enum class Primitive : GLenum
     {
         Points          = GL_POINTS,
         Lines           = GL_LINES,
