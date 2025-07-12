@@ -141,6 +141,8 @@ public:
     void            setVelocity(const Eigen::Vector3d&);
     Eigen::Vector3d getAngularVelocity() const;
     void            setAngularVelocity(const Eigen::Vector3d&);
+    Eigen::Vector3d getInputAngularVelocity() const;
+    void            setInputAngularVelocity(const Eigen::Vector3d&);
 
     float          getFOV() const;
     void           setFOV(float);
@@ -303,9 +305,15 @@ private:
     UniversalCoord      position{ 0.0, 0.0, 0.0 };
     Eigen::Quaterniond  originalOrientation{ Eigen::Quaterniond::Identity() };
     Eigen::Quaterniond  transformedOrientation{ Eigen::Quaterniond::Identity() };
-    Eigen::Quaterniond  orientationTransform{ Eigen::Quaterniond::Identity() };
+    // Flexible, full 6DoF observer pose, e.g., AR/VR headset
+    Eigen::Quaterniond  devicePoseQuaternion{ Eigen::Quaterniond::Identity() };
+    // Orientation driven by input (Euler-based, like joystick)
+    Eigen::Quaterniond  eulerDrivenOrientation{ Eigen::Quaterniond::Identity() };
+    Eigen::Vector3d     inputEulerAngles{ Eigen::Vector3d::Zero() };
+
     Eigen::Vector3d     velocity{ Eigen::Vector3d::Zero() };
     Eigen::Vector3d     angularVelocity{ Eigen::Vector3d::Zero() };
+    Eigen::Vector3d     inputAngularVelocity{ Eigen::Vector3d::Zero() };
 
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.

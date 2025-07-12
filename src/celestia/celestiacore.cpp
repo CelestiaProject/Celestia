@@ -731,6 +731,10 @@ void CelestiaCore::joystickAxis(int axis, float amount)
         joystickRotation.y() = amount;
     else if (axis == Joy_YAxis)
         joystickRotation.x() = -amount;
+    else if (axis == Joy_RXAxis)
+        joystickRightRotation.y() = amount;
+    else if (axis == Joy_RYAxis)
+        joystickRightRotation.x() = -amount;
 }
 
 
@@ -1792,8 +1796,11 @@ void CelestiaCore::tick(double dt)
 
     // Keyboard rotate
     Vector3d av = sim->getObserver().getAngularVelocity();
+    Vector3d inputAV = sim->getObserver().getInputAngularVelocity();
 
-    av = av * exp(-dt * RotationDecay);
+    double decayFactor = std::exp(-dt * static_cast<double>(RotationDecay));
+    av = av * decayFactor;
+    inputAV = inputAV * decayFactor;
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
     Selection refObject = sim->getFrame()->getRefObject();
@@ -1863,6 +1870,11 @@ void CelestiaCore::tick(double dt)
         av = av * exp(-dt * RotationBraking);
 
     sim->getObserver().setAngularVelocity(av);
+
+    if (joystickRightRotation != Vector3f::Zero())
+        inputAV += (dt * KeyRotationAccel) * joystickRightRotation.cast<double>();
+
+    sim->getObserver().setInputAngularVelocity(inputAV);
 
     if (keysPressed[static_cast<int>('A')] || joyButtonsPressed[JoyButton2])
     {

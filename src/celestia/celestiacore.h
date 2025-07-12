@@ -105,6 +105,9 @@ public:
         Joy_XAxis           = 0,
         Joy_YAxis           = 1,
         Joy_ZAxis           = 2,
+        Joy_RXAxis          = 3,
+        Joy_RYAxis          = 4,
+        Joy_RZAxis          = 5,
     };
 
     enum
@@ -481,6 +484,7 @@ private:
     double sysTime{ 0.0 };
 
     Eigen::Vector3f joystickRotation{ Eigen::Vector3f::Zero() };
+    Eigen::Vector3f joystickRightRotation{ Eigen::Vector3f::Zero() };
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];
