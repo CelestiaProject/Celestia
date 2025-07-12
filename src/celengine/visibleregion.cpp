@@ -19,6 +19,7 @@
 #include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celrender/linerenderer.h>
+#include <celrender/referencemarkrenderer.h>
 #include "body.h"
 #include "glsupport.h"
 #include "render.h"
@@ -72,7 +73,7 @@ VisibleRegion::setOpacity(float opacity)
 constexpr const unsigned maxSections = 360;
 
 void
-VisibleRegion::render(Renderer* renderer,
+VisibleRegion::render(render::ReferenceMarkRenderer* refMarkRenderer,
                       const Eigen::Vector3f& position,
                       float discSizeInPixels,
                       double tdb,
@@ -139,7 +140,8 @@ VisibleRegion::render(Renderer* renderer,
     Eigen::Vector3d e_ = e.cwiseProduct(recipSemiAxes);
     double ee = e_.squaredNorm();
 
-    render::LineRenderer lr(*renderer, 1.0f, render::LineRenderer::PrimType::LineStrip);
+    render::LineRenderer& lr = refMarkRenderer->visibleRegionRenderer();
+    lr.clear();
     lr.startUpdate();
 
     for (unsigned i = 0; i <= nSections + 1; i++)
@@ -163,7 +165,7 @@ VisibleRegion::render(Renderer* renderer,
     ps.depthMask = true;
     ps.depthTest = true;
     ps.smoothLines = true;
-    renderer->setPipelineState(ps);
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     lr.render({ m.projection, &modelView }, Color(m_color, opacity), nSections+1, 0);
     lr.finish();

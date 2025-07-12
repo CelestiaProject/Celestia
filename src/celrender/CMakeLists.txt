@@ -21,6 +21,8 @@ set(CELRENDER_SOURCES
   nebularenderer.h
   openclusterrenderer.cpp
   openclusterrenderer.h
+  referencemarkrenderer.cpp
+  referencemarkrenderer.h
   ringrenderer.cpp
   ringrenderer.h
   skygridrenderer.cpp

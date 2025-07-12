@@ -23,6 +23,11 @@
 
 class Body;
 
+namespace celestia::render
+{
+class ReferenceMarkRenderer;
+}
+
 class ArrowReferenceMark : public ReferenceMark
 {
 public:
@@ -31,7 +36,7 @@ public:
     void setSize(float _size);
     void setColor(const Color& _color);
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                 const Eigen::Vector3f& position,
                 float discSize,
                 double tdb,
@@ -60,7 +65,7 @@ public:
     void setSize(float _size);
     void setOpacity(float _opacity);
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                 const Eigen::Vector3f& position,
                 float discSize,
                 double tdb,
