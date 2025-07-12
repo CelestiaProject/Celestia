@@ -82,10 +82,22 @@ else()
   target_link_libraries(imgui PUBLIC ${SDL2_LIBRARIES})
 endif()
 
-install(
-  TARGETS celestia-sdl
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  COMPONENT sdlgui
-)
+if(WIN32)
+  install(
+    TARGETS celestia-sdl
+    RUNTIME_DEPENDENCIES
+      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
+      POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
+      DIRECTORIES $<TARGET_FILE_DIR:celestia> $<TARGET_FILE_DIR:SDL2::SDL2>
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT sdlgui
+  )
+else()
+  install(
+    TARGETS celestia-sdl
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT sdlgui
+  )
+endif()
 
 add_subdirectory(data)
