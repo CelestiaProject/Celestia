@@ -1209,10 +1209,10 @@ Observer::setTargetSpeed(float s)
         s = -s;
     if (trackObject.empty())
     {
-        trackingOrientation = getOrientation();
+        trackingOrientation = originalOrientationUniv;
         // Generate vector for velocity using current orientation
         // and specified speed.
-        v = getOrientation().conjugate() * Eigen::Vector3d(0, 0, -s);
+        v = trackingOrientation.conjugate() * Eigen::Vector3d(0, 0, -s);
     }
     else
     {

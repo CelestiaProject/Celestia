@@ -1884,7 +1884,7 @@ void CelestiaCore::tick(double dt)
                 sim->setTargetSpeed(currentSpeed / std::exp(static_cast<float>(dt) * 3.0f * decelerationCoefficient));
         }
     }
-    if (!bSetTargetSpeed && av.norm() > 0.0f)
+    if (!bSetTargetSpeed && av.norm() > 1.0e-10)
     {
         // Force observer velocity vector to align with observer direction if an observer
         // angular velocity still exists.
