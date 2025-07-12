@@ -13,6 +13,7 @@ class LargeStarRenderer;
 class LineRenderer;
 class NebulaRenderer;
 class OpenClusterRenderer;
+class ReferenceMarkRenderer;
 class RingRenderer;
 class SkyGridRenderer;
 }

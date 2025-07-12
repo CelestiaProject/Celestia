@@ -68,6 +68,7 @@
 #include <celrender/globularrenderer.h>
 #include <celrender/nebularenderer.h>
 #include <celrender/openclusterrenderer.h>
+#include <celrender/referencemarkrenderer.h>
 #include <celrender/ringrenderer.h>
 #include <celrender/skygridrenderer.h>
 #include <celrender/gl/buffer.h>
@@ -215,6 +216,7 @@ Renderer::Renderer() :
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
     m_openClusterRenderer(std::make_unique<OpenClusterRenderer>(*this)),
+    m_referenceMarkRenderer(std::make_unique<ReferenceMarkRenderer>(*this)),
     m_ringRenderer(std::make_unique<RingRenderer>(*this)),
     m_skyGridRenderer(std::make_unique<SkyGridRenderer>(*this))
 {
@@ -224,7 +226,6 @@ Renderer::Renderer() :
 Renderer::~Renderer()
 {
     CurvePlot::deinit();
-    PlanetographicGrid::deinit();
 }
 
 
@@ -3004,7 +3005,7 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
     if (discSizeInPixels <= 1)
         return;
 
-    refMark.render(this, pos, discSizeInPixels, now, m);
+    refMark.render(m_referenceMarkRenderer.get(), pos, discSizeInPixels, now, m);
 }
 
 

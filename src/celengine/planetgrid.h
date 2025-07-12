@@ -24,7 +24,7 @@ class Renderer;
 
 namespace celestia::render
 {
-class LineRenderer;
+class ReferenceMarkRenderer;
 }
 
 class PlanetographicGrid : public ReferenceMark
@@ -58,7 +58,7 @@ public:
     PlanetographicGrid(const Body& _body);
     ~PlanetographicGrid() = default;
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* renderer,
                 const Eigen::Vector3f& pos,
                 float discSizeInPixels,
                 double tdb,
@@ -67,18 +67,10 @@ public:
 
     void setIAULongLatConvention();
 
-    static void deinit();
-
 protected:
     std::string_view defaultTag() const override;
 
 private:
-    static celestia::render::LineRenderer *latitudeRenderer;
-    static celestia::render::LineRenderer *equatorRenderer;
-    static celestia::render::LineRenderer *longitudeRenderer;
-    static bool initialized;
-    static void InitializeGeometry(const Renderer&);
-
     const Body& body;
 
     float minLongitudeStep{ 10.0f };

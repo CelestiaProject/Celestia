@@ -16,8 +16,12 @@
 #include <string_view>
 #include <Eigen/Core>
 
-class Renderer;
 struct Matrices;
+
+namespace celestia::render
+{
+class ReferenceMarkRenderer;
+}
 
 /*! Reference marks give additional visual information about the
  *  position and orientation of a solar system body. Items such as
@@ -38,7 +42,7 @@ class ReferenceMark
 
     /*! Draw the reference mark geometry at the specified time.
      */
-    virtual void render(Renderer* renderer,
+    virtual void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                         const Eigen::Vector3f& position,
                         float discSizeInPixels,
                         double tdb,

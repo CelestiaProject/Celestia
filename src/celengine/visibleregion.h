@@ -23,6 +23,11 @@
 class Body;
 struct Matrices;
 
+namespace celestia::render
+{
+class ReferenceMarkRenderer;
+}
+
 /*! VisibleRegion is a reference mark that shows the outline of
  *  region on the surface of a body in which a specified target
  *  is visible.
@@ -33,7 +38,7 @@ public:
     VisibleRegion(const Body& body, const Selection& target);
     ~VisibleRegion() = default;
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                 const Eigen::Vector3f& pos,
                 float discSizeInPixels,
                 double tdb,

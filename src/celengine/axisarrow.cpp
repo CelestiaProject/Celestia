@@ -18,6 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
+#include <celrender/referencemarkrenderer.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include "axisarrow.h"
@@ -34,140 +35,7 @@ using namespace std::string_view_literals;
 using celestia::render::LineRenderer;
 namespace gl = celestia::gl;
 namespace math = celestia::math;
-
-namespace
-{
-
-constexpr float shaftLength  = 0.85f;
-constexpr float headLength   = 0.10f;
-constexpr float shaftRadius  = 0.010f;
-constexpr float headRadius   = 0.025f;
-constexpr unsigned int nSections = 30;
-
-std::vector<Eigen::Vector3f>
-GetArrowVertices()
-{
-    constexpr unsigned int totalVertices = nSections * 3U + 3U;
-
-    std::vector<Eigen::Vector3f> vertices;
-    vertices.reserve(totalVertices);
-    vertices.emplace_back(Eigen::Vector3f::Zero());
-    vertices.emplace_back(0.0f, 0.0f, shaftLength);
-    vertices.emplace_back(0.0f, 0.0f, shaftLength + headLength);
-
-    for (unsigned int i = 0U; i < nSections; ++i)
-    {
-        float s;
-        float c;
-        math::sincos((static_cast<float>(i) * 2.0f * celestia::numbers::pi_v<float>) / nSections, s, c);
-
-        vertices.emplace_back(shaftRadius * s, shaftRadius * c, 0.0f);
-        vertices.emplace_back(shaftRadius * s, shaftRadius * c, shaftLength);
-        vertices.emplace_back(headRadius * s, headRadius * c, shaftLength);
-    }
-
-    return vertices;
-}
-
-std::vector<GLushort>
-GetArrowIndices()
-{
-    constexpr unsigned int circleSize = (nSections + 1U) * 3U;
-    constexpr unsigned int shaftSize = 3U + nSections * 6U;
-    constexpr unsigned int annulusSize = (nSections + 1U) * 3U;
-    constexpr unsigned int headSize = (nSections + 1U) * 3U;
-
-    constexpr unsigned int totalSize = circleSize + shaftSize + annulusSize + headSize;
-
-    std::vector<GLushort> indices(totalSize, GLushort(0));
-
-    GLushort* const circle = indices.data();
-    GLushort* const shaft = circle + circleSize;
-    GLushort* const annulus = shaft + shaftSize;
-    GLushort* const head = annulus + annulusSize;
-
-    GLushort* circlePtr = circle;
-    GLushort* shaftPtr = shaft;
-    GLushort* annulusPtr = annulus;
-    GLushort* headPtr = head;
-
-    constexpr GLushort vZero = 0;
-    constexpr GLushort v3 = 1;
-    constexpr GLushort v4 = 2;
-    for (unsigned int i = 0U; i <= nSections; ++i)
-    {
-        unsigned int idx = i < nSections ? i : 0;
-        auto v0 = static_cast<GLushort>(3U + idx * 3U);
-        auto v1 = static_cast<GLushort>(v0 + 1U);
-        auto v2 = static_cast<GLushort>(v0 + 2U);
-
-        // Circle at bottom
-        if (i > 0)
-            *(circlePtr++) = v0;
-        *(circlePtr++) = vZero;
-        *(circlePtr++) = v1;
-
-        // Shaft
-        if (i > 0)
-        {
-            *(shaftPtr++) = v0; // left triangle
-
-            *(shaftPtr++) = v0; // right
-            *(shaftPtr++) = static_cast<GLushort>(idx * 3U + 1U) ; // v1Prev
-            *(shaftPtr++) = v1;
-        }
-        *(shaftPtr++) = v0; // left
-        *(shaftPtr++) = v1;
-
-        // Annulus
-        if (i > 0)
-            *(annulusPtr++) = v2;
-        *(annulusPtr++) = v2;
-        *(annulusPtr++) = v3;
-
-        // Head
-        if (i > 0)
-            *(headPtr++) = v2;
-        *(headPtr++) = v4;
-        *(headPtr++) = v2;
-    }
-
-    *circlePtr = circle[1];
-    *shaftPtr = shaft[0];
-    *annulusPtr = annulus[1];
-    *headPtr = head[1];
-
-    return indices;
-}
-
-gl::VertexObject&
-GetArrowVAO()
-{
-    static gl::VertexObject* vo = nullptr;
-
-    if (vo)
-        return *vo;
-
-    vo = std::make_unique<gl::VertexObject>().release();
-
-    auto vertices = GetArrowVertices();
-    auto indices = GetArrowIndices();
-
-    static gl::Buffer* vertexBuffer = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array).release();
-    vertexBuffer->setData(vertices, gl::Buffer::BufferUsage::StaticDraw);
-
-    vo->addVertexBuffer(*vertexBuffer,
-                        CelestiaGLProgram::VertexCoordAttributeIndex,
-                        3,
-                        gl::VertexObject::DataType::Float);
-    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
-    vo->setCount(static_cast<int>(indices.size()));
-    vo->setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
-
-    return *vo;
-}
-
-} // anonymous namespace
+namespace render = celestia::render;
 
 /****** ArrowReferenceMark base class ******/
 
@@ -194,7 +62,7 @@ ArrowReferenceMark::setColor(const Color &_color)
 
 
 void
-ArrowReferenceMark::render(Renderer* renderer,
+ArrowReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
                            const Eigen::Vector3f& position,
                            float /* discSize */,
                            double tdb,
@@ -215,12 +83,13 @@ ArrowReferenceMark::render(Renderer* renderer,
     ps.depthTest = true;
     ps.depthMask = true;
 
-    renderer->setPipelineState(ps);
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f mv = (*m.modelview) * transform.matrix();
 
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;
     prog->use();
@@ -229,7 +98,7 @@ ArrowReferenceMark::render(Renderer* renderer,
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
 		             color.red(), color.green(), color.blue(), 1.0f);
 
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 }
 
 
@@ -255,7 +124,7 @@ AxesReferenceMark::setOpacity(float _opacity)
 }
 
 void
-AxesReferenceMark::render(Renderer* renderer,
+AxesReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
                           const Eigen::Vector3f& position,
                           float /* discSize */,
                           double tdb,
@@ -274,7 +143,7 @@ AxesReferenceMark::render(Renderer* renderer,
         ps.blending = true;
         ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     }
-    renderer->setPipelineState(ps);
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f projection = *m.projection;
@@ -282,7 +151,8 @@ AxesReferenceMark::render(Renderer* renderer,
 
     float labelScale = 0.1f;
 
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;
     prog->use();
@@ -294,21 +164,22 @@ AxesReferenceMark::render(Renderer* renderer,
     Eigen::Matrix4f xModelView = modelView * math::YRot90Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
     // y-axis
     Eigen::Matrix4f yModelView = modelView * math::YRot180Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
     // z-axis
     Eigen::Matrix4f zModelView = modelView * math::XRot270Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
-    LineRenderer lr(*renderer);
+    LineRenderer& lr = arrowRenderer.lineRenderer();
+    lr.clear();
     lr.startUpdate();
     // X
     lr.addSegment({0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 1.0f});
