@@ -12,12 +12,16 @@
 
 #pragma once
 
+#include <string_view>
+
+#include <Eigen/Core>
+
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
 #include <celutil/color.h>
 
 class Body;
-
+struct Matrices;
 
 /*! VisibleRegion is a reference mark that shows the outline of
  *  region on the surface of a body in which a specified target
@@ -41,9 +45,12 @@ public:
     float opacity() const;
     void setOpacity(float opacity);
 
+protected:
+    std::string_view defaultTag() const override;
+
 private:
     const Body& m_body;
     const Selection m_target;
-    Color m_color;
-    float m_opacity;
+    Color m_color{ 1.0f, 1.0f, 1.0f };
+    float m_opacity{ 1.0f };
 };

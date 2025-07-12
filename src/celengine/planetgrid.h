@@ -12,11 +12,20 @@
 
 #pragma once
 
+#include <string_view>
+
+#include <Eigen/Core>
+
 #include <celengine/referencemark.h>
-#include <celrender/linerenderer.h>
 
 class Body;
+struct Matrices;
 class Renderer;
+
+namespace celestia::render
+{
+class LineRenderer;
+}
 
 class PlanetographicGrid : public ReferenceMark
 {
@@ -29,7 +38,7 @@ public:
      *      EastWest measures longitude both east and west, and is used only
      *         for the Earth and Moon (strictly because of convention.)
      */
-    enum LongitudeConvention
+    enum class LongitudeConvention
     {
         EastWest,
         Westward,
@@ -40,7 +49,7 @@ public:
      *  the rotation north. It should be set for retrograde rotators in
      *  order to conform with IAU conventions.
      */
-    enum NorthDirection
+    enum class NorthDirection
     {
         NorthNormal,
         NorthReversed
@@ -60,6 +69,9 @@ public:
 
     static void deinit();
 
+protected:
+    std::string_view defaultTag() const override;
+
 private:
     static celestia::render::LineRenderer *latitudeRenderer;
     static celestia::render::LineRenderer *equatorRenderer;
@@ -72,6 +84,6 @@ private:
     float minLongitudeStep{ 10.0f };
     float minLatitudeStep{ 10.0f };
 
-    LongitudeConvention longitudeConvention{ Westward };
-    NorthDirection northDirection{ NorthNormal };
+    LongitudeConvention longitudeConvention{ LongitudeConvention::Westward };
+    NorthDirection northDirection{ NorthDirection::NorthNormal };
 };

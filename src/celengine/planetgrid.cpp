@@ -10,25 +10,34 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "planetgrid.h"
+
+#include <algorithm>
 #include <cmath>
+
 #include <Eigen/Geometry>
 #include <fmt/format.h>
+
 #include <celastro/date.h>
 #include <celcompat/numbers.h>
+#include <celmath/ellipsoid.h>
 #include <celmath/geomutil.h>
 #include <celmath/intersect.h>
+#include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
 #include "body.h"
-#include "planetgrid.h"
 #include "render.h"
 
-using namespace celestia;
-using celestia::render::LineRenderer;
+using namespace std::string_view_literals;
 
-LineRenderer *PlanetographicGrid::latitudeRenderer = nullptr;
-LineRenderer *PlanetographicGrid::equatorRenderer = nullptr;
-LineRenderer *PlanetographicGrid::longitudeRenderer = nullptr;
+namespace astro = celestia::astro;
+namespace math = celestia::math;
+namespace render = celestia::render;
+
+render::LineRenderer *PlanetographicGrid::latitudeRenderer = nullptr;
+render::LineRenderer *PlanetographicGrid::equatorRenderer = nullptr;
+render::LineRenderer *PlanetographicGrid::longitudeRenderer = nullptr;
 bool PlanetographicGrid::initialized = false;
 
 namespace
@@ -46,21 +55,25 @@ void longLatLabel(const std::string& labelText,
                   float labelOffset,
                   Renderer* renderer)
 {
-    double theta = math::degToRad(longitude);
-    double phi = math::degToRad(latitude);
-    Eigen::Vector3d pos( cos(phi) * cos(theta) * semiAxes.x(),
-                         sin(phi) * semiAxes.y(),
-                        -cos(phi) * sin(theta) * semiAxes.z());
+    double stheta;
+    double ctheta;
+    math::sincos(math::degToRad(longitude), stheta, ctheta);
+    double sphi;
+    double cphi;
+    math::sincos(math::degToRad(latitude), sphi, cphi);
+    Eigen::Vector3d pos( cphi * ctheta * semiAxes.x(),
+                         sphi * semiAxes.y(),
+                        -cphi * stheta * semiAxes.z());
 
     float nearDist = renderer->getNearPlaneDistance();
 
-    pos = pos * (1.0 + labelOffset);
+    pos *= 1.0 + labelOffset;
 
     double boundingRadius = semiAxes.maxCoeff();
 
     // Draw the label only if it isn't obscured by the body ellipsoid
-    if (double t = 0.0; testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
-                                         math::Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
+    if (double t = 0.0; math::testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
+                                               math::Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
         Eigen::Vector3d labelPos = bodyCenter +
@@ -84,7 +97,6 @@ void longLatLabel(const std::string& labelText,
 PlanetographicGrid::PlanetographicGrid(const Body& _body) :
     body(_body)
 {
-    setTag("planetographic grid");
     setIAULongLatConvention();
 }
 
@@ -167,11 +179,11 @@ PlanetographicGrid::render(Renderer* renderer,
             {
                 char ns;
                 if (latitude < 0.0f)
-                    ns = northDirection == NorthNormal ? 'S' : 'N';
+                    ns = northDirection == NorthDirection::NorthNormal ? 'S' : 'N';
                 else
-                    ns = northDirection == NorthNormal ? 'N' : 'S';
+                    ns = northDirection == NorthDirection::NorthNormal ? 'N' : 'S';
 
-                auto buf = fmt::format("{}{}", static_cast<int>(fabs(latitude)), ns);
+                auto buf = fmt::format("{}{}", static_cast<int>(std::fabs(latitude)), ns);
                 longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
                 longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
@@ -195,18 +207,18 @@ PlanetographicGrid::render(Renderer* renderer,
 
             switch (longitudeConvention)
             {
-            case EastWest:
+            case LongitudeConvention::EastWest:
                 ew = 'E';
                 showLongitude = (int) longitude;
                 break;
-            case Eastward:
+            case LongitudeConvention::Eastward:
                 if (longitude > 0.0f)
-                    showLongitude = 360 - (int) longitude;
+                    showLongitude = 360 - static_cast<int>(longitude);
                 ew = 'E';
                 break;
-            case Westward:
+            case LongitudeConvention::Westward:
                 if (longitude > 0.0f)
-                    showLongitude = 360 - (int) longitude;
+                    showLongitude = 360 - static_cast<int>(longitude);
                 ew = 'W';
                 break;
             }
@@ -218,16 +230,16 @@ PlanetographicGrid::render(Renderer* renderer,
                 showLongitude = (int) longitude;
                 switch (longitudeConvention)
                 {
-                case EastWest:
+                case LongitudeConvention::EastWest:
                     ew = 'W';
-                    showLongitude = (int) longitude;
+                    showLongitude = static_cast<int>(longitude);
                     break;
-                case Eastward:
-                    showLongitude = (int) longitude;
+                case LongitudeConvention::Eastward:
+                    showLongitude = static_cast<int>(longitude);
                     ew = 'E';
                     break;
-                case Westward:
-                    showLongitude = (int) longitude;
+                case LongitudeConvention::Westward:
+                    showLongitude = static_cast<int>(longitude);
                     ew = 'W';
                     break;
                 }
@@ -256,27 +268,26 @@ PlanetographicGrid::setIAULongLatConvention()
 {
     if (body.getName() == "Earth" || body.getName() == "Moon")
     {
-        northDirection = NorthNormal;
-        longitudeConvention = EastWest;
+        northDirection = NorthDirection::NorthNormal;
+        longitudeConvention = LongitudeConvention::EastWest;
+    }
+    else if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
+    {
+        northDirection = NorthDirection::NorthNormal;
+        longitudeConvention = LongitudeConvention::Westward;
     }
     else
     {
-        if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
-        {
-            northDirection = NorthNormal;
-            longitudeConvention = Westward;
-        }
-        else
-        {
-            northDirection = NorthReversed;
-            longitudeConvention = Eastward;
-        }
+        northDirection = NorthDirection::NorthReversed;
+        longitudeConvention = LongitudeConvention::Eastward;
     }
 }
 
 void
 PlanetographicGrid::InitializeGeometry(const Renderer &renderer)
 {
+    using LineRenderer = render::LineRenderer;
+
     if (initialized)
         return;
     initialized = true;
@@ -287,9 +298,8 @@ PlanetographicGrid::InitializeGeometry(const Renderer &renderer)
 
     for (unsigned int i = 0; i <= circleSubdivisions + 1; i++)
     {
-        float theta = (2.0f * celestia::numbers::pi_v<float>) * (float) i / (float) circleSubdivisions;
         float s, c;
-        math::sincos(theta, s, c);
+        math::sincos((2.0f * celestia::numbers::pi_v<float>) * static_cast<float>(i) / circleSubdivisions, s, c);
         Eigen::Vector3f latitudePoint(c, 0.0f, s);
         Eigen::Vector3f longitudePoint(c, s, 0.0f);
         latitudeRenderer->addVertex(latitudePoint);
@@ -307,4 +317,10 @@ PlanetographicGrid::deinit()
     equatorRenderer = nullptr;
     delete longitudeRenderer;
     longitudeRenderer = nullptr;
+}
+
+std::string_view
+PlanetographicGrid::defaultTag() const
+{
+    return "planetographic grid"sv;
 }
