@@ -223,8 +223,6 @@ Renderer::Renderer() :
 
 Renderer::~Renderer()
 {
-    m_atmosphereRenderer->deinitGL();
-    m_cometRenderer->deinitGL();
     CurvePlot::deinit();
     PlanetographicGrid::deinit();
 }
