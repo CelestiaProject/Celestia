@@ -133,10 +133,9 @@ public:
     void               setOrientation(const Eigen::Quaternionf&);
     void               setOrientation(const Eigen::Quaterniond&);
 
-    Eigen::Matrix3d getOrientationTransform() const;
-    void            setOrientationTransform(const Eigen::Matrix3d&);
-
-    void            applyCurrentTransform();
+    const Eigen::Quaterniond& getOrientationTransform() const;
+    void                      setOrientationTransform(const Eigen::Quaterniond&);
+    void                      applyCurrentTransform();
 
     Eigen::Vector3d getVelocity() const;
     void            setVelocity(const Eigen::Vector3d&);
@@ -259,6 +258,7 @@ public:
         double expFactor{ 0.5 };
         double accelTime{ AccelerationTime };
         Eigen::Quaterniond rotation1; // rotation on the CircularOrbit around centerObject
+        Eigen::Quaterniond orientationTransformInverse; // the inverse of orientation transform when the journey starts
 
         Selection centerObject;
 
@@ -266,7 +266,6 @@ public:
     };
 
     void gotoJourney(const JourneyParams&);
-    // void setSimulation(Simulation* _sim) { sim = _sim; };
 
 private:
     void computeGotoParameters(const Selection &sel,
@@ -289,6 +288,8 @@ private:
                                    JourneyParams &jparams,
                                    double centerTime) const;
 
+    void startTraveling();
+
     void setOriginalOrientation(const Eigen::Quaternionf&);
     void setOriginalOrientation(const Eigen::Quaterniond&);
     void updateUniversal();
@@ -302,7 +303,7 @@ private:
     UniversalCoord      position{ 0.0, 0.0, 0.0 };
     Eigen::Quaterniond  originalOrientation{ Eigen::Quaterniond::Identity() };
     Eigen::Quaterniond  transformedOrientation{ Eigen::Quaterniond::Identity() };
-    Eigen::Matrix3d     orientationTransform{ Eigen::Matrix3d::Identity() };
+    Eigen::Quaterniond  orientationTransform{ Eigen::Quaterniond::Identity() };
     Eigen::Vector3d     velocity{ Eigen::Vector3d::Zero() };
     Eigen::Vector3d     angularVelocity{ Eigen::Vector3d::Zero() };
 
