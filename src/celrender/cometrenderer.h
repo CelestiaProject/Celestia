@@ -47,7 +47,6 @@ public:
                 const Matrices &m);
 
     bool initGL();
-    void deinitGL();
 
 private:
 

@@ -69,7 +69,6 @@ public:
         const Matrices           &m);
 
     void initGL();
-    void deinitGL();
 
 private:
     void computeLegacy(
