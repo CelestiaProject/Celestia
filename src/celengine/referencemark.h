@@ -13,6 +13,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <Eigen/Core>
 
 class Renderer;
@@ -54,16 +55,24 @@ class ReferenceMark
      */
     virtual bool isOpaque() const { return true; }
 
-    void setTag(const std::string& _tag)
+    void setTag(std::string_view tag)
     {
-        tag = _tag;
+        if (tag.empty() || tag == defaultTag())
+            m_tag = std::string{};
+        else
+            m_tag = tag;
     }
 
-    const std::string& getTag() const
+    std::string_view getTag() const
     {
-        return tag;
+        if (m_tag.empty())
+            return defaultTag();
+        return m_tag;
     }
+
+protected:
+    virtual std::string_view defaultTag() const = 0;
 
 private:
-    std::string tag;
+    std::string m_tag;
 };
