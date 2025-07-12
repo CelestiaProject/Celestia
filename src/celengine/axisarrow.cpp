@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 #include <celcompat/numbers.h>
 #include <celephem/orbit.h>
@@ -32,124 +33,134 @@ using celestia::render::LineRenderer;
 namespace gl = celestia::gl;
 namespace math = celestia::math;
 
-// draw a simple circle or annulus
-#define DRAW_ANNULUS 0
+namespace
+{
 
 constexpr float shaftLength  = 0.85f;
 constexpr float headLength   = 0.10f;
 constexpr float shaftRadius  = 0.010f;
 constexpr float headRadius   = 0.025f;
-constexpr unsigned nSections = 30;
+constexpr unsigned int nSections = 30;
 
-namespace
+std::vector<Eigen::Vector3f>
+GetArrowVertices()
 {
+    constexpr unsigned int totalVertices = nSections * 3U + 3U;
+
+    std::vector<Eigen::Vector3f> vertices;
+    vertices.reserve(totalVertices);
+    vertices.emplace_back(Eigen::Vector3f::Zero());
+    vertices.emplace_back(0.0f, 0.0f, shaftLength);
+    vertices.emplace_back(0.0f, 0.0f, shaftLength + headLength);
+
+    for (unsigned int i = 0U; i < nSections; ++i)
+    {
+        float s;
+        float c;
+        math::sincos((static_cast<float>(i) * 2.0f * celestia::numbers::pi_v<float>) / nSections, s, c);
+
+        vertices.emplace_back(shaftRadius * s, shaftRadius * c, 0.0f);
+        vertices.emplace_back(shaftRadius * s, shaftRadius * c, shaftLength);
+        vertices.emplace_back(headRadius * s, headRadius * c, shaftLength);
+    }
+
+    return vertices;
+}
+
+std::vector<GLushort>
+GetArrowIndices()
+{
+    constexpr unsigned int circleSize = (nSections + 1U) * 3U;
+    constexpr unsigned int shaftSize = 3U + nSections * 6U;
+    constexpr unsigned int annulusSize = (nSections + 1U) * 3U;
+    constexpr unsigned int headSize = (nSections + 1U) * 3U;
+
+    constexpr unsigned int totalSize = circleSize + shaftSize + annulusSize + headSize;
+
+    std::vector<GLushort> indices(totalSize, GLushort(0));
+
+    GLushort* const circle = indices.data();
+    GLushort* const shaft = circle + circleSize;
+    GLushort* const annulus = shaft + shaftSize;
+    GLushort* const head = annulus + annulusSize;
+
+    GLushort* circlePtr = circle;
+    GLushort* shaftPtr = shaft;
+    GLushort* annulusPtr = annulus;
+    GLushort* headPtr = head;
+
+    constexpr GLushort vZero = 0;
+    constexpr GLushort v3 = 1;
+    constexpr GLushort v4 = 2;
+    for (unsigned int i = 0U; i <= nSections; ++i)
+    {
+        unsigned int idx = i < nSections ? i : 0;
+        auto v0 = static_cast<GLushort>(3U + idx * 3U);
+        auto v1 = static_cast<GLushort>(v0 + 1U);
+        auto v2 = static_cast<GLushort>(v0 + 2U);
+
+        // Circle at bottom
+        if (i > 0)
+            *(circlePtr++) = v0;
+        *(circlePtr++) = vZero;
+        *(circlePtr++) = v1;
+
+        // Shaft
+        if (i > 0)
+        {
+            *(shaftPtr++) = v0; // left triangle
+
+            *(shaftPtr++) = v0; // right
+            *(shaftPtr++) = static_cast<GLushort>(idx * 3U + 1U) ; // v1Prev
+            *(shaftPtr++) = v1;
+        }
+        *(shaftPtr++) = v0; // left
+        *(shaftPtr++) = v1;
+
+        // Annulus
+        if (i > 0)
+            *(annulusPtr++) = v2;
+        *(annulusPtr++) = v2;
+        *(annulusPtr++) = v3;
+
+        // Head
+        if (i > 0)
+            *(headPtr++) = v2;
+        *(headPtr++) = v4;
+        *(headPtr++) = v2;
+    }
+
+    *circlePtr = circle[1];
+    *shaftPtr = shaft[0];
+    *annulusPtr = annulus[1];
+    *headPtr = head[1];
+
+    return indices;
+}
 
 gl::VertexObject&
 GetArrowVAO()
 {
-    static bool initialized = false;
+    static gl::VertexObject* vo = nullptr;
 
-    static std::unique_ptr<gl::VertexObject> vo;
-    static std::unique_ptr<gl::Buffer> bo;
-
-    if (initialized)
+    if (vo)
         return *vo;
 
-    initialized = true;
+    vo = std::make_unique<gl::VertexObject>().release();
 
-    vo = std::make_unique<gl::VertexObject>();
-    bo = std::make_unique<gl::Buffer>();
+    auto vertices = GetArrowVertices();
+    auto indices = GetArrowIndices();
 
-    // circle at bottom of a shaft
-    std::vector<Eigen::Vector3f> circle;
-    // arrow shaft
-    std::vector<Eigen::Vector3f> shaft;
-    // annulus
-    std::vector<Eigen::Vector3f> annulus;
-    // head of the arrow
-    std::vector<Eigen::Vector3f> head;
+    static gl::Buffer* vertexBuffer = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array).release();
+    vertexBuffer->setData(vertices, gl::Buffer::BufferUsage::StaticDraw);
 
-    for (unsigned i = 0; i <= nSections; i++)
-    {
-        float c, s;
-        math::sincos((i * 2.0f * celestia::numbers::pi_v<float>) / nSections, c, s);
-
-        // circle at bottom
-        Eigen::Vector3f v0(shaftRadius * c, shaftRadius * s, 0.0f);
-        if (i > 0)
-            circle.push_back(v0);
-        circle.push_back(Eigen::Vector3f::Zero());
-        circle.push_back(v0);
-
-        // shaft
-        Eigen::Vector3f v1(shaftRadius * c, shaftRadius * s, shaftLength);
-        Eigen::Vector3f v1prev;
-        if (i > 0)
-        {
-            shaft.push_back(v0); // left triangle
-
-            shaft.push_back(v0); // right
-            shaft.push_back(v1prev);
-            shaft.push_back(v1);
-        }
-        shaft.push_back(v0); // left
-        shaft.push_back(v1);
-        v1prev = v1;
-
-        // annulus
-        Eigen::Vector3f v2(headRadius * c, headRadius * s, shaftLength);
-#if DRAW_ANNULUS
-        Eigen::Vector3f v2prev;
-        if (i > 0)
-        {
-            annulus.push_back(v2);
-
-            annulus.push_back(v2);
-            annulus.push_back(v2prev);
-            annulus.push_back(v1);
-        }
-        annulus.push_back(v2);
-        annulus.push_back(v1);
-        v2prev = v1;
-#else
-        Eigen::Vector3f v3(0.0f, 0.0f, shaftLength);
-        if (i > 0)
-            annulus.push_back(v2);
-        annulus.push_back(v2);
-        annulus.push_back(v3);
-#endif
-
-        // head
-        Eigen::Vector3f v4(0.0f, 0.0f, shaftLength + headLength);
-        if (i > 0)
-            head.push_back(v2);
-        head.push_back(v4);
-        head.push_back(v2);
-    }
-
-    circle.push_back(circle[1]);
-    shaft.push_back(shaft[0]);
-#if DRAW_ANNULUS
-    annulus.push_back(annulus[0]);
-#else
-    annulus.push_back(annulus[1]);
-#endif
-    head.push_back(head[1]);
-
-    std::vector<Eigen::Vector3f> arrow;
-    arrow.reserve(circle.size() + shaft.size() + annulus.size() + head.size());
-    std::copy(circle.begin(), circle.end(), std::back_inserter(arrow));
-    std::copy(shaft.begin(), shaft.end(), std::back_inserter(arrow));
-    std::copy(annulus.begin(), annulus.end(), std::back_inserter(arrow));
-    std::copy(head.begin(), head.end(), std::back_inserter(arrow));
-
-    bo->setData(arrow, gl::Buffer::BufferUsage::StaticDraw);
-
-    vo->setCount(static_cast<int>(arrow.size())).addVertexBuffer(
-        *bo,
-        CelestiaGLProgram::VertexCoordAttributeIndex,
-        3,
-        gl::VertexObject::DataType::Float);
+    vo->addVertexBuffer(*vertexBuffer,
+                        CelestiaGLProgram::VertexCoordAttributeIndex,
+                        3,
+                        gl::VertexObject::DataType::Float);
+    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
+    vo->setCount(static_cast<int>(indices.size()));
+    vo->setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
 
     return *vo;
 }
