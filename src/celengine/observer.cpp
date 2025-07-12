@@ -578,14 +578,14 @@ Observer::setOriginalOrientation(const Eigen::Quaterniond& q)
     updateOrientation();
 }
 
-Eigen::Matrix3d
+const Eigen::Quaterniond&
 Observer::getOrientationTransform() const
 {
     return orientationTransform;
 }
 
 void
-Observer::setOrientationTransform(const Eigen::Matrix3d& transform)
+Observer::setOrientationTransform(const Eigen::Quaterniond& transform)
 {
     orientationTransform = transform;
     updateOrientation();
@@ -598,7 +598,7 @@ Observer::applyCurrentTransform()
 {
     originalOrientationUniv = transformedOrientationUniv;
     originalOrientation = transformedOrientation;
-    orientationTransform = Eigen::Matrix3d::Identity();
+    orientationTransform = Eigen::Quaterniond::Identity();
     updateOrientation();
 }
 
@@ -720,14 +720,14 @@ Observer::update(double dt, double timeScale)
 void
 Observer::updateOrientation()
 {
-    transformedOrientationUniv = Eigen::Quaterniond(orientationTransform) * originalOrientationUniv;
+    transformedOrientationUniv = orientationTransform * originalOrientationUniv;
     transformedOrientation = frame->convertFromUniversal(transformedOrientationUniv, getTime());
 }
 
 Eigen::Quaterniond
 Observer::undoTransform(const Eigen::Quaterniond& transformed) const
 {
-    return Eigen::Quaterniond(orientationTransform).inverse() * transformed;
+    return orientationTransform.inverse() * transformed;
 }
 
 Selection
@@ -1246,7 +1246,7 @@ Observer::gotoJourney(const JourneyParams& params)
 void
 Observer::startTraveling()
 {
-    journey.orientationTransformInverse = Eigen::Quaterniond(orientationTransform).inverse();
+    journey.orientationTransformInverse = orientationTransform.inverse();
     observerMode = ObserverMode::Travelling;
 }
 
