@@ -663,7 +663,7 @@ Observer::update(double dt, double timeScale)
 
         // Spherically interpolate the orientation over the first half
         // of the journey.
-        originalOrientation = undoTransform(interpolateOrientation(journey, t));
+        originalOrientation = journey.orientationTransformInverse * interpolateOrientation(journey, t);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
@@ -672,7 +672,7 @@ Observer::update(double dt, double timeScale)
             {
                 //situation = RigidTransform(journey.to, journey.finalOrientation);
                 position = journey.to;
-                originalOrientation = undoTransform(journey.finalOrientation);
+                originalOrientation = journey.orientationTransformInverse * journey.finalOrientation;
             }
 
             observerMode = ObserverMode::Free;
@@ -950,7 +950,7 @@ Observer::centerSelectionCO(const Selection& selection, double centerTime)
     if (!selection.empty() && !frame->getRefObject().empty())
     {
         computeCenterCOParameters(selection, journey, centerTime);
-        observerMode = ObserverMode::Travelling;
+        startTraveling();
     }
 }
 
@@ -1240,6 +1240,13 @@ Observer::gotoJourney(const JourneyParams& params)
                                               0.0001, 100.0,
                                               1e-10).first;
     journey.startTime = realTime;
+    startTraveling();
+}
+
+void
+Observer::startTraveling()
+{
+    journey.orientationTransformInverse = Eigen::Quaterniond(orientationTransform).inverse();
     observerMode = ObserverMode::Travelling;
 }
 
@@ -1276,7 +1283,7 @@ Observer::gotoSelection(const Selection& selection,
                           ObserverFrame::CoordinateSystem::Universal,
                           up, upFrame);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 /*! Like normal goto, except we'll follow a great circle trajectory.  Useful
@@ -1318,7 +1325,7 @@ Observer::gotoSelectionGC(const Selection& selection,
                             up, upFrame,
                             centerObj);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1341,7 +1348,7 @@ Observer::gotoSelection(const Selection& selection,
     computeGotoParameters(selection, journey,
                           v * -distance, ObserverFrame::CoordinateSystem::Universal,
                           up, upFrame);
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1368,7 +1375,7 @@ Observer::gotoSelectionGC(const Selection& selection,
                             up, upFrame,
                             centerObj);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 /** Make the observer travel to the specified planetocentric coordinates.
@@ -1404,7 +1411,7 @@ Observer::gotoSelectionLongLat(const Selection& selection,
                           ObserverFrame::CoordinateSystem::BodyFixed,
                           up, ObserverFrame::CoordinateSystem::BodyFixed);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1429,7 +1436,7 @@ Observer::gotoLocation(const UniversalCoord& toPosition,
                                               0.0001, 100.0,
                                               1e-10).first;
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1494,7 +1501,7 @@ Observer::centerSelection(const Selection& selection, double centerTime)
         return;
 
     computeCenterParameters(selection, journey, centerTime);
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void

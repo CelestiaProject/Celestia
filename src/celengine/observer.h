@@ -259,6 +259,7 @@ public:
         double expFactor{ 0.5 };
         double accelTime{ AccelerationTime };
         Eigen::Quaterniond rotation1; // rotation on the CircularOrbit around centerObject
+        Eigen::Quaterniond orientationTransformInverse; // the inverse of orientation transform when the journey starts
 
         Selection centerObject;
 
@@ -266,7 +267,7 @@ public:
     };
 
     void gotoJourney(const JourneyParams&);
-    // void setSimulation(Simulation* _sim) { sim = _sim; };
+    void startTraveling();
 
 private:
     void computeGotoParameters(const Selection &sel,
