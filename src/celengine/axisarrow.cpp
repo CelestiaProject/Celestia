@@ -88,7 +88,7 @@ ArrowReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f mv = (*m.modelview) * transform.matrix();
 
-    render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    const render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
     CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;

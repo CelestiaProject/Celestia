@@ -13,20 +13,16 @@
 #include <string_view>
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include <celutil/color.h>
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
 #include <celengine/shadermanager.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+#include <celrender/rendererfwd.h>
 
 class Body;
-
-namespace celestia::render
-{
-class ReferenceMarkRenderer;
-}
+struct Matrices;
 
 class ArrowReferenceMark : public ReferenceMark
 {

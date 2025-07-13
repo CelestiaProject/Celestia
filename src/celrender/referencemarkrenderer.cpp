@@ -138,8 +138,8 @@ constexpr unsigned int circleSubdivisions = 100U;
 ArrowRenderer::~ArrowRenderer() = default;
 
 ArrowRenderer::ArrowRenderer(const Renderer& renderer) :
-    m_lineRenderer(renderer),
-    m_vo(std::make_unique<gl::VertexObject>())
+    m_vo(std::make_unique<gl::VertexObject>()), //NOSONAR
+    m_lineRenderer(renderer)
 {
     auto vertices = getArrowVertices();
     auto indices = getArrowIndices();

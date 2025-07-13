@@ -479,7 +479,7 @@ class Renderer
                              float distance,
                              double now,
                              float nearPlaneDistance,
-                             const Matrices&);
+                             const Matrices&) const;
 
     void renderCometTail(const Body& body,
                          const Eigen::Vector3f& pos,
